@@ -42,7 +42,7 @@ class ExpressionOrFloat {
 
   struct ApproximationParameters {
     AngleUnit angleUnit;
-    Preferences::ComplexFormat complexFormat;
+    ComplexFormat complexFormat;
   };
 
   /* Writes the expression or float representation into the provided buffer.

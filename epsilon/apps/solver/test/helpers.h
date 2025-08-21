@@ -78,8 +78,7 @@ inline void assert_solves_to(const char* equation,
 
 // Helpers
 
-void setComplexFormatAndAngleUnit(
-    Poincare::Preferences::ComplexFormat complexFormat,
-    Poincare::AngleUnit angleUnit);
+void setComplexFormatAndAngleUnit(Poincare::ComplexFormat complexFormat,
+                                  Poincare::AngleUnit angleUnit);
 
 #endif

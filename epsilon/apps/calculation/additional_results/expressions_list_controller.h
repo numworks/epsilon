@@ -60,9 +60,9 @@ class ExpressionsListController
   Poincare::Preferences::PrintFloatMode displayMode() const {
     return m_calculationPreferences.displayMode;
   }
-  Poincare::Preferences::ComplexFormat complexFormat() const {
+  Poincare::ComplexFormat complexFormat() const {
     assert(m_calculationPreferences.complexFormat !=
-           Poincare::Preferences::ComplexFormat::None);
+           Poincare::ComplexFormat::None);
     return m_calculationPreferences.complexFormat;
   }
   uint8_t numberOfSignificantDigits() const {

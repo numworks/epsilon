@@ -51,12 +51,10 @@ constexpr Poincare::Preferences::UnitFormat MetricUnitFormat =
     Poincare::Preferences::UnitFormat::Metric;
 constexpr Poincare::Preferences::UnitFormat Imperial =
     Poincare::Preferences::UnitFormat::Imperial;
-constexpr Poincare::Preferences::ComplexFormat Cartesian =
-    Poincare::Preferences::ComplexFormat::Cartesian;
-constexpr Poincare::Preferences::ComplexFormat Polar =
-    Poincare::Preferences::ComplexFormat::Polar;
-constexpr Poincare::Preferences::ComplexFormat Real =
-    Poincare::Preferences::ComplexFormat::Real;
+constexpr Poincare::ComplexFormat Cartesian =
+    Poincare::ComplexFormat::Cartesian;
+constexpr Poincare::ComplexFormat Polar = Poincare::ComplexFormat::Polar;
+constexpr Poincare::ComplexFormat Real = Poincare::ComplexFormat::Real;
 
 void quiz_assert_log_if_failure(bool test, Poincare::PoolHandle tree);
 
@@ -68,8 +66,7 @@ typedef Poincare::Internal::Tree* (*ProcessExpression)(
 
 void assert_parsed_expression_process_to(
     const char* expression, const char* result, const Poincare::Context& ctx,
-    Poincare::ReductionTarget target,
-    Poincare::Preferences::ComplexFormat complexFormat,
+    Poincare::ReductionTarget target, Poincare::ComplexFormat complexFormat,
     Poincare::AngleUnit angleUnit, Poincare::Preferences::UnitFormat unitFormat,
     Poincare::SymbolicComputation symbolicComputation,
     ProcessExpression process,
@@ -89,7 +86,7 @@ void assert_reduce_and_store(
     const char* expression, Poincare::VariableStore& variableStore,
     Poincare::AngleUnit angleUnit = Radian,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
-    Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
+    Poincare::ComplexFormat complexFormat = Cartesian,
     Poincare::ReductionTarget target = User);
 
 /* The two signatures (with and without a context parameter) are there for
@@ -99,7 +96,7 @@ void assert_parsed_expression_simplify_to(
     const Poincare::Context& context, Poincare::ReductionTarget target = User,
     Poincare::AngleUnit angleUnit = Radian,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
-    Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
+    Poincare::ComplexFormat complexFormat = Cartesian,
     Poincare::SymbolicComputation symbolicComputation = ReplaceDefinedSymbols,
     bool beautify = true);
 void assert_parsed_expression_simplify_to(
@@ -107,7 +104,7 @@ void assert_parsed_expression_simplify_to(
     Poincare::ReductionTarget target = User,
     Poincare::AngleUnit angleUnit = Radian,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
-    Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
+    Poincare::ComplexFormat complexFormat = Cartesian,
     Poincare::SymbolicComputation symbolicComputation = ReplaceDefinedSymbols,
     bool beautify = true);
 
@@ -120,7 +117,7 @@ void assert_expression_approximates_to(
     const char* expression, const char* approximation,
     Poincare::Context& context, Poincare::AngleUnit angleUnit = Degree,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
-    Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
+    Poincare::ComplexFormat complexFormat = Cartesian,
     int numberOfSignificantDigits =
         Poincare::PrintFloat::SignificantDecimalDigits<T>());
 template <typename T>
@@ -128,7 +125,7 @@ void assert_expression_simplifies_approximates_to(
     const char* expression, const char* approximation,
     Poincare::Context& context, Poincare::AngleUnit angleUnit = Degree,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
-    Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
+    Poincare::ComplexFormat complexFormat = Cartesian,
     int numberOfSignificantDigits =
         Poincare::PrintFloat::SignificantDecimalDigits<T>());
 template <typename T>
@@ -136,7 +133,7 @@ void assert_expression_simplifies_approximates_to(
     const char* expression, const char* approximation,
     Poincare::AngleUnit angleUnit = Degree,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
-    Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
+    Poincare::ComplexFormat complexFormat = Cartesian,
     int numberOfSignificantDigits =
         Poincare::PrintFloat::SignificantDecimalDigits<T>());
 

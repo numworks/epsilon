@@ -157,10 +157,10 @@ QUIZ_CASE(calculation_ans) {
   assertAnsIs("1+1", "2", globalContext, &store);
   assertAnsIs("13.3", "13.3", globalContext, &store, DecimalMode);
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Cartesian);
+      ComplexFormat::Cartesian);
   assertAnsIs("√(-1-1)", "√(2)×i", globalContext, &store);
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Real);
+      ComplexFormat::Real);
   assertAnsIs("int(diff(x^2,x,x),x,0,1)", "int(diff(x^2,x,x),x,0,1)",
               globalContext, &store);
   assertAnsIs("int(diff(x^2.1,x,x),x,0,1)", "int(diff(x^2.1,x,x),x,0,1)",
@@ -767,7 +767,7 @@ QUIZ_CASE(calculation_complex_format) {
       PrintFloat::k_maxNumberOfSignificantDigits);
 
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Real);
+      ComplexFormat::Real);
   assertCalculationIs("1+i", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Hidden, "1+i", nullptr, globalContext, &store);
   assertCalculationIs("√(-1)", DisplayOutput::ExactOnly, EqualSign::Hidden,
@@ -787,7 +787,7 @@ QUIZ_CASE(calculation_complex_format) {
                       "nonreal", nullptr, globalContext, &store);
 
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Cartesian);
+      ComplexFormat::Cartesian);
   assertCalculationIs("1+i", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Hidden, "1+i", nullptr, globalContext, &store);
   assertCalculationIs("√(-1)", DisplayOutput::ApproximateIsIdenticalToExact,
@@ -810,7 +810,7 @@ QUIZ_CASE(calculation_complex_format) {
                       &store);
 
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Polar);
+      ComplexFormat::Polar);
   assertCalculationIs("1+i", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "√(2)e^((π/4)i)",
                       "1.4142135623731e^(0.78539816339745i)", globalContext,
@@ -837,7 +837,7 @@ QUIZ_CASE(calculation_complex_format) {
                       &store);
 
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Real);
+      ComplexFormat::Real);
 
   GlobalPreferences::SharedGlobalPreferences()->setNumberOfSignificantDigits(
       previousNumberOfSignificantDigits);
@@ -894,7 +894,7 @@ QUIZ_CASE(calculation_additional_results) {
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Real);
+      ComplexFormat::Real);
   assertCalculationAdditionalResultTypeHas("1+1", {.integer = true},
                                            globalContext, &store);
   assertCalculationAdditionalResultTypeHas("π-π", {.integer = true},
@@ -1016,13 +1016,13 @@ QUIZ_CASE(calculation_additional_results) {
 
 #if 0  // TODO: Fix additional results for negative numbers in polar form
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Polar);
+      ComplexFormat::Polar);
   assertCalculationAdditionalResultTypeHas("-10", {.complex = true},
                                            globalContext, &store);
 #endif
 
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Cartesian);
+      ComplexFormat::Cartesian);
   assertCalculationAdditionalResultTypeHas("√(-1)", {.complex = true},
                                            globalContext, &store);
   assertCalculationAdditionalResultTypeHas("[[1+2i][3+i]]", {.matrix = true},
@@ -1031,5 +1031,5 @@ QUIZ_CASE(calculation_additional_results) {
                                            globalContext, &store);
 
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Real);
+      ComplexFormat::Real);
 }

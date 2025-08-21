@@ -177,10 +177,10 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
   void setDisplayMode(Poincare::Preferences::PrintFloatMode displayMode) {
     s_data->m_calculationPreferences.displayMode = displayMode;
   }
-  Poincare::Preferences::ComplexFormat complexFormat() const {
+  Poincare::ComplexFormat complexFormat() const {
     return s_data->m_calculationPreferences.complexFormat;
   }
-  void setComplexFormat(Poincare::Preferences::ComplexFormat complexFormat) {
+  void setComplexFormat(Poincare::ComplexFormat complexFormat) {
     s_data->m_calculationPreferences.complexFormat = complexFormat;
   }
   uint8_t numberOfSignificantDigits() const {

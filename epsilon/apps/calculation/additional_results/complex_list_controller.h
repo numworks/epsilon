@@ -21,7 +21,7 @@ class ComplexListController : public IllustratedExpressionsListController {
  private:
   IllustrationCell* illustrationCell() override { return &m_complexGraphCell; }
   I18n::Message messageAtIndex(int index) override;
-  Poincare::Preferences::ComplexFormat complexFormToDisplay() const;
+  Poincare::ComplexFormat complexFormToDisplay() const;
   ComplexGraphCell m_complexGraphCell;
   ComplexModel m_model;
 };

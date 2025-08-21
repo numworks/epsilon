@@ -48,7 +48,7 @@ class ExpressionModelHandle : public Ion::Storage::Record {
     return editableModel()->setExpressionContent(this, e);
   }
 
-  Poincare::Preferences::ComplexFormat complexFormat(
+  Poincare::ComplexFormat complexFormat(
       const Poincare::Context& context) const {
     return model()->complexFormat(this, context);
   }

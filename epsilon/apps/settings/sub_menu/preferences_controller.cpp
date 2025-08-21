@@ -123,7 +123,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
   } else if (message == I18n::Message::EditionMode) {
     preferences->setEditionMode((GlobalPreferences::EditionMode)valueIndex);
   } else if (message == I18n::Message::ComplexFormat) {
-    preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
+    preferences->setComplexFormat((ComplexFormat)valueIndex);
   } else if (message == I18n::Message::FontSizes) {
     preferences->setFont(valueIndex == 0 ? KDFont::Size::Large
                                          : KDFont::Size::Small);

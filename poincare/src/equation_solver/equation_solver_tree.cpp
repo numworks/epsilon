@@ -220,7 +220,7 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
   assert(equationMetadata.unknownVariables.size() == 1);
   Approximation::PrepareFunctionForApproximation(
       preparedEquation, equationMetadata.unknownVariables[0],
-      Preferences::ComplexFormat::Real);
+      ComplexFormat::Real);
 
   // Step 2. Compute the solving range if not provided
   if (range.isNan()) {

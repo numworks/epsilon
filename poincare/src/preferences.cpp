@@ -14,7 +14,7 @@ constexpr int Preferences::VeryShortNumberOfSignificantDigits;
 Preferences::Interface* Preferences::s_preferences = nullptr;
 const Preferences Preferences::PreferencesInstance;
 
-Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
+ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     ComplexFormat complexFormat, const Internal::Tree* exp,
     const Context& context, SymbolicComputation replaceSymbols) {
   Internal::ProjectionContext projectionContext = {

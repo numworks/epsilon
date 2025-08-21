@@ -158,7 +158,7 @@ void assert_same_function_properties(const char* expression1,
 
 QUIZ_CASE(graph_function_properties) {
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Cartesian);
+      ComplexFormat::Cartesian);
 
   // Test the plot type under different Press-to-test parameters :
   using PTTFlags = ExamMode::PressToTestFlags::Flags;
@@ -177,7 +177,7 @@ QUIZ_CASE(graph_function_properties) {
   };
 
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Cartesian);
+      ComplexFormat::Cartesian);
 
   constexpr static FunctionProperties k_linearProperties = FunctionProperties{
       .m_caption = I18n::Message::LinearType,
@@ -885,28 +885,28 @@ QUIZ_CASE(graph_function_properties) {
     // === Updated complex format ===
 
     assert(GlobalPreferences::SharedGlobalPreferences()->complexFormat() ==
-           Preferences::ComplexFormat::Cartesian);
+           ComplexFormat::Cartesian);
     assert_check_function_properties("y=(√(-1))^2", k_horizontalLineProperties);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
     assert_check_function_properties("f(x)=im(i*x+1)", k_linearProperties);
     assert_check_function_properties("y=im(i*x+1)", k_lineProperties);
 
     GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-        Preferences::ComplexFormat::Real);
+        ComplexFormat::Real);
     assert_check_function_properties("y=(√(-1))^2", k_unhandledCartesian);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
     assert_check_function_properties("f(x)=im(i*x+1)", k_linearProperties);
     assert_check_function_properties("y=im(i*x+1)", k_lineProperties);
     // Restore cartesian complex format
     GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-        Preferences::ComplexFormat::Cartesian);
+        ComplexFormat::Cartesian);
   }
 
   ExamModeManager::SetExamMode(ExamMode(ExamMode::Ruleset::Off));
 
   // Restore default preferences
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Real);
+      ComplexFormat::Real);
 }
 
 QUIZ_CASE(graph_function_properties_with_predefined_variables) {
@@ -941,7 +941,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
   // Add a predefined a symbol
   assert_reduce_and_store("0→a", context, AngleUnit::Radian,
                           Poincare::Preferences::UnitFormat::Metric,
-                          Poincare::Preferences::ComplexFormat::Real);
+                          Poincare::ComplexFormat::Real);
   assert_check_function_properties("y=a*x+1", k_horizontalLineProperties,
                                    &store, context);
   assert_check_function_properties("a*y*y+y=x", k_lineProperties, &store,
@@ -949,7 +949,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
 
   assert_reduce_and_store("1→a", context, AngleUnit::Radian,
                           Poincare::Preferences::UnitFormat::Metric,
-                          Poincare::Preferences::ComplexFormat::Real);
+                          Poincare::ComplexFormat::Real);
   assert_check_function_properties("y=a*x+1", k_lineProperties, &store,
                                    context);
   assert_check_function_properties(
@@ -963,7 +963,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
   // Add a predefined y symbol
   assert_reduce_and_store("1→y", context, AngleUnit::Radian,
                           Poincare::Preferences::UnitFormat::Metric,
-                          Poincare::Preferences::ComplexFormat::Real);
+                          Poincare::ComplexFormat::Real);
   assert_check_function_properties("y=x", k_lineProperties, &store, context);
 
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();

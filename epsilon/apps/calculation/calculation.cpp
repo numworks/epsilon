@@ -277,8 +277,7 @@ Calculation::DisplayOutput Calculation::ComputeDisplayOutput(
 }
 
 Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
-    const OutputLayouts& outputLayouts,
-    Poincare::Preferences::ComplexFormat complexFormat,
+    const OutputLayouts& outputLayouts, Poincare::ComplexFormat complexFormat,
     Poincare::AngleUnit angleUnit, const Poincare::Context& context) {
   /* Displaying the right equal symbol is less important than displaying a
    * result, so we do not want computeEqualSign to create a pool failure that

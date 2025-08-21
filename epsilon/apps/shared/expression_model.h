@@ -39,9 +39,8 @@ class ExpressionModel {
   virtual void tidyDownstreamPoolFrom(
       const Poincare::PoolObject* treePoolCursor = nullptr) const;
 
-  Poincare::Preferences::ComplexFormat complexFormat(
-      const Ion::Storage::Record* record,
-      const Poincare::Context& context) const;
+  Poincare::ComplexFormat complexFormat(const Ion::Storage::Record* record,
+                                        const Poincare::Context& context) const;
 
  protected:
   // Setters helper

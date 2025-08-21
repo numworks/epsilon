@@ -304,8 +304,7 @@ QUIZ_CASE(poincare_properties_get_variables) {
 void assert_reduced_expression_has_polynomial_coefficient(
     const char* input, const char* symbolName, const Tree* expectedCoefficients,
     const Context& context = Poincare::EmptyContext{},
-    Preferences::ComplexFormat complexFormat =
-        Preferences::ComplexFormat::Cartesian,
+    ComplexFormat complexFormat = ComplexFormat::Cartesian,
     AngleUnit angleUnit = AngleUnit::Radian,
     Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric,
     SymbolicComputation symbolicComputation =
@@ -342,24 +341,23 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
                                                        KList(0_e, i_e));
   assert_reduced_expression_has_polynomial_coefficient(
       "√(-1)x", "x", KList(KNonReal), Poincare::EmptyContext{},
-      Preferences::ComplexFormat::Real);
+      ComplexFormat::Real);
 
   // 3 -> x
   store("3→x", globalContext);
   assert_reduced_expression_has_polynomial_coefficient("x+1", "x", KList(4_e),
                                                        globalContext);
   assert_reduced_expression_has_polynomial_coefficient(
-      "x+2", "x", KList(2_e, 1_e), globalContext,
-      Preferences::ComplexFormat::Real, AngleUnit::Radian,
-      Preferences::UnitFormat::Metric, SymbolicComputation::KeepAllSymbols);
+      "x+2", "x", KList(2_e, 1_e), globalContext, ComplexFormat::Real,
+      AngleUnit::Radian, Preferences::UnitFormat::Metric,
+      SymbolicComputation::KeepAllSymbols);
   assert_reduced_expression_has_polynomial_coefficient(
-      "x+2", "x", KList(2_e, 1_e), globalContext,
-      Preferences::ComplexFormat::Real, AngleUnit::Radian,
-      Preferences::UnitFormat::Metric,
+      "x+2", "x", KList(2_e, 1_e), globalContext, ComplexFormat::Real,
+      AngleUnit::Radian, Preferences::UnitFormat::Metric,
       SymbolicComputation::ReplaceDefinedFunctions);
   assert_reduced_expression_has_polynomial_coefficient(
       "f(x)", "x", KList(1_e, π_e, 1_e), globalContext,
-      Preferences::ComplexFormat::Cartesian, AngleUnit::Radian,
+      ComplexFormat::Cartesian, AngleUnit::Radian,
       Preferences::UnitFormat::Metric,
       SymbolicComputation::ReplaceDefinedFunctions);
 

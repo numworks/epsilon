@@ -137,7 +137,7 @@ static void compareSolutions(SystemOfEquations* system,
 
     bool reductionFailure = false;
     Internal::ProjectionContext projCtx{
-        .m_complexFormat = Preferences::ComplexFormat::Cartesian,
+        .m_complexFormat = ComplexFormat::Cartesian,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = context,
         .m_advanceReduce = false};
@@ -160,7 +160,7 @@ static void compareSolutions(SystemOfEquations* system,
     /* TODO: no need to recreate a projectionContext when const and non const
      * members of ProjectionContext are split (parameters vs metadata) */
     Internal::ProjectionContext projCtx2 = {
-        .m_complexFormat = Preferences::ComplexFormat::Cartesian,
+        .m_complexFormat = ComplexFormat::Cartesian,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = context,
         .m_advanceReduce = false};
@@ -262,7 +262,7 @@ void assert_auto_solving_range_is(const char* equation, double min, double max,
       });
 }
 
-void setComplexFormatAndAngleUnit(Preferences::ComplexFormat complexFormat,
+void setComplexFormatAndAngleUnit(ComplexFormat complexFormat,
                                   Poincare::AngleUnit angleUnit) {
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(complexFormat);
   GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(angleUnit);

@@ -126,7 +126,7 @@ class ContinuousFunctionProperties {
   void update(const Poincare::SystemExpression reducedEquation,
               const Poincare::UserExpression inputEquation,
               const Poincare::Context& context,
-              Poincare::Preferences::ComplexFormat complexFormat,
+              Poincare::ComplexFormat complexFormat,
               Poincare::Comparison::Operator precomputedOperatorType,
               SymbolType precomputedFunctionSymbol, bool isCartesianEquation);
 

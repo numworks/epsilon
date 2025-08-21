@@ -32,8 +32,6 @@ class Preferences {
   constexpr static int VeryShortNumberOfSignificantDigits = 3;
 
   // --- Calculation preferences ---
-  using ComplexFormat = ComplexFormat;
-
   /* The 'PrintFloatMode' refers to the way to display float 'scientific' or
    * 'auto'. The scientific mode returns float with style -1.2E2 whereas the
    * auto mode tries to return 'natural' float like (0.021) and switches to
@@ -77,7 +75,7 @@ class Preferences {
           Preferences::DefaultNumberOfPrintedSignificantDigits,
       .angleUnit = AngleUnit::Radian,
       .displayMode = Preferences::PrintFloatMode::Decimal,
-      .complexFormat = Preferences::ComplexFormat::Real,
+      .complexFormat = ComplexFormat::Real,
       .padding = 0,
   };
 

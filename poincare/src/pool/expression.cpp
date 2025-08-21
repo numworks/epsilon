@@ -374,7 +374,7 @@ SystemExpression SystemExpression::approximateSystemToTree() const {
 
 template <typename T>
 SystemExpression UserExpression::approximateUserToTree(
-    AngleUnit angleUnit, Preferences::ComplexFormat complexFormat,
+    AngleUnit angleUnit, ComplexFormat complexFormat,
     const Context& context) const {
   return SystemExpression::Builder(Approximation::ToTree<T>(
       tree(),
@@ -593,9 +593,8 @@ T PreparedFunctionScalar::approximateToRealScalarWithValue(
 
 template <typename T>
 T Expression::ParseAndSimplifyAndApproximateToRealScalar(
-    const char* text, const Context& context,
-    Preferences::ComplexFormat complexFormat, AngleUnit angleUnit,
-    SymbolicComputation symbolicComputation) {
+    const char* text, const Context& context, ComplexFormat complexFormat,
+    AngleUnit angleUnit, SymbolicComputation symbolicComputation) {
   UserExpression exp = UserExpression::Parse(text, context);
   if (exp.isUninitialized()) {
     return NAN;
@@ -621,7 +620,7 @@ bool UserExpression::hasDefinedComplexApproximation(AngleUnit angleUnit,
                                                     const Context& context,
                                                     T* returnRealPart,
                                                     T* returnImagPart) const {
-  if (complexFormat == Preferences::ComplexFormat::Real ||
+  if (complexFormat == ComplexFormat::Real ||
       !Internal::Dimension::IsNonListScalar(tree())) {
     return false;
   }
@@ -650,7 +649,7 @@ bool UserExpression::hasDefinedComplexApproximation(AngleUnit angleUnit,
 bool UserExpression::isComplexScalar(
     Preferences::CalculationPreferences calculationPreferences,
     const Context& context) const {
-  Preferences::ComplexFormat complexFormat =
+  ComplexFormat complexFormat =
       Preferences::UpdatedComplexFormatWithExpressionInput(
           calculationPreferences.complexFormat, *this, context);
   AngleUnit angleUnit = calculationPreferences.angleUnit;
@@ -739,9 +738,9 @@ int SystemExpression::polynomialDegree(const char* symbolName) const {
 
 int SystemExpression::getPolynomialReducedCoefficients(
     const char* symbolName, SystemExpression coefficients[],
-    const Context& context, Preferences::ComplexFormat complexFormat,
-    AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
-    SymbolicComputation symbolicComputation, bool keepDependencies) const {
+    const Context& context, ComplexFormat complexFormat, AngleUnit angleUnit,
+    Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation,
+    bool keepDependencies) const {
   Tree* coefList = PolynomialParser::GetReducedCoefficients(tree(), symbolName,
                                                             keepDependencies);
   if (!coefList) {

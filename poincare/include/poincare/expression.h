@@ -149,8 +149,8 @@ class Expression : public PoolHandle {
    * Return NAN for all non real scalar expressions. */
   template <typename T>
   static T ParseAndSimplifyAndApproximateToRealScalar(
-      const char* text, const Context& context,
-      Preferences::ComplexFormat complexFormat, AngleUnit angleUnit,
+      const char* text, const Context& context, ComplexFormat complexFormat,
+      AngleUnit angleUnit,
       SymbolicComputation symbolicComputation =
           SymbolicComputation::ReplaceAllSymbols);
 
@@ -260,14 +260,13 @@ class UserExpression : public Expression {
       const Internal::ProjectionContext& projectionContext,
       bool* reductionFailure) const;
   template <typename T>
-  SystemExpression approximateUserToTree(
-      AngleUnit angleUnit, Preferences::ComplexFormat complexFormat,
-      const Context& context) const;
+  SystemExpression approximateUserToTree(AngleUnit angleUnit,
+                                         ComplexFormat complexFormat,
+                                         const Context& context) const;
   // Approximate real scalar or unit
   template <typename T>
   T approximateToRealScalar(AngleUnit angleUnit = AngleUnit::None,
-                            Preferences::ComplexFormat complexFormat =
-                                Preferences::ComplexFormat::None,
+                            ComplexFormat complexFormat = ComplexFormat::None,
                             const Context& context = EmptyContext{}) const;
 
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
@@ -294,7 +293,7 @@ class UserExpression : public Expression {
    * imaginary part is not null. */
   template <typename T>
   bool hasDefinedComplexApproximation(AngleUnit angleUnit,
-                                      Preferences::ComplexFormat complexFormat,
+                                      ComplexFormat complexFormat,
                                       const Context& context,
                                       T* returnRealPart = nullptr,
                                       T* returnImagPart = nullptr) const;
@@ -451,7 +450,7 @@ class SystemExpression : public Expression {
   int getPolynomialReducedCoefficients(const char* symbolName,
                                        SystemExpression coefficients[],
                                        const Context& context,
-                                       Preferences::ComplexFormat complexFormat,
+                                       ComplexFormat complexFormat,
                                        AngleUnit angleUnit,
                                        Preferences::UnitFormat unitFormat,
                                        SymbolicComputation symbolicComputation,

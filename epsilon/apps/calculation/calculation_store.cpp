@@ -107,7 +107,7 @@ void CalculationStore::replaceAnsInExpression(UserExpression& expression,
 static bool compute(Poincare::UserExpression inputExpression,
                     Poincare::UserExpression& exactOutputExpression,
                     Poincare::UserExpression& approximateOutputExpression,
-                    Poincare::Preferences::ComplexFormat& complexFormat,
+                    Poincare::ComplexFormat& complexFormat,
                     const Poincare::Context& context) {
   assert(!inputExpression.isUninitialized());
   // Update complexFormat with input expression
@@ -134,8 +134,7 @@ struct CalculationResult {
 
 static CalculationResult computeInterruptible(
     Poincare::UserExpression inputExpression,
-    Poincare::Preferences::ComplexFormat& complexFormat,
-    const Poincare::Context& context) {
+    Poincare::ComplexFormat& complexFormat, const Poincare::Context& context) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
    * simplification, we could still try to display the approximate result? When
    * interrupted during approximation, we could at least display the exact
@@ -255,7 +254,7 @@ Poincare::UserExpression CalculationStore::parseInput(
 CalculationStore::CalculationElements CalculationStore::computeAndProcess(
     Poincare::UserExpression inputExpression,
     Poincare::VariableStore& variableStore) {
-  Poincare::Preferences::ComplexFormat complexFormat =
+  Poincare::ComplexFormat complexFormat =
       GlobalPreferences::SharedGlobalPreferences()->complexFormat();
   CalculationResult calculationResult =
       computeInterruptible(inputExpression, complexFormat, variableStore);

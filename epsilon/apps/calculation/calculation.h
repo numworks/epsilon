@@ -85,7 +85,7 @@ class Calculation {
     return m_calculationPreferences;
   }
 
-  void setComplexFormat(Poincare::Preferences::ComplexFormat complexFormat) {
+  void setComplexFormat(Poincare::ComplexFormat complexFormat) {
     m_calculationPreferences.complexFormat = complexFormat;
   }
 
@@ -159,8 +159,7 @@ class Calculation {
       const Poincare::Context& context);
 
   static EqualSign ComputeEqualSignFromOutputs(
-      const OutputLayouts& outputLayouts,
-      Poincare::Preferences::ComplexFormat complexFormat,
+      const OutputLayouts& outputLayouts, Poincare::ComplexFormat complexFormat,
       Poincare::AngleUnit angleUnit, const Poincare::Context& context);
 
   void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }

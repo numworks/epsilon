@@ -5,22 +5,6 @@
 
 namespace Poincare::Internal {
 
-enum class AngleUnit : uint8_t {
-  Radian = 0,
-  Degree,
-  Gradian,
-  None,
-  NUnits = None
-};
-
-enum class ComplexFormat : uint8_t {
-  Real = 0,
-  Cartesian,
-  Polar,
-  None,
-  NFormats = None
-};
-
 enum class Strategy { Default, ApproximateToFloat, DeepExpandAlgebraic };
 
 enum class ReductionTarget {

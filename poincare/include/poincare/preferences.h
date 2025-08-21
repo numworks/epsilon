@@ -6,6 +6,7 @@
 #include <omg/code_guard.h>
 #include <omg/global_box.h>
 #include <poincare/exam_mode.h>
+#include <poincare/math_options.h>
 #include <poincare/src/expression/context.h>
 #include <stdint.h>
 
@@ -31,8 +32,9 @@ class Preferences {
   constexpr static int VeryShortNumberOfSignificantDigits = 3;
 
   // --- Calculation preferences ---
+  using AngleUnit = AngleUnit;
+  using ComplexFormat = ComplexFormat;
 
-  using AngleUnit = Internal::AngleUnit;
   /* The 'PrintFloatMode' refers to the way to display float 'scientific' or
    * 'auto'. The scientific mode returns float with style -1.2E2 whereas the
    * auto mode tries to return 'natural' float like (0.021) and switches to
@@ -44,7 +46,6 @@ class Preferences {
     Engineering,
     NModes,
   };
-  using ComplexFormat = Internal::ComplexFormat;
   constexpr static ComplexFormat k_defaultComplexFormatIfNotReal =
       ComplexFormat::Cartesian;
   // TODO: C++23: use std::to_underlying instead of static_cast

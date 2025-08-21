@@ -60,15 +60,16 @@ QUIZ_CASE(pcj_beautification) {
 }
 
 void beautifies_to(const char* input, const char* output) {
-  process_tree_and_compare(input, output,
-                           [](Tree* e, ProjectionContext ctx) {
-                             Projection::DeepSystemProject(e, ctx);
-                             Beautification::DeepBeautify(e, ctx);
-                           },
-                           {
-                               .m_complexFormat = ComplexFormat::Cartesian,
-                               .m_advanceReduce = false,
-                           });
+  process_tree_and_compare(
+      input, output,
+      [](Tree* e, ProjectionContext ctx) {
+        Projection::DeepSystemProject(e, ctx);
+        Beautification::DeepBeautify(e, ctx);
+      },
+      {
+          .m_complexFormat = Poincare::ComplexFormat::Cartesian,
+          .m_advanceReduce = false,
+      });
 }
 
 QUIZ_CASE(pcj_beautification_complex) {

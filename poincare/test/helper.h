@@ -29,24 +29,24 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
 
 // Default context is realCtx
 constexpr Poincare::Internal::ProjectionContext realCtx = {
-    .m_complexFormat = Poincare::Internal::ComplexFormat::Real};
+    .m_complexFormat = Poincare::ComplexFormat::Real};
 
 constexpr Poincare::Internal::ProjectionContext cartesianCtx = {
-    .m_complexFormat = Poincare::Internal::ComplexFormat::Cartesian};
+    .m_complexFormat = Poincare::ComplexFormat::Cartesian};
 constexpr Poincare::Internal::ProjectionContext polarCtx = {
-    .m_complexFormat = Poincare::Internal::ComplexFormat::Polar};
+    .m_complexFormat = Poincare::ComplexFormat::Polar};
 
 constexpr Poincare::Internal::ProjectionContext degreeCtx = {
-    .m_angleUnit = Poincare::Internal::AngleUnit::Degree};
+    .m_angleUnit = Poincare::AngleUnit::Degree};
 constexpr Poincare::Internal::ProjectionContext gradianCtx = {
-    .m_angleUnit = Poincare::Internal::AngleUnit::Gradian};
+    .m_angleUnit = Poincare::AngleUnit::Gradian};
 
 constexpr Poincare::Internal::ProjectionContext degreeCartesianCtx = {
-    .m_complexFormat = Poincare::Internal::ComplexFormat::Cartesian,
-    .m_angleUnit = Poincare::Internal::AngleUnit::Degree};
+    .m_complexFormat = Poincare::ComplexFormat::Cartesian,
+    .m_angleUnit = Poincare::AngleUnit::Degree};
 constexpr Poincare::Internal::ProjectionContext gradianCartesianCtx = {
-    .m_complexFormat = Poincare::Internal::ComplexFormat::Cartesian,
-    .m_angleUnit = Poincare::Internal::AngleUnit::Gradian};
+    .m_complexFormat = Poincare::ComplexFormat::Cartesian,
+    .m_angleUnit = Poincare::AngleUnit::Gradian};
 
 constexpr Poincare::Internal::ProjectionContext keepAllSymbolsCtx = {
     .m_symbolic = Poincare::SymbolicComputation::KeepAllSymbols,

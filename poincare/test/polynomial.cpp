@@ -111,7 +111,7 @@ QUIZ_CASE(pcj_polynomial_degree) {
           "sys"));
 
   ProjectionContext projCtx = {
-      .m_complexFormat = ComplexFormat::Cartesian,
+      .m_complexFormat = Poincare::ComplexFormat::Cartesian,
       .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = globalContext,
       .m_advanceReduce = false};
@@ -154,7 +154,7 @@ QUIZ_CASE(pcj_polynomial_degree) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
-  projCtx.m_complexFormat = ComplexFormat::Real;
+  projCtx.m_complexFormat = Poincare::ComplexFormat::Real;
   assert_polynomial_degree_is(projCtx, "√(-1)×x", 0);
   assert_polynomial_degree_is(projCtx, "√(x)", -1);
 }

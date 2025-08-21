@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_ANGLE_H
 
 #include <omg/unreachable.h>
+#include <poincare/math_options.h>
 #include <poincare/src/memory/tree.h>
 
 #include "context.h"

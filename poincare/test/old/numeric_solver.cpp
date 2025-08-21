@@ -22,10 +22,10 @@ void assert_next_solution_is(const char* expression, const Context& context,
                              Poincare::Solver<double>* solver,
                              Poincare::Coordinate2D<double> expected,
                              Interest interest, const char* otherExpression,
-                             AngleUnit angleUnit) {
+                             Poincare::AngleUnit angleUnit) {
   assert(std::isnan(expected.x()) == std::isnan(expected.y()));
 
-  ProjectionContext projCtx = {.m_complexFormat = ComplexFormat::Real,
+  ProjectionContext projCtx = {.m_complexFormat = Poincare::ComplexFormat::Real,
                                .m_angleUnit = angleUnit,
                                .m_strategy = Strategy::ApproximateToFloat,
                                .m_context = context};

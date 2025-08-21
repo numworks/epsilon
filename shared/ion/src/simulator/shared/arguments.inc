@@ -50,3 +50,6 @@ BOOL_ARG(computeScreenshotsHash, "--compute-hash", "",
 BOOL_ARG(headlessStateFile, "--headless-state-file", "",
          "Assume the given state file as no header and use default values "
          "(useful to the fuzzer)")
+
+#undef BOOL_ARG
+#undef TEXT_ARG

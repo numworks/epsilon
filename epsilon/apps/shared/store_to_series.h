@@ -2,7 +2,7 @@
 #define SHARED_STORE_TO_SERIES_H
 
 #include <escher/i18n.h>
-#include <poincare/statistics/statistics.h>
+#include <poincare/statistics/data_table.h>
 
 #include "double_pair_store.h"
 

@@ -6,9 +6,9 @@
 #include <poincare/context.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/statistics/distributions/distribution_method.h>
-#include <poincare/src/statistics/statistics_dataset.h>
 #include <poincare/src/statistics/statistics_dataset_column.h>
 #include <poincare/statistics/distribution.h>
+#include <poincare/statistics/statistics_dataset.h>
 #include <poincare/trigonometry.h>
 
 #include <bit>

@@ -1,13 +1,12 @@
-#include "statistics_dataset.h"
-
 #include <omg/float.h>
 #include <omg/list.h>
 #include <omg/unreachable.h>
+#include <poincare/statistics/statistics_dataset.h>
 
 #include <algorithm>
 #include <cmath>
 
-namespace Poincare::Internal {
+namespace Poincare {
 
 double StatisticsCalculationOptions::transformValue(double value,
                                                     int column) const {
@@ -332,4 +331,4 @@ void StatisticsDataset<T>::buildMemoizedSortedIndex() const {
 template class StatisticsDataset<float>;
 template class StatisticsDataset<double>;
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare

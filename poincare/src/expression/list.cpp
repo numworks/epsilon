@@ -2,8 +2,8 @@
 
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
-#include <poincare/src/statistics/statistics_dataset.h>
 #include <poincare/src/statistics/statistics_dataset_column.h>
+#include <poincare/statistics/statistics_dataset.h>
 
 #include "approximation.h"
 #include "k_tree.h"

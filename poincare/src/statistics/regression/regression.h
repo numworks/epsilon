@@ -6,8 +6,8 @@
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/context.h>
-#include <poincare/src/statistics/data_table.h>
-#include <poincare/src/statistics/dataset_adapter.h>
+#include <poincare/statistics/data_table.h>
+#include <poincare/statistics/dataset_adapter.h>
 #include <stdint.h>
 
 #include <array>

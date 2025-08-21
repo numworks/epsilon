@@ -10,7 +10,7 @@
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/numeric_solver/matrix_array.h>
-#include <poincare/src/statistics/dataset_adapter.h>
+#include <poincare/statistics/dataset_adapter.h>
 
 #include <cmath>
 

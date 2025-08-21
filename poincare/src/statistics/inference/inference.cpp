@@ -4,10 +4,10 @@
 #include <omg/unreachable.h>
 #include <poincare/k_tree.h>
 #include <poincare/src/layout/k_tree.h>
-#include <poincare/src/statistics/dataset_adapter.h>
 #include <poincare/src/statistics/domain.h>
-#include <poincare/src/statistics/statistics_dataset.h>
+#include <poincare/statistics/dataset_adapter.h>
 #include <poincare/statistics/distribution.h>
+#include <poincare/statistics/statistics_dataset.h>
 
 namespace Poincare::Internal::Inference {
 

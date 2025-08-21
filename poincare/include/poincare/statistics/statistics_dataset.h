@@ -37,7 +37,7 @@
  * More statistics method could be implemented here if factorization is needed.
  * */
 
-namespace Poincare::Internal {
+namespace Poincare {
 
 // TODO: merge with StatisticsDataset
 class StatisticsCalculationOptions {
@@ -208,6 +208,6 @@ class StatisticsDataset {
   bool m_oppositeOfValues;
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare
 
 #endif

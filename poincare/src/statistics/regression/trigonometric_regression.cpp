@@ -3,8 +3,7 @@
 #include <assert.h>
 #include <poincare/k_tree.h>
 #include <poincare/preferences.h>
-#include <poincare/src/statistics/dataset_adapter.h>
-#include <poincare/statistics/statistics.h>
+#include <poincare/statistics/dataset_adapter.h>
 #include <poincare/trigonometry.h>
 
 #include <cmath>

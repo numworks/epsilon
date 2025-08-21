@@ -6,6 +6,7 @@
 #include <kandinsky/color.h>
 #include <poincare/float_list.h>
 #include <poincare/range.h>
+#include <poincare/statistics/statistics_dataset.h>
 #include <stdint.h>
 
 #include <algorithm>

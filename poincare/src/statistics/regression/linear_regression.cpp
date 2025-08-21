@@ -1,7 +1,7 @@
 #include "linear_regression.h"
 
 #include <poincare/k_tree.h>
-#include <poincare/src/statistics/dataset_adapter.h>
+#include <poincare/statistics/dataset_adapter.h>
 
 namespace Poincare::Internal {
 

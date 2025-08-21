@@ -1,7 +1,7 @@
 #include "transformed_regression.h"
 
 #include <assert.h>
-#include <poincare/src/statistics/dataset_adapter.h>
+#include <poincare/statistics/dataset_adapter.h>
 
 #include <cmath>
 

@@ -6,7 +6,6 @@
 #include "statistics_dataset.h"
 
 namespace Poincare {
-namespace Internal {
 
 class StatisticsDatasetFromTable;
 
@@ -63,8 +62,6 @@ class Series : public DataTable {
   double slope(StatisticsCalculationOptions options = {}) const;
   double yIntercept(StatisticsCalculationOptions options = {}) const;
 };
-
-}  // namespace Internal
 
 }  // namespace Poincare
 #endif

@@ -1,5 +1,6 @@
 #include "symbol_store.h"
 
+#include <omg/string.h>
 #include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/helpers/store.h>
@@ -15,14 +16,8 @@
 namespace PoincareTest {
 using Tree = Poincare::Internal::Tree;
 
-char SymbolNameFromString(const char* symbolString) {
-  // Only one character symbols are allowed
-  assert(strlen(symbolString) == 1);
-  return symbolString[0];
-}
-
-char SymbolNameFromTree(const Tree* symbolTree) {
-  return SymbolNameFromString(Poincare::Internal::Symbol::GetName(symbolTree));
+std::span<const char> SymbolNameFromTree(const Tree* symbolTree) {
+  return OMG::ToSpan(Poincare::Internal::Symbol::GetName(symbolTree));
 }
 
 void store(const char* storeExpression,
@@ -35,8 +30,11 @@ void store(const char* storeExpression,
 }
 
 SymbolStore::SymbolWithExpression::SymbolWithExpression(
-    char name, Poincare::Context::UserNamedType type, const Tree* e)
-    : m_name{name}, m_type{type} {
+    std::span<const char> name, Poincare::Context::UserNamedType type,
+    const Tree* e)
+    : m_type{type} {
+  assert(name.size() <= k_maxNameSize);
+  strlcpy(m_name, name.data(), name.size());
   assert(e->treeSize() <= k_expressionBufferSize);
   e->copyTreeTo(m_expressionBuffer.data());
 }
@@ -57,8 +55,9 @@ const Tree* SymbolStore::expressionForUserNamed(const Tree* symbol) const {
 
 Poincare::Context::UserNamedType SymbolStore::expressionTypeForIdentifier(
     const char* identifier, int length) const {
+  assert(length >= 0);
   const SymbolWithExpression* existingSymbol =
-      findSymbolInStore(SymbolNameFromString(identifier));
+      findSymbolInStore(OMG::ToSpan(identifier, length));
   if (!existingSymbol) {
     return UserNamedType::None;
   }
@@ -66,12 +65,12 @@ Poincare::Context::UserNamedType SymbolStore::expressionTypeForIdentifier(
 }
 
 const SymbolStore::SymbolWithExpression* SymbolStore::findSymbolInStore(
-    char symbolName) const {
-  const SymbolWithExpression* result =
-      std::find_if(m_symbolTable.begin(), m_symbolTable.end(),
-                   [symbolName](const SymbolWithExpression& storedSymbol) {
-                     return storedSymbol.name() == symbolName;
-                   });
+    std::span<const char> symbolName) const {
+  const SymbolWithExpression* result = std::find_if(
+      m_symbolTable.begin(), m_symbolTable.end(),
+      [symbolName](const SymbolWithExpression& storedSymbol) {
+        return OMG::StringsAreEqual(symbolName, storedSymbol.name());
+      });
   if (result == m_symbolTable.end()) {
     return nullptr;
   }
@@ -79,19 +78,19 @@ const SymbolStore::SymbolWithExpression* SymbolStore::findSymbolInStore(
 }
 
 SymbolStore::SymbolWithExpression* SymbolStore::findSymbolInStore(
-    char symbolName) {
-  SymbolWithExpression* result =
-      std::find_if(m_symbolTable.begin(), m_symbolTable.end(),
-                   [symbolName](const SymbolWithExpression& storedSymbol) {
-                     return storedSymbol.name() == symbolName;
-                   });
+    std::span<const char> symbolName) {
+  SymbolWithExpression* result = std::find_if(
+      m_symbolTable.begin(), m_symbolTable.end(),
+      [symbolName](const SymbolWithExpression& storedSymbol) {
+        return OMG::StringsAreEqual(symbolName, storedSymbol.name());
+      });
   if (result == m_symbolTable.end()) {
     return nullptr;
   }
   return result;
 }
 
-bool SymbolStore::push(const Tree* expression, char symbolName,
+bool SymbolStore::push(const Tree* expression, std::span<const char> symbolName,
                        UserNamedType symbolType) {
   SymbolWithExpression* existingSymbol = findSymbolInStore(symbolName);
   if (existingSymbol) {
@@ -103,7 +102,7 @@ bool SymbolStore::push(const Tree* expression, char symbolName,
 }
 
 bool SymbolStore::setExpressionForUserSymbol(const Tree* expression,
-                                             char symbolName) {
+                                             std::span<const char> symbolName) {
   UserNamedType symbolType = UserNamedType::Symbol;
   if (expression->isList()) {
     symbolType = UserNamedType::List;

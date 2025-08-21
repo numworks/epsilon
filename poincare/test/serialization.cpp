@@ -42,7 +42,7 @@ void assert_expression_or_float_serializes_to(
   expressionOrFloat.writeText(
       buffer,
       Poincare::ExpressionOrFloat::ApproximationParameters{
-          Poincare::Preferences::AngleUnit::Radian,
+          Poincare::AngleUnit::Radian,
           Poincare::Preferences::ComplexFormat::Real},
       numberOfSignificantDigits, printFloatMode, maxGlyphLength);
   quiz_assert_print_if_failure((strcmp(serialization, buffer) == 0),
@@ -135,7 +135,7 @@ QUIZ_CASE(pcj_serialization_expression_or_float) {
 
   auto approximationFunction = [](UserExpression expression) {
     return expression.approximateToRealScalar<float>(
-        Preferences::AngleUnit::Radian, Preferences::ComplexFormat::Real);
+        AngleUnit::Radian, Preferences::ComplexFormat::Real);
   };
 
   assert_expression_or_float_serializes_to(

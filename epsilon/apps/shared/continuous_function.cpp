@@ -586,7 +586,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
   }
   Preferences::ComplexFormat complexFormat =
       this->complexFormat(record, context);
-  Preferences::AngleUnit angleUnit =
+  AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   if (thisProperties.isScatterPlot()) {
     /* Scatter plots do not depend on any variable, so they can be approximated
@@ -729,7 +729,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   SystemExpression result;
   Preferences::ComplexFormat complexFormat =
       this->complexFormat(record, context);
-  Preferences::AngleUnit angleUnit =
+  AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   if (!equation.isUndefined()) {
     bool reductionFailure = false;

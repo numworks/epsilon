@@ -6,13 +6,13 @@
 namespace Poincare {
 
 namespace Trigonometry {
-UserExpression Period(Preferences::AngleUnit angleUnit);
+UserExpression Period(AngleUnit angleUnit);
 
 /* Turn cos(4) into cos(4rad) if the angle unit is rad and cos(π) into
  * cos(π°) if the angle unit is deg, to notify the user of the current
  * angle unit she is using if she's forgetting to switch the angle unit */
-void DeepAddAngleUnitToAmbiguousDirectFunctions(
-    UserExpression& e, Preferences::AngleUnit angleUnit);
+void DeepAddAngleUnitToAmbiguousDirectFunctions(UserExpression& e,
+                                                AngleUnit angleUnit);
 };  // namespace Trigonometry
 
 }  // namespace Poincare

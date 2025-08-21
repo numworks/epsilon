@@ -62,7 +62,7 @@ inline Poincare::SystemExpression ApproximateUser(
     Poincare::UserExpression e, const Poincare::Context& context,
     Poincare::Preferences::ComplexFormat complexFormat =
         GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-    Poincare::Preferences::AngleUnit angleUnit =
+    Poincare::AngleUnit angleUnit =
         GlobalPreferences::SharedGlobalPreferences()->angleUnit()) {
   complexFormat =
       Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
@@ -106,8 +106,8 @@ inline FloatType ApproximateToRealScalar(Poincare::UserExpression e) {
 inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(
     Poincare::UserExpression e, const Poincare::Context& context,
     Poincare::Preferences::ComplexFormat complexFormat,
-    Poincare::Preferences::AngleUnit angleUnit,
-    bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
+    Poincare::AngleUnit angleUnit, bool updateComplexFormatWithExpression,
+    Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation) {
   Poincare::Internal::ProjectionContext projectionContext = {
       .m_complexFormat = complexFormat,
@@ -127,7 +127,7 @@ inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(
 inline void CloneAndSimplify(Poincare::UserExpression* e,
                              const Poincare::Context& context,
                              Poincare::Preferences::ComplexFormat complexFormat,
-                             Poincare::Preferences::AngleUnit angleUnit,
+                             Poincare::AngleUnit angleUnit,
                              bool updateComplexFormatWithExpression,
                              Poincare::ReductionTarget target,
                              Poincare::SymbolicComputation symbolicComputation,
@@ -144,8 +144,8 @@ inline void CloneAndSimplify(Poincare::UserExpression* e,
 inline Poincare::SystemExpression CloneAndReduce(
     Poincare::UserExpression e, const Poincare::Context& context,
     Poincare::Preferences::ComplexFormat complexFormat,
-    Poincare::Preferences::AngleUnit angleUnit,
-    bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
+    Poincare::AngleUnit angleUnit, bool updateComplexFormatWithExpression,
+    Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation, bool* reductionFailure) {
   assert(reductionFailure);
   return e.cloneAndReduce(

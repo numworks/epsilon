@@ -7,15 +7,14 @@
 namespace Poincare {
 
 namespace Trigonometry {
-double PiInAngleUnit(Preferences::AngleUnit angleUnit);
-double ConvertAngleToRadian(double angle, Preferences::AngleUnit angleUnit);
+double PiInAngleUnit(AngleUnit angleUnit);
+double ConvertAngleToRadian(double angle, AngleUnit angleUnit);
 
 template <typename T>
-std::complex<T> ConvertToRadian(const std::complex<T> c,
-                                Preferences::AngleUnit angleUnit);
+std::complex<T> ConvertToRadian(const std::complex<T> c, AngleUnit angleUnit);
 template <typename T>
 std::complex<T> ConvertRadianToAngleUnit(const std::complex<T> c,
-                                         Preferences::AngleUnit angleUnit);
+                                         AngleUnit angleUnit);
 };  // namespace Trigonometry
 
 }  // namespace Poincare

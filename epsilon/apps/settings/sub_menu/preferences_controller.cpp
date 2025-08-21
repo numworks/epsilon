@@ -109,7 +109,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
 
   GlobalPreferences* preferences = GlobalPreferences::SharedGlobalPreferences();
   if (message == I18n::Message::AngleUnit) {
-    preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
+    preferences->setAngleUnit((AngleUnit)valueIndex);
   } else if (message == I18n::Message::DisplayMode) {
     Preferences::PrintFloatMode mode = (Preferences::PrintFloatMode)valueIndex;
     preferences->setDisplayMode(mode);

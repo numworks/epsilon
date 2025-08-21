@@ -263,7 +263,7 @@ void assert_auto_solving_range_is(const char* equation, double min, double max,
 }
 
 void setComplexFormatAndAngleUnit(Preferences::ComplexFormat complexFormat,
-                                  Preferences::AngleUnit angleUnit) {
+                                  Poincare::AngleUnit angleUnit) {
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(complexFormat);
   GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(angleUnit);
 }

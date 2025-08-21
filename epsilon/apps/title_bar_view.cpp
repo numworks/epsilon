@@ -157,17 +157,17 @@ void TitleBarView::refreshPreferences() {
                  ? I18n::Message::Sci
                  : I18n::Message::Eng);
   // Display the angle unit
-  const Preferences::AngleUnit angleUnit =
+  const AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   I18n::Message angleMessage;
   switch (angleUnit) {
-    case Preferences::AngleUnit::Degree:
+    case AngleUnit::Degree:
       angleMessage = I18n::Message::Deg;
       break;
-    case Preferences::AngleUnit::Radian:
+    case AngleUnit::Radian:
       angleMessage = I18n::Message::Rad;
       break;
-    case Preferences::AngleUnit::Gradian:
+    case AngleUnit::Gradian:
       angleMessage = I18n::Message::Gon;
       break;
     default:

@@ -6,20 +6,19 @@
 
 namespace Poincare {
 
-UserExpression Trigonometry::Period(Preferences::AngleUnit angleUnit) {
+UserExpression Trigonometry::Period(AngleUnit angleUnit) {
   return UserExpression::Builder(Internal::Angle::Period(angleUnit));
 }
 
-static void addAngleUnitToExpression(Internal::Tree* e,
-                                     Preferences::AngleUnit angleUnit) {
+static void addAngleUnitToExpression(Internal::Tree* e, AngleUnit angleUnit) {
   Internal::TreeRef unit = Internal::Units::Unit::Push(angleUnit);
   e->moveTreeOverTree(
       Internal::PatternMatching::Create(KMult(KA, KB), {.KA = e, .KB = unit}));
   unit->removeTree();
 }
 
-static void addAngleUnitToDirectFunctionIfNeeded(
-    Internal::Tree* e, Preferences::AngleUnit angleUnit) {
+static void addAngleUnitToDirectFunctionIfNeeded(Internal::Tree* e,
+                                                 AngleUnit angleUnit) {
   assert(e->isDirectTrigonometryFunction() ||
          e->isAdvancedTrigonometryFunction());
 
@@ -44,7 +43,7 @@ static void addAngleUnitToDirectFunctionIfNeeded(
     return;
   }
 
-  if ((angleUnit == Preferences::AngleUnit::Radian) ==
+  if ((angleUnit == AngleUnit::Radian) ==
       child->hasDescendantSatisfying(
           [](const Internal::Tree* e) { return e->isPi(); })) {
     /* Do not add angle units if the child contains Pi and the angle is in Rad
@@ -55,7 +54,7 @@ static void addAngleUnitToDirectFunctionIfNeeded(
 }
 
 static void privateDeepAddAngleUnitToAmbiguousDirectFunctions(
-    Internal::Tree* e, Preferences::AngleUnit angleUnit) {
+    Internal::Tree* e, AngleUnit angleUnit) {
   if (e->isDirectTrigonometryFunction() ||
       e->isDirectAdvancedTrigonometryFunction()) {
     return addAngleUnitToDirectFunctionIfNeeded(e, angleUnit);
@@ -66,7 +65,7 @@ static void privateDeepAddAngleUnitToAmbiguousDirectFunctions(
 }
 
 void Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
-    UserExpression& e, Preferences::AngleUnit angleUnit) {
+    UserExpression& e, AngleUnit angleUnit) {
   Internal::Tree* clone = e.tree()->cloneTree();
   if (clone->isUnitConversion() &&
       Internal::Dimension::DeepCheck(clone->child(0)) &&

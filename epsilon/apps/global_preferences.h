@@ -165,10 +165,10 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
   Poincare::Preferences::CalculationPreferences calculationPreferences() const {
     return s_data->m_calculationPreferences;
   }
-  Poincare::Preferences::AngleUnit angleUnit() const {
+  Poincare::AngleUnit angleUnit() const {
     return s_data->m_calculationPreferences.angleUnit;
   }
-  void setAngleUnit(Poincare::Preferences::AngleUnit angleUnit) {
+  void setAngleUnit(Poincare::AngleUnit angleUnit) {
     s_data->m_calculationPreferences.angleUnit = angleUnit;
   }
   Poincare::Preferences::PrintFloatMode displayMode() const override {

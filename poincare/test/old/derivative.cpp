@@ -10,8 +10,7 @@ using namespace Poincare;
 /* The two signatures (with and without a context parameter) can be merged when
  * it becomes possible to pass an empty context */
 void assert_reduces_to_formal_expression(
-    const char* expression, const char* result,
-    Preferences::AngleUnit angleUnit = Radian,
+    const char* expression, const char* result, AngleUnit angleUnit = Radian,
     Preferences::ComplexFormat complexFormat = Cartesian) {
   assert_parsed_expression_simplify_to(expression, result, User, angleUnit,
                                        MetricUnitFormat, complexFormat,
@@ -19,7 +18,7 @@ void assert_reduces_to_formal_expression(
 }
 void assert_reduces_to_formal_expression(
     const char* expression, const char* result, Context& context,
-    Preferences::AngleUnit angleUnit = Radian,
+    AngleUnit angleUnit = Radian,
     Preferences::ComplexFormat complexFormat = Cartesian) {
   assert_parsed_expression_simplify_to(expression, result, context, User,
                                        angleUnit, MetricUnitFormat,
@@ -160,7 +159,7 @@ QUIZ_CASE(poincare_derivative_formal_higher_order) {
 
 void assert_reduces_for_approximation(
     const char* expression, const char* result, Context& context,
-    Preferences::AngleUnit angleUnit = Radian,
+    AngleUnit angleUnit = Radian,
     Poincare::Preferences::ComplexFormat complexFormat = Real) {
   assert_parsed_expression_simplify_to(
       expression, result, context, SystemForApproximation, angleUnit,

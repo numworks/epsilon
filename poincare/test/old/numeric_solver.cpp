@@ -11,6 +11,7 @@
 #include "../helper.h"
 #include "helper.h"
 
+using Poincare::AngleUnit;
 using Poincare::Context;
 using Poincare::Preferences;
 using namespace Poincare::Internal;
@@ -67,8 +68,7 @@ void assert_next_solution_is(const char* expression, const Context& context,
 void assert_solutions_are(
     const char* expression, double start, double end,
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
-    Interest interest, Preferences::AngleUnit angleUnit,
-    const char* otherExpression) {
+    Interest interest, AngleUnit angleUnit, const char* otherExpression) {
   Poincare::Solver<double> solver(start, end);
   for (Poincare::Coordinate2D<double> c : expected) {
     assert_next_solution_is(expression, Poincare::EmptyContext{}, &solver, c,
@@ -82,28 +82,28 @@ void assert_solutions_are(
 void assert_roots_are(
     const char* expression, double start, double end,
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
-    Preferences::AngleUnit angleUnit = Degree) {
+    AngleUnit angleUnit = Degree) {
   assert_solutions_are(expression, start, end, expected, Interest::Root,
                        angleUnit, nullptr);
 }
 void assert_minima_are(
     const char* expression, double start, double end,
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
-    Preferences::AngleUnit angleUnit = Degree) {
+    AngleUnit angleUnit = Degree) {
   assert_solutions_are(expression, start, end, expected, Interest::LocalMinimum,
                        angleUnit, nullptr);
 }
 void assert_maxima_are(
     const char* expression, double start, double end,
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
-    Preferences::AngleUnit angleUnit = Degree) {
+    AngleUnit angleUnit = Degree) {
   assert_solutions_are(expression, start, end, expected, Interest::LocalMaximum,
                        angleUnit, nullptr);
 }
 void assert_intersections_are(
     const char* expression1, const char* expression2, double start, double end,
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
-    Preferences::AngleUnit angleUnit = Degree) {
+    AngleUnit angleUnit = Degree) {
   assert_solutions_are(expression1, start, end, expected,
                        Interest::Intersection, angleUnit, expression2);
 }

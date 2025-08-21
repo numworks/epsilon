@@ -177,7 +177,7 @@ bool AdditionalResultsType::HasUnit(
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Preferences::ComplexFormat complexFormat =
       calculationPreferences.complexFormat;
-  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit;
+  AngleUnit angleUnit = calculationPreferences.angleUnit;
   UserExpression unit;
   UserExpression clone = exactOutput.clone();
   PoincareHelpers::CloneAndReduceAndRemoveUnit(

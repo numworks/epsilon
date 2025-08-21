@@ -24,7 +24,7 @@ $(call document_extension,flash,Write <...>.dfu to a device. Define DFULEAVE to 
 
 $(OUTPUT_DIRECTORY)/%.st_flash: $(OUTPUT_DIRECTORY)/%.elf
 	$(call rule_label,STFLASH)
-	STM32_Programmer_CLI -c port=SWD -d $< -rst
+	STM32_Programmer_CLI -c port=SWD mode=UR -d $< -rst
 
 $(call document_extension,st_flash,Write <...>.bin to a device using a ST-Link and STM32_Programmer_CLI.)
 

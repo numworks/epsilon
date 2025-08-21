@@ -35,10 +35,10 @@ class App : public Shared::MathApp {
   };
 
   static App* app() { return static_cast<App*>(Escher::App::app()); }
-  Snapshot* snapshot() override {
+  Snapshot* snapshot() {
     return static_cast<Snapshot*>(Escher::App::snapshot());
   }
-  const Snapshot* snapshot() const override {
+  const Snapshot* snapshot() const {
     return static_cast<const Snapshot*>(Escher::App::snapshot());
   }
 

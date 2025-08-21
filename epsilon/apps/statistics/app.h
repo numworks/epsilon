@@ -66,10 +66,10 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
   Escher::InputViewController* inputViewController() {
     return &m_inputViewController;
   }
-  Snapshot* snapshot() override {
+  Snapshot* snapshot() {
     return static_cast<Snapshot*>(Escher::App::snapshot());
   }
-  const Snapshot* snapshot() const override {
+  const Snapshot* snapshot() const {
     return static_cast<const Snapshot*>(Escher::App::snapshot());
   }
 

@@ -24,17 +24,6 @@ SFLAGS += \
 
 include build/config.$(PLATFORM_TYPE).mak
 
-QUIZ_cases_directories := \
-  apps \
-  escher \
-  python \
-  ../poincare \
-  ../shared/ion \
-  ../shared/kandinsky \
-  ../shared/liba \
-  ../shared/libaxx \
-  ../shared/omg \
-
 # Select the font and layout
 KANDINSKY_font_variant := epsilon
 ION_layout_variant := epsilon

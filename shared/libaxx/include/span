@@ -42,6 +42,10 @@ class span {
 
   constexpr span& operator=(const span& other) = default;
 
+  operator std::span<const T>() const {
+    return std::span<const T>(data(), size());
+  }
+
   // Methods
 
   constexpr pointer data() const { return m_data; }

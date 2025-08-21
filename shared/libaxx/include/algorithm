@@ -50,6 +50,28 @@ UnaryFunction for_each(Iterator first, Iterator last, UnaryFunction function) {
   return function;
 }
 
+template <class Iterator, class T>
+void find(Iterator first, Iterator last, const T& value) {
+  while (first != last) {
+    if (*first == value) {
+      return first;
+    }
+    first++;
+  }
+  return last;
+}
+
+template <class Iterator, class UnaryPredicate>
+void find_if(Iterator first, Iterator last, UnaryPredicate predicate) {
+  while (first != last) {
+    if (predicate(*first)) {
+      return first;
+    }
+    first++;
+  }
+  return last;
+}
+
 template <class Iterator>
 constexpr Iterator max_element(Iterator first, Iterator end) {
   if (first == end) {

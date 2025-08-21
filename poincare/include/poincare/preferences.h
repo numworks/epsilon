@@ -32,7 +32,6 @@ class Preferences {
   constexpr static int VeryShortNumberOfSignificantDigits = 3;
 
   // --- Calculation preferences ---
-  using AngleUnit = AngleUnit;
   using ComplexFormat = ComplexFormat;
 
   /* The 'PrintFloatMode' refers to the way to display float 'scientific' or

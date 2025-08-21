@@ -150,8 +150,7 @@ class Expression : public PoolHandle {
   template <typename T>
   static T ParseAndSimplifyAndApproximateToRealScalar(
       const char* text, const Context& context,
-      Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit,
+      Preferences::ComplexFormat complexFormat, AngleUnit angleUnit,
       SymbolicComputation symbolicComputation =
           SymbolicComputation::ReplaceAllSymbols);
 
@@ -198,7 +197,7 @@ class UserExpression : public Expression {
   template <typename T>
   static UserExpression Builder(T x);
   // Build the unit corresponding to the angleUnit preference.
-  static UserExpression Builder(Preferences::AngleUnit angleUnit);
+  static UserExpression Builder(AngleUnit angleUnit);
   // Build a List containing all the expression contained in [expressions]
   static UserExpression BuildListOfExpressions(
       std::span<UserExpression> expressions);
@@ -262,15 +261,14 @@ class UserExpression : public Expression {
       bool* reductionFailure) const;
   template <typename T>
   SystemExpression approximateUserToTree(
-      Preferences::AngleUnit angleUnit,
-      Preferences::ComplexFormat complexFormat, const Context& context) const;
+      AngleUnit angleUnit, Preferences::ComplexFormat complexFormat,
+      const Context& context) const;
   // Approximate real scalar or unit
   template <typename T>
-  T approximateToRealScalar(
-      Preferences::AngleUnit angleUnit = Preferences::AngleUnit::None,
-      Preferences::ComplexFormat complexFormat =
-          Preferences::ComplexFormat::None,
-      const Context& context = EmptyContext{}) const;
+  T approximateToRealScalar(AngleUnit angleUnit = AngleUnit::None,
+                            Preferences::ComplexFormat complexFormat =
+                                Preferences::ComplexFormat::None,
+                            const Context& context = EmptyContext{}) const;
 
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits,
@@ -295,7 +293,7 @@ class UserExpression : public Expression {
   /* Return true when both real and imaginary approximation are defined and
    * imaginary part is not null. */
   template <typename T>
-  bool hasDefinedComplexApproximation(Preferences::AngleUnit angleUnit,
+  bool hasDefinedComplexApproximation(AngleUnit angleUnit,
                                       Preferences::ComplexFormat complexFormat,
                                       const Context& context,
                                       T* returnRealPart = nullptr,
@@ -454,7 +452,7 @@ class SystemExpression : public Expression {
                                        SystemExpression coefficients[],
                                        const Context& context,
                                        Preferences::ComplexFormat complexFormat,
-                                       Preferences::AngleUnit angleUnit,
+                                       AngleUnit angleUnit,
                                        Preferences::UnitFormat unitFormat,
                                        SymbolicComputation symbolicComputation,
                                        bool keepDependencies = false) const;

@@ -535,7 +535,7 @@ void assert_reduced_is_positive(
     const Context& context = Poincare::EmptyContext{},
     Preferences::ComplexFormat complexFormat =
         Preferences::ComplexFormat::Cartesian,
-    Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian) {
+    AngleUnit angleUnit = Poincare::AngleUnit::Radian) {
   ProjectionContext projCtx = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = angleUnit,
@@ -573,7 +573,7 @@ QUIZ_CASE(pcj_sign_reduced_is_positive) {
   assert_reduced_is_positive("cos(π/2)", OMG::Troolean::True);
   assert_reduced_is_positive("cos(90)", OMG::Troolean::True, EmptyContext{},
                              Preferences::ComplexFormat::Cartesian,
-                             Preferences::AngleUnit::Degree);
+                             AngleUnit::Degree);
   assert_reduced_is_positive("√(-1)", OMG::Troolean::Unknown);
   assert_reduced_is_positive("√(-1)", OMG::Troolean::Unknown, EmptyContext{},
                              Preferences::ComplexFormat::Real);

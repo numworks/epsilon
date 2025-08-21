@@ -94,7 +94,7 @@ void copy_without_system_chars(char *buffer, const char *input) {
 void assert_parsed_expression_process_to(
     const char *expression, const char *oldResult, const Context &ctx,
     ReductionTarget target, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+    AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     SymbolicComputation symbolicComputation, ProcessExpression process,
     int numberOfSignificantDigits) {
   constexpr int bufferSize = 2048;
@@ -145,8 +145,7 @@ the apps (in the CalculationStore and in the StoreMenuController).
 - more generally, some dedicated TestVariableContext and TestVariableStore
 classes should be used in the unit tests. */
 void assert_reduce_and_store(const char *expression,
-                             VariableStore &variableStore,
-                             Preferences::AngleUnit angleUnit,
+                             VariableStore &variableStore, AngleUnit angleUnit,
                              Preferences::UnitFormat unitFormat,
                              Preferences::ComplexFormat complexFormat,
                              ReductionTarget target) {
@@ -156,7 +155,7 @@ void assert_reduce_and_store(const char *expression,
 
 void assert_parsed_expression_simplify_to(
     const char *expression, const char *simplifiedExpression,
-    ReductionTarget target, Preferences::AngleUnit angleUnit,
+    ReductionTarget target, AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat,
     SymbolicComputation symbolicComputation, bool beautify) {
@@ -169,8 +168,8 @@ void assert_parsed_expression_simplify_to(
 
 void assert_parsed_expression_simplify_to(
     const char *expression, const char *simplifiedExpression,
-    const Context &context, ReductionTarget target,
-    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+    const Context &context, ReductionTarget target, AngleUnit angleUnit,
+    Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat,
     SymbolicComputation symbolicComputation, bool beautify) {
   // TODO_PCJ also approximate to see if it crashes
@@ -194,8 +193,8 @@ void assert_parsed_expression_simplify_to(
 
 template <typename T>
 void assert_expression_simplifies_approximates_to(
-    const char *expression, const char *approximation,
-    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+    const char *expression, const char *approximation, AngleUnit angleUnit,
+    Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   Shared::GlobalContext globalContext;
   assert_expression_simplifies_approximates_to<T>(
@@ -206,7 +205,7 @@ void assert_expression_simplifies_approximates_to(
 template <typename T>
 void assert_expression_simplifies_approximates_to(
     const char *expression, const char *approximation, Context &context,
-    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+    AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   assert_parsed_expression_process_to(
       expression, approximation, context, SystemForApproximation, complexFormat,
@@ -233,14 +232,14 @@ void assert_expression_simplifies_approximates_to(
 }
 
 template void assert_expression_simplifies_approximates_to<float>(
-    char const *, char const *, Context &context, Preferences::AngleUnit,
+    char const *, char const *, Context &context, AngleUnit,
     Preferences::UnitFormat, Preferences::ComplexFormat, int);
 template void assert_expression_simplifies_approximates_to<double>(
-    char const *, char const *, Context &context, Preferences::AngleUnit,
+    char const *, char const *, Context &context, AngleUnit,
     Preferences::UnitFormat, Preferences::ComplexFormat, int);
 template void assert_expression_simplifies_approximates_to<float>(
-    char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
+    char const *, char const *, AngleUnit, Preferences::UnitFormat,
     Preferences::ComplexFormat, int);
 template void assert_expression_simplifies_approximates_to<double>(
-    char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
+    char const *, char const *, AngleUnit, Preferences::UnitFormat,
     Preferences::ComplexFormat, int);

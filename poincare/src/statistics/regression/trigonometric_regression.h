@@ -10,7 +10,7 @@ namespace Poincare::Internal {
 class TrigonometricRegression : public Regression {
  public:
   constexpr TrigonometricRegression(
-      Preferences::AngleUnit angleUnit,
+      AngleUnit angleUnit,
       size_t initialParametersIterations = k_defaultParametersIterations)
       : Regression(initialParametersIterations), m_angleUnit(angleUnit) {}
 
@@ -56,7 +56,7 @@ class TrigonometricRegression : public Regression {
 
   double toRadiansCoeff() const;
 
-  Preferences::AngleUnit m_angleUnit;
+  AngleUnit m_angleUnit;
 };
 
 }  // namespace Poincare::Internal

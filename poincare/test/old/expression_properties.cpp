@@ -306,7 +306,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
     const Context& context = Poincare::EmptyContext{},
     Preferences::ComplexFormat complexFormat =
         Preferences::ComplexFormat::Cartesian,
-    Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian,
+    AngleUnit angleUnit = AngleUnit::Radian,
     Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric,
     SymbolicComputation symbolicComputation =
         SymbolicComputation::ReplaceDefinedSymbols) {
@@ -350,16 +350,16 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
                                                        globalContext);
   assert_reduced_expression_has_polynomial_coefficient(
       "x+2", "x", KList(2_e, 1_e), globalContext,
-      Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian,
+      Preferences::ComplexFormat::Real, AngleUnit::Radian,
       Preferences::UnitFormat::Metric, SymbolicComputation::KeepAllSymbols);
   assert_reduced_expression_has_polynomial_coefficient(
       "x+2", "x", KList(2_e, 1_e), globalContext,
-      Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian,
+      Preferences::ComplexFormat::Real, AngleUnit::Radian,
       Preferences::UnitFormat::Metric,
       SymbolicComputation::ReplaceDefinedFunctions);
   assert_reduced_expression_has_polynomial_coefficient(
       "f(x)", "x", KList(1_e, π_e, 1_e), globalContext,
-      Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit::Radian,
+      Preferences::ComplexFormat::Cartesian, AngleUnit::Radian,
       Preferences::UnitFormat::Metric,
       SymbolicComputation::ReplaceDefinedFunctions);
 

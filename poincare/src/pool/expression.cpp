@@ -322,7 +322,7 @@ SystemExpression SystemExpression::Undefined() {
   return SystemExpression::Builder(KUndef);
 }
 
-UserExpression UserExpression::Builder(Preferences::AngleUnit angleUnit) {
+UserExpression UserExpression::Builder(AngleUnit angleUnit) {
   return UserExpression::Builder(Units::Unit::Push(angleUnit));
 }
 
@@ -374,7 +374,7 @@ SystemExpression SystemExpression::approximateSystemToTree() const {
 
 template <typename T>
 SystemExpression UserExpression::approximateUserToTree(
-    Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat,
+    AngleUnit angleUnit, Preferences::ComplexFormat complexFormat,
     const Context& context) const {
   return SystemExpression::Builder(Approximation::ToTree<T>(
       tree(),
@@ -594,7 +594,7 @@ T PreparedFunctionScalar::approximateToRealScalarWithValue(
 template <typename T>
 T Expression::ParseAndSimplifyAndApproximateToRealScalar(
     const char* text, const Context& context,
-    Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
+    Preferences::ComplexFormat complexFormat, AngleUnit angleUnit,
     SymbolicComputation symbolicComputation) {
   UserExpression exp = UserExpression::Parse(text, context);
   if (exp.isUninitialized()) {
@@ -653,7 +653,7 @@ bool UserExpression::isComplexScalar(
   Preferences::ComplexFormat complexFormat =
       Preferences::UpdatedComplexFormatWithExpressionInput(
           calculationPreferences.complexFormat, *this, context);
-  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit;
+  AngleUnit angleUnit = calculationPreferences.angleUnit;
   if (hasDefinedComplexApproximation<double>(angleUnit, complexFormat,
                                              context)) {
     assert(!hasUnit());
@@ -740,7 +740,7 @@ int SystemExpression::polynomialDegree(const char* symbolName) const {
 int SystemExpression::getPolynomialReducedCoefficients(
     const char* symbolName, SystemExpression coefficients[],
     const Context& context, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+    AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     SymbolicComputation symbolicComputation, bool keepDependencies) const {
   Tree* coefList = PolynomialParser::GetReducedCoefficients(tree(), symbolName,
                                                             keepDependencies);

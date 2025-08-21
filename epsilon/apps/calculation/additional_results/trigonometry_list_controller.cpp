@@ -49,13 +49,13 @@ void TrigonometryListController::computeAdditionalResults(
       UserExpression::Create(
           KUnitConversion(KA, KB),
           {.KA = exactAngleWithUnit,
-           .KB = UserExpression::Builder(Preferences::AngleUnit::Radian)}),
+           .KB = UserExpression::Builder(AngleUnit::Radian)}),
       &ctx);
   m_approximatedLayouts[index] = GetExactLayoutFromExpression(
       UserExpression::Create(
           KUnitConversion(KA, KB),
           {.KA = exactAngleWithUnit,
-           .KB = UserExpression::Builder(Preferences::AngleUnit::Degree)}),
+           .KB = UserExpression::Builder(AngleUnit::Degree)}),
       &ctx);
 
   constexpr KTree k_symbol = "θ"_e;

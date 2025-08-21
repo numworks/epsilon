@@ -53,9 +53,8 @@ class ExpressionsListController
  protected:
   constexpr static int k_expressionCellType = 0;
   constexpr static int k_maxNumberOfRows = 6;
-  Poincare::Preferences::AngleUnit angleUnit() const {
-    assert(m_calculationPreferences.angleUnit !=
-           Poincare::Preferences::AngleUnit::None);
+  Poincare::AngleUnit angleUnit() const {
+    assert(m_calculationPreferences.angleUnit != Poincare::AngleUnit::None);
     return m_calculationPreferences.angleUnit;
   }
   Poincare::Preferences::PrintFloatMode displayMode() const {

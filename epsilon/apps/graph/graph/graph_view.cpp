@@ -401,8 +401,7 @@ void GraphView::drawTangent(KDContext* ctx, KDRect rect,
   }
 }
 
-static float polarThetaFromCoordinates(float x, float y,
-                                       Preferences::AngleUnit angleUnit) {
+static float polarThetaFromCoordinates(float x, float y, AngleUnit angleUnit) {
   // Return θ, between -π and π in given angleUnit for a (x,y) position.
   return Trigonometry::ConvertRadianToAngleUnit<float>(
              std::arg(std::complex<float>(x, y)), angleUnit)
@@ -423,7 +422,7 @@ void GraphView::drawPolar(KDContext* ctx, KDRect rect, ContinuousFunction* f,
   float rectDown =
       pixelToFloat(OMG::Axis::Vertical, rect.bottom() + k_externRectMargin);
 
-  const Preferences::AngleUnit angleUnit =
+  const AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   const float piInAngleUnit = Trigonometry::PiInAngleUnit(angleUnit);
   /* Cancel optimization if :

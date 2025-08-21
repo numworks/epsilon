@@ -49,7 +49,7 @@ class Regression {
       : m_initialParametersIterations{initialParametersIterations} {}
 
   // AngleUnit is needed for Trig regression
-  static const Regression* Get(Type type, Preferences::AngleUnit angleUnit);
+  static const Regression* Get(Type type, AngleUnit angleUnit);
 
 #if TARGET_POINCARE_JS
   /* Not useful since all regression objects are constexpr but silence embind

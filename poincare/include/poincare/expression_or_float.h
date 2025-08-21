@@ -41,7 +41,7 @@ class ExpressionOrFloat {
   bool hasNoExactExpression() const { return m_buffer[0] == '\0'; }
 
   struct ApproximationParameters {
-    Preferences::AngleUnit angleUnit;
+    AngleUnit angleUnit;
     Preferences::ComplexFormat complexFormat;
   };
 

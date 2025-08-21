@@ -44,12 +44,9 @@ constexpr Poincare::SymbolicComputation ReplaceAllSymbolsWithUndefined =
     Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined;
 constexpr Poincare::SymbolicComputation KeepAllSymbols =
     Poincare::SymbolicComputation::KeepAllSymbols;
-constexpr Poincare::Preferences::AngleUnit Radian =
-    Poincare::Preferences::AngleUnit::Radian;
-constexpr Poincare::Preferences::AngleUnit Degree =
-    Poincare::Preferences::AngleUnit::Degree;
-constexpr Poincare::Preferences::AngleUnit Gradian =
-    Poincare::Preferences::AngleUnit::Gradian;
+constexpr Poincare::AngleUnit Radian = Poincare::AngleUnit::Radian;
+constexpr Poincare::AngleUnit Degree = Poincare::AngleUnit::Degree;
+constexpr Poincare::AngleUnit Gradian = Poincare::AngleUnit::Gradian;
 constexpr Poincare::Preferences::UnitFormat MetricUnitFormat =
     Poincare::Preferences::UnitFormat::Metric;
 constexpr Poincare::Preferences::UnitFormat Imperial =
@@ -73,8 +70,7 @@ void assert_parsed_expression_process_to(
     const char* expression, const char* result, const Poincare::Context& ctx,
     Poincare::ReductionTarget target,
     Poincare::Preferences::ComplexFormat complexFormat,
-    Poincare::Preferences::AngleUnit angleUnit,
-    Poincare::Preferences::UnitFormat unitFormat,
+    Poincare::AngleUnit angleUnit, Poincare::Preferences::UnitFormat unitFormat,
     Poincare::SymbolicComputation symbolicComputation,
     ProcessExpression process,
     int numberOfSignificantDigits =
@@ -91,7 +87,7 @@ Poincare::Internal::Tree* parse_expression(
 
 void assert_reduce_and_store(
     const char* expression, Poincare::VariableStore& variableStore,
-    Poincare::Preferences::AngleUnit angleUnit = Radian,
+    Poincare::AngleUnit angleUnit = Radian,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     Poincare::ReductionTarget target = User);
@@ -101,7 +97,7 @@ void assert_reduce_and_store(
 void assert_parsed_expression_simplify_to(
     const char* expression, const char* simplifiedExpression,
     const Poincare::Context& context, Poincare::ReductionTarget target = User,
-    Poincare::Preferences::AngleUnit angleUnit = Radian,
+    Poincare::AngleUnit angleUnit = Radian,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     Poincare::SymbolicComputation symbolicComputation = ReplaceDefinedSymbols,
@@ -109,7 +105,7 @@ void assert_parsed_expression_simplify_to(
 void assert_parsed_expression_simplify_to(
     const char* expression, const char* simplifiedExpression,
     Poincare::ReductionTarget target = User,
-    Poincare::Preferences::AngleUnit angleUnit = Radian,
+    Poincare::AngleUnit angleUnit = Radian,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     Poincare::SymbolicComputation symbolicComputation = ReplaceDefinedSymbols,
@@ -122,8 +118,7 @@ void assert_parsed_expression_simplify_to(
 template <typename T>
 void assert_expression_approximates_to(
     const char* expression, const char* approximation,
-    Poincare::Context& context,
-    Poincare::Preferences::AngleUnit angleUnit = Degree,
+    Poincare::Context& context, Poincare::AngleUnit angleUnit = Degree,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     int numberOfSignificantDigits =
@@ -131,8 +126,7 @@ void assert_expression_approximates_to(
 template <typename T>
 void assert_expression_simplifies_approximates_to(
     const char* expression, const char* approximation,
-    Poincare::Context& context,
-    Poincare::Preferences::AngleUnit angleUnit = Degree,
+    Poincare::Context& context, Poincare::AngleUnit angleUnit = Degree,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     int numberOfSignificantDigits =
@@ -140,7 +134,7 @@ void assert_expression_simplifies_approximates_to(
 template <typename T>
 void assert_expression_simplifies_approximates_to(
     const char* expression, const char* approximation,
-    Poincare::Preferences::AngleUnit angleUnit = Degree,
+    Poincare::AngleUnit angleUnit = Degree,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     int numberOfSignificantDigits =

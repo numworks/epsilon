@@ -490,23 +490,22 @@ QUIZ_CASE(regression_median_2) {
                        NAN, NAN, sr);
 }
 
-void assert_trigonometric_regression_is(
-    const double* xi, const double* yi, int numberOfPoints,
-    const Coefficients& trueCoefficients,
-    Poincare::Preferences::AngleUnit trueCoeffcientsUnit,
-    double residualStdDeviation) {
+void assert_trigonometric_regression_is(const double* xi, const double* yi,
+                                        int numberOfPoints,
+                                        const Coefficients& trueCoefficients,
+                                        Poincare::AngleUnit trueCoeffcientsUnit,
+                                        double residualStdDeviation) {
   // Test the trigonometric regression at all angle units
-  const Preferences::AngleUnit previousAngleUnit =
+  const AngleUnit previousAngleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   // TODO: C++23: use std::to_underlying instead of static_cast
   constexpr size_t k_numberOfUnits =
-      static_cast<size_t>(Poincare::Preferences::AngleUnit::NUnits);
-  constexpr Poincare::Preferences::AngleUnit units[k_numberOfUnits] = {
-      Poincare::Preferences::AngleUnit::Radian,
-      Poincare::Preferences::AngleUnit::Degree,
-      Poincare::Preferences::AngleUnit::Gradian};
+      static_cast<size_t>(Poincare::AngleUnit::NUnits);
+  constexpr Poincare::AngleUnit units[k_numberOfUnits] = {
+      Poincare::AngleUnit::Radian, Poincare::AngleUnit::Degree,
+      Poincare::AngleUnit::Gradian};
   for (size_t i = 0; i < k_numberOfUnits; ++i) {
-    Poincare::Preferences::AngleUnit unit = units[i];
+    Poincare::AngleUnit unit = units[i];
     GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(unit);
     double unitFactor = Trigonometry::PiInAngleUnit(unit) /
                         Trigonometry::PiInAngleUnit(trueCoeffcientsUnit);
@@ -531,8 +530,7 @@ QUIZ_CASE(regression_trigonometric_1) {
   constexpr Coefficients coefficients = {2.9723, 0.016780, -1.3067, 12.146};
   constexpr double sr = 0.061848;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::Preferences::AngleUnit::Radian,
-                                     sr);
+                                     Poincare::AngleUnit::Radian, sr);
 }
 
 QUIZ_CASE(regression_trigonometric_2) {
@@ -545,8 +543,7 @@ QUIZ_CASE(regression_trigonometric_2) {
   constexpr Coefficients coefficients = {6.42, 0.26, -2.16, 2.82};
   constexpr double sr = 1.5093235;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::Preferences::AngleUnit::Radian,
-                                     sr);
+                                     Poincare::AngleUnit::Radian, sr);
 }
 
 QUIZ_CASE(regression_trigonometric_3) {
@@ -557,8 +554,7 @@ QUIZ_CASE(regression_trigonometric_3) {
   constexpr Coefficients coefficients = {22.55, 0.5955, -2.180, 30.86};
   constexpr double sr = 1.2068486;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::Preferences::AngleUnit::Radian,
-                                     sr);
+                                     Poincare::AngleUnit::Radian, sr);
 }
 
 QUIZ_CASE(regression_trigonometric_4) {
@@ -577,8 +573,7 @@ QUIZ_CASE(regression_trigonometric_4) {
   constexpr Coefficients coefficients = {1.0, 1.0, 0.0, 0.0};
   constexpr double sr = 0.0;
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients,
-                                     Poincare::Preferences::AngleUnit::Radian,
-                                     sr);
+                                     Poincare::AngleUnit::Radian, sr);
 }
 
 QUIZ_CASE(regression_trigonometric_4_bis) {
@@ -614,8 +609,7 @@ QUIZ_CASE(regression_trigonometric_4_bis) {
   constexpr Coefficients coefficients = {1.0, 1.0, 0.0, 0.0};
   constexpr double sr = 0.0;
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients,
-                                     Poincare::Preferences::AngleUnit::Radian,
-                                     sr);
+                                     Poincare::AngleUnit::Radian, sr);
 }
 
 QUIZ_CASE(regression_trigonometric_5) {
@@ -626,8 +620,7 @@ QUIZ_CASE(regression_trigonometric_5) {
   constexpr Coefficients coefficients = {4.116, 2.006, -2.944, 4.747};
   constexpr double sr = 0.2244;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::Preferences::AngleUnit::Radian,
-                                     sr);
+                                     Poincare::AngleUnit::Radian, sr);
 }
 
 QUIZ_CASE(regression_trigonometric_6) {
@@ -638,8 +631,7 @@ QUIZ_CASE(regression_trigonometric_6) {
   constexpr Coefficients coefficients = {25.611, 0.5090, -2.0685, 56.880};
   constexpr double sr = 0.719;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::Preferences::AngleUnit::Radian,
-                                     sr);
+                                     Poincare::AngleUnit::Radian, sr);
 }
 
 QUIZ_CASE(regression_trigonometric_7) {
@@ -651,8 +643,7 @@ QUIZ_CASE(regression_trigonometric_7) {
   constexpr Coefficients coefficients = {7.0226, 0.6281, -1.5705, 7.999};
   constexpr double sr = 0.0276;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::Preferences::AngleUnit::Radian,
-                                     sr);
+                                     Poincare::AngleUnit::Radian, sr);
 }
 
 QUIZ_CASE(regression_trigonometric_8) {
@@ -663,8 +654,7 @@ QUIZ_CASE(regression_trigonometric_8) {
   constexpr Coefficients coefficients = {0.6606, 0.4912, -1.768, 1.393};
   constexpr double sr = 0.085;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
-                                     Poincare::Preferences::AngleUnit::Radian,
-                                     sr);
+                                     Poincare::AngleUnit::Radian, sr);
 }
 
 QUIZ_CASE(regression_logistic) {

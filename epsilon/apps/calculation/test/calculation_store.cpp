@@ -280,10 +280,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
-  Preferences::AngleUnit previousAngleUnit =
+  AngleUnit previousAngleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
-  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(
-      Preferences::AngleUnit::Degree);
+  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(AngleUnit::Degree);
 
   uint8_t previousNumberOfSignificantDigits =
       GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
@@ -420,8 +419,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("45→gon", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr, "50gon", globalContext,
                       &store);
-  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(
-      Preferences::AngleUnit::Radian);
+  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(AngleUnit::Radian);
   assertCalculationIs("2+π→_rad", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "(2+π)rad",
                       "5.1415926535898rad", globalContext, &store);
@@ -446,8 +444,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       DisplayOutput::ApproximateOnly, EqualSign::Hidden,
                       nullptr, "1", globalContext, &store);
 
-  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(
-      Preferences::AngleUnit::Degree);
+  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(AngleUnit::Degree);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
   ExamModeManager::SetExamMode(ExamMode(ExamMode::Ruleset::Dutch));

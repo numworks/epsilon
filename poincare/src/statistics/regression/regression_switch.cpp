@@ -19,7 +19,7 @@
 
 namespace Poincare::Internal {
 
-const Regression* Regression::Get(Type type, Preferences::AngleUnit angleUnit) {
+const Regression* Regression::Get(Type type, AngleUnit angleUnit) {
   constexpr static NoneRegression none;
   constexpr static LinearRegression linearAxpb(false);
   constexpr static LinearRegression linearApbx(true);
@@ -37,12 +37,10 @@ const Regression* Regression::Get(Type type, Preferences::AngleUnit angleUnit) {
   /* NOTE: Having a static var for each angle unit seems weird, but it
    * was the easiest way to adapt to the current implementation.
    * Maybe the way Regressions are handled should be rethought ? */
-  constexpr static TrigonometricRegression trigonometricRad(
-      Preferences::AngleUnit::Radian);
-  constexpr static TrigonometricRegression trigonometricDeg(
-      Preferences::AngleUnit::Degree);
+  constexpr static TrigonometricRegression trigonometricRad(AngleUnit::Radian);
+  constexpr static TrigonometricRegression trigonometricDeg(AngleUnit::Degree);
   constexpr static TrigonometricRegression trigonometricGrad(
-      Preferences::AngleUnit::Gradian);
+      AngleUnit::Gradian);
 
   switch (type) {
     case Type::None:
@@ -75,11 +73,11 @@ const Regression* Regression::Get(Type type, Preferences::AngleUnit angleUnit) {
       return &median;
     case Type::Trigonometric: {
       switch (angleUnit) {
-        case Preferences::AngleUnit::Radian:
+        case AngleUnit::Radian:
           return &trigonometricRad;
-        case Preferences::AngleUnit::Degree:
+        case AngleUnit::Degree:
           return &trigonometricDeg;
-        case Preferences::AngleUnit::Gradian:
+        case AngleUnit::Gradian:
           return &trigonometricGrad;
         default:
           OMG::unreachable();

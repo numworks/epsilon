@@ -44,9 +44,15 @@ constexpr float GetTypeMetric(Type type) {
 
 /* Add/Mult Metric must depend on its number of children to ensure that if A is
  * better than B*C, A*D will also be better than B*C*D. */
+constexpr float GetAddMultMetric(int numberOfChildren) {
+  static_assert(GetTypeMetric(Type::Mult) == k_defaultMetric);
+  static_assert(GetTypeMetric(Type::Add) == k_defaultMetric);
+  return k_defaultMetric * (numberOfChildren - 1);
+}
+
 constexpr float GetAddMultMetric(const Tree* e) {
   assert(e->isAdd() || e->isMult());
-  return GetTypeMetric(e->type()) * (e->numberOfChildren() - 1);
+  return GetAddMultMetric(e->numberOfChildren());
 }
 
 Type ShortTypeForBigType(Type t) {
@@ -152,14 +158,20 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       if (shouldExpand &&
           PatternMatching::Match(
               e, KAdd(KA_s, KMult(KB, KC), KD_s, KMult(KB, KE), KF_s), &ctx)) {
-        /* Ignore cost of developing B*(C+E) when B:
+        /* Ignore cost of having developed B*(C+E) into B*C + B*E when B:
          * - is not minus one
          * - is not the inverse of an expression
-         * - is small enough (<= k_defaultMetric) */
+         * - is small enough (<= k_defaultMetric)
+         * To do so, we ensure M(B*(C+E)) ~= M(BC+BE))
+         * This is equivalent to
+         * M(*2)+M(B)+M(+2)+M(C)+M(E) ~= M(+2)+M(*2)+M(B)+M(C)+M(*2)+M(B)+M(E)
+         * We now need to offset the added cost of M(*2) and M(B) .
+         * We can bound M(B) with k_defaultMetric (otherwise contracted form
+         * will be preferred). */
         const Tree* factor = ctx.getTree(KB);
         if (!(factor->isPow() && factor->child(1)->isMinusOne()) &&
             !factor->isMinusOne()) {
-          result -= GetAddMultMetric(e);
+          result -= GetAddMultMetric(2);
           result -= k_defaultMetric;
         }
       }

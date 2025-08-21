@@ -54,6 +54,9 @@ class SymbolStore : public Poincare::VariableStore {
   bool push(const Poincare::Internal::Tree* expression, char symbolName,
             UserNamedType symbolType);
 
+  // Returns a nullptr if the symbol does not exist in the store
+  const SymbolWithExpression* findSymbolInStore(char symbolName) const;
+
   static constexpr size_t k_maxSymbols = 10;
   using SymbolTable = OMG::StaticVector<SymbolWithExpression, k_maxSymbols>;
   SymbolTable m_symbolTable;

@@ -10,6 +10,8 @@
 #include <poincare/src/memory/tree.h>
 #include <string.h>
 
+#include <algorithm>
+
 namespace PoincareTest {
 using Tree = Poincare::Internal::Tree;
 
@@ -45,24 +47,35 @@ const Poincare::Internal::Tree* SymbolStore::SymbolWithExpression::expression()
 }
 
 const Tree* SymbolStore::expressionForUserNamed(const Tree* symbol) const {
-  char symbolName = SymbolNameFromTree(symbol);
-  for (const SymbolWithExpression& element : m_symbolTable) {
-    if (element.name() == symbolName) {
-      return element.expression();
-    }
+  const SymbolWithExpression* existingSymbol =
+      findSymbolInStore(SymbolNameFromTree(symbol));
+  if (!existingSymbol) {
+    return nullptr;
   }
-  return nullptr;
+  return existingSymbol->expression();
 }
 
 Poincare::Context::UserNamedType SymbolStore::expressionTypeForIdentifier(
     const char* identifier, int length) const {
-  char symbolName = SymbolNameFromString(identifier);
-  for (const SymbolWithExpression& element : m_symbolTable) {
-    if (element.name() == symbolName) {
-      return element.type();
-    }
+  const SymbolWithExpression* existingSymbol =
+      findSymbolInStore(SymbolNameFromString(identifier));
+  if (!existingSymbol) {
+    return UserNamedType::None;
   }
-  return UserNamedType::None;
+  return existingSymbol->type();
+}
+
+const SymbolStore::SymbolWithExpression* SymbolStore::findSymbolInStore(
+    char symbolName) const {
+  const SymbolWithExpression* result =
+      std::find_if(m_symbolTable.begin(), m_symbolTable.end(),
+                   [symbolName](const SymbolWithExpression& storedSymbol) {
+                     return storedSymbol.name() == symbolName;
+                   });
+  if (result == m_symbolTable.end()) {
+    return nullptr;
+  }
+  return result;
 }
 
 bool SymbolStore::push(const Tree* expression, char symbolName,

@@ -102,6 +102,15 @@ bool SymbolStore::push(const Tree* expression, char symbolName,
   return true;
 }
 
+bool SymbolStore::setExpressionForUserSymbol(const Tree* expression,
+                                             char symbolName) {
+  UserNamedType symbolType = UserNamedType::Symbol;
+  if (expression->isList()) {
+    symbolType = UserNamedType::List;
+  }
+  return push(expression, symbolName, symbolType);
+}
+
 bool SymbolStore::setExpressionForUserFunction(
     const Poincare::Internal::Tree* expression,
     const Poincare::Internal::Tree* functionSymbol) {
@@ -121,7 +130,7 @@ bool SymbolStore::setExpressionForUserFunction(
 bool SymbolStore::setExpressionForUserNamed(const Tree* expression,
                                             const Tree* symbol) {
   if (symbol->isUserSymbol()) {
-    return push(expression, SymbolNameFromTree(symbol), UserNamedType::Symbol);
+    return setExpressionForUserSymbol(expression, SymbolNameFromTree(symbol));
   }
   if (symbol->isUserFunction()) {
     return setExpressionForUserFunction(expression, symbol);

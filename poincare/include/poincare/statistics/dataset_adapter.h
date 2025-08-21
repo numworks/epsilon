@@ -6,27 +6,6 @@
 
 namespace Poincare {
 
-class DatasetColumnAdapter : public DatasetColumn<double> {
- public:
-  DatasetColumnAdapter(const DataTable* data, int column)
-      : m_dataTable(data), m_column(column) {
-    assert(m_dataTable->numberOfColumns() > m_column);
-  }
-
-  double valueAtIndex(int index) const override {
-    assert(m_column >= 0);
-    return m_dataTable->get(m_column, index);
-  }
-  int length() const override {
-    assert(m_column >= 0);
-    return m_dataTable->numberOfRows();
-  }
-
- private:
-  const DataTable* m_dataTable;
-  int m_column;
-};
-
 class StatisticsDatasetFromTable : public StatisticsDataset<double> {
  public:
   // Use weightsColumnIndex = -1 to create a dataset with all weights equal to 1
@@ -72,6 +51,27 @@ class StatisticsDatasetFromTable : public StatisticsDataset<double> {
   ~StatisticsDatasetFromTable() = default;
 
  private:
+  class DatasetColumnAdapter : public DatasetColumn<double> {
+   public:
+    DatasetColumnAdapter(const DataTable* data, int column)
+        : m_dataTable(data), m_column(column) {
+      assert(m_dataTable->numberOfColumns() > m_column);
+    }
+
+    double valueAtIndex(int index) const override {
+      assert(m_column >= 0);
+      return m_dataTable->get(m_column, index);
+    }
+    int length() const override {
+      assert(m_column >= 0);
+      return m_dataTable->numberOfRows();
+    }
+
+   private:
+    const DataTable* m_dataTable;
+    int m_column;
+  };
+
   DatasetColumnAdapter m_valuesAdapter;
   DatasetColumnAdapter m_weightsAdapter;
 };

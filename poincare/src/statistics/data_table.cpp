@@ -1,8 +1,7 @@
-#include "data_table.h"
+#include <poincare/statistics/data_table.h>
+#include <poincare/statistics/dataset_adapter.h>
 
-#include "dataset_adapter.h"
-
-namespace Poincare::Internal {
+namespace Poincare {
 
 double DataTable::totalSum() const {
   double result = 0.;
@@ -107,4 +106,4 @@ double Series::yIntercept(StatisticsCalculationOptions options) const {
   return meanOfY - slope(options) * meanOfX;
 }
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare

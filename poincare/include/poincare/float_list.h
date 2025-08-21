@@ -3,7 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/statistics/dataset_column.h>
-#include <poincare/statistics/statistics.h>
 
 namespace Poincare {
 

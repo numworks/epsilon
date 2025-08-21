@@ -5,7 +5,6 @@
 #include <escher/i18n.h>
 #include <poincare/expression.h>
 #include <poincare/statistics/regression.h>
-#include <poincare/statistics/statistics.h>
 
 namespace Regression {
 

@@ -7,7 +7,7 @@
 #include <poincare/comparison_operator.h>
 #include <poincare/layout.h>
 #include <poincare/src/layout/k_tree.h>
-#include <poincare/src/statistics/data_table.h>
+#include <poincare/statistics/data_table.h>
 #include <poincare/statistics/distribution.h>
 
 namespace Poincare::Internal {

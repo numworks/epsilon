@@ -4,7 +4,7 @@
 #include "data_table.h"
 #include "statistics_dataset.h"
 
-namespace Poincare::Internal {
+namespace Poincare {
 
 class DatasetColumnAdapter : public DatasetColumn<double> {
  public:
@@ -76,6 +76,6 @@ class StatisticsDatasetFromTable : public StatisticsDataset<double> {
   DatasetColumnAdapter m_weightsAdapter;
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare
 
 #endif

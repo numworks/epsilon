@@ -1,7 +1,7 @@
 #ifndef POINCARE_STATISTICS_INFERENCE_CHI2_TEST_H
 #define POINCARE_STATISTICS_INFERENCE_CHI2_TEST_H
 
-#include <poincare/src/statistics/data_table.h>
+#include <poincare/statistics/data_table.h>
 
 #include "significance_test.h"
 

@@ -32,6 +32,7 @@ from time import sleep
 __Identifiers = [
     {"VID": 0x0483, "PID": 0xDF11},
     {"VID": 0x0483, "PID": 0xA291},
+    {"VID": 0x0483, "PID": 0xA51A},
 ]
 
 # USB request __TIMEOUT

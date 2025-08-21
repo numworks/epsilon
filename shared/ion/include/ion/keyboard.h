@@ -35,6 +35,15 @@ constexpr Key ValidKeys[] = {
 #undef KEY
 };
 
+constexpr uint64_t k_validKeysState = []() {
+  uint64_t state = 0;
+#define KEY(N, R, C, ...) \
+  state |= uint64_t(1) << (R * ION_KEYBOARD_COLUMNS + C);
+#include <ion/keys.inc>
+#undef KEY
+  return state;
+}();
+
 #undef PLAIN_KEY
 #undef SHIFT_KEY
 #undef ALPHA_KEY

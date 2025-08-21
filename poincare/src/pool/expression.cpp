@@ -281,7 +281,7 @@ UserExpression UserExpression::Builder(Coordinate2D<T> point) {
 }
 
 UserExpression UserExpression::BuildListOfExpressions(
-    std::span<const UserExpression> expressions) {
+    std::span<UserExpression> expressions) {
   Internal::Tree* list = Internal::SharedTreeStack->pushList(0);
   for (UserExpression expr : expressions) {
     expr.tree()->cloneTree();

@@ -1,5 +1,4 @@
-#ifndef PALETTE_H
-#define PALETTE_H
+#pragma once
 
 #include "eadkpp.h"
 
@@ -12,5 +11,3 @@ constexpr static EADK::Color Pink(0xCB6E79);
 constexpr static EADK::Color Red(0xFF0000);
 constexpr static EADK::Color White(0xFFFFFF);
 constexpr static EADK::Color Yellow(0xF3B443);
-
-#endif

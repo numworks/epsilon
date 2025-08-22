@@ -1,5 +1,4 @@
-#ifndef STORE_H
-#define STORE_H
+#pragma once
 
 class Store {
  public:
@@ -19,5 +18,3 @@ class Store {
   int m_storedValues[k_maxNumberOfStoredValues];
   int m_currentIndex;
 };
-
-#endif

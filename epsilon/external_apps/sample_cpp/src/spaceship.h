@@ -1,5 +1,4 @@
-#ifndef SPACESHIP_H
-#define SPACESHIP_H
+#pragma once
 
 #include "display.h"
 #include "eadkpp.h"
@@ -39,5 +38,3 @@ class Spaceship {
   Life m_lives[k_maxNumberOfLives];
   Score m_score;
 };
-
-#endif

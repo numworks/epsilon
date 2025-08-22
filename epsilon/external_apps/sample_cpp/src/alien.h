@@ -1,5 +1,4 @@
-#ifndef ALIEN_H
-#define ALIEN_H
+#pragma once
 
 #include "eadkpp.h"
 #include "spaceship.h"
@@ -26,5 +25,3 @@ class Alien {
   int m_x;
   int m_y;
 };
-
-#endif

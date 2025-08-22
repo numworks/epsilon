@@ -1,5 +1,4 @@
-#ifndef SCORE_H
-#define SCORE_H
+#pragma once
 
 #include "display.h"
 #include "eadkpp.h"
@@ -16,5 +15,3 @@ class Score {
       4;  // log(k_maximalScore, 10)
   int m_value;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef STATISTICS_STORE_CONTROLLER_H
-#define STATISTICS_STORE_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/store_controller.h>
 
@@ -76,5 +75,3 @@ class StoreController : public Shared::StoreController {
 };
 
 }  // namespace Statistics
-
-#endif

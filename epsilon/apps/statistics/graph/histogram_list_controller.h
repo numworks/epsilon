@@ -1,5 +1,4 @@
-#ifndef STATISTICS_HISTOGRAM_LIST_CONTROLLER_H
-#define STATISTICS_HISTOGRAM_LIST_CONTROLLER_H
+#pragma once
 
 #include <escher/list_view_data_source.h>
 #include <escher/selectable_list_view_controller.h>
@@ -103,5 +102,3 @@ class HistogramListController
 };
 
 }  // namespace Statistics
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef STATISTICS_BOX_AXIS_VIEW_H
-#define STATISTICS_BOX_AXIS_VIEW_H
+#pragma once
 
 #include <apps/constant.h>
 #include <apps/shared/plot_view_policies.h>
@@ -23,5 +22,3 @@ class BoxAxisView
 };
 
 }  // namespace Statistics
-
-#endif

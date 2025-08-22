@@ -1,5 +1,4 @@
-#ifndef STATISTICS_FREQUENCY_CONTROLLER_H
-#define STATISTICS_FREQUENCY_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/math_field_delegate.h>
 #include <apps/shared/round_cursor_view.h>
@@ -87,5 +86,3 @@ class FrequencyController : public PlotController,
 };
 
 }  // namespace Statistics
-
-#endif

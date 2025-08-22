@@ -1,5 +1,4 @@
-#ifndef STATISTICS_GRAPH_BUTTON_ROW_DELEGATE_H
-#define STATISTICS_GRAPH_BUTTON_ROW_DELEGATE_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/button_cell.h>
@@ -59,5 +58,3 @@ class GraphButtonRowDelegate : public Escher::ButtonRowDelegate {
 };
 
 }  // namespace Statistics
-
-#endif

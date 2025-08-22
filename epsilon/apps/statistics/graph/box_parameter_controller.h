@@ -1,5 +1,4 @@
-#ifndef STATISTICS_BOX_PARAMETER_CONTROLLER_H
-#define STATISTICS_BOX_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/menu_cell.h>
@@ -34,5 +33,3 @@ class BoxParameterController
 };
 
 }  // namespace Statistics
-
-#endif

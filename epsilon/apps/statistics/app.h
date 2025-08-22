@@ -1,5 +1,4 @@
-#ifndef STAT_APP_H
-#define STAT_APP_H
+#pragma once
 
 #include <apps/shared/store_app.h>
 #include <escher/alternate_empty_view_controller.h>
@@ -140,5 +139,3 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
 };
 
 }  // namespace Statistics
-
-#endif

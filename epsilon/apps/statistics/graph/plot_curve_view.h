@@ -1,5 +1,4 @@
-#ifndef STATISTICS_PLOT_CURVE_VIEW_H
-#define STATISTICS_PLOT_CURVE_VIEW_H
+#pragma once
 
 #include <apps/shared/plot_view_policies.h>
 
@@ -50,5 +49,3 @@ class PlotCurveView : public Shared::PlotView<PlotViewAxes, PlotViewPolicy,
 };
 
 }  // namespace Statistics
-
-#endif

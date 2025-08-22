@@ -1,5 +1,4 @@
-#ifndef STATISTICS_USER_PREFERENCES_H
-#define STATISTICS_USER_PREFERENCES_H
+#pragma once
 
 #include <apps/global_preferences.h>
 #include <apps/shared/double_pair_store.h>
@@ -45,5 +44,3 @@ class UserPreferences : public Shared::DoublePairStorePreferences {
 };
 
 }  // namespace Statistics
-
-#endif

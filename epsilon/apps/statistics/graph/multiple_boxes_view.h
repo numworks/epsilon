@@ -1,5 +1,4 @@
-#ifndef STATISTICS_MULTIPLE_BOXES_VIEW_H
-#define STATISTICS_MULTIPLE_BOXES_VIEW_H
+#pragma once
 
 #include "../store.h"
 #include "box_axis_view.h"
@@ -64,5 +63,3 @@ class MultipleBoxesView : public MultipleDataView {
 };
 
 }  // namespace Statistics
-
-#endif

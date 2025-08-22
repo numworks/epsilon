@@ -1,5 +1,4 @@
-#ifndef STATISTICS_BOX_CONTROLLER_H
-#define STATISTICS_BOX_CONTROLLER_H
+#pragma once
 
 #include <escher/button_row_controller.h>
 
@@ -53,5 +52,3 @@ class BoxController : public MultipleDataViewController {
 };
 
 }  // namespace Statistics
-
-#endif

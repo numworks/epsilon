@@ -1,5 +1,4 @@
-#ifndef STATISTICS_PLOT_CONTROLLER_H
-#define STATISTICS_PLOT_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/curve_view_cursor.h>
@@ -91,5 +90,3 @@ class PlotController : public DataViewController {
 };
 
 }  // namespace Statistics
-
-#endif

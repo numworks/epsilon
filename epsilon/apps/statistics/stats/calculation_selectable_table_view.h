@@ -1,5 +1,4 @@
-#ifndef APPS_STATISTICS_CALCULATION_SELECTABLE_TABLE_VIEW_H
-#define APPS_STATISTICS_CALCULATION_SELECTABLE_TABLE_VIEW_H
+#pragma once
 
 #include <escher/selectable_table_view.h>
 
@@ -12,5 +11,3 @@ class CalculationSelectableTableView : public Escher::SelectableTableView {
 };
 
 }  // namespace Statistics
-
-#endif

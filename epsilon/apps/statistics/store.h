@@ -1,5 +1,4 @@
-#ifndef STATISTICS_STORE_H
-#define STATISTICS_STORE_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/statistics_store.h>
@@ -176,5 +175,3 @@ class Store : public Shared::StatisticsStore {
 };
 
 }  // namespace Statistics
-
-#endif

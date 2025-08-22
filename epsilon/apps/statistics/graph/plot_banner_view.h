@@ -1,5 +1,4 @@
-#ifndef STATISTICS_PLOT_BANNER_VIEW_H
-#define STATISTICS_PLOT_BANNER_VIEW_H
+#pragma once
 
 #include <apps/shared/editable_field_banner_view_delegate.h>
 #include <escher/buffer_text_view.h>
@@ -49,5 +48,3 @@ class PlotBannerViewWithEditableField
 };
 
 }  // namespace Statistics
-
-#endif

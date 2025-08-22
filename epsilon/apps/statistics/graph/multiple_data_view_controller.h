@@ -1,5 +1,4 @@
-#ifndef STATISTICS_MULTIPLE_DATA_VIEW_CONTROLLER_H
-#define STATISTICS_MULTIPLE_DATA_VIEW_CONTROLLER_H
+#pragma once
 
 #include "data_view_controller.h"
 #include "multiple_data_view.h"
@@ -16,5 +15,3 @@ class MultipleDataViewController : public DataViewController {
 };
 
 }  // namespace Statistics
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef STATISTICS_HISTOGRAM_CELL_H
-#define STATISTICS_HISTOGRAM_CELL_H
+#pragma once
 
 #include <escher/highlight_cell.h>
 
@@ -38,5 +37,3 @@ class HistogramCell : public Escher::HighlightCell {
 };
 
 }  // namespace Statistics
-
-#endif

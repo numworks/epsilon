@@ -30,6 +30,7 @@ SFLAGS_ion += \
   -DION_DISPLAY_BORDER_COLOR="$(_ion_display_border_color_$(ION_layout_variant))" \
   -DION_KEYBOARD_COLUMNS=$(_ion_keyboard_columns) \
   -DION_KEYBOARD_ROWS=$(_ion_keyboard_rows_$(ION_layout_variant)) \
+  -DION_KEYBOARD_HAS_ALPHA=$(if $(findstring epsilon,$(ION_layout_variant)),1,0)
 
 PRIVATE_SFLAGS_ion += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \

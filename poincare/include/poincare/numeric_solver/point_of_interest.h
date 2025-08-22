@@ -1,5 +1,4 @@
-#ifndef POINCARE_SOLVER_POINT_OF_INTEREST_H
-#define POINCARE_SOLVER_POINT_OF_INTEREST_H
+#pragma once
 
 #include <poincare/numeric_solver/solver.h>
 
@@ -20,5 +19,3 @@ struct PointOfInterest {
 };
 
 }  // namespace Poincare
-
-#endif

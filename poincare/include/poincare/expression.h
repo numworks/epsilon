@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_H
-#define POINCARE_EXPRESSION_H
+#pragma once
 
 #include <omg/enums.h>
 #include <poincare/comparison_operator.h>
@@ -496,5 +495,3 @@ class PreparedFunction : public Expression {
 };
 
 }  // namespace Poincare
-
-#endif

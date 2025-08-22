@@ -1,5 +1,4 @@
-#ifndef POINCARE_EQUATION_SOLVER_POOL_H
-#define POINCARE_EQUATION_SOLVER_POOL_H
+#pragma once
 
 #include <poincare/expression.h>
 
@@ -53,5 +52,3 @@ SolverResult ApproximateSolve(const UserExpression& equationList,
 
 }  // namespace EquationSolver
 }  // namespace Poincare
-
-#endif

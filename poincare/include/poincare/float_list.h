@@ -1,5 +1,4 @@
-#ifndef POINCARE_FLOAT_LIST_H
-#define POINCARE_FLOAT_LIST_H
+#pragma once
 
 #include <poincare/expression.h>
 #include <poincare/statistics/dataset_column.h>
@@ -21,5 +20,3 @@ class FloatList : public SystemExpression, public DatasetColumn<T> {
 };
 
 }  // namespace Poincare
-
-#endif

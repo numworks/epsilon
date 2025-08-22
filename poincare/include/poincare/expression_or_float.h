@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_OR_FLOAT_H
-#define POINCARE_EXPRESSION_OR_FLOAT_H
+#pragma once
 
 #include <poincare/expression.h>
 #include <poincare/preferences.h>
@@ -152,5 +151,3 @@ class ExpressionOrFloat {
 };
 
 }  // namespace Poincare
-
-#endif

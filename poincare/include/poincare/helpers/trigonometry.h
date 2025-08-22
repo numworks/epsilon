@@ -1,5 +1,4 @@
-#ifndef POINCARE_HELPERS_TRIGONOMETRY_H
-#define POINCARE_HELPERS_TRIGONOMETRY_H
+#pragma once
 
 #include <poincare/expression.h>
 
@@ -16,5 +15,3 @@ void DeepAddAngleUnitToAmbiguousDirectFunctions(UserExpression& e,
 };  // namespace Trigonometry
 
 }  // namespace Poincare
-
-#endif

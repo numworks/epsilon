@@ -1,5 +1,4 @@
-#ifndef POINCARE_RANGE_H
-#define POINCARE_RANGE_H
+#pragma once
 
 #include <assert.h>
 #include <omg/float.h>
@@ -125,5 +124,3 @@ class Range2D {
 };
 
 }  // namespace Poincare
-
-#endif

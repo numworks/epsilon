@@ -1,5 +1,4 @@
-#ifndef POINCARE_POOL_VARIABLE_CONTEXT_H
-#define POINCARE_POOL_VARIABLE_CONTEXT_H
+#pragma once
 
 #include "context_with_parent.h"
 #include "expression.h"
@@ -32,5 +31,3 @@ class PoolVariableContext : public ContextWithParent {
 };
 
 }  // namespace Poincare
-
-#endif

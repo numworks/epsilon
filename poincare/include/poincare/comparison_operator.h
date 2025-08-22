@@ -1,5 +1,4 @@
-#ifndef POINCARE_COMPARISON_OPERATORS_H
-#define POINCARE_COMPARISON_OPERATORS_H
+#pragma once
 
 #include <assert.h>
 #include <omg/troolean.h>
@@ -47,5 +46,3 @@ class Comparison {
 };
 
 }  // namespace Poincare
-
-#endif

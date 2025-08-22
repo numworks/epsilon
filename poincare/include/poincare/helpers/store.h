@@ -1,5 +1,4 @@
-#ifndef POINCARE_HELPERS_STORE_H
-#define POINCARE_HELPERS_STORE_H
+#pragma once
 
 #include <poincare/expression.h>
 #include <poincare/variable_store.h>
@@ -18,5 +17,3 @@ bool StoreValueForSymbol(VariableStore& variableStore,
 }  // namespace StoreHelper
 
 }  // namespace Poincare
-
-#endif

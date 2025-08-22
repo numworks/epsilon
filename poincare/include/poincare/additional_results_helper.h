@@ -1,5 +1,4 @@
-#ifndef POINCARE_ADDITIONAL_RESULTS_HELPER_H
-#define POINCARE_ADDITIONAL_RESULTS_HELPER_H
+#pragma once
 
 #include <poincare/expression.h>
 #include <poincare/layout.h>
@@ -75,5 +74,3 @@ class AdditionalResultsHelper final {
 };
 
 }  // namespace Poincare
-
-#endif

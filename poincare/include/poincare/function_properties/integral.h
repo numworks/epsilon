@@ -1,5 +1,4 @@
-#ifndef POINCARE_FUNCTION_PROPERTIES_INTEGRAL_H
-#define POINCARE_FUNCTION_PROPERTIES_INTEGRAL_H
+#pragma once
 
 #include <poincare/expression.h>
 
@@ -20,5 +19,3 @@ T ApproximateIntegralBetweenBounds(const SystemExpression& expression,
                                    const SystemExpression& lowerBound,
                                    const SystemExpression& upperBound);
 }  // namespace Poincare
-
-#endif

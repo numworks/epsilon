@@ -1,5 +1,4 @@
-#ifndef POINCARE_TRIGONOMETRY_H
-#define POINCARE_TRIGONOMETRY_H
+#pragma once
 
 #include <complex.h>
 #include <poincare/preferences.h>
@@ -18,5 +17,3 @@ std::complex<T> ConvertRadianToAngleUnit(const std::complex<T> c,
 };  // namespace Trigonometry
 
 }  // namespace Poincare
-
-#endif

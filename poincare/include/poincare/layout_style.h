@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_STYLE_H
-#define POINCARE_LAYOUT_STYLE_H
+#pragma once
 
 #include <kandinsky/color.h>
 #include <kandinsky/glyph.h>
@@ -14,5 +13,3 @@ struct LayoutStyle : KDGlyph::Style {
 };
 
 }  // namespace Poincare
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_SOLVER_POINT_OF_INTEREST_LIST_H
-#define POINCARE_SOLVER_POINT_OF_INTEREST_LIST_H
+#pragma once
 
 #include <poincare/expression.h>
 
@@ -27,5 +26,3 @@ class PointsOfInterestList {
 };
 
 }  // namespace Poincare
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_H
-#define POINCARE_LAYOUT_H
+#pragma once
 
 #include <kandinsky/context.h>
 #include <poincare/layout_style.h>
@@ -157,5 +156,3 @@ class Layout final : public PoolHandle {
 };
 
 }  // namespace Poincare
-
-#endif

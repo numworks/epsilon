@@ -1,5 +1,4 @@
-#ifndef POINCARE_HELPERS_LAYOUT_H
-#define POINCARE_HELPERS_LAYOUT_H
+#pragma once
 
 #include <kandinsky/size.h>
 #include <limits.h>
@@ -29,5 +28,3 @@ KDSize Point2DSizeGivenChildSize(KDSize childSize);
 bool TurnEToTenPowerLayout(Internal::Tree* layout, bool linear = false);
 
 }  // namespace Poincare::LayoutHelpers
-
-#endif

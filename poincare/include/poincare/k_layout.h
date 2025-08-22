@@ -1,3 +1,5 @@
+#pragma once
+
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/memory/k_tree.h>
 // Placeholders KA, KB_s, KC_p, ...

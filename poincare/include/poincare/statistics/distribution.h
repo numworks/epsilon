@@ -1,5 +1,4 @@
-#ifndef POINCARE_STATISTICS_DISTRIBUTION_H
-#define POINCARE_STATISTICS_DISTRIBUTION_H
+#pragma once
 
 #include <omg/troolean.h>
 #include <omg/unreachable.h>
@@ -187,5 +186,3 @@ T ComputeYMax(Type type, const ParametersArray<T>& parameters);
 };  // namespace Distribution
 
 }  // namespace Poincare
-
-#endif

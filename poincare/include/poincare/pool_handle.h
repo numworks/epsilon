@@ -1,5 +1,4 @@
-#ifndef POINCARE_POOL_HANDLE_H
-#define POINCARE_POOL_HANDLE_H
+#pragma once
 
 #include <initializer_list>
 
@@ -112,5 +111,3 @@ class PoolHandle {
 };
 
 }  // namespace Poincare
-
-#endif

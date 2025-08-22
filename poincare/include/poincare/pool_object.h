@@ -1,5 +1,4 @@
-#ifndef POINCARE_POOL_OBJECT_H
-#define POINCARE_POOL_OBJECT_H
+#pragma once
 
 #include <assert.h>
 #include <stddef.h>
@@ -93,5 +92,3 @@ static PoolObject* Initializer(void* buffer) {
 }
 
 }  // namespace Poincare
-
-#endif

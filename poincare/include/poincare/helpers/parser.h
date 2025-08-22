@@ -1,5 +1,4 @@
-#ifndef POINCARE_HELPERS_PARSER_H
-#define POINCARE_HELPERS_PARSER_H
+#pragma once
 
 namespace Poincare::ParserHelper {
 
@@ -46,4 +45,3 @@ struct ParsingParameters {
 };
 
 }  // namespace Poincare::ParserHelper
-#endif

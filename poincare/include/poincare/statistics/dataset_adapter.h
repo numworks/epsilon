@@ -1,5 +1,4 @@
-#ifndef POINCARE_REGRESSION_DATASET_ADAPTER_H
-#define POINCARE_REGRESSION_DATASET_ADAPTER_H
+#pragma once
 
 #include "data_table.h"
 #include "statistics_dataset.h"
@@ -77,5 +76,3 @@ class StatisticsDatasetFromTable : public StatisticsDataset<double> {
 };
 
 }  // namespace Poincare
-
-#endif

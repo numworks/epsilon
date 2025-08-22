@@ -1,5 +1,4 @@
-#ifndef POINCARE_HELPERS_EXPRESSION_EQUAL_SIGN_H
-#define POINCARE_HELPERS_EXPRESSION_EQUAL_SIGN_H
+#pragma once
 
 #include <poincare/expression.h>
 #include <poincare/src/expression/projection.h>
@@ -10,5 +9,3 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(
     const Internal::ProjectionContext& ctx = {});
 
 }  // namespace Poincare
-
-#endif

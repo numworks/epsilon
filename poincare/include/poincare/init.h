@@ -1,5 +1,4 @@
-#ifndef POINCARE_INIT_H
-#define POINCARE_INIT_H
+#pragma once
 
 #include "context.h"
 #include "exam_mode.h"
@@ -13,5 +12,3 @@ void Init(Preferences::Interface* preferences = nullptr,
 void Shutdown();
 
 }  // namespace Poincare
-
-#endif

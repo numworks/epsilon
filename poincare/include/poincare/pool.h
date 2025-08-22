@@ -1,5 +1,4 @@
-#ifndef POINCARE_POOL_H
-#define POINCARE_POOL_H
+#pragma once
 
 #include <omg/memory.h>
 #include <stddef.h>
@@ -195,5 +194,3 @@ class Pool final {
 };
 
 }  // namespace Poincare
-
-#endif

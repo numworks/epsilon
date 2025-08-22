@@ -1,5 +1,4 @@
-#ifndef POINCARE_HELPERS_SCATTER_PLOT_ITERABLE_H
-#define POINCARE_HELPERS_SCATTER_PLOT_ITERABLE_H
+#pragma once
 
 #include <poincare/coordinate_2D.h>
 #include <poincare/expression.h>
@@ -33,5 +32,3 @@ class ScatterPlotIterable {
 };
 
 }  // namespace Poincare
-
-#endif

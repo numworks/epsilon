@@ -40,12 +40,17 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha, bool lock) {
 
   int noFallbackOffsets[] = {k_plainEventsOffset};
   int shiftFallbackOffsets[] = {k_shiftEventsOffset, k_plainEventsOffset};
+#if ION_KEYBOARD_HAS_ALPHA
   int alphaFallbackOffsets[] = {k_alphaEventsOffset, k_plainEventsOffset};
   int shiftAlphaFallbackOffsets[] = {k_shiftAlphaEventsOffset,
                                      k_alphaEventsOffset, k_plainEventsOffset};
 
   int* fallbackOffsets[] = {noFallbackOffsets, shiftFallbackOffsets,
                             alphaFallbackOffsets, shiftAlphaFallbackOffsets};
+#else
+  assert(alpha == false);
+  int* fallbackOffsets[] = {noFallbackOffsets, shiftFallbackOffsets};
+#endif
 
   int* fallbackOffset = fallbackOffsets[shift + 2 * alpha];
   int i = 0;

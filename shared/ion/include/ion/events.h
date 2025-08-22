@@ -67,19 +67,25 @@ class Event {
   constexpr static int k_pageSize = Keyboard::NumberOfKeys;
   constexpr static int k_plainEventsOffset = 0;
   constexpr static int k_shiftEventsOffset = 1 * k_pageSize;
+#if ION_KEYBOARD_HAS_ALPHA
   constexpr static int k_alphaEventsOffset = 2 * k_pageSize;
   constexpr static int k_shiftAlphaEventsOffset = 3 * k_pageSize;
   constexpr static int k_specialEventsOffset = 4 * k_pageSize;
+#else
+  constexpr static int k_specialEventsOffset = 2 * k_pageSize;
+#endif
   constexpr static Event PlainKey(Keyboard::Key k) { return Event((int)k); }
   constexpr static Event ShiftKey(Keyboard::Key k) {
     return Event(k_shiftEventsOffset + (int)k);
   }
+#if ION_KEYBOARD_HAS_ALPHA
   constexpr static Event AlphaKey(Keyboard::Key k) {
     return Event(k_alphaEventsOffset + (int)k);
   }
   constexpr static Event ShiftAlphaKey(Keyboard::Key k) {
     return Event(k_shiftAlphaEventsOffset + (int)k);
   }
+#endif
   constexpr static Event Special(int i) {
     return Event(k_specialEventsOffset + i);
   }

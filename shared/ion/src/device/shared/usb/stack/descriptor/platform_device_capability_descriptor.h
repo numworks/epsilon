@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_STACK_PLATFORM_DEVICE_CAPABLITY_DESCRIPTOR_H
-#define ION_DEVICE_SHARED_USB_STACK_PLATFORM_DEVICE_CAPABLITY_DESCRIPTOR_H
+#pragma once
 
 #include "device_capability_descriptor.h"
 
@@ -40,5 +39,3 @@ class PlatformDeviceCapabilityDescriptor : public DeviceCapabilityDescriptor {
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

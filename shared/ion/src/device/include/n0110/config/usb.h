@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_N0110_CONFIG_USB_H
-#define ION_DEVICE_N0110_CONFIG_USB_H
+#pragma once
 
 namespace Ion {
 namespace Device {
@@ -14,5 +13,3 @@ constexpr static const char ProductString[] = "NumWorks Calculator";
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

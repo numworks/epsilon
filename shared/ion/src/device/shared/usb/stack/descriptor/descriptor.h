@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_STACK_DESCRIPTOR_H
-#define ION_DEVICE_SHARED_USB_STACK_DESCRIPTOR_H
+#pragma once
 
 #include "../streamable.h"
 
@@ -29,5 +28,3 @@ class Descriptor : public Streamable {
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

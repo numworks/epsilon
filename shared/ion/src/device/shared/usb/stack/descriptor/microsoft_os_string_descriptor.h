@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_STACK_MICROSOFT_OS_STRING_DESCRIPTOR_H
-#define ION_DEVICE_SHARED_USB_STACK_MICROSOFT_OS_STRING_DESCRIPTOR_H
+#pragma once
 
 #include "string_descriptor.h"
 
@@ -26,5 +25,3 @@ class MicrosoftOSStringDescriptor : public StringDescriptor {
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

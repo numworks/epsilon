@@ -1,3 +1,5 @@
+#pragma once
+
 #include <shared/usb/dfu_interface.h>
 #include <shared/usb/dfu_interfaces.h>
 #include <shared/usb/stack/descriptor/dfu_functional_descriptor.h>

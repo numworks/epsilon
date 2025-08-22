@@ -1,7 +1,4 @@
-#ifndef ION_DEVICE_USERLAND_DRIVERS_USB_H
-#define ION_DEVICE_USERLAND_DRIVERS_USB_H
+#pragma once
 
 #include <config/usb_userland.h>
 #include <shared/drivers/usb.h>
-
-#endif

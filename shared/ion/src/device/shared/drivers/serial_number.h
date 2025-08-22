@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_SERIAL_NUMBER_H
-#define ION_DEVICE_SHARED_SERIAL_NUMBER_H
+#pragma once
 
 namespace Ion {
 namespace Device {
@@ -10,5 +9,3 @@ void copy(char* buffer);
 }
 }  // namespace Device
 }  // namespace Ion
-
-#endif

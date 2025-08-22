@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_FLASH_INFORMATION_H
-#define ION_DEVICE_SHARED_FLASH_INFORMATION_H
+#pragma once
 
 #include <stdint.h>
 
@@ -14,5 +13,3 @@ bool IncludesAddress(uint32_t address);
 }  // namespace Flash
 }  // namespace Device
 }  // namespace Ion
-
-#endif

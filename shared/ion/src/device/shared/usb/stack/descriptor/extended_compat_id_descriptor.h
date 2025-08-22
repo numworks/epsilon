@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_STACK_EXTENDED_COMPAT_ID_DESCRIPTOR_H
-#define ION_DEVICE_SHARED_USB_STACK_EXTENDED_COMPAT_ID_DESCRIPTOR_H
+#pragma once
 
 #include "../streamable.h"
 
@@ -44,5 +43,3 @@ class ExtendedCompatIDDescriptor : public Streamable {
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

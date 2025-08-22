@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_N0120_CONFIG_USB_USERLAND_H
-#define ION_DEVICE_N0120_CONFIG_USB_USERLAND_H
+#pragma once
 
 namespace Ion {
 namespace Device {
@@ -40,5 +39,3 @@ constexpr static const char* InterfaceSRAMStringDescriptor =
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

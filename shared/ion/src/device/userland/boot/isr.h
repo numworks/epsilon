@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_USERLAND_BOOT_ISR_H
-#define ION_DEVICE_USERLAND_BOOT_ISR_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,6 +8,4 @@ void start();
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

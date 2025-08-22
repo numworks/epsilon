@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_HELPERS_USBFS_H
-#define ION_DEVICE_SHARED_USB_HELPERS_USBFS_H
+#pragma once
 
 #include <stm32u083/usb.h>
 
@@ -66,5 +65,3 @@ class CHEP0R {
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

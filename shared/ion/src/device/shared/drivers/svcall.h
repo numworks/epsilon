@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_DRIVERS_SVCALL_H
-#define ION_DEVICE_SHARED_DRIVERS_SVCALL_H
+#pragma once
 
 namespace Ion {
 namespace Device {
@@ -108,5 +107,3 @@ namespace SVCall {
 }  // namespace SVCall
 }  // namespace Device
 }  // namespace Ion
-
-#endif

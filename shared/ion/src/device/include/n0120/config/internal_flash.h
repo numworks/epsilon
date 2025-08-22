@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_N0120_CONFIG_INTERNAL_FLASH_H
-#define ION_DEVICE_N0120_CONFIG_INTERNAL_FLASH_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -18,5 +17,3 @@ constexpr uint32_t SectorAddresses[NumberOfSectors + 1] = {
 }  // namespace InternalFlash
 }  // namespace Device
 }  // namespace Ion
-
-#endif

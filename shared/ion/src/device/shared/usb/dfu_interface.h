@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_DFU_INTERFACE_H
-#define ION_DEVICE_SHARED_USB_DFU_INTERFACE_H
+#pragma once
 
 #include <assert.h>
 #include <stddef.h>
@@ -271,5 +270,3 @@ class DFUSecureBackend : public DFUInterfaceBackend {
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

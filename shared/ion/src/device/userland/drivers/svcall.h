@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_USERLAND_DRIVERS_SVCALL_H
-#define ION_DEVICE_USERLAND_DRIVERS_SVCALL_H
+#pragma once
 
 #include <shared/drivers/svcall.h>
 
@@ -12,5 +11,3 @@ namespace SVCall {
 }  // namespace SVCall
 }  // namespace Device
 }  // namespace Ion
-
-#endif

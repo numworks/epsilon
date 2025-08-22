@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_FLASH_WRITE_WITH_INTERRUPTIONS_H
-#define ION_DEVICE_SHARED_FLASH_WRITE_WITH_INTERRUPTIONS_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -16,5 +15,3 @@ bool WriteMemoryWithInterruptions(uint8_t* destination, const uint8_t* source,
 }  // namespace Flash
 }  // namespace Device
 }  // namespace Ion
-
-#endif

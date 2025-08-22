@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_USERLAND_DRIVERS_DISPLAY_H
-#define ION_DEVICE_USERLAND_DRIVERS_DISPLAY_H
+#pragma once
 
 #include <kandinsky/color.h>
 #include <kandinsky/font.h>
@@ -16,5 +15,3 @@ void drawString(const char* text, KDPoint point, bool largeFont,
 
 }  // namespace Display
 }  // namespace Ion
-
-#endif

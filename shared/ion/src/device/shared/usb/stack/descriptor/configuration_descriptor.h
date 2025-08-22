@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_STACK_CONFIGURATION_DESCRIPTOR_H
-#define ION_DEVICE_SHARED_USB_STACK_CONFIGURATION_DESCRIPTOR_H
+#pragma once
 
 #include "descriptor.h"
 #include "interface_descriptor.h"
@@ -45,5 +44,3 @@ class ConfigurationDescriptor : public Descriptor {
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

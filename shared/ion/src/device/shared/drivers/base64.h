@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_BASE64_H
-#define ION_DEVICE_SHARED_BASE64_H
+#pragma once
 
 namespace Ion {
 namespace Device {
@@ -10,5 +9,3 @@ void encode(const unsigned char* input, unsigned int inputLength, char* output);
 }
 }  // namespace Device
 }  // namespace Ion
-
-#endif

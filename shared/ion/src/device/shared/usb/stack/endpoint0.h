@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_ENDPOINT0_H
-#define ION_DEVICE_SHARED_USB_ENDPOINT0_H
+#pragma once
 
 #include "setup_packet.h"
 
@@ -70,5 +69,3 @@ class Endpoint0 {
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef REGS_REGISTER_H
-#define REGS_REGISTER_H
+#pragma once
 
 #include <assert.h>
 #include <stdint.h>
@@ -78,5 +77,3 @@ typedef Register<uint64_t> Register64;
   constexpr volatile name* name() const {  \
     return (class name*)(Base() + offset); \
   };
-
-#endif

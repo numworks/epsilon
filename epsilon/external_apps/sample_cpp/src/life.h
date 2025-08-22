@@ -1,5 +1,4 @@
-#ifndef LIFE_H
-#define LIFE_H
+#pragma once
 
 #include "display.h"
 #include "eadkpp.h"
@@ -18,5 +17,3 @@ class Life {
   int m_y;
   bool m_broken;
 };
-
-#endif

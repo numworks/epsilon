@@ -1,5 +1,4 @@
-#ifndef INPUT_FIELD_H
-#define INPUT_FIELD_H
+#pragma once
 
 class InputField {
  public:
@@ -13,5 +12,3 @@ class InputField {
   constexpr static int k_maxNumberOfCharacters = 256;
   char m_input[k_maxNumberOfCharacters];
 };
-
-#endif

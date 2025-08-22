@@ -1,5 +1,4 @@
-#ifndef VIEW_H
-#define VIEW_H
+#pragma once
 
 #include "eadkpp.h"
 #include "store.h"
@@ -19,5 +18,3 @@ class View {
   constexpr static EADK::Color k_textColor = EADK::Color(0);
   constexpr static EADK::Color k_backgroundColor = EADK::Color(0xFFFFFF);
 };
-
-#endif

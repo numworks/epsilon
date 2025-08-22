@@ -1,5 +1,4 @@
-#ifndef EADKPP_H
-#define EADKPP_H
+#pragma once
 
 extern "C" {
 
@@ -537,5 +536,3 @@ static inline void msleep(uint32_t ms) { return eadk_timing_msleep(ms); }
 static inline uint32_t random() { return eadk_random(); }
 
 }  // namespace EADK
-
-#endif

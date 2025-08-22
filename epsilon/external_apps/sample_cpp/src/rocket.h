@@ -1,5 +1,4 @@
-#ifndef ROCKET_H
-#define ROCKET_H
+#pragma once
 
 #include "display.h"
 #include "eadkpp.h"
@@ -24,5 +23,3 @@ class Rocket {
   int m_x;
   int m_y;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef INPUT_FIELD_H
-#define INPUT_FIELD_H
+#pragma once
 
 class InputField {
  public:
@@ -9,5 +8,3 @@ class InputField {
   void append(const char* text);
   void remove(int numberOfChars);
 };
-
-#endif

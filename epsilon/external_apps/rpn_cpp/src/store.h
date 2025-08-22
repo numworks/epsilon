@@ -1,5 +1,4 @@
-#ifndef STORE_H
-#define STORE_H
+#pragma once
 
 class Store {
  public:
@@ -12,5 +11,3 @@ class Store {
   const int value(int index) const;
   constexpr static int k_maxNumberOfStoredValues = 3;
 };
-
-#endif

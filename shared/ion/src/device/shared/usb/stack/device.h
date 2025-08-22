@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_DEVICE_H
-#define ION_DEVICE_SHARED_USB_DEVICE_H
+#pragma once
 
 #include "descriptor/descriptor.h"
 #include "endpoint0.h"
@@ -70,5 +69,3 @@ class Device : public RequestRecipient {
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

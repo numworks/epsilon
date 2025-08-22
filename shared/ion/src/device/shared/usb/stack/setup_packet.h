@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_SETUP_PACKET_H
-#define ION_DEVICE_SHARED_USB_SETUP_PACKET_H
+#pragma once
 
 #include <stdint.h>
 
@@ -56,5 +55,3 @@ static_assert(sizeof(SetupPacket) == 8, "SetupData must be packed");
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

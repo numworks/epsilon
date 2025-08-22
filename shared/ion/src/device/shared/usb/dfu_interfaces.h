@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_DFU_INTERFACES_H
-#define ION_DEVICE_SHARED_USB_DFU_INTERFACES_H
+#pragma once
 
 #include "dfu_interface.h"
 #include "stack/descriptor/interface_descriptor.h"
@@ -17,5 +16,3 @@ const InterfaceDescriptor* firstInterfaceDescriptor();
 int interfaceDescriptorsTotalLength();
 
 }  // namespace Ion::Device::USB
-
-#endif

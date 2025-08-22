@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_H
-#define ION_DEVICE_SHARED_USB_H
+#pragma once
 
 #include <config/usb.h>
 #include <ion/keyboard.h>
@@ -37,5 +36,3 @@ SlotInfo* slotInfo();
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

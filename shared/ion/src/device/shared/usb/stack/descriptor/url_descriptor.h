@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_STACK_URL_DESCRIPTOR_H
-#define ION_DEVICE_SHARED_USB_STACK_URL_DESCRIPTOR_H
+#pragma once
 
 #include "descriptor.h"
 
@@ -26,5 +25,3 @@ class URLDescriptor : public Descriptor {
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_USERLAND_DRIVERS_RESET_H
-#define ION_DEVICE_USERLAND_DRIVERS_RESET_H
+#pragma once
 
 #include <stdint.h>
 
@@ -12,5 +11,3 @@ void jump(uint32_t jumpIsrVectorAddress);
 }
 }  // namespace Device
 }  // namespace Ion
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef REGS_OTG_H
-#define REGS_OTG_H
+#pragma once
 
 #include <config/otg.h>
 #include <shared/regs/register.h>
@@ -211,5 +210,3 @@ constexpr OTG OTG;
 }  // namespace Regs
 }  // namespace Device
 }  // namespace Ion
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USERLAND_HEADER_H
-#define ION_DEVICE_SHARED_USERLAND_HEADER_H
+#pragma once
 
 #include <assert.h>
 #include <stddef.h>
@@ -60,5 +59,3 @@ class UserlandHeader {
 
 }  // namespace Device
 }  // namespace Ion
-
-#endif

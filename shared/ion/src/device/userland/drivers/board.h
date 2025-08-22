@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_USERLAND_DRIVERS_BOARD_H
-#define ION_DEVICE_USERLAND_DRIVERS_BOARD_H
+#pragma once
 
 #include <stdint.h>
 
@@ -13,5 +12,3 @@ void updateClearanceLevelForExternalApps();
 }  // namespace Board
 }  // namespace Device
 }  // namespace Ion
-
-#endif

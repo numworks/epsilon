@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_DRIVERS_TRAMPOLINE_H
-#define ION_DEVICE_SHARED_DRIVERS_TRAMPOLINE_H
+#pragma once
 
 #include <stdint.h>
 
@@ -39,5 +38,3 @@ uint32_t addressOfFunction(int index);
 }  // namespace Trampoline
 }  // namespace Device
 }  // namespace Ion
-
-#endif

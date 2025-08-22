@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_N0110_SHARED_DRIVERS_CONFIG_TIMING_H
-#define ION_DEVICE_N0110_SHARED_DRIVERS_CONFIG_TIMING_H
+#pragma once
 
 #include <regs/regs.h>
 
@@ -15,5 +14,3 @@ constexpr static int LoopsPerMicrosecond = 38;
 }  // namespace Timing
 }  // namespace Device
 }  // namespace Ion
-
-#endif

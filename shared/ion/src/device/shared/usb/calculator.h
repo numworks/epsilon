@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_CALCULATOR_H
-#define ION_DEVICE_SHARED_USB_CALCULATOR_H
+#pragma once
 
 #include <assert.h>
 #include <config/internal_flash.h>
@@ -200,5 +199,3 @@ class Calculator : public Device {
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

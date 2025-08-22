@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_BOOT_RT0_H
-#define ION_DEVICE_SHARED_BOOT_RT0_H
+#pragma once
 
 namespace Ion {
 namespace Device {
@@ -11,4 +10,3 @@ void configureGlobalVariables();
 }  // namespace Init
 }  // namespace Device
 }  // namespace Ion
-#endif

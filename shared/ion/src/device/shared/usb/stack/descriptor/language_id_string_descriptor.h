@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_STACK_LANGUAGE_ID_STRING_DESCRIPTOR_H
-#define ION_DEVICE_SHARED_USB_STACK_LANGUAGE_ID_STRING_DESCRIPTOR_H
+#pragma once
 
 #include "descriptor.h"
 
@@ -21,5 +20,3 @@ class LanguageIDStringDescriptor : public Descriptor {
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

@@ -1,6 +1,3 @@
-#ifndef ION_DEVICE_N0115_CONFIG_BOOT_H
-#define ION_DEVICE_N0115_CONFIG_BOOT_H
+#pragma once
 
 #define INITIALISATION_VECTOR_SIZE 0x71
-
-#endif

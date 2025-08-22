@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_N0115_CONFIG_EXTERNAL_FLASH_H
-#define ION_DEVICE_N0115_CONFIG_EXTERNAL_FLASH_H
+#pragma once
 
 #include <stdint.h>
 
@@ -22,5 +21,3 @@ constexpr uint8_t NumberOfAddressBitsIn4KbyteBlock = 12;
 }  // namespace ExternalFlash
 }  // namespace Device
 }  // namespace Ion
-
-#endif

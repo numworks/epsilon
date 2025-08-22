@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_USB_STREAMABLE_H
-#define ION_DEVICE_SHARED_USB_STREAMABLE_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -48,5 +47,3 @@ class Streamable {
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion
-
-#endif

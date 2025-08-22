@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_USERLAND_DRIVERS_PERSISTING_BYTES_H
-#define ION_DEVICE_USERLAND_DRIVERS_PERSISTING_BYTES_H
+#pragma once
 
 #include <assert.h>
 #include <ion/exam_bytes.h>
@@ -62,5 +61,3 @@ uint8_t* read(Entry entry);
 
 }  // namespace PersistingBytes
 }  // namespace Ion
-
-#endif

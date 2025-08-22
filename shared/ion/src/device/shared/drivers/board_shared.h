@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_DRIVERS_BOARD_SHARED_H
-#define ION_DEVICE_SHARED_DRIVERS_BOARD_SHARED_H
+#pragma once
 
 #include <shared/drivers/kernel_header.h>
 #include <shared/drivers/userland_header.h>
@@ -28,5 +27,3 @@ uint32_t securityLevel();
 }  // namespace Board
 }  // namespace Device
 }  // namespace Ion
-
-#endif

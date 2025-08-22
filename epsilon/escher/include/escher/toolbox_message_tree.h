@@ -1,5 +1,4 @@
-#ifndef ESCHER_TOOLBOX_MESSAGE_TREE_H
-#define ESCHER_TOOLBOX_MESSAGE_TREE_H
+#pragma once
 
 #include <escher/message_tree.h>
 #include <poincare/layout.h>
@@ -139,4 +138,3 @@ inline const MessageTree* ToolboxMessageNodeDirect::childAtIndex(
 }
 
 }  // namespace Escher
-#endif

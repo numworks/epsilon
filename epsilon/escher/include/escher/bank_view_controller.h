@@ -1,5 +1,4 @@
-#ifndef ESCHER_BANK_VIEW_CONTROLLER_H
-#define ESCHER_BANK_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/view_controller.h>
 
@@ -51,5 +50,3 @@ class BankViewController : public ViewController {
 };
 
 }  // namespace Escher
-
-#endif

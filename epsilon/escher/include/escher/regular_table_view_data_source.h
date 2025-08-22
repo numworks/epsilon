@@ -1,5 +1,4 @@
-#ifndef ESCHER_REGULAR_TABLE_VIEW_DATA_SOURCE_H
-#define ESCHER_REGULAR_TABLE_VIEW_DATA_SOURCE_H
+#pragma once
 
 #include <escher/highlight_cell.h>
 #include <escher/table_view.h>
@@ -48,4 +47,3 @@ class SimpleTableViewDataSource : public RegularTableViewDataSource {
 };
 
 }  // namespace Escher
-#endif

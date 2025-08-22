@@ -1,5 +1,4 @@
-#ifndef ESCHER_SOLID_COLOR_CELL_H
-#define ESCHER_SOLID_COLOR_CELL_H
+#pragma once
 
 #include <escher/highlight_cell.h>
 #include <kandinsky/color.h>
@@ -22,5 +21,3 @@ class SolidColorCell : public HighlightCell {
 };
 
 }  // namespace Escher
-
-#endif

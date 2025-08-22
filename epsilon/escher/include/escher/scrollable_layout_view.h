@@ -1,5 +1,4 @@
-#ifndef ESCHER_SCROLLABLE_LAYOUT_VIEW_H
-#define ESCHER_SCROLLABLE_LAYOUT_VIEW_H
+#pragma once
 
 #include <escher/glyphs_view.h>
 #include <escher/layout_view.h>
@@ -40,4 +39,3 @@ class ScrollableLayoutView : public ScrollableView<ScrollView::ArrowDecorator>,
 };
 
 }  // namespace Escher
-#endif

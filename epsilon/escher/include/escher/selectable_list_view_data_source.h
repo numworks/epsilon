@@ -1,5 +1,4 @@
-#ifndef ESCHER_SELECTABLE_LIST_VIEW_DATA_SOURCE_H
-#define ESCHER_SELECTABLE_LIST_VIEW_DATA_SOURCE_H
+#pragma once
 
 #include <escher/selectable_table_view_data_source.h>
 
@@ -16,4 +15,3 @@ class SelectableListViewDataSource : public SelectableTableViewDataSource {
 };
 
 }  // namespace Escher
-#endif

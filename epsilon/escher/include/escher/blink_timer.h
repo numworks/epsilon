@@ -1,5 +1,4 @@
-#ifndef ESCHER_BLINK_TIMER_H
-#define ESCHER_BLINK_TIMER_H
+#pragma once
 
 #include <escher/text_cursor_view.h>
 #include <escher/timer.h>
@@ -25,5 +24,3 @@ class BlinkTimer : public Timer {
 };
 
 }  // namespace Escher
-
-#endif

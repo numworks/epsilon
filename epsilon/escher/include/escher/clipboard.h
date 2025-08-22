@@ -1,5 +1,4 @@
-#ifndef ESCHER_CLIPBOARD_H
-#define ESCHER_CLIPBOARD_H
+#pragma once
 
 #include <escher/text_field.h>
 #include <poincare/layout.h>
@@ -40,5 +39,3 @@ class Clipboard {
 };
 
 }  // namespace Escher
-
-#endif

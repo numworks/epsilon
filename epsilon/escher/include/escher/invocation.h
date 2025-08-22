@@ -1,5 +1,4 @@
-#ifndef ESCHER_INVOCATION_H
-#define ESCHER_INVOCATION_H
+#pragma once
 
 namespace Escher {
 
@@ -26,5 +25,3 @@ class Invocation {
 };
 
 }  // namespace Escher
-
-#endif

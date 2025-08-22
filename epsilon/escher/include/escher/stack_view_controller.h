@@ -1,5 +1,4 @@
-#ifndef ESCHER_STACK_VIEW_CONTROLLER_H
-#define ESCHER_STACK_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/palette.h>
 #include <escher/stack_view.h>
@@ -125,4 +124,3 @@ class CustomSizeStackViewController : public StackViewController {
 };
 
 }  // namespace Escher
-#endif

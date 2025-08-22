@@ -1,5 +1,4 @@
-#ifndef ESCHER_WINDOW_H
-#define ESCHER_WINDOW_H
+#pragma once
 
 #include <escher/view.h>
 
@@ -23,5 +22,3 @@ class Window : public View {
 };
 
 }  // namespace Escher
-
-#endif

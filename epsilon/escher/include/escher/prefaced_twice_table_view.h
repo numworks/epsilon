@@ -1,5 +1,4 @@
-#ifndef ESCHER_PREFACED_TWICE_TABLE_VIEW_H
-#define ESCHER_PREFACED_TWICE_TABLE_VIEW_H
+#pragma once
 
 #include <escher/prefaced_table_view.h>
 
@@ -45,5 +44,3 @@ class PrefacedTwiceTableView : public PrefacedTableView {
 };
 
 }  // namespace Escher
-
-#endif

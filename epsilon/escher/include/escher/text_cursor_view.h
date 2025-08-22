@@ -1,5 +1,4 @@
-#ifndef ESCHER_TEXT_CURSOR_VIEW_H
-#define ESCHER_TEXT_CURSOR_VIEW_H
+#pragma once
 
 #include <escher/responder.h>
 #include <escher/view.h>
@@ -71,4 +70,3 @@ class TextCursorView : public View {
 };
 
 }  // namespace Escher
-#endif

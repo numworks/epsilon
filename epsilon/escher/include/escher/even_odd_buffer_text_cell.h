@@ -1,5 +1,4 @@
-#ifndef ESCHER_EVEN_ODD_BUFFER_TEXT_CELL_H
-#define ESCHER_EVEN_ODD_BUFFER_TEXT_CELL_H
+#pragma once
 
 #include <escher/buffer_text_view.h>
 #include <escher/even_odd_cell.h>
@@ -61,5 +60,3 @@ using SmallFontEvenOddBufferTextCell =
     EvenOddBufferTextCell<OneLineBufferTextView<KDFont::Size::Small>>;
 
 }  // namespace Escher
-
-#endif

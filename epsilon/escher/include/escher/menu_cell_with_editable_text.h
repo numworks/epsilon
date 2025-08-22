@@ -1,5 +1,4 @@
-#ifndef ESCHER_MENU_CELL_WITH_EDITABLE_TEXT_H
-#define ESCHER_MENU_CELL_WITH_EDITABLE_TEXT_H
+#pragma once
 
 #include <escher/chained_text_field_delegate.h>
 #include <escher/container.h>
@@ -95,5 +94,3 @@ class MenuCellWithEditableText
 };
 
 }  // namespace Escher
-
-#endif

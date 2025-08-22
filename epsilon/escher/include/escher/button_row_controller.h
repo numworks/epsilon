@@ -1,5 +1,4 @@
-#ifndef BUTTON_ROW_CONTROLLER_H
-#define BUTTON_ROW_CONTROLLER_H
+#pragma once
 
 #include <assert.h>
 #include <escher/button_cell.h>
@@ -101,5 +100,3 @@ class ButtonRowDelegate {
 };
 
 }  // namespace Escher
-
-#endif

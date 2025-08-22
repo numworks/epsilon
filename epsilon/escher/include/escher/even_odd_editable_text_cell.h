@@ -1,5 +1,4 @@
-#ifndef ESCHER_EVEN_ODD_EDITABLE_TEXT_CELL_H
-#define ESCHER_EVEN_ODD_EDITABLE_TEXT_CELL_H
+#pragma once
 
 #include <escher/editable_text_cell.h>
 #include <escher/even_odd_cell.h>
@@ -48,5 +47,3 @@ class EvenOddEditableTextCell : public AbstractEvenOddEditableTextCell {
 };
 
 }  // namespace Escher
-
-#endif

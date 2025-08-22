@@ -1,5 +1,4 @@
-#ifndef ESCHER_EVEN_ODD_MESSAGE_TEXT_CELL_H
-#define ESCHER_EVEN_ODD_MESSAGE_TEXT_CELL_H
+#pragma once
 
 #include <escher/even_odd_cell.h>
 #include <escher/i18n.h>
@@ -29,5 +28,3 @@ class EvenOddMessageTextCell : public EvenOddCell {
 };
 
 }  // namespace Escher
-
-#endif

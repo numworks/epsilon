@@ -1,5 +1,4 @@
-#ifndef ESCHER_ARBITRARY_SHAPED_VIEW_H
-#define ESCHER_ARBITRARY_SHAPED_VIEW_H
+#pragma once
 
 #include <escher/view.h>
 
@@ -24,4 +23,3 @@ class ArbitraryShapedView : public View {
 };
 
 }  // namespace Escher
-#endif

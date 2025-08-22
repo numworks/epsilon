@@ -1,5 +1,4 @@
-#ifndef ESCHER_POP_UP_CONTROLLER_H
-#define ESCHER_POP_UP_CONTROLLER_H
+#pragma once
 
 #include <escher/buffer_text_view.h>
 #include <escher/button_cell.h>
@@ -99,5 +98,3 @@ class BufferPopUpController : public PopUpController {
 };
 
 }  // namespace Escher
-
-#endif

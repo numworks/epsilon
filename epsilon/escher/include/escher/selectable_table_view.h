@@ -1,5 +1,4 @@
-#ifndef ESCHER_SELECTABLE_TABLE_VIEW_H
-#define ESCHER_SELECTABLE_TABLE_VIEW_H
+#pragma once
 
 #include <escher/palette.h>
 #include <escher/responder.h>
@@ -88,4 +87,3 @@ class SelectableTableView : public TableView, public Responder {
 };
 
 }  // namespace Escher
-#endif

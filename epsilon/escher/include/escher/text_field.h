@@ -1,5 +1,4 @@
-#ifndef ESCHER_TEXT_FIELD_H
-#define ESCHER_TEXT_FIELD_H
+#pragma once
 
 #include "abstract_text_field.h"
 
@@ -21,5 +20,3 @@ class TextField : public AbstractTextField {
 };
 
 }  // namespace Escher
-
-#endif

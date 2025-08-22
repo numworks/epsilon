@@ -1,5 +1,4 @@
-#ifndef ESCHER_SELECTABLE_LIST_VIEW_CONTROLLER_H
-#define ESCHER_SELECTABLE_LIST_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/explicit_list_view_data_source.h>
 #include <escher/highlight_cell.h>
@@ -76,5 +75,3 @@ class UniformSelectableListController
 };
 
 }  // namespace Escher
-
-#endif

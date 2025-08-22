@@ -1,5 +1,4 @@
-#ifndef ESCHER_EDITABLE_TEXT_CELL_H
-#define ESCHER_EDITABLE_TEXT_CELL_H
+#pragma once
 
 #include <escher/highlight_cell.h>
 #include <escher/metric.h>
@@ -55,5 +54,3 @@ class EditableTextCell : public AbstractEditableTextCell {
 };
 
 }  // namespace Escher
-
-#endif

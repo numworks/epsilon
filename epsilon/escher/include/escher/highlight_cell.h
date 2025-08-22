@@ -1,5 +1,4 @@
-#ifndef ESCHER_HIGHLIGHT_CELL_H
-#define ESCHER_HIGHLIGHT_CELL_H
+#pragma once
 
 #include <escher/palette.h>
 #include <escher/responder.h>
@@ -47,5 +46,3 @@ class HighlightCell : public View {
 };
 
 }  // namespace Escher
-
-#endif

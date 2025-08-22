@@ -1,5 +1,4 @@
-#ifndef ESCHER_ALTERNATE_VIEW_CONTROLLER_H
-#define ESCHER_ALTERNATE_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/i18n.h>
 #include <escher/responder.h>
@@ -45,4 +44,3 @@ class AlternateViewController : public ViewController {
 };
 
 }  // namespace Escher
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_TOGGLEABLE_VIEW_H
-#define ESCHER_TOGGLEABLE_VIEW_H
+#pragma once
 
 #include <escher/view.h>
 
@@ -16,4 +15,3 @@ class ToggleableView : public View {
 };
 
 }  // namespace Escher
-#endif

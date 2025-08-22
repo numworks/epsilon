@@ -1,5 +1,4 @@
-#ifndef ESCHER_SELECTABLE_LIST_VIEW_H
-#define ESCHER_SELECTABLE_LIST_VIEW_H
+#pragma once
 
 #include <escher/list_view_data_source.h>
 #include <escher/selectable_list_view_data_source.h>
@@ -51,4 +50,3 @@ class SelectableListView : public SelectableTableView {
 };
 
 }  // namespace Escher
-#endif

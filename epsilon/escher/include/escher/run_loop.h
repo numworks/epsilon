@@ -1,5 +1,4 @@
-#ifndef ESCHER_RUN_LOOP_H
-#define ESCHER_RUN_LOOP_H
+#pragma once
 
 #include <escher/timer.h>
 #include <ion.h>
@@ -28,4 +27,3 @@ class RunLoop {
 };
 
 }  // namespace Escher
-#endif

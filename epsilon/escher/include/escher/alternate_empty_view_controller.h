@@ -1,5 +1,4 @@
-#ifndef ESCHER_ALTERNATE_EMPTY_VIEW_CONTROLLER_H
-#define ESCHER_ALTERNATE_EMPTY_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/i18n.h>
@@ -48,4 +47,3 @@ class AlternateEmptyViewController : public ViewController {
 };
 
 }  // namespace Escher
-#endif

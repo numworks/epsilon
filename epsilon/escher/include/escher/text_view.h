@@ -1,5 +1,4 @@
-#ifndef ESCHER_TEXT_VIEW_H
-#define ESCHER_TEXT_VIEW_H
+#pragma once
 
 #include <escher/glyphs_view.h>
 
@@ -26,4 +25,3 @@ class TextView : public GlyphsView {
 };
 
 }  // namespace Escher
-#endif

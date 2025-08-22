@@ -1,5 +1,4 @@
-#ifndef ESCHER_PALETTE_H
-#define ESCHER_PALETTE_H
+#pragma once
 
 #include <kandinsky/color.h>
 #include <stddef.h>
@@ -58,4 +57,3 @@ class Palette {
 };
 
 }  // namespace Escher
-#endif

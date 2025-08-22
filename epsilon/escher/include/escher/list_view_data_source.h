@@ -1,5 +1,4 @@
-#ifndef ESCHER_LIST_VIEW_DATA_SOURCE_H
-#define ESCHER_LIST_VIEW_DATA_SOURCE_H
+#pragma once
 
 #include <escher/highlight_cell.h>
 #include <escher/table_view.h>
@@ -101,5 +100,3 @@ class SimpleListViewDataSource : public RegularListViewDataSource {
 };
 
 }  // namespace Escher
-
-#endif

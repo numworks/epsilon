@@ -1,5 +1,4 @@
-#ifndef ESCHER_SELECTABLE_LIST_VIEW_DELEGATE_H
-#define ESCHER_SELECTABLE_LIST_VIEW_DELEGATE_H
+#pragma once
 
 #include <escher/selectable_table_view_delegate.h>
 
@@ -20,4 +19,3 @@ class SelectableListViewDelegate : public SelectableTableViewDelegate {
 };
 
 }  // namespace Escher
-#endif

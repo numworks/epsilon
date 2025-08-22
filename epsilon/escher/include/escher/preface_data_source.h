@@ -1,5 +1,4 @@
-#ifndef ESCHER_PREFACE_DATA_SOURCE_H
-#define ESCHER_PREFACE_DATA_SOURCE_H
+#pragma once
 
 #include <escher/selectable_table_view.h>
 
@@ -137,5 +136,3 @@ class IntersectionPrefaceDataSource : public RowPrefaceDataSource {
 };
 
 }  // namespace Escher
-
-#endif

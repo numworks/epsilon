@@ -1,5 +1,4 @@
-#ifndef ESCHER_SELECTABLE_TABLE_VIEW_DELEGATE_H
-#define ESCHER_SELECTABLE_TABLE_VIEW_DELEGATE_H
+#pragma once
 
 #include <escher/context_provider.h>
 
@@ -23,4 +22,3 @@ class SelectableTableViewDelegate : public ContextProvider {
 };
 
 }  // namespace Escher
-#endif

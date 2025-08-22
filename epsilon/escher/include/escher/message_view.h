@@ -1,5 +1,4 @@
-#ifndef ESCHER_MESSAGE_VIEW_H
-#define ESCHER_MESSAGE_VIEW_H
+#pragma once
 
 #include <escher/message_text_view.h>
 #include <omg/vector.h>
@@ -25,4 +24,3 @@ class MessageView : public View {
 };
 
 }  // namespace Escher
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_INPUT_VIEW_CONTROLLER_H
-#define ESCHER_INPUT_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/expression_input_bar.h>
 #include <escher/invocation.h>
@@ -63,5 +62,3 @@ class InputViewController : public ModalViewController, LayoutFieldDelegate {
 };
 
 }  // namespace Escher
-
-#endif

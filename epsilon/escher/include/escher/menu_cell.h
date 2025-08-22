@@ -1,5 +1,4 @@
-#ifndef ESCHER_MENU_CELL_H
-#define ESCHER_MENU_CELL_H
+#pragma once
 
 #include <escher/bordered.h>
 #include <escher/cell_widget.h>
@@ -215,4 +214,3 @@ class MenuCell : public AbstractMenuCell {
 };
 
 }  // namespace Escher
-#endif

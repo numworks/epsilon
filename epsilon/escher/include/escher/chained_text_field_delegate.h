@@ -1,5 +1,4 @@
-#ifndef ESCHER_CHAINED_TEXT_FIELD_DELEGATE_H
-#define ESCHER_CHAINED_TEXT_FIELD_DELEGATE_H
+#pragma once
 
 #include <escher/text_field_delegate.h>
 
@@ -33,5 +32,3 @@ class ChainedTextFieldDelegate : public TextFieldDelegate {
 };
 
 }  // namespace Escher
-
-#endif

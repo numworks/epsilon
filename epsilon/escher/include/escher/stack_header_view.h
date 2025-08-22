@@ -1,5 +1,4 @@
-#ifndef ESCHER_STACK_HEADER_VIEW_H
-#define ESCHER_STACK_HEADER_VIEW_H
+#pragma once
 
 #include <escher/bordered.h>
 #include <escher/view.h>
@@ -31,4 +30,3 @@ class StackHeaderView : public View, public Bordered {
 };
 
 }  // namespace Escher
-#endif

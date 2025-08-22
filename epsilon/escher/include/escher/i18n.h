@@ -1,5 +1,4 @@
-#ifndef ESCHER_I18N_H
-#define ESCHER_I18N_H
+#pragma once
 
 #include <stdint.h>
 
@@ -12,5 +11,3 @@ enum class Message : uint16_t;
 enum class Language : uint8_t;
 const char* translate(Message m);
 }  // namespace I18n
-
-#endif

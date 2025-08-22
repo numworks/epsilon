@@ -1,5 +1,4 @@
-#ifndef ESCHER_VIEW_CONTROLLER_H
-#define ESCHER_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/i18n.h>
 #include <ion/events.h>
@@ -75,4 +74,3 @@ class ViewController : public Responder {
 };
 
 }  // namespace Escher
-#endif

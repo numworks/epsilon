@@ -1,5 +1,4 @@
-#ifndef ESCHER_EMPTY_MODAL_VIEW_EMPTY_CONTROLLER_H
-#define ESCHER_EMPTY_MODAL_VIEW_EMPTY_CONTROLLER_H
+#pragma once
 
 #include <escher/bordered.h>
 #include <escher/layout_view.h>
@@ -45,4 +44,3 @@ class ModalViewEmptyController : public ViewController {
 };
 
 }  // namespace Escher
-#endif

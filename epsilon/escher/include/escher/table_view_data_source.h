@@ -1,5 +1,4 @@
-#ifndef ESCHER_TABLE_VIEW_DATA_SOURCE_H
-#define ESCHER_TABLE_VIEW_DATA_SOURCE_H
+#pragma once
 
 #include <escher/highlight_cell.h>
 #include <escher/metric.h>
@@ -94,4 +93,3 @@ class TableViewDataSource {
 };
 
 }  // namespace Escher
-#endif

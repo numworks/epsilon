@@ -1,5 +1,4 @@
-#ifndef ESCHER_TABLE_VIEW_H
-#define ESCHER_TABLE_VIEW_H
+#pragma once
 
 #include <escher/highlight_cell.h>
 #include <escher/palette.h>
@@ -169,4 +168,3 @@ class TableView : public ScrollView {
 };
 
 }  // namespace Escher
-#endif

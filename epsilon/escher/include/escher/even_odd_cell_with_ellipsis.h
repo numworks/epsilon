@@ -1,5 +1,4 @@
-#ifndef ESCHER_EVEN_ODD_CELL_WITH_ELLIPSIS_H
-#define ESCHER_EVEN_ODD_CELL_WITH_ELLIPSIS_H
+#pragma once
 
 #include <assert.h>
 #include <escher/ellipsis_view.h>
@@ -22,5 +21,3 @@ class EvenOddCellWithEllipsis : public EvenOddCell {
 };
 
 }  // namespace Escher
-
-#endif

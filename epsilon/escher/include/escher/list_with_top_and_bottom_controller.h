@@ -1,5 +1,4 @@
-#ifndef ESCHER_LIST_WITH_TOP_AND_BOTTOM_CONTROLLER_H
-#define ESCHER_LIST_WITH_TOP_AND_BOTTOM_CONTROLLER_H
+#pragma once
 
 #include <escher/selectable_list_view_controller.h>
 
@@ -116,5 +115,3 @@ class ListWithTopAndBottomController : public SelectableViewController,
 };
 
 }  // namespace Escher
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_SELECTABLE_TABLE_VIEW_DATA_SOURCE_H
-#define ESCHER_SELECTABLE_TABLE_VIEW_DATA_SOURCE_H
+#pragma once
 
 #include <escher/scroll_view_data_source.h>
 
@@ -23,4 +22,3 @@ class SelectableTableViewDataSource : public ScrollViewDataSource {
 };
 
 }  // namespace Escher
-#endif

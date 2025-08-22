@@ -1,5 +1,4 @@
-#ifndef ESCHER_ALTERNATE_EMPTY_NESTED_MENU_CONTROLLER_H
-#define ESCHER_ALTERNATE_EMPTY_NESTED_MENU_CONTROLLER_H
+#pragma once
 
 #include "modal_view_empty_controller.h"
 #include "nested_menu_controller.h"
@@ -25,5 +24,3 @@ class AlternateEmptyNestedMenuController : public NestedMenuController {
 };
 
 }  // namespace Escher
-
-#endif

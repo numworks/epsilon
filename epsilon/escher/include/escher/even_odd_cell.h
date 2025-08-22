@@ -1,5 +1,4 @@
-#ifndef ESCHER_EVEN_ODD_CELL_H
-#define ESCHER_EVEN_ODD_CELL_H
+#pragma once
 
 #include <escher/highlight_cell.h>
 #include <escher/metric.h>
@@ -27,5 +26,3 @@ class EvenOddCell : public HighlightCell {
 };
 
 }  // namespace Escher
-
-#endif

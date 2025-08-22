@@ -1,5 +1,4 @@
-#ifndef ESCHER_SUBAPP_CELL_H
-#define ESCHER_SUBAPP_CELL_H
+#pragma once
 
 #include <escher/bordered.h>
 #include <escher/chevron_view.h>
@@ -35,5 +34,3 @@ class SubappCell : public HighlightCell, public Bordered {
 };
 
 }  // namespace Escher
-
-#endif

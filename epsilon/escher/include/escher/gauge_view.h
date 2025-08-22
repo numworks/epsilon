@@ -1,5 +1,4 @@
-#ifndef ESCHER_GAUGE_VIEW_H
-#define ESCHER_GAUGE_VIEW_H
+#pragma once
 
 #include <escher/cell_widget.h>
 #include <escher/view.h>
@@ -37,5 +36,3 @@ class GaugeView : public View, public CellWidget {
 };
 
 }  // namespace Escher
-
-#endif

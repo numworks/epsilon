@@ -1,5 +1,4 @@
-#ifndef ESCHER_IMAGE_H
-#define ESCHER_IMAGE_H
+#pragma once
 
 #include <kandinsky/coordinate.h>
 
@@ -31,5 +30,3 @@ class Image {
 };
 
 }  // namespace Escher
-
-#endif

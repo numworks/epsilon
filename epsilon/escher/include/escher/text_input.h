@@ -1,5 +1,4 @@
-#ifndef ESCHER_TEXT_INPUT_H
-#define ESCHER_TEXT_INPUT_H
+#pragma once
 
 #include <assert.h>
 #include <escher/editable_field.h>
@@ -114,4 +113,3 @@ class TextInput : public EditableField {
 };
 
 }  // namespace Escher
-#endif

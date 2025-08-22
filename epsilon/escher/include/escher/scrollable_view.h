@@ -1,5 +1,4 @@
-#ifndef ESCHER_SCROLLABLE_VIEW_H
-#define ESCHER_SCROLLABLE_VIEW_H
+#pragma once
 
 #include <escher/palette.h>
 #include <escher/responder.h>
@@ -29,4 +28,3 @@ class ScrollableView : public AbstractScrollableView {
 };
 
 }  // namespace Escher
-#endif

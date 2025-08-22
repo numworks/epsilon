@@ -1,7 +1,7 @@
 #ifndef POINCARE_REGRESSION_NONE_REGRESSION_H
 #define POINCARE_REGRESSION_NONE_REGRESSION_H
 
-#include "regression.h"
+#include <poincare/statistics/regression.h>
 
 namespace Poincare::Internal {
 

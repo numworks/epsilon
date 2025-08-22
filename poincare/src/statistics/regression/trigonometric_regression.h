@@ -2,8 +2,7 @@
 #define POINCARE_REGRESSION_TRIGONOMETRIC_REGRESSION_H
 
 #include <poincare/preferences.h>
-
-#include "regression.h"
+#include <poincare/statistics/regression.h>
 
 namespace Poincare::Internal {
 

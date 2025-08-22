@@ -35,6 +35,7 @@ _sources_omg_test := $(addprefix test/, \
   ring_buffer.cpp \
   signaling_nan.cpp \
   store.cpp \
+  string.cpp \
   utf8_decoder.cpp \
   utf8_helper.cpp \
 )

@@ -62,6 +62,9 @@ class span {
     return *(data() + index);
   }
 
+  constexpr reference front() const { return *(begin()); }
+  constexpr reference back() const { return *(end() - 1); }
+
   constexpr std::span<element_type, std::dynamic_extent> first(
       size_type count) const {
     return std::span<element_type, std::dynamic_extent>(data(), data() + count);

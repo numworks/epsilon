@@ -1,5 +1,4 @@
-#ifndef SHARED_EXPRESSION_MODEL_LIST_CONTROLLER_H
-#define SHARED_EXPRESSION_MODEL_LIST_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/editable_expression_model_cell.h>
@@ -115,5 +114,3 @@ class ExpressionModelListController
 };
 
 }  // namespace Shared
-
-#endif

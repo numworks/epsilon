@@ -1,5 +1,4 @@
-#ifndef SHARED_FUNCTION_STORE_H
-#define SHARED_FUNCTION_STORE_H
+#pragma once
 
 #include <stdint.h>
 
@@ -48,5 +47,3 @@ class FunctionStore : public ExpressionModelStore {
 };
 
 }  // namespace Shared
-
-#endif

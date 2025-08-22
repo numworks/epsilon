@@ -1,5 +1,4 @@
-#ifndef SHARED_COLUMN_HELPER_H
-#define SHARED_COLUMN_HELPER_H
+#pragma once
 
 #include <escher/input_view_controller.h>
 #include <escher/selectable_table_view.h>
@@ -101,5 +100,3 @@ class StoreColumnHelper {
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_CURVE_SELECTION_CONTROLLER
-#define SHARED_CURVE_SELECTION_CONTROLLER
+#pragma once
 
 #include <escher/chevron_view.h>
 #include <escher/layout_view.h>
@@ -64,5 +63,3 @@ class CurveSelectionController
 };
 
 }  // namespace Shared
-
-#endif

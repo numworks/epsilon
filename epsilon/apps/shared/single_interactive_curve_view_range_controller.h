@@ -1,5 +1,4 @@
-#ifndef SHARED_SINGLE_INTERACTIVE_CURVE_VIEW_RANGE_CONTROLLER_H
-#define SHARED_SINGLE_INTERACTIVE_CURVE_VIEW_RANGE_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/single_range_controller.h>
 
@@ -83,5 +82,3 @@ class SingleInteractiveCurveViewRangeController
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_FLOAT_PARAMETER_CONTROLLER_H
-#define SHARED_FLOAT_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include "parameters_with_validation_controller.h"
 
@@ -38,5 +37,3 @@ class FloatParameterController : public ParametersWithValidationController {
 };
 
 }  // namespace Shared
-
-#endif

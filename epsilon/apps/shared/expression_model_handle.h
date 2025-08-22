@@ -1,5 +1,4 @@
-#ifndef SHARED_EXPRESSION_MODEL_HANDLE_H
-#define SHARED_EXPRESSION_MODEL_HANDLE_H
+#pragma once
 
 #include "expression_model.h"
 
@@ -62,5 +61,3 @@ class ExpressionModelHandle : public Ion::Storage::Record {
 };
 
 }  // namespace Shared
-
-#endif

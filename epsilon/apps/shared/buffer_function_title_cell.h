@@ -1,5 +1,4 @@
-#ifndef SHARED_BUFFER_FUNCTION_TITLE_CELL_H
-#define SHARED_BUFFER_FUNCTION_TITLE_CELL_H
+#pragma once
 
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_message_text_cell.h>
@@ -38,5 +37,3 @@ class BufferFunctionTitleCell : public FunctionTitleCell {
 };
 
 }  // namespace Shared
-
-#endif

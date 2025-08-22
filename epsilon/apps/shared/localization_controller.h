@@ -1,5 +1,4 @@
-#ifndef LOCALIZATION_CONTROLLER_H
-#define LOCALIZATION_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/container.h>
@@ -100,5 +99,3 @@ class LocalizationController
 };
 
 }  // namespace Shared
-
-#endif

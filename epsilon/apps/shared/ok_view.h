@@ -1,5 +1,4 @@
-#ifndef SHARED_OK_VIEW_H
-#define SHARED_OK_VIEW_H
+#pragma once
 
 #include <escher/arbitrary_shaped_view.h>
 
@@ -13,5 +12,3 @@ class OkView : public Escher::ArbitraryShapedView {
 };
 
 }  // namespace Shared
-
-#endif

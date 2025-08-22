@@ -1,5 +1,4 @@
-#ifndef SHARED_PARAMETER_TEXT_FIELD_DELEGATE_H
-#define SHARED_PARAMETER_TEXT_FIELD_DELEGATE_H
+#pragma once
 
 #include "math_field_delegate.h"
 
@@ -15,5 +14,3 @@ class ParameterTextFieldDelegate : public MathTextFieldDelegate {
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_ROUND_CURSOR_VIEW_H
-#define SHARED_ROUND_CURSOR_VIEW_H
+#pragma once
 
 #include "dots.h"
 #include "memoized_cursor_view.h"
@@ -50,5 +49,3 @@ class ToggleableRingRoundCursorView : public AbstractRoundCursorView {
 };
 
 }  // namespace Shared
-
-#endif

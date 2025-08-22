@@ -1,5 +1,4 @@
-#ifndef SHARED_MEMOIZED_CURVE_VIEW_RANGE_H
-#define SHARED_MEMOIZED_CURVE_VIEW_RANGE_H
+#pragma once
 
 #include <poincare/range.h>
 
@@ -88,5 +87,3 @@ class MemoizedCurveViewRange : public CurveViewRange {
 };
 
 }  // namespace Shared
-
-#endif

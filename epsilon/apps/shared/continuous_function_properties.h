@@ -1,5 +1,4 @@
-#ifndef SHARED_CONTINUOUS_FUNCTION_PROPERTIES_H
-#define SHARED_CONTINUOUS_FUNCTION_PROPERTIES_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <omg/bit_helper.h>
@@ -307,5 +306,3 @@ class ContinuousFunctionProperties {
 };
 
 }  // namespace Shared
-
-#endif

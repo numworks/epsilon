@@ -1,5 +1,4 @@
-#ifndef SHARED_COLOR_PARAMETER_CONTROLLER_H
-#define SHARED_COLOR_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <escher/selectable_list_view_controller.h>
 
@@ -55,5 +54,3 @@ class ColorParameterController : public Escher::SelectableListViewController<
 };
 
 }  // namespace Shared
-
-#endif

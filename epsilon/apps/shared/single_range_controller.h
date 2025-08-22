@@ -1,5 +1,4 @@
-#ifndef SHARED_SINGLE_RANGE_CONTROLLER_H
-#define SHARED_SINGLE_RANGE_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/menu_cell_with_editable_text.h>
@@ -99,5 +98,3 @@ using SingleRangeControllerExactExpressions =
     SingleRangeController<ExpressionParameterController>;
 
 }  // namespace Shared
-
-#endif

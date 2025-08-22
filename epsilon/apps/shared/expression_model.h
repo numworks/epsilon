@@ -1,5 +1,4 @@
-#ifndef SHARED_EXPRESSION_MODEL_H
-#define SHARED_EXPRESSION_MODEL_H
+#pragma once
 
 #include <ion/storage/record.h>
 #include <poincare/context.h>
@@ -82,5 +81,3 @@ class ExpressionModel {
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef PLOT_VIEW_BANNERS_H
-#define PLOT_VIEW_BANNERS_H
+#pragma once
 
 #include "plot_view.h"
 
@@ -25,5 +24,3 @@ class WithBanner {
 
 }  // namespace PlotPolicy
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_APP_H
-#define SHARED_APP_H
+#pragma once
 
 #include <escher/app.h>
 #include <escher/nested_menu_controller.h>
@@ -21,4 +20,3 @@ class SharedApp : public Escher::App {
 };
 
 }  // namespace Shared
-#endif

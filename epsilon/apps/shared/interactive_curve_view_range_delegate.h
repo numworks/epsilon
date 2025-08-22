@@ -1,5 +1,4 @@
-#ifndef SHARED_INTERACTIVE_CURVE_VIEW_DELEGATE_H
-#define SHARED_INTERACTIVE_CURVE_VIEW_DELEGATE_H
+#pragma once
 
 #include <apps/global_preferences.h>
 #include <assert.h>
@@ -41,5 +40,3 @@ class InteractiveCurveViewRangeDelegate {
 };
 
 }  // namespace Shared
-
-#endif

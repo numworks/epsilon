@@ -1,5 +1,4 @@
-#ifndef SHARED_INTERVAL_PARAM_CONTROLLER_H
-#define SHARED_INTERVAL_PARAM_CONTROLLER_H
+#pragma once
 
 #include <assert.h>
 #include <escher/menu_cell_with_editable_text.h>
@@ -47,5 +46,3 @@ class IntervalParameterController : public FloatParameterController<double> {
 };
 
 }  // namespace Shared
-
-#endif

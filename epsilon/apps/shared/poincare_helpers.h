@@ -1,5 +1,4 @@
-#ifndef SHARED_POINCARE_HELPERS_H
-#define SHARED_POINCARE_HELPERS_H
+#pragma once
 
 #include <apps/global_preferences.h>
 #include <poincare/context.h>
@@ -214,5 +213,3 @@ FloatType ToFloat(Poincare::ExpressionOrFloat value) {
 }  // namespace PoincareHelpers
 
 }  // namespace Shared
-
-#endif

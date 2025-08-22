@@ -1,5 +1,4 @@
-#ifndef SHARED_EXPLICIT_FLOAT_PARAMETER_CONTROLLER
-#define SHARED_EXPLICIT_FLOAT_PARAMETER_CONTROLLER
+#pragma once
 
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
@@ -42,5 +41,3 @@ class ExplicitFloatParameterController
 };
 
 }  // namespace Shared
-
-#endif

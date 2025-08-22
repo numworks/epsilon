@@ -1,5 +1,4 @@
-#ifndef SHARED_STATISTICAL_DISTRIBUTION_H
-#define SHARED_STATISTICAL_DISTRIBUTION_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <poincare/layout.h>
@@ -69,5 +68,3 @@ class StatisticalDistribution : public MemoizedCurveViewRange {
 };
 
 }  // namespace Shared
-
-#endif

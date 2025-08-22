@@ -1,5 +1,4 @@
-#ifndef SHARED_STORE_PARAM_CONTROLLER_H
-#define SHARED_STORE_PARAM_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
@@ -47,5 +46,3 @@ class StoreParameterController : public ColumnParameterController {
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_RANGE_PARAMETER_CONTROLLER_H
-#define SHARED_RANGE_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <escher/buffer_text_view.h>
 #include <escher/button_cell.h>
@@ -67,5 +66,3 @@ class RangeParameterController
 };
 
 }  // namespace Shared
-
-#endif

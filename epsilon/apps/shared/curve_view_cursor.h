@@ -1,5 +1,4 @@
-#ifndef SHARED_CURVE_VIEW_CURSOR_H
-#define SHARED_CURVE_VIEW_CURSOR_H
+#pragma once
 
 namespace Shared {
 
@@ -22,5 +21,3 @@ class CurveViewCursor {
 };
 
 }  // namespace Shared
-
-#endif

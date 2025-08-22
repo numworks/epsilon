@@ -1,5 +1,4 @@
-#ifndef SHARED_RECORD_RESTRICTIVE_EXTENSIONS_HELPER_H
-#define SHARED_RECORD_RESTRICTIVE_EXTENSIONS_HELPER_H
+#pragma once
 
 #include <ion/storage/file_system.h>
 
@@ -39,5 +38,3 @@ void registerRestrictiveExtensionsToSharedStorage() {
 }  // namespace RecordRestrictiveExtensions
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_MATH_APP_H
-#define SHARED_MATH_APP_H
+#pragma once
 
 #include "app_with_store_menu.h"
 #include "math_toolbox_controller.h"
@@ -25,4 +24,3 @@ class MathApp : public AppWithStoreMenu {
 };
 
 }  // namespace Shared
-#endif

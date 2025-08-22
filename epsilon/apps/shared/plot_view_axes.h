@@ -1,5 +1,4 @@
-#ifndef SHARED_PLOT_VIEW_AXES_H
-#define SHARED_PLOT_VIEW_AXES_H
+#pragma once
 
 #include <poincare/print_float.h>
 
@@ -209,5 +208,3 @@ typedef Axes<WithCartesianGrid, HorizontalLabeledAxis, VerticalLabeledAxis>
 
 }  // namespace PlotPolicy
 }  // namespace Shared
-
-#endif

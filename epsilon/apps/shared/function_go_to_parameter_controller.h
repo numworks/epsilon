@@ -1,5 +1,4 @@
-#ifndef SHARED_FUNCTION_GO_TO_PARAMETER_CONTROLLER_H
-#define SHARED_FUNCTION_GO_TO_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include "go_to_parameter_controller.h"
 #include "interactive_curve_view_controller.h"
@@ -33,5 +32,3 @@ class FunctionGoToParameterController : public GoToParameterController {
 };
 
 }  // namespace Shared
-
-#endif

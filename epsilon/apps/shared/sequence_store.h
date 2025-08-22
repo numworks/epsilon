@@ -1,5 +1,4 @@
-#ifndef APPS_SHARED_SEQUENCE_STORE_H
-#define APPS_SHARED_SEQUENCE_STORE_H
+#pragma once
 
 #include <omg/string.h>
 #include <poincare/helpers/sequence.h>
@@ -72,5 +71,3 @@ class SequenceStore : public FunctionStore {
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_FUNCTION_BANNER_DELEGATE_H
-#define SHARED_FUNCTION_BANNER_DELEGATE_H
+#pragma once
 
 #include <apps/global_preferences.h>
 #include <poincare/preferences.h>
@@ -49,5 +48,3 @@ class FunctionBannerDelegate {
 };
 
 }  // namespace Shared
-
-#endif

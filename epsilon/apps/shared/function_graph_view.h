@@ -1,5 +1,4 @@
-#ifndef SHARED_FUNCTION_GRAPH_VIEW_H
-#define SHARED_FUNCTION_GRAPH_VIEW_H
+#pragma once
 
 #include <apps/constant.h>
 
@@ -70,5 +69,3 @@ class FunctionGraphView
 };
 
 }  // namespace Shared
-
-#endif

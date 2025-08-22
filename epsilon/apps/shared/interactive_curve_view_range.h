@@ -1,5 +1,4 @@
-#ifndef SHARED_INTERACTIVE_CURVE_VIEW_RANGE_H
-#define SHARED_INTERACTIVE_CURVE_VIEW_RANGE_H
+#pragma once
 
 #include <float.h>
 #include <ion/display.h>
@@ -170,5 +169,3 @@ typedef float (InteractiveCurveViewRange::*ParameterGetterPointer)() const;
 typedef void (InteractiveCurveViewRange::*RangeMethodPointer)();
 
 }  // namespace Shared
-
-#endif

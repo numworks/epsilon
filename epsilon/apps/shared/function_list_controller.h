@@ -1,5 +1,4 @@
-#ifndef SHARED_FUNCTION_LIST_CONTROLLER_H
-#define SHARED_FUNCTION_LIST_CONTROLLER_H
+#pragma once
 
 #include <escher/button_row_controller.h>
 #include <escher/highlight_cell.h>
@@ -60,5 +59,3 @@ class FunctionListController : public ExpressionModelListController,
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_CURSOR_VIEW_H
-#define SHARED_CURSOR_VIEW_H
+#pragma once
 
 #include <escher/view.h>
 
@@ -22,5 +21,3 @@ class CursorView : public Escher::View {
 };
 
 }  // namespace Shared
-
-#endif

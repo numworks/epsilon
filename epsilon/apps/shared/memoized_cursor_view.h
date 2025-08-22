@@ -1,5 +1,4 @@
-#ifndef SHARED_MEMOIZED_CURSOR_VIEW_H
-#define SHARED_MEMOIZED_CURSOR_VIEW_H
+#pragma once
 
 #include <escher/palette.h>
 
@@ -32,5 +31,3 @@ class MemoizedCursorView : public CursorView {
 };
 
 }  // namespace Shared
-
-#endif

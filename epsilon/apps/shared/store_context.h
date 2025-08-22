@@ -1,5 +1,4 @@
-#ifndef SHARED_STORE_CONTEXT_H
-#define SHARED_STORE_CONTEXT_H
+#pragma once
 
 #include <poincare/context_with_parent.h>
 
@@ -25,5 +24,3 @@ class StoreContext : public Poincare::ContextWithParent {
 };
 
 }  // namespace Shared
-
-#endif

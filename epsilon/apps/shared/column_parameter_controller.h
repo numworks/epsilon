@@ -1,5 +1,4 @@
-#ifndef SHARED_COLUMN_PARAMETER_CONTROLLER_H
-#define SHARED_COLUMN_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
@@ -39,5 +38,3 @@ class ColumnParameterController
 };
 
 }  // namespace Shared
-
-#endif

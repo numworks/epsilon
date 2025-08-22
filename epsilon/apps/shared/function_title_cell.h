@@ -1,5 +1,4 @@
-#ifndef SHARED_FUNCTION_TITLE_CELL_H
-#define SHARED_FUNCTION_TITLE_CELL_H
+#pragma once
 
 #include <escher/even_odd_cell.h>
 #include <escher/metric.h>
@@ -26,5 +25,3 @@ class FunctionTitleCell : public Escher::EvenOddCell {
 };
 
 }  // namespace Shared
-
-#endif

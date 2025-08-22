@@ -1,5 +1,4 @@
-#ifndef SHARED_DOTS_H
-#define SHARED_DOTS_H
+#pragma once
 
 #include <assert.h>
 #include <kandinsky/coordinate.h>
@@ -98,5 +97,3 @@ constexpr KDCoordinate Diameter(Size size, bool ring) {
 
 }  // namespace Dots
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_ZOOM_AND_PAN_CURVE_VIEW_CONTROLLER_H
-#define SHARED_ZOOM_AND_PAN_CURVE_VIEW_CONTROLLER_H
+#pragma once
 
 #include "poincare_helpers.h"
 #include "zoom_curve_view_controller.h"
@@ -28,5 +27,3 @@ class ZoomAndPanCurveViewController : public ZoomCurveViewController {
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_PLOT_VIEW_PLOTS_H
-#define SHARED_PLOT_VIEW_PLOTS_H
+#pragma once
 
 #include <poincare/coordinate_2D.h>
 
@@ -180,5 +179,3 @@ class WithHistogram {
 
 }  // namespace PlotPolicy
 }  // namespace Shared
-
-#endif

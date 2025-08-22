@@ -1,5 +1,4 @@
-#ifndef SHARED_PARAMETERS_WITH_VALIDATION_CONTROLLER_H
-#define SHARED_PARAMETERS_WITH_VALIDATION_CONTROLLER_H
+#pragma once
 
 #include <escher/button_cell.h>
 #include <escher/list_with_top_and_bottom_controller.h>
@@ -55,5 +54,3 @@ class ParametersWithValidationController
 };
 
 }  // namespace Shared
-
-#endif

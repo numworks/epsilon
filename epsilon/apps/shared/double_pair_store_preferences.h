@@ -1,5 +1,4 @@
-#ifndef SHARED_DOUBLE_PAIR_STORE_PREFERENCES_H
-#define SHARED_DOUBLE_PAIR_STORE_PREFERENCES_H
+#pragma once
 
 #include <array>
 
@@ -30,5 +29,3 @@ class DoublePairStorePreferences {
 };
 
 }  // namespace Shared
-
-#endif

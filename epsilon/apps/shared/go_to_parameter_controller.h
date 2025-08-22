@@ -1,5 +1,4 @@
-#ifndef SHARED_GO_TO_PARAMETER_CONTROLLER_H
-#define SHARED_GO_TO_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <escher/menu_cell_with_editable_text.h>
 
@@ -47,5 +46,3 @@ class GoToParameterController : public FloatParameterController<double> {
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_PLOT_VIEW_H
-#define SHARED_PLOT_VIEW_H
+#pragma once
 
 #include <omg/enums.h>
 #include <poincare/coordinate_2D.h>
@@ -231,5 +230,3 @@ class PlotView : public AbstractPlotView,
 };
 
 }  // namespace Shared
-
-#endif

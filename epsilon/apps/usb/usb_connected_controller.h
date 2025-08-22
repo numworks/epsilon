@@ -1,5 +1,4 @@
-#ifndef USB_USB_CONNECTED_CONTROLLER_H
-#define USB_USB_CONNECTED_CONTROLLER_H
+#pragma once
 
 #include <escher/message_view.h>
 #include <escher/view_controller.h>
@@ -17,5 +16,3 @@ class USBConnectedController : public Escher::ViewController {
 };
 
 }  // namespace USB
-
-#endif

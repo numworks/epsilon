@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_MULTIPLICATION_SYMBOL_H
-#define POINCARE_LAYOUT_MULTIPLICATION_SYMBOL_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -10,5 +9,3 @@ namespace Poincare::Internal {
 CodePoint MultiplicationSymbol(const Tree* mult, bool linearMode);
 
 }  // namespace Poincare::Internal
-
-#endif

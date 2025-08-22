@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_K_TREE_H
-#define POINCARE_MEMORY_K_TREE_H
+#pragma once
 
 #include <omg/concept.h>
 #include <omg/print.h>
@@ -302,5 +301,3 @@ constexpr auto KArbitrary =
 }  // namespace KTrees
 
 }  // namespace Poincare::Internal
-
-#endif

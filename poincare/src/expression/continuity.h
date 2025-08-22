@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_CONTINUITY_H
-#define POINCARE_EXPRESSION_CONTINUITY_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -48,4 +47,3 @@ class Continuity {
 };
 
 }  // namespace Poincare::Internal
-#endif

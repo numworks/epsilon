@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_PARSING_TOKENIZER_H
-#define POINCARE_LAYOUT_PARSING_TOKENIZER_H
+#pragma once
 
 /* In order to parse a text input into an Expression, (an instance of) the
  * Tokenizer reads the successive characters of the input, pops the Tokens it
@@ -148,5 +147,3 @@ class Tokenizer {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

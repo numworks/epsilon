@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_POINT_OF_INTEREST_H
-#define POINCARE_EXPRESSION_POINT_OF_INTEREST_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -48,5 +47,3 @@ class PointOfInterest final {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

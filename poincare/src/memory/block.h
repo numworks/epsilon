@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_BLOCK_H
-#define POINCARE_MEMORY_BLOCK_H
+#pragma once
 
 #if POINCARE_TREE_LOG
 #include <ostream>
@@ -49,5 +48,3 @@ class Block {
 static_assert(sizeof(Block) == 1);
 
 }  // namespace Poincare::Internal
-
-#endif

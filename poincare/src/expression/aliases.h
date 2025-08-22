@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_ALIASES_H
-#define POINCARE_EXPRESSION_ALIASES_H
+#pragma once
 
 #include <assert.h>
 #include <omg/utf8_decoder.h>
@@ -99,4 +98,3 @@ class Aliases {
 };
 
 }  // namespace Poincare::Internal
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_PLACEHOLDER_H
-#define POINCARE_MEMORY_PLACEHOLDER_H
+#pragma once
 
 #include <omg/bit_helper.h>
 
@@ -63,5 +62,3 @@ class Placeholder {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

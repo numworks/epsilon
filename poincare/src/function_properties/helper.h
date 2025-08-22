@@ -1,5 +1,4 @@
-#ifndef POINCARE_FUNCTION_PROPERTIES_HELPER_H
-#define POINCARE_FUNCTION_PROPERTIES_HELPER_H
+#pragma once
 
 #include <poincare/expression.h>
 
@@ -13,5 +12,3 @@ bool DetectLinearPatternOfTrig(const Tree* e, const char* symbol, double* a,
                                double* b, double* c, bool acceptConstantTerm);
 
 }  // namespace Poincare::Internal
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_TREE_H
-#define POINCARE_MEMORY_TREE_H
+#pragma once
 
 #include <omg/memory.h>
 #include <string.h>
@@ -452,5 +451,3 @@ void SwapTreesPointers(Tree** u, Tree** v);
 int NumberOfNextTreeTo(const Tree* from, const Tree* to);
 
 }  // namespace Poincare::Internal
-
-#endif

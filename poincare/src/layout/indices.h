@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_INDICES_H
-#define POINCARE_LAYOUT_INDICES_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -87,5 +86,3 @@ constexpr static int k_secondInitialConditionIndex = 5;
 }  // namespace SequenceLayout
 
 }  // namespace Poincare::Internal
-
-#endif

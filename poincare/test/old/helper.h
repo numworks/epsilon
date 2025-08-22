@@ -1,5 +1,4 @@
-#ifndef POINCARE_TEST_HELPER_H
-#define POINCARE_TEST_HELPER_H
+#pragma once
 
 #include <omg/enums.h>
 #include <omg/float.h>
@@ -136,5 +135,3 @@ void assert_expression_simplifies_approximates_to(
     Poincare::ComplexFormat complexFormat = Cartesian,
     int numberOfSignificantDigits =
         Poincare::PrintFloat::SignificantDecimalDigits<T>());
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_POOL_POOL_LAYOUT_CURSOR_H
-#define POINCARE_POOL_POOL_LAYOUT_CURSOR_H
+#pragma once
 
 #include <poincare/context.h>
 #include <poincare/layout.h>
@@ -81,5 +80,3 @@ class PoolLayoutCursor final : public LayoutCursor,
 };
 
 }  // namespace Poincare::Internal
-
-#endif

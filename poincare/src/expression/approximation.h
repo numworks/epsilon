@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_APPROXIMATION_H
-#define POINCARE_EXPRESSION_APPROXIMATION_H
+#pragma once
 
 #include <omg/signaling_nan.h>
 #include <poincare/context.h>
@@ -327,5 +326,3 @@ std::complex<T> MakeResultRealIfInputIsReal(std::complex<T> result,
 }  // namespace Approximation
 
 }  // namespace Poincare::Internal
-
-#endif

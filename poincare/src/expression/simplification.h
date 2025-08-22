@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_SIMPLIFICATION_H
-#define POINCARE_EXPRESSION_SIMPLIFICATION_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -24,5 +23,3 @@ bool ReduceSystem(Tree* e, bool advanced,
 }  // namespace Simplification
 
 }  // namespace Poincare::Internal
-
-#endif

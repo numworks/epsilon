@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_GRID_H
-#define POINCARE_LAYOUT_GRID_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -100,4 +99,3 @@ class Grid : public Layout {
 };
 
 }  // namespace Poincare::Internal
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_ORDER_H
-#define POINCARE_EXPRESSION_ORDER_H
+#pragma once
 
 #include <poincare/src/memory/tree_ref.h>
 
@@ -59,5 +58,3 @@ class Order {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

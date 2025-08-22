@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_VARIABLES_H
-#define POINCARE_EXPRESSION_VARIABLES_H
+#pragma once
 
 #include <poincare/context.h>
 #include <poincare/sign.h>
@@ -97,4 +96,3 @@ uint8_t GetScopeOf(const Tree* tree, const Tree* root);
 };  // namespace Variables
 
 }  // namespace Poincare::Internal
-#endif

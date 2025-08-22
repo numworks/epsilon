@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_SEQUENCE_H
-#define POINCARE_EXPRESSION_SEQUENCE_H
+#pragma once
 
 #include <poincare/context.h>
 #include <poincare/src/memory/tree.h>
@@ -27,4 +26,3 @@ class Sequence {
 };
 
 }  // namespace Poincare::Internal
-#endif

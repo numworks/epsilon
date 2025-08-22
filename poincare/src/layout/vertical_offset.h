@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_VERTICAL_OFFSET_H
-#define POINCARE_LAYOUT_VERTICAL_OFFSET_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -32,5 +31,3 @@ inline bool IsSuffixSuperscript(const Tree* l) {
 }  // namespace VerticalOffset
 
 }  // namespace Poincare::Internal
-
-#endif

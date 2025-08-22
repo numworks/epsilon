@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_VISUALIZATION_H
-#define POINCARE_MEMORY_VISUALIZATION_H
+#pragma once
 
 #include <limits.h>
 
@@ -14,5 +13,3 @@ void Log(const char* event, const void* blockAddress = nullptr,
 #endif
 
 }  // namespace Poincare::Internal
-
-#endif

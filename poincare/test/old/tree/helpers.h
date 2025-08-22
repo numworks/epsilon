@@ -1,3 +1,5 @@
+#pragma once
+
 int pool_size();
 void assert_pool_size(int i);
 

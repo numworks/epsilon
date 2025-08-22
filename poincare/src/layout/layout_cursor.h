@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_LAYOUT_CURSOR_H
-#define POINCARE_LAYOUT_LAYOUT_CURSOR_H
+#pragma once
 
 #include <omg/directions.h>
 #include <omg/unreachable.h>
@@ -304,5 +303,3 @@ class RootedTreeStackCursor : public TreeStackCursor {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

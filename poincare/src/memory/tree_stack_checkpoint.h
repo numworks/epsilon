@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_TREE_STACK_CHECKPOINT_H
-#define POINCARE_MEMORY_TREE_STACK_CHECKPOINT_H
+#pragma once
 
 #include <assert.h>
 #include <poincare/src/memory/tree_stack.h>
@@ -93,5 +92,3 @@ class TreeStackCheckpoint final {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_REGRESSION_AFFINE_REGRESSION_H
-#define POINCARE_REGRESSION_AFFINE_REGRESSION_H
+#pragma once
 
 #include <poincare/statistics/regression.h>
 
@@ -28,5 +27,3 @@ class AffineRegression : public Regression {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

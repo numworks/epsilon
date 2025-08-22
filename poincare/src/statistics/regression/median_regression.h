@@ -1,5 +1,4 @@
-#ifndef POINCARE_REGRESSION_MEDIAN_REGRESSION_H
-#define POINCARE_REGRESSION_MEDIAN_REGRESSION_H
+#pragma once
 
 #include "affine_regression.h"
 
@@ -17,5 +16,3 @@ class MedianRegression : public AffineRegression {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

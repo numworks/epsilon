@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_PROJECTION_H
-#define POINCARE_EXPRESSION_PROJECTION_H
+#pragma once
 
 #include <poincare/context.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -63,5 +62,3 @@ class Projection {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

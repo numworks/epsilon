@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_INDEXED_CHILD_H
-#define POINCARE_MEMORY_INDEXED_CHILD_H
+#pragma once
 
 #include <assert.h>
 #include <stdint.h>
@@ -42,4 +41,3 @@ struct IndexedChild<const Tree*> : public _IndexedChildBase<const Tree*> {
 };
 
 }  // namespace Poincare::Internal
-#endif

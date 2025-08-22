@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_LAYOUT_SPAN_H
-#define POINCARE_LAYOUT_LAYOUT_SPAN_H
+#pragma once
 
 #include <omg/code_point.h>
 
@@ -21,4 +20,3 @@ size_t CodePointSearch(LayoutSpan span, CodePoint c);
 bool HasCodePoint(LayoutSpan span, CodePoint c);
 
 }  // namespace Poincare::Internal
-#endif

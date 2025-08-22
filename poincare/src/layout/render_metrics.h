@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_RENDER_METRICS_H
-#define POINCARE_LAYOUT_RENDER_METRICS_H
+#pragma once
 
 #include <kandinsky/coordinate.h>
 #include <omg/unreachable.h>
@@ -727,5 +726,3 @@ namespace GridWithCurlyBraces {
 constexpr KDCoordinate k_horizontalMargin = CurlyBraces::k_curlyBraceWidth;
 }  // namespace GridWithCurlyBraces
 }  // namespace Poincare::Internal
-
-#endif

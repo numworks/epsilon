@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_UNITS_REPRESENTATIVES_H
-#define POINCARE_EXPRESSION_UNITS_REPRESENTATIVES_H
+#pragma once
 
 #include "unit.h"
 
@@ -524,4 +523,3 @@ constexpr static const Representative* k_representativesWithoutLeftMargin[] =
 
 }  // namespace Units
 }  // namespace Poincare::Internal
-#endif

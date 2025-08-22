@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_DIMENSION_TYPE_H
-#define POINCARE_EXPRESSION_DIMENSION_TYPE_H
+#pragma once
 
 #include <stdint.h>
 
@@ -25,5 +24,3 @@ struct UnitDimension {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

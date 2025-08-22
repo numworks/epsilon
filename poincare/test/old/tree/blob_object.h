@@ -1,5 +1,4 @@
-#ifndef POINCARE_TEST_BLOB_OBJECT_H
-#define POINCARE_TEST_BLOB_OBJECT_H
+#pragma once
 
 #include <poincare/pool_handle.h>
 #include <poincare/pool_object.h>
@@ -36,5 +35,3 @@ class BlobByReference : public PoolHandle {
 };
 
 }  // namespace Poincare
-
-#endif

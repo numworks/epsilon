@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_POWER_LIKE_H
-#define POINCARE_EXPRESSION_POWER_LIKE_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -36,5 +35,3 @@ class PowerLike {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_SYMBOL_H
-#define POINCARE_EXPRESSION_SYMBOL_H
+#pragma once
 
 #include <poincare/context.h>
 #include <poincare/helpers/symbol.h>
@@ -39,5 +38,3 @@ bool InvolvesCircularity(const Tree* e, const Poincare::Context& context);
 };  // namespace Symbol
 
 }  // namespace Poincare::Internal
-
-#endif

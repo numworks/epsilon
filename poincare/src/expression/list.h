@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_LIST_H
-#define POINCARE_EXPRESSION_LIST_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -32,5 +31,3 @@ struct List {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

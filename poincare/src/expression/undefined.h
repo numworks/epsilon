@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_UNDEFINED_H
-#define POINCARE_EXPRESSION_UNDEFINED_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -32,5 +31,3 @@ class Undefined {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

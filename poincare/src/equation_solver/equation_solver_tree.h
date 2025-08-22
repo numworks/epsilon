@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_EQUATION_SOLVER_H
-#define POINCARE_EXPRESSION_EQUATION_SOLVER_H
+#pragma once
 
 #include <poincare/equation_solver/equation_solver_properties.h>
 #include <poincare/src/expression/projection.h>
@@ -98,5 +97,3 @@ class EquationSolver {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

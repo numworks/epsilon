@@ -1,5 +1,4 @@
-#ifndef POINCARE_SRC_SOLVER_ROOTS_H
-#define POINCARE_SRC_SOLVER_ROOTS_H
+#pragma once
 
 #include <poincare/k_tree.h>
 #include <poincare/src/memory/tree.h>
@@ -136,5 +135,3 @@ class Roots {
 };
 
 }  // namespace Poincare::Internal
-//
-#endif

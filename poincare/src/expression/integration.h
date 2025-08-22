@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_INTEGRATION_H
-#define POINCARE_EXPRESSION_INTEGRATION_H
+#pragma once
 
 #include <poincare/src/memory/tree_ref.h>
 
@@ -11,5 +10,3 @@ class Integration {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_SERIALIZER_H
-#define POINCARE_LAYOUT_SERIALIZER_H
+#pragma once
 
 #include <span>
 
@@ -29,5 +28,3 @@ class LayoutSerializer {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

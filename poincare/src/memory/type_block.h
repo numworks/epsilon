@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_TYPE_BLOCK_H
-#define POINCARE_MEMORY_TYPE_BLOCK_H
+#pragma once
 
 #include <omg/code_point.h>
 #include <omg/unaligned.h>
@@ -300,5 +299,3 @@ class TypeBlock : public Block {
 static_assert(sizeof(TypeBlock) == sizeof(Block));
 
 }  // namespace Poincare::Internal
-
-#endif

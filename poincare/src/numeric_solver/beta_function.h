@@ -1,5 +1,4 @@
-#ifndef POINCARE_SOLVER_BETA_FUNCTION_H
-#define POINCARE_SOLVER_BETA_FUNCTION_H
+#pragma once
 
 /*
  * zlib License
@@ -32,5 +31,3 @@ namespace Poincare::Internal {
 double BetaFunction(double a, double b);
 
 }
-
-#endif

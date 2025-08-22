@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_DEGREE_H
-#define POINCARE_EXPRESSION_DEGREE_H
+#pragma once
 
 #include <limits.h>
 #include <poincare/src/memory/tree.h>
@@ -30,5 +29,3 @@ class Degree {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

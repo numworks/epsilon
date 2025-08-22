@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_PARSING_HELPER_H
-#define POINCARE_LAYOUT_PARSING_HELPER_H
+#pragma once
 
 #include "../layout_span_decoder.h"
 #include "token.h"
@@ -29,4 +28,3 @@ class ParsingHelper {
 };
 
 }  // namespace Poincare::Internal
-#endif

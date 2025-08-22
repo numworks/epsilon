@@ -1,5 +1,4 @@
-#ifndef POINCARE_STATISTICS_INFERENCE_INFERENCE_H
-#define POINCARE_STATISTICS_INFERENCE_INFERENCE_H
+#pragma once
 
 // Link to the public API
 
@@ -152,5 +151,3 @@ double TwoMeansStandardError(StatisticType statisticType,
 };  // namespace Inference
 
 }  // namespace Poincare::Internal
-
-#endif

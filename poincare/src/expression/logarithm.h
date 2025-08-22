@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_LOGARITHM_H
-#define POINCARE_EXPRESSION_LOGARITHM_H
+#pragma once
 
 #include <poincare/src/memory/tree_ref.h>
 
@@ -21,5 +20,3 @@ class Logarithm final {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

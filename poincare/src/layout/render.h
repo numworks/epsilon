@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_RENDER_H
-#define POINCARE_LAYOUT_RENDER_H
+#pragma once
 
 #include <kandinsky/context.h>
 #include <kandinsky/coordinate.h>
@@ -94,5 +93,3 @@ class Render {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

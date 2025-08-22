@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_POLYNOMIAL_H
-#define POINCARE_EXPRESSION_POLYNOMIAL_H
+#pragma once
 
 #include <poincare/src/memory/tree_ref.h>
 
@@ -147,7 +146,6 @@ private:
 
 }  // namespace Poincare::Internal
 
-#endif
 /*
 algebraic_reduction
 --> rationalize

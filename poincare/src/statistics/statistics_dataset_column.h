@@ -1,5 +1,4 @@
-#ifndef POINCARE_STATISTICS_STATISTICS_DATASET_COLUMN_H
-#define POINCARE_STATISTICS_STATISTICS_DATASET_COLUMN_H
+#pragma once
 
 #include <poincare/statistics/dataset_column.h>
 
@@ -33,5 +32,3 @@ class TreeDatasetColumn : public DatasetColumn<T> {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

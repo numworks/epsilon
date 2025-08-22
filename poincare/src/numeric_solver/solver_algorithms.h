@@ -1,5 +1,4 @@
-#ifndef POINCARE_SOLVER_SOLVER_ALGORITHMS_H
-#define POINCARE_SOLVER_SOLVER_ALGORITHMS_H
+#pragma once
 
 #include <omg/float.h>
 #include <poincare/coordinate_2D.h>
@@ -52,5 +51,3 @@ class SolverAlgorithms {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

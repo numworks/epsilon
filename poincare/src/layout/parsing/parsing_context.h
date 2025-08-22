@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_PARSING_CONTEXT_H
-#define POINCARE_LAYOUT_PARSING_CONTEXT_H
+#pragma once
 
 #include <poincare/context.h>
 #include <poincare/helpers/parser.h>
@@ -39,5 +38,3 @@ struct ParsingContext {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

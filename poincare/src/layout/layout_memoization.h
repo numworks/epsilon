@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_MEMOIZATION_H
-#define POINCARE_LAYOUT_MEMOIZATION_H
+#pragma once
 
 #include <kandinsky/font.h>
 
@@ -52,5 +51,3 @@ class LayoutMemoization {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

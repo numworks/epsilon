@@ -1,5 +1,4 @@
-#ifndef POINCARE_REGRESSION_QUARTIC_REGRESSION_H
-#define POINCARE_REGRESSION_QUARTIC_REGRESSION_H
+#pragma once
 
 #include <poincare/statistics/regression.h>
 
@@ -21,5 +20,3 @@ class QuarticRegression : public Regression {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

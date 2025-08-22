@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_NUMBER_H
-#define POINCARE_EXPRESSION_NUMBER_H
+#pragma once
 
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -28,5 +27,3 @@ class Number {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

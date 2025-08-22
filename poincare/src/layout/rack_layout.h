@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_RACK_LAYOUT_H
-#define POINCARE_LAYOUT_RACK_LAYOUT_H
+#pragma once
 
 #include <kandinsky/context.h>
 #include <poincare/layout_style.h>
@@ -48,5 +47,3 @@ class RackLayout {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

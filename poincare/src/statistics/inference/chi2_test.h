@@ -1,5 +1,4 @@
-#ifndef POINCARE_STATISTICS_INFERENCE_CHI2_TEST_H
-#define POINCARE_STATISTICS_INFERENCE_CHI2_TEST_H
+#pragma once
 
 #include <poincare/statistics/data_table.h>
 
@@ -38,5 +37,3 @@ double ComputeCriticalValue(const DataTable* contributions);
 }  // namespace Chi2
 
 }  // namespace Poincare::Internal::Inference::SignificanceTest
-
-#endif

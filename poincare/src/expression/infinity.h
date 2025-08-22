@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_INFINITY_H
-#define POINCARE_EXPRESSION_INFINITY_H
+#pragma once
 
 #include <stdint.h>
 
@@ -14,5 +13,3 @@ class Infinity {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

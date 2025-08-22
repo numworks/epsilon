@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_BEAUTIFICATION_H
-#define POINCARE_EXPRESSION_BEAUTIFICATION_H
+#pragma once
 
 #include <poincare/src/memory/tree_ref.h>
 
@@ -21,5 +20,3 @@ Tree* PushBeautifiedComplex(std::complex<T> value, ComplexFormat complexFormat);
 }  // namespace Beautification
 
 }  // namespace Poincare::Internal
-
-#endif

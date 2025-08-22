@@ -1,5 +1,4 @@
-#ifndef POINCARE_TEST_PAIR_OBJECT_H
-#define POINCARE_TEST_PAIR_OBJECT_H
+#pragma once
 
 #include <poincare/pool_handle.h>
 #include <poincare/pool_object.h>
@@ -32,5 +31,3 @@ class PairByReference : public PoolHandle {
 };
 
 }  // namespace Poincare
-
-#endif

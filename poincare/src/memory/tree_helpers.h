@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_TREE_HELPERS_H
-#define POINCARE_MEMORY_TREE_HELPERS_H
+#pragma once
 
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/memory/type_block.h>
@@ -24,5 +23,3 @@ inline void removeMarker(TreeRef& marker) {
 }
 
 }  // namespace Poincare::Internal
-
-#endif

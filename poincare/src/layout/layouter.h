@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUTER_H
-#define POINCARE_LAYOUTER_H
+#pragma once
 
 #include <omg/enums.h>
 #include <poincare/print_float.h>
@@ -84,5 +83,3 @@ class Layouter {
   OMG::Base m_base;
 };
 }  // namespace Poincare::Internal
-
-#endif

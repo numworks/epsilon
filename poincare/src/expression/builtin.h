@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_BUILTINS_H
-#define POINCARE_EXPRESSION_BUILTINS_H
+#pragma once
 
 #include <poincare/preferences.h>
 #include <poincare/src/layout/layout_span_decoder.h>
@@ -279,5 +278,3 @@ constexpr const BuiltinWithLayout* BuiltinWithLayout::GetReservedFunction(
 }
 
 }  // namespace Poincare::Internal
-
-#endif

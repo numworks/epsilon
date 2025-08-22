@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_ARBITRARY_DATA_H
-#define POINCARE_MEMORY_ARBITRARY_DATA_H
+#pragma once
 
 #include "tree.h"
 
@@ -45,5 +44,3 @@ class ArbitraryData {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

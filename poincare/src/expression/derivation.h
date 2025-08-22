@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_DERIVATION_H
-#define POINCARE_EXPRESSION_DERIVATION_H
+#pragma once
 
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -28,5 +27,3 @@ class Derivation {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

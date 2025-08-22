@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_DIMENSION_VECTOR_H
-#define POINCARE_EXPRESSION_DIMENSION_VECTOR_H
+#pragma once
 
 #include <assert.h>
 #include <stddef.h>
@@ -160,5 +159,3 @@ static_assert(SIVector::Empty().isEmpty());
 
 }  // namespace Units
 }  // namespace Poincare::Internal
-
-#endif

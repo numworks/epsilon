@@ -1,5 +1,4 @@
-#ifndef POINCARE_REGRESSION_EXPONENTIAL_REGRESSION_H
-#define POINCARE_REGRESSION_EXPONENTIAL_REGRESSION_H
+#pragma once
 
 #include "transformed_regression.h"
 
@@ -24,5 +23,3 @@ class ExponentialRegression : public TransformedRegression {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

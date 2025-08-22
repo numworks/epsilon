@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_ADVANCED_REDUCTION_H
-#define POINCARE_EXPRESSION_ADVANCED_REDUCTION_H
+#pragma once
 
 #include <poincare/src/expression/metric.h>
 #include <poincare/src/memory/tree.h>
@@ -249,5 +248,3 @@ class AdvancedReduction {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

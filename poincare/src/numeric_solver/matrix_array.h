@@ -1,5 +1,4 @@
-#ifndef POINCARE_SOLVER_MATRIX_ARRAY_H
-#define POINCARE_SOLVER_MATRIX_ARRAY_H
+#pragma once
 
 namespace Poincare::Internal {
 
@@ -27,5 +26,3 @@ class MatrixArray {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

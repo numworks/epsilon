@@ -110,31 +110,34 @@ bool SymbolStore::setExpressionForUserSymbol(const Tree* expression,
   return push(expression, symbolName, symbolType);
 }
 
-bool SymbolStore::setExpressionForUserFunction(
+bool SymbolStore::setExpressionForUserFunctionOrSequence(
     const Poincare::Internal::Tree* expression,
-    const Poincare::Internal::Tree* functionSymbol) {
-  const Tree* variableSymbol = functionSymbol->child(0);
+    const Poincare::Internal::Tree* functionalSymbol) {
+  assert(functionalSymbol->isUserFunction() ||
+         functionalSymbol->isUserSequence());
+  const Tree* variableSymbol = functionalSymbol->child(0);
   assert(variableSymbol->isUserSymbol());
   // Replace the user symbol with KUnknown in the expression
   Tree* storedTree = expression->cloneTree();
   Poincare::Internal::Variables::ReplaceSymbolWithTree(
       storedTree, variableSymbol, Poincare::Internal::KUnknownSymbol);
 
-  bool success = push(storedTree, SymbolNameFromTree(functionSymbol),
-                      UserNamedType::Function);
+  bool success =
+      push(storedTree, SymbolNameFromTree(functionalSymbol),
+           functionalSymbol->isUserFunction() ? UserNamedType::Function
+                                              : UserNamedType::Sequence);
   storedTree->removeTree();
   return success;
 }
 
 bool SymbolStore::setExpressionForUserNamed(const Tree* expression,
                                             const Tree* symbol) {
+  assert(symbol->isUserNamed());
   if (symbol->isUserSymbol()) {
     return setExpressionForUserSymbol(expression, SymbolNameFromTree(symbol));
   }
-  if (symbol->isUserFunction()) {
-    return setExpressionForUserFunction(expression, symbol);
-  }
-  return false;
+
+  return setExpressionForUserFunctionOrSequence(expression, symbol);
 }
 
 }  // namespace PoincareTest

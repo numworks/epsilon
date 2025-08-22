@@ -1,5 +1,4 @@
-#ifndef REGRESSION_BANNER_VIEW_H
-#define REGRESSION_BANNER_VIEW_H
+#pragma once
 
 #include <apps/shared/xy_banner_view.h>
 #include <escher/buffer_text_view.h>
@@ -35,5 +34,3 @@ class BannerView : public Shared::XYBannerView {
 };
 
 }  // namespace Regression
-
-#endif

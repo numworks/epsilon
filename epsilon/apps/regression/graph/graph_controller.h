@@ -1,5 +1,4 @@
-#ifndef REGRESSION_GRAPH_CONTROLLER_H
-#define REGRESSION_GRAPH_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/curve_view_cursor.h>
 #include <apps/shared/interactive_curve_view_controller.h>
@@ -168,5 +167,3 @@ class GraphController : public Shared::InteractiveCurveViewController {
 };
 
 }  // namespace Regression
-
-#endif

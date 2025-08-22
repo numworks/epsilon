@@ -1,5 +1,4 @@
-#ifndef REGRESSION_RESIDUAL_PLOT_BANNER_VIEW_H
-#define REGRESSION_RESIDUAL_PLOT_BANNER_VIEW_H
+#pragma once
 
 #include <apps/shared/banner_view.h>
 #include <escher/buffer_text_view.h>
@@ -32,5 +31,3 @@ class ResidualPlotBannerView : public Shared::BannerView {
 };
 
 }  // namespace Regression
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef REGRESSION_RESIDUAL_PLOT_CURVE_VIEW_H
-#define REGRESSION_RESIDUAL_PLOT_CURVE_VIEW_H
+#pragma once
 
 #include <apps/shared/plot_view_policies.h>
 
@@ -30,5 +29,3 @@ class ResidualPlotCurveView
 };
 
 }  // namespace Regression
-
-#endif

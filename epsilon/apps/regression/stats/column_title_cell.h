@@ -1,5 +1,4 @@
-#ifndef REGRESSION_COLUMN_TITLE_CELL_H
-#define REGRESSION_COLUMN_TITLE_CELL_H
+#pragma once
 
 #include "even_odd_double_buffer_text_cell.h"
 
@@ -23,5 +22,3 @@ class ColumnTitleCell : public EvenOddDoubleBufferTextCell {
 };
 
 }  // namespace Regression
-
-#endif

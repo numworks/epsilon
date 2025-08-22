@@ -1,5 +1,4 @@
-#ifndef REGRESSION_CALCULATION_CONTROLLER_H
-#define REGRESSION_CALCULATION_CONTROLLER_H
+#pragma once
 
 #include <apps/global_preferences.h>
 #include <apps/shared/double_pair_table_controller.h>
@@ -122,5 +121,3 @@ class CalculationController : public Shared::DoublePairTableController {
 };
 
 }  // namespace Regression
-
-#endif

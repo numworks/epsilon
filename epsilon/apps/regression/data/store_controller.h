@@ -1,5 +1,4 @@
-#ifndef REGRESSION_STORE_CONTROLLER_H
-#define REGRESSION_STORE_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/store_controller.h>
 
@@ -29,5 +28,3 @@ class StoreController : public Shared::StoreController {
 };
 
 }  // namespace Regression
-
-#endif

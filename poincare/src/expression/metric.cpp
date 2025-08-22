@@ -103,36 +103,42 @@ float GetBeautifiedPowerMetric(const PatternMatching::Context& ctx) {
   // Favor smaller bases
   childrenCoeff += ChildCoeffOffsetInLnOrRoot(base, true, true);
 
-  Tree* exponent = PatternMatching::Create(KMult(KA_s), ctx);
-  if (exponent->isHalf() || Rational::IsMinusHalf(exponent)) {
-    // exp(A*ln(B)) -> √(B)
-    result += GetTypeMetric(Type::Sqrt);
-    if (Rational::IsMinusHalf(exponent)) {
-      // exp(A*ln(B)) -> 1/√(B)
-      result += GetTypeMetric(Type::One) + GetTypeMetric(Type::Div);
-    }
-  } else if (exponent->isRational() &&
-             (Rational::Numerator(exponent).isOne() ||
-              Rational::Numerator(exponent).isMinusOne())) {
-    // exp(A*ln(B)) -> Root(B,A)
-    static_assert(GetTypeMetric(Type::IntegerPosShort) ==
-                  GetTypeMetric(Type::IntegerPosBig));
-    result += GetTypeMetric(Type::IntegerPosShort);
-    result += GetTypeMetric(Type::Root);
-    if (Rational::Numerator(exponent).isMinusOne()) {
-      // exp(A*ln(B)) -> 1/Root(B,A)
-      result += GetTypeMetric(Type::One) + GetTypeMetric(Type::Div);
-    }
-  } else {
-    // exp(A*ln(B)) -> B^A
-    result += GetTypeMetric(Type::Pow);
-    result += Metric::GetTrueMetric(exponent, ReductionTarget::User);
-    if (exponent->isRational()) {
+  if (ctx.getNumberOfTrees(KA) == 1 && ctx.getTree(KA)->isRational()) {
+    const Tree* exponent = ctx.getTree(KA);
+    if (exponent->isHalf() || Rational::IsMinusHalf(exponent)) {
+      // exp(A*ln(B)) -> √(B)
+      result += GetTypeMetric(Type::Sqrt);
+      if (Rational::IsMinusHalf(exponent)) {
+        // exp(A*ln(B)) -> 1/√(B)
+        result += GetTypeMetric(Type::One) + GetTypeMetric(Type::Div);
+      }
+    } else if ((Rational::Numerator(exponent).isOne() ||
+                Rational::Numerator(exponent).isMinusOne())) {
+      // exp(A*ln(B)) -> Root(B,A)
+      static_assert(GetTypeMetric(Type::IntegerPosShort) ==
+                    GetTypeMetric(Type::IntegerPosBig));
+      result += GetTypeMetric(Type::IntegerPosShort);
+      result += GetTypeMetric(Type::Root);
+      if (Rational::Numerator(exponent).isMinusOne()) {
+        // exp(A*ln(B)) -> 1/Root(B,A)
+        result += GetTypeMetric(Type::One) + GetTypeMetric(Type::Div);
+      }
+    } else {
+      // exp(A*ln(B)) -> B^A
+      result += GetTypeMetric(Type::Pow);
+      result += Metric::GetTrueMetric(exponent, ReductionTarget::User);
       /* Favor root forms over power of rationals(e.g. Root(4,3) over
        * 2^(2/3))  */
       childrenCoeff += 3 * k_defaultMetric;
     }
+  } else {
+    Tree* exponent = PatternMatching::Create(KMult(KA_s), ctx);
+    // exp(A*ln(B)) -> B^A
+    result += GetTypeMetric(Type::Pow);
+    result += Metric::GetTrueMetric(exponent, ReductionTarget::User);
+    exponent->removeTree();
   }
+
   if (base->isPow()) {
     // Favor 1/Root(A,B) over Root(1/A,B)
     childrenCoeff += 3 * k_defaultMetric;

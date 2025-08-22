@@ -1,5 +1,4 @@
-#ifndef CALCULATION_CALCULATION_H
-#define CALCULATION_CALCULATION_H
+#pragma once
 
 #include <apps/calculation/additional_results/additional_results_type.h>
 #include <apps/shared/poincare_helpers.h>
@@ -238,5 +237,3 @@ class Calculation {
 };
 
 }  // namespace Calculation
-
-#endif

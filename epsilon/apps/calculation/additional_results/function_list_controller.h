@@ -1,5 +1,4 @@
-#ifndef CALCULATION_FUNCTION_LIST_CONTROLLER_H
-#define CALCULATION_FUNCTION_LIST_CONTROLLER_H
+#pragma once
 
 #include <omg/code_point.h>
 #include <poincare/code_points.h>
@@ -34,5 +33,3 @@ class FunctionListController : public IllustratedExpressionsListController {
 };
 
 }  // namespace Calculation
-
-#endif

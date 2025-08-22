@@ -1,5 +1,4 @@
-#ifndef CALCULATION_ILLUSTRATED_EXPRESSIONS_LIST_CONTROLLER_H
-#define CALCULATION_ILLUSTRATED_EXPRESSIONS_LIST_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 
@@ -56,5 +55,3 @@ class IllustratedExpressionsListController
 };
 
 }  // namespace Calculation
-
-#endif

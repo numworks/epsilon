@@ -1,5 +1,4 @@
-#ifndef CALCULATION_SCROLLABLE_THREE_LAYOUTS_CELL_H
-#define CALCULATION_SCROLLABLE_THREE_LAYOUTS_CELL_H
+#pragma once
 
 #include <escher/menu_cell.h>
 #include <escher/scrollable_multiple_layouts_view.h>
@@ -80,5 +79,3 @@ class ScrollableThreeLayoutsView
 };
 
 }  // namespace Calculation
-
-#endif

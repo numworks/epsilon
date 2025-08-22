@@ -1,5 +1,4 @@
-#ifndef CALCULATION_TRIGONOMETRY_GRAPH_CELL_H
-#define CALCULATION_TRIGONOMETRY_GRAPH_CELL_H
+#pragma once
 
 #include <apps/shared/plot_view_policies.h>
 
@@ -47,5 +46,3 @@ class TrigonometryGraphCell : public IllustrationCell {
 };
 
 }  // namespace Calculation
-
-#endif

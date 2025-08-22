@@ -1,5 +1,4 @@
-#ifndef CALCULATION_TRIGONOMETRY_MODEL_H
-#define CALCULATION_TRIGONOMETRY_MODEL_H
+#pragma once
 
 #include <apps/shared/curve_view_range.h>
 #include <escher/metric.h>
@@ -58,5 +57,3 @@ class TrigonometryModel : public Shared::CurveViewRange {
 };
 
 }  // namespace Calculation
-
-#endif

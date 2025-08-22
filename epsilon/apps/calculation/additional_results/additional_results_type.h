@@ -1,5 +1,4 @@
-#ifndef CALCULATION_ADDITIONAL_RESULTS_TYPE_CONTROLLER_H
-#define CALCULATION_ADDITIONAL_RESULTS_TYPE_CONTROLLER_H
+#pragma once
 
 #include <poincare/context.h>
 #include <poincare/expression.h>
@@ -84,5 +83,3 @@ struct AdditionalResultsType {
 constexpr AdditionalResultsType NoAdditionalResult{.empty = true};
 
 }  // namespace Calculation
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef CALCULATION_TRIGONOMETRY_LIST_CONTROLLER_H
-#define CALCULATION_TRIGONOMETRY_LIST_CONTROLLER_H
+#pragma once
 
 #include "illustrated_expressions_list_controller.h"
 #include "trigonometry_graph_cell.h"
@@ -36,5 +35,3 @@ class TrigonometryListController : public IllustratedExpressionsListController {
 };
 
 }  // namespace Calculation
-
-#endif

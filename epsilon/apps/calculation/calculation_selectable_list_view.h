@@ -1,5 +1,4 @@
-#ifndef CALCULATION_SELECTABLE_LIST_VIEW_H
-#define CALCULATION_SELECTABLE_LIST_VIEW_H
+#pragma once
 
 #include <escher/container.h>
 #include <escher/selectable_list_view.h>
@@ -24,5 +23,3 @@ class CalculationSelectableListView : public Escher::SelectableListView {
 };
 
 }  // namespace Calculation
-
-#endif

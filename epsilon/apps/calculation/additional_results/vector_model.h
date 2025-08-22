@@ -1,5 +1,4 @@
-#ifndef CALCULATION_VECTOR_MODEL_H
-#define CALCULATION_VECTOR_MODEL_H
+#pragma once
 
 #include <apps/shared/memoized_curve_view_range.h>
 
@@ -39,5 +38,3 @@ class VectorModel : public Shared::MemoizedCurveViewRange {
 };
 
 }  // namespace Calculation
-
-#endif

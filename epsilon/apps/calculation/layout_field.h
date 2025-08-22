@@ -1,5 +1,4 @@
-#ifndef CALCULATION_LAYOUT_FIELD_H
-#define CALCULATION_LAYOUT_FIELD_H
+#pragma once
 
 #include <escher/expression_input_bar.h>
 #include <omg/troolean.h>
@@ -40,5 +39,3 @@ class LayoutField : public Escher::LayoutField {
 using ExpressionInputBar = Escher::TemplatedExpressionInputBar<LayoutField>;
 
 }  // namespace Calculation
-
-#endif

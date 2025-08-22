@@ -1,5 +1,4 @@
-#ifndef CALCULATION_INTEGER_LIST_CONTROLLER_H
-#define CALCULATION_INTEGER_LIST_CONTROLLER_H
+#pragma once
 
 #include "chainable_expressions_list_controller.h"
 
@@ -21,5 +20,3 @@ class IntegerListController : public ChainableExpressionsListController {
 };
 
 }  // namespace Calculation
-
-#endif

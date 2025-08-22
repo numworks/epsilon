@@ -1,5 +1,4 @@
-#ifndef CALCULATION_FUNCTION_GRAPH_CELL_H
-#define CALCULATION_FUNCTION_GRAPH_CELL_H
+#pragma once
 
 #include <apps/shared/plot_view_policies.h>
 #include <kandinsky/rect.h>
@@ -84,5 +83,3 @@ class FunctionGraphCell : public IllustrationCell {
 };
 
 }  // namespace Calculation
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef CALCULATION_ADDITIONAL_RESULTS_CONTROLLER_H
-#define CALCULATION_ADDITIONAL_RESULTS_CONTROLLER_H
+#pragma once
 
 #include "additional_results_type.h"
 #include "complex_list_controller.h"
@@ -67,5 +66,3 @@ class AdditionalResultsController {
 };
 
 }  // namespace Calculation
-
-#endif

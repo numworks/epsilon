@@ -1,5 +1,4 @@
-#ifndef CALCULATION_CALCULATION_STORE_H
-#define CALCULATION_CALCULATION_STORE_H
+#pragma once
 
 #include <apps/constant.h>
 #include <apps/global_preferences.h>
@@ -120,5 +119,3 @@ class CalculationStore
 };
 
 }  // namespace Calculation
-
-#endif

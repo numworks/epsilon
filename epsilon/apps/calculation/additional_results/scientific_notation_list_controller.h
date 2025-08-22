@@ -1,5 +1,4 @@
-#ifndef CALCULATION_SCIENTIFIC_NOTATION_LIST_CONTROLLER_H
-#define CALCULATION_SCIENTIFIC_NOTATION_LIST_CONTROLLER_H
+#pragma once
 
 #include "chained_expressions_list_controller.h"
 
@@ -22,5 +21,3 @@ class ScientificNotationListController
 };
 
 }  // namespace Calculation
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef CALCULATION_COMPLEX_MODEL_H
-#define CALCULATION_COMPLEX_MODEL_H
+#pragma once
 
 #include <apps/shared/curve_view_range.h>
 
@@ -77,5 +76,3 @@ class ComplexModel : public Shared::CurveViewRange, public std::complex<float> {
 };
 
 }  // namespace Calculation
-
-#endif

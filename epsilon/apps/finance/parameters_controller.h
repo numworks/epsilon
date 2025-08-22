@@ -1,5 +1,4 @@
-#ifndef FINANCE_PARAMETERS_CONTROLLER_H
-#define FINANCE_PARAMETERS_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/dropdown_widget.h>
@@ -73,5 +72,3 @@ class ParametersController : public Shared::FloatParameterController<double>,
 };
 
 }  // namespace Finance
-
-#endif

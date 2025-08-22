@@ -1,5 +1,4 @@
-#include <apps/shared/global_context.h>
-#include <ion/storage/file_system.h>
+#include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/function_properties/conic.h>
 #include <poincare/pool_variable_context.h>
@@ -7,6 +6,7 @@
 
 #include "helper.h"
 #include "omg/float.h"
+#include "quiz.h"
 
 using namespace Poincare;
 using namespace Poincare::Internal;
@@ -30,13 +30,11 @@ PolarConic buildPolarConic(const char* expression) {
 }
 
 ParametricConic buildParametricConic(const char* expression) {
-  Shared::GlobalContext globalContext;
   ProjectionContext projContext = {.m_complexFormat = ComplexFormat::Cartesian,
-                                   .m_context = globalContext,
                                    .m_advanceReduce = false};
   // Prevent t from being interpreted as ton
   Poincare::PoolVariableContext tContext(
-      "t", UserExpression::Builder<float>(0.f), &globalContext);
+      "t", UserExpression::Builder<float>(0.f), &k_emptyContext);
   Tree* e = parse(expression, tContext);
   Simplification::ProjectAndReduce(e, &projContext);
   return ParametricConic(SystemExpression::Builder(e));
@@ -149,7 +147,6 @@ QUIZ_CASE(pcj_conics_cartesian_invalid) {
   quiz_assert_undefined_cartesian("y^2+x^2");
   quiz_assert_undefined_cartesian("(y-x-1)(y-x+1)");
   quiz_assert_undefined_cartesian("y*(y-x)");
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a").destroy();
   quiz_assert_undefined_cartesian("y^2-x^2+a");
   quiz_assert_undefined_cartesian("x^2+y^2+x*y+x+y-5*10^70");
   quiz_assert_undefined_cartesian("x^2+y^2+2*x*y+x+y");

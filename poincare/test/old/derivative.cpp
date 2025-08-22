@@ -1,9 +1,8 @@
-#include <apps/shared/global_context.h>
-#include <ion/storage/file_system.h>
+#include <poincare/context.h>
 #include <poincare/expression.h>
+#include <poincare/test/helpers/symbol_store.h>
 
 #include "helper.h"
-#include "poincare/context.h"
 
 using namespace Poincare;
 
@@ -105,33 +104,28 @@ QUIZ_CASE(poincare_derivative_formal) {
 #endif
 
   {
-    Shared::GlobalContext context;
-    assert_reduce_and_store("2→a", context);
-    assert_reduce_and_store("-1→b", context);
-    assert_reduce_and_store("3→c", context);
-    assert_reduce_and_store("x/2→f(x)", context);
+    PoincareTest::SymbolStore symbolStore;
+    assert_reduce_and_store("2→a", symbolStore);
+    assert_reduce_and_store("-1→b", symbolStore);
+    assert_reduce_and_store("3→c", symbolStore);
+    assert_reduce_and_store("x/2→f(x)", symbolStore);
 
     assert_reduces_to_formal_expression("diff(a×x^2+b×x+c,x,x)", "4×x-1",
-                                        context);
-    assert_reduces_to_formal_expression("diff(f(x),x,x)", "1/2", context);
-    assert_reduces_to_formal_expression("diff(a^2,a,x)", "2×x", context);
-    assert_reduces_to_formal_expression("diff(a^2,a,a)", "4", context);
-    assert_reduces_to_formal_expression("diff(b^2,b,2)", "4", context, Radian,
-                                        Real);
+                                        symbolStore);
+    assert_reduces_to_formal_expression("diff(f(x),x,x)", "1/2", symbolStore);
+    assert_reduces_to_formal_expression("diff(a^2,a,x)", "2×x", symbolStore);
+    assert_reduces_to_formal_expression("diff(a^2,a,a)", "4", symbolStore);
+    assert_reduces_to_formal_expression("diff(b^2,b,2)", "4", symbolStore,
+                                        Radian, Real);
 
-    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
-    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("c.exp").destroy();
-    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+    symbolStore.reset();
 
     // On points
     assert_reduces_to_formal_expression("diff((sin(t),cos(t)),t,t)",
-                                        "(cos(t),-sin(t))", context);
-    assert_reduce_and_store("(3t,-2t^2)→f(t)", context);
-    assert_reduces_to_formal_expression("diff(f(t),t,t)", "(3,-4×t)", context);
-    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("fx.pc").destroy();
-    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("fy.pc").destroy();
-    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+                                        "(cos(t),-sin(t))", symbolStore);
+    assert_reduce_and_store("(3t,-2t^2)→f(t)", symbolStore);
+    assert_reduces_to_formal_expression("diff(f(t),t,t)", "(3,-4×t)",
+                                        symbolStore);
   }
 
   // On matrices
@@ -166,43 +160,40 @@ void assert_reduces_for_approximation(
 }
 
 QUIZ_CASE(poincare_derivative_reduced_approximation) {
-  Shared::GlobalContext context;
-  assert(Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp")
-             .isNull());
-  assert_reduces_for_approximation("diff(ln(x),x,1)", "1", context);
-  assert_reduces_for_approximation("diff(ln(x),x,2.2)", "5/11", context);
-  assert_reduces_for_approximation("diff(ln(x),x,0)", "undef", context);
-  assert_reduces_for_approximation("diff(ln(x),x,-3.1)", "undef", context);
-  assert_reduces_for_approximation("diff(log(x),x,-10)", "undef", context);
+  PoincareTest::SymbolStore symbolStore;
+  assert_reduces_for_approximation("diff(ln(x),x,1)", "1", symbolStore);
+  assert_reduces_for_approximation("diff(ln(x),x,2.2)", "5/11", symbolStore);
+  assert_reduces_for_approximation("diff(ln(x),x,0)", "undef", symbolStore);
+  assert_reduces_for_approximation("diff(ln(x),x,-3.1)", "undef", symbolStore);
+  assert_reduces_for_approximation("diff(log(x),x,-10)", "undef", symbolStore);
 
-  assert_reduces_for_approximation("diff(abs(x),x,123)", "1", context);
-  assert_reduces_for_approximation("diff(abs(x),x,-2.34)", "-1", context);
-  assert_reduces_for_approximation("diff(abs(x),x,0)", "undef", context);
+  assert_reduces_for_approximation("diff(abs(x),x,123)", "1", symbolStore);
+  assert_reduces_for_approximation("diff(abs(x),x,-2.34)", "-1", symbolStore);
+  assert_reduces_for_approximation("diff(abs(x),x,0)", "undef", symbolStore);
 
-  assert_reduces_for_approximation("diff(sign(x),x,123)", "0", context);
-  assert_reduces_for_approximation("diff(sign(x),x,-2.34)", "0", context);
-  assert_reduces_for_approximation("diff(sign(x),x,0)", "undef", context);
+  assert_reduces_for_approximation("diff(sign(x),x,123)", "0", symbolStore);
+  assert_reduces_for_approximation("diff(sign(x),x,-2.34)", "0", symbolStore);
+  assert_reduces_for_approximation("diff(sign(x),x,0)", "undef", symbolStore);
 
-  assert_reduces_for_approximation("diff(√(x),x,-1)", "undef", context, Radian,
-                                   Cartesian);
+  assert_reduces_for_approximation("diff(√(x),x,-1)", "undef", symbolStore,
+                                   Radian, Cartesian);
 
-  assert_reduces_for_approximation("diff(asin(x),x,1)", "undef", context);
-  assert_reduces_for_approximation("diff(asin(x),x,-1)", "undef", context);
-  assert_reduces_for_approximation("diff(acos(x),x,1)", "undef", context);
-  assert_reduces_for_approximation("diff(acos(x),x,-1)", "undef", context);
-  assert_reduces_for_approximation("diff(arccot(x),x,0)", "-1", context);
+  assert_reduces_for_approximation("diff(asin(x),x,1)", "undef", symbolStore);
+  assert_reduces_for_approximation("diff(asin(x),x,-1)", "undef", symbolStore);
+  assert_reduces_for_approximation("diff(acos(x),x,1)", "undef", symbolStore);
+  assert_reduces_for_approximation("diff(acos(x),x,-1)", "undef", symbolStore);
+  assert_reduces_for_approximation("diff(arccot(x),x,0)", "-1", symbolStore);
 
-  assert_reduces_for_approximation("diff(1/x,x,-2)", "-1/4", context);
-  assert_reduces_for_approximation("diff(x^3+5*x^2,x,0)", "0", context);
+  assert_reduces_for_approximation("diff(1/x,x,-2)", "-1/4", symbolStore);
+  assert_reduces_for_approximation("diff(x^3+5*x^2,x,0)", "0", symbolStore);
   assert_reduces_for_approximation("diff(5^(sin(x)),x,3)",
-                                   "cos(3)×ln(5)×5^sin(3)", context);
-  assert_reduces_for_approximation("diff((-1)^(4-2*2),x,3)", "0", context);
-  assert_reduce_and_store("0→a", context);
-  assert_reduces_for_approximation("diff((-1)^(a*x),x,3)", "0", context);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+                                   "cos(3)×ln(5)×5^sin(3)", symbolStore);
+  assert_reduces_for_approximation("diff((-1)^(4-2*2),x,3)", "0", symbolStore);
+  assert_reduce_and_store("0→a", symbolStore);
+  assert_reduces_for_approximation("diff((-1)^(a*x),x,3)", "0", symbolStore);
 
   // On points
   assert_reduces_to_formal_expression("diff((sin(t),cos(t)),t,π/6)",
-                                      "(√(3)/2,-1/2)", context);
-  assert_reduces_to_formal_expression("diff((1,2),t,1)", "(0,0)", context);
+                                      "(√(3)/2,-1/2)", symbolStore);
+  assert_reduces_to_formal_expression("diff((1,2),t,1)", "(0,0)", symbolStore);
 }

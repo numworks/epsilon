@@ -1,4 +1,3 @@
-#include <apps/shared/global_context.h>
 #include <poincare/context.h>
 #include <poincare/src/equation_solver/equation_solver_tree.h>
 #include <poincare/src/expression/list.h>
@@ -54,12 +53,8 @@ bool check_solutions(
 }
 
 QUIZ_CASE(pcj_equation_solver) {
-  Shared::GlobalContext globalContext;
-  assert(
-      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
-      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
-          "sys"));
-  ProjectionContext projCtx = {.m_context = globalContext};
+  PoincareTest::SymbolStore symbolStore;
+  ProjectionContext projCtx = {.m_context = symbolStore};
 
   check_solutions({"x-3+y", "y-x+1"}, {"2", "1"}, projCtx);
   check_solutions({"x+x"}, {"0"}, projCtx);
@@ -81,11 +76,11 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"a-b", "b-c", "c-d", "d-f", "f-g", "g-a", "a+b+c+d+f+g+1"},
                   {"-1/6", "-1/6", "-1/6", "-1/6", "-1/6", "-1/6"}, projCtx);
   // User variables
-  PoincareTest::store("2→a", globalContext);
+  PoincareTest::store("2→a", symbolStore);
   check_solutions({"a*x-2"}, {"1"}, projCtx);
   check_solutions({"a+x-2", "x"}, {"0"}, projCtx);
   check_solutions({"a+x-3", "x"}, {"3", "0"}, projCtx);
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+  symbolStore.reset();
   // Errors
   check_solutions({"x^2", "y"}, {}, projCtx,
                   EquationSolver::Error::NonLinearSystem);
@@ -111,16 +106,16 @@ QUIZ_CASE(pcj_equation_solver) {
 
   // Complex format detection
   projCtx.m_complexFormat = Poincare::ComplexFormat::Real;
-  PoincareTest::store("i→a", globalContext);
+  PoincareTest::store("i→a", symbolStore);
   check_solutions({"x-a", "x-a+y-root(-1,3)"}, {"i", "1/2+√(3)/2×i"}, projCtx);
   check_solutions({"x-a", "x-a+y-root(-1,3)", "a-1"}, {"1", "1", "-1"},
                   projCtx);
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+  symbolStore.reset();
   check_solutions({"x^2+1"}, {"-4"}, projCtx, EquationSolver::Error::NoError);
 
-  PoincareTest::store("x+1→f(x)", globalContext);
+  PoincareTest::store("x+1→f(x)", symbolStore);
   check_solutions({"f(a)+x", "f(x)"}, {"0", "-1"}, projCtx);
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+  symbolStore.reset();
 
   // Dependency
   check_solutions({"x-1", "x+y^2/y-1"}, {}, projCtx);

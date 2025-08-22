@@ -1,7 +1,7 @@
 #include <apps/global_preferences.h>
-#include <apps/shared/global_context.h>
 #include <float.h>
 #include <omg/float.h>
+#include <poincare/expression.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
@@ -654,20 +654,19 @@ QUIZ_CASE(pcj_approximation_list) {
   approximates_to<float>("sequence(k^2,k,4)", "{1,4,9,16}");
   approximates_to<double>("sequence(k/2,k,7)", "{0.5,1,1.5,2,2.5,3,3.5}");
 
-  Shared::GlobalContext globalContext;
-  PoincareTest::store("{1,2,3,4,5}→L", globalContext);
-  approximates_to<float>("L(1)", "1", {.m_context = globalContext});
-  approximates_to<float>("L(0)", "undef", {.m_context = globalContext});
-  approximates_to<float>("L(7)", "undef", {.m_context = globalContext});
-  approximates_to<double>("L(1)", "1", {.m_context = globalContext});
-  approximates_to<double>("L(0)", "undef", {.m_context = globalContext});
-  approximates_to<double>("L(7)", "undef", {.m_context = globalContext});
-  approximates_to<float>("L(1,3)", "{1,2,3}", {.m_context = globalContext});
-  approximates_to<float>("L(1,9)", "{1,2,3,4,5}", {.m_context = globalContext});
-  approximates_to<float>("L(-5,3)", "undef", {.m_context = globalContext});
-  approximates_to<float>("L(3,1)", "{}", {.m_context = globalContext});
-  approximates_to<float>("L(8,9)", "{}", {.m_context = globalContext});
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+  PoincareTest::SymbolStore symbolStore;
+  PoincareTest::store("{1,2,3,4,5}→L", symbolStore);
+  approximates_to<float>("L(1)", "1", {.m_context = symbolStore});
+  approximates_to<float>("L(0)", "undef", {.m_context = symbolStore});
+  approximates_to<float>("L(7)", "undef", {.m_context = symbolStore});
+  approximates_to<double>("L(1)", "1", {.m_context = symbolStore});
+  approximates_to<double>("L(0)", "undef", {.m_context = symbolStore});
+  approximates_to<double>("L(7)", "undef", {.m_context = symbolStore});
+  approximates_to<float>("L(1,3)", "{1,2,3}", {.m_context = symbolStore});
+  approximates_to<float>("L(1,9)", "{1,2,3,4,5}", {.m_context = symbolStore});
+  approximates_to<float>("L(-5,3)", "undef", {.m_context = symbolStore});
+  approximates_to<float>("L(3,1)", "{}", {.m_context = symbolStore});
+  approximates_to<float>("L(8,9)", "{}", {.m_context = symbolStore});
 }
 
 QUIZ_CASE(pcj_approximation_lists_functions) {
@@ -2229,57 +2228,55 @@ QUIZ_CASE(pcj_approximation_store) {
 };
 
 QUIZ_CASE(pcj_approximation_context) {
-  Shared::GlobalContext globalContext;
+  PoincareTest::SymbolStore symbolStore;
   ProjectionContext cartesianCtx = {
       .m_complexFormat = ComplexFormat::Cartesian,
-      .m_context = globalContext,
+      .m_context = symbolStore,
   };
   ProjectionContext realCtx = {
       .m_complexFormat = ComplexFormat::Real,
-      .m_context = globalContext,
+      .m_context = symbolStore,
   };
 
-  PoincareTest::store("2x+5→f(x)", globalContext);
-  PoincareTest::store("π+1→a", globalContext);
-  PoincareTest::store("[[4]]→b", globalContext);
+  PoincareTest::store("2x+5→f(x)", symbolStore);
+  PoincareTest::store("π+1→a", symbolStore);
+  PoincareTest::store("[[4]]→b", symbolStore);
   approximates_to<float>("a", "4.141593", cartesianCtx);
   approximates_to<float>("f(a)", "13.28319", cartesianCtx);
   approximates_to<float>("f(a+i)", "13.28319+2×i", cartesianCtx);
   approximates_to<float>("z", "undef", cartesianCtx);
   approximates_to<float>("b*[[5]]", "[[20]]", cartesianCtx);
 
-  PoincareTest::store("x>0→g(x)", globalContext);
-  PoincareTest::store("true→t", globalContext);
+  PoincareTest::store("x>0→g(x)", symbolStore);
+  PoincareTest::store("true→t", symbolStore);
   approximates_to_boolean("g(2)", true, cartesianCtx);
   approximates_to_boolean("g(1/0)", Approximation::BooleanOrUndefined::Undef(),
                           cartesianCtx);
   approximates_to_boolean("t", true, cartesianCtx);
 
-  PoincareTest::store("[[x,0][0,x]]→h(x)", globalContext);
+  PoincareTest::store("[[x,0][0,x]]→h(x)", symbolStore);
   approximates_to<float>("h(3)", "[[3,0][0,3]]", cartesianCtx);
   approximates_to<float>("h(1/0)", "undef", cartesianCtx);
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
+  symbolStore.reset();
   // f : x→ x^2
-  PoincareTest::store("x^2→f(x)", globalContext);
+  PoincareTest::store("x^2→f(x)", symbolStore);
   // Approximate f(x-2) with x = 5
-  PoincareTest::store("5→x", globalContext);
+  PoincareTest::store("5→x", symbolStore);
   approximates_to<double>("f(x-2)", 9.0, cartesianCtx);
   // Approximate f(x-1)+f(x+1) with x = 3
-  PoincareTest::store("3→x", globalContext);
+  PoincareTest::store("3→x", symbolStore);
   approximates_to<double>("f(x-1)+f(x+1)", 20.0, cartesianCtx);
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
+  symbolStore.reset();
   // f : x → √(-1)×√(-1)
-  PoincareTest::store("√(-1)×√(-1)→f(x)", globalContext);
+  PoincareTest::store("√(-1)×√(-1)→f(x)", symbolStore);
   // Approximate f(x) with x = 1
-  PoincareTest::store("1→x", globalContext);
+  PoincareTest::store("1→x", symbolStore);
   // Cartesian
   approximates_to<double>("f(x)", -1.0, cartesianCtx);
   // Real
   approximates_to<double>("f(x)", (double)NAN, realCtx);
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 QUIZ_CASE(pcj_approximation_floor_ceil_integer) {

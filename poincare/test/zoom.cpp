@@ -1,4 +1,3 @@
-#include <apps/shared/global_context.h>
 #include <poincare/numeric_solver/zoom.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>

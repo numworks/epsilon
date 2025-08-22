@@ -1,4 +1,3 @@
-#include <apps/shared/global_context.h>
 #include <poincare/context.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/k_tree.h>
@@ -200,31 +199,26 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(hasInvalidDimOrLen("[[1,2]]-3"));
   QUIZ_ASSERT(hasInvalidDimOrLen("1-[[3][4]]"));
 
-  Shared::GlobalContext globalContext;
-  assert(
-      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
-      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
-          "sys"));
-  PoincareTest::store("2→a", globalContext);
-  PoincareTest::store("{4,2}→b", globalContext);
-  PoincareTest::store("(1,3)→c", globalContext);
-  PoincareTest::store("33_m→d", globalContext);
-  PoincareTest::store("[[1]]→v", globalContext);
-  PoincareTest::store("[[x]]→f(x)", globalContext);
-  PoincareTest::store("{x,2*x}→g(x)", globalContext);
-  PoincareTest::store("(x,2*x)→h(x)", globalContext);
-  PoincareTest::store("0.2*x→j(x)", globalContext);
+  PoincareTest::SymbolStore symbolStore;
+  PoincareTest::store("2→a", symbolStore);
+  PoincareTest::store("{4,2}→b", symbolStore);
+  PoincareTest::store("(1,3)→c", symbolStore);
+  PoincareTest::store("33_m→d", symbolStore);
+  PoincareTest::store("[[1]]→v", symbolStore);
+  PoincareTest::store("[[x]]→f(x)", symbolStore);
+  PoincareTest::store("{x,2*x}→g(x)", symbolStore);
+  PoincareTest::store("(x,2*x)→h(x)", symbolStore);
+  PoincareTest::store("0.2*x→j(x)", symbolStore);
 
-  QUIZ_ASSERT(dim("a", Scalar, globalContext));
-  QUIZ_ASSERT(dim("b", Scalar, globalContext));
-  QUIZ_ASSERT(dim("c", Point, globalContext));
-  QUIZ_ASSERT(dim("d", Dimension::Unit(KUnits::meter), globalContext));
-  QUIZ_ASSERT(dim("v", Matrix(1, 1), globalContext));
-  QUIZ_ASSERT(dim("f(x)", Matrix(1, 1), globalContext));
-  QUIZ_ASSERT(dim("g(a)+b+{1,6}", Scalar, globalContext));
-  QUIZ_ASSERT(len("h(b)", 2, globalContext));
-  QUIZ_ASSERT(dim("i(2)", Scalar, globalContext));
+  QUIZ_ASSERT(dim("a", Scalar, symbolStore));
+  QUIZ_ASSERT(dim("b", Scalar, symbolStore));
+  QUIZ_ASSERT(dim("c", Point, symbolStore));
+  QUIZ_ASSERT(dim("d", Dimension::Unit(KUnits::meter), symbolStore));
+  QUIZ_ASSERT(dim("v", Matrix(1, 1), symbolStore));
+  QUIZ_ASSERT(dim("f(x)", Matrix(1, 1), symbolStore));
+  QUIZ_ASSERT(dim("g(a)+b+{1,6}", Scalar, symbolStore));
+  QUIZ_ASSERT(len("h(b)", 2, symbolStore));
+  QUIZ_ASSERT(dim("i(2)", Scalar, symbolStore));
 
   QUIZ_ASSERT(SharedTreeStack->numberOfTrees() == 0);
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }

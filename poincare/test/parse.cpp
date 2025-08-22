@@ -1,7 +1,7 @@
 #include <apps/global_preferences.h>
-#include <apps/shared/global_context.h>
 #include <omg/code_point.h>
 #include <poincare/context.h>
+#include <poincare/expression.h>
 #include <poincare/src/expression/derivation.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
@@ -545,15 +545,14 @@ QUIZ_CASE(pcj_parse_unit_convert) {
   assert_text_not_parsable("3×_min→_s+1-1");
   assert_text_not_parsable("0→_K");
 
-  Shared::GlobalContext context;
-  PoincareTest::store("_m→a", context);
-  PoincareTest::store("_m→b", context);
-  assert_text_not_parsable("1_km→a×b", context);
-  PoincareTest::store("2→a", context);
-  assert_text_not_parsable("3_m→a×_km", context);
-  PoincareTest::store("2→f(x)", context);
+  PoincareTest::SymbolStore symbolStore;
+  PoincareTest::store("_m→a", symbolStore);
+  PoincareTest::store("_m→b", symbolStore);
+  assert_text_not_parsable("1_km→a×b", symbolStore);
+  PoincareTest::store("2→a", symbolStore);
+  assert_text_not_parsable("3_m→a×_km", symbolStore);
+  PoincareTest::store("2→f(x)", symbolStore);
   assert_text_not_parsable("3_m→f(2)×_km");
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 // TODO: unify style layout or string parsing
@@ -655,63 +654,57 @@ QUIZ_CASE(pcj_parse_derivative_apostrophe) {
                               KMult("f"_e, apostropheUnit, apostropheUnit));
   assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)));
 
-  Shared::GlobalContext globalContext;
+  PoincareTest::SymbolStore symbolStore;
   // Function defined
-  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      "f", "func", "", 0);
+  PoincareTest::store("undef→f(x)", symbolStore);
   assert_parsed_expression_is(
       "f'(x)",
       KDiff(Derivation::k_functionDerivativeVariable, "x"_e, 1_e,
             KFun<"f">(Derivation::k_functionDerivativeVariable)),
-      globalContext);
+      symbolStore);
   assert_parsed_expression_is(
       "f\"(x)",
       KDiff(Derivation::k_functionDerivativeVariable, "x"_e, 2_e,
             KFun<"f">(Derivation::k_functionDerivativeVariable)),
-      globalContext);
-  assert_parse_to_same_expression("f'(x)", "f^(1)(x)", globalContext);
-  assert_parse_to_same_expression("f\"(x)", "f^(2)(x)", globalContext);
-  assert_parse_to_same_expression("f''(x)", "f^(2)(x)", globalContext);
-  assert_parse_to_same_expression("f'''(x)", "f^(3)(x)", globalContext);
-  assert_parse_to_same_expression("f\"\"(x)", "f^(4)(x)", globalContext);
-  assert_parse_to_same_expression("f'\"'(x)", "f^(4)(x)", globalContext);
+      symbolStore);
+  assert_parse_to_same_expression("f'(x)", "f^(1)(x)", symbolStore);
+  assert_parse_to_same_expression("f\"(x)", "f^(2)(x)", symbolStore);
+  assert_parse_to_same_expression("f''(x)", "f^(2)(x)", symbolStore);
+  assert_parse_to_same_expression("f'''(x)", "f^(3)(x)", symbolStore);
+  assert_parse_to_same_expression("f\"\"(x)", "f^(4)(x)", symbolStore);
+  assert_parse_to_same_expression("f'\"'(x)", "f^(4)(x)", symbolStore);
   assert_parsed_expression_is(
       "f^(3)(x)",
       KDiff(Derivation::k_functionDerivativeVariable, "x"_e, 3_e,
             KFun<"f">(Derivation::k_functionDerivativeVariable)),
-      globalContext);
+      symbolStore);
   assert_parsed_expression_is(
       "f^(3/2)(x)",
       KMult(KPow("f"_e, KParentheses(KDiv(3_e, 2_e))), KParentheses("x"_e)),
-      globalContext);
-  assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit),
-                              globalContext);
-  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit), globalContext);
+      symbolStore);
+  assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit), symbolStore);
+  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit), symbolStore);
   assert_parsed_expression_is(
-      "f''", KMult("f"_e, apostropheUnit, apostropheUnit), globalContext);
+      "f''", KMult("f"_e, apostropheUnit, apostropheUnit), symbolStore);
   assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)),
-                              globalContext);
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
-
+                              symbolStore);
+  symbolStore.reset();
   // Expression defined
-  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      "f", "exp", "", 0);
-  assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit),
-                              globalContext);
-  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit), globalContext);
+  PoincareTest::store("undef→f", symbolStore);
+  assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit), symbolStore);
+  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit), symbolStore);
   assert_parsed_expression_is(
-      "f''", KMult("f"_e, apostropheUnit, apostropheUnit), globalContext);
+      "f''", KMult("f"_e, apostropheUnit, apostropheUnit), symbolStore);
   assert_parsed_expression_is("f^(1)", KPow("f"_e, KParentheses(1_e)),
-                              globalContext);
+                              symbolStore);
   assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)),
-                              globalContext);
+                              symbolStore);
   assert_parsed_expression_is("f^(3)", KPow("f"_e, KParentheses(3_e)),
-                              globalContext);
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
-
+                              symbolStore);
+  symbolStore.reset();
   assert_text_not_parsable(
       "→M^\U00000012√\U00000012^\U000000122\U00000013\U00000013\U00000013",
-      globalContext);
+      symbolStore);
 }
 
 QUIZ_CASE(pcj_parse_parametric) {
@@ -911,25 +904,24 @@ QUIZ_CASE(pcj_parse_identifiers) {
 
   assert_text_not_parsable("ln^(2)(2)");
 
-  Shared::GlobalContext globalContext;
-  PoincareTest::store("0→ab", globalContext);
-  PoincareTest::store("x→bacos(x)", globalContext);
-  PoincareTest::store("0→azfoo", globalContext);
-  PoincareTest::store("x→foobar(x)", globalContext);
-  PoincareTest::store("0→a3b", globalContext);
-  assert_parsed_expression_is("xyz", KMult("x"_e, "y"_e, "z"_e), globalContext);
+  PoincareTest::SymbolStore symbolStore;
+  PoincareTest::store("0→ab", symbolStore);
+  PoincareTest::store("x→bacos(x)", symbolStore);
+  PoincareTest::store("0→azfoo", symbolStore);
+  PoincareTest::store("x→foobar(x)", symbolStore);
+  PoincareTest::store("0→a3b", symbolStore);
+  assert_parsed_expression_is("xyz", KMult("x"_e, "y"_e, "z"_e), symbolStore);
   assert_parsed_expression_is("xy123z", KMult("x"_e, "y123"_e, "z"_e),
-                              globalContext);
-  assert_parsed_expression_is("3→xyz", KStore(3_e, "xyz"_e), globalContext);
-  assert_parsed_expression_is("ab", "ab"_e, globalContext);
-  assert_parsed_expression_is("ab3", KMult("a"_e, "b3"_e), globalContext);
-  assert_parsed_expression_is("a3b", "a3b"_e, globalContext);
+                              symbolStore);
+  assert_parsed_expression_is("3→xyz", KStore(3_e, "xyz"_e), symbolStore);
+  assert_parsed_expression_is("ab", "ab"_e, symbolStore);
+  assert_parsed_expression_is("ab3", KMult("a"_e, "b3"_e), symbolStore);
+  assert_parsed_expression_is("a3b", "a3b"_e, symbolStore);
   assert_parsed_expression_is("aacos(x)", KMult("a"_e, KACos("x"_e)),
-                              globalContext);
-  assert_parsed_expression_is("bacos(x)", KFun<"bacos">("x"_e), globalContext);
+                              symbolStore);
+  assert_parsed_expression_is("bacos(x)", KFun<"bacos">("x"_e), symbolStore);
   assert_parsed_expression_is(
-      "azfoobar(x)", KMult("a"_e, "z"_e, KFun<"foobar">("x"_e)), globalContext);
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+      "azfoobar(x)", KMult("a"_e, "z"_e, KFun<"foobar">("x"_e)), symbolStore);
 }
 
 QUIZ_CASE(pcj_parse_implicit_multiplication) {

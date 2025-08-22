@@ -1,4 +1,4 @@
-#include <apps/shared/global_context.h>
+#include <poincare/context.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/layout_cursor.h>
 
@@ -12,14 +12,13 @@ void assert_inserted_text_turns_into(const char* textToInsert,
                                      const char* textRightOfInsertedText = "") {
   Layout r = KRackL();
   Poincare::Internal::PoolLayoutCursor cursor(r, r.tree());
-  Shared::GlobalContext context;
-  cursor.insertText(textRightOfInsertedText, &context, false, true);
+  cursor.insertText(textRightOfInsertedText, EmptyContext{}, false, true);
   size_t textLen = strlen(textToInsert);
   char buffer[2] = {0, 0};
   for (size_t i = 0; i < textLen; i++) {
     // Insert text char by char to apply beautification
     buffer[0] = textToInsert[i];
-    cursor.insertText(buffer, &context);
+    cursor.insertText(buffer);
   }
   quiz_assert(cursor.rootRack()->treeIsIdenticalTo(expectedLayout));
 }

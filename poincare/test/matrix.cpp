@@ -1,4 +1,3 @@
-#include <apps/shared/global_context.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/simplification.h>

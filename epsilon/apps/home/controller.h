@@ -1,5 +1,4 @@
-#ifndef HOME_CONTROLLER_H
-#define HOME_CONTROLLER_H
+#pragma once
 
 #include <escher/regular_table_view_data_source.h>
 #include <escher/selectable_table_view.h>
@@ -99,5 +98,3 @@ class Controller : public Escher::ViewController,
 };
 
 }  // namespace Home
-
-#endif

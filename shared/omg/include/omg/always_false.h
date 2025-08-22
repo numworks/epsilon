@@ -1,5 +1,4 @@
-#ifndef OMG_ALWAYS_FALSE_H
-#define OMG_ALWAYS_FALSE_H
+#pragma once
 
 namespace OMG {
 
@@ -13,5 +12,3 @@ template <class... T>
 constexpr bool always_false = false;
 
 }  // namespace OMG
-
-#endif

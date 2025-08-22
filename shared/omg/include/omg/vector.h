@@ -1,5 +1,4 @@
-#ifndef OMG_VECTOR_H
-#define OMG_VECTOR_H
+#pragma once
 
 #include <assert.h>
 #include <stddef.h>
@@ -83,5 +82,3 @@ class StaticVector : public AbstractStaticVector<T> {
 };
 
 }  // namespace OMG
-
-#endif

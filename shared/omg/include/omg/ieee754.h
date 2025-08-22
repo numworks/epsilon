@@ -1,5 +1,4 @@
-#ifndef OMG_IEEE754_H
-#define OMG_IEEE754_H
+#pragma once
 
 #include <assert.h>
 #include <stddef.h>
@@ -102,5 +101,3 @@ class IEEE754 final {
 };
 
 }  // namespace OMG
-
-#endif

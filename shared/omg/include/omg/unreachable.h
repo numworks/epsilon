@@ -1,5 +1,4 @@
-#ifndef OMG_UNREACHABLE_H
-#define OMG_UNREACHABLE_H
+#pragma once
 
 #include "assert.h"
 
@@ -14,5 +13,3 @@ namespace OMG {
 }
 
 }  // namespace OMG
-
-#endif

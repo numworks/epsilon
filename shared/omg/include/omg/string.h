@@ -1,5 +1,4 @@
-#ifndef OMG_STRING_H
-#define OMG_STRING_H
+#pragma once
 
 #include <stddef.h>
 
@@ -21,5 +20,3 @@ constexpr static bool StringsAreEqual(const char* s1, const char* s2) {
 }
 
 }  // namespace OMG
-
-#endif

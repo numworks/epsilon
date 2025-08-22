@@ -1,5 +1,4 @@
-#ifndef OMG_DECONSTIFIER_H
-#define OMG_DECONSTIFIER_H
+#pragma once
 
 namespace OMG::Utils {
 
@@ -26,5 +25,3 @@ constexpr inline T DeconstifyObj(ConstActionByObject<T, Args...> action,
 }
 
 }  // namespace OMG::Utils
-
-#endif

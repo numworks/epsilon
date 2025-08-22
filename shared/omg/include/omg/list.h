@@ -1,5 +1,4 @@
-#ifndef OMG_LIST_H
-#define OMG_LIST_H
+#pragma once
 
 namespace OMG::List {
 
@@ -11,5 +10,3 @@ int ExtremumIndex(Compare compare, void* context, int numberOfElements,
                   bool minimum);
 
 }  // namespace OMG::List
-
-#endif

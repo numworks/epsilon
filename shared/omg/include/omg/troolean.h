@@ -1,5 +1,4 @@
-#ifndef OMG_TROOLEAN_H
-#define OMG_TROOLEAN_H
+#pragma once
 
 #include <assert.h>
 #include <stdint.h>
@@ -79,5 +78,3 @@ inline bool TrooleanToBool(Troolean b) {
 }
 
 }  // namespace OMG
-
-#endif

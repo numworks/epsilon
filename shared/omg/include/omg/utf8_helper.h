@@ -1,5 +1,4 @@
-#ifndef OMG_UTF8_HELPER_H
-#define OMG_UTF8_HELPER_H
+#pragma once
 
 #include <stddef.h>
 
@@ -173,5 +172,3 @@ size_t ReplaceSystemParenthesesAndBracesByUserParentheses(char* buffer,
                                                           size_t length = -1);
 
 }  // namespace UTF8Helper
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef OMG_ROUND_H
-#define OMG_ROUND_H
+#pragma once
 
 #include <limits.h>
 
@@ -15,5 +14,3 @@ static inline T LaxToZero(T x) {
 constexpr int CeilDivision(int x, int y) { return (x + y - 1) / y; }
 
 }  // namespace OMG
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef OMG_UTF8_DECODER_H
-#define OMG_UTF8_DECODER_H
+#pragma once
 
 #include <assert.h>
 #include <stddef.h>
@@ -107,5 +106,3 @@ class UTF8Decoder : public UnicodeDecoder {
   char previousByte() { return m_string[--m_position]; }
   const char* m_string;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef OMG_SIGNALING_NAN_H
-#define OMG_SIGNALING_NAN_H
+#pragma once
 
 #include <stdint.h>
 
@@ -46,5 +45,3 @@ inline double SignalingNan<double>() {
 }
 
 }  // namespace OMG
-
-#endif

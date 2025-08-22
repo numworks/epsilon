@@ -1,5 +1,4 @@
-#ifndef OMG_CODE_GUARD_H
-#define OMG_CODE_GUARD_H
+#pragma once
 
 #include <omg/memory.h>
 
@@ -19,5 +18,3 @@ namespace OMG {
   __VA_ARGS__
 
 }  // namespace OMG
-
-#endif

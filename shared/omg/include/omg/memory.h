@@ -1,5 +1,4 @@
-#ifndef OMG_MEMORY_H
-#define OMG_MEMORY_H
+#pragma once
 
 #include <assert.h>
 #include <stddef.h>
@@ -34,5 +33,3 @@ constexpr uint32_t crc32String(const char* str) {
 int memcmp(const void* s1, const void* s2, size_t n);
 
 }  // namespace OMG::Memory
-
-#endif

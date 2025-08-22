@@ -1,5 +1,4 @@
-#ifndef OMG_DIRECTIONS_H
-#define OMG_DIRECTIONS_H
+#pragma once
 
 namespace OMG {
 
@@ -47,5 +46,3 @@ class VerticalDirection : public Direction {
 };
 
 }  // namespace OMG
-
-#endif

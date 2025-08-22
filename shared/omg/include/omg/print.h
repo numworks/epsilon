@@ -1,5 +1,4 @@
-#ifndef OMG_PRINT_H
-#define OMG_PRINT_H
+#pragma once
 
 #include <assert.h>
 #include <omg/bit_helper.h>
@@ -68,5 +67,3 @@ inline constexpr bool IsDigit(char c) { return '0' <= c && c <= '9'; }
 }  // namespace Print
 
 }  // namespace OMG
-
-#endif

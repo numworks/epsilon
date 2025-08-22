@@ -1,5 +1,4 @@
-#ifndef OMG_GLOBAL_BOX_H
-#define OMG_GLOBAL_BOX_H
+#pragma once
 
 #include <assert.h>
 #include <stdint.h>
@@ -79,5 +78,3 @@ class TrackedGlobalBox : public GlobalBox<T> {
 };
 
 }  // namespace OMG
-
-#endif

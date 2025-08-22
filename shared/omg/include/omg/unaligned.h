@@ -1,5 +1,4 @@
-#ifndef OMG_UNALIGNED_H
-#define OMG_UNALIGNED_H
+#pragma once
 
 #include <stdint.h>
 
@@ -42,5 +41,3 @@ inline void writeUnalignedLong(uint32_t value, void* address) {
 }
 
 }  // namespace OMG
-
-#endif

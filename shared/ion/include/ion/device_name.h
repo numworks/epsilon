@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_NAME_H
-#define ION_DEVICE_NAME_H
+#pragma once
 
 namespace Ion {
 namespace DeviceName {
@@ -9,5 +8,3 @@ const char* read();
 
 }  // namespace DeviceName
 }  // namespace Ion
-
-#endif

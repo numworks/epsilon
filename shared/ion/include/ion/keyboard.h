@@ -1,5 +1,4 @@
-#ifndef ION_KEYBOARD_H
-#define ION_KEYBOARD_H
+#pragma once
 
 extern "C" {
 #include <assert.h>
@@ -76,5 +75,3 @@ static_assert(sizeof(State) * 8 > NumberOfKeys,
 
 }  // namespace Keyboard
 }  // namespace Ion
-
-#endif

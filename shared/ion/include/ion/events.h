@@ -1,5 +1,4 @@
-#ifndef ION_EVENTS_H
-#define ION_EVENTS_H
+#pragma once
 
 #include <ion/keyboard.h>
 #include <omg/directions.h>
@@ -239,5 +238,3 @@ inline OMG::Direction Event::direction() const {
 
 }  // namespace Events
 }  // namespace Ion
-
-#endif

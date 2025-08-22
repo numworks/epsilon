@@ -1,5 +1,4 @@
-#ifndef ION_ION_H
-#define ION_ION_H
+#pragma once
 
 #include <ion/authentication.h>
 #include <ion/backlight.h>
@@ -61,5 +60,3 @@ bool stackSafe();
 uintptr_t collectRegisters(jmp_buf regs);
 
 }  // namespace Ion
-
-#endif

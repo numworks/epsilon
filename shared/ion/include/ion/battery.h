@@ -1,5 +1,4 @@
-#ifndef ION_BATTERY_H
-#define ION_BATTERY_H
+#pragma once
 
 #include <stdint.h>
 /*
@@ -31,5 +30,3 @@ float voltage();
 
 }  // namespace Battery
 }  // namespace Ion
-
-#endif

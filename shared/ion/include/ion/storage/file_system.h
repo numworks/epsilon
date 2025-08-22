@@ -1,5 +1,4 @@
-#ifndef ION_STORAGE_H
-#define ION_STORAGE_H
+#pragma once
 
 #include <assert.h>
 #include <omg/global_box.h>
@@ -245,5 +244,3 @@ class FileSystem {
 }  // namespace Storage
 
 }  // namespace Ion
-
-#endif

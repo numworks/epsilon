@@ -1,5 +1,4 @@
-#ifndef ION_BACKLIGHT_H
-#define ION_BACKLIGHT_H
+#pragma once
 
 #include <stdint.h>
 
@@ -12,5 +11,3 @@ uint8_t brightness();
 
 }  // namespace Backlight
 }  // namespace Ion
-
-#endif

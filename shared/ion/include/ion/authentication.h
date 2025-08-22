@@ -1,5 +1,4 @@
-#ifndef ION_AUTHENTICATION_H
-#define ION_AUTHENTICATION_H
+#pragma once
 
 #include <stdint.h>
 
@@ -16,5 +15,3 @@ ClearanceLevel clearanceLevel();
 
 }  // namespace Authentication
 }  // namespace Ion
-
-#endif

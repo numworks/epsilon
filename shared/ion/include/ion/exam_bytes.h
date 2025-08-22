@@ -1,5 +1,4 @@
-#ifndef ION_EXAM_BYTES_H
-#define ION_EXAM_BYTES_H
+#pragma once
 
 #include <omg/unaligned.h>
 #include <stdint.h>
@@ -16,5 +15,3 @@ void write(Int examBytes);
 
 }  // namespace ExamBytes
 }  // namespace Ion
-
-#endif

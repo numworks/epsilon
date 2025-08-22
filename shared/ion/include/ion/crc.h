@@ -1,5 +1,4 @@
-#ifndef ION_CRC_H
-#define ION_CRC_H
+#pragma once
 
 #include <omg/memory.h>
 #include <stddef.h>
@@ -14,5 +13,3 @@ uint32_t crc32Word(const uint16_t* data, size_t length);
 uint32_t crc32Byte(const uint8_t* data, size_t length);
 
 }  // namespace Ion
-
-#endif

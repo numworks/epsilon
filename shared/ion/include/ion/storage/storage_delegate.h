@@ -1,5 +1,4 @@
-#ifndef ION_STORAGE_DELEGATE_H
-#define ION_STORAGE_DELEGATE_H
+#pragma once
 
 #include "record.h"
 
@@ -27,5 +26,3 @@ class StorageDelegate {
 }  // namespace Storage
 
 }  // namespace Ion
-
-#endif

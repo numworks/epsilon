@@ -1,5 +1,4 @@
-#ifndef ION_TIMING_H
-#define ION_TIMING_H
+#pragma once
 
 #include <stdint.h>
 
@@ -15,5 +14,3 @@ uint64_t millis();
 
 }  // namespace Timing
 }  // namespace Ion
-
-#endif

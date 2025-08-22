@@ -1,5 +1,4 @@
-#ifndef ION_DISPLAY_CONSTANTS_H
-#define ION_DISPLAY_CONSTANTS_H
+#pragma once
 
 #include <kandinsky/rect.h>
 
@@ -19,5 +18,3 @@ constexpr int HeightInTenthOfMillimeter = 432;
 
 }  // namespace Display
 }  // namespace Ion
-
-#endif

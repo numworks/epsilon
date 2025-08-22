@@ -1,5 +1,4 @@
-#ifndef ION_EXAM_MODE_H
-#define ION_EXAM_MODE_H
+#pragma once
 
 #include <ion/exam_bytes.h>
 #include <kandinsky/color.h>
@@ -104,5 +103,3 @@ void set(Configuration);
 
 }  // namespace ExamMode
 }  // namespace Ion
-
-#endif

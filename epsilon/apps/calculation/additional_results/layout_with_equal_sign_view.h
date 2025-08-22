@@ -1,5 +1,4 @@
-#ifndef CALCULATION_LAYOUT_WITH_EQUAL_SIGN_VIEW_H
-#define CALCULATION_LAYOUT_WITH_EQUAL_SIGN_VIEW_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/layout_view.h>
@@ -28,5 +27,3 @@ class LayoutWithEqualSignView : public Escher::LayoutView {
 };
 
 }  // namespace Calculation
-
-#endif

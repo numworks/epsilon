@@ -1,5 +1,4 @@
-#ifndef CALCULATION_ILLUSTRATION_CELL_H
-#define CALCULATION_ILLUSTRATION_CELL_H
+#pragma once
 
 #include <escher/bordered.h>
 #include <escher/highlight_cell.h>
@@ -20,5 +19,3 @@ class IllustrationCell : public Escher::Bordered, public Escher::HighlightCell {
 };
 
 }  // namespace Calculation
-
-#endif

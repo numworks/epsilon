@@ -1,5 +1,4 @@
-#ifndef CALCULATION_RATIONAL_LIST_CONTROLLER_H
-#define CALCULATION_RATIONAL_LIST_CONTROLLER_H
+#pragma once
 
 #include "chainable_expressions_list_controller.h"
 
@@ -22,5 +21,3 @@ class RationalListController : public ChainableExpressionsListController {
 };
 
 }  // namespace Calculation
-
-#endif

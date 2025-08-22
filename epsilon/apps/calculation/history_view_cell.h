@@ -1,5 +1,4 @@
-#ifndef CALCULATION_HISTORY_VIEW_CELL_H
-#define CALCULATION_HISTORY_VIEW_CELL_H
+#pragma once
 
 #include <apps/calculation/additional_results/additional_results_type.h>
 #include <escher/even_odd_cell_with_ellipsis.h>
@@ -105,5 +104,3 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
 };
 
 }  // namespace Calculation
-
-#endif

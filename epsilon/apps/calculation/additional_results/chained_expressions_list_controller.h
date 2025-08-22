@@ -1,5 +1,4 @@
-#ifndef CALCULATION_CHAINED_EXPRESSIONS_LIST_CONTROLLER_H
-#define CALCULATION_CHAINED_EXPRESSIONS_LIST_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <poincare/layout.h>
@@ -46,5 +45,3 @@ class ChainedExpressionsListController : public ExpressionsListController {
 };
 
 }  // namespace Calculation
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef CALCULATION_EXPRESSIONS_LIST_CONTROLLER_H
-#define CALCULATION_EXPRESSIONS_LIST_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/list_view_data_source.h>
@@ -108,5 +107,3 @@ class ExpressionsListController
 };
 
 }  // namespace Calculation
-
-#endif

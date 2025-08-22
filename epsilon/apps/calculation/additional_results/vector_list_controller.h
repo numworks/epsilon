@@ -1,5 +1,4 @@
-#ifndef CALCULATION_VECTOR_LIST_CONTROLLER_H
-#define CALCULATION_VECTOR_LIST_CONTROLLER_H
+#pragma once
 
 #include "illustrated_expressions_list_controller.h"
 #include "vector_graph_cell.h"
@@ -31,5 +30,3 @@ class VectorListController : public IllustratedExpressionsListController {
 };
 
 }  // namespace Calculation
-
-#endif

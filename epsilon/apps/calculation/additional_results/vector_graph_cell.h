@@ -1,5 +1,4 @@
-#ifndef CALCULATION_VECTOR_GRAPH_CELL_H
-#define CALCULATION_VECTOR_GRAPH_CELL_H
+#pragma once
 
 #include <apps/shared/plot_view_policies.h>
 
@@ -40,5 +39,3 @@ class VectorGraphCell : public IllustrationCell {
 };
 
 }  // namespace Calculation
-
-#endif

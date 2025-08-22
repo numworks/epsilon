@@ -1,5 +1,4 @@
-#ifndef CALCULATION_COMPLEX_LIST_CONTROLLER_H
-#define CALCULATION_COMPLEX_LIST_CONTROLLER_H
+#pragma once
 
 #include "complex_graph_cell.h"
 #include "complex_model.h"
@@ -27,5 +26,3 @@ class ComplexListController : public IllustratedExpressionsListController {
 };
 
 }  // namespace Calculation
-
-#endif

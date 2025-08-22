@@ -1,5 +1,4 @@
-#ifndef CALCULATION_MATRIX_LIST_CONTROLLER_H
-#define CALCULATION_MATRIX_LIST_CONTROLLER_H
+#pragma once
 
 #include "expressions_list_controller.h"
 
@@ -22,5 +21,3 @@ class MatrixListController : public ExpressionsListController {
 };
 
 }  // namespace Calculation
-
-#endif

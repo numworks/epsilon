@@ -1,5 +1,4 @@
-#ifndef CALCULATION_COMPLEX_GRAPH_CELL_H
-#define CALCULATION_COMPLEX_GRAPH_CELL_H
+#pragma once
 
 #include <apps/shared/plot_view_policies.h>
 
@@ -35,5 +34,3 @@ class ComplexGraphCell : public IllustrationCell {
 };
 
 }  // namespace Calculation
-
-#endif

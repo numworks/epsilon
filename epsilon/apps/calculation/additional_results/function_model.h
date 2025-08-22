@@ -1,5 +1,4 @@
-#ifndef CALCULATION_FUNCTION_MODEL_H
-#define CALCULATION_FUNCTION_MODEL_H
+#pragma once
 
 #include <apps/shared/memoized_curve_view_range.h>
 #include <poincare/expression.h>
@@ -41,5 +40,3 @@ class FunctionModel : public Shared::MemoizedCurveViewRange {
 };
 
 }  // namespace Calculation
-
-#endif

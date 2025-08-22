@@ -1,5 +1,4 @@
-#ifndef CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
-#define CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/math_field_delegate.h>
 #include <poincare/layout.h>
@@ -85,5 +84,3 @@ class EditExpressionController : public Escher::ViewController,
 };
 
 }  // namespace Calculation
-
-#endif

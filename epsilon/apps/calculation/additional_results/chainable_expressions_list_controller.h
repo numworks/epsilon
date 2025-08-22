@@ -1,5 +1,4 @@
-#ifndef CALCULATION_CHAINABLE_EXPRESSIONS_LIST_CONTROLLER_H
-#define CALCULATION_CHAINABLE_EXPRESSIONS_LIST_CONTROLLER_H
+#pragma once
 
 #include "expressions_list_controller.h"
 
@@ -34,5 +33,3 @@ class ChainableExpressionsListController : public ExpressionsListController {
 };
 
 }  // namespace Calculation
-
-#endif

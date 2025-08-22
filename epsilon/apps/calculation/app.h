@@ -1,5 +1,4 @@
-#ifndef CALCULATION_APP_H
-#define CALCULATION_APP_H
+#pragma once
 
 #include <apps/shared/math_app.h>
 
@@ -70,5 +69,3 @@ class App : public Shared::MathApp {
 };
 
 }  // namespace Calculation
-
-#endif

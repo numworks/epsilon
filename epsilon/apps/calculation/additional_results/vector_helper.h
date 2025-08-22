@@ -1,5 +1,4 @@
-#ifndef CALCULATION_VECTOR_HELPER_H
-#define CALCULATION_VECTOR_HELPER_H
+#pragma once
 
 #include <poincare/expression.h>
 
@@ -15,5 +14,3 @@ Poincare::UserExpression BuildVectorNorm(
 }
 
 }  // namespace Calculation
-
-#endif

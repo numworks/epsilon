@@ -1,5 +1,4 @@
-#ifndef CALCULATION_UNIT_LIST_CONTROLLER_H
-#define CALCULATION_UNIT_LIST_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
@@ -60,5 +59,3 @@ class UnitListController : public ExpressionsListController {
 };
 
 }  // namespace Calculation
-
-#endif

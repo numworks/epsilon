@@ -1,5 +1,4 @@
-#ifndef CALCULATION_HISTORY_CONTROLLER_H
-#define CALCULATION_HISTORY_CONTROLLER_H
+#pragma once
 
 #include <apps/calculation/additional_results/additional_results_controller.h>
 
@@ -56,5 +55,3 @@ class HistoryController : public Escher::ViewController,
 };
 
 }  // namespace Calculation
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef CALCULATION_UNIT_COMPARISON_HELPER_H
-#define CALCULATION_UNIT_COMPARISON_HELPER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <poincare/expression.h>
@@ -38,5 +37,3 @@ Poincare::UserExpression BuildComparisonExpression(
 }  // namespace UnitComparison
 
 }  // namespace Calculation
-
-#endif

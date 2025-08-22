@@ -1,5 +1,4 @@
-#ifndef CALCULATION_ADDITIONAL_RESULT_CELL_H
-#define CALCULATION_ADDITIONAL_RESULT_CELL_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/menu_cell.h>
@@ -36,5 +35,3 @@ class AdditionalResultCell : public Escher::MenuCell<ScrollableThreeLayoutsView,
 };
 
 }  // namespace Calculation
-
-#endif

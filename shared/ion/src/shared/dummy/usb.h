@@ -1,5 +1,4 @@
-#ifndef ION_SHARED_DUMMY_H
-#define ION_SHARED_DUMMY_H
+#pragma once
 
 namespace Ion {
 namespace USB {
@@ -8,5 +7,3 @@ void togglePlug();
 
 }
 }  // namespace Ion
-
-#endif

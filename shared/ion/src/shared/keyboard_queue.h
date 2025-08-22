@@ -1,5 +1,4 @@
-#ifndef ION_SHARED_KEYBOARD_QUEUE_H
-#define ION_SHARED_KEYBOARD_QUEUE_H
+#pragma once
 
 #include <ion/keyboard.h>
 #include <omg/ring_buffer.h>
@@ -46,5 +45,3 @@ class Queue {
 
 }  // namespace Keyboard
 }  // namespace Ion
-
-#endif

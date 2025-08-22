@@ -1,5 +1,4 @@
-#ifndef ION_SHARED_LED_H
-#define ION_SHARED_LED_H
+#pragma once
 
 #include <ion/led.h>
 
@@ -11,5 +10,3 @@ void setLock(bool locked);
 
 }  // namespace LED
 }  // namespace Ion
-
-#endif

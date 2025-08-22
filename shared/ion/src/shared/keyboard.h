@@ -1,5 +1,4 @@
-#ifndef ION_SHARED_KEYBOARD_H
-#define ION_SHARED_KEYBOARD_H
+#pragma once
 
 #include <ion/keyboard.h>
 
@@ -13,5 +12,3 @@ void keyboardWasScanned(State state);
 
 }  // namespace Keyboard
 }  // namespace Ion
-
-#endif

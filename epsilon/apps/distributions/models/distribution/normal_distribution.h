@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_NORMAL_DISTRIBUTION_H
-#define PROBABILITE_NORMAL_DISTRIBUTION_H
+#pragma once
 
 #include <poincare/statistics/distribution.h>
 
@@ -35,5 +34,3 @@ class NormalDistribution final : public TwoParametersDistribution {
 };
 
 }  // namespace Distributions
-
-#endif

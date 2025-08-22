@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_FISHER_DISTRIBUTION_H
-#define PROBABILITE_FISHER_DISTRIBUTION_H
+#pragma once
 
 #include "two_parameters_distribution.h"
 
@@ -33,5 +32,3 @@ class FisherDistribution final : public TwoParametersDistribution {
 };
 
 }  // namespace Distributions
-
-#endif

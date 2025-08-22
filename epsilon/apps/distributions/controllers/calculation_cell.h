@@ -1,5 +1,4 @@
-#ifndef DISTRIBUTIONS_PROBABILITY_CALCULATION_CELL_H
-#define DISTRIBUTIONS_PROBABILITY_CALCULATION_CELL_H
+#pragma once
 
 #include <escher/editable_text_cell.h>
 #include <escher/highlight_cell.h>
@@ -34,5 +33,3 @@ class CalculationCell : public Escher::HighlightCell {
 };
 
 }  // namespace Distributions
-
-#endif

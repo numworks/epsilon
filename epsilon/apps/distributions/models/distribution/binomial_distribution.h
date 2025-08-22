@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_BINOMIAL_DISTRIBUTION_H
-#define PROBABILITE_BINOMIAL_DISTRIBUTION_H
+#pragma once
 
 #include <omg/unreachable.h>
 #include <poincare/statistics/distribution.h>
@@ -33,5 +32,3 @@ class BinomialDistribution final : public TwoParametersDistribution {
 };
 
 }  // namespace Distributions
-
-#endif

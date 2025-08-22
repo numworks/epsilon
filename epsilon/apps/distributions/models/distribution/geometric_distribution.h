@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_GEOMETRIC_DISTRIBUTION_H
-#define PROBABILITE_GEOMETRIC_DISTRIBUTION_H
+#pragma once
 
 #include <poincare/layout.h>
 
@@ -30,5 +29,3 @@ class GeometricDistribution final : public OneParameterDistribution {
 };
 
 }  // namespace Distributions
-
-#endif

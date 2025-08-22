@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_DISCRETE_CALCULATION_H
-#define PROBABILITE_DISCRETE_CALCULATION_H
+#pragma once
 
 #include "calculation.h"
 
@@ -23,5 +22,3 @@ class DiscreteCalculation final : public Calculation {
 };
 
 }  // namespace Distributions
-
-#endif

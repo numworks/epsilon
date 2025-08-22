@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_THREE_PARAMETERS_DISTRIBUTION_H
-#define PROBABILITE_THREE_PARAMETERS_DISTRIBUTION_H
+#pragma once
 
 #include "distribution.h"
 
@@ -20,5 +19,3 @@ class ThreeParametersDistribution : public Distribution {
 };
 
 }  // namespace Distributions
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_DISTRIBUTION_DISTRIBUTION_H
-#define PROBABILITE_DISTRIBUTION_DISTRIBUTION_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/statistical_distribution.h>
@@ -136,5 +135,3 @@ class Distribution : public Shared::StatisticalDistribution {
 };
 
 }  // namespace Distributions
-
-#endif

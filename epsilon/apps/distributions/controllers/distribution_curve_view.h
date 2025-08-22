@@ -1,5 +1,4 @@
-#ifndef DISTRIBUTIONS_PROBABILITY_DISTRIBUTION_CURVE_VIEW_H
-#define DISTRIBUTIONS_PROBABILITY_DISTRIBUTION_CURVE_VIEW_H
+#pragma once
 
 #include <apps/shared/plot_view_policies.h>
 
@@ -32,5 +31,3 @@ class DistributionCurveView
 };
 
 }  // namespace Distributions
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef DISTRIBUTIONS_CONSTANTS_H
-#define DISTRIBUTIONS_CONSTANTS_H
+#pragma once
 
 #include <poincare/print_float.h>
 
@@ -20,5 +19,3 @@ constexpr int k_largeFloatNumberOfChars = k_largeBufferSize - 1;
 }  // namespace Constants
 
 }  // namespace Distributions
-
-#endif /* DISTRIBUTIONS_CONSTANTS_H */

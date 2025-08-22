@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_ONE_PARAMETER_DISTRIBUTION_H
-#define PROBABILITE_ONE_PARAMETER_DISTRIBUTION_H
+#pragma once
 
 #include <assert.h>
 
@@ -19,5 +18,3 @@ class OneParameterDistribution : public Distribution {
 };
 
 }  // namespace Distributions
-
-#endif

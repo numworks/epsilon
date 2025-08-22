@@ -1,5 +1,4 @@
-#ifndef DISTRIBUTIONS_PROBABILITY_CALCULATION_POPUP_DATA_SOURCE_H
-#define DISTRIBUTIONS_PROBABILITY_CALCULATION_POPUP_DATA_SOURCE_H
+#pragma once
 
 #include <escher/explicit_list_view_data_source.h>
 #include <escher/highlight_image_cell.h>
@@ -25,5 +24,3 @@ class CalculationPopupDataSource : public Escher::ExplicitListViewDataSource {
 };
 
 }  // namespace Distributions
-
-#endif

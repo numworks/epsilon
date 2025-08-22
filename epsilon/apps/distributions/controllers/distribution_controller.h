@@ -1,5 +1,4 @@
-#ifndef DISTRIBUTIONS_PROBABILITY_DISTRIBUTION_CONTROLLER_H
-#define DISTRIBUTIONS_PROBABILITY_DISTRIBUTION_CONTROLLER_H
+#pragma once
 
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
@@ -51,5 +50,3 @@ class DistributionController : public Escher::SelectableListViewController<
 };
 
 }  // namespace Distributions
-
-#endif

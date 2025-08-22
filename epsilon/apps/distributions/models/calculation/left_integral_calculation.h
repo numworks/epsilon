@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_LEFT_INTEGRAL_CALCULATION_H
-#define PROBABILITE_LEFT_INTEGRAL_CALCULATION_H
+#pragma once
 
 #include "calculation.h"
 
@@ -23,5 +22,3 @@ class LeftIntegralCalculation final : public Calculation {
 };
 
 }  // namespace Distributions
-
-#endif

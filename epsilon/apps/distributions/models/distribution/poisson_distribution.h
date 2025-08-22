@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_POISSON_DISTRIBUTION_H
-#define PROBABILITE_POISSON_DISTRIBUTION_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <poincare/layout.h>
@@ -26,5 +25,3 @@ class PoissonDistribution final : public OneParameterDistribution {
 };
 
 }  // namespace Distributions
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_RIGHT_INTEGRAL_CALCULATION_H
-#define PROBABILITE_RIGHT_INTEGRAL_CALCULATION_H
+#pragma once
 
 #include "calculation.h"
 
@@ -23,5 +22,3 @@ class RightIntegralCalculation final : public Calculation {
 };
 
 }  // namespace Distributions
-
-#endif

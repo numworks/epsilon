@@ -1,5 +1,4 @@
-#ifndef HARDWARE_TEST_SERIAL_NUMBER_CONTROLLER_H
-#define HARDWARE_TEST_SERIAL_NUMBER_CONTROLLER_H
+#pragma once
 
 #include <escher/view_controller.h>
 
@@ -19,5 +18,3 @@ class SerialNumberController : public Escher::ViewController {
 };
 
 }  // namespace HardwareTest
-
-#endif

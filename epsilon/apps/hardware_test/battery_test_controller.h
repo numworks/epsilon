@@ -1,5 +1,4 @@
-#ifndef HARDWARE_TEST_BATTERY_TEST_CONTROLLER_H
-#define HARDWARE_TEST_BATTERY_TEST_CONTROLLER_H
+#pragma once
 
 #include <escher/buffer_text_view.h>
 #include <escher/solid_color_view.h>
@@ -41,5 +40,3 @@ class BatteryTestController : public Escher::ViewController {
 };
 
 }  // namespace HardwareTest
-
-#endif

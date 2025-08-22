@@ -1,5 +1,4 @@
-#ifndef HARDWARE_TEST_CODE_128B_VIEW_H
-#define HARDWARE_TEST_CODE_128B_VIEW_H
+#pragma once
 
 #include <escher/view.h>
 
@@ -28,5 +27,3 @@ class Code128BView : public Escher::View {
 };
 
 }  // namespace HardwareTest
-
-#endif

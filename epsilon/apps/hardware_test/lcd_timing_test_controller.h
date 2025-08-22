@@ -1,5 +1,4 @@
-#ifndef LCD_TIMING_TEST_CONTROLLER_H
-#define LCD_TIMING_TEST_CONTROLLER_H
+#pragma once
 
 #include <assert.h>
 #include <escher/buffer_text_view.h>
@@ -42,5 +41,3 @@ class LCDTimingTestController : public Escher::ViewController {
 };
 
 }  // namespace HardwareTest
-
-#endif

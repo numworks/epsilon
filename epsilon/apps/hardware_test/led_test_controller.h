@@ -1,5 +1,4 @@
-#ifndef HARDWARE_TEST_LED_TEST_CONTROLLER_H
-#define HARDWARE_TEST_LED_TEST_CONTROLLER_H
+#pragma once
 
 #include <escher/buffer_text_view.h>
 #include <escher/solid_color_view.h>
@@ -45,5 +44,3 @@ class LEDTestController : public Escher::ViewController {
 };
 
 }  // namespace HardwareTest
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef HARDWARE_TEST_ARROW_VIEW_H
-#define HARDWARE_TEST_ARROW_VIEW_H
+#pragma once
 
 #include <escher/arbitrary_shaped_view.h>
 #include <ion.h>
@@ -21,5 +20,3 @@ class ArrowView : public Escher::ArbitraryShapedView {
 };
 
 }  // namespace HardwareTest
-
-#endif

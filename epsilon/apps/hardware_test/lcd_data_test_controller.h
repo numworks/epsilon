@@ -1,5 +1,4 @@
-#ifndef LCD_DATA_TEST_CONTROLLER_H
-#define LCD_DATA_TEST_CONTROLLER_H
+#pragma once
 
 #include <assert.h>
 #include <escher/buffer_text_view.h>
@@ -41,5 +40,3 @@ class LCDDataTestController : public Escher::ViewController {
 };
 
 }  // namespace HardwareTest
-
-#endif

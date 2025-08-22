@@ -94,6 +94,55 @@ float ChildCoeffOffsetInLnOrRoot(const Tree* child, bool willBeBeautified,
   return 0.f;
 }
 
+// Return metric for a to-be beautified exp(KA*ln(KB))
+float GetBeautifiedPowerMetric(const PatternMatching::Context& ctx) {
+  // exp(A*ln(B)) is beautified in many forms of B^A
+  float result = 0.f;
+  const Tree* base = ctx.getTree(KB);
+  float childrenCoeff = ChildrenCoeffLn(GetComplexSign(base));
+  // Favor smaller bases
+  childrenCoeff += ChildCoeffOffsetInLnOrRoot(base, true, true);
+
+  Tree* exponent = PatternMatching::Create(KMult(KA_s), ctx);
+  if (exponent->isHalf() || Rational::IsMinusHalf(exponent)) {
+    // exp(A*ln(B)) -> √(B)
+    result += GetTypeMetric(Type::Sqrt);
+    if (Rational::IsMinusHalf(exponent)) {
+      // exp(A*ln(B)) -> 1/√(B)
+      result += GetTypeMetric(Type::One) + GetTypeMetric(Type::Div);
+    }
+  } else if (exponent->isRational() &&
+             (Rational::Numerator(exponent).isOne() ||
+              Rational::Numerator(exponent).isMinusOne())) {
+    // exp(A*ln(B)) -> Root(B,A)
+    static_assert(GetTypeMetric(Type::IntegerPosShort) ==
+                  GetTypeMetric(Type::IntegerPosBig));
+    result += GetTypeMetric(Type::IntegerPosShort);
+    result += GetTypeMetric(Type::Root);
+    if (Rational::Numerator(exponent).isMinusOne()) {
+      // exp(A*ln(B)) -> 1/Root(B,A)
+      result += GetTypeMetric(Type::One) + GetTypeMetric(Type::Div);
+    }
+  } else {
+    // exp(A*ln(B)) -> B^A
+    result += GetTypeMetric(Type::Pow);
+    result += Metric::GetTrueMetric(exponent, ReductionTarget::User);
+    if (exponent->isRational()) {
+      /* Favor root forms over power of rationals(e.g. Root(4,3) over
+       * 2^(2/3))  */
+      childrenCoeff += 3 * k_defaultMetric;
+    }
+  }
+  if (base->isPow()) {
+    // Favor 1/Root(A,B) over Root(1/A,B)
+    childrenCoeff += 3 * k_defaultMetric;
+  }
+
+  // Cost of ln, multiplication and sometimes of the exponent are ignored.
+  float baseMetric = Metric::GetTrueMetric(base, ReductionTarget::User);
+  return result + baseMetric * childrenCoeff;
+}
+
 }  // namespace
 
 float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
@@ -187,54 +236,8 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
     case Type::Exp: {
       if (willBeBeautified &&
           PatternMatching::Match(e, KExp(KMult(KA_s, KLn(KB))), &ctx)) {
-        // exp(A*ln(B)) is beautified in many forms of B^A
-        assert(result == GetTypeMetric(Type::Exp));
-        result = 0.f;
-        const Tree* base = ctx.getTree(KB);
-        childrenCoeff = ChildrenCoeffLn(GetComplexSign(base));
-        // Favor smaller bases
-        childrenCoeff +=
-            ChildCoeffOffsetInLnOrRoot(base, willBeBeautified, true);
-
-        Tree* exponent = PatternMatching::Create(KMult(KA_s), ctx);
-        if (exponent->isHalf() || Rational::IsMinusHalf(exponent)) {
-          // exp(A*ln(B)) -> √(B)
-          result += GetTypeMetric(Type::Sqrt);
-          if (Rational::IsMinusHalf(exponent)) {
-            // exp(A*ln(B)) -> 1/√(B)
-            result += GetTypeMetric(Type::One) + GetTypeMetric(Type::Div);
-          }
-        } else if (exponent->isRational() &&
-                   (Rational::Numerator(exponent).isOne() ||
-                    Rational::Numerator(exponent).isMinusOne())) {
-          // exp(A*ln(B)) -> Root(B,A)
-          static_assert(GetTypeMetric(Type::IntegerPosShort) ==
-                        GetTypeMetric(Type::IntegerPosBig));
-          result += GetTypeMetric(Type::IntegerPosShort);
-          result += GetTypeMetric(Type::Root);
-          if (Rational::Numerator(exponent).isMinusOne()) {
-            // exp(A*ln(B)) -> 1/Root(B,A)
-            result += GetTypeMetric(Type::One) + GetTypeMetric(Type::Div);
-          }
-        } else {
-          // exp(A*ln(B)) -> B^A
-          result += GetTypeMetric(Type::Pow);
-          result += GetTrueMetric(exponent, reductionTarget);
-          if (exponent->isRational()) {
-            /* Favor root forms over power of rationals(e.g. Root(4,3) over
-             * 2^(2/3))  */
-            childrenCoeff += 3 * k_defaultMetric;
-          }
-        }
-        if (base->isPow()) {
-          // Favor 1/Root(A,B) over Root(1/A,B)
-          childrenCoeff += 3 * k_defaultMetric;
-        }
-        exponent->removeTree();
-        /* Escape next steps since we ignore cost of ln, multiplication and
-         * sometimes of the exponent. */
-        float baseMetric = GetTrueMetric(base, reductionTarget);
-        return result + baseMetric * childrenCoeff;
+        assert(reductionTarget == ReductionTarget::User);
+        return GetBeautifiedPowerMetric(ctx);
       }
       break;
     }

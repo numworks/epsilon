@@ -1,5 +1,4 @@
-#ifndef HARDWARE_TEST_KEYBOARD_MODEL_H
-#define HARDWARE_TEST_KEYBOARD_MODEL_H
+#pragma once
 
 #include <ion/keyboard.h>
 
@@ -84,5 +83,3 @@ class KeyboardModel {
   int m_testedKeyIndex;
 };
 }  // namespace HardwareTest
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef HARDWARE_TEST_DEAD_PIXELS_TEST_CONTROLLER_H
-#define HARDWARE_TEST_DEAD_PIXELS_TEST_CONTROLLER_H
+#pragma once
 
 #include <escher/solid_color_view.h>
 #include <escher/view_controller.h>
@@ -25,5 +24,3 @@ class DeadPixelsTestController : public Escher::ViewController {
 };
 
 }  // namespace HardwareTest
-
-#endif

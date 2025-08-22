@@ -1,5 +1,4 @@
-#ifndef HARDWARE_TEST_APP_H
-#define HARDWARE_TEST_APP_H
+#pragma once
 
 #include <escher/app.h>
 #include <escher/bank_view_controller.h>
@@ -49,5 +48,3 @@ class App : public Escher::App {
 };
 
 }  // namespace HardwareTest
-
-#endif

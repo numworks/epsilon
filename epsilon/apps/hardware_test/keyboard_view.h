@@ -1,5 +1,4 @@
-#ifndef HARDWARE_TEST_KEYBOARD_VIEW_H
-#define HARDWARE_TEST_KEYBOARD_VIEW_H
+#pragma once
 
 #include <escher/view.h>
 
@@ -27,5 +26,3 @@ class KeyboardView : public Escher::View {
   KeyboardModel m_keyboardModel;
 };
 }  // namespace HardwareTest
-
-#endif

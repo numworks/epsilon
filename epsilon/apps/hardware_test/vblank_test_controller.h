@@ -1,5 +1,4 @@
-#ifndef HARDWARE_TEST_VBLANK_TEST_CONTROLLER_H
-#define HARDWARE_TEST_VBLANK_TEST_CONTROLLER_H
+#pragma once
 
 #include <assert.h>
 #include <escher/buffer_text_view.h>
@@ -39,5 +38,3 @@ class VBlankTestController : public Escher::ViewController {
 };
 
 }  // namespace HardwareTest
-
-#endif

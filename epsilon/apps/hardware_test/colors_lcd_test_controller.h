@@ -1,5 +1,4 @@
-#ifndef HARDWARE_TEST_COLORS_LCD_TEST_CONTROLLER_H
-#define HARDWARE_TEST_COLORS_LCD_TEST_CONTROLLER_H
+#pragma once
 
 #include <assert.h>
 #include <escher/buffer_text_view.h>
@@ -40,5 +39,3 @@ class ColorsLCDTestController : public Escher::ViewController {
 };
 
 }  // namespace HardwareTest
-
-#endif

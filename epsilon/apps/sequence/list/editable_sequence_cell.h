@@ -1,5 +1,4 @@
-#ifndef ESCHER_EDITABLE_SEQUENCE_CELL_H
-#define ESCHER_EDITABLE_SEQUENCE_CELL_H
+#pragma once
 
 #include <escher/editable_expression_model_cell.h>
 
@@ -25,5 +24,3 @@ class EditableSequenceCell
 };
 
 }  // namespace Sequence
-
-#endif

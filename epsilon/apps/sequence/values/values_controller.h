@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_VALUES_CONTROLLER_H
-#define SEQUENCE_VALUES_CONTROLLER_H
+#pragma once
 
 #include <apps/sequence/values/sequence_column_parameter_controller.h>
 #include <apps/sequence/values/sum_column_parameter_controller.h>
@@ -123,5 +122,3 @@ class ValuesController : public Shared::ValuesController,
 };
 
 }  // namespace Sequence
-
-#endif

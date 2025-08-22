@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_SEQUENCE_TOOLBOX_H
-#define SEQUENCE_SEQUENCE_TOOLBOX_H
+#pragma once
 
 #include <apps/shared/math_toolbox_controller.h>
 #include <apps/shared/sequence_store.h>
@@ -31,5 +30,3 @@ class SequenceToolboxDataSource
 };
 
 }  // namespace Sequence
-
-#endif

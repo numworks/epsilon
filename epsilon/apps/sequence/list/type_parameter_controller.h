@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_TYPE_PARAMETER_CONTROLLER_H
-#define SEQUENCE_TYPE_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/sequence_store.h>
 #include <escher/even_odd_expression_cell.h>
@@ -44,5 +43,3 @@ class TypeParameterController
 };
 
 }  // namespace Sequence
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_TERM_SUM_CONTROLLER_H
-#define SEQUENCE_TERM_SUM_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/sum_graph_controller.h>
 #include <poincare/layout.h>
@@ -27,5 +26,3 @@ class TermSumController : public Shared::SumGraphController {
 };
 
 }  // namespace Sequence
-
-#endif

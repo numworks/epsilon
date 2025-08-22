@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_GRAPH_VIEW_H
-#define SEQUENCE_GRAPH_VIEW_H
+#pragma once
 
 #include <apps/shared/function_graph_view.h>
 #include <apps/shared/sequence_store.h>
@@ -39,5 +38,3 @@ class GraphView : public Shared::FunctionGraphView {
 };
 
 }  // namespace Sequence
-
-#endif

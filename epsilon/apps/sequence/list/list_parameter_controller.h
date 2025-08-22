@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_LIST_PARAM_CONTROLLER_H
-#define SEQUENCE_LIST_PARAM_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/list_parameter_controller.h>
 #include <apps/shared/parameter_text_field_delegate.h>
@@ -55,5 +54,3 @@ class ListParameterController : public Shared::ListParameterController,
 };
 
 }  // namespace Sequence
-
-#endif

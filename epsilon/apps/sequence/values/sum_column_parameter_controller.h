@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_SUM_COLUMN_PARAM_CONTROLLER_H
-#define SEQUENCE_SUM_COLUMN_PARAM_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/function_store.h>
 #include <apps/shared/values_controller.h>
@@ -31,5 +30,3 @@ class SumColumnParameterController : public Shared::ColumnParameterController {
 };
 
 }  // namespace Sequence
-
-#endif

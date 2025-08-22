@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_GRAPH_CONTROLLER_H
-#define SEQUENCE_GRAPH_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/function_graph_controller.h>
 #include <apps/shared/round_cursor_view.h>
@@ -108,5 +107,3 @@ class GraphController final : public Shared::FunctionGraphController {
 };
 
 }  // namespace Sequence
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_SEQUENCE_COLUMN_PARAM_CONTROLLER_H
-#define SEQUENCE_SEQUENCE_COLUMN_PARAM_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/column_parameter_controller.h>
 #include <apps/shared/continuous_function_store.h>
@@ -38,5 +37,3 @@ class SequenceColumnParameterController
 };
 
 }  // namespace Sequence
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_UNITS_K_UNITS_H
-#define POINCARE_EXPRESSION_UNITS_K_UNITS_H
+#pragma once
 
 #include "representatives.h"
 
@@ -96,5 +95,3 @@ DEFINE_KUNIT(volume, liter);
 }  // namespace Poincare::Internal::KTrees::KUnits
 
 #undef DEFINE_KUNIT
-
-#endif

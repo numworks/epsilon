@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_RACK_H
-#define POINCARE_LAYOUT_RACK_H
+#pragma once
 
 #include <poincare/src/memory/tree_sub_class.h>
 
@@ -26,5 +25,3 @@ class Rack : public TreeSubClass<Rack, Layout> {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

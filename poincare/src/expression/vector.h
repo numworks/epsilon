@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_VECTOR_H
-#define POINCARE_EXPRESSION_VECTOR_H
+#pragma once
 
 #include "matrix.h"
 
@@ -13,5 +12,3 @@ struct Vector {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

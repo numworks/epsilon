@@ -1,5 +1,4 @@
-#ifndef POINCARE_REGRESSION_POWER_REGRESSION_H
-#define POINCARE_REGRESSION_POWER_REGRESSION_H
+#pragma once
 
 #include "transformed_regression.h"
 
@@ -15,5 +14,3 @@ class PowerRegression : public TransformedRegression {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

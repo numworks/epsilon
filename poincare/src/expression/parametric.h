@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_PARAMETRIC_H
-#define POINCARE_EXPRESSION_PARAMETRIC_H
+#pragma once
 
 #include <poincare/sign.h>
 #include <poincare/src/memory/tree.h>
@@ -45,4 +44,3 @@ class Parametric {
 };
 
 }  // namespace Poincare::Internal
-#endif

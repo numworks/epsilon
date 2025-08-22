@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_TRIGONOMETRY_H
-#define POINCARE_EXPRESSION_TRIGONOMETRY_H
+#pragma once
 
 #include <poincare/src/memory/tree_ref.h>
 
@@ -25,5 +24,3 @@ class Trigonometry final {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

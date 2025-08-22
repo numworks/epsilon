@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_VALUE_BLOCK_H
-#define POINCARE_MEMORY_VALUE_BLOCK_H
+#pragma once
 
 #include "block.h"
 #include "type_block.h"
@@ -46,5 +45,3 @@ class ValueBlock : public Block {
 static_assert(sizeof(ValueBlock) == sizeof(Block));
 
 }  // namespace Poincare::Internal
-
-#endif

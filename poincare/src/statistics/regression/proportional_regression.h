@@ -1,5 +1,4 @@
-#ifndef POINCARE_REGRESSION_PROPORTIONAL_REGRESSION_H
-#define POINCARE_REGRESSION_PROPORTIONAL_REGRESSION_H
+#pragma once
 
 #include <poincare/statistics/regression.h>
 
@@ -22,5 +21,3 @@ class ProportionalRegression : public Regression {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

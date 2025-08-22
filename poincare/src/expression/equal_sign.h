@@ -1,5 +1,4 @@
-#ifndef POINCARE_SRC_EXPRESSION_EQUAL_SIGN_H
-#define POINCARE_SRC_EXPRESSION_EQUAL_SIGN_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -9,5 +8,3 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
                                                     const Tree* approximate);
 
 }  // namespace Poincare::Internal
-
-#endif

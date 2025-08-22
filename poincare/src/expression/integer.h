@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_INTEGER_H
-#define POINCARE_EXPRESSION_INTEGER_H
+#pragma once
 
 #include <omg/arithmetic.h>
 #include <omg/bit_helper.h>
@@ -354,5 +353,3 @@ class Integer {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

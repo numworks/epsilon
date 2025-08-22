@@ -1,5 +1,4 @@
-#ifndef POINCARE_TEST_FLOAT_HELPER_H
-#define POINCARE_TEST_FLOAT_HELPER_H
+#pragma once
 
 #include <omg/float.h>
 
@@ -19,4 +18,3 @@ void assert_roughly_equal(T observed, T expected,
                           T threshold = OMG::Float::Epsilon<T>(),
                           bool acceptNAN = false,
                           T nullExpectedThreshold = NAN);
-#endif

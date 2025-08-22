@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_UNITS_UNIT_H
-#define POINCARE_EXPRESSION_UNITS_UNIT_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -264,5 +263,3 @@ bool IsPureAngleUnit(const Tree* e);
 
 }  // namespace Units
 }  // namespace Poincare::Internal
-
-#endif

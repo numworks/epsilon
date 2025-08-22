@@ -1,5 +1,4 @@
-#ifndef POINCARE_STATISTICS_PROBABILITY_DISTRIBUTION_METHOD_H
-#define POINCARE_STATISTICS_PROBABILITY_DISTRIBUTION_METHOD_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -46,5 +45,3 @@ bool ShallowReduce(Type method, const Abscissae<const Tree*> abscissae,
 };  // namespace DistributionMethod
 
 }  // namespace Poincare::Internal
-
-#endif

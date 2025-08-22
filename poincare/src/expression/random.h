@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_RANDOM_H
-#define POINCARE_EXPRESSION_RANDOM_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -65,5 +64,3 @@ class Random {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_MULTIPLE_NODES_ITERATOR_H
-#define POINCARE_MEMORY_MULTIPLE_NODES_ITERATOR_H
+#pragma once
 
 #include <omg/array.h>
 
@@ -229,5 +228,3 @@ typedef MultipleNodesIterator::NoEditablePolicy NoEditable;
 typedef MultipleNodesIterator::EditablePolicy Editable;
 
 }  // namespace Poincare::Internal
-
-#endif

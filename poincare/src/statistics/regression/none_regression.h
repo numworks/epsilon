@@ -1,5 +1,4 @@
-#ifndef POINCARE_REGRESSION_NONE_REGRESSION_H
-#define POINCARE_REGRESSION_NONE_REGRESSION_H
+#pragma once
 
 #include <poincare/statistics/regression.h>
 
@@ -32,5 +31,3 @@ class NoneRegression : public Regression {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_K_TREE_H
-#define POINCARE_EXPRESSION_K_TREE_H
+#pragma once
 
 #include <omg/arithmetic.h>
 #include <poincare/sign.h>
@@ -538,5 +537,3 @@ constexpr auto KSeq = _KFunHelper<Type::UserSequence, S>();
 
 }  // namespace KTrees
 }  // namespace Poincare::Internal
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_INPUT_BEAUTIFICATION_H
-#define POINCARE_INPUT_BEAUTIFICATION_H
+#pragma once
 
 #include <poincare/preferences.h>
 #include <poincare/src/expression/aliases.h>
@@ -317,5 +316,3 @@ class InputBeautification {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

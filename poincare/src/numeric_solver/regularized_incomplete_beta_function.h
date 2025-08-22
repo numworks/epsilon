@@ -1,5 +1,4 @@
-#ifndef POINCARE_SOLVER_REGULARIZED_INCOMPLETE_BETA_FUNCTION_H
-#define POINCARE_SOLVER_REGULARIZED_INCOMPLETE_BETA_FUNCTION_H
+#pragma once
 
 /*
  * zlib License
@@ -32,5 +31,3 @@ namespace Poincare::Internal {
 double RegularizedIncompleteBetaFunction(double a, double b, double x);
 
 }
-
-#endif

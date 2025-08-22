@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_RATIONAL_H
-#define POINCARE_EXPRESSION_RATIONAL_H
+#pragma once
 
 #include <omg/troolean.h>
 #include <poincare/sign.h>
@@ -72,5 +71,3 @@ class Rational final {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

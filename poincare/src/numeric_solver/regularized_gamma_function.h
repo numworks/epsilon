@@ -1,5 +1,4 @@
-#ifndef POINCARE_SOLVER_REGULARIZED_GAMMA_FUNCTION_H
-#define POINCARE_SOLVER_REGULARIZED_GAMMA_FUNCTION_H
+#pragma once
 
 #include <float.h>
 
@@ -11,5 +10,3 @@ double RegularizedGammaFunction(double s, double x, double epsilon,
                                 int maxNumberOfIterations, double* result);
 
 }  // namespace Poincare::Internal
-
-#endif

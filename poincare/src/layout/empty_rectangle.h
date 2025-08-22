@@ -1,5 +1,4 @@
-#ifndef POINCARE_EMPTY_RECTANGLE_H
-#define POINCARE_EMPTY_RECTANGLE_H
+#pragma once
 
 #include <kandinsky/color.h>
 #include <kandinsky/context.h>
@@ -23,5 +22,3 @@ class EmptyRectangle {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_REGRESSION_TRANSFORMED_REGRESSION_H
-#define POINCARE_REGRESSION_TRANSFORMED_REGRESSION_H
+#pragma once
 
 #include <poincare/statistics/regression.h>
 
@@ -29,5 +28,3 @@ class TransformedRegression : public Regression {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

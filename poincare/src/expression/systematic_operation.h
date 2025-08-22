@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_SYSTEMATIC_OPERATION_H
-#define POINCARE_EXPRESSION_SYSTEMATIC_OPERATION_H
+#pragma once
 
 #include <poincare/src/memory/tree_ref.h>
 
@@ -30,5 +29,3 @@ class SystematicOperation {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_TRIGONOMETRY_EXACT_FORMULAS_H
-#define POINCARE_EXPRESSION_TRIGONOMETRY_EXACT_FORMULAS_H
+#pragma once
 
 #include <poincare/src/memory/k_tree.h>
 #include <poincare/src/memory/tree.h>
@@ -35,5 +34,3 @@ class ExactFormula {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

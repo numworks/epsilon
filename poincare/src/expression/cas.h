@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_CAS_H
-#define POINCARE_EXPRESSION_CAS_H
+#pragma once
 
 #include <poincare/context.h>
 #include <poincare/src/memory/tree.h>
@@ -17,5 +16,3 @@ bool ShouldOnlyDisplayApproximation(const Tree* input, const Tree* exactOutput,
 }  // namespace CAS
 
 }  // namespace Poincare::Internal
-
-#endif

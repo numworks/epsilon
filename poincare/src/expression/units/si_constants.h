@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_UNITS_SI_CONSTANTS_H
-#define POINCARE_EXPRESSION_UNITS_SI_CONSTANTS_H
+#pragma once
 
 #include "representatives.h"
 
@@ -64,5 +63,3 @@ static_assert(W == J / s);
 
 }  // namespace Units
 }  // namespace Poincare::Internal
-
-#endif

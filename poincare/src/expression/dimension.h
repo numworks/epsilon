@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_DIMENSION_H
-#define POINCARE_EXPRESSION_DIMENSION_H
+#pragma once
 
 #include <poincare/context.h>
 #include <poincare/src/memory/tree.h>
@@ -139,5 +138,3 @@ struct Dimension {
 }  // namespace Internal
 
 }  // namespace Poincare
-
-#endif

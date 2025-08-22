@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_LAYOUT_SPAN_DECODER_H
-#define POINCARE_LAYOUT_LAYOUT_SPAN_DECODER_H
+#pragma once
 
 #include <omg/unicode_helper.h>
 #include <omg/utf8_decoder.h>
@@ -132,5 +131,3 @@ inline int CompareLayoutSpanWithNullTerminatedString(const LayoutSpan a,
 }
 
 }  // namespace Poincare::Internal
-
-#endif

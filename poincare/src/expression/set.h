@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_SET_H
-#define POINCARE_EXPRESSION_SET_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -20,5 +19,3 @@ class Set {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_DEPENDENCY_H
-#define POINCARE_EXPRESSION_DEPENDENCY_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -54,4 +53,3 @@ struct Dependency {
 };
 
 }  // namespace Poincare::Internal
-#endif

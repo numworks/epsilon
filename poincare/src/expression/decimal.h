@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_DECIMAL_H
-#define POINCARE_EXPRESSION_DECIMAL_H
+#pragma once
 
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
@@ -26,5 +25,3 @@ class Decimal final {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

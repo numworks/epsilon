@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_TREE_SUB_CLASS_H
-#define POINCARE_MEMORY_TREE_SUB_CLASS_H
+#pragma once
 
 #include <type_traits>
 
@@ -53,5 +52,3 @@ struct TreeSubClass : Tree {
  * not generate any code in release. */
 
 }  // namespace Poincare::Internal
-
-#endif

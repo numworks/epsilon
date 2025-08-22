@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_CODE_POINT_LAYOUT_H
-#define POINCARE_LAYOUT_CODE_POINT_LAYOUT_H
+#pragma once
 
 #include <omg/code_point.h>
 #include <poincare/src/memory/tree.h>
@@ -22,5 +21,3 @@ class CodePointLayout {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

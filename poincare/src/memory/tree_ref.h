@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_TREE_REF_H
-#define POINCARE_MEMORY_TREE_REF_H
+#pragma once
 
 #include "k_tree.h"
 #include "tree.h"
@@ -137,5 +136,3 @@ inline void CloneNodeOverTree(TreeRef& u, const Tree* n) {
 }
 
 }  // namespace Poincare::Internal
-
-#endif

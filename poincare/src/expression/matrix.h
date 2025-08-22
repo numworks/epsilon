@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_MATRIX_H
-#define POINCARE_EXPRESSION_MATRIX_H
+#pragma once
 
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree.h>
@@ -81,5 +80,3 @@ struct Matrix {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

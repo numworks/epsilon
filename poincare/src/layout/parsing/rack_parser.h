@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_PARSING_RACK_PARSER_H
-#define POINCARE_LAYOUT_PARSING_RACK_PARSER_H
+#pragma once
 
 /* A precedence-climbing parser is implemented hereafter.
  * It is a trade-off between
@@ -203,5 +202,3 @@ class RackParser {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

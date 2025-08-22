@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_BINARY_H
-#define POINCARE_EXPRESSION_BINARY_H
+#pragma once
 
 #include <poincare/comparison_operator.h>
 #include <poincare/src/layout/layout_span_decoder.h>
@@ -71,5 +70,3 @@ class Binary {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

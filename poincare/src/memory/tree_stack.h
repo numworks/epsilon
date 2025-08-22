@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_TREE_STACK_H
-#define POINCARE_MEMORY_TREE_STACK_H
+#pragma once
 
 #include <omg/code_point.h>
 #include <omg/global_box.h>
@@ -273,5 +272,3 @@ inline constexpr OMG::GlobalBox<TreeStack>& SharedTreeStack =
     TreeStack::SharedTreeStack;
 
 }  // namespace Poincare::Internal
-
-#endif

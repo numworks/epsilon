@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_TYPE_ENUM_H
-#define POINCARE_MEMORY_TYPE_ENUM_H
+#pragma once
 
 namespace Poincare::Internal {
 
@@ -92,4 +91,3 @@ class LayoutType {
 };
 
 }  // namespace Poincare::Internal
-#endif

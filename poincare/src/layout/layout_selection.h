@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_SELECTION_H
-#define POINCARE_LAYOUT_SELECTION_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -56,5 +55,3 @@ class LayoutSelection {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

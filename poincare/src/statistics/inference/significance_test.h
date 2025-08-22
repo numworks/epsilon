@@ -1,5 +1,4 @@
-#ifndef POINCARE_STATISTICS_INFERENCE_SIGNIFICANCE_TEST_H
-#define POINCARE_STATISTICS_INFERENCE_SIGNIFICANCE_TEST_H
+#pragma once
 
 #include "inference.h"
 
@@ -85,5 +84,3 @@ double ComputeCriticalValue(Type type, double h0,
 };  // namespace Inference
 
 }  // namespace Poincare::Internal
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCAREJ_TEST_HELPER_H
-#define POINCAREJ_TEST_HELPER_H
+#pragma once
 
 #include <poincare/context.h>
 #include <poincare/helpers/parser.h>
@@ -251,5 +250,3 @@ void serialize_expression(const Poincare::Internal::Tree* expression,
 void simplify(Poincare::Internal::Tree* e,
               const Poincare::Internal::ProjectionContext& ctx,
               bool beautify = true);
-
-#endif

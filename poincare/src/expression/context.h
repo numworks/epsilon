@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_CONTEXT_H
-#define POINCARE_EXPRESSION_CONTEXT_H
+#pragma once
 
 #include <stdint.h>
 
@@ -51,5 +50,3 @@ enum class UnitDisplay : uint8_t {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

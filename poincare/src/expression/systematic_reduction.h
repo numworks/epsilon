@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_SYSTEMATIC_REDUCTION_H
-#define POINCARE_EXPRESSION_SYSTEMATIC_REDUCTION_H
+#pragma once
 
 #include <poincare/src/memory/tree_ref.h>
 
@@ -23,5 +22,3 @@ class SystematicReduction {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_K_TREE_CONCEPT_H
-#define POINCARE_MEMORY_K_TREE_CONCEPT_H
+#pragma once
 
 #include <omg/concept.h>
 
@@ -19,5 +18,3 @@ concept HasATreeConcept = (false || ... ||
                            std::is_same<const TSC*, Args>::value);
 
 }  // namespace Poincare::Internal::KTrees
-
-#endif

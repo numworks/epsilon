@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_ANGLE_H
-#define POINCARE_EXPRESSION_ANGLE_H
+#pragma once
 
 #include <omg/unreachable.h>
 #include <poincare/math_options.h>
@@ -53,5 +52,3 @@ class Angle {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

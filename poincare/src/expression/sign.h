@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_SIGN_H
-#define POINCARE_EXPRESSION_SIGN_H
+#pragma once
 
 #include <poincare/sign.h>
 #include <poincare/src/memory/tree.h>
@@ -33,5 +32,3 @@ inline NonStrictSign InvertSign(NonStrictSign sign) {
 ComplexSign SignOfTreeOrApproximation(const Tree* e);
 
 }  // namespace Poincare::Internal
-
-#endif

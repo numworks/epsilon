@@ -1,5 +1,4 @@
-#ifndef POINCARE_STATISTICS_INFERENCE_CONFIDENCE_INTERVAL_H
-#define POINCARE_STATISTICS_INFERENCE_CONFIDENCE_INTERVAL_H
+#pragma once
 
 #include "inference.h"
 
@@ -48,5 +47,3 @@ constexpr double ComputeMarginOfError(double intervalCriticalValue,
 };  // namespace Inference
 
 }  // namespace Poincare::Internal
-
-#endif

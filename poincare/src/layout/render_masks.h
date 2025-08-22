@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_RENDER_MASKS_H
-#define POINCARE_LAYOUT_RENDER_MASKS_H
+#pragma once
 
 #include "render_metrics.h"
 
@@ -96,5 +95,3 @@ const uint8_t symbolUpperHalf[k_symbolWidth * k_symbolHeight / 2] = {
 }
 
 }  // namespace Poincare::Internal
-
-#endif

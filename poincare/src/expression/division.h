@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_DIVISION_H
-#define POINCARE_EXPRESSION_DIVISION_H
+#pragma once
 
 #include <poincare/src/memory/tree_ref.h>
 
@@ -25,5 +24,3 @@ class Division {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

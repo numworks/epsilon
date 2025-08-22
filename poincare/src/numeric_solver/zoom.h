@@ -1,5 +1,4 @@
-#ifndef POINCARE_SOLVER_ZOOM_H
-#define POINCARE_SOLVER_ZOOM_H
+#pragma once
 
 #include <ion/display.h>
 #include <poincare/numeric_solver/solver.h>
@@ -187,5 +186,3 @@ class Zoom {
 };
 
 }  // namespace Poincare
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_FLOAT_HELPER_H
-#define POINCARE_EXPRESSION_FLOAT_HELPER_H
+#pragma once
 
 #include <omg/bit_helper.h>
 #include <poincare/src/expression/sign.h>
@@ -34,5 +33,3 @@ class FloatHelper {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

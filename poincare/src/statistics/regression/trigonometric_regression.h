@@ -1,5 +1,4 @@
-#ifndef POINCARE_REGRESSION_TRIGONOMETRIC_REGRESSION_H
-#define POINCARE_REGRESSION_TRIGONOMETRIC_REGRESSION_H
+#pragma once
 
 #include <poincare/preferences.h>
 #include <poincare/statistics/regression.h>
@@ -59,5 +58,3 @@ class TrigonometricRegression : public Regression {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_SEQUENCE_H
-#define POINCARE_LAYOUT_SEQUENCE_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -16,5 +15,3 @@ inline void SetFirstRank(Tree* l, uint8_t firstRank) {
 }  // namespace SequenceLayout
 
 }  // namespace Poincare::Internal
-
-#endif

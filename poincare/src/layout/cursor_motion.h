@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_CURSOR_MOTION_H
-#define POINCARE_LAYOUT_CURSOR_MOTION_H
+#pragma once
 
 #include <omg/directions.h>
 #include <poincare/src/memory/tree.h>
@@ -51,5 +50,3 @@ class CursorMotion {
   constexpr static int k_cantMoveIndex = -2;
 };
 }  // namespace Poincare::Internal
-
-#endif

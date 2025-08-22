@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_LATEX_PARSER_LATEX_TO_LAYOUT_H
-#define POINCARE_LAYOUT_LATEX_PARSER_LATEX_TO_LAYOUT_H
+#pragma once
 
 #include <poincare/src/layout/rack.h>
 #include <poincare/src/memory/tree.h>
@@ -19,5 +18,3 @@ class LatexParser {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

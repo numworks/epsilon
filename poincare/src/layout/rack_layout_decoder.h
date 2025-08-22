@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_RACK_LAYOUT_DECODER_H
-#define POINCARE_LAYOUT_RACK_LAYOUT_DECODER_H
+#pragma once
 
 #include <omg/utf8_decoder.h>
 
@@ -128,5 +127,3 @@ class CPLayoutDecoder : public UnicodeDecoder {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

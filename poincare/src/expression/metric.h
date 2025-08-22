@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_METRIC_H
-#define POINCARE_EXPRESSION_METRIC_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -40,5 +39,3 @@ class Metric {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

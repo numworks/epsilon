@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_ARITHMETIC_H
-#define POINCARE_EXPRESSION_ARITHMETIC_H
+#pragma once
 
 #include <poincare/src/memory/tree.h>
 
@@ -60,4 +59,3 @@ class Arithmetic {
 };
 
 }  // namespace Poincare::Internal
-#endif

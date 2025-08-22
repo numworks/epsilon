@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_PATTERN_MATCHING_H
-#define POINCARE_MEMORY_PATTERN_MATCHING_H
+#pragma once
 
 #include <omg/always_false.h>
 #include <omg/unreachable.h>
@@ -313,5 +312,3 @@ constexpr auto KH_s = KZeroOrMorePlaceholder<Placeholder::Tag::H>();
 }  // namespace KTrees
 
 }  // namespace Poincare::Internal
-
-#endif

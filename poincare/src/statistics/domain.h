@@ -1,5 +1,4 @@
-#ifndef POINCARE_STATISTICS_PROBABILITY_DOMAIN_H
-#define POINCARE_STATISTICS_PROBABILITY_DOMAIN_H
+#pragma once
 
 #include <omg/float.h>
 #include <omg/troolean.h>
@@ -81,5 +80,3 @@ OMG::Troolean IsAGreaterThanB(const T a, const T b, bool strictly = false);
 };  // namespace Domain
 
 }  // namespace Poincare::Internal
-
-#endif

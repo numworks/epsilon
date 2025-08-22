@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_PHYSICAL_CONSTANT_H
-#define POINCARE_EXPRESSION_PHYSICAL_CONSTANT_H
+#pragma once
 
 #include <assert.h>
 #include <poincare/src/layout/layout_span_decoder.h>
@@ -33,5 +32,3 @@ class PhysicalConstant {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

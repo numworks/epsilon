@@ -1,5 +1,4 @@
-#ifndef POINCARE_STATISTICS_DISTRIBUTIONS_DISTRIBUTION_H
-#define POINCARE_STATISTICS_DISTRIBUTIONS_DISTRIBUTION_H
+#pragma once
 
 #include <poincare/statistics/distribution.h>
 
@@ -19,5 +18,3 @@ constexpr static float k_uniformDiracMaximum = 10.0f;
 constexpr static float k_fisherDefaultMax = 3.0f;
 
 }  // namespace Poincare::Internal::Distribution
-
-#endif

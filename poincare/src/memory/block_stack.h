@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_BLOCK_STACK_H
-#define POINCARE_MEMORY_BLOCK_STACK_H
+#pragma once
 
 #include <string.h>
 
@@ -140,5 +139,3 @@ class BlockStack {
 };
 
 }  // namespace Poincare::Internal
-
-#endif

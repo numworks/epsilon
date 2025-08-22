@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_K_TREE_H
-#define POINCARE_LAYOUT_K_TREE_H
+#pragma once
 
 #include <omg/bit_helper.h>
 #include <omg/code_point.h>
@@ -218,5 +217,3 @@ constexpr auto operator^(SimpleKTrees::KTree<T1, B1...>,
 
 }  // namespace KTrees
 }  // namespace Poincare::Internal
-
-#endif

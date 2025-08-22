@@ -1,5 +1,4 @@
-#ifndef POINCARE_MEMORY_N_ARY_H
-#define POINCARE_MEMORY_N_ARY_H
+#pragma once
 
 #include <poincare/src/expression/order.h>
 
@@ -40,5 +39,3 @@ Tree* CloneSubRange(const Tree* nary, int startIndex, int endIndex);
 }  // namespace NAry
 
 }  // namespace Poincare::Internal
-
-#endif

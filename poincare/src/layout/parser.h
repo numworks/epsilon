@@ -1,5 +1,4 @@
-#ifndef POINCARE_LAYOUT_PARSER_H
-#define POINCARE_LAYOUT_PARSER_H
+#pragma once
 
 #include <poincare/context.h>
 #include <poincare/helpers/parser.h>
@@ -22,5 +21,3 @@ inline Tree* Parse(const Tree* l, const Context& context = EmptyContext{},
 }  // namespace Parser
 
 }  // namespace Poincare::Internal
-
-#endif

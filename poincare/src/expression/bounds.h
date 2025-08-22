@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXPRESSION_BOUNDS_H
-#define POINCARE_EXPRESSION_BOUNDS_H
+#pragma once
 
 #include <poincare/sign.h>
 #include <poincare/src/memory/tree.h>
@@ -84,4 +83,3 @@ class Bounds {
 };
 
 }  // namespace Poincare::Internal
-#endif

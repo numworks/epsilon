@@ -1,5 +1,4 @@
-#ifndef SHARED_BUTTON_CELL_H
-#define SHARED_BUTTON_CELL_H
+#pragma once
 
 #include <escher/highlight_cell.h>
 #include <escher/i18n.h>
@@ -71,4 +70,3 @@ class SimpleButtonCell : public ButtonCell {
 };
 
 }  // namespace Escher
-#endif

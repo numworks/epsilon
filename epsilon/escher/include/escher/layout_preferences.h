@@ -1,5 +1,4 @@
-#ifndef ESCHER_LAYOUT_PREFERENCES_H
-#define ESCHER_LAYOUT_PREFERENCES_H
+#pragma once
 
 #include <poincare/preferences.h>
 
@@ -44,4 +43,3 @@ inline constexpr const LayoutPreferences& SharedPreferences =
     LayoutPreferences::PreferencesInstance;
 
 }  // namespace Escher
-#endif

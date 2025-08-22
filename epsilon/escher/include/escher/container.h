@@ -1,5 +1,4 @@
-#ifndef ESCHER_CONTAINER_H
-#define ESCHER_CONTAINER_H
+#pragma once
 
 /* Container is the entry point of a program using Escher.
  *
@@ -47,5 +46,3 @@ class Container : public RunLoop {
 inline App* App::app() { return Container::activeApp(); }
 
 }  // namespace Escher
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_CONTEXT_PROVIDER_H
-#define ESCHER_CONTEXT_PROVIDER_H
+#pragma once
 
 #include <escher/container.h>
 #include <poincare/context.h>
@@ -14,5 +13,3 @@ class ContextProvider {
   }
 };
 }  // namespace Escher
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_EVEN_ODD_EXPRESSION_CELL_H
-#define ESCHER_EVEN_ODD_EXPRESSION_CELL_H
+#pragma once
 
 #include <escher/even_odd_cell.h>
 #include <escher/layout_view.h>
@@ -35,5 +34,3 @@ class EvenOddExpressionCell : public EvenOddCell {
 };
 
 }  // namespace Escher
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_EXPLICIT_LIST_VIEW_DATA_SOURCE_H
-#define ESCHER_EXPLICIT_LIST_VIEW_DATA_SOURCE_H
+#pragma once
 
 #include <escher/list_view_data_source.h>
 #include <escher/table_size_1D_manager.h>
@@ -34,5 +33,3 @@ class ExplicitListViewDataSource : public ListViewDataSource {
 };
 
 }  // namespace Escher
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_CELL_WIDGET_H
-#define ESCHER_CELL_WIDGET_H
+#pragma once
 
 #include <escher/responder.h>
 #include <escher/view.h>
@@ -38,4 +37,3 @@ class EmptyCellWidget : public CellWidget {
 };
 
 }  // namespace Escher
-#endif

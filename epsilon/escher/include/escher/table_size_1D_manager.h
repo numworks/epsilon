@@ -1,5 +1,4 @@
-#ifndef ESCHER_TABLE_SIZE_1D_MANAGER_H
-#define ESCHER_TABLE_SIZE_1D_MANAGER_H
+#pragma once
 
 #include <kandinsky/coordinate.h>
 
@@ -163,4 +162,3 @@ class MemoizedRowHeightManager : public TemplatedMemoizedTableSize1DManager<N> {
 };
 
 }  // namespace Escher
-#endif

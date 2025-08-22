@@ -1,5 +1,4 @@
-#ifndef ESCHER_UNEQUAL_VIEW_H
-#define ESCHER_UNEQUAL_VIEW_H
+#pragma once
 
 #include <escher/cell_widget.h>
 #include <escher/toggleable_view.h>
@@ -20,5 +19,3 @@ class ToggleableUnequalView : public ToggleableView {
 };
 
 }  // namespace Escher
-
-#endif

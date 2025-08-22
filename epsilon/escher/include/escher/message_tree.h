@@ -1,5 +1,4 @@
-#ifndef ESCHER_MESSAGE_TREE_H
-#define ESCHER_MESSAGE_TREE_H
+#pragma once
 
 #include <escher/i18n.h>
 
@@ -19,5 +18,3 @@ class MessageTree {
 };
 
 }  // namespace Escher
-
-#endif

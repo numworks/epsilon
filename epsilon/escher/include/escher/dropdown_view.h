@@ -1,5 +1,4 @@
-#ifndef ESCHER_DROPDOWN_VIEW_H
-#define ESCHER_DROPDOWN_VIEW_H
+#pragma once
 
 #include <escher/bordered.h>
 #include <escher/bordering_view.h>
@@ -106,5 +105,3 @@ class Dropdown : public PopupItemView, public Responder {
 };
 
 }  // namespace Escher
-
-#endif

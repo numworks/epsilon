@@ -1,5 +1,4 @@
-#ifndef ESCHER_EDITABLE_FIELD_HELP_BOX_H
-#define ESCHER_EDITABLE_FIELD_HELP_BOX_H
+#pragma once
 
 namespace Escher {
 
@@ -17,5 +16,3 @@ class EditableFieldHelpBox {
 };
 
 }  // namespace Escher
-
-#endif

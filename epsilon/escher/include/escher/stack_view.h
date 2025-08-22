@@ -1,5 +1,4 @@
-#ifndef ESCHER_STACK_VIEW_H
-#define ESCHER_STACK_VIEW_H
+#pragma once
 
 #include <escher/solid_color_view.h>
 #include <escher/stack_header_view.h>
@@ -52,4 +51,3 @@ class StackView : public View {
 };
 
 }  // namespace Escher
-#endif

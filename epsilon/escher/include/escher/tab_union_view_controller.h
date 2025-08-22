@@ -1,5 +1,4 @@
-#ifndef ESCHER_TAB_UNION_VIEW_CONTROLLER_H
-#define ESCHER_TAB_UNION_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/tab_view_controller.h>
 
@@ -121,4 +120,3 @@ class TabUnionViewController : public TabViewController {
 };
 
 }  // namespace Escher
-#endif

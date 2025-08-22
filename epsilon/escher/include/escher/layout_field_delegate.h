@@ -1,5 +1,4 @@
-#ifndef ESCHER_LAYOUT_FIELD_DELEGATE_H
-#define ESCHER_LAYOUT_FIELD_DELEGATE_H
+#pragma once
 
 #include <escher/context_provider.h>
 #include <ion/events.h>
@@ -40,5 +39,3 @@ class LayoutFieldDelegate : public ContextProvider {
 };
 
 }  // namespace Escher
-
-#endif

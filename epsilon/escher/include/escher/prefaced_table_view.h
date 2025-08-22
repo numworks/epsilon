@@ -1,5 +1,4 @@
-#ifndef ESCHER_PREFACED_TABLE_VIEW_H
-#define ESCHER_PREFACED_TABLE_VIEW_H
+#pragma once
 
 #include <escher/preface_data_source.h>
 
@@ -85,5 +84,3 @@ class PrefacedTableView : public View,
 };
 
 }  // namespace Escher
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_GLYPHS_VIEW_H
-#define ESCHER_GLYPHS_VIEW_H
+#pragma once
 
 #include <escher/cell_widget.h>
 #include <escher/menu_cell.h>
@@ -52,4 +51,3 @@ class GlyphsView : public View, public CellWidget {
 };
 
 }  // namespace Escher
-#endif

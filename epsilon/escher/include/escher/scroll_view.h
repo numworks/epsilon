@@ -1,5 +1,4 @@
-#ifndef ESCHER_SCROLL_VIEW_H
-#define ESCHER_SCROLL_VIEW_H
+#pragma once
 
 #include <escher/metric.h>
 #include <escher/scroll_view_data_source.h>
@@ -176,4 +175,3 @@ class ScrollView : public View {
 };
 
 }  // namespace Escher
-#endif

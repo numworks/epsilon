@@ -1,5 +1,4 @@
-#ifndef ESCHER_SCROLLABLE_TWO_LAYOUTS_CELL_H
-#define ESCHER_SCROLLABLE_TWO_LAYOUTS_CELL_H
+#pragma once
 
 #include <escher/scrollable_multiple_layouts_view.h>
 
@@ -42,5 +41,3 @@ class ScrollableTwoLayoutsCell : public EvenOddCell, public Responder {
 };
 
 }  // namespace Escher
-
-#endif

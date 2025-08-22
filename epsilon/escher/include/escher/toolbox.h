@@ -1,5 +1,4 @@
-#ifndef ESCHER_TOOLBOX_H
-#define ESCHER_TOOLBOX_H
+#pragma once
 
 #include <escher/nested_menu_controller.h>
 #include <escher/toolbox_message_tree.h>
@@ -42,4 +41,3 @@ class Toolbox : public NestedMenuController {
 };
 
 }  // namespace Escher
-#endif

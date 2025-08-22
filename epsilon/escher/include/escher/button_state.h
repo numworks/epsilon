@@ -1,5 +1,4 @@
-#ifndef ESCHER_BUTTON_STATE_H
-#define ESCHER_BUTTON_STATE_H
+#pragma once
 
 #include <escher/button_cell.h>
 #include <escher/toggleable_view.h>
@@ -27,5 +26,3 @@ class ButtonState : public SimpleButtonCell {
 };
 
 }  // namespace Escher
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_SOLID_COLOR_VIEW_H
-#define ESCHER_SOLID_COLOR_VIEW_H
+#pragma once
 
 #include <escher/view.h>
 
@@ -22,4 +21,3 @@ class SolidColorView : public View {
 };
 
 }  // namespace Escher
-#endif

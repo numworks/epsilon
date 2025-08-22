@@ -1,5 +1,4 @@
-#ifndef ESCHER_TAB_VIEW_CELL_H
-#define ESCHER_TAB_VIEW_CELL_H
+#pragma once
 
 #include <escher/i18n.h>
 #include <escher/text_view.h>
@@ -31,4 +30,3 @@ class TabViewCell : public View {
 };
 
 }  // namespace Escher
-#endif

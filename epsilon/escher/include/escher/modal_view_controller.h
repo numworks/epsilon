@@ -1,5 +1,4 @@
-#ifndef ESCHER_MODAL_VIEW_CONTROLLER_H
-#define ESCHER_MODAL_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/view_controller.h>
 #include <kandinsky/margins.h>
@@ -76,4 +75,3 @@ class ModalViewController : public ViewController {
 };
 
 }  // namespace Escher
-#endif

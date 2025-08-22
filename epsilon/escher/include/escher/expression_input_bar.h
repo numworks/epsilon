@@ -1,5 +1,4 @@
-#ifndef ESCHER_EXPRESSION_INPUT_BAR_H
-#define ESCHER_EXPRESSION_INPUT_BAR_H
+#pragma once
 
 #include <escher/layout_field.h>
 #include <escher/metric.h>
@@ -51,5 +50,3 @@ class TemplatedExpressionInputBar : public AbstractExpressionInputBar {
 using ExpressionInputBar = TemplatedExpressionInputBar<LayoutField>;
 
 }  // namespace Escher
-
-#endif

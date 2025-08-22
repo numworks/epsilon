@@ -1,5 +1,4 @@
-#ifndef ESCHER_TRANSPARENT_IMAGE_VIEW_H
-#define ESCHER_TRANSPARENT_IMAGE_VIEW_H
+#pragma once
 
 #include "cell_widget.h"
 #include "image_view.h"
@@ -28,5 +27,3 @@ class TransparentImageView : public ImageView, public CellWidget {
 };
 
 }  // namespace Escher
-
-#endif

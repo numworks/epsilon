@@ -1,5 +1,4 @@
-#ifndef ESCHER_IMAGE_VIEW_H
-#define ESCHER_IMAGE_VIEW_H
+#pragma once
 
 #include <escher/image.h>
 #include <escher/view.h>
@@ -23,5 +22,3 @@ class ImageView : public View {
 };
 
 }  // namespace Escher
-
-#endif

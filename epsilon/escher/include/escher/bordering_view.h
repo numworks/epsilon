@@ -1,5 +1,4 @@
-#ifndef ESCHER_BORDERING_VIEW_H
-#define ESCHER_BORDERING_VIEW_H
+#pragma once
 
 #include <escher/bordered.h>
 #include <escher/view.h>
@@ -20,5 +19,3 @@ class BorderingView : public View, public Bordered {
 };
 
 }  // namespace Escher
-
-#endif

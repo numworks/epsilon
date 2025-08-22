@@ -1,5 +1,4 @@
-#ifndef ESCHER_HIGHLIGHT_IMAGE_CELL_H
-#define ESCHER_HIGHLIGHT_IMAGE_CELL_H
+#pragma once
 
 #include <escher/highlight_cell.h>
 #include <escher/transparent_image_view.h>
@@ -25,5 +24,3 @@ class HighlightImageCell : public HighlightCell {
 };
 
 }  // namespace Escher
-
-#endif

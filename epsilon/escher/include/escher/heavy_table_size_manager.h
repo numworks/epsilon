@@ -1,5 +1,4 @@
-#ifndef ESCHER_HEAVY_TABLE_SIZE_MANAGER_H
-#define ESCHER_HEAVY_TABLE_SIZE_MANAGER_H
+#pragma once
 
 #include <escher/table_size_1D_manager.h>
 #include <kandinsky/size.h>
@@ -129,5 +128,3 @@ class HeavyTableSizeManager : public AbstractHeavyTableSizeManager {
 };
 
 }  // namespace Escher
-
-#endif

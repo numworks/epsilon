@@ -1,5 +1,4 @@
-#ifndef ESCHER_POINTER_TEXT_VIEW_H
-#define ESCHER_POINTER_TEXT_VIEW_H
+#pragma once
 
 #include <escher/i18n.h>
 #include <escher/text_view.h>
@@ -17,4 +16,3 @@ class PointerTextView : public TextView {
 };
 
 }  // namespace Escher
-#endif

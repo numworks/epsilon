@@ -1,5 +1,4 @@
-#ifndef ESCHER_HORIZONTAL_OR_VERTICAL_LAYOUT_H
-#define ESCHER_HORIZONTAL_OR_VERTICAL_LAYOUT_H
+#pragma once
 
 #include <escher/palette.h>
 #include <escher/solid_color_view.h>
@@ -76,5 +75,3 @@ class HorizontalLayout : public OrientedLayout {
 };
 
 }  // namespace Escher
-
-#endif

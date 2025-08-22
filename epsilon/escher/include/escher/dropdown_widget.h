@@ -1,5 +1,4 @@
-#ifndef ESCHER_DROPDOWN_WIDGET_H
-#define ESCHER_DROPDOWN_WIDGET_H
+#pragma once
 
 #include <escher/container.h>
 #include <escher/dropdown_view.h>
@@ -30,5 +29,3 @@ class DropdownWidget : public CellWidget {
 };
 
 }  // namespace Escher
-
-#endif

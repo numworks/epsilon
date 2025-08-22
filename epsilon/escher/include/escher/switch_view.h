@@ -1,5 +1,4 @@
-#ifndef ESCHER_SWITCH_VIEW_H
-#define ESCHER_SWITCH_VIEW_H
+#pragma once
 
 #include <escher/cell_widget.h>
 #include <escher/palette.h>
@@ -32,4 +31,3 @@ class SwitchView final : public ToggleableView, public CellWidget {
 };
 
 }  // namespace Escher
-#endif

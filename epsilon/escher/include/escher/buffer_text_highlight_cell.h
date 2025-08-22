@@ -1,5 +1,4 @@
-#ifndef ESCHER_TEXT_HIGHLIGHT_VIEW_H
-#define ESCHER_TEXT_HIGHLIGHT_VIEW_H
+#pragma once
 
 #include <escher/buffer_text_view.h>
 #include <escher/highlight_cell.h>
@@ -28,5 +27,3 @@ class SmallBufferTextHighlightCell : public HighlightCell {
 };
 
 }  // namespace Escher
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_SCROLLABLE_MULTIPLE_LAYOUTS_VIEW_H
-#define ESCHER_SCROLLABLE_MULTIPLE_LAYOUTS_VIEW_H
+#pragma once
 
 #include <escher/buffer_text_view.h>
 #include <escher/even_odd_cell.h>
@@ -147,5 +146,3 @@ class ScrollableTwoLayoutsView : public AbstractScrollableMultipleLayoutsView {
 };
 
 }  // namespace Escher
-
-#endif

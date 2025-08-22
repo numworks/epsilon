@@ -1,5 +1,4 @@
-#ifndef ESCHER_SCROLL_VIEW_INDICATOR_H
-#define ESCHER_SCROLL_VIEW_INDICATOR_H
+#pragma once
 
 #include <escher/metric.h>
 #include <escher/palette.h>
@@ -83,4 +82,3 @@ class ScrollViewRightArrow : public ScrollViewArrow {
 };
 
 }  // namespace Escher
-#endif

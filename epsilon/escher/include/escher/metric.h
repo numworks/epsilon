@@ -1,5 +1,4 @@
-#ifndef ESCHER_METRIC_H
-#define ESCHER_METRIC_H
+#pragma once
 
 #include <ion/display.h>
 #include <kandinsky/coordinate.h>
@@ -83,4 +82,3 @@ class Metric {
 };
 
 }  // namespace Escher
-#endif

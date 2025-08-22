@@ -1,5 +1,4 @@
-#ifndef ESCHER_EDITABLE_EXPRESSION_MODEL_CELL_H
-#define ESCHER_EDITABLE_EXPRESSION_MODEL_CELL_H
+#pragma once
 
 #include <escher/even_odd_cell.h>
 #include <escher/layout_field.h>
@@ -47,5 +46,3 @@ class EditableExpressionModelCell : public HighlightCell {
 };
 
 }  // namespace Escher
-
-#endif

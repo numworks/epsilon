@@ -1,5 +1,4 @@
-#ifndef ESCHER_ALTERNATE_EMPTY_VIEW_DELEGATE_H
-#define ESCHER_ALTERNATE_EMPTY_VIEW_DELEGATE_H
+#pragma once
 
 #include <escher/i18n.h>
 #include <escher/message_text_view.h>
@@ -28,5 +27,3 @@ class AlternateEmptyViewDelegate {
 };
 
 }  // namespace Escher
-
-#endif

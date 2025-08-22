@@ -1,5 +1,4 @@
-#ifndef ESCHER_TEXT_FIELD_DELEGATE_H
-#define ESCHER_TEXT_FIELD_DELEGATE_H
+#pragma once
 
 #include <ion/events.h>
 
@@ -38,4 +37,3 @@ class TextFieldDelegate {
 };
 
 }  // namespace Escher
-#endif

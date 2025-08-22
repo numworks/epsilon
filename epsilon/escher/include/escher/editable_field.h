@@ -1,5 +1,4 @@
-#ifndef ESCHER_EDITABLE_FIELD_H
-#define ESCHER_EDITABLE_FIELD_H
+#pragma once
 
 #include <escher/scrollable_view.h>
 #include <escher/text_cursor_view.h>
@@ -51,5 +50,3 @@ class EditableField : public TextCursorView::WithBlinkingCursor<
 };
 
 }  // namespace Escher
-
-#endif

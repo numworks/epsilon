@@ -1,5 +1,4 @@
-#ifndef ESCHER_TAB_VIEW_CONTROLLER_H
-#define ESCHER_TAB_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/app.h>
 #include <escher/palette.h>
@@ -70,4 +69,3 @@ class TabViewController : public ViewController {
 };
 
 }  // namespace Escher
-#endif

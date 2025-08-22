@@ -1,5 +1,4 @@
-#ifndef ESCHER_RESPONDER_H
-#define ESCHER_RESPONDER_H
+#pragma once
 
 #include <ion/events.h>
 
@@ -70,4 +69,3 @@ class Responder {
 };
 
 }  // namespace Escher
-#endif

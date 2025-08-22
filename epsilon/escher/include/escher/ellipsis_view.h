@@ -1,5 +1,4 @@
-#ifndef ESCHER_ELLIPSIS_VIEW_H
-#define ESCHER_ELLIPSIS_VIEW_H
+#pragma once
 
 #include <escher/arbitrary_shaped_view.h>
 
@@ -15,5 +14,3 @@ class EllipsisView : public ArbitraryShapedView {
 };
 
 }  // namespace Escher
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_LAYOUT_VIEW_H
-#define ESCHER_LAYOUT_VIEW_H
+#pragma once
 
 #include <escher/glyphs_view.h>
 #include <poincare/layout.h>
@@ -76,5 +75,3 @@ class LayoutViewWithCursor : public LayoutView {
 };
 
 }  // namespace Escher
-
-#endif

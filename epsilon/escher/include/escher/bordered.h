@@ -1,5 +1,4 @@
-#ifndef ESCHER_BORDERED_H
-#define ESCHER_BORDERED_H
+#pragma once
 
 #include <escher/metric.h>
 #include <kandinsky/context.h>
@@ -18,5 +17,3 @@ class Bordered {
 };
 
 }  // namespace Escher
-
-#endif

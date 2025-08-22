@@ -1,5 +1,4 @@
-#ifndef ESCHER_APP_H
-#define ESCHER_APP_H
+#pragma once
 
 #include <escher/editable_field_help_box.h>
 #include <escher/i18n.h>
@@ -124,5 +123,3 @@ class App : public Responder {
 };
 
 }  // namespace Escher
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_VIEW_H
-#define ESCHER_VIEW_H
+#pragma once
 
 #include <kandinsky/context.h>
 #include <kandinsky/point.h>
@@ -107,4 +106,3 @@ class View {
 };
 
 }  // namespace Escher
-#endif

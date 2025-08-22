@@ -1,5 +1,4 @@
-#ifndef ESCHER_TIMER_H
-#define ESCHER_TIMER_H
+#pragma once
 
 #include <stdint.h>
 
@@ -32,4 +31,3 @@ class Timer {
 };
 
 }  // namespace Escher
-#endif

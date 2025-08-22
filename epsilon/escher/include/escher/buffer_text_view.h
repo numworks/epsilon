@@ -1,5 +1,4 @@
-#ifndef ESCHER_BUFFER_TEXT_VIEW_H
-#define ESCHER_BUFFER_TEXT_VIEW_H
+#pragma once
 
 #include <escher/i18n.h>
 #include <escher/text_view.h>
@@ -63,5 +62,3 @@ using FloatBufferTextView =
         numberOfSignificantDigits)>;
 
 }  // namespace Escher
-
-#endif

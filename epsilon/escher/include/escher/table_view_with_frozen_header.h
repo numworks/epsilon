@@ -1,5 +1,4 @@
-#ifndef ESCHER_TABLE_VIEW_WITH_FROZEN_HEADER_H
-#define ESCHER_TABLE_VIEW_WITH_FROZEN_HEADER_H
+#pragma once
 
 #include <escher/selectable_table_view.h>
 #include <escher/view.h>
@@ -24,5 +23,3 @@ class TableViewWithFrozenHeader : public Escher::View {
 };
 
 }  // namespace Escher
-
-#endif /* ESCHER_TABLE_VIEW_WITH_FROZEN_HEADER_H */

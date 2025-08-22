@@ -1,5 +1,4 @@
-#ifndef ESCHER_SCROLL_VIEW_DATA_SOURCE_H
-#define ESCHER_SCROLL_VIEW_DATA_SOURCE_H
+#pragma once
 
 #include <kandinsky/point.h>
 
@@ -32,4 +31,3 @@ class ScrollViewDataSource {
 };
 
 }  // namespace Escher
-#endif

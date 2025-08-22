@@ -1,5 +1,4 @@
-#ifndef ESCHER_KEY_VIEW_H
-#define ESCHER_KEY_VIEW_H
+#pragma once
 
 #include <escher/arbitrary_shaped_view.h>
 
@@ -19,5 +18,3 @@ class KeyView : public ArbitraryShapedView {
 };
 
 }  // namespace Escher
-
-#endif

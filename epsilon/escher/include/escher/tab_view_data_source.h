@@ -1,5 +1,4 @@
-#ifndef ESCHER_TAB_VIEW_DATA_SOURCE_H
-#define ESCHER_TAB_VIEW_DATA_SOURCE_H
+#pragma once
 
 extern "C" {
 #include <stdint.h>
@@ -21,4 +20,3 @@ class TabViewDataSource {
 };
 
 }  // namespace Escher
-#endif

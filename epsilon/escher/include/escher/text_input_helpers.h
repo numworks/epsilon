@@ -1,5 +1,4 @@
-#ifndef ESCHER_TEXT_INPUT_HELPERS_H
-#define ESCHER_TEXT_INPUT_HELPERS_H
+#pragma once
 
 #include <escher/i18n.h>
 #include <stddef.h>
@@ -21,4 +20,3 @@ size_t CursorIndexInCommand(const char* text,
 
 }  // namespace TextInputHelpers
 }  // namespace Escher
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_NESTED_MENU_CONTROLLER_H
-#define ESCHER_NESTED_MENU_CONTROLLER_H
+#pragma once
 
 #include <escher/chevron_view.h>
 #include <escher/container.h>
@@ -131,4 +130,3 @@ class NestedMenuController : public StackViewController::Custom<5>,
 };
 
 }  // namespace Escher
-#endif

@@ -1,5 +1,4 @@
-#ifndef ESCHER_LAYOUT_FIELD_H
-#define ESCHER_LAYOUT_FIELD_H
+#pragma once
 
 #include <escher/editable_field.h>
 #include <escher/layout_field_delegate.h>
@@ -146,5 +145,3 @@ class LayoutField : public EditableField {
 };
 
 }  // namespace Escher
-
-#endif

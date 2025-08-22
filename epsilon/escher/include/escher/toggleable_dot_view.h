@@ -1,5 +1,4 @@
-#ifndef ESCHER_TOGGLEABLE_DOT_VIEW_H
-#define ESCHER_TOGGLEABLE_DOT_VIEW_H
+#pragma once
 
 #include <escher/toggleable_view.h>
 
@@ -21,4 +20,3 @@ class ToggleableDotView final : public ToggleableView {
 };
 
 }  // namespace Escher
-#endif

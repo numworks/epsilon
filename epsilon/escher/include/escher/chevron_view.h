@@ -1,5 +1,4 @@
-#ifndef ESCHER_CHEVRON_VIEW_H
-#define ESCHER_CHEVRON_VIEW_H
+#pragma once
 
 #include <escher/arbitrary_shaped_view.h>
 #include <escher/cell_widget.h>
@@ -23,5 +22,3 @@ class ChevronView : public ArbitraryShapedView, public CellWidget {
 };
 
 }  // namespace Escher
-
-#endif

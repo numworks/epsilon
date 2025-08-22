@@ -1,5 +1,4 @@
-#ifndef ESCHER_ABSTRACT_TEXT_FIELD_H
-#define ESCHER_ABSTRACT_TEXT_FIELD_H
+#pragma once
 
 #include <escher/text_field_delegate.h>
 #include <escher/text_input.h>
@@ -163,5 +162,3 @@ class AbstractTextField : public TextInput {
 };
 
 }  // namespace Escher
-
-#endif

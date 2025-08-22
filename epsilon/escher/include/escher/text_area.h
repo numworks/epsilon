@@ -1,5 +1,4 @@
-#ifndef ESCHER_TEXT_AREA_H
-#define ESCHER_TEXT_AREA_H
+#pragma once
 
 #include <assert.h>
 #include <escher/text_input.h>
@@ -168,4 +167,3 @@ class TextArea : public TextInput {
 };
 
 }  // namespace Escher
-#endif

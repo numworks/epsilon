@@ -1,5 +1,4 @@
-#ifndef CODE_SCRIPT_NODE_H
-#define CODE_SCRIPT_NODE_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -34,5 +33,3 @@ class ScriptNode {
 };
 
 }  // namespace Code
-
-#endif

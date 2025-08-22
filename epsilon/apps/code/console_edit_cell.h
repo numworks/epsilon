@@ -1,5 +1,4 @@
-#ifndef CODE_EDIT_CELL_H
-#define CODE_EDIT_CELL_H
+#pragma once
 
 #include <escher/highlight_cell.h>
 #include <escher/pointer_text_view.h>
@@ -40,5 +39,3 @@ class ConsoleEditCell : public Escher::HighlightCell, public Escher::Responder {
 };
 
 }  // namespace Code
-
-#endif

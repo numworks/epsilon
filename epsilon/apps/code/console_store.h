@@ -1,5 +1,4 @@
-#ifndef CODE_CONSOLE_STORE_H
-#define CODE_CONSOLE_STORE_H
+#pragma once
 
 #include <assert.h>
 #include <stddef.h>
@@ -56,5 +55,3 @@ class ConsoleStore {
 };
 
 }  // namespace Code
-
-#endif

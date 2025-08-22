@@ -1,5 +1,4 @@
-#ifndef CODE_MENU_CONTROLLER_H
-#define CODE_MENU_CONTROLLER_H
+#pragma once
 
 #include <escher/button_row_controller.h>
 #include <escher/even_odd_cell_with_ellipsis.h>
@@ -120,5 +119,3 @@ class MenuController : public Escher::ViewController,
 };
 
 }  // namespace Code
-
-#endif

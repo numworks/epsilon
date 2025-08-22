@@ -1,5 +1,4 @@
-#ifndef CODE_CONSOLE_CONTROLLER_H
-#define CODE_CONSOLE_CONTROLLER_H
+#pragma once
 
 #include <escher/list_view_data_source.h>
 #include <python/port/port.h>
@@ -140,5 +139,3 @@ class ConsoleController : public Escher::ViewController,
 #endif
 };
 }  // namespace Code
-
-#endif

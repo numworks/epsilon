@@ -1,5 +1,4 @@
-#ifndef CODE_EDITOR_CONTROLLER_H
-#define CODE_EDITOR_CONTROLLER_H
+#pragma once
 
 #include "editor_view.h"
 #include "python_variable_box_controller.h"
@@ -42,5 +41,3 @@ class EditorController : public Escher::ViewController,
 };
 
 }  // namespace Code
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef CODE_CONSOLE_LINE_H
-#define CODE_CONSOLE_LINE_H
+#pragma once
 
 #include <stddef.h>
 
@@ -40,5 +39,3 @@ class ConsoleLine {
 };
 
 }  // namespace Code
-
-#endif

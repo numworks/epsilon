@@ -1,5 +1,4 @@
-#ifndef CODE_APP_H
-#define CODE_APP_H
+#pragma once
 
 #include <apps/shared/shared_app.h>
 #include <ion/events.h>
@@ -145,5 +144,3 @@ class App : public Shared::SharedApp {
 };
 
 }  // namespace Code
-
-#endif

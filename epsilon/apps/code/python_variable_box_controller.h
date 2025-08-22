@@ -1,5 +1,4 @@
-#ifndef CODE_PYTHON_VARIABLE_BOX_CONTROLLER_H
-#define CODE_PYTHON_VARIABLE_BOX_CONTROLLER_H
+#pragma once
 
 #include <escher/alternate_empty_nested_menu_controller.h>
 #include <escher/buffer_text_view.h>
@@ -184,4 +183,3 @@ class PythonVariableBoxController
 };
 
 }  // namespace Code
-#endif

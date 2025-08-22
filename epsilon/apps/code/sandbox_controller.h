@@ -1,5 +1,4 @@
-#ifndef CODE_SANDBOX_CONTROLLER_H
-#define CODE_SANDBOX_CONTROLLER_H
+#pragma once
 
 #include <escher/responder.h>
 #include <escher/solid_color_view.h>
@@ -31,5 +30,3 @@ class SandboxController : public Escher::ViewController {
   Escher::SolidColorView m_solidColorView;
 };
 }  // namespace Code
-
-#endif

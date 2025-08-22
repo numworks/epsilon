@@ -1,5 +1,4 @@
-#ifndef CODE_PYTHON_TEXT_AREA_H
-#define CODE_PYTHON_TEXT_AREA_H
+#pragma once
 
 #include <escher/text_area.h>
 
@@ -103,5 +102,3 @@ class PythonTextArea : public Escher::TextArea {
 };
 
 }  // namespace Code
-
-#endif

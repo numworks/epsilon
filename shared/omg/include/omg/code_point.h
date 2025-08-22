@@ -1,5 +1,4 @@
-#ifndef OMG_CODE_POINT_H
-#define OMG_CODE_POINT_H
+#pragma once
 
 #include <stdint.h>
 
@@ -86,5 +85,3 @@ constexpr static CodePoint UCodePointLeftAngleBracket              = 0x27E8;  //
 constexpr static CodePoint UCodePointRightAngleBracket             = 0x27E9;  // ⟩
 constexpr static CodePoint UCodePointReplacement                   = 0xFFFD;  // �
 // clang-format on
-
-#endif

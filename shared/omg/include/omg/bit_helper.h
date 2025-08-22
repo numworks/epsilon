@@ -1,5 +1,4 @@
-#ifndef OMG_BIT_HELPER_H
-#define OMG_BIT_HELPER_H
+#pragma once
 
 #include <assert.h>
 #include <stddef.h>
@@ -120,5 +119,3 @@ constexpr static T getByteAtIndex(T value, uint8_t index) {
 
 }  // namespace BitHelper
 }  // namespace OMG
-
-#endif

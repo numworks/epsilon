@@ -1,5 +1,4 @@
-#ifndef OMG_FLOAT_H
-#define OMG_FLOAT_H
+#pragma once
 
 #include <assert.h>
 #include <float.h>
@@ -133,5 +132,3 @@ constexpr inline double Max<double>() {
 }
 
 }  // namespace OMG::Float
-
-#endif

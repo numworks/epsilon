@@ -1,5 +1,4 @@
-#ifndef OMG_UNICODE_HELPER_H
-#define OMG_UNICODE_HELPER_H
+#pragma once
 
 #include <omg/utf8_decoder.h>
 
@@ -15,5 +14,3 @@ int CompareDecoderWithNullTerminatedString(UnicodeDecoder* decoder,
                                            const char* string);
 
 }  // namespace OMG
-
-#endif

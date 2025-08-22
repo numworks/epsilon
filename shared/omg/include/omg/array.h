@@ -1,5 +1,4 @@
-#ifndef OMG_ARRAY_H
-#define OMG_ARRAY_H
+#pragma once
 
 #include <array>
 
@@ -19,5 +18,3 @@ static std::array<U, N> MapAction(std::array<T, N> array, void* context,
 }
 
 }  // namespace OMG::Array
-
-#endif

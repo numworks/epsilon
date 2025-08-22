@@ -1,5 +1,4 @@
-#ifndef OMG_ARITHMETIC_H
-#define OMG_ARITHMETIC_H
+#pragma once
 
 #include <omg/bit_helper.h>
 #include <stddef.h>
@@ -46,5 +45,3 @@ constexpr size_t NumberOfDigits(uint64_t value) {
 // uint64_t ?
 
 }  // namespace OMG::Arithmetic
-
-#endif

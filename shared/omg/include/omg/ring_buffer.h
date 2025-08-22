@@ -1,5 +1,4 @@
-#ifndef OMG_RING_BUFFER_H
-#define OMG_RING_BUFFER_H
+#pragma once
 
 #include <assert.h>
 #include <stddef.h>
@@ -61,5 +60,3 @@ class RingBuffer {
 };
 
 }  // namespace OMG
-
-#endif

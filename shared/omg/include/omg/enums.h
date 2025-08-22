@@ -1,5 +1,4 @@
-#ifndef OMG_ENUMS_H
-#define OMG_ENUMS_H
+#pragma once
 
 #include <stdint.h>
 
@@ -17,5 +16,3 @@ constexpr static OMG::Axis OtherAxis(OMG::Axis axis) {
 }
 
 }  // namespace OMG
-
-#endif

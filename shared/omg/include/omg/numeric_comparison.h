@@ -1,5 +1,4 @@
-#ifndef OMG_COMPARISON_H
-#define OMG_COMPARISON_H
+#pragma once
 
 #include <cmath>
 
@@ -15,5 +14,3 @@ constexpr static inline bool EqualOrBothNan(double a, double b) {
 }
 
 }  // namespace OMG
-
-#endif

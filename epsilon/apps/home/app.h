@@ -1,5 +1,4 @@
-#ifndef HOME_APP_H
-#define HOME_APP_H
+#pragma once
 
 #include <escher/app.h>
 #include <escher/container.h>
@@ -36,5 +35,3 @@ class App : public Escher::App {
 };
 
 }  // namespace Home
-
-#endif

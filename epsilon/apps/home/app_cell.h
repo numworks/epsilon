@@ -1,5 +1,4 @@
-#ifndef HOME_APP_CELL_H
-#define HOME_APP_CELL_H
+#pragma once
 
 #include <escher/app.h>
 #include <escher/highlight_cell.h>
@@ -40,5 +39,3 @@ class AppCell : public Escher::HighlightCell {
 };
 
 }  // namespace Home
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef INFERENCE_SHARED_DYNAMIC_CELLS_DATA_SOURCE_H
-#define INFERENCE_SHARED_DYNAMIC_CELLS_DATA_SOURCE_H
+#pragma once
 
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
@@ -71,5 +70,3 @@ constexpr int k_maxNumberOfResultCells =
     k_resultDataSourceNumberOfReusableCells;
 
 }  // namespace Inference
-
-#endif

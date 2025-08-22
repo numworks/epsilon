@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_HOMOGENEITY_TEST_H
-#define INFERENCE_MODELS_HOMOGENEITY_TEST_H
+#pragma once
 
 #include <poincare/float_list.h>
 
@@ -71,5 +70,3 @@ class HomogeneityTest final : public Chi2Test {
 };
 
 }  // namespace Inference
-
-#endif

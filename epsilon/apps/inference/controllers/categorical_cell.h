@@ -1,5 +1,4 @@
-#ifndef INFERENCE_CATEGORICAL_CELL_H
-#define INFERENCE_CATEGORICAL_CELL_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/button_cell.h>
@@ -101,5 +100,3 @@ class ButtonCategoricalCell : public AbstractCategoricalCell {
 };
 
 }  // namespace Inference
-
-#endif

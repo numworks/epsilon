@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_CHI2_TEST_H
-#define INFERENCE_MODELS_CHI2_TEST_H
+#pragma once
 
 #include <poincare/statistics/inference.h>
 
@@ -71,5 +70,3 @@ class Chi2Test : public SignificanceTest, public InputTable {
 };
 
 }  // namespace Inference
-
-#endif

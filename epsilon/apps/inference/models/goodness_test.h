@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_GOODNESS_TEST_H
-#define INFERENCE_MODELS_GOODNESS_TEST_H
+#pragma once
 
 #include <poincare/float_list.h>
 
@@ -88,5 +87,3 @@ class GoodnessTest final : public Chi2Test {
 };
 
 }  // namespace Inference
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_INTERVAL_INTERVAL_GRAPH_CONTROLLER_H
-#define INFERENCE_STATISTIC_INTERVAL_INTERVAL_GRAPH_CONTROLLER_H
+#pragma once
 
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
@@ -42,4 +41,3 @@ class IntervalGraphController : public Escher::ViewController {
 };
 
 }  // namespace Inference
-#endif

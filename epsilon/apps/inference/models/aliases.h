@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_SUBAPP_H
-#define INFERENCE_MODELS_SUBAPP_H
+#pragma once
 
 #include <poincare/statistics/inference.h>
 
@@ -19,5 +18,3 @@ using CategoricalType =
 
 namespace Params = Poincare::Inference::Params;
 }  // namespace Inference
-
-#endif

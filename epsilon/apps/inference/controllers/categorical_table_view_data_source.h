@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_TABLE_VIEW_DATA_SOURCE_H
-#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_TABLE_VIEW_DATA_SOURCE_H
+#pragma once
 
 #include <escher/even_odd_cell.h>
 #include <escher/table_view_data_source.h>
@@ -46,5 +45,3 @@ class CategoricalTableViewDataSource : public Escher::TableViewDataSource {
 };
 
 }  // namespace Inference
-
-#endif

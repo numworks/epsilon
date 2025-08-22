@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_TYPE_CONTROLLER_H
-#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_TYPE_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/chevron_view.h>
@@ -46,4 +45,3 @@ class CategoricalTypeController
 };
 
 }  // namespace Inference
-#endif

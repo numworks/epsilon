@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_TEST_HINT_VIEW_H
-#define INFERENCE_STATISTIC_TEST_HINT_VIEW_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/banner_view.h>
@@ -33,5 +32,3 @@ class ZoomHintView : public Escher::View {
 };
 
 }  // namespace Inference
-
-#endif

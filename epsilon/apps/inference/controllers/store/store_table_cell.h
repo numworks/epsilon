@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_SLOPE_TABLE_CELL_H
-#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_SLOPE_TABLE_CELL_H
+#pragma once
 
 #include "inference/controllers/categorical_table_cell.h"
 #include "inference/models/input_table_from_store.h"
@@ -62,5 +61,3 @@ class StoreTableCell : public DoubleColumnTableCell,
 };
 
 }  // namespace Inference
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_BUFFER_H
-#define INFERENCE_MODELS_BUFFER_H
+#pragma once
 
 #include <new>
 
@@ -62,5 +61,3 @@ union InferenceBuffer {
 };
 
 }  // namespace Inference
-
-#endif

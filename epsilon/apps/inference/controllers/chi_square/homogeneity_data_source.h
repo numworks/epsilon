@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_HOMOGENEITY_DATA_SOURCE_H
-#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_HOMOGENEITY_DATA_SOURCE_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/even_odd_buffer_text_cell.h>
@@ -75,5 +74,3 @@ class HomogeneityTableDataSource
 };
 
 }  // namespace Inference
-
-#endif

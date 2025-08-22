@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_COMPARISON_OPERATOR_POPUP_DATA_SOURCE_H
-#define INFERENCE_STATISTIC_COMPARISON_OPERATOR_POPUP_DATA_SOURCE_H
+#pragma once
 
 #include <escher/buffer_text_highlight_cell.h>
 #include <escher/explicit_list_view_data_source.h>
@@ -26,5 +25,3 @@ class ComparisonOperatorPopupDataSource
 };
 
 }  // namespace Inference
-
-#endif

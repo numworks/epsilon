@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_RESULTS_CONTROLLER_H
-#define INFERENCE_STATISTIC_RESULTS_CONTROLLER_H
+#pragma once
 
 #include <escher/buffer_text_view.h>
 #include <escher/button_cell.h>
@@ -73,5 +72,3 @@ class ResultsController
 };
 
 }  // namespace Inference
-
-#endif

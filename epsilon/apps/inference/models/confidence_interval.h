@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_CONFIDENCE_INTERVAL_H
-#define INFERENCE_MODELS_CONFIDENCE_INTERVAL_H
+#pragma once
 
 #include <poincare/statistics/inference.h>
 
@@ -105,5 +104,3 @@ class ConfidenceInterval : public InferenceModel {
 };
 
 }  // namespace Inference
-
-#endif

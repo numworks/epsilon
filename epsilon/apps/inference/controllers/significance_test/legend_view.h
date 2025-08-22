@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_TEST_LEGEND_VIEW_H
-#define INFERENCE_STATISTIC_TEST_LEGEND_VIEW_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/message_text_view.h>
@@ -47,5 +46,3 @@ class LegendView : public Escher::View {
 };
 
 }  // namespace Inference
-
-#endif

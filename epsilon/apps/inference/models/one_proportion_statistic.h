@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_ONE_PROPORTION_Z_TEST_H
-#define INFERENCE_MODELS_ONE_PROPORTION_Z_TEST_H
+#pragma once
 
 #include "confidence_interval.h"
 #include "significance_test.h"
@@ -57,5 +56,3 @@ class OneProportionZInterval : public ConfidenceInterval,
 };
 
 }  // namespace Inference
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_SIGNIFICANCE_TEST_H
-#define INFERENCE_MODELS_SIGNIFICANCE_TEST_H
+#pragma once
 
 #include <poincare/statistics/inference.h>
 
@@ -100,5 +99,3 @@ class SignificanceTest : public InferenceModel {
 };
 
 }  // namespace Inference
-
-#endif

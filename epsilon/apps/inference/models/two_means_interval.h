@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_TWO_MEANS_INTERVAL_H
-#define INFERENCE_MODELS_TWO_MEANS_INTERVAL_H
+#pragma once
 
 #include "confidence_interval.h"
 #include "two_means_statistic.h"
@@ -62,5 +61,3 @@ class TwoMeansZInterval : public TwoMeansInterval {
 };
 
 }  // namespace Inference
-
-#endif

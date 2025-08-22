@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_INPUT_TABLE_H
-#define INFERENCE_MODELS_INPUT_TABLE_H
+#pragma once
 
 #include <apps/shared/double_pair_store.h>
 #include <assert.h>
@@ -54,5 +53,3 @@ class InputTable {
 };
 
 }  // namespace Inference
-
-#endif

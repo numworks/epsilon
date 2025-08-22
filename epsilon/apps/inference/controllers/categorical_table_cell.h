@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_TABLE_CELL_H
-#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_TABLE_CELL_H
+#pragma once
 
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/highlight_cell.h>
@@ -169,5 +168,3 @@ class DoubleColumnTableCell
 };
 
 }  // namespace Inference
-
-#endif

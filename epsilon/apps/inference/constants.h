@@ -1,5 +1,4 @@
-#ifndef INFERENCE_CONSTANTS_H
-#define INFERENCE_CONSTANTS_H
+#pragma once
 
 #include <poincare/print_float.h>
 
@@ -20,5 +19,3 @@ constexpr int k_largeFloatNumberOfChars = k_largeBufferSize - 1;
 }  // namespace Constants
 
 }  // namespace Inference
-
-#endif

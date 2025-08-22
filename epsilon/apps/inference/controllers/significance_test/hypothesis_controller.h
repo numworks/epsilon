@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_TEST_HYPOTHESIS_CONTROLLER_H
-#define INFERENCE_STATISTIC_TEST_HYPOTHESIS_CONTROLLER_H
+#pragma once
 
 #include <escher/button_cell.h>
 #include <escher/dropdown_widget.h>
@@ -99,5 +98,3 @@ class HypothesisController
 };
 
 }  // namespace Inference
-
-#endif

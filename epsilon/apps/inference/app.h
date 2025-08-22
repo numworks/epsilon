@@ -1,5 +1,4 @@
-#ifndef INFERENCE_APP_H
-#define INFERENCE_APP_H
+#pragma once
 
 #include <apps/shared/math_app.h>
 #include <apps/shared/menu_controller.h>
@@ -143,5 +142,3 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
 };
 
 }  // namespace Inference
-
-#endif

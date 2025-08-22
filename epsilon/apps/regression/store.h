@@ -1,5 +1,4 @@
-#ifndef REGRESSION_STORE_H
-#define REGRESSION_STORE_H
+#pragma once
 
 #include <apps/global_preferences.h>
 #include <apps/shared/double_pair_store_preferences.h>
@@ -141,5 +140,3 @@ class Store : public Shared::LinearRegressionStore {
 typedef void (Store::*RangeMethodPointer)();
 
 }  // namespace Regression
-
-#endif

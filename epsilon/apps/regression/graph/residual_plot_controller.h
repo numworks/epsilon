@@ -1,5 +1,4 @@
-#ifndef REGRESSION_RESIDUAL_PLOT_CONTROLLER_H
-#define REGRESSION_RESIDUAL_PLOT_CONTROLLER_H
+#pragma once
 
 #include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
@@ -62,5 +61,3 @@ class ResidualPlotController : public Escher::ViewController {
 };
 
 }  // namespace Regression
-
-#endif

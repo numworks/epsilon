@@ -1,5 +1,4 @@
-#ifndef REGRESSION_GRAPH_VIEW_H
-#define REGRESSION_GRAPH_VIEW_H
+#pragma once
 
 #include <apps/constant.h>
 #include <apps/shared/plot_view_policies.h>
@@ -27,5 +26,3 @@ class GraphView
 };
 
 }  // namespace Regression
-
-#endif

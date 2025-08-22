@@ -1,5 +1,4 @@
-#ifndef REGRESSION_MODEL_H
-#define REGRESSION_MODEL_H
+#pragma once
 
 #include <apps/global_preferences.h>
 #include <escher/i18n.h>
@@ -78,5 +77,3 @@ class Model {
 };
 
 }  // namespace Regression
-
-#endif

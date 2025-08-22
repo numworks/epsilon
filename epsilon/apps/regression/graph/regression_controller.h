@@ -1,5 +1,4 @@
-#ifndef REGRESSION_REGRESSION_CONTROLLER_H
-#define REGRESSION_REGRESSION_CONTROLLER_H
+#pragma once
 
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
@@ -120,5 +119,3 @@ class RegressionController : public Escher::SelectableListViewController<
 };
 
 }  // namespace Regression
-
-#endif

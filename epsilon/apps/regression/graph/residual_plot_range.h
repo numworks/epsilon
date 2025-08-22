@@ -1,5 +1,4 @@
-#ifndef REGRESSION_RESIDUAL_PLOT_RANGE_H
-#define REGRESSION_RESIDUAL_PLOT_RANGE_H
+#pragma once
 
 #include <apps/shared/memoized_curve_view_range.h>
 #include <kandinsky/coordinate.h>
@@ -20,5 +19,3 @@ class ResidualPlotRange : public Shared::MemoizedCurveViewRange {
 };
 
 }  // namespace Regression
-
-#endif

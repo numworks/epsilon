@@ -1,5 +1,4 @@
-#ifndef REGRESSION_EVEN_ODD_DOUBLE_BUFFER_TEXT_CELL_WITH_SEPARATOR_H
-#define REGRESSION_EVEN_ODD_DOUBLE_BUFFER_TEXT_CELL_WITH_SEPARATOR_H
+#pragma once
 
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_cell.h>
@@ -37,5 +36,3 @@ class EvenOddDoubleBufferTextCell : public Escher::EvenOddCell,
 };
 
 }  // namespace Regression
-
-#endif

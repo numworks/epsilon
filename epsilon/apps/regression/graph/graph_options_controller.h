@@ -1,5 +1,4 @@
-#ifndef REGRESSION_GRAPH_OPTIONS_CONTROLLER_H
-#define REGRESSION_GRAPH_OPTIONS_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/curve_view_cursor.h>
 #include <escher/buffer_text_view.h>
@@ -78,5 +77,3 @@ class GraphOptionsController
 };
 
 }  // namespace Regression
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef REGRESSION_STORE_PARAMETER_CONTROLLER_H
-#define REGRESSION_STORE_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/store_parameter_controller.h>
 #include <escher/chevron_view.h>
@@ -32,5 +31,3 @@ class StoreParameterController : public Shared::StoreParameterController {
 };
 
 }  // namespace Regression
-
-#endif

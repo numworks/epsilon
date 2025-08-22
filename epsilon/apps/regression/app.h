@@ -1,5 +1,4 @@
-#ifndef REGRESSION_APP_H
-#define REGRESSION_APP_H
+#pragma once
 
 #include <apps/shared/store_app.h>
 #include <escher/tab_union_view_controller.h>
@@ -112,5 +111,3 @@ class App : public Shared::StoreApp {
 };
 
 }  // namespace Regression
-
-#endif

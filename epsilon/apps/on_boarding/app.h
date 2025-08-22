@@ -1,5 +1,4 @@
-#ifndef ON_BOARDING_APP_H
-#define ON_BOARDING_APP_H
+#pragma once
 
 #include <escher/app.h>
 
@@ -25,5 +24,3 @@ class App : public Escher::App {
 };
 
 }  // namespace OnBoarding
-
-#endif

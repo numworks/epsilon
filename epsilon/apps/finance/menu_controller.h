@@ -1,5 +1,4 @@
-#ifndef FINANCE_MENU_CONTROLLER_H
-#define FINANCE_MENU_CONTROLLER_H
+#pragma once
 
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
@@ -34,5 +33,3 @@ class MenuController
 };
 
 }  // namespace Finance
-
-#endif

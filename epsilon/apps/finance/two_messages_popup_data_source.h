@@ -1,5 +1,4 @@
-#ifndef FINANCE_TWO_MESSAGE_POPUP_DATA_SOURCE_H
-#define FINANCE_TWO_MESSAGE_POPUP_DATA_SOURCE_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/buffer_text_highlight_cell.h>
@@ -23,5 +22,3 @@ class TwoMessagesPopupDataSource : public Escher::ExplicitListViewDataSource {
 };
 
 }  // namespace Finance
-
-#endif

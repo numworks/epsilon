@@ -1,5 +1,4 @@
-#ifndef FINANCE_SIMPLE_INTEREST_MENU_CONTROLLER_H
-#define FINANCE_SIMPLE_INTEREST_MENU_CONTROLLER_H
+#pragma once
 
 #include <escher/chevron_view.h>
 #include <escher/list_with_top_and_bottom_controller.h>
@@ -45,5 +44,3 @@ class InterestMenuController : public Escher::ListWithTopAndBottomController {
 };
 
 }  // namespace Finance
-
-#endif

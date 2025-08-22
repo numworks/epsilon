@@ -1,5 +1,4 @@
-#ifndef FINANCE_DATA_H
-#define FINANCE_DATA_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <assert.h>
@@ -198,5 +197,3 @@ class Data {
 };
 
 }  // namespace Finance
-
-#endif

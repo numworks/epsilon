@@ -1,5 +1,4 @@
-#ifndef FINANCE_APP_H
-#define FINANCE_APP_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/math_app.h>
@@ -79,5 +78,3 @@ class App : public Shared::MathApp {
 };
 
 }  // namespace Finance
-
-#endif

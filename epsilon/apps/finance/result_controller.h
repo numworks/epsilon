@@ -1,5 +1,4 @@
-#ifndef FINANCE_RESULT_CONTROLLER_H
-#define FINANCE_RESULT_CONTROLLER_H
+#pragma once
 
 #include <escher/buffer_text_view.h>
 #include <escher/list_with_top_and_bottom_controller.h>
@@ -48,5 +47,3 @@ class ResultController : public Escher::ListWithTopAndBottomController {
 };
 
 }  // namespace Finance
-
-#endif

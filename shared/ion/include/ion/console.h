@@ -1,5 +1,4 @@
-#ifndef ION_CONSOLE_H
-#define ION_CONSOLE_H
+#pragma once
 
 namespace Ion {
 namespace Console {
@@ -17,5 +16,3 @@ void readLine(char* line, int maxLineLength);
 
 }  // namespace Console
 }  // namespace Ion
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ION_DISPLAY_H
-#define ION_DISPLAY_H
+#pragma once
 
 /* ION abstracts pushing pixels to the screen.
  *
@@ -51,5 +50,3 @@ void setScreenshotCallback(void (*)(void));
 
 }  // namespace Display
 }  // namespace Ion
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ION_RECORD_NAME_VERIFIER_H
-#define ION_RECORD_NAME_VERIFIER_H
+#pragma once
 
 #include <assert.h>
 
@@ -121,5 +120,3 @@ class RecordNameVerifier {
 }  // namespace Storage
 
 }  // namespace Ion
-
-#endif

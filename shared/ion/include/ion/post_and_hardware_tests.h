@@ -1,5 +1,4 @@
-#ifndef ION_DEVICE_SHARED_POST_AND_HARDWARE_TESTS_H
-#define ION_DEVICE_SHARED_POST_AND_HARDWARE_TESTS_H
+#pragma once
 
 namespace Ion {
 namespace POSTAndHardwareTests {
@@ -19,5 +18,3 @@ bool TextLCDGlyphFailures();
 
 }  // namespace POSTAndHardwareTests
 }  // namespace Ion
-
-#endif

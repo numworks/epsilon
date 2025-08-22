@@ -1,5 +1,4 @@
-#ifndef ION_CIRCUIT_BREAKER_H
-#define ION_CIRCUIT_BREAKER_H
+#pragma once
 
 #include <setjmp.h>
 #include <stdint.h>
@@ -44,5 +43,3 @@ jmp_buf* jmpbufForType(CheckpointType type);
 
 }  // namespace CircuitBreaker
 }  // namespace Ion
-
-#endif

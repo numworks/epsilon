@@ -1,5 +1,4 @@
-#ifndef ION_LED_H
-#define ION_LED_H
+#pragma once
 
 #include <kandinsky/color.h>
 
@@ -13,5 +12,3 @@ KDColor updateColorWithPlugAndCharge();
 
 }  // namespace LED
 }  // namespace Ion
-
-#endif

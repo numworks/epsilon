@@ -1,5 +1,4 @@
-#ifndef ION_USB_H
-#define ION_USB_H
+#pragma once
 
 #include <ion/keyboard.h>
 
@@ -31,5 +30,3 @@ void disable();
 
 }  // namespace USB
 }  // namespace Ion
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ION_CLIPBOARD_H
-#define ION_CLIPBOARD_H
+#pragma once
 
 namespace Ion {
 namespace Clipboard {
@@ -16,5 +15,3 @@ void fetchSystemClipboardToBuffer();
 
 }  // namespace Clipboard
 }  // namespace Ion
-
-#endif

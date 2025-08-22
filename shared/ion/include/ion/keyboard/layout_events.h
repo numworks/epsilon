@@ -1,5 +1,4 @@
-#ifndef ION_KEYBOARD_LAYOUT_EVENTS_H
-#define ION_KEYBOARD_LAYOUT_EVENTS_H
+#pragma once
 
 #include <ion/events.h>
 #include <omg/code_point.h>
@@ -28,5 +27,3 @@ bool SetLogEvents(bool logEvents);
 
 }  // namespace Events
 }  // namespace Ion
-
-#endif

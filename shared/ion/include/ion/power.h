@@ -1,5 +1,4 @@
-#ifndef ION_POWER_H
-#define ION_POWER_H
+#pragma once
 
 namespace Ion {
 namespace Power {
@@ -10,5 +9,3 @@ void selectStandbyMode(bool standbyMode);
 
 }  // namespace Power
 }  // namespace Ion
-
-#endif

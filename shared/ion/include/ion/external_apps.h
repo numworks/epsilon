@@ -1,5 +1,4 @@
-#ifndef ION_EXTERNAL_APPS_H
-#define ION_EXTERNAL_APPS_H
+#pragma once
 
 #include <stdint.h>
 
@@ -85,5 +84,3 @@ void updateClearanceLevel(bool isExamModeActive);
 
 }  // namespace ExternalApps
 }  // namespace Ion
-
-#endif

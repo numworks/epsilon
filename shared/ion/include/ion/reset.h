@@ -1,5 +1,4 @@
-#ifndef ION_RESET_H
-#define ION_RESET_H
+#pragma once
 
 namespace Ion {
 namespace Reset {
@@ -8,5 +7,3 @@ void core();
 
 }
 }  // namespace Ion
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ION_RECORD_H
-#define ION_RECORD_H
+#pragma once
 
 #include <stdint.h>
 #include <string.h>
@@ -96,5 +95,3 @@ class Record {
 }  // namespace Storage
 
 }  // namespace Ion
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_ELEMENT_DATA
-#define ELEMENTS_ELEMENT_DATA
+#pragma once
 
 #include <apps/i18n.h>
 #include <stdint.h>
@@ -90,5 +89,3 @@ class ElementData {
 };
 
 }  // namespace Elements
-
-#endif

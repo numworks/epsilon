@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_BANNER_VIEW_H
-#define ELEMENTS_BANNER_VIEW_H
+#pragma once
 
 #include <escher/ellipsis_view.h>
 #include <escher/layout_view.h>
@@ -81,5 +80,3 @@ class BannerView : public Escher::View {
 };
 
 }  // namespace Elements
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_ELEMENTS_VIEW_H
-#define ELEMENTS_ELEMENTS_VIEW_H
+#pragma once
 
 #include <escher/message_text_view.h>
 #include <escher/view.h>
@@ -59,5 +58,3 @@ class ElementsView : public Escher::View {
 };
 
 }  // namespace Elements
-
-#endif

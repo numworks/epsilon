@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_DISPLAY_TYPE_CONTROLLER_H
-#define ELEMENTS_DISPLAY_TYPE_CONTROLLER_H
+#pragma once
 
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
@@ -39,5 +38,3 @@ class DisplayTypeController
 };
 
 }  // namespace Elements
-
-#endif

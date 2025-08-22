@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_SINGLE_ELEMENT_VIEW_H
-#define ELEMENTS_SINGLE_ELEMENT_VIEW_H
+#pragma once
 
 #include <escher/view.h>
 
@@ -31,5 +30,3 @@ class SingleElementView : public Escher::View {
 };
 
 }  // namespace Elements
-
-#endif

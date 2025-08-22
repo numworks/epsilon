@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_MAIN_CONTROLLER_H
-#define ELEMENTS_MAIN_CONTROLLER_H
+#pragma once
 
 #include <escher/stack_view_controller.h>
 
@@ -69,5 +68,3 @@ class MainController : public Escher::ViewController,
 };
 
 }  // namespace Elements
-
-#endif

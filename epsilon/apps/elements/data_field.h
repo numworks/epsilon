@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_DATA_FIELD
-#define ELEMENTS_DATA_FIELD
+#pragma once
 
 #include <apps/i18n.h>
 #include <poincare/layout.h>
@@ -319,5 +318,3 @@ class IonizationDataField : public DoubleDataFieldWithSubscriptSymbol {
 };
 
 }  // namespace Elements
-
-#endif

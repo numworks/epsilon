@@ -1,5 +1,4 @@
-#ifndef APPS_WINDOW_H
-#define APPS_WINDOW_H
+#pragma once
 
 #include <escher/window.h>
 
@@ -28,5 +27,3 @@ class AppsWindow : public Escher::Window {
   TitleBarView m_titleBarView;
   bool m_hideTitleBarView;
 };
-
-#endif

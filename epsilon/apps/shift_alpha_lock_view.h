@@ -1,5 +1,4 @@
-#ifndef APPS_SHIFT_ALPHA_LOCK_VIEW_H
-#define APPS_SHIFT_ALPHA_LOCK_VIEW_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/message_text_view.h>
@@ -23,5 +22,3 @@ class ShiftAlphaLockView : public Escher::View {
   Escher::MessageTextView m_shiftAlphaView;
   Ion::Events::ShiftAlphaStatus m_status;
 };
-
-#endif

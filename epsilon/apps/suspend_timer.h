@@ -1,5 +1,4 @@
-#ifndef APPS_SUSPEND_TIMER_H
-#define APPS_SUSPEND_TIMER_H
+#pragma once
 
 #include <escher/timer.h>
 
@@ -12,5 +11,3 @@ class SuspendTimer : public Escher::Timer {
   constexpr static int k_idleBeforeSuspendDuration = 5 * 60 * 1000;
   bool fire() override;
 };
-
-#endif

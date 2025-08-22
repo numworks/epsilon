@@ -1,5 +1,4 @@
-#ifndef APPS_CONTAINER_STORAGE_H
-#define APPS_CONTAINER_STORAGE_H
+#pragma once
 
 #include <omg/global_box.h>
 
@@ -20,5 +19,3 @@ class AppsContainerStorage : public AppsContainer {
  private:
   APPS_CONTAINER_SNAPSHOT_DECLARATIONS
 };
-
-#endif

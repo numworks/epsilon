@@ -1,5 +1,4 @@
-#ifndef COUNTRY_PREFERENCES_H
-#define COUNTRY_PREFERENCES_H
+#pragma once
 
 #include <escher/layout_preferences.h>
 #include <poincare/preferences.h>
@@ -206,5 +205,3 @@ class CountryPreferences {
   const GraphTemplateDefault m_graphTemplateDefault;
   const StepAdjustmentWarning m_stepAdjustmentWarning;
 };
-
-#endif

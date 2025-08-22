@@ -1,5 +1,4 @@
-#ifndef APPS_GLOBAL_PREFERENCES_H
-#define APPS_GLOBAL_PREFERENCES_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/layout_preferences.h>
@@ -291,5 +290,3 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
 // TODO?
 // inline constexpr GlobalPreferences& SharedGlobalPreferences =
 //     GlobalPreferences::GlobalPreferencesInstance;
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_CURVE_PARAMETER_CONTROLLER_H
-#define SEQUENCE_CURVE_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
@@ -40,5 +39,3 @@ class CurveParameterController
 };
 
 }  // namespace Sequence
-
-#endif

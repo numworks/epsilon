@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_INTERVAL_PARAM_CONTROLLER_H
-#define SEQUENCE_INTERVAL_PARAM_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/interval_parameter_controller.h>
 
@@ -12,5 +11,3 @@ class IntervalParameterController : public Shared::IntervalParameterController {
 };
 
 }  // namespace Sequence
-
-#endif

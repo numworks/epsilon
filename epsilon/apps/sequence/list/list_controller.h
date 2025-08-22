@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_LIST_CONTROLLER_H
-#define SEQUENCE_LIST_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/function_list_controller.h>
@@ -81,5 +80,3 @@ class ListController : public Shared::FunctionListController {
 };
 
 }  // namespace Sequence
-
-#endif

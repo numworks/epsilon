@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_GO_TO_PARAMETER_CONTROLLER_H
-#define SEQUENCE_GO_TO_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/function_go_to_parameter_controller.h>
 
@@ -17,5 +16,3 @@ class GoToParameterController : public Shared::FunctionGoToParameterController {
 };
 
 }  // namespace Sequence
-
-#endif

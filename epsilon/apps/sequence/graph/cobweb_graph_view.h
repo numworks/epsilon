@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_COBWEB_GRAPH_VIEW_H
-#define SEQUENCE_COBWEB_GRAPH_VIEW_H
+#pragma once
 
 #include <apps/shared/dots.h>
 #include <apps/shared/function_graph_view.h>
@@ -77,5 +76,3 @@ class CobwebGraphView
 };
 
 }  // namespace Sequence
-
-#endif

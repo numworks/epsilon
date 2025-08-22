@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_CURVE_VIEW_RANGE_H
-#define SEQUENCE_CURVE_VIEW_RANGE_H
+#pragma once
 
 #include <apps/shared/interactive_curve_view_range.h>
 
@@ -20,5 +19,3 @@ class CurveViewRange : public Shared::InteractiveCurveViewRange {
 };
 
 }  // namespace Sequence
-
-#endif

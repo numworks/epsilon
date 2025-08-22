@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_COBWEB_CONTROLLER_H
-#define SEQUENCE_COBWEB_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/curve_view_cursor.h>
 #include <apps/shared/function_graph_controller.h>
@@ -70,5 +69,3 @@ class CobwebController : public Shared::SimpleInteractiveCurveViewController,
 };
 
 }  // namespace Sequence
-
-#endif

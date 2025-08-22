@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_APP_H
-#define SEQUENCE_APP_H
+#pragma once
 
 #include <apps/apps_container_helper.h>
 #include <apps/shared/function_app.h>
@@ -94,5 +93,3 @@ class App : public Shared::FunctionApp {
 };
 
 }  // namespace Sequence
-
-#endif

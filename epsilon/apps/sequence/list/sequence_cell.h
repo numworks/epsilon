@@ -1,5 +1,4 @@
-#ifndef SEQUENCE_SEQUENCE_CELL_H
-#define SEQUENCE_SEQUENCE_CELL_H
+#pragma once
 
 #include <apps/shared/with_expression_cell.h>
 #include <escher/ellipsis_view.h>
@@ -64,5 +63,3 @@ class SequenceCell
 };
 
 }  // namespace Sequence
-
-#endif

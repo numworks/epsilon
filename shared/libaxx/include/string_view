@@ -1,0 +1,64 @@
+#ifndef LIBAXX_STRING_VIEW
+#define LIBAXX_STRING_VIEW
+
+#include <stddef.h>
+
+namespace std {
+
+class string_view {
+ public:
+  // Types
+
+  using char_type = char;
+  using value_type = char_type;
+  using size_type = size_t;
+  using const_pointer = const value_type*;
+  using const_reference = const value_type&;
+  using const_iterator = const value_type*;
+
+  // Constructors
+
+  constexpr string_view() = default;
+  constexpr string_view(const string_view& other) = default;
+  // Constructs a view of the first "count" characters in the string
+  constexpr string_view(const char* string, size_type count)
+      : m_data(string), m_size(count) {}
+  /* Constructs a view of all the characters in the string, not including the
+   * terminating null character */
+  constexpr string_view(const char* string) {
+    m_data = string;
+    while (*(m_data + m_size) != '\0') {
+      m_size++;
+    }
+  }
+
+  /* A string view cannot be constructed from a nullptr according to the C++
+   * standard (from C++ 23 and onwards) */
+  constexpr string_view(decltype(nullptr)) = delete;
+
+  // Methods
+
+  constexpr const_pointer data() const { return m_data; }
+  constexpr size_type size() const { return m_size; }
+  constexpr size_type length() const { return m_size; }
+  constexpr bool empty() const { return size() == 0; }
+
+  // Accessing or iterating on elements of a string_view is always read-only
+
+  constexpr const_iterator begin() const { return data(); }
+  constexpr const_iterator cbegin() const { return data(); }
+  constexpr const_iterator end() const { return data() + size(); }
+  constexpr const_iterator cend() const { return data() + size(); }
+
+  constexpr const_reference operator[](size_type index) const {
+    return *(data() + index);
+  }
+
+ private:
+  const_pointer m_data = nullptr;
+  size_type m_size = 0;
+};
+
+}  // namespace std
+
+#endif

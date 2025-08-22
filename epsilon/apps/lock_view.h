@@ -1,5 +1,4 @@
-#ifndef APPS_LOCK_VIEW_H
-#define APPS_LOCK_VIEW_H
+#pragma once
 
 #include <escher/arbitrary_shaped_view.h>
 
@@ -10,5 +9,3 @@ class LockView : public Escher::ArbitraryShapedView {
   constexpr static int k_lockHeight = 9;
   constexpr static int k_lockWidth = 7;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef APPS_TITLE_BAR_VIEW_H
-#define APPS_TITLE_BAR_VIEW_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
@@ -50,5 +49,3 @@ class TitleBarView : public Escher::View {
   Escher::ImageView m_examModeIconView;
   Escher::MessageTextView m_examModeTextView;
 };
-
-#endif

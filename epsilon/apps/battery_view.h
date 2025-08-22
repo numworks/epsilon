@@ -1,5 +1,4 @@
-#ifndef APPS_BATTERY_VIEW_H
-#define APPS_BATTERY_VIEW_H
+#pragma once
 
 #include <escher/metric.h>
 #include <escher/view.h>
@@ -41,5 +40,3 @@ class BatteryView : public Escher::View {
   bool m_isCharging;
   bool m_isPlugged;
 };
-
-#endif

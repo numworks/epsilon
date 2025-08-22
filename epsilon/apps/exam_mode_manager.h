@@ -1,5 +1,4 @@
-#ifndef APPS_EXAM_MODE_MANAGER_H
-#define APPS_EXAM_MODE_MANAGER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/layout_preferences.h>
@@ -63,5 +62,3 @@ class __attribute__((packed)) ExamModeManager {
               * the persisting bytes with the Preferences. */
              bool m_forceExamModeReload = false;)
 };
-
-#endif

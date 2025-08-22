@@ -1,5 +1,4 @@
-#ifndef APPS_PREFERENCES_DEFAULT_CHECKER_H
-#define APPS_PREFERENCES_DEFAULT_CHECKER_H
+#pragma once
 
 /* Ensure consistency between default values of Poincare::Preferences and
  * CountryPreferences of the default country.
@@ -29,5 +28,3 @@ static_assert(
 static_assert(
     GlobalPreferences::defaultCountryPreferences().parabolaParameter() ==
     Poincare::Preferences::k_defaultParabolaParameter);
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef APPS_CONTAINER_H
-#define APPS_CONTAINER_H
+#pragma once
 
 #include <escher/blink_timer.h>
 #include <escher/container.h>
@@ -94,5 +93,3 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   Escher::App::Snapshot* m_initialAppSnapshot;
 #endif
 };
-
-#endif

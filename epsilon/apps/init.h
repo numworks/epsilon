@@ -1,10 +1,7 @@
-#ifndef APPS_INIT_H
-#define APPS_INIT_H
+#pragma once
 
 namespace Apps {
 
 void Init();
 
 }
-
-#endif

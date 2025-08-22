@@ -1,5 +1,4 @@
-#ifndef APPS_EXAM_POP_UP_CONTROLLER_H
-#define APPS_EXAM_POP_UP_CONTROLLER_H
+#pragma once
 
 #include <poincare/preferences.h>
 
@@ -21,5 +20,3 @@ class ExamPopUpController : public Shared::MessagePopUpController {
   Poincare::ExamMode m_targetExamMode =
       Poincare::ExamMode(Ion::ExamMode::Ruleset::Uninitialized);
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef APPS_CONSTANT_H
-#define APPS_CONSTANT_H
+#pragma once
 
 #include <escher/text_field.h>
 
@@ -8,5 +7,3 @@ class Constant {
   constexpr static int MaxSerializedExpressionSize =
       2 * Escher::TextField::MaxBufferSize();
 };
-
-#endif

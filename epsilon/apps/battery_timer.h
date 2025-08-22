@@ -1,5 +1,4 @@
-#ifndef APPS_BATTERY_TIMER_H
-#define APPS_BATTERY_TIMER_H
+#pragma once
 
 #include <apps/shared/prompt_controller.h>
 #include <escher/timer.h>
@@ -21,5 +20,3 @@ class BatteryTimer : public Escher::Timer {
   constexpr static int8_t k_alreadyShownModal = -1;
   int8_t m_showModalTickCountdown = k_alreadyShownModal;
 };
-
-#endif

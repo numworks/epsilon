@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_JOURNAL_QUEUE_JOURNAL_H
-#define ION_SIMULATOR_JOURNAL_QUEUE_JOURNAL_H
+#pragma once
 
 #include <ion/events.h>
 
@@ -55,5 +54,3 @@ class QueueJournal : public Ion::Events::Journal {
 }  // namespace Journal
 }  // namespace Simulator
 }  // namespace Ion
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_KEYBOARD_H
-#define ION_SIMULATOR_KEYBOARD_H
+#pragma once
 
 #include <SDL.h>
 #include <ion/keyboard.h>
@@ -16,5 +15,3 @@ void didScan();
 }  // namespace Keyboard
 }  // namespace Simulator
 }  // namespace Ion
-
-#endif

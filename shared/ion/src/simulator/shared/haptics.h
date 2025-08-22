@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_HAPTICS_H
-#define ION_SIMULATOR_HAPTICS_H
+#pragma once
 
 namespace Ion {
 namespace Simulator {
@@ -13,5 +12,3 @@ void shutdown();
 }  // namespace Haptics
 }  // namespace Simulator
 }  // namespace Ion
-
-#endif

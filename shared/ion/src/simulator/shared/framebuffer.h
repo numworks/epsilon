@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_FRAMEBUFFER_H
-#define ION_SIMULATOR_FRAMEBUFFER_H
+#pragma once
 
 #include <kandinsky/color.h>
 
@@ -13,5 +12,3 @@ void setActive(bool enabled);
 }  // namespace Framebuffer
 }  // namespace Simulator
 }  // namespace Ion
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef COMPARE_SCREENSHOT_H
-#define COMPARE_SCREENSHOT_H
+#pragma once
 
 #include <ion/events.h>
 
@@ -25,5 +24,3 @@ class Screenshot {
 
 }  // namespace Simulator
 }  // namespace Ion
-
-#endif

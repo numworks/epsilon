@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_JOURNAL_H
-#define ION_SIMULATOR_JOURNAL_H
+#pragma once
 
 #include <ion/events.h>
 
@@ -15,5 +14,3 @@ Ion::Events::Journal* logJournal();
 }  // namespace Journal
 }  // namespace Simulator
 }  // namespace Ion
-
-#endif

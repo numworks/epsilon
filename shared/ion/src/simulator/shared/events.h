@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_EVENTS_H
-#define ION_SIMULATOR_EVENTS_H
+#pragma once
 
 #include <SDL.h>
 #include <ion/events.h>
@@ -13,5 +12,3 @@ char* sharedExternalTextBuffer();
 
 }  // namespace Events
 }  // namespace Ion
-
-#endif

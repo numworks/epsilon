@@ -1,5 +1,4 @@
-#ifndef GRAPH_GRAPH_CONTROLLER_H
-#define GRAPH_GRAPH_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/continuous_function_store.h>
 #include <apps/shared/curve_view_cursor.h>
@@ -154,5 +153,3 @@ class GraphController : public Shared::FunctionGraphController,
 };
 
 }  // namespace Graph
-
-#endif

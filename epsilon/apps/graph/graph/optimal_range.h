@@ -1,5 +1,4 @@
-#ifndef GRAPH_GRAPH_OPTIMAL_RANGE_H
-#define GRAPH_GRAPH_OPTIMAL_RANGE_H
+#pragma once
 
 #include <poincare/context.h>
 #include <poincare/range.h>
@@ -13,5 +12,3 @@ Poincare::Range2D<float> OptimalRange(
     const Poincare::Context& context);
 
 }
-
-#endif

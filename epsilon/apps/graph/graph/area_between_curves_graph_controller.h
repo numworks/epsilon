@@ -1,5 +1,4 @@
-#ifndef GRAPH_AREA_BETWEEN_CURVES_GRAPH_CONTROLLER_H
-#define GRAPH_AREA_BETWEEN_CURVES_GRAPH_CONTROLLER_H
+#pragma once
 
 #include "integral_graph_controller.h"
 
@@ -32,5 +31,3 @@ class AreaBetweenCurvesGraphController : public IntegralGraphController {
 };
 
 }  // namespace Graph
-
-#endif

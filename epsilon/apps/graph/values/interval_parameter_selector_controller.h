@@ -1,5 +1,4 @@
-#ifndef GRAPH_INTERVAL_PARAMETER_SELECTOR_CONTROLLER
-#define GRAPH_INTERVAL_PARAMETER_SELECTOR_CONTROLLER
+#pragma once
 
 #include <apps/shared/continuous_function.h>
 #include <apps/shared/interval_parameter_controller.h>
@@ -38,5 +37,3 @@ class IntervalParameterSelectorController
 };
 
 }  // namespace Graph
-
-#endif

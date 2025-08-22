@@ -1,5 +1,4 @@
-#ifndef GRAPH_GRAPH_VIEW_H
-#define GRAPH_GRAPH_VIEW_H
+#pragma once
 
 #include <apps/shared/continuous_function.h>
 #include <apps/shared/continuous_function_store.h>
@@ -90,5 +89,3 @@ class GraphView : public Shared::FunctionGraphView,
 };
 
 }  // namespace Graph
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef GRAPH_CALCULATION_GRAPH_CONTROLLER_H
-#define GRAPH_CALCULATION_GRAPH_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/continuous_function_store.h>
 #include <apps/shared/function_banner_delegate.h>
@@ -77,5 +76,3 @@ class CalculationGraphController
 };
 
 }  // namespace Graph
-
-#endif

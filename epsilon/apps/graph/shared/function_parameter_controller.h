@@ -1,5 +1,4 @@
-#ifndef GRAPH_SHARED_FUNCTION_PARAMETER_CONTROLLER_H
-#define GRAPH_SHARED_FUNCTION_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/exam_mode_manager.h>
 #include <apps/shared/column_parameter_controller.h>
@@ -69,5 +68,3 @@ class FunctionParameterController : public Shared::ListParameterController,
 };
 
 }  // namespace Graph
-
-#endif

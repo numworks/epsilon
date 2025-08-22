@@ -1,5 +1,4 @@
-#ifndef GRAPH_SHARED_DERIVATIVES_PARAMETER_CONTROLLER_H
-#define GRAPH_SHARED_DERIVATIVES_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/continuous_function.h>
 #include <escher/menu_cell.h>
@@ -44,5 +43,3 @@ class DerivativesParameterController
 };
 
 }  // namespace Graph
-
-#endif

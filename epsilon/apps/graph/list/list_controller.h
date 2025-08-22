@@ -1,5 +1,4 @@
-#ifndef GRAPH_LIST_CONTROLLER_H
-#define GRAPH_LIST_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/continuous_function_store.h>
 #include <apps/shared/function_list_controller.h>
@@ -97,5 +96,3 @@ class ListController : public Shared::FunctionListController,
 };
 
 }  // namespace Graph
-
-#endif

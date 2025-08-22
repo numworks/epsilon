@@ -1,5 +1,4 @@
-#ifndef GRAPH_AREA_BETWEEN_CURVES_PARAMETER_CONTROLLER
-#define GRAPH_AREA_BETWEEN_CURVES_PARAMETER_CONTROLLER
+#pragma once
 
 #include <apps/shared/curve_selection_controller.h>
 #include <escher/list_with_top_and_bottom_controller.h>
@@ -52,5 +51,3 @@ class AreaBetweenCurvesParameterController
 };
 
 }  // namespace Graph
-
-#endif

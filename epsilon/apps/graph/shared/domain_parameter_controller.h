@@ -1,5 +1,4 @@
-#ifndef GRAPH_SHARED_DOMAIN_PARAMETER_CONTROLLER_H
-#define GRAPH_SHARED_DOMAIN_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/continuous_function.h>
 #include <apps/shared/interactive_curve_view_controller.h>
@@ -68,5 +67,3 @@ class DomainParameterController
 };
 
 }  // namespace Graph
-
-#endif

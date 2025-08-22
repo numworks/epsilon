@@ -1,5 +1,4 @@
-#ifndef GRAPH_FUNCTION_MODELS_PARAMETER_CONTROLLER_H
-#define GRAPH_FUNCTION_MODELS_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/continuous_function.h>
@@ -139,5 +138,3 @@ class FunctionModelsParameterController
 };
 
 }  // namespace Graph
-
-#endif

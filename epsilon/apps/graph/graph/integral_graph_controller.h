@@ -1,5 +1,4 @@
-#ifndef GRAPH_INTEGRAL_GRAPH_CONTROLLER_H
-#define GRAPH_INTEGRAL_GRAPH_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/sum_graph_controller.h>
 
@@ -26,5 +25,3 @@ class IntegralGraphController : public Shared::SumGraphController {
 };
 
 }  // namespace Graph
-
-#endif

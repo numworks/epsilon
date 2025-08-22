@@ -1,5 +1,4 @@
-#ifndef GRAPH_EXTREMUM_GRAPH_CONTROLLER_H
-#define GRAPH_EXTREMUM_GRAPH_CONTROLLER_H
+#pragma once
 
 #include "calculation_graph_controller.h"
 
@@ -34,5 +33,3 @@ class MaximumGraphController : public CalculationGraphController {
 };
 
 }  // namespace Graph
-
-#endif

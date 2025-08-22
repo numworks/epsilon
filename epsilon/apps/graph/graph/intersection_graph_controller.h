@@ -1,5 +1,4 @@
-#ifndef GRAPH_INTERSECTION_GRAPH_CONTROLLER_H
-#define GRAPH_INTERSECTION_GRAPH_CONTROLLER_H
+#pragma once
 
 #include "calculation_graph_controller.h"
 
@@ -26,5 +25,3 @@ class IntersectionGraphController : public CalculationGraphController {
 };
 
 }  // namespace Graph
-
-#endif

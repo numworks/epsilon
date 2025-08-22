@@ -1,6 +1,5 @@
 #include "helper.h"
 
-#include <apps/shared/global_context.h>
 #include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/print.h>

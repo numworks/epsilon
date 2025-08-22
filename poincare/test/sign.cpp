@@ -1,4 +1,3 @@
-#include <apps/shared/global_context.h>
 #include <poincare/context.h>
 #include <poincare/src/expression/number.h>
 #include <poincare/src/expression/projection.h>
@@ -582,10 +581,9 @@ QUIZ_CASE(pcj_sign_reduced_is_positive) {
   assert_reduced_is_positive("-1+1%", OMG::Troolean::False);
   assert_reduced_is_positive("1-1%", OMG::Troolean::Unknown);
   assert_reduced_is_positive("a", OMG::Troolean::Unknown);
-  Shared::GlobalContext globalContext;
-  PoincareTest::store("42→a", globalContext);
-  assert_reduced_is_positive("a", OMG::Troolean::True, globalContext);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+  PoincareTest::SymbolStore symbolStore;
+  PoincareTest::store("42→a", symbolStore);
+  assert_reduced_is_positive("a", OMG::Troolean::True, symbolStore);
 }
 
 void assert_sign_sets_to(const char* input,

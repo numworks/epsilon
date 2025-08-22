@@ -1,7 +1,6 @@
 #ifndef POINCARE_EXPRESSION_REFERENCE_H
 #define POINCARE_EXPRESSION_REFERENCE_H
 
-#include <ion/storage/file_system.h>
 #include <omg/enums.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/layout.h>

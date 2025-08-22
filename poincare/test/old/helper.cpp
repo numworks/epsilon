@@ -1,6 +1,5 @@
 #include "helper.h"
 
-#include <apps/shared/global_context.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/builtin.h>
@@ -158,10 +157,10 @@ void assert_parsed_expression_simplify_to(
     ReductionTarget target, AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat, ComplexFormat complexFormat,
     SymbolicComputation symbolicComputation, bool beautify) {
-  Shared::GlobalContext globalContext;
+  PoincareTest::SymbolStore symbolStore;
   // TODO_PCJ also approximate to see if it crashes
   assert_parsed_expression_simplify_to(
-      expression, simplifiedExpression, globalContext, target, angleUnit,
+      expression, simplifiedExpression, symbolStore, target, angleUnit,
       unitFormat, complexFormat, symbolicComputation, beautify);
 }
 
@@ -194,9 +193,9 @@ void assert_expression_simplifies_approximates_to(
     const char *expression, const char *approximation, AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat, ComplexFormat complexFormat,
     int numberOfSignificantDigits) {
-  Shared::GlobalContext globalContext;
+  PoincareTest::SymbolStore symbolStore;
   assert_expression_simplifies_approximates_to<T>(
-      expression, approximation, globalContext, angleUnit, unitFormat,
+      expression, approximation, symbolStore, angleUnit, unitFormat,
       complexFormat, numberOfSignificantDigits);
 }
 

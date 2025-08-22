@@ -1,5 +1,3 @@
-#include <apps/shared/global_context.h>
-#include <ion/storage/file_system.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/k_tree.h>
@@ -105,16 +103,11 @@ void assert_polynomial_degree_is(ProjectionContext projectionContext,
 }
 
 QUIZ_CASE(pcj_polynomial_degree) {
-  Shared::GlobalContext globalContext;
-  assert(
-      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
-      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
-          "sys"));
-
+  PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
       .m_complexFormat = Poincare::ComplexFormat::Cartesian,
       .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = globalContext,
+      .m_context = symbolStore,
       .m_advanceReduce = false};
 
   assert_polynomial_degree_is(projCtx, "x+1", 1);
@@ -138,22 +131,19 @@ QUIZ_CASE(pcj_polynomial_degree) {
   assert_polynomial_degree_is(projCtx, "x^257", Degree::k_maxPolynomialDegree);
 
   // f: y→y^2+πy+1
-  PoincareTest::store("1+π×y+y^2→f(y)", globalContext);
+  PoincareTest::store("1+π×y+y^2→f(y)", symbolStore);
   assert_polynomial_degree_is(projCtx, "f(x)", 2);
   // With y=1
-  PoincareTest::store("1→y", globalContext);
-  assert_polynomial_degree_is(projCtx, "f(x)", 2);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("y.exp").destroy();
+  PoincareTest::store("1→y", symbolStore);
+  symbolStore.reset();
   // a : undef and f : y→ay+πy+1
-  PoincareTest::store("undef→a", globalContext);
-  PoincareTest::store("1+π×y+y×a→f(y)", globalContext);
+  PoincareTest::store("undef→a", symbolStore);
+  PoincareTest::store("1+π×y+y×a→f(y)", symbolStore);
   assert_polynomial_degree_is(projCtx, "f(x)", 0);  // a is undefined
   // With a = 1
-  PoincareTest::store("1→a", globalContext);
+  PoincareTest::store("1→a", symbolStore);
   assert_polynomial_degree_is(projCtx, "f(x)", 1);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+  symbolStore.reset();
 
   projCtx.m_complexFormat = Poincare::ComplexFormat::Real;
   assert_polynomial_degree_is(projCtx, "√(-1)×x", 0);

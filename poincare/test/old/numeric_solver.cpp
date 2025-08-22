@@ -1,4 +1,3 @@
-#include <apps/shared/global_context.h>
 #include <omg/float.h>
 #include <poincare/context.h>
 #include <poincare/numeric_solver/solver.h>

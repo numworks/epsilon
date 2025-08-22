@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <ion/storage/file_system.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/projection.h>
 

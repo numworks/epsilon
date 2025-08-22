@@ -1,4 +1,3 @@
-#include <apps/shared/global_context.h>
 #include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/expression_or_float.h>
@@ -12,6 +11,7 @@
 #include <poincare/src/layout/layout_serializer.h>
 
 #include "helper.h"
+#include "helpers/symbol_store.h"
 
 using namespace Poincare::Internal;
 
@@ -406,24 +406,27 @@ QUIZ_CASE(pcj_serialization_derivative) {
   assert_expression_parses_and_serializes_to("f^(1)(x)", "f^(1)×(x)");
   assert_expression_parses_and_serializes_to("f^(2)(x)", "f^(2)×(x)");
   assert_expression_parses_and_serializes_to("f^(3)(x)", "f^(3)×(x)");
-  // TODO: create record through a Context instance
-  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      "f", "func", "", 0);
-  Shared::GlobalContext context;
-  assert_expression_parses_and_serializes_to_itself("f(x)", context);
-  assert_expression_parses_and_serializes_to_itself("f'(x+1)", context);
-  assert_expression_parses_and_serializes_to_itself("f\"(x+1)", context);
-  assert_expression_parses_and_serializes_to_itself("f^(3)(x+1)", context);
-  assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a)", context);
+  PoincareTest::SymbolStore symbolStore;
+  PoincareTest::store("x→f(x)", symbolStore);
+  assert_expression_parses_and_serializes_to_itself("f(x)", symbolStore);
+  assert_expression_parses_and_serializes_to_itself("f'(x+1)", symbolStore);
+  assert_expression_parses_and_serializes_to_itself("f\"(x+1)", symbolStore);
+  assert_expression_parses_and_serializes_to_itself("f^(3)(x+1)", symbolStore);
+  assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a)",
+                                                    symbolStore);
   assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a,2)",
-                                                    context);
+                                                    symbolStore);
   assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a,3)",
-                                                    context);
-  assert_expression_parses_and_serializes_to("f''(x)", "f\"(x)", context);
-  assert_expression_parses_and_serializes_to("f'''(x)", "f^(3)(x)", context);
-  assert_expression_parses_and_serializes_to("f'\"(x)", "f^(3)(x)", context);
-  assert_expression_parses_and_serializes_to("f\"\"(x)", "f^(4)(x)", context);
-  assert_expression_parses_and_serializes_to("f^(1)(x)", "f'(x)", context);
-  assert_expression_parses_and_serializes_to("f^(2)(x)", "f\"(x)", context);
-  assert_expression_parses_and_serializes_to("f^(3)(x)", "f^(3)(x)", context);
+                                                    symbolStore);
+  assert_expression_parses_and_serializes_to("f''(x)", "f\"(x)", symbolStore);
+  assert_expression_parses_and_serializes_to("f'''(x)", "f^(3)(x)",
+                                             symbolStore);
+  assert_expression_parses_and_serializes_to("f'\"(x)", "f^(3)(x)",
+                                             symbolStore);
+  assert_expression_parses_and_serializes_to("f\"\"(x)", "f^(4)(x)",
+                                             symbolStore);
+  assert_expression_parses_and_serializes_to("f^(1)(x)", "f'(x)", symbolStore);
+  assert_expression_parses_and_serializes_to("f^(2)(x)", "f\"(x)", symbolStore);
+  assert_expression_parses_and_serializes_to("f^(3)(x)", "f^(3)(x)",
+                                             symbolStore);
 }

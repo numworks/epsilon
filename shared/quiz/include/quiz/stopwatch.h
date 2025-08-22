@@ -1,5 +1,4 @@
-#ifndef QUIZ_STOPWATCH_H
-#define QUIZ_STOPWATCH_H
+#pragma once
 
 #include <stdint.h>
 
@@ -12,6 +11,4 @@ void quiz_stopwatch_print_lap(uint64_t startTime);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

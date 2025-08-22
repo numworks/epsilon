@@ -1,5 +1,4 @@
-#ifndef QUIZ_H
-#define QUIZ_H
+#pragma once
 
 #include <assert.h>
 #include <quiz/src/symbols.h>
@@ -27,5 +26,3 @@ struct RegisterQuizCase {
 void quiz_assert(bool condition);
 void quiz_print(const char* message);
 extern bool sSkipAssertions;
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_DISPLAY_H
-#define ION_SIMULATOR_DISPLAY_H
+#pragma once
 
 #include <SDL.h>
 
@@ -17,5 +16,3 @@ void prepareForScreenshot();
 }  // namespace Display
 }  // namespace Simulator
 }  // namespace Ion
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_STATE_FILE_H
-#define ION_SIMULATOR_STATE_FILE_H
+#pragma once
 
 namespace Ion {
 namespace Simulator {
@@ -13,5 +12,3 @@ void save(const char* filename);
 }  // namespace StateFile
 }  // namespace Simulator
 }  // namespace Ion
-
-#endif

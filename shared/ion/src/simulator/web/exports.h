@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_WEB_EXPORTS_H
-#define ION_SIMULATOR_WEB_EXPORTS_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,6 +12,4 @@ void IonSimulatorEventsPushEvent(int eventNumber);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

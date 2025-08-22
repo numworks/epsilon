@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_WINDOW_H
-#define ION_SIMULATOR_WINDOW_H
+#pragma once
 
 #include <SDL.h>
 
@@ -29,5 +28,3 @@ void willShutdown(SDL_Window* window);
 }  // namespace Window
 }  // namespace Simulator
 }  // namespace Ion
-
-#endif

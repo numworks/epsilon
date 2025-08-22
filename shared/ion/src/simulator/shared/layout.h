@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_LAYOUT_H
-#define ION_SIMULATOR_LAYOUT_H
+#pragma once
 
 #include <SDL.h>
 #include <ion/keyboard.h>
@@ -28,5 +27,3 @@ void shutdown();
 }  // namespace Layout
 }  // namespace Simulator
 }  // namespace Ion
-
-#endif

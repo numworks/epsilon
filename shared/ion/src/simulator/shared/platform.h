@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_PLATFORM_H
-#define ION_SIMULATOR_PLATFORM_H
+#pragma once
 
 #include <SDL.h>
 #include <kandinsky/color.h>
@@ -22,5 +21,3 @@ const char* cacheWindowPositionFilePath();
 }  // namespace Platform
 }  // namespace Simulator
 }  // namespace Ion
-
-#endif

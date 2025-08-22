@@ -1,5 +1,4 @@
-#ifndef ION_CLIPBOARD_HELPER_H
-#define ION_CLIPBOARD_HELPER_H
+#pragma once
 
 #include <stddef.h>
 
@@ -17,5 +16,3 @@ void fetchFromSystemClipboard(char* buffer, size_t bufferSize);
 
 }  // namespace Clipboard
 }  // namespace Ion
-
-#endif

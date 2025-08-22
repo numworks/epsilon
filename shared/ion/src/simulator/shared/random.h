@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_RANDOM_H
-#define ION_SIMULATOR_RANDOM_H
+#pragma once
 
 #include <ion.h>
 
@@ -12,5 +11,3 @@ void init();
 }
 }  // namespace Simulator
 }  // namespace Ion
-
-#endif

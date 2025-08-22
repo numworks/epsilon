@@ -1,5 +1,4 @@
-#ifndef ION_SIMULATOR_ACTIONS_H
-#define ION_SIMULATOR_ACTIONS_H
+#pragma once
 
 #include <SDL.h>
 
@@ -15,5 +14,3 @@ void handleUSR1Sig(int i);
 }  // namespace Actions
 }  // namespace Simulator
 }  // namespace Ion
-
-#endif

@@ -6,6 +6,7 @@
 
 #include <initializer_list>
 #include <span>
+#include <string_view>
 
 namespace OMG {
 
@@ -48,6 +49,11 @@ class String {
     for (const char_type& element : characters) {
       (*this)[m_size++] = element;
     }
+  }
+
+  // Implicit conversion to an std::string_view
+  operator std::string_view() const {
+    return std::string_view(data(), length());
   }
 
   // Methods

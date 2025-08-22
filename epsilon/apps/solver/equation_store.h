@@ -1,5 +1,4 @@
-#ifndef SOLVER_EQUATION_STORE_H
-#define SOLVER_EQUATION_STORE_H
+#pragma once
 
 #include <apps/shared/expression_model_store.h>
 #include <poincare/equation_solver/equation_solver_pool.h>
@@ -49,5 +48,3 @@ class EquationStore : public Shared::ExpressionModelStore {
 };
 
 }  // namespace Solver
-
-#endif

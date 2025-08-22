@@ -1,5 +1,4 @@
-#ifndef APPS_SOLVER_TEST_HELPERS_H
-#define APPS_SOLVER_TEST_HELPERS_H
+#pragma once
 
 #include <poincare/preferences.h>
 #include <poincare/test/old/helper.h>
@@ -80,5 +79,3 @@ inline void assert_solves_to(const char* equation,
 
 void setComplexFormatAndAngleUnit(Poincare::ComplexFormat complexFormat,
                                   Poincare::AngleUnit angleUnit);
-
-#endif

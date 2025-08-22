@@ -1,5 +1,4 @@
-#ifndef SOLVER_EQUATION_h
-#define SOLVER_EQUATION_h
+#pragma once
 
 #include <apps/shared/expression_model_handle.h>
 #include <poincare/context.h>
@@ -43,5 +42,3 @@ class Equation : public Shared::ExpressionModelHandle {
 };
 
 }  // namespace Solver
-
-#endif

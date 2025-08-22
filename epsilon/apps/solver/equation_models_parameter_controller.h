@@ -1,5 +1,4 @@
-#ifndef SOLVER_EQUATION_PARAMETER_CONTROLLER_H
-#define SOLVER_EQUATION_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <escher/layout_view.h>
 #include <escher/menu_cell.h>
@@ -45,5 +44,3 @@ class EquationModelsParameterController
 };
 
 }  // namespace Solver
-
-#endif

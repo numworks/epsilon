@@ -1,5 +1,4 @@
-#ifndef SOLVER_SOLUTIONS_CONTROLLER_H
-#define SOLVER_SOLUTIONS_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/alternate_empty_view_controller.h>
@@ -243,5 +242,3 @@ class SolutionsController : public Escher::ViewController,
 };
 
 }  // namespace Solver
-
-#endif

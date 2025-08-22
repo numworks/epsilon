@@ -1,5 +1,4 @@
-#ifndef ON_BOARDING_LOCALIZATION_CONTROLLER_H
-#define ON_BOARDING_LOCALIZATION_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/localization_controller.h>
 
@@ -16,5 +15,3 @@ class LocalizationController : public Shared::LocalizationController {
 };
 
 }  // namespace OnBoarding
-
-#endif

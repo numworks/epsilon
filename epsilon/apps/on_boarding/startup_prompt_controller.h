@@ -1,3 +1,5 @@
+#pragma once
+
 #include <apps/shared/prompt_controller.h>
 
 namespace OnBoarding {

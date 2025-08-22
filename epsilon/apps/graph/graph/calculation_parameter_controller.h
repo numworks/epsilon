@@ -1,5 +1,4 @@
-#ifndef GRAPH_CALCULATION_PARAMETER_CONTROLLER_H
-#define GRAPH_CALCULATION_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
@@ -97,5 +96,3 @@ class CalculationParameterController
 };
 
 }  // namespace Graph
-
-#endif

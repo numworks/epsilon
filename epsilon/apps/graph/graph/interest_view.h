@@ -1,5 +1,4 @@
-#ifndef GRAPH_INTEREST_VIEW_H
-#define GRAPH_INTEREST_VIEW_H
+#pragma once
 
 #include <apps/shared/dots.h>
 #include <escher/view.h>
@@ -24,5 +23,3 @@ class InterestView : public Escher::View {
 };
 
 }  // namespace Graph
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef GRAPH_BANNER_VIEW_H
-#define GRAPH_BANNER_VIEW_H
+#pragma once
 
 #include <apps/shared/cursor_view.h>
 #include <apps/shared/xy_banner_view.h>
@@ -68,5 +67,3 @@ class BannerView : public Shared::XYBannerView {
 };
 
 }  // namespace Graph
-
-#endif

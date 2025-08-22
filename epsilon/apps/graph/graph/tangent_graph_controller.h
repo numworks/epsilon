@@ -1,5 +1,4 @@
-#ifndef GRAPH_TANGENT_GRAPH_CONTROLLER_H
-#define GRAPH_TANGENT_GRAPH_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/simple_interactive_curve_view_controller.h>
@@ -57,5 +56,3 @@ class TangentGraphController
 };
 
 }  // namespace Graph
-
-#endif

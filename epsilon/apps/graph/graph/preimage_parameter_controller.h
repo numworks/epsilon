@@ -1,5 +1,4 @@
-#ifndef GRAPH_PREIMAGE_PARAMETER_CONTROLLER
-#define GRAPH_PREIMAGE_PARAMETER_CONTROLLER
+#pragma once
 
 #include <apps/shared/go_to_parameter_controller.h>
 
@@ -34,5 +33,3 @@ class PreimageParameterController : public Shared::GoToParameterController {
 };
 
 }  // namespace Graph
-
-#endif

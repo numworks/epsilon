@@ -1,3 +1,5 @@
+#pragma once
+
 #include <apps/i18n.h>
 
 #include "calculation_graph_controller.h"

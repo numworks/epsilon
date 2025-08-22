@@ -1,5 +1,4 @@
-#ifndef GRAPH_VALUES_CONTROLLER_H
-#define GRAPH_VALUES_CONTROLLER_H
+#pragma once
 
 #include <apps/graph/shared/derivative_column_parameter_controller.h>
 #include <apps/graph/shared/function_parameter_controller.h>
@@ -207,5 +206,3 @@ class ValuesController : public Shared::ValuesController,
 };
 
 }  // namespace Graph
-
-#endif

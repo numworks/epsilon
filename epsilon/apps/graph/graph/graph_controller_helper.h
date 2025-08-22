@@ -1,5 +1,4 @@
-#ifndef GRAPH_GRAPH_CONTROLLER_HELPER_H
-#define GRAPH_GRAPH_CONTROLLER_HELPER_H
+#pragma once
 
 #include <apps/shared/curve_view_cursor.h>
 #include <apps/shared/function_banner_delegate.h>
@@ -48,5 +47,3 @@ class GraphControllerHelper {
 };
 
 }  // namespace Graph
-
-#endif

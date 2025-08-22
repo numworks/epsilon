@@ -1,5 +1,4 @@
-#ifndef ESCHER_EDITABLE_FUNCTION_CELL_H
-#define ESCHER_EDITABLE_FUNCTION_CELL_H
+#pragma once
 
 #include <escher/button_cell.h>
 #include <escher/editable_expression_model_cell.h>
@@ -57,5 +56,3 @@ class EditableFunctionCell
 };
 
 }  // namespace Graph
-
-#endif

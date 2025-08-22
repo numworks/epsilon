@@ -1,5 +1,4 @@
-#ifndef GRAPH_ROOT_GRAPH_CONTROLLER_H
-#define GRAPH_ROOT_GRAPH_CONTROLLER_H
+#pragma once
 
 #include "calculation_graph_controller.h"
 
@@ -20,5 +19,3 @@ class RootGraphController : public CalculationGraphController {
 };
 
 }  // namespace Graph
-
-#endif

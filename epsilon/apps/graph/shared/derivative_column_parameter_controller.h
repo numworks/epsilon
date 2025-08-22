@@ -1,5 +1,4 @@
-#ifndef GRAPH_DERIVATIVE_COLUMN_PARAMETER_CONTROLLER_H
-#define GRAPH_DERIVATIVE_COLUMN_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/color_parameter_controller.h>
 #include <apps/shared/function_store.h>
@@ -52,5 +51,3 @@ class DerivativeColumnParameterController
 };
 
 }  // namespace Graph
-
-#endif

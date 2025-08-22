@@ -1,5 +1,4 @@
-#ifndef GRAPH_APP_H
-#define GRAPH_APP_H
+#pragma once
 
 #include <apps/apps_container_helper.h>
 #include <apps/shared/continuous_function.h>
@@ -99,5 +98,3 @@ class App : public Shared::FunctionApp {
 };
 
 }  // namespace Graph
-
-#endif

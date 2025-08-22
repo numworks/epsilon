@@ -1,5 +1,4 @@
-#ifndef APPS_GRAPH_TEST_HELPER_H
-#define APPS_GRAPH_TEST_HELPER_H
+#pragma once
 
 #include <poincare/test/old/helper.h>
 
@@ -12,5 +11,3 @@ Shared::ContinuousFunction* addFunction(const char* definition,
                                         const Poincare::Context& context);
 
 }
-
-#endif

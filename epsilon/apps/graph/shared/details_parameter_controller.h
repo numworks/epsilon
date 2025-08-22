@@ -1,5 +1,4 @@
-#ifndef GRAPH_SHARED_DETAILS_PARAMETER_CONTROLLER_H
-#define GRAPH_SHARED_DETAILS_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/continuous_function.h>
 #include <escher/buffer_text_view.h>
@@ -86,5 +85,3 @@ class DetailsParameterController
 };
 
 }  // namespace Graph
-
-#endif

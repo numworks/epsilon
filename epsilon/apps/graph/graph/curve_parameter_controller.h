@@ -1,5 +1,4 @@
-#ifndef GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
-#define GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/explicit_float_parameter_controller.h>
 #include <escher/buffer_text_view.h>
@@ -128,5 +127,3 @@ class CurveParameterController
 };
 
 }  // namespace Graph
-
-#endif

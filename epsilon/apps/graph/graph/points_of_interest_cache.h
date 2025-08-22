@@ -1,5 +1,4 @@
-#ifndef GRAPH_POINTS_OF_INTEREST_CACHE
-#define GRAPH_POINTS_OF_INTEREST_CACHE
+#pragma once
 
 #include <ion/storage/record.h>
 #include <poincare/numeric_solver/point_of_interest_list.h>
@@ -83,5 +82,3 @@ class PointsOfInterestCache {
 };
 
 }  // namespace Graph
-
-#endif

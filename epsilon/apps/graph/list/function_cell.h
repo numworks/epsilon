@@ -1,5 +1,4 @@
-#ifndef ESCHER_FUNCTION_CELL_H
-#define ESCHER_FUNCTION_CELL_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/with_expression_cell.h>
@@ -86,5 +85,3 @@ class FunctionCell
 };
 
 }  // namespace Graph
-
-#endif

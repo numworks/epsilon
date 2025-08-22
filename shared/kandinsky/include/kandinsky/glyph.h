@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_GLYPHS_H
-#define KANDINSKY_GLYPHS_H
+#pragma once
 
 #include <kandinsky/color.h>
 #include <kandinsky/font.h>
@@ -25,5 +24,3 @@ class KDGlyph {
   };
 
 };  // namespace KDGlyph
-
-#endif

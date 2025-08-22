@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_PIXEL_CACHE_H
-#define KANDINSKY_PIXEL_CACHE_H
+#pragma once
 
 #include <kandinsky/color.h>
 #include <kandinsky/context.h>
@@ -33,5 +32,3 @@ class KDPixelCache : public KDAbstractPixelCache {
   KDColor* buffer() override { return m_buffer; }
   KDColor m_buffer[Size];
 };
-
-#endif

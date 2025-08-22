@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_MEASURING_CONTEXT_H
-#define KANDINSKY_MEASURING_CONTEXT_H
+#pragma once
 
 #include <kandinsky/context.h>
 
@@ -19,5 +18,3 @@ class KDMeasuringContext : public KDContext {
   void pullRect(KDRect rect, KDColor* pixels) override{};
   KDRect m_rect;
 };
-
-#endif

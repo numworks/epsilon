@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_COORDINATE_H
-#define KANDINSKY_COORDINATE_H
+#pragma once
 
 #include <stdint.h>
 
@@ -12,5 +11,3 @@ inline bool SumOverflowsKDCoordinate(KDCoordinate a, KDCoordinate b) {
   return (b > 0 && a > KDCOORDINATE_MAX - b) ||
          (b < 0 && a < KDCOORDINATE_MIN - b);
 }
-
-#endif

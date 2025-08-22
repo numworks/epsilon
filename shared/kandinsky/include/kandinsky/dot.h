@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_DOT_H
-#define KANDINSKY_DOT_H
+#pragma once
 
 #include <kandinsky/coordinate.h>
 
@@ -63,5 +62,3 @@ template <KDCoordinate Size>
 constexpr KDMask<Size> KDMakeDot(float radius) {
   return KDMakeRing<Size>(0.0f, radius);
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_FONTS_CODE_POINTS_H
-#define KANDINSKY_FONTS_CODE_POINTS_H
+#pragma once
 
 /* [0x30a].map{|i| "0x" + i.to_s(16) +", // " + [i].pack("U") + " // " +
  * Unicode::Name.of([i].pack("U"))}.join("|") */
@@ -203,5 +202,3 @@ constexpr
 };
 
 const int NumberOfCodePoints = sizeof(CodePoints) / sizeof(uint32_t);
-
-#endif

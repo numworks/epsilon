@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_CONTEXT_H
-#define KANDINSKY_CONTEXT_H
+#pragma once
 
 #include <kandinsky/glyph.h>
 #include <kandinsky/rect.h>
@@ -68,5 +67,3 @@ class KDContext {
   KDPoint m_origin;
   KDRect m_clippingRect;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_POINT_H
-#define KANDINSKY_POINT_H
+#pragma once
 
 #include <kandinsky/coordinate.h>
 
@@ -29,5 +28,3 @@ class KDPoint {
 };
 
 constexpr KDPoint KDPointZero = KDPoint(0, 0);
-
-#endif

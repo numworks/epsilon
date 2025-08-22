@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_RECT_H
-#define KANDINSKY_RECT_H
+#pragma once
 
 #include <kandinsky/coordinate.h>
 #include <kandinsky/point.h>
@@ -88,5 +87,3 @@ class KDRect {
 };
 
 constexpr KDRect KDRectZero = KDRect(0, 0, 0, 0);
-
-#endif

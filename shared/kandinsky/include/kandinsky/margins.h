@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_MARGIN_H
-#define KANDINSKY_MARGIN_H
+#pragma once
 
 #include <kandinsky/coordinate.h>
 #include <kandinsky/point.h>
@@ -126,5 +125,3 @@ class KDMargins : public KDHorizontalMargins, public KDVerticalMargins {
 
   constexpr KDPoint topLeftPoint() const { return KDPoint(left(), top()); }
 };
-
-#endif

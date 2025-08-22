@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_FONTS_FONT_CONSTANTS_H
-#define KANDINSKY_FONTS_FONT_CONSTANTS_H
+#pragma once
 
 #ifdef __cplusplus
 constexpr
@@ -8,6 +7,4 @@ constexpr
     int k_grayscaleBitsPerPixel = 1;
 #else
 int k_grayscaleBitsPerPixel = 4;
-#endif
-
 #endif

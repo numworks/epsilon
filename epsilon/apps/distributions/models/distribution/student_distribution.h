@@ -1,5 +1,4 @@
-#ifndef DISTRIBUTION_STUDENT_DISTRIBUTION_H
-#define DISTRIBUTION_STUDENT_DISTRIBUTION_H
+#pragma once
 
 #include <poincare/layout.h>
 
@@ -25,5 +24,3 @@ class StudentDistribution : public OneParameterDistribution {
 };
 
 }  // namespace Distributions
-
-#endif

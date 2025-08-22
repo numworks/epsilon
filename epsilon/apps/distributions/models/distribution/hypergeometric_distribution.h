@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_HYPERGEOMETRIC_DISTRIBUTION_H
-#define PROBABILITE_HYPERGEOMETRIC_DISTRIBUTION_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <poincare/layout.h>
@@ -32,5 +31,3 @@ class HypergeometricDistribution final : public ThreeParametersDistribution {
 };
 
 }  // namespace Distributions
-
-#endif

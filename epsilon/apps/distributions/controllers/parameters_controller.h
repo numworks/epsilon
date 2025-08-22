@@ -1,5 +1,4 @@
-#ifndef DISTRIBUTIONS_PROBABILITY_PARAMETERS_CONTROLLER_H
-#define DISTRIBUTIONS_PROBABILITY_PARAMETERS_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/layout_view.h>
@@ -51,5 +50,3 @@ class ParametersController : public Shared::FloatParameterController<double> {
 };
 
 }  // namespace Distributions
-
-#endif

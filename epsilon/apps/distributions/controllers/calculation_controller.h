@@ -1,5 +1,4 @@
-#ifndef DISTRIBUTIONS_PROBABILITY_CALCULATION_CONTROLLER_H
-#define DISTRIBUTIONS_PROBABILITY_CALCULATION_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/parameter_text_field_delegate.h>
 #include <escher/buffer_text_view.h>
@@ -116,5 +115,3 @@ class CalculationController : public Escher::ViewController,
 };
 
 }  // namespace Distributions
-
-#endif

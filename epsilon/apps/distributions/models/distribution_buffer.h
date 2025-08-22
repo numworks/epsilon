@@ -1,5 +1,4 @@
-#ifndef DISTRIBUTIONS_DISTRIBUTION_BUFFER_H
-#define DISTRIBUTIONS_DISTRIBUTION_BUFFER_H
+#pragma once
 
 #include <new>
 
@@ -47,5 +46,3 @@ union DistributionBuffer {
 };
 
 }  // namespace Distributions
-
-#endif /* DISTRIBUTIONS_DISTRIBUTION_BUFFER_H */

@@ -1,5 +1,4 @@
-#ifndef DISTRIBUTIONS_APP_H
-#define DISTRIBUTIONS_APP_H
+#pragma once
 
 #include <apps/shared/math_app.h>
 #include <escher/stack_view_controller.h>
@@ -71,5 +70,3 @@ class App : public Shared::MathApp {
 };
 
 }  // namespace Distributions
-
-#endif

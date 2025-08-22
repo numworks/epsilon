@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_UNIFORM_DISTRIBUTION_H
-#define PROBABILITE_UNIFORM_DISTRIBUTION_H
+#pragma once
 
 #include <poincare/statistics/distribution.h>
 
@@ -37,5 +36,3 @@ class UniformDistribution final : public TwoParametersDistribution {
 };
 
 }  // namespace Distributions
-
-#endif

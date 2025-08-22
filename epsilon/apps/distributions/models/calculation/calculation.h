@@ -1,5 +1,4 @@
-#ifndef DISTRIBUTIONS_MODELS_CALCULATION_CALCULATION_H
-#define DISTRIBUTIONS_MODELS_CALCULATION_CALCULATION_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <assert.h>
@@ -45,5 +44,3 @@ class Calculation {
 };
 
 }  // namespace Distributions
-
-#endif

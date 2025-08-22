@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_EXPONENTIAL_DISTRIBUTION_H
-#define PROBABILITE_EXPONENTIAL_DISTRIBUTION_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <assert.h>
@@ -28,5 +27,3 @@ class ExponentialDistribution final : public OneParameterDistribution {
 };
 
 }  // namespace Distributions
-
-#endif

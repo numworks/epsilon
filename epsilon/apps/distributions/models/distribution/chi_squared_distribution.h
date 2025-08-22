@@ -1,5 +1,4 @@
-#ifndef DISTRIBUTION_CHI_SQUARED_DISTRIBUTION_H
-#define DISTRIBUTION_CHI_SQUARED_DISTRIBUTION_H
+#pragma once
 
 #include <poincare/layout.h>
 
@@ -26,5 +25,3 @@ class ChiSquaredDistribution : public OneParameterDistribution {
 };
 
 }  // namespace Distributions
-
-#endif

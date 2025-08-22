@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_TWO_PARAMETERS_DISTRIBUTION_H
-#define PROBABILITE_TWO_PARAMETERS_DISTRIBUTION_H
+#pragma once
 
 #include <poincare/statistics/distribution.h>
 
@@ -21,5 +20,3 @@ class TwoParametersDistribution : public Distribution {
 };
 
 }  // namespace Distributions
-
-#endif

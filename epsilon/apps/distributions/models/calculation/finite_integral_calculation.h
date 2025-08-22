@@ -1,5 +1,4 @@
-#ifndef PROBABILITE_FINITE_INTEGRAL_CALCULATION_H
-#define PROBABILITE_FINITE_INTEGRAL_CALCULATION_H
+#pragma once
 
 #include "calculation.h"
 
@@ -24,5 +23,3 @@ class FiniteIntegralCalculation : public Calculation {
 };
 
 }  // namespace Distributions
-
-#endif

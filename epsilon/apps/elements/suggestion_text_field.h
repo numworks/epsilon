@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_SUGGESTION_TEXT_FIELD_H
-#define ELEMENTS_SUGGESTION_TEXT_FIELD_H
+#pragma once
 
 #include <escher/text_field.h>
 
@@ -46,5 +45,3 @@ class SuggestionTextField : public Escher::AbstractTextField {
 };
 
 }  // namespace Elements
-
-#endif

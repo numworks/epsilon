@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_PALETTE_H
-#define ELEMENTS_PALETTE_H
+#pragma once
 
 #include <kandinsky/color.h>
 
@@ -67,5 +66,3 @@ constexpr KDColor ScaleTextYellowDark = KDColor::RGB24(0x7e4d00);
 
 }  // namespace Palette
 }  // namespace Elements
-
-#endif

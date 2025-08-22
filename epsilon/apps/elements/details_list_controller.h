@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_DETAILS_LIST_CONTROLLER
-#define ELEMENTS_DETAILS_LIST_CONTROLLER
+#pragma once
 
 #include <escher/layout_view.h>
 #include <escher/list_with_top_and_bottom_controller.h>
@@ -62,5 +61,3 @@ class DetailsListController : public Escher::ListWithTopAndBottomController {
 };
 
 }  // namespace Elements
-
-#endif

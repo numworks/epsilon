@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_ELEMENTS_DATA_BASE
-#define ELEMENTS_ELEMENTS_DATA_BASE
+#pragma once
 
 #include <poincare/layout.h>
 
@@ -85,5 +84,3 @@ class ElementsDataBase {
 };
 
 }  // namespace Elements
-
-#endif

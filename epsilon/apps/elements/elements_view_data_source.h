@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_ELEMENTS_VIEW_DATA_SOURCE_H
-#define ELEMENTS_ELEMENTS_VIEW_DATA_SOURCE_H
+#pragma once
 
 #include "elements_data_base.h"
 #include "elements_view_delegate.h"
@@ -39,5 +38,3 @@ class ElementsViewDataSource {
 };
 
 }  // namespace Elements
-
-#endif

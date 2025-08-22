@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_TABLE_LAYOUT_H
-#define ELEMENTS_TABLE_LAYOUT_H
+#pragma once
 
 #include "elements_data_base.h"
 
@@ -26,5 +25,3 @@ class TableLayout {
 };
 
 }  // namespace Elements
-
-#endif

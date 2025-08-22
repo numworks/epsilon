@@ -1,5 +1,4 @@
-#ifndef ELEMENTS_APP_H
-#define ELEMENTS_APP_H
+#pragma once
 
 #include <apps/shared/app_with_store_menu.h>
 #include <escher/container.h>
@@ -65,5 +64,3 @@ class App : public Shared::AppWithStoreMenu {
 };
 
 }  // namespace Elements
-
-#endif

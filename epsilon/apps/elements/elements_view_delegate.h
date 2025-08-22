@@ -1,5 +1,4 @@
-#ifndef PERDIODIC_ELEMENTS_VIEW_DELEGATE_H
-#define PERDIODIC_ELEMENTS_VIEW_DELEGATE_H
+#pragma once
 
 #include "elements_data_base.h"
 
@@ -12,5 +11,3 @@ class ElementsViewDelegate {
 };
 
 }  // namespace Elements
-
-#endif

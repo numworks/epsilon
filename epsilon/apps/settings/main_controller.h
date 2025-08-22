@@ -1,5 +1,4 @@
-#ifndef SETTINGS_MAIN_CONTROLLER_H
-#define SETTINGS_MAIN_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/pop_up_controller.h>
 #include <escher/button_cell.h>
@@ -95,5 +94,3 @@ class MainController : public Escher::SelectableListViewController<
 };
 
 }  // namespace Settings
-
-#endif

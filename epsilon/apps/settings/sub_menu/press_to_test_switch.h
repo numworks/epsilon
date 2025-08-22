@@ -1,5 +1,4 @@
-#ifndef SETTINGS_MESSAGE_TABLE_CELL_WITH_MESSAGE_WITH_SWITCH_OR_IMAGE_H
-#define SETTINGS_MESSAGE_TABLE_CELL_WITH_MESSAGE_WITH_SWITCH_OR_IMAGE_H
+#pragma once
 
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
@@ -47,5 +46,3 @@ using PressToTestSwitch =
                      AlternateSwitchAndImage>;
 
 }  // namespace Settings
-
-#endif

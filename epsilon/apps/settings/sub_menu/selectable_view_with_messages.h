@@ -1,5 +1,4 @@
-#ifndef SETTINGS_SELECTABLE_VIEW_WITH_MESSAGES_H
-#define SETTINGS_SELECTABLE_VIEW_WITH_MESSAGES_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/menu_cell.h>
@@ -23,5 +22,3 @@ class SelectableViewWithMessages : public Escher::View {
 };
 
 }  // namespace Settings
-
-#endif

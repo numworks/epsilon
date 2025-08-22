@@ -1,5 +1,4 @@
-#ifndef SETTINGS_DISPLAY_MODE_CONTROLLER_H
-#define SETTINGS_DISPLAY_MODE_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/parameter_text_field_delegate.h>
 #include <escher/menu_cell_with_editable_text.h>
@@ -38,5 +37,3 @@ class DisplayModeController : public PreferencesController,
 };
 
 }  // namespace Settings
-
-#endif

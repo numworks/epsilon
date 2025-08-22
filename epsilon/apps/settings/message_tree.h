@@ -1,5 +1,4 @@
-#ifndef SHARED_SETTINGS_MESSAGE_TREE_H
-#define SHARED_SETTINGS_MESSAGE_TREE_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/message_tree.h>
@@ -33,5 +32,3 @@ class MessageTree : public Escher::MessageTree {
 };
 
 }  // namespace Settings
-
-#endif

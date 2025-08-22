@@ -1,5 +1,4 @@
-#ifndef SETTINGS_GENERIC_SUB_CONTROLLER_H
-#define SETTINGS_GENERIC_SUB_CONTROLLER_H
+#pragma once
 
 #include <escher/message_tree.h>
 #include <escher/selectable_list_view_controller.h>
@@ -28,5 +27,3 @@ class GenericSubController : public Escher::SelectableListViewController<
 };
 
 }  // namespace Settings
-
-#endif

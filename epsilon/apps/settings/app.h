@@ -1,5 +1,4 @@
-#ifndef SETTINGS_APP_H
-#define SETTINGS_APP_H
+#pragma once
 
 #include <apps/shared/shared_app.h>
 
@@ -28,5 +27,3 @@ class App : public Shared::SharedApp {
 };
 
 }  // namespace Settings
-
-#endif

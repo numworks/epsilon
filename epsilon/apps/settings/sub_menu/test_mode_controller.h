@@ -1,5 +1,4 @@
-#ifndef SETTINGS_TEST_MODE_CONTROLLER_H
-#define SETTINGS_TEST_MODE_CONTROLLER_H
+#pragma once
 
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
@@ -33,5 +32,3 @@ class TestModeController : public GenericSubController {
 };
 
 }  // namespace Settings
-
-#endif

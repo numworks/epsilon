@@ -1,5 +1,4 @@
-#ifndef TIDY_RESET_GLOBALS_H
-#define TIDY_RESET_GLOBALS_H
+#pragma once
 
 #include <clang-tidy/ClangTidyCheck.h>
 
@@ -24,5 +23,3 @@ class ResetGlobalsCheck : public ClangTidyCheck {
 }  // namespace epsilon
 }  // namespace tidy
 }  // namespace clang
-
-#endif

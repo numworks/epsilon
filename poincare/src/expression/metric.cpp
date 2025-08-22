@@ -63,15 +63,15 @@ constexpr float GetAddMultMetric(const Tree* e) {
 }
 
 float ChildrenCoeffLn(ComplexSign sign) {
-  float childrenCoeff = 2.f;
   if (sign.isReal() && sign.realSign().isStrictlyNegative()) {
     // Increase cost of real negative children in roots
-    childrenCoeff = 4.f;
-  } else if (!sign.isReal()) {
-    // Increase cost of non-real children even more
-    childrenCoeff = 8.f;
+    return 4.f;
   }
-  return childrenCoeff;
+  if (!sign.isReal()) {
+    // Increase cost of non-real children even more
+    return 8.f;
+  }
+  return 2.f;
 }
 
 float LnMetric(const Tree* firstChild, bool willBeBeautified, bool inRoot) {
@@ -186,7 +186,8 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       if (willBeBeautified &&
           PatternMatching::Match(e, KExp(KMult(KA_s, KLn(KB))), &ctx)) {
         // exp(A*ln(B)) is beautified in many forms of B^A
-        result -= GetTypeMetric(Type::Exp);
+        assert(result == GetTypeMetric(Type::Exp));
+        result = 0.f;
         const Tree* base = ctx.getTree(KB);
         childrenCoeff = ChildrenCoeffLn(GetComplexSign(base));
         // Favor smaller bases

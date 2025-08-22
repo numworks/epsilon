@@ -1,5 +1,4 @@
-#ifndef USB_APP_H
-#define USB_APP_H
+#pragma once
 
 #include <escher/app.h>
 
@@ -27,5 +26,3 @@ class App : public Escher::App {
 };
 
 }  // namespace USB
-
-#endif

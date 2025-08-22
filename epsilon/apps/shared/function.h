@@ -1,5 +1,4 @@
-#ifndef SHARED_FUNCTION_H
-#define SHARED_FUNCTION_H
+#pragma once
 
 #include <poincare/helpers/symbol.h>
 
@@ -126,5 +125,3 @@ class Function : public ExpressionModelHandle {
 };
 
 }  // namespace Shared
-
-#endif

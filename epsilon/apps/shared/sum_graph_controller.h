@@ -1,5 +1,4 @@
-#ifndef SHARED_SUM_GRAPH_CONTROLLER_H
-#define SHARED_SUM_GRAPH_CONTROLLER_H
+#pragma once
 
 #include <escher/layout_view.h>
 #include <poincare/print_float.h>
@@ -110,5 +109,3 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
 };
 
 }  // namespace Shared
-
-#endif

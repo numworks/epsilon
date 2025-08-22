@@ -1,5 +1,4 @@
-#ifndef SHARED_BANNER_VIEW_WITH_EDITABLE_FIELD_H
-#define SHARED_BANNER_VIEW_WITH_EDITABLE_FIELD_H
+#pragma once
 
 #include <escher/buffer_text_view.h>
 #include <escher/responder.h>
@@ -42,5 +41,3 @@ class EditableFieldBannerViewDelegate {
 };
 
 }  // namespace Shared
-
-#endif

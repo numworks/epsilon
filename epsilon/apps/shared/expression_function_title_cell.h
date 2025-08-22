@@ -1,5 +1,4 @@
-#ifndef APPS_SHARED_EXPRESSION_FUNCTION_TITLE_CELL_H
-#define APPS_SHARED_EXPRESSION_FUNCTION_TITLE_CELL_H
+#pragma once
 
 #include <escher/even_odd_expression_cell.h>
 #include <poincare/layout.h>
@@ -31,5 +30,3 @@ class ExpressionFunctionTitleCell : public FunctionTitleCell {
 };
 
 }  // namespace Shared
-
-#endif

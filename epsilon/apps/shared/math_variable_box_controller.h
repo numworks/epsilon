@@ -1,5 +1,4 @@
-#ifndef APPS_MATH_VARIABLE_BOX_CONTROLLER_H
-#define APPS_MATH_VARIABLE_BOX_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/layout_view.h>
@@ -89,5 +88,3 @@ class MathVariableBoxController : public Escher::NestedMenuController {
 };
 
 }  // namespace Shared
-
-#endif

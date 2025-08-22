@@ -1,5 +1,4 @@
-#ifndef SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
-#define SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/regular_table_view_data_source.h>
@@ -110,5 +109,3 @@ class EditableCellTableViewController
 };
 
 }  // namespace Shared
-
-#endif

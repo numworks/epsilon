@@ -1,5 +1,4 @@
-#ifndef SHARED_EXPRESSION_MODEL_STORE_H
-#define SHARED_EXPRESSION_MODEL_STORE_H
+#pragma once
 
 #include <assert.h>
 #include <ion/storage/file_system.h>
@@ -94,5 +93,3 @@ class ExpressionModelStore {
 };
 
 }  // namespace Shared
-
-#endif

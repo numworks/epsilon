@@ -1,5 +1,4 @@
-#ifndef SHARED_CONTINUOUS_FUNCTION_CACHE_H
-#define SHARED_CONTINUOUS_FUNCTION_CACHE_H
+#pragma once
 
 #include <float.h>
 #include <ion/display.h>
@@ -82,5 +81,3 @@ class CachesContainer {
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_WITH_EXPRESSION_CELL_H
-#define SHARED_WITH_EXPRESSION_CELL_H
+#pragma once
 
 #include <escher/editable_expression_model_cell.h>
 #include <escher/even_odd_expression_cell.h>
@@ -30,5 +29,3 @@ class WithEditableExpressionCell {
 };
 
 }  // namespace Shared
-
-#endif

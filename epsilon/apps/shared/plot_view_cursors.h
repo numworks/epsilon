@@ -1,5 +1,4 @@
-#ifndef SHARED_PLOT_VIEW_CURSORS_H
-#define SHARED_PLOT_VIEW_CURSORS_H
+#pragma once
 
 #include "curve_view_cursor.h"
 #include "plot_view.h"
@@ -28,5 +27,3 @@ class WithCursor {
 
 }  // namespace PlotPolicy
 }  // namespace Shared
-
-#endif

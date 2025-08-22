@@ -1,5 +1,4 @@
-#ifndef SHARED_TAB_TABLE_CONTROLLER_H
-#define SHARED_TAB_TABLE_CONTROLLER_H
+#pragma once
 
 #include <escher/container.h>
 #include <escher/selectable_table_view.h>
@@ -36,5 +35,3 @@ class TabTableController : public Escher::ViewController,
 };
 
 }  // namespace Shared
-
-#endif

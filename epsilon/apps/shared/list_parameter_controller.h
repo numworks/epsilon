@@ -1,5 +1,4 @@
-#ifndef SHARED_LIST_PARAMETER_CONTROLLER_H
-#define SHARED_LIST_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/chevron_view.h>
@@ -49,5 +48,3 @@ class ListParameterController
 };
 
 }  // namespace Shared
-
-#endif

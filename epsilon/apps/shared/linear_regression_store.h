@@ -1,5 +1,4 @@
-#ifndef SHARED_LINEAR_REGRESSION_STORE_H
-#define SHARED_LINEAR_REGRESSION_STORE_H
+#pragma once
 
 #include <float.h>
 #include <poincare/statistics/statistics_dataset.h>
@@ -72,5 +71,3 @@ class LinearRegressionStore : public Shared::DoublePairStore {
 };
 
 }  // namespace Shared
-
-#endif

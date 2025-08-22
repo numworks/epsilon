@@ -1,5 +1,4 @@
-#ifndef SHARED_PACKED_RANGE_1D_H
-#define SHARED_PACKED_RANGE_1D_H
+#pragma once
 
 #include <float.h>
 #include <poincare/range.h>
@@ -51,5 +50,3 @@ static_assert(
     "precision, it might draw uglily curves such as cos(x)^2+sin(x)^2");
 
 }  // namespace Shared
-
-#endif

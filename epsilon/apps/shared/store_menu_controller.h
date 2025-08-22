@@ -1,5 +1,4 @@
-#ifndef SHARED_STORE_MENU_CONTROLLER_H
-#define SHARED_STORE_MENU_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/editable_expression_cell.h>
@@ -77,5 +76,3 @@ class StoreMenuController : public Escher::ModalViewController,
 };
 
 }  // namespace Shared
-
-#endif

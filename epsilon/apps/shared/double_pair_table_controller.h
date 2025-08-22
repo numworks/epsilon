@@ -1,5 +1,4 @@
-#ifndef SHARED_DOUBLE_PAIR_TABLE_CONTROLLER_H
-#define SHARED_DOUBLE_PAIR_TABLE_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/alternate_empty_view_controller.h>
@@ -103,5 +102,3 @@ class DoublePairTableController
 };
 
 }  // namespace Shared
-
-#endif

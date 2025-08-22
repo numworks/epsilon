@@ -1,5 +1,4 @@
-#ifndef SHARED_VALUES_INTERVAL_H
-#define SHARED_VALUES_INTERVAL_H
+#pragma once
 
 #include <omg/vector.h>
 
@@ -52,5 +51,3 @@ typedef void (Interval::IntervalParameters::*SetterPointer)(double);
 typedef double (Interval::IntervalParameters::*GetterPointer)() const;
 
 }  // namespace Shared
-
-#endif

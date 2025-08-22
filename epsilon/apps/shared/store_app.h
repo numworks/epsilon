@@ -1,5 +1,4 @@
-#ifndef STORE_APP_H
-#define STORE_APP_H
+#pragma once
 
 #include <apps/shared/double_pair_store.h>
 #include <apps/shared/math_app.h>
@@ -49,4 +48,3 @@ class StoreApp : public MathApp {
 };
 
 }  // namespace Shared
-#endif

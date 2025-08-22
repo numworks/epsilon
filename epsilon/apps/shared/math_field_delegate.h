@@ -1,5 +1,4 @@
-#ifndef SHARED_MATH_INPUT_FIELD_DELEGATE_H
-#define SHARED_MATH_INPUT_FIELD_DELEGATE_H
+#pragma once
 
 #include <escher/abstract_text_field.h>
 #include <escher/app.h>
@@ -71,5 +70,3 @@ class MathTextFieldDelegate : public AbstractMathFieldDelegate,
 };
 
 }  // namespace Shared
-
-#endif

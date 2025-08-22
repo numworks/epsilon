@@ -1,5 +1,4 @@
-#ifndef APPS_SHARED_SEQUENCE_CACHE_H
-#define APPS_SHARED_SEQUENCE_CACHE_H
+#pragma once
 
 #include <omg/troolean.h>
 #include <poincare/context.h>
@@ -64,4 +63,3 @@ class SequenceCache {
 };
 
 }  // namespace Shared
-#endif

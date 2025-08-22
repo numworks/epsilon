@@ -1,5 +1,4 @@
-#ifndef SHARED_COLOR_CELL_H
-#define SHARED_COLOR_CELL_H
+#pragma once
 
 #include <escher/arbitrary_shaped_view.h>
 #include <escher/menu_cell.h>
@@ -29,5 +28,3 @@ using ColorCell = Escher::MenuCell<Escher::MessageTextView,
                                    Escher::EmptyCellWidget, ColorView>;
 
 }  // namespace Shared
-
-#endif

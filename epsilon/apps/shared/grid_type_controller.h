@@ -1,5 +1,4 @@
-#ifndef SHARED_GRID_TYPE_CONTROLLER_H
-#define SHARED_GRID_TYPE_CONTROLLER_H
+#pragma once
 
 #include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_list_view_delegate.h>
@@ -33,5 +32,3 @@ class GridTypeController
 };
 
 }  // namespace Shared
-
-#endif

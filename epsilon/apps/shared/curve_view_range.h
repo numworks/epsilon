@@ -1,5 +1,4 @@
-#ifndef SHARED_CURVE_VIEW_RANGE_H
-#define SHARED_CURVE_VIEW_RANGE_H
+#pragma once
 
 #include <omg/enums.h>
 #include <poincare/numeric_solver/zoom.h>
@@ -44,5 +43,3 @@ class CurveViewRange {
 };
 
 }  // namespace Shared
-
-#endif

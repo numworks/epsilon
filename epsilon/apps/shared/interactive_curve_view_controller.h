@@ -1,5 +1,4 @@
-#ifndef SHARED_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
-#define SHARED_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/button_row_controller.h>
@@ -161,5 +160,3 @@ class InteractiveCurveViewController
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_FUNCTION_GRAPH_CONTROLLER_H
-#define SHARED_FUNCTION_GRAPH_CONTROLLER_H
+#pragma once
 
 #include "function_banner_delegate.h"
 #include "function_graph_view.h"
@@ -115,5 +114,3 @@ class FunctionGraphController : public InteractiveCurveViewController,
 };
 
 }  // namespace Shared
-
-#endif

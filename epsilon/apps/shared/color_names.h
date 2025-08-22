@@ -1,5 +1,4 @@
-#ifndef SHARED_COLOR_NAMES_H
-#define SHARED_COLOR_NAMES_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/palette.h>
@@ -34,5 +33,3 @@ I18n::Message NameForCurveColor(KDColor color);
 }  // namespace ColorNames
 
 }  // namespace Shared
-
-#endif

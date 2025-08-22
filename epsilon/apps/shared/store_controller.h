@@ -1,5 +1,4 @@
-#ifndef SHARED_STORE_CONTROLLER_H
-#define SHARED_STORE_CONTROLLER_H
+#pragma once
 
 #include <escher/button_row_controller.h>
 #include <escher/even_odd_editable_text_cell.h>
@@ -117,5 +116,3 @@ class StoreController : public EditableCellTableViewController,
 };
 
 }  // namespace Shared
-
-#endif

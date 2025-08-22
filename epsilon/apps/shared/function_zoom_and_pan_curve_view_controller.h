@@ -1,5 +1,4 @@
-#ifndef SHARED_FUNCTION_ZOOM_AND_PAN_CURVE_VIEW_CONTROLLER_H
-#define SHARED_FUNCTION_ZOOM_AND_PAN_CURVE_VIEW_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/key_view.h>
@@ -90,5 +89,3 @@ class FunctionZoomAndPanCurveViewController
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_APP_WITH_STORE_MENU_H
-#define SHARED_APP_WITH_STORE_MENU_H
+#pragma once
 
 #include "shared_app.h"
 #include "store_menu_controller.h"
@@ -42,4 +41,3 @@ class AppWithStoreMenu : public SharedApp {
 };
 
 }  // namespace Shared
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_STATISTICS_STORE_H
-#define SHARED_STATISTICS_STORE_H
+#pragma once
 
 #include <poincare/statistics/statistics_dataset.h>
 
@@ -53,5 +52,3 @@ class StatisticsStore : public DoublePairStore {
 };
 
 }  // namespace Shared
-
-#endif

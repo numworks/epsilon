@@ -1,5 +1,4 @@
-#ifndef ON_PROMPT_CONTROLLER_H
-#define ON_PROMPT_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/ok_view.h>
@@ -44,5 +43,3 @@ class PromptController : public Escher::ViewController {
 };
 
 }  // namespace Shared
-
-#endif

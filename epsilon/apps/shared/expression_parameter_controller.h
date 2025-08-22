@@ -1,5 +1,4 @@
-#ifndef SHARED_EXPRESSION_PARAMETER_CONTROLLER_H
-#define SHARED_EXPRESSION_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <poincare/expression_or_float.h>
 
@@ -40,5 +39,3 @@ class ExpressionParameterController
 };
 
 }  // namespace Shared
-
-#endif

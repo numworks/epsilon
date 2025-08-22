@@ -1,5 +1,4 @@
-#ifndef SHARED_XY_BANNER_VIEW_H
-#define SHARED_XY_BANNER_VIEW_H
+#pragma once
 
 #include "banner_view.h"
 #include "editable_field_banner_view_delegate.h"
@@ -30,5 +29,3 @@ class XYBannerView : public BannerView, public EditableFieldBannerViewDelegate {
 };
 
 }  // namespace Shared
-
-#endif

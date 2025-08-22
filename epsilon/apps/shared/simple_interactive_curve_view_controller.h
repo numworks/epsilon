@@ -1,5 +1,4 @@
-#ifndef SHARED_SIMPLE_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
-#define SHARED_SIMPLE_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
+#pragma once
 
 #include "math_field_delegate.h"
 #include "zoom_curve_view_controller.h"
@@ -71,5 +70,3 @@ class SimpleInteractiveCurveViewController : public ZoomCurveViewController,
 };
 
 }  // namespace Shared
-
-#endif

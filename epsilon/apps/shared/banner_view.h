@@ -1,5 +1,4 @@
-#ifndef SHARED_BANNER_VIEW_H
-#define SHARED_BANNER_VIEW_H
+#pragma once
 
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/metric.h>
@@ -61,5 +60,3 @@ class BannerView : public Escher::View {
 };
 
 }  // namespace Shared
-
-#endif

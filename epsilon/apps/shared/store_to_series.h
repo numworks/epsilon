@@ -1,5 +1,4 @@
-#ifndef SHARED_STORE_TO_SERIES_H
-#define SHARED_STORE_TO_SERIES_H
+#pragma once
 
 #include <escher/i18n.h>
 #include <poincare/statistics/data_table.h>
@@ -24,5 +23,3 @@ class StoreToSeries : public Poincare::Series {
 };
 
 }  // namespace Shared
-
-#endif

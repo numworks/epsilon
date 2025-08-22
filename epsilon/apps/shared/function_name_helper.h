@@ -1,5 +1,4 @@
-#ifndef SHARED_FUNCTION_MODELS_NAMES_H
-#define SHARED_FUNCTION_MODELS_NAMES_H
+#pragma once
 
 #include <apps/shared/continuous_function.h>
 #include <omg/code_point.h>
@@ -24,5 +23,3 @@ bool ParametricComponentsNameError(Poincare::UserExpression expression,
 }  // namespace FunctionNameHelper
 
 }  // namespace Shared
-
-#endif

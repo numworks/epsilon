@@ -1,5 +1,4 @@
-#ifndef SHARED_TOOLBOX_HELPERS_H
-#define SHARED_TOOLBOX_HELPERS_H
+#pragma once
 
 #include <escher/i18n.h>
 #include <string.h>
@@ -18,5 +17,3 @@ void TextToInsertForCommandText(const char* command, int commandLength,
 
 }  // namespace ToolboxHelpers
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_CONTINUOUS_FUNCTION_STORE_H
-#define SHARED_CONTINUOUS_FUNCTION_STORE_H
+#pragma once
 
 #include "continuous_function.h"
 #include "function_store.h"
@@ -125,5 +124,3 @@ class ContinuousFunctionStore : public FunctionStore {
 };
 
 }  // namespace Shared
-
-#endif

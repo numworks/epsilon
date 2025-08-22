@@ -1,5 +1,4 @@
-#ifndef APPS_SHARED_GLOBAL_CONTEXT_H
-#define APPS_SHARED_GLOBAL_CONTEXT_H
+#pragma once
 
 #include <assert.h>
 #include <ion/storage/file_system.h>
@@ -112,5 +111,3 @@ class GlobalContextAccessor {
 };
 
 }  // namespace Shared
-
-#endif

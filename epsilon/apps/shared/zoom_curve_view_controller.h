@@ -1,5 +1,4 @@
-#ifndef SHARED_ZOOM_CURVE_VIEW_CONTROLLER_H
-#define SHARED_ZOOM_CURVE_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/view_controller.h>
 
@@ -34,5 +33,3 @@ class ZoomCurveViewController : public Escher::ViewController {
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef APPS_SHARED_SEQUENCE_H
-#define APPS_SHARED_SEQUENCE_H
+#pragma once
 
 #include <assert.h>
 #include <ion/storage/file_system.h>
@@ -276,5 +275,3 @@ class Sequence : public Function {
 };
 
 }  // namespace Shared
-
-#endif

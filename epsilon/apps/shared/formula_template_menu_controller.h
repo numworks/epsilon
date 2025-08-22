@@ -1,5 +1,4 @@
-#ifndef APPS_SHARED_FORMULA_TEMPLATE_MENU_CONTROLLER_H
-#define APPS_SHARED_FORMULA_TEMPLATE_MENU_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
@@ -98,4 +97,3 @@ class FormulaTemplateMenuController
 };
 
 }  // namespace Shared
-#endif

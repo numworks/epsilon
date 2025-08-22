@@ -1,5 +1,4 @@
-#ifndef SHARED_VERTICAL_CURSOR_VIEW_H
-#define SHARED_VERTICAL_CURSOR_VIEW_H
+#pragma once
 
 #include "cursor_view.h"
 
@@ -12,5 +11,3 @@ class VerticalCursorView : public CursorView {
 };
 
 }  // namespace Shared
-
-#endif

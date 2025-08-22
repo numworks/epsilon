@@ -1,5 +1,4 @@
-#ifndef SHARED_POP_UP_CONTROLLER_H
-#define SHARED_POP_UP_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/pop_up_controller.h>
@@ -30,5 +29,3 @@ class BufferPopUpController : public Escher::BufferPopUpController {
 };
 
 }  // namespace Shared
-
-#endif

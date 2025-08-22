@@ -1,5 +1,4 @@
-#ifndef SHARED_FUNCTION_APP_H
-#define SHARED_FUNCTION_APP_H
+#pragma once
 
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/input_view_controller.h>
@@ -94,5 +93,3 @@ class FunctionApp : public MathApp {
 };
 
 }  // namespace Shared
-
-#endif

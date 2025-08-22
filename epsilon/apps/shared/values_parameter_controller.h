@@ -1,5 +1,4 @@
-#ifndef SHARED_VALUES_PARAM_CONTROLLER_H
-#define SHARED_VALUES_PARAM_CONTROLLER_H
+#pragma once
 
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
@@ -35,5 +34,3 @@ class ValuesParameterController : public ColumnParameterController {
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SHARED_DOUBLE_PAIR_STORE_H
-#define SHARED_DOUBLE_PAIR_STORE_H
+#pragma once
 
 #include <assert.h>
 #include <escher/palette.h>
@@ -181,5 +180,3 @@ class DoublePairStore {
 };
 
 }  // namespace Shared
-
-#endif

@@ -1,5 +1,3 @@
-#include "regression.h"
-
 #include <omg/float.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/src/expression/approximation.h>
@@ -11,10 +9,12 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/numeric_solver/matrix_array.h>
 #include <poincare/statistics/dataset_adapter.h>
+#include <poincare/statistics/regression.h>
 
 #include <cmath>
 
-namespace Poincare::Internal {
+namespace Poincare {
+using namespace Internal;
 
 Layout Regression::equationLayout(
     const double* modelCoefficients, const char* ySymbol, int significantDigits,
@@ -491,4 +491,4 @@ bool Regression::isRegressionStrictlyBetter(
   return residualsSquareSum1 + precision < residualsSquareSum2;
 }
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare

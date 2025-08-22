@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_SLOPE_T_STATISTIC_H
-#define INFERENCE_MODELS_SLOPE_T_STATISTIC_H
+#pragma once
 
 #include <apps/shared/double_pair_store_preferences.h>
 #include <apps/shared/linear_regression_store.h>
@@ -79,5 +78,3 @@ class SlopeTTest : public SignificanceTest, public SlopeTStatistic {
 };
 
 }  // namespace Inference
-
-#endif

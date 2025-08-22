@@ -1,5 +1,4 @@
-#ifndef INFERENCE_SLOPE_COLUMN_PARAMETER_CONTROLLER_H
-#define INFERENCE_SLOPE_COLUMN_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <array>
 
@@ -27,5 +26,3 @@ class StoreColumnParameterController : public Shared::StoreParameterController {
 };
 
 }  // namespace Inference
-
-#endif

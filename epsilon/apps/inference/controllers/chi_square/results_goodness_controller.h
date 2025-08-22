@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULTS_GOODNESS_CONTROLLER_H
-#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULTS_GOODNESS_CONTROLLER_H
+#pragma once
 
 #include <escher/tab_view_controller.h>
 
@@ -76,5 +75,3 @@ class ResultsGoodnessTabController : public Escher::TabViewController,
 };
 
 }  // namespace Inference
-
-#endif

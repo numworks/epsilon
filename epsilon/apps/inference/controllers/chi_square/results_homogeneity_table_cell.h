@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULTS_HOMOGENEITY_TABLE_CELL_H
-#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULTS_HOMOGENEITY_TABLE_CELL_H
+#pragma once
 
 #include "homogeneity_data_source.h"
 #include "inference/controllers/categorical_table_cell.h"
@@ -76,5 +75,3 @@ class ResultsHomogeneityTableCell
 };
 
 }  // namespace Inference
-
-#endif

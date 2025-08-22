@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_TYPE_CONTROLLER_H
-#define INFERENCE_STATISTIC_TYPE_CONTROLLER_H
+#pragma once
 
 #include <escher/chevron_view.h>
 #include <escher/highlight_cell.h>
@@ -57,5 +56,3 @@ class TypeController
 };
 
 }  // namespace Inference
-
-#endif

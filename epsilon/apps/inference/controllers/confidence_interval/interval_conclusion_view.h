@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_INTERVAL_INTERVAL_CONCLUSION_VIEW_H
-#define INFERENCE_STATISTIC_INTERVAL_INTERVAL_CONCLUSION_VIEW_H
+#pragma once
 
 #include <escher/buffer_text_view.h>
 #include <escher/horizontal_or_vertical_layout.h>
@@ -18,5 +17,3 @@ class IntervalConclusionView
 };
 
 }  // namespace Inference
-
-#endif

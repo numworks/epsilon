@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_TWO_MEANS_STATISTIC_H
-#define INFERENCE_MODELS_TWO_MEANS_STATISTIC_H
+#pragma once
 
 #include <poincare/statistics/inference.h>
 
@@ -28,5 +27,3 @@ class TwoMeansStatistic : public InputTableFromStatisticStore {
 };
 
 }  // namespace Inference
-
-#endif

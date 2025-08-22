@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_DATASET_CONTROLLER_H
-#define INFERENCE_STATISTIC_DATASET_CONTROLLER_H
+#pragma once
 
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
@@ -47,5 +46,3 @@ class DatasetController
 };
 
 }  // namespace Inference
-
-#endif

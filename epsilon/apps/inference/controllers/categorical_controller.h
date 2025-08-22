@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_CONTROLLER_H
-#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_CONTROLLER_H
+#pragma once
 
 #include <escher/button_cell.h>
 
@@ -148,5 +147,3 @@ class InputCategoricalController : public CategoricalController,
 };
 
 }  // namespace Inference
-
-#endif

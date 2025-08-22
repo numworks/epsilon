@@ -1,5 +1,4 @@
-#ifndef INFERENCE_TEXT_HELPERS_H
-#define INFERENCE_TEXT_HELPERS_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <omg/code_point.h>
@@ -35,5 +34,3 @@ void PrintValueInTextHolder(
 }
 
 }  // namespace Inference
-
-#endif

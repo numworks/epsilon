@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_ONE_MEAN_STATISTIC_H
-#define INFERENCE_MODELS_ONE_MEAN_STATISTIC_H
+#pragma once
 
 #include <poincare/statistics/inference.h>
 
@@ -27,5 +26,3 @@ class OneMeanStatistic : public InputTableFromStatisticStore {
 };
 
 }  // namespace Inference
-
-#endif

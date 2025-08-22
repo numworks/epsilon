@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULT_GOODNESS_TABLE_CELL_H
-#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULT_GOODNESS_TABLE_CELL_H
+#pragma once
 
 #include "inference/controllers/categorical_controller.h"
 #include "inference/models/goodness_test.h"
@@ -66,5 +65,3 @@ class ResultGoodnessContributionsTable
   CategoricalController* m_parentController;
 };
 }  // namespace Inference
-
-#endif

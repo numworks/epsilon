@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_ONE_MEAN_INTERVAL_H
-#define INFERENCE_MODELS_ONE_MEAN_INTERVAL_H
+#pragma once
 
 #include <poincare/statistics/inference.h>
 
@@ -54,5 +53,3 @@ class OneMeanZInterval : public OneMeanInterval {
 };
 
 }  // namespace Inference
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_TEST_TEST_GRAPH_CONTROLLER_H
-#define INFERENCE_STATISTIC_TEST_TEST_GRAPH_CONTROLLER_H
+#pragma once
 
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
@@ -38,4 +37,3 @@ class TestGraphController : public Escher::ViewController {
 };
 
 }  // namespace Inference
-#endif

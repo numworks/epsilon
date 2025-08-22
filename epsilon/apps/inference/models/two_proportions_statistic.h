@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_TWO_PROPORTIONS_Z_INTERVAL_H
-#define INFERENCE_MODELS_TWO_PROPORTIONS_Z_INTERVAL_H
+#pragma once
 
 #include "confidence_interval.h"
 #include "significance_test.h"
@@ -59,5 +58,3 @@ class TwoProportionsZTest : public SignificanceTest,
 };
 
 }  // namespace Inference
-
-#endif

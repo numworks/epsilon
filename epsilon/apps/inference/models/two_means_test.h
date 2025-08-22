@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_TWO_MEANS_TEST_H
-#define INFERENCE_MODELS_TWO_MEANS_TEST_H
+#pragma once
 
 #include "inference/models/input_table_from_store.h"
 #include "significance_test.h"
@@ -64,5 +63,3 @@ class TwoMeansZTest : public TwoMeansTest {
 };
 
 };  // namespace Inference
-
-#endif

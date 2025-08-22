@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_INPUT_STORE_CONTROLLER_H
-#define INFERENCE_STATISTIC_INPUT_STORE_CONTROLLER_H
+#pragma once
 
 #include <escher/buffer_text_highlight_cell.h>
 
@@ -146,5 +145,3 @@ class InputStoreController : public InputCategoricalController,
 };
 
 }  // namespace Inference
-
-#endif

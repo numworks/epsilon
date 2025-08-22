@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_ONE_MEAN_TEST_H
-#define INFERENCE_MODELS_ONE_MEAN_TEST_H
+#pragma once
 
 #include <poincare/statistics/inference.h>
 
@@ -55,5 +54,3 @@ class OneMeanZTest : public OneMeanTest {
 };
 
 }  // namespace Inference
-
-#endif

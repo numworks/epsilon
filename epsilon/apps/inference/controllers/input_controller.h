@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_INPUT_CONTROLLER_H
-#define INFERENCE_STATISTIC_INPUT_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/highlight_cell.h>
@@ -88,5 +87,3 @@ class InputController
 };
 
 }  // namespace Inference
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_TEST_GRAPH_VIEW_H
-#define INFERENCE_STATISTIC_TEST_GRAPH_VIEW_H
+#pragma once
 
 #include <escher/view.h>
 
@@ -34,5 +33,3 @@ class TestGraphView : public Escher::View {
 };
 
 }  // namespace Inference
-
-#endif

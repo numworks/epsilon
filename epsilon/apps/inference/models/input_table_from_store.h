@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_RAW_DATA_STATISTIC_H
-#define INFERENCE_MODELS_RAW_DATA_STATISTIC_H
+#pragma once
 
 #include <apps/shared/double_pair_store_preferences.h>
 #include <apps/shared/linear_regression_store.h>
@@ -116,5 +115,3 @@ class InputTableFromRegressionStore : public InputTableFromStore,
 };
 
 }  // namespace Inference
-
-#endif

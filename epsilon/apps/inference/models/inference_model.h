@@ -1,5 +1,4 @@
-#ifndef INFERENCE_MODELS_INFERENCE_MODEL_H
-#define INFERENCE_MODELS_INFERENCE_MODEL_H
+#pragma once
 
 #include <apps/shared/global_context.h>
 #include <apps/shared/statistical_distribution.h>
@@ -229,5 +228,3 @@ class InferenceModel : public Shared::StatisticalDistribution {
 };
 
 }  // namespace Inference
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_INTERVAL_GRAPH_VIEW_H
-#define INFERENCE_STATISTIC_INTERVAL_GRAPH_VIEW_H
+#pragma once
 
 #include <escher/view.h>
 
@@ -28,5 +27,3 @@ class IntervalGraphView : public Escher::View {
 };
 
 }  // namespace Inference
-
-#endif

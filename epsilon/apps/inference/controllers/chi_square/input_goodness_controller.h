@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_GOODNESS_CONTROLLER_H
-#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_GOODNESS_CONTROLLER_H
+#pragma once
 
 #include "inference/controllers/categorical_cell.h"
 #include "inference/controllers/categorical_controller.h"
@@ -41,5 +40,3 @@ class InputGoodnessController : public InputCategoricalController {
 };
 
 }  // namespace Inference
-
-#endif

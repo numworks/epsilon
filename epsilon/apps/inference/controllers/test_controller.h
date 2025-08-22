@@ -1,5 +1,4 @@
-#ifndef INFERENCE_STATISTIC_TEST_CONTROLLER_H
-#define INFERENCE_STATISTIC_TEST_CONTROLLER_H
+#pragma once
 
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
@@ -54,5 +53,3 @@ class TestController
 };
 
 }  // namespace Inference
-
-#endif

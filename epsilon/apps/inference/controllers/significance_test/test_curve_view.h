@@ -1,5 +1,4 @@
-#ifndef INFERENCE_INFERENCE_STATISTIC_TEST_TEST_CURVE_VIEW_H
-#define INFERENCE_INFERENCE_STATISTIC_TEST_TEST_CURVE_VIEW_H
+#pragma once
 
 #include <apps/shared/plot_view_policies.h>
 
@@ -48,5 +47,3 @@ class TestCurveView : public Shared::PlotView<TestAxes, TestPlotPolicy,
 };
 
 }  // namespace Inference
-
-#endif

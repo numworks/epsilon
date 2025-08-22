@@ -51,9 +51,9 @@ class SymbolStore : public Poincare::VariableStore {
         m_expressionBuffer;
   };
 
-  bool setExpressionForUserFunction(
+  bool setExpressionForUserFunctionOrSequence(
       const Poincare::Internal::Tree* expression,
-      const Poincare::Internal::Tree* functionSymbol);
+      const Poincare::Internal::Tree* functionialSymbol);
 
   bool setExpressionForUserSymbol(const Poincare::Internal::Tree* expression,
                                   std::span<const char> symbolName);

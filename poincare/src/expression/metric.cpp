@@ -18,7 +18,7 @@ namespace {
 
 constexpr static float k_defaultMetric = 1.f;
 
-constexpr float GetTypeMetric(Type type) {
+static constexpr float GetTypeMetric(Type type) {
   switch (type) {
     case Type::Add:
     case Type::Mult:
@@ -51,18 +51,18 @@ constexpr float GetTypeMetric(Type type) {
 
 /* Add/Mult Metric must depend on its number of children to ensure that if A is
  * better than B*C, A*D will also be better than B*C*D. */
-constexpr float GetAddMultMetric(int numberOfChildren) {
+static constexpr float GetAddMultMetric(int numberOfChildren) {
   static_assert(GetTypeMetric(Type::Mult) == 0.f);
   static_assert(GetTypeMetric(Type::Add) == 0.f);
   return k_defaultMetric * (numberOfChildren - 1);
 }
 
-constexpr float GetAddMultMetric(const Tree* e) {
+static constexpr float GetAddMultMetric(const Tree* e) {
   assert(e->isAdd() || e->isMult());
   return GetAddMultMetric(e->numberOfChildren());
 }
 
-float ChildrenCoeffLn(ComplexSign sign) {
+static float ChildrenCoeffLn(ComplexSign sign) {
   if (sign.isReal() && sign.realSign().isStrictlyNegative()) {
     // Increase cost of real negative children in roots
     return 4.f;
@@ -75,8 +75,8 @@ float ChildrenCoeffLn(ComplexSign sign) {
 }
 
 // Used in ln(A) and root(A,B) to give weight to A to favor smaller values.
-float ChildCoeffOffsetInLnOrRoot(const Tree* child, bool willBeBeautified,
-                                 bool inRoot) {
+static float ChildCoeffOffsetInLnOrRoot(const Tree* child,
+                                        bool willBeBeautified, bool inRoot) {
   if (willBeBeautified && child->isRational() && !child->isZero()) {
     // Increase cost of rationals in ln according to their value
     IntegerHandler p = Rational::Numerator(child);
@@ -95,7 +95,7 @@ float ChildCoeffOffsetInLnOrRoot(const Tree* child, bool willBeBeautified,
 }
 
 // Return metric for a to-be beautified exp(KA*ln(KB))
-float GetBeautifiedPowerMetric(const PatternMatching::Context& ctx) {
+static float GetBeautifiedPowerMetric(const PatternMatching::Context& ctx) {
   // exp(A*ln(B)) is beautified in many forms of B^A
   float result = 0.f;
   const Tree* base = ctx.getTree(KB);

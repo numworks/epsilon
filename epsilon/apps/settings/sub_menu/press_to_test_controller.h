@@ -1,5 +1,4 @@
-#ifndef SETTINGS_PRESS_TO_TEST_CONTROLLER_H
-#define SETTINGS_PRESS_TO_TEST_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/pop_up_controller.h>
@@ -56,5 +55,3 @@ class PressToTestController : public Escher::ListWithTopAndBottomController {
 };
 
 }  // namespace Settings
-
-#endif

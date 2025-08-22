@@ -1,5 +1,4 @@
-#ifndef SETTINGS_PREFERENCES_CONTROLLER_H
-#define SETTINGS_PREFERENCES_CONTROLLER_H
+#pragma once
 
 #include <escher/layout_view.h>
 #include <escher/menu_cell.h>
@@ -34,5 +33,3 @@ class PreferencesController : public GenericSubController {
 };
 
 }  // namespace Settings
-
-#endif

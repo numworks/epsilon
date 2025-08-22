@@ -1,5 +1,4 @@
-#ifndef SETTINGS_SCREEN_TIMEOUT_CONTROLLER_H
-#define SETTINGS_SCREEN_TIMEOUT_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/pop_up_controller.h>
 #include <escher/layout_view.h>
@@ -55,5 +54,3 @@ class ScreenTimeoutController : public GenericSubController {
 };
 
 }  // namespace Settings
-
-#endif

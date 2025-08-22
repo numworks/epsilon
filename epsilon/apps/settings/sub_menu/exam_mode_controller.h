@@ -1,5 +1,4 @@
-#ifndef SETTINGS_EXAM_MODE_CONTROLLER_H
-#define SETTINGS_EXAM_MODE_CONTROLLER_H
+#pragma once
 
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
@@ -42,5 +41,3 @@ class ExamModeController : public GenericSubController {
 };
 
 }  // namespace Settings
-
-#endif

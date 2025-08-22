@@ -1,5 +1,4 @@
-#ifndef SETTINGS_ABOUT_CONTROLLER_H
-#define SETTINGS_ABOUT_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/pop_up_controller.h>
 #include <escher/buffer_text_view.h>
@@ -41,5 +40,3 @@ class AboutController : public GenericSubController {
 };
 
 }  // namespace Settings
-
-#endif

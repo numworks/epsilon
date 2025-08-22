@@ -1,5 +1,4 @@
-#ifndef SETTING_LOCALIZATION_CONTROLLER_H
-#define SETTING_LOCALIZATION_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/localization_controller.h>
 
@@ -15,5 +14,3 @@ class LocalizationController : public Shared::LocalizationController {
   bool handleEvent(Ion::Events::Event event) override;
 };
 }  // namespace Settings
-
-#endif

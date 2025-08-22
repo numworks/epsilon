@@ -1,5 +1,4 @@
-#ifndef SOLVER_LIST_CONTROLLER_H
-#define SOLVER_LIST_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/expression_model_list_controller.h>
@@ -82,5 +81,3 @@ class ListController : public Shared::ExpressionModelListController,
 };
 
 }  // namespace Solver
-
-#endif

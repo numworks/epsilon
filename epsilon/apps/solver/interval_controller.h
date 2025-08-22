@@ -1,5 +1,4 @@
-#ifndef SOLVER_INTERVAL_CONTROLLER_H
-#define SOLVER_INTERVAL_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/single_range_controller.h>
 #include <escher/menu_cell_with_editable_text.h>
@@ -30,5 +29,3 @@ class IntervalController : public Shared::SingleRangeControllerDoublePrecision {
 };
 
 }  // namespace Solver
-
-#endif

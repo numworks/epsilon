@@ -1,5 +1,4 @@
-#ifndef SOLVER_SYSTEM_OF_EQUATIONS_H
-#define SOLVER_SYSTEM_OF_EQUATIONS_H
+#pragma once
 
 #include <apps/shared/interactive_curve_view_range.h>
 #include <poincare/context_with_parent.h>
@@ -122,5 +121,3 @@ class SystemOfEquations {
 };
 
 }  // namespace Solver
-
-#endif

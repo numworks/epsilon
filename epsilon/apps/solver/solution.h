@@ -1,5 +1,4 @@
-#ifndef SOLVER_SOLUTION_H
-#define SOLVER_SOLUTION_H
+#pragma once
 
 #include <poincare/layout.h>
 
@@ -30,5 +29,3 @@ class Solution {
 };
 
 }  // namespace Solver
-
-#endif

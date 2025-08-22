@@ -1,5 +1,4 @@
-#ifndef SOLVER_EQUATION_LIST_VIEW_H
-#define SOLVER_EQUATION_LIST_VIEW_H
+#pragma once
 
 #include <escher/responder.h>
 #include <escher/scrollable_view.h>
@@ -49,5 +48,3 @@ class EquationListView : public Escher::Responder,
 };
 
 }  // namespace Solver
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SOLVER_APP_H
-#define SOLVER_APP_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/math_app.h>
@@ -66,5 +65,3 @@ class App : public Shared::MathApp {
 };
 
 }  // namespace Solver
-
-#endif

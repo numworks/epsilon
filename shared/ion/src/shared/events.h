@@ -1,5 +1,4 @@
-#ifndef ION_SHARED_EVENTS_H
-#define ION_SHARED_EVENTS_H
+#pragma once
 
 #include <ion/events.h>
 #include <ion/keyboard.h>
@@ -53,5 +52,3 @@ bool waitForInterruptingEvent(int maximumDelay, int* timeout);
 
 }  // namespace Events
 }  // namespace Ion
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ION_SHARED_EVENTS_MODIFIER_H
-#define ION_SHARED_EVENTS_MODIFIER_H
+#pragma once
 
 #include <ion/events.h>
 #include <omg/global_box.h>
@@ -34,5 +33,3 @@ extern OMG::GlobalBox<ModifierState> SharedModifierState;
 
 }  // namespace Events
 }  // namespace Ion
-
-#endif

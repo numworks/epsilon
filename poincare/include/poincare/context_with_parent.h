@@ -1,5 +1,4 @@
-#ifndef POINCARE_CONTEXT_WITH_PARENT_H
-#define POINCARE_CONTEXT_WITH_PARENT_H
+#pragma once
 
 #include <assert.h>
 
@@ -39,5 +38,3 @@ class ContextWithParent : public Context {
 };
 
 }  // namespace Poincare
-
-#endif

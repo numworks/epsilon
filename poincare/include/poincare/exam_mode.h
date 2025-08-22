@@ -1,9 +1,8 @@
+#pragma once
+
 /* Caution: Dutch exam mode is subject to a compliance certification by a
  * government agency. Distribution of a non-certified Dutch exam mode is
  * illegal. */
-
-#ifndef POINCARE_EXAM_MODE_H
-#define POINCARE_EXAM_MODE_H
 
 #include <assert.h>
 #include <ion/exam_mode.h>
@@ -165,5 +164,3 @@ inline constexpr const ExamModeStore& SharedExamMode =
     ExamModeStore::StoreInstance;
 
 }  // namespace Poincare
-
-#endif

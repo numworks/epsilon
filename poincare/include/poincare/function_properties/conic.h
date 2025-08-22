@@ -1,5 +1,4 @@
-#ifndef POINCARE_CONIC_H
-#define POINCARE_CONIC_H
+#pragma once
 
 #include <float.h>
 #include <poincare/expression.h>
@@ -152,5 +151,3 @@ class ParametricConic : public Conic {
 };
 
 }  // namespace Poincare
-
-#endif

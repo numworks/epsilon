@@ -1,5 +1,4 @@
-#ifndef POINCARE_PRINT_FLOAT_H
-#define POINCARE_PRINT_FLOAT_H
+#pragma once
 
 #include <assert.h>
 #include <poincare/preferences.h>
@@ -145,5 +144,3 @@ class PrintFloat {
 };
 
 }  // namespace Poincare
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_REGRESSION_SERIES_H
-#define POINCARE_REGRESSION_SERIES_H
+#pragma once
 
 #include <assert.h>
 
@@ -64,4 +63,3 @@ class Series : public DataTable {
 };
 
 }  // namespace Poincare
-#endif

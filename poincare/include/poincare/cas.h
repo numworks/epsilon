@@ -1,5 +1,4 @@
-#ifndef POINCARE_CAS_H
-#define POINCARE_CAS_H
+#pragma once
 
 #include <poincare/expression.h>
 
@@ -19,5 +18,3 @@ class CAS {
 };
 
 }  // namespace Poincare
-
-#endif

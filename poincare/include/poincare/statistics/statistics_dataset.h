@@ -1,5 +1,4 @@
-#ifndef POINCARE_SOLVER_STATISTICS_DATASET_H
-#define POINCARE_SOLVER_STATISTICS_DATASET_H
+#pragma once
 
 #include <assert.h>
 #include <poincare/statistics/dataset_column.h>
@@ -209,5 +208,3 @@ class StatisticsDataset {
 };
 
 }  // namespace Poincare
-
-#endif

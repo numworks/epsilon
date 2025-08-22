@@ -1,5 +1,4 @@
-#ifndef POINCARE_SIGN_H
-#define POINCARE_SIGN_H
+#pragma once
 
 #include <assert.h>
 #include <omg/bit_helper.h>
@@ -305,5 +304,3 @@ static_assert(sizeof(Sign) == sizeof(uint8_t));
 static_assert(sizeof(ComplexSign) == 2 * sizeof(uint8_t));
 
 }  // namespace Poincare
-
-#endif

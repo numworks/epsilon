@@ -1,5 +1,4 @@
-#ifndef POINCARE_HELPERS_SEQUENCE_H
-#define POINCARE_HELPERS_SEQUENCE_H
+#pragma once
 
 #include <poincare/expression.h>
 
@@ -30,5 +29,3 @@ bool MainExpressionContainsForbiddenTerms(UserExpression e, const Context& ctx,
 }  // namespace SequenceHelper
 
 }  // namespace Poincare
-
-#endif

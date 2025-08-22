@@ -1,5 +1,4 @@
-#ifndef POINCARE_POOL_CHECKPOINT_H
-#define POINCARE_POOL_CHECKPOINT_H
+#pragma once
 
 #include <poincare/src/memory/tree_stack.h>
 
@@ -66,5 +65,3 @@ class PoolCheckpoint {
 };
 
 }  // namespace Poincare
-
-#endif

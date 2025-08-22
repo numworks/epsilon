@@ -1,5 +1,4 @@
-#ifndef POINCARE_HELPERS_SYMBOL_H
-#define POINCARE_HELPERS_SYMBOL_H
+#pragma once
 
 #include <stddef.h>
 
@@ -26,5 +25,3 @@ const char* AnsMainAlias();
 const char* GetName(const Internal::Tree* e);
 
 }  // namespace Poincare::SymbolHelper
-
-#endif

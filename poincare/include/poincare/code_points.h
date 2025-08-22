@@ -1,5 +1,4 @@
-#ifndef POINCARE_CODE_POINTS_H
-#define POINCARE_CODE_POINTS_H
+#pragma once
 
 #include <omg/code_point.h>
 
@@ -17,5 +16,3 @@ constexpr static CodePoint k_sequenceSymbol = 'n';
 }  // namespace CodePoints
 
 }  // namespace Poincare
-
-#endif

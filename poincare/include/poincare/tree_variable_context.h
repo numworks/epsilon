@@ -1,5 +1,4 @@
-#ifndef POINCARE_VARIABLE_CONTEXT_H
-#define POINCARE_VARIABLE_CONTEXT_H
+#pragma once
 
 #include "context_with_parent.h"
 
@@ -29,5 +28,3 @@ class TreeVariableContext : public ContextWithParent {
 };
 
 }  // namespace Poincare
-
-#endif

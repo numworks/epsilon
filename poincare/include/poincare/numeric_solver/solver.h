@@ -1,5 +1,4 @@
-#ifndef POINCARE_SOLVER_SOLVER_H
-#define POINCARE_SOLVER_SOLVER_H
+#pragma once
 
 #include <omg/float.h>
 #include <omg/troolean.h>
@@ -248,5 +247,3 @@ class Solver {
 };
 
 }  // namespace Poincare
-
-#endif

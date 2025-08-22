@@ -1,5 +1,4 @@
-#ifndef POINCARE_HELPERS_POLYNOMIAL_HELPER_H
-#define POINCARE_HELPERS_POLYNOMIAL_HELPER_H
+#pragma once
 
 #include <stddef.h>
 
@@ -12,5 +11,3 @@ constexpr static size_t k_maxSolvableDegree = 3;
 constexpr size_t NumberOfCoefficients(size_t degree) { return degree + 1; }
 
 }  // namespace Poincare::PolynomialHelpers
-
-#endif

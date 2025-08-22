@@ -1,5 +1,4 @@
-#ifndef POINCARE_COORDINATE_2D_H
-#define POINCARE_COORDINATE_2D_H
+#pragma once
 
 #include <cmath>
 
@@ -52,5 +51,3 @@ class Coordinate2D final {
 };
 
 }  // namespace Poincare
-
-#endif

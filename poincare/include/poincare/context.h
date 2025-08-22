@@ -1,5 +1,4 @@
-#ifndef POINCARE_CONTEXT_H
-#define POINCARE_CONTEXT_H
+#pragma once
 
 #include <stdint.h>
 
@@ -55,5 +54,3 @@ class EmptyContext : public Context {
 static const EmptyContext k_emptyContext;
 
 }  // namespace Poincare
-
-#endif

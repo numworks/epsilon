@@ -1,5 +1,4 @@
-#ifndef POINCARE_STATISTICS_INFERENCE_H
-#define POINCARE_STATISTICS_INFERENCE_H
+#pragma once
 
 #include <poincare/src/statistics/inference/chi2_test.h>
 #include <poincare/src/statistics/inference/confidence_interval.h>
@@ -111,5 +110,3 @@ using Internal::Inference::ConfidenceInterval::DefaultThreshold;
 }  // namespace Inference
 
 }  // namespace Poincare
-
-#endif

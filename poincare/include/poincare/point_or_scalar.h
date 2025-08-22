@@ -1,5 +1,4 @@
-#ifndef POINCARE_POINT_OR_SCALAR_H
-#define POINCARE_POINT_OR_SCALAR_H
+#pragma once
 
 #include <assert.h>
 #include <omg/signaling_nan.h>
@@ -33,5 +32,3 @@ class PointOrRealScalar {
 };
 
 }  // namespace Poincare
-
-#endif

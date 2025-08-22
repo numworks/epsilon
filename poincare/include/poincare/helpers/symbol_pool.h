@@ -1,5 +1,4 @@
-#ifndef POINCARE_HELPERS_SYMBOL_POOL_H
-#define POINCARE_HELPERS_SYMBOL_POOL_H
+#pragma once
 
 #include <poincare/expression.h>
 
@@ -23,5 +22,3 @@ static inline UserExpression SystemSymbol() {
 }
 
 }  // namespace Poincare::SymbolHelper
-
-#endif

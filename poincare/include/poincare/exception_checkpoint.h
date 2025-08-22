@@ -1,5 +1,4 @@
-#ifndef POINCARE_EXCEPTION_CHECKPOINT_H
-#define POINCARE_EXCEPTION_CHECKPOINT_H
+#pragma once
 
 #include <setjmp.h>
 
@@ -33,5 +32,3 @@ class ExceptionCheckpoint final : public PoolCheckpoint {
 };
 
 }  // namespace Poincare
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef POINCARE_XNT_H
-#define POINCARE_XNT_H
+#pragma once
 
 #include <omg/utf8_decoder.h>
 #include <poincare/src/memory/tree.h>
@@ -17,5 +16,3 @@ CodePoint CodePointAtIndexInDefaultCycle(int index, CodePoint startingCodePoint,
                                          size_t* cycleSize);
 
 }  // namespace Poincare::XNT
-
-#endif

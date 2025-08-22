@@ -1,5 +1,4 @@
-#ifndef POINCARE_VARIABLE_STORE_H
-#define POINCARE_VARIABLE_STORE_H
+#pragma once
 
 #include <assert.h>
 
@@ -20,5 +19,3 @@ class VariableStore : public Context {
 };
 
 }  // namespace Poincare
-
-#endif

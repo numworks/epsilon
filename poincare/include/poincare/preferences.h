@@ -1,5 +1,4 @@
-#ifndef POINCARE_PREFERENCES_H
-#define POINCARE_PREFERENCES_H
+#pragma once
 
 #include <assert.h>
 #include <omg/bit_helper.h>
@@ -153,5 +152,3 @@ static_assert(std::alignment_of<Preferences>() == 1);
 #endif
 
 }  // namespace Poincare
-
-#endif

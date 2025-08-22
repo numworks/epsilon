@@ -1,5 +1,4 @@
-#ifndef POINCARE_FUNCTION_PROPERTIES_FUNCTION_TYPE_H
-#define POINCARE_FUNCTION_PROPERTIES_FUNCTION_TYPE_H
+#pragma once
 
 #include <poincare/expression.h>
 
@@ -32,5 +31,3 @@ class FunctionType {
 };
 
 }  // namespace Poincare
-
-#endif

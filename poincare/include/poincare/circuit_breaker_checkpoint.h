@@ -1,5 +1,4 @@
-#ifndef POINCARE_CIRCUIT_BREAKER_CHECKPOINT
-#define POINCARE_CIRCUIT_BREAKER_CHECKPOINT
+#pragma once
 
 #include <ion/circuit_breaker.h>
 
@@ -34,5 +33,3 @@ class CircuitBreakerCheckpoint final : public PoolCheckpoint {
 };
 
 }  // namespace Poincare
-
-#endif

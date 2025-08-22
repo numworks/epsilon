@@ -1,5 +1,4 @@
-#ifndef POINCARE_PRINT_H
-#define POINCARE_PRINT_H
+#pragma once
 
 #include <ion/display_constants.h>
 #include <kandinsky/font.h>
@@ -81,5 +80,3 @@ class Print {
 };
 
 }  // namespace Poincare
-
-#endif

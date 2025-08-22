@@ -1,5 +1,4 @@
-#ifndef POINCARE_EQUATION_SOLVER_PROPERTIES_H
-#define POINCARE_EQUATION_SOLVER_PROPERTIES_H
+#pragma once
 
 #include <assert.h>
 #include <omg/vector.h>
@@ -89,5 +88,3 @@ struct SolutionMetadata {
 }  // namespace EquationSolverProperties
 
 }  // namespace Poincare
-
-#endif

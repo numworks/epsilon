@@ -655,10 +655,10 @@ static bool ReduceSquareRoot(Tree* e) {
     return false;
   }
   if (ctx.getTree(KA)->isNegativeRational()) {
-    // √(-m) = i*√(m)
-    return PatternMatching::MatchReplaceReduce(
-        e, KExp(KMult(1_e / 2_e, KLn(KA))),
-        KMult(i_e, KExp(KMult(1_e / 2_e, KLn(KMult(-1_e, KA))))));
+    // √(-m) = √(m)*i
+    e->moveTreeOverTree(PatternMatching::CreateReduce(
+        KMult(KExp(KMult(1_e / 2_e, KLn(KMult(-1_e, KA)))), i_e), ctx));
+    return true;
   }
   if (!ctx.getTree(KA)->isPositiveInteger()) {
     return false;

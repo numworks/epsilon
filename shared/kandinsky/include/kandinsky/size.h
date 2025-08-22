@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_SIZE_H
-#define KANDINSKY_SIZE_H
+#pragma once
 
 #include <kandinsky/coordinate.h>
 #include <kandinsky/margins.h>
@@ -39,5 +38,3 @@ class KDSize {
 };
 
 constexpr KDSize KDSizeZero = KDSize(0, 0);
-
-#endif

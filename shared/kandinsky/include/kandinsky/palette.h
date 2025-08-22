@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_PALETTE_H
-#define KANDINSKY_PALETTE_H
+#pragma once
 
 #include <assert.h>
 #include <kandinsky/color.h>
@@ -25,5 +24,3 @@ class KDPalette {
   KDPalette() {}
   KDColor m_colors[S];
 };
-
-#endif

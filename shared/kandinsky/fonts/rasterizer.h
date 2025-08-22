@@ -9,8 +9,7 @@
  * -> Generates a .png image with the font rasterized
  * -> Generates a .c and a .h files with the content of the font */
 
-#ifndef KANDINSKY_FONTS_RASTERIZER_H
-#define KANDINSKY_FONTS_RASTERIZER_H
+#pragma once
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -97,6 +96,4 @@ void drawAllGlyphsInImage(FT_Face face, image_t* bitmap_image, int gridWidth,
                           int glyphWidth, int glyphHeight, int grid_size,
                           int maxAboveBaseline);
 void writeImageToPNGFile(image_t* image, const char* filename);
-#endif
-
 #endif

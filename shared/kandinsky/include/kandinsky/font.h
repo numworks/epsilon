@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_FONT_H
-#define KANDINSKY_FONT_H
+#pragma once
 
 #include <kandinsky/coordinate.h>
 #include <kandinsky/fonts/SmallFont.h>
@@ -204,5 +203,3 @@ class KDFont {
   static const CodePointIndexPair* s_CodePointToGlyphIndex;
   static const size_t s_codePointPairsTableLength;
 };
-
-#endif

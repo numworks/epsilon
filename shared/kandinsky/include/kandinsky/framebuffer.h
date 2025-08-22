@@ -1,5 +1,4 @@
-#ifndef KANDINSKY_FRAMEBUFFER_H
-#define KANDINSKY_FRAMEBUFFER_H
+#pragma once
 
 #include <kandinsky/color.h>
 #include <kandinsky/rect.h>
@@ -17,5 +16,3 @@ class KDFrameBuffer {
   KDColor* m_pixels;
   KDSize m_size;
 };
-
-#endif

@@ -74,11 +74,13 @@ float ChildrenCoeffLn(ComplexSign sign) {
   return 2.f;
 }
 
-float LnMetric(const Tree* firstChild, bool willBeBeautified, bool inRoot) {
-  if (willBeBeautified && firstChild->isRational() && !firstChild->isZero()) {
+// Used in ln(A) and root(A,B) to give weight to A to favor smaller values.
+float ChildCoeffOffsetInLnOrRoot(const Tree* child, bool willBeBeautified,
+                                 bool inRoot) {
+  if (willBeBeautified && child->isRational() && !child->isZero()) {
     // Increase cost of rationals in ln according to their value
-    IntegerHandler p = Rational::Numerator(firstChild);
-    IntegerHandler q = Rational::Denominator(firstChild);
+    IntegerHandler p = Rational::Numerator(child);
+    IntegerHandler q = Rational::Denominator(child);
     p.setSign(NonStrictSign::Positive);
     float sum = p.to<float>() + q.to<float>();
     assert(sum != 1.f);
@@ -191,7 +193,8 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
         const Tree* base = ctx.getTree(KB);
         childrenCoeff = ChildrenCoeffLn(GetComplexSign(base));
         // Favor smaller bases
-        childrenCoeff += LnMetric(base, willBeBeautified, true);
+        childrenCoeff +=
+            ChildCoeffOffsetInLnOrRoot(base, willBeBeautified, true);
 
         Tree* exponent = PatternMatching::Create(KMult(KA_s), ctx);
         if (exponent->isHalf() || Rational::IsMinusHalf(exponent)) {
@@ -265,7 +268,8 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       childrenCoeff = ChildrenCoeffLn(GetComplexSign(e->child(0)));
       const Tree* firstChild =
           e->child(0)->isMult() ? e->child(0)->child(0) : e->child(0);
-      childrenCoeff += LnMetric(firstChild, willBeBeautified, false);
+      childrenCoeff +=
+          ChildCoeffOffsetInLnOrRoot(firstChild, willBeBeautified, false);
       break;
     }
     case Type::Abs:

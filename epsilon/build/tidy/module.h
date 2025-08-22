@@ -1,5 +1,4 @@
-#ifndef TIDY_MODULE_H
-#define TIDY_MODULE_H
+#pragma once
 
 #include <clang-tidy/ClangTidyModule.h>
 #include <clang-tidy/ClangTidyModuleRegistry.h>
@@ -20,5 +19,3 @@ class EpsilonModule : public ClangTidyModule {
 }  // namespace epsilon
 }  // namespace tidy
 }  // namespace clang
-
-#endif

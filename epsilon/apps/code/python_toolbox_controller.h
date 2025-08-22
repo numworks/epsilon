@@ -1,5 +1,4 @@
-#ifndef CODE_PYTHON_TOOLBOX_CONTROLLER_H
-#define CODE_PYTHON_TOOLBOX_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/container.h>
@@ -48,5 +47,3 @@ class PythonToolboxController : public Escher::Toolbox {
 };
 
 }  // namespace Code
-
-#endif

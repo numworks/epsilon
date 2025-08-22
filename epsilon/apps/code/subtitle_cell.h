@@ -1,5 +1,4 @@
-#ifndef CODE_SUBTITLE_CELL_H
-#define CODE_SUBTITLE_CELL_H
+#pragma once
 
 #include <escher/bordered.h>
 #include <escher/buffer_text_view.h>
@@ -44,5 +43,3 @@ class SubtitleCell : public Escher::Bordered, public Escher::HighlightCell {
 };
 
 }  // namespace Code
-
-#endif

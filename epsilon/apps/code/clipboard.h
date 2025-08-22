@@ -1,5 +1,4 @@
-#ifndef PYTHON_CLIPBOARD_H
-#define PYTHON_CLIPBOARD_H
+#pragma once
 
 #include <escher/clipboard.h>
 #include <omg/utf8_helper.h>
@@ -23,5 +22,3 @@ class Clipboard : public Escher::Clipboard {
 };
 
 }  // namespace Code
-
-#endif

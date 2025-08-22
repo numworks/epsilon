@@ -1,5 +1,4 @@
-#ifndef CODE_CONSOLE_LINE_CELL_H
-#define CODE_CONSOLE_LINE_CELL_H
+#pragma once
 
 #include <assert.h>
 #include <escher/highlight_cell.h>
@@ -64,5 +63,3 @@ class ConsoleLineCell : public Escher::HighlightCell, public Escher::Responder {
 };
 
 }  // namespace Code
-
-#endif

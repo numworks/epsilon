@@ -1,5 +1,4 @@
-#ifndef CODE_SCRIPT_H
-#define CODE_SCRIPT_H
+#pragma once
 
 #include <ion.h>
 
@@ -90,5 +89,3 @@ class Script : public Ion::Storage::Record {
 };
 
 }  // namespace Code
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef CODE_SCRIPT_TEMPLATE_H
-#define CODE_SCRIPT_TEMPLATE_H
+#pragma once
 
 #include "script.h"
 
@@ -23,5 +22,3 @@ class ScriptTemplate {
 };
 
 }  // namespace Code
-
-#endif

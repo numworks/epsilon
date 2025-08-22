@@ -1,5 +1,4 @@
-#ifndef CODE_SCRIPT_STORE_H
-#define CODE_SCRIPT_STORE_H
+#pragma once
 
 #include <ion.h>
 #include <python/port/port.h>
@@ -72,5 +71,3 @@ class ScriptStore : public MicroPython::ScriptProvider {
 };
 
 }  // namespace Code
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef CODE_SCRIPT_PARAMETER_CONTROLLER_H
-#define CODE_SCRIPT_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/menu_cell.h>
@@ -53,5 +52,3 @@ class ScriptParameterController
 };
 
 }  // namespace Code
-
-#endif

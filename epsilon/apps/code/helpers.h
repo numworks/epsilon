@@ -1,5 +1,4 @@
-#ifndef CODE_HELPERS_H
-#define CODE_HELPERS_H
+#pragma once
 
 #include <ion/events.h>
 
@@ -10,5 +9,3 @@ const char* PythonTextForEvent(Ion::Events::Event event);
 
 }
 }  // namespace Code
-
-#endif

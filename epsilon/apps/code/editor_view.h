@@ -1,5 +1,4 @@
-#ifndef CODE_EDITOR_VIEW_H
-#define CODE_EDITOR_VIEW_H
+#pragma once
 
 #include <escher/container.h>
 
@@ -57,5 +56,3 @@ class EditorView : public Escher::Responder,
 };
 
 }  // namespace Code
-
-#endif

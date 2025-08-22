@@ -1,5 +1,4 @@
-#ifndef CODE_SCRIPT_NAME_CELL_H
-#define CODE_SCRIPT_NAME_CELL_H
+#pragma once
 
 #include <escher/even_odd_cell.h>
 #include <escher/metric.h>
@@ -74,5 +73,3 @@ class ScriptNameCell : public Escher::EvenOddCell, public Escher::Responder {
 };
 
 }  // namespace Code
-
-#endif

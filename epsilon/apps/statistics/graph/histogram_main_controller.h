@@ -1,5 +1,4 @@
-#ifndef STATISTICS_HISTOGRAM_MAIN_CONTROLLER_H
-#define STATISTICS_HISTOGRAM_MAIN_CONTROLLER_H
+#pragma once
 
 #include <escher/tab_view_controller.h>
 #include <poincare/range.h>
@@ -89,5 +88,3 @@ class HistogramMainController : public Escher::ViewController,
 };
 
 }  // namespace Statistics
-
-#endif

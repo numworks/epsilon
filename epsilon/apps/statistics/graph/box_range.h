@@ -1,5 +1,4 @@
-#ifndef STATISTICS_BOX_RANGE_H
-#define STATISTICS_BOX_RANGE_H
+#pragma once
 
 #include <apps/shared/curve_view_range.h>
 
@@ -25,5 +24,3 @@ class BoxRange : public Shared::CurveViewRange {
 };
 
 }  // namespace Statistics
-
-#endif

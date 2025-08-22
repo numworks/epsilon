@@ -1,5 +1,4 @@
-#ifndef STATISTICS_HISTOGRAM_MAIN_VIEW_H
-#define STATISTICS_HISTOGRAM_MAIN_VIEW_H
+#pragma once
 
 #include <escher/selectable_list_view.h>
 
@@ -37,5 +36,3 @@ class HistogramMainView : public Escher::View {
 };
 
 }  // namespace Statistics
-
-#endif

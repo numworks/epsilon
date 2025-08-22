@@ -1,5 +1,4 @@
-#ifndef STATISTICS_HISTOGRAM_PARAMETER_CONTROLLER_H
-#define STATISTICS_HISTOGRAM_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/float_parameter_controller.h>
 #include <apps/shared/pop_up_controller.h>
@@ -49,5 +48,3 @@ class HistogramParameterController
 };
 
 }  // namespace Statistics
-
-#endif

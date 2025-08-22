@@ -1,5 +1,4 @@
-#ifndef STATISTICS_NORMAL_PROBABILITY_CONTROLLER_H
-#define STATISTICS_NORMAL_PROBABILITY_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/round_cursor_view.h>
 #include <escher/alternate_empty_view_delegate.h>
@@ -76,5 +75,3 @@ class NormalProbabilityController : public PlotController,
 };
 
 }  // namespace Statistics
-
-#endif

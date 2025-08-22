@@ -1,5 +1,4 @@
-#ifndef STATISTICS_DATA_VIEW_CONTROLLER_H
-#define STATISTICS_DATA_VIEW_CONTROLLER_H
+#pragma once
 
 #include <escher/tab_view_controller.h>
 #include <escher/view_controller.h>
@@ -69,5 +68,3 @@ class DataViewController : public Escher::ViewController,
 };
 
 }  // namespace Statistics
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef STATISTICS_HISTOGRAM_RANGE_H
-#define STATISTICS_HISTOGRAM_RANGE_H
+#pragma once
 
 #include <apps/shared/memoized_curve_view_range.h>
 
@@ -25,5 +24,3 @@ class HistogramRange : public Shared::MemoizedCurveViewRange {
 };
 
 }  // namespace Statistics
-
-#endif

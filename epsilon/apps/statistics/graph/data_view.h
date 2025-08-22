@@ -1,5 +1,4 @@
-#ifndef STATISTICS_DATA_VIEW_H
-#define STATISTICS_DATA_VIEW_H
+#pragma once
 
 #include <apps/shared/banner_view.h>
 #include <apps/shared/plot_view.h>
@@ -34,5 +33,3 @@ class DataView : public Escher::View {
 };
 
 }  // namespace Statistics
-
-#endif

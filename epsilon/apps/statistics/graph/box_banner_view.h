@@ -1,5 +1,4 @@
-#ifndef STATISTICS_BOX_BANNER_VIEW_H
-#define STATISTICS_BOX_BANNER_VIEW_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/banner_view.h>
@@ -23,5 +22,3 @@ class BoxBannerView : public Shared::BannerView {
 };
 
 }  // namespace Statistics
-
-#endif

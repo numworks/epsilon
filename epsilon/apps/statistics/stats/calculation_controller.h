@@ -1,5 +1,4 @@
-#ifndef STATISTICS_CALCULATION_CONTROLLER_H
-#define STATISTICS_CALCULATION_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/buffer_function_title_cell.h>
 #include <apps/shared/double_pair_table_controller.h>
@@ -116,5 +115,3 @@ class CalculationController : public Shared::DoublePairTableController {
 };
 
 }  // namespace Statistics
-
-#endif

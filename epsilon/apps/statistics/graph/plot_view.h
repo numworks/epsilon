@@ -1,5 +1,4 @@
-#ifndef STATISTICS_PLOT_VIEW_H
-#define STATISTICS_PLOT_VIEW_H
+#pragma once
 
 #include <apps/shared/curve_view_cursor.h>
 #include <escher/view.h>
@@ -45,5 +44,3 @@ class PlotView : public DataView {
 };
 
 }  // namespace Statistics
-
-#endif

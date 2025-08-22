@@ -1,5 +1,4 @@
-#ifndef STATISTICS_GRAPH_TYPE_CONTROLLER_H
-#define STATISTICS_GRAPH_TYPE_CONTROLLER_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/alternate_empty_view_delegate.h>
@@ -50,5 +49,3 @@ class GraphTypeController
 };
 
 }  // namespace Statistics
-
-#endif

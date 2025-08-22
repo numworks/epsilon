@@ -1,5 +1,4 @@
-#ifndef STATISTICS_GRAPH_VIEW_MODEL_H
-#define STATISTICS_GRAPH_VIEW_MODEL_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <escher/image.h>
@@ -31,5 +30,3 @@ class GraphViewModel {
 };
 
 }  // namespace Statistics
-
-#endif

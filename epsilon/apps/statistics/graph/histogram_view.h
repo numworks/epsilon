@@ -1,5 +1,4 @@
-#ifndef STATISTICS_HISTOGRAM_VIEW_H
-#define STATISTICS_HISTOGRAM_VIEW_H
+#pragma once
 
 #include <apps/constant.h>
 #include <apps/shared/plot_view_policies.h>
@@ -51,5 +50,3 @@ class HistogramView
 };
 
 }  // namespace Statistics
-
-#endif

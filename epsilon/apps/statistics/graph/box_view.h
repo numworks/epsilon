@@ -1,5 +1,4 @@
-#ifndef STATISTICS_BOX_VIEW_H
-#define STATISTICS_BOX_VIEW_H
+#pragma once
 
 #include <apps/constant.h>
 #include <apps/shared/plot_view_policies.h>
@@ -110,5 +109,3 @@ class BoxView
 };
 
 }  // namespace Statistics
-
-#endif

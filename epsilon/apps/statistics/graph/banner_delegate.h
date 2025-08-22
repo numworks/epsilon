@@ -1,5 +1,4 @@
-#ifndef STATISTICS_BANNER_DELEGATE_H
-#define STATISTICS_BANNER_DELEGATE_H
+#pragma once
 
 namespace Statistics {
 
@@ -10,5 +9,3 @@ class BannerDelegate {
 };
 
 }  // namespace Statistics
-
-#endif

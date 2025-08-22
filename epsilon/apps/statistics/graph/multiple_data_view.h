@@ -1,5 +1,4 @@
-#ifndef STATISTICS_MULTIPLE_DATA_VIEW_H
-#define STATISTICS_MULTIPLE_DATA_VIEW_H
+#pragma once
 
 #include "../store.h"
 #include "data_view.h"
@@ -26,5 +25,3 @@ class MultipleDataView : public DataView {
 };
 
 }  // namespace Statistics
-
-#endif

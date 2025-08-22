@@ -1,5 +1,4 @@
-#ifndef STATISTICS_HISTOGRAM_BANNER_VIEW_H
-#define STATISTICS_HISTOGRAM_BANNER_VIEW_H
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/shared/banner_view.h>
@@ -30,5 +29,3 @@ class HistogramBannerView : public Shared::BannerView {
 };
 
 }  // namespace Statistics
-
-#endif

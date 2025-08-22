@@ -1,5 +1,4 @@
-#ifndef STATISTICS_STORE_PARAMETER_CONTROLLER_H
-#define STATISTICS_STORE_PARAMETER_CONTROLLER_H
+#pragma once
 
 #include <apps/shared/store_parameter_controller.h>
 #include <escher/menu_cell.h>
@@ -41,5 +40,3 @@ class StoreParameterController : public Shared::StoreParameterController {
 };
 
 }  // namespace Statistics
-
-#endif

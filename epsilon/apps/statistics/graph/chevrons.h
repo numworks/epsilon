@@ -1,5 +1,4 @@
-#ifndef STATISTICS_CHEVRONS_H
-#define STATISTICS_CHEVRONS_H
+#pragma once
 
 #include <kandinsky/coordinate.h>
 
@@ -14,5 +13,3 @@ class Chevrons {
 };
 
 }  // namespace Statistics
-
-#endif

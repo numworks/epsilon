@@ -191,7 +191,8 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
       if (parenthesesAreNeeded) {
         // -1ᴇ23 -> -(10^23)
         NAry::AddOrMergeChild(cursorRack, ")"_l->cloneTree());
-      } else if (!isOperator(child) && (linear || !mantissaIsOne)) {
+      } else if (!isOperator(child) && !child->isSeparatorLayout() &&
+                 (linear || !mantissaIsOne)) {
         // 2ᴇ23i -> 2×10^23×i
         NAry::AddOrMergeChild(cursorRack, "×"_l->cloneTree());
       } else {

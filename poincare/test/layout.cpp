@@ -117,7 +117,7 @@ QUIZ_CASE(pcj_expression_to_layout) {
   assert(Poincare::SharedPreferences->logarithmBasePosition() ==
          Poincare::Preferences::LogarithmBasePosition::TopLeft);
   assert_expression_layouts_as(KMult(KAdd(π_e, 1_e), KLogBase(7_e, 3_e)),
-                               KParenthesesL("π+1"_l) ^
+                               KParenthesesL("π+1"_l) ^ "·"_l ^
                                    KPrefixSuperscriptL("3"_l) ^ "log"_l ^
                                    KParenthesesL("7"_l));
   GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::WW);

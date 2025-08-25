@@ -1,8 +1,6 @@
 #pragma once
 
 #include <assert.h>
-#include <stddef.h>
-#include <string.h>
 
 #include <initializer_list>
 #include <string_view>
@@ -96,12 +94,6 @@ constexpr static size_t StringLength(const char* string) {
     result++;
   }
   return result;
-}
-
-/* FIXME : This can be replaced by std::string_view when moving to C++17 */
-constexpr static bool StringsAreEqual(const char* s1, const char* s2) {
-  return *s1 == *s2 &&
-         ((*s1 == '\0' && *s2 == '\0') || StringsAreEqual(s1 + 1, s2 + 1));
 }
 
 }  // namespace OMG

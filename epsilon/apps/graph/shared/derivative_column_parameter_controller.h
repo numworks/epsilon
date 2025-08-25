@@ -1,6 +1,7 @@
 #pragma once
 
 #include <apps/shared/color_parameter_controller.h>
+#include <apps/shared/continuous_function.h>
 #include <apps/shared/function_store.h>
 #include <apps/shared/values_controller.h>
 #include <escher/menu_cell.h>

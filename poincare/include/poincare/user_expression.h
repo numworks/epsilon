@@ -118,6 +118,14 @@ class UserExpression : public Expression {
                             ComplexFormat complexFormat = ComplexFormat::None,
                             const Context& context = EmptyContext{}) const;
 
+  // Return NAN for all non real scalar expressions
+  template <typename T>
+  static T ParseAndSimplifyAndApproximateToRealScalar(
+      const char* text, const Context& context, ComplexFormat complexFormat,
+      AngleUnit angleUnit,
+      SymbolicComputation symbolicComputation =
+          SymbolicComputation::ReplaceAllSymbols);
+
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits,
                       const Context& context = EmptyContext{},

@@ -233,6 +233,29 @@ T UserExpression::approximateToRealScalar(AngleUnit angleUnit,
 }
 
 template <typename T>
+T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
+    const char* text, const Context& context, ComplexFormat complexFormat,
+    AngleUnit angleUnit, SymbolicComputation symbolicComputation) {
+  UserExpression exp = UserExpression::Parse(text, context);
+  if (exp.isUninitialized()) {
+    return NAN;
+  }
+  ProjectionContext ctx = ProjectionContext{.m_complexFormat = complexFormat,
+                                            .m_angleUnit = angleUnit,
+                                            .m_symbolic = symbolicComputation,
+                                            .m_context = context};
+  bool reductionFailure;
+  exp = exp.cloneAndSimplify(ctx, &reductionFailure);
+  assert(!exp.isUninitialized());
+  Poincare::Dimension dimension = Poincare::Dimension(exp, context);
+  if (!dimension.isScalar()) {
+    return NAN;
+  }
+  return exp.approximateToRealScalar<T>(ctx.m_angleUnit, ctx.m_complexFormat,
+                                        context);
+}
+
+template <typename T>
 bool UserExpression::hasDefinedComplexApproximation(AngleUnit angleUnit,
                                                     ComplexFormat complexFormat,
                                                     const Context& context,
@@ -586,5 +609,11 @@ template SystemExpression UserExpression::approximateUserToTree<float>(
     AngleUnit, ComplexFormat, const Context&) const;
 template SystemExpression UserExpression::approximateUserToTree<double>(
     AngleUnit, ComplexFormat, const Context&) const;
+template float
+UserExpression::ParseAndSimplifyAndApproximateToRealScalar<float>(
+    const char*, const Context&, ComplexFormat, AngleUnit, SymbolicComputation);
+template double
+UserExpression::ParseAndSimplifyAndApproximateToRealScalar<double>(
+    const char*, const Context&, ComplexFormat, AngleUnit, SymbolicComputation);
 
 }  // namespace Poincare

@@ -2,7 +2,6 @@
 
 #include <apps/global_preferences.h>
 #include <poincare/context.h>
-#include <poincare/expression.h>
 #include <poincare/expression_or_float.h>
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
@@ -171,11 +170,11 @@ inline T ValueOfFloatAsDisplayed(
   // Silence compiler warnings for assert
   (void)numberOfChar;
   // Extract displayed value
-  return Poincare::Expression::ParseAndSimplifyAndApproximateToRealScalar<T>(
-      buffer, context,
-      GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-      GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-      Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+  return Poincare::UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
+      T>(buffer, context,
+         GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+         GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+         Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
 }
 
 // Conversions to float

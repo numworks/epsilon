@@ -4,7 +4,6 @@
 #include <poincare/src/expression/infinity.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/vector.h>
-#include <poincare/user_expression.h>
 
 namespace Poincare {
 
@@ -131,29 +130,6 @@ int Expression::numberOfDescendants(bool includeSelf) const {
   return tree()->numberOfDescendants(includeSelf);
 }
 
-template <typename T>
-T Expression::ParseAndSimplifyAndApproximateToRealScalar(
-    const char* text, const Context& context, ComplexFormat complexFormat,
-    AngleUnit angleUnit, SymbolicComputation symbolicComputation) {
-  UserExpression exp = UserExpression::Parse(text, context);
-  if (exp.isUninitialized()) {
-    return NAN;
-  }
-  ProjectionContext ctx = ProjectionContext{.m_complexFormat = complexFormat,
-                                            .m_angleUnit = angleUnit,
-                                            .m_symbolic = symbolicComputation,
-                                            .m_context = context};
-  bool reductionFailure;
-  exp = exp.cloneAndSimplify(ctx, &reductionFailure);
-  assert(!exp.isUninitialized());
-  Poincare::Dimension dimension = Poincare::Dimension(exp, context);
-  if (!dimension.isScalar()) {
-    return NAN;
-  }
-  return exp.approximateToRealScalar<T>(ctx.m_angleUnit, ctx.m_complexFormat,
-                                        context);
-}
-
 Poincare::Dimension Expression::dimension(const Context& context) const {
   return Poincare::Dimension(*this, context);
 }
@@ -265,10 +241,5 @@ PoolHandle Expression::BuildPoolHandleFromTree(const Tree* tree) {
   ExpressionObject* node = new (bufferNode) ExpressionObject(tree, size);
   return PoolHandle::Build(node);
 }
-
-template float Expression::ParseAndSimplifyAndApproximateToRealScalar<float>(
-    const char*, const Context&, ComplexFormat, AngleUnit, SymbolicComputation);
-template double Expression::ParseAndSimplifyAndApproximateToRealScalar<double>(
-    const char*, const Context&, ComplexFormat, AngleUnit, SymbolicComputation);
 
 }  // namespace Poincare

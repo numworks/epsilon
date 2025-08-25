@@ -1,5 +1,4 @@
 #include <poincare/context.h>
-#include <poincare/expression.h>
 #include <poincare/expression_or_float.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/k_tree.h>
@@ -9,6 +8,7 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/layout/layout_serializer.h>
+#include <poincare/user_expression.h>
 
 #include "helper.h"
 #include "helpers/symbol_store.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <poincare/expression.h>
+#include <poincare/user_expression.h>
 #include <poincare/variable_store.h>
 
 namespace Poincare {

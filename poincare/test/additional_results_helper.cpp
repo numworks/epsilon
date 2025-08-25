@@ -1,5 +1,5 @@
 #include <poincare/additional_results_helper.h>
-#include <poincare/expression.h>
+#include <poincare/user_expression.h>
 
 #include "helper.h"
 

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <poincare/context.h>
-#include <poincare/expression.h>
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
+#include <poincare/user_expression.h>
 #include <stdint.h>
 
 #include <array>

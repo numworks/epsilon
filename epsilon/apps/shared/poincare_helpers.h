@@ -8,6 +8,8 @@
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/system_expression.h>
+#include <poincare/user_expression.h>
 
 #include <type_traits>
 

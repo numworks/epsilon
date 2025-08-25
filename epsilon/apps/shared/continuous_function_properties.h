@@ -5,8 +5,8 @@
 #include <omg/troolean.h>
 #include <poincare/code_points.h>
 #include <poincare/comparison_operator.h>
-#include <poincare/expression.h>
 #include <poincare/function_properties/conic.h>
+#include <poincare/user_expression.h>
 
 /* ContinuousFunctionProperties is an object containing:
  *  - A pointer to a const function type

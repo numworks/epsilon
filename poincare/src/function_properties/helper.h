@@ -1,8 +1,8 @@
 #pragma once
 
-#include <poincare/expression.h>
-
 namespace Poincare::Internal {
+
+class Tree;
 
 double PositiveModulo(double i, double n);
 

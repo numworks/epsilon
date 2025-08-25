@@ -1,8 +1,8 @@
 #include "expression_parameter_controller.h"
 
 #include <apps/global_preferences.h>
-#include <poincare/expression.h>
 #include <poincare/expression_or_float.h>
+#include <poincare/user_expression.h>
 
 #include "poincare_helpers.h"
 

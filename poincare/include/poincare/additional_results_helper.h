@@ -1,8 +1,8 @@
 #pragma once
 
-#include <poincare/expression.h>
 #include <poincare/layout.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/user_expression.h>
 
 namespace Poincare {
 

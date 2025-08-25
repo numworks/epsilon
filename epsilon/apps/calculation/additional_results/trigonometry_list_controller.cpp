@@ -2,10 +2,10 @@
 
 #include <poincare/additional_results_helper.h>
 #include <poincare/cas.h>
-#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/user_expression.h>
 
 #include "../app.h"
 

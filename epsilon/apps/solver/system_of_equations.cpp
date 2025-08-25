@@ -8,7 +8,6 @@
 #include <poincare/cas.h>
 #include <poincare/context.h>
 #include <poincare/equation_solver/equation_solver_pool.h>
-#include <poincare/expression.h>
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/pool_variable_context.h>
 #include <poincare/range.h>
@@ -19,6 +18,7 @@
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/user_expression.h>
 
 using namespace Poincare;
 using namespace Poincare::Internal::KTrees;

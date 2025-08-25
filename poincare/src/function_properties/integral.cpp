@@ -1,4 +1,3 @@
-#include <poincare/expression.h>
 #include <poincare/function_properties/integral.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/approximation.h>
@@ -8,6 +7,7 @@
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/system_expression.h>
 
 namespace Poincare {
 

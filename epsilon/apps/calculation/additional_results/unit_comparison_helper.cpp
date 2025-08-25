@@ -2,7 +2,7 @@
 
 #include <apps/i18n.h>
 #include <omg/utf8_helper.h>
-#include <poincare/expression.h>
+#include <poincare/user_expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/dimension.h>

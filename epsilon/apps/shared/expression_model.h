@@ -2,8 +2,9 @@
 
 #include <ion/storage/record.h>
 #include <poincare/context.h>
-#include <poincare/expression.h>
 #include <poincare/layout.h>
+#include <poincare/system_expression.h>
+#include <poincare/user_expression.h>
 
 namespace Shared {
 

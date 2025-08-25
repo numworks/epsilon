@@ -2,9 +2,9 @@
 
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
-#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
+#include <poincare/user_expression.h>
 
 #include <array>
 

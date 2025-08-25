@@ -5,6 +5,7 @@
 #include <poincare/src/expression/list.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
+#include <poincare/system_expression.h>
 
 namespace Poincare {
 

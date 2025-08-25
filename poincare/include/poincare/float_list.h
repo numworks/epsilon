@@ -1,7 +1,7 @@
 #pragma once
 
-#include <poincare/expression.h>
 #include <poincare/statistics/dataset_column.h>
+#include <poincare/system_expression.h>
 
 namespace Poincare {
 

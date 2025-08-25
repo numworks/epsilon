@@ -2,8 +2,8 @@
 
 #include <escher/palette.h>
 #include <kandinsky/color.h>
-#include <poincare/expression.h>
 #include <poincare/print.h>
+#include <poincare/user_expression.h>
 
 using namespace Shared;
 using namespace Poincare;

@@ -1,7 +1,7 @@
 #include "helper.h"
 
 #include <poincare/context.h>
-#include <poincare/expression.h>
+#include <poincare/helpers/store.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/metric.h>
@@ -10,6 +10,7 @@
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
+#include <poincare/user_expression.h>
 #include <poincare/variable_store.h>
 
 using namespace Poincare::Internal;

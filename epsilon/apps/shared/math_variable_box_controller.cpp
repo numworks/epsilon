@@ -8,7 +8,6 @@
 #include <escher/metric.h>
 #include <omg/utf8_helper.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/expression.h>
 #include <poincare/k_layout.h>
 #include <poincare/layout.h>
 #include <poincare/preferences.h>

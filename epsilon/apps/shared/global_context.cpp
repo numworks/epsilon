@@ -5,9 +5,9 @@
 #include <omg/utf8_helper.h>
 #include <poincare/cas.h>
 #include <poincare/code_points.h>
-#include <poincare/expression.h>
 #include <poincare/helpers/symbol_pool.h>
 #include <poincare/k_tree.h>
+#include <poincare/user_expression.h>
 
 #include "continuous_function.h"
 #include "continuous_function_store.h"

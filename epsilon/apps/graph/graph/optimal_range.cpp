@@ -6,8 +6,8 @@
 #include <apps/shared/interactive_curve_view_range.h>
 #include <omg/expiring_pointer.h>
 #include <poincare/coordinate_2D.h>
-#include <poincare/expression.h>
 #include <poincare/numeric_solver/zoom.h>
+#include <poincare/prepared_function.h>
 #include <poincare/range.h>
 #include <poincare/src/memory/tree.h>
 

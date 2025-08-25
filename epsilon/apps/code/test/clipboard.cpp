@@ -1,7 +1,7 @@
 #include "../clipboard.h"
 
 #include <poincare/context.h>
-#include <poincare/expression.h>
+#include <poincare/user_expression.h>
 #include <python/test/execution_environment.h>
 #include <quiz.h>
 #include <string.h>

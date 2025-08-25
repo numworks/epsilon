@@ -1,7 +1,7 @@
 #pragma once
 
 #include <float.h>
-#include <poincare/expression.h>
+#include <poincare/system_expression.h>
 
 namespace Poincare {
 

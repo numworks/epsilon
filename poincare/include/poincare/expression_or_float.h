@@ -1,9 +1,9 @@
 #pragma once
 
-#include <poincare/expression.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/user_expression.h>
 
 #include <span>
 

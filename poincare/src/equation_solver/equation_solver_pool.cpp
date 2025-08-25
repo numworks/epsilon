@@ -1,7 +1,7 @@
 #include <poincare/equation_solver/equation_solver_pool.h>
-#include <poincare/expression.h>
 #include <poincare/src/equation_solver/equation_solver_tree.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/user_expression.h>
 
 namespace Poincare {
 

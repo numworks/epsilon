@@ -3,11 +3,8 @@
 #include <apps/constant.h>
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
-#include <poincare/expression.h>
-
-#include "continuous_function.h"
-#include "poincare_helpers.h"
-#include "sequence.h"
+#include <poincare/code_points.h>
+#include <poincare/user_expression.h>
 
 using namespace Poincare;
 using namespace Escher;

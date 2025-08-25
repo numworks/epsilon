@@ -1,4 +1,4 @@
-#include <poincare/expression.h>
+#include <poincare/system_expression.h>
 
 #include "roots.h"
 

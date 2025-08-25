@@ -1,7 +1,7 @@
 #pragma once
 
 #include <poincare/coordinate_2D.h>
-#include <poincare/expression.h>
+#include <poincare/system_expression.h>
 
 namespace Poincare {
 

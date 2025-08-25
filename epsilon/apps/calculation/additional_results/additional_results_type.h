@@ -1,7 +1,7 @@
 #pragma once
 
 #include <poincare/context.h>
-#include <poincare/expression.h>
+#include <poincare/user_expression.h>
 
 namespace Calculation {
 

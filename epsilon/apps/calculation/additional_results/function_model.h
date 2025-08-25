@@ -1,7 +1,8 @@
 #pragma once
 
 #include <apps/shared/memoized_curve_view_range.h>
-#include <poincare/expression.h>
+#include <poincare/prepared_function.h>
+#include <poincare/user_expression.h>
 
 #include "illustrated_expressions_list_controller.h"
 

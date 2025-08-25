@@ -1,7 +1,6 @@
 #pragma once
 
 #include <poincare/context_with_parent.h>
-#include <poincare/expression.h>
 
 #include "sequence_cache.h"
 #include "sequence_store.h"

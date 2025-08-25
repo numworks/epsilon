@@ -2,8 +2,8 @@
 
 #include <apps/global_preferences.h>
 #include <escher/i18n.h>
-#include <poincare/expression.h>
 #include <poincare/statistics/regression.h>
+#include <poincare/user_expression.h>
 
 namespace Regression {
 

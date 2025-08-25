@@ -14,6 +14,7 @@
 #include <poincare/helpers/scatter_plot_iterable.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/preferences.h>
+#include <poincare/prepared_function.h>
 
 #include "continuous_function_cache.h"
 #include "continuous_function_properties.h"

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "context_with_parent.h"
-#include "expression.h"
 #include "helpers/symbol.h"
+#include "user_expression.h"
 
 namespace Poincare {
 

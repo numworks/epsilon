@@ -1,9 +1,9 @@
 #include "area_between_curves_graph_controller.h"
 
 #include <assert.h>
-#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
+#include <poincare/system_expression.h>
 #include <stdlib.h>
 
 #include <cmath>

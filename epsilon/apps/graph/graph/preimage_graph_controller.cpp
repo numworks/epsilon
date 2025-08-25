@@ -1,7 +1,7 @@
 #include "preimage_graph_controller.h"
 
 #include <omg/utf8_helper.h>
-#include <poincare/expression.h>
+#include <poincare/system_expression.h>
 
 using namespace Poincare;
 using namespace Shared;

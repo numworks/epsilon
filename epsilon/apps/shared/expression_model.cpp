@@ -5,17 +5,14 @@
 #include <assert.h>
 #include <omg/utf8_helper.h>
 #include <poincare/context.h>
-#include <poincare/expression.h>
 #include <poincare/helpers/symbol_pool.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
+#include <poincare/user_expression.h>
 #include <string.h>
 
 #include <algorithm>
-#include <cmath>
 
-#include "function.h"
-#include "global_context.h"
 #include "poincare_helpers.h"
 
 using namespace Ion;

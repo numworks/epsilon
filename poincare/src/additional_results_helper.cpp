@@ -17,6 +17,7 @@
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/system_expression.h>
 #include <poincare/trigonometry.h>
 
 namespace Poincare {

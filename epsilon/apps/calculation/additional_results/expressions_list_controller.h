@@ -6,7 +6,7 @@
 #include <escher/selectable_list_view_data_source.h>
 #include <escher/selectable_list_view_delegate.h>
 #include <escher/stack_view_controller.h>
-#include <poincare/expression.h>
+#include <poincare/user_expression.h>
 
 #include "additional_result_cell.h"
 

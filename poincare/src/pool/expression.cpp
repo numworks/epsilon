@@ -7,6 +7,7 @@
 #include <poincare/helpers/symbol_pool.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
+#include <poincare/prepared_function.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
@@ -40,6 +41,8 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
+#include <poincare/system_expression.h>
+#include <poincare/user_expression.h>
 
 #include <complex>
 

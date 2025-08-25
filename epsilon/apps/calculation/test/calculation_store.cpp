@@ -407,7 +407,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       globalContext, &store);
   assertCalculationIs("(1/6)_L_kg", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr,
-                      "1.6666666666667×10^(-4)×m^3·kg", globalContext, &store);
+                      "1.6666666666667×10^(-4)m^3·kg", globalContext, &store);
   assertCalculationIs("(π/6)_rad", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr, "30°", globalContext, &store);
   assertCalculationIs("(1/11)_°", DisplayOutput::ApproximateOnly,
@@ -443,6 +443,10 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("int(6/x^2-8/x^3,x,1,2)+1",
                       DisplayOutput::ApproximateOnly, EqualSign::Hidden,
                       nullptr, "1", globalContext, &store);
+  assertCalculationIs("6i'log(14,10)", DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Approximation,
+                      "6rad·(((π·log(2))/10800)i+((π·log(7))/10800)i)",
+                      "3.333951312×10^(-4)×6rad×i", globalContext, &store);
 
   GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(AngleUnit::Degree);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();

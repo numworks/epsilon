@@ -87,13 +87,4 @@ class String {
   value_type m_data[CAPACITY];
 };
 
-// constexpr version of strlen
-constexpr static size_t StringLength(const char* string) {
-  size_t result = 0;
-  while (string[result] != 0) {
-    result++;
-  }
-  return result;
-}
-
 }  // namespace OMG

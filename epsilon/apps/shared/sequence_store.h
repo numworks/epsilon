@@ -1,8 +1,9 @@
 #pragma once
 
-#include <omg/string.h>
 #include <poincare/helpers/sequence.h>
 #include <stdint.h>
+
+#include <string_view>
 
 #include "function_store.h"
 #include "sequence.h"
@@ -38,7 +39,7 @@ class SequenceStore : public FunctionStore {
   constexpr static size_t k_maxSequenceNameLength = []() {
     size_t m = 0;
     for (const char* s : Poincare::SequenceHelper::k_sequenceNames) {
-      m = std::max<size_t>(m, OMG::StringLength(s));
+      m = std::max<size_t>(m, std::string_view(s).length());
     }
     return m;
   }();

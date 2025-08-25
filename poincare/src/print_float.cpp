@@ -1,6 +1,5 @@
 #include <omg/ieee754.h>
 #include <omg/print.h>
-#include <omg/string.h>
 #include <omg/utf8_decoder.h>
 #include <omg/utf8_helper.h>
 #include <poincare/infinity.h>
@@ -16,12 +15,13 @@ extern "C" {
 }
 #include <algorithm>
 #include <cmath>
+#include <string_view>
 
 namespace Poincare {
 
 constexpr const char* k_undefName =
     Internal::BuiltinsAliases::k_undefinedAlias.mainAlias();
-constexpr size_t k_undefNameLength = OMG::StringLength(k_undefName);
+constexpr size_t k_undefNameLength = std::string_view(k_undefName).length();
 
 constexpr size_t PrintFloat::Long::k_maxNumberOfCharsForDigit;
 

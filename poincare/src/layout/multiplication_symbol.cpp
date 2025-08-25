@@ -2,6 +2,7 @@
 
 #include <omg/unreachable.h>
 #include <omg/utf8_helper.h>
+#include <poincare/preferences.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/symbol.h>
@@ -32,6 +33,12 @@ using enum LayoutShape;
 LayoutShape LeftLayoutShape(const Tree* e) {
   const Builtin* builtin = Builtin::GetReservedFunction(e);
   if (builtin && !builtin->has2DLayout()) {
+    if (e->isLogBase() &&
+        SharedPreferences->logarithmBasePosition() ==
+            Poincare::Preferences::LogarithmBasePosition::TopLeft) {
+      // Always have an operator left of NL logarithm
+      return Default;
+    }
     // This builtin will be displayed as : foobar()
     return MoreLetters;
   }
@@ -61,7 +68,7 @@ LayoutShape LeftLayoutShape(const Tree* e) {
     case Type::Sum:
     case Type::Product:
     case Type::Norm:
-    case Type::Parentheses:  // TODO_PCJ remove this one
+    case Type::Parentheses:
       return BoundaryPunctuation;
 
     case Type::Add:

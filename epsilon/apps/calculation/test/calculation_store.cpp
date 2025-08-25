@@ -495,6 +495,20 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(previousAngleUnit);
   GlobalPreferences::SharedGlobalPreferences()->setNumberOfSignificantDigits(
       previousNumberOfSignificantDigits);
+
+  assertCalculationIs("(π+1)*log(7,3)", DisplayOutput::ExactAndApproximate,
+                      EqualSign::Approximation, "(1+π)log(7,3)", "7.335770099",
+                      globalContext, &store);
+  // TODO: This test crashes
+#if 0
+  I18n::Country previousCountry =
+      GlobalPreferences::SharedGlobalPreferences()->country();
+  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::NL);
+  assertCalculationIs("(π+1)*log(7,3)", DisplayOutput::ExactAndApproximate,
+                      EqualSign::Approximation, "(1+π)log(7,3)", "7.335770099",
+                      globalContext, &store);
+  GlobalPreferences::SharedGlobalPreferences()->setCountry(previousCountry);
+#endif
 }
 
 QUIZ_CASE(calculation_big_expressions) {

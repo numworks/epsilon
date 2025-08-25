@@ -16,6 +16,9 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/user_expression.h>
 
+// Used to test a different logarithmBasePosition. TODO: remove it
+#include <apps/global_preferences.h>
+
 #include "helper.h"
 
 using namespace Poincare::Internal;
@@ -105,6 +108,19 @@ QUIZ_CASE(pcj_expression_to_layout) {
   assert_parsed_expression_layouts_to(
       "-1^2", "-"_l ^ KParenthesesL("1"_l ^ KSuperscriptL("2"_l)));
   assert_parsed_expression_layouts_to("-x^2", "-x"_l ^ KSuperscriptL("2"_l));
+
+  assert_expression_layouts_as(KMult(KAdd(π_e, 1_e), KLogBase(7_e, 3_e)),
+                               KParenthesesL("π+1"_l) ^ "log"_l ^
+                                   KSubscriptL("3"_l) ^ KParenthesesL("7"_l));
+
+  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::NL);
+  assert(Poincare::SharedPreferences->logarithmBasePosition() ==
+         Poincare::Preferences::LogarithmBasePosition::TopLeft);
+  assert_expression_layouts_as(KMult(KAdd(π_e, 1_e), KLogBase(7_e, 3_e)),
+                               KParenthesesL("π+1"_l) ^
+                                   KPrefixSuperscriptL("3"_l) ^ "log"_l ^
+                                   KParenthesesL("7"_l));
+  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::WW);
 }
 
 void assert_expression_layouts_and_serializes_to(const Tree* expression,

@@ -28,6 +28,8 @@ class String {
 
   String() = default;
 
+  String(const String& other) = default;
+
   String(const char_type* string, size_type stringLength) {
     assert(stringLength <= CAPACITY);
     size_type i = 0;
@@ -44,6 +46,8 @@ class String {
     }
   }
 
+  explicit String(std::string_view view) : String(view.data(), view.length()) {}
+
   String(std::initializer_list<char_type> characters) {
     assert(characters.size() <= CAPACITY);
     for (const char_type& element : characters) {
@@ -54,6 +58,15 @@ class String {
   // Implicit conversion to an std::string_view
   operator std::string_view() const {
     return std::string_view(data(), length());
+  }
+
+  // Assignement
+
+  String& operator=(const String& other) = default;
+
+  String& operator=(std::string_view view) {
+    *this = String(view);
+    return *this;
   }
 
   // Methods

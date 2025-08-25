@@ -27,4 +27,7 @@ QUIZ_CASE(omg_string) {
   helloStringView.copy(buffer, helloStringView.length());
   quiz_assert(std::string_view(buffer, helloStringView.length()) ==
               helloStringView);
+  OMG::String<k_bufferLength> string;
+  string = helloStringView;
+  quiz_assert(string == helloStringView);
 }

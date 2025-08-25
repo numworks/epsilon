@@ -43,10 +43,10 @@ class SymbolStore : public Poincare::VariableStore {
     const Poincare::Internal::Tree* expression() const;
 
    private:
-    static constexpr size_t k_maxNameSize = 10;
+    constexpr static size_t k_maxNameSize = 10;
     char m_name[k_maxNameSize];
     UserNamedType m_type;
-    static constexpr size_t k_expressionBufferSize = 25;
+    constexpr static size_t k_expressionBufferSize = 25;
     std::array<Poincare::Internal::Block, k_expressionBufferSize>
         m_expressionBuffer;
   };

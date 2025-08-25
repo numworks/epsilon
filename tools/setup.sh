@@ -87,8 +87,8 @@ install_macos_binary_deps() {
 }
 
 install_linux_binary_deps() {
-  sudo apt-get update && sudo apt-get upgrade
-  sudo apt-get install \
+  sudo apt-get update -y && sudo apt-get upgrade -y
+  sudo apt-get install -y \
     build-essential \
     ccache \
     clang-format-15 \
@@ -105,13 +105,13 @@ install_linux_binary_deps() {
     python3-venv
 
   if [[ "${INSTALL_ARM_GCC-0}" == "1" ]]; then
-    sudo apt-get install gcc-arm-none-eabi binutils-arm-none-eabi
+    sudo apt-get install -y gcc-arm-none-eabi binutils-arm-none-eabi
   fi
 
   if [[ $CI == "1" ]]; then
-    sudo apt-get install parallel
+    sudo apt-get install -y parallel
     # format.mak requires prettier
-    sudo apt-get install npm
+    sudo apt-get install -y npm
     sudo npm install -g prettier
     sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-15 100
     install_latest_lcov

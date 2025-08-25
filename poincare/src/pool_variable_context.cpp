@@ -1,16 +1,12 @@
-#include <omg/utf8_helper.h>
 #include <poincare/pool_variable_context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/symbol.h>
-
-#include <cmath>
 
 namespace Poincare {
 
 Context::UserNamedType PoolVariableContext::expressionTypeForIdentifier(
     std::string_view identifier) const {
-  if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
-          identifier.data(), identifier.length(), m_name) == 0) {
+  if ((m_name != nullptr) && (identifier == m_name)) {
     return UserNamedType::Symbol;
   }
   return ContextWithParent::expressionTypeForIdentifier(identifier);
@@ -18,8 +14,8 @@ Context::UserNamedType PoolVariableContext::expressionTypeForIdentifier(
 
 const Internal::Tree* PoolVariableContext::expressionForUserNamed(
     const Internal::Tree* symbol) const {
-  if (m_name != nullptr &&
-      strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
+  if ((m_name != nullptr) &&
+      (std::string_view(Internal::Symbol::GetName(symbol)) == m_name)) {
     if (symbol->isUserSymbol()) {
       return m_value;
     }

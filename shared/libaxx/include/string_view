@@ -54,10 +54,36 @@ class string_view {
     return *(data() + index);
   }
 
+  /* Copies "count" characters of the string_view, starting from the character
+   * at "position", into the "destination" character array. Returns the number
+   * of copied characters. */
+  constexpr size_type copy(char_type* destination, size_type count,
+                           size_type position = 0) const {
+    size_type i = 0;
+    while ((i + position < count) && (i + position < size())) {
+      *(destination + i) = m_data[i + position];
+      i++;
+    }
+    return i;
+  }
+
  private:
   const_pointer m_data = nullptr;
   size_type m_size = 0;
 };
+
+// String equality operator
+constexpr bool operator==(std::string_view view1, std::string_view view2) {
+  if (view1.length() != view2.length()) {
+    return false;
+  }
+  for (size_t i = 0; i < view1.length(); i++) {
+    if (view1[i] != view2[i]) {
+      return false;
+    }
+  }
+  return true;
+}
 
 }  // namespace std
 

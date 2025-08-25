@@ -21,4 +21,10 @@ QUIZ_CASE(omg_string) {
   quiz_assert(strlen(helloCString) == helloString.length());
   std::string_view helloStringView(helloCString);
   quiz_assert(helloStringView.length() == helloString.length());
+
+  static constexpr size_t k_bufferLength = 10;
+  char buffer[k_bufferLength];
+  helloStringView.copy(buffer, helloStringView.length());
+  quiz_assert(std::string_view(buffer, helloStringView.length()) ==
+              helloStringView);
 }

@@ -26,7 +26,7 @@ class SequenceContext final : public Poincare::ContextWithParent {
    * The other methods (setExpressionForUserNamed and
    * expressionForUserNamed) always call the parent context. */
   Poincare::Context::UserNamedType expressionTypeForIdentifier(
-      const char* identifier, int length) const override;
+      std::string_view identifier) const override;
 
   // SequenceContext
 

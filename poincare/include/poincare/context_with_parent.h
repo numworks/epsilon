@@ -19,11 +19,11 @@ class ContextWithParent : public Context {
                            : nullptr;
   }
 
-  UserNamedType expressionTypeForIdentifier(const char* identifier,
-                                            int length) const override {
-    return m_parentContext ? m_parentContext->expressionTypeForIdentifier(
-                                 identifier, length)
-                           : UserNamedType::None;
+  UserNamedType expressionTypeForIdentifier(
+      std::string_view identifier) const override {
+    return m_parentContext
+               ? m_parentContext->expressionTypeForIdentifier(identifier)
+               : UserNamedType::None;
   }
 
   double approximateSequenceAtRank(const char* identifier,

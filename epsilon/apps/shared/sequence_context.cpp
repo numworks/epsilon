@@ -18,15 +18,15 @@ SequenceContext::SequenceContext(const Context* parentContext,
     : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {}
 
 Context::UserNamedType SequenceContext::expressionTypeForIdentifier(
-    const char* identifier, int length) const {
+    std::string_view identifier) const {
   constexpr int numberOfSequencesNames =
       std::size(SequenceHelper::k_sequenceNames);
   for (int i = 0; i < numberOfSequencesNames; i++) {
-    if (strncmp(identifier, SequenceHelper::k_sequenceNames[i], length) == 0) {
+    if (identifier == std::string_view(SequenceHelper::k_sequenceNames[i])) {
       return Context::UserNamedType::Sequence;
     }
   }
-  return ContextWithParent::expressionTypeForIdentifier(identifier, length);
+  return ContextWithParent::expressionTypeForIdentifier(identifier);
 }
 
 const Sequence* SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {

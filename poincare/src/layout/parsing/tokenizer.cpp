@@ -508,11 +508,12 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   /* If preserveInput or isAssignmentDeclaration, any identifier is
    * understood as a CustomIdentifier */
   if (!hasUnitOnlyCodePoint  // CustomIdentifiers can't contain °, ' or "
-      && (m_parsingContext->metadata.isAssignmentDeclaration ||
-          m_parsingContext->params.preserveInput ||
-          (m_parsingContext->context &&
-           m_parsingContext->context->expressionTypeForIdentifier(
-               string, *length) != Context::UserNamedType::None))) {
+      &&
+      (m_parsingContext->metadata.isAssignmentDeclaration ||
+       m_parsingContext->params.preserveInput ||
+       (m_parsingContext->context &&
+        m_parsingContext->context->expressionTypeForIdentifier(std::string_view(
+            string, *length)) != Context::UserNamedType::None))) {
     return Token::Type::CustomIdentifier;
   }
 

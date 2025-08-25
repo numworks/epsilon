@@ -82,11 +82,11 @@ void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(
 }
 
 Context::UserNamedType GlobalContext::expressionTypeForIdentifier(
-    const char* identifier, int length) const {
-  const char* extension =
-      Ion::Storage::FileSystem::sharedFileSystem
-          ->extensionOfRecordBaseNamedWithExtensions(
-              identifier, length, k_extensions, k_numberOfExtensions);
+    std::string_view identifier) const {
+  const char* extension = Ion::Storage::FileSystem::sharedFileSystem
+                              ->extensionOfRecordBaseNamedWithExtensions(
+                                  identifier.data(), identifier.length(),
+                                  k_extensions, k_numberOfExtensions);
   if (extension == nullptr) {
     return Context::UserNamedType::None;
   } else if (strcmp(extension, Ion::Storage::expressionExtension) == 0 ||

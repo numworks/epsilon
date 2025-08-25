@@ -8,12 +8,12 @@
 namespace Poincare {
 
 Context::UserNamedType TreeVariableContext::expressionTypeForIdentifier(
-    const char* identifier, int length) const {
+    std::string_view identifier) const {
   if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
-          identifier, length, m_name) == 0) {
+          identifier.data(), identifier.length(), m_name) == 0) {
     return UserNamedType::Symbol;
   }
-  return ContextWithParent::expressionTypeForIdentifier(identifier, length);
+  return ContextWithParent::expressionTypeForIdentifier(identifier);
 }
 
 const Internal::Tree* TreeVariableContext::expressionForUserNamed(

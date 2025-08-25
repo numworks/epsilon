@@ -165,8 +165,9 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
     bool isValidEquality = false;
     const UserExpression leftOfEqual = formula.cloneChildAtIndex(0);
     if (leftOfEqual.isUserSymbol()) {
-      const char* name = SymbolHelper::GetName(leftOfEqual);
-      if (store()->isColumnName(name, strlen(name), series, column)) {
+      if (store()->isColumnName(
+              std::string_view(SymbolHelper::GetName(leftOfEqual)), series,
+              column)) {
         formula = formula.cloneChildAtIndex(1);
         isValidEquality = true;
       }

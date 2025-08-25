@@ -74,9 +74,10 @@ size_t DoublePairStore::fillColumnName(int series, int column,
   return 2;
 }
 
-bool DoublePairStore::isColumnName(const char* name, int nameLen,
-                                   int* returnSeries, int* returnColumn) {
-  if (nameLen != 2 || name[1] < '1' || name[1] >= '1' + k_numberOfSeries) {
+bool DoublePairStore::isColumnName(std::string_view name, int* returnSeries,
+                                   int* returnColumn) {
+  if (name.length() != 2 || name[1] < '1' ||
+      name[1] >= '1' + k_numberOfSeries) {
     return false;
   }
   for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {

@@ -12,11 +12,11 @@ class StoreContext : public Poincare::ContextWithParent {
       : Poincare::ContextWithParent(parentContext), m_store(store) {}
 
   Poincare::Context::UserNamedType expressionTypeForIdentifier(
-      const char* identifier, int length) const override {
-    return m_store->isColumnName(identifier, length)
+      std::string_view identifier) const override {
+    return m_store->isColumnName(identifier)
                ? Poincare::Context::UserNamedType::List
                : Poincare::ContextWithParent::expressionTypeForIdentifier(
-                     identifier, length);
+                     identifier);
   }
 
  private:

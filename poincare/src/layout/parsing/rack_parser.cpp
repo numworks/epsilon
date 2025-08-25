@@ -1137,8 +1137,8 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
       Poincare::Context::UserNamedType::None;
   if (!m_parsingContext.metadata.isAssignmentDeclaration) {
     idType = m_parsingContext.context
-                 ? m_parsingContext.context->expressionTypeForIdentifier(name,
-                                                                         length)
+                 ? m_parsingContext.context->expressionTypeForIdentifier(
+                       std::string_view(name, length))
                  : Poincare::Context::UserNamedType::None;
     if (idType == Poincare::Context::UserNamedType::Symbol ||
         (!m_parsingContext.params.preserveInput &&

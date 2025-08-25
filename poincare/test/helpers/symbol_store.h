@@ -6,7 +6,7 @@
 #include <poincare/src/memory/block.h>
 #include <poincare/variable_store.h>
 
-#include <span>
+#include <string_view>
 
 namespace Poincare::Internal {
 class Tree;
@@ -34,17 +34,17 @@ class SymbolStore : public Poincare::VariableStore {
  private:
   class SymbolWithExpression {
    public:
-    SymbolWithExpression(std::span<const char> name, UserNamedType type,
+    SymbolWithExpression(std::string_view name, UserNamedType type,
                          const Poincare::Internal::Tree* e);
     SymbolWithExpression() = default;
 
-    std::span<const char> name() const { return OMG::ToSpan(m_name); }
+    std::string_view name() const { return m_name; }
     UserNamedType type() const { return m_type; }
     const Poincare::Internal::Tree* expression() const;
 
    private:
     constexpr static size_t k_maxNameSize = 10;
-    char m_name[k_maxNameSize];
+    OMG::String<k_maxNameSize> m_name;
     UserNamedType m_type;
     constexpr static size_t k_expressionBufferSize = 25;
     std::array<Poincare::Internal::Block, k_expressionBufferSize>
@@ -56,15 +56,15 @@ class SymbolStore : public Poincare::VariableStore {
       const Poincare::Internal::Tree* functionialSymbol);
 
   bool setExpressionForUserSymbol(const Poincare::Internal::Tree* expression,
-                                  std::span<const char> symbolName);
+                                  std::string_view symbolName);
 
   bool push(const Poincare::Internal::Tree* expression,
-            std::span<const char> symbolName, UserNamedType symbolType);
+            std::string_view symbolName, UserNamedType symbolType);
 
   // Returns a nullptr if the symbol does not exist in the store
   const SymbolWithExpression* findSymbolInStore(
-      std::span<const char> symbolName) const;
-  SymbolWithExpression* findSymbolInStore(std::span<const char> symbolName);
+      std::string_view symbolName) const;
+  SymbolWithExpression* findSymbolInStore(std::string_view symbolName);
 
   static constexpr size_t k_maxSymbols = 10;
   using SymbolTable = OMG::StaticVector<SymbolWithExpression, k_maxSymbols>;

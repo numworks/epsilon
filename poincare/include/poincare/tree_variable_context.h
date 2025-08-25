@@ -16,8 +16,8 @@ class TreeVariableContext : public ContextWithParent {
       : TreeVariableContext(name, nullptr, parentContext) {}
 
   // Context
-  UserNamedType expressionTypeForIdentifier(const char* identifier,
-                                            int length) const override;
+  UserNamedType expressionTypeForIdentifier(
+      std::string_view identifier) const override;
 
   const Internal::Tree* expressionForUserNamed(
       const Internal::Tree* symbol) const override;

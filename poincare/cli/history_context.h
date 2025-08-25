@@ -22,12 +22,12 @@ class HistoryContext : public Poincare::Context {
     return m_history.size() - 1;
   }
 
-  UserNamedType expressionTypeForIdentifier(const char* identifier,
-                                            int length) const override {
+  UserNamedType expressionTypeForIdentifier(
+      std::string_view identifier) const override {
     if (!s_isInteractive) {
       return UserNamedType::None;
     }
-    if (length < 2 || identifier[0] != 'o') {
+    if (identifier.length() < 2 || identifier[0] != 'o') {
       return UserNamedType::None;
     }
     return UserNamedType::Symbol;

@@ -21,8 +21,8 @@ class SymbolStore : public Poincare::VariableStore {
   const Poincare::Internal::Tree* expressionForUserNamed(
       const Poincare::Internal::Tree* symbol) const override;
 
-  UserNamedType expressionTypeForIdentifier(const char* identifier,
-                                            int length) const override;
+  UserNamedType expressionTypeForIdentifier(
+      std::string_view identifier) const override;
 
   bool setExpressionForUserNamed(
       const Poincare::Internal::Tree* expression,

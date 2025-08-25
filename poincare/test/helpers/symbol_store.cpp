@@ -52,10 +52,8 @@ const Tree* SymbolStore::expressionForUserNamed(const Tree* symbol) const {
 }
 
 Poincare::Context::UserNamedType SymbolStore::expressionTypeForIdentifier(
-    const char* identifier, int length) const {
-  assert(length >= 0);
-  const SymbolWithExpression* existingSymbol = findSymbolInStore(
-      std::string_view(identifier, static_cast<size_t>(length)));
+    std::string_view identifier) const {
+  const SymbolWithExpression* existingSymbol = findSymbolInStore(identifier);
   if (!existingSymbol) {
     return UserNamedType::None;
   }

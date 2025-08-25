@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <array>
+#include <string_view>
 
 #include "global_context.h"
 
@@ -51,7 +52,7 @@ class DoublePairStore {
   virtual char columnNamePrefixAtIndex(int column) const = 0;
   // Fills 3 chars in the buffer (2 chars for name + null terminate)
   size_t fillColumnName(int series, int column, char* buffer) const;
-  bool isColumnName(const char* name, int nameLen, int* returnSeries = nullptr,
+  bool isColumnName(std::string_view name, int* returnSeries = nullptr,
                     int* returnColumn = nullptr);
   size_t tableName(int series, char* buffer, size_t bufferSize) const;
 

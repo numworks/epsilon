@@ -52,8 +52,8 @@ class GlobalContext final : public Poincare::VariableStore {
   /* Expression for symbol
    * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
-  UserNamedType expressionTypeForIdentifier(const char* identifier,
-                                            int length) const override;
+  UserNamedType expressionTypeForIdentifier(
+      std::string_view identifier) const override;
   bool setExpressionForUserNamed(
       const Poincare::Internal::Tree* expression,
       const Poincare::Internal::Tree* symbol) override;

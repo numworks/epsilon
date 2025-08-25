@@ -152,7 +152,10 @@ $(addprefix memory/, \
 $(addprefix pool/, \
   expression.cpp:-nopool \
   layout.cpp:-nopool \
+  prepared_function.cpp:-nopool \
   pool_layout_cursor.cpp:-nopool \
+  system_expression.cpp:-nopool \
+  user_expression.cpp:-nopool \
 ) \
 $(addprefix numeric_solver/, \
   beta_function.cpp \

@@ -117,15 +117,6 @@ class Expression : public PoolHandle {
   // Only called on expressions that are comparisons
   Comparison::Operator comparisonOperator() const;
 
-  /* Approximation Helper
-   * Return NAN for all non real scalar expressions. */
-  template <typename T>
-  static T ParseAndSimplifyAndApproximateToRealScalar(
-      const char* text, const Context& context, ComplexFormat complexFormat,
-      AngleUnit angleUnit,
-      SymbolicComputation symbolicComputation =
-          SymbolicComputation::ReplaceAllSymbols);
-
   /* Tree manipulation */
   // TODO: These methods should be protected
 

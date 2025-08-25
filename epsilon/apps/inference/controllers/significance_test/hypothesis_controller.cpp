@@ -9,12 +9,12 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/print.h>
+#include <poincare/user_expression.h>
 #include <shared/poincare_helpers.h>
 #include <string.h>
 
 #include "inference/app.h"
 #include "inference/controllers/input_controller.h"
-#include "inference/text_helpers.h"
 
 using namespace Escher;
 
@@ -72,10 +72,11 @@ bool HypothesisController::textFieldDidReceiveEvent(
 bool HypothesisController::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   double h0 =
-      Poincare::Expression::ParseAndSimplifyAndApproximateToRealScalar<double>(
-          textField->draftText(), Shared::GlobalContextAccessor::Context(),
-          GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-          GlobalPreferences::SharedGlobalPreferences()->angleUnit());
+      Poincare::UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
+          double>(textField->draftText(),
+                  Shared::GlobalContextAccessor::Context(),
+                  GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+                  GlobalPreferences::SharedGlobalPreferences()->angleUnit());
   // Check
   if (std::isnan(h0) || !m_test->isValidH0(h0)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);

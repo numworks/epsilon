@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <config/board.h>
 #include <ion/external_apps.h>
+#include <ion/reset.h>
 #include <shared/drivers/flash_write_with_interruptions.h>
 
 #include "board.h"
@@ -147,7 +148,13 @@ int numberOfApps(bool isExamModeActive) {
   return counter;
 }
 
-void deleteApps(bool isExamModeActive) {
+void deleteApps(bool isExamModeActive, bool keepAfterSoftwareReset) {
+  if (keepAfterSoftwareReset &&
+      Ion::Reset::lastResetType() == Ion::Reset::ResetType::Software) {
+    // Keep external apps after a crash. A voluntary software reset will clear
+    // them beforehand.
+    return;
+  }
   for (App a : Apps(isExamModeActive)) {
     assert(!hideExternalApps(isExamModeActive));
     a.eraseMagicCode();

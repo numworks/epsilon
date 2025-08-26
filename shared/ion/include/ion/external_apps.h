@@ -76,7 +76,7 @@ class Apps {
 // Apps are hidden during an active exam mode.
 int numberOfApps(bool isExamModeActive);
 // During exam mode, apps are hidden and will not be deleted.
-void deleteApps(bool isExamModeActive);
+void deleteApps(bool isExamModeActive, bool keepAfterSoftwareReset);
 bool allowThirdParty();
 
 // Update clearance level if there are external apps

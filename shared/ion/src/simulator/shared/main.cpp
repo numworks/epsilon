@@ -90,6 +90,7 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
+#if ION_SIMULATOR_FILES
 #ifndef __WIN32__
 #ifdef ASAN
   if (args.limitStackUsage) {
@@ -136,6 +137,7 @@ int main(int argc, char* argv[]) {
               ArgumentNames::limitStackUsage);
     }
   }
+#endif
 #endif
 #endif
 

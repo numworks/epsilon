@@ -10,9 +10,7 @@ BOOL_ARG(help, "--help", "-help", "Show this help message")
 TEXT_ARG(stateFile, "--load-state-file", "-l",
          "Fetch events from an .nws state file", "statefile.nws")
 
-#if ION_SIMULATOR_FILES
 BOOL_ARG(headless, "--headless", "-h", "Run without the SDL")
-#endif
 
 TEXT_ARG(language, "--language", "",
          "Start with the given language and associated country",

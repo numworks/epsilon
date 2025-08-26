@@ -4,13 +4,13 @@
 #include <kandinsky/color.h>
 #include <omg/bit_helper.h>
 #include <omg/code_guard.h>
-
+#include <stdio.h>
 namespace Ion {
 namespace ExamMode {
 
 using Int = ExamBytes::Int;
 
-CODE_GUARD(exam_mode_rulesets, 2206142180,  //
+CODE_GUARD(exam_mode_rulesets, 3405765083,  //
            enum class Ruleset
            : Int{
                Off = 0,
@@ -24,6 +24,7 @@ CODE_GUARD(exam_mode_rulesets, 2206142180,  //
                Pennsylvania,
                SouthCarolina,
                NorthCarolina,
+               SAT,
                Uninitialized,
                NumberOfRulesets,
            };)

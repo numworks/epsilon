@@ -145,9 +145,10 @@ ExamMode::Ruleset ExamModeController::examModeRulesetAtIndex(
       constexpr ExamMode::Ruleset modes[] = {
           ExamMode::Ruleset::Standard,      ExamMode::Ruleset::Dutch,
           ExamMode::Ruleset::Portuguese,    ExamMode::Ruleset::English,
-          ExamMode::Ruleset::STAAR,         ExamMode::Ruleset::Pennsylvania,
-          ExamMode::Ruleset::SouthCarolina, ExamMode::Ruleset::NorthCarolina,
-          ExamMode::Ruleset::SAT,           ExamMode::Ruleset::IBTest};
+          ExamMode::Ruleset::IBTest,        ExamMode::Ruleset::NorthCarolina,
+          ExamMode::Ruleset::Pennsylvania,  ExamMode::Ruleset::SAT,
+          ExamMode::Ruleset::SouthCarolina, ExamMode::Ruleset::STAAR,
+      };
       static_assert(std::size(modes) == k_maxNumberOfCells,
                     "modes must contain each available exam mode");
       assert(index < std::size(modes));

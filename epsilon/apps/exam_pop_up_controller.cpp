@@ -56,7 +56,7 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       I18n::Message::ActiveDutchOrEnglishExamModeWithResetMessage,
       // IBTest
       I18n::Message::ActiveUSAExamModeMessage,
-      I18n::Message::ActiveTxPaScNcSatIbExamModeWithResetMessage,
+      I18n::Message::ActiveUSAExamModeWithResetMessage,
       // PressToTest
       I18n::Message::ActivePressToTestModeMessage,
       I18n::Message::ActivePressToTestWithResetMessage,
@@ -68,19 +68,19 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       I18n::Message::ActiveDutchOrEnglishExamModeWithResetMessage,
       // STAAR
       I18n::Message::ActiveUSAExamModeMessage,
-      I18n::Message::ActiveTxPaScNcSatIbExamModeWithResetMessage,
+      I18n::Message::ActiveUSAExamModeWithResetMessage,
       // Pennsylvania
       I18n::Message::ActiveUSAExamModeMessage,
-      I18n::Message::ActiveTxPaScNcSatIbExamModeWithResetMessage,
+      I18n::Message::ActiveUSAExamModeWithResetMessage,
       // SouthCarolina
       I18n::Message::ActiveUSAExamModeMessage,
-      I18n::Message::ActiveTxPaScNcSatIbExamModeWithResetMessage,
+      I18n::Message::ActiveUSAExamModeWithResetMessage,
       // NorthCarolina
       I18n::Message::ActiveUSAExamModeMessage,
-      I18n::Message::ActiveTxPaScNcSatIbExamModeWithResetMessage,
+      I18n::Message::ActiveUSAExamModeWithResetMessage,
       // SAT
       I18n::Message::ActiveUSAExamModeMessage,
-      I18n::Message::ActiveTxPaScNcSatIbExamModeWithResetMessage,
+      I18n::Message::ActiveUSAExamModeWithResetMessage,
   };
   static_assert(
       std::size(messages) == Ion::ExamMode::k_numberOfModes * messagesPerMode,

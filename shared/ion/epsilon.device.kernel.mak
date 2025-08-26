@@ -92,6 +92,7 @@ $(addprefix device/core/device/kernel/drivers/, \
   led_update.cpp \
   power.cpp \
   power_$(_ion_mcu_suffix).cpp \
+  reset_$(_ion_mcu_suffix).cpp \
   serial_number.cpp \
   svcall_handler.cpp \
   svcall_handler_as.s \

@@ -71,6 +71,8 @@ jobs:
 
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
+        with:
+          platform: device
 
       - name: Check for core
         id: core

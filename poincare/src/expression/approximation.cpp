@@ -1776,6 +1776,11 @@ static bool MergeChildrenOfMultOrAdd(Tree* e) {
       child->removeTree();
       n--;
       NAry::SetNumberOfChildren(e, n);
+    } else if (child->type() == e->type()) {
+      // Merge Mult/Add that may have appeared
+      n += child->numberOfChildren() - 1;
+      child->removeNode();
+      NAry::SetNumberOfChildren(e, n);
     } else {
       child = child->nextTree();
       i++;

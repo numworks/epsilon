@@ -69,6 +69,7 @@ bool Arithmetic::ReduceEuclideanDivision(Tree* e) {
 }
 
 bool Arithmetic::ReduceFloor(Tree* e) {
+  assert(e->isFloor());
   Tree* child = e->child(0);
   if (child->isRational()) {
     DivisionResult div = IntegerHandler::Division(Rational::Numerator(child),

@@ -7,7 +7,8 @@ description: |
 inputs:
   platform:
     description: 'The target platform for the build system inside the container'
-    required: true
+    required: false
+    default: 'linux'
   emsdk-version:
     description: 'The Emscripten SDK version to install in the container'
     required: false

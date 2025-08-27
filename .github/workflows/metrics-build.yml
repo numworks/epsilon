@@ -35,6 +35,8 @@ jobs:
 
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
+        with:
+          platform: device
 
       - name: Checkout to most recent ancestor
         run: git checkout ${{ steps.common_ancestor.outputs.commit_sha }}

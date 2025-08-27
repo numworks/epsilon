@@ -446,7 +446,11 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("6i'log(14,10)", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation,
                       "6rad·(((π·log(2))/10800)i+((π·log(7))/10800)i)",
-                      "3.333951312×10^(-4)×6rad×i", globalContext, &store);
+                      "0.0020003707872rad·i", globalContext, &store);
+  assertCalculationIs("i'log(14,10)", DisplayOutput::ExactAndApproximate,
+                      EqualSign::Approximation,
+                      "((π·(log(2)i+log(7)i))/10800)rad",
+                      "3.333951312×10^(-4)rad·i", globalContext, &store);
 
   GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(AngleUnit::Degree);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();

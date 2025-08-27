@@ -1,5 +1,4 @@
 #include <poincare/context.h>
-#include <poincare/expression.h>
 #include <poincare/test/helpers/symbol_store.h>
 
 #include "helper.h"

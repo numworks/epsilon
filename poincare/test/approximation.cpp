@@ -1,7 +1,5 @@
 #include <apps/global_preferences.h>
-#include <float.h>
 #include <omg/float.h>
-#include <poincare/expression.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
@@ -9,6 +7,7 @@
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/test/float_helper.h>
+#include <poincare/user_expression.h>
 
 #include <cmath>
 

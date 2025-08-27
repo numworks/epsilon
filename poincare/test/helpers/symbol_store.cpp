@@ -2,14 +2,12 @@
 
 #include <omg/string.h>
 #include <poincare/context.h>
-#include <poincare/expression.h>
 #include <poincare/helpers/store.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/memory/tree.h>
-#include <string.h>
 
 #include <algorithm>
 

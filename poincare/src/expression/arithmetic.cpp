@@ -82,11 +82,16 @@ bool Arithmetic::ReduceFloor(Tree* e) {
     int totalChildren = child->numberOfChildren();
     TreeRef result = SharedTreeStack->pushAdd(0);
     int detachedChildren = 0;
-    for (Tree* addChild : child->children()) {
-      if (addChild->isInteger()) {
-        addChild->detachTree();
+    Tree* grandChild = child->nextNode();
+    int index = 0;
+    while (index < totalChildren) {
+      if (grandChild->isInteger()) {
+        grandChild->detachTree();
         ++detachedChildren;
+      } else {
+        grandChild = grandChild->nextTree();
       }
+      index++;
     }
     if (detachedChildren > 0) {
       NAry::SetNumberOfChildren(child, totalChildren - detachedChildren);

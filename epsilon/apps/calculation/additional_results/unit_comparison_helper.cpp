@@ -2,13 +2,13 @@
 
 #include <apps/i18n.h>
 #include <omg/utf8_helper.h>
-#include <poincare/user_expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/dimension_vector.h>
 #include <poincare/src/expression/units/representatives.h>
 #include <poincare/src/expression/units/unit.h>
+#include <poincare/user_expression.h>
 
 #include <array>
 #include <cmath>

@@ -1,6 +1,7 @@
 #ifndef LIBAXX_STRING_VIEW
 #define LIBAXX_STRING_VIEW
 
+#include <assert.h>
 #include <stddef.h>
 
 namespace std {
@@ -22,14 +23,14 @@ class string_view {
   constexpr string_view(const string_view& other) = default;
   // Constructs a view of the first "count" characters in the string
   constexpr string_view(const char* string, size_type count)
-      : m_data(string), m_size(count) {}
+      : m_data(string), m_size(count) {
+    assert(m_size <= strlen(string));
+  }
   /* Constructs a view of all the characters in the string, not including the
    * terminating null character */
   constexpr string_view(const char* string) {
     m_data = string;
-    while (*(m_data + m_size) != '\0') {
-      m_size++;
-    }
+    m_size = strlen(string);
   }
 
   /* A string view cannot be constructed from a nullptr according to the C++
@@ -51,6 +52,7 @@ class string_view {
   constexpr const_iterator cend() const { return data() + size(); }
 
   constexpr const_reference operator[](size_type index) const {
+    assert(index < size());
     return *(data() + index);
   }
 
@@ -68,6 +70,13 @@ class string_view {
   }
 
  private:
+  // Redefinition of strlen here to avoid creating a dependency to liba
+  constexpr size_t strlen(const char* s) {
+    const char* str = s;
+    while (*str) str++;
+    return str - s;
+  }
+
   const_pointer m_data = nullptr;
   size_type m_size = 0;
 };

@@ -1,6 +1,4 @@
 #include <poincare/context.h>
-#include <poincare/expression.h>
-#include <poincare/src/expression/builtin.h>
 #include <poincare/test/helpers/symbol_store.h>
 
 #include "../helper.h"

@@ -1,11 +1,13 @@
 #include <poincare/context.h>
-#include <poincare/expression.h>
+#include <poincare/prepared_function.h>
 #include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/infinity.h>
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/variables.h>
+#include <poincare/system_expression.h>
 #include <poincare/test/helpers/symbol_store.h>
+#include <poincare/user_expression.h>
 
 #include "../helper.h"
 

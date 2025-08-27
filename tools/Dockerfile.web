@@ -1,8 +1,8 @@
 # Dockerfile used by the CI
 
-ARG EMSDK_VERSION=4.0.10
-
 FROM debian:bookworm-slim
+
+ARG EMSDK_VERSION
 
 WORKDIR /runner
 
@@ -19,9 +19,12 @@ RUN git clone https://github.com/emscripten-core/emsdk.git emsdk && \
     cd emsdk && \
     git checkout ${EMSDK_VERSION} && \
     ./emsdk install ${EMSDK_VERSION} && \
-    ./emsdk activate ${EMSDK_VERSION}
+    ./emsdk activate ${EMSDK_VERSION} && \
+    # Ensure the cache directory is writable
+    chmod -R a+rwX /runner/emsdk/upstream/emscripten
 
-ENV PATH="emsdk:emsdk/upstream/emscripten:${PATH}"
+ENV PATH="/runner/emsdk:/runner/emsdk/upstream/emscripten:${PATH}"
+
 ENV PYTHON=/runner/.venv/bin/python
 
 WORKDIR /monorepo

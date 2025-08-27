@@ -8,13 +8,17 @@ inputs:
   platform:
     description: 'The target platform for the build system inside the container'
     required: true
+  emsdk-version:
+    description: 'The Emscripten SDK version to install in the container'
+    required: false
+    default: 'unknown'
 
 runs:
   using: 'composite'
   steps:
     - name: Build Docker container
       shell: bash
-      run: docker build -f tools/Dockerfile.${{ inputs.platform }} . --tag oasis-builder-${{ inputs.platform }} --build-arg EMSDK_VERSION=${{ env.EMSDK_VERSION }}
+      run: docker build -f tools/Dockerfile.${{ inputs.platform }} . --tag oasis-builder-${{ inputs.platform }} --build-arg EMSDK_VERSION=${{ inputs.emsdk-version }}
 
     - name: Define DOCKER_RUN environment variable
       shell: bash

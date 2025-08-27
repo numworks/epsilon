@@ -534,7 +534,10 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     reducedRowEchelonFormL = CreateBeautifiedLayout(
         reducedRowEchelonForm, &ctx, displayMode, numberOfSignificantDigits);
   } else {
-    reducedRowEchelonForm->removeTree();
+    reducedRowEchelonForm->cloneTreeOverTree(KUndefUnhandled);
+    rowEchelonFormL = CreateBeautifiedLayout(
+        reducedRowEchelonForm, &ctx, displayMode, numberOfSignificantDigits);
+    reducedRowEchelonFormL = rowEchelonFormL.clone();
   }
 
   // 5. Matrix trace if square matrix

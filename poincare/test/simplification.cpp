@@ -865,6 +865,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
    * angle has too many approximation errors. This blocks the floor exact
    * reduction.  */
   simplifies_to("floor(cos(1000))", "floor(cos(1000))");
+  simplifies_to("sin(frac(frac(exp(6))))", "sin(-403+e^(6))");
 }
 
 QUIZ_CASE(pcj_simplification_percent) {

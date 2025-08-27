@@ -1,0 +1,27 @@
+# Dockerfile used by the CI
+
+ARG EMSDK_VERSION=4.0.10
+
+FROM debian:bookworm-slim
+
+WORKDIR /runner
+
+RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/assume-yes && \
+    apt-get update && \
+    apt-get upgrade && \
+    apt-get install --no-install-recommends sudo
+
+COPY tools/setup.sh tools/setup.sh
+
+RUN tools/setup.sh --ci --only-simulator
+
+RUN git clone https://github.com/emscripten-core/emsdk.git emsdk && \
+    cd emsdk && \
+    git checkout ${EMSDK_VERSION} && \
+    ./emsdk install ${EMSDK_VERSION} && \
+    ./emsdk activate ${EMSDK_VERSION}
+
+ENV PATH="emsdk:emsdk/upstream/emscripten:${PATH}"
+ENV PYTHON=/runner/.venv/bin/python
+
+WORKDIR /monorepo

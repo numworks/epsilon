@@ -48,17 +48,14 @@ void DeleteChildrenRacks(Tree* rack) {
 void SanitizeRack(Tree* rack) {
   if (!rack->isRackLayout()) {
     rack->cloneNodeAtNode(KRackL.node<1>);
+  } else {
+    // TODO: This is not optimized, and can probably be skipped anyway.
+    NAry::Flatten(rack);
   }
   for (Tree* child : rack->children()) {
-    if (child->isRackLayout()) {
-      SanitizeRack(child);
-      NAry::SetNumberOfChildren(
-          rack, rack->numberOfChildren() + child->numberOfChildren());
-      child->removeTree();
-    } else {
-      for (Tree* subRack : child->children()) {
-        SanitizeRack(subRack);
-      }
+    assert(!child->isRackLayout());
+    for (Tree* subRack : child->children()) {
+      SanitizeRack(subRack);
     }
   }
 }

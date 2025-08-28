@@ -1125,10 +1125,6 @@ std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
     case Type::PercentAddition:
       return children[0] * (1.0 + children[1] / 100.0);
     default:
-      if (e->isParametric()) {
-        // TODO: Explicit e if it contains random nodes.
-      }
-      // TODO: Implement more Types
       assert(false);
       return NAN;
   }
@@ -1222,6 +1218,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     case Type::Diff:
     case Type::Integral:
     case Type::IntegralWithAlternatives:
+      // TODO: Explicit parametrics if they contain random nodes?
       return AnalysisToComplex<T>(e, ctx);
     case Type::Norm:
     case Type::Det:
@@ -1261,10 +1258,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     default:;
   }
   // The remaining operators are defined only on reals
-  // assert(e->numberOfChildren() <= 2);
-  if (e->numberOfChildren() > 2) {
-    return NAN;
-  }
+  // TODO: handle potential types with more than 2 children
   return ToComplexSwitchOnlyReal<T>(e, ctx);
 }
 

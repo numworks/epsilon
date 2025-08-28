@@ -26,13 +26,6 @@ class ContextWithParent : public Context {
                : UserNamedType::None;
   }
 
-  double approximateSequenceAtRank(const char* identifier,
-                                   int rank) const override {
-    return m_parentContext
-               ? m_parentContext->approximateSequenceAtRank(identifier, rank)
-               : NAN;
-  }
-
  private:
   const Context* m_parentContext;
 };

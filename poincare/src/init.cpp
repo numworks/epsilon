@@ -1,8 +1,8 @@
-#include <poincare/context.h>
 #include <poincare/exam_mode.h>
 #include <poincare/init.h>
 #include <poincare/pool.h>
 #include <poincare/preferences.h>
+#include <poincare/sequence_approximation_helper.h>
 #include <poincare/src/memory/tree_stack.h>
 
 #if POINCARE_TREE_STACK_VISUALIZATION
@@ -11,11 +11,12 @@
 
 namespace Poincare {
 
-void Init(Preferences::Interface* preferences, const ExamMode* examModePtr,
-          const Poincare::Context* globalContext) {
+void Init(
+    Preferences::Interface* preferences, const ExamMode* examModePtr,
+    const SequenceApproximationHelper::ContextInterface* sequenceContext) {
   Preferences::Init(preferences);
   ExamModeStore::Init(examModePtr);
-  Context::Init(globalContext);
+  SequenceApproximationHelper::Init(sequenceContext);
   Pool::sharedPool.init();
   Internal::SharedTreeStack.init();
 }

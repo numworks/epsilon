@@ -8,12 +8,13 @@
 
 namespace Poincare {
 
-void Init(Preferences::Interface* preferences, const ExamMode* examModePtr,
-          const Poincare::Context* globalContext) {
+void Init(
+    Preferences::Interface* preferences, const ExamMode* examModePtr,
+    const SequenceApproximationHelper::ContextInterface* sequenceContext) {
   Preferences::Init(preferences);
   ExamModeStore::Init(examModePtr);
-  Context::Init(globalContext);
   Internal::SharedTreeStack.init();
+  SequenceApproximationHelper::Init(sequenceContext);
 }
 
 void Shutdown() {

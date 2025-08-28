@@ -1,6 +1,8 @@
 #pragma once
 
+#include <poincare/context.h>
 #include <poincare/context_with_parent.h>
+#include <poincare/sequence_approximation_helper.h>
 
 #include "sequence_cache.h"
 #include "sequence_store.h"
@@ -9,7 +11,9 @@ namespace Shared {
 
 class Sequence;
 
-class SequenceContext final : public Poincare::ContextWithParent {
+class SequenceContext final
+    : public Poincare::ContextWithParent,
+      public Poincare::SequenceApproximationHelper::ContextInterface {
   friend class Sequence;
 
  public:
@@ -27,6 +31,10 @@ class SequenceContext final : public Poincare::ContextWithParent {
    * expressionForUserNamed) always call the parent context. */
   Poincare::Context::UserNamedType expressionTypeForIdentifier(
       std::string_view identifier) const override;
+
+  // SequenceApproximationHelper::Context
+  double approximateSequenceAtRank(const char* identifier,
+                                   int rank) const override;
 
   // SequenceContext
 

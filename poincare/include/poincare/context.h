@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 
-#include <cmath>
 #include <string_view>
 
 // TODO: refactor to have an Internal Context and a public API Context
@@ -24,18 +23,6 @@ class Context {
   /* The returned Tree* may live in the Pool or in the Storage. */
   virtual const Internal::Tree* expressionForUserNamed(
       const Internal::Tree* symbol) const = 0;
-
-  virtual double approximateSequenceAtRank(const char* identifier,
-                                           int rank) const {
-    return NAN;
-  }
-
-  static inline void Init(const Context* globalContext) {
-    GlobalContext = globalContext;
-  }
-
-  // TODO: remove, only a static SequenceContext may still be needed
-  static inline const Context* GlobalContext = nullptr;
 };
 
 class EmptyContext : public Context {

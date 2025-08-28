@@ -4,6 +4,7 @@
 #include <omg/unreachable.h>
 #include <omg/vector.h>
 #include <poincare/context.h>
+#include <poincare/sequence_approximation_helper.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/statistics/distributions/distribution_method.h>
 #include <poincare/src/statistics/statistics_dataset_column.h>
@@ -611,10 +612,9 @@ std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
       if (std::isnan(rank) || std::floor(rank) != rank) {
         return NAN;
       }
-      /* TODO_PCJ: Sequence are not replaced by their definition on projection,
-       * GlobalContext is therefore used. */
-      return Poincare::Context::GlobalContext->approximateSequenceAtRank(
-          Symbol::GetName(e), rank);
+      return static_cast<T>(
+          SequenceApproximationHelper::ApproximateSequenceAtRank(
+              Symbol::GetName(e), static_cast<int>(rank)));
     }
     default:
       OMG::unreachable();

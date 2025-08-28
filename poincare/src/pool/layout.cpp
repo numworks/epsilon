@@ -93,6 +93,8 @@ Layout Layout::Builder(Internal::Tree* tree) {
 Layout Layout::Create(const Internal::Tree* structure,
                       Internal::ContextTrees ctx) {
   Internal::Tree* tree = Internal::PatternMatching::Create(structure, ctx);
+  /* PatternMatching::Create has already sanitized all NAries. However, all
+   * layout must have RackLayouts children, so an extra step is needed.*/
   LayoutHelpers::SanitizeRack(tree);
   return Builder(tree);
 }

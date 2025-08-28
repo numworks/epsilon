@@ -17,7 +17,8 @@ void MakeRightMostParenthesisTemporary(Internal::Tree* l);
 // KRackL(KAbsL("x"_l)) -> KRackL(KAbsL(""_l))
 void DeleteChildrenRacks(Internal::Tree* rack);
 
-// Enforce a correct rack/layout structure by merging or inserting racks
+/* Enforce a correct rack/layout structure of a Tree containing sanitized NArys
+ * by putting all Layout's children in racks. */
 void SanitizeRack(Internal::Tree* rack);
 
 bool IsSanitizedRack(const Internal::Tree* rack);

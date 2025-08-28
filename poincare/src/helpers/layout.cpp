@@ -48,6 +48,9 @@ void DeleteChildrenRacks(Tree* rack) {
 void SanitizeRack(Tree* rack) {
   if (!rack->isRackLayout()) {
     rack->cloneNodeAtNode(KRackL.node<1>);
+  } else {
+    // Racks are expected to have been sanitized using NAry::Sanitize before
+    assert(!NAry::Sanitize(rack));
   }
   for (Tree* child : rack->children()) {
     assert(!child->isRackLayout());

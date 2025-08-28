@@ -10,9 +10,8 @@
 
 class GlobalPreferencesTestBuilder {
  public:
-  static bool IsGlobalPreferenceDefault() {
-    return GlobalPreferences::GlobalPreferencesData() ==
-           *GlobalPreferences::s_data;
+  static void ResetGlobalPreferences() {
+    *GlobalPreferences::s_data = GlobalPreferences::GlobalPreferencesData();
   }
 };
 
@@ -24,13 +23,15 @@ void init() {
 void shutdown() { Poincare::Shutdown(); }
 
 void flushGlobalData() {
-  /* TODO: Some global data are asserted to be preserved while others are reset
-   * here, unifomize expectations. */
-
+  // Reset state that could have been altered
+  GlobalPreferencesTestBuilder::ResetGlobalPreferences();
+  if (ExamModeManager::ExamMode().isActive()) {
+    ExamModeManager::SetExamMode(
+        Poincare::ExamMode(Poincare::ExamMode::Ruleset::Off));
+  }
   flushGlobalDataNoPool();
+  // No PoolObject should leak after a unit test.
   quiz_assert(Poincare::Pool::sharedPool->numberOfObjects() == 0);
-  quiz_assert(GlobalPreferencesTestBuilder::IsGlobalPreferenceDefault());
-  quiz_assert(!ExamModeManager::ExamMode().isActive());
 }
 
 void exception_run(void (*inner_main)(const char*, const char*, const char*,

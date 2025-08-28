@@ -130,6 +130,7 @@ bool Grid::childIsInLastNonGrayRow(int index) const {
 int Grid::rowAtChildIndex(int index) const { return index / numberOfColumns(); }
 
 int Grid::columnAtChildIndex(int index) const {
+  assert(numberOfColumns() > 0);
   return index % numberOfColumns();
 }
 

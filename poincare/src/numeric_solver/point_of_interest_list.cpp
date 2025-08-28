@@ -138,6 +138,7 @@ bool PointsOfInterestList::merge(Expression& stash) {
       return false;
     }
   }
+  assert(stackedList);
   assert(stackedList->isList() &&
          !stackedList->hasChildSatisfying(
              [](const Internal::Tree* t) { return !t->isPointOfInterest(); }));

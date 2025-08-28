@@ -77,7 +77,6 @@ static void numerical_reduce_axes(ndarray_obj_t *ndarray, int8_t axis, size_t *s
     // removes the values corresponding to a single axis from the shape and strides array
     uint8_t index = ULAB_MAX_DIMS - ndarray->ndim + axis;
     if((ndarray->ndim == 1) && (axis == 0)) {
-        index = 0;
         shape[ULAB_MAX_DIMS - 1] = 1;
         return;
     }
@@ -420,7 +419,6 @@ static mp_obj_t numerical_argmin_argmax_iterable(mp_obj_t oin, uint8_t optype) {
     item = mp_iternext(iterable);
     mp_obj_t best_obj = item;
     mp_float_t value, best_value = mp_obj_get_float(item);
-    value = best_value;
     while((item = mp_iternext(iterable)) != MP_OBJ_STOP_ITERATION) {
         idx++;
         value = mp_obj_get_float(item);

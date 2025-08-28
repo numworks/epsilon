@@ -74,7 +74,7 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
     // k1 * a + k2 * a -> (k1+k2) * a
     /* inf-inf, inf+inf and -inf-inf will be handled here */
     Tree* term = PushTerm(child);
-    merge = PatternMatching::CreateReduce(
+    PatternMatching::CreateReduce(
         KMult(KAdd(KA, KB), KC),
         {.KA = Constant(child), .KB = Constant(next), .KC = term});
     term->removeTree();

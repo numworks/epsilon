@@ -46,7 +46,9 @@ bool ShallowPrepareForApproximation(Tree* e, void* ctx) {
 
 static Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
   Tree* value = SharedTreeStack->pushAdd(2);
-  bound->cloneTree();
+  // Bound could contain variables that needs to be scoped.
+  Tree* scopedBound = bound->cloneTree();
+  Variables::EnterScope(scopedBound);
   KVarX->cloneTree();
   SystematicReduction::DeepReduce(value);
   Tree* tree = integrand->cloneTree();

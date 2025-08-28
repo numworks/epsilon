@@ -2294,3 +2294,23 @@ QUIZ_CASE(pcj_prepare_function) {
   assert_function_prepares_to(KAdd(2_e, 3_e, "x"_e), KAdd(5.0_de, KVarX));
   assert_function_prepares_to(KAdd(2_e, "a"_e, "x"_e), KUndef);
 }
+
+void assert_expression_prepares_to(const Tree* input, const Tree* expected) {
+  Tree* clone = input->cloneTree();
+  ProjectionContext ctx = {};
+  assert(!Simplification::ToSystem(clone, &ctx));
+  Approximation::Private::PrepareExpressionForApproximation(clone);
+  assert_trees_are_equal(clone, expected);
+}
+
+QUIZ_CASE(pcj_prepare_expression) {
+  constexpr KTree k_scopedVarX =
+      KVar<1, Parametric::k_continuousVariableSign.getRealValue(),
+           Parametric::k_continuousVariableSign.getImagValue()>;
+  assert_expression_prepares_to(
+      KIntegral("t"_e, 0_e, KVarX, KMult(KVarX, k_scopedVarX)),
+      KIntegralWithAlternatives(
+          "t"_e, 0_e, KVarX, KMult(KVarX, k_scopedVarX),
+          KMult(KVarX, k_scopedVarX),
+          KAdd(KMult(KVarX, k_scopedVarX), KPow(k_scopedVarX, 2_e))));
+}

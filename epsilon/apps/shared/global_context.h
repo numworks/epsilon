@@ -88,8 +88,7 @@ class GlobalContext final : public Poincare::VariableStore {
       Ion::Storage::Record previousRecord);
   // Record getter
   static Ion::Storage::Record UserNamedRecordWithBaseName(const char* name);
-  double approximateSequenceAtRank(const char* identifier,
-                                   int rank) const override;
+
   SequenceContext m_sequenceContext;
 };
 

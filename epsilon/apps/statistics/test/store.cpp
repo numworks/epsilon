@@ -231,7 +231,6 @@ void assert_data_box_plot(Store* store, int numberOfData,
 }
 
 QUIZ_CASE(statistics) {
-  GlobalContext context;
   UserPreferences userPreferences;
   Store store(&userPreferences);
 
@@ -971,7 +970,6 @@ void assert_data_statistics_multiple_series_equal_to(
 }
 
 QUIZ_CASE(statistics_multiple_series) {
-  GlobalContext context;
   UserPreferences userPreferences;
   Store store(&userPreferences);
 

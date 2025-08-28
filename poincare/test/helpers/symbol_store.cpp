@@ -8,6 +8,8 @@
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/test/helper.h>
+#include <poincare/user_expression.h>
 
 #include <algorithm>
 #include <string_view>
@@ -26,6 +28,14 @@ void store(const char* storeExpression,
   variableStore.setExpressionForUserNamed(
       Poincare::StoreHelper::Value(storeUserExpression),
       Poincare::StoreHelper::Symbol(storeUserExpression));
+}
+
+void store(const char* symbol, const char* expression,
+           Poincare::VariableStore& variableStore) {
+  variableStore.setExpressionForUserNamed(
+      Poincare::UserExpression::Parse(expression, variableStore),
+      Poincare::UserExpression::Parse(symbol, variableStore,
+                                      ParsingParameters{.isAssignment = true}));
 }
 
 SymbolStore::SymbolWithExpression::SymbolWithExpression(

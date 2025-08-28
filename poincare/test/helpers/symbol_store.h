@@ -15,6 +15,8 @@ class Tree;
 namespace PoincareTest {
 
 void store(const char* storeExpression, Poincare::VariableStore& variableStore);
+void store(const char* symbol, const char* expression,
+           Poincare::VariableStore& variableStore);
 
 class SymbolStore : public Poincare::VariableStore {
  public:

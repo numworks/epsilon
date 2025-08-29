@@ -150,9 +150,9 @@ constexpr
         0x30a,  //  ̊ // COMBINING RING ABOVE
 #endif
         0x327,  //  ̧ // COMBINING CEDILLA
-#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x338,  // ◌̸ // COMBINING LONG SOLIDUS OVERLAY
 
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x393,  // Γ // GREEK CAPITAL LETTER GAMMA
         0x394,  // Δ // GREEK CAPITAL LETTER DELTA
         0x3a3,  // Σ // GREEK CAPITAL LETTER SIGMA
@@ -177,7 +177,9 @@ constexpr
         0x3C7,   // χ // GREEK SMALL LETTER CHI
         0x3C9,   // ω // GREEK SMALL LETTER OMEGA
         0x1d07,  // ᴇ // LATIN LETTER SMALL CAPITAL E
+#endif
         0x2192,  // → // RIGHTWARDS ARROW
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x2197,  // ↗ // NORTH EAST ARROW
         0x2198,  // ↘ // SOUTH EAST ARROW
 #endif
@@ -186,11 +188,9 @@ constexpr
         0x221e,  // ∞ // INFINITY
         0x222b,  // ∫ // INTEGRAL
         0x2248,  // ≈ // ALMOST EQUAL TO
-#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x2264,  // ≤ // LESS-THAN OR EQUAL TO
-        0x2265,  // ≥ // GREATER-THAN OR EQUAL TO
-#endif
 #if KANDINSKY_CODEPOINTS_SCANDIUM
+        0x2265,  // ≥ // GREATER-THAN OR EQUAL TO
         0x22a6,  // ⊦ // ASSERTION
         0x22ef,  // ⋯ // MIDLINE HORIZONTAL ELLIPSIS
 #endif

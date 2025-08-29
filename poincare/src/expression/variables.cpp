@@ -244,8 +244,9 @@ bool Variables::ProjectLocalVariablesToId(Tree* e, uint8_t depth) {
     if (isParametric && child.index == Parametric::k_variableIndex) {
     } else if (isParametric && Parametric::IsFunctionIndex(child.index, e)) {
       // Project local variable
-      ReplaceSymbol(child, e->child(Parametric::k_variableIndex), 0,
-                    Parametric::VariableSign(e));
+      changed = ReplaceSymbol(child, e->child(Parametric::k_variableIndex), 0,
+                              Parametric::VariableSign(e)) ||
+                changed;
       changed = ProjectLocalVariablesToId(child, depth + 1) || changed;
     } else {
       changed = ProjectLocalVariablesToId(child, depth) || changed;

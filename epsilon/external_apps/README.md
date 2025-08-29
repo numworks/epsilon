@@ -36,7 +36,7 @@ on the `CALCULATOR IS CONNECTED` screen:
 
 Then, run the following commad to build and install the app:
 ```shell
-make -c sample_cpp platform=device run
+make -C sample_cpp PLATFORM=device run
 ```
 
 A `THIRD PARTY APPLICATIONS` message will appear,

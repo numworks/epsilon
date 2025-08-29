@@ -4,10 +4,13 @@
 #include <poincare/exception_checkpoint.h>
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/src/expression/projection.h>
+#include <shared/global_context.h>
 #include <string.h>
 
 #include <algorithm>
 #include <cmath>
+
+#include "global_preferences.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -84,28 +87,27 @@ UserExpression Calculation::approximateOutput() {
   return e;
 }
 
-Layout Calculation::createInputLayout(const Context& context) {
+Layout Calculation::createInputLayout() {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     UserExpression e = input();
     if (!e.isUninitialized()) {
       return e.createLayout(Preferences::PrintFloatMode::Decimal,
                             PrintFloat::k_maxNumberOfSignificantDigits,
-                            context);
+                            GlobalContextAccessor::Context());
     }
   }
   return Layout();
 }
 
-Layout Calculation::createExactOutputLayout(const Context& context,
-                                            bool* couldNotCreateExactLayout) {
+Layout Calculation::createExactOutputLayout(bool* couldNotCreateExactLayout) {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     UserExpression e = exactOutput();
     if (!e.isUninitialized()) {
       return e.createLayout(Preferences::PrintFloatMode::Decimal,
                             PrintFloat::k_maxNumberOfSignificantDigits,
-                            context);
+                            GlobalContextAccessor::Context());
     }
   }
   *couldNotCreateExactLayout = true;
@@ -113,8 +115,7 @@ Layout Calculation::createExactOutputLayout(const Context& context,
 }
 
 Layout Calculation::createApproximateOutputLayout(
-    const Context& context, bool* couldNotCreateApproximateLayout,
-    bool forEditing) {
+    bool* couldNotCreateApproximateLayout, bool forEditing) {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     UserExpression e = approximateOutput();
@@ -126,7 +127,7 @@ Layout Calculation::createApproximateOutputLayout(
               m_calculationPreferences.displayMode,
               forEditing ? PrintFloat::k_maxNumberOfSignificantDigits
                          : m_calculationPreferences.numberOfSignificantDigits,
-              context)
+              GlobalContextAccessor::Context())
           .cloneAndTurnEToTenPowerLayout(false);
     }
   }
@@ -140,12 +141,12 @@ KDCoordinate Calculation::height(bool expanded) {
   return h;
 }
 
-void Calculation::computeDisplayOutput(const Poincare::Context& context) {
+void Calculation::computeDisplayOutput() {
   if (m_displayOutput != DisplayOutput::Unknown) {
     return;
   }
-  m_displayOutput = ComputeDisplayOutput(input(), exactOutput(),
-                                         approximateOutput(), context);
+  m_displayOutput =
+      ComputeDisplayOutput(input(), exactOutput(), approximateOutput());
   /* Hide the exact output if it comes from a reduction failure and if the
    * approximate output is available */
   if (m_reductionFailure && CanDisplayApproximate(m_displayOutput)) {
@@ -168,26 +169,26 @@ static bool ShouldOnlyDisplayExactOutput(UserExpression input) {
 
 Calculation::OutputLayouts Calculation::layoutCalculation(
     KDFont::Size font, KDCoordinate maxVisibleWidth,
-    const Poincare::Context& context, bool canChangeDisplayOutput) {
+    bool canChangeDisplayOutput) {
   /* This processing has do be done in a certain order (1. display output, 2.
    * output layouts, 3. equal sign). */
-  computeDisplayOutput(context);
-  OutputLayouts outputLayouts = createOutputLayouts(
-      context, canChangeDisplayOutput, maxVisibleWidth, font);
-  computeEqualSign(outputLayouts, context);
+  computeDisplayOutput();
+  OutputLayouts outputLayouts =
+      createOutputLayouts(canChangeDisplayOutput, maxVisibleWidth, font);
+  computeEqualSign(outputLayouts);
   return outputLayouts;
 }
 
 Calculation::OutputLayouts Calculation::createOutputLayouts(
-    const Context& context, bool canChangeDisplayOutput,
-    KDCoordinate maxVisibleWidth, KDFont::Size font) {
+    bool canChangeDisplayOutput, KDCoordinate maxVisibleWidth,
+    KDFont::Size font) {
   assert(m_displayOutput != DisplayOutput::Unknown);
 
   // Create the exact output layout
   Layout exactOutput = Layout();
   if (CanDisplayExact(m_displayOutput)) {
     bool couldNotCreateExactLayout = false;
-    exactOutput = createExactOutputLayout(context, &couldNotCreateExactLayout);
+    exactOutput = createExactOutputLayout(&couldNotCreateExactLayout);
     if (couldNotCreateExactLayout) {
       if (canChangeDisplayOutput &&
           m_displayOutput != DisplayOutput::ExactOnly) {
@@ -216,8 +217,8 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
   Layout approximateOutput = Layout();
   if (CanDisplayApproximate(m_displayOutput)) {
     bool couldNotCreateApproximateLayout = false;
-    approximateOutput = createApproximateOutputLayout(
-        context, &couldNotCreateApproximateLayout);
+    approximateOutput =
+        createApproximateOutputLayout(&couldNotCreateApproximateLayout);
     if (couldNotCreateApproximateLayout) {
       if (canChangeDisplayOutput &&
           m_displayOutput != DisplayOutput::ApproximateOnly) {
@@ -226,8 +227,8 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
         forceDisplayOutput(DisplayOutput::ApproximateOnly);
         exactOutput = Layout();
         couldNotCreateApproximateLayout = false;
-        approximateOutput = createApproximateOutputLayout(
-            context, &couldNotCreateApproximateLayout);
+        approximateOutput =
+            createApproximateOutputLayout(&couldNotCreateApproximateLayout);
         if (couldNotCreateApproximateLayout) {
           ExceptionCheckpoint::Raise();
         }
@@ -244,7 +245,7 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
         exactOutput.isSameScientificNotationAs(approximateOutput, false)) {
       forceDisplayOutput(DisplayOutput::ApproximateIsIdenticalToExact);
     } else if ((m_displayOutput != DisplayOutput::ExactAndApproximateToggle) &&
-               exactOutput.isIdenticalTo(createInputLayout(context))) {
+               exactOutput.isIdenticalTo(createInputLayout())) {
       forceDisplayOutput(DisplayOutput::ExactAndApproximateToggle);
     }
   }
@@ -254,7 +255,7 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
 
 Calculation::DisplayOutput Calculation::ComputeDisplayOutput(
     UserExpression input, UserExpression exactOutput,
-    UserExpression approximateOutput, const Poincare::Context& context) {
+    UserExpression approximateOutput) {
   using enum Calculation::Calculation::DisplayOutput;
   if (input.isUninitialized() || exactOutput.isUninitialized() ||
       ShouldOnlyDisplayExactOutput(input) ||
@@ -264,13 +265,16 @@ Calculation::DisplayOutput Calculation::ComputeDisplayOutput(
   if (approximateOutput.isUndefinedOrNonReal() ||
       // Other conditions are factorized in CAS
       CAS::ShouldOnlyDisplayApproximation(input, exactOutput, approximateOutput,
-                                          context)) {
+                                          GlobalContextAccessor::Context())) {
     return ApproximateOnly;
   }
   if (input.isIdenticalTo(exactOutput) ||
-      input.recursivelyMatches(&Expression::isApproximate, context) ||
-      exactOutput.recursivelyMatches(&Expression::isApproximate, context) ||
-      input.recursivelyMatches(&Expression::isPercent, context)) {
+      input.recursivelyMatches(&Expression::isApproximate,
+                               GlobalContextAccessor::Context()) ||
+      exactOutput.recursivelyMatches(&Expression::isApproximate,
+                                     GlobalContextAccessor::Context()) ||
+      input.recursivelyMatches(&Expression::isPercent,
+                               GlobalContextAccessor::Context())) {
     return ExactAndApproximateToggle;
   }
   return ExactAndApproximate;
@@ -278,7 +282,7 @@ Calculation::DisplayOutput Calculation::ComputeDisplayOutput(
 
 Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
     const OutputLayouts& outputLayouts, Poincare::ComplexFormat complexFormat,
-    Poincare::AngleUnit angleUnit, const Poincare::Context& context) {
+    Poincare::AngleUnit angleUnit) {
   /* Displaying the right equal symbol is less important than displaying a
    * result, so we do not want computeEqualSign to create a pool failure that
    * would prevent from displaying a result that we managed to compute. We thus
@@ -293,10 +297,12 @@ Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
      * compared */
     assert(!outputLayouts.exact.isUninitialized());
     assert(!outputLayouts.approximate.isUninitialized());
-    UserExpression exactDisplayOutput = UserExpression::Parse(
-        outputLayouts.exact.cloneWithoutMargins(), context);
-    UserExpression approximateDisplayOutput = UserExpression::Parse(
-        outputLayouts.approximate.cloneWithoutMargins(), context);
+    UserExpression exactDisplayOutput =
+        UserExpression::Parse(outputLayouts.exact.cloneWithoutMargins(),
+                              GlobalContextAccessor::Context());
+    UserExpression approximateDisplayOutput =
+        UserExpression::Parse(outputLayouts.approximate.cloneWithoutMargins(),
+                              GlobalContextAccessor::Context());
     // Parsing the layout into an expression is supposed to work here
     assert(!exactDisplayOutput.isUninitialized() &&
            !approximateDisplayOutput.isUninitialized());
@@ -311,8 +317,7 @@ Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
   }
 }
 
-void Calculation::computeEqualSign(const OutputLayouts& outputLayouts,
-                                   const Poincare::Context& context) {
+void Calculation::computeEqualSign(const OutputLayouts& outputLayouts) {
   assert(m_displayOutput != DisplayOutput::Unknown);
   if (m_equalSign != EqualSign::Unknown) {
     return;
@@ -324,14 +329,14 @@ void Calculation::computeEqualSign(const OutputLayouts& outputLayouts,
   } else {
     m_equalSign = ComputeEqualSignFromOutputs(
         outputLayouts, m_calculationPreferences.complexFormat,
-        m_calculationPreferences.angleUnit, context);
+        m_calculationPreferences.angleUnit);
   }
   assert(m_equalSign != EqualSign::Unknown);
 }
 
 void Calculation::fillExpressionsForAdditionalResults(
     UserExpression* input, UserExpression* exactOutput,
-    UserExpression* approximateOutput, const Context& context) {
+    UserExpression* approximateOutput) {
   *input = this->input();
   *approximateOutput = this->approximateOutput();
   assert(m_displayOutput != DisplayOutput::Unknown);
@@ -340,18 +345,18 @@ void Calculation::fillExpressionsForAdditionalResults(
                      : this->exactOutput();
 }
 
-AdditionalResultsType Calculation::additionalResultsType(
-    const Context& context) {
+AdditionalResultsType Calculation::additionalResultsType() {
   if (m_additionalResultsType.isUninitialized()) {
     if (m_reductionFailure) {
       // Hide the additional result if the calculation had a reduction failure
       m_additionalResultsType = AdditionalResultsType{.empty = true};
     } else {
       UserExpression i, a, e;
-      fillExpressionsForAdditionalResults(&i, &e, &a, context);
+      fillExpressionsForAdditionalResults(&i, &e, &a);
       m_additionalResultsType =
           AdditionalResultsType::AdditionalResultsForExpressions(
-              i, e, a, m_calculationPreferences, context);
+              i, e, a, m_calculationPreferences,
+              GlobalContextAccessor::Context());
     }
   }
   assert(!m_additionalResultsType.isUninitialized());

@@ -37,19 +37,15 @@ class CalculationStore
    * filled. */
   int numberOfCalculations() const { return numberOfElements(); }
   OMG::ExpiringPointer<Calculation> calculationAtIndex(int index) const;
-  Poincare::UserExpression ansExpression(
-      const Poincare::Context& context) const;
+  Poincare::UserExpression ansExpression() const;
 
-  void replaceAnsInExpression(Poincare::UserExpression& expression,
-                              const Poincare::Context& context) const;
+  void replaceAnsInExpression(Poincare::UserExpression& expression) const;
 
-  OMG::ExpiringPointer<Calculation> push(
-      Poincare::Layout input, Poincare::VariableStore& variableStore);
+  OMG::ExpiringPointer<Calculation> push(Poincare::Layout input);
   void deleteCalculationAtIndex(int index);
   bool preferencesHaveChanged();
 
-  Poincare::PoolVariableContext createAnsContext(
-      const Poincare::Context& context);
+  Poincare::PoolVariableContext createAnsContext();
 
   using Store::deleteAll;
   using Store::maximumSize;
@@ -75,12 +71,10 @@ class CalculationStore
     }
   };
 
-  Poincare::UserExpression parseInput(Poincare::Layout inputLayout,
-                                      const Poincare::Context& context);
+  Poincare::UserExpression parseInput(Poincare::Layout inputLayout);
 
   CalculationElements computeAndProcess(
-      Poincare::UserExpression inputExpression,
-      Poincare::VariableStore& variableStore);
+      Poincare::UserExpression inputExpression);
 
   /* Push an empty calculation at a certain location. Assumes there is enough
    * space to push an empty calculation. Returns a pointer to the new

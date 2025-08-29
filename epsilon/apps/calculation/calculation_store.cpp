@@ -12,7 +12,6 @@
 #include <poincare/k_tree.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
-#include <poincare/variable_store.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -51,7 +50,7 @@ void CalculationStore::deleteCalculationAtIndex(int index) {
   deleteElementAtIndex(numberOfElements() - 1 - index);
 }
 
-UserExpression CalculationStore::ansExpression(const Context& context) const {
+UserExpression CalculationStore::ansExpression() const {
   const UserExpression defaultAns = UserExpression::Builder(0_e);
   if (numberOfCalculations() == 0) {
     return defaultAns;
@@ -80,7 +79,8 @@ UserExpression CalculationStore::ansExpression(const Context& context) const {
        * calculation. */
       ansExpr = ansExpr.cloneChildAtIndex(0);
     }
-  } else if (input.recursivelyMatches(&Expression::isApproximate, context) &&
+  } else if (input.recursivelyMatches(&Expression::isApproximate,
+                                      GlobalContextAccessor::Context()) &&
              mostRecentCalculation->equalSign() ==
                  Calculation::EqualSign::Equal) {
     /* Case 2.
@@ -97,23 +97,21 @@ UserExpression CalculationStore::ansExpression(const Context& context) const {
   return ansExpr.isUninitialized() ? defaultAns : ansExpr;
 }
 
-void CalculationStore::replaceAnsInExpression(UserExpression& expression,
-                                              const Context& context) const {
+void CalculationStore::replaceAnsInExpression(
+    UserExpression& expression) const {
   UserExpression ansSymbol = SymbolHelper::Ans();
-  UserExpression ansExpression = this->ansExpression(context);
-  expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
+  expression.replaceSymbolWithExpression(ansSymbol, ansExpression());
 }
 
 static bool compute(Poincare::UserExpression inputExpression,
                     Poincare::UserExpression& exactOutputExpression,
                     Poincare::UserExpression& approximateOutputExpression,
-                    Poincare::ComplexFormat& complexFormat,
-                    const Poincare::Context& context) {
+                    Poincare::ComplexFormat& complexFormat) {
   assert(!inputExpression.isUninitialized());
   // Update complexFormat with input expression
   complexFormat =
       Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-          complexFormat, inputExpression, context);
+          complexFormat, inputExpression, GlobalContextAccessor::Context());
   Internal::ProjectionContext projContext = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
@@ -121,7 +119,7 @@ static bool compute(Poincare::UserExpression inputExpression,
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_symbolic = CAS::Enabled() ? SymbolicComputation::ReplaceDefinedSymbols
                                    : SymbolicComputation::ReplaceAllSymbols,
-      .m_context = context};
+      .m_context = GlobalContextAccessor::Context()};
 
   return inputExpression.cloneAndSimplifyAndApproximate(
       &exactOutputExpression, &approximateOutputExpression, projContext);
@@ -134,7 +132,7 @@ struct CalculationResult {
 
 static CalculationResult computeInterruptible(
     Poincare::UserExpression inputExpression,
-    Poincare::ComplexFormat& complexFormat, const Poincare::Context& context) {
+    Poincare::ComplexFormat& complexFormat) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
    * simplification, we could still try to display the approximate result? When
    * interrupted during approximation, we could at least display the exact
@@ -147,7 +145,7 @@ static CalculationResult computeInterruptible(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
     hasReductionFailure = compute(inputExpression, outputs.exact,
-                                  outputs.approximate, complexFormat, context);
+                                  outputs.approximate, complexFormat);
   } else {
     GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
         checkpoint.endOfPoolBeforeCheckpoint());
@@ -162,8 +160,7 @@ static CalculationResult computeInterruptible(
 }
 
 static void processStore(OutputExpressions& outputs,
-                         Poincare::UserExpression input,
-                         Poincare::VariableStore& variableStore) {
+                         Poincare::UserExpression input) {
   /* The global variable store performs the store and ensures that no symbol is
    * kept in the definition of a variable.
    * Once this is done, the output is replaced with the stored expression. To do
@@ -176,11 +173,13 @@ static void processStore(OutputExpressions& outputs,
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
   Internal::ProjectionContext projectionContext =
-      PoincareHelpers::ProjectionContextForPreferences(value, variableStore);
+      PoincareHelpers::ProjectionContextForPreferences(
+          value, GlobalContextAccessor::Context());
   UserExpression valueApprox =
       value.cloneAndApproximate<double>(projectionContext);
-  if (symbol.isUserSymbol() && CAS::ShouldOnlyDisplayApproximation(
-                                   input, value, valueApprox, variableStore)) {
+  if (symbol.isUserSymbol() &&
+      CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox,
+                                          GlobalContextAccessor::Context())) {
     value = valueApprox;
   }
 #if 0
@@ -189,7 +188,7 @@ static void processStore(OutputExpressions& outputs,
 assert(!value.recursivelyMatches(
 [](const Expression e) { return e.isUserSymbol(); }));
 #endif
-  if (StoreHelper::StoreValueForSymbol(variableStore, value, symbol)) {
+  if (GlobalContextAccessor::Store().setExpressionForUserNamed(value, symbol)) {
     outputs.exact = value;
     outputs.approximate = valueApprox;
     assert(!outputs.exact.isUninitialized() &&
@@ -202,8 +201,7 @@ assert(!value.recursivelyMatches(
 
 static void postProcessOutputs(OutputExpressions& outputs,
                                Poincare::UserExpression inputExpression,
-                               bool unitsForbidden,
-                               Poincare::VariableStore& variableStore) {
+                               bool unitsForbidden) {
   /* TODO: the two following operations should be performed in a
    * CircuitBreakerCheckpoint to handle the "Back" interruption properly,
    * although it is very unlikely to happen because these operations are fast.
@@ -222,12 +220,12 @@ static void postProcessOutputs(OutputExpressions& outputs,
    * above the checkpoint. */
   // TODO: improve the safety of the store operation
   if (outputs.exact.isStore()) {
-    processStore(outputs, inputExpression, variableStore);
+    processStore(outputs, inputExpression);
   }
 }
 
 Poincare::UserExpression CalculationStore::parseInput(
-    Poincare::Layout inputLayout, const Poincare::Context& context) {
+    Poincare::Layout inputLayout) {
   m_inUsePreferences = getCurrentPreferences();
 
   CircuitBreakerCheckpoint checkpoint(
@@ -238,10 +236,10 @@ Poincare::UserExpression CalculationStore::parseInput(
      * Setting Ans in the context makes it available during the parsing of the
      * input, namely to know if a rightwards arrow is a unit conversion or a
      * variable assignment. */
-    PoolVariableContext ansContext = createAnsContext(context);
+    PoolVariableContext ansContext = createAnsContext();
     UserExpression inputExpression =
         UserExpression::Parse(inputLayout, ansContext);
-    replaceAnsInExpression(inputExpression, context);
+    replaceAnsInExpression(inputExpression);
     enhancePushedExpression(inputExpression);
     return inputExpression;
   } else {
@@ -252,15 +250,14 @@ Poincare::UserExpression CalculationStore::parseInput(
 }
 
 CalculationStore::CalculationElements CalculationStore::computeAndProcess(
-    Poincare::UserExpression inputExpression,
-    Poincare::VariableStore& variableStore) {
+    Poincare::UserExpression inputExpression) {
   Poincare::ComplexFormat complexFormat =
       GlobalPreferences::SharedGlobalPreferences()->complexFormat();
   CalculationResult calculationResult =
-      computeInterruptible(inputExpression, complexFormat, variableStore);
+      computeInterruptible(inputExpression, complexFormat);
 
   postProcessOutputs(calculationResult.outputs, inputExpression,
-                     ExamModeManager::ExamMode().forbidUnits(), variableStore);
+                     ExamModeManager::ExamMode().forbidUnits());
 
   return CalculationElements{inputExpression, calculationResult.outputs,
                              calculationResult.hasReductionFailure,
@@ -268,17 +265,15 @@ CalculationStore::CalculationElements CalculationStore::computeAndProcess(
 }
 
 OMG::ExpiringPointer<Calculation> CalculationStore::push(
-    Poincare::Layout inputLayout, Poincare::VariableStore& variableStore) {
-  Poincare::UserExpression inputExpression =
-      parseInput(inputLayout, variableStore);
+    Poincare::Layout inputLayout) {
+  Poincare::UserExpression inputExpression = parseInput(inputLayout);
   if (inputExpression.isUninitialized()) {
     /* If parsing was interrupted (which is unlikely to happen), do not update
      * the calculation store */
     return nullptr;
   }
 
-  CalculationElements calculationToPush =
-      computeAndProcess(inputExpression, variableStore);
+  CalculationElements calculationToPush = computeAndProcess(inputExpression);
 
   size_t neededSize = neededSizeForCalculation(calculationToPush.sizeOfTrees());
   if (neededSize > maximumSize()) {
@@ -313,9 +308,9 @@ bool CalculationStore::preferencesHaveChanged() {
   return true;
 }
 
-PoolVariableContext CalculationStore::createAnsContext(const Context& context) {
-  return PoolVariableContext(SymbolHelper::AnsMainAlias(),
-                             ansExpression(context), &context);
+PoolVariableContext CalculationStore::createAnsContext() {
+  return PoolVariableContext(SymbolHelper::AnsMainAlias(), ansExpression(),
+                             &GlobalContextAccessor::Context());
 }
 
 // Private

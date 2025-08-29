@@ -2,7 +2,6 @@
 
 #include <apps/constant.h>
 #include <assert.h>
-#include <poincare/context.h>
 #include <poincare/exception_checkpoint.h>
 #include <string.h>
 
@@ -18,10 +17,9 @@ namespace Calculation {
 
 /* HistoryViewCell */
 
-void HistoryViewCell::ComputeCalculationHeights(Calculation* calculation,
-                                                const Context& context) {
+void HistoryViewCell::ComputeCalculationHeights(Calculation* calculation) {
   HistoryViewCell cell(nullptr);
-  cell.setNewCalculation(calculation, false, context, true);
+  cell.setNewCalculation(calculation, false, true);
   KDCoordinate unExpandedHeight = cell.minimalHeightForOptimalDisplay();
   KDCoordinate expandedHeight = cell.updateExpanded(true)
                                     ? cell.minimalHeightForOptimalDisplay()
@@ -256,7 +254,6 @@ void HistoryViewCell::resetMemoization() {
 }
 
 void HistoryViewCell::setCalculation(Calculation* calculation, bool expanded,
-                                     const Context& context,
                                      bool canChangeDisplayOutput) {
   uint32_t newCalculationCRC =
       Ion::crc32Byte((const uint8_t*)calculation,
@@ -274,7 +271,7 @@ void HistoryViewCell::setCalculation(Calculation* calculation, bool expanded,
   // Memoization
   m_calculationCRC32 = newCalculationCRC;
 
-  setNewCalculation(calculation, expanded, context, canChangeDisplayOutput);
+  setNewCalculation(calculation, expanded, canChangeDisplayOutput);
 
   /* The displayed input and outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */
@@ -283,10 +280,9 @@ void HistoryViewCell::setCalculation(Calculation* calculation, bool expanded,
 }
 
 void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
-                                        const Poincare::Context& context,
                                         bool canChangeDisplayOutput) {
   // Memoization
-  m_inputView.setLayout(calculation->createInputLayout(context));
+  m_inputView.setLayout(calculation->createInputLayout());
 
   /* All expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
@@ -298,14 +294,14 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
        2 * KDFont::GlyphWidth(font));  // > arrow and = sign
 
   Calculation::OutputLayouts outputLayouts = calculation->layoutCalculation(
-      font, maxVisibleWidth, context, canChangeDisplayOutput);
+      font, maxVisibleWidth, canChangeDisplayOutput);
 
   m_calculationDisplayOutput = calculation->displayOutput();
   /* m_calculationDisplayOutput must have been updated before computing the
    * additional results type (a forbidden expression could hide the exact
    * results). */
 
-  m_hasEllipsis = calculation->additionalResultsType(context).isNotEmpty();
+  m_hasEllipsis = calculation->additionalResultsType().isNotEmpty();
 
   /* Update m_scrollableOutputView. Must be done once m_calculationDisplayOutput
    * has been updated. We must set which subviews are displayed before

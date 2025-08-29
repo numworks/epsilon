@@ -136,8 +136,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
   assert(&layoutField->context() == &GlobalContextAccessor::Context());
-  PoolVariableContext ansContext =
-      m_calculationStore->createAnsContext(GlobalContextAccessor::Context());
+  PoolVariableContext ansContext = m_calculationStore->createAnsContext();
   if (!layoutField->isEmpty()) {
     m_lastInput = layoutField->layout().clone();
   }
@@ -151,12 +150,9 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   }
   assert(!layout.isUninitialized());
   // TODO layout is parsed twice : in isAcceptableLayout and in push
-  Calculation* calculation =
-      m_calculationStore->push(layout, GlobalContextAccessor::Store())
-          .pointer();
+  Calculation* calculation = m_calculationStore->push(layout).pointer();
   if (calculation) {
-    HistoryViewCell::ComputeCalculationHeights(
-        calculation, GlobalContextAccessor::Context());
+    HistoryViewCell::ComputeCalculationHeights(calculation);
     m_historyController->reload(false);
     layoutField->clearAndSetEditing(true);
     return true;
@@ -188,7 +184,7 @@ bool EditExpressionController::isAcceptableExpression(
   }
   // Replace ans with its value and check layout
   UserExpression exp = expression.clone();
-  m_calculationStore->replaceAnsInExpression(exp, context);
+  m_calculationStore->replaceAnsInExpression(exp);
 
   assert(!exp.isUninitialized());
   Layout layout =

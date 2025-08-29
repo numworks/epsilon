@@ -169,6 +169,9 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
 
   // Beautify approximate solutions
   if (result.approximateSolutionList) {
+    // Advanced reduction is only needed to beautify in polar format
+    projectionContext.m_advanceReduce =
+        projectionContext.m_complexFormat == ComplexFormat::Polar;
     Simplification::BeautifyReduced(result.approximateSolutionList,
                                     &projectionContext);
   }

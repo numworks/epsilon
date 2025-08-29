@@ -31,7 +31,7 @@ void store(const char* storeExpression,
 SymbolStore::SymbolWithExpression::SymbolWithExpression(
     std::string_view name, Poincare::Context::UserNamedType type, const Tree* e)
     : m_type{type} {
-  assert(name.size() <= k_maxNameSize);
+  assert(name.length() <= k_maxNameSize);
   m_name = name;
   assert(e->treeSize() <= k_expressionBufferSize);
   e->copyTreeTo(m_expressionBuffer.data());

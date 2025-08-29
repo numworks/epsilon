@@ -31,7 +31,7 @@ class String {
     assert(stringLength <= CAPACITY);
     size_type i = 0;
     while (i < stringLength) {
-      (*this)[m_size++] = *(string + (i++));
+      (*this)[m_length++] = *(string + (i++));
     }
   }
 
@@ -39,7 +39,7 @@ class String {
     size_type i = 0;
     while (*(string + i) != '\0') {
       assert(i <= CAPACITY);
-      (*this)[m_size++] = *(string + (i++));
+      (*this)[m_length++] = *(string + (i++));
     }
   }
 
@@ -48,7 +48,7 @@ class String {
   String(std::initializer_list<char_type> characters) {
     assert(characters.size() <= CAPACITY);
     for (const char_type& element : characters) {
-      (*this)[m_size++] = element;
+      (*this)[m_length++] = element;
     }
   }
 
@@ -69,21 +69,20 @@ class String {
   // Methods
 
   const_reference operator[](size_type index) const {
-    assert(index < m_size);
+    assert(index < m_length);
     return m_data[index];
   }
   reference operator[](size_type index) {
-    assert(index < m_size);
+    assert(index < m_length);
     return m_data[index];
   }
 
-  size_type length() const { return m_size; }
-  size_type size() const { return m_size; }
+  size_type length() const { return m_length; }
   const char_type* data() const { return m_data; }
   char_type* data() { return m_data; }
 
  private:
-  size_type m_size = 0;
+  size_type m_length = 0;
   value_type m_data[CAPACITY];
 };
 

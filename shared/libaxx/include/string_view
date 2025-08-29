@@ -23,14 +23,14 @@ class string_view {
   constexpr string_view(const string_view& other) = default;
   // Constructs a view of the first "count" characters in the string
   constexpr string_view(const char* string, size_type count)
-      : m_data(string), m_size(count) {
-    assert(m_size <= strlen(string));
+      : m_data(string), m_length(count) {
+    assert(m_length <= strlen(string));
   }
   /* Constructs a view of all the characters in the string, not including the
    * terminating null character */
   constexpr string_view(const char* string) {
     m_data = string;
-    m_size = strlen(string);
+    m_length = strlen(string);
   }
 
   /* A string view cannot be constructed from a nullptr according to the C++
@@ -40,19 +40,18 @@ class string_view {
   // Methods
 
   constexpr const_pointer data() const { return m_data; }
-  constexpr size_type size() const { return m_size; }
-  constexpr size_type length() const { return m_size; }
-  constexpr bool empty() const { return size() == 0; }
+  constexpr size_type length() const { return m_length; }
+  constexpr bool empty() const { return length() == 0; }
 
   // Accessing or iterating on elements of a string_view is always read-only
 
   constexpr const_iterator begin() const { return data(); }
   constexpr const_iterator cbegin() const { return data(); }
-  constexpr const_iterator end() const { return data() + size(); }
-  constexpr const_iterator cend() const { return data() + size(); }
+  constexpr const_iterator end() const { return data() + length(); }
+  constexpr const_iterator cend() const { return data() + length(); }
 
   constexpr const_reference operator[](size_type index) const {
-    assert(index < size());
+    assert(index < length());
     return *(data() + index);
   }
 
@@ -62,7 +61,7 @@ class string_view {
   constexpr size_type copy(char_type* destination, size_type count,
                            size_type position = 0) const {
     size_type i = 0;
-    while ((i + position < count) && (i + position < size())) {
+    while ((i + position < count) && (i + position < length())) {
       *(destination + i) = m_data[i + position];
       i++;
     }
@@ -78,7 +77,7 @@ class string_view {
   }
 
   const_pointer m_data = nullptr;
-  size_type m_size = 0;
+  size_type m_length = 0;
 };
 
 // String equality operator

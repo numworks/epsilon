@@ -2,7 +2,6 @@
 
 #include <apps/calculation/additional_results/additional_results_type.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/context.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/user_expression.h>
@@ -99,12 +98,10 @@ class Calculation {
   Poincare::UserExpression approximateOutput();
 
   // Layouts
-  Poincare::Layout createInputLayout(const Poincare::Context& context);
-  Poincare::Layout createExactOutputLayout(const Poincare::Context& context,
-                                           bool* couldNotCreateExactLayout);
+  Poincare::Layout createInputLayout();
+  Poincare::Layout createExactOutputLayout(bool* couldNotCreateExactLayout);
   Poincare::Layout createApproximateOutputLayout(
-      const Poincare::Context& context, bool* couldNotCreateApproximateLayout,
-      bool forEditing = false);
+      bool* couldNotCreateApproximateLayout, bool forEditing = false);
 
   // Heights
   KDCoordinate height(bool expanded);
@@ -130,14 +127,12 @@ class Calculation {
    * m_displayOutput and m_equalSign members are also computed. */
   OutputLayouts layoutCalculation(KDFont::Size font,
                                   KDCoordinate maxVisibleWidth,
-                                  const Poincare::Context& context,
                                   bool canChangeDisplayOutput);
 
   void fillExpressionsForAdditionalResults(
       Poincare::UserExpression* input, Poincare::UserExpression* exactOutput,
-      Poincare::UserExpression* approximateOutput,
-      const Poincare::Context& context);
-  AdditionalResultsType additionalResultsType(const Poincare::Context& context);
+      Poincare::UserExpression* approximateOutput);
+  AdditionalResultsType additionalResultsType();
 
  private:
   /* An exact result of length longer than 58 characters will be hidden. Add a
@@ -155,12 +150,11 @@ class Calculation {
 
   static DisplayOutput ComputeDisplayOutput(
       Poincare::UserExpression input, Poincare::UserExpression exactOutput,
-      Poincare::UserExpression approximateOutput,
-      const Poincare::Context& context);
+      Poincare::UserExpression approximateOutput);
 
   static EqualSign ComputeEqualSignFromOutputs(
       const OutputLayouts& outputLayouts, Poincare::ComplexFormat complexFormat,
-      Poincare::AngleUnit angleUnit, const Poincare::Context& context);
+      Poincare::AngleUnit angleUnit);
 
   void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
 
@@ -191,19 +185,17 @@ class Calculation {
            m_approximatedOutputTreeSize;
   }
 
-  void computeDisplayOutput(const Poincare::Context& context);
+  void computeDisplayOutput();
 
   /* Returns the output layouts (exact and approximate). Optionally
    * (canChangeDisplayOutput), can change the m_displayOutput member variable */
-  OutputLayouts createOutputLayouts(const Poincare::Context& context,
-                                    bool canChangeDisplayOutput,
+  OutputLayouts createOutputLayouts(bool canChangeDisplayOutput,
                                     KDCoordinate maxVisibleWidth,
                                     KDFont::Size font);
 
   /* Compute the sign to be displayed for this expression by comparing the exact
    * output layout and the approximate output layout. */
-  void computeEqualSign(const OutputLayouts& outputLayouts,
-                        const Poincare::Context& context);
+  void computeEqualSign(const OutputLayouts& outputLayouts);
 
   /* Buffers holding text expressions have to be longer than the text written
    * by user (of maximum length TextField::MaxBufferSize()) because when we

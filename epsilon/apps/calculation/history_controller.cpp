@@ -2,7 +2,6 @@
 
 #include <assert.h>
 #include <poincare/circuit_breaker_checkpoint.h>
-#include <poincare/context.h>
 #include <poincare/exception_checkpoint.h>
 
 #include "app.h"
@@ -165,10 +164,7 @@ void HistoryController::recomputeHistoryCellHeightsIfNeeded() {
     return;
   }
   for (int i = 0; i < numberOfRows(); i++) {
-    /* The void context is used since there is no reasons for the
-     * heightComputer to resolve symbols */
-    HistoryViewCell::ComputeCalculationHeights(calculationAtIndex(i).pointer(),
-                                               EmptyContext{});
+    HistoryViewCell::ComputeCalculationHeights(calculationAtIndex(i).pointer());
   }
 }
 
@@ -192,8 +188,7 @@ void HistoryController::fillCellForRow(HighlightCell* cell, int row) {
   HistoryViewCell* myCell = static_cast<HistoryViewCell*>(cell);
   myCell->setCalculation(
       calculationAtIndex(row).pointer(),
-      row == selectedRow() && m_selectedSubviewType == SubviewType::Output,
-      App::app()->localContext());
+      row == selectedRow() && m_selectedSubviewType == SubviewType::Output);
   myCell->setEven(row % 2 == 0);
   myCell->reloadSubviewHighlight();
 }
@@ -282,8 +277,7 @@ void HistoryController::handleOK() {
   if (m_selectedSubviewType == SubviewType::Input) {
     m_selectableListView.deselectTable();
     editController->insertLayout(
-        calculationAtIndex(focusRow)->createInputLayout(
-            App::app()->localContext()));
+        calculationAtIndex(focusRow)->createInputLayout());
     return;
   }
 
@@ -297,12 +291,12 @@ void HistoryController::handleOK() {
     if (outputSubviewPosition ==
             ScrollableTwoLayoutsView::SubviewPosition::Right &&
         Calculation::CanDisplayApproximate(displayOutput)) {
-      editController->insertLayout(calculation->createApproximateOutputLayout(
-          App::app()->localContext(), &dummy, true));
+      editController->insertLayout(
+          calculation->createApproximateOutputLayout(&dummy, true));
     } else {
       assert(Calculation::CanDisplayExact(displayOutput));
-      editController->insertLayout(calculation->createExactOutputLayout(
-          App::app()->localContext(), &dummy));
+      editController->insertLayout(
+          calculation->createExactOutputLayout(&dummy));
     }
     return;
   }
@@ -312,8 +306,7 @@ void HistoryController::handleOK() {
   OMG::ExpiringPointer<Calculation> selectedCalculation =
       calculationAtIndex(focusRow);
   UserExpression i, a, e;
-  selectedCalculation->fillExpressionsForAdditionalResults(
-      &i, &e, &a, App::app()->localContext());
+  selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a);
   assert(Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
              selectedCalculation->calculationPreferences().complexFormat, i,
              App::app()->localContext()) ==
@@ -322,8 +315,8 @@ void HistoryController::handleOK() {
   /* Reuse the same angle unit and updated complexFormat as when the calculation
    * was computed. */
   m_additionalResultsController.openAdditionalResults(
-      selectedCalculation->additionalResultsType(App::app()->localContext()), i,
-      e, a, selectedCalculation->calculationPreferences());
+      selectedCalculation->additionalResultsType(), i, e, a,
+      selectedCalculation->calculationPreferences());
 }
 
 }  // namespace Calculation

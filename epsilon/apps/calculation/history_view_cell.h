@@ -32,8 +32,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
       Escher::AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
   constexpr static KDCoordinate k_maxCellHeight = Ion::Display::Height * 2;
 
-  static void ComputeCalculationHeights(Calculation* calculation,
-                                        const Poincare::Context& context);
+  static void ComputeCalculationHeights(Calculation* calculation);
   HistoryViewCell(Responder* parentResponder = nullptr);
   static bool ViewsCanBeSingleLine(KDCoordinate inputViewWidth,
                                    KDCoordinate outputViewWidth, bool ellipsis);
@@ -55,10 +54,8 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   }
   void resetMemoization();
   void setCalculation(Calculation* calculation, bool expanded,
-                      const Poincare::Context& context,
                       bool canChangeDisplayOutput = false);
   void setNewCalculation(Calculation* calculation, bool expanded,
-                         const Poincare::Context& context,
                          bool canChangeDisplayOutput = false);
   int numberOfSubviews() const override { return 2 + isDisplayingEllipsis(); }
   View* subviewAtIndex(int index) override;

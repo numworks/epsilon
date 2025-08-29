@@ -245,7 +245,8 @@ QUIZ_CASE(pcj_approximation_can_approximate) {
   quiz_assert(
       Approximation::CanApproximate(KSum("k"_e, 2_e, 8_e, KAdd(KVarK, 3_e))));
   quiz_assert(!Approximation::CanApproximate(
-      KSum("k"_e, 2_e, 8_e, KAdd(KVarK, KVar<1, 0, 0>, 3_e))));
+      KSum("k"_e, 2_e, 8_e,
+           KAdd(KVarK, KDiscreteVar<Parametric::k_localVariableId + 1>, 3_e))));
 }
 
 QUIZ_CASE(pcj_approximation_scalar) {
@@ -2304,13 +2305,12 @@ void assert_expression_prepares_to(const Tree* input, const Tree* expected) {
 }
 
 QUIZ_CASE(pcj_prepare_expression) {
-  constexpr KTree k_scopedVarX =
-      KVar<1, Parametric::k_continuousVariableSign.getRealValue(),
-           Parametric::k_continuousVariableSign.getImagValue()>;
+  constexpr uint8_t k_varId = Parametric::k_localVariableId + 1;
   assert_expression_prepares_to(
-      KIntegral("t"_e, 0_e, KVarX, KMult(KVarX, k_scopedVarX)),
-      KIntegralWithAlternatives(
-          "t"_e, 0_e, KVarX, KMult(KVarX, k_scopedVarX),
-          KMult(KVarX, k_scopedVarX),
-          KAdd(KMult(KVarX, k_scopedVarX), KPow(k_scopedVarX, 2_e))));
+      KIntegral("t"_e, 0_e, KVarX, KMult(KVarX, KContinuousVar<k_varId>)),
+      KIntegralWithAlternatives("t"_e, 0_e, KVarX,
+                                KMult(KVarX, KContinuousVar<k_varId>),
+                                KMult(KVarX, KContinuousVar<k_varId>),
+                                KAdd(KMult(KVarX, KContinuousVar<k_varId>),
+                                     KPow(KContinuousVar<k_varId>, 2_e))));
 }

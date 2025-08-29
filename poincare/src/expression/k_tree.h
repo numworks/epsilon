@@ -176,15 +176,18 @@ template <uint8_t Id, uint8_t realSign, uint8_t imagSign>
 constexpr auto KVar = KTree<Type::Var, Id, realSign, imagSign>();
 
 // Discrete local variable
-constexpr auto KVarK = KVar<Parametric::k_localVariableId,
-                            Parametric::k_discreteVariableSign.getRealValue(),
-                            Parametric::k_discreteVariableSign.getImagValue()>;
+template <uint8_t Id>
+constexpr auto KDiscreteVar =
+    KTree<Type::Var, Id, Parametric::k_discreteVariableSign.getRealValue(),
+          Parametric::k_discreteVariableSign.getImagValue()>();
+constexpr auto KVarK = KDiscreteVar<Parametric::k_localVariableId>;
 
 // Continuous local variable
-constexpr auto KVarX =
-    KVar<Parametric::k_localVariableId,
-         Parametric::k_continuousVariableSign.getRealValue(),
-         Parametric::k_continuousVariableSign.getImagValue()>;
+template <uint8_t Id>
+constexpr auto KContinuousVar =
+    KTree<Type::Var, Id, Parametric::k_continuousVariableSign.getRealValue(),
+          Parametric::k_continuousVariableSign.getImagValue()>();
+constexpr auto KVarX = KContinuousVar<Parametric::k_localVariableId>;
 
 // Default UserSymbol in functions
 // TODO: Try to limit the usage of UCodePointUnknown

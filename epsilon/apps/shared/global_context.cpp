@@ -272,6 +272,11 @@ void GlobalContext::reset() {
   s_continuousFunctionStore->reset();
 }
 
+void GlobalContext::resetAll() {
+  reset();
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+}
+
 // Parametric components
 
 static void deleteParametricComponent(char* baseName, size_t baseNameLength,

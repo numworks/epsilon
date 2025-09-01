@@ -65,7 +65,11 @@ class GlobalContext final : public Poincare::VariableStore {
   const SequenceContext* sequenceContext() const { return &m_sequenceContext; }
   void tidyStores();
   void prepareForNewApp();
+  // Reset all functions and sequences
   void reset();
+  /* Reset all store entries (functions, sequences, expressions, matrices,
+   * lists, regressions and parametric components) */
+  void resetAll();
 
  private:
   // Expression getters

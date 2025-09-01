@@ -7,6 +7,7 @@
 #include <omg/float.h>
 #include <poincare/print.h>
 #include <poincare/test/helper.h>
+#include <poincare/test/helpers/symbol_store.h>
 #include <poincare/test/old/helper.h>
 #include <quiz.h>
 #include <string.h>
@@ -738,80 +739,79 @@ QUIZ_CASE(sequence_evaluation) {
                              conditions2);
 }
 
-QUIZ_CASE(sequence_context) {
-  Shared::GlobalContext globalContext;
-  SequenceStore* store = globalContext.s_sequenceStore;
-  SequenceContext* sequenceContext = globalContext.sequenceContext();
+QUIZ_CASE(sequence_store) {
+  SequenceStore* sequenceStore = GlobalContext::s_sequenceStore;
+  GlobalContext& globalStore = GlobalContextAccessor::Store();
+  SequenceContext* sequenceContext =
+      GlobalContextAccessor::Store().sequenceContext();
 
-  assert_reduce_and_store("3→f(x)", globalContext);
+  PoincareTest::store("3→f(x)", GlobalContextAccessor::Store());
   assert_expression_simplifies_approximates_to<double>("f(u(0))", "undef",
-                                                       globalContext);
+                                                       globalStore);
 
-  addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr,
+  addSequence(sequenceStore, Sequence::Type::Explicit, "1", nullptr, nullptr,
               sequenceContext);
   assert_expression_simplifies_approximates_to<double>("f(u(2))", "3",
-                                                       globalContext);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-
-  store->removeAll();
-  addSequence(store, Sequence::Type::Explicit, "1/0", nullptr, nullptr,
+                                                       globalStore);
+  globalStore.resetAll();
+  addSequence(sequenceStore, Sequence::Type::Explicit, "1/0", nullptr, nullptr,
               sequenceContext);
   assert_expression_simplifies_approximates_to<double>("f(u(2))", "undef",
-                                                       globalContext);
+                                                       globalStore);
 
-  store->removeAll();
-  assert_reduce_and_store("3→a", globalContext);
-  addSequence(store, Sequence::Type::Explicit, "a+1", nullptr, nullptr,
+  sequenceStore->removeAll();
+  assert_reduce_and_store("3→a", globalStore);
+  addSequence(sequenceStore, Sequence::Type::Explicit, "a+1", nullptr, nullptr,
               sequenceContext);
   assert_expression_simplifies_approximates_to<double>("u(34)", "4",
-                                                       globalContext);
-  assert_reduce_and_store("-3→a", globalContext);
-  globalContext.storageDidChangeForRecord(Ion::Storage::Record("a.exp"));
+                                                       globalStore);
+  assert_reduce_and_store("-3→a", globalStore);
+  globalStore.storageDidChangeForRecord(Ion::Storage::Record("a.exp"));
   assert_expression_simplifies_approximates_to<double>("u(34)", "-2",
-                                                       globalContext);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-
-  store->removeAll();
-  store->tidyDownstreamPoolFrom();
+                                                       globalStore);
+  globalStore.resetAll();
+  sequenceStore->tidyDownstreamPoolFrom();
 }
 
 QUIZ_CASE(sequence_order) {
-  Shared::GlobalContext globalContext;
-  SequenceStore* store = globalContext.s_sequenceStore;
-  SequenceContext* sequenceContext = globalContext.sequenceContext();
+  SequenceStore* sequenceStore = GlobalContext::s_sequenceStore;
+  SequenceContext* sequenceContext =
+      GlobalContextAccessor::Store().sequenceContext();
 
-  Sequence* u = addSequence(store, Sequence::Type::Explicit, "", nullptr,
-                            nullptr, sequenceContext);
+  Sequence* u = addSequence(sequenceStore, Sequence::Type::Explicit, "",
+                            nullptr, nullptr, sequenceContext);
   quiz_assert(u->fullName()[0] == 'u');
-  Sequence* v = addSequence(store, Sequence::Type::Explicit, "", nullptr,
-                            nullptr, sequenceContext);
+  Sequence* v = addSequence(sequenceStore, Sequence::Type::Explicit, "",
+                            nullptr, nullptr, sequenceContext);
   quiz_assert(v->fullName()[0] == 'v');
-  Sequence* w = addSequence(store, Sequence::Type::Explicit, "3", nullptr,
-                            nullptr, sequenceContext);
+  Sequence* w = addSequence(sequenceStore, Sequence::Type::Explicit, "3",
+                            nullptr, nullptr, sequenceContext);
   quiz_assert(w->fullName()[0] == 'w');
+  // Manually destroy u and v (but not w)
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("u.seq").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("v.seq").destroy();
-  u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr,
-                  sequenceContext);
+  u = addSequence(sequenceStore, Sequence::Type::Explicit, "0", nullptr,
+                  nullptr, sequenceContext);
   assert(u->fullName()[0] == 'u');
-  v = addSequence(store, Sequence::Type::Explicit, "1+w(1)", nullptr, nullptr,
-                  sequenceContext);
+  v = addSequence(sequenceStore, Sequence::Type::Explicit, "1+w(1)", nullptr,
+                  nullptr, sequenceContext);
   assert(v->fullName()[0] == 'v');
 
   sequenceContext->resetCache();
   quiz_assert(v->evaluateXYAtParameter(1., *sequenceContext).y() == 4.);
 
-  store->removeAll();
-  u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr,
-                  sequenceContext);
-  v = addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr,
-                  sequenceContext);
+  sequenceStore->removeAll();
+  u = addSequence(sequenceStore, Sequence::Type::Explicit, "0", nullptr,
+                  nullptr, sequenceContext);
+  v = addSequence(sequenceStore, Sequence::Type::Explicit, "1", nullptr,
+                  nullptr, sequenceContext);
+  // Manually destroy u (but not v)
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("u.seq").destroy();
   sequenceContext->resetCache();
   quiz_assert(v->evaluateXYAtParameter(1., *sequenceContext).y() == 1.);
 
-  store->removeAll();
-  store->tidyDownstreamPoolFrom();
+  sequenceStore->removeAll();
+  sequenceStore->tidyDownstreamPoolFrom();
 }
 
 QUIZ_CASE(sequence_sum_evaluation) {

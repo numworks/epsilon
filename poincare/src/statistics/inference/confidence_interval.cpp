@@ -6,10 +6,12 @@
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/statistics/domain.h>
 #include <poincare/statistics/distribution.h>
+#include <poincare/statistics/inference.h>
 
 #include "significance_test.h"
 
-namespace Poincare::Internal::Inference::ConfidenceInterval {
+namespace Poincare::Inference::ConfidenceInterval {
+using namespace Poincare::Internal::Inference::ConfidenceInterval;
 
 Results Compute(Type type, double threshold, const ParametersArray params) {
   assert(IsTypeCompatibleWithConfidenceInterval(type));
@@ -23,16 +25,6 @@ Results Compute(Type type, double threshold, const ParametersArray params) {
                  .standardError = standardError,
                  .marginOfError = marginOfError,
                  .degreesOfFreedom = degreesOfFreedom};
-}
-
-double ComputeCriticalValue(Type type, double threshold,
-                            double degreesOfFreedom) {
-  Distribution::Type distrib = DistributionType(type);
-  Distribution::ParametersArray<double> distribParams =
-      DistributionParameters(type, degreesOfFreedom);
-  double proba = 0.5 + threshold / 2;
-  return Distribution::CumulativeDistributiveInverseForProbability(
-      distrib, proba, distribParams);
 }
 
 // Return -1 if the estimate is not directly in the parameters
@@ -49,62 +41,6 @@ int IndexOfParameterToUseAsEstimate(TestType testType) {
 
 bool ShowEstimate(TestType testType) {
   return IndexOfParameterToUseAsEstimate(testType) < 0;
-}
-
-double ComputeEstimate(TestType testType, const ParametersArray parameters) {
-  int index = IndexOfParameterToUseAsEstimate(testType);
-  if (index >= 0) {
-    return parameters[index];
-  }
-  switch (testType) {
-    case TestType::OneProportion:
-      return parameters[Params::OneProportion::X] /
-             parameters[Params::OneProportion::N];
-    case TestType::TwoProportions: {
-      double x1 = parameters[Params::TwoProportions::X1];
-      double n1 = parameters[Params::TwoProportions::N1];
-      double x2 = parameters[Params::TwoProportions::X2];
-      double n2 = parameters[Params::TwoProportions::N2];
-      return x1 / n1 - x2 / n2;
-    }
-    case TestType::TwoMeans:
-      return parameters[Params::TwoMeans::X1] -
-             parameters[Params::TwoMeans::X2];
-    default:
-      // Chi2 doesn't have an interval estimate
-      OMG::unreachable();
-  }
-}
-
-double ComputeStandardError(Type type, const ParametersArray parameters) {
-  switch (type.testType) {
-    case TestType::OneProportion: {
-      double estimate = ComputeEstimate(type, parameters);
-      double n = parameters[Params::OneProportion::N];
-      return OMG::LaxToZero(std::sqrt(estimate * (1 - estimate) / n));
-    }
-    case TestType::TwoProportions: {
-      double x1 = parameters[Params::TwoProportions::X1];
-      double n1 = parameters[Params::TwoProportions::N1];
-      double x2 = parameters[Params::TwoProportions::X2];
-      double n2 = parameters[Params::TwoProportions::N2];
-      double p1 = x1 / n1;
-      double p2 = x2 / n2;
-      return OMG::LaxToZero(std::sqrt(p1 * (1 - p1) / n1 + p2 * (1 - p2) / n2));
-    }
-    case TestType::OneMean: {
-      double s = parameters[Params::OneMean::S];
-      double n = parameters[Params::OneMean::N];
-      return s / std::sqrt(n);
-    }
-    case TestType::TwoMeans:
-      return TwoMeansStandardError(type, parameters);
-    case TestType::Slope:
-      return parameters[Params::Slope::SE];
-    default:
-      // Chi2 doesn't have an interval estimate
-      OMG::unreachable();
-  }
 }
 
 constexpr static KTree KXBar =
@@ -203,6 +139,77 @@ double DefaultParameterAtIndex(Type type, int index) {
       OMG::unreachable();
   }
   return defaultParameters[index];
+}
+
+}  // namespace Poincare::Inference::ConfidenceInterval
+
+namespace Poincare::Internal::Inference::ConfidenceInterval {
+using Poincare::Inference::ConfidenceInterval::IndexOfParameterToUseAsEstimate;
+
+double ComputeCriticalValue(Type type, double threshold,
+                            double degreesOfFreedom) {
+  Distribution::Type distrib = DistributionType(type);
+  Distribution::ParametersArray<double> distribParams =
+      DistributionParameters(type, degreesOfFreedom);
+  double proba = 0.5 + threshold / 2;
+  return Distribution::CumulativeDistributiveInverseForProbability(
+      distrib, proba, distribParams);
+}
+
+double ComputeEstimate(TestType testType, const ParametersArray parameters) {
+  int index = IndexOfParameterToUseAsEstimate(testType);
+  if (index >= 0) {
+    return parameters[index];
+  }
+  switch (testType) {
+    case TestType::OneProportion:
+      return parameters[Params::OneProportion::X] /
+             parameters[Params::OneProportion::N];
+    case TestType::TwoProportions: {
+      double x1 = parameters[Params::TwoProportions::X1];
+      double n1 = parameters[Params::TwoProportions::N1];
+      double x2 = parameters[Params::TwoProportions::X2];
+      double n2 = parameters[Params::TwoProportions::N2];
+      return x1 / n1 - x2 / n2;
+    }
+    case TestType::TwoMeans:
+      return parameters[Params::TwoMeans::X1] -
+             parameters[Params::TwoMeans::X2];
+    default:
+      // Chi2 doesn't have an interval estimate
+      OMG::unreachable();
+  }
+}
+
+double ComputeStandardError(Type type, const ParametersArray parameters) {
+  switch (type.testType) {
+    case TestType::OneProportion: {
+      double estimate = ComputeEstimate(type, parameters);
+      double n = parameters[Params::OneProportion::N];
+      return OMG::LaxToZero(std::sqrt(estimate * (1 - estimate) / n));
+    }
+    case TestType::TwoProportions: {
+      double x1 = parameters[Params::TwoProportions::X1];
+      double n1 = parameters[Params::TwoProportions::N1];
+      double x2 = parameters[Params::TwoProportions::X2];
+      double n2 = parameters[Params::TwoProportions::N2];
+      double p1 = x1 / n1;
+      double p2 = x2 / n2;
+      return OMG::LaxToZero(std::sqrt(p1 * (1 - p1) / n1 + p2 * (1 - p2) / n2));
+    }
+    case TestType::OneMean: {
+      double s = parameters[Params::OneMean::S];
+      double n = parameters[Params::OneMean::N];
+      return s / std::sqrt(n);
+    }
+    case TestType::TwoMeans:
+      return TwoMeansStandardError(type, parameters);
+    case TestType::Slope:
+      return parameters[Params::Slope::SE];
+    default:
+      // Chi2 doesn't have an interval estimate
+      OMG::unreachable();
+  }
 }
 
 }  // namespace Poincare::Internal::Inference::ConfidenceInterval

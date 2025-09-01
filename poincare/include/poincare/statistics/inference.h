@@ -1,6 +1,5 @@
 #pragma once
 
-#include <poincare/src/statistics/inference/confidence_interval.h>
 #include <poincare/src/statistics/inference/inference.h>
 #include <poincare/src/statistics/inference/significance_test.h>
 
@@ -97,20 +96,28 @@ Results Compute(const DataTable* contributions, double degreesOfFreedom);
 
 namespace ConfidenceInterval {
 
-using Internal::Inference::ConfidenceInterval::
-    IsTypeCompatibleWithConfidenceInterval;
+constexpr bool IsTypeCompatibleWithConfidenceInterval(TestType testType) {
+  return testType != TestType::Chi2;
+}
 
-using Internal::Inference::ConfidenceInterval::Compute;
-using Internal::Inference::ConfidenceInterval::Results;
+struct Results {
+  double estimate;
+  double zCritical;
+  double standardError;
+  double marginOfError;
+  double degreesOfFreedom;
+};
 
-using Internal::Inference::ConfidenceInterval::ShowEstimate;
+Results Compute(Type type, double threshold, const ParametersArray parameters);
 
-using Internal::Inference::ConfidenceInterval::CriticalValueLayout;
-using Internal::Inference::ConfidenceInterval::EstimateLayout;
-using Internal::Inference::ConfidenceInterval::EstimateSymbol;
+bool ShowEstimate(TestType testType);
 
-using Internal::Inference::ConfidenceInterval::DefaultParameterAtIndex;
-using Internal::Inference::ConfidenceInterval::DefaultThreshold;
+Poincare::Layout CriticalValueLayout(StatisticType statisticType);
+const char* EstimateSymbol(TestType testType);
+Poincare::Layout EstimateLayout(Type type);
+
+constexpr double DefaultThreshold() { return 0.95; }
+double DefaultParameterAtIndex(Type type, int index);
 
 }  // namespace ConfidenceInterval
 

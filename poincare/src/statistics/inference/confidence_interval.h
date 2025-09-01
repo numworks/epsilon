@@ -2,36 +2,7 @@
 
 #include "inference.h"
 
-namespace Poincare::Internal {
-
-namespace Inference {
-
-namespace ConfidenceInterval {
-
-constexpr bool IsTypeCompatibleWithConfidenceInterval(TestType testType) {
-  return testType != TestType::Chi2;
-}
-
-struct Results {
-  double estimate;
-  double zCritical;
-  double standardError;
-  double marginOfError;
-  double degreesOfFreedom;
-};
-
-Results Compute(Type type, double threshold, const ParametersArray parameters);
-
-bool ShowEstimate(TestType testType);
-
-Poincare::Layout CriticalValueLayout(StatisticType statisticType);
-const char* EstimateSymbol(TestType testType);
-Poincare::Layout EstimateLayout(Type type);
-
-constexpr double DefaultThreshold() { return 0.95; }
-double DefaultParameterAtIndex(Type type, int index);
-
-// ===== PRIVATE =====
+namespace Poincare::Internal::Inference::ConfidenceInterval {
 
 double ComputeCriticalValue(Type type, double threshold,
                             double degreesOfFreedom);
@@ -42,8 +13,4 @@ constexpr double ComputeMarginOfError(double intervalCriticalValue,
   return intervalCriticalValue * standardError;
 }
 
-}  // namespace ConfidenceInterval
-
-};  // namespace Inference
-
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Inference::ConfidenceInterval

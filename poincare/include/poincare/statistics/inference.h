@@ -1,6 +1,5 @@
 #pragma once
 
-#include <poincare/src/statistics/inference/chi2_test.h>
 #include <poincare/src/statistics/inference/confidence_interval.h>
 #include <poincare/src/statistics/inference/inference.h>
 #include <poincare/src/statistics/inference/significance_test.h>
@@ -67,22 +66,30 @@ using Internal::Inference::SignificanceTest::DefaultThreshold;
 
 namespace Chi2 {
 
-using Internal::Inference::SignificanceTest::Chi2::CategoricalType;
+enum class CategoricalType : uint8_t {
+  // Order matter for cells order
+  GoodnessOfFit,
+  Homogeneity
+};
 
-using Internal::Inference::SignificanceTest::Chi2::AreGoodnessInputsValid;
-using Internal::Inference::SignificanceTest::Chi2::AreHomogeneityInputsValid;
-using Internal::Inference::SignificanceTest::Chi2::IsExpectedValueValid;
-using Internal::Inference::SignificanceTest::Chi2::IsObservedValueValid;
+bool IsObservedValueValid(double value);
+bool IsExpectedValueValid(double value);
+bool AreHomogeneityInputsValid(const DataTable* observedValues);
+bool AreGoodnessInputsValid(const DataTable* observedValues,
+                            const DataTable* expectedValues);
 
-using Internal::Inference::SignificanceTest::Chi2::ComputeDegreesOfFreedom;
-using Internal::Inference::SignificanceTest::Chi2::IsDegreesOfFreedomValid;
+void FillHomogeneityExpectedValues(const DataTable* observedValues,
+                                   DataTable* expectedValues);
 
-using Internal::Inference::SignificanceTest::Chi2::
-    FillHomogeneityExpectedValues;
+bool IsDegreesOfFreedomValid(double p);
+int ComputeDegreesOfFreedom(CategoricalType categoricalType,
+                            const DataTable* observedValues);
 
-using Internal::Inference::SignificanceTest::Chi2::FillContributions;
+void FillContributions(const DataTable* observedValues,
+                       const DataTable* expectedValues,
+                       DataTable* contributions);
 
-using Internal::Inference::SignificanceTest::Chi2::Compute;
+Results Compute(const DataTable* contributions, double degreesOfFreedom);
 
 }  // namespace Chi2
 

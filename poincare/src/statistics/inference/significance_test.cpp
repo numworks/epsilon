@@ -9,6 +9,8 @@
 
 namespace Poincare::Inference::SignificanceTest {
 using namespace Poincare::Internal::Inference::SignificanceTest;
+using Poincare::Inference::Type;
+using Poincare::Internal::Inference::ComputeDegreesOfFreedom;
 
 bool IsH0Valid(TestType testType, double h0) {
   switch (testType) {
@@ -157,6 +159,7 @@ double DefaultParameterAtIndex(Type type, int index) {
 
 namespace Poincare::Internal::Inference::SignificanceTest {
 using namespace Poincare::Inference::SignificanceTest;
+using Poincare::Inference::Type;
 
 double ComputePValue(StatisticType statisticType,
                      Comparison::Operator haOperator, double criticalValue,

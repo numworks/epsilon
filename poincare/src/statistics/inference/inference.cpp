@@ -7,9 +7,12 @@
 #include <poincare/src/statistics/domain.h>
 #include <poincare/statistics/dataset_adapter.h>
 #include <poincare/statistics/distribution.h>
+#include <poincare/statistics/inference.h>
 #include <poincare/statistics/statistics_dataset.h>
 
-namespace Poincare::Internal::Inference {
+namespace Poincare::Inference {
+using namespace Poincare::Internal::Inference;
+using namespace Poincare::Internal;
 
 int NumberOfStatisticsForTest(TestType testType) {
   const StatisticType statsArray[] = {StatisticType::T, StatisticType::TPooled,
@@ -67,35 +70,6 @@ const char* CriticalValueSymbol(StatisticType statisticType) {
 
 bool HasDegreesOfFreedom(StatisticType statisticType) {
   return statisticType != StatisticType::Z;
-}
-
-double ComputeDegreesOfFreedom(Type type, const ParametersArray parameters) {
-  if (!HasDegreesOfFreedom(type)) {
-    return NAN;
-  }
-  switch (type.testType) {
-    case TestType::OneMean:
-      return parameters[Params::OneMean::N] - 1;
-    case TestType::TwoMeans: {
-      double n1 = parameters[Params::TwoMeans::N1];
-      double n2 = parameters[Params::TwoMeans::N2];
-      if (type.statisticType == StatisticType::TPooled) {
-        return n1 + n2 - 2;
-      }
-      double s1 = parameters[Params::TwoMeans::S1];
-      double s2 = parameters[Params::TwoMeans::S2];
-      double v1 = std::pow(s1, 2.) / n1;
-      double v2 = std::pow(s2, 2.) / n2;
-      return std::pow(v1 + v2, 2.) /
-             (std::pow(v1, 2.) / (n1 - 1.) + std::pow(v2, 2.) / (n2 - 1.));
-    }
-    case TestType::Slope:
-      return parameters[Params::Slope::N] - 2;
-    default:
-      // OneProportion, TwoProportions
-      // Chi2 is handled separately
-      OMG::unreachable();
-  }
 }
 
 constexpr static KTree KXBar =
@@ -269,6 +243,41 @@ bool IsThresholdValid(double threshold) {
   /* A threshold of 1.0 does not make sense mathematically speaking and can
    * cause some results to be infinite. */
   return Domain::ContainsFloat(threshold, Domain::Type::ZeroToOneExcluded);
+}
+
+}  // namespace Poincare::Inference
+
+namespace Poincare::Internal::Inference {
+using namespace Poincare::Inference;
+
+double ComputeDegreesOfFreedom(Inference::Type type,
+                               const ParametersArray parameters) {
+  if (!HasDegreesOfFreedom(type)) {
+    return NAN;
+  }
+  switch (type.testType) {
+    case TestType::OneMean:
+      return parameters[Params::OneMean::N] - 1;
+    case TestType::TwoMeans: {
+      double n1 = parameters[Params::TwoMeans::N1];
+      double n2 = parameters[Params::TwoMeans::N2];
+      if (type.statisticType == StatisticType::TPooled) {
+        return n1 + n2 - 2;
+      }
+      double s1 = parameters[Params::TwoMeans::S1];
+      double s2 = parameters[Params::TwoMeans::S2];
+      double v1 = std::pow(s1, 2.) / n1;
+      double v2 = std::pow(s2, 2.) / n2;
+      return std::pow(v1 + v2, 2.) /
+             (std::pow(v1, 2.) / (n1 - 1.) + std::pow(v2, 2.) / (n2 - 1.));
+    }
+    case TestType::Slope:
+      return parameters[Params::Slope::N] - 2;
+    default:
+      // OneProportion, TwoProportions
+      // Chi2 is handled separately
+      OMG::unreachable();
+  }
 }
 
 double TwoMeansStandardError(StatisticType statisticType,

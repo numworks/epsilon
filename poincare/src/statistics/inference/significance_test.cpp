@@ -7,7 +7,8 @@
 #include <poincare/src/statistics/domain.h>
 #include <poincare/statistics/distribution.h>
 
-namespace Poincare::Internal::Inference::SignificanceTest {
+namespace Poincare::Inference::SignificanceTest {
+using namespace Poincare::Internal::Inference::SignificanceTest;
 
 bool IsH0Valid(TestType testType, double h0) {
   switch (testType) {
@@ -65,93 +66,6 @@ Results Compute(Type type, Hypothesis hypothesis,
                  .criticalValue = criticalValue,
                  .pValue = pValue,
                  .degreesOfFreedom = degreesOfFreedom};
-}
-
-Estimates ComputeEstimates(TestType testType,
-                           const ParametersArray parameters) {
-  Estimates estimates{NAN, NAN, NAN};
-  switch (testType) {
-    case TestType::OneProportion: {
-      double x = parameters[Params::OneProportion::X];
-      double n = parameters[Params::OneProportion::N];
-      estimates[EstimatesOrder::OneProportion::P] = x / n;
-      break;
-    }
-    case TestType::TwoProportions: {
-      double x1 = parameters[Params::TwoProportions::X1];
-      double n1 = parameters[Params::TwoProportions::N1];
-      double x2 = parameters[Params::TwoProportions::X2];
-      double n2 = parameters[Params::TwoProportions::N2];
-      estimates[EstimatesOrder::TwoProportions::P1] = x1 / n1;
-      estimates[EstimatesOrder::TwoProportions::P2] = x2 / n2;
-      estimates[EstimatesOrder::TwoProportions::Pooled] = (x1 + x2) / (n1 + n2);
-      break;
-    }
-    default:
-      break;
-  }
-  return estimates;
-}
-
-double ComputeCriticalValue(Type type, double h0,
-                            const ParametersArray parameters) {
-  switch (type.testType) {
-    case TestType::OneProportion: {
-      double x = parameters[Params::OneProportion::X];
-      double n = parameters[Params::OneProportion::N];
-      double p = x / n;
-      return (p - h0) / std::sqrt(h0 * (1 - h0) / n);
-    }
-    case TestType::TwoProportions: {
-      double x1 = parameters[Params::TwoProportions::X1];
-      double n1 = parameters[Params::TwoProportions::N1];
-      double x2 = parameters[Params::TwoProportions::X2];
-      double n2 = parameters[Params::TwoProportions::N2];
-      double p1 = x1 / n1;
-      double p2 = x2 / n2;
-      double p = (x1 + x2) / (n1 + n2);
-      return (p1 - p2 - h0) / std::sqrt(p * (1 - p) * (1. / n1 + 1. / n2));
-    }
-    case TestType::OneMean: {
-      double x = parameters[Params::OneMean::X];
-      double s = parameters[Params::OneMean::S];
-      double n = parameters[Params::OneMean::N];
-      return (x - h0) / (s / std::sqrt(n));
-    }
-    case TestType::TwoMeans: {
-      double x1 = parameters[Params::TwoMeans::X1];
-      double x2 = parameters[Params::TwoMeans::X2];
-      return (x1 - x2 - h0) / TwoMeansStandardError(type, parameters);
-    }
-    case TestType::Slope:
-      return (parameters[Params::Slope::B] - h0) /
-             parameters[Params::Slope::SE];
-    default:
-      // Chi2 is special
-      OMG::unreachable();
-  }
-}
-
-double ComputePValue(StatisticType statisticType,
-                     Comparison::Operator haOperator, double criticalValue,
-                     double degreesOfFreedom) {
-  Distribution::Type distrib = DistributionType(statisticType);
-  Distribution::ParametersArray<double> distribParams =
-      DistributionParameters(statisticType, degreesOfFreedom);
-
-  switch (haOperator) {
-    case Comparison::Operator::Inferior:
-      return Distribution::CumulativeDistributiveFunctionAtAbscissa(
-          distrib, criticalValue, distribParams);
-    case Comparison::Operator::Superior:
-      return 1.0 - Distribution::CumulativeDistributiveFunctionAtAbscissa(
-                       distrib, criticalValue, distribParams);
-    case Comparison::Operator::NotEqual:
-      return 2.0 * Distribution::CumulativeDistributiveFunctionAtAbscissa(
-                       distrib, -std::fabs(criticalValue), distribParams);
-    default:
-      OMG::unreachable();
-  }
 }
 
 constexpr static KTree KPHat =
@@ -237,6 +151,98 @@ double DefaultParameterAtIndex(Type type, int index) {
       OMG::unreachable();
   }
   return defaultParameters[index];
+}
+
+}  // namespace Poincare::Inference::SignificanceTest
+
+namespace Poincare::Internal::Inference::SignificanceTest {
+using namespace Poincare::Inference::SignificanceTest;
+
+double ComputePValue(StatisticType statisticType,
+                     Comparison::Operator haOperator, double criticalValue,
+                     double degreesOfFreedom) {
+  Distribution::Type distrib = DistributionType(statisticType);
+  Distribution::ParametersArray<double> distribParams =
+      DistributionParameters(statisticType, degreesOfFreedom);
+
+  switch (haOperator) {
+    case Comparison::Operator::Inferior:
+      return Distribution::CumulativeDistributiveFunctionAtAbscissa(
+          distrib, criticalValue, distribParams);
+    case Comparison::Operator::Superior:
+      return 1.0 - Distribution::CumulativeDistributiveFunctionAtAbscissa(
+                       distrib, criticalValue, distribParams);
+    case Comparison::Operator::NotEqual:
+      return 2.0 * Distribution::CumulativeDistributiveFunctionAtAbscissa(
+                       distrib, -std::fabs(criticalValue), distribParams);
+    default:
+      OMG::unreachable();
+  }
+}
+
+Estimates ComputeEstimates(TestType testType,
+                           const ParametersArray parameters) {
+  Estimates estimates{NAN, NAN, NAN};
+  switch (testType) {
+    case TestType::OneProportion: {
+      double x = parameters[Params::OneProportion::X];
+      double n = parameters[Params::OneProportion::N];
+      estimates[EstimatesOrder::OneProportion::P] = x / n;
+      break;
+    }
+    case TestType::TwoProportions: {
+      double x1 = parameters[Params::TwoProportions::X1];
+      double n1 = parameters[Params::TwoProportions::N1];
+      double x2 = parameters[Params::TwoProportions::X2];
+      double n2 = parameters[Params::TwoProportions::N2];
+      estimates[EstimatesOrder::TwoProportions::P1] = x1 / n1;
+      estimates[EstimatesOrder::TwoProportions::P2] = x2 / n2;
+      estimates[EstimatesOrder::TwoProportions::Pooled] = (x1 + x2) / (n1 + n2);
+      break;
+    }
+    default:
+      break;
+  }
+  return estimates;
+}
+
+double ComputeCriticalValue(Type type, double h0,
+                            const ParametersArray parameters) {
+  switch (type.testType) {
+    case TestType::OneProportion: {
+      double x = parameters[Params::OneProportion::X];
+      double n = parameters[Params::OneProportion::N];
+      double p = x / n;
+      return (p - h0) / std::sqrt(h0 * (1 - h0) / n);
+    }
+    case TestType::TwoProportions: {
+      double x1 = parameters[Params::TwoProportions::X1];
+      double n1 = parameters[Params::TwoProportions::N1];
+      double x2 = parameters[Params::TwoProportions::X2];
+      double n2 = parameters[Params::TwoProportions::N2];
+      double p1 = x1 / n1;
+      double p2 = x2 / n2;
+      double p = (x1 + x2) / (n1 + n2);
+      return (p1 - p2 - h0) / std::sqrt(p * (1 - p) * (1. / n1 + 1. / n2));
+    }
+    case TestType::OneMean: {
+      double x = parameters[Params::OneMean::X];
+      double s = parameters[Params::OneMean::S];
+      double n = parameters[Params::OneMean::N];
+      return (x - h0) / (s / std::sqrt(n));
+    }
+    case TestType::TwoMeans: {
+      double x1 = parameters[Params::TwoMeans::X1];
+      double x2 = parameters[Params::TwoMeans::X2];
+      return (x1 - x2 - h0) / TwoMeansStandardError(type, parameters);
+    }
+    case TestType::Slope:
+      return (parameters[Params::Slope::B] - h0) /
+             parameters[Params::Slope::SE];
+    default:
+      // Chi2 is special
+      OMG::unreachable();
+  }
 }
 
 }  // namespace Poincare::Internal::Inference::SignificanceTest

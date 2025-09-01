@@ -2,6 +2,7 @@
 
 #include <poincare/statistics/inference.h>
 
+#include "confidence_interval.h"
 #include "inference.h"
 
 namespace Poincare::Internal::Inference::SignificanceTest {
@@ -13,7 +14,7 @@ double ComputePValue(StatisticType statisticType,
                      double degreesOfFreedom);
 Poincare::Inference::SignificanceTest::Estimates ComputeEstimates(
     TestType testType, const ParametersArray parameters);
-double ComputeCriticalValue(Type type, double h0,
+double ComputeCriticalValue(Inference::Type type, double h0,
                             const ParametersArray parameters);
 
 }  // namespace Poincare::Internal::Inference::SignificanceTest

@@ -4,10 +4,11 @@
 
 namespace Poincare::Internal::Inference::ConfidenceInterval {
 
-double ComputeCriticalValue(Type type, double threshold,
+double ComputeCriticalValue(Inference::Type type, double threshold,
                             double degreesOfFreedom);
 double ComputeEstimate(TestType testType, const ParametersArray parameters);
-double ComputeStandardError(Type type, const ParametersArray parameters);
+double ComputeStandardError(Inference::Type type,
+                            const ParametersArray parameters);
 constexpr double ComputeMarginOfError(double intervalCriticalValue,
                                       double standardError) {
   return intervalCriticalValue * standardError;

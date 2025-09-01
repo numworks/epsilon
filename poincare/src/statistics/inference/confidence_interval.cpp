@@ -8,10 +8,13 @@
 #include <poincare/statistics/distribution.h>
 #include <poincare/statistics/inference.h>
 
+#include "inference.h"
 #include "significance_test.h"
 
 namespace Poincare::Inference::ConfidenceInterval {
 using namespace Poincare::Internal::Inference::ConfidenceInterval;
+using Poincare::Inference::Type;
+using Poincare::Internal::Inference::ComputeDegreesOfFreedom;
 
 Results Compute(Type type, double threshold, const ParametersArray params) {
   assert(IsTypeCompatibleWithConfidenceInterval(type));
@@ -144,6 +147,7 @@ double DefaultParameterAtIndex(Type type, int index) {
 }  // namespace Poincare::Inference::ConfidenceInterval
 
 namespace Poincare::Internal::Inference::ConfidenceInterval {
+using Poincare::Inference::Type;
 using Poincare::Inference::ConfidenceInterval::IndexOfParameterToUseAsEstimate;
 
 double ComputeCriticalValue(Type type, double threshold,

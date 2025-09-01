@@ -2,8 +2,11 @@
 
 #include <float.h>
 #include <poincare/statistics/data_table.h>
+#include <poincare/statistics/inference.h>
 
-namespace Poincare::Internal::Inference::SignificanceTest::Chi2 {
+#include "significance_test.h"
+
+namespace Poincare::Inference::SignificanceTest::Chi2 {
 
 bool IsObservedValueValid(double value) {
   return !std::isnan(value) && value >= 0.;
@@ -144,6 +147,26 @@ void FillContributions(const DataTable* observedValues,
   }
 }
 
+Results Compute(const DataTable* contributions, double degreesOfFreedom) {
+  Results results;
+  results.estimates = Estimates({NAN, NAN, NAN});
+  results.degreesOfFreedom = degreesOfFreedom;
+
+  results.criticalValue = Poincare::Internal::Inference::SignificanceTest::
+      Chi2::ComputeCriticalValue(contributions);
+
+  // Always use the superior operator for the chi2 test
+  results.pValue =
+      Poincare::Internal::Inference::SignificanceTest::ComputePValue(
+          StatisticType::Chi2, Comparison::Operator::Superior,
+          results.criticalValue, degreesOfFreedom);
+  return results;
+}
+
+}  // namespace Poincare::Inference::SignificanceTest::Chi2
+
+namespace Poincare::Internal::Inference::SignificanceTest::Chi2 {
+
 double ComputeCriticalValue(const DataTable* contributions) {
   double chi2 = 0;
   for (int row = 0; row < contributions->numberOfRows(); row++) {
@@ -152,20 +175,6 @@ double ComputeCriticalValue(const DataTable* contributions) {
     }
   }
   return chi2;
-}
-
-Results Compute(const DataTable* contributions, double degreesOfFreedom) {
-  Results results;
-  results.estimates = Estimates({NAN, NAN, NAN});
-  results.degreesOfFreedom = degreesOfFreedom;
-
-  results.criticalValue = ComputeCriticalValue(contributions);
-
-  // Always use the superior operator for the chi2 test
-  results.pValue =
-      ComputePValue(StatisticType::Chi2, Comparison::Operator::Superior,
-                    results.criticalValue, degreesOfFreedom);
-  return results;
 }
 
 }  // namespace Poincare::Internal::Inference::SignificanceTest::Chi2

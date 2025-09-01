@@ -56,7 +56,7 @@ Record::Record(const char* baseName, const char* extension)
 
 #if ION_STORAGE_LOG
 
-void Record::log(bool displayValue, bool endLine) {
+void Record::log(bool displayValue, bool endLine) const {
   std::cout << "Record " << fullName() << ": address=" << this
             << " crc32=" << m_fullNameCRC32 << " contentSize=" << value().size;
   if (displayValue) {

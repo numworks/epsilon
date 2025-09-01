@@ -57,7 +57,7 @@ class Record {
   bool operator!=(const Record& other) const { return !(*this == other); }
   explicit operator uint32_t() const { return m_fullNameCRC32; }
 #if ION_STORAGE_LOG
-  void log(bool displayValue, bool endLine);
+  void log(bool displayValue = true, bool endLine = true) const;
 #endif
   uint32_t checksum() const;
   bool isNull() const { return m_fullNameCRC32 == 0; }

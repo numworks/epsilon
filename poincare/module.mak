@@ -221,7 +221,6 @@ $(addprefix statistics/, \
 
 _sources_poincare_test := $(addprefix test/, \
   old/derivative.cpp \
-  old/exam_mode.cpp \
   old/expression_properties.cpp \
   old/helper.cpp \
   old/simplification.cpp \
@@ -235,6 +234,7 @@ _sources_poincare_test := $(addprefix test/, \
   dimension.cpp \
   distribution.cpp \
   equation_solver.cpp \
+  exam_mode.cpp \
   float_helper.cpp \
   helper.cpp \
   integer.cpp \

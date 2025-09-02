@@ -221,11 +221,9 @@ $(addprefix statistics/, \
 
 _sources_poincare_test := $(addprefix test/, \
   old/derivative.cpp \
-  old/erf_inv.cpp \
   old/exam_mode.cpp \
   old/expression_properties.cpp \
   old/helper.cpp \
-  old/numeric_solver.cpp \
   old/simplification.cpp \
   old/tree/helpers.cpp \
   old/tree/tree_handle.cpp \
@@ -247,6 +245,7 @@ _sources_poincare_test := $(addprefix test/, \
   matrix.cpp \
   memory_elements.cpp \
   n_ary.cpp \
+  numeric_solver.cpp \
   order.cpp \
   parse.cpp \
   polynomial.cpp \

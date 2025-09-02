@@ -59,7 +59,7 @@ class App : public Shared::FunctionApp {
    * appear there NestedMenuController * variableBox(EditableField *
    * textInput) override; */
   const Shared::SequenceContext& localContext() const override {
-    return *Shared::GlobalContextAccessor::Context().sequenceContext();
+    return Shared::GlobalContextAccessor::SequenceContext();
   }
   Shared::SequenceStore* functionStore() override {
     return Shared::GlobalContext::s_sequenceStore;

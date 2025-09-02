@@ -15,8 +15,7 @@ class LogisticRegression : public Regression {
                   double y, const Poincare::Context& context) const override;
 
  private:
-  Coefficients privateFit(const Series* series,
-                          const Poincare::Context& context) const override;
+  Coefficients privateFit(const Series* series) const override;
   double privateEvaluate(const Coefficients& modelCoefficients,
                          double x) const override;
   Poincare::UserExpression privateExpression(

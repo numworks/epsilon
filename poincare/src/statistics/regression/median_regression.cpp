@@ -42,7 +42,7 @@ static void sortIndexByColumn(uint8_t* sortedIndex, const Series* series,
 }
 
 Regression::Coefficients MedianRegression::privateFit(
-    const Series* series, const Poincare::Context& context) const {
+    const Series* series) const {
   uint8_t numberOfDots = series->numberOfPairs();
   assert(slopeCoefficientIndex() == 0 && yInterceptCoefficientIndex() == 1);
   if (numberOfDots < 3) {

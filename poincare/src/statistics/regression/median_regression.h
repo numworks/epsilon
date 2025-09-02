@@ -11,8 +11,7 @@ class MedianRegression : public AffineRegression {
  private:
   double getMedianValue(const Series* series, uint8_t* sortedIndex, int column,
                         int startIndex, int endIndex) const;
-  Coefficients privateFit(const Series* series,
-                          const Poincare::Context& context) const override;
+  Coefficients privateFit(const Series* series) const override;
 };
 
 }  // namespace Poincare::Internal

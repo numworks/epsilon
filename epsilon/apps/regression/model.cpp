@@ -9,10 +9,9 @@
 
 namespace Regression {
 
-void Model::fit(const Store* store, int series, double* modelCoefficients,
-                const Poincare::Context& context) {
+void Model::fit(const Store* store, int series, double* modelCoefficients) {
   Shared::StoreToSeries bridge(store, series);
-  return regression()->fit(&bridge, modelCoefficients, context);
+  return regression()->fit(&bridge, modelCoefficients);
 }
 
 double Model::correlationCoefficient(const Store* store, int series) {

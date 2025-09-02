@@ -172,8 +172,7 @@ class Regression {
   virtual double levelSet(const double* modelCoefficients, double xMin,
                           double xMax, double y,
                           const Poincare::Context& context) const;
-  void fit(const Series* series, double* modelCoefficients,
-           const Poincare::Context& context) const;
+  void fit(const Series* series, double* modelCoefficients) const;
 
   static Coefficients CoefficientsToMatchMean(const Series* series, Type type);
   double correlationCoefficient(const Series* series) const;
@@ -201,8 +200,7 @@ class Regression {
    * the different fit attempts is selected. */
   size_t m_initialParametersIterations;
 
-  virtual Coefficients privateFit(const Series* series,
-                                  const Poincare::Context& context) const;
+  virtual Coefficients privateFit(const Series* series) const;
   virtual bool dataSuitableForFit(const Series* series) const;
   constexpr static int k_maxNumberOfPairs = 100;
 
@@ -263,8 +261,7 @@ class Regression {
   constexpr static double k_initialCoefficientValue = 1.0;
   constexpr static int k_consecutiveSmallChi2ChangesLimit = 10;
   void fitLevenbergMarquardt(const Series* series,
-                             Coefficients& modelCoefficients,
-                             const Poincare::Context& context) const;
+                             Coefficients& modelCoefficients) const;
   double chi2(const Series* series,
               const Coefficients& modelCoefficients) const;
   double alphaPrimeCoefficient(const Series* series,
@@ -276,8 +273,7 @@ class Regression {
   double betaCoefficient(const Series* series,
                          const Coefficients& modelCoefficients, int k) const;
   int solveLinearSystem(double* solutions, double* coefficients,
-                        double* constants, int solutionDimension,
-                        const Poincare::Context& context) const;
+                        double* constants, int solutionDimension) const;
   Coefficients initCoefficientsForFit(double defaultValue,
                                       bool forceDefaultValue,
                                       size_t attemptNumber,

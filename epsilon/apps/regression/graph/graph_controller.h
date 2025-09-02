@@ -148,10 +148,8 @@ class GraphController : public Shared::InteractiveCurveViewController {
     return dotCoordinate(curveIndex, dotIndex, 1);
   }
   double dotCoordinate(int curveIndex, int dotIndex, int coordinate) const;
-  double yValue(int curveIndex, double t,
-                const Poincare::Context& context) const {
-    return m_store->yValueForXValue(seriesIndexFromCurveIndex(curveIndex), t,
-                                    context);
+  double yValue(int curveIndex, double t) const {
+    return m_store->yValueForXValue(seriesIndexFromCurveIndex(curveIndex), t);
   }
 
   Shared::ToggleableRingRoundCursorView m_cursorView;

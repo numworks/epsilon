@@ -57,7 +57,7 @@ double TransformedRegression::levelSet(const double* modelCoefficients,
 }
 
 Regression::Coefficients TransformedRegression::privateFit(
-    const Series* series, const Poincare::Context& context) const {
+    const Series* series) const {
   bool opposeY = applyLnOnA() && series->getY(0) < 0.0;
   StatisticsCalculationOptions options(applyLnOnX(), applyLnOnY(), opposeY);
   double c0 = series->yIntercept(options);

@@ -124,8 +124,7 @@ bool GraphController::buildRegressionExpression(
     char* buffer, size_t bufferSize, Model::Type modelType,
     int significantDigits,
     Poincare::Preferences::PrintFloatMode displayMode) const {
-  double* coefficients =
-      m_store->coefficientsForSeries(selectedSeriesIndex(), globalContext());
+  double* coefficients = m_store->coefficientsForSeries(selectedSeriesIndex());
   Layout l = m_store->regressionModel(modelType)->equationLayout(
       coefficients,
       GlobalPreferences::SharedGlobalPreferences()->yPredictedSymbol(),
@@ -148,8 +147,7 @@ void GraphController::reloadBannerView() {
       GlobalPreferences::SharedGlobalPreferences()->displayMode();
 
   // If any coefficient is NAN, display that data is not suitable
-  bool coefficientsAreDefined =
-      m_store->coefficientsAreDefined(selectedSeries, globalContext());
+  bool coefficientsAreDefined = m_store->coefficientsAreDefined(selectedSeries);
   if (coefficientsAreDefined && *m_selectedDotIndex < 0 &&
       curveIsScatterPlot(*m_selectedCurveIndex)) {
     // Regression model has been removed, reinitialize cursor
@@ -232,7 +230,7 @@ bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
                       interactiveCurveViewRange()->xGridUnit()) /
                   static_cast<double>(k_numberOfCursorStepsInGradUnit);
     x = m_cursor->x() + step;
-    y = yValue(*m_selectedCurveIndex, x, globalContext());
+    y = yValue(*m_selectedCurveIndex, x);
   }
   m_cursor->moveTo(x, x, y);
   return true;
@@ -305,9 +303,9 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
 
   // Find the closest dot
   int closesDotSeries = -1;
-  int dotSelected = m_store->closestVerticalDot(
-      direction, x, y, selectedSeriesIndex(), *m_selectedDotIndex,
-      &closesDotSeries, context);
+  int dotSelected =
+      m_store->closestVerticalDot(direction, x, y, selectedSeriesIndex(),
+                                  *m_selectedDotIndex, &closesDotSeries);
   int closesDotCurve =
       closesDotSeries == -1 ? -1 : curveIndexFromSeriesIndex(closesDotSeries);
 
@@ -327,7 +325,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     } else {
       // Compare the y distances
       double regressionDistanceY =
-          std::fabs(yValue(closestRegressionCurve, x, context) - y);
+          std::fabs(yValue(closestRegressionCurve, x) - y);
       double dotDistanceY =
           std::fabs(dotOrdinate(closesDotCurve, dotSelected) - y);
       if (regressionDistanceY <= dotDistanceY) {
@@ -351,7 +349,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     }
     *m_selectedDotIndex = -1;
     setRoundCrossCursorView();
-    double newY = yValue(*m_selectedCurveIndex, x, context);
+    double newY = yValue(*m_selectedCurveIndex, x);
     m_cursor->moveTo(x, x, newY);
     setAbscissaInputAsFirstResponder();
     return true;
@@ -381,7 +379,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
 Coordinate2D<double> GraphController::xyValues(int curveIndex, double t,
                                                const Poincare::Context& context,
                                                int subCurveIndex) const {
-  return Coordinate2D<double>(t, yValue(curveIndex, t, context));
+  return Coordinate2D<double>(t, yValue(curveIndex, t));
 }
 
 bool GraphController::suitableYValue(double y) const {

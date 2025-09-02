@@ -53,9 +53,7 @@ void ResidualPlotController::updateCursor() {
       buffer, bufferSize, significantDigits, k_maxNumberOfGlyphs, "%s%s%*.*ed",
       I18n::translate(I18n::Message::ResidualStandardDeviation),
       I18n::translate(I18n::Message::ColonConvention),
-      m_store->residualStandardDeviation(
-          m_selectedSeriesIndex, Shared::GlobalContextAccessor::Context()),
-      displayMode);
+      m_store->residualStandardDeviation(m_selectedSeriesIndex), displayMode);
   m_bannerView.stddevView()->setText(buffer);
 
   m_curveView.reload();

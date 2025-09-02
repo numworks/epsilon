@@ -540,11 +540,9 @@ QUIZ_CASE(pcj_simplification_derivative_for_approximation) {
   projects_and_reduces_to("diff(abs(x),x,-2.34)", "-1", ctxForApprox);
   projects_and_reduces_to("diff(abs(x),x,0)", "undef", ctxForApprox);
 
-#if TODO_PCJ
   projects_and_reduces_to("diff(sign(x),x,123)", "0", ctxForApprox);
   projects_and_reduces_to("diff(sign(x),x,-2.34)", "0", ctxForApprox);
   projects_and_reduces_to("diff(sign(x),x,0)", "undef", ctxForApprox);
-#endif
 
   projects_and_reduces_to("diff(√(x),x,-1)", "undef", cartesianCtxForApprox);
 

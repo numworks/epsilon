@@ -220,7 +220,6 @@ $(addprefix statistics/, \
 )
 
 _sources_poincare_test := $(addprefix test/, \
-  old/derivative.cpp \
   old/helper.cpp \
   old/simplification.cpp \
   additional_results_helper.cpp \

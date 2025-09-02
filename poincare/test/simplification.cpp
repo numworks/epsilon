@@ -345,9 +345,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
   // Undefined
   simplifies_to("diff(undef,x,x)", "undef");
   simplifies_to("diff(nonreal,x,x)", "nonreal");
-#if TODO_PCJ
   simplifies_to("diff(inf,x,x)", "undef");
-#endif
 
   // Constants
   simplifies_to("diff(i,x,x)", "undef");

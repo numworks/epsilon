@@ -5,6 +5,7 @@
 
 #include "dependency.h"
 #include "dimension.h"
+#include "infinity.h"
 #include "k_tree.h"
 #include "poincare/src/memory/type_enum.h"
 #include "random.h"
@@ -130,6 +131,9 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     return derivand->cloneTree();
   }
   if (!Variables::HasVariable(derivand, 0)) {
+    if (Infinity::IsPlusOrMinusInfinity(derivand)) {
+      return KUndef->cloneTree();
+    }
     return (0_e)->cloneTree();
   }
   /* General case :

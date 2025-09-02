@@ -6,6 +6,7 @@
 #include "dependency.h"
 #include "dimension.h"
 #include "k_tree.h"
+#include "poincare/src/memory/type_enum.h"
 #include "random.h"
 #include "rational.h"
 #include "set.h"
@@ -265,6 +266,13 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       SystematicReduction::ShallowReduce(multiplication);
       return multiplication;
     }
+#if POINCARE_PIECEWISE
+    case Type::Sign: {
+      // Di(sign(x)) = 0 if x != 0 and undef if x = 0
+      return PatternMatching::CreateReduce(
+          KPiecewise(KUndef, KEqual(KA, 0_e), 0_e), {.KA = derivand->child(0)});
+    }
+#endif
     default:
       return nullptr;
   }

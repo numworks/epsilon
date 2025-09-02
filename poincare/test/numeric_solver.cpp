@@ -5,14 +5,13 @@
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
+#include <poincare/src/numeric_solver/erf_inv.h>
 
-#include "../float_helper.h"
-#include "../helper.h"
+#include "float_helper.h"
 #include "helper.h"
 
 using Poincare::AngleUnit;
 using Poincare::Context;
-using Poincare::Preferences;
 using namespace Poincare::Internal;
 
 typedef Poincare::Solver<double>::Interest Interest;
@@ -81,28 +80,28 @@ void assert_solutions_are(
 void assert_roots_are(
     const char* expression, double start, double end,
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
-    AngleUnit angleUnit = Degree) {
+    AngleUnit angleUnit = AngleUnit::Degree) {
   assert_solutions_are(expression, start, end, expected, Interest::Root,
                        angleUnit, nullptr);
 }
 void assert_minima_are(
     const char* expression, double start, double end,
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
-    AngleUnit angleUnit = Degree) {
+    AngleUnit angleUnit = AngleUnit::Degree) {
   assert_solutions_are(expression, start, end, expected, Interest::LocalMinimum,
                        angleUnit, nullptr);
 }
 void assert_maxima_are(
     const char* expression, double start, double end,
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
-    AngleUnit angleUnit = Degree) {
+    AngleUnit angleUnit = AngleUnit::Degree) {
   assert_solutions_are(expression, start, end, expected, Interest::LocalMaximum,
                        angleUnit, nullptr);
 }
 void assert_intersections_are(
     const char* expression1, const char* expression2, double start, double end,
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
-    AngleUnit angleUnit = Degree) {
+    AngleUnit angleUnit = AngleUnit::Degree) {
   assert_solutions_are(expression1, start, end, expected,
                        Interest::Intersection, angleUnit, expression2);
 }
@@ -114,7 +113,7 @@ Poincare::Coordinate2D<double> XY(double x, double y) {
   return Poincare::Coordinate2D<double>(x, y);
 }
 
-QUIZ_CASE(poincare_solver_roots) {
+QUIZ_CASE(pcj_solver_roots) {
   assert_roots_are("x", -10., 10., {R(0.)});
   assert_roots_are("x×(x-1)", 0., 10., {R(1.)});
   assert_roots_are("x^2+2x+1", -10., 10., {R(-1.)});
@@ -136,7 +135,7 @@ QUIZ_CASE(poincare_solver_roots) {
       {R(5.127216097883478), R(3.687536352063443), R(2.5956489551161432),
        R(1.1559692092961089), R(-1.1559692092961089), R(-2.5956489551161432),
        R(-3.687536352063443), R(-5.127216097883478)},
-      Radian);
+      AngleUnit::Radian);
   assert_roots_are("√(x)+x", -10., 10., {R(0.)});
   // TODO_PCJ: fix PowReal approximation with even denominator
   // assert_roots_are("1.23x^(0.45)+6x^(0.78)", -10., 10., {R(0.)});
@@ -162,7 +161,7 @@ QUIZ_CASE(poincare_solver_roots) {
   assert_roots_are("piecewise(-x,x<=0,x-1)", -10, 10, {R(0.), R(1.)});
 }
 
-QUIZ_CASE(poincare_solver_minima) {
+QUIZ_CASE(pcj_solver_minima) {
   assert_minima_are("cos(x)", 0., 300., {XY(180., -1.)});
   assert_minima_are("cos(x)", 300., 0., {XY(180., -1.)});
   assert_minima_are("x^2", -1e-3, 100., {XY(0., 0.)});
@@ -170,13 +169,13 @@ QUIZ_CASE(poincare_solver_minima) {
   assert_minima_are("csc(x)+tan(2×x)", -6., 6.,
                     {XY(-5.8419120302571166, 3.5573771431792993),
                      XY(0.44127324410824942, 3.5573771431792993)},
-                    Radian);
+                    AngleUnit::Radian);
   assert_minima_are("1/(x-3)", 7., -1., {});
   assert_minima_are("5+4/sin(x)-2/tan(x)", 10., -10.,
                     {XY(7.3303828071957247, 8.4641016151377606),
                      XY(1.0471975566950564, 8.4641016151377606),
                      XY(-5.2359877779725741, 8.4641016151377606)},
-                    Radian);
+                    AngleUnit::Radian);
   assert_minima_are("(x^2+x+1)/x", -2., 2., {XY(1., 3.)});
   assert_minima_are("0.05/x+1.44×x^2", 7., -7.,
                     {XY(0.25893604049110841, 0.2896468153816889)});
@@ -186,7 +185,7 @@ QUIZ_CASE(poincare_solver_minima) {
                     {XY(1.4142135565624723, 71.086127010533858)});
 }
 
-QUIZ_CASE(poincare_solver_maxima) {
+QUIZ_CASE(pcj_solver_maxima) {
   assert_maxima_are("cos(x)", -1., 500., {XY(0., 1.), XY(360., 1.)});
   assert_maxima_are("cos(x)", 500., -1., {XY(360., 1.), XY(0., 1.)});
   assert_maxima_are("x^2", -1e-3, 100., {});
@@ -194,18 +193,18 @@ QUIZ_CASE(poincare_solver_maxima) {
   assert_maxima_are("csc(x)+tan(2×x)", 6., -6.,
                     {XY(5.8419120302571166, -3.5573771431792993),
                      XY(-0.44127324410824942, -3.5573771431792993)},
-                    Radian);
+                    AngleUnit::Radian);
   assert_maxima_are("1/(x-3)", -1., 7., {});
   assert_maxima_are("5+4/sin(x)-2/tan(x)", -10., 10.,
                     {XY(-7.3303828071957247, 1.5358983848622398),
                      XY(-1.0471975566950564, 1.5358983848622398),
                      XY(5.2359877779725741, 1.5358983848622398)},
-                    Radian);
+                    AngleUnit::Radian);
   assert_maxima_are("(x^2+x+1)/x", -2., 2., {XY(-1., -1.)});
   assert_maxima_are("0.05/x+1.44×x^2", 7., -7., {});
 }
 
-QUIZ_CASE(poincare_solver_intersections) {
+QUIZ_CASE(pcj_solver_intersections) {
   assert_intersections_are("cos(x)", "2", -1., 500., {});
   assert_intersections_are("cos(x)", "1", 500., -1, {XY(360., 1.), XY(0., 1.)});
   assert_intersections_are("x", "x^3", -1e-2, 2., {XY(0., 0.), XY(1., 1.)});
@@ -221,4 +220,24 @@ QUIZ_CASE(poincare_solver_intersections) {
   /* This serves the purpose of checking if no fake intersection is found
    * around -1.479, which was the case at some point in history. */
   assert_intersections_are("x^(2x^92)", "3", -1.5, -1.47, {});
+}
+
+QUIZ_CASE(pcj_solver_erf_inv) {
+  quiz_assert(erfInv(0.0) == 0.0);
+  quiz_assert(std::isinf(erfInv(1.0)) && erfInv(1.0) > 0.0);
+  quiz_assert(std::isinf(erfInv(-1.0)) && erfInv(-1.0) < 0.0);
+  assert_roughly_equal(
+      erfInv(0.5), 0.476936276204469873381418353643130559808969749059470644703,
+      OMG::Float::EpsilonLax<double>());
+  assert_roughly_equal(
+      erfInv(0.25), 0.225312055012178104725014013952277554782118447807246757600,
+      OMG::Float::EpsilonLax<double>());
+  assert_roughly_equal(
+      erfInv(0.999999),
+      3.458910737279500022150927635957569519915669808042886747076,
+      1E4 * OMG::Float::EpsilonLax<double>());
+  assert_roughly_equal(
+      erfInv(0.123456),
+      0.109850294001424923867673480939041914394684494884310054922,
+      OMG::Float::EpsilonLax<double>());
 }

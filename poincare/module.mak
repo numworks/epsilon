@@ -223,8 +223,6 @@ _sources_poincare_test := $(addprefix test/, \
   old/derivative.cpp \
   old/helper.cpp \
   old/simplification.cpp \
-  old/tree/helpers.cpp \
-  old/tree/tree_handle.cpp \
   additional_results_helper.cpp \
   approximation.cpp \
   beautification.cpp \
@@ -249,6 +247,8 @@ _sources_poincare_test := $(addprefix test/, \
   order.cpp \
   parse.cpp \
   polynomial.cpp \
+  pool/helpers.cpp \
+  pool/pool_handle.cpp \
   print.cpp \
   projection.cpp \
   random.cpp \

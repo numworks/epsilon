@@ -9,7 +9,7 @@
 #include <poincare/test/helpers/symbol_store.h>
 #include <poincare/user_expression.h>
 
-#include "../helper.h"
+#include "helper.h"
 
 using namespace Poincare;
 using namespace Poincare::Internal;
@@ -28,7 +28,7 @@ void assert_reduced_is_number(const char* input, bool isNumber = true) {
   quiz_assert_print_if_failure(e2.isConstantNumber() == isNumber, input);
 }
 
-QUIZ_CASE(poincare_properties_is_number) {
+QUIZ_CASE(pcj_properties_is_number) {
   // Always a number from parsing
   assert_is_number("2");
   assert_is_number("0b10");
@@ -71,7 +71,7 @@ void assert_reduced_is_rational(const char* input, bool isRational = true) {
   quiz_assert_print_if_failure(e2.isRational() == isRational, input);
 }
 
-QUIZ_CASE(poincare_properties_is_rational_number) {
+QUIZ_CASE(pcj_properties_is_rational_number) {
   assert_reduced_is_rational("0b20");
   assert_reduced_is_rational("2");
   assert_reduced_is_rational("0x2");
@@ -92,7 +92,7 @@ void assert_has_random(const char* input, bool hasRandom = true) {
   quiz_assert_print_if_failure(e.hasRandomNumber() == hasRandom, input);
 }
 
-QUIZ_CASE(poincare_properties_has_random) {
+QUIZ_CASE(pcj_properties_has_random) {
   assert_has_random("random()");
   assert_has_random("randint(1,2)");
   assert_has_random("cos(random())");
@@ -108,7 +108,7 @@ void assert_is_parametered_expression(const char* input,
                                input);
 }
 
-QUIZ_CASE(poincare_properties_is_parametered_expression) {
+QUIZ_CASE(pcj_properties_is_parametered_expression) {
   assert_is_parametered_expression("diff(2x,x,2)");
   assert_is_parametered_expression("diff(1,x,2,3)");
   assert_is_parametered_expression("int(x,x,2,4)");
@@ -137,14 +137,14 @@ void assert_expression_has_not_property(const char* input, T test) {
   assert_expression_has_property_or_not<T>(input, test, false);
 }
 
-QUIZ_CASE(poincare_properties_has_approximate) {
+QUIZ_CASE(pcj_properties_has_approximate) {
   assert_expression_has_property("3.4", &Expression::isApproximate);
   assert_expression_has_property("2.3+1", &Expression::isApproximate);
   assert_expression_has_property("0.1f", &Expression::isApproximate);
   assert_expression_has_not_property("a", &Expression::isApproximate);
 }
 
-QUIZ_CASE(poincare_properties_has_matrix) {
+QUIZ_CASE(pcj_properties_has_matrix) {
   assert_expression_has_property("[[1,2][3,4]]",
                                  &Expression::isOfMatrixDimension);
   assert_expression_has_property("dim([[1,2][3,4]])/3",
@@ -184,7 +184,7 @@ void assert_projected_is_infinity(const char* input, ProjectionContext* projCtx,
                                input);
 }
 
-QUIZ_CASE(poincare_properties_is_infinity) {
+QUIZ_CASE(pcj_properties_is_infinity) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
@@ -211,7 +211,7 @@ void assert_expression_has_variables(const char* input,
   assert_trees_are_equal(variables, expectedVariables);
 }
 
-QUIZ_CASE(poincare_properties_get_variables) {
+QUIZ_CASE(pcj_properties_get_variables) {
   /* Warning: Theses tests are weird because you need to avoid a lot of
    * reserved identifiers like:
    * - e and i
@@ -302,7 +302,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
   assert_trees_are_equal(coefficients, expectedCoefficients);
 }
 
-QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
+QUIZ_CASE(pcj_properties_get_polynomial_coefficients) {
   assert_reduced_expression_has_polynomial_coefficient("x^2+x+2", "x",
                                                        KList(2_e, 1_e, 1_e));
   assert_reduced_expression_has_polynomial_coefficient(
@@ -358,7 +358,7 @@ void assert_list_length_in_children_is(const char* definition,
 
 constexpr int k_mismatchedLists = -2;
 
-QUIZ_CASE(poincare_properties_children_list_length) {
+QUIZ_CASE(pcj_properties_children_list_length) {
   assert_list_length_in_children_is(
       "1+1", Poincare::Internal::Dimension::k_nonListListLength);
   assert_list_length_in_children_is("1+{}", 0);
@@ -374,7 +374,7 @@ void assert_is_list_of_points(const char* input, const Context& context,
   quiz_assert_print_if_failure(isListOfPoints == truth, input);
 }
 
-QUIZ_CASE(poincare_properties_list_of_points) {
+QUIZ_CASE(pcj_properties_list_of_points) {
   PoincareTest::SymbolStore symbolStore;
 
   PoincareTest::store("(1,2)→a", symbolStore);
@@ -413,7 +413,7 @@ void assert_is_continuous_on_interval(const char* input, float x1, float x2,
       input);
 }
 
-QUIZ_CASE(poincare_properties_is_continuous) {
+QUIZ_CASE(pcj_properties_is_continuous) {
   assert_is_continuous_on_interval("x+x^2", 2.43f, 2.45f, true);
   assert_is_continuous_on_interval("x+x^2", 2.45f, 2.47f, true);
   assert_is_continuous_on_interval("x+floor(x^2)", 2.43f, 2.45f, false);
@@ -442,7 +442,7 @@ void assert_reduced_deep_is_symbolic(const char* input,
       Variables::HasUserSymbols(reducedExpression.tree()) == isSymbolic, input);
 }
 
-QUIZ_CASE(poincare_properties_deep_is_symbolic) {
+QUIZ_CASE(pcj_properties_deep_is_symbolic) {
   assert_reduced_deep_is_symbolic("2/cos(3x+2)");
   assert_reduced_deep_is_symbolic("2/int(5x, x, 3, 4)", false);
   assert_reduced_deep_is_symbolic("2/int(5xy, x, 3, 4)");

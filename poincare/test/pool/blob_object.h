@@ -11,7 +11,7 @@ class BlobObject : public PoolObject {
   size_t size() const override { return sizeof(BlobObject); }
   int data() { return m_data; }
 #if POINCARE_TREE_LOG
-  void logObjectName(std::ostream &stream) const override { stream << "Blob"; }
+  void logObjectName(std::ostream& stream) const override { stream << "Blob"; }
 #endif
  private:
   int m_data;
@@ -20,17 +20,17 @@ class BlobObject : public PoolObject {
 class BlobByReference : public PoolHandle {
  public:
   static BlobByReference Builder(int data = 0) {
-    void *bufferObject = Pool::sharedPool->alloc(sizeof(BlobObject));
-    BlobObject *object = new (bufferObject) BlobObject(data);
+    void* bufferObject = Pool::sharedPool->alloc(sizeof(BlobObject));
+    BlobObject* object = new (bufferObject) BlobObject(data);
     PoolHandle h = PoolHandle::Build(object);
-    return static_cast<BlobByReference &>(h);
+    return static_cast<BlobByReference&>(h);
   }
   BlobByReference() = delete;
   int data() { return object()->data(); }
 
  private:
-  BlobObject *object() const {
-    return static_cast<BlobObject *>(PoolHandle::object());
+  BlobObject* object() const {
+    return static_cast<BlobObject*>(PoolHandle::object());
   }
 };
 

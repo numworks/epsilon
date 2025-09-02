@@ -19,7 +19,7 @@ void Init() {
   Shared::GlobalContextAccessor::Init();
   Poincare::Init(GlobalPreferences::SharedGlobalPreferences(),
                  ExamModeManager::ExamModePtr(),
-                 Shared::GlobalContextAccessor::Context().sequenceContext());
+                 &Shared::GlobalContextAccessor::SequenceContext());
   Escher::Init(GlobalPreferences::SharedGlobalPreferences());
 }
 

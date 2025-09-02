@@ -20,7 +20,7 @@ namespace Shared {
 
 Sequence* addSequence(SequenceStore* store, Sequence::Type type,
                       const char* definition, const char* condition1,
-                      const char* condition2, Context* context) {
+                      const char* condition2, const Context* context) {
   Ion::Storage::Record::ErrorStatus err = store->addEmptyModel();
   assert(err == Ion::Storage::Record::ErrorStatus::None);
 
@@ -53,19 +53,20 @@ void check_sequences_defined_by(
     const char* conditions2[SequenceStore::k_maxNumberOfSequences]) {
   Shared::GlobalContext globalContext;
   SequenceStore* store = globalContext.s_sequenceStore;
-  SequenceContext* sequenceContext = globalContext.sequenceContext();
+  const SequenceContext& sequenceContext =
+      GlobalContextAccessor::SequenceContext();
 
   Sequence* seqs[SequenceStore::k_maxNumberOfSequences];
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
     seqs[i] = addSequence(store, types[i], definitions[i], conditions1[i],
-                          conditions2[i], sequenceContext);
+                          conditions2[i], &sequenceContext);
   }
 
   for (int j = 0; j < 10; j++) {
     for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
       if (seqs[i]->isDefined()) {
         double un =
-            seqs[i]->evaluateXYAtParameter((double)j, *sequenceContext).y();
+            seqs[i]->evaluateXYAtParameter((double)j, sequenceContext).y();
         bool isEqual = OMG::Float::RoughlyEqual<double>(
             un, result[i][j], OMG::Float::EpsilonLax<double>(), true);
         constexpr size_t bufferSize = 100;
@@ -91,14 +92,14 @@ void check_sum_of_sequence_between_bounds(double result, double start,
                                           const char* definition,
                                           const char* condition1,
                                           const char* condition2) {
-  Shared::GlobalContext globalContext;
-  SequenceStore* store = globalContext.s_sequenceStore;
-  SequenceContext* sequenceContext = globalContext.sequenceContext();
+  SequenceStore* store = GlobalContext::s_sequenceStore;
+  const SequenceContext& sequenceContext =
+      GlobalContextAccessor::SequenceContext();
 
   Sequence* seq = addSequence(store, type, definition, condition1, condition2,
-                              sequenceContext);
+                              &sequenceContext);
 
-  double sum = seq->sumBetweenBounds(start, end, *sequenceContext)
+  double sum = seq->sumBetweenBounds(start, end, sequenceContext)
                    .approximateSystemToRealScalar<double>();
   assert_roughly_equal(sum, result);
 
@@ -742,8 +743,8 @@ QUIZ_CASE(sequence_evaluation) {
 QUIZ_CASE(sequence_store) {
   SequenceStore* sequenceStore = GlobalContext::s_sequenceStore;
   GlobalContext& globalStore = GlobalContextAccessor::Store();
-  SequenceContext* sequenceContext =
-      GlobalContextAccessor::Store().sequenceContext();
+  const SequenceContext* sequenceContext =
+      &GlobalContextAccessor::SequenceContext();
 
   PoincareTest::store("3→f(x)", GlobalContextAccessor::Store());
   assert_expression_simplifies_approximates_to<double>("f(u(0))", "undef",
@@ -775,8 +776,8 @@ QUIZ_CASE(sequence_store) {
 
 QUIZ_CASE(sequence_order) {
   SequenceStore* sequenceStore = GlobalContext::s_sequenceStore;
-  SequenceContext* sequenceContext =
-      GlobalContextAccessor::Store().sequenceContext();
+  const SequenceContext* sequenceContext =
+      &GlobalContextAccessor::SequenceContext();
 
   Sequence* u = addSequence(sequenceStore, Sequence::Type::Explicit, "",
                             nullptr, nullptr, sequenceContext);
@@ -825,33 +826,33 @@ QUIZ_CASE(sequence_sum_evaluation) {
 }
 
 QUIZ_CASE(sequence_suitable_for_cobweb) {
-  Shared::GlobalContext globalContext;
-  SequenceStore* store = globalContext.s_sequenceStore;
-  SequenceContext* sequenceContext = globalContext.sequenceContext();
+  SequenceStore* store = GlobalContext::s_sequenceStore;
+  const SequenceContext& sequenceContext =
+      GlobalContextAccessor::SequenceContext();
   quiz_assert(addSequence(store, Sequence::Type::SingleRecurrence,
-                          "3(u(n)+2)+u(n)", "0", nullptr, sequenceContext)
-                  ->isSuitableForCobweb(*sequenceContext));
+                          "3(u(n)+2)+u(n)", "0", nullptr, &sequenceContext)
+                  ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
   quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence, "v(n)+2",
-                           "0", nullptr, sequenceContext)
-                   ->isSuitableForCobweb(*sequenceContext));
+                           "0", nullptr, &sequenceContext)
+                   ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
   quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence,
-                           "u(n)+cos(n)", "0", nullptr, sequenceContext)
-                   ->isSuitableForCobweb(*sequenceContext));
+                           "u(n)+cos(n)", "0", nullptr, &sequenceContext)
+                   ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
   quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence, "2*u(n-2)",
-                           "0", nullptr, sequenceContext)
-                   ->isSuitableForCobweb(*sequenceContext));
+                           "0", nullptr, &sequenceContext)
+                   ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
   quiz_assert(addSequence(store, Sequence::Type::SingleRecurrence,
-                          "2*u(n)+u(0)", "0", nullptr, sequenceContext)
-                  ->isSuitableForCobweb(*sequenceContext));
+                          "2*u(n)+u(0)", "0", nullptr, &sequenceContext)
+                  ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
-  sequenceContext->resetCache();  // for computation of u(0)
+  sequenceContext.resetCache();  // for computation of u(0)
   quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence,
-                           "2*u(n)+u(0)", "n", nullptr, sequenceContext)
-                   ->isSuitableForCobweb(*sequenceContext));
+                           "2*u(n)+u(0)", "n", nullptr, &sequenceContext)
+                   ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
   store->tidyDownstreamPoolFrom();
 }

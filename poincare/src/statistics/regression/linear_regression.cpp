@@ -18,7 +18,7 @@ UserExpression LinearRegression::privateExpression(
 }
 
 Regression::Coefficients LinearRegression::privateFit(
-    const Series* series, const Context& context) const {
+    const Series* series) const {
   Coefficients result;
   size_t slopeIndex = slopeCoefficientIndex();
   size_t yInterceptIndex = yInterceptCoefficientIndex();

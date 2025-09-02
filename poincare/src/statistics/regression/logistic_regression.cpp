@@ -66,13 +66,13 @@ double LogisticRegression::privateEvaluate(
 }
 
 Regression::Coefficients LogisticRegression::privateFit(
-    const Series* series, const Poincare::Context& context) const {
+    const Series* series) const {
   if (m_isInternal) {
-    return Regression::privateFit(series, context);
+    return Regression::privateFit(series);
   }
   Coefficients modelCoefficients;
   Get(Type::LogisticInternal, AngleUnit::Radian)
-      ->fit(series, modelCoefficients.data(), context);
+      ->fit(series, modelCoefficients.data());
   bool success = UpdateToUserCoefficients(modelCoefficients);
   if (!success) {
     // Fallback to all NAN if update fails

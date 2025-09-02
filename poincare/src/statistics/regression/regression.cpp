@@ -41,7 +41,7 @@ UserExpression Regression::expression(const double* modelCoefficients) const {
 
 double Regression::levelSet(const double* modelCoefficients, double xMin,
                             double xMax, double y,
-                            const Poincare::Context& context) const {
+                            const Context& context) const {
   UserExpression e = expression(modelCoefficients);
   if (e.isUninitialized()) {
     return NAN;
@@ -69,21 +69,19 @@ double Regression::evaluate(const double* modelCoefficients, double x) const {
   return privateEvaluate(coefficients, x);
 }
 
-void Regression::fit(const Series* series, double* modelCoefficients,
-                     const Poincare::Context& context) const {
+void Regression::fit(const Series* series, double* modelCoefficients) const {
   if (!dataSuitableForFit(series)) {
     Coefficients initialCoefficients = initCoefficientsForFit(NAN, true, 0);
     memmove(modelCoefficients, initialCoefficients.data(),
             numberOfCoefficients() * sizeof(double));
     return;
   }
-  Coefficients coefficients = privateFit(series, context);
+  Coefficients coefficients = privateFit(series);
   memmove(modelCoefficients, coefficients.data(),
           numberOfCoefficients() * sizeof(double));
 }
 
-Regression::Coefficients Regression::privateFit(
-    const Series* series, const Poincare::Context& context) const {
+Regression::Coefficients Regression::privateFit(const Series* series) const {
   double lowestResidualsSquareSum = OMG::Float::Max<double>();
   Coefficients bestModelCoefficients;
   /* The coefficients are initialized to zero, so that in the worst case (it
@@ -98,7 +96,7 @@ Regression::Coefficients Regression::privateFit(
   while (attemptNumber < m_initialParametersIterations) {
     Coefficients modelCoefficients = initCoefficientsForFit(
         k_initialCoefficientValue, false, attemptNumber, &preparedSeries);
-    fitLevenbergMarquardt(&preparedSeries, modelCoefficients, context);
+    fitLevenbergMarquardt(&preparedSeries, modelCoefficients);
     uniformizeCoefficientsFromFit(modelCoefficients);
     double newResidualsSquareSum =
         privateResidualsSquareSum(&preparedSeries, modelCoefficients);
@@ -146,8 +144,7 @@ bool Regression::dataSuitableForFit(const Series* series) const {
 }
 
 void Regression::fitLevenbergMarquardt(const Series* series,
-                                       Coefficients& modelCoefficients,
-                                       const Context& context) const {
+                                       Coefficients& modelCoefficients) const {
   /* We want to find the best coefficients of the regression to minimize the sum
    * of the squares of the difference between a data point and the corresponding
    * point of the fitting regression (chi2 function).
@@ -186,7 +183,7 @@ void Regression::fitLevenbergMarquardt(const Series* series,
     // Compute the equation solution (= vector of coefficients increments)
     double modelCoefficientSteps[Regression::k_maxNumberOfCoefficients];
     if (solveLinearSystem(modelCoefficientSteps, coefficientsAPrime, operandsB,
-                          n, context) < 0) {
+                          n) < 0) {
       break;
     }
 
@@ -283,8 +280,8 @@ double Regression::betaCoefficient(const Series* series,
 }
 
 int Regression::solveLinearSystem(double* solutions, double* coefficients,
-                                  double* constants, int solutionDimension,
-                                  const Context& context) const {
+                                  double* constants,
+                                  int solutionDimension) const {
   int n = solutionDimension;
   assert(n <= k_maxNumberOfCoefficients);
   double

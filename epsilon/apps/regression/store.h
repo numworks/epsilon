@@ -37,8 +37,7 @@ class Store : public Shared::LinearRegressionStore {
 
   // Dots
   int closestVerticalDot(OMG::VerticalDirection direction, double x, double y,
-                         int currentSeries, int currentDot, int* nextSeries,
-                         const Poincare::Context& globalContext);
+                         int currentSeries, int currentDot, int* nextSeries);
   int nextDot(int series, OMG::HorizontalDirection direction, int dot,
               bool displayMean);
   Model* regressionModel(Model::Type type) const;
@@ -47,24 +46,16 @@ class Store : public Shared::LinearRegressionStore {
   void updateSeriesValidity(int series) override;
 
   // Calculation
-  void updateCoefficients(int series, const Poincare::Context& globalContext);
-  double* coefficientsForSeries(int series,
-                                const Poincare::Context& globalContext);
-  bool coefficientsAreDefined(int series,
-                              const Poincare::Context& globalContext,
-                              bool finite = false);
+  void updateCoefficients(int series);
+  double* coefficientsForSeries(int series);
+  bool coefficientsAreDefined(int series, bool finite = false);
   double correlationCoefficient(int series) const;
   // R2
-  double determinationCoefficientForSeries(
-      int series, const Poincare::Context& globalContext);
-  double yValueForXValue(int series, double x,
-                         const Poincare::Context& globalContext);
-  double xValueForYValue(int series, double y,
-                         const Poincare::Context& globalContext);
-  double residualAtIndexForSeries(int series, int index,
-                                  const Poincare::Context& globalContext);
-  double residualStandardDeviation(int series,
-                                   const Poincare::Context& globalContext);
+  double determinationCoefficientForSeries(int series);
+  double yValueForXValue(int series, double x);
+  double xValueForYValue(int series, double y);
+  double residualAtIndexForSeries(int series, int index);
+  double residualStandardDeviation(int series);
 
   // To speed up computation during drawings, float is returned.
   float maxValueOfColumn(int series, int i) const;
@@ -109,10 +100,8 @@ class Store : public Shared::LinearRegressionStore {
   }
 
  private:
-  double computeDeterminationCoefficient(
-      int series, const Poincare::Context& globalContext);
-  double computeResidualStandardDeviation(
-      int series, const Poincare::Context& globalContext);
+  double computeDeterminationCoefficient(int series);
+  double computeResidualStandardDeviation(int series);
   void resetMemoization();
 
   constexpr static int k_functionNameSize = 3;

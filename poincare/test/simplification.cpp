@@ -342,59 +342,46 @@ QUIZ_CASE(pcj_simplification_big_nary) {
 }
 
 QUIZ_CASE(pcj_simplification_derivative) {
-  simplifies_to("diff(x, x, 2)", "1");
-  simplifies_to("diff(a×x, x, 1)", "a");
-  simplifies_to("diff(23, x, 1)", "0");
-  simplifies_to("diff(1+x, x, y)", "1");
-  simplifies_to("diff(sin(ln(x)), x, y)",
-                "dep(cos(ln(y))/y,{real(sin(ln(y))),realPos(y)})");
-  simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
-                "dep((3×y^4×ln(y)+y^3×(1+4×ln(y)))×e^(3×y),{nonNull(y),real(y^"
-                "4×ln(y)×e^(3×y)),realPos(y)})");
-  simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
-  simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
-  simplifies_to("diff(ln(x), x, -1)", "undef");
-  simplifies_to("diff(x^3,x,x,2)", "6×x");
-  simplifies_to("diff(x*y*y*y*z,y,x,2)", "6×x^2×z");
+  // Undefined
+  simplifies_to("diff(undef,x,x)", "undef");
+  simplifies_to("diff(nonreal,x,x)", "nonreal");
+#if TODO_PCJ
+  simplifies_to("diff(inf,x,x)", "undef");
+#endif
 
-  simplifies_to("k*x*sum(y*x*k,k,1,2)", "3×k×x^2×y");
-  simplifies_to("diff(3×x^2×k×y,x,k,2)", "6×k×y");
-  simplifies_to("diff(k*x*sum(y*x*k,k,1,2),x,k,2)", "6×k×y");
-  simplifies_to("diff((x^2, floor(x)),x,k)", "(2×k,diff(floor(x),x,k))");
-  simplifies_to("diff(floor(x), x, y, 1)", "diff(floor(x),x,y)");
-  // There should be no dependencies, see Dependency::ContainsSameDependency
-  simplifies_to("diff(floor(x)+x, x, y, 2)",
-                "dep(diff(floor(x),x,y,2),{floor(y)})");
-  simplifies_to("diff((sin(t),cos(t)),t,t,2)", "(-sin(t),-cos(t))");
-  simplifies_to("diff((sin(t),floor(t)),t,t,2)",
-                "(-sin(t),diff(floor(t),t,t,2))");
-  simplifies_to("diff(diff(diff(diff(floor(a),a,b,2),b,c),c,d,3),d,x)",
-                "dep(diff(floor(a),a,x,7),{diff(floor(a),a,x,2),diff(floor(a),"
-                "a,x,3),diff(floor(a),a,x,6)})");
-  simplifies_to("diff(diff(floor(a)+b*a,a,x),b,x)",
-                "dep(1,{floor(x),diff(floor(a),a,x)})");
-  simplifies_to("diff(randint(0,5), x, 2)", "undef");
-  simplifies_to("diff(x+floor(random()), x, 2)", "undef");
-  // Derivating a complex expression is forbidden
-  simplifies_to("diff(i,x,2)", "undef");
-  simplifies_to("diff(e^(i×x),x,3)", "undef");
-  simplifies_to("diff(ln(x),x,-1)", "undef");
-  // Derivating a variable evaluated at a complex value is forbidden
-  simplifies_to("diff(x,x,-i)", "undef");
-  simplifies_to("diff(abs(x),x,i)", "undef");
-  simplifies_to("diff(ln(x),x,i)", "undef");
-  simplifies_to("diff(x,x,ln(-3))", "undef");
+  // Constants
+  simplifies_to("diff(i,x,x)", "undef");
+  simplifies_to("diff(π,x,x)", "0");
+  simplifies_to("diff(e,x,x)", "0");
+  simplifies_to("diff(1,x,x)", "0");
 
+  // Trigonometry
   simplifies_to("diff(sin(x),x,x)", "cos(x)");
+  simplifies_to("diff(sin(x),x,x)", "(π×cos(x))/180", degreeCtx);
   simplifies_to("diff(cos(x),x,x)", "-sin(x)");
+  simplifies_to("diff(cos(x),x,x)", "-(π×sin(x))/200", gradianCtx);
   simplifies_to("diff(tan(x),x,x)", "dep(tan(x)^2+1,{tan(x)})");
+  simplifies_to("diff(tan(x),x,x)",
+                "dep((π×(tan(x)^2+1))/180,{tan((180×π×x)/(180×π))})",
+                degreeCtx);
   simplifies_to(
       "diff(acos(x),x,x)",
       "dep(-1/√(-x^2+1),{piecewise(0,abs(x)≤1,nonreal),real(arccos(x))})");
+  simplifies_to("diff(acos(x),x,x)",
+                "dep(-180/"
+                "(π×√(-x^2+1)),{piecewise(0,abs(x)≤1,nonreal),real(("
+                "180×π×arccos(x))/(180×π))})",
+                degreeCtx);
   simplifies_to(
       "diff(asin(x),x,x)",
       "dep(1/√(-x^2+1),{piecewise(0,abs(x)≤1,nonreal),real(arcsin(x))})");
+  simplifies_to("diff(asin(x),x,x)",
+                "dep(180/"
+                "(π×√(-x^2+1)),{piecewise(0,abs(x)≤1,nonreal),real(("
+                "180×π×arcsin(x))/(180×π))})",
+                degreeCtx);
   simplifies_to("diff(atan(x),x,x)", "1/(x^2+1)");
+  simplifies_to("diff(atan(x),x,x)", "180/(π×x^2+π)", degreeCtx);
   simplifies_to("diff(sinh(x),x,x)", "cosh(x)");
   simplifies_to("diff(cosh(x),x,x)", "sinh(x)");
   simplifies_to("diff(tanh(x),x,x)", "dep(-(tanh(x)^2)+1,{-tanh(x)×i×i})");
@@ -402,7 +389,6 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(arsinh(x),x,x)", "1/√(x^2+1)");
   simplifies_to("diff(artanh(x),x,x)",
                 "dep(1/(-x^2+1),{real(-artanh(x)×i×i)})");
-
   simplifies_to("diff(sec(x),x,x)", "sin(x)/cos(x)^2");
   simplifies_to("diff(csc(x),x,x)", "-cos(x)/sin(x)^2");
   simplifies_to("diff(cot(x),x,x)", "dep(-(1+cot(x)^2),{cot(x)})");
@@ -413,7 +399,179 @@ QUIZ_CASE(pcj_simplification_derivative) {
                 "dep(-1/(x^2×√(1-1/x^2)),{piecewise(0,abs(1/"
                 "x)≤1,nonreal),real(arcsin(1/x))})");
   simplifies_to("diff(arccot(x),x,x)", "-1/(x^2+1)");
+  simplifies_to("diff(sin(x)^2,x,x)", "sin(2×x)");
+  simplifies_to("diff(sinh(sin(y)),x,x)", "0");
+
+  // Others
+  simplifies_to("diff(y,x,x)", "0");
+  simplifies_to("diff(x,x,x)", "1");
+  simplifies_to("diff(x^2,x,x)", "2×x");
+  simplifies_to("diff(x, x, 2)", "1");
+  simplifies_to("diff(a×x, x, 1)", "a");
+  simplifies_to("diff(23, x, 1)", "0");
+  simplifies_to("diff(1+x, x, y)", "1");
+  simplifies_to("diff(sin(ln(x)), x, y)",
+                "dep(cos(ln(y))/y,{real(sin(ln(y))),realPos(y)})");
+  simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
+                "dep((3×y^4×ln(y)+y^3×(1+4×ln(y)))×e^(3×y),{nonNull(y),real(y^"
+                "4×ln(y)×e^(3×y)),realPos(y)})");
+  simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
+  simplifies_to("diff((x-1)(x-2)(x-3),x,x)", "3×x^2-12×x+11");
+  simplifies_to("diff(√(x),x,x)", "dep(1/(2×√(x)),{real(√(x))})", cartesianCtx);
+  simplifies_to("diff(1/x,x,x)", "-1/x^2");
+  simplifies_to("diff(diff(x^3,x,x),x,x)", "6×x");
+  simplifies_to("diff(e^x,x,x)", "e^(x)");
+  simplifies_to("diff(2^x,x,x)", "ln(2)×2^x");
+  simplifies_to("diff(ln(x),x,x)", "dep(1/x,{real(ln(x))})", cartesianCtx);
+  // TODO: fix beautification ln(2)+ln(5) -> ln(10)
+  simplifies_to("diff(log(x),x,x)",
+                "dep(1/(x×(ln(2)+ln(5))),{real(log(x)),realPos(x)})");
+  simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
+  simplifies_to("diff(ln(x), x, -1)", "undef");
+  simplifies_to("diff(randint(0,5), x, 2)", "undef");
+  simplifies_to("diff(x+floor(random()), x, 2)", "undef");
+
+  // Derivating a complex expression is forbidden
+  simplifies_to("diff(i,x,2)", "undef");
+  simplifies_to("diff(e^(i×x),x,3)", "undef");
+  simplifies_to("diff(ln(x),x,-1)", "undef");
+
+  // Derivating a variable evaluated at a complex value is forbidden
+  simplifies_to("diff(x,x,-i)", "undef");
+  simplifies_to("diff(abs(x),x,i)", "undef");
+  simplifies_to("diff(ln(x),x,i)", "undef");
+  simplifies_to("diff(x,x,ln(-3))", "undef");
   simplifies_to("diff(floor(z), x, y)", "dep(0,{floor(z)})");
+
+  // Piecewise
+#if TODO_PCJ
+  simplifies_to("diff(piecewise(x,x≥1,-x,x≠0),x,x)",
+                "dep(piecewise(1,x>1,undef,x≥1,-1,"
+                "x≠0,undef,x=0),{piecewise(x,x≥1,-x,x≠0)})");
+  simplifies_to("diff(piecewise(x,x=1,2×x,x<5,3),x,x)",
+                "dep(piecewise(undef,x=1,2,x<5,undef,x≤5,0),{"
+                "piecewise(x,x=1,2×x,x<5,3)})");
+#endif
+
+  // Matrices
+  simplifies_to("diff([[x]],x,x)", "undef");
+  simplifies_to("diff([[2t,3t]],t,t)", "undef");
+  simplifies_to("diff([[2t][3t]],t,t)", "undef");
+
+  // With context
+  {
+    PoincareTest::SymbolStore symbolStore;
+    store("2→a", symbolStore);
+    store("-1→b", symbolStore);
+    store("3→c", symbolStore);
+    store("x/2→f(x)", symbolStore);
+
+    ProjectionContext ctx = {
+        .m_symbolic =
+            Poincare::Internal::SymbolicComputation::ReplaceDefinedSymbols,
+        .m_context = symbolStore};
+
+    simplifies_to("diff(a×x^2+b×x+c,x,x)", "4×x-1", ctx);
+    simplifies_to("diff(f(x),x,x)", "1/2", ctx);
+    simplifies_to("diff(a^2,a,x)", "2×x", ctx);
+    simplifies_to("diff(a^2,a,a)", "4", ctx);
+    simplifies_to("diff(b^2,b,2)", "4", ctx);
+
+    symbolStore.reset();
+
+    // On points
+    simplifies_to("diff((sin(t),cos(t)),t,t)", "(cos(t),-sin(t))", ctx);
+    store("(3t,-2t^2)→f(t)", symbolStore);
+    simplifies_to("diff(f(t),t,t)", "(3,-4×t)", ctx);
+  }
+
+  // On points
+  simplifies_to("diff((x^2, floor(x)),x,k)", "(2×k,diff(floor(x),x,k))");
+  simplifies_to("diff((sin(t),cos(t)),t,π/6)", "(√(3)/2,-1/2)");
+  simplifies_to("diff((1,2),t,1)", "(0,0)");
+}
+
+QUIZ_CASE(pcj_simplification_derivative_higher_order) {
+  simplifies_to("diff(x^3,x,x,2)", "6×x");
+  simplifies_to("diff(x^3,x,x,0)", "x^3");
+  simplifies_to("diff(x^3,x,x,-1)", "undef");
+  simplifies_to("diff(x^3,x,x,1.3)", "undef");
+  simplifies_to("diff(x^3,x,x,n)", "diff(x^3,x,x,n)");
+
+  simplifies_to("diff(cos(x),x,x,3)", "sin(x)");
+  simplifies_to("diff(x^5+1,x,x,10)", "0");
+  simplifies_to("diff(e^(2x),x,x,8)", "256×e^(2×x)");
+
+  simplifies_to("diff(x*y*y*y*z,y,x,2)", "6×x^2×z");
+  simplifies_to("k*x*sum(y*x*k,k,1,2)", "3×k×x^2×y");
+  simplifies_to("diff(3×x^2×k×y,x,k,2)", "6×k×y");
+  simplifies_to("diff(k*x*sum(y*x*k,k,1,2),x,k,2)", "6×k×y");
+
+  simplifies_to("diff(floor(x), x, y, 1)", "diff(floor(x),x,y)");
+  // There should be no dependencies, see Dependency::ContainsSameDependency
+  simplifies_to("diff(floor(x)+x, x, y, 2)",
+                "dep(diff(floor(x),x,y,2),{floor(y)})");
+  simplifies_to("diff(diff(diff(diff(floor(a),a,b,2),b,c),c,d,3),d,x)",
+                "dep(diff(floor(a),a,x,7),{diff(floor(a),a,x,2),diff(floor(a),"
+                "a,x,3),diff(floor(a),a,x,6)})");
+  simplifies_to("diff(diff(floor(a)+b*a,a,x),b,x)",
+                "dep(1,{floor(x),diff(floor(a),a,x)})");
+
+  // On points
+  simplifies_to("diff((sin(t),cos(t)),t,t,2)", "(-sin(t),-cos(t))");
+  simplifies_to("diff((t,2t^2),t,t,3)", "(0,0)");
+  simplifies_to("diff((sin(t),floor(t)),t,t,2)",
+                "(-sin(t),diff(floor(t),t,t,2))");
+}
+
+QUIZ_CASE(pcj_simplification_derivative_for_approximation) {
+  ProjectionContext ctxForApprox = {
+      .m_reductionTarget = Poincare::ReductionTarget::SystemForApproximation};
+  ProjectionContext cartesianCtxForApprox = {
+      .m_complexFormat = Poincare::ComplexFormat::Cartesian,
+      .m_reductionTarget = Poincare::ReductionTarget::SystemForApproximation};
+  projects_and_reduces_to("diff(ln(x),x,1)", "1", ctxForApprox);
+  projects_and_reduces_to("diff(ln(x),x,2.2)", "5/11", ctxForApprox);
+  projects_and_reduces_to("diff(ln(x),x,0)", "undef", ctxForApprox);
+  projects_and_reduces_to("diff(ln(x),x,-3.1)", "undef", ctxForApprox);
+  projects_and_reduces_to("diff(log(x),x,-10)", "undef", ctxForApprox);
+
+  projects_and_reduces_to("diff(abs(x),x,123)", "1", ctxForApprox);
+  projects_and_reduces_to("diff(abs(x),x,-2.34)", "-1", ctxForApprox);
+  projects_and_reduces_to("diff(abs(x),x,0)", "undef", ctxForApprox);
+
+#if TODO_PCJ
+  projects_and_reduces_to("diff(sign(x),x,123)", "0", ctxForApprox);
+  projects_and_reduces_to("diff(sign(x),x,-2.34)", "0", ctxForApprox);
+  projects_and_reduces_to("diff(sign(x),x,0)", "undef", ctxForApprox);
+#endif
+
+  projects_and_reduces_to("diff(√(x),x,-1)", "undef", cartesianCtxForApprox);
+
+  projects_and_reduces_to("diff(asin(x),x,1)", "undef", ctxForApprox);
+  projects_and_reduces_to("diff(asin(x),x,-1)", "undef", ctxForApprox);
+  projects_and_reduces_to("diff(acos(x),x,1)", "undef", ctxForApprox);
+  projects_and_reduces_to("diff(acos(x),x,-1)", "undef", ctxForApprox);
+  projects_and_reduces_to("diff(arccot(x),x,0)", "-1", ctxForApprox);
+
+  projects_and_reduces_to("diff(1/x,x,-2)", "-1/4", ctxForApprox);
+  projects_and_reduces_to("diff(x^3+5*x^2,x,0)", "0", ctxForApprox);
+  projects_and_reduces_to("diff(5^(sin(x)),x,3)", "cos(3)×ln(5)×5^sin(3)",
+                          ctxForApprox);
+
+  projects_and_reduces_to("diff((-1)^(4-2*2),x,3)", "0", ctxForApprox);
+
+  // With context
+  {
+    PoincareTest::SymbolStore symbolStore;
+    ProjectionContext ctxWithSymbol = {
+        .m_reductionTarget = Poincare::ReductionTarget::SystemForApproximation,
+        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+        .m_context = symbolStore};
+
+    store("0→a", symbolStore);
+    projects_and_reduces_to("diff((-1)^(a*x),x,3)", "0", ctxWithSymbol);
+  }
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {

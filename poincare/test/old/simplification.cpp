@@ -1777,11 +1777,11 @@ QUIZ_CASE(poincare_simplification_store_correctly_parsed) {
   PoincareTest::SymbolStore symbolStore;
   assert_parsed_expression_simplify_to("abc", "a×b×c", symbolStore);
   assert_parsed_expression_simplify_to("\"abc\"", "\"abc\"", symbolStore);
-  assert_reduce_and_store("2→a", symbolStore);
-  assert_reduce_and_store("5→bc", symbolStore);
+  store("2→a", symbolStore);
+  store("5→bc", symbolStore);
   assert_parsed_expression_simplify_to("abc", "10", symbolStore);  // a*bc
   assert_parsed_expression_simplify_to("aa", "4", symbolStore);
-  assert_reduce_and_store("10→aa", symbolStore);
+  store("10→aa", symbolStore);
   assert_parsed_expression_simplify_to("aa", "10", symbolStore);
   assert_parsed_expression_simplify_to("aaa", "20",
                                        symbolStore);  // Parsed to a*aa
@@ -1789,14 +1789,14 @@ QUIZ_CASE(poincare_simplification_store_correctly_parsed) {
                                        symbolStore);  // Parsed to a*aa*aa
   assert_parsed_expression_simplify_to("acos(b)", "arccos(b)", symbolStore);
   assert_parsed_expression_simplify_to("aacos(b)", "2×arccos(b)", symbolStore);
-  assert_reduce_and_store("t→bar(t)", symbolStore);
-  assert_reduce_and_store("8→foo", symbolStore);
+  store("t→bar(t)", symbolStore);
+  store("8→foo", symbolStore);
   assert_parsed_expression_simplify_to("foobar(x)", "8×x", symbolStore);
-  assert_reduce_and_store("t^2→foobar(t)", symbolStore);
+  store("t^2→foobar(t)", symbolStore);
   assert_parsed_expression_simplify_to("foobar(x)", "x^2", symbolStore);
 
   assert_parsed_expression_simplify_to("t", "1×_t", symbolStore);
-  assert_reduce_and_store("2→t", symbolStore);
+  store("2→t", symbolStore);
   assert_parsed_expression_simplify_to("t", "2", symbolStore);
 }
 
@@ -1834,7 +1834,7 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("_hplanck→_eV×_s",
                                        "4.1356676969239ᴇ-15×_eV×_s");
   PoincareTest::SymbolStore symbolStore;
-  assert_reduce_and_store("2_kg→a", symbolStore);
+  store("2_kg→a", symbolStore);
   assert_parsed_expression_simplify_to("a→g", "2000×_g", symbolStore);
 }
 
@@ -1871,15 +1871,13 @@ QUIZ_CASE(poincare_simplification_complex_format) {
                                          MetricUnitFormat, Real);
     // a = 2+i
     PoincareTest::SymbolStore symbolStore;
-    assert_reduce_and_store("2+i→a", symbolStore, Radian, MetricUnitFormat,
-                            Real);
+    store("2+i→a", symbolStore);
     assert_parsed_expression_simplify_to("a", "nonreal", symbolStore, User,
                                          Radian, MetricUnitFormat, Real);
     symbolStore.reset();
     // User defined function
     // f : x → x+1
-    assert_reduce_and_store("x+1+i→f(x)", symbolStore, Radian, MetricUnitFormat,
-                            Real);
+    store("x+1+i→f(x)", symbolStore);
     assert_parsed_expression_simplify_to("f(3)", "nonreal", symbolStore, User,
                                          Radian, MetricUnitFormat, Real);
   }
@@ -2036,15 +2034,13 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   {
     // a = 2+i
     PoincareTest::SymbolStore symbolStore;
-    assert_reduce_and_store("2+i→a", symbolStore, Radian, MetricUnitFormat,
-                            Cartesian);
+    store("2+i→a", symbolStore);
     assert_parsed_expression_simplify_to("a", "2+i", symbolStore, User, Radian,
                                          MetricUnitFormat, Cartesian);
     symbolStore.reset();
     // User defined function
     // f : x → x+1
-    assert_reduce_and_store("x+1+i→f(x)", symbolStore, Radian, MetricUnitFormat,
-                            Cartesian);
+    store("x+1+i→f(x)", symbolStore);
     assert_parsed_expression_simplify_to("f(3)", "4+i", symbolStore, User,
                                          Radian, MetricUnitFormat, Cartesian);
   }
@@ -2132,8 +2128,7 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   {
     PoincareTest::SymbolStore symbolStore;
     // a = 2 + i
-    assert_reduce_and_store("2+i→a", symbolStore, Radian, MetricUnitFormat,
-                            Polar);
+    store("2+i→a", symbolStore);
     assert_parsed_expression_simplify_to("a", "√(5)×e^((-2×arctan(2)+π)/2×i)",
                                          symbolStore, User, Radian,
                                          MetricUnitFormat, Polar);
@@ -2141,8 +2136,7 @@ QUIZ_CASE(poincare_simplification_complex_format) {
     // User defined function
     // f: x → x+1
 
-    assert_reduce_and_store("x+1+i→f(x)", symbolStore, Radian, MetricUnitFormat,
-                            Polar);
+    store("x+1+i→f(x)", symbolStore);
     assert_parsed_expression_simplify_to("f(3)", "√(17)×e^(arctan(1/4)×i)",
                                          symbolStore, User, Radian,
                                          MetricUnitFormat, Polar);
@@ -2212,15 +2206,13 @@ QUIZ_CASE(poincare_simplification_user_function) {
   PoincareTest::SymbolStore symbolStore;
   // User defined function
   // f: x → x*3
-  assert_reduce_and_store("x*3→f(x)", symbolStore, Radian, MetricUnitFormat,
-                          Polar);
+  store("x*3→f(x)", symbolStore);
   assert_parsed_expression_simplify_to("f(1+1)", "6", symbolStore, User, Radian,
                                        MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("f({2,3})", "{6,9}", symbolStore, User,
                                        Radian, MetricUnitFormat, Polar);
   // f: x → 3
-  assert_reduce_and_store("3→f(x)", symbolStore, Radian, MetricUnitFormat,
-                          Polar);
+  store("3→f(x)", symbolStore);
   assert_parsed_expression_simplify_to("f(1/0)", "undef", symbolStore, User,
                                        Radian, MetricUnitFormat, Polar);
 }
@@ -2529,8 +2521,8 @@ QUIZ_CASE(poincare_simplification_list) {
   {
     // Access to an element
     PoincareTest::SymbolStore symbolStore;
-    assert_reduce_and_store("{1,4,9}→l1", symbolStore);
-    assert_reduce_and_store("{}→l2", symbolStore);
+    store("{1,4,9}→l1", symbolStore);
+    store("{}→l2", symbolStore);
     assert_parsed_expression_simplify_to("l1(1)", "1", symbolStore);
     assert_parsed_expression_simplify_to("l1(2)", "4", symbolStore);
     assert_parsed_expression_simplify_to("l1(3)", "9", symbolStore);
@@ -2666,7 +2658,7 @@ QUIZ_CASE(poincare_simplification_list) {
   {
     // Do not confuse u{n} and L*{n}
     PoincareTest::SymbolStore symbolStore;
-    assert_reduce_and_store("{3}→L", symbolStore);
+    store("{3}→L", symbolStore);
     assert_parsed_expression_simplify_to("L{2}", "{6}",
                                          symbolStore);  // L*{2}
   }

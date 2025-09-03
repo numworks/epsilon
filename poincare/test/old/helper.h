@@ -72,21 +72,7 @@ void assert_parsed_expression_process_to(
     int numberOfSignificantDigits =
         Poincare::PrintFloat::k_maxNumberOfSignificantDigits);
 
-// Parsing
-
-Poincare::Internal::Tree* parse_expression(
-    const char* expression,
-    const Poincare::Context& context = Poincare::EmptyContext{},
-    bool isAssignment = false);
-
 // Simplification
-
-void assert_reduce_and_store(
-    const char* expression, Poincare::VariableStore& variableStore,
-    Poincare::AngleUnit angleUnit = Radian,
-    Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
-    Poincare::ComplexFormat complexFormat = Cartesian,
-    Poincare::ReductionTarget target = User);
 
 /* The two signatures (with and without a context parameter) are there for
  * retro-compatibilty with the old tests */

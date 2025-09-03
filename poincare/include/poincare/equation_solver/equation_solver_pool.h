@@ -8,19 +8,6 @@ namespace Poincare {
 
 namespace EquationSolver {
 
-constexpr static size_t k_maxNumberOfVariables =
-    EquationSolverProperties::k_maxNumberOfVariables;
-constexpr static size_t k_maxNumberOfExactSolutions =
-    EquationSolverProperties::k_maxNumberOfExactSolutions;
-
-using VariableArray = EquationSolverProperties::VariableArray;
-using Error = EquationSolverProperties::Error;
-using SolvingMethod = EquationSolverProperties::SolvingMethod;
-using SolutionType = EquationSolverProperties::SolutionType;
-
-using EquationMetadata = EquationSolverProperties::EquationMetadata;
-using SolutionMetadata = EquationSolverProperties::SolutionMetadata;
-
 // Similar to Poincare::Internal::EquationSolver::SolverResult
 struct SolverResult {
   // List of exact solutions, or nullptr if no exact solution

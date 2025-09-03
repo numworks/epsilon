@@ -25,289 +25,30 @@
 #include <poincare/src/numeric_solver/roots.h>
 #include <poincare/src/numeric_solver/zoom.h>
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::EquationSolver {
+using namespace Poincare::EquationSolver;
 
-EquationSolver::SolverResult EquationSolver::ExactSolveAdaptive(
-    const Tree* equationList, ProjectionContext projectionContext) {
-  // Try solving while using user variables
-  SolverResult firstResult = ExactSolve(equationList, projectionContext, false);
+enum class UnknownSelectionStrategy : uint8_t {
+  // Only includes symbols that are not defined by the user
+  OnlyUndefinedSymbols,
+  // Includes all symbols, even ones defined by the user
+  AllSymbols,
+  /* Choses whether or not to override defined variables in order to have only
+   * one unknown at the end */
+  MaxOneSymbol,
+};
 
-  Error firstError = firstResult.error;
-  size_t nDefinedVariables =
-      firstResult.equationMetadata.definedVariables.size();
+struct PreprocessingResult {
+  Tree* reducedEquationList = nullptr;
+  Error error = Error::NoError;
+  EquationMetadata equationMetadata;
+};
 
-  /* Retry with overriden variables if:
-   *     - There are variables to override (nDefinedVariables > 0)
-   * AND -    There is no error but no solution was found
-   *       OR The equation is undefined or non real or unhandled
-   *
-   * For every other errors, overriding the variables shouldn't change anything.
-   */
-  bool retryWithOverridenVariables =
-      nDefinedVariables > 0 &&
-      ((firstError == Error::NoError &&
-        firstResult.exactSolutionList->numberOfChildren() == 0) ||
-       firstError == Error::EquationUndefined ||
-       firstError == Error::EquationNonReal ||
-       firstError == Error::EquationUnhandled);
+constexpr static char k_parameterPrefix = 't';
 
-  if (!retryWithOverridenVariables) {
-    return firstResult;
-  }
-
-  // Try solving while overriding user variables
-  SolverResult secondResult = ExactSolve(equationList, projectionContext, true);
-  Error secondError = secondResult.error;
-
-  if (firstError == Error::NoError && secondError != Error::NoError &&
-      secondError != Error::RequireApproximateSolution) {
-    assert(!secondResult.exactSolutionList &&
-           !secondResult.approximateSolutionList &&
-           firstResult.exactSolutionList);
-    // Use the first result empty solution list
-    return firstResult;
-  }
-
-  if (firstResult.exactSolutionList) {
-    firstResult.exactSolutionList->removeTree();
-  }
-  if (firstResult.approximateSolutionList) {
-    firstResult.approximateSolutionList->removeTree();
-  }
-
-  return secondResult;
-}
-
-EquationSolver::SolverResult EquationSolver::ExactSolve(
-    const Tree* equationList, ProjectionContext projectionContext,
-    bool overrideDefinedVariables) {
-  // Step 1. Analyze the equations
-  PreprocessingResult preprocessingResult = PreprocessEquationList(
-      equationList, &projectionContext,
-      overrideDefinedVariables
-          ? UnknownSelectionStrategy::AllSymbols
-          : UnknownSelectionStrategy::OnlyUndefinedSymbols);
-
-  Tree* reducedEquationList = preprocessingResult.reducedEquationList;
-  EquationMetadata equationMetadata = preprocessingResult.equationMetadata;
-  projectionContext.m_complexFormat =
-      preprocessingResult.equationMetadata.complexFormat;
-
-  if (preprocessingResult.error != Error::NoError) {
-    /* If the analysis failed, return an empty solution list */
-    assert(reducedEquationList == nullptr);
-    return {
-        .error = preprocessingResult.error,
-        .equationMetadata = equationMetadata,
-    };
-  }
-
-  // Step 2. Solve the equations
-
-  // Step 2.1. Try with linear system solving
-  SolverResult result = SolveLinearSystem(reducedEquationList, equationMetadata,
-                                          projectionContext.m_context);
-
-#if POINCARE_POLYNOMIAL_SOLVER
-  // Step 2.2. Try with polynomial solving
-  if (result.error == Error::NonLinearSystem &&
-      equationMetadata.unknownVariables.size() <= 1 &&
-      reducedEquationList->numberOfChildren() <= 1) {
-    assert(!result.exactSolutionList && !result.approximateSolutionList);
-    result = SolvePolynomial(reducedEquationList, equationMetadata);
-
-    if (result.error == Error::NoError) {
-      /* Remove non real solutions of a polynomial if the equation was
-       * projected with a "Real" Complex format */
-      Tree* solutionList = result.exactSolutionList;
-      assert(solutionList->isList());
-      if (projectionContext.m_complexFormat == ComplexFormat::Real) {
-        for (int i = solutionList->numberOfChildren() - 1; i >= 0; i--) {
-          if (!SignOfTreeOrApproximation(solutionList->child(i)).isReal()) {
-            NAry::RemoveChildAtIndex(solutionList, i);
-          }
-        }
-      }
-    }
-  }
-#endif
-
-  reducedEquationList->removeTree();
-
-  // Step 3. Handle the result
-
-  if (result.error == Error::NonLinearSystem ||
-      result.error == Error::RequireApproximateSolution ||
-      !result.exactSolutionList) {
-    // TODO: Handle GeneralMonovariable solving.
-    if (result.exactSolutionList) {
-      result.exactSolutionList->removeTree();
-    }
-    // Reset solution metadata
-    result.solutionMetadata = {};
-    return result;
-  }
-
-  /* Approximate */
-
-  if (result.solutionMetadata.solutionType != SolutionType::Formal) {
-    Approximation::Context approxCtx(projectionContext.m_angleUnit,
-                                     projectionContext.m_complexFormat,
-                                     projectionContext.m_context);
-    result.approximateSolutionList = Approximation::ToTree<double>(
-        result.exactSolutionList,
-        Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                  .prepare = true},
-        approxCtx);
-  }
-
-  /* Beautify result */
-
-  // Beautify exact solutions
-  assert(result.exactSolutionList);
-  Simplification::BeautifyReduced(result.exactSolutionList, &projectionContext);
-
-  // Beautify approximate solutions
-  if (result.approximateSolutionList) {
-    // Advanced reduction is only needed to beautify in polar format
-    projectionContext.m_advanceReduce =
-        projectionContext.m_complexFormat == ComplexFormat::Polar;
-    Simplification::BeautifyReduced(result.approximateSolutionList,
-                                    &projectionContext);
-  }
-
-  return result;
-}
-
-template <typename T>
-static Coordinate2D<T> evaluator(T t, const void* model) {
-  const Tree* e = reinterpret_cast<const Tree*>(model);
-  return Coordinate2D<T>(
-      t, Approximation::To<T>(
-             e, t, Approximation::Parameters{.isRootAndCanHaveRandom = true}));
-}
-
-EquationSolver::SolverResult EquationSolver::ApproximateSolve(
-    const Tree* equationList, ProjectionContext projectionContext,
-    Range1D<double> range, size_t maxNumberOfSolutions) {
-  assert(equationList->isList());
-
-  if (equationList->numberOfChildren() > 1) {
-    return {.error = Error::EquationUnhandled};
-  }
-
-  // Step 1. Analyze the equations
-  PreprocessingResult preprocessingResult = PreprocessEquationList(
-      equationList, &projectionContext, UnknownSelectionStrategy::MaxOneSymbol);
-
-  Tree* reducedEquationList = preprocessingResult.reducedEquationList;
-  EquationMetadata equationMetadata = preprocessingResult.equationMetadata;
-
-  if (preprocessingResult.error != Error::NoError) {
-    assert(reducedEquationList == nullptr);
-    return {
-        .error = preprocessingResult.error,
-        .equationMetadata = equationMetadata,
-    };
-  }
-
-  SolutionMetadata solutionMetadata{
-      .solvingMethod = SolvingMethod::GeneralMonovariable,
-      .solutionType = SolutionType::Approximate,
-  };
-
-  assert(reducedEquationList->isList() &&
-         reducedEquationList->numberOfChildren() == 1);
-  Tree* preparedEquation = reducedEquationList->child(0);
-
-  assert(equationMetadata.unknownVariables.size() == 1);
-  Approximation::PrepareFunctionForApproximation(
-      preparedEquation, equationMetadata.unknownVariables[0],
-      ComplexFormat::Real);
-
-  // Step 2. Compute the solving range if not provided
-  if (range.isNan()) {
-    /* Interval search is done in float to gain some time, since precision does
-     * not matter as much as for the actual solve. The computed interval is
-     * stretched and converted to double because the actual solver works on
-     * double. */
-    constexpr float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
-    // TODO: factor with InteractiveCurveViewRange::NormalYXRatio();
-    constexpr float k_yxRatio = 3.06f / 5.76f;
-    Zoom zoom(NAN, NAN, k_yxRatio, k_maxFloatForAutoApproximateSolvingRange);
-    // Use the intersection between the definition domain of f and the bounds
-    zoom.setBounds(-k_maxFloatForAutoApproximateSolvingRange,
-                   k_maxFloatForAutoApproximateSolvingRange);
-    zoom.setMaxPointsOneSide(maxNumberOfSolutions, maxNumberOfSolutions / 2);
-    const void* model = static_cast<const void*>(preparedEquation);
-    bool finiteNumberOfSolutions = true;
-    bool didFitRoots =
-        zoom.fitRoots(evaluator<float>, model, false, evaluator<double>,
-                      &finiteNumberOfSolutions);
-    zoom.fitBounds(evaluator<float>, model, false);
-    Range1D<float> finalRange = *(zoom.range(false, false).x());
-    if (didFitRoots) {
-      /* The range was computed from the solution found with a solver in float.
-       * We need to strech the range in case it does not cover the solution
-       * found with a solver in double. */
-      constexpr static float k_securityMarginCoef = 1 / 10.0;
-      float securityMargin =
-          std::max(std::abs(finalRange.max()), std::abs(finalRange.min())) *
-          k_securityMarginCoef;
-      finalRange.stretchEachBoundBy(securityMargin,
-                                    k_maxFloatForAutoApproximateSolvingRange);
-    }
-
-    range = Range1D<double>(finalRange.min(), finalRange.max());
-    if (!finiteNumberOfSolutions) {
-      /* When there are more than k_maxNumberOfApproximateSolutions on one side
-       * of 0, the zoom is setting the interval to have a maximum of 5 solutions
-       * left of 0 and 5 solutions right of zero. This means that sometimes, for
-       * a function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions
-       * will be displayed. We still want to notify the user that more solutions
-       * exist.
-       */
-      solutionMetadata.incompleteSolutions = true;
-    }
-  }
-
-  // Step 3. Compute the solutions
-  assert(range.isValid());
-  solutionMetadata.solvingRange = range;
-  Solver<double> solver = Poincare::Solver<double>(range.min(), range.max());
-  solver.stretch();
-
-  TreeRef resultList = List::PushEmpty();
-
-  for (int i = 0; i <= maxNumberOfSolutions; i++) {
-    double root = solver.nextRoot(preparedEquation).x();
-    if (root < range.min()) {
-      i--;
-      continue;
-    } else if (root > range.max()) {
-      root = NAN;
-    }
-
-    if (i == maxNumberOfSolutions) {
-      solutionMetadata.incompleteSolutions = true;
-    } else {
-      if (std::isnan(root)) {
-        break;
-      }
-      if (std::isfinite(root)) {
-        NAry::AddChild(resultList, SharedTreeStack->pushFloat(root));
-      }
-    }
-  }
-
-  reducedEquationList->removeTree();
-  // exactSolutionList is nullptr
-  return {.approximateSolutionList = resultList,
-          .equationMetadata = equationMetadata,
-          .solutionMetadata = solutionMetadata};
-}
-
-EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
+/* This is used by both ExactSolve and ApproximateSolve.
+ * It computes the EquationMetadata, and reduces the equation list. */
+static PreprocessingResult PreprocessEquationList(
     const Tree* equationList, ProjectionContext* projectionContext,
     UnknownSelectionStrategy selectionStrategy) {
   assert(equationList->isList());
@@ -463,9 +204,138 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
           .equationMetadata = equationMetadata};
 }
 
-EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
-    const Tree* reducedEquationList, const EquationMetadata& equationMetadata,
-    const Context& context) {
+/* Return list of linear coefficients for each variables and final constant. */
+static Tree* GetLinearCoefficients(const Tree* equation,
+                                   uint8_t numberOfVariables) {
+  TreeRef result = List::PushEmpty();
+  TreeRef eq = equation->cloneTree();
+  /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
+   * temporary workaround. */
+  SystematicReduction::DeepReduce(eq);
+  AdvancedReduction::DeepExpandAlgebraic(eq);
+  Dependency::DeepRemoveUselessDependencies(eq);
+  /* TODO If [eq] still has dependency, they will not be handled by Parse */
+  for (uint8_t i = 0; i < numberOfVariables; i++) {
+    // TODO: PolynomialParser::Parse may need to handle more block types.
+    // TODO: Use user settings for a RealUnkown sign ?
+    Tree* polynomial = PolynomialParser::Parse(
+        eq, Variables::Variable(i, ComplexSign::Finite()));
+    if (!polynomial) {
+      // equation is not polynomial
+      SharedTreeStack->dropBlocksFrom(result);
+      return nullptr;
+    }
+    if (!polynomial->isPolynomial()) {
+      // eq did not depend on variable. Continue.
+      eq = polynomial;
+      NAry::AddChild(result, SharedTreeStack->pushZero());
+      continue;
+    }
+    if (Polynomial::Degree(polynomial) != 1) {
+      /* Degree is supposed to be 0 or 1. Otherwise, it means that equation
+       * is 'undefined' due to the reduction of 0*inf for example.
+       * (ie, x*y*inf = 0) */
+      polynomial->removeTree();
+      result->removeTree();
+      return nullptr;
+    }
+    bool nullConstant = (Polynomial::NumberOfTerms(polynomial) == 1);
+    /* The equation can be written: a_1*x+a_0 with a_1 and a_0 x-independent.
+     * The equation supposed to be linear in all variables, so we can look for
+     * the coefficients linked to the other variables in a_0. */
+    // Pilfer polynomial result : [P][Variable][Coeff1][?Coeff0]
+    polynomial->removeNode();  // Remove Node : [Variable][Coeff1][?Coeff0]
+    polynomial->removeTree();  // Remove Variable : [Coeff1][?Coeff0]
+    // Update eq to follow [Coeff0] if it exists for next variables.
+    eq = nullConstant ? SharedTreeStack->pushZero() : polynomial->nextTree();
+    if (Variables::HasVariables(polynomial) ||
+        (i == numberOfVariables - 1 && Variables::HasVariables(eq))) {
+      /* The expression can be linear on all coefficients taken one by one but
+       * non-linear (ex: xy = 2). We delete the results and return false if one
+       * of the coefficients (or last constant term) contains a variable. */
+      eq->removeTree();
+      polynomial->removeTree();
+      result->removeTree();
+      return nullptr;
+    }
+    /* This will detach [Coeff1] into result, leaving eq alone and polynomial
+     * properly pilfered. */
+    NAry::AddChild(result, polynomial);
+  }
+  // Constant term is remaining [Coeff0].
+  Tree* constant = eq->detachTree();
+  NAry::AddChild(result, constant);
+  return result;
+}
+
+static uint32_t TagParametersUsedAsVariables(VariableArray variables) {
+  uint32_t tags = 0;
+  constexpr size_t k_maxIndex = OMG::BitHelper::numberOfBitsIn(tags);
+  constexpr size_t k_maxNumberOfDigits =
+      OMG::Print::LengthOfUInt32(OMG::Base::Decimal, k_maxIndex);
+  /* Only check local variables that may not have a global definition. The
+   * others  will be checked for later. */
+  for (int i = 0; i < variables.size(); i++) {
+    // Set the k-th bit in tags if name == "t{k}" and 0th if name is "t"
+    const char* variable = variables[i];
+    if (variable[0] != k_parameterPrefix) {
+      continue;
+    }
+    if (variable[1] == '\0') {
+      OMG::BitHelper::setBitAtIndex(tags, 0, true);
+      continue;
+    }
+    size_t index =
+        OMG::Print::ParseDecimalInt(&variable[1], k_maxNumberOfDigits);
+    if (index > 0 && index < k_maxIndex) {
+      OMG::BitHelper::setBitAtIndex(tags, index, true);
+    }
+  }
+  return tags;
+}
+
+/* Return the userSymbol for the next additional parameter variable. */
+static Tree* GetNextParameterSymbol(size_t* parameterIndex,
+                                    uint32_t usedParameterIndices,
+                                    const Context& context) {
+  /* Equation had more solution and introduced new unknowns variables, name
+   * them 't' + 2 digits + '\0' */
+  constexpr size_t k_parameterNameSize = 1 + 2 + 1;
+  constexpr size_t k_maxIndex =
+      OMG::BitHelper::numberOfBitsIn(usedParameterIndices);
+  char parameterName[k_parameterNameSize] = {k_parameterPrefix};
+  while (*parameterIndex < k_maxIndex) {
+    // Skip already used parameter indices in local variables
+    while (OMG::BitHelper::bitAtIndex(usedParameterIndices, *parameterIndex)) {
+      (*parameterIndex)++;
+      assert(*parameterIndex < k_maxIndex);
+    }
+    size_t parameterNameLength =
+        *parameterIndex == 0
+            ? 1
+            : 1 + OMG::Print::IntLeft(*parameterIndex, parameterName + 1,
+                                      k_parameterNameSize - 2);
+    (*parameterIndex)++;
+    assert(parameterNameLength >= 1 &&
+           parameterNameLength < k_parameterNameSize);
+    parameterName[parameterNameLength] = 0;
+    Tree* symbol =
+        SharedTreeStack->pushUserSymbol(parameterName, parameterNameLength + 1);
+    if (!context.expressionForUserNamed(symbol)) {
+      return symbol;
+    }
+    // Skip already used parameter indices in global variables
+    symbol->removeTree();
+  }
+  OMG::unreachable();
+}
+
+/* Checks if the equationList is a linear system, and if so, computes the
+ * solutions. The equationMetada passed as arguments are contained in the
+ * returned SolverResult.  */
+static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
+                                      const EquationMetadata& equationMetadata,
+                                      const Context& context) {
   SolutionMetadata solutionMetadata{
       .solvingMethod = SolvingMethod::LinearSystem,
       .solutionType = SolutionType::Exact,
@@ -687,72 +557,11 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
           .solutionMetadata = solutionMetadata};
 }
 
-Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
-                                            uint8_t numberOfVariables) {
-  TreeRef result = List::PushEmpty();
-  TreeRef eq = equation->cloneTree();
-  /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
-   * temporary workaround. */
-  SystematicReduction::DeepReduce(eq);
-  AdvancedReduction::DeepExpandAlgebraic(eq);
-  Dependency::DeepRemoveUselessDependencies(eq);
-  /* TODO If [eq] still has dependency, they will not be handled by Parse */
-  for (uint8_t i = 0; i < numberOfVariables; i++) {
-    // TODO: PolynomialParser::Parse may need to handle more block types.
-    // TODO: Use user settings for a RealUnkown sign ?
-    Tree* polynomial = PolynomialParser::Parse(
-        eq, Variables::Variable(i, ComplexSign::Finite()));
-    if (!polynomial) {
-      // equation is not polynomial
-      SharedTreeStack->dropBlocksFrom(result);
-      return nullptr;
-    }
-    if (!polynomial->isPolynomial()) {
-      // eq did not depend on variable. Continue.
-      eq = polynomial;
-      NAry::AddChild(result, SharedTreeStack->pushZero());
-      continue;
-    }
-    if (Polynomial::Degree(polynomial) != 1) {
-      /* Degree is supposed to be 0 or 1. Otherwise, it means that equation
-       * is 'undefined' due to the reduction of 0*inf for example.
-       * (ie, x*y*inf = 0) */
-      polynomial->removeTree();
-      result->removeTree();
-      return nullptr;
-    }
-    bool nullConstant = (Polynomial::NumberOfTerms(polynomial) == 1);
-    /* The equation can be written: a_1*x+a_0 with a_1 and a_0 x-independent.
-     * The equation supposed to be linear in all variables, so we can look for
-     * the coefficients linked to the other variables in a_0. */
-    // Pilfer polynomial result : [P][Variable][Coeff1][?Coeff0]
-    polynomial->removeNode();  // Remove Node : [Variable][Coeff1][?Coeff0]
-    polynomial->removeTree();  // Remove Variable : [Coeff1][?Coeff0]
-    // Update eq to follow [Coeff0] if it exists for next variables.
-    eq = nullConstant ? SharedTreeStack->pushZero() : polynomial->nextTree();
-    if (Variables::HasVariables(polynomial) ||
-        (i == numberOfVariables - 1 && Variables::HasVariables(eq))) {
-      /* The expression can be linear on all coefficients taken one by one but
-       * non-linear (ex: xy = 2). We delete the results and return false if one
-       * of the coefficients (or last constant term) contains a variable. */
-      eq->removeTree();
-      polynomial->removeTree();
-      result->removeTree();
-      return nullptr;
-    }
-    /* This will detach [Coeff1] into result, leaving eq alone and polynomial
-     * properly pilfered. */
-    NAry::AddChild(result, polynomial);
-  }
-  // Constant term is remaining [Coeff0].
-  Tree* constant = eq->detachTree();
-  NAry::AddChild(result, constant);
-  return result;
-}
-
-EquationSolver::SolverResult EquationSolver::SolvePolynomial(
-    const Tree* simplifiedEquationList,
-    const EquationMetadata& equationMetadata) {
+/* Checks if the equationList is a deg 2 or 3 polynomial, and if so, computes
+ * the solutions. The equationMetada passed as arguments are contained in the
+ * returned SolverResult. */
+static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
+                                    const EquationMetadata& equationMetadata) {
   assert(simplifiedEquationList->isList() &&
          simplifiedEquationList->numberOfChildren() == 1);
 
@@ -880,65 +689,285 @@ EquationSolver::SolverResult EquationSolver::SolvePolynomial(
           .solutionMetadata = solutionMetadata};
 }
 
-uint32_t EquationSolver::TagParametersUsedAsVariables(VariableArray variables) {
-  uint32_t tags = 0;
-  constexpr size_t k_maxIndex = OMG::BitHelper::numberOfBitsIn(tags);
-  constexpr size_t k_maxNumberOfDigits =
-      OMG::Print::LengthOfUInt32(OMG::Base::Decimal, k_maxIndex);
-  /* Only check local variables that may not have a global definition. The
-   * others  will be checked for later. */
-  for (int i = 0; i < variables.size(); i++) {
-    // Set the k-th bit in tags if name == "t{k}" and 0th if name is "t"
-    const char* variable = variables[i];
-    if (variable[0] != k_parameterPrefix) {
-      continue;
-    }
-    if (variable[1] == '\0') {
-      OMG::BitHelper::setBitAtIndex(tags, 0, true);
-      continue;
-    }
-    size_t index =
-        OMG::Print::ParseDecimalInt(&variable[1], k_maxNumberOfDigits);
-    if (index > 0 && index < k_maxIndex) {
-      OMG::BitHelper::setBitAtIndex(tags, index, true);
-    }
+SolverResult ExactSolveAdaptive(const Tree* equationList,
+                                ProjectionContext projectionContext) {
+  // Try solving while using user variables
+  SolverResult firstResult = ExactSolve(equationList, projectionContext, false);
+
+  Error firstError = firstResult.error;
+  size_t nDefinedVariables =
+      firstResult.equationMetadata.definedVariables.size();
+
+  /* Retry with overriden variables if:
+   *     - There are variables to override (nDefinedVariables > 0)
+   * AND -    There is no error but no solution was found
+   *       OR The equation is undefined or non real or unhandled
+   *
+   * For every other errors, overriding the variables shouldn't change anything.
+   */
+  bool retryWithOverridenVariables =
+      nDefinedVariables > 0 &&
+      ((firstError == Error::NoError &&
+        firstResult.exactSolutionList->numberOfChildren() == 0) ||
+       firstError == Error::EquationUndefined ||
+       firstError == Error::EquationNonReal ||
+       firstError == Error::EquationUnhandled);
+
+  if (!retryWithOverridenVariables) {
+    return firstResult;
   }
-  return tags;
+
+  // Try solving while overriding user variables
+  SolverResult secondResult = ExactSolve(equationList, projectionContext, true);
+  Error secondError = secondResult.error;
+
+  if (firstError == Error::NoError && secondError != Error::NoError &&
+      secondError != Error::RequireApproximateSolution) {
+    assert(!secondResult.exactSolutionList &&
+           !secondResult.approximateSolutionList &&
+           firstResult.exactSolutionList);
+    // Use the first result empty solution list
+    return firstResult;
+  }
+
+  if (firstResult.exactSolutionList) {
+    firstResult.exactSolutionList->removeTree();
+  }
+  if (firstResult.approximateSolutionList) {
+    firstResult.approximateSolutionList->removeTree();
+  }
+
+  return secondResult;
 }
 
-Tree* EquationSolver::GetNextParameterSymbol(size_t* parameterIndex,
-                                             uint32_t usedParameterIndices,
-                                             const Context& context) {
-  /* Equation had more solution and introduced new unknowns variables, name
-   * them 't' + 2 digits + '\0' */
-  constexpr size_t k_parameterNameSize = 1 + 2 + 1;
-  constexpr size_t k_maxIndex =
-      OMG::BitHelper::numberOfBitsIn(usedParameterIndices);
-  char parameterName[k_parameterNameSize] = {k_parameterPrefix};
-  while (*parameterIndex < k_maxIndex) {
-    // Skip already used parameter indices in local variables
-    while (OMG::BitHelper::bitAtIndex(usedParameterIndices, *parameterIndex)) {
-      (*parameterIndex)++;
-      assert(*parameterIndex < k_maxIndex);
-    }
-    size_t parameterNameLength =
-        *parameterIndex == 0
-            ? 1
-            : 1 + OMG::Print::IntLeft(*parameterIndex, parameterName + 1,
-                                      k_parameterNameSize - 2);
-    (*parameterIndex)++;
-    assert(parameterNameLength >= 1 &&
-           parameterNameLength < k_parameterNameSize);
-    parameterName[parameterNameLength] = 0;
-    Tree* symbol =
-        SharedTreeStack->pushUserSymbol(parameterName, parameterNameLength + 1);
-    if (!context.expressionForUserNamed(symbol)) {
-      return symbol;
-    }
-    // Skip already used parameter indices in global variables
-    symbol->removeTree();
+SolverResult ExactSolve(const Tree* equationList,
+                        ProjectionContext projectionContext,
+                        bool overrideDefinedVariables) {
+  // Step 1. Analyze the equations
+  PreprocessingResult preprocessingResult = PreprocessEquationList(
+      equationList, &projectionContext,
+      overrideDefinedVariables
+          ? UnknownSelectionStrategy::AllSymbols
+          : UnknownSelectionStrategy::OnlyUndefinedSymbols);
+
+  Tree* reducedEquationList = preprocessingResult.reducedEquationList;
+  EquationMetadata equationMetadata = preprocessingResult.equationMetadata;
+  projectionContext.m_complexFormat =
+      preprocessingResult.equationMetadata.complexFormat;
+
+  if (preprocessingResult.error != Error::NoError) {
+    /* If the analysis failed, return an empty solution list */
+    assert(reducedEquationList == nullptr);
+    return {
+        .error = preprocessingResult.error,
+        .equationMetadata = equationMetadata,
+    };
   }
-  OMG::unreachable();
+
+  // Step 2. Solve the equations
+
+  // Step 2.1. Try with linear system solving
+  SolverResult result = SolveLinearSystem(reducedEquationList, equationMetadata,
+                                          projectionContext.m_context);
+
+#if POINCARE_POLYNOMIAL_SOLVER
+  // Step 2.2. Try with polynomial solving
+  if (result.error == Error::NonLinearSystem &&
+      equationMetadata.unknownVariables.size() <= 1 &&
+      reducedEquationList->numberOfChildren() <= 1) {
+    assert(!result.exactSolutionList && !result.approximateSolutionList);
+    result = SolvePolynomial(reducedEquationList, equationMetadata);
+
+    if (result.error == Error::NoError) {
+      /* Remove non real solutions of a polynomial if the equation was
+       * projected with a "Real" Complex format */
+      Tree* solutionList = result.exactSolutionList;
+      assert(solutionList->isList());
+      if (projectionContext.m_complexFormat == ComplexFormat::Real) {
+        for (int i = solutionList->numberOfChildren() - 1; i >= 0; i--) {
+          if (!SignOfTreeOrApproximation(solutionList->child(i)).isReal()) {
+            NAry::RemoveChildAtIndex(solutionList, i);
+          }
+        }
+      }
+    }
+  }
+#endif
+
+  reducedEquationList->removeTree();
+
+  // Step 3. Handle the result
+
+  if (result.error == Error::NonLinearSystem ||
+      result.error == Error::RequireApproximateSolution ||
+      !result.exactSolutionList) {
+    // TODO: Handle GeneralMonovariable solving.
+    if (result.exactSolutionList) {
+      result.exactSolutionList->removeTree();
+    }
+    // Reset solution metadata
+    result.solutionMetadata = {};
+    return result;
+  }
+
+  /* Approximate */
+
+  if (result.solutionMetadata.solutionType != SolutionType::Formal) {
+    Approximation::Context approxCtx(projectionContext.m_angleUnit,
+                                     projectionContext.m_complexFormat,
+                                     projectionContext.m_context);
+    result.approximateSolutionList = Approximation::ToTree<double>(
+        result.exactSolutionList,
+        Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                  .prepare = true},
+        approxCtx);
+  }
+
+  /* Beautify result */
+
+  // Beautify exact solutions
+  assert(result.exactSolutionList);
+  Simplification::BeautifyReduced(result.exactSolutionList, &projectionContext);
+
+  // Beautify approximate solutions
+  if (result.approximateSolutionList) {
+    // Advanced reduction is only needed to beautify in polar format
+    projectionContext.m_advanceReduce =
+        projectionContext.m_complexFormat == ComplexFormat::Polar;
+    Simplification::BeautifyReduced(result.approximateSolutionList,
+                                    &projectionContext);
+  }
+
+  return result;
 }
 
-}  // namespace Poincare::Internal
+template <typename T>
+static Coordinate2D<T> evaluator(T t, const void* model) {
+  const Tree* e = reinterpret_cast<const Tree*>(model);
+  return Coordinate2D<T>(
+      t, Approximation::To<T>(
+             e, t, Approximation::Parameters{.isRootAndCanHaveRandom = true}));
+}
+
+SolverResult ApproximateSolve(const Tree* equationList,
+                              ProjectionContext projectionContext,
+                              Range1D<double> range,
+                              size_t maxNumberOfSolutions) {
+  assert(equationList->isList());
+
+  if (equationList->numberOfChildren() > 1) {
+    return {.error = Error::EquationUnhandled};
+  }
+
+  // Step 1. Analyze the equations
+  PreprocessingResult preprocessingResult = PreprocessEquationList(
+      equationList, &projectionContext, UnknownSelectionStrategy::MaxOneSymbol);
+
+  Tree* reducedEquationList = preprocessingResult.reducedEquationList;
+  EquationMetadata equationMetadata = preprocessingResult.equationMetadata;
+
+  if (preprocessingResult.error != Error::NoError) {
+    assert(reducedEquationList == nullptr);
+    return {
+        .error = preprocessingResult.error,
+        .equationMetadata = equationMetadata,
+    };
+  }
+
+  SolutionMetadata solutionMetadata{
+      .solvingMethod = SolvingMethod::GeneralMonovariable,
+      .solutionType = SolutionType::Approximate,
+  };
+
+  assert(reducedEquationList->isList() &&
+         reducedEquationList->numberOfChildren() == 1);
+  Tree* preparedEquation = reducedEquationList->child(0);
+
+  assert(equationMetadata.unknownVariables.size() == 1);
+  Approximation::PrepareFunctionForApproximation(
+      preparedEquation, equationMetadata.unknownVariables[0],
+      ComplexFormat::Real);
+
+  // Step 2. Compute the solving range if not provided
+  if (range.isNan()) {
+    /* Interval search is done in float to gain some time, since precision does
+     * not matter as much as for the actual solve. The computed interval is
+     * stretched and converted to double because the actual solver works on
+     * double. */
+    constexpr float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
+    // TODO: factor with InteractiveCurveViewRange::NormalYXRatio();
+    constexpr float k_yxRatio = 3.06f / 5.76f;
+    Zoom zoom(NAN, NAN, k_yxRatio, k_maxFloatForAutoApproximateSolvingRange);
+    // Use the intersection between the definition domain of f and the bounds
+    zoom.setBounds(-k_maxFloatForAutoApproximateSolvingRange,
+                   k_maxFloatForAutoApproximateSolvingRange);
+    zoom.setMaxPointsOneSide(maxNumberOfSolutions, maxNumberOfSolutions / 2);
+    const void* model = static_cast<const void*>(preparedEquation);
+    bool finiteNumberOfSolutions = true;
+    bool didFitRoots =
+        zoom.fitRoots(evaluator<float>, model, false, evaluator<double>,
+                      &finiteNumberOfSolutions);
+    zoom.fitBounds(evaluator<float>, model, false);
+    Range1D<float> finalRange = *(zoom.range(false, false).x());
+    if (didFitRoots) {
+      /* The range was computed from the solution found with a solver in float.
+       * We need to strech the range in case it does not cover the solution
+       * found with a solver in double. */
+      constexpr static float k_securityMarginCoef = 1 / 10.0;
+      float securityMargin =
+          std::max(std::abs(finalRange.max()), std::abs(finalRange.min())) *
+          k_securityMarginCoef;
+      finalRange.stretchEachBoundBy(securityMargin,
+                                    k_maxFloatForAutoApproximateSolvingRange);
+    }
+
+    range = Range1D<double>(finalRange.min(), finalRange.max());
+    if (!finiteNumberOfSolutions) {
+      /* When there are more than k_maxNumberOfApproximateSolutions on one side
+       * of 0, the zoom is setting the interval to have a maximum of 5 solutions
+       * left of 0 and 5 solutions right of zero. This means that sometimes, for
+       * a function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions
+       * will be displayed. We still want to notify the user that more solutions
+       * exist.
+       */
+      solutionMetadata.incompleteSolutions = true;
+    }
+  }
+
+  // Step 3. Compute the solutions
+  assert(range.isValid());
+  solutionMetadata.solvingRange = range;
+  Solver<double> solver = Poincare::Solver<double>(range.min(), range.max());
+  solver.stretch();
+
+  TreeRef resultList = List::PushEmpty();
+
+  for (int i = 0; i <= maxNumberOfSolutions; i++) {
+    double root = solver.nextRoot(preparedEquation).x();
+    if (root < range.min()) {
+      i--;
+      continue;
+    } else if (root > range.max()) {
+      root = NAN;
+    }
+
+    if (i == maxNumberOfSolutions) {
+      solutionMetadata.incompleteSolutions = true;
+    } else {
+      if (std::isnan(root)) {
+        break;
+      }
+      if (std::isfinite(root)) {
+        NAry::AddChild(resultList, SharedTreeStack->pushFloat(root));
+      }
+    }
+  }
+
+  reducedEquationList->removeTree();
+  // exactSolutionList is nullptr
+  return {.approximateSolutionList = resultList,
+          .equationMetadata = equationMetadata,
+          .solutionMetadata = solutionMetadata};
+}
+
+}  // namespace Poincare::Internal::EquationSolver

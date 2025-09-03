@@ -11,9 +11,7 @@
 /* This file is used by equation_solver_pool and equation_solver_tree.
  * It's splitted to ensure Scandium can use it without including expression.h */
 
-namespace Poincare {
-
-namespace EquationSolverProperties {
+namespace Poincare::EquationSolver {
 
 constexpr static size_t k_maxNumberOfVariables = 6;
 constexpr static size_t k_maxNumberOfExactSolutions =
@@ -85,6 +83,4 @@ struct SolutionMetadata {
   bool incompleteSolutions = false;
 };
 
-}  // namespace EquationSolverProperties
-
-}  // namespace Poincare
+}  // namespace Poincare::EquationSolver

@@ -8,8 +8,9 @@
 #include <poincare/range.h>
 #include <string.h>
 
-/* This file is used by equation_solver_pool and equation_solver_tree.
- * It's splitted to ensure Scandium can use it without including expression.h */
+/* EquationSolver namespace is split into 2: in [equation_solver.h] and in
+ * [equation_solver_pool.h]
+ * This ensure Scandium can use it without including `expression.h`. */
 
 namespace Poincare::EquationSolver {
 

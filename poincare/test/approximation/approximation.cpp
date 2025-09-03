@@ -7,190 +7,14 @@
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/test/float_helper.h>
-#include <poincare/user_expression.h>
 
 #include <cmath>
 
+#include "../helpers/symbol_store.h"
 #include "helper.h"
-#include "helpers/symbol_store.h"
 
 using namespace Poincare;
 using namespace Poincare::Internal;
-
-void approximates_to_boolean(const Tree* n,
-                             Approximation::BooleanOrUndefined expected) {
-  Approximation::BooleanOrUndefined approx = Approximation::ToBoolean<float>(
-      n,
-      Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                .projectLocalVariables = true},
-      Approximation::Context(AngleUnit::Radian, ComplexFormat::Real));
-  quiz_assert(approx.isUndefined() == expected.isUndefined());
-  if (!approx.isUndefined()) {
-    quiz_assert(approx.value() == expected.value());
-  }
-}
-
-void approximates_to_boolean(const char* input,
-                             Approximation::BooleanOrUndefined expected,
-                             const ProjectionContext& projectionContext) {
-  Tree* expression = parse(input, projectionContext.m_context);
-  Approximation::BooleanOrUndefined approx = Approximation::ToBoolean<float>(
-      expression,
-      Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                .projectLocalVariables = true},
-      Approximation::Context(projectionContext.m_angleUnit,
-                             projectionContext.m_complexFormat,
-                             projectionContext.m_context));
-  quiz_assert(approx.isUndefined() == expected.isUndefined());
-  if (!approx.isUndefined()) {
-    quiz_assert(approx.value() == expected.value());
-  }
-  expression->removeTree();
-}
-
-template <typename T>
-void approximates_to(const Tree* n, T f) {
-  T approx = Approximation::To<T>(
-      n,
-      Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                .projectLocalVariables = true},
-      Approximation::Context(AngleUnit::Radian, ComplexFormat::Real));
-  bool result =
-      OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
-#if POINCARE_TREE_LOG
-  if (!result) {
-    std::cout << "Approximation test failure with: \n";
-    n->log();
-    std::cout << "Approximated to " << approx << " instead of " << f << "\n";
-    std::cout << "Absolute difference is : " << std::fabs(approx - f) << "\n";
-    std::cout << "Relative difference is : " << std::fabs((approx - f) / f)
-              << "\n";
-  }
-#endif
-  quiz_assert(result);
-}
-
-template <typename T>
-void approximates_to(const char* input, T f,
-                     const ProjectionContext& projectionContext = realCtx) {
-  Tree* expression = parse(input, projectionContext.m_context);
-  T approx = Approximation::To<T>(
-      expression,
-      Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                .projectLocalVariables = true},
-      Approximation::Context(projectionContext.m_angleUnit,
-                             projectionContext.m_complexFormat,
-                             projectionContext.m_context));
-  bool result =
-      OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
-#if POINCARE_TREE_LOG
-  if (!result) {
-    std::cout << "Approximation test failure with: " << input << "\n";
-    std::cout << "Approximated to " << approx << " instead of " << f << "\n";
-    std::cout << "Absolute difference is : " << std::fabs(approx - f) << "\n";
-    std::cout << "Relative difference is : " << std::fabs((approx - f) / f)
-              << "\n";
-  }
-#endif
-  quiz_assert(result);
-  expression->removeTree();
-}
-
-template <typename T>
-void approximates_to(const char* input, const char* output,
-                     const ProjectionContext& projectionContext = realCtx,
-                     int nbOfSignificantDigits =
-                         PrintFloat::k_undefinedNumberOfSignificantDigits) {
-  // TODO: use same test and log as approximates_to?
-  process_tree_and_compare(
-      input, output,
-      [](Tree* tree, ProjectionContext projectionContext) {
-        tree->moveTreeOverTree(Approximation::ToTree<T>(
-            tree,
-            Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                      .projectLocalVariables = true},
-            Approximation::Context(projectionContext.m_angleUnit,
-                                   projectionContext.m_complexFormat,
-                                   projectionContext.m_context)));
-        Beautification::DeepBeautify(tree, projectionContext);
-      },
-      projectionContext, nbOfSignificantDigits);
-}
-
-template <typename T>
-void simplified_approximates_to(
-    const char* input, const char* output,
-    const ProjectionContext& projectionContext = realCtx,
-    int nbOfSignificantDigits =
-        PrintFloat::k_undefinedNumberOfSignificantDigits) {
-  process_tree_and_compare(
-      input, output,
-      [](Tree* tree, ProjectionContext projectionContext) {
-        simplify(tree, projectionContext, false);
-        tree->moveTreeOverTree(Approximation::ToTree<T>(
-            tree,
-            Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                      .projectLocalVariables = true},
-            Approximation::Context(projectionContext.m_angleUnit,
-                                   projectionContext.m_complexFormat,
-                                   projectionContext.m_context)));
-        Beautification::DeepBeautify(tree, projectionContext);
-      },
-      projectionContext, nbOfSignificantDigits);
-}
-
-template <typename T>
-void projected_approximates_to(
-    const char* input, const char* output,
-    const ProjectionContext& projectionContext = realCtx,
-    int nbOfSignificantDigits =
-        PrintFloat::k_undefinedNumberOfSignificantDigits) {
-  process_tree_and_compare(
-      input, output,
-      [](Tree* tree, ProjectionContext projectionContext) {
-        Simplification::ToSystem(tree, &projectionContext);
-        tree->moveTreeOverTree(Approximation::ToTree<T>(
-            tree,
-            Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                      .prepare = true},
-            Approximation::Context(projectionContext.m_angleUnit,
-                                   projectionContext.m_complexFormat,
-                                   projectionContext.m_context)));
-        Beautification::DeepBeautify(tree, projectionContext);
-      },
-      projectionContext, nbOfSignificantDigits);
-}
-
-template <typename T>
-void approximates_to_keeping_symbols(
-    const char* expression, const char* simplifiedExpression,
-    const ProjectionContext& projectionContext = realCtx,
-    int numberOfSignificantDigits =
-        PrintFloat::k_undefinedNumberOfSignificantDigits) {
-  process_tree_and_compare(
-      expression, simplifiedExpression,
-      [](Tree* tree, ProjectionContext projectionContext) {
-        Variables::ProjectLocalVariablesToId(tree);
-        Approximation::ApproximateAndReplaceEveryScalar<T>(
-            tree, Approximation::Context(projectionContext.m_angleUnit,
-                                         projectionContext.m_complexFormat,
-                                         projectionContext.m_context));
-        Variables::BeautifyToName(tree);
-      },
-      projectionContext, numberOfSignificantDigits);
-}
-
-template <typename T>
-void assert_float_approximates_to(UserExpression f, const char* result) {
-  ProjectionContext projectionContext = Poincare::Internal::ProjectionContext{
-      .m_complexFormat = ComplexFormat::Cartesian,
-      .m_angleUnit = AngleUnit::Radian};
-  int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
-  char buffer[500];
-  f.cloneAndApproximate<T>(projectionContext)
-      .serialize(buffer, false, DecimalMode, numberOfDigits);
-  quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
-}
 
 QUIZ_CASE(pcj_approximation_float) {
   assert_float_approximates_to<double>(
@@ -1900,46 +1724,37 @@ QUIZ_CASE(pcj_approximation_integrals) {
   approximates_to<float>("int(sin((10^7)*x),x,0,1)", "undef");
 }
 
-void assert_approximate_to(const char* expression, const char* result,
-                           ProjectionContext projCtx = realCtx) {
-  /* Reduce significant numbers to 3 to handle platforms discrepancies when
-   * computing floats. This allows to expect the same results from both double
-   * and float approximations. */
-  approximates_to<float>(expression, result, projCtx, 3);
-  approximates_to<double>(expression, result, projCtx, 3);
-}
-
 QUIZ_CASE(pcj_approximation_derivatives) {
   approximates_to<float>("diff(ln(x), x, -1)", "undef");
 
-  assert_approximate_to("diff(2×x, x, 2)", "2");
-  assert_approximate_to("diff(2×\"TO\"^2, \"TO\", 7)", "28");
-  assert_approximate_to("diff(ln(x),x,1)", "1");
-  assert_approximate_to("diff(ln(x),x,2.2)", "0.455");
-  assert_approximate_to("diff(ln(x),x,0)", "undef");
-  assert_approximate_to("diff(ln(x),x,-3.1)", "undef");
-  assert_approximate_to("diff(log(x),x,-10)", "undef");
-  assert_approximate_to("diff(abs(x),x,123)", "1");
-  assert_approximate_to("diff(abs(x),x,-2.34)", "-1");
-  assert_approximate_to("diff(1/x,x,-2)", "-0.25");
-  assert_approximate_to("diff(x^3+5*x^2,x,0)", "0");
-  assert_approximate_to("diff(abs(x),x,0)", "0");  // "undef");
+  approximates_to_float_and_double("diff(2×x, x, 2)", "2");
+  approximates_to_float_and_double("diff(2×\"TO\"^2, \"TO\", 7)", "28");
+  approximates_to_float_and_double("diff(ln(x),x,1)", "1");
+  approximates_to_float_and_double("diff(ln(x),x,2.2)", "0.455");
+  approximates_to_float_and_double("diff(ln(x),x,0)", "undef");
+  approximates_to_float_and_double("diff(ln(x),x,-3.1)", "undef");
+  approximates_to_float_and_double("diff(log(x),x,-10)", "undef");
+  approximates_to_float_and_double("diff(abs(x),x,123)", "1");
+  approximates_to_float_and_double("diff(abs(x),x,-2.34)", "-1");
+  approximates_to_float_and_double("diff(1/x,x,-2)", "-0.25");
+  approximates_to_float_and_double("diff(x^3+5*x^2,x,0)", "0");
+  approximates_to_float_and_double("diff(abs(x),x,0)", "0");  // "undef");
   // TODO_PCJ: error too big on floats
   // approximates_to<float>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
   approximates_to<double>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
   // On points
-  assert_approximate_to("diff((sin(t),cos(t)),t,π/2)", "(0,-1)");
+  approximates_to_float_and_double("diff((sin(t),cos(t)),t,π/2)", "(0,-1)");
 
   // Higher order
   // We have to approximate to double because error is too big on floats
   approximates_to<double>("diff(x^3,x,10,2)", "60");
   approximates_to<double>("diff(x^3,x,1,4)", "0");
   approximates_to<double>("diff(e^(2x),x,0,4)", "16");
-  assert_approximate_to("diff(x^3,x,3,0)", "27");
-  assert_approximate_to("diff(x^3,x,3,-1)", "undef");
-  assert_approximate_to("diff(x^3,x,3,1.3)", "undef");
+  approximates_to_float_and_double("diff(x^3,x,3,0)", "27");
+  approximates_to_float_and_double("diff(x^3,x,3,-1)", "undef");
+  approximates_to_float_and_double("diff(x^3,x,3,1.3)", "undef");
   // Order 5 and above are not handled because recursively too long
-  assert_approximate_to("diff(e^(2x),x,0,5)", "undef");
+  approximates_to_float_and_double("diff(e^(2x),x,0,5)", "undef");
   // On points
   approximates_to<double>("diff((2t,ln(t)),t,2,2)", "(0,-0.25)");
 }

@@ -222,7 +222,8 @@ _sources_poincare_test := $(addprefix test/, \
   old/helper.cpp \
   old/simplification.cpp \
   additional_results_helper.cpp \
-  approximation.cpp \
+  approximation/approximation.cpp \
+  approximation/helper.cpp \
   beautification.cpp \
   bounds.cpp \
   conics.cpp \

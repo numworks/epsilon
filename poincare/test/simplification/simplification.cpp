@@ -1,16 +1,13 @@
-#include <poincare/src/expression/advanced_reduction.h>
-#include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/list.h>
-#include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/expression/units/k_units.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/tree_stack.h>
 
+#include "../helpers/symbol_store.h"
 #include "helper.h"
-#include "helpers/symbol_store.h"
 
 using namespace Poincare::Internal;
 using Poincare::AngleUnit;
@@ -20,32 +17,6 @@ using Poincare::Strategy;
 using Poincare::SymbolicComputation;
 using Poincare::UnitDisplay;
 using UnitFormat = Poincare::Preferences::UnitFormat;
-
-void deepSystematicReduce_and_operation_to(const Tree* input,
-                                           Tree::Operation operation,
-                                           const Tree* output) {
-  Tree* tree = input->cloneTree();
-  // Expand / contract expects a deep systematic reduced tree
-  SystematicReduction::DeepReduce(tree);
-  quiz_assert(operation(tree));
-  assert_trees_are_equal(tree, output);
-  tree->removeTree();
-}
-
-void expand_to(const Tree* input, const Tree* output) {
-  deepSystematicReduce_and_operation_to(input, AdvancedReduction::DeepExpand,
-                                        output);
-}
-
-void algebraic_expand_to(const Tree* input, const Tree* output) {
-  deepSystematicReduce_and_operation_to(
-      input, AdvancedReduction::DeepExpandAlgebraic, output);
-}
-
-void contract_to(const Tree* input, const Tree* output) {
-  deepSystematicReduce_and_operation_to(input, AdvancedReduction::DeepContract,
-                                        output);
-}
 
 QUIZ_CASE(pcj_simplification_expansion) {
   expand_to(KExp(KAdd("x"_e, "y"_e, "z"_e)),
@@ -148,42 +119,6 @@ QUIZ_CASE(pcj_replace_symbol_with_tree) {
   assert_trees_are_equal(e3,
                          KMult(4_e, KAdd(KMult(2_e, KMult(5_e, "n"_e)), 3_e)));
   e3->removeTree();
-}
-
-void simplifies_to(const char* input, const char* output,
-                   ProjectionContext projectionContext = realCtx) {
-  process_tree_and_compare(
-      input, output,
-      [](Tree* tree, ProjectionContext projectionContext) {
-        simplify(tree, projectionContext, true);
-      },
-      projectionContext);
-}
-
-void projects_and_reduces_to(const char* input, const char* output,
-                             ProjectionContext projectionContext = realCtx) {
-  process_tree_and_compare(
-      input, output,
-      [](Tree* tree, ProjectionContext projectionContext) {
-        simplify(tree, projectionContext, false);
-        // Beautify anyway to compare input and outputs
-        ReductionTarget previousReductionTarget =
-            projectionContext.m_reductionTarget;
-        projectionContext.m_reductionTarget = ReductionTarget::User;
-        Beautification::DeepBeautify(tree, projectionContext);
-        projectionContext.m_reductionTarget = previousReductionTarget;
-      },
-      projectionContext);
-}
-
-void simplifies_to_no_beautif(const char* input, const char* output,
-                              ProjectionContext projectionContext = realCtx) {
-  process_tree_and_compare(
-      input, output,
-      [](Tree* tree, ProjectionContext projectionContext) {
-        simplify(tree, projectionContext, false);
-      },
-      projectionContext);
 }
 
 QUIZ_CASE(pcj_simplification_basic) {
@@ -2358,13 +2293,6 @@ QUIZ_CASE(pcj_simplification_roots) {
   simplifies_to("1/√(-4+√(17))", "√(4+√(17))");
   // TODO: simplify the minus sign
   simplifies_to("1/√(-3+√(19))", "√(-(-3-√(19))/10)");
-}
-
-void reduces_to_tree(const Tree* input, const Tree* output) {
-  Tree* reduced = input->cloneTree();
-  simplify(reduced, {}, false);
-  assert_trees_are_equal(reduced, output);
-  reduced->removeTree();
 }
 
 QUIZ_CASE(pcj_simplification_undef) {

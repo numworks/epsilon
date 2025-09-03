@@ -8,14 +8,6 @@ enum class Strategy { Default, ApproximateToFloat, DeepExpandAlgebraic };
 
 enum class UnitFormat { Metric, Imperial };
 
-enum class SymbolicComputation {
-  ReplaceAllSymbols = 0,  // If a symbol is not defined, it is replaced by undef
-  ReplaceDefinedSymbols = 1,
-  ReplaceDefinedFunctions = 2,
-  ReplaceAllSymbolsWithUndefined = 3,  // Used in UnitConvert::shallowReduce
-  KeepAllSymbols = 4
-};
-
 enum class UnitDisplay : uint8_t {
   // Display for main output in Calculation
   MainOutput,

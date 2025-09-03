@@ -16,6 +16,7 @@ using namespace Poincare::Internal;
 using Poincare::AngleUnit;
 using Poincare::ComplexFormat;
 using Poincare::ReductionTarget;
+using Poincare::SymbolicComputation;
 
 void deepSystematicReduce_and_operation_to(const Tree* input,
                                            Tree::Operation operation,
@@ -466,8 +467,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
     store("x/2→f(x)", symbolStore);
 
     ProjectionContext ctx = {
-        .m_symbolic =
-            Poincare::Internal::SymbolicComputation::ReplaceDefinedSymbols,
+        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = symbolStore};
 
     simplifies_to("diff(a×x^2+b×x+c,x,x)", "4×x-1", ctx);

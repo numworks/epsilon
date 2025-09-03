@@ -2,7 +2,6 @@
 
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
-#include <poincare/src/memory/tree.h>
 #include <poincare/user_expression.h>
 
 #include <span>
@@ -73,12 +72,7 @@ class ExpressionOrFloat {
                      floatDisplayMode, buffer.size());
   }
 
-  UserExpression expression() const {
-    if (hasNoExactExpression()) {
-      return UserExpression::Builder(m_value);
-    }
-    return UserExpression::Builder(Internal::Tree::FromBlocks(m_buffer.data()));
-  }
+  UserExpression expression() const;
 
   template <typename T>
   T approximation(ApproximationParameters approximationParameters) const {
@@ -87,18 +81,7 @@ class ExpressionOrFloat {
                : Approximate<T>(expression(), approximationParameters);
   }
 
-  bool operator==(const ExpressionOrFloat& other) const {
-    if (hasNoExactExpression() != other.hasNoExactExpression()) {
-      return false;
-    }
-    if (hasNoExactExpression()) {
-      return (m_value == other.m_value);
-    }
-    const Internal::Tree* tree = Internal::Tree::FromBlocks(m_buffer.data());
-    const Internal::Tree* otherTree =
-        Internal::Tree::FromBlocks(other.m_buffer.data());
-    return tree->treeIsIdenticalTo(otherTree);
-  }
+  bool operator==(const ExpressionOrFloat& other) const;
 
  private:
   constexpr static size_t k_oppositeNodeSize =

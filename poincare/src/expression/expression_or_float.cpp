@@ -82,4 +82,24 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
                              floatDisplayMode, maxGlyphLength);
 }
 
+UserExpression ExpressionOrFloat::expression() const {
+  if (hasNoExactExpression()) {
+    return UserExpression::Builder(m_value);
+  }
+  return UserExpression::Builder(Internal::Tree::FromBlocks(m_buffer.data()));
+}
+
+bool ExpressionOrFloat::operator==(const ExpressionOrFloat& other) const {
+  if (hasNoExactExpression() != other.hasNoExactExpression()) {
+    return false;
+  }
+  if (hasNoExactExpression()) {
+    return (m_value == other.m_value);
+  }
+  const Internal::Tree* tree = Internal::Tree::FromBlocks(m_buffer.data());
+  const Internal::Tree* otherTree =
+      Internal::Tree::FromBlocks(other.m_buffer.data());
+  return tree->treeIsIdenticalTo(otherTree);
+}
+
 }  // namespace Poincare

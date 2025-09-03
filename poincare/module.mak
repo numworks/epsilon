@@ -254,7 +254,6 @@ _sources_poincare_test := $(addprefix test/, \
   serialization.cpp \
   set.cpp \
   sign.cpp \
-  simplification.cpp \
   tree_stack.cpp \
   trigonometry_exact_formulas.cpp \
   zoom.cpp \
@@ -279,6 +278,10 @@ _sources_poincare_test := $(addprefix test/, \
   $(addprefix pool/, \
     helpers.cpp \
     pool_handle.cpp \
+  ) \
+  $(addprefix simplification/, \
+    helper.cpp \
+    simplification.cpp \
   ) \
 )
 

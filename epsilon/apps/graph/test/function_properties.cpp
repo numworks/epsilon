@@ -3,6 +3,7 @@
 #include <poincare/function_properties/function_type.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/test/helper.h>
+#include <poincare/test/helpers/symbol_store.h>
 #include <quiz.h>
 
 #include "helper.h"
@@ -15,7 +16,7 @@ namespace Graph {
 void assert_cartesian_function_type_is(
     const char* expression, FunctionType::CartesianType expectedType) {
   const char* symbol = "x";
-  UserExpression e = UserExpression::Builder(parse_expression(expression));
+  UserExpression e = UserExpression::Builder(parse(expression));
   bool reductionFailure = false;
   SystemExpression s = e.cloneAndReduce(
       Internal::Projection::DefaultProjectionContextForAnalysis(),
@@ -52,7 +53,7 @@ QUIZ_CASE(graph_cartesian_function_type) {
 void assert_polar_line_type_is(const char* expression,
                                FunctionType::LineType expectedType) {
   const char* symbol = "θ";
-  UserExpression e = UserExpression::Builder(parse_expression(expression));
+  UserExpression e = UserExpression::Builder(parse(expression));
   bool reductionFailure = false;
   SystemExpression s = e.cloneAndReduce(
       Internal::Projection::DefaultProjectionContextForAnalysis(),
@@ -939,17 +940,13 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
       &store, context);
 
   // Add a predefined a symbol
-  assert_reduce_and_store("0→a", context, AngleUnit::Radian,
-                          Poincare::Preferences::UnitFormat::Metric,
-                          Poincare::ComplexFormat::Real);
+  PoincareTest::store("0→a", context);
   assert_check_function_properties("y=a*x+1", k_horizontalLineProperties,
                                    &store, context);
   assert_check_function_properties("a*y*y+y=x", k_lineProperties, &store,
                                    context);
 
-  assert_reduce_and_store("1→a", context, AngleUnit::Radian,
-                          Poincare::Preferences::UnitFormat::Metric,
-                          Poincare::ComplexFormat::Real);
+  PoincareTest::store("1→a", context);
   assert_check_function_properties("y=a*x+1", k_lineProperties, &store,
                                    context);
   assert_check_function_properties(
@@ -961,9 +958,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
       &store, context);
 
   // Add a predefined y symbol
-  assert_reduce_and_store("1→y", context, AngleUnit::Radian,
-                          Poincare::Preferences::UnitFormat::Metric,
-                          Poincare::ComplexFormat::Real);
+  PoincareTest::store("1→y", context);
   assert_check_function_properties("y=x", k_lineProperties, &store, context);
 
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();

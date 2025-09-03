@@ -101,7 +101,10 @@ void assert_parsed_expression_process_to(
   char result[bufferSize];
   copy_without_system_chars(result, oldResult);
   assert(SharedTreeStack->numberOfTrees() == 0);
-  Tree *e = parse_expression(expression, ctx);
+  Tree *inputLayout = RackFromText(expression);
+  TreeRef e = Parser::Parse(inputLayout, ctx);
+  inputLayout->removeTree();
+  quiz_assert_print_if_failure(e != nullptr, expression);
   Internal::ProjectionContext projCtx = {.m_complexFormat = complexFormat,
                                          .m_angleUnit = angleUnit,
                                          .m_reductionTarget = target,
@@ -125,31 +128,6 @@ void assert_parsed_expression_process_to(
 #else
   quiz_tolerate_print_if_failure(test, expression, result, buffer);
 #endif
-}
-
-Internal::Tree *parse_expression(const char *expression, const Context &context,
-                                 bool isAssignment) {
-  Tree *inputLayout = RackFromText(expression);
-  TreeRef result =
-      Parser::Parse(inputLayout, context, {.isAssignment = isAssignment});
-  inputLayout->removeTree();
-  quiz_assert_print_if_failure(result != nullptr, expression);
-  return result;
-}
-
-/* TODO: rethink about this test:
-- should it be in Poincare? In Poincare no store is ever performed (the store
-operator is ignored in simplification etc.). Storing is actually performed in
-the apps (in the CalculationStore and in the StoreMenuController).
-- more generally, some dedicated TestVariableContext and TestVariableStore
-classes should be used in the unit tests. */
-void assert_reduce_and_store(const char *expression,
-                             VariableStore &variableStore, AngleUnit angleUnit,
-                             Preferences::UnitFormat unitFormat,
-                             ComplexFormat complexFormat,
-                             ReductionTarget target) {
-  // TODO_PCJ: reduce expression (to check it stays a store expression)
-  PoincareTest::store(expression, variableStore);
 }
 
 void assert_parsed_expression_simplify_to(

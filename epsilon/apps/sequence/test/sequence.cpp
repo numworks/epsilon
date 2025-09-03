@@ -6,13 +6,15 @@
 #include <assert.h>
 #include <omg/float.h>
 #include <poincare/print.h>
-#include <poincare/test/helper.h>
+#include <poincare/test/approximation/helper.h>
+#include <poincare/test/float_helper.h>
 #include <poincare/test/helpers/symbol_store.h>
-#include <poincare/test/old/helper.h>
 #include <quiz.h>
 #include <string.h>
 
 #include <cmath>
+
+#include "poincare/src/expression/projection.h"
 
 using namespace Poincare;
 
@@ -745,31 +747,27 @@ QUIZ_CASE(sequence_store) {
   GlobalContext& globalStore = GlobalContextAccessor::Store();
   const SequenceContext* sequenceContext =
       &GlobalContextAccessor::SequenceContext();
+  Internal::ProjectionContext projCtx = {.m_context = globalStore};
 
   PoincareTest::store("3→f(x)", GlobalContextAccessor::Store());
-  assert_expression_simplifies_approximates_to<double>("f(u(0))", "undef",
-                                                       globalStore);
+  simplified_approximates_to<double>("f(u(0))", "undef", projCtx);
 
   addSequence(sequenceStore, Sequence::Type::Explicit, "1", nullptr, nullptr,
               sequenceContext);
-  assert_expression_simplifies_approximates_to<double>("f(u(2))", "3",
-                                                       globalStore);
+  simplified_approximates_to<double>("f(u(2))", "3", projCtx);
   globalStore.resetAll();
   addSequence(sequenceStore, Sequence::Type::Explicit, "1/0", nullptr, nullptr,
               sequenceContext);
-  assert_expression_simplifies_approximates_to<double>("f(u(2))", "undef",
-                                                       globalStore);
+  simplified_approximates_to<double>("f(u(2))", "undef", projCtx);
 
   sequenceStore->removeAll();
-  assert_reduce_and_store("3→a", globalStore);
+  PoincareTest::store("3→a", globalStore);
   addSequence(sequenceStore, Sequence::Type::Explicit, "a+1", nullptr, nullptr,
               sequenceContext);
-  assert_expression_simplifies_approximates_to<double>("u(34)", "4",
-                                                       globalStore);
-  assert_reduce_and_store("-3→a", globalStore);
+  simplified_approximates_to<double>("u(34)", "4", projCtx);
+  PoincareTest::store("-3→a", globalStore);
   globalStore.storageDidChangeForRecord(Ion::Storage::Record("a.exp"));
-  assert_expression_simplifies_approximates_to<double>("u(34)", "-2",
-                                                       globalStore);
+  simplified_approximates_to<double>("u(34)", "-2", projCtx);
   globalStore.resetAll();
   sequenceStore->tidyDownstreamPoolFrom();
 }

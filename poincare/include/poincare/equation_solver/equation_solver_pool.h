@@ -2,7 +2,7 @@
 
 #include <poincare/user_expression.h>
 
-#include "equation_solver_properties.h"
+#include "equation_solver.h"
 
 namespace Poincare {
 

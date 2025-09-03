@@ -28,8 +28,7 @@ _sources_poincare_preferences := $(addprefix src/, \
 _sources_poincare_extended := $(addprefix src/, \
 $(addprefix equation_solver/, \
   equation_solver_pool.cpp:-nopool \
-  equation_solver_properties.cpp \
-  equation_solver_tree.cpp \
+  equation_solver.cpp \
 ) \
 $(addprefix expression/, \
   advanced_operation.cpp \

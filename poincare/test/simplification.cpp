@@ -15,6 +15,7 @@
 using namespace Poincare::Internal;
 using Poincare::AngleUnit;
 using Poincare::ComplexFormat;
+using Poincare::ReductionTarget;
 
 void deepSystematicReduce_and_operation_to(const Tree* input,
                                            Tree::Operation operation,

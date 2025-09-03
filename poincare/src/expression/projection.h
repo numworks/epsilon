@@ -1,6 +1,7 @@
 #pragma once
 
 #include <poincare/context.h>
+#include <poincare/math_options.h>
 #include <poincare/src/memory/tree_ref.h>
 
 #include "context.h"

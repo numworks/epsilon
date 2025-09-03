@@ -13,7 +13,6 @@
 
 namespace Poincare {
 
-using ReductionTarget = Internal::ReductionTarget;
 using SymbolicComputation = Internal::SymbolicComputation;
 
 /* [Preferences] is a singleton accessible via the [SharedPreferences] instance.

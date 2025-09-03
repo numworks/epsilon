@@ -1,8 +1,7 @@
 #pragma once
 
+#include <poincare/math_options.h>
 #include <poincare/src/memory/tree.h>
-
-#include "context.h"
 
 #define USE_TREE_SIZE_METRIC 0
 

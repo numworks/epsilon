@@ -13,8 +13,6 @@
 
 namespace Poincare {
 
-using SymbolicComputation = Internal::SymbolicComputation;
-
 /* [Preferences] is a singleton accessible via the [SharedPreferences] instance.
  * The object gives access to an implementation of [Preferences::Interface].
  * The class also defines (or uses) structs and enums relative to Poincare

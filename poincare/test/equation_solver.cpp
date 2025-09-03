@@ -30,8 +30,8 @@ bool check_solutions(
                 static_cast<int>(outputs.size()));
     projectionContext.m_symbolic =
         result.equationMetadata.overrideDefinedVariables
-            ? SymbolicComputation::KeepAllSymbols
-            : SymbolicComputation::ReplaceDefinedSymbols;
+            ? Poincare::SymbolicComputation::KeepAllSymbols
+            : Poincare::SymbolicComputation::ReplaceDefinedSymbols;
     projectionContext.m_complexFormat = result.equationMetadata.complexFormat;
     const Tree* solution = solutions->nextNode();
     for (const char* output : outputs) {

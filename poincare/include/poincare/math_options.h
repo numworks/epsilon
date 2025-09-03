@@ -30,4 +30,12 @@ enum class ReductionTarget {
   User
 };
 
+enum class SymbolicComputation {
+  ReplaceAllSymbols = 0,  // If a symbol is not defined, it is replaced by undef
+  ReplaceDefinedSymbols = 1,
+  ReplaceDefinedFunctions = 2,
+  ReplaceAllSymbolsWithUndefined = 3,  // Used in UnitConvert::shallowReduce
+  KeepAllSymbols = 4
+};
+
 }  // namespace Poincare

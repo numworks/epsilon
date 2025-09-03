@@ -222,8 +222,6 @@ _sources_poincare_test := $(addprefix test/, \
   old/helper.cpp \
   old/simplification.cpp \
   additional_results_helper.cpp \
-  approximation/approximation.cpp \
-  approximation/helper.cpp \
   beautification.cpp \
   bounds.cpp \
   conics.cpp \
@@ -246,8 +244,6 @@ _sources_poincare_test := $(addprefix test/, \
   order.cpp \
   parse.cpp \
   polynomial.cpp \
-  pool/helpers.cpp \
-  pool/pool_handle.cpp \
   print.cpp \
   projection.cpp \
   random.cpp \
@@ -262,10 +258,28 @@ _sources_poincare_test := $(addprefix test/, \
   tree_stack.cpp \
   trigonometry_exact_formulas.cpp \
   zoom.cpp \
-$(addprefix helpers/, \
-  expression_equal_sign.cpp \
-  symbol_store.cpp \
-) \
+  $(addprefix approximation/, \
+    approximation.cpp \
+    arithmetic.cpp \
+    basic_operations.cpp \
+    complex.cpp \
+    helper.cpp \
+    lists.cpp \
+    matrix.cpp \
+    numbers.cpp \
+    parametric.cpp \
+    probability.cpp \
+    trigonometry.cpp \
+    units.cpp \
+  ) \
+  $(addprefix helpers/, \
+    expression_equal_sign.cpp \
+    symbol_store.cpp \
+  ) \
+  $(addprefix pool/, \
+    helpers.cpp \
+    pool_handle.cpp \
+  ) \
 )
 
 $(call create_module,poincare,1, \

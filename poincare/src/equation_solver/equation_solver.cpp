@@ -1,7 +1,7 @@
-#include "equation_solver_tree.h"
+#include "equation_solver.h"
 
 #include <poincare/context.h>
-#include <poincare/equation_solver/equation_solver_properties.h>
+#include <poincare/equation_solver/equation_solver.h>
 #include <poincare/helpers/polynomial.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/preferences.h>
@@ -24,6 +24,18 @@
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/numeric_solver/roots.h>
 #include <poincare/src/numeric_solver/zoom.h>
+
+namespace Poincare::EquationSolver {
+
+void VariableArray::fillWithList(const Internal::Tree* list) {
+  assert(list->isList() && list->numberOfChildren() <= capacity());
+  clear();
+  for (const Internal::Tree* variable : list->children()) {
+    push(SymbolHelper::GetName(variable));
+  }
+}
+
+}  // namespace Poincare::EquationSolver
 
 namespace Poincare::Internal::EquationSolver {
 using namespace Poincare::EquationSolver;

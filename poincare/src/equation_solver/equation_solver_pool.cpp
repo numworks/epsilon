@@ -1,5 +1,5 @@
 #include <poincare/equation_solver/equation_solver_pool.h>
-#include <poincare/src/equation_solver/equation_solver_tree.h>
+#include <poincare/src/equation_solver/equation_solver.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/user_expression.h>
 

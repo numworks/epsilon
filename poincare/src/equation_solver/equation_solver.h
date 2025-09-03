@@ -1,6 +1,6 @@
 #pragma once
 
-#include <poincare/equation_solver/equation_solver_properties.h>
+#include <poincare/equation_solver/equation_solver.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree_ref.h>
 

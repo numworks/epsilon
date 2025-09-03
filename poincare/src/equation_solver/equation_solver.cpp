@@ -569,6 +569,7 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
           .solutionMetadata = solutionMetadata};
 }
 
+#if POINCARE_POLYNOMIAL_SOLVER
 /* Checks if the equationList is a deg 2 or 3 polynomial, and if so, computes
  * the solutions. The equationMetada passed as arguments are contained in the
  * returned SolverResult. */
@@ -700,6 +701,7 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
           .equationMetadata = equationMetadata,
           .solutionMetadata = solutionMetadata};
 }
+#endif
 
 SolverResult ExactSolveAdaptive(const Tree* equationList,
                                 ProjectionContext projectionContext) {

@@ -3,9 +3,7 @@
 #include <poincare/src/expression/projection.h>
 #include <poincare/user_expression.h>
 
-namespace Poincare {
-
-namespace EquationSolver {
+namespace Poincare::EquationSolver {
 
 // This will destroy the trees of solutions on the stack
 static SolverResult ConvertInternalResult(
@@ -58,6 +56,4 @@ SolverResult ApproximateSolve(const UserExpression& equationList,
   return ConvertInternalResult(result);
 }
 
-}  // namespace EquationSolver
-
-}  // namespace Poincare
+}  // namespace Poincare::EquationSolver

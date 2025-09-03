@@ -1,7 +1,7 @@
 #include <poincare/equation_solver/equation_solver_properties.h>
 #include <poincare/src/memory/tree.h>
 
-namespace Poincare::EquationSolverProperties {
+namespace Poincare::EquationSolver {
 
 void VariableArray::fillWithList(const Internal::Tree* list) {
   assert(list->isList() && list->numberOfChildren() <= capacity());
@@ -11,4 +11,4 @@ void VariableArray::fillWithList(const Internal::Tree* list) {
   }
 }
 
-}  // namespace Poincare::EquationSolverProperties
+}  // namespace Poincare::EquationSolver

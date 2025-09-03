@@ -280,8 +280,16 @@ _sources_poincare_test := $(addprefix test/, \
     pool_handle.cpp \
   ) \
   $(addprefix simplification/, \
+    complex.cpp \
+    dependencies.cpp \
     helper.cpp \
+    lists.cpp \
+    matrix.cpp \
+    numbers.cpp \
+    parametrics.cpp \
     simplification.cpp \
+    trigonometry.cpp \
+    units.cpp \
   ) \
 )
 

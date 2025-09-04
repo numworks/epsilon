@@ -2298,7 +2298,7 @@ QUIZ_CASE(pcj_prepare_function) {
 
 void assert_expression_prepares_to(const Tree* input, const Tree* expected) {
   Tree* clone = input->cloneTree();
-  ProjectionContext ctx = {};
+  [[maybe_unused]] ProjectionContext ctx = {};
   assert(!Simplification::ToSystem(clone, &ctx));
   Approximation::Private::PrepareExpressionForApproximation(clone);
   assert_trees_are_equal(clone, expected);

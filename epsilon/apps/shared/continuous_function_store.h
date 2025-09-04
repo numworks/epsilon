@@ -123,4 +123,6 @@ class ContinuousFunctionStore : public FunctionStore {
   CachesContainer* m_cachesContainer;
 };
 
+using ContinuousFunctionContext = const ContinuousFunctionStore;
+
 }  // namespace Shared

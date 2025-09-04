@@ -70,6 +70,11 @@ QUIZ_CASE(pcj_simplification_constants) {
   simplifies_to("_hplanck", "6.62607015ᴇ-34×_s×_J");
 }
 
+QUIZ_CASE(pcj_simplification_based_integer) {
+  simplifies_to("0b10011", "19");
+  simplifies_to("0x2A", "42");
+}
+
 QUIZ_CASE(pcj_simplification_large_integer_no_crash) {
   simplifies_to("diff(x,x,0,100000000000)", "diff(x,x,0,100000000000)");
   simplifies_to("40000000000ln(10)", "40000000000ln(10)");

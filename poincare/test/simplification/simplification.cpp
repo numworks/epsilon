@@ -277,72 +277,6 @@ QUIZ_CASE(pcj_simplification_big_nary) {
       "y0+y1+y2+y3+y4+y5+y6+y7+y8+y9+z0+z1+z2+z3+(z4+z5+z6+z7+z8+z9)");
 }
 
-QUIZ_CASE(pcj_simplification_factorial) {
-  simplifies_to("0!", "1");
-  simplifies_to("4!", "24");
-  simplifies_to("(-4)!", "undef");
-  simplifies_to("(3/5)!", "undef");
-  simplifies_to("i!", "undef");
-  simplifies_to("π!", "undef");
-  simplifies_to("n!", "n!");
-  // simplifies_to("(n+1)!/n!", "n+1"); TODO through parametric
-}
-
-QUIZ_CASE(pcj_simplification_arithmetic) {
-  simplifies_to("factor(0)", "0");
-  simplifies_to("factor(1)", "1");
-  simplifies_to("factor(23)", "23");
-  simplifies_to("factor(42*3)", "2×3^2×7");
-  simplifies_to("factor(-12)", "-2^2×3");
-  simplifies_to("factor(-4/17)", "-2^2/17");
-  simplifies_to("factor(2π)", "undef");
-  simplifies_to("factor(42*3)", "2×3^2×7",
-                {.m_complexFormat = ComplexFormat::Polar});
-  simplifies_to("105×10^14", "1.05×10^16");
-  simplifies_to("factor(105×10^14)", "2^14×3×5^15×7");
-
-  simplifies_to("quo(23,5)", "4");
-  simplifies_to("rem(23,5)", "3");
-  simplifies_to("gcd(14,28,21)", "7");
-  simplifies_to("lcm(14,6)", "42");
-  simplifies_to("gcd(6,y,2,x,4)", "gcd(2,x,y)");
-  simplifies_to("sign(-2)", "-1");
-  simplifies_to("sign(abs(x)+1)", "1");
-  simplifies_to("ceil(8/3)", "3");
-  simplifies_to("frac(8/3)", "2/3");
-  simplifies_to("floor(8/3)", "2");
-  simplifies_to("round(1/3,2)", "33/100");
-  simplifies_to("round(3.3_m)", "undef");
-  simplifies_to("ceil(x)", "ceil(x)");
-  simplifies_to("ceil(-x)", "-floor(x)");
-  simplifies_to("floor(x)+frac(x)", "dep(x,{floor(x)})");
-  simplifies_to("permute(4,2)", "12");
-  simplifies_to("binomial(4,2)", "6");
-  simplifies_to("1 2/3", "5/3");
-  simplifies_to("-1 2/3", "-5/3");
-
-  simplifies_to("floor({1.3,3.9})", "{1,3}");
-  // TODO: Approximation is undef
-  simplifies_to("ceil(1+i)", "1+ceil(i)");
-  // Reductions using approximation
-  simplifies_to("floor(π)", "3");
-  simplifies_to("frac(π+1)+floor(π+0.1)", "π");
-  simplifies_to("log(ceil(2^15+π)-4,2)", "15");
-  simplifies_to("frac(871616/2π)×2π", "871616-277442×π");
-  simplifies_to("frac(2^24*π)", "-52707178+16777216×π");
-  simplifies_to("frac(2^32*π)-π", "4294967295×π+ceil(-4294967296×π)");
-  simplifies_to("frac(2^24+π)-π", "-3");
-  simplifies_to("frac(sin(10^18))", "frac(sin(10^18))");
-  simplifies_to("log(floor(2^54+π)-3, 2)", "54");
-  simplifies_to("floor(random())", "floor(random())");
-  simplifies_to("floor(sin(0.001))", "0");
-  /* Above a certain threshold, we consider that the sine or cosine of a "big"
-   * angle has too many approximation errors. This blocks the floor exact
-   * reduction.  */
-  simplifies_to("floor(cos(1000))", "floor(cos(1000))");
-  simplifies_to("sin(frac(frac(exp(6))))", "sin(-403+e^(6))");
-}
-
 QUIZ_CASE(pcj_simplification_percent) {
   // % are left unreduced on purpose to show their exact formula
   simplifies_to("-25%", "-25/100");
@@ -350,9 +284,34 @@ QUIZ_CASE(pcj_simplification_percent) {
   simplifies_to("-2-30%", "(-2)×(1-30/100)");
   simplifies_to("x-30%", "x×(1-30/100)",
                 {.m_strategy = Strategy::ApproximateToFloat});
+  simplifies_to("20%", "20/100");
+  simplifies_to("20%%", "(20/100)/100");
+  simplifies_to("80*20%", "80×20/100");
+  simplifies_to("80/(20%)", "80/(20/100)");
+  simplifies_to("80+20%", "80×(1+20/100)");
+  simplifies_to("20%+80+20%", "(80+20/100)×(1+20/100)");
+  simplifies_to("80+20%+20%", "80×(1+20/100)×(1+20/100)");
+  simplifies_to("80-20%", "80×(1-20/100)");
+  simplifies_to("80+20-20%", "100×(1-20/100)");
+  simplifies_to("80+10*20%", "80+10×20/100");
+  simplifies_to("80-10*20%", "80-10×20/100");
+  simplifies_to("80+20%*10", "80+10×20/100");
+  simplifies_to("80-20%*10", "80-10×20/100");
+  simplifies_to("80+20%π", "80+π×20/100");
 }
 
 QUIZ_CASE(pcj_simplification_random) {
+  simplifies_to("1/random()+1/3+1/4", "7/12+1/random()");
+  simplifies_to("random()+random()", "random()+random()");
+  simplifies_to("random()-random()", "random()-random()");
+  simplifies_to("abs(random()-random())", "abs(random()-random())");
+  simplifies_to("1/random()+1/3+1/4+1/random()", "7/12+1/random()+1/random()");
+  simplifies_to("random()×random()", "random()×random()");
+  simplifies_to("random()/random()", "random()/random()");
+  simplifies_to("3^random()×3^random()", "3^(random()+random())");
+  simplifies_to("random()×ln(2)×3+random()×ln(2)×5",
+                "(3×random()+5×random())×ln(2)");
+
   // TODO: Handle them with {.m_strategy = Strategy::ApproximateToFloat}
   simplifies_to("randintnorep(1,10,5)", "randintnorep(1,10,5)");
   simplifies_to("randintnorep(1,10,11)", "undef");
@@ -383,6 +342,13 @@ QUIZ_CASE(pcj_simplification_random) {
                          KRandIntNoRepSeeded<0>(0_e, 1000_e, 101_e));
 
   SharedTreeStack->flushFromBlock(randIntList);
+
+  // TODO_PCJ: used to simplify to 1
+  simplifies_to("randint(1,1)", "randint(1,1)");
+  //  Randint is not simplified if ReductionTarget = SystemForApproximation
+  simplifies_to_no_beautif(
+      "randint(1,3)", "randint(1,3)",
+      {.m_reductionTarget = ReductionTarget::SystemForApproximation});
 }
 
 QUIZ_CASE(pcj_simplification_power) {
@@ -581,41 +547,17 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("log(3,8)+log(5,8)", "log(3,8)+log(5,8)");
 }
 
-QUIZ_CASE(pcj_simplification_boolean) {
-  simplifies_to("true", "true");
-  simplifies_to("true and false", "false");
-
-  simplifies_to("1+1=2", "True");
-  simplifies_to("2!=3", "True");
-  simplifies_to("2<1", "False");
-  simplifies_to("1<2<=2", "True");
-  simplifies_to("x≥2", "x>=2");
-  simplifies_to("x>y>z", "x>y and y>z");
-  simplifies_to("a>b≥c=d≤e<f", "a>b and b>=c and c=d and d<=e and e<f");
-  simplifies_to("60>5≥1+3=4≤2+2<50", "True");
-  simplifies_to("(x>y)>z", "undef");
-  simplifies_to("(x and y)>z", "undef");
-  simplifies_to("undef<0", "undef");
-  simplifies_to("undef<0<1", "undef");
-  simplifies_to("{0,1}<1", "{True,False}");
-  simplifies_to("1<{1,2,3}<3", "{False,True,False}");
-  simplifies_to("1<2<{1,2,3}<4", "{False,False,True}");
-  simplifies_to("{undef,undef}<1", "{undef,undef}");
-  simplifies_to("{1,2}<undef", "{undef,undef}");
-  simplifies_to("0<{undef,undef}<1", "{undef,undef}");
-  simplifies_to("{1,2}<3<undef", "{undef,undef}");
-  simplifies_to("0<undef<{1,2}", "{undef,undef}");
-  simplifies_to("1<i", "undef");
-  simplifies_to("not ((i<1) and {True,False})", "{undef,undef}");
-  simplifies_to("undef<{0,1}<1", "{undef,undef}");
-}
-
 QUIZ_CASE(pcj_simplification_point) {
   simplifies_to("(1,2)", "(1,2)");
   simplifies_to("({1,3},{2,4})", "{(1,2),(3,4)}");
   simplifies_to("sequence((k,k+1),k,3)", "{(1,2),(2,3),(3,4)}");
   simplifies_to("(undef,2)", "(undef,2)");
   simplifies_to("0*(1,2)", "undef");
+  simplifies_to("(1/0,2)", "(undef,2)");
+  simplifies_to("(1,2)+3", "undef");
+  simplifies_to("abs((1.23,4.56))", "undef");
+  simplifies_to("{(1+2,3+4),(5+6,7+8)}", "{(3,7),(11,15)}");
+  simplifies_to("sequence((k,-k+1),k,4)", "{(1,0),(2,-1),(3,-2),(4,-3)}");
 }
 
 QUIZ_CASE(pcj_simplification_piecewise) {
@@ -630,6 +572,17 @@ QUIZ_CASE(pcj_simplification_piecewise) {
   simplifies_to("piecewise(3,1>0,2,undef)", "undef");
   simplifies_to("piecewise(-1,undef,i)", "undef");
   simplifies_to("piecewise(4^2,undef,6,4>2)", "undef");
+  simplifies_to("piecewise(3,1<0,2)", "2");
+  simplifies_to("piecewise(3,1>0,2)", "3");
+  simplifies_to("piecewise(3,0>1,4,0>2,5,0<6,2)", "5");
+  simplifies_to("piecewise(3,0<1,4,0<2,5,0<6,2)", "3");
+
+  simplifies_to("piecewise(3,1<0,2,3=4)", "undef");
+  simplifies_to("piecewise(3,1<0,undef)", "undef");
+  simplifies_to("piecewise(3,1>0,undef)", "3");
+  simplifies_to("piecewise(-x/x,x>0,0)", "piecewise(dep(-1,{x^0}),x>0,0)");
+  simplifies_to("piecewise(3,4>0,2,2<a)", "undef",
+                {.m_symbolic = SymbolicComputation::ReplaceAllSymbols});
 }
 
 QUIZ_CASE(pcj_simplification_distributions) {
@@ -780,6 +733,21 @@ QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
   // TODO: x^2*(1-x^2) might be better for approximation.
   projects_and_reduces_to("x^2-x^4", "-x^4+x^2", ctxForApproximation);
   projects_and_reduces_to("x^2-x^4", "-x^4+x^2", ctxForAnalysis);
+}
+
+QUIZ_CASE(pcj_simplification_user_function) {
+  PoincareTest::SymbolStore symbolStore;
+  ProjectionContext projCtx = {
+      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+      .m_context = symbolStore};
+  // User defined function
+  // f: x → x*3
+  store("x*3→f(x)", symbolStore);
+  simplifies_to("f(1+1)", "6", projCtx);
+  simplifies_to("f({2,3})", "{6,9}", projCtx);
+  // f: x → 3
+  store("3→f(x)", symbolStore);
+  simplifies_to("f(1/0)", "undef", projCtx);
 }
 
 QUIZ_CASE(pcj_simplification_context) {

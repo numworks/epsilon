@@ -8,11 +8,6 @@
 using namespace Poincare;
 using namespace Poincare::Internal;
 
-QUIZ_CASE(poincare_simplification_based_integer) {
-  assert_parsed_expression_simplify_to("0b10011", "19");
-  assert_parsed_expression_simplify_to("0x2A", "42");
-}
-
 QUIZ_CASE(poincare_simplification_decimal) {
   assert_parsed_expression_simplify_to("-2.3", "-23/10");
   assert_parsed_expression_simplify_to("-232.2ᴇ-4", "-1161/50000");
@@ -991,32 +986,6 @@ QUIZ_CASE(poincare_simplification_power) {
                                        "(-123456789012345)^3");
 }
 
-QUIZ_CASE(poincare_simplification_factorial) {
-  assert_parsed_expression_simplify_to("1/3!", "1/6");
-  assert_parsed_expression_simplify_to("5!", "120");
-  assert_parsed_expression_simplify_to("(1/3)!", "undef");
-  assert_parsed_expression_simplify_to("π!", "undef");
-  assert_parsed_expression_simplify_to("e!", "undef");
-}
-
-QUIZ_CASE(poincare_simplification_percent) {
-  assert_parsed_expression_simplify_to("20%", "20/100");
-  assert_parsed_expression_simplify_to("20%%", "(20/100)/100");
-  assert_parsed_expression_simplify_to("80*20%", "80×20/100");
-  assert_parsed_expression_simplify_to("80/(20%)", "80/(20/100)");
-  assert_parsed_expression_simplify_to("80+20%", "80×(1+20/100)");
-  assert_parsed_expression_simplify_to("20%+80+20%", "(80+20/100)×(1+20/100)");
-  assert_parsed_expression_simplify_to("80+20%+20%",
-                                       "(80×(1+20/100))×(1+20/100)");
-  assert_parsed_expression_simplify_to("80-20%", "80×(1-20/100)");
-  assert_parsed_expression_simplify_to("80+20-20%", "100×(1-20/100)");
-  assert_parsed_expression_simplify_to("80+10*20%", "80+10×20/100");
-  assert_parsed_expression_simplify_to("80-10*20%", "80-10×20/100");
-  assert_parsed_expression_simplify_to("80+20%*10", "80+10×20/100");
-  assert_parsed_expression_simplify_to("80-20%*10", "80-10×20/100");
-  assert_parsed_expression_simplify_to("80+20%π", "80+π×20/100");
-}
-
 QUIZ_CASE(poincare_simplification_logarithm) {
   assert_parsed_expression_simplify_to("log(0,0)", "undef");
   assert_parsed_expression_simplify_to("log(0,1)", "undef");
@@ -1063,34 +1032,6 @@ QUIZ_CASE(poincare_simplification_logarithm) {
                                        "log(11,14)+log(3,14)+2×log(2,14)+5");
   assert_parsed_expression_simplify_to("log(1/6991712,14)", "-log(13,14)-5");
   assert_parsed_expression_simplify_to("log(4,10)", "2×log(2)");
-}
-
-QUIZ_CASE(poincare_simplification_random) {
-  assert_parsed_expression_simplify_to("1/random()+1/3+1/4", "7/12+1/random()");
-  assert_parsed_expression_simplify_to("random()+random()",
-                                       "random()+random()");
-  assert_parsed_expression_simplify_to("random()-random()",
-                                       "random()-random()");
-  assert_parsed_expression_simplify_to("abs(random()-random())",
-                                       "abs(random()-random())");
-  assert_parsed_expression_simplify_to("1/random()+1/3+1/4+1/random()",
-                                       "7/12+1/random()+1/random()");
-  assert_parsed_expression_simplify_to("random()×random()",
-                                       "random()×random()");
-  assert_parsed_expression_simplify_to("random()/random()",
-                                       "random()/random()");
-  assert_parsed_expression_simplify_to("3^random()×3^random()",
-                                       "3^(random()+random())");
-  assert_parsed_expression_simplify_to("random()×ln(2)×3+random()×ln(2)×5",
-                                       "(3×random()+5×random())×ln(2)");
-}
-
-QUIZ_CASE(poincare_simplification_randint) {
-  // assert_parsed_expression_simplify_to("randint(1,1)", "1", User);
-  //  Randint is not simplified if ReductionTarget = SystemForApproximation
-  assert_parsed_expression_simplify_to(
-      "randint(1,3)", "randint(1,3)", SystemForApproximation, Radian,
-      MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
 }
 
 QUIZ_CASE(poincare_simplification_function) {
@@ -1688,68 +1629,6 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("norm([[1,i+1,π,-5]])", "√(π^2+28)");
 }
 
-QUIZ_CASE(poincare_simplification_functions_of_matrices) {
-  assert_parsed_expression_simplify_to("abs([[1,-1][2,-3]])", "undef");
-  assert_parsed_expression_simplify_to("acos([[1/√(2),1/2][1,-1]])", "undef");
-  assert_parsed_expression_simplify_to("asin([[1,0]])", "undef");
-  assert_parsed_expression_simplify_to("binomial([[0,180]],1)", "undef");
-  assert_parsed_expression_simplify_to("binomial(1,[[0,180]])", "undef");
-  assert_parsed_expression_simplify_to("binomial([[0,180]],[[1]])", "undef");
-  assert_parsed_expression_simplify_to("ceil([[0.3,180]])", "undef");
-  assert_parsed_expression_simplify_to("arg([[1,1+i]])", "undef");
-  assert_parsed_expression_simplify_to("conj([[1,1+i]])", "undef");
-  assert_parsed_expression_simplify_to("cos([[π/3,0][π/7,π/2]])", "undef");
-  assert_parsed_expression_simplify_to("cos([[0,π]])", "undef");
-  assert_parsed_expression_simplify_to("diff([[0,180]],x,1)", "undef");
-  assert_parsed_expression_simplify_to("diff(1,x,[[0,180]])", "undef");
-  assert_parsed_expression_simplify_to("quo([[0,180]],1)", "undef");
-  assert_parsed_expression_simplify_to("quo(1,[[0,180]])", "undef");
-  assert_parsed_expression_simplify_to("quo([[0,180]],[[1]])", "undef");
-  assert_parsed_expression_simplify_to("rem([[0,180]],1)", "undef");
-  assert_parsed_expression_simplify_to("rem(1,[[0,180]])", "undef");
-  assert_parsed_expression_simplify_to("rem([[0,180]],[[1]])", "undef");
-  assert_parsed_expression_simplify_to("factor([[0,180]])", "undef");
-  assert_parsed_expression_simplify_to("[[1,3]]!", "undef");
-  assert_parsed_expression_simplify_to("floor([[1/√(2),1/2][1,-1.3]])",
-                                       "undef");
-  assert_parsed_expression_simplify_to("frac([[0.3,180]])", "undef");
-  assert_parsed_expression_simplify_to("gcd([[0,180]],1)", "undef");
-  assert_parsed_expression_simplify_to("gcd(1,[[0,180]])", "undef");
-  assert_parsed_expression_simplify_to("gcd([[0,180]],[[1]])", "undef");
-  assert_parsed_expression_simplify_to("gcd(1,2,[[1]])", "undef");
-  assert_parsed_expression_simplify_to("arsinh([[0,π]])", "undef");
-  assert_parsed_expression_simplify_to("artanh([[0,π]])", "undef");
-  assert_parsed_expression_simplify_to("sinh([[0,π]])", "undef");
-  assert_parsed_expression_simplify_to("im([[1,1+i]])", "undef");
-  assert_parsed_expression_simplify_to("int([[0,180]],x,1,2)", "undef");
-  assert_parsed_expression_simplify_to("int(1,x,[[0,180]],1)", "undef");
-  assert_parsed_expression_simplify_to("int(1,x,1,[[0,180]])", "undef");
-  assert_parsed_expression_simplify_to("log([[2,3]])", "undef");
-  assert_parsed_expression_simplify_to("log(5,[[2,3]])", "undef");
-  assert_parsed_expression_simplify_to("ln([[2,3]])", "undef");
-  assert_parsed_expression_simplify_to("root([[2,3]],5)", "undef");
-  assert_parsed_expression_simplify_to("root(5,[[2,3]])", "undef");
-  // Opposite is mapped on matrix
-  assert_parsed_expression_simplify_to("-[[1/√(2),1/2,3][2,1,-3]]",
-                                       "[[-√(2)/2,-1/2,-3][-2,-1,3]]");
-  assert_parsed_expression_simplify_to("permute([[2,3]],5)", "undef");
-  assert_parsed_expression_simplify_to("permute(5,[[2,3]])", "undef");
-  assert_parsed_expression_simplify_to("product(1,x,[[0,180]],1)", "undef");
-  assert_parsed_expression_simplify_to("product(1,x,1,[[0,180]])", "undef");
-  assert_parsed_expression_simplify_to("re([[1,i]])", "undef");
-  assert_parsed_expression_simplify_to("round(1.3, [[2.1,3.4]])", "undef");
-  assert_parsed_expression_simplify_to("round(1.3, [[2.1,3.4]])", "undef");
-  assert_parsed_expression_simplify_to("sign([[2.1,3.4]])", "undef");
-  assert_parsed_expression_simplify_to("sin([[π/3,0][π/7,π/2]])", "undef");
-  assert_parsed_expression_simplify_to("sum(1,x,[[0,180]],1)", "undef");
-  assert_parsed_expression_simplify_to("sum(1,x,1,[[0,180]])", "undef");
-  assert_parsed_expression_simplify_to("√([[2.1,3.4]])", "undef");
-  assert_parsed_expression_simplify_to("[[2,3.4]]-[[0.1,3.1]]",
-                                       "[[19/10,3/10]]");
-  assert_parsed_expression_simplify_to("[[2,3.4]]-1", "undef");
-  assert_parsed_expression_simplify_to("1-[[0.1,3.1]]", "undef");
-}
-
 QUIZ_CASE(poincare_simplification_store) {
   assert_parsed_expression_simplify_to("1+2→x", "3→x");
 #if TODO_PCJ
@@ -1763,14 +1642,6 @@ QUIZ_CASE(poincare_simplification_store) {
   assert_parsed_expression_simplify_to("a→x", "undef→x", User, Radian,
                                        MetricUnitFormat, Cartesian,
                                        ReplaceAllSymbols);
-}
-
-QUIZ_CASE(poincare_simplification_store_matrix) {
-  assert_parsed_expression_simplify_to("1+1→a", "2→a");
-#if TODO_PCJ
-  assert_parsed_expression_simplify_to("[[8]]→f(x)", "[[8]]→f(x)");
-  assert_parsed_expression_simplify_to("[[x]]→f(x)", "[[x]]→f(x)");
-#endif
 }
 
 QUIZ_CASE(poincare_simplification_store_correctly_parsed) {
@@ -2200,21 +2071,6 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
       "(2+x)^2", "x^2+4×x+4", SystemForAnalysis, Radian, MetricUnitFormat,
       Cartesian, ReplaceDefinedSymbols, false);
   assert_parsed_expression_simplify_to("(2+x)^2", "x^2+4×x+4", User);
-}
-
-QUIZ_CASE(poincare_simplification_user_function) {
-  PoincareTest::SymbolStore symbolStore;
-  // User defined function
-  // f: x → x*3
-  store("x*3→f(x)", symbolStore);
-  assert_parsed_expression_simplify_to("f(1+1)", "6", symbolStore, User, Radian,
-                                       MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("f({2,3})", "{6,9}", symbolStore, User,
-                                       Radian, MetricUnitFormat, Polar);
-  // f: x → 3
-  store("3→f(x)", symbolStore);
-  assert_parsed_expression_simplify_to("f(1/0)", "undef", symbolStore, User,
-                                       Radian, MetricUnitFormat, Polar);
 }
 
 QUIZ_CASE(poincare_simplification_mix) {
@@ -2761,160 +2617,9 @@ QUIZ_CASE(poincare_simplification_mixed_fraction) {
 #endif
 }
 
-QUIZ_CASE(poincare_simplification_booleans) {
-  assert_parsed_expression_simplify_to("true", "True");
-  assert_parsed_expression_simplify_to("false", "False");
-  assert_parsed_expression_simplify_to("True + False", "undef");
-  assert_parsed_expression_simplify_to("2True", "undef");
-  assert_parsed_expression_simplify_to("False^3", "undef");
-}
-
-QUIZ_CASE(poincare_simplification_comparison_operators) {
-  assert_parsed_expression_simplify_to("3 < 4", "True");
-  assert_parsed_expression_simplify_to("3 < 3", "False");
-  assert_parsed_expression_simplify_to("3 < 2", "False");
-
-  assert_parsed_expression_simplify_to("3 <= 4", "True");
-  assert_parsed_expression_simplify_to("3 <= 3", "True");
-  assert_parsed_expression_simplify_to("3 <= 2", "False");
-
-  assert_parsed_expression_simplify_to("3 > 4", "False");
-  assert_parsed_expression_simplify_to("3 > 3", "False");
-  assert_parsed_expression_simplify_to("3 > 2", "True");
-
-  assert_parsed_expression_simplify_to("3 >= 4", "False");
-  assert_parsed_expression_simplify_to("3 >= 3", "True");
-  assert_parsed_expression_simplify_to("3 >= 2", "True");
-
-  assert_parsed_expression_simplify_to("3 = 4", "False");
-  assert_parsed_expression_simplify_to("3 = 3", "True");
-  assert_parsed_expression_simplify_to("3 = 2", "False");
-
-  assert_parsed_expression_simplify_to("3 != 4", "True");
-  assert_parsed_expression_simplify_to("3 != 3", "False");
-  assert_parsed_expression_simplify_to("3 != 2", "True");
-
-  assert_parsed_expression_simplify_to("undef = 2", "undef");
-  assert_parsed_expression_simplify_to("undef != 2", "undef");
-
-  assert_parsed_expression_simplify_to("3 + i < 1 + 2i", "undef");
-  assert_parsed_expression_simplify_to("3 + i < 1 + i", "undef");
-  assert_parsed_expression_simplify_to("3 + i = 3 + i", "True");
-  assert_parsed_expression_simplify_to("[[0, 0]] < [[1, 1]]", "undef");
-
-  assert_parsed_expression_simplify_to("3 > 2 >= 1 = 4 - 3 != 6", "True");
-  assert_parsed_expression_simplify_to("3 < 2 >= 1 = 4 - 3 != 6", "False");
-  assert_parsed_expression_simplify_to("3 > 2 >= 1 = 4 / 0", "undef");
-
-  assert_parsed_expression_simplify_to("3=3+3<4", "False");
-  assert_parsed_expression_simplify_to("(3=3)+(3<4)", "undef");
-  assert_parsed_expression_simplify_to("ln(3=5)", "undef");
-
-  assert_parsed_expression_simplify_to("4000!4=9",
-                                       "\U000000124×4000!\U00000013=9");
-  assert_parsed_expression_simplify_to("4000!4!=9",
-                                       "\U000000124×4000!\U00000013≠9");
-}
-
-typedef bool (*BoolCompare)(bool a, bool b);
-static void testLogicalOperatorTruthTable(const char* operatorString,
-                                          BoolCompare evaluationFunction) {
-  constexpr const char* booleanNames[] = {"False", "True"};
-  constexpr static int bufferSize = 17;  // 9 == strlen("False nand False") + 1
-  char buffer[bufferSize];
-  int operatorLength = strlen(operatorString);
-  assert(operatorLength <= 4);
-  // Test truth table
-  for (int a = 0; a <= 1; a++) {
-    const char* aString = booleanNames[a];
-    int length = strlcpy(buffer, aString, strlen(aString) + 1);
-    buffer[length] = ' ';
-    length++;
-    length += strlcpy(buffer + length, operatorString, operatorLength + 1);
-    buffer[length] = ' ';
-    length++;
-    for (int b = 0; b <= 1; b++) {
-      const char* bString = booleanNames[b];
-      strlcpy(buffer + length, bString, strlen(bString) + 1);
-      const char* truthString = booleanNames[evaluationFunction(
-          static_cast<bool>(a), static_cast<bool>(b))];
-      assert_parsed_expression_simplify_to(buffer, truthString);
-    }
-  }
-  // Test undefined on numbers
-  const char* numberString = "1";
-  int length = strlcpy(buffer, numberString, strlen(numberString) + 1);
-  buffer[length] = ' ';
-  length++;
-  length += strlcpy(buffer + length, operatorString, operatorLength + 1);
-  buffer[length] = ' ';
-  length++;
-  strlcpy(buffer + length, numberString, strlen(numberString) + 1);
-  assert_parsed_expression_simplify_to(buffer, "undef");
-}
-
-QUIZ_CASE(poincare_simplification_logical_operators) {
-  assert_parsed_expression_simplify_to("not True", "False");
-  assert_parsed_expression_simplify_to("not False", "True");
-  testLogicalOperatorTruthTable("and", [](bool a, bool b) { return a && b; });
-  testLogicalOperatorTruthTable("or", [](bool a, bool b) { return a || b; });
-  testLogicalOperatorTruthTable("xor", [](bool a, bool b) { return a != b; });
-  testLogicalOperatorTruthTable("nor",
-                                [](bool a, bool b) { return !(a || b); });
-  testLogicalOperatorTruthTable("nand",
-                                [](bool a, bool b) { return !(a && b); });
-
-  assert_parsed_expression_simplify_to("not False and False", "False");
-  assert_parsed_expression_simplify_to("not (False and False)", "True");
-  assert_parsed_expression_simplify_to("True or False xor True", "False");
-  assert_parsed_expression_simplify_to("True or (False xor True)", "True");
-  assert_parsed_expression_simplify_to("True xor True and False", "True");
-  assert_parsed_expression_simplify_to("(True xor True) and False", "False");
-
-  assert_parsed_expression_simplify_to("True xor {False,True,False,True}",
-                                       "{True,False,True,False}");
-
-  assert_parsed_expression_simplify_to("True and -5.2", "undef");
-  assert_parsed_expression_simplify_to("True and [[-5,2]]", "undef");
-  assert_parsed_expression_simplify_to("True or undef", "undef");
-  assert_parsed_expression_simplify_to("not undef", "undef");
-  assert_parsed_expression_simplify_to("True and 2 = 2 ", "True");
-  assert_parsed_expression_simplify_to("(True and 2) = 2", "undef");
-
-  assert_parsed_expression_simplify_to("3×not True", "undef");
-}
-
-QUIZ_CASE(poincare_simplification_piecewise_operator) {
-  assert_parsed_expression_simplify_to("piecewise(3,1<0,2)", "2");
-  assert_parsed_expression_simplify_to("piecewise(3,1>0,2)", "3");
-  assert_parsed_expression_simplify_to("piecewise(3,0>1,4,0>2,5,0<6,2)", "5");
-  assert_parsed_expression_simplify_to("piecewise(3,0<1,4,0<2,5,0<6,2)", "3");
-
-  assert_parsed_expression_simplify_to("piecewise(3,1<0,2,3=4)", "undef");
-  assert_parsed_expression_simplify_to("piecewise(3,1<0,undef)", "undef");
-  assert_parsed_expression_simplify_to("piecewise(3,1>0,undef)", "3");
-  assert_parsed_expression_simplify_to("piecewise(-x/x,x>0,0)",
-                                       "piecewise(dep(-1,{x^0}),x>0,0)");
-
-  assert_parsed_expression_simplify_to("piecewise(3,4>0,2,2<a)", "undef", User,
-                                       Radian, MetricUnitFormat, Cartesian,
-                                       ReplaceAllSymbols);
-}
-
 QUIZ_CASE(poincare_simplification_integral) {
   assert_parsed_expression_simplify_to("int(tan(x),x,0,x)",
                                        "int(tan(x),x,0,x)");
   assert_parsed_expression_simplify_to("int(arccot(x),x,0,x)",
                                        "int(arccot(x),x,0,x)");
-}
-
-QUIZ_CASE(poincare_simplification_point) {
-  assert_parsed_expression_simplify_to("(1,2)", "(1,2)");
-  assert_parsed_expression_simplify_to("(1/0,2)", "(undef,2)");
-  assert_parsed_expression_simplify_to("(1,2)+3", "undef");
-  assert_parsed_expression_simplify_to("abs((1.23,4.56))", "undef");
-  assert_parsed_expression_simplify_to("{(1+2,3+4),(5+6,7+8)}",
-                                       "{(3,7),(11,15)}");
-  assert_parsed_expression_simplify_to("sequence((k,-k+1),k,4)",
-                                       "{(1,0),(2,-1),(3,-2),(4,-3)}");
 }

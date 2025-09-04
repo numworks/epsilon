@@ -162,7 +162,9 @@ bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext) {
           (e->numberOfChildren() == 0 || e->child(0)->isUndefined())));
   bool changed =
       HandleUnits(e, projectionContext, projectionContext->m_dimension);
-  changed = Beautification::DeepBeautify(e, *projectionContext) || changed;
+  changed = Beautification::DeepBeautify(e, *projectionContext,
+                                         projectionContext->m_dimension) ||
+            changed;
   return changed;
 }
 

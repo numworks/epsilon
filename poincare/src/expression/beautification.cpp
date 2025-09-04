@@ -224,15 +224,14 @@ bool DeepBeautifyUnits(Tree* e) {
   return false;
 }
 
-bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
+bool DeepBeautify(Tree* e, ProjectionContext projectionContext,
+                  const Dimension& dimension) {
   assert(projectionContext.m_reductionTarget == ReductionTarget::User);
-  if (projectionContext.m_dimension.isNone()) {
-    // Dimension is default, update it.
-    projectionContext.m_dimension =
-        Dimension::Get(e, projectionContext.m_context);
-  }
-  bool changed =
-      ApplyComplexFormat(e, projectionContext.m_dimension, projectionContext);
+  bool changed = ApplyComplexFormat(
+      e,
+      dimension.isNone() ? Dimension::Get(e, projectionContext.m_context)
+                         : dimension,
+      projectionContext);
 
   PatternMatching::Context ctx;
   if ((projectionContext.m_complexFormat == ComplexFormat::Polar &&

@@ -24,10 +24,11 @@ void assert_next_solution_is(const char* expression, const Context& context,
                              Poincare::AngleUnit angleUnit) {
   assert(std::isnan(expected.x()) == std::isnan(expected.y()));
 
-  ProjectionContext projCtx = {.m_complexFormat = Poincare::ComplexFormat::Real,
-                               .m_angleUnit = angleUnit,
-                               .m_strategy = Strategy::ApproximateToFloat,
-                               .m_context = context};
+  ProjectionContext projCtx = {
+      .m_complexFormat = Poincare::ComplexFormat::Real,
+      .m_angleUnit = angleUnit,
+      .m_strategy = Poincare::Strategy::ApproximateToFloat,
+      .m_context = context};
 
   Tree* e = parseAndPrepareForApproximation(expression, projCtx);
 

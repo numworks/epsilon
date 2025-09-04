@@ -8,6 +8,7 @@
 using namespace Poincare::Internal;
 using Poincare::AngleUnit;
 using Poincare::ComplexFormat;
+using Poincare::Strategy;
 
 QUIZ_CASE(pcj_projection) {
   TreeRef ref(KCos(KSin(KPow(

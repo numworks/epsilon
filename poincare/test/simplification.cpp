@@ -16,6 +16,7 @@ using namespace Poincare::Internal;
 using Poincare::AngleUnit;
 using Poincare::ComplexFormat;
 using Poincare::ReductionTarget;
+using Poincare::Strategy;
 using Poincare::SymbolicComputation;
 using UnitFormat = Poincare::Preferences::UnitFormat;
 

@@ -182,7 +182,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
         .m_complexFormat = m_equationMetadata.complexFormat,
         .m_angleUnit =
             GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-        .m_strategy = Internal::Strategy::ApproximateToFloat,
+        .m_strategy = Strategy::ApproximateToFloat,
         .m_unitFormat =
             GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
         // Any remaining symbol at this point should be an unknown parameter.

@@ -76,7 +76,7 @@ class Preferences {
 
   // --- Country-dependent preferences ---
 
-  enum class UnitFormat { Metric, Imperial };
+  enum class UnitFormat : uint8_t { Metric, Imperial };
 
   enum class CombinatoricSymbols : uint8_t {
     Default = 0,

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <poincare/src/memory/tree_stack.h>
-
 /* Usage:
  *
  * CAUTION : A scope MUST be created directly around the PoolCheckpoint, to
@@ -40,10 +38,8 @@ class PoolCheckpoint {
 
   PoolCheckpoint();
   PoolCheckpoint(const PoolCheckpoint&) = delete;
-  virtual ~PoolCheckpoint() {
-    assert(Poincare::Internal::TreeStack::SharedTreeStack->size() == 0);
-    protectedDiscard();
-  }
+  virtual ~PoolCheckpoint();
+
   PoolCheckpoint& operator=(const PoolCheckpoint&) = delete;
 
   const PoolObject* const endOfPoolBeforeCheckpoint() { return m_endOfPool; }

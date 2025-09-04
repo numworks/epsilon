@@ -1,5 +1,6 @@
 #pragma once
 
+#include <omg/global_box.h>
 #include <omg/memory.h>
 #include <stddef.h>
 #include <string.h>

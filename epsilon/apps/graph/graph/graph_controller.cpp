@@ -1,5 +1,6 @@
 #include "graph_controller.h"
 
+#include <apps/shared/global_context.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/layout.h>
 
@@ -376,10 +377,10 @@ void GraphController::jumpToLeftRightCurve(double t,
 
 void GraphController::reloadBannerViewForCursorOnFunction(
     double cursorT, double cursorX, double cursorY, Ion::Storage::Record record,
-    FunctionStore* functionStore, const Poincare::Context& context,
+    const FunctionContext& functionContext, const Poincare::Context& context,
     bool cappedNumberOfSignificantDigits) {
-  OMG::ExpiringPointer<ContinuousFunction> function =
-      App::app()->functionStore()->modelForRecord(record);
+  OMG::ExpiringPointer<const ContinuousFunction> function =
+      GlobalContextAccessor::ContinuousFunctionContext().modelForRecord(record);
   PointsOfInterestCache* pointsOfInterest = pointsOfInterestForRecord(record);
   bannerView()->emptyInterestMessages();
   /* The interests are sorted from most important to lowest, in case there is
@@ -424,7 +425,8 @@ void GraphController::reloadBannerViewForCursorOnFunction(
   cappedNumberOfSignificantDigits =
       cappedNumberOfSignificantDigits || hasInterest;
   FunctionGraphController::reloadBannerViewForCursorOnFunction(
-      cursorT, cursorX, cursorY, record, functionStore, context,
+      cursorT, cursorX, cursorY, record,
+      GlobalContextAccessor::ContinuousFunctionContext(), context,
       cappedNumberOfSignificantDigits);
 }
 

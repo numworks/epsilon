@@ -10,10 +10,10 @@ namespace Shared {
 
 void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
     double cursorT, double cursorX, double cursorY, Ion::Storage::Record record,
-    FunctionStore* functionStore, const Poincare::Context& context,
+    const FunctionContext& functionContext, const Poincare::Context& context,
     bool cappedNumberOfSignificantDigits) {
-  OMG::ExpiringPointer<Function> function =
-      functionStore->modelForRecord(record);
+  OMG::ExpiringPointer<const Function> function =
+      functionContext.modelForRecord(record);
   char buffer[k_textBufferSize];
   size_t numberOfChar = 0;
   numberOfChar += UTF8Helper::WriteCodePoint(

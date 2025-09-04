@@ -34,7 +34,7 @@ class FunctionBannerDelegate {
       Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
   virtual void reloadBannerViewForCursorOnFunction(
       double cursorT, double cursorX, double cursorY,
-      Ion::Storage::Record record, FunctionStore* functionStore,
+      Ion::Storage::Record record, const FunctionContext& functionContext,
       const Poincare::Context& context,
       bool cappedNumberOfSignificantDigits = false);
   virtual XYBannerView* bannerView() = 0;

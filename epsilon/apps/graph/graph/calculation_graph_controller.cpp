@@ -95,9 +95,10 @@ void CalculationGraphController::setRecord(Ion::Storage::Record record) {
 }
 
 void CalculationGraphController::reloadBannerView() {
-  reloadBannerViewForCursorOnFunction(m_cursor->t(), m_cursor->x(),
-                                      m_cursor->y(), m_record, functionStore(),
-                                      Shared::GlobalContextAccessor::Context());
+  reloadBannerViewForCursorOnFunction(
+      m_cursor->t(), m_cursor->x(), m_cursor->y(), m_record,
+      Shared::GlobalContextAccessor::ContinuousFunctionContext(),
+      Shared::GlobalContextAccessor::Context());
 }
 
 Coordinate2D<double>

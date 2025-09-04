@@ -44,7 +44,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   }
 }
 
-int GraphView::nextDotIndex(Shared::Sequence* sequence, int currentIndex,
+int GraphView::nextDotIndex(const Shared::Sequence* sequence, int currentIndex,
                             OMG::HorizontalDirection direction,
                             int scrollSpeed) const {
   assert(scrollSpeed > 0);

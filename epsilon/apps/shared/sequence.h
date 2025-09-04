@@ -50,7 +50,7 @@ class Sequence : public Function {
       Poincare::Layout l, const Poincare::Context& context);
 
   // Definition
-  Poincare::Layout definitionName() { return m_definition.name(this); }
+  Poincare::Layout definitionName() const { return m_definition.name(this); }
   // First initial condition
   Poincare::Layout firstInitialConditionName() {
     return m_firstInitialCondition.name(this);
@@ -210,13 +210,13 @@ class Sequence : public Function {
   class SequenceModel : public ExpressionModel {
    public:
     using ExpressionModel::ExpressionModel;
-    Poincare::Layout name(Sequence* sequence);
+    Poincare::Layout name(const Sequence* sequence) const;
     void tidyDownstreamPoolFrom(
         const Poincare::PoolObject* treePoolCursor) const override;
     void tidyName(const Poincare::PoolObject* treePoolCursor = nullptr) const;
 
    protected:
-    virtual void buildName(Sequence* sequence) = 0;
+    virtual void buildName(const Sequence* sequence) const = 0;
     mutable Poincare::Layout m_name;
 
    private:
@@ -236,7 +236,7 @@ class Sequence : public Function {
    private:
     void* expressionAddress(const Ion::Storage::Record* record) const override;
     size_t expressionSize(const Ion::Storage::Record* record) const override;
-    void buildName(Sequence* sequence) override;
+    void buildName(const Sequence* sequence) const override;
   };
 
   class InitialConditionModel : public SequenceModel {
@@ -245,7 +245,7 @@ class Sequence : public Function {
                         size_t newSize) override;
     void* expressionAddress(const Ion::Storage::Record* record) const override;
     size_t expressionSize(const Ion::Storage::Record* record) const override;
-    void buildName(Sequence* sequence) override;
+    void buildName(const Sequence* sequence) const override;
     virtual int conditionIndex() const = 0;
   };
 

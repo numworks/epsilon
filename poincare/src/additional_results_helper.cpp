@@ -461,11 +461,12 @@ UserExpression AdditionalResultsHelper::CreateMixedFraction(
 }
 
 // Eat reduced expression's tree and return a beautified layout
-Poincare::Layout CreateBeautifiedLayout(Tree* reducedExpression,
-                                        ProjectionContext* ctx,
-                                        Preferences::PrintFloatMode displayMode,
-                                        uint8_t numberOfSignificantDigits) {
-  Simplification::BeautifyReduced(reducedExpression, ctx, ctx->m_dimension);
+static Poincare::Layout CreateBeautifiedLayout(
+    Tree* reducedExpression, ProjectionContext* ctx,
+    const Internal::Dimension& dimension,
+    Preferences::PrintFloatMode displayMode,
+    uint8_t numberOfSignificantDigits) {
+  Simplification::BeautifyReduced(reducedExpression, ctx, dimension);
   return Poincare::Layout::Builder(Layouter::LayoutExpression(
       reducedExpression, false, false, numberOfSignificantDigits, displayMode));
 }
@@ -482,9 +483,10 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
                            .m_advanceReduce = false};
   Tree* e = approximateOutput.tree()->cloneTree();
   Simplification::ProjectAndReduce(e, &ctx);
-  assert(!ctx.m_dimension.isUnit());
+  Internal::Dimension dim = ctx.m_dimension;
+  assert(!dim.isUnit());
   return CreateBeautifiedLayout(
-      e, &ctx, Preferences::PrintFloatMode::Scientific,
+      e, &ctx, dim, Preferences::PrintFloatMode::Scientific,
       calculationPreferences.numberOfSignificantDigits);
 }
 
@@ -500,6 +502,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
       (isApproximate ? approximateOutput : exactOutput).tree()->cloneTree();
   // The expression must be reduced to call matrix methods.
   Simplification::ProjectAndReduce(matrix, &ctx);
+  Internal::Dimension dim = ctx.m_dimension;
   bool isSquared = Internal::Matrix::NumberOfRows(matrix) ==
                    Internal::Matrix::NumberOfColumns(matrix);
 
@@ -515,18 +518,17 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     bool determinantIsUndefinedOrNull =
         determinant->isUndefined() || determinant->isZero();
     // TODO_PCJ: Prevent having to update ctx here.
-    Internal::Dimension previousDimension = ctx.m_dimension;
-    ctx.m_dimension = Internal::Dimension::Get(determinant, ctx.m_context);
-    determinantL = CreateBeautifiedLayout(determinant, &ctx, displayMode,
-                                          numberOfSignificantDigits);
-    ctx.m_dimension = previousDimension;
+    Internal::Dimension dimension =
+        Internal::Dimension::Get(determinant, ctx.m_context);
+    determinantL = CreateBeautifiedLayout(
+        determinant, &ctx, dimension, displayMode, numberOfSignificantDigits);
     matrixClone->removeTree();
 
     /* 2. Matrix inverse if invertible matrix
      * A squared matrix is invertible if and only if determinant is non null */
     if (!determinantIsUndefinedOrNull) {
       Tree* inverse = Internal::Matrix::Inverse(matrix, isApproximate);
-      inverseL = CreateBeautifiedLayout(inverse, &ctx, displayMode,
+      inverseL = CreateBeautifiedLayout(inverse, &ctx, dim, displayMode,
                                         numberOfSignificantDigits);
     }
   }
@@ -537,7 +539,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
                                     isApproximate)) {
     // Clone layouted tree to preserve reducedRowEchelonForm for next step.
     rowEchelonFormL =
-        CreateBeautifiedLayout(reducedRowEchelonForm->cloneTree(), &ctx,
+        CreateBeautifiedLayout(reducedRowEchelonForm->cloneTree(), &ctx, dim,
                                displayMode, numberOfSignificantDigits);
 
     /* 4. Matrix reduced row echelon form
@@ -546,22 +548,23 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
                                        isApproximate)) {
       OMG::unreachable();
     }
-    reducedRowEchelonFormL = CreateBeautifiedLayout(
-        reducedRowEchelonForm, &ctx, displayMode, numberOfSignificantDigits);
+    reducedRowEchelonFormL =
+        CreateBeautifiedLayout(reducedRowEchelonForm, &ctx, dim, displayMode,
+                               numberOfSignificantDigits);
   } else {
     reducedRowEchelonForm->cloneTreeOverTree(KUndefUnhandled);
-    rowEchelonFormL = CreateBeautifiedLayout(
-        reducedRowEchelonForm, &ctx, displayMode, numberOfSignificantDigits);
+    rowEchelonFormL =
+        CreateBeautifiedLayout(reducedRowEchelonForm, &ctx, dim, displayMode,
+                               numberOfSignificantDigits);
     reducedRowEchelonFormL = rowEchelonFormL.clone();
   }
 
   // 5. Matrix trace if square matrix
   if (isSquared) {
     Tree* trace = Internal::Matrix::Trace(matrix);
-    // TODO_PCJ: Prevent having to update ctx here.
-    ctx.m_dimension = Internal::Dimension::Get(trace, ctx.m_context);
-    traceL = CreateBeautifiedLayout(trace, &ctx, displayMode,
-                                    numberOfSignificantDigits);
+    traceL = CreateBeautifiedLayout(
+        trace, &ctx, Internal::Dimension::Get(trace, ctx.m_context),
+        displayMode, numberOfSignificantDigits);
   }
 
   matrix->removeTree();

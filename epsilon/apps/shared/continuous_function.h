@@ -49,17 +49,17 @@ class ContinuousFunction : public Function {
   CodePoint symbol() const override { return properties().symbol(); }
 
   size_t nameWithoutArgument(char* buffer, size_t bufferSize,
-                             int derivationOrder = 0);
+                             int derivationOrder = 0) const;
   // Insert ContinuousFunction's name and argument in buffer ("f(x)" or "y")
   size_t nameWithArgument(char* buffer, size_t bufferSize,
-                          int derivationOrder = 0) override;
+                          int derivationOrder = 0) const override;
   // Insert the value of the symbol in buffer
   size_t printAbscissaValue(double cursorT, double cursorX, char* buffer,
-                            size_t bufferSize, int precision) override;
+                            size_t bufferSize, int precision) const override;
   // Insert the value of the evaluation in buffer
   size_t printFunctionValue(double cursorT, double cursorX, double cursorY,
                             char* buffer, size_t bufferSize, int precision,
-                            const Poincare::Context& context) override;
+                            const Poincare::Context& context) const override;
   // Return true if the ContinuousFunction is active
   bool isActive() const override {
     return Function::isActive() && properties().isEnabled();

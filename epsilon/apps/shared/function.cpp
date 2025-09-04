@@ -54,7 +54,7 @@ void Function::setActive(bool active) {
 
 size_t Function::printAbscissaValue(double cursorT, double cursorX,
                                     char* buffer, size_t bufferSize,
-                                    int precision) {
+                                    int precision) const {
   return PoincareHelpers::ConvertFloatToText<double>(cursorT, buffer,
                                                      bufferSize, precision);
 }
@@ -62,7 +62,7 @@ size_t Function::printAbscissaValue(double cursorT, double cursorX,
 size_t Function::printFunctionValue(double cursorT, double cursorX,
                                     double cursorY, char* buffer,
                                     size_t bufferSize, int precision,
-                                    const Poincare::Context& context) {
+                                    const Poincare::Context& context) const {
   return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer,
                                                      bufferSize, precision);
 }
@@ -76,7 +76,7 @@ size_t Function::withArgument(char* buffer, size_t bufferSize) const {
 }
 
 size_t Function::nameWithArgument(char* buffer, size_t bufferSize,
-                                  int derivationOrder) {
+                                  int derivationOrder) const {
   assert(derivationOrder == 0);
   return Function::NameWithArgument(*this, symbol(), buffer, bufferSize);
 }

@@ -5,6 +5,7 @@
 #include "helper.h"
 
 using namespace Poincare::Internal;
+using Poincare::ProjectionContext;
 
 QUIZ_CASE(pcj_simplification_parametric) {
   // Leave and enter with a nested parametric

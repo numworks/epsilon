@@ -25,7 +25,7 @@ void assert_next_solution_is(const char* expression,
                              Poincare::AngleUnit angleUnit) {
   assert(std::isnan(expected.x()) == std::isnan(expected.y()));
 
-  ProjectionContext projCtx = {
+  Poincare::ProjectionContext projCtx = {
       .m_complexFormat = Poincare::ComplexFormat::Real,
       .m_angleUnit = angleUnit,
       .m_strategy = Poincare::Strategy::ApproximateToFloat,

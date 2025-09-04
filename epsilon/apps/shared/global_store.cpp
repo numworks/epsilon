@@ -196,7 +196,7 @@ Ion::Storage::Record::ErrorStatus GlobalStore::setExpressionForUserSymbol(
     Ion::Storage::Record previousRecord) {
   bool storeApproximation =
       CAS::NeverDisplayReductionOfInput(expression, *this);
-  Internal::ProjectionContext projectionContext =
+  ProjectionContext projectionContext =
       PoincareHelpers::ProjectionContextForPreferences(expression, *this);
   projectionContext.m_symbolic = SymbolicComputation::ReplaceAllSymbols;
   UserExpression approximation;

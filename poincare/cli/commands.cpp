@@ -17,8 +17,8 @@ using namespace Poincare;
 HistoryContext s_historyContext;
 bool s_isInteractive = false;
 
-Internal::ProjectionContext context() {
-  Internal::ProjectionContext ctx;
+ProjectionContext context() {
+  ProjectionContext ctx;
   ctx.m_context = &s_historyContext;
   ctx.m_symbolic = SymbolicComputation::ReplaceDefinedSymbols;
   return ctx;
@@ -51,7 +51,7 @@ void printExpression(const Expression& expr) {
 // Command implementations
 void expandCommand(const std::vector<std::string>& args) {
   UserExpression s = getExpression(args);
-  Internal::ProjectionContext ctx = context();
+  ProjectionContext ctx = context();
   Internal::Tree* p = s.tree()->cloneTree();
   Internal::Simplification::ToSystem(p, &ctx);
   Internal::SystematicReduction::DeepReduce(p);
@@ -62,7 +62,7 @@ void expandCommand(const std::vector<std::string>& args) {
 
 void approximateCommand(const std::vector<std::string>& args) {
   UserExpression s = getExpression(args);
-  Internal::ProjectionContext ctx = context();
+  ProjectionContext ctx = context();
   Internal::Tree* p = s.tree()->cloneTree();
   Internal::Simplification::ToSystem(p, &ctx);
   Internal::Tree* a = Internal::Approximation::ToTree<double>(p, {});

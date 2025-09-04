@@ -106,7 +106,7 @@ void assert_parsed_expression_process_to(
   TreeRef e = Parser::Parse(inputLayout, symbolContext);
   inputLayout->removeTree();
   quiz_assert_print_if_failure(e != nullptr, expression);
-  Internal::ProjectionContext projCtx = {.m_complexFormat = complexFormat,
+  Poincare::ProjectionContext projCtx = {.m_complexFormat = complexFormat,
                                          .m_angleUnit = angleUnit,
                                          .m_reductionTarget = target,
                                          .m_unitFormat = unitFormat,
@@ -154,10 +154,10 @@ void assert_parsed_expression_simplify_to(
       expression, simplifiedExpression, symbolContext, target, complexFormat,
       angleUnit, unitFormat, symbolicComputation,
       beautify ?
-      [](Tree *e, Internal::ProjectionContext &projCtx) {
+      [](Tree *e, Poincare::ProjectionContext &projCtx) {
         simplify(e, projCtx, true);
         return e;
-      } :[](Tree *e, Internal::ProjectionContext &projCtx) {
+      } :[](Tree *e, Poincare::ProjectionContext &projCtx) {
         simplify(e, projCtx, false);
         /* Beautify the expression with a different target, to allow layouting and output comparison. */
         ReductionTarget previousReductionTarget = projCtx.m_reductionTarget;

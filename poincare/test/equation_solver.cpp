@@ -13,7 +13,7 @@ using namespace Poincare::Internal;
 bool check_solutions(
     std::initializer_list<const char*> inputs,
     std::initializer_list<const char*> outputs,
-    ProjectionContext projectionContext,
+    Poincare::ProjectionContext projectionContext,
     EquationSolver::Error expectedError = EquationSolver::Error::NoError) {
   Tree* equationList = Poincare::Internal::List::PushEmpty();
   for (const char* equation : inputs) {
@@ -54,7 +54,7 @@ bool check_solutions(
 
 QUIZ_CASE(pcj_equation_solver) {
   PoincareTest::SymbolStore symbolStore;
-  ProjectionContext projCtx = {.m_context = symbolStore};
+  Poincare::ProjectionContext projCtx = {.m_context = symbolStore};
 
   check_solutions({"x-3+y", "y-x+1"}, {"2", "1"}, projCtx);
   check_solutions({"x+x"}, {"0"}, projCtx);
@@ -131,7 +131,7 @@ QUIZ_CASE(pcj_equation_solver) {
 void check_range(const char* input, double min, double max) {
   Tree* equationList = TreeStack::SharedTreeStack->pushList(1);
   parse(input);
-  ProjectionContext ctx;
+  Poincare::ProjectionContext ctx;
   EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
       equationList, ctx, Poincare::Range1D<double>(), 10);
   quiz_assert(result.solutionMetadata.solvingRange.min() == min);

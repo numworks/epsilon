@@ -92,7 +92,7 @@ QUIZ_CASE(pcj_polynomial_operations) {
   assert_trees_are_equal(remainder, KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e));
 }
 
-void assert_polynomial_degree_is(ProjectionContext projectionContext,
+void assert_polynomial_degree_is(Poincare::ProjectionContext projectionContext,
                                  const char* input, int expectedDegree,
                                  const char* symbolName = "x") {
   Tree* expression = parse(input, projectionContext.m_context);
@@ -104,7 +104,7 @@ void assert_polynomial_degree_is(ProjectionContext projectionContext,
 
 QUIZ_CASE(pcj_polynomial_degree) {
   PoincareTest::SymbolStore symbolStore;
-  ProjectionContext projCtx = {
+  Poincare::ProjectionContext projCtx = {
       .m_complexFormat = Poincare::ComplexFormat::Cartesian,
       .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = symbolStore,

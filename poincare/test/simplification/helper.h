@@ -17,13 +17,12 @@ void contract_to(const Poincare::Internal::Tree* input,
 void reduces_to_tree(const Poincare::Internal::Tree* input,
                      const Poincare::Internal::Tree* output);
 
-void simplifies_to(
-    const char* input, const char* output,
-    Poincare::Internal::ProjectionContext projectionContext = realCtx,
-    bool preserveInput = true);
+void simplifies_to(const char* input, const char* output,
+                   Poincare::ProjectionContext projectionContext = realCtx,
+                   bool preserveInput = true);
 void projects_and_reduces_to(
     const char* input, const char* output,
-    Poincare::Internal::ProjectionContext projectionContext = realCtx);
+    Poincare::ProjectionContext projectionContext = realCtx);
 void simplifies_to_no_beautif(
     const char* input, const char* output,
-    Poincare::Internal::ProjectionContext projectionContext = realCtx);
+    Poincare::ProjectionContext projectionContext = realCtx);

@@ -62,7 +62,7 @@ QUIZ_CASE(pcj_beautification) {
 void beautifies_to(const char* input, const char* output) {
   process_tree_and_compare(
       input, output,
-      [](Tree* e, ProjectionContext ctx) {
+      [](Tree* e, Poincare::ProjectionContext ctx) {
         Projection::DeepSystemProject(e, ctx);
         Beautification::DeepBeautify(e, ctx);
       },

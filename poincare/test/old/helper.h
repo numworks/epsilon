@@ -61,7 +61,7 @@ void copy_without_system_chars(char* buffer, const char* input);
 
 typedef Poincare::Internal::Tree* (*ProcessExpression)(
     Poincare::Internal::Tree*,
-    Poincare::Internal::ProjectionContext& projectionContext);
+    Poincare::ProjectionContext& projectionContext);
 
 void assert_parsed_expression_process_to(
     const char* expression, const char* result,

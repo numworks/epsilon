@@ -136,7 +136,7 @@ static void compareSolutions(SystemOfEquations* system,
      * creating an expression from a layout. */
 
     bool reductionFailure = false;
-    Internal::ProjectionContext projCtx{
+    ProjectionContext projCtx{
         .m_complexFormat = ComplexFormat::Cartesian,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = symbolContext,
@@ -159,7 +159,7 @@ static void compareSolutions(SystemOfEquations* system,
     quiz_assert(!parsedExpression.isUninitialized());
     /* TODO: no need to recreate a projectionContext when const and non const
      * members of ProjectionContext are split (parameters vs metadata) */
-    Internal::ProjectionContext projCtx2 = {
+    ProjectionContext projCtx2 = {
         .m_complexFormat = ComplexFormat::Cartesian,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = symbolContext,

@@ -51,11 +51,11 @@ struct FastSolve {
 
 template <typename SolverPolicy = solver_policies::ExactSolve>
 void assert_roots_are(const char* coefficients, const char* expectedRoots) {
-  ProjectionContext projCtx = {.m_complexFormat =
-                                   Poincare::ComplexFormat::Cartesian};
+  Poincare::ProjectionContext projCtx = {
+      .m_complexFormat = Poincare::ComplexFormat::Cartesian};
   process_tree_and_compare(
       coefficients, expectedRoots,
-      [](Tree* tree, ProjectionContext projCtx) {
+      [](Tree* tree, Poincare::ProjectionContext projCtx) {
         Dimension dimension = Simplification::ProjectAndReduce(tree, &projCtx);
         switch (tree->numberOfChildren()) {
           case 2:

@@ -9,6 +9,7 @@
 
 using namespace Poincare::Internal;
 using Poincare::ComplexFormat;
+using Poincare::ProjectionContext;
 using Poincare::ReductionTarget;
 using Poincare::Strategy;
 using Poincare::SymbolicComputation;

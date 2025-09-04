@@ -26,7 +26,7 @@ void TrigonometryListController::computeAdditionalResults(
               input, exactOutput, approximateOutput, m_calculationPreferences,
               App::app()->localContext())));
 
-  Internal::ProjectionContext ctx = {
+  ProjectionContext ctx = {
       .m_complexFormat = complexFormat(),
       .m_angleUnit = angleUnit(),
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,

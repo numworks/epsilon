@@ -91,7 +91,8 @@ void assert_sorts_to(const char* input, const char* output,
   s_order = order;
   process_tree_and_compare(
       input, output,
-      [](Tree* e, ProjectionContext ctx) { NAry::Sort(e, s_order); }, {});
+      [](Tree* e, Poincare::ProjectionContext ctx) { NAry::Sort(e, s_order); },
+      {});
 }
 
 QUIZ_CASE(pcj_sort) {

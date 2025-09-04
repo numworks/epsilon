@@ -260,8 +260,7 @@ bool AdditionalResultsHelper::HasInverseTrigo(
     /* Projection is needed here for an accurate sign prediction, to avoid
      * additional result on complex inverse trigo */
     Tree* output = approximateOutput.tree()->cloneTree();
-    Internal::ProjectionContext ctx = Internal::ProjectionContext{
-        .m_complexFormat = ComplexFormat::Cartesian};
+    ProjectionContext ctx{.m_complexFormat = ComplexFormat::Cartesian};
     Internal::Simplification::ToSystem(output, &ctx);
     result = GetComplexSign(output).isReal();
     output->removeTree();
@@ -491,7 +490,7 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
 
 void AdditionalResultsHelper::ComputeMatrixProperties(
     const UserExpression& exactOutput, const UserExpression& approximateOutput,
-    Internal::ProjectionContext ctx, Preferences::PrintFloatMode displayMode,
+    ProjectionContext ctx, Preferences::PrintFloatMode displayMode,
     uint8_t numberOfSignificantDigits, Poincare::Layout& determinantL,
     Poincare::Layout& inverseL, Poincare::Layout& rowEchelonFormL,
     Poincare::Layout& reducedRowEchelonFormL, Poincare::Layout& traceL) {

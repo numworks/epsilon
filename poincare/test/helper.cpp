@@ -93,7 +93,7 @@ void remove_system_codepoints(char* buffer) {
   *dest = 0;
 }
 
-void simplify(Tree* e, const ProjectionContext& ctx, bool beautify) {
+void simplify(Tree* e, const Poincare::ProjectionContext& ctx, bool beautify) {
   if (!Simplification::Simplify(e, ctx, beautify)) {
     // Return undef to spot tests overflowing the TreeStack
     e->cloneNodeOverTree(KFailedSimplification);
@@ -102,7 +102,7 @@ void simplify(Tree* e, const ProjectionContext& ctx, bool beautify) {
 
 void process_tree_and_compare(const char* input, const char* output,
                               ProcessTree process,
-                              ProjectionContext projectionContext,
+                              Poincare::ProjectionContext projectionContext,
                               int nbOfSignificantDigits, bool preserveInput) {
   Tree* expected = parse(output, projectionContext.m_context,
                          {.preserveInput = preserveInput});
@@ -180,7 +180,7 @@ Tree* parse(const char* input, const Poincare::SymbolContext& symbolContext,
 Tree* parse_and_reduce(const char* input, bool beautify) {
   Tree* e = parse(input);
   assert(e);
-  ProjectionContext ctx = {};
+  Poincare::ProjectionContext ctx = {};
   simplify(e, ctx, beautify);
   return e;
 }

@@ -51,7 +51,7 @@ SystemExpression Equation::Model::standardForm(
     returnedExpression =
         Subtraction::Builder(simplifiedInput.cloneChildAtIndex(0),
                              simplifiedInput.cloneChildAtIndex(1));
-    Internal::ProjectionContext projCtx =
+    ProjectionContext projCtx =
         PoincareHelpers::ProjectionContextForParameters(
             expressionInputWithoutFunctions, contextToUse,
             {.target = reductionTarget});

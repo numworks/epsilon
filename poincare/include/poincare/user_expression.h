@@ -9,6 +9,7 @@
 #include <poincare/pool_handle.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
+#include <poincare/projection_context.h>
 #include <poincare/symbol_context.h>
 
 #include <span>
@@ -16,8 +17,6 @@
 namespace Poincare::Internal {
 class Tree;
 struct ContextTrees;
-// TODO: Expose ProjectionContext
-struct ProjectionContext;
 }  // namespace Poincare::Internal
 
 namespace Poincare {
@@ -91,25 +90,21 @@ class UserExpression : public Expression {
 
   /* Expressions in parameters are outputs. The return boolean indicates the
    * reduction status (success or failure) */
-  bool cloneAndSimplifyAndApproximate(
-      UserExpression* simplifiedExpression,
-      UserExpression* approximatedExpression,
-      Internal::ProjectionContext& context) const;
-  UserExpression cloneAndSimplify(const Internal::ProjectionContext& context,
+  bool cloneAndSimplifyAndApproximate(UserExpression* simplifiedExpression,
+                                      UserExpression* approximatedExpression,
+                                      ProjectionContext& context) const;
+  UserExpression cloneAndSimplify(const ProjectionContext& context,
                                   bool* reductionFailure) const;
   /* This version does not warn if simplification fails. In case of failure the
    * initial expression is returned. */
-  UserExpression cloneAndTrySimplify(
-      const Internal::ProjectionContext& context) const;
+  UserExpression cloneAndTrySimplify(const ProjectionContext& context) const;
   template <typename T>
-  UserExpression cloneAndApproximate(
-      Internal::ProjectionContext& context) const;
+  UserExpression cloneAndApproximate(ProjectionContext& context) const;
 
   /* Other helpers */
 
-  SystemExpression cloneAndReduce(
-      const Internal::ProjectionContext& projectionContext,
-      bool* reductionFailure) const;
+  SystemExpression cloneAndReduce(const ProjectionContext& projectionContext,
+                                  bool* reductionFailure) const;
   template <typename T>
   SystemExpression approximateUserToTree(
       AngleUnit angleUnit, ComplexFormat complexFormat,
@@ -223,8 +218,7 @@ class UserExpression : public Expression {
                           IgnoredSymbols* ignoredSymbols) const;
 
   UserExpression privateCloneAndSimplify(
-      const Internal::ProjectionContext& context,
-      bool* reductionFailure = nullptr) const;
+      const ProjectionContext& context, bool* reductionFailure = nullptr) const;
 };
 
 }  // namespace Poincare

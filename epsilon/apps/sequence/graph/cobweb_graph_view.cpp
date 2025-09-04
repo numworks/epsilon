@@ -68,7 +68,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
           name, Poincare::SymbolHelper::SystemSymbol());
   function.replaceSymbolWithUnknown(sequenceSymbol);
   bool reductionFailure = false;
-  Poincare::Internal::ProjectionContext projCtx = {
+  Poincare::ProjectionContext projCtx = {
       .m_complexFormat =
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),

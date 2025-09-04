@@ -13,7 +13,7 @@ using Poincare::Strategy;
 QUIZ_CASE(pcj_projection) {
   TreeRef ref(KCos(KSin(KPow(
       KPow(KPow(e_e, KLogBase(KLogBase(KLog(π_e), 2_e), e_e)), π_e), 3_e))));
-  ProjectionContext ctx;
+  Poincare::ProjectionContext ctx;
   ctx.m_complexFormat = ComplexFormat::Cartesian;
   ctx.m_strategy = Strategy::Default;
   ctx.m_angleUnit = AngleUnit::Radian;

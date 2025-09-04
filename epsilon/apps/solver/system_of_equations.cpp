@@ -179,7 +179,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
 
   if (forbidExactSolution && approximate.isUninitialized()) {
     // Re-reduce exact solution but approximate during reduction.
-    Internal::ProjectionContext projCtx = {
+    ProjectionContext projCtx = {
         .m_complexFormat = m_equationMetadata.complexFormat,
         .m_angleUnit =
             GlobalPreferences::SharedGlobalPreferences()->angleUnit(),

@@ -112,7 +112,7 @@ static bool compute(Poincare::UserExpression inputExpression,
   complexFormat =
       Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
           complexFormat, inputExpression, GlobalContextAccessor::Context());
-  Internal::ProjectionContext projContext = {
+  ProjectionContext projContext = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .m_unitFormat =
@@ -172,7 +172,7 @@ static void processStore(OutputExpressions& outputs,
   // TODO: add circuit breaker?
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
-  Internal::ProjectionContext projectionContext =
+  ProjectionContext projectionContext =
       PoincareHelpers::ProjectionContextForPreferences(
           value, GlobalContextAccessor::Context());
   UserExpression valueApprox =

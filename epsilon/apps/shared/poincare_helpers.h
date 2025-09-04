@@ -79,10 +79,10 @@ inline Poincare::SystemExpression ApproximateSystem(
   return e.approximateSystemToTree<T>();
 }
 
-inline Poincare::Internal::ProjectionContext ProjectionContextForPreferences(
+inline Poincare::ProjectionContext ProjectionContextForPreferences(
     const Poincare::UserExpression e,
     const Poincare::SymbolContext& symbolContext) {
-  Poincare::Internal::ProjectionContext projectionContext = {
+  Poincare::ProjectionContext projectionContext = {
       .m_complexFormat =
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
@@ -105,12 +105,12 @@ inline FloatType ApproximateToRealScalar(Poincare::UserExpression e) {
 
 // ===== Reduction =====
 
-inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(
+inline Poincare::ProjectionContext ProjectionContextForParameters(
     Poincare::UserExpression e, const Poincare::SymbolContext& symbolContext,
     Poincare::ComplexFormat complexFormat, Poincare::AngleUnit angleUnit,
     bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation) {
-  Poincare::Internal::ProjectionContext projectionContext = {
+  Poincare::ProjectionContext projectionContext = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = angleUnit,
       .m_reductionTarget = target,

@@ -2,6 +2,7 @@
 #include <poincare/helpers/layout.h>
 #include <poincare/helpers/symbol_pool.h>
 #include <poincare/layout.h>
+#include <poincare/projection_context.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/integer.h>
@@ -127,8 +128,7 @@ SystemExpression UserExpression::approximateUserToTree(
 
 bool UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* simplifiedExpression,
-    UserExpression* approximatedExpression,
-    Internal::ProjectionContext& context) const {
+    UserExpression* approximatedExpression, ProjectionContext& context) const {
   // Step 1: simplify
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   bool reductionFailure = false;
@@ -143,7 +143,7 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
 
 template <typename T>
 UserExpression UserExpression::cloneAndApproximate(
-    Internal::ProjectionContext& context) const {
+    ProjectionContext& context) const {
   Approximation::Context approxCtx(context.m_angleUnit, context.m_complexFormat,
                                    context.m_context);
   Tree* a;
@@ -165,19 +165,18 @@ UserExpression UserExpression::cloneAndApproximate(
 }
 
 UserExpression UserExpression::cloneAndSimplify(
-    const Internal::ProjectionContext& context, bool* reductionFailure) const {
+    const ProjectionContext& context, bool* reductionFailure) const {
   assert(reductionFailure);
   return privateCloneAndSimplify(context, reductionFailure);
 }
 
 UserExpression UserExpression::cloneAndTrySimplify(
-    const Internal::ProjectionContext& context) const {
+    const ProjectionContext& context) const {
   return privateCloneAndSimplify(context, nullptr);
 }
 
 SystemExpression UserExpression::cloneAndReduce(
-    const Internal::ProjectionContext& projectionContext,
-    bool* reductionFailure) const {
+    const ProjectionContext& projectionContext, bool* reductionFailure) const {
   assert(reductionFailure);
   Tree* e = tree()->cloneTree();
   bool reductionSuccess = Simplification::Simplify(e, projectionContext, false);
@@ -190,7 +189,7 @@ SystemExpression UserExpression::cloneAndReduce(
 }
 
 UserExpression UserExpression::privateCloneAndSimplify(
-    const Internal::ProjectionContext& context, bool* reductionFailure) const {
+    const ProjectionContext& context, bool* reductionFailure) const {
   assert(!isUninitialized());
   Tree* e = tree()->cloneTree();
   bool reductionSuccess = Simplification::Simplify(e, context, true);
@@ -586,9 +585,9 @@ template UserExpression UserExpression::Builder<float>(
 template UserExpression UserExpression::Builder<double>(
     PointOrRealScalar<double>);
 template UserExpression UserExpression::cloneAndApproximate<float>(
-    Internal::ProjectionContext&) const;
+    ProjectionContext&) const;
 template UserExpression UserExpression::cloneAndApproximate<double>(
-    Internal::ProjectionContext&) const;
+    ProjectionContext&) const;
 template float UserExpression::approximateToRealScalar<float>(
     AngleUnit, ComplexFormat, const SymbolContext&) const;
 template double UserExpression::approximateToRealScalar<double>(

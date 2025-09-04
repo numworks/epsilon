@@ -75,9 +75,9 @@ void approximates_to(const char* input, const char* output,
       projectionContext, nbOfSignificantDigits);
 }
 
-void approximates_to_float_and_double(
-    const char* expression, const char* result,
-    Poincare::Internal::ProjectionContext projCtx) {
+void approximates_to_float_and_double(const char* expression,
+                                      const char* result,
+                                      Poincare::ProjectionContext projCtx) {
   /* Reduce significant numbers to 3 to handle platforms discrepancies when
    * computing floats. This allows to expect the same results from both double
    * and float approximations. */
@@ -118,9 +118,9 @@ void approximates_to_boolean(const char* input,
 
 template <typename T>
 void assert_float_approximates_to(UserExpression f, const char* result) {
-  ProjectionContext projectionContext = Poincare::Internal::ProjectionContext{
-      .m_complexFormat = ComplexFormat::Cartesian,
-      .m_angleUnit = AngleUnit::Radian};
+  ProjectionContext projectionContext =
+      Poincare::ProjectionContext{.m_complexFormat = ComplexFormat::Cartesian,
+                                  .m_angleUnit = AngleUnit::Radian};
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
   f.cloneAndApproximate<T>(projectionContext)

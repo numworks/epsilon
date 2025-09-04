@@ -39,7 +39,7 @@ void compare_approximates(const Tree* e1, const Tree* e2, bool equal,
 template <typename T>
 void project_and_compare_approximates(const char* input1, const char* input2,
                                       bool equal) {
-  ProjectionContext ctx;
+  Poincare::ProjectionContext ctx;
   Tree* e1 = parse(input1);
   Simplification::ToSystem(e1, &ctx);
   Tree* e2 = parse(input2);
@@ -197,7 +197,7 @@ void assert_no_duplicates_in_list(const char* expression) {
   Tree* e = parse(expression);
   // Sort list
   e->cloneNodeAtNode(KListSort);
-  simplify(e, ProjectionContext{}, false);
+  simplify(e, Poincare::ProjectionContext{}, false);
   e->moveTreeOverTree(Approximation::ToTree<T>(
       e, Approximation::Parameters{.isRootAndCanHaveRandom = true}));
   // Find duplicates

@@ -109,7 +109,7 @@ SystemExpression SystemExpression::approximateSystemToTree() const {
 void SystemExpression::cloneAndBeautifyAndApproximate(
     UserExpression* beautifiedExpression,
     UserExpression* approximatedExpression,
-    Internal::ProjectionContext& context) const {
+    ProjectionContext& context) const {
   assert(beautifiedExpression && beautifiedExpression->isUninitialized());
   *beautifiedExpression = cloneAndBeautify(context);
   assert(approximatedExpression && approximatedExpression->isUninitialized());
@@ -118,7 +118,7 @@ void SystemExpression::cloneAndBeautifyAndApproximate(
 }
 
 UserExpression SystemExpression::cloneAndBeautify(
-    Internal::ProjectionContext& context) const {
+    ProjectionContext& context) const {
   Tree* e = tree()->cloneTree();
   Simplification::BeautifyReduced(e, &context, Internal::Dimension::Get(e));
   return UserExpression::Builder(e);

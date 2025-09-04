@@ -23,17 +23,17 @@ struct SolverResult {
  * but will fallback on overrideDefinedVariables = true if it fails.
  * See Poincare::Internal::EquationSolver::ExactSolveAdaptive */
 SolverResult ExactSolveAdaptive(const UserExpression& equationList,
-                                Internal::ProjectionContext projectionContext);
+                                ProjectionContext projectionContext);
 
 // See Poincare::Internal::EquationSolver::ExactSolve
 SolverResult ExactSolve(const UserExpression& equationList,
-                        Internal::ProjectionContext projectionContext,
+                        ProjectionContext projectionContext,
                         bool overrideDefinedVariables = false);
 
 /* If the range is (NaN, NaN), it will be automatically computed.
  * See Poincare::Internal::EquationSolver::ApproximateSolve */
 SolverResult ApproximateSolve(const UserExpression& equationList,
-                              Internal::ProjectionContext projectionContext,
+                              ProjectionContext projectionContext,
                               Range1D<double> range,
                               size_t maxNumberOfSolutions);
 

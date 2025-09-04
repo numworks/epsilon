@@ -21,7 +21,7 @@ QUIZ_CASE(pcj_simplification_list_bubble_up) {
 }
 
 QUIZ_CASE(pcj_simplification_list) {
-  ProjectionContext replaceSymbolCtx = {
+  Poincare::ProjectionContext replaceSymbolCtx = {
       .m_symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols};
   simplifies_to("{1,2}+3", "{4,5}");
   simplifies_to("{1,2}*{3,4}", "{3,8}");

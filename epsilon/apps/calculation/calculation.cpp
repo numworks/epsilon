@@ -306,7 +306,7 @@ Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
     // Parsing the layout into an expression is supposed to work here
     assert(!exactDisplayOutput.isUninitialized() &&
            !approximateDisplayOutput.isUninitialized());
-    Internal::ProjectionContext ctx{.m_complexFormat = complexFormat,
+    ProjectionContext ctx{.m_complexFormat = complexFormat,
                                     .m_angleUnit = angleUnit};
     return Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
                exactDisplayOutput, approximateDisplayOutput, ctx)

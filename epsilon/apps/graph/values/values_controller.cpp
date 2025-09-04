@@ -387,7 +387,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         &simplificationFailure,
         SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     UserExpression approximation;
-    Poincare::Internal::ProjectionContext projectionContext = {
+    Poincare::ProjectionContext projectionContext = {
         .m_complexFormat =
             GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
         .m_angleUnit =

@@ -27,36 +27,36 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
     Poincare::Preferences::PrintFloatMode::Engineering;
 
 // Default context is realCtx
-constexpr Poincare::Internal::ProjectionContext realCtx = {
+constexpr Poincare::ProjectionContext realCtx = {
     .m_complexFormat = Poincare::ComplexFormat::Real};
 
-constexpr Poincare::Internal::ProjectionContext cartesianCtx = {
+constexpr Poincare::ProjectionContext cartesianCtx = {
     .m_complexFormat = Poincare::ComplexFormat::Cartesian};
-constexpr Poincare::Internal::ProjectionContext polarCtx = {
+constexpr Poincare::ProjectionContext polarCtx = {
     .m_complexFormat = Poincare::ComplexFormat::Polar};
 
-constexpr Poincare::Internal::ProjectionContext degreeCtx = {
+constexpr Poincare::ProjectionContext degreeCtx = {
     .m_angleUnit = Poincare::AngleUnit::Degree};
-constexpr Poincare::Internal::ProjectionContext gradianCtx = {
+constexpr Poincare::ProjectionContext gradianCtx = {
     .m_angleUnit = Poincare::AngleUnit::Gradian};
 
-constexpr Poincare::Internal::ProjectionContext degreeCartesianCtx = {
+constexpr Poincare::ProjectionContext degreeCartesianCtx = {
     .m_complexFormat = Poincare::ComplexFormat::Cartesian,
     .m_angleUnit = Poincare::AngleUnit::Degree};
-constexpr Poincare::Internal::ProjectionContext gradianCartesianCtx = {
+constexpr Poincare::ProjectionContext gradianCartesianCtx = {
     .m_complexFormat = Poincare::ComplexFormat::Cartesian,
     .m_angleUnit = Poincare::AngleUnit::Gradian};
 
-constexpr Poincare::Internal::ProjectionContext keepAllSymbolsCtx = {
+constexpr Poincare::ProjectionContext keepAllSymbolsCtx = {
     .m_symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
 };
 
 typedef void (*ProcessTree)(
     Poincare::Internal::Tree*,
-    Poincare::Internal::ProjectionContext projectionContext);
+    Poincare::ProjectionContext projectionContext);
 void process_tree_and_compare(
     const char* input, const char* output, ProcessTree process,
-    Poincare::Internal::ProjectionContext projectionContext,
+    Poincare::ProjectionContext projectionContext,
     int nbOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits,
     bool preserveInput = true);
@@ -212,7 +212,7 @@ void assert_parse_to_integer_overflow(
                            Poincare::EmptySymbolContext{});
 
 inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
-    const char* function, Poincare::Internal::ProjectionContext ctx = {}) {
+    const char* function, Poincare::ProjectionContext ctx = {}) {
   constexpr const char* k_symbol = "x";
   Poincare::Internal::Tree* e = parse(function);
   Poincare::Internal::Simplification::ToSystem(e, &ctx);
@@ -248,5 +248,5 @@ void serialize_expression(const Poincare::Internal::Tree* expression,
 
 // Simplification
 void simplify(Poincare::Internal::Tree* e,
-              const Poincare::Internal::ProjectionContext& ctx,
+              const Poincare::ProjectionContext& ctx,
               bool beautify = true);

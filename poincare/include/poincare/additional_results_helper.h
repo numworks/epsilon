@@ -25,7 +25,7 @@ class AdditionalResultsHelper final {
       const UserExpression input, const UserExpression exactOutput,
       const UserExpression approximateOutput, bool directTrigonometry,
       Preferences::CalculationPreferences calculationPreferences,
-      const Internal::ProjectionContext* ctx,
+      const ProjectionContext* ctx,
       ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation);
 
   static UserExpression ExtractExactAngleFromDirectTrigo(
@@ -69,7 +69,7 @@ class AdditionalResultsHelper final {
   /* Matrix additional results */
   static void ComputeMatrixProperties(
       const UserExpression& exactOutput,
-      const UserExpression& approximateOutput, Internal::ProjectionContext ctx,
+      const UserExpression& approximateOutput, ProjectionContext ctx,
       Preferences::PrintFloatMode displayMode,
       uint8_t numberOfSignificantDigits, Layout& determinant, Layout& inverse,
       Layout& rowEchelonForm, Layout& reducedRowEchelonForm, Layout& trace);

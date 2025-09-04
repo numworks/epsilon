@@ -23,7 +23,7 @@ void ComplexListController::computeAdditionalResults(
   assert(AdditionalResultsType::HasComplex(
       approximateOutput, m_calculationPreferences, App::app()->localContext()));
   assert(complexFormat() != ComplexFormat::Real);
-  Internal::ProjectionContext ctx = {
+  ProjectionContext ctx = {
       .m_complexFormat = ComplexFormat::Cartesian,
       .m_angleUnit = angleUnit(),
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,

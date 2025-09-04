@@ -11,7 +11,7 @@ QUIZ_CASE(pcj_simplification_decimal) {
   Tree* tree = SharedTreeStack->pushDecimal();
   (124_e)->cloneTree();
   (-2_e)->cloneTree();
-  ProjectionContext ctx = realCtx;
+  Poincare::ProjectionContext ctx = realCtx;
   simplify(tree, ctx);
   assert_trees_are_equal(tree, 12400_e);
   tree->removeTree();
@@ -129,7 +129,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
 
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("x→f(x)", symbolStore);
-  ProjectionContext ctx = {
+  Poincare::ProjectionContext ctx = {
       .m_symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
       .m_context = symbolStore,
   };

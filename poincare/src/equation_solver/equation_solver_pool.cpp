@@ -30,7 +30,7 @@ static SolverResult ConvertInternalResult(
 }
 
 SolverResult ExactSolveAdaptive(const UserExpression& equationList,
-                                Internal::ProjectionContext projectionContext) {
+                                ProjectionContext projectionContext) {
   Internal::EquationSolver::SolverResult result =
       Internal::EquationSolver::ExactSolveAdaptive(equationList.tree(),
                                                    projectionContext);
@@ -38,7 +38,7 @@ SolverResult ExactSolveAdaptive(const UserExpression& equationList,
 }
 
 SolverResult ExactSolve(const UserExpression& equationList,
-                        Internal::ProjectionContext projectionContext,
+                        ProjectionContext projectionContext,
                         bool overrideDefinedVariables) {
   Internal::EquationSolver::SolverResult result =
       Internal::EquationSolver::ExactSolve(
@@ -47,7 +47,7 @@ SolverResult ExactSolve(const UserExpression& equationList,
 }
 
 SolverResult ApproximateSolve(const UserExpression& equationList,
-                              Internal::ProjectionContext projectionContext,
+                              ProjectionContext projectionContext,
                               Range1D<double> range,
                               size_t maxNumberOfSolutions) {
   Internal::EquationSolver::SolverResult result =

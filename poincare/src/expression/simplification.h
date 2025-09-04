@@ -15,7 +15,8 @@ void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext);
 bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext,
                      const Dimension& dimension);
 bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext);
-bool ToSystem(Tree* e, ProjectionContext* projectionContext);
+bool ToSystem(Tree* e, ProjectionContext* projectionContext,
+              Dimension* outDimension = nullptr);
 #if ASSERTIONS
 bool IsSystem(const Tree* e);
 #endif

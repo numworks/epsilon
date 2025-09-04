@@ -142,7 +142,9 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
 
 void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext) {
   assert(!e->isStore());
-  ToSystem(e, projectionContext);
+  Dimension dimension;
+  ToSystem(e, projectionContext, &dimension);
+  projectionContext->m_dimension = dimension;
   ReduceSystem(e, projectionContext->m_advanceReduce,
                projectionContext->m_reductionTarget);
   // Non-approximated numbers or node may have appeared during reduction.
@@ -203,17 +205,20 @@ bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext) {
   return changed;
 }
 
-bool ToSystem(Tree* e, ProjectionContext* projectionContext) {
+bool ToSystem(Tree* e, ProjectionContext* projectionContext,
+              Dimension* outDimension) {
   /* 1 - Prepare for projection */
   bool changed = PrepareForProjection(e, projectionContext);
   /* 2 - Update projection context */
-  projectionContext->m_dimension = Dimension::Get(e);
+  Dimension dim = Dimension::Get(e);
+  if (outDimension) {
+    *outDimension = dim;
+  }
   /* 3 - Apply projection strategy */
   changed = ApplyProjectionStrategy(e, *projectionContext) || changed;
   /* 4 - Project */
-  changed = Projection::DeepSystemProject(e, *projectionContext,
-                                          projectionContext->m_dimension) ||
-            changed;
+  changed =
+      Projection::DeepSystemProject(e, *projectionContext, dim) || changed;
   return changed;
 }
 

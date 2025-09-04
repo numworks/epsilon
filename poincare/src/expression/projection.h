@@ -14,7 +14,6 @@ struct ProjectionContext {
   AngleUnit m_angleUnit = AngleUnit::Radian;
   Strategy m_strategy = Strategy::Default;
   ReductionTarget m_reductionTarget = ReductionTarget::User;
-  Dimension m_dimension = Dimension();
   Preferences::UnitFormat m_unitFormat = Preferences::UnitFormat::Metric;
   SymbolicComputation m_symbolic = SymbolicComputation::KeepAllSymbols;
   const Poincare::SymbolContext& m_context = k_emptySymbolContext;

@@ -120,8 +120,7 @@ void SystemExpression::cloneAndBeautifyAndApproximate(
 UserExpression SystemExpression::cloneAndBeautify(
     Internal::ProjectionContext& context) const {
   Tree* e = tree()->cloneTree();
-  context.m_dimension = Internal::Dimension::Get(e);
-  Simplification::BeautifyReduced(e, &context);
+  Simplification::BeautifyReduced(e, &context, Internal::Dimension::Get(e));
   return UserExpression::Builder(e);
 }
 

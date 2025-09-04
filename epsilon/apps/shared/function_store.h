@@ -46,4 +46,6 @@ class FunctionStore : public ExpressionModelStore {
   }
 };
 
+using FunctionContext = const FunctionStore;
+
 }  // namespace Shared

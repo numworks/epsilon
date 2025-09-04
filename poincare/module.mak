@@ -280,6 +280,8 @@ _sources_poincare_test := $(addprefix test/, \
     pool_handle.cpp \
   ) \
   $(addprefix simplification/, \
+    arithmetic.cpp \
+    booleans.cpp \
     complex.cpp \
     dependencies.cpp \
     helper.cpp \

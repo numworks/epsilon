@@ -54,3 +54,68 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("dot([[1]], inverse([[0]]))", "undef");
   simplifies_to("log(det([[0]]^2))", "undef");
 }
+
+QUIZ_CASE(pcj_simplification_functions_of_matrices) {
+  simplifies_to("abs([[1,-1][2,-3]])", "undef");
+  simplifies_to("acos([[1/√(2),1/2][1,-1]])", "undef");
+  simplifies_to("asin([[1,0]])", "undef");
+  simplifies_to("binomial([[0,180]],1)", "undef");
+  simplifies_to("binomial(1,[[0,180]])", "undef");
+  simplifies_to("binomial([[0,180]],[[1]])", "undef");
+  simplifies_to("ceil([[0.3,180]])", "undef");
+  simplifies_to("arg([[1,1+i]])", "undef");
+  simplifies_to("conj([[1,1+i]])", "undef");
+  simplifies_to("cos([[π/3,0][π/7,π/2]])", "undef");
+  simplifies_to("cos([[0,π]])", "undef");
+  simplifies_to("diff([[0,180]],x,1)", "undef");
+  simplifies_to("diff(1,x,[[0,180]])", "undef");
+  simplifies_to("quo([[0,180]],1)", "undef");
+  simplifies_to("quo(1,[[0,180]])", "undef");
+  simplifies_to("quo([[0,180]],[[1]])", "undef");
+  simplifies_to("rem([[0,180]],1)", "undef");
+  simplifies_to("rem(1,[[0,180]])", "undef");
+  simplifies_to("rem([[0,180]],[[1]])", "undef");
+  simplifies_to("factor([[0,180]])", "undef");
+  simplifies_to("[[1,3]]!", "undef");
+  simplifies_to("floor([[1/√(2),1/2][1,-1.3]])", "undef");
+  simplifies_to("frac([[0.3,180]])", "undef");
+  simplifies_to("gcd([[0,180]],1)", "undef");
+  simplifies_to("gcd(1,[[0,180]])", "undef");
+  simplifies_to("gcd([[0,180]],[[1]])", "undef");
+  simplifies_to("gcd(1,2,[[1]])", "undef");
+  simplifies_to("arsinh([[0,π]])", "undef");
+  simplifies_to("artanh([[0,π]])", "undef");
+  simplifies_to("sinh([[0,π]])", "undef");
+  simplifies_to("im([[1,1+i]])", "undef");
+  simplifies_to("int([[0,180]],x,1,2)", "undef");
+  simplifies_to("int(1,x,[[0,180]],1)", "undef");
+  simplifies_to("int(1,x,1,[[0,180]])", "undef");
+  simplifies_to("log([[2,3]])", "undef");
+  simplifies_to("log(5,[[2,3]])", "undef");
+  simplifies_to("ln([[2,3]])", "undef");
+  simplifies_to("root([[2,3]],5)", "undef");
+  simplifies_to("root(5,[[2,3]])", "undef");
+  // Opposite is mapped on matrix
+  simplifies_to("-[[1/√(2),1/2,3][2,1,-3]]", "[[-√(2)/2,-1/2,-3][-2,-1,3]]");
+  simplifies_to("permute([[2,3]],5)", "undef");
+  simplifies_to("permute(5,[[2,3]])", "undef");
+  simplifies_to("product(1,x,[[0,180]],1)", "undef");
+  simplifies_to("product(1,x,1,[[0,180]])", "undef");
+  simplifies_to("re([[1,i]])", "undef");
+  simplifies_to("round(1.3, [[2.1,3.4]])", "undef");
+  simplifies_to("round(1.3, [[2.1,3.4]])", "undef");
+  simplifies_to("sign([[2.1,3.4]])", "undef");
+  simplifies_to("sin([[π/3,0][π/7,π/2]])", "undef");
+  simplifies_to("sum(1,x,[[0,180]],1)", "undef");
+  simplifies_to("sum(1,x,1,[[0,180]])", "undef");
+  simplifies_to("√([[2.1,3.4]])", "undef");
+  simplifies_to("[[2,3.4]]-[[0.1,3.1]]", "[[19/10,3/10]]");
+  simplifies_to("[[2,3.4]]-1", "undef");
+  simplifies_to("1-[[0.1,3.1]]", "undef");
+}
+
+QUIZ_CASE(pcj_simplification_store_matrix) {
+  simplifies_to("1+1→a", "2→a");
+  simplifies_to("[[8]]→f(x)", "[[8]]→f(x)");
+  simplifies_to("[[x]]→f(x)", "[[x]]→f(x)");
+}

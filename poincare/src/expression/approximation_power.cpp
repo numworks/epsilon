@@ -1,5 +1,4 @@
 #include "approximation.h"
-#include "context.h"
 #include "rational.h"
 #include "undefined.h"
 

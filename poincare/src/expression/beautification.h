@@ -2,7 +2,6 @@
 
 #include <poincare/src/memory/tree_ref.h>
 
-#include "context.h"
 #include "integer.h"
 #include "projection.h"
 

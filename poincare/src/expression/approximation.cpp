@@ -17,7 +17,6 @@
 #include <complex>
 
 #include "arithmetic.h"
-#include "context.h"
 #include "dependency.h"
 #include "dimension.h"
 #include "float_helper.h"

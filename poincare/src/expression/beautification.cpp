@@ -9,7 +9,6 @@
 #include "angle.h"
 #include "approximation.h"
 #include "arithmetic.h"
-#include "context.h"
 #include "dependency.h"
 #include "division.h"
 #include "float.h"

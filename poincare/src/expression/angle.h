@@ -4,7 +4,6 @@
 #include <poincare/math_options.h>
 #include <poincare/src/memory/tree.h>
 
-#include "context.h"
 #include "k_tree.h"
 
 namespace Poincare::Internal {

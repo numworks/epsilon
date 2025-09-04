@@ -4,7 +4,6 @@
 #include <poincare/helpers/symbol.h>
 #include <poincare/sign.h>
 
-#include "context.h"
 #include "k_tree.h"
 
 namespace Poincare::Internal {

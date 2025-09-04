@@ -17,7 +17,6 @@
 // TODO: used only for pushVar
 #include <poincare/sign.h>
 // TODO: used for pushAngleUnitContext
-#include <poincare/src/expression/context.h>
 
 namespace Poincare::Internal {
 

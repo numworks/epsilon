@@ -269,7 +269,7 @@ Sequence::RecordDataBuffer* Sequence::recordData() const {
 
 /* Sequence Model */
 
-Layout Sequence::SequenceModel::name(Sequence* sequence) {
+Layout Sequence::SequenceModel::name(const Sequence* sequence) const {
   if (m_name.isUninitialized()) {
     buildName(sequence);
   }
@@ -330,7 +330,7 @@ size_t Sequence::DefinitionModel::expressionSize(
          dataBuffer->initialConditionSize(1);
 }
 
-void Sequence::DefinitionModel::buildName(Sequence* sequence) {
+void Sequence::DefinitionModel::buildName(const Sequence* sequence) const {
   const char* index;
   if (sequence->type() == Type::Explicit) {
     index = "n";
@@ -372,7 +372,8 @@ void Sequence::InitialConditionModel::updateMetaData(
       newSize, conditionIndex());
 }
 
-void Sequence::InitialConditionModel::buildName(Sequence* sequence) {
+void Sequence::InitialConditionModel::buildName(
+    const Sequence* sequence) const {
   assert(
       (conditionIndex() == 0 && sequence->type() == Type::SingleRecurrence) ||
       sequence->type() == Type::DoubleRecurrence);

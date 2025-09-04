@@ -79,7 +79,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded() {
 }
 
 size_t ContinuousFunction::nameWithoutArgument(char* buffer, size_t bufferSize,
-                                               int derivationOrder) {
+                                               int derivationOrder) const {
   assert(0 <= derivationOrder && derivationOrder <= 2);
   size_t length = 0;
   if (isNamed()) {
@@ -104,7 +104,7 @@ size_t ContinuousFunction::nameWithoutArgument(char* buffer, size_t bufferSize,
 }
 
 size_t ContinuousFunction::nameWithArgument(char* buffer, size_t bufferSize,
-                                            int derivationOrder) {
+                                            int derivationOrder) const {
   assert(0 <= derivationOrder && derivationOrder <= 2);
   size_t length = nameWithoutArgument(buffer, bufferSize, derivationOrder);
   if (isNamed()) {
@@ -115,7 +115,7 @@ size_t ContinuousFunction::nameWithArgument(char* buffer, size_t bufferSize,
 
 size_t ContinuousFunction::printAbscissaValue(double cursorT, double cursorX,
                                               char* buffer, size_t bufferSize,
-                                              int precision) {
+                                              int precision) const {
   ContinuousFunctionProperties thisProperties = properties();
   /* With Vertical curves, cursorT != cursorX .
    * We need the value for symbol=... */
@@ -128,7 +128,7 @@ size_t ContinuousFunction::printAbscissaValue(double cursorT, double cursorX,
 size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
                                               double cursorY, char* buffer,
                                               size_t bufferSize, int precision,
-                                              const Context& context) {
+                                              const Context& context) const {
   ContinuousFunctionProperties thisProperties = properties();
   if (thisProperties.isParametric()) {
     Preferences::PrintFloatMode mode =

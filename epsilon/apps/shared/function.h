@@ -52,15 +52,15 @@ class Function : public ExpressionModelHandle {
   size_t name(char* buffer, size_t bufferSize) const;
   size_t withArgument(char* buffer, size_t bufferSize) const;
   virtual size_t nameWithArgument(char* buffer, size_t bufferSize,
-                                  int derivationOrder = 0);
+                                  int derivationOrder = 0) const;
   virtual size_t printAbscissaValue(double cursorT, double cursorX,
                                     char* buffer, size_t bufferSize,
-                                    int precision);
+                                    int precision) const;
   // Insert the value of the evaluation in buffer
   virtual size_t printFunctionValue(double cursorT, double cursorX,
                                     double cursorY, char* buffer,
                                     size_t bufferSize, int precision,
-                                    const Poincare::Context& context);
+                                    const Poincare::Context& context) const;
 
   // Evaluation
   virtual Poincare::Coordinate2D<float> evaluateXYAtParameter(

@@ -465,7 +465,7 @@ Poincare::Layout CreateBeautifiedLayout(Tree* reducedExpression,
                                         ProjectionContext* ctx,
                                         Preferences::PrintFloatMode displayMode,
                                         uint8_t numberOfSignificantDigits) {
-  Simplification::BeautifyReduced(reducedExpression, ctx);
+  Simplification::BeautifyReduced(reducedExpression, ctx, ctx->m_dimension);
   return Poincare::Layout::Builder(Layouter::LayoutExpression(
       reducedExpression, false, false, numberOfSignificantDigits, displayMode));
 }

@@ -129,7 +129,7 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
 
   ProjectAndReduce(e, projectionContext);
   if (beautify) {
-    BeautifyReduced(e, projectionContext);
+    BeautifyReduced(e, projectionContext, projectionContext->m_dimension);
   }
 
   if (isStore) {
@@ -149,22 +149,20 @@ void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext) {
   ApplyReductionStrategy(e, *projectionContext);
 }
 
-bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext) {
+bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext,
+                     const Dimension& dimension) {
   assert(!e->isStore());
   // TODO: Should this be recomputed here ?
   /* Empty list has every type (kinda).
    * Example: Input `{}=1` is simplified to `{}`.
    * projectionContext->m_dimension is Boolean but Dimension::Get(e) is Scalar
    */
-  assert(e->isUndefined() ||
-         projectionContext->m_dimension == Dimension::Get(e) ||
+  assert(e->isUndefined() || dimension == Dimension::Get(e) ||
          (e->isList() &&
           (e->numberOfChildren() == 0 || e->child(0)->isUndefined())));
-  bool changed =
-      HandleUnits(e, projectionContext, projectionContext->m_dimension);
-  changed = Beautification::DeepBeautify(e, *projectionContext,
-                                         projectionContext->m_dimension) ||
-            changed;
+  bool changed = HandleUnits(e, projectionContext, dimension);
+  changed =
+      Beautification::DeepBeautify(e, *projectionContext, dimension) || changed;
   return changed;
 }
 

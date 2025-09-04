@@ -159,8 +159,7 @@ UserExpression UserExpression::cloneAndApproximate(
         Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                   .projectLocalVariables = true},
         approxCtx);
-    context.m_dimension = Internal::Dimension::Get(a);
-    Beautification::DeepBeautify(a, context);
+    Beautification::DeepBeautify(a, context, Internal::Dimension::Get(a));
   }
   return UserExpression::Builder(a);
 }

@@ -20,7 +20,7 @@ enum class ComplexFormat : uint8_t {
   NFormats = None
 };
 
-enum class ReductionTarget {
+enum class ReductionTarget : uint8_t {
   /* Optimized for approximation : (1+x)^3 will not be developed. */
   SystemForApproximation = 0,
   /* Optimized for analysis : (1+x)^3 will be developed to identify polynomial
@@ -30,7 +30,7 @@ enum class ReductionTarget {
   User
 };
 
-enum class SymbolicComputation {
+enum class SymbolicComputation : uint8_t {
   ReplaceAllSymbols = 0,  // If a symbol is not defined, it is replaced by undef
   ReplaceDefinedSymbols = 1,
   ReplaceDefinedFunctions = 2,
@@ -38,7 +38,11 @@ enum class SymbolicComputation {
   KeepAllSymbols = 4
 };
 
-enum class Strategy { Default, ApproximateToFloat, DeepExpandAlgebraic };
+enum class Strategy : uint8_t {
+  Default,
+  ApproximateToFloat,
+  DeepExpandAlgebraic
+};
 
 enum class UnitDisplay : uint8_t {
   // Display for main output in Calculation

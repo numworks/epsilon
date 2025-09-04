@@ -19,7 +19,8 @@ void reduces_to_tree(const Poincare::Internal::Tree* input,
 
 void simplifies_to(
     const char* input, const char* output,
-    Poincare::Internal::ProjectionContext projectionContext = realCtx);
+    Poincare::Internal::ProjectionContext projectionContext = realCtx,
+    bool preserveInput = true);
 void projects_and_reduces_to(
     const char* input, const char* output,
     Poincare::Internal::ProjectionContext projectionContext = realCtx);

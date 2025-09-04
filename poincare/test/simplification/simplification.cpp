@@ -860,3 +860,43 @@ QUIZ_CASE(pcj_simplification_context) {
   PoincareTest::store("f(undef)→b", symbolStore);
   simplifies_to("b", "undef", projCtx);
 }
+
+QUIZ_CASE(pcj_simplification_store) {
+  simplifies_to("1+2→x", "3→x");
+  simplifies_to("0.2→f(x)", "0.2→f(x)",
+                {.m_reductionTarget = ReductionTarget::SystemForAnalysis,
+                 .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols});
+  simplifies_to("0.1+0.2→x", "3/10→x");
+  simplifies_to("a→x", "a→x");
+  simplifies_to("a→x", "undef→x",
+                {.m_symbolic = SymbolicComputation::ReplaceAllSymbols});
+}
+
+QUIZ_CASE(pcj_simplification_store_correctly_parsed) {
+  PoincareTest::SymbolStore symbolStore;
+  ProjectionContext projCtx = {
+      .m_complexFormat = ComplexFormat::Cartesian,
+      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+      .m_context = symbolStore};
+  simplifies_to("abc", "a×b×c", projCtx, false);
+  simplifies_to("\"abc\"", "\"abc\"", projCtx, false);
+  store("2→a", symbolStore);
+  store("5→bc", symbolStore);
+  simplifies_to("abc", "10", projCtx, false);  // a*, falsebc
+  simplifies_to("aa", "4", projCtx, false);
+  store("10→aa", symbolStore);
+  simplifies_to("aa", "10", projCtx, false);
+  simplifies_to("aaa", "20", projCtx, false);     // Parsed to a*aa
+  simplifies_to("aaaaa", "200", projCtx, false);  // Parsed to a*aa*aa
+  simplifies_to("acos(b)", "arccos(b)", projCtx, false);
+  simplifies_to("aacos(b)", "2×arccos(b)", projCtx, false);
+  store("t→bar(t)", symbolStore);
+  store("8→foo", symbolStore);
+  simplifies_to("foobar(x)", "8×x", projCtx, false);
+  store("t^2→foobar(t)", symbolStore);
+  simplifies_to("foobar(x)", "x^2", projCtx, false);
+
+  simplifies_to("t", "1×_t", projCtx, false);
+  store("2→t", symbolStore);
+  simplifies_to("t", "2", projCtx, false);
+}

@@ -232,6 +232,7 @@ _sources_poincare_test := $(addprefix test/, \
   expression_properties.cpp \
   float_helper.cpp \
   helper.cpp \
+  input_beautification.cpp \
   integer.cpp \
   k_tree.cpp \
   latex_parser.cpp \

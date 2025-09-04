@@ -2,6 +2,7 @@
 
 #include <poincare/context.h>
 #include <poincare/math_options.h>
+#include <poincare/preferences.h>
 #include <poincare/src/memory/tree_ref.h>
 
 #include "context.h"
@@ -15,7 +16,7 @@ struct ProjectionContext {
   Strategy m_strategy = Strategy::Default;
   ReductionTarget m_reductionTarget = ReductionTarget::User;
   Dimension m_dimension = Dimension();
-  UnitFormat m_unitFormat = UnitFormat::Metric;
+  Preferences::UnitFormat m_unitFormat = Preferences::UnitFormat::Metric;
   SymbolicComputation m_symbolic = SymbolicComputation::KeepAllSymbols;
   const Poincare::Context& m_context = k_emptyContext;
   UnitDisplay m_unitDisplay = UnitDisplay::MainOutput;
@@ -29,7 +30,7 @@ class Projection {
     ProjectionContext projCtx{
         .m_complexFormat = ComplexFormat::Cartesian,
         .m_angleUnit = AngleUnit::Radian,
-        .m_unitFormat = UnitFormat::Metric,
+        .m_unitFormat = Preferences::UnitFormat::Metric,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = k_emptyContext};
     return projCtx;

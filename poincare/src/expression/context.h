@@ -6,8 +6,6 @@ namespace Poincare::Internal {
 
 enum class Strategy { Default, ApproximateToFloat, DeepExpandAlgebraic };
 
-enum class UnitFormat { Metric, Imperial };
-
 enum class UnitDisplay : uint8_t {
   // Display for main output in Calculation
   MainOutput,

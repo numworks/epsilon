@@ -83,7 +83,7 @@ class Representative {
   virtual const Representative* representativesOfSameDimension() const = 0;
   virtual bool isBaseUnit() const = 0;
   virtual const Representative* bestRepresentativeAndPrefix(
-      double value, double exponent, UnitFormat unitFormat,
+      double value, double exponent, Preferences::UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr = nullptr) const {
     if (forcedRepr) {
       return defaultFindBestRepresentativeAndPrefix(value, exponent, forcedRepr,
@@ -179,9 +179,8 @@ class Unit {
     LayoutSpanDecoder decoder(span);
     return CanParse(&decoder, representative, prefix);
   }
-  static void ChooseBestRepresentativeAndPrefixForValue(Tree* units,
-                                                        double* value,
-                                                        UnitFormat unitFormat);
+  static void ChooseBestRepresentativeAndPrefixForValue(
+      Tree* units, double* value, Preferences::UnitFormat unitFormat);
 
   static bool AllowImplicitAddition(
       const Representative* smallestRepresentative,
@@ -192,10 +191,9 @@ class Unit {
 
   /* Optimize prefix for the given unit and value.
    * Can optimize representative as well. */
-  static void ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
-                                                double exponent,
-                                                UnitFormat unitFormat,
-                                                bool optimizeRepresentative);
+  static void ChooseBestRepresentativeAndPrefix(
+      Tree* unit, double* value, double exponent,
+      Preferences::UnitFormat unitFormat, bool optimizeRepresentative);
 
   static bool IsNonKelvinTemperature(const Representative* representative);
   // Remove units and Convert tree to Kelvin.
@@ -225,7 +223,7 @@ class Unit {
   // Project expression and unit according to unitDisplay strategy
   static bool ProjectToBestUnits(Tree* e, Dimension dimension,
                                  UnitDisplay unitDisplay, AngleUnit angleUnit,
-                                 UnitFormat unitFormat);
+                                 Preferences::UnitFormat unitFormat);
 
  private:
   // From Kelvin value, return value in given temperature representative
@@ -249,10 +247,10 @@ class Unit {
   static bool ApplyAutomaticInputDisplay(Tree* e, TreeRef& inputUnits);
   static bool ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
                                      Dimension dimension,
-                                     UnitFormat unitFormat);
+                                     Preferences::UnitFormat unitFormat);
   static bool ApplyDecompositionDisplay(Tree* e, TreeRef& inputUnits,
                                         Dimension dimension,
-                                        UnitFormat unitFormat);
+                                        Preferences::UnitFormat unitFormat);
 };
 
 Tree* ChooseBestDerivedUnits(SIVector* unitCoefficients);

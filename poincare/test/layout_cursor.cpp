@@ -1,83 +1,79 @@
+#include <poincare/include/poincare/layout_cursor.h>
 #include <poincare/src/layout/k_tree.h>
-#include <poincare/src/layout/layout_cursor.h>
 
 #include "helper.h"
 
 using namespace Poincare;
 using namespace Poincare::Internal::KTrees;
 
-void assert_cursor_layout_is(Poincare::Internal::PoolLayoutCursor c,
+void assert_cursor_layout_is(LayoutCursor c,
                              const Poincare::Internal::Tree* rootRack) {
-  quiz_assert(c.rootRack()->treeIsIdenticalTo(rootRack));
+  quiz_assert_print_if_failure(c.rootRack()->treeIsIdenticalTo(rootRack),
+                               "Incorrect layout");
 }
 
-void assert_cursor_position_is(Poincare::Internal::PoolLayoutCursor c,
+void assert_cursor_position_is(LayoutCursor c,
                                Poincare::Internal::Tree* cursorRack,
                                int position) {
-  quiz_assert(c.cursorRack() == cursorRack);
-  quiz_assert(c.position() == position);
+  quiz_assert_print_if_failure(c.cursorRack() == cursorRack, "Incorrect rack");
+  quiz_assert_print_if_failure(c.position() == position, "Incorrect position");
 }
 
-void assert_cursor_is(Poincare::Internal::PoolLayoutCursor c,
-                      const Poincare::Internal::Tree* rootRack,
+void assert_cursor_is(LayoutCursor c, const Poincare::Internal::Tree* rootRack,
                       Poincare::Internal::Tree* cursorRack, int position) {
   assert_cursor_layout_is(c, rootRack);
   assert_cursor_position_is(c, cursorRack, position);
 }
 
-Poincare::Internal::PoolLayoutCursor insert_layout(
-    const Poincare::Internal::Tree* layout) {
+LayoutCursor insert_layout(const Poincare::Internal::Tree* layout) {
   Layout r = KRackL();
-  Poincare::Internal::PoolLayoutCursor c(r, r.tree());
+  LayoutCursor c(r, r.tree());
   c.insertLayout(layout);
   assert_cursor_layout_is(c, layout);
   return c;
 }
 
-QUIZ_CASE(poincare_layout_cursor_insertion) {
+QUIZ_CASE(pcj_layout_cursor_insertion) {
   // 1+2
   {
-    Poincare::Internal::PoolLayoutCursor c = insert_layout("1+2"_l);
+    LayoutCursor c = insert_layout("1+2"_l);
     assert_cursor_position_is(c, c.rootRack(), 3);
   }
 
   // random()
   {
-    Poincare::Internal::PoolLayoutCursor c = insert_layout("random()"_l);
+    LayoutCursor c = insert_layout("random()"_l);
     assert_cursor_position_is(c, c.rootRack(), 8);
   }
 
   // cos()
   {
-    Poincare::Internal::PoolLayoutCursor c =
-        insert_layout("cos"_l ^ KParenthesesL(KRackL()));
+    LayoutCursor c = insert_layout("cos"_l ^ KParenthesesL(KRackL()));
     assert_cursor_position_is(c, c.rootRack()->child(3)->child(0), 0);
   }
 
   // ▯^▯
   {
-    Poincare::Internal::PoolLayoutCursor c =
-        insert_layout(KRackL(KSuperscriptL(KRackL())));
+    LayoutCursor c = insert_layout(KRackL(KSuperscriptL(KRackL())));
     assert_cursor_position_is(c, c.rootRack()->child(0)->child(0), 0);
   }
 
   // int(▯, x, ▯, ▯)
   {
-    Poincare::Internal::PoolLayoutCursor c =
+    LayoutCursor c =
         insert_layout(KRackL(KIntegralL("x"_l, KRackL(), KRackL(), KRackL())));
     assert_cursor_position_is(c, c.rootRack()->child(0)->child(1), 0);
   }
 }
 
-QUIZ_CASE(poincare_layout_cursor_deletion) {
+QUIZ_CASE(pcj_layout_cursor_deletion) {
   /*  12
    * --- -> "BackSpace" -> 12|34
    * |34
    * */
   {
     Layout l = KRackL(KFracL("12"_l, "34"_l));
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree()->child(0)->child(1),
-                                           OMG::Direction::Left());
+    LayoutCursor c(l, l.tree()->child(0)->child(1), OMG::Direction::Left());
     c.performBackspace();
     assert_cursor_is(c, "1234"_l, c.rootRack(), 2);
   }
@@ -88,8 +84,7 @@ QUIZ_CASE(poincare_layout_cursor_deletion) {
    * */
   {
     Layout l = "1+"_l ^ KFracL(KRackL(), "3"_l);
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree()->child(2)->child(1),
-                                           OMG::Direction::Left());
+    LayoutCursor c(l, l.tree()->child(2)->child(1), OMG::Direction::Left());
     c.performBackspace();
     assert_cursor_is(c, "1+3"_l, c.rootRack(), 2);
   }
@@ -100,8 +95,7 @@ QUIZ_CASE(poincare_layout_cursor_deletion) {
    * */
   {
     Layout l = "1+"_l ^ KFracL(KRackL(), KRackL(KSuperscriptL("2"_l)));
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree()->child(2)->child(1),
-                                           OMG::Direction::Left());
+    LayoutCursor c(l, l.tree()->child(2)->child(1), OMG::Direction::Left());
     c.performBackspace();
     assert_cursor_is(c, "1+"_l ^ KSuperscriptL("2"_l), c.rootRack(), 2);
   }
@@ -111,7 +105,7 @@ QUIZ_CASE(poincare_layout_cursor_deletion) {
    * */
   {
     Layout l = KRackL(KMatrix1x1L("1"_l));
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree(), OMG::Direction::Left());
+    LayoutCursor c(l, l.tree(), OMG::Direction::Left());
     bool dummy;
     c.move(OMG::Direction::Right(), false, &dummy);
     c.performBackspace();
@@ -123,20 +117,19 @@ QUIZ_CASE(poincare_layout_cursor_deletion) {
    * */
   {
     Layout l = "2"_l ^ KAbsL("1"_l) ^ "+3"_l;
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree()->child(1)->child(0),
-                                           OMG::Direction::Left());
+    LayoutCursor c(l, l.tree()->child(1)->child(0), OMG::Direction::Left());
     c.performBackspace();
     assert_cursor_is(c, "21+3"_l, c.rootRack(), 1);
   }
 }
 
-QUIZ_CASE(poincare_layout_parentheses) {
+QUIZ_CASE(pcj_layout_parentheses) {
   /*
    * |∅ -> "(" -> ")" -> ()|
    */
   {
     Layout l = KRackL();
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
+    LayoutCursor c(l, l.tree());
     c.insertText("(");
     c.insertText(")");
     assert_cursor_is(c, KRackL(KParenthesesL(KRackL())), c.rootRack(),
@@ -148,7 +141,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
    */
   {
     Layout l = KRackL();
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
+    LayoutCursor c(l, l.tree());
     c.insertText(")");
     c.insertText("(");
     assert_cursor_is(
@@ -161,7 +154,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
    */
   {
     Layout l = KRackL();
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
+    LayoutCursor c(l, l.tree());
     c.insertText("(");
     c.insertText("(");
     assert_cursor_is(c,
@@ -175,7 +168,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
    */
   {
     Layout l = "12345"_l;
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
+    LayoutCursor c(l, l.tree());
     c.safeSetPosition(2);
     c.insertText("(");
     assert_cursor_is(c, "12"_l ^ KParenthesesRightTempL("345"_l),
@@ -187,7 +180,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
    */
   {
     Layout l = "2"_l ^ KSuperscriptL("3"_l);
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
+    LayoutCursor c(l, l.tree());
     c.safeSetPosition(1);
     c.insertText("(");
     assert_cursor_is(
@@ -200,7 +193,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
    * */
   {
     Layout l = KRackL(KParenthesesL("123"_l));
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
+    LayoutCursor c(l, l.tree());
     c.performBackspace();
     assert_cursor_is(c, KRackL(KParenthesesRightTempL("123"_l)),
                      c.rootRack()->child(0)->child(0),
@@ -212,9 +205,8 @@ QUIZ_CASE(poincare_layout_parentheses) {
    */
   {
     Layout l = KRackL(KParenthesesL("12"_l ^ KParenthesesL("34"_l) ^ "5"_l));
-    Poincare::Internal::PoolLayoutCursor c(
-        l, l.tree()->child(0)->child(0)->child(2)->child(0),
-        OMG::Direction::Left());
+    LayoutCursor c(l, l.tree()->child(0)->child(0)->child(2)->child(0),
+                   OMG::Direction::Left());
     c.performBackspace();
     assert_cursor_is(
         c, KRackL(KParenthesesLeftTempL(KParenthesesL("1234"_l) ^ "5"_l)),
@@ -226,9 +218,8 @@ QUIZ_CASE(poincare_layout_parentheses) {
    */
   {
     Layout l = KRackL(KParenthesesRightTempL(KRackL(KParenthesesL("3"_l))));
-    Poincare::Internal::PoolLayoutCursor c(
-        l, l.tree()->child(0)->child(0)->child(0)->child(0),
-        OMG::Direction::Left());
+    LayoutCursor c(l, l.tree()->child(0)->child(0)->child(0)->child(0),
+                   OMG::Direction::Left());
     c.performBackspace();
     assert_cursor_is(c, KRackL(KParenthesesL("3"_l)),
                      c.rootRack()->child(0)->child(0), 0);
@@ -239,7 +230,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
    */
   {
     Layout l = KRackL(KRootL(KRackL(KParenthesesRightTempL("3"_l)), "2"_l));
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree()->child(0)->child(0));
+    LayoutCursor c(l, l.tree()->child(0)->child(0));
     c.insertText(")");
     assert_cursor_is(c, KRackL(KRootL(KRackL(KParenthesesL("3"_l)), "2"_l)),
                      c.rootRack()->child(0)->child(0), 1);
@@ -250,7 +241,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
    */
   {
     Layout l = KRackL(KCurlyBracesLeftTempL(KRackL()));
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree(), OMG::Direction::Left());
+    LayoutCursor c(l, l.tree(), OMG::Direction::Left());
     c.insertLayout(KCurlyBracesL(KRackL()));
     assert_cursor_is(c, KCurlyBracesL(KRackL()) ^ KCurlyBracesL(KRackL()),
                      c.rootRack()->child(0)->child(0), 0);
@@ -262,7 +253,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
   {
     Layout l =
         KRackL(KParenthesesLeftTempL(KRackL(KPrefixSuperscriptL(KRackL()))));
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
+    LayoutCursor c(l, l.tree());
     c.performBackspace();
     assert_cursor_is(c, KRackL(KPrefixSuperscriptL(KRackL())), c.rootRack(), 1);
   }
@@ -273,7 +264,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
    */
   {
     Layout l = KParenthesesL(KRackL(KPrefixSuperscriptL("1"_l))) ^ "23"_l;
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
+    LayoutCursor c(l, l.tree());
     c.safeSetPosition(1);
     c.performBackspace();
     assert_cursor_is(
@@ -288,7 +279,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
   {
     Layout l = KParenthesesLeftTempL(KRackL(KPrefixSuperscriptL("1"_l))) ^
                KSuperscriptL("2"_l) ^ "3"_l;
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
+    LayoutCursor c(l, l.tree());
     c.safeSetPosition(1);
     c.performBackspace();
     assert_cursor_is(c,
@@ -297,16 +288,16 @@ QUIZ_CASE(poincare_layout_parentheses) {
   }
 }
 
-QUIZ_CASE(poincare_layout_fraction_create) {
+QUIZ_CASE(pcj_layout_fraction_create) {
   /*                         12
    * 12|34+5 -> "Divide" -> --- + 5
    *                        |34
    * */
   {
     Layout l = "1234+5"_l;
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
+    LayoutCursor c(l, l.tree());
     c.safeSetPosition(2);
-    c.addFractionLayoutAndCollapseSiblings(nullptr);
+    c.addFractionLayoutAndCollapseSiblings(k_emptyContext);
     assert_cursor_is(c, KFracL("12"_l, "34"_l) ^ "+5"_l,
                      c.rootRack()->child(0)->child(1), 0);
   }
@@ -317,8 +308,8 @@ QUIZ_CASE(poincare_layout_fraction_create) {
    * */
   {
     Layout l = "34+5"_l;
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree(), OMG::Direction::Left());
-    c.addFractionLayoutAndCollapseSiblings(nullptr);
+    LayoutCursor c(l, l.tree(), OMG::Direction::Left());
+    c.addFractionLayoutAndCollapseSiblings(k_emptyContext);
     assert_cursor_is(c, KFracL(""_l, "34"_l) ^ "+5"_l,
                      c.rootRack()->child(0)->child(0), 0);
   }
@@ -330,9 +321,9 @@ QUIZ_CASE(poincare_layout_fraction_create) {
    * */
   {
     Layout l = KFracL("1"_l, "2"_l) ^ "34"_l;
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
+    LayoutCursor c(l, l.tree());
     c.safeSetPosition(2);
-    c.addFractionLayoutAndCollapseSiblings(nullptr);
+    c.addFractionLayoutAndCollapseSiblings(k_emptyContext);
     assert_cursor_is(c, KFracL("1"_l, "2"_l) ^ KFracL("3"_l, "4"_l),
                      c.rootRack()->child(1)->child(1), 0);
   }
@@ -344,17 +335,15 @@ QUIZ_CASE(poincare_layout_fraction_create) {
    * */
   {
     Layout l = "sin(x)cos(x)2"_l;
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
-    c.safeSetPosition(l.numberOfChildren() - 1);
-#if 0  // TODO_PCJ
-    c.addFractionLayoutAndCollapseSiblings(nullptr);
+    LayoutCursor c(l, l.tree());
+    c.safeSetPosition(l.tree()->numberOfChildren() - 1);
+    c.addFractionLayoutAndCollapseSiblings(k_emptyContext);
     assert_cursor_is(c, KRackL(KFracL("sin(x)cos(x)"_l, "2"_l)),
                      c.rootRack()->child(0)->child(1), 0);
-#endif
   }
 }
 
-QUIZ_CASE(poincare_layout_power) {
+QUIZ_CASE(pcj_layout_power) {
   /*
    *                      2|
    * 12| -> "Square" -> 12 |
@@ -362,8 +351,8 @@ QUIZ_CASE(poincare_layout_power) {
    * */
   {
     Layout l = "12"_l;
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
-    c.addEmptySquarePowerLayout(nullptr);
+    LayoutCursor c(l, l.tree());
+    c.addEmptySquarePowerLayout(k_emptyContext);
     assert_cursor_is(c, "12"_l ^ KSuperscriptL("2"_l), c.rootRack(),
                      c.rootRack()->numberOfChildren());
   }
@@ -375,8 +364,8 @@ QUIZ_CASE(poincare_layout_power) {
    * */
   {
     Layout l = "1"_l ^ KSuperscriptL("2"_l);
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree()->child(1));
-    c.addEmptySquarePowerLayout(nullptr);
+    LayoutCursor c(l, l.tree()->child(1));
+    c.addEmptySquarePowerLayout(k_emptyContext);
     assert_cursor_is(
         c, KParenthesesL("1"_l ^ KSuperscriptL("2"_l)) ^ KSuperscriptL("2"_l),
         c.rootRack(), c.rootRack()->numberOfChildren());
@@ -388,10 +377,10 @@ QUIZ_CASE(poincare_layout_power) {
    * */
   {
     Layout l = KRackL(KParenthesesL("1"_l ^ KSuperscriptL("2"_l)));
-    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
+    LayoutCursor c(l, l.tree());
     bool dummy;
     c.move(OMG::Direction::Left(), false, &dummy);
-    c.addEmptySquarePowerLayout(nullptr);
+    c.addEmptySquarePowerLayout(k_emptyContext);
     assert_cursor_is(
         c,
         KRackL(KParenthesesL(KParenthesesL("1"_l ^ KSuperscriptL("2"_l)) ^

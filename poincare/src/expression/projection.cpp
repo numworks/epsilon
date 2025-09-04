@@ -162,19 +162,29 @@ bool Projection::UpdateComplexFormatWithExpressionInput(
   return false;
 }
 
-bool Projection::DeepSystemProject(Tree* e,
-                                   ProjectionContext projectionContext) {
+struct ShallowSystemProjectArgs {
+  AngleUnit m_angleUnit;
+  ComplexFormat m_complexFormat;
+  bool m_hasNonKelvinTemperatureUnit;
+};
+
+bool Projection::DeepSystemProject(Tree* e, ProjectionContext projectionContext,
+                                   const Dimension& dimension) {
   bool changed = false;
+  ShallowSystemProjectArgs args{
+      .m_angleUnit = projectionContext.m_angleUnit,
+      .m_complexFormat = projectionContext.m_complexFormat,
+      .m_hasNonKelvinTemperatureUnit = dimension.hasNonKelvinTemperatureUnit(),
+  };
   if (e->isEuclideanDivision()) {
     /* The euclidian division node is kept only at the root level and
      * it replaced by quo in ShallowSystemProject otherwise. */
-    changed |= Tree::ApplyShallowTopDown(e->child(0), ShallowSystemProject,
-                                         &projectionContext);
-    changed |= Tree::ApplyShallowTopDown(e->child(1), ShallowSystemProject,
-                                         &projectionContext);
-  } else {
     changed |=
-        Tree::ApplyShallowTopDown(e, ShallowSystemProject, &projectionContext);
+        Tree::ApplyShallowTopDown(e->child(0), ShallowSystemProject, &args);
+    changed |=
+        Tree::ApplyShallowTopDown(e->child(1), ShallowSystemProject, &args);
+  } else {
+    changed |= Tree::ApplyShallowTopDown(e, ShallowSystemProject, &args);
   }
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   if (changed) {
@@ -221,8 +231,8 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   /* TODO: Most of the projections could be optimized by simply replacing
    * and inserting nodes. This optimization could be applied in
    * matchAndReplace. See comment in matchAndReplace. */
-  ProjectionContext* projectionContext =
-      static_cast<ProjectionContext*>(context);
+  ShallowSystemProjectArgs* args =
+      static_cast<ShallowSystemProjectArgs*>(context);
 
   if (IsForbidden(e)) {
     e->cloneTreeOverTree(KForbidden);
@@ -238,8 +248,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     Decimal::Project(e);
     changed = true;
   }
-  if (e->isUnitOrPhysicalConstant() &&
-      projectionContext->m_dimension.hasNonKelvinTemperatureUnit() &&
+  if (e->isUnitOrPhysicalConstant() && args->m_hasNonKelvinTemperatureUnit &&
       Units::Unit::GetRepresentative(e)->siVector() !=
           Units::Temperature::Dimension) {
     /* To prevent unnecessary mix of units
@@ -248,7 +257,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   }
 
   // Project angles depending on context
-  AngleUnit angleUnit = projectionContext->m_angleUnit;
+  AngleUnit angleUnit = args->m_angleUnit;
   if (e->isOfType({Type::Sin, Type::Cos, Type::Tan})) {
     /* In degree, cos(23°) and cos(23) -> trig(23×π/180, 0)
      * but        cos(23rad)           -> trig(23      , 0) */
@@ -265,8 +274,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   } else if (e->isOfType({Type::ASin, Type::ACos, Type::ATan})) {
     /* Project inverse trigonometric functions here to avoid infinite projection
      * to radian loop. */
-    if (projectionContext->m_complexFormat == ComplexFormat::Real &&
-        !e->isATan()) {
+    if (args->m_complexFormat == ComplexFormat::Real && !e->isATan()) {
 #if POINCARE_PIECEWISE
       // Only real functions asin and acos have a domain of definition
       // acos(A) -> atrig(A, 0) if -1 <= A <= 1
@@ -305,7 +313,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   }
 
   // Under Real complex format, use node alternative to properly handle nonreal.
-  bool realMode = projectionContext->m_complexFormat == ComplexFormat::Real;
+  bool realMode = args->m_complexFormat == ComplexFormat::Real;
   if (e->isPow()) {
     if (PatternMatching::MatchReplace(e, KPow(e_e, KA), KExp(KA))) {
       changed = true;

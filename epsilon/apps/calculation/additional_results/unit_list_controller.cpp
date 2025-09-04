@@ -94,8 +94,8 @@ void UnitListController::computeAdditionalResults(
   bool reductionFailure = false;
   int numberOfExpressions = 0;
   ctx.m_unitDisplay = (unitFormat == Preferences::UnitFormat::Metric)
-                          ? Internal::UnitDisplay::AutomaticMetric
-                          : Internal::UnitDisplay::AutomaticImperial;
+                          ? UnitDisplay::AutomaticMetric
+                          : UnitDisplay::AutomaticImperial;
   expressions[numberOfExpressions++] =
       input.cloneAndSimplify(ctx, &reductionFailure);
   if (reductionFailure) {
@@ -103,21 +103,21 @@ void UnitListController::computeAdditionalResults(
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 #if 0  // TODO: correctly implement AutomaticInput and reenable it
-  ctx.m_unitDisplay = Internal::UnitDisplay::AutomaticInput;
+  ctx.m_unitDisplay = UnitDisplay::AutomaticInput;
   expressions[numberOfExpressions++] = input.cloneAndSimplify(ctx, &reductionFailure);
   if (reductionFailure) {
     expressions[--numberOfExpressions] = Expression();
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 #endif
-  ctx.m_unitDisplay = Internal::UnitDisplay::Decomposition;
+  ctx.m_unitDisplay = UnitDisplay::Decomposition;
   expressions[numberOfExpressions++] =
       input.cloneAndSimplify(ctx, &reductionFailure);
   if (reductionFailure) {
     expressions[--numberOfExpressions] = UserExpression();
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
-  ctx.m_unitDisplay = Internal::UnitDisplay::Equivalent;
+  ctx.m_unitDisplay = UnitDisplay::Equivalent;
   expressions[numberOfExpressions++] =
       input.cloneAndSimplify(ctx, &reductionFailure);
   if (reductionFailure) {
@@ -126,7 +126,7 @@ void UnitListController::computeAdditionalResults(
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 
   if (unitFormat != Preferences::UnitFormat::Metric) {
-    ctx.m_unitDisplay = Internal::UnitDisplay::AutomaticMetric;
+    ctx.m_unitDisplay = UnitDisplay::AutomaticMetric;
     expressions[numberOfExpressions++] =
         input.cloneAndSimplify(ctx, &reductionFailure);
     if (reductionFailure) {
@@ -134,7 +134,7 @@ void UnitListController::computeAdditionalResults(
     }
     assert(!expressions[numberOfExpressions - 1].isUninitialized());
   }
-  ctx.m_unitDisplay = Internal::UnitDisplay::BasicSI;
+  ctx.m_unitDisplay = UnitDisplay::BasicSI;
   UserExpression approximatedSIExpression;
   input.cloneAndSimplifyAndApproximate(expressions + numberOfExpressions++,
                                        &approximatedSIExpression, ctx);

@@ -18,6 +18,7 @@ using Poincare::ComplexFormat;
 using Poincare::ReductionTarget;
 using Poincare::Strategy;
 using Poincare::SymbolicComputation;
+using Poincare::UnitDisplay;
 using UnitFormat = Poincare::Preferences::UnitFormat;
 
 void deepSystematicReduce_and_operation_to(const Tree* input,

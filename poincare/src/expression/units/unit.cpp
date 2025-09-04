@@ -405,7 +405,7 @@ bool Unit::CanParse(ForwardUnicodeDecoder* name,
 
 // Return true if best representative and prefix have been chosen.
 static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-    Tree* unit, double* value, UnitFormat unitFormat,
+    Tree* unit, double* value, Preferences::UnitFormat unitFormat,
     bool optimizeRepresentative) {
   double exponent = 1.f;
   Tree* factor = unit;
@@ -432,8 +432,8 @@ static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
   return true;
 }
 
-void Unit::ChooseBestRepresentativeAndPrefixForValue(Tree* units, double* value,
-                                                     UnitFormat unitFormat) {
+void Unit::ChooseBestRepresentativeAndPrefixForValue(
+    Tree* units, double* value, Preferences::UnitFormat unitFormat) {
   if (units->isMult()) {
     for (Tree* factor : units->children()) {
       ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(factor, value,
@@ -495,7 +495,7 @@ bool Unit::ForceMarginLeftOfUnit(const Tree* e) {
 
 void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
                                              double exponent,
-                                             UnitFormat unitFormat,
+                                             Preferences::UnitFormat unitFormat,
                                              bool optimizeRepresentative) {
   assert(exponent != 0.f);
 
@@ -727,7 +727,7 @@ bool HasPhysicalConstant(const Tree* e) {
 // From a projected tree, gather units and use best representatives/prefixes.
 bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
                               UnitDisplay unitDisplay, AngleUnit angleUnit,
-                              UnitFormat unitFormat) {
+                              Preferences::UnitFormat unitFormat) {
   if (unitDisplay == UnitDisplay::None && !e->isUnitConversion()) {
     // TODO_PCJ : Remove units that cancel themselves
     return false;
@@ -1061,8 +1061,9 @@ void Unit::ApplyAutomaticDisplay(Tree* e, TreeRef& inputUnits,
     if (unitDisplay != UnitDisplay::AutomaticPrefixFreeMetric) {
       ChooseBestRepresentativeAndPrefixForValue(
           units, &value,
-          unitDisplay == UnitDisplay::AutomaticMetric ? UnitFormat::Metric
-                                                      : UnitFormat::Imperial);
+          unitDisplay == UnitDisplay::AutomaticMetric
+              ? Preferences::UnitFormat::Metric
+              : Preferences::UnitFormat::Imperial);
     }
   }
   TreeRef approximated = SharedTreeStack->pushDoubleFloat(value);
@@ -1117,7 +1118,8 @@ bool Unit::ApplyAutomaticInputDisplay(Tree* e, TreeRef& inputUnits) {
 
 // Use an equivalent representative for surface and volumes
 bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
-                                  Dimension dimension, UnitFormat unitFormat) {
+                                  Dimension dimension,
+                                  Preferences::UnitFormat unitFormat) {
   SIVector vector = dimension.unit.vector;
   bool isSurface = vector.supportSize() == 1 && vector.distance == 2;
   bool isVolume = vector.supportSize() == 1 && vector.distance == 3;
@@ -1141,7 +1143,7 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
         return e->isUnit() &&
                GetRepresentative(e)->siVector() == Distance::Dimension;
       });
-  bool isImperial = unitFormat == UnitFormat::Imperial;
+  bool isImperial = unitFormat == Preferences::UnitFormat::Imperial;
 
   inputUnits->removeTree();
   const Representative* targetRepresentative;
@@ -1297,7 +1299,7 @@ constexpr const Representative* const volumeRepresentativesList[] = {
 
 bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& inputUnits,
                                      Dimension dimension,
-                                     UnitFormat unitFormat) {
+                                     Preferences::UnitFormat unitFormat) {
   // Decompose time, angle, and imperial volume, mass and length
   SIVector vector = dimension.unit.vector;
   const Representative* const* list = nullptr;
@@ -1308,7 +1310,7 @@ bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& inputUnits,
   } else if (vector == Angle::Dimension) {
     list = angleRepresentativesList;
     length = std::size(angleRepresentativesList);
-  } else if (unitFormat == UnitFormat::Imperial &&
+  } else if (unitFormat == Preferences::UnitFormat::Imperial &&
              DisplayImperialUnitsInOutput(inputUnits)) {
     if (vector == Mass::Dimension) {
       list = massRepresentativesList;

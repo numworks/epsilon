@@ -80,7 +80,7 @@ class Distance : public Helper<Distance> {
   };
 
   const Representative* bestRepresentativeAndPrefix(
-      double value, double exponent, UnitFormat unitFormat,
+      double value, double exponent, Preferences::UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override;
 
   using Helper::Helper;
@@ -104,7 +104,7 @@ class Angle : public Helper<Angle> {
       AngleUnit angleUnit);
 
   const Representative* bestRepresentativeAndPrefix(
-      double value, double exponent, UnitFormat unitFormat,
+      double value, double exponent, Preferences::UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override;
 
   using Helper::Helper;
@@ -128,7 +128,7 @@ class Mass : public Helper<Mass> {
   };
 
   const Representative* bestRepresentativeAndPrefix(
-      double value, double exponent, UnitFormat unitFormat,
+      double value, double exponent, Preferences::UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override;
 
   using Helper::Helper;
@@ -160,7 +160,7 @@ class Temperature : public Helper<Temperature> {
   };
 
   const Representative* bestRepresentativeAndPrefix(
-      double value, double exponent, UnitFormat unitFormat,
+      double value, double exponent, Preferences::UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override {
     return this;
   }
@@ -400,7 +400,7 @@ class Surface : public Helper<Surface> {
   };
 
   const Representative* bestRepresentativeAndPrefix(
-      double value, double exponent, UnitFormat unitFormat,
+      double value, double exponent, Preferences::UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override;
   using Helper::Helper;
   const static Representatives<const Self> representatives;
@@ -423,7 +423,7 @@ class Volume : public Helper<Volume> {
   };
 
   const Representative* bestRepresentativeAndPrefix(
-      double value, double exponent, UnitFormat unitFormat,
+      double value, double exponent, Preferences::UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override;
   using Helper::Helper;
   const static Representatives<const Self> representatives;
@@ -443,7 +443,7 @@ class Speed : public Helper<Speed> {
   };
 
   const Representative* bestRepresentativeAndPrefix(
-      double value, double exponent, UnitFormat unitFormat,
+      double value, double exponent, Preferences::UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override {
     return nullptr;
   }

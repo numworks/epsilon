@@ -140,13 +140,13 @@ const Speed::Representatives<const Speed> Speed::representatives = {
     .none = {nullptr, 1_e, None, None}};
 
 const Representative* Distance::bestRepresentativeAndPrefix(
-    double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
-    const Representative* forcedRepr) const {
+    double value, double exponent, Preferences::UnitFormat unitFormat,
+    const Prefix** prefix, const Representative* forcedRepr) const {
   bool useMetricRepresentative;
   if (forcedRepr) {
     useMetricRepresentative = forcedRepr == &representatives.meter;
   } else {
-    useMetricRepresentative = unitFormat == UnitFormat::Metric;
+    useMetricRepresentative = unitFormat == Preferences::UnitFormat::Metric;
   }
   return useMetricRepresentative ? /* Exclude imperial units from the search. */
              defaultFindBestRepresentativeAndPrefix(
@@ -159,8 +159,8 @@ const Representative* Distance::bestRepresentativeAndPrefix(
 }
 
 const Representative* Angle::bestRepresentativeAndPrefix(
-    double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
-    const Representative* forcedRepr) const {
+    double value, double exponent, Preferences::UnitFormat unitFormat,
+    const Prefix** prefix, const Representative* forcedRepr) const {
   if (forcedRepr) {
     if (forcedRepr == &representatives.degree ||
         forcedRepr == &representatives.arcMinute ||
@@ -192,8 +192,8 @@ const Representative* Angle::DefaultRepresentativeForAngleUnit(
 }
 
 const Representative* Mass::bestRepresentativeAndPrefix(
-    double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
-    const Representative* forcedRepr) const {
+    double value, double exponent, Preferences::UnitFormat unitFormat,
+    const Prefix** prefix, const Representative* forcedRepr) const {
   if (forcedRepr) {
     // Grams and kilograms are split in two representatives.
     if (forcedRepr == &representatives.gram ||
@@ -206,13 +206,13 @@ const Representative* Mass::bestRepresentativeAndPrefix(
           value, exponent, unitFormat, prefix, forcedRepr);
     }
   }
-  if (unitFormat == UnitFormat::Imperial) {
+  if (unitFormat == Preferences::UnitFormat::Imperial) {
     // With shortTon but not longTon
     return defaultFindBestRepresentativeAndPrefix(
         value, exponent, &representatives.ounce, &representatives.longTon,
         prefix);
   }
-  assert(unitFormat == UnitFormat::Metric);
+  assert(unitFormat == Preferences::UnitFormat::Metric);
   if (exponent == 1. && value >= representatives.ton.ratio()) {
     return defaultFindBestRepresentativeAndPrefix(
         value, exponent, &representatives.ton, &representatives.ton + 1,
@@ -223,27 +223,27 @@ const Representative* Mass::bestRepresentativeAndPrefix(
 }
 
 const Representative* Surface::bestRepresentativeAndPrefix(
-    double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
-    const Representative* forcedRepr) const {
+    double value, double exponent, Preferences::UnitFormat unitFormat,
+    const Prefix** prefix, const Representative* forcedRepr) const {
   *prefix = Prefix::EmptyPrefix();
   bool useMetricRepresentative;
   if (forcedRepr) {
     useMetricRepresentative = forcedRepr == &representatives.hectare;
   } else {
-    useMetricRepresentative = unitFormat == UnitFormat::Metric;
+    useMetricRepresentative = unitFormat == Preferences::UnitFormat::Metric;
   }
   return useMetricRepresentative ? &representatives.hectare
                                  : &representatives.acre;
 }
 
 const Representative* Volume::bestRepresentativeAndPrefix(
-    double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
-    const Representative* forcedRepr) const {
+    double value, double exponent, Preferences::UnitFormat unitFormat,
+    const Prefix** prefix, const Representative* forcedRepr) const {
   bool useMetricRepresentative;
   if (forcedRepr) {
     useMetricRepresentative = forcedRepr == &representatives.liter;
   } else {
-    useMetricRepresentative = unitFormat == UnitFormat::Metric;
+    useMetricRepresentative = unitFormat == Preferences::UnitFormat::Metric;
   }
   if (useMetricRepresentative) {
     // Convert from m^3 to liter value

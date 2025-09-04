@@ -77,7 +77,7 @@ class Preferences {
 
   // --- Country-dependent preferences ---
 
-  using UnitFormat = Internal::UnitFormat;
+  enum class UnitFormat { Metric, Imperial };
 
   enum class CombinatoricSymbols : uint8_t {
     Default = 0,

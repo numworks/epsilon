@@ -54,6 +54,7 @@ struct PreprocessingResult {
   Tree* reducedEquationList = nullptr;
   Error error = Error::NoError;
   EquationMetadata equationMetadata;
+  Dimension dimension = Dimension();
 };
 
 constexpr static char k_parameterPrefix = 't';
@@ -191,7 +192,8 @@ static PreprocessingResult PreprocessEquationList(
   // Step 3.4. Project (replace local symbols) and reduce
 
   Simplification::ProjectAndReduce(reducedEquationList, projectionContext);
-  if (projectionContext->m_dimension.isUnit()) {
+  Dimension dimension = projectionContext->m_dimension;
+  if (dimension.isUnit()) {
     error = Error::EquationUndefined;
   } else if (!reducedEquationList->isList()) {
     error = Error::EquationUndefined;
@@ -213,7 +215,8 @@ static PreprocessingResult PreprocessEquationList(
   }
 
   return {.reducedEquationList = reducedEquationList,
-          .equationMetadata = equationMetadata};
+          .equationMetadata = equationMetadata,
+          .dimension = dimension};
 }
 
 /* Return list of linear coefficients for each variables and final constant. */
@@ -777,6 +780,7 @@ SolverResult ExactSolve(const Tree* equationList,
         .equationMetadata = equationMetadata,
     };
   }
+  assert(!preprocessingResult.dimension.isNone());
 
   // Step 2. Solve the equations
 
@@ -842,7 +846,7 @@ SolverResult ExactSolve(const Tree* equationList,
   // Beautify exact solutions
   assert(result.exactSolutionList);
   Simplification::BeautifyReduced(result.exactSolutionList, &projectionContext,
-                                  projectionContext.m_dimension);
+                                  preprocessingResult.dimension);
 
   // Beautify approximate solutions
   if (result.approximateSolutionList) {
@@ -851,7 +855,7 @@ SolverResult ExactSolve(const Tree* equationList,
         projectionContext.m_complexFormat == ComplexFormat::Polar;
     Simplification::BeautifyReduced(result.approximateSolutionList,
                                     &projectionContext,
-                                    projectionContext.m_dimension);
+                                    preprocessingResult.dimension);
   }
 
   return result;
@@ -889,6 +893,7 @@ SolverResult ApproximateSolve(const Tree* equationList,
         .equationMetadata = equationMetadata,
     };
   }
+  assert(!preprocessingResult.dimension.isNone());
 
   SolutionMetadata solutionMetadata{
       .solvingMethod = SolvingMethod::GeneralMonovariable,

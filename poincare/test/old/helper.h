@@ -15,13 +15,6 @@ namespace Poincare::Internal {
 class Tree;
 }
 
-const char* MaxIntegerString();         // (2^32)^k_maxNumberOfDigits-1
-const char* OverflowedIntegerString();  // (2^32)^k_maxNumberOfDigits
-// OverflowedIntegerString with a 2 on first digit
-const char* BigOverflowedIntegerString();
-const char* MaxParsedIntegerString();
-const char* ApproximatedParsedIntegerString();
-
 /* TODO: With C++20, these can be simplified with:
  * using enum Poincare::ReductionTarget;
  * using enum Poincare::SymbolicComputation;

@@ -56,7 +56,8 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
   process_tree_and_compare(
       coefficients, expectedRoots,
       [](Tree* tree, ProjectionContext projCtx) {
-        Simplification::ProjectAndReduce(tree, &projCtx);
+        Dimension dimension;
+        Simplification::ProjectAndReduce(tree, &projCtx, &dimension);
         switch (tree->numberOfChildren()) {
           case 2:
             tree->moveTreeOverTree(
@@ -78,7 +79,7 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
             // Not handled
             quiz_assert(false);
         }
-        Simplification::BeautifyReduced(tree, &projCtx, projCtx.m_dimension);
+        Simplification::BeautifyReduced(tree, &projCtx, dimension);
       },
       projCtx);
 }

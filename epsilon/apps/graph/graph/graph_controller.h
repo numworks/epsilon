@@ -43,8 +43,8 @@ class GraphController : public Shared::FunctionGraphController,
 
   // TextFieldDelegate
   bool textFieldIsEditable(Escher::AbstractTextField*) override {
-    return !functionStore()
-                ->modelForRecord(recordAtSelectedCurveIndex())
+    return !functionOrSequenceContext()
+                .modelForRecord(recordAtSelectedCurveIndex())
                 ->properties()
                 .isScatterPlot();
   }
@@ -113,13 +113,10 @@ class GraphController : public Shared::FunctionGraphController,
                                int* nextSubCurveIndex) const override;
   double defaultCursorT(Ion::Storage::Record record,
                         bool ignoreMargins) override;
-  Shared::ContinuousFunctionStore* functionStore() override {
-    return static_cast<Shared::ContinuousFunctionStore*>(
-        Shared::FunctionGraphController::functionStore());
-  }
-  const Shared::ContinuousFunctionStore* functionStore() const override {
-    return static_cast<const Shared::ContinuousFunctionStore*>(
-        Shared::FunctionGraphController::functionStore());
+  const Shared::ContinuousFunctionContext& functionOrSequenceContext()
+      const override {
+    return static_cast<Shared::ContinuousFunctionContext&>(
+        Shared::FunctionGraphController::functionOrSequenceContext());
   }
   GraphView* functionGraphView() override { return &m_view; }
   void openMenuForSelectedCurve() override;

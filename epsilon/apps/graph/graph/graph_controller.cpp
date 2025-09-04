@@ -34,7 +34,7 @@ GraphController::GraphController(
 }
 
 I18n::Message GraphController::emptyMessage() {
-  if (functionStore()->numberOfDefinedModels() == 0) {
+  if (functionOrSequenceContext().numberOfDefinedModels() == 0) {
     return I18n::Message::NoFunction;
   }
   return I18n::Message::NoActivatedFunction;
@@ -68,7 +68,8 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
 Poincare::Range2D<float> GraphController::optimalRange(
     bool computeX, bool computeY,
     Poincare::Range2D<float> originalRange) const {
-  return OptimalRange(computeX, computeY, originalRange, functionStore(),
+  return OptimalRange(computeX, computeY, originalRange,
+                      &functionOrSequenceContext(),
                       m_graphRange->gridType() ==
                           Shared::InteractiveCurveViewRange::GridType::Polar,
                       App::app()->localContext());
@@ -76,8 +77,8 @@ Poincare::Range2D<float> GraphController::optimalRange(
 
 PointsOfInterestCache* GraphController::pointsOfInterestForRecord(
     Ion::Storage::Record record) {
-  OMG::ExpiringPointer<ContinuousFunction> f =
-      functionStore()->modelForRecord(record);
+  OMG::ExpiringPointer<const ContinuousFunction> f =
+      functionOrSequenceContext().modelForRecord(record);
   PointsOfInterestCache* cache = nullptr;
   for (int i = 0; i < static_cast<int>(m_pointsOfInterest.length()); i++) {
     if (m_pointsOfInterest.elementAtIndex(i)->record() == record) {
@@ -109,16 +110,17 @@ const Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(
     int j) const {
   GraphController* graphController =
       static_cast<GraphController*>(m_graphController);
-  ContinuousFunctionStore* store = graphController->functionStore();
-  OMG::ExpiringPointer<ContinuousFunction> function =
-      store->modelForRecord(store->activeRecordAtIndex(j));
+  const ContinuousFunctionContext& functionContext =
+      graphController->functionOrSequenceContext();
+  OMG::ExpiringPointer<const ContinuousFunction> function =
+      functionContext.modelForRecord(functionContext.activeRecordAtIndex(j));
   return function->layout();
 }
 
 void GraphController::reloadBannerView() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
-  OMG::ExpiringPointer<ContinuousFunction> f =
-      functionStore()->modelForRecord(record);
+  OMG::ExpiringPointer<const ContinuousFunction> f =
+      functionOrSequenceContext().modelForRecord(record);
   int derivationOrder =
       f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex);
   bool displayOrdinate, displayValueFirstDerivative,
@@ -153,7 +155,7 @@ void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible,
                                          int subCurveIndex) {
   Ion::Storage::Record record = recordAtCurveIndex(curveIndex);
   ContinuousFunctionProperties properties =
-      functionStore()->modelForRecord(record)->properties();
+      functionOrSequenceContext().modelForRecord(record)->properties();
   bool cursorShouldBeRing =
       properties.isScatterPlot() ||
       pointsOfInterestForRecord(record)
@@ -174,7 +176,8 @@ int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
                                               int* nextSubCurveIndex) const {
   assert(nextSubCurveIndex != nullptr);
   int nbOfActiveFunctions = 0;
-  if (functionStore()->displaysOnlyCartesianFunctions(&nbOfActiveFunctions)) {
+  if (functionOrSequenceContext().displaysOnlyCartesianFunctions(
+          &nbOfActiveFunctions)) {
     return FunctionGraphController::nextCurveIndexVertically(
         direction, currentCurveIndex, context, currentSubCurveIndex,
         nextSubCurveIndex);
@@ -209,8 +212,8 @@ int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
 
 double GraphController::defaultCursorT(Ion::Storage::Record record,
                                        bool ignoreMargins) {
-  OMG::ExpiringPointer<ContinuousFunction> function =
-      functionStore()->modelForRecord(record);
+  OMG::ExpiringPointer<const ContinuousFunction> function =
+      functionOrSequenceContext().modelForRecord(record);
   if (function->properties().isCartesian()) {
     return FunctionGraphController::defaultCursorT(record, ignoreMargins);
   }
@@ -259,8 +262,8 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
 
 void GraphController::openMenuForSelectedCurve() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
-  OMG::ExpiringPointer<ContinuousFunction> f =
-      functionStore()->modelForRecord(record);
+  OMG::ExpiringPointer<const ContinuousFunction> f =
+      functionOrSequenceContext().modelForRecord(record);
   int derivationOrder =
       f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex);
   m_curveParameterController.setRecord(record, derivationOrder);
@@ -283,15 +286,15 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     return false;
   }
 
-  OMG::ExpiringPointer<ContinuousFunction> currentF =
-      functionStore()->modelForRecord(recordAtSelectedCurveIndex());
+  OMG::ExpiringPointer<const ContinuousFunction> currentF =
+      functionOrSequenceContext().modelForRecord(recordAtSelectedCurveIndex());
   float nextT =
       currentF->properties().isScatterPlot() && std::isfinite(m_cursor->x())
           ? m_cursor->x()
           : m_cursor->t();
 
-  OMG::ExpiringPointer<ContinuousFunction> nextF =
-      functionStore()->modelForRecord(recordAtCurveIndex(nextCurve));
+  OMG::ExpiringPointer<const ContinuousFunction> nextF =
+      functionOrSequenceContext().modelForRecord(recordAtCurveIndex(nextCurve));
   if (nextF->properties().isScatterPlot()) {
     double nextX = nextT;
     nextT = -1;
@@ -329,8 +332,8 @@ void GraphController::jumpToLeftRightCurve(double t,
     if (currentRecord == record) {
       continue;
     }
-    OMG::ExpiringPointer<ContinuousFunction> f =
-        functionStore()->modelForRecord(currentRecord);
+    OMG::ExpiringPointer<const ContinuousFunction> f =
+        functionOrSequenceContext().modelForRecord(currentRecord);
     assert(f->properties().isCartesian());
     /* Select the closest horizontal curve, then the closest vertically, then
      * the lowest curve index. */

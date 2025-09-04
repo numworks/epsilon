@@ -34,7 +34,9 @@ class FunctionGraphController : public InteractiveCurveViewController,
       return I18n::translate(I18n::Message::GraphCalculus);
     }
     int numberOfRows() const override {
-      return graphController()->functionStore()->numberOfActiveFunctions();
+      return graphController()
+          ->functionOrSequenceContext()
+          .numberOfActiveFunctions();
     }
     void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
@@ -84,8 +86,7 @@ class FunctionGraphController : public InteractiveCurveViewController,
                                   int subCurveIndex = -1);
   virtual double defaultCursorT(Ion::Storage::Record record,
                                 bool ignoreMargins);
-  virtual FunctionStore* functionStore();
-  virtual const FunctionStore* functionStore() const;
+  virtual const FunctionContext& functionOrSequenceContext() const;
   virtual int nextCurveIndexVertically(OMG::VerticalDirection direction,
                                        int currentCurveIndex,
                                        const Poincare::Context& context,
@@ -96,7 +97,7 @@ class FunctionGraphController : public InteractiveCurveViewController,
   }
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange* range) const;
   Ion::Storage::Record recordAtCurveIndex(int curveIndex) const {
-    return functionStore()->activeRecordAtIndex(curveIndex);
+    return functionOrSequenceContext().activeRecordAtIndex(curveIndex);
   }
   Ion::Storage::Record recordAtSelectedCurveIndex() const {
     return recordAtCurveIndex(*m_selectedCurveIndex);

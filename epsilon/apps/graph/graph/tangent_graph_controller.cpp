@@ -2,6 +2,7 @@
 
 #include <apps/apps_container_helper.h>
 #include <apps/global_preferences.h>
+#include <apps/shared/global_context.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
@@ -85,7 +86,7 @@ void TangentGraphController::reloadBannerView() {
   }
   FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
       m_cursor->t(), m_cursor->x(), m_cursor->y(), m_record,
-      FunctionApp::app()->functionStore(),
+      Shared::GlobalContextAccessor::ContinuousFunctionContext(),
       Shared::GlobalContextAccessor::Context());
 
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;

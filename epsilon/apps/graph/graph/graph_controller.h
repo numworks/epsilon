@@ -134,7 +134,8 @@ class GraphController : public Shared::FunctionGraphController,
   // FunctionBannerDelegate
   void reloadBannerViewForCursorOnFunction(
       double cursorT, double cursorX, double cursorY,
-      Ion::Storage::Record record, Shared::FunctionStore* functionStore,
+      Ion::Storage::Record record,
+      const Shared::FunctionContext& functionContext,
       const Poincare::Context& context,
       bool cappedNumberOfSignificantDigits = false) override;
 

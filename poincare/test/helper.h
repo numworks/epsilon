@@ -58,7 +58,8 @@ void process_tree_and_compare(
     const char* input, const char* output, ProcessTree process,
     Poincare::Internal::ProjectionContext projectionContext,
     int nbOfSignificantDigits =
-        Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits);
+        Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits,
+    bool preserveInput = true);
 
 void quiz_tolerate_print_if_failure(bool test, const char* input,
                                     const char* expected = "",

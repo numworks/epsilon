@@ -103,11 +103,11 @@ void simplify(Tree* e, const ProjectionContext& ctx, bool beautify) {
 void process_tree_and_compare(const char* input, const char* output,
                               ProcessTree process,
                               ProjectionContext projectionContext,
-                              int nbOfSignificantDigits) {
-  Tree* expected =
-      parse(output, projectionContext.m_context, {.preserveInput = true});
-  Tree* expression =
-      parse(input, projectionContext.m_context, {.preserveInput = true});
+                              int nbOfSignificantDigits, bool preserveInput) {
+  Tree* expected = parse(output, projectionContext.m_context,
+                         {.preserveInput = preserveInput});
+  Tree* expression = parse(input, projectionContext.m_context,
+                           {.preserveInput = preserveInput});
   ;
   if (!expression || !expected) {
     // Parsing failed

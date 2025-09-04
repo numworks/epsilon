@@ -1629,48 +1629,6 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("norm([[1,i+1,π,-5]])", "√(π^2+28)");
 }
 
-QUIZ_CASE(poincare_simplification_store) {
-  assert_parsed_expression_simplify_to("1+2→x", "3→x");
-#if TODO_PCJ
-  assert_parsed_expression_simplify_to(
-      "0.2→f(x)", "0.2→f(x)", SystemForAnalysis, Radian, MetricUnitFormat,
-      Cartesian, ReplaceDefinedSymbols, false, Radian, MetricUnitFormat,
-      Cartesian, ReplaceDefinedSymbols, false);
-#endif
-  assert_parsed_expression_simplify_to("0.1+0.2→x", "3/10→x");
-  assert_parsed_expression_simplify_to("a→x", "a→x");
-  assert_parsed_expression_simplify_to("a→x", "undef→x", User, Radian,
-                                       MetricUnitFormat, Cartesian,
-                                       ReplaceAllSymbols);
-}
-
-QUIZ_CASE(poincare_simplification_store_correctly_parsed) {
-  PoincareTest::SymbolStore symbolStore;
-  assert_parsed_expression_simplify_to("abc", "a×b×c", symbolStore);
-  assert_parsed_expression_simplify_to("\"abc\"", "\"abc\"", symbolStore);
-  store("2→a", symbolStore);
-  store("5→bc", symbolStore);
-  assert_parsed_expression_simplify_to("abc", "10", symbolStore);  // a*bc
-  assert_parsed_expression_simplify_to("aa", "4", symbolStore);
-  store("10→aa", symbolStore);
-  assert_parsed_expression_simplify_to("aa", "10", symbolStore);
-  assert_parsed_expression_simplify_to("aaa", "20",
-                                       symbolStore);  // Parsed to a*aa
-  assert_parsed_expression_simplify_to("aaaaa", "200",
-                                       symbolStore);  // Parsed to a*aa*aa
-  assert_parsed_expression_simplify_to("acos(b)", "arccos(b)", symbolStore);
-  assert_parsed_expression_simplify_to("aacos(b)", "2×arccos(b)", symbolStore);
-  store("t→bar(t)", symbolStore);
-  store("8→foo", symbolStore);
-  assert_parsed_expression_simplify_to("foobar(x)", "8×x", symbolStore);
-  store("t^2→foobar(t)", symbolStore);
-  assert_parsed_expression_simplify_to("foobar(x)", "x^2", symbolStore);
-
-  assert_parsed_expression_simplify_to("t", "1×_t", symbolStore);
-  store("2→t", symbolStore);
-  assert_parsed_expression_simplify_to("t", "2", symbolStore);
-}
-
 QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("10_m/_s→_km/_h",
                                        "36×_km×_h^\x12-1\x13");

@@ -38,4 +38,6 @@ enum class SymbolicComputation {
   KeepAllSymbols = 4
 };
 
+enum class Strategy { Default, ApproximateToFloat, DeepExpandAlgebraic };
+
 }  // namespace Poincare

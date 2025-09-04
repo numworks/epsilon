@@ -209,7 +209,9 @@ bool ToSystem(Tree* e, ProjectionContext* projectionContext) {
   /* 3 - Apply projection strategy */
   changed = ApplyProjectionStrategy(e, *projectionContext) || changed;
   /* 4 - Project */
-  changed = Projection::DeepSystemProject(e, *projectionContext) || changed;
+  changed = Projection::DeepSystemProject(e, *projectionContext,
+                                          projectionContext->m_dimension) ||
+            changed;
   return changed;
 }
 

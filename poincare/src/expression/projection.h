@@ -45,7 +45,8 @@ class Projection {
                                    SymbolicComputation symbolic);
   // All user variables are replaced with Undefined
   static bool DeepReplaceUserNamedWithUndefined(Tree* e);
-  static bool DeepSystemProject(Tree* e, ProjectionContext ctx = {});
+  static bool DeepSystemProject(Tree* e, ProjectionContext ctx = {},
+                                const Dimension& dimension = Dimension());
 
   /* Some projections are performed during advanced reduction instead so the
    * metric can cancel it if unecessary. */

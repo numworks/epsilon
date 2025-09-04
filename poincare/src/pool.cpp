@@ -1,4 +1,5 @@
 #include <omg/memory.h>
+#include <omg/unreachable.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/pool.h>
 #include <poincare/pool_checkpoint.h>

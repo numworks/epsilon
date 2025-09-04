@@ -6,6 +6,7 @@
 #include <poincare/pool_object.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/dimension_type.h>
+#include <poincare/src/memory/block.h>
 
 namespace Poincare {
 

@@ -2,6 +2,7 @@
 #include <poincare/pool.h>
 #include <poincare/pool_checkpoint.h>
 #include <poincare/pool_object.h>
+#include <poincare/src/memory/tree_stack.h>
 
 namespace Poincare {
 
@@ -11,6 +12,11 @@ PoolCheckpoint::PoolCheckpoint()
     : m_parent(s_topmost), m_endOfPool(Pool::sharedPool->last()) {
   assert(!m_parent || m_endOfPool >= m_parent->m_endOfPool);
   assert(Internal::TreeStack::SharedTreeStack->size() == 0);
+}
+
+PoolCheckpoint::~PoolCheckpoint() {
+  assert(Poincare::Internal::TreeStack::SharedTreeStack->size() == 0);
+  protectedDiscard();
 }
 
 void PoolCheckpoint::protectedDiscard() const {

@@ -134,6 +134,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     if (Infinity::IsPlusOrMinusInfinity(derivand)) {
       return KUndef->cloneTree();
     }
+    // TODO: Handle case where derivand can be infinite.
     return (0_e)->cloneTree();
   }
   /* General case :

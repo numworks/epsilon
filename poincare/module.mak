@@ -236,6 +236,7 @@ _sources_poincare_test := $(addprefix test/, \
   integer.cpp \
   k_tree.cpp \
   latex_parser.cpp \
+  layout_cursor.cpp \
   layout.cpp \
   match.cpp \
   matrix.cpp \

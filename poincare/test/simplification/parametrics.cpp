@@ -418,4 +418,6 @@ QUIZ_CASE(pcj_simplification_integral) {
   simplifies_to("diff(int(x^2/2+t,t,0,1),x,y)",
                 "dep(y,{real(y^2/2+int(t,t,0,1))})");
   simplifies_to("int(diff(x^2,x,x),x,0,1)", "2×int(x,x,0,1)");
+  simplifies_to("int(tan(x),x,0,x)", "int(tan(x),x,0,x)");
+  simplifies_to("int(arccot(x),x,0,x)", "(π×x)/2-int(arctan(x),x,0,x)");
 }

@@ -283,6 +283,7 @@ _sources_poincare_test := $(addprefix test/, \
   ) \
   $(addprefix simplification/, \
     arithmetic.cpp \
+    basic_operations.cpp \
     booleans.cpp \
     complex.cpp \
     dependencies.cpp \

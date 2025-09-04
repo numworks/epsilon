@@ -106,6 +106,11 @@ class GlobalContextAccessor {
     return Context().sequenceContext();
   }
 
+  static inline const Shared::ContinuousFunctionContext&
+  ContinuousFunctionContext() {
+    return *GlobalContext::s_continuousFunctionStore.get();
+  }
+
   // mutable access
   static inline Shared::GlobalContext& Store() {
     return *s_globalContext.get();

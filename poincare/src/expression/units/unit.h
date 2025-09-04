@@ -6,7 +6,6 @@
 
 #include "../approximation.h"
 #include "../builtin.h"
-#include "../context.h"
 #include "../dimension_vector.h"
 #include "../k_tree.h"
 

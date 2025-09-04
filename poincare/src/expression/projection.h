@@ -5,7 +5,6 @@
 #include <poincare/preferences.h>
 #include <poincare/src/memory/tree_ref.h>
 
-#include "context.h"
 #include "dimension.h"
 
 namespace Poincare::Internal {

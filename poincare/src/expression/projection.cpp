@@ -5,7 +5,6 @@
 #include <poincare/src/memory/tree_helpers.h>
 
 #include "angle.h"
-#include "context.h"
 #include "decimal.h"
 #include "dependency.h"
 #include "k_tree.h"

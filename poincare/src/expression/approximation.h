@@ -9,7 +9,6 @@
 #include <cmath>
 #include <complex>
 
-#include "context.h"
 #include "random.h"
 
 namespace Poincare::Internal {

@@ -6,7 +6,6 @@
 #include <omg/global_box.h>
 #include <poincare/exam_mode.h>
 #include <poincare/math_options.h>
-#include <poincare/src/expression/context.h>
 #include <stdint.h>
 
 #include "context.h"

@@ -3,7 +3,6 @@
 #include <ion/display.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/range.h>
-#include <poincare/src/expression/context.h>
 #include <poincare/src/memory/tree.h>
 
 /* The unit tests need to be able to read the working values of

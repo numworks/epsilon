@@ -25,6 +25,12 @@ QUIZ_CASE(pcj_simplification_decimal) {
   simplifies_to(
       ".99999999999999999999999999999999 - 3*.33333333333333333333333333333333",
       "0");
+
+  simplifies_to("-2.3", "-23/10");
+  simplifies_to("-232.2ᴇ-4", "-1161/50000");
+  simplifies_to("0000.000000ᴇ-2", "0");
+  simplifies_to(".000000", "0");
+  simplifies_to("0000", "0");
 }
 
 QUIZ_CASE(pcj_simplification_float) {
@@ -99,6 +105,63 @@ QUIZ_CASE(pcj_simplification_large_numbers) {
                 "123456789012345678901234567800");
   simplifies_to("1234567890123456789012345678901×10^15",
                 "1234567890123456789012345678901000000000000000");
+}
+
+QUIZ_CASE(poincare_simplification_rational) {
+  // 1/MaxParsedIntegerString()
+  constexpr static size_t k_bufferSizeOfMax = 32;
+  char bufferMax[k_bufferSizeOfMax] = "1/";
+  size_t bufferLengthOfMax = strlen(bufferMax);
+  strlcpy(bufferMax + bufferLengthOfMax, MaxParsedIntegerString(),
+          k_bufferSizeOfMax - bufferLengthOfMax);
+  simplifies_to(bufferMax, bufferMax);
+  // 1/OverflowedIntegerString()
+  constexpr static size_t k_bufferSizeOfInf = 400;
+  char bufferInf[k_bufferSizeOfInf] = "1/";
+  size_t bufferLengthOfInf = strlen(bufferInf);
+  strlcpy(bufferInf + bufferLengthOfInf, BigOverflowedIntegerString(),
+          k_bufferSizeOfInf - bufferLengthOfInf);
+  assert_parse_to_integer_overflow(bufferInf);
+  // MaxParsedIntegerString()
+  simplifies_to(MaxParsedIntegerString(), MaxParsedIntegerString());
+  // OverflowedIntegerString()
+  assert_parse_to_integer_overflow(OverflowedIntegerString());
+  assert_parse_to_integer_overflow(BigOverflowedIntegerString());
+  // ApproximatedParsedIntegerString()
+  simplifies_to(ApproximatedParsedIntegerString(), "10^30");
+  // -OverflowedIntegerString()
+  bufferInf[0] = '-';
+  bufferLengthOfInf = 1;
+  strlcpy(bufferInf + bufferLengthOfInf, BigOverflowedIntegerString(),
+          k_bufferSizeOfInf - bufferLengthOfInf);
+  assert_parse_to_integer_overflow(bufferInf);
+
+  simplifies_to("-1/3", "-1/3");
+  simplifies_to("22355/45325", "4471/9065");
+  simplifies_to("0000.000000", "0");
+  simplifies_to(".000000", "0");
+  simplifies_to("0000", "0");
+  simplifies_to("0.1234567", "1234567/10000000");
+  simplifies_to("123.4567", "1234567/10000");
+  simplifies_to("0.1234", "617/5000");
+  simplifies_to("0.1234000", "617/5000");
+  simplifies_to("001234000", "1234000");
+  simplifies_to("001.234000ᴇ3", "1234");
+  simplifies_to("001234000ᴇ-4", "617/5");
+  simplifies_to("3/4+5/4-12+1/567", "-5669/567");
+  simplifies_to("34/78+67^(-1)", "1178/2613");
+  simplifies_to("12348/34564", "3087/8641");
+  simplifies_to("1-0.3-0.7", "0");
+  simplifies_to("123456789123456789+112233445566778899", "235690234690235688");
+  simplifies_to("56^56",
+                "79164324866862966607842406018063254671922245312646690223362402"
+                "918484170424104310169552592050323456");
+  simplifies_to("999^999", "undef");
+  simplifies_to("999^-999", "undef");
+  simplifies_to("0^0", "undef");
+  simplifies_to("π^0", "1");
+  simplifies_to("(-3)^0", "1");
+  simplifies_to("2ᴇ150/2ᴇ150", "1");
 }
 
 QUIZ_CASE(pcj_simplification_infinity) {

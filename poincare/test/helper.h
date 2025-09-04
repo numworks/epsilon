@@ -169,11 +169,12 @@ inline void assertionsWarn() {
 
 // Integer
 
-const char* MaxIntegerString();            // (2^8)^k_maxNumberOfDigits-1
 const char* AlmostMaxIntegerString();      // (2^8)^k_maxNumberOfDigits-2
+const char* MaxIntegerString();            // (2^8)^k_maxNumberOfDigits-1
 const char* OverflowedIntegerString();     // (2^8)^k_maxNumberOfDigits
 const char* BigOverflowedIntegerString();  // OverflowedIntegerString with a 2
                                            // on first digit
+const char* MaxParsedIntegerString();
 const char* ApproximatedParsedIntegerString();
 
 // Parsing

@@ -9,75 +9,12 @@ using namespace Poincare;
 using namespace Poincare::Internal;
 
 QUIZ_CASE(poincare_simplification_decimal) {
-  assert_parsed_expression_simplify_to("-2.3", "-23/10");
-  assert_parsed_expression_simplify_to("-232.2ᴇ-4", "-1161/50000");
-  assert_parsed_expression_simplify_to("0000.000000ᴇ-2", "0");
-  assert_parsed_expression_simplify_to(".000000", "0");
-  assert_parsed_expression_simplify_to("0000", "0");
   // Big decimals are handled as m*10^e
   assert_parsed_expression_simplify_to("1ᴇ1000", "10^1000");
   assert_parsed_expression_simplify_to("-1ᴇ1000", "-10^1000");
   assert_parsed_expression_simplify_to("1ᴇ-1000", "1/10^1000");
   assert_parsed_expression_simplify_to("45.678ᴇ200", "45678×10^197");
   assert_parsed_expression_simplify_to("-45.678ᴇ200", "-45678×10^197");
-}
-
-QUIZ_CASE(poincare_simplification_rational) {
-  // 1/MaxParsedIntegerString()
-  constexpr static size_t k_bufferSizeOfMax = 32;
-  char bufferMax[k_bufferSizeOfMax] = "1/";
-  size_t bufferLengthOfMax = strlen(bufferMax);
-  strlcpy(bufferMax + bufferLengthOfMax, MaxParsedIntegerString(),
-          k_bufferSizeOfMax - bufferLengthOfMax);
-  assert_parsed_expression_simplify_to(bufferMax, bufferMax);
-  // 1/OverflowedIntegerString()
-  constexpr static size_t k_bufferSizeOfInf = 400;
-  char bufferInf[k_bufferSizeOfInf] = "1/";
-  size_t bufferLengthOfInf = strlen(bufferInf);
-  strlcpy(bufferInf + bufferLengthOfInf, BigOverflowedIntegerString(),
-          k_bufferSizeOfInf - bufferLengthOfInf);
-  assert_parse_to_integer_overflow(bufferInf);
-  // MaxParsedIntegerString()
-  assert_parsed_expression_simplify_to(MaxParsedIntegerString(),
-                                       MaxParsedIntegerString());
-  // OverflowedIntegerString()
-  assert_parse_to_integer_overflow(OverflowedIntegerString());
-  assert_parse_to_integer_overflow(BigOverflowedIntegerString());
-  // ApproximatedParsedIntegerString()
-  assert_parsed_expression_simplify_to(ApproximatedParsedIntegerString(),
-                                       "1ᴇ30");
-  // -OverflowedIntegerString()
-  bufferInf[0] = '-';
-  bufferLengthOfInf = 1;
-  strlcpy(bufferInf + bufferLengthOfInf, BigOverflowedIntegerString(),
-          k_bufferSizeOfInf - bufferLengthOfInf);
-  assert_parse_to_integer_overflow(bufferInf);
-
-  assert_parsed_expression_simplify_to("-1/3", "-1/3");
-  assert_parsed_expression_simplify_to("22355/45325", "4471/9065");
-  assert_parsed_expression_simplify_to("0000.000000", "0");
-  assert_parsed_expression_simplify_to(".000000", "0");
-  assert_parsed_expression_simplify_to("0000", "0");
-  assert_parsed_expression_simplify_to("0.1234567", "1234567/10000000");
-  assert_parsed_expression_simplify_to("123.4567", "1234567/10000");
-  assert_parsed_expression_simplify_to("0.1234", "617/5000");
-  assert_parsed_expression_simplify_to("0.1234000", "617/5000");
-  assert_parsed_expression_simplify_to("001234000", "1234000");
-  assert_parsed_expression_simplify_to("001.234000ᴇ3", "1234");
-  assert_parsed_expression_simplify_to("001234000ᴇ-4", "617/5");
-  assert_parsed_expression_simplify_to("3/4+5/4-12+1/567", "-5669/567");
-  assert_parsed_expression_simplify_to("34/78+67^(-1)", "1178/2613");
-  assert_parsed_expression_simplify_to("12348/34564", "3087/8641");
-  assert_parsed_expression_simplify_to("1-0.3-0.7", "0");
-  assert_parsed_expression_simplify_to("123456789123456789+112233445566778899",
-                                       "235690234690235688");
-  assert_parsed_expression_simplify_to("56^56", "56^56");
-  assert_parsed_expression_simplify_to("999^999", "999^999");
-  assert_parsed_expression_simplify_to("999^-999", "1/999^999");
-  assert_parsed_expression_simplify_to("0^0", "undef");
-  assert_parsed_expression_simplify_to("π^0", "1");
-  assert_parsed_expression_simplify_to("(-3)^0", "1");
-  assert_parsed_expression_simplify_to("2ᴇ200/2ᴇ200", "1");
 }
 
 QUIZ_CASE(poincare_simplification_infinity) {

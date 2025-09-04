@@ -39,7 +39,7 @@ GraphController::GraphController(Responder* parentResponder,
 }
 
 I18n::Message GraphController::emptyMessage() {
-  if (functionStore()->numberOfDefinedModels() == 0) {
+  if (functionOrSequenceContext().numberOfDefinedModels() == 0) {
     return I18n::Message::NoSequence;
   }
   return I18n::Message::NoActivatedSequence;
@@ -58,10 +58,10 @@ void GraphController::viewWillAppear() {
 
 float GraphController::interestingXMin() const {
   int nmin = INT_MAX;
-  int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
+  int nbOfActiveModels = functionOrSequenceContext().numberOfActiveFunctions();
   for (int i = 0; i < nbOfActiveModels; i++) {
     const Shared::Sequence* s =
-        functionStore()->modelForRecord(recordAtCurveIndex(i));
+        functionOrSequenceContext().modelForRecord(recordAtCurveIndex(i));
     nmin = std::min(nmin, s->initialRank());
   }
   assert(nmin < INT_MAX);
@@ -99,12 +99,14 @@ Range2D<float> GraphController::optimalRange(
   if (computeY) {
     Zoom zoom(result.xMin(), result.xMax(),
               InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
-    int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
+    int nbOfActiveModels =
+        functionOrSequenceContext().numberOfActiveFunctions();
     assert(nbOfActiveModels <= Shared::SequenceStore::k_maxNumberOfSequences);
     const Shared::Sequence*
         sequences[Shared::SequenceStore::k_maxNumberOfSequences];
     for (int i = 0; i < nbOfActiveModels; i++) {
-      sequences[i] = functionStore()->modelForRecord(recordAtCurveIndex(i));
+      sequences[i] =
+          functionOrSequenceContext().modelForRecord(recordAtCurveIndex(i));
     }
     int min = std::ceil(result.xMin());
     int max = std::floor(result.xMax());
@@ -125,9 +127,10 @@ const Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(
     int j) const {
   GraphController* graphController =
       static_cast<GraphController*>(m_graphController);
-  SequenceStore* store = graphController->functionStore();
-  OMG::ExpiringPointer<Shared::Sequence> sequence =
-      store->modelForRecord(store->activeRecordAtIndex(j));
+  const SequenceStore* sequenceContext =
+      &graphController->functionOrSequenceContext();
+  OMG::ExpiringPointer<const Shared::Sequence> sequence =
+      sequenceContext->modelForRecord(sequenceContext->activeRecordAtIndex(j));
   return sequence->definitionName();
 }
 
@@ -139,8 +142,8 @@ void GraphController::openMenuForCurveAtIndex(int curveIndex) {
 bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
                                              int scrollSpeed) {
   int xCursorPosition = std::round(m_cursor->x());
-  Shared::Sequence* s =
-      functionStore()->modelForRecord(recordAtSelectedCurveIndex());
+  const Shared::Sequence* s =
+      functionOrSequenceContext().modelForRecord(recordAtSelectedCurveIndex());
   int x = m_view.nextDotIndex(s, xCursorPosition, direction, scrollSpeed);
   if (x == xCursorPosition) {
     return false;

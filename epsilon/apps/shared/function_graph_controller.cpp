@@ -78,7 +78,8 @@ void FunctionGraphController::selectCurveAtIndex(int curveIndex,
 
   Ion::Storage::Record r = recordAtCurveIndex(curveIndex);
   functionGraphView()->selectRecord(r);
-  OMG::ExpiringPointer<Function> f = functionStore()->modelForRecord(r);
+  OMG::ExpiringPointer<const Function> f =
+      functionOrSequenceContext().modelForRecord(r);
   KDColor color =
       f->color(f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex));
   functionGraphView()->cursorView()->setColor(color, functionGraphView());
@@ -92,8 +93,8 @@ KDCoordinate
 FunctionGraphController::FunctionSelectionController::nonMemoizedRowHeight(
     int row) {
   assert(row < graphController()->numberOfCurves());
-  OMG::ExpiringPointer<Function> function =
-      graphController()->functionStore()->modelForRecord(
+  OMG::ExpiringPointer<const Function> function =
+      graphController()->functionOrSequenceContext().modelForRecord(
           graphController()->recordAtCurveIndex(row));
   return std::max(function->layout()->layoutSize(k_font).height(),
                   nameLayoutAtIndex(row)->layoutSize(k_font).height()) +
@@ -103,8 +104,8 @@ FunctionGraphController::FunctionSelectionController::nonMemoizedRowHeight(
 void FunctionGraphController::FunctionSelectionController::fillCellForRow(
     HighlightCell* cell, int row) {
   assert(row < graphController()->numberOfCurves());
-  OMG::ExpiringPointer<Function> function =
-      graphController()->functionStore()->modelForRecord(
+  OMG::ExpiringPointer<const Function> function =
+      graphController()->functionOrSequenceContext().modelForRecord(
           graphController()->recordAtCurveIndex(row));
   CurveSelectionCellWithChevron* myCell =
       static_cast<CurveSelectionCellWithChevron*>(cell);
@@ -131,15 +132,15 @@ void FunctionGraphController::FunctionSelectionController::
 void FunctionGraphController::reloadBannerView() {
   assert(numberOfCurves() > 0);
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
-  reloadBannerViewForCursorOnFunction(m_cursor->t(), m_cursor->x(),
-                                      m_cursor->y(), record, *functionStore(),
-                                      Shared::GlobalContextAccessor::Context());
+  reloadBannerViewForCursorOnFunction(
+      m_cursor->t(), m_cursor->x(), m_cursor->y(), record,
+      functionOrSequenceContext(), Shared::GlobalContextAccessor::Context());
 }
 
 double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
                                                bool ignoreMargins) {
-  OMG::ExpiringPointer<Function> function =
-      functionStore()->modelForRecord(record);
+  OMG::ExpiringPointer<const Function> function =
+      functionOrSequenceContext().modelForRecord(record);
   float gridUnit =
       2.f * PoincareHelpers::ToFloat(interactiveCurveViewRange()->xGridUnit());
   float xMin = interactiveCurveViewRange()->xMin();
@@ -176,19 +177,16 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
   return currentX;
 }
 
-FunctionStore* FunctionGraphController::functionStore() {
-  return FunctionApp::app()->functionStore();
-}
-
-const FunctionStore* FunctionGraphController::functionStore() const {
-  return FunctionApp::app()->functionStore();
+const FunctionContext& FunctionGraphController::functionOrSequenceContext()
+    const {
+  return *FunctionApp::app()->functionStore();
 }
 
 void FunctionGraphController::computeDefaultPositionForFunctionAtIndex(
     int index, double* t, Coordinate2D<double>* xy, bool ignoreMargins) {
   Ion::Storage::Record record = recordAtCurveIndex(index);
-  OMG::ExpiringPointer<Function> function =
-      functionStore()->modelForRecord(record);
+  OMG::ExpiringPointer<const Function> function =
+      functionOrSequenceContext().modelForRecord(record);
   *t = defaultCursorT(record, ignoreMargins);
   *xy = function->evaluateXYAtParameter(*t, App::app()->localContext(), 0);
 }
@@ -236,8 +234,8 @@ void FunctionGraphController::moveCursorVerticallyToPosition(int nextCurve,
                                                              int nextSubCurve,
                                                              double nextT) {
   // Clip the current t to the domain of the next function
-  OMG::ExpiringPointer<Function> f =
-      functionStore()->modelForRecord(recordAtCurveIndex(nextCurve));
+  OMG::ExpiringPointer<const Function> f =
+      functionOrSequenceContext().modelForRecord(recordAtCurveIndex(nextCurve));
   if (!std::isnan(f->tMin())) {
     assert(!std::isnan(f->tMax()));
     nextT = std::min<double>(f->tMax(), std::max<double>(f->tMin(), nextT));
@@ -275,33 +273,33 @@ AbstractPlotView* FunctionGraphController::curveView() {
 Coordinate2D<double> FunctionGraphController::xyValues(
     int curveIndex, double t, const Poincare::Context& context,
     int subCurveIndex) const {
-  return functionStore()
-      ->modelForRecord(recordAtCurveIndex(curveIndex))
+  return functionOrSequenceContext()
+      .modelForRecord(recordAtCurveIndex(curveIndex))
       ->evaluateXYAtParameter(t, context, subCurveIndex);
 }
 
 int FunctionGraphController::numberOfSubCurves(int curveIndex) const {
-  return functionStore()
-      ->modelForRecord(recordAtCurveIndex(curveIndex))
+  return functionOrSequenceContext()
+      .modelForRecord(recordAtCurveIndex(curveIndex))
       ->numberOfSubCurves(true);
 }
 
 bool FunctionGraphController::isAlongY(int curveIndex) const {
-  return functionStore()
-      ->modelForRecord(recordAtCurveIndex(curveIndex))
+  return functionOrSequenceContext()
+      .modelForRecord(recordAtCurveIndex(curveIndex))
       ->isAlongY();
 }
 
 int FunctionGraphController::numberOfCurves() const {
-  return functionStore()->numberOfActiveFunctions();
+  return functionOrSequenceContext().numberOfActiveFunctions();
 }
 
 void FunctionGraphController::tidyModels(
     const Poincare::PoolObject* treePoolCursor) {
   int nbOfFunctions = numberOfCurves();
   for (int i = 0; i < nbOfFunctions; i++) {
-    OMG::ExpiringPointer<Function> f =
-        functionStore()->modelForRecord(recordAtCurveIndex(i));
+    OMG::ExpiringPointer<const Function> f =
+        functionOrSequenceContext().modelForRecord(recordAtCurveIndex(i));
     f->tidyDownstreamPoolFrom(treePoolCursor);
   }
 }

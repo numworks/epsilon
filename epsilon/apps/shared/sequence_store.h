@@ -1,5 +1,6 @@
 #pragma once
 
+#include <omg/global_box.h>
 #include <poincare/helpers/sequence.h>
 #include <stdint.h>
 
@@ -11,8 +12,10 @@
 namespace Shared {
 
 class SequenceStore : public FunctionStore {
+  friend class OMG::GlobalBox<SequenceStore>;
+  friend class SequenceStoreTestBuilder;
+
  public:
-  using FunctionStore::FunctionStore;
   /* Sequence Store holds all its Sequences in an array. The Sequence pointers
    * returned by modelForRecord are therefore non-expirable. We choose to return
    * Sequence * instead of OMG::ExpiringPointer<Sequence>. */
@@ -49,6 +52,10 @@ class SequenceStore : public FunctionStore {
   float smallestInitialRank() const;
 
  private:
+  /* SequenceStore is a singleton. The unique instance can be accessed
+   * through GlobalContextAccessor */
+  SequenceStore() = default;
+
   int maxNumberOfMemoizedModels() const override {
     return SequenceStore::k_maxNumberOfSequences;
   }

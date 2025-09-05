@@ -7,6 +7,29 @@
 
 namespace Shared {
 
+class ContinuousFunctionStoreTestBuilder {
+ public:
+  static ContinuousFunctionStore Build() { return ContinuousFunctionStore{}; }
+};
+
+class SequenceStoreTestBuilder {
+ public:
+  static SequenceStore Build() { return SequenceStore{}; }
+};
+
+template <class T>
+static inline T Build();
+
+template <>
+ContinuousFunctionStore Build<ContinuousFunctionStore>() {
+  return ContinuousFunctionStoreTestBuilder::Build();
+}
+
+template <>
+SequenceStore Build<SequenceStore>() {
+  return SequenceStoreTestBuilder::Build();
+}
+
 template <class F>
 void interactWithBaseRecordMember(F* fct) {
   /* Accessing Function record member m_color, which has a 2-byte alignment
@@ -42,7 +65,7 @@ Ion::Storage::Record createRecord(T* store) {
 
 template <class T>
 void testAlignmentHandlingFor() {
-  T store;
+  T store = Build<T>();
   Ion::Storage::FileSystem* sharedFileSystem =
       Ion::Storage::FileSystem::sharedFileSystem;
 
@@ -51,8 +74,8 @@ void testAlignmentHandlingFor() {
   // Evaluate the sequence shift compared to a 2-byte alignment
   uintptr_t shift = reinterpret_cast<uintptr_t>(rec1.value().buffer) % 2;
 
-  /* Interact with an alignment sensitive member. A mishandled record alignment
-   * should throw an abort(alignment fault) exception */
+  /* Interact with an alignment sensitive member. A mishandled record
+   * alignment should throw an abort(alignment fault) exception */
   interactWithRecordMember(&store, rec1);
 
   sharedFileSystem->destroyAllRecords();

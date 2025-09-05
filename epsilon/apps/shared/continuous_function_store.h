@@ -1,11 +1,16 @@
 #pragma once
 
+#include <omg/global_box.h>
+
 #include "continuous_function.h"
 #include "function_store.h"
 
 namespace Shared {
 
 class ContinuousFunctionStore : public FunctionStore {
+  friend class OMG::GlobalBox<ContinuousFunctionStore>;
+  friend class ContinuousFunctionStoreTestBuilder;
+
  public:
   // Very large limit, so that records id in name can't exceed two chars.
   constexpr static int k_maxNumberOfModels = 100;
@@ -20,7 +25,6 @@ class ContinuousFunctionStore : public FunctionStore {
            static_cast<const ContinuousFunction*>(model)->canComputeArea();
   }
 
-  ContinuousFunctionStore() : FunctionStore() {}
   int numberOfActiveFunctionsInTable() const {
     return numberOfModelsSatisfyingTest(&IsFunctionActiveInTable, nullptr);
   }
@@ -78,6 +82,10 @@ class ContinuousFunctionStore : public FunctionStore {
   int maxNumberOfModels() const override { return k_maxNumberOfModels; }
 
  private:
+  /* ContinuousFunctionStore is a singleton. The unique instance can be accessed
+   * through GlobalContextAccessor */
+  ContinuousFunctionStore() = default;
+
   static bool IsFunctionActiveInTable(const ExpressionModelHandle* model,
                                       const void* context) {
     // An active function must be defined

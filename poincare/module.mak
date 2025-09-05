@@ -268,7 +268,7 @@ _sources_poincare_test := $(addprefix test/, \
     lists.cpp \
     matrix.cpp \
     numbers.cpp \
-    parametric.cpp \
+    parametrics.cpp \
     probability.cpp \
     trigonometry.cpp \
     units.cpp \

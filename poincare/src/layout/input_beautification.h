@@ -131,7 +131,12 @@ class InputBeautification {
    * "If the function has multiple aliases, take the first alias
    * in alphabetical order to choose position in list." */
   constexpr static const BeautificationRule k_simpleIdentifiersRules[] = {
-      k_infRule, k_piRule, k_thetaRule};
+      k_infRule, k_piRule,
+#if !POINCARE_SCANDIUM_LAYOUTS
+      // Scandium layouts don't support the theta glyph
+      k_thetaRule
+#endif
+  };
   constexpr static size_t k_lenOfSimpleIdentifiersRules =
       std::size(k_simpleIdentifiersRules);
 
@@ -221,7 +226,10 @@ class InputBeautification {
       ruleHelper<Type::Root, Type::RootLayout>(),
       /* sqrt( */
       ruleHelper<Type::Sqrt, Type::SqrtLayout>(),
-      /* theta */ k_thetaRule};
+#if !POINCARE_SCANDIUM_LAYOUTS
+      /* theta */ k_thetaRule
+#endif
+  };
 
   constexpr static size_t k_lenOfIdentifiersRules =
       std::size(k_identifiersRules);

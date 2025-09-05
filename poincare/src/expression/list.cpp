@@ -268,6 +268,17 @@ bool List::ShallowApplyListOperators(Tree* e) {
       return true;
     }
     case Type::Median: {
+      if (e->hasDescendantSatisfying(
+              [](const Tree* e) { return e->isUndefined(); }) ||
+          !(e->child(1)->isOne() || IsValidCoefficientsList(e->child(1)))) {
+        e->cloneTreeOverTree(KUndef);
+        return true;
+      }
+      if (Variables::HasVariables(e) || Variables::HasUserSymbols(e)) {
+        // leave med({x,0}) unchanged
+        // TODO: we could return undef with med({x,i})
+        return false;
+      }
       // precision used for comparisons
       using T = double;
       bool hasWeightList = Dimension::IsList(e->child(1));

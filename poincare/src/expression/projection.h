@@ -24,7 +24,7 @@ class Projection {
   /* Update complexFormat if tree contains i, Re, Im, Arg or Conj. Return true
    * if updated. */
   static bool UpdateComplexFormatWithExpressionInput(
-      const Tree* e, ProjectionContext* projectionContext);
+      const Tree* e, ProjectionContext& projectionContext);
   /* User variables are fetched from the Context and replaced according to the
   SymbolicComputation strategy */
   static bool DeepReplaceUserNamed(Tree* e,

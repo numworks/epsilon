@@ -237,6 +237,19 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
                                         symbolContext);
 }
 
+ComplexFormat UserExpression::preferedComplexFormat(
+    ComplexFormat complexFormat, const SymbolContext& symbolContext,
+    SymbolicComputation replaceSymbols) const {
+  ProjectionContext projectionContext = {
+      .m_complexFormat = complexFormat,
+      .m_symbolic = replaceSymbols,
+      .m_context = symbolContext,
+  };
+  Internal::Projection::UpdateComplexFormatWithExpressionInput(
+      tree(), projectionContext);
+  return projectionContext.m_complexFormat;
+}
+
 template <typename T>
 bool UserExpression::hasDefinedComplexApproximation(
     AngleUnit angleUnit, ComplexFormat complexFormat,
@@ -271,9 +284,8 @@ bool UserExpression::hasDefinedComplexApproximation(
 bool UserExpression::isComplexScalar(
     Preferences::CalculationPreferences calculationPreferences,
     const SymbolContext& symbolContext) const {
-  ComplexFormat complexFormat =
-      Preferences::UpdatedComplexFormatWithExpressionInput(
-          calculationPreferences.complexFormat, *this, symbolContext);
+  ComplexFormat complexFormat = preferedComplexFormat(
+      calculationPreferences.complexFormat, symbolContext);
   AngleUnit angleUnit = calculationPreferences.angleUnit;
   if (hasDefinedComplexApproximation<double>(angleUnit, complexFormat,
                                              symbolContext)) {

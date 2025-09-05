@@ -13,17 +13,4 @@ constexpr int Preferences::VeryShortNumberOfSignificantDigits;
 Preferences::Interface* Preferences::s_preferences = nullptr;
 const Preferences Preferences::PreferencesInstance;
 
-ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
-    ComplexFormat complexFormat, const Internal::Tree* exp,
-    const SymbolContext& symbolContext, SymbolicComputation replaceSymbols) {
-  ProjectionContext projectionContext = {
-      .m_complexFormat = complexFormat,
-      .m_symbolic = replaceSymbols,
-      .m_context = symbolContext,
-  };
-  Internal::Projection::UpdateComplexFormatWithExpressionInput(
-      exp, &projectionContext);
-  return projectionContext.m_complexFormat;
-}
-
 }  // namespace Poincare

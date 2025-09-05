@@ -67,8 +67,8 @@ void DerivativeColumnParameterController::setRecord(Ion::Storage::Record record,
 
 OMG::ExpiringPointer<ContinuousFunction>
 DerivativeColumnParameterController::function() const {
-  return Shared::GlobalContext::s_continuousFunctionStore->modelForRecord(
-      m_record);
+  return Shared::GlobalContextAccessor::ContinuousFunctionStore()
+      .modelForRecord(m_record);
 }
 
 Shared::ClearColumnHelper*

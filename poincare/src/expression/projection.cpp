@@ -149,13 +149,12 @@ bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
 }
 
 bool Projection::UpdateComplexFormatWithExpressionInput(
-    const Tree* e, ProjectionContext* projectionContext) {
+    const Tree* e, ProjectionContext& projectionContext) {
   assert(e);
-  assert(projectionContext);
-  if (projectionContext->m_complexFormat == ComplexFormat::Real &&
-      !Symbol::InvolvesCircularity(e, projectionContext->m_context) &&
-      hasComplexNodes(e, *projectionContext)) {
-    projectionContext->m_complexFormat =
+  if (projectionContext.m_complexFormat == ComplexFormat::Real &&
+      !Symbol::InvolvesCircularity(e, projectionContext.m_context) &&
+      hasComplexNodes(e, projectionContext)) {
+    projectionContext.m_complexFormat =
         Preferences::k_defaultComplexFormatIfNotReal;
     return true;
   }

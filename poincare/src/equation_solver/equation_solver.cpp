@@ -156,7 +156,7 @@ static PreprocessingResult PreprocessEquationList(
    * NOTE: This must be done after deciding the symbolic computation mode */
 
   Projection::UpdateComplexFormatWithExpressionInput(equationList,
-                                                     projectionContext);
+                                                     *projectionContext);
   equationMetadata.complexFormat = projectionContext->m_complexFormat;
 
   // Step 3. Clone and simplify the equations

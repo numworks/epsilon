@@ -59,9 +59,9 @@ ComplexFormat ExpressionModel::complexFormat(
   if (m_expressionComplexFormat == MemoizedComplexFormat::NotMemoized) {
     UserExpression expression = ExpressionModel::expressionClone(record);
     if (!expression.isUninitialized() &&
-        (Preferences::UpdatedComplexFormatWithExpressionInput(
-             ComplexFormat::Real, expression,
-             GlobalContextAccessor::Context()) != ComplexFormat::Real)) {
+        (expression.preferedComplexFormat(ComplexFormat::Real,
+                                          GlobalContextAccessor::Context()) !=
+         ComplexFormat::Real)) {
       m_expressionComplexFormat = MemoizedComplexFormat::Complex;
     } else {
       m_expressionComplexFormat = MemoizedComplexFormat::Any;

@@ -124,13 +124,6 @@ class Preferences {
 
   static const Preferences PreferencesInstance;
 
-  // TODO: this has nothing to do here
-  static ComplexFormat UpdatedComplexFormatWithExpressionInput(
-      ComplexFormat complexFormat, const Internal::Tree* e,
-      const SymbolContext& symbolContext,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceDefinedSymbols);
-
  private:
   Preferences() = default;
   static Interface* s_preferences;

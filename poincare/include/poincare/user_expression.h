@@ -86,6 +86,11 @@ class UserExpression : public Expression {
                       SymbolicComputation symbolic =
                           SymbolicComputation::ReplaceDefinedSymbols);
 
+  ComplexFormat preferedComplexFormat(
+      ComplexFormat complexFormat, const SymbolContext& symbolContext,
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceDefinedSymbols) const;
+
   /* UserExpression to UserExpression helpers */
 
   /* Expressions in parameters are outputs. The return boolean indicates the

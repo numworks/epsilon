@@ -250,6 +250,12 @@ ComplexFormat UserExpression::preferedComplexFormat(
   return projectionContext.m_complexFormat;
 }
 
+bool UserExpression::updateProjectionContextWithPreferedComplexFormat(
+    ProjectionContext& context) const {
+  return Internal::Projection::UpdateComplexFormatWithExpressionInput(tree(),
+                                                                      context);
+}
+
 template <typename T>
 bool UserExpression::hasDefinedComplexApproximation(
     AngleUnit angleUnit, ComplexFormat complexFormat,

@@ -34,8 +34,7 @@ void VectorListController::computeAdditionalResults(
                            .m_angleUnit = angleUnit(),
                            .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .m_context = symbolContext};
-  assert(!Internal::Projection::UpdateComplexFormatWithExpressionInput(
-      exactOutput, &ctx));
+  assert(!exactOutput.updateProjectionContextWithPreferedComplexFormat(ctx));
 
   setShowIllustration(false);
   size_t index = 0;

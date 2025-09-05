@@ -49,12 +49,12 @@ class CalculationGraphController
     return Poincare::Solver<double>::Interest::None;
   }
   virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(
-      double start, double max, const Poincare::Context& context,
-      bool stretch) {
-    return computeAtLeastOnePointOfInterest(start, max, context, stretch).xy();
+      double start, double max, bool stretch) {
+    return computeAtLeastOnePointOfInterest(start, max, stretch).xy();
   }
-  Poincare::PointOfInterest computeAtLeastOnePointOfInterest(
-      double start, double max, const Poincare::Context& context, bool stretch);
+  Poincare::PointOfInterest computeAtLeastOnePointOfInterest(double start,
+                                                             double max,
+                                                             bool stretch);
 
   GraphView* m_graphView;
   BannerView* m_bannerView;

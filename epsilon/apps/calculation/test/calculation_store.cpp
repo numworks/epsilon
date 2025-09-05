@@ -11,6 +11,8 @@
 #include <shared/global_context.h>
 #include <string.h>
 
+#include "poincare/context.h"
+
 using AdditionalResultsType = Calculation::AdditionalResultsType;
 using DisplayOutput = Calculation::Calculation::DisplayOutput;
 using EqualSign = Calculation::Calculation::EqualSign;
@@ -801,8 +803,7 @@ QUIZ_CASE(calculation_involving_sequence) {
       seqStore->recordAtIndex(seqStore->numberOfModels() - 1);
   Shared::Sequence* u = seqStore->modelForRecord(record);
   u->setType(Shared::Sequence::Type::Explicit);
-  err = u->setContent(Layout::String("i"),
-                      Shared::GlobalContextAccessor::Context());
+  err = u->setContent(Layout::String("i"), EmptyContext{});
   assert(err == Ion::Storage::Record::ErrorStatus::None);
   (void)err;  // Silence compilation warning.
 

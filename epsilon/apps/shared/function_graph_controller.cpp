@@ -59,8 +59,7 @@ void FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
   if (curveIndex != *m_selectedCurveIndex) {
     selectCurveAtIndex(curveIndex, false);
     Coordinate2D<double> xy =
-        xyValues(curveIndex, m_cursor->t(), App::app()->localContext(),
-                 m_selectedSubCurveIndex);
+        xyValues(curveIndex, m_cursor->t(), m_selectedSubCurveIndex);
     m_cursor->moveTo(m_cursor->t(), xy.x(), xy.y());
   }
   openMenuForSelectedCurve();
@@ -161,9 +160,7 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
     currentX = middle + (iterations % 2 == 0 ? -1 : 1) *
                             ((iterations + 1) / 2) * gridUnit;
     // Using first subCurve for default cursor.
-    currentY =
-        function->evaluateXYAtParameter(currentX, App::app()->localContext(), 0)
-            .y();
+    currentY = function->evaluateXYAtParameter(currentX, 0).y();
     iterations++;
   } while (xMin < currentX && currentX < xMax &&
            !isCursorVisibleAtPosition(Coordinate2D<float>(currentX, currentY),
@@ -188,7 +185,7 @@ void FunctionGraphController::computeDefaultPositionForFunctionAtIndex(
   OMG::ExpiringPointer<const Function> function =
       functionOrSequenceContext().modelForRecord(record);
   *t = defaultCursorT(record, ignoreMargins);
-  *xy = function->evaluateXYAtParameter(*t, App::app()->localContext(), 0);
+  *xy = function->evaluateXYAtParameter(*t, 0);
 }
 
 void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
@@ -219,9 +216,9 @@ bool FunctionGraphController::moveCursorVertically(
     OMG::VerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
   int nextSubCurve = 0;
-  int nextCurve = nextCurveIndexVertically(
-      direction, currentActiveFunctionIndex, App::app()->localContext(),
-      m_selectedSubCurveIndex, &nextSubCurve);
+  int nextCurve =
+      nextCurveIndexVertically(direction, currentActiveFunctionIndex,
+                               m_selectedSubCurveIndex, &nextSubCurve);
   if (nextCurve < 0) {
     return false;
   }
@@ -241,7 +238,7 @@ void FunctionGraphController::moveCursorVerticallyToPosition(int nextCurve,
     nextT = std::min<double>(f->tMax(), std::max<double>(f->tMin(), nextT));
   }
   Poincare::Coordinate2D<double> cursorPosition =
-      f->evaluateXYAtParameter(nextT, App::app()->localContext(), nextSubCurve);
+      f->evaluateXYAtParameter(nextT, nextSubCurve);
   m_cursor->moveTo(nextT, cursorPosition.x(), cursorPosition.y());
   selectCurveAtIndex(nextCurve, true, nextSubCurve);
   // Prevent the abscissaValue from edition if the function is along y
@@ -262,8 +259,7 @@ bool FunctionGraphController::selectedModelIsValid() const {
 Poincare::Coordinate2D<double> FunctionGraphController::selectedModelXyValues(
     double t) const {
   assert(selectedModelIsValid());
-  return xyValues(*m_selectedCurveIndex, t, App::app()->localContext(),
-                  m_selectedSubCurveIndex);
+  return xyValues(*m_selectedCurveIndex, t, m_selectedSubCurveIndex);
 }
 
 AbstractPlotView* FunctionGraphController::curveView() {
@@ -271,11 +267,10 @@ AbstractPlotView* FunctionGraphController::curveView() {
 }
 
 Coordinate2D<double> FunctionGraphController::xyValues(
-    int curveIndex, double t, const Poincare::Context& context,
-    int subCurveIndex) const {
+    int curveIndex, double t, int subCurveIndex) const {
   return functionOrSequenceContext()
       .modelForRecord(recordAtCurveIndex(curveIndex))
-      ->evaluateXYAtParameter(t, context, subCurveIndex);
+      ->evaluateXYAtParameter(t, subCurveIndex);
 }
 
 int FunctionGraphController::numberOfSubCurves(int curveIndex) const {

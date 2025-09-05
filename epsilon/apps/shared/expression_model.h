@@ -16,8 +16,7 @@ class ExpressionModel {
   void text(const Ion::Storage::Record* record, char* buffer, size_t bufferSize,
             CodePoint symbol = 0) const;
   virtual Poincare::SystemExpression expressionReduced(
-      const Ion::Storage::Record* record,
-      const Poincare::Context& context) const;
+      const Ion::Storage::Record* record) const;
   virtual Poincare::UserExpression expressionClone(
       const Ion::Storage::Record* record) const;
 
@@ -39,8 +38,8 @@ class ExpressionModel {
   virtual void tidyDownstreamPoolFrom(
       const Poincare::PoolObject* treePoolCursor = nullptr) const;
 
-  Poincare::ComplexFormat complexFormat(const Ion::Storage::Record* record,
-                                        const Poincare::Context& context) const;
+  Poincare::ComplexFormat complexFormat(
+      const Ion::Storage::Record* record) const;
 
  protected:
   // Setters helper
@@ -51,8 +50,7 @@ class ExpressionModel {
       Poincare::UserExpression e, CodePoint symbol,
       bool onlySecondTerm = false);
 
-  bool isCircularlyDefined(const Ion::Storage::Record* record,
-                           const Poincare::Context& context) const;
+  bool isCircularlyDefined(const Ion::Storage::Record* record) const;
   virtual void updateNewDataWithExpression(
       Ion::Storage::Record* record,
       const Poincare::UserExpression& expressionToStore,

@@ -94,16 +94,14 @@ void SequenceCache::shiftValuesRight(int sequenceIndex,
   }
 }
 
-void SequenceCache::stepUntilRank(int sequenceIndex, int rank,
-                                  const Poincare::Context& context) {
+void SequenceCache::stepUntilRank(int sequenceIndex, int rank) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   bool intermediateComputation = m_isInsideComputation;
   const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
   assert(s->isDefined());
   assert(rank >= s->initialRank());
   bool explicitComputation =
-      rank >= s->firstNonInitialRank() &&
-      s->canBeHandledAsExplicit(Poincare::EmptyContext{} /* TODO this*/);
+      rank >= s->firstNonInitialRank() && s->canBeHandledAsExplicit();
   if (!explicitComputation && rank > k_maxRecurrentRank) {
     return;
   }
@@ -117,12 +115,12 @@ void SequenceCache::stepUntilRank(int sequenceIndex, int rank,
   }
   while (*currentRank < rank) {
     int step = jumpToRank ? rank - *currentRank : 1;
-    stepRanks(sequenceIndex, intermediateComputation, step, context);
+    stepRanks(sequenceIndex, intermediateComputation, step);
   }
 }
 
 void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
-                              int step, const Poincare::Context& context) {
+                              int step) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
 
   // Update computation state
@@ -155,8 +153,7 @@ void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
     const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
     assert(s->isDefined());
     *values = s->approximateAtContextRank(
-        context, rank(sequenceIndex, intermediateComputation),
-        intermediateComputation);
+        rank(sequenceIndex, intermediateComputation), intermediateComputation);
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
     // Store value in initial storage if rank is in the right range
     int offset = rankForInitialValuesStorage(sequenceIndex) - *currentRank;
@@ -199,13 +196,11 @@ int SequenceCache::rankForInitialValuesStorage(int sequenceIndex) const {
   return sequenceAtNameIndex(sequenceIndex)->initialRank() + k_storageDepth - 1;
 }
 
-bool SequenceCache::sequenceIsNotComputable(const Poincare::Context& context,
-                                            int sequenceIndex) {
+bool SequenceCache::sequenceIsNotComputable(int sequenceIndex) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   if (m_sequenceIsNotComputable[sequenceIndex] == OMG::Troolean::Unknown) {
-    m_sequenceIsNotComputable[sequenceIndex] =
-        OMG::BoolToTroolean(sequenceAtNameIndex(sequenceIndex)
-                                ->mainExpressionIsNotComputable(context));
+    m_sequenceIsNotComputable[sequenceIndex] = OMG::BoolToTroolean(
+        sequenceAtNameIndex(sequenceIndex)->mainExpressionIsNotComputable());
   }
   return TrooleanToBool(m_sequenceIsNotComputable[sequenceIndex]);
 }

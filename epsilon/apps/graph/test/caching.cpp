@@ -28,10 +28,8 @@ void assert_check_cartesian_cache_against_function(
   float t;
   for (int i = 0; i < Ion::Display::Width; i++) {
     t = tMin + i * cache->step();
-    Coordinate2D<float> cacheValues = cache->valueForParameter(
-        function, GlobalContextAccessor::Context(), t, 0);
-    Coordinate2D<float> functionValues =
-        function->evaluateXYAtParameter(t, GlobalContextAccessor::Context());
+    Coordinate2D<float> cacheValues = cache->valueForParameter(function, t, 0);
+    Coordinate2D<float> functionValues = function->evaluateXYAtParameter(t);
     assert_float_equals(t, cacheValues.x());
     assert_float_equals(t, functionValues.x());
     assert_float_equals(cacheValues.y(), functionValues.y());
@@ -53,10 +51,7 @@ void assert_cartesian_cache_stays_valid_while_panning(
   constexpr int numberOfMoves = 30;
   for (int i = 0; i < numberOfMoves; i++) {
     cursor->moveTo(cursor->t() + step, cursor->x() + step,
-                   function
-                       ->evaluateXYAtParameter(cursor->x() + step,
-                                               GlobalContextAccessor::Context())
-                       .y());
+                   function->evaluateXYAtParameter(cursor->x() + step).y());
     range->panToMakePointVisible(
         cursor->x(), cursor->y(), margin, margin, margin, margin,
         (range->xMax() - range->xMin()) / (Ion::Display::Width - 1));
@@ -86,16 +81,14 @@ void assert_check_polar_cache_against_function(
   float t;
   for (int i = 0; i < Ion::Display::Width / 2; i++) {
     t = tMin + i * cache->step();
-    function->evaluateXYAtParameter(t, GlobalContextAccessor::Context());
+    function->evaluateXYAtParameter(t);
   }
 
   function->setCache(nullptr);
   for (int i = 0; i < Ion::Display::Width / 2; i++) {
     t = tMin + i * cache->step();
-    Coordinate2D<float> cacheValues = cache->valueForParameter(
-        function, GlobalContextAccessor::Context(), t, 0);
-    Coordinate2D<float> functionValues =
-        function->evaluateXYAtParameter(t, GlobalContextAccessor::Context());
+    Coordinate2D<float> cacheValues = cache->valueForParameter(function, t, 0);
+    Coordinate2D<float> functionValues = function->evaluateXYAtParameter(t);
     assert_float_equals(cacheValues.x(), functionValues.x());
     assert_float_equals(cacheValues.y(), functionValues.y());
   }
@@ -112,8 +105,7 @@ void assert_cache_stays_valid(const char* definition, float rangeXMin = -5,
 
   CurveViewCursor cursor;
   ContinuousFunction* function = AddFunction(definition);
-  Coordinate2D<float> origin =
-      function->evaluateXYAtParameter(0.f, GlobalContextAccessor::Context(), 0);
+  Coordinate2D<float> origin = function->evaluateXYAtParameter(0.f, 0);
   cursor.moveTo(0.f, origin.x(), origin.y());
 
   if (function->properties().isCartesian()) {

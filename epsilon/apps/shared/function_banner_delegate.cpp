@@ -40,7 +40,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
   numberOfChar += function->printFunctionValue(
       cursorT, cursorX, cursorY, buffer + numberOfChar,
       k_textBufferSize - numberOfChar,
-      numberOfSignificantDigits(cappedNumberOfSignificantDigits), context);
+      numberOfSignificantDigits(cappedNumberOfSignificantDigits));
   assert(numberOfChar < k_textBufferSize - 1);
   buffer[numberOfChar++] = 0;
   bannerView()->ordinateView()->setText(buffer);

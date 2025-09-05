@@ -38,8 +38,7 @@ class SequenceContext final
 
   // SequenceContext
 
-  bool sequenceIsNotComputable(const Poincare::Context& context,
-                               int sequenceIndex) const;
+  bool sequenceIsNotComputable(int sequenceIndex) const;
   void resetCache() const { cache()->resetCache(); }
   const Sequence* sequenceAtNameIndex(int sequenceIndex) const;
 

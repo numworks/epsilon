@@ -192,8 +192,7 @@ bool InteractiveCurveViewController::textFieldDidReceiveEvent(
 
 void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
   Coordinate2D<double> xy =
-      xyValues(selectedCurveIndex(), t, App::app()->localContext(),
-               m_selectedSubCurveIndex);
+      xyValues(selectedCurveIndex(), t, m_selectedSubCurveIndex);
   m_cursor->moveTo(t, xy.x(), xy.y());
   reloadBannerView();
   if (!isCursorCurrentlyVisible(false, true)) {
@@ -239,8 +238,7 @@ bool InteractiveCurveViewController::isCursorVisibleAtPosition(
 
 int InteractiveCurveViewController::closestCurveIndexVertically(
     OMG::VerticalDirection direction, int currentCurveIndex,
-    const Poincare::Context& context, int currentSubCurveIndex,
-    int* newSubCurveIndex) const {
+    int currentSubCurveIndex, int* newSubCurveIndex) const {
   /* Vertical curves are quite hard to handle when moving the cursor.
    * To simplify things here, we consider vertical curves as if it they were
    * rotated by 90 degrees by swapping x and y when dealing with them. */
@@ -268,7 +266,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(
         continue;
       }
       Poincare::Coordinate2D<double> newXY =
-          xyValues(curveIndex, x, context, subCurveIndex);
+          xyValues(curveIndex, x, subCurveIndex);
       double newY = newXY.y();
       if (isAlongY(curveIndex)) {
         newY = newXY.x();

@@ -77,7 +77,6 @@ class FunctionGraphController : public InteractiveCurveViewController,
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t,
-                                          const Poincare::Context& context,
                                           int subCurveIndex = 0) const override;
   int numberOfSubCurves(int curveIndex) const override;
   bool isAlongY(int curveIndex) const override;
@@ -89,10 +88,9 @@ class FunctionGraphController : public InteractiveCurveViewController,
   virtual const FunctionContext& functionOrSequenceContext() const;
   virtual int nextCurveIndexVertically(OMG::VerticalDirection direction,
                                        int currentCurveIndex,
-                                       const Poincare::Context& context,
                                        int currentSubCurveIndex,
                                        int* subCurveIndex) const {
-    return closestCurveIndexVertically(direction, currentCurveIndex, context,
+    return closestCurveIndexVertically(direction, currentCurveIndex,
                                        currentSubCurveIndex, subCurveIndex);
   }
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange* range) const;

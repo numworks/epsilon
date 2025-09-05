@@ -20,8 +20,7 @@ class PreimageGraphController : public CalculationGraphController {
 
  private:
   Poincare::Coordinate2D<double> computeNewPointOfInterest(
-      double start, double max, const Poincare::Context& context,
-      bool stretch) override;
+      double start, double max, bool stretch) override;
   double m_image;
 };
 

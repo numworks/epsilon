@@ -113,25 +113,25 @@ Layout Sequence::aggregatedLayout() {
 }
 
 Ion::Storage::Record::ErrorStatus Sequence::setLayoutsForAggregated(
-    Layout l, const Context& ctx) {
+    Layout l, const Context& context) {
   if (SequenceHelper::IsSequenceInsideRack(l)) {
     Ion::Storage::Record::ErrorStatus error =
-        setContent(SequenceHelper::ExtractExpressionAtRow(l, 0), ctx);
+        setContent(SequenceHelper::ExtractExpressionAtRow(l, 0), context);
     if (type() == Type::Explicit ||
         error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
     }
     error = setFirstInitialConditionContent(
-        SequenceHelper::ExtractExpressionAtRow(l, 1), ctx);
+        SequenceHelper::ExtractExpressionAtRow(l, 1), context);
     if (type() == Type::SingleRecurrence ||
         error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
     }
     return setSecondInitialConditionContent(
-        SequenceHelper::ExtractExpressionAtRow(l, 2), ctx);
+        SequenceHelper::ExtractExpressionAtRow(l, 2), context);
   } else {
     // Handle layout as main expression
-    return setContent(l, ctx);
+    return setContent(l, context);
   }
 }
 
@@ -166,25 +166,25 @@ bool Sequence::isEmpty() const {
                                       data->initialConditionSize(1) == 0)));
 }
 
-bool Sequence::isSuitableForCobweb(const Context& context) const {
+bool Sequence::isSuitableForCobweb() const {
   return type() == Type::SingleRecurrence &&
          !std::isnan(approximateAtRank(
              initialRank(),
-             reinterpret_cast<const SequenceContext&>(context).cache(),
-             context)) &&
-         !mainExpressionContainsForbiddenTerms(context, true, false, false);
+             GlobalContextAccessor::SequenceContext().cache())) &&
+         !mainExpressionContainsForbiddenTerms(true, false, false);
 }
 
 bool Sequence::mainExpressionContainsForbiddenTerms(
-    const Context& context, bool recursionIsAllowed, bool systemSymbolIsAllowed,
+    bool recursionIsAllowed, bool systemSymbolIsAllowed,
     bool otherSequencesAreAllowed) const {
   constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameLength + 1;
   char buffer[bufferSize];
   name(buffer, bufferSize);
   // TODO_PCJ: used SymbolicComputation::ReplaceDefinedSymbols
   return SequenceHelper::MainExpressionContainsForbiddenTerms(
-      expressionClone(), context, buffer, type(), initialRank(),
-      recursionIsAllowed, systemSymbolIsAllowed, otherSequencesAreAllowed);
+      expressionClone(), GlobalContextAccessor::SequenceContext(), buffer,
+      type(), initialRank(), recursionIsAllowed, systemSymbolIsAllowed,
+      otherSequencesAreAllowed);
 }
 
 void Sequence::tidyDownstreamPoolFrom(const PoolObject* treePoolCursor) const {
@@ -194,50 +194,48 @@ void Sequence::tidyDownstreamPoolFrom(const PoolObject* treePoolCursor) const {
 }
 
 template <typename T>
-T Sequence::privateEvaluateYAtX(T x, const Context& context) const {
+T Sequence::privateEvaluateYAtX(T x) const {
   // Round behaviour changes platform-wise if std::isnan(x)
   assert(!std::isnan(x));
   int n = std::round(x);
-  return static_cast<T>(approximateAtRank(
-      n, reinterpret_cast<const SequenceContext&>(context).cache(), context));
+  return static_cast<T>(
+      approximateAtRank(n, GlobalContextAccessor::SequenceContext().cache()));
 }
 
-double Sequence::approximateAtRank(int rank, SequenceCache* sqctx,
-                                   const Context& context) const {
+double Sequence::approximateAtRank(int rank, SequenceCache* sqctx) const {
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   if (!isDefined() || rank < initialRank() ||
       (rank >= firstNonInitialRank() &&
-       sqctx->sequenceIsNotComputable(context, sequenceIndex))) {
+       sqctx->sequenceIsNotComputable(sequenceIndex))) {
     return NAN;
   }
-  sqctx->stepUntilRank(sequenceIndex, rank, context);
+  sqctx->stepUntilRank(sequenceIndex, rank);
   return sqctx->storedValueOfSequenceAtRank(sequenceIndex, rank);
 }
 
-double Sequence::approximateAtContextRank(const Context& context, int rank,
+double Sequence::approximateAtContextRank(int rank,
                                           bool intermediateComputation) const {
   if (rank < initialRank()) {
     return NAN;
   }
   if (rank >= firstNonInitialRank()) {
     // TODO: Prepared function of expressionReduced could be memoized.
-    return expressionReduced(context)
+    return expressionReduced()
         .getPreparedFunction(Function::k_unknownName)
         .approximateToRealScalarWithValue(static_cast<double>(rank - order()));
   }
   assert(type() != Type::Explicit);
   SystemExpression e;
   if (rank == initialRank()) {
-    e = firstInitialConditionExpressionReduced(context);
+    e = firstInitialConditionExpressionReduced();
   } else {
     assert(type() == Type::DoubleRecurrence);
-    e = secondInitialConditionExpressionReduced(context);
+    e = secondInitialConditionExpressionReduced();
   }
   return e.approximateSystemToRealScalar<double>();
 }
 
-double Sequence::sumBetweenBoundsValue(double start, double end,
-                                       const Context& context) const {
+double Sequence::sumBetweenBoundsValue(double start, double end) const {
   double result = 0.0;
   if (end - start > k_maxNumberOfSteps || start + 1.0 == start) {
     return NAN;
@@ -250,15 +248,13 @@ double Sequence::sumBetweenBoundsValue(double start, double end,
     if (i == i - 1.0 || i == i + 1.0) {
       return NAN;
     }
-    result += evaluateXYAtParameter(i, context).y();
+    result += evaluateXYAtParameter(i).y();
   }
   return result;
 }
 
-SystemExpression Sequence::sumBetweenBounds(double start, double end,
-                                            const Context& context) const {
-  return SystemExpression::Builder<double>(
-      sumBetweenBoundsValue(start, end, context));
+SystemExpression Sequence::sumBetweenBounds(double start, double end) const {
+  return SystemExpression::Builder<double>(sumBetweenBoundsValue(start, end));
 }
 
 Sequence::RecordDataBuffer* Sequence::recordData() const {
@@ -386,9 +382,7 @@ void Sequence::InitialConditionModel::buildName(
                            .KB = Layout::String(buffer)});
 }
 
-template double Sequence::privateEvaluateYAtX<double>(double,
-                                                      const Context&) const;
-template float Sequence::privateEvaluateYAtX<float>(float,
-                                                    const Context&) const;
+template double Sequence::privateEvaluateYAtX<double>(double) const;
+template float Sequence::privateEvaluateYAtX<float>(float) const;
 
 }  // namespace Shared

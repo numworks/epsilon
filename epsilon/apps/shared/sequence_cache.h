@@ -1,7 +1,6 @@
 #pragma once
 
 #include <omg/troolean.h>
-#include <poincare/context.h>
 
 namespace Shared {
 
@@ -13,11 +12,9 @@ class SequenceCache {
   SequenceCache(Shared::SequenceStore* sequenceStore);
 
   void resetCache();
-  bool sequenceIsNotComputable(const Poincare::Context& context,
-                               int sequenceIndex);
+  bool sequenceIsNotComputable(int sequenceIndex);
 
-  void stepUntilRank(int sequenceIndex, int rank,
-                     const Poincare::Context& context);
+  void stepUntilRank(int sequenceIndex, int rank);
   int rank(int sequenceIndex, bool intermediateComputation) {
     return *(rankPointer(sequenceIndex, intermediateComputation));
   }
@@ -33,8 +30,7 @@ class SequenceCache {
   double* valuesPointer(int sequenceIndex, bool intermediateComputation);
   void shiftValuesRight(int sequenceIndex, bool intermediateComputation,
                         int delta);
-  void stepRanks(int sequenceIndex, bool intermediateComputation, int step,
-                 const Poincare::Context& context);
+  void stepRanks(int sequenceIndex, bool intermediateComputation, int step);
   void resetValuesOfSequence(int sequenceIndex, bool intermediateComputation);
   void resetRanksAndValuesOfSequence(int sequenceIndex,
                                      bool intermediateComputation);

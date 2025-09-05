@@ -174,13 +174,9 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   bool isSumColumn = false;
   OMG::ExpiringPointer<Shared::Sequence> sequence =
       functionStore()->modelForRecord(recordAtColumn(column, &isSumColumn));
-  double sumValue =
-      isSumColumn
-          ? sequence->sumBetweenBoundsValue(sequence->initialRank(), abscissa,
-                                            App::app()->localContext())
-          : sequence
-                ->evaluateXYAtParameter(abscissa, App::app()->localContext())
-                .y();
+  double sumValue = isSumColumn ? sequence->sumBetweenBoundsValue(
+                                      sequence->initialRank(), abscissa)
+                                : sequence->evaluateXYAtParameter(abscissa).y();
   *memoizedLayoutAtIndex(index) =
       UserExpression::Builder(sumValue).createLayout(
           GlobalPreferences::SharedGlobalPreferences()->displayMode(),

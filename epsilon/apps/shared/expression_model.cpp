@@ -9,6 +9,7 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/user_expression.h>
+#include <shared/global_context.h>
 #include <string.h>
 
 #include <algorithm>
@@ -44,24 +45,23 @@ void ExpressionModel::text(const Storage::Record* record, char* buffer,
   }
 }
 
-bool ExpressionModel::isCircularlyDefined(
-    const Storage::Record* record, const Poincare::Context& context) const {
+bool ExpressionModel::isCircularlyDefined(const Storage::Record* record) const {
   if (m_circular == -1) {
     UserExpression e = expressionClone(record);
-    e.replaceSymbols(context);
+    e.replaceSymbols(GlobalContextAccessor::Context());
     m_circular = e.isUninitialized();
   }
   return m_circular;
 }
 
-ComplexFormat ExpressionModel::complexFormat(const Storage::Record* record,
-                                             const Context& context) const {
+ComplexFormat ExpressionModel::complexFormat(
+    const Storage::Record* record) const {
   if (m_expressionComplexFormat == MemoizedComplexFormat::NotMemoized) {
     UserExpression expression = ExpressionModel::expressionClone(record);
     if (!expression.isUninitialized() &&
         (Preferences::UpdatedComplexFormatWithExpressionInput(
-             ComplexFormat::Real, expression, context) !=
-         ComplexFormat::Real)) {
+             ComplexFormat::Real, expression,
+             GlobalContextAccessor::Context()) != ComplexFormat::Real)) {
       m_expressionComplexFormat = MemoizedComplexFormat::Complex;
     } else {
       m_expressionComplexFormat = MemoizedComplexFormat::Any;
@@ -78,7 +78,7 @@ ComplexFormat ExpressionModel::complexFormat(const Storage::Record* record,
 }
 
 SystemExpression ExpressionModel::expressionReduced(
-    const Storage::Record* record, const Poincare::Context& context) const {
+    const Storage::Record* record) const {
   /* TODO
    * By calling isCircularlyDefined and then Simplify, the expression tree is
    * browsed twice. Note that Simplify does ALMOST the job of
@@ -99,7 +99,7 @@ SystemExpression ExpressionModel::expressionReduced(
    */
   if (m_expression.isUninitialized()) {
     assert(record->fullName() != nullptr);
-    if (isCircularlyDefined(record, context)) {
+    if (isCircularlyDefined(record)) {
       m_expression = SystemExpression::Undefined();
     } else {
       UserExpression userExpression = UserExpression::ExpressionFromAddress(
@@ -109,7 +109,8 @@ SystemExpression ExpressionModel::expressionReduced(
        * 'Simplify'. Thus, we use a temporary expression. */
       bool reductionFailure = false;
       m_expression = PoincareHelpers::CloneAndReduce(
-          userExpression, context, complexFormat(record, context),
+          userExpression, GlobalContextAccessor::Context(),
+          complexFormat(record),
           GlobalPreferences::SharedGlobalPreferences()->angleUnit(), false,
           Poincare::ReductionTarget::User,
           Poincare::SymbolicComputation::ReplaceDefinedSymbols,

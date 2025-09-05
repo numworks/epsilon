@@ -51,11 +51,10 @@ bool CalculationGraphController::handleEnter() {
   t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
       t, App::app()->localContext(), numberOfSignificantDigits(),
       curveView()->pixelWidth());
-  Coordinate2D<double> xy =
-      App::app()
-          ->functionStore()
-          .modelForRecord(m_record)
-          ->evaluateXYAtParameter(t, App::app()->localContext());
+  Coordinate2D<double> xy = App::app()
+                                ->functionStore()
+                                .modelForRecord(m_record)
+                                ->evaluateXYAtParameter(t);
   m_cursor->moveTo(t, xy.x(), xy.y());
   return Shared::SimpleInteractiveCurveViewController::handleEnter();
 }
@@ -108,12 +107,11 @@ CalculationGraphController::computeNewPointOfInterestFromAbscissa(
       direction.isRight() ? m_graphRange->xMax() : m_graphRange->xMin();
   functionStore()->modelForRecord(m_record)->trimResolutionInterval(&start,
                                                                     &max);
-  return computeNewPointOfInterest(start, max, App::app()->localContext(),
-                                   stretch);
+  return computeNewPointOfInterest(start, max, stretch);
 }
 
 PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(
-    double start, double max, const Poincare::Context& context, bool stretch) {
+    double start, double max, bool stretch) {
   // Compute at least 1 point of interest before displaying the view
   PointsOfInterestCache* pointsOfInterest =
       App::app()->graphController()->pointsOfInterestForSelectedRecord();

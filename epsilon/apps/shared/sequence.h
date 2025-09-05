@@ -58,9 +58,8 @@ class Sequence : public Function {
   void firstInitialConditionText(char* buffer, size_t bufferSize) const {
     return m_firstInitialCondition.text(this, buffer, bufferSize);
   }
-  Poincare::SystemExpression firstInitialConditionExpressionReduced(
-      const Poincare::Context& context) const {
-    return m_firstInitialCondition.expressionReduced(this, context);
+  Poincare::SystemExpression firstInitialConditionExpressionReduced() const {
+    return m_firstInitialCondition.expressionReduced(this);
   }
   Poincare::UserExpression firstInitialConditionExpressionClone() const {
     return m_firstInitialCondition.expressionClone(this);
@@ -80,9 +79,8 @@ class Sequence : public Function {
   void secondInitialConditionText(char* buffer, size_t bufferSize) const {
     return m_secondInitialCondition.text(this, buffer, bufferSize);
   }
-  Poincare::SystemExpression secondInitialConditionExpressionReduced(
-      const Poincare::Context& context) const {
-    return m_secondInitialCondition.expressionReduced(this, context);
+  Poincare::SystemExpression secondInitialConditionExpressionReduced() const {
+    return m_secondInitialCondition.expressionReduced(this);
   }
   Poincare::UserExpression secondInitialConditionExpressionClone() const {
     return m_secondInitialCondition.expressionClone(this);
@@ -108,47 +106,41 @@ class Sequence : public Function {
    * - u(n+1) depends only on u(n) or u(i) and not on n, on another sequence or
    *   on another rank of u
    * - u(i) has a non NAN value */
-  bool isSuitableForCobweb(const Poincare::Context& context) const;
+  bool isSuitableForCobweb() const;
   /* Sequence u (with initial rank i) can be handled as explicit if main
    * expression does not contains forbidden terms:
    * - explicit: any term of u
    * - simple recurrence: any term of u other than u(i)
    * - double recurrence: any term of u other than u(i+1), u(i) */
-  bool canBeHandledAsExplicit(const Poincare::Context& context) const {
-    return !mainExpressionContainsForbiddenTerms(context, false, true, false);
+  bool canBeHandledAsExplicit() const {
+    return !mainExpressionContainsForbiddenTerms(false, true, false);
   }
   /* Sequence u (with initial rank i) is not computable if main expression
    * contains another sequence or forbidden terms:
    * - explicit: any term of u
    * - simple recurrence: any term of u other than u(n), u(i)
    * - double recurrence: any term of u other than u(n+1), u(n), u(i+1), u(i) */
-  bool mainExpressionIsNotComputable(const Poincare::Context& context) const {
-    return mainExpressionContainsForbiddenTerms(context, true, true, true);
+  bool mainExpressionIsNotComputable() const {
+    return mainExpressionContainsForbiddenTerms(true, true, true);
   }
   int order() const { return static_cast<int>(type()); }
   int firstNonInitialRank() const { return initialRank() + order(); }
 
   // Approximation
   Poincare::Coordinate2D<float> evaluateXYAtParameter(
-      float x, const Poincare::Context& context,
-      int subCurveIndex = 0) const override {
-    return Poincare::Coordinate2D<float>(x, privateEvaluateYAtX(x, context));
+      float x, int subCurveIndex = 0) const override {
+    return Poincare::Coordinate2D<float>(x, privateEvaluateYAtX(x));
   }
   Poincare::Coordinate2D<double> evaluateXYAtParameter(
-      double x, const Poincare::Context& context,
-      int subCurveIndex = 0) const override {
-    return Poincare::Coordinate2D<double>(x, privateEvaluateYAtX(x, context));
+      double x, int subCurveIndex = 0) const override {
+    return Poincare::Coordinate2D<double>(x, privateEvaluateYAtX(x));
   }
-  double approximateAtContextRank(const Poincare::Context& context, int rank,
-                                  bool intermediateComputation) const;
-  double approximateAtRank(int rank, SequenceCache* sqctx,
-                           const Poincare::Context& context) const;
+  double approximateAtContextRank(int rank, bool intermediateComputation) const;
+  double approximateAtRank(int rank, SequenceCache* sqctx) const;
 
-  double sumBetweenBoundsValue(double start, double end,
-                               const Poincare::Context& context) const;
-  Poincare::SystemExpression sumBetweenBounds(
-      double start, double end,
-      const Poincare::Context& context) const override;
+  double sumBetweenBoundsValue(double start, double end) const;
+  Poincare::SystemExpression sumBetweenBounds(double start,
+                                              double end) const override;
 
   // m_initialRank is capped by 255
   constexpr static int k_maxInitialRank = 255;
@@ -260,14 +252,14 @@ class Sequence : public Function {
   };
 
   template <typename T>
-  T privateEvaluateYAtX(T x, const Poincare::Context& context) const;
+  T privateEvaluateYAtX(T x) const;
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const ExpressionModel* model() const override { return &m_definition; }
   RecordDataBuffer* recordData() const;
 
   bool mainExpressionContainsForbiddenTerms(
-      const Poincare::Context& context, bool recursionIsAllowed,
-      bool systemSymbolIsAllowed, bool otherSequencesAreAllowed) const;
+      bool recursionIsAllowed, bool systemSymbolIsAllowed,
+      bool otherSequencesAreAllowed) const;
 
   DefinitionModel m_definition;
   FirstInitialConditionModel m_firstInitialCondition;

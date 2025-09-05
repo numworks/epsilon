@@ -2,7 +2,6 @@
 
 #include <float.h>
 #include <ion/display.h>
-#include <poincare/context.h>
 #include <poincare/coordinate_2D.h>
 
 namespace Shared {
@@ -19,8 +18,7 @@ class ContinuousFunctionCache {
   float step() const { return m_tStep; }
   void clear();
   Poincare::Coordinate2D<float> valueForParameter(
-      const ContinuousFunction* function, const Poincare::Context& context,
-      float t, int curveIndex);
+      const ContinuousFunction* function, float t, int curveIndex);
   // Sets step parameters for non-cartesian curves
   static void ComputeNonCartesianSteps(float* tStep, float* tCacheStep,
                                        float tMax, float tMin);
@@ -56,8 +54,7 @@ class ContinuousFunctionCache {
   int indexForParameter(const ContinuousFunction* function, float t,
                         int curveIndex) const;
   Poincare::Coordinate2D<float> valuesAtIndex(
-      const ContinuousFunction* function, const Poincare::Context& context,
-      float t, int i, int curveIndex);
+      const ContinuousFunction* function, float t, int i, int curveIndex);
   void pan(ContinuousFunction* function, float newTMin);
 
   float m_tMin, m_tStep;

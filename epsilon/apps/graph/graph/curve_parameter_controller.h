@@ -88,10 +88,8 @@ class CurveParameterController
   bool parameterAtIndexIsFirstComponent(ParameterIndex index) const;
   bool parameterAtIndexIsEditable(ParameterIndex index) const;
   int derivationOrderOfParameterAtIndex(ParameterIndex index) const;
-  double evaluateCurveAt(ParameterIndex index,
-                         const Poincare::Context& context) const;
-  double evaluateDerivativeAt(ParameterIndex index, int derivationOrder,
-                              const Poincare::Context& context) const;
+  double evaluateCurveAt(ParameterIndex index) const;
+  double evaluateDerivativeAt(ParameterIndex index, int derivationOrder) const;
 
   Escher::StackViewController* stackController() const;
 

@@ -59,7 +59,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
       Poincare::SymbolHelper::BuildSequence(
           name, Poincare::UserExpression::Builder(sequence->initialRank()));
   Poincare::SystemExpression initialExpression =
-      sequence->firstInitialConditionExpressionReduced(context);
+      sequence->firstInitialConditionExpressionReduced();
   function.replaceSymbolWithExpression(initialSymbol, initialExpression);
 
   // Replace u(n) by n: u(n) becomes the variable
@@ -97,15 +97,12 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   bool increasing = shouldUpdate() && m_cachedStep == m_step - 1;
   int initialStep = increasing ? m_cachedStep : (shouldUpdate() ? m_step : 0);
   int rank = sequence->initialRank() + initialStep;
-  float x =
-      increasing
-          ? m_x
-          : sequence->evaluateXYAtParameter(static_cast<float>(rank), context)
-                .y();
+  float x = increasing
+                ? m_x
+                : sequence->evaluateXYAtParameter(static_cast<float>(rank)).y();
   float y = rank == sequence->initialRank() ? 0 : x;
   float uOfX =
-      sequence->evaluateXYAtParameter(static_cast<float>(rank + 1), context)
-          .y();
+      sequence->evaluateXYAtParameter(static_cast<float>(rank + 1)).y();
   KDMeasuringContext measuringContext(*ctx);
   for (int i = initialStep; i < m_step; i++) {
     rank++;
@@ -118,8 +115,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
                                         uOfX, sequence->color());
     y = uOfX;
     float uOfuOfX =
-        sequence->evaluateXYAtParameter(static_cast<float>(rank + 1), context)
-            .y();
+        sequence->evaluateXYAtParameter(static_cast<float>(rank + 1)).y();
     measuringContext.reset();
     plotView->drawDashedStraightSegment(&measuringContext, rect,
                                         OMG::Axis::Horizontal, y, x, uOfX,

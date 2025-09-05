@@ -372,11 +372,11 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     // Compute derivative approximate result
     assert(derivationOrder == 1 || derivationOrder == 2);
     result = UserExpression::Builder(function->approximateDerivative<double>(
-        abscissa, context, derivationOrder, false));
+        abscissa, derivationOrder, false));
   } else {
     // Compute exact result
     assert(derivationOrder == 0);
-    SystemExpression e = function->expressionReduced(context);
+    SystemExpression e = function->expressionReduced();
     SystemExpression abscissaExpression =
         SystemExpression::DecimalBuilderFromDouble(abscissa);
     bool simplificationFailure = false;

@@ -107,9 +107,7 @@ class GraphController : public Shared::FunctionGraphController,
   void selectCurveAtIndex(int curveIndex, bool willBeVisible,
                           int subCurveIndex = -1) override;
   int nextCurveIndexVertically(OMG::VerticalDirection direction,
-                               int currentCurveIndex,
-                               const Poincare::Context& context,
-                               int currentSubCurveIndex,
+                               int currentCurveIndex, int currentSubCurveIndex,
                                int* nextSubCurveIndex) const override;
   double defaultCursorT(Ion::Storage::Record record,
                         bool ignoreMargins) override;

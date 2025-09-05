@@ -26,14 +26,14 @@ static Coordinate2D<T> evaluator(T t, const void* model) {
   const ContinuousFunctionAndContext curve =
       *static_cast<const ContinuousFunctionAndContext*>(model);
   assert(curve.ctx);
-  return curve.func->evaluateXYAtParameter(t, *curve.ctx);
+  return curve.func->evaluateXYAtParameter(t);
 }
 template <typename T>
 static Coordinate2D<T> evaluatorSecondCurve(T t, const void* model) {
   const ContinuousFunctionAndContext curve =
       *static_cast<const ContinuousFunctionAndContext*>(model);
   assert(curve.ctx);
-  return curve.func->evaluateXYAtParameter(t, *curve.ctx, 1);
+  return curve.func->evaluateXYAtParameter(t, 1);
 }
 
 template <typename T, int coordinate>
@@ -86,13 +86,13 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
     ContinuousFunctionAndContext fModel{.func = f.operator->(),
                                         .ctx = &context};
     defaultRangeIsNormalized |= f->properties().enforcePlotNormalization();
-    if (f->approximationBasedOnCostlyAlgorithms(context)) {
+    if (f->approximationBasedOnCostlyAlgorithms()) {
       continue;
     }
     if (f->properties().isPolar() || f->properties().isInversePolar() ||
         f->properties().isParametric()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
-      PreparedFunctionPoint e = f->parametricForm(context).getPreparedFunction(
+      PreparedFunctionPoint e = f->parametricForm().getPreparedFunction(
           Shared::Function::k_unknownName);
       // Compute the ordinate range of x(t) and y(t)
       Range1D<float> ranges[2];
@@ -117,7 +117,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       zoom.fitPoint(Coordinate2D<float>(ranges[0].max(), ranges[1].max()));
       zoom.fitPoint(Coordinate2D<float>(ranges[0].min(), ranges[1].min()));
     } else if (f->properties().isScatterPlot()) {
-      for (Coordinate2D<float> p : f->iterateScatterPlot(context)) {
+      for (Coordinate2D<float> p : f->iterateScatterPlot()) {
         zoom.fitPoint(p);
       }
     } else {
@@ -145,7 +145,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
        * have its conditions fitted. It is assumed that expressions containing
        * more than one piecewise will be rare. */
       const Internal::Tree* piecewise =
-          f->expressionApproximated(context).tree()->firstDescendantSatisfying(
+          f->expressionApproximated().tree()->firstDescendantSatisfying(
               [](const Internal::Tree* t) { return t->isPiecewise(); });
       if (piecewise) {
         zoom.fitConditions(PreparedFunction::Builder(piecewise),
@@ -162,7 +162,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
               g->properties()
                   .canComputeIntersectionsWithFunctionsAlongSameVariable() &&
               g->isAlongY() == alongY &&
-              !g->approximationBasedOnCostlyAlgorithms(context)) {
+              !g->approximationBasedOnCostlyAlgorithms()) {
             ContinuousFunctionAndContext gModel{.func = g.operator->(),
                                                 .ctx = &context};
             zoom.fitIntersections(evaluator<float>, &fModel, evaluator<float>,
@@ -178,7 +178,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
     for (int i = 0; i < nbFunctions; i++) {
       OMG::ExpiringPointer<const ContinuousFunction> f =
           store->modelForRecord(store->activeRecordAtIndex(i));
-      if (f->approximationBasedOnCostlyAlgorithms(context) ||
+      if (f->approximationBasedOnCostlyAlgorithms() ||
           !f->properties().isCartesian()) {
         continue;
       }

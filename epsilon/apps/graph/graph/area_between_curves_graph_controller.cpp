@@ -41,9 +41,7 @@ void AreaBetweenCurvesGraphController::makeCursorVisibleOnSecondCurve(float x) {
   OMG::ExpiringPointer<const Shared::Function> functionG =
       FunctionApp::app()->functionContext().modelForRecord(
           secondSelectedRecord());
-  float yG =
-      functionG->evaluateXYAtParameter(x, FunctionApp::app()->localContext())
-          .y();
+  float yG = functionG->evaluateXYAtParameter(x).y();
   // zoomOut is always true so that the user can see both dots
   makeDotVisible(x, yG, true);
 }
@@ -98,16 +96,16 @@ Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
 }
 
 SystemExpression AreaBetweenCurvesGraphController::createSumExpression(
-    double startSum, double endSum, const Context& context) {
+    double startSum, double endSum) {
   // Get the expression of the first function
   OMG::ExpiringPointer<const Shared::Function> functionF =
       FunctionApp::app()->functionContext().modelForRecord(selectedRecord());
-  SystemExpression expressionF = functionF->expressionReduced(context).clone();
+  SystemExpression expressionF = functionF->expressionReduced().clone();
   // Get the expression of the second function
   OMG::ExpiringPointer<const Shared::Function> functionG =
       FunctionApp::app()->functionContext().modelForRecord(
           secondSelectedRecord());
-  SystemExpression expressionG = functionG->expressionReduced(context).clone();
+  SystemExpression expressionG = functionG->expressionReduced().clone();
   SystemExpression result = SystemExpression::CreateIntegralOfAbsOfDifference(
       SystemExpression::Builder<double>(startSum),
       SystemExpression::Builder<double>(endSum), expressionF, expressionG);

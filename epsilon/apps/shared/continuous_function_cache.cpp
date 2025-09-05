@@ -56,13 +56,12 @@ void ContinuousFunctionCache::clear() {
 }
 
 Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(
-    const ContinuousFunction* function, const Poincare::Context& context,
-    float t, int curveIndex) {
+    const ContinuousFunction* function, float t, int curveIndex) {
   int resIndex = indexForParameter(function, t, curveIndex);
   if (resIndex < 0) {
-    return function->privateEvaluateXYAtParameter(t, context, curveIndex);
+    return function->privateEvaluateXYAtParameter(t, curveIndex);
   }
-  return valuesAtIndex(function, context, t, resIndex, curveIndex);
+  return valuesAtIndex(function, t, resIndex, curveIndex);
 }
 
 void ContinuousFunctionCache::ComputeNonCartesianSteps(float* tStep,
@@ -131,20 +130,18 @@ int ContinuousFunctionCache::indexForParameter(
 }
 
 Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(
-    const ContinuousFunction* function, const Poincare::Context& context,
-    float t, int i, int curveIndex) {
+    const ContinuousFunction* function, float t, int i, int curveIndex) {
   assert(curveIndex == 0);
   if (function->properties().isCartesian()) {
     if (OMG::IsSignalingNan(m_cache[i])) {
-      m_cache[i] =
-          function->privateEvaluateXYAtParameter(t, context, curveIndex).y();
+      m_cache[i] = function->privateEvaluateXYAtParameter(t, curveIndex).y();
     }
     return Poincare::Coordinate2D<float>(t, m_cache[i]);
   }
   if (OMG::IsSignalingNan(m_cache[2 * i]) ||
       OMG::IsSignalingNan(m_cache[2 * i + 1])) {
     Poincare::Coordinate2D<float> res =
-        function->privateEvaluateXYAtParameter(t, context, curveIndex);
+        function->privateEvaluateXYAtParameter(t, curveIndex);
     m_cache[2 * i] = res.x();
     m_cache[2 * i + 1] = res.y();
   }

@@ -40,9 +40,8 @@ const Sequence* SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
   return s;
 }
 
-bool SequenceContext::sequenceIsNotComputable(const Context& context,
-                                              int sequenceIndex) const {
-  return cache()->sequenceIsNotComputable(context, sequenceIndex);
+bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) const {
+  return cache()->sequenceIsNotComputable(sequenceIndex);
 }
 
 double SequenceContext::approximateSequenceAtRank(const char* identifier,
@@ -55,7 +54,7 @@ double SequenceContext::approximateSequenceAtRank(const char* identifier,
   double result = cache()->storedValueOfSequenceAtRank(index, rank);
   if (OMG::IsSignalingNan(result)) {
     // compute value if not in cache
-    result = sequence->approximateAtRank(rank, cache(), *this);
+    result = sequence->approximateAtRank(rank, cache());
   }
   return result;
 }

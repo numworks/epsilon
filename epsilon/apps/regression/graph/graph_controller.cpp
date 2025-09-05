@@ -243,8 +243,7 @@ InteractiveCurveViewRange* GraphController::interactiveCurveViewRange() const {
 void GraphController::openMenuForCurveAtIndex(int curveIndex) {
   if (*m_selectedCurveIndex != curveIndex) {
     *m_selectedCurveIndex = curveIndex;
-    Coordinate2D<double> xy =
-        xyValues(curveIndex, m_cursor->t(), App::app()->localContext());
+    Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t());
     m_cursor->moveTo(m_cursor->t(), xy.x(), xy.y());
   }
   if (curveIsScatterPlot(*m_selectedCurveIndex)) {
@@ -283,7 +282,7 @@ Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(
     double t) const {
   assert(selectedModelIsValid());
   if (*m_selectedDotIndex == -1) {
-    return xyValues(*m_selectedCurveIndex, t, globalContext());
+    return xyValues(*m_selectedCurveIndex, t);
   }
   return Coordinate2D<double>(
       dotAbscissa(*m_selectedCurveIndex, *m_selectedDotIndex),
@@ -291,7 +290,6 @@ Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(
 }
 
 bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
-  const Poincare::Context& context = globalContext();
   double x = m_cursor->x();
   double y = m_cursor->y();
 
@@ -299,7 +297,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
   int selectedRegressionCurve =
       *m_selectedDotIndex == -1 ? *m_selectedCurveIndex : -1;
   int closestRegressionCurve =
-      closestCurveIndexVertically(direction, selectedRegressionCurve, context);
+      closestCurveIndexVertically(direction, selectedRegressionCurve);
 
   // Find the closest dot
   int closesDotSeries = -1;
@@ -377,7 +375,6 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
 }
 
 Coordinate2D<double> GraphController::xyValues(int curveIndex, double t,
-                                               const Poincare::Context& context,
                                                int subCurveIndex) const {
   return Coordinate2D<double>(t, yValue(curveIndex, t));
 }

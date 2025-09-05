@@ -46,7 +46,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     assert(subCurveIndex != nullptr);
     // previousXY will be needed for conic's special horizontal cursor moves.
     specialConicCursorMove = std::isfinite(
-        function->evaluateXYAtParameter(tCursor, context, *subCurveIndex).y());
+        function->evaluateXYAtParameter(tCursor, *subCurveIndex).y());
     if (*subCurveIndex == 1 &&
         !function->properties().isCartesianHyperbolaOfDegreeTwo()) {
       // On the sub curve, pressing left actually moves the cursor right
@@ -62,14 +62,14 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     double slopeMultiplicator = 1.0;
     if (function->canDisplayDerivative()) {
       // Use the local derivative to slow down the cursor's step if needed
-      double slope = function->approximateDerivative<double>(tCursor, context)
-                         .toRealScalar();
+      double slope =
+          function->approximateDerivative<double>(tCursor).toRealScalar();
       if ((!subCurveIndex || *subCurveIndex == 0) && std::isnan(slope)) {
         /* If the derivative could not bet computed, compute the derivative one
          * step further. */
         slope = function
-                    ->approximateDerivative<double>(
-                        tCursor + dir * step * pixelWidth, context)
+                    ->approximateDerivative<double>(tCursor +
+                                                    dir * step * pixelWidth)
                     .toRealScalar();
         if (std::isnan(slope)) {
           /* If the derivative is still NAN, it might mean that it's NAN
@@ -138,7 +138,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     // Silence warning for step being potentially uninitialized.
     step = 1.0;
     float newT = std::floor(t + dir);
-    if (0.f <= newT && newT < function->iterateScatterPlot(context).length()) {
+    if (0.f <= newT && newT < function->iterateScatterPlot().length()) {
       t = newT;
     }
   } else {
@@ -160,7 +160,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
   t = std::max(tMin, std::min(tMax, t));
   int subCurveIndexValue = subCurveIndex == nullptr ? 0 : *subCurveIndex;
   Coordinate2D<double> xy =
-      function->evaluateXYAtParameter(t, context, subCurveIndexValue);
+      function->evaluateXYAtParameter(t, subCurveIndexValue);
 
   if (specialConicCursorMove && std::isnan(xy.y())) {
     if (function->properties().isCartesianHyperbolaOfDegreeTwo()) {
@@ -172,20 +172,20 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
       do {
         // Try to jump out of the undefined section
         t += dir * step;
-        xy = function->evaluateXYAtParameter(t, context, *subCurveIndex);
+        xy = function->evaluateXYAtParameter(t, *subCurveIndex);
         tries++;
       } while (std::isnan(xy.y()) && tries < maxTries);
       if (tries >= maxTries || t < tMin || t > tMax) {
         // Reset to default t and xy
         t = previousT;
-        xy = function->evaluateXYAtParameter(t, context, *subCurveIndex);
+        xy = function->evaluateXYAtParameter(t, *subCurveIndex);
       }
     } else {
       /* The cursor would end up out of the conic's bounds, do not move the
        * cursor and switch to the other sub curve (with inverted dir) */
       t = tCursor;
       *subCurveIndex = 1 - *subCurveIndex;
-      xy = function->evaluateXYAtParameter(t, context, *subCurveIndex);
+      xy = function->evaluateXYAtParameter(t, *subCurveIndex);
     }
   }
 
@@ -199,8 +199,7 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
   OMG::ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore().modelForRecord(record);
   PointOrRealScalar<double> derivative =
-      function->approximateDerivative<double>(
-          cursor->t(), App::app()->localContext(), derivationOrder);
+      function->approximateDerivative<double>(cursor->t(), derivationOrder);
 
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
@@ -252,8 +251,7 @@ double GraphControllerHelper::reloadSlopeInBannerViewForCursorOnFunction(
     CurveViewCursor* cursor, Ion::Storage::Record record) {
   OMG::ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore().modelForRecord(record);
-  double slope =
-      function->approximateSlope(cursor->t(), App::app()->localContext());
+  double slope = function->approximateSlope(cursor->t());
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
   Print::CustomPrintf(

@@ -125,10 +125,7 @@ void SumGraphController::makeCursorVisible() {
   }
   OMG::ExpiringPointer<const Function> function =
       FunctionApp::app()->functionContext().modelForRecord(selectedRecord());
-  float y =
-      function
-          ->evaluateXYAtParameter(position, FunctionApp::app()->localContext())
-          .y();
+  float y = function->evaluateXYAtParameter(position).y();
   // Do not zoom out if user is selecting first parameter
   makeDotVisible(position, y, m_step != Step::FirstParameter);
   makeCursorVisibleOnSecondCurve(position);
@@ -214,8 +211,7 @@ void SumGraphController::reloadBannerView() {
   if (m_step == Step::Result) {
     endSum = m_cursor->x();
     assert(!selectedRecord().isNull());
-    Poincare::SystemExpression sum = createSumExpression(
-        m_startSum, endSum, FunctionApp::app()->localContext());
+    Poincare::SystemExpression sum = createSumExpression(m_startSum, endSum);
     result = sum.approximateSystemToRealScalar<double>();
     functionLayout = createFunctionLayout();
   } else {
@@ -228,10 +224,10 @@ void SumGraphController::reloadBannerView() {
 }
 
 Poincare::SystemExpression SumGraphController::createSumExpression(
-    double startSum, double endSum, const Poincare::Context& context) {
+    double startSum, double endSum) {
   OMG::ExpiringPointer<const Function> function =
       FunctionApp::app()->functionContext().modelForRecord(selectedRecord());
-  return function->sumBetweenBounds(startSum, endSum, context);
+  return function->sumBetweenBounds(startSum, endSum);
 }
 
 /* Legend View */

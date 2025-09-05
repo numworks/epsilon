@@ -3,6 +3,8 @@
 #include <omg/utf8_helper.h>
 #include <poincare/system_expression.h>
 
+#include "shared/global_context.h"
+
 using namespace Poincare;
 using namespace Shared;
 using namespace Escher;
@@ -18,14 +20,14 @@ PreimageGraphController::PreimageGraphController(
       m_image(NAN) {}
 
 Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
-    double start, double max, const Context& context, bool stretch) {
-  Solver<double> solver = Poincare::Solver(start, max, context);
+    double start, double max, bool stretch) {
+  Solver<double> solver =
+      Poincare::Solver(start, max, Shared::GlobalContextAccessor::Context());
   if (stretch) {
     solver.stretch();
   }
   PreparedFunction f =
-      functionStore()->modelForRecord(m_record)->expressionApproximated(
-          context);
+      functionStore()->modelForRecord(m_record)->expressionApproximated();
   return solver
       .nextIntersection(SystemExpression::Builder<double>(m_image).tree(),
                         f.tree())

@@ -58,8 +58,8 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
   virtual double cursorNextStep(double position,
                                 OMG::HorizontalDirection direction) = 0;
   virtual Poincare::Layout createFunctionLayout() = 0;
-  virtual Poincare::SystemExpression createSumExpression(
-      double startSum, double endSum, const Poincare::Context& context);
+  virtual Poincare::SystemExpression createSumExpression(double startSum,
+                                                         double endSum);
 
   class LegendView : public Escher::View {
    public:

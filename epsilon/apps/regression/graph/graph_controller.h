@@ -109,7 +109,6 @@ class GraphController : public Shared::InteractiveCurveViewController {
     return const_cast<CurveSelectionController*>(&m_curveSelectionController);
   }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t,
-                                          const Poincare::Context& context,
                                           int subCurveIndex = 0) const override;
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override {

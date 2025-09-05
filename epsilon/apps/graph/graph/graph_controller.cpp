@@ -171,7 +171,6 @@ void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible,
 
 int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
                                               int currentCurveIndex,
-                                              const Poincare::Context& context,
                                               int currentSubCurveIndex,
                                               int* nextSubCurveIndex) const {
   assert(nextSubCurveIndex != nullptr);
@@ -179,8 +178,7 @@ int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
   if (functionOrSequenceContext().displaysOnlyCartesianFunctions(
           &nbOfActiveFunctions)) {
     return FunctionGraphController::nextCurveIndexVertically(
-        direction, currentCurveIndex, context, currentSubCurveIndex,
-        nextSubCurveIndex);
+        direction, currentCurveIndex, currentSubCurveIndex, nextSubCurveIndex);
   }
   // Handle for sub curve in current function
   if (direction.isDown()) {
@@ -218,10 +216,9 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
     return FunctionGraphController::defaultCursorT(record, ignoreMargins);
   }
 
-  const Poincare::Context& context = App::app()->localContext();
   if (function->properties().isScatterPlot()) {
     float t = 0;
-    for (Coordinate2D<float> p : function->iterateScatterPlot(context)) {
+    for (Coordinate2D<float> p : function->iterateScatterPlot()) {
       if (isCursorVisibleAtPosition(p, ignoreMargins)) {
         return t;
       }
@@ -246,7 +243,7 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
      * tMin+0.75*tRange / tMax */
     currentT = tMin + i * (tRange / numberOfRangeSubdivisions);
     // Using first subCurve for default cursor.
-    currentXY = function->evaluateXYAtParameter(currentT, context, 0);
+    currentXY = function->evaluateXYAtParameter(currentT, 0);
     if (isCursorVisibleAtPosition(currentXY, ignoreMargins)) {
       break;
     }
@@ -276,11 +273,9 @@ void GraphController::openMenuForSelectedCurve() {
 
 bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
-  const Context& context = App::app()->localContext();
-
   int nextSubCurve = 0;
   int nextCurve =
-      nextCurveIndexVertically(direction, currentActiveFunctionIndex, context,
+      nextCurveIndexVertically(direction, currentActiveFunctionIndex,
                                m_selectedSubCurveIndex, &nextSubCurve);
   if (nextCurve < 0) {
     return false;
@@ -299,7 +294,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     double nextX = nextT;
     nextT = -1;
     double previousX = -INFINITY;
-    for (Coordinate2D<float> xy : nextF->iterateScatterPlot(context)) {
+    for (Coordinate2D<float> xy : nextF->iterateScatterPlot()) {
       if (xy.x() >= nextX) {
         if (xy.x() - nextX < nextX - previousX) {
           ++nextT;
@@ -355,8 +350,8 @@ void GraphController::jumpToLeftRightCurve(double t,
         // If a function has two curves
         for (int subCurveIndex = 0; subCurveIndex < f->numberOfSubCurves();
              subCurveIndex++) {
-          Coordinate2D<double> xy = f->evaluateXYAtParameter(
-              potentialNextT, App::app()->localContext(), subCurveIndex);
+          Coordinate2D<double> xy =
+              f->evaluateXYAtParameter(potentialNextT, subCurveIndex);
           if (currentXDelta < xDelta || std::abs(xy.y() - m_cursor->y()) <
                                             std::abs(nextY - m_cursor->y())) {
             nextCurveIndex = i;

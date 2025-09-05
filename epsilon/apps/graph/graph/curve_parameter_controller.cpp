@@ -142,20 +142,19 @@ int CurveParameterController::derivationOrderOfParameterAtIndex(
   }
 }
 
-double CurveParameterController::evaluateCurveAt(ParameterIndex index,
-                                                 const Context& context) const {
+double CurveParameterController::evaluateCurveAt(ParameterIndex index) const {
   double cursorT = m_cursor->t();
   double cursorX = m_cursor->x();
   double cursorY = m_cursor->y();
   if (function()->properties().isScatterPlot() &&
       (cursorT != std::round(cursorT) ||
-       cursorT >= function()->iterateScatterPlot(context).length())) {
+       cursorT >= function()->iterateScatterPlot().length())) {
     /* FIXME This will display the first point of a multi-point scatter plot
      * when accessed through the Calculate button, which is not super useful,
      * but there is no real alternative barring some UX changes. */
     cursorT = 0.;
     Poincare::Coordinate2D<double> xy =
-        function()->evaluateXYAtParameter(cursorT, context);
+        function()->evaluateXYAtParameter(cursorT);
     cursorX = xy.x();
     cursorY = xy.y();
   }
@@ -164,19 +163,19 @@ double CurveParameterController::evaluateCurveAt(ParameterIndex index,
     case ContinuousFunctionProperties::SymbolType::T:
       return (index == ParameterIndex::Abscissa) ? cursorT
              : index == ParameterIndex::Image1
-                 ? function()->evaluateXYAtParameter(cursorT, context).x()
-                 : function()->evaluateXYAtParameter(cursorT, context).y();
+                 ? function()->evaluateXYAtParameter(cursorT).x()
+                 : function()->evaluateXYAtParameter(cursorT).y();
     case ContinuousFunctionProperties::SymbolType::Theta:
     case ContinuousFunctionProperties::SymbolType::Radius: {
       switch (index) {
         case ParameterIndex::Abscissa:
           return cursorT;
         case ParameterIndex::Image1:
-          return function()->evaluate2DAtParameter(cursorT, context).y();
+          return function()->evaluate2DAtParameter(cursorT).y();
         case ParameterIndex::Image2:
-          return function()->evaluateXYAtParameter(cursorT, context).x();
+          return function()->evaluateXYAtParameter(cursorT).x();
         case ParameterIndex::Image3:
-          return function()->evaluateXYAtParameter(cursorT, context).y();
+          return function()->evaluateXYAtParameter(cursorT).y();
         default:
           OMG::unreachable();
       }
@@ -187,13 +186,12 @@ double CurveParameterController::evaluateCurveAt(ParameterIndex index,
 }
 
 double CurveParameterController::evaluateDerivativeAt(
-    ParameterIndex index, int derivationOrder, const Context& context) const {
+    ParameterIndex index, int derivationOrder) const {
   assert(derivationOrder == 1 || derivationOrder == 2);
   assert(function()->canDisplayDerivative());
   bool firstComponent = parameterAtIndexIsFirstComponent(index);
   PointOrRealScalar<double> derivative =
-      function()->approximateDerivative<double>(m_cursor->t(), context,
-                                                derivationOrder);
+      function()->approximateDerivative<double>(m_cursor->t(), derivationOrder);
   if (derivative.isRealScalar()) {
     assert(firstComponent);
     return derivative.toRealScalar();
@@ -247,10 +245,9 @@ double CurveParameterController::parameterAtIndex(int index) {
 
   int derivationOrder = derivationOrderOfParameterAtIndex(parameterIndex);
   if (derivationOrder >= 1) {
-    return evaluateDerivativeAt(parameterIndex, derivationOrder,
-                                App::app()->localContext());
+    return evaluateDerivativeAt(parameterIndex, derivationOrder);
   }
-  return evaluateCurveAt(parameterIndex, App::app()->localContext());
+  return evaluateCurveAt(parameterIndex);
 }
 
 bool CurveParameterController::confirmParameterAtIndex(ParameterIndex index,

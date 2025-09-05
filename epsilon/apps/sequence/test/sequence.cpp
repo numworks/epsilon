@@ -61,10 +61,7 @@ void check_sequences_defined_by(
   for (int j = 0; j < 10; j++) {
     for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
       if (seqs[i]->isDefined()) {
-        double un = seqs[i]
-                        ->evaluateXYAtParameter(
-                            (double)j, GlobalContextAccessor::SequenceContext())
-                        .y();
+        double un = seqs[i]->evaluateXYAtParameter((double)j).y();
         bool isEqual = OMG::Float::RoughlyEqual<double>(
             un, result[i][j], OMG::Float::EpsilonLax<double>(), true);
         constexpr size_t bufferSize = 100;
@@ -88,10 +85,8 @@ void check_sum_of_sequence_between_bounds(double result, double start,
                                           const char* condition1,
                                           const char* condition2) {
   const Sequence* seq = AddSequence(type, definition, condition1, condition2);
-
-  double sum = seq->sumBetweenBounds(start, end,
-                                     GlobalContextAccessor::SequenceContext())
-                   .approximateSystemToRealScalar<double>();
+  double sum =
+      seq->sumBetweenBounds(start, end).approximateSystemToRealScalar<double>();
   assert_roughly_equal(sum, result);
 
   GlobalContextAccessor::SequenceStore().removeAll();
@@ -776,7 +771,7 @@ QUIZ_CASE(sequence_order) {
   assert(v->fullName()[0] == 'v');
 
   sequenceContext->resetCache();
-  quiz_assert(v->evaluateXYAtParameter(1., *sequenceContext).y() == 4.);
+  quiz_assert(v->evaluateXYAtParameter(1.).y() == 4.);
 
   sequenceStore->removeAll();
   u = AddSequence(Sequence::Type::Explicit, "0", nullptr, nullptr);
@@ -784,7 +779,7 @@ QUIZ_CASE(sequence_order) {
   // Manually destroy u (but not v)
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("u.seq").destroy();
   sequenceContext->resetCache();
-  quiz_assert(v->evaluateXYAtParameter(1., *sequenceContext).y() == 1.);
+  quiz_assert(v->evaluateXYAtParameter(1.).y() == 1.);
 }
 
 QUIZ_CASE(sequence_sum_evaluation) {
@@ -803,28 +798,28 @@ QUIZ_CASE(sequence_suitable_for_cobweb) {
       GlobalContextAccessor::SequenceContext();
   quiz_assert(AddSequence(Sequence::Type::SingleRecurrence, "3(u(n)+2)+u(n)",
                           "0", nullptr)
-                  ->isSuitableForCobweb(sequenceContext));
+                  ->isSuitableForCobweb());
   store->removeAll();
   quiz_assert(
       !AddSequence(Sequence::Type::SingleRecurrence, "v(n)+2", "0", nullptr)
-           ->isSuitableForCobweb(sequenceContext));
+           ->isSuitableForCobweb());
   store->removeAll();
   quiz_assert(!AddSequence(Sequence::Type::SingleRecurrence, "u(n)+cos(n)", "0",
                            nullptr)
-                   ->isSuitableForCobweb(sequenceContext));
+                   ->isSuitableForCobweb());
   store->removeAll();
   quiz_assert(
       !AddSequence(Sequence::Type::SingleRecurrence, "2*u(n-2)", "0", nullptr)
-           ->isSuitableForCobweb(sequenceContext));
+           ->isSuitableForCobweb());
   store->removeAll();
   quiz_assert(
       AddSequence(Sequence::Type::SingleRecurrence, "2*u(n)+u(0)", "0", nullptr)
-          ->isSuitableForCobweb(sequenceContext));
+          ->isSuitableForCobweb());
   store->removeAll();
   sequenceContext.resetCache();  // for computation of u(0)
   quiz_assert(!AddSequence(Sequence::Type::SingleRecurrence, "2*u(n)+u(0)", "n",
                            nullptr)
-                   ->isSuitableForCobweb(sequenceContext));
+                   ->isSuitableForCobweb());
 }
 
 }  // namespace Shared

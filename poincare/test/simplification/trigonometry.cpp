@@ -1,4 +1,6 @@
 #include "helper.h"
+#include "poincare/math_options.h"
+#include "poincare/test/helper.h"
 
 using namespace Poincare;
 using namespace Poincare::Internal;
@@ -191,6 +193,291 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   // atan(1/x)
   simplifies_to("arctan(1/(1+x^2))", "π/2-arctan(x^2+1)");
   simplifies_to("arctan(-1/(1+abs(x)))", "-π/2+arctan(1+abs(x))");
+
+  // -- sin/cos -> tan
+  simplifies_to("sin(x)/cos(x)", "tan(x)");
+  simplifies_to("cos(x)/sin(x)", "cot(x)");
+  // 1/tan = cot if tan(x) != undef
+  simplifies_to("1/tan(x)", "dep(cot(x),{nonNull(cos(x))})");
+  simplifies_to("sin(x)×π/cos(x)", "π×tan(x)");
+  simplifies_to("sin(x)/(π×cos(x))", "tan(x)/π");
+  simplifies_to("1×tan(2)×tan(5)", "tan(2)×tan(5)");
+  /* TODO_PCJ: decide which angle we want to reduce to, see #6586
+   * In this example we currently retun tan((20×π)/21) */
+#if TODO_PCJ
+  simplifies_to("tan(62π/21)", "-tan(π/21)");
+  simplifies_to("cos(26π/21)/sin(25π/17)", "cos((5×π)/21)/sin((8×π)/17)");
+  simplifies_to("cos(62π/21)×π×3/sin(62π/21)", "-(3×π)/tan(π/21)");
+  simplifies_to("cos(62π/21)/(π×3×sin(62π/21))", "-1/(3×π×tan(π/21))");
+  simplifies_to("sin(62π/21)×π×3/cos(62π/21)", "-3×π×tan(π/21)");
+  simplifies_to("sin(62π/21)/(π×3cos(62π/21))", "-tan(π/21)/(3×π)");
+  simplifies_to("-cos(π/62)ln(3)/(sin(π/62)π)", "-ln(3)/(π×tan(π/62))");
+#endif
+  simplifies_to("-2cos(π/62)ln(3)/(sin(π/62)π)", "-(2×cot(π/62)×ln(3))/π");
+  // -- cos
+  simplifies_to("cos(0)", "1");
+  simplifies_to("cos(π)", "-1");
+#if TODO_PCJ
+  simplifies_to("cos(π×4/7)", "-cos((3×π)/7)");
+  simplifies_to("cos(π×35/29)", "-cos((6×π)/29)");
+  simplifies_to("cos(-π×35/29)", "-cos((6×π)/29)");
+#endif
+  simplifies_to("cos(π×340000)", "1");
+  simplifies_to("cos(-π×340001)", "-1");
+  simplifies_to("cos(-π×√(2))", "cos(π×√(2))");
+  simplifies_to("cos(1311π/6)", "0");
+  simplifies_to("cos(π/12)", "(√(2)+√(6))/4");
+  simplifies_to("cos(-π/12)", "(√(2)+√(6))/4");
+  simplifies_to("cos(-π17/8)", "√(2+√(2))/2");
+  simplifies_to("cos(41π/6)", "-√(3)/2");
+  simplifies_to("cos(π/4+1000π)", "√(2)/2");
+  simplifies_to("cos(-π/3)", "1/2");
+  simplifies_to("cos(41π/5)", "(1+√(5))/4");
+  simplifies_to("cos(7π/10)", "-√((5-√(5))/8)");
+  simplifies_to("cos(0)", "1", degreeCtx);
+  simplifies_to("cos(180)", "-1", degreeCtx);
+#if TODO_PCJ
+  simplifies_to("cos(720/7)", "-cos(540/7)", degreeCtx);
+  simplifies_to("cos(6300/29)", "-cos(1080/29)", degreeCtx);
+  simplifies_to("cos(-6300/29)", "-cos(1080/29)", degreeCtx);
+#endif
+  simplifies_to("cos(61200000)", "1", degreeCtx);
+  simplifies_to("cos(-61200180)", "-1", degreeCtx);
+  simplifies_to("cos(-180×√(2))", "cos(180×√(2))", degreeCtx);
+  simplifies_to("cos(39330)", "0", degreeCtx);
+  simplifies_to("cos(15)", "(√(2)+√(6))/4", degreeCtx);
+  simplifies_to("cos(-15)", "(√(2)+√(6))/4", degreeCtx);
+  simplifies_to("cos(-765/2)", "√(2+√(2))/2", degreeCtx);
+  simplifies_to("cos(7380/6)", "-√(3)/2", degreeCtx);
+  simplifies_to("cos(180045)", "√(2)/2", degreeCtx);
+  simplifies_to("cos(-60)", "1/2", degreeCtx);
+  simplifies_to("cos(7380/5)", "(1+√(5))/4", degreeCtx);
+  simplifies_to("cos(112.5)", "-√(2-√(2))/2", degreeCtx);
+  // -- sin
+  simplifies_to("sin(0)", "0");
+  simplifies_to("sin(π)", "0");
+#if TODO_PCJ
+  simplifies_to("sin(π×35/29)", "-sin((6×π)/29)");
+  simplifies_to("sin(-π×35/29)", "sin((6×π)/29)");
+#endif
+  simplifies_to("sin(π×340000)", "0");
+  simplifies_to("sin(π×340001)", "0");
+  simplifies_to("sin(-π×340001)", "0");
+#if TODO_PCJ
+  simplifies_to("sin(π/12)", "(√(6)-√(2))/4");
+  simplifies_to("sin(-π/12)", "(-√(6)+√(2))/4");
+#endif
+  simplifies_to("sin(-π×√(2))", "-sin(π×√(2))");
+  simplifies_to("sin(1311π/6)", "1");
+  simplifies_to("sin(-π17/8)", "-√(2-√(2))/2");
+  simplifies_to("sin(41π/6)", "1/2");
+  simplifies_to("sin(-3π/10)", "-(1+√(5))/4");
+  simplifies_to("sin(π/4+1000π)", "√(2)/2");
+  simplifies_to("sin(-π/3)", "-√(3)/2");
+  simplifies_to("sin(17π/5)", "-√((5+√(5))/8)");
+  simplifies_to("sin(π/5)", "√((5-√(5))/8)");
+  simplifies_to("sin(0)", "0", degreeCtx);
+  simplifies_to("sin(180)", "0", degreeCtx);
+#if TODO_PCJ
+  simplifies_to("sin(6300/29)", "-sin(1080/29)", degreeCtx);
+  simplifies_to("sin(-6300/29)", "sin(1080/29)", degreeCtx);
+#endif
+  simplifies_to("sin(61200000)", "0", degreeCtx);
+  simplifies_to("sin(61200180)", "0", degreeCtx);
+  simplifies_to("sin(-61200180)", "0", degreeCtx);
+#if TODO_PCJ
+  simplifies_to("sin(15)", "(√(6)-√(2))/4", degreeCtx);
+  simplifies_to("sin(-15)", "(-√(6)+√(2))/4", degreeCtx);
+#endif
+  simplifies_to("sin(-180×√(2))", "-sin(180×√(2))", degreeCtx);
+  simplifies_to("sin(39330)", "1", degreeCtx);
+  simplifies_to("sin(-765/2)", "-√(2-√(2))/2", degreeCtx);
+  simplifies_to("sin(1230)", "1/2", degreeCtx);
+  simplifies_to("sin(180045)", "√(2)/2", degreeCtx);
+  simplifies_to("sin(-60)", "-√(3)/2", degreeCtx);
+  simplifies_to("sin(612)", "-√((5+√(5))/8)", degreeCtx);
+  simplifies_to("sin(36)", "√((5-√(5))/8)", degreeCtx);
+  // -- tan
+  simplifies_to("tan(0)", "0");
+  simplifies_to("tan(π)", "0");
+  simplifies_to("tan(3×π/2)", "undef");
+  simplifies_to("tan(π/2)", "undef");
+  simplifies_to("tan(90)", "undef", degreeCtx);
+  simplifies_to("tan(100)", "undef", gradianCtx);
+#if TODO_PCJ
+  simplifies_to("tan(π×35/29)", "tan((6×π)/29)");
+  simplifies_to("tan(-π×35/29)", "-tan((6×π)/29)");
+#endif
+  simplifies_to("tan(π×340000)", "0");
+  simplifies_to("tan(π×340001)", "0");
+  simplifies_to("tan(-π×340001)", "0");
+  simplifies_to("tan(π/12)", "2-√(3)");
+  simplifies_to("tan(-π/12)", "-2+√(3)");
+  simplifies_to("tan(-π×√(2))", "-tan(π×√(2))");
+  simplifies_to("tan(1311π/6)", "undef");
+  simplifies_to("tan(-π17/8)", "1-√(2)");
+  simplifies_to("tan(41π/6)", "-√(3)/3");
+  simplifies_to("tan(π/4+1000π)", "1");
+  simplifies_to("tan(-π/3)", "-√(3)");
+  /*  Currently simplifies to -((-1+√(5))×√(2-(2×√(5))/5))/4.
+   * TODO: contract to -√(1-2×√(5)/5) */
+#if TODO_PCJ
+  simplifies_to("tan(-π/10)", "-√(1-2×√(5)/5)");
+#endif
+  simplifies_to("tan(0)", "0", degreeCtx);
+  simplifies_to("tan(180)", "0", degreeCtx);
+#if TODO_PCJ
+  simplifies_to("tan(6300/29)", "tan(1080/29)", degreeCtx);
+  simplifies_to("tan(-6300/29)", "-tan(1080/29)", degreeCtx);
+#endif
+  simplifies_to("tan(61200000)", "0", degreeCtx);
+  simplifies_to("tan(61200180)", "0", degreeCtx);
+  simplifies_to("tan(-61200180)", "0", degreeCtx);
+  simplifies_to("tan(15)", "2-√(3)", degreeCtx);
+  simplifies_to("tan(-15)", "-2+√(3)", degreeCtx);
+  simplifies_to("tan(-180×√(2))", "-tan(180×√(2))", degreeCtx);
+  simplifies_to("tan(39330)", "undef", degreeCtx);
+  simplifies_to("tan(-382.5)", "1-√(2)", degreeCtx);
+  simplifies_to("tan(1230)", "-√(3)/3", degreeCtx);
+  simplifies_to("tan(180045)", "1", degreeCtx);
+  simplifies_to("tan(-60)", "-√(3)", degreeCtx);
+  simplifies_to("tan(tan(tan(tan(9))))", "tan(tan(tan(tan(9))))");
+  // 1/tan = cot if tan(x) != undef
+  simplifies_to("1/tan(2)", "cot(2)");
+  simplifies_to("tan(3)*sin(3)/cos(3)", "tan(3)^2");
+  // -- acos
+  simplifies_to("acos(-1/2)", "(2×π)/3", cartesianCtx);
+  simplifies_to("acos(-1.2)", "π-arccos(6/5)", cartesianCtx);
+  simplifies_to("acos(cos(2/3))", "2/3", cartesianCtx);
+  simplifies_to("acos(cos(3/2))", "3/2", cartesianCtx);
+  simplifies_to("cos(acos(3/2))", "3/2", cartesianCtx);
+  simplifies_to("cos(acos(2/3))", "2/3", cartesianCtx);
+
+  simplifies_to("acos(cos(12))", "-12+4×π", cartesianCtx);
+  simplifies_to("acos(cos(2*1ᴇ10))", "arccos(cos(20000000000))", cartesianCtx);
+  simplifies_to("acos(cos(inf))", "undef", cartesianCtx);
+  simplifies_to("acos(cos(9))", "9-2×π", cartesianCtx);
+  simplifies_to("acos(cos(10^125))", "arccos(cos(10^125))", cartesianCtx);
+  simplifies_to("acos(cos(1/0))", "undef", cartesianCtx);
+  simplifies_to("acos(cos(-8.8))", "44/5-2×π", cartesianCtx);
+  simplifies_to("acos(cos(π+26))", "-26+9×π", cartesianCtx);
+  simplifies_to("acos(cos(0))", "0", cartesianCtx);
+  simplifies_to("acos(cos(9π))", "π", cartesianCtx);
+  simplifies_to("acos(cos(2*1ᴇ10))", "160", degreeCartesianCtx);
+  simplifies_to("acos(cos(180+50))", "130", degreeCartesianCtx);
+  simplifies_to(
+      "arccos(cos(2345995537929342462976×π^5-36850577388590589246720×π^4+"
+      "231537533966682879807360×π^3-727391989955238208647840×π^2+"
+      "1142577399842170168717980×π-717897987691852588770249))",
+      "arccos(cos(2345995537929342462976×π^5-36850577388590589246720×π^4+"
+      "231537533966682879807360×π^3-727391989955238208647840×π^2-"
+      "717897987691852588770249+1142577399842170168717980×π))",
+      cartesianCtx);
+
+  simplifies_to("acos(cos(4π/7))", "(4×π)/7", cartesianCtx);
+#if TODO_PCJ
+  simplifies_to("acos(-cos(2))", "π-2", cartesianCtx);
+#endif
+  simplifies_to("acos(-1/2)", "120", degreeCartesianCtx);
+  simplifies_to("acos(-1.2)", "180-arccos(6/5)", degreeCartesianCtx);
+  simplifies_to("acos(cos(2/3))", "2/3", degreeCartesianCtx);
+  simplifies_to("acos(cos(190))", "170", degreeCartesianCtx);
+  simplifies_to("acos(cos(75))", "75", degreeCartesianCtx);
+  simplifies_to("cos(acos(190))", "190", degreeCartesianCtx);
+  simplifies_to("cos(acos(75))", "75", degreeCartesianCtx);
+  simplifies_to("acos(cos(12))", "12", degreeCartesianCtx);
+  simplifies_to("acos(cos(720/7))", "720/7", degreeCartesianCtx);
+  // -- asin
+  simplifies_to("asin(-1/2)", "-π/6", cartesianCtx);
+  simplifies_to("asin(-1.2)", "-arcsin(6/5)", cartesianCtx);
+  simplifies_to("asin(sin(2/3))", "2/3", cartesianCtx);
+  simplifies_to("sin(asin(2/3))", "2/3", cartesianCtx);
+  simplifies_to("sin(asin(3/2))", "3/2", cartesianCtx);
+  simplifies_to("asin(sin(3/2))", "3/2", cartesianCtx);
+  simplifies_to("asin(sin(3.6))", "-18/5+π", cartesianCtx);
+  simplifies_to("asin(sin(-2.23))", "223/100-π", cartesianCtx);
+  simplifies_to("asin(sin(-18.39))", "-1839/100+6×π", cartesianCtx);
+
+  simplifies_to("asin(sin(12))", "12-4×π", cartesianCtx);
+  simplifies_to("asin(sin(2+π))", "2-π", cartesianCtx);
+  simplifies_to("asin(sin(90+6800))", "50", degreeCartesianCtx);
+  simplifies_to("asin(sin(60-9×9×9))", "51", degreeCartesianCtx);
+
+  simplifies_to("asin(sin(-π/7))", "-π/7", cartesianCtx);
+#if TODO_PCJ
+  simplifies_to("asin(sin(-√(2)))", "-√(2)", cartesianCtx);
+#endif
+  simplifies_to("asin(-1/2)", "-30", degreeCartesianCtx);
+  simplifies_to("asin(-1.2)", "-arcsin(6/5)", degreeCartesianCtx);
+  simplifies_to("asin(sin(75))", "75", degreeCartesianCtx);
+  simplifies_to("sin(asin(75))", "75", degreeCartesianCtx);
+  simplifies_to("sin(asin(190))", "190", degreeCartesianCtx);
+  simplifies_to("asin(sin(32))", "32", degreeCartesianCtx);
+  simplifies_to("asin(sin(400))", "40", degreeCartesianCtx);
+  simplifies_to("asin(sin(-180/7))", "-180/7", degreeCartesianCtx);
+  simplifies_to("arcsin(sin(10^10))", "arcsin(sin(10000000000))", cartesianCtx);
+  // -- atan
+  simplifies_to("atan(-1)", "-π/4");
+  simplifies_to("atan(-1.2)", "-arctan(6/5)");
+  simplifies_to("atan(tan(2/3))", "2/3");
+  simplifies_to("tan(atan(2/3))", "2/3");
+  // If target != User, sin/cos is not reduced to tan(x)
+  projects_and_reduces_to(
+      "atan(sin(2/3)/cos(2/3))", "2/3",
+      {.m_reductionTarget = Poincare::ReductionTarget::SystemForAnalysis});
+  simplifies_to("tan(atan(5/2))", "5/2");
+  simplifies_to("atan(tan(5/2))", "5/2-π");
+  simplifies_to("atan(tan(-π/7))", "-π/7");
+  simplifies_to("atan(√(3))", "π/3");
+  simplifies_to("atan(tan(-√(2)))", "-√(2)");
+  simplifies_to("atan(-1)", "-45", degreeCtx);
+  simplifies_to("atan(-1.2)", "-arctan(6/5)", degreeCtx);
+  simplifies_to("atan(tan(-45))", "-45", degreeCtx);
+  simplifies_to("tan(atan(120))", "120", degreeCtx);
+  simplifies_to("tan(atan(2293))", "2293", degreeCtx);
+  simplifies_to("atan(tan(2293))", "-47", degreeCtx);
+  simplifies_to("atan(tan(1808))", "8", degreeCtx);
+  simplifies_to("atan(tan(-180/7))", "-180/7", degreeCtx);
+  simplifies_to("atan(√(3))", "60", degreeCtx);
+  simplifies_to("atan(inf)", "π/2", cartesianCtx);
+  simplifies_to("atan(-inf)", "-π/2", cartesianCtx);
+  simplifies_to("tan(atan(inf))", "undef", cartesianCtx);
+  // Use abs(x)+1 because atan(1/x) is only reduced if sign(x) can be reduced.
+  simplifies_to("atan(1/(abs(x)+1))", "π/2-arctan(1+abs(x))");
+  simplifies_to("atan(1/(abs(x)+1))", "90-arctan(1+abs(x))", degreeCtx);
+  simplifies_to("atan(1/(abs(x)+1))", "100-arctan(1+abs(x))", gradianCtx);
+  simplifies_to("atan(cos(x)/sin(x))", "arctan(cot(x))");
+#if TODO_PCJ
+  simplifies_to("atan(cos(π/7)/sin(π/7))", "(5×π)/14");
+  simplifies_to("atan(cos(4)/sin(4))", "(3×π-8)/2");
+#endif
+  simplifies_to("atan(cos(1.57079632)/sin(1.57079632))",
+                "arctan(cot(9817477/6250000))");
+  // cos(asin)
+  simplifies_to("cos(asin(x))", "√(-x^2+1)", degreeCartesianCtx);
+  simplifies_to("cos(asin(-x))", "√(-x^2+1)", degreeCartesianCtx);
+// cos(atan)
+#if TODO_PCJ
+  simplifies_to("cos(atan(x))", "1/√(x^2+1)", degreeCartesianCtx);
+  simplifies_to("cos(atan(-x))", "1/√(x^2+1)", degreeCartesianCtx);
+#endif
+  // sin(acos)
+  simplifies_to("sin(acos(x))", "√(-x^2+1)", degreeCartesianCtx);
+  simplifies_to("sin(acos(-x))", "√(-x^2+1)", degreeCartesianCtx);
+  // sin(atan)
+#if TODO_PCJ
+  simplifies_to("sin(atan(x))", "x/√(x^2+1)", degreeCartesianCtx);
+  simplifies_to("sin(atan(-x))", "-x/√(x^2+1)", degreeCartesianCtx);
+#endif
+  // tan(acos)
+  simplifies_to("tan(acos(x))", "√(-x^2+1)/x", degreeCartesianCtx);
+  simplifies_to("tan(acos(-x))", "-√(-x^2+1)/x", degreeCartesianCtx);
+  // tan(asin)
+  simplifies_to("tan(asin(x))", "x/√(-x^2+1)", degreeCartesianCtx);
+  simplifies_to("tan(asin(-x))", "-x/√(-x^2+1)", degreeCartesianCtx);
+
+  // Mix
+  simplifies_to("sin(atan(3/4))", "3/5", degreeCartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_trigonometry_hyperbolic) {
@@ -221,6 +508,62 @@ QUIZ_CASE(pcj_simplification_trigonometry_hyperbolic) {
   simplifies_to("cosh(arcosh(x))", "x", cartesianCtx);
   simplifies_to("sinh(arsinh(x))", "x", cartesianCtx);
   simplifies_to("tanh(artanh(x))", "x", cartesianCtx);
+
+  // Exact values
+  simplifies_to("sinh(0)", "0");
+  simplifies_to("cosh(0)", "1");
+  simplifies_to("tanh(0)", "0");
+  simplifies_to("arsinh(0)", "0");
+  simplifies_to("arcosh(1)", "0");
+  simplifies_to("artanh(0)", "0");
+
+  // arcosh(cosh)
+  simplifies_to("arcosh(cosh(3))", "3");
+  simplifies_to("arcosh(cosh(0.5))", "1/2");
+  simplifies_to("arcosh(cosh(-3))", "3");
+  simplifies_to("arcosh(cosh(3))", "3", cartesianCtx);
+  simplifies_to("arcosh(cosh(0.5))", "1/2", cartesianCtx);
+  simplifies_to("arcosh(cosh(-3))", "3", cartesianCtx);
+
+  // cosh(acosh)
+  simplifies_to("cosh(arcosh(3))", "3");
+  simplifies_to("cosh(arcosh(0.5))", "1/2");
+  simplifies_to("cosh(arcosh(-3))", "-3");
+  simplifies_to("cosh(arcosh(3))", "3", cartesianCtx);
+  simplifies_to("cosh(arcosh(0.5))", "1/2", cartesianCtx);
+  simplifies_to("cosh(arcosh(-3))", "-3", cartesianCtx);
+
+  // sinh(asinh)
+  simplifies_to("sinh(arsinh(3))", "3");
+  simplifies_to("sinh(arsinh(0.5))", "1/2");
+  simplifies_to("sinh(arsinh(-3))", "-3");
+  simplifies_to("sinh(arsinh(3))", "3", cartesianCtx);
+  simplifies_to("sinh(arsinh(0.5))", "1/2", cartesianCtx);
+  simplifies_to("sinh(arsinh(-3))", "-3", cartesianCtx);
+
+  // arsinh(sinh)
+  simplifies_to("arsinh(sinh(3))", "3");
+  simplifies_to("arsinh(sinh(0.5))", "1/2");
+  simplifies_to("arsinh(sinh(-3))", "-3");
+  simplifies_to("arsinh(sinh(3))", "3", cartesianCtx);
+  simplifies_to("arsinh(sinh(0.5))", "1/2", cartesianCtx);
+  simplifies_to("arsinh(sinh(-3))", "-3", cartesianCtx);
+
+  // tanh(atanh)
+  simplifies_to("tanh(artanh(3))", "3");
+  simplifies_to("tanh(artanh(0.5))", "1/2");
+  simplifies_to("tanh(artanh(-3))", "-3");
+  simplifies_to("tanh(artanh(3))", "3", cartesianCtx);
+  simplifies_to("tanh(artanh(0.5))", "1/2", cartesianCtx);
+  simplifies_to("tanh(artanh(-3))", "-3", cartesianCtx);
+
+  // artanh(tanh)
+  simplifies_to("artanh(tanh(3))", "3");
+  simplifies_to("artanh(tanh(0.5))", "1/2");
+  simplifies_to("artanh(tanh(-3))", "-3");
+  simplifies_to("artanh(tanh(3))", "3", cartesianCtx);
+  simplifies_to("artanh(tanh(0.5))", "1/2", cartesianCtx);
+  simplifies_to("artanh(tanh(-3))", "-3", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_trigonometry_advanced) {
@@ -252,4 +595,64 @@ QUIZ_CASE(pcj_simplification_trigonometry_advanced) {
                 "dep(tan(x)×ln(x),{nonNull(x),realPos(x)})");
   simplifies_to("ln(x)*tan(x)", "dep(tan(x)×ln(x),{nonNull(x),realPos(x)})");
   simplifies_to("sin(x)*(cos(y)^-1)*(cos(x)^-1)*sin(y)", "tan(x)×tan(y)");
+
+  // Exact values
+  simplifies_to("csc(0)", "undef");
+  simplifies_to("sec(0)", "1");
+  simplifies_to("cot(0)", "undef");
+  simplifies_to("arccsc(2/√(3))", "π/3");
+  simplifies_to("arcsec(2/√(3))", "π/6");
+  simplifies_to("arccot(0)", "π/2");
+  simplifies_to("csc(π/2)", "1");
+  simplifies_to("sec(π/2)", "undef");
+  simplifies_to("cot(π/2)", "0");
+  simplifies_to("arccsc(1)", "π/2");
+  simplifies_to("arcsec(1)", "0");
+  simplifies_to("arccot(1)", "π/4");
+
+  // arcsec(sec)
+  simplifies_to("arcsec(sec(3))", "3");
+  simplifies_to("arcsec(sec(0.5))", "1/2");
+  simplifies_to("arcsec(sec(-3))", "3");
+
+  // sec(asec)
+  simplifies_to("sec(arcsec(3))", "3", cartesianCtx);
+  simplifies_to("sec(arcsec(0.5))", "1/2", cartesianCtx);
+  simplifies_to("sec(arcsec(-3))", "-3", cartesianCtx);
+
+  // arccsc(csc)
+  simplifies_to("arccsc(csc(3))", "-3+π");
+  simplifies_to("arccsc(csc(0.5))", "1/2");
+  simplifies_to("arccsc(csc(-3))", "3-π");
+
+  // csc(acsc)
+  simplifies_to("csc(arccsc(3))", "3", cartesianCtx);
+  simplifies_to("csc(arccsc(0.5))", "1/2", cartesianCtx);
+  simplifies_to("csc(arccsc(-3))", "-3", cartesianCtx);
+
+  // arccot(cot)
+#if TODO_PCJ
+  simplifies_to("arccot(cot(3))", "-π+3");
+  simplifies_to("arccot(cot(0.5))", "1/2");
+  simplifies_to("arccot(cot(-3))", "π-3");
+#endif
+  simplifies_to("arccot(3)", "π/2-arctan(3)");
+  projects_and_reduces_to(
+      "arccot(3)", "π/2-arctan(3)",
+      {.m_reductionTarget = Poincare::ReductionTarget::SystemForAnalysis});
+  projects_and_reduces_to(
+      "arccot(3)", "π/2-arctan(3)",
+      {.m_reductionTarget = Poincare::ReductionTarget::SystemForApproximation});
+  simplifies_to("arccot(x)", "π/2-arctan(x)");
+  projects_and_reduces_to(
+      "arccot(x)", "π/2-arctan(x)",
+      {.m_reductionTarget = Poincare::ReductionTarget::SystemForAnalysis});
+  projects_and_reduces_to(
+      "arccot(x)", "π/2-arctan(x)",
+      {.m_reductionTarget = Poincare::ReductionTarget::SystemForApproximation});
+
+  // cot(acot)
+  simplifies_to("cot(arccot(3))", "3");
+  simplifies_to("cot(arccot(0.5))", "1/2");
+  simplifies_to("cot(arccot(-3))", "-3");
 }

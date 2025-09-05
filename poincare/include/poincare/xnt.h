@@ -1,7 +1,7 @@
 #pragma once
 
 #include <omg/utf8_decoder.h>
-#include <poincare/src/memory/tree.h>
+#include <poincare/tree.h>
 
 namespace Poincare::XNT {
 

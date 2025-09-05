@@ -2,8 +2,8 @@
 
 #include <omg/unreachable.h>
 #include <poincare/comparison_operator.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/src/layout/k_tree.h>
 #include <poincare/statistics/data_table.h>
 #include <poincare/statistics/distribution.h>
 

@@ -354,57 +354,6 @@ QUIZ_CASE(pcj_simplification_percent) {
   simplifies_to("80+20%π", "80+π×20/100");
 }
 
-QUIZ_CASE(pcj_simplification_random) {
-  simplifies_to("1/random()+1/3+1/4", "7/12+1/random()");
-  simplifies_to("random()+random()", "random()+random()");
-  simplifies_to("random()-random()", "random()-random()");
-  simplifies_to("abs(random()-random())", "abs(random()-random())");
-  simplifies_to("1/random()+1/3+1/4+1/random()", "7/12+1/random()+1/random()");
-  simplifies_to("random()×random()", "random()×random()");
-  simplifies_to("random()/random()", "random()/random()");
-  simplifies_to("3^random()×3^random()", "3^(random()+random())");
-  simplifies_to("random()×ln(2)×3+random()×ln(2)×5",
-                "(3×random()+5×random())×ln(2)");
-
-  // TODO: Handle them with {.m_strategy = Strategy::ApproximateToFloat}
-  simplifies_to("randintnorep(1,10,5)", "randintnorep(1,10,5)");
-  simplifies_to("randintnorep(1,10,11)", "undef");
-  simplifies_to("randintnorep(1.5,10, 10)", "undef");
-  simplifies_to("random()", "random()");
-  simplifies_to("randint(1,10)", "randint(1,10)");
-  simplifies_to("diff(random()+1,x,2)", "undef");
-  simplifies_to("sum(k+randint(1,10),k,2,5)-14", "sum(randint(1,10),k,2,5)");
-  simplifies_to("sequence(2*k+random(),k,3)+1", "1+sequence(2×k+random(),k,3)");
-  simplifies_to("random()<acos(40)", "undef");
-  Tree* randIntList =
-      (KAdd(KRandInt(0_e, KList(0_e, 1_e)), KRandom))->cloneTree();
-  simplify(randIntList, realCtx, true);
-  assert_trees_are_equal(
-      randIntList, KList(KAdd(KRandomSeeded<3>, KRandIntSeeded<1>(0_e, 0_e)),
-                         KAdd(KRandomSeeded<3>, KRandIntSeeded<2>(0_e, 1_e))));
-
-  Tree* randIntNoRep = (KRandIntNoRep(0_e, 1000_e, 100_e))->cloneTree();
-  simplify(randIntNoRep, realCtx, true);
-  assert_trees_are_equal(randIntNoRep,
-                         KRandIntNoRepSeeded<1>(0_e, 1000_e, 100_e));
-  randIntNoRep = (KRandIntNoRep(0_e, 1000_e, 101_e))->cloneTree();
-  simplify(randIntNoRep, realCtx, true);
-  /* NOTE: RandIntNoRep size is limited by
-   * Random::Context::k_maxNumberOfVariables ->
-   * 0-seeded RandIntNoRep means it will approximate to a list of undef */
-  assert_trees_are_equal(randIntNoRep,
-                         KRandIntNoRepSeeded<0>(0_e, 1000_e, 101_e));
-
-  SharedTreeStack->flushFromBlock(randIntList);
-
-  // TODO_PCJ: used to simplify to 1
-  simplifies_to("randint(1,1)", "randint(1,1)");
-  //  Randint is not simplified if ReductionTarget = SystemForApproximation
-  simplifies_to_no_beautif(
-      "randint(1,3)", "randint(1,3)",
-      {.m_reductionTarget = ReductionTarget::SystemForApproximation});
-}
-
 QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("1/a", "1/a");
   simplifies_to("1/(1/a)", "dep(a,{nonNull(a)})");

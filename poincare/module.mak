@@ -292,6 +292,7 @@ _sources_poincare_test := $(addprefix test/, \
     matrix.cpp \
     numbers.cpp \
     parametrics.cpp \
+    probability.cpp \
     simplification.cpp \
     trigonometry.cpp \
     units.cpp \

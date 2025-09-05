@@ -162,12 +162,6 @@ class UserExpression : public Expression {
                bool replaceSymbols = false,
                const Context& ctx = EmptyContext{}) const;
 
-  /* TODO: The following two methods should be made private or deleted to hide
-   *       Internal node types. */
-  bool isOfType(std::initializer_list<Internal::AnyType> types) const;
-  bool deepIsOfType(std::initializer_list<Internal::AnyType> types,
-                    const Context& context = EmptyContext{}) const;
-
   /* recursivelyMatches */
 
   typedef OMG::Troolean (*UserExpressionTrinaryTest)(const UserExpression e,

@@ -112,25 +112,6 @@ UserExpression UserExpression::cloneChildAtIndex(int i) const {
   return Builder(tree()->child(i));
 }
 
-bool UserExpression::isOfType(
-    std::initializer_list<Internal::AnyType> types) const {
-  return tree()->isOfType(types);
-}
-
-bool UserExpression::deepIsOfType(
-    std::initializer_list<Internal::AnyType> types,
-    const Context& context) const {
-  return recursivelyMatches(
-      [](const UserExpression e, const Context& context, void* auxiliary) {
-        return e.isOfType(
-                   *static_cast<std::initializer_list<Internal::AnyType>*>(
-                       auxiliary))
-                   ? OMG::Troolean::True
-                   : OMG::Troolean::Unknown;
-      },
-      context, SymbolicComputation::ReplaceDefinedSymbols, &types);
-}
-
 template <typename T>
 SystemExpression UserExpression::approximateUserToTree(
     AngleUnit angleUnit, ComplexFormat complexFormat,

@@ -135,7 +135,7 @@ Ion::Storage::Record::ErrorStatus Sequence::setLayoutsForAggregated(
   }
 }
 
-Layout Sequence::nameLayout() {
+Layout Sequence::nameLayout() const {
   return Layout::Create(KA ^ KSubscriptL(KB),
                         {.KA = Layout::CodePoint(fullName()[0]),
                          .KB = Layout::CodePoint(symbol())});

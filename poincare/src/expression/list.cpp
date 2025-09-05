@@ -7,6 +7,7 @@
 
 #include "approximation.h"
 #include "k_tree.h"
+#include "poincare/src/expression/sign.h"
 #include "rational.h"
 #include "systematic_reduction.h"
 #include "undefined.h"
@@ -169,6 +170,14 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
 #endif
 }
 
+static bool IsValidCoefficientsList(const Tree* coefficients) {
+  // Coefficients must be real and positive
+  return !coefficients->hasChildSatisfying([](const Tree* e) {
+    ComplexSign s = GetComplexSign(e);
+    return s.canBeNonReal() || s.realSign().isStrictlyNegative();
+  });
+}
+
 Tree* List::Mean(const Tree* list, const Tree* coefficients) {
 #if POINCARE_LIST
   if (coefficients->isOne()) {
@@ -183,6 +192,9 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
     return result;
   }
   assert(Dimension::IsList(coefficients));
+  if (!IsValidCoefficientsList(coefficients)) {
+    return KUndef->cloneNode();
+  }
   PatternMatching::Context ctx({.KA = list, .KB = coefficients});
   ctx.setInvolvesList(true);
   return PatternMatching::CreateReduce(

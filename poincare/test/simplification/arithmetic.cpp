@@ -14,10 +14,18 @@ QUIZ_CASE(pcj_simplification_factorial) {
   simplifies_to("π!", "undef");
   simplifies_to("e!", "undef");
   simplifies_to("n!", "n!");
-  // simplifies_to("(n+1)!/n!", "n+1"); TODO through parametric
+#if TODO_PCJ  // TODO through parametric
+  simplifies_to("(n+1)!/n!", "n+1");
+#endif
+  simplifies_to(
+      "99!",
+      "933262154439441526816992388562667004907159682643816214685929638952175999"
+      "932299156089414639761565182862536979208272237582511852109168640000000000"
+      "000000000000");
 }
 
 QUIZ_CASE(pcj_simplification_arithmetic) {
+  // Factor
   simplifies_to("factor(0)", "0");
   simplifies_to("factor(1)", "1");
   simplifies_to("factor(23)", "23");
@@ -29,30 +37,43 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
                 {.m_complexFormat = ComplexFormat::Polar});
   simplifies_to("105×10^14", "1.05×10^16");
   simplifies_to("factor(105×10^14)", "2^14×3×5^15×7");
+  simplifies_to("factor(-10008/6895)", "-(2^3×3^2×139)/(5×7×197)");
+  simplifies_to("factor(1008/6895)", "(2^4×3^2)/(5×197)");
+  simplifies_to("factor(10007)", "10007");
+  simplifies_to("factor(10007^2)", "undef");
+  simplifies_to("factor(i)", "undef", cartesianCtx);
 
+  // Euclidean division
   simplifies_to("quo(23,5)", "4");
   simplifies_to("rem(23,5)", "3");
-  simplifies_to("gcd(14,28,21)", "7");
-  simplifies_to("lcm(14,6)", "42");
-  simplifies_to("gcd(6,y,2,x,4)", "gcd(2,x,y)");
-  simplifies_to("sign(-2)", "-1");
-  simplifies_to("sign(abs(x)+1)", "1");
+  simplifies_to("quo(19,3)", "6");
+  simplifies_to("quo(19,0)", "undef");
+  simplifies_to("quo(-19,3)", "-7");
+  simplifies_to("rem(19,3)", "1");
+  simplifies_to("rem(-19,3)", "2");
+  simplifies_to("rem(19,0)", "undef");
+
+  // Ceil, floor, frac
+  simplifies_to("ceil(-1.3)", "-1");
+  simplifies_to("ceil(2π)", "7");
+  simplifies_to("ceil(123456789012345678901234567892/3)",
+                "41152263004115226300411522631");
+  simplifies_to("ceil(123456789*π)", "387850942");
   simplifies_to("ceil(8/3)", "3");
-  simplifies_to("frac(8/3)", "2/3");
-  simplifies_to("floor(8/3)", "2");
-  simplifies_to("round(1/3,2)", "33/100");
-  simplifies_to("round(3.3_m)", "undef");
   simplifies_to("ceil(x)", "ceil(x)");
   simplifies_to("ceil(-x)", "-floor(x)");
-  simplifies_to("floor(x)+frac(x)", "dep(x,{floor(x)})");
-  simplifies_to("permute(4,2)", "12");
-  simplifies_to("binomial(4,2)", "6");
-  simplifies_to("1 2/3", "5/3");
-  simplifies_to("-1 2/3", "-5/3");
-
-  simplifies_to("floor({1.3,3.9})", "{1,3}");
   // TODO: Approximation is undef
-  simplifies_to("ceil(1+i)", "1+ceil(i)");
+  simplifies_to("ceil(1+i)", "1+ceil(i)", cartesianCtx);
+  simplifies_to("frac(8/3)", "2/3");
+  simplifies_to("frac(-1.3)", "7/10");
+  simplifies_to("floor(x)+frac(x)", "dep(x,{floor(x)})");
+  simplifies_to("floor(8/3)", "2");
+  simplifies_to("floor(-1.3)", "-2");
+  simplifies_to("floor(2π)", "6");
+  simplifies_to("floor(123456789012345678901234567892/3)",
+                "41152263004115226300411522630");
+  simplifies_to("floor(123456789*π)", "387850941");
+  simplifies_to("floor({1.3,3.9})", "{1,3}");
   // Reductions using approximation
   simplifies_to("floor(π)", "3");
   simplifies_to("frac(π+1)+floor(π+0.1)", "π");
@@ -65,9 +86,50 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("log(floor(2^54+π)-3, 2)", "54");
   simplifies_to("floor(random())", "floor(random())");
   simplifies_to("floor(sin(0.001))", "0");
-  /* Above a certain threshold, we consider that the sine or cosine of a "big"
-   * angle has too many approximation errors. This blocks the floor exact
-   * reduction.  */
+  /* Above a certain threshold, we consider that the sine or cosine of a
+   * "big" angle has too many approximation errors. This blocks the floor
+   * exact reduction.  */
   simplifies_to("floor(cos(1000))", "floor(cos(1000))");
   simplifies_to("sin(frac(frac(exp(6))))", "sin(-403+e^(6))");
+
+  // Gcd, lcm
+  simplifies_to("gcd(14,28,21)", "7");
+  simplifies_to("gcd(123,278)", "1");
+  simplifies_to("gcd(11,121)", "11");
+  simplifies_to("gcd(56,112,28,91)", "7");
+  simplifies_to("gcd(-32,-32)", "32");
+  simplifies_to("gcd(6,y,2,x,4)", "gcd(2,x,y)");
+  simplifies_to("lcm(14,6)", "42");
+  simplifies_to("lcm(123,278)", "34194");
+  simplifies_to("lcm(11,121)", "121");
+  simplifies_to("lcm(11,121, 3)", "363");
+  simplifies_to("lcm(-32,-32)", "32");
+
+  // Round
+  simplifies_to("round(4.235,2)", "106/25");
+  simplifies_to("round(4.23,0)", "4");
+  simplifies_to("round(4.9,0)", "5");
+  simplifies_to("round(12.9,-1)", "10");
+  simplifies_to("round(12.9,-2)", "0");
+  simplifies_to("round(4.235)", "4");
+  simplifies_to("round(0.235)", "0");
+  simplifies_to("round(1/3,2)", "33/100");
+  simplifies_to("round(3.3_m)", "undef");
+}
+
+QUIZ_CASE(pcj_simplification_combinatorics) {
+  simplifies_to("binomial(4,2)", "6");
+  simplifies_to("binomial(20,3)", "1140");
+  simplifies_to("binomial(20,10)", "184756");
+  simplifies_to("binomial(10,20)", "0");
+  simplifies_to("binomial(10.34,0)", "1");
+  simplifies_to("binomial(3.34,-1)", "0");
+  simplifies_to("binomial(-10,10)", "92378");
+  simplifies_to("binomial(2.5,3)", "binomial(5/2,3)");
+  simplifies_to("binomial(-200,120)", "binomial(-200,120)");
+  simplifies_to("binomial(400,1)", "binomial(400,1)");
+
+  simplifies_to("permute(4,2)", "12");
+  simplifies_to("permute(99,4)", "90345024");
+  simplifies_to("permute(20,-10)", "undef");
 }

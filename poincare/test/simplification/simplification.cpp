@@ -175,6 +175,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("e^(ln(1+x^2))", "x^2+1");
   simplifies_to("e^(ln(x+x))", "dep(2×x,{nonNull(x+x)})", cartesianCtx);
   simplifies_to("x+1+(-1)(x+1)", "0");
+  simplifies_to("√(4)", "2");
   simplifies_to("0.1875", "3/16");
   simplifies_to("0.0001234", "617/5000000");
   simplifies_to("98765000", "98765000");
@@ -219,8 +220,34 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs((-3)^ln(5))", "3^ln(5)", cartesianCtx);
   simplifies_to("abs(acos(2)^4)", "abs(acos(2))^4", cartesianCtx);
   simplifies_to("abs(e^(π/2×i)+e^(π/6×i))", "√(3)");
-  simplifies_to("2^101*2", "5070602400912917605986812821504");
-  simplifies_to("2.3×10^45", "2.3×10^45");
+  simplifies_to("abs(π)", "π");
+  simplifies_to("abs(-π)", "π");
+  simplifies_to("abs(1+i)", "√(2)", cartesianCtx);
+  simplifies_to("abs(0)", "0");
+  simplifies_to("abs(x*y)-abs(x)×abs(y)", "0");
+  simplifies_to("abs(x^7)", "abs(x)^7");
+#if TODO_PCJ  // Reduce abs(x^a) with a non integer
+  simplifies_to("abs(x^π)", "abs(x)^π");
+#endif
+  simplifies_to("abs(i)", "1", cartesianCtx);
+  simplifies_to("abs(√(√(√(√(√(√(i)))))))", "1", cartesianCtx);
+  simplifies_to("abs(√(√(√(√(√(√(πi)))))))", "root(π,64)", cartesianCtx);
+}
+
+QUIZ_CASE(pcj_simplification_sign) {
+  simplifies_to("sign(-23)", "-1");
+  simplifies_to("sign(-i)", "undef", cartesianCtx);
+  simplifies_to("sign(0)", "0");
+  simplifies_to("sign(inf)", "1");
+  simplifies_to("sign(-inf)", "-1");
+  simplifies_to("sign(undef)", "undef");
+  simplifies_to("sign(23)", "1");
+  simplifies_to("sign(log(18))", "1");
+  simplifies_to("sign(-√(2))", "-1");
+  simplifies_to("sign(x)", "sign(x)");
+  simplifies_to("sign(2+i)", "undef", cartesianCtx);
+  simplifies_to("sign(-2)", "-1");
+  simplifies_to("sign(abs(x)+1)", "1");
 }
 
 QUIZ_CASE(pcj_simplification_big_nary) {
@@ -712,7 +739,7 @@ QUIZ_CASE(pcj_euclidean_division) {
   simplifies_to("2+7⊦2", "5");
   // simplifies_to("(2+7)⊦2", "Q=4,R=1");
   simplifies_to("-3⊦2", "-1");  // Parsed as -(3⊦2)
-  // simplifies_to("(-3)⊦2", "Q=3,R=1");
+                                // simplifies_to("(-3)⊦2", "Q=3,R=1");
 #endif
 }
 

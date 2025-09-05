@@ -12,15 +12,6 @@ namespace Poincare::Internal {
 
 class Projection {
  public:
-  static ProjectionContext DefaultProjectionContextForAnalysis() {
-    ProjectionContext projCtx{
-        .m_complexFormat = ComplexFormat::Cartesian,
-        .m_angleUnit = AngleUnit::Radian,
-        .m_unitFormat = Preferences::UnitFormat::Metric,
-        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-        .m_context = k_emptySymbolContext};
-    return projCtx;
-  }
   /* Update complexFormat if tree contains i, Re, Im, Arg or Conj. Return true
    * if updated. */
   static bool UpdateComplexFormatWithExpressionInput(

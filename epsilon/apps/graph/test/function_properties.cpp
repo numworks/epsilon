@@ -15,14 +15,23 @@ using namespace Shared;
 
 namespace Graph {
 
+static ProjectionContext DefaultProjectionContextForAnalysis() {
+  ProjectionContext projCtx{
+      .m_complexFormat = ComplexFormat::Cartesian,
+      .m_angleUnit = AngleUnit::Radian,
+      .m_unitFormat = Preferences::UnitFormat::Metric,
+      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+      .m_context = k_emptySymbolContext};
+  return projCtx;
+}
+
 void assert_cartesian_function_type_is(
     const char* expression, FunctionType::CartesianType expectedType) {
   const char* symbol = "x";
   UserExpression e = UserExpression::Builder(parse(expression));
   bool reductionFailure = false;
-  SystemExpression s = e.cloneAndReduce(
-      Internal::Projection::DefaultProjectionContextForAnalysis(),
-      &reductionFailure);
+  SystemExpression s = e.cloneAndReduce(DefaultProjectionContextForAnalysis(),
+                                        &reductionFailure);
   assert(!reductionFailure && !s.isUninitialized());
   FunctionType::CartesianType type =
       FunctionType::CartesianFunctionType(s, symbol);
@@ -57,9 +66,8 @@ void assert_polar_line_type_is(const char* expression,
   const char* symbol = "θ";
   UserExpression e = UserExpression::Builder(parse(expression));
   bool reductionFailure = false;
-  SystemExpression s = e.cloneAndReduce(
-      Internal::Projection::DefaultProjectionContextForAnalysis(),
-      &reductionFailure);
+  SystemExpression s = e.cloneAndReduce(DefaultProjectionContextForAnalysis(),
+                                        &reductionFailure);
   assert(!reductionFailure && !s.isUninitialized());
   FunctionType::LineType type = FunctionType::PolarLineType(s, symbol);
   quiz_assert_print_if_failure(type == expectedType, expression);

@@ -86,8 +86,7 @@ inline Poincare::ProjectionContext ProjectionContextForPreferences(
       .m_unitFormat =
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_context = symbolContext};
-  Poincare::Internal::Projection::UpdateComplexFormatWithExpressionInput(
-      e, &projectionContext);
+  e.updateProjectionContextWithPreferedComplexFormat(projectionContext);
   return projectionContext;
 }
 
@@ -116,8 +115,7 @@ inline Poincare::ProjectionContext ProjectionContextForParameters(
       .m_symbolic = symbolicComputation,
       .m_context = symbolContext};
   if (updateComplexFormatWithExpression) {
-    Poincare::Internal::Projection::UpdateComplexFormatWithExpressionInput(
-        e, &projectionContext);
+    e.updateProjectionContextWithPreferedComplexFormat(projectionContext);
   }
   return projectionContext;
 }

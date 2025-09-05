@@ -91,6 +91,9 @@ class UserExpression : public Expression {
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceDefinedSymbols) const;
 
+  bool updateProjectionContextWithPreferedComplexFormat(
+      ProjectionContext& projContext) const;
+
   /* UserExpression to UserExpression helpers */
 
   /* Expressions in parameters are outputs. The return boolean indicates the

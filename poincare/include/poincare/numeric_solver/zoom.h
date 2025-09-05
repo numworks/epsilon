@@ -2,7 +2,7 @@
 
 #include <ion/display.h>
 #include <poincare/range.h>
-#include <poincare/src/memory/tree.h>
+#include <poincare/tree.h>
 
 #include "solver.h"
 

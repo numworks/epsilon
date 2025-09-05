@@ -5,7 +5,7 @@
 #include <omg/vector.h>
 #include <poincare/context.h>
 #include <poincare/coordinate_2D.h>
-#include <poincare/src/memory/tree.h>
+#include <poincare/tree.h>
 
 #include <algorithm>
 #include <cmath>

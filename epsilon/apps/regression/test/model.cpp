@@ -66,8 +66,7 @@ void assert_regression_is(const double* xi, const double* yi,
 
   setRegressionPoints(&store, series, numberOfPoints, xi, yi);
   store.setSeriesRegressionType(series, modelType);
-  Shared::GlobalContext globalContext;
-  Shared::StoreContext context(&store, &globalContext);
+  Shared::StoreContext context(&store, &k_emptyContext);
 
   double precision = 1e-2;
   // When expected value is null, expect a stronger precision

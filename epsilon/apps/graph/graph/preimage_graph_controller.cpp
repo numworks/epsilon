@@ -3,7 +3,7 @@
 #include <omg/utf8_helper.h>
 #include <poincare/system_expression.h>
 
-#include "shared/global_context.h"
+#include "shared/global_store.h"
 
 using namespace Poincare;
 using namespace Shared;

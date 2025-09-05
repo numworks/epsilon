@@ -2,7 +2,7 @@
 
 #include <apps/apps_container_helper.h>
 #include <apps/global_preferences.h>
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>

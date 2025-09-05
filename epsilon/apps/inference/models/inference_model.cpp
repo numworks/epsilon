@@ -1,7 +1,7 @@
 #include "inference_model.h"
 
 #include <apps/apps_container_helper.h>
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <inference/app.h>
 #include <omg/unreachable.h>
 #include <poincare/statistics/inference.h>

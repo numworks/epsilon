@@ -14,9 +14,9 @@
 
 namespace Shared {
 
-class GlobalContext final : public Poincare::VariableStore {
+class GlobalStore final : public Poincare::VariableStore {
   friend class GlobalContextAccessor;
-  friend class OMG::GlobalBox<GlobalContext>;
+  friend class OMG::GlobalBox<GlobalStore>;
 
  public:
   constexpr static const char* k_extensions[] = {
@@ -34,7 +34,7 @@ class GlobalContext final : public Poincare::VariableStore {
   // Storage information
   static bool UserNameIsFree(const char* baseName);
 
-  static const Poincare::Layout LayoutForRecord(Ion::Storage::Record record);
+  static Poincare::Layout LayoutForRecord(Ion::Storage::Record record);
 
   // Destroy records
   static void DestroyRecordsBaseNamedWithoutExtension(const char* baseName,
@@ -69,9 +69,9 @@ class GlobalContext final : public Poincare::VariableStore {
   static OMG::GlobalBox<SequenceCache> s_sequenceCache;
   static OMG::GlobalBox<ContinuousFunctionStore> s_continuousFunctionStore;
 
-  /* GlobalContext is a singleton. The unique instance can be accessed through
+  /* GlobalStore is a singleton. The unique instance can be accessed through
    * GlobalContextAccessor */
-  GlobalContext() : m_sequenceContext(this, s_sequenceStore){};
+  GlobalStore() : m_sequenceContext(this, s_sequenceStore){};
 
   // Expression getters
   const Poincare::Internal::Tree* expressionForUserNamed(
@@ -97,11 +97,13 @@ class GlobalContext final : public Poincare::VariableStore {
   SequenceContext m_sequenceContext;
 };
 
+using GlobalContext = const GlobalStore;
+
 class GlobalContextAccessor {
  public:
   // const access
   static inline const Shared::GlobalContext& Context() {
-    return *s_globalContext.get();
+    return *s_globalStore.get();
   }
   static inline const Shared::SequenceContext& SequenceContext() {
     return Context().sequenceContext();
@@ -109,30 +111,28 @@ class GlobalContextAccessor {
 
   static inline const Shared::ContinuousFunctionContext&
   ContinuousFunctionContext() {
-    return *GlobalContext::s_continuousFunctionStore.get();
+    return *GlobalStore::s_continuousFunctionStore.get();
   }
 
   // mutable access
-  static inline Shared::GlobalContext& Store() {
-    return *s_globalContext.get();
-  }
+  static inline Shared::GlobalStore& Store() { return *s_globalStore.get(); }
 
   static inline Shared::ContinuousFunctionStore& ContinuousFunctionStore() {
-    return *GlobalContext::s_continuousFunctionStore.get();
+    return *GlobalStore::s_continuousFunctionStore.get();
   }
 
   static inline Shared::SequenceStore& SequenceStore() {
-    return *GlobalContext::s_sequenceStore.get();
+    return *GlobalStore::s_sequenceStore.get();
   }
 
   static inline Shared::SequenceCache& SequenceCache() {
-    return *GlobalContext::s_sequenceCache.get();
+    return *GlobalStore::s_sequenceCache.get();
   }
 
-  static inline void Init() { s_globalContext.init(); }
+  static inline void Init() { s_globalStore.init(); }
 
  private:
-  static inline OMG::GlobalBox<Shared::GlobalContext> s_globalContext;
+  static inline OMG::GlobalBox<Shared::GlobalStore> s_globalStore;
 };
 
 }  // namespace Shared

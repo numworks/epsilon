@@ -8,7 +8,7 @@
 #include <poincare/print.h>
 
 #include "column_parameter_controller.h"
-#include "global_context.h"
+#include "global_store.h"
 #include "poincare_helpers.h"
 
 using namespace Escher;

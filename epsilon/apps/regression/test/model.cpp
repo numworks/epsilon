@@ -1,7 +1,7 @@
 #include "../model.h"
 
 #include <apps/global_preferences.h>
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <apps/shared/store_context.h>
 #include <assert.h>
 #include <omg/list.h>

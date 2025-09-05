@@ -12,7 +12,7 @@
 
 #include <cmath>
 
-#include "global_context.h"
+#include "global_store.h"
 #include "sequence_context.h"
 #include "sequence_store.h"
 

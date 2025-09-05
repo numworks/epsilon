@@ -4,7 +4,7 @@
 #include <poincare/exception_checkpoint.h>
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/src/expression/projection.h>
-#include <shared/global_context.h>
+#include <shared/global_store.h>
 #include <string.h>
 
 #include <algorithm>

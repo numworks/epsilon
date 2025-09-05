@@ -2,7 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <poincare/helpers/sequence.h>
 
 #include <array>

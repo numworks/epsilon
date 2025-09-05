@@ -8,7 +8,7 @@
 #include <poincare/variable_store.h>
 
 #include "app_with_store_menu.h"
-#include "global_context.h"
+#include "global_store.h"
 
 using namespace Poincare;
 using namespace Escher;

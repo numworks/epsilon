@@ -7,7 +7,7 @@
 #include "images/significance_test.h"
 #include "inference_icon.h"
 #include "models/homogeneity_test.h"
-#include "shared/global_context.h"
+#include "shared/global_store.h"
 
 using namespace Escher;
 

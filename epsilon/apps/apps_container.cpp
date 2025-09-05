@@ -11,7 +11,7 @@
 #include "exam_mode_manager.h"
 #include "global_preferences.h"
 #include "on_boarding/startup_prompt_controller.h"
-#include "shared/global_context.h"
+#include "shared/global_store.h"
 #include "shared/record_restrictive_extensions_helper.h"
 
 extern "C" {

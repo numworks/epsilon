@@ -6,7 +6,7 @@
 
 #include "../app.h"
 #include "../model.h"
-#include "shared/global_context.h"
+#include "shared/global_store.h"
 
 using namespace Escher;
 using namespace Poincare;

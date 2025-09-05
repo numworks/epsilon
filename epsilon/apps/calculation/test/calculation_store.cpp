@@ -8,7 +8,7 @@
 #include <poincare/k_tree.h>
 #include <poincare/test/helper.h>
 #include <quiz.h>
-#include <shared/global_context.h>
+#include <shared/global_store.h>
 #include <string.h>
 
 #include "poincare/context.h"

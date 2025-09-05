@@ -9,7 +9,7 @@
 
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
-#include "shared/global_context.h"
+#include "shared/global_store.h"
 #include "values/values_controller.h"
 
 namespace Graph {

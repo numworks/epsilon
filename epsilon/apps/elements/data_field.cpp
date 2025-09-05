@@ -9,7 +9,7 @@
 #include <array>
 
 #include "elements_data_base.h"
-#include "shared/global_context.h"
+#include "shared/global_store.h"
 
 using namespace Poincare;
 

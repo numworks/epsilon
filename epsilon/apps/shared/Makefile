@@ -74,7 +74,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   expression_model_store.cpp \
   function.cpp \
   function_name_helper.cpp \
-  global_context.cpp \
+  global_store.cpp \
   interactive_curve_view_range.cpp \
   interactive_curve_view_range_delegate.cpp \
   interval.cpp \

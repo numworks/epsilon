@@ -4,7 +4,7 @@
 #include <apps/i18n.h>
 
 #include "graph_icon.h"
-#include "shared/global_context.h"
+#include "shared/global_store.h"
 
 using namespace Poincare;
 using namespace Shared;

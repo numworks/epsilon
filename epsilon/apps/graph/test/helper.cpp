@@ -2,7 +2,7 @@
 
 #include <ion/storage/record.h>
 #include <quiz.h>
-#include <shared/global_context.h>
+#include <shared/global_store.h>
 
 namespace Graph {
 

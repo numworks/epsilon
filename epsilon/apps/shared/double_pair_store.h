@@ -12,7 +12,7 @@
 #include <array>
 #include <string_view>
 
-#include "global_context.h"
+#include "global_store.h"
 
 namespace Shared {
 

@@ -2,7 +2,7 @@
 
 #include <apps/apps_container_helper.h>
 #include <apps/shared/function_app.h>
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <apps/shared/interval.h>
 #include <apps/shared/sequence_context.h>
 #include <apps/shared/sequence_store.h>

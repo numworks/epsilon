@@ -1,5 +1,5 @@
 #include <apps/global_preferences.h>
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <poincare/function_properties/function_type.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/test/helper.h>
@@ -904,7 +904,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
       .m_curveParameterType =
           ContinuousFunctionProperties::CurveParameterType::Line};
 
-  GlobalContext& globalStore = GlobalContextAccessor::Store();
+  GlobalStore& globalStore = GlobalContextAccessor::Store();
   // Add a predefined test function
   AddFunction("test(x)=1+x");
 

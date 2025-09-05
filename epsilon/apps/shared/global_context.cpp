@@ -280,6 +280,8 @@ void GlobalContext::reset() {
 
 void GlobalContext::resetAll() {
   reset();
+  s_sequenceStore->tidyDownstreamPoolFrom();
+  s_continuousFunctionStore->tidyDownstreamPoolFrom();
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 

@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <omg/float.h>
 #include <poincare/print.h>
+#include <poincare/src/expression/projection.h>
 #include <poincare/test/approximation/helper.h>
 #include <poincare/test/float_helper.h>
 #include <poincare/test/helpers/symbol_store.h>
@@ -13,8 +14,6 @@
 #include <string.h>
 
 #include <cmath>
-
-#include "poincare/src/expression/projection.h"
 
 using namespace Poincare;
 

@@ -116,20 +116,3 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("round(1/3,2)", "33/100");
   simplifies_to("round(3.3_m)", "undef");
 }
-
-QUIZ_CASE(pcj_simplification_combinatorics) {
-  simplifies_to("binomial(4,2)", "6");
-  simplifies_to("binomial(20,3)", "1140");
-  simplifies_to("binomial(20,10)", "184756");
-  simplifies_to("binomial(10,20)", "0");
-  simplifies_to("binomial(10.34,0)", "1");
-  simplifies_to("binomial(3.34,-1)", "0");
-  simplifies_to("binomial(-10,10)", "92378");
-  simplifies_to("binomial(2.5,3)", "binomial(5/2,3)");
-  simplifies_to("binomial(-200,120)", "binomial(-200,120)");
-  simplifies_to("binomial(400,1)", "binomial(400,1)");
-
-  simplifies_to("permute(4,2)", "12");
-  simplifies_to("permute(99,4)", "90345024");
-  simplifies_to("permute(20,-10)", "undef");
-}

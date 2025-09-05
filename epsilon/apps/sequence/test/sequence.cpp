@@ -52,8 +52,6 @@ void check_sequences_defined_by(
     const char* definitions[SequenceStore::k_maxNumberOfSequences],
     const char* conditions1[SequenceStore::k_maxNumberOfSequences],
     const char* conditions2[SequenceStore::k_maxNumberOfSequences]) {
-  SequenceStore& store = GlobalContextAccessor::SequenceStore();
-
   Sequence* seqs[SequenceStore::k_maxNumberOfSequences];
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
     seqs[i] =
@@ -79,11 +77,8 @@ void check_sequences_defined_by(
       }
     }
   }
-  store.removeAll();
-  /* The store is a global variable that has been contructed through
-   * GlobalContext::sequenceStore singleton. It won't be destructed. However,
-   * we need to make sure that the pool is empty between quiz_cases. */
-  store.tidyDownstreamPoolFrom();
+  GlobalContextAccessor::SequenceStore().removeAll();
+  GlobalContextAccessor::SequenceStore().tidyDownstreamPoolFrom();
   GlobalContextAccessor::SequenceCache().resetCache();
 }
 
@@ -92,8 +87,6 @@ void check_sum_of_sequence_between_bounds(double result, double start,
                                           const char* definition,
                                           const char* condition1,
                                           const char* condition2) {
-  SequenceStore& store = GlobalContextAccessor::SequenceStore();
-
   const Sequence* seq = AddSequence(type, definition, condition1, condition2);
 
   double sum = seq->sumBetweenBounds(start, end,
@@ -101,8 +94,8 @@ void check_sum_of_sequence_between_bounds(double result, double start,
                    .approximateSystemToRealScalar<double>();
   assert_roughly_equal(sum, result);
 
-  store.removeAll();
-  store.tidyDownstreamPoolFrom();  // Cf comment above
+  GlobalContextAccessor::SequenceStore().removeAll();
+  GlobalContextAccessor::SequenceStore().tidyDownstreamPoolFrom();
   GlobalContextAccessor::SequenceCache().resetCache();
 }
 
@@ -792,9 +785,6 @@ QUIZ_CASE(sequence_order) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("u.seq").destroy();
   sequenceContext->resetCache();
   quiz_assert(v->evaluateXYAtParameter(1., *sequenceContext).y() == 1.);
-
-  sequenceStore->removeAll();
-  sequenceStore->tidyDownstreamPoolFrom();
 }
 
 QUIZ_CASE(sequence_sum_evaluation) {
@@ -835,8 +825,6 @@ QUIZ_CASE(sequence_suitable_for_cobweb) {
   quiz_assert(!AddSequence(Sequence::Type::SingleRecurrence, "2*u(n)+u(0)", "n",
                            nullptr)
                    ->isSuitableForCobweb(sequenceContext));
-  store->removeAll();
-  store->tidyDownstreamPoolFrom();
 }
 
 }  // namespace Shared

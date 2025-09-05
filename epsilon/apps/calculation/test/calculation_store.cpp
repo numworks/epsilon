@@ -809,8 +809,6 @@ QUIZ_CASE(calculation_involving_sequence) {
   CalculationStore calcStore(calculationBuffer, calculationBufferSize);
 
   assertMainCalculationOutputIs("√(i×u(0))×√(6)", "undef", &calcStore);
-  seqStore->removeAll();
-  seqStore->tidyDownstreamPoolFrom();
 }
 
 bool operator==(const AdditionalResultsType& a,

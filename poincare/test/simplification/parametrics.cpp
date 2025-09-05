@@ -174,6 +174,15 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("f'(4)", "8", ctx2);
   simplifies_to("g(4)", "8", ctx2);
   simplifies_to("h(4)", "8", ctx2);
+
+  /* Test with no symbolic computation to check that n inside a sum expression
+   * is not replaced by Undefined */
+  simplifies_to(
+      "sum(n,n,1,5)", "15",
+      {.m_symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols});
+  simplifies_to(
+      "sum(1/n,n,1,2)", "3/2",
+      {.m_symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols});
 }
 
 QUIZ_CASE(pcj_simplification_derivative) {

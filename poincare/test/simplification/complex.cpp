@@ -79,6 +79,17 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("0.3*ln(1+i)-ln(exp(0.3*ln(1+i)))", "0", cartesianCtx);
   simplifies_to("2×cos(π/12)×e^(5×i×π/12)", "1/2+(1+√(3)/2)×i", cartesianCtx);
   simplifies_to("(1+i)^201", "(1+i)^201", cartesianCtx);
+
+  simplifies_to("arg(0)", "undef", cartesianCtx);
+  simplifies_to("arg(123)", "0", cartesianCtx);
+  simplifies_to("arg(-1ᴇ123)", "π", cartesianCtx);
+  simplifies_to("arg(i)", "π/2", cartesianCtx);
+  simplifies_to("arg(-6i)", "-π/2", cartesianCtx);
+  simplifies_to("arg(1+i)", "π/4", cartesianCtx);
+  simplifies_to("conj(1/2)", "1/2", cartesianCtx);
+  simplifies_to("re(1/2)", "1/2", cartesianCtx);
+  simplifies_to("im(1+5×i)", "5", cartesianCtx);
+  simplifies_to("re(1+5×i)", "1", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_polar) {

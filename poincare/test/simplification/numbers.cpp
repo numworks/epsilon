@@ -105,6 +105,8 @@ QUIZ_CASE(pcj_simplification_large_numbers) {
                 "123456789012345678901234567800");
   simplifies_to("1234567890123456789012345678901×10^15",
                 "1234567890123456789012345678901000000000000000");
+  simplifies_to("2^101*2", "5070602400912917605986812821504");
+  simplifies_to("2.3×10^45", "2.3×10^45");
 }
 
 QUIZ_CASE(poincare_simplification_rational) {
@@ -265,4 +267,9 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("atan(inf)", "π/2");
   simplifies_to("atan(-inf)", "-π/2");
   simplifies_to("atan(e^inf)", "π/2");
+}
+
+QUIZ_CASE(pcj_mixed_fraction) {
+  simplifies_to("1 2/3", "5/3");
+  simplifies_to("-1 2/3", "-5/3");
 }

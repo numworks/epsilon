@@ -46,6 +46,12 @@ constexpr Poincare::ProjectionContext degreeCartesianCtx = {
 constexpr Poincare::ProjectionContext gradianCartesianCtx = {
     .m_complexFormat = Poincare::ComplexFormat::Cartesian,
     .m_angleUnit = Poincare::AngleUnit::Gradian};
+constexpr Poincare::ProjectionContext degreePolarCtx = {
+    .m_complexFormat = Poincare::ComplexFormat::Polar,
+    .m_angleUnit = Poincare::AngleUnit::Degree};
+constexpr Poincare::ProjectionContext gradianPolarCtx = {
+    .m_complexFormat = Poincare::ComplexFormat::Polar,
+    .m_angleUnit = Poincare::AngleUnit::Gradian};
 
 constexpr Poincare::ProjectionContext keepAllSymbolsCtx = {
     .m_symbolic = Poincare::SymbolicComputation::KeepAllSymbols,

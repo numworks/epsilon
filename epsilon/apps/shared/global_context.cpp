@@ -27,6 +27,12 @@ OMG::GlobalBox<SequenceCache> GlobalContext::s_sequenceCache;
 OMG::GlobalBox<ContinuousFunctionStore>
     GlobalContext::s_continuousFunctionStore;
 
+void GlobalContext::Init() {
+  s_sequenceStore.init();
+  s_sequenceCache.init(s_sequenceStore.get());
+  s_continuousFunctionStore.init();
+}
+
 void GlobalContext::storageDidChangeForRecord(Ion::Storage::Record record) {
   m_sequenceContext.resetCache();
   GlobalContext::s_sequenceStore->storageDidChangeForRecord(record);

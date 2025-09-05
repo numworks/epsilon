@@ -15,6 +15,8 @@
 namespace Shared {
 
 class GlobalContext final : public Poincare::VariableStore {
+  friend class GlobalContextAccessor;
+
  public:
   constexpr static const char* k_extensions[] = {
       Ion::Storage::expressionExtension,
@@ -25,6 +27,8 @@ class GlobalContext final : public Poincare::VariableStore {
       Ion::Storage::regressionExtension,
       Ion::Storage::parametricComponentExtension};
   constexpr static int k_numberOfExtensions = std::size(k_extensions);
+
+  static void Init();
 
   // Storage information
   static bool UserNameIsFree(const char* baseName);
@@ -57,9 +61,6 @@ class GlobalContext final : public Poincare::VariableStore {
   bool setExpressionForUserNamed(
       const Poincare::Internal::Tree* expression,
       const Poincare::Internal::Tree* symbol) override;
-  static OMG::GlobalBox<SequenceStore> s_sequenceStore;
-  static OMG::GlobalBox<SequenceCache> s_sequenceCache;
-  static OMG::GlobalBox<ContinuousFunctionStore> s_continuousFunctionStore;
   void storageDidChangeForRecord(const Ion::Storage::Record record);
   SequenceContext& sequenceContext() { return m_sequenceContext; }
   const SequenceContext& sequenceContext() const { return m_sequenceContext; }
@@ -72,6 +73,10 @@ class GlobalContext final : public Poincare::VariableStore {
   void resetAll();
 
  private:
+  static OMG::GlobalBox<SequenceStore> s_sequenceStore;
+  static OMG::GlobalBox<SequenceCache> s_sequenceCache;
+  static OMG::GlobalBox<ContinuousFunctionStore> s_continuousFunctionStore;
+
   // Expression getters
   const Poincare::Internal::Tree* expressionForUserNamed(
       const Poincare::Internal::Tree* symbol) const override;
@@ -122,6 +127,10 @@ class GlobalContextAccessor {
 
   static inline Shared::SequenceStore& SequenceStore() {
     return *GlobalContext::s_sequenceStore.get();
+  }
+
+  static inline Shared::SequenceCache& SequenceCache() {
+    return *GlobalContext::s_sequenceCache.get();
   }
 
   static inline void Init() { s_globalContext.init(); }

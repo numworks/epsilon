@@ -147,7 +147,7 @@ static CalculationResult computeInterruptible(
     hasReductionFailure = compute(inputExpression, outputs.exact,
                                   outputs.approximate, complexFormat);
   } else {
-    GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
+    GlobalContextAccessor::SequenceStore().tidyDownstreamPoolFrom(
         checkpoint.endOfPoolBeforeCheckpoint());
     // If the output computation is interrupted, return undef
     outputs = {UserExpression::Undefined(), UserExpression::Undefined()};
@@ -243,7 +243,7 @@ Poincare::UserExpression CalculationStore::parseInput(
     enhancePushedExpression(inputExpression);
     return inputExpression;
   } else {
-    GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
+    GlobalContextAccessor::SequenceStore().tidyDownstreamPoolFrom(
         checkpoint.endOfPoolBeforeCheckpoint());
     return Poincare::UserExpression();
   }

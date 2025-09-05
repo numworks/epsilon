@@ -47,7 +47,7 @@ void FunctionGraphPolicy::drawPlot(const AbstractPlotView* plotView,
       tidyModel(index, checkpoint.endOfPoolBeforeCheckpoint());
       functionStore()->tidyDownstreamPoolFrom(
           checkpoint.endOfPoolBeforeCheckpoint());
-      GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
+      GlobalContextAccessor::SequenceStore().tidyDownstreamPoolFrom(
           checkpoint.endOfPoolBeforeCheckpoint());
     }
     firstDrawnRecord = false;

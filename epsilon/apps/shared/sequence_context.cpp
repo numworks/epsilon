@@ -61,7 +61,7 @@ double SequenceContext::approximateSequenceAtRank(const char* identifier,
 }
 
 SequenceCache* SequenceContext::cache() const {
-  return GlobalContext::s_sequenceCache;
+  return &GlobalContextAccessor::SequenceCache();
 }
 
 }  // namespace Shared

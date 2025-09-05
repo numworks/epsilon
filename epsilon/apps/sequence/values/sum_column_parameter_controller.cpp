@@ -1,5 +1,7 @@
 #include "sum_column_parameter_controller.h"
 
+#include "shared/global_context.h"
+
 using namespace Escher;
 using namespace Shared;
 
@@ -18,8 +20,9 @@ bool SumColumnParameterController::handleEvent(Ion::Events::Event event) {
     m_valuesController->selectCellAtLocation(
         m_valuesController->selectedColumn() - 1,
         m_valuesController->selectedRow());
-    GlobalContext::s_sequenceStore->modelForRecord(m_record)->setDisplaySum(
-        false);
+    GlobalContextAccessor::SequenceStore()
+        .modelForRecord(m_record)
+        ->setDisplaySum(false);
     StackViewController* stack = (StackViewController*)(parentResponder());
     stack->pop();
     return true;

@@ -53,13 +53,13 @@ void check_sequences_defined_by(
     const char* conditions1[SequenceStore::k_maxNumberOfSequences],
     const char* conditions2[SequenceStore::k_maxNumberOfSequences]) {
   Shared::GlobalContext globalContext;
-  SequenceStore* store = globalContext.s_sequenceStore;
+  SequenceStore& store = GlobalContextAccessor::SequenceStore();
   const SequenceContext& sequenceContext =
       GlobalContextAccessor::SequenceContext();
 
   Sequence* seqs[SequenceStore::k_maxNumberOfSequences];
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    seqs[i] = addSequence(store, types[i], definitions[i], conditions1[i],
+    seqs[i] = addSequence(&store, types[i], definitions[i], conditions1[i],
                           conditions2[i], &sequenceContext);
   }
 
@@ -80,12 +80,12 @@ void check_sequences_defined_by(
       }
     }
   }
-  store->removeAll();
+  store.removeAll();
   /* The store is a global variable that has been contructed through
    * GlobalContext::sequenceStore singleton. It won't be destructed. However,
    * we need to make sure that the pool is empty between quiz_cases. */
-  store->tidyDownstreamPoolFrom();
-  GlobalContext::s_sequenceCache->resetCache();
+  store.tidyDownstreamPoolFrom();
+  GlobalContextAccessor::SequenceCache().resetCache();
 }
 
 void check_sum_of_sequence_between_bounds(double result, double start,
@@ -93,20 +93,20 @@ void check_sum_of_sequence_between_bounds(double result, double start,
                                           const char* definition,
                                           const char* condition1,
                                           const char* condition2) {
-  SequenceStore* store = GlobalContext::s_sequenceStore;
+  SequenceStore& store = GlobalContextAccessor::SequenceStore();
   const SequenceContext& sequenceContext =
       GlobalContextAccessor::SequenceContext();
 
-  Sequence* seq = addSequence(store, type, definition, condition1, condition2,
+  Sequence* seq = addSequence(&store, type, definition, condition1, condition2,
                               &sequenceContext);
 
   double sum = seq->sumBetweenBounds(start, end, sequenceContext)
                    .approximateSystemToRealScalar<double>();
   assert_roughly_equal(sum, result);
 
-  store->removeAll();
-  store->tidyDownstreamPoolFrom();  // Cf comment above
-  GlobalContext::s_sequenceCache->resetCache();
+  store.removeAll();
+  store.tidyDownstreamPoolFrom();  // Cf comment above
+  GlobalContextAccessor::SequenceCache().resetCache();
 }
 
 QUIZ_CASE(sequence_evaluation) {
@@ -742,7 +742,7 @@ QUIZ_CASE(sequence_evaluation) {
 }
 
 QUIZ_CASE(sequence_store) {
-  SequenceStore* sequenceStore = GlobalContext::s_sequenceStore;
+  SequenceStore* sequenceStore = &GlobalContextAccessor::SequenceStore();
   GlobalContext& globalStore = GlobalContextAccessor::Store();
   const SequenceContext* sequenceContext =
       &GlobalContextAccessor::SequenceContext();
@@ -772,7 +772,7 @@ QUIZ_CASE(sequence_store) {
 }
 
 QUIZ_CASE(sequence_order) {
-  SequenceStore* sequenceStore = GlobalContext::s_sequenceStore;
+  SequenceStore* sequenceStore = &GlobalContextAccessor::SequenceStore();
   const SequenceContext* sequenceContext =
       &GlobalContextAccessor::SequenceContext();
 
@@ -823,7 +823,7 @@ QUIZ_CASE(sequence_sum_evaluation) {
 }
 
 QUIZ_CASE(sequence_suitable_for_cobweb) {
-  SequenceStore* store = GlobalContext::s_sequenceStore;
+  SequenceStore* store = &GlobalContextAccessor::SequenceStore();
   const SequenceContext& sequenceContext =
       GlobalContextAccessor::SequenceContext();
   quiz_assert(addSequence(store, Sequence::Type::SingleRecurrence,

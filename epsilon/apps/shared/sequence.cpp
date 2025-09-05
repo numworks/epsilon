@@ -310,7 +310,7 @@ void Sequence::SequenceModel::updateNewDataWithExpression(
 }
 
 void Sequence::SequenceModel::setStorageChangeFlag() const {
-  GlobalContext::s_sequenceStore->setStorageChangeFlag(true);
+  GlobalContextAccessor::SequenceStore().setStorageChangeFlag(true);
 }
 
 /* Definition Handle*/

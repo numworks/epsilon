@@ -9,11 +9,7 @@
 namespace Apps {
 
 void Init() {
-  ::Shared::GlobalContext::s_sequenceStore.init();
-  ::Shared::GlobalContext::s_sequenceCache.init(
-      Shared::GlobalContext::s_sequenceStore.get());
-  ::Shared::GlobalContext::s_continuousFunctionStore.init();
-
+  Shared::GlobalContext::Init();
   GlobalPreferences::Init();
   ExamModeManager::Init();
   Shared::GlobalContextAccessor::Init();

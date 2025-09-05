@@ -27,7 +27,7 @@ bool SequenceColumnParameterController::handleEvent(Ion::Events::Event event) {
   assert(selectedRow() == 0);
   if (m_showSumCell.canBeActivatedByEvent(event)) {
     OMG::ExpiringPointer<Shared::Sequence> currentSequence =
-        GlobalContext::s_sequenceStore->modelForRecord(m_record);
+        GlobalContextAccessor::SequenceStore().modelForRecord(m_record);
     currentSequence->setDisplaySum(!currentSequence->displaySum());
     updateShowSumSwitch();
     return true;
@@ -42,7 +42,7 @@ void SequenceColumnParameterController::viewWillAppear() {
 
 void SequenceColumnParameterController::updateShowSumSwitch() {
   OMG::ExpiringPointer<Shared::Sequence> currentSequence =
-      GlobalContext::s_sequenceStore->modelForRecord(m_record);
+      GlobalContextAccessor::SequenceStore().modelForRecord(m_record);
   m_showSumCell.accessory()->setState(currentSequence->displaySum());
 }
 

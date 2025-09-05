@@ -16,6 +16,7 @@ namespace Shared {
 
 class GlobalContext final : public Poincare::VariableStore {
   friend class GlobalContextAccessor;
+  friend class OMG::GlobalBox<GlobalContext>;
 
  public:
   constexpr static const char* k_extensions[] = {
@@ -44,15 +45,6 @@ class GlobalContext final : public Poincare::VariableStore {
   static void DeleteParametricComponentsOfRecord(Ion::Storage::Record record);
   static void StoreParametricComponentsOfRecord(Ion::Storage::Record record);
 
-  GlobalContext() : m_sequenceContext(this, s_sequenceStore){};
-
-  ~GlobalContext() {
-    // Destroy all static cache and stores
-    s_sequenceStore->removeAll();
-    s_sequenceCache->resetCache();
-    s_continuousFunctionStore->removeAll();
-  }
-
   /* Expression for symbol
    * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
@@ -76,6 +68,10 @@ class GlobalContext final : public Poincare::VariableStore {
   static OMG::GlobalBox<SequenceStore> s_sequenceStore;
   static OMG::GlobalBox<SequenceCache> s_sequenceCache;
   static OMG::GlobalBox<ContinuousFunctionStore> s_continuousFunctionStore;
+
+  /* GlobalContext is a singleton. The unique instance can be accessed through
+   * GlobalContextAccessor */
+  GlobalContext() : m_sequenceContext(this, s_sequenceStore){};
 
   // Expression getters
   const Poincare::Internal::Tree* expressionForUserNamed(

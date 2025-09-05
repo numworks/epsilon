@@ -6,7 +6,14 @@
 
 namespace Poincare::Internal {
 
-enum class DimensionType { Scalar, Matrix, Unit, Boolean, Point, None };
+enum class DimensionType : uint8_t {
+  Scalar,
+  Matrix,
+  Unit,
+  Boolean,
+  Point,
+  None,
+};
 
 struct MatrixDimension {
   uint8_t rows;

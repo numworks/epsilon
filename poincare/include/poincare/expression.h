@@ -5,7 +5,6 @@
 #include <poincare/pool_handle.h>
 #include <poincare/pool_object.h>
 #include <poincare/preferences.h>
-#include <poincare/src/expression/dimension_type.h>
 #include <poincare/src/memory/block.h>
 
 namespace Poincare {
@@ -33,8 +32,9 @@ class Dimension {
   bool isPointOrListOfPoints();
 
  private:
-  Internal::MatrixDimension m_matrixDimension;
-  Internal::DimensionType m_type;
+  /* MatrixDimension */ uint8_t m_matrixDimensionRows;
+  /* MatrixDimension */ uint8_t m_matrixDimensionCols;
+  /* DimensionType */ uint8_t m_type;
   bool m_isList;
   bool m_isValid;
   bool m_isEmptyList;

@@ -11,73 +11,83 @@ using namespace Internal;
 
 /* Dimension */
 
+static DimensionType toDT(uint8_t type) {
+  assert(type <= static_cast<uint8_t>(DimensionType::None));
+  return static_cast<DimensionType>(type);
+}
+
 Poincare::Dimension::Dimension(const Expression e, const Context& context)
-    : m_matrixDimension({.rows = 0, .cols = 0}),
-      m_type(DimensionType::Scalar),
+    : m_matrixDimensionRows(0),
+      m_matrixDimensionCols(0),
+      m_type(static_cast<uint8_t>(DimensionType::Scalar)),
       m_isList(false),
       m_isValid(false),
       m_isEmptyList(false) {
+  static_assert(sizeof(DimensionType) == sizeof(m_type));
+  static_assert(sizeof(MatrixDimension) ==
+                sizeof(m_matrixDimensionCols) + sizeof(m_matrixDimensionRows));
   // TODO_PCJ: Remove checks in SystemExpression implementation of this
   if (!Internal::Dimension::DeepCheck(e.tree(), context)) {
     return;
   }
   Internal::Dimension dimension = Internal::Dimension::Get(e.tree(), context);
-  m_type = dimension.type;
+  m_type = static_cast<uint8_t>(dimension.type);
   m_isList = Internal::Dimension::IsList(e.tree(), context);
   m_isEmptyList = (m_isList && Internal::Dimension::ListLength(e.tree()) == 0);
-  if (m_type == DimensionType::Matrix) {
-    m_matrixDimension = dimension.matrix;
+  if (toDT(m_type) == DimensionType::Matrix) {
+    m_matrixDimensionRows = dimension.matrix.rows;
+    m_matrixDimensionCols = dimension.matrix.cols;
   }
   m_isValid = true;
 }
 
 bool Poincare::Dimension::isScalar() {
-  return m_isValid && !m_isList && m_type == DimensionType::Scalar;
+  return m_isValid && !m_isList && toDT(m_type) == DimensionType::Scalar;
 }
 
 bool Poincare::Dimension::isMatrix() {
-  return m_isValid && !m_isList && m_type == DimensionType::Matrix;
+  return m_isValid && !m_isList && toDT(m_type) == DimensionType::Matrix;
 }
 
 bool Poincare::Dimension::isVector() {
   return isMatrix() &&
-         (m_matrixDimension.rows == 1 || m_matrixDimension.cols == 1);
+         (m_matrixDimensionRows == 1 || m_matrixDimensionCols == 1);
 }
 
 bool Poincare::Dimension::isUnit() {
-  return m_isValid && !m_isList && m_type == DimensionType::Unit;
+  return m_isValid && !m_isList && toDT(m_type) == DimensionType::Unit;
 }
 
 bool Poincare::Dimension::isBoolean() {
-  return m_isValid && !m_isList && m_type == DimensionType::Boolean;
+  return m_isValid && !m_isList && toDT(m_type) == DimensionType::Boolean;
 }
 
 bool Poincare::Dimension::isPoint() {
   /* TODO_PCJ: This method used to allow (undef, x) with x undefined. Restore
    * this behavior ? */
-  return m_isValid && !m_isList && m_type == DimensionType::Point;
+  return m_isValid && !m_isList && toDT(m_type) == DimensionType::Point;
 }
 
 bool Poincare::Dimension::isList() { return m_isValid && m_isList; }
 
 bool Poincare::Dimension::isListOfScalars() {
-  return m_isValid && m_isList && m_type == DimensionType::Scalar;
+  return m_isValid && m_isList && toDT(m_type) == DimensionType::Scalar;
 }
 
 bool Poincare::Dimension::isListOfUnits() {
-  return m_isValid && m_isList && m_type == DimensionType::Unit;
+  return m_isValid && m_isList && toDT(m_type) == DimensionType::Unit;
 }
 
 bool Poincare::Dimension::isListOfBooleans() {
-  return m_isValid && m_isList && m_type == DimensionType::Boolean;
+  return m_isValid && m_isList && toDT(m_type) == DimensionType::Boolean;
 }
 
 bool Poincare::Dimension::isListOfPoints() {
-  return m_isValid && m_isList && m_type == DimensionType::Point;
+  return m_isValid && m_isList && toDT(m_type) == DimensionType::Point;
 }
 
 bool Poincare::Dimension::isPointOrListOfPoints() {
-  return m_isValid && m_type == DimensionType::Point;
+  return m_isValid && toDT(m_type) == DimensionType::Point;
 }
 
 bool Poincare::Dimension::isEmptyList() { return m_isEmptyList; }

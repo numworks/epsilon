@@ -84,8 +84,7 @@ class ExpressionOrFloat {
   bool operator==(const ExpressionOrFloat& other) const;
 
  private:
-  constexpr static size_t k_oppositeNodeSize =
-      Internal::TypeBlock(Internal::Type::Opposite).nodeSize();
+  constexpr static size_t k_oppositeNodeSize = 1;
   /* Max tree size, including potential [Opposite] node */
   constexpr static size_t k_maxTreeSize = 8 + k_oppositeNodeSize;
   constexpr static size_t k_numberOfSignificantDigits =
@@ -115,15 +114,7 @@ class ExpressionOrFloat {
         approximationParameters.complexFormat);
   }
 
-  /* We ignore the cost of the [Opposite] node when storing the tree in the
-   * buffer:
-   * Either the expression is negative and smaller than [k_maxTreeSize].
-   * Or it is positive and smaller than [k_maxTreeSize - 1]. */
-  static bool ExpressionFitsBuffer(UserExpression expression) {
-    size_t treeSize = expression.tree()->treeSize();
-    treeSize -= expression.tree()->isOpposite() ? k_oppositeNodeSize : 0;
-    return treeSize <= k_maxTreeSize;
-  }
+  static bool ExpressionFitsBuffer(UserExpression expression);
 
   /* The Pool (where Expressions are stored) is not preserved when the current
    * App is closed. So for the expression to be preserved when closing and

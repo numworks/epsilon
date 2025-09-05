@@ -102,4 +102,16 @@ bool ExpressionOrFloat::operator==(const ExpressionOrFloat& other) const {
   return tree->treeIsIdenticalTo(otherTree);
 }
 
+bool ExpressionOrFloat::ExpressionFitsBuffer(UserExpression expression) {
+  /* We ignore the cost of the [Opposite] node when storing the tree in the
+   * buffer:
+   * Either the expression is negative and smaller than [k_maxTreeSize].
+   * Or it is positive and smaller than [k_maxTreeSize - 1]. */
+  static_assert(k_oppositeNodeSize ==
+                Internal::TypeBlock(Internal::Type::Opposite).nodeSize());
+  size_t treeSize = expression.tree()->treeSize();
+  treeSize -= expression.tree()->isOpposite() ? k_oppositeNodeSize : 0;
+  return treeSize <= k_maxTreeSize;
+}
+
 }  // namespace Poincare

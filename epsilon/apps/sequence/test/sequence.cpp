@@ -19,27 +19,27 @@ using namespace Poincare;
 
 namespace Shared {
 
-Sequence* addSequence(SequenceStore* store, Sequence::Type type,
-                      const char* definition, const char* condition1,
-                      const char* condition2, const Context* context) {
-  Ion::Storage::Record::ErrorStatus err = store->addEmptyModel();
+// Add a Sequence to the global sequence store
+Sequence* AddSequence(Sequence::Type type, const char* definition,
+                      const char* condition1, const char* condition2) {
+  SequenceStore& store = GlobalContextAccessor::SequenceStore();
+  const SequenceContext& context = GlobalContextAccessor::SequenceContext();
+  Ion::Storage::Record::ErrorStatus err = store.addEmptyModel();
   assert(err == Ion::Storage::Record::ErrorStatus::None);
 
-  Ion::Storage::Record record =
-      store->recordAtIndex(store->numberOfModels() - 1);
-  Sequence* u = store->modelForRecord(record);
+  Ion::Storage::Record record = store.recordAtIndex(store.numberOfModels() - 1);
+  Sequence* u = store.modelForRecord(record);
   u->setType(type);
-  assert(context);
-  err = u->setContent(Layout::Parse(definition), *context);
+  err = u->setContent(Layout::Parse(definition), context);
   assert(err == Ion::Storage::Record::ErrorStatus::None);
   if (condition1) {
     err =
-        u->setFirstInitialConditionContent(Layout::Parse(condition1), *context);
+        u->setFirstInitialConditionContent(Layout::Parse(condition1), context);
     assert(err == Ion::Storage::Record::ErrorStatus::None);
   }
   if (condition2) {
-    err = u->setSecondInitialConditionContent(Layout::Parse(condition2),
-                                              *context);
+    err =
+        u->setSecondInitialConditionContent(Layout::Parse(condition2), context);
     assert(err == Ion::Storage::Record::ErrorStatus::None);
   }
   (void)err;  // Silence compilation warning.
@@ -52,22 +52,21 @@ void check_sequences_defined_by(
     const char* definitions[SequenceStore::k_maxNumberOfSequences],
     const char* conditions1[SequenceStore::k_maxNumberOfSequences],
     const char* conditions2[SequenceStore::k_maxNumberOfSequences]) {
-  Shared::GlobalContext globalContext;
   SequenceStore& store = GlobalContextAccessor::SequenceStore();
-  const SequenceContext& sequenceContext =
-      GlobalContextAccessor::SequenceContext();
 
   Sequence* seqs[SequenceStore::k_maxNumberOfSequences];
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    seqs[i] = addSequence(&store, types[i], definitions[i], conditions1[i],
-                          conditions2[i], &sequenceContext);
+    seqs[i] =
+        AddSequence(types[i], definitions[i], conditions1[i], conditions2[i]);
   }
 
   for (int j = 0; j < 10; j++) {
     for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
       if (seqs[i]->isDefined()) {
-        double un =
-            seqs[i]->evaluateXYAtParameter((double)j, sequenceContext).y();
+        double un = seqs[i]
+                        ->evaluateXYAtParameter(
+                            (double)j, GlobalContextAccessor::SequenceContext())
+                        .y();
         bool isEqual = OMG::Float::RoughlyEqual<double>(
             un, result[i][j], OMG::Float::EpsilonLax<double>(), true);
         constexpr size_t bufferSize = 100;
@@ -94,13 +93,11 @@ void check_sum_of_sequence_between_bounds(double result, double start,
                                           const char* condition1,
                                           const char* condition2) {
   SequenceStore& store = GlobalContextAccessor::SequenceStore();
-  const SequenceContext& sequenceContext =
-      GlobalContextAccessor::SequenceContext();
 
-  Sequence* seq = addSequence(&store, type, definition, condition1, condition2,
-                              &sequenceContext);
+  const Sequence* seq = AddSequence(type, definition, condition1, condition2);
 
-  double sum = seq->sumBetweenBounds(start, end, sequenceContext)
+  double sum = seq->sumBetweenBounds(start, end,
+                                     GlobalContextAccessor::SequenceContext())
                    .approximateSystemToRealScalar<double>();
   assert_roughly_equal(sum, result);
 
@@ -744,25 +741,20 @@ QUIZ_CASE(sequence_evaluation) {
 QUIZ_CASE(sequence_store) {
   SequenceStore* sequenceStore = &GlobalContextAccessor::SequenceStore();
   GlobalContext& globalStore = GlobalContextAccessor::Store();
-  const SequenceContext* sequenceContext =
-      &GlobalContextAccessor::SequenceContext();
   Internal::ProjectionContext projCtx = {.m_context = globalStore};
 
   PoincareTest::store("3→f(x)", GlobalContextAccessor::Store());
   simplified_approximates_to<double>("f(u(0))", "undef", projCtx);
 
-  addSequence(sequenceStore, Sequence::Type::Explicit, "1", nullptr, nullptr,
-              sequenceContext);
+  AddSequence(Sequence::Type::Explicit, "1", nullptr, nullptr);
   simplified_approximates_to<double>("f(u(2))", "3", projCtx);
   globalStore.resetAll();
-  addSequence(sequenceStore, Sequence::Type::Explicit, "1/0", nullptr, nullptr,
-              sequenceContext);
+  AddSequence(Sequence::Type::Explicit, "1/0", nullptr, nullptr);
   simplified_approximates_to<double>("f(u(2))", "undef", projCtx);
 
   sequenceStore->removeAll();
   PoincareTest::store("3→a", globalStore);
-  addSequence(sequenceStore, Sequence::Type::Explicit, "a+1", nullptr, nullptr,
-              sequenceContext);
+  AddSequence(Sequence::Type::Explicit, "a+1", nullptr, nullptr);
   simplified_approximates_to<double>("u(34)", "4", projCtx);
   PoincareTest::store("-3→a", globalStore);
   globalStore.storageDidChangeForRecord(Ion::Storage::Record("a.exp"));
@@ -776,33 +768,26 @@ QUIZ_CASE(sequence_order) {
   const SequenceContext* sequenceContext =
       &GlobalContextAccessor::SequenceContext();
 
-  Sequence* u = addSequence(sequenceStore, Sequence::Type::Explicit, "",
-                            nullptr, nullptr, sequenceContext);
+  Sequence* u = AddSequence(Sequence::Type::Explicit, "", nullptr, nullptr);
   quiz_assert(u->fullName()[0] == 'u');
-  Sequence* v = addSequence(sequenceStore, Sequence::Type::Explicit, "",
-                            nullptr, nullptr, sequenceContext);
+  Sequence* v = AddSequence(Sequence::Type::Explicit, "", nullptr, nullptr);
   quiz_assert(v->fullName()[0] == 'v');
-  Sequence* w = addSequence(sequenceStore, Sequence::Type::Explicit, "3",
-                            nullptr, nullptr, sequenceContext);
+  Sequence* w = AddSequence(Sequence::Type::Explicit, "3", nullptr, nullptr);
   quiz_assert(w->fullName()[0] == 'w');
   // Manually destroy u and v (but not w)
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("u.seq").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("v.seq").destroy();
-  u = addSequence(sequenceStore, Sequence::Type::Explicit, "0", nullptr,
-                  nullptr, sequenceContext);
+  u = AddSequence(Sequence::Type::Explicit, "0", nullptr, nullptr);
   assert(u->fullName()[0] == 'u');
-  v = addSequence(sequenceStore, Sequence::Type::Explicit, "1+w(1)", nullptr,
-                  nullptr, sequenceContext);
+  v = AddSequence(Sequence::Type::Explicit, "1+w(1)", nullptr, nullptr);
   assert(v->fullName()[0] == 'v');
 
   sequenceContext->resetCache();
   quiz_assert(v->evaluateXYAtParameter(1., *sequenceContext).y() == 4.);
 
   sequenceStore->removeAll();
-  u = addSequence(sequenceStore, Sequence::Type::Explicit, "0", nullptr,
-                  nullptr, sequenceContext);
-  v = addSequence(sequenceStore, Sequence::Type::Explicit, "1", nullptr,
-                  nullptr, sequenceContext);
+  u = AddSequence(Sequence::Type::Explicit, "0", nullptr, nullptr);
+  v = AddSequence(Sequence::Type::Explicit, "1", nullptr, nullptr);
   // Manually destroy u (but not v)
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("u.seq").destroy();
   sequenceContext->resetCache();
@@ -826,29 +811,29 @@ QUIZ_CASE(sequence_suitable_for_cobweb) {
   SequenceStore* store = &GlobalContextAccessor::SequenceStore();
   const SequenceContext& sequenceContext =
       GlobalContextAccessor::SequenceContext();
-  quiz_assert(addSequence(store, Sequence::Type::SingleRecurrence,
-                          "3(u(n)+2)+u(n)", "0", nullptr, &sequenceContext)
+  quiz_assert(AddSequence(Sequence::Type::SingleRecurrence, "3(u(n)+2)+u(n)",
+                          "0", nullptr)
                   ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
-  quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence, "v(n)+2",
-                           "0", nullptr, &sequenceContext)
+  quiz_assert(
+      !AddSequence(Sequence::Type::SingleRecurrence, "v(n)+2", "0", nullptr)
+           ->isSuitableForCobweb(sequenceContext));
+  store->removeAll();
+  quiz_assert(!AddSequence(Sequence::Type::SingleRecurrence, "u(n)+cos(n)", "0",
+                           nullptr)
                    ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
-  quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence,
-                           "u(n)+cos(n)", "0", nullptr, &sequenceContext)
-                   ->isSuitableForCobweb(sequenceContext));
+  quiz_assert(
+      !AddSequence(Sequence::Type::SingleRecurrence, "2*u(n-2)", "0", nullptr)
+           ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
-  quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence, "2*u(n-2)",
-                           "0", nullptr, &sequenceContext)
-                   ->isSuitableForCobweb(sequenceContext));
-  store->removeAll();
-  quiz_assert(addSequence(store, Sequence::Type::SingleRecurrence,
-                          "2*u(n)+u(0)", "0", nullptr, &sequenceContext)
-                  ->isSuitableForCobweb(sequenceContext));
+  quiz_assert(
+      AddSequence(Sequence::Type::SingleRecurrence, "2*u(n)+u(0)", "0", nullptr)
+          ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
   sequenceContext.resetCache();  // for computation of u(0)
-  quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence,
-                           "2*u(n)+u(0)", "n", nullptr, &sequenceContext)
+  quiz_assert(!AddSequence(Sequence::Type::SingleRecurrence, "2*u(n)+u(0)", "n",
+                           nullptr)
                    ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
   store->tidyDownstreamPoolFrom();

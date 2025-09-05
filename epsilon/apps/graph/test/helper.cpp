@@ -1,21 +1,26 @@
 #include "helper.h"
 
+#include <ion/storage/record.h>
+#include <quiz.h>
+#include <shared/global_context.h>
+
 namespace Graph {
 
-Shared::ContinuousFunction* addFunction(const char* definition,
-                                        Shared::ContinuousFunctionStore* store,
-                                        const Poincare::Context& context) {
-  Ion::Storage::Record::ErrorStatus err = store->addEmptyModel();
+Shared::ContinuousFunction* AddFunction(const char* definition) {
+  Shared::ContinuousFunctionStore& functionStore =
+      Shared::GlobalContextAccessor::ContinuousFunctionStore();
+  Ion::Storage::Record::ErrorStatus err = functionStore.addEmptyModel();
   quiz_assert(err == Ion::Storage::Record::ErrorStatus::None);
   Shared::ContinuousFunction* f;
   {
     Ion::Storage::Record record =
-        store->recordAtIndex(store->numberOfModels() - 1);
+        functionStore.recordAtIndex(functionStore.numberOfModels() - 1);
     f = static_cast<Shared::ContinuousFunction*>(
-        store->modelForRecord(record).operator->());
+        functionStore.modelForRecord(record).operator->());
     // Prevent further use of record as it may get invalidated by setContent.
   }
-  err = f->setContent(Poincare::Layout::Parse(definition), context);
+  err = f->setContent(Poincare::Layout::Parse(definition),
+                      Shared::GlobalContextAccessor::Context());
   quiz_assert(err == Ion::Storage::Record::ErrorStatus::None);
   (void)err;  // Silence compilation warning.
 

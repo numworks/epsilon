@@ -3,7 +3,6 @@
 #include <apps/global_preferences.h>
 #include <assert.h>
 #include <poincare/helpers/symbol.h>
-#include <poincare/src/layout/rack.h>
 
 #include <algorithm>
 
@@ -92,8 +91,7 @@ void ListController::layoutFieldDidAbortEditing(LayoutField* layoutField) {
 
   // Remove sequence if main expression is empty
   Shared::Sequence* sequence = modelStore()->modelForRecord(selectedRecord());
-  if (Poincare::Internal::Rack::IsEmpty(sequence->layout()) &&
-      removeModelRow(selectedRecord())) {
+  if (sequence->layout().isEmpty() && removeModelRow(selectedRecord())) {
     int newSelectedRow =
         selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
     selectRow(newSelectedRow);

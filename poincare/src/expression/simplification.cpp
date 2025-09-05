@@ -127,12 +127,9 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
   assert(!e->hasDescendantSatisfying(
       [](const Tree* tree) { return tree->isStore(); }));
 
+  Dimension dim = ProjectAndReduce(e, projectionContext);
   if (beautify) {
-    Dimension dim;
-    ProjectAndReduce(e, projectionContext, &dim);
     BeautifyReduced(e, projectionContext, dim);
-  } else {
-    ProjectAndReduce(e, projectionContext);
   }
 
   if (isStore) {
@@ -143,14 +140,14 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
   return e;
 }
 
-void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext,
-                      Dimension* outDimension) {
+Dimension ProjectAndReduce(Tree* e, ProjectionContext* projectionContext) {
   assert(!e->isStore());
-  ToSystem(e, projectionContext, outDimension);
+  Dimension dim = ToSystem(e, projectionContext).dimension;
   ReduceSystem(e, projectionContext->m_advanceReduce,
                projectionContext->m_reductionTarget);
   // Non-approximated numbers or node may have appeared during reduction.
   ApplyReductionStrategy(e, *projectionContext);
+  return dim;
 }
 
 bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext,
@@ -207,21 +204,17 @@ bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext) {
   return changed;
 }
 
-bool ToSystem(Tree* e, ProjectionContext* projectionContext,
-              Dimension* outDimension) {
+ToSystemOutput ToSystem(Tree* e, ProjectionContext* projectionContext) {
   /* 1 - Prepare for projection */
   bool changed = PrepareForProjection(e, projectionContext);
   /* 2 - Update projection context */
   Dimension dim = Dimension::Get(e);
-  if (outDimension) {
-    *outDimension = dim;
-  }
   /* 3 - Apply projection strategy */
   changed = ApplyProjectionStrategy(e, *projectionContext) || changed;
   /* 4 - Project */
   changed =
       Projection::DeepSystemProject(e, *projectionContext, dim) || changed;
-  return changed;
+  return {changed, dim};
 }
 
 #if ASSERTIONS
@@ -229,7 +222,7 @@ bool IsSystem(const Tree* e) {
   Tree* c = e->cloneTree();
   // Use ComplexFormat::Cartesian to avoid having PowReal interfering
   ProjectionContext ctx = {.m_complexFormat = ComplexFormat::Cartesian};
-  bool changed = ToSystem(c, &ctx);
+  bool changed = ToSystem(c, &ctx).changed;
   c->removeTree();
   return !changed;
 }

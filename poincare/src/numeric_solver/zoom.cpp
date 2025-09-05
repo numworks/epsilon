@@ -1,5 +1,4 @@
-#include "zoom.h"
-
+#include <poincare/numeric_solver/zoom.h>
 #include <poincare/src/expression/approximation.h>
 #include <string.h>
 

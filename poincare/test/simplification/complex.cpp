@@ -1,3 +1,4 @@
+#include "../helpers/symbol_store.h"
 #include "helper.h"
 
 using namespace Poincare;
@@ -117,4 +118,191 @@ QUIZ_CASE(pcj_simplification_polar) {
   // TODO: Simplify arg between ]-π,π]
   simplifies_to("e^(534/7×i)", "e^(534/7×i)", polarCtx);
   simplifies_to("e^(3.1415×i)", "e^(6283/2000×i)", polarCtx);
+}
+
+QUIZ_CASE(poincare_simplification_complex_format) {
+  // Real
+  simplifies_to("i", "nonreal");
+  simplifies_to("√(-1)", "nonreal");
+  simplifies_to("√(-1)×√(-1)", "nonreal");
+  simplifies_to("ln(-2)", "nonreal");
+  simplifies_to("(-8)^(2/3)", "4");
+#if TODO_PCJ
+  simplifies_to("(-8)^(2/5)", "2×root(2,5)");
+  simplifies_to("(-8)^(1/5)", "-root(8,5)");
+#endif
+  simplifies_to("(-8)^(1/4)", "nonreal");
+  simplifies_to("(-8)^(1/3)", "-2");
+  simplifies_to("[[1,2+√(-1)]]", "[[1,nonreal]]");
+  simplifies_to("atan(2)", "arctan(2)");
+  simplifies_to("atan(-2)", "-arctan(2)");
+
+  {
+    // User defined variable
+    simplifies_to("a", "a");
+    // a = 2+i
+    PoincareTest::SymbolStore symbolStore;
+    Poincare::ProjectionContext projCtx = {
+        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+        .m_context = symbolStore};
+    store("2+i→a", symbolStore);
+    simplifies_to("a", "nonreal", projCtx);
+    symbolStore.reset();
+    // User defined function
+    // f : x → x+1
+    store("x+1+i→f(x)", symbolStore);
+    simplifies_to("f(3)", "nonreal", projCtx);
+  }
+
+  // Cartesian
+  simplifies_to("-2.3ᴇ3", "-2300", cartesianCtx);
+  simplifies_to("3", "3", cartesianCtx);
+  simplifies_to("∞", "∞", cartesianCtx);
+  simplifies_to("1+2+i", "3+i", cartesianCtx);
+  simplifies_to("-(5+2×i)", "-5-2×i", cartesianCtx);
+  simplifies_to("(5+2×i)", "5+2×i", cartesianCtx);
+  simplifies_to("i+i", "2×i", cartesianCtx);
+  simplifies_to("-2+2×i", "-2+2×i", cartesianCtx);
+  simplifies_to("(3+i)-(2+4×i)", "1-3×i", cartesianCtx);
+  simplifies_to("(2+3×i)×(4-2×i)", "14+8×i", cartesianCtx);
+  simplifies_to("(3+i)/2", "3/2+1/2×i", cartesianCtx);
+  simplifies_to("(3+i)/(2+i)", "7/5-1/5×i", cartesianCtx);
+  // The simplification of (3+i)^(2+i) in a Cartesian complex form generates to
+  // many nodes
+  // simplifies_to("(3+i)^(2+i)",
+  // "10×cos((-4×atan(3)+ln(2)+ln(5)+2×π)/2)×e^((2×atan(3)-π)/2)+10×sin((-4×atan(3)+ln(2)+ln(5)+2×π)/2)×e^((2×atan(3)-π)/2)i",
+  // cartesianCtx);
+  simplifies_to("(3+i)^(2+i)", "(3+i)^(2+i)", cartesianCtx);
+  simplifies_to("√(1+6i)", "√((1+√(37))/2)+√((-1+√(37))/2)×i", cartesianCtx);
+  simplifies_to("(1+i)^2", "2×i", cartesianCtx);
+  simplifies_to("2×i", "2×i", cartesianCtx);
+  simplifies_to("i!", "undef", cartesianCtx);
+  simplifies_to("3!", "6", cartesianCtx);
+  simplifies_to("x!", "x!", cartesianCtx);
+  simplifies_to("e", "e", cartesianCtx);
+  simplifies_to("π", "π", cartesianCtx);
+  simplifies_to("i", "i", cartesianCtx);
+
+  simplifies_to("arctan(2)", "arctan(2)", cartesianCtx);
+  simplifies_to("arctan(-2)", "-arctan(2)", cartesianCtx);
+  simplifies_to("abs(-3)", "3", cartesianCtx);
+  simplifies_to("abs(-3+i)", "√(10)", cartesianCtx);
+  simplifies_to("arctan(2)", "arctan(2)", cartesianCtx);
+  simplifies_to("arctan(2+i)", "arctan(2+i)", cartesianCtx);
+  simplifies_to("binomial(10, 4)", "210", cartesianCtx);
+  simplifies_to("ceil(-1.3)", "-1", cartesianCtx);
+  simplifies_to("arg(-2)", "π", cartesianCtx);
+  simplifies_to("conj(-2)", "-2", cartesianCtx);
+  simplifies_to("conj(-2+2×i+i)", "-2-3×i", cartesianCtx);
+  simplifies_to("cos(12)", "cos(12)", cartesianCtx);
+  simplifies_to("cos(12+i)", "cos(12)×cosh(1)-sin(12)×sinh(1)×i", cartesianCtx);
+  simplifies_to("diff(3×x, x, 3)", "3", cartesianCtx);
+  simplifies_to("quo(34,x)", "quo(34,x)", cartesianCtx);
+  simplifies_to("rem(5,3)", "2", cartesianCtx);
+  simplifies_to("floor(x)", "floor(x)", cartesianCtx);
+  simplifies_to("frac(x)", "frac(x)", cartesianCtx);
+  simplifies_to("gcd(x,y)", "gcd(x,y)", cartesianCtx);
+  simplifies_to("gcd(x,gcd(y,z))", "gcd(x,y,z)", cartesianCtx);
+  simplifies_to("gcd(3, 1, 2, x, x^2)", "gcd(1,x^2,x)", cartesianCtx);
+  simplifies_to("im(1+i)", "1", cartesianCtx);
+  simplifies_to("int(x^2, x, 1, 2)", "int(x^2,x,1,2)", cartesianCtx);
+  simplifies_to("lcm(x,y)", "lcm(x,y)", cartesianCtx);
+  simplifies_to("lcm(x,lcm(y,z))", "lcm(x,y,z)", cartesianCtx);
+  simplifies_to("lcm(3, 1, 2, x, x^2)", "lcm(6,x^2,x)", cartesianCtx);
+  // TODO: dim is not simplified yet
+  // simplifies_to("dim(x)", "dim(x)", User, Radian,
+  // MetricUnitFormat, Cartesian);
+
+  simplifies_to("root(2,i)", "cos(ln(2))-sin(ln(2))×i", cartesianCtx);
+  // TODO_PCJ: get minus sign out of cos and sin
+  simplifies_to("root(2,i+1)", "√(2)×(cos(-(90×ln(2))/π)+sin(-(90×ln(2))/π)×i)",
+                degreeCartesianCtx);
+  simplifies_to("root(2,i+1)", "cos(-ln(2)/2)×√(2)+sin(-ln(2)/2)×√(2)×i",
+                cartesianCtx);
+  simplifies_to("permute(10, 4)", "5040", cartesianCtx);
+  simplifies_to("random()", "random()", cartesianCtx);
+  simplifies_to("re(x)", "x", cartesianCtx);
+  simplifies_to("round(x,y)", "round(x,y)", cartesianCtx);
+  simplifies_to("sign(x)", "sign(x)", cartesianCtx);
+  simplifies_to("sin(23)", "sin(23)", cartesianCtx);
+  simplifies_to("sin(23+i)", "sin(23)×cosh(1)+cos(23)×sinh(1)×i", cartesianCtx);
+  simplifies_to("√(1-i)", "√((1+√(2))/2)-√((-1+√(2))/2)×i", cartesianCtx);
+  simplifies_to("tan(23)", "tan(23)", cartesianCtx);
+  simplifies_to("tan(23+i)", "tan(23+i)", cartesianCtx);
+  simplifies_to("[[1,√(-1)]]", "[[1,i]]", cartesianCtx);
+
+  // User defined variable
+  simplifies_to("a", "a", cartesianCtx);
+  {
+    // a = 2+i
+    PoincareTest::SymbolStore symbolStore;
+    Poincare::ProjectionContext projCtx = {
+        .m_complexFormat = ComplexFormat::Cartesian,
+        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+        .m_context = symbolStore};
+    store("2+i→a", symbolStore);
+    simplifies_to("a", "2+i", projCtx);
+    symbolStore.reset();
+    // User defined function
+    // f : x → x+1
+    store("x+1+i→f(x)", symbolStore);
+    simplifies_to("f(3)", "4+i", projCtx);
+  }
+  // Polar
+  simplifies_to("-2.3ᴇ3", "2300×e^(π×i)", polarCtx);
+  simplifies_to("3", "3", polarCtx);
+  simplifies_to("∞", "∞", polarCtx);
+  simplifies_to("1+2+i", "√(10)×e^(arctan(1/3)×i)", polarCtx);
+  simplifies_to("1+2+i", "√(10)×e^((π×arctan(1/3))/180×i)", degreePolarCtx);
+  simplifies_to("-(5+2×i)", "√(29)×e^((-π+arctan(2/5))×i)", polarCtx);
+  simplifies_to("(5+2×i)", "√(29)×e^(arctan(2/5)×i)", polarCtx);
+  simplifies_to("i+i", "2×e^(π/2×i)", polarCtx);
+  simplifies_to("i+i", "2×e^(π/2×i)", polarCtx);
+  simplifies_to("-2+2×i", "2×√(2)×e^((3×π)/4×i)", polarCtx);
+  simplifies_to("(3+i)-(2+4×i)", "√(10)×e^(-arctan(3)×i)", polarCtx);
+  simplifies_to("(2+3×i)×(4-2×i)", "(2×√(65))×e^(arctan(4/7)×i)", polarCtx);
+  simplifies_to("(3+i)/2", "√(10)/2×e^(arctan(1/3)×i)", polarCtx);
+  simplifies_to("(3+i)/(2+i)", "√(2)×e^(-arctan(1/7)×i)", polarCtx);
+  // TODO: simplify arctan(tan(x)) = x±k×pi?
+  // simplifies_to("(3+i)^(2+i)",
+  // "10e^((2×arctan(3)-π)/2)×e^(((-4×arctan(3)+ln(2)+ln(5)+2π)/2)i)",
+  //  polarCtx);
+  // The simplification of (3+i)^(2+i) in a Polar complex form generates too
+  // many nodes
+  simplifies_to("(3+i)^(2+i)", "(3+i)^(2+i)", polarCtx);
+  simplifies_to("(1+i)^2", "2×e^(π/2×i)", polarCtx);
+  simplifies_to("2×i", "2×e^(π/2×i)", polarCtx);
+  simplifies_to("3!", "6", polarCtx);
+  simplifies_to("x!", "x!", polarCtx);
+  simplifies_to("e", "e", polarCtx);
+  simplifies_to("π", "π", polarCtx);
+  simplifies_to("i", "e^(π/2×i)", polarCtx);
+  simplifies_to("abs(-3)", "3", polarCtx);
+  simplifies_to("abs(-3+i)", "√(10)", polarCtx);
+  simplifies_to("conj(2×e^(i×π/2))", "2×e^(-π/2×i)", polarCtx);
+  simplifies_to("-2×e^(i×π/2)", "2×e^(-π/2×i)", polarCtx);
+  simplifies_to("[[1,√(-1)]]", "[[1,e^(π/2×i)]]", polarCtx);
+  simplifies_to("arctan(2)", "arctan(2)", polarCtx);
+  simplifies_to("arctan(-2)", "arctan(2)×e^(π×i)", polarCtx);
+  simplifies_to("cos(42π)", "cos(42×π)", degreePolarCtx);
+
+  // User defined variable
+  simplifies_to("a", "a", polarCtx);
+  {
+    PoincareTest::SymbolStore symbolStore;
+    Poincare::ProjectionContext projCtx = {
+        .m_complexFormat = ComplexFormat::Polar,
+        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+        .m_context = symbolStore};
+    // a = 2 + i
+    store("2+i→a", symbolStore);
+    simplifies_to("a", "√(5)×e^(arctan(1/2)×i)", projCtx);
+    symbolStore.reset();
+    // User defined function
+    // f: x → x+1
+
+    store("x+1+i→f(x)", symbolStore);
+    simplifies_to("f(3)", "√(17)×e^(arctan(1/4)×i)", projCtx);
+    symbolStore.reset();
+  }
 }

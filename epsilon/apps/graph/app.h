@@ -30,12 +30,6 @@ class App : public Shared::FunctionApp {
     void reset() override;
     void tidy() override;
     const Descriptor* descriptor() const override;
-    Shared::ContinuousFunctionStore* functionStore() override {
-      return Shared::GlobalContext::s_continuousFunctionStore;
-    }
-    const Shared::ContinuousFunctionStore* functionStore() const override {
-      return Shared::GlobalContext::s_continuousFunctionStore;
-    }
     Shared::InteractiveCurveViewRange* graphRange() { return &m_graphRange; }
     Shared::Interval* intervalForSymbolType(
         Shared::ContinuousFunctionProperties::SymbolType symbolType) {
@@ -54,12 +48,14 @@ class App : public Shared::FunctionApp {
   const Snapshot* snapshot() const {
     return static_cast<const Snapshot*>(Escher::App::snapshot());
   }
-  Shared::ContinuousFunctionStore* functionStore() override {
-    return snapshot()->functionStore();
+
+  Shared::ContinuousFunctionStore& functionStore() override {
+    return Shared::GlobalContextAccessor::ContinuousFunctionStore();
   }
-  const Shared::ContinuousFunctionStore* functionStore() const override {
-    return snapshot()->functionStore();
-  }
+  const Shared::ContinuousFunctionContext& functionContext() const override {
+    return Shared::GlobalContextAccessor::ContinuousFunctionContext();
+  };
+
   Shared::Interval* intervalForSymbolType(
       Shared::ContinuousFunctionProperties::SymbolType symbolType) {
     return snapshot()->intervalForSymbolType(symbolType);

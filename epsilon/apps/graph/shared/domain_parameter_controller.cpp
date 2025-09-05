@@ -117,7 +117,7 @@ DomainParameterController::infinityAllowanceForRow(int row) const {
 OMG::ExpiringPointer<Shared::ContinuousFunction>
 DomainParameterController::function() const {
   assert(!m_record.isNull());
-  return App::app()->functionStore()->modelForRecord(m_record);
+  return App::app()->functionStore().modelForRecord(m_record);
 }
 
 Poincare::Layout DomainParameterController::extraCellLayoutAtRow(int row) {

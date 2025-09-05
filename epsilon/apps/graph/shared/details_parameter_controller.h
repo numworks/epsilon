@@ -59,7 +59,7 @@ class DetailsParameterController
   constexpr static size_t k_hyperbolaDetailsSections = 6;
   constexpr static int k_numberOfDataPoints = 7;  // max + 1 for plot type
   // Return record's Continuous Function pointer
-  OMG::ExpiringPointer<Shared::ContinuousFunction> function() const;
+  OMG::ExpiringPointer<const Shared::ContinuousFunction> function() const;
   bool functionIsNonVerticalLine() const {
     return function()->properties().isLine() &&
            !function()->properties().isAlongY();

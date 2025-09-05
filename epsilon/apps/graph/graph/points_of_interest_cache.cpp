@@ -8,6 +8,7 @@
 #include <array>
 
 #include "../app.h"
+#include "shared/global_context.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -371,7 +372,7 @@ Expression PointsOfInterestCache::computeBetween(float start, float end) {
     m_computedEnd = end;
   }
 
-  ContinuousFunctionStore* store = App::app()->functionStore();
+  ContinuousFunctionStore* store = &App::app()->functionStore();
 
   PointSearchContext searchContext{
       .start = start,
@@ -390,13 +391,14 @@ Expression PointsOfInterestCache::computeBetween(float start, float end) {
 
 void PointsOfInterestCache::tidyDownstreamPoolFrom(
     const PoolObject* treePoolCursor) const {
-  ContinuousFunctionStore* store = App::app()->functionStore();
-  int n = store->numberOfActiveFunctions();
+  ContinuousFunctionStore* functionStore =
+      &GlobalContextAccessor::ContinuousFunctionStore();
+  int n = functionStore->numberOfActiveFunctions();
   for (int i = 0; i < n; i++) {
-    store->modelForRecord(store->activeRecordAtIndex(i))
+    functionStore->modelForRecord(functionStore->activeRecordAtIndex(i))
         ->tidyDownstreamPoolFrom(treePoolCursor);
   }
-  GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
+  GlobalContextAccessor::SequenceStore().tidyDownstreamPoolFrom(treePoolCursor);
 }
 
 }  // namespace Graph

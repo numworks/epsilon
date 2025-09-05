@@ -30,7 +30,7 @@ class ListParameterController
  protected:
   // Type order defines cell order
   constexpr static int k_numberOfSharedCells = 3;
-  FunctionStore* functionStore();
+  FunctionStore& functionStore();
   OMG::ExpiringPointer<Function> function();
   void updateEnableCellSwitch();
 

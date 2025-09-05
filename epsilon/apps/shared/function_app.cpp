@@ -59,7 +59,7 @@ bool FunctionApp::storageCanChangeForRecordName(
    * Warning: this has no effect on Sequence yet: we can't define sequences
    * from the store menu.  */
   return !m_intrusiveStorageChangeFlag ||
-         strcmp(recordName.extension, functionStore()->modelExtension()) != 0;
+         strcmp(recordName.extension, functionContext().modelExtension()) != 0;
 }
 
 FunctionApp::ListTab::ListTab(Shared::FunctionListController* listController)

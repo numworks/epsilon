@@ -21,8 +21,6 @@ class FunctionApp : public MathApp {
    public:
     Snapshot();
     CurveViewCursor* cursor() { return &m_cursor; }
-    virtual FunctionStore* functionStore() = 0;
-    virtual const FunctionStore* functionStore() const = 0;
     int* selectedCurveIndex() { return &m_selectedCurveIndex; }
     void reset() override;
 
@@ -41,11 +39,12 @@ class FunctionApp : public MathApp {
     return static_cast<const Snapshot*>(Escher::App::snapshot());
   }
 
-  virtual FunctionStore* functionStore() { return snapshot()->functionStore(); }
-
-  virtual const FunctionStore* functionStore() const {
-    return snapshot()->functionStore();
-  }
+  /* The FunctionStore of an app contains either sequences (for the sequence
+   * app) or continuous functions (for other apps) */
+  virtual FunctionStore& functionStore() = 0;
+  /* The FunctionContext of an app contains either sequences (for the sequence
+   * app) or continuous functions (for other apps) */
+  virtual const FunctionContext& functionContext() const = 0;
 
   virtual ValuesController* valuesController() = 0;
 

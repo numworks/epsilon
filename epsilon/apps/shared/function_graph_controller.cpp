@@ -179,7 +179,7 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
 
 const FunctionContext& FunctionGraphController::functionOrSequenceContext()
     const {
-  return *FunctionApp::app()->functionStore();
+  return FunctionApp::app()->functionContext();
 }
 
 void FunctionGraphController::computeDefaultPositionForFunctionAtIndex(

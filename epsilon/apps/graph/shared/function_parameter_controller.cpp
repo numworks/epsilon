@@ -54,8 +54,8 @@ void FunctionParameterController::setRecord(Ion::Storage::Record record) {
   m_domainParameterController.setRecord(m_record);
   m_derivativesParameterController.setRecord(m_record);
   bool displayDerivative = !m_record.isNull() && App::app()
-                                                     ->functionStore()
-                                                     ->modelForRecord(m_record)
+                                                     ->functionContext()
+                                                     .modelForRecord(m_record)
                                                      ->canDisplayDerivative();
   m_derivativesCell.setVisible(displayDerivative);
   m_detailsCell.setVisible(displayDetails());
@@ -83,8 +83,8 @@ int writeInterval(char* buffer, int bufferSize, double min, double max,
 void FunctionParameterController::viewWillAppear() {
   if (!m_record.isNull()) {
     App* myApp = App::app();
-    OMG::ExpiringPointer<ContinuousFunction> function =
-        myApp->functionStore()->modelForRecord(m_record);
+    OMG::ExpiringPointer<const ContinuousFunction> function =
+        myApp->functionContext().modelForRecord(m_record);
     m_detailsCell.subLabel()->setMessage(function->properties().caption());
     double min = function->tMin();
     double max = function->tMax();
@@ -130,7 +130,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
 
 OMG::ExpiringPointer<ContinuousFunction>
 FunctionParameterController::function() {
-  return App::app()->functionStore()->modelForRecord(m_record);
+  return App::app()->functionStore().modelForRecord(m_record);
 }
 
 void FunctionParameterController::initializeColumnParameters() {

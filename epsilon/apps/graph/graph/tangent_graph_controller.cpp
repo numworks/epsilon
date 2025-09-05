@@ -134,7 +134,7 @@ bool TangentGraphController::handleEnter() {
 
 OMG::ExpiringPointer<ContinuousFunction> TangentGraphController::function()
     const {
-  return App::app()->functionStore()->modelForRecord(m_record);
+  return App::app()->functionStore().modelForRecord(m_record);
 }
 
 }  // namespace Graph

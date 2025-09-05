@@ -116,6 +116,14 @@ class GlobalContextAccessor {
     return *s_globalContext.get();
   }
 
+  static inline Shared::ContinuousFunctionStore& ContinuousFunctionStore() {
+    return *GlobalContext::s_continuousFunctionStore.get();
+  }
+
+  static inline Shared::SequenceStore& SequenceStore() {
+    return *GlobalContext::s_sequenceStore.get();
+  }
+
   static inline void Init() { s_globalContext.init(); }
 
  private:

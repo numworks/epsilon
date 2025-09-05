@@ -48,7 +48,8 @@ void App::Snapshot::resetInterval() {
 
 void App::Snapshot::updateInterval() {
   if (!intervalModifiedByUser()) {
-    int smallestInitRank = functionStore()->smallestInitialRank();
+    int smallestInitRank =
+        Shared::GlobalContextAccessor::SequenceStore().smallestInitialRank();
     if (smallestInitRank < Shared::Sequence::k_maxInitialRank &&
         smallestInitRank != interval()->parameters()->start()) {
       interval()->translateTo(smallestInitRank);
@@ -76,11 +77,10 @@ App::ListTab::ListTab()
 
 App::GraphTab::GraphTab()
     : Shared::FunctionApp::GraphTab(&m_graphController),
-      m_graphController(&m_graphAlternateEmptyViewController, &m_graphHeader,
-                        app()->snapshot()->graphRange(),
-                        app()->snapshot()->cursor(),
-                        app()->snapshot()->selectedCurveIndex(),
-                        app()->snapshot()->functionStore()) {}
+      m_graphController(
+          &m_graphAlternateEmptyViewController, &m_graphHeader,
+          app()->snapshot()->graphRange(), app()->snapshot()->cursor(),
+          app()->snapshot()->selectedCurveIndex(), &app()->functionStore()) {}
 
 App::ValuesTab::ValuesTab()
     : Shared::FunctionApp::ValuesTab(&m_valuesController),

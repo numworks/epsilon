@@ -11,7 +11,7 @@ namespace Graph {
 Ion::Storage::Record
 AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(
     int index, Ion::Storage::Record excludedRecord) {
-  ContinuousFunctionStore* store = App::app()->functionStore();
+  ContinuousFunctionStore* store = &App::app()->functionStore();
   assert(index < store->numberOfAreaCompatibleFunctions());
   int maxNumberOfFonctions = store->numberOfActiveFunctions();
   int numberOfDerivableActiveFunctionsFound = 0;
@@ -47,13 +47,13 @@ const char* AreaBetweenCurvesParameterController::title() const {
 }
 
 int AreaBetweenCurvesParameterController::numberOfRows() const {
-  return App::app()->functionStore()->numberOfAreaCompatibleFunctions() - 1;
+  return App::app()->functionStore().numberOfAreaCompatibleFunctions() - 1;
 }
 
 KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(
     int row) {
   OMG::ExpiringPointer<ContinuousFunction> function =
-      App::app()->functionStore()->modelForRecord(
+      App::app()->functionStore().modelForRecord(
           AreaCompatibleFunctionAtIndex(row, m_mainRecord));
   CurveSelectionCell tempCell;
   tempCell.label()->setLayout(function->layout());
@@ -64,7 +64,7 @@ KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(
 void AreaBetweenCurvesParameterController::fillCellForRow(
     Escher::HighlightCell* cell, int row) {
   OMG::ExpiringPointer<ContinuousFunction> function =
-      App::app()->functionStore()->modelForRecord(
+      App::app()->functionStore().modelForRecord(
           AreaCompatibleFunctionAtIndex(row, m_mainRecord));
   CurveSelectionCell* curveSelectionCell =
       static_cast<CurveSelectionCell*>(cell);
@@ -84,8 +84,8 @@ bool AreaBetweenCurvesParameterController::handleEvent(
     Ion::Storage::Record secondRecord =
         AreaCompatibleFunctionAtIndex(innerSelectedRow(), m_mainRecord);
     assert(
-        App::app()->functionStore()->modelForRecord(m_mainRecord)->isActive() &&
-        App::app()->functionStore()->modelForRecord(secondRecord)->isActive());
+        App::app()->functionStore().modelForRecord(m_mainRecord)->isActive() &&
+        App::app()->functionStore().modelForRecord(secondRecord)->isActive());
     m_areaGraphController->setRecord(m_mainRecord);
     m_areaGraphController->setSecondRecord(secondRecord);
     stack->popUntilDepth(

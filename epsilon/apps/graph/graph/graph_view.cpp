@@ -152,7 +152,7 @@ void GraphView::tidyModel(int i, const PoolObject* treePoolCursor) const {
 }
 
 ContinuousFunctionStore* GraphView::functionStore() const {
-  return App::app()->functionStore();
+  return &App::app()->functionStore();
 }
 
 template <typename T>

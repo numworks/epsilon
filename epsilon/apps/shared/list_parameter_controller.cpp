@@ -58,9 +58,9 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (cell == &m_deleteCell && m_deleteCell.canBeActivatedByEvent(event)) {
-    assert(functionStore()->numberOfModels() > 0);
+    assert(functionStore().numberOfModels() > 0);
     m_selectableListView.deselectTable();
-    functionStore()->removeModel(m_record);
+    functionStore().removeModel(m_record);
     StackViewController* stack =
         static_cast<StackViewController*>(parentResponder());
     stack->popUntilDepth(
@@ -73,10 +73,10 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 OMG::ExpiringPointer<Function> ListParameterController::function() {
-  return functionStore()->modelForRecord(m_record);
+  return functionStore().modelForRecord(m_record);
 }
 
-FunctionStore* ListParameterController::functionStore() {
+FunctionStore& ListParameterController::functionStore() {
   return FunctionApp::app()->functionStore();
 }
 

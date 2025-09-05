@@ -20,8 +20,7 @@ void assert_float_equals(
 }
 
 void assert_check_cartesian_cache_against_function(
-    ContinuousFunction* function, ContinuousFunctionCache* cache,
-    const Context& context, float tMin) {
+    ContinuousFunction* function, ContinuousFunctionCache* cache, float tMin) {
   /* We set the cache to nullptr to force the evaluation (otherwise we would be
    * comparing the cache against itself). */
   function->setCache(nullptr);
@@ -29,10 +28,10 @@ void assert_check_cartesian_cache_against_function(
   float t;
   for (int i = 0; i < Ion::Display::Width; i++) {
     t = tMin + i * cache->step();
-    Coordinate2D<float> cacheValues =
-        cache->valueForParameter(function, context, t, 0);
+    Coordinate2D<float> cacheValues = cache->valueForParameter(
+        function, GlobalContextAccessor::Context(), t, 0);
     Coordinate2D<float> functionValues =
-        function->evaluateXYAtParameter(t, context);
+        function->evaluateXYAtParameter(t, GlobalContextAccessor::Context());
     assert_float_equals(t, cacheValues.x());
     assert_float_equals(t, functionValues.x());
     assert_float_equals(cacheValues.y(), functionValues.y());
@@ -43,35 +42,35 @@ void assert_check_cartesian_cache_against_function(
 }
 
 void assert_cartesian_cache_stays_valid_while_panning(
-    ContinuousFunction* function, const Context& context,
-    InteractiveCurveViewRange* range, CurveViewCursor* cursor,
-    ContinuousFunctionStore* store, float step) {
-  ContinuousFunctionCache* cache = store->cacheAtIndex(0);
+    ContinuousFunction* function, InteractiveCurveViewRange* range,
+    CurveViewCursor* cursor, float step) {
+  ContinuousFunctionCache* cache =
+      GlobalContextAccessor::ContinuousFunctionContext().cacheAtIndex(0);
   assert(cache);
 
   float tMin, tStep;
   constexpr float margin = 0.04f;
   constexpr int numberOfMoves = 30;
   for (int i = 0; i < numberOfMoves; i++) {
-    cursor->moveTo(
-        cursor->t() + step, cursor->x() + step,
-        function->evaluateXYAtParameter(cursor->x() + step, context).y());
+    cursor->moveTo(cursor->t() + step, cursor->x() + step,
+                   function
+                       ->evaluateXYAtParameter(cursor->x() + step,
+                                               GlobalContextAccessor::Context())
+                       .y());
     range->panToMakePointVisible(
         cursor->x(), cursor->y(), margin, margin, margin, margin,
         (range->xMax() - range->xMin()) / (Ion::Display::Width - 1));
     tMin = range->xMin();
     tStep = (range->xMax() - range->xMin()) / (Ion::Display::Width - 1);
     ContinuousFunctionCache::PrepareForCaching(function, cache, tMin, tStep);
-    assert_check_cartesian_cache_against_function(function, cache, context,
-                                                  tMin);
+    assert_check_cartesian_cache_against_function(function, cache, tMin);
   }
 }
 
-void assert_check_polar_cache_against_function(ContinuousFunction* function,
-                                               const Context& context,
-                                               InteractiveCurveViewRange* range,
-                                               ContinuousFunctionStore* store) {
-  ContinuousFunctionCache* cache = store->cacheAtIndex(0);
+void assert_check_polar_cache_against_function(
+    ContinuousFunction* function, InteractiveCurveViewRange* range) {
+  ContinuousFunctionCache* cache =
+      GlobalContextAccessor::ContinuousFunctionContext().cacheAtIndex(0);
   assert(cache);
 
   float tMin = range->xMin();
@@ -87,16 +86,16 @@ void assert_check_polar_cache_against_function(ContinuousFunction* function,
   float t;
   for (int i = 0; i < Ion::Display::Width / 2; i++) {
     t = tMin + i * cache->step();
-    function->evaluateXYAtParameter(t, context);
+    function->evaluateXYAtParameter(t, GlobalContextAccessor::Context());
   }
 
   function->setCache(nullptr);
   for (int i = 0; i < Ion::Display::Width / 2; i++) {
     t = tMin + i * cache->step();
-    Coordinate2D<float> cacheValues =
-        cache->valueForParameter(function, context, t, 0);
+    Coordinate2D<float> cacheValues = cache->valueForParameter(
+        function, GlobalContextAccessor::Context(), t, 0);
     Coordinate2D<float> functionValues =
-        function->evaluateXYAtParameter(t, context);
+        function->evaluateXYAtParameter(t, GlobalContextAccessor::Context());
     assert_float_equals(cacheValues.x(), functionValues.x());
     assert_float_equals(cacheValues.y(), functionValues.y());
   }
@@ -104,34 +103,29 @@ void assert_check_polar_cache_against_function(ContinuousFunction* function,
 
 void assert_cache_stays_valid(const char* definition, float rangeXMin = -5,
                               float rangeXMax = 5) {
-  GlobalContext globalContext;
-  ContinuousFunctionStore functionStore;
   CachesContainer cachesContainer;
-  functionStore.setCachesContainer(&cachesContainer);
-
+  GlobalContextAccessor::ContinuousFunctionStore().setCachesContainer(
+      &cachesContainer);
   InteractiveCurveViewRange graphRange;
   graphRange.setXRange(rangeXMin, rangeXMax);
   graphRange.setYRange(-3.f, 3.f);
 
   CurveViewCursor cursor;
-  ContinuousFunction* function =
-      addFunction(definition, &functionStore, globalContext);
+  ContinuousFunction* function = AddFunction(definition);
   Coordinate2D<float> origin =
-      function->evaluateXYAtParameter(0.f, globalContext, 0);
+      function->evaluateXYAtParameter(0.f, GlobalContextAccessor::Context(), 0);
   cursor.moveTo(0.f, origin.x(), origin.y());
 
   if (function->properties().isCartesian()) {
-    assert_cartesian_cache_stays_valid_while_panning(
-        function, globalContext, &graphRange, &cursor, &functionStore, 2.f);
-    assert_cartesian_cache_stays_valid_while_panning(
-        function, globalContext, &graphRange, &cursor, &functionStore, -0.4f);
+    assert_cartesian_cache_stays_valid_while_panning(function, &graphRange,
+                                                     &cursor, 2.f);
+    assert_cartesian_cache_stays_valid_while_panning(function, &graphRange,
+                                                     &cursor, -0.4f);
   } else {
     assert(function->properties().isPolar());
-    assert_check_polar_cache_against_function(function, globalContext,
-                                              &graphRange, &functionStore);
+    assert_check_polar_cache_against_function(function, &graphRange);
   }
-
-  functionStore.removeAll();
+  GlobalContextAccessor::ContinuousFunctionStore().removeAll();
 }
 
 QUIZ_CASE(graph_caching) {

@@ -8,6 +8,7 @@
 #include <cmath>
 
 #include "helper.h"
+#include "shared/continuous_function_store.h"
 
 namespace Graph {
 
@@ -23,59 +24,56 @@ void assert_default_name_for_symbol_is(CodePoint symbol,
 }
 
 QUIZ_CASE(graph_list_default_function_name) {
-  GlobalContext context;
-  ContinuousFunctionStore store;
-
   assert_default_name_for_symbol_is(k_cartesianSymbol, "f");
   assert_default_name_for_symbol_is(k_parametricSymbol, "f");
   assert_default_name_for_symbol_is(k_polarSymbol, "r1");
-  addFunction("f(x)=x", &store, context);
-  addFunction("r1(θ)=cos(θ)", &store, context);
+  AddFunction("f(x)=x");
+  AddFunction("r1(θ)=cos(θ)");
   assert_default_name_for_symbol_is(k_cartesianSymbol, "g");
   assert_default_name_for_symbol_is(k_parametricSymbol, "g");
   assert_default_name_for_symbol_is(k_polarSymbol, "r2");
-  addFunction("g(t)=t", &store, context);
-  addFunction("r2(θ)=cos(θ)", &store, context);
+  AddFunction("g(t)=t");
+  AddFunction("r2(θ)=cos(θ)");
   assert_default_name_for_symbol_is(k_cartesianSymbol, "h");
   assert_default_name_for_symbol_is(k_parametricSymbol, "h");
   assert_default_name_for_symbol_is(k_polarSymbol, "r3");
-  addFunction("h(t)=t", &store, context);
-  addFunction("r3(θ)=cos(θ)", &store, context);
+  AddFunction("h(t)=t");
+  AddFunction("r3(θ)=cos(θ)");
   assert_default_name_for_symbol_is(k_cartesianSymbol, "p");
   assert_default_name_for_symbol_is(k_parametricSymbol, "p");
   assert_default_name_for_symbol_is(k_polarSymbol, "r4");
-  addFunction("p(t)=t", &store, context);
-  addFunction("r4(θ)=cos(θ)", &store, context);
+  AddFunction("p(t)=t");
+  AddFunction("r4(θ)=cos(θ)");
   assert_default_name_for_symbol_is(k_cartesianSymbol, "f1");
   assert_default_name_for_symbol_is(k_parametricSymbol, "f1");
   assert_default_name_for_symbol_is(k_polarSymbol, "r5");
-  addFunction("f1(t)=t", &store, context);
-  addFunction("r5(θ)=cos(θ)", &store, context);
+  AddFunction("f1(t)=t");
+  AddFunction("r5(θ)=cos(θ)");
   assert_default_name_for_symbol_is(k_cartesianSymbol, "f2");
   assert_default_name_for_symbol_is(k_parametricSymbol, "f2");
   assert_default_name_for_symbol_is(k_polarSymbol, "r6");
-  store.removeAll();
+
+  GlobalContextAccessor::ContinuousFunctionStore().removeAll();
 
   // Parametric components
-  addFunction("fx(x)=x", &store, context);
+  AddFunction("fx(x)=x");
   assert_default_name_for_symbol_is(k_cartesianSymbol, "f");
   assert_default_name_for_symbol_is(k_parametricSymbol, "g");
-  addFunction("gy(x)=x", &store, context);
+  AddFunction("gy(x)=x");
   assert_default_name_for_symbol_is(k_cartesianSymbol, "f");
   assert_default_name_for_symbol_is(k_parametricSymbol, "h");
-  addFunction("h(x)=x", &store, context);
+  AddFunction("h(x)=x");
   assert_default_name_for_symbol_is(k_cartesianSymbol, "f");
   assert_default_name_for_symbol_is(k_parametricSymbol, "p");
-  addFunction("pyy(x)=x", &store, context);
+  AddFunction("pyy(x)=x");
   assert_default_name_for_symbol_is(k_cartesianSymbol, "f");
   assert_default_name_for_symbol_is(k_parametricSymbol, "p");
-  addFunction("py(x)=x", &store, context);
+  AddFunction("py(x)=x");
   assert_default_name_for_symbol_is(k_cartesianSymbol, "f");
   assert_default_name_for_symbol_is(k_parametricSymbol, "f1");
-  addFunction("f1(t)=t", &store, context);
+  AddFunction("f1(t)=t");
   assert_default_name_for_symbol_is(k_cartesianSymbol, "f");
   assert_default_name_for_symbol_is(k_parametricSymbol, "f2");
-  store.removeAll();
 }
 
 void assert_will_display_parametric_name_error(const char* definition,
@@ -89,20 +87,17 @@ void assert_will_display_parametric_name_error(const char* definition,
 }
 
 QUIZ_CASE(graph_list_valid_function_name) {
-  GlobalContext context;
-  ContinuousFunctionStore store;
-
   /******     Case A: function was not parametric     ******/
 
   // Case A.1: name taken by current record
   // Case A.1.1: parametric components name are free
-  ContinuousFunction* f = addFunction("f(x)=x", &store, context);
+  ContinuousFunction* f = AddFunction("f(x)=x");
   assert_will_display_parametric_name_error("f(x)=x+1", f, false);
   assert_will_display_parametric_name_error("f(t)=t+1", f, false);
   assert_will_display_parametric_name_error("f(t)=(cos(t),sin(t))", f, false);
   assert_will_display_parametric_name_error("f(θ)=θ+1", f, false);
   // Case A.1.2: parametric components name are not free
-  addFunction("fx(x)=x", &store, context);
+  AddFunction("fx(x)=x");
   assert_will_display_parametric_name_error("f(x)=x+1", f, false);
   assert_will_display_parametric_name_error("f(t)=t+1", f, false);
   assert_will_display_parametric_name_error("f(t)=(cos(t),sin(t))", f, true);
@@ -110,14 +105,14 @@ QUIZ_CASE(graph_list_valid_function_name) {
 
   // Case A.2: name taken by another record
   // Case A.2.1: parametric components name are free
-  addFunction("g(x)=x", &store, context);
-  ContinuousFunction* h = addFunction("h(x)=x", &store, context);
+  AddFunction("g(x)=x");
+  ContinuousFunction* h = AddFunction("h(x)=x");
   assert_will_display_parametric_name_error("g(x)=x+1", h, false);
   assert_will_display_parametric_name_error("g(t)=t+1", h, false);
   assert_will_display_parametric_name_error("g(t)=(cos(t),sin(t))", h, false);
   assert_will_display_parametric_name_error("g(θ)=θ+1", h, false);
   // Case A.2.2: parametric components name are not free
-  addFunction("gx(x)=x", &store, context);
+  AddFunction("gx(x)=x");
   assert_will_display_parametric_name_error("g(x)=x+1", h, false);
   assert_will_display_parametric_name_error("g(t)=t+1", h, false);
   assert_will_display_parametric_name_error("g(t)=(cos(t),sin(t))", h, false);
@@ -130,25 +125,25 @@ QUIZ_CASE(graph_list_valid_function_name) {
   assert_will_display_parametric_name_error("p(t)=(cos(t),sin(t))", h, false);
   assert_will_display_parametric_name_error("p(θ)=θ+1", h, false);
   // Case A.3.2: parametric components name are not free
-  addFunction("py(x)=x", &store, context);
+  AddFunction("py(x)=x");
   assert_will_display_parametric_name_error("p(x)=x+1", h, false);
   assert_will_display_parametric_name_error("p(t)=t+1", h, false);
   assert_will_display_parametric_name_error("p(t)=(cos(t),sin(t))", h, true);
   assert_will_display_parametric_name_error("p(θ)=θ+1", h, false);
 
-  store.removeAll();
+  GlobalContextAccessor::ContinuousFunctionStore().removeAll();
 
   /******       Case B: function was parametric       ******/
 
   // Case B.1: name taken by current record
   // Case B.1.1: parametric components name are free
-  f = addFunction("f(t)=(cos(t),sin(t))", &store, context);
+  f = AddFunction("f(t)=(cos(t),sin(t))");
   assert_will_display_parametric_name_error("f(x)=x+1", f, false);
   assert_will_display_parametric_name_error("f(t)=t+1", f, false);
   assert_will_display_parametric_name_error("f(t)=(cos(t),sin(t))", f, false);
   assert_will_display_parametric_name_error("f(θ)=θ+1", f, false);
   // Case B.1.2: parametric components name are not free
-  addFunction("fx(x)=x", &store, context);
+  AddFunction("fx(x)=x");
   assert_will_display_parametric_name_error("f(x)=x+1", f, false);
   assert_will_display_parametric_name_error("f(t)=t+1", f, false);
   assert_will_display_parametric_name_error("f(t)=(cos(t),sin(t))", f, false);
@@ -156,14 +151,14 @@ QUIZ_CASE(graph_list_valid_function_name) {
 
   // Case B.2: name taken by another record
   // Case B.2.1: parametric components name are free
-  addFunction("g(x)=x", &store, context);
-  h = addFunction("h(t)=(cos(t),sin(t))", &store, context);
+  AddFunction("g(x)=x");
+  h = AddFunction("h(t)=(cos(t),sin(t))");
   assert_will_display_parametric_name_error("g(x)=x+1", h, false);
   assert_will_display_parametric_name_error("g(t)=t+1", h, false);
   assert_will_display_parametric_name_error("g(t)=(cos(t),sin(t))", h, false);
   assert_will_display_parametric_name_error("g(θ)=θ+1", h, false);
   // Case B.2.2: parametric components name are not free
-  addFunction("gx(x)=x", &store, context);
+  AddFunction("gx(x)=x");
   assert_will_display_parametric_name_error("g(x)=x+1", h, false);
   assert_will_display_parametric_name_error("g(t)=t+1", h, false);
   assert_will_display_parametric_name_error("g(t)=(cos(t),sin(t))", h, false);
@@ -176,13 +171,11 @@ QUIZ_CASE(graph_list_valid_function_name) {
   assert_will_display_parametric_name_error("p(t)=(cos(t),sin(t))", h, false);
   assert_will_display_parametric_name_error("p(θ)=θ+1", h, false);
   // Case B.3.2: parametric components name are not free
-  addFunction("py(x)=x", &store, context);
+  AddFunction("py(x)=x");
   assert_will_display_parametric_name_error("p(x)=x+1", h, false);
   assert_will_display_parametric_name_error("p(t)=t+1", h, false);
   assert_will_display_parametric_name_error("p(t)=(cos(t),sin(t))", h, true);
   assert_will_display_parametric_name_error("p(θ)=θ+1", h, false);
-
-  store.removeAll();
 }
 
 }  // namespace Graph

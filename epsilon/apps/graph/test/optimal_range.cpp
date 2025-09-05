@@ -1,5 +1,6 @@
 #include <apps/graph/graph/optimal_range.h>
 #include <apps/shared/continuous_function.h>
+#include <apps/shared/global_context.h>
 #include <apps/shared/memoized_curve_view_range.h>
 #include <poincare/include/poincare/range.h>
 #include <poincare/print.h>
@@ -22,11 +23,9 @@ void quiz_assert_optimal_range_is(
     bool computeY = true,
     Range2D<float> originalRange = MemoizedCurveViewRange::k_defaultRange) {
   assert(intervals.size() == 0 || intervals.size() == equations.size());
-  GlobalContext context;
-  ContinuousFunctionStore store;
   int i = 0;
   for (const char* equation : equations) {
-    ContinuousFunction* function = addFunction(equation, &store, context);
+    ContinuousFunction* function = AddFunction(equation);
     if (intervals.size() > 0) {
       const Range1D<float>& interval = intervals.begin()[i];
       function->setTAuto(false);
@@ -35,8 +34,10 @@ void quiz_assert_optimal_range_is(
     }
     i++;
   }
-  Range2D<float> range = Graph::OptimalRange(computeX, computeY, originalRange,
-                                             &store, false, context);
+  Range2D<float> range =
+      Graph::OptimalRange(computeX, computeY, originalRange,
+                          &GlobalContextAccessor::ContinuousFunctionContext(),
+                          false, GlobalContextAccessor::Context());
 
   struct testCaseResult {
     const char* name;
@@ -50,6 +51,9 @@ void quiz_assert_optimal_range_is(
       {"yMin", range.yMin(), optimalRange.yMin(), false},
       {"yMax", range.yMax(), optimalRange.yMax(), false},
   };
+  // Reset function store
+  GlobalContextAccessor::ContinuousFunctionStore().removeAll();
+
   bool success = true;
   // A great precision is not expected in this test.
   float precision = 0.01f;

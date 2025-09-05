@@ -4,8 +4,11 @@
 
 #include "context.h"
 
-/*  This file is temporary! Store is only performed in the Apps. Poincare only
- * has a const Context available */
+/* The Variable Store interface is defined in Poincaré although no store is ever
+ * performed in Poincaré. However it is useful to implement such an interface
+ * for the Poincaré unit tests (see PoincareTest::SymbolStore). The projects
+ * that use Poincaré can also implement this interface for their symbol store.
+ */
 
 namespace Poincare {
 

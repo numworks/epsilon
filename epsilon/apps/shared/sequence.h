@@ -100,7 +100,7 @@ class Sequence : public Function {
 
   // Sequence properties
   int numberOfElements() { return order() + 1; }
-  Poincare::Layout nameLayout();
+  Poincare::Layout nameLayout() const;
   bool isDefined() const override;
   bool isEmpty() const override;
   /* Sequence u (with initial rank i) is suitable for cobweb if:

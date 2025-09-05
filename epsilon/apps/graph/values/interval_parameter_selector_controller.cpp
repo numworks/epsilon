@@ -43,8 +43,9 @@ int IntervalParameterSelectorController::numberOfRows() const {
     symbolType = static_cast<Shared::ContinuousFunctionProperties::SymbolType>(
         symbolTypeIndex);
     bool symbolTypeIsShown =
-        App::app()->functionStore()->numberOfActiveFunctionsInTableOfSymbolType(
-            symbolType) > 0;
+        App::app()
+            ->functionContext()
+            .numberOfActiveFunctionsInTableOfSymbolType(symbolType) > 0;
     rowCount += symbolTypeIsShown;
     symbolTypeIndex++;
   }
@@ -75,8 +76,9 @@ IntervalParameterSelectorController::symbolTypeAtRow(int j) const {
     symbolType = static_cast<Shared::ContinuousFunctionProperties::SymbolType>(
         symbolTypeIndex);
     bool symbolTypeIsShown =
-        App::app()->functionStore()->numberOfActiveFunctionsInTableOfSymbolType(
-            symbolType) > 0;
+        App::app()
+            ->functionContext()
+            .numberOfActiveFunctionsInTableOfSymbolType(symbolType) > 0;
     if (symbolTypeIsShown && rowCount == j) {
       break;
     }

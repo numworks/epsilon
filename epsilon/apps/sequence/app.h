@@ -30,12 +30,6 @@ class App : public Shared::FunctionApp {
     void updateInterval();
     void reset() override;
     const Descriptor* descriptor() const override;
-    Shared::SequenceStore* functionStore() override {
-      return Shared::GlobalContext::s_sequenceStore;
-    }
-    const Shared::SequenceStore* functionStore() const override {
-      return Shared::GlobalContext::s_sequenceStore;
-    }
     CurveViewRange* graphRange() { return &m_graphRange; }
     Shared::Interval* interval() { return &m_interval; }
     bool intervalModifiedByUser() { return m_intervalModifiedByUser; }
@@ -61,11 +55,11 @@ class App : public Shared::FunctionApp {
   const Shared::SequenceContext& localContext() const override {
     return Shared::GlobalContextAccessor::SequenceContext();
   }
-  Shared::SequenceStore* functionStore() override {
-    return Shared::GlobalContext::s_sequenceStore;
+  Shared::SequenceStore& functionStore() override {
+    return Shared::GlobalContextAccessor::SequenceStore();
   }
-  Shared::SequenceStore* functionStore() const override {
-    return Shared::GlobalContext::s_sequenceStore;
+  const Shared::SequenceStore& functionContext() const override {
+    return Shared::GlobalContextAccessor::SequenceStore();
   }
   Shared::Interval* interval() { return snapshot()->interval(); }
   ValuesController* valuesController() override {

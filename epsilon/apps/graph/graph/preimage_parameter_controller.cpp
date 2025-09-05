@@ -29,7 +29,7 @@ void PreimageParameterController::buttonAction() {
     stack->popUntilDepth(
         Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
         true);
-    if (App::app()->functionStore()->modelForRecord(m_record)->isActive()) {
+    if (App::app()->functionContext().modelForRecord(m_record)->isActive()) {
       stack->push(m_preimageGraphController);
     }
   }

@@ -63,7 +63,7 @@ Escher::HighlightCell* CurveParameterController::cell(int row) {
 
 OMG::ExpiringPointer<Shared::ContinuousFunction>
 CurveParameterController::function() const {
-  return App::app()->functionStore()->modelForRecord(m_record);
+  return App::app()->functionStore().modelForRecord(m_record);
 }
 
 const char* CurveParameterController::title() const {
@@ -328,7 +328,7 @@ void CurveParameterController::setRecord(Ion::Storage::Record record,
   m_calculationCell.setVisible(
       (function()->canDisplayDerivative() && m_derivationOrder == 0) ||
       (function()->shouldDisplayIntersections() &&
-       App::app()->functionStore()->numberOfIntersectableFunctions() > 1));
+       App::app()->functionStore().numberOfIntersectableFunctions() > 1));
   selectRow(0);
   m_selectableListView.resetSizeAndOffsetMemoization();
   m_preimageGraphController.setRecord(record);

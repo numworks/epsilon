@@ -18,6 +18,7 @@
 #include <cmath>
 
 #include "../app.h"
+#include "shared/global_context.h"
 
 using namespace Shared;
 
@@ -41,9 +42,8 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
       }
     }
   }
-  SequenceStore* sequenceStore = App::app()->functionStore();
   OMG::ExpiringPointer<Shared::Sequence> sequence =
-      sequenceStore->modelForRecord(m_record);
+      GlobalContextAccessor::SequenceStore().modelForRecord(m_record);
   constexpr size_t bufferSize = k_textMaxLength + 1;
   char name[bufferSize] = {};
   size_t nameLength = sequence->name(name, bufferSize);

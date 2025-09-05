@@ -21,7 +21,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     Ion::Storage::Record record, float pixelWidth, int scrollSpeed,
     int* subCurveIndex) {
   OMG::ExpiringPointer<ContinuousFunction> function =
-      App::app()->functionStore()->modelForRecord(record);
+      App::app()->functionStore().modelForRecord(record);
   assert(!subCurveIndex || *subCurveIndex < function->numberOfSubCurves(true));
   const double tCursor = cursor->t();
   double tMin = function->tMin();
@@ -30,14 +30,14 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
 
   if (((direction.isRight() && std::abs(tCursor - tMax) < DBL_EPSILON) ||
        (direction.isLeft() && std::abs(tCursor - tMin) < DBL_EPSILON)) &&
-      App::app()->functionStore()->displaysOnlyCartesianFunctions(
+      App::app()->functionContext().displaysOnlyCartesianFunctions(
           &functionsCount)) {
     jumpToLeftRightCurve(tCursor, direction, functionsCount, record);
     return true;
   }
   const Context& context = App::app()->localContext();
   // Reload the expiring pointer
-  function = App::app()->functionStore()->modelForRecord(record);
+  function = App::app()->functionStore().modelForRecord(record);
   bool isStrictInequality = function->properties().isStrictInequality();
   double dir = (direction.isRight() ? 1.0 : -1.0);
 
@@ -128,7 +128,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
           pixelWidth, false);
     }
     // Snap to interest could have corrupted ExpiringPointer
-    function = App::app()->functionStore()->modelForRecord(record);
+    function = App::app()->functionStore().modelForRecord(record);
 
     // Ensure a minimal tStep again, allowing the crossing of asymptotes.
     if (std::abs(t - tCursor) < minimalAbsoluteStep) {
@@ -197,7 +197,7 @@ PointOrRealScalar<double>
 GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
     CurveViewCursor* cursor, Ion::Storage::Record record, int derivationOrder) {
   OMG::ExpiringPointer<ContinuousFunction> function =
-      App::app()->functionStore()->modelForRecord(record);
+      App::app()->functionStore().modelForRecord(record);
   PointOrRealScalar<double> derivative =
       function->approximateDerivative<double>(
           cursor->t(), App::app()->localContext(), derivationOrder);
@@ -251,7 +251,7 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
 double GraphControllerHelper::reloadSlopeInBannerViewForCursorOnFunction(
     CurveViewCursor* cursor, Ion::Storage::Record record) {
   OMG::ExpiringPointer<ContinuousFunction> function =
-      App::app()->functionStore()->modelForRecord(record);
+      App::app()->functionStore().modelForRecord(record);
   double slope =
       function->approximateSlope(cursor->t(), App::app()->localContext());
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;

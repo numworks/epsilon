@@ -329,7 +329,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
 }
 
 FunctionStore* ValuesController::functionStore() const {
-  return FunctionApp::app()->functionStore();
+  return &FunctionApp::app()->functionStore();
 }
 
 // Function evaluation memoization

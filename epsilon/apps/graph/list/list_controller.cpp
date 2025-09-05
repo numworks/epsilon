@@ -332,7 +332,7 @@ void ListController::hideDerivative(Ion::Storage::Record record,
 
 void ListController::addNewModelAction() {
   Ion::Storage::Record::ErrorStatus error =
-      App::app()->functionStore()->addEmptyModel();
+      App::app()->functionStore().addEmptyModel();
   if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
     return;
   }
@@ -342,7 +342,7 @@ void ListController::addNewModelAction() {
 }
 
 ContinuousFunctionStore* ListController::modelStore() const {
-  return App::app()->functionStore();
+  return &App::app()->functionStore();
 }
 
 int ListController::numberOfRowsForRecord(Ion::Storage::Record record) const {

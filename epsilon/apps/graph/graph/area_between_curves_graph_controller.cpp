@@ -38,8 +38,8 @@ void AreaBetweenCurvesGraphController::setSecondRecord(
 
 void AreaBetweenCurvesGraphController::makeCursorVisibleOnSecondCurve(float x) {
   assert(!secondSelectedRecord().isNull());
-  OMG::ExpiringPointer<Shared::Function> functionG =
-      FunctionApp::app()->functionStore()->modelForRecord(
+  OMG::ExpiringPointer<const Shared::Function> functionG =
+      FunctionApp::app()->functionContext().modelForRecord(
           secondSelectedRecord());
   float yG =
       functionG->evaluateXYAtParameter(x, FunctionApp::app()->localContext())
@@ -70,8 +70,8 @@ Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
   constexpr size_t bufferSize =
       Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small) + 1;
   char buffer[bufferSize];
-  OMG::ExpiringPointer<ContinuousFunction> functionF =
-      App::app()->functionStore()->modelForRecord(selectedRecord());
+  OMG::ExpiringPointer<const ContinuousFunction> functionF =
+      App::app()->functionContext().modelForRecord(selectedRecord());
   bool functionFisNamed = functionF->isNamed();
   size_t numberOfChars = functionF->nameWithArgument(buffer, bufferSize);
   if (numberOfChars >= bufferSize) {
@@ -82,8 +82,8 @@ Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
   if (numberOfChars >= bufferSize) {
     return Layout();
   }
-  OMG::ExpiringPointer<ContinuousFunction> functionG =
-      App::app()->functionStore()->modelForRecord(secondSelectedRecord());
+  OMG::ExpiringPointer<const ContinuousFunction> functionG =
+      App::app()->functionContext().modelForRecord(secondSelectedRecord());
   if (!functionFisNamed && !functionG->isNamed()) {
     /* If both function are unnamed, display "Area = ..."
      * to avoid displaying "integral(|y - y|) = ..." */
@@ -100,13 +100,14 @@ Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
 SystemExpression AreaBetweenCurvesGraphController::createSumExpression(
     double startSum, double endSum, const Context& context) {
   // Get the expression of the first function
-  OMG::ExpiringPointer<Shared::Function> function =
-      FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
-  SystemExpression expressionF = function->expressionReduced(context).clone();
+  OMG::ExpiringPointer<const Shared::Function> functionF =
+      FunctionApp::app()->functionContext().modelForRecord(selectedRecord());
+  SystemExpression expressionF = functionF->expressionReduced(context).clone();
   // Get the expression of the second function
-  function = FunctionApp::app()->functionStore()->modelForRecord(
-      secondSelectedRecord());
-  SystemExpression expressionG = function->expressionReduced(context).clone();
+  OMG::ExpiringPointer<const Shared::Function> functionG =
+      FunctionApp::app()->functionContext().modelForRecord(
+          secondSelectedRecord());
+  SystemExpression expressionG = functionG->expressionReduced(context).clone();
   SystemExpression result = SystemExpression::CreateIntegralOfAbsOfDifference(
       SystemExpression::Builder<double>(startSum),
       SystemExpression::Builder<double>(endSum), expressionF, expressionG);

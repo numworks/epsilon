@@ -58,7 +58,7 @@ StackViewController* DerivativesParameterController::stackController() const {
 OMG::ExpiringPointer<Shared::ContinuousFunction>
 DerivativesParameterController::function() const {
   assert(!m_record.isNull());
-  return App::app()->functionStore()->modelForRecord(m_record);
+  return App::app()->functionStore().modelForRecord(m_record);
 }
 
 void DerivativesParameterController::updateSwitchs() {

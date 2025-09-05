@@ -8,6 +8,7 @@
 #include <algorithm>
 
 #include "../app.h"
+#include "shared/global_context.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -191,7 +192,7 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
 }
 
 SequenceStore* ListController::modelStore() const {
-  return App::app()->functionStore();
+  return &GlobalContextAccessor::SequenceStore();
 }
 
 void ListController::showLastSequence() {

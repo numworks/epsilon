@@ -148,7 +148,7 @@ void CalculationParameterController::fillAreaCell() {
         AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(
             0, m_record);
     OMG::ExpiringPointer<ContinuousFunction> secondFunction =
-        App::app()->functionStore()->modelForRecord(secondRecord);
+        App::app()->functionStore().modelForRecord(secondRecord);
     secondFunction->nameWithArgument(secondPlaceHolder + numberOfChars,
                                      bufferSize - numberOfChars);
     if (strcmp(mainFunctionName, secondPlaceHolder + numberOfChars) == 0) {
@@ -198,7 +198,7 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
 bool CalculationParameterController::shouldDisplayIntersectionCell() const {
   /* Intersection is handled between all active functions having one subcurve,
    * except Polar and Parametric. */
-  ContinuousFunctionStore* store = App::app()->functionStore();
+  ContinuousFunctionStore* store = &App::app()->functionStore();
   /* Intersection row is displayed if there is at least two intersectable
    * functions. */
   return function()->shouldDisplayIntersections() &&
@@ -206,7 +206,7 @@ bool CalculationParameterController::shouldDisplayIntersectionCell() const {
 }
 
 bool CalculationParameterController::shouldDisplayAreaCell() const {
-  ContinuousFunctionStore* store = App::app()->functionStore();
+  ContinuousFunctionStore* store = &App::app()->functionStore();
   /* Area between curves is displayed if there is at least two derivable
    * functions. */
   return function()->properties().isCartesian() &&
@@ -215,12 +215,12 @@ bool CalculationParameterController::shouldDisplayAreaCell() const {
 
 bool CalculationParameterController::ShouldDisplayChevronInAreaCell() {
   /* Area between curves row does not always have a chevron. */
-  return App::app()->functionStore()->numberOfAreaCompatibleFunctions() > 2;
+  return App::app()->functionStore().numberOfAreaCompatibleFunctions() > 2;
 }
 
 OMG::ExpiringPointer<Shared::ContinuousFunction>
 CalculationParameterController::function() const {
-  return App::app()->functionStore()->modelForRecord(m_record);
+  return App::app()->functionStore().modelForRecord(m_record);
 }
 
 }  // namespace Graph

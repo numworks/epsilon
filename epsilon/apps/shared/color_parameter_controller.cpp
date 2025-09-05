@@ -59,7 +59,7 @@ KDCoordinate ColorParameterController::defaultRowHeight() {
 }
 
 OMG::ExpiringPointer<Function> ColorParameterController::function() {
-  return FunctionApp::app()->functionStore()->modelForRecord(m_record);
+  return FunctionApp::app()->functionStore().modelForRecord(m_record);
 }
 
 }  // namespace Shared

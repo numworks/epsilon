@@ -84,7 +84,7 @@ DetailCell* DetailsParameterController::reusableCell(int index, int type) {
 void DetailsParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
   if (!m_record.isNull()) {
-    OMG::ExpiringPointer<Shared::ContinuousFunction> f = function();
+    OMG::ExpiringPointer<const Shared::ContinuousFunction> f = function();
     if (functionIsNonVerticalLine()) {
       double slope, intercept;
       f->getLineParameters(&slope, &intercept, App::app()->localContext());
@@ -134,11 +134,11 @@ int DetailsParameterController::detailsNumberOfSections() const {
   }
 }
 
-OMG::ExpiringPointer<Shared::ContinuousFunction>
+OMG::ExpiringPointer<const Shared::ContinuousFunction>
 DetailsParameterController::function() const {
   assert(!m_record.isNull());
   App* myApp = App::app();
-  return myApp->functionStore()->modelForRecord(m_record);
+  return myApp->functionContext().modelForRecord(m_record);
 }
 
 I18n::Message DetailsParameterController::detailsTitle(int i) const {

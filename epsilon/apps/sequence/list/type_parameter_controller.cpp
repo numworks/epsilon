@@ -7,7 +7,9 @@
 #include <poincare/layout.h>
 
 #include "../app.h"
+#include "kandinsky/color.h"
 #include "list_controller.h"
+#include "shared/global_context.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -92,7 +94,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 SequenceStore* TypeParameterController::sequenceStore() {
-  return App::app()->functionStore();
+  return &GlobalContextAccessor::SequenceStore();
 }
 
 }  // namespace Sequence

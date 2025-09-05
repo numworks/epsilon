@@ -54,7 +54,7 @@ bool CalculationGraphController::handleEnter() {
   Coordinate2D<double> xy =
       App::app()
           ->functionStore()
-          ->modelForRecord(m_record)
+          .modelForRecord(m_record)
           ->evaluateXYAtParameter(t, App::app()->localContext());
   m_cursor->moveTo(t, xy.x(), xy.y());
   return Shared::SimpleInteractiveCurveViewController::handleEnter();
@@ -74,7 +74,7 @@ void CalculationGraphController::viewWillAppear() {
     m_isActive = true;
     assert(App::app()
                ->functionStore()
-               ->modelForRecord(m_record)
+               .modelForRecord(m_record)
                ->properties()
                .isCartesian());
     m_cursor->moveTo(pointOfInterest.x(), pointOfInterest.x(),
@@ -131,7 +131,7 @@ PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(
 }
 
 ContinuousFunctionStore* CalculationGraphController::functionStore() const {
-  return App::app()->functionStore();
+  return &GlobalContextAccessor::ContinuousFunctionStore();
 }
 
 bool CalculationGraphController::moveCursorHorizontally(
@@ -146,7 +146,7 @@ bool CalculationGraphController::moveCursorHorizontally(
   }
   assert(App::app()
              ->functionStore()
-             ->modelForRecord(m_record)
+             .modelForRecord(m_record)
              ->properties()
              .isCartesian());
   m_cursor->moveTo(newPointOfInterest.x(), newPointOfInterest.x(),

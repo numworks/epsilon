@@ -4,6 +4,7 @@
 #include <apps/i18n.h>
 
 #include "graph_icon.h"
+#include "shared/global_context.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -40,7 +41,7 @@ const App::Descriptor* App::Snapshot::descriptor() const {
 }
 
 void App::Snapshot::tidy() {
-  functionStore()->setCachesContainer(nullptr);
+  GlobalContextAccessor::ContinuousFunctionStore().setCachesContainer(nullptr);
   SharedApp::Snapshot::tidy();
 }
 
@@ -69,7 +70,8 @@ App::App(Snapshot* snapshot)
     : FunctionApp(snapshot, &m_tabs, ListTab::k_title),
       m_functionParameterController(nullptr),
       m_derivativeColumnParameterController(nullptr) {
-  snapshot->functionStore()->setCachesContainer(&m_cachesContainer);
+  GlobalContextAccessor::ContinuousFunctionStore().setCachesContainer(
+      &m_cachesContainer);
 }
 
 }  // namespace Graph

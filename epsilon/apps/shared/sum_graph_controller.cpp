@@ -123,8 +123,8 @@ void SumGraphController::makeCursorVisible() {
   if (!std::isfinite(position)) {
     return;
   }
-  OMG::ExpiringPointer<Function> function =
-      FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
+  OMG::ExpiringPointer<const Function> function =
+      FunctionApp::app()->functionContext().modelForRecord(selectedRecord());
   float y =
       function
           ->evaluateXYAtParameter(position, FunctionApp::app()->localContext())
@@ -229,8 +229,8 @@ void SumGraphController::reloadBannerView() {
 
 Poincare::SystemExpression SumGraphController::createSumExpression(
     double startSum, double endSum, const Poincare::Context& context) {
-  OMG::ExpiringPointer<Function> function =
-      FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
+  OMG::ExpiringPointer<const Function> function =
+      FunctionApp::app()->functionContext().modelForRecord(selectedRecord());
   return function->sumBetweenBounds(startSum, endSum, context);
 }
 

@@ -1,6 +1,7 @@
 #include <apps/exam_mode_manager.h>
 #include <apps/global_preferences.h>
 #include <apps/init.h>
+#include <apps/shared/global_context.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/init.h>
 #include <poincare/pool.h>
@@ -29,6 +30,8 @@ void flushGlobalData() {
     ExamModeManager::SetExamMode(
         Poincare::ExamMode(Poincare::ExamMode::Ruleset::Off));
   }
+  // Reset symbol store
+  Shared::GlobalContextAccessor::Store().resetAll();
   flushGlobalDataNoPool();
   // No PoolObject should leak after a unit test.
   quiz_assert(Poincare::Pool::sharedPool->numberOfObjects() == 0);

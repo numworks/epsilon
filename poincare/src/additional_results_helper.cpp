@@ -220,17 +220,30 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   return UserExpression::Builder(exactAngle);
 }
 
+static bool deepIsOfType(UserExpression e,
+                         std::initializer_list<Internal::AnyType> types) {
+  return e.recursivelyMatches(
+      [](const UserExpression e, const Context& context, void* auxiliary) {
+        return e.tree()->isOfType(
+                   *static_cast<std::initializer_list<Internal::AnyType>*>(
+                       auxiliary))
+                   ? OMG::Troolean::True
+                   : OMG::Troolean::Unknown;
+      },
+      EmptyContext{}, SymbolicComputation::ReplaceDefinedSymbols, &types);
+}
+
 bool AdditionalResultsHelper::expressionIsInterestingFunction(
     const UserExpression e) {
   assert(!e.isUninitialized());
 
-  if (e.isOfType({Type::Opposite, Type::Parentheses})) {
+  if (e.tree()->isOfType({Type::Opposite, Type::Parentheses})) {
     return AdditionalResultsHelper::expressionIsInterestingFunction(
         e.cloneChildAtIndex(0));
   }
   return !e.isConstantNumber() && !e.tree()->isUnitConversion() &&
-         !e.deepIsOfType({Type::UserSequence, Type::Factor, Type::Re, Type::Im,
-                          Type::Arg, Type::Conj}) &&
+         !deepIsOfType(e, {Type::UserSequence, Type::Factor, Type::Re, Type::Im,
+                           Type::Arg, Type::Conj}) &&
          AdditionalResultsHelper::HasSingleNumericalValue(e);
 }
 

@@ -191,9 +191,8 @@ static PreprocessingResult PreprocessEquationList(
 
   // Step 3.4. Project (replace local symbols) and reduce
 
-  Dimension dimension;
-  Simplification::ProjectAndReduce(reducedEquationList, projectionContext,
-                                   &dimension);
+  Dimension dimension =
+      Simplification::ProjectAndReduce(reducedEquationList, projectionContext);
   if (dimension.isUnit()) {
     error = Error::EquationUndefined;
   } else if (!reducedEquationList->isList()) {

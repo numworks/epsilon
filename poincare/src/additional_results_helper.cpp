@@ -482,8 +482,7 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
                            .m_context = symbolContext,
                            .m_advanceReduce = false};
   Tree* e = approximateOutput.tree()->cloneTree();
-  Internal::Dimension dim;
-  Simplification::ProjectAndReduce(e, &ctx, &dim);
+  Internal::Dimension dim = Simplification::ProjectAndReduce(e, &ctx);
   assert(!dim.isUnit());
   return CreateBeautifiedLayout(
       e, &ctx, dim, Preferences::PrintFloatMode::Scientific,
@@ -501,8 +500,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   Tree* matrix =
       (isApproximate ? approximateOutput : exactOutput).tree()->cloneTree();
   // The expression must be reduced to call matrix methods.
-  Internal::Dimension dim;
-  Simplification::ProjectAndReduce(matrix, &ctx, &dim);
+  Internal::Dimension dim = Simplification::ProjectAndReduce(matrix, &ctx);
   bool isSquared = Internal::Matrix::NumberOfRows(matrix) ==
                    Internal::Matrix::NumberOfColumns(matrix);
 

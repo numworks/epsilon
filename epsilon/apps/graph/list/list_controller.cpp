@@ -186,9 +186,9 @@ void ListController::editExpression(Ion::Events::Event event) {
 }
 
 bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
-  GlobalContext::DeleteParametricComponentsOfRecord(selectedRecord());
+  GlobalStore::DeleteParametricComponentsOfRecord(selectedRecord());
   bool result = FunctionListController::editSelectedRecordWithLayout(layout);
-  GlobalContext::StoreParametricComponentsOfRecord(selectedRecord());
+  GlobalStore::StoreParametricComponentsOfRecord(selectedRecord());
   return result;
 }
 
@@ -237,7 +237,7 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
   // Remove parametric components too
   int relativeRow;
   Ion::Storage::Record r = selectedRecord(&relativeRow);
-  GlobalContext::DeleteParametricComponentsOfRecord(r);
+  GlobalStore::DeleteParametricComponentsOfRecord(r);
   // If we are on a derivative row, only hide derivative
   OMG::ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(r);
   int derivationOrder =

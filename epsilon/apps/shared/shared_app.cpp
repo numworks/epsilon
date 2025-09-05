@@ -1,7 +1,7 @@
 #include "shared_app.h"
 
 #include <apps/apps_container_helper.h>
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <poincare/context.h>
 
 #include "../apps_container.h"

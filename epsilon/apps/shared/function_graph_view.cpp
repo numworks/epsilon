@@ -1,6 +1,6 @@
 #include "function_graph_view.h"
 
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <assert.h>
 #include <float.h>
 #include <poincare/circuit_breaker_checkpoint.h>

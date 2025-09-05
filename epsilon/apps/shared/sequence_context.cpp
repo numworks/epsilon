@@ -1,6 +1,6 @@
 #include "sequence_context.h"
 
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/signaling_nan.h>
 

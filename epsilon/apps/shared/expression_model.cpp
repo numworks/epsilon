@@ -9,7 +9,7 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/user_expression.h>
-#include <shared/global_context.h>
+#include <shared/global_store.h>
 #include <string.h>
 
 #include <algorithm>
@@ -87,7 +87,7 @@ SystemExpression ExpressionModel::expressionReduced(
    * should probably be removed. The difficulty relies in the ambiguous
    * conventions about the values returned or set when a symbol has no proper
    * expression: for example,
-   *  - GlobalContext::expressionForUserNamed returns an uninitialized
+   *  - GlobalStore::expressionForUserNamed returns an uninitialized
    *    expression,
    *  - so do Expression::replaceSymbols and SymbolAbstract::Expand,
    *  - Symbol::shallowReduce and Function::shallowReduce and
@@ -133,8 +133,8 @@ UserExpression ExpressionModel::expressionClone(
   /* TODO
    * The substitution of UCodePointUnknown back and forth is done in the
    * methods layout, setContent (through buildExpressionFromLayout), layout and
-   * also in GlobalContext::expressionForUserNamed and
-   * GlobalContext::setExpressionForUserNamed. When getting the expression,
+   * also in GlobalStore::expressionForUserNamed and
+   * GlobalStore::setExpressionForUserNamed. When getting the expression,
    * the substitutions may probably be gathered here.
    */
 }

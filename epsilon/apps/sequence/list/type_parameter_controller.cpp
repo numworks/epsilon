@@ -9,7 +9,7 @@
 #include "../app.h"
 #include "kandinsky/color.h"
 #include "list_controller.h"
-#include "shared/global_context.h"
+#include "shared/global_store.h"
 
 using namespace Poincare;
 using namespace Shared;

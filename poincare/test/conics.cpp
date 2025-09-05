@@ -1,4 +1,4 @@
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <ion/storage/file_system.h>
 #include <poincare/context.h>
 #include <poincare/function_properties/conic.h>

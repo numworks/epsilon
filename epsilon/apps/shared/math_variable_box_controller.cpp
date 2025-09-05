@@ -15,7 +15,7 @@
 #include <algorithm>
 
 #include "continuous_function.h"
-#include "global_context.h"
+#include "global_store.h"
 
 using namespace Poincare;
 using namespace Ion;
@@ -380,7 +380,7 @@ Layout MathVariableBoxController::expressionLayoutForRecord(
     Layout result;
     Poincare::ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
-      result = GlobalContext::LayoutForRecord(record);
+      result = GlobalStore::LayoutForRecord(record);
     }
     m_layouts[index - m_firstMemoizedLayoutIndex] = result;
   }
@@ -468,8 +468,8 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
       return false;
     }
     if (isParametricFunction) {
-      GlobalContext::DeleteParametricComponentsWithBaseName(buffer, length,
-                                                            bufferSize);
+      GlobalStore::DeleteParametricComponentsWithBaseName(buffer, length,
+                                                          bufferSize);
     }
   }
   // Shift the memoization if needed

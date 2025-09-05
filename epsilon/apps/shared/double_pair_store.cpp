@@ -14,7 +14,7 @@
 
 #include "double_pair_store_preferences.h"
 #include "poincare_helpers.h"
-#include "shared/global_context.h"
+#include "shared/global_store.h"
 
 using namespace Poincare;
 using namespace Ion::Storage;

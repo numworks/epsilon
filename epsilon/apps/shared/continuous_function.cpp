@@ -18,7 +18,7 @@
 
 #include <algorithm>
 
-#include "global_context.h"
+#include "global_store.h"
 #include "poincare_helpers.h"
 
 using namespace Poincare;
@@ -848,7 +848,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     const size_t functionNameLength = strlen(functionName);
     const UserExpression functionSymbol = leftExpression.cloneChildAtIndex(0);
     CodePoint codePointSymbol = CodePointForSymbol(functionSymbol);
-    if (Shared::GlobalContext::UserNameIsFree(functionName) ||
+    if (Shared::GlobalStore::UserNameIsFree(functionName) ||
         strncmp(record->fullName(), functionName, functionNameLength) == 0) {
       // Set the model's plot type.
       tempFunctionSymbol =
@@ -960,7 +960,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(
       Ion::Storage::Record::ErrorStatus::None;
   if (newExpression.isUninitialized()) {
     /* The expression is not set, the record will be named later or is already
-     * correctly named by GlobalContext. */
+     * correctly named by GlobalStore. */
     return error;
   }
   if (record->hasExtension(Ion::Storage::functionExtension)) {

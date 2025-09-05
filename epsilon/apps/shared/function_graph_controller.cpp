@@ -1,7 +1,7 @@
 #include "function_graph_controller.h"
 
 #include <apps/apps_container_helper.h>
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <assert.h>
 #include <float.h>
 #include <poincare/coordinate_2D.h>

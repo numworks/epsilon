@@ -7,7 +7,7 @@
 #include <array>
 
 #include "regression_icon.h"
-#include "shared/global_context.h"
+#include "shared/global_store.h"
 
 using namespace Shared;
 using namespace Escher;

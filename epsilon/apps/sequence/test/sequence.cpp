@@ -1,5 +1,5 @@
 #include <apps/global_preferences.h>
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <apps/shared/poincare_helpers.h>
 #include <apps/shared/sequence_context.h>
 #include <apps/shared/sequence_store.h>
@@ -728,7 +728,7 @@ QUIZ_CASE(sequence_evaluation) {
 
 QUIZ_CASE(sequence_store) {
   SequenceStore* sequenceStore = &GlobalContextAccessor::SequenceStore();
-  GlobalContext& globalStore = GlobalContextAccessor::Store();
+  GlobalStore& globalStore = GlobalContextAccessor::Store();
   Internal::ProjectionContext projCtx = {.m_context = globalStore};
 
   PoincareTest::store("3→f(x)", GlobalContextAccessor::Store());

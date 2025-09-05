@@ -1,7 +1,7 @@
 #include "edit_expression_controller.h"
 
 #include <apps/global_preferences.h>
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <assert.h>
 #include <ion/display.h>
 #include <poincare/context.h>

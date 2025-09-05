@@ -1,6 +1,6 @@
 #pragma once
 
-#include <apps/shared/global_context.h>
+#include <apps/shared/global_store.h>
 #include <apps/shared/statistical_distribution.h>
 #include <poincare/statistics/distribution.h>
 #include <poincare/statistics/inference.h>

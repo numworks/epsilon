@@ -1,4 +1,4 @@
-#include "global_context.h"
+#include "global_store.h"
 
 #include <apps/apps_container.h>
 #include <assert.h>
@@ -20,30 +20,29 @@ using namespace Poincare;
 
 namespace Shared {
 
-constexpr const char* GlobalContext::k_extensions[];
+constexpr const char* GlobalStore::k_extensions[];
 
-OMG::GlobalBox<SequenceStore> GlobalContext::s_sequenceStore;
-OMG::GlobalBox<SequenceCache> GlobalContext::s_sequenceCache;
-OMG::GlobalBox<ContinuousFunctionStore>
-    GlobalContext::s_continuousFunctionStore;
+OMG::GlobalBox<SequenceStore> GlobalStore::s_sequenceStore;
+OMG::GlobalBox<SequenceCache> GlobalStore::s_sequenceCache;
+OMG::GlobalBox<ContinuousFunctionStore> GlobalStore::s_continuousFunctionStore;
 
-void GlobalContext::Init() {
+void GlobalStore::Init() {
   s_sequenceStore.init();
   s_sequenceCache.init(s_sequenceStore.get());
   s_continuousFunctionStore.init();
 }
 
-void GlobalContext::storageDidChangeForRecord(Ion::Storage::Record record) {
+void GlobalStore::storageDidChangeForRecord(Ion::Storage::Record record) {
   m_sequenceContext.resetCache();
-  GlobalContext::s_sequenceStore->storageDidChangeForRecord(record);
-  GlobalContext::s_continuousFunctionStore->storageDidChangeForRecord(record);
+  GlobalStore::s_sequenceStore->storageDidChangeForRecord(record);
+  GlobalStore::s_continuousFunctionStore->storageDidChangeForRecord(record);
 }
 
-bool GlobalContext::UserNameIsFree(const char* baseName) {
+bool GlobalStore::UserNameIsFree(const char* baseName) {
   return UserNamedRecordWithBaseName(baseName).isNull();
 }
 
-const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
+Layout GlobalStore::LayoutForRecord(Ion::Storage::Record record) {
   assert(!record.isNull());
   if (record.hasExtension(Ion::Storage::expressionExtension) ||
       record.hasExtension(Ion::Storage::listExtension) ||
@@ -56,7 +55,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
              record.hasExtension(Ion::Storage::regressionExtension)) {
     CodePoint symbol = UCodePointNull;
     if (record.hasExtension(Ion::Storage::functionExtension)) {
-      symbol = GlobalContext::s_continuousFunctionStore->modelForRecord(record)
+      symbol = GlobalStore::s_continuousFunctionStore->modelForRecord(record)
                    ->symbol();
     } else if (record.hasExtension(
                    Ion::Storage::parametricComponentExtension)) {
@@ -76,7 +75,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   }
 }
 
-void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(
+void GlobalStore::DestroyRecordsBaseNamedWithoutExtension(
     const char* baseName, const char* extension) {
   for (int i = 0; i < k_numberOfExtensions; i++) {
     if (strcmp(k_extensions[i], extension) != 0) {
@@ -87,7 +86,7 @@ void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(
   }
 }
 
-Context::UserNamedType GlobalContext::expressionTypeForIdentifier(
+Context::UserNamedType GlobalStore::expressionTypeForIdentifier(
     std::string_view identifier) const {
   const char* extension = Ion::Storage::FileSystem::sharedFileSystem
                               ->extensionOfRecordBaseNamedWithExtensions(
@@ -111,7 +110,7 @@ Context::UserNamedType GlobalContext::expressionTypeForIdentifier(
   }
 }
 
-const Internal::Tree* GlobalContext::expressionForUserNamed(
+const Internal::Tree* GlobalStore::expressionForUserNamed(
     const Internal::Tree* symbol) const {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
   Ion::Storage::Record r =
@@ -119,7 +118,7 @@ const Internal::Tree* GlobalContext::expressionForUserNamed(
   return expressionForSymbolAndRecord(symbol, r);
 }
 
-bool GlobalContext::setExpressionForUserNamed(
+bool GlobalStore::setExpressionForUserNamed(
     const Internal::Tree* expressionTree, const Internal::Tree* symbolTree) {
   assert(symbolTree->isUserNamed());
   UserExpression expression = UserExpression::Builder(expressionTree);
@@ -158,14 +157,14 @@ bool GlobalContext::setExpressionForUserNamed(
          Ion::Storage::Record::ErrorStatus::None;
 }
 
-const Internal::Tree* GlobalContext::expressionForSymbolAndRecord(
+const Internal::Tree* GlobalStore::expressionForSymbolAndRecord(
     const Internal::Tree* symbol, Ion::Storage::Record r) const {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
   return symbol->isUserSymbol() ? ExpressionForUserSymbol(r)
                                 : ExpressionForUserFunction(r);
 }
 
-const Internal::Tree* GlobalContext::ExpressionForUserSymbol(
+const Internal::Tree* GlobalStore::ExpressionForUserSymbol(
     Ion::Storage::Record r) {
   if (!r.hasExtension(Ion::Storage::expressionExtension) &&
       !r.hasExtension(Ion::Storage::listExtension) &&
@@ -177,7 +176,7 @@ const Internal::Tree* GlobalContext::ExpressionForUserSymbol(
   return UserExpression::TreeFromAddress(d.buffer);
 }
 
-const Internal::Tree* GlobalContext::ExpressionForUserFunction(
+const Internal::Tree* GlobalStore::ExpressionForUserFunction(
     Ion::Storage::Record r) {
   if (r.hasExtension(Ion::Storage::parametricComponentExtension) ||
       r.hasExtension(Ion::Storage::regressionExtension)) {
@@ -192,7 +191,7 @@ const Internal::Tree* GlobalContext::ExpressionForUserFunction(
   return nullptr;
 }
 
-Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserSymbol(
+Ion::Storage::Record::ErrorStatus GlobalStore::setExpressionForUserSymbol(
     UserExpression& expression, const char* name,
     Ion::Storage::Record previousRecord) {
   bool storeApproximation =
@@ -225,7 +224,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserSymbol(
       simplifiedExpression.size(), true);
 }
 
-Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserFunction(
+Ion::Storage::Record::ErrorStatus GlobalStore::setExpressionForUserFunction(
     const UserExpression& expressionToStore, const UserExpression& symbol,
     Ion::Storage::Record previousRecord) {
   assert(symbol.isUserFunction());
@@ -233,7 +232,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserFunction(
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::Record::ErrorStatus::None;
   if (previousRecord.hasExtension(Ion::Storage::functionExtension)) {
-    GlobalContext::DeleteParametricComponentsOfRecord(recordToSet);
+    GlobalStore::DeleteParametricComponentsOfRecord(recordToSet);
   } else {
     // The previous record was not a function. Create a new model.
     ContinuousFunction newModel = s_continuousFunctionStore->newModel(
@@ -246,39 +245,39 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserFunction(
   Poincare::UserExpression equation = Poincare::UserExpression::Create(
       KEqual(KA, KB), {.KA = symbol, .KB = expressionToStore});
   OMG::ExpiringPointer<ContinuousFunction> f =
-      GlobalContext::s_continuousFunctionStore->modelForRecord(recordToSet);
+      GlobalStore::s_continuousFunctionStore->modelForRecord(recordToSet);
   // TODO: factorize with ContinuousFunction::setContent
   bool wasCartesian = f->properties().isCartesian();
   error = f->setExpressionContent(equation);
   if (error == Ion::Storage::Record::ErrorStatus::None) {
     f->updateModel(wasCartesian);
   }
-  GlobalContext::StoreParametricComponentsOfRecord(recordToSet);
+  GlobalStore::StoreParametricComponentsOfRecord(recordToSet);
   return error;
 }
 
-Ion::Storage::Record GlobalContext::UserNamedRecordWithBaseName(
+Ion::Storage::Record GlobalStore::UserNamedRecordWithBaseName(
     const char* name) {
   return Ion::Storage::FileSystem::sharedFileSystem
       ->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);
 }
 
-void GlobalContext::tidyStores() {
+void GlobalStore::tidyStores() {
   s_sequenceStore->tidyDownstreamPoolFrom();
   s_continuousFunctionStore->tidyDownstreamPoolFrom();
 }
 
-void GlobalContext::prepareForNewApp() {
+void GlobalStore::prepareForNewApp() {
   s_sequenceStore->setStorageChangeFlag(false);
   s_continuousFunctionStore->setStorageChangeFlag(false);
 }
 
-void GlobalContext::reset() {
+void GlobalStore::reset() {
   s_sequenceStore->reset();
   s_continuousFunctionStore->reset();
 }
 
-void GlobalContext::resetAll() {
+void GlobalStore::resetAll() {
   reset();
   s_sequenceStore->tidyDownstreamPoolFrom();
   s_continuousFunctionStore->tidyDownstreamPoolFrom();
@@ -297,16 +296,17 @@ static void deleteParametricComponent(char* baseName, size_t baseNameLength,
   record.destroy();
 }
 
-void GlobalContext::DeleteParametricComponentsWithBaseName(
-    char* baseName, size_t baseNameLength, size_t bufferSize) {
+void GlobalStore::DeleteParametricComponentsWithBaseName(char* baseName,
+                                                         size_t baseNameLength,
+                                                         size_t bufferSize) {
   deleteParametricComponent(baseName, baseNameLength, bufferSize, true);
   deleteParametricComponent(baseName, baseNameLength, bufferSize, false);
 }
 
-void GlobalContext::DeleteParametricComponentsOfRecord(
+void GlobalStore::DeleteParametricComponentsOfRecord(
     Ion::Storage::Record record) {
   OMG::ExpiringPointer<ContinuousFunction> f =
-      GlobalContext::s_continuousFunctionStore->modelForRecord(record);
+      GlobalStore::s_continuousFunctionStore->modelForRecord(record);
   if (!f->properties().isEnabledParametric()) {
     return;
   }
@@ -328,10 +328,10 @@ static void storeParametricComponent(char* baseName, size_t baseNameLength,
       child.addressInPool(), child.size(), true);
 }
 
-void GlobalContext::StoreParametricComponentsOfRecord(
+void GlobalStore::StoreParametricComponentsOfRecord(
     Ion::Storage::Record record) {
   OMG::ExpiringPointer<ContinuousFunction> f =
-      GlobalContext::s_continuousFunctionStore->modelForRecord(record);
+      GlobalStore::s_continuousFunctionStore->modelForRecord(record);
   if (!f->properties().isEnabledParametric()) {
     return;
   }

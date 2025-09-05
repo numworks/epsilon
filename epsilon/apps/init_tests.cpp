@@ -4,12 +4,12 @@
 #include "exam_mode_manager.h"
 #include "global_preferences.h"
 #include "init.h"
-#include "shared/global_context.h"
+#include "shared/global_store.h"
 
 namespace Apps {
 
 void Init() {
-  Shared::GlobalContext::Init();
+  Shared::GlobalStore::Init();
   GlobalPreferences::Init();
   ExamModeManager::Init();
   Shared::GlobalContextAccessor::Init();

@@ -193,9 +193,7 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("mean({1,6,3,undef,5,2},{2,3,1,2,3,1})", "undef");
   simplifies_to("mean({5,8,7,4,12},{2})", "undef");
   simplifies_to("mean({5,8,7,4,12},{0,0,0,0,0})", "undef");
-#if TODO_PCJ  // Mean with negative weights should be undef
   simplifies_to("mean({5,8,7,4,12},{-2,4,4,4,4})", "undef");
-#endif
   // Minimum of a list
   simplifies_to("min({})", "undef");
   simplifies_to("min({1,2,3})", "1");

@@ -21,7 +21,6 @@
 #include <poincare/user_expression.h>
 
 using namespace Poincare;
-using namespace Poincare::Internal::KTrees;
 using namespace Shared;
 
 namespace Solver {

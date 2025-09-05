@@ -141,8 +141,8 @@ bool StoreMenuController::store(Layout layout) {
   UserExpression symbol = StoreHelper::Symbol(input);
   close();
   app->prepareForIntrusiveStorageChange();
-  bool stored = StoreHelper::StoreValueForSymbol(GlobalContextAccessor::Store(),
-                                                 value, symbol);
+  bool stored =
+      GlobalContextAccessor::Store().setExpressionForUserNamed(value, symbol);
   app->concludeIntrusiveStorageChange();
   if (!stored) {
     /* TODO: we could detect this before the close and open the warning over the

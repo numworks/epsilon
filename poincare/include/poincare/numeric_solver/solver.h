@@ -126,7 +126,7 @@ class Solver {
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */
-  Solver(T xStart, T xEnd, const Context& context = EmptyContext{});
+  Solver(T xStart, T xEnd, const Context& context = EmptySymbolContext{});
 
   void reset(T xStart, T xEnd, T searchStep);
 

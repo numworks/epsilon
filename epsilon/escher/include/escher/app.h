@@ -94,7 +94,7 @@ class App : public Responder {
     return nullptr;
   }
   virtual const Poincare::Context& localContext() const {
-    return Poincare::k_emptyContext;
+    return Poincare::k_emptySymbolContext;
   }
   virtual EditableFieldHelpBox* toolbox() { return nullptr; }
   virtual EditableFieldHelpBox* variableBox() { return nullptr; }

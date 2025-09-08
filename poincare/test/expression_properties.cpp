@@ -284,7 +284,7 @@ QUIZ_CASE(pcj_properties_get_variables) {
 
 void assert_reduced_expression_has_polynomial_coefficient(
     const char* input, const char* symbolName, const Tree* expectedCoefficients,
-    const Context& context = Poincare::EmptyContext{},
+    const Context& context = Poincare::EmptySymbolContext{},
     ComplexFormat complexFormat = ComplexFormat::Cartesian,
     AngleUnit angleUnit = AngleUnit::Radian,
     Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric,
@@ -321,7 +321,7 @@ QUIZ_CASE(pcj_properties_get_polynomial_coefficients) {
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x",
                                                        KList(0_e, i_e));
   assert_reduced_expression_has_polynomial_coefficient(
-      "√(-1)x", "x", KList(KNonReal), Poincare::EmptyContext{},
+      "√(-1)x", "x", KList(KNonReal), Poincare::EmptySymbolContext{},
       ComplexFormat::Real);
 
   // 3 -> x

@@ -36,7 +36,7 @@ void IntegerListController::computeAdditionalResults(
     m_layouts[index] =
         integer.createLayout(Preferences::PrintFloatMode::Decimal,
                              Preferences::LargeNumberOfSignificantDigits,
-                             EmptyContext{}, baseAtIndex(index));
+                             EmptySymbolContext{}, baseAtIndex(index));
   }
   // Computing factorExpression
   UserExpression factor = UserExpression::Create(KFactor(KA), {.KA = integer});

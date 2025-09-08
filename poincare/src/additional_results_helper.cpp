@@ -230,7 +230,7 @@ static bool deepIsOfType(UserExpression e,
                    ? OMG::Troolean::True
                    : OMG::Troolean::Unknown;
       },
-      EmptyContext{}, SymbolicComputation::ReplaceDefinedSymbols, &types);
+      EmptySymbolContext{}, SymbolicComputation::ReplaceDefinedSymbols, &types);
 }
 
 bool AdditionalResultsHelper::expressionIsInterestingFunction(

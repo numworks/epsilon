@@ -286,33 +286,33 @@ QUIZ_CASE(pcj_serialization_decimal) {
       "0.99999999999999999999999999999996", "1");
   assert_expression_parses_and_serializes_to(
       "0.999999999999999999999999999995", "9.99999999999999999999999999995ᴇ-1",
-      Poincare::EmptyContext{}, ScientificMode, 14);
+      Poincare::EmptySymbolContext{}, ScientificMode, 14);
   assert_expression_parses_and_serializes_to(
       "0.000000999999999999999999999999999995",
-      "9.99999999999999999999999999995ᴇ-7", Poincare::EmptyContext{},
+      "9.99999999999999999999999999995ᴇ-7", Poincare::EmptySymbolContext{},
       ScientificMode, 14);
   assert_expression_parses_and_serializes_to(
       "0.0000009999999999999999999999999999995", "1ᴇ-6",
-      Poincare::EmptyContext{}, DecimalMode);
+      Poincare::EmptySymbolContext{}, DecimalMode);
   assert_expression_parses_and_serializes_to(
       "0.0000009999999999999999999999999901200121020102010201201201021099995",
-      "9.9999999999999999999999999012ᴇ-7", Poincare::EmptyContext{},
+      "9.9999999999999999999999999012ᴇ-7", Poincare::EmptySymbolContext{},
       DecimalMode, 14);
   assert_expression_parses_and_serializes_to(
       "99999999999999999999999999999.53", "99999999999999999999999999999.5",
-      Poincare::EmptyContext{}, DecimalMode, 14);
+      Poincare::EmptySymbolContext{}, DecimalMode, 14);
   assert_expression_parses_and_serializes_to(
-      "999999999999999999999999999999.54", "1ᴇ30", Poincare::EmptyContext{},
-      DecimalMode, 14);
+      "999999999999999999999999999999.54", "1ᴇ30",
+      Poincare::EmptySymbolContext{}, DecimalMode, 14);
   assert_expression_parses_and_serializes_to(
-      "9999999999999999999999999999999.54", "1ᴇ31", Poincare::EmptyContext{},
-      DecimalMode, 14);
+      "9999999999999999999999999999999.54", "1ᴇ31",
+      Poincare::EmptySymbolContext{}, DecimalMode, 14);
   assert_expression_parses_and_serializes_to(
-      "99999999999999999999999999999999.54", "1ᴇ32", Poincare::EmptyContext{},
-      DecimalMode, 14);
+      "99999999999999999999999999999999.54", "1ᴇ32",
+      Poincare::EmptySymbolContext{}, DecimalMode, 14);
   assert_expression_parses_and_serializes_to(
-      "-9.702365051313ᴇ-297", "-9.702365051313ᴇ-297", Poincare::EmptyContext{},
-      DecimalMode, 14);
+      "-9.702365051313ᴇ-297", "-9.702365051313ᴇ-297",
+      Poincare::EmptySymbolContext{}, DecimalMode, 14);
 
   // Engineering notation
   assert_expression_serializes_to(0.0_e, "0", EngineeringMode);

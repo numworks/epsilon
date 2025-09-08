@@ -297,7 +297,7 @@ QUIZ_CASE(pcj_layout_fraction_create) {
     Layout l = "1234+5"_l;
     LayoutCursor c(l, l.tree());
     c.safeSetPosition(2);
-    c.addFractionLayoutAndCollapseSiblings(k_emptyContext);
+    c.addFractionLayoutAndCollapseSiblings(k_emptySymbolContext);
     assert_cursor_is(c, KFracL("12"_l, "34"_l) ^ "+5"_l,
                      c.rootRack()->child(0)->child(1), 0);
   }
@@ -309,7 +309,7 @@ QUIZ_CASE(pcj_layout_fraction_create) {
   {
     Layout l = "34+5"_l;
     LayoutCursor c(l, l.tree(), OMG::Direction::Left());
-    c.addFractionLayoutAndCollapseSiblings(k_emptyContext);
+    c.addFractionLayoutAndCollapseSiblings(k_emptySymbolContext);
     assert_cursor_is(c, KFracL(""_l, "34"_l) ^ "+5"_l,
                      c.rootRack()->child(0)->child(0), 0);
   }
@@ -323,7 +323,7 @@ QUIZ_CASE(pcj_layout_fraction_create) {
     Layout l = KFracL("1"_l, "2"_l) ^ "34"_l;
     LayoutCursor c(l, l.tree());
     c.safeSetPosition(2);
-    c.addFractionLayoutAndCollapseSiblings(k_emptyContext);
+    c.addFractionLayoutAndCollapseSiblings(k_emptySymbolContext);
     assert_cursor_is(c, KFracL("1"_l, "2"_l) ^ KFracL("3"_l, "4"_l),
                      c.rootRack()->child(1)->child(1), 0);
   }
@@ -337,7 +337,7 @@ QUIZ_CASE(pcj_layout_fraction_create) {
     Layout l = "sin(x)cos(x)2"_l;
     LayoutCursor c(l, l.tree());
     c.safeSetPosition(l.tree()->numberOfChildren() - 1);
-    c.addFractionLayoutAndCollapseSiblings(k_emptyContext);
+    c.addFractionLayoutAndCollapseSiblings(k_emptySymbolContext);
     assert_cursor_is(c, KRackL(KFracL("sin(x)cos(x)"_l, "2"_l)),
                      c.rootRack()->child(0)->child(1), 0);
   }
@@ -352,7 +352,7 @@ QUIZ_CASE(pcj_layout_power) {
   {
     Layout l = "12"_l;
     LayoutCursor c(l, l.tree());
-    c.addEmptySquarePowerLayout(k_emptyContext);
+    c.addEmptySquarePowerLayout(k_emptySymbolContext);
     assert_cursor_is(c, "12"_l ^ KSuperscriptL("2"_l), c.rootRack(),
                      c.rootRack()->numberOfChildren());
   }
@@ -365,7 +365,7 @@ QUIZ_CASE(pcj_layout_power) {
   {
     Layout l = "1"_l ^ KSuperscriptL("2"_l);
     LayoutCursor c(l, l.tree()->child(1));
-    c.addEmptySquarePowerLayout(k_emptyContext);
+    c.addEmptySquarePowerLayout(k_emptySymbolContext);
     assert_cursor_is(
         c, KParenthesesL("1"_l ^ KSuperscriptL("2"_l)) ^ KSuperscriptL("2"_l),
         c.rootRack(), c.rootRack()->numberOfChildren());
@@ -380,7 +380,7 @@ QUIZ_CASE(pcj_layout_power) {
     LayoutCursor c(l, l.tree());
     bool dummy;
     c.move(OMG::Direction::Left(), false, &dummy);
-    c.addEmptySquarePowerLayout(k_emptyContext);
+    c.addEmptySquarePowerLayout(k_emptySymbolContext);
     assert_cursor_is(
         c,
         KRackL(KParenthesesL(KParenthesesL("1"_l ^ KSuperscriptL("2"_l)) ^

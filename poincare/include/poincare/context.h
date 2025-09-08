@@ -12,7 +12,6 @@ class Tree;
 
 namespace Poincare {
 
-// TODO: Rename to a more specific name
 class Context {
  public:
   enum class UserNamedType : uint8_t { None, Function, Sequence, Symbol, List };
@@ -25,7 +24,7 @@ class Context {
       const Internal::Tree* symbol) const = 0;
 };
 
-class EmptyContext : public Context {
+class EmptySymbolContext : public Context {
  public:
   // Context
   UserNamedType expressionTypeForIdentifier(
@@ -39,6 +38,6 @@ class EmptyContext : public Context {
   }
 };
 
-static const EmptyContext k_emptyContext;
+static const EmptySymbolContext k_emptySymbolContext;
 
 }  // namespace Poincare

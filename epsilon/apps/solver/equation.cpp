@@ -26,7 +26,7 @@ SystemExpression Equation::Model::standardForm(
     // The expression is circularly-defined
     expressionInputWithoutFunctions = Undefined::Builder();
   }
-  EmptyContext emptyContext;
+  EmptySymbolContext emptyContext;
   Context* contextToUse =
       replaceFunctionsButNotSymbols ? &emptyContext : context;
 

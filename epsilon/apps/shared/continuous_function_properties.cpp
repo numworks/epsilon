@@ -518,7 +518,7 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
                           ? OMG::Troolean::True
                           : OMG::Troolean::Unknown;
              },
-             EmptyContext{}, SymbolicComputation::KeepAllSymbols,
+             EmptySymbolContext{}, SymbolicComputation::KeepAllSymbols,
              static_cast<void*>(&symbol));
 }
 

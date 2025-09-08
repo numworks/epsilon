@@ -17,7 +17,7 @@ bool check_solutions(
     EquationSolver::Error expectedError = EquationSolver::Error::NoError) {
   Tree* equationList = Poincare::Internal::List::PushEmpty();
   for (const char* equation : inputs) {
-    NAry::AddChild(equationList, parse(equation, Poincare::EmptyContext{},
+    NAry::AddChild(equationList, parse(equation, Poincare::EmptySymbolContext{},
                                        {.preserveInput = true}));
   }
   EquationSolver::SolverResult result =
@@ -35,7 +35,7 @@ bool check_solutions(
     projectionContext.m_complexFormat = result.equationMetadata.complexFormat;
     const Tree* solution = solutions->nextNode();
     for (const char* output : outputs) {
-      Tree* expectedSolution = parse(output, Poincare::EmptyContext{},
+      Tree* expectedSolution = parse(output, Poincare::EmptySymbolContext{},
                                      {
                                          .preserveInput = true,
                                      });

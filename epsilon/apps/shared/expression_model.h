@@ -45,7 +45,7 @@ class ExpressionModel {
   // Setters helper
   virtual Poincare::UserExpression buildExpressionFromLayout(
       Poincare::Layout l, CodePoint symbol = 0,
-      const Poincare::Context& context = Poincare::EmptyContext{}) const;
+      const Poincare::Context& context = Poincare::EmptySymbolContext{}) const;
   static Poincare::UserExpression ReplaceSymbolWithUnknown(
       Poincare::UserExpression e, CodePoint symbol,
       bool onlySecondTerm = false);

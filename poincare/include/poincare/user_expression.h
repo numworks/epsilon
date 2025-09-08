@@ -114,9 +114,10 @@ class UserExpression : public Expression {
                                          const Context& context) const;
   // Approximate real scalar or unit
   template <typename T>
-  T approximateToRealScalar(AngleUnit angleUnit = AngleUnit::None,
-                            ComplexFormat complexFormat = ComplexFormat::None,
-                            const Context& context = EmptyContext{}) const;
+  T approximateToRealScalar(
+      AngleUnit angleUnit = AngleUnit::None,
+      ComplexFormat complexFormat = ComplexFormat::None,
+      const Context& context = EmptySymbolContext{}) const;
 
   // Return NAN for all non real scalar expressions
   template <typename T>
@@ -128,7 +129,7 @@ class UserExpression : public Expression {
 
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits,
-                      const Context& context = EmptyContext{},
+                      const Context& context = EmptySymbolContext{},
                       OMG::Base base = OMG::Base::Decimal,
                       bool linearMode = false) const;
   char* toLatex(char* buffer, int bufferSize,
@@ -160,7 +161,7 @@ class UserExpression : public Expression {
   bool isParsedNumber() const;
   bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
                bool replaceSymbols = false,
-               const Context& ctx = EmptyContext{}) const;
+               const Context& ctx = EmptySymbolContext{}) const;
 
   /* recursivelyMatches */
 
@@ -168,7 +169,7 @@ class UserExpression : public Expression {
                                                      const Context& context,
                                                      void* auxiliary);
   bool recursivelyMatches(UserExpressionTrinaryTest test,
-                          const Context& context = EmptyContext{},
+                          const Context& context = EmptySymbolContext{},
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols,
                           void* auxiliary = nullptr) const;
@@ -176,19 +177,19 @@ class UserExpression : public Expression {
   typedef bool (*ExpressionTest)(const UserExpression e,
                                  const Context& context);
   bool recursivelyMatches(ExpressionTest test,
-                          const Context& context = EmptyContext{},
+                          const Context& context = EmptySymbolContext{},
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols) const;
 
   typedef bool (*SimpleExpressionTest)(const UserExpression e);
   bool recursivelyMatches(SimpleExpressionTest test,
-                          const Context& context = EmptyContext{},
+                          const Context& context = EmptySymbolContext{},
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols) const;
 
   typedef bool (UserExpression::*NonStaticSimpleExpressionTest)() const;
   bool recursivelyMatches(NonStaticSimpleExpressionTest test,
-                          const Context& context = EmptyContext{},
+                          const Context& context = EmptySymbolContext{},
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols) const;
 
@@ -196,7 +197,7 @@ class UserExpression : public Expression {
                                           const Context& context,
                                           void* auxiliary);
   bool recursivelyMatches(ExpressionTestAuxiliary test,
-                          const Context& context = EmptyContext{},
+                          const Context& context = EmptySymbolContext{},
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols,
                           void* auxiliary = nullptr) const;

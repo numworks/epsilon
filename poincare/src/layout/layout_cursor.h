@@ -69,10 +69,11 @@ class LayoutCursor {
   /* Move */
   // Return false if could not move
   bool move(OMG::Direction direction, bool selecting, bool* shouldRedrawLayout,
-            const Poincare::Context& context = EmptyContext{});
-  bool moveMultipleSteps(OMG::Direction direction, int step, bool selecting,
-                         bool* shouldRedrawLayout,
-                         const Poincare::Context& context = EmptyContext{});
+            const Poincare::Context& context = EmptySymbolContext{});
+  bool moveMultipleSteps(
+      OMG::Direction direction, int step, bool selecting,
+      bool* shouldRedrawLayout,
+      const Poincare::Context& context = EmptySymbolContext{});
 
   /* Layout deletion */
   void stopSelecting() { m_startOfSelection = -1; }
@@ -225,7 +226,7 @@ class TreeStackCursor : public LayoutCursor,
    * PoolLayoutCursor::execute. The public API is a more convenient wrapper
    * around the private one. */
   void insertText(const char* text,
-                  const Poincare::Context& context = EmptyContext{},
+                  const Poincare::Context& context = EmptySymbolContext{},
                   bool forceRight = false, bool forceLeft = false,
                   bool linearMode = false) {
     InsertTextContext insertTextContext{text, forceRight, forceLeft,
@@ -233,14 +234,14 @@ class TreeStackCursor : public LayoutCursor,
     insertText(context, &insertTextContext);
   }
   void insertLayout(const Tree* l,
-                    const Poincare::Context& context = EmptyContext{},
+                    const Poincare::Context& context = EmptySymbolContext{},
                     bool forceRight = false, bool forceLeft = false,
                     bool collapseSiblings = true) {
     InsertLayoutContext insertLayoutContext{l, forceRight, forceLeft,
                                             collapseSiblings};
     insertLayout(context, &insertLayoutContext);
   }
-  void performBackspace() { performBackspace(EmptyContext{}, nullptr); }
+  void performBackspace() { performBackspace(EmptySymbolContext{}, nullptr); }
 
   Rack* rootRack() const override {
     return static_cast<Rack*>(Tree::FromBlocks(SharedTreeStack->firstBlock()));

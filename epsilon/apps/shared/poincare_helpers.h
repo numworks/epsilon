@@ -156,7 +156,7 @@ inline Poincare::SystemExpression CloneAndReduce(
 template <class T>
 inline T ValueOfFloatAsDisplayed(
     T t, int precision,
-    const Poincare::Context& context = Poincare::EmptyContext{}) {
+    const Poincare::Context& context = Poincare::EmptySymbolContext{}) {
   assert(
       precision <=
       static_cast<int>(Poincare::PrintFloat::k_maxNumberOfSignificantDigits));

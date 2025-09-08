@@ -161,7 +161,7 @@ const Poincare::Context& LayoutField::context() const {
   if (m_delegate) {
     return *m_delegate->context();
   }
-  return k_emptyContext;
+  return k_emptySymbolContext;
 }
 
 size_t LayoutField::dumpContent(char* buffer, size_t bufferSize,
@@ -290,7 +290,8 @@ bool LayoutField::insertText(const char* text, bool indentation,
   // Single keys are not parsed to avoid changing " to _"
   UserExpression resultExpression =
       UTF8Helper::StringGlyphLength(text) > 1
-          ? UserExpression::Parse(text, EmptyContext{}, {.preserveInput = true})
+          ? UserExpression::Parse(text, EmptySymbolContext{},
+                                  {.preserveInput = true})
           : UserExpression();
   // If first inserted character was empty, cursor must be left of layout
   bool forceCursorLeftOfText =
@@ -308,7 +309,7 @@ bool LayoutField::insertText(const char* text, bool indentation,
       SharedPreferences->displayMode(),
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
       App::app() ? static_cast<const Context&>(App::app()->localContext())
-                 : k_emptyContext);
+                 : k_emptySymbolContext);
   if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >=
       k_maxNumberOfLayouts) {
     return false;
@@ -635,13 +636,13 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
     /* TODO_PCJ: Check if layout is already a 1D layout. If so, insert it
      * directly. */
     // Parse with preserveInput to avoid modifying the layout unwantedly.
-    UserExpression e =
-        UserExpression::Parse(layout, EmptyContext{}, {.preserveInput = true});
+    UserExpression e = UserExpression::Parse(layout, EmptySymbolContext{},
+                                             {.preserveInput = true});
     if (!e.isUninitialized()) {
-      layout =
-          e.createLayout(SharedPreferences->displayMode(),
-                         Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
-                         Poincare::EmptyContext{}, OMG::Base::Decimal, true);
+      layout = e.createLayout(
+          SharedPreferences->displayMode(),
+          Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
+          Poincare::EmptySymbolContext{}, OMG::Base::Decimal, true);
       cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
                              forceCursorLeftOfLayout);
     } else {

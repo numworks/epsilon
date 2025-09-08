@@ -167,7 +167,7 @@ QUIZ_CASE(calculation_ans) {
   ExamModeManager::SetExamMode(ExamMode(ExamMode::Ruleset::Dutch));
   assert(CAS::ShouldOnlyDisplayApproximation(
       UserExpression::Builder(KSqrt(2_e)), UserExpression::Builder(KSqrt(2_e)),
-      UserExpression(), Poincare::EmptyContext{}));
+      UserExpression(), Poincare::EmptySymbolContext{}));
 
   assertAnsIs("√(1+1)", "√(1+1)", &store);
 
@@ -803,7 +803,7 @@ QUIZ_CASE(calculation_involving_sequence) {
       seqStore->recordAtIndex(seqStore->numberOfModels() - 1);
   Shared::Sequence* u = seqStore->modelForRecord(record);
   u->setType(Shared::Sequence::Type::Explicit);
-  err = u->setContent(Layout::String("i"), EmptyContext{});
+  err = u->setContent(Layout::String("i"), EmptySymbolContext{});
   assert(err == Ion::Storage::Record::ErrorStatus::None);
   (void)err;  // Silence compilation warning.
 

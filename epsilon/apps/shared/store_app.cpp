@@ -30,8 +30,8 @@ bool StoreApp::Snapshot::memoizeFormula(Poincare::Layout formula, int index) {
 
 Layout StoreApp::Snapshot::memoizedFormula(int index) const {
   // TODO: This doesn't work
-  return UserExpression::Parse(m_memoizedFormulasBuffer[index], EmptyContext{},
-                               {.preserveInput = true})
+  return UserExpression::Parse(m_memoizedFormulasBuffer[index],
+                               EmptySymbolContext{}, {.preserveInput = true})
       .createLayout(Preferences::PrintFloatMode::Decimal,
                     PrintFloat::k_maxNumberOfSignificantDigits);
 }

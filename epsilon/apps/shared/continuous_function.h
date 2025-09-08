@@ -407,7 +407,7 @@ class ContinuousFunction : public Function {
     Poincare::UserExpression buildExpressionFromLayout(
         Poincare::Layout l, CodePoint symbol = 0,
         const Poincare::Context& context =
-            Poincare::EmptyContext{}) const override;
+            Poincare::EmptySymbolContext{}) const override;
     // Tidy the model
     void tidyDownstreamPoolFrom(
         const Poincare::PoolObject* treePoolCursor) const override;

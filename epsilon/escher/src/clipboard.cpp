@@ -94,7 +94,8 @@ Poincare::Layout Clipboard::storedLayout() {
   const char* systemText = Ion::Clipboard::read();
   if (systemText) {
     // TODO: Is it needed to use an expression here ? why not layout directly ?
-    return Poincare::UserExpression::Parse(systemText, Poincare::EmptyContext{},
+    return Poincare::UserExpression::Parse(systemText,
+                                           Poincare::EmptySymbolContext{},
                                            {.preserveInput = true})
         .createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
                       Poincare::PrintFloat::k_maxNumberOfSignificantDigits);

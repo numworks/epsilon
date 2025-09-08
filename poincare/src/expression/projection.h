@@ -17,7 +17,7 @@ struct ProjectionContext {
   Dimension m_dimension = Dimension();
   Preferences::UnitFormat m_unitFormat = Preferences::UnitFormat::Metric;
   SymbolicComputation m_symbolic = SymbolicComputation::KeepAllSymbols;
-  const Poincare::Context& m_context = k_emptyContext;
+  const Poincare::Context& m_context = k_emptySymbolContext;
   UnitDisplay m_unitDisplay = UnitDisplay::MainOutput;
   // Optional simplification step
   bool m_advanceReduce = true;
@@ -31,7 +31,7 @@ class Projection {
         .m_angleUnit = AngleUnit::Radian,
         .m_unitFormat = Preferences::UnitFormat::Metric,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-        .m_context = k_emptyContext};
+        .m_context = k_emptySymbolContext};
     return projCtx;
   }
   /* Update complexFormat if tree contains i, Re, Im, Arg or Conj. Return true

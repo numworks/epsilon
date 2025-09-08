@@ -61,7 +61,7 @@ class Context {
  public:
   Context(AngleUnit angleUnit = AngleUnit::None,
           ComplexFormat complexFormat = ComplexFormat::None,
-          const Poincare::Context& symbolContext = k_emptyContext,
+          const Poincare::Context& symbolContext = k_emptySymbolContext,
           int16_t listElement = -1)
       : m_randomContext(Random::Context(false)),
         m_localContext(nullptr),

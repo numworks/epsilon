@@ -128,7 +128,7 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
           !messageTree->useRaw()) {
         // preserveInput is true so that f(x) is never parsed as f×(x)
         UserExpression resultExpression = UserExpression::Parse(
-            text, EmptyContext{}, {.preserveInput = true});
+            text, EmptySymbolContext{}, {.preserveInput = true});
         if (!resultExpression.isUninitialized()) {
           // The text is parsable, we create its layout an insert it.
           resultLayout = resultExpression.createLayout(

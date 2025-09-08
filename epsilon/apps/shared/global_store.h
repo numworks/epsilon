@@ -65,6 +65,10 @@ class GlobalStore final : public Poincare::VariableStore {
   void resetAll();
 
  private:
+  /* REFACTOR: SequenceStore, SequenceCache and SequenceContext should be
+   * grouped in a single interface. SequenceContext could be the const version
+   * of SequenceStore (like ContinuousFonctionContext and
+   * ContinuousFonctionStore). */
   static OMG::GlobalBox<SequenceStore> s_sequenceStore;
   static OMG::GlobalBox<SequenceCache> s_sequenceCache;
   static OMG::GlobalBox<ContinuousFunctionStore> s_continuousFunctionStore;

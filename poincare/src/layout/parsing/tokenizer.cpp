@@ -513,7 +513,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
        m_parsingContext->params.preserveInput ||
        (m_parsingContext->context &&
         m_parsingContext->context->expressionTypeForIdentifier(std::string_view(
-            string, *length)) != Context::UserNamedType::None))) {
+            string, *length)) != SymbolContext::UserNamedType::None))) {
     return Token::Type::CustomIdentifier;
   }
 

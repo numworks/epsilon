@@ -5,7 +5,7 @@
 #include <poincare/k_tree.h>
 
 #include "../app.h"
-#include "poincare/context.h"
+#include "poincare/symbol_context.h"
 
 using namespace Poincare;
 using namespace Shared;

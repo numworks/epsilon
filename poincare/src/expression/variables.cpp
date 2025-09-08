@@ -1,9 +1,9 @@
 #include "variables.h"
 
 #include <omg/unreachable.h>
-#include <poincare/context.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack.h>
+#include <poincare/symbol_context.h>
 #include <string.h>
 
 #include "k_tree.h"
@@ -45,24 +45,26 @@ const Tree* Variables::Private::ToSymbol(const Tree* variables, uint8_t id) {
   return variables->child(id);
 }
 
-Tree* Variables::GetUserSymbols(const Tree* e, const Poincare::Context& ctx) {
+Tree* Variables::GetUserSymbols(const Tree* e,
+                                const Poincare::SymbolContext& symbolContext) {
   // TODO Is it worth to represent the empty set with nullptr ?
   Tree* set = Set::PushEmpty();
-  Private::GetUserSymbols(e, set, ctx);
+  Private::GetUserSymbols(e, set, symbolContext);
   return set;
 }
 
-void Variables::Private::GetUserSymbols(const Tree* e, Tree* set,
-                                        const Poincare::Context& ctx) {
+void Variables::Private::GetUserSymbols(
+    const Tree* e, Tree* set, const Poincare::SymbolContext& symbolContext) {
   if (e->isUserSymbol()) {
     return Set::Add(set, e);
   }
   if (e->isUserFunction()) {
-    assert(ctx.expressionForUserNamed(e));
-    /* If ctx is given, we look inside the user function definition. Unknown
-     * symbol has to be discarded. */
+    assert(symbolContext.expressionForUserNamed(e));
+    /* If symbolContext is given, we look inside the user function definition.
+     * Unknown symbol has to be discarded. */
     Tree* subSet = Set::PushEmpty();
-    GetUserSymbols(ctx.expressionForUserNamed(e), subSet, ctx);
+    GetUserSymbols(symbolContext.expressionForUserNamed(e), subSet,
+                   symbolContext);
     Tree* symbolToRemove = KList(KUnknownSymbol)->cloneTree();
     subSet = Set::Difference(subSet, symbolToRemove);
     set = Set::Union(set, subSet);
@@ -73,13 +75,13 @@ void Variables::Private::GetUserSymbols(const Tree* e, Tree* set,
     if (isParametric && child.index == Parametric::k_variableIndex) {
     } else if (isParametric && Parametric::IsFunctionIndex(child.index, e)) {
       Tree* subSet = Set::PushEmpty();
-      GetUserSymbols(child, subSet, ctx);
+      GetUserSymbols(child, subSet, symbolContext);
       Tree* boundSymbols = Set::PushEmpty();
       Set::Add(boundSymbols, e->child(Parametric::k_variableIndex));
       subSet = Set::Difference(subSet, boundSymbols);
       set = Set::Union(set, subSet);
     } else {
-      GetUserSymbols(child, set, ctx);
+      GetUserSymbols(child, set, symbolContext);
     }
   }
 }

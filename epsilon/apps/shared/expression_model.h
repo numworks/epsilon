@@ -1,8 +1,8 @@
 #pragma once
 
 #include <ion/storage/record.h>
-#include <poincare/context.h>
 #include <poincare/layout.h>
+#include <poincare/symbol_context.h>
 #include <poincare/system_expression.h>
 #include <poincare/user_expression.h>
 
@@ -27,10 +27,9 @@ class ExpressionModel {
                           CodePoint symbol = 0) const;
 
   // Setters
-  Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record* record,
-                                               const Poincare::Layout& l,
-                                               const Poincare::Context& context,
-                                               CodePoint symbol = 0);
+  Ion::Storage::Record::ErrorStatus setContent(
+      Ion::Storage::Record* record, const Poincare::Layout& l,
+      const Poincare::SymbolContext& symbolContext, CodePoint symbol = 0);
   Ion::Storage::Record::ErrorStatus setExpressionContent(
       Ion::Storage::Record* record,
       const Poincare::UserExpression& newExpression);
@@ -45,7 +44,8 @@ class ExpressionModel {
   // Setters helper
   virtual Poincare::UserExpression buildExpressionFromLayout(
       Poincare::Layout l, CodePoint symbol = 0,
-      const Poincare::Context& context = Poincare::EmptySymbolContext{}) const;
+      const Poincare::SymbolContext& symbolContext =
+          Poincare::EmptySymbolContext{}) const;
   static Poincare::UserExpression ReplaceSymbolWithUnknown(
       Poincare::UserExpression e, CodePoint symbol,
       bool onlySecondTerm = false);

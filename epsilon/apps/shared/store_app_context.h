@@ -10,13 +10,14 @@ namespace Shared {
  * (Statistics and Regression) */
 class StoreAppContext : public Poincare::ContextWithParent {
  public:
-  StoreAppContext(Shared::DoublePairStore* store, const Context* parentContext)
+  StoreAppContext(Shared::DoublePairStore* store,
+                  const SymbolContext* parentContext)
       : Poincare::ContextWithParent(parentContext), m_store(store) {}
 
-  Poincare::Context::UserNamedType expressionTypeForIdentifier(
+  Poincare::SymbolContext::UserNamedType expressionTypeForIdentifier(
       std::string_view identifier) const override {
     return m_store->isColumnName(identifier)
-               ? Poincare::Context::UserNamedType::List
+               ? Poincare::SymbolContext::UserNamedType::List
                : Poincare::ContextWithParent::expressionTypeForIdentifier(
                      identifier);
   }

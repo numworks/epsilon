@@ -4,7 +4,8 @@
 
 #include <string_view>
 
-// TODO: refactor to have an Internal Context and a public API Context
+/* TODO: refactor to have an Internal SymbolContext and a public API
+ * SymbolContext */
 
 namespace Poincare::Internal {
 class Tree;
@@ -12,7 +13,7 @@ class Tree;
 
 namespace Poincare {
 
-class Context {
+class SymbolContext {
  public:
   enum class UserNamedType : uint8_t { None, Function, Sequence, Symbol, List };
   virtual UserNamedType expressionTypeForIdentifier(
@@ -24,9 +25,9 @@ class Context {
       const Internal::Tree* symbol) const = 0;
 };
 
-class EmptySymbolContext : public Context {
+class EmptySymbolContext : public SymbolContext {
  public:
-  // Context
+  // SymbolContext
   UserNamedType expressionTypeForIdentifier(
       std::string_view identifer) const override {
     return UserNamedType::None;

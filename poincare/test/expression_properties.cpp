@@ -1,10 +1,10 @@
-#include <poincare/context.h>
 #include <poincare/prepared_function.h>
 #include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/infinity.h>
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/variables.h>
+#include <poincare/symbol_context.h>
 #include <poincare/system_expression.h>
 #include <poincare/test/helpers/symbol_store.h>
 #include <poincare/user_expression.h>
@@ -284,7 +284,7 @@ QUIZ_CASE(pcj_properties_get_variables) {
 
 void assert_reduced_expression_has_polynomial_coefficient(
     const char* input, const char* symbolName, const Tree* expectedCoefficients,
-    const Context& context = Poincare::EmptySymbolContext{},
+    const SymbolContext& symbolContext = Poincare::EmptySymbolContext{},
     ComplexFormat complexFormat = ComplexFormat::Cartesian,
     AngleUnit angleUnit = AngleUnit::Radian,
     Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric,
@@ -293,8 +293,8 @@ void assert_reduced_expression_has_polynomial_coefficient(
   ProjectionContext projContext{.m_complexFormat = complexFormat,
                                 .m_angleUnit = angleUnit,
                                 .m_symbolic = symbolicComputation,
-                                .m_context = context};
-  UserExpression e = UserExpression::Builder(parse(input, context));
+                                .m_context = symbolContext};
+  UserExpression e = UserExpression::Builder(parse(input, symbolContext));
   bool reductionFailure = false;
   SystemExpression s = e.cloneAndReduce(projContext, &reductionFailure);
   quiz_assert(!reductionFailure);
@@ -367,10 +367,11 @@ QUIZ_CASE(pcj_properties_children_list_length) {
   assert_list_length_in_children_is("{1,2}+{3,4,5}", k_mismatchedLists);
 }
 
-void assert_is_list_of_points(const char* input, const Context& context,
+void assert_is_list_of_points(const char* input,
+                              const SymbolContext& symbolContext,
                               bool truth = true) {
-  UserExpression e = UserExpression::Builder(parse(input, context));
-  bool isListOfPoints = e.dimension(context).isListOfPoints();
+  UserExpression e = UserExpression::Builder(parse(input, symbolContext));
+  bool isListOfPoints = e.dimension(symbolContext).isListOfPoints();
   quiz_assert_print_if_failure(isListOfPoints == truth, input);
 }
 

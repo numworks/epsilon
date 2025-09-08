@@ -1,6 +1,6 @@
 #include "store_app.h"
 
-#include <poincare/context.h>
+#include <poincare/symbol_context.h>
 
 using namespace Poincare;
 

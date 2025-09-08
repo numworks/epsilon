@@ -134,15 +134,16 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
 
 UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
     const UserExpression input, const UserExpression exactOutput,
-    const Context& context,
+    const SymbolContext& symbolContext,
     const Preferences::CalculationPreferences calculationPreferences) {
   const Tree* inputTree = input.tree();
   const Tree* exactTree = exactOutput.tree();
-  Internal::Dimension dimension = Internal::Dimension::Get(inputTree, context);
+  Internal::Dimension dimension =
+      Internal::Dimension::Get(inputTree, symbolContext);
 
-  assert(dimension == Internal::Dimension::Get(exactTree, context));
+  assert(dimension == Internal::Dimension::Get(exactTree, symbolContext));
   if (!dimension.isScalarOrUnit() ||
-      Internal::Dimension::IsList(exactTree, context) ||
+      Internal::Dimension::IsList(exactTree, symbolContext) ||
       (dimension.isUnit() && !dimension.isSimpleAngleUnit())) {
     return UserExpression();
   }
@@ -156,7 +157,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
    * However if the result is complex, it is treated as a complex result.
    * When both inputs and outputs are direct trigo functions, we take the input
    * because the angle might not be the same modulo 2π. */
-  assert(!exactOutput.isComplexScalar(calculationPreferences, context));
+  assert(!exactOutput.isComplexScalar(calculationPreferences, symbolContext));
   const Tree* directTrigoFunction;
   if ((inputTree->isDirectTrigonometryFunction() ||
        inputTree->isDirectAdvancedTrigonometryFunction()) &&
@@ -179,7 +180,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   Tree* exactAngle = directTrigoFunction->child(0)->cloneTree();
   assert(exactAngle && !exactAngle->isUndefined());
   Internal::Dimension exactAngleDimension =
-      Internal::Dimension::Get(exactAngle, context);
+      Internal::Dimension::Get(exactAngle, symbolContext);
   assert(exactAngleDimension.isScalar() ||
          exactAngleDimension.isSimpleAngleUnit());
   ComplexFormat complexFormat = calculationPreferences.complexFormat;
@@ -188,7 +189,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
       .m_complexFormat = complexFormat,
       .m_angleUnit = angleUnit,
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = context,
+      .m_context = symbolContext,
   };
 
   /* TODO: Second Simplify could be avoided by calling
@@ -213,7 +214,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   if (reductionFailure ||
       !std::isfinite(Approximation::To<float>(
           exactAngle, Approximation::Parameters{.projectLocalVariables = true},
-          Approximation::Context(angleUnit, complexFormat, context)))) {
+          Approximation::Context(angleUnit, complexFormat, symbolContext)))) {
     exactAngle->removeTree();
     return UserExpression();
   }
@@ -223,7 +224,8 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
 static bool deepIsOfType(UserExpression e,
                          std::initializer_list<Internal::AnyType> types) {
   return e.recursivelyMatches(
-      [](const UserExpression e, const Context& context, void* auxiliary) {
+      [](const UserExpression e, const SymbolContext& symbolContext,
+         void* auxiliary) {
         return e.tree()->isOfType(
                    *static_cast<std::initializer_list<Internal::AnyType>*>(
                        auxiliary))
@@ -469,14 +471,14 @@ Poincare::Layout CreateBeautifiedLayout(Tree* reducedExpression,
 }
 
 Poincare::Layout AdditionalResultsHelper::ScientificLayout(
-    const UserExpression approximateOutput, const Context& context,
+    const UserExpression approximateOutput, const SymbolContext& symbolContext,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
   ProjectionContext ctx = {.m_complexFormat = ComplexFormat::Cartesian,
                            .m_strategy = Strategy::ApproximateToFloat,
                            .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-                           .m_context = context,
+                           .m_context = symbolContext,
                            .m_advanceReduce = false};
   Tree* e = approximateOutput.tree()->cloneTree();
   Simplification::ProjectAndReduce(e, &ctx);

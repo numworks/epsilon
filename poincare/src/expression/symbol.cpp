@@ -28,13 +28,14 @@ ComplexSign Symbol::GetComplexSign(const Tree* e) {
   return e->isUserSymbol() ? ComplexSign::RealFinite() : ComplexSign::Unknown();
 }
 
-bool involvesCircularity(const Tree* e, const Poincare::Context& context,
+bool involvesCircularity(const Tree* e,
+                         const Poincare::SymbolContext& symbolContext,
                          int maxDepth, const char** visitedSymbols,
                          int numberOfVisitedSymbols) {
   // Check for circularity only when a symbol/function is encountered
   if (!e->isUserFunction() && !e->isUserSymbol()) {
     for (const Tree* child : e->children()) {
-      if (involvesCircularity(child, context, maxDepth, visitedSymbols,
+      if (involvesCircularity(child, symbolContext, maxDepth, visitedSymbols,
                               numberOfVisitedSymbols)) {
         return true;
       }
@@ -52,7 +53,7 @@ bool involvesCircularity(const Tree* e, const Poincare::Context& context,
 
   // Check children of this (useful for function parameters)
   for (const Tree* child : e->children()) {
-    if (involvesCircularity(child, context, maxDepth, visitedSymbols,
+    if (involvesCircularity(child, symbolContext, maxDepth, visitedSymbols,
                             numberOfVisitedSymbols)) {
       return true;
     }
@@ -77,18 +78,18 @@ bool involvesCircularity(const Tree* e, const Poincare::Context& context,
     e->cloneTree();
   }
 
-  const Tree* definition = context.expressionForUserNamed(symbol);
+  const Tree* definition = symbolContext.expressionForUserNamed(symbol);
   bool isCircular =
-      definition && involvesCircularity(definition, context, maxDepth,
+      definition && involvesCircularity(definition, symbolContext, maxDepth,
                                         visitedSymbols, numberOfVisitedSymbols);
   symbol->removeTree();
   return isCircular;
 }
 
 bool Symbol::InvolvesCircularity(const Tree* e,
-                                 const Poincare::Context& context) {
+                                 const Poincare::SymbolContext& symbolContext) {
   const char* visitedSymbols[k_maxSymbolReplacementsCount];
-  return involvesCircularity(e, context, k_maxSymbolReplacementsCount,
+  return involvesCircularity(e, symbolContext, k_maxSymbolReplacementsCount,
                              visitedSymbols, 0);
 }
 

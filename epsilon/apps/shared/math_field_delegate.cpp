@@ -33,19 +33,19 @@ CodePoint AbstractMathFieldDelegate::defaultXNT() {
   return CodePoints::k_cartesianSymbol;
 }
 
-bool AbstractMathFieldDelegate::isAcceptableExpression(const UserExpression exp,
-                                                       const Context& context) {
+bool AbstractMathFieldDelegate::isAcceptableExpression(
+    const UserExpression exp, const SymbolContext& symbolContext) {
   return !exp.isUninitialized() && !exp.isStore();
 }
 
-bool AbstractMathFieldDelegate::isAcceptableText(const char* text,
-                                                 const Context& context) {
+bool AbstractMathFieldDelegate::isAcceptableText(
+    const char* text, const SymbolContext& symbolContext) {
   /* Parsing
    * Do not parse for assignment to detect if there is a syntax error, since
    * some errors could be missed.
    * Sometimes the field needs to be parsed for assignment but this is
    * done later, namely by ContinuousFunction::buildExpressionFromLayout. */
-  UserExpression exp = UserExpression::Parse(text, context);
+  UserExpression exp = UserExpression::Parse(text, symbolContext);
   if (exp.isUninitialized()) {
     // Unparsable expression
     return false;
@@ -64,7 +64,7 @@ bool AbstractMathFieldDelegate::isAcceptableText(const char* text,
      * escaped before printing utterly the expression. */
     return false;
   }
-  return isAcceptableExpression(exp, context);
+  return isAcceptableExpression(exp, symbolContext);
 }
 
 MathLayoutFieldDelegate* MathLayoutFieldDelegate::Default() {
@@ -80,13 +80,13 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
 }
 
 bool MathLayoutFieldDelegate::isAcceptableLayout(
-    Layout layout, const Poincare::Context& context) {
+    Layout layout, const Poincare::SymbolContext& symbolContext) {
   if (layout.isEmpty()) {
     // Accept empty layouts
     return true;
   }
-  UserExpression exp = UserExpression::Parse(layout, context);
-  return isAcceptableExpression(exp, context);
+  UserExpression exp = UserExpression::Parse(layout, symbolContext);
+  return isAcceptableExpression(exp, symbolContext);
 }
 
 bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(

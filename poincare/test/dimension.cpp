@@ -1,8 +1,8 @@
-#include <poincare/context.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/units/k_units.h>
 #include <poincare/src/expression/units/representatives.h>
+#include <poincare/symbol_context.h>
 
 #include "helper.h"
 #include "helpers/symbol_store.h"
@@ -10,15 +10,16 @@
 using namespace Poincare::Internal;
 
 bool dim(const Tree* e, Dimension dExpected,
-         const Poincare::Context& ctx = Poincare::EmptySymbolContext{}) {
-  if (!Dimension::DeepCheck(e, ctx)) {
+         const Poincare::SymbolContext& symbolContext =
+             Poincare::EmptySymbolContext{}) {
+  if (!Dimension::DeepCheck(e, symbolContext)) {
 #if POINCARE_TREE_LOG
     std::cout << "EXPECTED VALID dimension for: ";
     e->logSerialize();
 #endif
     return false;
   }
-  Dimension dObtained = Dimension::Get(e, ctx);
+  Dimension dObtained = Dimension::Get(e, symbolContext);
   if (dExpected != dObtained) {
 #if POINCARE_TREE_LOG
     std::cout << "For tree: ";
@@ -34,23 +35,26 @@ bool dim(const Tree* e, Dimension dExpected,
 }
 
 bool dim(const char* input, Dimension d,
-         const Poincare::Context& ctx = Poincare::EmptySymbolContext{}) {
-  Tree* e = parse(input, ctx);
-  bool result = dim(e, d, ctx);
+         const Poincare::SymbolContext& symbolContext =
+             Poincare::EmptySymbolContext{}) {
+  Tree* e = parse(input, symbolContext);
+  bool result = dim(e, d, symbolContext);
   e->removeTree();
   return result;
 }
 
 bool len(const Tree* e, int n,
-         const Poincare::Context& ctx = Poincare::EmptySymbolContext{}) {
-  assert(Dimension::DeepCheck(e, ctx));
-  return Dimension::ListLength(e, ctx) == n;
+         const Poincare::SymbolContext& symbolContext =
+             Poincare::EmptySymbolContext{}) {
+  assert(Dimension::DeepCheck(e, symbolContext));
+  return Dimension::ListLength(e, symbolContext) == n;
 }
 
 bool len(const char* input, int n,
-         const Poincare::Context& ctx = Poincare::EmptySymbolContext{}) {
-  Tree* e = parse(input, ctx);
-  bool result = len(e, n, ctx);
+         const Poincare::SymbolContext& symbolContext =
+             Poincare::EmptySymbolContext{}) {
+  Tree* e = parse(input, symbolContext);
+  bool result = len(e, n, symbolContext);
   e->removeTree();
   return result;
 }

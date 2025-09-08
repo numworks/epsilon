@@ -16,7 +16,8 @@ static DimensionType toDT(uint8_t type) {
   return static_cast<DimensionType>(type);
 }
 
-Poincare::Dimension::Dimension(const Expression e, const Context& context)
+Poincare::Dimension::Dimension(const Expression e,
+                               const SymbolContext& symbolContext)
     : m_matrixDimensionRows(0),
       m_matrixDimensionCols(0),
       m_type(static_cast<uint8_t>(DimensionType::Scalar)),
@@ -27,12 +28,13 @@ Poincare::Dimension::Dimension(const Expression e, const Context& context)
   static_assert(sizeof(MatrixDimension) ==
                 sizeof(m_matrixDimensionCols) + sizeof(m_matrixDimensionRows));
   // TODO_PCJ: Remove checks in SystemExpression implementation of this
-  if (!Internal::Dimension::DeepCheck(e.tree(), context)) {
+  if (!Internal::Dimension::DeepCheck(e.tree(), symbolContext)) {
     return;
   }
-  Internal::Dimension dimension = Internal::Dimension::Get(e.tree(), context);
+  Internal::Dimension dimension =
+      Internal::Dimension::Get(e.tree(), symbolContext);
   m_type = static_cast<uint8_t>(dimension.type);
-  m_isList = Internal::Dimension::IsList(e.tree(), context);
+  m_isList = Internal::Dimension::IsList(e.tree(), symbolContext);
   m_isEmptyList = (m_isList && Internal::Dimension::ListLength(e.tree()) == 0);
   if (toDT(m_type) == DimensionType::Matrix) {
     m_matrixDimensionRows = dimension.matrix.rows;
@@ -140,8 +142,9 @@ int Expression::numberOfDescendants(bool includeSelf) const {
   return tree()->numberOfDescendants(includeSelf);
 }
 
-Poincare::Dimension Expression::dimension(const Context& context) const {
-  return Poincare::Dimension(*this, context);
+Poincare::Dimension Expression::dimension(
+    const SymbolContext& symbolContext) const {
+  return Poincare::Dimension(*this, symbolContext);
 }
 
 bool Expression::isUndefined() const {
@@ -211,8 +214,9 @@ bool Expression::isVector() const {
   return !isUninitialized() && Vector::IsVector(tree());
 }
 
-bool Expression::isInRadians(const Context& context) const {
-  return Internal::Dimension::Get(tree(), context).isSimpleRadianAngleUnit();
+bool Expression::isInRadians(const SymbolContext& symbolContext) const {
+  return Internal::Dimension::Get(tree(), symbolContext)
+      .isSimpleRadianAngleUnit();
 }
 
 bool Expression::isConstantNumber() const {

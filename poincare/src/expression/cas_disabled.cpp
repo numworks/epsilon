@@ -39,7 +39,8 @@ bool exactExpressionIsForbidden(const Tree* exactOutput) {
       isFraction || isPrimeFactorization(exactOutput));
 }
 
-bool neverDisplayExactOutput(const Tree* exactOutput, const Context& context) {
+bool neverDisplayExactOutput(const Tree* exactOutput,
+                             const SymbolContext& symbolContext) {
   if (!exactOutput) {
     return false;
   }
@@ -74,13 +75,13 @@ bool neverDisplayExactOutput(const Tree* exactOutput, const Context& context) {
        (exactOutput->isList() || exactOutput->isMatrix())) {
     return true;
   }
-  Internal::Dimension d = Internal::Dimension::Get(exactOutput, context);
+  Internal::Dimension d = Internal::Dimension::Get(exactOutput, symbolContext);
   // Angle units can have an exact output contrary to other units
   return d.isUnit() && !d.isAngleUnit();
 }
 
-bool neverDisplayExactExpressionOfApproximation(const Tree* approximateOutput,
-                                                const Context& context) {
+bool neverDisplayExactExpressionOfApproximation(
+    const Tree* approximateOutput, const SymbolContext& symbolContext) {
   /* The angle units could display exact output but we want to avoid exact
    * results that are not in radians like "(3/sqrt(2))°" because they are not
    * relevant for the user.
@@ -88,7 +89,8 @@ bool neverDisplayExactExpressionOfApproximation(const Tree* approximateOutput,
    * To do so, the approximateOutput is checked rather than the exactOutput,
    * because the approximateOutput has a unit only if the degree unit is not
    * in a trig function. */
-  Internal::Dimension d = Internal::Dimension::Get(approximateOutput, context);
+  Internal::Dimension d =
+      Internal::Dimension::Get(approximateOutput, symbolContext);
   return d.isUnit() && !d.isSimpleRadianAngleUnit();
 }
 
@@ -97,7 +99,7 @@ bool neverDisplayExactExpressionOfApproximation(const Tree* approximateOutput,
 bool CAS::Enabled() { return false; }
 
 bool CAS::NeverDisplayReductionOfInput(const Internal::Tree* input,
-                                       const Context& context) {
+                                       const SymbolContext& symbolContext) {
   if (!input) {
     return false;
   }
@@ -121,11 +123,12 @@ bool CAS::NeverDisplayReductionOfInput(const Internal::Tree* input,
 
 bool CAS::ShouldOnlyDisplayApproximation(
     const Internal::Tree* input, const Internal::Tree* exactOutput,
-    const Internal::Tree* approximateOutput, const Context& context) {
-  return NeverDisplayReductionOfInput(input, context) ||
-         neverDisplayExactOutput(exactOutput, context) ||
+    const Internal::Tree* approximateOutput,
+    const SymbolContext& symbolContext) {
+  return NeverDisplayReductionOfInput(input, symbolContext) ||
+         neverDisplayExactOutput(exactOutput, symbolContext) ||
          (approximateOutput && neverDisplayExactExpressionOfApproximation(
-                                   approximateOutput, context));
+                                   approximateOutput, symbolContext));
 }
 
 }  // namespace Poincare::Internal

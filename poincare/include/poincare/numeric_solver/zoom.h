@@ -177,7 +177,7 @@ class Zoom {
   Range2D<T> m_magnitudeRange;
   Range2D<T> m_forcedRange;
   Range1D<T> m_bounds;
-  Context* m_context;
+  SymbolContext* m_context;
   T m_defaultHalfLength;
   T m_normalRatio;
   const T m_maxFloat;

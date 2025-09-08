@@ -1,23 +1,24 @@
 #include <omg/float.h>
-#include <poincare/context.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/numeric_solver/erf_inv.h>
+#include <poincare/symbol_context.h>
 
 #include "float_helper.h"
 #include "helper.h"
 
 using Poincare::AngleUnit;
-using Poincare::Context;
+using Poincare::SymbolContext;
 using namespace Poincare::Internal;
 
 typedef Poincare::Solver<double>::Interest Interest;
 typedef Poincare::Solver<double>::Solution Solution;
 
-void assert_next_solution_is(const char* expression, const Context& context,
+void assert_next_solution_is(const char* expression,
+                             const SymbolContext& symbolContext,
                              Poincare::Solver<double>* solver,
                              Poincare::Coordinate2D<double> expected,
                              Interest interest, const char* otherExpression,
@@ -28,7 +29,7 @@ void assert_next_solution_is(const char* expression, const Context& context,
       .m_complexFormat = Poincare::ComplexFormat::Real,
       .m_angleUnit = angleUnit,
       .m_strategy = Poincare::Strategy::ApproximateToFloat,
-      .m_context = context};
+      .m_context = symbolContext};
 
   Tree* e = parseAndPrepareForApproximation(expression, projCtx);
 

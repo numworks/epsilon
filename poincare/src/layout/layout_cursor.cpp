@@ -94,7 +94,7 @@ bool LayoutCursor::isOnEmptySquare() const {
 /* Move */
 bool LayoutCursor::move(OMG::Direction direction, bool selecting,
                         bool* shouldRedrawLayout,
-                        const Poincare::Context& context) {
+                        const Poincare::SymbolContext& symbolContext) {
   *shouldRedrawLayout = false;
   if (!selecting && isSelecting()) {
     stopSelecting();
@@ -123,7 +123,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
     if (cursorRack() != oldRack) {
       // Beautify the layout that was just left
       *shouldRedrawLayout =
-          beautifyRightOfRack(oldRack, context) || *shouldRedrawLayout;
+          beautifyRightOfRack(oldRack, symbolContext) || *shouldRedrawLayout;
     }
   }
 
@@ -137,14 +137,15 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   return moved;
 }
 
-bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step,
-                                     bool selecting, bool* shouldRedrawLayout,
-                                     const Poincare::Context& context) {
+bool LayoutCursor::moveMultipleSteps(
+    OMG::Direction direction, int step, bool selecting,
+    bool* shouldRedrawLayout, const Poincare::SymbolContext& symbolContext) {
   assert(step > 0);
   *shouldRedrawLayout = false;
   for (int i = 0; i < step; i++) {
     bool shouldRedrawLayoutStep;
-    bool canMove = move(direction, selecting, &shouldRedrawLayoutStep, context);
+    bool canMove =
+        move(direction, selecting, &shouldRedrawLayoutStep, symbolContext);
     *shouldRedrawLayout |= shouldRedrawLayoutStep;
     if (!canMove) {
       return i > 0;
@@ -155,31 +156,32 @@ bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step,
 
 // TreeStackCursor
 
-void TreeStackCursor::beautifyLeftAction(const Poincare::Context& context,
-                                         const void*) {
+void TreeStackCursor::beautifyLeftAction(
+    const Poincare::SymbolContext& symbolContext, const void*) {
   // TODO_PCJ: We used to handle beautification while selecting here.
   if (!isSelecting()) {
-    InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this, context);
+    InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this,
+                                                              symbolContext);
   }
 }
 
-bool TreeStackCursor::beautifyRightOfRack(Rack* targetRack,
-                                          const Poincare::Context& context) {
+bool TreeStackCursor::beautifyRightOfRack(
+    Rack* targetRack, const Poincare::SymbolContext& symbolContext) {
   // TODO_PCJ: We used to handle beautification while selecting here.
   if (isSelecting()) {
     return false;
   }
   TreeStackCursor tempCursor = *this;
   tempCursor.moveCursorToLayout(targetRack, OMG::Direction::Right());
-  return InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(&tempCursor,
-                                                                   context);
+  return InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
+      &tempCursor, symbolContext);
 }
 
 void TreeStackCursor::beautifyRightOfRackAction(
-    const Poincare::Context& context, const void* rackOffset) {
+    const Poincare::SymbolContext& symbolContext, const void* rackOffset) {
   const BeautifyContext* ctx = static_cast<const BeautifyContext*>(rackOffset);
   Rack* targetRack = cursorRack() + ctx->m_rackOffset;
-  ctx->m_shouldRedraw = beautifyRightOfRack(targetRack, context);
+  ctx->m_shouldRedraw = beautifyRightOfRack(targetRack, symbolContext);
 }
 
 static bool IsTemporaryAutocompletedBracketPair(const Tree* l, Side tempSide) {
@@ -210,7 +212,7 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(Rack* rack,
 }
 
 /* const Tree* insertion */
-void TreeStackCursor::insertLayout(const Poincare::Context& context,
+void TreeStackCursor::insertLayout(const Poincare::SymbolContext& symbolContext,
                                    const void* data) {
   const InsertLayoutContext* insertLayoutContext =
       static_cast<const InsertLayoutContext*>(data);
@@ -235,7 +237,7 @@ void TreeStackCursor::insertLayout(const Poincare::Context& context,
 
   assert(!forceRight || !forceLeft);
   // - Step 1 - Delete selection
-  deleteAndResetSelection(context, nullptr);
+  deleteAndResetSelection(symbolContext, nullptr);
 
   // - Step 2 - Beautify the current layout if needed.
   InputBeautification::BeautificationMethod beautificationMethod =
@@ -243,7 +245,8 @@ void TreeStackCursor::insertLayout(const Poincare::Context& context,
   if (beautificationMethod.beautifyIdentifiersBeforeInserting) {
     // TODO_PCJ: We used to handle beautification while selecting here.
     assert(!isSelecting());
-    InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this, context);
+    InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this,
+                                                              symbolContext);
   }
 
   /* - Step 3 - Add empty row to grid layout if needed
@@ -384,11 +387,12 @@ void TreeStackCursor::insertLayout(const Poincare::Context& context,
 
   // - Step 11 - Beautify after insertion if needed
   if (beautificationMethod.beautifyAfterInserting) {
-    InputBeautification::BeautifyLeftOfCursorAfterInsertion(this, context);
+    InputBeautification::BeautifyLeftOfCursorAfterInsertion(this,
+                                                            symbolContext);
   }
 }
 
-void TreeStackCursor::insertText(const Poincare::Context& context,
+void TreeStackCursor::insertText(const Poincare::SymbolContext& symbolContext,
                                  const void* data) {
   const InsertTextContext* insertTextContext =
       static_cast<const InsertTextContext*>(data);
@@ -428,7 +432,7 @@ void TreeStackCursor::insertText(const Poincare::Context& context,
         (void)currentSubscriptDepth;
         TreeStackCursor::InsertLayoutContext insertLayoutContext{
             layoutToInsert, forceCursorRightOfText, forceCursorLeftOfText};
-        insertLayout(context, &insertLayoutContext);
+        insertLayout(symbolContext, &insertLayoutContext);
         layoutToInsert = KRackL()->cloneTree();
         currentLayout = layoutToInsert;
         forceCursorLeftOfText = true;
@@ -475,16 +479,16 @@ void TreeStackCursor::insertText(const Poincare::Context& context,
   // - Step 2 - Inserted the created layout
   TreeStackCursor::InsertLayoutContext insertLayoutContext{
       layoutToInsert, forceCursorRightOfText, forceCursorLeftOfText};
-  insertLayout(context, &insertLayoutContext);
+  insertLayout(symbolContext, &insertLayoutContext);
 
   // TODO: Restore beautification
 }
 
-void TreeStackCursor::performBackspace(const Poincare::Context& context,
-                                       const void* data) {
+void TreeStackCursor::performBackspace(
+    const Poincare::SymbolContext& symbolContext, const void* data) {
   assert(data == nullptr);
   if (isSelecting()) {
-    return deleteAndResetSelection(context, nullptr);
+    return deleteAndResetSelection(symbolContext, nullptr);
   }
 
   const Tree* leftL = leftLayout();
@@ -506,8 +510,8 @@ void TreeStackCursor::performBackspace(const Poincare::Context& context,
   removeEmptyRowOrColumnOfGridParentIfNeeded();
 }
 
-void TreeStackCursor::deleteAndResetSelection(const Poincare::Context& context,
-                                              const void* data) {
+void TreeStackCursor::deleteAndResetSelection(
+    const Poincare::SymbolContext& symbolContext, const void* data) {
   assert(data == nullptr);
   LayoutSelection selec = selection();
   if (selec.isEmpty()) {

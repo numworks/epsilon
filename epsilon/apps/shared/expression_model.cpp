@@ -4,10 +4,10 @@
 #include <apps/global_preferences.h>
 #include <assert.h>
 #include <omg/utf8_helper.h>
-#include <poincare/context.h>
 #include <poincare/helpers/symbol_pool.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
+#include <poincare/symbol_context.h>
 #include <poincare/user_expression.h>
 #include <shared/global_store.h>
 #include <string.h>
@@ -166,9 +166,9 @@ Layout ExpressionModel::layout(const Storage::Record* record,
 }
 
 Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(
-    Ion::Storage::Record* record, const Layout& l, const Context& context,
-    CodePoint symbol) {
-  UserExpression e = buildExpressionFromLayout(l, symbol, context);
+    Ion::Storage::Record* record, const Layout& l,
+    const SymbolContext& symbolContext, CodePoint symbol) {
+  UserExpression e = buildExpressionFromLayout(l, symbol, symbolContext);
   return setExpressionContent(record, e);
 }
 
@@ -237,12 +237,12 @@ void ExpressionModel::tidyDownstreamPoolFrom(
 
 Poincare::UserExpression ExpressionModel::buildExpressionFromLayout(
     Poincare::Layout l, CodePoint symbol,
-    const Poincare::Context& context) const {
+    const Poincare::SymbolContext& symbolContext) const {
   if (l.isUninitialized() || l.isEmpty()) {
     return UserExpression();
   }
   // Compute the expression to store, without replacing symbols
-  UserExpression expressionToStore = UserExpression::Parse(l, context);
+  UserExpression expressionToStore = UserExpression::Parse(l, symbolContext);
   return ReplaceSymbolWithUnknown(expressionToStore, symbol);
 }
 

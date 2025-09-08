@@ -9,12 +9,12 @@
  */
 
 #include <apps/i18n.h>
-#include <poincare/context.h>
 #include <poincare/function_properties/conic.h>
 #include <poincare/helpers/scatter_plot_iterable.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/preferences.h>
 #include <poincare/prepared_function.h>
+#include <poincare/symbol_context.h>
 
 #include "continuous_function_cache.h"
 #include "continuous_function_properties.h"
@@ -70,7 +70,8 @@ class ContinuousFunction : public Function {
   /* ExpressionModelHandle */
 
   Ion::Storage::Record::ErrorStatus setContent(
-      const Poincare::Layout& l, const Poincare::Context& context) override;
+      const Poincare::Layout& l,
+      const Poincare::SymbolContext& symbolContext) override;
   void tidyDownstreamPoolFrom(
       const Poincare::PoolObject* treePoolCursor = nullptr) const override;
 
@@ -406,7 +407,7 @@ class ContinuousFunction : public Function {
     // Build the expression from layout, handling f(x)=... cartesian equations
     Poincare::UserExpression buildExpressionFromLayout(
         Poincare::Layout l, CodePoint symbol = 0,
-        const Poincare::Context& context =
+        const Poincare::SymbolContext& symbolContext =
             Poincare::EmptySymbolContext{}) const override;
     // Tidy the model
     void tidyDownstreamPoolFrom(

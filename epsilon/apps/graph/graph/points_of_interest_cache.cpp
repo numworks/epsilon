@@ -198,7 +198,7 @@ namespace {
 
 struct PointSearchContext {
   const float start, end;
-  const Context& context;
+  const SymbolContext& context;
   ContinuousFunctionStore* const store;
   const float searchStep;
   Solver<double> solver;

@@ -1,4 +1,4 @@
-#include <poincare/context.h>
+#include <poincare/symbol_context.h>
 #include <poincare/test/helpers/symbol_store.h>
 
 #include "../approximation//helper.h"

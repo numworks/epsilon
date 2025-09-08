@@ -6,7 +6,6 @@
 #include <apps/shared/poincare_helpers.h>
 #include <omg/print.h>
 #include <poincare/cas.h>
-#include <poincare/context.h>
 #include <poincare/equation_solver/equation_solver_pool.h>
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/pool_variable_context.h>
@@ -18,6 +17,7 @@
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/symbol_context.h>
 #include <poincare/user_expression.h>
 
 using namespace Poincare;
@@ -36,7 +36,7 @@ UserExpression equationList(const EquationStore* store) {
 }
 
 SystemOfEquations::Error SystemOfEquations::exactSolve(
-    const Poincare::Context& context) {
+    const Poincare::SymbolContext& symbolContext) {
   m_wasInterrupted = false;
   m_equationMetadata.unknownVariables.clear();
   m_equationMetadata.definedVariables.clear();
@@ -49,7 +49,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
               GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
           .m_angleUnit =
               GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-          .m_context = context,
+          .m_context = symbolContext,
       });
   UserExpression exactSolutionList = result.exactSolutionList;
   UserExpression approximateSolutionList = result.approximateSolutionList;
@@ -74,7 +74,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
         approximate = approximateSolutionList.cloneChildAtIndex(i);
       }
       UserExpression exact = exactSolutionList.cloneChildAtIndex(i);
-      registerExactSolution(exact, approximate, context);
+      registerExactSolution(exact, approximate, symbolContext);
     }
   } else {
     assert(exactSolutionList.isUninitialized() &&
@@ -100,7 +100,7 @@ void SystemOfEquations::cancelApproximateSolve() {
       Poincare::EquationSolver::SolutionType::Approximate;
 }
 
-void SystemOfEquations::approximateSolve(const Context& context) {
+void SystemOfEquations::approximateSolve(const SymbolContext& symbolContext) {
   assert(m_store->numberOfDefinedModels() == 1);
   m_wasInterrupted = false;
   UserExpression eqList = equationList(m_store);
@@ -110,7 +110,7 @@ void SystemOfEquations::approximateSolve(const Context& context) {
       {.m_complexFormat =
            GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
        .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-       .m_context = context},
+       .m_context = symbolContext},
       m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
                                 : m_approximateSolvingRange,
       k_maxNumberOfApproximateSolutions);
@@ -149,7 +149,8 @@ void SystemOfEquations::tidy(PoolObject* treePoolCursor) {
 }
 
 SystemOfEquations::Error SystemOfEquations::registerExactSolution(
-    UserExpression exact, UserExpression approximate, const Context& context) {
+    UserExpression exact, UserExpression approximate,
+    const SymbolContext& symbolContext) {
   assert(m_solutionMetadata.solutionType != SolutionType::Approximate);
   assert(!exact.isUninitialized());
 
@@ -163,18 +164,18 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     OMG::ExpiringPointer<Equation> equation =
         store->modelForRecord(store->definedRecordAtIndex(i));
     if (CAS::NeverDisplayReductionOfInput(equation->expressionClone(),
-                                          context)) {
+                                          symbolContext)) {
       forbidExactSolution = true;
     }
     i++;
   }
 
   assert(m_solutionMetadata.solutionType == SolutionType::Formal ||
-         !exact.clone().replaceSymbols(context));
+         !exact.clone().replaceSymbols(symbolContext));
 
   forbidExactSolution =
-      forbidExactSolution ||
-      CAS::ShouldOnlyDisplayApproximation(exact, exact, approximate, context);
+      forbidExactSolution || CAS::ShouldOnlyDisplayApproximation(
+                                 exact, exact, approximate, symbolContext);
 
   if (forbidExactSolution && approximate.isUninitialized()) {
     // Re-reduce exact solution but approximate during reduction.
@@ -187,7 +188,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
             GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
         // Any remaining symbol at this point should be an unknown parameter.
         .m_symbolic = SymbolicComputation::KeepAllSymbols,
-        .m_context = context,
+        .m_context = symbolContext,
         .m_advanceReduce = false};
     bool failure = false;
     approximate = exact.cloneAndSimplify(projCtx, &failure);
@@ -205,10 +206,11 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   Layout exactLayout, approximateLayout;
   if (!forbidExactSolution) {
     assert(!exact.isUninitialized());
-    exactLayout = PoincareHelpers::CreateLayout(exact, context);
+    exactLayout = PoincareHelpers::CreateLayout(exact, symbolContext);
   }
   if (!approximate.isUninitialized()) {
-    approximateLayout = PoincareHelpers::CreateLayout(approximate, context);
+    approximateLayout =
+        PoincareHelpers::CreateLayout(approximate, symbolContext);
   }
 
   assert(!approximateLayout.isUninitialized() ||

@@ -3,7 +3,6 @@
 #include <omg/code_point.h>
 #include <omg/unicode_helper.h>
 #include <omg/utf8_decoder.h>
-#include <poincare/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/binary.h>
@@ -21,6 +20,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
+#include <poincare/symbol_context.h>
 #include <poincare/tree_variable_context.h>
 #include <stdlib.h>
 
@@ -1024,7 +1024,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
       leftHandSide = parseFunctionParameters();
     } else {
       // We must make sure that the parameter is parsed as a single variable.
-      const Poincare::Context* oldContext = m_parsingContext.context;
+      const Poincare::SymbolContext* oldContext = m_parsingContext.context;
       Poincare::TreeVariableContext parameterContext(name, oldContext);
       m_parsingContext.context = &parameterContext;
       leftHandSide = parseFunctionParameters();
@@ -1133,22 +1133,22 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
    * afterwards.
    * If preserveInput is true and the symbol is not defined, f(x) is always
    * parsed  as a function and u{n} as a sequence*/
-  Poincare::Context::UserNamedType idType =
-      Poincare::Context::UserNamedType::None;
+  Poincare::SymbolContext::UserNamedType idType =
+      Poincare::SymbolContext::UserNamedType::None;
   if (!m_parsingContext.metadata.isAssignmentDeclaration) {
     idType = m_parsingContext.context
                  ? m_parsingContext.context->expressionTypeForIdentifier(
                        std::string_view(name, length))
-                 : Poincare::Context::UserNamedType::None;
-    if (idType == Poincare::Context::UserNamedType::Symbol ||
+                 : Poincare::SymbolContext::UserNamedType::None;
+    if (idType == Poincare::SymbolContext::UserNamedType::Symbol ||
         (!m_parsingContext.params.preserveInput &&
-         idType == Poincare::Context::UserNamedType::None)) {
+         idType == Poincare::SymbolContext::UserNamedType::None)) {
       leftHandSide = SharedTreeStack->pushUserSymbol(name);
       return;
     }
   }
 
-  if (idType == Poincare::Context::UserNamedType::List) {
+  if (idType == Poincare::SymbolContext::UserNamedType::List) {
     leftHandSide = SharedTreeStack->pushUserSymbol(name);
     parseListParameters(leftHandSide);
     return;
@@ -1161,8 +1161,8 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
       (m_nextToken.type() == Token::Type::Layout &&
        m_nextToken.firstLayout()->isParenthesesLayout());
   bool hasLeftParenthesis = m_nextToken.type() == Token::Type::LeftParenthesis;
-  if ((idType == Poincare::Context::UserNamedType::Sequence ||
-       (idType == Poincare::Context::UserNamedType::None &&
+  if ((idType == Poincare::SymbolContext::UserNamedType::Sequence ||
+       (idType == Poincare::SymbolContext::UserNamedType::None &&
         Sequence::IsSequenceName(name))) &&
       (hasSubscriptOrLayoutParentheses || hasLeftParenthesis)) {
     /* If the user is not defining a variable and the identifier is already
@@ -1289,7 +1289,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
      * If we decide that functions can be assigned with any parameter,
      * this will ensure that f(abc)=abc is understood like f(x)=x
      */
-    const Poincare::Context* previousContext = m_parsingContext.context;
+    const Poincare::SymbolContext* previousContext = m_parsingContext.context;
     Poincare::TreeVariableContext functionAssignmentContext(
         Symbol::GetName(parameter), m_parsingContext.context);
     m_parsingContext.context = &functionAssignmentContext;

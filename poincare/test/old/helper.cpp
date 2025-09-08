@@ -92,8 +92,9 @@ void copy_without_system_chars(char *buffer, const char *input) {
 }
 
 void assert_parsed_expression_process_to(
-    const char *expression, const char *oldResult, const Context &ctx,
-    ReductionTarget target, ComplexFormat complexFormat, AngleUnit angleUnit,
+    const char *expression, const char *oldResult,
+    const SymbolContext &symbolContext, ReductionTarget target,
+    ComplexFormat complexFormat, AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation,
     ProcessExpression process, int numberOfSignificantDigits) {
   constexpr int bufferSize = 2048;
@@ -102,7 +103,7 @@ void assert_parsed_expression_process_to(
   copy_without_system_chars(result, oldResult);
   assert(SharedTreeStack->numberOfTrees() == 0);
   Tree *inputLayout = RackFromText(expression);
-  TreeRef e = Parser::Parse(inputLayout, ctx);
+  TreeRef e = Parser::Parse(inputLayout, symbolContext);
   inputLayout->removeTree();
   quiz_assert_print_if_failure(e != nullptr, expression);
   Internal::ProjectionContext projCtx = {.m_complexFormat = complexFormat,
@@ -110,7 +111,7 @@ void assert_parsed_expression_process_to(
                                          .m_reductionTarget = target,
                                          .m_unitFormat = unitFormat,
                                          .m_symbolic = symbolicComputation,
-                                         .m_context = ctx};
+                                         .m_context = symbolContext};
   Tree *m = process(e, projCtx);
   Tree *l = Internal::Layouter::LayoutExpression(m, true, false,
                                                  numberOfSignificantDigits);
@@ -144,12 +145,13 @@ void assert_parsed_expression_simplify_to(
 
 void assert_parsed_expression_simplify_to(
     const char *expression, const char *simplifiedExpression,
-    const Context &context, ReductionTarget target, AngleUnit angleUnit,
-    Preferences::UnitFormat unitFormat, ComplexFormat complexFormat,
-    SymbolicComputation symbolicComputation, bool beautify) {
+    const SymbolContext &symbolContext, ReductionTarget target,
+    AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+    ComplexFormat complexFormat, SymbolicComputation symbolicComputation,
+    bool beautify) {
   // TODO_PCJ also approximate to see if it crashes
   assert_parsed_expression_process_to(
-      expression, simplifiedExpression, context, target, complexFormat,
+      expression, simplifiedExpression, symbolContext, target, complexFormat,
       angleUnit, unitFormat, symbolicComputation,
       beautify ?
       [](Tree *e, Internal::ProjectionContext &projCtx) {

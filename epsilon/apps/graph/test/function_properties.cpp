@@ -7,7 +7,7 @@
 #include <quiz.h>
 
 #include "helper.h"
-#include "poincare/context.h"
+#include "poincare/symbol_context.h"
 #include "shared/continuous_function_store.h"
 
 using namespace Poincare;

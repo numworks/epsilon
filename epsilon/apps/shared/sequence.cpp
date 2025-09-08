@@ -113,25 +113,25 @@ Layout Sequence::aggregatedLayout() {
 }
 
 Ion::Storage::Record::ErrorStatus Sequence::setLayoutsForAggregated(
-    Layout l, const Context& context) {
+    Layout l, const SymbolContext& symbolContext) {
   if (SequenceHelper::IsSequenceInsideRack(l)) {
     Ion::Storage::Record::ErrorStatus error =
-        setContent(SequenceHelper::ExtractExpressionAtRow(l, 0), context);
+        setContent(SequenceHelper::ExtractExpressionAtRow(l, 0), symbolContext);
     if (type() == Type::Explicit ||
         error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
     }
     error = setFirstInitialConditionContent(
-        SequenceHelper::ExtractExpressionAtRow(l, 1), context);
+        SequenceHelper::ExtractExpressionAtRow(l, 1), symbolContext);
     if (type() == Type::SingleRecurrence ||
         error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
     }
     return setSecondInitialConditionContent(
-        SequenceHelper::ExtractExpressionAtRow(l, 2), context);
+        SequenceHelper::ExtractExpressionAtRow(l, 2), symbolContext);
   } else {
     // Handle layout as main expression
-    return setContent(l, context);
+    return setContent(l, symbolContext);
   }
 }
 

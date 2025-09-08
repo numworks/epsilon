@@ -61,7 +61,7 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
 }
 
 bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
-    LayoutCursor* layoutCursor, const Poincare::Context& context) {
+    LayoutCursor* layoutCursor, const Poincare::SymbolContext& symbolContext) {
   Tree* cursorRack = layoutCursor->cursorRack();
   int position = layoutCursor->position();
   if (position == 0) {
@@ -72,17 +72,17 @@ bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
           Preferences::CombinatoricSymbols::LetterWithSubAndSuperscript &&
       TokenizeAndBeautifyIdentifiers(
           cursorRack, position - 1, k_specialCombinatoricsRules,
-          k_lenOfSpecialCombinatoricsRules, context, layoutCursor)) {
+          k_lenOfSpecialCombinatoricsRules, symbolContext, layoutCursor)) {
     return true;
   }
 #endif
   return TokenizeAndBeautifyIdentifiers(
       cursorRack, position - 1, k_simpleIdentifiersRules,
-      k_lenOfSimpleIdentifiersRules, context, layoutCursor);
+      k_lenOfSimpleIdentifiersRules, symbolContext, layoutCursor);
 }
 
 bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
-    LayoutCursor* layoutCursor, const Poincare::Context& context) {
+    LayoutCursor* layoutCursor, const Poincare::SymbolContext& symbolContext) {
   Tree* cursorRack = layoutCursor->cursorRack();
   Tree* rootRack = layoutCursor->rootRack();
   int position = layoutCursor->position();
@@ -127,15 +127,16 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
 #if POINCARE_PT_COMBINATORICS_LAYOUTS
     if (SharedPreferences->combinatoricSymbols() ==
             Preferences::CombinatoricSymbols::LetterWithSubAndSuperscript &&
-        TokenizeAndBeautifyIdentifiers(
-            h, insertedLayoutIndex - 1, k_specialCombinatoricsRules,
-            k_lenOfSpecialCombinatoricsRules, context, layoutCursor, true)) {
+        TokenizeAndBeautifyIdentifiers(h, insertedLayoutIndex - 1,
+                                       k_specialCombinatoricsRules,
+                                       k_lenOfSpecialCombinatoricsRules,
+                                       symbolContext, layoutCursor, true)) {
       return true;
     }
 #endif
     return TokenizeAndBeautifyIdentifiers(
                h, insertedLayoutIndex - 1, k_identifiersRules,
-               k_lenOfIdentifiersRules, context, layoutCursor, true) ||
+               k_lenOfIdentifiersRules, symbolContext, layoutCursor, true) ||
            BeautifyFractionIntoDerivative(h, insertedLayoutIndex - 1,
                                           layoutCursor);
   }
@@ -147,7 +148,7 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
                                                   layoutCursor) ||
          BeautifyPipeKey(h, insertedLayoutIndex, layoutCursor) ||
          BeautifySymbols(h, insertedLayoutIndex, layoutCursor) ||
-         BeautifySum(h, insertedLayoutIndex, context, layoutCursor);
+         BeautifySum(h, insertedLayoutIndex, symbolContext, layoutCursor);
 }
 
 // private
@@ -205,7 +206,7 @@ bool InputBeautification::BeautifySymbols(Tree* rack,
 bool InputBeautification::TokenizeAndBeautifyIdentifiers(
     Tree* rack, int rightmostIndexToBeautify,
     const BeautificationRule* rulesList, size_t numberOfRules,
-    const Poincare::Context& context, LayoutCursor* layoutCursor,
+    const Poincare::SymbolContext& symbolContext, LayoutCursor* layoutCursor,
     bool logBeautification) {
   assert(rack);
   assert(rightmostIndexToBeautify < rack->numberOfChildren() &&
@@ -251,7 +252,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
 
   /* Tokenize the identifiers string (ex: xpiabs = x*pi*abs) and try to
    * beautify each token. */
-  ParsingContext parsingContext{.context = &context};
+  ParsingContext parsingContext{.context = &symbolContext};
 
   /* The content of rack will be modified if token match which would break the
    * tokenizer. To avoid this we run the tokenizer on rack and modifications on
@@ -416,9 +417,9 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
 #endif
 }
 
-bool InputBeautification::BeautifySum(Tree* rack, int indexOfComma,
-                                      const Poincare::Context& context,
-                                      LayoutCursor* layoutCursor) {
+bool InputBeautification::BeautifySum(
+    Tree* rack, int indexOfComma, const Poincare::SymbolContext& symbolContext,
+    LayoutCursor* layoutCursor) {
 #if !POINCARE_SUM_AND_PRODUCT
   return false;
 #else
@@ -465,9 +466,9 @@ bool InputBeautification::BeautifySum(Tree* rack, int indexOfComma,
   /* The whole identifier string needs to be tokenized, to ensure that sum
    * can be beautified. For example, "asum(3," can't be beautified if "asum"
    * is a user-defined function. */
-  bool result =
-      TokenizeAndBeautifyIdentifiers(horizontalParent, indexOfParenthesis - 1,
-                                     &k_sumRule, 1, context, layoutCursor);
+  bool result = TokenizeAndBeautifyIdentifiers(
+      horizontalParent, indexOfParenthesis - 1, &k_sumRule, 1, symbolContext,
+      layoutCursor);
   if (result) {
     // Replace the cursor if it's in variable slot
     TreeRef parent =

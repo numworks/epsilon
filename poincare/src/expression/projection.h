@@ -1,9 +1,9 @@
 #pragma once
 
-#include <poincare/context.h>
 #include <poincare/math_options.h>
 #include <poincare/preferences.h>
 #include <poincare/src/memory/tree_ref.h>
+#include <poincare/symbol_context.h>
 
 #include "dimension.h"
 
@@ -17,7 +17,7 @@ struct ProjectionContext {
   Dimension m_dimension = Dimension();
   Preferences::UnitFormat m_unitFormat = Preferences::UnitFormat::Metric;
   SymbolicComputation m_symbolic = SymbolicComputation::KeepAllSymbols;
-  const Poincare::Context& m_context = k_emptySymbolContext;
+  const Poincare::SymbolContext& m_context = k_emptySymbolContext;
   UnitDisplay m_unitDisplay = UnitDisplay::MainOutput;
   // Optional simplification step
   bool m_advanceReduce = true;
@@ -40,7 +40,8 @@ class Projection {
       const Tree* e, ProjectionContext* projectionContext);
   /* User variables are fetched from the Context and replaced according to the
   SymbolicComputation strategy */
-  static bool DeepReplaceUserNamed(Tree* e, const Poincare::Context& context,
+  static bool DeepReplaceUserNamed(Tree* e,
+                                   const Poincare::SymbolContext& symbolContext,
                                    SymbolicComputation symbolic);
   // All user variables are replaced with Undefined
   static bool DeepReplaceUserNamedWithUndefined(Tree* e);
@@ -57,8 +58,9 @@ class Projection {
   static bool HasForbiddenDescendants(const Tree* e);
 
  private:
-  static bool ShallowReplaceUserNamed(Tree* e, const Poincare::Context& context,
-                                      SymbolicComputation symbolic);
+  static bool ShallowReplaceUserNamed(
+      Tree* e, const Poincare::SymbolContext& symbolContext,
+      SymbolicComputation symbolic);
   static bool ShallowSystemProject(Tree* e, void* ctx);
 };
 

@@ -10,7 +10,8 @@ class NoneRegression : public Regression {
   Type type() const override { return Type::None; }
 
   double levelSet(const double* modelCoefficients, double xMin, double xMax,
-                  double y, const Poincare::Context& context) const override {
+                  double y,
+                  const Poincare::SymbolContext& symbolContext) const override {
     assert(false);
     return NAN;
   }

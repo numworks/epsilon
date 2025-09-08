@@ -1,7 +1,7 @@
 #pragma once
 
-#include <poincare/context.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/symbol_context.h>
 
 namespace Poincare::Internal {
 
@@ -21,8 +21,9 @@ class Sequence {
                                         bool isFirstCondition = true);
 
   static bool MainExpressionContainsForbiddenTerms(
-      const Tree* e, const Context& ctx, const char* name, Type type,
-      int initialRank, bool recursion, bool systemSymbol, bool otherSequences);
+      const Tree* e, const SymbolContext& symbolContext, const char* name,
+      Type type, int initialRank, bool recursion, bool systemSymbol,
+      bool otherSequences);
 };
 
 }  // namespace Poincare::Internal

@@ -40,7 +40,7 @@ UserExpression Regression::expression(const double* modelCoefficients) const {
 
 double Regression::levelSet(const double* modelCoefficients, double xMin,
                             double xMax, double y,
-                            const Context& context) const {
+                            const SymbolContext& symbolContext) const {
   UserExpression e = expression(modelCoefficients);
   if (e.isUninitialized()) {
     return NAN;
@@ -54,7 +54,7 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
   Approximation::PrepareFunctionForApproximation(diff, "x",
                                                  ComplexFormat::Real);
   // TODO: use y+evaluate() instead of yTree+e in nextIntersection
-  Poincare::Solver solver = Poincare::Solver(xMin, xMax, context);
+  Poincare::Solver solver = Poincare::Solver(xMin, xMax, symbolContext);
   solver.stretch();
   double result = solver.nextRoot(diff).x();
   diff->removeTree();

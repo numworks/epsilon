@@ -2,7 +2,7 @@
 
 #include <assert.h>
 
-#include "context.h"
+#include "symbol_context.h"
 
 /* The Variable Store interface is defined in Poincaré although no store is ever
  * performed in Poincaré. However it is useful to implement such an interface
@@ -14,7 +14,7 @@ namespace Poincare {
 
 /* A VariableStore allows to access variable types and definitions and to insert
  * new entries */
-class VariableStore : public Context {
+class VariableStore : public SymbolContext {
  public:
   // TODO: the parameters should have Poincare::Expression types
   virtual bool setExpressionForUserNamed(const Internal::Tree* expression,

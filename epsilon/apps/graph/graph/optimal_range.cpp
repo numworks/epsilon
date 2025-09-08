@@ -18,7 +18,7 @@ namespace Graph {
 
 struct ContinuousFunctionAndContext {
   const ContinuousFunction* func;
-  const Context* ctx;
+  const SymbolContext* ctx;
 };
 
 template <typename T>
@@ -52,7 +52,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
                             Range2D<float> originalRange,
                             const ContinuousFunctionStore* store,
                             bool defaultRangeIsNormalized,
-                            const Context& context) {
+                            const SymbolContext& symbolContext) {
   constexpr float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
   if (store->memoizationOverflows()) {
@@ -84,7 +84,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
     OMG::ExpiringPointer<const ContinuousFunction> f =
         store->modelForRecord(store->activeRecordAtIndex(i));
     ContinuousFunctionAndContext fModel{.func = f.operator->(),
-                                        .ctx = &context};
+                                        .ctx = &symbolContext};
     defaultRangeIsNormalized |= f->properties().enforcePlotNormalization();
     if (f->approximationBasedOnCostlyAlgorithms()) {
       continue;
@@ -164,7 +164,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
               g->isAlongY() == alongY &&
               !g->approximationBasedOnCostlyAlgorithms()) {
             ContinuousFunctionAndContext gModel{.func = g.operator->(),
-                                                .ctx = &context};
+                                                .ctx = &symbolContext};
             zoom.fitIntersections(evaluator<float>, &fModel, evaluator<float>,
                                   &gModel);
           }
@@ -187,7 +187,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
        * axis: we want to see the value of f at each point of X range. */
       bool cropOutliers = computeX;
       ContinuousFunctionAndContext model{.func = f.operator->(),
-                                         .ctx = &context};
+                                         .ctx = &symbolContext};
       zoom.fitMagnitude(evaluator, &model, cropOutliers, alongY);
       if (f->numberOfSubCurves() > 1) {
         zoom.fitMagnitude(evaluatorSecondCurve, &model, cropOutliers, alongY);

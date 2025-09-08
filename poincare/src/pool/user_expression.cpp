@@ -27,12 +27,14 @@ UserExpression UserExpression::ExpressionFromAddress(const void* address,
   return static_cast<UserExpression&>(e);
 }
 
-UserExpression UserExpression::Parse(const Tree* layout, const Context& context,
+UserExpression UserExpression::Parse(const Tree* layout,
+                                     const SymbolContext& symbolContext,
                                      ParserHelper::ParsingParameters params) {
-  return UserExpression::Builder(Parser::Parse(layout, context, params));
+  return UserExpression::Builder(Parser::Parse(layout, symbolContext, params));
 }
 
-UserExpression UserExpression::Parse(const char* string, const Context& context,
+UserExpression UserExpression::Parse(const char* string,
+                                     const SymbolContext& symbolContext,
                                      ParserHelper::ParsingParameters params) {
   if (string[0] == 0) {
     return UserExpression();
@@ -41,19 +43,19 @@ UserExpression UserExpression::Parse(const char* string, const Context& context,
   if (!layout) {
     return UserExpression();
   }
-  UserExpression result = Parse(layout, context, params);
+  UserExpression result = Parse(layout, symbolContext, params);
   layout->removeTree();
   return result;
 }
 
 UserExpression UserExpression::ParseLatex(
-    const char* latex, const Context& context,
+    const char* latex, const SymbolContext& symbolContext,
     ParserHelper::ParsingParameters params) {
   Tree* layout = LatexParser::LatexToLayout(latex);
   if (!layout) {
     return UserExpression();
   }
-  UserExpression result = Parse(layout, context, params);
+  UserExpression result = Parse(layout, symbolContext, params);
   layout->removeTree();
   return result;
 }
@@ -115,12 +117,12 @@ UserExpression UserExpression::cloneChildAtIndex(int i) const {
 template <typename T>
 SystemExpression UserExpression::approximateUserToTree(
     AngleUnit angleUnit, ComplexFormat complexFormat,
-    const Context& context) const {
+    const SymbolContext& symbolContext) const {
   return SystemExpression::Builder(Approximation::ToTree<T>(
       tree(),
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      Approximation::Context(angleUnit, complexFormat, context)));
+      Approximation::Context(angleUnit, complexFormat, symbolContext)));
 }
 
 bool UserExpression::cloneAndSimplifyAndApproximate(
@@ -200,48 +202,48 @@ UserExpression UserExpression::privateCloneAndSimplify(
 }
 
 template <typename T>
-T UserExpression::approximateToRealScalar(AngleUnit angleUnit,
-                                          ComplexFormat complexFormat,
-                                          const Context& context) const {
+T UserExpression::approximateToRealScalar(
+    AngleUnit angleUnit, ComplexFormat complexFormat,
+    const SymbolContext& symbolContext) const {
   static_assert(std::is_floating_point_v<T>);
-  assert(Poincare::Dimension(*this, context).isScalar() ||
-         Poincare::Dimension(*this, context).isUnit());
+  assert(Poincare::Dimension(*this, symbolContext).isScalar() ||
+         Poincare::Dimension(*this, symbolContext).isUnit());
   return Approximation::To<T>(
       tree(),
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      Approximation::Context(angleUnit, complexFormat, context));
+      Approximation::Context(angleUnit, complexFormat, symbolContext));
 }
 
 template <typename T>
 T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
-    const char* text, const Context& context, ComplexFormat complexFormat,
-    AngleUnit angleUnit, SymbolicComputation symbolicComputation) {
-  UserExpression exp = UserExpression::Parse(text, context);
+    const char* text, const SymbolContext& symbolContext,
+    ComplexFormat complexFormat, AngleUnit angleUnit,
+    SymbolicComputation symbolicComputation) {
+  UserExpression exp = UserExpression::Parse(text, symbolContext);
   if (exp.isUninitialized()) {
     return NAN;
   }
   ProjectionContext ctx = ProjectionContext{.m_complexFormat = complexFormat,
                                             .m_angleUnit = angleUnit,
                                             .m_symbolic = symbolicComputation,
-                                            .m_context = context};
+                                            .m_context = symbolContext};
   bool reductionFailure;
   exp = exp.cloneAndSimplify(ctx, &reductionFailure);
   assert(!exp.isUninitialized());
-  Poincare::Dimension dimension = Poincare::Dimension(exp, context);
+  Poincare::Dimension dimension = Poincare::Dimension(exp, symbolContext);
   if (!dimension.isScalar()) {
     return NAN;
   }
   return exp.approximateToRealScalar<T>(ctx.m_angleUnit, ctx.m_complexFormat,
-                                        context);
+                                        symbolContext);
 }
 
 template <typename T>
-bool UserExpression::hasDefinedComplexApproximation(AngleUnit angleUnit,
-                                                    ComplexFormat complexFormat,
-                                                    const Context& context,
-                                                    T* returnRealPart,
-                                                    T* returnImagPart) const {
+bool UserExpression::hasDefinedComplexApproximation(
+    AngleUnit angleUnit, ComplexFormat complexFormat,
+    const SymbolContext& symbolContext, T* returnRealPart,
+    T* returnImagPart) const {
   if (complexFormat == ComplexFormat::Real ||
       !Internal::Dimension::IsNonListScalar(tree())) {
     return false;
@@ -250,7 +252,7 @@ bool UserExpression::hasDefinedComplexApproximation(AngleUnit angleUnit,
       tree(),
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      Approximation::Context(angleUnit, complexFormat, context));
+      Approximation::Context(angleUnit, complexFormat, symbolContext));
   T b = z.imag();
   if (b == static_cast<T>(0.) || std::isinf(b) || std::isnan(b)) {
     return false;
@@ -270,13 +272,13 @@ bool UserExpression::hasDefinedComplexApproximation(AngleUnit angleUnit,
 
 bool UserExpression::isComplexScalar(
     Preferences::CalculationPreferences calculationPreferences,
-    const Context& context) const {
+    const SymbolContext& symbolContext) const {
   ComplexFormat complexFormat =
       Preferences::UpdatedComplexFormatWithExpressionInput(
-          calculationPreferences.complexFormat, *this, context);
+          calculationPreferences.complexFormat, *this, symbolContext);
   AngleUnit angleUnit = calculationPreferences.angleUnit;
   if (hasDefinedComplexApproximation<double>(angleUnit, complexFormat,
-                                             context)) {
+                                             symbolContext)) {
     assert(!hasUnit());
     return true;
   }
@@ -285,7 +287,7 @@ bool UserExpression::isComplexScalar(
 
 Poincare::Layout UserExpression::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    const Context& context, OMG::Base base, bool linearMode) const {
+    const SymbolContext& symbolContext, OMG::Base base, bool linearMode) const {
   if (isUninitialized()) {
     return Poincare::Layout();
   }
@@ -297,12 +299,12 @@ Poincare::Layout UserExpression::createLayout(
 char* UserExpression::toLatex(char* buffer, int bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
                               int numberOfSignificantDigits,
-                              const Context& context,
+                              const SymbolContext& symbolContext,
                               bool withThousandsSeparator) const {
   return LatexParser::LayoutToLatex(
-      Rack::From(
-          createLayout(floatDisplayMode, numberOfSignificantDigits, context)
-              .tree()),
+      Rack::From(createLayout(floatDisplayMode, numberOfSignificantDigits,
+                              symbolContext)
+                     .tree()),
       buffer, buffer + bufferSize - 1, withThousandsSeparator);
 }
 
@@ -352,14 +354,16 @@ bool UserExpression::replaceUnknownWithSymbol(CodePoint symbol) {
                                      SymbolHelper::BuildSymbol(symbol));
 }
 
-bool UserExpression::replaceSymbols(const Poincare::Context& context,
-                                    SymbolicComputation symbolic) {
+bool UserExpression::replaceSymbols(
+    const Poincare::SymbolContext& symbolContext,
+    SymbolicComputation symbolic) {
   /* Caution: must be called on an unprojected expression!
    * Indeed, the projection of the replacements has to be done at the same time
    * as the rest of the expression (otherwise inconsistencies could appear like
    * with random for example). */
   Tree* clone = tree()->cloneTree();
-  bool didReplace = Projection::DeepReplaceUserNamed(clone, context, symbolic);
+  bool didReplace =
+      Projection::DeepReplaceUserNamed(clone, symbolContext, symbolic);
   *this = UserExpression::Builder(clone);
   return didReplace;
 }
@@ -381,21 +385,22 @@ bool UserExpression::IsIgnoredSymbol(
 }
 
 bool UserExpression::recursivelyMatches(UserExpressionTrinaryTest test,
-                                        const Context& context,
+                                        const SymbolContext& symbolContext,
                                         SymbolicComputation replaceSymbols,
                                         void* auxiliary) const {
-  return recursivelyMatches(test, context, replaceSymbols, auxiliary, nullptr);
+  return recursivelyMatches(test, symbolContext, replaceSymbols, auxiliary,
+                            nullptr);
 }
 
 bool UserExpression::recursivelyMatches(UserExpressionTrinaryTest test,
-                                        const Context& context,
+                                        const SymbolContext& symbolContext,
                                         SymbolicComputation replaceSymbols,
                                         void* auxiliary,
                                         IgnoredSymbols* ignoredSymbols) const {
   if (IsIgnoredSymbol(this, ignoredSymbols)) {
     return false;
   }
-  OMG::Troolean testResult = test(*this, context, auxiliary);
+  OMG::Troolean testResult = test(*this, symbolContext, auxiliary);
   if (testResult == OMG::Troolean::True) {
     return true;
   } else if (testResult == OMG::Troolean::False) {
@@ -406,7 +411,7 @@ bool UserExpression::recursivelyMatches(UserExpressionTrinaryTest test,
   // Handle dependencies, store, symbols and functions
   if (tree()->isDep() || tree()->isStore()) {
     return cloneChildAtIndex(0).recursivelyMatches(
-        test, context, replaceSymbols, auxiliary, ignoredSymbols);
+        test, symbolContext, replaceSymbols, auxiliary, ignoredSymbols);
   }
   if (tree()->isUserSymbol() || tree()->isUserFunction()) {
     assert(replaceSymbols == SymbolicComputation::ReplaceDefinedSymbols ||
@@ -422,9 +427,9 @@ bool UserExpression::recursivelyMatches(UserExpressionTrinaryTest test,
            tree()->isUserFunction());
     // Undefined symbols must be preserved.
     UserExpression e = clone();
-    e.replaceSymbols(context, SymbolicComputation::ReplaceDefinedSymbols);
+    e.replaceSymbols(symbolContext, SymbolicComputation::ReplaceDefinedSymbols);
     return !e.isUninitialized() &&
-           e.recursivelyMatches(test, context,
+           e.recursivelyMatches(test, symbolContext,
                                 SymbolicComputation::KeepAllSymbols, auxiliary,
                                 ignoredSymbols);
   }
@@ -447,11 +452,12 @@ bool UserExpression::recursivelyMatches(UserExpressionTrinaryTest test,
           cloneChildAtIndex(Parametric::k_variableIndex);
       IgnoredSymbols updatedIgnoredSymbols = {.head = &symbolExpr,
                                               .tail = ignoredSymbols};
-      matches = childToAnalyze.recursivelyMatches(
-          test, context, replaceSymbols, auxiliary, &updatedIgnoredSymbols);
+      matches =
+          childToAnalyze.recursivelyMatches(test, symbolContext, replaceSymbols,
+                                            auxiliary, &updatedIgnoredSymbols);
     } else {
-      matches = childToAnalyze.recursivelyMatches(test, context, replaceSymbols,
-                                                  auxiliary, ignoredSymbols);
+      matches = childToAnalyze.recursivelyMatches(
+          test, symbolContext, replaceSymbols, auxiliary, ignoredSymbols);
     }
     if (matches) {
       return true;
@@ -461,43 +467,46 @@ bool UserExpression::recursivelyMatches(UserExpressionTrinaryTest test,
 }
 
 bool UserExpression::recursivelyMatches(
-    ExpressionTest test, const Context& context,
+    ExpressionTest test, const SymbolContext& symbolContext,
     SymbolicComputation replaceSymbols) const {
-  UserExpressionTrinaryTest ternary =
-      [](const UserExpression e, const Context& context, void* auxiliary) {
-        ExpressionTest* trueTest = static_cast<ExpressionTest*>(auxiliary);
-        return (*trueTest)(e, context) ? OMG::Troolean::True
-                                       : OMG::Troolean::Unknown;
-      };
-  return recursivelyMatches(ternary, context, replaceSymbols, &test);
+  UserExpressionTrinaryTest ternary = [](const UserExpression e,
+                                         const SymbolContext& symbolContext,
+                                         void* auxiliary) {
+    ExpressionTest* trueTest = static_cast<ExpressionTest*>(auxiliary);
+    return (*trueTest)(e, symbolContext) ? OMG::Troolean::True
+                                         : OMG::Troolean::Unknown;
+  };
+  return recursivelyMatches(ternary, symbolContext, replaceSymbols, &test);
 }
 
 bool UserExpression::recursivelyMatches(
-    SimpleExpressionTest test, const Context& context,
+    SimpleExpressionTest test, const SymbolContext& symbolContext,
     SymbolicComputation replaceSymbols) const {
-  UserExpressionTrinaryTest ternary =
-      [](const UserExpression e, const Context& context, void* auxiliary) {
-        SimpleExpressionTest* trueTest =
-            static_cast<SimpleExpressionTest*>(auxiliary);
-        return (*trueTest)(e) ? OMG::Troolean::True : OMG::Troolean::Unknown;
-      };
-  return recursivelyMatches(ternary, context, replaceSymbols, &test);
+  UserExpressionTrinaryTest ternary = [](const UserExpression e,
+                                         const SymbolContext& symbolContext,
+                                         void* auxiliary) {
+    SimpleExpressionTest* trueTest =
+        static_cast<SimpleExpressionTest*>(auxiliary);
+    return (*trueTest)(e) ? OMG::Troolean::True : OMG::Troolean::Unknown;
+  };
+  return recursivelyMatches(ternary, symbolContext, replaceSymbols, &test);
 }
 
 bool UserExpression::recursivelyMatches(
-    NonStaticSimpleExpressionTest test, const Context& context,
+    NonStaticSimpleExpressionTest test, const SymbolContext& symbolContext,
     SymbolicComputation replaceSymbols) const {
-  UserExpressionTrinaryTest ternary =
-      [](const UserExpression e, const Context& context, void* auxiliary) {
-        NonStaticSimpleExpressionTest* trueTest =
-            static_cast<NonStaticSimpleExpressionTest*>(auxiliary);
-        return (e.**trueTest)() ? OMG::Troolean::True : OMG::Troolean::Unknown;
-      };
-  return recursivelyMatches(ternary, context, replaceSymbols, &test);
+  UserExpressionTrinaryTest ternary = [](const UserExpression e,
+                                         const SymbolContext& symbolContext,
+                                         void* auxiliary) {
+    NonStaticSimpleExpressionTest* trueTest =
+        static_cast<NonStaticSimpleExpressionTest*>(auxiliary);
+    return (e.**trueTest)() ? OMG::Troolean::True : OMG::Troolean::Unknown;
+  };
+  return recursivelyMatches(ternary, symbolContext, replaceSymbols, &test);
 }
 
 bool UserExpression::recursivelyMatches(ExpressionTestAuxiliary test,
-                                        const Context& context,
+                                        const SymbolContext& symbolContext,
                                         SymbolicComputation replaceSymbols,
                                         void* auxiliary) const {
   struct Pack {
@@ -505,19 +514,21 @@ bool UserExpression::recursivelyMatches(ExpressionTestAuxiliary test,
     void* auxiliary;
   };
   UserExpressionTrinaryTest ternary = [](const UserExpression e,
-                                         const Context& context, void* pack) {
+                                         const SymbolContext& symbolContext,
+                                         void* pack) {
     ExpressionTestAuxiliary* trueTest =
         static_cast<ExpressionTestAuxiliary*>(static_cast<Pack*>(pack)->test);
-    return (*trueTest)(e, context, static_cast<Pack*>(pack)->auxiliary)
+    return (*trueTest)(e, symbolContext, static_cast<Pack*>(pack)->auxiliary)
                ? OMG::Troolean::True
                : OMG::Troolean::Unknown;
   };
   Pack pack{&test, auxiliary};
-  return recursivelyMatches(ternary, context, replaceSymbols, &pack);
+  return recursivelyMatches(ternary, symbolContext, replaceSymbols, &pack);
 }
 
 bool UserExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
-                             bool replaceSymbols, const Context& ctx) const {
+                             bool replaceSymbols,
+                             const SymbolContext& symbolContext) const {
   if (hasAngleUnits) {
     *hasAngleUnits = false;
   }
@@ -527,7 +538,8 @@ bool UserExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
   };
   Pack pack{ignoreAngleUnits, hasAngleUnits};
   return recursivelyMatches(
-      [](const UserExpression e, const Context& context, void* arg) {
+      [](const UserExpression e, const SymbolContext& symbolContext,
+         void* arg) {
         Pack* pack = static_cast<Pack*>(arg);
         bool isAngleUnit = e.isPureAngleUnit();
         bool* hasAngleUnits = pack->hasAngleUnits;
@@ -537,7 +549,7 @@ bool UserExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
         return (e.tree()->isUnitOrPhysicalConstant() &&
                 (!pack->ignoreAngleUnits || !isAngleUnit));
       },
-      ctx,
+      symbolContext,
       replaceSymbols ? SymbolicComputation::ReplaceDefinedSymbols
                      : SymbolicComputation::KeepAllSymbols,
       &pack);
@@ -579,22 +591,22 @@ template UserExpression UserExpression::cloneAndApproximate<float>(
 template UserExpression UserExpression::cloneAndApproximate<double>(
     Internal::ProjectionContext&) const;
 template float UserExpression::approximateToRealScalar<float>(
-    AngleUnit, ComplexFormat, const Context&) const;
+    AngleUnit, ComplexFormat, const SymbolContext&) const;
 template double UserExpression::approximateToRealScalar<double>(
-    AngleUnit, ComplexFormat, const Context&) const;
+    AngleUnit, ComplexFormat, const SymbolContext&) const;
 template bool UserExpression::hasDefinedComplexApproximation<float>(
-    AngleUnit, ComplexFormat, const Context&, float*, float*) const;
+    AngleUnit, ComplexFormat, const SymbolContext&, float*, float*) const;
 template bool UserExpression::hasDefinedComplexApproximation<double>(
-    AngleUnit, ComplexFormat, const Context&, double*, double*) const;
+    AngleUnit, ComplexFormat, const SymbolContext&, double*, double*) const;
 template SystemExpression UserExpression::approximateUserToTree<float>(
-    AngleUnit, ComplexFormat, const Context&) const;
+    AngleUnit, ComplexFormat, const SymbolContext&) const;
 template SystemExpression UserExpression::approximateUserToTree<double>(
-    AngleUnit, ComplexFormat, const Context&) const;
-template float
-UserExpression::ParseAndSimplifyAndApproximateToRealScalar<float>(
-    const char*, const Context&, ComplexFormat, AngleUnit, SymbolicComputation);
-template double
-UserExpression::ParseAndSimplifyAndApproximateToRealScalar<double>(
-    const char*, const Context&, ComplexFormat, AngleUnit, SymbolicComputation);
+    AngleUnit, ComplexFormat, const SymbolContext&) const;
+template float UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
+    float>(const char*, const SymbolContext&, ComplexFormat, AngleUnit,
+           SymbolicComputation);
+template double UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
+    double>(const char*, const SymbolContext&, ComplexFormat, AngleUnit,
+            SymbolicComputation);
 
 }  // namespace Poincare

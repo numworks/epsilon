@@ -16,8 +16,9 @@
 
 namespace Poincare::Internal {
 
-bool Projection::DeepReplaceUserNamed(Tree* e, const Poincare::Context& context,
-                                      SymbolicComputation symbolic) {
+bool Projection::DeepReplaceUserNamed(
+    Tree* e, const Poincare::SymbolContext& symbolContext,
+    SymbolicComputation symbolic) {
   /* TODO_PCJ: in old poincare, we did not do anything for sequence trees (not
    * only nodes), and for store trees we only replaced in the first child and if
    * the second child was a user symbol. */
@@ -28,7 +29,7 @@ bool Projection::DeepReplaceUserNamed(Tree* e, const Poincare::Context& context,
     return DeepReplaceUserNamedWithUndefined(e);
   }
   // Check for circularity
-  if (Symbol::InvolvesCircularity(e, context)) {
+  if (Symbol::InvolvesCircularity(e, symbolContext)) {
     e->cloneTreeOverTree(KUndef);
     return true;
   }
@@ -42,7 +43,7 @@ bool Projection::DeepReplaceUserNamed(Tree* e, const Poincare::Context& context,
       static_assert(Parametric::k_variableIndex == 0);
       e = e->nextNode()->nextTree();
     }
-    changed = ShallowReplaceUserNamed(e, context, symbolic) || changed;
+    changed = ShallowReplaceUserNamed(e, symbolContext, symbolic) || changed;
     e = e->nextNode();
   }
   removeMarker(marker);
@@ -65,9 +66,9 @@ bool Projection::DeepReplaceUserNamedWithUndefined(Tree* e) {
   return changed;
 }
 
-bool Projection::ShallowReplaceUserNamed(Tree* e,
-                                         const Poincare::Context& context,
-                                         SymbolicComputation symbolic) {
+bool Projection::ShallowReplaceUserNamed(
+    Tree* e, const Poincare::SymbolContext& symbolContext,
+    SymbolicComputation symbolic) {
   /* ReplaceAllSymbolsWithUndefined and KeepAllSymbols are escaped in
    * DeepReplaceUserNamed */
   assert(symbolic != SymbolicComputation::ReplaceAllSymbolsWithUndefined);
@@ -80,7 +81,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* e,
     return false;
   }
   // Get Definition
-  const Tree* definition = context.expressionForUserNamed(e);
+  const Tree* definition = symbolContext.expressionForUserNamed(e);
   if (symbolic == SymbolicComputation::ReplaceAllSymbols && !definition) {
     e->cloneTreeOverTree(KNotDefined);
     return true;
@@ -96,7 +97,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* e,
     e->cloneTreeOverTree(definition);
   }
   // Replace node again in case it has been replaced with another symbol
-  ShallowReplaceUserNamed(e, context, symbolic);
+  ShallowReplaceUserNamed(e, symbolContext, symbolic);
   return true;
 }
 

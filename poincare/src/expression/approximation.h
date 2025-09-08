@@ -1,10 +1,10 @@
 #pragma once
 
 #include <omg/signaling_nan.h>
-#include <poincare/context.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
+#include <poincare/symbol_context.h>
 
 #include <cmath>
 #include <complex>
@@ -61,7 +61,7 @@ class Context {
  public:
   Context(AngleUnit angleUnit = AngleUnit::None,
           ComplexFormat complexFormat = ComplexFormat::None,
-          const Poincare::Context& symbolContext = k_emptySymbolContext,
+          const Poincare::SymbolContext& symbolContext = k_emptySymbolContext,
           int16_t listElement = -1)
       : m_randomContext(Random::Context(false)),
         m_localContext(nullptr),
@@ -89,7 +89,7 @@ class Context {
   // LocalContext is used to store the values of local variables
   Private::LocalContext* m_localContext;
   // SymbolContext is used to store the values of user symbols and functions
-  const Poincare::Context& m_symbolContext;
+  const Poincare::SymbolContext& m_symbolContext;
   // Tells if we are approximating to get the nth-element of a list
   int16_t m_listElement;
   // Tells if we are approximating to get the nth-element of a point

@@ -2,9 +2,9 @@
 #include <apps/shared/continuous_function.h>
 #include <apps/shared/global_store.h>
 #include <apps/shared/memoized_curve_view_range.h>
-#include <poincare/context.h>
 #include <poincare/include/poincare/range.h>
 #include <poincare/print.h>
+#include <poincare/symbol_context.h>
 #include <poincare/test/float_helper.h>
 #include <quiz.h>
 

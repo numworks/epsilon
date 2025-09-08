@@ -1,6 +1,6 @@
 #pragma once
 
-#include <poincare/context.h>
+#include <poincare/symbol_context.h>
 #include <poincare/user_expression.h>
 
 namespace Calculation {
@@ -37,7 +37,7 @@ struct AdditionalResultsType {
       const Poincare::UserExpression approximateOutput,
       const Poincare::Preferences::CalculationPreferences
           calculationPreferences,
-      const Poincare::Context& context);
+      const Poincare::SymbolContext& symbolContext);
 
   static bool ForbidAdditionalResults(
       const Poincare::UserExpression input,
@@ -47,19 +47,19 @@ struct AdditionalResultsType {
   static bool HasComplex(const Poincare::UserExpression approximateOutput,
                          const Poincare::Preferences::CalculationPreferences
                              calculationPreferences,
-                         const Poincare::Context& context);
+                         const Poincare::SymbolContext& symbolContext);
   static bool HasDirectTrigo(const Poincare::UserExpression input,
                              const Poincare::UserExpression exactOutput,
                              const Poincare::Preferences::CalculationPreferences
                                  calculationPreferences,
-                             const Poincare::Context& context);
+                             const Poincare::SymbolContext& symbolContext);
   static bool HasInverseTrigo(
       const Poincare::UserExpression input,
       const Poincare::UserExpression exactOutput,
       const Poincare::UserExpression approximateOutput,
       const Poincare::Preferences::CalculationPreferences
           calculationPreferences,
-      const Poincare::Context& context);
+      const Poincare::SymbolContext& symbolContext);
   static bool HasUnit(const Poincare::UserExpression exactOutput,
                       const Poincare::Preferences::CalculationPreferences
                           calculationPreferences);
@@ -67,7 +67,7 @@ struct AdditionalResultsType {
                         const Poincare::UserExpression approximateOutput,
                         const Poincare::Preferences::CalculationPreferences
                             calculationPreferences,
-                        const Poincare::Context& context);
+                        const Poincare::SymbolContext& symbolContext);
   static bool HasMatrix(const Poincare::UserExpression approximateOutput);
   static bool HasFunction(const Poincare::UserExpression input,
                           const Poincare::UserExpression approximateOutput);
@@ -75,7 +75,7 @@ struct AdditionalResultsType {
       const Poincare::UserExpression approximateOutput,
       const Poincare::Preferences::CalculationPreferences
           calculationPreferences,
-      const Poincare::Context& context);
+      const Poincare::SymbolContext& symbolContext);
   static bool HasPositiveInteger(const Poincare::UserExpression);
   static bool HasRational(const Poincare::UserExpression);
 };

@@ -14,9 +14,11 @@ class AbstractMathFieldDelegate {
   AbstractMathFieldDelegate() : m_currentXNTIndex(-1) {}
 
  protected:
-  virtual bool isAcceptableExpression(const Poincare::UserExpression expression,
-                                      const Poincare::Context& context);
-  bool isAcceptableText(const char* text, const Poincare::Context& context);
+  virtual bool isAcceptableExpression(
+      const Poincare::UserExpression expression,
+      const Poincare::SymbolContext& symbolContext);
+  bool isAcceptableText(const char* text,
+                        const Poincare::SymbolContext& symbolContext);
   virtual CodePoint defaultXNT();
   bool handleEventForField(Escher::EditableField* field,
                            Ion::Events::Event event);
@@ -43,7 +45,7 @@ class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,
   }
 
   bool isAcceptableLayout(Poincare::Layout layout,
-                          const Poincare::Context& context);
+                          const Poincare::SymbolContext& symbolContext);
 };
 
 class MathTextFieldDelegate : public AbstractMathFieldDelegate,

@@ -50,7 +50,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
   int selectedSeriesIndex() const {
     return seriesIndexFromCurveIndex(*m_selectedCurveIndex);
   }
-  const Poincare::Context& globalContext() const;
+  const Poincare::SymbolContext& globalContext() const;
 
  protected:
   // Responder

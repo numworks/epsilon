@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <ion/storage/file_system.h>
 #include <poincare/code_points.h>
-#include <poincare/context.h>
 #include <poincare/helpers/sequence.h>
+#include <poincare/symbol_context.h>
 
 #include "function.h"
 #include "sequence_cache.h"
@@ -17,7 +17,7 @@ namespace Shared {
 
 /* WARNING: after calling setType, setInitialRank, setContent,
  * setFirstInitialConditionContent or setSecondInitialConditionContent, the
- * sequence context needs to invalidate the cache because the sequences
+ * sequence symbolContext needs to invalidate the cache because the sequences
  * evaluations might have changed. */
 
 class SequenceContext;
@@ -47,7 +47,7 @@ class Sequence : public Function {
   // Aggregated layout
   Poincare::Layout aggregatedLayout();
   Ion::Storage::Record::ErrorStatus setLayoutsForAggregated(
-      Poincare::Layout l, const Poincare::Context& context);
+      Poincare::Layout l, const Poincare::SymbolContext& symbolContext);
 
   // Definition
   Poincare::Layout definitionName() const { return m_definition.name(this); }
@@ -68,9 +68,9 @@ class Sequence : public Function {
     return m_firstInitialCondition.layout(this);
   }
   Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(
-      Poincare::Layout l,
-      const Poincare::Context& context = Poincare::EmptySymbolContext{}) {
-    return m_firstInitialCondition.setContent(this, l, context);
+      Poincare::Layout l, const Poincare::SymbolContext& symbolContext =
+                              Poincare::EmptySymbolContext{}) {
+    return m_firstInitialCondition.setContent(this, l, symbolContext);
   }
   // Second initial condition
   Poincare::Layout secondInitialConditionName() {
@@ -89,9 +89,9 @@ class Sequence : public Function {
     return m_secondInitialCondition.layout(this);
   }
   Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(
-      Poincare::Layout l,
-      const Poincare::Context& context = Poincare::EmptySymbolContext{}) {
-    return m_secondInitialCondition.setContent(this, l, context);
+      Poincare::Layout l, const Poincare::SymbolContext& symbolContext =
+                              Poincare::EmptySymbolContext{}) {
+    return m_secondInitialCondition.setContent(this, l, symbolContext);
   }
   void tidyDownstreamPoolFrom(
       const Poincare::PoolObject* treePoolCursor = nullptr) const override;

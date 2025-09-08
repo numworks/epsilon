@@ -1,8 +1,8 @@
 #pragma once
 
-#include <poincare/context.h>
 #include <poincare/layout.h>
 #include <poincare/src/layout/layout_cursor.h>
+#include <poincare/symbol_context.h>
 
 namespace Poincare::Internal {
 
@@ -32,23 +32,24 @@ class PoolLayoutCursor final : public LayoutCursor,
   Rack* cursorRack() const override { return rootRack() + m_cursorRack; }
 
   /* Layout insertion */
-  void insertText(
-      const char* text,
-      const Poincare::Context& context = Poincare::EmptySymbolContext{},
-      bool forceRight = false, bool forceLeft = false,
-      bool linearMode = false) {
+  void insertText(const char* text,
+                  const Poincare::SymbolContext& symbolContext =
+                      Poincare::EmptySymbolContext{},
+                  bool forceRight = false, bool forceLeft = false,
+                  bool linearMode = false) {
     TreeStackCursor::InsertTextContext insertTextContext{text, forceRight,
                                                          forceLeft, linearMode};
-    execute(&TreeStackCursor::insertText, context, &insertTextContext);
+    execute(&TreeStackCursor::insertText, symbolContext, &insertTextContext);
   }
-  void insertLayout(
-      const Tree* l,
-      const Poincare::Context& context = Poincare::EmptySymbolContext{},
-      bool forceRight = false, bool forceLeft = false,
-      bool collapseSiblings = true) {
+  void insertLayout(const Tree* l,
+                    const Poincare::SymbolContext& symbolContext =
+                        Poincare::EmptySymbolContext{},
+                    bool forceRight = false, bool forceLeft = false,
+                    bool collapseSiblings = true) {
     TreeStackCursor::InsertLayoutContext insertLayoutContext{
         l, forceRight, forceLeft, collapseSiblings};
-    execute(&TreeStackCursor::insertLayout, context, &insertLayoutContext);
+    execute(&TreeStackCursor::insertLayout, symbolContext,
+            &insertLayoutContext);
   }
   void deleteAndResetSelection() {
     execute(&TreeStackCursor::deleteAndResetSelection);
@@ -58,25 +59,25 @@ class PoolLayoutCursor final : public LayoutCursor,
     m_rootLayout->invalidAllSizesPositionsAndBaselines();
   }
 
-  void beautifyLeft(const Poincare::Context& context);
+  void beautifyLeft(const Poincare::SymbolContext& symbolContext);
 
  private:
   TreeStackCursor createTreeStackCursor() const {
     return TreeStackCursor(m_position, m_startOfSelection, cursorRackOffset());
   }
   void applyTreeStackCursor(TreeStackCursor cursor);
-  typedef void (TreeStackCursor::*Action)(const Poincare::Context& context,
-                                          const void* data);
-  void execute(
-      Action action,
-      const Poincare::Context& context = Poincare::EmptySymbolContext{},
-      const void* data = nullptr);
+  typedef void (TreeStackCursor::*Action)(
+      const Poincare::SymbolContext& symbolContext, const void* data);
+  void execute(Action action,
+               const Poincare::SymbolContext& symbolContext =
+                   Poincare::EmptySymbolContext{},
+               const void* data = nullptr);
   void setCursorRack(Rack* rack) override {
     // Don't use rack here as it may be invalid during execute
     m_cursorRack = rack - Rack::From(static_cast<Tree*>(rootRack()));
   }
-  bool beautifyRightOfRack(Rack* rack,
-                           const Poincare::Context& context) override;
+  bool beautifyRightOfRack(
+      Rack* rack, const Poincare::SymbolContext& symbolContext) override;
 
   Poincare::Layout m_rootLayout;
   int m_cursorRack;

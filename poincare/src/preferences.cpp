@@ -15,11 +15,11 @@ const Preferences Preferences::PreferencesInstance;
 
 ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     ComplexFormat complexFormat, const Internal::Tree* exp,
-    const Context& context, SymbolicComputation replaceSymbols) {
+    const SymbolContext& symbolContext, SymbolicComputation replaceSymbols) {
   Internal::ProjectionContext projectionContext = {
       .m_complexFormat = complexFormat,
       .m_symbolic = replaceSymbols,
-      .m_context = context,
+      .m_context = symbolContext,
   };
   Internal::Projection::UpdateComplexFormatWithExpressionInput(
       exp, &projectionContext);

@@ -1,11 +1,11 @@
 #pragma once
 
 #include <poincare/comparison_operator.h>
-#include <poincare/context.h>
 #include <poincare/pool_handle.h>
 #include <poincare/pool_object.h>
 #include <poincare/preferences.h>
 #include <poincare/src/memory/block.h>
+#include <poincare/symbol_context.h>
 
 namespace Poincare {
 
@@ -13,7 +13,8 @@ class Expression;
 
 class Dimension {
  public:
-  Dimension(const Expression e, const Context& context = EmptySymbolContext{});
+  Dimension(const Expression e,
+            const SymbolContext& symbolContext = EmptySymbolContext{});
 
   bool isScalar();
   bool isMatrix();
@@ -91,7 +92,7 @@ class Expression : public PoolHandle {
   bool isDiv() const;
   bool isEquality() const;
   bool isFactor() const;
-  bool isInRadians(const Context& context) const;
+  bool isInRadians(const SymbolContext& symbolContext) const;
   bool isIntegral() const;
   bool isList() const;
   bool isMatrix() const;
@@ -114,7 +115,8 @@ class Expression : public PoolHandle {
 
   /* Other properties */
 
-  Dimension dimension(const Context& context = EmptySymbolContext{}) const;
+  Dimension dimension(
+      const SymbolContext& symbolContext = EmptySymbolContext{}) const;
   // Only called on expressions that are comparisons
   Comparison::Operator comparisonOperator() const;
 

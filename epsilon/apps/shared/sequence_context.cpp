@@ -13,17 +13,17 @@ using namespace Poincare;
 
 namespace Shared {
 
-SequenceContext::SequenceContext(const Context* parentContext,
+SequenceContext::SequenceContext(const SymbolContext* parentContext,
                                  const SequenceStore* sequenceStore)
     : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {}
 
-Context::UserNamedType SequenceContext::expressionTypeForIdentifier(
+SymbolContext::UserNamedType SequenceContext::expressionTypeForIdentifier(
     std::string_view identifier) const {
   constexpr int numberOfSequencesNames =
       std::size(SequenceHelper::k_sequenceNames);
   for (int i = 0; i < numberOfSequencesNames; i++) {
     if (identifier == std::string_view(SequenceHelper::k_sequenceNames[i])) {
-      return Context::UserNamedType::Sequence;
+      return SymbolContext::UserNamedType::Sequence;
     }
   }
   return ContextWithParent::expressionTypeForIdentifier(identifier);

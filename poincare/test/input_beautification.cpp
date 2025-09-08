@@ -1,6 +1,6 @@
-#include <poincare/context.h>
 #include <poincare/include/poincare/layout_cursor.h>
 #include <poincare/src/layout/k_tree.h>
+#include <poincare/symbol_context.h>
 
 #include "helper.h"
 #include "helpers/symbol_store.h"
@@ -120,8 +120,9 @@ QUIZ_CASE(pcj_input_beautification_after_inserting_text) {
 }
 
 typedef void (Poincare::Internal::AddEmptyLayoutHelpers<LayoutCursor>::*
-                  AddLayoutPointer)(const Context& context);
-typedef void (*CursorAddLayout)(LayoutCursor* cursor, Context& context,
+                  AddLayoutPointer)(const SymbolContext& symbolContext);
+typedef void (*CursorAddLayout)(LayoutCursor* cursor,
+                                SymbolContext& symbolContext,
                                 AddLayoutPointer optionalAddLayoutFunction);
 
 void assert_apply_beautification_after_layout_insertion(
@@ -129,9 +130,9 @@ void assert_apply_beautification_after_layout_insertion(
     AddLayoutPointer optionalAddLayoutFunction = nullptr) {
   Layout r = Layout::Builder(KRackL());
   LayoutCursor cursor = {r, r.tree()};
-  PoincareTest::SymbolStore context;
-  cursor.insertText("pi", context);
-  (*layoutInsertionFunction)(&cursor, context, optionalAddLayoutFunction);
+  PoincareTest::SymbolStore symbolStore;
+  cursor.insertText("pi", symbolStore);
+  (*layoutInsertionFunction)(&cursor, symbolStore, optionalAddLayoutFunction);
   if (optionalAddLayoutFunction ==
       &Poincare::Internal::AddEmptyLayoutHelpers<
           LayoutCursor>::addFractionLayoutAndCollapseSiblings) {
@@ -165,9 +166,9 @@ QUIZ_CASE(pcj_input_beautification_after_inserting_layout) {
 
   for (int i = 0; i < numberOfFunctions; i++) {
     assert_apply_beautification_after_layout_insertion(
-        [](LayoutCursor* cursor, Context& context,
+        [](LayoutCursor* cursor, SymbolContext& symbolContext,
            AddLayoutPointer optionalAddLayoutFunction) {
-          (cursor->*optionalAddLayoutFunction)(context);
+          (cursor->*optionalAddLayoutFunction)(symbolContext);
         },
         layoutInsertionFunction[i]);
   }

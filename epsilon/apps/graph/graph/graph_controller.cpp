@@ -375,7 +375,8 @@ void GraphController::jumpToLeftRightCurve(double t,
 
 void GraphController::reloadBannerViewForCursorOnFunction(
     double cursorT, double cursorX, double cursorY, Ion::Storage::Record record,
-    const FunctionContext& functionContext, const Poincare::Context& context,
+    const FunctionContext& functionContext,
+    const Poincare::SymbolContext& symbolContext,
     bool cappedNumberOfSignificantDigits) {
   OMG::ExpiringPointer<const ContinuousFunction> function =
       GlobalContextAccessor::ContinuousFunctionContext().modelForRecord(record);
@@ -423,7 +424,7 @@ void GraphController::reloadBannerViewForCursorOnFunction(
   cappedNumberOfSignificantDigits =
       cappedNumberOfSignificantDigits || hasInterest;
   FunctionGraphController::reloadBannerViewForCursorOnFunction(
-      cursorT, cursorX, cursorY, record, functionContext, context,
+      cursorT, cursorX, cursorY, record, functionContext, symbolContext,
       cappedNumberOfSignificantDigits);
 }
 

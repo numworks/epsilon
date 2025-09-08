@@ -2,7 +2,7 @@
 
 #include <apps/apps_container_helper.h>
 #include <apps/shared/global_store.h>
-#include <poincare/context.h>
+#include <poincare/symbol_context.h>
 
 #include "../apps_container.h"
 
@@ -30,7 +30,7 @@ void SharedApp::Snapshot::reset() { GlobalContextAccessor::Store().reset(); }
 SharedApp::SharedApp(Snapshot* snapshot, ViewController* rootViewController)
     : ::App(snapshot, rootViewController) {}
 
-const Poincare::Context& SharedApp::localContext() const {
+const Poincare::SymbolContext& SharedApp::localContext() const {
   return GlobalContextAccessor::Context();
 }
 

@@ -1,6 +1,5 @@
 #include "equation_solver.h"
 
-#include <poincare/context.h>
 #include <poincare/equation_solver/equation_solver.h>
 #include <poincare/helpers/polynomial.h>
 #include <poincare/numeric_solver/solver.h>
@@ -24,6 +23,7 @@
 #include <poincare/src/memory/tree_helpers.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/numeric_solver/roots.h>
+#include <poincare/symbol_context.h>
 
 namespace Poincare::EquationSolver {
 
@@ -68,8 +68,8 @@ static PreprocessingResult PreprocessEquationList(
   EquationMetadata equationMetadata;
 
   // Step 1. Retrieve user symbols and infer the list of unknowns
-  const Context& context = projectionContext->m_context;
-  Tree* userSymbols = Variables::GetUserSymbols(equationList, context);
+  const SymbolContext& symbolContext = projectionContext->m_context;
+  Tree* userSymbols = Variables::GetUserSymbols(equationList, symbolContext);
   assert(userSymbols->isList());
 
   VariableArray undefinedVariables;
@@ -87,7 +87,7 @@ static PreprocessingResult PreprocessEquationList(
 
   for (Tree* userSymbol : userSymbols->children()) {
     const char* symbolName = Symbol::GetName(userSymbol);
-    if (context.expressionForUserNamed(userSymbol)) {
+    if (symbolContext.expressionForUserNamed(userSymbol)) {
       if (!equationMetadata.definedVariables.isFull()) {
         equationMetadata.definedVariables.push(symbolName);
       }
@@ -176,7 +176,7 @@ static PreprocessingResult PreprocessEquationList(
 
   // Step 3.2. Replace UserFunctions
   Projection::DeepReplaceUserNamed(
-      reducedEquationList, context,
+      reducedEquationList, symbolContext,
       SymbolicComputation::ReplaceDefinedFunctions);
 
   // Step 3.3. Replace unkowns
@@ -309,7 +309,7 @@ static uint32_t TagParametersUsedAsVariables(VariableArray variables) {
 /* Return the userSymbol for the next additional parameter variable. */
 static Tree* GetNextParameterSymbol(size_t* parameterIndex,
                                     uint32_t usedParameterIndices,
-                                    const Context& context) {
+                                    const SymbolContext& symbolContext) {
   /* Equation had more solution and introduced new unknowns variables, name
    * them 't' + 2 digits + '\0' */
   constexpr size_t k_parameterNameSize = 1 + 2 + 1;
@@ -333,7 +333,7 @@ static Tree* GetNextParameterSymbol(size_t* parameterIndex,
     parameterName[parameterNameLength] = 0;
     Tree* symbol =
         SharedTreeStack->pushUserSymbol(parameterName, parameterNameLength + 1);
-    if (!context.expressionForUserNamed(symbol)) {
+    if (!symbolContext.expressionForUserNamed(symbol)) {
       return symbol;
     }
     // Skip already used parameter indices in global variables
@@ -347,7 +347,7 @@ static Tree* GetNextParameterSymbol(size_t* parameterIndex,
  * returned SolverResult.  */
 static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
                                       const EquationMetadata& equationMetadata,
-                                      const Context& context) {
+                                      const SymbolContext& symbolContext) {
   SolutionMetadata solutionMetadata{
       .solvingMethod = SolvingMethod::LinearSystem,
       .solutionType = SolutionType::Exact,
@@ -557,8 +557,8 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
     size_t lastExtraVariableId = firstExtraVariableId + numberOfExtraVariables;
     for (int j = firstExtraVariableId; j < lastExtraVariableId; j++) {
       // Generate a unique identifier t? that does not collide with variables.
-      TreeRef symbol = GetNextParameterSymbol(&parameterIndex,
-                                              usedParameterIndices, context);
+      TreeRef symbol = GetNextParameterSymbol(
+          &parameterIndex, usedParameterIndices, symbolContext);
       Variables::Replace(matrix, j, symbol, false, false);
       symbol->removeTree();
     }

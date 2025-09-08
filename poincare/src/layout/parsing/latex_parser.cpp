@@ -1,7 +1,6 @@
 #include "latex_parser.h"
 
 #include <omg/utf8_decoder.h>
-#include <poincare/context.h>
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/indices.h>
 #include <poincare/src/layout/k_tree.h>
@@ -12,6 +11,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
+#include <poincare/symbol_context.h>
 
 #include <array>
 

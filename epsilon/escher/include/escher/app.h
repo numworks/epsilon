@@ -9,7 +9,7 @@
 #include <escher/view_controller.h>
 #include <escher/warning_controller.h>
 #include <ion/storage/file_system.h>
-#include <poincare/context.h>
+#include <poincare/symbol_context.h>
 
 /* An app is fed events and outputs drawing calls.
  *
@@ -93,7 +93,7 @@ class App : public Responder {
     assert(false);
     return nullptr;
   }
-  virtual const Poincare::Context& localContext() const {
+  virtual const Poincare::SymbolContext& localContext() const {
     return Poincare::k_emptySymbolContext;
   }
   virtual EditableFieldHelpBox* toolbox() { return nullptr; }

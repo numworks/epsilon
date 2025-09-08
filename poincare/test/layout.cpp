@@ -1,6 +1,5 @@
 #include <ion/display.h>
 #include <omg/unicode_helper.h>
-#include <poincare/context.h>
 #include <poincare/layout.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/units/k_units.h>
@@ -14,6 +13,7 @@
 #include <poincare/src/layout/rack_layout_decoder.h>
 #include <poincare/src/layout/render.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/symbol_context.h>
 #include <poincare/user_expression.h>
 
 // Used to test a different logarithmBasePosition. TODO: remove it

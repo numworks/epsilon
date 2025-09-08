@@ -1,9 +1,9 @@
-#include <poincare/context.h>
 #include <poincare/src/equation_solver/equation_solver.h>
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack.h>
+#include <poincare/symbol_context.h>
 
 #include "helper.h"
 #include "helpers/symbol_store.h"

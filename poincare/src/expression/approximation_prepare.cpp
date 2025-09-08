@@ -1,5 +1,5 @@
-#include <poincare/context.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/symbol_context.h>
 
 #include "advanced_reduction.h"
 #include "approximation.h"

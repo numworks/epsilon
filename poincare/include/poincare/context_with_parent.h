@@ -2,14 +2,14 @@
 
 #include <assert.h>
 
-#include "context.h"
+#include "symbol_context.h"
 
 namespace Poincare {
 
 // If parentContext is nullptr, this context will behave like an empty context
-class ContextWithParent : public Context {
+class ContextWithParent : public SymbolContext {
  public:
-  ContextWithParent(const Context* parentContext)
+  ContextWithParent(const SymbolContext* parentContext)
       : m_parentContext(parentContext) {}
 
   // Context
@@ -27,7 +27,7 @@ class ContextWithParent : public Context {
   }
 
  private:
-  const Context* m_parentContext;
+  const SymbolContext* m_parentContext;
 };
 
 }  // namespace Poincare

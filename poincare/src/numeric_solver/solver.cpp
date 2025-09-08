@@ -13,10 +13,10 @@ using namespace Poincare::Internal;
 namespace Poincare {
 
 template <typename T>
-Solver<T>::Solver(T xStart, T xEnd, const Context& context)
+Solver<T>::Solver(T xStart, T xEnd, const SymbolContext& symbolContext)
     : m_xStart(xStart),
       m_xEnd(xEnd),
-      m_context(context),
+      m_context(symbolContext),
       m_growthSpeed(sizeof(T) == sizeof(double) ? GrowthSpeed::Precise
                                                 : GrowthSpeed::Fast) {
   setSearchStep(DefaultSearchStepForAmplitude(xEnd - xStart));
@@ -549,7 +549,8 @@ template <typename T>
 T Solver<T>::nextRootInMultiplication(const Tree* e) const {
   assert(e->isMult());
   return nextRootInChildren(
-      e, [](const Tree*, const Context&, void*) { return true; }, nullptr);
+      e, [](const Tree*, const SymbolContext&, void*) { return true; },
+      nullptr);
 }
 
 template <typename T>
@@ -561,28 +562,29 @@ T Solver<T>::nextRootInAddition(const Tree* e) const {
    * Since the expression does not change sign around x0, the usual numerical
    * schemes won't work. We instead look for the zeroes of f, and check whether
    * they are zeroes of the whole expression. */
-  ExpressionTestAuxiliary test = [](const Tree* e, const Context& context,
-                                    void* aux) {
-    /* TODO_PCJ: Either ensure expression is projected, or pass approximation
-     * context(ComplexFormat, AngleUnit) and replace defined symbols. */
-    return e->hasDescendantSatisfying([](const Tree* e) {
-      T exponent = k_NAN;
-      if (e->type() == Type::Sqrt) {
-        exponent = static_cast<T>(0.5);
-      } else if (e->type() == Type::Pow) {
-        exponent =
-            Approximation::To<T>(e->child(1), Approximation::Parameters{});
-      } else if (e->type() == Type::Root) {
-        exponent =
-            static_cast<T>(1.) /
-            Approximation::To<T>(e->child(1), Approximation::Parameters{});
-      }
-      if (std::isnan(exponent)) {
-        return false;
-      }
-      return k_zero < exponent && exponent < static_cast<T>(1.);
-    });
-  };
+  ExpressionTestAuxiliary test =
+      [](const Tree* e, const SymbolContext& symbolContext, void* aux) {
+        /* TODO_PCJ: Either ensure expression is projected, or pass
+         * approximation context(ComplexFormat, AngleUnit) and replace defined
+         * symbols. */
+        return e->hasDescendantSatisfying([](const Tree* e) {
+          T exponent = k_NAN;
+          if (e->type() == Type::Sqrt) {
+            exponent = static_cast<T>(0.5);
+          } else if (e->type() == Type::Pow) {
+            exponent =
+                Approximation::To<T>(e->child(1), Approximation::Parameters{});
+          } else if (e->type() == Type::Root) {
+            exponent =
+                static_cast<T>(1.) /
+                Approximation::To<T>(e->child(1), Approximation::Parameters{});
+          }
+          if (std::isnan(exponent)) {
+            return false;
+          }
+          return k_zero < exponent && exponent < static_cast<T>(1.);
+        });
+      };
   T xChildrenRoot = nextRootInChildren(e, test, const_cast<Solver<T>*>(this));
   Solver<T> solver = *this;
   T xRoot = solver.next(e, EvenOrOddRootInBracket, CompositeBrentForRoot).x();
@@ -841,7 +843,7 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
 
 // Explicit template instantiations
 
-template Solver<double>::Solver(double, double, const Context&);
+template Solver<double>::Solver(double, double, const SymbolContext&);
 template void Solver<double>::reset(double, double, double);
 template Solver<double>::Solution Solver<double>::next(
     FunctionEvaluation, const void*, BracketTest, HoneResult,
@@ -863,7 +865,7 @@ template bool Solver<double>::DiscontinuityTestBetweenPoints(
 
 template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(
     Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>, const void*);
-template Solver<float>::Solver(float, float, const Context&);
+template Solver<float>::Solver(float, float, const SymbolContext&);
 template void Solver<float>::reset(float, float, float);
 template Solver<float>::Solution Solver<float>::next(
     FunctionEvaluation, const void*, BracketTest, HoneResult,

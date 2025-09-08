@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <ion/storage/file_system.h>
 #include <omg/global_box.h>
-#include <poincare/variable_store.h>
+#include <poincare/symbol_store_interface.h>
 
 #include <array>
 
@@ -14,7 +14,7 @@
 
 namespace Shared {
 
-class GlobalStore final : public Poincare::VariableStore {
+class GlobalStore final : public Poincare::SymbolStoreInterface {
   friend class GlobalContextAccessor;
   friend class OMG::GlobalBox<GlobalStore>;
 

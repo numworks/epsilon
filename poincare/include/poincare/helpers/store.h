@@ -1,7 +1,7 @@
 #pragma once
 
+#include <poincare/symbol_store_interface.h>
 #include <poincare/user_expression.h>
-#include <poincare/variable_store.h>
 
 namespace Poincare {
 

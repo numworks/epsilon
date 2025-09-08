@@ -4,7 +4,7 @@
 #include <omg/string.h>
 #include <omg/vector.h>
 #include <poincare/src/memory/block.h>
-#include <poincare/variable_store.h>
+#include <poincare/symbol_store_interface.h>
 
 #include <string_view>
 
@@ -14,11 +14,12 @@ class Tree;
 
 namespace PoincareTest {
 
-void store(const char* storeExpression, Poincare::VariableStore& variableStore);
+void store(const char* storeExpression,
+           Poincare::SymbolStoreInterface& symbolStore);
 void store(const char* symbol, const char* expression,
-           Poincare::VariableStore& variableStore);
+           Poincare::SymbolStoreInterface& symbolStore);
 
-class SymbolStore : public Poincare::VariableStore {
+class SymbolStore : public Poincare::SymbolStoreInterface {
  public:
   const Poincare::Internal::Tree* expressionForUserNamed(
       const Poincare::Internal::Tree* symbol) const override;

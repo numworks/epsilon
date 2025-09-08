@@ -1,7 +1,7 @@
 #include <poincare/helpers/store.h>
 #include <poincare/src/expression/dimension.h>
+#include <poincare/symbol_store_interface.h>
 #include <poincare/user_expression.h>
-#include <poincare/variable_store.h>
 
 namespace Poincare {
 

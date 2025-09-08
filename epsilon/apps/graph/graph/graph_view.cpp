@@ -156,29 +156,25 @@ ContinuousFunctionStore* GraphView::functionStore() const {
 }
 
 template <typename T>
-static Coordinate2D<T> evaluateXY(T t, const void* model, const void* context) {
-  assert(context);
+static Coordinate2D<T> evaluateXY(T t, const void* model, const void*) {
   return static_cast<const ContinuousFunction*>(model)->evaluateXYAtParameter(
       t, 0);
 }
 template <typename T>
 static Coordinate2D<T> evaluateXYSecondCurve(T t, const void* model,
-                                             const void* context) {
-  assert(context);
+                                             const void*) {
   return static_cast<const ContinuousFunction*>(model)->evaluateXYAtParameter(
       t, 1);
 }
 template <typename T>
 static Coordinate2D<T> evaluateXYFirstDerivative(T t, const void* model,
-                                                 const void* context) {
-  assert(context);
+                                                 const void*) {
   return static_cast<const ContinuousFunction*>(model)
       ->evaluateXYDerivativeAtParameter(t, 1);
 }
 template <typename T>
 static Coordinate2D<T> evaluateXYSecondDerivative(T t, const void* model,
-                                                  const void* context) {
-  assert(context);
+                                                  const void*) {
   return static_cast<const ContinuousFunction*>(model)
       ->evaluateXYDerivativeAtParameter(t, 2);
 }
@@ -196,9 +192,7 @@ static Coordinate2D<float> evaluateZero(float t, const void*, const void*) {
 
 bool GraphView::FunctionIsDiscontinuousOnFloatInterval(float minBound,
                                                        float maxBound,
-                                                       const void* model,
-                                                       const void* context) {
-  assert(context);
+                                                       const void* model) {
   return static_cast<const ContinuousFunction*>(model)
       ->isDiscontinuousOnFloatInterval(minBound, maxBound);
 }

@@ -23,7 +23,7 @@ class WithCurves {
    * argument is shared between all curves in one drawing. */
   template <typename T>
   using Curve2DEvaluation = Poincare::Coordinate2D<T> (*)(T, const void* model,
-                                                          const void* context);
+                                                          const void*);
 
   class Curve2D {
    public:
@@ -41,11 +41,9 @@ class WithCurves {
     const void* m_model;
   };
 
-  typedef bool (*DiscontinuityTest)(float, float, const void*, const void*);
+  typedef bool (*DiscontinuityTest)(float, float, const void*);
 
-  static bool NoDiscontinuity(float, float, const void*, const void*) {
-    return false;
-  }
+  static bool NoDiscontinuity(float, float, const void*) { return false; }
 
   /* The screen is tiled with a 4×4 pattern. It takes the form of a
    * lattice with four colored sections and a transparent background.

@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <omg/utf8_decoder.h>
 #include <omg/utf8_helper.h>
-#include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/layout.h>
 #include <poincare/old/parametered_expression.h>
@@ -9,6 +8,7 @@
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
 #include <poincare/src/memory/tree_stack.h>
+#include <poincare/symbol_context.h>
 #include <string.h>
 
 #include <cmath>

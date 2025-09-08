@@ -5,7 +5,6 @@
 #include <escher/palette.h>
 #include <omg/utf8_helper.h>
 #include <poincare/code_points.h>
-#include <poincare/context.h>
 #include <poincare/function_properties/integral.h>
 #include <poincare/helpers/polynomial.h>
 #include <poincare/helpers/symbol_pool.h>
@@ -14,6 +13,7 @@
 #include <poincare/numeric_solver/roots.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/derivation.h>
+#include <poincare/symbol_context.h>
 #include <poincare/trigonometry.h>
 
 #include <algorithm>
@@ -145,7 +145,7 @@ size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
-    const Poincare::Layout& l, const Context& context) {
+    const Poincare::Layout& l, const SymbolContext& symbolContext) {
   setCache(nullptr);
   bool wasCartesian = properties().isCartesian();
   /* About to set the content, the symbol does not matter here yet. We don't use
@@ -153,7 +153,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
    * and any unnecessary plot type update at this point. See comment in
    * ContinuousFunction::Model::buildExpressionFromLayout. */
   Ion::Storage::Record::ErrorStatus error =
-      m_model.setContent(this, l, context, k_unnamedExpressionSymbol);
+      m_model.setContent(this, l, symbolContext, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
     // Set proper name
     error = updateNameIfNeeded();
@@ -1006,7 +1006,8 @@ CodePoint ContinuousFunction::Model::CodePointForSymbol(
 }
 
 Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
-    Poincare::Layout l, CodePoint symbol, const Context& context) const {
+    Poincare::Layout l, CodePoint symbol,
+    const SymbolContext& symbolContext) const {
   /* The symbol parameter is discarded in this implementation. Either there is a
    * valid named left expression and the symbol will be extracted, either the
    * symbol should be the default symbol used in unnamed expressions. */
@@ -1017,7 +1018,7 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
   }
   /* Parse the expression to store as possible function assignment. */
   UserExpression expressionToStore =
-      UserExpression::Parse(l, context, {.isAssignment = true});
+      UserExpression::Parse(l, symbolContext, {.isAssignment = true});
   if (expressionToStore.isUninitialized()) {
     return expressionToStore;
   }
@@ -1040,7 +1041,7 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
     }
     // Fallback on normal parsing (replace symbol with unknown)
     expressionToStore =
-        ExpressionModel::buildExpressionFromLayout(l, symbol, context);
+        ExpressionModel::buildExpressionFromLayout(l, symbol, symbolContext);
   }
 
   return expressionToStore;

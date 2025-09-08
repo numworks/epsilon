@@ -9,11 +9,11 @@ namespace Poincare {
 class PoolVariableContext : public ContextWithParent {
  public:
   PoolVariableContext(const char* name, UserExpression expression,
-                      const Context* parentContext)
+                      const SymbolContext* parentContext)
       : ContextWithParent(parentContext), m_name(name), m_value(expression) {}
   /* Building a self referential context is a trick for parsing parametered
    * expression. */
-  PoolVariableContext(UserExpression symbol, const Context* parentContext)
+  PoolVariableContext(UserExpression symbol, const SymbolContext* parentContext)
       : ContextWithParent(parentContext),
         m_name(SymbolHelper::GetName(symbol)),
         m_value(symbol) {}

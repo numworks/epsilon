@@ -1,6 +1,5 @@
 #pragma once
 
-#include <poincare/context.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/expression.h>
 #include <poincare/helpers/parser.h>
@@ -10,6 +9,7 @@
 #include <poincare/pool_handle.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
+#include <poincare/symbol_context.h>
 
 #include <span>
 
@@ -54,11 +54,13 @@ class UserExpression : public Expression {
   static UserExpression Undefined();
 
   static UserExpression Parse(const Internal::Tree* layout,
-                              const Context& context,
+                              const SymbolContext& symbolContext,
                               ParserHelper::ParsingParameters params = {});
-  static UserExpression Parse(const char* layout, const Context& context,
+  static UserExpression Parse(const char* layout,
+                              const SymbolContext& symbolContext,
                               ParserHelper::ParsingParameters params = {});
-  static UserExpression ParseLatex(const char* latex, const Context& context,
+  static UserExpression ParseLatex(const char* latex,
+                                   const SymbolContext& symbolContext,
                                    ParserHelper::ParsingParameters params = {});
 
   static UserExpression Create(const Internal::Tree* structure,
@@ -81,7 +83,7 @@ class UserExpression : public Expression {
                                 bool onlySecondTerm = false);
   bool replaceUnknownWithSymbol(CodePoint symbol);
 
-  bool replaceSymbols(const Poincare::Context& context,
+  bool replaceSymbols(const Poincare::SymbolContext& symbolContext,
                       SymbolicComputation symbolic =
                           SymbolicComputation::ReplaceDefinedSymbols);
 
@@ -109,32 +111,33 @@ class UserExpression : public Expression {
       const Internal::ProjectionContext& projectionContext,
       bool* reductionFailure) const;
   template <typename T>
-  SystemExpression approximateUserToTree(AngleUnit angleUnit,
-                                         ComplexFormat complexFormat,
-                                         const Context& context) const;
+  SystemExpression approximateUserToTree(
+      AngleUnit angleUnit, ComplexFormat complexFormat,
+      const SymbolContext& symbolContext) const;
   // Approximate real scalar or unit
   template <typename T>
   T approximateToRealScalar(
       AngleUnit angleUnit = AngleUnit::None,
       ComplexFormat complexFormat = ComplexFormat::None,
-      const Context& context = EmptySymbolContext{}) const;
+      const SymbolContext& symbolContext = EmptySymbolContext{}) const;
 
   // Return NAN for all non real scalar expressions
   template <typename T>
   static T ParseAndSimplifyAndApproximateToRealScalar(
-      const char* text, const Context& context, ComplexFormat complexFormat,
-      AngleUnit angleUnit,
+      const char* text, const SymbolContext& symbolContext,
+      ComplexFormat complexFormat, AngleUnit angleUnit,
       SymbolicComputation symbolicComputation =
           SymbolicComputation::ReplaceAllSymbols);
 
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits,
-                      const Context& context = EmptySymbolContext{},
+                      const SymbolContext& symbolContext = EmptySymbolContext{},
                       OMG::Base base = OMG::Base::Decimal,
                       bool linearMode = false) const;
   char* toLatex(char* buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits, const Context& context,
+                int numberOfSignificantDigits,
+                const SymbolContext& symbolContext,
                 bool withThousandsSeparator = false) const;
   /* TODO: detect when the buffer size was to small to hold the expression
    * serialization, and return an error code so that the caller can handle this
@@ -152,55 +155,60 @@ class UserExpression : public Expression {
   template <typename T>
   bool hasDefinedComplexApproximation(AngleUnit angleUnit,
                                       ComplexFormat complexFormat,
-                                      const Context& context,
+                                      const SymbolContext& symbolContext,
                                       T* returnRealPart = nullptr,
                                       T* returnImagPart = nullptr) const;
   bool isComplexScalar(
       Preferences::CalculationPreferences calculationPreferences,
-      const Context& context) const;
+      const SymbolContext& symbolContext) const;
   bool isParsedNumber() const;
   bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
                bool replaceSymbols = false,
-               const Context& ctx = EmptySymbolContext{}) const;
+               const SymbolContext& symbolContext = EmptySymbolContext{}) const;
 
   /* recursivelyMatches */
 
-  typedef OMG::Troolean (*UserExpressionTrinaryTest)(const UserExpression e,
-                                                     const Context& context,
-                                                     void* auxiliary);
-  bool recursivelyMatches(UserExpressionTrinaryTest test,
-                          const Context& context = EmptySymbolContext{},
-                          SymbolicComputation replaceSymbols =
-                              SymbolicComputation::ReplaceDefinedSymbols,
-                          void* auxiliary = nullptr) const;
+  typedef OMG::Troolean (*UserExpressionTrinaryTest)(
+      const UserExpression e, const SymbolContext& symbolContext,
+      void* auxiliary);
+  bool recursivelyMatches(
+      UserExpressionTrinaryTest test,
+      const SymbolContext& symbolContext = EmptySymbolContext{},
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceDefinedSymbols,
+      void* auxiliary = nullptr) const;
 
   typedef bool (*ExpressionTest)(const UserExpression e,
-                                 const Context& context);
-  bool recursivelyMatches(ExpressionTest test,
-                          const Context& context = EmptySymbolContext{},
-                          SymbolicComputation replaceSymbols =
-                              SymbolicComputation::ReplaceDefinedSymbols) const;
+                                 const SymbolContext& symbolContext);
+  bool recursivelyMatches(
+      ExpressionTest test,
+      const SymbolContext& symbolContext = EmptySymbolContext{},
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceDefinedSymbols) const;
 
   typedef bool (*SimpleExpressionTest)(const UserExpression e);
-  bool recursivelyMatches(SimpleExpressionTest test,
-                          const Context& context = EmptySymbolContext{},
-                          SymbolicComputation replaceSymbols =
-                              SymbolicComputation::ReplaceDefinedSymbols) const;
+  bool recursivelyMatches(
+      SimpleExpressionTest test,
+      const SymbolContext& symbolContext = EmptySymbolContext{},
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceDefinedSymbols) const;
 
   typedef bool (UserExpression::*NonStaticSimpleExpressionTest)() const;
-  bool recursivelyMatches(NonStaticSimpleExpressionTest test,
-                          const Context& context = EmptySymbolContext{},
-                          SymbolicComputation replaceSymbols =
-                              SymbolicComputation::ReplaceDefinedSymbols) const;
+  bool recursivelyMatches(
+      NonStaticSimpleExpressionTest test,
+      const SymbolContext& symbolContext = EmptySymbolContext{},
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceDefinedSymbols) const;
 
   typedef bool (*ExpressionTestAuxiliary)(const UserExpression e,
-                                          const Context& context,
+                                          const SymbolContext& symbolContext,
                                           void* auxiliary);
-  bool recursivelyMatches(ExpressionTestAuxiliary test,
-                          const Context& context = EmptySymbolContext{},
-                          SymbolicComputation replaceSymbols =
-                              SymbolicComputation::ReplaceDefinedSymbols,
-                          void* auxiliary = nullptr) const;
+  bool recursivelyMatches(
+      ExpressionTestAuxiliary test,
+      const SymbolContext& symbolContext = EmptySymbolContext{},
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceDefinedSymbols,
+      void* auxiliary = nullptr) const;
 
  private:
   struct IgnoredSymbols {
@@ -210,7 +218,7 @@ class UserExpression : public Expression {
   static bool IsIgnoredSymbol(const UserExpression* e,
                               UserExpression::IgnoredSymbols* ignoredSymbols);
   bool recursivelyMatches(UserExpressionTrinaryTest test,
-                          const Context& context,
+                          const SymbolContext& symbolContext,
                           SymbolicComputation replaceSymbols, void* auxiliary,
                           IgnoredSymbols* ignoredSymbols) const;
 

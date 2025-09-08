@@ -81,9 +81,9 @@ Regression::Coefficients LogisticRegression::privateFit(
   return modelCoefficients;
 }
 
-double LogisticRegression::levelSet(const double* modelCoefficients,
-                                    double xMin, double xMax, double y,
-                                    const Poincare::Context& context) const {
+double LogisticRegression::levelSet(
+    const double* modelCoefficients, double xMin, double xMax, double y,
+    const Poincare::SymbolContext& symbolContext) const {
   assert(!m_isInternal);
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];

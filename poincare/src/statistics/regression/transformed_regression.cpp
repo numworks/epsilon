@@ -32,9 +32,9 @@ double TransformedRegression::privateEvaluate(
          (applyLnOnY() ? std::exp(transformedY) : transformedY);
 }
 
-double TransformedRegression::levelSet(const double* modelCoefficients,
-                                       double xMin, double xMax, double y,
-                                       const Poincare::Context& context) const {
+double TransformedRegression::levelSet(
+    const double* modelCoefficients, double xMin, double xMax, double y,
+    const Poincare::SymbolContext& symbolContext) const {
   bool opposeY = false;
   double a = modelCoefficients[0];
   if (applyLnOnA()) {

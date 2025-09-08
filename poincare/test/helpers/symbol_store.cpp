@@ -1,13 +1,13 @@
 #include "symbol_store.h"
 
 #include <omg/string.h>
-#include <poincare/context.h>
 #include <poincare/helpers/store.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/symbol_context.h>
 #include <poincare/test/helper.h>
 #include <poincare/user_expression.h>
 
@@ -39,7 +39,8 @@ void store(const char* symbol, const char* expression,
 }
 
 SymbolStore::SymbolWithExpression::SymbolWithExpression(
-    std::string_view name, Poincare::Context::UserNamedType type, const Tree* e)
+    std::string_view name, Poincare::SymbolContext::UserNamedType type,
+    const Tree* e)
     : m_type{type} {
   assert(name.length() <= k_maxNameSize);
   m_name = name;
@@ -61,7 +62,7 @@ const Tree* SymbolStore::expressionForUserNamed(const Tree* symbol) const {
   return existingSymbol->expression();
 }
 
-Poincare::Context::UserNamedType SymbolStore::expressionTypeForIdentifier(
+Poincare::SymbolContext::UserNamedType SymbolStore::expressionTypeForIdentifier(
     std::string_view identifier) const {
   const SymbolWithExpression* existingSymbol = findSymbolInStore(identifier);
   if (!existingSymbol) {

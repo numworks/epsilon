@@ -1,8 +1,8 @@
 #pragma once
 
-#include <poincare/context.h>
 #include <poincare/context_with_parent.h>
 #include <poincare/sequence_approximation_helper.h>
+#include <poincare/symbol_context.h>
 
 #include "sequence_cache.h"
 #include "sequence_store.h"
@@ -17,7 +17,7 @@ class SequenceContext final
   friend class Sequence;
 
  public:
-  SequenceContext(const Poincare::Context* parentContext,
+  SequenceContext(const Poincare::SymbolContext* parentContext,
                   const SequenceStore* sequenceStore);
 
   // Context
@@ -29,7 +29,7 @@ class SequenceContext final
    * and calls the parent context in other cases.
    * The other methods (setExpressionForUserNamed and
    * expressionForUserNamed) always call the parent context. */
-  Poincare::Context::UserNamedType expressionTypeForIdentifier(
+  Poincare::SymbolContext::UserNamedType expressionTypeForIdentifier(
       std::string_view identifier) const override;
 
   // SequenceApproximationHelper::Context

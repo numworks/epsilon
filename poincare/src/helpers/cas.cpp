@@ -6,15 +6,16 @@ namespace Poincare {
 bool CAS::Enabled() { return Internal::CAS::Enabled(); }
 
 bool CAS::NeverDisplayReductionOfInput(const UserExpression& input,
-                                       const Context& ctx) {
-  return Internal::CAS::NeverDisplayReductionOfInput(input, ctx);
+                                       const SymbolContext& symbolContext) {
+  return Internal::CAS::NeverDisplayReductionOfInput(input, symbolContext);
 }
 
 bool CAS::ShouldOnlyDisplayApproximation(
     const UserExpression& input, const UserExpression& exactOutput,
-    const UserExpression& approximateOutput, const Context& ctx) {
-  return Internal::CAS::ShouldOnlyDisplayApproximation(input, exactOutput,
-                                                       approximateOutput, ctx);
+    const UserExpression& approximateOutput,
+    const SymbolContext& symbolContext) {
+  return Internal::CAS::ShouldOnlyDisplayApproximation(
+      input, exactOutput, approximateOutput, symbolContext);
 }
 
 }  // namespace Poincare

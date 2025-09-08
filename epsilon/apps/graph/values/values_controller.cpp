@@ -366,7 +366,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   int derivationOrder;
   OMG::ExpiringPointer<ContinuousFunction> function =
       functionAtIndex(column, row, &abscissa, &derivationOrder);
-  const Context& context = App::app()->localContext();
+  const SymbolContext& symbolContext = App::app()->localContext();
   UserExpression result;
   if (derivationOrder >= 1) {
     // Compute derivative approximate result
@@ -401,7 +401,8 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
      * non-beautified expression. */
     if (simplificationFailure || !m_exactValuesAreActivated ||
         CAS::ShouldOnlyDisplayApproximation(function->originalEquation(),
-                                            result, approximation, context)) {
+                                            result, approximation,
+                                            symbolContext)) {
       // Do not show exact expressions in certain cases, use approximate result
       result = approximation;
     }
@@ -412,15 +413,15 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   uint8_t significantDigits =
       GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
   Layout layout =
-      result.createLayout(floatDisplayMode, significantDigits, context);
+      result.createLayout(floatDisplayMode, significantDigits, symbolContext);
   if (result.isPoint() && layout->layoutSize(k_cellFont).width() >
                               ApproximatedParametricCellSize().width() -
                                   2 * Metric::SmallCellMargin) {
     // Fallback on two rows point display if one row does not fit
     Poincare::Layout child0 = result.cloneChildAtIndex(0).createLayout(
-        floatDisplayMode, significantDigits, context);
+        floatDisplayMode, significantDigits, symbolContext);
     Poincare::Layout child1 = result.cloneChildAtIndex(1).createLayout(
-        floatDisplayMode, significantDigits, context);
+        floatDisplayMode, significantDigits, symbolContext);
     layout = Poincare::Layout::Create(KPoint2DL(KA, KB),
                                       {.KA = child0, .KB = child1});
   }

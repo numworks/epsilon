@@ -65,9 +65,11 @@ Tree* Sequence::PushInitialConditionName(const Tree* sequence,
 }
 
 bool Sequence::MainExpressionContainsForbiddenTerms(
-    const Tree* e, const Context& ctx, const char* name, Type type,
-    int initialRank, bool recursion, bool systemSymbol, bool otherSequences) {
-  if (!Dimension::DeepCheck(e, ctx) || !Dimension::IsNonListScalar(e, ctx)) {
+    const Tree* e, const SymbolContext& symbolContext, const char* name,
+    Type type, int initialRank, bool recursion, bool systemSymbol,
+    bool otherSequences) {
+  if (!Dimension::DeepCheck(e, symbolContext) ||
+      !Dimension::IsNonListScalar(e, symbolContext)) {
     return true;
   }
   const Tree* skipUntil = e;

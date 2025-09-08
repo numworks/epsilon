@@ -2,9 +2,9 @@
 
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
-#include <poincare/context.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
+#include <poincare/symbol_context.h>
 
 using namespace Poincare;
 

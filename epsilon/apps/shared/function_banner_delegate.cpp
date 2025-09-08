@@ -10,7 +10,8 @@ namespace Shared {
 
 void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
     double cursorT, double cursorX, double cursorY, Ion::Storage::Record record,
-    const FunctionContext& functionContext, const Poincare::Context& context,
+    const FunctionContext& functionContext,
+    const Poincare::SymbolContext& symbolContext,
     bool cappedNumberOfSignificantDigits) {
   OMG::ExpiringPointer<const Function> function =
       functionContext.modelForRecord(record);
@@ -49,15 +50,15 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
 }
 
 double FunctionBannerDelegate::GetValueDisplayedOnBanner(
-    double t, const Poincare::Context& context, int significantDigits,
-    double deltaThreshold, bool roundToZero) {
+    double t, const Poincare::SymbolContext& symbolContext,
+    int significantDigits, double deltaThreshold, bool roundToZero) {
   if (roundToZero && std::fabs(t) < deltaThreshold) {
     // Round to 0 to avoid rounding to unnecessary low non-zero value.
     return 0.0;
   }
   // Round to displayed value
   double displayedValue = PoincareHelpers::ValueOfFloatAsDisplayed<double>(
-      t, significantDigits, context);
+      t, significantDigits, symbolContext);
   // Return displayed value if difference from t is under deltaThreshold
   return std::fabs(displayedValue - t) < deltaThreshold ? displayedValue : t;
 }

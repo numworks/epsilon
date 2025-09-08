@@ -41,7 +41,7 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
 
   UserExpression value = UserExpression::Builder<double>(v);
   /* Check the global context to know whether units need an underscore. */
-  const Context& globalContext = Shared::GlobalContextAccessor::Context();
+  const SymbolContext& globalContext = Shared::GlobalContextAccessor::Context();
   UserExpression unit = UserExpression::Parse(rawUnit(), globalContext);
 
   if (unit.isUninitialized()) {
@@ -103,7 +103,7 @@ Poincare::Layout ZDataField::getLayout(AtomicNumber z,
                                        int significantDigits) const {
   Preferences::PrintFloatMode floatDisplayMode =
       GlobalPreferences::SharedGlobalPreferences()->displayMode();
-  const Context& globalContext = Shared::GlobalContextAccessor::Context();
+  const SymbolContext& globalContext = Shared::GlobalContextAccessor::Context();
   return UserExpression::Builder(static_cast<int>(z))
       .createLayout(floatDisplayMode, significantDigits, globalContext);
 }
@@ -117,7 +117,7 @@ Layout ADataField::getLayout(AtomicNumber z, int significantDigits) const {
   }
   Preferences::PrintFloatMode floatDisplayMode =
       GlobalPreferences::SharedGlobalPreferences()->displayMode();
-  const Context& globalContext = Shared::GlobalContextAccessor::Context();
+  const SymbolContext& globalContext = Shared::GlobalContextAccessor::Context();
   return UserExpression::Builder(static_cast<int>(a))
       .createLayout(floatDisplayMode, significantDigits, globalContext);
 }
@@ -202,7 +202,7 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z,
 
   Preferences::PrintFloatMode floatDisplayMode =
       GlobalPreferences::SharedGlobalPreferences()->displayMode();
-  const Context& globalContext = Shared::GlobalContextAccessor::Context();
+  const SymbolContext& globalContext = Shared::GlobalContextAccessor::Context();
 
   /* Subshells are displayed in order of increasing n, then increasing l. */
   for (n = 1; n <= k_nMax; n++) {

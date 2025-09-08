@@ -1,8 +1,8 @@
 #include "parser.h"
 
 #include <omg/utf8_decoder.h>
-#include <poincare/context.h>
 #include <poincare/old/simplification_helper.h>
+#include <poincare/symbol_context.h>
 #include <stdlib.h>
 
 #include <algorithm>
@@ -925,22 +925,22 @@ void Parser::privateParseCustomIdentifier(OExpression &leftHandSide,
    * afterwards.
    * If there is no context, f(x) is always parsed as a function and u{n} as
    * a sequence*/
-  Context::UserNamedType idType = Context::UserNamedType::None;
+  SymbolContext::UserNamedType idType = SymbolContext::UserNamedType::None;
   if (m_parsingContext.context() &&
       m_parsingContext.parsingMethod() !=
           ParsingContext::ParsingMethod::Assignment) {
     idType =
         m_parsingContext.context()->expressionTypeForIdentifier(name, length);
-    if (idType != Context::UserNamedType::Function &&
-        idType != Context::UserNamedType::Sequence &&
-        idType != Context::UserNamedType::List) {
+    if (idType != SymbolContext::UserNamedType::Function &&
+        idType != SymbolContext::UserNamedType::Sequence &&
+        idType != SymbolContext::UserNamedType::List) {
       leftHandSide = Symbol::Builder(name, length);
       return;
     }
   }
 
-  if (idType == Context::UserNamedType::Sequence ||
-      (idType == Context::UserNamedType::None &&
+  if (idType == SymbolContext::UserNamedType::Sequence ||
+      (idType == SymbolContext::UserNamedType::None &&
        m_nextToken.otype() == Token::Type::LeftSystemBrace)) {
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or has an unknown type and is followed
@@ -973,7 +973,7 @@ void Parser::privateParseCustomIdentifier(OExpression &leftHandSide,
 
 bool Parser::privateParseCustomIdentifierWithParameters(
     OExpression &leftHandSide, const char *name, size_t length,
-    Token::Type stoppingType, Context::UserNamedType idType,
+    Token::Type stoppingType, SymbolContext::UserNamedType idType,
     bool parseApostropheAsDerivative) {
   int derivativeOrder = 0;
   if (parseApostropheAsDerivative) {
@@ -1034,7 +1034,7 @@ bool Parser::privateParseCustomIdentifierWithParameters(
       m_status =
           Status::Error;  // Function and variable must have distinct names.
       return true;
-    } else if (idType == Context::UserNamedType::List) {
+    } else if (idType == SymbolContext::UserNamedType::List) {
       if (derivativeOrder > 0) {
         return false;
       }

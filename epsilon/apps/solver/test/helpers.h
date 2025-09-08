@@ -1,7 +1,7 @@
 #pragma once
 
-#include <poincare/context.h>
 #include <poincare/preferences.h>
+#include <poincare/symbol_context.h>
 #include <poincare/test/old/helper.h>
 
 #include <initializer_list>
@@ -21,66 +21,71 @@ bring_in(Solver::SystemOfEquations::Error, EquationUnhandled);
 
 // Custom assertions
 
-void assert_solves_to(
-    std::initializer_list<const char*> equations,
-    std::initializer_list<const char*> solutions,
-    const Poincare::Context& context = Poincare::EmptySymbolContext{},
-    double approxThreshold = 0.);
-void assert_solves_numerically_to(
-    const char* equation, double min, double max,
-    std::initializer_list<double> solutions,
-    const Poincare::Context& context = Poincare::EmptySymbolContext{},
-    const char* variable = "x");
-void assert_solves_to_error(
-    std::initializer_list<const char*> equations,
-    Solver::SystemOfEquations::Error error,
-    const Poincare::Context& context = Poincare::EmptySymbolContext{});
+void assert_solves_to(std::initializer_list<const char*> equations,
+                      std::initializer_list<const char*> solutions,
+                      const Poincare::SymbolContext& symbolContext =
+                          Poincare::EmptySymbolContext{},
+                      double approxThreshold = 0.);
+void assert_solves_numerically_to(const char* equation, double min, double max,
+                                  std::initializer_list<double> solutions,
+                                  const Poincare::SymbolContext& symbolContext =
+                                      Poincare::EmptySymbolContext{},
+                                  const char* variable = "x");
+void assert_solves_to_error(std::initializer_list<const char*> equations,
+                            Solver::SystemOfEquations::Error error,
+                            const Poincare::SymbolContext& symbolContext =
+                                Poincare::EmptySymbolContext{});
 void assert_solves_to_infinite_solutions(
     std::initializer_list<const char*> equations,
     std::initializer_list<const char*> solutions,
-    const Poincare::Context& context = Poincare::EmptySymbolContext{});
+    const Poincare::SymbolContext& symbolContext =
+        Poincare::EmptySymbolContext{});
 
 // Auto solving range
 
 void assert_solves_with_auto_solving_range(
     const char* equation, std::initializer_list<double> solutions,
-    const Poincare::Context& context = Poincare::EmptySymbolContext{});
-void assert_auto_solving_range_is(
-    const char* equation, double min, double max,
-    const Poincare::Context& context = Poincare::EmptySymbolContext{});
+    const Poincare::SymbolContext& symbolContext =
+        Poincare::EmptySymbolContext{});
+void assert_auto_solving_range_is(const char* equation, double min, double max,
+                                  const Poincare::SymbolContext& symbolContext =
+                                      Poincare::EmptySymbolContext{});
 
 // Shorthands
 inline void assert_solves_to_no_solution(
-    const char* equation,
-    const Poincare::Context& context = Poincare::EmptySymbolContext{}) {
+    const char* equation, const Poincare::SymbolContext& symbolContext =
+                              Poincare::EmptySymbolContext{}) {
   /* Note: Doesn't really work with quadratic equations that will always report
    * at least a delta value. */
-  assert_solves_to({equation}, {}, context);
+  assert_solves_to({equation}, {}, symbolContext);
 }
 inline void assert_solves_to_no_solution(
     std::initializer_list<const char*> equations,
-    const Poincare::Context& context = Poincare::EmptySymbolContext{}) {
-  assert_solves_to(equations, {}, context);
+    const Poincare::SymbolContext& symbolContext =
+        Poincare::EmptySymbolContext{}) {
+  assert_solves_to(equations, {}, symbolContext);
 }
 inline void assert_solves_to_error(
     const char* equation, Solver::SystemOfEquations::Error error,
-    const Poincare::Context& context = Poincare::EmptySymbolContext{}) {
-  assert_solves_to_error({equation}, error, context);
+    const Poincare::SymbolContext& symbolContext =
+        Poincare::EmptySymbolContext{}) {
+  assert_solves_to_error({equation}, error, symbolContext);
 }
 inline void assert_solves_to_infinite_solutions(
-    const char* equation,
-    const Poincare::Context& context = Poincare::EmptySymbolContext{}) {
-  assert_solves_to_infinite_solutions({equation}, {}, context);
+    const char* equation, const Poincare::SymbolContext& symbolContext =
+                              Poincare::EmptySymbolContext{}) {
+  assert_solves_to_infinite_solutions({equation}, {}, symbolContext);
 }
-inline void assert_solves_to(
-    const char* equation, const char* solution,
-    const Poincare::Context& context = Poincare::EmptySymbolContext{}) {
-  assert_solves_to({equation}, {solution}, context);
+inline void assert_solves_to(const char* equation, const char* solution,
+                             const Poincare::SymbolContext& symbolContext =
+                                 Poincare::EmptySymbolContext{}) {
+  assert_solves_to({equation}, {solution}, symbolContext);
 }
-inline void assert_solves_to(
-    const char* equation, std::initializer_list<const char*> solutions,
-    const Poincare::Context& context = Poincare::EmptySymbolContext{}) {
-  assert_solves_to({equation}, solutions, context);
+inline void assert_solves_to(const char* equation,
+                             std::initializer_list<const char*> solutions,
+                             const Poincare::SymbolContext& symbolContext =
+                                 Poincare::EmptySymbolContext{}) {
+  assert_solves_to({equation}, solutions, symbolContext);
 }
 
 // Helpers

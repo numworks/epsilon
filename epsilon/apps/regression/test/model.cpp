@@ -5,7 +5,7 @@
 #include <apps/shared/store_app_context.h>
 #include <assert.h>
 #include <omg/list.h>
-#include <poincare/context.h>
+#include <poincare/symbol_context.h>
 #include <poincare/test/old/helper.h>
 #include <poincare/trigonometry.h>
 #include <quiz.h>

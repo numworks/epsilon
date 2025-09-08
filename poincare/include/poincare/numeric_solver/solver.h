@@ -3,8 +3,8 @@
 #include <omg/float.h>
 #include <omg/troolean.h>
 #include <omg/vector.h>
-#include <poincare/context.h>
 #include <poincare/coordinate_2D.h>
+#include <poincare/symbol_context.h>
 #include <poincare/tree.h>
 
 #include <algorithm>
@@ -126,7 +126,8 @@ class Solver {
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */
-  Solver(T xStart, T xEnd, const Context& context = EmptySymbolContext{});
+  Solver(T xStart, T xEnd,
+         const SymbolContext& symbolContext = EmptySymbolContext{});
 
   void reset(T xStart, T xEnd, T searchStep);
 
@@ -210,7 +211,7 @@ class Solver {
   T nextX(T x, T direction, T slope) const;
   T nextPossibleRootInChild(const Internal::Tree* e, int childIndex) const;
   typedef bool (*ExpressionTestAuxiliary)(const Internal::Tree* e,
-                                          const Context& context,
+                                          const SymbolContext& symbolContext,
                                           void* auxiliary);
   T nextRootInChildren(const Internal::Tree* e, ExpressionTestAuxiliary test,
                        void* aux) const;
@@ -240,7 +241,7 @@ class Solver {
   T m_xStart;
   T m_xEnd;
   T m_searchStep;
-  const Context& m_context;
+  const SymbolContext& m_context;
   GrowthSpeed m_growthSpeed;
   SolutionQueue m_solutionQueue;
 };

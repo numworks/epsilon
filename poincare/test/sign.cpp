@@ -1,9 +1,9 @@
-#include <poincare/context.h>
 #include <poincare/src/expression/number.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/expression/variables.h>
+#include <poincare/symbol_context.h>
 
 #include "helper.h"
 #include "helpers/symbol_store.h"
@@ -532,16 +532,16 @@ QUIZ_CASE(pcj_sign_is_positive) {
 
 void assert_reduced_is_positive(
     const char* input, OMG::Troolean isPositive,
-    const Context& context = Poincare::EmptySymbolContext{},
+    const SymbolContext& symbolContext = Poincare::EmptySymbolContext{},
     ComplexFormat complexFormat = ComplexFormat::Cartesian,
     AngleUnit angleUnit = AngleUnit::Radian) {
   ProjectionContext projCtx = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = angleUnit,
       .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = context,
+      .m_context = symbolContext,
       .m_advanceReduce = false};
-  Tree* e = parse(input, context);
+  Tree* e = parse(input, symbolContext);
   Simplification::ProjectAndReduce(e, &projCtx);
   ComplexSign sign = GetComplexSign(e);
   quiz_assert_print_if_failure(

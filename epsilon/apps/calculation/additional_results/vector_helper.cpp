@@ -13,7 +13,7 @@ namespace Calculation {
 namespace VectorHelper {
 
 UserExpression BuildVectorNorm(
-    const UserExpression exactOutput, const Context& context,
+    const UserExpression exactOutput, const SymbolContext& symbolContext,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit(true));
@@ -24,7 +24,7 @@ UserExpression BuildVectorNorm(
   UserExpression norm = UserExpression::Create(KNorm(KA), {.KA = exactOutput});
   bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(
-      &norm, context, calculationPreferences.complexFormat,
+      &norm, symbolContext, calculationPreferences.complexFormat,
       calculationPreferences.angleUnit, true, Poincare::ReductionTarget::User,
       VectorListController::k_symbolicComputation, &reductionFailure);
   return reductionFailure || norm.isUninitialized() || norm.isUndefined()

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <poincare/context.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/symbol_context.h>
 
 #include <string>
 #include <vector>
@@ -12,7 +12,7 @@
 using namespace Poincare::Internal;
 
 // Save trees of previous outputs o0, o1...
-class HistoryContext : public Poincare::Context {
+class HistoryContext : public Poincare::SymbolContext {
  public:
   int addOutput(const Tree* tree) {
     int n = tree->treeSize();

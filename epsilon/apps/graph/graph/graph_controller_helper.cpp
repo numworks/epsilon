@@ -35,7 +35,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     jumpToLeftRightCurve(tCursor, direction, functionsCount, record);
     return true;
   }
-  const Context& context = App::app()->localContext();
+  const SymbolContext& symbolContext = App::app()->localContext();
   // Reload the expiring pointer
   function = App::app()->functionStore().modelForRecord(record);
   bool isStrictInequality = function->properties().isStrictInequality();
@@ -122,7 +122,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
       t = magnitude * std::round(t / magnitude);
       // Also round t so that f(x) matches f evaluated at displayed x
       t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-          t, context,
+          t, symbolContext,
           GlobalPreferences::SharedGlobalPreferences()
               ->numberOfSignificantDigits(),
           pixelWidth, false);
@@ -149,7 +149,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     t += dir * step * scrollSpeed;
     // If possible, round t so that f(x) matches f evaluated at displayed x
     t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-        t, context,
+        t, symbolContext,
         GlobalPreferences::SharedGlobalPreferences()
             ->numberOfSignificantDigits(),
         0.05 * step, true);

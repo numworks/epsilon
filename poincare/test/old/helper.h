@@ -2,11 +2,11 @@
 
 #include <omg/enums.h>
 #include <omg/float.h>
-#include <poincare/context.h>
 #include <poincare/pool_handle.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/symbol_context.h>
 #include <poincare/test/float_helper.h>
 #include <poincare/variable_store.h>
 #include <quiz.h>
@@ -64,7 +64,8 @@ typedef Poincare::Internal::Tree* (*ProcessExpression)(
     Poincare::Internal::ProjectionContext& projectionContext);
 
 void assert_parsed_expression_process_to(
-    const char* expression, const char* result, const Poincare::Context& ctx,
+    const char* expression, const char* result,
+    const Poincare::SymbolContext& symbolContext,
     Poincare::ReductionTarget target, Poincare::ComplexFormat complexFormat,
     Poincare::AngleUnit angleUnit, Poincare::Preferences::UnitFormat unitFormat,
     Poincare::SymbolicComputation symbolicComputation,
@@ -78,7 +79,8 @@ void assert_parsed_expression_process_to(
  * retro-compatibilty with the old tests */
 void assert_parsed_expression_simplify_to(
     const char* expression, const char* simplifiedExpression,
-    const Poincare::Context& context, Poincare::ReductionTarget target = User,
+    const Poincare::SymbolContext& symbolContext,
+    Poincare::ReductionTarget target = User,
     Poincare::AngleUnit angleUnit = Radian,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::ComplexFormat complexFormat = Cartesian,
@@ -100,7 +102,7 @@ void assert_parsed_expression_simplify_to(
 template <typename T>
 void assert_expression_approximates_to(
     const char* expression, const char* approximation,
-    Poincare::Context& context, Poincare::AngleUnit angleUnit = Degree,
+    Poincare::SymbolContext& context, Poincare::AngleUnit angleUnit = Degree,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::ComplexFormat complexFormat = Cartesian,
     int numberOfSignificantDigits =

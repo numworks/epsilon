@@ -24,7 +24,7 @@ struct ReferenceValue {
 
 int FindUpperAndLowerReferenceValues(
     double inputValue, Poincare::UserExpression approximatedSIExpression,
-    const Poincare::Context& context,
+    const Poincare::SymbolContext& symbolContext,
     const ReferenceValue** returnReferenceValues,
     int* returnReferenceTableIndex);
 #if 0

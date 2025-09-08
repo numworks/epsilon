@@ -131,7 +131,7 @@ class GraphController : public Shared::FunctionGraphController,
       double cursorT, double cursorX, double cursorY,
       Ion::Storage::Record record,
       const Shared::FunctionContext& functionContext,
-      const Poincare::Context& context,
+      const Poincare::SymbolContext& symbolContext,
       bool cappedNumberOfSignificantDigits = false) override;
 
   void interestingFunctionRange(

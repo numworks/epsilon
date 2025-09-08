@@ -9,7 +9,8 @@ namespace Poincare::Internal {
 class AffineRegression : public Regression {
  public:
   double levelSet(const double* modelCoefficients, double xMin, double xMax,
-                  double y, const Poincare::Context& context) const override;
+                  double y,
+                  const Poincare::SymbolContext& symbolContext) const override;
 
  protected:
   virtual int slopeCoefficientIndex() const { return 0; }

@@ -13,7 +13,8 @@ class AdditionalResultsHelper final {
    * and passed here as parameter. */
   typedef bool (*ShouldOnlyDisplayApproximation)(
       const UserExpression& input, const UserExpression& exactOutput,
-      const UserExpression& approximateOutput, const Context& context);
+      const UserExpression& approximateOutput,
+      const SymbolContext& symbolContext);
 
   struct TrigonometryResults {
     UserExpression exactAngle;
@@ -29,7 +30,7 @@ class AdditionalResultsHelper final {
 
   static UserExpression ExtractExactAngleFromDirectTrigo(
       const UserExpression input, const UserExpression exactOutput,
-      const Context& context,
+      const SymbolContext& symbolContext,
       const Preferences::CalculationPreferences calculationPreferences);
 
   static bool expressionIsInterestingFunction(const UserExpression e);
@@ -61,7 +62,8 @@ class AdditionalResultsHelper final {
 
   /* Scientific notation additional results */
   static Layout ScientificLayout(
-      const UserExpression approximateOutput, const Context& context,
+      const UserExpression approximateOutput,
+      const SymbolContext& symbolContext,
       const Preferences::CalculationPreferences calculationPreferences);
 
   /* Matrix additional results */

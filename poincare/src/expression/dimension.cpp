@@ -1,7 +1,7 @@
 #include "dimension.h"
 
-#include <poincare/context.h>
 #include <poincare/src/memory/n_ary.h>
+#include <poincare/symbol_context.h>
 
 #include <algorithm>
 
@@ -24,9 +24,13 @@ namespace Poincare::Internal {
 template <typename T>
 class LazyArray {
  public:
-  LazyArray(const Tree* root, const Poincare::Context& ctx,
-            T (*getter)(const Tree* e, const Poincare::Context& ctx))
-      : m_root(root), m_ctx(ctx), m_getter(getter), m_lastAccessedIndex(0) {
+  LazyArray(const Tree* root, const Poincare::SymbolContext& symbolContext,
+            T (*getter)(const Tree* e,
+                        const Poincare::SymbolContext& symbolContext))
+      : m_root(root),
+        m_ctx(symbolContext),
+        m_getter(getter),
+        m_lastAccessedIndex(0) {
     if (m_root->numberOfChildren() > 0) {
       m_element0 = m_getter(m_root->child(0), m_ctx);
     }
@@ -47,8 +51,8 @@ class LazyArray {
   T m_element0;
   T m_lastAccessedElement;
   const Tree* m_root;
-  const Poincare::Context& m_ctx;
-  T (*m_getter)(const Tree* e, const Poincare::Context& ctx);
+  const Poincare::SymbolContext& m_ctx;
+  T (*m_getter)(const Tree* e, const Poincare::SymbolContext& symbolContext);
   size_t m_lastAccessedIndex;
 };
 
@@ -100,24 +104,24 @@ Tree* CloneAndReplaceFunctionDefinition(const Tree* e, const Tree* definition) {
   return clone;
 }
 
-/* Returns nullptr if the variable is not defined in the context, returns undef
- * if the definition exists but is circular, and returns the variable definition
- * otherwise. */
+/* Returns nullptr if the variable is not defined in the symbolContext, returns
+ * undef if the definition exists but is circular, and returns the variable
+ * definition otherwise. */
 const Tree* DefinitionWithCircularityCheck(const Tree* e,
-                                           const Context& context) {
-  const Tree* definition = context.expressionForUserNamed(e);
-  if (definition && Symbol::InvolvesCircularity(definition, context)) {
+                                           const SymbolContext& symbolContext) {
+  const Tree* definition = symbolContext.expressionForUserNamed(e);
+  if (definition && Symbol::InvolvesCircularity(definition, symbolContext)) {
     return KUndef;
   }
   return definition;
 }
 
-bool Dimension::DeepCheckListLength(const Tree* e,
-                                    const Poincare::Context& ctx) {
+bool Dimension::DeepCheckListLength(
+    const Tree* e, const Poincare::SymbolContext& symbolContext) {
   // TODO complexity should be linear
-  LazyArray<int> childLength(e, ctx, ListLength);
+  LazyArray<int> childLength(e, symbolContext, ListLength);
   for (IndexedChild<const Tree*> child : e->indexedChildren()) {
-    if (!DeepCheckListLength(child, ctx)) {
+    if (!DeepCheckListLength(child, symbolContext)) {
       return false;
     }
   }
@@ -157,19 +161,19 @@ bool Dimension::DeepCheckListLength(const Tree* e,
       return true;
     }
     case Type::UserSymbol: {
-      // UserSymbols in context should always be well defined
+      // UserSymbols in symbolContext should always be well defined
 #if ASSERTIONS
-      const Tree* definition = ctx.expressionForUserNamed(e);
-      assert(!definition || DeepCheckListLength(definition, ctx));
+      const Tree* definition = symbolContext.expressionForUserNamed(e);
+      assert(!definition || DeepCheckListLength(definition, symbolContext));
 #endif
       return true;
     }
     case Type::UserFunction: {
-      const Tree* definition = DefinitionWithCircularityCheck(e, ctx);
+      const Tree* definition = DefinitionWithCircularityCheck(e, symbolContext);
       if (definition) {
         Tree* functionEvaluation =
             CloneAndReplaceFunctionDefinition(e, definition);
-        bool result = DeepCheckListLength(functionEvaluation, ctx);
+        bool result = DeepCheckListLength(functionEvaluation, symbolContext);
         functionEvaluation->removeTree();
         return result;
       }
@@ -193,7 +197,7 @@ bool Dimension::DeepCheckListLength(const Tree* e,
         if (e->isListSequence() || e->isRandIntNoRep()) {
           return false;
         }
-        Dimension dim = Get(e, ctx);
+        Dimension dim = Get(e, symbolContext);
         if (dim.isMatrix() || dim.isUnit()) {
           return false;
         }
@@ -212,7 +216,8 @@ bool Dimension::hasNonKelvinTemperatureUnit() const {
   return isUnit() && Units::Unit::IsNonKelvinTemperature(unit.representative);
 }
 
-int Dimension::ListLength(const Tree* e, const Poincare::Context& ctx) {
+int Dimension::ListLength(const Tree* e,
+                          const Poincare::SymbolContext& symbolContext) {
   switch (e->type()) {
     case Type::Mean:
     case Type::StdDev:
@@ -228,7 +233,7 @@ int Dimension::ListLength(const Tree* e, const Poincare::Context& ctx) {
       return k_nonListListLength;
     case Type::Dep:
     case Type::ListSort:
-      return ListLength(e->child(0), ctx);
+      return ListLength(e->child(0), symbolContext);
     case Type::List:
       return e->numberOfChildren();
     case Type::ListSequence: {
@@ -241,7 +246,7 @@ int Dimension::ListLength(const Tree* e, const Poincare::Context& ctx) {
     case Type::ListSlice: {
       assert(Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2)));
-      int listLength = ListLength(e->child(0), ctx);
+      int listLength = ListLength(e->child(0), symbolContext);
       int start = Integer::Handler(e->child(1)).to<uint8_t>();
       start = std::max(start, 1);
       int end = Integer::Handler(e->child(2)).to<uint8_t>();
@@ -253,18 +258,18 @@ int Dimension::ListLength(const Tree* e, const Poincare::Context& ctx) {
       assert(Integer::Is<uint8_t>(e->child(2)));
       return Integer::Handler(e->child(2)).to<uint8_t>();
     case Type::UserSymbol: {
-      const Tree* definition = ctx.expressionForUserNamed(e);
+      const Tree* definition = symbolContext.expressionForUserNamed(e);
       if (definition) {
-        return ListLength(definition, ctx);
+        return ListLength(definition, symbolContext);
       }
       return k_nonListListLength;
     }
     case Type::UserFunction: {
-      const Tree* definition = DefinitionWithCircularityCheck(e, ctx);
+      const Tree* definition = DefinitionWithCircularityCheck(e, symbolContext);
       if (definition) {
         Tree* functionEvaluation =
             CloneAndReplaceFunctionDefinition(e, definition);
-        int result = ListLength(functionEvaluation, ctx);
+        int result = ListLength(functionEvaluation, symbolContext);
         functionEvaluation->removeTree();
         return result;
       }
@@ -274,7 +279,7 @@ int Dimension::ListLength(const Tree* e, const Poincare::Context& ctx) {
     default: {
       // TODO sort lists first to optimize ListLength ?
       for (const Tree* child : e->children()) {
-        int childListDim = ListLength(child, ctx);
+        int childListDim = ListLength(child, symbolContext);
         if (childListDim >= 0) {
           return childListDim;
         }
@@ -284,15 +289,15 @@ int Dimension::ListLength(const Tree* e, const Poincare::Context& ctx) {
   }
 }
 
-bool Dimension::DeepCheckDimensions(const Tree* e,
-                                    const Poincare::Context& ctx) {
+bool Dimension::DeepCheckDimensions(
+    const Tree* e, const Poincare::SymbolContext& symbolContext) {
   bool hasUnitChild = false;
   bool hasNonKelvinChild = false;
   for (IndexedChild<const Tree*> child : e->indexedChildren()) {
-    if (!DeepCheckDimensions(child, ctx)) {
+    if (!DeepCheckDimensions(child, symbolContext)) {
       return false;
     }
-    Dimension childDim = Get(child, ctx);
+    Dimension childDim = Get(child, symbolContext);
     if (childDim.isUnit()) {
       // Cannot mix non-Kelvin temperature unit with any unit.
       // TODO: UnitConvert should be able to handle this.
@@ -349,7 +354,8 @@ bool Dimension::DeepCheckDimensions(const Tree* e,
     }
     assert(childDim.isSanitized());
   }
-  return DeepCheckDimensionsAux(e, ctx, hasUnitChild, hasNonKelvinChild);
+  return DeepCheckDimensionsAux(e, symbolContext, hasUnitChild,
+                                hasNonKelvinChild);
 }
 
 /* To reduce the stack frame of the recursive method [DeepCheckDimensions], the
@@ -358,9 +364,10 @@ bool Dimension::DeepCheckDimensions(const Tree* e,
  * frame without risking a stack overflow on big Trees when evaluating the
  * recursive part of [DeepCheckDimensions] */
 bool __attribute__((noinline))
-Dimension::DeepCheckDimensionsAux(const Tree* e, const Poincare::Context& ctx,
+Dimension::DeepCheckDimensionsAux(const Tree* e,
+                                  const Poincare::SymbolContext& symbolContext,
                                   bool hasUnitChild, bool hasNonKelvinChild) {
-  LazyArray<Dimension> childDim(e, ctx, Get);
+  LazyArray<Dimension> childDim(e, symbolContext, Get);
   bool unitsAllowed = false;
   bool angleUnitsAllowed = e->isDirectTrigonometryFunction() ||
                            e->isDirectAdvancedTrigonometryFunction();
@@ -566,19 +573,19 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, const Poincare::Context& ctx,
       return n <= Random::k_maxNumberOfSeeds && a <= b && n <= b - a + 1;
     }
     case Type::UserSymbol: {
-      // UserSymbols in context should always be well defined
+      // UserSymbols in symbolContext should always be well defined
 #if ASSERTIONS
-      const Tree* definition = ctx.expressionForUserNamed(e);
-      assert(!definition || DeepCheckDimensions(definition, ctx));
+      const Tree* definition = symbolContext.expressionForUserNamed(e);
+      assert(!definition || DeepCheckDimensions(definition, symbolContext));
 #endif
       return true;
     }
     case Type::UserFunction: {
-      const Tree* definition = DefinitionWithCircularityCheck(e, ctx);
+      const Tree* definition = DefinitionWithCircularityCheck(e, symbolContext);
       if (definition) {
         Tree* functionEvaluation =
             CloneAndReplaceFunctionDefinition(e, definition);
-        bool result = DeepCheckDimensions(functionEvaluation, ctx);
+        bool result = DeepCheckDimensions(functionEvaluation, symbolContext);
         functionEvaluation->removeTree();
         return result;
       }
@@ -616,7 +623,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, const Poincare::Context& ctx,
   return true;
 }
 
-Dimension Dimension::Get(const Tree* e, const Poincare::Context& ctx) {
+Dimension Dimension::Get(const Tree* e,
+                         const Poincare::SymbolContext& symbolContext) {
   switch (e->type()) {
     case Type::Div:
     case Type::Mult: {
@@ -626,7 +634,7 @@ Dimension Dimension::Get(const Tree* e, const Poincare::Context& ctx) {
       Units::SIVector unitVector = Units::SIVector::Empty();
       bool secondDivisionChild = false;
       for (const Tree* child : e->children()) {
-        Dimension dim = Get(child, ctx);
+        Dimension dim = Get(child, symbolContext);
         if (dim.isMatrix()) {
           if (rows == 0) {
             rows = dim.matrix.rows;
@@ -650,16 +658,17 @@ Dimension Dimension::Get(const Tree* e, const Poincare::Context& ctx) {
     case Type::Product:
     case Type::ListSequence:
     case Type::Diff:
-      return Get(e->child(Parametric::FunctionIndex(e)), ctx);
+      return Get(e->child(Parametric::FunctionIndex(e)), symbolContext);
     case Type::Dep:
-      return Get(Dependency::Main(e), ctx);
+      return Get(Dependency::Main(e), symbolContext);
     case Type::PowReal:
     case Type::Pow: {
-      Dimension dim = Get(e->child(0), ctx);
+      Dimension dim = Get(e->child(0), symbolContext);
       if (dim.isUnit()) {
         float index = Approximation::To<float>(
             e->child(1), Approximation::Parameters{},
-            Approximation::Context(AngleUnit::None, ComplexFormat::None, ctx));
+            Approximation::Context(AngleUnit::None, ComplexFormat::None,
+                                   symbolContext));
         assert(!std::isnan(index) && index <= static_cast<float>(INT8_MAX) &&
                index >= static_cast<float>(INT8_MIN) &&
                std::round(index) == index);
@@ -673,7 +682,8 @@ Dimension Dimension::Get(const Tree* e, const Poincare::Context& ctx) {
       return dim;
     }
     case Type::Add:
-      return e->numberOfChildren() > 0 ? Get(e->child(0), ctx) : Scalar();
+      return e->numberOfChildren() > 0 ? Get(e->child(0), symbolContext)
+                                       : Scalar();
     case Type::AngleUnitContext:
     case Type::Abs:
     case Type::Opposite:
@@ -687,13 +697,14 @@ Dimension Dimension::Get(const Tree* e, const Poincare::Context& ctx) {
     case Type::Parentheses:
     case Type::ListElement:
     case Type::ListSort:
-      return Get(e->child(0), ctx);
+      return Get(e->child(0), symbolContext);
     case Type::Matrix:
       return Matrix(Matrix::NumberOfRows(e), Matrix::NumberOfColumns(e));
     case Type::Dim:
-      return Get(e->child(0), ctx).isMatrix() ? Matrix(1, 2) : Scalar();
+      return Get(e->child(0), symbolContext).isMatrix() ? Matrix(1, 2)
+                                                        : Scalar();
     case Type::Transpose: {
-      Dimension dim = Get(e->child(0), ctx);
+      Dimension dim = Get(e->child(0), symbolContext);
       return Matrix(dim.matrix.cols, dim.matrix.rows);
     }
     case Type::Identity: {
@@ -709,7 +720,7 @@ Dimension Dimension::Get(const Tree* e, const Poincare::Context& ctx) {
     case Type::UnitConversion:
       /* Use first child because it's representative is needed in
        * Unit::ProjectToBestUnits in case of non kelvin units. */
-      return Get(e->child(0), ctx);
+      return Get(e->child(0), symbolContext);
     case Type::Unit:
       return Dimension::Unit(e);
     case Type::PhysicalConstant:
@@ -719,20 +730,21 @@ Dimension Dimension::Get(const Tree* e, const Poincare::Context& ctx) {
       return Point();
     case Type::ListSlice:
     case Type::List:
-      return ListLength(e, ctx) > 0 ? Get(e->child(0), ctx) : Scalar();
+      return ListLength(e, symbolContext) > 0 ? Get(e->child(0), symbolContext)
+                                              : Scalar();
     case Type::UserSymbol: {
-      const Tree* definition = ctx.expressionForUserNamed(e);
+      const Tree* definition = symbolContext.expressionForUserNamed(e);
       if (definition) {
-        return Get(definition, ctx);
+        return Get(definition, symbolContext);
       }
       return Scalar();
     }
     case Type::UserFunction: {
-      const Tree* definition = DefinitionWithCircularityCheck(e, ctx);
+      const Tree* definition = DefinitionWithCircularityCheck(e, symbolContext);
       if (definition) {
         Tree* functionEvaluation =
             CloneAndReplaceFunctionDefinition(e, definition);
-        Dimension result = Get(functionEvaluation, ctx);
+        Dimension result = Get(functionEvaluation, symbolContext);
         functionEvaluation->removeTree();
         return result;
       }

@@ -2,10 +2,10 @@
 #include <escher/text_field.h>
 #include <ion/clipboard.h>
 #include <omg/utf8_decoder.h>
-#include <poincare/context.h>
 #include <poincare/layout.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/symbol_context.h>
 #include <poincare/user_expression.h>
 
 #include <algorithm>

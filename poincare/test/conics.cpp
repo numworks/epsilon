@@ -1,9 +1,9 @@
 #include <apps/shared/global_store.h>
 #include <ion/storage/file_system.h>
-#include <poincare/context.h>
 #include <poincare/function_properties/conic.h>
 #include <poincare/pool_variable_context.h>
 #include <poincare/src/expression/simplification.h>
+#include <poincare/symbol_context.h>
 
 #include "helper.h"
 #include "omg/float.h"

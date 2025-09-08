@@ -493,10 +493,11 @@ static_assert(std::size(k_referenceTables) == k_numberOfReferenceTables,
 
 int FindUpperAndLowerReferenceValues(
     double inputValue, UserExpression approximatedSIExpression,
-    const Context& context, const ReferenceValue** returnReferenceValues,
+    const SymbolContext& symbolContext,
+    const ReferenceValue** returnReferenceValues,
     int* returnReferenceTableIndex) {
   Poincare::Internal::Units::SIVector siVector =
-      Internal::Dimension::Get(approximatedSIExpression.tree(), context)
+      Internal::Dimension::Get(approximatedSIExpression.tree(), symbolContext)
           .unit.vector;
   /* 1. Find table of corresponding unit.
    * WARNING : if you call this method with a unit that is not an SI unit,

@@ -4,9 +4,9 @@
 #include <apps/shared/global_store.h>
 #include <assert.h>
 #include <ion/display.h>
-#include <poincare/context.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/preferences.h>
+#include <poincare/symbol_context.h>
 
 #include "app.h"
 
@@ -178,7 +178,8 @@ void EditExpressionController::layoutFieldDidChangeSize(
 }
 
 bool EditExpressionController::isAcceptableExpression(
-    const Poincare::UserExpression expression, const Context& context) {
+    const Poincare::UserExpression expression,
+    const SymbolContext& symbolContext) {
   if (expression.isUninitialized()) {
     return false;
   }
@@ -187,12 +188,12 @@ bool EditExpressionController::isAcceptableExpression(
   m_calculationStore->replaceAnsInExpression(exp);
 
   assert(!exp.isUninitialized());
-  Layout layout =
-      exp.createLayout(Preferences::PrintFloatMode::Decimal,
-                       PrintFloat::k_maxNumberOfSignificantDigits, context);
+  Layout layout = exp.createLayout(Preferences::PrintFloatMode::Decimal,
+                                   PrintFloat::k_maxNumberOfSignificantDigits,
+                                   symbolContext);
   assert(!layout.isUninitialized());
   layout = layout.cloneWithoutMargins();
-  exp = UserExpression::Parse(layout, context);
+  exp = UserExpression::Parse(layout, symbolContext);
   // Replacing Ans made the expression un-parsable.
   return !exp.isUninitialized();
 }

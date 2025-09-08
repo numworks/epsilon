@@ -6,7 +6,6 @@
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <omg/utf8_helper.h>
-#include <poincare/context.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
@@ -14,6 +13,7 @@
 #include <poincare/layout_cursor.h>
 #include <poincare/src/layout/rack_layout.h>
 #include <poincare/src/layout/rack_layout_decoder.h>
+#include <poincare/symbol_context.h>
 #include <poincare/user_expression.h>
 #include <poincare/xnt.h>
 #include <string.h>
@@ -50,8 +50,8 @@ KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   return KDSize(evSize.width() + TextCursorView::k_width, evSize.height());
 }
 
-void LayoutField::ContentView::copySelection(const Poincare::Context& context,
-                                             bool intoStoreMenu) {
+void LayoutField::ContentView::copySelection(
+    const Poincare::SymbolContext& symbolContext, bool intoStoreMenu) {
   // Unit tests use this method without any static app
   assert((!App::app() && !intoStoreMenu) ||
          (App::app() && App::app()->canStoreLayout()));
@@ -157,7 +157,7 @@ void LayoutField::setLayout(Poincare::Layout newLayout) {
   insertLayoutAtCursor(newLayout, true);
 }
 
-const Poincare::Context& LayoutField::context() const {
+const Poincare::SymbolContext& LayoutField::context() const {
   if (m_delegate) {
     return *m_delegate->context();
   }
@@ -228,8 +228,8 @@ void LayoutField::reload(KDSize previousSize) {
   markWholeFrameAsDirty();
 }
 
-using LayoutInsertionMethod =
-    void (Poincare::LayoutCursor::*)(const Poincare::Context& context);
+using LayoutInsertionMethod = void (Poincare::LayoutCursor::*)(
+    const Poincare::SymbolContext& symbolContext);
 
 bool LayoutField::insertText(const char* text, bool indentation,
                              bool forceCursorRightOfText) {
@@ -308,7 +308,7 @@ bool LayoutField::insertText(const char* text, bool indentation,
   Layout resultLayout = resultExpression.createLayout(
       SharedPreferences->displayMode(),
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
-      App::app() ? static_cast<const Context&>(App::app()->localContext())
+      App::app() ? static_cast<const SymbolContext&>(App::app()->localContext())
                  : k_emptySymbolContext);
   if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >=
       k_maxNumberOfLayouts) {

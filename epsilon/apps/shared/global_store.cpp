@@ -86,27 +86,27 @@ void GlobalStore::DestroyRecordsBaseNamedWithoutExtension(
   }
 }
 
-Context::UserNamedType GlobalStore::expressionTypeForIdentifier(
+SymbolContext::UserNamedType GlobalStore::expressionTypeForIdentifier(
     std::string_view identifier) const {
   const char* extension = Ion::Storage::FileSystem::sharedFileSystem
                               ->extensionOfRecordBaseNamedWithExtensions(
                                   identifier.data(), identifier.length(),
                                   k_extensions, k_numberOfExtensions);
   if (extension == nullptr) {
-    return Context::UserNamedType::None;
+    return SymbolContext::UserNamedType::None;
   } else if (strcmp(extension, Ion::Storage::expressionExtension) == 0 ||
              strcmp(extension, Ion::Storage::matrixExtension) == 0) {
-    return Context::UserNamedType::Symbol;
+    return SymbolContext::UserNamedType::Symbol;
   } else if (strcmp(extension, Ion::Storage::functionExtension) == 0 ||
              strcmp(extension, Ion::Storage::parametricComponentExtension) ==
                  0 ||
              strcmp(extension, Ion::Storage::regressionExtension) == 0) {
-    return Context::UserNamedType::Function;
+    return SymbolContext::UserNamedType::Function;
   } else if (strcmp(extension, Ion::Storage::listExtension) == 0) {
-    return Context::UserNamedType::List;
+    return SymbolContext::UserNamedType::List;
   } else {
     assert(strcmp(extension, Ion::Storage::sequenceExtension) == 0);
-    return Context::UserNamedType::Sequence;
+    return SymbolContext::UserNamedType::Sequence;
   }
 }
 

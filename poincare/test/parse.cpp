@@ -1,6 +1,5 @@
 #include <apps/global_preferences.h>
 #include <omg/code_point.h>
-#include <poincare/context.h>
 #include <poincare/src/expression/derivation.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
@@ -13,6 +12,7 @@
 #include <poincare/src/layout/parsing/tokenizer.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/n_ary.h>
+#include <poincare/symbol_context.h>
 #include <poincare/user_expression.h>
 #include <quiz.h>
 

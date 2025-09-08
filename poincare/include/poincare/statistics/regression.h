@@ -1,8 +1,8 @@
 #pragma once
 
-#include <poincare/context.h>
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
+#include <poincare/symbol_context.h>
 #include <poincare/user_expression.h>
 #include <stdint.h>
 
@@ -171,7 +171,7 @@ class Regression {
 
   virtual double levelSet(const double* modelCoefficients, double xMin,
                           double xMax, double y,
-                          const Poincare::Context& context) const;
+                          const Poincare::SymbolContext& symbolContext) const;
   void fit(const Series* series, double* modelCoefficients) const;
 
   static Coefficients CoefficientsToMatchMean(const Series* series, Type type);

@@ -66,10 +66,10 @@ QUIZ_CASE(pcj_projection) {
 }
 
 void replaces_to(const Tree* input, const Tree* output,
-                 const Poincare::Context& context,
+                 const Poincare::SymbolContext& symbolContext,
                  Poincare::SymbolicComputation symbolicPolicy) {
   Tree* e = input->cloneTree();
-  Poincare::Internal::Projection::DeepReplaceUserNamed(e, context,
+  Poincare::Internal::Projection::DeepReplaceUserNamed(e, symbolContext,
                                                        symbolicPolicy);
   quiz_assert(e->treeIsIdenticalTo(output));
   e->removeTree();

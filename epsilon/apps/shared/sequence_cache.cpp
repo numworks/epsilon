@@ -2,7 +2,7 @@
 
 #include <assert.h>
 #include <omg/signaling_nan.h>
-#include <poincare/context.h>
+#include <poincare/symbol_context.h>
 
 #include "sequence_store.h"
 

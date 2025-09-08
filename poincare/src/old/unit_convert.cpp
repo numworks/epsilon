@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <omg/float.h>
-#include <poincare/context.h>
 #include <poincare/old/complex.h>
 #include <poincare/old/division.h>
 #include <poincare/old/infinity.h>
@@ -10,6 +9,7 @@
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit_convert.h>
+#include <poincare/symbol_context.h>
 #include <stdlib.h>
 
 #include <cmath>

@@ -101,7 +101,7 @@ class SystemExpression : public Expression {
    * called on a reduced expression. coefficients has up to 3 entries.  */
   int getPolynomialReducedCoefficients(const char* symbolName,
                                        SystemExpression coefficients[],
-                                       const Context& context,
+                                       const SymbolContext& symbolContext,
                                        ComplexFormat complexFormat,
                                        AngleUnit angleUnit,
                                        Preferences::UnitFormat unitFormat,

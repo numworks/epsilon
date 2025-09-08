@@ -6,9 +6,9 @@
 #include <apps/shared/function_name_helper.h>
 #include <apps/shared/global_store.h>
 #include <assert.h>
-#include <poincare/context.h>
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
+#include <poincare/symbol_context.h>
 #include <string.h>
 
 #include "../app.h"

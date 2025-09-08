@@ -1,7 +1,7 @@
 #pragma once
 
-#include <poincare/context.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/symbol_context.h>
 
 #include "dimension_type.h"
 
@@ -74,21 +74,27 @@ struct Dimension {
 
   constexpr static int k_nonListListLength = -1;
   // Return k_nonListListLength if tree isn't a list.
-  static int ListLength(const Tree* e,
-                        const Poincare::Context& ctx = EmptySymbolContext{});
-  static bool IsList(const Tree* e,
-                     const Poincare::Context& ctx = EmptySymbolContext{}) {
-    return ListLength(e, ctx) != k_nonListListLength;
+  static int ListLength(
+      const Tree* e,
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
+  static bool IsList(
+      const Tree* e,
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{}) {
+    return ListLength(e, symbolContext) != k_nonListListLength;
   }
-  static Dimension Get(const Tree* e,
-                       const Poincare::Context& ctx = EmptySymbolContext{});
-  static bool DeepCheck(const Tree* e,
-                        const Poincare::Context& ctx = EmptySymbolContext{}) {
-    return DeepCheckDimensions(e, ctx) && DeepCheckListLength(e, ctx);
+  static Dimension Get(
+      const Tree* e,
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
+  static bool DeepCheck(
+      const Tree* e,
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{}) {
+    return DeepCheckDimensions(e, symbolContext) &&
+           DeepCheckListLength(e, symbolContext);
   }
   static bool IsNonListScalar(
-      const Tree* e, const Poincare::Context& ctx = EmptySymbolContext{}) {
-    return Get(e, ctx).isScalar() && !IsList(e, ctx);
+      const Tree* e,
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{}) {
+    return Get(e, symbolContext).isScalar() && !IsList(e, symbolContext);
   }
 
   DimensionType type;
@@ -127,12 +133,14 @@ struct Dimension {
 
  private:
   static bool DeepCheckDimensions(
-      const Tree* e, const Poincare::Context& ctx = EmptySymbolContext{});
-  static bool DeepCheckDimensionsAux(const Tree* e,
-                                     const Poincare::Context& ctx,
-                                     bool hasUnitChild, bool hasNonKelvinChild);
+      const Tree* e,
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
+  static bool DeepCheckDimensionsAux(
+      const Tree* e, const Poincare::SymbolContext& symbolContext,
+      bool hasUnitChild, bool hasNonKelvinChild);
   static bool DeepCheckListLength(
-      const Tree* e, const Poincare::Context& ctx = EmptySymbolContext{});
+      const Tree* e,
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
 };
 
 }  // namespace Internal

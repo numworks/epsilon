@@ -136,8 +136,9 @@ void ContinuousFunctionProperties::setErrorStatusAndUpdateCaption(
 
 void ContinuousFunctionProperties::update(
     const Poincare::SystemExpression reducedEquation,
-    const Poincare::UserExpression inputEquation, const Context& context,
-    ComplexFormat complexFormat, Comparison::Operator precomputedOperatorType,
+    const Poincare::UserExpression inputEquation,
+    const SymbolContext& symbolContext, ComplexFormat complexFormat,
+    Comparison::Operator precomputedOperatorType,
     SymbolType precomputedFunctionSymbol, bool isCartesianEquation) {
   reset();
   m_isInitialized = true;
@@ -155,7 +156,7 @@ void ContinuousFunctionProperties::update(
    * user. We do not care (neither have) an approximate expression. Indeed we
    * only check display permissions for input expression.*/
   bool genericCaptionOnly = CAS::ShouldOnlyDisplayApproximation(
-      inputEquation, UserExpression(), UserExpression(), context);
+      inputEquation, UserExpression(), UserExpression(), symbolContext);
 
   setHideDetails(genericCaptionOnly);
 
@@ -190,7 +191,7 @@ void ContinuousFunctionProperties::update(
     }
 
     // Check dimension
-    Dimension dimension = analyzedExpression.dimension(context);
+    Dimension dimension = analyzedExpression.dimension(symbolContext);
     if (((precomputedFunctionSymbol == SymbolType::X ||
           precomputedFunctionSymbol == SymbolType::Theta ||
           precomputedFunctionSymbol == SymbolType::Radius) &&
@@ -295,7 +296,7 @@ void ContinuousFunctionProperties::update(
     }
   }
 
-  assert(analyzedExpression.dimension(context).isScalar());
+  assert(analyzedExpression.dimension(symbolContext).isScalar());
   setCartesianEquationProperties(analyzedExpression, xDeg, yDeg,
                                  highestCoefficientIsPositive);
   if (genericCaptionOnly) {
@@ -509,7 +510,7 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
   return equation.isComparison() &&
          SymbolHelper::IsSymbol(equation.cloneChildAtIndex(0), symbol) &&
          !equation.cloneChildAtIndex(1).recursivelyMatches(
-             [](const UserExpression e, const Context& context,
+             [](const UserExpression e, const SymbolContext& symbolContext,
                 void* auxiliary) {
                const CodePoint* symbol =
                    static_cast<const CodePoint*>(auxiliary);

@@ -2,10 +2,10 @@
 
 #include <omg/directions.h>
 #include <omg/unreachable.h>
-#include <poincare/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
+#include <poincare/symbol_context.h>
 
 #include "cursor_motion.h"
 #include "empty_rectangle.h"
@@ -68,12 +68,13 @@ class LayoutCursor {
 
   /* Move */
   // Return false if could not move
-  bool move(OMG::Direction direction, bool selecting, bool* shouldRedrawLayout,
-            const Poincare::Context& context = EmptySymbolContext{});
+  bool move(
+      OMG::Direction direction, bool selecting, bool* shouldRedrawLayout,
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
   bool moveMultipleSteps(
       OMG::Direction direction, int step, bool selecting,
       bool* shouldRedrawLayout,
-      const Poincare::Context& context = EmptySymbolContext{});
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
 
   /* Layout deletion */
   void stopSelecting() { m_startOfSelection = -1; }
@@ -122,8 +123,8 @@ class LayoutCursor {
                                            OMG::HorizontalDirection direction,
                                            int absorbingChildIndex);
 
-  virtual bool beautifyRightOfRack(Rack* rack,
-                                   const Poincare::Context& context) = 0;
+  virtual bool beautifyRightOfRack(
+      Rack* rack, const Poincare::SymbolContext& symbolContext) = 0;
 
   // Cursor's horizontal position
   int m_position;
@@ -147,8 +148,8 @@ class TreeCursor final : public LayoutCursor {
   Rack* rootRack() const override { return m_root; }
   Rack* cursorRack() const override { return m_cursor; }
   void setCursorRack(Rack* rack) override { assert(false); };
-  bool beautifyRightOfRack(Rack* rack,
-                           const Poincare::Context& context) override {
+  bool beautifyRightOfRack(
+      Rack* rack, const Poincare::SymbolContext& symbolContext) override {
     OMG::unreachable();
   }
 
@@ -159,51 +160,53 @@ class TreeCursor final : public LayoutCursor {
 
 template <class Cursor>
 class AddEmptyLayoutHelpers {
-  void insertLayout(const Tree* l, const Poincare::Context& context,
+  void insertLayout(const Tree* l, const Poincare::SymbolContext& symbolContext,
                     bool forceRight, bool forceLeft,
                     bool collapseSiblings = true) {
     // Up cast to the template class that should be a cursor
-    static_cast<Cursor&>(*this).insertLayout(l, context, forceRight, forceLeft,
-                                             collapseSiblings);
+    static_cast<Cursor&>(*this).insertLayout(l, symbolContext, forceRight,
+                                             forceLeft, collapseSiblings);
   }
 
  public:
-  void addEmptyMatrixLayout(const Poincare::Context& context) {
-    insertLayout(KEmptyMatrixL, context, false, false);
+  void addEmptyMatrixLayout(const Poincare::SymbolContext& symbolContext) {
+    insertLayout(KEmptyMatrixL, symbolContext, false, false);
   }
-  void addEmptyPowerLayout(const Poincare::Context& context) {
-    insertLayout(KSuperscriptL(""_l), context, false, false);
+  void addEmptyPowerLayout(const Poincare::SymbolContext& symbolContext) {
+    insertLayout(KSuperscriptL(""_l), symbolContext, false, false);
   }
-  void addEmptySquareRootLayout(const Poincare::Context& context) {
-    insertLayout(KSqrtL(""_l), context, false, false);
+  void addEmptySquareRootLayout(const Poincare::SymbolContext& symbolContext) {
+    insertLayout(KSqrtL(""_l), symbolContext, false, false);
   }
-  void addEmptySquarePowerLayout(const Poincare::Context& context) {
+  void addEmptySquarePowerLayout(const Poincare::SymbolContext& symbolContext) {
     /* Force the cursor right of the layout. */
-    insertLayout(KSuperscriptL("2"_l), context, true, false);
+    insertLayout(KSuperscriptL("2"_l), symbolContext, true, false);
   }
-  void addEmptyNthRootLayout(const Poincare::Context& context) {
-    insertLayout(KRootL(""_l, ""_l), context, false, false);
+  void addEmptyNthRootLayout(const Poincare::SymbolContext& symbolContext) {
+    insertLayout(KRootL(""_l, ""_l), symbolContext, false, false);
   }
-  void addEmptyExponentialLayout(const Poincare::Context& context) {
-    insertLayout("e"_l ^ KSuperscriptL(""_l), context, false, false);
+  void addEmptyExponentialLayout(const Poincare::SymbolContext& symbolContext) {
+    insertLayout("e"_l ^ KSuperscriptL(""_l), symbolContext, false, false);
   }
-  void addEmptyLogarithmWithBase10Layout(const Poincare::Context& context) {
+  void addEmptyLogarithmWithBase10Layout(
+      const Poincare::SymbolContext& symbolContext) {
     const Tree* l =
         SharedPreferences->logarithmBasePosition() ==
                 Preferences::LogarithmBasePosition::TopLeft
             ? KPrefixSuperscriptL("10"_l) ^ "log"_l ^
                   KParenthesesRightTempL(""_l)
             : "log"_l ^ KSubscriptL("10"_l) ^ KParenthesesRightTempL(""_l);
-    insertLayout(l, context, false, false);
+    insertLayout(l, symbolContext, false, false);
   }
-  void addEmptyTenPowerLayout(const Poincare::Context& context) {
-    insertLayout("×10"_l ^ KSuperscriptL(""_l), context, false, false);
+  void addEmptyTenPowerLayout(const Poincare::SymbolContext& symbolContext) {
+    insertLayout("×10"_l ^ KSuperscriptL(""_l), symbolContext, false, false);
   }
-  void addFractionLayoutAndCollapseSiblings(const Poincare::Context& context) {
-    insertLayout(KFracL(""_l, ""_l), context, false, false);
+  void addFractionLayoutAndCollapseSiblings(
+      const Poincare::SymbolContext& symbolContext) {
+    insertLayout(KFracL(""_l, ""_l), symbolContext, false, false);
   }
-  void addMixedFractionLayout(const Poincare::Context& context) {
-    insertLayout(KFracL(""_l, ""_l), context, false, true, false);
+  void addMixedFractionLayout(const Poincare::SymbolContext& symbolContext) {
+    insertLayout(KFracL(""_l, ""_l), symbolContext, false, true, false);
   }
 };
 
@@ -225,21 +228,23 @@ class TreeStackCursor : public LayoutCursor,
   /* The private API has structs because it is used through
    * PoolLayoutCursor::execute. The public API is a more convenient wrapper
    * around the private one. */
-  void insertText(const char* text,
-                  const Poincare::Context& context = EmptySymbolContext{},
-                  bool forceRight = false, bool forceLeft = false,
-                  bool linearMode = false) {
+  void insertText(
+      const char* text,
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{},
+      bool forceRight = false, bool forceLeft = false,
+      bool linearMode = false) {
     InsertTextContext insertTextContext{text, forceRight, forceLeft,
                                         linearMode};
-    insertText(context, &insertTextContext);
+    insertText(symbolContext, &insertTextContext);
   }
-  void insertLayout(const Tree* l,
-                    const Poincare::Context& context = EmptySymbolContext{},
-                    bool forceRight = false, bool forceLeft = false,
-                    bool collapseSiblings = true) {
+  void insertLayout(
+      const Tree* l,
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{},
+      bool forceRight = false, bool forceLeft = false,
+      bool collapseSiblings = true) {
     InsertLayoutContext insertLayoutContext{l, forceRight, forceLeft,
                                             collapseSiblings};
-    insertLayout(context, &insertLayoutContext);
+    insertLayout(symbolContext, &insertLayoutContext);
   }
   void performBackspace() { performBackspace(EmptySymbolContext{}, nullptr); }
 
@@ -252,9 +257,9 @@ class TreeStackCursor : public LayoutCursor,
 
  private:
   // TreeStackCursor Actions
-  void performBackspace(const Poincare::Context& context,
+  void performBackspace(const Poincare::SymbolContext& symbolContext,
                         const void* nullptrData);
-  void deleteAndResetSelection(const Poincare::Context& context,
+  void deleteAndResetSelection(const Poincare::SymbolContext& symbolContext,
                                const void* nullptrData);
   struct InsertLayoutContext {
     const Tree* m_tree;
@@ -262,13 +267,13 @@ class TreeStackCursor : public LayoutCursor,
     bool m_forceLeft = false;
     bool m_collapseSiblings = true;
   };
-  void insertLayout(const Poincare::Context& context,
+  void insertLayout(const Poincare::SymbolContext& symbolContext,
                     const void* insertLayoutContext);
   struct InsertTextContext {
     const char* m_text;
     bool m_forceRight, m_forceLeft, m_linearMode;
   };
-  void insertText(const Poincare::Context& context,
+  void insertText(const Poincare::SymbolContext& symbolContext,
                   const void* insertTextContext);
   void balanceAutocompletedBracketsAndKeepAValidCursor();
 
@@ -279,11 +284,11 @@ class TreeStackCursor : public LayoutCursor,
     int m_rackOffset;
     mutable bool m_shouldRedraw;
   };
-  bool beautifyRightOfRack(Rack* rack,
-                           const Poincare::Context& context) override;
-  void beautifyRightOfRackAction(const Poincare::Context& context,
+  bool beautifyRightOfRack(
+      Rack* rack, const Poincare::SymbolContext& symbolContext) override;
+  void beautifyRightOfRackAction(const Poincare::SymbolContext& symbolContext,
                                  const void* rack);
-  void beautifyLeftAction(const Poincare::Context& context,
+  void beautifyLeftAction(const Poincare::SymbolContext& symbolContext,
                           const void* /* no arg */);
 
   TreeRef m_cursorRackRef;

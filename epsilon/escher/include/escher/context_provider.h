@@ -1,13 +1,13 @@
 #pragma once
 
 #include <escher/container.h>
-#include <poincare/context.h>
+#include <poincare/symbol_context.h>
 
 namespace Escher {
 
 class ContextProvider {
  public:
-  const Poincare::Context* context() const {
+  const Poincare::SymbolContext* context() const {
     assert(Escher::App::app());
     return &Escher::App::app()->localContext();
   }

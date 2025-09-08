@@ -1,6 +1,6 @@
 #include "graph_view.h"
 
-#include <poincare/context.h>
+#include <poincare/symbol_context.h>
 
 #include <cmath>
 

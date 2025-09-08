@@ -1,8 +1,8 @@
 #pragma once
 
-#include <poincare/context.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/sign.h>
+#include <poincare/symbol_context.h>
 
 #include "k_tree.h"
 
@@ -33,7 +33,8 @@ const char* GetName(const Tree* e);
 
 ComplexSign GetComplexSign(const Tree* e);
 
-bool InvolvesCircularity(const Tree* e, const Poincare::Context& context);
+bool InvolvesCircularity(const Tree* e,
+                         const Poincare::SymbolContext& symbolContext);
 };  // namespace Symbol
 
 }  // namespace Poincare::Internal

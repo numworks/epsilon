@@ -6,9 +6,9 @@
 #include <stdint.h>
 
 #include "computation_context.h"
-#include "context.h"
 #include "evaluation.h"
 #include "pool_object.h"
+#include "symbol_context.h"
 
 namespace Poincare {
 
@@ -194,7 +194,8 @@ class ExpressionNode : public PoolObject {
   /*!*/ virtual int getPolynomialCoefficients(Context* context,
                                               const char* symbolName,
                                               OExpression coefficients[]) const;
-  typedef bool (*isVariableTest)(const char* c, Poincare::Context* context);
+  typedef bool (*isVariableTest)(const char* c,
+                                 Poincare::SymbolContext* context);
   virtual int getVariables(Context* context, isVariableTest isVariable,
                            char* variables, int maxSizeVariable,
                            int nextVariableIndex) const;

@@ -2,10 +2,10 @@
 
 #include <apps/i18n.h>
 #include <assert.h>
-#include <poincare/context.h>
 #include <poincare/k_layout.h>
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
+#include <poincare/symbol_context.h>
 
 #include "list_controller.h"
 

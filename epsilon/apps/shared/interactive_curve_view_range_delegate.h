@@ -2,8 +2,8 @@
 
 #include <apps/global_preferences.h>
 #include <assert.h>
-#include <poincare/context.h>
 #include <poincare/range.h>
+#include <poincare/symbol_context.h>
 
 #include "function_store.h"
 

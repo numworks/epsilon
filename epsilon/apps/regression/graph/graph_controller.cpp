@@ -95,7 +95,7 @@ void GraphController::setAbscissaInputAsFirstResponder() {
   App::app()->setFirstResponder(m_bannerView.abscissaValue());
 }
 
-const Poincare::Context& GraphController::globalContext() const {
+const Poincare::SymbolContext& GraphController::globalContext() const {
   return GlobalContextAccessor::Context();
 }
 

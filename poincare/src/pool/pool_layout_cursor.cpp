@@ -4,8 +4,9 @@
 
 namespace Poincare::Internal {
 
-void PoolLayoutCursor::beautifyLeft(const Poincare::Context& context) {
-  execute(&TreeStackCursor::beautifyLeftAction, context, nullptr);
+void PoolLayoutCursor::beautifyLeft(
+    const Poincare::SymbolContext& symbolContext) {
+  execute(&TreeStackCursor::beautifyLeftAction, symbolContext, nullptr);
   if (position() > cursorRack()->numberOfChildren() + 1) {
     /* Beautification does not preserve the cursor so its position may be
      * invalid. The other calls to beaufication happen just after we move the
@@ -18,11 +19,11 @@ void PoolLayoutCursor::beautifyLeft(const Poincare::Context& context) {
   // TODO factorize with beautifyRightOfRack
 }
 
-bool PoolLayoutCursor::beautifyRightOfRack(Rack* rack,
-                                           const Poincare::Context& context) {
+bool PoolLayoutCursor::beautifyRightOfRack(
+    Rack* rack, const Poincare::SymbolContext& symbolContext) {
   TreeStackCursor::BeautifyContext ctx{static_cast<int>(rack - cursorRack()),
                                        false};
-  execute(&TreeStackCursor::beautifyRightOfRackAction, context, &ctx);
+  execute(&TreeStackCursor::beautifyRightOfRackAction, symbolContext, &ctx);
   return ctx.m_shouldRedraw;
 }
 
@@ -35,7 +36,8 @@ void PoolLayoutCursor::applyTreeStackCursor(TreeStackCursor cursor) {
       Tree::FromBlocks(rootRack()->block() + cursor.cursorRackOffset())));
 }
 
-void PoolLayoutCursor::execute(Action action, const Poincare::Context& context,
+void PoolLayoutCursor::execute(Action action,
+                               const Poincare::SymbolContext& symbolContext,
                                const void* data) {
   assert(SharedTreeStack->numberOfTrees() == 0);
   // Clone layoutBuffer into the TreeStack
@@ -46,7 +48,7 @@ void PoolLayoutCursor::execute(Action action, const Poincare::Context& context,
     // Create a temporary cursor
     TreeStackCursor editionCursor = createTreeStackCursor();
     // Perform the action
-    (editionCursor.*(action))(context, data);
+    (editionCursor.*(action))(symbolContext, data);
     // Apply the changes
     /* We need a rack cast there since the pointed rack is set before the
      * actual content of the buffer is modified. */

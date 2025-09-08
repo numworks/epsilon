@@ -1,8 +1,8 @@
 #pragma once
 
-#include <poincare/context.h>
 #include <poincare/sign.h>
 #include <poincare/src/memory/tree_ref.h>
+#include <poincare/symbol_context.h>
 
 namespace Poincare::Internal {
 
@@ -32,16 +32,18 @@ namespace Private {
 void EnterOrLeaveScope(Tree* e, bool enter, int preserveUnder);
 /* Get the user symbols of e and push them in set. Look inside UserFunctions
  * definition if ctx is given. */
-void GetUserSymbols(const Tree* e, Tree* set,
-                    const Poincare::Context& ctx = EmptySymbolContext{});
+void GetUserSymbols(
+    const Tree* e, Tree* set,
+    const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
 uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
 const Tree* ToSymbol(const Tree* variables, uint8_t id);
 }  // namespace Private
 
 /* Push a Set with the free user symbols of the expression. Look inside
  * UserFunctions definition if ctx is given. */
-Tree* GetUserSymbols(const Tree* e,
-                     const Poincare::Context& ctx = EmptySymbolContext{});
+Tree* GetUserSymbols(
+    const Tree* e,
+    const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
 // Ignore UserSymbols in parametric's variable
 bool HasUserSymbols(const Tree* e, bool checkForUserFunctions = false);
 

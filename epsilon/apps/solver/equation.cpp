@@ -77,12 +77,12 @@ SystemExpression Equation::Model::standardForm(
 
 Poincare::UserExpression Equation::Model::buildExpressionFromLayout(
     Poincare::Layout l, CodePoint symbol,
-    const Poincare::Context& context) const {
+    const Poincare::SymbolContext& symbolContext) const {
   if (l.isUninitialized() || l.isEmpty()) {
     return UserExpression();
   }
   UserExpression expressionToStore =
-      UserExpression::Parse(l, context, {.forceUnitUnderscore = true});
+      UserExpression::Parse(l, symbolContext, {.forceUnitUnderscore = true});
   return ReplaceSymbolWithUnknown(expressionToStore, symbol);
 }
 

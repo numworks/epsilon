@@ -48,8 +48,9 @@ class Model {
     return regression()->evaluate(modelCoefficients, x);
   };
   double levelSet(double* modelCoefficients, double xMin, double xMax, double y,
-                  const Poincare::Context& context) {
-    return regression()->levelSet(modelCoefficients, xMin, xMax, y, context);
+                  const Poincare::SymbolContext& symbolContext) {
+    return regression()->levelSet(modelCoefficients, xMin, xMax, y,
+                                  symbolContext);
   };
   void fit(const Store* store, int series, double* modelCoefficients);
   double correlationCoefficient(const Store* store, int series);

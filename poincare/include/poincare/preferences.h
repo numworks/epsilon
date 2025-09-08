@@ -8,7 +8,7 @@
 #include <poincare/math_options.h>
 #include <stdint.h>
 
-#include "context.h"
+#include "symbol_context.h"
 
 namespace Poincare {
 
@@ -127,7 +127,7 @@ class Preferences {
   // TODO: this has nothing to do here
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(
       ComplexFormat complexFormat, const Internal::Tree* e,
-      const Context& context,
+      const SymbolContext& symbolContext,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceDefinedSymbols);
 

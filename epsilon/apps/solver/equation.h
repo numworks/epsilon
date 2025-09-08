@@ -1,7 +1,7 @@
 #pragma once
 
 #include <apps/shared/expression_model_handle.h>
-#include <poincare/context.h>
+#include <poincare/symbol_context.h>
 
 namespace Solver {
 
@@ -10,7 +10,7 @@ class Equation : public Shared::ExpressionModelHandle {
   Equation(Ion::Storage::Record record = Record())
       : ExpressionModelHandle(record) {}
   Poincare::SystemExpression standardForm(
-      Poincare::Context* context, bool replaceFunctionsButNotSymbols,
+      Poincare::SymbolContext* context, bool replaceFunctionsButNotSymbols,
       Poincare::ReductionTarget reductionTarget) const {
     return m_model.standardForm(this, context, replaceFunctionsButNotSymbols,
                                 reductionTarget);
@@ -21,14 +21,14 @@ class Equation : public Shared::ExpressionModelHandle {
   class Model : public Shared::ExpressionModel {
    public:
     Poincare::SystemExpression standardForm(
-        const Ion::Storage::Record* record, Poincare::Context* context,
+        const Ion::Storage::Record* record, Poincare::SymbolContext* context,
         bool replaceFunctionsButNotSymbols,
         Poincare::ReductionTarget reductionTarget) const;
     /* The only difference with ExpressionModel is that we require units to have
      * an underscore, so that they are not mixed with symbols. */
     Poincare::UserExpression buildExpressionFromLayout(
         Poincare::Layout l, CodePoint symbol = 0,
-        const Poincare::Context& context =
+        const Poincare::SymbolContext& symbolContext =
             Poincare::EmptySymbolContext{}) const override;
 
    private:

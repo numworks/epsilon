@@ -1,7 +1,7 @@
 #pragma once
 
-#include <poincare/context.h>
 #include <poincare/helpers/parser.h>
+#include <poincare/symbol_context.h>
 
 namespace Poincare::Internal {
 
@@ -29,7 +29,7 @@ struct ParsingContext {
    * Re-assigning to another value is possible with a pointer-to-const, but
    * would not be with a const reference, so we need a pointer-to-const in the
    * Parser. */
-  const Poincare::Context* context = nullptr;
+  const Poincare::SymbolContext* context = nullptr;
   const ParserHelper::ParsingParameters params = {};
   ParsingMetadata metadata = {};
   ParsingContext cloneWithoutMetadata() const {

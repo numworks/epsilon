@@ -375,9 +375,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
       cartesianCtx);
 
   simplifies_to("acos(cos(4π/7))", "(4×π)/7", cartesianCtx);
-#if TODO_PCJ
-  simplifies_to("acos(-cos(2))", "π-2", cartesianCtx);
-#endif
+  simplifies_to("acos(-cos(2))", "-2+π", cartesianCtx);
   simplifies_to("acos(-1/2)", "120", degreeCartesianCtx);
   simplifies_to("acos(-1.2)", "180-arccos(6/5)", degreeCartesianCtx);
   simplifies_to("acos(cos(2/3))", "2/3", degreeCartesianCtx);
@@ -404,9 +402,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("asin(sin(60-9×9×9))", "51", degreeCartesianCtx);
 
   simplifies_to("asin(sin(-π/7))", "-π/7", cartesianCtx);
-#if TODO_PCJ
   simplifies_to("asin(sin(-√(2)))", "-√(2)", cartesianCtx);
-#endif
   simplifies_to("asin(-1/2)", "-30", degreeCartesianCtx);
   simplifies_to("asin(-1.2)", "-arcsin(6/5)", degreeCartesianCtx);
   simplifies_to("asin(sin(75))", "75", degreeCartesianCtx);

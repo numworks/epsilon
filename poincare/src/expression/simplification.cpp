@@ -207,7 +207,7 @@ bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext) {
 ToSystemOutput ToSystem(Tree* e, ProjectionContext* projectionContext) {
   /* 1 - Prepare for projection */
   bool changed = PrepareForProjection(e, projectionContext);
-  /* 2 - Update projection context */
+  /* 2 - Compute expression's dimension */
   Dimension dim = Dimension::Get(e);
   /* 3 - Apply projection strategy */
   changed = ApplyProjectionStrategy(e, *projectionContext) || changed;

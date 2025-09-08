@@ -282,12 +282,22 @@ bool Trigonometry::ReduceTrig(Tree* e) {
     e->cloneTreeOverTree(KUndef);
     return true;
   }
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KTrig(KATanRad(KA), KB), &ctx) &&
+      GetComplexSign(ctx.getTree(KA)).isReal()) {
+    // cos(atan(x)) -> 1/sqrt(1+x^2) and sin(atan(x))-> x/sqrt(1+x^2) for x real
+    const Tree* pattern =
+        ctx.getTree(KB)->isZero()
+            ? KPow(KAdd(1_e, KPow(KA, 2_e)), -1_e / 2_e)
+            : KMult(KA, KPow(KAdd(1_e, KPow(KA, 2_e)), -1_e / 2_e));
+    e->moveTreeOverTree(PatternMatching::CreateReduce(pattern, ctx));
+    changed = true;
+  }
   if (isOpposed && changed) {
     e->cloneTreeAtNode(-1_e);
     e->moveNodeAtNode(SharedTreeStack->pushMult(2));
     SystematicReduction::ShallowReduce(e);
   }
-  // TODO_PCJ: cos(atan(x)) -> 1/sqrt(1+x^2) and sin(atan(x))-> x/sqrt(1+x^2)
   return changed;
 }
 

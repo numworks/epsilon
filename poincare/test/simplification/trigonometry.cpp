@@ -285,6 +285,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin(61200000)", "0", k_degreeCtx);
   simplifies_to("sin(61200180)", "0", k_degreeCtx);
   simplifies_to("sin(-61200180)", "0", k_degreeCtx);
+  /*  Currently simplifies to (√(2)×(-1+√(3)))/4.
+   * TODO: develop and contract */
 #if TODO_PCJ
   simplifies_to("sin(15)", "(√(6)-√(2))/4", k_degreeCtx);
   simplifies_to("sin(-15)", "(-√(6)+√(2))/4", k_degreeCtx);
@@ -563,74 +565,71 @@ QUIZ_CASE(pcj_simplification_trigonometry_hyperbolic) {
 }
 
 QUIZ_CASE(pcj_simplification_trigonometry_advanced) {
-  simplifies_to("cot(π/2)", "0");
-  simplifies_to("cot(90)", "0", {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("arccot(0)", "90", {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("arccot(0)", "π/2");
   simplifies_to("sec(x)", "1/cos(x)");
   simplifies_to("csc(x)", "1/sin(x)");
   simplifies_to("cot(x)", "cot(x)");
-  simplifies_to("arcsec(sec(π/6))", "π/6");
-  simplifies_to("arccsc(csc(π/6))", "π/6");
-  simplifies_to("arccot(cot(π/6))", "π/6");
-  simplifies_to("arccot(-1)", "3π/4");
-  simplifies_to("arccot(-1)", "135", {.m_angleUnit = AngleUnit::Degree});
-
-  simplifies_to("csc(arccsc(9/7))", "9/7");
-  simplifies_to("csc(arccsc(3/7))", "nonreal");
-  simplifies_to("csc(arccsc(3/7))", "3/7", k_cartesianCtx);
-  simplifies_to("sec(arcsec(9/7))", "9/7");
-  simplifies_to("sec(arcsec(3/7))", "nonreal");
-
   simplifies_to("sec(arcsec(x))", "dep(x,{nonNull(x)})", k_cartesianCtx);
   simplifies_to("csc(arccsc(x))", "dep(x,{nonNull(x)})", k_cartesianCtx);
   simplifies_to("cot(arccot(1+abs(x)))", "1+abs(x)", k_cartesianCtx);
-
   simplifies_to("sin(x)*(cos(x)^-1)*ln(x)",
                 "dep(tan(x)×ln(x),{nonNull(x),realPos(x)})");
   simplifies_to("ln(x)*tan(x)", "dep(tan(x)×ln(x),{nonNull(x),realPos(x)})");
   simplifies_to("sin(x)*(cos(y)^-1)*(cos(x)^-1)*sin(y)", "tan(x)×tan(y)");
 
   // Exact values
+  simplifies_to("cot(0)", "undef");
+  simplifies_to("cot(π/2)", "0");
+  // TODO: simplify -cot(-x)
+  simplifies_to("cot(π°)", "-cot(-π^2/180)");
+  simplifies_to("cot(2)", "-cot(-2)");
+  simplifies_to("cot(90)", "0", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("csc(0)", "undef");
   simplifies_to("sec(0)", "1");
-  simplifies_to("cot(0)", "undef");
   simplifies_to("arccsc(2/√(3))", "π/3");
   simplifies_to("arcsec(2/√(3))", "π/6");
-  simplifies_to("arccot(0)", "π/2");
   simplifies_to("csc(π/2)", "1");
   simplifies_to("sec(π/2)", "undef");
   simplifies_to("cot(π/2)", "0");
   simplifies_to("arccsc(1)", "π/2");
   simplifies_to("arcsec(1)", "0");
+  simplifies_to("arccot(0)", "90", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("arccot(0)", "π/2");
   simplifies_to("arccot(1)", "π/4");
+  simplifies_to("arccot(-1)", "3π/4");
+  simplifies_to("arccot(-1)", "135", {.m_angleUnit = AngleUnit::Degree});
 
   // arcsec(sec)
   simplifies_to("arcsec(sec(3))", "3");
   simplifies_to("arcsec(sec(0.5))", "1/2");
   simplifies_to("arcsec(sec(-3))", "3");
+  simplifies_to("arcsec(sec(π/6))", "π/6");
 
   // sec(asec)
   simplifies_to("sec(arcsec(3))", "3", k_cartesianCtx);
   simplifies_to("sec(arcsec(0.5))", "1/2", k_cartesianCtx);
   simplifies_to("sec(arcsec(-3))", "-3", k_cartesianCtx);
+  simplifies_to("sec(arcsec(9/7))", "9/7");
+  simplifies_to("sec(arcsec(3/7))", "nonreal");
 
   // arccsc(csc)
   simplifies_to("arccsc(csc(3))", "-3+π");
   simplifies_to("arccsc(csc(0.5))", "1/2");
   simplifies_to("arccsc(csc(-3))", "3-π");
+  simplifies_to("arccsc(csc(π/6))", "π/6");
 
   // csc(acsc)
   simplifies_to("csc(arccsc(3))", "3", k_cartesianCtx);
   simplifies_to("csc(arccsc(0.5))", "1/2", k_cartesianCtx);
   simplifies_to("csc(arccsc(-3))", "-3", k_cartesianCtx);
+  simplifies_to("csc(arccsc(9/7))", "9/7");
+  simplifies_to("csc(arccsc(3/7))", "nonreal");
+  simplifies_to("csc(arccsc(3/7))", "3/7", k_cartesianCtx);
 
   // arccot(cot)
-#if TODO_PCJ
-  simplifies_to("arccot(cot(3))", "-π+3");
+  simplifies_to("arccot(cot(3))", "3");
   simplifies_to("arccot(cot(0.5))", "1/2");
-  simplifies_to("arccot(cot(-3))", "π-3");
-#endif
+  simplifies_to("arccot(cot(-3))", "-3+π");
+  simplifies_to("arccot(cot(π/6))", "π/6");
   simplifies_to("arccot(3)", "π/2-arctan(3)");
   projects_and_reduces_to(
       "arccot(3)", "π/2-arctan(3)",

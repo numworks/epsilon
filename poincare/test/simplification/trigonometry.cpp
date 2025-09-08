@@ -96,20 +96,19 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("atan(-x)", "-arctan(x)", cartesianCtx);
 
   // trig(atrig)
-  simplifies_to("cos({acos(x), asin(x), atan(x)})",
-                "{x,√(-x^2+1),cos(arctan(x))}", cartesianCtx);
+  simplifies_to("cos({acos(x), asin(x), atan(x)})", "{x,√(-x^2+1),1/√(x^2+1)}",
+                cartesianCtx);
   simplifies_to("cos({acos(-x), asin(-x), atan(-x)})",
-                "{-x,√(-x^2+1),cos(arctan(x))}", cartesianCtx);
-  simplifies_to("sin({acos(x), asin(x), atan(x)})",
-                "{√(-x^2+1),x,sin(arctan(x))}", cartesianCtx);
+                "{-x,√(-x^2+1),1/√(x^2+1)}", cartesianCtx);
+  simplifies_to("sin({acos(x), asin(x), atan(x)})", "{√(-x^2+1),x,x/√(x^2+1)}",
+                cartesianCtx);
   simplifies_to("sin({acos(-x), asin(-x), atan(-x)})",
-                "{√(-x^2+1),-x,-sin(arctan(x))}", cartesianCtx);
+                "{√(-x^2+1),-x,-x/√(x^2+1)}", cartesianCtx);
   simplifies_to("tan({acos(x), asin(x), atan(x)})",
                 "{√(-x^2+1)/x,x/√(-x^2+1),x}", cartesianCtx);
   simplifies_to("tan({acos(-x), asin(-x), atan(-x)})",
                 "{-√(-x^2+1)/x,-x/√(-x^2+1),-x}", cartesianCtx);
-  simplifies_to("cos({acos(x), asin(x), atan(x)})",
-                "{x,√(-x^2+1),cos(arctan(x))}",
+  simplifies_to("cos({acos(x), asin(x), atan(x)})", "{x,√(-x^2+1),1/√(x^2+1)}",
                 {.m_complexFormat = ComplexFormat::Cartesian,
                  .m_angleUnit = AngleUnit::Degree});
   simplifies_to("cos(acos(3/7))", "3/7");
@@ -175,9 +174,6 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("arg(cos(π/6)+i*sin(π/6))", "π/6");
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", cartesianCtx);
   simplifies_to("sin(17)^2+cos(6)^2", "cos(6)^2+sin(17)^2", cartesianCtx);
-  // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
-  simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)",
-                "dep(0,{0×√(-x^2/(x^2+1)+1)})", cartesianCtx);
   // Strategy
   simplifies_to("sin(90)", "1",
                 {.m_angleUnit = AngleUnit::Degree,
@@ -443,6 +439,9 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("atan(1/(abs(x)+1))", "90-arctan(1+abs(x))", degreeCtx);
   simplifies_to("atan(1/(abs(x)+1))", "100-arctan(1+abs(x))", gradianCtx);
   simplifies_to("atan(cos(x)/sin(x))", "arctan(cot(x))");
+  simplifies_to("atan(cot(π/7))", "(5×π)/14");
+  // TODO: contract to (3×π-8)/2
+  simplifies_to("atan(cot(4))", "-4+(3×π)/2");
 #if TODO_PCJ
   simplifies_to("atan(cos(π/7)/sin(π/7))", "(5×π)/14");
   simplifies_to("atan(cos(4)/sin(4))", "(3×π-8)/2");
@@ -452,19 +451,15 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   // cos(asin)
   simplifies_to("cos(asin(x))", "√(-x^2+1)", degreeCartesianCtx);
   simplifies_to("cos(asin(-x))", "√(-x^2+1)", degreeCartesianCtx);
-// cos(atan)
-#if TODO_PCJ
+  // cos(atan)
   simplifies_to("cos(atan(x))", "1/√(x^2+1)", degreeCartesianCtx);
   simplifies_to("cos(atan(-x))", "1/√(x^2+1)", degreeCartesianCtx);
-#endif
   // sin(acos)
   simplifies_to("sin(acos(x))", "√(-x^2+1)", degreeCartesianCtx);
   simplifies_to("sin(acos(-x))", "√(-x^2+1)", degreeCartesianCtx);
   // sin(atan)
-#if TODO_PCJ
   simplifies_to("sin(atan(x))", "x/√(x^2+1)", degreeCartesianCtx);
   simplifies_to("sin(atan(-x))", "-x/√(x^2+1)", degreeCartesianCtx);
-#endif
   // tan(acos)
   simplifies_to("tan(acos(x))", "√(-x^2+1)/x", degreeCartesianCtx);
   simplifies_to("tan(acos(-x))", "-√(-x^2+1)/x", degreeCartesianCtx);

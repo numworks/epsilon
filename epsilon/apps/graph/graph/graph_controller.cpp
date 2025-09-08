@@ -423,8 +423,7 @@ void GraphController::reloadBannerViewForCursorOnFunction(
   cappedNumberOfSignificantDigits =
       cappedNumberOfSignificantDigits || hasInterest;
   FunctionGraphController::reloadBannerViewForCursorOnFunction(
-      cursorT, cursorX, cursorY, record,
-      GlobalContextAccessor::ContinuousFunctionContext(), context,
+      cursorT, cursorX, cursorY, record, functionContext, context,
       cappedNumberOfSignificantDigits);
 }
 

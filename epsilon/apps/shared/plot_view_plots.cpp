@@ -226,7 +226,7 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView* plotView,
   float t12 = 0.5f * (t1 + t2);
   Coordinate2D<float> xy12 = m_curve.evaluate(t12, m_context);
 
-  bool discontinuous = discontinuity(t1, t2, m_curve.model(), m_context);
+  bool discontinuous = discontinuity(t1, t2, m_curve.model());
   if (discontinuous) {
     /* If the function is discontinuous, it can never join dots at abscissas of
      * discontinuity, and thus will always go to max recursion. To avoid this,

@@ -12,6 +12,7 @@
 #include "parametric.h"
 #include "rational.h"
 #include "set.h"
+#include "systematic_reduction.h"
 #include "undefined.h"
 #include "variables.h"
 
@@ -130,6 +131,16 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
       continue;
     }
     Tree* approximation = depI->cloneTree();
+    SystematicReduction::DeepReduce(approximation);
+    if (approximation->isDep()) {
+      if (!approximation->treeIsIdenticalTo(dep)) {
+        ShallowRemoveUselessDependencies(approximation);
+      } else {
+        /* Infinite loop if we RemoveUselessDep on this reduced tree,
+         * ignore reduction in this case */
+        approximation->moveTreeOverTree(depI->cloneTree());
+      }
+    }
     // TODO_PCJ: Ensure the default Radian/Cartesian context is good enough.
     Approximation::ApproximateAndReplaceEveryScalar<double>(approximation);
     if (approximation->isUndefined()) {

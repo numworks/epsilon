@@ -69,9 +69,8 @@ QUIZ_CASE(pcj_simplification_dependencies) {
 
   Tree* e5 =
       KDep(1_e, KDepList(KAdd(KInf, "x"_e, KMult(-1_e, KInf))))->cloneTree();
-  const Tree* r5 = KDep(1_e, KDepList(KAdd("x"_e, KInf, KOpposite(KInf))));
   simplify(e5, context);
-  assert_trees_are_equal(e5, r5);
+  assert_trees_are_equal(e5, KUndef);
 
   SharedTreeStack->flush();
 

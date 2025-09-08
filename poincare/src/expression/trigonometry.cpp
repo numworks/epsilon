@@ -354,18 +354,36 @@ static Tree* ReduceATrigOfTrig(const Tree* arg, Type type) {
 bool Trigonometry::ReduceATrig(Tree* e) {
   assert(e->isATrig());
   // atrig(trig(x))
+  bool isAtrigOfTrig = false;
+  bool isOpposite = false;
   PatternMatching::Context ctx;
+  // asin(-sin) or asin(-cos) or acos(-cos) or acos(-sin)
+  if (PatternMatching::Match(e, KATrig(KMult(-1_e, KTrig(KA, KB)), KC), &ctx)) {
+    isAtrigOfTrig = true;
+    isOpposite = true;
+  }
   // asin(sin) or asin(cos) or acos(cos) or acos(sin)
-  if (PatternMatching::Match(e, KATrig(KTrig(KA, KB), KC), &ctx)) {
+  else if (PatternMatching::Match(e, KATrig(KTrig(KA, KB), KC), &ctx)) {
+    isAtrigOfTrig = true;
+  }
+  if (isAtrigOfTrig) {
     // Handle asin(cos) like acos(cos) and acos(sin) like asin(sin) for now
-    Type type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
-    bool swapATrig = type != (ctx.getTree(KC)->isOne() ? Type::Sin : Type::Cos);
-    Tree* result = ReduceATrigOfTrig(ctx.getTree(KA), type);
+    Type typeInside = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
+    Type typeOutside = ctx.getTree(KC)->isOne() ? Type::Sin : Type::Cos;
+    bool swapATrig = typeInside != typeOutside;
+    Tree* result = ReduceATrigOfTrig(ctx.getTree(KA), typeInside);
     if (result) {
       if (swapATrig) {
         // Handle asin(cos) and acos(sin) using acos(x) = π/2 - asin(x)
         PatternMatching::MatchReplaceReduce(
             result, KA, KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)));
+      }
+      if (isOpposite) {
+        // asin(-x) = -asin(x) and acos(-x) = π - acos(x)
+        PatternMatching::MatchReplaceReduce(result, KA,
+                                            typeOutside == Type::Sin
+                                                ? KMult(-1_e, KA)
+                                                : KAdd(π_e, KMult(-1_e, KA)));
       }
       e->moveTreeOverTree(result);
       return true;

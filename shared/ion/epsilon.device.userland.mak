@@ -82,7 +82,7 @@ _lddeps_ion_userland := \
   $(PATH_ion)/src/device/userland/flash/userland_A.ld:+A:-test \
   $(PATH_ion)/src/device/userland/flash/userland_test_A.ld:+A:+test \
   $(PATH_ion)/src/device/userland/flash/userland_B.ld:+B:-test \
-  $(PBTH_ion)/src/device/userland/flash/userland_test_B.ld:+B:+test \
+  $(PATH_ion)/src/device/userland/flash/userland_test_B.ld:+B:+test
 
 _ldflags_ion_userland := \
   $(patsubst %,-Wl$(,)-T$(,)%,$(_lddeps_ion_userland)) \

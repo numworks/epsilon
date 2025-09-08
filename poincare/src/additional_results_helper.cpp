@@ -515,7 +515,6 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     // TODO: Use ComplexSign or approximation to handle more complex cases
     bool determinantIsUndefinedOrNull =
         determinant->isUndefined() || determinant->isZero();
-    // TODO_PCJ: Prevent having to update ctx here.
     Internal::Dimension dimension =
         Internal::Dimension::Get(determinant, ctx.m_context);
     determinantL = CreateBeautifiedLayout(

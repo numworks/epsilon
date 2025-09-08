@@ -257,7 +257,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
 
   // Project angles depending on context
   AngleUnit angleUnit = args->m_angleUnit;
-  if (e->isOfType({Type::Sin, Type::Cos, Type::Tan})) {
+  if (e->isOfType({Type::Sin, Type::Cos, Type::Tan, Type::Cot})) {
     /* In degree, cos(23°) and cos(23) -> trig(23×π/180, 0)
      * but        cos(23rad)           -> trig(23      , 0) */
     Tree* child = e->child(0);
@@ -345,9 +345,6 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // log(A, e) -> ln(A)
       PatternMatching::MatchReplace(e, KLogBase(KA, e_e), KLnUser(KA)) ||
 #if POINCARE_TRIGONOMETRY_ADVANCED
-      // Cot(A) -> cos(A)/sin(A)
-      PatternMatching::MatchReplace(e, KCot(KA),
-                                    KMult(KCos(KA), KPow(KSin(KA), -1_e))) ||
       // Sec(A) -> 1/cos(A)
       PatternMatching::MatchReplace(e, KSec(KA), KPow(KCos(KA), -1_e)) ||
       // Csc(A) -> 1/sin(A)
@@ -401,9 +398,15 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // tan(A) -> sin(A)/cos(A)
       PatternMatching::MatchReplace(
           e, KTan(KA), KMult(KTrig(KA, 1_e), KPow(KTrig(KA, 0_e), -1_e))) ||
+      // cot(A) -> sin(π/2 - A)/cos(π/2 - A)
+      PatternMatching::MatchReplace(
+          e, KCot(KA),
+          KMult(KTrig(KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)), 1_e),
+                KPow(KTrig(KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)), 0_e),
+                     -1_e))) ||
 #if POINCARE_TRIGONOMETRY_ADVANCED
       /* acot(A) -> π/2 - atan(A)
-      using acos(0) instead of π/2 to handle angle */
+       * using acos(0) instead of π/2 to handle angle */
       PatternMatching::MatchReplace(e, KACot(KA),
                                     KAdd(KACos(0_e), KMult(-1_e, KATan(KA)))) ||
 #endif

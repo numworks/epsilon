@@ -233,7 +233,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
                 "dep(1/(-x^2+1),{real(-artanh(x)×i×i)})");
   simplifies_to("diff(sec(x),x,x)", "sin(x)/cos(x)^2");
   simplifies_to("diff(csc(x),x,x)", "-cos(x)/sin(x)^2");
-  simplifies_to("diff(cot(x),x,x)", "dep(-(1+cot(x)^2),{cot(x)})");
+  simplifies_to("diff(cot(x),x,x)", "dep(-(1+cot(x)^2),{tan(-x+π/2)})");
   simplifies_to("diff(arcsec(x),x,x)",
                 "dep(1/(x^2×√(1-1/x^2)),{piecewise(0,abs(1/"
                 "x)≤1,nonreal),real(arccos(1/x))})");

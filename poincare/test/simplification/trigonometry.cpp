@@ -442,12 +442,11 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("atan(cot(π/7))", "(5×π)/14");
   // TODO: contract to (3×π-8)/2
   simplifies_to("atan(cot(4))", "-4+(3×π)/2");
-#if TODO_PCJ
   simplifies_to("atan(cos(π/7)/sin(π/7))", "(5×π)/14");
-  simplifies_to("atan(cos(4)/sin(4))", "(3×π-8)/2");
-#endif
+  // TODO: contract to (3×π-8)/2
+  simplifies_to("atan(cos(4)/sin(4))", "-4+(3×π)/2");
   simplifies_to("atan(cos(1.57079632)/sin(1.57079632))",
-                "arctan(cot(9817477/6250000))");
+                "-9817477/6250000+π/2");
   // cos(asin)
   simplifies_to("cos(asin(x))", "√(-x^2+1)", degreeCartesianCtx);
   simplifies_to("cos(asin(-x))", "√(-x^2+1)", degreeCartesianCtx);
@@ -579,8 +578,7 @@ QUIZ_CASE(pcj_simplification_trigonometry_advanced) {
 
   simplifies_to("sec(arcsec(x))", "dep(x,{nonNull(x)})", cartesianCtx);
   simplifies_to("csc(arccsc(x))", "dep(x,{nonNull(x)})", cartesianCtx);
-  // FIXME : Should be "dep(1+abs(x),{tan(arctan(1+abs(x)))})"
-  simplifies_to("cot(arccot(1+abs(x)))", "tan(arctan(1+abs(x)))", cartesianCtx);
+  simplifies_to("cot(arccot(1+abs(x)))", "1+abs(x)", cartesianCtx);
 
   simplifies_to("sin(x)*(cos(x)^-1)*ln(x)",
                 "dep(tan(x)×ln(x),{nonNull(x),realPos(x)})");

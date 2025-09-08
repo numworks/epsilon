@@ -6,14 +6,10 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "advanced_operation.h"
-#include "degree.h"
 #include "infinity.h"
 #include "k_tree.h"
-#include "number.h"
 #include "order.h"
 #include "poincare/sign.h"
-#include "polynomial.h"
-#include "projection.h"
 #include "rational.h"
 #include "sign.h"
 #include "systematic_reduction.h"
@@ -433,6 +429,13 @@ static Tree* GetAtanTanArg(const Tree* e) {
   if (!PatternMatching::Match(
           e, KATanRad(KMult(KPow(KTrig(KB, 0_e), -1_e), KTrig(KA, 1_e))),
           &ctx)) {
+    if (PatternMatching::Match(
+            e, KATanRad(KMult(KTrig(KA, 0_e), KPow(KTrig(KA, 1_e), -1_e))),
+            &ctx)) {
+      // atan(cos(a)/sin(a)) = atan(tan(π/2-a))
+      return PatternMatching::CreateReduce(
+          KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)), ctx);
+    }
     return nullptr;
   }
   const Tree* a = ctx.getTree(KA);

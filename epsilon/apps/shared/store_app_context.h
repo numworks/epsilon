@@ -6,9 +6,11 @@
 
 namespace Shared {
 
-class StoreContext : public Poincare::ContextWithParent {
+/* This Context is used in Apps which are centered on a double column table
+ * (Statistics and Regression) */
+class StoreAppContext : public Poincare::ContextWithParent {
  public:
-  StoreContext(Shared::DoublePairStore* store, const Context* parentContext)
+  StoreAppContext(Shared::DoublePairStore* store, const Context* parentContext)
       : Poincare::ContextWithParent(parentContext), m_store(store) {}
 
   Poincare::Context::UserNamedType expressionTypeForIdentifier(

@@ -155,9 +155,9 @@ int StoreColumnHelper::formulaMemoizationIndex(int series, int column) {
 StoreColumnHelper::FillColumnStatus
 StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
                                                 int* series, int* column) {
-  StoreContext storeContext(store(), &GlobalContextAccessor::Context());
+  StoreAppContext storeAppContext(store(), &GlobalContextAccessor::Context());
   UserExpression formula = UserExpression::Parse(
-      formulaLayout.tree(), storeContext, {.isAssignment = true});
+      formulaLayout.tree(), storeAppContext, {.isAssignment = true});
   if (formula.isUninitialized()) {
     return FillColumnStatus::SyntaxError;
   }
@@ -183,7 +183,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
 
   bool reductionFailure = false;
   SystemExpression reduced = PoincareHelpers::CloneAndReduce(
-      formula, storeContext,
+      formula, storeAppContext,
       GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
       GlobalPreferences::SharedGlobalPreferences()->angleUnit(), true,
       Poincare::ReductionTarget::User, SymbolicComputation::ReplaceAllSymbols,

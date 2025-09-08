@@ -6,7 +6,7 @@
 #include "double_pair_store.h"
 #include "formula_template_menu_controller.h"
 #include "pop_up_controller.h"
-#include "store_context.h"
+#include "store_app_context.h"
 
 namespace Shared {
 

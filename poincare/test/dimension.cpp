@@ -10,7 +10,7 @@
 using namespace Poincare::Internal;
 
 bool dim(const Tree* e, Dimension dExpected,
-         const Poincare::Context& ctx = Poincare::EmptyContext{}) {
+         const Poincare::Context& ctx = Poincare::EmptySymbolContext{}) {
   if (!Dimension::DeepCheck(e, ctx)) {
 #if POINCARE_TREE_LOG
     std::cout << "EXPECTED VALID dimension for: ";
@@ -34,7 +34,7 @@ bool dim(const Tree* e, Dimension dExpected,
 }
 
 bool dim(const char* input, Dimension d,
-         const Poincare::Context& ctx = Poincare::EmptyContext{}) {
+         const Poincare::Context& ctx = Poincare::EmptySymbolContext{}) {
   Tree* e = parse(input, ctx);
   bool result = dim(e, d, ctx);
   e->removeTree();
@@ -42,13 +42,13 @@ bool dim(const char* input, Dimension d,
 }
 
 bool len(const Tree* e, int n,
-         const Poincare::Context& ctx = Poincare::EmptyContext{}) {
+         const Poincare::Context& ctx = Poincare::EmptySymbolContext{}) {
   assert(Dimension::DeepCheck(e, ctx));
   return Dimension::ListLength(e, ctx) == n;
 }
 
 bool len(const char* input, int n,
-         const Poincare::Context& ctx = Poincare::EmptyContext{}) {
+         const Poincare::Context& ctx = Poincare::EmptySymbolContext{}) {
   Tree* e = parse(input, ctx);
   bool result = len(e, n, ctx);
   e->removeTree();
@@ -68,7 +68,8 @@ bool hasInvalidDimOrLen(const Tree* e) {
 }
 
 bool hasInvalidDimOrLen(const char* input) {
-  Tree* e = parse(input, Poincare::EmptyContext{}, {.preserveInput = true});
+  Tree* e =
+      parse(input, Poincare::EmptySymbolContext{}, {.preserveInput = true});
   bool result = hasInvalidDimOrLen(e);
   e->removeTree();
   return result;

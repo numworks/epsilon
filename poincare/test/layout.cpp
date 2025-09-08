@@ -396,7 +396,7 @@ void assert_layout_is_not_parsed(Poincare::Layout layout) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   LayoutSerializer::Serialize(layout, buffer);
-  UserExpression e = UserExpression::Parse(buffer, EmptyContext{});
+  UserExpression e = UserExpression::Parse(buffer, EmptySymbolContext{});
   quiz_assert_print_if_failure(e.isUninitialized(), buffer);
 }
 

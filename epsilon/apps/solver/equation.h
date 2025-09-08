@@ -29,7 +29,7 @@ class Equation : public Shared::ExpressionModelHandle {
     Poincare::UserExpression buildExpressionFromLayout(
         Poincare::Layout l, CodePoint symbol = 0,
         const Poincare::Context& context =
-            Poincare::EmptyContext{}) const override;
+            Poincare::EmptySymbolContext{}) const override;
 
    private:
     void* expressionAddress(const Ion::Storage::Record* record) const override;

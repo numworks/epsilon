@@ -33,7 +33,7 @@ EquationModelsParameterController::EquationModelsParameterController(
   m_selectableListView.hideScrollBars();
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     Poincare::UserExpression e = UserExpression::Parse(
-        k_models[i + 1], EmptyContext{}, {.preserveInput = true});
+        k_models[i + 1], EmptySymbolContext{}, {.preserveInput = true});
     m_layouts[i] =
         e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
                        Preferences::ShortNumberOfSignificantDigits);

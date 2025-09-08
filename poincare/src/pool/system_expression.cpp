@@ -77,7 +77,7 @@ SystemExpression SystemExpression::DecimalBuilderFromDouble(double value) {
   assert(buffer[0] != 0);
   Tree* layout = RackFromText(buffer);
   assert(layout);
-  TreeRef expression = Parser::Parse(layout, EmptyContext{});
+  TreeRef expression = Parser::Parse(layout, EmptySymbolContext{});
   // expression is only made of numbers and simple nodes, no need for contextes.
   layout->removeTree();
   ProjectionContext context = {};

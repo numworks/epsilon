@@ -209,7 +209,7 @@ QUIZ_CASE(solver_cubic) {
       {"x^3+1111111116*x^2-6"},
       {"x=-1111111116", "x=-7363160451/100000000000000",
        "x=7339318593/100000000000000", "delta=32921811134156380512921812532"},
-      Poincare::EmptyContext{}, 1e-2);
+      Poincare::EmptySymbolContext{}, 1e-2);
 
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);
@@ -280,9 +280,9 @@ QUIZ_CASE(solver_approximate) {
   assert_solves_numerically_to("e^x/1000=0", -1000, 1000, {});
   assert_solves_numerically_to("e^x=0", -1000, 1000, {});
   assert_solves_numerically_to("√(y)=0", -900, 1000, {0},
-                               Poincare::EmptyContext{}, "y");
+                               Poincare::EmptySymbolContext{}, "y");
   assert_solves_numerically_to("√(y+1)=0", -900, 1000, {-1},
-                               Poincare::EmptyContext{}, "y");
+                               Poincare::EmptySymbolContext{}, "y");
   // The ends of the interval are solutions
   assert_solves_numerically_to(
       "sin(x)=0", 0, 10000,

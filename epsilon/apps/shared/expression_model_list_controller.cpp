@@ -250,7 +250,7 @@ static CodePoint symbolForEquation(UserExpression expression) {
         }
         return false;
       },
-      EmptyContext{}, SymbolicComputation::KeepAllSymbols, &symbol);
+      EmptySymbolContext{}, SymbolicComputation::KeepAllSymbols, &symbol);
   return symbol;
 }
 

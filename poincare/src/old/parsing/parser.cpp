@@ -79,7 +79,7 @@ OExpression Parser::parseExpressionWithRightwardsArrow(
             ExpressionNode::Type::Symbol))) {
     setState(previousState);
     m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
-    EmptyContext tempContext = EmptyContext();
+    EmptySymbolContext tempContext = EmptySymbolContext();
     /* This is instatiated outside the condition so that the pointer is not
      * lost. */
     VariableContext assignmentContext("", &tempContext);

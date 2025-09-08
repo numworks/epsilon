@@ -46,7 +46,7 @@ void assert_regression_data_is_not_suitable(const double* xi, const double* yi,
 
   setRegressionPoints(&store, series, numberOfPoints, xi, yi);
   store.setSeriesRegressionType(series, modelType);
-  Shared::StoreAppContext context(&store, &k_emptyContext);
+  Shared::StoreAppContext context(&store, &k_emptySymbolContext);
 
   quiz_assert(!store.coefficientsAreDefined(series, finite));
 }
@@ -66,7 +66,7 @@ void assert_regression_is(const double* xi, const double* yi,
 
   setRegressionPoints(&store, series, numberOfPoints, xi, yi);
   store.setSeriesRegressionType(series, modelType);
-  Shared::StoreAppContext context(&store, &k_emptyContext);
+  Shared::StoreAppContext context(&store, &k_emptySymbolContext);
 
   double precision = 1e-2;
   // When expected value is null, expect a stronger precision

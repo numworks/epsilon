@@ -33,7 +33,7 @@ void EnterOrLeaveScope(Tree* e, bool enter, int preserveUnder);
 /* Get the user symbols of e and push them in set. Look inside UserFunctions
  * definition if ctx is given. */
 void GetUserSymbols(const Tree* e, Tree* set,
-                    const Poincare::Context& ctx = EmptyContext{});
+                    const Poincare::Context& ctx = EmptySymbolContext{});
 uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
 const Tree* ToSymbol(const Tree* variables, uint8_t id);
 }  // namespace Private
@@ -41,7 +41,7 @@ const Tree* ToSymbol(const Tree* variables, uint8_t id);
 /* Push a Set with the free user symbols of the expression. Look inside
  * UserFunctions definition if ctx is given. */
 Tree* GetUserSymbols(const Tree* e,
-                     const Poincare::Context& ctx = EmptyContext{});
+                     const Poincare::Context& ctx = EmptySymbolContext{});
 // Ignore UserSymbols in parametric's variable
 bool HasUserSymbols(const Tree* e, bool checkForUserFunctions = false);
 

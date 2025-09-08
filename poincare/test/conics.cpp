@@ -35,7 +35,7 @@ ParametricConic buildParametricConic(const char* expression) {
                                    .m_advanceReduce = false};
   // Prevent t from being interpreted as ton
   Poincare::PoolVariableContext tContext(
-      "t", UserExpression::Builder<float>(0.f), &k_emptyContext);
+      "t", UserExpression::Builder<float>(0.f), &k_emptySymbolContext);
   Tree* e = parse(expression, tContext);
   Simplification::ProjectAndReduce(e, &projContext);
   return ParametricConic(SystemExpression::Builder(e));

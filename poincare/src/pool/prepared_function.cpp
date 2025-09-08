@@ -17,7 +17,7 @@ T PreparedFunctionScalar::approximateToRealScalarWithValue(
   return Approximation::To<T>(
       tree(), x, Approximation::Parameters{.isRootAndCanHaveRandom = true},
       Approximation::Context(AngleUnit::None, ComplexFormat::None,
-                             EmptyContext{}, listElement));
+                             EmptySymbolContext{}, listElement));
 }
 
 bool PreparedFunction::involvesDiscontinuousFunction() const {

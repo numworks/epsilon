@@ -75,19 +75,19 @@ struct Dimension {
   constexpr static int k_nonListListLength = -1;
   // Return k_nonListListLength if tree isn't a list.
   static int ListLength(const Tree* e,
-                        const Poincare::Context& ctx = EmptyContext{});
+                        const Poincare::Context& ctx = EmptySymbolContext{});
   static bool IsList(const Tree* e,
-                     const Poincare::Context& ctx = EmptyContext{}) {
+                     const Poincare::Context& ctx = EmptySymbolContext{}) {
     return ListLength(e, ctx) != k_nonListListLength;
   }
   static Dimension Get(const Tree* e,
-                       const Poincare::Context& ctx = EmptyContext{});
+                       const Poincare::Context& ctx = EmptySymbolContext{});
   static bool DeepCheck(const Tree* e,
-                        const Poincare::Context& ctx = EmptyContext{}) {
+                        const Poincare::Context& ctx = EmptySymbolContext{}) {
     return DeepCheckDimensions(e, ctx) && DeepCheckListLength(e, ctx);
   }
-  static bool IsNonListScalar(const Tree* e,
-                              const Poincare::Context& ctx = EmptyContext{}) {
+  static bool IsNonListScalar(
+      const Tree* e, const Poincare::Context& ctx = EmptySymbolContext{}) {
     return Get(e, ctx).isScalar() && !IsList(e, ctx);
   }
 
@@ -127,12 +127,12 @@ struct Dimension {
 
  private:
   static bool DeepCheckDimensions(
-      const Tree* e, const Poincare::Context& ctx = EmptyContext{});
+      const Tree* e, const Poincare::Context& ctx = EmptySymbolContext{});
   static bool DeepCheckDimensionsAux(const Tree* e,
                                      const Poincare::Context& ctx,
                                      bool hasUnitChild, bool hasNonKelvinChild);
   static bool DeepCheckListLength(
-      const Tree* e, const Poincare::Context& ctx = EmptyContext{});
+      const Tree* e, const Poincare::Context& ctx = EmptySymbolContext{});
 };
 
 }  // namespace Internal

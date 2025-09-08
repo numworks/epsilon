@@ -182,7 +182,7 @@ using ParsingParameters = Poincare::ParserHelper::ParsingParameters;
 
 Poincare::Internal::Tree* parse(
     const char* input,
-    const Poincare::Context& context = Poincare::EmptyContext{},
+    const Poincare::Context& context = Poincare::EmptySymbolContext{},
     ParsingParameters params = {});
 
 Poincare::Internal::Tree* parse_and_reduce(const char* input,
@@ -205,11 +205,11 @@ void assert_expression_serializes_and_parses_to(
 
 void assert_text_not_parsable(
     const char* input,
-    const Poincare::Context& context = Poincare::EmptyContext{},
+    const Poincare::Context& context = Poincare::EmptySymbolContext{},
     ParsingParameters params = {});
 void assert_parse_to_integer_overflow(
     const char* input,
-    const Poincare::Context& context = Poincare::EmptyContext{});
+    const Poincare::Context& context = Poincare::EmptySymbolContext{});
 
 inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
     const char* function, Poincare::Internal::ProjectionContext ctx = {}) {
@@ -234,12 +234,12 @@ void assert_layout_serializes_to(const Poincare::Internal::Tree* layout,
 
 void assert_expression_parses_and_serializes_to(
     const char* expression, const char* result,
-    const Poincare::Context& context = Poincare::EmptyContext{},
+    const Poincare::Context& context = Poincare::EmptySymbolContext{},
     Poincare::Preferences::PrintFloatMode mode = ScientificMode,
     int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);
 void assert_expression_parses_and_serializes_to_itself(
     const char* expression,
-    const Poincare::Context& context = Poincare::EmptyContext{});
+    const Poincare::Context& context = Poincare::EmptySymbolContext{});
 
 void serialize_expression(const Poincare::Internal::Tree* expression,
                           std::span<char> buffer,

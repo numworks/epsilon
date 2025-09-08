@@ -32,18 +32,20 @@ class PoolLayoutCursor final : public LayoutCursor,
   Rack* cursorRack() const override { return rootRack() + m_cursorRack; }
 
   /* Layout insertion */
-  void insertText(const char* text,
-                  const Poincare::Context& context = Poincare::EmptyContext{},
-                  bool forceRight = false, bool forceLeft = false,
-                  bool linearMode = false) {
+  void insertText(
+      const char* text,
+      const Poincare::Context& context = Poincare::EmptySymbolContext{},
+      bool forceRight = false, bool forceLeft = false,
+      bool linearMode = false) {
     TreeStackCursor::InsertTextContext insertTextContext{text, forceRight,
                                                          forceLeft, linearMode};
     execute(&TreeStackCursor::insertText, context, &insertTextContext);
   }
-  void insertLayout(const Tree* l,
-                    const Poincare::Context& context = Poincare::EmptyContext{},
-                    bool forceRight = false, bool forceLeft = false,
-                    bool collapseSiblings = true) {
+  void insertLayout(
+      const Tree* l,
+      const Poincare::Context& context = Poincare::EmptySymbolContext{},
+      bool forceRight = false, bool forceLeft = false,
+      bool collapseSiblings = true) {
     TreeStackCursor::InsertLayoutContext insertLayoutContext{
         l, forceRight, forceLeft, collapseSiblings};
     execute(&TreeStackCursor::insertLayout, context, &insertLayoutContext);
@@ -65,9 +67,10 @@ class PoolLayoutCursor final : public LayoutCursor,
   void applyTreeStackCursor(TreeStackCursor cursor);
   typedef void (TreeStackCursor::*Action)(const Poincare::Context& context,
                                           const void* data);
-  void execute(Action action,
-               const Poincare::Context& context = Poincare::EmptyContext{},
-               const void* data = nullptr);
+  void execute(
+      Action action,
+      const Poincare::Context& context = Poincare::EmptySymbolContext{},
+      const void* data = nullptr);
   void setCursorRack(Rack* rack) override {
     // Don't use rack here as it may be invalid during execute
     m_cursorRack = rack - Rack::From(static_cast<Tree*>(rootRack()));

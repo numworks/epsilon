@@ -129,7 +129,7 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
         rightHandSide->child(0)->isUserSymbol()))) {
     setState(previousState);
     m_parsingContext.metadata.isAssignmentDeclaration = false;
-    Poincare::EmptyContext tempContext = Poincare::EmptyContext();
+    Poincare::EmptySymbolContext tempContext = Poincare::EmptySymbolContext();
     // This is instantiated outside the condition so that the pointer is not
     // lost.
     Poincare::TreeVariableContext assignmentContext("", &tempContext);

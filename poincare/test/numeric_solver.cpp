@@ -70,10 +70,10 @@ void assert_solutions_are(
     Interest interest, AngleUnit angleUnit, const char* otherExpression) {
   Poincare::Solver<double> solver(start, end);
   for (Poincare::Coordinate2D<double> c : expected) {
-    assert_next_solution_is(expression, Poincare::EmptyContext{}, &solver, c,
-                            interest, otherExpression, angleUnit);
+    assert_next_solution_is(expression, Poincare::EmptySymbolContext{}, &solver,
+                            c, interest, otherExpression, angleUnit);
   }
-  assert_next_solution_is(expression, Poincare::EmptyContext{}, &solver,
+  assert_next_solution_is(expression, Poincare::EmptySymbolContext{}, &solver,
                           Poincare::Coordinate2D<double>(NAN, NAN), interest,
                           otherExpression, angleUnit);
 }

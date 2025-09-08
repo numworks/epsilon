@@ -11,7 +11,7 @@ namespace Poincare::Internal {
 namespace Parser {
 
 // Parses a top-level layout.
-inline Tree* Parse(const Tree* l, const Context& context = EmptyContext{},
+inline Tree* Parse(const Tree* l, const Context& context = EmptySymbolContext{},
                    ParserHelper::ParsingParameters params = {}) {
   return LayoutParser::Parse(l, {.context = &context,
                                  .params = params,

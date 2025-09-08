@@ -69,7 +69,7 @@ class Sequence : public Function {
   }
   Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(
       Poincare::Layout l,
-      const Poincare::Context& context = Poincare::EmptyContext{}) {
+      const Poincare::Context& context = Poincare::EmptySymbolContext{}) {
     return m_firstInitialCondition.setContent(this, l, context);
   }
   // Second initial condition
@@ -90,7 +90,7 @@ class Sequence : public Function {
   }
   Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(
       Poincare::Layout l,
-      const Poincare::Context& context = Poincare::EmptyContext{}) {
+      const Poincare::Context& context = Poincare::EmptySymbolContext{}) {
     return m_secondInitialCondition.setContent(this, l, context);
   }
   void tidyDownstreamPoolFrom(

@@ -13,7 +13,7 @@ class Expression;
 
 class Dimension {
  public:
-  Dimension(const Expression e, const Context& context = EmptyContext{});
+  Dimension(const Expression e, const Context& context = EmptySymbolContext{});
 
   bool isScalar();
   bool isMatrix();
@@ -114,7 +114,7 @@ class Expression : public PoolHandle {
 
   /* Other properties */
 
-  Dimension dimension(const Context& context = EmptyContext{}) const;
+  Dimension dimension(const Context& context = EmptySymbolContext{}) const;
   // Only called on expressions that are comparisons
   Comparison::Operator comparisonOperator() const;
 

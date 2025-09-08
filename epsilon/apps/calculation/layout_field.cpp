@@ -29,7 +29,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
       /* Beautify and save the cursor before moving up, otherwise moving up may
        * beautify and the copied cursor will be pointing to the pre-beautified
        * layout. */
-      cursor()->beautifyLeft(EmptyContext{});
+      cursor()->beautifyLeft(EmptySymbolContext{});
       m_insertionCursor = *cursor();
       /* Ensure insertion cursor will stay valid even when the current layout is
        * exited */

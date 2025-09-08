@@ -13,7 +13,7 @@ void assert_inserted_text_turns_into(const char* textToInsert,
                                      const char* textRightOfInsertedText = "") {
   Layout r = Layout::Builder(KRackL());
   LayoutCursor cursor = {r, r.tree()};
-  cursor.insertText(textRightOfInsertedText, EmptyContext{}, false, true);
+  cursor.insertText(textRightOfInsertedText, EmptySymbolContext{}, false, true);
   size_t textLen = strlen(textToInsert);
   char buffer[2] = {0, 0};
   for (size_t i = 0; i < textLen; i++) {
@@ -191,7 +191,7 @@ QUIZ_CASE(pcj_input_beautification_derivative) {
   {
     Layout l = firstOrderDerivative;
     LayoutCursor c(l, l.tree()->child(0)->child(0));
-    c.addEmptyPowerLayout(k_emptyContext);
+    c.addEmptyPowerLayout(k_emptySymbolContext);
     quiz_assert(c.rootRack()->treeIsIdenticalTo(nthOrderDerivative.tree()));
   }
 }

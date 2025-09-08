@@ -100,7 +100,8 @@ void PrepareFunctionForApproximation(Tree* e, const char* variable,
   /* All symbols should already have been replaced by their definition.
    * Leftover symbols can be replaced by undefined. */
   Projection::DeepReplaceUserNamed(
-      e, EmptyContext{}, SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+      e, EmptySymbolContext{},
+      SymbolicComputation::ReplaceAllSymbolsWithUndefined);
   e->moveTreeOverTree(ToTree<double>(
       e,
       Parameters{

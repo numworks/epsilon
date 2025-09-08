@@ -7,8 +7,8 @@
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/symbol_context.h>
+#include <poincare/symbol_store_interface.h>
 #include <poincare/test/float_helper.h>
-#include <poincare/variable_store.h>
 #include <quiz.h>
 
 namespace Poincare::Internal {

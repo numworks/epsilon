@@ -6,7 +6,7 @@
 #include <omg/expiring_pointer.h>
 #include <omg/store.h>
 #include <poincare/pool_variable_context.h>
-#include <poincare/variable_store.h>
+#include <poincare/symbol_store_interface.h>
 #include <stddef.h>
 
 #include "calculation.h"

@@ -10,7 +10,7 @@
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <poincare/symbol_context.h>
-#include <poincare/variable_store.h>
+#include <poincare/symbol_store_interface.h>
 #include <quiz.h>
 
 #include <span>

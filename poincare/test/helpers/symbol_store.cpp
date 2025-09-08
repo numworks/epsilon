@@ -22,19 +22,19 @@ std::string_view SymbolNameFromTree(const Tree* symbolTree) {
 }
 
 void store(const char* storeExpression,
-           Poincare::VariableStore& variableStore) {
+           Poincare::SymbolStoreInterface& symbolStore) {
   Poincare::UserExpression storeUserExpression =
-      Poincare::UserExpression::Parse(storeExpression, variableStore);
-  variableStore.setExpressionForUserNamed(
+      Poincare::UserExpression::Parse(storeExpression, symbolStore);
+  symbolStore.setExpressionForUserNamed(
       Poincare::StoreHelper::Value(storeUserExpression),
       Poincare::StoreHelper::Symbol(storeUserExpression));
 }
 
 void store(const char* symbol, const char* expression,
-           Poincare::VariableStore& variableStore) {
-  variableStore.setExpressionForUserNamed(
-      Poincare::UserExpression::Parse(expression, variableStore),
-      Poincare::UserExpression::Parse(symbol, variableStore,
+           Poincare::SymbolStoreInterface& symbolStore) {
+  symbolStore.setExpressionForUserNamed(
+      Poincare::UserExpression::Parse(expression, symbolStore),
+      Poincare::UserExpression::Parse(symbol, symbolStore,
                                       ParsingParameters{.isAssignment = true}));
 }
 

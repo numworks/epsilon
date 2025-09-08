@@ -10,8 +10,8 @@
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <poincare/symbol_context.h>
+#include <poincare/symbol_store_interface.h>
 #include <poincare/user_expression.h>
-#include <poincare/variable_store.h>
 
 using namespace Poincare::Internal;
 

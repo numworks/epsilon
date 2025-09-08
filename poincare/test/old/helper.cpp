@@ -11,9 +11,9 @@
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
+#include <poincare/symbol_store_interface.h>
 #include <poincare/test/helper.h>
 #include <poincare/test/helpers/symbol_store.h>
-#include <poincare/variable_store.h>
 
 using namespace Poincare;
 using namespace Poincare::Internal;

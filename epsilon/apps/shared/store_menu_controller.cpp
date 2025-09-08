@@ -5,7 +5,7 @@
 #include <poincare/cas.h>
 #include <poincare/helpers/store.h>
 #include <poincare/k_tree.h>
-#include <poincare/variable_store.h>
+#include <poincare/symbol_store_interface.h>
 
 #include "app_with_store_menu.h"
 #include "global_store.h"

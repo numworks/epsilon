@@ -14,15 +14,6 @@
 
 namespace Poincare::Internal {
 
-bool Sequence::IsSequenceName(const char* name) {
-  for (const char* s : SequenceHelper::k_sequenceNames) {
-    if (strcmp(s, name) == 0) {
-      return true;
-    }
-  }
-  return false;
-}
-
 int Sequence::InitialRank(const Tree* sequence) {
   assert(sequence->isSequence());
   assert(sequence->child(k_firstRankIndex)->isInteger());

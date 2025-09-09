@@ -1065,27 +1065,6 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   }
 }
 
-void RackParser::parseSequence(TreeRef& leftHandSide, const char* name,
-                               Token::Type rightDelimiter) {
-#if POINCARE_SEQUENCE
-  // assert(m_nextToken.type() ==
-  // ((rightDelimiter == Token::Type::RightSystemBrace)
-  // ? Token::Type::LeftSystemBrace
-  // : Token::Type::LeftParenthesis));
-  popToken();  // Pop the left delimiter
-  TreeRef rank = parseUntil(rightDelimiter);
-  if (!popTokenIfType(rightDelimiter)) {
-    // Right delimiter missing
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  } else {
-    leftHandSide = SharedTreeStack->pushUserSequence(name);
-    leftHandSide->moveTreeAfterNode(rank);
-  }
-#else
-  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-#endif
-}
-
 void RackParser::parseSpecialIdentifier(TreeRef& leftHandSide,
                                         Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
@@ -1155,32 +1134,34 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
   }
 
 #if POINCARE_SEQUENCE
-  // Parse u(n)
-  bool hasSubscriptOrLayoutParentheses =
-      m_nextToken.type() == Token::Type::Subscript ||
-      (m_nextToken.type() == Token::Type::Layout &&
-       m_nextToken.firstLayout()->isParenthesesLayout());
+  // Parse u(n) and u_n
+  bool hasSubscript = m_nextToken.type() == Token::Type::Subscript;
+  bool hasLayoutParentheses = m_nextToken.type() == Token::Type::Layout &&
+                              m_nextToken.firstLayout()->isParenthesesLayout();
   bool hasLeftParenthesis = m_nextToken.type() == Token::Type::LeftParenthesis;
-  if ((idType == Poincare::SymbolContext::UserNamedType::Sequence ||
-       (idType == Poincare::SymbolContext::UserNamedType::None &&
-        Sequence::IsSequenceName(name))) &&
-      (hasSubscriptOrLayoutParentheses || hasLeftParenthesis)) {
+
+  if ((idType == Poincare::SymbolContext::UserNamedType::None &&
+       hasSubscript) ||
+      (idType == Poincare::SymbolContext::UserNamedType::Sequence)) {
     /* If the user is not defining a variable and the identifier is already
-     * known to be a sequence, or has an unknown type and the identifier is a
-     * sequence name, it's a sequence call. */
-    if (hasSubscriptOrLayoutParentheses) {
-      popToken();
-      /* TODO factor with parseSequence */
-      leftHandSide = SharedTreeStack->pushUserSequence(name);
-      Tree* index = LayoutParser::Parse(m_currentToken.firstLayout()->child(0),
-                                        m_parsingContext);
-      if (!index) {
+     * known to be a sequence, or if it's followed by a subscript, it's a
+     * sequence call. */
+    popToken();
+    leftHandSide = SharedTreeStack->pushUserSequence(name);
+    Tree* index = nullptr;
+    if (hasLeftParenthesis) {
+      index = parseUntil(Token::Type::RightParenthesis);
+      if (!popTokenIfType(Token::Type::RightParenthesis)) {
+        // Right delimiter missing
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
-      return;
+    } else if (hasSubscript || hasLayoutParentheses) {
+      index = LayoutParser::Parse(m_currentToken.firstLayout()->child(0),
+                                  m_parsingContext);
     }
-    assert(hasLeftParenthesis);
-    parseSequence(leftHandSide, name, Token::Type::RightParenthesis);
+    if (!index) {
+      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    }
     return;
   }
 #endif
@@ -1248,13 +1229,6 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
   if (parameter->numberOfChildren() != 1) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-
-#if POINCARE_SEQUENCE
-  if (Sequence::IsSequenceName(name)) {
-    // UserFunction cannot have a sequence name.
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
-#endif
 
   MoveTreeOverTree(parameter, parameter->child(0));
   if (parameter->type() == Type::UserSymbol &&

@@ -59,15 +59,18 @@ void assert_tokenizes_as_undefined_token(const char* string) {
 
 void assertLayoutParsesTo(
     const Tree* layout, const Tree* expected,
+    const Poincare::SymbolContext& symbolContext =
+        Poincare::EmptySymbolContext{},
     Poincare::ParserHelper::ParsingParameters params = {}) {
-  Tree* expression =
-      Parser::Parse(layout, Poincare::EmptySymbolContext{}, params);
+  Tree* expression = Parser::Parse(layout, symbolContext, params);
   assert_trees_are_equal(expression, expected);
 }
 
-bool is_parsable(const Tree* layout, bool preserveInput = true) {
-  TreeRef expression = Parser::Parse(layout, Poincare::EmptySymbolContext{},
-                                     {.preserveInput = preserveInput});
+bool is_parsable(const Tree* layout, bool preserveInput = true,
+                 const Poincare::SymbolContext& symbolContext =
+                     Poincare::EmptySymbolContext{}) {
+  TreeRef expression =
+      Parser::Parse(layout, symbolContext, {.preserveInput = preserveInput});
   return !expression.isUninitialized();
 }
 
@@ -572,7 +575,7 @@ QUIZ_CASE(pcj_parse_assignment) {
   assertLayoutParsesTo(
       "f(x)=xxln(x)"_l,
       KEqual(KFun<"f">("x"_e), KMult("x"_e, "x"_e, KLnUser("x"_e))),
-      {.isAssignment = true});
+      Poincare::EmptySymbolContext(), {.isAssignment = true});
 
   assert_parsed_expression_is(
       "f(x)=xy",
@@ -598,7 +601,7 @@ QUIZ_CASE(pcj_parse_assignment) {
 QUIZ_CASE(pcj_parse_mixed_fraction) {
   assertLayoutParsesTo("1"_l ^ KFracL("2"_l, "3"_l),
                        KMixedFraction(1_e, KDiv(2_e, 3_e)),
-                       {.preserveInput = true});
+                       Poincare::EmptySymbolContext(), {.preserveInput = true});
 
   GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::US);
   assert(Poincare::SharedPreferences->mixedFractionsAreEnabled());
@@ -750,10 +753,20 @@ QUIZ_CASE(pcj_parse_sequences) {
 #if POINCARE_SEQUENCE
   Tree* expected = SharedTreeStack->pushUserSequence("u");
   (4_e)->cloneTree();
-  assertLayoutParsesTo("u(4)"_l, expected, {.preserveInput = true});
+
+  // If u is not defined, u_4 is parsed as a sequence (if preserveInput is true)
+  assert(!is_parsable("u"_l ^ KSubscriptL("4"_l), false));
+  assertLayoutParsesTo("u"_l ^ KSubscriptL("4"_l), expected,
+                       Poincare::EmptySymbolContext(), {.preserveInput = true});
+
+  // If u is defined, u(4) is parsed as u_4
+  PoincareTest::SymbolStore symbolStore;
+  symbolStore.setExpressionForUserNamed(1_e, KSeq<"u">(KUnknownSymbol));
+  assertLayoutParsesTo("u(4)"_l, expected, symbolStore);
   expected->removeTree();
-  quiz_assert(is_parsable("f'(4)"_l));
-  quiz_assert(!is_parsable("u'(4)"_l));
+
+  // Cannot parse u' if u is a sequence
+  assert(!is_parsable("u'(4)"_l, false, symbolStore));
 #endif
 }
 

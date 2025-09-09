@@ -13,7 +13,6 @@ class Sequence {
   constexpr static int k_firstInitialConditionIndex = 3;
   constexpr static int k_secondInitialConditionIndex = 4;
 
-  static bool IsSequenceName(const char* name);
   static int InitialRank(const Tree* sequence);
 
   static Tree* PushMainExpressionName(const Tree* sequence);

@@ -491,7 +491,7 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
   }
 
   // ShallowReduce to remove defined dependencies ({x+3}->{x, 3}->{x})
-  RemoveDefinedDependencies(dep);
+  changed |= RemoveDefinedDependencies(dep);
   if (!dep->isDep()) {
     return true;
   }
@@ -531,7 +531,10 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
     depI = depI->nextTree();
   }
 
-  changed |= RemoveDefinedDependencies(dep);
+  if (nbChildren == 0) {
+    // Remove dep node if the DepList is empty
+    dep->moveTreeOverTree(dep->child(0));
+  }
   return changed;
 }
 

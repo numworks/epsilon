@@ -1,4 +1,5 @@
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/expression/units/k_units.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/tree_stack.h>
@@ -22,6 +23,26 @@ QUIZ_CASE(pcj_simplification_expansion) {
                       KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 1_e))),
                  KDepList(KMult(0_e, KTrig(KAdd("x"_e, "y"_e), 1_e)))));
   expand_to(KLn(KMult(2_e, π_e)), KAdd(KLn(2_e), KLn(π_e)));
+
+  // Pushing the rational on the stack because it can't be made a KTree.
+  // TODO: Result is false.
+  // 40000000/18358803711643
+  Tree* bigRational = KMult.node<2>->cloneNode();
+  (40000000_e)->cloneTree();
+  KPow->cloneNode();
+  (18358803711643_e)->cloneTree();
+  (-1_e)->cloneTree();
+  SystematicReduction::DeepReduce(bigRational);
+  assert(bigRational->isRational());
+  // ln(40000000/18358803711643)+ln(21)
+  Tree* input = KAdd.node<2>->cloneNode();
+  KLn->cloneNode();
+  bigRational->cloneTree();
+  KLn->cloneNode();
+  (21_e)->cloneTree();
+  // 9*ln(2)+ln(3)+7*ln(5)+ln(7)
+  expand_to(input, KAdd(KMult(9_e, KLn(2_e)), KLn(3_e), KMult(7_e, KLn(5_e)),
+                        KLn(7_e)));
 }
 
 QUIZ_CASE(pcj_simplification_algebraic_expansion) {

@@ -51,9 +51,8 @@ constexpr Poincare::ProjectionContext keepAllSymbolsCtx = {
     .m_symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
 };
 
-typedef void (*ProcessTree)(
-    Poincare::Internal::Tree*,
-    Poincare::ProjectionContext projectionContext);
+typedef void (*ProcessTree)(Poincare::Internal::Tree*,
+                            Poincare::ProjectionContext projectionContext);
 void process_tree_and_compare(
     const char* input, const char* output, ProcessTree process,
     Poincare::ProjectionContext projectionContext,
@@ -248,5 +247,4 @@ void serialize_expression(const Poincare::Internal::Tree* expression,
 
 // Simplification
 void simplify(Poincare::Internal::Tree* e,
-              const Poincare::ProjectionContext& ctx,
-              bool beautify = true);
+              const Poincare::ProjectionContext& ctx, bool beautify = true);

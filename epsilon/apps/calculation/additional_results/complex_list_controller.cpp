@@ -23,11 +23,10 @@ void ComplexListController::computeAdditionalResults(
   assert(AdditionalResultsType::HasComplex(
       approximateOutput, m_calculationPreferences, App::app()->localContext()));
   assert(complexFormat() != ComplexFormat::Real);
-  ProjectionContext ctx = {
-      .m_complexFormat = ComplexFormat::Cartesian,
-      .m_angleUnit = angleUnit(),
-      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = App::app()->localContext()};
+  ProjectionContext ctx = {.m_complexFormat = ComplexFormat::Cartesian,
+                           .m_angleUnit = angleUnit(),
+                           .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+                           .m_context = App::app()->localContext()};
 
   // Fill Calculation Store
   constexpr KTree k_symbol = "z"_e;

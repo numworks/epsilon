@@ -156,8 +156,8 @@ Poincare::Layout ExpressionsListController::layoutAtIndex(HighlightCell* cell,
 }
 
 Layout ExpressionsListController::GetExactLayoutFromExpression(
-    const UserExpression e, const ProjectionContext* ctx,
-    Layout* approximate, bool* isStrictlyEqual) {
+    const UserExpression e, const ProjectionContext* ctx, Layout* approximate,
+    bool* isStrictlyEqual) {
   assert(!e.isUninitialized());
   UserExpression approximateExpression, exactExpression;
   ProjectionContext tempCtx = *ctx;

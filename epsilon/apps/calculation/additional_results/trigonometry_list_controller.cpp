@@ -26,11 +26,10 @@ void TrigonometryListController::computeAdditionalResults(
               input, exactOutput, approximateOutput, m_calculationPreferences,
               App::app()->localContext())));
 
-  ProjectionContext ctx = {
-      .m_complexFormat = complexFormat(),
-      .m_angleUnit = angleUnit(),
-      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = App::app()->localContext()};
+  ProjectionContext ctx = {.m_complexFormat = complexFormat(),
+                           .m_angleUnit = angleUnit(),
+                           .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+                           .m_context = App::app()->localContext()};
 
   AdditionalResultsHelper::TrigonometryResults trigonometryResults =
       AdditionalResultsHelper::TrigonometryAngleHelper(

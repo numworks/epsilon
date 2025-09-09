@@ -21,12 +21,11 @@ void MatrixListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  ProjectionContext ctx = {
-      .m_complexFormat = complexFormat(),
-      .m_angleUnit = angleUnit(),
-      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = App::app()->localContext(),
-      .m_advanceReduce = false};
+  ProjectionContext ctx = {.m_complexFormat = complexFormat(),
+                           .m_angleUnit = angleUnit(),
+                           .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+                           .m_context = App::app()->localContext(),
+                           .m_advanceReduce = false};
 
   // Compute all layouts at once to reuse intermediate results
   Layout determinant, inverse, rowEchelonForm, reducedRowEchelonForm, trace;

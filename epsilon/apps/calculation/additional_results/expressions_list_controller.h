@@ -68,8 +68,7 @@ class ExpressionsListController
     return m_calculationPreferences.numberOfSignificantDigits;
   }
   static Poincare::Layout GetExactLayoutFromExpression(
-      const Poincare::UserExpression e,
-      const Poincare::ProjectionContext* ctx,
+      const Poincare::UserExpression e, const Poincare::ProjectionContext* ctx,
       Poincare::Layout* approximatedLayout = nullptr,
       bool* exactAndApproximateExpressionsAreStrictlyEqual = nullptr);
 

@@ -60,8 +60,7 @@ void quiz_assert_log_if_failure(bool test, Poincare::PoolHandle tree);
 void copy_without_system_chars(char* buffer, const char* input);
 
 typedef Poincare::Internal::Tree* (*ProcessExpression)(
-    Poincare::Internal::Tree*,
-    Poincare::ProjectionContext& projectionContext);
+    Poincare::Internal::Tree*, Poincare::ProjectionContext& projectionContext);
 
 void assert_parsed_expression_process_to(
     const char* expression, const char* result,

@@ -30,11 +30,10 @@ void VectorListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  ProjectionContext ctx = {
-      .m_complexFormat = complexFormat(),
-      .m_angleUnit = angleUnit(),
-      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = symbolContext};
+  ProjectionContext ctx = {.m_complexFormat = complexFormat(),
+                           .m_angleUnit = angleUnit(),
+                           .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+                           .m_context = symbolContext};
   assert(!Internal::Projection::UpdateComplexFormatWithExpressionInput(
       exactOutput, &ctx));
 

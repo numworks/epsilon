@@ -307,7 +307,7 @@ Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
     assert(!exactDisplayOutput.isUninitialized() &&
            !approximateDisplayOutput.isUninitialized());
     ProjectionContext ctx{.m_complexFormat = complexFormat,
-                                    .m_angleUnit = angleUnit};
+                          .m_angleUnit = angleUnit};
     return Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
                exactDisplayOutput, approximateDisplayOutput, ctx)
                ? EqualSign::Equal

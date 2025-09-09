@@ -131,13 +131,24 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
       continue;
     }
     Tree* approximation = depI->cloneTree();
+    /* TODO it would be good to assert the tree is projected here. Unfortunalty
+     * this is not always the case as the reduction can be called in the earlier
+     * part of beautification */
+    /* NOTE We Reduce dependency before approximation to avoid floating point
+     * error when approximating complex unreduced trees.
+     * This happend for example when computing `arcsin(2/√3*sin(60))` in degree.
+     * The piecewise dependency of the form:
+     * piecewise(0, 2/√3*sin(60*1/180*π)<=1, nonreal)
+     * yields nonreal due to a floating point when approximating
+     * 2/√3*sin(60*1/180*π) */
     SystematicReduction::DeepReduce(approximation);
     if (approximation->isDep()) {
       if (!approximation->treeIsIdenticalTo(dep)) {
         ShallowRemoveUselessDependencies(approximation);
       } else {
         /* Infinite loop if we RemoveUselessDep on this reduced tree,
-         * ignore reduction in this case */
+         * ignore reduction in this case.
+         * Example: a tree like dep(...,{0^a}) reduces to dep(0,{0^a}) */
         approximation->moveTreeOverTree(depI->cloneTree());
       }
     }

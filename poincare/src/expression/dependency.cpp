@@ -131,7 +131,7 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
       continue;
     }
     Tree* approximation = depI->cloneTree();
-    /* TODO it would be good to assert the tree is projected here. Unfortunalty
+    /* TODO it would be good to assert the tree is projected here. Unfortunatly
      * this is not always the case as the reduction can be called in the earlier
      * part of beautification */
     /* NOTE We Reduce dependency before approximation to avoid floating point
@@ -532,6 +532,7 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
   }
 
   if (nbChildren == 0) {
+    assert(changed);
     // Remove dep node if the DepList is empty
     dep->moveTreeOverTree(dep->child(0));
   }

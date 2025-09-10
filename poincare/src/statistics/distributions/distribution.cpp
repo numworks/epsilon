@@ -9,11 +9,6 @@ namespace Poincare::Distribution {
 
 using namespace Internal::Distribution;
 
-Type GetType(const Internal::Tree* tree) {
-  assert(tree->isDistribution());
-  return tree->nodeValueBlock(1)->get<Type>();
-}
-
 template <typename T>
 T MeanAbscissa(Type type, const ParametersArray<T>& parameters) {
   switch (type) {
@@ -236,6 +231,11 @@ template double ComputeYMax(
 
 namespace Poincare::Internal::Distribution {
 using Poincare::Distribution::Type;
+
+Type GetType(const Internal::Tree* tree) {
+  assert(tree->isDistribution());
+  return tree->nodeValueBlock(1)->get<Type>();
+}
 
 template <typename T>
 T GetFisherMode(Type type, const ParametersArray<T>& parameters) {

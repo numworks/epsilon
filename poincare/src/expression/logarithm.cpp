@@ -338,6 +338,10 @@ bool Logarithm::ExpandLnOnRational(Tree* e) {
       child->isInteger()
           ? nullptr
           : ExpandLnOnInteger(Rational::Denominator(child), false);
+  if (!denominator && !child->isInteger()) {
+    // factorization of denominator failed.
+    return false;
+  }
   Tree* numerator =
       ExpandLnOnInteger(Rational::Numerator(child), denominator == nullptr);
   if (!numerator) {

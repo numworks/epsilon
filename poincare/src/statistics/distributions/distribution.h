@@ -6,6 +6,8 @@ namespace Poincare::Internal::Distribution {
 
 using namespace Poincare::Distribution;
 
+Distribution::Type GetType(const Internal::Tree* tree);
+
 template <typename T>
 T GetFisherMode(Type type, const ParametersArray<T>& parameters);
 template <typename T>

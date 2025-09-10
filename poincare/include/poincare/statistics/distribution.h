@@ -102,8 +102,6 @@ constexpr static TypeDescription DescriptionForType(Type type) {
 }
 }  // namespace detail
 
-Type GetType(const Internal::Tree* tree);
-
 constexpr int NumberOfParameters(Type type) {
   return detail::DescriptionForType(type).numberOfParameters;
 }

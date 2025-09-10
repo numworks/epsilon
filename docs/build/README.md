@@ -59,7 +59,7 @@ Plug your calculator to the `The calculator is connected` menu.
 
 Build and flash the custom userland with the command
 ```shell
-make -j8 custom_userland.flash
+make -j8 -C epsilon PLATFORM=n0120 custom_userland.flash
 ```
 
 The software should jump on your custom firmware with an `UNOFFICIAL SOFTWARE` warning:

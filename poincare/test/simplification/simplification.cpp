@@ -25,7 +25,6 @@ QUIZ_CASE(pcj_simplification_expansion) {
   expand_to(KLn(KMult(2_e, π_e)), KAdd(KLn(2_e), KLn(π_e)));
 
   // Pushing the rational on the stack because it can't be made a KTree.
-  // TODO: Result is false.
   // 40000000/18358803711643
   Tree* bigRational = KMult.node<2>->cloneNode();
   (40000000_e)->cloneTree();
@@ -40,9 +39,15 @@ QUIZ_CASE(pcj_simplification_expansion) {
   bigRational->cloneTree();
   KLn->cloneNode();
   (21_e)->cloneTree();
-  // 9*ln(2)+ln(3)+7*ln(5)+ln(7)
-  expand_to(input, KAdd(KMult(9_e, KLn(2_e)), KLn(3_e), KMult(7_e, KLn(5_e)),
-                        KLn(7_e)));
+  // ln(40000000/18358803711643)+ln(3)+ln(7)
+  Tree* expected = KAdd.node<3>->cloneNode();
+  KLn->cloneNode();
+  bigRational->cloneTree();
+  KLn->cloneNode();
+  (3_e)->cloneTree();
+  KLn->cloneNode();
+  (7_e)->cloneTree();
+  expand_to(input, expected);
 }
 
 QUIZ_CASE(pcj_simplification_algebraic_expansion) {

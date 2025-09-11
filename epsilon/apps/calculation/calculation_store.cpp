@@ -61,24 +61,18 @@ UserExpression CalculationStore::ansExpression() const {
   UserExpression exactOutput = mostRecentCalculation->exactOutput();
   UserExpression approxOutput = mostRecentCalculation->approximateOutput();
   UserExpression ansExpr;
-  if ((mostRecentCalculation->displayOutput() ==
-           Calculation::DisplayOutput::ApproximateOnly &&
-       !exactOutput.isIdenticalTo(approxOutput)) ||
+  /* NOTE: taking input as Ans quickly makes very large calculation on
+   * repetitive Ans calculation.
+   * With the following method we automatically fallback to approx once the
+   * exactOutput if too big to be displayed */
+
+  if (!Calculation::CanDisplayExact(mostRecentCalculation->displayOutput()) ||
       exactOutput.isUndefined()) {
     /* Case 1.
-     * If exact output was hidden, it should not be accessible using Ans.
-     * Return input instead so that no precision is lost.
-     * Except if the exact output is equal to its approximation and is neither
-     * Nonreal nor Undefined, in which case the exact output can be used as Ans
-     * since it's exactly the approx (this happens mainly with units).
-     * */
-    ansExpr = input;
-    if (ansExpr.isStore()) {
-      /* Case 1.1 If the input is a store expression, keep only the first child
-       * of the input in Ans because the whole store can't be used in a
-       * calculation. */
-      ansExpr = ansExpr.cloneChildAtIndex(0);
-    }
+     * If exact output was hidden it should not be accessible using Ans.
+     * Return approxOutput instead.
+     * If exact is Undefined, Ans is also approxOutput */
+    ansExpr = approxOutput;
   } else if (input.recursivelyMatches(&Expression::isApproximate,
                                       GlobalContextAccessor::Context()) &&
              mostRecentCalculation->equalSign() ==

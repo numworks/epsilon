@@ -148,7 +148,7 @@ QUIZ_CASE(calculation_ans) {
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits);
 
   assertAnsIs("1+1→a", "2", &store);
-  assertAnsIs("0^0→a", "0^0", &store);
+  assertAnsIs("0^0→a", "undef", &store);
   Shared::GlobalContextAccessor::Store().resetAll();
 
   assertAnsIs("1+1", "2", &store);
@@ -158,9 +158,8 @@ QUIZ_CASE(calculation_ans) {
   assertAnsIs("√(-1-1)", "√(2)×i", &store);
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       ComplexFormat::Real);
-  assertAnsIs("int(diff(x^2,x,x),x,0,1)", "int(diff(x^2,x,x),x,0,1)", &store);
-  assertAnsIs("int(diff(x^2.1,x,x),x,0,1)", "int(diff(x^2.1,x,x),x,0,1)",
-              &store);
+  assertAnsIs("int(diff(x^2,x,x),x,0,1)", "1", &store);
+  assertAnsIs("int(diff(x^2.1,x,x),x,0,1)", "1", &store);
   assertAnsIs("int(diff(x^2,x,x),x,0,1)→a", "1", &store);
 
   assertAnsIs("√(1+1)", "√(2)", &store);
@@ -170,7 +169,7 @@ QUIZ_CASE(calculation_ans) {
       UserExpression::Builder(KSqrt(2_e)), UserExpression::Builder(KSqrt(2_e)),
       UserExpression(), Poincare::EmptySymbolContext{}));
 
-  assertAnsIs("√(1+1)", "√(1+1)", &store);
+  assertAnsIs("√(1+1)", "1.414214", &store);
 
   ExamModeManager::SetExamMode(ExamMode(ExamMode::Ruleset::Off));
 
@@ -184,7 +183,7 @@ QUIZ_CASE(calculation_ans) {
   pushAndProcessCalculation(&store, "Ans×1.0071^9");
   lastCalculation = store.calculationAtIndex(0);
   assert_expression_serializes_to(lastCalculation->input(),
-                                  "(4546249×1.0071^9)×1.0071^9");
+                                  "4.845143ᴇ6×1.0071^9");
 
   store.deleteAll();
 }

@@ -15,6 +15,8 @@ From future versions :
 - `dfd80f3d762441e34e501c18a20b50c09fe3730f` (after release-2.28.1, date: 12/05/23)
 - `3ddbeab88fcf5bc1b09fb664403b1240d342a6ae` (SDL 3, release-3.2.0, commit date: 20/06/2023 only a subpart of this commit is applied: emptying unused function `SDL_ANDROID_SensorUpdate`)
 - `77285b6c3fba3cad57a53c1b804926a679e07411` (release-2.32.x, fix auto-rotate by respecting user orientation lock)
+- `f9d018c8081d7bbac5f083853ecfbcf67fdb2fdd` (SDL 3, release-3.2.0, fix for Android 14+, API 33+)
+- `814f0b7d41a6df9c72b02083dbf404ec6093e218` (SDL 3 not released. Purely code aesthetic, only a subpart of the commit, impacting previous cherry-picked commit)
 
 ## Updating SDL
 

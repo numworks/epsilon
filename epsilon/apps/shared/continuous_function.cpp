@@ -737,7 +737,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
     }
     assert(!result.isUninitialized());
   } else {
-    result = SystemExpression::Builder(KUndef);
+    result = SystemExpression::Undefined();
   }
   /* TODO_PCJ: equation and result used to be a same Expression at this step.
    * Ensure this pool usage regression of still having equation in the pool is

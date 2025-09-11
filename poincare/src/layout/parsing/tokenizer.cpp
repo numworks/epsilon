@@ -7,6 +7,7 @@
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/physical_constant.h>
 #include <poincare/src/expression/symbol.h>
+#include <poincare/src/expression/units/representatives.h>
 #include <poincare/src/expression/units/unit.h>
 #include <poincare/src/layout/vertical_offset.h>
 
@@ -492,10 +493,18 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   if (Builtin::HasReservedFunction(span)) {
     return Token::Type::ReservedFunction;
   }
-  /* When parsing for unit conversion, the identifier "m" should always
-   * be understood as the unit and not the variable. */
-  if (m_parsingContext->metadata.isUnitConversion &&
-      Units::Unit::CanParse(span, nullptr, nullptr)) {
+
+  const Units::Representative* unitRepresentative = nullptr;
+  const Units::Prefix* unitPrefix = nullptr;
+  bool canParseUnit =
+      Units::Unit::CanParse(span, &unitRepresentative, &unitPrefix);
+
+  /* - When parsing for unit conversion, the identifier "m" should always
+   * be understood as the unit and not the variable.
+   * - Angle units should always be treated as units, never as variables. */
+  if (canParseUnit &&
+      (m_parsingContext->metadata.isUnitConversion ||
+       unitRepresentative->siVector() == Units::Angle::Dimension)) {
     return Token::Type::Unit;
   }
 
@@ -519,13 +528,11 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
 
   /* If "m" has been or is being declared by the user, it's understood as a
    * variable before being understood as a unit. That's why the following
-   * condition is checked after the previous one.
-   * Also escape if unitConversion, as it was already checked earlier  */
-  if (!m_parsingContext->metadata.isUnitConversion &&
-      !m_parsingContext->params.forceUnitUnderscore &&
-      Units::Unit::CanParse(span, nullptr, nullptr)) {
+   * condition is checked after the previous one. */
+  if (canParseUnit && !m_parsingContext->params.forceUnitUnderscore) {
     return Token::Type::Unit;
   }
+
   /* "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
    * "cos2" should not be parsed as "c*o*s2" but "cos(2)" */
   Token::Type type;

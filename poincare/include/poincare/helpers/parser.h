@@ -18,7 +18,11 @@ struct ParsingParameters {
    */
   bool isAssignment = false;
 
-  // If true, "g" will never be parsed as a unit (for solver)
+  /* If true, "g" will never be parsed as a unit (for solver)
+   * It doesn't apply to:
+   * - angle units (°, ', ", rad, gon) which are always parsed as units
+   * - units containing special characters (°C) since they can't be variables
+   */
   bool forceUnitUnderscore = false;
 
   /* This tells the parser that the layout is intentionally structured as-is and

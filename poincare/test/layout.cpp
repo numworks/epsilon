@@ -30,9 +30,13 @@ void assert_expression_layouts_as(const Tree* expression, const Tree* layout,
                                   Preferences::PrintFloatMode floatMode =
                                       Preferences::PrintFloatMode::Decimal,
                                   OMG::Base base = OMG::Base::Decimal) {
-  Tree* l = Layouter::LayoutExpression(expression->cloneTree(), linearMode,
-                                       compactMode, numberOfSignificantDigits,
-                                       floatMode, base);
+  Tree* l = Layouter::LayoutExpression(
+      expression->cloneTree(),
+      {.linearMode = linearMode,
+       .compactMode = compactMode,
+       .numberOfSignificantDigits = numberOfSignificantDigits,
+       .floatMode = floatMode,
+       .base = base});
   assert_trees_are_equal(l, layout);
   l->removeTree();
 }
@@ -126,8 +130,8 @@ QUIZ_CASE(pcj_expression_to_layout) {
 void assert_expression_layouts_and_serializes_to(const Tree* expression,
                                                  const char* serialization,
                                                  bool linearMode) {
-  Tree* layout =
-      Layouter::LayoutExpression(expression->cloneTree(), linearMode);
+  Tree* layout = Layouter::LayoutExpression(expression->cloneTree(),
+                                            {.linearMode = linearMode});
   quiz_assert(layout);
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];

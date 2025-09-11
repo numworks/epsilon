@@ -220,7 +220,8 @@ void assert_expression_serializes_and_parses_to(
     const Poincare::Internal::Tree* result) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
-  Tree* layout = Layouter::LayoutExpression(expression->cloneTree(), true);
+  Tree* layout =
+      Layouter::LayoutExpression(expression->cloneTree(), {.linearMode = true});
   LayoutSerializer::Serialize(layout, buffer);
   layout->removeTree();
   assert_parsed_expression_is(buffer, result);
@@ -245,8 +246,10 @@ void assert_parse_to_integer_overflow(
 
 void serialize_expression(const Tree* expression, std::span<char> buffer,
                           int numberOfSignificantDigits) {
-  Tree* layout = Layouter::LayoutExpression(expression->cloneTree(), true,
-                                            false, numberOfSignificantDigits);
+  Tree* layout = Layouter::LayoutExpression(
+      expression->cloneTree(),
+      {.linearMode = true,
+       .numberOfSignificantDigits = numberOfSignificantDigits});
   quiz_assert(layout);
   LayoutSerializer::Serialize(layout, buffer);
   remove_system_codepoints(buffer.data());
@@ -260,9 +263,12 @@ void assert_expression_serializes_to(const Tree* expression,
                                      OMG::Base base) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
-  Tree* layout =
-      Layouter::LayoutExpression(expression->cloneTree(), true, false,
-                                 numberOfSignificantDigits, mode, base);
+  Tree* layout = Layouter::LayoutExpression(
+      expression->cloneTree(),
+      {.linearMode = true,
+       .numberOfSignificantDigits = numberOfSignificantDigits,
+       .floatMode = mode,
+       .base = base});
   LayoutSerializer::Serialize(layout, buffer);
   bool test = strcmp(serialization, buffer) == 0;
   layout->removeTree();
@@ -287,8 +293,11 @@ void assert_expression_parses_and_serializes_to(
     Preferences::PrintFloatMode mode, int numberOfSignificantDigits,
     OMG::Base base) {
   Tree* e = parse(expression, symbolContext);
-  Tree* l = Layouter::LayoutExpression(e, true, false,
-                                       numberOfSignificantDigits, mode, base);
+  Tree* l = Layouter::LayoutExpression(
+      e, {.linearMode = true,
+          .numberOfSignificantDigits = numberOfSignificantDigits,
+          .floatMode = mode,
+          .base = base});
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   LayoutSerializer::Serialize(l, buffer);

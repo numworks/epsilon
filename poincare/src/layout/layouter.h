@@ -5,21 +5,27 @@
 #include <poincare/src/expression/decimal.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/memory/tree_ref.h>
+#include <poincare/symbol_context.h>
 
 using Poincare::Preferences;
 
 namespace Poincare::Internal {
 
+struct LayouterParameters {
+  const SymbolContext& symbolContext = k_emptySymbolContext;
+  bool linearMode = false;
+  bool compactMode = false;
+  int numberOfSignificantDigits =
+      PrintFloat::k_undefinedNumberOfSignificantDigits;
+  Preferences::PrintFloatMode floatMode = Preferences::PrintFloatMode::Decimal;
+  OMG::Base base = OMG::Base::Decimal;
+};
+
 class Layouter {
  public:
   // Eats expression to built its layout inplace.
-  static Tree* LayoutExpression(
-      Tree* expression, bool linearMode = false, bool compactMode = false,
-      int numberOfSignificantDigits =
-          PrintFloat::k_undefinedNumberOfSignificantDigits,
-      Preferences::PrintFloatMode floatMode =
-          Preferences::PrintFloatMode::Decimal,
-      OMG::Base base = OMG::Base::Decimal);
+  static Tree* LayoutExpression(Tree* expression,
+                                LayouterParameters params = {});
 
   static bool AddThousandsSeparators(Tree* rack);
 
@@ -28,23 +34,12 @@ class Layouter {
   static void StripSeparators(Tree* rack);
 
  private:
-  Layouter(bool linearMode, bool addSeparators, bool compactMode,
-           int numberOfSignificantDigits, Preferences::PrintFloatMode floatMode,
-           OMG::Base base)
-      : m_linearMode(linearMode),
-        m_addSeparators(addSeparators),
-        m_compactMode(compactMode),
-        m_numberOfSignificantDigits(numberOfSignificantDigits),
-        m_floatMode(floatMode),
-        m_base(base) {}
+  Layouter(LayouterParameters params)
+      : m_params(params), m_addSeparators(false) {}
+
   // Eats expression to built its layout inplace. May raise TreeStack exceptions
-  static Tree* UnsafeLayoutExpression(
-      Tree* expression, bool linearMode = false, bool compactMode = false,
-      int numberOfSignificantDigits =
-          PrintFloat::k_undefinedNumberOfSignificantDigits,
-      Preferences::PrintFloatMode floatMode =
-          Preferences::PrintFloatMode::Decimal,
-      OMG::Base base = OMG::Base::Decimal);
+  static Tree* UnsafeLayoutExpression(Tree* expression,
+                                      LayouterParameters params = {});
 
   // Insert layout or codepoint depending on linear mode.
   Tree* insertParenthesis(TreeRef& layoutParent, bool isOpening,
@@ -75,11 +70,7 @@ class Layouter {
                                size_t bufferSize);
   // Recursively replace "+-" into "-" in rack
   static void StripUselessPlus(Tree* rack);
-  bool m_linearMode;
+  LayouterParameters m_params;
   bool m_addSeparators;
-  bool m_compactMode;
-  int m_numberOfSignificantDigits;
-  Preferences::PrintFloatMode m_floatMode;
-  OMG::Base m_base;
 };
 }  // namespace Poincare::Internal

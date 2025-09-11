@@ -113,8 +113,9 @@ void assert_parsed_expression_process_to(
                                          .m_symbolic = symbolicComputation,
                                          .m_context = symbolContext};
   Tree *m = process(e, projCtx);
-  Tree *l = Internal::Layouter::LayoutExpression(m, true, false,
-                                                 numberOfSignificantDigits);
+  Tree *l = Internal::Layouter::LayoutExpression(
+      m, {.linearMode = true,
+          .numberOfSignificantDigits = numberOfSignificantDigits});
   Internal::LayoutSerializer::Serialize(l, buffer);
   copy_without_system_chars(buffer, buffer);
   l->removeTree();

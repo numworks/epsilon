@@ -105,22 +105,15 @@ constexpr static int OperatorPriority(TypeBlock type) {
 // Commas have no associated block but behave like an operator
 constexpr static int k_commaPriority = OperatorPriority(Type::List);
 
-Tree* Layouter::LayoutExpression(Tree* expression, bool linearMode,
-                                 bool compactMode,
-                                 int numberOfSignificantDigits,
-                                 Preferences::PrintFloatMode floatMode,
-                                 OMG::Base base) {
+Tree* Layouter::LayoutExpression(Tree* expression, LayouterParameters params) {
   ExceptionTryAfterBlock(expression) {
-    return UnsafeLayoutExpression(expression, linearMode, compactMode,
-                                  numberOfSignificantDigits, floatMode, base);
+    return UnsafeLayoutExpression(expression, params);
   }
   ExceptionCatch(exc) {
     switch (exc) {
       case ExceptionType::TreeStackOverflow:
       case ExceptionType::IntegerOverflow:
-        return UnsafeLayoutExpression(KUndef->cloneTree(), linearMode,
-                                      compactMode, numberOfSignificantDigits,
-                                      floatMode, base);
+        return UnsafeLayoutExpression(KUndef->cloneTree(), params);
       default:
         TreeStackCheckpoint::Raise(exc);
     }
@@ -128,21 +121,17 @@ Tree* Layouter::LayoutExpression(Tree* expression, bool linearMode,
   OMG::unreachable();
 }
 
-Tree* Layouter::UnsafeLayoutExpression(Tree* expression, bool linearMode,
-                                       bool compactMode,
-                                       int numberOfSignificantDigits,
-                                       Preferences::PrintFloatMode floatMode,
-                                       OMG::Base base) {
+Tree* Layouter::UnsafeLayoutExpression(Tree* expression,
+                                       LayouterParameters params) {
   assert(expression->isExpression() || expression->isPlaceholder());
   /* expression lives before layoutParent in the TreeStack and will be
    * destroyed in the process. A TreeRef is necessary to keep track of
    * layoutParent's root. */
   TreeRef layoutParent = SharedTreeStack->pushRackLayout(0);
   assert(expression->nextTree() == layoutParent);
-  Layouter layouter(linearMode, false, compactMode, numberOfSignificantDigits,
-                    floatMode, base);
+  Layouter layouter(params);
   layouter.m_addSeparators =
-      !linearMode && layouter.requireSeparators(expression);
+      !params.linearMode && layouter.requireSeparators(expression);
   layouter.layoutExpression(layoutParent, expression, k_maxPriority);
   StripUselessPlus(layoutParent);
   assert(expression == layoutParent);
@@ -167,7 +156,7 @@ void Layouter::addOperatorSeparator(Tree* layoutParent) {
   if (!m_addSeparators) {
     return;
   }
-  assert(!m_linearMode);
+  assert(!m_params.linearMode);
   NAry::AddChild(layoutParent, KOperatorSeparatorL->cloneTree());
 }
 
@@ -175,13 +164,13 @@ void Layouter::addUnitSeparator(Tree* layoutParent) {
   if (!m_addSeparators) {
     return;
   }
-  assert(!m_linearMode);
+  assert(!m_params.linearMode);
   NAry::AddChild(layoutParent, KUnitSeparatorL->cloneTree());
 }
 
 Tree* Layouter::insertParenthesis(TreeRef& layoutParent, bool isOpening,
                                   bool isCurlyBrace) {
-  if (m_linearMode) {
+  if (m_params.linearMode) {
     PushCodePoint(layoutParent, isOpening      ? isCurlyBrace ? '{' : '('
                                 : isCurlyBrace ? '}'
                                                : ')');
@@ -216,7 +205,7 @@ void Layouter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
   assert(Builtin::IsReservedFunction(expression));
   const Builtin* builtin = Builtin::GetReservedFunction(
       expression, SharedPreferences->translateBuiltins());
-  if (m_linearMode || !builtin->has2DLayout()) {
+  if (m_params.linearMode || !builtin->has2DLayout()) {
     // Built "builtin(child1, child2)"
     if (expression->isParametric()) {
       // Move sub-expression first
@@ -273,10 +262,10 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
     PushCodePoint(layoutParent, '-');
   }
   handler.setSign(NonStrictSign::Positive);
-  if (m_base != OMG::Base::Decimal) {
+  if (m_params.base != OMG::Base::Decimal) {
     assert(decimalOffset == 0);
     PushCodePoint(layoutParent, '0');
-    PushCodePoint(layoutParent, m_base == OMG::Base::Binary ? 'b' : 'x');
+    PushCodePoint(layoutParent, m_params.base == OMG::Base::Binary ? 'b' : 'x');
   }
   Tree* rack = KRackL()->cloneTree();
   /* We can't manipulate an IntegerHandler in a workingBuffer since we're
@@ -285,7 +274,8 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
   TreeRef value = handler.pushOnTreeStack();
   do {
     DivisionResult result = IntegerHandler::Division(
-        Integer::Handler(value), IntegerHandler(static_cast<uint8_t>(m_base)));
+        Integer::Handler(value),
+        IntegerHandler(static_cast<uint8_t>(m_params.base)));
     uint8_t digit = Integer::Handler(result.remainder);
     assert(result.remainder > result.quotient);
     result.remainder->removeTree();
@@ -303,7 +293,7 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
     }
   } while (!(value->isZero() && decimalOffset <= 0));
   value->removeTree();
-  if (m_base == OMG::Base::Decimal && !m_linearMode) {
+  if (m_params.base == OMG::Base::Decimal && !m_params.linearMode) {
     AddThousandsSeparators(rack);
   }
   NAry::AddOrMergeChild(layoutParent, rack);
@@ -319,7 +309,7 @@ void Layouter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
     Tree* child = expression->nextNode();
     bool isUnit = Units::Unit::IsUnitOrPowerOfUnit(child);
     if (childIndex > 0) {
-      if (!m_linearMode && multiplication && isUnit) {
+      if (!m_params.linearMode && multiplication && isUnit) {
         if (!previousWasUnit) {
           if (Units::Unit::ForceMarginLeftOfUnit(child)) {
             // Add small separator between 2 and m in "2 m"
@@ -355,7 +345,7 @@ void Layouter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
 }
 
 void Layouter::layoutMatrix(TreeRef& layoutParent, Tree* expression) {
-  if (!m_linearMode) {
+  if (!m_params.linearMode) {
     TreeRef layout = expression->cloneNode();
     *layout->block() = Type::MatrixLayout;
     layoutChildrenAsRacks(expression);
@@ -431,7 +421,7 @@ void Layouter::layoutSequence(TreeRef& layoutParent, Tree* expression) {
 
 void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
   // TODO_PCJ: ask the context whether to add an underscore
-  if (m_linearMode) {
+  if (m_params.linearMode) {
     PushCodePoint(layoutParent, '_');
   }
   layoutText(layoutParent, Units::Unit::GetPrefix(expression)->symbol());
@@ -446,10 +436,10 @@ void Layouter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
   expression = expression->child(0);
   TreeRef createdLayout;
   // No parentheses in Fraction roots and Power index.
-  if (m_linearMode) {
+  if (m_params.linearMode) {
     // In compact mode, parentheses are removed from (a×b)/c
     int firstChildPriority =
-        (type == Type::Div && expression->isMult() && m_compactMode)
+        (type == Type::Div && expression->isMult() && m_params.compactMode)
             ? k_forceRemoveParentheses
             : OperatorPriority(type);
     // force parentheses when serializing e^(x)
@@ -482,20 +472,20 @@ void Layouter::serializeDecimalOrFloat(const Tree* expression, char* buffer,
   if (expression->isDecimal()) {
     /* Just as it doesn't apply to integers, numberOfSignificantDigits is
      * ignored with Decimals. */
-    Decimal::Serialize(expression, buffer, bufferSize, m_floatMode);
+    Decimal::Serialize(expression, buffer, bufferSize, m_params.floatMode);
     return;
   }
   int numberOfSignificantDigits =
-      m_numberOfSignificantDigits !=
+      m_params.numberOfSignificantDigits !=
               PrintFloat::k_undefinedNumberOfSignificantDigits
-          ? m_numberOfSignificantDigits
+          ? m_params.numberOfSignificantDigits
       : expression->isSingleFloat()
           ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
           : Poincare::PrintFloat::SignificantDecimalDigits<double>();
   Poincare::PrintFloat::ConvertFloatToText(
       FloatHelper::To(expression), buffer, bufferSize,
       Poincare::PrintFloat::k_maxFloatGlyphLength, numberOfSignificantDigits,
-      m_floatMode);
+      m_params.floatMode);
 }
 
 // Remove expression while converting it to a layout in layoutParent
@@ -519,18 +509,19 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
   switch (type) {
     // TODO_PCJ: Restore Addition and Multiplication symbol in linear mode
     case Type::Add: {
-      CodePoint op = implicitAddition(expression) && !m_linearMode
+      CodePoint op = implicitAddition(expression) && !m_params.linearMode
                          ? UCodePointNull
                          : CodePoint('+');
       layoutInfixOperator(layoutParent, expression, op);
       break;
     }
     case Type::Mult:
-      layoutInfixOperator(layoutParent, expression,
-                          (m_linearMode && !m_compactMode)
-                              ? CodePoint(u'×')
-                              : MultiplicationSymbol(expression, m_linearMode),
-                          true);
+      layoutInfixOperator(
+          layoutParent, expression,
+          (m_params.linearMode && !m_params.compactMode)
+              ? CodePoint(u'×')
+              : MultiplicationSymbol(expression, m_params.linearMode),
+          true);
       break;
     case Type::Pow:
     case Type::Div:
@@ -637,7 +628,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
           expression->child(2)->removeTree();
         } else {
           TreeRef rack;
-          if (m_linearMode) {
+          if (m_params.linearMode) {
             PushCodePoint(layoutParent, '^');
             rack = layoutParent;
           } else {
@@ -654,7 +645,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         break;
       }
       // Case 2: diff(f(x),x,a,n)
-      if (m_linearMode) {
+      if (m_params.linearMode) {
         layoutBuiltin(layoutParent, expression);
       } else {
         TreeRef layout =
@@ -665,8 +656,9 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       break;
     case Type::Binomial:
     case Type::Permute:
-      if (m_linearMode || SharedPreferences->combinatoricSymbols() ==
-                              Preferences::CombinatoricSymbols::Default) {
+      if (m_params.linearMode ||
+          SharedPreferences->combinatoricSymbols() ==
+              Preferences::CombinatoricSymbols::Default) {
         layoutBuiltin(layoutParent, expression);
       } else {
         TreeRef layout = SharedTreeStack->pushBlock(
@@ -676,7 +668,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
       break;
     case Type::LogBase: {
-      if (m_linearMode) {
+      if (m_params.linearMode) {
         layoutBuiltin(layoutParent, expression);
         break;
       }
@@ -704,7 +696,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::MixedFraction:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
-      if (m_linearMode) {
+      if (m_params.linearMode) {
         // TODO_PCJ make sure the serializer makes the distinction too
         PushCodePoint(layoutParent, ' ');
       }
@@ -725,7 +717,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
                          k_forceParentheses);
       }
       if (type.isUserSequence()) {
-        if (m_linearMode) {
+        if (m_params.linearMode) {
           layoutExpression(layoutParent, expression->nextNode(),
                            k_forceParentheses);
         } else {
@@ -740,7 +732,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       layoutMatrix(layoutParent, expression);
       break;
     case Type::Piecewise:
-      if (m_linearMode) {
+      if (m_params.linearMode) {
         layoutBuiltin(layoutParent, expression);
       } else {
         int rows = (expression->numberOfChildren() + 1) / 2;
@@ -777,7 +769,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
       TreeRef rack = KRackL()->cloneTree();
       layoutText(rack, buffer);
-      if (!m_linearMode) {
+      if (!m_params.linearMode) {
         AddThousandsSeparators(rack);
       }
       NAry::AddOrMergeChild(layoutParent, rack);

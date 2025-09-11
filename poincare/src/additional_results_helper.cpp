@@ -467,7 +467,9 @@ static Poincare::Layout CreateBeautifiedLayout(
     uint8_t numberOfSignificantDigits) {
   Simplification::BeautifyReduced(reducedExpression, ctx, dimension);
   return Poincare::Layout::Builder(Layouter::LayoutExpression(
-      reducedExpression, false, false, numberOfSignificantDigits, displayMode));
+      reducedExpression,
+      {.numberOfSignificantDigits = numberOfSignificantDigits,
+       .floatMode = displayMode}));
 }
 
 Poincare::Layout AdditionalResultsHelper::ScientificLayout(

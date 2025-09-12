@@ -148,7 +148,8 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
       } else {
         /* Infinite loop if we RemoveUselessDep on this reduced tree,
          * ignore reduction in this case.
-         * Example: a tree like dep(...,{0^a}) reduces to dep(0,{0^a}) */
+         * Example: a dep tree like 0^a reduces to dep(0,{0^a})
+         * which in turn will try to reduce 0^a */
         approximation->moveTreeOverTree(depI->cloneTree());
       }
     }

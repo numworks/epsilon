@@ -810,6 +810,9 @@ QUIZ_CASE(calculation_involving_sequence) {
   CalculationStore calcStore(calculationBuffer, calculationBufferSize);
 
   assertMainCalculationOutputIs("√(i×u(0))×√(6)", "undef", &calcStore);
+  seqStore->removeAll();
+  seqStore->tidyDownstreamPoolFrom();
+  Shared::GlobalContextAccessor::SequenceCache().resetCache();
 }
 
 bool operator==(const AdditionalResultsType& a,

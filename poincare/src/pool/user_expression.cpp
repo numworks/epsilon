@@ -309,7 +309,8 @@ Poincare::Layout UserExpression::createLayout(
   }
   return Poincare::Layout::Builder(Layouter::LayoutExpression(
       tree()->cloneTree(),
-      {.linearMode = linearMode,
+      {.symbolContext = symbolContext,
+       .linearMode = linearMode,
        .numberOfSignificantDigits = numberOfSignificantDigits,
        .floatMode = floatDisplayMode,
        .base = base}));

@@ -14,6 +14,7 @@ using Poincare::Preferences;
 namespace Poincare::Internal {
 
 struct LayouterParameters {
+  // Only used for Units in 2D mode
   const SymbolContext& symbolContext = k_emptySymbolContext;
   bool linearMode = false;
   bool compactMode = false;

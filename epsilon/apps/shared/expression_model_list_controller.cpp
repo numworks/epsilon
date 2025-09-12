@@ -7,6 +7,7 @@
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <poincare/code_points.h>
+#include <poincare/context_with_parent.h>
 #include <poincare/helpers/symbol_pool.h>
 
 #include <algorithm>
@@ -259,10 +260,12 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
     LayoutField* layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
   /* It's not a problem if f(t) is understood as f*(t) as we're just trying to
-   * detect the variable */
+   * detect the variable.
+   * Force unit underscore to avoid t to be understood as ton. */
+  Poincare::MandatoryUnitUnderscoreContext tempContext(
+      &App::app()->localContext());
   UserExpression parsedExpression =
-      UserExpression::Parse(layoutField->layout(), App::app()->localContext(),
-                            {.forceUnitUnderscore = true});
+      UserExpression::Parse(layoutField->layout(), tempContext);
   if (parsedExpression.isUninitialized()) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;

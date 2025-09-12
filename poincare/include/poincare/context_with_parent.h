@@ -26,8 +26,19 @@ class ContextWithParent : public SymbolContext {
                : UserNamedType::None;
   }
 
+  bool isUnitUnderscoreMandatory() const override {
+    return m_parentContext ? m_parentContext->isUnitUnderscoreMandatory()
+                           : SymbolContext::isUnitUnderscoreMandatory();
+  }
+
  private:
   const SymbolContext* m_parentContext;
+};
+
+class MandatoryUnitUnderscoreContext : public ContextWithParent {
+ public:
+  using ContextWithParent::ContextWithParent;
+  bool isUnitUnderscoreMandatory() const override { return true; }
 };
 
 }  // namespace Poincare

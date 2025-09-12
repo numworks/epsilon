@@ -75,17 +75,6 @@ SystemExpression Equation::Model::standardForm(
 }
 #endif
 
-Poincare::UserExpression Equation::Model::buildExpressionFromLayout(
-    Poincare::Layout l, CodePoint symbol,
-    const Poincare::SymbolContext& symbolContext) const {
-  if (l.isUninitialized() || l.isEmpty()) {
-    return UserExpression();
-  }
-  UserExpression expressionToStore =
-      UserExpression::Parse(l, symbolContext, {.forceUnitUnderscore = true});
-  return ReplaceSymbolWithUnknown(expressionToStore, symbol);
-}
-
 void* Equation::Model::expressionAddress(
     const Ion::Storage::Record* record) const {
   return (char*)record->value().buffer;

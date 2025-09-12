@@ -501,23 +501,25 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
 
   /* - When parsing for unit conversion, the identifier "m" should always
    * be understood as the unit and not the variable.
-   * - Angle units should always be treated as units, never as variables. */
-  if (canParseUnit &&
-      (m_parsingContext->metadata.isUnitConversion ||
-       unitRepresentative->siVector() == Units::Angle::Dimension)) {
+   * - Some unit should always be treated as units, never as variables (e.g.
+   * angle units). */
+  if (canParseUnit && (m_parsingContext->metadata.isUnitConversion ||
+                       Units::Unit::IsNameReserved(unitRepresentative))) {
     return Token::Type::Unit;
   }
 
   bool hasUnitOnlyCodePoint = HasCodePoint(span, UCodePointDegreeSign) ||
                               HasCodePoint(span, '\'') ||
                               HasCodePoint(span, '"');
+
   char string[Symbol::k_maxNameSize];
   LayoutSpanDecoder decoder(span);
   decoder.printInBuffer(string, std::size(string));
   /* If preserveInput or isAssignmentDeclaration, any identifier is
-   * understood as a CustomIdentifier */
-  if (!hasUnitOnlyCodePoint  // CustomIdentifiers can't contain °, ' or "
-      &&
+   * understood as a CustomIdentifier.
+   * If the string contains unit-only chars (like °), they can never be a custom
+   * identifier. */
+  if (!hasUnitOnlyCodePoint &&
       (m_parsingContext->metadata.isAssignmentDeclaration ||
        m_parsingContext->params.preserveInput ||
        (m_parsingContext->context &&
@@ -529,7 +531,9 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   /* If "m" has been or is being declared by the user, it's understood as a
    * variable before being understood as a unit. That's why the following
    * condition is checked after the previous one. */
-  if (canParseUnit && !m_parsingContext->params.forceUnitUnderscore) {
+  if (canParseUnit &&
+      !(m_parsingContext->context &&
+        m_parsingContext->context->isUnitUnderscoreMandatory())) {
     return Token::Type::Unit;
   }
 

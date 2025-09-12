@@ -403,6 +403,10 @@ bool Unit::CanParse(ForwardUnicodeDecoder* name,
   return false;
 }
 
+bool Unit::IsNameReserved(const Representative* representative) {
+  return representative->siVector() == Units::Angle::Dimension;
+}
+
 // Return true if best representative and prefix have been chosen.
 static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     Tree* unit, double* value, Preferences::UnitFormat unitFormat,

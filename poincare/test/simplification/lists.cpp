@@ -151,7 +151,7 @@ QUIZ_CASE(pcj_simplification_list) {
     simplifies_to("l2(1,2)", "{}", projCtx);
   }
   // Functions on lists
-  // OList length
+  // List length
   simplifies_to("dim({})", "0");
   simplifies_to("dim({1,2,3})", "3");
   simplifies_to("dim({{1,2,3,4,5}})", "undef");
@@ -240,7 +240,7 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("med({1,6,3},{1,1,-1})", "undef");
   simplifies_to("med({1,x,2,3})", "med({1,x,2,3})");
   simplifies_to("med({1,6,3},{1,1,x})", "med({1,6,3},{1,1,x})");
-  // OList sequences
+  // List sequences
   simplifies_to("sequence(1,k,1)", "{1}");
   simplifies_to("sequence(k,k,10)", "{1,2,3,4,5,6,7,8,9,10}");
   simplifies_to("sequence(1/(n-3),n,5)", "{-1/2,-1,undef,1,1/2}");

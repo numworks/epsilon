@@ -1,6 +1,7 @@
+#include <poincare/math_options.h>
+
+#include "../helper.h"
 #include "helper.h"
-#include "poincare/math_options.h"
-#include "poincare/test/helper.h"
 
 using namespace Poincare;
 using namespace Poincare::Internal;

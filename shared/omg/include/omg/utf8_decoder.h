@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <string.h>
 
+#include <string_view>
+
 #include "code_point.h"
 
 class ForwardUnicodeDecoder {
@@ -66,6 +68,13 @@ class UTF8Decoder : public UnicodeDecoder {
                        stringEnd ? stringEnd - string : k_noSize),
         m_string(string) {
     assert(string != nullptr);
+  }
+
+  UTF8Decoder(std::string_view stringView, size_t initialPosition = 0,
+              size_t end = -1)
+      : UnicodeDecoder(initialPosition, end == -1 ? stringView.length() : end),
+        m_string(stringView.data()) {
+    assert(stringView.data() != nullptr);
   }
 
   CodePoint codePoint() override {

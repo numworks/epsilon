@@ -754,19 +754,34 @@ QUIZ_CASE(pcj_parse_sequences) {
   Tree* expected = SharedTreeStack->pushUserSequence("u");
   (4_e)->cloneTree();
 
-  // If u is not defined, u_4 is parsed as a sequence (if preserveInput is true)
+  // If u is not defined, u_4 is not parsable
   assert(!is_parsable("u"_l ^ KSubscriptL("4"_l), false));
+  // If u is not defined and preserveInput, u_4 is parsed as a sequence
   assertLayoutParsesTo("u"_l ^ KSubscriptL("4"_l), expected,
                        Poincare::EmptySymbolContext(), {.preserveInput = true});
 
-  // If u is defined, u(4) is parsed as u_4
   PoincareTest::SymbolStore symbolStore;
   symbolStore.setExpressionForUserNamed(1_e, KSeq<"u">(KUnknownSymbol));
-  assertLayoutParsesTo("u(4)"_l, expected, symbolStore);
-  expected->removeTree();
 
-  // Cannot parse u' if u is a sequence
+  // If u is defined as sequence, u(4) is parsed as a sequence
+  assertLayoutParsesTo("u(4)"_l, expected, symbolStore);
+  // If u is defined as sequence, u_4 is parsed as a sequence
+  assertLayoutParsesTo("u"_l ^ KSubscriptL("4"_l), expected, symbolStore);
+  // If u is a sequence, u'(4) is not parsable
   assert(!is_parsable("u'(4)"_l, false, symbolStore));
+
+  // Replace u definition
+  symbolStore.setExpressionForUserNamed(1_e, KFun<"u">(KUnknownSymbol));
+  Tree* expected2 = SharedTreeStack->pushUserFunction("u");
+  (4_e)->cloneTree();
+
+  // If u is defined as function, u(4) is parsed as a function
+  assertLayoutParsesTo("u(4)"_l, expected2, symbolStore);
+  // If u is defined as function, u_4 is not parsable
+  assert(!is_parsable("u"_l ^ KSubscriptL("4"_l), false, symbolStore));
+
+  expected->removeTree();
+  expected2->removeTree();
 #endif
 }
 

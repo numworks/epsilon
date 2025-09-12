@@ -30,8 +30,12 @@ void flushGlobalData() {
     ExamModeManager::SetExamMode(
         Poincare::ExamMode(Poincare::ExamMode::Ruleset::Off));
   }
-  // Reset symbol store
+  // Reset global stores
   Shared::GlobalContextAccessor::Store().resetAll();
+  Shared::GlobalContextAccessor::SequenceStore().removeAll();
+  Shared::GlobalContextAccessor::SequenceCache().resetCache();
+  Shared::GlobalContextAccessor::ContinuousFunctionStore().removeAll();
+
   flushGlobalDataNoPool();
   // No PoolObject should leak after a unit test.
   quiz_assert(Poincare::Pool::sharedPool->numberOfObjects() == 0);

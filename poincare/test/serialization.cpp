@@ -210,8 +210,8 @@ QUIZ_CASE(pcj_serialization_rational) {
   Tree* e5 = Rational::Push(-2345678909876_e, 5_e);
   assert_beautifies_serializes_to(e5, "-2345678909876/5");
 
-  Tree* e6 = parse(MaxIntegerString());
-  assert_beautifies_serializes_to(e6, MaxIntegerString());
+  Tree* e6 = parse(k_maxIntegerString);
+  assert_beautifies_serializes_to(e6, k_maxIntegerString);
 
   flush_stack();  // TODO: should be done after each quiz_case
 }

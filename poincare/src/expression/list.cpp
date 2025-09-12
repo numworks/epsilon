@@ -7,8 +7,8 @@
 
 #include "approximation.h"
 #include "k_tree.h"
-#include "poincare/src/expression/sign.h"
 #include "rational.h"
+#include "sign.h"
 #include "systematic_reduction.h"
 #include "undefined.h"
 #include "variables.h"

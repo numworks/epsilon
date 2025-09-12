@@ -9,6 +9,9 @@ namespace OMG {
 
 template <size_t CAPACITY>
 class String {
+  template <size_t OTHER_CAPACITY>
+  friend class String;
+
  public:
   using char_type = char;
   using value_type = char_type;
@@ -80,6 +83,19 @@ class String {
   size_type length() const { return m_length; }
   const char_type* data() const { return m_data; }
   char_type* data() { return m_data; }
+
+  // Operators
+
+  // (String + String) concatenation
+  template <size_t R_CAPACITY>
+  String<CAPACITY + R_CAPACITY> operator+(const String<R_CAPACITY>& right) {
+    String<CAPACITY + R_CAPACITY> result(m_data, m_length);
+    size_type i = 0;
+    while (i < right.m_length) {
+      result.m_data[result.m_length++] = right.m_data[i++];
+    }
+    return result;
+  }
 
  private:
   size_type m_length = 0;

@@ -258,7 +258,7 @@ QUIZ_CASE(pcj_parse_numbers) {
   const char* input = "123456789012345678765434567";
   Tree* a = Integer::Push(input, strlen(input));
   assert_parsed_expression_is(input, a);
-  const char* input2 = MaxIntegerString();
+  const char* input2 = k_maxIntegerString;
   a->removeTree();
   Tree* b = Integer::Push(input2, strlen(input2));
   assert_parsed_expression_is(input2, b);

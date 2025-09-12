@@ -84,7 +84,7 @@ QUIZ_CASE(pcj_integer_properties) {
   IntegerHandler minusOne(-1);
   IntegerHandler a = CreateIntegerHandler("254");
   IntegerHandler b = CreateIntegerHandler("-13");
-  IntegerHandler max = CreateIntegerHandler(MaxIntegerString());
+  IntegerHandler max = CreateIntegerHandler(k_maxIntegerString);
 
   quiz_assert(a.strictSign() == StrictSign::Positive);
   quiz_assert(b.strictSign() == StrictSign::Negative);
@@ -160,7 +160,7 @@ QUIZ_CASE(pcj_integer_compare) {
   assert_greater("123456789123456789", "123456789123456788");
   assert_equal("0x2BABE", "178878");
   assert_equal("0b1011", "11");
-  assert_greater(MaxIntegerString(), AlmostMaxIntegerString());
+  assert_greater(k_maxIntegerString, k_almostMaxIntegerString);
 }
 
 static void assert_set_sign_to(const Tree* i, NonStrictSign sign,
@@ -314,9 +314,9 @@ QUIZ_CASE(pcj_integer_divide) {
   assert_div_to("0", "-10", "0", "0");
   assert_div_to("0", "-123456789098760", "0", "0");
   assert_div_to("2305843009213693952", "2305843009213693921", "1", "31");
-  assert_div_to(MaxIntegerString(), MaxIntegerString(), "1", "0");
+  assert_div_to(k_maxIntegerString, k_maxIntegerString, "1", "0");
   assert_div_to("18446744073709551615", "10", "1844674407370955161", "5");
-  assert_div_to(MaxIntegerString(), "10",
+  assert_div_to(k_maxIntegerString, "10",
                 "17976931348623159077293051907890247336179769789423065727343008"
                 "11577326758055009631327084773224075360211201138798713933576587"
                 "89768814416622492847430639474124377767893424865485276302219601"
@@ -562,27 +562,27 @@ static void assert_did_not_overflow(Action action) {
 QUIZ_CASE(pcj_integer_overflows) {
   // Construction
   assert_did_overflow(
-      []() { CreateIntegerHandler(OverflowedIntegerString()); });
-  assert_did_not_overflow([]() { CreateIntegerHandler(MaxIntegerString()); });
+      []() { CreateIntegerHandler(k_overflowedIntegerString); });
+  assert_did_not_overflow([]() { CreateIntegerHandler(k_maxIntegerString); });
 
   // Operations
   assert_did_overflow([]() {
-    TreeRef a = CreateInteger(MaxIntegerString());
+    TreeRef a = CreateInteger(k_maxIntegerString);
     TreeRef b = CreateInteger("1");
     IntegerHandler::Addition(Integer::Handler(a), Integer::Handler(b));
   });
   assert_did_not_overflow([]() {
-    TreeRef a = CreateInteger(MaxIntegerString());
+    TreeRef a = CreateInteger(k_maxIntegerString);
     TreeRef b = CreateInteger("1");
     IntegerHandler::Subtraction(Integer::Handler(a), Integer::Handler(b));
   });
   assert_did_overflow([]() {
-    TreeRef a = CreateInteger(MaxIntegerString());
+    TreeRef a = CreateInteger(k_maxIntegerString);
     TreeRef b = CreateInteger("2");
     IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
   });
   assert_did_not_overflow([]() {
-    TreeRef a = CreateInteger(MaxIntegerString());
+    TreeRef a = CreateInteger(k_maxIntegerString);
     TreeRef b = CreateInteger("1");
     IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
   });
@@ -704,7 +704,7 @@ QUIZ_CASE(pcj_integer_cast) {
                            "835356329624224137215"),
       true, 1.7976931348622999E+308);
 
-  assert_integer_cast<double_t>(CreateIntegerHandler(MaxIntegerString()), true,
+  assert_integer_cast<double_t>(CreateIntegerHandler(k_maxIntegerString), true,
                                 INFINITY);
 }
 

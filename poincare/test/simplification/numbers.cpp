@@ -110,31 +110,31 @@ QUIZ_CASE(pcj_simplification_large_numbers) {
 }
 
 QUIZ_CASE(poincare_simplification_rational) {
-  // 1/MaxParsedIntegerString()
+  // 1/k_maxParsedIntegerString
   constexpr static size_t k_bufferSizeOfMax = 32;
   char bufferMax[k_bufferSizeOfMax] = "1/";
   size_t bufferLengthOfMax = strlen(bufferMax);
-  strlcpy(bufferMax + bufferLengthOfMax, MaxParsedIntegerString(),
+  strlcpy(bufferMax + bufferLengthOfMax, k_maxParsedIntegerString,
           k_bufferSizeOfMax - bufferLengthOfMax);
   simplifies_to(bufferMax, bufferMax);
-  // 1/OverflowedIntegerString()
+  // 1/k_overflowedIntegerString
   constexpr static size_t k_bufferSizeOfInf = 400;
   char bufferInf[k_bufferSizeOfInf] = "1/";
   size_t bufferLengthOfInf = strlen(bufferInf);
-  strlcpy(bufferInf + bufferLengthOfInf, BigOverflowedIntegerString(),
+  strlcpy(bufferInf + bufferLengthOfInf, k_bigOverflowedIntegerString,
           k_bufferSizeOfInf - bufferLengthOfInf);
   assert_parse_to_integer_overflow(bufferInf);
-  // MaxParsedIntegerString()
-  simplifies_to(MaxParsedIntegerString(), MaxParsedIntegerString());
-  // OverflowedIntegerString()
-  assert_parse_to_integer_overflow(OverflowedIntegerString());
-  assert_parse_to_integer_overflow(BigOverflowedIntegerString());
-  // ApproximatedParsedIntegerString()
-  simplifies_to(ApproximatedParsedIntegerString(), "10^30");
-  // -OverflowedIntegerString()
+  // k_maxParsedIntegerString
+  simplifies_to(k_maxParsedIntegerString, k_maxParsedIntegerString);
+  // k_overflowedIntegerString
+  assert_parse_to_integer_overflow(k_overflowedIntegerString);
+  assert_parse_to_integer_overflow(k_bigOverflowedIntegerString);
+  // k_approximatedParsedIntegerString
+  simplifies_to(k_approximatedParsedIntegerString, "10^30");
+  // -k_overflowedIntegerString
   bufferInf[0] = '-';
   bufferLengthOfInf = 1;
-  strlcpy(bufferInf + bufferLengthOfInf, BigOverflowedIntegerString(),
+  strlcpy(bufferInf + bufferLengthOfInf, k_bigOverflowedIntegerString,
           k_bufferSizeOfInf - bufferLengthOfInf);
   assert_parse_to_integer_overflow(bufferInf);
 

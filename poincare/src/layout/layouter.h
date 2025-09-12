@@ -7,6 +7,8 @@
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/symbol_context.h>
 
+#include <string_view>
+
 using Poincare::Preferences;
 
 namespace Poincare::Internal {
@@ -50,10 +52,10 @@ class Layouter {
   void addOperatorSeparator(Tree* layoutParent);
   void addUnitSeparator(Tree* layoutParent);
   bool requireSeparators(const Tree* expression);
-  void layoutText(TreeRef& layoutParent, const char* text);
+  void layoutText(TreeRef& layoutParent, std::string_view text);
   void layoutBuiltin(TreeRef& layoutParent, Tree* expression);
   void layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
-                          const char* name);
+                          std::string_view name);
   void layoutChildrenAsRacks(Tree* expression);
   void layoutIntegerHandler(TreeRef& layoutParent, IntegerHandler handler,
                             int decimalOffset = 0);

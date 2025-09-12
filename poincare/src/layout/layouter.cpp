@@ -186,7 +186,7 @@ Tree* Layouter::insertParenthesis(TreeRef& layoutParent, bool isOpening,
   return layoutParent;
 }
 
-void Layouter::layoutText(TreeRef& layoutParent, const char* text) {
+void Layouter::layoutText(TreeRef& layoutParent, std::string_view text) {
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull) {
@@ -226,7 +226,7 @@ void Layouter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
 }
 
 void Layouter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
-                                  const char* name) {
+                                  std::string_view name) {
   layoutText(layoutParent, name);
   TreeRef newParent = insertParenthesis(layoutParent, true);
   for (int j = 0; j < expression->numberOfChildren(); j++) {

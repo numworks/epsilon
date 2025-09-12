@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <apps/shared/math_app.h>
+#include <poincare/context_with_parent.h>
 
 #include "equation_store.h"
 #include "interval_controller.h"
@@ -41,6 +42,10 @@ class App : public Shared::MathApp {
     return static_cast<const Snapshot*>(Escher::App::snapshot());
   }
 
+  const Poincare::SymbolContext& localContext() const override {
+    return m_localContext;
+  }
+
   EquationStore* equationStore() { return &m_equationStore; }
   SystemOfEquations* system() { return &m_system; }
 
@@ -53,6 +58,8 @@ class App : public Shared::MathApp {
  private:
   App(Snapshot* snapshot);
 
+  // Force units to have an underscore, so that they are not mixed with unknowns
+  Poincare::MandatoryUnitUnderscoreContext m_localContext;
   EquationStore m_equationStore;
   // Controllers
   SolutionsController m_solutionsController;

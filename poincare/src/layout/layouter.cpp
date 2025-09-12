@@ -429,13 +429,20 @@ void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
 
   OMG::String<k_maxPrefixLen> prefixText(
       Units::Unit::GetPrefix(expression)->symbol());
+  const Units::Representative* representative =
+      Units::Unit::GetRepresentative(expression);
   OMG::String<k_maxRepresentativeLen> representativeText(
-      Units::Unit::GetRepresentative(expression)->rootSymbols().mainAlias());
+      representative->rootSymbols().mainAlias());
   OMG::String<k_maxUnitTextSize> unitText = prefixText + representativeText;
 
-  if (m_params.linearMode ||
-      m_params.symbolContext.expressionTypeForIdentifier(unitText) !=
-          SymbolContext::UserNamedType::None) {
+  bool isUnderscoreMandatory =
+      m_params.linearMode ||
+      (!Units::Unit::IsNameReserved(representative) &&
+       (m_params.symbolContext.isUnitUnderscoreMandatory() ||
+        m_params.symbolContext.expressionTypeForIdentifier(unitText) !=
+            SymbolContext::UserNamedType::None));
+
+  if (isUnderscoreMandatory) {
     PushCodePoint(layoutParent, '_');
   }
 

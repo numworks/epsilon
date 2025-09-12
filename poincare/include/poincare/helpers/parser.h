@@ -18,13 +18,6 @@ struct ParsingParameters {
    */
   bool isAssignment = false;
 
-  /* If true, "g" will never be parsed as a unit (for solver)
-   * It doesn't apply to:
-   * - angle units (°, ', ", rad, gon) which are always parsed as units
-   * - units containing special characters (°C) since they can't be variables
-   */
-  bool forceUnitUnderscore = false;
-
   /* This tells the parser that the layout is intentionally structured as-is and
    * should be interpreted as minimally as possible.
    * If preserveInput is true:
@@ -36,14 +29,12 @@ struct ParsingParameters {
    *   (this rule is slightly different from isAssignment. In the preserveInput
    *    case, if "f" is already defined with another symbol type like variable,
    *    sequence or list, it won't be understood as a function).
-   * - g is always understood as a variable and not a unit.
-   *   (this means that forceUnitUnderscore is included in preserveInput)
+   * - g is always understood as a variable and not a unit (even if the context
+   *   allows omitting unit underscore).
    * - 1 2/3 is always understood as a mixed fraction and not 1*2/3
    *
-   * Impact on the other parameters:
-   * - forceUnitUnderscore will be ignored.
-   * - isAssignment can still be used (in order to undersetand "f(x)=" as a
-   *   function assignment even if "f" is already defined as a variable).
+   * isAssignment can still be used (in order to undersetand "f(x)=" as a
+   * function assignment even if "f" is already defined as a variable).
    */
   bool preserveInput = false;
 };

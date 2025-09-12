@@ -50,6 +50,7 @@ void App::openIntervalController() {
 
 App::App(Snapshot* snapshot)
     : MathApp(snapshot, &m_stackViewController),
+      m_localContext(&Shared::SharedApp::localContext()),
       m_solutionsController(&m_stackViewController, &m_solutionHeader),
       m_solutionHeader(
           &m_stackViewController, &m_solutionsController,

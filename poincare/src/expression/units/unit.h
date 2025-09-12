@@ -178,6 +178,10 @@ class Unit {
     LayoutSpanDecoder decoder(span);
     return CanParse(&decoder, representative, prefix);
   }
+
+  // Returns true if the unit name cannot be used as a variable name
+  static bool IsNameReserved(const Representative* representative);
+
   static void ChooseBestRepresentativeAndPrefixForValue(
       Tree* units, double* value, Preferences::UnitFormat unitFormat);
 

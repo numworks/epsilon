@@ -3,6 +3,7 @@
 #include <apps/global_preferences.h>
 #include <assert.h>
 #include <limits.h>
+#include <poincare/context_with_parent.h>
 #include <poincare/helpers/store.h>
 #include <poincare/test/float_helper.h>
 #include <poincare/test/helper.h>
@@ -23,6 +24,8 @@ void solve_and_process_error(std::initializer_list<const char*> equations,
                              const SymbolContext& symbolContext, T&& lambda) {
   EquationStore equationStore;
   SystemOfEquations system(&equationStore);
+  MandatoryUnitUnderscoreContext tempContext(&symbolContext);
+
   for (const char* equation : equations) {
     Ion::Storage::Record::ErrorStatus err = equationStore.addEmptyModel();
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None,
@@ -30,13 +33,13 @@ void solve_and_process_error(std::initializer_list<const char*> equations,
     Ion::Storage::Record record =
         equationStore.recordAtIndex(equationStore.numberOfModels() - 1);
     OMG::ExpiringPointer<Equation> model = equationStore.modelForRecord(record);
-    err = model->setContent(Layout::Parse(equation), symbolContext);
+    err = model->setContent(Layout::Parse(equation), tempContext);
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None,
                                  equation);
   }
   equationStore.tidyDownstreamPoolFrom();
   system.tidy();
-  SystemOfEquations::Error err = system.exactSolve(symbolContext);
+  SystemOfEquations::Error err = system.exactSolve(tempContext);
   lambda(&system, err);
   equationStore.removeAll();
 }
@@ -100,6 +103,8 @@ static void compareSolutions(SystemOfEquations* system,
    * directly, instead of parsing const char * objects and Layouts and comparing
    * afterwards. */
 
+  MandatoryUnitUnderscoreContext tempContext(&symbolContext);
+
   size_t i = 0;
   for (const char* solution : solutions) {
     // Solutions are specified under the form "foo=bar"
@@ -139,11 +144,10 @@ static void compareSolutions(SystemOfEquations* system,
     ProjectionContext projCtx{
         .m_complexFormat = ComplexFormat::Cartesian,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-        .m_context = symbolContext,
+        .m_context = tempContext,
         .m_advanceReduce = false};
     SystemExpression expectedExpression =
-        UserExpression::Parse(expectedValue, symbolContext,
-                              {.forceUnitUnderscore = true})
+        UserExpression::Parse(expectedValue, tempContext)
             .cloneAndReduce(projCtx, &reductionFailure);
     quiz_assert(!reductionFailure && !expectedExpression.isUninitialized());
 
@@ -154,15 +158,15 @@ static void compareSolutions(SystemOfEquations* system,
     constexpr int bufferSize = 500;
     char obtainedLayoutBuffer[bufferSize];
     obtainedLayout.serialize(obtainedLayoutBuffer);
-    UserExpression parsedExpression = UserExpression::Parse(
-        obtainedLayoutBuffer, symbolContext, {.forceUnitUnderscore = true});
+    UserExpression parsedExpression =
+        UserExpression::Parse(obtainedLayoutBuffer, tempContext);
     quiz_assert(!parsedExpression.isUninitialized());
     /* TODO: no need to recreate a projectionContext when const and non const
      * members of ProjectionContext are split (parameters vs metadata) */
     ProjectionContext projCtx2 = {
         .m_complexFormat = ComplexFormat::Cartesian,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-        .m_context = symbolContext,
+        .m_context = tempContext,
         .m_advanceReduce = false};
     SystemExpression obtainedExpression =
         parsedExpression.cloneAndReduce(projCtx2, &reductionFailure);

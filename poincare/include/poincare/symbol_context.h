@@ -23,6 +23,13 @@ class SymbolContext {
   /* The returned Tree* may live in the Pool or in the Storage. */
   virtual const Internal::Tree* expressionForUserNamed(
       const Internal::Tree* symbol) const = 0;
+
+  /* If true, "g" will never be parsed as a unit, and a unit will never
+   * be layoutted without "_" (for solver for example)
+   * It doesn't apply to some reserved units names (e.g. angle units).
+   * This needs to be in the symbol context because it's used both in parsing
+   * and layouting, and it's related to how symbols are interpreted. */
+  virtual bool isUnitUnderscoreMandatory() const { return false; }
 };
 
 class EmptySymbolContext : public SymbolContext {

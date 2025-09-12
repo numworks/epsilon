@@ -1,5 +1,6 @@
 #include "layouter.h"
 
+#include <omg/string.h>
 #include <omg/unreachable.h>
 #include <omg/utf8_helper.h>
 #include <poincare/comparison_operator.h>
@@ -21,6 +22,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/placeholder.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
+#include <poincare/symbol_context.h>
 
 #include "grid.h"
 #include "k_tree.h"
@@ -420,14 +422,23 @@ void Layouter::layoutSequence(TreeRef& layoutParent, Tree* expression) {
 }
 
 void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
-  // TODO_PCJ: ask the context whether to add an underscore
-  if (m_params.linearMode) {
+  constexpr int k_maxPrefixLen = 2;          //"da"
+  constexpr int k_maxRepresentativeLen = 5;  //"month"
+  constexpr int k_maxUnitTextSize = k_maxPrefixLen + k_maxRepresentativeLen;
+
+  OMG::String<k_maxPrefixLen> prefixText(
+      Units::Unit::GetPrefix(expression)->symbol());
+  OMG::String<k_maxRepresentativeLen> representativeText(
+      Units::Unit::GetRepresentative(expression)->rootSymbols().mainAlias());
+  OMG::String<k_maxUnitTextSize> unitText = prefixText + representativeText;
+
+  if (m_params.linearMode ||
+      m_params.symbolContext.expressionTypeForIdentifier(unitText) !=
+          SymbolContext::UserNamedType::None) {
     PushCodePoint(layoutParent, '_');
   }
-  layoutText(layoutParent, Units::Unit::GetPrefix(expression)->symbol());
-  layoutText(
-      layoutParent,
-      Units::Unit::GetRepresentative(expression)->rootSymbols().mainAlias());
+
+  layoutText(layoutParent, unitText);
 }
 
 void Layouter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {

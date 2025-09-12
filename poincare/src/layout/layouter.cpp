@@ -422,6 +422,7 @@ void Layouter::layoutSequence(TreeRef& layoutParent, Tree* expression) {
 }
 
 void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
+#if POINCARE_UNIT
   constexpr int k_maxPrefixLen = 2;          //"da"
   constexpr int k_maxRepresentativeLen = 5;  //"month"
   constexpr int k_maxUnitTextSize = k_maxPrefixLen + k_maxRepresentativeLen;
@@ -439,6 +440,7 @@ void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
   }
 
   layoutText(layoutParent, unitText);
+#endif
 }
 
 void Layouter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {

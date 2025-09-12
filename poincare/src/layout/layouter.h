@@ -14,8 +14,10 @@ using Poincare::Preferences;
 namespace Poincare::Internal {
 
 struct LayouterParameters {
+#if POINCARE_UNIT
   // Only used for Units in 2D mode
   const SymbolContext& symbolContext = k_emptySymbolContext;
+#endif
   bool linearMode = false;
   bool compactMode = false;
   int numberOfSignificantDigits =

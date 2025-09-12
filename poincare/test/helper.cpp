@@ -294,7 +294,8 @@ void assert_expression_parses_and_serializes_to(
     OMG::Base base) {
   Tree* e = parse(expression, symbolContext);
   Tree* l = Layouter::LayoutExpression(
-      e, {.linearMode = true,
+      e, {.symbolContext = symbolContext,
+          .linearMode = true,
           .numberOfSignificantDigits = numberOfSignificantDigits,
           .floatMode = mode,
           .base = base});

@@ -582,6 +582,7 @@ QUIZ_CASE(pcj_node) {
   assert_trees_are_equal(n1->nextTree(), e2);
   quiz_assert(n1->numberOfDescendants(false) == 8);
   quiz_assert(n1->numberOfDescendants(true) == 9);
+  quiz_assert(n1->maxDepth() == 3);
   assert_trees_are_equal(n1->child(0), n1->nextNode());
   assert_trees_are_equal(n1->child(1),
                          n1->nextNode()->nextNode()->nextNode()->nextNode());

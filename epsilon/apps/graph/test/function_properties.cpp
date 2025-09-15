@@ -839,6 +839,14 @@ QUIZ_CASE(graph_function_properties) {
                   .m_status = ContinuousFunctionProperties::Status::Unhandled,
                   .m_caption = I18n::Message::UnhandledType,
                   .m_equationType = Comparison::Operator::Superior});
+    assert_check_function_properties(
+        "1+x^2>cos(y)",
+        noInequations
+            ? k_bannedProperties
+            : FunctionProperties{
+                  .m_status = ContinuousFunctionProperties::Status::Unhandled,
+                  .m_caption = I18n::Message::UnhandledType,
+                  .m_equationType = Comparison::Operator::Superior});
 
     assert_check_function_properties("x*y^2=x", k_unhandledCartesian);
     assert_check_function_properties("y=piecewise(3y,x<2,x)",

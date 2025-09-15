@@ -228,8 +228,8 @@ constexpr ToolboxMessage unitSurfaceFork[] = {
                        unitSurfaceChildrenForImperialToolbox)};
 
 constexpr ToolboxMessage volumeAndSurfaceChildren[] = {
-    ToolboxMessageNode(I18n::Message::UnitVolumeMenu, unitVolumeFork, true),
     ToolboxMessageNode(I18n::Message::UnitSurfaceMenu, unitSurfaceFork, true),
+    ToolboxMessageNode(I18n::Message::UnitVolumeMenu, unitVolumeFork, true),
 };
 
 constexpr ToolboxMessage unitMassGramMicro = ToolboxMessageLeaf(
@@ -486,7 +486,7 @@ constexpr ToolboxMessage unitChildren[] = {
                        distanceAndAngleChildren),
     ToolboxMessageNode(I18n::Message::UnitTimeAndFrequencyMenu,
                        timeAndFrequencyChildren),
-    ToolboxMessageNode(I18n::Message::UnitVolumeAndAreaMenu,
+    ToolboxMessageNode(I18n::Message::UnitAreaAndVolumeMenu,
                        volumeAndSurfaceChildren),
     ToolboxMessageNode(I18n::Message::UnitMassMenu, unitMassFork, true),
     ToolboxMessageNode(I18n::Message::UnitElectricityMenu, electricityChildren),

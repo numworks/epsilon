@@ -273,10 +273,12 @@ void ContinuousFunctionProperties::update(
 
   if (precomputedOperatorType != Comparison::Operator::Equal) {
     if (highestCoefficientIsPositive == OMG::Troolean::Unknown ||
-        (yDeg == 2 && xDeg == -1)) {
+        (yDeg == 2 && xDeg == -1) || (xDeg == 2 && yDeg == -1)) {
       /* Are unhandled equation with :
        * - An unknown highest coefficient sign: sign must be strict and constant
-       * - A non polynomial x coefficient in a quadratic equation on y. */
+       * - A non polynomial coefficient in a quadratic equation.
+       * (example: y^2 > ln(x) -> it's not easy to know where the area is
+       * defined and where it is not) */
       setErrorStatusAndUpdateCaption(Status::Unhandled);
       return;
     }

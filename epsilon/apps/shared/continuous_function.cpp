@@ -190,12 +190,8 @@ void ContinuousFunction::getLineParameters(double* slope,
   SystemExpression coefficients[PolynomialHelpers::NumberOfCoefficients(
       PolynomialHelpers::k_lineDegree)];
   // Separate the two line coefficients for approximation.
-  int d = equation.getPolynomialReducedCoefficients(
-      k_unknownName, coefficients, GlobalContextAccessor::Context(),
-      complexFormat(),
-      GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-      ContinuousFunctionProperties::k_defaultUnitFormat,
-      SymbolicComputation::ReplaceAllSymbols);
+  int d =
+      equation.getPolynomialReducedCoefficients(k_unknownName, coefficients);
   assert(d <= PolynomialHelpers::k_lineDegree);
   /* Degree might vary depending on symbols definition and complex format.
    * Approximate and return the two line coefficients */
@@ -625,9 +621,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
     int degree = m_expression.getPolynomialReducedCoefficients(
         willBeAlongX ? ContinuousFunctionProperties::k_ordinateName
                      : k_unknownName,
-        coefficients, GlobalContextAccessor::Context(), complexFormat,
-        angleUnit, ContinuousFunctionProperties::k_defaultUnitFormat,
-        SymbolicComputation::ReplaceDefinedSymbols, true);
+        coefficients, true);
 
     if (degree == -1) {
       /* The reduction failed, so the expression is not reduced and

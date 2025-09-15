@@ -267,9 +267,7 @@ int SystemExpression::polynomialDegree(const char* symbolName) const {
 
 int SystemExpression::getPolynomialReducedCoefficients(
     const char* symbolName, SystemExpression coefficients[],
-    const SymbolContext& symbolContext, ComplexFormat complexFormat,
-    AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
-    SymbolicComputation symbolicComputation, bool keepDependencies) const {
+    bool keepDependencies) const {
   Tree* coefList = PolynomialParser::GetReducedCoefficients(tree(), symbolName,
                                                             keepDependencies);
   if (!coefList) {

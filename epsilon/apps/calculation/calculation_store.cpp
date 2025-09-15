@@ -108,7 +108,6 @@ static bool compute(Poincare::UserExpression inputExpression,
                     Poincare::UserExpression& approximateOutputExpression,
                     Poincare::ComplexFormat& complexFormat) {
   assert(!inputExpression.isUninitialized());
-  // Update complexFormat with input expression
   ProjectionContext projContext = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
@@ -117,7 +116,9 @@ static bool compute(Poincare::UserExpression inputExpression,
       .m_symbolic = CAS::Enabled() ? SymbolicComputation::ReplaceDefinedSymbols
                                    : SymbolicComputation::ReplaceAllSymbols,
       .m_context = GlobalContextAccessor::Context()};
+  // Update complexFormat with input expression
   inputExpression.updateProjectionContextWithPreferedComplexFormat(projContext);
+  complexFormat = projContext.m_complexFormat;
   return inputExpression.cloneAndSimplifyAndApproximate(
       &exactOutputExpression, &approximateOutputExpression, projContext);
 }

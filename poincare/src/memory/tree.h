@@ -122,6 +122,7 @@ class Tree : public TypeBlock {
 
   // Sizes
   size_t treeSize() const { return nextTree()->block() - block(); }
+  size_t maxDepth() const;
   // Return the CRC32 hash of the entire tree
   uint32_t hash() const;
 

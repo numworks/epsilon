@@ -361,6 +361,17 @@ const Tree* Tree::nextNode(size_t nodeSize) const {
   return Tree::FromBlocks(this + nodeSize);
 }
 
+size_t Tree::maxDepth() const {
+  size_t result = 0;
+  for (const Tree* child : children()) {
+    size_t childMaxDepth = child->maxDepth();
+    if (childMaxDepth > result) {
+      result = childMaxDepth;
+    }
+  }
+  return result + 1;
+}
+
 uint32_t Tree::hash() const {
   return Ion::crc32Byte(reinterpret_cast<const uint8_t*>(this), treeSize());
 }

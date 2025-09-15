@@ -121,7 +121,7 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("e^(3.1415×i)", "e^(6283/2000×i)", k_polarCtx);
 }
 
-QUIZ_CASE(poincare_simplification_complex_format) {
+QUIZ_CASE(pcj_simplification_complex_format) {
   // Real
   simplifies_to("i", "nonreal");
   simplifies_to("√(-1)", "nonreal");
@@ -216,10 +216,9 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   // MetricUnitFormat, Cartesian);
 
   simplifies_to("root(2,i)", "cos(ln(2))-sin(ln(2))×i", k_cartesianCtx);
-  // TODO_PCJ: get minus sign out of cos and sin
-  simplifies_to("root(2,i+1)", "√(2)×(cos(-(90×ln(2))/π)+sin(-(90×ln(2))/π)×i)",
+  simplifies_to("root(2,i+1)", "√(2)×(cos((90×ln(2))/π)-sin((90×ln(2))/π)×i)",
                 k_degreeCartesianCtx);
-  simplifies_to("root(2,i+1)", "cos(-ln(2)/2)×√(2)+sin(-ln(2)/2)×√(2)×i",
+  simplifies_to("root(2,i+1)", "cos(ln(2)/2)×√(2)-sin(ln(2)/2)×√(2)×i",
                 k_cartesianCtx);
   simplifies_to("permute(10, 4)", "5040", k_cartesianCtx);
   simplifies_to("random()", "random()", k_cartesianCtx);

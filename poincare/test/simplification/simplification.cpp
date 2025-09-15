@@ -99,14 +99,16 @@ QUIZ_CASE(pcj_simplification_contraction) {
   contract_to(KAdd("b"_e, "c"_e, "d"_e, KPow(KTrig("x"_e, 0_e), 2_e),
                    KPow(KTrig("x"_e, 1_e), 2_e)),
               KDep(KAdd(1_e, "b"_e, "c"_e, "d"_e), KDepList("x"_e)));
+  // 2*sin(π/9)*sin(π/7) = cos(2π/63)+cos(79π/63)
   contract_to(KMult(2_e, KTrig(KMult(1_e / 9_e, π_e), 1_e),
                     KTrig(KMult(1_e / 7_e, π_e), 1_e)),
-              KAdd(KTrig(KMult(79_e / 63_e, π_e), 0_e),
-                   KTrig(KMult(124_e / 63_e, π_e), 0_e)));
+              KAdd(KTrig(KMult(2_e / 63_e, π_e), 0_e),
+                   KTrig(KMult(79_e / 63_e, π_e), 0_e)));
+  // 2*cos(π/9)*sin(π/7) = sin(2π/63)+sin(16π/63)
   contract_to(KMult(2_e, KTrig(KMult(1_e / 9_e, π_e), 0_e),
                     KTrig(KMult(1_e / 7_e, π_e), 1_e)),
-              KAdd(KTrig(KMult(16_e / 63_e, π_e), 1_e),
-                   KTrig(KMult(61_e / 63_e, π_e), 1_e)));
+              KAdd(KTrig(KMult(2_e / 63_e, π_e), 1_e),
+                   KTrig(KMult(16_e / 63_e, π_e), 1_e)));
 }
 
 QUIZ_CASE(pcj_simplification_variables) {

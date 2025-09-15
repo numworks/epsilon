@@ -76,7 +76,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("2×sin(2y)×cos(y)-sin(3×y)", "sin(y)");
   simplifies_to("2×cos(2y)×sin(y)+sin(y)", "sin(3×y)");
   simplifies_to("2×cos(2y)×cos(y)-cos(y)", "cos(3×y)");
-  simplifies_to("sin(4π/21)sin(π/7)", "(-1/2+cos((41×π)/21))/2");
+  simplifies_to("sin(4π/21)sin(π/7)", "-1/4+cos(π/21)/2");
   simplifies_to("cos(13π/42)sin(π/7)", "(-1/2+sin((19×π)/42))/2");
 
   // Direct trigonometry
@@ -579,9 +579,8 @@ QUIZ_CASE(pcj_simplification_trigonometry_advanced) {
   // Exact values
   simplifies_to("cot(0)", "undef");
   simplifies_to("cot(π/2)", "0");
-  // TODO: simplify -cot(-x)
-  simplifies_to("cot(π°)", "-cot(-π^2/180)");
-  simplifies_to("cot(2)", "-cot(-2)");
+  simplifies_to("cot(π°)", "cot(π^2/180)");
+  simplifies_to("cot(2)", "cot(2)");
   simplifies_to("cot(90)", "0", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("csc(0)", "undef");
   simplifies_to("sec(0)", "1");

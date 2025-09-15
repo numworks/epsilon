@@ -216,10 +216,19 @@ bool Trigonometry::ReduceTrig(Tree* e) {
   bool changed = ReduceTrigSecondElement(secondArgument, &isOpposed);
   assert(secondArgument->isZero() || secondArgument->isOne());
   bool isSin = secondArgument->isOne();
-  // cos(-x) = cos(x) and sin(-x) = -sin(x)
-  // TODO: Maybe factorize even/odd functions logic
-  if (PatternMatching::MatchReplaceReduce(
-          firstArgument, KMult(KA_s, -1_e, KB_s), KMult(KA_s, KB_s))) {
+  ComplexSign s = GetComplexSign(firstArgument);
+  bool isRealStrictlyNegative = s.isReal() && s.realSign().isStrictlyNegative();
+  bool isRealPositive = s.isReal() && s.realSign().isPositive();
+  if ((isRealStrictlyNegative && PatternMatching::MatchReplaceReduce(
+                                     firstArgument, KA, KMult(-1_e, KA))) ||
+      (!isRealPositive &&
+       PatternMatching::MatchReplaceReduce(
+           firstArgument, KMult(KA_s, -1_e, KB_s), KMult(KA_s, KB_s)))) {
+    // TODO: Maybe factorize even/odd functions logic
+    /* cos(-x) = cos(x) and sin(-x) = -sin(x)
+     * Sign of cos(A) is changed if either:
+     * - A is strictly negative
+     * - A is not known to be positive, and is of the form -1*B */
     changed = true;
     if (isSin) {
       isOpposed = !isOpposed;

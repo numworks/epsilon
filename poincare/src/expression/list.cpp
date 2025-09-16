@@ -217,7 +217,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
     case Type::ListProduct:
     case Type::Min:
     case Type::Max: {
-      Tree* result;
+      Tree* result = nullptr;
       ExceptionTry { result = Fold(e->child(0), e->type()); }
       ExceptionCatch(exc) {
         if (exc == ExceptionType::SortFail) {

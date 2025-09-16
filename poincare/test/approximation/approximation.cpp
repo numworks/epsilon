@@ -75,8 +75,8 @@ QUIZ_CASE(pcj_approximation_point) {
   approximates_to<double>("{(1+2,3+4),(5+6,7+8)}", "{(3,7),(11,15)}");
 
   // undef is not bubbled up in points
-  approximates_to<double>("(undef,i)", "(undef,nonreal)", realCtx);
-  approximates_to<double>("(undef,i)", "(undef,i)", cartesianCtx);
+  approximates_to<double>("(undef,i)", "(undef,nonreal)", k_realCtx);
+  approximates_to<double>("(undef,i)", "(undef,i)", k_cartesianCtx);
 }
 
 QUIZ_CASE(pcj_approximation_piecewise) {
@@ -97,19 +97,19 @@ QUIZ_CASE(pcj_approximation_logarithm) {
   approximates_to<float>("log(5)", "0.69897");
   approximates_to<double>("ln(5)", "1.6094379124341");
   approximates_to<float>("log(2+5×i,64)", "0.4048317+0.2862042×i",
-                         cartesianCtx);
+                         k_cartesianCtx);
   approximates_to<double>("log(6,7+4×i)", "0.80843880717528-0.20108238082167×i",
-                          cartesianCtx);
-  approximates_to<float>("log(5+2×i)", "0.731199+0.1652518×i", cartesianCtx);
+                          k_cartesianCtx);
+  approximates_to<float>("log(5+2×i)", "0.731199+0.1652518×i", k_cartesianCtx);
   approximates_to<double>("ln(5+2×i)", "1.6836479149932+0.38050637711236×i",
-                          cartesianCtx);
+                          k_cartesianCtx);
   projected_approximates_to<double>("log(0,0)", "undef");
   projected_approximates_to<double>("log(0)", "undef");
   projected_approximates_to<double>("log(2,0)", "undef");
 
   // WARNING: evaluate on branch cut can be multi-valued
   approximates_to<double>("ln(-4)", "1.3862943611199+3.1415926535898×i",
-                          cartesianCtx);
+                          k_cartesianCtx);
 }
 
 QUIZ_CASE(pcj_approximation_abs) {
@@ -119,9 +119,9 @@ QUIZ_CASE(pcj_approximation_abs) {
   approximates_to<float>("abs(-1)", "1");
   approximates_to<double>("abs(-1)", "1");
   approximates_to<double>("abs(-2.3ᴇ-39)", "2.3ᴇ-39");
-  approximates_to<float>("abs(-2.3ᴇ-39)", "2.3ᴇ-39", realCtx, 5);
-  approximates_to<float>("abs(3+2i)", "3.605551", cartesianCtx);
-  approximates_to<double>("abs(3+2i)", "3.605551275464", cartesianCtx);
+  approximates_to<float>("abs(-2.3ᴇ-39)", "2.3ᴇ-39", k_realCtx, 5);
+  approximates_to<float>("abs(3+2i)", "3.605551", k_cartesianCtx);
+  approximates_to<double>("abs(3+2i)", "3.605551275464", k_cartesianCtx);
 }
 
 QUIZ_CASE(pcj_approximation_root) {
@@ -131,29 +131,32 @@ QUIZ_CASE(pcj_approximation_root) {
   approximates_to<double>("√(2)", "1.4142135623731");
   approximates_to<float>("√(5ᴇ-37)", "7.071068ᴇ-19");
   approximates_to<double>("√(5ᴇ-79)", "7.0710678118655ᴇ-40");
-  approximates_to<float>("√(-1)", "i", cartesianCtx);
-  approximates_to<double>("√(-1)", "i", cartesianCtx);
-  approximates_to<float>("√(i)", "0.7071068+0.7071068×i", cartesianCtx);
+  approximates_to<float>("√(-1)", "i", k_cartesianCtx);
+  approximates_to<double>("√(-1)", "i", k_cartesianCtx);
+  approximates_to<float>("√(i)", "0.7071068+0.7071068×i", k_cartesianCtx);
   approximates_to<double>("√(i)", "0.70710678118655+0.70710678118655×i",
-                          cartesianCtx);
-  approximates_to<float>("√(-1-i)", "0.4550898-1.098684×i", cartesianCtx);
+                          k_cartesianCtx);
+  approximates_to<float>("√(-1-i)", "0.4550898-1.098684×i", k_cartesianCtx);
   approximates_to<double>("√(-1-i)", "0.45508986056223-1.0986841134678×i",
-                          cartesianCtx);
-  approximates_to<float>("root(3+i, 3)", "1.459366+0.1571201×i", cartesianCtx);
+                          k_cartesianCtx);
+  approximates_to<float>("root(3+i, 3)", "1.459366+0.1571201×i",
+                         k_cartesianCtx);
   approximates_to<double>("root(3+i, 3)", "1.4593656008684+0.15712012294394×i",
-                          cartesianCtx);
-  approximates_to<float>("root(3, 3+i)", "1.382007-0.1524428×i", cartesianCtx);
+                          k_cartesianCtx);
+  approximates_to<float>("root(3, 3+i)", "1.382007-0.1524428×i",
+                         k_cartesianCtx);
   approximates_to<double>("root(3, 3+i)", "1.3820069623326-0.1524427794159×i",
-                          cartesianCtx);
-  approximates_to<float>("√(3+i)", "1.755317+0.2848488×i", cartesianCtx);
+                          k_cartesianCtx);
+  approximates_to<float>("√(3+i)", "1.755317+0.2848488×i", k_cartesianCtx);
   approximates_to<double>("√(3+i)", "1.7553173018244+0.28484878459314×i",
-                          cartesianCtx);
-  approximates_to<float>("√(-1)", "i", cartesianCtx);
-  approximates_to<double>("√(-1)", "i", cartesianCtx);
-  approximates_to<float>("root(-1,3)", "0.5+0.8660254×i", cartesianCtx);
-  approximates_to<double>("root(-1,3)", "0.5+0.86602540378444×i", cartesianCtx);
-  approximates_to<float>("root(5^((-i)3^9),i)", "3.504", cartesianCtx, 4);
-  approximates_to<double>("root(5^((-i)3^9),i)", "3.5039410843", cartesianCtx,
+                          k_cartesianCtx);
+  approximates_to<float>("√(-1)", "i", k_cartesianCtx);
+  approximates_to<double>("√(-1)", "i", k_cartesianCtx);
+  approximates_to<float>("root(-1,3)", "0.5+0.8660254×i", k_cartesianCtx);
+  approximates_to<double>("root(-1,3)", "0.5+0.86602540378444×i",
+                          k_cartesianCtx);
+  approximates_to<float>("root(5^((-i)3^9),i)", "3.504", k_cartesianCtx, 4);
+  approximates_to<double>("root(5^((-i)3^9),i)", "3.5039410843", k_cartesianCtx,
                           11);
 }
 
@@ -220,22 +223,22 @@ QUIZ_CASE(pcj_approximation_replace) {
 
 QUIZ_CASE(pcj_approximation_keeping_symbols) {
   approximates_to_keeping_symbols<double>("ln(10)+cos(10)+3x",
-                                          "3.287392846+3×x", degreeCtx, 10);
+                                          "3.287392846+3×x", k_degreeCtx, 10);
   approximates_to_keeping_symbols<double>(
-      "cos(4/3+ln(x-1/2))", "cos(1.333333333+ln(x-0.5))", degreeCtx, 10);
+      "cos(4/3+ln(x-1/2))", "cos(1.333333333+ln(x-0.5))", k_degreeCtx, 10);
   approximates_to_keeping_symbols<double>("ln(ln(ln(10+10)))+ln(ln(ln(x+10)))",
                                           "0.09275118142+ln(ln(ln(x+10)))",
-                                          realCtx, 10);
+                                          k_realCtx, 10);
   approximates_to_keeping_symbols<double>("int(x,x,0,2)+int(x,x,0,x)",
-                                          "2+int(x,x,0,x)", realCtx, 10);
+                                          "2+int(x,x,0,x)", k_realCtx, 10);
   approximates_to_keeping_symbols<double>(
       "[[x,cos(10)][1/2+x,cos(4/3+x)]]",
-      "[[x,0.984807753][0.5+x,cos(1.333333333+x)]]", degreeCtx, 10);
+      "[[x,0.984807753][0.5+x,cos(1.333333333+x)]]", k_degreeCtx, 10);
   approximates_to_keeping_symbols<double>("{x,undef,cos(10)+x,cos(10)}",
                                           "{x,undef,0.984807753+x,0.984807753}",
-                                          degreeCtx, 10);
+                                          k_degreeCtx, 10);
   approximates_to_keeping_symbols<double>("cos(10)→x", "0.984807753→x",
-                                          degreeCtx, 10);
+                                          k_degreeCtx, 10);
 }
 
 QUIZ_CASE(pcj_approximation_context) {

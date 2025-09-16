@@ -11,7 +11,7 @@ QUIZ_CASE(pcj_simplification_decimal) {
   Tree* tree = SharedTreeStack->pushDecimal();
   (124_e)->cloneTree();
   (-2_e)->cloneTree();
-  Poincare::ProjectionContext ctx = realCtx;
+  Poincare::ProjectionContext ctx = k_realCtx;
   simplify(tree, ctx);
   assert_trees_are_equal(tree, 12400_e);
   tree->removeTree();
@@ -54,8 +54,8 @@ QUIZ_CASE(pcj_simplification_float) {
 }
 
 QUIZ_CASE(pcj_simplification_constants) {
-  simplifies_to("i", "nonreal", realCtx);
-  simplifies_to("i", "i", cartesianCtx);
+  simplifies_to("i", "nonreal", k_realCtx);
+  simplifies_to("i", "i", k_cartesianCtx);
   simplifies_to("π", "π");
   simplifies_to("e", "e");
   simplifies_to("_mn + _mp", "3.34754942651ᴇ-27×_kg");
@@ -90,7 +90,7 @@ QUIZ_CASE(pcj_simplification_large_numbers) {
   simplifies_to("123450000000000000000000000000", "1.2345×10^29");
   simplifies_to("123450000000000000000000000000/(5×7)", "(2.469×10^28)/7");
   simplifies_to("π/(12345×10^5)^2", "π/(1.52399025×10^18)");
-  simplifies_to("10^14+i", "10^14+i", cartesianCtx);
+  simplifies_to("10^14+i", "10^14+i", k_cartesianCtx);
   simplifies_to("e^(3×10^15)", "e^(3×10^15)");
 
   /* Edge cases */
@@ -188,9 +188,9 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("1/inf", "0");
   simplifies_to("0/inf", "0");
   simplifies_to("inf×i×i×i×i", "∞");
-  simplifies_to("inf×2i", "∞×i", cartesianCtx);
-  simplifies_to("-i×inf", "-∞×i", cartesianCtx);
-  simplifies_to("inf×cos(3)×i", "∞×sign(cos(3)×i)", cartesianCtx);
+  simplifies_to("inf×2i", "∞×i", k_cartesianCtx);
+  simplifies_to("-i×inf", "-∞×i", k_cartesianCtx);
+  simplifies_to("inf×cos(3)×i", "∞×sign(cos(3)×i)", k_cartesianCtx);
 
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("x→f(x)", symbolStore);
@@ -243,21 +243,22 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("log(inf,x)", "dep(∞×sign(1/ln(x)),{nonNull(x),realPos(x)})");
   simplifies_to("log(-inf,x)",
                 "dep(nonreal,{nonNull(x),realPos(x),ln(-∞)/ln(x)})");
-  simplifies_to("log(-inf,x)", "dep((∞+π×i)/ln(x),{nonNull(x)})", cartesianCtx);
+  simplifies_to("log(-inf,x)", "dep((∞+π×i)/ln(x),{nonNull(x)})",
+                k_cartesianCtx);
   /* Should be nonreal, TODO return NonReal when evaluating PowReal(x) with x
    * non real */
   simplifies_to("log(inf,-3)", "undef");
-  simplifies_to("log(inf,-3)", "∞×sign(1/ln(-3))", cartesianCtx);
+  simplifies_to("log(inf,-3)", "∞×sign(1/ln(-3))", k_cartesianCtx);
   simplifies_to("log(0,inf)", "undef");
-  simplifies_to("log(0,-inf)", "undef", cartesianCtx);
+  simplifies_to("log(0,-inf)", "undef", k_cartesianCtx);
   simplifies_to("log(1,inf)", "0");
-  simplifies_to("log(1,-inf)", "0", cartesianCtx);
+  simplifies_to("log(1,-inf)", "0", k_cartesianCtx);
   simplifies_to("log(x,inf)", "dep(0,{0×ln(x),nonNull(x),realPos(x)})");
-  simplifies_to("log(x,-inf)", "dep(log(x,-∞),{nonNull(x)})", cartesianCtx);
+  simplifies_to("log(x,-inf)", "dep(log(x,-∞),{nonNull(x)})", k_cartesianCtx);
   simplifies_to("log(inf,inf)", "undef");
-  // TODO_PCJ simplifies_to("log(-inf,inf)", "undef", cartesianCtx);
-  // TODO_PCJ simplifies_to("log(inf,-inf)", "undef", cartesianCtx);
-  // TODO_PCJ simplifies_to("log(-inf,-inf)", "undef", cartesianCtx);
+  // TODO_PCJ simplifies_to("log(-inf,inf)", "undef", k_cartesianCtx);
+  // TODO_PCJ simplifies_to("log(inf,-inf)", "undef", k_cartesianCtx);
+  // TODO_PCJ simplifies_to("log(-inf,-inf)", "undef", k_cartesianCtx);
   simplifies_to("ln(inf)", "∞");
   simplifies_to("ln(-inf)", "nonreal");
   simplifies_to("cos(inf)", "undef");

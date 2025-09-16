@@ -944,7 +944,7 @@ QUIZ_CASE(poincare_simplification_mix) {
   // TODO: get rid of complex at denominator?
   assert_parsed_expression_simplify_to("1/√(i) × (√(2)-i×√(2))", "-2×i");
   simplified_approximates_to<double>(
-      "abs(√(300000.0003^23))", "9.702740901018ᴇ62", degreeCartesianCtx, 13);
+      "abs(√(300000.0003^23))", "9.702740901018ᴇ62", k_degreeCartesianCtx, 13);
 }
 
 QUIZ_CASE(poincare_simplification_system_circuit_breaker_handled) {

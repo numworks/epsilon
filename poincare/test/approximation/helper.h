@@ -10,16 +10,16 @@ void approximates_to(const Poincare::Internal::Tree* n, T f);
 template <typename T>
 void approximates_to(
     const char* input, T f,
-    const Poincare::ProjectionContext& projectionContext = realCtx);
+    const Poincare::ProjectionContext& projectionContext = k_realCtx);
 template <typename T>
 void approximates_to(
     const char* input, const char* output,
-    const Poincare::ProjectionContext& projectionContext = realCtx,
+    const Poincare::ProjectionContext& projectionContext = k_realCtx,
     int nbOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits);
 void approximates_to_float_and_double(
     const char* expression, const char* result,
-    Poincare::ProjectionContext projCtx = realCtx);
+    Poincare::ProjectionContext projCtx = k_realCtx);
 void approximates_to_boolean(
     const Poincare::Internal::Tree* n,
     Poincare::Internal::Approximation::BooleanOrUndefined expected);
@@ -35,18 +35,18 @@ void assert_float_approximates_to(Poincare::UserExpression f,
 template <typename T>
 void simplified_approximates_to(
     const char* input, const char* output,
-    const Poincare::ProjectionContext& projectionContext = realCtx,
+    const Poincare::ProjectionContext& projectionContext = k_realCtx,
     int nbOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits);
 template <typename T>
 void projected_approximates_to(
     const char* input, const char* output,
-    const Poincare::ProjectionContext& projectionContext = realCtx,
+    const Poincare::ProjectionContext& projectionContext = k_realCtx,
     int nbOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits);
 template <typename T>
 void approximates_to_keeping_symbols(
     const char* expression, const char* simplifiedExpression,
-    const Poincare::ProjectionContext& projectionContext = realCtx,
+    const Poincare::ProjectionContext& projectionContext = k_realCtx,
     int numberOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits);

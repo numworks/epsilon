@@ -126,11 +126,11 @@ QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<double>("10^1000", "∞");
   approximates_to<double>("2*10^1000", "∞");
   approximates_to<double>("(10^1000)/2", "∞");
-  approximates_to<double>("(∞)×(i)", "∞×i", cartesianCtx);
-  approximates_to<double>("(inf×i)×(i)", "-∞", cartesianCtx);
-  approximates_to<double>("(inf×i)×(2)", "∞×i", cartesianCtx);
+  approximates_to<double>("(∞)×(i)", "∞×i", k_cartesianCtx);
+  approximates_to<double>("(inf×i)×(i)", "-∞", k_cartesianCtx);
+  approximates_to<double>("(inf×i)×(2)", "∞×i", k_cartesianCtx);
   // (inf+i)×(2) = inf * 2 - 1 * 0 + i * (inf * 0 + 1 * 2), inf * 0 return NAN
-  approximates_to<double>("(inf+i)×(2)", "undef", cartesianCtx);
+  approximates_to<double>("(inf+i)×(2)", "undef", k_cartesianCtx);
 
   // x^inf
   approximates_to<float>("(-2)^inf", "undef");  // complex inf
@@ -147,12 +147,12 @@ QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<float>("1^(-inf)", "undef");
   approximates_to<float>("2^inf", "∞");
   approximates_to<float>("2^(-inf)", "0");
-  approximates_to<double>("(-i)^inf", "undef", cartesianCtx);
-  approximates_to<double>("(-i)^(-inf)", "undef", cartesianCtx);
-  approximates_to<double>("i^inf", "undef", cartesianCtx);
-  approximates_to<double>("i^(-inf)", "undef", cartesianCtx);
-  approximates_to<double>("(3+4i)^inf", "undef", cartesianCtx);
-  approximates_to<double>("(3+4i)^(-inf)", "0", cartesianCtx);
+  approximates_to<double>("(-i)^inf", "undef", k_cartesianCtx);
+  approximates_to<double>("(-i)^(-inf)", "undef", k_cartesianCtx);
+  approximates_to<double>("i^inf", "undef", k_cartesianCtx);
+  approximates_to<double>("i^(-inf)", "undef", k_cartesianCtx);
+  approximates_to<double>("(3+4i)^inf", "undef", k_cartesianCtx);
+  approximates_to<double>("(3+4i)^(-inf)", "0", k_cartesianCtx);
 
   // inf^x
   approximates_to<float>("inf^i", "undef");
@@ -174,37 +174,37 @@ QUIZ_CASE(pcj_approximation_infinity) {
   // functions
   approximates_to<float>("exp(inf)", "∞");
   approximates_to<float>("exp(-inf)", "0");
-  approximates_to<float>("log(inf,0)", "undef", cartesianCtx);
-  approximates_to<float>("log(-inf,0)", "undef", cartesianCtx);
-  approximates_to<float>("log(inf,1)", "undef", cartesianCtx);
-  approximates_to<float>("log(-inf,1)", "undef", cartesianCtx);
+  approximates_to<float>("log(inf,0)", "undef", k_cartesianCtx);
+  approximates_to<float>("log(-inf,0)", "undef", k_cartesianCtx);
+  approximates_to<float>("log(inf,1)", "undef", k_cartesianCtx);
+  approximates_to<float>("log(-inf,1)", "undef", k_cartesianCtx);
   approximates_to<float>("log(inf,0.3)", "-∞");
   approximates_to<float>("log(-inf,0.3)", "nonreal");
-  approximates_to<float>("log(-inf,0.3)", "-∞-2.609355×i", cartesianCtx);
+  approximates_to<float>("log(-inf,0.3)", "-∞-2.609355×i", k_cartesianCtx);
   approximates_to<float>("log(inf,3)", "∞");
   approximates_to<float>("log(-inf,3)", "nonreal");
-  approximates_to<float>("log(-inf,3)", "∞+2.859601×i", cartesianCtx);
+  approximates_to<float>("log(-inf,3)", "∞+2.859601×i", k_cartesianCtx);
   approximates_to<float>("log(inf,-3)", "nonreal");
-  approximates_to<float>("log(inf,-3)", "∞-∞×i", cartesianCtx);
-  approximates_to<float>("log(0,inf)", "undef", cartesianCtx);
-  approximates_to<float>("log(0,-inf)", "undef", cartesianCtx);
+  approximates_to<float>("log(inf,-3)", "∞-∞×i", k_cartesianCtx);
+  approximates_to<float>("log(0,inf)", "undef", k_cartesianCtx);
+  approximates_to<float>("log(0,-inf)", "undef", k_cartesianCtx);
   approximates_to<float>("log(1,inf)", "0");
   approximates_to<float>("log(1,-inf)", "0");
   approximates_to<float>("log(0.3,inf)", "0");
   approximates_to<float>("log(0.3,-inf)", "0");
   approximates_to<float>("log(3,inf)", "0");
   approximates_to<float>("log(3,-inf)", "0");
-  approximates_to<float>("log(inf,inf)", "undef", cartesianCtx);
-  approximates_to<float>("log(-inf,inf)", "undef", cartesianCtx);
-  approximates_to<float>("log(inf,-inf)", "undef", cartesianCtx);
-  approximates_to<float>("log(-inf,-inf)", "undef", cartesianCtx);
+  approximates_to<float>("log(inf,inf)", "undef", k_cartesianCtx);
+  approximates_to<float>("log(-inf,inf)", "undef", k_cartesianCtx);
+  approximates_to<float>("log(inf,-inf)", "undef", k_cartesianCtx);
+  approximates_to<float>("log(-inf,-inf)", "undef", k_cartesianCtx);
   approximates_to<float>("ln(inf)", "∞");
   approximates_to<float>("ln(-inf)", "nonreal");
-  approximates_to<float>("ln(-inf)", "∞+3.141593×i", cartesianCtx);
+  approximates_to<float>("ln(-inf)", "∞+3.141593×i", k_cartesianCtx);
   approximates_to<float>("cos(inf)", "undef");
-  approximates_to<float>("cos(-inf)", "undef", cartesianCtx);
-  approximates_to<float>("sin(inf)", "undef", cartesianCtx);
-  approximates_to<float>("sin(-inf)", "undef", cartesianCtx);
+  approximates_to<float>("cos(-inf)", "undef", k_cartesianCtx);
+  approximates_to<float>("sin(inf)", "undef", k_cartesianCtx);
+  approximates_to<float>("sin(-inf)", "undef", k_cartesianCtx);
   approximates_to<float>("atan(inf)", "1.570796");
   approximates_to<float>("atan(-inf)", "-1.570796");
 

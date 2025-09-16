@@ -42,7 +42,7 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("[[1,2][3,4]]^(-3)*[[1,2,3][3,4,5]]*[[1,2][3,2][4,5]]*4",
                 "[[-176,-186][122,129]]");
   simplifies_to("2×[[3]]", "[[6]]");
-  simplifies_to("[[3]]×i", "[[3×i]]", cartesianCtx);
+  simplifies_to("[[3]]×i", "[[3×i]]", k_cartesianCtx);
   simplifies_to("[[1,2][3,4]]×[[2,3][4,5]]", "[[10,13][22,29]]");
   simplifies_to("0*[[2][4]]×[[1,2]]", "[[0,0][0,0]]");
   simplifies_to("[[0]]*[[0]]", "[[0]]");
@@ -171,13 +171,13 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("dot([[1/√(2)][0][0]],[[1][0][0]])", "√(2)/2");
   simplifies_to("dot([[1,1,0]],[[0][0][1]])", "undef");
   simplifies_to("dot([[1,1,0]],[[0,0,1]])", "0");
-  simplifies_to("dot([[1,1,1]],[[0,π,i]])", "π+i", cartesianCtx);
+  simplifies_to("dot([[1,1,1]],[[0,π,i]])", "π+i", k_cartesianCtx);
   simplifies_to("dot([[1]], inverse([[0]]))", "undef");
 
   // Vector norm
   simplifies_to("norm([[1/√(2)][0][0]])", "√(2)/2");
   simplifies_to("norm([[1][2][3]])", "√(14)");
-  simplifies_to("norm([[1,i+1,π,-5]])", "√(π^2+28)", cartesianCtx);
+  simplifies_to("norm([[1,i+1,π,-5]])", "√(π^2+28)", k_cartesianCtx);
   simplifies_to("norm([[2,3,6]])", "7");
 }
 

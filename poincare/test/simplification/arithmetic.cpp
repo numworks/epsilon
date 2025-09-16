@@ -41,7 +41,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("factor(1008/6895)", "(2^4×3^2)/(5×197)");
   simplifies_to("factor(10007)", "10007");
   simplifies_to("factor(10007^2)", "undef");
-  simplifies_to("factor(i)", "undef", cartesianCtx);
+  simplifies_to("factor(i)", "undef", k_cartesianCtx);
 
   // Euclidean division
   simplifies_to("quo(23,5)", "4");
@@ -63,7 +63,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("ceil(x)", "ceil(x)");
   simplifies_to("ceil(-x)", "-floor(x)");
   // TODO: Ceil of a complex number should simplify to undef
-  simplifies_to("ceil(1+i)", "1+ceil(i)", cartesianCtx);
+  simplifies_to("ceil(1+i)", "1+ceil(i)", k_cartesianCtx);
   simplifies_to("frac(8/3)", "2/3");
   simplifies_to("frac(-1.3)", "7/10");
   simplifies_to("floor(x)+frac(x)", "dep(x,{floor(x)})");

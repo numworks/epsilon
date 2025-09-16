@@ -73,10 +73,10 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("med({π,3,e})", "3");
   // Ensure that [GetElement] returning [nullptr] doesn't crash
   simplifies_to("mean(sort({x,0}))", "undef", replaceSymbolCtx);
-  simplifies_to("mean(sort({x,0}))", "mean(sort({x,0}))", keepAllSymbolsCtx);
-  simplifies_to("max(sort({x,0}))", "max(sort({x,0}))", keepAllSymbolsCtx);
+  simplifies_to("mean(sort({x,0}))", "mean(sort({x,0}))", k_keepAllSymbolsCtx);
+  simplifies_to("max(sort({x,0}))", "max(sort({x,0}))", k_keepAllSymbolsCtx);
   simplifies_to("samplestddev({1,2},sort({x,0}))",
-                "samplestddev({1,2},sort({x,0}))", keepAllSymbolsCtx);
+                "samplestddev({1,2},sort({x,0}))", k_keepAllSymbolsCtx);
 
   simplifies_to("{3,4}(0)", "undef");
   simplifies_to("{3,4}(4)", "undef");

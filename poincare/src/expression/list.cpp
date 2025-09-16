@@ -174,7 +174,7 @@ static bool IsValidCoefficientsList(const Tree* coefficients) {
   // Coefficients must be real and positive
   return !coefficients->hasChildSatisfying([](const Tree* e) {
     ComplexSign s = GetComplexSign(e);
-    return s.canBeNonReal() || s.realSign().isStrictlyNegative();
+    return s.canBeNonReal() || s.realSign().canBeStrictlyNegative();
   });
 }
 

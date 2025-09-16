@@ -263,11 +263,13 @@ class TreeStack : public TemplatedTreeStack<POINCARE_TREE_STACK_SIZE> {
 #if PLATFORM_DEVICE
   __attribute__((section(".bss.$tree_stack")))
 #endif
-  static OMG::GlobalBox<TreeStack>
+  /* NOTE Tracking is required because its content can be corrupted by an
+     external apps or a python environment heap usage */
+  static OMG::TrackedGlobalBox<TreeStack>
       SharedTreeStack;
 };
 
-inline constexpr OMG::GlobalBox<TreeStack>& SharedTreeStack =
+inline constexpr OMG::TrackedGlobalBox<TreeStack>& SharedTreeStack =
     TreeStack::SharedTreeStack;
 
 }  // namespace Poincare::Internal

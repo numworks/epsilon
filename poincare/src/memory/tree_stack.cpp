@@ -15,7 +15,7 @@
 
 namespace Poincare::Internal {
 
-OMG::GlobalBox<TreeStack> TreeStack::SharedTreeStack;
+OMG::TrackedGlobalBox<TreeStack> TreeStack::SharedTreeStack;
 
 size_t AbstractTreeStack::numberOfTrees() const {
   const Block* currentBlock = firstBlock();

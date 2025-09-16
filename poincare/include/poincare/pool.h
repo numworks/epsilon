@@ -33,7 +33,9 @@ class Pool final {
   friend class PoolCheckpoint;
 
  public:
-  static OMG::GlobalBox<Pool> sharedPool
+  /* NOTE Tracking is required because its content can be corrupted by an
+     external apps or a python environment heap usage */
+  static OMG::TrackedGlobalBox<Pool> sharedPool
 #if PLATFORM_DEVICE
       __attribute__((section(".bss.$poincare_pool")))
 #endif

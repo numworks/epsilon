@@ -11,6 +11,7 @@
 #include <shared/global_store.h>
 #include <string.h>
 
+#include "poincare/math_options.h"
 #include "poincare/symbol_context.h"
 
 using AdditionalResultsType = Calculation::AdditionalResultsType;
@@ -740,6 +741,14 @@ QUIZ_CASE(calculation_complex_format) {
                       EqualSign::Hidden, "4", nullptr, &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "nonreal", nullptr, &store);
+
+  // Update complex format with input
+  pushAndProcessCalculation(&store, "i+1");
+  quiz_assert_print_if_failure(
+      store.calculationAtIndex(0)->calculationPreferences().complexFormat ==
+          ComplexFormat::Cartesian,
+      "Complex format should have been updated with input.");
+  store.deleteAll();
 
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       ComplexFormat::Cartesian);

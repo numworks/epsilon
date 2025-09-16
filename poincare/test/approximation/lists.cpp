@@ -87,7 +87,7 @@ QUIZ_CASE(pcj_approximation_lists_functions) {
   approximates_to<double>("sort({undef})", "{undef}");
   approximates_to<double>("sort({-1,5,2+6,-0})", "{-1,0,5,8}");
   approximates_to<double>("sort({-1,-2,-inf,inf})", "{-∞,-2,-1,∞}");
-  approximates_to<double>("sort({i})", "{i}", cartesianCtx);
+  approximates_to<double>("sort({i})", "{i}", k_cartesianCtx);
   approximates_to<double>("sort({-1,undef,-2,-inf,inf})",
                           "{undef,undef,undef,undef,undef}");
   approximates_to<double>("sort({-1,undef,1})", "{undef,undef,undef}");
@@ -99,13 +99,13 @@ QUIZ_CASE(pcj_approximation_lists_functions) {
 
   // Do not sort complexes or undefined expressions
   approximates_to<double>("sort({-1,i,8,-0})", "{undef,undef,undef,undef}",
-                          cartesianCtx);
+                          k_cartesianCtx);
   approximates_to<double>("sort({(8,1),(5,i),(5,-3)})",
                           "{(undef,undef),(undef,undef),(undef,undef)}",
-                          cartesianCtx);
+                          k_cartesianCtx);
   approximates_to<double>("sort({(undef,1),(6,1),(5,-3)})",
                           "{(undef,undef),(undef,undef),(undef,undef)}",
-                          cartesianCtx);
+                          k_cartesianCtx);
 }
 
 QUIZ_CASE(pcj_approximation_map_on_list) {
@@ -119,8 +119,8 @@ QUIZ_CASE(pcj_approximation_map_on_list) {
   approximates_to<float>("floor({0.3,180})", "{0,180}");
   approximates_to<float>("frac({0.3,180})", "{0.3,0}");
   approximates_to<float>("im({1/√(2),1/2,1,-1})", "{0,0,0,0}");
-  approximates_to<float>("im({1,1+i})", "{0,1}", cartesianCtx);
-  approximates_to<float>("re({1,i})", "{1,0}", cartesianCtx);
+  approximates_to<float>("im({1,1+i})", "{0,1}", k_cartesianCtx);
+  approximates_to<float>("re({1,i})", "{1,0}", k_cartesianCtx);
   approximates_to<float>("round({2.12,3.42}, 1)", "{2.1,3.4}");
   approximates_to<float>("round(1.23456, {2,3})", "{1.23,1.235}");
   approximates_to<float>("sin({0,π})", "{0,0}");

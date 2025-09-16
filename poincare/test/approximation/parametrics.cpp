@@ -4,13 +4,15 @@ QUIZ_CASE(pcj_approximation_parametrics) {
   approximates_to<float>("sum(k/2, k, 1, 12)", "39");
   approximates_to<float>("sum(r,r, 4, 10)", "49");
   approximates_to<double>("sum(k,k, 4, 10)", "49");
-  approximates_to<double>("sum(2+n×i,n,1,5)", "10+15×i", cartesianCtx);
-  approximates_to<double>("sum(2+n×i,n,1,5)", "10+15×i", cartesianCtx);
+  approximates_to<double>("sum(2+n×i,n,1,5)", "10+15×i", k_cartesianCtx);
+  approximates_to<double>("sum(2+n×i,n,1,5)", "10+15×i", k_cartesianCtx);
 
   approximates_to<float>("product(n,n, 4, 10)", "604800");
   approximates_to<double>("product(n,n, 4, 10)", "604800");
-  approximates_to<float>("product(2+k×i,k, 1, 5)", "-100-540×i", cartesianCtx);
-  approximates_to<double>("product(2+o×i,o, 1, 5)", "-100-540×i", cartesianCtx);
+  approximates_to<float>("product(2+k×i,k, 1, 5)", "-100-540×i",
+                         k_cartesianCtx);
+  approximates_to<double>("product(2+o×i,o, 1, 5)", "-100-540×i",
+                          k_cartesianCtx);
 }
 
 QUIZ_CASE(pcj_approximation_integrals) {
@@ -41,8 +43,8 @@ QUIZ_CASE(pcj_approximation_integrals) {
   // Ensure this does not take up too much time
   approximates_to<double>("int(e^(x^3),x,0,6)", "5.9639380918976ᴇ91");
 
-  approximates_to<float>("int(1+cos(a),a, 0, 180)", "180", degreeCtx);
-  approximates_to<double>("int(1+cos(a),a, 0, 180)", "180", degreeCtx);
+  approximates_to<float>("int(1+cos(a),a, 0, 180)", "180", k_degreeCtx);
+  approximates_to<double>("int(1+cos(a),a, 0, 180)", "180", k_degreeCtx);
 
   // former precision issues
   // #1912
@@ -60,47 +62,47 @@ QUIZ_CASE(pcj_approximation_integrals) {
   approximates_to<double>("int(1/(x^2+1),x,0,100000)", "1.5707863267949");
   approximates_to<double>("int(1/(x^2+1),x,0,inf)", "1.5707963267949");
 
-  approximates_to<double>("int(1/x,x,1,1000000)", "13.81551056", realCtx, 10);
-  approximates_to<double>("int(e^(-x)/√(x),x,0,inf)", "1.7724", realCtx, 5);
+  approximates_to<double>("int(1/x,x,1,1000000)", "13.81551056", k_realCtx, 10);
+  approximates_to<double>("int(e^(-x)/√(x),x,0,inf)", "1.7724", k_realCtx, 5);
   approximates_to<double>("int(1,x,inf,0)", "undef");
   approximates_to<double>("int(e^(-x),x,inf,0)", "-1");
 
   // singularities, project for better precision
   projected_approximates_to<double>("int(ln(x)*√(x),x,0,1)", "-0.444444444444",
-                                    realCtx, 12);
-  projected_approximates_to<double>("int(1/√(x),x,0,1)", "2", realCtx, 12);
-  projected_approximates_to<double>("int(1/√(1-x),x,0,1)", "2", realCtx, 12);
-  projected_approximates_to<double>("int(1/√(x)+1/√(1-x),x,0,1)", "4", realCtx,
-                                    12);
-  projected_approximates_to<double>("int(ln(x)^2,x,0,1)", "2", realCtx, 12);
+                                    k_realCtx, 12);
+  projected_approximates_to<double>("int(1/√(x),x,0,1)", "2", k_realCtx, 12);
+  projected_approximates_to<double>("int(1/√(1-x),x,0,1)", "2", k_realCtx, 12);
+  projected_approximates_to<double>("int(1/√(x)+1/√(1-x),x,0,1)", "4",
+                                    k_realCtx, 12);
+  projected_approximates_to<double>("int(ln(x)^2,x,0,1)", "2", k_realCtx, 12);
   // #596
-  projected_approximates_to<double>("int(1/√(x-1),x,1,2)", "2", realCtx, 12);
+  projected_approximates_to<double>("int(1/√(x-1),x,1,2)", "2", k_realCtx, 12);
   // #1780
   projected_approximates_to<double>("int(2/√(1-x^2),x,0,1)", "3.1415926535898");
   // #1780
   projected_approximates_to<double>("int(4x/√(1-x^4),x,0,1)",
                                     "3.1415926535898");
   // convergence is slow with 1/x^k k≈1, therefore precision is poor
-  projected_approximates_to<float>("int(1/x^0.9,x,0,1)", "10", realCtx, 3);
+  projected_approximates_to<float>("int(1/x^0.9,x,0,1)", "10", k_realCtx, 3);
 
   // double integration
   approximates_to<float>("int(int(x×x,x,0,x),x,0,4)", "21.33333");
   approximates_to<double>("int(int(x×x,x,0,x),x,0,4)", "21.333333333333");
   approximates_to<double>("int(sum(sin(x)^k,k,0,100),x,0,π)", "48.3828",
-                          realCtx, 6);
+                          k_realCtx, 6);
   approximates_to<double>("int(int(1/(1-x)^k,x,0,1),k,0.5,0.25)", "-0.405465",
-                          realCtx, 6);
+                          k_realCtx, 6);
   // this integral on R2 takes about one minute to compute on N110
   // approximates_to<double>("int(int(e^(-(x^2+y^2)),x,-inf,inf),y,-inf,inf)",
-  //                         "3.141592654", realCtx, 10);
+  //                         "3.141592654", k_realCtx, 10);
   // approximates_to<double>("int(int(e^(-x*t)/t^2,t,1,inf),x,0,1)",
-  //                         "0.3903080328", realCtx, 10);
+  //                         "0.3903080328", k_realCtx, 10);
 
   // oscillator
   // poor precision
-  approximates_to<double>("int((sin(x)/x)^2,x,0,inf)", "1.5708", realCtx, 5);
+  approximates_to<double>("int((sin(x)/x)^2,x,0,inf)", "1.5708", k_realCtx, 5);
   approximates_to<double>("int(x*sin(1/x)*√(abs(1-x)),x,0,3)", "1.9819412",
-                          realCtx, 8);
+                          k_realCtx, 8);
 
   /* The integral approximation escapes before finding a result, because it
    * would take too much time. */

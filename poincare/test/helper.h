@@ -27,33 +27,33 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
     Poincare::Preferences::PrintFloatMode::Engineering;
 
 // Default context is realCtx
-constexpr Poincare::ProjectionContext realCtx = {
+constexpr Poincare::ProjectionContext k_realCtx = {
     .m_complexFormat = Poincare::ComplexFormat::Real};
 
-constexpr Poincare::ProjectionContext cartesianCtx = {
+constexpr Poincare::ProjectionContext k_cartesianCtx = {
     .m_complexFormat = Poincare::ComplexFormat::Cartesian};
-constexpr Poincare::ProjectionContext polarCtx = {
+constexpr Poincare::ProjectionContext k_polarCtx = {
     .m_complexFormat = Poincare::ComplexFormat::Polar};
 
-constexpr Poincare::ProjectionContext degreeCtx = {
+constexpr Poincare::ProjectionContext k_degreeCtx = {
     .m_angleUnit = Poincare::AngleUnit::Degree};
-constexpr Poincare::ProjectionContext gradianCtx = {
+constexpr Poincare::ProjectionContext k_gradianCtx = {
     .m_angleUnit = Poincare::AngleUnit::Gradian};
 
-constexpr Poincare::ProjectionContext degreeCartesianCtx = {
+constexpr Poincare::ProjectionContext k_degreeCartesianCtx = {
     .m_complexFormat = Poincare::ComplexFormat::Cartesian,
     .m_angleUnit = Poincare::AngleUnit::Degree};
-constexpr Poincare::ProjectionContext gradianCartesianCtx = {
+constexpr Poincare::ProjectionContext k_gradianCartesianCtx = {
     .m_complexFormat = Poincare::ComplexFormat::Cartesian,
     .m_angleUnit = Poincare::AngleUnit::Gradian};
-constexpr Poincare::ProjectionContext degreePolarCtx = {
+constexpr Poincare::ProjectionContext k_degreePolarCtx = {
     .m_complexFormat = Poincare::ComplexFormat::Polar,
     .m_angleUnit = Poincare::AngleUnit::Degree};
-constexpr Poincare::ProjectionContext gradianPolarCtx = {
+constexpr Poincare::ProjectionContext k_gradianPolarCtx = {
     .m_complexFormat = Poincare::ComplexFormat::Polar,
     .m_angleUnit = Poincare::AngleUnit::Gradian};
 
-constexpr Poincare::ProjectionContext keepAllSymbolsCtx = {
+constexpr Poincare::ProjectionContext k_keepAllSymbolsCtx = {
     .m_symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
 };
 

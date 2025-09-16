@@ -2,11 +2,12 @@
 
 QUIZ_CASE(pcj_approximation_probability) {
   // FIXME: precision problem
-  approximates_to<float>("binomcdf(5.3, 9, 0.7)", "0.270341", realCtx, 6);
+  approximates_to<float>("binomcdf(5.3, 9, 0.7)", "0.270341", k_realCtx, 6);
   // FIXME precision problem
-  approximates_to<double>("binomcdf(5.3, 9, 0.7)", "0.270340902", realCtx, 10);
+  approximates_to<double>("binomcdf(5.3, 9, 0.7)", "0.270340902", k_realCtx,
+                          10);
   // FIXME: precision problem
-  approximates_to<float>("binompdf(4.4, 9, 0.7)", "0.0735138", realCtx, 6);
+  approximates_to<float>("binompdf(4.4, 9, 0.7)", "0.0735138", k_realCtx, 6);
   approximates_to<double>("binompdf(4.4, 9, 0.7)", "0.073513818");
   approximates_to<float>("invbinom(0.9647324002, 15, 0.7)", "13");
   approximates_to<double>("invbinom(0.9647324002, 15, 0.7)", "13");
@@ -46,7 +47,8 @@ QUIZ_CASE(pcj_approximation_probability) {
   approximates_to<double>("invhgeom(0,4,2,3)", "0");
   approximates_to<double>("invhgeom(1,4,2,3)", "2");
 
-  approximates_to<double>("normcdf(5, 7, 0.3162)", "1.265256ᴇ-10", realCtx, 7);
+  approximates_to<double>("normcdf(5, 7, 0.3162)", "1.265256ᴇ-10", k_realCtx,
+                          7);
   approximates_to<float>("normcdf(1.2, 3.4, 5.6)", "0.3472125");
   approximates_to<double>("normcdf(1.2, 3.4, 5.6)", "0.34721249841587");
   approximates_to<float>("normcdf(-1ᴇ99,3.4,5.6)", "0");
@@ -72,9 +74,10 @@ QUIZ_CASE(pcj_approximation_probability) {
   approximates_to<float>("tcdf(0.5, 2)", "0.6666667");
   approximates_to<float>("tcdf(1.2, 3.4)", "0.8464878");
   // FIXME: precision problem
-  approximates_to<double>("tcdf(1.2, 3.4)", "0.8464877995", realCtx, 10);
+  approximates_to<double>("tcdf(1.2, 3.4)", "0.8464877995", k_realCtx, 10);
   approximates_to<float>("invt(0.8464878,3.4)", "1.2");
-  approximates_to<double>("invt(0.84648779949601043,3.4)", "1.2", realCtx, 10);
+  approximates_to<double>("invt(0.84648779949601043,3.4)", "1.2", k_realCtx,
+                          10);
 }
 
 QUIZ_CASE(pcj_approximation_combinatorics) {

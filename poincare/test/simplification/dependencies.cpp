@@ -14,7 +14,7 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to("cos(re(f(x)))+inf", "dep(∞,{f(x)})");
   simplifies_to("diff(1+x, x, f(y))", "dep(1,{real(1+f(y)),real(f(y))})");
   simplifies_to("diff(1, x, f(y))", "dep(0,{dep(1,{f(y)}),real(f(y))})");
-  simplifies_to("im(re(f(x)))", "dep(0,{f(x)})", cartesianCtx);
+  simplifies_to("im(re(f(x)))", "dep(0,{f(x)})", k_cartesianCtx);
   simplifies_to("sign(abs(f(x))+1)", "dep(1,{f(x)})");
   simplifies_to("arg(1+1/abs(x))", "dep(0,{nonNull(abs(x))})");
   simplifies_to("arg(-i/abs(y))", "dep(-π/2,{nonNull(1/abs(y)),-1/abs(y)×i})");
@@ -148,16 +148,16 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   symbolStore.reset();
 
   // Power
-  simplifies_to("1/(1/x)", "dep(x,{nonNull(x)})", cartesianCtx);
-  simplifies_to("x/√(x)", "dep(√(x),{-ln(x)/2})", cartesianCtx);
-  simplifies_to("(1+x)/(1+x)", "dep(1,{(x+1)^0})", cartesianCtx);
-  simplifies_to("x^0", "dep(1,{x^0})", cartesianCtx);
+  simplifies_to("1/(1/x)", "dep(x,{nonNull(x)})", k_cartesianCtx);
+  simplifies_to("x/√(x)", "dep(√(x),{-ln(x)/2})", k_cartesianCtx);
+  simplifies_to("(1+x)/(1+x)", "dep(1,{(x+1)^0})", k_cartesianCtx);
+  simplifies_to("x^0", "dep(1,{x^0})", k_cartesianCtx);
 
   // Multiplication
-  simplifies_to("ln(x)-ln(x)", "dep(0,{0×ln(x),nonNull(x)})", cartesianCtx);
-  simplifies_to("0*random()", "0", cartesianCtx);
-  simplifies_to("0*randint(1,0)", "dep(0,{randint(1,0)})", cartesianCtx);
+  simplifies_to("ln(x)-ln(x)", "dep(0,{0×ln(x),nonNull(x)})", k_cartesianCtx);
+  simplifies_to("0*random()", "0", k_cartesianCtx);
+  simplifies_to("0*randint(1,0)", "dep(0,{randint(1,0)})", k_cartesianCtx);
   // Dependency is properly reduced even when containing symbols
-  simplifies_to("0x^arcsin(π)", "dep(0,{0×x^arcsin(π)})", cartesianCtx);
+  simplifies_to("0x^arcsin(π)", "dep(0,{0×x^arcsin(π)})", k_cartesianCtx);
   simplifies_to("0x^arcsin(π)", "dep(nonreal,{0×x^arcsin(π)})");
 }

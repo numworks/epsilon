@@ -82,7 +82,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("log(_s×x/(_s×y))",
                 "dep(log(x/y),{nonNull(x),nonNull(1/"
                 "(1×10^0×y)),realPos((1×10^0×x)/(1×10^0×y))})",
-                keepAllSymbolsCtx);
+                k_keepAllSymbolsCtx);
 
   // BestRepresentative
   simplifies_to("1_m+1_km", "1.001×_km",

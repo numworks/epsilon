@@ -81,17 +81,17 @@ QUIZ_CASE(pcj_simplification_random) {
   simplifies_to("random()<acos(40)", "undef");
   Tree* randIntList =
       (KAdd(KRandInt(0_e, KList(0_e, 1_e)), KRandom))->cloneTree();
-  simplify(randIntList, realCtx, true);
+  simplify(randIntList, k_realCtx, true);
   assert_trees_are_equal(
       randIntList, KList(KAdd(KRandomSeeded<3>, KRandIntSeeded<1>(0_e, 0_e)),
                          KAdd(KRandomSeeded<3>, KRandIntSeeded<2>(0_e, 1_e))));
 
   Tree* randIntNoRep = (KRandIntNoRep(0_e, 1000_e, 100_e))->cloneTree();
-  simplify(randIntNoRep, realCtx, true);
+  simplify(randIntNoRep, k_realCtx, true);
   assert_trees_are_equal(randIntNoRep,
                          KRandIntNoRepSeeded<1>(0_e, 1000_e, 100_e));
   randIntNoRep = (KRandIntNoRep(0_e, 1000_e, 101_e))->cloneTree();
-  simplify(randIntNoRep, realCtx, true);
+  simplify(randIntNoRep, k_realCtx, true);
   /* NOTE: RandIntNoRep size is limited by
    * Random::Context::k_maxNumberOfVariables ->
    * 0-seeded RandIntNoRep means it will approximate to a list of undef */

@@ -26,9 +26,9 @@ QUIZ_CASE(pcj_approximation_matrix) {
   approximates_to<double>("det([[1,23,3][4,5,6][7,8,9]])", "126");
   approximates_to<double>("det([[1,undef][4,6]])", "undef");
   approximates_to<float>("det([[i,23-2i,3×i][4+i,5×i,6][7,8×i+2,9]])",
-                         "126-231×i", cartesianCtx);
+                         "126-231×i", k_cartesianCtx);
   approximates_to<double>("det([[i,23-2i,3×i][4+i,5×i,6][7,8×i+2,9]])",
-                          "126-231×i", cartesianCtx);
+                          "126-231×i", k_cartesianCtx);
 
   approximates_to<float>("transpose([[1,2,3][4,5,-6][7,8,9]])",
                          "[[1,4,7][2,5,8][3,-6,9]]");
@@ -69,7 +69,7 @@ QUIZ_CASE(pcj_approximation_matrix) {
       "inverse([[1,2,3][4,5,-6][7,8,9]])",
       "[[-1.2917,-0.083333,0.375][1.0833,0.16667,-0.25][0.041667,-0.083333,0."
       "041667]]",
-      realCtx, 5);
+      k_realCtx, 5);
   approximates_to<double>(
       "inverse([[1,2,3][4,5,-6][7,8,9]])",
       "[[-1.2916666666667,-0.083333333333333,0.375][1.0833333333333,0."
@@ -81,7 +81,7 @@ QUIZ_CASE(pcj_approximation_matrix) {
       "[[-0.0118-0.0455×i,-0.5-0.727×i,0.318+0.489×i][0.0409+0.00364×i,0.04-0."
       "0218×i,-0.0255+9.1ᴇ-4×i][0.00334-0.00182×i,0.361+0.535×i,-0.13-0.358×i]"
       "]",
-      cartesianCtx, 3);
+      k_cartesianCtx, 3);
   // FIXME: inverse is not precise enough to display 14 significative digits
   approximates_to<double>(
       "inverse([[i,23-2i,3×i][4+i,5×i,6][7,8×i+2,9]])",
@@ -90,7 +90,7 @@ QUIZ_CASE(pcj_approximation_matrix) {
       "0400363967243-0.0218380345769×i,-0.0254777070064+9.0991810737ᴇ-4×i][0."
       "00333636639369-0.00181983621474×i,0.36093418259+0.534728541098×i,-0."
       "130118289354-0.357597816197×i]]",
-      cartesianCtx, 12);
+      k_cartesianCtx, 12);
 
   // We do not map on matrices anymore
   approximates_to<float>("abs([[1,-2][3,-4]])", "undef");

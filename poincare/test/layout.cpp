@@ -1,5 +1,6 @@
 #include <ion/display.h>
 #include <omg/unicode_helper.h>
+#include <poincare/context_with_parent.h>
 #include <poincare/layout.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/units/k_units.h>
@@ -14,6 +15,7 @@
 #include <poincare/src/layout/render.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/symbol_context.h>
+#include <poincare/tree_variable_context.h>
 #include <poincare/user_expression.h>
 
 // Used to test a different logarithmBasePosition. TODO: remove it
@@ -24,19 +26,8 @@
 using namespace Poincare::Internal;
 
 void assert_expression_layouts_as(const Tree* expression, const Tree* layout,
-                                  bool linearMode = false,
-                                  bool compactMode = false,
-                                  int numberOfSignificantDigits = -1,
-                                  Preferences::PrintFloatMode floatMode =
-                                      Preferences::PrintFloatMode::Decimal,
-                                  OMG::Base base = OMG::Base::Decimal) {
-  Tree* l = Layouter::LayoutExpression(
-      expression->cloneTree(),
-      {.linearMode = linearMode,
-       .compactMode = compactMode,
-       .numberOfSignificantDigits = numberOfSignificantDigits,
-       .floatMode = floatMode,
-       .base = base});
+                                  LayouterParameters params = {}) {
+  Tree* l = Layouter::LayoutExpression(expression->cloneTree(), params);
   assert_trees_are_equal(l, layout);
   l->removeTree();
 }
@@ -61,27 +52,20 @@ QUIZ_CASE(pcj_expression_to_layout) {
       KPow(KMult("x"_e, "y"_e), 2_e),
       KRackL(KParenthesesL("x·y"_l), KSuperscriptL("2"_l)));
   assert_expression_layouts_as(KAdd(KMixedFraction(2_e, KDiv(1_e, 3_e)), 4_e),
-                               "2 1/3+4"_l, true);
+                               "2 1/3+4"_l, {.linearMode = true});
   // 12 345 - 54 321
   const Tree* expected = "12"_l ^ KThousandsSeparatorL ^ "345"_l ^
                          KOperatorSeparatorL ^ "-"_l ^ KOperatorSeparatorL ^
                          "54"_l ^ KThousandsSeparatorL ^ "321"_l;
-  assert_expression_layouts_as(KAdd(12345_e, KOpposite(54321_e)), expected,
-                               false);
-  assert_expression_layouts_as(KAdd(12345_de, -54321_de), expected, false);
+  assert_expression_layouts_as(KAdd(12345_e, KOpposite(54321_e)), expected);
+  assert_expression_layouts_as(KAdd(12345_de, -54321_de), expected);
 
-  assert_expression_layouts_as(9_e, "0b1001"_l, false, false, -1,
-                               Preferences::PrintFloatMode::Decimal,
-                               OMG::Base::Binary);
-  assert_expression_layouts_as(54321_e, "0b1101010000110001"_l, false, false,
-                               -1, Preferences::PrintFloatMode::Decimal,
-                               OMG::Base::Binary);
-  assert_expression_layouts_as(54321_e, "0xD431"_l, false, false, -1,
-                               Preferences::PrintFloatMode::Decimal,
-                               OMG::Base::Hexadecimal);
-  assert_expression_layouts_as(-123_e, "-123"_l, false, false, -1,
-                               Preferences::PrintFloatMode::Decimal,
-                               OMG::Base::Decimal);
+  assert_expression_layouts_as(9_e, "0b1001"_l, {.base = OMG::Base::Binary});
+  assert_expression_layouts_as(54321_e, "0b1101010000110001"_l,
+                               {.base = OMG::Base::Binary});
+  assert_expression_layouts_as(54321_e, "0xD431"_l,
+                               {.base = OMG::Base::Hexadecimal});
+  assert_expression_layouts_as(-123_e, "-123"_l, {.base = OMG::Base::Decimal});
   assert_expression_layouts_as(KAdd("x"_e, KOpposite(KAdd("y"_e, "z"_e))),
                                "x-"_l ^ KParenthesesL("y+z"_l));
   assert_expression_layouts_as(KListSlice("L"_e, 2_e, 3_e),
@@ -250,6 +234,26 @@ QUIZ_CASE(pcj_expression_to_layout_mixed_fraction) {
   assert_expression_layouts_and_serializes_to(
       KDiv(KMixedFraction(1_e, KDiv(2_e, 3_e)), 4_e), "(1 2/3)/4",
       "(1(2/3))/4");
+}
+
+QUIZ_CASE(pcj_expression_to_layout_units) {
+  assert_expression_layouts_as(KUnits::meter, "m"_l);
+
+  // Underscore can be mandatory in the context
+  Poincare::EmptySymbolContext emptyContext;
+  Poincare::MandatoryUnitUnderscoreContext symbolContext(&emptyContext);
+  assert_expression_layouts_as(KUnits::meter, "_m"_l,
+                               {.symbolContext = symbolContext});
+  // Angle units never need an underscore
+  assert_expression_layouts_as(KUnits::radian, "rad"_l,
+                               {.symbolContext = symbolContext});
+  assert_expression_layouts_as(KUnits::degree, "°"_l,
+                               {.symbolContext = symbolContext});
+
+  Poincare::TreeVariableContext varContext("m", 3_e);
+  // Meter is layouted with underscore if the m symbol is defined as a variable
+  assert_expression_layouts_as(KUnits::meter, "_m"_l,
+                               {.symbolContext = varContext});
 }
 
 void assert_parsed_expression_layout_serialize_to_self(

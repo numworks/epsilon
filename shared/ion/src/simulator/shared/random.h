@@ -6,7 +6,7 @@ namespace Ion {
 namespace Simulator {
 namespace Random {
 
-void init();
+void init(bool isHeadless);
 
 }
 }  // namespace Simulator

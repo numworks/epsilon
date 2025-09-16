@@ -3,7 +3,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-void Ion::Simulator::Random::init() {
+void Ion::Simulator::Random::init(bool isHeadless) {
+  if (isHeadless) {
+    // Use a fix seed for screenshots and fuzzer
+    srand(42);
+    return;
+  }
   // Set the seed for random using the current time
   srand(time(NULL));
 }

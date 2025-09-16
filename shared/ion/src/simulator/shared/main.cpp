@@ -195,7 +195,7 @@ int main(int argc, char* argv[]) {
 
   bool headless = Window::isAlwaysHeadless() || args.headless;
 
-  Random::init();
+  Random::init(headless);
   if (!headless) {
     Journal::init();
     if (Journal::logJournal()) {

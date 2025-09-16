@@ -528,6 +528,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
     return Token::Type::CustomIdentifier;
   }
 
+#if POINCARE_UNIT
   /* If "m" has been or is being declared by the user, it's understood as a
    * variable before being understood as a unit. That's why the following
    * condition is checked after the previous one. */
@@ -536,6 +537,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
         m_parsingContext->context->isUnitUnderscoreMandatory())) {
     return Token::Type::Unit;
   }
+#endif
 
   /* "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
    * "cos2" should not be parsed as "c*o*s2" but "cos(2)" */

@@ -26,8 +26,23 @@ void PoolCheckpoint::protectedDiscard() const {
 }
 
 void PoolCheckpoint::rollback() const {
-  Internal::TreeStack::SharedTreeStack->flush();
-  Pool::sharedPool->freePoolFromObject(m_endOfPool);
+  /* NOTE: A rollback may be triggered when:
+   * - Pressing Home in an external app or a python environment
+   * - Other Home press, or CircuitBreaker
+   * - On a PoolCheckpoint::Raise
+   *
+   * In the first case the data contained in the object may be corrupted but
+   * the shared object should be uninitialised anyway. */
+  if (Internal::SharedTreeStack.isInitialized()) {
+    Internal::SharedTreeStack->flush();
+  } else {
+    Internal::SharedTreeStack.init();
+  }
+  if (Pool::sharedPool.isInitialized()) {
+    Pool::sharedPool->freePoolFromObject(m_endOfPool);
+  } else {
+    Pool::sharedPool.init();
+  }
 }
 
 void PoolCheckpoint::rollbackException() {

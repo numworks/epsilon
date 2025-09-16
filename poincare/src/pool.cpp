@@ -13,7 +13,7 @@ namespace Poincare {
 bool Pool::s_treePoolLocked = false;
 #endif
 
-OMG::GlobalBox<Pool> Pool::sharedPool;
+OMG::TrackedGlobalBox<Pool> Pool::sharedPool;
 
 void Pool::freeIdentifier(uint16_t identifier) {
   if (PoolObject::IsValidIdentifier(identifier) &&

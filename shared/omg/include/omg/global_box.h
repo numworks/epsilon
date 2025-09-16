@@ -56,7 +56,6 @@ class alignas(T) GlobalBox {
 template <typename T>
 class TrackedGlobalBox : public GlobalBox<T> {
  public:
-  TrackedGlobalBox() : GlobalBox<T>(), m_isInitialized(false) {}
   template <typename... Args>
   void init(Args... args) {
     if (!m_isInitialized) {

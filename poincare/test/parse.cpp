@@ -1,5 +1,6 @@
 #include <apps/global_preferences.h>
 #include <omg/code_point.h>
+#include <poincare/context_with_parent.h>
 #include <poincare/src/expression/derivation.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
@@ -431,6 +432,7 @@ QUIZ_CASE(pcj_parse_store) {
   assert_text_not_parsable("x→tan(x)");
   assert_text_not_parsable("3→min");
   assert_text_not_parsable("1→f(f)");
+  assert_text_not_parsable("x→rad(x)");
 
   quiz_assert(is_parsable("0→a"_l));
   quiz_assert(is_parsable("2+3→b"_l));
@@ -522,6 +524,21 @@ QUIZ_CASE(pcj_parse_unit) {
   // Does not allow repetition
   assert_parsed_expression_is("3s5s",
                               KMult(3_e, "s5"_e, KUnits::second));  // 3*s5*s
+
+  // m is meter
+  assertLayoutParsesTo("m=3"_l, KEqual(KUnits::meter, 3_e));
+  // m is symbol if isAssignment
+  assertLayoutParsesTo("m=3"_l, KEqual(KUserSymbol<"m">(), 3_e),
+                       Poincare::EmptySymbolContext{}, {.isAssignment = true});
+  // m is symbol if preserveInput
+  assertLayoutParsesTo("m=3"_l, KEqual(KUserSymbol<"m">(), 3_e),
+                       Poincare::EmptySymbolContext{}, {.preserveInput = true});
+  // m is symbol if the unit underscore is mandatory
+  Poincare::EmptySymbolContext emptyContext;
+  Poincare::MandatoryUnitUnderscoreContext symbolContext(&emptyContext);
+  assertLayoutParsesTo("3m"_l, KMult(3_e, KUserSymbol<"m">()), symbolContext);
+  // rad is always a unit
+  assertLayoutParsesTo("3rad"_l, KMult(3_e, KUnits::radian), symbolContext);
 }
 
 QUIZ_CASE(pcj_parse_unit_convert) {

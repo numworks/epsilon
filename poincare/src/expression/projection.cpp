@@ -398,7 +398,10 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // tan(A) -> sin(A)/cos(A)
       PatternMatching::MatchReplace(
           e, KTan(KA), KMult(KTrig(KA, 1_e), KPow(KTrig(KA, 0_e), -1_e))) ||
-      // cot(A) -> sin(π/2 - A)/cos(π/2 - A)
+      /* cot(A) -> tan(π/2 - A) -> sin(π/2 - A)/cos(π/2 - A)
+       * Child has already been projected to radians.
+       * Project directly to system nodes so that we do not go through angle
+       * projection again. */
       PatternMatching::MatchReplace(
           e, KCot(KA),
           KMult(KTrig(KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)), 1_e),

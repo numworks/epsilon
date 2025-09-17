@@ -241,7 +241,7 @@ QUIZ_CASE(pcj_expression_to_layout_units) {
 
   // Underscore can be mandatory in the context
   Poincare::EmptySymbolContext emptyContext;
-  Poincare::MandatoryUnitUnderscoreContext symbolContext(&emptyContext);
+  Poincare::StrictUnitContext symbolContext(&emptyContext);
   assert_expression_layouts_as(KUnits::meter, "_m"_l,
                                {.symbolContext = symbolContext});
   // Angle units never need an underscore

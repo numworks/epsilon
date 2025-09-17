@@ -30,7 +30,7 @@ class SymbolContext {
    * It doesn't apply to some reserved units names (e.g. angle units).
    * This needs to be in the symbol context because it's used both in parsing
    * and layouting, and it's related to how symbols are interpreted. */
-  virtual bool isUnitUnderscoreMandatory() const { return false; }
+  virtual bool useStrictUnitLayout() const { return false; }
 #endif
 };
 

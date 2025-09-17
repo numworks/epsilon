@@ -77,6 +77,12 @@ inline static bool AreConsistent(const ComplexSign& sign,
 
 bool Simplify(Tree* e, const ProjectionContext& projectionContext,
               bool beautify) {
+#ifdef POINCARE_MAX_TREE_SIZE_FOR_SIMPLIFICATION
+  if (e->maxDepth() > POINCARE_MAX_TREE_SIZE_FOR_SIMPLIFICATION) {
+    // Prevent recursive simplification algorithms from overflowing the stack
+    return false;
+  }
+#endif
   ExceptionTry {
 #if ASSERTIONS
     size_t treesNumber = SharedTreeStack->numberOfTrees();

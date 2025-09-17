@@ -120,6 +120,7 @@ void assert_parsed_expression_process_to(
   Internal::LayoutSerializer::Serialize(l, buffer);
   copy_without_system_chars(buffer, buffer);
   l->removeTree();
+  m->removeTree();
   bool test = strcmp(buffer, result) == 0;
   assert(SharedTreeStack->numberOfTrees() == 0);
 #if POINCARE_STRICT_TESTS

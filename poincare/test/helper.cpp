@@ -221,7 +221,7 @@ void assert_expression_serializes_and_parses_to(
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   Tree* layout = Layouter::LayoutExpression(
-      expression->cloneTree(), {.layouterMode = LayouterMode::Linear});
+      expression, {.layouterMode = LayouterMode::Linear});
   LayoutSerializer::Serialize(layout, buffer);
   layout->removeTree();
   assert_parsed_expression_is(buffer, result);
@@ -247,9 +247,8 @@ void assert_parse_to_integer_overflow(
 void serialize_expression(const Tree* expression, std::span<char> buffer,
                           int numberOfSignificantDigits) {
   Tree* layout = Layouter::LayoutExpression(
-      expression->cloneTree(),
-      {.layouterMode = LayouterMode::Linear,
-       .numberOfSignificantDigits = numberOfSignificantDigits});
+      expression, {.layouterMode = LayouterMode::Linear,
+                   .numberOfSignificantDigits = numberOfSignificantDigits});
   quiz_assert(layout);
   LayoutSerializer::Serialize(layout, buffer);
   remove_system_codepoints(buffer.data());
@@ -264,11 +263,10 @@ void assert_expression_serializes_to(const Tree* expression,
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   Tree* layout = Layouter::LayoutExpression(
-      expression->cloneTree(),
-      {.layouterMode = LayouterMode::Linear,
-       .numberOfSignificantDigits = numberOfSignificantDigits,
-       .floatMode = mode,
-       .base = base});
+      expression, {.layouterMode = LayouterMode::Linear,
+                   .numberOfSignificantDigits = numberOfSignificantDigits,
+                   .floatMode = mode,
+                   .base = base});
   LayoutSerializer::Serialize(layout, buffer);
   bool test = strcmp(serialization, buffer) == 0;
   layout->removeTree();
@@ -303,6 +301,7 @@ void assert_expression_parses_and_serializes_to(
   char buffer[bufferSize];
   LayoutSerializer::Serialize(l, buffer);
   l->removeTree();
+  e->removeTree();
   const bool test = strcmp(buffer, result) == 0;
   quiz_assert_print_if_failure(test, expression, result, buffer);
 }

@@ -466,11 +466,14 @@ static Poincare::Layout CreateBeautifiedLayout(
     Preferences::PrintFloatMode displayMode,
     uint8_t numberOfSignificantDigits) {
   Simplification::BeautifyReduced(reducedExpression, ctx, dimension);
-  return Poincare::Layout::Builder(Layouter::LayoutExpression(
-      reducedExpression,
-      {.symbolContext = ctx->m_context,
-       .numberOfSignificantDigits = numberOfSignificantDigits,
-       .floatMode = displayMode}));
+  Poincare::Layout layout =
+      Poincare::Layout::Builder(Layouter::LayoutExpression(
+          reducedExpression,
+          {.symbolContext = ctx->m_context,
+           .numberOfSignificantDigits = numberOfSignificantDigits,
+           .floatMode = displayMode}));
+  reducedExpression->removeTree();
+  return layout;
 }
 
 Poincare::Layout AdditionalResultsHelper::ScientificLayout(

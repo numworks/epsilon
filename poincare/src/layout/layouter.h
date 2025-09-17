@@ -37,8 +37,8 @@ struct LayouterParameters {
 
 class Layouter {
  public:
-  // Eats expression to built its layout inplace.
-  static Tree* LayoutExpression(Tree* expression,
+  // Create a Layout corresponding to the given expression
+  static Tree* LayoutExpression(const Tree* expression,
                                 LayouterParameters params = {});
 
   static bool AddThousandsSeparators(Tree* rack);
@@ -51,8 +51,8 @@ class Layouter {
   Layouter(LayouterParameters params)
       : m_parameters(params), m_addSeparators(false) {}
 
-  // Eats expression to built its layout inplace. May raise TreeStack exceptions
-  static Tree* UnsafeLayoutExpression(Tree* expression,
+  // May raise TreeStack exceptions
+  static Tree* UnsafeLayoutExpression(const Tree* expression,
                                       LayouterParameters params = {});
 
   // Insert layout or codepoint depending on linear mode.

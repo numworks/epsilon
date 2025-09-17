@@ -15,7 +15,7 @@ namespace Poincare::Internal {
 
 struct LayouterParameters {
 #if POINCARE_UNIT
-  // Only used for Units in 2D mode
+  // Only used to decide whether a unit should be layoutted with '_' prefix
   const SymbolContext& symbolContext = k_emptySymbolContext;
 #endif
   bool linearMode = false;

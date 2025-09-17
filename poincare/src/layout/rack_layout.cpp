@@ -223,7 +223,10 @@ KDSize RackLayout::SizeBetweenIndexes(const Rack* node, int leftIndex,
   Callback* iter = [](const Layout* child, KDSize childSize,
                       KDCoordinate childBaseline, KDPoint, void* ctx) {
     Context* context = static_cast<Context*>(ctx);
-    context->totalWidth += childSize.width();
+    context->totalWidth =
+        (context->totalWidth > KDCOORDINATE_MAX - childSize.width()
+             ? KDCOORDINATE_MAX
+             : context->totalWidth + childSize.width());
     context->maxUnderBaseline = std::max<KDCoordinate>(
         context->maxUnderBaseline, childSize.height() - childBaseline);
     context->maxAboveBaseline =

@@ -435,14 +435,11 @@ void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
       representative->rootSymbols().mainAlias());
   OMG::String<k_maxUnitTextSize> unitText = prefixText + representativeText;
 
-  bool isUnderscoreMandatory =
-      m_params.linearMode ||
+  if (m_params.linearMode ||
       (!Units::Unit::IsNameReserved(representative) &&
        (m_params.symbolContext.useStrictUnitLayout() ||
         m_params.symbolContext.expressionTypeForIdentifier(unitText) !=
-            SymbolContext::UserNamedType::None));
-
-  if (isUnderscoreMandatory) {
+            SymbolContext::UserNamedType::None))) {
     PushCodePoint(layoutParent, '_');
   }
 

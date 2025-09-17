@@ -171,11 +171,17 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
 }
 
 static bool IsValidCoefficientsList(const Tree* coefficients) {
-  // Coefficients must be real and positive
-  return !coefficients->hasChildSatisfying([](const Tree* e) {
-    ComplexSign s = GetComplexSign(e);
-    return s.canBeNonReal() || s.realSign().canBeStrictlyNegative();
-  });
+  /* Coefficients must be real and positive.
+   * At least one of them must be non null. */
+  bool hasNonNull = false;
+  for (const Tree* child : coefficients->children()) {
+    ComplexSign s = GetComplexSign(child);
+    if (s.canBeNonReal() || s.realSign().canBeStrictlyNegative()) {
+      return false;
+    }
+    hasNonNull = hasNonNull || !s.canBeNull();
+  }
+  return hasNonNull;
 }
 
 Tree* List::Mean(const Tree* list, const Tree* coefficients) {

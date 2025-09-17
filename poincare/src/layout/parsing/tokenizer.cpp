@@ -495,9 +495,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   }
 
   const Units::Representative* unitRepresentative = nullptr;
-  const Units::Prefix* unitPrefix = nullptr;
-  bool canParseUnit =
-      Units::Unit::CanParse(span, &unitRepresentative, &unitPrefix);
+  bool canParseUnit = Units::Unit::CanParse(span, &unitRepresentative, nullptr);
 
   /* - When parsing for unit conversion, the identifier "m" should always
    * be understood as the unit and not the variable.
@@ -600,9 +598,8 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
     }
     length += lengthOfPotentialUnit;
     const Units::Representative* unitRepresentative;
-    const Units::Prefix* unitPrefix;
     LayoutSpanDecoder decoder(currentStringStart, lengthOfPotentialUnit);
-    if (!Units::Unit::CanParse(&decoder, &unitRepresentative, &unitPrefix)) {
+    if (!Units::Unit::CanParse(&decoder, &unitRepresentative, nullptr)) {
       // Second element is not a unit : the string is not an implicit addition
       isImplicitAddition = false;
       break;

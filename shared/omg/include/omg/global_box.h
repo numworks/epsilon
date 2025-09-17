@@ -56,9 +56,12 @@ class alignas(T) GlobalBox {
 template <typename T>
 class TrackedGlobalBox : public GlobalBox<T> {
  public:
+  /* [force] parameter allow the initialization of the GlobalBox without
+   * accessing the potential garbage at [m_isInitialized] location.
+   * It should be set to [true] only on the very first initialization */
   template <typename... Args>
-  void init(Args... args) {
-    if (!m_isInitialized) {
+  void init(Args... args, bool force = false) {
+    if (force || !m_isInitialized) {
       GlobalBox<T>::init(args...);
       m_isInitialized = true;
     }

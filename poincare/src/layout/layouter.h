@@ -56,28 +56,28 @@ class Layouter {
                                       LayouterParameters params = {});
 
   // Insert layout or codepoint depending on linear mode.
-  Tree* insertParenthesis(TreeRef& layoutParent, bool isOpening,
+  Tree* insertParenthesis(Tree* parentRack, bool isOpening,
                           bool isCurlyBrace = false);
   /* TODO: addOperatorSeparator, addUnitSeparator and AddThousandsSeparators
    * should all be applicable in linear mode. Separators should be stripped
    * before parsing layouts in 1D. */
-  void addOperatorSeparator(Tree* layoutParent);
-  void addUnitSeparator(Tree* layoutParent);
+  void addOperatorSeparator(Tree* parentRack);
+  void addUnitSeparator(Tree* parentRack);
   bool requireSeparators(const Tree* expression);
-  void layoutText(TreeRef& layoutParent, std::string_view text);
-  void layoutBuiltin(TreeRef& layoutParent, const Tree* expression);
-  void layoutFunctionCall(TreeRef& layoutParent, const Tree* expression,
+  void layoutText(Tree* layoutParent, std::string_view text);
+  void layoutBuiltin(Tree* layoutParent, const Tree* expression);
+  void layoutFunctionCall(Tree* layoutParent, const Tree* expression,
                           std::string_view name);
   void layoutChildrenAsRacks(const Tree* expression);
-  void layoutIntegerHandler(TreeRef& layoutParent, IntegerHandler handler,
+  void layoutIntegerHandler(Tree* parentRack, IntegerHandler handler,
                             int decimalOffset = 0);
-  void layoutInfixOperator(TreeRef& layoutParent, const Tree* expression,
+  void layoutInfixOperator(Tree* parentRack, const Tree* expression,
                            CodePoint op, bool multiplication = false);
-  void layoutMatrix(TreeRef& layoutParent, const Tree* expression);
-  void layoutSequence(TreeRef& layoutParent, const Tree* expression);
-  void layoutUnit(TreeRef& layoutParent, const Tree* expression);
-  void layoutPowerOrDivision(TreeRef& layoutParent, const Tree* expression);
-  void layoutExpression(TreeRef& layoutParent, const Tree* expression,
+  void layoutMatrix(Tree* parentRack, const Tree* expression);
+  void layoutSequence(Tree* parentRack, const Tree* expression);
+  void layoutUnit(Tree* parentRack, const Tree* expression);
+  void layoutPowerOrDivision(Tree* parentRack, const Tree* expression);
+  void layoutExpression(Tree* parentRack, const Tree* expression,
                         int parentPriority);
   bool implicitAddition(const Tree* addition);
   void serializeDecimalOrFloat(const Tree* expression, char* buffer,

@@ -308,13 +308,12 @@ Poincare::Layout UserExpression::createLayout(
     return Poincare::Layout();
   }
   return Poincare::Layout::Builder(Layouter::LayoutExpression(
-      tree()->cloneTree(),
-      {.symbolContext = symbolContext,
-       .layouterMode =
-           linearMode ? LayouterMode::Linear : LayouterMode::Natural,
-       .numberOfSignificantDigits = numberOfSignificantDigits,
-       .floatMode = floatDisplayMode,
-       .base = base}));
+      tree(), {.symbolContext = symbolContext,
+               .layouterMode =
+                   linearMode ? LayouterMode::Linear : LayouterMode::Natural,
+               .numberOfSignificantDigits = numberOfSignificantDigits,
+               .floatMode = floatDisplayMode,
+               .base = base}));
 }
 
 char* UserExpression::toLatex(char* buffer, int bufferSize,
@@ -336,10 +335,9 @@ size_t UserExpression::serialize(std::span<char> buffer, bool compactMode,
     return 0;
   }
   Tree* layout = Layouter::LayoutExpression(
-      tree()->cloneTree(),
-      {.layouterMode =
-           compactMode ? LayouterMode::LinearCompact : LayouterMode::Linear,
-       .numberOfSignificantDigits = numberOfSignificantDigits});
+      tree(), {.layouterMode = compactMode ? LayouterMode::LinearCompact
+                                           : LayouterMode::Linear,
+               .numberOfSignificantDigits = numberOfSignificantDigits});
   size_t length = LayoutSerializer::Serialize(layout, buffer);
   layout->removeTree();
   assert(length <= buffer.size() || length == LayoutHelpers::k_bufferOverflow);

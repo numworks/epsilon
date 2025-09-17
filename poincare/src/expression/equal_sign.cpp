@@ -20,7 +20,7 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
     /* TODO: We need to be careful to the number of significant digits 1/16 ~=
      * 0.63 with 2 digits. But until now the app will call this with the
      * truncated float. */
-    Tree* layout = Layouter::LayoutExpression(approximate->cloneTree());
+    Tree* layout = Layouter::LayoutExpression(approximate);
     Layouter::StripSeparators(layout);
     Tree* parsed = Parser::Parse(layout);
     assert(parsed->isRationalOrFloat() || parsed->isDecimal() ||

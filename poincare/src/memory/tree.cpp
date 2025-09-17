@@ -159,7 +159,7 @@ void Tree::logSerialize(std::ostream& stream) const {
   assert(isExpression() || isRackOrLayout());
   Tree* layout = isExpression()
                      ? Layouter::LayoutExpression(
-                           cloneTree(), {.layouterMode = LayouterMode::Linear})
+                           this, {.layouterMode = LayouterMode::Linear})
                      : cloneTree();
   assert(layout);
   constexpr size_t bufferSize = 1024;

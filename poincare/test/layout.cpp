@@ -27,7 +27,7 @@ using namespace Poincare::Internal;
 
 void assert_expression_layouts_as(const Tree* expression, const Tree* layout,
                                   LayouterParameters params = {}) {
-  Tree* l = Layouter::LayoutExpression(expression->cloneTree(), params);
+  Tree* l = Layouter::LayoutExpression(expression, params);
   assert_trees_are_equal(l, layout);
   l->removeTree();
 }
@@ -116,9 +116,8 @@ void assert_expression_layouts_and_serializes_to(const Tree* expression,
                                                  const char* serialization,
                                                  bool linearMode) {
   Tree* layout = Layouter::LayoutExpression(
-      expression->cloneTree(),
-      {.layouterMode =
-           linearMode ? LayouterMode::Linear : LayouterMode::Natural});
+      expression, {.layouterMode = linearMode ? LayouterMode::Linear
+                                              : LayouterMode::Natural});
   quiz_assert(layout);
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];

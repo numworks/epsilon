@@ -107,10 +107,9 @@ constexpr static int OperatorPriority(TypeBlock type) {
 // Commas have no associated block but behave like an operator
 constexpr static int k_commaPriority = OperatorPriority(Type::List);
 
-Tree* Layouter::LayoutExpression(Tree* expression, LayouterParameters params) {
-  ExceptionTryAfterBlock(expression) {
-    return UnsafeLayoutExpression(expression, params);
-  }
+Tree* Layouter::LayoutExpression(const Tree* expression,
+                                 LayouterParameters params) {
+  ExceptionTry { return UnsafeLayoutExpression(expression, params); }
   ExceptionCatch(exc) {
     switch (exc) {
       case ExceptionType::TreeStackOverflow:
@@ -123,7 +122,7 @@ Tree* Layouter::LayoutExpression(Tree* expression, LayouterParameters params) {
   OMG::unreachable();
 }
 
-Tree* Layouter::UnsafeLayoutExpression(Tree* expression,
+Tree* Layouter::UnsafeLayoutExpression(const Tree* expression,
                                        LayouterParameters params) {
   assert(expression->isExpression() || expression->isPlaceholder());
   TreeRef rack = SharedTreeStack->pushRackLayout(0);
@@ -131,9 +130,7 @@ Tree* Layouter::UnsafeLayoutExpression(Tree* expression,
   layouter.m_addSeparators = params.layouterMode == LayouterMode::Natural &&
                              layouter.requireSeparators(expression);
   layouter.layoutExpression(rack, expression, k_maxPriority);
-  expression->removeTree();
   StripUselessPlus(rack);
-  assert(expression == rack);
   return rack;
 }
 

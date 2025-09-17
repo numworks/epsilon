@@ -261,7 +261,7 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
   assert(!layoutField->isEditing());
   /* It's not a problem if f(t) is understood as f*(t) as we're just trying to
    * detect the variable.
-   * Force unit underscore to avoid t to be understood as ton. */
+   * Make unit underscore mandatory to avoid t to be understood as ton. */
   Poincare::StrictUnitContext tempContext(&App::app()->localContext());
   UserExpression parsedExpression =
       UserExpression::Parse(layoutField->layout(), tempContext);

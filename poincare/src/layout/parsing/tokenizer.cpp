@@ -529,9 +529,9 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   }
 
 #if POINCARE_UNIT
-  /* If "m" has been or is being declared by the user, it's understood as a
-   * variable before being understood as a unit. That's why the following
-   * condition is checked after the previous one. */
+  /* "m" can be parsed as a unit, except in the following cases:
+   * - There is a variable "m" in the context (checked above).
+   * - useStrictUnitLayout is true ('_' prefix is mandatory). */
   if (canParseUnit && !(m_parsingContext->context &&
                         m_parsingContext->context->useStrictUnitLayout())) {
     return Token::Type::Unit;

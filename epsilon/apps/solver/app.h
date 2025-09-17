@@ -58,7 +58,7 @@ class App : public Shared::MathApp {
  private:
   App(Snapshot* snapshot);
 
-  // Force units to have an underscore, so that they are not mixed with unknowns
+  // Make unit underscore mandatory, so that they are not mixed with unknowns
   Poincare::StrictUnitContext m_localContext;
   EquationStore m_equationStore;
   // Controllers

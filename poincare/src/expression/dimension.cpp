@@ -570,7 +570,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
           Approximation::To<float>(e->child(1), Approximation::Parameters{});
       assert(std::floor(b) == b);
       uint8_t n = Integer::Handler(e->child(2)).to<uint8_t>();
-      return n <= Random::k_maxNumberOfSeeds && a <= b && n <= b - a + 1;
+      return a <= b && n <= b - a + 1;
     }
     case Type::UserSymbol: {
       // UserSymbols in symbolContext should always be well defined

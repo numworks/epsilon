@@ -1,5 +1,6 @@
 #include "random.h"
 
+#include <ion.h>
 #include <poincare/random.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack.h>
@@ -42,18 +43,16 @@ uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
     /* RandIntNoRep and RandInt of lists needs to reserve seed for each of
      * its elements. */
     int size = 1;
-    if ((descendant->isRandIntNoRep() || descendant->isRandInt()) &&
-        Dimension::DeepCheck(descendant)) {
-      /* RandIntNoRep dimension may have not been checked at this point and
-       * we need its length. The dimension check for RandIntNoRep is
-       * straighforward and can be done at this step. */
+    if (descendant->isRandInt() && Dimension::DeepCheck(descendant)) {
+      /* RandInt dimension may have not been checked at this point and
+       * it may contain a list, we need its length. */
       // Keep a size 1 to increment currentSeed anyway.
       size = std::max(Dimension::ListLength(descendant), 1);
     }
     if (descendant->isRandIntNoRep() &&
         currentSeed + size > Context::k_maxNumberOfVariables) {
-      /* RandIntNoRep should not be seeded if all its content doesn't fit in the
-       * Context */
+      /* RandIntNoRep should not be seeded if its seed won't fit in the Context
+       */
       size = 0;
       // Keep seed 0
     } else {
@@ -69,70 +68,78 @@ uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
   }
   return currentSeed;
 }
+#define LCG_A 1664525U
+#define LCG_C 1013904223U
+
+static uint32_t Lcg(uint32_t* state) {
+  *state = LCG_A * (*state) + LCG_C;
+  return *state;
+}
+
+static uint32_t RandIntNoRepInRangeOfIndex(uint32_t range, uint32_t seed,
+                                           uint8_t index) {
+  uint32_t selected[1 << 8];
+  uint32_t sequence_index = 0;
+  uint32_t state = seed;
+
+  while (sequence_index <= index) {
+    // next is the next value in the sequence, if not already selected
+    uint32_t next = Lcg(&state) % range;
+    bool already_selected = false;
+    for (uint32_t i = 0; i < sequence_index; i++) {
+      if (selected[i] == next) {
+        already_selected = true;
+        break;
+      }
+    }
+    if (!already_selected) {
+      selected[sequence_index++] = next;
+      if (sequence_index > index) {
+        return next;
+      }
+    }
+  }
+  OMG::unreachable();
+}
 
 /* Approximate a RandInNoRep tree, this function ignores
  * [approxCtx->m_listElement], instead it uses the parameter [listElement].
  * This hack allows calling this function without needing to make a
  * local copy of the context to changed [m_listElement], because we usually have
  * a [const Context*] */
-template <typename T>
-T PrivateApproximateRandIntNoRep(const Tree* randInNoRep,
-                                 const Approximation::Context* approxCtx,
-                                 const int listElement, const T* min = nullptr,
-                                 const T* max = nullptr) {
-  /* TODO we plan to use a LCG RNG sequence to avoid storing all previous terms
-   * of the RandIntNoRep in the Random::Context */
+double PrivateApproximateRandIntNoRep(const Tree* randInNoRep,
+                                      const Approximation::Context* approxCtx,
+                                      uint8_t seed) {
   assert(randInNoRep->isRandIntNoRep());
-  assert(listElement >= 0);
-  uint8_t seed = Random::GetSeed(randInNoRep);
-  if (seed == 0) {
+  uint8_t lcgSeedIndex = seed;
+  if (lcgSeedIndex <= 0 ||
+      lcgSeedIndex > Random::Context::k_maxNumberOfVariables) {
     // Cannot access a single element for unseeded RandIntNoRep.
     return NAN;
   }
-  assert(listElement <= Random::Context::k_maxNumberOfVariables - seed);
-  seed += listElement;
-  Random::Context::VariableType* cachedValue =
-      &approxCtx->m_randomContext.m_list[seed - 1];
-  if (!std::isnan(*cachedValue)) {
-    return *cachedValue;
+  Random::Context::VariableType* lcgSeed =
+      &approxCtx->m_randomContext.m_list[lcgSeedIndex - 1];
+  if (std::isnan(*lcgSeed)) {
+    *lcgSeed = Ion::random();
+    /* NOTE Storing a uint32_t without loss of precision is only possible in a
+     * double not in a float */
+    static_assert(std::is_same<double, Random::Context::VariableType>::value);
   }
-  using Approximation::Private::PrivateTo;
-  T a = min ? *min : PrivateTo<T>(randInNoRep->child(0), approxCtx);
-  T b = max ? *max : PrivateTo<T>(randInNoRep->child(1), approxCtx);
-  assert(!min || *min == PrivateTo<T>(randInNoRep->child(0), approxCtx));
-  assert(!max || *max == PrivateTo<T>(randInNoRep->child(1), approxCtx));
+  double min = Approximation::Private::PrivateTo<double>(randInNoRep->child(0),
+                                                         approxCtx);
+  double max = Approximation::Private::PrivateTo<double>(randInNoRep->child(1),
+                                                         approxCtx);
+  assert(min == std::round(min) && max == std::round(max));
 
-  // Shorten the RandInt window since numbers have already been generated.
-  T result = Random::RandomInt<T>(a, b - listElement);
-  // Check all previously generated numbers, ordered by increasing value.
-  T check = b + 1.0;
-  T previousCheck = a - 1.0;
-  for (int j = 0; j < listElement; j++) {
-    // Find the next check : smallest value bigger than previousCheck
-    for (int k = 0; k < listElement; k++) {
-      T value =
-          PrivateApproximateRandIntNoRep<T>(randInNoRep, approxCtx, k, &a, &b);
-      if (value > previousCheck && value < check) {
-        check = value;
-      }
-    }
-    /* With each checked values, map result to values not yet generated.
-     * For example, a is 1 and b is 6. 1, 6 and 3 have been generated already.
-     * Result can be 1/2/3. First checked value is 1. Result can now be 2/3/4.
-     * Next checked value is 3, result can now be 2/4/5. Final checked value is
-     * 6, so result stays 2/4/5. The possible value have not been generated
-     * yet.*/
-    if (result >= check) {
-      result += 1.0;
-    } else {
-      // Result is strictly smaller than all remaining values to check.
-      break;
-    }
-    previousCheck = check;
-    check = b + 1.0;
-  }
-  *cachedValue = result;
-  return *cachedValue;
+  uint32_t range = static_cast<uint32_t>(max - min + 1);
+#if ASSERTIONS
+  double length = Approximation::Private::PrivateTo<double>(
+      randInNoRep->child(2), approxCtx);
+  assert(approxCtx->m_listElement < length && length <= range);
+#endif
+  return min + RandIntNoRepInRangeOfIndex(range,
+                                          static_cast<uint32_t>(*lcgSeed),
+                                          approxCtx->m_listElement);
 }
 
 template <typename T>
@@ -145,8 +152,10 @@ T Approximation::Private::ApproximateRandom(const Tree* randomTree,
     return NAN;
   }
   if (randomTree->isRandIntNoRep()) {
-    return PrivateApproximateRandIntNoRep<T>(randomTree, approxCtx,
-                                             approxCtx->m_listElement);
+    if (!validSeed) {
+      return NAN;
+    }
+    return PrivateApproximateRandIntNoRep(randomTree, approxCtx, seed);
   }
   if (!validSeed) {
     return ApproximateRandomHelper<T>(randomTree, approxCtx);
@@ -205,11 +214,4 @@ template double ApproximateRandomHelper<double>(const Tree*,
                                                 const Approximation::Context*);
 template float Random::RandomInt<float>(float, float);
 template double Random::RandomInt<double>(double, double);
-template float PrivateApproximateRandIntNoRep<float>(
-    const Tree*, const Approximation::Context*, const int, const float*,
-    const float*);
-template double PrivateApproximateRandIntNoRep<double>(
-    const Tree*, const Approximation::Context*, const int, const double*,
-    const double*);
-
 }  // namespace Poincare::Internal

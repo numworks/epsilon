@@ -84,7 +84,7 @@ std::complex<T> ToComplex(const Tree* e, Parameters params,
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = clone ? clone : e;
-  std::complex<T> c = PrivateToComplex<T>(target, &context);
+  std::complex<T> c = PrivateRootToComplex<T>(target, &context);
   if (clone) {
     clone->removeTree();
   }
@@ -181,7 +181,7 @@ Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
 
 template <typename T>
 Tree* Private::ToComplexTree(const Tree* e, const Context* ctx) {
-  std::complex<T> value = PrivateToComplex<T>(e, ctx);
+  std::complex<T> value = PrivateRootToComplex<T>(e, ctx);
   T re = value.real(), im = value.imag();
   if (std::isnan(re) || std::isnan(im)) {
     return IsNonReal(value) ? KNonReal->cloneTree() : KUndef->cloneTree();
@@ -351,7 +351,7 @@ std::complex<float> Private::HelperUndefDependencies(const Tree* dep,
     Dimension dim = Dimension::Get(child, ctx->m_symbolContext);
     if (dim.isScalar()) {
       // Optimize most cases
-      std::complex<float> c = PrivateToComplex<float>(child, ctx);
+      std::complex<float> c = PrivateRootToComplex<float>(child, ctx);
       // Only update to nonreal if there is no undef to respect priority
       if (IsNonReal(c) && undefValue == std::complex<float>(0)) {
         undefValue = c;
@@ -380,13 +380,21 @@ std::complex<T> Private::UndefDependencies(const Tree* dep,
 }
 
 template <typename T>
+std::complex<T> Private::PrivateRootToComplex(const Tree* e,
+                                              const Context* ctx) {
+#if POINCARE_NO_FLOAT_APPROXIMATION
+  return PrivateToComplex<double>(e, ctx);
+#else
+  return PrivateToComplex<T>(e, ctx);
+#endif
+}
+
+template <typename T>
 std::complex<T> Private::PrivateToComplex(const Tree* e, const Context* ctx) {
 #if POINCARE_NO_FLOAT_APPROXIMATION
-  std::complex<T> value;
-  value = ToComplexSwitch<double>(e, ctx);
-#else
-  std::complex<T> value = ToComplexSwitch<T>(e, ctx);
+  static_assert(sizeof(T) == sizeof(double));
 #endif
+  std::complex<T> value = ToComplexSwitch<T>(e, ctx);
   if (ctx && ctx->m_complexFormat == ComplexFormat::Real && value.imag() != 0 &&
       !(Undefined::IsUndefined(value)) && !e->isComplexI()) {
     /* Some operations in reduction can introduce i, but when complex format is
@@ -587,7 +595,7 @@ std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
         return NAN;
       }
       if (e->isUserSymbol()) {
-        return PrivateToComplex<T>(definition, ctx);
+        return PrivateRootToComplex<T>(definition, ctx);
       }
       /* LocalContext only handles complex scalar, but non scalar children of
        * UserFunction are forbidden in dimension check anyway. */
@@ -602,7 +610,8 @@ std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
       Context ctxCopy = *ctx;
       LocalContext localCtx = LocalContext(x, ctx->m_localContext);
       ctxCopy.m_localContext = &localCtx;
-      std::complex<T> result = PrivateToComplex<T>(definitionClone, &ctxCopy);
+      std::complex<T> result =
+          PrivateRootToComplex<T>(definitionClone, &ctxCopy);
       definitionClone->removeTree();
       return result;
     }
@@ -1295,8 +1304,8 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
   }
   if (e->isComparison()) {
     assert(e->isEqual() || e->isNotEqual());
-    std::complex<T> a = PrivateToComplex<T>(e->child(0), ctx);
-    std::complex<T> b = PrivateToComplex<T>(e->child(1), ctx);
+    std::complex<T> a = PrivateRootToComplex<T>(e->child(0), ctx);
+    std::complex<T> b = PrivateRootToComplex<T>(e->child(1), ctx);
     if (std::isnan(a.real()) || std::isnan(a.imag()) || std::isnan(b.real()) ||
         std::isnan(b.imag())) {
       return BooleanOrUndefined::Undef();
@@ -1355,7 +1364,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     }
     /* LocalContext only handles complex scalar, but non scalar children of
      * UserFunction are forbidden in dimension check anyway. */
-    std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
+    std::complex<T> x = PrivateRootToComplex<T>(e->child(0), ctx);
     if (std::isnan(x.real()) || std::isnan(x.imag())) {
       return BooleanOrUndefined::Undef();
     }
@@ -1576,7 +1585,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       }
       /* LocalContext only handles complex scalar, but non scalar children of
        * UserFunction are forbidden in dimension check anyway. */
-      std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
+      std::complex<T> x = PrivateRootToComplex<T>(e->child(0), ctx);
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
         /* NOTE: this is problematic as the returned tree is not isMatrix */
         return KUndef->cloneTree();
@@ -1606,7 +1615,7 @@ T Private::PrivateTo(const Tree* e, const Context* ctx) {
   assert((dim.isScalar() && (ctx->m_listElement != -1 ||
                              !Dimension::IsList(e, ctx->m_symbolContext))) ||
          (dim.isPoint() && ctx->m_pointElement != -1) || dim.isUnit());
-  std::complex<T> value = PrivateToComplex<T>(e, ctx);
+  std::complex<T> value = PrivateRootToComplex<T>(e, ctx);
   // Remove signaling nan
   return value.imag() == 0 && !IsNonReal(value) ? value.real() : NAN;
 }
@@ -1822,7 +1831,7 @@ Tree* ExtractRealPart(const Tree* e) {
   if (GetComplexSign(e).isReal()) {
     return e->cloneTree();
   }
-  std::complex<double> value = PrivateToComplex<double>(e, nullptr);
+  std::complex<double> value = PrivateRootToComplex<double>(e, nullptr);
   return SharedTreeStack->pushDoubleFloat(value.real());
 }
 
@@ -1869,6 +1878,11 @@ template Coordinate2D<double> ToPoint(const Tree*, Parameters, const Context&);
 
 template float FloatBinomial(float, float);
 template double FloatBinomial(double, double);
+
+template std::complex<float> Private::PrivateRootToComplex(const Tree*,
+                                                           const Context*);
+template std::complex<double> Private::PrivateRootToComplex(const Tree*,
+                                                            const Context*);
 
 template std::complex<float> Private::PrivateToComplex(const Tree*,
                                                        const Context*);

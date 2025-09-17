@@ -27,9 +27,9 @@ class ContextWithParent : public SymbolContext {
   }
 
 #if POINCARE_UNIT
-  bool isUnitUnderscoreMandatory() const override {
-    return m_parentContext ? m_parentContext->isUnitUnderscoreMandatory()
-                           : SymbolContext::isUnitUnderscoreMandatory();
+  bool useStrictUnitLayout() const override {
+    return m_parentContext ? m_parentContext->useStrictUnitLayout()
+                           : SymbolContext::useStrictUnitLayout();
   }
 #endif
 
@@ -38,10 +38,10 @@ class ContextWithParent : public SymbolContext {
 };
 
 #if POINCARE_UNIT
-class MandatoryUnitUnderscoreContext : public ContextWithParent {
+class StrictUnitContext : public ContextWithParent {
  public:
   using ContextWithParent::ContextWithParent;
-  bool isUnitUnderscoreMandatory() const override { return true; }
+  bool useStrictUnitLayout() const override { return true; }
 };
 #endif
 

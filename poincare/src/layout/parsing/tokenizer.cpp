@@ -532,9 +532,8 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   /* If "m" has been or is being declared by the user, it's understood as a
    * variable before being understood as a unit. That's why the following
    * condition is checked after the previous one. */
-  if (canParseUnit &&
-      !(m_parsingContext->context &&
-        m_parsingContext->context->isUnitUnderscoreMandatory())) {
+  if (canParseUnit && !(m_parsingContext->context &&
+                        m_parsingContext->context->useStrictUnitLayout())) {
     return Token::Type::Unit;
   }
 #endif

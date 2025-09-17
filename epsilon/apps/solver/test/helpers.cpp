@@ -24,7 +24,7 @@ void solve_and_process_error(std::initializer_list<const char*> equations,
                              const SymbolContext& symbolContext, T&& lambda) {
   EquationStore equationStore;
   SystemOfEquations system(&equationStore);
-  MandatoryUnitUnderscoreContext tempContext(&symbolContext);
+  StrictUnitContext tempContext(&symbolContext);
 
   for (const char* equation : equations) {
     Ion::Storage::Record::ErrorStatus err = equationStore.addEmptyModel();
@@ -103,7 +103,7 @@ static void compareSolutions(SystemOfEquations* system,
    * directly, instead of parsing const char * objects and Layouts and comparing
    * afterwards. */
 
-  MandatoryUnitUnderscoreContext tempContext(&symbolContext);
+  StrictUnitContext tempContext(&symbolContext);
 
   size_t i = 0;
   for (const char* solution : solutions) {

@@ -438,7 +438,7 @@ void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
   bool isUnderscoreMandatory =
       m_params.linearMode ||
       (!Units::Unit::IsNameReserved(representative) &&
-       (m_params.symbolContext.isUnitUnderscoreMandatory() ||
+       (m_params.symbolContext.useStrictUnitLayout() ||
         m_params.symbolContext.expressionTypeForIdentifier(unitText) !=
             SymbolContext::UserNamedType::None));
 

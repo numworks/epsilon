@@ -126,107 +126,102 @@ Tree* Layouter::LayoutExpression(Tree* expression, LayouterParameters params) {
 Tree* Layouter::UnsafeLayoutExpression(Tree* expression,
                                        LayouterParameters params) {
   assert(expression->isExpression() || expression->isPlaceholder());
-  /* expression lives before layoutParent in the TreeStack and will be
-   * destroyed in the process. A TreeRef is necessary to keep track of
-   * layoutParent's root. */
-  TreeRef layoutParent = SharedTreeStack->pushRackLayout(0);
-  assert(expression->nextTree() == layoutParent);
+  TreeRef rack = SharedTreeStack->pushRackLayout(0);
   Layouter layouter(params);
   layouter.m_addSeparators = params.layouterMode == LayouterMode::Natural &&
                              layouter.requireSeparators(expression);
-  layouter.layoutExpression(layoutParent, expression, k_maxPriority);
+  layouter.layoutExpression(rack, expression, k_maxPriority);
   expression->removeTree();
-  StripUselessPlus(layoutParent);
-  assert(expression == layoutParent);
-  return layoutParent;
+  StripUselessPlus(rack);
+  assert(expression == rack);
+  return rack;
 }
 
-static void PushCodePoint(Tree* layout, CodePoint codePoint) {
-  NAry::AddChild(layout, CodePointLayout::Push(codePoint));
+static void PushCodePoint(Tree* rack, CodePoint codePoint) {
+  NAry::AddChild(rack, CodePointLayout::Push(codePoint));
 }
 
-static void PushCombinedCodePoint(Tree* layout, CodePoint codePoint,
+static void PushCombinedCodePoint(Tree* rack, CodePoint codePoint,
                                   CodePoint combiningCodePoint) {
-  NAry::AddChild(layout,
+  NAry::AddChild(rack,
                  CodePointLayout::PushCombined(codePoint, combiningCodePoint));
 }
 
-static void InsertCodePointAt(Tree* layout, CodePoint codePoint, int index) {
-  NAry::AddChildAtIndex(layout, CodePointLayout::Push(codePoint), index);
+static void InsertCodePointAt(Tree* rack, CodePoint codePoint, int index) {
+  NAry::AddChildAtIndex(rack, CodePointLayout::Push(codePoint), index);
 }
 
-void Layouter::addOperatorSeparator(Tree* layoutParent) {
+void Layouter::addOperatorSeparator(Tree* parentRack) {
   if (!m_addSeparators) {
     return;
   }
   assert(!linearMode());
-  NAry::AddChild(layoutParent, KOperatorSeparatorL->cloneTree());
+  NAry::AddChild(parentRack, KOperatorSeparatorL->cloneTree());
 }
 
-void Layouter::addUnitSeparator(Tree* layoutParent) {
+void Layouter::addUnitSeparator(Tree* parentRack) {
   if (!m_addSeparators) {
     return;
   }
   assert(!linearMode());
-  NAry::AddChild(layoutParent, KUnitSeparatorL->cloneTree());
+  NAry::AddChild(parentRack, KUnitSeparatorL->cloneTree());
 }
 
-Tree* Layouter::insertParenthesis(TreeRef& layoutParent, bool isOpening,
+Tree* Layouter::insertParenthesis(Tree* parentRack, bool isOpening,
                                   bool isCurlyBrace) {
   if (linearMode()) {
-    PushCodePoint(layoutParent, isOpening      ? isCurlyBrace ? '{' : '('
-                                : isCurlyBrace ? '}'
-                                               : ')');
-    return layoutParent;
+    PushCodePoint(parentRack, isOpening      ? isCurlyBrace ? '{' : '('
+                              : isCurlyBrace ? '}'
+                                             : ')');
+    return parentRack;
   } else if (isOpening) {
-    TreeRef parenthesis =
+    Tree* parenthesis =
         (isCurlyBrace ? KCurlyBracesL : KParenthesesL)->cloneNode();
     KRackL()->cloneTree();
-    NAry::AddChild(layoutParent, parenthesis);
+    NAry::AddChild(parentRack, parenthesis);
     return parenthesis->child(0);
   }
   // If closing layout parentheses, do nothing.
-  return layoutParent;
+  return parentRack;
 }
 
-void Layouter::layoutText(TreeRef& layoutParent, std::string_view text) {
+void Layouter::layoutText(Tree* parentRack, std::string_view text) {
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull) {
     CodePoint nextCodePoint = decoder.nextCodePoint();
     if (nextCodePoint.isCombining()) {
-      PushCombinedCodePoint(layoutParent, codePoint, nextCodePoint);
+      PushCombinedCodePoint(parentRack, codePoint, nextCodePoint);
       codePoint = decoder.nextCodePoint();
     } else {
-      PushCodePoint(layoutParent, codePoint);
+      PushCodePoint(parentRack, codePoint);
       codePoint = nextCodePoint;
     }
   }
 }
 
-void Layouter::layoutBuiltin(TreeRef& layoutParent, const Tree* expression) {
+void Layouter::layoutBuiltin(Tree* parentRack, const Tree* expression) {
   assert(Builtin::IsReservedFunction(expression));
   const Builtin* builtin = Builtin::GetReservedFunction(
       expression, SharedPreferences->translateBuiltins());
   if (linearMode() || !builtin->has2DLayout()) {
     // Built "builtin(child1, child2)"
     const char* name = builtin->aliases()->mainAlias();
-    layoutFunctionCall(layoutParent, expression, name);
+    layoutFunctionCall(parentRack, expression, name);
   } else {
     // Built 2D layout associated with builtin
     const BuiltinWithLayout* builtinWithLayout =
         static_cast<const BuiltinWithLayout*>(builtin);
-    TreeRef layout =
-        SharedTreeStack->pushBlock(builtinWithLayout->layoutType());
+    Tree* layout = SharedTreeStack->pushBlock(builtinWithLayout->layoutType());
     layoutChildrenAsRacks(expression);
-    NAry::AddChild(layoutParent, layout);
+    NAry::AddChild(parentRack, layout);
   }
 }
 
-void Layouter::layoutFunctionCall(TreeRef& layoutParent, const Tree* expression,
+void Layouter::layoutFunctionCall(Tree* parentRack, const Tree* expression,
                                   std::string_view name) {
-  layoutText(layoutParent, name);
-  TreeRef newParent = insertParenthesis(layoutParent, true);
+  layoutText(parentRack, name);
+  Tree* newParent = insertParenthesis(parentRack, true);
   for (int j = 0; j < expression->numberOfChildren(); j++) {
     int childIndex = j;
     if (expression->isParametric()) {
@@ -257,21 +252,21 @@ void Layouter::layoutFunctionCall(TreeRef& layoutParent, const Tree* expression,
 
 void Layouter::layoutChildrenAsRacks(const Tree* expression) {
   for (const Tree* child : expression->children()) {
-    TreeRef newParent = SharedTreeStack->pushRackLayout(0);
+    Tree* newParent = SharedTreeStack->pushRackLayout(0);
     layoutExpression(newParent, child, k_maxPriority);
   }
 }
 
-void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
-                                    IntegerHandler handler, int decimalOffset) {
+void Layouter::layoutIntegerHandler(Tree* parentRack, IntegerHandler handler,
+                                    int decimalOffset) {
   if (handler.strictSign() == StrictSign::Negative) {
-    PushCodePoint(layoutParent, '-');
+    PushCodePoint(parentRack, '-');
   }
   handler.setSign(NonStrictSign::Positive);
   if (m_parameters.base != OMG::Base::Decimal) {
     assert(decimalOffset == 0);
-    PushCodePoint(layoutParent, '0');
-    PushCodePoint(layoutParent,
+    PushCodePoint(parentRack, '0');
+    PushCodePoint(parentRack,
                   m_parameters.base == OMG::Base::Binary ? 'b' : 'x');
   }
   Tree* rack = KRackL()->cloneTree();
@@ -303,12 +298,11 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
   if (m_parameters.base == OMG::Base::Decimal && !linearMode()) {
     AddThousandsSeparators(rack);
   }
-  NAry::AddOrMergeChild(layoutParent, rack);
+  NAry::AddOrMergeChild(parentRack, rack);
 }
 
-void Layouter::layoutInfixOperator(TreeRef& layoutParent,
-                                   const Tree* expression, CodePoint op,
-                                   bool multiplication) {
+void Layouter::layoutInfixOperator(Tree* parentRack, const Tree* expression,
+                                   CodePoint op, bool multiplication) {
   Type type = expression->type();
   int operatorPriority = OperatorPriority(type);
   bool previousWasUnit = false;
@@ -320,20 +314,20 @@ void Layouter::layoutInfixOperator(TreeRef& layoutParent,
         if (!previousWasUnit) {
           if (Units::Unit::ForceMarginLeftOfUnit(child)) {
             // Add small separator between 2 and m in "2 m"
-            addUnitSeparator(layoutParent);
+            addUnitSeparator(parentRack);
           }
         } else {
-          PushCodePoint(layoutParent, UCodePointMiddleDot);
+          PushCodePoint(parentRack, UCodePointMiddleDot);
         }
-        layoutExpression(layoutParent, child, operatorPriority);
+        layoutExpression(parentRack, child, operatorPriority);
         previousWasUnit = isUnit;
         continue;
       }
-      addOperatorSeparator(layoutParent);
+      addOperatorSeparator(parentRack);
       if (op != UCodePointNull) {
         if (op == '+' && child->isOpposite()) {
           // Consume opposite block now and insert - instead of +
-          PushCodePoint(layoutParent, '-');
+          PushCodePoint(parentRack, '-');
           targetChild = targetChild->child(0);
           if (OperatorPriority(Type::Opposite) <
               OperatorPriority(child->type())) {
@@ -341,46 +335,46 @@ void Layouter::layoutInfixOperator(TreeRef& layoutParent,
             operatorPriority = k_forceParentheses;
           }
         } else {
-          PushCodePoint(layoutParent, op);
+          PushCodePoint(parentRack, op);
         }
-        addOperatorSeparator(layoutParent);
+        addOperatorSeparator(parentRack);
       }
     }
-    layoutExpression(layoutParent, targetChild, operatorPriority);
+    layoutExpression(parentRack, targetChild, operatorPriority);
     previousWasUnit = isUnit;
   }
 }
 
-void Layouter::layoutMatrix(TreeRef& layoutParent, const Tree* expression) {
+void Layouter::layoutMatrix(Tree* parentRack, const Tree* expression) {
   if (!linearMode()) {
-    TreeRef layout = expression->cloneNode();
+    Tree* layout = expression->cloneNode();
     *layout->block() = Type::MatrixLayout;
     layoutChildrenAsRacks(expression);
-    NAry::AddChild(layoutParent, layout);
+    NAry::AddChild(parentRack, layout);
     Grid* grid = Grid::From(layout);
     grid->addEmptyColumn();
     grid->addEmptyRow();
     return;
   }
-  PushCodePoint(layoutParent, '[');
+  PushCodePoint(parentRack, '[');
   int cols = Matrix::NumberOfColumns(expression);
   int rows = Matrix::NumberOfRows(expression);
   const Tree* child = expression->nextNode();
   for (int row = 0; row < rows; row++) {
-    PushCodePoint(layoutParent, '[');
+    PushCodePoint(parentRack, '[');
     for (int col = 0; col < cols; col++) {
       if (col > 0) {
-        PushCodePoint(layoutParent, ',');
+        PushCodePoint(parentRack, ',');
       }
-      layoutExpression(layoutParent, child, k_commaPriority);
+      layoutExpression(parentRack, child, k_commaPriority);
       child = child->nextTree();
     }
-    PushCodePoint(layoutParent, ']');
+    PushCodePoint(parentRack, ']');
   }
-  PushCodePoint(layoutParent, ']');
+  PushCodePoint(parentRack, ']');
 }
 
-void Layouter::layoutSequence(TreeRef& layoutParent, const Tree* expression) {
+void Layouter::layoutSequence(Tree* parentRack, const Tree* expression) {
 #if POINCARE_SEQUENCE
   // Get first rank
   assert(Integer::Handler(expression->child(Sequence::k_firstRankIndex))
@@ -417,7 +411,7 @@ void Layouter::layoutSequence(TreeRef& layoutParent, const Tree* expression) {
                  : i == 1 ? firstInitialConditionName
                           : secondInitialConditionName;
     assert(name);
-    TreeRef newParent = SharedTreeStack->pushRackLayout(0);
+    Tree* newParent = SharedTreeStack->pushRackLayout(0);
     layoutExpression(newParent, name, k_maxPriority);
     name->removeTree();
     newParent = SharedTreeStack->pushRackLayout(0);
@@ -428,11 +422,11 @@ void Layouter::layoutSequence(TreeRef& layoutParent, const Tree* expression) {
       currentChild = currentChild->nextTree();
     }
   }
-  NAry::AddChild(layoutParent, layout);
+  NAry::AddChild(parentRack, layout);
 #endif
 }
 
-void Layouter::layoutUnit(TreeRef& layoutParent, const Tree* expression) {
+void Layouter::layoutUnit(Tree* parentRack, const Tree* expression) {
 #if POINCARE_UNIT
   using namespace Units;
   OMG::String<Prefix::k_maxTextLen> prefixText(
@@ -446,16 +440,15 @@ void Layouter::layoutUnit(TreeRef& layoutParent, const Tree* expression) {
                        (m_parameters.symbolContext.useStrictUnitLayout() ||
                         m_parameters.symbolContext.expressionTypeForIdentifier(
                             unitText) != SymbolContext::UserNamedType::None))) {
-    PushCodePoint(layoutParent, '_');
+    PushCodePoint(parentRack, '_');
   }
 
-  layoutText(layoutParent, unitText);
+  layoutText(parentRack, unitText);
 #endif
 }
 
-void Layouter::layoutPowerOrDivision(TreeRef& layoutParent,
-                                     const Tree* expression) {
-  TreeRef createdLayout;
+void Layouter::layoutPowerOrDivision(Tree* parentRack, const Tree* expression) {
+  Tree* newLayout;
   const Tree* firstChild = expression->child(0);
   const Tree* secondChild = firstChild->nextTree();
   // No parentheses in Fraction roots and Power index.
@@ -470,24 +463,24 @@ void Layouter::layoutPowerOrDivision(TreeRef& layoutParent,
     int secondChildPriority = expression->isPow() && firstChild->isEulerE()
                                   ? k_forceParentheses
                                   : OperatorPriority(expression->type());
-    layoutExpression(layoutParent, firstChild, firstChildPriority);
-    PushCodePoint(layoutParent, expression->isDiv() ? '/' : '^');
-    layoutExpression(layoutParent, secondChild, secondChildPriority);
+    layoutExpression(parentRack, firstChild, firstChildPriority);
+    PushCodePoint(parentRack, expression->isDiv() ? '/' : '^');
+    layoutExpression(parentRack, secondChild, secondChildPriority);
     return;
   }
   if (expression->isDiv()) {
-    createdLayout = SharedTreeStack->pushFractionLayout();
+    newLayout = SharedTreeStack->pushFractionLayout();
     TreeRef rack = SharedTreeStack->pushRackLayout(0);
     layoutExpression(rack, firstChild, k_maxPriority);
   } else {
     assert(expression->isPow());
-    layoutExpression(layoutParent, firstChild,
+    layoutExpression(parentRack, firstChild,
                      OperatorPriority(expression->type()));
-    createdLayout = KSuperscriptL->cloneNode();
+    newLayout = KSuperscriptL->cloneNode();
   }
   TreeRef rack = SharedTreeStack->pushRackLayout(0);
   layoutExpression(rack, secondChild, k_maxPriority);
-  NAry::AddChild(layoutParent, createdLayout);
+  NAry::AddChild(parentRack, newLayout);
 }
 
 void Layouter::serializeDecimalOrFloat(const Tree* expression, char* buffer,
@@ -513,10 +506,10 @@ void Layouter::serializeDecimalOrFloat(const Tree* expression, char* buffer,
       m_parameters.floatMode);
 }
 
-// Remove expression while converting it to a layout in layoutParent
-void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
+// Remove expression while converting it to a layout in parentRack
+void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
                                 int parentPriority) {
-  assert(layoutParent->isRackLayout());
+  assert(parentRack->isRackLayout());
   TypeBlock type = expression->type();
 
   // Add Parentheses if necessary
@@ -525,7 +518,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
         parentPriority == k_forceParentheses)) ||
       (type.isEuclideanDivision() &&
        parentPriority < OperatorPriority(Type::Equal))) {
-    TreeRef newParent = insertParenthesis(layoutParent, true);
+    Tree* newParent = insertParenthesis(parentRack, true);
     layoutExpression(newParent, expression, k_maxPriority);
     insertParenthesis(newParent, false);
     return;
@@ -538,11 +531,11 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
       CodePoint op = implicitAddition(expression) && !linearMode()
                          ? UCodePointNull
                          : CodePoint('+');
-      layoutInfixOperator(layoutParent, expression, op);
+      layoutInfixOperator(parentRack, expression, op);
       break;
     }
     case Type::Mult:
-      layoutInfixOperator(layoutParent, expression,
+      layoutInfixOperator(parentRack, expression,
                           (m_parameters.layouterMode == LayouterMode::Linear)
                               ? CodePoint(u'×')
                               : MultiplicationSymbol(expression, linearMode()),
@@ -550,62 +543,62 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
       break;
     case Type::Pow:
     case Type::Div:
-      layoutPowerOrDivision(layoutParent, expression);
+      layoutPowerOrDivision(parentRack, expression);
       break;
     case Type::Sub:
-      layoutExpression(layoutParent, child, k_subLeftChildPriority);
+      layoutExpression(parentRack, child, k_subLeftChildPriority);
       child = child->nextTree();
-      addOperatorSeparator(layoutParent);
-      PushCodePoint(layoutParent, '-');
-      addOperatorSeparator(layoutParent);
-      layoutExpression(layoutParent, child, OperatorPriority(type));
+      addOperatorSeparator(parentRack);
+      PushCodePoint(parentRack, '-');
+      addOperatorSeparator(parentRack);
+      layoutExpression(parentRack, child, OperatorPriority(type));
       break;
     case Type::Opposite: {
-      PushCodePoint(layoutParent, '-');
+      PushCodePoint(parentRack, '-');
       // Add extra parentheses for -1^2 -> -(1^2) but not for -x^2
       bool addExtraParenthesis =
           expression->child(0)->isPow() &&
           !expression->child(0)->child(0)->isUserSymbol();
       layoutExpression(
-          layoutParent, child,
+          parentRack, child,
           addExtraParenthesis ? k_forceParentheses : OperatorPriority(type));
       break;
     }
     case Type::Fact:
-      layoutExpression(layoutParent, child, OperatorPriority(type));
-      PushCodePoint(layoutParent, '!');
+      layoutExpression(parentRack, child, OperatorPriority(type));
+      PushCodePoint(parentRack, '!');
       break;
     case Type::PercentAddition:
-      layoutExpression(layoutParent, child, OperatorPriority(type));
+      layoutExpression(parentRack, child, OperatorPriority(type));
       child = child->nextTree();
       if (child->isOpposite()) {
-        PushCodePoint(layoutParent, UCodePointSouthEastArrow);
+        PushCodePoint(parentRack, UCodePointSouthEastArrow);
         child = child->nextNode();
       } else {
-        PushCodePoint(layoutParent, UCodePointNorthEastArrow);
+        PushCodePoint(parentRack, UCodePointNorthEastArrow);
       }
       [[fallthrough]];
     case Type::PercentSimple:
       /* Use OperatorPriority(Type::PercentSimple) instead of
        * OperatorPriority(type) because PercentAddition's second
        * child has the same priority as a PercentSimple. */
-      layoutExpression(layoutParent, child,
+      layoutExpression(parentRack, child,
                        OperatorPriority(Type::PercentSimple));
-      PushCodePoint(layoutParent, '%');
+      PushCodePoint(parentRack, '%');
       break;
     case Type::EuclideanDivision:
-      layoutInfixOperator(layoutParent, expression,
+      layoutInfixOperator(parentRack, expression,
                           CodePoint(UCodePointAssertion));
       break;
     case Type::EuclideanDivisionResult:
-      PushCodePoint(layoutParent, 'Q');
-      PushCodePoint(layoutParent, '=');
-      layoutExpression(layoutParent, child, k_commaPriority);
+      PushCodePoint(parentRack, 'Q');
+      PushCodePoint(parentRack, '=');
+      layoutExpression(parentRack, child, k_commaPriority);
       child = child->nextTree();
-      PushCodePoint(layoutParent, ',');
-      PushCodePoint(layoutParent, 'R');
-      PushCodePoint(layoutParent, '=');
-      layoutExpression(layoutParent, child, k_commaPriority);
+      PushCodePoint(parentRack, ',');
+      PushCodePoint(parentRack, 'R');
+      PushCodePoint(parentRack, '=');
+      layoutExpression(parentRack, child, k_commaPriority);
       break;
     case Type::Zero:
     case Type::MinusOne:
@@ -615,7 +608,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
     case Type::IntegerNegShort:
     case Type::IntegerPosBig:
     case Type::IntegerNegBig:
-      layoutIntegerHandler(layoutParent, Integer::Handler(expression));
+      layoutIntegerHandler(parentRack, Integer::Handler(expression));
       break;
     case Type::Half:
     case Type::RationalPosShort:
@@ -623,9 +616,9 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
     case Type::RationalPosBig:
     case Type::RationalNegBig: {
 #if POINCARE_TREE_LOG  // Improves Tree::logSerialize
-      layoutIntegerHandler(layoutParent, Rational::Numerator(expression));
-      PushCodePoint(layoutParent, '/');
-      layoutIntegerHandler(layoutParent, Rational::Denominator(expression));
+      layoutIntegerHandler(parentRack, Rational::Numerator(expression));
+      PushCodePoint(parentRack, '/');
+      layoutIntegerHandler(parentRack, Rational::Denominator(expression));
 #else
       // Expression should have been beautified before layouting
       assert(false);
@@ -641,55 +634,54 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
                expression->lastChild()->child(0)->isUserSymbol() &&
                expression->lastChild()->child(0)->treeIsIdenticalTo(
                    Derivation::k_functionDerivativeVariable));
-        layoutText(layoutParent, Symbol::GetName(expression->lastChild()));
+        layoutText(parentRack, Symbol::GetName(expression->lastChild()));
         assert(expression->child(2)->isInteger() &&
                Integer::Handler(expression->child(2)).is<uint8_t>());
         int order = Integer::Handler(expression->child(2)).to<int>();
         if (order <= 2) {
-          PushCodePoint(layoutParent, order == 1
-                                          ? Derivation::k_firstOrderSymbol
-                                          : Derivation::k_secondOrderSymbol);
+          PushCodePoint(parentRack, order == 1
+                                        ? Derivation::k_firstOrderSymbol
+                                        : Derivation::k_secondOrderSymbol);
         } else {
           TreeRef rack;
           if (linearMode()) {
-            PushCodePoint(layoutParent, '^');
-            rack = layoutParent;
+            PushCodePoint(parentRack, '^');
+            rack = parentRack;
           } else {
             Tree* createdLayout = KSuperscriptL->cloneNode();
             rack = SharedTreeStack->pushRackLayout(0);
-            NAry::AddChild(layoutParent, createdLayout);
+            NAry::AddChild(parentRack, createdLayout);
           }
           layoutExpression(rack, expression->child(2), k_forceParentheses);
         }
-        layoutExpression(layoutParent, expression->child(1),
-                         k_forceParentheses);
+        layoutExpression(parentRack, expression->child(1), k_forceParentheses);
         break;
       }
       // Case 2: diff(f(x),x,a,n)
       if (linearMode()) {
-        layoutBuiltin(layoutParent, expression);
+        layoutBuiltin(parentRack, expression);
       } else {
-        TreeRef layout =
+        Tree* layout =
             (expression->child(2)->isOne() ? KDiffL : KNthDiffL)->cloneNode();
         layoutChildrenAsRacks(expression);
-        NAry::AddChild(layoutParent, layout);
+        NAry::AddChild(parentRack, layout);
       }
       break;
     case Type::Binomial:
     case Type::Permute:
       if (linearMode() || SharedPreferences->combinatoricSymbols() ==
                               Preferences::CombinatoricSymbols::Default) {
-        layoutBuiltin(layoutParent, expression);
+        layoutBuiltin(parentRack, expression);
       } else {
-        TreeRef layout = SharedTreeStack->pushBlock(
+        Tree* layout = SharedTreeStack->pushBlock(
             type.isBinomial() ? Type::PtBinomialLayout : Type::PtPermuteLayout);
         layoutChildrenAsRacks(expression);
-        NAry::AddChild(layoutParent, layout);
+        NAry::AddChild(parentRack, layout);
       }
       break;
     case Type::LogBase: {
       if (linearMode()) {
-        layoutBuiltin(layoutParent, expression);
+        layoutBuiltin(parentRack, expression);
         break;
       }
       constexpr const char* log =
@@ -697,62 +689,62 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
       bool nlLog = SharedPreferences->logarithmBasePosition() ==
                    Preferences::LogarithmBasePosition::TopLeft;
       if (!nlLog) {
-        layoutText(layoutParent, log);
+        layoutText(parentRack, log);
       }
       // Base
       TreeRef layout =
           nlLog ? KPrefixSuperscriptL->cloneNode() : KSubscriptL->cloneNode();
-      TreeRef newParent = KRackL()->cloneTree();
+      Tree* newParent = KRackL()->cloneTree();
       layoutExpression(newParent, expression->child(1), k_maxPriority);
-      NAry::AddChild(layoutParent, layout);
+      NAry::AddChild(parentRack, layout);
       if (nlLog) {
-        layoutText(layoutParent, log);
+        layoutText(parentRack, log);
       }
       // Value
-      layoutExpression(layoutParent, child, k_forceParentheses);
+      layoutExpression(parentRack, child, k_forceParentheses);
       break;
     }
     case Type::MixedFraction:
-      layoutExpression(layoutParent, child, OperatorPriority(type));
+      layoutExpression(parentRack, child, OperatorPriority(type));
       child = child->nextTree();
       if (linearMode()) {
         // TODO_PCJ make sure the serializer makes the distinction too
-        PushCodePoint(layoutParent, ' ');
+        PushCodePoint(parentRack, ' ');
       }
-      layoutExpression(layoutParent, child, OperatorPriority(type));
+      layoutExpression(parentRack, child, OperatorPriority(type));
       break;
     case Type::PhysicalConstant:
-      layoutText(layoutParent, PhysicalConstant::GetProperties(expression)
-                                   .m_aliasesList.mainAlias());
+      layoutText(parentRack, PhysicalConstant::GetProperties(expression)
+                                 .m_aliasesList.mainAlias());
       break;
     case Type::UserSymbol:
     case Type::UserSequence:
     case Type::UserFunction: {
-      layoutText(layoutParent, Symbol::GetName(expression));
+      layoutText(parentRack, Symbol::GetName(expression));
       if (type.isUserFunction()) {
-        layoutExpression(layoutParent, child, k_forceParentheses);
+        layoutExpression(parentRack, child, k_forceParentheses);
         child = child->nextTree();
       }
       if (type.isUserSequence()) {
         if (linearMode()) {
-          layoutExpression(layoutParent, child, k_forceParentheses);
+          layoutExpression(parentRack, child, k_forceParentheses);
         } else {
-          TreeRef layout = KSubscriptL->cloneNode();
+          Tree* layout = KSubscriptL->cloneNode();
           layoutChildrenAsRacks(expression);
-          NAry::AddChild(layoutParent, layout);
+          NAry::AddChild(parentRack, layout);
         }
       }
       break;
     }
     case Type::Matrix:
-      layoutMatrix(layoutParent, expression);
+      layoutMatrix(parentRack, expression);
       break;
     case Type::Piecewise:
       if (linearMode()) {
-        layoutBuiltin(layoutParent, expression);
+        layoutBuiltin(parentRack, expression);
       } else {
         int rows = (expression->numberOfChildren() + 1) / 2;
-        TreeRef layout = SharedTreeStack->pushPiecewiseLayout(rows + 1, 2);
+        Tree* layout = SharedTreeStack->pushPiecewiseLayout(rows + 1, 2);
         layoutChildrenAsRacks(expression);
         // Placeholders
         if (expression->numberOfChildren() % 2 == 1) {
@@ -760,18 +752,18 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
         }
         KRackL()->cloneTree();
         KRackL()->cloneTree();
-        NAry::AddChild(layoutParent, layout);
+        NAry::AddChild(parentRack, layout);
       }
       break;
     case Type::SequenceExplicit:
     case Type::SequenceSingleRecurrence:
     case Type::SequenceDoubleRecurrence:
-      layoutSequence(layoutParent, expression);
+      layoutSequence(parentRack, expression);
       break;
     case Type::EmptySequenceExpression:
       break;
     case Type::Unit:
-      layoutUnit(layoutParent, expression);
+      layoutUnit(parentRack, expression);
       break;
     case Type::Decimal:
     case Type::SingleFloat:
@@ -779,12 +771,12 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
       constexpr size_t bufferSize = 100;
       char buffer[bufferSize];
       serializeDecimalOrFloat(expression, buffer, bufferSize);
-      TreeRef rack = KRackL()->cloneTree();
+      Tree* rack = KRackL()->cloneTree();
       layoutText(rack, buffer);
       if (!linearMode()) {
         AddThousandsSeparators(rack);
       }
-      NAry::AddOrMergeChild(layoutParent, rack);
+      NAry::AddOrMergeChild(parentRack, rack);
       break;
     }
     case Type::LogicalAnd:
@@ -794,13 +786,13 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
     case Type::LogicalNor:
     case Type::LogicalNand:
       if (!type.isLogicalNot()) {
-        layoutExpression(layoutParent, child, OperatorPriority(type));
+        layoutExpression(parentRack, child, OperatorPriority(type));
         child = child->nextTree();
-        PushCodePoint(layoutParent, ' ');
+        PushCodePoint(parentRack, ' ');
       }
-      layoutText(layoutParent, Binary::OperatorName(type));
-      PushCodePoint(layoutParent, ' ');
-      layoutExpression(layoutParent, child, OperatorPriority(type));
+      layoutText(parentRack, Binary::OperatorName(type));
+      PushCodePoint(parentRack, ' ');
+      layoutExpression(parentRack, child, OperatorPriority(type));
       break;
     case Type::Equal:
     case Type::NotEqual:
@@ -808,39 +800,38 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
     case Type::Inferior:
     case Type::SuperiorEqual:
     case Type::Superior:
-      layoutExpression(layoutParent, child, OperatorPriority(type));
+      layoutExpression(parentRack, child, OperatorPriority(type));
       child = child->nextTree();
-      addOperatorSeparator(layoutParent);
+      addOperatorSeparator(parentRack);
       if (type == Type::NotEqual) {
         // Special case for ≠ combined
-        PushCombinedCodePoint(layoutParent, CodePoint('='),
+        PushCombinedCodePoint(parentRack, CodePoint('='),
                               UCodePointCombiningLongSolidusOverlay);
       } else {
-        layoutText(layoutParent, Comparison::OperatorString(
-                                     Binary::ComparisonOperatorForType(type)));
+        layoutText(parentRack, Comparison::OperatorString(
+                                   Binary::ComparisonOperatorForType(type)));
       }
 
-      addOperatorSeparator(layoutParent);
-      layoutExpression(layoutParent, child, OperatorPriority(type));
+      addOperatorSeparator(parentRack);
+      layoutExpression(parentRack, child, OperatorPriority(type));
       break;
     case Type::List:
     case Type::DepList:
     case Type::Point: {
-      TreeRef newParent =
-          insertParenthesis(layoutParent, true, !type.isPoint());
+      Tree* newParent = insertParenthesis(parentRack, true, !type.isPoint());
       layoutInfixOperator(newParent, expression, ',');
       insertParenthesis(newParent, false, !type.isPoint());
       break;
     }
     case Type::ListElement:
-      layoutExpression(layoutParent, child, OperatorPriority(type));
+      layoutExpression(parentRack, child, OperatorPriority(type));
       child = child->nextTree();
-      layoutExpression(layoutParent, child, k_forceParentheses);
+      layoutExpression(parentRack, child, k_forceParentheses);
       break;
     case Type::ListSlice: {
-      layoutExpression(layoutParent, child, OperatorPriority(type));
+      layoutExpression(parentRack, child, OperatorPriority(type));
       child = child->nextTree();
-      TreeRef newParent = insertParenthesis(layoutParent, true);
+      Tree* newParent = insertParenthesis(parentRack, true);
       layoutExpression(newParent, child, OperatorPriority(type));
       child = child->nextTree();
       PushCodePoint(newParent, ',');
@@ -849,22 +840,22 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
       break;
     }
     case Type::Parentheses:
-      layoutExpression(layoutParent, child, k_forceParentheses);
+      layoutExpression(parentRack, child, k_forceParentheses);
       break;
     case Type::Store:
     case Type::UnitConversion:
-      layoutInfixOperator(layoutParent, expression, UCodePointRightwardsArrow);
+      layoutInfixOperator(parentRack, expression, UCodePointRightwardsArrow);
       break;
 #if POINCARE_TREE_LOG  // Improves Tree::logSerialize
     case Type::Placeholder: {
-      PushCodePoint(layoutParent, 'K');
+      PushCodePoint(parentRack, 'K');
       uint8_t offset = Placeholder::NodeToTag(expression);
       Placeholder::Filter filter = Placeholder::NodeToFilter(expression);
       char name = 'A' + offset;
-      PushCodePoint(layoutParent, name);
+      PushCodePoint(parentRack, name);
       if (filter != Placeholder::Filter::One) {
-        PushCodePoint(layoutParent, '_');
-        PushCodePoint(layoutParent,
+        PushCodePoint(parentRack, '_');
+        PushCodePoint(parentRack,
                       filter == Placeholder::Filter::ZeroOrMore ? 's' : 'p');
       }
       break;
@@ -881,7 +872,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
         if (name >= 'i') {
           name++;
         }
-        PushCodePoint(layoutParent, name);
+        PushCodePoint(parentRack, name);
         offset = (offset - localOffset) / 24;
       } while (offset != 0);
       break;
@@ -890,16 +881,15 @@ void Layouter::layoutExpression(TreeRef& layoutParent, const Tree* expression,
     case Type::Polynomial:
     default:
       if (Builtin::IsReservedFunction(expression)) {
-        layoutBuiltin(layoutParent, expression);
+        layoutBuiltin(parentRack, expression);
       } else if (Builtin::HasSpecialIdentifier(type)) {
-        layoutText(layoutParent,
-                   Builtin::SpecialIdentifierName(
-                       type, SharedPreferences->translateBuiltins())
-                       .mainAlias());
+        layoutText(parentRack, Builtin::SpecialIdentifierName(
+                                   type, SharedPreferences->translateBuiltins())
+                                   .mainAlias());
       } else {
 #if POINCARE_TREE_LOG  // Improves Tree::logSerialize
         layoutFunctionCall(
-            layoutParent, expression,
+            parentRack, expression,
             TypeBlock::names[static_cast<uint8_t>(*expression->block())]);
 #else
         OMG::unreachable();
@@ -968,7 +958,7 @@ bool Layouter::requireSeparators(const Tree* expression) {
     /* Since rules are complex with floatDisplayMode, layout the float and check
      * if it has separators. */
     Tree* clone = expression->cloneTree();
-    TreeRef rack = KRackL()->cloneTree();
+    Tree* rack = KRackL()->cloneTree();
     layoutExpression(rack, clone, k_tokenPriority);
     bool found = false;
     for (const Tree* child : rack->descendants()) {

@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/src/memory/tree_stack.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
 namespace Poincare {

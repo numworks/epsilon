@@ -382,6 +382,12 @@ std::complex<T> Private::UndefDependencies(const Tree* dep,
 template <typename T>
 std::complex<T> Private::PrivateRootToComplex(const Tree* e,
                                               const Context* ctx) {
+#ifdef POINCARE_MAX_TREE_SIZE_FOR_APPROXIMATION
+  if (e->maxDepth() > POINCARE_MAX_TREE_SIZE_FOR_APPROXIMATION) {
+    // Prevent recursive approximation algorithms from overflowing the stack
+    return NAN;
+  }
+#endif
 #if POINCARE_NO_FLOAT_APPROXIMATION
   return PrivateToComplex<double>(e, ctx);
 #else

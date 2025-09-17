@@ -211,7 +211,7 @@ Tree* PrepareTreeAndContext(const Tree* e, Parameters params,
 template <typename T>
 Tree* PrivateToTree(const Tree* e, Dimension dim, const Context* ctx);
 
-// Tree must be of scalar dimension or equivalent.
+// Tree must be of scalar dimension or equivalent. Escape if tree is too deep.
 template <typename T>
 std::complex<T> PrivateRootToComplex(const Tree* e, const Context* ctx);
 

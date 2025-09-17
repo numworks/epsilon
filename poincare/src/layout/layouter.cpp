@@ -423,20 +423,16 @@ void Layouter::layoutSequence(TreeRef& layoutParent, Tree* expression) {
 
 void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
 #if POINCARE_UNIT
-  constexpr int k_maxPrefixLen = 2;          //"da"
-  constexpr int k_maxRepresentativeLen = 5;  //"month"
-  constexpr int k_maxUnitTextSize = k_maxPrefixLen + k_maxRepresentativeLen;
-
-  OMG::String<k_maxPrefixLen> prefixText(
-      Units::Unit::GetPrefix(expression)->symbol());
-  const Units::Representative* representative =
-      Units::Unit::GetRepresentative(expression);
-  OMG::String<k_maxRepresentativeLen> representativeText(
+  using namespace Units;
+  OMG::String<Prefix::k_maxTextLen> prefixText(
+      Unit::GetPrefix(expression)->symbol());
+  const Representative* representative = Unit::GetRepresentative(expression);
+  OMG::String<Representative::k_maxTextLen> representativeText(
       representative->rootSymbols().mainAlias());
-  OMG::String<k_maxUnitTextSize> unitText = prefixText + representativeText;
+  OMG::String<Unit::k_maxTextLen> unitText = prefixText + representativeText;
 
   if (m_params.linearMode ||
-      (!Units::Unit::IsNameReserved(representative) &&
+      (!Unit::IsNameReserved(representative) &&
        (m_params.symbolContext.useStrictUnitLayout() ||
         m_params.symbolContext.expressionTypeForIdentifier(unitText) !=
             SymbolContext::UserNamedType::None))) {

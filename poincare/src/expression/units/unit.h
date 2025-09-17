@@ -29,6 +29,8 @@ class Prefix {
 
  public:
   constexpr static int k_numberOfPrefixes = 13;
+  constexpr static int k_maxTextLen = 2;  // "da"
+
   static const Prefix* Prefixes();
   static const Prefix* EmptyPrefix();
   // Assigning an id to each accessible prefixes
@@ -50,6 +52,8 @@ class Representative {
   friend class Unit;
 
  public:
+  constexpr static int k_maxTextLen = 5;  // "month"
+
   // Operators
   bool operator==(const Representative&) const = default;
   bool operator!=(const Representative&) const = default;
@@ -125,7 +129,9 @@ class Representative {
         m_ratioExpression(ratioExpression),
         m_inputPrefixable(inputPrefixable),
         m_outputPrefixable(outputPrefixable),
-        m_isImperial(isImperial) {}
+        m_isImperial(isImperial) {
+    assert(!rootSymbol || strlen(rootSymbol.mainAlias()) <= k_maxTextLen);
+  }
 
   const Representative* defaultFindBestRepresentativeAndPrefix(
       double value, double exponent, const Representative* begin,
@@ -159,6 +165,19 @@ class Unit {
       Prefix("h", 2),   Prefix("k", 3),  Prefix("M", 6),  Prefix("G", 9),
       Prefix("T", 12),
   };
+
+  static_assert([] {
+    for (int i = 0; i < Prefix::k_numberOfPrefixes - 1; i++) {
+      if (std::string_view(k_prefixes[i].m_symbol).length() >
+          Prefix::k_maxTextLen) {
+        return false;
+      }
+    }
+    return true;
+  }());
+
+  constexpr static int k_maxTextLen =
+      Prefix::k_maxTextLen + Representative::k_maxTextLen;
 
   /* Define access points to some prefixes. */
   constexpr static int k_emptyPrefixIndex = 6;

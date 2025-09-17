@@ -17,8 +17,8 @@ void Init(
   Preferences::Init(preferences);
   ExamModeStore::Init(examModePtr);
   SequenceApproximationHelper::Init(sequenceContext);
-  Pool::sharedPool.init();
-  Internal::SharedTreeStack.init();
+  Pool::sharedPool.init(true);
+  Internal::SharedTreeStack.init(true);
 }
 
 void Shutdown() {

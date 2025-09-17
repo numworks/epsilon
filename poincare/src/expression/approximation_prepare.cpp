@@ -105,8 +105,7 @@ void PrepareFunctionForApproximation(Tree* e, const char* variable,
   e->moveTreeOverTree(ToTree<double>(
       e,
       Parameters{
-          .isRootAndCanHaveRandom = true, .prepare = true, .optimize = true},
-      Context(AngleUnit::None, complexFormat)));
+          .isRootAndCanHaveRandom = true, .prepare = true, .optimize = true}));
 }
 
 }  // namespace Poincare::Internal::Approximation

@@ -112,6 +112,22 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results1, types, definitions, conditions1,
                              conditions2);
 
+  assert(GlobalPreferences::SharedGlobalPreferences()->complexFormat() ==
+         ComplexFormat::Real);
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
+      ComplexFormat::Cartesian);
+  // u(n) = (-1/2)^n
+  double results1bis[SequenceStore::k_maxNumberOfSequences][10] = {
+      {1, -0.5, 0.25, -0.125, 0.0625, -0.03125, 0.015625, -0.0078125,
+       0.00390625, -0.001953125},
+      {},
+      {}};
+  definitions[0] = "(-1/2)^n";
+  check_sequences_defined_by(results1bis, types, definitions, conditions1,
+                             conditions2);
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
+      ComplexFormat::Real);
+
   // u(n+1) = u(n)+n, u(0) = 0
   double results2[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0}, {}, {}};

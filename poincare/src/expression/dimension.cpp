@@ -2,6 +2,7 @@
 
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/symbol_context.h>
+#include <stdint.h>
 
 #include <algorithm>
 
@@ -563,12 +564,19 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
           !Integer::Is<uint8_t>(e->child(2))) {
         return false;
       }
-      float a =
-          Approximation::To<float>(e->child(0), Approximation::Parameters{});
+      // NOTE Using double approx here to ensure the bounds are respected
+      double a =
+          Approximation::To<double>(e->child(0), Approximation::Parameters{});
       assert(std::floor(a) == a);
-      float b =
-          Approximation::To<float>(e->child(1), Approximation::Parameters{});
+      if (!(INT32_MIN <= a && a <= INT32_MAX)) {
+        return false;
+      }
+      double b =
+          Approximation::To<double>(e->child(1), Approximation::Parameters{});
       assert(std::floor(b) == b);
+      if (!(INT32_MIN <= b && b <= INT32_MAX)) {
+        return false;
+      }
       uint8_t n = Integer::Handler(e->child(2)).to<uint8_t>();
       return a <= b && n <= b - a + 1;
     }

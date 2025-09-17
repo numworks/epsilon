@@ -58,6 +58,7 @@ QUIZ_CASE(pcj_simplification_probability) {
 }
 
 QUIZ_CASE(pcj_simplification_random) {
+  simplifies_to("random()", "random()");
   simplifies_to("1/random()+1/3+1/4", "7/12+1/random()");
   simplifies_to("random()+random()", "random()+random()");
   simplifies_to("random()-random()", "random()-random()");
@@ -69,16 +70,27 @@ QUIZ_CASE(pcj_simplification_random) {
   simplifies_to("random()×ln(2)×3+random()×ln(2)×5",
                 "(3×random()+5×random())×ln(2)");
 
+  simplifies_to("randint(1,10)", "randint(1,10)");
+
   // TODO: Handle them with {.m_strategy = Strategy::ApproximateToFloat}
   simplifies_to("randintnorep(1,10,5)", "randintnorep(1,10,5)");
+  simplifies_to("randintnorep(1,1000,255)", "randintnorep(1,1000,255)");
+  simplifies_to("randintnorep(1,1000,256)", "undef");
   simplifies_to("randintnorep(1,10,11)", "undef");
   simplifies_to("randintnorep(1.5,10, 10)", "undef");
-  simplifies_to("random()", "random()");
-  simplifies_to("randint(1,10)", "randint(1,10)");
+  simplifies_to("randintnorep(1,10, 1+1)", "undef");
+  simplifies_to("randintnorep(10, 1, 1)", "undef");
+  simplifies_to("randintnorep(-2^31,2^31-1, 1)",
+                "randintnorep(-2147483648,2147483647,1)");  // Max bounds
+  simplifies_to("randintnorep(0, 2^31, 1)", "undef");       // Exceeding bounds
+  simplifies_to("randintnorep(-2^31-1, 0, 1)", "undef");    // Exceeding bounds
+
   simplifies_to("diff(random()+1,x,2)", "undef");
   simplifies_to("sum(k+randint(1,10),k,2,5)-14", "sum(randint(1,10),k,2,5)");
   simplifies_to("sequence(2*k+random(),k,3)+1", "1+sequence(2×k+random(),k,3)");
   simplifies_to("random()<acos(40)", "undef");
+
+  // Seeding test
   Tree* randIntList =
       (KAdd(KRandInt(0_e, KList(0_e, 1_e)), KRandom))->cloneTree();
   simplify(randIntList, k_realCtx, true);

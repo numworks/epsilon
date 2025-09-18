@@ -260,7 +260,8 @@ int Rational::CompareHandlers(IntegerHandler num1, IntegerHandler denom1,
   uint8_t n2 = num2.numberOfDigits();
   uint8_t d1 = denom1.numberOfDigits();
   uint8_t d2 = denom2.numberOfDigits();
-  /* Compare orders of magnitude.
+  /* Compare orders of magnitude to escape obvious cases and avoid unnecessary
+   * big multiplications.
    * 10^(n1-d1-1) < |num1/denom1| < 10^(n1-d1+1) and
    * 10^(n2-d2-1) < |num2/denom2| < 10^(n2-d2-1)
    */

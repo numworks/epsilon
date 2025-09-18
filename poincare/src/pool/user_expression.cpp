@@ -310,7 +310,8 @@ Poincare::Layout UserExpression::createLayout(
   return Poincare::Layout::Builder(Layouter::LayoutExpression(
       tree()->cloneTree(),
       {.symbolContext = symbolContext,
-       .linearMode = linearMode,
+       .layouterMode =
+           linearMode ? LayouterMode::Linear : LayouterMode::Natural,
        .numberOfSignificantDigits = numberOfSignificantDigits,
        .floatMode = floatDisplayMode,
        .base = base}));
@@ -336,8 +337,8 @@ size_t UserExpression::serialize(std::span<char> buffer, bool compactMode,
   }
   Tree* layout = Layouter::LayoutExpression(
       tree()->cloneTree(),
-      {.linearMode = true,
-       .compactMode = compactMode,
+      {.layouterMode =
+           compactMode ? LayouterMode::LinearCompact : LayouterMode::Linear,
        .numberOfSignificantDigits = numberOfSignificantDigits});
   size_t length = LayoutSerializer::Serialize(layout, buffer);
   layout->removeTree();

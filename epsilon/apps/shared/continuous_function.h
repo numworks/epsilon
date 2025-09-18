@@ -96,8 +96,7 @@ class ContinuousFunction : public Function {
    * If intersections are implemented for verticalLines, isActiveInTable might
    * need a change. */
   bool shouldDisplayIntersections() const {
-    return !isAlongY() && !properties().isOfDegreeTwo() &&
-           !properties().isScatterPlot() && isActive() &&
+    return !isAlongY() && !properties().isScatterPlot() && isActive() &&
            properties().canComputeIntersectionsWithFunctionsAlongSameVariable();
   }
   bool isDiscontinuousOnFloatInterval(float minBound, float maxBound) const;

@@ -2,8 +2,6 @@
 
 #include <poincare/src/memory/tree.h>
 
-#include <array>
-
 #include "../approximation.h"
 #include "../builtin.h"
 #include "../dimension_vector.h"
@@ -42,7 +40,9 @@ class Prefix {
 
  private:
   constexpr Prefix(const char* symbol, int8_t exponent)
-      : m_symbol(symbol), m_exponent(exponent) {}
+      : m_symbol(symbol), m_exponent(exponent) {
+    assert(std::string_view(symbol).length() <= k_maxTextLen);
+  }
 
   const char* m_symbol;
   int8_t m_exponent;
@@ -165,16 +165,6 @@ class Unit {
       Prefix("h", 2),   Prefix("k", 3),  Prefix("M", 6),  Prefix("G", 9),
       Prefix("T", 12),
   };
-
-  static_assert([] {
-    for (int i = 0; i < Prefix::k_numberOfPrefixes - 1; i++) {
-      if (std::string_view(k_prefixes[i].m_symbol).length() >
-          Prefix::k_maxTextLen) {
-        return false;
-      }
-    }
-    return true;
-  }());
 
   constexpr static int k_maxTextLen =
       Prefix::k_maxTextLen + Representative::k_maxTextLen;

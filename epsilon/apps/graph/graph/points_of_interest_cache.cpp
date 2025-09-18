@@ -206,6 +206,10 @@ struct PointSearchContext {
 
   size_t currentProvider = 0;
   int counter = 0;
+  struct {
+    uint8_t subCounter1 = 0;
+    uint8_t subCounter2 = 0;
+  };
   Ion::Storage::Record otherRecord;
 
   void reinitSolver() { solver.reset(start, end, searchStep); }
@@ -282,6 +286,28 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
   return PointOfInterest{};
 }
 
+PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
+                                     PreparedFunction f, PreparedFunction g) {
+  Solver<double>::Solution solution;
+  while (std::isfinite((solution = ctx->solver.nextIntersection(f, g)).x())) {
+    /* Loop over finite solutions to exhaust solutions out of the interval
+     * without returning NAN. */
+    if (solution.xy().xIsIn(ctx->start, ctx->end, true, false)) {
+      assert(solution.interest() == Solver<double>::Interest::Intersection);
+      return {
+          solution.x(),
+          solution.y(),
+          static_cast<uint32_t>(ctx->otherRecord),
+          Solver<double>::Interest::Intersection,
+          false,
+          0,
+      };
+    }
+  }
+  ctx->reinitSolver();
+  return PointOfInterest{};
+}
+
 PointOfInterest findIntersections(void* searchContext) {
   PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
   /* Do not compute intersections if store is full because re-creating a
@@ -292,11 +318,12 @@ PointOfInterest findIntersections(void* searchContext) {
        !f->shouldDisplayIntersections())) {
     return PointOfInterest{};
   }
-  PreparedFunction memoizedOtherFunction;
   int n = ctx->store->numberOfModels();
-  PreparedFunction e = f->expressionApproximated();
+  PreparedFunction fExpr = f->expressionApproximated();
   bool alongY = f->isAlongY();
   bool fIsStrict = f->properties().isStrictInequality();
+  int fNumberOfSubCurves = fExpr.isList() ? fExpr.numberOfChildren() : 1;
+  assert(!fExpr.isList() || fNumberOfSubCurves > 1);
   for (; ctx->counter < n; ++ctx->counter) {
     ctx->otherRecord = ctx->store->recordAtIndex(ctx->counter);
     if (ctx->record == ctx->otherRecord) {
@@ -304,35 +331,41 @@ PointOfInterest findIntersections(void* searchContext) {
     }
     OMG::ExpiringPointer<ContinuousFunction> g =
         ctx->store->modelForRecord(ctx->otherRecord);
+    bool gIsStrict = g->properties().isStrictInequality();
     if (!g->shouldDisplayIntersections()) {
       continue;
     }
-    memoizedOtherFunction = g->expressionApproximated();
+    PreparedFunction gExpr = g->expressionApproximated();
     ctx->solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Precise);
-    Solver<double>::Solution solution;
-    while (std::isfinite(
-        (solution = ctx->solver.nextIntersection(e, memoizedOtherFunction))
-            .x())) {
-      /* Loop over finite solutions to exhaust solutions out of the interval
-       * without returning NAN. */
-      if (solution.xy().xIsIn(ctx->start, ctx->end, true, false)) {
-        OMG::ExpiringPointer<ContinuousFunction> g =
-            ctx->store->modelForRecord(ctx->otherRecord);
-        bool gIsStrict = g->properties().isStrictInequality();
-        assert(solution.interest() == Solver<double>::Interest::Intersection);
-        return {
-            solution.x(),
-            solution.y(),
-            static_cast<uint32_t>(ctx->otherRecord),
-            fIsStrict || gIsStrict
-                ? Solver<double>::Interest::UnreachedIntersection
-                : Solver<double>::Interest::Intersection,
-            alongY,
-            0,
-        };
+    int gNumberOfSubCurves = gExpr.isList() ? gExpr.numberOfChildren() : 1;
+    assert(!gExpr.isList() || gNumberOfSubCurves > 1);
+    for (; ctx->subCounter1 < fNumberOfSubCurves; ++ctx->subCounter1) {
+      PreparedFunction firstFunc = fExpr;
+      if (fNumberOfSubCurves > 1) {
+        firstFunc = fExpr.cloneChildAtIndex(ctx->subCounter1);
       }
+      for (; ctx->subCounter2 < gNumberOfSubCurves; ++ctx->subCounter2) {
+        PreparedFunction secondFunc = gExpr;
+        if (gNumberOfSubCurves > 1) {
+          secondFunc = gExpr.cloneChildAtIndex(ctx->subCounter2);
+        }
+        PointOfInterest poi = findIntersectionsAux(ctx, firstFunc, secondFunc);
+        if (poi.isUninitialized()) {
+          continue;
+        }
+        poi.inverted = alongY;
+        if (fIsStrict || gIsStrict) {
+          poi.interest = Solver<double>::Interest::UnreachedIntersection;
+        }
+#if 0
+        // NOTE this cannot be done as it interfer with derivates interest points
+        poi.subCurveIndex = ctx->subCounter1;
+#endif
+        return poi;
+      }
+      ctx->subCounter2 = 0;
     }
-    ctx->reinitSolver();
+    ctx->subCounter1 = 0;
   }
 
   return PointOfInterest{};

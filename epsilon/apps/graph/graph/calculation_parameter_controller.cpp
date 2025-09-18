@@ -177,20 +177,20 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
   ContinuousFunctionProperties properties = function()->properties();
   bool isEquality = properties.isEquality();
-  assert(function()->canDisplayDerivative() ||
-         (!isEquality && shouldDisplayIntersectionCell()));
+  assert(function()->canDisplayDerivative() || shouldDisplayIntersectionCell());
   selectRow(0);
   bool isCartesian = properties.isCartesian();
-  bool isCartesianEquality = isCartesian && isEquality;
+  bool isOfDegreeTwo = properties.isOfDegreeTwo();
+  bool isSimpleCartesianEquality = isCartesian && isEquality && !isOfDegreeTwo;
   assert(isCartesian || properties.isPolar() || properties.isParametric());
-  m_tangentCell.setVisible(isEquality);
-  m_preimageCell.setVisible(isCartesianEquality);
+  m_tangentCell.setVisible(isEquality && !isOfDegreeTwo);
+  m_preimageCell.setVisible(isSimpleCartesianEquality);
   m_intersectionCell.setVisible(shouldDisplayIntersectionCell());
-  m_maximumCell.setVisible(isCartesianEquality);
-  m_minimumCell.setVisible(isCartesianEquality);
-  m_rootCell.setVisible(isCartesianEquality);
+  m_maximumCell.setVisible(isSimpleCartesianEquality);
+  m_minimumCell.setVisible(isSimpleCartesianEquality);
+  m_rootCell.setVisible(isSimpleCartesianEquality);
   m_slopeCell.setVisible(!isCartesian && isEquality);
-  m_integralCell.setVisible(isCartesianEquality);
+  m_integralCell.setVisible(isSimpleCartesianEquality);
   m_areaCell.setVisible(shouldDisplayAreaCell() && isEquality);
   m_selectableListView.resetSizeAndOffsetMemoization();
 }

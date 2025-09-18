@@ -180,7 +180,7 @@ class ContinuousFunctionProperties {
   }
 
   bool canComputeIntersectionsWithFunctionsAlongSameVariable() const {
-    return isCartesian() && !isOfDegreeTwo();
+    return isCartesian();
   }
 
   /* Normalization isn't enforced on Parabola and Hyperbola for a better zooms.

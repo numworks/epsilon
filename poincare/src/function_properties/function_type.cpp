@@ -93,7 +93,8 @@ FunctionType::LineType FunctionType::ParametricLineType(
   Tree* variableY = yOfT->cloneTree();
   RemoveConstantTermsInAddition(variableY, symbol);
   (-1_e)->cloneTree();
-  Simplification::ReduceSystem(quotient, false);
+  // Use advanced reduction to simplify complicated functions such as cos
+  Simplification::ReduceSystem(quotient, true);
   bool diag = Degree::Get(quotient, symbol) == 0;
   quotient->removeTree();
   if (diag) {

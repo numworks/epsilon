@@ -220,7 +220,7 @@ def main():
         shutil.rmtree(output_folder)
 
     if not args.ignore_failure:
-        sys.exit(fails)
+        sys.exit(fails > 0)
 
 
 if __name__ == "__main__":

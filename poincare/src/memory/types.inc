@@ -83,7 +83,7 @@
 #define SCOPED_NODE(F) F
 
 NODE(Arbitrary, BASE, NARY, {
-  uint16_t size;
+  uint8_t size;
   uint8_t data[];
 })
 

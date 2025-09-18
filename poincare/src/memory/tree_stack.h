@@ -189,10 +189,11 @@ class AbstractTreeStack : public BlockStack {
   Tree* pushSequenceLayout(uint8_t nbRows, uint8_t nbCols,
                            uint8_t firstRank = 1);
 
-  Tree* pushArbitrary(uint16_t size, const uint8_t* data);
+  Tree* pushArbitrary(uint8_t size, const uint8_t* data);
 
   template <typename T>
   Tree* pushArbitrary(const T& value) {
+    static_assert(sizeof(T) <= UINT8_MAX);
     return pushArbitrary(sizeof(T), reinterpret_cast<const uint8_t*>(&value));
   }
 

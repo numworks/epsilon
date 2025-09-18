@@ -187,8 +187,10 @@ struct KTreesImplementation {
 
   template <auto data, std::size_t... I>
   struct _KArbitraryHelper<data, std::index_sequence<I...>>
-      : KNAry<Type::Arbitrary, sizeof(data) & 0xFF, (sizeof(data) >> 8),
-              std::bit_cast<std::array<uint8_t, sizeof(data)>>(data)[I]...> {};
+      : KNAry<Type::Arbitrary, sizeof(data) & 0xFF,
+              std::bit_cast<std::array<uint8_t, sizeof(data)>>(data)[I]...> {
+    static_assert(sizeof(data) <= UINT8_MAX);
+  };
 
   /* WARNING: data may not have implicit padding, as it leads to uninitialized
    * bytes, which are not permitted in bit_cast. You must declare padding

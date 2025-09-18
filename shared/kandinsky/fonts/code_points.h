@@ -189,8 +189,8 @@ constexpr
         0x222b,  // ∫ // INTEGRAL
         0x2248,  // ≈ // ALMOST EQUAL TO
         0x2264,  // ≤ // LESS-THAN OR EQUAL TO
-#if KANDINSKY_CODEPOINTS_SCANDIUM
         0x2265,  // ≥ // GREATER-THAN OR EQUAL TO
+#if KANDINSKY_CODEPOINTS_SCANDIUM
         0x22a6,  // ⊦ // ASSERTION
         0x22ef,  // ⋯ // MIDLINE HORIZONTAL ELLIPSIS
 #endif

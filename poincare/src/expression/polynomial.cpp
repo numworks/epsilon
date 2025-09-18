@@ -374,6 +374,8 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
       return std::make_pair(e->cloneTreeOverTree(1_e), exp);
     }
   }
+  Tree* coefficient = e;
+  uint8_t exponent = 0;
   if (e->isMult()) {
     for (Tree* child : e->children()) {
       auto [childCoefficient, childExponent] =
@@ -385,20 +387,24 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
          * children coefficients and addition children exponents. */
         child->moveTreeOverTree(childCoefficient);
         SystematicReduction::DeepReduce(e);
-        return std::make_pair(e, childExponent);
+        exponent = childExponent;
+        break;
       }
       childCoefficient->removeTree();
     }
   }
-  /* TODO Order::ContainsSubtree ignores Parametric,
-   * but is needed for HasNonNullCoefficients atm.
-   * When variable->isVar(), uses the more precise HasVariable */
-  if ((variable->isVar() && Variables::HasVariable(e, variable)) ||
-      Order::ContainsSubtree(e, variable)) {
-    // TODO for HasVariable: assert e is not a child of a parametric node?
+  /* Check that the coefficient does not contain the variable.
+   * When variable->isVar(), use HasVariable which handles parametrics.
+   * Otherwise, variable cannot be confused with a parametric variable, use
+   * ContainsSubtree. */
+  if (variable->isVar() ? Variables::HasVariable(coefficient, variable)
+                        : Order::ContainsSubtree(coefficient, variable)) {
+    /* TODO for HasVariable: assert e is not a child of a parametric node?
+     * It should never happen because Parse does not handle parametrics for now.
+     */
     TreeStackCheckpoint::Raise(ExceptionType::NonPolynomial);
   }
-  return std::make_pair(e, static_cast<uint8_t>(0));
+  return std::make_pair(coefficient, exponent);
 }
 
 void addChildToNAryWithDependencies(Tree* nary, const Tree* child,

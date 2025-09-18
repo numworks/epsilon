@@ -49,7 +49,7 @@ class Layouter {
 
  private:
   Layouter(LayouterParameters params)
-      : m_params(params), m_addSeparators(false) {}
+      : m_parameters(params), m_addSeparators(false) {}
 
   // Eats expression to built its layout inplace. May raise TreeStack exceptions
   static Tree* UnsafeLayoutExpression(Tree* expression,
@@ -86,10 +86,10 @@ class Layouter {
   static void StripUselessPlus(Tree* rack);
 
   bool linearMode() const {
-    return m_params.layouterMode != LayouterMode::Natural;
+    return m_parameters.layouterMode != LayouterMode::Natural;
   }
 
-  LayouterParameters m_params;
+  LayouterParameters m_parameters;
   bool m_addSeparators;
 };
 }  // namespace Poincare::Internal

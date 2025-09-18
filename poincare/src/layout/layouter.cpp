@@ -264,10 +264,11 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
     PushCodePoint(layoutParent, '-');
   }
   handler.setSign(NonStrictSign::Positive);
-  if (m_params.base != OMG::Base::Decimal) {
+  if (m_parameters.base != OMG::Base::Decimal) {
     assert(decimalOffset == 0);
     PushCodePoint(layoutParent, '0');
-    PushCodePoint(layoutParent, m_params.base == OMG::Base::Binary ? 'b' : 'x');
+    PushCodePoint(layoutParent,
+                  m_parameters.base == OMG::Base::Binary ? 'b' : 'x');
   }
   Tree* rack = KRackL()->cloneTree();
   /* We can't manipulate an IntegerHandler in a workingBuffer since we're
@@ -277,7 +278,7 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
   do {
     DivisionResult result = IntegerHandler::Division(
         Integer::Handler(value),
-        IntegerHandler(static_cast<uint8_t>(m_params.base)));
+        IntegerHandler(static_cast<uint8_t>(m_parameters.base)));
     uint8_t digit = Integer::Handler(result.remainder);
     assert(result.remainder > result.quotient);
     result.remainder->removeTree();
@@ -295,7 +296,7 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
     }
   } while (!(value->isZero() && decimalOffset <= 0));
   value->removeTree();
-  if (m_params.base == OMG::Base::Decimal && !linearMode()) {
+  if (m_parameters.base == OMG::Base::Decimal && !linearMode()) {
     AddThousandsSeparators(rack);
   }
   NAry::AddOrMergeChild(layoutParent, rack);
@@ -432,8 +433,8 @@ void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
   OMG::String<Unit::k_maxTextLen> unitText = prefixText + representativeText;
 
   if (linearMode() || (!Unit::IsNameReserved(representative) &&
-                       (m_params.symbolContext.useStrictUnitLayout() ||
-                        m_params.symbolContext.expressionTypeForIdentifier(
+                       (m_parameters.symbolContext.useStrictUnitLayout() ||
+                        m_parameters.symbolContext.expressionTypeForIdentifier(
                             unitText) != SymbolContext::UserNamedType::None))) {
     PushCodePoint(layoutParent, '_');
   }
@@ -452,7 +453,7 @@ void Layouter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
     // In compact mode, parentheses are removed from (a×b)/c
     int firstChildPriority =
         (type == Type::Div && expression->isMult() &&
-         m_params.layouterMode == LayouterMode::LinearCompact)
+         m_parameters.layouterMode == LayouterMode::LinearCompact)
             ? k_forceRemoveParentheses
             : OperatorPriority(type);
     // force parentheses when serializing e^(x)
@@ -485,20 +486,20 @@ void Layouter::serializeDecimalOrFloat(const Tree* expression, char* buffer,
   if (expression->isDecimal()) {
     /* Just as it doesn't apply to integers, numberOfSignificantDigits is
      * ignored with Decimals. */
-    Decimal::Serialize(expression, buffer, bufferSize, m_params.floatMode);
+    Decimal::Serialize(expression, buffer, bufferSize, m_parameters.floatMode);
     return;
   }
   int numberOfSignificantDigits =
-      m_params.numberOfSignificantDigits !=
+      m_parameters.numberOfSignificantDigits !=
               PrintFloat::k_undefinedNumberOfSignificantDigits
-          ? m_params.numberOfSignificantDigits
+          ? m_parameters.numberOfSignificantDigits
       : expression->isSingleFloat()
           ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
           : Poincare::PrintFloat::SignificantDecimalDigits<double>();
   Poincare::PrintFloat::ConvertFloatToText(
       FloatHelper::To(expression), buffer, bufferSize,
       Poincare::PrintFloat::k_maxFloatGlyphLength, numberOfSignificantDigits,
-      m_params.floatMode);
+      m_parameters.floatMode);
 }
 
 // Remove expression while converting it to a layout in layoutParent
@@ -530,7 +531,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     }
     case Type::Mult:
       layoutInfixOperator(layoutParent, expression,
-                          (m_params.layouterMode == LayouterMode::Linear)
+                          (m_parameters.layouterMode == LayouterMode::Linear)
                               ? CodePoint(u'×')
                               : MultiplicationSymbol(expression, linearMode()),
                           true);

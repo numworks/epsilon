@@ -185,12 +185,16 @@ std::complex<T> ApproximateRoot(const Tree* root, const Context* ctx) {
       ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
 }
 
+#if !POINCARE_NO_FLOAT_APPROXIMATION
 template std::complex<float> ApproximatePower(const Tree*, const Context*,
                                               ComplexFormat);
+#endif
 template std::complex<double> ApproximatePower(const Tree*, const Context*,
                                                ComplexFormat);
 
+#if !POINCARE_NO_FLOAT_APPROXIMATION
 template std::complex<float> ApproximateRoot(const Tree*, const Context*);
+#endif
 template std::complex<double> ApproximateRoot(const Tree*, const Context*);
 
 template std::complex<float> ComputeNotPrincipalRealRootOfRationalPow(

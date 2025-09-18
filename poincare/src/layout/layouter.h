@@ -65,19 +65,19 @@ class Layouter {
   void addUnitSeparator(Tree* layoutParent);
   bool requireSeparators(const Tree* expression);
   void layoutText(TreeRef& layoutParent, std::string_view text);
-  void layoutBuiltin(TreeRef& layoutParent, Tree* expression);
-  void layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
+  void layoutBuiltin(TreeRef& layoutParent, const Tree* expression);
+  void layoutFunctionCall(TreeRef& layoutParent, const Tree* expression,
                           std::string_view name);
-  void layoutChildrenAsRacks(Tree* expression);
+  void layoutChildrenAsRacks(const Tree* expression);
   void layoutIntegerHandler(TreeRef& layoutParent, IntegerHandler handler,
                             int decimalOffset = 0);
-  void layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
+  void layoutInfixOperator(TreeRef& layoutParent, const Tree* expression,
                            CodePoint op, bool multiplication = false);
-  void layoutMatrix(TreeRef& layoutParent, Tree* expression);
-  void layoutSequence(TreeRef& layoutParent, Tree* expression);
-  void layoutUnit(TreeRef& layoutParent, Tree* expression);
-  void layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression);
-  void layoutExpression(TreeRef& layoutParent, Tree* expression,
+  void layoutMatrix(TreeRef& layoutParent, const Tree* expression);
+  void layoutSequence(TreeRef& layoutParent, const Tree* expression);
+  void layoutUnit(TreeRef& layoutParent, const Tree* expression);
+  void layoutPowerOrDivision(TreeRef& layoutParent, const Tree* expression);
+  void layoutExpression(TreeRef& layoutParent, const Tree* expression,
                         int parentPriority);
   bool implicitAddition(const Tree* addition);
   void serializeDecimalOrFloat(const Tree* expression, char* buffer,

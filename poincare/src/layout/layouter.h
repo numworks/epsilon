@@ -13,13 +13,22 @@ using Poincare::Preferences;
 
 namespace Poincare::Internal {
 
+enum class LayouterMode {
+  // 2D layouts
+  Natural,
+  // 1D layouts only
+  Linear,
+  // 1D layouts without parentheses to preserve the 2D structure
+  // (a×b)/c and a×(b/c) are layouted as a×b/c
+  LinearCompact
+};
+
 struct LayouterParameters {
 #if POINCARE_UNIT
   // Only used to decide whether a unit should be layoutted with '_' prefix
   const SymbolContext& symbolContext = k_emptySymbolContext;
 #endif
-  bool linearMode = false;
-  bool compactMode = false;
+  LayouterMode layouterMode;
   int numberOfSignificantDigits =
       PrintFloat::k_undefinedNumberOfSignificantDigits;
   Preferences::PrintFloatMode floatMode = Preferences::PrintFloatMode::Decimal;
@@ -75,6 +84,11 @@ class Layouter {
                                size_t bufferSize);
   // Recursively replace "+-" into "-" in rack
   static void StripUselessPlus(Tree* rack);
+
+  bool linearMode() const {
+    return m_params.layouterMode != LayouterMode::Natural;
+  }
+
   LayouterParameters m_params;
   bool m_addSeparators;
 };

@@ -220,8 +220,8 @@ void assert_expression_serializes_and_parses_to(
     const Poincare::Internal::Tree* result) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
-  Tree* layout =
-      Layouter::LayoutExpression(expression->cloneTree(), {.linearMode = true});
+  Tree* layout = Layouter::LayoutExpression(
+      expression->cloneTree(), {.layouterMode = LayouterMode::Linear});
   LayoutSerializer::Serialize(layout, buffer);
   layout->removeTree();
   assert_parsed_expression_is(buffer, result);
@@ -248,7 +248,7 @@ void serialize_expression(const Tree* expression, std::span<char> buffer,
                           int numberOfSignificantDigits) {
   Tree* layout = Layouter::LayoutExpression(
       expression->cloneTree(),
-      {.linearMode = true,
+      {.layouterMode = LayouterMode::Linear,
        .numberOfSignificantDigits = numberOfSignificantDigits});
   quiz_assert(layout);
   LayoutSerializer::Serialize(layout, buffer);
@@ -265,7 +265,7 @@ void assert_expression_serializes_to(const Tree* expression,
   char buffer[bufferSize];
   Tree* layout = Layouter::LayoutExpression(
       expression->cloneTree(),
-      {.linearMode = true,
+      {.layouterMode = LayouterMode::Linear,
        .numberOfSignificantDigits = numberOfSignificantDigits,
        .floatMode = mode,
        .base = base});
@@ -295,7 +295,7 @@ void assert_expression_parses_and_serializes_to(
   Tree* e = parse(expression, symbolContext);
   Tree* l = Layouter::LayoutExpression(
       e, {.symbolContext = symbolContext,
-          .linearMode = true,
+          .layouterMode = LayouterMode::Linear,
           .numberOfSignificantDigits = numberOfSignificantDigits,
           .floatMode = mode,
           .base = base});

@@ -52,7 +52,8 @@ QUIZ_CASE(pcj_expression_to_layout) {
       KPow(KMult("x"_e, "y"_e), 2_e),
       KRackL(KParenthesesL("x·y"_l), KSuperscriptL("2"_l)));
   assert_expression_layouts_as(KAdd(KMixedFraction(2_e, KDiv(1_e, 3_e)), 4_e),
-                               "2 1/3+4"_l, {.linearMode = true});
+                               "2 1/3+4"_l,
+                               {.layouterMode = LayouterMode::Linear});
   // 12 345 - 54 321
   const Tree* expected = "12"_l ^ KThousandsSeparatorL ^ "345"_l ^
                          KOperatorSeparatorL ^ "-"_l ^ KOperatorSeparatorL ^
@@ -114,8 +115,10 @@ QUIZ_CASE(pcj_expression_to_layout) {
 void assert_expression_layouts_and_serializes_to(const Tree* expression,
                                                  const char* serialization,
                                                  bool linearMode) {
-  Tree* layout = Layouter::LayoutExpression(expression->cloneTree(),
-                                            {.linearMode = linearMode});
+  Tree* layout = Layouter::LayoutExpression(
+      expression->cloneTree(),
+      {.layouterMode =
+           linearMode ? LayouterMode::Linear : LayouterMode::Natural});
   quiz_assert(layout);
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];

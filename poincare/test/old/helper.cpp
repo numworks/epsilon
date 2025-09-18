@@ -115,7 +115,7 @@ void assert_parsed_expression_process_to(
   Tree *m = process(e, projCtx);
   Tree *l = Internal::Layouter::LayoutExpression(
       m, {.symbolContext = symbolContext,
-          .linearMode = true,
+          .layouterMode = LayouterMode::Linear,
           .numberOfSignificantDigits = numberOfSignificantDigits});
   Internal::LayoutSerializer::Serialize(l, buffer);
   copy_without_system_chars(buffer, buffer);

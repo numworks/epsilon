@@ -140,19 +140,9 @@ QUIZ_CASE(pcj_simplification_multiplication) {
   simplifies_to("2*3^x*3^(-x)", "2");
   simplifies_to("10-1/(3^x)", "10-1/3^x");
   simplifies_to("2×cos(π/12)×e^(5πi/12)", "1/2+(1+√(3)/2)×i", k_cartesianCtx);
-  /* Do not factorize exponent if the multiplication result is over DBL_MAX
-   * Test without beautification because the expression is too big. */
-  simplifies_to_no_beautif(
-      "((1.63871ᴇ182)^(1/256))*((1.93871ᴇ157)^(1/256))",
-      "exp(1/"
-      "256×Ln("
-      "193871000000000000000000000000000000000000000000000000000000000000000000"
-      "000000000000000000000000000000000000000000000000000000000000000000000000"
-      "00000000000000))×exp(1/"
-      "256×Ln("
-      "163871000000000000000000000000000000000000000000000000000000000000000000"
-      "000000000000000000000000000000000000000000000000000000000000000000000000"
-      "000000000000000000000000000000000000000))");
+  // Do not factorize exponent if the multiplication result is over DBL_MAX
+  simplifies_to("((1.63871ᴇ182)^(1/256))*((1.93871ᴇ157)^(1/256))",
+                "root(1.93871×10^157,256)×root(1.63871×10^182,256)");
 }
 
 QUIZ_CASE(pcj_simplification_root) {

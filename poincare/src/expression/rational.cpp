@@ -5,7 +5,6 @@
 #include <poincare/src/memory/value_block.h>
 
 #include "k_tree.h"
-#include "number.h"
 
 #if POINCARE_TREE_STACK_VISUALIZATION
 #include <poincare/src/memory/visualization.h>
@@ -248,6 +247,28 @@ int Rational::CompareHandlers(IntegerHandler num1, IntegerHandler denom1,
                               IntegerHandler num2, IntegerHandler denom2) {
   assert(denom1.strictSign() == StrictSign::Positive &&
          denom2.strictSign() == StrictSign::Positive);
+  // Compare signs
+  if (num1.strictSign() == StrictSign::Null) {
+    return -static_cast<int>(num2.strictSign());
+  } else if (num2.strictSign() == StrictSign::Null) {
+    return static_cast<int>(num1.strictSign());
+  } else if (num1.strictSign() != num2.strictSign()) {
+    return num1.strictSign() > num2.strictSign() ? 1 : -1;
+  }
+  assert(num1.strictSign() == num2.strictSign());
+  uint8_t n1 = num1.numberOfDigits();
+  uint8_t n2 = num2.numberOfDigits();
+  uint8_t d1 = denom1.numberOfDigits();
+  uint8_t d2 = denom2.numberOfDigits();
+  /* Compare orders of magnitude.
+   * 10^(n1-d1-1) < |num1/denom1| < 10^(n1-d1+1) and
+   * 10^(n2-d2-1) < |num2/denom2| < 10^(n2-d2-1)
+   */
+  if (n1 - d1 - 1 >= n2 - d2 + 1) {
+    return num1.strictSign() == StrictSign::Positive ? 1 : -1;
+  } else if (n2 - d2 - 1 > n1 - d1 + 1) {
+    return num2.strictSign() == StrictSign::Positive ? -1 : 1;
+  }
   // num1/denom1 > num2/denom2 <=> num1*denom2 > num2*denom1
   Tree* m1 = IntegerHandler::Multiplication(num1, denom2);
   Tree* m2 = IntegerHandler::Multiplication(denom1, num2);
@@ -260,9 +281,6 @@ int Rational::CompareHandlers(IntegerHandler num1, IntegerHandler denom1,
 
 int Rational::Compare(const Tree* e1, const Tree* e2) {
   assert(e1->isRational() && e2->isRational());
-  if (e1->isStrictlyNegativeRational() != e2->isStrictlyNegativeRational()) {
-    return e1->isStrictlyNegativeRational() ? -1 : 1;
-  }
   return CompareHandlers(Numerator(e1), Denominator(e1), Numerator(e2),
                          Denominator(e2));
 }

@@ -129,7 +129,7 @@ std::complex<T> ApproximatePower(const Tree* power, const Context* ctx,
                                  ComplexFormat complexFormat) {
   const Tree* base = power->child(0);
   const Tree* exponent = power->child(1);
-  std::complex<T> c = PrivateToComplex<T>(base, ctx);
+  std::complex<T> c = PrivateToComplexRecursive<T>(base, ctx);
   /* Special case: c^(p/q) with p, q integers
    * In real mode, c^(p/q) might have a real root which is not the principal
    * root. We return this value in that case to avoid returning "nonreal". */
@@ -160,14 +160,14 @@ std::complex<T> ApproximatePower(const Tree* power, const Context* ctx,
     }
   }
 defaultApproximation:
-  return ComputeComplexPower<T>(c, PrivateToComplex<T>(exponent, ctx),
+  return ComputeComplexPower<T>(c, PrivateToComplexRecursive<T>(exponent, ctx),
                                 complexFormat);
 }
 
 template <typename T>
 std::complex<T> ApproximateRoot(const Tree* root, const Context* ctx) {
-  std::complex<T> base = PrivateToComplex<T>(root->child(0), ctx);
-  std::complex<T> exp = PrivateToComplex<T>(root->child(1), ctx);
+  std::complex<T> base = PrivateToComplexRecursive<T>(root->child(0), ctx);
+  std::complex<T> exp = PrivateToComplexRecursive<T>(root->child(1), ctx);
   /* If the complexFormat is Real, we look for nth root of form root(x,q)
    * with x real and q integer because they might have a real form which
    * does not correspond to the principal angle. */

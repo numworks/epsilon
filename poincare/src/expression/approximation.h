@@ -217,7 +217,7 @@ std::complex<T> PrivateRootToComplex(const Tree* e, const Context* ctx);
 
 // Tree must be of scalar dimension or equivalent
 template <typename T>
-std::complex<T> PrivateToComplex(const Tree* e, const Context* ctx);
+std::complex<T> PrivateToComplexRecursive(const Tree* e, const Context* ctx);
 
 // Tree must be of scalar dimension or equivalent, and real.
 template <typename T>

@@ -155,6 +155,12 @@ class Solver {
   Solution nextIntersection(
       const Internal::Tree* e1, const Internal::Tree* e2,
       const Internal::Tree** memoizedDifference = nullptr);
+  /* Caller of nextIntersectionAlongDifferentAxis may provide a place to store
+   * the difference between the two expressions, in case the method needs to be
+   * called several times in a row. */
+  Solution nextIntersectionAlongDifferentAxis(
+      const Internal::Tree* alongMainAxis, const Internal::Tree* alongOtherAxis,
+      const Internal::Tree** memoizedDifference = nullptr);
   /* Stretch the interval to include the previous bounds. This allows finding
    * solutions in [xStart,xEnd], as otherwise all resolution is done on an open
    * interval. */

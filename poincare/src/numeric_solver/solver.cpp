@@ -6,6 +6,7 @@
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/pattern_matching.h>
 
+#include "poincare/src/expression/variables.h"
 #include "solver_algorithms.h"
 
 using namespace Poincare::Internal;
@@ -221,6 +222,63 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
   /* Result is not always exactly the same due to approximation errors. Take
    * the middle of the two values. */
   return Solution(x, (y1 + y2) / 2., Interest::Intersection);
+}
+
+template <typename T>
+typename Solver<T>::Solution Solver<T>::nextIntersectionAlongDifferentAxis(
+    const Tree* alongMainAxis, const Tree* alongOtherAxis,
+    const Tree** memoizedDifference) {
+  /* NOTE For simplicity we will call f the tree alongMainAxis and g the other
+   * This method finds intersection points between f and g by finding roots of:
+   * g(f(a))-a */
+  if (!memoizedDifference) {
+    Tree* diff = nullptr;
+    Solution result = nextIntersectionAlongDifferentAxis(
+        alongMainAxis, alongOtherAxis, const_cast<const Tree**>(&diff));
+    diff->removeTree();
+    return result;
+  }
+  assert(memoizedDifference);
+  if (*memoizedDifference == nullptr) {
+    /* TODO: simplify if we decide that functions should be simplified.
+     * Either pass ProjectionContext(m_complexFormat,
+     * m_angleUnit, ReductionTarget::SystemForAnalysis, UnitFormat::Metric,
+     * m_context) or ensure expression is projected. */
+    *memoizedDifference = SharedTreeStack->pushAdd(2);
+    // Creating g(f(a))
+    Tree* gOfFOfa = alongOtherAxis->cloneTree();
+    Variables::Replace(gOfFOfa, 0, alongMainAxis, false, false);
+    // Cloning -a
+    PatternMatching::Create(KMult(-1_e, KVarX));
+  }
+  Solution root = nextRoot(*memoizedDifference);
+  if (root.interest() != Interest::Root) {
+    assert(root.interest() == Interest::None);
+    return Solution();
+  }
+  T x = root.x();
+  T y = Approximation::To<T>(
+      alongMainAxis, x,
+      Approximation::Parameters{.isRootAndCanHaveRandom = true});
+  T x2 = Approximation::To<T>(
+      alongOtherAxis, y,
+      Approximation::Parameters{.isRootAndCanHaveRandom = true});
+  assert(OMG::Float::RoughlyEqual<T>(x, x2, 1e-8));
+#if 0
+  // TODO: check those weird cases
+  if (!std::isfinite(y1) || !std::isfinite(y2)) {
+    /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
+     * or undef expressions in specific points like x^2/x, the root of the
+     * difference yields an infinite or a nan value when e1 or e2 is
+     * evaluated. It means the intersection was incorrectly computed, and the
+     * search continues. */
+    return nextIntersectionAlongY(alongMainAxis, alongOtherAxis,
+                                  memoizedDifference);
+  }
+  /* Result is not always exactly the same due to approximation errors. Take
+   * the middle of the two values. */
+#endif
+  return Solution(x, y, Interest::Intersection);
 }
 
 template <typename T>
@@ -852,6 +910,9 @@ template Solver<double>::Solution Solver<double>::nextRoot(const Tree*);
 template Solver<double>::Solution Solver<double>::nextMinimum(const Tree*);
 template Solver<double>::Solution Solver<double>::nextIntersection(
     const Tree*, const Tree*, const Tree**);
+template Solver<double>::Solution
+Solver<double>::nextIntersectionAlongDifferentAxis(const Tree*, const Tree*,
+                                                   const Tree**);
 template void Solver<double>::stretch();
 template Coordinate2D<double> Solver<double>::SafeBrentMaximum(
     FunctionEvaluation, const void*, double, double, Interest, double,

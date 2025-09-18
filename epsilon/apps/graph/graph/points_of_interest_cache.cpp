@@ -287,9 +287,15 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
 }
 
 PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
-                                     PreparedFunction f, PreparedFunction g) {
+                                     PreparedFunction f, PreparedFunction g,
+                                     bool alongSameAxis) {
   Solver<double>::Solution solution;
-  while (std::isfinite((solution = ctx->solver.nextIntersection(f, g)).x())) {
+  while (std::isfinite(
+      (solution = alongSameAxis
+                      ? ctx->solver.nextIntersection(f, g)
+                      : ctx->solver.nextIntersectionAlongDifferentAxis(f, g))
+
+          .x())) {
     /* Loop over finite solutions to exhaust solutions out of the interval
      * without returning NAN. */
     if (solution.xy().xIsIn(ctx->start, ctx->end, true, false)) {
@@ -320,7 +326,7 @@ PointOfInterest findIntersections(void* searchContext) {
   }
   int n = ctx->store->numberOfModels();
   PreparedFunction fExpr = f->expressionApproximated();
-  bool alongY = f->isAlongY();
+  bool fAlongY = f->isAlongY();
   bool fIsStrict = f->properties().isStrictInequality();
   int fNumberOfSubCurves = fExpr.isList() ? fExpr.numberOfChildren() : 1;
   assert(!fExpr.isList() || fNumberOfSubCurves > 1);
@@ -332,6 +338,7 @@ PointOfInterest findIntersections(void* searchContext) {
     OMG::ExpiringPointer<ContinuousFunction> g =
         ctx->store->modelForRecord(ctx->otherRecord);
     bool gIsStrict = g->properties().isStrictInequality();
+    bool gAlongY = g->properties().isAlongY();
     if (!g->shouldDisplayIntersections()) {
       continue;
     }
@@ -349,11 +356,12 @@ PointOfInterest findIntersections(void* searchContext) {
         if (gNumberOfSubCurves > 1) {
           secondFunc = gExpr.cloneChildAtIndex(ctx->subCounter2);
         }
-        PointOfInterest poi = findIntersectionsAux(ctx, firstFunc, secondFunc);
+        PointOfInterest poi = findIntersectionsAux(ctx, firstFunc, secondFunc,
+                                                   fAlongY == gAlongY);
         if (poi.isUninitialized()) {
           continue;
         }
-        poi.inverted = alongY;
+        poi.inverted = fAlongY;
         if (fIsStrict || gIsStrict) {
           poi.interest = Solver<double>::Interest::UnreachedIntersection;
         }

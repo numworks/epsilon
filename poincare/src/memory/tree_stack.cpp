@@ -212,11 +212,10 @@ Tree* AbstractTreeStack::pushSequenceLayout(uint8_t nbRows, uint8_t nbCols,
   return result;
 }
 
-Tree* AbstractTreeStack::pushArbitrary(uint16_t size, const uint8_t* data) {
+Tree* AbstractTreeStack::pushArbitrary(uint8_t size, const uint8_t* data) {
   Tree* result = pushBlock(Type::Arbitrary);
   pushValueBlock(0);  // nary
-  pushValueBlock(size & 0xFF);
-  pushValueBlock(size >> 8);
+  pushValueBlock(size);
   for (size_t i = 0; i < size; i++) {
     pushValueBlock(data[i]);
   }

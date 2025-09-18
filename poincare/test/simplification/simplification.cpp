@@ -927,3 +927,22 @@ QUIZ_CASE(pcj_simplification_store_correctly_parsed) {
   store("2→t", symbolStore);
   simplifies_to("t", "2", projCtx, false);
 }
+
+QUIZ_CASE(pcj_simplification_capped) {
+#ifdef POINCARE_MAX_TREE_SIZE_FOR_SIMPLIFICATION
+  Tree* bigTree = KFloor->cloneNode();
+  const Tree* almostBigTree = KFloor->cloneNode();
+  for (int i = 2; i < POINCARE_MAX_TREE_SIZE_FOR_SIMPLIFICATION; i++) {
+    KFloor->cloneNode();
+  }
+  (1_e)->cloneTree();
+
+  Tree* simplifiedAlmostBigTree = almostBigTree->cloneTree();
+  quiz_assert(
+      Simplification::Simplify(simplifiedAlmostBigTree, ProjectionContext()));
+  quiz_assert(simplifiedAlmostBigTree->treeIsIdenticalTo(1_e));
+  simplifiedAlmostBigTree->removeTree();
+
+  quiz_assert(!Simplification::Simplify(bigTree, ProjectionContext()));
+#endif
+}

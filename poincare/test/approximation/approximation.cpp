@@ -321,3 +321,20 @@ QUIZ_CASE(pcj_prepare_expression) {
                                 KAdd(KMult(KVarX, KContinuousVar<k_varId>),
                                      KPow(KContinuousVar<k_varId>, 2_e))));
 }
+
+QUIZ_CASE(pcj_approximation_capped) {
+#ifdef POINCARE_MAX_TREE_SIZE_FOR_APPROXIMATION
+  const Tree* bigTree = KFloor->cloneNode();
+  const Tree* almostBigTree = KFloor->cloneNode();
+  for (int i = 2; i < POINCARE_MAX_TREE_SIZE_FOR_APPROXIMATION; i++) {
+    KFloor->cloneNode();
+  }
+  (1_e)->cloneTree();
+
+  quiz_assert(Approximation::ToComplex<float>(
+                  almostBigTree, Approximation::Parameters()) == 1.f);
+  quiz_assert(std::isnan(
+      Approximation::ToComplex<float>(bigTree, Approximation::Parameters())
+          .real()));
+#endif
+}

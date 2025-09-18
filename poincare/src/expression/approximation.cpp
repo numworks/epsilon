@@ -389,7 +389,7 @@ std::complex<T> Private::PrivateRootToComplex(const Tree* e,
   }
 #endif
 #if POINCARE_NO_FLOAT_APPROXIMATION
-  return PrivateToComplex<double>(e, ctx);
+  return static_cast<std::complex<T>>(PrivateToComplex<double>(e, ctx));
 #else
   return PrivateToComplex<T>(e, ctx);
 #endif
@@ -1890,8 +1890,10 @@ template std::complex<float> Private::PrivateRootToComplex(const Tree*,
 template std::complex<double> Private::PrivateRootToComplex(const Tree*,
                                                             const Context*);
 
+#if !POINCARE_NO_FLOAT_APPROXIMATION
 template std::complex<float> Private::PrivateToComplex(const Tree*,
                                                        const Context*);
+#endif
 template std::complex<double> Private::PrivateToComplex(const Tree*,
                                                         const Context*);
 

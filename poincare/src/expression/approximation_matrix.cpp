@@ -25,8 +25,10 @@ std::complex<T> ApproximateTrace(const Tree* e, const Context* ctx) {
   return result;
 }
 
+#if !POINCARE_NO_FLOAT_APPROXIMATION
 template std::complex<float> ApproximateTrace<float>(const Tree* matrix,
                                                      const Context* ctx);
+#endif
 template std::complex<double> ApproximateTrace<double>(const Tree* matrix,
                                                        const Context* ctx);
 

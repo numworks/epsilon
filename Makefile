@@ -5,7 +5,7 @@ subdir_combined_make_call:
 	@for subdir in $(SUBDIRS); do \
 		targets=`echo $(MAKECMDGOALS) | xargs -n1 | grep -E "^$${subdir}" | xargs`; \
 		if [ -n "$$targets" ]; then \
-			$(MAKE) -C $$subdir $$targets; \
+			$(MAKE) -C $$subdir $$targets || exit 1; \
 		fi; \
 	done
 

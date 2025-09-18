@@ -114,7 +114,7 @@ Tree* Layouter::LayoutExpression(const Tree* expression,
     switch (exc) {
       case ExceptionType::TreeStackOverflow:
       case ExceptionType::IntegerOverflow:
-        return UnsafeLayoutExpression(KUndef->cloneTree(), params);
+        return UnsafeLayoutExpression(KUndef, params);
       default:
         TreeStackCheckpoint::Raise(exc);
     }

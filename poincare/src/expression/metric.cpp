@@ -86,7 +86,12 @@ static float ChildCoeffOffsetInLnOrRoot(const Tree* child,
     assert(sum != 1.f);
     if (inRoot) {
       // In roots, √(11)*√(2) should not be favored over √(22)
+#if !POINCARE_NO_FLOAT_APPROXIMATION
       return 2.f * std::log(sum);
+#else
+      // Save firmware size by not using std::log float implementation
+      return 2.f * std::log(static_cast<double>(sum));
+#endif
     } else {
       return 4.f * (sum - 1.f);
     }

@@ -35,7 +35,8 @@ SFLAGS += \
   -DION_DISPLAY_HEIGHT=1000 \
   -DION_DISPLAY_BORDER=0 \
   -DION_KEYBOARD_COLUMNS=6 \
-  -DION_KEYBOARD_ROWS=9
+  -DION_KEYBOARD_ROWS=9 \
+  -DION_KEYBOARD_HAS_ALPHA=1
 
 $(call import_module,liba,../../shared/liba)
 $(call import_module,omg,../../shared/omg)

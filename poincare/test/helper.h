@@ -245,7 +245,7 @@ inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
   Poincare::Internal::Tree* e = parse(function);
   Poincare::Internal::Simplification::ToSystem(e, &ctx);
   Poincare::Internal::Approximation::PrepareFunctionForApproximation(
-      e, k_symbol, ctx.m_complexFormat);
+      e, k_symbol, ctx.m_complexFormat == Poincare::ComplexFormat::Real);
   return e;
 }
 

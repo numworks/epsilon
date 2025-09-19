@@ -296,8 +296,7 @@ QUIZ_CASE(pcj_approximation_context) {
 // Use projected trees
 void assert_function_prepares_to(const Tree* input, const Tree* expected) {
   Tree* clone = input->cloneTree();
-  Approximation::PrepareFunctionForApproximation(clone, "x",
-                                                 ComplexFormat::Real);
+  Approximation::PrepareFunctionForApproximation(clone, "x", true);
   assert_trees_are_equal(clone, expected);
 }
 

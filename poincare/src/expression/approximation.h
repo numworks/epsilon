@@ -166,7 +166,7 @@ T ToLocalContext(const Tree* e, const Context* ctx, T x);
 
 // Optimize a projected function for efficient approximations
 void PrepareFunctionForApproximation(Tree* e, const char* variable,
-                                     ComplexFormat complexFormat);
+                                     bool variableIsReal);
 
 // Return false if e cannot be approximated to a defined value.
 bool CanApproximate(const Tree* e, bool approxLocalVar = false);

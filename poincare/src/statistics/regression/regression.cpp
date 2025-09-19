@@ -51,8 +51,7 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
   ProjectionContext projectionContext = ProjectionContext{
       .m_complexFormat = ComplexFormat::Real, .m_angleUnit = angleUnit()};
   Internal::Simplification::ToSystem(diff, &projectionContext);
-  Approximation::PrepareFunctionForApproximation(diff, "x",
-                                                 ComplexFormat::Real);
+  Approximation::PrepareFunctionForApproximation(diff, "x", true);
   // TODO: use y+evaluate() instead of yTree+e in nextIntersection
   Poincare::Solver solver = Poincare::Solver(xMin, xMax, symbolContext);
   solver.stretch();

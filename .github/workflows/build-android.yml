@@ -17,13 +17,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup
-        run: tools/setup.sh --only-simulator
-      - name: Build
-        run: make -C epsilon DEBUG=$DEBUG PLATFORM=simulator TARGET=android epsilon.apk
-      - name: Optimize ()
-        # Optimize twice since first try will fail.
-        run: $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 $OUTPUT_PATH/epsilon.apk $OUTPUT_PATH/epsilon_temp.apk ; $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 $OUTPUT_PATH/epsilon_temp.apk $OUTPUT_PATH/epsilon_optimized.apk
+      - name: Build container and define DOCKER_RUN
+        uses: ./.github/actions/docker-builder
+        with:
+          platform: ${{ matrix.platform == 'u0-discovery' && 'device' || matrix.platform }}
+      - run: $DOCKER_RUN "make -C epsilon CCACHE=0 PLATFORM=android ANDROID_HOME=/opt/android-sdk ASSERTIONS=1 epsilon.apk.opt"
         # Delete temporary files.
       - run: rm $OUTPUT_PATH/epsilon_temp.apk $OUTPUT_PATH/epsilon.apk
       - name: Upload apk

@@ -12,6 +12,7 @@
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/systematic_reduction.h>
+#include <poincare/src/expression/trigonometry.h>
 #include <poincare/src/expression/units/representatives.h>
 #include <poincare/src/expression/units/unit.h>
 #include <poincare/src/layout/layouter.h>
@@ -44,7 +45,13 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
    * Use the reduction of frac part to compute modulo. */
   Tree* simplifiedAngle = PatternMatching::Create(
       KMult(KFrac(KDiv(KA, KB)), KB), {.KA = exactAngle, .KB = period});
-  bool reductionSuccess = Simplification::Simplify(simplifiedAngle, *ctx);
+  ProjectionContext ctxCopy{*ctx};
+  Poincare::Internal::Dimension dim =
+      Simplification::ProjectAndReduce(simplifiedAngle, &ctxCopy);
+  bool isRationalOrMultipleOfPi =
+      simplifiedAngle->isRational() ||
+      Internal::Trigonometry::GetPiFactor(simplifiedAngle) != nullptr;
+  Simplification::BeautifyReduced(simplifiedAngle, &ctxCopy, dim);
 
   Tree* approximateAngleTree = nullptr;
   if (!directTrigonometry) {
@@ -58,14 +65,10 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   }
 
   /* Approximate the angle if:
-   * - Reduction was unsuccessful
-   * - The fractional part could not be reduced
+   * - The angle is not a multiple of pi
    * - Displaying the exact expression is forbidden. */
   bool angleIsExact = true;
-  if (!reductionSuccess ||
-      simplifiedAngle->hasDescendantSatisfying([](const Tree* e) {
-        return e->isFrac() || e->isCeil() || e->isFloor();
-      }) ||
+  if (!isRationalOrMultipleOfPi ||
       shouldOnlyDisplayApproximation(
           exactAngle,
           UserExpression::Builder(static_cast<const Tree*>(simplifiedAngle)),
@@ -124,8 +127,8 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
     approximateAngleTree->removeTree();
   }
   simplifiedAngle->removeTree();
-  approximatedAngle =
-      Trigonometry::ConvertAngleToRadian(approximatedAngle, ctx->m_angleUnit);
+  approximatedAngle = Poincare::Trigonometry::ConvertAngleToRadian(
+      approximatedAngle, ctx->m_angleUnit);
   assert(0.0 <= approximatedAngle && approximatedAngle <= 2.0 * M_PI);
   return {.exactAngle = exactAngle,
           .approximatedAngle = approximatedAngle,

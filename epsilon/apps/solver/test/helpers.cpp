@@ -5,6 +5,7 @@
 #include <limits.h>
 #include <poincare/context_with_parent.h>
 #include <poincare/helpers/store.h>
+#include <poincare/print.h>
 #include <poincare/test/float_helper.h>
 #include <poincare/test/helper.h>
 #include <quiz.h>
@@ -82,8 +83,13 @@ void assert_solves_with_range_to(const char* equation, double min, double max,
           }
           assert(system->numberOfSolutions() == i);
         } else {
-          // Number of solutions doesn't match
-          quiz_assert(false);
+          constexpr int bufferSize = 75;
+          char buffer[bufferSize];
+          Print::CustomPrintf(
+              buffer, bufferSize,
+              "Number of solutions doesn't match: %i instead of %i",
+              system->numberOfSolutions(), solutions.size());
+          quiz_assert_print_if_failure(false, buffer);
         }
       });
 }

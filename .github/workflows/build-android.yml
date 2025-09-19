@@ -8,31 +8,27 @@ on:
 
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS }}
-  DEBUG: ${{ fromJSON(github.event.inputs.debug) && '1' || '0' }}
-  OUTPUT_PATH: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/simulator/android
 
 jobs:
   build:
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
         with:
-          platform: ${{ matrix.platform == 'u0-discovery' && 'device' || matrix.platform }}
-      - run: $DOCKER_RUN "make -C epsilon CCACHE=0 PLATFORM=android ANDROID_HOME=/opt/android-sdk ASSERTIONS=1 epsilon.apk.opt"
-        # Delete temporary files.
-      - run: rm $OUTPUT_PATH/epsilon_temp.apk $OUTPUT_PATH/epsilon.apk
+          platform: android
+      - run: $DOCKER_RUN "make -C epsilon DEBUG=${{ fromJSON(github.event.inputs.debug) && '1' || '0' }} CCACHE=0 PLATFORM=android epsilon_aligned.apk"
       - name: Upload apk
         uses: actions/upload-artifact@v4
         with:
           name: unsigned-epsilon-android.apk
-          path: $OUTPUT_PATH/epsilon_optimized.apk
+          path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/android/epsilon_aligned.apk
           retention-days: 7
       - name: Upload debug symbols
         uses: actions/upload-artifact@v4
         with:
           name: android-debug-symbols.zip
-          path: $OUTPUT_PATH/app/outputs/native-debug-symbols/release/native-debug-symbols.zip
+          path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/android/app/outputs/native-debug-symbols/release/native-debug-symbols.zip
           retention-days: 7

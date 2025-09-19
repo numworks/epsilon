@@ -51,7 +51,7 @@ jobs:
         uses: ./.github/actions/docker-builder
         with:
           platform: android
-      - run: $DOCKER_RUN "make -C epsilon CCACHE=0 PLATFORM=android ANDROID_HOME=/opt/android-sdk ASSERTIONS=1 epsilon_aligned.apk"
+      - run: $DOCKER_RUN "make -C epsilon CCACHE=0 PLATFORM=android ASSERTIONS=1 epsilon_aligned.apk"
         # TODO test.apk
       - uses: actions/upload-artifact@master
         with:

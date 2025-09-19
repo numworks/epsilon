@@ -4,6 +4,7 @@
 #include <omg/unreachable.h>
 #include <omg/utf8_helper.h>
 #include <poincare/comparison_operator.h>
+#include <poincare/helpers/layout.h>
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/decimal.h>
@@ -131,6 +132,9 @@ Tree* Layouter::UnsafeLayoutExpression(const Tree* expression,
                              layouter.requireSeparators(expression);
   layouter.layoutExpression(rack, expression, k_maxPriority);
   StripUselessPlus(rack);
+  if (params.useTenPowerInsteadOfE) {
+    Poincare::LayoutHelpers::TurnEToTenPowerLayout(rack, layouter.linearMode());
+  }
   return rack;
 }
 

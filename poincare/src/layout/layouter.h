@@ -28,11 +28,16 @@ struct LayouterParameters {
   // Only used to decide whether a unit should be layoutted with '_' prefix
   const SymbolContext& symbolContext = k_emptySymbolContext;
 #endif
-  LayouterMode layouterMode;
+  LayouterMode layouterMode = LayouterMode::Natural;
   int numberOfSignificantDigits =
       PrintFloat::k_undefinedNumberOfSignificantDigits;
   Preferences::PrintFloatMode floatMode = Preferences::PrintFloatMode::Decimal;
   OMG::Base base = OMG::Base::Decimal;
+#if POINCARE_NO_E_EXPONENT
+  static constexpr bool useTenPowerInsteadOfE = true;
+#else
+  bool useTenPowerInsteadOfE = false;
+#endif
 };
 
 class Layouter {

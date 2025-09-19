@@ -210,6 +210,7 @@ bool CalculationParameterController::shouldDisplayAreaCell() const {
   /* Area between curves is displayed if there is at least two derivable
    * functions. */
   return function()->properties().isCartesian() &&
+         !function()->properties().isOfDegreeTwo() &&
          store->numberOfAreaCompatibleFunctions() > 1;
 }
 

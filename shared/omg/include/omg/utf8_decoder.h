@@ -71,8 +71,9 @@ class UTF8Decoder : public UnicodeDecoder {
   }
 
   UTF8Decoder(std::string_view stringView, size_t initialPosition = 0,
-              size_t end = -1)
-      : UnicodeDecoder(initialPosition, end == -1 ? stringView.length() : end),
+              size_t end = -1)  // use -1 for size_t max
+      : UnicodeDecoder(initialPosition,
+                       end == (size_t)-1 ? stringView.length() : end),
         m_string(stringView.data()) {
     assert(stringView.data() != nullptr);
   }

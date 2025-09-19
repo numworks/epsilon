@@ -74,12 +74,17 @@ void assert_solves_with_range_to(const char* equation, double min, double max,
         if (variable) {
           quiz_assert(strcmp(system->unknownVariable(0), variable) == 0);
         }
-        size_t i = 0;
-        for (double solution : solutions) {
-          assert_roughly_equal(system->solution(i++)->approximate(), solution,
-                               1E-5);
+        if (solutions.size() == system->numberOfSolutions()) {
+          size_t i = 0;
+          for (double solution : solutions) {
+            assert_roughly_equal(system->solution(i++)->approximate(), solution,
+                                 1E-5);
+          }
+          assert(system->numberOfSolutions() == i);
+        } else {
+          // Number of solutions doesn't match
+          quiz_assert(false);
         }
-        quiz_assert(system->numberOfSolutions() == i);
       });
 }
 

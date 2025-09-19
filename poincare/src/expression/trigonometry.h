@@ -18,6 +18,7 @@ class Trigonometry final {
 
   static bool ReduceArgumentToPrincipal(Tree* e);
   static Type GetInverseType(Type type);
+  static const Tree* GetPiFactor(const Tree* e);
 
  private:
   static bool ReduceTrigSecondElement(Tree* e, bool* isOpposed);

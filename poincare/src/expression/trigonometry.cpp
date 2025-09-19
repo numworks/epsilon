@@ -97,7 +97,7 @@ bool Trigonometry::ReduceTrigDiff(Tree* e) {
 }
 
 // If e is of the form π*n, return n.
-const Tree* getPiFactor(const Tree* e) {
+const Tree* Trigonometry::GetPiFactor(const Tree* e) {
   if (e->treeIsIdenticalTo(π_e)) {
     return 1_e;
   }
@@ -190,7 +190,7 @@ static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
  * r*π with r rational */
 bool Trigonometry::ReduceArgumentToPrincipal(Tree* e) {
   assert(GetComplexSign(e).isReal());
-  const Tree* piFactor = getPiFactor(e);
+  const Tree* piFactor = GetPiFactor(e);
   if (piFactor) {
     TreeRef simplifiedPiFactor =
         computeSimplifiedPiFactorForType(piFactor, Type::Arg);
@@ -234,7 +234,7 @@ bool Trigonometry::ReduceTrig(Tree* e) {
       isOpposed = !isOpposed;
     }
   }
-  const Tree* piFactor = getPiFactor(firstArgument);
+  const Tree* piFactor = GetPiFactor(firstArgument);
   /* TODO: Maybe the exact trigonometric values should be replaced in advanced
    *        reduction. */
   if (piFactor) {
@@ -344,7 +344,7 @@ static Tree* ReduceATrigOfTrig(const Tree* arg, Type type) {
     }
   } else {
     // x = π*y
-    const Tree* rationalPiFactor = getPiFactor(arg);
+    const Tree* rationalPiFactor = Trigonometry::GetPiFactor(arg);
     TreeRef reducedPiFactor;
     if (rationalPiFactor) {
       reducedPiFactor =
@@ -454,9 +454,9 @@ static Tree* GetAtanTanArg(const Tree* e) {
      * cos(a), so b can't be a mult with -1 factor. */
     return a->cloneTree();
   }
-  const Tree* aFactor = getPiFactor(a);
-  // Skip getPiFactor if aFactor is nullptr
-  const Tree* bFactor = aFactor ? getPiFactor(b) : nullptr;
+  const Tree* aFactor = Trigonometry::GetPiFactor(a);
+  // Skip GetPiFactor if aFactor is nullptr
+  const Tree* bFactor = aFactor ? Trigonometry::GetPiFactor(b) : nullptr;
   if (!bFactor) {
     return nullptr;
   }

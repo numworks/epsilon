@@ -73,6 +73,44 @@ def run_test(scenario_name, state_file, executable, computed_crc32_list):
     computed_crc32_list.append((scenario_name, find_crc32_in_log(p.stdout)))
 
 
+def take_screenshot(
+    scenario_name, state_file, output_folder, args, computed_crc32, reference_crc32_file
+):
+    # Create output subfolder
+    output_scenario_folder = os.path.join(output_folder, scenario_name)
+    os.mkdir(output_scenario_folder)
+
+    # Generate all screenshots and create a gif
+    print_underlined("Tested executable")
+    computed_folder = os.path.join(output_scenario_folder, "computed")
+    list_computed_images = generate_all_screenshots_and_create_gif(
+        state_file, args.executable, computed_folder
+    )
+    store_crc32(computed_crc32, os.path.join(computed_folder, "crc32.txt"))
+
+    # Compare with ref
+    if args.ref is not None:
+        print_underlined("Reference executable")
+        reference_folder = os.path.join(output_scenario_folder, "reference")
+        list_reference_images = generate_all_screenshots_and_create_gif(
+            state_file, args.ref, reference_folder
+        )
+        shutil.copy(reference_crc32_file, os.path.join(reference_folder, "crc32.txt"))
+
+        # Generate diff gif
+        print_underlined("Diff")
+        create_diff_gif(
+            list_reference_images, list_computed_images, output_scenario_folder
+        )
+
+    if args.update:
+        # Update crc32
+        print_underlined("Updating crc32")
+        store_crc32(computed_crc32, reference_crc32_file)
+
+    print("--------")
+
+
 def main():
     # Parse args
     args = parser.parse_args()
@@ -132,77 +170,59 @@ def main():
     print("==============================")
     fails = 0
     count = 0
-    for scenario_name, computed_crc32 in computed_crc32_list:
-        scenario_folder = folder(scenario_name, dataset)
-        assert os.path.isdir(scenario_folder)
-        state_file = get_file_with_extension(scenario_folder, ".nws")
-        assert state_file != ""
-        reference_crc32_file = get_file_with_extension(scenario_folder, ".txt")
-        assert reference_crc32_file != ""
 
-        with open(reference_crc32_file) as f:
-            reference_crc32 = f.read().splitlines()
+    try:
+        with ThreadPoolExecutor(max_workers=os.cpu_count()) as pool:
+            for scenario_name, computed_crc32 in computed_crc32_list:
+                scenario_folder = folder(scenario_name, dataset)
+                assert os.path.isdir(scenario_folder)
+                state_file = get_file_with_extension(scenario_folder, ".nws")
+                assert state_file != ""
+                reference_crc32_file = get_file_with_extension(scenario_folder, ".txt")
+                assert reference_crc32_file != ""
 
-        success = False
-        if len(reference_crc32) in [1, 2]:
-            # Compare crc32
-            success = computed_crc32 in reference_crc32
-        else:
-            # There can be several lines if crc32 differs between computer architectures
-            # TODO: fix inconsistent approximation accross platforms to only have one crc32
-            print(
-                bold("Error:"),
-                reference_crc32_file,
-                "contains",
-                len(reference_crc32),
-                "lines",
-            )
+                with open(reference_crc32_file) as f:
+                    reference_crc32 = f.read().splitlines()
 
-        # Print report
-        count = count + 1
-        if success:
-            print("Comparing crc32 of", scenario_name, bold(green("OK")))
-        else:
-            fails = fails + 1
-            print("Comparing crc32 of", scenario_name, bold(red("FAILED")))
+                success = False
+                if len(reference_crc32) in [1, 2]:
+                    # Compare crc32
+                    success = computed_crc32 in reference_crc32
+                else:
+                    # There can be several lines if crc32 differs between computer architectures
+                    # TODO: fix inconsistent approximation accross platforms to only have one crc32
+                    print(
+                        bold("Error:"),
+                        reference_crc32_file,
+                        "contains",
+                        len(reference_crc32),
+                        "lines",
+                    )
 
-        # Take screenshot at each step
-        if not success and not args.no_screenshots:
-            # Create output subfolder
-            output_scenario_folder = os.path.join(output_folder, scenario_name)
-            os.mkdir(output_scenario_folder)
+                # Print report
+                count = count + 1
+                if success:
+                    print("Comparing crc32 of", scenario_name, bold(green("OK")))
+                else:
+                    fails = fails + 1
+                    print("Comparing crc32 of", scenario_name, bold(red("FAILED")))
 
-            # Generate all screenshots and create a gif
-            print_underlined("Tested executable")
-            computed_folder = os.path.join(output_scenario_folder, "computed")
-            list_computed_images = generate_all_screenshots_and_create_gif(
-                state_file, args.executable, computed_folder
-            )
-            store_crc32(computed_crc32, os.path.join(computed_folder, "crc32.txt"))
+                # Take screenshot at each step
+                if not success and not args.no_screenshots:
+                    pool.submit(
+                        take_screenshot,
+                        scenario_name,
+                        state_file,
+                        output_folder,
+                        args,
+                        computed_crc32,
+                        reference_crc32_file,
+                    )
 
-            # Compare with ref
-            if args.ref is not None:
-                print_underlined("Reference executable")
-                reference_folder = os.path.join(output_scenario_folder, "reference")
-                list_reference_images = generate_all_screenshots_and_create_gif(
-                    state_file, args.ref, reference_folder
-                )
-                shutil.copy(
-                    reference_crc32_file, os.path.join(reference_folder, "crc32.txt")
-                )
-
-                # Generate diff gif
-                print_underlined("Diff")
-                create_diff_gif(
-                    list_reference_images, list_computed_images, output_scenario_folder
-                )
-
-            if args.update:
-                # Update crc32
-                print_underlined("Updating crc32")
-                store_crc32(computed_crc32, reference_crc32_file)
-
-            print("--------")
+    except KeyboardInterrupt:
+        pool.shutdown(cancel_futures=True)
+        print("^C")
+        sys.exit(1)
 
     # Print report
     print("==============================")

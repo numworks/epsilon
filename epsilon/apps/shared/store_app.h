@@ -4,7 +4,7 @@
 #include <apps/shared/math_app.h>
 #include <apps/shared/store_controller.h>
 #include <escher/tab_view_data_source.h>
-#include <poincare/src/memory/block.h>
+#include <poincare/tree.h>
 
 namespace Shared {
 

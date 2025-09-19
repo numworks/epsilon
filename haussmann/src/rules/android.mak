@@ -29,12 +29,12 @@ $(OUTPUT_DIRECTORY)/%.apk: $$(_ion_simulator_assets) $(_apk_deps)
 
 $(call document_extension,apk)
 
-%.apk.opt: $(OUTPUT_DIRECTORY)/%.apk.opt
+%_aligned.apk: $(OUTPUT_DIRECTORY)/%_aligned.apk
 	:
 
-$(OUTPUT_DIRECTORY)/%.apk.opt: $(OUTPUT_DIRECTORY)/%.apk
+$(OUTPUT_DIRECTORY)/%_aligned.apk: $(OUTPUT_DIRECTORY)/%.apk
 	$(call rule_label,ZIPALGN)
 	$(BUILD_TOOLS_PATH)/zipalign -f 4 $< $@.temp; $(BUILD_TOOLS_PATH)/zipalign -f 4 $@.temp $@
 
 
-$(call document_extension,.apk.opt,Zipaligned APK)
+$(call document_other_target,<project>_aligned.apk,Zipaligned APK)

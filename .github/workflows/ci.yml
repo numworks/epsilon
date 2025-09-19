@@ -51,12 +51,12 @@ jobs:
         uses: ./.github/actions/docker-builder
         with:
           platform: android
-      - run: $DOCKER_RUN "make -C epsilon CCACHE=0 PLATFORM=android ANDROID_HOME=/opt/android-sdk ASSERTIONS=1 epsilon.apk"
+      - run: $DOCKER_RUN "make -C epsilon CCACHE=0 PLATFORM=android ANDROID_HOME=/opt/android-sdk ASSERTIONS=1 epsilon_aligned.apk"
         # TODO test.apk
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-android.apk
-          path: epsilon/output/debug/optimized/android/epsilon.apk
+          path: epsilon/output/debug/optimized/android/epsilon_aligned.apk
   device:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}

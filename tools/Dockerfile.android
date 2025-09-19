@@ -13,12 +13,10 @@ COPY tools/setup.sh tools/setup.sh
 
 RUN tools/setup.sh --ci
 
-RUN apt-get install sdkmanager
-RUN sdkmanager "ndk;27.2.12479018" "build-tools;29.0.2"
+RUN apt-get install sdkmanager openjdk-17-jdk
 
-RUN apt-get install openjdk-17-jdk
-
-RUN sdkmanager "platforms;android-34" "build-tools;30.0.2"
+# For some reason gradle decides to install the second build-tools version
+RUN sdkmanager "ndk;28.2.13676358" "platforms;android-35" "build-tools;30.0.2" "build-tools;35.0.0"
 
 ENV PYTHON=/runner/.venv/bin/python
 

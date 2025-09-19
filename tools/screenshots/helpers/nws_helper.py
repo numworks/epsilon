@@ -72,7 +72,7 @@ def convert_nws_to_txt(nwspath, txtpath=None):
     f.close()
 
 
-def convert_txt_to_nws(txtpath, nwspath, filter=[]):
+def convert_txt_to_nws(txtpath, nwspath=None, filter=[]):
     if not os.path.isfile(txtpath) or os.path.splitext(txtpath)[1] != ".txt":
         raise argparse.ArgumentTypeError(txtpath + " is not a .txt")
 
@@ -107,12 +107,17 @@ def convert_txt_to_nws(txtpath, nwspath, filter=[]):
                 events.append(b"\x00")
                 pass
 
-    with open(nwspath, "wb") as f:
-        f.write(BIN_HEADER)
-        f.write(version.encode())
-        f.write(bytes([formatVersion]))
-        f.write(language.encode())
-        for e in events:
-            f.write(e)
+    if nwspath is None:
+        f = sys.stdout.buffer
+    else:
+        f = open(txtpath, "wb")
+
+    f.write(BIN_HEADER)
+    f.write(version.encode())
+    f.write(bytes([formatVersion]))
+    f.write(language.encode())
+    for e in events:
+        f.write(e)
+    f.close()
 
     return filteredEvents

@@ -124,7 +124,7 @@ bool Variables::LeaveScopeWithReplacement(Tree* e, const Tree* value,
 bool Variables::Replace(Tree* e, const Tree* variable, const Tree* value,
                         bool reduce) {
   assert(variable->isVar());
-  return Replace(e, Id(variable), value, reduce);
+  return Replace(e, Id(variable), value, false, reduce);
 }
 
 bool Variables::Replace(Tree* e, int id, const Tree* value, bool leave,

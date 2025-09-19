@@ -906,8 +906,7 @@ SolverResult ApproximateSolve(const Tree* equationList,
 
   assert(equationMetadata.unknownVariables.size() == 1);
   Approximation::PrepareFunctionForApproximation(
-      preparedEquation, equationMetadata.unknownVariables[0],
-      ComplexFormat::Real);
+      preparedEquation, equationMetadata.unknownVariables[0], true);
 
   // Step 2. Compute the solving range if not provided
   if (range.isNan()) {

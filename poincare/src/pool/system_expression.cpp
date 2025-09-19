@@ -207,8 +207,7 @@ PreparedFunction SystemExpression::getPreparedFunction(const char* symbolName,
       (!dimension.isScalar() && !dimension.isPoint())) {
     result->cloneTreeOverTree(KUndef);
   } else {
-    Approximation::PrepareFunctionForApproximation(result, symbolName,
-                                                   ComplexFormat::Real);
+    Approximation::PrepareFunctionForApproximation(result, symbolName, true);
   }
   return PreparedFunction::Builder(result);
 }

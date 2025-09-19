@@ -2,8 +2,9 @@
 
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/src/memory/tree.h>
+#include <poincare/src/memory/block.h>
 #include <poincare/symbol_context.h>
+#include <poincare/tree.h>
 
 using namespace Poincare;
 

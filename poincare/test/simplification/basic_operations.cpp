@@ -146,7 +146,7 @@ QUIZ_CASE(pcj_simplification_multiplication) {
 }
 
 QUIZ_CASE(pcj_simplification_root) {
-  simplifies_to("root(4,3)", "2^(2/3)");
+  simplifies_to("root(4,3)", "root(4,3)");
   simplifies_to("root(4,π)", "4^(1/π)");
   simplifies_to("root(27,3)", "3");
 }

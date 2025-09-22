@@ -19,6 +19,7 @@ ListParameterController::ListParameterController(ListController* listController)
                                       I18n::Message::DeleteSequence, this),
       m_firstRankCell(&m_selectableListView, this) {
   m_firstRankCell.label()->setMessage(I18n::Message::FirstTermIndex);
+  m_notationCell.label()->setMessage(I18n::Message::SequenceNotation);
 }
 
 const char* ListParameterController::title() const {
@@ -72,7 +73,8 @@ void ListParameterController::listViewDidChangeSelectionAndDidScroll(
 
 HighlightCell* ListParameterController::cell(int row) {
   assert(0 <= row && row < numberOfRows());
-  HighlightCell* const cells[] = {&m_colorCell, &m_firstRankCell, &m_enableCell,
+  HighlightCell* const cells[] = {&m_colorCell, &m_firstRankCell,
+                                  &m_notationCell, &m_enableCell,
                                   &m_deleteCell};
   return cells[row];
 }

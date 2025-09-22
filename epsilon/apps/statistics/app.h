@@ -59,6 +59,8 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
 
   static App* app() { return static_cast<App*>(Escher::App::app()); }
 
+  const char* memoizedFormulaExtension() const override;
+
   Shared::StoreController* storeController() override {
     return &m_tabs.tab<StoreTab>()->m_storeController;
   }

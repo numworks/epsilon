@@ -257,14 +257,13 @@ void StoreController::resetMemoizedFormulasOfEmptyColumns(int series) {
 }
 
 void StoreController::loadMemoizedFormulasFromSnapshot() {
-  for (int i = 0; i < StoreApp::Snapshot::k_numberOfMemoizedFormulas; i++) {
+  for (int i = 0; i < StoreApp::k_numberOfMemoizedFormulas; i++) {
     if (m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(i)) == 0) {
       /* The series could have been emptied outside of the app. If it's the
        * case, reset the memoized formula. */
       m_memoizedFormulas[i] = Layout();
     } else {
-      m_memoizedFormulas[i] =
-          StoreApp::storeApp()->storeAppSnapshot()->memoizedFormula(i);
+      m_memoizedFormulas[i] = StoreApp::storeApp()->memoizedFormula(i);
     }
   }
 }
@@ -272,7 +271,7 @@ void StoreController::loadMemoizedFormulasFromSnapshot() {
 void StoreController::memoizeFormula(const Poincare::Layout& formula,
                                      int index) {
   m_memoizedFormulas[index] = formula;
-  StoreApp::storeApp()->storeAppSnapshot()->memoizeFormula(formula, index);
+  StoreApp::storeApp()->memoizeFormula(formula, index);
 }
 
 void StoreController::setClearPopUpContent() {

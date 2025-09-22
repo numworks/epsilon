@@ -1,5 +1,6 @@
 #include "store_app.h"
 
+#include <ion/storage/record.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/src/memory/block.h>
@@ -10,40 +11,30 @@ using namespace Poincare;
 
 namespace Shared {
 
-StoreApp::Snapshot::Snapshot() {
-  for (int i = 0; i < k_numberOfMemoizedFormulas; i++) {
-    m_memoizedFormulasBuffer[i][0] = 0;
-  }
-}
-
-bool StoreApp::Snapshot::memoizeFormula(Poincare::Layout formula, int index) {
+bool StoreApp::memoizeFormula(Poincare::Layout formula, int index) {
+  // Name memoized formulas from A to Z.
+  static_assert('Z' - 'A' >= k_numberOfMemoizedFormulas);
   assert(index >= 0 && index < k_numberOfMemoizedFormulas);
-  static_assert(!static_cast<Internal::Tree>(Internal::Type(0)).isLayout());
-  /* We use 0 as error
-   * TODO: Create an error block type ? */
+  const char baseName[2] = {static_cast<char>('A' + index), 0};
+  Ion::Storage::Record(baseName, memoizedFormulaExtension()).tryToDestroy();
   if (formula.isUninitialized()) {
-    m_memoizedFormulasBuffer[index][0] = 0;
     return false;
   }
-  size_t size = formula.tree()->treeSize();
-  if (size > k_bufferSize - 1) {
-    // Formula is too long
-    m_memoizedFormulasBuffer[index][0] = 0;
-    return false;
-  }
-  memcpy(m_memoizedFormulasBuffer[index], formula.tree(), size);
-  return true;
+  Ion::Storage::Record::ErrorStatus err =
+      Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
+          baseName, memoizedFormulaExtension(), formula.tree(),
+          formula.tree()->treeSize(), true);
+  return err == Ion::Storage::Record::ErrorStatus::None;
 }
 
-Layout StoreApp::Snapshot::memoizedFormula(int index) const {
-  /* We use 0 as error
-   * TODO: Create an error block type ? */
-  if (m_memoizedFormulasBuffer[index][0] == static_cast<Internal::Block>(0)) {
+Layout StoreApp::memoizedFormula(int index) const {
+  const char baseName[2] = {static_cast<char>('A' + index), 0};
+  Ion::Storage::Record r(baseName, memoizedFormulaExtension());
+  if (r.isNull()) {
     return Poincare::Layout();
   }
-  const Internal::Tree* layoutTree =
-      Internal::Tree::FromBlocks(m_memoizedFormulasBuffer[index]);
-  return Poincare::Layout::Builder(layoutTree);
+  return Poincare::Layout::Builder(
+      static_cast<const Poincare::Internal::Tree*>(r.value().buffer));
 }
 
 }  // namespace Shared

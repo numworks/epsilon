@@ -3,6 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
+#include <ion/storage/record.h>
 
 #include <array>
 
@@ -53,6 +54,10 @@ void App::Snapshot::countryWasUpdated() {
   m_userPreferences.setDisplayOutliers(
       GlobalPreferences::SharedGlobalPreferences()->outliersStatus() ==
       CountryPreferences::OutlierDefaultVisibility::Displayed);
+}
+
+const char* App::memoizedFormulaExtension() const {
+  return Ion::Storage::statisticsMemoizedFormulaExtension;
 }
 
 constexpr static App::Descriptor sDescriptor;

@@ -3,6 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
+#include <ion/storage/record.h>
 
 #include <array>
 
@@ -57,6 +58,10 @@ void App::Snapshot::reset() {
   setActiveTab(0);
   memset(m_regressionTypes, 0, sizeof(m_regressionTypes));
   Shared::SharedApp::Snapshot::reset();
+}
+
+const char* App::memoizedFormulaExtension() const {
+  return Ion::Storage::regressionMemoizedFormulaExtension;
 }
 
 constexpr static App::Descriptor sDescriptor;

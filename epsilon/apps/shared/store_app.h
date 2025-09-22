@@ -11,35 +11,23 @@ namespace Shared {
 class StoreApp : public MathApp {
  public:
   class Snapshot : public Shared::MathApp::Snapshot,
-                   public Escher::TabViewDataSource {
-   public:
-    Snapshot();
-
-    bool memoizeFormula(Poincare::Layout formula, int index);
-    Poincare::Layout memoizedFormula(int index) const;
-
-    constexpr static int k_numberOfMemoizedFormulas =
-        DoublePairStore::k_numberOfColumnsPerSeries *
-        DoublePairStore::k_numberOfSeries;
-
-   private:
-    constexpr static size_t k_bufferSize = Escher::TextField::MaxBufferSize();
-
-    Poincare::Internal::Block
-        m_memoizedFormulasBuffer[k_numberOfMemoizedFormulas][k_bufferSize];
-  };
+                   public Escher::TabViewDataSource {};
 
   static StoreApp* storeApp() {
     return static_cast<StoreApp*>(Escher::App::app());
   }
 
-  Snapshot* storeAppSnapshot() {
-    return static_cast<Snapshot*>(Escher::App::snapshot());
-  }
+  bool memoizeFormula(Poincare::Layout formula, int index);
+  Poincare::Layout memoizedFormula(int index) const;
+
+  constexpr static int k_numberOfMemoizedFormulas =
+      DoublePairStore::k_numberOfColumnsPerSeries *
+      DoublePairStore::k_numberOfSeries;
 
  protected:
   using MathApp::MathApp;
   virtual StoreController* storeController() = 0;
+  virtual const char* memoizedFormulaExtension() const = 0;
 
  private:
   bool storageCanChangeForRecordName(

@@ -15,6 +15,8 @@ constexpr static char sequenceExtension[] = "seq";
 constexpr static char matrixExtension[] = "mat";
 constexpr static char regressionExtension[] = "reg";
 constexpr static char parametricComponentExtension[] = "pc";
+constexpr static char regressionMemoizedFormulaExtension[] = "rgm";
+constexpr static char statisticsMemoizedFormulaExtension[] = "stm";
 constexpr static char systemExtension[] = "sys";
 
 /*  * A record's fullName is baseName.extension.

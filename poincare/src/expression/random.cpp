@@ -51,8 +51,7 @@ uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
     }
     if (descendant->isRandIntNoRep() &&
         currentSeed + size > Context::k_maxNumberOfVariables) {
-      /* RandIntNoRep should not be seeded if its seed won't fit in the Context
-       */
+      // RandIntNoRep should not be seeded if its seed won't fit in the Context
       size = 0;
       // Keep seed 0
     } else {
@@ -68,45 +67,61 @@ uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
   }
   return currentSeed;
 }
+
+/* A Linear Congruential Generator (lcg) is a seeded pseudo-random generator
+ * that yield a fixed sequence of uint32_t starting at a given seed.
+ * The formula is: X(n+1) = A * X(n) + C % M
+ * Since we want M=2^32, we choose A and C accordingly, see
+ * https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use
+ * With this parameters, the LCG as a period of M before repeating.
+ * From a given X(0) (the seed) the sequence X(n) will contain the set of all
+ * uint32_t before repeating (X(0) == X(2^32)) */
+static uint32_t Lcg(uint32_t* state) {
 #define LCG_A 1664525U
 #define LCG_C 1013904223U
-
-static uint32_t Lcg(uint32_t* state) {
   *state = LCG_A * (*state) + LCG_C;
   return *state;
 }
 
+/* [RandIntNoRepInRangeOfIndex] uses the LCG sequence of a given [seed] to
+ * returns an [uint32_t] below [range] that is unique depending on [index]. */
 static uint32_t RandIntNoRepInRangeOfIndex(uint32_t range, uint32_t seed,
                                            uint8_t index) {
-  uint32_t selected[1 << 8];
-  uint32_t sequence_index = 0;
-  uint32_t state = seed;
+  /* The uniqueness of the return value is guarantee by this uint32_t[256]
+   * array. It will store the previously returned values.
+   * i.e.: sequence[i] == RandIntNoRepInRangeOfIndex(range,seed,i)
+   * This approach allows for computing sequentially unique element of a
+   * sequence without any external state, at the cost of recomputing all the
+   * previous term of the sequence each time */
+  uint32_t sequence[1 << 8];
+  uint32_t maxComputedIndex = 0;
+  uint32_t lcgState = seed;
 
-  while (sequence_index <= index) {
-    // next is the next value in the sequence, if not already selected
-    uint32_t next = Lcg(&state) % range;
-    bool already_selected = false;
-    for (uint32_t i = 0; i < sequence_index; i++) {
-      if (selected[i] == next) {
-        already_selected = true;
+  assert(index < range);
+
+  while (maxComputedIndex <= index) {
+    /* [Lcg] computes and returns the next state i.e. the next value in the LCG
+     * sequence
+     * [nextValueInRange] is the next candidate for the randintnorep value */
+    uint32_t nextValueInRange = Lcg(&lcgState) % range;
+    bool alreadySelected = false;
+    // Check if [next] is already in the [sequence]
+    for (uint32_t i = 0; i < maxComputedIndex; i++) {
+      if (sequence[i] == nextValueInRange) {
+        alreadySelected = true;
         break;
       }
     }
-    if (!already_selected) {
-      selected[sequence_index++] = next;
-      if (sequence_index > index) {
-        return next;
+    if (!alreadySelected) {
+      sequence[maxComputedIndex++] = nextValueInRange;
+      if (maxComputedIndex > index) {
+        return nextValueInRange;
       }
     }
   }
   OMG::unreachable();
 }
 
-/* Approximate a RandInNoRep tree, this function ignores
- * [approxCtx->m_listElement], instead it uses the parameter [listElement].
- * This hack allows calling this function without needing to make a
- * local copy of the context to changed [m_listElement], because we usually have
- * a [const Context*] */
 double PrivateApproximateRandIntNoRep(const Tree* randInNoRep,
                                       const Approximation::Context* approxCtx,
                                       uint8_t seed) {

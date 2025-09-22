@@ -260,7 +260,7 @@ Poincare::Layout StoreController::memoizedFormula(int index) {
   return StoreApp::storeApp()->memoizedFormula(index);
 }
 
-void StoreController::loadMemoizedFormulasFromSnapshot() {
+void StoreController::updateMemoizedFormulasOfErasedSeries() {
   for (int i = 0; i < StoreApp::k_numberOfMemoizedFormulas; i++) {
     if (m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(i)) == 0) {
       /* The series could have been emptied outside of the app. If it's the

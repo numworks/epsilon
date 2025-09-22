@@ -77,7 +77,7 @@ App::StoreTab::StoreTab()
       m_storeStackViewController(
           &app()->m_tabViewController, &m_storeHeader,
           Escher::StackViewController::Style::WhiteUniform) {
-  m_storeController.loadMemoizedFormulasFromSnapshot();
+  m_storeController.updateMemoizedFormulasOfErasedSeries();
 }
 
 App::GraphTab::GraphTab()

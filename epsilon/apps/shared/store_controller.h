@@ -47,7 +47,7 @@ class StoreController : public EditableCellTableViewController,
   }
   void setClearPopUpContent() override;
 
-  void loadMemoizedFormulasFromSnapshot();
+  void updateMemoizedFormulasOfErasedSeries();
 
  protected:
   constexpr static int k_titleCellType = 0;

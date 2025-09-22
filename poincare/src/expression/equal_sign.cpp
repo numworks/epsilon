@@ -1,10 +1,28 @@
 #include "equal_sign.h"
 
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parser.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 namespace Poincare::Internal {
+
+bool isExpectedExpression(const Tree* expr) {
+  if (PatternMatching::Context ctx;
+      PatternMatching::Match(expr, KMult(KA, KPow(10_e, KB)), &ctx) ||
+      PatternMatching::Match(expr, KPow(10_e, KB), &ctx)) {
+    return (!ctx.getTree(KA) || ctx.getTree(KA)->isDecimal()) &&
+           (ctx.getTree(KB)->isInteger() ||
+            (ctx.getTree(KB)->isOpposite() &&
+             ctx.getTree(KB)->child(0)->isInteger()));
+  }
+  /* Warning this matches a larger class of expression that the actual float
+   * layout outputs. Is the assert useful at all ? */
+  return expr->isRationalOrFloat() || expr->isDecimal() ||
+         ((expr->isOpposite() || expr->isParentheses()) &&
+          isExpectedExpression(expr->child(0)));
+}
 
 bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
                                                     const Tree* approximate) {
@@ -23,9 +41,7 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
     Tree* layout = Layouter::LayoutExpression(approximate);
     Layouter::StripSeparators(layout);
     Tree* parsed = Parser::Parse(layout);
-    assert(parsed->isRationalOrFloat() || parsed->isDecimal() ||
-           (parsed->isOpposite() && (parsed->child(0)->isRationalOrFloat() ||
-                                     parsed->child(0)->isDecimal())));
+    assert(isExpectedExpression(parsed));
     ProjectionContext ctx{.m_advanceReduce = false};
     Simplification::ProjectAndReduce(parsed, &ctx);
     bool result = exact->treeIsIdenticalTo(parsed);

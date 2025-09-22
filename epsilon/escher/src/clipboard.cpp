@@ -94,11 +94,16 @@ Poincare::Layout Clipboard::storedLayout() {
   const char* systemText = Ion::Clipboard::read();
   if (systemText) {
     // TODO: Is it needed to use an expression here ? why not layout directly ?
-    return Poincare::UserExpression::Parse(systemText,
-                                           Poincare::EmptySymbolContext{},
-                                           {.preserveInput = true})
-        .createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
-                      Poincare::PrintFloat::k_maxNumberOfSignificantDigits);
+    Poincare::Layout rawLayout = Poincare::Layout::Parse(systemText);
+    if (rawLayout.isUninitialized()) {
+      return rawLayout;
+    }
+    Poincare::Layout layoutOfExpr =
+        Poincare::UserExpression::Parse(
+            rawLayout, Poincare::EmptySymbolContext{}, {.preserveInput = true})
+            .createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
+                          Poincare::PrintFloat::k_maxNumberOfSignificantDigits);
+    return layoutOfExpr.isUninitialized() ? rawLayout : layoutOfExpr;
   }
   if (m_bufferState == TreeOutdated) {
     updateTreeFromText();

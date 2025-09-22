@@ -69,18 +69,13 @@ class StoreController : public EditableCellTableViewController,
   void setTitleCellStyle(Escher::HighlightCell* titleCell, int column) override;
   int numberOfElementsInColumn(int column) const override;
 
-  Poincare::Layout memoizedFormula(int index) override {
-    return m_memoizedFormulas[index];
-  }
+  Poincare::Layout memoizedFormula(int index) override;
   void resetMemoizedFormulaOfColumn(int series, int column);
   void resetMemoizedFormulasOfEmptyColumns(int series);
   void memoizeFormula(const Poincare::Layout& formula, int index) override;
 
   Escher::PrefacedTableView m_prefacedTableView;
   DoublePairStore* m_store;
-  Poincare::Layout
-      m_memoizedFormulas[DoublePairStore::k_numberOfSeries *
-                         DoublePairStore::k_numberOfColumnsPerSeries];
 
  protected:
   void handleResponderChainEvent(ResponderChainEvent event) override;

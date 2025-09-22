@@ -42,7 +42,7 @@ class ListParameterController : public Shared::ListParameterController,
   constexpr static int k_indexOfFirstRankCell = 1;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfNonInheritedCells() const {
-    return 1;
+    return 2;
   }  // number of non inherited cells
 
   void updateFirstRankCell();
@@ -50,6 +50,9 @@ class ListParameterController : public Shared::ListParameterController,
   Shared::Sequence* sequence() {
     return static_cast<Shared::Sequence*>(function().pointer());
   }
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::ChevronView>
+      m_notationCell;
   Escher::MenuCellWithEditableText<Escher::MessageTextView> m_firstRankCell;
 };
 

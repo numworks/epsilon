@@ -292,9 +292,11 @@ QUIZ_CASE(pcj_simplification_functions_of_lists) {
   simplifies_to("im({1/√(2),1/2,1,-1})", "{0,0,0,0}");
   simplifies_to("im({1,1+i})", "{0,1}");
   simplifies_to("int({0,180},x,1,2)", "{0,180}");
-  simplifies_to("int({x,x^2},x,1,2)", "{int(x,x,1,2),int(x^2,x,1,2)}");
+  simplifies_to("int({x,x^2},x,1,2)", "{3/2,7/3}");
   simplifies_to("int(1,x,{0,1},1)", "{1,0}");
-  simplifies_to("int(x,x,{0,1},1)", "{int(x,x,0,1),int(x,x,1,1)}");
+  simplifies_to("int(x,x,{0,1},1)", "{1/2,0}");
+  simplifies_to("int(abs(x),x,{0,1},1)",
+                "{int(abs(x),x,0,1),int(abs(x),x,1,1)}");
   simplifies_to("log({2,3})", "{log(2),log(3)}");
   simplifies_to("log({2,3},5)", "{log(2,5),log(3,5)}");
   simplifies_to("log(5,{2,3})", "{log(5,2),log(5,3)}");

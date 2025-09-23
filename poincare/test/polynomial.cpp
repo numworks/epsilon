@@ -117,7 +117,8 @@ QUIZ_CASE(pcj_polynomial_degree) {
   assert_polynomial_degree_is(projCtx, "diff(3×x+x,x,x)", 0, "a");
   assert_polynomial_degree_is(projCtx, "(3×x+2)/3", 1);
   assert_polynomial_degree_is(projCtx, "(3×x+2)/x", -1);
-  assert_polynomial_degree_is(projCtx, "int(2×x,x, 0, 1)", -1);
+  assert_polynomial_degree_is(projCtx, "int(2×x,x, 0, 1)", 0);
+  assert_polynomial_degree_is(projCtx, "int(2×cos(x),x, 0, 1)", -1);
   assert_polynomial_degree_is(projCtx, "int(2×x,x, 0, 1)", 0, "a");
   assert_polynomial_degree_is(projCtx, "[[1,2][3,4]]", -1);
   assert_polynomial_degree_is(projCtx, "(x^2+2)×(x+1)", 3);

@@ -415,19 +415,24 @@ QUIZ_CASE(pcj_simplification_derivative_for_approximation) {
 }
 
 QUIZ_CASE(pcj_simplification_integral) {
+  // Constants
   simplifies_to("int(3*π,x,0,1)", "3×π");
   simplifies_to("int(3a,x,-2,2)", "12×a");
-  simplifies_to("int(x+x,x,-1,1)", "2×int(x,x,-1,1)");
-  simplifies_to("int(3x^2+x-15,x,-2,1)", "-45+3×int(x^2,x,-2,1)+int(x,x,-2,1)");
+  // Addition and constants
   simplifies_to("int(6e^x+sin(x),x,1,3)",
                 "int(sin(x),x,1,3)+6×int(e^(x),x,1,3)");
-  simplifies_to("int((x-3)(x+1),x,1,2)", "-3+int(x^2,x,1,2)-2×int(x,x,1,2)");
-  simplifies_to("int(x*e^x,x,0,0)", "int(e^(x)×x,x,0,0)");
-  simplifies_to("diff(int(x^2*t/2,t,0,1),x,y)",
-                "dep(y×int(t,t,0,1),{real((y^2×int(t,t,0,1))/2)})");
-  simplifies_to("diff(int(x^2/2+t,t,0,1),x,y)",
-                "dep(y,{real(y^2/2+int(t,t,0,1))})");
-  simplifies_to("int(diff(x^2,x,x),x,0,1)", "2×int(x,x,0,1)");
-  simplifies_to("int(tan(x),x,0,x)", "int(tan(x),x,0,x)");
   simplifies_to("int(arccot(x),x,0,x)", "(π×x)/2-int(arctan(x),x,0,x)");
+  // Polynoms
+  simplifies_to("int(x,x,0,5/2)", "25/8");
+  simplifies_to("int(x+x,x,-1,1)", "0");
+  simplifies_to("int(3x^2+x-15,x,-2,1)", "-75/2");
+  simplifies_to("int((x-3)(x+1),x,1,2)", "-11/3");
+  // Derivation of integral
+  simplifies_to("diff(int(x^2*t/2,t,0,1),x,y)", "y/2");
+  simplifies_to("diff(int(x^2/2+t,t,0,1),x,y)", "y");
+  // Integral of derivation
+  simplifies_to("int(diff(x^2,x,x),x,0,1)", "1");
+  // Not reduced
+  simplifies_to("int(x*e^x,x,0,0)", "int(e^(x)×x,x,0,0)");
+  simplifies_to("int(tan(x),x,0,x)", "int(tan(x),x,0,x)");
 }

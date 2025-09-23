@@ -207,7 +207,7 @@ QUIZ_CASE(pcj_simplification_complex_format) {
   simplifies_to("gcd(x,gcd(y,z))", "gcd(x,y,z)", k_cartesianCtx);
   simplifies_to("gcd(3, 1, 2, x, x^2)", "gcd(1,x^2,x)", k_cartesianCtx);
   simplifies_to("im(1+i)", "1", k_cartesianCtx);
-  simplifies_to("int(x^2, x, 1, 2)", "int(x^2,x,1,2)", k_cartesianCtx);
+  simplifies_to("int(x^2, x, 1, 2)", "7/3", k_cartesianCtx);
   simplifies_to("lcm(x,y)", "lcm(x,y)", k_cartesianCtx);
   simplifies_to("lcm(x,lcm(y,z))", "lcm(x,y,z)", k_cartesianCtx);
   simplifies_to("lcm(3, 1, 2, x, x^2)", "lcm(6,x^2,x)", k_cartesianCtx);

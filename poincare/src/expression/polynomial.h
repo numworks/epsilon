@@ -116,54 +116,6 @@ class PolynomialParser final {
 
  private:
   static std::pair<Tree*, uint8_t> ParseMonomial(Tree* e, const Tree* variable);
-#if 0
-  Tree* PolynomialInterpretation
-  Tree* RationalInterpretation --> list of 2 polynomial
-  // Set!
-  //
-  sign
-  compare
-
-  // General polynomial
-  isMonomial(u,setOfGeneralVariables)
-  isPolynomial(u,setOfGeneralVariables)
-  coefficientMonomial(u, generalVariable)
-  coefficient(u, generalVariable, exponent (int))
-  leadingCoefficient(u,generalVariable)
-  collectTerms(u, S) //--> polynomial form in S
-  ALGEBRAIC_EXPAND // Should we apply on all subexpressions? --> NO agit uniquement sur +*^
-
-  Numerator
-  Denominator
-private:
-  exponentForNthVariable(int monomialIndex, int variableIndex)
-  Integer coeffient(int monomialIndex);
-  Tree* m_listOfVariables; // Set of expressions
-  Tree* ListOfCoefficient; // Integers -> based of set of expressions order
-  Tree* ListOfListsExponents; // List of list of exponents
-#endif
 };
 
 }  // namespace Poincare::Internal
-
-/*
-algebraic_reduction
---> rationalize
---> numerator Pe = expr
---> denominator Qe = expr
-for numerator and denominator:
---> algebraic_expand Pe
---> S = variables(Pe)
---> extract side relation for S
---> Pp = polynome(Pe) (collectTerms ?)
---> polynomial expansion in Grobner base? for Pp
-
---> S2 = union of variables(P) U variables(Q)
---> Pp2 = polynome(Pe), Qp2 = polynome(Qe)
---> polynome division Pp2/Qp2 per GCD
-
-
-resultant
-
-leading_monomial(u, L)
-Mb_poly(div, u, V, L)*/

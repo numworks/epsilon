@@ -80,6 +80,8 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
   zoom.setForcedRange(forcedRange);
 
   for (int i = 0; i < nbFunctions; i++) {
+    Coordinate2D<float> intervalMin = Coordinate2D<float>(NAN, NAN);
+    Coordinate2D<float> intervalMax = intervalMin;
     canComputeIntersections[i] = false;
     OMG::ExpiringPointer<const ContinuousFunction> f =
         store->modelForRecord(store->activeRecordAtIndex(i));
@@ -116,6 +118,14 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       // Fit the zoom to the range of x(t) and y(t)
       zoom.fitPoint(Coordinate2D<float>(ranges[0].max(), ranges[1].max()));
       zoom.fitPoint(Coordinate2D<float>(ranges[0].min(), ranges[1].min()));
+
+      // Since function is defined on an interval, add interval edges
+      intervalMin = Coordinate2D<float>(
+          parametricExpressionEvaluator<float, 0>(f->tMin(), &e).y(),
+          parametricExpressionEvaluator<float, 1>(f->tMin(), &e).y());
+      intervalMax = Coordinate2D<float>(
+          parametricExpressionEvaluator<float, 0>(f->tMax(), &e).y(),
+          parametricExpressionEvaluator<float, 1>(f->tMax(), &e).y());
     } else if (f->properties().isScatterPlot()) {
       for (Coordinate2D<float> p : f->iterateScatterPlot()) {
         zoom.fitPoint(p);
@@ -126,8 +136,19 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       bool alongY = f->isAlongY();
       Range1D<float>* bounds = alongY ? &yBounds : &xBounds;
       // Use the intersection between the definition domain of f and the bounds
-      zoom.setBounds(std::clamp(f->tMin(), bounds->min(), bounds->max()),
-                     std::clamp(f->tMax(), bounds->min(), bounds->max()));
+      float tMin = std::clamp(f->tMin(), bounds->min(), bounds->max());
+      float tMax = std::clamp(f->tMax(), bounds->min(), bounds->max());
+      zoom.setBounds(tMin, tMax);
+      // If function is defined on an interval, add interval edges
+      if (tMin == f->tMin()) {
+        Coordinate2D<float> c(evaluator<float>(tMin, &fModel));
+        intervalMin = Coordinate2D<float>(tMin, alongY ? c.x() : c.y());
+      }
+      if (tMax == f->tMax()) {
+        Coordinate2D<float> c(evaluator<float>(tMax, &fModel));
+        intervalMax = Coordinate2D<float>(tMax, alongY ? c.x() : c.y());
+      }
+
       zoom.fitPointsOfInterest(evaluator<float>, &fModel, alongY,
                                evaluator<double>, canComputeIntersections + i);
       zoom.fitBounds(evaluator<float>, &fModel, alongY);
@@ -170,6 +191,12 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
           }
         }
       }
+    }
+    if (std::isfinite(intervalMin.x()) && std::isfinite(intervalMin.y())) {
+      zoom.fitPoint(intervalMin);
+    }
+    if (std::isfinite(intervalMax.x()) && std::isfinite(intervalMax.y())) {
+      zoom.fitPoint(intervalMax);
     }
   }
 

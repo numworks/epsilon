@@ -292,6 +292,10 @@ static bool HasVariablesOutOfScope(const Tree* e, int scope) {
   return false;
 }
 
+bool Variables::IsVariableWithId(const Tree* e, int id) {
+  return e->isVar() && Id(e) == id;
+}
+
 bool Variables::HasVariables(const Tree* e) {
   return HasVariablesOutOfScope(e, 0);
 }
@@ -303,8 +307,8 @@ bool Variables::HasVariable(const Tree* e, const Tree* variable) {
 }
 
 bool Variables::HasVariable(const Tree* e, int id) {
-  if (e->isVar()) {
-    return Id(e) == id;
+  if (IsVariableWithId(e, id)) {
+    return true;
   }
   bool isParametric = e->isParametric();
   for (IndexedChild<const Tree*> child : e->indexedChildren()) {

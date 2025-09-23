@@ -40,8 +40,10 @@ uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
       assert(GetSeed(descendant) <= maxSeed);
       continue;
     }
-    /* RandIntNoRep and RandInt of lists needs to reserve seed for each of
-     * its elements. */
+    /* NOTE:
+     * Random reserves one seed, to store the random value.
+     * RandInt of lists needs to reserve seed for each of its elements.
+     * RandIntNoRep only reserves 1 seed, used to store the LCG seed. */
     int size = 1;
     if (descendant->isRandInt() && Dimension::DeepCheck(descendant)) {
       /* RandInt dimension may have not been checked at this point and
@@ -73,12 +75,13 @@ uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
  * The formula is: X(n+1) = A * X(n) + C % M
  * Since we want M=2^32, we choose A and C accordingly, see
  * https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use
- * With this parameters, the LCG as a period of M before repeating.
+ * With these parameters, the LCG has a period of M before repeating.
  * From a given X(0) (the seed) the sequence X(n) will contain the set of all
- * uint32_t before repeating (X(0) == X(2^32)) */
+ * uint32_t before starting to repeat at X(2^32) */
 static uint32_t Lcg(uint32_t* state) {
 #define LCG_A 1664525U
 #define LCG_C 1013904223U
+  // NOTE: %M operation is guaranteed by the uint32_t overflow
   *state = LCG_A * (*state) + LCG_C;
   return *state;
 }
@@ -87,12 +90,14 @@ static uint32_t Lcg(uint32_t* state) {
  * returns an [uint32_t] below [range] that is unique depending on [index]. */
 static uint32_t RandIntNoRepInRangeOfIndex(uint32_t range, uint32_t seed,
                                            uint8_t index) {
-  /* The uniqueness of the return value is guarantee by this uint32_t[256]
+  /* The uniqueness of the return value is guaranteed by this uint32_t[256]
    * array. It will store the previously returned values.
    * i.e.: sequence[i] == RandIntNoRepInRangeOfIndex(range,seed,i)
    * This approach allows for computing sequentially unique element of a
    * sequence without any external state, at the cost of recomputing all the
-   * previous term of the sequence each time */
+   * previous term of the sequence each time.
+   * Main downside: Computing the last new value (when range == index) takes on
+   * average range [Lcg] calls */
   uint32_t sequence[1 << 8];
   uint32_t maxComputedIndex = 0;
   uint32_t lcgState = seed;

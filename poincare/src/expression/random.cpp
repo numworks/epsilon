@@ -98,7 +98,7 @@ static uint32_t RandIntNoRepInRangeOfIndex(uint32_t range, uint32_t seed,
    * previous term of the sequence each time.
    * Main downside: Computing the last new value (when range == index) takes on
    * average range [Lcg] calls */
-  uint32_t sequence[1 << 8];
+  uint32_t sequence[NAry::k_maxNumberOfChildren + 1];
   uint32_t maxComputedIndex = 0;
   uint32_t lcgState = seed;
 

@@ -23,45 +23,51 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
                                       {.KA = a, .KB = b, .KC = result}));
     return result;
   }
-  if (integrand->isAdd()) {
-    Tree* result = SharedTreeStack->pushAdd(integrand->numberOfChildren());
-    for (const Tree* child : integrand->children()) {
-      Integrate(symbol, a, b, child, true);
+  switch (integrand->type()) {
+    case Type::Add: {
+      Tree* result = SharedTreeStack->pushAdd(integrand->numberOfChildren());
+      for (const Tree* child : integrand->children()) {
+        Integrate(symbol, a, b, child, true);
+      }
+      SystematicReduction::ShallowReduce(result);
+      return result;
     }
-    SystematicReduction::ShallowReduce(result);
-    return result;
-  }
-  static_assert(
-      Parametric::k_variableIndex == 0 && Parametric::k_lowerBoundIndex == 1 &&
-      Parametric::k_upperBoundIndex == 2 && Parametric::k_integrandIndex == 3);
-  if (integrand->isMult()) {
-    // Separate the constant part of the integrand
-    TreeRef constant = SharedTreeStack->pushMult(0);
-    TreeRef remainingIntegrand = SharedTreeStack->pushMult(0);
-    for (const Tree* child : integrand->children()) {
-      NAry::AddChild(
-          Variables::HasVariable(child, 0) ? remainingIntegrand : constant,
-          child->cloneTree());
+    case Type::Mult: {
+      static_assert(Parametric::k_variableIndex == 0 &&
+                    Parametric::k_lowerBoundIndex == 1 &&
+                    Parametric::k_upperBoundIndex == 2 &&
+                    Parametric::k_integrandIndex == 3);
+      // Separate the constant part of the integrand
+      TreeRef constant = SharedTreeStack->pushMult(0);
+      TreeRef remainingIntegrand = SharedTreeStack->pushMult(0);
+      for (const Tree* child : integrand->children()) {
+        NAry::AddChild(
+            Variables::HasVariable(child, 0) ? remainingIntegrand : constant,
+            child->cloneTree());
+      }
+      if (constant->numberOfChildren() > 0) {
+        assert(remainingIntegrand->numberOfChildren() > 0);
+        assert(constant->nextTree() == remainingIntegrand);
+        // int(c * f(x), x, a, b) = c * int(f(x), x, a, b)
+        Variables::LeaveScope(constant);
+        NAry::SquashIfUnary(remainingIntegrand);
+        assert(!SystematicReduction::ShallowReduce(remainingIntegrand));
+        (KIntegral)->cloneNode();
+        symbol->cloneTree();
+        a->cloneTree();
+        b->cloneTree();
+        remainingIntegrand->detachTree();
+        NAry::SetNumberOfChildren(constant, constant->numberOfChildren() + 1);
+        SystematicReduction::ShallowReduce(constant);
+        return constant;
+      }
+      // No constant part, fall back to default case
+      remainingIntegrand->removeTree();
+      constant->removeTree();
+      break;
     }
-    if (constant->numberOfChildren() > 0) {
-      assert(remainingIntegrand->numberOfChildren() > 0);
-      assert(constant->nextTree() == remainingIntegrand);
-      // int(c * f(x), x, a, b) = c * int(f(x), x, a, b)
-      Variables::LeaveScope(constant);
-      NAry::SquashIfUnary(remainingIntegrand);
-      assert(!SystematicReduction::ShallowReduce(remainingIntegrand));
-      (KIntegral)->cloneNode();
-      symbol->cloneTree();
-      a->cloneTree();
-      b->cloneTree();
-      remainingIntegrand->detachTree();
-      NAry::SetNumberOfChildren(constant, constant->numberOfChildren() + 1);
-      SystematicReduction::ShallowReduce(constant);
-      return constant;
-    }
-    // No constant part, fall back to default case
-    remainingIntegrand->removeTree();
-    constant->removeTree();
+    default:
+      break;
   }
   // Not handled
   return force

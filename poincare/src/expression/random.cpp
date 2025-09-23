@@ -79,10 +79,10 @@ uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
  * From a given X(0) (the seed) the sequence X(n) will contain the set of all
  * uint32_t before starting to repeat at X(2^32) */
 static uint32_t Lcg(uint32_t* state) {
-#define LCG_A 1664525U
-#define LCG_C 1013904223U
+  constexpr uint32_t A = 1664525U;
+  constexpr uint32_t C = 1013904223U;
   // NOTE: %M operation is guaranteed by the uint32_t overflow
-  *state = LCG_A * (*state) + LCG_C;
+  *state = A * (*state) + C;
   return *state;
 }
 

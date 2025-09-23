@@ -79,8 +79,8 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
     case Type::Pow: {
       const Tree* integrandBase = integrand->child(0);
       const Tree* integrandExp = integrandBase->nextTree();
-      if (integrandExp->isPositiveInteger() && integrandBase->isVar() &&
-          Variables::Id(integrandBase) == 0) {
+      if (integrandExp->isPositiveInteger() &&
+          Variables::IsVariableWithId(integrandBase, 0)) {
         /* int(x^n, x, a, b) = 1/(n+1) * (b^(n+1) - a^(n+1))
          * if n is a positive integer */
         return PatternMatching::CreateReduce(

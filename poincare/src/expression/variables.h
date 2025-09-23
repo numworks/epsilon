@@ -56,6 +56,7 @@ ComplexSign GetComplexSign(const Tree* variable);
 bool HasVariables(const Tree* e);
 
 // On projected expressions
+bool IsVariableWithId(const Tree* e, int id);
 bool HasVariable(const Tree* e, const Tree* variable);
 bool HasVariable(const Tree* e, int id);
 

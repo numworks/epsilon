@@ -357,10 +357,6 @@ PointOfInterest findIntersections(void* searchContext) {
         if (fIsStrict || gIsStrict) {
           poi.interest = Solver<double>::Interest::UnreachedIntersection;
         }
-#if 0
-        // NOTE this cannot be done as it interfer with derivates interest points
-        poi.subCurveIndex = ctx->subCounter1;
-#endif
         return poi;
       }
       ctx->subCounter2 = 0;

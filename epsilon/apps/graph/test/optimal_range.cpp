@@ -190,6 +190,24 @@ QUIZ_CASE(graph_optimal_range) {
   // grapher_autozoom_costly_algorithm
   quiz_assert_optimal_range_is({"y=int(1/a,a,1,x)"},
                                Range2D<float>(-10, 10, -5.3125, 5.3125));
+
+  // Autozoom on interval
+  // TODO: Take the interval edges into account
+  quiz_assert_optimal_range_is(
+      {"f(x)=√((4-7x)^2+1)"},
+      Range2D<float>(0.5711345, 1.5, 1.000002, 6.576473),
+      {Range1D<float>(0, 3)});
+  quiz_assert_optimal_range_is(
+      {"f(t)=(3/t,t^3*exp(-2t))"},
+      Range2D<float>(0.681473, 0.9241731, 0.03909695, 0.1680314),
+      {Range1D<float>(1, 6)});
+  quiz_assert_optimal_range_is({"f(t)=(2tan(t)+1,2sec(t)^2+3)"},
+                               Range2D<float>(0, 1.200669, 4.691139, 5.328995),
+                               {Range1D<float>(-0.8, 1)});
+  quiz_assert_optimal_range_is(
+      {"y=cos(x)"},
+      Range2D<float>(4.277048e7, 5.372952e7, -0.9999649, 0.9999729),
+      {Range1D<float>(0, INFINITY)});
 }
 
 }  // namespace Graph

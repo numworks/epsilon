@@ -93,6 +93,10 @@ static inline void pushEventFromFile(uint8_t c, FILE* f) {
         Journal::replayJournal()->pushEvent(e);
       }
     }
+    if (buffer[0] == 0 || buffer[0] == EOF) {
+      // Do not push an empty ExternalText event
+      return;
+    }
   }
   Journal::replayJournal()->pushEvent(e);
 }
@@ -122,6 +126,10 @@ void pushEventFromMemory(uint8_t c, const uint8_t** ptr,
         i = 0;
         Journal::replayJournal()->pushEvent(e);
       }
+    }
+    if (buffer[0] == 0 || buffer[0] == EOF) {
+      // Do not push an empty ExternalText event
+      return;
     }
   }
   Journal::replayJournal()->pushEvent(e);

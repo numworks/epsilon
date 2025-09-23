@@ -52,11 +52,12 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
         Variables::LeaveScope(constant);
         NAry::SquashIfUnary(remainingIntegrand);
         assert(!SystematicReduction::ShallowReduce(remainingIntegrand));
-        (KIntegral)->cloneNode();
+        TreeRef integral = (KIntegral)->cloneNode();
         symbol->cloneTree();
         a->cloneTree();
         b->cloneTree();
         remainingIntegrand->detachTree();
+        Integration::Reduce(integral);
         NAry::SetNumberOfChildren(constant, constant->numberOfChildren() + 1);
         SystematicReduction::ShallowReduce(constant);
         return constant;
@@ -64,6 +65,30 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
       // No constant part, fall back to default case
       remainingIntegrand->removeTree();
       constant->removeTree();
+      break;
+    }
+    case Type::Var: {
+      if (Variables::Id(integrand) == 0) {
+        // int(x, x, a, b) = 1/2 * (b^2 - a^2)
+        return PatternMatching::CreateReduce(
+            KMult(1_e / 2_e, KAdd(KPow(KB, 2_e), KMult(-1_e, KPow(KA, 2_e)))),
+            {.KA = a, .KB = b});
+      }
+      break;
+    }
+    case Type::Pow: {
+      const Tree* integrandBase = integrand->child(0);
+      const Tree* integrandExp = integrandBase->nextTree();
+      if (integrandExp->isPositiveInteger() && integrandBase->isVar() &&
+          Variables::Id(integrandBase) == 0) {
+        /* int(x^n, x, a, b) = 1/(n+1) * (b^(n+1) - a^(n+1))
+         * if n is a positive integer */
+        return PatternMatching::CreateReduce(
+            KMult(KPow(KAdd(KC, 1_e), -1_e),
+                  KAdd(KPow(KB, KAdd(KC, 1_e)),
+                       KMult(-1_e, KPow(KA, KAdd(KC, 1_e))))),
+            {.KA = a, .KB = b, .KC = integrandExp});
+      }
       break;
     }
     default:

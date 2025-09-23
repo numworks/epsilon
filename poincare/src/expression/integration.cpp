@@ -7,6 +7,7 @@
 #include "advanced_reduction.h"
 #include "dependency.h"
 #include "parametric.h"
+#include "poincare/src/expression/k_tree.h"
 #include "systematic_reduction.h"
 #include "variables.h"
 
@@ -91,6 +92,31 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
       }
       break;
     }
+    case Type::Trig: {
+      PatternMatching::Context ctx;
+      if (PatternMatching::Match(integrand->child(0), KMult(KA_s, KB), &ctx) &&
+          Variables::IsVariableWithId(ctx.getTree(KB), 0)) {
+        Tree* constant = PatternMatching::Create(KMult(KA_s), ctx);
+        if (!Variables::HasVariable(constant, 0)) {
+          /* int(sin(c*x), x, a, b) = 1/c * (cos(c*a) - cos(c*b))
+           * int(cos(c*x), x, a, b) = 1/c * (sin(c*b) - sin(c*a)) */
+          bool isSin = integrand->child(1)->isOne();
+          TreeRef result = PatternMatching::CreateReduce(
+              KMult(KPow(KC, -1_e),
+                    KAdd(KTrig(KMult(KC, KA), KD),
+                         KMult(-1_e, KTrig(KMult(KC, KB), KD)))),
+              {
+                  .KA = isSin ? a : b,
+                  .KB = isSin ? b : a,
+                  .KC = constant,
+                  .KD = isSin ? 0_e : 1_e,
+              });
+          constant->removeTree();
+          return result;
+        }
+      }
+    }
+
     default:
       break;
   }

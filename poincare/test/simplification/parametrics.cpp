@@ -419,14 +419,21 @@ QUIZ_CASE(pcj_simplification_integral) {
   simplifies_to("int(3*π,x,0,1)", "3×π");
   simplifies_to("int(3a,x,-2,2)", "12×a");
   // Addition and constants
-  simplifies_to("int(6e^x+sin(x),x,1,3)",
-                "int(sin(x),x,1,3)+6×int(e^(x),x,1,3)");
+  simplifies_to("int(6e^x+sin(x^2),x,1,3)",
+                "int(sin(x^2),x,1,3)+6×int(e^(x),x,1,3)");
   simplifies_to("int(arccot(x),x,0,x)", "(π×x)/2-int(arctan(x),x,0,x)");
   // Polynoms
   simplifies_to("int(x,x,0,5/2)", "25/8");
   simplifies_to("int(x+x,x,-1,1)", "0");
   simplifies_to("int(3x^2+x-15,x,-2,1)", "-75/2");
   simplifies_to("int((x-3)(x+1),x,1,2)", "-11/3");
+  // Trigonometry
+  simplifies_to("int(cos(x),x,0,π)", "0");
+  simplifies_to("int(sin(x),x,0,π)", "2");
+  simplifies_to("int(sin(x),x,1,3)", "cos(1)-cos(3)");
+  simplifies_to("int(sin(3x),x,0,π)", "2/3");
+  simplifies_to("int(3cos(2x)-sin(3x), x, -π,3π)", "0");
+  simplifies_to("int(15×sin(12466×x),x,0,60)", "(15×(1-cos(747960)))/12466");
   // Derivation of integral
   simplifies_to("diff(int(x^2*t/2,t,0,1),x,y)", "y/2");
   simplifies_to("diff(int(x^2/2+t,t,0,1),x,y)", "y");

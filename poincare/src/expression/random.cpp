@@ -155,7 +155,8 @@ double PrivateApproximateRandIntNoRep(const Tree* randInNoRep,
 #if ASSERTIONS
   double length = Approximation::Private::PrivateTo<double>(
       randInNoRep->child(2), approxCtx);
-  assert(approxCtx->m_listElement < length && length <= range);
+  assert(0 <= approxCtx->m_listElement && approxCtx->m_listElement < length &&
+         length <= range);
 #endif
   return min + RandIntNoRepInRangeOfIndex(range,
                                           static_cast<uint32_t>(*lcgSeed),

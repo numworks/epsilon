@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <assert.h>
 #include <ion/circuit_breaker.h>
+#include <ion/clipboard.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <ion/src/shared/dummy/usb.h>
@@ -112,6 +113,16 @@ Event getEvent(int* timeout) {
     /* Keep track of whether the simulator is plugged or unplugged. */
     Ion::USB::togglePlug();
   }
+#if ION_KEYBOARD_RICH
+  if (nextEvent == Ion::Events::Paste) {
+    /* On the web simulator, the fetch and send functions in Clipboard will call
+     * an emscripten_sleep, which requires all symbols currently on the stack to
+     * be whitelisted. Fetch and send are thus called before returning the event
+     * to avoid having to maintain a whitelist of symbols from the appliation
+     * code. */
+    Ion::Clipboard::fetchSystemClipboardToBuffer();
+  }
+#endif
   if (sDestinationJournal != nullptr) {
     sDestinationJournal->pushEvent(nextEvent);
   }

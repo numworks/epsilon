@@ -260,23 +260,12 @@ typename Solver<T>::Solution Solver<T>::nextIntersectionAlongDifferentAxis(
   T y = Approximation::To<T>(
       alongMainAxis, x,
       Approximation::Parameters{.isRootAndCanHaveRandom = true});
+#if ASSERTIONS
   T x2 = Approximation::To<T>(
       alongOtherAxis, y,
       Approximation::Parameters{.isRootAndCanHaveRandom = true});
+  assert(std::isfinite(y) && std::isfinite(x2));
   assert(OMG::Float::RoughlyEqual<T>(x, x2, 1e-8));
-#if 0
-  // TODO: check those weird cases
-  if (!std::isfinite(y1) || !std::isfinite(y2)) {
-    /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
-     * or undef expressions in specific points like x^2/x, the root of the
-     * difference yields an infinite or a nan value when e1 or e2 is
-     * evaluated. It means the intersection was incorrectly computed, and the
-     * search continues. */
-    return nextIntersectionAlongY(alongMainAxis, alongOtherAxis,
-                                  memoizedDifference);
-  }
-  /* Result is not always exactly the same due to approximation errors. Take
-   * the middle of the two values. */
 #endif
   return Solution(x, y, Interest::Intersection);
 }

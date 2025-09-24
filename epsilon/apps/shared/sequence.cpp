@@ -84,6 +84,11 @@ void Sequence::setInitialRank(int rank) {
   m_secondInitialCondition.tidyName();
 }
 
+void Sequence::setRecursiveNotation(RecursiveNotation notation) {
+  recordData()->setRecursiveNotation(notation);
+  m_definition.tidyName();
+}
+
 Layout Sequence::aggregatedLayout() {
   Layout result;
   switch (type()) {

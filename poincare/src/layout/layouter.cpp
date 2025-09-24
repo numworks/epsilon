@@ -968,8 +968,7 @@ bool Layouter::requireSeparators(const Tree* expression) {
         break;
       }
     }
-    rack->removeTree();
-    clone->removeTree();
+    SharedTreeStack->dropBlocksFrom(clone);
     return found;
   }
   for (const Tree* child : expression->children()) {

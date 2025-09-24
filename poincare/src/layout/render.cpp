@@ -348,7 +348,10 @@ KDSize Render::Size(const Layout* l) {
     case LayoutType::Ceil:
     case LayoutType::VectorNorm: {
       KDSize childSize = Size(l->child(0), !l->isAutocompletedPair());
-      width = 2 * Pair::BracketWidth(l) + childSize.width();
+      KDCoordinate bracketsWidth = 2 * Pair::BracketWidth(l);
+      width = SumOverflowsKDCoordinate(bracketsWidth, childSize.width())
+                  ? KDCOORDINATE_MAX
+                  : bracketsWidth + childSize.width();
       height = Pair::Height(childSize.height(), Pair::MinVerticalMargin(l));
       break;
     }

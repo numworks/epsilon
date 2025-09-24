@@ -18,7 +18,8 @@ ListParameterController::ListParameterController(ListController* listController)
                                       I18n::Message::SequenceColor,
                                       I18n::Message::DeleteSequence, this),
       m_firstRankCell(&m_selectableListView, this),
-      m_displayNotationCell(false) {
+      m_displayNotationCell(false),
+      m_notationParameterController(nullptr) {
   m_firstRankCell.label()->setMessage(I18n::Message::FirstTermIndex);
   m_notationCell.label()->setMessage(I18n::Message::SequenceNotation);
 }
@@ -96,8 +97,15 @@ void ListParameterController::viewWillAppear() {
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell* cell = selectedCell();
+  StackViewController* stack =
+      static_cast<StackViewController*>(parentResponder());
   if (cell == &m_enableCell && m_enableCell.canBeActivatedByEvent(event)) {
     App::app()->localContext().resetCache();
+  }
+  if (cell == &m_notationCell && m_notationCell.canBeActivatedByEvent(event)) {
+    m_notationParameterController.setRecord(m_record);
+    stack->push(&m_notationParameterController);
+    return true;
   }
   return Shared::ListParameterController::handleEvent(event);
 }

@@ -11,6 +11,8 @@
 #include <escher/menu_cell_with_editable_text.h>
 #include <escher/message_text_view.h>
 
+#include "notation_parameter_controller.h"
+
 namespace Sequence {
 
 class ListController;
@@ -57,6 +59,7 @@ class ListParameterController : public Shared::ListParameterController,
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
       m_notationCell;
+  NotationParameterController m_notationParameterController;
 };
 
 }  // namespace Sequence

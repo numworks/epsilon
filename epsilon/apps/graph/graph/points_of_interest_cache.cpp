@@ -214,6 +214,8 @@ struct PointSearchContext {
   };
   Ion::Storage::Record otherRecord;
 
+  bool lastSegment;
+
   void reinitSolver() { solver.reset(start, end, searchStep); }
 
   OMG::ExpiringPointer<ContinuousFunction> model() const {
@@ -275,7 +277,7 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
             .x())) {
       /* Loop over finite solutions to exhaust solutions out of the interval
        * without returning NAN. */
-      if (solution.xy().xIsIn(ctx->start, ctx->end, true, false)) {
+      if (solution.xy().xIsIn(ctx->start, ctx->end, true, ctx->lastSegment)) {
         return {
             solution.x(),        solution.y(),  0,
             solution.interest(), f->isAlongY(), 0,
@@ -426,6 +428,7 @@ Expression PointsOfInterestCache::computeBetween(float start, float end) {
           Solver<double>::DefaultSearchStepForAmplitude(m_start - m_end)),
       .solver = Solver<double>(start, end, App::app()->localContext()),
       .record = m_record,
+      .lastSegment = (m_computedEnd == end),
   };
   searchContext.reinitSolver();
 

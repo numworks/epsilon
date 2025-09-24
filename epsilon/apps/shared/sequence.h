@@ -29,6 +29,11 @@ class Sequence : public Function {
   constexpr static CodePoint k_sequenceSymbol =
       Poincare::CodePoints::k_sequenceSymbol;
   using Type = Poincare::SequenceHelper::Type;
+  // Notation for recursive sequences
+  enum class RecursiveNotation {
+    Default = 0,  // u(n+2) = u(n+1)+u(n)
+    Shifted = 1,  // u(n) = u(n-1)+u(n-2)
+  };
   Sequence(Ion::Storage::Record record = Record()) : Function(record) {}
 
   CodePoint symbol() const override { return k_sequenceSymbol; }
@@ -37,11 +42,15 @@ class Sequence : public Function {
   // MetaData getters
   Type type() const { return recordData()->type(); }
   int initialRank() const { return recordData()->initialRank(); }
+  RecursiveNotation recursiveNotation() const {
+    return recordData()->recursiveNotation();
+  }
   bool displaySum() const { return recordData()->displaySum(); }
 
   // MetaData setters
   void setType(Type type);
   void setInitialRank(int rank);
+  void setRecursiveNotation(RecursiveNotation notation);
   void setDisplaySum(bool display) { recordData()->setDisplaySum(display); }
 
   // Aggregated layout
@@ -162,6 +171,7 @@ class Sequence : public Function {
           m_type(Type::Explicit),
           m_initialRank(0),
           m_initialConditionSizes{0, 0},
+          m_recursiveNotation(RecursiveNotation::Default),
           m_displaySum(false) {}
     Type type() const { return m_type; }
     void setType(Type type) { m_type = type; }
@@ -177,6 +187,10 @@ class Sequence : public Function {
     void setInitialConditionSize(uint16_t size, int conditionIndex) {
       assert(conditionIndex >= 0 && conditionIndex < 2);
       m_initialConditionSizes[conditionIndex] = size;
+    }
+    RecursiveNotation recursiveNotation() const { return m_recursiveNotation; }
+    void setRecursiveNotation(RecursiveNotation notation) {
+      m_recursiveNotation = notation;
     }
     bool displaySum() const { return m_displaySum; }
     void setDisplaySum(bool display) { m_displaySum = display; }
@@ -196,6 +210,7 @@ class Sequence : public Function {
 #else
     uint16_t m_initialConditionSizes[2];
 #endif
+    RecursiveNotation m_recursiveNotation;
     bool m_displaySum;
   };
 

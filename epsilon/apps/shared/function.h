@@ -82,9 +82,10 @@ class Function : public ExpressionModelHandle {
    * - complicate getters, setters and record handling
    * In addition, Record::value() is a pointer to an address inside
    * Ion::Storage::FileSystem::sharedFileSystem, and it might be unaligned. We
-   * use the packed keyword to warn the compiler that it members are potentially
-   * unaligned (otherwise, the compiler can emit instructions that work only on
-   * aligned objects). It also solves the padding issue mentioned above.
+   * use the packed keyword to warn the compiler that its members are
+   * potentially unaligned (otherwise, the compiler can emit instructions that
+   * work only on aligned objects). It also solves the padding issue mentioned
+   * above.
    */
   class __attribute__((packed)) RecordDataBuffer {
    public:

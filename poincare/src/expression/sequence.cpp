@@ -20,28 +20,6 @@ int Sequence::InitialRank(const Tree* sequence) {
   return Integer::Handler(sequence->child(k_firstRankIndex)).to<int>();
 }
 
-Tree* Sequence::PushMainExpressionName(const Tree* sequence) {
-  assert(sequence->isSequence());
-  Tree* result = SharedTreeStack->pushUserSequence(
-      Symbol::GetName(sequence->child(k_nameIndex)));
-  Tree* sequenceSymbol = SharedTreeStack->pushUserSymbol("n");
-  switch (sequence->type()) {
-    case Type::SequenceExplicit:
-      break;
-    case Type::SequenceSingleRecurrence:
-      sequenceSymbol->moveTreeOverTree(
-          PatternMatching::Create(KAdd(KA, 1_e), {.KA = sequenceSymbol}));
-      break;
-    case Type::SequenceDoubleRecurrence:
-      sequenceSymbol->moveTreeOverTree(
-          PatternMatching::Create(KAdd(KA, 2_e), {.KA = sequenceSymbol}));
-      break;
-    default:
-      OMG::unreachable();
-  }
-  return result;
-}
-
 Tree* Sequence::PushInitialConditionName(const Tree* sequence,
                                          bool isFirstCondition) {
   assert(sequence->isSequence());

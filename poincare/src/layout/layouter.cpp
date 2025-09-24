@@ -385,7 +385,7 @@ void Layouter::layoutSequence(Tree* parentRack, const Tree* expression) {
           .to<uint8_t>();
 
   // Get names
-  TreeRef mainExpressionName = Sequence::PushMainExpressionName(expression);
+  TreeRef mainExpressionName = expression->child(0)->cloneTree();
   TreeRef firstInitialConditionName =
       (expression->type() == Type::SequenceSingleRecurrence ||
        expression->type() == Type::SequenceDoubleRecurrence)

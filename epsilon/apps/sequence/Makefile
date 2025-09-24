@@ -11,6 +11,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/sequence/,$(addsuffix :-test, \
   list/editable_sequence_cell.cpp \
   list/list_controller.cpp \
   list/list_parameter_controller.cpp \
+  list/notation_parameter_controller.cpp \
   list/sequence_cell.cpp \
   list/sequence_toolbox_data_source.cpp \
   list/type_parameter_controller.cpp \

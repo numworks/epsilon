@@ -134,14 +134,12 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
       assert(grid->numberOfRows() >= 1);
       assert(grid->numberOfRows() <= 3);
 
-      // Sequence symbol
+      // Sequence name
       const Tree* currentChild = grid->child(0);
       Tree* expr = Parse(currentChild, parsingContext.cloneWithoutMetadata());
       if (!expr || !expr->isUserSequence()) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
-      SharedTreeStack->pushUserSymbol(Symbol::GetName(expr));
-      expr->removeTree();
 
       // Sequence expression
       currentChild = currentChild->nextTree();

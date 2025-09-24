@@ -15,7 +15,6 @@ class Sequence {
 
   static int InitialRank(const Tree* sequence);
 
-  static Tree* PushMainExpressionName(const Tree* sequence);
   static Tree* PushInitialConditionName(const Tree* sequence,
                                         bool isFirstCondition = true);
 

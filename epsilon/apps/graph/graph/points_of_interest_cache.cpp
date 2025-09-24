@@ -294,16 +294,20 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
                                      PreparedFunction f, PreparedFunction g,
                                      bool alongSameAxis) {
   Solver<double>::Solution solution;
+  Internal::Tree* diff = nullptr;
   while (std::isfinite(
       (solution = alongSameAxis
-                      ? ctx->solver.nextIntersection(f, g)
-                      : ctx->solver.nextIntersectionAlongDifferentAxis(f, g))
+                      ? ctx->solver.nextIntersection(
+                            f, g, const_cast<const Internal::Tree**>(&diff))
+                      : ctx->solver.nextIntersectionAlongDifferentAxis(
+                            f, g, const_cast<const Internal::Tree**>(&diff)))
 
           .x())) {
     /* Loop over finite solutions to exhaust solutions out of the interval
      * without returning NAN. */
     if (solution.xy().xIsIn(ctx->start, ctx->end, true, false)) {
       assert(solution.interest() == Solver<double>::Interest::Intersection);
+      diff->removeTree();
       return {
           solution.x(),
           solution.y(),
@@ -314,6 +318,7 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
       };
     }
   }
+  diff->removeTree();
   ctx->reinitSolver();
   return PointOfInterest{};
 }

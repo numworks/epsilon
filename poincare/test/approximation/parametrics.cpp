@@ -104,6 +104,9 @@ QUIZ_CASE(pcj_approximation_integrals) {
   approximates_to<double>("int(x*sin(1/x)*√(abs(1-x)),x,0,3)", "1.9819412",
                           k_realCtx, 8);
 
+  // Complex bounds
+  approximates_to<double>("int(e^x,x,i,2i)", "undef", k_cartesianCtx);
+
   /* The integral approximation escapes before finding a result, because it
    * would take too much time. */
   approximates_to<float>("int(sin((10^7)*x),x,0,1)", "undef");

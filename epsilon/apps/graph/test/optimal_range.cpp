@@ -186,6 +186,10 @@ QUIZ_CASE(graph_optimal_range) {
   // Force x in [-20,5]
   quiz_assert_optimal_range_is({"y=x^2"}, Range2D<float>(-20, 5, 0, 400), {},
                                false, true, Range2D<float>(-20, 5, 0, 25));
+
+  // grapher_autozoom_costly_algorithm
+  quiz_assert_optimal_range_is({"y=int(1/a,a,1,x)"},
+                               Range2D<float>(-10, 10, -5.3125, 5.3125));
 }
 
 }  // namespace Graph

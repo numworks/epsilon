@@ -89,19 +89,17 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
   if (direction < 0) {
     std::swap(firstIndex, lastIndex);
   }
-  constexpr double margin = 1e-8;
+  double margin = fabs(start - end) / 1e8;
   for (int i = firstIndex; direction * i <= direction * lastIndex;
        i += direction) {
     PointOfInterest p = pointAtIndex(i);
     /* NOTE using a margin of error here to avoid return the same
      * PointOfInterest twice or skipping a PointOfInterest when p.abscissa is
      * very close to start or end */
-    if (direction * p.abscissa < direction * start ||
-        (!stretch && direction * p.abscissa < direction * start + margin)) {
+    if (direction * p.abscissa < direction * start + (!stretch * margin)) {
       continue;
     }
-    if (direction * p.abscissa > direction * end ||
-        (!stretch && direction * p.abscissa > direction * end - margin)) {
+    if (direction * p.abscissa > direction * end - (!stretch * margin)) {
       break;
     }
     if (PointFitInterest(p, interest) && p.subCurveIndex == subCurveIndex) {

@@ -64,7 +64,7 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
     if (!d->isUserSequence()) {
       continue;
     }
-    if (strcmp(Symbol::GetName(d), name) != 0) {
+    if (!Symbol::IsNamed(d, name)) {
       if (!otherSequences) {
         return true;
       }

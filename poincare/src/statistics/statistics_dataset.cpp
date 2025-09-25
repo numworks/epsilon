@@ -133,6 +133,41 @@ T StatisticsDataset<T>::sampleStandardDeviation() const {
 }
 
 template <typename T>
+T StatisticsDataset<T>::firstQuartile() const {
+  return sortedElementAtCumulatedFrequency(1.0 / 4.0, true);
+}
+
+template <typename T>
+T StatisticsDataset<T>::thirdQuartile() const {
+  return sortedElementAtCumulatedFrequency(3.0 / 4.0, true);
+}
+
+template <typename T>
+T StatisticsDataset<T>::quartileRange() const {
+  return thirdQuartile() - firstQuartile();
+}
+
+template <typename T>
+T StatisticsDataset<T>::lowerFence() const {
+  return firstQuartile() - 1.5 * quartileRange();
+}
+
+template <typename T>
+T StatisticsDataset<T>::upperFence() const {
+  return thirdQuartile() + 1.5 * quartileRange();
+}
+
+template <typename T>
+T StatisticsDataset<T>::lowerWhisker(bool hasOutliers) const {
+  return valueAtIndex(indexAtSortedIndex(lowerWhiskerSortedIndex(hasOutliers)));
+}
+
+template <typename T>
+T StatisticsDataset<T>::upperWhisker(bool hasOutliers) const {
+  return valueAtIndex(indexAtSortedIndex(upperWhiskerSortedIndex(hasOutliers)));
+}
+
+template <typename T>
 T StatisticsDataset<T>::sortedElementAtCumulatedFrequency(
     T freq, bool createMiddleElement) const {
   assert(freq >= 0.0 && freq <= 1.0);
@@ -563,6 +598,72 @@ T StatisticsDataset<T>::normalProbabilityResultAtIndex(int i) const {
                                                                           1.0};
   return Poincare::Distribution::CumulativeDistributiveInverseForProbability(
       Poincare::Distribution::Type::Normal, plottingPosition, k_distribParams);
+}
+
+template <typename T>
+uint8_t StatisticsDataset<T>::lowerWhiskerSortedIndex(bool hasOutliers) const {
+  T lowFence = lowerFence();
+  int length = datasetLength();
+  for (int k = 0; k < length; k++) {
+    int valueIndex = indexAtSortedIndex(k);
+    if (!hasOutliers || (valueAtIndex(valueIndex) >= lowFence &&
+                         weightAtIndex(valueIndex) > 0.0)) {
+      return k;
+    }
+  }
+  return length;
+}
+
+template <typename T>
+uint8_t StatisticsDataset<T>::upperWhiskerSortedIndex(bool hasOutliers) const {
+  T uppFence = upperFence();
+  int length = datasetLength();
+  for (int k = length - 1; k >= 0; k--) {
+    int valueIndex = indexAtSortedIndex(k);
+    if (!hasOutliers || (valueAtIndex(valueIndex) <= uppFence &&
+                         weightAtIndex(valueIndex) > 0.0)) {
+      return k;
+    }
+  }
+  return length;
+}
+
+template <typename T>
+int StatisticsDataset<T>::numberOfLowerOutliers() const {
+  T value;
+  int distinctValues;
+  countDistinctValues(0, lowerWhiskerSortedIndex(true), -1, false, &value,
+                      &distinctValues);
+  return distinctValues;
+}
+
+template <typename T>
+int StatisticsDataset<T>::numberOfUpperOutliers() const {
+  T value;
+  int distinctValues;
+  countDistinctValues(upperWhiskerSortedIndex(true) + 1, datasetLength(), -1,
+                      false, &value, &distinctValues);
+  return distinctValues;
+}
+
+template <typename T>
+T StatisticsDataset<T>::lowerOutlierAtIndex(int index) const {
+  assert(index < numberOfLowerOutliers());
+  T value;
+  int distinctValues;
+  countDistinctValues(0, lowerWhiskerSortedIndex(true), index, false, &value,
+                      &distinctValues);
+  return value;
+}
+
+template <typename T>
+T StatisticsDataset<T>::upperOutlierAtIndex(int index) const {
+  assert(index < numberOfUpperOutliers());
+  T value;
+  int distinctValues;
+  countDistinctValues(upperWhiskerSortedIndex(true) + 1, datasetLength(), index,
+                      false, &value, &distinctValues);
+  return value;
 }
 
 template class StatisticsDataset<float>;

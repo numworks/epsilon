@@ -145,6 +145,14 @@ class StatisticsDataset {
   T standardDeviation() const { return std::sqrt(variance()); }
   T sampleStandardDeviation() const;
 
+  T firstQuartile() const;
+  T thirdQuartile() const;
+  T quartileRange() const;
+  T lowerFence() const;
+  T upperFence() const;
+  T lowerWhisker(bool hasOutliers) const;
+  T upperWhisker(bool hasOutliers) const;
+
   /* All the following methods need sortedIndex and are way faster with a
    * length < 256. */
   T sortedElementAtCumulatedFrequency(T freq, bool createMiddleElement) const;
@@ -212,6 +220,15 @@ class StatisticsDataset {
   T normalProbabilityValueAtIndex(int i) const;
   // Return the z-score of the i-th sorted element
   T normalProbabilityResultAtIndex(int i) const;
+
+  /* Boxplot */
+
+  uint8_t lowerWhiskerSortedIndex(bool hasOutliers) const;
+  uint8_t upperWhiskerSortedIndex(bool hasOutliers) const;
+  int numberOfLowerOutliers() const;
+  int numberOfUpperOutliers() const;
+  T lowerOutlierAtIndex(int index) const;
+  T upperOutlierAtIndex(int index) const;
 
  private:
   int datasetLength() const {

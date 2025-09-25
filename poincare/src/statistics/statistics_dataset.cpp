@@ -1,6 +1,7 @@
 #include <omg/float.h>
 #include <omg/list.h>
 #include <omg/unreachable.h>
+#include <poincare/preferences.h>
 #include <poincare/statistics/distribution.h>
 #include <poincare/statistics/statistics_dataset.h>
 
@@ -134,12 +135,28 @@ T StatisticsDataset<T>::sampleStandardDeviation() const {
 
 template <typename T>
 T StatisticsDataset<T>::firstQuartile() const {
-  return sortedElementAtCumulatedFrequency(1.0 / 4.0, true);
+  if (SharedPreferences->methodForQuartiles() ==
+          Preferences::MethodForQuartiles::CumulatedFrequency ||
+      !areWeightsAllIntegers()) {
+    return sortedElementAtCumulatedFrequency(1.0 / 4.0, false);
+  }
+  assert(SharedPreferences->methodForQuartiles() ==
+         Preferences::MethodForQuartiles::MedianOfSublist);
+  return sortedElementAtCumulatedWeight(std::floor(totalWeight() / 2.0) / 2.0,
+                                        true);
 }
 
 template <typename T>
 T StatisticsDataset<T>::thirdQuartile() const {
-  return sortedElementAtCumulatedFrequency(3.0 / 4.0, true);
+  if (SharedPreferences->methodForQuartiles() ==
+          Preferences::MethodForQuartiles::CumulatedFrequency ||
+      !areWeightsAllIntegers()) {
+    return sortedElementAtCumulatedFrequency(3.0 / 4.0, false);
+  }
+  assert(SharedPreferences->methodForQuartiles() ==
+         Preferences::MethodForQuartiles::MedianOfSublist);
+  return sortedElementAtCumulatedWeight(
+      std::ceil(3.0 / 2.0 * totalWeight()) / 2.0, true);
 }
 
 template <typename T>

@@ -1,6 +1,7 @@
 #include <omg/float.h>
 #include <omg/list.h>
 #include <omg/unreachable.h>
+#include <poincare/statistics/distribution.h>
 #include <poincare/statistics/statistics_dataset.h>
 
 #include <algorithm>
@@ -200,6 +201,94 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight,
 }
 
 template <typename T>
+T StatisticsDataset<T>::min(bool handleNullFrequencies) const {
+  int length = datasetLength();
+  for (int k = 0; k < length; k++) {
+    // Unless handleNullFrequencies is true, look for the first non null value.
+    int sortedIndex = indexAtSortedIndex(k);
+    if (handleNullFrequencies || weightAtIndex(sortedIndex) > 0.0) {
+      return valueAtIndex(sortedIndex);
+    }
+  }
+  return DBL_MAX;
+}
+
+template <typename T>
+T StatisticsDataset<T>::max(bool handleNullFrequencies) const {
+  int length = datasetLength();
+  for (int k = length - 1; k >= 0; k--) {
+    // Unless handleNullFrequencies is true, look for the first non null value.
+    int sortedIndex = indexAtSortedIndex(k);
+    if (handleNullFrequencies || weightAtIndex(sortedIndex) > 0.0) {
+      return valueAtIndex(sortedIndex);
+    }
+  }
+  return -DBL_MAX;
+}
+
+template <typename T>
+T StatisticsDataset<T>::sumOfValuesBetween(T lowerBound, T upperBound,
+                                           bool strictUpperBound) const {
+  if (lowerBound == INFINITY || upperBound == -INFINITY) {
+    return 0;
+  }
+  bool stopIfEqual = strictUpperBound && upperBound != INFINITY;
+  T result = 0;
+  int numberOfPairs = datasetLength();
+  for (int k = 0; k < numberOfPairs; k++) {
+    int sortedIndex = indexAtSortedIndex(k);
+    T value = valueAtIndex(sortedIndex);
+    if (value > upperBound ||
+        (stopIfEqual &&
+         OMG::Float::RelativelyEqual<T>(value, upperBound, k_precision))) {
+      break;
+    }
+    if (value >= lowerBound ||
+        OMG::Float::RelativelyEqual<T>(value, lowerBound, k_precision)) {
+      result += weightAtIndex(sortedIndex);
+    }
+  }
+  return result;
+}
+
+template <typename T>
+void StatisticsDataset<T>::countDistinctValues(int start, int end, int i,
+                                               bool handleNullFrequencies,
+                                               T* value,
+                                               int* distinctValues) const {
+  assert(start >= 0 && end <= datasetLength() && start <= end);
+  *distinctValues = 0;
+  *value = NAN;
+  for (int j = start; j < end; j++) {
+    int valueIndex = indexAtSortedIndex(j);
+    if (handleNullFrequencies || weightAtIndex(valueIndex) > 0.0) {
+      T nextX = valueAtIndex(valueIndex);
+      // *value != nextX returns true if *value is NAN
+      if (*value != nextX) {
+        (*distinctValues)++;
+        *value = nextX;
+      }
+      if (i == (*distinctValues) - 1) {
+        // Found the i-th distinct value
+        return;
+      }
+    }
+  }
+  assert(i == -1);
+}
+
+template <typename T>
+bool StatisticsDataset<T>::areWeightsAllIntegers() const {
+  for (int i = 0; i < datasetLength(); i++) {
+    T weight = weightAtIndex(indexAtSortedIndex(i));
+    if (weight != std::round(weight)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+template <typename T>
 typename StatisticsDataset<T>::ModeData StatisticsDataset<T>::modeData() const {
   if (m_memoizedModeData.numberOfModes > 0) {
     return m_memoizedModeData;
@@ -326,6 +415,154 @@ void StatisticsDataset<T>::buildMemoizedSortedIndex() const {
       },
       pack, datasetLength());
   m_recomputeSortedIndex = false;
+}
+
+template <typename T>
+T StatisticsDataset<T>::heightOfBarAtIndex(int index, T barWidth,
+                                           T firstDrawnBarAbscissa) const {
+  return sumOfValuesBetween(
+      startOfBarAtIndex(index, barWidth, firstDrawnBarAbscissa),
+      endOfBarAtIndex(index, barWidth, firstDrawnBarAbscissa));
+}
+
+template <typename T>
+T StatisticsDataset<T>::startOfBarAtIndex(int index, T barWidth,
+                                          T firstDrawnBarAbscissa) const {
+  double minValue = min();
+  double firstBarAbscissa =
+      firstDrawnBarAbscissa +
+      barWidth * std::floor((minValue - firstDrawnBarAbscissa) / barWidth);
+  /* Because of floating point approximation, firstBarAbscissa could be above
+   * the minimal value, or too much below. As a result, we would compute a
+   * height of zero for all bars. */
+  if (firstBarAbscissa > minValue) {
+    firstBarAbscissa -= barWidth;
+  } else if (firstBarAbscissa + barWidth <= minValue) {
+    firstBarAbscissa += barWidth;
+  }
+  return firstBarAbscissa + index * barWidth;
+}
+
+template <typename T>
+T StatisticsDataset<T>::endOfBarAtIndex(int index, T barWidth,
+                                        T firstDrawnBarAbscissa) const {
+  return startOfBarAtIndex(index + 1, barWidth, firstDrawnBarAbscissa);
+}
+
+template <typename T>
+int StatisticsDataset<T>::numberOfBars(T barWidth, T firstDrawnBarAbscissa) {
+  T firstBarAbscissa = startOfBarAtIndex(0, barWidth, firstDrawnBarAbscissa);
+  T maxValue = max();
+  int nBars = static_cast<int>(
+      std::floor((maxValue - firstBarAbscissa) / barWidth) + 1);
+  if (OMG::Float::RelativelyEqual<T>(
+          maxValue, firstBarAbscissa + nBars * barWidth, k_precision)) {
+    /* If the maxValue is on the upper bound of the last bar, we need to add
+     * one bar to be consistent with sumOfValuesBetween. */
+    nBars++;
+  }
+  return nBars;
+}
+
+template <typename T>
+int StatisticsDataset<T>::totalCumulatedFrequencyValues() const {
+  T value;
+  int distinctValues;
+  countDistinctValues(0, datasetLength(), -1, true, &value, &distinctValues);
+  return distinctValues;
+}
+
+template <typename T>
+T StatisticsDataset<T>::cumulatedFrequencyValueAtIndex(int i) const {
+  T value;
+  int distinctValues;
+  countDistinctValues(0, datasetLength(), i, true, &value, &distinctValues);
+  return value;
+}
+
+template <typename T>
+T StatisticsDataset<T>::cumulatedFrequencyResultAtIndex(int i) const {
+  T cumulatedOccurrences = 0.0;
+  int index = 0;
+  const T value = cumulatedFrequencyValueAtIndex(i);
+  const int length = datasetLength();
+  while (index < length && valueAtIndex(indexAtSortedIndex(index)) <= value) {
+    cumulatedOccurrences += weightAtIndex(indexAtSortedIndex(index));
+    index++;
+  }
+  // Taking advantage of sumOfOccurrences being memoized.
+  return 100.0 * cumulatedOccurrences / totalWeight();
+}
+
+template <typename T>
+T StatisticsDataset<T>::cumulatedFrequencyResultAtAbscissa(T x) const {
+  if (x < min(true)) {
+    return 0.0;
+  }
+  if (x >= max(true)) {
+    return 100.0;
+  }
+
+  // Find the closest indices for interpolation
+  const int totalValues = totalCumulatedFrequencyValues();
+  int lowerIndex = -1;
+  int upperIndex = -1;
+
+  // Find the two closest distinct values for interpolation
+  for (int i = 0; i < totalValues; i++) {
+    T currentValue = cumulatedFrequencyValueAtIndex(i);
+    if (currentValue <= x) {
+      lowerIndex = i;
+    } else {
+      upperIndex = i;
+      break;
+    }
+  }
+
+  // If x equals a value in the dataset, return the exact cumulated frequency
+  if (lowerIndex >= 0 &&
+      OMG::Float::RelativelyEqual<T>(cumulatedFrequencyValueAtIndex(lowerIndex),
+                                     x, k_precision)) {
+    return cumulatedFrequencyResultAtIndex(lowerIndex);
+  }
+
+  // x is between two values: interpolate
+  T lowerValue = cumulatedFrequencyValueAtIndex(lowerIndex);
+  T upperValue = cumulatedFrequencyValueAtIndex(upperIndex);
+  T lowerResult = cumulatedFrequencyResultAtIndex(lowerIndex);
+  T upperResult = cumulatedFrequencyResultAtIndex(upperIndex);
+
+  // Linear interpolation: y = y1 + (x - x1) * (y2 - y1) / (x2 - x1)
+  return lowerResult + (x - lowerValue) * (upperResult - lowerResult) /
+                           (upperValue - lowerValue);
+}
+
+template <typename T>
+int StatisticsDataset<T>::totalNormalProbabilityValues() const {
+  if (!areWeightsAllIntegers()) {
+    return 0;
+  }
+  T result = totalWeight();
+  assert(result == std::round(result));
+  return static_cast<int>(result);
+}
+
+template <typename T>
+T StatisticsDataset<T>::normalProbabilityValueAtIndex(int i) const {
+  assert(areWeightsAllIntegers());
+  return sortedElementAtCumulatedWeight(i + 1, false);
+}
+
+template <typename T>
+T StatisticsDataset<T>::normalProbabilityResultAtIndex(int i) const {
+  T total = static_cast<T>(totalNormalProbabilityValues());
+  assert(i >= 0 && total > 0.0 && static_cast<T>(i) < total);
+  // invnorm((i-0.5)/total,0,1)
+  T plottingPosition = (static_cast<T>(i) + 0.5) / total;
+  constexpr Poincare::Distribution::ParametersArray<T> k_distribParams = {0.0,
+                                                                          1.0};
+  return Poincare::Distribution::CumulativeDistributiveInverseForProbability(
+      Poincare::Distribution::Type::Normal, plottingPosition, k_distribParams);
 }
 
 template class StatisticsDataset<float>;

@@ -161,10 +161,18 @@ class StatisticsDataset {
     return indexAtCumulatedFrequency(1.0 / 2.0, upperIndex);
   }
 
-  T min() const { return valueAtIndex(indexAtSortedIndex(0)); }
-  T max() const {
-    return valueAtIndex(indexAtSortedIndex(datasetLength() - 1));
-  }
+  T min(bool handleNullFrequencies = false) const;
+  T max(bool handleNullFrequencies = false) const;
+  T sumOfValuesBetween(T lowerBound, T upperBound,
+                       bool strictUpperBound = true) const;
+  /* Find the i-th distinct value (if i is -1, browse the entire dataset) from
+   * start to end (ordered by value).
+   * Retrieve the i-th value and the number distinct values encountered.
+   * If not handleNullFrequencies, ignore values with null frequency. */
+  void countDistinctValues(int start, int end, int i,
+                           bool handleNullFrequencies, T* value,
+                           int* distinctValues) const;
+  bool areWeightsAllIntegers() const;
 
   struct ModeData {
     int numberOfModes = 0;
@@ -173,6 +181,37 @@ class StatisticsDataset {
 
   ModeData modeData() const;
   T modeValueAtIndex(int index) const;
+
+  /* Histogram bars */
+
+  T heightOfBarAtIndex(int index, T barWidth, T firstDrawnBarAbscissa) const;
+  T startOfBarAtIndex(int index, T barWidth, T firstDrawnBarAbscissa) const;
+  T endOfBarAtIndex(int index, T barWidth, T firstDrawnBarAbscissa) const;
+  int numberOfBars(T barWidth, T firstDrawnBarAbscissa);
+
+  /* Cumulated frequencies
+   * Distinct values are aggregated and their frequency summed */
+
+  // Return number of distinct values
+  int totalCumulatedFrequencyValues() const;
+  // Return the i-th distinct sorted value
+  T cumulatedFrequencyValueAtIndex(int index) const;
+  // Return the cumulated frequency of the i-th distinct sorted value
+  T cumulatedFrequencyResultAtIndex(int index) const;
+  /* Return the cumulated frequency result
+   * for a given abscissa value using interpolation */
+  T cumulatedFrequencyResultAtAbscissa(T x) const;
+
+  /* Normal probability
+   * Values are scattered into elements of frequency 1 */
+
+  /* Return the totalWeight, return 0 if it exceeds k_maxNumberOfPairs or
+   * if any frequency is not an integer */
+  int totalNormalProbabilityValues() const;
+  // Return the sorted element at cumulated population i+1
+  T normalProbabilityValueAtIndex(int i) const;
+  // Return the z-score of the i-th sorted element
+  T normalProbabilityResultAtIndex(int i) const;
 
  private:
   int datasetLength() const {
@@ -205,6 +244,12 @@ class StatisticsDataset {
   mutable ModeData m_memoizedModeData;
   bool m_lnOfValues;
   bool m_oppositeOfValues;
+
+  /* Use RelativelyEqual to handle impossible double representations such as
+   * 12.11 being 12.109999999999999 or 12.110000000000001. The precision we use
+   * must be higher than 1e-14 (max number of significant digits) but having it
+   * higher than DBL_EPSILON wouldn't be effective. */
+  constexpr static double k_precision = 1e-15;
 };
 
 }  // namespace Poincare

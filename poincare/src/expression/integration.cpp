@@ -53,12 +53,8 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
         Variables::LeaveScope(constant);
         NAry::SquashIfUnary(remainingIntegrand);
         assert(!SystematicReduction::ShallowReduce(remainingIntegrand));
-        TreeRef integral = (KIntegral)->cloneNode();
-        symbol->cloneTree();
-        a->cloneTree();
-        b->cloneTree();
-        remainingIntegrand->detachTree();
-        Integration::Reduce(integral);
+        remainingIntegrand->moveTreeOverTree(
+            Integrate(symbol, a, b, remainingIntegrand, true));
         NAry::SetNumberOfChildren(constant, constant->numberOfChildren() + 1);
         SystematicReduction::ShallowReduce(constant);
         return constant;

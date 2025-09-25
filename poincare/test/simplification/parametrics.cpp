@@ -438,7 +438,7 @@ QUIZ_CASE(pcj_simplification_integral) {
   simplifies_to("diff(int(x^2*t/2,t,0,1),x,y)", "y/2");
   simplifies_to("diff(int(x^2/2+t,t,0,1),x,y)", "y");
   // Integral of derivation
-  simplifies_to("int(diff(x^2,x,x),x,0,1)", "1");
+  simplifies_to("int(diff(x^2,x,x),x,0,2)", "4");
   // Not reduced
   simplifies_to("int(x*e^x,x,0,0)", "int(e^(x)×x,x,0,0)");
   simplifies_to("int(tan(x),x,0,x)", "int(tan(x),x,0,x)");

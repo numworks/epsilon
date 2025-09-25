@@ -81,10 +81,10 @@ class Store : public Shared::StatisticsStore {
   double upperWhisker(int series) const;
   double lowerFence(int series) const;
   double upperFence(int series) const;
-  /* ! */ int numberOfLowerOutliers(int series) const;
-  /* ! */ int numberOfUpperOutliers(int series) const;
-  /* ! */ double lowerOutlierAtIndex(int series, int index) const;
-  /* ! */ double upperOutlierAtIndex(int series, int index) const;
+  int numberOfLowerOutliers(int series) const;
+  int numberOfUpperOutliers(int series) const;
+  double lowerOutlierAtIndex(int series, int index) const;
+  double upperOutlierAtIndex(int series, int index) const;
   double sum(int series) const;
   double squaredValueSum(int series) const;
   int numberOfModes(int series) const;

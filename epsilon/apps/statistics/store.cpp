@@ -85,8 +85,9 @@ int Store::numberOfBars(int series) const {
   double maxVal = maxValue(series);
   int nBars = static_cast<int>(
       std::floor((maxVal - firstBarAbscissa) / barWidth()) + 1);
-  if (OMG::Float::RelativelyEqual<double>(
-          maxVal, firstBarAbscissa + nBars * barWidth(), k_precision)) {
+  if (OMG::Float::RelativelyEqual<double>(maxVal,
+                                          firstBarAbscissa + nBars * barWidth(),
+                                          OMG::Float::EpsilonLax<double>())) {
     /* If the maxValue is on the upper bound of the last bar, we need to add
      * one bar to be consistent with sumOfValuesBetween. */
     nBars++;

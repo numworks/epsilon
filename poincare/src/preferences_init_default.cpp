@@ -26,6 +26,10 @@ class DefaultPreferences : public Preferences::Interface {
   constexpr Preferences::ParabolaParameter parabolaParameter() const override {
     return Preferences::k_defaultParabolaParameter;
   }
+  constexpr Preferences::MethodForQuartiles methodForQuartiles()
+      const override {
+    return Preferences::k_defaultMethodForQuartiles;
+  }
 };
 
 #if POINCARE_TRANSLATE_BUILTINS

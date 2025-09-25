@@ -45,7 +45,8 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
   CountryPreferences::AvailableExamModes availableExamModes() const {
     return countryPreferences().availableExamModes();
   }
-  CountryPreferences::MethodForQuartiles methodForQuartiles() const {
+  Poincare::Preferences::MethodForQuartiles methodForQuartiles()
+      const override {
     return countryPreferences().methodForQuartiles();
   }
   CountryPreferences::OutlierDefaultVisibility outliersStatus() const {

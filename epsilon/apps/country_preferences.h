@@ -14,8 +14,6 @@ class CountryPreferences {
     All
   };
 
-  enum class MethodForQuartiles : bool { MedianOfSublist, CumulatedFrequency };
-
   enum class OutlierDefaultVisibility : bool { Displayed, Hidden };
 
   enum class HomeAppsLayout : uint8_t {
@@ -76,7 +74,7 @@ class CountryPreferences {
 
   constexpr CountryPreferences(
       AvailableExamModes availableExamModes,
-      MethodForQuartiles methodForQuartiles,
+      Poincare::Preferences::MethodForQuartiles methodForQuartiles,
       OutlierDefaultVisibility outliersStatus,
       Poincare::Preferences::UnitFormat unitFormat,
       HomeAppsLayout homeAppsLayout, DiscriminantSymbol discriminantSymbol,
@@ -119,7 +117,8 @@ class CountryPreferences {
   constexpr AvailableExamModes availableExamModes() const {
     return m_availableExamModes;
   }
-  constexpr MethodForQuartiles methodForQuartiles() const {
+  constexpr Poincare::Preferences::MethodForQuartiles methodForQuartiles()
+      const {
     return m_methodForQuartiles;
   }
   constexpr OutlierDefaultVisibility outliersStatus() const {
@@ -186,7 +185,7 @@ class CountryPreferences {
   const AvailableExamModes m_availableExamModes;
   const HomeAppsLayout m_homeAppsLayout;
   const Poincare::Preferences::UnitFormat m_unitFormat;
-  const MethodForQuartiles m_methodForQuartiles;
+  const Poincare::Preferences::MethodForQuartiles m_methodForQuartiles;
   const OutlierDefaultVisibility m_outliersStatus;
   const DiscriminantSymbol m_discriminantSymbol;
   const HistogramsOffset m_histogramOffset;

@@ -183,7 +183,7 @@ void assert_data_box_plot(Store* store, int numberOfData,
     GlobalPreferences::SharedGlobalPreferences()->setCountry(country);
     bool countryUseFrequencyMethod =
         (GlobalPreferences::SharedGlobalPreferences()->methodForQuartiles() ==
-         CountryPreferences::MethodForQuartiles::CumulatedFrequency);
+         Poincare::Preferences::MethodForQuartiles::CumulatedFrequency);
     if (shouldUseFrequencyMethod != countryUseFrequencyMethod) {
       continue;
     }

@@ -34,7 +34,7 @@ ComplexSign Variables::GetComplexSign(const Tree* variable) {
 uint8_t Variables::Private::ToId(const Tree* variables, const char* name,
                                  uint8_t length) {
   for (IndexedChild<const Tree*> child : variables->indexedChildren()) {
-    if (strcmp(Symbol::GetName(child), name) == 0) {
+    if (Symbol::IsNamed(child, name)) {
       return child.index;
     }
   }
@@ -171,7 +171,7 @@ bool Variables::ReplaceSymbol(Tree* e, const Tree* symbol, int id,
 
 bool Variables::ReplaceSymbol(Tree* e, const char* symbol, int id,
                               ComplexSign sign) {
-  if (e->isUserSymbol() && strcmp(Symbol::GetName(e), symbol) == 0) {
+  if (Symbol::IsUserSymbol(e, symbol)) {
     Tree* var = SharedTreeStack->pushVar(static_cast<uint8_t>(id), sign);
     e->moveTreeOverTree(var);
     return true;
@@ -182,8 +182,8 @@ bool Variables::ReplaceSymbol(Tree* e, const char* symbol, int id,
     if (isParametric && child.index == Parametric::k_variableIndex) {
     } else if (isParametric && Parametric::IsFunctionIndex(child.index, e)) {
       // No need to continue if symbol is hidden by a local definition
-      if (strcmp(Symbol::GetName(e->child(Parametric::k_variableIndex)),
-                 symbol) != 0) {
+      if (!Symbol::IsUserSymbol(e->child(Parametric::k_variableIndex),
+                                symbol)) {
         changed = ReplaceSymbol(child, symbol, id + 1, sign) || changed;
       }
     } else {
@@ -220,8 +220,8 @@ bool Variables::ReplaceSymbolWithTree(Tree* e, const Tree* symbol,
     if (!(isParametric &&
           (child.index == Parametric::k_variableIndex ||
            (Parametric::IsFunctionIndex(child.index, e) &&
-            strcmp(Symbol::GetName(e->child(Parametric::k_variableIndex)),
-                   Symbol::GetName(symbol)) == 0)))) {
+            Symbol::IsNamed(e->child(Parametric::k_variableIndex),
+                            Symbol::GetName(symbol)))))) {
       changed = ReplaceSymbolWithTree(child, symbol, replacement) || changed;
     }
   }

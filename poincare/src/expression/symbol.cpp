@@ -21,6 +21,18 @@ const char* Symbol::GetName(const Tree* e) {
   return reinterpret_cast<const char*>(e->block()->nextNth(2));
 }
 
+bool Symbol::IsNamed(const Tree* e, const char* name) {
+  assert(e->isUserNamed());
+  return strcmp(GetName(e), name) == 0;
+}
+
+bool Symbol::IsUserSymbol(const Tree* e, const char* name) {
+  if (!e->isUserSymbol()) {
+    return false;
+  }
+  return IsNamed(e, name);
+}
+
 ComplexSign Symbol::GetComplexSign(const Tree* e) {
   /* Undefined global variables are considered scalar (and real finite for
    * UserSymbols) */

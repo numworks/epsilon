@@ -24,7 +24,7 @@ bool SymbolHelper::IsSymbol(Expression e, CodePoint c) {
   [[maybe_unused]] size_t codePointLength =
       UTF8Helper::WriteCodePoint(buffer, bufferSize - 1, c);
   assert(codePointLength < bufferSize);
-  return strcmp(GetName(e), buffer) == 0;
+  return Internal::Symbol::IsNamed(e, buffer);
 }
 
 const char* SymbolHelper::GetName(Expression e) {

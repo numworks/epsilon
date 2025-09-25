@@ -643,6 +643,23 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
       // Equation can be plotted along y. For example : x=cos(y) or x^2=1
       willBeAlongX = false;
     }
+    if (yDegree == 1) {
+      /* Escape simple y=f(x) equations, using SystemForApproximation reduction
+       * target to match f(x)= behavior.
+       * TODO : implement a more general solution for any implicit curves. */
+      static_assert(ContinuousFunctionProperties::k_ordinateName[0] == 'y');
+      UserExpression cartesianEquation =
+          expressionEquation(record).equivalentCartesianEquation();
+      if (!cartesianEquation.isUninitialized()) {
+        SystemExpression resultForApproximation =
+            getSystemExpressionForApproximation(cartesianEquation, m_expression,
+                                                complexFormat, angleUnit);
+        if (!resultForApproximation.isUninitialized()) {
+          m_expression = resultForApproximation;
+          return m_expression;
+        }
+      }
+    }
     /* Solve the equation in y (or x if not willBeAlongX)
      * Symbols are replaced to simplify roots. */
     constexpr size_t k_maxHandledDegree = 2;

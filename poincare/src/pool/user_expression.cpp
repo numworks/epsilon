@@ -8,6 +8,7 @@
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/units/unit.h>
 #include <poincare/src/layout/layout_serializer.h>
 #include <poincare/src/layout/layouter.h>
@@ -235,6 +236,19 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
   }
   return exp.approximateToRealScalar<T>(ctx.m_angleUnit, ctx.m_complexFormat,
                                         symbolContext);
+}
+
+UserExpression UserExpression::equivalentCartesianEquation() const {
+  const Tree* t = tree();
+  // Looking for KSub("y"_e, [something without "y"_e])
+  if (t->isSub() && t->child(0)->isUserSymbol() &&
+      strcmp(Symbol::GetName(t->child(0)), "y") == 0 &&
+      !(t->child(1)->hasDescendantSatisfying([](const Tree* e) {
+        return (e->isUserSymbol() && strcmp(Symbol::GetName(e), "y") == 0);
+      }))) {
+    return UserExpression::Builder(t->child(1));
+  }
+  return UserExpression();
 }
 
 ComplexFormat UserExpression::preferedComplexFormat(

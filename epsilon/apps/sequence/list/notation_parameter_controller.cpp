@@ -38,8 +38,8 @@ void NotationParameterController::fillCellForRow(HighlightCell* cell, int row) {
   NotationCell* notationCell = static_cast<NotationCell*>(cell);
   assert(row >= 0);
   assert(row < k_numberOfCells);
-  // TODO_PAULINE: create and set layout according to row
-  notationCell->label()->setLayout(sequence()->nameLayout());
+  notationCell->label()->setLayout(Shared::Sequence::DefinitionName(
+      sequence()->fullName()[0], sequence()->type(), notationForRow(row)));
 }
 
 void NotationParameterController::setRecord(Ion::Storage::Record record) {

@@ -34,10 +34,6 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
       return result;
     }
     case Type::Mult: {
-      static_assert(Parametric::k_variableIndex == 0 &&
-                    Parametric::k_lowerBoundIndex == 1 &&
-                    Parametric::k_upperBoundIndex == 2 &&
-                    Parametric::k_integrandIndex == 3);
       // Separate the constant part of the integrand
       TreeRef constant = SharedTreeStack->pushMult(0);
       TreeRef remainingIntegrand = SharedTreeStack->pushMult(0);
@@ -126,21 +122,35 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
 
 bool Integration::Reduce(Tree* e) {
   assert(e->isIntegral());
+  static_assert(
+      Parametric::k_variableIndex == 0 && Parametric::k_lowerBoundIndex == 1 &&
+      Parametric::k_upperBoundIndex == 2 && Parametric::k_integrandIndex == 3);
+  const Tree* symbol = e->child(0);
+  const Tree* lowerBound = symbol->nextTree();
+  const Tree* upperBound = lowerBound->nextTree();
+  const Tree* integrand = upperBound->nextTree();
   /* Dependencies cannot be bubbled up outside of integrals because we need to
    * make sure the integrand is defined between bounds. Remove useless
    * dependencies here to still be able to reduce the integral if possible. */
   bool changed = Dependency::DeepRemoveUselessDependencies(e);
-  Tree* integrandExpanded = e->child(Parametric::k_integrandIndex)->cloneTree();
+  Tree* integrandExpanded = integrand->cloneTree();
   /* Expand the integrand to improve output's approximation. This step could
    * rely on advanced reduction, or be moved in the multiplication case in
    * Integrate. */
   AdvancedReduction::DeepExpandAlgebraic(integrandExpanded);
-  TreeRef result = Integrate(e->child(Parametric::k_variableIndex),
-                             e->child(Parametric::k_lowerBoundIndex),
-                             e->child(Parametric::k_upperBoundIndex),
-                             integrandExpanded, false);
+  TreeRef result =
+      Integrate(symbol, lowerBound, upperBound, integrandExpanded, false);
   integrandExpanded->removeTree();
   if (result) {
+    // Add dependencies in bounds being real.
+    SharedTreeStack->pushDepList(2);
+    SharedTreeStack->pushReal();
+    lowerBound->cloneTree();
+    SharedTreeStack->pushReal();
+    upperBound->cloneTree();
+    result->cloneNodeAtNode(KDep);
+    SystematicReduction::ShallowReduce(result->child(1));
+    SystematicReduction::ShallowReduce(result);
     e->moveTreeOverTree(result);
     return true;
   }

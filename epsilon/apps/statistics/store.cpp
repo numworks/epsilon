@@ -40,8 +40,8 @@ void Store::setBarWidth(double barWidth) {
 }
 
 double Store::heightOfBarAtIndex(int series, int index) const {
-  return sumOfValuesBetween(series, startOfBarAtIndex(series, index),
-                            endOfBarAtIndex(series, index));
+  return m_datasets[series].heightOfBarAtIndex(index, barWidth(),
+                                               firstDrawnBarAbscissa());
 }
 
 double Store::maxHeightOfBar(int series) const {
@@ -71,24 +71,13 @@ double Store::heightOfBarAtValue(int series, double value) const {
 }
 
 double Store::startOfBarAtIndex(int series, int index) const {
-  double minimalValue = minValue(series);
-  double firstBarAbscissa =
-      firstDrawnBarAbscissa() +
-      barWidth() *
-          std::floor((minimalValue - firstDrawnBarAbscissa()) / barWidth());
-  /* Because of floating point approximation, firstBarAbscissa could be above
-   * the minimal value, or too much below. As a result, we would compute a
-   * height of zero for all bars. */
-  if (firstBarAbscissa > minimalValue) {
-    firstBarAbscissa -= barWidth();
-  } else if (firstBarAbscissa + barWidth() <= minimalValue) {
-    firstBarAbscissa += barWidth();
-  }
-  return firstBarAbscissa + index * barWidth();
+  return m_datasets[series].startOfBarAtIndex(index, barWidth(),
+                                              firstDrawnBarAbscissa());
 }
 
 double Store::endOfBarAtIndex(int series, int index) const {
-  return startOfBarAtIndex(series, index + 1);
+  return m_datasets[series].endOfBarAtIndex(index, barWidth(),
+                                            firstDrawnBarAbscissa());
 }
 
 int Store::numberOfBars(int series) const {
@@ -215,28 +204,12 @@ double Store::minValueForAllSeries(bool handleNullFrequencies,
 
 double Store::maxValue(int series, bool handleNullFrequencies) const {
   assert(seriesIsActive(series));
-  int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int k = numberOfPairs - 1; k >= 0; k--) {
-    // Unless handleNullFrequencies is true, look for the last non null value.
-    int sortedIndex = valueIndexAtSortedIndex(series, k);
-    if (handleNullFrequencies || get(series, 1, sortedIndex) > 0.0) {
-      return get(series, 0, sortedIndex);
-    }
-  }
-  return -DBL_MAX;
+  return m_datasets[series].max(handleNullFrequencies);
 }
 
 double Store::minValue(int series, bool handleNullFrequencies) const {
   assert(seriesIsActive(series));
-  int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int k = 0; k < numberOfPairs; k++) {
-    // Unless handleNullFrequencies is true, look for the first non null value.
-    int sortedIndex = valueIndexAtSortedIndex(series, k);
-    if (handleNullFrequencies || get(series, 1, sortedIndex) > 0.0) {
-      return get(series, 0, sortedIndex);
-    }
-  }
-  return DBL_MAX;
+  return m_datasets[series].min(handleNullFrequencies);
 }
 
 double Store::range(int series) const {
@@ -301,13 +274,11 @@ double Store::quartileRange(int series) const {
 double Store::median(int series) const { return m_datasets[series].median(); }
 
 double Store::lowerWhisker(int series) const {
-  return get(series, 0,
-             valueIndexAtSortedIndex(series, lowerWhiskerSortedIndex(series)));
+  return m_datasets[series].lowerWhisker(displayOutliers());
 }
 
 double Store::upperWhisker(int series) const {
-  return get(series, 0,
-             valueIndexAtSortedIndex(series, upperWhiskerSortedIndex(series)));
+  return m_datasets[series].upperWhisker(displayOutliers());
 }
 
 double Store::lowerFence(int series) const {
@@ -322,42 +293,24 @@ int Store::numberOfLowerOutliers(int series) const {
   if (!displayOutliers()) {
     return 0;
   }
-  double value;
-  int distinctValues;
-  countDistinctValues(series, 0, lowerWhiskerSortedIndex(series), -1, false,
-                      &value, &distinctValues);
-  return distinctValues;
+  return m_datasets[series].numberOfLowerOutliers();
 }
 
 int Store::numberOfUpperOutliers(int series) const {
   if (!displayOutliers()) {
     return 0;
   }
-  double value;
-  int distinctValues;
-  countDistinctValues(series, upperWhiskerSortedIndex(series) + 1,
-                      numberOfPairsOfSeries(series), -1, false, &value,
-                      &distinctValues);
-  return distinctValues;
+  return m_datasets[series].numberOfUpperOutliers();
 }
 
 double Store::lowerOutlierAtIndex(int series, int index) const {
   assert(displayOutliers() && index < numberOfLowerOutliers(series));
-  double value;
-  int distinctValues;
-  countDistinctValues(series, 0, lowerWhiskerSortedIndex(series), index, false,
-                      &value, &distinctValues);
-  return value;
+  return m_datasets[series].lowerOutlierAtIndex(index);
 }
 
 double Store::upperOutlierAtIndex(int series, int index) const {
   assert(displayOutliers() && index < numberOfUpperOutliers(series));
-  double value;
-  int distinctValues;
-  countDistinctValues(series, upperWhiskerSortedIndex(series) + 1,
-                      numberOfPairsOfSeries(series), index, false, &value,
-                      &distinctValues);
-  return value;
+  return m_datasets[series].upperOutlierAtIndex(index);
 }
 
 double Store::sum(int series) const { return m_datasets[series].weightedSum(); }
@@ -422,25 +375,7 @@ double Store::sumOfValuesBetween(int series, double x1, double x2,
   if (!seriesIsValid(series)) {
     return NAN;
   }
-  if (x1 == INFINITY || x2 == -INFINITY) {
-    return 0;
-  }
-  bool stopIfEqual = strictUpperBound && x2 != INFINITY;
-  double result = 0;
-  int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int k = 0; k < numberOfPairs; k++) {
-    int sortedIndex = valueIndexAtSortedIndex(series, k);
-    double value = get(series, 0, sortedIndex);
-    if (value > x2 || (stopIfEqual && OMG::Float::RelativelyEqual<double>(
-                                          value, x2, k_precision))) {
-      break;
-    }
-    if (value >= x1 ||
-        OMG::Float::RelativelyEqual<double>(value, x1, k_precision)) {
-      result += get(series, 1, sortedIndex);
-    }
-  }
-  return result;
+  return m_datasets[series].sumOfValuesBetween(x1, x2, strictUpperBound);
 }
 
 double Store::sortedElementAtCumulatedFrequency(
@@ -456,31 +391,11 @@ double Store::sortedElementAtCumulatedPopulation(
 }
 
 uint8_t Store::lowerWhiskerSortedIndex(int series) const {
-  double lowFence = lowerFence(series);
-  int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int k = 0; k < numberOfPairs; k++) {
-    int valueIndex = valueIndexAtSortedIndex(series, k);
-    if ((!displayOutliers() || get(series, 0, valueIndex) >= lowFence) &&
-        get(series, 1, valueIndex) > 0.0) {
-      return k;
-    }
-  }
-  assert(false);
-  return numberOfPairs;
+  return m_datasets[series].lowerWhiskerSortedIndex(displayOutliers());
 }
 
 uint8_t Store::upperWhiskerSortedIndex(int series) const {
-  double uppFence = upperFence(series);
-  int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int k = numberOfPairs - 1; k >= 0; k--) {
-    int valueIndex = valueIndexAtSortedIndex(series, k);
-    if ((!displayOutliers() || get(series, 0, valueIndex) <= uppFence) &&
-        get(series, 1, valueIndex) > 0.0) {
-      return k;
-    }
-  }
-  assert(false);
-  return numberOfPairs;
+  return m_datasets[series].upperWhiskerSortedIndex(displayOutliers());
 }
 
 void Store::countDistinctValues(int series, int start, int end, int i,
@@ -508,66 +423,35 @@ void Store::countDistinctValues(int series, int start, int end, int i,
 }
 
 int Store::totalCumulatedFrequencyValues(int series) const {
-  double value;
-  int distinctValues;
-  countDistinctValues(series, 0, numberOfPairsOfSeries(series), -1, true,
-                      &value, &distinctValues);
-  return distinctValues;
+  return m_datasets[series].totalCumulatedFrequencyValues();
 }
 
 double Store::cumulatedFrequencyValueAtIndex(int series, int i) const {
-  double value;
-  int distinctValues;
-  countDistinctValues(series, 0, numberOfPairsOfSeries(series), i, true, &value,
-                      &distinctValues);
-  return value;
+  return m_datasets[series].cumulatedFrequencyValueAtIndex(i);
 }
 
 double Store::cumulatedFrequencyResultAtIndex(int series, int i) const {
-  double cumulatedOccurrences = 0.0;
-  int index = 0;
-  const double value = cumulatedFrequencyValueAtIndex(series, i);
-  const int numberOfPairs = numberOfPairsOfSeries(series);
-  while (index < numberOfPairs &&
-         get(series, 0, valueIndexAtSortedIndex(series, index)) <= value) {
-    cumulatedOccurrences +=
-        get(series, 1, valueIndexAtSortedIndex(series, index));
-    index++;
-  }
-  // Taking advantage of sumOfOccurrences being memoized.
-  return 100.0 * cumulatedOccurrences / sumOfOccurrences(series);
+  return 100.0 * m_datasets[series].cumulatedFrequencyResultAtIndex(i);
 }
 
 int Store::totalNormalProbabilityValues(int series) const {
-  if (!seriesIsActive(series) || !columnIsIntegersOnly(series, 1)) {
+  if (!seriesIsActive(series)) {
     return 0;
   }
-  double result = sumOfOccurrences(series);
-  assert(result == std::round(result));
-  /* Limiting the result to k_maxNumberOfPairs to prevent limitless Normal
-   * Probability plots and int overflows */
-  static_assert(k_maxNumberOfPairs <= INT_MAX,
-                "k_maxNumberOfPairs is too large.");
-  if (result > k_maxNumberOfPairs) {
-    return 0;
-  }
-  return static_cast<int>(result);
+  return m_datasets[series].totalNormalProbabilityValues();
 }
 
 double Store::normalProbabilityValueAtIndex(int series, int i) const {
-  assert(columnIsIntegersOnly(series, 1));
-  return sortedElementAtCumulatedPopulation(series, i + 1, false);
+  return m_datasets[series].normalProbabilityValueAtIndex(i);
 }
 
 double Store::normalProbabilityResultAtIndex(int series, int i) const {
-  double total = static_cast<double>(totalNormalProbabilityValues(series));
-  assert(i >= 0 && total > 0.0 && static_cast<double>(i) < total);
-  // invnorm((i-0.5)/total,0,1)
-  double plottingPosition = (static_cast<double>(i) + 0.5) / total;
-  constexpr Poincare::Distribution::ParametersArray<double> k_distribParams = {
-      0.0, 1.0};
-  return Poincare::Distribution::CumulativeDistributiveInverseForProbability(
-      Poincare::Distribution::Type::Normal, plottingPosition, k_distribParams);
+  return m_datasets[series].normalProbabilityResultAtIndex(i);
+}
+
+double Store::normalProbabilityZScoreLineAtAbscissa(int series,
+                                                    double x) const {
+  return m_datasets[series].normalProbabilityZScoreLineAtAbscissa(x);
 }
 
 uint8_t Store::valueIndexAtSortedIndex(int series, int i) const {

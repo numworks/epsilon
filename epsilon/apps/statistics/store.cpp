@@ -205,12 +205,16 @@ double Store::minValueForAllSeries(bool handleNullFrequencies,
 
 double Store::maxValue(int series, bool handleNullFrequencies) const {
   assert(seriesIsActive(series));
-  return m_datasets[series].max(handleNullFrequencies);
+  return handleNullFrequencies
+             ? m_datasets[series].maxIncludingNullFrequencies()
+             : m_datasets[series].max();
 }
 
 double Store::minValue(int series, bool handleNullFrequencies) const {
   assert(seriesIsActive(series));
-  return m_datasets[series].min(handleNullFrequencies);
+  return handleNullFrequencies
+             ? m_datasets[series].minIncludingNullFrequencies()
+             : m_datasets[series].min();
 }
 
 double Store::range(int series) const {

@@ -169,8 +169,10 @@ class StatisticsDataset {
     return indexAtCumulatedFrequency(1.0 / 2.0, upperIndex);
   }
 
-  T min(bool handleNullFrequencies = false) const;
-  T max(bool handleNullFrequencies = false) const;
+  T min() const;
+  T minIncludingNullFrequencies() const;
+  T max() const;
+  T maxIncludingNullFrequencies() const;
   T sumOfValuesBetween(T lowerBound, T upperBound,
                        bool strictUpperBound = true) const;
   /* Find the i-th distinct value (if i is -1, browse the entire dataset) from

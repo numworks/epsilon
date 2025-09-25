@@ -560,7 +560,7 @@ T StatisticsDataset<T>::cumulatedFrequencyResultAtIndex(int i) const {
 
 template <typename T>
 T StatisticsDataset<T>::cumulatedFrequencyResultAtAbscissa(T x) const {
-  if (x < min()) {
+  if (x < minIncludingNullFrequencies()) {
     return 0.0;
   }
   if (x >= max()) {

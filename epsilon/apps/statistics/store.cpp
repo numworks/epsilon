@@ -244,31 +244,15 @@ double Store::sampleVariance(int series) const {
  * the more general definition if non-integral frequencies are found.
  * */
 double Store::firstQuartile(int series) const {
-  if (GlobalPreferences::SharedGlobalPreferences()->methodForQuartiles() ==
-          CountryPreferences::MethodForQuartiles::CumulatedFrequency ||
-      !columnIsIntegersOnly(series, 1)) {
-    return sortedElementAtCumulatedFrequency(series, 1.0 / 4.0);
-  }
-  assert(GlobalPreferences::SharedGlobalPreferences()->methodForQuartiles() ==
-         CountryPreferences::MethodForQuartiles::MedianOfSublist);
-  return sortedElementAtCumulatedPopulation(
-      series, std::floor(sumOfOccurrences(series) / 2.) / 2., true);
+  return m_datasets[series].firstQuartile();
 }
 
 double Store::thirdQuartile(int series) const {
-  if (GlobalPreferences::SharedGlobalPreferences()->methodForQuartiles() ==
-          CountryPreferences::MethodForQuartiles::CumulatedFrequency ||
-      !columnIsIntegersOnly(series, 1)) {
-    return sortedElementAtCumulatedFrequency(series, 3.0 / 4.0);
-  }
-  assert(GlobalPreferences::SharedGlobalPreferences()->methodForQuartiles() ==
-         CountryPreferences::MethodForQuartiles::MedianOfSublist);
-  return sortedElementAtCumulatedPopulation(
-      series, std::ceil(3. / 2. * sumOfOccurrences(series)) / 2., true);
+  return m_datasets[series].thirdQuartile();
 }
 
 double Store::quartileRange(int series) const {
-  return thirdQuartile(series) - firstQuartile(series);
+  return m_datasets[series].quartileRange();
 }
 
 double Store::median(int series) const { return m_datasets[series].median(); }
@@ -282,11 +266,11 @@ double Store::upperWhisker(int series) const {
 }
 
 double Store::lowerFence(int series) const {
-  return firstQuartile(series) - 1.5 * quartileRange(series);
+  return m_datasets[series].lowerFence();
 }
 
 double Store::upperFence(int series) const {
-  return thirdQuartile(series) + 1.5 * quartileRange(series);
+  return m_datasets[series].upperFence();
 }
 
 int Store::numberOfLowerOutliers(int series) const {
@@ -401,25 +385,8 @@ uint8_t Store::upperWhiskerSortedIndex(int series) const {
 void Store::countDistinctValues(int series, int start, int end, int i,
                                 bool handleNullFrequencies, double* value,
                                 int* distinctValues) const {
-  assert(start >= 0 && end <= numberOfPairsOfSeries(series) && start <= end);
-  *distinctValues = 0;
-  *value = NAN;
-  for (int j = start; j < end; j++) {
-    int valueIndex = valueIndexAtSortedIndex(series, j);
-    if (handleNullFrequencies || get(series, 1, valueIndex) > 0.0) {
-      double nextX = get(series, 0, valueIndexAtSortedIndex(series, j));
-      // *value != nextX returns true if *value is NAN
-      if (*value != nextX) {
-        (*distinctValues)++;
-        *value = nextX;
-      }
-      if (i == (*distinctValues) - 1) {
-        // Found the i-th distinct value
-        return;
-      }
-    }
-  }
-  assert(i == -1);
+  return m_datasets[series].countDistinctValues(
+      start, end, i, handleNullFrequencies, value, distinctValues);
 }
 
 int Store::totalCumulatedFrequencyValues(int series) const {

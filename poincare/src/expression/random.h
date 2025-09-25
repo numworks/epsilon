@@ -35,11 +35,7 @@ class Random {
    public:
     using VariableType = double;
     Context(bool isInitialized = true);
-#ifdef POINCARE_SMALL_RANDOM_CTX
     constexpr static int k_maxNumberOfVariables = 16;
-#else
-    constexpr static int k_maxNumberOfVariables = 100;
-#endif
     VariableType m_list[k_maxNumberOfVariables];
     bool m_isInitialized;
   };

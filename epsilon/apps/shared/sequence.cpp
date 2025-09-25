@@ -331,19 +331,24 @@ size_t Sequence::DefinitionModel::expressionSize(
          dataBuffer->initialConditionSize(1);
 }
 
-void Sequence::DefinitionModel::buildName(const Sequence* sequence) const {
+Poincare::Layout Sequence::DefinitionName(CodePoint name, Type type,
+                                          RecursiveNotation notation) {
   const char* index;
-  if (sequence->type() == Type::Explicit) {
+  if (type == Type::Explicit || notation == RecursiveNotation::Shifted) {
     index = "n";
-  } else if (sequence->type() == Type::SingleRecurrence) {
+  } else if (type == Type::SingleRecurrence) {
     index = "n+1";
   } else {
-    assert(sequence->type() == Type::DoubleRecurrence);
+    assert(type == Type::DoubleRecurrence);
     index = "n+2";
   }
-  m_name = Layout::Create(KA ^ KSubscriptL(KB),
-                          {.KA = Layout::CodePoint(sequence->fullName()[0]),
-                           .KB = Layout::String(index)});
+  return Layout::Create(KA ^ KSubscriptL(KB), {.KA = Layout::CodePoint(name),
+                                               .KB = Layout::String(index)});
+}
+
+void Sequence::DefinitionModel::buildName(const Sequence* sequence) const {
+  m_name = DefinitionName(sequence->fullName()[0], sequence->type(),
+                          sequence->recursiveNotation());
 }
 
 /* Initial Condition Handle*/

@@ -220,6 +220,8 @@ class StatisticsDataset {
   T normalProbabilityValueAtIndex(int i) const;
   // Return the z-score of the i-th sorted element
   T normalProbabilityResultAtIndex(int i) const;
+  // Return the z-score line value for a given abscissa value
+  T normalProbabilityZScoreLineAtAbscissa(T x) const;
 
   /* Boxplot */
 

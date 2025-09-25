@@ -109,6 +109,9 @@ class UserExpression : public Expression {
   template <typename T>
   UserExpression cloneAndApproximate(ProjectionContext& context) const;
 
+  // If of the form y-f(x), return f(x). Return uninitialized otherwise.
+  UserExpression equivalentCartesianEquation() const;
+
   /* Other helpers */
 
   SystemExpression cloneAndReduce(const ProjectionContext& projectionContext,

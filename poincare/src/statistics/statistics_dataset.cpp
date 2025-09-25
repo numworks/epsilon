@@ -601,6 +601,14 @@ T StatisticsDataset<T>::normalProbabilityResultAtIndex(int i) const {
 }
 
 template <typename T>
+T StatisticsDataset<T>::normalProbabilityZScoreLineAtAbscissa(T x) const {
+  T meanValue = mean();
+  T sigmaValue = standardDeviation();
+  assert(sigmaValue != 0.0);
+  return (x - meanValue) / sigmaValue;
+}
+
+template <typename T>
 uint8_t StatisticsDataset<T>::lowerWhiskerSortedIndex(bool hasOutliers) const {
   T lowFence = lowerFence();
   int length = datasetLength();

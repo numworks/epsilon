@@ -291,12 +291,13 @@ T StatisticsDataset<T>::sumOfValuesBetween(T lowerBound, T upperBound,
     int sortedIndex = indexAtSortedIndex(k);
     T value = valueAtIndex(sortedIndex);
     if (value > upperBound ||
-        (stopIfEqual &&
-         OMG::Float::RelativelyEqual<T>(value, upperBound, k_precision))) {
+        (stopIfEqual && OMG::Float::RelativelyEqual<T>(
+                            value, upperBound, OMG::Float::EpsilonLax<T>()))) {
       break;
     }
     if (value >= lowerBound ||
-        OMG::Float::RelativelyEqual<T>(value, lowerBound, k_precision)) {
+        OMG::Float::RelativelyEqual<T>(value, lowerBound,
+                                       OMG::Float::EpsilonLax<T>())) {
       result += weightAtIndex(sortedIndex);
     }
   }
@@ -507,8 +508,9 @@ int StatisticsDataset<T>::numberOfBars(T barWidth, T firstDrawnBarAbscissa) {
   T maxValue = max();
   int nBars = static_cast<int>(
       std::floor((maxValue - firstBarAbscissa) / barWidth) + 1);
-  if (OMG::Float::RelativelyEqual<T>(
-          maxValue, firstBarAbscissa + nBars * barWidth, k_precision)) {
+  if (OMG::Float::RelativelyEqual<T>(maxValue,
+                                     firstBarAbscissa + nBars * barWidth,
+                                     OMG::Float::EpsilonLax<T>())) {
     /* If the maxValue is on the upper bound of the last bar, we need to add
      * one bar to be consistent with sumOfValuesBetween. */
     nBars++;
@@ -574,7 +576,7 @@ T StatisticsDataset<T>::cumulatedFrequencyResultAtAbscissa(T x) const {
   // If x equals a value in the dataset, return the exact cumulated frequency
   if (lowerIndex >= 0 &&
       OMG::Float::RelativelyEqual<T>(cumulatedFrequencyValueAtIndex(lowerIndex),
-                                     x, k_precision)) {
+                                     x, OMG::Float::EpsilonLax<T>())) {
     return cumulatedFrequencyResultAtIndex(lowerIndex);
   }
 

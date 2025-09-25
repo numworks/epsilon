@@ -93,6 +93,7 @@ class Preferences {
     // TODO: support other languages
   };
   enum class ParabolaParameter : uint8_t { Default, FocalLength };
+  enum class MethodForQuartiles : bool { MedianOfSublist, CumulatedFrequency };
 
   constexpr static MixedFractions k_defaultMixedFraction =
       MixedFractions::Disabled;
@@ -103,6 +104,8 @@ class Preferences {
       CombinatoricSymbols::Default;
   constexpr static ParabolaParameter k_defaultParabolaParameter =
       ParabolaParameter::Default;
+  constexpr static MethodForQuartiles k_defaultMethodForQuartiles =
+      MethodForQuartiles::MedianOfSublist;
 
   /* These country-dependent preferences are needed inside Poincare.
    * This [Interface] allows the storage of those preferences to be outside
@@ -116,6 +119,7 @@ class Preferences {
     // TODO: setTranslateBuiltins should only be accessible in Scandium
     virtual void setTranslateBuiltins(TranslateBuiltins translate) = 0;
     virtual ParabolaParameter parabolaParameter() const = 0;
+    virtual MethodForQuartiles methodForQuartiles() const = 0;
     bool operator==(const Interface&) const = default;
   };
 

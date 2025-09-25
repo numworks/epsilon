@@ -28,3 +28,7 @@ static_assert(
 static_assert(
     GlobalPreferences::defaultCountryPreferences().parabolaParameter() ==
     Poincare::Preferences::k_defaultParabolaParameter);
+
+static_assert(
+    GlobalPreferences::defaultCountryPreferences().methodForQuartiles() ==
+    Poincare::Preferences::k_defaultMethodForQuartiles);

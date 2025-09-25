@@ -42,18 +42,21 @@ class ListParameterController : public Shared::ListParameterController,
   constexpr static int k_indexOfFirstRankCell = 1;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfNonInheritedCells() const {
-    return 2;
+    return 1 + displayNotationCell();
   }  // number of non inherited cells
 
   void updateFirstRankCell();
+  bool displayNotationCell() const { return m_displayNotationCell; };
+  void updateDisplayNotationCell();
 
   Shared::Sequence* sequence() {
     return static_cast<Shared::Sequence*>(function().pointer());
   }
+  Escher::MenuCellWithEditableText<Escher::MessageTextView> m_firstRankCell;
+  bool m_displayNotationCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
       m_notationCell;
-  Escher::MenuCellWithEditableText<Escher::MessageTextView> m_firstRankCell;
 };
 
 }  // namespace Sequence

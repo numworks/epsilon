@@ -253,12 +253,12 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight,
 }
 
 template <typename T>
-T StatisticsDataset<T>::min(bool handleNullFrequencies) const {
+T StatisticsDataset<T>::min() const {
   int length = datasetLength();
   for (int k = 0; k < length; k++) {
-    // Unless handleNullFrequencies is true, look for the first non null value.
+    // Look for the first non null value
     int sortedIndex = indexAtSortedIndex(k);
-    if (handleNullFrequencies || weightAtIndex(sortedIndex) > 0.0) {
+    if (weightAtIndex(sortedIndex) > 0.0) {
       return valueAtIndex(sortedIndex);
     }
   }
@@ -266,16 +266,26 @@ T StatisticsDataset<T>::min(bool handleNullFrequencies) const {
 }
 
 template <typename T>
-T StatisticsDataset<T>::max(bool handleNullFrequencies) const {
+T StatisticsDataset<T>::minIncludingNullFrequencies() const {
+  return valueAtIndex(indexAtSortedIndex(0));
+}
+
+template <typename T>
+T StatisticsDataset<T>::max() const {
   int length = datasetLength();
   for (int k = length - 1; k >= 0; k--) {
-    // Unless handleNullFrequencies is true, look for the first non null value.
+    // Look for the first non null value
     int sortedIndex = indexAtSortedIndex(k);
-    if (handleNullFrequencies || weightAtIndex(sortedIndex) > 0.0) {
+    if (weightAtIndex(sortedIndex) > 0.0) {
       return valueAtIndex(sortedIndex);
     }
   }
   return -DBL_MAX;
+}
+
+template <typename T>
+T StatisticsDataset<T>::maxIncludingNullFrequencies() const {
+  return valueAtIndex(indexAtSortedIndex(datasetLength() - 1));
 }
 
 template <typename T>
@@ -550,10 +560,10 @@ T StatisticsDataset<T>::cumulatedFrequencyResultAtIndex(int i) const {
 
 template <typename T>
 T StatisticsDataset<T>::cumulatedFrequencyResultAtAbscissa(T x) const {
-  if (x < min(true)) {
+  if (x < minIncludingNullFrequencies()) {
     return 0.0;
   }
-  if (x >= max(true)) {
+  if (x >= maxIncludingNullFrequencies()) {
     return 1.0;
   }
 

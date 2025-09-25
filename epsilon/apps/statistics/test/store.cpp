@@ -234,726 +234,736 @@ QUIZ_CASE(statistics) {
   UserPreferences userPreferences;
   Store store(&userPreferences);
 
-  /* 1 2 3 4
-   * 1 1 1 1 */
+  {
+    /* 1 2 3 4
+     * 1 1 1 1 */
+    constexpr int listLength = 4;
+    double v[listLength] = {1.0, 2.0, 3.0, 4.0};
+    double n[listLength] = {1.0, 1.0, 1.0, 1.0};
+    setStoreData(&store, v, n, listLength, k_defaultSeriesIndex);
+    constexpr int numberOfmodes = 4;
+    double modes[numberOfmodes] = {1.0, 2.0, 3.0, 4.0};
+    assert_data_statistics_equal_to(&store, listLength,
+                                    /* sumOfOccurrences */ 4.0,
+                                    /* range */ 3.0,
+                                    /* mean */ 2.5,
+                                    /* variance */ 1.25,
+                                    /* standardDeviation */ 1.118,
+                                    /* sampleStandardDeviation */ 1.291,
+                                    /* sum */ 10.0,
+                                    /* squaredValueSum */ 30.0, numberOfmodes,
+                                    modes,
+                                    /* modesFrequency */ 1.0);
 
-  constexpr int listLength1 = 4;
-  double v1[listLength1] = {1.0, 2.0, 3.0, 4.0};
-  double n1[listLength1] = {1.0, 1.0, 1.0, 1.0};
-  setStoreData(&store, v1, n1, listLength1, k_defaultSeriesIndex);
-  constexpr int numberOfModes1 = 4;
-  double modes1[numberOfModes1] = {1.0, 2.0, 3.0, 4.0};
-  assert_data_statistics_equal_to(&store, listLength1,
-                                  /* sumOfOccurrences */ 4.0,
-                                  /* range */ 3.0,
-                                  /* mean */ 2.5,
-                                  /* variance */ 1.25,
-                                  /* standardDeviation */ 1.118,
-                                  /* sampleStandardDeviation */ 1.291,
-                                  /* sum */ 10.0,
-                                  /* squaredValueSum */ 30.0, numberOfModes1,
-                                  modes1,
-                                  /* modesFrequency */ 1.0);
-
-  constexpr int totalCumulatedFrequency1 = listLength1;
-  double trueCumulatedFrequencyValues1[totalCumulatedFrequency1] = {1.0, 2.0,
+    constexpr int totalCumulatedFrequency = listLength;
+    double trueCumulatedFrequencyValues[totalCumulatedFrequency] = {1.0, 2.0,
                                                                     3.0, 4.0};
-  double trueCumulatedFrequencyResults1[totalCumulatedFrequency1] = {
-      25.0, 50.0, 75.0, 100.0};
-  assert_data_cumulated_frequency(
-      &store, listLength1, trueCumulatedFrequencyValues1,
-      trueCumulatedFrequencyResults1, totalCumulatedFrequency1);
+    double trueCumulatedFrequencyResults[totalCumulatedFrequency] = {
+        25.0, 50.0, 75.0, 100.0};
+    assert_data_cumulated_frequency(
+        &store, listLength, trueCumulatedFrequencyValues,
+        trueCumulatedFrequencyResults, totalCumulatedFrequency);
 
-  constexpr int totalNormalProbability1 = listLength1;
-  double trueNormalProbabilityValues1[totalNormalProbability1] = {1.0, 2.0, 3.0,
+    constexpr int totalNormalProbability = listLength;
+    double trueNormalProbabilityValues[totalNormalProbability] = {1.0, 2.0, 3.0,
                                                                   4.0};
-  double trueNormalProbabilityResults1[totalNormalProbability1] = {
-      -1.150, -0.3186, 0.3186, 1.150};
-  assert_data_normal_probability(
-      &store, listLength1, trueNormalProbabilityValues1,
-      trueNormalProbabilityResults1, totalNormalProbability1);
+    double trueNormalProbabilityResults[totalNormalProbability] = {
+        -1.150, -0.3186, 0.3186, 1.150};
+    assert_data_normal_probability(
+        &store, listLength, trueNormalProbabilityValues,
+        trueNormalProbabilityResults, totalNormalProbability);
 
-  constexpr int totalLowerOutliers1 = 0;
-  double trueLowerOutliers1[totalLowerOutliers1] = {};
-  constexpr int totalUpperOutliers1 = 0;
-  double trueUpperOutliers1[totalUpperOutliers1] = {};
-  // SublistMethod
-  assert_data_box_plot(
-      &store, listLength1,
-      /* quartileRange */ 2.0,
-      /* minValue */ 1.0, trueLowerOutliers1, totalLowerOutliers1,
-      /* lowerFence */ -1.5,
-      /* lowerWhisker */ 1.0,
-      /* firstQuartile */ 1.5,
-      /* median */ 2.5,
-      /* thirdQuartile */ 3.5,
-      /* upperWhisker */ 4.0,
-      /* upperFence */ 6.5, trueUpperOutliers1, totalUpperOutliers1,
-      /* maxValue */ 4.0, false);
+    constexpr int totalLowerOutliers = 0;
+    double trueLowerOutliers[totalLowerOutliers] = {};
+    constexpr int totalUpperOutliers = 0;
+    double trueUpperOutliers[totalUpperOutliers] = {};
+    // SublistMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 2.0,
+        /* minValue */ 1.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ -1.5,
+        /* lowerWhisker */ 1.0,
+        /* firstQuartile */ 1.5,
+        /* median */ 2.5,
+        /* thirdQuartile */ 3.5,
+        /* upperWhisker */ 4.0,
+        /* upperFence */ 6.5, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 4.0, false);
 
-  // FrequencyMethod
-  assert_data_box_plot(
-      &store, listLength1,
-      /* quartileRange */ 2.0,
-      /* minValue */ 1.0, trueLowerOutliers1, totalLowerOutliers1,
-      /* lowerFence */ -2.0,
-      /* lowerWhisker */ 1.0,
-      /* firstQuartile */ 1.0,
-      /* median */ 2.5,
-      /* thirdQuartile */ 3.0,
-      /* upperWhisker */ 4.0,
-      /* upperFence */ 6.0, trueUpperOutliers1, totalUpperOutliers1,
-      /* maxValue */ 4.0, true);
+    // FrequencyMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 2.0,
+        /* minValue */ 1.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ -2.0,
+        /* lowerWhisker */ 1.0,
+        /* firstQuartile */ 1.0,
+        /* median */ 2.5,
+        /* thirdQuartile */ 3.0,
+        /* upperWhisker */ 4.0,
+        /* upperFence */ 6.0, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 4.0, true);
+  }
 
-  /* 1 2 3 4 5 6 7 8 9 10 11
-   * 1 1 1 1 1 1 1 1 1  1  1 */
-
-  constexpr int listLength2 = 11;
-  double v2[listLength2] = {1.0, 2.0, 3.0, 4.0,  5.0, 6.0,
+  {
+    /* 1 2 3 4 5 6 7 8 9 10 11
+     * 1 1 1 1 1 1 1 1 1  1  1 */
+    constexpr int listLength = 11;
+    double v[listLength] = {1.0, 2.0, 3.0, 4.0,  5.0, 6.0,
                             7.0, 8.0, 9.0, 10.0, 11.0};
-  double n2[listLength2] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+    double n[listLength] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
                             1.0, 1.0, 1.0, 1.0, 1.0};
-  setStoreData(&store, v2, n2, listLength2, k_defaultSeriesIndex);
-  constexpr int numberOfModes2 = 11;
-  double modes2[numberOfModes2] = {1.0, 2.0, 3.0, 4.0,  5.0, 6.0,
+    setStoreData(&store, v, n, listLength, k_defaultSeriesIndex);
+    constexpr int numberOfmodes = 11;
+    double modes[numberOfmodes] = {1.0, 2.0, 3.0, 4.0,  5.0, 6.0,
                                    7.0, 8.0, 9.0, 10.0, 11.0};
-  assert_data_statistics_equal_to(&store, listLength2,
-                                  /* sumOfOccurrences */ 11.0,
-                                  /* range */ 10.0,
-                                  /* mean */ 6.0,
-                                  /* variance */ 10.0,
-                                  /* standardDeviation */ 3.1623,
-                                  /* sampleStandardDeviation */ 3.3166,
-                                  /* sum */ 66.0,
-                                  /* squaredValueSum */ 506.0, numberOfModes2,
-                                  modes2,
-                                  /* modesFrequency */ 1.0);
+    assert_data_statistics_equal_to(&store, listLength,
+                                    /* sumOfOccurrences */ 11.0,
+                                    /* range */ 10.0,
+                                    /* mean */ 6.0,
+                                    /* variance */ 10.0,
+                                    /* standardDeviation */ 3.1623,
+                                    /* sampleStandardDeviation */ 3.3166,
+                                    /* sum */ 66.0,
+                                    /* squaredValueSum */ 506.0, numberOfmodes,
+                                    modes,
+                                    /* modesFrequency */ 1.0);
 
-  constexpr int totalCumulatedFrequency2 = listLength2;
-  double trueCumulatedFrequencyValues2[totalCumulatedFrequency2] = {
-      1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0};
-  double trueCumulatedFrequencyResults2[totalCumulatedFrequency2] = {
-      9.090, 18.18, 27.27, 36.36, 45.45, 54.54,
-      63.63, 72.72, 81.81, 90.90, 100.0};
-  assert_data_cumulated_frequency(
-      &store, listLength2, trueCumulatedFrequencyValues2,
-      trueCumulatedFrequencyResults2, totalCumulatedFrequency2);
+    constexpr int totalCumulatedFrequency = listLength;
+    double trueCumulatedFrequencyValues[totalCumulatedFrequency] = {
+        1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0};
+    double trueCumulatedFrequencyResults[totalCumulatedFrequency] = {
+        9.090, 18.18, 27.27, 36.36, 45.45, 54.54,
+        63.63, 72.72, 81.81, 90.90, 100.0};
+    assert_data_cumulated_frequency(
+        &store, listLength, trueCumulatedFrequencyValues,
+        trueCumulatedFrequencyResults, totalCumulatedFrequency);
 
-  constexpr int totalNormalProbability2 = listLength2;
-  double trueNormalProbabilityValues2[totalNormalProbability2] = {
-      1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0};
-  double trueNormalProbabilityResults2[totalNormalProbability2] = {
-      -1.691, -1.097, -0.7479, -0.4728, -0.2299, 0.0,
-      0.2299, 0.4728, 0.7479,  1.097,   1.691};
-  assert_data_normal_probability(
-      &store, listLength2, trueNormalProbabilityValues2,
-      trueNormalProbabilityResults2, totalNormalProbability2);
+    constexpr int totalNormalProbability = listLength;
+    double trueNormalProbabilityValues[totalNormalProbability] = {
+        1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0};
+    double trueNormalProbabilityResults[totalNormalProbability] = {
+        -1.691, -1.097, -0.7479, -0.4728, -0.2299, 0.0,
+        0.2299, 0.4728, 0.7479,  1.097,   1.691};
+    assert_data_normal_probability(
+        &store, listLength, trueNormalProbabilityValues,
+        trueNormalProbabilityResults, totalNormalProbability);
 
-  constexpr int totalLowerOutliers2 = 0;
-  double trueLowerOutliers2[totalLowerOutliers2] = {};
-  constexpr int totalUpperOutliers2 = 0;
-  double trueUpperOutliers2[totalUpperOutliers2] = {};
-  // SublistMethod
-  assert_data_box_plot(
-      &store, listLength2,
-      /* quartileRange */ 6.0,
-      /* minValue */ 1.0, trueLowerOutliers2, totalLowerOutliers2,
-      /* lowerFence */ -6.0,
-      /* lowerWhisker */ 1.0,
-      /* firstQuartile */ 3.0,
-      /* median */ 6.0,
-      /* thirdQuartile */ 9.0,
-      /* upperWhisker */ 11.0,
-      /* upperFence */ 18.0, trueUpperOutliers2, totalUpperOutliers2,
-      /* maxValue */ 11.0, false);
+    constexpr int totalLowerOutliers = 0;
+    double trueLowerOutliers[totalLowerOutliers] = {};
+    constexpr int totalUpperOutliers = 0;
+    double trueUpperOutliers[totalUpperOutliers] = {};
+    // SublistMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 6.0,
+        /* minValue */ 1.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ -6.0,
+        /* lowerWhisker */ 1.0,
+        /* firstQuartile */ 3.0,
+        /* median */ 6.0,
+        /* thirdQuartile */ 9.0,
+        /* upperWhisker */ 11.0,
+        /* upperFence */ 18.0, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 11.0, false);
 
-  // FrequencyMethod
-  assert_data_box_plot(
-      &store, listLength2,
-      /* quartileRange */ 6.0,
-      /* minValue */ 1.0, trueLowerOutliers2, totalLowerOutliers2,
-      /* lowerFence */ -6.0,
-      /* lowerWhisker */ 1.0,
-      /* firstQuartile */ 3.0,
-      /* median */ 6.0,
-      /* thirdQuartile */ 9.0,
-      /* upperWhisker */ 11.0,
-      /* upperFence */ 18.0, trueUpperOutliers2, totalUpperOutliers2,
-      /* maxValue */ 11.0, true);
+    // FrequencyMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 6.0,
+        /* minValue */ 1.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ -6.0,
+        /* lowerWhisker */ 1.0,
+        /* firstQuartile */ 3.0,
+        /* median */ 6.0,
+        /* thirdQuartile */ 9.0,
+        /* upperWhisker */ 11.0,
+        /* upperFence */ 18.0, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 11.0, true);
+  }
 
-  /* 1 2 3 4 5 6 7 8 9 10 11 12
-   * 1 1 1 1 1 1 1 1 1  1  1  1 */
-
-  constexpr int listLength3 = 12;
-  double v3[listLength3] = {1.0, 2.0, 3.0, 4.0,  5.0,  6.0,
+  {
+    /* 1 2 3 4 5 6 7 8 9 10 11 12
+     * 1 1 1 1 1 1 1 1 1  1  1  1 */
+    constexpr int listLength = 12;
+    double v[listLength] = {1.0, 2.0, 3.0, 4.0,  5.0,  6.0,
                             7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
-  double n3[listLength3] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+    double n[listLength] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
                             1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
-  setStoreData(&store, v3, n3, listLength3, k_defaultSeriesIndex);
-  constexpr int numberOfModes3 = 12;
-  double modes3[numberOfModes3] = {1.0, 2.0, 3.0, 4.0,  5.0,  6.0,
+    setStoreData(&store, v, n, listLength, k_defaultSeriesIndex);
+    constexpr int numberOfmodes = 12;
+    double modes[numberOfmodes] = {1.0, 2.0, 3.0, 4.0,  5.0,  6.0,
                                    7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
-  assert_data_statistics_equal_to(&store, listLength3,
-                                  /* sumOfOccurrences */ 12.0,
-                                  /* range */ 11.0,
-                                  /* mean */ 6.5,
-                                  /* variance */ 11.917,
-                                  /* standardDeviation */ 3.4521,
-                                  /* sampleStandardDeviation */ 3.6056,
-                                  /* sum */ 78.0,
-                                  /* squaredValueSum */ 650.0, numberOfModes3,
-                                  modes3,
-                                  /* modesFrequency */ 1.0);
+    assert_data_statistics_equal_to(&store, listLength,
+                                    /* sumOfOccurrences */ 12.0,
+                                    /* range */ 11.0,
+                                    /* mean */ 6.5,
+                                    /* variance */ 11.917,
+                                    /* standardDeviation */ 3.4521,
+                                    /* sampleStandardDeviation */ 3.6056,
+                                    /* sum */ 78.0,
+                                    /* squaredValueSum */ 650.0, numberOfmodes,
+                                    modes,
+                                    /* modesFrequency */ 1.0);
 
-  constexpr int totalCumulatedFrequency3 = listLength3;
-  double trueCumulatedFrequencyValues3[totalCumulatedFrequency3] = {
-      1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
-  double trueCumulatedFrequencyResults3[totalCumulatedFrequency3] = {
-      8.333, 16.67, 25.00, 33.33, 41.67, 50.00,
-      58.33, 66.67, 75.00, 83.33, 91.67, 100.0};
-  assert_data_cumulated_frequency(
-      &store, listLength3, trueCumulatedFrequencyValues3,
-      trueCumulatedFrequencyResults3, totalCumulatedFrequency3);
+    constexpr int totalCumulatedFrequency = listLength;
+    double trueCumulatedFrequencyValues[totalCumulatedFrequency] = {
+        1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
+    double trueCumulatedFrequencyResults[totalCumulatedFrequency] = {
+        8.333, 16.67, 25.00, 33.33, 41.67, 50.00,
+        58.33, 66.67, 75.00, 83.33, 91.67, 100.0};
+    assert_data_cumulated_frequency(
+        &store, listLength, trueCumulatedFrequencyValues,
+        trueCumulatedFrequencyResults, totalCumulatedFrequency);
 
-  constexpr int totalNormalProbability3 = listLength3;
-  double trueNormalProbabilityValues3[totalNormalProbability3] = {
-      1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
-  double trueNormalProbabilityResults3[totalNormalProbability3] = {
-      -1.732, -1.150, -0.8122, -0.5485, -0.3186, -0.1046,
-      0.1046, 0.3186, 0.5485,  0.8122,  1.150,   1.732};
-  assert_data_normal_probability(
-      &store, listLength3, trueNormalProbabilityValues3,
-      trueNormalProbabilityResults3, totalNormalProbability3);
+    constexpr int totalNormalProbability = listLength;
+    double trueNormalProbabilityValues[totalNormalProbability] = {
+        1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
+    double trueNormalProbabilityResults[totalNormalProbability] = {
+        -1.732, -1.150, -0.8122, -0.5485, -0.3186, -0.1046,
+        0.1046, 0.3186, 0.5485,  0.8122,  1.150,   1.732};
+    assert_data_normal_probability(
+        &store, listLength, trueNormalProbabilityValues,
+        trueNormalProbabilityResults, totalNormalProbability);
 
-  constexpr int totalLowerOutliers3 = 0;
-  double trueLowerOutliers3[totalLowerOutliers3] = {};
-  constexpr int totalUpperOutliers3 = 0;
-  double trueUpperOutliers3[totalUpperOutliers3] = {};
-  // SublistMethod
-  assert_data_box_plot(
-      &store, listLength3,
-      /* quartileRange */ 6.0,
-      /* minValue */ 1.0, trueLowerOutliers3, totalLowerOutliers3,
-      /* lowerFence */ -5.5,
-      /* lowerWhisker */ 1.0,
-      /* firstQuartile */ 3.5,
-      /* median */ 6.5,
-      /* thirdQuartile */ 9.5,
-      /* upperWhisker */ 12.0,
-      /* upperFence */ 18.5, trueUpperOutliers3, totalUpperOutliers3,
-      /* maxValue */ 12.0, false);
+    constexpr int totalLowerOutliers = 0;
+    double trueLowerOutliers[totalLowerOutliers] = {};
+    constexpr int totalUpperOutliers = 0;
+    double trueUpperOutliers[totalUpperOutliers] = {};
+    // SublistMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 6.0,
+        /* minValue */ 1.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ -5.5,
+        /* lowerWhisker */ 1.0,
+        /* firstQuartile */ 3.5,
+        /* median */ 6.5,
+        /* thirdQuartile */ 9.5,
+        /* upperWhisker */ 12.0,
+        /* upperFence */ 18.5, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 12.0, false);
 
-  // FrequencyMethod
-  assert_data_box_plot(
-      &store, listLength3,
-      /* quartileRange */ 6.0,
-      /* minValue */ 1.0, trueLowerOutliers3, totalLowerOutliers3,
-      /* lowerFence */ -6.0,
-      /* lowerWhisker */ 1.0,
-      /* firstQuartile */ 3.0,
-      /* median */ 6.5,
-      /* thirdQuartile */ 9.0,
-      /* upperWhisker */ 12.0,
-      /* upperFence */ 18.0, trueUpperOutliers3, totalUpperOutliers3,
-      /* maxValue */ 12.0, true);
+    // FrequencyMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 6.0,
+        /* minValue */ 1.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ -6.0,
+        /* lowerWhisker */ 1.0,
+        /* firstQuartile */ 3.0,
+        /* median */ 6.5,
+        /* thirdQuartile */ 9.0,
+        /* upperWhisker */ 12.0,
+        /* upperFence */ 18.0, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 12.0, true);
+  }
 
-  /*   1    2   3      5     10
-   * 0.2 0.05 0.3 0.0001 0.4499 */
+  {
+    /*   1    2   3      5     10
+     * 0.2 0.05 0.3 0.0001 0.4499 */
+    constexpr int listLength = 5;
+    double v[listLength] = {1.0, 2.0, 3.0, 5.0, 10.0};
+    double n[listLength] = {0.2, 0.05, 0.3, 0.0001, 0.4499};
+    setStoreData(&store, v, n, listLength, k_defaultSeriesIndex);
+    constexpr int numberOfmodes = 1;
+    double modes[numberOfmodes] = {10.0};
+    assert_data_statistics_equal_to(&store, listLength,
+                                    /* sumOfOccurrences */ 1.0,
+                                    /* range */ 9.0,
+                                    /* mean */ 5.6995,
+                                    /* variance */ 15.6082,
+                                    /* standardDeviation */ 3.9507,
+                                    /* sampleStandardDeviation */ INFINITY,
+                                    /* sum */ 5.6995,
+                                    /* squaredValueSum */ 48.0925,
+                                    numberOfmodes, modes,
+                                    /* modesFrequency */ 0.4499);
 
-  constexpr int listLength4 = 5;
-  double v4[listLength4] = {1.0, 2.0, 3.0, 5.0, 10.0};
-  double n4[listLength4] = {0.2, 0.05, 0.3, 0.0001, 0.4499};
-  setStoreData(&store, v4, n4, listLength4, k_defaultSeriesIndex);
-  constexpr int numberOfModes4 = 1;
-  double modes4[numberOfModes4] = {10.0};
-  assert_data_statistics_equal_to(&store, listLength4,
-                                  /* sumOfOccurrences */ 1.0,
-                                  /* range */ 9.0,
-                                  /* mean */ 5.6995,
-                                  /* variance */ 15.6082,
-                                  /* standardDeviation */ 3.9507,
-                                  /* sampleStandardDeviation */ INFINITY,
-                                  /* sum */ 5.6995,
-                                  /* squaredValueSum */ 48.0925, numberOfModes4,
-                                  modes4,
-                                  /* modesFrequency */ 0.4499);
+    constexpr int totalCumulatedFrequency = listLength;
+    double trueCumulatedFrequencyValues[totalCumulatedFrequency] = {
+        1.0, 2.0, 3.0, 5.0, 10.0};
+    double trueCumulatedFrequencyResults[totalCumulatedFrequency] = {
+        20.0, 25.0, 55.0, 55.01, 100.0};
+    assert_data_cumulated_frequency(
+        &store, listLength, trueCumulatedFrequencyValues,
+        trueCumulatedFrequencyResults, totalCumulatedFrequency);
 
-  constexpr int totalCumulatedFrequency4 = listLength4;
-  double trueCumulatedFrequencyValues4[totalCumulatedFrequency4] = {
-      1.0, 2.0, 3.0, 5.0, 10.0};
-  double trueCumulatedFrequencyResults4[totalCumulatedFrequency4] = {
-      20.0, 25.0, 55.0, 55.01, 100.0};
-  assert_data_cumulated_frequency(
-      &store, listLength4, trueCumulatedFrequencyValues4,
-      trueCumulatedFrequencyResults4, totalCumulatedFrequency4);
+    constexpr int totalNormalProbability = 0;
+    double trueNormalProbabilityValues[totalNormalProbability] = {};
+    double trueNormalProbabilityResults[totalNormalProbability] = {};
+    assert_data_normal_probability(
+        &store, listLength, trueNormalProbabilityValues,
+        trueNormalProbabilityResults, totalNormalProbability);
 
-  constexpr int totalNormalProbability4 = 0;
-  double trueNormalProbabilityValues4[totalNormalProbability4] = {};
-  double trueNormalProbabilityResults4[totalNormalProbability4] = {};
-  assert_data_normal_probability(
-      &store, listLength4, trueNormalProbabilityValues4,
-      trueNormalProbabilityResults4, totalNormalProbability4);
+    constexpr int totalLowerOutliers = 0;
+    double trueLowerOutliers[totalLowerOutliers] = {};
+    constexpr int totalUpperOutliers = 0;
+    double trueUpperOutliers[totalUpperOutliers] = {};
+    // SublistMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 8.0,
+        /* minValue */ 1.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ -10.0,
+        /* lowerWhisker */ 1.0,
+        /* firstQuartile */ 2.0,
+        /* median */ 3.0,
+        /* thirdQuartile */ 10.0,
+        /* upperWhisker */ 10.0,
+        /* upperFence */ 22.0, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 10.0, false);
 
-  constexpr int totalLowerOutliers4 = 0;
-  double trueLowerOutliers4[totalLowerOutliers4] = {};
-  constexpr int totalUpperOutliers4 = 0;
-  double trueUpperOutliers4[totalUpperOutliers4] = {};
-  // SublistMethod
-  assert_data_box_plot(
-      &store, listLength4,
-      /* quartileRange */ 8.0,
-      /* minValue */ 1.0, trueLowerOutliers4, totalLowerOutliers4,
-      /* lowerFence */ -10.0,
-      /* lowerWhisker */ 1.0,
-      /* firstQuartile */ 2.0,
-      /* median */ 3.0,
-      /* thirdQuartile */ 10.0,
-      /* upperWhisker */ 10.0,
-      /* upperFence */ 22.0, trueUpperOutliers4, totalUpperOutliers4,
-      /* maxValue */ 10.0, false);
+    // FrequencyMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 8.0,
+        /* minValue */ 1.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ -10.0,
+        /* lowerWhisker */ 1.0,
+        /* firstQuartile */ 2.0,
+        /* median */ 3.0,
+        /* thirdQuartile */ 10.0,
+        /* upperWhisker */ 10.0,
+        /* upperFence */ 22.0, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 10.0, true);
+  }
 
-  // FrequencyMethod
-  assert_data_box_plot(
-      &store, listLength4,
-      /* quartileRange */ 8.0,
-      /* minValue */ 1.0, trueLowerOutliers4, totalLowerOutliers4,
-      /* lowerFence */ -10.0,
-      /* lowerWhisker */ 1.0,
-      /* firstQuartile */ 2.0,
-      /* median */ 3.0,
-      /* thirdQuartile */ 10.0,
-      /* upperWhisker */ 10.0,
-      /* upperFence */ 22.0, trueUpperOutliers4, totalUpperOutliers4,
-      /* maxValue */ 10.0, true);
+  {
+    /*   1      -2   3   5  10
+     * 0.4 0.00005 0.9 0.4 0.5 */
+    constexpr int listLength = 5;
+    double v[listLength] = {1.0, -2.0, 3.0, 5.0, 10.0};
+    double n[listLength] = {0.4, 0.00005, 0.9, 0.4, 0.5};
+    setStoreData(&store, v, n, listLength, k_defaultSeriesIndex);
+    constexpr int numberOfmodes = 1;
+    double modes[numberOfmodes] = {3.0};
+    assert_data_statistics_equal_to(&store, listLength,
+                                    /* sumOfOccurrences */ 2.2,
+                                    /* range */ 12.0,
+                                    /* mean */ 4.5908,
+                                    /* variance */ 10.06,
+                                    /* standardDeviation */ 3.1719,
+                                    /* sampleStandardDeviation */ 4.2947,
+                                    /* sum */ 10.1,
+                                    /* squaredValueSum */ 68.500, numberOfmodes,
+                                    modes,
+                                    /* modesFrequency */ 0.9);
 
-  /*   1      -2   3   5  10
-   * 0.4 0.00005 0.9 0.4 0.5 */
+    constexpr int totalCumulatedFrequency = listLength;
+    double trueCumulatedFrequencyValues[totalCumulatedFrequency] = {
+        -2.0, 1.0, 3.0, 5.0, 10.0};
+    double trueCumulatedFrequencyResults[totalCumulatedFrequency] = {
+        0.002273, 18.18, 59.09, 77.27, 100.0};
+    assert_data_cumulated_frequency(
+        &store, listLength, trueCumulatedFrequencyValues,
+        trueCumulatedFrequencyResults, totalCumulatedFrequency);
 
-  constexpr int listLength5 = 5;
-  double v5[listLength5] = {1.0, -2.0, 3.0, 5.0, 10.0};
-  double n5[listLength5] = {0.4, 0.00005, 0.9, 0.4, 0.5};
-  setStoreData(&store, v5, n5, listLength5, k_defaultSeriesIndex);
-  constexpr int numberOfModes5 = 1;
-  double modes5[numberOfModes5] = {3.0};
-  assert_data_statistics_equal_to(&store, listLength5,
-                                  /* sumOfOccurrences */ 2.2,
-                                  /* range */ 12.0,
-                                  /* mean */ 4.5908,
-                                  /* variance */ 10.06,
-                                  /* standardDeviation */ 3.1719,
-                                  /* sampleStandardDeviation */ 4.2947,
-                                  /* sum */ 10.1,
-                                  /* squaredValueSum */ 68.500, numberOfModes5,
-                                  modes5,
-                                  /* modesFrequency */ 0.9);
+    constexpr int totalNormalProbability = 0;
+    double trueNormalProbabilityValues[totalNormalProbability] = {};
+    double trueNormalProbabilityResults[totalNormalProbability] = {};
+    assert_data_normal_probability(
+        &store, listLength, trueNormalProbabilityValues,
+        trueNormalProbabilityResults, totalNormalProbability);
 
-  constexpr int totalCumulatedFrequency5 = listLength5;
-  double trueCumulatedFrequencyValues5[totalCumulatedFrequency5] = {
-      -2.0, 1.0, 3.0, 5.0, 10.0};
-  double trueCumulatedFrequencyResults5[totalCumulatedFrequency5] = {
-      0.002273, 18.18, 59.09, 77.27, 100.0};
-  assert_data_cumulated_frequency(
-      &store, listLength5, trueCumulatedFrequencyValues5,
-      trueCumulatedFrequencyResults5, totalCumulatedFrequency5);
+    constexpr int totalLowerOutliers = 1;
+    double trueLowerOutliers[totalLowerOutliers] = {-2.0};
+    constexpr int totalUpperOutliers = 1;
+    double trueUpperOutliers[totalUpperOutliers] = {10.0};
+    // SublistMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 2.0,
+        /* minValue */ -2.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ 0.0,
+        /* lowerWhisker */ 1.0,
+        /* firstQuartile */ 3.0,
+        /* median */ 3.0,
+        /* thirdQuartile */ 5.0,
+        /* upperWhisker */ 5.0,
+        /* upperFence */ 8.0, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 10.0, false);
 
-  constexpr int totalNormalProbability5 = 0;
-  double trueNormalProbabilityValues5[totalNormalProbability5] = {};
-  double trueNormalProbabilityResults5[totalNormalProbability5] = {};
-  assert_data_normal_probability(
-      &store, listLength5, trueNormalProbabilityValues5,
-      trueNormalProbabilityResults5, totalNormalProbability5);
+    // FrequencyMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 2.0,
+        /* minValue */ -2.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ 0,
+        /* lowerWhisker */ 1.0,
+        /* firstQuartile */ 3.0,
+        /* median */ 3.0,
+        /* thirdQuartile */ 5.0,
+        /* upperWhisker */ 5.0,
+        /* upperFence */ 8.0, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 10.0, true);
+  }
 
-  constexpr int totalLowerOutliers5 = 1;
-  double trueLowerOutliers5[totalLowerOutliers5] = {-2.0};
-  constexpr int totalUpperOutliers5 = 1;
-  double trueUpperOutliers5[totalUpperOutliers5] = {10.0};
-  // SublistMethod
-  assert_data_box_plot(
-      &store, listLength5,
-      /* quartileRange */ 2.0,
-      /* minValue */ -2.0, trueLowerOutliers5, totalLowerOutliers5,
-      /* lowerFence */ 0.0,
-      /* lowerWhisker */ 1.0,
-      /* firstQuartile */ 3.0,
-      /* median */ 3.0,
-      /* thirdQuartile */ 5.0,
-      /* upperWhisker */ 5.0,
-      /* upperFence */ 8.0, trueUpperOutliers5, totalUpperOutliers5,
-      /* maxValue */ 10.0, false);
+  {
+    /* -7 -10 12 5 -2
+     *  4   5  3 1  9 */
+    constexpr int listLength = 6;
+    double v[listLength] = {-7.0, -10.0, 1.0, 2.0, 5.0, -2.0};
+    double n[listLength] = {4.0, 5.0, 3.0, 0.5, 1.0, 9.0};
+    setStoreData(&store, v, n, listLength, k_defaultSeriesIndex);
+    constexpr int numberOfmodes = 1;
+    double modes[numberOfmodes] = {-2.0};
+    assert_data_statistics_equal_to(&store, listLength,
+                                    /* sumOfOccurrences */ 22.5,
+                                    /* range */ 15.0,
+                                    /* mean */ -3.8667,
+                                    /* variance */ 18.9155,
+                                    /* standardDeviation */ 4.3492,
+                                    /* sampleStandardDeviation */ 4.4492,
+                                    /* sum */ -87.0,
+                                    /* squaredValueSum */ 762.0, numberOfmodes,
+                                    modes,
+                                    /* modesFrequency */ 9.0);
 
-  // FrequencyMethod
-  assert_data_box_plot(
-      &store, listLength5,
-      /* quartileRange */ 2.0,
-      /* minValue */ -2.0, trueLowerOutliers5, totalLowerOutliers5,
-      /* lowerFence */ 0,
-      /* lowerWhisker */ 1.0,
-      /* firstQuartile */ 3.0,
-      /* median */ 3.0,
-      /* thirdQuartile */ 5.0,
-      /* upperWhisker */ 5.0,
-      /* upperFence */ 8.0, trueUpperOutliers5, totalUpperOutliers5,
-      /* maxValue */ 10.0, true);
+    constexpr int totalCumulatedFrequency = listLength;
+    double trueCumulatedFrequencyValues[totalCumulatedFrequency] = {
+        -10.0, -7.0, -2.0, 1.0, 2.0, 5.0};
+    double trueCumulatedFrequencyResults[totalCumulatedFrequency] = {
+        22.22, 40.00, 80.00, 93.33, 95.56, 100.0};
+    assert_data_cumulated_frequency(
+        &store, listLength, trueCumulatedFrequencyValues,
+        trueCumulatedFrequencyResults, totalCumulatedFrequency);
 
-  /* -7 -10 12 5 -2
-   *  4   5  3 1  9 */
+    constexpr int totalNormalProbability = 0;
+    double trueNormalProbabilityValues[totalNormalProbability] = {};
+    double trueNormalProbabilityResults[totalNormalProbability] = {};
+    assert_data_normal_probability(
+        &store, listLength, trueNormalProbabilityValues,
+        trueNormalProbabilityResults, totalNormalProbability);
 
-  constexpr int listLength6 = 6;
-  double v6[listLength6] = {-7.0, -10.0, 1.0, 2.0, 5.0, -2.0};
-  double n6[listLength6] = {4.0, 5.0, 3.0, 0.5, 1.0, 9.0};
-  setStoreData(&store, v6, n6, listLength6, k_defaultSeriesIndex);
-  constexpr int numberOfModes6 = 1;
-  double modes6[numberOfModes6] = {-2.0};
-  assert_data_statistics_equal_to(&store, listLength6,
-                                  /* sumOfOccurrences */ 22.5,
-                                  /* range */ 15.0,
-                                  /* mean */ -3.8667,
-                                  /* variance */ 18.9155,
-                                  /* standardDeviation */ 4.3492,
-                                  /* sampleStandardDeviation */ 4.4492,
-                                  /* sum */ -87.0,
-                                  /* squaredValueSum */ 762.0, numberOfModes6,
-                                  modes6,
-                                  /* modesFrequency */ 9.0);
+    constexpr int totalLowerOutliers = 0;
+    double trueLowerOutliers[totalLowerOutliers] = {};
+    constexpr int totalUpperOutliers = 0;
+    double trueUpperOutliers[totalUpperOutliers] = {};
+    // SublistMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 5.0,
+        /* minValue */ -10.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ -14.5,
+        /* lowerWhisker */ -10.0,
+        /* firstQuartile */ -7.0,
+        /* median */ -2.0,
+        /* thirdQuartile */ -2.0,
+        /* upperWhisker */ 5.0,
+        /* upperFence */ 5.5, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 5.0, false);
 
-  constexpr int totalCumulatedFrequency6 = listLength6;
-  double trueCumulatedFrequencyValues6[totalCumulatedFrequency6] = {
-      -10.0, -7.0, -2.0, 1.0, 2.0, 5.0};
-  double trueCumulatedFrequencyResults6[totalCumulatedFrequency6] = {
-      22.22, 40.00, 80.00, 93.33, 95.56, 100.0};
-  assert_data_cumulated_frequency(
-      &store, listLength6, trueCumulatedFrequencyValues6,
-      trueCumulatedFrequencyResults6, totalCumulatedFrequency6);
+    // FrequencyMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 5.0,
+        /* minValue */ -10.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ -14.5,
+        /* lowerWhisker */ -10.0,
+        /* firstQuartile */ -7.0,
+        /* median */ -2.0,
+        /* thirdQuartile */ -2.0,
+        /* upperWhisker */ 5.0,
+        /* upperFence */ 5.5, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 5.0, true);
+  }
 
-  constexpr int totalNormalProbability6 = 0;
-  double trueNormalProbabilityValues6[totalNormalProbability6] = {};
-  double trueNormalProbabilityResults6[totalNormalProbability6] = {};
-  assert_data_normal_probability(
-      &store, listLength6, trueNormalProbabilityValues6,
-      trueNormalProbabilityResults6, totalNormalProbability6);
+  {
+    /* 1 1 1 10 3 -1 3
+     * 1 1 1  0 0  0 1 */
+    constexpr int listLength = 7;
+    double v[listLength] = {1.0, 1.0, 1.0, 10.0, 3.0, -1.0, 3.0};
+    double n[listLength] = {1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0};
+    setStoreData(&store, v, n, listLength, k_defaultSeriesIndex);
+    constexpr int numberOfmodes = 1;
+    double modes[numberOfmodes] = {1.0};
+    assert_data_statistics_equal_to(&store, listLength,
+                                    /* sumOfOccurrences */ 4.0,
+                                    /* range */ 2.0,
+                                    /* mean */ 1.5,
+                                    /* variance */ 0.75,
+                                    /* standardDeviation */ 0.866,
+                                    /* sampleStandardDeviation */ 1.0,
+                                    /* sum */ 6.0,
+                                    /* squaredValueSum */ 12.0, numberOfmodes,
+                                    modes,
+                                    /* modesFrequency */ 3.0);
 
-  constexpr int totalLowerOutliers6 = 0;
-  double trueLowerOutliers6[totalLowerOutliers6] = {};
-  constexpr int totalUpperOutliers6 = 0;
-  double trueUpperOutliers6[totalUpperOutliers6] = {};
-  // SublistMethod
-  assert_data_box_plot(
-      &store, listLength6,
-      /* quartileRange */ 5.0,
-      /* minValue */ -10.0, trueLowerOutliers6, totalLowerOutliers6,
-      /* lowerFence */ -14.5,
-      /* lowerWhisker */ -10.0,
-      /* firstQuartile */ -7.0,
-      /* median */ -2.0,
-      /* thirdQuartile */ -2.0,
-      /* upperWhisker */ 5.0,
-      /* upperFence */ 5.5, trueUpperOutliers6, totalUpperOutliers6,
-      /* maxValue */ 5.0, false);
-
-  // FrequencyMethod
-  assert_data_box_plot(
-      &store, listLength6,
-      /* quartileRange */ 5.0,
-      /* minValue */ -10.0, trueLowerOutliers6, totalLowerOutliers6,
-      /* lowerFence */ -14.5,
-      /* lowerWhisker */ -10.0,
-      /* firstQuartile */ -7.0,
-      /* median */ -2.0,
-      /* thirdQuartile */ -2.0,
-      /* upperWhisker */ 5.0,
-      /* upperFence */ 5.5, trueUpperOutliers6, totalUpperOutliers6,
-      /* maxValue */ 5.0, true);
-
-  /* 1 1 1 10 3 -1 3
-   * 1 1 1  0 0  0 1 */
-
-  constexpr int listLength7 = 7;
-  double v7[listLength7] = {1.0, 1.0, 1.0, 10.0, 3.0, -1.0, 3.0};
-  double n7[listLength7] = {1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0};
-  setStoreData(&store, v7, n7, listLength7, k_defaultSeriesIndex);
-  constexpr int numberOfModes7 = 1;
-  double modes7[numberOfModes7] = {1.0};
-  assert_data_statistics_equal_to(&store, listLength7,
-                                  /* sumOfOccurrences */ 4.0,
-                                  /* range */ 2.0,
-                                  /* mean */ 1.5,
-                                  /* variance */ 0.75,
-                                  /* standardDeviation */ 0.866,
-                                  /* sampleStandardDeviation */ 1.0,
-                                  /* sum */ 6.0,
-                                  /* squaredValueSum */ 12.0, numberOfModes7,
-                                  modes7,
-                                  /* modesFrequency */ 3.0);
-
-  constexpr int totalCumulatedFrequency7 = 4;
-  double trueCumulatedFrequencyValues7[totalCumulatedFrequency7] = {-1.0, 1.0,
+    constexpr int totalCumulatedFrequency = 4;
+    double trueCumulatedFrequencyValues[totalCumulatedFrequency] = {-1.0, 1.0,
                                                                     3.0, 10.0};
-  double trueCumulatedFrequencyResults7[totalCumulatedFrequency7] = {
-      0.0, 75.0, 100.0, 100.0};
-  assert_data_cumulated_frequency(
-      &store, listLength7, trueCumulatedFrequencyValues7,
-      trueCumulatedFrequencyResults7, totalCumulatedFrequency7);
+    double trueCumulatedFrequencyResults[totalCumulatedFrequency] = {
+        0.0, 75.0, 100.0, 100.0};
+    assert_data_cumulated_frequency(
+        &store, listLength, trueCumulatedFrequencyValues,
+        trueCumulatedFrequencyResults, totalCumulatedFrequency);
 
-  constexpr int totalNormalProbability7 = 4;
-  double trueNormalProbabilityValues7[totalNormalProbability7] = {1.0, 1.0, 1.0,
+    constexpr int totalNormalProbability = 4;
+    double trueNormalProbabilityValues[totalNormalProbability] = {1.0, 1.0, 1.0,
                                                                   3.0};
-  double trueNormalProbabilityResults7[totalNormalProbability7] = {
-      -1.150, -0.3186, 0.3186, 1.150};
-  assert_data_normal_probability(
-      &store, listLength7, trueNormalProbabilityValues7,
-      trueNormalProbabilityResults7, totalNormalProbability7);
+    double trueNormalProbabilityResults[totalNormalProbability] = {
+        -1.150, -0.3186, 0.3186, 1.150};
+    assert_data_normal_probability(
+        &store, listLength, trueNormalProbabilityValues,
+        trueNormalProbabilityResults, totalNormalProbability);
 
-  constexpr int totalLowerOutliersSublistMethod7 = 0;
-  double trueLowerOutliersSublistMethod7[totalLowerOutliersSublistMethod7] = {};
-  constexpr int totalUpperOutliersSublistMethod7 = 0;
-  double trueUpperOutliersSublistMethod7[totalUpperOutliersSublistMethod7] = {};
-  // SublistMethod
-  assert_data_box_plot(&store, listLength7,
-                       /* quartileRange */ 1.0,
-                       /* minValue */ 1.0, trueLowerOutliersSublistMethod7,
-                       totalLowerOutliersSublistMethod7,
-                       /* lowerFence */ -0.5,
-                       /* lowerWhisker */ 1.0,
-                       /* firstQuartile */ 1.0,
-                       /* median */ 1.0,
-                       /* thirdQuartile */ 2.0,
-                       /* upperWhisker */ 3.0,
-                       /* upperFence */ 3.5, trueUpperOutliersSublistMethod7,
-                       totalUpperOutliersSublistMethod7,
-                       /* maxValue */ 3.0, false);
+    constexpr int totalLowerOutliersSublistMethod = 0;
+    double trueLowerOutliersSublistMethod[totalLowerOutliersSublistMethod] = {};
+    constexpr int totalUpperOutliersSublistMethod = 0;
+    double trueUpperOutliersSublistMethod[totalUpperOutliersSublistMethod] = {};
+    // SublistMethod
+    assert_data_box_plot(&store, listLength,
+                         /* quartileRange */ 1.0,
+                         /* minValue */ 1.0, trueLowerOutliersSublistMethod,
+                         totalLowerOutliersSublistMethod,
+                         /* lowerFence */ -0.5,
+                         /* lowerWhisker */ 1.0,
+                         /* firstQuartile */ 1.0,
+                         /* median */ 1.0,
+                         /* thirdQuartile */ 2.0,
+                         /* upperWhisker */ 3.0,
+                         /* upperFence */ 3.5, trueUpperOutliersSublistMethod,
+                         totalUpperOutliersSublistMethod,
+                         /* maxValue */ 3.0, false);
 
-  constexpr int totalLowerOutliersFrequencyMethod7 = 0;
-  double trueLowerOutliersFrequencyMethod7[totalLowerOutliersFrequencyMethod7] =
-      {};
-  constexpr int totalUpperOutliersFrequencyMethod7 = 1;
-  double trueUpperOutliersFrequencyMethod7[totalUpperOutliersFrequencyMethod7] =
-      {3.0};
-  // FrequencyMethod
-  assert_data_box_plot(&store, listLength7,
-                       /* quartileRange */ 0.0,
-                       /* minValue */ 1.0, trueLowerOutliersFrequencyMethod7,
-                       totalLowerOutliersFrequencyMethod7,
-                       /* lowerFence */ 1.0,
-                       /* lowerWhisker */ 1.0,
-                       /* firstQuartile */ 1.0,
-                       /* median */ 1.0,
-                       /* thirdQuartile */ 1.0,
-                       /* upperWhisker */ 1.0,
-                       /* upperFence */ 1.0, trueUpperOutliersFrequencyMethod7,
-                       totalUpperOutliersFrequencyMethod7,
-                       /* maxValue */ 3.0, true);
+    constexpr int totalLowerOutliersFrequencyMethod = 0;
+    double trueLowerOutliersFrequencyMethod[totalLowerOutliersFrequencyMethod] =
+        {};
+    constexpr int totalUpperOutliersFrequencyMethod = 1;
+    double trueUpperOutliersFrequencyMethod[totalUpperOutliersFrequencyMethod] =
+        {3.0};
+    // FrequencyMethod
+    assert_data_box_plot(&store, listLength,
+                         /* quartileRange */ 0.0,
+                         /* minValue */ 1.0, trueLowerOutliersFrequencyMethod,
+                         totalLowerOutliersFrequencyMethod,
+                         /* lowerFence */ 1.0,
+                         /* lowerWhisker */ 1.0,
+                         /* firstQuartile */ 1.0,
+                         /* median */ 1.0,
+                         /* thirdQuartile */ 1.0,
+                         /* upperWhisker */ 1.0,
+                         /* upperFence */ 1.0, trueUpperOutliersFrequencyMethod,
+                         totalUpperOutliersFrequencyMethod,
+                         /* maxValue */ 3.0, true);
+  }
 
-  /* 1 2 3 4
-   * 0 1 0 1 */
+  {
+    /* 1 2 3 4
+     * 0 1 0 1 */
+    constexpr int listLength = 4;
+    double v[listLength] = {1.0, 2.0, 3.0, 4.0};
+    double n[listLength] = {0.0, 1.0, 0.0, 1.0};
+    setStoreData(&store, v, n, listLength, k_defaultSeriesIndex);
+    constexpr int numberOfmodes = 2;
+    double modes[numberOfmodes] = {2.0, 4.0};
+    assert_data_statistics_equal_to(&store, listLength,
+                                    /* sumOfOccurrences */ 2.0,
+                                    /* range */ 2.0,
+                                    /* mean */ 3.0,
+                                    /* variance */ 1.0,
+                                    /* standardDeviation */ 1.0,
+                                    /* sampleStandardDeviation */ 1.414,
+                                    /* sum */ 6.0,
+                                    /* squaredValueSum */ 20.0, numberOfmodes,
+                                    modes,
+                                    /* modesFrequency */ 1.0);
 
-  constexpr int listLength8 = 4;
-  double v8[listLength8] = {1.0, 2.0, 3.0, 4.0};
-  double n8[listLength8] = {0.0, 1.0, 0.0, 1.0};
-  setStoreData(&store, v8, n8, listLength8, k_defaultSeriesIndex);
-  constexpr int numberOfModes8 = 2;
-  double modes8[numberOfModes8] = {2.0, 4.0};
-  assert_data_statistics_equal_to(&store, listLength8,
-                                  /* sumOfOccurrences */ 2.0,
-                                  /* range */ 2.0,
-                                  /* mean */ 3.0,
-                                  /* variance */ 1.0,
-                                  /* standardDeviation */ 1.0,
-                                  /* sampleStandardDeviation */ 1.414,
-                                  /* sum */ 6.0,
-                                  /* squaredValueSum */ 20.0, numberOfModes8,
-                                  modes8,
-                                  /* modesFrequency */ 1.0);
-
-  constexpr int totalCumulatedFrequency8 = listLength8;
-  double trueCumulatedFrequencyValues8[totalCumulatedFrequency8] = {1.0, 2.0,
+    constexpr int totalCumulatedFrequency = listLength;
+    double trueCumulatedFrequencyValues[totalCumulatedFrequency] = {1.0, 2.0,
                                                                     3.0, 4.0};
-  double trueCumulatedFrequencyResults8[totalCumulatedFrequency8] = {
-      0.0, 50.0, 50.0, 100.0};
-  assert_data_cumulated_frequency(
-      &store, listLength8, trueCumulatedFrequencyValues8,
-      trueCumulatedFrequencyResults8, totalCumulatedFrequency8);
+    double trueCumulatedFrequencyResults[totalCumulatedFrequency] = {
+        0.0, 50.0, 50.0, 100.0};
+    assert_data_cumulated_frequency(
+        &store, listLength, trueCumulatedFrequencyValues,
+        trueCumulatedFrequencyResults, totalCumulatedFrequency);
 
-  constexpr int totalNormalProbability8 = 2;
-  double trueNormalProbabilityValues8[totalNormalProbability8] = {2.0, 4.0};
-  double trueNormalProbabilityResults8[totalNormalProbability8] = {-0.6745,
+    constexpr int totalNormalProbability = 2;
+    double trueNormalProbabilityValues[totalNormalProbability] = {2.0, 4.0};
+    double trueNormalProbabilityResults[totalNormalProbability] = {-0.6745,
                                                                    0.6745};
-  assert_data_normal_probability(
-      &store, listLength8, trueNormalProbabilityValues8,
-      trueNormalProbabilityResults8, totalNormalProbability8);
+    assert_data_normal_probability(
+        &store, listLength, trueNormalProbabilityValues,
+        trueNormalProbabilityResults, totalNormalProbability);
 
-  constexpr int totalLowerOutliers8 = 0;
-  double trueLowerOutliers8[totalLowerOutliers8] = {};
-  constexpr int totalUpperOutliers8 = 0;
-  double trueUpperOutliers8[totalUpperOutliers8] = {};
-  // SublistMethod
-  assert_data_box_plot(
-      &store, listLength8,
-      /* quartileRange */ 2.0,
-      /* minValue */ 2.0, trueLowerOutliers8, totalLowerOutliers8,
-      /* lowerFence */ -1.0,
-      /* lowerWhisker */ 2.0,
-      /* firstQuartile */ 2.0,
-      /* median */ 3.0,
-      /* thirdQuartile */ 4.0,
-      /* upperWhisker */ 4.0,
-      /* upperFence */ 7.0, trueUpperOutliers8, totalUpperOutliers8,
-      /* maxValue */ 4.0, false);
+    constexpr int totalLowerOutliers = 0;
+    double trueLowerOutliers[totalLowerOutliers] = {};
+    constexpr int totalUpperOutliers = 0;
+    double trueUpperOutliers[totalUpperOutliers] = {};
+    // SublistMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 2.0,
+        /* minValue */ 2.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ -1.0,
+        /* lowerWhisker */ 2.0,
+        /* firstQuartile */ 2.0,
+        /* median */ 3.0,
+        /* thirdQuartile */ 4.0,
+        /* upperWhisker */ 4.0,
+        /* upperFence */ 7.0, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 4.0, false);
 
-  // FrequencyMethod
-  assert_data_box_plot(
-      &store, listLength8,
-      /* quartileRange */ 2.0,
-      /* minValue */ 2.0, trueLowerOutliers8, totalLowerOutliers8,
-      /* lowerFence */ -1.0,
-      /* lowerWhisker */ 2.0,
-      /* firstQuartile */ 2.0,
-      /* median */ 3.0,
-      /* thirdQuartile */ 4.0,
-      /* upperWhisker */ 4.0,
-      /* upperFence */ 7.0, trueUpperOutliers8, totalUpperOutliers8,
-      /* maxValue */ 4.0, true);
+    // FrequencyMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 2.0,
+        /* minValue */ 2.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ -1.0,
+        /* lowerWhisker */ 2.0,
+        /* firstQuartile */ 2.0,
+        /* median */ 3.0,
+        /* thirdQuartile */ 4.0,
+        /* upperWhisker */ 4.0,
+        /* upperFence */ 7.0, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 4.0, true);
+  }
 
-  /* -996.85840734641
-   * 9 */
+  {
+    /* -996.85840734641
+     * 9 */
+    constexpr int listLength = 1;
+    double v[listLength] = {-996.85840734641};
+    double n[listLength] = {9.0};
+    setStoreData(&store, v, n, listLength, k_defaultSeriesIndex);
+    constexpr int numberOfmodes = 1;
+    double modes[numberOfmodes] = {-996.85840734641};
+    assert_data_statistics_equal_to(&store, listLength,
+                                    /* sumOfOccurrences */ 9.0,
+                                    /* range */ 0.0,
+                                    /* mean */ -996.85840734641,
+                                    /* variance */ 0.0,
+                                    /* standardDeviation */ 0.0,
+                                    /* sampleStandardDeviation */ 0.0,
+                                    /* sum */ -8971.72566611769,
+                                    /* squaredValueSum */ 8943540.158675,
+                                    numberOfmodes, modes,
+                                    /* modesFrequency */ 9.0);
 
-  constexpr int listLength9 = 1;
-  double v9[listLength9] = {-996.85840734641};
-  double n9[listLength9] = {9.0};
-  setStoreData(&store, v9, n9, listLength9, k_defaultSeriesIndex);
-  constexpr int numberOfModes9 = 1;
-  double modes9[numberOfModes9] = {-996.85840734641};
-  assert_data_statistics_equal_to(&store, listLength9,
-                                  /* sumOfOccurrences */ 9.0,
-                                  /* range */ 0.0,
-                                  /* mean */ -996.85840734641,
-                                  /* variance */ 0.0,
-                                  /* standardDeviation */ 0.0,
-                                  /* sampleStandardDeviation */ 0.0,
-                                  /* sum */ -8971.72566611769,
-                                  /* squaredValueSum */ 8943540.158675,
-                                  numberOfModes9, modes9,
-                                  /* modesFrequency */ 9.0);
+    constexpr int totalCumulatedFrequency = listLength;
+    double trueCumulatedFrequencyValues[totalCumulatedFrequency] = {
+        -996.85840734641};
+    double trueCumulatedFrequencyResults[totalCumulatedFrequency] = {100.0};
+    assert_data_cumulated_frequency(
+        &store, listLength, trueCumulatedFrequencyValues,
+        trueCumulatedFrequencyResults, totalCumulatedFrequency);
 
-  constexpr int totalCumulatedFrequency9 = listLength9;
-  double trueCumulatedFrequencyValues9[totalCumulatedFrequency9] = {
-      -996.85840734641};
-  double trueCumulatedFrequencyResults9[totalCumulatedFrequency9] = {100.0};
-  assert_data_cumulated_frequency(
-      &store, listLength9, trueCumulatedFrequencyValues9,
-      trueCumulatedFrequencyResults9, totalCumulatedFrequency9);
+    constexpr int totalNormalProbability = 9;
+    double trueNormalProbabilityValues[totalNormalProbability] = {
+        -996.85840734641, -996.85840734641, -996.85840734641,
+        -996.85840734641, -996.85840734641, -996.85840734641,
+        -996.85840734641, -996.85840734641, -996.85840734641};
+    double trueNormalProbabilityResults[totalNormalProbability] = {
+        -1.593, -0.9674, -0.5895, -0.2822, 0.0, 0.2822, 0.5895, 0.9674, 1.593};
+    assert_data_normal_probability(
+        &store, listLength, trueNormalProbabilityValues,
+        trueNormalProbabilityResults, totalNormalProbability);
 
-  constexpr int totalNormalProbability9 = 9;
-  double trueNormalProbabilityValues9[totalNormalProbability9] = {
-      -996.85840734641, -996.85840734641, -996.85840734641,
-      -996.85840734641, -996.85840734641, -996.85840734641,
-      -996.85840734641, -996.85840734641, -996.85840734641};
-  double trueNormalProbabilityResults9[totalNormalProbability9] = {
-      -1.593, -0.9674, -0.5895, -0.2822, 0.0, 0.2822, 0.5895, 0.9674, 1.593};
-  assert_data_normal_probability(
-      &store, listLength9, trueNormalProbabilityValues9,
-      trueNormalProbabilityResults9, totalNormalProbability9);
+    constexpr int totalLowerOutliers = 0;
+    double trueLowerOutliers[totalLowerOutliers] = {};
+    constexpr int totalUpperOutliers = 0;
+    double trueUpperOutliers[totalUpperOutliers] = {};
+    // SublistMethod
+    assert_data_box_plot(&store, listLength,
+                         /* quartileRange */ 0.0,
+                         /* minValue */ -996.85840734641, trueLowerOutliers,
+                         totalLowerOutliers,
+                         /* lowerFence */ -996.85840734641,
+                         /* lowerWhisker */ -996.85840734641,
+                         /* firstQuartile */ -996.85840734641,
+                         /* median */ -996.85840734641,
+                         /* thirdQuartile */ -996.85840734641,
+                         /* upperWhisker */ -996.85840734641,
+                         /* upperFence */ -996.85840734641, trueUpperOutliers,
+                         totalUpperOutliers,
+                         /* maxValue */ -996.85840734641, false);
 
-  constexpr int totalLowerOutliers9 = 0;
-  double trueLowerOutliers9[totalLowerOutliers9] = {};
-  constexpr int totalUpperOutliers9 = 0;
-  double trueUpperOutliers9[totalUpperOutliers9] = {};
-  // SublistMethod
-  assert_data_box_plot(&store, listLength9,
-                       /* quartileRange */ 0.0,
-                       /* minValue */ -996.85840734641, trueLowerOutliers9,
-                       totalLowerOutliers9,
-                       /* lowerFence */ -996.85840734641,
-                       /* lowerWhisker */ -996.85840734641,
-                       /* firstQuartile */ -996.85840734641,
-                       /* median */ -996.85840734641,
-                       /* thirdQuartile */ -996.85840734641,
-                       /* upperWhisker */ -996.85840734641,
-                       /* upperFence */ -996.85840734641, trueUpperOutliers9,
-                       totalUpperOutliers9,
-                       /* maxValue */ -996.85840734641, false);
+    // FrequencyMethod
+    assert_data_box_plot(&store, listLength,
+                         /* quartileRange */ 0.0,
+                         /* minValue */ -996.85840734641, trueLowerOutliers,
+                         totalLowerOutliers,
+                         /* lowerFence */ -996.85840734641,
+                         /* lowerWhisker */ -996.85840734641,
+                         /* firstQuartile */ -996.85840734641,
+                         /* median */ -996.85840734641,
+                         /* thirdQuartile */ -996.85840734641,
+                         /* upperWhisker */ -996.85840734641,
+                         /* upperFence */ -996.85840734641, trueUpperOutliers,
+                         totalUpperOutliers,
+                         /* maxValue */ -996.85840734641, true);
+  }
 
-  // FrequencyMethod
-  assert_data_box_plot(&store, listLength9,
-                       /* quartileRange */ 0.0,
-                       /* minValue */ -996.85840734641, trueLowerOutliers9,
-                       totalLowerOutliers9,
-                       /* lowerFence */ -996.85840734641,
-                       /* lowerWhisker */ -996.85840734641,
-                       /* firstQuartile */ -996.85840734641,
-                       /* median */ -996.85840734641,
-                       /* thirdQuartile */ -996.85840734641,
-                       /* upperWhisker */ -996.85840734641,
-                       /* upperFence */ -996.85840734641, trueUpperOutliers9,
-                       totalUpperOutliers9,
-                       /* maxValue */ -996.85840734641, true);
+  {
+    /* 1 4
+     * 0 1 */
+    constexpr int listLength = 2;
+    double v[listLength] = {1.0, 4.0};
+    double n[listLength] = {0.0, 1.0};
+    setStoreData(&store, v, n, listLength, k_defaultSeriesIndex);
+    constexpr int numberOfmodes = 1;
+    double modes[numberOfmodes] = {4.0};
+    assert_data_statistics_equal_to(&store, listLength,
+                                    /* sumOfOccurrences */ 1.0,
+                                    /* range */ 0.0,
+                                    /* mean */ 4.0,
+                                    /* variance */ 0.0,
+                                    /* standardDeviation */ 0.0,
+                                    /* sampleStandardDeviation */ NAN,
+                                    /* sum */ 4.0,
+                                    /* squaredValueSum */ 16.0, numberOfmodes,
+                                    modes,
+                                    /* modesFrequency */ 1.0);
 
-  /* 1 4
-   * 0 1 */
+    constexpr int totalCumulatedFrequency = listLength;
+    double trueCumulatedFrequencyValues[totalCumulatedFrequency] = {1.0, 4.0};
+    double trueCumulatedFrequencyResults[totalCumulatedFrequency] = {0.0,
+                                                                     100.0};
+    assert_data_cumulated_frequency(
+        &store, listLength, trueCumulatedFrequencyValues,
+        trueCumulatedFrequencyResults, totalCumulatedFrequency);
 
-  constexpr int listLength10 = 2;
-  double v10[listLength10] = {1.0, 4.0};
-  double n10[listLength10] = {0.0, 1.0};
-  setStoreData(&store, v10, n10, listLength10, k_defaultSeriesIndex);
-  constexpr int numberOfModes10 = 1;
-  double modes10[numberOfModes10] = {4.0};
-  assert_data_statistics_equal_to(&store, listLength10,
-                                  /* sumOfOccurrences */ 1.0,
-                                  /* range */ 0.0,
-                                  /* mean */ 4.0,
-                                  /* variance */ 0.0,
-                                  /* standardDeviation */ 0.0,
-                                  /* sampleStandardDeviation */ NAN,
-                                  /* sum */ 4.0,
-                                  /* squaredValueSum */ 16.0, numberOfModes10,
-                                  modes10,
-                                  /* modesFrequency */ 1.0);
+    constexpr int totalNormalProbability = 1;
+    double trueNormalProbabilityValues[totalNormalProbability] = {4.0};
+    double trueNormalProbabilityResults[totalNormalProbability] = {0.0};
+    assert_data_normal_probability(
+        &store, listLength, trueNormalProbabilityValues,
+        trueNormalProbabilityResults, totalNormalProbability);
 
-  constexpr int totalCumulatedFrequency10 = listLength10;
-  double trueCumulatedFrequencyValues10[totalCumulatedFrequency10] = {1.0, 4.0};
-  double trueCumulatedFrequencyResults10[totalCumulatedFrequency10] = {0.0,
-                                                                       100.0};
-  assert_data_cumulated_frequency(
-      &store, listLength10, trueCumulatedFrequencyValues10,
-      trueCumulatedFrequencyResults10, totalCumulatedFrequency10);
+    constexpr int totalLowerOutliers = 0;
+    double trueLowerOutliers[totalLowerOutliers] = {};
+    constexpr int totalUpperOutliers = 0;
+    double trueUpperOutliers[totalUpperOutliers] = {};
+    // SublistMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 0.0,
+        /* minValue */ 4.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ 4.0,
+        /* lowerWhisker */ 4.0,
+        /* firstQuartile */ 4.0,
+        /* median */ 4.0,
+        /* thirdQuartile */ 4.0,
+        /* upperWhisker */ 4.0,
+        /* upperFence */ 4.0, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 4.0, false);
 
-  constexpr int totalNormalProbability10 = 1;
-  double trueNormalProbabilityValues10[totalNormalProbability10] = {4.0};
-  double trueNormalProbabilityResults10[totalNormalProbability10] = {0.0};
-  assert_data_normal_probability(
-      &store, listLength10, trueNormalProbabilityValues10,
-      trueNormalProbabilityResults10, totalNormalProbability10);
-
-  constexpr int totalLowerOutliers10 = 0;
-  double trueLowerOutliers10[totalLowerOutliers10] = {};
-  constexpr int totalUpperOutliers10 = 0;
-  double trueUpperOutliers10[totalUpperOutliers10] = {};
-  // SublistMethod
-  assert_data_box_plot(
-      &store, listLength10,
-      /* quartileRange */ 0.0,
-      /* minValue */ 4.0, trueLowerOutliers10, totalLowerOutliers10,
-      /* lowerFence */ 4.0,
-      /* lowerWhisker */ 4.0,
-      /* firstQuartile */ 4.0,
-      /* median */ 4.0,
-      /* thirdQuartile */ 4.0,
-      /* upperWhisker */ 4.0,
-      /* upperFence */ 4.0, trueUpperOutliers10, totalUpperOutliers10,
-      /* maxValue */ 4.0, false);
-
-  // FrequencyMethod
-  assert_data_box_plot(
-      &store, listLength10,
-      /* quartileRange */ 0.0,
-      /* minValue */ 4.0, trueLowerOutliers10, totalLowerOutliers10,
-      /* lowerFence */ 4.0,
-      /* lowerWhisker */ 4.0,
-      /* firstQuartile */ 4.0,
-      /* median */ 4.0,
-      /* thirdQuartile */ 4.0,
-      /* upperWhisker */ 4.0,
-      /* upperFence */ 4.0, trueUpperOutliers10, totalUpperOutliers10,
-      /* maxValue */ 4.0, true);
+    // FrequencyMethod
+    assert_data_box_plot(
+        &store, listLength,
+        /* quartileRange */ 0.0,
+        /* minValue */ 4.0, trueLowerOutliers, totalLowerOutliers,
+        /* lowerFence */ 4.0,
+        /* lowerWhisker */ 4.0,
+        /* firstQuartile */ 4.0,
+        /* median */ 4.0,
+        /* thirdQuartile */ 4.0,
+        /* upperWhisker */ 4.0,
+        /* upperFence */ 4.0, trueUpperOutliers, totalUpperOutliers,
+        /* maxValue */ 4.0, true);
+  }
 
   // Empty out the store
   setStoreData(&store, {}, {}, 0, k_defaultSeriesIndex);

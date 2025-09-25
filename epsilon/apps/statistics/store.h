@@ -113,6 +113,8 @@ class Store : public Shared::StatisticsStore {
   double normalProbabilityValueAtIndex(int series, int i) const;
   // Return the z-score of the i-th sorted element
   double normalProbabilityResultAtIndex(int series, int i) const;
+  // Return the z-score line value for a given abscissa value
+  double normalProbabilityZScoreLineAtAbscissa(int series, double x) const;
 
   // DoublePairStore
   void updateSeriesValidity(int series) override;

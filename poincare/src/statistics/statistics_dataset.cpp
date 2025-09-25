@@ -526,7 +526,7 @@ T StatisticsDataset<T>::cumulatedFrequencyResultAtIndex(int i) const {
     index++;
   }
   // Taking advantage of sumOfOccurrences being memoized.
-  return 100.0 * cumulatedOccurrences / totalWeight();
+  return cumulatedOccurrences / totalWeight();
 }
 
 template <typename T>
@@ -535,7 +535,7 @@ T StatisticsDataset<T>::cumulatedFrequencyResultAtAbscissa(T x) const {
     return 0.0;
   }
   if (x >= max(true)) {
-    return 100.0;
+    return 1.0;
   }
 
   // Find the closest indices for interpolation

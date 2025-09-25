@@ -626,7 +626,7 @@ T StatisticsDataset<T>::normalProbabilityZScoreLineAtAbscissa(T x) const {
 }
 
 template <typename T>
-uint8_t StatisticsDataset<T>::lowerWhiskerSortedIndex(bool hasOutliers) const {
+int StatisticsDataset<T>::lowerWhiskerSortedIndex(bool hasOutliers) const {
   T lowFence = lowerFence();
   int length = datasetLength();
   for (int k = 0; k < length; k++) {
@@ -640,7 +640,7 @@ uint8_t StatisticsDataset<T>::lowerWhiskerSortedIndex(bool hasOutliers) const {
 }
 
 template <typename T>
-uint8_t StatisticsDataset<T>::upperWhiskerSortedIndex(bool hasOutliers) const {
+int StatisticsDataset<T>::upperWhiskerSortedIndex(bool hasOutliers) const {
   T uppFence = upperFence();
   int length = datasetLength();
   for (int k = length - 1; k >= 0; k--) {

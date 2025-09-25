@@ -225,8 +225,8 @@ class StatisticsDataset {
 
   /* Boxplot */
 
-  uint8_t lowerWhiskerSortedIndex(bool hasOutliers) const;
-  uint8_t upperWhiskerSortedIndex(bool hasOutliers) const;
+  int lowerWhiskerSortedIndex(bool hasOutliers) const;
+  int upperWhiskerSortedIndex(bool hasOutliers) const;
   int numberOfLowerOutliers() const;
   int numberOfUpperOutliers() const;
   T lowerOutlierAtIndex(int index) const;

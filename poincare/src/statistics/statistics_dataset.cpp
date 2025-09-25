@@ -631,8 +631,8 @@ uint8_t StatisticsDataset<T>::lowerWhiskerSortedIndex(bool hasOutliers) const {
   int length = datasetLength();
   for (int k = 0; k < length; k++) {
     int valueIndex = indexAtSortedIndex(k);
-    if (!hasOutliers || (valueAtIndex(valueIndex) >= lowFence &&
-                         weightAtIndex(valueIndex) > 0.0)) {
+    if ((!hasOutliers || valueAtIndex(valueIndex) >= lowFence) &&
+        weightAtIndex(valueIndex) > 0.0) {
       return k;
     }
   }
@@ -645,8 +645,8 @@ uint8_t StatisticsDataset<T>::upperWhiskerSortedIndex(bool hasOutliers) const {
   int length = datasetLength();
   for (int k = length - 1; k >= 0; k--) {
     int valueIndex = indexAtSortedIndex(k);
-    if (!hasOutliers || (valueAtIndex(valueIndex) <= uppFence &&
-                         weightAtIndex(valueIndex) > 0.0)) {
+    if ((!hasOutliers || valueAtIndex(valueIndex) <= uppFence) &&
+        weightAtIndex(valueIndex) > 0.0) {
       return k;
     }
   }

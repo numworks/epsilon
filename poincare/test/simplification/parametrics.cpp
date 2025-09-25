@@ -442,4 +442,5 @@ QUIZ_CASE(pcj_simplification_integral) {
   // Not reduced
   simplifies_to("int(x*e^x,x,0,0)", "int(e^(x)×x,x,0,0)");
   simplifies_to("int(tan(x),x,0,x)", "int(tan(x),x,0,x)");
+  simplifies_to("int(1/x,x,1,2)", "int(1/x,x,1,2)");
 }

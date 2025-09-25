@@ -17,36 +17,38 @@ class QueueJournal : public Ion::Events::Journal {
 #if ION_KEYBOARD_RICH
     if (e == Ion::Events::Paste) {
       const char* systemBuffer = Ion::Clipboard::read();
-      if (systemBuffer) {
-        // Changed a Paste that uses the system clipboard into an ExternalText
-        // to preserve pasted content
-        size_t len = strlen(systemBuffer);
-        // 1 <=len<= 9 = 1 event
-        // 10<=len<=18 = 2 events
-        // 19<=len<=27 = 3 events
-        for (int i = 0;
-             i < (len + Ion::Events::sharedExternalTextBufferSize - 2) /
-                     (Ion::Events::sharedExternalTextBufferSize - 1);
-             ++i) {
-          m_eventStorage.push(Ion::Events::ExternalText);
-          AdditionalData data;
-          strlcpy(data.text, systemBuffer,
-                  Ion::Events::sharedExternalTextBufferSize);
-          m_externalTextStorage.push(data);
-          systemBuffer += Ion::Events::sharedExternalTextBufferSize - 1;
-        }
+      if (!systemBuffer) {
+        m_eventStorage.push(e);
         return;
       }
-    }
+      size_t len = strlen(systemBuffer);
+      /* Changed a Paste that uses the system clipboard into an ExternalText to
+       * preserve pasted content:
+       *  1 <=len<= 9 = 1 event
+       *  10<=len<=18 = 2 events
+       *  19<=len<=27 = 3 events */
+      for (int i = 0;
+           i < (len + Ion::Events::sharedExternalTextBufferSize - 2) /
+                   (Ion::Events::sharedExternalTextBufferSize - 1);
+           ++i) {
+        // TODO probably need to fix this for longer than 1byte ExternalTexts
+        m_eventStorage.push(Ion::Events::ExternalText);
+        ExternalTextBuffer data;
+        strlcpy(data.buffer, systemBuffer,
+                Ion::Events::sharedExternalTextBufferSize);
+        m_externalTextStorage.push(data);
+        systemBuffer += Ion::Events::sharedExternalTextBufferSize - 1;
+      }
+    } else
 #endif
-    if (e != Ion::Events::None) {
-      m_eventStorage.push(e);
-    }
-    if (e == Ion::Events::ExternalText) {
-      AdditionalData data;
-      strlcpy(data.text, Ion::Events::sharedExternalTextBuffer(),
+        if (e == Ion::Events::ExternalText) {
+      ExternalTextBuffer data;
+      strlcpy(data.buffer, Ion::Events::sharedExternalTextBuffer(),
               Ion::Events::sharedExternalTextBufferSize);
       m_externalTextStorage.push(data);
+      m_eventStorage.push(e);
+    } else if (e != Ion::Events::None) {
+      m_eventStorage.push(e);
     }
   }
   Ion::Events::Event popEvent() override {
@@ -58,7 +60,7 @@ class QueueJournal : public Ion::Events::Journal {
     if (e == Ion::Events::ExternalText) {
       assert(!m_externalTextStorage.empty());
       strlcpy(Ion::Events::sharedExternalTextBuffer(),
-              m_externalTextStorage.front().text,
+              m_externalTextStorage.front().buffer,
               Ion::Events::sharedExternalTextBufferSize);
       m_externalTextStorage.pop();
     }
@@ -71,10 +73,12 @@ class QueueJournal : public Ion::Events::Journal {
 
  private:
   std::queue<Ion::Events::Event> m_eventStorage;
-  struct AdditionalData {
-    char text[Ion::Events::sharedExternalTextBufferSize];
+  struct ExternalTextBuffer {
+    char buffer[Ion::Events::sharedExternalTextBufferSize];
   };
-  std::queue<AdditionalData> m_externalTextStorage;
+  static_assert(sizeof(ExternalTextBuffer::buffer) ==
+                Ion::Events::sharedExternalTextBufferSize);
+  std::queue<ExternalTextBuffer> m_externalTextStorage;
 };
 
 }  // namespace Journal

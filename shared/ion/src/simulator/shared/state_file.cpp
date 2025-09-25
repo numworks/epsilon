@@ -97,8 +97,8 @@ static inline void pushEventFromFile(uint8_t c, FILE* f) {
   Journal::replayJournal()->pushEvent(e);
 }
 
-static inline void pushEventFromMemory(uint8_t c, const uint8_t* ptr,
-                                       const uint8_t* bufferEnd) {
+void pushEventFromMemory(uint8_t c, const uint8_t** ptr,
+                         const uint8_t* bufferEnd) {
   Ion::Events::Event e = reconstructEvent(c);
   if (e == Ion::Events::None) {
     return;
@@ -109,9 +109,10 @@ static inline void pushEventFromMemory(uint8_t c, const uint8_t* ptr,
     int i = 0;
     char ch;
     while (true) {
-      ch = *ptr;
+      ch = **ptr;
       buffer[i++] = ch;
-      if (ch == 0 || ptr++ >= bufferEnd) {
+      (*ptr)++;
+      if (ch == 0 || *ptr >= bufferEnd) {
         break;
       }
       if (i == k_bufferSize - 1) {
@@ -179,7 +180,8 @@ void loadMemory(const char* buffer, size_t length, bool headlessStateFile) {
   const uint8_t* bufferEnd = reinterpret_cast<const uint8_t*>(buffer + length);
   while (e < bufferEnd) {
     uint8_t ch = *e;
-    pushEventFromMemory(ch, e++, bufferEnd);
+    e++;
+    pushEventFromMemory(ch, &e, bufferEnd);
   }
   Ion::Events::replayFrom(Journal::replayJournal());
 }

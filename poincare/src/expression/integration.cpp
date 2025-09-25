@@ -61,13 +61,12 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
       break;
     }
     case Type::Var: {
-      if (Variables::Id(integrand) == 0) {
-        // int(x, x, a, b) = 1/2 * (b^2 - a^2)
-        return PatternMatching::CreateReduce(
-            KMult(1_e / 2_e, KAdd(KPow(KB, 2_e), KMult(-1_e, KPow(KA, 2_e)))),
-            {.KA = a, .KB = b});
-      }
-      break;
+      // Case of other variable has been escaped earlier
+      assert(Variables::Id(integrand) == 0);
+      // int(x, x, a, b) = 1/2 * (b^2 - a^2)
+      return PatternMatching::CreateReduce(
+          KMult(1_e / 2_e, KAdd(KPow(KB, 2_e), KMult(-1_e, KPow(KA, 2_e)))),
+          {.KA = a, .KB = b});
     }
     case Type::Pow: {
       const Tree* integrandBase = integrand->child(0);

@@ -46,11 +46,13 @@ void Clipboard::storeLayout(Poincare::Layout layout) {
   if (size < k_bufferSize) {
     memcpy(m_treeBuffer, layout.tree(), size);
   }
-  // Serialize in case we need it in a text field/area or outside epsilon
-  // updateTextFromTree();
-  // TODO_PCJ check that it fits
-  Ion::Clipboard::write(m_textBuffer);
   m_bufferState = TextOutdated;
+#if !PLATFORM_DEVICE
+  // Serialize in case we need it outside epsilon
+  updateTextFromTree();
+  Ion::Clipboard::write(m_textBuffer);
+  m_bufferState = Updated;
+#endif
 }
 
 const char* Clipboard::storedText() {

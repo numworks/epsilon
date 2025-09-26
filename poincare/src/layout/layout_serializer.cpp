@@ -62,7 +62,8 @@ Rack* rackForSerialization(const Rack* rack) {
 
 char* LayoutSerializer::SerializeRack(const Rack* rack, char* buffer,
                                       const char* end) {
-  if (rack->numberOfChildren() == 0) {
+  if (rack->numberOfChildren() == 0 ||
+      rack->child(0)->treeIsIdenticalTo(KCodePointL<','>())) {
     /* Text fields serializes layouts to insert them and we need an empty
      * codepoint for the cursor to be placed correctly in the text field.
      * TODO: should this behavior be behind a flag ? */

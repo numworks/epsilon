@@ -20,23 +20,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-size_t Sequence::nameWithArgumentAndType(char* buffer, size_t bufferSize) {
-  size_t result = nameWithArgument(buffer, bufferSize);
-  assert(result >= 1);
-  size_t offset = result - 1;
-  switch (type()) {
-    case Type::SingleRecurrence:
-      result += strlcpy(buffer + offset, "+1)", bufferSize - offset);
-      break;
-    case Type::DoubleRecurrence:
-      result += strlcpy(buffer + offset, "+2)", bufferSize - offset);
-      break;
-    default:
-      break;
-  }
-  return result;
-}
-
 void Sequence::setType(Type t) {
   if (t == type()) {
     return;

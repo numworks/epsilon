@@ -37,11 +37,12 @@ void SequenceHelper::SetFirstRank(Layout l, uint8_t firstRank) {
 
 bool SequenceHelper::MainExpressionContainsForbiddenTerms(
     UserExpression e, const SymbolContext& symbolContext, const char* name,
-    Type type, int initialRank, bool recursion, bool systemSymbol,
-    bool otherSequences) {
+    Type type, int initialRank, RecursiveNotation notation, bool recursion,
+    bool systemSymbol, bool otherSequences) {
   return Internal::Sequence::MainExpressionContainsForbiddenTerms(
-      e.tree(), symbolContext, name, GetType(type), initialRank, recursion,
-      systemSymbol, otherSequences);
+      e.tree(), symbolContext, name, GetType(type), initialRank,
+      notation == RecursiveNotation::Shifted, recursion, systemSymbol,
+      otherSequences);
 }
 
 }  // namespace Poincare

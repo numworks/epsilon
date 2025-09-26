@@ -35,8 +35,8 @@ Tree* Sequence::PushInitialConditionName(const Tree* sequence,
 
 bool Sequence::MainExpressionContainsForbiddenTerms(
     const Tree* e, const SymbolContext& symbolContext, const char* name,
-    Type type, int initialRank, bool recursion, bool systemSymbol,
-    bool otherSequences) {
+    Type type, int initialRank, bool shiftedNotation, bool recursion,
+    bool systemSymbol, bool otherSequences) {
   if (!Dimension::DeepCheck(e, symbolContext) ||
       !Dimension::IsNonListScalar(e, symbolContext)) {
     return true;
@@ -82,10 +82,17 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
       // if rank !is<int>(), then it's definitely too big to be valid
       return true;
     }
-    // Recursion on a sequence is allowed only on u(n) (or u(n+1) if double rec)
-    if (recursion && (rank->treeIsIdenticalTo(KUnknownSymbol) ||
-                      (type == Type::SequenceDoubleRecurrence &&
-                       rank->treeIsIdenticalTo(KAdd(KUnknownSymbol, 1_e))))) {
+    /* Recursion on a sequence is allowed only on
+     * - u(n) for single recurrence (or u(n-1) with shifted notation)
+     * - u(n) and u(n+1) for double recurrence (or u(n-1) and u(n-2) with
+     *   shifted notation) */
+    if (recursion &&
+        (rank->treeIsIdenticalTo(shiftedNotation ? KSub(KUnknownSymbol, 1_e)
+                                                 : KUnknownSymbol) ||
+         (type == Type::SequenceDoubleRecurrence &&
+          rank->treeIsIdenticalTo(shiftedNotation
+                                      ? KSub(KUnknownSymbol, 2_e)
+                                      : KAdd(KUnknownSymbol, 1_e))))) {
       // Ignore the child content which has been checked already
       skipUntil = d->nextTree();
       continue;

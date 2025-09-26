@@ -127,8 +127,10 @@ class Sequence : public Function {
   /* Sequence u (with initial rank i) is not computable if main expression
    * contains another sequence or forbidden terms:
    * - explicit: any term of u
-   * - simple recurrence: any term of u other than u(n), u(i)
-   * - double recurrence: any term of u other than u(n+1), u(n), u(i+1), u(i) */
+   * - simple recurrence: any term of u other than u(n) (or u(n-1) for shifted
+   *   notation), u(i)
+   * - double recurrence: any term of u other than u(n+1), u(n) (or u(n-1),
+   *   u(n-2) for shifted notation), u(i+1), u(i) */
   bool mainExpressionIsNotComputable() const {
     return mainExpressionContainsForbiddenTerms(true, true, true);
   }

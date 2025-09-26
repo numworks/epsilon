@@ -17,6 +17,7 @@ constexpr int NumberOfKeys = ION_KEYBOARD_ROWS * ION_KEYBOARD_COLUMNS;
 #define SHIFT_KEY(...) KEY(__VA_ARGS__)
 #define ALPHA_KEY(...) KEY(__VA_ARGS__)
 #define SHIFT_ALPHA_KEY(...) KEY(__VA_ARGS__)
+#define DEDICATED_KEY(...) KEY(__VA_ARGS__)
 #define DUMMY_KEY(...) KEY(__VA_ARGS__)
 
 enum class Key {
@@ -26,6 +27,8 @@ enum class Key {
   None = NumberOfKeys,
 };
 
+/* Dummy keys are in the enum and have an associated event but no physical key
+ * on the devices and no button in the simulators. */
 #undef DUMMY_KEY
 #define DUMMY_KEY(...)
 
@@ -35,7 +38,12 @@ constexpr Key ValidKeys[] = {
 #undef KEY
 };
 
-constexpr uint64_t k_validKeysState = []() {
+/* Dedicated keys have a dedicated gpio, they are actual keys (ValidKeys) but
+ * are not in the matrix. */
+#undef DEDICATED_KEY
+#define DEDICATED_KEY(...)
+
+constexpr uint64_t k_validMatrixKeysState = []() {
   uint64_t state = 0;
 #define KEY(N, R, C, ...) \
   state |= uint64_t(1) << (R * ION_KEYBOARD_COLUMNS + C);
@@ -48,6 +56,7 @@ constexpr uint64_t k_validKeysState = []() {
 #undef SHIFT_KEY
 #undef ALPHA_KEY
 #undef SHIFT_ALPHA_KEY
+#undef DEDICATED_KEY
 #undef DUMMY_KEY
 
 constexpr int NumberOfValidKeys = std::size(ValidKeys);

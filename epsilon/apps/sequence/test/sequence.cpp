@@ -131,10 +131,9 @@ QUIZ_CASE(sequence_evaluation) {
   }
   // u(n) = 250+n v(n) = (-1)^u(n)
   {
-    // TODO: Fix this
     double results[SequenceStore::k_maxNumberOfSequences][10] = {
         {250.0, 251.0, 252.0, 253.0, 254.0, 255.0, 256.0, 257.0, 258.0, 259.0},
-        {NAN, NAN, NAN, -1, 1, NAN, NAN, NAN, NAN, NAN},
+        {1, -1, 1, -1, 1, -1, 1, -1, 1, -1},
         {}};
     definitions[0] = "250+n";
     definitions[1] = "(-1)^u(n)";

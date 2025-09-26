@@ -19,6 +19,11 @@ bool ShallowPrepareForApproximation(Tree* e, void* ctx) {
   // exp(A*ln(B))-> B^A
   bool changed = PatternMatching::MatchReplace(
       e, KExp(KMult(KA_s, KLn(KB), KC_s)), KPow(KB, KMult(KA_s, KC_s)));
+  // ln(-1) could have been simplified to π*i, and skip previous step.
+  changed =
+      PatternMatching::MatchReplace(e, KExp(KMult(KA_s, π_e, KB_s, i_e, KC_s)),
+                                    KPow(-1_e, KMult(KA_s, KB_s, KC_s))) ||
+      changed;
   /* Do exp => pow here to allow pow => sqrt/div to take effect in a single
    * shallow call */
   /* TODO: e^ is better than exp because we have code to handle special

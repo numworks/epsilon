@@ -294,9 +294,11 @@ bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
         SystematicReduction::DeepReduce(e);
       }
       break;
+#if POINCARE_NO_ADVANCED_REDUCTION
     case Strategy::PseudoAdvanceReduce:
       changed = insideReduction && AdvancedReduction::PseudoReduce(e);
       break;
+#endif
     default:
       OMG::unreachable();
   }

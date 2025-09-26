@@ -7,6 +7,11 @@ namespace Poincare {
 
 namespace SequenceHelper {
 
+enum class RecursiveNotation {
+  Default = 0,  // u(n+2) = u(n+1)+u(n)
+  Shifted = 1,  // u(n) = u(n-1)+u(n-2)
+};
+
 enum class Type : uint8_t {
   Explicit = 0,
   SingleRecurrence = 1,

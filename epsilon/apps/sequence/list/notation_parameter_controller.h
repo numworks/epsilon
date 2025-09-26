@@ -40,7 +40,7 @@ class NotationParameterController : public Escher::SelectableListViewController<
   constexpr static int k_defaultNotationRow = 0;
   constexpr static int k_shiftedNotationRow = 1;
 
-  using Notation = Shared::Sequence::RecursiveNotation;
+  using Notation = Poincare::SequenceHelper::RecursiveNotation;
   int rowForNotation(Notation notation) const {
     return notation == Notation::Default ? k_defaultNotationRow
                                          : k_shiftedNotationRow;

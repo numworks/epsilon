@@ -29,11 +29,8 @@ class Sequence : public Function {
   constexpr static CodePoint k_sequenceSymbol =
       Poincare::CodePoints::k_sequenceSymbol;
   using Type = Poincare::SequenceHelper::Type;
-  // Notation for recursive sequences
-  enum class RecursiveNotation {
-    Default = 0,  // u(n+2) = u(n+1)+u(n)
-    Shifted = 1,  // u(n) = u(n-1)+u(n-2)
-  };
+  using RecursiveNotation = Poincare::SequenceHelper::RecursiveNotation;
+
   Sequence(Ion::Storage::Record record = Record()) : Function(record) {}
 
   CodePoint symbol() const override { return k_sequenceSymbol; }

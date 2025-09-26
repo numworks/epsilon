@@ -294,7 +294,7 @@ bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
         SystematicReduction::DeepReduce(e);
       }
       break;
-    case Strategy::DeepExpandAlgebraic:
+    case Strategy::PseudoAdvanceReduce:
       changed = insideReduction && AdvancedReduction::PseudoReduce(e);
       break;
     default:

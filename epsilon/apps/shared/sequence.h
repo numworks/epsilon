@@ -61,6 +61,8 @@ class Sequence : public Function {
   static Poincare::Layout DefinitionName(CodePoint name, Type type,
                                          RecursiveNotation notation);
   Poincare::Layout definitionName() const { return m_definition.name(this); }
+  Poincare::UserExpression initialExpressionContentForTypeAndNotation() const;
+
   // First initial condition
   Poincare::Layout firstInitialConditionName() {
     return m_firstInitialCondition.name(this);

@@ -130,7 +130,11 @@ class Representative {
         m_inputPrefixable(inputPrefixable),
         m_outputPrefixable(outputPrefixable),
         m_isImperial(isImperial) {
+#if !PLATFORM_DEVICE
+    /* This assert prohibits building device in debug because it generate code
+     * in the .init_array section which is not handled */
     assert(!rootSymbol || strlen(rootSymbol.mainAlias()) <= k_maxTextLen);
+#endif
   }
 
   const Representative* defaultFindBestRepresentativeAndPrefix(

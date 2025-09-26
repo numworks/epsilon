@@ -16,21 +16,18 @@ namespace Private {
 bool ShallowPrepareForApproximation(Tree* e, void* ctx) {
   // TODO: we want x^-1 -> 1/x and y*x^-1 -> y/x but maybe not x^-2 -> 1/x^2 ?
   // TODO: Ensure no node is duplicated (random not may have not been seeded)
-  // exp(A*ln(B))-> B^A
-  bool changed = PatternMatching::MatchReplace(
-      e, KExp(KMult(KA_s, KLn(KB), KC_s)), KPow(KB, KMult(KA_s, KC_s)));
-  // ln(-1) could have been simplified to π*i, and skip previous step.
-  changed =
+  // Do exp => pow first to allow pow => sqrt/div to take effect next.
+  bool changed =
+      // exp(A*ln(B))-> B^A
+      PatternMatching::MatchReplace(e, KExp(KMult(KA_s, KLn(KB), KC_s)),
+                                    KPow(KB, KMult(KA_s, KC_s))) ||
+      // exp(A*π*B*i*C)-> (-1)^(A*B*C), ln(-1) could have been simplified to π*i
       PatternMatching::MatchReplace(e, KExp(KMult(KA_s, π_e, KB_s, i_e, KC_s)),
                                     KPow(-1_e, KMult(KA_s, KB_s, KC_s))) ||
-      changed;
-  /* Do exp => pow here to allow pow => sqrt/div to take effect in a single
-   * shallow call */
-  /* TODO: e^ is better than exp because we have code to handle special
-   * cases in pow, exp is probably more precise on normal values */
-  // exp(A) -> e^A
-  changed =
-      PatternMatching::MatchReplace(e, KExp(KA), KPow(e_e, KA)) || changed;
+      /* TODO: e^ is better than exp because we have code to handle special
+       *       cases in pow, exp is probably more precise on normal values */
+      // exp(A) -> e^A
+      PatternMatching::MatchReplace(e, KExp(KA), KPow(e_e, KA));
   return
       // A^-1 -> 1/A
       PatternMatching::MatchReplace(e, KPowReal(KA, -1_e), KDiv(1_e, KA)) ||

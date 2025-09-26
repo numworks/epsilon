@@ -257,11 +257,9 @@ class AdvancedReduction {
   };
 #if POINCARE_NO_ADVANCED_REDUCTION
   constexpr static Tree::Operation k_pseudoReduceOperations[] = {
-      AdvancedOperation::ExpandPower,
-      AdvancedOperation::ExpandMult,
-      Parametric::ExpandSum,
+      Logarithm::ExpandLnOnPower,    AdvancedOperation::ExpandPower,
+      AdvancedOperation::ExpandMult, Parametric::ExpandSum,
       Parametric::ExpandProduct,
-      Logarithm::ExpandLn,
   };
 #endif
 };

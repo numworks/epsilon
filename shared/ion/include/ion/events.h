@@ -161,6 +161,7 @@ inline int longPressFactor() {
 // Keyboard events
 
 #define DUMMY_KEY(...) PLAIN_KEY(__VA_ARGS__)
+#define DEDICATED_KEY(...) PLAIN_KEY(__VA_ARGS__)
 #define PLAIN_KEY(Name, ...) Name = Event::PlainKey(Keyboard::Key::Name),
 
 #define SHIFT_KEY(Name, R, C, SEvent, ...)     \
@@ -209,6 +210,7 @@ using enum EventId;
 #undef SHIFT_KEY
 #undef ALPHA_KEY
 #undef SHIFT_ALPHA_KEY
+#undef DEDICATED_KEY
 #undef DUMMY_KEY
 
 // Special

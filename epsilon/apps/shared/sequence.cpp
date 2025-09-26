@@ -227,7 +227,9 @@ double Sequence::approximateAtContextRank(int rank,
     // TODO: Prepared function of expressionReduced could be memoized.
     return expressionReduced()
         .getPreparedFunction(Function::k_unknownName)
-        .approximateToRealScalarWithValue(static_cast<double>(rank - order()));
+        .approximateToRealScalarWithValue(static_cast<double>(
+            rank -
+            (recursiveNotation() == RecursiveNotation::Default ? order() : 0)));
   }
   assert(type() != Type::Explicit);
   SystemExpression e;

@@ -25,11 +25,9 @@ class AdvancedReduction {
   // Bottom-up deep contract
   static bool DeepContract(Tree* e);
   // Top-Bottom deep expand
-  static bool DeepExpand(Tree* e) { return PrivateDeepExpand(e); };
+  static bool DeepExpand(Tree* e);
   // Top-Bottom deep expand using only algebraic operations
-  static bool DeepExpandAlgebraic(Tree* e) {
-    return PrivateDeepExpand(e, true);
-  };
+  static bool DeepExpandAlgebraic(Tree* e);
 
  private:
   // Ordered list of hashes encountered during advanced reduction.
@@ -194,19 +192,22 @@ class AdvancedReduction {
   static bool UpwardSystematicReduce(Tree* root, const Tree* tree);
 
   /* Expand/Contract operations */
-  static bool PrivateDeepExpand(Tree* e, bool onlyAlgebraicOperations = false);
+  template <int N>
+  static bool ShallowApply(Tree* e, bool tryAll,
+                           const Tree::Operation (&operations)[N]) {
+    return (tryAll ? TryAllOperations : TryOneOperation)(e, operations, N);
+  }
   static bool ShallowContract(Tree* e, bool tryAll) {
-    return (tryAll ? TryAllOperations : TryOneOperation)(
-        e, k_contractOperations, std::size(k_contractOperations));
+    return ShallowApply(e, tryAll, k_contractOperations);
   }
   static bool ShallowExpand(Tree* e, bool tryAll) {
-    return (tryAll ? TryAllOperations : TryOneOperation)(
-        e, k_expandOperations, std::size(k_expandOperations));
+    return ShallowApply(e, tryAll, k_expandOperations);
   }
   static bool ShallowExpandAlgebraic(Tree* e, bool tryAll) {
-    return (tryAll ? TryAllOperations : TryOneOperation)(
-        e, k_expandAlgebraicOperations, std::size(k_expandAlgebraicOperations));
+    return ShallowApply(e, tryAll, k_expandAlgebraicOperations);
   }
+  using ShallowApplication = bool (*)(Tree*, bool);
+  static bool PrivateDeepExpand(Tree* e, ShallowApplication shallowExpand);
 
   // Try all Operations until they all fail consecutively.
   static bool TryAllOperations(Tree* e, const Tree::Operation* operations,

@@ -611,8 +611,16 @@ bool AdvancedReduction::DeepContract(Tree* e) {
   return ShallowContract(e, true) || changed;
 }
 
+bool AdvancedReduction::DeepExpand(Tree* e) {
+  return PrivateDeepExpand(e, ShallowExpand);
+}
+
+bool AdvancedReduction::DeepExpandAlgebraic(Tree* e) {
+  return PrivateDeepExpand(e, ShallowExpandAlgebraic);
+}
+
 bool AdvancedReduction::PrivateDeepExpand(Tree* e,
-                                          bool onlyAlgebraicOperations) {
+                                          ShallowApplication shallowExpand) {
   // Tree::ApplyShallowTopDown could be used but we need to skip dependencies
   bool changed = false;
   /* ShallowExpand may push and remove trees at the end of TreeStack.
@@ -624,9 +632,7 @@ bool AdvancedReduction::PrivateDeepExpand(Tree* e,
       // Never expand anything in dependency's dependencies set.
       target = target->nextTree();
     }
-    changed = (onlyAlgebraicOperations ? ShallowExpandAlgebraic
-                                       : ShallowExpand)(target, true) ||
-              changed;
+    changed = shallowExpand(target, true) || changed;
     target = target->nextNode();
   }
   removeMarker(endMarker);
@@ -634,8 +640,8 @@ bool AdvancedReduction::PrivateDeepExpand(Tree* e,
     // Bottom-up systematic reduce is necessary.
     SystematicReduction::DeepReduce(e);
     // TODO_PCJ: Find a solution so we don't have to run this twice.
-    bool temp = PrivateDeepExpand(e, onlyAlgebraicOperations);
-    assert(!temp || !PrivateDeepExpand(e, onlyAlgebraicOperations));
+    bool temp = PrivateDeepExpand(e, shallowExpand);
+    assert(!temp || !PrivateDeepExpand(e, shallowExpand));
     (void)temp;
   }
   return changed;

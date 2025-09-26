@@ -20,8 +20,8 @@ class Sequence {
 
   static bool MainExpressionContainsForbiddenTerms(
       const Tree* e, const SymbolContext& symbolContext, const char* name,
-      Type type, int initialRank, bool recursion, bool systemSymbol,
-      bool otherSequences);
+      Type type, int initialRank, bool shiftedNotation, bool recursion,
+      bool systemSymbol, bool otherSequences);
 };
 
 }  // namespace Poincare::Internal

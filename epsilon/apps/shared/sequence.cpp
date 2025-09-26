@@ -188,8 +188,8 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
   // TODO_PCJ: used SymbolicComputation::ReplaceDefinedSymbols
   return SequenceHelper::MainExpressionContainsForbiddenTerms(
       expressionClone(), GlobalContextAccessor::SequenceContext(), buffer,
-      type(), initialRank(), recursionIsAllowed, systemSymbolIsAllowed,
-      otherSequencesAreAllowed);
+      type(), initialRank(), recursiveNotation(), recursionIsAllowed,
+      systemSymbolIsAllowed, otherSequencesAreAllowed);
 }
 
 void Sequence::tidyDownstreamPoolFrom(const PoolObject* treePoolCursor) const {

@@ -178,9 +178,8 @@ void MathVariableBoxController::fillCellForRow(HighlightCell* cell, int row) {
   } else {
     assert(m_currentPage == Page::Sequence);
     Shared::Sequence u(record);
-    symbolLength = u.nameWithArgumentAndType(
-        symbolName, Shared::Sequence::k_maxNameWithArgumentSize);
     symbolLayout = u.definitionName();
+    assert(!symbolLayout.isUninitialized());
   }
   if (symbolLayout.isUninitialized()) {
     symbolLayout = Layout::String(symbolName, symbolLength);

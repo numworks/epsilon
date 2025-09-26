@@ -5,6 +5,7 @@ SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/, \
   shared/dummy/haptics_enabled.cpp \
   shared/dummy/language.cpp \
   shared/haptics.cpp \
+  shared/state_file.cpp \
   web/clipboard_helper.cpp \
   web/exports.cpp \
   web/journal.cpp \
@@ -24,8 +25,12 @@ _ion_web_exported_functions = $(subst $( ),$(,),$(strip $(patsubst %,_%, \
   IonSimulatorKeyboardKeyDown \
   IonSimulatorKeyboardKeyUp \
   IonSimulatorEventsPushEvent \
+  IonSimulatorEventsPushEventArray \
+  IonSimulatorNumberOfEventsInArray \
   IonSoftwareVersion \
   IonPatchLevel \
+  malloc \
+  free \
   $(_eadk_exported_functions) \
 )))
 
@@ -33,6 +38,7 @@ _ion_web_exported_functions = $(subst $( ),$(,),$(strip $(patsubst %,_%, \
 # $(_sdl_web_exported_runtime_methods) is already defined
 _ion_web_exported_runtime_methods = $(subst $( ),$(,),$(strip \
   UTF8ToString \
+  HEAPU8 \
   FS \
   $(_sdl_web_exported_runtime_methods) \
 ))

@@ -22,6 +22,10 @@ class AdvancedReduction {
  public:
   static bool Reduce(Tree* e,
                      ReductionTarget reductionTarget = ReductionTarget::User);
+#if POINCARE_NO_ADVANCED_REDUCTION
+  static bool PseudoReduce(Tree* e);
+#endif
+
   // Bottom-up deep contract
   static bool DeepContract(Tree* e);
   // Top-Bottom deep expand
@@ -206,6 +210,11 @@ class AdvancedReduction {
   static bool ShallowExpandAlgebraic(Tree* e, bool tryAll) {
     return ShallowApply(e, tryAll, k_expandAlgebraicOperations);
   }
+#if POINCARE_NO_ADVANCED_REDUCTION
+  static bool ShallowExpandPseudoReduce(Tree* e, bool tryAll) {
+    return ShallowApply(e, tryAll, k_pseudoReduceOperations);
+  }
+#endif
   using ShallowApplication = bool (*)(Tree*, bool);
   static bool PrivateDeepExpand(Tree* e, ShallowApplication shallowExpand);
 
@@ -246,6 +255,15 @@ class AdvancedReduction {
       Parametric::ExpandSum,
       Parametric::ExpandProduct,
   };
+#if POINCARE_NO_ADVANCED_REDUCTION
+  constexpr static Tree::Operation k_pseudoReduceOperations[] = {
+      AdvancedOperation::ExpandPower,
+      AdvancedOperation::ExpandMult,
+      Parametric::ExpandSum,
+      Parametric::ExpandProduct,
+      Logarithm::ExpandLn,
+  };
+#endif
 };
 
 }  // namespace Poincare::Internal

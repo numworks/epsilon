@@ -289,18 +289,18 @@ bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
           e, Approximation::Context(projectionContext.m_angleUnit,
                                     projectionContext.m_complexFormat,
                                     projectionContext.m_context));
+      if (changed && insideReduction) {
+        // NAries could be sorted again, some children may be merged.
+        SystematicReduction::DeepReduce(e);
+      }
       break;
     case Strategy::DeepExpandAlgebraic:
-      changed = insideReduction && AdvancedReduction::DeepExpandAlgebraic(e);
+      changed = insideReduction && AdvancedReduction::PseudoReduce(e);
       break;
     default:
       OMG::unreachable();
   }
 
-  if (changed && insideReduction) {
-    // NAries could be sorted again, some children may be merged.
-    SystematicReduction::DeepReduce(e);
-  }
   return changed;
 }
 

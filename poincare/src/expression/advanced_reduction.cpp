@@ -112,6 +112,12 @@ bool AdvancedReduction::Reduce(Tree* e, ReductionTarget reductionTarget) {
   return changed;
 }
 
+#if POINCARE_NO_ADVANCED_REDUCTION
+bool AdvancedReduction::PseudoReduce(Tree* e) {
+  return PrivateDeepExpand(e, ShallowExpandPseudoReduce);
+}
+#endif
+
 bool AdvancedReduction::ReduceIndependantElement(
     Tree* e, ReductionTarget reductionTarget) {
   Path best_path{};

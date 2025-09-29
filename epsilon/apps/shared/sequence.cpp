@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
+#include <escher/app.h>
 #include <float.h>
 #include <omg/print.h>
 #include <omg/utf8_helper.h>
@@ -16,6 +17,7 @@
 #include "sequence_context.h"
 #include "sequence_store.h"
 
+using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {
@@ -84,8 +86,19 @@ void Sequence::setInitialRank(int rank) {
   m_secondInitialCondition.tidyName();
 }
 
+void Sequence::updateMainExpressionForNotation() {
+  [[maybe_unused]] ErrorStatus error =
+      setExpressionContent(SequenceHelper::UpdateMainExpressionForNotation(
+          expressionClone(), type(), recursiveNotation()));
+  assert(error == ErrorStatus::None);
+}
+
 void Sequence::setRecursiveNotation(RecursiveNotation notation) {
+  RecursiveNotation previousNotation = recursiveNotation();
   recordData()->setRecursiveNotation(notation);
+  if (previousNotation != notation) {
+    updateMainExpressionForNotation();
+  }
   m_definition.tidyName();
 }
 

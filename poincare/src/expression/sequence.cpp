@@ -102,4 +102,57 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
   return false;
 }
 
+void Sequence::UpdateMainExpressionForNotation(Tree* e, Type type,
+                                               bool shiftedNotation) {
+  assert(type != Type::SequenceExplicit);
+  for (Tree* t : e->selfAndDescendants()) {
+    if (t->isUserSequence()) {
+      Tree* rank = t->child(0);
+      if (shiftedNotation) {
+        /* Replace u(n) with:
+         * - u(n-1) if single rec
+         * - u(n-2) if double rec */
+        PatternMatching::MatchReplace(rank, KUnknownSymbol,
+                                      type == Type::SequenceSingleRecurrence
+                                          ? KSub(KUnknownSymbol, 1_e)
+                                          : KSub(KUnknownSymbol, 2_e));
+        /* Replace u(n+1) with:
+         * - u(n) if single rec
+         * - u(n-1) if double rec */
+        PatternMatching::MatchReplace(rank, KAdd(KUnknownSymbol, 1_e),
+                                      type == Type::SequenceSingleRecurrence
+                                          ? KUnknownSymbol
+                                          : KSub(KUnknownSymbol, 1_e));
+        /* Replace u(n+2) with:
+         * - u(n) if double rec */
+        if (type == Type::SequenceDoubleRecurrence) {
+          PatternMatching::MatchReplace(rank, KAdd(KUnknownSymbol, 2_e),
+                                        KUnknownSymbol);
+        }
+      } else {
+        /* Replace u(n) with:
+         * - u(n+1) if single rec
+         * - u(n+2) if double rec */
+        PatternMatching::MatchReplace(rank, KUnknownSymbol,
+                                      type == Type::SequenceSingleRecurrence
+                                          ? KAdd(KUnknownSymbol, 1_e)
+                                          : KAdd(KUnknownSymbol, 2_e));
+        /* Replace u(n-1) with:
+         * - u(n) if single rec
+         * - u(n+1) if double rec */
+        PatternMatching::MatchReplace(rank, KSub(KUnknownSymbol, 1_e),
+                                      type == Type::SequenceSingleRecurrence
+                                          ? KUnknownSymbol
+                                          : KAdd(KUnknownSymbol, 1_e));
+        /* Replace u(n-2) with:
+         * - u(n) if double rec */
+        if (type == Type::SequenceDoubleRecurrence) {
+          PatternMatching::MatchReplace(rank, KSub(KUnknownSymbol, 2_e),
+                                        KUnknownSymbol);
+        }
+      }
+    }
+  }
+}
+
 }  // namespace Poincare::Internal

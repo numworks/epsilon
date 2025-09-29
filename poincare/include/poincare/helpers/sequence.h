@@ -30,6 +30,8 @@ bool MainExpressionContainsForbiddenTerms(
     UserExpression e, const SymbolContext& symbolContext, const char* name,
     Type type, int initialRank, RecursiveNotation notation, bool recursion,
     bool systemSymbol, bool otherSequences);
+UserExpression UpdateMainExpressionForNotation(UserExpression e, Type type,
+                                               RecursiveNotation notation);
 
 }  // namespace SequenceHelper
 

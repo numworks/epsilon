@@ -47,6 +47,12 @@ bool SequenceHelper::MainExpressionContainsForbiddenTerms(
       otherSequences);
 }
 
+UserExpression SequenceHelper::InitialExpression(const char* name, Type type,
+                                                 RecursiveNotation notation) {
+  return UserExpression::Builder(Internal::Sequence::InitialExpression(
+      name, GetType(type), notation == RecursiveNotation::Shifted));
+}
+
 UserExpression SequenceHelper::UpdateMainExpressionForNotation(
     UserExpression e, Type type, RecursiveNotation notation) {
   Internal::Tree* expr = e.tree()->cloneTree();

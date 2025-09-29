@@ -22,34 +22,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-UserExpression Sequence::initialExpressionContentForTypeAndNotation() const {
-  char name[SymbolHelper::k_maxNameSize];
-  nameWithoutExtension(name, SymbolHelper::k_maxNameSize);
-  bool isDefaultNotation = recursiveNotation() == RecursiveNotation::Default;
-  switch (type()) {
-    case Type::Explicit:
-      return UserExpression();
-    case Type::SingleRecurrence: {
-      return SymbolHelper::BuildSequence(
-          name, UserExpression::Builder(isDefaultNotation
-                                            ? KUnknownSymbol
-                                            : KSub(KUnknownSymbol, 1_e)));
-    }
-    case Type::DoubleRecurrence: {
-      return UserExpression::Create(
-          KAdd(KA, KB),
-          {.KA = SymbolHelper::BuildSequence(
-               name, UserExpression::Builder(isDefaultNotation
-                                                 ? KAdd(KUnknownSymbol, 1_e)
-                                                 : KSub(KUnknownSymbol, 1_e))),
-           .KB = SymbolHelper::BuildSequence(
-               name, UserExpression::Builder(
-                         isDefaultNotation ? KUnknownSymbol
-                                           : KSub(KUnknownSymbol, 2_e)))});
-    }
-  }
-}
-
 void Sequence::setType(Type t) {
   if (t == type()) {
     return;
@@ -58,8 +30,10 @@ void Sequence::setType(Type t) {
   m_definition.tidyName();
   tidyDownstreamPoolFrom();
   /* Reset all contents */
-  Ion::Storage::Record::ErrorStatus error =
-      setExpressionContent(initialExpressionContentForTypeAndNotation());
+  char name[SymbolHelper::k_maxNameSize];
+  nameWithoutExtension(name, SymbolHelper::k_maxNameSize);
+  Ion::Storage::Record::ErrorStatus error = setExpressionContent(
+      SequenceHelper::InitialExpression(name, type(), recursiveNotation()));
   switch (t) {
     case Type::Explicit:
       setFirstInitialConditionContent(Layout());

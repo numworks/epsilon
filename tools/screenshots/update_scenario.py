@@ -15,9 +15,9 @@ parser.add_argument(
     help="epsilon executable",
 )
 parser.add_argument(
-    "name",
-    metavar="NAME",
-    help="name of scenario folder in the test screenshots dataset",
+    "scenario",
+    metavar="SCENARIO",
+    help="path to the scenario folder in the test screenshots dataset",
 )
 
 
@@ -35,9 +35,11 @@ def main():
     )
     print("-------")
 
-    scenario_folder = folder(args.name)
+    scenario_folder = args.scenario
     if not os.path.isdir(scenario_folder):
-        print("Error:", args.name, "is not a folder in the test screenshots dataset")
+        print(
+            "Error:", args.scenario, "is not a folder in the test screenshots dataset"
+        )
         sys.exit(1)
     state_file = get_file_with_extension(scenario_folder, ".nws")
     crc_file = get_file_with_extension(scenario_folder, ".txt")

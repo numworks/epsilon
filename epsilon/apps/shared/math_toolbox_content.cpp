@@ -723,6 +723,10 @@ constexpr ToolboxMessage advancedTrigonometryChildren[] = {
                        I18n::Message::ArcCotangent)};
 
 constexpr ToolboxMessage trigonometryChildren[] = {
+    ToolboxMessageLeaf(I18n::Message::UnitAngleDegreeSymbol,
+                       I18n::Message::UnitAngleDegree),
+    ToolboxMessageLeaf(I18n::Message::UnitAngleRadianSymbol,
+                       I18n::Message::UnitAngleRadian),
     ToolboxMessageNode(I18n::Message::HyperbolicTrigonometry,
                        hyperbolicTrigonometryChildren),
     ToolboxMessageNode(I18n::Message::AdvancedTrigonometry,

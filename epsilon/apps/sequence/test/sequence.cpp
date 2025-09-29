@@ -94,6 +94,32 @@ void check_sum_of_sequence_between_bounds(double result, double start,
   GlobalContextAccessor::SequenceCache().resetCache();
 }
 
+void check_sequence_notation(Sequence::Type type, const char* definition,
+                             const char* condition1, const char* condition2) {
+  assert(type != Sequence::Type::Explicit);
+  Sequence* seq = AddSequence(type, definition, condition1, condition2);
+  quiz_assert_print_if_failure(seq->isDefined(), "Sequence is undefined.");
+  for (int j = 0; j < 10; j++) {
+    seq->setRecursiveNotation(SequenceHelper::RecursiveNotation::Default);
+    double unDefault = seq->evaluateXYAtParameter((double)j).y();
+    seq->setRecursiveNotation(SequenceHelper::RecursiveNotation::Shifted);
+    double unShifted = seq->evaluateXYAtParameter((double)j).y();
+    bool isEqual = OMG::Float::RoughlyEqual<double>(
+        unDefault, unShifted, OMG::Float::EpsilonLax<double>(), true);
+    constexpr size_t bufferSize = 100;
+    char buffer[bufferSize];
+    Poincare::Print::CustomPrintf(
+        buffer, bufferSize,
+        "Default notation gives %*.*ed and shifted notation gives %*.*ed.",
+        unDefault, Preferences::PrintFloatMode::Decimal, 7, unShifted,
+        Preferences::PrintFloatMode::Decimal, 7);
+    quiz_assert_print_if_failure(isEqual, buffer);
+  }
+  GlobalContextAccessor::SequenceStore().removeAll();
+  GlobalContextAccessor::SequenceStore().tidyDownstreamPoolFrom();
+  GlobalContextAccessor::SequenceCache().resetCache();
+}
+
 QUIZ_CASE(sequence_evaluation) {
   Sequence::Type types[SequenceStore::k_maxNumberOfSequences] = {
       Sequence::Type::Explicit, Sequence::Type::Explicit,
@@ -937,6 +963,15 @@ QUIZ_CASE(sequence_suitable_for_cobweb) {
   quiz_assert(!AddSequence(Sequence::Type::SingleRecurrence, "2*u(n)+u(0)", "n",
                            nullptr)
                    ->isSuitableForCobweb());
+}
+
+QUIZ_CASE(sequence_notation_change) {
+  check_sequence_notation(Sequence::Type::SingleRecurrence, "n+2", "2",
+                          nullptr);
+  check_sequence_notation(Sequence::Type::SingleRecurrence, "u(n)+3*(n+1)", "0",
+                          nullptr);
+  check_sequence_notation(Sequence::Type::DoubleRecurrence,
+                          "u(n+1)-u(n)+n+2-n-1", "0", "1");
 }
 
 }  // namespace Shared

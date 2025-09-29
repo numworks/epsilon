@@ -102,6 +102,35 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
   return false;
 }
 
+Tree* Sequence::InitialExpression(const char* name, Type type,
+                                  bool shiftedNotation) {
+  Tree* result = nullptr;
+  switch (type) {
+    case Type::SequenceExplicit:
+      // No initial expression
+      break;
+    case Type::SequenceSingleRecurrence: {
+      // u(n) (or u(n-1) for shifted notation)
+      result = SharedTreeStack->pushUserSequence(name);
+      (shiftedNotation ? KSub(KUnknownSymbol, 1_e) : KUnknownSymbol)
+          ->cloneTree();
+      break;
+    }
+    case Type::SequenceDoubleRecurrence: {
+      // u(n+1)+u(n) (or u(n-1)+u(n-2) for shifted notation)
+      result = SharedTreeStack->pushAdd(2);
+      SharedTreeStack->pushUserSequence(name);
+      (shiftedNotation ? KSub(KUnknownSymbol, 1_e) : KAdd(KUnknownSymbol, 1_e))
+          ->cloneTree();
+      SharedTreeStack->pushUserSequence(name);
+      (shiftedNotation ? KSub(KUnknownSymbol, 2_e) : KUnknownSymbol)
+          ->cloneTree();
+      break;
+    }
+  }
+  return result;
+}
+
 void Sequence::UpdateMainExpressionForNotation(Tree* e, Type type,
                                                bool shiftedNotation) {
   assert(type != Type::SequenceExplicit);

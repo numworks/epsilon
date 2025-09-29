@@ -191,6 +191,7 @@ void HistoryController::fillCellForRow(HighlightCell* cell, int row) {
       row == selectedRow() && m_selectedSubviewType == SubviewType::Output);
   myCell->setEven(row % 2 == 0);
   myCell->reloadSubviewHighlight();
+  myCell->reloadScroll();
 }
 
 KDCoordinate HistoryController::nonMemoizedRowHeight(int row) {

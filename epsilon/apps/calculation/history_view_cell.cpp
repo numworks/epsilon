@@ -107,15 +107,10 @@ void HistoryViewCell::reloadScroll() {
 void HistoryViewCell::reloadOutputSelection(
     HistoryViewCellDataSource::SubviewType previousType) {
   assert(m_calculationDisplayOutput != Calculation::DisplayOutput::Unknown);
-  /* Select the right output according to the calculation display output. This
-   * will reload the scroll to display the selected output. */
-  bool selectExactOutput =
-      m_calculationDisplayOutput ==
-          Calculation::DisplayOutput::ExactAndApproximate &&
-      previousType != HistoryViewCellDataSource::SubviewType::Ellipsis;
+  /* Select the left output. This will reload the scroll to display the selected
+   * output. */
   m_scrollableOutputView.setSelectedSubviewPosition(
-      selectExactOutput ? ScrollableTwoLayoutsView::SubviewPosition::Center
-                        : ScrollableTwoLayoutsView::SubviewPosition::Right);
+      ScrollableTwoLayoutsView::SubviewPosition::Right);
 }
 
 void HistoryViewCell::cellDidSelectSubview(
@@ -171,7 +166,7 @@ bool HistoryViewCell::ViewsCanBeSingleLine(KDCoordinate inputViewWidth,
 void HistoryViewCell::layoutSubviews(bool force) {
   KDRect frameBounds = bounds();
   if (bounds().width() <= 0 || bounds().height() <= 0) {
-    /* TODO Make this behaviour in a non-virtual layoutSublviews, and all layout
+    /* TODO Make this behaviour in a non-virtual layoutSubviews, and all layout
      * subviews should become privateLayoutSubviews */
     return;
   }
@@ -322,6 +317,9 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
   }
   m_scrollableOutputView.setExactAndApproximateAreStriclyEqual(
       calculation->equalSign() == Calculation::EqualSign::Equal);
+  // Scroll to approximate output
+  m_scrollableOutputView.setSelectedSubviewPosition(
+      ScrollableTwoLayoutsView::SubviewPosition::Right);
   updateExpanded(expanded);
 }
 

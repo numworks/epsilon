@@ -100,6 +100,12 @@ void EditExpressionController::memoizeInput() {
 
 void EditExpressionController::viewWillAppear() {
   m_historyController->viewWillAppear();
+  App::app()->defaultToolbox()->setExtraCellsDataSource(
+      &m_calculationToolboxDataSource);
+}
+
+void EditExpressionController::viewDidDisappear() {
+  App::app()->defaultToolbox()->setExtraCellsDataSource(nullptr);
 }
 
 bool EditExpressionController::layoutFieldDidReceiveEvent(
@@ -118,6 +124,9 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(
     m_calculationStore->deleteAll();
     m_historyController->reload();
     return true;
+  }
+  if (event == Ion::Events::Toolbox) {
+    // TODO: if inside a trig function
   }
   return MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
                                                              event);

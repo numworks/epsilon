@@ -16,6 +16,11 @@ class LayoutField : public Escher::LayoutField {
 
   void updateCursorBeforeInsertion();
 
+  bool containsTrigFunction() const {
+    // TODO
+    return true;
+  }
+
  protected:
   bool handleEvent(Ion::Events::Event event) override;
 

@@ -126,7 +126,8 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(
     return true;
   }
   if (event == Ion::Events::Toolbox) {
-    // TODO: if inside a trig function
+    m_calculationToolboxDataSource.toggleAngleUnitsDisplay(
+        m_contentView.layoutField()->containsTrigFunction());
   }
   return MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField,
                                                              event);

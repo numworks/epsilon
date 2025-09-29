@@ -1,5 +1,6 @@
 #pragma once
 
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/symbol_context.h>
 
@@ -26,6 +27,14 @@ class Sequence {
                                  bool shiftedNotation);
   static void UpdateMainExpressionForNotation(Tree* e, Type type,
                                               bool shiftedNotation);
+
+ private:
+  constexpr static const Tree* k_defaultRank = KUnknownSymbol;
+  constexpr static const Tree* k_firstFollowingRank = KAdd(KUnknownSymbol, 1_e);
+  constexpr static const Tree* k_secondFollowingRank =
+      KAdd(KUnknownSymbol, 2_e);
+  constexpr static const Tree* k_firstPreviousRank = KSub(KUnknownSymbol, 1_e);
+  constexpr static const Tree* k_secondPreviousRank = KSub(KUnknownSymbol, 2_e);
 };
 
 }  // namespace Poincare::Internal

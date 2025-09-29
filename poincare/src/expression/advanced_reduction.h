@@ -212,11 +212,15 @@ class AdvancedReduction {
   }
 #if POINCARE_NO_ADVANCED_REDUCTION
   static bool ShallowExpandPseudoReduce(Tree* e, bool tryAll) {
-    return ShallowApply(e, tryAll, k_pseudoReduceOperations);
+    return ShallowApply(e, tryAll, k_pseudoReduceExpandOperations);
+  }
+  static bool ShallowContractPseudoReduce(Tree* e, bool tryAll) {
+    return ShallowApply(e, tryAll, k_pseudoReduceContractOperations);
   }
 #endif
   using ShallowApplication = bool (*)(Tree*, bool);
   static bool PrivateDeepExpand(Tree* e, ShallowApplication shallowExpand);
+  static bool PrivateDeepContract(Tree* e, ShallowApplication shallowContract);
 
   // Try all Operations until they all fail consecutively.
   static bool TryAllOperations(Tree* e, const Tree::Operation* operations,
@@ -256,10 +260,15 @@ class AdvancedReduction {
       Parametric::ExpandProduct,
   };
 #if POINCARE_NO_ADVANCED_REDUCTION
-  constexpr static Tree::Operation k_pseudoReduceOperations[] = {
-      Logarithm::ExpandLnOnPower,    AdvancedOperation::ExpandPower,
+  constexpr static Tree::Operation k_pseudoReduceExpandOperations[] = {
+      Logarithm::ExpandLnOnPower,    Logarithm::ExpandLnOnRational,
+      AdvancedOperation::ExpandExp,  AdvancedOperation::ExpandPower,
       AdvancedOperation::ExpandMult, Parametric::ExpandSum,
       Parametric::ExpandProduct,
+  };
+  constexpr static Tree::Operation k_pseudoReduceContractOperations[] = {
+      Logarithm::ContractLn,
+      AdvancedOperation::ContractExp,
   };
 #endif
 };

@@ -114,7 +114,10 @@ bool AdvancedReduction::Reduce(Tree* e, ReductionTarget reductionTarget) {
 
 #if POINCARE_NO_ADVANCED_REDUCTION
 bool AdvancedReduction::PseudoReduce(Tree* e) {
-  return PrivateDeepExpand(e, ShallowExpandPseudoReduce);
+  uint32_t h = e->hash();
+  PrivateDeepExpand(e, ShallowExpandPseudoReduce) &&
+      PrivateDeepContract(e, ShallowContractPseudoReduce);
+  return e->hash() != h;
 }
 #endif
 
@@ -605,16 +608,21 @@ bool AdvancedReduction::UpwardSystematicReduce(Tree* root, const Tree* tree) {
 /* Expand/Contract operations */
 
 bool AdvancedReduction::DeepContract(Tree* e) {
+  return PrivateDeepContract(e, ShallowContract);
+}
+
+bool AdvancedReduction::PrivateDeepContract(
+    Tree* e, ShallowApplication shallowContract) {
   if (e->isDepList()) {
     // Never contract anything in dependency's dependencies set.
     return false;
   }
   bool changed = false;
   for (Tree* child : e->children()) {
-    changed = DeepContract(child) || changed;
+    changed = PrivateDeepContract(child, shallowContract) || changed;
   }
   // TODO: Assert !DeepContract(e)
-  return ShallowContract(e, true) || changed;
+  return shallowContract(e, true) || changed;
 }
 
 bool AdvancedReduction::DeepExpand(Tree* e) {

@@ -19,10 +19,6 @@ extern "C" {
 
 namespace Poincare {
 
-constexpr const char* k_undefName =
-    Internal::BuiltinsAliases::k_undefinedAlias.mainAlias();
-constexpr size_t k_undefNameLength = std::string_view(k_undefName).length();
-
 constexpr size_t PrintFloat::Long::k_maxNumberOfCharsForDigit;
 
 PrintFloat::Long::Long(int64_t i) : m_negative(i < 0) {
@@ -211,15 +207,20 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
   }
 
   if (std::isnan(f)) {
-    // Nan
-    constexpr size_t requiredCharLength = k_undefNameLength;
-    constexpr TextLengths requiredTextLengths = {
-        .CharLength = requiredCharLength, .GlyphLength = requiredCharLength};
+    const char* undefName =
+        Internal::Builtin::SpecialIdentifierName(
+            Internal::Type::Undef, SharedPreferences->translateBuiltins())
+            .mainAlias();
+    Internal::BuiltinsAliases::k_undefinedAlias.mainAlias();
+    size_t requiredCharLength = std::string_view(undefName).length();
+
+    TextLengths requiredTextLengths = {.CharLength = requiredCharLength,
+                                       .GlyphLength = requiredCharLength};
     if (requiredCharLength > availableCharLength) {
       // We will not be able to print
       return requiredTextLengths;
     }
-    strlcpy(buffer, k_undefName, bufferSize);
+    strlcpy(buffer, undefName, bufferSize);
     return requiredTextLengths;
   }
 

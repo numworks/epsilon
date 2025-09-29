@@ -59,6 +59,7 @@ class Sequence : public Function {
                                          RecursiveNotation notation);
   Poincare::Layout definitionName() const { return m_definition.name(this); }
   Poincare::UserExpression initialExpressionContentForTypeAndNotation() const;
+  void updateMainExpressionForNotation();
 
   // First initial condition
   Poincare::Layout firstInitialConditionName() {

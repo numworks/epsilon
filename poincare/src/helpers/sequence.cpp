@@ -4,6 +4,8 @@
 #include <poincare/src/layout/grid.h>
 #include <poincare/src/layout/sequence.h>
 
+#include "poincare/user_expression.h"
+
 namespace Poincare {
 
 static Internal::Type GetType(SequenceHelper::Type sequenceType) {
@@ -43,6 +45,14 @@ bool SequenceHelper::MainExpressionContainsForbiddenTerms(
       e.tree(), symbolContext, name, GetType(type), initialRank,
       notation == RecursiveNotation::Shifted, recursion, systemSymbol,
       otherSequences);
+}
+
+UserExpression SequenceHelper::UpdateMainExpressionForNotation(
+    UserExpression e, Type type, RecursiveNotation notation) {
+  Internal::Tree* expr = e.tree()->cloneTree();
+  Internal::Sequence::UpdateMainExpressionForNotation(
+      expr, GetType(type), notation == RecursiveNotation::Shifted);
+  return UserExpression::Builder(expr);
 }
 
 }  // namespace Poincare

@@ -116,8 +116,8 @@ bool AdvancedReduction::Reduce(Tree* e, ReductionTarget reductionTarget) {
 #if POINCARE_NO_ADVANCED_REDUCTION
 bool AdvancedReduction::PseudoReduce(Tree* e) {
   uint32_t h = e->hash();
-  PrivateDeepExpand(e, ShallowExpandPseudoReduce) &&
-      PrivateDeepContract(e, ShallowContractPseudoReduce);
+  PrivateDeepExpand(e, ShallowExpandPseudoReduce);
+  PrivateDeepContract(e, ShallowContractPseudoReduce);
   return e->hash() != h;
 }
 #endif

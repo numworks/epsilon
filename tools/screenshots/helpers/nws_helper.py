@@ -110,7 +110,7 @@ def convert_txt_to_nws(txtpath, nwspath=None, filter=[]):
     if nwspath is None:
         f = sys.stdout.buffer
     else:
-        f = open(txtpath, "wb")
+        f = open(nwspath, "wb")
 
     f.write(BIN_HEADER)
     f.write(version.encode())

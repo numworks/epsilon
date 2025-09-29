@@ -255,10 +255,9 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
     fillCellForRow(selectedCell, selectedRow());
   }
 
-  previousSubviewType = sameCell ? previousSubviewType : SubviewType::None;
   if (selectedCell) {
     selectedCell->reloadSubviewHighlight();
-    selectedCell->cellDidSelectSubview(subviewType, previousSubviewType);
+    selectedCell->cellDidSelectSubview(subviewType);
     App::app()->setFirstResponder(selectedCell, true);
   }
   if (previousSelectedCell) {

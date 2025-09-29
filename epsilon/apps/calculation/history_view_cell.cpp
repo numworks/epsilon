@@ -104,21 +104,13 @@ void HistoryViewCell::reloadScroll() {
   m_scrollableOutputView.reloadScroll();
 }
 
-void HistoryViewCell::reloadOutputSelection(
-    HistoryViewCellDataSource::SubviewType previousType) {
-  assert(m_calculationDisplayOutput != Calculation::DisplayOutput::Unknown);
-  /* Select the left output. This will reload the scroll to display the selected
-   * output. */
-  m_scrollableOutputView.setSelectedSubviewPosition(
-      ScrollableTwoLayoutsView::SubviewPosition::Right);
-}
-
 void HistoryViewCell::cellDidSelectSubview(
-    HistoryViewCellDataSource::SubviewType type,
-    HistoryViewCellDataSource::SubviewType previousType) {
+    HistoryViewCellDataSource::SubviewType type) {
   // Init output selection
   if (type == HistoryViewCellDataSource::SubviewType::Output) {
-    reloadOutputSelection(previousType);
+    // Select the approximate output
+    m_scrollableOutputView.setSelectedSubviewPosition(
+        ScrollableTwoLayoutsView::SubviewPosition::Right);
   }
 
   /* The selected subview has changed. The displayed outputs might have changed.

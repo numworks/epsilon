@@ -131,52 +131,55 @@ Tree* Sequence::InitialExpression(const char* name, Type type,
 void Sequence::UpdateMainExpressionForNotation(Tree* e, Type type,
                                                bool shiftedNotation) {
   assert(type != Type::SequenceExplicit);
-  for (Tree* t : e->selfAndDescendants()) {
-    if (t->isUserSequence()) {
-      Tree* rank = t->child(0);
-      if (shiftedNotation) {
+  bool changed = false;
+  if (shiftedNotation) {
+    changed =
         /* Replace u(n) with:
          * - u(n-1) if single rec
          * - u(n-2) if double rec */
-        PatternMatching::MatchReplace(rank, k_defaultRank,
+        PatternMatching::MatchReplace(e, k_defaultRank,
                                       type == Type::SequenceSingleRecurrence
                                           ? k_firstPreviousRank
-                                          : k_secondPreviousRank);
+                                          : k_secondPreviousRank) ||
         /* Replace u(n+1) with:
          * - u(n) if single rec
          * - u(n-1) if double rec */
-        PatternMatching::MatchReplace(rank, k_firstFollowingRank,
+        PatternMatching::MatchReplace(e, k_firstFollowingRank,
                                       type == Type::SequenceSingleRecurrence
                                           ? k_defaultRank
-                                          : k_firstPreviousRank);
+                                          : k_firstPreviousRank) ||
         /* Replace u(n+2) with:
          * - u(n) if double rec */
-        if (type == Type::SequenceDoubleRecurrence) {
-          PatternMatching::MatchReplace(rank, k_secondFollowingRank,
-                                        k_defaultRank);
-        }
-      } else {
+        (type == Type::SequenceDoubleRecurrence &&
+         PatternMatching::MatchReplace(e, k_secondFollowingRank,
+                                       k_defaultRank)) ||
+        changed;
+  } else {
+    changed =
         /* Replace u(n) with:
          * - u(n+1) if single rec
          * - u(n+2) if double rec */
-        PatternMatching::MatchReplace(rank, k_defaultRank,
+        PatternMatching::MatchReplace(e, k_defaultRank,
                                       type == Type::SequenceSingleRecurrence
                                           ? k_firstFollowingRank
-                                          : k_secondFollowingRank);
+                                          : k_secondFollowingRank) ||
         /* Replace u(n-1) with:
          * - u(n) if single rec
          * - u(n+1) if double rec */
-        PatternMatching::MatchReplace(rank, k_firstPreviousRank,
+        PatternMatching::MatchReplace(e, k_firstPreviousRank,
                                       type == Type::SequenceSingleRecurrence
                                           ? k_defaultRank
-                                          : k_firstFollowingRank);
+                                          : k_firstFollowingRank) ||
         /* Replace u(n-2) with:
          * - u(n) if double rec */
-        if (type == Type::SequenceDoubleRecurrence) {
-          PatternMatching::MatchReplace(rank, k_secondPreviousRank,
-                                        k_defaultRank);
-        }
-      }
+        (type == Type::SequenceDoubleRecurrence &&
+         PatternMatching::MatchReplace(e, k_secondPreviousRank,
+                                       k_defaultRank)) ||
+        changed;
+  }
+  if (!changed) {
+    for (Tree* child : e->children()) {
+      UpdateMainExpressionForNotation(child, type, shiftedNotation);
     }
   }
 }

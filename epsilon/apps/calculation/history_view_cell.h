@@ -36,10 +36,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   HistoryViewCell(Responder* parentResponder = nullptr);
   static bool ViewsCanBeSingleLine(KDCoordinate inputViewWidth,
                                    KDCoordinate outputViewWidth, bool ellipsis);
-  void cellDidSelectSubview(
-      HistoryViewCellDataSource::SubviewType type,
-      HistoryViewCellDataSource::SubviewType previousType =
-          HistoryViewCellDataSource::SubviewType::None);
+  void cellDidSelectSubview(HistoryViewCellDataSource::SubviewType type);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void reloadSubviewHighlight();
@@ -86,8 +83,6 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   void computeSubviewFrames(KDCoordinate frameWidth, KDCoordinate frameHeight,
                             KDRect* ellipsisFrame, KDRect* inputFrame,
                             KDRect* outputFrame);
-  void reloadOutputSelection(
-      HistoryViewCellDataSource::SubviewType previousType);
   bool isDisplayingEllipsis() const { return isHighlighted() && hasEllipsis(); }
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;

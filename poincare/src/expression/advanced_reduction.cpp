@@ -1,5 +1,6 @@
 #include "advanced_reduction.h"
 
+#include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_helpers.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
@@ -617,10 +618,21 @@ bool AdvancedReduction::PrivateDeepContract(
     // Never contract anything in dependency's dependencies set.
     return false;
   }
+
   bool changed = false;
   for (Tree* child : e->children()) {
     changed = PrivateDeepContract(child, shallowContract) || changed;
   }
+
+  /* Contracting the children might break the sorting, e.g.:
+   *   exp(3/8*ln(2)*exp(1/8*ln(3))) -> exp(1/8*ln(8))*exp(1/8*ln(3))
+   *   sorted: exp(1/8*ln(3))*exp(1/8*ln(8))
+   * TODO: This is enough for now, but if need be feel free to upgrade this Sort
+   * to a full DeepReduce. */
+  if (changed && e->isNAry()) {
+    NAry::Sort(e);
+  }
+
   // TODO: Assert !DeepContract(e)
   return shallowContract(e, true) || changed;
 }

@@ -4,6 +4,7 @@
 #include <poincare/layout.h>
 
 #include "calculation_selectable_list_view.h"
+#include "calculation_toolbox_data_source.h"
 #include "history_controller.h"
 #include "layout_field.h"
 
@@ -30,6 +31,7 @@ class EditExpressionController : public Escher::ViewController,
   /* ViewController */
   Escher::View* view() override { return &m_contentView; }
   void viewWillAppear() override;
+  void viewDidDisappear() override;
 
   /* MathLayoutFieldDelegate */
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
@@ -82,6 +84,7 @@ class EditExpressionController : public Escher::ViewController,
   CalculationStore* m_calculationStore;
   ContentView m_contentView;
   Poincare::Layout m_lastInput;
+  CalculationToolboxDataSource m_calculationToolboxDataSource;
 };
 
 }  // namespace Calculation

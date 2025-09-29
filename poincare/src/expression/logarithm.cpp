@@ -311,7 +311,15 @@ bool Logarithm::ExpandLn(Tree* e) {
     b->removeTree();
     return true;
   }
-  if (ExpandLnOnPower(e)) {
+  // ln(A^B) = B*ln(A) - i*(B*arg(A) - arg(A^B))
+  if (PatternMatching::Match(e, KLn(KPow(KA, KB)), &ctx)) {
+    const Tree* a = ctx.getTree(KA);
+    const Tree* b = ctx.getTree(KB);
+    TreeRef c = PushProductCorrection(a, b);
+    ctx.setNode(KC, c, 1, false);
+    e->moveTreeOverTree(PatternMatching::CreateReduce(
+        KAdd(KMult(KB, KLn(KA)), KMult(-1_e, KC)), ctx));
+    c->removeTree();
     return true;
   }
   /* ln(exp(A))-> ln(exp(re(A)))+ln(exp(i*im(A)) -> re(A) + i*arg(exp(i*im(A)))
@@ -359,21 +367,6 @@ bool Logarithm::ExpandLnOnRational(Tree* e) {
   }
   e->moveTreeOverTree(result);
   return true;
-}
-
-bool Logarithm::ExpandLnOnPower(Tree* e) {
-  PatternMatching::Context ctx;
-  if (PatternMatching::Match(e, KLn(KPow(KA, KB)), &ctx)) {
-    const Tree* a = ctx.getTree(KA);
-    const Tree* b = ctx.getTree(KB);
-    TreeRef c = PushProductCorrection(a, b);
-    ctx.setNode(KC, c, 1, false);
-    e->moveTreeOverTree(PatternMatching::CreateReduce(
-        KAdd(KMult(KB, KLn(KA)), KMult(-1_e, KC)), ctx));
-    c->removeTree();
-    return true;
-  }
-  return false;
 }
 
 Tree* Logarithm::ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime) {

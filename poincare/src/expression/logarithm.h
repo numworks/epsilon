@@ -13,8 +13,6 @@ class Logarithm final {
   static bool ExpandLn(Tree* e);
   // ln(12/5)->2*ln(2)+ln(3)-ln(5)
   static bool ExpandLnOnRational(Tree* e);
-  // ln(A^B) = B*ln(A) - i*(B*arg(A) - arg(A^B))
-  static bool ExpandLnOnPower(Tree* e);
 
  private:
   // ln(12)->2*ln(2)+ln(3), return nullptr if m is prime and escapeIfPrime true.

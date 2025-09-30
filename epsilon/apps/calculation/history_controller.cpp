@@ -248,18 +248,17 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
       static_cast<HistoryViewCell*>(m_selectableListView.selectedCell());
   HistoryViewCell* previousSelectedCell = static_cast<HistoryViewCell*>(
       m_selectableListView.cell(previousSelectedRow));
-  /* 'reloadData' calls 'fillCellForRow' for each cell while the table
-   * has been deselected. To reload the expanded cell, we call one more time
-   * 'fillCellForRow' but once the right cell has been selected. */
-  if (selectedCell) {
-    fillCellForRow(selectedCell, selectedRow());
-  }
 
   if (selectedCell) {
+    /* 'reloadData' calls 'fillCellForRow' for each cell while the table
+     * has been deselected. To reload the expanded cell, we call one more time
+     * 'fillCellForRow' but once the right cell has been selected. */
+    fillCellForRow(selectedCell, selectedRow());
     selectedCell->reloadSubviewHighlight();
     selectedCell->cellDidSelectSubview(subviewType);
     App::app()->setFirstResponder(selectedCell, true);
   }
+
   if (previousSelectedCell) {
     previousSelectedCell->cellDidSelectSubview(SubviewType::Input);
   }

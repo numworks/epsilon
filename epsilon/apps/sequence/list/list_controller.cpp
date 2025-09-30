@@ -110,8 +110,10 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
     if (sequenceDefinition == k_sequenceDefinition) {
       recurrenceDepth = sequence->numberOfElements() - 1;
     }
-    m_sequenceToolboxDataSource.buildExtraCellsLayouts(sequence->fullName(),
-                                                       recurrenceDepth);
+    m_sequenceToolboxDataSource.buildExtraCellsLayouts(
+        sequence->fullName(), recurrenceDepth,
+        sequence->recursiveNotation() ==
+            SequenceHelper::RecursiveNotation::Shifted);
   }
   return ExpressionModelListController::layoutFieldDidReceiveEvent(layoutField,
                                                                    event);

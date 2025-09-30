@@ -44,8 +44,31 @@ publish-source: | $(OUTPUT_ROOT)/.
 
 $(call document_other_target,publish-source,Archive the source code of the current branch in a tarball. Edit .gitattributes to exclude files.)
 
+# Toolchain info
+
+.PHONY: toolchain_info
+toolchain_info:
+	@echo "HOSTCC:" $(HOSTCC)
+	@$(HOSTCC) --version
+	@echo
+	@echo "HOSTCXX:" $(HOSTCXX)
+	@$(HOSTCXX) --version
+	@echo
+	@echo "CC:" $(CC)
+	@$(CC) --version
+	@echo
+	@echo "CXX:" $(CXX)
+	@$(CXX) --version
+	@echo
+	@echo "PYTHON:" $(PYTHON)
+	@$(PYTHON) --version
+
+$(call document_other_target,toolchain_info,Display the version of the compilers in use with the current TOOLCHAIN)
+
 # Helpers
 
 define _extract_tastes
 $(sort $(subst :,,$(filter :%,$(subst :-, :,$(subst :+, :,$1)))))
 endef
+
+

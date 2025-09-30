@@ -405,6 +405,7 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
     return true;
   }
 
+#if POINCARE_SUM_AND_PRODUCT
   // Binomial theorem
   // (A + B?)^n = sum(binomial(n, k) * A^k * B^(n-k), k, 0, n)
   bool matched = PatternMatching::Match(e, KPow(KAdd(KA, KB_p), KC), &ctx) &&
@@ -450,6 +451,7 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
     }
     return true;
   }
+#endif
 
   return false;
 }

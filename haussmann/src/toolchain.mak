@@ -96,23 +96,3 @@ ifneq ($(EMCC_REQUIRED_VERSION),)
 $(call check_compiler_exact_version,$(EMCC_REQUIRED_VERSION))
 endif
 endif
-
-
-.PHONY: compilers
-compilers:
-	@echo "HOSTCC:" $(HOSTCC)
-	@$(HOSTCC) --version
-	@echo
-	@echo "HOSTCXX:" $(HOSTCXX)
-	@$(HOSTCXX) --version
-	@echo
-	@echo "CC:" $(CC)
-	@$(CC) --version
-	@echo
-	@echo "CXX:" $(CXX)
-	@$(CXX) --version
-	@echo
-	@echo "PYTHON:" $(PYTHON)
-	@$(PYTHON) --version
-
-$(call document_other_target,compilers,Display the version of the compilers in use with the current TOOLCHAIN)

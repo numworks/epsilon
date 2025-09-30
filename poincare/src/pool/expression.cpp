@@ -224,6 +224,10 @@ bool Expression::isConstantNumber() const {
                                 tree()->isUndefined() || tree()->isDecimal());
 };
 
+bool Expression::isTrigonometryFunction() const {
+  return tree()->isTrigonometryFunction();
+}
+
 bool Expression::allChildrenAreUndefined() const {
   return !tree()->hasChildSatisfying(
       [](const Tree* e) { return !e->isUndefined(); });

@@ -112,6 +112,7 @@ class Expression : public PoolHandle {
   bool isUserFunction() const;
   bool isUserSymbol() const;
   bool isVector() const;
+  bool isTrigonometryFunction() const;
 
   /* Other properties */
 

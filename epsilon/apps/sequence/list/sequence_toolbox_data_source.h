@@ -20,7 +20,8 @@ class SequenceToolboxDataSource
     assert(row < numberOfExtraCells());
     return m_addedCellLayout[row];
   }
-  void buildExtraCellsLayouts(const char* sequenceName, int order);
+  void buildExtraCellsLayouts(const char* sequenceName, int order,
+                              bool shiftedNotation);
 
  private:
   constexpr static int k_maxNumberOfLayouts =

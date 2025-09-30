@@ -13,7 +13,8 @@ using namespace Escher;
 namespace Sequence {
 
 void SequenceToolboxDataSource::buildExtraCellsLayouts(const char* sequenceName,
-                                                       int order) {
+                                                       int order,
+                                                       bool shiftedNotation) {
   /* If recurrenceDepth < 0, the user is setting the initial conditions so we
    * do not want to add any cell in the toolbox. */
   if (order < 0) {
@@ -24,7 +25,9 @@ void SequenceToolboxDataSource::buildExtraCellsLayouts(const char* sequenceName,
    * and the other sequence at ranks smaller or equal to the depth, ie:
    * if the sequence is u(n+1), we add cells u(n), v(n), v(n+1), w(n), w(n+1).
    * There is a special case for double recurrent sequences because we do not
-   * want to parse symbols u(n+2), v(n+2) or w(n+2). */
+   * want to parse symbols u(n+2), v(n+2) or w(n+2).
+   * The ranks change if the notation is shifted, so we give u(n-1), v(n-1),
+   * v(n-2), w(n-1), w(n-2). */
   m_numberOfAddedCells = 0;
   int sequenceIndex =
       Shared::SequenceStore::SequenceIndexForName(sequenceName[0]);
@@ -34,7 +37,8 @@ void SequenceToolboxDataSource::buildExtraCellsLayouts(const char* sequenceName,
       if (j == 2 || (j == order && sequenceIndex == i)) {
         continue;
       }
-      const char* indice = j == 0 ? "n" : "n+1";
+      const char* indice = j == 0 ? (shiftedNotation ? "n-1" : "n")
+                                  : (shiftedNotation ? "n-2" : "n+1");
       assert(m_numberOfAddedCells < k_maxNumberOfLayouts);
       m_addedCellLayout[m_numberOfAddedCells++] = Layout::Create(
           KA ^ KSubscriptL(KB),

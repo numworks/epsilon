@@ -26,10 +26,13 @@ class PoolLayoutCursor final : public LayoutCursor,
   }
 
   Poincare::Layout rootLayout() const { return m_rootLayout; }
-  Rack* rootRack() const override {
-    return static_cast<Rack*>(const_cast<Tree*>(m_rootLayout.tree()));
+
+  Rack* rootRack() override { return static_cast<Rack*>(m_rootLayout.tree()); }
+  const Rack* rootRack() const override {
+    return static_cast<Rack*>(m_rootLayout.tree());
   }
-  Rack* cursorRack() const override { return rootRack() + m_cursorRack; }
+  Rack* cursorRack() override { return rootRack() + m_cursorRack; }
+  const Rack* cursorRack() const override { return rootRack() + m_cursorRack; }
 
   /* Layout insertion */
   void insertText(const char* text,

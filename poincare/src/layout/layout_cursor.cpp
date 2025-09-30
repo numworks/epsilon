@@ -571,12 +571,16 @@ void LayoutCursor::moveCursorToLayout(Tree* cursorNode,
   m_position = sideOfLayout.isLeft() ? leftmostPosition() : rightmostPosition();
 }
 
-Layout* LayoutCursor::leftLayout() const {
+Layout* LayoutCursor::leftLayout() {
   assert(!isUninitialized());
   return m_position == 0 ? nullptr : cursorRack()->child(m_position - 1);
 }
 
-Layout* LayoutCursor::rightLayout() const {
+const Layout* LayoutCursor::leftLayout() const {
+  return const_cast<LayoutCursor*>(this)->leftLayout();
+}
+
+Layout* LayoutCursor::rightLayout() {
   assert(!isUninitialized());
   if (m_position == cursorRack()->numberOfChildren()) {
     return nullptr;
@@ -584,7 +588,15 @@ Layout* LayoutCursor::rightLayout() const {
   return cursorRack()->child(m_position);
 }
 
-Tree* LayoutCursor::parentLayout(int* index) const {
+const Layout* LayoutCursor::rightLayout() const {
+  return const_cast<LayoutCursor*>(this)->rightLayout();
+}
+
+Tree* LayoutCursor::parentLayout(int* index) {
+  return rootRack()->parentOfDescendant(cursorRack(), index);
+}
+
+const Tree* LayoutCursor::parentLayout(int* index) const {
   return rootRack()->parentOfDescendant(cursorRack(), index);
 }
 

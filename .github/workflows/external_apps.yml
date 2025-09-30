@@ -40,12 +40,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: latest
-      - name: Setup nwlink
-        run: npm install -g nwlink
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: thumbv7em-none-eabihf
+      # - name: Install Rust toolchain
+      #   uses: actions-rs/toolchain@v1
+      #   with:
+      #     toolchain: stable
+      #     target: thumbv7em-none-eabihf
       - name: Run cargo build
-        run: "cd epsilon/external_apps/sample_rust; cargo build"
+        run: "cd epsilon/external_apps/sample_rust; rustup target add thumbv7em-none-eabihf; cargo build"

@@ -142,14 +142,14 @@ Layout Layout::Concatenate(Layout layout1, Layout layout2) {
 }
 
 void Layout::draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
-                  Internal::LayoutCursor* cursor) {
+                  const Internal::LayoutCursor* cursor) {
   object()->draw(ctx, p, style, cursor);
 }
 
 // Rendering
 
 void LayoutObject::draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
-                        Internal::LayoutCursor* cursor) const {
+                        const Internal::LayoutCursor* cursor) const {
   Internal::Render::Draw(
       tree(), ctx, p, style,
       cursor ? cursor->simpleCursor() : Internal::SimpleLayoutCursor(),

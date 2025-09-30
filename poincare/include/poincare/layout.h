@@ -52,7 +52,7 @@ class LayoutObject final : public PoolObject,
   bool isIdenticalTo(Layout l, bool makeEditable) const;
 
   void draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
-            Internal::LayoutCursor* cursor) const;
+            const Internal::LayoutCursor* cursor) const;
 
   const Internal::Tree* tree() const;
   Internal::Tree* tree();
@@ -130,7 +130,7 @@ class Layout final : public PoolHandle {
 
   // Render
   void draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
-            Internal::LayoutCursor* cursor = nullptr);
+            const Internal::LayoutCursor* cursor = nullptr);
 
   LayoutObject* object() {
     return static_cast<LayoutObject*>(PoolHandle::object());

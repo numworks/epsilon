@@ -25,7 +25,7 @@ class PoolLayoutCursor final : public LayoutCursor,
     return m_rootLayout.isUninitialized() || LayoutCursor::isUninitialized();
   }
 
-  Poincare::Layout rootLayout() { return m_rootLayout; }
+  Poincare::Layout rootLayout() const { return m_rootLayout; }
   Rack* rootRack() const override {
     return static_cast<Rack*>(const_cast<Tree*>(m_rootLayout.tree()));
   }

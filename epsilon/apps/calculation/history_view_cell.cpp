@@ -48,10 +48,14 @@ void HistoryViewCell::setHighlighted(bool highlight) {
   if (isHighlighted() == highlight) {
     return;
   }
+  bool ellipsisWasVisible = isDisplayingEllipsis();
   setHighlightedWithoutReload(highlight);
   reloadSubviewHighlight();
-  // Re-layout as the ellispsis subview might have appear/disappear
-  layoutSubviews();
+  // Re-layout and reload scroll if ellipsis subview visibility has changed
+  if (ellipsisWasVisible != isDisplayingEllipsis()) {
+    layoutSubviews();
+    reloadScroll();
+  }
 }
 
 void HistoryViewCell::updateSubviewsBackgroundAfterChangingState() {

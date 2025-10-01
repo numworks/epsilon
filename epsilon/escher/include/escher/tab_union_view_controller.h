@@ -10,6 +10,10 @@ class Tab {
   virtual ~Tab() = default;
 };
 
+class NoTab : public Tab {
+  ViewController* top() override { OMG::unreachable(); }
+};
+
 class AbstractTabUnion {
  public:
   virtual void setActiveTab(int index) = 0;
@@ -18,7 +22,7 @@ class AbstractTabUnion {
 };
 
 // this is a simplified std::variant-like class to hold three tabs
-template <class T0, class T1, class T2>
+template <class T0, class T1, class T2 = NoTab>
 class TabUnion : public AbstractTabUnion {
  public:
   TabUnion() : m_activeTab(-1) {}
@@ -92,6 +96,13 @@ class TabUnionViewController : public TabViewController {
   TabUnionViewController(Responder* parentResponder,
                          TabViewDataSource* dataSource, AbstractTabUnion* tabs,
                          std::initializer_list<I18n::Message> titles);
+
+  template <class T0, class T1>
+  TabUnionViewController(Responder* parentResponder,
+                         TabViewDataSource* dataSource,
+                         TabUnion<T0, T1, NoTab>* tabs)
+      : TabUnionViewController(parentResponder, dataSource, tabs,
+                               {T0::k_title, T1::k_title}) {}
 
   template <class T0, class T1, class T2>
   TabUnionViewController(Responder* parentResponder,

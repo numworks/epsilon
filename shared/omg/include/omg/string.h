@@ -81,6 +81,7 @@ class String {
   }
 
   size_type length() const { return m_length; }
+  size_type capacity() const { return CAPACITY; }
   const char_type* data() const { return m_data; }
   char_type* data() { return m_data; }
 

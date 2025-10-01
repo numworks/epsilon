@@ -252,7 +252,7 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
   if (selectedCell) {
     /* 'reloadData' calls 'fillCellForRow' for each cell while the table
      * has been deselected. To reload the expanded cell, we call one more time
-     * 'fillCellForRow' but once the right cell has been selected. */
+     * 'fillCellForRow', after the right cell has been selected. */
     fillCellForRow(selectedCell, selectedRow());
     selectedCell->reloadSubviewHighlight();
     selectedCell->cellDidSelectSubview(subviewType);

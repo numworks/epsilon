@@ -7,18 +7,14 @@ extern "C" {
 
 namespace Escher {
 
-TabUnionViewController::TabUnionViewController(Responder* parentResponder,
-                                               TabViewDataSource* dataSource,
-                                               AbstractTabUnion* tabs,
-                                               I18n::Message titleOne,
-                                               I18n::Message titleTwo,
-                                               I18n::Message titleThree)
-    : TabViewController(parentResponder, dataSource, nullptr, nullptr, nullptr),
-      m_tabs(tabs) {
-  m_titles[0] = titleOne;
-  m_titles[1] = titleTwo;
-  m_titles[2] = titleThree;
-  m_numberOfChildren = 3;
+TabUnionViewController::TabUnionViewController(
+    Responder* parentResponder, TabViewDataSource* dataSource,
+    AbstractTabUnion* tabs, std::initializer_list<I18n::Message> titles)
+    : TabViewController(parentResponder, dataSource, {}), m_tabs(tabs) {
+  for (I18n::Message title : titles) {
+    m_titles[m_numberOfChildren++] = title;
+  }
+  assert(m_numberOfChildren <= k_maxNumberOfChildren);
 }
 
 void TabUnionViewController::initView() {

@@ -53,23 +53,17 @@ const char* TabViewController::ContentView::className() const {
 }
 #endif
 
-TabViewController::TabViewController(Responder* parentResponder,
-                                     TabViewDataSource* dataSource,
-                                     ViewController* one, ViewController* two,
-                                     ViewController* three)
+TabViewController::TabViewController(
+    Responder* parentResponder, TabViewDataSource* dataSource,
+    std::initializer_list<ViewController*> viewControllers)
     : ViewController(parentResponder),
       m_dataSource(dataSource),
       m_isSelected(false) {
-  m_children[0] = one;
-  m_children[1] = two;
-  m_children[2] = three;
-
   m_numberOfChildren = 0;
-  while (m_numberOfChildren < k_maxNumberOfChildren &&
-         m_children[m_numberOfChildren] != nullptr) {
-    m_numberOfChildren++;
+  for (ViewController* controller : viewControllers) {
+    m_children[m_numberOfChildren++] = controller;
   }
-
+  assert(m_numberOfChildren <= k_maxNumberOfChildren);
   addTabs();
 }
 

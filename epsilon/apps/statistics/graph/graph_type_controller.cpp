@@ -62,3 +62,12 @@ bool GraphTypeController::handleEvent(Ion::Events::Event event) {
   }
   return false;
 }
+
+void GraphTypeController::activeViewDidBecomeFirstResponder(
+    Escher::ViewController* activeViewController) {
+  if (m_store->graphViewHasBeenInvalidated()) {
+    m_stackViewController->push(this);
+  } else {
+    Escher::App::app()->setFirstResponder(activeViewController);
+  }
+}

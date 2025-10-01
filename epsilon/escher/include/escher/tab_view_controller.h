@@ -11,8 +11,7 @@ namespace Escher {
 class TabViewController : public ViewController {
  public:
   TabViewController(Responder* parentResponder, TabViewDataSource* dataSource,
-                    ViewController* one, ViewController* two,
-                    ViewController* three);
+                    std::initializer_list<ViewController*> viewControllers);
   View* view() override;
   int activeTab() const;
   void selectTab();

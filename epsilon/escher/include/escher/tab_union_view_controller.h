@@ -91,15 +91,14 @@ class TabUnionViewController : public TabViewController {
  public:
   TabUnionViewController(Responder* parentResponder,
                          TabViewDataSource* dataSource, AbstractTabUnion* tabs,
-                         I18n::Message titleOne, I18n::Message titleTwo,
-                         I18n::Message titleThree);
+                         std::initializer_list<I18n::Message> titles);
 
   template <class T0, class T1, class T2>
   TabUnionViewController(Responder* parentResponder,
                          TabViewDataSource* dataSource,
                          TabUnion<T0, T1, T2>* tabs)
-      : TabUnionViewController(parentResponder, dataSource, tabs, T0::k_title,
-                               T1::k_title, T2::k_title) {}
+      : TabUnionViewController(parentResponder, dataSource, tabs,
+                               {T0::k_title, T1::k_title, T2::k_title}) {}
 
   void setActiveTab(int8_t index, bool enter = true) override;
   void initView() override;
@@ -115,7 +114,7 @@ class TabUnionViewController : public TabViewController {
   void updateUnionActiveTab() override;
   void addTabs() override {}
 
-  I18n::Message m_titles[3];
+  I18n::Message m_titles[k_maxNumberOfChildren];
   AbstractTabUnion* m_tabs;
 };
 

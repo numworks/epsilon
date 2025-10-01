@@ -9,8 +9,9 @@ namespace Inference {
 ResultsHomogeneityTabController::ResultsHomogeneityTabController(
     Escher::StackViewController* parent, Escher::ViewController* nextController,
     HomogeneityTest* inference)
-    : TabViewController(parent, this, &m_expectedValuesController,
-                        &m_contributionsController, nullptr),
+    : TabViewController(
+          parent, this,
+          {&m_expectedValuesController, &m_contributionsController}),
       m_tableController(nextController, inference),
       m_expectedValuesController(this, &m_tableController),
       m_contributionsController(this, &m_tableController) {}

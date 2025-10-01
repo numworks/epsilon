@@ -93,8 +93,9 @@ FunctionApp::ValuesTab::ValuesTab(Shared::ValuesController* valuesController)
 FunctionApp::FunctionApp(Snapshot* snapshot, Escher::AbstractTabUnion* tabs,
                          I18n::Message firstTabName)
     : MathApp(snapshot, &m_tabViewController),
-      m_tabViewController(&m_modalViewController, snapshot, tabs, firstTabName,
-                          GraphTab::k_title, ValuesTab::k_title),
+      m_tabViewController(
+          &m_modalViewController, snapshot, tabs,
+          {firstTabName, GraphTab::k_title, ValuesTab::k_title}),
       m_activeControllerBeforeStore(nullptr) {}
 
 }  // namespace Shared

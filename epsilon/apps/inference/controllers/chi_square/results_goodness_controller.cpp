@@ -7,8 +7,8 @@ namespace Inference {
 ResultsGoodnessTabController::ResultsGoodnessTabController(
     Escher::Responder* parent, TestGraphController* testGraphController,
     IntervalGraphController* intervalGraphController, GoodnessTest* inference)
-    : TabViewController(parent, this, &m_resultsController,
-                        &m_contributionsController, nullptr),
+    : TabViewController(parent, this,
+                        {&m_resultsController, &m_contributionsController}),
       m_resultsController(this, inference, testGraphController,
                           intervalGraphController, false),
       m_contributionsController(this, testGraphController, inference) {}

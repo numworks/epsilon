@@ -32,7 +32,7 @@ npm install -g nwlink
 To install the app on your calculator, it must be plugged in and
 on the `CALCULATOR IS CONNECTED` screen:
 
-![Calculator is connected screenshot](docs/calculator_connected.png)
+![Calculator is connected screenshot](epsilon/docs/calculator_connected.png)
 
 Then, run the following commad to build and install the app:
 ```shell
@@ -42,7 +42,7 @@ make -C sample_cpp PLATFORM=device run
 A `THIRD PARTY APPLICATIONS` message will appear,
 and the app should be accessible at the end of the Home menu.
 
-![Third party application screenshot](docs/third_party_applications.png)
+![Third party application screenshot](epsilon/docs/third_party_applications.png)
 
 ### Distribute your `app.nwa`
 

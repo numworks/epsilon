@@ -17,7 +17,7 @@
 
 namespace Statistics {
 
-class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
+class App : public Shared::StoreApp {
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:
@@ -76,15 +76,6 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
 
  private:
   App(Snapshot* snapshot);
-  int activeViewControllerIndex() const override {
-    return GraphViewModel::IndexOfGraphView(
-        snapshot()->graphViewModel()->selectedGraphView());
-  }
-  Escher::ViewController::TitlesDisplay alternateViewTitlesDisplay() override {
-    return Escher::ViewController::TitlesDisplay::NeverDisplayOwnTitle;
-  }
-  void activeViewDidBecomeFirstResponder(
-      Escher::ViewController* activeViewController) override;
   void didBecomeActive(Escher::Window* window) override;
 
   struct StoreTab : public Escher::Tab {

@@ -108,7 +108,7 @@ App::GraphTab::GraphTab()
                             &app()->m_tabViewController,
                             &m_graphMenuStackViewController, &app()->m_store,
                             app()->snapshot()->graphViewModel()),
-      m_graphController(&m_graphMenuStackViewController, app(),
+      m_graphController(&m_graphMenuStackViewController, &m_graphTypeController,
                         {&m_histogramHeader, &m_boxHeader, &m_frequencyHeader,
                          &m_normalProbabilityHeader}),
       m_graphMenuStackViewController(
@@ -142,16 +142,6 @@ App::App(Snapshot* snapshot)
              GraphViewModel::GraphView::Frequency) == 2);
   assert(GraphViewModel::IndexOfGraphView(
              GraphViewModel::GraphView::NormalProbability) == 3);
-}
-
-void App::activeViewDidBecomeFirstResponder(
-    Escher::ViewController* activeViewController) {
-  if (m_store.graphViewHasBeenInvalidated()) {
-    m_tabs.tab<GraphTab>()->m_graphMenuStackViewController.push(
-        &m_tabs.tab<GraphTab>()->m_graphTypeController);
-  } else {
-    setFirstResponder(activeViewController);
-  }
 }
 
 void App::didBecomeActive(Escher::Window* windows) {

@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <escher/alternate_empty_view_delegate.h>
+#include <escher/alternate_view_controller.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/responder.h>
@@ -20,6 +21,7 @@ using GraphTypeCell =
 
 class GraphTypeController
     : public Escher::AlternateEmptyViewDelegate,
+      public Escher::AlternateViewDelegate,
       public Escher::UniformSelectableListController<GraphTypeCell, 4> {
  public:
   GraphTypeController(Escher::Responder* parentResponder,
@@ -27,10 +29,21 @@ class GraphTypeController
                       Escher::StackViewController* stackView, Store* store,
                       GraphViewModel* graphViewModel);
 
-  // AlternateEmptyViewDelegate
+  // AlternateEmptyViewDelegate (showing graph selection menu or empty)
   bool isEmpty() const override { return !m_store->hasActiveSeries(); }
   I18n::Message emptyMessage() override { return I18n::Message::NoDataToPlot; }
   Escher::Responder* responderWhenEmpty() override;
+
+  // AlternateViewDelegate (which graphView is shown)
+  int activeViewControllerIndex() const override {
+    return GraphViewModel::IndexOfGraphView(
+        m_graphViewModel->selectedGraphView());
+  }
+  Escher::ViewController::TitlesDisplay alternateViewTitlesDisplay() override {
+    return Escher::ViewController::TitlesDisplay::NeverDisplayOwnTitle;
+  }
+  void activeViewDidBecomeFirstResponder(
+      Escher::ViewController* activeViewController) override;
 
   // UniformSelectableListController
   bool handleEvent(Ion::Events::Event event) override;

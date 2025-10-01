@@ -51,7 +51,7 @@ static Coordinate2D<T> parametricExpressionEvaluator(T t, const void* model) {
 Range2D<float> OptimalRange(bool computeX, bool computeY,
                             Range2D<float> originalRange,
                             const ContinuousFunctionStore* store,
-                            bool defaultRangeIsNormalized,
+                            const bool defaultRangeIsNormalized,
                             const SymbolContext& symbolContext) {
   constexpr float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
@@ -78,6 +78,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       Range2D<float>(computeX ? Range1D<float>() : *originalRange.x(),
                      computeY ? Range1D<float>() : *originalRange.y());
   zoom.setForcedRange(forcedRange);
+  bool tryNormalizedRange = false;
 
   for (int i = 0; i < nbFunctions; i++) {
     Coordinate2D<float> intervalMin = Coordinate2D<float>(NAN, NAN);
@@ -87,7 +88,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
         store->modelForRecord(store->activeRecordAtIndex(i));
     ContinuousFunctionAndContext fModel{.func = f.operator->(),
                                         .ctx = &symbolContext};
-    defaultRangeIsNormalized |= f->properties().enforcePlotNormalization();
+    tryNormalizedRange |= f->properties().enforcePlotNormalization();
     if (f->approximationBasedOnCostlyAlgorithms()) {
       continue;
     }
@@ -222,7 +223,35 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
     }
   }
 
-  Range2D<float> newRange = zoom.range(true, defaultRangeIsNormalized);
+  Range2D<float> newRange =
+      zoom.range(true, defaultRangeIsNormalized || tryNormalizedRange);
+
+  if (!defaultRangeIsNormalized && tryNormalizedRange) {
+    // Cancel normalization if the normalized range is too much bigger.
+    Range2D<float> unNormalizedRange = zoom.range(true, false);
+    float xRangeRatio =
+        newRange.x()->length() / unNormalizedRange.x()->length();
+    float yRangeRatio =
+        newRange.y()->length() / unNormalizedRange.y()->length();
+    // Only one of the ranges has been increased
+    assert(xRangeRatio >= 1.f && yRangeRatio >= 1.f);
+    // Only one of the ranges has been altered
+    assert(xRangeRatio == 1.f || yRangeRatio == 1.f);
+
+    float rangeRatio = xRangeRatio + yRangeRatio - 1.0f;
+    /* Normalization is sometimes already enforced in Zoom::range so rangeRatio
+     * should be capped. */
+    constexpr float k_maximalRatio = 5.f;
+    assert(rangeRatio == 1.0f ||
+           rangeRatio * Zoom<float>::k_minimalNormalizationCoverage >= 1.f);
+    static_assert(
+        k_maximalRatio * Zoom<float>::k_minimalNormalizationCoverage > 1.f,
+        "k_maximalRatio is too small to ever be reached.");
+    if (rangeRatio > k_maximalRatio) {
+      newRange = unNormalizedRange;
+    }
+  }
+
   return Range2D<float>(*(computeX ? newRange : originalRange).x(),
                         *(computeY ? newRange : originalRange).y());
 }

@@ -2,6 +2,10 @@
 
 #include <escher/expression_input_bar.h>
 #include <omg/troolean.h>
+#include <poincare/layout.h>
+#include <poincare/layout_cursor.h>
+#include <poincare/symbol_context.h>
+#include <poincare/user_expression.h>
 
 namespace Calculation {
 
@@ -16,9 +20,25 @@ class LayoutField : public Escher::LayoutField {
 
   void updateCursorBeforeInsertion();
 
+  static Poincare::UserExpression UserExpressionFromEditionField(
+      Poincare::Layout layout) {
+    Poincare::UserExpression currentExpression =
+        Poincare::UserExpression::Parse(layout, Poincare::EmptySymbolContext{});
+    return currentExpression;
+  }
+
   bool containsTrigFunction() const {
-    // TODO
-    return true;
+    // Try to parse the expression
+    Poincare::UserExpression userExpression =
+        UserExpressionFromEditionField(layout());
+    if (userExpression.isUninitialized()) {
+      // Failed to parse the expression being edited, return false by default
+      return false;
+    }
+    return userExpression.recursivelyMatches(
+        [](const Poincare::UserExpression e) {
+          return e.isTrigonometryFunction();
+        });
   }
 
  protected:

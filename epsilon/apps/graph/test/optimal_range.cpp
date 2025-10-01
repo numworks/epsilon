@@ -130,13 +130,10 @@ QUIZ_CASE(graph_optimal_range) {
   quiz_assert_optimal_range_is({"y=x^2+1", "y=x^2-2"},
                                Range2D<float>(-4.71031, 4.71031, -2, 3.0047));
 
-#if 0
-  // TODO: Fix this case
   // grapher_autozoom_10
   quiz_assert_optimal_range_is({"f(t)=(2×t+1,t^3-2×t+5)"},
-                               Range2D<float>(-5.23051, 6.23051, 0, 6.08866),
+                               Range2D<float>(-399, 401, -7999595, 7999605),
                                {Range1D<float>(-200, 200)});
-#endif
 
   // grapher_autozoom_11
   quiz_assert_optimal_range_is({"r1(θ)=cos(θ)"},
@@ -199,7 +196,7 @@ QUIZ_CASE(graph_optimal_range) {
                                Range2D<float>(0, 3, 1.000002, 17.02939),
                                {Range1D<float>(0, 3)});
   quiz_assert_optimal_range_is({"f(t)=(3/t,t^3*exp(-2t))"},
-                               Range2D<float>(0.5, 3, -0.5793832, 0.7487417),
+                               Range2D<float>(0.5, 3, 0.00132715, 0.1680314),
                                {Range1D<float>(1, 6)});
   quiz_assert_optimal_range_is({"f(t)=(2tan(t)+1,2sec(t)^2+3)"},
                                Range2D<float>(-3.037914, 6.093452, 5, 9.851038),

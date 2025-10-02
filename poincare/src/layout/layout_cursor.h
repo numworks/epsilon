@@ -111,7 +111,6 @@ class LayoutCursor {
   int rightmostPosition() const { return cursorRack()->numberOfChildren(); }
 
   void privateStartSelecting() { m_startOfSelection = m_position; }
-  virtual void invalidateSizesAndPositions() {}
 
   // Cursor's horizontal position
   int m_position;

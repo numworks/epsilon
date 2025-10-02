@@ -187,9 +187,11 @@ Layout ExpressionsListController::GetExactLayoutFromExpression(
     } else {
       *approximate = approximateLayout;
       if (isStrictlyEqual) {
-        *isStrictlyEqual =
-            Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
-                exactExpression, approximateExpression, *ctx);
+        *isStrictlyEqual = Poincare::ExactAndApproximateLayoutsAreStrictlyEqual(
+            exactExpression, approximateExpression,
+            GlobalPreferences::SharedGlobalPreferences()
+                ->numberOfSignificantDigits(),
+            *ctx);
       }
     }
   }

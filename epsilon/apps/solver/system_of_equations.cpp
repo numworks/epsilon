@@ -228,8 +228,10 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     assert(approximateLength <= ::Constant::MaxSerializedExpressionSize);
     if (strcmp(exactBuffer, approximateBuffer) == 0) {
       exactLayout = Layout();
-    } else if (Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
-                   exact, approximate)) {
+    } else if (Poincare::ExactAndApproximateLayoutsAreStrictlyEqual(
+                   exact, approximate,
+                   GlobalPreferences::SharedGlobalPreferences()
+                       ->numberOfSignificantDigits())) {
       exactAndApproximateAreEqual = true;
     }
   }

@@ -3,8 +3,7 @@
 #include <poincare/src/expression/sequence.h>
 #include <poincare/src/layout/grid.h>
 #include <poincare/src/layout/sequence.h>
-
-#include "poincare/user_expression.h"
+#include <poincare/user_expression.h>
 
 namespace Poincare {
 

@@ -37,13 +37,13 @@ void SequenceToolboxDataSource::buildExtraCellsLayouts(const char* sequenceName,
       if (j == 2 || (j == order && sequenceIndex == i)) {
         continue;
       }
-      const char* indice = j == 0 ? (shiftedNotation ? "n-1" : "n")
-                                  : (shiftedNotation ? "n-2" : "n+1");
+      const char* index = j == 0 ? (shiftedNotation ? "n-1" : "n")
+                                 : (shiftedNotation ? "n-2" : "n+1");
       assert(m_numberOfAddedCells < k_maxNumberOfLayouts);
       m_addedCellLayout[m_numberOfAddedCells++] = Layout::Create(
           KA ^ KSubscriptL(KB),
           {.KA = Layout::CodePoint(SequenceHelper::k_sequenceNames[i][0]),
-           .KB = Layout::String(indice)});
+           .KB = Layout::String(index)});
     }
   }
 }

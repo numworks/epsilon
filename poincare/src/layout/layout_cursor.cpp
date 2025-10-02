@@ -156,15 +156,6 @@ bool TreeStackCursor::moveMultipleSteps(
 
 // TreeStackCursor
 
-void TreeStackCursor::beautifyLeftAction(
-    const Poincare::SymbolContext& symbolContext, const void*) {
-  // TODO_PCJ: We used to handle beautification while selecting here.
-  if (!isSelecting()) {
-    InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this,
-                                                              symbolContext);
-  }
-}
-
 bool TreeStackCursor::beautifyRightOfRack(
     Rack* targetRack, const Poincare::SymbolContext& symbolContext) {
   // TODO_PCJ: We used to handle beautification while selecting here.
@@ -175,13 +166,6 @@ bool TreeStackCursor::beautifyRightOfRack(
   tempCursor.moveCursorToLayout(targetRack, OMG::Direction::Right());
   return InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
       &tempCursor, symbolContext);
-}
-
-void TreeStackCursor::beautifyRightOfRackAction(
-    const Poincare::SymbolContext& symbolContext, const void* rackOffset) {
-  const BeautifyContext* ctx = static_cast<const BeautifyContext*>(rackOffset);
-  Rack* targetRack = cursorRack() + ctx->m_rackOffset;
-  ctx->m_shouldRedraw = beautifyRightOfRack(targetRack, symbolContext);
 }
 
 static bool IsTemporaryAutocompletedBracketPair(const Tree* l, Side tempSide) {

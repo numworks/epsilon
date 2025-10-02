@@ -1,12 +1,13 @@
 #include "pool_layout_cursor.h"
 
+#include <poincare/src/layout/input_beautification.h>
 #include <poincare/src/layout/k_tree.h>
 
 namespace Poincare::Internal {
 
 void PoolLayoutCursor::beautifyLeft(
     const Poincare::SymbolContext& symbolContext) {
-  execute(&TreeStackCursor::beautifyLeftAction, symbolContext, nullptr);
+  execute(&PoolLayoutCursor::BeautifyLeftAction, symbolContext, nullptr);
   if (position() > cursorRack()->numberOfChildren() + 1) {
     /* Beautification does not preserve the cursor so its position may be
      * invalid. The other calls to beaufication happen just after we move the
@@ -23,7 +24,7 @@ bool PoolLayoutCursor::beautifyRightOfRack(
     Rack* rack, const Poincare::SymbolContext& symbolContext) {
   TreeStackCursor::BeautifyContext ctx{static_cast<int>(rack - cursorRack()),
                                        false};
-  execute(&TreeStackCursor::beautifyRightOfRackAction, symbolContext, &ctx);
+  execute(&PoolLayoutCursor::BeautifyRightOfRackAction, symbolContext, &ctx);
   return ctx.m_shouldRedraw;
 }
 
@@ -48,7 +49,7 @@ void PoolLayoutCursor::execute(Action action,
     // Create a temporary cursor
     TreeStackCursor editionCursor = createTreeStackCursor();
     // Perform the action
-    (editionCursor.*(action))(symbolContext, data);
+    action(&editionCursor, symbolContext, data);
     // Apply the changes
     /* We need a rack cast there since the pointed rack is set before the
      * actual content of the buffer is modified. */
@@ -60,6 +61,59 @@ void PoolLayoutCursor::execute(Action action,
   m_rootLayout = Poincare::Layout::Builder(
       Tree::FromBlocks(SharedTreeStack->firstBlock()));
   SharedTreeStack->flush();
+}
+
+// Action implementations
+
+void PoolLayoutCursor::PerformBackspaceAction(
+    TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
+    const void* data) {
+  assert(data == nullptr);
+  cursor->performBackspace(symbolContext);
+}
+
+void PoolLayoutCursor::DeleteAndResetSelectionAction(
+    TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
+    const void* data) {
+  assert(data == nullptr);
+  cursor->deleteAndResetSelection(symbolContext, nullptr);
+}
+
+void PoolLayoutCursor::InsertLayoutAction(
+    TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
+    const void* data) {
+  const TreeStackCursor::InsertLayoutContext* context =
+      static_cast<const TreeStackCursor::InsertLayoutContext*>(data);
+  cursor->insertLayout(context->m_tree, symbolContext, context->m_forceRight,
+                       context->m_forceLeft, context->m_collapseSiblings);
+}
+
+void PoolLayoutCursor::InsertTextAction(
+    TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
+    const void* data) {
+  const TreeStackCursor::InsertTextContext* context =
+      static_cast<const TreeStackCursor::InsertTextContext*>(data);
+  cursor->insertText(context->m_text, symbolContext, context->m_forceRight,
+                     context->m_forceLeft, context->m_linearMode);
+}
+
+void PoolLayoutCursor::BeautifyLeftAction(
+    TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
+    const void* data) {
+  // TODO_PCJ: We used to handle beautification while selecting here.
+  if (!cursor->isSelecting()) {
+    InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(cursor,
+                                                              symbolContext);
+  }
+}
+
+void PoolLayoutCursor::BeautifyRightOfRackAction(
+    TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
+    const void* data) {
+  const TreeStackCursor::BeautifyContext* ctx =
+      static_cast<const TreeStackCursor::BeautifyContext*>(data);
+  Rack* targetRack = cursor->cursorRack() + ctx->m_rackOffset;
+  ctx->m_shouldRedraw = cursor->beautifyRightOfRack(targetRack, symbolContext);
 }
 
 template class AddEmptyLayoutHelpers<PoolLayoutCursor>;

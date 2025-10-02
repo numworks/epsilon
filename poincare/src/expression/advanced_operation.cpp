@@ -211,8 +211,8 @@ bool AdvancedOperation::ExpandExp(Tree* e) {
 
 bool AdvancedOperation::ContractExp(Tree* e) {
   // A? * exp(B * Ln(C)) * D? * exp(B * Ln(E)) * F? =>
-  // A * exp(B * Ln(C * E)) * D * F with C and E real
-  // This steps shortcuts 3 contract steps
+  // A * exp(B * (Ln(C) + Ln(E))) * D * F with C and E real
+  // This steps shortcuts 2 contract steps
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e,
                              KMult(KA_s, KExp(KMult(KB_p, KLn(KC))), KD_s,
@@ -221,7 +221,8 @@ bool AdvancedOperation::ContractExp(Tree* e) {
       GetComplexSign(ctx.getTree(KC)).isReal() &&
       GetComplexSign(ctx.getTree(KE)).isReal()) {
     Tree* contracted = PatternMatching::CreateReduce(
-        KMult(KA_s, KExp(KMult(KB_p, KLn(KMult(KC, KE)))), KD_s, KF_s), ctx);
+        KMult(KA_s, KExp(KMult(KB_p, KAdd(KLn(KC), KLn(KE)))), KD_s, KF_s),
+        ctx);
     e->moveTreeOverTree(contracted);
     return true;
   }

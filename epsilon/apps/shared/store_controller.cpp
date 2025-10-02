@@ -152,13 +152,30 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Up) {
-    selectableTableView()->deselectTable();
+    if (numberOfButtons(Escher::ButtonRowController::Position::Top) > 0) {
+      if (header()->selectedButton() >= 0) {
+        header()->setSelectedButton(-1);
+        tabController()->selectTab();
+      } else {
+        selectableTableView()->deselectTable();
+        header()->setSelectedButton(0);
+      }
+    } else {
+      selectableTableView()->deselectTable();
+      tabController()->selectTab();
+    }
     assert(selectedRow() == -1);
-    tabController()->selectTab();
     return true;
   }
   if (event == Ion::Events::Backspace) {
     handleDeleteEvent();
+    return true;
+  }
+  if (event == Ion::Events::Down &&
+      (selectedRow() < 0 || selectedColumn() < 0)) {
+    selectCellAtLocation(0, 0);
+    header()->setSelectedButton(-1);
+    App::app()->setFirstResponder(this);
     return true;
   }
   return false;
@@ -193,7 +210,11 @@ void StoreController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (selectedRow() < 0 || selectedColumn() < 0) {
-      selectCellAtLocation(0, 0);
+      if (numberOfButtons(Escher::ButtonRowController::Position::Top) > 0) {
+        header()->setSelectedButton(0);
+      } else {
+        selectCellAtLocation(0, 0);
+      }
     }
     EditableCellTableViewController::handleResponderChainEvent(event);
   } else {

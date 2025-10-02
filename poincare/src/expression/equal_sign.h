@@ -5,8 +5,8 @@
 
 namespace Poincare::Internal {
 // Exact and approximated must be system expressions
-bool ExactAndApproximateExpressionsAreStrictlyEqual(
-    const Tree* exact, const Tree* approximate,
-    int significantDigits = PrintFloat::k_undefinedNumberOfSignificantDigits);
+bool ExactAndApproximateLayoutsAreStrictlyEqual(const Tree* exact,
+                                                const Tree* approximate,
+                                                int significantDigits);
 
 }  // namespace Poincare::Internal

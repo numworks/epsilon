@@ -4,8 +4,8 @@
 #include <poincare/user_expression.h>
 
 namespace Poincare {
-bool ExactAndApproximateExpressionsAreStrictlyEqual(
+bool ExactAndApproximateLayoutsAreStrictlyEqual(
     const UserExpression exact, const UserExpression approximate,
-    const ProjectionContext& ctx = {});
+    int numberOfSignificantDigits, const ProjectionContext& ctx = {});
 
 }  // namespace Poincare

@@ -56,8 +56,9 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
   UserExpression exactExpression = expression();
   float approximation =
       Approximate<float>(exactExpression, approximationParameters);
-  if (!ExactAndApproximateExpressionsAreStrictlyEqual(
-          exactExpression, UserExpression::Builder(approximation))) {
+  if (!ExactAndApproximateLayoutsAreStrictlyEqual(
+          exactExpression, UserExpression::Builder(approximation),
+          numberOfSignificantDigits)) {
     constexpr size_t k_bufferExactLength = 15;
     char exactSerialization[k_bufferExactLength];
     PrintFloat::TextLengths exactTextLengths =

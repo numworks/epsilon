@@ -190,9 +190,10 @@ QUIZ_CASE(ion_utf8_remove_code_point) {
                                  indexToUpdateResult, result);
 }
 
+template <size_t textBufferSize = bufferSize>
 void assert_slide_string_by_number_of_char_gives(
     const char* string, int slidingSize, bool successResult,
-    const char* stringResult = nullptr, int textBufferSize = bufferSize) {
+    const char* stringResult = nullptr) {
   char buffer[textBufferSize];
   strlcpy(buffer, string, textBufferSize);
   bool success = UTF8Helper::SlideStringByNumberOfChar(
@@ -216,9 +217,9 @@ QUIZ_CASE(ion_utf8_move_string_from_index_by_number_of_char) {
                                               false);
   assert_slide_string_by_number_of_char_gives(string3, -8, true, "");
 
-  assert_slide_string_by_number_of_char_gives("12345", 2, true, "1212345", 8);
-  assert_slide_string_by_number_of_char_gives("12345", 2, false, "", 6);
-  assert_slide_string_by_number_of_char_gives("12345", -2, true, "345", 6);
+  assert_slide_string_by_number_of_char_gives<8>("12345", 2, true, "1212345");
+  assert_slide_string_by_number_of_char_gives<6>("12345", 2, false, "");
+  assert_slide_string_by_number_of_char_gives<6>("12345", -2, true, "345");
 }
 
 void assert_try_and_replace_pattern_in_string_by_pattern_gives(

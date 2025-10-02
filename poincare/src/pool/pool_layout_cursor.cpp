@@ -22,8 +22,7 @@ void PoolLayoutCursor::beautifyLeft(
 
 bool PoolLayoutCursor::beautifyRightOfRack(
     Rack* rack, const Poincare::SymbolContext& symbolContext) {
-  TreeStackCursor::BeautifyContext ctx{static_cast<int>(rack - cursorRack()),
-                                       false};
+  BeautifyContext ctx{static_cast<int>(rack - cursorRack()), false};
   execute(&PoolLayoutCursor::BeautifyRightOfRackAction, symbolContext, &ctx);
   return ctx.m_shouldRedraw;
 }
@@ -82,8 +81,8 @@ void PoolLayoutCursor::DeleteAndResetSelectionAction(
 void PoolLayoutCursor::InsertLayoutAction(
     TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
     const void* data) {
-  const TreeStackCursor::InsertLayoutContext* context =
-      static_cast<const TreeStackCursor::InsertLayoutContext*>(data);
+  const InsertLayoutContext* context =
+      static_cast<const InsertLayoutContext*>(data);
   cursor->insertLayout(context->m_tree, symbolContext, context->m_forceRight,
                        context->m_forceLeft, context->m_collapseSiblings);
 }
@@ -91,8 +90,8 @@ void PoolLayoutCursor::InsertLayoutAction(
 void PoolLayoutCursor::InsertTextAction(
     TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
     const void* data) {
-  const TreeStackCursor::InsertTextContext* context =
-      static_cast<const TreeStackCursor::InsertTextContext*>(data);
+  const InsertTextContext* context =
+      static_cast<const InsertTextContext*>(data);
   cursor->insertText(context->m_text, symbolContext, context->m_forceRight,
                      context->m_forceLeft, context->m_linearMode);
 }
@@ -110,30 +109,28 @@ void PoolLayoutCursor::BeautifyLeftAction(
 void PoolLayoutCursor::BeautifyRightOfRackAction(
     TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
     const void* data) {
-  const TreeStackCursor::BeautifyContext* ctx =
-      static_cast<const TreeStackCursor::BeautifyContext*>(data);
+  const BeautifyContext* ctx = static_cast<const BeautifyContext*>(data);
   Rack* targetRack = cursor->cursorRack() + ctx->m_rackOffset;
   ctx->m_shouldRedraw = cursor->beautifyRightOfRack(targetRack, symbolContext);
 }
 
-void PoolLayoutCursor::MoveAction(
-    TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
-    const void* data) {
-  const TreeStackCursor::MoveContext* context =
-      static_cast<const TreeStackCursor::MoveContext*>(data);
-  context->m_moved = cursor->move(context->m_direction, context->m_selecting,
-                                  &context->m_shouldRedrawLayout, symbolContext);
+void PoolLayoutCursor::MoveAction(TreeStackCursor* cursor,
+                                  const Poincare::SymbolContext& symbolContext,
+                                  const void* data) {
+  const MoveContext* context = static_cast<const MoveContext*>(data);
+  context->m_moved =
+      cursor->move(context->m_direction, context->m_selecting,
+                   &context->m_shouldRedrawLayout, symbolContext);
 }
 
 void PoolLayoutCursor::MoveMultipleStepsAction(
     TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
     const void* data) {
-  const TreeStackCursor::MoveMultipleStepsContext* context =
-      static_cast<const TreeStackCursor::MoveMultipleStepsContext*>(data);
-  context->m_moved =
-      cursor->moveMultipleSteps(context->m_direction, context->m_step,
-                                context->m_selecting,
-                                &context->m_shouldRedrawLayout, symbolContext);
+  const MoveMultipleStepsContext* context =
+      static_cast<const MoveMultipleStepsContext*>(data);
+  context->m_moved = cursor->moveMultipleSteps(
+      context->m_direction, context->m_step, context->m_selecting,
+      &context->m_shouldRedrawLayout, symbolContext);
 }
 
 template class AddEmptyLayoutHelpers<PoolLayoutCursor>;

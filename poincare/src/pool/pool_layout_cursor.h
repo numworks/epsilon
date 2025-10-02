@@ -40,8 +40,8 @@ class PoolLayoutCursor final : public LayoutCursor,
                       Poincare::EmptySymbolContext{},
                   bool forceRight = false, bool forceLeft = false,
                   bool linearMode = false) {
-    TreeStackCursor::InsertTextContext insertTextContext{text, forceRight,
-                                                         forceLeft, linearMode};
+    InsertTextContext insertTextContext{text, forceRight, forceLeft,
+                                        linearMode};
     execute(&PoolLayoutCursor::InsertTextAction, symbolContext,
             &insertTextContext);
   }
@@ -50,8 +50,8 @@ class PoolLayoutCursor final : public LayoutCursor,
                         Poincare::EmptySymbolContext{},
                     bool forceRight = false, bool forceLeft = false,
                     bool collapseSiblings = true) {
-    TreeStackCursor::InsertLayoutContext insertLayoutContext{
-        l, forceRight, forceLeft, collapseSiblings};
+    InsertLayoutContext insertLayoutContext{l, forceRight, forceLeft,
+                                            collapseSiblings};
     execute(&PoolLayoutCursor::InsertLayoutAction, symbolContext,
             &insertLayoutContext);
   }
@@ -61,22 +61,19 @@ class PoolLayoutCursor final : public LayoutCursor,
   void performBackspace() {
     execute(&PoolLayoutCursor::PerformBackspaceAction);
   }
-  bool move(OMG::Direction direction, bool selecting,
-            bool* shouldRedrawLayout,
+  bool move(OMG::Direction direction, bool selecting, bool* shouldRedrawLayout,
             const Poincare::SymbolContext& symbolContext =
                 Poincare::EmptySymbolContext{}) {
-    TreeStackCursor::MoveContext ctx{direction, selecting, false, false};
+    MoveContext ctx{direction, selecting, false, false};
     execute(&PoolLayoutCursor::MoveAction, symbolContext, &ctx);
     *shouldRedrawLayout = ctx.m_shouldRedrawLayout;
     return ctx.m_moved;
   }
-  bool moveMultipleSteps(
-      OMG::Direction direction, int step, bool selecting,
-      bool* shouldRedrawLayout,
-      const Poincare::SymbolContext& symbolContext =
-          Poincare::EmptySymbolContext{}) {
-    TreeStackCursor::MoveMultipleStepsContext ctx{direction, step, selecting,
-                                                  false, false};
+  bool moveMultipleSteps(OMG::Direction direction, int step, bool selecting,
+                         bool* shouldRedrawLayout,
+                         const Poincare::SymbolContext& symbolContext =
+                             Poincare::EmptySymbolContext{}) {
+    MoveMultipleStepsContext ctx{direction, step, selecting, false, false};
     execute(&PoolLayoutCursor::MoveMultipleStepsAction, symbolContext, &ctx);
     *shouldRedrawLayout = ctx.m_shouldRedrawLayout;
     return ctx.m_moved;
@@ -107,10 +104,39 @@ class PoolLayoutCursor final : public LayoutCursor,
   bool beautifyRightOfRack(Rack* rack,
                            const Poincare::SymbolContext& symbolContext);
 
+  // Context structs for Actions
+  struct InsertLayoutContext {
+    const Tree* m_tree;
+    bool m_forceRight = false;
+    bool m_forceLeft = false;
+    bool m_collapseSiblings = true;
+  };
+  struct InsertTextContext {
+    const char* m_text;
+    bool m_forceRight, m_forceLeft, m_linearMode;
+  };
+  struct BeautifyContext {
+    int m_rackOffset;
+    mutable bool m_shouldRedraw;
+  };
+  struct MoveContext {
+    OMG::Direction m_direction;
+    bool m_selecting;
+    mutable bool m_shouldRedrawLayout;
+    mutable bool m_moved;
+  };
+  struct MoveMultipleStepsContext {
+    OMG::Direction m_direction;
+    int m_step;
+    bool m_selecting;
+    mutable bool m_shouldRedrawLayout;
+    mutable bool m_moved;
+  };
+
   // Action methods
-  static void PerformBackspaceAction(TreeStackCursor* cursor,
-                                     const Poincare::SymbolContext& symbolContext,
-                                     const void* data);
+  static void PerformBackspaceAction(
+      TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
+      const void* data);
   static void DeleteAndResetSelectionAction(
       TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
       const void* data);

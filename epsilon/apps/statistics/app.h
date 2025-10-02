@@ -6,7 +6,9 @@
 #include <escher/tab_union_view_controller.h>
 
 #include "categorical/data/store_controller.h"
+#include "categorical/graph/bar_graph_controller.h"
 #include "categorical/graph/graph_type_controller.h"
+#include "categorical/graph/pie_graph_controller.h"
 #include "data/store_controller.h"
 #include "graph/box_controller.h"
 #include "graph/frequency_controller.h"
@@ -40,6 +42,12 @@ class App : public Shared::StoreApp, public Escher::AlternateViewDelegate {
     uint32_t* storeVersion() { return &m_storeVersion; }
     GraphViewModel* graphViewModel() { return &m_graphViewModel; }
     const GraphViewModel* graphViewModel() const { return &m_graphViewModel; }
+    Categorical::GraphViewModel* categoricalGraphViewModel() {
+      return &m_categoricalGraphViewModel;
+    }
+    const Categorical::GraphViewModel* categoricalGraphViewModel() const {
+      return &m_categoricalGraphViewModel;
+    }
     DataTypeViewModel* dataTypeViewModel() { return &m_dataTypeViewModel; }
     const DataTypeViewModel* dataTypeViewModel() const {
       return &m_dataTypeViewModel;
@@ -60,6 +68,7 @@ class App : public Shared::StoreApp, public Escher::AlternateViewDelegate {
     uint32_t m_storeVersion;
     UserPreferences m_userPreferences;
     GraphViewModel m_graphViewModel;
+    Categorical::GraphViewModel m_categoricalGraphViewModel;
     DataTypeViewModel m_dataTypeViewModel;
     int8_t m_selectedSeries;
     int16_t m_selectedIndex;
@@ -166,9 +175,13 @@ class App : public Shared::StoreApp, public Escher::AlternateViewDelegate {
     Escher::ViewController* top() override {
       return &m_graphMenuAlternateEmptyViewController;
     }
-    CategoricalGraphTypeController m_graphTypeController;
-    // Escher::AlternateViewController m_graphController;
-    // Escher::StackViewController::Default m_graphMenuStackViewController;
+    Categorical::BarGraphController m_barGraphController;
+    Escher::ButtonRowController m_barGraphHeader;
+    Categorical::PieGraphController m_pieGraphController;
+    Escher::ButtonRowController m_pieGraphHeader;
+    Categorical::GraphTypeController m_graphTypeController;
+    Escher::AlternateViewController m_graphController;
+    Escher::StackViewController::Default m_graphMenuStackViewController;
     Escher::AlternateEmptyViewController
         m_graphMenuAlternateEmptyViewController;
   };

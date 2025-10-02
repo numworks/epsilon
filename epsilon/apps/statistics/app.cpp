@@ -151,11 +151,30 @@ App::CategoricalStoreTab::CategoricalStoreTab()
           Escher::StackViewController::Style::WhiteUniform) {}
 
 App::CategoricalGraphTab::CategoricalGraphTab()
-    : m_graphTypeController(&m_graphMenuAlternateEmptyViewController,
-                            &app()->m_categoricalTabViewController),
+    : m_barGraphController(&m_barGraphHeader, &m_barGraphHeader,
+                           &app()->m_categoricalTabViewController,
+                           &m_graphMenuStackViewController,
+                           &m_graphTypeController),
+      m_barGraphHeader(&m_graphController, &m_barGraphController,
+                       &m_barGraphController),
+      m_pieGraphController(&m_pieGraphHeader, &m_pieGraphHeader,
+                           &app()->m_categoricalTabViewController,
+                           &m_graphMenuStackViewController,
+                           &m_graphTypeController),
+      m_pieGraphHeader(&m_graphController, &m_pieGraphController,
+                       &m_pieGraphController),
+      m_graphTypeController(&m_graphMenuStackViewController,
+                            &app()->m_categoricalTabViewController,
+                            &m_graphMenuStackViewController,
+                            app()->snapshot()->categoricalGraphViewModel()),
+      m_graphController(&m_graphMenuStackViewController, &m_graphTypeController,
+                        {&m_barGraphHeader, &m_pieGraphHeader}),
+      m_graphMenuStackViewController(
+          &m_graphMenuAlternateEmptyViewController, &m_graphController,
+          Escher::StackViewController::Style::WhiteUniform),
       m_graphMenuAlternateEmptyViewController(
-          &app()->m_categoricalTabViewController, &m_graphTypeController,
-          &m_graphTypeController) {};
+          &app()->m_categoricalTabViewController,
+          &m_graphMenuStackViewController, &m_graphTypeController) {};
 
 App::App(Snapshot* snapshot)
     : StoreApp(snapshot, &m_inputViewController),

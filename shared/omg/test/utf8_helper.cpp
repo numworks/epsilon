@@ -64,7 +64,7 @@ void assert_copy_and_remove_code_points_gives(char* dst, size_t dstSize,
     quiz_assert(dst[i] == result[i]);
   }
 }
-static int bufferSize = 100;
+constexpr static int bufferSize = 100;
 QUIZ_CASE(ion_utf8_copy_and_remove_code_point) {
   char buffer[bufferSize];
 

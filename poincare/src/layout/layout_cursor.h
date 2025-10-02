@@ -16,6 +16,15 @@
 
 namespace Poincare::Internal {
 
+/* There are two main cursor classes:
+ *  - LayoutCursor has all the method that doesn't need to modify the underlying
+ *    Layout. This underlying layout may leave anywhere.
+ *  - TreeStackCursor must point to a layout in the TreeStack and is able to
+ *    alter it to perform insertions and backspace.
+ *    The usual cursor motion move is in TreeStackCursor since it can trigger a
+ *    beautification and may alter the layout.
+ */
+
 /* The LayoutCursor has 3 main attributes:
  *   - m_rootLayout: the root rack Layout (only in LayoutBufferCursor)
  *   - m_cursorRack: the rack Tree (descendant of the root rack tree) in which
@@ -68,17 +77,6 @@ class LayoutCursor {
   KDPoint middleLeftPoint(KDFont::Size font) const;
   KDCoordinate cursorBaseline(KDFont::Size font) const;
 
-  /* Move */
-  // Return false if could not move
-  bool move(
-      OMG::Direction direction, bool selecting, bool* shouldRedrawLayout,
-      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
-  bool moveMultipleSteps(
-      OMG::Direction direction, int step, bool selecting,
-      bool* shouldRedrawLayout,
-      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
-
-  /* Layout deletion */
   void stopSelecting() { m_startOfSelection = -1; }
 
   /* This moves the cursor to a location that will stay valid after exiting the
@@ -111,21 +109,9 @@ class LayoutCursor {
 
   int leftmostPosition() const { return 0; }
   int rightmostPosition() const { return cursorRack()->numberOfChildren(); }
-  bool horizontalMove(OMG::HorizontalDirection direction);
-  bool verticalMove(OMG::VerticalDirection direction);
-  bool verticalMoveWithoutSelection(OMG::VerticalDirection direction);
 
   void privateStartSelecting() { m_startOfSelection = m_position; }
   virtual void invalidateSizesAndPositions() {}
-  void removeEmptyRowOrColumnOfGridParentIfNeeded();
-
-  void collapseSiblingsOfLayout(Layout* l);
-  void collapseSiblingsOfLayoutOnDirection(Layout* l,
-                                           OMG::HorizontalDirection direction,
-                                           int absorbingChildIndex);
-
-  virtual bool beautifyRightOfRack(
-      Rack* rack, const Poincare::SymbolContext& symbolContext) = 0;
 
   // Cursor's horizontal position
   int m_position;
@@ -146,10 +132,6 @@ class TreeCursor final : public LayoutCursor {
   const Rack* cursorRack() const override { return m_cursor; }
   Rack* cursorRack() override { return m_cursor; }
   void setCursorRack(Rack* rack) override { assert(false); };
-  bool beautifyRightOfRack(
-      Rack* rack, const Poincare::SymbolContext& symbolContext) override {
-    OMG::unreachable();
-  }
 
  private:
   Rack* m_root;
@@ -223,6 +205,17 @@ class TreeStackCursor : public LayoutCursor,
     }
   }
 
+  /* Motion */
+  // Return false if could not move
+  bool move(
+      OMG::Direction direction, bool selecting, bool* shouldRedrawLayout,
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
+  bool moveMultipleSteps(
+      OMG::Direction direction, int step, bool selecting,
+      bool* shouldRedrawLayout,
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
+
+  /* Insertion */
   /* The private API has structs because it is used through
    * PoolLayoutCursor::execute. The public API is a more convenient wrapper
    * around the private one. */
@@ -244,22 +237,9 @@ class TreeStackCursor : public LayoutCursor,
                                             collapseSiblings};
     insertLayout(symbolContext, &insertLayoutContext);
   }
+
+  /* Deletion */
   void performBackspace() { performBackspace(EmptySymbolContext{}, nullptr); }
-
-  const Rack* rootRack() const override {
-    return static_cast<const Rack*>(
-        Tree::FromBlocks(SharedTreeStack->firstBlock()));
-  }
-  Rack* rootRack() override {
-    return static_cast<Rack*>(Tree::FromBlocks(SharedTreeStack->firstBlock()));
-  }
-  const Rack* cursorRack() const override {
-    return static_cast<const Rack*>(static_cast<const Tree*>(m_cursorRackRef));
-  }
-
-  Rack* cursorRack() override {
-    return static_cast<Rack*>(static_cast<Tree*>(m_cursorRackRef));
-  }
 
  private:
   // TreeStackCursor Actions
@@ -290,12 +270,37 @@ class TreeStackCursor : public LayoutCursor,
     int m_rackOffset;
     mutable bool m_shouldRedraw;
   };
-  bool beautifyRightOfRack(
-      Rack* rack, const Poincare::SymbolContext& symbolContext) override;
+  bool beautifyRightOfRack(Rack* rack,
+                           const Poincare::SymbolContext& symbolContext);
   void beautifyRightOfRackAction(const Poincare::SymbolContext& symbolContext,
                                  const void* rack);
   void beautifyLeftAction(const Poincare::SymbolContext& symbolContext,
                           const void* /* no arg */);
+
+  bool horizontalMove(OMG::HorizontalDirection direction);
+  bool verticalMove(OMG::VerticalDirection direction);
+  bool verticalMoveWithoutSelection(OMG::VerticalDirection direction);
+
+  void collapseSiblingsOfLayout(Layout* l);
+  void collapseSiblingsOfLayoutOnDirection(Layout* l,
+                                           OMG::HorizontalDirection direction,
+                                           int absorbingChildIndex);
+  void removeEmptyRowOrColumnOfGridParentIfNeeded();
+
+  const Rack* rootRack() const override {
+    return static_cast<const Rack*>(
+        Tree::FromBlocks(SharedTreeStack->firstBlock()));
+  }
+  Rack* rootRack() override {
+    return static_cast<Rack*>(Tree::FromBlocks(SharedTreeStack->firstBlock()));
+  }
+  const Rack* cursorRack() const override {
+    return static_cast<const Rack*>(static_cast<const Tree*>(m_cursorRackRef));
+  }
+
+  Rack* cursorRack() override {
+    return static_cast<Rack*>(static_cast<Tree*>(m_cursorRackRef));
+  }
 
   TreeRef m_cursorRackRef;
 };

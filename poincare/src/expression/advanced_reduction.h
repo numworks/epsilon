@@ -22,10 +22,6 @@ class AdvancedReduction {
  public:
   static bool Reduce(Tree* e,
                      ReductionTarget reductionTarget = ReductionTarget::User);
-#if POINCARE_NO_ADVANCED_REDUCTION
-  static bool PseudoReduce(Tree* e);
-#endif
-
   // Bottom-up deep contract
   static bool DeepContract(Tree* e);
   // Top-Bottom deep expand

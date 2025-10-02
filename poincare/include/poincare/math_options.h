@@ -41,7 +41,6 @@ enum class SymbolicComputation : uint8_t {
 enum class Strategy : uint8_t {
   Default,
   ApproximateToFloat,
-  PseudoAdvanceReduce,
 };
 
 enum class UnitDisplay : uint8_t {

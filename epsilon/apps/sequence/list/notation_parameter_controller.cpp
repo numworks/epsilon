@@ -6,8 +6,6 @@
 #include "../app.h"
 
 using namespace Escher;
-using NotationCell =
-    Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView>;
 
 namespace Sequence {
 

@@ -6,12 +6,15 @@
 #include <escher/selectable_list_view_controller.h>
 #include <omg/expiring_pointer.h>
 
+using NotationCell =
+    Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView>;
+
 namespace Sequence {
 
 class NotationParameterController : public Escher::SelectableListViewController<
                                         Escher::SimpleListViewDataSource> {
  public:
-  NotationParameterController(Escher::Responder* parentResponder)
+  explicit NotationParameterController(Escher::Responder* parentResponder)
       : SelectableListViewController<SimpleListViewDataSource>(
             parentResponder) {}
 
@@ -26,6 +29,7 @@ class NotationParameterController : public Escher::SelectableListViewController<
 
   // SimpleListViewDataSource
   Escher::HighlightCell* reusableCell(int index) override {
+    assert(index >= 0 && index < k_numberOfCells);
     return &m_cells[index];
   }
   int reusableCellCount() const override { return k_numberOfCells; }
@@ -46,14 +50,14 @@ class NotationParameterController : public Escher::SelectableListViewController<
                                          : k_shiftedNotationRow;
   }
   Notation notationForRow(int row) const {
+    assert(row >= 0 && row < k_numberOfCells);
     return row == k_defaultNotationRow ? Notation::Default : Notation::Shifted;
   }
 
   OMG::ExpiringPointer<Shared::Sequence> sequence();
 
   Ion::Storage::Record m_record;
-  Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView>
-      m_cells[k_numberOfCells];
+  NotationCell m_cells[k_numberOfCells];
 };
 
 }  // namespace Sequence

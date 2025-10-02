@@ -24,6 +24,7 @@ class ModalViewController : public ViewController {
     }
   }
   void initView() override;
+  void refetchMainView();
   void viewWillAppear() override;
   void viewDidDisappear() override;
   ViewController* currentModalViewController() const {

@@ -5,6 +5,8 @@
 #include <escher/alternate_view_controller.h>
 #include <escher/tab_union_view_controller.h>
 
+#include "categorical/data/store_controller.h"
+#include "categorical/graph/graph_type_controller.h"
 #include "data/store_controller.h"
 #include "graph/box_controller.h"
 #include "graph/frequency_controller.h"
@@ -12,12 +14,13 @@
 #include "graph/graph_view_model.h"
 #include "graph/histogram_main_controller.h"
 #include "graph/normal_probability_controller.h"
+#include "statistics_type_controller.h"
 #include "stats/calculation_controller.h"
 #include "store.h"
 
 namespace Statistics {
 
-class App : public Shared::StoreApp {
+class App : public Shared::StoreApp, public Escher::AlternateViewDelegate {
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:
@@ -37,6 +40,10 @@ class App : public Shared::StoreApp {
     uint32_t* storeVersion() { return &m_storeVersion; }
     GraphViewModel* graphViewModel() { return &m_graphViewModel; }
     const GraphViewModel* graphViewModel() const { return &m_graphViewModel; }
+    DataTypeViewModel* dataTypeViewModel() { return &m_dataTypeViewModel; }
+    const DataTypeViewModel* dataTypeViewModel() const {
+      return &m_dataTypeViewModel;
+    }
     UserPreferences* userPreferences() { return &m_userPreferences; }
     int8_t selectedSeries() const { return m_selectedSeries; }
     int16_t selectedIndex() const { return m_selectedIndex; }
@@ -53,6 +60,7 @@ class App : public Shared::StoreApp {
     uint32_t m_storeVersion;
     UserPreferences m_userPreferences;
     GraphViewModel m_graphViewModel;
+    DataTypeViewModel m_dataTypeViewModel;
     int8_t m_selectedSeries;
     int16_t m_selectedIndex;
   };
@@ -62,7 +70,7 @@ class App : public Shared::StoreApp {
   const char* memoizedFormulaExtension() const override;
 
   Shared::StoreController* storeController() override {
-    return &m_tabs.tab<StoreTab>()->m_storeController;
+    return &m_quantitativeTabs.tab<StoreTab>()->m_storeController;
   }
   Escher::InputViewController* inputViewController() {
     return &m_inputViewController;
@@ -78,6 +86,19 @@ class App : public Shared::StoreApp {
   App(Snapshot* snapshot);
   void didBecomeActive(Escher::Window* window) override;
 
+  // AlternateViewDelegate (choses between quantitative and categorical views)
+  int activeViewControllerIndex() const override {
+    return DataTypeViewModel::IndexOfDataTypeView(
+        snapshot()->dataTypeViewModel()->selectedDataType());
+  }
+  Escher::ViewController::TitlesDisplay alternateViewTitlesDisplay() override {
+    return Escher::ViewController::TitlesDisplay::NeverDisplayOwnTitle;
+  }
+  void activeViewDidBecomeFirstResponder(
+      Escher::ViewController* activeViewController) override {
+    app()->setFirstResponder(activeViewController);
+  }
+
   struct StoreTab : public Escher::Tab {
     StoreTab();
     constexpr static I18n::Message k_title = I18n::Message::DataTab;
@@ -86,6 +107,7 @@ class App : public Shared::StoreApp {
     }
     StoreController m_storeController;
     Escher::ButtonRowController m_storeHeader;  // Needed for upper margin only
+    DataTypeController m_dataTypeController;
     Escher::StackViewController::Default m_storeStackViewController;
   };
 
@@ -125,10 +147,39 @@ class App : public Shared::StoreApp {
         m_calculationHeader;  // Needed for upper margin only
   };
 
+  struct CategoricalStoreTab : public Escher::Tab {
+    CategoricalStoreTab();
+    constexpr static I18n::Message k_title = I18n::Message::DataTab;
+    Escher::ViewController* top() override {
+      return &m_storeStackViewController;
+    }
+    CategoricalStoreController m_storeController;
+    Escher::AlternateEmptyViewController m_tempEmpty;
+    Escher::ButtonRowController m_storeHeader;
+    DataTypeController m_dataTypeController;
+    Escher::StackViewController::Default m_storeStackViewController;
+  };
+
+  struct CategoricalGraphTab : public Escher::Tab {
+    CategoricalGraphTab();
+    constexpr static I18n::Message k_title = I18n::Message::StatisticsGraphTab;
+    Escher::ViewController* top() override {
+      return &m_graphMenuAlternateEmptyViewController;
+    }
+    CategoricalGraphTypeController m_graphTypeController;
+    // Escher::AlternateViewController m_graphController;
+    // Escher::StackViewController::Default m_graphMenuStackViewController;
+    Escher::AlternateEmptyViewController
+        m_graphMenuAlternateEmptyViewController;
+  };
+
   Store m_store;
   Escher::InputViewController m_inputViewController;
-  Escher::TabUnion<StoreTab, GraphTab, CalculationTab> m_tabs;
-  Escher::TabUnionViewController m_tabViewController;
+  Escher::AlternateViewController m_alternateViewController;
+  Escher::TabUnion<StoreTab, GraphTab, CalculationTab> m_quantitativeTabs;
+  Escher::TabUnionViewController m_quantitativeTabViewController;
+  Escher::TabUnion<CategoricalStoreTab, CategoricalGraphTab> m_categoricalTabs;
+  Escher::TabUnionViewController m_categoricalTabViewController;
 };
 
 }  // namespace Statistics

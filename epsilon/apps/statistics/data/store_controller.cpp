@@ -18,10 +18,22 @@ using namespace Escher;
 namespace Statistics {
 
 StoreController::StoreController(Responder* parentResponder, Store* store,
-                                 ButtonRowController* header)
+                                 ButtonRowController* header,
+                                 StackViewController* stackViewController,
+                                 ViewController* dataTypeController)
     : Shared::StoreController(parentResponder, store, header),
       m_store(store),
-      m_storeParameterController(this, this, store) {}
+      m_stackViewController(stackViewController),
+      m_storeParameterController(this, this, store),
+      m_dataTypeController(dataTypeController),
+      m_dataTypeButton(this, I18n::Message::DataType,
+                       Escher::Invocation::Builder<StoreController>(
+                           [](StoreController* controller, void* sender) {
+                             controller->pushTypeController();
+                             return true;
+                           },
+                           this),
+                       KDFont::Size::Small) {}
 
 void StoreController::sortSelectedColumn() {
   int relativeIndex = m_store->relativeColumn(selectedColumn());

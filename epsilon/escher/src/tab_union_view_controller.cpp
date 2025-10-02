@@ -15,13 +15,17 @@ TabUnionViewController::TabUnionViewController(
     m_titles[m_numberOfChildren++] = title;
   }
   assert(m_numberOfChildren <= k_maxNumberOfChildren);
-}
-
-void TabUnionViewController::initView() {
   for (int i = 0; i < m_numberOfChildren; i++) {
     m_view.m_tabView.addTab(this);
   }
 }
+
+void TabUnionViewController::initView() {
+  if (m_dataSource->activeTab() >= 0) {
+    updateUnionActiveTab();
+    activeViewController()->initView();
+  }
+};
 
 void TabUnionViewController::setActiveTab(int8_t i, bool enter) {
   assert(i >= 0 && i < m_numberOfChildren);

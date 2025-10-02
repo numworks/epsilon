@@ -200,9 +200,21 @@ void TreeStackCursor::insertLayout(const Tree* tree,
   if (tree->isRackLayout() && Rack::IsEmpty(tree)) {
     return;
   }
+  stealAndInsertLayout(tree->cloneTree(), symbolContext, forceRight, forceLeft,
+                       collapseSiblings);
+}
 
-  Tree* copy = SharedTreeStack->contains(tree) ? const_cast<Tree*>(tree)
-                                               : tree->cloneTree();
+void TreeStackCursor::stealAndInsertLayout(
+    Tree* copy, const Poincare::SymbolContext& symbolContext, bool forceRight,
+    bool forceLeft, bool collapseSiblings) {
+  assert(SharedTreeStack->contains(copy) &&
+         copy->nextTree() == SharedTreeStack->lastBlock());
+
+  if (copy->isRackLayout() && Rack::IsEmpty(copy)) {
+    // TODO seems wrong
+    return;
+  }
+
   // We need to keep track of the node which must live in the TreeStack
   // TODO: do we need ConstReferences on const Nodes in the pool ?
   TreeRef ref(copy);
@@ -399,8 +411,8 @@ void TreeStackCursor::insertText(const char* text,
          * and force the cursor left of it. */
         assert(currentSubscriptDepth == 0);
         (void)currentSubscriptDepth;
-        insertLayout(layoutToInsert, symbolContext, forceCursorRightOfText,
-                     forceCursorLeftOfText);
+        stealAndInsertLayout(layoutToInsert, symbolContext,
+                             forceCursorRightOfText, forceCursorLeftOfText);
         layoutToInsert = KRackL()->cloneTree();
         currentLayout = layoutToInsert;
         forceCursorLeftOfText = true;
@@ -445,8 +457,8 @@ void TreeStackCursor::insertText(const char* text,
   assert(currentSubscriptDepth == 0);
 
   // - Step 2 - Inserted the created layout
-  insertLayout(layoutToInsert, symbolContext, forceCursorRightOfText,
-               forceCursorLeftOfText);
+  stealAndInsertLayout(layoutToInsert, symbolContext, forceCursorRightOfText,
+                       forceCursorLeftOfText);
 
   // TODO: Restore beautification
 }

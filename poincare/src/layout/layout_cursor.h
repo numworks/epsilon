@@ -232,6 +232,22 @@ class TreeStackCursor : public LayoutCursor,
   void performBackspace(
       const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
 
+  // Context structs for Actions
+  struct InsertLayoutContext {
+    const Tree* m_tree;
+    bool m_forceRight = false;
+    bool m_forceLeft = false;
+    bool m_collapseSiblings = true;
+  };
+  struct InsertTextContext {
+    const char* m_text;
+    bool m_forceRight, m_forceLeft, m_linearMode;
+  };
+  struct BeautifyContext {
+    int m_rackOffset;
+    mutable bool m_shouldRedraw;
+  };
+
   /* LayoutCursor */
   const Rack* rootRack() const override {
     return static_cast<const Rack*>(
@@ -249,53 +265,14 @@ class TreeStackCursor : public LayoutCursor,
   }
 
  private:
-  // TreeStackCursor Actions
-  void performBackspace(const Poincare::SymbolContext& symbolContext,
-                        const void* nullptrData) {
-    assert(nullptrData == nullptr);
-    performBackspace(symbolContext);
-  }
+  void balanceAutocompletedBracketsAndKeepAValidCursor();
   void deleteAndResetSelection(const Poincare::SymbolContext& symbolContext,
                                const void* nullptrData);
-  struct InsertLayoutContext {
-    const Tree* m_tree;
-    bool m_forceRight = false;
-    bool m_forceLeft = false;
-    bool m_collapseSiblings = true;
-  };
-  void insertLayout(const Poincare::SymbolContext& symbolContext,
-                    const void* insertLayoutContext) {
-    const InsertLayoutContext* context =
-        static_cast<const InsertLayoutContext*>(insertLayoutContext);
-    insertLayout(context->m_tree, symbolContext, context->m_forceRight,
-                 context->m_forceLeft, context->m_collapseSiblings);
-  }
-  struct InsertTextContext {
-    const char* m_text;
-    bool m_forceRight, m_forceLeft, m_linearMode;
-  };
-  void insertText(const Poincare::SymbolContext& symbolContext,
-                  const void* insertTextContext) {
-    const InsertTextContext* context =
-        static_cast<const InsertTextContext*>(insertTextContext);
-    insertText(context->m_text, symbolContext, context->m_forceRight,
-               context->m_forceLeft, context->m_linearMode);
-  }
-  void balanceAutocompletedBracketsAndKeepAValidCursor();
-
   void privateDelete(DeletionMethod deletionMethod,
                      bool deletionAppliedToParent);
   void setCursorRack(Rack* rack) override { m_cursorRackRef = TreeRef(rack); }
-  struct BeautifyContext {
-    int m_rackOffset;
-    mutable bool m_shouldRedraw;
-  };
   bool beautifyRightOfRack(Rack* rack,
                            const Poincare::SymbolContext& symbolContext);
-  void beautifyRightOfRackAction(const Poincare::SymbolContext& symbolContext,
-                                 const void* rack);
-  void beautifyLeftAction(const Poincare::SymbolContext& symbolContext,
-                          const void* /* no arg */);
 
   bool horizontalMove(OMG::HorizontalDirection direction);
   bool verticalMove(OMG::VerticalDirection direction);

@@ -20,17 +20,10 @@ class LayoutField : public Escher::LayoutField {
 
   void updateCursorBeforeInsertion();
 
-  static Poincare::UserExpression UserExpressionFromEditionField(
-      Poincare::Layout layout) {
-    Poincare::UserExpression currentExpression =
-        Poincare::UserExpression::Parse(layout, Poincare::EmptySymbolContext{});
-    return currentExpression;
-  }
-
   bool containsTrigFunction() const {
     // Try to parse the expression
-    Poincare::UserExpression userExpression =
-        UserExpressionFromEditionField(layout());
+    Poincare::UserExpression userExpression = Poincare::UserExpression::Parse(
+        layout(), Poincare::EmptySymbolContext{});
     if (userExpression.isUninitialized()) {
       // Failed to parse the expression being edited, return false by default
       return false;

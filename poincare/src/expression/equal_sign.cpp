@@ -25,7 +25,8 @@ bool isExpectedExpression(const Tree* expr) {
 }
 
 bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
-                                                    const Tree* approximate) {
+                                                    const Tree* approximate,
+                                                    int significantDigits) {
   assert(exact && approximate);
   // If projection failed, exact can be not system
   assert(Simplification::IsSystem(approximate));
@@ -35,10 +36,8 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
   if (exact->isRational() && approximate->isFloat()) {
     /* Using parsing is the safest way to create a Decimal that will be the same
      * as what the user will read. */
-    /* TODO: We need to be careful to the number of significant digits 1/16 ~=
-     * 0.63 with 2 digits. But until now the app will call this with the
-     * truncated float. */
-    Tree* layout = Layouter::LayoutExpression(approximate);
+    Tree* layout = Layouter::LayoutExpression(
+        approximate, {.numberOfSignificantDigits = significantDigits});
     Layouter::StripSeparators(layout);
     Tree* parsed = Parser::Parse(layout);
     assert(isExpectedExpression(parsed));
@@ -64,8 +63,8 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
   }
   const Tree* approxChild = approximate->nextNode();
   for (const Tree* exactChild : exact->children()) {
-    if (!ExactAndApproximateExpressionsAreStrictlyEqual(exactChild,
-                                                        approxChild)) {
+    if (!ExactAndApproximateExpressionsAreStrictlyEqual(exactChild, approxChild,
+                                                        significantDigits)) {
       return false;
     }
     approxChild = approxChild->nextTree();

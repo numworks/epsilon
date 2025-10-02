@@ -426,6 +426,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(-12)/2", "√(3)×i", k_cartesianCtx);
   simplifies_to("-2+√(-12)/2", "-2+√(3)×i", k_cartesianCtx);
   simplifies_to("√(-5)*√(-3)", "-√(15)", k_cartesianCtx);
+  simplifies_to("√(-5)*√(-5)", "-5", k_cartesianCtx);
 
   // Denesting of square roots
   simplifies_to("√(2+√(3))", "(√(2)+√(6))/2");

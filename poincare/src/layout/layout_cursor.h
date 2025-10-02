@@ -215,9 +215,6 @@ class TreeStackCursor : public LayoutCursor,
       const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
 
   /* Insertion */
-  /* The private API has structs because it is used through
-   * PoolLayoutCursor::execute. The public API is a more convenient wrapper
-   * around the private one. */
   void insertText(
       const char* text,
       const Poincare::SymbolContext& symbolContext = EmptySymbolContext{},
@@ -231,35 +228,6 @@ class TreeStackCursor : public LayoutCursor,
   /* Deletion */
   void performBackspace(
       const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
-
-  // Context structs for Actions
-  struct InsertLayoutContext {
-    const Tree* m_tree;
-    bool m_forceRight = false;
-    bool m_forceLeft = false;
-    bool m_collapseSiblings = true;
-  };
-  struct InsertTextContext {
-    const char* m_text;
-    bool m_forceRight, m_forceLeft, m_linearMode;
-  };
-  struct BeautifyContext {
-    int m_rackOffset;
-    mutable bool m_shouldRedraw;
-  };
-  struct MoveContext {
-    OMG::Direction m_direction;
-    bool m_selecting;
-    mutable bool m_shouldRedrawLayout;
-    mutable bool m_moved;
-  };
-  struct MoveMultipleStepsContext {
-    OMG::Direction m_direction;
-    int m_step;
-    bool m_selecting;
-    mutable bool m_shouldRedrawLayout;
-    mutable bool m_moved;
-  };
 
   /* LayoutCursor */
   const Rack* rootRack() const override {

@@ -36,6 +36,8 @@ SOURCES_apps += $(addprefix $(PATH_apps)/statistics/,$(addsuffix :-test, \
   histogram_icon.png \
   cumulative_icon.png \
   statistics_normal_icon.png \
+  statistics_type_controller.cpp \
+  statistics_type_view_model.cpp \
 ) \
   store.cpp \
   test/store.cpp:+test \

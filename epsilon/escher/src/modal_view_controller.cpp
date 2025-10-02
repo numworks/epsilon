@@ -186,6 +186,11 @@ void ModalViewController::initView() {
   m_regularViewController->initView();
 }
 
+void ModalViewController::refetchMainView() {
+  m_contentView.setMainView(m_regularViewController->view());
+  m_contentView.reload();
+}
+
 void ModalViewController::viewWillAppear() {
   m_contentView.layoutSubviews();
   if (m_contentView.isDisplayingModal()) {

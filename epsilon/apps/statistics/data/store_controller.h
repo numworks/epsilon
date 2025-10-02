@@ -2,6 +2,7 @@
 
 #include <apps/shared/store_controller.h>
 
+#include "../statistics_type_controller.h"
 #include "../store.h"
 #include "store_parameter_controller.h"
 
@@ -10,7 +11,23 @@ namespace Statistics {
 class StoreController : public Shared::StoreController {
  public:
   StoreController(Escher::Responder* parentResponder, Store* store,
-                  Escher::ButtonRowController* header);
+                  Escher::ButtonRowController* header,
+                  Escher::StackViewController* stackViewController,
+                  Escher::ViewController* dataTypeController);
+
+  // Escher::ButtonRowDelegate
+  int numberOfButtons(
+      Escher::ButtonRowController::Position position) const override {
+    assert(position == Escher::ButtonRowController::Position::Top);
+    return 1;
+  }
+  Escher::ButtonCell* buttonAtIndex(
+      int index,
+      Escher::ButtonRowController::Position position) const override {
+    assert(index == 0 &&
+           position == Escher::ButtonRowController::Position::Top);
+    return const_cast<Escher::SimpleButtonCell*>(&m_dataTypeButton);
+  }
 
   /* Shared::StoreController */
   void sortSelectedColumn() override;
@@ -68,10 +85,17 @@ class StoreController : public Shared::StoreController {
     return !isCumulatedFrequencyColumn(column);
   }
 
+  void pushTypeController() {
+    m_stackViewController->push(m_dataTypeController);
+  }
+
   Store* m_store;
+  Escher::StackViewController* m_stackViewController;
   StoreParameterController m_storeParameterController;
   Escher::FloatEvenOddBufferTextCell<>
       m_nonEditableCells[k_maxNumberOfNonEditableCells];
+  Escher::ViewController* m_dataTypeController;
+  Escher::SimpleButtonCell m_dataTypeButton;
 };
 
 }  // namespace Statistics

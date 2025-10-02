@@ -26,7 +26,7 @@ class Sequence {
   static Tree* InitialExpression(const char* name, Type type,
                                  bool shiftedNotation);
   static void UpdateMainExpressionForNotation(Tree* e, Type type,
-                                              bool shiftedNotation);
+                                              bool toShiftedNotation);
 
  private:
   constexpr static const Tree* k_defaultRank = KUnknownSymbol;

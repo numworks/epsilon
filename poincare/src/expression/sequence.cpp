@@ -139,58 +139,69 @@ Tree* Sequence::InitialExpression(const char* name, Type type,
   return result;
 }
 
+/* Update a sequence expression when changing from default to shifted notation
+ * or back, so that it stays mathematically correct.
+ * Example: u(n+1)=v(n+1)+3u(n)*n <-> u(n)=v(n)+3u(n-1)*(n-1) */
 void Sequence::UpdateMainExpressionForNotation(Tree* e, Type type,
-                                               bool shiftedNotation) {
+                                               bool toShiftedNotation) {
   assert(type != Type::SequenceExplicit);
   bool changed = false;
-  if (shiftedNotation) {
+  if (toShiftedNotation) {
+    /* Replace n and common default notation ranks n+1 and n+2.
+     * Other ranks will be changed when n is identified in the children.
+     * Example: u(n+1) -> u(n) and u(n+3) -> u((n-1)+3) for single rec. */
     changed =
-        /* Replace u(n) with:
-         * - u(n-1) if single rec
-         * - u(n-2) if double rec */
+        /* Replace n with:
+         * - n-1 if single rec
+         * - n-2 if double rec */
         PatternMatching::MatchReplace(e, k_defaultRank,
                                       type == Type::SequenceSingleRecurrence
                                           ? k_firstPreviousRank
                                           : k_secondPreviousRank) ||
-        /* Replace u(n+1) with:
-         * - u(n) if single rec
-         * - u(n-1) if double rec */
+        /* Replace n+1 with:
+         * - n if single rec
+         * - n-1 if double rec */
         PatternMatching::MatchReplace(e, k_firstFollowingRank,
                                       type == Type::SequenceSingleRecurrence
                                           ? k_defaultRank
                                           : k_firstPreviousRank) ||
-        /* Replace u(n+2) with:
-         * - u(n) if double rec */
+        /* Replace n+2 with:
+         * - n if double rec */
         (type == Type::SequenceDoubleRecurrence &&
          PatternMatching::MatchReplace(e, k_secondFollowingRank,
                                        k_defaultRank)) ||
         changed;
   } else {
+    /* Replace n and common shifted notation ranks n-1 and n-2.
+     * Other ranks will be changed when n is identified in the children.
+     * Example: u(n-1) -> u(n+1) and u(n+1) -> u((n+2)+1) for double rec. */
     changed =
-        /* Replace u(n) with:
-         * - u(n+1) if single rec
-         * - u(n+2) if double rec */
+        /* Replace n with:
+         * - n+1 if single rec
+         * - n+2 if double rec */
         PatternMatching::MatchReplace(e, k_defaultRank,
                                       type == Type::SequenceSingleRecurrence
                                           ? k_firstFollowingRank
                                           : k_secondFollowingRank) ||
-        /* Replace u(n-1) with:
-         * - u(n) if single rec
-         * - u(n+1) if double rec */
+        /* Replace n-1 with:
+         * - n if single rec
+         * - n+1 if double rec */
         PatternMatching::MatchReplace(e, k_firstPreviousRank,
                                       type == Type::SequenceSingleRecurrence
                                           ? k_defaultRank
                                           : k_firstFollowingRank) ||
-        /* Replace u(n-2) with:
-         * - u(n) if double rec */
+        /* Replace n-2 with:
+         * - n if double rec */
         (type == Type::SequenceDoubleRecurrence &&
          PatternMatching::MatchReplace(e, k_secondPreviousRank,
                                        k_defaultRank)) ||
         changed;
   }
   if (!changed) {
+    /* Replace in children if the expression was not already replaced (because
+     * it was an identifiable rank). */
     for (Tree* child : e->children()) {
-      UpdateMainExpressionForNotation(child, type, shiftedNotation);
+      UpdateMainExpressionForNotation(child, type, toShiftedNotation);
     }
   }
 }

@@ -29,7 +29,7 @@ class PoolLayoutCursor final : public LayoutCursor,
 
   Rack* rootRack() override { return static_cast<Rack*>(m_rootLayout.tree()); }
   const Rack* rootRack() const override {
-    return static_cast<Rack*>(m_rootLayout.tree());
+    return static_cast<const Rack*>(m_rootLayout.tree());
   }
   Rack* cursorRack() override { return rootRack() + m_cursorRack; }
   const Rack* cursorRack() const override { return rootRack() + m_cursorRack; }

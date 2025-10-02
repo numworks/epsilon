@@ -251,7 +251,8 @@ class TreeStackCursor : public LayoutCursor,
   void performBackspace() { performBackspace(EmptySymbolContext{}, nullptr); }
 
   const Rack* rootRack() const override {
-    return static_cast<Rack*>(Tree::FromBlocks(SharedTreeStack->firstBlock()));
+    return static_cast<const Rack*>(
+        Tree::FromBlocks(SharedTreeStack->firstBlock()));
   }
   Rack* rootRack() override {
     return static_cast<Rack*>(Tree::FromBlocks(SharedTreeStack->firstBlock()));

@@ -92,7 +92,10 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(
 
 bool AdvancedReduction::Reduce(Tree* e, ReductionTarget reductionTarget) {
 #if POINCARE_NO_ADVANCED_REDUCTION
-  return false;
+  uint32_t h = e->hash();
+  PrivateDeepExpand(e, ShallowExpandPseudoReduce);
+  PrivateDeepContract(e, ShallowContractPseudoReduce);
+  return e->hash() != h;
 #endif
   /* In the case of a list, advanced reduction works more efficiently when
    * called independently on the list elements. Thus we ensure that there are no
@@ -112,15 +115,6 @@ bool AdvancedReduction::Reduce(Tree* e, ReductionTarget reductionTarget) {
   }
   return changed;
 }
-
-#if POINCARE_NO_ADVANCED_REDUCTION
-bool AdvancedReduction::PseudoReduce(Tree* e) {
-  uint32_t h = e->hash();
-  PrivateDeepExpand(e, ShallowExpandPseudoReduce);
-  PrivateDeepContract(e, ShallowContractPseudoReduce);
-  return e->hash() != h;
-}
-#endif
 
 bool AdvancedReduction::ReduceIndependantElement(
     Tree* e, ReductionTarget reductionTarget) {

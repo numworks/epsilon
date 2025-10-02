@@ -88,10 +88,6 @@ class LayoutCursor {
 
   bool isAtNumeratorOfEmptyFraction() const;
 
-#if 0
-  static int RightmostPossibleCursorPosition(Layout l);
-#endif
-
   SimpleLayoutCursor simpleCursor() const {
     return {.rack = cursorRack(), .position = position()};
   }

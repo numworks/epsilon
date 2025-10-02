@@ -21,9 +21,8 @@ class LayoutMemoization {
             .m_sizeFontSize = KDFont::Size::Small,
         }) {}
 
-  // TODO: invalid cache when tempering with hierarchy
   // TODO remember if cursor was in layout and hide this method
-  virtual void invalidAllSizesPositionsAndBaselines();
+  void invalidAllSizesPositionsAndBaselines();
   KDSize layoutSize(KDFont::Size font,
                     const LayoutCursor* cursor = nullptr) const;
   KDCoordinate baseline(KDFont::Size font,

@@ -33,6 +33,15 @@ Tree* Sequence::PushInitialConditionName(const Tree* sequence,
   return result;
 }
 
+/* Returns true if the main expression of a sequence is invalid.
+ * Parameters are:
+ * - e -> sequence's main expression
+ * - symbolContext -> used to check dimension
+ * - name, type, initialRank and shiftedNotation -> attributes of the sequence
+ * - recursion -> indicates whether recursion is allowed
+ * - systemSymbol -> indicates whether system nodes are allowed
+ * - otherSequences -> indicates whether other sequences are allowed
+ */
 bool Sequence::MainExpressionContainsForbiddenTerms(
     const Tree* e, const SymbolContext& symbolContext, const char* name,
     Type type, int initialRank, bool shiftedNotation, bool recursion,
@@ -82,21 +91,23 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
       // if rank !is<int>(), then it's definitely too big to be valid
       return true;
     }
-    /* Recursion on a sequence is allowed only on
-     * - u(n) for single recurrence (or u(n-1) with shifted notation)
-     * - u(n) and u(n+1) for double recurrence (or u(n-1) and u(n-2) with
-     *   shifted notation) */
-    if (recursion &&
-        (rank->treeIsIdenticalTo(shiftedNotation ? k_firstPreviousRank
-                                                 : k_defaultRank) ||
-         (type == Type::SequenceDoubleRecurrence &&
-          rank->treeIsIdenticalTo(shiftedNotation ? k_secondPreviousRank
-                                                  : k_firstFollowingRank)))) {
+    if (!recursion) {
+      return true;
+    } else if (!((rank->treeIsIdenticalTo(shiftedNotation ? k_firstPreviousRank
+                                                          : k_defaultRank)) ||
+                 (type == Type::SequenceDoubleRecurrence &&
+                  rank->treeIsIdenticalTo(shiftedNotation
+                                              ? k_secondPreviousRank
+                                              : k_firstFollowingRank)))) {
+      /* Recursion on a sequence is allowed only on
+       * - u(n) for single recurrence (or u(n-1) with shifted notation)
+       * - u(n) and u(n+1) for double recurrence (or u(n-1) and u(n-2) with
+       *   shifted notation) */
+      return true;
+    } else {
       // Ignore the child content which has been checked already
       skipUntil = d->nextTree();
-      continue;
     }
-    return true;
   }
   return false;
 }

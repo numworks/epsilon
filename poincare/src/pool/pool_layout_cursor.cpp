@@ -116,6 +116,26 @@ void PoolLayoutCursor::BeautifyRightOfRackAction(
   ctx->m_shouldRedraw = cursor->beautifyRightOfRack(targetRack, symbolContext);
 }
 
+void PoolLayoutCursor::MoveAction(
+    TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
+    const void* data) {
+  const TreeStackCursor::MoveContext* context =
+      static_cast<const TreeStackCursor::MoveContext*>(data);
+  context->m_moved = cursor->move(context->m_direction, context->m_selecting,
+                                  &context->m_shouldRedrawLayout, symbolContext);
+}
+
+void PoolLayoutCursor::MoveMultipleStepsAction(
+    TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
+    const void* data) {
+  const TreeStackCursor::MoveMultipleStepsContext* context =
+      static_cast<const TreeStackCursor::MoveMultipleStepsContext*>(data);
+  context->m_moved =
+      cursor->moveMultipleSteps(context->m_direction, context->m_step,
+                                context->m_selecting,
+                                &context->m_shouldRedrawLayout, symbolContext);
+}
+
 template class AddEmptyLayoutHelpers<PoolLayoutCursor>;
 
 }  // namespace Poincare::Internal

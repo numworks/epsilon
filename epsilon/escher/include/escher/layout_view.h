@@ -72,7 +72,7 @@ class LayoutViewWithCursor : public LayoutView {
   const Poincare::Internal::LayoutCursor* cursor() const override {
     return m_editing ? m_cursor : nullptr;
   }
-  const Poincare::LayoutCursor* m_cursor;
+  Poincare::LayoutCursor* m_cursor;
   bool m_editing;
 };
 

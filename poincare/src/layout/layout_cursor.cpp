@@ -464,9 +464,8 @@ void TreeStackCursor::insertText(const char* text,
   assert(currentSubscriptDepth == 0);
 
   // - Step 2 - Inserted the created layout
-  TreeStackCursor::InsertLayoutContext insertLayoutContext{
-      layoutToInsert, forceCursorRightOfText, forceCursorLeftOfText};
-  insertLayout(symbolContext, &insertLayoutContext);
+  insertLayout(layoutToInsert, symbolContext, forceCursorRightOfText,
+               forceCursorLeftOfText);
 
   // TODO: Restore beautification
 }

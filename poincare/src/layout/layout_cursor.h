@@ -193,7 +193,6 @@ class AddEmptyLayoutHelpers {
 class TreeStackCursor : public LayoutCursor,
                         public AddEmptyLayoutHelpers<TreeStackCursor> {
   friend class PoolLayoutCursor;
-  friend class InputBeautification;
 
  public:
   TreeStackCursor() : LayoutCursor(0, -1) {}
@@ -232,6 +231,22 @@ class TreeStackCursor : public LayoutCursor,
   /* Deletion */
   void performBackspace(
       const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
+
+  /* LayoutCursor */
+  const Rack* rootRack() const override {
+    return static_cast<const Rack*>(
+        Tree::FromBlocks(SharedTreeStack->firstBlock()));
+  }
+  Rack* rootRack() override {
+    return static_cast<Rack*>(Tree::FromBlocks(SharedTreeStack->firstBlock()));
+  }
+  const Rack* cursorRack() const override {
+    return static_cast<const Rack*>(static_cast<const Tree*>(m_cursorRackRef));
+  }
+
+  Rack* cursorRack() override {
+    return static_cast<Rack*>(static_cast<Tree*>(m_cursorRackRef));
+  }
 
  private:
   // TreeStackCursor Actions
@@ -291,21 +306,6 @@ class TreeStackCursor : public LayoutCursor,
                                            OMG::HorizontalDirection direction,
                                            int absorbingChildIndex);
   void removeEmptyRowOrColumnOfGridParentIfNeeded();
-
-  const Rack* rootRack() const override {
-    return static_cast<const Rack*>(
-        Tree::FromBlocks(SharedTreeStack->firstBlock()));
-  }
-  Rack* rootRack() override {
-    return static_cast<Rack*>(Tree::FromBlocks(SharedTreeStack->firstBlock()));
-  }
-  const Rack* cursorRack() const override {
-    return static_cast<const Rack*>(static_cast<const Tree*>(m_cursorRackRef));
-  }
-
-  Rack* cursorRack() override {
-    return static_cast<Rack*>(static_cast<Tree*>(m_cursorRackRef));
-  }
 
   TreeRef m_cursorRackRef;
 };

@@ -355,8 +355,7 @@ bool InputBeautification::BeautifyPipeKey(Tree* rack, int indexOfPipeKey,
   TreeStackCursor cursorForInsertion = *static_cast<TreeStackCursor*>(cursor);
   cursorForInsertion.moveCursorToLayout(rack, OMG::Direction::Left());
   cursorForInsertion.setPosition(indexOfPipeKey);
-  TreeStackCursor::InsertLayoutContext data{toInsert};
-  cursorForInsertion.insertLayout(EmptySymbolContext{}, &data);
+  cursorForInsertion.insertLayout(toInsert, EmptySymbolContext{});
   if (cursor->cursorRack() == rack &&
       cursor->position() == indexOfPipeKey + 1) {
     cursor->moveCursorToLayout(cursorForInsertion.cursorRack(),

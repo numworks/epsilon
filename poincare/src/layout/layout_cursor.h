@@ -247,6 +247,19 @@ class TreeStackCursor : public LayoutCursor,
     int m_rackOffset;
     mutable bool m_shouldRedraw;
   };
+  struct MoveContext {
+    OMG::Direction m_direction;
+    bool m_selecting;
+    mutable bool m_shouldRedrawLayout;
+    mutable bool m_moved;
+  };
+  struct MoveMultipleStepsContext {
+    OMG::Direction m_direction;
+    int m_step;
+    bool m_selecting;
+    mutable bool m_shouldRedrawLayout;
+    mutable bool m_moved;
+  };
 
   /* LayoutCursor */
   const Rack* rootRack() const override {

@@ -61,6 +61,26 @@ class PoolLayoutCursor final : public LayoutCursor,
   void performBackspace() {
     execute(&PoolLayoutCursor::PerformBackspaceAction);
   }
+  bool move(OMG::Direction direction, bool selecting,
+            bool* shouldRedrawLayout,
+            const Poincare::SymbolContext& symbolContext =
+                Poincare::EmptySymbolContext{}) {
+    TreeStackCursor::MoveContext ctx{direction, selecting, false, false};
+    execute(&PoolLayoutCursor::MoveAction, symbolContext, &ctx);
+    *shouldRedrawLayout = ctx.m_shouldRedrawLayout;
+    return ctx.m_moved;
+  }
+  bool moveMultipleSteps(
+      OMG::Direction direction, int step, bool selecting,
+      bool* shouldRedrawLayout,
+      const Poincare::SymbolContext& symbolContext =
+          Poincare::EmptySymbolContext{}) {
+    TreeStackCursor::MoveMultipleStepsContext ctx{direction, step, selecting,
+                                                  false, false};
+    execute(&PoolLayoutCursor::MoveMultipleStepsAction, symbolContext, &ctx);
+    *shouldRedrawLayout = ctx.m_shouldRedrawLayout;
+    return ctx.m_moved;
+  }
   void invalidateSizesAndPositions() override {
     m_rootLayout->invalidAllSizesPositionsAndBaselines();
   }
@@ -104,6 +124,12 @@ class PoolLayoutCursor final : public LayoutCursor,
                                  const Poincare::SymbolContext& symbolContext,
                                  const void* data);
   static void BeautifyRightOfRackAction(
+      TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
+      const void* data);
+  static void MoveAction(TreeStackCursor* cursor,
+                         const Poincare::SymbolContext& symbolContext,
+                         const void* data);
+  static void MoveMultipleStepsAction(
       TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
       const void* data);
 

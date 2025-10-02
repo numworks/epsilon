@@ -131,9 +131,6 @@ bool TreeStackCursor::move(OMG::Direction direction, bool selecting,
     stopSelecting();
   }
 
-  if (*shouldRedrawLayout) {
-    invalidateSizesAndPositions();
-  }
   return moved;
 }
 

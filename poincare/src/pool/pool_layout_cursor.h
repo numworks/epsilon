@@ -67,6 +67,9 @@ class PoolLayoutCursor final : public LayoutCursor,
     MoveContext ctx{direction, selecting, false, false};
     execute(&PoolLayoutCursor::MoveAction, symbolContext, &ctx);
     *shouldRedrawLayout = ctx.m_shouldRedrawLayout;
+    if (shouldRedrawLayout) {
+      invalidateSizesAndPositions();
+    }
     return ctx.m_moved;
   }
   bool moveMultipleSteps(OMG::Direction direction, int step, bool selecting,
@@ -76,9 +79,12 @@ class PoolLayoutCursor final : public LayoutCursor,
     MoveMultipleStepsContext ctx{direction, step, selecting, false, false};
     execute(&PoolLayoutCursor::MoveMultipleStepsAction, symbolContext, &ctx);
     *shouldRedrawLayout = ctx.m_shouldRedrawLayout;
+    if (shouldRedrawLayout) {
+      invalidateSizesAndPositions();
+    }
     return ctx.m_moved;
   }
-  void invalidateSizesAndPositions() override {
+  void invalidateSizesAndPositions() {
     m_rootLayout->invalidAllSizesPositionsAndBaselines();
   }
 

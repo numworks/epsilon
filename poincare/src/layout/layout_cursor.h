@@ -239,6 +239,11 @@ class TreeStackCursor : public LayoutCursor {
       const Poincare::SymbolContext& symbolContext = EmptySymbolContext{},
       bool forceRight = false, bool forceLeft = false,
       bool collapseSiblings = true);
+  void stealAndInsertLayout(
+      Tree* l,
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{},
+      bool forceRight = false, bool forceLeft = false,
+      bool collapseSiblings = true);
 
   /* Deletion */
   void performBackspace(

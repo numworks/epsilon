@@ -32,12 +32,17 @@ SOURCES_apps += $(addprefix $(PATH_apps)/statistics/,$(addsuffix :-test, \
   data/store_parameter_controller.cpp \
   app.cpp \
   stat_icon.png \
+  bar_icon.png \
+  pie_icon.png \
   box_icon.png \
   histogram_icon.png \
   cumulative_icon.png \
   statistics_normal_icon.png \
   statistics_type_controller.cpp \
   statistics_type_view_model.cpp \
+  $(addprefix categorical/, \
+    graph/graph_view_model.cpp \
+  ) \
 ) \
   store.cpp \
   test/store.cpp:+test \
@@ -52,6 +57,13 @@ $(addprefix apps/statistics/, \
   histogram_icon.png \
   cumulative_icon.png \
   statistics_normal_icon.png \
+))
+
+$(call depends_on_transparent_image, \
+apps/statistics/categorical/graph/graph_view_model.cpp, \
+$(addprefix apps/statistics/, \
+  bar_icon.png \
+  pie_icon.png \
 ))
 
 $(call i18n_with_universal,statistics/i18n/base)

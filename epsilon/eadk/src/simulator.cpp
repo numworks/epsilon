@@ -22,7 +22,7 @@ void _eadk_keyboard_scan_do_scan() {
   s_state = Ion::Keyboard::scan();
 }
 
-uint32_t _eadk_keyboard_scan_low() { return s_state % UINT32_MAX; }
+uint32_t _eadk_keyboard_scan_low() { return s_state & UINT32_MAX; }
 uint32_t _eadk_keyboard_scan_high() { return s_state / UINT32_MAX; }
 
 eadk_event_t eadk_event_get(int32_t* timeout) {

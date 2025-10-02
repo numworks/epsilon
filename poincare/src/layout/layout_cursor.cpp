@@ -346,9 +346,8 @@ void TreeStackCursor::insertLayout(const Poincare::SymbolContext& symbolContext,
   bool autocompletedPairInserted =
       (numberOfInsertedChildren == 1) && ref->child(0)->isAutocompletedPair();
   TreeRef toCollapse = numberOfInsertedChildren == 1 ? ref->child(0) : nullptr;
-  /* AddOrMergeLayoutAtIndex will replace current layout with an
-   * HorizontalLayout if needed. With this assert, m_position is guaranteed to
-   * be preserved. */
+  /* AddOrMergeLayoutAtIndex will replace current layout with an RackLayout if
+   * needed. With this assert, m_position is guaranteed to be preserved. */
   assert(cursorRack()->isRackLayout() &&
          (cursorRack() == rootRack() ||
           !rootRack()->parentOfDescendant(cursorRack())->isRackLayout()));

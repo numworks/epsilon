@@ -222,29 +222,24 @@ class TreeStackCursor : public LayoutCursor,
   void insertText(
       const char* text,
       const Poincare::SymbolContext& symbolContext = EmptySymbolContext{},
-      bool forceRight = false, bool forceLeft = false,
-      bool linearMode = false) {
-    InsertTextContext insertTextContext{text, forceRight, forceLeft,
-                                        linearMode};
-    insertText(symbolContext, &insertTextContext);
-  }
+      bool forceRight = false, bool forceLeft = false, bool linearMode = false);
   void insertLayout(
       const Tree* l,
       const Poincare::SymbolContext& symbolContext = EmptySymbolContext{},
       bool forceRight = false, bool forceLeft = false,
-      bool collapseSiblings = true) {
-    InsertLayoutContext insertLayoutContext{l, forceRight, forceLeft,
-                                            collapseSiblings};
-    insertLayout(symbolContext, &insertLayoutContext);
-  }
+      bool collapseSiblings = true);
 
   /* Deletion */
-  void performBackspace() { performBackspace(EmptySymbolContext{}, nullptr); }
+  void performBackspace(
+      const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
 
  private:
   // TreeStackCursor Actions
   void performBackspace(const Poincare::SymbolContext& symbolContext,
-                        const void* nullptrData);
+                        const void* nullptrData) {
+    assert(nullptrData == nullptr);
+    performBackspace(symbolContext);
+  }
   void deleteAndResetSelection(const Poincare::SymbolContext& symbolContext,
                                const void* nullptrData);
   struct InsertLayoutContext {
@@ -254,13 +249,23 @@ class TreeStackCursor : public LayoutCursor,
     bool m_collapseSiblings = true;
   };
   void insertLayout(const Poincare::SymbolContext& symbolContext,
-                    const void* insertLayoutContext);
+                    const void* insertLayoutContext) {
+    const InsertLayoutContext* context =
+        static_cast<const InsertLayoutContext*>(insertLayoutContext);
+    insertLayout(context->m_tree, symbolContext, context->m_forceRight,
+                 context->m_forceLeft, context->m_collapseSiblings);
+  }
   struct InsertTextContext {
     const char* m_text;
     bool m_forceRight, m_forceLeft, m_linearMode;
   };
   void insertText(const Poincare::SymbolContext& symbolContext,
-                  const void* insertTextContext);
+                  const void* insertTextContext) {
+    const InsertTextContext* context =
+        static_cast<const InsertTextContext*>(insertTextContext);
+    insertText(context->m_text, symbolContext, context->m_forceRight,
+               context->m_forceLeft, context->m_linearMode);
+  }
   void balanceAutocompletedBracketsAndKeepAValidCursor();
 
   void privateDelete(DeletionMethod deletionMethod,

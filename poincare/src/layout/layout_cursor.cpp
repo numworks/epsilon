@@ -212,22 +212,16 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(Rack* rack,
 }
 
 /* const Tree* insertion */
-void TreeStackCursor::insertLayout(const Poincare::SymbolContext& symbolContext,
-                                   const void* data) {
-  const InsertLayoutContext* insertLayoutContext =
-      static_cast<const InsertLayoutContext*>(data);
-  bool forceRight = insertLayoutContext->m_forceRight;
-  bool forceLeft = insertLayoutContext->m_forceLeft;
-
-  const Tree* tree = insertLayoutContext->m_tree;
-
+void TreeStackCursor::insertLayout(const Tree* tree,
+                                   const Poincare::SymbolContext& symbolContext,
+                                   bool forceRight, bool forceLeft,
+                                   bool collapseSiblings) {
   if (tree->isRackLayout() && Rack::IsEmpty(tree)) {
     return;
   }
 
-  Tree* copy = SharedTreeStack->contains(tree)
-                   ? const_cast<Tree*>(insertLayoutContext->m_tree)
-                   : tree->cloneTree();
+  Tree* copy = SharedTreeStack->contains(tree) ? const_cast<Tree*>(tree)
+                                               : tree->cloneTree();
   // We need to keep track of the node which must live in the TreeStack
   // TODO: do we need ConstReferences on const Nodes in the pool ?
   TreeRef ref(copy);
@@ -363,7 +357,7 @@ void TreeStackCursor::insertLayout(const Poincare::SymbolContext& symbolContext,
    * not merged */
   if (numberOfInsertedChildren == 1 && !autocompletedPairInserted) {
     // ref is undef
-    if (insertLayoutContext->m_collapseSiblings) {
+    if (collapseSiblings) {
       collapseSiblingsOfLayout(Layout::From(toCollapse));
       assert(position() <= cursorRack()->numberOfChildren());
     }
@@ -391,15 +385,10 @@ void TreeStackCursor::insertLayout(const Poincare::SymbolContext& symbolContext,
   }
 }
 
-void TreeStackCursor::insertText(const Poincare::SymbolContext& symbolContext,
-                                 const void* data) {
-  const InsertTextContext* insertTextContext =
-      static_cast<const InsertTextContext*>(data);
-  const char* text = insertTextContext->m_text;
-  bool forceCursorRightOfText = insertTextContext->m_forceRight;
-  bool forceCursorLeftOfText = insertTextContext->m_forceLeft;
-  bool linearMode = insertTextContext->m_linearMode;
-
+void TreeStackCursor::insertText(const char* text,
+                                 const Poincare::SymbolContext& symbolContext,
+                                 bool forceCursorRightOfText,
+                                 bool forceCursorLeftOfText, bool linearMode) {
   UTF8Decoder decoder(text);
 
   CodePoint codePoint = decoder.nextCodePoint();
@@ -429,9 +418,8 @@ void TreeStackCursor::insertText(const Poincare::SymbolContext& symbolContext,
          * and force the cursor left of it. */
         assert(currentSubscriptDepth == 0);
         (void)currentSubscriptDepth;
-        TreeStackCursor::InsertLayoutContext insertLayoutContext{
-            layoutToInsert, forceCursorRightOfText, forceCursorLeftOfText};
-        insertLayout(symbolContext, &insertLayoutContext);
+        insertLayout(layoutToInsert, symbolContext, forceCursorRightOfText,
+                     forceCursorLeftOfText);
         layoutToInsert = KRackL()->cloneTree();
         currentLayout = layoutToInsert;
         forceCursorLeftOfText = true;
@@ -484,8 +472,7 @@ void TreeStackCursor::insertText(const Poincare::SymbolContext& symbolContext,
 }
 
 void TreeStackCursor::performBackspace(
-    const Poincare::SymbolContext& symbolContext, const void* data) {
-  assert(data == nullptr);
+    const Poincare::SymbolContext& symbolContext) {
   if (isSelecting()) {
     return deleteAndResetSelection(symbolContext, nullptr);
   }

@@ -23,7 +23,9 @@ class QueueJournal : public Ion::Events::Journal {
       }
       size_t len = strlen(systemBuffer);
       /* Changed a Paste that uses the system clipboard into an ExternalText to
-       * preserve pasted content:
+       * preserve pasted content.
+       * `strlcpy` always end with a null-byte so this is the number of events
+       * based on copied length:
        *  1 <=len<= 9 = 1 event
        *  10<=len<=18 = 2 events
        *  19<=len<=27 = 3 events */

@@ -92,9 +92,9 @@ bool LayoutCursor::isOnEmptySquare() const {
 }
 
 /* Move */
-bool LayoutCursor::move(OMG::Direction direction, bool selecting,
-                        bool* shouldRedrawLayout,
-                        const Poincare::SymbolContext& symbolContext) {
+bool TreeStackCursor::move(OMG::Direction direction, bool selecting,
+                           bool* shouldRedrawLayout,
+                           const Poincare::SymbolContext& symbolContext) {
   *shouldRedrawLayout = false;
   if (!selecting && isSelecting()) {
     stopSelecting();
@@ -137,7 +137,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   return moved;
 }
 
-bool LayoutCursor::moveMultipleSteps(
+bool TreeStackCursor::moveMultipleSteps(
     OMG::Direction direction, int step, bool selecting,
     bool* shouldRedrawLayout, const Poincare::SymbolContext& symbolContext) {
   assert(step > 0);
@@ -607,7 +607,7 @@ void LayoutCursor::setCursorRack(Rack* l, int childIndex,
   moveCursorToLayout(l->child(childIndex), side);
 }
 
-bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
+bool TreeStackCursor::horizontalMove(OMG::HorizontalDirection direction) {
   Tree* nextLayout = nullptr;
   /* Search the nextLayout on the left/right to ask it where
    * the cursor should go when entering from outside.
@@ -745,7 +745,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
   return true;
 }
 
-bool LayoutCursor::verticalMove(OMG::VerticalDirection direction) {
+bool TreeStackCursor::verticalMove(OMG::VerticalDirection direction) {
   Tree* previousLayout = cursorRack();
   bool moved = verticalMoveWithoutSelection(direction);
 
@@ -796,7 +796,7 @@ static TreeCursor ClosestCursorInDescendantsOfRack(LayoutCursor* currentCursor,
   return result;
 }
 
-bool LayoutCursor::verticalMoveWithoutSelection(
+bool TreeStackCursor::verticalMoveWithoutSelection(
     OMG::VerticalDirection direction) {
   /* Step 1:
    * Try to enter right or left layout if it can be entered through up/down
@@ -971,7 +971,7 @@ void TreeStackCursor::privateDelete(DeletionMethod deletionMethod,
   NAry::RemoveChildAtIndex(m_cursorRackRef, m_position);
 }
 
-void LayoutCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
+void TreeStackCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
   if (!RackLayout::IsEmpty(cursorRack())) {
     return;
   }
@@ -987,7 +987,7 @@ void LayoutCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
                      OMG::HorizontalDirection::Left());
 }
 
-void LayoutCursor::collapseSiblingsOfLayout(Layout* l) {
+void TreeStackCursor::collapseSiblingsOfLayout(Layout* l) {
   using namespace OMG;
   for (HorizontalDirection dir : {Direction::Right(), Direction::Left()}) {
     if (CursorMotion::ShouldCollapseSiblingsOnDirection(l, dir)) {
@@ -997,7 +997,7 @@ void LayoutCursor::collapseSiblingsOfLayout(Layout* l) {
   }
 }
 
-void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
+void TreeStackCursor::collapseSiblingsOfLayoutOnDirection(
     Layout* l, OMG::HorizontalDirection direction, int absorbingChildIndex) {
   Rack* rack = cursorRack();
   assert(rack->indexOfChild(l) != -1);

@@ -79,8 +79,8 @@ class PoolLayoutCursor final : public LayoutCursor,
     // Don't use rack here as it may be invalid during execute
     m_cursorRack = rack - Rack::From(static_cast<Tree*>(rootRack()));
   }
-  bool beautifyRightOfRack(
-      Rack* rack, const Poincare::SymbolContext& symbolContext) override;
+  bool beautifyRightOfRack(Rack* rack,
+                           const Poincare::SymbolContext& symbolContext);
 
   Poincare::Layout m_rootLayout;
   int m_cursorRack;

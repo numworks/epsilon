@@ -22,7 +22,7 @@ void SequenceToolboxDataSource::buildExtraCellsLayouts(const char* sequenceName,
     return;
   }
   /* The cells added represent the sequence at smaller ranks than its depth
-   * and the other sequence at ranks smaller or equal to the depth, ie:
+   * and the other sequences at ranks smaller or equal to the depth, i.e.:
    * if the sequence is u(n+1), we add cells u(n), v(n), v(n+1), w(n), w(n+1).
    * There is a special case for double recurrent sequences because we do not
    * want to parse symbols u(n+2), v(n+2) or w(n+2).

@@ -27,7 +27,7 @@ constexpr ScriptTemplate mandelbrotScriptTemplate(
 import kandinsky
 def mandelbrot(N_iteration):
   for x in range(320):
-    for y in range(222):
+    for y in range(112):
 # Compute the mandelbrot sequence for the point c = (c_r, c_i) with start value z = (z_r, z_i)
       z = complex(0,0)
 # Rescale to fit the drawing screen 320x222
@@ -40,7 +40,8 @@ def mandelbrot(N_iteration):
       rgb = int(255*i/N_iteration)
       col = kandinsky.color(int(rgb),int(rgb*0.75),int(rgb*0.25))
 # Draw a pixel colored in 'col' at position (x,y)
-      kandinsky.set_pixel(x,y,col))");
+      kandinsky.set_pixel(x,y,col)
+      kandinsky.set_pixel(x,222-y,col))");
 
 constexpr ScriptTemplate polynomialScriptTemplate("polynomial.py",
                                                   R"(from math import *

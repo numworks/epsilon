@@ -91,6 +91,7 @@ void ListParameterController::viewWillAppear() {
   if (!m_record.isNull()) {
     updateFirstRankCell();
     updateDisplayNotationCell();
+    m_notationCell.subLabel()->setLayout(sequence()->definitionName());
   }
   Shared::ListParameterController::viewWillAppear();
 }

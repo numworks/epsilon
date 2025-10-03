@@ -227,7 +227,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       zoom.range(true, normalizeRange || tryNormalizedRange);
 
   if (!normalizeRange && tryNormalizedRange) {
-    // Cancel normalization if the normalized range is too much bigger.
+    // Cancel normalization if the normalized range is too extended
     Range2D<float> unNormalizedRange = zoom.range(true, false);
     float xRangeRatio =
         newRange.x()->length() / unNormalizedRange.x()->length();
@@ -239,8 +239,8 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
     assert(xRangeRatio == 1.f || yRangeRatio == 1.f);
 
     float rangeRatio = xRangeRatio + yRangeRatio - 1.0f;
-    /* Normalization is sometimes already enforced in Zoom::range so rangeRatio
-     * should be capped. */
+    /* Normalization is also enforced in Zoom::range when ranges are close.
+     * rangeRatio is therefore either 1 or higher than Zoom's ratio. */
     constexpr float k_maximalRatio = 5.f;
     assert(rangeRatio == 1.0f ||
            rangeRatio * Zoom<float>::k_minimalNormalizationCoverage >= 1.f);

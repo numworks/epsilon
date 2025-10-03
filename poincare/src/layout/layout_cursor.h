@@ -313,7 +313,7 @@ class RootedTreeStackCursor : public TreeStackCursor {
         m_rootRack(root) {}
 
   const Rack* rootRack() const override {
-    return static_cast<Rack*>(m_rootRack);
+    return static_cast<const Rack*>(m_rootRack);
   }
   Rack* rootRack() override { return static_cast<Rack*>(m_rootRack); }
 

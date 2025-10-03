@@ -56,7 +56,7 @@ class ListParameterController : public Shared::ListParameterController,
   }
   Escher::MenuCellWithEditableText<Escher::MessageTextView> m_firstRankCell;
   bool m_displayNotationCell;
-  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+  Escher::MenuCell<Escher::MessageTextView, Escher::LayoutView,
                    Escher::ChevronView>
       m_notationCell;
   NotationParameterController m_notationParameterController;

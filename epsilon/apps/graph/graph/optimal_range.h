@@ -8,7 +8,7 @@ namespace Graph {
 
 Poincare::Range2D<float> OptimalRange(
     bool computeX, bool computeY, Poincare::Range2D<float> originalRange,
-    const Shared::ContinuousFunctionStore* store, bool defaultRangeIsNormalized,
+    const Shared::ContinuousFunctionStore* store, bool normalizeRange,
     const Poincare::SymbolContext& symbolContext);
 
 }

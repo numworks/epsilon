@@ -51,7 +51,7 @@ static Coordinate2D<T> parametricExpressionEvaluator(T t, const void* model) {
 Range2D<float> OptimalRange(bool computeX, bool computeY,
                             Range2D<float> originalRange,
                             const ContinuousFunctionStore* store,
-                            const bool defaultRangeIsNormalized,
+                            const bool normalizeRange,
                             const SymbolContext& symbolContext) {
   constexpr float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
@@ -224,9 +224,9 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
   }
 
   Range2D<float> newRange =
-      zoom.range(true, defaultRangeIsNormalized || tryNormalizedRange);
+      zoom.range(true, normalizeRange || tryNormalizedRange);
 
-  if (!defaultRangeIsNormalized && tryNormalizedRange) {
+  if (!normalizeRange && tryNormalizedRange) {
     // Cancel normalization if the normalized range is too much bigger.
     Range2D<float> unNormalizedRange = zoom.range(true, false);
     float xRangeRatio =

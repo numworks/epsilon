@@ -85,6 +85,8 @@ constexpr I18n::Message Title(Poincare::Inference::Type type,
         default:
           OMG::unreachable();
       }
+    case TestType::ANOVA:
+      return I18n::Message::InputANOVAOneWayTitle;
     default:
       OMG::unreachable();
   }

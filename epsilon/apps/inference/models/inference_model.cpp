@@ -6,6 +6,7 @@
 #include <omg/unreachable.h>
 #include <poincare/statistics/inference.h>
 
+#include "anova_test.h"
 #include "goodness_test.h"
 #include "homogeneity_test.h"
 #include "one_mean_interval.h"
@@ -49,8 +50,7 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
         case TestType::TwoProportions:
           return new (target) TwoProportionsZTest();
         case TestType::ANOVA:
-          // TODO: create an ANOVATest class
-          return new (target) SlopeTTest{};
+          return new (target) ANOVATest{};
         case TestType::Slope:
           return new (target) SlopeTTest{};
         case TestType::Chi2:

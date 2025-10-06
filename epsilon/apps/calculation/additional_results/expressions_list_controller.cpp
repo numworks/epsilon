@@ -187,7 +187,7 @@ Layout ExpressionsListController::GetExactLayoutFromExpression(
     } else {
       *approximate = approximateLayout;
       if (isStrictlyEqual) {
-        *isStrictlyEqual = Poincare::ExactAndApproximateLayoutsAreStrictlyEqual(
+        *isStrictlyEqual = Poincare::IsCalculationOutputStrictEquality(
             exactExpression, approximateExpression,
             GlobalPreferences::SharedGlobalPreferences()
                 ->numberOfSignificantDigits(),

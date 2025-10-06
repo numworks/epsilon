@@ -5,9 +5,10 @@
 
 namespace Poincare {
 
-bool ExactAndApproximateLayoutsAreStrictlyEqual(
-    const UserExpression exact, const UserExpression approximate,
-    int numberOfSignificantDigits, const ProjectionContext& ctx) {
+bool IsCalculationOutputStrictEquality(const UserExpression exact,
+                                       const UserExpression approximate,
+                                       int numberOfSignificantDigits,
+                                       const ProjectionContext& ctx) {
   ProjectionContext ctxCopy = ctx;
   ctxCopy.m_advanceReduce = false;
   // Exact is projected and reduced to turn divisions into rationals
@@ -21,7 +22,7 @@ bool ExactAndApproximateLayoutsAreStrictlyEqual(
   assert(!approximate.isUninitialized());
   Internal::Tree* approximateProjected = approximate.tree()->cloneTree();
   Internal::Simplification::ProjectAndReduce(approximateProjected, &ctxCopy);
-  bool result = Internal::ExactAndApproximateLayoutsAreStrictlyEqual(
+  bool result = Internal::IsCalculationOutputStrictEquality(
       exactProjected, approximateProjected, numberOfSignificantDigits);
   approximateProjected->removeTree();
   exactProjected->removeTree();

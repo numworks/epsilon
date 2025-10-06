@@ -70,7 +70,7 @@ class ExpressionsListController
   static Poincare::Layout GetExactLayoutFromExpression(
       const Poincare::UserExpression e, const Poincare::ProjectionContext* ctx,
       Poincare::Layout* approximatedLayout = nullptr,
-      bool* exactAndApproximateExpressionsAreStrictlyEqual = nullptr);
+      bool* isStrictlyEqual = nullptr);
 
   // Memoization of layouts
   mutable Poincare::Layout m_layouts[k_maxNumberOfRows];

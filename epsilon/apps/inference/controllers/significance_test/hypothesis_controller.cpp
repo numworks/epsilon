@@ -15,6 +15,7 @@
 
 #include "inference/app.h"
 #include "inference/controllers/input_controller.h"
+#include "inference/models/aliases.h"
 
 using namespace Escher;
 
@@ -130,6 +131,10 @@ void HypothesisController::handleResponderChainEvent(
 
 bool HypothesisController::ButtonAction(HypothesisController* controller,
                                         void* s) {
+  if (controller->m_test->testType() == TestType::ANOVA) {
+    // TODO: open the next ANOVA controller
+    return true;
+  }
   ViewController* nextController = controller->m_inputController;
   if (controller->m_test->testType() == TestType::Slope) {
     nextController = controller->m_inputStoreController;

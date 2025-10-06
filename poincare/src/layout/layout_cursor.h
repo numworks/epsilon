@@ -147,10 +147,6 @@ class TreeCursor final : public LayoutCursor {
   Rack* m_cursor;
 };
 
-// TODO: use it in epsilon too
-bool DefaultLayoutForEvent(Ion::Events::Event event, const Tree** rack,
-                           bool* forceRight);
-
 template <class Cursor>
 class AddEmptyLayoutHelpers {
   void insertLayout(const Tree* l, const Poincare::SymbolContext& symbolContext,
@@ -203,8 +199,7 @@ class AddEmptyLayoutHelpers {
   }
 };
 
-class TreeStackCursor : public LayoutCursor,
-                        public AddEmptyLayoutHelpers<TreeStackCursor> {
+class TreeStackCursor : public LayoutCursor {
   friend class PoolLayoutCursor;
 
  public:

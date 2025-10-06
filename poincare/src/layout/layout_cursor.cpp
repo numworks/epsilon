@@ -151,32 +151,6 @@ bool TreeStackCursor::moveMultipleSteps(
   return true;
 }
 
-bool DefaultLayoutForEvent(Ion::Events::Event event, const Tree** rack,
-                           bool* forceRight) {
-  *forceRight = false;
-  using enum Ion::Events::EventId;
-  if (event == Division) {
-    *rack = KRackL(KFracL(""_l, ""_l));
-  } else if (event == Power) {
-    *rack = KRackL(KSuperscriptL(""_l));
-  } else if (event == Square) {
-    *rack = KRackL(KSuperscriptL("2"_l));
-    // Force the cursor right of the layout.
-    *forceRight = true;
-  } else if (event == NthRoot) {
-    *rack = KRackL(KRootL(""_l, ""_l));
-  } else if (event == Sqrt) {
-    *rack = KRackL(KSqrtL(""_l));
-  } else if (event == EE) {
-    *rack = KRackL(KSqrtL("×10"_l ^ KSuperscriptL(""_l)));
-  } else if (event == Exp) {
-    *rack = "e"_l ^ KSuperscriptL(""_l);
-  } else {
-    return false;
-  }
-  return true;
-}
-
 // TreeStackCursor
 
 bool TreeStackCursor::beautifyRightOfRack(

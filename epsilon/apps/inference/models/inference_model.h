@@ -25,8 +25,6 @@ namespace Inference {
 
 class InferenceModel : public Shared::StatisticalDistribution {
  public:
-  static constexpr int k_numberOfTests = 6;
-
   InferenceModel() : m_threshold(-1), m_degreesOfFreedom(NAN) { init(); }
   ~InferenceModel() { tidy(); }
   virtual void init() {}
@@ -50,10 +48,6 @@ class InferenceModel : public Shared::StatisticalDistribution {
   bool initializeDistribution(StatisticType statisticType);
   bool initializeCategoricalType(CategoricalType type);
 
-  int numberOfTestTypes() const {
-    // Confidence interval does not have Chi2
-    return k_numberOfTests - (subApp() == SubApp::SignificanceTest ? 0 : 1);
-  }
   int numberOfAvailableStatistics() const {
     return Poincare::Inference::NumberOfStatisticsForTest(testType());
   }

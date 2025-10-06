@@ -118,7 +118,7 @@ static PreprocessingResult PreprocessEquationList(
       OMG::unreachable();
   }
 
-  int expectedNumberOfUnknowns =
+  size_t expectedNumberOfUnknowns =
       nUndefinedVariables +
       (equationMetadata.overrideDefinedVariables ? nDefinedVariables : 0);
 
@@ -182,7 +182,7 @@ static PreprocessingResult PreprocessEquationList(
 
   // Step 3.3. Replace unkowns
 
-  for (int i = 0; i < equationMetadata.unknownVariables.size(); i++) {
+  for (size_t i = 0; i < equationMetadata.unknownVariables.size(); i++) {
     const char* variable = equationMetadata.unknownVariables[i];
     // TODO: Use a more precise complexSign when possible for better reduction.
     Variables::ReplaceSymbol(reducedEquationList, variable, i,
@@ -290,7 +290,7 @@ static uint32_t TagParametersUsedAsVariables(VariableArray variables) {
       OMG::Print::LengthOfUInt32(OMG::Base::Decimal, k_maxIndex);
   /* Only check local variables that may not have a global definition. The
    * others  will be checked for later. */
-  for (int i = 0; i < variables.size(); i++) {
+  for (size_t i = 0; i < variables.size(); i++) {
     // Set the k-th bit in tags if name == "t{k}" and 0th if name is "t"
     const char* variable = variables[i];
     if (variable[0] != k_parameterPrefix) {
@@ -558,7 +558,7 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
     uint32_t usedParameterIndices =
         TagParametersUsedAsVariables(equationMetadata.unknownVariables);
     size_t lastExtraVariableId = firstExtraVariableId + numberOfExtraVariables;
-    for (int j = firstExtraVariableId; j < lastExtraVariableId; j++) {
+    for (size_t j = firstExtraVariableId; j < lastExtraVariableId; j++) {
       // Generate a unique identifier t? that does not collide with variables.
       TreeRef symbol = GetNextParameterSymbol(
           &parameterIndex, usedParameterIndices, symbolContext);
@@ -614,7 +614,7 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
 
   int numberOfTerms = Polynomial::NumberOfTerms(polynomial);
   const Tree* coefficient = Polynomial::LeadingCoefficient(polynomial);
-  for (int i = 0; i < numberOfTerms; i++) {
+  for (size_t i = 0; i < numberOfTerms; i++) {
     int exponent = Polynomial::ExponentAtIndex(polynomial, i);
     if (exponent < PolynomialHelpers::NumberOfCoefficients(
                        PolynomialHelpers::k_maxSolvableDegree)) {
@@ -962,7 +962,7 @@ SolverResult ApproximateSolve(const Tree* equationList,
 
   TreeRef resultList = List::PushEmpty();
 
-  for (int i = 0; i <= maxNumberOfSolutions; i++) {
+  for (size_t i = 0; i <= maxNumberOfSolutions; i++) {
     double root = solver.nextRoot(preparedEquation).x();
     if (root < range.min()) {
       i--;

@@ -137,10 +137,10 @@ App::CalculationTab::CalculationTab()
 
 App::CategoricalStoreTab::CategoricalStoreTab()
     : m_storeController(
-          &m_tempEmpty, &m_storeHeader, &m_storeStackViewController,
-          &app()->m_categoricalTabViewController, &m_dataTypeController),
-      m_tempEmpty(&m_storeHeader, &m_storeController, &m_storeController),
-      m_storeHeader(&m_storeStackViewController, &m_tempEmpty,
+          &m_storeHeader, &m_storeHeader, &m_storeStackViewController,
+          &app()->m_categoricalTabViewController, &m_dataTypeController,
+          app()->snapshot()->categoricalTableData()),
+      m_storeHeader(&m_storeStackViewController, &m_storeController,
                     &m_storeController),
       m_dataTypeController(&m_storeStackViewController,
                            &m_storeStackViewController,

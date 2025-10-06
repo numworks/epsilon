@@ -1,35 +1,41 @@
 
 #include <apps/i18n.h>
+#include <apps/inference/text_helpers.h>
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/button_row_controller.h>
+#include <escher/highlight_cell.h>
 #include <escher/stack_view_controller.h>
 #include <escher/tab_view_controller.h>
+#include <shared/math_field_delegate.h>
+#include <shared/tab_table_controller.h>
 
-namespace Statistics {
+#include "table_data.h"
+#include "table_data_source.h"
 
-class CategoricalStoreController : public Escher::ViewController,
-                                   public Escher::AlternateEmptyViewDelegate,
-                                   public Escher::ButtonRowDelegate {
+namespace Statistics::Categorical {
+
+class StoreController : public Shared::TabTableController,
+                        public Escher::SelectableTableViewDelegate,
+                        public TableViewDataSource,
+                        public Escher::ButtonRowDelegate,
+                        public Shared::MathTextFieldDelegate {
  public:
-  CategoricalStoreController(Escher::Responder* parentResponder,
-                             Escher::ButtonRowController* header,
-                             Escher::StackViewController* stackViewController,
-                             Escher::TabViewController* tabViewController,
-                             Escher::ViewController* dataTypeController)
-      : Escher::ViewController(parentResponder),
-        Escher::ButtonRowDelegate(header, nullptr),
-        m_stackViewController(stackViewController),
-        m_tabController(tabViewController),
-        m_dataTypeController(dataTypeController),
-        m_dataTypeButton(
-            this, I18n::Message::DataType,
-            Escher::Invocation::Builder<CategoricalStoreController>(
-                [](CategoricalStoreController* controller, void* sender) {
-                  controller->pushTypeController();
-                  return true;
-                },
-                this),
-            KDFont::Size::Small) {}
+  StoreController(Escher::Responder* parentResponder,
+                  Escher::ButtonRowController* header,
+                  Escher::StackViewController* stackViewController,
+                  Escher::TabViewController* tabViewController,
+                  Escher::ViewController* dataTypeController,
+                  TableData* tableData);
+
+  // TextFieldDelegate
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
+                                    Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
+                                 Ion::Events::Event event) override;
+
+  // Categorical::TableViewDataSource
+  void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
+                                int row) override;
 
   // Escher::ButtonRowDelegate
   int numberOfButtons(
@@ -45,41 +51,34 @@ class CategoricalStoreController : public Escher::ViewController,
     return const_cast<Escher::SimpleButtonCell*>(&m_dataTypeButton);
   }
 
-  Escher::View* view() override { OMG::unreachable(); }
+  // TabTableController
+  Escher::Responder* tabController() const override { return m_tabController; }
+  Escher::SelectableTableView* selectableTableView() override {
+    return &m_selectableTableView;
+  }
 
   void pushTypeController() {
     m_stackViewController->push(m_dataTypeController);
   }
 
-  void handleResponderChainEvent(
-      Responder::ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::HasBecomeFirst) {
-      header()->setSelectedButton(0);
-    }
-  }
+  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 
-  bool handleEvent(Ion::Events::Event event) override {
-    if (event == Ion::Events::Up) {
-      if (header()->selectedButton() >= 0) {
-        header()->setSelectedButton(-1);
-        m_tabController->selectTab();
-      } else {
-        header()->setSelectedButton(0);
-      }
-      return true;
-    }
-    return false;
-  }
+ private:
+  bool recomputeDimensions();
+  void recomputeDimensionsAndReload();
 
-  // TEMP: AlternateEmptyViewDelegate
-  bool isEmpty() const override { return true; }
-  I18n::Message emptyMessage() override { return I18n::Message::Categorical; }
-  Escher::Responder* responderWhenEmpty() override { return this; }
+  static constexpr int k_maxNumberOfColumns =
+      TableData::k_maxNumberOfGroups + 1;
+  static constexpr int k_maxNumberOfRows = TableData::k_maxNumberOfCategory + 1;
+
+  Escher::SimpleButtonCell m_dataTypeButton;
+  Escher::SelectableTableView m_selectableTableView;
+  TableData* m_tableData;
 
   Escher::StackViewController* m_stackViewController;
   Escher::TabViewController* m_tabController;
   Escher::ViewController* m_dataTypeController;
-  Escher::SimpleButtonCell m_dataTypeButton;
 };
 
-}  // namespace Statistics
+}  // namespace Statistics::Categorical

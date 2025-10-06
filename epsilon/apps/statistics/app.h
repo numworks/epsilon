@@ -6,6 +6,7 @@
 #include <escher/tab_union_view_controller.h>
 
 #include "categorical/data/store_controller.h"
+#include "categorical/data/table_data.h"
 #include "categorical/graph/bar_graph_controller.h"
 #include "categorical/graph/graph_type_controller.h"
 #include "categorical/graph/pie_graph_controller.h"
@@ -52,6 +53,12 @@ class App : public Shared::StoreApp, public Escher::AlternateViewDelegate {
     const DataTypeViewModel* dataTypeViewModel() const {
       return &m_dataTypeViewModel;
     }
+    const Categorical::TableData* categoricalTableData() const {
+      return &m_categoricalTableData;
+    }
+    Categorical::TableData* categoricalTableData() {
+      return &m_categoricalTableData;
+    }
     UserPreferences* userPreferences() { return &m_userPreferences; }
     int8_t selectedSeries() const { return m_selectedSeries; }
     int16_t selectedIndex() const { return m_selectedIndex; }
@@ -65,6 +72,7 @@ class App : public Shared::StoreApp, public Escher::AlternateViewDelegate {
     }
 
    private:
+    Categorical::TableData m_categoricalTableData;
     uint32_t m_storeVersion;
     UserPreferences m_userPreferences;
     GraphViewModel m_graphViewModel;
@@ -162,8 +170,7 @@ class App : public Shared::StoreApp, public Escher::AlternateViewDelegate {
     Escher::ViewController* top() override {
       return &m_storeStackViewController;
     }
-    CategoricalStoreController m_storeController;
-    Escher::AlternateEmptyViewController m_tempEmpty;
+    Categorical::StoreController m_storeController;
     Escher::ButtonRowController m_storeHeader;
     DataTypeController m_dataTypeController;
     Escher::StackViewController::Default m_storeStackViewController;

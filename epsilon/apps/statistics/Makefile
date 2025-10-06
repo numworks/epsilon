@@ -41,6 +41,8 @@ SOURCES_apps += $(addprefix $(PATH_apps)/statistics/,$(addsuffix :-test, \
   statistics_type_controller.cpp \
   statistics_type_view_model.cpp \
   $(addprefix categorical/, \
+    data/store_controller.cpp \
+    data/table_data_source.cpp \
     graph/graph_view_model.cpp \
   ) \
 ) \

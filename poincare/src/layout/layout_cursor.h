@@ -53,10 +53,17 @@ class LayoutCursor {
   bool isUninitialized() const { return cursorRack() == nullptr; }
 
   // Getters and setters
-  virtual const Rack* rootRack() const = 0;
-  virtual Rack* rootRack() = 0;
-  virtual const Rack* cursorRack() const = 0;
-  virtual Rack* cursorRack() = 0;
+  const Rack* rootRack() const { return protectedRootRack(); }
+  const Rack* cursorRack() const { return protectedCursorRack(); }
+  Rack* rootRack() {
+    return const_cast<Rack*>(
+        const_cast<const LayoutCursor*>(this)->protectedRootRack());
+  }
+  Rack* cursorRack() {
+    return const_cast<Rack*>(
+        const_cast<const LayoutCursor*>(this)->protectedCursorRack());
+  }
+
   void moveCursorToLayout(Tree* l, OMG::HorizontalDirection sideOfLayout);
   int position() const { return m_position; }
   void setPosition(int position) { m_position = position; }
@@ -92,6 +99,8 @@ class LayoutCursor {
   int startOfSelection() const { return m_startOfSelection; }
 
  protected:
+  virtual const Rack* protectedRootRack() const = 0;
+  virtual const Rack* protectedCursorRack() const = 0;
   virtual void setCursorRack(Rack* rack) = 0;
   void setCursorRack(Rack* rack, int childIndex, OMG::HorizontalDirection side);
   int cursorRackOffset() const {
@@ -126,13 +135,12 @@ class TreeCursor final : public LayoutCursor {
   TreeCursor(Rack* root, Rack* cursor, int position)
       : LayoutCursor(position, -1), m_root(root), m_cursor(cursor) {}
 
-  const Rack* rootRack() const override { return m_root; }
-  Rack* rootRack() override { return m_root; }
-  const Rack* cursorRack() const override { return m_cursor; }
-  Rack* cursorRack() override { return m_cursor; }
   void setCursorRack(Rack* rack) override { assert(false); };
 
  private:
+  const Rack* protectedRootRack() const override { return m_root; }
+  const Rack* protectedCursorRack() const override { return m_cursor; }
+
   Rack* m_root;
   Rack* m_cursor;
 };
@@ -228,23 +236,16 @@ class TreeStackCursor : public LayoutCursor,
   void performBackspace(
       const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
 
+ private:
   /* LayoutCursor */
-  const Rack* rootRack() const override {
+  const Rack* protectedRootRack() const override {
     return static_cast<const Rack*>(
         Tree::FromBlocks(SharedTreeStack->firstBlock()));
   }
-  Rack* rootRack() override {
-    return static_cast<Rack*>(Tree::FromBlocks(SharedTreeStack->firstBlock()));
-  }
-  const Rack* cursorRack() const override {
-    return static_cast<const Rack*>(static_cast<const Tree*>(m_cursorRackRef));
+  const Rack* protectedCursorRack() const override {
+    return static_cast<const Rack*>(static_cast<Tree*>(m_cursorRackRef));
   }
 
-  Rack* cursorRack() override {
-    return static_cast<Rack*>(static_cast<Tree*>(m_cursorRackRef));
-  }
-
- private:
   void balanceAutocompletedBracketsAndKeepAValidCursor();
   void deleteAndResetSelection(const Poincare::SymbolContext& symbolContext,
                                const void* nullptrData);
@@ -275,12 +276,11 @@ class RootedTreeStackCursor : public TreeStackCursor {
             position, -1, cursor->block() - SharedTreeStack->firstBlock()),
         m_rootRack(root) {}
 
-  const Rack* rootRack() const override {
+ private:
+  const Rack* protectedRootRack() const override {
     return static_cast<const Rack*>(m_rootRack);
   }
-  Rack* rootRack() override { return static_cast<Rack*>(m_rootRack); }
 
- private:
   Tree* m_rootRack;
 };
 

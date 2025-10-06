@@ -27,13 +27,6 @@ class PoolLayoutCursor final : public LayoutCursor,
 
   Poincare::Layout rootLayout() { return m_rootLayout; }
 
-  Rack* rootRack() override { return static_cast<Rack*>(m_rootLayout.tree()); }
-  const Rack* rootRack() const override {
-    return static_cast<const Rack*>(m_rootLayout.tree());
-  }
-  Rack* cursorRack() override { return rootRack() + m_cursorRack; }
-  const Rack* cursorRack() const override { return rootRack() + m_cursorRack; }
-
   /* Layout insertion */
   void insertText(const char* text,
                   const Poincare::SymbolContext& symbolContext =
@@ -91,6 +84,13 @@ class PoolLayoutCursor final : public LayoutCursor,
   void beautifyLeft(const Poincare::SymbolContext& symbolContext);
 
  private:
+  const Rack* protectedRootRack() const override {
+    return static_cast<Rack*>(m_rootLayout.tree());
+  }
+  const Rack* protectedCursorRack() const override {
+    return rootRack() + m_cursorRack;
+  }
+
   TreeStackCursor createTreeStackCursor() const {
     return TreeStackCursor(m_position, m_startOfSelection, cursorRackOffset());
   }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ion/events.h>
 #include <omg/directions.h>
 #include <omg/unreachable.h>
 #include <poincare/preferences.h>
@@ -145,6 +146,10 @@ class TreeCursor final : public LayoutCursor {
   Rack* m_root;
   Rack* m_cursor;
 };
+
+// TODO: use it in epsilon too
+bool DefaultLayoutForEvent(Ion::Events::Event event, const Tree** rack,
+                           bool* forceRight);
 
 template <class Cursor>
 class AddEmptyLayoutHelpers {

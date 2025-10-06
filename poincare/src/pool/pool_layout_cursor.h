@@ -95,9 +95,10 @@ class PoolLayoutCursor final : public LayoutCursor,
     return TreeStackCursor(m_position, m_startOfSelection, cursorRackOffset());
   }
   void applyTreeStackCursor(TreeStackCursor cursor);
-  typedef void (*Action)(TreeStackCursor* cursor,
-                         const Poincare::SymbolContext& symbolContext,
-                         const void* data);
+
+  using Action = void (*)(TreeStackCursor* cursor,
+                          const Poincare::SymbolContext& symbolContext,
+                          const void* data);
 
   void execute(Action action,
                const Poincare::SymbolContext& symbolContext =

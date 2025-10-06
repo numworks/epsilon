@@ -37,6 +37,7 @@ TestController::TestController(StackViewController* parentResponder,
   cell(k_indexOfTwoMeans)->label()->setMessage(I18n::Message::TwoMeans);
   cell(k_indexOfChiSquare)->label()->setMessage(I18n::Message::ChiSquare);
   cell(k_indexOfChiSquare)->subLabel()->setMessage(I18n::Message::Chi2Test);
+  cell(k_indexOfANOVA)->label()->setMessage(I18n::Message::ANOVAOneWay);
   cell(k_indexOfSlope)->label()->setMessage(I18n::Message::Slope);
   // Init selection
   selectRow(0);
@@ -78,6 +79,8 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     testType = TestType::OneMean;
   } else if (row == k_indexOfTwoMeans) {
     testType = TestType::TwoMeans;
+  } else if (row == k_indexOfANOVA) {
+    testType = TestType::ANOVA;
   } else if (row == k_indexOfSlope) {
     testType = TestType::Slope;
   } else {
@@ -116,9 +119,11 @@ void TestController::viewWillAppear() {
   cell(k_indexOfTwoMeans)
       ->subLabel()
       ->setMessage(m_inference->tOrZStatisticMessage());
-  /* Chi-square is only available in the Test sub-app, not in the Interval
-   * sub-app */
+  /* Chi-square and ANOVA are only available in the Test sub-app, not in the
+   * Interval sub-app */
   cell(k_indexOfChiSquare)
+      ->setVisible(m_inference->subApp() == SubApp::SignificanceTest);
+  cell(k_indexOfANOVA)
       ->setVisible(m_inference->subApp() == SubApp::SignificanceTest);
   cell(k_indexOfSlope)
       ->subLabel()

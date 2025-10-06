@@ -1,3 +1,4 @@
+ANOVAOneWay = "ANOVA unidirecional"
 Chi2Test = "Teste do χ2"
 Confidence = "Confiança"
 ConfidenceInterval = "Intervalo de confiança"

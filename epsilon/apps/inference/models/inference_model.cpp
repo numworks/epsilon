@@ -48,6 +48,9 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
           return new (target) OneProportionZTest();
         case TestType::TwoProportions:
           return new (target) TwoProportionsZTest();
+        case TestType::ANOVA:
+          // TODO: create an ANOVATest class
+          return new (target) SlopeTTest{};
         case TestType::Slope:
           return new (target) SlopeTTest{};
         case TestType::Chi2:

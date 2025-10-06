@@ -24,17 +24,23 @@ constexpr CodePoint k_defaultXNTCycle[] = {
     CodePoints::k_polarSymbol,
     UCodePointNull,
 };
+
+#if POINCARE_DIFF | POINCARE_INTEGRAL
 constexpr CodePoint k_defaultContinuousXNTCycle[] = {
     CodePoints::k_cartesianSymbol,
     CodePoints::k_parametricSymbol,
     CodePoints::k_polarSymbol,
     UCodePointNull,
 };
+#endif
+
+#if POINCARE_SUM_AND_PRODUCT | POINCARE_LIST
 constexpr CodePoint k_defaultDiscreteXNTCycle[] = {
     'k',
     'n',
     UCodePointNull,
 };
+#endif
 
 static int indexOfCodePointInCycle(CodePoint codePoint,
                                    const CodePoint* cycle) {

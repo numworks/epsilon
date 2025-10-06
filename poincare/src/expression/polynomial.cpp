@@ -434,12 +434,12 @@ Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
   poly = Parse(poly, symbol);
   TreeRef result;
   if (poly->isPolynomial()) {
-    int degree = Polynomial::Degree(poly);
+    size_t degree = Polynomial::Degree(poly);
     if (0 <= degree && degree <= PolynomialHelpers::k_maxSolvableDegree) {
       result = SharedTreeStack->pushList(0);
       int numberOfTerms = Polynomial::NumberOfTerms(poly);
       int indexExponent = numberOfTerms - 1;
-      for (int i = 0; i <= degree; i++) {
+      for (size_t i = 0; i <= degree; i++) {
         if (0 <= indexExponent &&
             i == Polynomial::ExponentAtIndex(poly, indexExponent)) {
           addChildToNAryWithDependencies(result, poly->child(indexExponent + 1),
@@ -485,7 +485,7 @@ bool PolynomialParser::HasNonNullCoefficients(
   if (!coefList) {
     return false;
   }
-  int degree = coefList->numberOfChildren() - 1;
+  size_t degree = coefList->numberOfChildren() - 1;
   assert(0 <= degree && degree <= PolynomialHelpers::k_maxSolvableDegree);
 
   assert(highestDegreeCoefficientIsPositive);

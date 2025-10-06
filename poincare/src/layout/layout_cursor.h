@@ -1,6 +1,5 @@
 #pragma once
 
-#include <ion/events.h>
 #include <omg/directions.h>
 #include <omg/unreachable.h>
 #include <poincare/preferences.h>

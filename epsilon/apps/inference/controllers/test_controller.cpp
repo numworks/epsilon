@@ -125,6 +125,7 @@ void TestController::viewWillAppear() {
       ->setVisible(m_inference->subApp() == SubApp::SignificanceTest);
   cell(k_indexOfANOVA)
       ->setVisible(m_inference->subApp() == SubApp::SignificanceTest);
+  cell(k_indexOfANOVA)->subLabel()->setMessage(I18n::Message::FTest);
   cell(k_indexOfSlope)
       ->subLabel()
       ->setMessage(m_inference->tStatisticMessage());

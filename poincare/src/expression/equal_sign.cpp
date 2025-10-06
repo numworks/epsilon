@@ -24,9 +24,9 @@ bool isExpectedExpression(const Tree* expr) {
           isExpectedExpression(expr->child(0)));
 }
 
-bool ExactAndApproximateLayoutsAreStrictlyEqual(const Tree* exact,
-                                                const Tree* approximate,
-                                                int significantDigits) {
+bool IsCalculationOutputStrictEquality(const Tree* exact,
+                                       const Tree* approximate,
+                                       int significantDigits) {
   assert(exact && approximate);
   // If projection failed, exact can be not system
   assert(Simplification::IsSystem(approximate));
@@ -63,8 +63,8 @@ bool ExactAndApproximateLayoutsAreStrictlyEqual(const Tree* exact,
   }
   const Tree* approxChild = approximate->nextNode();
   for (const Tree* exactChild : exact->children()) {
-    if (!ExactAndApproximateLayoutsAreStrictlyEqual(exactChild, approxChild,
-                                                    significantDigits)) {
+    if (!IsCalculationOutputStrictEquality(exactChild, approxChild,
+                                           significantDigits)) {
       return false;
     }
     approxChild = approxChild->nextTree();

@@ -228,7 +228,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     assert(approximateLength <= ::Constant::MaxSerializedExpressionSize);
     if (strcmp(exactBuffer, approximateBuffer) == 0) {
       exactLayout = Layout();
-    } else if (Poincare::ExactAndApproximateLayoutsAreStrictlyEqual(
+    } else if (Poincare::IsCalculationOutputStrictEquality(
                    exact, approximate,
                    GlobalPreferences::SharedGlobalPreferences()
                        ->numberOfSignificantDigits())) {

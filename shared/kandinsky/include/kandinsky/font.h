@@ -165,7 +165,9 @@ class KDFont {
 #endif
                    const uint8_t* data)
       : m_glyphSize(glyphWidth, glyphHeight),
+#if KANDINSKY_FONT_COMPRESS
         m_glyphDataOffset(glyphDataOffset),
+#endif
 #if KANDINSKY_FONT_VARIABLE_WIDTH
         m_glyphWidths(widths),
 #endif
@@ -194,7 +196,9 @@ class KDFont {
   }
 
   KDSize m_glyphSize;
+#if KANDINSKY_FONT_COMPRESS
   const uint16_t* m_glyphDataOffset;
+#endif
 #if KANDINSKY_FONT_VARIABLE_WIDTH
   const uint8_t* m_glyphWidths;
 #endif

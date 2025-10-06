@@ -1,3 +1,4 @@
+ANOVAOneWay = "ANOVA eenzijdig"
 Chi2Test = "χ2-toets"
 Confidence = "Betrouwbaarheid"
 ConfidenceInterval = "Betrouwbaarheidsinterval"

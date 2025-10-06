@@ -16,7 +16,7 @@ class TypeController;
 class InputController;
 class InputStoreController;
 
-static constexpr int k_numberOfTests = 6;
+static constexpr int k_numberOfTests = 7;
 
 class TestController
     : public Escher::UniformSelectableListController<
@@ -40,7 +40,8 @@ class TestController
   constexpr static int k_indexOfTwoProps = 2;
   constexpr static int k_indexOfTwoMeans = 3;
   constexpr static int k_indexOfChiSquare = 4;
-  constexpr static int k_indexOfSlope = 5;
+  constexpr static int k_indexOfANOVA = 5;
+  constexpr static int k_indexOfSlope = 6;
 
  protected:
   void handleResponderChainEvent(ResponderChainEvent event) override;

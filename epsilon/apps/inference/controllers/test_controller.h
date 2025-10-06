@@ -16,11 +16,13 @@ class TypeController;
 class InputController;
 class InputStoreController;
 
+static constexpr int k_numberOfTests = 6;
+
 class TestController
     : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::ChevronView>,
-          InferenceModel::k_numberOfTests> {
+          k_numberOfTests> {
  public:
   TestController(Escher::StackViewController* parentResponder,
                  HypothesisController* hypothesisController,

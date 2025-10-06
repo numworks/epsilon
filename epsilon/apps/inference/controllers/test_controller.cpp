@@ -9,6 +9,7 @@
 #include <poincare/statistics/inference.h>
 
 #include "chi_square/categorical_type_controller.h"
+#include "inference/models/aliases.h"
 #include "significance_test/hypothesis_controller.h"
 #include "type_controller.h"
 
@@ -115,8 +116,10 @@ void TestController::viewWillAppear() {
   cell(k_indexOfTwoMeans)
       ->subLabel()
       ->setMessage(m_inference->tOrZStatisticMessage());
+  /* Chi-square is only available in the Test sub-app, not in the Interval
+   * sub-app */
   cell(k_indexOfChiSquare)
-      ->setVisible(m_inference->numberOfTestTypes() == numberOfRows());
+      ->setVisible(m_inference->subApp() == SubApp::SignificanceTest);
   cell(k_indexOfSlope)
       ->subLabel()
       ->setMessage(m_inference->tStatisticMessage());

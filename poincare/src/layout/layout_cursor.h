@@ -272,9 +272,11 @@ class TreeStackCursor : public LayoutCursor {
 class RootedTreeStackCursor : public TreeStackCursor {
  public:
   RootedTreeStackCursor() : m_rootRack(nullptr) {}
-  RootedTreeStackCursor(Tree* root, Tree* cursor, int position = 0)
+  RootedTreeStackCursor(Tree* root, Tree* cursor, int position,
+                        int startOfSelection = -1)
       : Poincare::Internal::TreeStackCursor(
-            position, -1, cursor->block() - SharedTreeStack->firstBlock()),
+            position, startOfSelection,
+            cursor->block() - SharedTreeStack->firstBlock()),
         m_rootRack(root) {}
 
  private:

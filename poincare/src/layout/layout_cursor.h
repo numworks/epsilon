@@ -18,7 +18,7 @@ namespace Poincare::Internal {
 
 /* There are two main cursor classes:
  *  - LayoutCursor has all the method that doesn't need to modify the underlying
- *    Layout. This underlying layout may leave anywhere.
+ *    Layout. This underlying layout may live anywhere.
  *  - TreeStackCursor must point to a layout in the TreeStack and is able to
  *    alter it to perform insertions and backspace.
  *    The usual cursor motion move is in TreeStackCursor since it can trigger a
@@ -26,9 +26,10 @@ namespace Poincare::Internal {
  */
 
 /* The LayoutCursor has 3 main attributes:
- *   - m_rootLayout: the root rack Layout (only in LayoutBufferCursor)
- *   - m_cursorRack: the rack Tree (descendant of the root rack tree) in which
- *                   the cursor is
+ *   - rootRack: the top rack of the edition field, we need it to move the
+ *               cursor up in the hierarchy
+ *   - cursorRack: the rack Tree (descendant of the root rack tree) in which the
+ *                 cursor is
  *   - m_position: the index of the child of m_cursorRack. The cursor is left of
  *                 that child. If m_position == m_cursorRack->numberOfChildren()
  *                 the cursor is on the right of the last child of m_cursorRack.

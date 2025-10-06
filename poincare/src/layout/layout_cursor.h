@@ -48,6 +48,8 @@ class LayoutCursor {
   constexpr static int k_outsideIndex = -1;
   constexpr static int k_cantMoveIndex = -2;
 
+  constexpr static int k_noSelection = -1;
+
   LayoutCursor(int position, int startOfSelection)
       : m_position(position), m_startOfSelection(startOfSelection) {}
 
@@ -86,7 +88,7 @@ class LayoutCursor {
   KDPoint middleLeftPoint(KDFont::Size font) const;
   KDCoordinate cursorBaseline(KDFont::Size font) const;
 
-  void stopSelecting() { m_startOfSelection = -1; }
+  void stopSelecting() { m_startOfSelection = k_noSelection; }
 
   /* This moves the cursor to a location that will stay valid after exiting the
    * field. Currently only used to move the cursor from grid gray squares to
@@ -125,8 +127,8 @@ class LayoutCursor {
 
   // Cursor's horizontal position
   int m_position;
-  /* -1 if no current selection. If m_startOfSelection >= 0, the selection is
-   * between m_startOfSelection and m_position */
+  /* k_noSelection if no current selection. If m_startOfSelection >= 0, the
+   * selection is between m_startOfSelection and m_position */
   int m_startOfSelection;
 };
 
@@ -135,7 +137,7 @@ class LayoutCursor {
 class TreeCursor final : public LayoutCursor {
  public:
   TreeCursor(Rack* root, Rack* cursor, int position)
-      : LayoutCursor(position, -1), m_root(root), m_cursor(cursor) {}
+      : LayoutCursor(position, k_noSelection), m_root(root), m_cursor(cursor) {}
 
   void setCursorRack(Rack* rack) override { assert(false); };
 
@@ -203,7 +205,7 @@ class TreeStackCursor : public LayoutCursor {
   friend class PoolLayoutCursor;
 
  public:
-  TreeStackCursor() : LayoutCursor(0, -1) {}
+  TreeStackCursor() : LayoutCursor(0, k_noSelection) {}
   TreeStackCursor(int position, int startOfSelection, int cursorOffset)
       : LayoutCursor(position, startOfSelection) {
     if (cursorOffset != -1) {
@@ -273,7 +275,7 @@ class RootedTreeStackCursor : public TreeStackCursor {
  public:
   RootedTreeStackCursor() : m_rootRack(nullptr) {}
   RootedTreeStackCursor(Tree* root, Tree* cursor, int position,
-                        int startOfSelection = -1)
+                        int startOfSelection = k_noSelection)
       : Poincare::Internal::TreeStackCursor(
             position, startOfSelection,
             cursor->block() - SharedTreeStack->firstBlock()),

@@ -430,6 +430,7 @@ QUIZ_CASE(pcj_properties_is_continuous) {
   assert_is_continuous_on_interval("piecewise(-1,x<0,1)", -1.0f, 1.0f, false);
   assert_is_continuous_on_interval("piecewise(-1,random()-0.5<0,1)", -1.0f,
                                    1.0f, false);
+  assert_is_continuous_on_interval("arccos(x)", -1.0f, 1.0f, true);
 }
 
 void assert_reduced_deep_is_symbolic(const char* input,

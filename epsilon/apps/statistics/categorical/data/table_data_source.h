@@ -43,16 +43,22 @@ class TableViewDataSource : public Escher::TableViewDataSource {
   }
   constexpr static int k_typeOfInnerCells = 0;
   constexpr static int k_typeOfHeaderCells = k_typeOfInnerCells + 1;
-  constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;
+  constexpr static int k_typeOfVerticalHeaderCells = k_typeOfHeaderCells + 1;
+  constexpr static int k_typeOfTopLeftCell = k_typeOfVerticalHeaderCells + 1;
 
-  constexpr static int k_maxNumberOfHeaderCells = 14;
+  constexpr static int k_maxNumberOfHeaderCells = 5;
+  constexpr static int k_maxNumberOfVerticalHeaderCells = 9;
 
   // Escher::EvenOddBufferTextCell<
   //     Poincare::Preferences::ShortNumberOfSignificantDigits>
   //     m_titleCells[k_maxNumberOfDisplayableColumns];
   constexpr static int k_maxNumberOfReusableCells = 50;
 
+  /* NOTE: we use 2 distinct types for the two header (even though they are the
+   * same) as it's makes the preface work seamlessly */
   std::array<EvenOddBufferCell, k_maxNumberOfHeaderCells> m_headerCells;
+  std::array<EvenOddBufferCell, k_maxNumberOfVerticalHeaderCells>
+      m_verticalHeaderCells;
   std::array<EvenOddEditableCell, k_maxNumberOfReusableCells> m_editableCells;
 
   constexpr static int k_minRowOrCol = 3;

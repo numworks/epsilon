@@ -42,6 +42,8 @@ void RationalListController::computeAdditionalResults(
   const UserExpression div = negative ? e.cloneChildAtIndex(0) : e;
   assert(div.isDiv());
 
+  Layout approximateFraction =
+      AdditionalResultsHelper::CreateRationalApproximation(div, negative);
   SystemExpression rational =
       AdditionalResultsHelper::CreateRational(div, negative);
   UserExpression mixedFraction = AdditionalResultsHelper::CreateMixedFraction(
@@ -52,6 +54,10 @@ void RationalListController::computeAdditionalResults(
       AdditionalResultsHelper::CreateEuclideanDivision(rational);
 
   int index = 0;
+  if (!approximateFraction.isUninitialized()) {
+    m_message[index] = I18n::Message::RationalApproximation;
+    m_layouts[index++] = approximateFraction;
+  }
   m_message[index] = I18n::Message::MixedFraction;
   m_layouts[index++] =
       PoincareHelpers::CreateLayout(mixedFraction, App::app()->localContext());

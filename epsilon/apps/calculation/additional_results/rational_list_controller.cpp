@@ -52,19 +52,12 @@ void RationalListController::computeAdditionalResults(
       AdditionalResultsHelper::CreateEuclideanDivision(rational);
 
   int index = 0;
+  m_message[index] = I18n::Message::MixedFraction;
   m_layouts[index++] =
       PoincareHelpers::CreateLayout(mixedFraction, App::app()->localContext());
+  m_message[index] = I18n::Message::EuclideanDivision;
   m_layouts[index++] =
       PoincareHelpers::CreateLayout(euclideanDiv, App::app()->localContext());
-}
-
-I18n::Message RationalListController::messageAtIndex(int index) {
-  switch (index) {
-    case 0:
-      return I18n::Message::MixedFraction;
-    default:
-      return I18n::Message::EuclideanDivision;
-  }
 }
 
 Layout RationalListController::layoutAtIndex(Escher::HighlightCell* cell,

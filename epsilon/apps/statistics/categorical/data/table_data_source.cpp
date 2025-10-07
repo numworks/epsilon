@@ -4,6 +4,8 @@
 #include <apps/i18n.h>
 #include <poincare/print.h>
 
+#include "table_data.h"
+
 namespace Statistics::Categorical {
 
 void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
@@ -12,28 +14,35 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
   if (type == k_typeOfTopLeftCell) {
     return;
   }
-  if (type == k_typeOfHeaderCells || type == k_typeOfVerticalHeaderCells) {
+  if (type == k_typeOfHeaderCells) {
+    Shared::BufferFunctionTitleCell* myCell =
+        static_cast<Shared::BufferFunctionTitleCell*>(cell);
+    myCell->setHorizontalAlignment(KDGlyph::k_alignCenter);
+    myCell->setFont(KDFont::Size::Small);
+    myCell->setEven(row % 2 == 0);
+    assert(column - 1 <= '9' - '1');
+    char digit = '1' + (column - 1);
+    constexpr int bufferSize = 20;
+    char txt[bufferSize];
+    Poincare::Print::CustomPrintf(txt, bufferSize, "%s%c",
+                                  I18n::translate(I18n::Message::Group), digit);
+    myCell->setText(txt);
+    myCell->setColor(isActiveColumn(innerCol(column))
+                         ? Escher::Palette::DataColor[column - 1]
+                         : Escher::Palette::GrayDark);
+    static_assert(Escher::Palette::numberOfDataColors() >=
+                  TableData::k_maxNumberOfGroups);
+  } else if (type == k_typeOfVerticalHeaderCells) {
     EvenOddBufferCell* myCell = static_cast<EvenOddBufferCell*>(cell);
     myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     myCell->setFont(KDFont::Size::Small);
     myCell->setEven(row % 2 == 0);
-    char digit;
-    I18n::Message message;
-    if (row == 0) {
-      assert(type == k_typeOfHeaderCells);
-      assert(column - 1 <= '9' - '1');
-      digit = '1' + (column - 1);
-      message = I18n::Message::Group;
-    } else {
-      assert(type == k_typeOfVerticalHeaderCells);
-      assert(row - 1 <= 'Z' - 'A');
-      digit = 'A' + (row - 1);
-      message = I18n::Message::Group;
-    }
+    assert(row - 1 <= 'Z' - 'A');
+    char digit = 'A' + (row - 1);
     constexpr int bufferSize = 20;
     char txt[bufferSize];
     Poincare::Print::CustomPrintf(txt, bufferSize, "%s%c",
-                                  I18n::translate(message), digit);
+                                  I18n::translate(I18n::Message::Group), digit);
     myCell->setText(txt);
     myCell->setTextColor(KDColorBlack);
   } else {

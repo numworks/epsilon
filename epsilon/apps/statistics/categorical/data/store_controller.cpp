@@ -94,6 +94,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
       m_tabController->selectTab();
     } else {
       selectableTableView()->deselectTable();
+      selectableTableView()->scrollToCell(0, 0);
       header()->setSelectedButton(0);
     }
     return true;

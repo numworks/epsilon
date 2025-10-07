@@ -42,7 +42,8 @@ class TableViewDataSource : public Escher::TableViewDataSource {
  protected:
   constexpr static int k_rowHeight = Escher::Metric::SmallEditableCellHeight;
   KDCoordinate nonMemoizedRowHeight(int row) override { return k_rowHeight; }
-  constexpr static int k_columnWidth = 82;
+  // NOTE for now, same as Shared::EditableCellTableViewController::k_cellWidth;
+  constexpr static int k_columnWidth = 102;
   KDCoordinate nonMemoizedColumnWidth(int column) override {
     return k_columnWidth;
   }

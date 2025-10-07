@@ -41,8 +41,9 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     char digit = 'A' + (row - 1);
     constexpr int bufferSize = 20;
     char txt[bufferSize];
-    Poincare::Print::CustomPrintf(txt, bufferSize, "%s%c",
-                                  I18n::translate(I18n::Message::Group), digit);
+    Poincare::Print::CustomPrintf(txt, bufferSize, "%s %c",
+                                  I18n::translate(I18n::Message::Category),
+                                  digit);
     myCell->setText(txt);
     myCell->setTextColor(KDColorBlack);
   } else {

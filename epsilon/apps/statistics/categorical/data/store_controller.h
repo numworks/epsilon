@@ -5,6 +5,7 @@
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/button_row_controller.h>
 #include <escher/highlight_cell.h>
+#include <escher/prefaced_twice_table_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/tab_view_controller.h>
 #include <shared/math_field_delegate.h>
@@ -57,6 +58,7 @@ class StoreController : public Shared::TabTableController,
   Escher::SelectableTableView* selectableTableView() override {
     return &m_selectableTableView;
   }
+  Escher::View* view() override { return &m_prefacedTableView; }
 
   void pushTypeController() {
     m_stackViewController->push(m_dataTypeController);
@@ -75,6 +77,7 @@ class StoreController : public Shared::TabTableController,
 
   Escher::SimpleButtonCell m_dataTypeButton;
   Escher::SelectableTableView m_selectableTableView;
+  Escher::PrefacedTwiceTableView m_prefacedTableView;
   TableData* m_tableData;
 
   Escher::StackViewController* m_stackViewController;

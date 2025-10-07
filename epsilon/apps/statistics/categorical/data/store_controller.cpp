@@ -18,15 +18,19 @@ StoreController::StoreController(
                            this),
                        KDFont::Size::Small),
       m_selectableTableView(this, this, this, this),
+      m_prefacedTableView(0, 0, this, &m_selectableTableView, this, this),
       m_tableData(tableData),
       m_stackViewController(stackViewController),
       m_tabController(tabViewController),
       m_dataTypeController(dataTypeController) {
-  m_selectableTableView.setBackgroundColor(Escher::Palette::WallScreenDark);
+  m_prefacedTableView.setBackgroundColor(Escher::Palette::WallScreenDark);
+  m_prefacedTableView.setCellOverlap(0, 0);
+  m_prefacedTableView.setMargins(k_margins);
   for (EvenOddEditableCell& cell : m_editableCells) {
     cell.setParentResponder(&m_selectableTableView);
     cell.editableTextCell()->textField()->setDelegate(this);
   }
+  recomputeDimensionsAndReload();
 }
 
 void StoreController::fillInnerCellForLocation(Escher::HighlightCell* cell,

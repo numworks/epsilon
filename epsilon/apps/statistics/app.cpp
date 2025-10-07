@@ -163,7 +163,8 @@ App::GraphTab::GraphTab()
 
 App::CalculationTab::CalculationTab()
     : m_calculationController(&m_calculationAlternateEmptyViewController,
-                              &m_calculationHeader, &app()->m_store),
+                              &m_calculationHeader, &app()->m_store,
+                              app()->snapshot()->dataTypeViewModel()),
       m_calculationAlternateEmptyViewController(&m_calculationHeader,
                                                 &m_calculationController,
                                                 &m_calculationController),

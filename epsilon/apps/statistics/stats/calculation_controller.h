@@ -8,6 +8,7 @@
 
 #include <array>
 
+#include "../statistics_type_view_model.h"
 #include "../store.h"
 #include "calculation_selectable_table_view.h"
 
@@ -16,7 +17,8 @@ namespace Statistics {
 class CalculationController : public Shared::DoublePairTableController {
  public:
   CalculationController(Escher::Responder* parentResponder,
-                        Escher::ButtonRowController* header, Store* store);
+                        Escher::ButtonRowController* header, Store* store,
+                        const DataTypeViewModel* dataTypeModel);
 
   // TableViewDataSource
   int numberOfRows() const override {
@@ -29,6 +31,17 @@ class CalculationController : public Shared::DoublePairTableController {
   int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
 
+  // AlternateEmptyViewDelegate (override to handle Categorical special case)
+  bool isEmpty() const override {
+    // NOTE: no stats for Categorical data
+    return m_dataTypeViewModel->isCategorical() ||
+           Shared::DoublePairTableController::isEmpty();
+  }
+  I18n::Message emptyMessage() override {
+    return m_dataTypeViewModel->isCategorical()
+               ? I18n::Message::NoStatForCategorical
+               : Shared::DoublePairTableController::emptyMessage();
+  }
   bool showModeFrequency() const { return m_store->totalNumberOfModes() > 0; }
 
  private:
@@ -112,6 +125,7 @@ class CalculationController : public Shared::DoublePairTableController {
       m_calculationCells[k_numberOfCalculationCells];
   double m_memoizedCellContent[Store::k_numberOfSeries][k_numberOfCalculations];
   Store* m_store;
+  const DataTypeViewModel* m_dataTypeViewModel;
 };
 
 }  // namespace Statistics

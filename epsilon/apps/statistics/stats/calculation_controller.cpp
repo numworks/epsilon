@@ -12,10 +12,12 @@ using namespace Escher;
 
 namespace Statistics {
 
-CalculationController::CalculationController(Responder* parentResponder,
-                                             ButtonRowController* header,
-                                             Store* store)
-    : DoublePairTableController(parentResponder, header), m_store(store) {
+CalculationController::CalculationController(
+    Responder* parentResponder, ButtonRowController* header, Store* store,
+    const DataTypeViewModel* dataTypeModel)
+    : DoublePairTableController(parentResponder, header),
+      m_store(store),
+      m_dataTypeViewModel(dataTypeModel) {
   for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
     m_seriesTitleCells[i].setFont(KDFont::Size::Small);
   }

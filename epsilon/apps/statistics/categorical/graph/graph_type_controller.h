@@ -1,3 +1,5 @@
+#pragma once
+
 #include <apps/i18n.h>
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/alternate_view_controller.h>

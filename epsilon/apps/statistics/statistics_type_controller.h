@@ -26,9 +26,7 @@ class DataTypeController
  public:
   DataTypeController(Escher::Responder* parentResponder,
                      Escher::StackViewController* stackView,
-                     DataTypeViewModel* dataTypeModel,
-                     Escher::ModalViewController* rootViewController,
-                     Escher::TabViewDataSource* tabViewDataSource);
+                     DataTypeViewModel* dataTypeModel);
 
   // UniformSelectableListController
   bool handleEvent(Ion::Events::Event event) override;
@@ -41,9 +39,6 @@ class DataTypeController
 
  private:
   Escher::StackViewController* m_stackViewController;
-  Escher::ModalViewController* m_rootViewController;
-  Escher::TabViewDataSource* m_tabViewDataSource;
-  Store* m_store;
   DataTypeViewModel* m_dataTypeModel;
 };
 

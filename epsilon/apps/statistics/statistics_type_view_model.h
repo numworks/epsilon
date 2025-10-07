@@ -24,6 +24,9 @@ class DataTypeViewModel {
   DataTypeViewModel() : m_selectedDataType(DataType::Quantitative) {}
   DataType selectedDataType() const { return m_selectedDataType; }
   void selectDataType(DataType graphView) { m_selectedDataType = graphView; }
+  bool isCategorical() const {
+    return m_selectedDataType == DataType::Qualitative;
+  }
 
  private:
   DataType m_selectedDataType;

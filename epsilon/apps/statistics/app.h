@@ -23,7 +23,9 @@
 
 namespace Statistics {
 
-class App : public Shared::StoreApp, public Escher::AlternateViewDelegate {
+class App : public Shared::StoreApp,
+            public Escher::AlternateViewDelegate,
+            public Escher::AlternateEmptyViewDelegate {
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:
@@ -116,14 +118,31 @@ class App : public Shared::StoreApp, public Escher::AlternateViewDelegate {
     app()->setFirstResponder(activeViewController);
   }
 
+  // AlternateEmptyViewDelegate (for graph tab: choses between empty or graph,
+  // depending on dataType)
+  bool isEmpty() const override {
+    return snapshot()->dataTypeViewModel()->isCategorical()
+               ? false
+               : !m_store.hasActiveSeries();
+  }
+  I18n::Message emptyMessage() override { return I18n::Message::NoDataToPlot; }
+  Escher::Responder* responderWhenEmpty() override {
+    m_quantitativeTabViewController.selectTab();
+    return &m_quantitativeTabViewController;
+  }
+
   struct StoreTab : public Escher::Tab {
     StoreTab();
     constexpr static I18n::Message k_title = I18n::Message::DataTab;
     Escher::ViewController* top() override {
       return &m_storeStackViewController;
     }
+    // TODO: handle the two exclusive controller in an union
     StoreController m_storeController;
-    Escher::ButtonRowController m_storeHeader;  // Needed for upper margin only
+    Categorical::StoreController m_categoricalStoreController;
+    Escher::ButtonRowController m_storeHeader;
+    Escher::ButtonRowController m_categoricalStoreHeader;
+    Escher::AlternateViewController m_alternateDataTypeController;
     DataTypeController m_dataTypeController;
     Escher::StackViewController::Default m_storeStackViewController;
   };
@@ -134,6 +153,8 @@ class App : public Shared::StoreApp, public Escher::AlternateViewDelegate {
     Escher::ViewController* top() override {
       return &m_graphMenuAlternateEmptyViewController;
     }
+    // TODO union the 2 exclusive sets of controller (for space)
+    // Quantitative controllers
     NormalProbabilityController m_normalProbabilityController;
     /* NormalProbabilityController is the only DataView overriding series
      * validity It may be empty when other graph views are not */
@@ -148,6 +169,16 @@ class App : public Shared::StoreApp, public Escher::AlternateViewDelegate {
     Escher::ButtonRowController m_histogramHeader;
     GraphTypeController m_graphTypeController;
     Escher::AlternateViewController m_graphController;
+    // Categorical controllers
+    Categorical::BarGraphController m_barGraphController;
+    Escher::ButtonRowController m_barGraphHeader;
+    Categorical::PieGraphController m_pieGraphController;
+    Escher::ButtonRowController m_pieGraphHeader;
+    Categorical::GraphTypeController m_categoricalGraphTypeController;
+    // GraphAlternateDelegate m_graphAlternateDelegate;
+    Escher::AlternateViewController m_categoricalGraphController;
+    // General controllers
+    Escher::AlternateViewController m_alternateDataTypeController;
     Escher::StackViewController::Default m_graphMenuStackViewController;
     Escher::AlternateEmptyViewController
         m_graphMenuAlternateEmptyViewController;
@@ -164,42 +195,10 @@ class App : public Shared::StoreApp, public Escher::AlternateViewDelegate {
         m_calculationHeader;  // Needed for upper margin only
   };
 
-  struct CategoricalStoreTab : public Escher::Tab {
-    CategoricalStoreTab();
-    constexpr static I18n::Message k_title = I18n::Message::DataTab;
-    Escher::ViewController* top() override {
-      return &m_storeStackViewController;
-    }
-    Categorical::StoreController m_storeController;
-    Escher::ButtonRowController m_storeHeader;
-    DataTypeController m_dataTypeController;
-    Escher::StackViewController::Default m_storeStackViewController;
-  };
-
-  struct CategoricalGraphTab : public Escher::Tab {
-    CategoricalGraphTab();
-    constexpr static I18n::Message k_title = I18n::Message::StatisticsGraphTab;
-    Escher::ViewController* top() override {
-      return &m_graphMenuAlternateEmptyViewController;
-    }
-    Categorical::BarGraphController m_barGraphController;
-    Escher::ButtonRowController m_barGraphHeader;
-    Categorical::PieGraphController m_pieGraphController;
-    Escher::ButtonRowController m_pieGraphHeader;
-    Categorical::GraphTypeController m_graphTypeController;
-    Escher::AlternateViewController m_graphController;
-    Escher::StackViewController::Default m_graphMenuStackViewController;
-    Escher::AlternateEmptyViewController
-        m_graphMenuAlternateEmptyViewController;
-  };
-
   Store m_store;
   Escher::InputViewController m_inputViewController;
-  Escher::AlternateViewController m_alternateViewController;
   Escher::TabUnion<StoreTab, GraphTab, CalculationTab> m_quantitativeTabs;
   Escher::TabUnionViewController m_quantitativeTabViewController;
-  Escher::TabUnion<CategoricalStoreTab, CategoricalGraphTab> m_categoricalTabs;
-  Escher::TabUnionViewController m_categoricalTabViewController;
 };
 
 }  // namespace Statistics

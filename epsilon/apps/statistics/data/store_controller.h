@@ -32,6 +32,15 @@ class StoreController : public Shared::StoreController {
   /* Shared::StoreController */
   void sortSelectedColumn() override;
   size_t fillColumnName(int column, char* buffer) override;
+  Escher::TabViewController* tabController() const override {
+    return static_cast<Escher::TabViewController*>(parentResponder()
+                                                       ->parentResponder()
+                                                       ->parentResponder()
+                                                       ->parentResponder());
+  }
+  Escher::StackViewController* stackController() const override {
+    return m_stackViewController;
+  }
 
   // TableViewDataSource
   int numberOfColumns() const override;
@@ -85,9 +94,7 @@ class StoreController : public Shared::StoreController {
     return !isCumulatedFrequencyColumn(column);
   }
 
-  void pushTypeController() {
-    m_stackViewController->push(m_dataTypeController);
-  }
+  void pushTypeController() { stackController()->push(m_dataTypeController); }
 
   Store* m_store;
   Escher::StackViewController* m_stackViewController;

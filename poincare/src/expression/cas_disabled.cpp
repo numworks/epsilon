@@ -46,10 +46,13 @@ bool neverDisplayExactOutput(const Tree* exactOutput,
   }
   /* Force all outputs to be ApproximateOnly if required by the exam mode
    * configuration */
+#if POINCARE_EXAM_MODE
   if (exactExpressionIsForbidden(exactOutput)) {
     return true;
   }
+#endif
   bool allChildrenAreUndefined = exactOutput->numberOfChildren() > 0;
+  (void)allChildrenAreUndefined;
   /* 1. If the output contains a comparison, we only display the
    * approximate output. (this can occur for pi > 3 for example, since
    * it's handled by approximation and not by reduction)
@@ -69,19 +72,29 @@ bool neverDisplayExactOutput(const Tree* exactOutput,
       allChildrenAreUndefined = false;
     }
   }
+#if POINCARE_MATRIX || POINCARE_LIST
   if
       // Lists or Matrices with only nonreal/undefined children
       (allChildrenAreUndefined &&
        (exactOutput->isList() || exactOutput->isMatrix())) {
     return true;
   }
+#endif
+#if POINCARE_UNIT
   Internal::Dimension d = Internal::Dimension::Get(exactOutput, symbolContext);
   // Angle units can have an exact output contrary to other units
-  return d.isUnit() && !d.isAngleUnit();
+  if (d.isUnit() && !d.isAngleUnit()) {
+    return true;
+  }
+#endif
+  return false;
 }
 
 bool neverDisplayExactExpressionOfApproximation(
     const Tree* approximateOutput, const SymbolContext& symbolContext) {
+  if (!approximateOutput) {
+    return false;
+  }
   /* The angle units could display exact output but we want to avoid exact
    * results that are not in radians like "(3/sqrt(2))°" because they are not
    * relevant for the user.
@@ -89,9 +102,14 @@ bool neverDisplayExactExpressionOfApproximation(
    * To do so, the approximateOutput is checked rather than the exactOutput,
    * because the approximateOutput has a unit only if the degree unit is not
    * in a trig function. */
+#if POINCARE_UNIT
   Internal::Dimension d =
       Internal::Dimension::Get(approximateOutput, symbolContext);
-  return d.isUnit() && !d.isSimpleRadianAngleUnit();
+  if (d.isUnit() && !d.isSimpleRadianAngleUnit()) {
+    return true;
+  }
+#endif
+  return false;
 }
 
 }  // namespace
@@ -129,8 +147,8 @@ bool CAS::ShouldOnlyDisplayApproximation(
     const SymbolContext& symbolContext) {
   return NeverDisplayReductionOfInput(input, symbolContext) ||
          neverDisplayExactOutput(exactOutput, symbolContext) ||
-         (approximateOutput && neverDisplayExactExpressionOfApproximation(
-                                   approximateOutput, symbolContext));
+         neverDisplayExactExpressionOfApproximation(approximateOutput,
+                                                    symbolContext);
 }
 
 }  // namespace Poincare::Internal

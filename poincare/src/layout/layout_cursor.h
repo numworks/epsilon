@@ -205,12 +205,18 @@ class TreeStackCursor : public LayoutCursor {
 
  public:
   TreeStackCursor() : LayoutCursor(0, k_noSelection) {}
-  TreeStackCursor(int position, int startOfSelection, int cursorOffset)
-      : LayoutCursor(position, startOfSelection) {
+  TreeStackCursor(int position, int startOfSelection, int cursorOffset,
+                  Tree* root = Tree::FromBlocks(SharedTreeStack->firstBlock()))
+      : LayoutCursor(position, startOfSelection), m_rootRack(root) {
     if (cursorOffset != -1) {
       setCursorRack(
           Rack::From(Tree::FromBlocks(rootRack()->block() + cursorOffset)));
     }
+  }
+  TreeStackCursor(Tree* root, Tree* cursor, int position,
+                  int startOfSelection = k_noSelection)
+      : Poincare::Internal::TreeStackCursor(
+            position, startOfSelection, cursor->block() - root->block(), root) {
   }
 
   /* Motion */
@@ -241,8 +247,7 @@ class TreeStackCursor : public LayoutCursor {
  private:
   /* LayoutCursor */
   const Rack* protectedRootRack() const override {
-    return static_cast<const Rack*>(
-        Tree::FromBlocks(SharedTreeStack->firstBlock()));
+    return static_cast<const Rack*>(m_rootRack);
   }
   const Rack* protectedCursorRack() const override {
     return static_cast<const Rack*>(static_cast<Tree*>(m_cursorRackRef));
@@ -268,23 +273,6 @@ class TreeStackCursor : public LayoutCursor {
   void removeEmptyRowOrColumnOfGridParentIfNeeded();
 
   TreeRef m_cursorRackRef;
-};
-
-class RootedTreeStackCursor : public TreeStackCursor {
- public:
-  RootedTreeStackCursor() : m_rootRack(nullptr) {}
-  RootedTreeStackCursor(Tree* root, Tree* cursor, int position,
-                        int startOfSelection = k_noSelection)
-      : Poincare::Internal::TreeStackCursor(
-            position, startOfSelection,
-            cursor->block() - SharedTreeStack->firstBlock()),
-        m_rootRack(root) {}
-
- private:
-  const Rack* protectedRootRack() const override {
-    return static_cast<const Rack*>(m_rootRack);
-  }
-
   Tree* m_rootRack;
 };
 

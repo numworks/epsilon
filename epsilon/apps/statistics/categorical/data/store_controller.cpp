@@ -126,20 +126,14 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
 bool StoreController::recomputeDimensions() {
   TableDimension dim = m_tableData->currentDimension();
   // NOTE: +2 comes from header + new empty row/col
-  dim.row += 2;
-  dim.col += 2;
-  bool changed = false;
-  if (dim.row != m_numberOfRows && dim.row <= k_maxNumberOfRows &&
-      k_minRowOrCol <= dim.row) {
+  dim.row = std::clamp(dim.row + 2, k_minRowOrCol, k_maxNumberOfRows);
+  dim.col = std::clamp(dim.col + 2, k_minRowOrCol, k_maxNumberOfColumns);
+  if (dim.row != m_numberOfRows || dim.col != m_numberOfColumns) {
     m_numberOfRows = dim.row;
-    changed = true;
-  }
-  if (dim.col != m_numberOfColumns && dim.col <= k_maxNumberOfColumns &&
-      k_minRowOrCol <= dim.col) {
     m_numberOfColumns = dim.col;
-    changed = true;
+    return true;
   }
-  return changed;
+  return false;
 }
 
 void StoreController::recomputeDimensionsAndReload() {

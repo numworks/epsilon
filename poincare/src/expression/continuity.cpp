@@ -35,9 +35,14 @@ bool Continuity::IsDiscontinuousOnInterval(const Tree* e, T minBound,
         (Approximation::To<T>(e->child(0), minBound, params) > 0.0) !=
         (Approximation::To<T>(e->child(0), maxBound, params) > 0.0);
   } else if (e->isPiecewise()) {
-    isDiscontinuous =
-        Approximation::IndexOfActivePiecewiseBranchAt(e, minBound) !=
-        Approximation::IndexOfActivePiecewiseBranchAt(e, maxBound);
+    int index = Approximation::IndexOfActivePiecewiseBranchAt(e, minBound);
+    if (index != Approximation::IndexOfActivePiecewiseBranchAt(e, maxBound) ||
+        index == -1) {
+      return true;
+    }
+    assert(index < e->numberOfChildren());
+    // Only check active piecewise branch
+    return IsDiscontinuousOnInterval(e->child(index), minBound, maxBound);
   }
   if (isDiscontinuous) {
     return true;

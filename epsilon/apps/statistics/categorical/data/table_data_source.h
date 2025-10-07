@@ -6,6 +6,7 @@
 #include <escher/highlight_cell.h>
 #include <escher/solid_color_cell.h>
 #include <escher/table_view_data_source.h>
+#include <shared/buffer_function_title_cell.h>
 
 namespace Statistics::Categorical {
 
@@ -24,6 +25,7 @@ class TableViewDataSource : public Escher::TableViewDataSource {
                            int row) override;
   virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                         int row) = 0;
+  virtual bool isActiveColumn(int column) = 0;
   bool canSelectCellAtLocation(int column, int row) override {
     return typeAtLocation(column, row) != k_typeOfTopLeftCell;
   }
@@ -33,6 +35,9 @@ class TableViewDataSource : public Escher::TableViewDataSource {
 
   int numberOfRows() const override { return m_numberOfRows; }
   int numberOfColumns() const override { return m_numberOfColumns; }
+
+  int innerRow(int globalRow) const { return globalRow - 1; }
+  int innerCol(int globalCol) const { return globalCol - 1; }
 
  protected:
   constexpr static int k_rowHeight = Escher::Metric::SmallEditableCellHeight;
@@ -49,14 +54,10 @@ class TableViewDataSource : public Escher::TableViewDataSource {
   constexpr static int k_maxNumberOfHeaderCells = 5;
   constexpr static int k_maxNumberOfVerticalHeaderCells = 9;
 
-  // Escher::EvenOddBufferTextCell<
-  //     Poincare::Preferences::ShortNumberOfSignificantDigits>
-  //     m_titleCells[k_maxNumberOfDisplayableColumns];
   constexpr static int k_maxNumberOfReusableCells = 50;
 
-  /* NOTE: we use 2 distinct types for the two header (even though they are the
-   * same) as it's makes the preface work seamlessly */
-  std::array<EvenOddBufferCell, k_maxNumberOfHeaderCells> m_headerCells;
+  std::array<Shared::BufferFunctionTitleCell, k_maxNumberOfHeaderCells>
+      m_headerCells;
   std::array<EvenOddBufferCell, k_maxNumberOfVerticalHeaderCells>
       m_verticalHeaderCells;
   std::array<EvenOddEditableCell, k_maxNumberOfReusableCells> m_editableCells;

@@ -69,7 +69,7 @@ bool StoreController::textFieldDidFinishEditing(
   //   App::app()->displayWarning(I18n::Message::ForbiddenValue);
   //   return false;
   // }
-  m_tableData->m_data[col - 1][row - 1] = p;
+  m_tableData->m_data[innerCol(col)][innerRow(row)] = p;
   recomputeDimensionsAndReload();
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     event = Ion::Events::Down;
@@ -114,7 +114,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     int col = m_selectableTableView.selectedColumn(),
         row = m_selectableTableView.selectedRow();
     if (typeAtLocation(col, row) == k_typeOfInnerCells) {
-      m_tableData->m_data[col - 1][row - 1] = NAN;
+      m_tableData->m_data[innerCol(col)][innerRow(row)] = NAN;
       recomputeDimensionsAndReload();
       return true;
     }
@@ -143,6 +143,7 @@ void StoreController::recomputeDimensionsAndReload() {
     m_selectableTableView.reloadData(true);
   } else {
     m_selectableTableView.reloadCellAtLocation(col, row);
+    m_selectableTableView.reloadCellAtLocation(col, 0);
   }
 }
 

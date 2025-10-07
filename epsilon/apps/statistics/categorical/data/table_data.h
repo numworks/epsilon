@@ -36,6 +36,14 @@ struct TableData {
     }
     return TableDimension{maxCol + 1, maxRow + 1};
   }
+  bool isActiveColumn(int column) {
+    for (int row = 0; row < k_maxNumberOfCategory; row++) {
+      if (std::isfinite(m_data[column][row])) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   static constexpr int k_maxNumberOfGroups = 6;
   static constexpr int k_maxNumberOfCategory = 10;

@@ -56,6 +56,8 @@ class AdditionalResultsHelper final {
   /* Rational additional results */
   static bool HasRational(const UserExpression exactOutput);
   static SystemExpression CreateRational(const UserExpression e, bool negative);
+  static Layout CreateRationalApproximation(const UserExpression e,
+                                            bool negative);
   static UserExpression CreateEuclideanDivision(SystemExpression rational);
   static UserExpression CreateMixedFraction(SystemExpression rational,
                                             bool mixedFractionsEnabled);
@@ -73,6 +75,9 @@ class AdditionalResultsHelper final {
       Preferences::PrintFloatMode displayMode,
       uint8_t numberOfSignificantDigits, Layout& determinant, Layout& inverse,
       Layout& rowEchelonForm, Layout& reducedRowEchelonForm, Layout& trace);
+
+ private:
+  constexpr static double k_rationalApproximationPrecision = 1e-5;
 };
 
 }  // namespace Poincare

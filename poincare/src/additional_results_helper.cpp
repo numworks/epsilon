@@ -1,6 +1,8 @@
+#include <omg/float.h>
 #include <omg/ieee754.h>
 #include <poincare/additional_results_helper.h>
 #include <poincare/src/expression/angle.h>
+#include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/float_helper.h>
@@ -393,6 +395,94 @@ SystemExpression AdditionalResultsHelper::CreateRational(const UserExpression e,
   }
   IntegerHandler denominator = extractInteger(eTree->child(1));
   return SystemExpression::Builder(Rational::Push(numerator, denominator));
+}
+
+/* Create a rational approximation (within ε) with at most 2 digits
+ * in the denominator. Return an uninitialized expression if not possible. */
+Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
+    const UserExpression e, bool negative) {
+  assert(e.tree()->isDiv());
+  /* Use the successive convergents of the continued fraction of e,
+   * written as: r = a_0 + 1/(a_1 + 1/(a_2 + 1/(a_3 + ...))).
+   * Work on the absolute value of e and add the sign at the end.
+   * The continued fraction is computed using the Euclidean algorithm.
+   * r = a / b = 1 / b * (quo(a,b) * b + a mod b) = quo(a,b) + rem(a,b) / b =
+   * quo(a,b) + 1/(b/rem(a,b)).
+   * Noting a_k = quo(a,b) and p_k/q_k the successive convergents, the first
+   * convergent is a_0.
+   * The next convergent is found by applying the same formula to b/rem(a,b),
+   * i.e. defining a <- b, b <- (a mod b), computing a_k and using the
+   * recurrence relations:
+   * p_k = a_k * p_{k-1} + p_{k-2} and
+   * q_k = a_k * q_{k-1} + q_{k-2}
+   * Since the first convergent is a_0 = (1 * a_0 + 0)/(0 * a_0 + 1) = p_0/q_0,
+   * we start with values p_{-2} = 0, p_{-1} = 1, q_{-2} = 1, q_{-1} = 0.
+   * The algorithm stops when rem(a,b) = 0 (the last convergent is exactly r),
+   * or when q_k has more than 2 digits (limit the size of the denominator).
+   * For a more detailed proof of the algorithm, see
+   * https://cp-algorithms.com/algebra/continued-fractions.html */
+  TreeRef a = e.tree()->child(0)->cloneTree();
+  TreeRef b = e.tree()->child(1)->cloneTree();
+  TreeRef p0 = (0_e)->cloneTree();
+  TreeRef p1 = (1_e)->cloneTree();
+  TreeRef q0 = (1_e)->cloneTree();
+  TreeRef q1 = (0_e)->cloneTree();
+
+  while (!b->isZero()) {
+    DivisionResult<Tree*> division =
+        IntegerHandler::Division(extractInteger(a), extractInteger(b));
+    TreeRef a_k = division.quotient;
+    TreeRef rem = division.remainder;
+    // p = p0 + a_k * p1 and q = q0 + a_k * q1
+    TreeRef p = PatternMatching::CreateReduce(KAdd(KA, KMult(KB, KC)),
+                                              {.KA = p0, .KB = a_k, .KC = p1});
+    TreeRef q = PatternMatching::CreateReduce(KAdd(KA, KMult(KB, KC)),
+                                              {.KA = q0, .KB = a_k, .KC = q1});
+    a_k->removeTree();
+
+    if (extractInteger(q).totalNumberOfBase10DigitsWithoutSign() > 2) {
+      // Stop if the next dominator has more than 2 digits
+      q->removeTree();
+      p->removeTree();
+      rem->removeTree();
+      break;
+    }
+    // p0 <- p1, p1 <- p, q0 <- q1, q1 <- q
+    p0->cloneTreeOverTree(p1);
+    p1->moveTreeOverTree(p);
+    q0->cloneTreeOverTree(q1);
+    q1->moveTreeOverTree(q);
+
+    // a <- b, b <- rem
+    a->cloneTreeOverTree(b);
+    b->moveTreeOverTree(rem);
+  }
+  q0->removeTree();
+  p0->removeTree();
+  b->removeTree();
+  a->removeTree();
+  // Result is the last computed convergent p1/q1.
+  Tree* result = p1;
+  result->cloneNodeAtNode(KDiv);
+  // Check the precision of the approximation
+  double rationalApprox = Approximation::To<double>(e.tree(), {});
+  double resultApprox = Approximation::To<double>(result, {});
+  if (!e.tree()->treeIsIdenticalTo(result) &&
+      std::fabs(rationalApprox - resultApprox) <
+          k_rationalApproximationPrecision) {
+    // Approximation is not the same as the input and is precise enough
+    if (negative) {
+      // Add sign
+      PatternMatching::MatchReplaceReduce(result, KA, KOpposite(KA));
+    }
+    // Create the layout ~p/q
+    TreeRef rack = Layouter::LayoutExpression(result);
+    result->removeTree();
+    NAry::AddChildAtIndex(rack, CodePointLayout::Push('~'), 0);
+    return Poincare::Layout::Builder(rack);
+  }
+  result->removeTree();
+  return Poincare::Layout();
 }
 
 // Take a rational a/b and create the euclidean division a=b*q+r

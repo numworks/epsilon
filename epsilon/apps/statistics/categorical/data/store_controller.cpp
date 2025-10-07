@@ -106,6 +106,16 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     Escher::App::app()->setFirstResponder(this);
     return true;
   }
+  if (event == Ion::Events::Backspace) {
+    int col = m_selectableTableView.selectedColumn(),
+        row = m_selectableTableView.selectedRow();
+    if (typeAtLocation(col, row) == k_typeOfInnerCells) {
+      m_tableData->m_data[col - 1][row - 1] = NAN;
+      recomputeDimensionsAndReload();
+      return true;
+    }
+    return false;
+  }
   return false;
 }
 

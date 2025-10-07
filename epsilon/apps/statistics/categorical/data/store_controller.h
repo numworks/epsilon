@@ -1,3 +1,4 @@
+#pragma once
 
 #include <apps/i18n.h>
 #include <apps/inference/text_helpers.h>

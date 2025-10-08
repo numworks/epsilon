@@ -28,9 +28,6 @@ bool ColumnParameterController::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (cell == &m_columnNameCell) {
-    // TODO
-  }
   if (cell == &m_relativeFreqCell) {
     // TODO
   }

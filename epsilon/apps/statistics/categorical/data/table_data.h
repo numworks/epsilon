@@ -1,6 +1,8 @@
 #pragma once
 
+#include <apps/i18n.h>
 #include <assert.h>
+#include <poincare/print.h>
 #include <string.h>
 
 #include <array>
@@ -72,6 +74,23 @@ struct TableData {
     if (m_groupStatus[col] == GroupStatus::Empty) {
       m_groupStatus[col] = GroupStatus::Active;
     }
+  }
+
+  void setGroupName(const char* name, int col) {
+    assert(0 <= col && col < k_maxNumberOfGroups);
+    strlcpy(m_groupLabels[col], name, sizeof(m_groupLabels[col]));
+  }
+
+  void getGroupName(int col, char* buffer, int bufferSize) {
+    assert(0 <= col && col < k_maxNumberOfGroups);
+    if (m_groupLabels[col][0] != '\x00') {
+      strlcpy(buffer, m_groupLabels[col], bufferSize);
+      return;
+    }
+    // Default group name
+    char digit = '1' + col;
+    Poincare::Print::CustomPrintf(buffer, bufferSize, "%s%c",
+                                  I18n::translate(I18n::Message::Group), digit);
   }
 
   void eraseValue(int col, int row) {

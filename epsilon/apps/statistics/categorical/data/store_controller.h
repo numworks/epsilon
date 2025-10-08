@@ -11,6 +11,7 @@
 #include <shared/math_field_delegate.h>
 #include <shared/tab_table_controller.h>
 
+#include "column_parameter_controller.h"
 #include "table_data.h"
 #include "table_data_source.h"
 
@@ -28,6 +29,11 @@ class StoreController : public Shared::TabTableController,
                   Escher::TabViewController* tabViewController,
                   Escher::ViewController* dataTypeController,
                   TableData* tableData);
+
+  void viewWillAppear() override {
+    recomputeDimensions();
+    Shared::TabTableController::viewWillAppear();
+  }
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
@@ -83,6 +89,7 @@ class StoreController : public Shared::TabTableController,
   Escher::PrefacedTwiceTableView m_prefacedTableView;
   TableData* m_tableData;
 
+  ColumnParameterController m_columnParameterController;
   Escher::StackViewController* m_stackViewController;
   Escher::TabViewController* m_tabController;
   Escher::ViewController* m_dataTypeController;

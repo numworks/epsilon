@@ -50,7 +50,20 @@ struct TableData {
   bool isGroupActive(int col) {
     return m_groupStatus[col] == GroupStatus::Active;
   }
-  void setGroupActive(bool active, int col) {}
+  bool isGroupEmpty(int col) {
+    if (m_groupStatus[col] == GroupStatus::Hidden) {
+      // A hidden group could be empty or not
+      return !computeGroupHasValue(col);
+    }
+    return m_groupStatus[col] == GroupStatus::Empty;
+  }
+
+  void setGroupActive(bool active, int col) {
+    GroupStatus& status = m_groupStatus[col];
+    if (status != GroupStatus::Empty) {
+      status = active ? GroupStatus::Active : GroupStatus::Hidden;
+    }
+  }
   float getValue(int col, int row) { return m_data[col][row]; }
 
   void setValue(float data, int col, int row) {
@@ -66,6 +79,14 @@ struct TableData {
     if (m_groupStatus[col] != GroupStatus::Hidden) {
       m_groupStatus[col] =
           computeGroupHasValue(col) ? GroupStatus::Active : GroupStatus::Empty;
+    }
+  }
+  void clearColumn(int col) {
+    for (int row = 0; row < k_maxNumberOfCategory; row++) {
+      m_data[col][row] = NAN;
+    }
+    if (m_groupStatus[col] != GroupStatus::Hidden) {
+      m_groupStatus[col] = GroupStatus::Empty;
     }
   }
 

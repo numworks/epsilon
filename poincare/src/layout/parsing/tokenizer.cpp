@@ -61,33 +61,24 @@ bool Tokenizer::canPopCodePoint(const CodePoint c) {
 }
 
 size_t Tokenizer::popWhile(PopTest popTest) {
-  size_t length = 0;
+  size_t start = m_decoder.position();
   bool didPop = true;
   while (true) {
-    bool nextIsCombinedCodePoint = m_decoder.nextLayoutIsCombinedCodePoint();
-    if (!m_decoder.nextLayoutIsCodePoint() && !nextIsCombinedCodePoint) {
+    if (!m_decoder.nextLayoutIsCodePoint()) {
       break;
     }
-    /* If the next layout is a combined code point, calling nextCodePoint will
-     * pop both the base and the combining code point, but only the base code
-     * point is returned. This is to ensure symmetry between number of calls to
-     * nextTree and nextCodePoint. */
-    size_t combiningExtraLength =
-        nextIsCombinedCodePoint
-            ? UTF8Decoder::CharSizeOfCodePoint(m_decoder.combiningCodePoint())
-            : 0;
-    CodePoint c = nextCodePoint(popTest, &didPop);
+    nextCodePoint(popTest, &didPop);
     if (!didPop) {
       break;
     }
-    length += UTF8Decoder::CharSizeOfCodePoint(c) + combiningExtraLength;
   }
-  return length;
+  return m_decoder.position() - start;
 }
 
 static bool IsNonDigitalIdentifierMaterial(const CodePoint c) {
-  return c.isLatinLetter() || c == '_' || c == UCodePointDegreeSign ||
-         c == '\'' || c == '"' || c.isGreekCapitalLetter() ||
+  return c.isLatinLetter() || c.isCombining() || c == '_' ||
+         c == UCodePointDegreeSign || c == '\'' || c == '"' ||
+         c.isGreekCapitalLetter() ||
          (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
 }
 
@@ -181,19 +172,6 @@ Token Tokenizer::popToken() {
   }
   // Skip whitespaces
   while (canPopCodePoint(' ')) {
-  }
-
-  if (m_decoder.nextLayoutIsCombinedCodePoint()) {
-    // Special case for ≠
-    if (m_decoder.codePoint() == '=' &&
-        m_decoder.combiningCodePoint() ==
-            UCodePointCombiningLongSolidusOverlay) {
-      size_t length = 1;
-      Token result(Token::Type::ComparisonOperator);
-      result.setRange(m_decoder.layout(), length);
-      m_decoder.skip(length);
-      return result;
-    }
   }
 
   if (!m_decoder.nextLayoutIsCodePoint()) {

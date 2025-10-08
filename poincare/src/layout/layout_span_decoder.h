@@ -58,19 +58,17 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
     if (isEmpty()) {
       return UCodePointNull;
     }
-    assert(m_layout != nullptr);
-    assert(m_length != k_outOfRange);
-    return (m_layout->isCodePointLayout() ||
-            m_layout->isCombinedCodePointsLayout())
-               ? CodePointLayout::GetCodePoint(m_layout)
-               : UCodePointNull;
-  }
 
-  CodePoint combiningCodePoint() const {
     assert(m_layout != nullptr);
     assert(m_length != k_outOfRange);
-    return m_length > 0 && m_layout->isCombinedCodePointsLayout()
-               ? CodePointLayout::GetCombiningCodePoint(m_layout)
+
+    if (m_layout->isCombinedCodePointsLayout()) {
+      return m_isOnCombining ? CodePointLayout::GetCombiningCodePoint(m_layout)
+                             : CodePointLayout::GetCodePoint(m_layout);
+    }
+    assert(!m_isOnCombining);
+    return m_layout->isCodePointLayout()
+               ? CodePointLayout::GetCodePoint(m_layout)
                : UCodePointNull;
   }
 
@@ -85,13 +83,8 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
      * codepoints until they hit a null codepoints. */
     assert(m_layout != nullptr);
     assert(m_length != k_outOfRange);
-    return m_length == 0 || m_layout->isCodePointLayout();
-  }
-
-  bool nextLayoutIsCombinedCodePoint() const {
-    assert(m_layout != nullptr);
-    assert(m_length != k_outOfRange);
-    return m_layout->isCombinedCodePointsLayout();
+    return m_length == 0 || m_layout->isCodePointLayout() ||
+           m_layout->isCombinedCodePointsLayout();
   }
 
   const Layout* nextLayout() {
@@ -119,6 +112,7 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
   void next();
   const Layout* m_layout;  // allowed to be a nullptr
   uint16_t m_length;
+  bool m_isOnCombining = false;
 };
 
 inline int CompareLayoutSpanWithNullTerminatedString(const LayoutSpan a,

@@ -84,7 +84,7 @@ class StaticVector : public AbstractStaticVector<T> {
   StaticVector(std::initializer_list<T> values) {
     assert(values.size() <= CAPACITY);
     for (const T& value : values) {
-      push(value);
+      this->push(value);
     }
   }
 

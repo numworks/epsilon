@@ -52,7 +52,6 @@ bool neverDisplayExactOutput(const Tree* exactOutput,
   }
 #endif
   bool allChildrenAreUndefined = exactOutput->numberOfChildren() > 0;
-  (void)allChildrenAreUndefined;
   /* 1. If the output contains a comparison, we only display the
    * approximate output. (this can occur for pi > 3 for example, since
    * it's handled by approximation and not by reduction)
@@ -72,14 +71,12 @@ bool neverDisplayExactOutput(const Tree* exactOutput,
       allChildrenAreUndefined = false;
     }
   }
-#if POINCARE_MATRIX || POINCARE_LIST
   if
       // Lists or Matrices with only nonreal/undefined children
       (allChildrenAreUndefined &&
        (exactOutput->isList() || exactOutput->isMatrix())) {
     return true;
   }
-#endif
 #if POINCARE_UNIT
   Internal::Dimension d = Internal::Dimension::Get(exactOutput, symbolContext);
   // Angle units can have an exact output contrary to other units

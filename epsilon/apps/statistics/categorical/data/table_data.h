@@ -1,5 +1,6 @@
 #pragma once
 
+#include <assert.h>
 #include <string.h>
 
 #include <array>
@@ -7,7 +8,7 @@
 
 namespace Statistics::Categorical {
 
-using Label = const char[11];
+using Label = char[11];
 
 struct TableDimension {
   int col;
@@ -16,6 +17,15 @@ struct TableDimension {
 
 struct TableData {
   TableData() {
+    for (Label& label : m_groupLabels) {
+      label[0] = '\x00';
+    }
+    for (Label& label : m_categoryLabels) {
+      label[0] = '\x00';
+    }
+    for (GroupStatus& status : m_groupStatus) {
+      status = GroupStatus::Empty;
+    }
     for (float* data = &m_data[0][0];
          data < &m_data[0][0] + k_maxNumberOfGroups * k_maxNumberOfCategory;
          data++) {
@@ -36,7 +46,34 @@ struct TableData {
     }
     return TableDimension{maxCol + 1, maxRow + 1};
   }
-  bool isActiveColumn(int column) {
+
+  bool isGroupActive(int col) {
+    return m_groupStatus[col] == GroupStatus::Active;
+  }
+  void setGroupActive(bool active, int col) {}
+  float getValue(int col, int row) { return m_data[col][row]; }
+
+  void setValue(float data, int col, int row) {
+    assert(std::isfinite(data));
+    m_data[col][row] = data;
+    if (m_groupStatus[col] == GroupStatus::Empty) {
+      m_groupStatus[col] = GroupStatus::Active;
+    }
+  }
+
+  void eraseValue(int col, int row) {
+    m_data[col][row] = NAN;
+    if (m_groupStatus[col] != GroupStatus::Hidden) {
+      m_groupStatus[col] =
+          computeGroupHasValue(col) ? GroupStatus::Active : GroupStatus::Empty;
+    }
+  }
+
+  static constexpr int k_maxNumberOfGroups = 6;
+  static constexpr int k_maxNumberOfCategory = 10;
+
+ private:
+  bool computeGroupHasValue(int column) {
     for (int row = 0; row < k_maxNumberOfCategory; row++) {
       if (std::isfinite(m_data[column][row])) {
         return true;
@@ -45,10 +82,14 @@ struct TableData {
     return false;
   }
 
-  static constexpr int k_maxNumberOfGroups = 6;
-  static constexpr int k_maxNumberOfCategory = 10;
+  enum class GroupStatus : uint8_t {
+    Empty,   // Hidden because no value
+    Active,  // Shown
+    Hidden,  // User chose to hide this group
+  };
 
   std::array<Label, k_maxNumberOfGroups> m_groupLabels = {};
+  std::array<GroupStatus, k_maxNumberOfGroups> m_groupStatus = {};
   std::array<Label, k_maxNumberOfCategory> m_categoryLabels = {};
   float m_data[k_maxNumberOfGroups][k_maxNumberOfCategory];
 };

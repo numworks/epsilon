@@ -177,7 +177,7 @@ bool ApproximateAndReplaceEveryScalar(Tree* e,
                                       const Context& context = Context());
 
 /* Returns -1 if every condition is false, it assumes there is no other free
- * variable than VarX */
+ * variable than VarX, return -2 if a condition was undefined. */
 template <typename T>
 int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x);
 
@@ -302,7 +302,7 @@ template <typename T>
 std::complex<T> ComplexLogarithm(std::complex<T> c, bool isLog10);
 
 /* Approximate the conditions of a piecewise and return the tree corresponding
- * to the matching branch */
+ * to the matching branch. Return nullptr if a condition was undefined. */
 template <typename T>
 const Tree* SelectPiecewiseBranch(const Tree* piecewise, const Context* ctx);
 

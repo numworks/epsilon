@@ -6,6 +6,7 @@
 #include <poincare/k_tree.h>
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/tree_helpers.h>
 #include <string.h>
 
 #include "../app.h"
@@ -82,18 +83,23 @@ Layout RationalListController::layoutAtIndex(Escher::HighlightCell* cell,
     Internal::NAry::RemoveChildAtIndex(result, 0);
     return Layout::Builder(result);
   }
-  return l;
-
-#if 0  // TODO_PCJ
-  if (index == 1) {
-    // Get rid of the left part of the equality
-    char *equalPosition = strchr(buffer, '=');
-    assert(equalPosition != nullptr);
-    strlcpy(buffer, equalPosition + 1, bufferSize);
-    return buffer + length - 1 - equalPosition;
+  if (hasRationalApproximation() ? index == 2 : index == 1) {
+    // Strip the left part of the equality in euclidean division
+    Internal::Tree* result = l.tree()->cloneTree();
+    Internal::TreeRef end = pushEndMarker(result);
+    Internal::Tree* child = result->nextNode();
+    while (child != end) {
+      bool isEqualitySign = child->isCodePointLayout() &&
+                            Internal::CodePointLayout::IsCodePoint(child, '=');
+      Internal::NAry::RemoveChildAtIndex(result, 0);
+      if (isEqualitySign) {
+        break;
+      }
+    }
+    removeMarker(end);
+    return Layout::Builder(result);
   }
-  return length;
-#endif
+  return l;
 }
 
 }  // namespace Calculation

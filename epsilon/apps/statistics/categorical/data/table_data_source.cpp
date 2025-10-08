@@ -20,12 +20,8 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     myCell->setHorizontalAlignment(KDGlyph::k_alignCenter);
     myCell->setFont(KDFont::Size::Small);
     myCell->setEven(row % 2 == 0);
-    assert(column - 1 <= '9' - '1');
-    char digit = '1' + (column - 1);
-    constexpr int bufferSize = 20;
-    char txt[bufferSize];
-    Poincare::Print::CustomPrintf(txt, bufferSize, "%s%c",
-                                  I18n::translate(I18n::Message::Group), digit);
+    char txt[20];
+    tableData()->getGroupName(innerCol(column), txt, sizeof(txt));
     myCell->setText(txt);
     myCell->setColor(tableData()->isGroupActive(innerCol(column))
                          ? Escher::Palette::DataColor[innerCol(column)]

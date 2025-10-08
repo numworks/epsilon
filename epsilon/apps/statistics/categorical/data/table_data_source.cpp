@@ -27,8 +27,8 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     Poincare::Print::CustomPrintf(txt, bufferSize, "%s%c",
                                   I18n::translate(I18n::Message::Group), digit);
     myCell->setText(txt);
-    myCell->setColor(isActiveColumn(innerCol(column))
-                         ? Escher::Palette::DataColor[column - 1]
+    myCell->setColor(tableData()->isGroupActive(innerCol(column))
+                         ? Escher::Palette::DataColor[innerCol(column)]
                          : Escher::Palette::GrayDark);
     static_assert(Escher::Palette::numberOfDataColors() >=
                   TableData::k_maxNumberOfGroups);

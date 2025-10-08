@@ -8,6 +8,8 @@
 #include <escher/table_view_data_source.h>
 #include <shared/buffer_function_title_cell.h>
 
+#include "table_data.h"
+
 namespace Statistics::Categorical {
 
 // Why float here ?
@@ -25,7 +27,7 @@ class TableViewDataSource : public Escher::TableViewDataSource {
                            int row) override;
   virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                         int row) = 0;
-  virtual bool isActiveColumn(int column) = 0;
+  virtual TableData* tableData() = 0;
   bool canSelectCellAtLocation(int column, int row) override {
     return typeAtLocation(column, row) != k_typeOfTopLeftCell;
   }

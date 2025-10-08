@@ -62,9 +62,9 @@ class AbstractStaticVector {
   }
 
  protected:
-  AbstractStaticVector() : m_size(0) {}
+  AbstractStaticVector() = default;
 
-  size_t m_size;
+  size_t m_size = 0;
   T m_data[0];
 };
 

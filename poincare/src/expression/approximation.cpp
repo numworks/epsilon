@@ -950,9 +950,10 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
       tempCtx.m_angleUnit = static_cast<AngleUnit>(e->nodeValue(0));
       return PrivateToComplexRecursive<T>(e->child(0), &tempCtx);
     }
-    case Type::Piecewise:
-      return PrivateToComplexRecursive<T>(SelectPiecewiseBranch<T>(e, ctx),
-                                          ctx);
+    case Type::Piecewise: {
+      const Tree* branch = SelectPiecewiseBranch<T>(e, ctx);
+      return branch ? PrivateToComplexRecursive<T>(branch, ctx) : NAN;
+    }
     case Type::Distribution: {
       const Tree* child = e->child(0);
       DistributionMethod::Abscissae<T> abscissae;
@@ -1323,7 +1324,9 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     return e->isEqual() == (a == b);
   }
   if (e->isPiecewise()) {
-    return PrivateToBoolean<T>(SelectPiecewiseBranch<T>(e, ctx), ctx);
+    const Tree* branch = SelectPiecewiseBranch<T>(e, ctx);
+    return branch ? PrivateToBoolean<T>(branch, ctx)
+                  : BooleanOrUndefined::Undef();
   }
   if (e->isList()) {
     assert(ctx && ctx->m_listElement != -1);
@@ -1572,8 +1575,10 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       u->removeTree();
       return u;
     }
-    case Type::Piecewise:
-      return ToMatrix<T>(SelectPiecewiseBranch<T>(e, ctx), ctx);
+    case Type::Piecewise: {
+      const Tree* branch = SelectPiecewiseBranch<T>(e, ctx);
+      return branch ? ToMatrix<T>(branch, ctx) : KUndef->cloneTree();
+    }
     case Type::Dep: {
       std::complex<T> undef = UndefDependencies<T>(e, ctx);
       return (undef == std::complex<T>(0.0))
@@ -1656,7 +1661,7 @@ const Tree* Private::SelectPiecewiseBranch(const Tree* piecewise,
         PrivateToBoolean<T>(condition, ctx);
     if (conditionEvaluation.isUndefined()) {
       // TODO: return a dimensioned Undef
-      return KUndef;
+      return nullptr;
     }
     if (conditionEvaluation.value()) {
       return child;
@@ -1680,7 +1685,7 @@ int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   Context ctx;
   ctx.m_localContext = &localCtx;
   const Tree* branch = SelectPiecewiseBranch<T>(piecewise, &ctx);
-  return branch == KUndef ? -1 : piecewise->indexOfChild(branch);
+  return !branch ? -2 : branch == KUndef ? -1 : piecewise->indexOfChild(branch);
 }
 
 bool CanApproximate(const Tree* e, bool approxLocalVar) {

@@ -81,6 +81,13 @@ class StaticVector : public AbstractStaticVector<T> {
     this->m_size = initialSize;
   }
 
+  StaticVector(std::initializer_list<T> values) {
+    assert(values.size() <= CAPACITY);
+    for (const T& value : values) {
+      push(value);
+    }
+  }
+
   size_t capacity() const { return CAPACITY; }
   bool isFull() const { return this->m_size == CAPACITY; }
   std::span<T> span() { return std::span<T>(this->m_data, this->size()); }

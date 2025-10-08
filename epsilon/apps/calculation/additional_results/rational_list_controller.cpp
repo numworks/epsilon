@@ -2,7 +2,10 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/additional_results_helper.h>
+#include <poincare/helpers/layout.h>
 #include <poincare/k_tree.h>
+#include <poincare/src/layout/code_point_layout.h>
+#include <poincare/src/memory/n_ary.h>
 #include <string.h>
 
 #include "../app.h"
@@ -68,7 +71,19 @@ void RationalListController::computeAdditionalResults(
 
 Layout RationalListController::layoutAtIndex(Escher::HighlightCell* cell,
                                              int index) {
-  return ExpressionsListController::layoutAtIndex(cell, index);
+  assert(index < k_maxNumberOfOutputRows && index >= 0);
+  Layout l = ExpressionsListController::layoutAtIndex(cell, index);
+  if (hasRationalApproximation() && index == 0) {
+    // Strip the ~ sign from the rational approximation
+    Internal::Tree* result = l.tree()->cloneTree();
+    assert(result->isRackLayout() && result->numberOfChildren() >= 2);
+    assert(result->child(0)->isCodePointLayout() &&
+           Internal::CodePointLayout::IsCodePoint(result->child(0), '~'));
+    Internal::NAry::RemoveChildAtIndex(result, 0);
+    return Layout::Builder(result);
+  }
+  return l;
+
 #if 0  // TODO_PCJ
   if (index == 1) {
     // Get rid of the left part of the equality

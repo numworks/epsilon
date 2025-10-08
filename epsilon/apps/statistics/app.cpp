@@ -83,8 +83,7 @@ App::StoreTab::StoreTab()
           {&m_storeHeader, &m_categoricalStoreHeader}),
       m_dataTypeController(&m_storeStackViewController,
                            &m_storeStackViewController,
-                           app()->snapshot()->dataTypeViewModel(),
-                           &app()->m_inputViewController, app()->snapshot()),
+                           app()->snapshot()->dataTypeViewModel()),
       m_storeStackViewController(
           &app()->m_quantitativeTabViewController,
           &m_alternateDataTypeController,

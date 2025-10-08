@@ -441,7 +441,7 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
     a_k->removeTree();
 
     if (extractInteger(q).totalNumberOfBase10DigitsWithoutSign() > 2) {
-      // Stop if the next dominator has more than 2 digits
+      // Stop if the next denominator has more than 2 digits
       q->removeTree();
       p->removeTree();
       rem->removeTree();

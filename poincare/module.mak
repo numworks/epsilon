@@ -256,6 +256,7 @@ _sources_poincare_test := $(addprefix test/, \
   serialization.cpp \
   set.cpp \
   sign.cpp \
+  statistics.cpp \
   tree_stack.cpp \
   trigonometry_exact_formulas.cpp \
   zoom.cpp \

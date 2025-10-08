@@ -29,11 +29,13 @@ bool Continuity::IsDiscontinuousOnInterval(const Tree* e, T minBound,
     isDiscontinuous =
         std::floor(Approximation::To<T>(e->child(0), minBound, params)) !=
         std::floor(Approximation::To<T>(e->child(0), maxBound, params));
-  } else if (e->isOfType({Type::Abs, Type::Sign})) {
+  } else if (e->isOfType({Type::Abs, Type::Sign, Type::Div}) ||
+             (e->isPow() && e->child(1)->isNegativeInteger())) {
+    int childIndex = e->isDiv() ? 1 : 0;
     // is discontinuous if the child changes sign
     isDiscontinuous =
-        (Approximation::To<T>(e->child(0), minBound, params) > 0.0) !=
-        (Approximation::To<T>(e->child(0), maxBound, params) > 0.0);
+        (Approximation::To<T>(e->child(childIndex), minBound, params) > 0.0) !=
+        (Approximation::To<T>(e->child(childIndex), maxBound, params) > 0.0);
   } else if (e->isPiecewise()) {
     int index = Approximation::IndexOfActivePiecewiseBranchAt(e, minBound);
     assert(index < 0 || index < e->numberOfChildren());

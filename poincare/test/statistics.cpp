@@ -2,8 +2,6 @@
 #include <poincare/statistics/statistics_dataset.h>
 #include <quiz.h>
 
-#include <initializer_list>
-
 #include "float_helper.h"
 
 namespace Poincare {

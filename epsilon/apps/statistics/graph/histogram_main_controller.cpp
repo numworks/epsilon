@@ -196,11 +196,10 @@ void HistogramMainController::updateBannerView() {
 
   // Display relative frequency
   double relativeFrequency = size / m_store->sumOfOccurrences(selectedSeries);
-  Poincare::Print::CustomPrintf(
-      buffer, k_bufferSize, "%s%s%*.*ed",
-      I18n::translate(I18n::Message::RelativeFrequency),
-      I18n::translate(I18n::Message::ColonConvention), relativeFrequency,
-      displayMode, precision);
+  Poincare::Print::CustomPrintf(buffer, k_bufferSize, "%s%s%*.*ed",
+                                I18n::translate(I18n::Message::Relative),
+                                I18n::translate(I18n::Message::ColonConvention),
+                                relativeFrequency, displayMode, precision);
   m_view.bannerView()->relativeFrequencyView()->setText(buffer);
 
   if (previousHeight !=

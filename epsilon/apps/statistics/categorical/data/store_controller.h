@@ -44,9 +44,7 @@ class StoreController : public Shared::TabTableController,
   // Categorical::TableViewDataSource
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;
-  bool isActiveColumn(int column) override {
-    return m_tableData->isGroupActive(column);
-  }
+  TableData* tableData() override { return m_tableData; }
 
   // Escher::ButtonRowDelegate
   int numberOfButtons(

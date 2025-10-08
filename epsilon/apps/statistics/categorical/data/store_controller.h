@@ -39,7 +39,7 @@ class StoreController : public Shared::TabTableController,
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;
   bool isActiveColumn(int column) override {
-    return m_tableData->isActiveColumn(column);
+    return m_tableData->isGroupActive(column);
   }
 
   // Escher::ButtonRowDelegate

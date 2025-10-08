@@ -35,7 +35,7 @@ StoreController::StoreController(
 
 void StoreController::fillInnerCellForLocation(Escher::HighlightCell* cell,
                                                int column, int row) {
-  float p = m_tableData->m_data[column][row];
+  float p = m_tableData->getValue(column, row);
   EvenOddEditableCell* editableCell = static_cast<EvenOddEditableCell*>(cell);
   // TODO extract from inference
   Inference::PrintValueInTextHolder(
@@ -69,7 +69,7 @@ bool StoreController::textFieldDidFinishEditing(
   //   App::app()->displayWarning(I18n::Message::ForbiddenValue);
   //   return false;
   // }
-  m_tableData->m_data[innerCol(col)][innerRow(row)] = p;
+  m_tableData->setValue(p, innerCol(col), innerRow(row));
   recomputeDimensionsAndReload();
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     event = Ion::Events::Down;
@@ -114,7 +114,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     int col = m_selectableTableView.selectedColumn(),
         row = m_selectableTableView.selectedRow();
     if (typeAtLocation(col, row) == k_typeOfInnerCells) {
-      m_tableData->m_data[innerCol(col)][innerRow(row)] = NAN;
+      m_tableData->eraseValue(innerCol(col), innerRow(row));
       recomputeDimensionsAndReload();
       return true;
     }

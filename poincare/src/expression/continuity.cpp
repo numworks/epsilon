@@ -29,7 +29,7 @@ bool Continuity::IsDiscontinuousOnInterval(const Tree* e, T minBound,
     isDiscontinuous =
         std::floor(Approximation::To<T>(e->child(0), minBound, params)) !=
         std::floor(Approximation::To<T>(e->child(0), maxBound, params));
-  } else if (e->isOfType({Type::Abs, Type::Sign, Type::Div}) ||
+  } else if (e->isOfType({Type::Sign, Type::Div}) ||
              (e->isPow() && e->child(1)->isNegativeInteger())) {
     int childIndex = e->isDiv() ? 1 : 0;
     // is discontinuous if the child changes sign

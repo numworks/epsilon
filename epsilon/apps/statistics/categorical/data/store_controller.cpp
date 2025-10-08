@@ -20,6 +20,8 @@ StoreController::StoreController(
       m_selectableTableView(this, this, this, this),
       m_prefacedTableView(0, 0, this, &m_selectableTableView, this, this),
       m_tableData(tableData),
+      m_columnParameterController(stackViewController, tableData,
+                                  stackViewController),
       m_stackViewController(stackViewController),
       m_tabController(tabViewController),
       m_dataTypeController(dataTypeController) {
@@ -30,7 +32,6 @@ StoreController::StoreController(
     cell.setParentResponder(&m_selectableTableView);
     cell.editableTextCell()->textField()->setDelegate(this);
   }
-  recomputeDimensionsAndReload();
 }
 
 void StoreController::fillInnerCellForLocation(Escher::HighlightCell* cell,
@@ -117,6 +118,20 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
       m_tableData->eraseValue(innerCol(col), innerRow(row));
       recomputeDimensionsAndReload();
       return true;
+    }
+    return false;
+  }
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    if (selectedRow() == 0) {
+      m_columnParameterController.setColumn(innerCol(selectedColumn()));
+      m_stackViewController->push(&m_columnParameterController);
+      return true;
+    } else if (selectedColumn() == 0) {
+      /* TODO RowParameterController
+      m_rowParameterController.setRow(innerRow(selectedRow()));
+      m_stackViewController->push(&m_rowParameterController);
+      return true;
+      */
     }
     return false;
   }

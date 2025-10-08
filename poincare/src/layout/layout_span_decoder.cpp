@@ -10,14 +10,23 @@ void LayoutSpanDecoder::next() {
     m_length = k_outOfRange;
     return;
   }
+#else
+  if (m_length == 0) {
+    return;
+  }
 #endif
 
-  if (m_length > 0) {
-    assert(m_layout != nullptr);
-    m_layout = static_cast<const Layout*>(m_layout->nextTree());
-    m_position++;
-    m_length--;
+  assert(m_layout != nullptr);
+
+  if (m_layout->isCombinedCodePointsLayout() && !m_isOnCombining) {
+    m_isOnCombining = true;
+    return;
   }
+
+  m_layout = static_cast<const Layout*>(m_layout->nextTree());
+  m_position++;
+  m_length--;
+  m_isOnCombining = false;
 }
 
 }  // namespace Poincare::Internal

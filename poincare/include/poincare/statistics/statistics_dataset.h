@@ -234,11 +234,12 @@ class StatisticsDataset {
   T lowerOutlierAtIndex(int index) const;
   T upperOutlierAtIndex(int index) const;
 
- private:
   int datasetLength() const {
     assert(m_weights == nullptr || m_weights->length() == m_values->length());
     return m_values->length();
   }
+
+ private:
   T valueAtIndex(int index) const;
   T weightAtIndex(int index) const;
   T privateTotalWeight() const;

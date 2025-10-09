@@ -112,6 +112,7 @@ Hypothesis DefaultHypothesis(TestType testType) {
       return Hypothesis{50., Comparison::Operator::Inferior};
     case TestType::TwoMeans:
     case TestType::Slope:
+    case TestType::ANOVA:
     case TestType::Chi2:
       return Hypothesis{0., Comparison::Operator::Superior};
     default:

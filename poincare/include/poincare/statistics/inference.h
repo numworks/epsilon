@@ -162,6 +162,8 @@ struct Hypothesis {
       : Hypothesis(0.0, Poincare::Comparison::Operator::Superior) {}
 };
 
+/* REFACTOR: default hypothesis values are project-specific, they should not be
+ * in Poincaré */
 Hypothesis DefaultHypothesis(TestType testType);
 constexpr bool HasHypothesis(TestType testType) {
   return testType != TestType::Chi2;

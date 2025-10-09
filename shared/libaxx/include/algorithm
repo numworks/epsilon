@@ -50,6 +50,16 @@ UnaryFunction for_each(Iterator first, Iterator last, UnaryFunction function) {
   return function;
 }
 
+template <class InputIterator, class OutputIterator, class UnaryFunction>
+void transform(InputIterator first, InputIterator last, OutputIterator out,
+               UnaryFunction function) {
+  while (first != last) {
+    *out = function(*first);
+    first++;
+    out++;
+  }
+}
+
 /* Returns an iterator to the first found element comparing equal to "value" in
  * the container between "first" and "last" (last is not included). If no
  * element matches "value", returns the "last" iterator. */

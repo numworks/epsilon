@@ -98,15 +98,15 @@ QUIZ_CASE(pcj_tree_ref) {
   ref2 = ref1->nextTree();  // 10_e
 
   // Replacements by same
-  ref2 = ref2->moveTreeOverNode(ref2);
+  ref2 = ref2->moveTreeOverTree(ref2);
   assert_tree_stack_contains({k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
 
   // Replacements from nodes outside of the TreeStack
   ref0 = ref0->cloneNodeOverNode(9_e);  // Same size
   assert_tree_stack_contains({k_expr0, 10_e, k_expr1, 9_e, k_expr0, 10_e, 9_e});
-  ref1 = ref1->cloneNodeOverTree(10_e);  // Smaller size
+  ref1 = ref1->cloneTreeOverTree(10_e);  // Smaller size
   assert_tree_stack_contains({k_expr0, 10_e, k_expr1, 9_e, 10_e, 10_e, 9_e});
-  ref2 = ref2->cloneTreeOverNode(k_expr1);  // Bigger size
+  ref2 = ref2->cloneTreeOverTree(k_expr1);  // Bigger size
   assert_tree_stack_contains({k_expr0, 10_e, k_expr1, 9_e, 10_e, k_expr1, 9_e});
 
   // Replacements from nodes living in the TreeStack
@@ -209,7 +209,7 @@ QUIZ_CASE(pcj_tree_motions) {
   QUIZ_ASSERT(u->nextNode() == v && u->treeIsIdenticalTo("aaaa"_e) &&
               v->treeIsIdenticalTo("ccc"_e));
   setup();
-  u->moveTreeOverNode(v);
+  u->moveNodeOverNode(v);
   /* u+v
    *  |
    *  cccbbdd */

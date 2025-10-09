@@ -103,10 +103,6 @@ inline void MoveTreeBeforeNode(TreeRef& target, Tree* treeToMove) {
   MoveAt(target, treeToMove, true, true);
 }
 
-inline void MoveNodeOverTree(TreeRef& u, Tree* n) {
-  u = u->moveNodeOverTree(n);
-}
-
 inline void MoveTreeOverTree(TreeRef& u, Tree* n) {
   u = u->moveTreeOverTree(n);
 }
@@ -115,24 +111,12 @@ inline void MoveNodeOverNode(TreeRef& u, Tree* n) {
   u = u->moveNodeOverNode(n);
 }
 
-inline void MoveTreeOverNode(TreeRef& u, Tree* n) {
-  u = u->moveTreeOverNode(n);
-}
-
-inline void CloneTreeOverNode(TreeRef& u, const Tree* n) {
-  u = u->cloneTreeOverNode(n);
-}
-
 inline void CloneTreeOverTree(TreeRef& u, const Tree* n) {
   u = u->cloneTreeOverTree(n);
 }
 
 inline void CloneNodeOverNode(TreeRef& u, const Tree* n) {
   u = u->cloneNodeOverNode(n);
-}
-
-inline void CloneNodeOverTree(TreeRef& u, const Tree* n) {
-  u = u->cloneNodeOverTree(n);
 }
 
 }  // namespace Poincare::Internal

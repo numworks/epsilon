@@ -64,7 +64,7 @@ void remove_system_codepoints(char* buffer) {
 void simplify(Tree* e, const Poincare::ProjectionContext& ctx, bool beautify) {
   if (!Simplification::Simplify(e, ctx, beautify)) {
     // Return undef to spot tests overflowing the TreeStack
-    e->cloneNodeOverTree(KFailedSimplification);
+    e->cloneTreeOverTree(KFailedSimplification);
   }
 }
 

@@ -75,8 +75,15 @@ struct Type {
 // ===== Distribution =====
 
 Distribution::Type DistributionType(StatisticType statisticType);
+
+Distribution::ParametersArray<double> DistributionParameters(
+    StatisticType statisticType, double degreesOfFreedom1,
+    double degreesOfFreedom2);
+/* This version is kept for retro-compatibility, it is not suitable for the F
+ * statistic which needs two degreesOfFreedom parameters */
 Distribution::ParametersArray<double> DistributionParameters(
     StatisticType statisticType, double degreesOfFreedom);
+
 const char* CriticalValueSymbol(StatisticType statisticType);
 
 // ===== Parameters =====

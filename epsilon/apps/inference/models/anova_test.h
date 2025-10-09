@@ -21,7 +21,10 @@ class ANOVATest : public SignificanceTest {
 
  private:
   // Inference
-  double* parametersArray() override { return nullptr; }
+  double* parametersArray() override {
+    assert(false);
+    return nullptr;
+  }
   float computeXMax() const override {
     // TODO
     return 1;

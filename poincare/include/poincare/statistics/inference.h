@@ -7,6 +7,8 @@
 #include <poincare/statistics/data_table.h>
 #include <poincare/statistics/distribution.h>
 
+#include <initializer_list>
+
 namespace Poincare::Inference {
 
 // ===== Test types =====
@@ -225,6 +227,26 @@ void FillContributions(const DataTable* observedValues,
 Results Compute(const DataTable* contributions, double degreesOfFreedom);
 
 }  // namespace Chi2
+
+namespace FTest {
+
+struct CalculatedValues {
+  double sumOfSquares;
+  int degreesOfFreedom;
+  double meanSquares;
+};
+
+struct StatisticResults {
+  double statistic;
+  CalculatedValues between;
+  CalculatedValues within;
+};
+
+static constexpr size_t k_maxNumberOfGroups = 6;
+
+using Values = std::initializer_list<double>;
+StatisticResults ComputeStatisticResults(std::span<const Values> groups);
+}  // namespace FTest
 
 }  // namespace SignificanceTest
 

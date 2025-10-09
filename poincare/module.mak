@@ -181,6 +181,7 @@ $(addprefix statistics/, \
   $(addprefix inference/, \
     chi2_test.cpp:-nopool \
     confidence_interval.cpp:-nopool \
+    ftest.cpp:-nopool \
     inference.cpp:-nopool \
     significance_test.cpp:-nopool \
   ) \

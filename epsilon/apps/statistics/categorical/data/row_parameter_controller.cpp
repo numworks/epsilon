@@ -6,11 +6,11 @@
 namespace Statistics::Categorical {
 
 RowParameterController::RowParameterController(
-    Escher::Responder* parentResponder, TableData* tableData,
+    Escher::Responder* parentResponder, Store* store,
     Escher::StackViewController* stackViewController)
     : Escher::ExplicitSelectableListViewController(parentResponder),
       m_rowNameCell(&m_selectableListView, this),
-      m_tableData(tableData),
+      m_store(store),
       m_stackViewController(stackViewController) {
   m_rowNameCell.label()->setMessage(I18n::Message::RowName);
   m_clearColumnCell.label()->setMessage(I18n::Message::ClearRow);
@@ -24,7 +24,7 @@ bool RowParameterController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (cell == &m_clearColumnCell) {
-    m_tableData->clearRow(m_row);
+    m_store->clearRow(m_row);
     m_stackViewController->pop();
     return true;
   }
@@ -34,9 +34,9 @@ bool RowParameterController::handleEvent(Ion::Events::Event event) {
 bool RowParameterController::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   const char* name = textField->draftText();
-  m_tableData->setCategoryName(name, m_row);
+  m_store->setCategoryName(name, m_row);
   char buffer[20];
-  m_tableData->getCategoryName(m_row, buffer, sizeof(buffer));
+  m_store->getCategoryName(m_row, buffer, sizeof(buffer));
   m_rowNameCell.textField()->setText(buffer);
   m_selectableListView.reloadSelectedCell();
   if (event == Ion::Events::Down) {
@@ -56,7 +56,7 @@ const Escher::AbstractMenuCell* RowParameterController::cell(int row) const {
 
 const char* RowParameterController::title() const {
   char buffer[20];
-  m_tableData->getCategoryName(m_row, buffer, sizeof(buffer));
+  m_store->getCategoryName(m_row, buffer, sizeof(buffer));
   Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),
                                 I18n::translate(I18n::Message::RowOptions),
                                 buffer);
@@ -66,7 +66,7 @@ const char* RowParameterController::title() const {
 void RowParameterController::setRow(int row) {
   m_row = row;
   char buffer[20];
-  m_tableData->getCategoryName(row, buffer, sizeof(buffer));
+  m_store->getCategoryName(row, buffer, sizeof(buffer));
   m_rowNameCell.textField()->setText(buffer);
   m_selectableListView.selectRow(0);
 }

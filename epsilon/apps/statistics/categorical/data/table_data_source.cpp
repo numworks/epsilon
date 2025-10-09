@@ -16,13 +16,13 @@ void TableViewDataSource::prepareHeaderCell(Escher::HighlightCell* cell,
   myCell->setFont(KDFont::Size::Small);
   myCell->setEven(true);
   char txt[20];
-  tableData()->getGroupName(innerCol(column), txt, sizeof(txt));
+  store()->getGroupName(innerCol(column), txt, sizeof(txt));
   myCell->setText(txt);
-  myCell->setColor(tableData()->isGroupActive(innerCol(column))
+  myCell->setColor(store()->isGroupActive(innerCol(column))
                        ? Escher::Palette::DataColor[innerCol(column)]
                        : Escher::Palette::GrayDark);
   static_assert(Escher::Palette::numberOfDataColors() >=
-                TableData::k_maxNumberOfGroups);
+                Store::k_maxNumberOfGroups);
 }
 
 void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
@@ -40,7 +40,7 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     myCell->setFont(KDFont::Size::Small);
     myCell->setEven(row % 2 == 0);
     char txt[20];
-    tableData()->getCategoryName(innerRow(row), txt, sizeof(txt));
+    store()->getCategoryName(innerRow(row), txt, sizeof(txt));
     myCell->setText(txt);
     myCell->setTextColor(KDColorBlack);
   } else {

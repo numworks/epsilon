@@ -35,7 +35,7 @@ struct TableData {
     }
   }
 
-  TableDimension currentDimension() {
+  TableDimension currentDimension() const {
     int maxRow = 0;
     int maxCol = 0;
     for (int col = 0; col < k_maxNumberOfGroups; col++) {
@@ -49,10 +49,10 @@ struct TableData {
     return TableDimension{maxCol + 1, maxRow + 1};
   }
 
-  bool isGroupActive(int col) {
+  bool isGroupActive(int col) const {
     return m_groupStatus[col] == GroupStatus::Active;
   }
-  bool isGroupEmpty(int col) {
+  bool isGroupEmpty(int col) const {
     if (m_groupStatus[col] == GroupStatus::Hidden) {
       // A hidden group could be empty or not
       return !computeGroupHasValue(col);
@@ -66,7 +66,7 @@ struct TableData {
       status = active ? GroupStatus::Active : GroupStatus::Hidden;
     }
   }
-  float getValue(int col, int row) { return m_data[col][row]; }
+  float getValue(int col, int row) const { return m_data[col][row]; }
 
   void setValue(float data, int col, int row) {
     assert(std::isfinite(data));
@@ -81,7 +81,7 @@ struct TableData {
     strlcpy(m_groupLabels[col], name, sizeof(m_groupLabels[col]));
   }
 
-  void getGroupName(int col, char* buffer, int bufferSize) {
+  void getGroupName(int col, char* buffer, int bufferSize) const {
     assert(0 <= col && col < k_maxNumberOfGroups);
     if (m_groupLabels[col][0] != '\x00') {
       strlcpy(buffer, m_groupLabels[col], bufferSize);
@@ -99,7 +99,7 @@ struct TableData {
     strlcpy(m_categoryLabels[row], name, sizeof(m_categoryLabels[row]));
   }
 
-  void getCategoryName(int row, char* buffer, int bufferSize) {
+  void getCategoryName(int row, char* buffer, int bufferSize) const {
     assert(0 <= row && row < k_maxNumberOfCategory);
     if (m_categoryLabels[row][0] != '\x00') {
       strlcpy(buffer, m_categoryLabels[row], bufferSize);
@@ -143,7 +143,7 @@ struct TableData {
   static constexpr int k_maxNumberOfCategory = 10;
 
  private:
-  bool computeGroupHasValue(int column) {
+  bool computeGroupHasValue(int column) const {
     for (int row = 0; row < k_maxNumberOfCategory; row++) {
       if (std::isfinite(m_data[column][row])) {
         return true;

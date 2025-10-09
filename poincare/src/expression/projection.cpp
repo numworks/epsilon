@@ -151,6 +151,7 @@ bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
 bool Projection::UpdateComplexFormatWithExpressionInput(
     const Tree* e, ProjectionContext& projectionContext) {
   assert(e);
+#if POINCARE_COMPLEX
   if (projectionContext.m_complexFormat == ComplexFormat::Real &&
       !Symbol::InvolvesCircularity(e, projectionContext.m_context) &&
       hasComplexNodes(e, projectionContext)) {
@@ -158,6 +159,7 @@ bool Projection::UpdateComplexFormatWithExpressionInput(
         Preferences::k_defaultComplexFormatIfNotReal;
     return true;
   }
+#endif
   return false;
 }
 

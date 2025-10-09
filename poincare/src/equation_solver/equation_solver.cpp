@@ -769,8 +769,10 @@ SolverResult ExactSolve(const Tree* equationList,
 
   Tree* reducedEquationList = preprocessingResult.reducedEquationList;
   EquationMetadata equationMetadata = preprocessingResult.equationMetadata;
+#if POINCARE_COMPLEX
   projectionContext.m_complexFormat =
       preprocessingResult.equationMetadata.complexFormat;
+#endif
 
   if (preprocessingResult.error != Error::NoError) {
     /* If the analysis failed, return an empty solution list */

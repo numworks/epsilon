@@ -248,6 +248,7 @@ struct CalculatedValues {
 
 struct StatisticResults {
   double statistic;
+  double pValue;
   CalculatedValues between;
   CalculatedValues within;
 };

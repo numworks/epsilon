@@ -1,7 +1,10 @@
 
 #include <omg/float.h>
+#include <poincare/src/statistics/inference/significance_test.h>
 #include <poincare/statistics/dataset_column.h>
 #include <poincare/statistics/inference.h>
+
+#include "poincare/comparison_operator.h"
 
 namespace Poincare::Inference::SignificanceTest::FTest {
 
@@ -93,7 +96,13 @@ StatisticResults ComputeStatisticResults(std::span<const Values> groups) {
   GlobalData globalData = ComputeGlobalData(groupDataList);
   CalculatedValues within = ComputeWithin(globalData, groupDataList);
   CalculatedValues between = ComputeBetween(globalData, groupDataList);
-  return StatisticResults{.statistic = Statistic(within, between),
+
+  double statistic = Statistic(within, between);
+  double pValue = Internal::Inference::SignificanceTest::ComputePValue(
+      StatisticType::F, Comparison::Operator::Superior, statistic,
+      between.degreesOfFreedom, within.degreesOfFreedom);
+  return StatisticResults{.statistic = statistic,
+                          .pValue = pValue,
                           .between = between,
                           .within = within};
 }

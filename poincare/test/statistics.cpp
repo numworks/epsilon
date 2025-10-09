@@ -18,20 +18,24 @@ QUIZ_CASE(pcj_statistics_dataset) {
 QUIZ_CASE(pcj_statistics_anova) {
   using namespace Poincare::Inference::SignificanceTest::FTest;
 
-  static constexpr double k_precision = 1e-2;
+  static constexpr double k_precision1 = 1e-3;
+  static constexpr double k_precision2 = 1e-2;
 
   std::array<Values, 3> groups = {Values{3, 2, 4, 2, 1, 4, 2},
                                   Values{1, 3, 3, 2, 1, 4, 2, 3, 2},
                                   Values{3, 4, 2, 4, 5, 2, 4, 5}};
 
   StatisticResults statisticResults = ComputeStatisticResults(groups);
-  assert_roughly_equal(statisticResults.statistic, 3.1776, k_precision);
+  assert_roughly_equal(statisticResults.statistic, 3.1776, k_precision1);
+  assert_roughly_equal(statisticResults.pValue, 0.0623, k_precision1);
+
   quiz_assert(statisticResults.between.degreesOfFreedom == 2);
   assert_roughly_equal(statisticResults.between.sumOfSquares, 7.74,
-                       k_precision);
-  assert_roughly_equal(statisticResults.between.meanSquares, 3.87, k_precision);
+                       k_precision2);
+  assert_roughly_equal(statisticResults.between.meanSquares, 3.87,
+                       k_precision2);
   quiz_assert(statisticResults.within.degreesOfFreedom == 21);
   assert_roughly_equal(statisticResults.within.sumOfSquares, 25.59,
-                       k_precision);
-  assert_roughly_equal(statisticResults.within.meanSquares, 1.22, k_precision);
+                       k_precision2);
+  assert_roughly_equal(statisticResults.within.meanSquares, 1.22, k_precision2);
 }

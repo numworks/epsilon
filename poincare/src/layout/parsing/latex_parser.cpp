@@ -451,10 +451,13 @@ Tree* NextLatexToken(const char** start, const char* rightDelimiter) {
             }
           }
         }
+
         // --- Step 4. Clone child ---
         if (!wasAlreadyParsedElsewhere) {
           RackAtIndex(resultLayout, indexInLayout)
-              ->cloneTreeOverTree(childResult);
+              ->moveTreeOverTree(childResult);
+        } else {
+          childResult->removeTree();
         }
       }
 

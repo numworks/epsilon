@@ -59,7 +59,8 @@ Poincare::Layout HypothesisLayout(TestType testType) {
 
 Results Compute(Type type, Hypothesis hypothesis,
                 const ParametersArray params) {
-  assert(type.testType != TestType::Chi2);
+  assert((type.testType != TestType::Chi2) &&
+         (type.testType != TestType::ANOVA));
   Estimates estimates = ComputeEstimates(type, params);
   double degreesOfFreedom = ComputeDegreesOfFreedom(type, params);
   double criticalValue = ComputeCriticalValue(type, hypothesis.m_h0, params);
@@ -244,7 +245,7 @@ double ComputeCriticalValue(Type type, double h0,
       return (parameters[Params::Slope::B] - h0) /
              parameters[Params::Slope::SE];
     default:
-      // Chi2 is special
+      // Chi2 and ANOVA are special
       OMG::unreachable();
   }
 }

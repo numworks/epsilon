@@ -289,7 +289,7 @@ double ComputeDegreesOfFreedom(Inference::Type type,
       return parameters[Params::Slope::N] - 2;
     default:
       // OneProportion, TwoProportions
-      // Chi2 is handled separately
+      // Chi2, ANOVA are  handled separately
       OMG::unreachable();
   }
 }

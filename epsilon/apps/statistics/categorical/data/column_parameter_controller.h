@@ -31,7 +31,7 @@ class ColumnParameterController
     m_clearColumnCell.label()->setMessage(I18n::Message::ClearColumn);
     m_relativeFreqCell.label()->setMessage(I18n::Message::RelativeFrequency);
   }
-  int numberOfRows() const override { return 4; }
+  int numberOfRows() const override { return k_numberOfCells; }
 
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
                                     Ion::Events::Event event) override {

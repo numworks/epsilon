@@ -34,6 +34,7 @@ const char* HypothesisSymbol(TestType testType) {
       return "p";
     case TestType::TwoProportions:
       return "p1-p2";
+    case TestType::ANOVA:
     case TestType::OneMean:
       return "μ";
     case TestType::TwoMeans:

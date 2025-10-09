@@ -16,7 +16,8 @@ using namespace Poincare::Internal;
 
 int NumberOfStatisticsForTest(TestType testType) {
   const StatisticType statsArray[] = {StatisticType::T, StatisticType::TPooled,
-                                      StatisticType::Z, StatisticType::Chi2};
+                                      StatisticType::Z, StatisticType::Chi2,
+                                      StatisticType::F};
   int count = 0;
   for (StatisticType statisticType : statsArray) {
     if (IsTestCompatibleWithStatistic(testType, statisticType)) {
@@ -35,6 +36,8 @@ Distribution::Type DistributionType(StatisticType statisticType) {
       return Distribution::Type::Normal;
     case StatisticType::Chi2:
       return Distribution::Type::Chi2;
+    case StatisticType::F:
+      return Distribution::Type::Fisher;
     default:
       OMG::unreachable();
   }

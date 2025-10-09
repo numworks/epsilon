@@ -19,10 +19,11 @@ enum class TestType : uint8_t {
   TwoProportions,
   TwoMeans,
   Chi2,
+  ANOVA,
   Slope,
 };
 
-enum class StatisticType : uint8_t { T, TPooled, Z, Chi2 };
+enum class StatisticType : uint8_t { T, TPooled, Z, Chi2, F };
 
 constexpr bool IsTestCompatibleWithStatistic(TestType testType,
                                              StatisticType statisticType) {
@@ -39,6 +40,8 @@ constexpr bool IsTestCompatibleWithStatistic(TestType testType,
              statisticType == StatisticType::Z;
     case TestType::Chi2:
       return statisticType == StatisticType::Chi2;
+    case TestType::ANOVA:
+      return statisticType == StatisticType::F;
     case TestType::Slope:
       return statisticType == StatisticType::T;
     default:
@@ -61,7 +64,8 @@ struct Type {
                  ? StatisticType::T
                  : (IsTestCompatibleWithStatistic(testType, StatisticType::Z)
                         ? StatisticType::Z
-                        : StatisticType::Chi2)) {}
+                        : ((testType == TestType::Chi2) ? StatisticType::Chi2
+                                                        : StatisticType::F))) {}
   constexpr Type() : Type(TestType::OneMean) {}
 
   operator TestType() const { return testType; }
@@ -114,8 +118,9 @@ constexpr int NumberOfParameters(TestType testType) {
       return 4;
     case TestType::TwoMeans:
       return 6;
+    case TestType::ANOVA:
     case TestType::Chi2:
-      // Special case
+      // Special cases
       return 0;
     default:
       OMG::unreachable();
@@ -251,7 +256,7 @@ StatisticResults ComputeStatisticResults(std::span<const Values> groups);
 namespace ConfidenceInterval {
 
 constexpr bool IsTypeCompatibleWithConfidenceInterval(TestType testType) {
-  return testType != TestType::Chi2;
+  return (testType != TestType::Chi2) && (testType != TestType::ANOVA);
 }
 
 struct Results {

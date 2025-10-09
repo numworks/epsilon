@@ -8,6 +8,8 @@ namespace std {
 template <class T>
 class initializer_list {
  public:
+  using value_type = T;
+
   constexpr initializer_list() noexcept : m_begin(nullptr), m_size(0) {}
   constexpr size_t size() const noexcept { return m_size; }
   constexpr const T* begin() const noexcept { return m_begin; }

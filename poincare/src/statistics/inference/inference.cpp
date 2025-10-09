@@ -45,11 +45,22 @@ Distribution::Type DistributionType(StatisticType statisticType) {
 
 Distribution::ParametersArray<double> DistributionParameters(
     StatisticType statisticType, double degreesOfFreedom) {
+  // The Fisher distribution has two different degreesOfFreedom parameters
+  assert(statisticType != StatisticType::F);
+  return DistributionParameters(statisticType, degreesOfFreedom, 0);
+}
+
+Distribution::ParametersArray<double> DistributionParameters(
+    StatisticType statisticType, double degreesOfFreedom1,
+    double degreesOfFreedom2) {
   Distribution::Type distributionType = DistributionType(statisticType);
   switch (distributionType) {
     case Distribution::Type::Student:
     case Distribution::Type::Chi2:
-      return Distribution::ParametersArray<double>({degreesOfFreedom});
+      return Distribution::ParametersArray<double>({degreesOfFreedom1});
+    case Distribution::Type::Fisher:
+      return Distribution::ParametersArray<double>(
+          {degreesOfFreedom1, degreesOfFreedom2});
     case Distribution::Type::Normal:
       return Distribution::ParametersArray<double>({0., 1.});
     default:

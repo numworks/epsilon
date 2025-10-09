@@ -227,7 +227,12 @@ ToSystemOutput ToSystem(Tree* e, ProjectionContext* projectionContext) {
 bool IsSystem(const Tree* e) {
   Tree* c = e->cloneTree();
   // Use ComplexFormat::Cartesian to avoid having PowReal interfering
-  ProjectionContext ctx = {.m_complexFormat = ComplexFormat::Cartesian};
+  ProjectionContext ctx =
+#if POINCARE_COMPLEX
+      {.m_complexFormat = ComplexFormat::Cartesian};
+#else
+      {};
+#endif
   bool changed = ToSystem(c, &ctx).changed;
   c->removeTree();
   return !changed;

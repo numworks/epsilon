@@ -41,39 +41,4 @@ Tree* TreeRef::tree() const {
   return SharedTreeStack->nodeForIdentifier(m_identifier);
 }
 
-void CloneNodeAtNode(TreeRef& target, const Tree* nodeToClone) {
-  Tree* previousTarget = target;
-  target->cloneNodeAtNode(nodeToClone);
-  target = previousTarget;
-}
-
-void CloneTreeAtNode(TreeRef& target, const Tree* treeToClone) {
-  Tree* previousTarget = target;
-  target->cloneTreeAtNode(treeToClone);
-  target = previousTarget;
-}
-
-void MoveAt(TreeRef& target, Tree* source, bool tree, bool before) {
-  Tree* previousTarget = target;
-  if (source->block() < previousTarget->block()) {
-    previousTarget =
-        Tree::FromBlocks(previousTarget->block() -
-                         (tree ? source->treeSize() : source->nodeSize()));
-  }
-  if (tree) {
-    if (before) {
-      target->moveTreeBeforeNode(source);
-    } else {
-      target->moveTreeAtNode(source);
-    }
-  } else {
-    if (before) {
-      target->moveNodeBeforeNode(source);
-    } else {
-      target->moveNodeAtNode(source);
-    }
-  }
-  target = previousTarget;
-}
-
 }  // namespace Poincare::Internal

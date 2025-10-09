@@ -440,14 +440,14 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
     // imaginary parts. If we know that some roots are pure real numbers because
     // the polynomial coefficients are all real, remove these small imaginary
     // parts.
-    MoveTreeOverTree(rootList,
-                     (SignOfTreeOrApproximation(a).isReal() &&
-                      SignOfTreeOrApproximation(b).isReal() &&
-                      SignOfTreeOrApproximation(c).isReal() &&
-                      SignOfTreeOrApproximation(d).isReal())
-                         ? Roots::ApproximateRootsOfRealCubic(rootList, delta)
-                         : Approximation::ToTree<double>(
-                               rootList, Approximation::Parameters{}));
+    rootList->moveTreeOverTree(
+        (SignOfTreeOrApproximation(a).isReal() &&
+         SignOfTreeOrApproximation(b).isReal() &&
+         SignOfTreeOrApproximation(c).isReal() &&
+         SignOfTreeOrApproximation(d).isReal())
+            ? Roots::ApproximateRootsOfRealCubic(rootList, delta)
+            : Approximation::ToTree<double>(rootList,
+                                            Approximation::Parameters{}));
   }
   NAry::Sort(rootList, Order::OrderType::ComplexLine);
   return rootList;

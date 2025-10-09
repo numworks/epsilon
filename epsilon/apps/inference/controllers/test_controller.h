@@ -20,7 +20,7 @@ class TestController
     : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::ChevronView>,
-          Poincare::Inference::k_numberOfTestTypes> {
+          InferenceModel::k_numberOfTests> {
  public:
   TestController(Escher::StackViewController* parentResponder,
                  HypothesisController* hypothesisController,

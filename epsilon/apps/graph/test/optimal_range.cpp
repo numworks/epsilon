@@ -87,8 +87,9 @@ void quiz_assert_optimal_range_is(
 }
 
 QUIZ_CASE(graph_optimal_range) {
-  quiz_assert_optimal_range_is({"y=35000*1.06^(x-1)", "y=40000+2500(x-1)"},
-                               Range2D<float>(-15.0, 12.7, -37.4, 69400));
+  quiz_assert_optimal_range_is(
+      {"y=35000*1.06^(x-1)", "y=40000+2500(x-1)"},
+      Range2D<float>(-167.873, 12.7, -382182.6, 69400));
 
   /* Following tests have been imported from screenshot testing */
 

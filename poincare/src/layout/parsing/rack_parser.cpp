@@ -76,7 +76,7 @@ Tree* RackParser::parse() {
 static inline void turnIntoBinaryNode(const Tree* node, TreeRef& leftHandSide,
                                       TreeRef& rightHandSide) {
   assert(leftHandSide->nextTree() == static_cast<Tree*>(rightHandSide));
-  CloneNodeAtNode(leftHandSide, node);
+  leftHandSide->cloneNodeAtNode(node);
 }
 
 Tree* RackParser::parseExpressionWithRightwardsArrow(
@@ -486,7 +486,7 @@ void RackParser::privateParsePlusAndMinus(TreeRef& leftHandSide, bool plus,
     // +2 = 2, -2 = -2
     leftHandSide = parseUntil(std::max(stoppingType, Token::Type::Minus));
     if (!plus) {
-      CloneNodeAtNode(leftHandSide, KOpposite);
+      leftHandSide->cloneNodeAtNode(KOpposite);
     }
     return;
   }
@@ -497,14 +497,14 @@ void RackParser::privateParsePlusAndMinus(TreeRef& leftHandSide, bool plus,
   }
   assert(leftHandSide->nextTree() == static_cast<Tree*>(rightHandSide));
   if (!plus) {
-    CloneNodeAtNode(leftHandSide, KSub);
+    leftHandSide->cloneNodeAtNode(KSub);
     return;
   }
   if (leftHandSide->isAdd()) {
     NAry::SetNumberOfChildren(leftHandSide,
                               leftHandSide->numberOfChildren() + 1);
   } else {
-    CloneNodeAtNode(leftHandSide, KAdd.node<2>);
+    leftHandSide->cloneNodeAtNode(KAdd.node<2>);
   }
 }
 
@@ -536,10 +536,10 @@ bool RackParser::mergeIntoPercentAdditionIfNeeded(TreeRef& leftHandSide,
       rightHandSide->child(0)->isPercentSimple()) {
     return false;
   }
-  CloneNodeAtNode(leftHandSide, KPercentAddition);
-  MoveNodeOverNode(rightHandSide, rightHandSide->child(0));
+  leftHandSide->cloneNodeAtNode(KPercentAddition);
+  rightHandSide->moveNodeOverNode(rightHandSide->child(0));
   if (!north) {
-    CloneNodeAtNode(rightHandSide, KOpposite);
+    rightHandSide->cloneNodeAtNode(KOpposite);
   }
   return true;
 }
@@ -574,7 +574,7 @@ void RackParser::parseImplicitAdditionBetweenUnits(TreeRef& leftHandSide,
 void RackParser::parseSlash(TreeRef& leftHandSide, Token::Type stoppingType) {
   TreeRef rightHandSide;
   parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Slash);
-  CloneNodeAtNode(leftHandSide, KDiv);
+  leftHandSide->cloneNodeAtNode(KDiv);
 }
 
 void RackParser::parseEuclideanDivision(TreeRef& leftHandSide,
@@ -583,7 +583,7 @@ void RackParser::parseEuclideanDivision(TreeRef& leftHandSide,
   TreeRef rightHandSide;
   parseBinaryOperator(leftHandSide, rightHandSide,
                       Token::Type::EuclideanDivision);
-  CloneNodeAtNode(leftHandSide, KEuclideanDiv);
+  leftHandSide->cloneNodeAtNode(KEuclideanDiv);
 #else
   assert(false);
 #endif
@@ -597,7 +597,7 @@ void RackParser::privateParseTimes(TreeRef& leftHandSide,
     NAry::SetNumberOfChildren(leftHandSide,
                               leftHandSide->numberOfChildren() + 1);
   } else {
-    CloneNodeAtNode(leftHandSide, KMult.node<2>);
+    leftHandSide->cloneNodeAtNode(KMult.node<2>);
   }
   if (rightHandSide->isMult()) {
     // mult<2>(A, mult<2>(B, C)) -> mult<3>(A, B, C)
@@ -651,16 +651,16 @@ void RackParser::parseComparisonOperator(TreeRef& leftHandSide,
                                      ? leftHandSide->child(1)
                                      : static_cast<Tree*>(leftHandSide);
     assert(lastComparison->isComparison());
-    CloneTreeAtNode(rightHandSide, lastComparison->child(1));
+    rightHandSide->cloneTreeAtNode(lastComparison->child(1));
     Tree* comparison = SharedTreeStack->pushBlock(operatorType);
-    MoveNodeAtNode(rightHandSide, comparison);
-    CloneNodeAtNode(leftHandSide, KLogicalAnd);
+    rightHandSide->moveNodeAtNode(comparison);
+    leftHandSide->cloneNodeAtNode(KLogicalAnd);
 #else
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
 #endif
   } else {
     Tree* comparison = SharedTreeStack->pushBlock(operatorType);
-    MoveNodeAtNode(leftHandSide, comparison);
+    leftHandSide->moveNodeAtNode(comparison);
   }
 }
 
@@ -669,7 +669,7 @@ void RackParser::parseAssignmentEqual(TreeRef& leftHandSide,
   TreeRef rightHandSide;
   parseBinaryOperator(leftHandSide, rightHandSide,
                       Token::Type::AssignmentEqual);
-  CloneNodeAtNode(leftHandSide, KEqual);
+  leftHandSide->cloneNodeAtNode(KEqual);
 }
 
 void RackParser::parseRightwardsArrow(TreeRef& leftHandSide,
@@ -728,7 +728,7 @@ void RackParser::parseLogicalOperatorNot(TreeRef& leftHandSide,
   if (rightHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  CloneNodeAtNode(rightHandSide, KLogicalNot);
+  rightHandSide->cloneNodeAtNode(KLogicalNot);
   leftHandSide = rightHandSide;
 #else
   TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -789,12 +789,12 @@ void RackParser::parseLeftParenthesis(TreeRef& leftHandSide,
   assert(!list.isUninitialized());
 #if POINCARE_POINT
   if (list->numberOfChildren() == 2) {
-    CloneNodeOverNode(list, KPoint);
+    list->cloneNodeOverNode(KPoint);
     leftHandSide = list;
   } else
 #endif
       if (list->numberOfChildren() == 1) {
-    CloneNodeOverNode(list, KParentheses);
+    list->cloneNodeOverNode(KParentheses);
     leftHandSide = list;
   } else {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -813,7 +813,7 @@ void RackParser::parseBang(TreeRef& leftHandSide, Token::Type stoppingType) {
     // Left-hand side missing
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   } else {
-    CloneNodeAtNode(leftHandSide, KFact);
+    leftHandSide->cloneNodeAtNode(KFact);
   }
   isThereImplicitOperator();
 }
@@ -823,7 +823,7 @@ void RackParser::parsePercent(TreeRef& leftHandSide, Token::Type stoppingType) {
     // Left-hand side missing
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  CloneNodeAtNode(leftHandSide, KPercentSimple);
+  leftHandSide->cloneNodeAtNode(KPercentSimple);
   isThereImplicitOperator();
 }
 
@@ -885,8 +885,8 @@ static void PromoteBuiltin(TreeRef& parameterList, const Builtin* builtin) {
       NAry::AddChild(parameterList, (1_e)->cloneTree());
     }
   }
-  MoveNodeOverNode(parameterList,
-                   builtin->pushNode(parameterList->numberOfChildren()));
+  parameterList->moveNodeOverNode(
+      builtin->pushNode(parameterList->numberOfChildren()));
   if (TypeBlock(type).isParametric()) {
     if (!parameterList->child(1)->isUserSymbol()) {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -986,10 +986,10 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
       // Unexpected number of many parameters.
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     } else {
-      MoveTreeOverTree(parameter, parameter->child(0));
+      parameter->moveTreeOverTree(parameter->child(0));
       base->swapWithTree(parameter);
       leftHandSide = parameter;
-      CloneNodeAtNode(leftHandSide, KLogBase);
+      leftHandSide->cloneNodeAtNode(KLogBase);
     }
     return;
   }
@@ -1060,7 +1060,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   }
 
   if (powerFunction) {
-    CloneNodeAtNode(leftHandSide, KPow);
+    leftHandSide->cloneNodeAtNode(KPow);
     Integer::Push(powerValue);
   }
 }
@@ -1230,7 +1230,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
-  MoveTreeOverTree(parameter, parameter->child(0));
+  parameter->moveTreeOverTree(parameter->child(0));
   if (parameter->type() == Type::UserSymbol &&
       strncmp(Symbol::GetName(parameter), name, length) == 0) {
     // Function and variable must have distinct names.
@@ -1437,9 +1437,9 @@ void RackParser::parseListParameters(TreeRef& leftHandSide) {
 #if POINCARE_LIST
     int numberOfParameters = parameter->numberOfChildren();
     if (numberOfParameters == 2) {
-      CloneNodeAtNode(leftHandSide, KListSlice);
+      leftHandSide->cloneNodeAtNode(KListSlice);
     } else if (numberOfParameters == 1) {
-      CloneNodeAtNode(leftHandSide, KListElement);
+      leftHandSide->cloneNodeAtNode(KListElement);
     } else
 #endif
     {
@@ -1580,7 +1580,7 @@ bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
           IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(0)) &&
           IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(1))) {
         // The following expression looks like "int/int" -> it's a mixedFraction
-        CloneNodeAtNode(leftHandSide, KMixedFraction);
+        leftHandSide->cloneNodeAtNode(KMixedFraction);
         return true;
       }
       rightHandSide->removeTree();

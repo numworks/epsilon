@@ -749,7 +749,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
   TreeRef extractedUnits = e->cloneTree();
   if (e->isUnitConversion()) {
     // Use second child for target units and first one for value.
-    MoveTreeOverTree(extractedUnits, extractedUnits->child(1));
+    extractedUnits->moveTreeOverTree(extractedUnits->child(1));
     e->moveTreeOverTree(e->child(0));
     unitDisplay = UnitDisplay::AutomaticInput;
     assert(!Dimension::Get(e).isScalar());
@@ -799,7 +799,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
           ApplyDecompositionDisplay(e, extractedUnits, dimension, unitFormat);
       break;
     case UnitDisplay::BasicSI:
-      MoveTreeOverTree(extractedUnits, GetBaseUnits(dimension.unit.vector));
+      extractedUnits->moveTreeOverTree(GetBaseUnits(dimension.unit.vector));
       assert(e->nextTree() == extractedUnits);
       e->cloneNodeAtNode(KMult.node<2>);
       break;
@@ -865,7 +865,7 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
     Unit::Push(angleUnit);
     Integer::Push(dimension.unit.vector.angle);
     assert(Dimension::Get(newExtractedUnits) == Dimension::Get(inputUnits));
-    MoveTreeOverTree(inputUnits, newExtractedUnits);
+    inputUnits->moveTreeOverTree(newExtractedUnits);
     e->moveTreeOverTree(ExactConvertToUnit(e, inputUnits));
     inputUnits->removeTree();
     return;

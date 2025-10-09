@@ -82,41 +82,4 @@ inline bool operator==(Tree* n, const TreeRef& r) {
   return n == static_cast<Tree*>(r);
 }
 
-void CloneNodeAtNode(TreeRef& target, const Tree* nodeToClone);
-void CloneTreeAtNode(TreeRef& target, const Tree* treeToClone);
-
-void MoveAt(TreeRef& target, Tree* toMove, bool tree, bool before);
-
-inline void MoveNodeAtNode(TreeRef& target, Tree* nodeToMove) {
-  MoveAt(target, nodeToMove, false, false);
-}
-
-inline void MoveTreeAtNode(TreeRef& target, Tree* treeToMove) {
-  MoveAt(target, treeToMove, true, false);
-}
-
-inline void MoveNodeBeforeNode(TreeRef& target, Tree* nodeToMove) {
-  MoveAt(target, nodeToMove, false, true);
-}
-
-inline void MoveTreeBeforeNode(TreeRef& target, Tree* treeToMove) {
-  MoveAt(target, treeToMove, true, true);
-}
-
-inline void MoveTreeOverTree(TreeRef& u, Tree* n) {
-  u = u->moveTreeOverTree(n);
-}
-
-inline void MoveNodeOverNode(TreeRef& u, Tree* n) {
-  u = u->moveNodeOverNode(n);
-}
-
-inline void CloneTreeOverTree(TreeRef& u, const Tree* n) {
-  u = u->cloneTreeOverTree(n);
-}
-
-inline void CloneNodeOverNode(TreeRef& u, const Tree* n) {
-  u = u->cloneNodeOverNode(n);
-}
-
 }  // namespace Poincare::Internal

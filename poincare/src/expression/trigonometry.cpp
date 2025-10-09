@@ -249,13 +249,12 @@ bool Trigonometry::ReduceTrig(Tree* e) {
       TreeRef simplifiedPiFactor = piFactor->cloneTree();
       if (isOpposed) {
         // -cos(x) = cos(x+π) and -sin(x) = sin(x+π)
-        MoveTreeOverTree(simplifiedPiFactor,
-                         PatternMatching::CreateReduce(
-                             KAdd(KA, 1_e), {.KA = simplifiedPiFactor}));
+        simplifiedPiFactor->moveTreeOverTree(PatternMatching::CreateReduce(
+            KAdd(KA, 1_e), {.KA = simplifiedPiFactor}));
         isOpposed = false;
       }
-      MoveTreeOverTree(simplifiedPiFactor,
-                       computeSimplifiedPiFactor(simplifiedPiFactor));
+      simplifiedPiFactor->moveTreeOverTree(
+          computeSimplifiedPiFactor(simplifiedPiFactor));
       if (!simplifiedPiFactor->treeIsIdenticalTo(piFactor)) {
         firstArgument->moveTreeOverTree(PatternMatching::CreateReduce(
             KMult(π_e, KA), {.KA = simplifiedPiFactor}));

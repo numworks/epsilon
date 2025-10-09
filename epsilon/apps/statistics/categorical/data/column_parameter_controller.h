@@ -25,7 +25,9 @@ class ColumnParameterController
         m_stackViewController(stackViewController) {
     m_columnNameCell.label()->setMessage(I18n::Message::ColumnName);
     m_showInGraphCell.label()->setMessage(
-        I18n::Message::ActivateDeactivateListParamTitle);
+        I18n::Message::CategoricalActivateDeactivateStoreParamTitle);
+    m_showInGraphCell.subLabel()->setMessage(
+        I18n::Message::CategoricalActivateDeactivateStoreParamDescription);
     m_clearColumnCell.label()->setMessage(I18n::Message::ClearColumn);
     m_relativeFreqCell.label()->setMessage(I18n::Message::RelativeFrequency);
   }

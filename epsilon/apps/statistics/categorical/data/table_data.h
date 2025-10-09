@@ -16,7 +16,7 @@ struct TableDimension {
 };
 
 struct TableData {
-  using Label = char[11];
+  using Label = char[11 + 1];  // 11 (from spec) + \x00
 
   TableData() {
     for (Label& label : m_groupLabels) {

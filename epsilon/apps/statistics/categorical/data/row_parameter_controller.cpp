@@ -13,8 +13,7 @@ RowParameterController::RowParameterController(
       m_tableData(tableData),
       m_stackViewController(stackViewController) {
   m_rowNameCell.label()->setMessage(I18n::Message::RowName);
-  // TODO update once i18n is here
-  m_clearColumnCell.label()->setMessage(I18n::Message::ClearColumn);
+  m_clearColumnCell.label()->setMessage(I18n::Message::ClearRow);
 }
 
 bool RowParameterController::handleEvent(Ion::Events::Event event) {

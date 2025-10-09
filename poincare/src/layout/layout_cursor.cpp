@@ -211,7 +211,7 @@ void TreeStackCursor::insertAndRemoveLayout(
          copy->nextTree() == SharedTreeStack->lastBlock());
 
   if (copy->isRackLayout() && Rack::IsEmpty(copy)) {
-    // TODO seems wrong
+    copy->removeTree();
     return;
   }
 

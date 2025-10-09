@@ -21,9 +21,10 @@ void Decimal::Project(Tree* e) {
   Integer::Push(10);
   SharedTreeStack->pushMult(2);
   (-1_e)->cloneTree();
-  e->child(1)->detachTree();
-  e->moveTreeOverNode(mult);
-  NAry::SetNumberOfChildren(e, 2);
+  e->child(1)->cloneTree();
+  e->child(0)->cloneTree();
+  NAry::SetNumberOfChildren(mult, 2);
+  e->moveTreeOverTree(mult);
 }
 
 using Poincare::Preferences;

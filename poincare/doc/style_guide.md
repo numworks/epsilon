@@ -297,20 +297,6 @@ tree->nextTree()->moveNodeAtTree(otherTree);
 Childless trees are equivalent to their node. We avoid mixing the definition for clarity, and in case children are added later.
 
 > [!CAUTION]
-> Avoid this:
-
-```cpp
-tree->cloneNodeOverTree(KUndef);
-```
-
-> [!TIP]
-> Prefer this:
-
-```cpp
-tree->cloneTreeOverTree(KUndef);
-```
-
-> [!CAUTION]
 > This is broken:
 
 ```cpp

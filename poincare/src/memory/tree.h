@@ -225,12 +225,8 @@ class Tree : public TypeBlock {
    *  aaaabbcccdd        =>         cccbbdd
    */
   Tree* moveNodeOverNode(Tree* n) { return moveOver(n, false, false); }
-  Tree* moveTreeOverNode(Tree* n) { return moveOver(n, false, true); }
-  Tree* moveNodeOverTree(Tree* n) { return moveOver(n, true, false); }
   Tree* moveTreeOverTree(Tree* n) { return moveOver(n, true, true); }
   Tree* cloneNodeOverNode(const Tree* n) { return cloneOver(n, false, false); }
-  Tree* cloneTreeOverNode(const Tree* n) { return cloneOver(n, false, true); }
-  Tree* cloneNodeOverTree(const Tree* n) { return cloneOver(n, true, false); }
   Tree* cloneTreeOverTree(const Tree* n) { return cloneOver(n, true, true); }
 
   /*    u   v                     u+v

@@ -338,7 +338,8 @@ Tree* PolynomialParser::Parse(Tree* e, const Tree* variable) {
       }
       polynomial = Polynomial::Sanitize(polynomial);
       // Addition node has been emptied from children
-      e->moveTreeOverNode(polynomial);
+      e->moveTreeAfterNode(polynomial);
+      e->removeNode();
     } else {
       // Move polynomial next to e before it's parsed (and likely
       // replaced)

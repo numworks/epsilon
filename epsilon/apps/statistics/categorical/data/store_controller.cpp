@@ -8,6 +8,7 @@ StoreController::StoreController(
     Escher::TabViewController* tabViewController,
     Escher::ViewController* dataTypeController, TableData* tableData)
     : Shared::TabTableController(parentResponder),
+      TableViewDataSource(&m_selectableTableView, this),
       Escher::ButtonRowDelegate(header, nullptr),
       m_dataTypeButton(this, I18n::Message::DataType,
                        Escher::Invocation::Builder<StoreController>(
@@ -30,10 +31,6 @@ StoreController::StoreController(
   m_prefacedTableView.setBackgroundColor(Escher::Palette::WallScreenDark);
   m_prefacedTableView.setCellOverlap(0, 0);
   m_prefacedTableView.setMargins(k_margins);
-  for (EvenOddEditableCell& cell : m_editableCells) {
-    cell.setParentResponder(&m_selectableTableView);
-    cell.editableTextCell()->textField()->setDelegate(this);
-  }
 }
 
 void StoreController::fillInnerCellForLocation(Escher::HighlightCell* cell,

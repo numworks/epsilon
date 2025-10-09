@@ -32,14 +32,13 @@ class Store {
   struct TableData {
     friend class Store;
     TableData() {
-      for (Label& label : m_groupLabels) {
-        label[0] = '\x00';
+      for (int group = 0; group < k_maxNumberOfGroups; ++group) {
+        m_groupLabels[group][0] = '\x00';
+        m_groupStatus[group] = GroupStatus::Empty;
+        m_showRelativeFreqColumn[group] = false;
       }
       for (Label& label : m_categoryLabels) {
         label[0] = '\x00';
-      }
-      for (GroupStatus& status : m_groupStatus) {
-        status = GroupStatus::Empty;
       }
       for (float* data = &m_data[0][0];
            data < &m_data[0][0] + k_maxNumberOfGroups * k_maxNumberOfCategory;
@@ -51,11 +50,12 @@ class Store {
    private:
     std::array<Label, k_maxNumberOfGroups> m_groupLabels = {};
     std::array<GroupStatus, k_maxNumberOfGroups> m_groupStatus = {};
+    std::array<bool, k_maxNumberOfGroups> m_showRelativeFreqColumn = {};
     std::array<Label, k_maxNumberOfCategory> m_categoryLabels = {};
     float m_data[k_maxNumberOfGroups][k_maxNumberOfCategory];
   };
 
-  Store(TableData* tableData) : m_table(tableData) {}
+  Store(TableData* tableData) : m_table(tableData) { recomputeAllSums(); }
 
   TableDimension currentDimension() const {
     int maxRow = 0;
@@ -96,6 +96,7 @@ class Store {
     if (m_table->m_groupStatus[col] == GroupStatus::Empty) {
       m_table->m_groupStatus[col] = GroupStatus::Active;
     }
+    recomputeSum(col);
   }
 
   void setGroupName(const char* name, int col) {
@@ -142,6 +143,7 @@ class Store {
       m_table->m_groupStatus[col] =
           computeGroupHasValue(col) ? GroupStatus::Active : GroupStatus::Empty;
     }
+    recomputeSum(col);
   }
   void clearColumn(int col) {
     for (int row = 0; row < k_maxNumberOfCategory; row++) {
@@ -150,6 +152,7 @@ class Store {
     if (m_table->m_groupStatus[col] != GroupStatus::Hidden) {
       m_table->m_groupStatus[col] = GroupStatus::Empty;
     }
+    m_sumOfCategories[col] = NAN;
   }
   void clearRow(int row) {
     for (int col = 0; col < k_maxNumberOfGroups; col++) {
@@ -158,10 +161,41 @@ class Store {
           !computeGroupHasValue(col)) {
         m_table->m_groupStatus[col] = GroupStatus::Empty;
       }
+      recomputeSum(col);
     }
   }
 
+  bool isRelativeFrequencyColumnActive(int col) const {
+    return m_table->m_showRelativeFreqColumn[col];
+  }
+  void setRelativeFrequencyColumn(int col, bool active) {
+    m_table->m_showRelativeFreqColumn[col] = active;
+  }
+  float getRelativeFrequency(int col, int row) const {
+    float value = m_table->m_data[col][row];
+    return std::isfinite(value) ? value / m_sumOfCategories[col] : NAN;
+  }
+
  private:
+  void recomputeSum(int column) {
+    assert(0 <= column && column < k_maxNumberOfGroups);
+    float sum = 0;
+    bool hasValue = false;
+    for (int row = 0; row < k_maxNumberOfCategory; row++) {
+      if (std::isfinite(m_table->m_data[column][row])) {
+        hasValue = true;
+        sum += m_table->m_data[column][row];
+      }
+    }
+    m_sumOfCategories[column] = hasValue ? sum : NAN;
+  }
+
+  void recomputeAllSums() {
+    for (int col = 0; col < k_maxNumberOfGroups; col++) {
+      recomputeSum(col);
+    }
+  }
+
   bool computeGroupHasValue(int column) const {
     for (int row = 0; row < k_maxNumberOfCategory; row++) {
       if (std::isfinite(m_table->m_data[column][row])) {
@@ -171,6 +205,7 @@ class Store {
     return false;
   }
 
+  std::array<float, k_maxNumberOfGroups> m_sumOfCategories;
   TableData* m_table;
 };
 

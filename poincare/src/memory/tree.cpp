@@ -676,11 +676,11 @@ Tree* Tree::moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at) {
   return Tree::FromBlocks(addedBlock);
 }
 
-Tree* Tree::cloneOver(const Tree* newNode, bool oldIsTree, bool newIsTree) {
+Tree* Tree::cloneOver(const Tree* newNode, bool isTree) {
   assert(newNode);
   Tree* oldNode = this;
-  int oldSize = oldIsTree ? oldNode->treeSize() : oldNode->nodeSize();
-  int newSize = newIsTree ? newNode->treeSize() : newNode->nodeSize();
+  int oldSize = isTree ? oldNode->treeSize() : oldNode->nodeSize();
+  int newSize = isTree ? newNode->treeSize() : newNode->nodeSize();
   Block* oldBlock = oldNode->block();
   const Block* newBlock = newNode->block();
   if (oldBlock == newBlock && oldSize == newSize) {
@@ -708,11 +708,11 @@ Tree* Tree::cloneOver(const Tree* newNode, bool oldIsTree, bool newIsTree) {
   return Tree::FromBlocks(oldBlock);
 }
 
-Tree* Tree::moveOver(Tree* newNode, bool oldIsTree, bool newIsTree) {
+Tree* Tree::moveOver(Tree* newNode, bool isTree) {
   assert(newNode);
   Tree* oldNode = this;
-  int oldSize = oldIsTree ? oldNode->treeSize() : oldNode->nodeSize();
-  int newSize = newIsTree ? newNode->treeSize() : newNode->nodeSize();
+  int oldSize = isTree ? oldNode->treeSize() : oldNode->nodeSize();
+  int newSize = isTree ? newNode->treeSize() : newNode->nodeSize();
   Block* oldBlock = oldNode->block();
   Block* newBlock = newNode->block();
   if (oldBlock == newBlock && oldSize == newSize) {
@@ -721,8 +721,8 @@ Tree* Tree::moveOver(Tree* newNode, bool oldIsTree, bool newIsTree) {
   Block* finalBlock = oldBlock;
   assert(SharedTreeStack->contains(newNode->block()));
   // Fractal scheme
-  assert(!(newIsTree && oldNode->hasAncestor(newNode, true)));
-  if (oldIsTree && newNode->hasAncestor(oldNode, true)) {
+  assert(!(isTree && oldNode->hasAncestor(newNode, true)));
+  if (isTree && newNode->hasAncestor(oldNode, true)) {
     oldSize -= newSize;
   }
   // Move newNode at oldNode to preserve TreeRefs on oldNode's root.

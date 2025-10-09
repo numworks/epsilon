@@ -224,10 +224,10 @@ class Tree : public TypeBlock {
    *  |     |       u.moveOver(v)   |
    *  aaaabbcccdd        =>         cccbbdd
    */
-  Tree* moveNodeOverNode(Tree* n) { return moveOver(n, false, false); }
-  Tree* moveTreeOverTree(Tree* n) { return moveOver(n, true, true); }
-  Tree* cloneNodeOverNode(const Tree* n) { return cloneOver(n, false, false); }
-  Tree* cloneTreeOverTree(const Tree* n) { return cloneOver(n, true, true); }
+  Tree* moveNodeOverNode(Tree* n) { return moveOver(n, false); }
+  Tree* moveTreeOverTree(Tree* n) { return moveOver(n, true); }
+  Tree* cloneNodeOverNode(const Tree* n) { return cloneOver(n, false); }
+  Tree* cloneTreeOverTree(const Tree* n) { return cloneOver(n, true); }
 
   /*    u   v                     u+v
    *    |   |       u.remove()     |
@@ -423,8 +423,8 @@ class Tree : public TypeBlock {
   Tree* cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
                 bool at = false);
   Tree* moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at = false);
-  Tree* cloneOver(const Tree* n, bool oldIsTree, bool newIsTree);
-  Tree* moveOver(Tree* n, bool oldIsTree, bool newIsTree);
+  Tree* cloneOver(const Tree* n, bool isTree);
+  Tree* moveOver(Tree* n, bool isTree);
   Tree* detach(bool isTree);
   void remove(bool isTree);
 

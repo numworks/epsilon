@@ -23,13 +23,13 @@ class DataTypeViewModel {
 
   DataTypeViewModel() : m_selectedDataType(DataType::Quantitative) {}
   DataType selectedDataType() const { return m_selectedDataType; }
-  void selectDataType(DataType graphView) { m_selectedDataType = graphView; }
+  void selectDataType(DataType dataType) { m_selectedDataType = dataType; }
   bool isCategorical() const {
     return m_selectedDataType == DataType::Qualitative;
   }
 
  private:
-  DataType m_selectedDataType;
+  DataType m_selectedDataType = DataType::Quantitative;
 };
 
 }  // namespace Statistics

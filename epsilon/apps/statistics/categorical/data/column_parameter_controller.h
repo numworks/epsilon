@@ -82,11 +82,10 @@ class ColumnParameterController
 
  private:
   constexpr static int k_numberOfCells = 4;
-  int m_column = -1;
-  bool m_columnIsActive = true;
-  constexpr static int k_titleBufferSize = 50;  // todo
+  constexpr static int k_titleBufferSize = 23 + sizeof(TableData::Label);
   // mutable because title() needs to be const
   mutable char m_titleBuffer[k_titleBufferSize];
+  int m_column = -1;
 
   Escher::MenuCellWithEditableText<Escher::MessageTextView> m_columnNameCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,

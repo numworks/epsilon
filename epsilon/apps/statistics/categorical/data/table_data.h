@@ -10,14 +10,14 @@
 
 namespace Statistics::Categorical {
 
-using Label = char[11];
-
 struct TableDimension {
   int col;
   int row;
 };
 
 struct TableData {
+  using Label = char[11];
+
   TableData() {
     for (Label& label : m_groupLabels) {
       label[0] = '\x00';
@@ -88,13 +88,34 @@ struct TableData {
       return;
     }
     // Default group name
+    static_assert('1' + k_maxNumberOfGroups - 1 <= '9');
     char digit = '1' + col;
     Poincare::Print::CustomPrintf(buffer, bufferSize, "%s%c",
                                   I18n::translate(I18n::Message::Group), digit);
   }
 
+  void setCategoryName(const char* name, int row) {
+    assert(0 <= row && row < k_maxNumberOfCategory);
+    strlcpy(m_categoryLabels[row], name, sizeof(m_categoryLabels[row]));
+  }
+
+  void getCategoryName(int row, char* buffer, int bufferSize) {
+    assert(0 <= row && row < k_maxNumberOfCategory);
+    if (m_categoryLabels[row][0] != '\x00') {
+      strlcpy(buffer, m_categoryLabels[row], bufferSize);
+      return;
+    }
+    // Default group name
+    static_assert('A' + k_maxNumberOfCategory - 1 <= 'Z');
+    char digit = 'A' + row;
+    Poincare::Print::CustomPrintf(buffer, bufferSize, "%s %c",
+                                  I18n::translate(I18n::Message::Category),
+                                  digit);
+  }
+
   void eraseValue(int col, int row) {
     m_data[col][row] = NAN;
+    // A hidden column stays hidden even if emptied
     if (m_groupStatus[col] != GroupStatus::Hidden) {
       m_groupStatus[col] =
           computeGroupHasValue(col) ? GroupStatus::Active : GroupStatus::Empty;
@@ -106,6 +127,15 @@ struct TableData {
     }
     if (m_groupStatus[col] != GroupStatus::Hidden) {
       m_groupStatus[col] = GroupStatus::Empty;
+    }
+  }
+  void clearRow(int row) {
+    for (int col = 0; col < k_maxNumberOfGroups; col++) {
+      m_data[col][row] = NAN;
+      if (m_groupStatus[col] == GroupStatus::Active &&
+          !computeGroupHasValue(col)) {
+        m_groupStatus[col] = GroupStatus::Empty;
+      }
     }
   }
 

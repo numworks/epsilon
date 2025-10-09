@@ -22,6 +22,8 @@ StoreController::StoreController(
       m_tableData(tableData),
       m_columnParameterController(stackViewController, tableData,
                                   stackViewController),
+      m_rowParameterController(stackViewController, tableData,
+                               stackViewController),
       m_stackViewController(stackViewController),
       m_tabController(tabViewController),
       m_dataTypeController(dataTypeController) {
@@ -127,11 +129,9 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
       m_stackViewController->push(&m_columnParameterController);
       return true;
     } else if (selectedColumn() == 0) {
-      /* TODO RowParameterController
       m_rowParameterController.setRow(innerRow(selectedRow()));
       m_stackViewController->push(&m_rowParameterController);
       return true;
-      */
     }
     return false;
   }

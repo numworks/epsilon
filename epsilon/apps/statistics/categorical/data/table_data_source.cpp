@@ -33,13 +33,8 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     myCell->setFont(KDFont::Size::Small);
     myCell->setEven(row % 2 == 0);
-    assert(row - 1 <= 'Z' - 'A');
-    char digit = 'A' + (row - 1);
-    constexpr int bufferSize = 20;
-    char txt[bufferSize];
-    Poincare::Print::CustomPrintf(txt, bufferSize, "%s %c",
-                                  I18n::translate(I18n::Message::Category),
-                                  digit);
+    char txt[20];
+    tableData()->getCategoryName(innerRow(row), txt, sizeof(txt));
     myCell->setText(txt);
     myCell->setTextColor(KDColorBlack);
   } else {

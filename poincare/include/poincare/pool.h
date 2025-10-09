@@ -54,6 +54,7 @@ class Pool final {
   Pool() : m_cursor(buffer()) {}
 
   PoolObject* cursor() const { return reinterpret_cast<PoolObject*>(m_cursor); }
+  size_t size() const { return m_cursor - constBuffer(); }
 
   // Object
   PoolObject* object(uint16_t identifier) const {

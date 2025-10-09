@@ -200,11 +200,11 @@ void TreeStackCursor::insertLayout(const Tree* tree,
   if (tree->isRackLayout() && Rack::IsEmpty(tree)) {
     return;
   }
-  stealAndInsertLayout(tree->cloneTree(), symbolContext, forceRight, forceLeft,
-                       collapseSiblings);
+  insertAndRemoveLayout(tree->cloneTree(), symbolContext, forceRight, forceLeft,
+                        collapseSiblings);
 }
 
-void TreeStackCursor::stealAndInsertLayout(
+void TreeStackCursor::insertAndRemoveLayout(
     Tree* copy, const Poincare::SymbolContext& symbolContext, bool forceRight,
     bool forceLeft, bool collapseSiblings) {
   assert(SharedTreeStack->contains(copy) &&
@@ -411,8 +411,8 @@ void TreeStackCursor::insertText(const char* text,
          * and force the cursor left of it. */
         assert(currentSubscriptDepth == 0);
         (void)currentSubscriptDepth;
-        stealAndInsertLayout(layoutToInsert, symbolContext,
-                             forceCursorRightOfText, forceCursorLeftOfText);
+        insertAndRemoveLayout(layoutToInsert, symbolContext,
+                              forceCursorRightOfText, forceCursorLeftOfText);
         layoutToInsert = KRackL()->cloneTree();
         currentLayout = layoutToInsert;
         forceCursorLeftOfText = true;
@@ -457,8 +457,8 @@ void TreeStackCursor::insertText(const char* text,
   assert(currentSubscriptDepth == 0);
 
   // - Step 2 - Inserted the created layout
-  stealAndInsertLayout(layoutToInsert, symbolContext, forceCursorRightOfText,
-                       forceCursorLeftOfText);
+  insertAndRemoveLayout(layoutToInsert, symbolContext, forceCursorRightOfText,
+                        forceCursorLeftOfText);
 
   // TODO: Restore beautification
 }

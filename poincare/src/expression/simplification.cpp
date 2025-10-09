@@ -226,12 +226,23 @@ ToSystemOutput ToSystem(Tree* e, ProjectionContext* projectionContext) {
 #if ASSERTIONS
 bool IsSystem(const Tree* e) {
   Tree* c = e->cloneTree();
-  // Use ComplexFormat::Cartesian to avoid having PowReal interfering
-  ProjectionContext ctx =
 #if POINCARE_COMPLEX
-      {.m_complexFormat = ComplexFormat::Cartesian};
+  // Use ComplexFormat::Cartesian to avoid having PowReal interfering
+  ProjectionContext ctx = {.m_complexFormat = ComplexFormat::Cartesian};
 #else
-      {};
+  /* Pow is used both in UserExpressions to represent all the types of powers
+   * and in system for some specific powers (simple integral powers for
+   * instance). This is an issue in ComplexFormat::Real since ToSystem replaces
+   * all Pow nodes with PowReal nodes, ie Pow nodes are not allowed by IsSystem
+   * while they are produced by the reduction.
+   * TODO: introduce a PowUser node similar to LnUser to clarify the situation ?
+   */
+  ProjectionContext ctx = {};
+  for (Tree* d : c->selfAndDescendants()) {
+    if (d->isPow()) {
+      d->cloneNodeOverNode(KPowReal);
+    }
+  }
 #endif
   bool changed = ToSystem(c, &ctx).changed;
   c->removeTree();

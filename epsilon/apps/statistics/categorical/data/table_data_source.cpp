@@ -8,6 +8,23 @@
 
 namespace Statistics::Categorical {
 
+void TableViewDataSource::prepareHeaderCell(Escher::HighlightCell* cell,
+                                            int column) {
+  Shared::BufferFunctionTitleCell* myCell =
+      static_cast<Shared::BufferFunctionTitleCell*>(cell);
+  myCell->setHorizontalAlignment(KDGlyph::k_alignCenter);
+  myCell->setFont(KDFont::Size::Small);
+  myCell->setEven(true);
+  char txt[20];
+  tableData()->getGroupName(innerCol(column), txt, sizeof(txt));
+  myCell->setText(txt);
+  myCell->setColor(tableData()->isGroupActive(innerCol(column))
+                       ? Escher::Palette::DataColor[innerCol(column)]
+                       : Escher::Palette::GrayDark);
+  static_assert(Escher::Palette::numberOfDataColors() >=
+                TableData::k_maxNumberOfGroups);
+}
+
 void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
                                               int column, int row) {
   int type = typeAtLocation(column, row);
@@ -15,19 +32,8 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     return;
   }
   if (type == k_typeOfHeaderCells) {
-    Shared::BufferFunctionTitleCell* myCell =
-        static_cast<Shared::BufferFunctionTitleCell*>(cell);
-    myCell->setHorizontalAlignment(KDGlyph::k_alignCenter);
-    myCell->setFont(KDFont::Size::Small);
-    myCell->setEven(row % 2 == 0);
-    char txt[20];
-    tableData()->getGroupName(innerCol(column), txt, sizeof(txt));
-    myCell->setText(txt);
-    myCell->setColor(tableData()->isGroupActive(innerCol(column))
-                         ? Escher::Palette::DataColor[innerCol(column)]
-                         : Escher::Palette::GrayDark);
-    static_assert(Escher::Palette::numberOfDataColors() >=
-                  TableData::k_maxNumberOfGroups);
+    assert(row == 0);
+    prepareHeaderCell(cell, column);
   } else if (type == k_typeOfVerticalHeaderCells) {
     EvenOddBufferCell* myCell = static_cast<EvenOddBufferCell*>(cell);
     myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);

@@ -13,9 +13,7 @@ namespace Poincare::Inference {
 
 // ===== Test types =====
 
-constexpr int k_numberOfTestTypes = 6;
 enum class TestType : uint8_t {
-  // Order matter for cells order
   OneProportion,
   OneMean,
   TwoProportions,

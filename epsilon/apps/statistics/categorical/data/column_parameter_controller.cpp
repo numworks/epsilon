@@ -29,7 +29,11 @@ bool ColumnParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (cell == &m_relativeFreqCell) {
-    // TODO
+    bool newState = !m_store->isRelativeFrequencyColumnActive(m_column);
+    m_store->setRelativeFrequencyColumn(m_column, newState);
+    m_relativeFreqCell.accessory()->setState(newState);
+    m_selectableListView.reloadSelectedCell();
+    return true;
   }
   return false;
 }

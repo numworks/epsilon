@@ -42,9 +42,7 @@ class StoreController : public Shared::TabTableController,
                                  Ion::Events::Event event) override;
 
   // Categorical::TableViewDataSource
-  void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
-                                int row) override;
-  Store* store() override { return m_store; }
+  const Store* store() const override { return m_store; }
 
   // Escher::ButtonRowDelegate
   int numberOfButtons(
@@ -76,7 +74,7 @@ class StoreController : public Shared::TabTableController,
 
  private:
   bool recomputeDimensions();
-  void recomputeDimensionsAndReload();
+  void recomputeDimensionsAndReload(bool force);
 
   static constexpr int k_maxNumberOfColumns = Store::k_maxNumberOfGroups + 1;
   static constexpr int k_maxNumberOfRows = Store::k_maxNumberOfCategory + 1;

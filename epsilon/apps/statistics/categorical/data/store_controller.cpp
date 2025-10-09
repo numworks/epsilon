@@ -32,16 +32,6 @@ StoreController::StoreController(
   m_prefacedTableView.setMargins(k_margins);
 }
 
-void StoreController::fillInnerCellForLocation(Escher::HighlightCell* cell,
-                                               int column, int row) {
-  float p = m_store->getValue(column, row);
-  EvenOddEditableCell* editableCell = static_cast<EvenOddEditableCell*>(cell);
-  // TODO extract from inference
-  Inference::PrintValueInTextHolder(
-      p, editableCell->editableTextCell()->textField());
-  editableCell->setEven(row % 2 == 1);
-};
-
 bool StoreController::textFieldShouldFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
@@ -68,8 +58,10 @@ bool StoreController::textFieldDidFinishEditing(
   //   App::app()->displayWarning(I18n::Message::ForbiddenValue);
   //   return false;
   // }
-  m_store->setValue(p, innerCol(col), innerRow(row));
-  recomputeDimensionsAndReload();
+  int dataCol = dataColumn(col);
+  m_store->setValue(p, dataCol, dataRow(row));
+  recomputeDimensionsAndReload(
+      m_store->isRelativeFrequencyColumnActive(dataCol));
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     event = Ion::Events::Down;
   }
@@ -113,19 +105,25 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     int col = m_selectableTableView.selectedColumn(),
         row = m_selectableTableView.selectedRow();
     if (typeAtLocation(col, row) == k_typeOfInnerCells) {
-      m_store->eraseValue(innerCol(col), innerRow(row));
-      recomputeDimensionsAndReload();
+      ColumnInfo info = columnInfo(col);
+      if (info.isDataColumn) {
+        m_store->eraseValue(info.groupNumber, dataRow(row));
+        recomputeDimensionsAndReload(
+            m_store->isRelativeFrequencyColumnActive(info.groupNumber));
+      }
       return true;
     }
     return false;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (selectedRow() == 0) {
-      m_columnParameterController.setColumn(innerCol(selectedColumn()));
+      ColumnInfo info = columnInfo(selectedColumn());
+      // TODO RF column needs custom menu item
+      m_columnParameterController.setColumn(info.groupNumber);
       m_stackViewController->push(&m_columnParameterController);
       return true;
     } else if (selectedColumn() == 0) {
-      m_rowParameterController.setRow(innerRow(selectedRow()));
+      m_rowParameterController.setRow(dataRow(selectedRow()));
       m_stackViewController->push(&m_rowParameterController);
       return true;
     }
@@ -135,25 +133,36 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
 }
 
 bool StoreController::recomputeDimensions() {
+  constexpr int k_minGroupOrCategoryToShow = 2;
   TableDimension dim = m_store->currentDimension();
-  // NOTE: +2 comes from header + new empty row/col
-  dim.row = std::clamp(dim.row + 2, k_minRowOrCol, k_maxNumberOfRows);
-  dim.col = std::clamp(dim.col + 2, k_minRowOrCol, k_maxNumberOfColumns);
-  if (dim.row != m_numberOfRows || dim.col != m_numberOfColumns) {
+  int numberOfGroupsToShow =
+      std::clamp(dim.col + 1, k_minGroupOrCategoryToShow,
+                 Store::k_maxNumberOfGroups);  // +1 for empty col
+  int numberOfCol = numberOfGroupsToShow + 1;  // vertical header
+  for (int group = 0; group < numberOfGroupsToShow; ++group) {
+    if (m_store->isRelativeFrequencyColumnActive(group)) {
+      ++numberOfCol;
+    }
+  }
+  // +2 for header + empty row
+  dim.row = std::clamp(dim.row + 2, k_minGroupOrCategoryToShow + 1,
+                       k_maxNumberOfRows);
+  if (dim.row != m_numberOfRows || numberOfCol != m_numberOfColumns) {
     m_numberOfRows = dim.row;
-    m_numberOfColumns = dim.col;
+    m_numberOfColumns = numberOfCol;
     return true;
   }
   return false;
 }
 
-void StoreController::recomputeDimensionsAndReload() {
+void StoreController::recomputeDimensionsAndReload(bool force) {
   int col = m_selectableTableView.selectedColumn();
   int row = m_selectableTableView.selectedRow();
-  if (recomputeDimensions()) {
+  if (recomputeDimensions() || force) {
     m_selectableTableView.reloadData(true);
   } else {
     m_selectableTableView.reloadCellAtLocation(col, row);
+    // Reload header cell to update color
     m_selectableTableView.reloadCellAtLocation(col, 0);
   }
 }

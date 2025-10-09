@@ -65,6 +65,8 @@ class ColumnParameterController
   void setColumn(int col) {
     m_column = col;
     m_showInGraphCell.accessory()->setState(m_store->isGroupActive(m_column));
+    m_relativeFreqCell.accessory()->setState(
+        m_store->isRelativeFrequencyColumnActive(m_column));
     char buffer[20];
     m_store->getGroupName(col, buffer, sizeof(buffer));
     m_columnNameCell.textField()->setText(buffer);

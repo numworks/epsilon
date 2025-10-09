@@ -13,6 +13,8 @@
 namespace Statistics::Categorical {
 
 // Why float here ?
+// NOTE If changed, number of significant digit also present in
+// fillCellForLocation
 using EvenOddBufferCell = Escher::FloatEvenOddBufferTextCell<
     Poincare::Preferences::ShortNumberOfSignificantDigits>;
 using EvenOddEditableCell = Escher::EvenOddEditableTextCell<
@@ -41,14 +43,23 @@ class TableViewDataSource : public Escher::TableViewDataSource {
     return typeAtLocation(column, row) != k_typeOfTopLeftCell;
   }
 
-  virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
-                                        int row) = 0;
-  virtual Store* store() = 0;
-
-  int innerRow(int globalRow) const { return globalRow - 1; }
-  int innerCol(int globalCol) const { return globalCol - 1; }
-
  protected:
+  virtual const Store* store() const = 0;
+
+  struct ColumnInfo {
+    bool isDataColumn;
+    int groupNumber;
+  };
+  ColumnInfo columnInfo(int col) const;
+  /* Given a column in the selectableTable returns the corresponding
+   * column/group in the tableData.
+   * Asserts that the given column is not a RF column */
+  int dataColumn(int col);
+  int dataRow(int row) const {
+    assert(row > 0);
+    return row - 1;
+  }
+
   // Shared::TableViewDataSource
   constexpr static int k_rowHeight = Escher::Metric::SmallEditableCellHeight;
   KDCoordinate nonMemoizedRowHeight(int row) override { return k_rowHeight; }
@@ -62,23 +73,26 @@ class TableViewDataSource : public Escher::TableViewDataSource {
   constexpr static int k_typeOfHeaderCells = k_typeOfInnerCells + 1;
   constexpr static int k_typeOfVerticalHeaderCells = k_typeOfHeaderCells + 1;
   constexpr static int k_typeOfTopLeftCell = k_typeOfVerticalHeaderCells + 1;
+  constexpr static int k_typeOfRFCells = k_typeOfTopLeftCell + 1;
 
-  constexpr static int k_minRowOrCol = 3;
-  int m_numberOfRows = k_minRowOrCol;
-  int m_numberOfColumns = k_minRowOrCol;
+  int m_numberOfRows;
+  int m_numberOfColumns;
 
  private:
   void prepareHeaderCell(Escher::HighlightCell* cell, int column);
 
   constexpr static int k_maxNumberOfHeaderCells = 5;
   constexpr static int k_maxNumberOfVerticalHeaderCells = 9;
-  constexpr static int k_maxNumberOfReusableCells = 50;
+  constexpr static int k_maxNumberOfNonEditableHeaderCells = 14;
+  constexpr static int k_maxNumberOfEditableCells = 50;
 
   std::array<Shared::BufferFunctionTitleCell, k_maxNumberOfHeaderCells>
       m_headerCells;
   std::array<EvenOddBufferCell, k_maxNumberOfVerticalHeaderCells>
       m_verticalHeaderCells;
-  std::array<EvenOddEditableCell, k_maxNumberOfReusableCells> m_editableCells;
+  std::array<EvenOddBufferCell, k_maxNumberOfNonEditableHeaderCells>
+      m_nonEditableCells;
+  std::array<EvenOddEditableCell, k_maxNumberOfEditableCells> m_editableCells;
   Escher::SolidColorCell m_topLeftCell;
 };
 

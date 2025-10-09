@@ -3,8 +3,8 @@ $(call assert_defined,ION_layout_variant)
 $(call create_module,ion,1, $(patsubst %, test/%:+test, \
   crc32.cpp \
   events.cpp \
-  exam_bytes.cpp \
-  exam_mode.cpp \
+  exam_bytes.cpp:-no_exam \
+  exam_mode.cpp:-no_exam \
   keyboard.cpp \
   storage.cpp  \
 ))

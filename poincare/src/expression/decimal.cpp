@@ -5,6 +5,7 @@
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack.h>
 
 #include <algorithm>
@@ -16,15 +17,8 @@ namespace Poincare::Internal {
 void Decimal::Project(Tree* e) {
   assertValidDecimal(e);
   // dec(x, n) -> 10^(-n)*x
-  TreeRef mult = SharedTreeStack->pushMult(1);
-  SharedTreeStack->pushPow();
-  Integer::Push(10);
-  SharedTreeStack->pushMult(2);
-  (-1_e)->cloneTree();
-  e->child(1)->cloneTree();
-  e->child(0)->cloneTree();
-  NAry::SetNumberOfChildren(mult, 2);
-  e->moveTreeOverTree(mult);
+  PatternMatching::MatchReplace(e, KDecimal(KA, KB),
+                                KMult(KPow(10_e, KMult(-1_e, KB)), KA));
 }
 
 using Poincare::Preferences;

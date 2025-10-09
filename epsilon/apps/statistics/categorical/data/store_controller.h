@@ -28,8 +28,7 @@ class StoreController : public Shared::TabTableController,
                   Escher::ButtonRowController* header,
                   Escher::StackViewController* stackViewController,
                   Escher::TabViewController* tabViewController,
-                  Escher::ViewController* dataTypeController,
-                  TableData* tableData);
+                  Escher::ViewController* dataTypeController, Store* store);
 
   void viewWillAppear() override {
     recomputeDimensions();
@@ -45,7 +44,7 @@ class StoreController : public Shared::TabTableController,
   // Categorical::TableViewDataSource
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;
-  TableData* tableData() override { return m_tableData; }
+  Store* store() override { return m_store; }
 
   // Escher::ButtonRowDelegate
   int numberOfButtons(
@@ -79,14 +78,13 @@ class StoreController : public Shared::TabTableController,
   bool recomputeDimensions();
   void recomputeDimensionsAndReload();
 
-  static constexpr int k_maxNumberOfColumns =
-      TableData::k_maxNumberOfGroups + 1;
-  static constexpr int k_maxNumberOfRows = TableData::k_maxNumberOfCategory + 1;
+  static constexpr int k_maxNumberOfColumns = Store::k_maxNumberOfGroups + 1;
+  static constexpr int k_maxNumberOfRows = Store::k_maxNumberOfCategory + 1;
 
   Escher::SimpleButtonCell m_dataTypeButton;
   Escher::SelectableTableView m_selectableTableView;
   Escher::PrefacedTwiceTableView m_prefacedTableView;
-  TableData* m_tableData;
+  Store* m_store;
 
   ColumnParameterController m_columnParameterController;
   RowParameterController m_rowParameterController;

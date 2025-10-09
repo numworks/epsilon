@@ -6,7 +6,7 @@ StoreController::StoreController(
     Escher::Responder* parentResponder, Escher::ButtonRowController* header,
     Escher::StackViewController* stackViewController,
     Escher::TabViewController* tabViewController,
-    Escher::ViewController* dataTypeController, TableData* tableData)
+    Escher::ViewController* dataTypeController, Store* store)
     : Shared::TabTableController(parentResponder),
       TableViewDataSource(&m_selectableTableView, this),
       Escher::ButtonRowDelegate(header, nullptr),
@@ -20,11 +20,10 @@ StoreController::StoreController(
                        KDFont::Size::Small),
       m_selectableTableView(this, this, this, this),
       m_prefacedTableView(0, 0, this, &m_selectableTableView, this, this),
-      m_tableData(tableData),
-      m_columnParameterController(stackViewController, tableData,
+      m_store(store),
+      m_columnParameterController(stackViewController, store,
                                   stackViewController),
-      m_rowParameterController(stackViewController, tableData,
-                               stackViewController),
+      m_rowParameterController(stackViewController, store, stackViewController),
       m_stackViewController(stackViewController),
       m_tabController(tabViewController),
       m_dataTypeController(dataTypeController) {
@@ -35,7 +34,7 @@ StoreController::StoreController(
 
 void StoreController::fillInnerCellForLocation(Escher::HighlightCell* cell,
                                                int column, int row) {
-  float p = m_tableData->getValue(column, row);
+  float p = m_store->getValue(column, row);
   EvenOddEditableCell* editableCell = static_cast<EvenOddEditableCell*>(cell);
   // TODO extract from inference
   Inference::PrintValueInTextHolder(
@@ -69,7 +68,7 @@ bool StoreController::textFieldDidFinishEditing(
   //   App::app()->displayWarning(I18n::Message::ForbiddenValue);
   //   return false;
   // }
-  m_tableData->setValue(p, innerCol(col), innerRow(row));
+  m_store->setValue(p, innerCol(col), innerRow(row));
   recomputeDimensionsAndReload();
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     event = Ion::Events::Down;
@@ -114,7 +113,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     int col = m_selectableTableView.selectedColumn(),
         row = m_selectableTableView.selectedRow();
     if (typeAtLocation(col, row) == k_typeOfInnerCells) {
-      m_tableData->eraseValue(innerCol(col), innerRow(row));
+      m_store->eraseValue(innerCol(col), innerRow(row));
       recomputeDimensionsAndReload();
       return true;
     }
@@ -136,7 +135,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
 }
 
 bool StoreController::recomputeDimensions() {
-  TableDimension dim = m_tableData->currentDimension();
+  TableDimension dim = m_store->currentDimension();
   // NOTE: +2 comes from header + new empty row/col
   dim.row = std::clamp(dim.row + 2, k_minRowOrCol, k_maxNumberOfRows);
   dim.col = std::clamp(dim.col + 2, k_minRowOrCol, k_maxNumberOfColumns);

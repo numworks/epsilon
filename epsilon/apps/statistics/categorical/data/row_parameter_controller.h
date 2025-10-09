@@ -16,8 +16,7 @@ class RowParameterController
     : public Escher::ExplicitSelectableListViewController,
       public Escher::TextFieldDelegate {
  public:
-  RowParameterController(Escher::Responder* parentResponder,
-                         TableData* tableData,
+  RowParameterController(Escher::Responder* parentResponder, Store* store,
                          Escher::StackViewController* stackViewController);
 
   // Responder via ExplicitSelectableListViewController
@@ -44,14 +43,14 @@ class RowParameterController
 
  private:
   constexpr static int k_numberOfCells = 2;
-  constexpr static int k_titleBufferSize = 22 + sizeof(TableData::Label);
+  constexpr static int k_titleBufferSize = 22 + sizeof(Store::Label);
   // mutable because title() needs to be const
   mutable char m_titleBuffer[k_titleBufferSize];
   int m_row = -1;
 
   Escher::MenuCellWithEditableText<Escher::MessageTextView> m_rowNameCell;
   Escher::MenuCell<Escher::MessageTextView> m_clearColumnCell;
-  TableData* m_tableData;
+  Store* m_store;
   Escher::StackViewController* m_stackViewController;
 };
 

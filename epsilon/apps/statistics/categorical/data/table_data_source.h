@@ -43,7 +43,7 @@ class TableViewDataSource : public Escher::TableViewDataSource {
 
   virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                         int row) = 0;
-  virtual TableData* tableData() = 0;
+  virtual Store* store() = 0;
 
   int innerRow(int globalRow) const { return globalRow - 1; }
   int innerCol(int globalCol) const { return globalCol - 1; }

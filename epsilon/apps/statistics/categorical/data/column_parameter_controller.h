@@ -16,12 +16,11 @@ class ColumnParameterController
     : public Escher::ExplicitSelectableListViewController,
       public Escher::TextFieldDelegate {
  public:
-  ColumnParameterController(Escher::Responder* parentResponder,
-                            TableData* tableData,
+  ColumnParameterController(Escher::Responder* parentResponder, Store* store,
                             Escher::StackViewController* stackViewController)
       : Escher::ExplicitSelectableListViewController(parentResponder),
         m_columnNameCell(&m_selectableListView, this),
-        m_tableData(tableData),
+        m_store(store),
         m_stackViewController(stackViewController) {
     m_columnNameCell.label()->setMessage(I18n::Message::ColumnName);
     m_showInGraphCell.label()->setMessage(
@@ -42,9 +41,9 @@ class ColumnParameterController
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override {
     const char* name = textField->draftText();
-    m_tableData->setGroupName(name, m_column);
+    m_store->setGroupName(name, m_column);
     char buffer[20];
-    m_tableData->getGroupName(m_column, buffer, sizeof(buffer));
+    m_store->getGroupName(m_column, buffer, sizeof(buffer));
     m_columnNameCell.textField()->setText(buffer);
     m_selectableListView.reloadSelectedCell();
     if (event == Ion::Events::Down) {
@@ -65,17 +64,16 @@ class ColumnParameterController
 
   void setColumn(int col) {
     m_column = col;
-    m_showInGraphCell.accessory()->setState(
-        m_tableData->isGroupActive(m_column));
+    m_showInGraphCell.accessory()->setState(m_store->isGroupActive(m_column));
     char buffer[20];
-    m_tableData->getGroupName(col, buffer, sizeof(buffer));
+    m_store->getGroupName(col, buffer, sizeof(buffer));
     m_columnNameCell.textField()->setText(buffer);
     m_selectableListView.selectRow(0);
   }
 
   const char* title() const override {
     char buffer[20];
-    m_tableData->getGroupName(m_column, buffer, sizeof(buffer));
+    m_store->getGroupName(m_column, buffer, sizeof(buffer));
     Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),
                                   I18n::translate(I18n::Message::ColumnOptions),
                                   buffer);
@@ -84,7 +82,7 @@ class ColumnParameterController
 
  private:
   constexpr static int k_numberOfCells = 4;
-  constexpr static int k_titleBufferSize = 23 + sizeof(TableData::Label);
+  constexpr static int k_titleBufferSize = 23 + sizeof(Store::Label);
   // mutable because title() needs to be const
   mutable char m_titleBuffer[k_titleBufferSize];
   int m_column = -1;
@@ -98,7 +96,7 @@ class ColumnParameterController
                    Escher::SwitchView>
       m_relativeFreqCell;
 
-  TableData* m_tableData;
+  Store* m_store;
   Escher::StackViewController* m_stackViewController;
 };
 

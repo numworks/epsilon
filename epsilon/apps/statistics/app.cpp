@@ -72,7 +72,7 @@ App::StoreTab::StoreTab()
       m_categoricalStoreController(
           &m_categoricalStoreHeader, &m_categoricalStoreHeader,
           &m_storeStackViewController, &app()->m_quantitativeTabViewController,
-          &m_dataTypeController, app()->snapshot()->categoricalTableData()),
+          &m_dataTypeController, &app()->m_categoricalStore),
       m_storeHeader(&m_alternateDataTypeController, &m_storeController,
                     &m_storeController),
       m_categoricalStoreHeader(&m_alternateDataTypeController,
@@ -174,6 +174,7 @@ App::CalculationTab::CalculationTab()
 App::App(Snapshot* snapshot)
     : StoreApp(snapshot, &m_inputViewController),
       m_store(snapshot->userPreferences()),
+      m_categoricalStore(snapshot->categoricalTableData()),
       m_inputViewController(&m_modalViewController,
                             &m_quantitativeTabViewController,
                             MathLayoutFieldDelegate::Default()),

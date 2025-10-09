@@ -55,10 +55,10 @@ class App : public Shared::StoreApp,
     const DataTypeViewModel* dataTypeViewModel() const {
       return &m_dataTypeViewModel;
     }
-    const Categorical::TableData* categoricalTableData() const {
+    const Categorical::Store::TableData* categoricalTableData() const {
       return &m_categoricalTableData;
     }
-    Categorical::TableData* categoricalTableData() {
+    Categorical::Store::TableData* categoricalTableData() {
       return &m_categoricalTableData;
     }
     UserPreferences* userPreferences() { return &m_userPreferences; }
@@ -74,7 +74,7 @@ class App : public Shared::StoreApp,
     }
 
    private:
-    Categorical::TableData m_categoricalTableData;
+    Categorical::Store::TableData m_categoricalTableData;
     uint32_t m_storeVersion;
     UserPreferences m_userPreferences;
     GraphViewModel m_graphViewModel;
@@ -195,7 +195,9 @@ class App : public Shared::StoreApp,
         m_calculationHeader;  // Needed for upper margin only
   };
 
+  // TODO union the 2 store as they cannot be used simulatanetly
   Store m_store;
+  Categorical::Store m_categoricalStore;
   Escher::InputViewController m_inputViewController;
   Escher::TabUnion<StoreTab, GraphTab, CalculationTab> m_quantitativeTabs;
   Escher::TabUnionViewController m_quantitativeTabViewController;

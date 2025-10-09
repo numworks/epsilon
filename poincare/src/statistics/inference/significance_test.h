@@ -11,7 +11,7 @@ namespace Poincare::Internal::Inference::SignificanceTest {
 
 double ComputePValue(StatisticType statisticType,
                      Comparison::Operator haOperator, double criticalValue,
-                     double degreesOfFreedom);
+                     double degreesOfFreedom1, double degreesOfFreedom2 = 0);
 Poincare::Inference::SignificanceTest::Estimates ComputeEstimates(
     TestType testType, const ParametersArray parameters);
 double ComputeCriticalValue(Inference::Type type, double h0,

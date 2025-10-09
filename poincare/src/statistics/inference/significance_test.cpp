@@ -165,10 +165,10 @@ using Poincare::Inference::Type;
 
 double ComputePValue(StatisticType statisticType,
                      Comparison::Operator haOperator, double criticalValue,
-                     double degreesOfFreedom) {
+                     double degreesOfFreedom1, double degreesOfFreedom2) {
   Distribution::Type distrib = DistributionType(statisticType);
-  Distribution::ParametersArray<double> distribParams =
-      DistributionParameters(statisticType, degreesOfFreedom);
+  Distribution::ParametersArray<double> distribParams = DistributionParameters(
+      statisticType, degreesOfFreedom1, degreesOfFreedom2);
 
   switch (haOperator) {
     case Comparison::Operator::Inferior:

@@ -17,70 +17,21 @@ class ColumnParameterController
       public Escher::TextFieldDelegate {
  public:
   ColumnParameterController(Escher::Responder* parentResponder, Store* store,
-                            Escher::StackViewController* stackViewController)
-      : Escher::ExplicitSelectableListViewController(parentResponder),
-        m_columnNameCell(&m_selectableListView, this),
-        m_store(store),
-        m_stackViewController(stackViewController) {
-    m_columnNameCell.label()->setMessage(I18n::Message::ColumnName);
-    m_showInGraphCell.label()->setMessage(
-        I18n::Message::CategoricalActivateDeactivateStoreParamTitle);
-    m_showInGraphCell.subLabel()->setMessage(
-        I18n::Message::CategoricalActivateDeactivateStoreParamDescription);
-    m_clearColumnCell.label()->setMessage(I18n::Message::ClearColumn);
-    m_relativeFreqCell.label()->setMessage(I18n::Message::RelativeFrequency);
-  }
-  int numberOfRows() const override { return k_numberOfCells; }
+                            Escher::StackViewController* stackViewController);
 
+  // Escher::TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
-                                    Ion::Events::Event event) override {
-    return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
-           event == Ion::Events::Down;
-  }
-
+                                    Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
-                                 Ion::Events::Event event) override {
-    const char* name = textField->draftText();
-    m_store->setGroupName(name, m_column);
-    char buffer[20];
-    m_store->getGroupName(m_column, buffer, sizeof(buffer));
-    m_columnNameCell.textField()->setText(buffer);
-    m_selectableListView.reloadSelectedCell();
-    if (event == Ion::Events::Down) {
-      m_selectableListView.handleEvent(event);
-    }
-    return true;
-  }
+                                 Ion::Events::Event event) override;
 
+  // Escher::ExplicitSelectableListViewController
+  int numberOfRows() const override { return k_numberOfCells; }
   bool handleEvent(Ion::Events::Event event) override;
+  const Escher::AbstractMenuCell* cell(int row) const override;
+  const char* title() const override;
 
-  const Escher::AbstractMenuCell* cell(int row) const override {
-    assert(0 <= row && row < k_numberOfCells);
-    std::array<const Escher::AbstractMenuCell*, k_numberOfCells> cells = {
-        &m_columnNameCell, &m_showInGraphCell, &m_clearColumnCell,
-        &m_relativeFreqCell};
-    return cells[row];
-  }
-
-  void setColumn(int col) {
-    m_column = col;
-    m_showInGraphCell.accessory()->setState(m_store->isGroupActive(m_column));
-    m_relativeFreqCell.accessory()->setState(
-        m_store->isRelativeFrequencyColumnActive(m_column));
-    char buffer[20];
-    m_store->getGroupName(col, buffer, sizeof(buffer));
-    m_columnNameCell.textField()->setText(buffer);
-    m_selectableListView.selectRow(0);
-  }
-
-  const char* title() const override {
-    char buffer[20];
-    m_store->getGroupName(m_column, buffer, sizeof(buffer));
-    Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),
-                                  I18n::translate(I18n::Message::ColumnOptions),
-                                  buffer);
-    return m_titleBuffer;
-  }
+  void setColumn(int col);
 
  private:
   constexpr static int k_numberOfCells = 4;

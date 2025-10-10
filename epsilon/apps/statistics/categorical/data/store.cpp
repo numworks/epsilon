@@ -20,7 +20,7 @@ Store::TableData::TableData() {
   }
 }
 
-TableDimension Store::currentDimension() const {
+void Store::recomputeDimensions() {
   int maxRow = 0;
   int maxCol = 0;
   for (int col = 0; col < k_maxNumberOfGroups; col++) {
@@ -31,7 +31,10 @@ TableDimension Store::currentDimension() const {
       }
     }
   }
-  return TableDimension{maxCol + 1, maxRow + 1};
+  m_numberOfColumns = maxCol + 1;
+  m_numberOfRows = maxRow + 1;
+  assert(0 < m_numberOfColumns && m_numberOfColumns <= k_maxNumberOfGroups);
+  assert(0 < m_numberOfRows && m_numberOfRows <= k_maxNumberOfCategory);
 }
 
 bool Store::isGroupEmpty(int col) const {
@@ -59,6 +62,9 @@ void Store::setValue(float data, int col, int row) {
   if (m_table->m_groupStatus[col] == GroupStatus::Empty) {
     m_table->m_groupStatus[col] = GroupStatus::Active;
   }
+  // Setting a value can only make dimension bigger: recompute dimensions lazily
+  m_numberOfColumns = std::max(m_numberOfColumns, col + 1);
+  m_numberOfRows = std::max(m_numberOfRows, row + 1);
   recomputeSum(col);
 }
 
@@ -98,12 +104,13 @@ void Store::eraseValue(int col, int row) {
     m_table->m_groupStatus[col] =
         computeGroupHasValue(col) ? GroupStatus::Active : GroupStatus::Empty;
   }
+  recomputeDimensions();
   recomputeSum(col);
 }
 
 void Store::clearColumn(int col) {
   assert(0 <= col && col < k_maxNumberOfGroups);
-  for (int row = 0; row < k_maxNumberOfCategory; row++) {
+  for (int row = 0; row < m_numberOfRows; row++) {
     m_table->m_data[col][row] = NAN;
   }
   if (m_table->m_groupStatus[col] != GroupStatus::Hidden) {
@@ -111,18 +118,30 @@ void Store::clearColumn(int col) {
   }
   m_sumOfCategories[col] = NAN;
   m_table->m_groupLabels[col][0] = '\x00';
+  recomputeDimensions();
 }
 
-void Store::clearRow(int row) {
-  assert(0 <= row && row < k_maxNumberOfCategory);
-  for (int col = 0; col < k_maxNumberOfGroups; col++) {
-    m_table->m_data[col][row] = NAN;
+void Store::clearRow(int clearedRow) {
+  assert(0 <= clearedRow && clearedRow < k_maxNumberOfCategory);
+  for (int col = 0; col < m_numberOfColumns; col++) {
+    // Shift rows up
+    for (int row = clearedRow + 1; row < m_numberOfRows; ++row) {
+      m_table->m_data[col][row - 1] = m_table->m_data[col][row];
+    }
+    m_table->m_data[col][m_numberOfRows - 1] = NAN;
     if (m_table->m_groupStatus[col] == GroupStatus::Active &&
         !computeGroupHasValue(col)) {
       m_table->m_groupStatus[col] = GroupStatus::Empty;
     }
-    recomputeSum(col);
   }
+  // Shift category label up
+  for (int row = clearedRow + 1; row < m_numberOfRows; ++row) {
+    strlcpy(m_table->m_categoryLabels[row - 1], m_table->m_categoryLabels[row],
+            sizeof(Label));
+  }
+  m_table->m_categoryLabels[m_numberOfRows - 1][0] = '\x00';
+  recomputeDimensions();
+  recomputeAllSums();
 }
 
 float Store::getRelativeFrequency(int col, int row) const {
@@ -136,7 +155,7 @@ void Store::recomputeSum(int column) {
   assert(0 <= column && column < k_maxNumberOfGroups);
   float sum = 0;
   bool hasValue = false;
-  for (int row = 0; row < k_maxNumberOfCategory; row++) {
+  for (int row = 0; row < m_numberOfRows; row++) {
     if (std::isfinite(m_table->m_data[column][row])) {
       hasValue = true;
       sum += m_table->m_data[column][row];
@@ -146,14 +165,14 @@ void Store::recomputeSum(int column) {
 }
 
 void Store::recomputeAllSums() {
-  for (int col = 0; col < k_maxNumberOfGroups; col++) {
+  for (int col = 0; col < m_numberOfColumns; col++) {
     recomputeSum(col);
   }
 }
 
 bool Store::computeGroupHasValue(int column) const {
   assert(0 <= column && column < k_maxNumberOfGroups);
-  for (int row = 0; row < k_maxNumberOfCategory; row++) {
+  for (int row = 0; row < m_numberOfRows; row++) {
     if (std::isfinite(m_table->m_data[column][row])) {
       return true;
     }

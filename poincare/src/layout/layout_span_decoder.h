@@ -101,6 +101,18 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
     }
   }
 
+  void skipTree(int n) {
+    assert(!m_isOnCombining);
+    const Layout* newLayout = m_layout;
+    for (int i = 0; i < n; i++) {
+      newLayout = static_cast<const Layout*>(newLayout->nextTree());
+    }
+    while (m_layout != newLayout && m_length > 0) {
+      next();
+    }
+    assert(!m_isOnCombining);
+  }
+
  private:
 #if ASSERTIONS
   /* For optimization purposes, the next() function can be called when m_length

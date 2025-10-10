@@ -57,7 +57,7 @@ bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,
     // Loop twice, once on the main string, the other on the alternative string
     for (int k = 0; k < 2; k++) {
       size_t operatorLength =
-          UTF8Helper::StringCodePointLength(currentOperatorString);
+          UTF8Helper::StringGlyphLength(currentOperatorString);
       if (operatorLength <= maxOperatorLength &&
           operatorLength > lengthOfFoundOperator &&
           CompareLayoutSpanWithNullTerminatedString(

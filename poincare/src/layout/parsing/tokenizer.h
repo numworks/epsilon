@@ -25,6 +25,7 @@ class Tokenizer {
   Token popToken();
 
   void skip(int n) { m_decoder.skip(n); }
+  void skipTree(int n) { m_decoder.skipTree(n); }
   size_t currentPosition() const { return m_decoder.position(); }
   size_t endPosition() const { return m_decoder.end(); }
 

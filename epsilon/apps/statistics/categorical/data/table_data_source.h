@@ -8,7 +8,7 @@
 #include <escher/table_view_data_source.h>
 #include <shared/buffer_function_title_cell.h>
 
-#include "table_data.h"
+#include "store.h"
 
 namespace Statistics::Categorical {
 

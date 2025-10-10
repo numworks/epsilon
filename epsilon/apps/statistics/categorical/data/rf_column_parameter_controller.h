@@ -6,7 +6,7 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 
-#include "table_data.h"
+#include "store.h"
 
 namespace Statistics::Categorical {
 

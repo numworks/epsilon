@@ -5,8 +5,8 @@
 #include <escher/alternate_view_controller.h>
 #include <escher/tab_union_view_controller.h>
 
+#include "categorical/data/store.h"
 #include "categorical/data/store_controller.h"
-#include "categorical/data/table_data.h"
 #include "categorical/graph/bar_graph_controller.h"
 #include "categorical/graph/graph_type_controller.h"
 #include "categorical/graph/pie_graph_controller.h"

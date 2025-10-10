@@ -1090,7 +1090,7 @@ void RackParser::parseCustomIdentifier(TreeRef& leftHandSide,
   char* end = buffer + bufferSize;
   char* buf = buffer;
   while (length--) {
-    assert(l->isCodePointLayout());
+    assert(l->isCodePointLayout() || l->isCombinedCodePointsLayout());
     buf = CodePointLayout::CopyName(l, buf, end - buf);
     l = l->nextTree();
   }

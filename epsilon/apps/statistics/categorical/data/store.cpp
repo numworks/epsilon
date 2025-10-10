@@ -110,6 +110,7 @@ void Store::clearColumn(int col) {
     m_table->m_groupStatus[col] = GroupStatus::Empty;
   }
   m_sumOfCategories[col] = NAN;
+  m_table->m_groupLabels[col][0] = '\x00';
 }
 
 void Store::clearRow(int row) {

@@ -59,6 +59,7 @@ class Store {
     return m_table->m_data[col][row];
   }
   void setValue(float data, int col, int row);
+  bool authorizedValue(float data) { return data >= 0; }
 
   // Labels
   void getGroupName(int col, char* buffer, int bufferSize) const;

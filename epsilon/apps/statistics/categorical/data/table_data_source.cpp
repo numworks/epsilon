@@ -66,7 +66,7 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     // TODO extract from inference
     Inference::PrintValueInTextHolder(
         p, editableCell->editableTextCell()->textField());
-    editableCell->setEven(row % 2 == 1);
+    editableCell->setEven(row % 2 == 0);
   } else {
     assert(type == k_typeOfRFCells);
     EvenOddBufferCell* myCell = static_cast<EvenOddBufferCell*>(cell);
@@ -86,7 +86,7 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     } else {
       myCell->setText("");
     }
-    myCell->setEven(row % 2 == 1);
+    myCell->setEven(row % 2 == 0);
   }
 }
 

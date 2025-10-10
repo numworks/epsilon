@@ -18,7 +18,7 @@ class RFColumnParameterController
       : Escher::ExplicitSelectableListViewController(parentResponder),
         m_store(store),
         m_stackViewController(stackViewController) {
-    m_clearColumnCell.label()->setMessage(I18n::Message::ClearColumn);
+    m_clearColumnCell.label()->setMessage(I18n::Message::HideColumn);
   }
 
   // ExplicitSelectableListViewController

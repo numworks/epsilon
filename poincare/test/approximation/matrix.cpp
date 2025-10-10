@@ -64,6 +64,9 @@ QUIZ_CASE(pcj_approximation_matrix) {
   approximates_to<float>("norm([[-5,4,-1]])", "6.480741");
   approximates_to<double>("norm([[-5,4,-1]])", "6.4807406984079");
 
+  // approximates to [[undef][undef][undef]] but beautified into undef
+  approximates_to<float>("piecewise([[1][2][3]],1<0,[[1][2][3]],3=4)", "undef");
+
   // inverse is not precise enough to display 7 significative digits
   approximates_to<float>(
       "inverse([[1,2,3][4,5,-6][7,8,9]])",

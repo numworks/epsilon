@@ -1,13 +1,13 @@
 #pragma once
 
 #include <omg/unreachable.h>
+#include <omg/vector.h>
 #include <poincare/comparison_operator.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/statistics/data_table.h>
+#include <poincare/statistics/dataset_column.h>
 #include <poincare/statistics/distribution.h>
-
-#include <initializer_list>
 
 namespace Poincare::Inference {
 
@@ -256,8 +256,11 @@ struct StatisticResults {
 };
 
 static constexpr size_t k_maxNumberOfGroups = 6;
+static constexpr size_t k_maxNumberOfGroupValues =
+    VectorDatasetColumn<double>::k_capacity;
 
-using Values = std::initializer_list<double>;
+using Values = OMG::StaticVector<double, k_maxNumberOfGroupValues>;
+
 StatisticResults ComputeStatisticResults(std::span<const Values> groups);
 }  // namespace FTest
 

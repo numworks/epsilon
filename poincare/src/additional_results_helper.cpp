@@ -363,15 +363,14 @@ bool AdditionalResultsHelper::HasPositiveInteger(
                  IntegerLiteral<k_maxPositiveInteger>{})) < 0;
 }
 
+// True if reduced output is a rational but not an integer
 bool AdditionalResultsHelper::HasRational(
     const Poincare::UserExpression exactOutput) {
-  // Find forms like [12]/[23] or -[12]/[23]
-  Internal::PatternMatching::Context ctx;
-  // TODO: this should be isRational before the beautification
-  return (Internal::PatternMatching::Match(exactOutput, KDiv(KA, KB), &ctx) ||
-          Internal::PatternMatching::Match(exactOutput, KOpposite(KDiv(KA, KB)),
-                                           &ctx)) &&
-         ctx.getTree(KA)->isInteger() && ctx.getTree(KB)->isInteger();
+  bool reductionFailure = false;
+  SystemExpression e =
+      exactOutput.cloneAndReduce({.m_advanceReduce = false}, &reductionFailure);
+  assert(!reductionFailure);
+  return (!e.tree()->isInteger() && e.tree()->isRational());
 }
 
 IntegerHandler extractInteger(const Tree* e) {

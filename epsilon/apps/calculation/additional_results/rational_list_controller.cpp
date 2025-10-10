@@ -20,25 +20,25 @@ void RationalListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput) {
   assert(AdditionalResultsType::HasRational(exactOutput));
+  static_assert(
+      k_maxNumberOfRows >= k_maxNumberOfOutputRows,
+      "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
   UserExpression e = exactOutput;
   assert(!e.isUninitialized());
-  static_assert(k_maxNumberOfRows >= 2,
-                "k_maxNumberOfRows must be greater than 2");
-
-  bool negative = e.isOpposite();
-  const UserExpression div = negative ? e.cloneChildAtIndex(0) : e;
-  assert(div.isDiv());
+  bool reductionFailure = false;
+  SystemExpression eReduced =
+      e.cloneAndReduce({.m_advanceReduce = false}, &reductionFailure);
+  assert(!reductionFailure);
+  assert(eReduced.tree()->isRational());
 
   Layout approximateFraction =
-      AdditionalResultsHelper::CreateRationalApproximation(div, negative);
-  SystemExpression rational =
-      AdditionalResultsHelper::CreateRational(div, negative);
+      AdditionalResultsHelper::CreateRationalApproximation(eReduced);
   UserExpression mixedFraction = AdditionalResultsHelper::CreateMixedFraction(
-      rational,
+      eReduced,
       GlobalPreferences::SharedGlobalPreferences()->mixedFractions() ==
           Preferences::MixedFractions::Enabled);
   UserExpression euclideanDiv =
-      AdditionalResultsHelper::CreateEuclideanDivision(rational);
+      AdditionalResultsHelper::CreateEuclideanDivision(eReduced);
 
   int index = 0;
   if (!approximateFraction.isUninitialized()) {

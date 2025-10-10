@@ -6,6 +6,8 @@
 #include <poincare/user_expression.h>
 
 #include "helper.h"
+#include "poincare/src/memory/tree.h"
+#include "poincare/system_expression.h"
 
 using namespace Poincare;
 
@@ -50,14 +52,11 @@ QUIZ_CASE(pcj_additional_results_generalization) {
 }
 
 static void assert_rational_approximation_is(int numerator, int denominator,
-                                             bool negative,
                                              const char* approximate) {
-  const Internal::Tree* e = Internal::SharedTreeStack->pushDiv();
-  Internal::SharedTreeStack->pushInteger(numerator);
-  Internal::SharedTreeStack->pushInteger(denominator);
-  UserExpression expr = UserExpression::Builder(e);
-  Layout l =
-      AdditionalResultsHelper::CreateRationalApproximation(expr, negative);
+  const Internal::Tree* rational =
+      Internal::Rational::Push(numerator, denominator);
+  Layout l = AdditionalResultsHelper::CreateRationalApproximation(
+      SystemExpression::Builder(rational));
   if (!approximate) {
     quiz_assert(l.isUninitialized());
   } else {
@@ -72,11 +71,11 @@ static void assert_rational_approximation_is(int numerator, int denominator,
 }
 
 QUIZ_CASE(pcj_additional_results_rational_approximation) {
-  assert_rational_approximation_is(1, 100, false, nullptr);
-  assert_rational_approximation_is(101, 10000, false, "1/99");
-  assert_rational_approximation_is(1, 3, false, nullptr);
-  assert_rational_approximation_is(3333, 10000, false, nullptr);
-  assert_rational_approximation_is(33333, 100000, false, "1/3");
-  assert_rational_approximation_is(4667, 10000, true, nullptr);
-  assert_rational_approximation_is(46667, 100000, true, "-7/15");
+  assert_rational_approximation_is(1, 100, nullptr);
+  assert_rational_approximation_is(101, 10000, "1/99");
+  assert_rational_approximation_is(1, 3, nullptr);
+  assert_rational_approximation_is(3333, 10000, nullptr);
+  assert_rational_approximation_is(33333, 100000, "1/3");
+  assert_rational_approximation_is(-4667, 10000, nullptr);
+  assert_rational_approximation_is(-46667, 100000, "-7/15");
 }

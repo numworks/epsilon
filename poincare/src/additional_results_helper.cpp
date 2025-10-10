@@ -386,22 +386,11 @@ IntegerHandler extractInteger(const Tree* e) {
   return Integer::Handler(e);
 }
 
-SystemExpression AdditionalResultsHelper::CreateRational(const UserExpression e,
-                                                         bool negative) {
-  const Tree* eTree = e.tree();
-  IntegerHandler numerator = extractInteger(eTree->child(0));
-  if (negative) {
-    numerator.setSign(InvertSign(numerator.sign()));
-  }
-  IntegerHandler denominator = extractInteger(eTree->child(1));
-  return SystemExpression::Builder(Rational::Push(numerator, denominator));
-}
-
 /* Create a rational approximation (within ε) with at most 2 digits
  * in the denominator. Return an uninitialized expression if not possible. */
 Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
-    const UserExpression e, bool negative) {
-  assert(e.tree()->isDiv());
+    const SystemExpression rational) {
+  assert(rational.tree()->isRational());
   /* Use the successive convergents of the continued fraction of e,
    * written as: r = a_0 + 1/(a_1 + 1/(a_2 + 1/(a_3 + ...))).
    * Work on the absolute value of e and add the sign at the end.
@@ -421,8 +410,12 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
    * or when q_k has more than 2 digits (limit the size of the denominator).
    * For a more detailed proof of the algorithm, see
    * https://cp-algorithms.com/algebra/continued-fractions.html */
-  TreeRef a = e.tree()->child(0)->cloneTree();
-  TreeRef b = e.tree()->child(1)->cloneTree();
+  bool isNegative = rational.tree()->isNegativeRational();
+  TreeRef a = Rational::Numerator(rational).pushOnTreeStack();
+  if (isNegative) {
+    Integer::SetSign(a, NonStrictSign::Positive);
+  }
+  TreeRef b = Rational::Denominator(rational).pushOnTreeStack();
   TreeRef p0 = (0_e)->cloneTree();
   TreeRef p1 = (1_e)->cloneTree();
   TreeRef q0 = (1_e)->cloneTree();
@@ -462,19 +455,20 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
   b->removeTree();
   a->removeTree();
   // Result is the last computed convergent p1/q1.
-  Tree* result = p1;
-  result->cloneNodeAtNode(KDiv);
-  // Check the precision of the approximation
-  double rationalApprox = Approximation::To<double>(e.tree(), {});
+  TreeRef result = Rational::Push(p1, q1);
+  q1->removeTree();
+  p1->removeTree();
+  if (isNegative) {
+    // Restore sign
+    Rational::SetSign(result, NonStrictSign::Negative);
+  }
+  double rationalApprox = Approximation::To<double>(rational.tree(), {});
   double resultApprox = Approximation::To<double>(result, {});
-  if (!e.tree()->treeIsIdenticalTo(result) &&
+  if (!result->treeIsIdenticalTo(rational.tree()) &&
       std::fabs(rationalApprox - resultApprox) <
           k_rationalApproximationPrecision) {
-    // Approximation is not the same as the input and is precise enough
-    if (negative) {
-      // Add sign
-      PatternMatching::MatchReplaceReduce(result, KA, KOpposite(KA));
-    }
+    // Result is not the same as the input and approximation is precise enough
+    Beautification::DeepBeautify(result);
     // Create the layout ~p/q
     TreeRef rack = Layouter::LayoutExpression(result);
     result->removeTree();

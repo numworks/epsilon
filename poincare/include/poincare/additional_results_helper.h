@@ -55,9 +55,7 @@ class AdditionalResultsHelper final {
 
   /* Rational additional results */
   static bool HasRational(const UserExpression exactOutput);
-  static SystemExpression CreateRational(const UserExpression e, bool negative);
-  static Layout CreateRationalApproximation(const UserExpression e,
-                                            bool negative);
+  static Layout CreateRationalApproximation(const SystemExpression rational);
   static UserExpression CreateEuclideanDivision(SystemExpression rational);
   static UserExpression CreateMixedFraction(SystemExpression rational,
                                             bool mixedFractionsEnabled);

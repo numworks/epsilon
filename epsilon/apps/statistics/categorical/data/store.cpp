@@ -51,6 +51,8 @@ void Store::setGroupActive(bool active, int col) {
 
 void Store::setValue(float data, int col, int row) {
   assert(std::isfinite(data));
+  assert(0 <= col && col < k_maxNumberOfGroups);
+  assert(0 <= row && row < k_maxNumberOfCategory);
   m_table->m_data[col][row] = data;
   if (m_table->m_groupStatus[col] == GroupStatus::Empty) {
     m_table->m_groupStatus[col] = GroupStatus::Active;

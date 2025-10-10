@@ -17,9 +17,9 @@ struct TableDimension {
 class Store {
  private:
   enum class GroupStatus : uint8_t {
-    Empty,   // Hidden because no value
-    Active,  // Shown
-    Hidden,  // User chose to hide this group
+    Empty,   // Inactive because no value
+    Active,  // Active, the group has at least one value
+    Hidden,  // Inactive because User chose to (the group can be empty or not)
   };
 
  public:
@@ -53,7 +53,11 @@ class Store {
   bool isGroupEmpty(int col) const;
 
   // Data
-  float getValue(int col, int row) const { return m_table->m_data[col][row]; }
+  float getValue(int col, int row) const {
+    assert(0 <= col && col < k_maxNumberOfGroups);
+    assert(0 <= row && row < k_maxNumberOfCategory);
+    return m_table->m_data[col][row];
+  }
   void setValue(float data, int col, int row);
 
   // Labels
@@ -75,9 +79,11 @@ class Store {
 
   // RF releated
   bool isRelativeFrequencyColumnActive(int col) const {
+    assert(0 <= col && col < k_maxNumberOfGroups);
     return m_table->m_showRelativeFreqColumn[col];
   }
   void setRelativeFrequencyColumn(int col, bool active) {
+    assert(0 <= col && col < k_maxNumberOfGroups);
     m_table->m_showRelativeFreqColumn[col] = active;
   }
   float getRelativeFrequency(int col, int row) const;

@@ -12,6 +12,7 @@
 #include <ion/src/shared/keyboard.h>
 #include <ion/src/shared/keyboard_queue.h>
 #include <ion/timing.h>
+#include <kandinsky/font.h>
 
 #include <algorithm>
 
@@ -69,7 +70,8 @@ bool waitForInterruptingEvent(int maximumDelay, int* timeout) {
 // ion/include/ion/events.h
 
 const char* Event::text() const {
-  if (*this == ExternalText) {
+  if (*this == ExternalText &&
+      KDFont::CanBeWrittenWithGlyphs(sharedExternalTextBuffer())) {
     return const_cast<const char*>(sharedExternalTextBuffer());
   }
   return defaultText();

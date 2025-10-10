@@ -177,7 +177,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
       return FillColumnStatus::DataNotSuitable;
     }
   }
-  Poincare::Dimension d = formula.dimension();
+  Poincare::Dimension d = formula.dimension(storeAppContext);
   if (!(d.isScalar() || d.isList())) {
     return FillColumnStatus::DataNotSuitable;
   }

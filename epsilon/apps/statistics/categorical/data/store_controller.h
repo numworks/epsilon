@@ -33,6 +33,9 @@ class StoreController : public Shared::TabTableController,
 
   void viewWillAppear() override {
     recomputeDimensions();
+    if (selectedRow() < 0) {
+      selectCellAtLocation(1, 1);
+    }
     Shared::TabTableController::viewWillAppear();
   }
 

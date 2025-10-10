@@ -23,6 +23,8 @@ StoreController::StoreController(
       m_store(store),
       m_columnParameterController(stackViewController, store,
                                   stackViewController),
+      m_rfColumnParameterController(stackViewController, store,
+                                    stackViewController),
       m_rowParameterController(stackViewController, store, stackViewController),
       m_stackViewController(stackViewController),
       m_tabController(tabViewController),
@@ -118,9 +120,14 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (selectedRow() == 0) {
       ColumnInfo info = columnInfo(selectedColumn());
-      // TODO RF column needs custom menu item
-      m_columnParameterController.setColumn(info.groupNumber);
-      m_stackViewController->push(&m_columnParameterController);
+      if (info.isDataColumn) {
+        m_columnParameterController.setColumn(info.groupNumber);
+        m_stackViewController->push(&m_columnParameterController);
+
+      } else {
+        m_rfColumnParameterController.setGroup(info.groupNumber);
+        m_stackViewController->push(&m_rfColumnParameterController);
+      }
       return true;
     } else if (selectedColumn() == 0) {
       m_rowParameterController.setRow(dataRow(selectedRow()));

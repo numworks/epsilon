@@ -12,6 +12,7 @@
 #include <shared/tab_table_controller.h>
 
 #include "column_parameter_controller.h"
+#include "rf_column_parameter_controller.h"
 #include "row_parameter_controller.h"
 #include "table_data.h"
 #include "table_data_source.h"
@@ -85,6 +86,7 @@ class StoreController : public Shared::TabTableController,
   Store* m_store;
 
   ColumnParameterController m_columnParameterController;
+  RFColumnParameterController m_rfColumnParameterController;
   RowParameterController m_rowParameterController;
   Escher::StackViewController* m_stackViewController;
   Escher::TabViewController* m_tabController;

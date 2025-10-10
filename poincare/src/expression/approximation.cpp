@@ -1325,8 +1325,11 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
   }
   if (e->isPiecewise()) {
     const Tree* branch = SelectPiecewiseBranch<T>(e, ctx);
-    return branch ? PrivateToBoolean<T>(branch, ctx)
-                  : BooleanOrUndefined::Undef();
+    if (!branch || branch->isUndefined()) {
+      // SelectPiecewiseBranch may return KUndef to signal no active branches
+      return BooleanOrUndefined::Undef();
+    }
+    return PrivateToBoolean<T>(branch, ctx);
   }
   if (e->isList()) {
     assert(ctx && ctx->m_listElement != -1);
@@ -1577,7 +1580,11 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
     }
     case Type::Piecewise: {
       const Tree* branch = SelectPiecewiseBranch<T>(e, ctx);
-      return branch ? ToMatrix<T>(branch, ctx) : KUndef->cloneTree();
+      if (!branch || branch->isUndefined()) {
+        // SelectPiecewiseBranch may return KUndef to signal no active branches
+        return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
+      }
+      return ToMatrix<T>(branch, ctx);
     }
     case Type::Dep: {
       std::complex<T> undef = UndefDependencies<T>(e, ctx);

@@ -59,6 +59,7 @@ QUIZ_CASE(pcj_approximation_boolean) {
 
   approximates_to<float>("4000!4=9", "False");
   approximates_to<float>("4000!4!=9", "True");
+  approximates_to<float>("piecewise(True,1<0,False,3=4)", "undef");
 }
 
 QUIZ_CASE(pcj_approximation_point) {

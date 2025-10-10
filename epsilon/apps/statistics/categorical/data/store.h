@@ -40,10 +40,15 @@ class Store {
     float m_data[k_maxNumberOfGroups][k_maxNumberOfCategory];
   };
 
-  Store(TableData* tableData) : m_table(tableData) { recomputeAllSums(); }
+  Store(TableData* tableData) : m_table(tableData) {
+    recomputeDimensions();
+    recomputeAllSums();
+  }
 
   /* Returns the max dimension of the current data in each axis */
-  TableDimension currentDimension() const;
+  TableDimension currentDimension() const {
+    return TableDimension{m_numberOfColumns, m_numberOfRows};
+  }
 
   // Group status
   void setGroupActive(bool active, int col);
@@ -90,11 +95,14 @@ class Store {
   float getRelativeFrequency(int col, int row) const;
 
  private:
+  void recomputeDimensions();
   void recomputeSum(int column);
   void recomputeAllSums();
   bool computeGroupHasValue(int column) const;
 
   std::array<float, k_maxNumberOfGroups> m_sumOfCategories;
+  int m_numberOfRows;
+  int m_numberOfColumns;
   TableData* m_table;
 };
 

@@ -5,7 +5,7 @@
 #include <apps/inference/text_helpers.h>
 #include <poincare/print.h>
 
-#include "table_data.h"
+#include "store.h"
 
 namespace Statistics::Categorical {
 

@@ -8,7 +8,7 @@
 #include <escher/switch_view.h>
 #include <poincare/print.h>
 
-#include "table_data.h"
+#include "store.h"
 
 namespace Statistics::Categorical {
 

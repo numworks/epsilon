@@ -44,6 +44,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/statistics/,$(addsuffix :-test, \
     data/column_parameter_controller.cpp \
     data/rf_column_parameter_controller.cpp \
     data/row_parameter_controller.cpp \
+    data/store.cpp \
     data/store_controller.cpp \
     data/table_data_source.cpp \
     graph/graph_view_model.cpp \

@@ -14,7 +14,7 @@
 #include "column_parameter_controller.h"
 #include "rf_column_parameter_controller.h"
 #include "row_parameter_controller.h"
-#include "table_data.h"
+#include "store.h"
 #include "table_data_source.h"
 
 namespace Statistics::Categorical {

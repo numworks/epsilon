@@ -35,6 +35,7 @@ TableDimension Store::currentDimension() const {
 }
 
 bool Store::isGroupEmpty(int col) const {
+  assert(0 <= col && col < k_maxNumberOfGroups);
   if (m_table->m_groupStatus[col] == GroupStatus::Hidden) {
     // A hidden group could be empty or not
     return !computeGroupHasValue(col);
@@ -43,6 +44,7 @@ bool Store::isGroupEmpty(int col) const {
 }
 
 void Store::setGroupActive(bool active, int col) {
+  assert(0 <= col && col < k_maxNumberOfGroups);
   GroupStatus& status = m_table->m_groupStatus[col];
   if (status != GroupStatus::Empty) {
     status = active ? GroupStatus::Active : GroupStatus::Hidden;
@@ -88,6 +90,8 @@ void Store::getCategoryName(int row, char* buffer, int bufferSize) const {
 }
 
 void Store::eraseValue(int col, int row) {
+  assert(0 <= row && row < k_maxNumberOfCategory);
+  assert(0 <= col && col < k_maxNumberOfGroups);
   m_table->m_data[col][row] = NAN;
   // A hidden column stays hidden even if emptied
   if (m_table->m_groupStatus[col] != GroupStatus::Hidden) {
@@ -98,6 +102,7 @@ void Store::eraseValue(int col, int row) {
 }
 
 void Store::clearColumn(int col) {
+  assert(0 <= col && col < k_maxNumberOfGroups);
   for (int row = 0; row < k_maxNumberOfCategory; row++) {
     m_table->m_data[col][row] = NAN;
   }
@@ -108,6 +113,7 @@ void Store::clearColumn(int col) {
 }
 
 void Store::clearRow(int row) {
+  assert(0 <= row && row < k_maxNumberOfCategory);
   for (int col = 0; col < k_maxNumberOfGroups; col++) {
     m_table->m_data[col][row] = NAN;
     if (m_table->m_groupStatus[col] == GroupStatus::Active &&
@@ -119,6 +125,8 @@ void Store::clearRow(int row) {
 }
 
 float Store::getRelativeFrequency(int col, int row) const {
+  assert(0 <= col && col < k_maxNumberOfGroups);
+  assert(0 <= row && row < k_maxNumberOfCategory);
   float value = m_table->m_data[col][row];
   return std::isfinite(value) ? value / m_sumOfCategories[col] : NAN;
 }
@@ -143,6 +151,7 @@ void Store::recomputeAllSums() {
 }
 
 bool Store::computeGroupHasValue(int column) const {
+  assert(0 <= column && column < k_maxNumberOfGroups);
   for (int row = 0; row < k_maxNumberOfCategory; row++) {
     if (std::isfinite(m_table->m_data[column][row])) {
       return true;

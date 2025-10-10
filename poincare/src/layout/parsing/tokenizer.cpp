@@ -367,6 +367,10 @@ Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
     decoder.nextCodePoint();
     nextTokenStart = decoder.layout();
   }
+  /* FIXME The former condition was faulty, as it worked on strings, not trees.
+   * As a result, the rest of the parser was built around the stored identifiers
+   * being cleared everytime. */
+#if 0
   if (tokenLength !=
       static_cast<size_t>(NumberOfNextTreeTo(stringStart, *stringEnd))) {
     /* The token doesn't go to the end of the string.
@@ -378,6 +382,9 @@ Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
      * */
     m_storedIdentifiersList.clear();
   }
+#else
+  m_storedIdentifiersList.clear();
+#endif
   *stringEnd = stringStart;
   return Token(tokenType, stringStart, tokenLength);
 }

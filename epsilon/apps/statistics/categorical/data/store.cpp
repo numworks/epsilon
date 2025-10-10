@@ -123,6 +123,11 @@ void Store::clearColumn(int col) {
 
 void Store::clearRow(int clearedRow) {
   assert(0 <= clearedRow && clearedRow < k_maxNumberOfCategory);
+  if (clearedRow == m_numberOfRows) {
+    // Trying to clear an empty row, just clear the label
+    m_table->m_categoryLabels[clearedRow][0] = '\x00';
+    return;
+  }
   for (int col = 0; col < m_numberOfColumns; col++) {
     // Shift rows up
     for (int row = clearedRow + 1; row < m_numberOfRows; ++row) {

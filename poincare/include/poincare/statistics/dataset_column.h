@@ -16,7 +16,11 @@ class VectorDatasetColumn : public DatasetColumn<T> {
  public:
   static constexpr size_t k_capacity = 100;
 
+  using vector_type = OMG::StaticVector<T, k_capacity>;
+
   VectorDatasetColumn(std::initializer_list<T> values) : m_vector{values} {}
+  explicit VectorDatasetColumn(const vector_type& vector) : m_vector{vector} {}
+
   T valueAtIndex(int index) const override {
     assert(index >= 0);
     return m_vector[index];
@@ -24,7 +28,7 @@ class VectorDatasetColumn : public DatasetColumn<T> {
   int length() const override { return m_vector.size(); }
 
  private:
-  OMG::StaticVector<T, k_capacity> m_vector;
+  vector_type m_vector;
 };
 
 }  // namespace Poincare

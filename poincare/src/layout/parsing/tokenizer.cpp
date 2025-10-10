@@ -270,7 +270,7 @@ Token Tokenizer::popToken() {
     /* Set decoder after comparison operator in case not all codepoints were
      * popped. */
     m_decoder = start;
-    m_decoder.skip(comparisonOperatorLength);
+    m_decoder.skipTree(comparisonOperatorLength);
     return result;
   }
 
@@ -343,13 +343,10 @@ void Tokenizer::fillIdentifiersList() {
   Token rightMostParsedToken = m_storedIdentifiersList[0];
   m_decoder = save;
 
-  const Tree* newLayout = rightMostParsedToken.firstLayout();
-  for (int i = rightMostParsedToken.length(); i > 0; i--) {
-    newLayout = newLayout->nextTree();
-  }
-  while (m_decoder.layout() != newLayout) {
+  while (m_decoder.layout() != rightMostParsedToken.firstLayout()) {
     m_decoder.skip(1);
   }
+  m_decoder.skipTree(rightMostParsedToken.length());
 }
 
 Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,

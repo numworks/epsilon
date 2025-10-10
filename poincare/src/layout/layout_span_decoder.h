@@ -119,9 +119,7 @@ inline int CompareLayoutSpanWithNullTerminatedString(const LayoutSpan a,
                                                      const char* b) {
   LayoutSpanDecoder da(a.data(), a.size());
   UTF8Decoder db(b);
-  /* Ignore combining code points in the comparison, as the layout span decoder
-   * will not return them. */
-  return OMG::CompareDecoders(&da, &db, /* ignoreCombining */ true);
+  return OMG::CompareDecoders(&da, &db);
 }
 
 }  // namespace Poincare::Internal

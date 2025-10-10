@@ -342,10 +342,14 @@ void Tokenizer::fillIdentifiersList() {
    * */
   Token rightMostParsedToken = m_storedIdentifiersList[0];
   m_decoder = save;
-  while (m_decoder.layout() != rightMostParsedToken.firstLayout()) {
+
+  const Tree* newLayout = rightMostParsedToken.firstLayout();
+  for (int i = rightMostParsedToken.length(); i > 0; i--) {
+    newLayout = newLayout->nextTree();
+  }
+  while (m_decoder.layout() != newLayout) {
     m_decoder.skip(1);
   }
-  m_decoder.skip(rightMostParsedToken.length());
 }
 
 Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
@@ -366,7 +370,8 @@ Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
     decoder.nextCodePoint();
     nextTokenStart = decoder.layout();
   }
-  if (stringStart + tokenLength != *stringEnd) {
+  if (tokenLength !=
+      static_cast<size_t>(NumberOfNextTreeTo(stringStart, *stringEnd))) {
     /* The token doesn't go to the end of the string.
      * This can happen when parsing "Ans5x" for example.
      * It should be parsed as "Ans*5*x" and not "A*n*s5*x",
@@ -385,6 +390,9 @@ static bool stringIsACodePointFollowedByNumbers(LayoutSpan span) {
   CodePoint c = decoder.nextCodePoint();
   if (!IsNonDigitalIdentifierMaterial(c)) {
     return false;
+  }
+  if (decoder.codePoint().isCombining()) {
+    decoder.nextCodePoint();
   }
   while (!decoder.isEmpty()) {
     CodePoint c = decoder.nextCodePoint();

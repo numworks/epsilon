@@ -14,12 +14,10 @@ constexpr
         0x20,  //   // SPACE
         0x21,  // ! // EXCLAMATION MARK
         0x22,  // " // QUOTATION MARK
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x23,  // # // NUMBER SIGN
-#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x24,  // $ // DOLLAR SIGN
-#endif
         0x25,  // % // PERCENT SIGN
-#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x26,  // & // AMPERSAND
 #endif
         0x27,  // ' // APOSTROPHE
@@ -108,16 +106,20 @@ constexpr
         0x78,  // x // LATIN SMALL LETTER X
         0x79,  // y // LATIN SMALL LETTER Y
         0x7a,  // z // LATIN SMALL LETTER Z
-        0x7b,  // { // LEFT CURLY BRACKET
-        0x7c,  // | // VERTICAL LINE
-        0x7d,  // } // RIGHT CURLY BRACKET
 #if !KANDINSKY_CODEPOINTS_SCANDIUM
+        0x7b,  // { // LEFT CURLY BRACKET
+#endif
+        0x7c,  // | // VERTICAL LINE
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
+        0x7d,  // } // RIGHT CURLY BRACKET
         0x7e,  // ~ // TILDE
 
         0xaa,  // ª // Feminine Ordinal Indicator
 #endif
         0xb0,  // ° // DEGREE SIGN
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0xb1,  // ± // PLUS OR MINUS SIGN
+#endif
         0xb7,  // · // MIDDLE DOT
 #if !KANDINSKY_CODEPOINTS_SCANDIUM
         0xba,  // º // Masculine Ordinal Indicator

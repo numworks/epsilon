@@ -23,14 +23,7 @@ using EvenOddEditableCell = Escher::EvenOddEditableTextCell<
 class TableViewDataSource : public Escher::TableViewDataSource {
  public:
   TableViewDataSource(Escher::Responder* editableCellsParentResponder,
-                      Escher::TextFieldDelegate* textFieldDelegate)
-      : m_topLeftCell(Escher::Palette::WallScreenDark) {
-    for (EvenOddEditableCell& cell : m_editableCells) {
-      cell.setParentResponder(editableCellsParentResponder);
-      cell.editableTextCell()->textField()->setDelegate(textFieldDelegate);
-    }
-  }
-
+                      Escher::TextFieldDelegate* textFieldDelegate);
   // Escher::TableViewDataSource
   int numberOfRows() const override { return m_numberOfRows; }
   int numberOfColumns() const override { return m_numberOfColumns; }

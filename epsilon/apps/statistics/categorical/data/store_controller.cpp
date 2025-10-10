@@ -71,6 +71,14 @@ bool StoreController::textFieldDidFinishEditing(
   return true;
 }
 
+void StoreController::viewWillAppear() {
+  recomputeDimensions();
+  if (selectedRow() < 0) {
+    selectCellAtLocation(1, 1);
+  }
+  Shared::TabTableController::viewWillAppear();
+}
+
 void StoreController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::HasBecomeFirst) {

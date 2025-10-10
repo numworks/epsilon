@@ -31,14 +31,6 @@ class StoreController : public Shared::TabTableController,
                   Escher::TabViewController* tabViewController,
                   Escher::ViewController* dataTypeController, Store* store);
 
-  void viewWillAppear() override {
-    recomputeDimensions();
-    if (selectedRow() < 0) {
-      selectCellAtLocation(1, 1);
-    }
-    Shared::TabTableController::viewWillAppear();
-  }
-
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
                                     Ion::Events::Event event) override;
@@ -63,6 +55,7 @@ class StoreController : public Shared::TabTableController,
   }
 
   // TabTableController
+  void viewWillAppear() override;
   Escher::Responder* tabController() const override { return m_tabController; }
   Escher::SelectableTableView* selectableTableView() override {
     return &m_selectableTableView;

@@ -21,16 +21,9 @@ size_t CodePointSearch(const char* string, CodePoint c) {
   return result;
 }
 
-int CompareDecoders(ForwardUnicodeDecoder* a, ForwardUnicodeDecoder* b,
-                    bool ignoreCombining) {
+int CompareDecoders(ForwardUnicodeDecoder* a, ForwardUnicodeDecoder* b) {
   while (CodePoint c = a->nextCodePoint()) {
-    if (ignoreCombining && c.isCombining()) {
-      continue;
-    }
     CodePoint d = b->nextCodePoint();
-    while (ignoreCombining && d.isCombining()) {
-      d = b->nextCodePoint();
-    }
     if (c != d) {
       return c - d;
     }

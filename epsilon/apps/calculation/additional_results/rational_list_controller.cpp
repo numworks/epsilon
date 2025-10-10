@@ -16,28 +16,11 @@ using namespace Shared;
 
 namespace Calculation {
 
-static bool isIntegerInput(const UserExpression e) {
-  return (e.isBasedInteger() ||
-          (e.isOpposite() && isIntegerInput(e.cloneChildAtIndex(0))));
-}
-
-static bool isFractionInput(const UserExpression e) {
-  if (e.isOpposite()) {
-    return isFractionInput(e.cloneChildAtIndex(0));
-  }
-  if (!e.isDiv()) {
-    return false;
-  }
-  UserExpression num = e.cloneChildAtIndex(0);
-  UserExpression den = e.cloneChildAtIndex(1);
-  return isIntegerInput(num) && isIntegerInput(den);
-}
-
 void RationalListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput) {
   assert(AdditionalResultsType::HasRational(exactOutput));
-  UserExpression e = isFractionInput(input) ? input : exactOutput;
+  UserExpression e = exactOutput;
   assert(!e.isUninitialized());
   static_assert(k_maxNumberOfRows >= 2,
                 "k_maxNumberOfRows must be greater than 2");

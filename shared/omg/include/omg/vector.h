@@ -23,18 +23,18 @@ class AbstractStaticVector {
   using iterator = T*;
   using const_iterator = const T*;
 
-  size_t size() const { return m_size; }
-  void clear() { m_size = 0; }
-  void resize(size_t size) {
+  constexpr size_t size() const { return m_size; }
+  constexpr void clear() { m_size = 0; }
+  constexpr void resize(size_t size) {
     assert(size <= m_size);
     m_size = size;
   }
 
-  const T& operator[](size_t index) const {
+  constexpr const T& operator[](size_t index) const {
     assert(index < m_size);
     return m_data[index];
   }
-  T& operator[](size_t index) {
+  constexpr T& operator[](size_t index) {
     assert(index < m_size);
     return m_data[index];
   }
@@ -44,8 +44,8 @@ class AbstractStaticVector {
   constexpr iterator end() { return m_data + m_size; }
   constexpr const_iterator end() const { return m_data + m_size; }
 
-  void push(const T& value) { (*this)[m_size++] = value; }
-  T& pop() {
+  constexpr void push(const T& value) { (*this)[m_size++] = value; }
+  constexpr T& pop() {
     assert(m_size > 0);
     T& result = (*this)[m_size - 1];
     /* This cannot be decreased before accessing the element or the assert in
@@ -53,7 +53,7 @@ class AbstractStaticVector {
     --m_size;
     return result;
   }
-  void removeAt(size_t index) {
+  constexpr void removeAt(size_t index) {
     assert(index < m_size);
     for (size_t i = index; i < m_size - 1; i++) {
       (*this)[i] = (*this)[i + 1];
@@ -62,7 +62,7 @@ class AbstractStaticVector {
   }
 
  protected:
-  AbstractStaticVector() = default;
+  constexpr AbstractStaticVector() = default;
 
   size_t m_size = 0;
   T m_data[0];
@@ -73,24 +73,26 @@ class StaticVector : public AbstractStaticVector<T> {
  public:
   static_assert(CAPACITY > 0, "StaticVector must have a positive capacity");
 
-  StaticVector() : AbstractStaticVector<T>() {}
+  constexpr StaticVector() = default;
 
   // Use this constructor only if T has a proper default constructor
-  StaticVector(size_t initialSize) : AbstractStaticVector<T>() {
+  constexpr StaticVector(size_t initialSize) : AbstractStaticVector<T>() {
     assert(initialSize <= CAPACITY);
     this->m_size = initialSize;
   }
 
-  StaticVector(std::initializer_list<T> values) {
+  constexpr StaticVector(std::initializer_list<T> values) {
     assert(values.size() <= CAPACITY);
     for (const T& value : values) {
       this->push(value);
     }
   }
 
-  size_t capacity() const { return CAPACITY; }
-  bool isFull() const { return this->m_size == CAPACITY; }
-  std::span<T> span() { return std::span<T>(this->m_data, this->size()); }
+  constexpr size_t capacity() const { return CAPACITY; }
+  constexpr bool isFull() const { return this->m_size == CAPACITY; }
+  constexpr std::span<T> span() {
+    return std::span<T>(this->m_data, this->size());
+  }
 
  protected:
   T m_data[CAPACITY];

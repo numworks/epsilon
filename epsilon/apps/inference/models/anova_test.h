@@ -1,6 +1,6 @@
 #pragma once
 
-#include <poincare/statistics/inference.h>
+#include <omg/vector.h>
 
 #include "significance_test.h"
 
@@ -13,11 +13,7 @@ class ANOVATest : public SignificanceTest {
     return StatisticType::F;
   }
 
-  void compute() override {
-    // TODO
-    m_testCriticalValue = 0;
-    m_pValue = 0;
-  }
+  void compute() override;
 
  private:
   // Inference
@@ -36,6 +32,14 @@ class ANOVATest : public SignificanceTest {
   bool shouldForbidZoom(float alpha, float criticalValue) override {
     return false;
   }
+
+  static constexpr size_t k_maxNumberOfGroups = 6;
+  static_assert(
+      k_maxNumberOfGroups <=
+      Poincare::Inference::SignificanceTest::FTest::k_maxNumberOfGroups);
+
+  using GroupValues = Poincare::Inference::SignificanceTest::FTest::Values;
+  OMG::StaticVector<GroupValues, k_maxNumberOfGroups> m_groups;
 };
 
 }  // namespace Inference

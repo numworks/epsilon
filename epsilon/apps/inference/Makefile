@@ -36,6 +36,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   images/confidence_interval.png \
   images/significance_test.png \
 ) \
+  models/anova_test.cpp \
   models/chi2_test.cpp \
   models/confidence_interval.cpp \
   models/goodness_test.cpp \

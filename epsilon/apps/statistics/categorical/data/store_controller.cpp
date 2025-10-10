@@ -54,12 +54,10 @@ bool StoreController::textFieldDidFinishEditing(
   }
   int row = m_selectableTableView.selectedRow(),
       col = m_selectableTableView.selectedColumn();
-  // if (!tableModel()->authorizedValueAtPosition(p, relativeRow(row),
-  //                                              relativeColumn(column)))
-  //                                              {
-  //   App::app()->displayWarning(I18n::Message::ForbiddenValue);
-  //   return false;
-  // }
+  if (!m_store->authorizedValue(p)) {
+    Escher::App::app()->displayWarning(I18n::Message::ForbiddenValue);
+    return false;
+  }
   int dataCol = dataColumn(col);
   m_store->setValue(p, dataCol, dataRow(row));
   recomputeDimensionsAndReload(

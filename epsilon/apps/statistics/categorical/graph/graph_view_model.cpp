@@ -24,8 +24,7 @@ GraphViewModel::GraphView GraphViewModel::GraphViewAtIndex(uint8_t index) {
 }
 
 uint8_t GraphViewModel::IndexOfGraphView(GraphView graphView) {
-  assert(static_cast<uint8_t>(graphView) >= 0 &&
-         static_cast<uint8_t>(graphView) < k_numberOfGraphViews);
+  assert(static_cast<uint8_t>(graphView) < k_numberOfGraphViews);
   return static_cast<uint8_t>(graphView);
 }
 

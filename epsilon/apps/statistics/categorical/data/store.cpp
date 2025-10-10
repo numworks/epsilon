@@ -89,10 +89,10 @@ void Store::getCategoryName(int row, char* buffer, int bufferSize) const {
   }
   // Default group name
   static_assert('A' + k_maxNumberOfCategory - 1 <= 'Z');
-  char digit = 'A' + row;
+  char letter = 'A' + row;
   Poincare::Print::CustomPrintf(buffer, bufferSize, "%s %c",
                                 I18n::translate(I18n::Message::Category),
-                                digit);
+                                letter);
 }
 
 void Store::eraseValue(int col, int row) {

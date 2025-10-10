@@ -82,12 +82,6 @@ bool RunLoop::step() {
     }
 #endif
 
-#if !PLATFORM_DEVICE
-    if (event == Ion::Events::ExternalText &&
-        !KDFont::CanBeWrittenWithGlyphs(event.text())) {
-      return true;
-    }
-#endif
     dispatchEvent(event);
   }
 

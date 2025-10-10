@@ -176,8 +176,11 @@ template <typename T>
 bool ApproximateAndReplaceEveryScalar(Tree* e,
                                       const Context& context = Context());
 
-/* Returns -1 if every condition is false, it assumes there is no other free
- * variable than VarX, return -2 if a condition was undefined. */
+constexpr int k_noActiveBranch = -1;
+constexpr int k_unknownActiveBranch = -2;
+/* Returns k_noActiveBranch if every condition is false, it assumes there is no
+ * other free variable than VarX, return k_unknownActiveBranch if a condition
+ * was undefined. */
 template <typename T>
 int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x);
 

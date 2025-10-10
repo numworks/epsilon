@@ -1685,7 +1685,9 @@ int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   Context ctx;
   ctx.m_localContext = &localCtx;
   const Tree* branch = SelectPiecewiseBranch<T>(piecewise, &ctx);
-  return !branch ? -2 : branch == KUndef ? -1 : piecewise->indexOfChild(branch);
+  return !branch            ? k_unknownActiveBranch
+         : branch == KUndef ? k_noActiveBranch
+                            : piecewise->indexOfChild(branch);
 }
 
 bool CanApproximate(const Tree* e, bool approxLocalVar) {

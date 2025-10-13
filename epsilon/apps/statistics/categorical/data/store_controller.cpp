@@ -18,14 +18,33 @@ StoreController::StoreController(
                            },
                            this),
                        KDFont::Size::Small),
+      m_deleteColumnConfirmPopUpController(
+          Escher::Invocation::Builder<StoreController>(
+              [](StoreController* param, void* parent) {
+                param->clearSelectedColumn();
+                Escher::App::app()->modalViewController()->dismissModal();
+                param->recomputeDimensionsAndReload(true);
+                return true;
+              },
+              this)),
+      m_deleteRowConfirmPopUpController(
+          Escher::Invocation::Builder<StoreController>(
+              [](StoreController* param, void* parent) {
+                param->clearSelectedRow();
+                Escher::App::app()->modalViewController()->dismissModal();
+                param->recomputeDimensionsAndReload(true);
+                return true;
+              },
+              this)),
       m_selectableTableView(this, this, this, this),
       m_prefacedTableView(0, 0, this, &m_selectableTableView, this, this),
       m_store(store),
       m_columnParameterController(stackViewController, store,
-                                  stackViewController),
+                                  stackViewController, this),
       m_rfColumnParameterController(stackViewController, store,
                                     stackViewController),
-      m_rowParameterController(stackViewController, store, stackViewController),
+      m_rowParameterController(stackViewController, store, stackViewController,
+                               this),
       m_stackViewController(stackViewController),
       m_tabController(tabViewController),
       m_dataTypeController(dataTypeController) {
@@ -121,6 +140,17 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
       }
       return true;
     }
+    if (typeAtLocation(col, row) == k_typeOfVerticalHeaderCells) {
+      popupConfirmation(false, dataRow(row));
+      return true;
+    }
+    if (typeAtLocation(col, row) == k_typeOfHeaderCells) {
+      ColumnInfo info = columnInfo(col);
+      if (info.isDataColumn) {
+        popupConfirmation(true, info.groupNumber);
+      }
+      return info.isDataColumn;
+    }
     return false;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
@@ -177,6 +207,21 @@ void StoreController::recomputeDimensionsAndReload(bool force) {
     m_selectableTableView.reloadCellAtLocation(col, row);
     // Reload header cell to update color
     m_selectableTableView.reloadCellAtLocation(col, 0);
+  }
+}
+
+void StoreController::popupConfirmation(bool forColumn, int dataColOrRow) {
+  char buffer[20];
+  if (forColumn) {
+    m_store->getGroupName(dataColOrRow, buffer, sizeof(buffer));
+    m_deleteColumnConfirmPopUpController.setMessageWithPlaceholders(
+        I18n::Message::ClearColumnConfirmation, buffer);
+    m_deleteColumnConfirmPopUpController.presentModally();
+  } else {
+    m_store->getCategoryName(dataColOrRow, buffer, sizeof(buffer));
+    m_deleteRowConfirmPopUpController.setMessageWithPlaceholders(
+        I18n::Message::ClearRowConfirmation, buffer);
+    m_deleteRowConfirmPopUpController.presentModally();
   }
 }
 

@@ -9,6 +9,7 @@
 #include <escher/stack_view_controller.h>
 #include <escher/tab_view_controller.h>
 #include <shared/math_field_delegate.h>
+#include <shared/pop_up_controller.h>
 #include <shared/tab_table_controller.h>
 
 #include "column_parameter_controller.h"
@@ -69,6 +70,14 @@ class StoreController : public Shared::TabTableController,
   void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
 
+  void clearSelectedColumn() {
+    m_store->clearColumn(dataColumn(m_selectableTableView.selectedColumn()));
+  }
+  void clearSelectedRow() {
+    m_store->clearRow(dataRow(m_selectableTableView.selectedRow()));
+  }
+  void popupConfirmation(bool forColumn, int dataColOrRow);
+
  private:
   bool recomputeDimensions();
   void recomputeDimensionsAndReload(bool force);
@@ -77,6 +86,8 @@ class StoreController : public Shared::TabTableController,
   static constexpr int k_maxNumberOfRows = Store::k_maxNumberOfCategory + 1;
 
   Escher::SimpleButtonCell m_dataTypeButton;
+  Shared::BufferPopUpController m_deleteColumnConfirmPopUpController;
+  Shared::BufferPopUpController m_deleteRowConfirmPopUpController;
   Escher::SelectableTableView m_selectableTableView;
   Escher::PrefacedTwiceTableView m_prefacedTableView;
   Store* m_store;

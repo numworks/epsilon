@@ -41,7 +41,7 @@ bool Store::isGroupEmpty(int col) const {
   assert(0 <= col && col < k_maxNumberOfGroups);
   if (m_table->m_groupStatus[col] == GroupStatus::Hidden) {
     // A hidden group could be empty or not
-    return !computeGroupHasValue(col);
+    return nonMemoizedIsGroupEmpty(col);
   }
   return m_table->m_groupStatus[col] == GroupStatus::Empty;
 }
@@ -102,7 +102,7 @@ void Store::eraseValue(int col, int row) {
   // A hidden column stays hidden even if emptied
   if (m_table->m_groupStatus[col] != GroupStatus::Hidden) {
     m_table->m_groupStatus[col] =
-        computeGroupHasValue(col) ? GroupStatus::Active : GroupStatus::Empty;
+        nonMemoizedIsGroupEmpty(col) ? GroupStatus::Empty : GroupStatus::Active;
   }
   recomputeDimensions();
   recomputeSum(col);
@@ -135,7 +135,7 @@ void Store::clearRow(int clearedRow) {
     }
     m_table->m_data[col][m_numberOfRows - 1] = NAN;
     if (m_table->m_groupStatus[col] == GroupStatus::Active &&
-        !computeGroupHasValue(col)) {
+        nonMemoizedIsGroupEmpty(col)) {
       m_table->m_groupStatus[col] = GroupStatus::Empty;
     }
   }
@@ -175,14 +175,14 @@ void Store::recomputeAllSums() {
   }
 }
 
-bool Store::computeGroupHasValue(int column) const {
+bool Store::nonMemoizedIsGroupEmpty(int column) const {
   assert(0 <= column && column < k_maxNumberOfGroups);
   for (int row = 0; row < m_numberOfRows; row++) {
     if (std::isfinite(m_table->m_data[column][row])) {
-      return true;
+      return false;
     }
   }
-  return false;
+  return true;
 }
 
 }  // namespace Statistics::Categorical

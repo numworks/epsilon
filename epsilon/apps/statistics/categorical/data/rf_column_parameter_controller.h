@@ -18,7 +18,7 @@ class RFColumnParameterController
       : Escher::ExplicitSelectableListViewController(parentResponder),
         m_store(store),
         m_stackViewController(stackViewController) {
-    m_clearColumnCell.label()->setMessage(I18n::Message::HideColumn);
+    m_hideRFColumnCell.label()->setMessage(I18n::Message::HideColumn);
   }
 
   // ExplicitSelectableListViewController
@@ -28,7 +28,7 @@ class RFColumnParameterController
   const char* title() const override;
   const Escher::AbstractMenuCell* cell(int row) const override {
     assert(0 == row);
-    return &m_clearColumnCell;
+    return &m_hideRFColumnCell;
   }
 
   /* Set the group/col that is being selected on the tableData
@@ -42,7 +42,7 @@ class RFColumnParameterController
   mutable char m_titleBuffer[k_titleBufferSize];
   int m_group = -1;
 
-  Escher::MenuCell<Escher::MessageTextView> m_clearColumnCell;
+  Escher::MenuCell<Escher::MessageTextView> m_hideRFColumnCell;
   Store* m_store;
   Escher::StackViewController* m_stackViewController;
 };

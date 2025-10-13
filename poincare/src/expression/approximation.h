@@ -302,6 +302,14 @@ template <typename T>
 std::complex<T> ApproximateRoot(const Tree* root, const Context* ctx);
 
 template <typename T>
+std::complex<T> ApproximateUserLogarithm(const Tree* e,
+                                         const Approximation::Context* ctx);
+
+template <typename T>
+std::complex<T> ApproximateSystemLogarithm(const Tree* e,
+                                           const Approximation::Context* ctx);
+
+template <typename T>
 std::complex<T> ComplexLogarithm(std::complex<T> c, bool isLog10);
 
 /* Approximate the conditions of a piecewise and return the tree corresponding

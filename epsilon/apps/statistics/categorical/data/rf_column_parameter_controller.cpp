@@ -21,13 +21,9 @@ bool RFColumnParameterController::handleEvent(Ion::Events::Event event) {
 
 void RFColumnParameterController::setGroup(int group) {
   m_group = group;
-  char buffer[20];
-  m_store->getGroupName(group, buffer, sizeof(buffer));
   m_selectableListView.selectRow(0);
 }
 const char* RFColumnParameterController::title() const {
-  char buffer[20];
-  m_store->getGroupName(m_group, buffer, sizeof(buffer));
   Poincare::Print::CustomPrintf(
       m_titleBuffer, sizeof(m_titleBuffer),
       I18n::translate(I18n::Message::ColumnOptions),

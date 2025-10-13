@@ -21,7 +21,8 @@ struct GlobalData {
 };
 
 GroupData ComputeGroupData(const Values& values) {
-  Poincare::VectorDatasetColumn<Values::value_type> vector{values};
+  Poincare::VectorDatasetColumn<Values::value_type, k_maxNumberOfGroupValues>
+      vector{values};
   Poincare::StatisticsDataset<Values::value_type> dataset =
       Poincare::StatisticsDataset<Values::value_type>(&vector);
   return GroupData{.nSamples = dataset.datasetLength(),

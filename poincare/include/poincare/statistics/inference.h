@@ -256,8 +256,8 @@ struct StatisticResults {
 };
 
 static constexpr size_t k_maxNumberOfGroups = 6;
-static constexpr size_t k_maxNumberOfGroupValues =
-    VectorDatasetColumn<double>::k_capacity;
+
+static constexpr size_t k_maxNumberOfGroupValues = 40;
 
 using Values = OMG::StaticVector<double, k_maxNumberOfGroupValues>;
 

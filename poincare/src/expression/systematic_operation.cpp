@@ -191,8 +191,9 @@ bool SystematicOperation::ReducePower(Tree* e) {
                                                KExp(KMult(KLn(KA), KB)));
   }
   if (base->isRational()) {
-    e->moveTreeOverTree(Rational::IntegerPower(base, n));
-    return true;
+    Rational::IntegerOperationResult result = Rational::IntegerPower(base, n);
+    e->moveTreeOverTree(result.tree);
+    return !result.hasOverflown;
   }
   // base^0 -> 1
   if (n->isZero()) {
@@ -677,8 +678,8 @@ static bool ReduceSquareRoot(Tree* e) {
     DivisionResult<Tree*> div = IntegerHandler::Division(
         factorization.coefficients[i], IntegerHandler(2));
     Tree* factor = Integer::Push(factorization.factors[i]);
-    TreeRef powerIn = Rational::IntegerPower(factor, div.remainder);
-    TreeRef powerOut = Rational::IntegerPower(factor, div.quotient);
+    TreeRef powerIn = Rational::IntegerPower(factor, div.remainder).tree;
+    TreeRef powerOut = Rational::IntegerPower(factor, div.quotient).tree;
     factor->removeTree();
     div.remainder->removeTree();
     div.quotient->removeTree();

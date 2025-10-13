@@ -83,7 +83,7 @@ QUIZ_CASE(pcj_simplification_based_integer) {
 
 QUIZ_CASE(pcj_simplification_large_integer_no_crash) {
   simplifies_to("diff(x,x,0,100000000000)", "diff(x,x,0,100000000000)");
-  simplifies_to("40000000000ln(10)", "40000000000ln(10)");
+  simplifies_to("40000000000ln(10)", "40000000000×ln(2)+40000000000×ln(5)");
 }
 
 QUIZ_CASE(pcj_simplification_large_numbers) {
@@ -158,8 +158,8 @@ QUIZ_CASE(poincare_simplification_rational) {
   simplifies_to("56^56",
                 "79164324866862966607842406018063254671922245312646690223362402"
                 "918484170424104310169552592050323456");
-  simplifies_to("999^999", "undef");
-  simplifies_to("999^-999", "undef");
+  simplifies_to("999^999", "999^999");
+  simplifies_to("999^-999", "1/999^999");
   simplifies_to("0^0", "undef");
   simplifies_to("π^0", "1");
   simplifies_to("(-3)^0", "1");

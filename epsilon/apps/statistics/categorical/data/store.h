@@ -98,7 +98,7 @@ class Store {
   void recomputeDimensions();
   void recomputeSum(int column);
   void recomputeAllSums();
-  bool computeGroupHasValue(int column) const;
+  bool nonMemoizedIsGroupEmpty(int column) const;
 
   std::array<float, k_maxNumberOfGroups> m_sumOfCategories;
   int m_numberOfRows;

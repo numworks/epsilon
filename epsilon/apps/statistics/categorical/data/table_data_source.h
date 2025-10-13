@@ -76,8 +76,8 @@ class TableViewDataSource : public Escher::TableViewDataSource {
 
   constexpr static int k_maxNumberOfHeaderCells = 5;
   constexpr static int k_maxNumberOfVerticalHeaderCells = 9;
-  constexpr static int k_maxNumberOfNonEditableHeaderCells = 14;
-  constexpr static int k_maxNumberOfEditableCells = 50;
+  constexpr static int k_maxNumberOfNonEditableHeaderCells = 18;
+  constexpr static int k_maxNumberOfEditableCells = 32;
 
   std::array<Shared::BufferFunctionTitleCell, k_maxNumberOfHeaderCells>
       m_headerCells;

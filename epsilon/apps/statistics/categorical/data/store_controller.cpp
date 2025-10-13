@@ -99,7 +99,7 @@ void StoreController::viewWillAppear() {
 void StoreController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
-    if (selectedRow() < 0 || selectedColumn() < 0) {
+    if (selectedRow() < 0) {
       header()->setSelectedButton(0);
     } else {
       Shared::TabTableController::handleResponderChainEvent(event);

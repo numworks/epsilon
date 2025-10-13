@@ -12,15 +12,15 @@
 
 namespace Statistics::Categorical {
 
-// Why float here ?
-// NOTE If changed, number of significant digit also present in
-// fillCellForLocation
-using EvenOddBufferCell = Escher::FloatEvenOddBufferTextCell<
-    Poincare::Preferences::ShortNumberOfSignificantDigits>;
-using EvenOddEditableCell = Escher::EvenOddEditableTextCell<
-    Poincare::Preferences::ShortNumberOfSignificantDigits>;
-
 class TableViewDataSource : public Escher::TableViewDataSource {
+  static constexpr int k_numberOfSignificantDigits =
+      Poincare::Preferences::ShortNumberOfSignificantDigits;
+
+  using EvenOddBufferCell =
+      Escher::FloatEvenOddBufferTextCell<k_numberOfSignificantDigits>;
+  using EvenOddEditableCell =
+      Escher::EvenOddEditableTextCell<k_numberOfSignificantDigits>;
+
  public:
   TableViewDataSource(Escher::Responder* editableCellsParentResponder,
                       Escher::TextFieldDelegate* textFieldDelegate);

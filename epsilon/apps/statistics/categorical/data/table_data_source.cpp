@@ -26,7 +26,6 @@ void TableViewDataSource::prepareHeaderCell(Escher::HighlightCell* cell,
   ColumnInfo info = columnInfo(column);
   myCell->setHorizontalAlignment(KDGlyph::k_alignCenter);
   myCell->setFont(KDFont::Size::Small);
-  myCell->setEven(true);
   if (info.isDataColumn) {
     char txt[20];
     store()->getGroupName(info.groupNumber, txt, sizeof(txt));
@@ -48,6 +47,7 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
   if (type == k_typeOfTopLeftCell) {
     return;
   }
+  static_cast<Escher::EvenOddCell*>(cell)->setEven(row % 2 == 0);
   if (type == k_typeOfHeaderCells) {
     assert(row == 0);
     prepareHeaderCell(cell, column);
@@ -55,7 +55,6 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     EvenOddBufferCell* myCell = static_cast<EvenOddBufferCell*>(cell);
     myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     myCell->setFont(KDFont::Size::Small);
-    myCell->setEven(row % 2 == 0);
     char txt[20];
     store()->getCategoryName(dataRow(row), txt, sizeof(txt));
     myCell->setText(txt);
@@ -66,27 +65,22 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     // TODO extract from inference
     Inference::PrintValueInTextHolder(
         p, editableCell->editableTextCell()->textField());
-    editableCell->setEven(row % 2 == 0);
   } else {
     assert(type == k_typeOfRFCells);
     EvenOddBufferCell* myCell = static_cast<EvenOddBufferCell*>(cell);
     ColumnInfo info = columnInfo(column);
     assert(!info.isDataColumn);
     float p = store()->getRelativeFrequency(info.groupNumber, dataRow(row));
+    constexpr int bufferSize =
+        Poincare::PrintFloat::charSizeForFloatsWithPrecision(
+            k_numberOfSignificantDigits);
+    char buffer[bufferSize] = "";
     if (std::isfinite(p)) {
-      constexpr int bufferSize =
-          Poincare::PrintFloat::charSizeForFloatsWithPrecision(
-              Poincare::Preferences::ShortNumberOfSignificantDigits);
-      char buffer[bufferSize];
       Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
-          p, buffer, bufferSize,
-          Poincare::Preferences::ShortNumberOfSignificantDigits,
+          p, buffer, bufferSize, k_numberOfSignificantDigits,
           GlobalPreferences::SharedGlobalPreferences()->displayMode());
-      myCell->setText(buffer);
-    } else {
-      myCell->setText("");
     }
-    myCell->setEven(row % 2 == 0);
+    myCell->setText(buffer);
   }
 }
 

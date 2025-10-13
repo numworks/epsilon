@@ -12,12 +12,15 @@
 
 namespace Statistics::Categorical {
 
+class StoreController;
+
 class ColumnParameterController
     : public Escher::ExplicitSelectableListViewController,
       public Escher::TextFieldDelegate {
  public:
   ColumnParameterController(Escher::Responder* parentResponder, Store* store,
-                            Escher::StackViewController* stackViewController);
+                            Escher::StackViewController* stackViewController,
+                            StoreController* storeController);
 
   // Escher::TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
@@ -51,6 +54,7 @@ class ColumnParameterController
 
   Store* m_store;
   Escher::StackViewController* m_stackViewController;
+  StoreController* m_storeController;
 };
 
 }  // namespace Statistics::Categorical

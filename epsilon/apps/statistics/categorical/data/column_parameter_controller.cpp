@@ -3,15 +3,19 @@
 
 #include <escher/app.h>
 
+#include "store_controller.h"
+
 namespace Statistics::Categorical {
 
 ColumnParameterController::ColumnParameterController(
     Escher::Responder* parentResponder, Store* store,
-    Escher::StackViewController* stackViewController)
+    Escher::StackViewController* stackViewController,
+    StoreController* storeController)
     : Escher::ExplicitSelectableListViewController(parentResponder),
       m_columnNameCell(&m_selectableListView, this),
       m_store(store),
-      m_stackViewController(stackViewController) {
+      m_stackViewController(stackViewController),
+      m_storeController(storeController) {
   m_columnNameCell.label()->setMessage(I18n::Message::ColumnName);
   m_showInGraphCell.label()->setMessage(
       I18n::Message::CategoricalActivateDeactivateStoreParamTitle);
@@ -29,8 +33,8 @@ bool ColumnParameterController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (cell == &m_clearColumnCell) {
-    m_store->clearColumn(m_column);
     m_stackViewController->pop();
+    m_storeController->popupConfirmation(true, m_column);
     return true;
   }
   if (cell == &m_showInGraphCell) {

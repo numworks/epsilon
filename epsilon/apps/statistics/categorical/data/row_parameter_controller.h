@@ -12,12 +12,15 @@
 
 namespace Statistics::Categorical {
 
+class StoreController;
+
 class RowParameterController
     : public Escher::ExplicitSelectableListViewController,
       public Escher::TextFieldDelegate {
  public:
   RowParameterController(Escher::Responder* parentResponder, Store* store,
-                         Escher::StackViewController* stackViewController);
+                         Escher::StackViewController* stackViewController,
+                         StoreController* storeController);
 
   // Responder via ExplicitSelectableListViewController
   bool handleEvent(Ion::Events::Event event) override;
@@ -43,7 +46,7 @@ class RowParameterController
 
  private:
   constexpr static int k_numberOfCells = 2;
-  constexpr static int k_titleBufferSize = 22 + sizeof(Store::Label);
+  constexpr static int k_titleBufferSize = 23 + sizeof(Store::Label);
   // mutable because title() needs to be const
   mutable char m_titleBuffer[k_titleBufferSize];
   int m_row = -1;
@@ -52,6 +55,7 @@ class RowParameterController
   Escher::MenuCell<Escher::MessageTextView> m_clearColumnCell;
   Store* m_store;
   Escher::StackViewController* m_stackViewController;
+  StoreController* m_storeController;
 };
 
 }  // namespace Statistics::Categorical

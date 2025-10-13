@@ -77,7 +77,7 @@ void Store::getGroupName(int col, char* buffer, int bufferSize) const {
   // Default group name
   static_assert('1' + k_maxNumberOfGroups - 1 <= '9');
   char digit = '1' + col;
-  Poincare::Print::CustomPrintf(buffer, bufferSize, "%s%c",
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "%s %c",
                                 I18n::translate(I18n::Message::Group), digit);
 }
 

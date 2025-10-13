@@ -74,7 +74,7 @@ void HomogeneityTableDataSource::fillCellForLocation(
     }
     constexpr int bufferSize = k_headerTranslationBuffer;
     char txt[bufferSize];
-    Poincare::Print::CustomPrintf(txt, bufferSize, "%s%c",
+    Poincare::Print::CustomPrintf(txt, bufferSize, "%s %c",
                                   I18n::translate(m_headerPrefix), digit);
     myCell->setText(txt);
     myCell->setTextColor(KDColorBlack);

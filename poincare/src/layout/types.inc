@@ -47,7 +47,7 @@ NODE(Parentheses, BASE, 1, {
   bool leftIsTemporary : 1;
   bool rightIsTemporary : 1;
 })
-NODE(CurlyBraces, BASE, 1, {
+NODE(CurlyBraces, LIST, 1, {
   bool leftIsTemporary : 1;
   bool rightIsTemporary : 1;
 })

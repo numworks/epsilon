@@ -207,19 +207,32 @@ Tree* Rational::Multiplication(const Tree* e1, const Tree* e2) {
   return result;
 }
 
-Tree* Rational::IntegerPower(const Tree* e1, const Tree* e2) {
+Rational::IntegerOperationResult Rational::IntegerPower(const Tree* e1,
+                                                        const Tree* e2) {
   assert(!(e1->isZero() && Sign(e2).isNegative()));
-  IntegerHandler absJ = Integer::Handler(e2);
-  absJ.setSign(NonStrictSign::Positive);
-  Tree* newNumerator = IntegerHandler::Power(Numerator(e1), absJ);
-  Tree* newDenominator = IntegerHandler::Power(Denominator(e1), absJ);
-  TreeRef result =
-      Sign(e2).isNegative()
-          ? Rational::PushIrreducible(newDenominator, newNumerator)
-          : Rational::PushIrreducible(newNumerator, newDenominator);
-  newDenominator->removeTree();
-  newNumerator->removeTree();
-  return result;
+  ExceptionTry {
+    IntegerHandler absJ = Integer::Handler(e2);
+    absJ.setSign(NonStrictSign::Positive);
+    Tree* newNumerator = IntegerHandler::Power(Numerator(e1), absJ);
+    Tree* newDenominator = IntegerHandler::Power(Denominator(e1), absJ);
+    TreeRef result =
+        Sign(e2).isNegative()
+            ? Rational::PushIrreducible(newDenominator, newNumerator)
+            : Rational::PushIrreducible(newNumerator, newDenominator);
+    newDenominator->removeTree();
+    newNumerator->removeTree();
+    return IntegerOperationResult{.tree = result, .hasOverflown = false};
+  }
+  ExceptionCatch(type) {
+    if (type == ExceptionType::IntegerOverflow) {
+      // Return the unchanged power
+      return IntegerOperationResult{
+          .tree = PatternMatching::Create(KPow(KA, KB), {.KA = e1, .KB = e2}),
+          .hasOverflown = true};
+    }
+    TreeStackCheckpoint::Raise(type);
+  }
+  OMG::unreachable();
 }
 
 bool Rational::IsIrreducible(const Tree* e) {

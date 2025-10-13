@@ -48,8 +48,13 @@ class Rational final {
     result->moveTreeOverTree(Multiplication(result, e3, others...));
     return result;
   }
+  struct IntegerOperationResult {
+    Tree* tree;
+    bool hasOverflown;
+  };
+
   // IntegerPower of (p1/q1)^(p2) --> (p1^p2)/(q1^p2)
-  static Tree* IntegerPower(const Tree* e1, const Tree* e2);
+  static IntegerOperationResult IntegerPower(const Tree* e1, const Tree* e2);
 
   static bool IsGreaterThanOne(const Tree* e);
   static bool IsStrictlyPositiveUnderOne(const Tree* e);

@@ -374,8 +374,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       &store);
 
   // IntegerOverflow during reduction
-  assertCalculationIs("0^(10^600)", DisplayOutput::ApproximateOnly,
-                      EqualSign::Hidden, nullptr, "0", &store);
+  assertCalculationIs("0^(10^600)",
+                      DisplayOutput::ApproximateIsIdenticalToExact,
+                      EqualSign::Hidden, "0", nullptr, &store);
 
   // Exact output that have dependencies are not displayed
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,
@@ -918,7 +919,8 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("_L/(_L/3)", {}, &store);
 
   // IntegerOverflow during reduction
-  assertCalculationAdditionalResultTypeHas("0^(10^600)", {}, &store);
+  assertCalculationAdditionalResultTypeHas(
+      "0^(10^600)", {.integer = true, .function = true}, &store);
 
   GlobalPreferences::SharedGlobalPreferences()->setDisplayMode(
       Preferences::PrintFloatMode::Scientific);

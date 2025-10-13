@@ -215,13 +215,19 @@ QUIZ_CASE(pcj_rational_multiplication) {
                    -1_e, 8_e);
 }
 
+static inline Tree* IntegerPowerNoOverflow(const Tree* e1, const Tree* e2) {
+  Rational::IntegerOperationResult result = Rational::IntegerPower(e1, e2);
+  assert(!result.hasOverflown);
+  return result.tree;
+}
+
 QUIZ_CASE(pcj_rational_integer_power) {
-  assert_operation(3_e, 2_e, 3_e, 1_e, Rational::IntegerPower, 27_e, 8_e);
-  assert_operation(1_e, 2_e, 10_e, 1_e, Rational::IntegerPower, 1_e, 1024_e);
-  assert_operation(7123_e, 3_e, 2_e, 1_e, Rational::IntegerPower, 50737129_e,
+  assert_operation(3_e, 2_e, 3_e, 1_e, IntegerPowerNoOverflow, 27_e, 8_e);
+  assert_operation(1_e, 2_e, 10_e, 1_e, IntegerPowerNoOverflow, 1_e, 1024_e);
+  assert_operation(7123_e, 3_e, 2_e, 1_e, IntegerPowerNoOverflow, 50737129_e,
                    9_e);
-  assert_operation(4_e, 5_e, 3_e, 1_e, Rational::IntegerPower, 64_e, 125_e);
-  assert_operation(4_e, 5_e, -3_e, 1_e, Rational::IntegerPower, 125_e, 64_e);
+  assert_operation(4_e, 5_e, 3_e, 1_e, IntegerPowerNoOverflow, 64_e, 125_e);
+  assert_operation(4_e, 5_e, -3_e, 1_e, IntegerPowerNoOverflow, 125_e, 64_e);
 }
 
 static const Tree* GetMixedFractionTree(const Tree* rational,

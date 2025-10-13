@@ -497,6 +497,8 @@ QUIZ_CASE(pcj_simplification_advanced) {
 }
 
 QUIZ_CASE(pcj_simplification_logarithm) {
+  simplifies_to("log(10^2022)", "2022");
+
   simplifies_to("log(3,27)", "1/3");
   simplifies_to("log(27,3)", "3");
   simplifies_to("ln(i)", "π/2×i", k_cartesianCtx);

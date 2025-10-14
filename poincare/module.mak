@@ -137,19 +137,21 @@ $(addprefix memory/, \
   visualization.cpp \
 ) \
 $(addprefix pool/, \
-  circuit_breaker_checkpoint.cpp:-nopool \
-  exception_checkpoint.cpp:-nopool \
-  expression.cpp:-nopool \
-  layout.cpp:-nopool \
-  pool.cpp:-nopool \
-  pool_checkpoint.cpp:-nopool \
-  pool_handle.cpp:-nopool \
-  pool_layout_cursor.cpp:-nopool \
-  pool_object.cpp:-nopool \
-  pool_variable_context.cpp:-nopool \
-  prepared_function.cpp:-nopool \
-  system_expression.cpp:-nopool \
-  user_expression.cpp:-nopool \
+  $(addsuffix :-nopool, \
+    circuit_breaker_checkpoint.cpp \
+    exception_checkpoint.cpp \
+    expression.cpp \
+    layout.cpp \
+    pool.cpp \
+    pool_checkpoint.cpp \
+    pool_handle.cpp \
+    pool_layout_cursor.cpp \
+    pool_object.cpp \
+    pool_variable_context.cpp \
+    prepared_function.cpp \
+    system_expression.cpp \
+    user_expression.cpp \
+  ) \
 ) \
 $(addprefix numeric_solver/, \
   beta_function.cpp \

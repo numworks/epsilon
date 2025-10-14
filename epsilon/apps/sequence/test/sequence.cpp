@@ -143,8 +143,8 @@ QUIZ_CASE(sequence_evaluation) {
   // u(n) = floor(1200*1.0125^(n-1+160))
   {
     double results[SequenceStore::k_maxNumberOfSequences][10] = {
-        {8649.0, INFINITY, INFINITY, INFINITY, INFINITY, INFINITY, INFINITY,
-         INFINITY, INFINITY, INFINITY},
+        {8649.0, 8757.0, 8867.0, 8977.0, 9090.0, 9203.0, 9318.0, 9435.0, 9553.0,
+         9672.0},
         {},
         {}};
     definitions[0] = "floor(1200*1.0125^(n-1+160))";

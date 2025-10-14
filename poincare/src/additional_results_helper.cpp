@@ -390,25 +390,26 @@ IntegerHandler extractInteger(const Tree* e) {
 Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
     const SystemExpression rational) {
   assert(rational.tree()->isRational());
-  /* Use the successive convergents of the continued fraction of e,
-   * written as: r = a_0 + 1/(a_1 + 1/(a_2 + 1/(a_3 + ...))).
+  /* Use the successive convergents of the continued fraction of a rational x,
+   * written as: x = a_0 + 1/(a_1 + 1/(a_2 + 1/(a_3 + ...))).
    * Work on the absolute value of e and add the sign at the end.
    * The continued fraction is computed using the Euclidean algorithm.
-   * r = a / b = 1 / b * (quo(a,b) * b + a mod b) = quo(a,b) + rem(a,b) / b =
+   * x = a / b = 1 / b * (quo(a,b) * b + rem(a,b)) = quo(a,b) + rem(a,b) / b =
    * quo(a,b) + 1/(b/rem(a,b)).
    * Noting a_k = quo(a,b) and p_k/q_k the successive convergents, the first
    * convergent is a_0.
    * The next convergent is found by applying the same formula to b/rem(a,b),
-   * i.e. defining a <- b, b <- (a mod b), computing a_k and using the
+   * i.e. defining a <- b, b <- rem(a,b), computing a_k and using the
    * recurrence relations:
    * p_k = a_k * p_{k-1} + p_{k-2} and
    * q_k = a_k * q_{k-1} + q_{k-2}
    * Since the first convergent is a_0 = (1 * a_0 + 0)/(0 * a_0 + 1) = p_0/q_0,
    * we start with values p_{-2} = 0, p_{-1} = 1, q_{-2} = 1, q_{-1} = 0.
-   * The algorithm stops when rem(a,b) = 0 (the last convergent is exactly r),
+   * The algorithm stops when rem(a,b) = 0 (the last convergent is exactly x),
    * or when q_k has more than 2 digits (limit the size of the denominator).
-   * For a more detailed proof of the algorithm, see
-   * https://cp-algorithms.com/algebra/continued-fractions.html */
+   * For more detailed proofs of the algorithm, see
+   * https://cp-algorithms.com/algebra/continued-fractions.html or
+   * https://www.math.u-bordeaux.fr/~pjaming/M1/exposes/MA2.pdf */
   bool isNegative = rational.tree()->isNegativeRational();
   TreeRef a = Rational::Numerator(rational).pushOnTreeStack();
   if (isNegative) {

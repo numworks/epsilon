@@ -1,8 +1,9 @@
 #include "table_data_source.h"
 
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
-#include <apps/inference/text_helpers.h>
 #include <poincare/print.h>
+#include <shared/poincare_helpers.h>
 
 namespace Statistics::Categorical {
 
@@ -59,9 +60,16 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
   } else if (type == k_typeOfInnerCells) {
     float p = store()->getValue(dataColumn(column), dataRow(row));
     EvenOddEditableCell* editableCell = static_cast<EvenOddEditableCell*>(cell);
-    // TODO extract from inference
-    Inference::PrintValueInTextHolder(
-        p, editableCell->editableTextCell()->textField());
+    constexpr int bufferSize =
+        Poincare::PrintFloat::charSizeForFloatsWithPrecision(
+            k_numberOfSignificantDigits);
+    char buffer[bufferSize] = "";
+    if (std::isfinite(p)) {
+      Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
+          p, buffer, bufferSize, k_numberOfSignificantDigits,
+          GlobalPreferences::SharedGlobalPreferences()->displayMode());
+    }
+    editableCell->editableTextCell()->textField()->setText(buffer);
   } else {
     assert(type == k_typeOfRFCells);
     EvenOddBufferCell* myCell = static_cast<EvenOddBufferCell*>(cell);

@@ -89,7 +89,6 @@ bool StoreController::textFieldDidFinishEditing(
 }
 
 void StoreController::viewWillAppear() {
-  recomputeDimensions();
   if (selectedRow() < 0) {
     selectCellAtLocation(1, 1);
   }

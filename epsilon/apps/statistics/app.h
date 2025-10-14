@@ -26,6 +26,8 @@ namespace Statistics {
 class App : public Shared::StoreApp,
             public Escher::AlternateViewDelegate,
             public Escher::AlternateEmptyViewDelegate {
+  friend class DataTypeController;
+
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:
@@ -134,11 +136,27 @@ class App : public Shared::StoreApp,
     Escher::ViewController* top() override {
       return &m_storeStackViewController;
     }
-    // TODO: handle the two exclusive controller in an union
-    StoreController m_storeController;
-    Categorical::StoreController m_categoricalStoreController;
-    Escher::ButtonRowController m_storeHeader;
-    Escher::ButtonRowController m_categoricalStoreHeader;
+    void switchActiveVariant(DataTypeViewModel::DataType type,
+                             bool destroy = true);
+
+    union ControllersVariant {
+      struct {
+        StoreController m_storeController;
+        Escher::ButtonRowController m_storeHeader;
+      } quantitative;
+      struct CategoricalControllers {
+        Categorical::StoreController m_storeController;
+        Escher::ButtonRowController m_storeHeader;
+      } categorical;
+      ControllersVariant(){};
+      ~ControllersVariant() {
+        if (App::app()->snapshot()->dataTypeViewModel()->selectedDataType() ==
+            DataTypeViewModel::DataType::Quantitative) {
+          quantitative.m_storeController
+              .Statistics::StoreController::~StoreController();
+        }
+      };
+    } m_variant;
     Escher::AlternateViewController m_alternateDataTypeController;
     DataTypeController m_dataTypeController;
     Escher::StackViewController::Default m_storeStackViewController;
@@ -150,7 +168,9 @@ class App : public Shared::StoreApp,
     Escher::ViewController* top() override {
       return &m_graphMenuAlternateEmptyViewController;
     }
-    // TODO union the 2 exclusive sets of controller (for space)
+    // TODO union the 2 exclusive sets of controller (for space): useless
+    // because StoreTab is bigger (for now)
+
     // Quantitative controllers
     NormalProbabilityController m_normalProbabilityController;
     /* NormalProbabilityController is the only DataView overriding series
@@ -192,12 +212,16 @@ class App : public Shared::StoreApp,
         m_calculationHeader;  // Needed for upper margin only
   };
 
-  // TODO union the 2 store as they cannot be used simulatanetly
   Store m_store;
   Categorical::Store m_categoricalStore;
   Escher::InputViewController m_inputViewController;
   Escher::TabUnion<StoreTab, GraphTab, CalculationTab> m_tabs;
   Escher::TabUnionViewController m_tabViewController;
+
+  // NOTE: If this breaks optimizing the bigger tab is needed, see TODO in
+  // GraphTab
+  static_assert(sizeof(StoreTab) > sizeof(GraphTab));
+  static_assert(sizeof(StoreTab) > sizeof(CalculationTab));
 };
 
 }  // namespace Statistics

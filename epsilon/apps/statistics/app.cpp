@@ -67,27 +67,58 @@ const App::Descriptor* App::Snapshot::descriptor() const {
 }
 
 App::StoreTab::StoreTab()
-    : m_storeController(&m_storeHeader, &app()->m_store, &m_storeHeader,
-                        &m_storeStackViewController, &m_dataTypeController),
-      m_categoricalStoreController(
-          &m_categoricalStoreHeader, &m_categoricalStoreHeader,
-          &m_storeStackViewController, &app()->m_tabViewController,
-          &m_dataTypeController, &app()->m_categoricalStore),
-      m_storeHeader(&m_alternateDataTypeController, &m_storeController,
-                    &m_storeController),
-      m_categoricalStoreHeader(&m_alternateDataTypeController,
-                               &m_categoricalStoreController,
-                               &m_categoricalStoreController),
-      m_alternateDataTypeController(
-          &m_storeStackViewController, app(),
-          {&m_storeHeader, &m_categoricalStoreHeader}),
+    : m_alternateDataTypeController(&m_storeStackViewController, app(),
+                                    {&m_variant.quantitative.m_storeHeader,
+                                     &m_variant.categorical.m_storeHeader}),
       m_dataTypeController(&m_storeStackViewController,
                            &m_storeStackViewController,
                            app()->snapshot()->dataTypeViewModel()),
       m_storeStackViewController(
           &app()->m_tabViewController, &m_alternateDataTypeController,
           Escher::StackViewController::Style::WhiteUniform) {
-  m_storeController.updateMemoizedFormulasOfErasedSeries();
+  switchActiveVariant(
+      app()->snapshot()->dataTypeViewModel()->selectedDataType(), false);
+}
+
+void App::StoreTab::switchActiveVariant(DataTypeViewModel::DataType type,
+                                        bool destroy) {
+  if (destroy) {
+    /* The dataType is fetch from the App direclty in the destructor, it's
+     * expected that the viewModel still holds the old dataType */
+    assert(App::app()->snapshot()->dataTypeViewModel()->selectedDataType() !=
+           type);
+    m_variant.~ControllersVariant();
+  }
+  switch (type) {
+    case DataTypeViewModel::DataType::Quantitative: {
+      new (&m_variant.quantitative.m_storeController) StoreController(
+          &m_variant.quantitative.m_storeHeader, &app()->m_store,
+          &m_variant.quantitative.m_storeHeader, &m_storeStackViewController,
+          &m_dataTypeController);
+      new (&m_variant.quantitative.m_storeHeader) Escher::ButtonRowController(
+          &m_alternateDataTypeController,
+          &m_variant.quantitative.m_storeController,
+          &m_variant.quantitative.m_storeController);
+      m_variant.quantitative.m_storeController
+          .updateMemoizedFormulasOfErasedSeries();
+      break;
+    }
+    case DataTypeViewModel::DataType::Qualitative: {
+      new (&m_variant.categorical.m_storeController)
+          Categorical::StoreController(
+              &m_variant.categorical.m_storeHeader,
+              &m_variant.categorical.m_storeHeader, &m_storeStackViewController,
+              &app()->m_tabViewController, &m_dataTypeController,
+              &app()->m_categoricalStore);
+      new (&m_variant.categorical.m_storeHeader)
+          Escher::ButtonRowController(&m_alternateDataTypeController,
+                                      &m_variant.categorical.m_storeController,
+                                      &m_variant.categorical.m_storeController);
+      break;
+    }
+    default:
+      OMG::unreachable();
+  }
 }
 
 App::GraphTab::GraphTab()

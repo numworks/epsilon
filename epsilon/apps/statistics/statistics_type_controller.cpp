@@ -1,6 +1,7 @@
 
 #include "statistics_type_controller.h"
 
+#include "app.h"
 #include "statistics_type_view_model.h"
 
 namespace Statistics {
@@ -38,8 +39,14 @@ void DataTypeController::handleResponderChainEvent(
 bool DataTypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE ||
       event == Ion::Events::Right) {
-    m_dataTypeModel->selectDataType(
-        DataTypeViewModel::DataTypeAtIndex(selectedRow()));
+    DataTypeViewModel::DataType newDataType =
+        DataTypeViewModel::DataTypeAtIndex(selectedRow());
+    if (m_dataTypeModel->selectedDataType() != newDataType) {
+      // NOTE: switching active variant before changing type in model
+      Statistics::App::app()->m_tabs.tab<App::StoreTab>()->switchActiveVariant(
+          newDataType);
+      m_dataTypeModel->selectDataType(newDataType);
+    }
     m_stackViewController->pop();
     return true;
   }

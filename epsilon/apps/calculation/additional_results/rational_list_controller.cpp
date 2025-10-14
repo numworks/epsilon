@@ -7,7 +7,6 @@
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_helpers.h>
-#include <string.h>
 
 #include "../app.h"
 
@@ -57,7 +56,7 @@ Layout RationalListController::layoutAtIndex(Escher::HighlightCell* cell,
                                              int index) {
   assert(index < k_maxNumberOfOutputRows && index >= 0);
   Layout l = ExpressionsListController::layoutAtIndex(cell, index);
-  if (hasRationalApproximation() && index == 0) {
+  if (index == indexOfRationalApproximationCell()) {
     // Strip the ~ sign from the rational approximation
     Internal::Tree* result = l.tree()->cloneTree();
     assert(result->isRackLayout() && result->numberOfChildren() >= 2);
@@ -66,7 +65,7 @@ Layout RationalListController::layoutAtIndex(Escher::HighlightCell* cell,
     Internal::NAry::RemoveChildAtIndex(result, 0);
     return Layout::Builder(result);
   }
-  if (hasRationalApproximation() ? index == 2 : index == 1) {
+  if (index == indexOfEuclidianDivisionCell()) {
     // Strip the left part of the equality in euclidean division
     Internal::Tree* result = l.tree()->cloneTree();
     Internal::TreeRef end = pushEndMarker(result);

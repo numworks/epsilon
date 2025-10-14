@@ -20,6 +20,8 @@
 
 namespace Statistics::Categorical {
 
+/* Main controller for the data tab of the categorical statistics.
+ * Handles the interactions between the store and the view. */
 class StoreController : public Shared::TabTableController,
                         public Escher::SelectableTableViewDelegate,
                         public TableViewDataSource,

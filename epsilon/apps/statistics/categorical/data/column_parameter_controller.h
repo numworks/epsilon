@@ -14,6 +14,9 @@ namespace Statistics::Categorical {
 
 class StoreController;
 
+/* Controller for the parameter menu of the column headers.
+ * Allows changing the name, toggle show/hide, clear and show RF column for the
+ * selected group */
 class ColumnParameterController
     : public Escher::ExplicitSelectableListViewController,
       public Escher::TextFieldDelegate {

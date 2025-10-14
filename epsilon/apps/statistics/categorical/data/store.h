@@ -14,6 +14,9 @@ struct TableDimension {
   int row;
 };
 
+/* Store the the categorical statistics app, contains:
+ * The snapshoted data [TableData]
+ * And memoized data (like sum for each group) */
 class Store {
  private:
   enum class GroupStatus : uint8_t {

@@ -6,6 +6,7 @@
 
 namespace Statistics {
 
+/* Model to store the selected data type in the snapshot */
 class DataTypeViewModel {
  public:
   enum class DataType : uint8_t {

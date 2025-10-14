@@ -1,19 +1,11 @@
 #pragma once
 
 #include <apps/i18n.h>
-#include <escher/alternate_empty_view_delegate.h>
 #include <escher/menu_cell.h>
-#include <escher/message_text_view.h>
-#include <escher/responder.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
-#include <escher/tab_view_controller.h>
-#include <escher/tab_view_data_source.h>
-#include <escher/transparent_image_view.h>
 
-#include "escher/alternate_view_controller.h"
 #include "statistics_type_view_model.h"
-#include "store.h"
 
 namespace Statistics {
 

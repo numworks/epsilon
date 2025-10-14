@@ -6,7 +6,6 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/switch_view.h>
-#include <poincare/print.h>
 
 #include "store.h"
 

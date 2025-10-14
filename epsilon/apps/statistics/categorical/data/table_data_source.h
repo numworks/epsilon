@@ -1,6 +1,5 @@
 #pragma once
 
-// TODO remove useless
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/highlight_cell.h>

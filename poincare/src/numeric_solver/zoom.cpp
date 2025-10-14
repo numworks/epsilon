@@ -542,15 +542,14 @@ Range2D<T> Zoom<T>::sanitize2DHelper(Range2D<T> range) const {
 template <typename T>
 static bool lengthCompatibleWithNormalization(T length, T lengthNormalized,
                                               T interestingLength) {
-  constexpr T k_minimalNormalizedCoverage = static_cast<T>(0.15);
   return
       /* The range (interesting + magnitude) makes up for at least 30% of the
        * normalized range (i.e. the curve does not appear squeezed). */
-      lengthNormalized * Zoom<T>::k_minimalNormalizationCoverage <= length &&
+      lengthNormalized <= length * Zoom<T>::k_maxNormalizationRatio &&
       /* The normalized range makes up for at least 15% of the range. This is to
        * prevent that, by shrinking the range, the other axis becomes too long
        * for the remaining visible part of the curve. */
-      length * k_minimalNormalizedCoverage <= lengthNormalized &&
+      lengthNormalized >= length * Zoom<T>::k_minNormalizationRatio &&
       /* The normalized range can fit the interesting range. We only count the
        * interesting range for this part as discarding the part that comes from
        * the magnitude is not an issue. */

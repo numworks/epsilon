@@ -20,6 +20,8 @@ namespace Statistics {
 using DataTypeCell =
     Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView>;
 
+/* Controller for the statistics data type menu.
+ * Allows changing between quantitative and categorical data type */
 class DataTypeController
     : public Escher::UniformSelectableListController<
           DataTypeCell, DataTypeViewModel::k_numberOfDataTypes> {

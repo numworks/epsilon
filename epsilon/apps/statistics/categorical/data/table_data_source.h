@@ -12,6 +12,8 @@
 
 namespace Statistics::Categorical {
 
+/* DataSource for the categorical table. Contains the reusable cells used in the
+ * table and fills them accordingly */
 class TableViewDataSource : public Escher::TableViewDataSource {
   static constexpr int k_numberOfSignificantDigits =
       Poincare::Preferences::ShortNumberOfSignificantDigits;

@@ -10,6 +10,8 @@
 
 namespace Statistics::Categorical {
 
+/* Controller for the parameter menu of the RF column headers.
+ * Allows hiding of the column for the selected group */
 class RFColumnParameterController
     : public Escher::ExplicitSelectableListViewController {
  public:

@@ -14,6 +14,8 @@ namespace Statistics::Categorical {
 
 class StoreController;
 
+/* Controller for the parameter menu of the row headers.
+ * Allows changing the name or clear for the selected category */
 class RowParameterController
     : public Escher::ExplicitSelectableListViewController,
       public Escher::TextFieldDelegate {

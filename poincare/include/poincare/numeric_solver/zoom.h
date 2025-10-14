@@ -62,7 +62,7 @@ class Zoom {
   void fitPoint(Coordinate2D<T> xy, bool flipped = false, T leftMargin = 0.f,
                 T rightMargin = 0.f, T bottomMargin = 0.f, T topMargin = 0.f);
   void fitPointsOfInterest(Function2D<T> f, const void* model,
-                           bool vertical = false,
+                           bool vertical = false, bool fitYIntercept = false,
                            Function2D<double> fDouble = nullptr,
                            bool* finiteNumberOfPoints = nullptr);
   bool fitRoots(Function2D<T> f, const void* model, bool vertical = false,

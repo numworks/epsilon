@@ -421,8 +421,9 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
                                               {.KA = q0, .KB = a_k, .KC = q1});
     a_k->removeTree();
 
-    if (Integer::Handler(q).totalNumberOfBase10DigitsWithoutSign() > 2) {
-      // Stop if the next denominator has more than 2 digits
+    if (Integer::Handler(q).totalNumberOfBase10DigitsWithoutSign() >
+        k_maxDenominatorDigitsForRationalApproximation) {
+      // Stop if the next denominator has too many digits
       q->removeTree();
       p->removeTree();
       rem->removeTree();

@@ -76,6 +76,7 @@ class AdditionalResultsHelper final {
 
  private:
   constexpr static double k_rationalApproximationPrecision = 1e-5;
+  constexpr static int k_maxDenominatorDigitsForRationalApproximation = 2;
 };
 
 }  // namespace Poincare

@@ -183,7 +183,7 @@ static PreprocessingResult PreprocessEquationList(
   // Step 3.3. Replace unkowns
 
   for (size_t i = 0; i < equationMetadata.unknownVariables.size(); i++) {
-    const char* variable = equationMetadata.unknownVariables[i];
+    const char* variable = equationMetadata.unknownVariables[i].data();
     // TODO: Use a more precise complexSign when possible for better reduction.
     Variables::ReplaceSymbol(reducedEquationList, variable, i,
                              ComplexSign::Finite());
@@ -292,7 +292,7 @@ static uint32_t TagParametersUsedAsVariables(VariableArray variables) {
    * others  will be checked for later. */
   for (size_t i = 0; i < variables.size(); i++) {
     // Set the k-th bit in tags if name == "t{k}" and 0th if name is "t"
-    const char* variable = variables[i];
+    const char* variable = variables[i].data();
     if (variable[0] != k_parameterPrefix) {
       continue;
     }
@@ -908,7 +908,7 @@ SolverResult ApproximateSolve(const Tree* equationList,
 
   assert(equationMetadata.unknownVariables.size() == 1);
   Approximation::PrepareFunctionForApproximation(
-      preparedEquation, equationMetadata.unknownVariables[0], true);
+      preparedEquation, equationMetadata.unknownVariables[0].data(), true);
 
   // Step 2. Compute the solving range if not provided
   if (range.isNan()) {

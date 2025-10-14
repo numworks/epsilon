@@ -1,6 +1,7 @@
 #pragma once
 
 #include <assert.h>
+#include <omg/string.h>
 #include <omg/vector.h>
 #include <poincare/helpers/polynomial.h>
 #include <poincare/helpers/symbol.h>
@@ -22,13 +23,13 @@ constexpr static size_t k_maxNumberOfExactSolutions =
 
 constexpr static size_t k_maxVariableSize = SymbolHelper::k_maxNameSize;
 
-class VariableArray : public OMG::StaticVector<char[k_maxVariableSize],
+class VariableArray : public OMG::StaticVector<OMG::String<k_maxVariableSize>,
                                                k_maxNumberOfVariables> {
  public:
   void push(const char* variable) {
     assert(m_size < capacity());
     assert(variable && strlen(variable) < k_maxVariableSize);
-    memcpy(m_data[m_size], variable, strlen(variable) + 1);
+    m_data[m_size] = std::string_view{variable, strlen(variable) + 1};
     m_size++;
   }
 
@@ -36,7 +37,7 @@ class VariableArray : public OMG::StaticVector<char[k_maxVariableSize],
 
  private:
   // Prevent pushing arrays
-  using OMG::StaticVector<char[k_maxVariableSize],
+  using OMG::StaticVector<OMG::String<k_maxVariableSize>,
                           k_maxNumberOfVariables>::push;
 };
 

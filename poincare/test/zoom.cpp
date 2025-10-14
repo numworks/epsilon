@@ -79,7 +79,7 @@ void assert_points_of_interest_range_is(const char* expression,
                                         Range2D<T> expectedRange) {
   Tree* e = parseAndPrepareForApproximation(expression, ProjectionContext{});
   ZoomTest zoom(Range1D<T>(-k_maxFloat, k_maxFloat));
-  zoom.zoom()->fitPointsOfInterest(expressionEvaluator<T>, e, false,
+  zoom.zoom()->fitPointsOfInterest(expressionEvaluator<T>, e, false, false,
                                    expressionEvaluator<double>);
   e->removeTree();
   assert_ranges_equal(zoom.interestingRange(), expectedRange, expression);

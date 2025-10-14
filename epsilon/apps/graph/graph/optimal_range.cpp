@@ -110,7 +110,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
             NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
         zoomAlongCoordinate.setBounds(f->tMin(), f->tMax());
         zoomAlongCoordinate.fitPointsOfInterest(floatEvaluators[coordinate], &e,
-                                                false,
+                                                false, false,
                                                 doubleEvaluators[coordinate]);
         zoomAlongCoordinate.fitBounds(floatEvaluators[coordinate], &e, false);
         ranges[coordinate] = *zoomAlongCoordinate.range(false, false).y();
@@ -150,13 +150,13 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
         intervalMax = Coordinate2D<float>(tMax, alongY ? c.x() : c.y());
       }
 
-      zoom.fitPointsOfInterest(evaluator<float>, &fModel, alongY,
+      zoom.fitPointsOfInterest(evaluator<float>, &fModel, alongY, false,
                                evaluator<double>, canComputeIntersections + i);
       zoom.fitBounds(evaluator<float>, &fModel, alongY);
       if (f->numberOfSubCurves() > 1) {
         assert(f->numberOfSubCurves() == 2);
         zoom.fitPointsOfInterest(evaluatorSecondCurve<float>, &fModel, alongY,
-                                 evaluatorSecondCurve<double>,
+                                 false, evaluatorSecondCurve<double>,
                                  canComputeIntersections + i);
         zoom.fitBounds(evaluatorSecondCurve<float>, &fModel, alongY);
       }

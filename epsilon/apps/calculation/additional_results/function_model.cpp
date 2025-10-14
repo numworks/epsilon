@@ -41,7 +41,7 @@ void FunctionModel::recomputeViewRange() {
 
   // fitPointsOfInterest is not suited for sequences
   assert(!m_function.hasSequences());
-  zoom.fitPointsOfInterest(evaluator<float>, &m_function, false,
+  zoom.fitPointsOfInterest(evaluator<float>, &m_function, false, false,
                            evaluator<double>);
 
   zoom.fitPoint(Coordinate2D<float>(m_abscissa, m_ordinate));

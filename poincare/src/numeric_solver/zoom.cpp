@@ -156,7 +156,8 @@ static typename Solver<T>::Interest pointIsInterestingHelper(Coordinate2D<T> a,
 
 template <typename T>
 void Zoom<T>::fitPointsOfInterest(Function2D<T> f, const void* model,
-                                  bool vertical, Function2D<double> fDouble,
+                                  bool vertical, bool fitYIntercept,
+                                  Function2D<double> fDouble,
                                   bool* finiteNumberOfPoints) {
   HorizontalAsymptoteHelper asymptotes(m_bounds.center());
   T(Coordinate2D<T>::*ordinate)
@@ -178,6 +179,11 @@ void Zoom<T>::fitPointsOfInterest(Function2D<T> f, const void* model,
     const InterestParameters* p = static_cast<const InterestParameters*>(aux);
     return (p->fDouble(t, p->model).*p->ordinateDouble)();
   };
+  if (fitYIntercept) {
+    // y-intercept can be fitted only if the function is not vertical
+    assert(!vertical);
+    fitPoint(f(0.0, model));
+  }
   bool leftInterrupted, rightInterrupted;
   fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator, &params,
                 PointIsInteresting, HonePoint, vertical, evaluatorDouble,

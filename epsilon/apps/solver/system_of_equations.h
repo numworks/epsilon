@@ -49,13 +49,13 @@ class SystemOfEquations {
   }
 
   const char* unknownVariable(size_t index) const {
-    return m_equationMetadata.unknownVariables[index];
+    return m_equationMetadata.unknownVariables[index].data();
   }
   size_t numberOfDefinedVariables() const {
     return m_equationMetadata.definedVariables.size();
   }
   const char* definedVariable(size_t index) const {
-    return m_equationMetadata.definedVariables[index];
+    return m_equationMetadata.definedVariables[index].data();
   }
   bool overrideDefinedVariables() const {
     return m_equationMetadata.overrideDefinedVariables;

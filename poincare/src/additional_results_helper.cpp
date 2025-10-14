@@ -373,18 +373,6 @@ bool AdditionalResultsHelper::HasRational(
   return (!e.tree()->isInteger() && e.tree()->isRational());
 }
 
-IntegerHandler extractInteger(const Tree* e) {
-  /* TODO_PCJ: is this usage of IntegerHandler correct ?
-   * A quick experiment showed incorrect digits with large numbers ! */
-  if (e->isOpposite()) {
-    IntegerHandler i = extractInteger(e->child(0));
-    i.setSign(InvertSign(i.sign()));
-    return i;
-  }
-  assert(e->isInteger());
-  return Integer::Handler(e);
-}
-
 /* Create a rational approximation (within ε) with at most 2 digits
  * in the denominator. Return an uninitialized expression if not possible. */
 Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
@@ -423,7 +411,7 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
 
   while (!b->isZero()) {
     DivisionResult<Tree*> division =
-        IntegerHandler::Division(extractInteger(a), extractInteger(b));
+        IntegerHandler::Division(Integer::Handler(a), Integer::Handler(b));
     TreeRef a_k = division.quotient;
     TreeRef rem = division.remainder;
     // p = p0 + a_k * p1 and q = q0 + a_k * q1
@@ -433,7 +421,7 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
                                               {.KA = q0, .KB = a_k, .KC = q1});
     a_k->removeTree();
 
-    if (extractInteger(q).totalNumberOfBase10DigitsWithoutSign() > 2) {
+    if (Integer::Handler(q).totalNumberOfBase10DigitsWithoutSign() > 2) {
       // Stop if the next denominator has more than 2 digits
       q->removeTree();
       p->removeTree();

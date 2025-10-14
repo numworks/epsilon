@@ -15,6 +15,15 @@ class ANOVATest : public SignificanceTest {
 
   void compute() override;
 
+  using GroupValues = Poincare::Inference::SignificanceTest::FTest::Values;
+
+  void setValues(std::span<const GroupValues> data) {
+    m_groups.clear();
+    for (const GroupValues& group : data) {
+      m_groups.push(group);
+    }
+  }
+
  private:
   // Inference
   double* parametersArray() override {
@@ -38,7 +47,6 @@ class ANOVATest : public SignificanceTest {
       k_maxNumberOfGroups <=
       Poincare::Inference::SignificanceTest::FTest::k_maxNumberOfGroups);
 
-  using GroupValues = Poincare::Inference::SignificanceTest::FTest::Values;
   OMG::StaticVector<GroupValues, k_maxNumberOfGroups> m_groups;
 };
 

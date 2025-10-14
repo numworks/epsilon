@@ -55,6 +55,7 @@ class StoreController : public Shared::TabTableController,
   }
 
   // TabTableController
+  void initView() override { recomputeDimensions(); };
   void viewWillAppear() override;
   Escher::Responder* tabController() const override { return m_tabController; }
   Escher::SelectableTableView* selectableTableView() override {

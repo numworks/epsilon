@@ -26,7 +26,6 @@ class StoreApp : public MathApp {
 
  protected:
   using MathApp::MathApp;
-  virtual StoreController* storeController() = 0;
   virtual const char* memoizedFormulaExtension() const = 0;
 
  private:

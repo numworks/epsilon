@@ -5,19 +5,6 @@ _sources_poincare_minimal := $(addprefix src/, \
   preferences.cpp \
   print_float.cpp \
   sign.cpp \
-  pool_handle.cpp:-nopool \
-  pool_object.cpp:-nopool \
-  pool.cpp:-nopool \
-)
-
-_sources_poincare_checkpoint := $(addprefix src/, \
-  $(addsuffix :-nocheckpoint, \
-    memory/tree_stack_checkpoint.cpp \
-    pool_checkpoint.cpp:-nopool \
-    circuit_breaker_checkpoint.cpp:-nopool \
-    exception_checkpoint.cpp:-nopool \
-  ) \
-  pool_checkpoint_dummy.cpp:+nocheckpoint \
 )
 
 _sources_poincare_preferences := $(addprefix src/, \
@@ -145,14 +132,22 @@ $(addprefix memory/, \
   pattern_matching.cpp \
   tree.cpp \
   tree_ref.cpp \
+  tree_stack_checkpoint.cpp \
   value_block.cpp \
   visualization.cpp \
 ) \
 $(addprefix pool/, \
+  circuit_breaker_checkpoint.cpp:-nopool \
+  exception_checkpoint.cpp:-nopool \
   expression.cpp:-nopool \
   layout.cpp:-nopool \
-  prepared_function.cpp:-nopool \
+  pool.cpp:-nopool \
+  pool_checkpoint.cpp:-nopool \
+  pool_handle.cpp:-nopool \
   pool_layout_cursor.cpp:-nopool \
+  pool_object.cpp:-nopool \
+  pool_variable_context.cpp:-nopool \
+  prepared_function.cpp:-nopool \
   system_expression.cpp:-nopool \
   user_expression.cpp:-nopool \
 ) \
@@ -213,7 +208,6 @@ $(addprefix statistics/, \
   exam_mode.cpp \
   comparison_operator.cpp \
   float_list.cpp:-nopool \
-  pool_variable_context.cpp:-nopool \
   print.cpp \
   random.cpp \
   range.cpp \
@@ -303,7 +297,6 @@ _sources_poincare_test := $(addprefix test/, \
 
 $(call create_module,poincare,1, \
   $(_sources_poincare_minimal) \
-  $(_sources_poincare_checkpoint) \
   $(_sources_poincare_preferences) \
   $(addsuffix :-minimal,$(_sources_poincare_extended)) \
   $(addsuffix :+test,$(_sources_poincare_test)) \

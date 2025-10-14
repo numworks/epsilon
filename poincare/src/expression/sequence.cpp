@@ -2,7 +2,6 @@
 
 #include <assert.h>
 #include <omg/unreachable.h>
-#include <poincare/helpers/sequence.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <string.h>

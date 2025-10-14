@@ -373,10 +373,10 @@ bool AdditionalResultsHelper::HasRational(
   return (!e.tree()->isInteger() && e.tree()->isRational());
 }
 
-/* Create a rational approximation (within ε) with at most 2 digits
- * in the denominator. Return an uninitialized expression if not possible. */
-Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
-    const SystemExpression rational) {
+/* For a rational x, return the closest rational convergent of the continued
+ * fraction of x, with a limited number of digits on the denominator. */
+static Tree* BestConvergentOfContinuedFraction(const SystemExpression rational,
+                                               int maxDenominatorDigits) {
   assert(rational.tree()->isRational());
   /* Use the successive convergents of the continued fraction of a rational x,
    * written as: x = a_0 + 1/(a_1 + 1/(a_2 + 1/(a_3 + ...))).
@@ -394,7 +394,7 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
    * Since the first convergent is a_0 = (1 * a_0 + 0)/(0 * a_0 + 1) = p_0/q_0,
    * we start with values p_{-2} = 0, p_{-1} = 1, q_{-2} = 1, q_{-1} = 0.
    * The algorithm stops when rem(a,b) = 0 (the last convergent is exactly x),
-   * or when q_k has more than 2 digits (limit the size of the denominator).
+   * or when q_k has more than maxDenominatorDigits digits.
    * For more detailed proofs of the algorithm, see
    * https://cp-algorithms.com/algebra/continued-fractions.html or
    * https://www.math.u-bordeaux.fr/~pjaming/M1/exposes/MA2.pdf */
@@ -422,7 +422,7 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
     a_k->removeTree();
 
     if (Integer::Handler(q).totalNumberOfBase10DigitsWithoutSign() >
-        k_maxDenominatorDigitsForRationalApproximation) {
+        maxDenominatorDigits) {
       // Stop if the next denominator has too many digits
       q->removeTree();
       p->removeTree();
@@ -451,6 +451,15 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
     // Restore sign
     Rational::SetSign(result, NonStrictSign::Negative);
   }
+  return result;
+}
+
+/* Create a rational approximation (within ε) with limited digits in the
+ * denominator. Return an uninitialized expression if not possible. */
+Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
+    const SystemExpression rational) {
+  Tree* result = BestConvergentOfContinuedFraction(
+      rational, k_maxDenominatorDigitsForRationalApproximation);
   double rationalApprox = Approximation::To<double>(rational.tree(), {});
   double resultApprox = Approximation::To<double>(result, {});
   if (!result->treeIsIdenticalTo(rational.tree()) &&

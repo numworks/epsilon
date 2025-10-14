@@ -5,6 +5,7 @@
 #include <array>
 #include <cmath>
 
+#include "inference/models/anova_test.h"
 #include "inference/models/goodness_test.h"
 #include "inference/models/homogeneity_test.h"
 #include "inference/models/inference_model.h"
@@ -672,4 +673,24 @@ QUIZ_CASE(inference_one_mean_t_with_table) {
   rawDataCase.m_pValue = referenceTest.pValue();
 
   testTest(&rawDataTest, rawDataCase);
+}
+
+QUIZ_CASE(inference_anova) {
+  ANOVATest anovaTest;
+
+  using Values = ANOVATest::GroupValues;
+  std::array<Values, 6> groups = {
+      Values{1.2, -3.4, -4.5, 0.1, -1.0, -5.8},
+      Values{8.3, 3.1, -0.5, 10.1, 11.4, 7.0, 2.1, 0.9},
+      Values{-1.0, 2.4, -1.3, -1.4, 3.2},
+      Values{-7.0, -12.0, -9.4, -8.2, -4.3},
+      Values{-1.2, -2.4, 1.3, 0.4, 0.5, -1.8, 3.0},
+      Values{-5.2, 4.4, -3.0, 1.4, 0.4, 4.5, 2.5, -1.4, 0.4}};
+
+  anovaTest.setValues(groups);
+  anovaTest.compute();
+
+  constexpr double precision = 1e-2;
+  assert_roughly_equal(anovaTest.pValue(), 0.000001028, precision);
+  assert_roughly_equal(anovaTest.testCriticalValue(), 11.94, precision);
 }

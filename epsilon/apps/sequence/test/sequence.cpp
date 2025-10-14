@@ -140,6 +140,18 @@ QUIZ_CASE(sequence_evaluation) {
                                conditions2);
   }
 
+  // u(n) = floor(1200*1.0125^(n-1+160))
+  {
+    double results[SequenceStore::k_maxNumberOfSequences][10] = {
+        {8649.0, INFINITY, INFINITY, INFINITY, INFINITY, INFINITY, INFINITY,
+         INFINITY, INFINITY, INFINITY},
+        {},
+        {}};
+    definitions[0] = "floor(1200*1.0125^(n-1+160))";
+    check_sequences_defined_by(results, types, definitions, conditions1,
+                               conditions2);
+  }
+
   assert(GlobalPreferences::SharedGlobalPreferences()->complexFormat() ==
          ComplexFormat::Real);
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(

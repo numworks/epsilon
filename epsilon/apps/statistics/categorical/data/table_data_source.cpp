@@ -1,11 +1,8 @@
-
 #include "table_data_source.h"
 
 #include <apps/i18n.h>
 #include <apps/inference/text_helpers.h>
 #include <poincare/print.h>
-
-#include "store.h"
 
 namespace Statistics::Categorical {
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <apps/i18n.h>
-#include <escher/image.h>
 #include <stdint.h>
 
 namespace Statistics {

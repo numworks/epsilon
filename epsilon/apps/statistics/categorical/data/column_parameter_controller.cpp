@@ -2,6 +2,7 @@
 #include "column_parameter_controller.h"
 
 #include <escher/app.h>
+#include <poincare/print.h>
 
 #include "store_controller.h"
 

@@ -89,7 +89,7 @@ class App : public Shared::StoreApp,
   const char* memoizedFormulaExtension() const override;
 
   Shared::StoreController* storeController() override {
-    return &m_quantitativeTabs.tab<StoreTab>()->m_storeController;
+    return &m_tabs.tab<StoreTab>()->m_storeController;
   }
   Escher::InputViewController* inputViewController() {
     return &m_inputViewController;
@@ -127,8 +127,8 @@ class App : public Shared::StoreApp,
   }
   I18n::Message emptyMessage() override { return I18n::Message::NoDataToPlot; }
   Escher::Responder* responderWhenEmpty() override {
-    m_quantitativeTabViewController.selectTab();
-    return &m_quantitativeTabViewController;
+    m_tabViewController.selectTab();
+    return &m_tabViewController;
   }
 
   struct StoreTab : public Escher::Tab {
@@ -199,8 +199,8 @@ class App : public Shared::StoreApp,
   Store m_store;
   Categorical::Store m_categoricalStore;
   Escher::InputViewController m_inputViewController;
-  Escher::TabUnion<StoreTab, GraphTab, CalculationTab> m_quantitativeTabs;
-  Escher::TabUnionViewController m_quantitativeTabViewController;
+  Escher::TabUnion<StoreTab, GraphTab, CalculationTab> m_tabs;
+  Escher::TabUnionViewController m_tabViewController;
 };
 
 }  // namespace Statistics

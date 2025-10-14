@@ -71,7 +71,7 @@ App::StoreTab::StoreTab()
                         &m_storeStackViewController, &m_dataTypeController),
       m_categoricalStoreController(
           &m_categoricalStoreHeader, &m_categoricalStoreHeader,
-          &m_storeStackViewController, &app()->m_quantitativeTabViewController,
+          &m_storeStackViewController, &app()->m_tabViewController,
           &m_dataTypeController, &app()->m_categoricalStore),
       m_storeHeader(&m_alternateDataTypeController, &m_storeController,
                     &m_storeController),
@@ -85,8 +85,7 @@ App::StoreTab::StoreTab()
                            &m_storeStackViewController,
                            app()->snapshot()->dataTypeViewModel()),
       m_storeStackViewController(
-          &app()->m_quantitativeTabViewController,
-          &m_alternateDataTypeController,
+          &app()->m_tabViewController, &m_alternateDataTypeController,
           Escher::StackViewController::Style::WhiteUniform) {
   m_storeController.updateMemoizedFormulasOfErasedSeries();
 }
@@ -94,7 +93,7 @@ App::StoreTab::StoreTab()
 App::GraphTab::GraphTab()
     : m_normalProbabilityController(
           &m_normalProbabilityAlternateEmptyViewController,
-          &m_normalProbabilityHeader, &app()->m_quantitativeTabViewController,
+          &m_normalProbabilityHeader, &app()->m_tabViewController,
           &m_graphMenuStackViewController, &m_graphTypeController,
           &app()->m_store),
       m_normalProbabilityAlternateEmptyViewController(
@@ -104,46 +103,41 @@ App::GraphTab::GraphTab()
           &m_graphController, &m_normalProbabilityAlternateEmptyViewController,
           &m_normalProbabilityController),
       m_frequencyController(&m_frequencyHeader, &m_frequencyHeader,
-                            &app()->m_quantitativeTabViewController,
+                            &app()->m_tabViewController,
                             &m_graphMenuStackViewController,
                             &m_graphTypeController, &app()->m_store),
       m_frequencyHeader(&m_graphController, &m_frequencyController,
                         &m_frequencyController),
-      m_boxController(&m_boxHeader, &m_boxHeader,
-                      &app()->m_quantitativeTabViewController,
+      m_boxController(&m_boxHeader, &m_boxHeader, &app()->m_tabViewController,
                       &m_graphMenuStackViewController, &m_graphTypeController,
                       &app()->m_store),
       m_boxHeader(&m_graphController, &m_boxController, &m_boxController),
-      m_histogramMainController(&m_histogramHeader, &m_histogramHeader,
-                                &app()->m_quantitativeTabViewController,
-                                &m_graphMenuStackViewController,
-                                &m_graphTypeController, &app()->m_store,
-                                app()->snapshot()->storeVersion()),
+      m_histogramMainController(
+          &m_histogramHeader, &m_histogramHeader, &app()->m_tabViewController,
+          &m_graphMenuStackViewController, &m_graphTypeController,
+          &app()->m_store, app()->snapshot()->storeVersion()),
       m_histogramHeader(&m_graphController, &m_histogramMainController,
                         &m_histogramMainController),
       m_graphTypeController(&m_graphMenuStackViewController,
-                            &app()->m_quantitativeTabViewController,
+                            &app()->m_tabViewController,
                             &m_graphMenuStackViewController, &app()->m_store,
                             app()->snapshot()->graphViewModel()),
       m_graphController(&m_graphMenuStackViewController, &m_graphTypeController,
                         {&m_histogramHeader, &m_boxHeader, &m_frequencyHeader,
                          &m_normalProbabilityHeader}),
       // Categorical
-      m_barGraphController(&m_barGraphHeader, &m_barGraphHeader,
-                           &app()->m_quantitativeTabViewController,
-                           &m_graphMenuStackViewController,
-                           &m_categoricalGraphTypeController),
+      m_barGraphController(
+          &m_barGraphHeader, &m_barGraphHeader, &app()->m_tabViewController,
+          &m_graphMenuStackViewController, &m_categoricalGraphTypeController),
       m_barGraphHeader(&m_graphController, &m_barGraphController,
                        &m_barGraphController),
-      m_pieGraphController(&m_pieGraphHeader, &m_pieGraphHeader,
-                           &app()->m_quantitativeTabViewController,
-                           &m_graphMenuStackViewController,
-                           &m_categoricalGraphTypeController),
+      m_pieGraphController(
+          &m_pieGraphHeader, &m_pieGraphHeader, &app()->m_tabViewController,
+          &m_graphMenuStackViewController, &m_categoricalGraphTypeController),
       m_pieGraphHeader(&m_graphController, &m_pieGraphController,
                        &m_pieGraphController),
       m_categoricalGraphTypeController(
-          &m_graphMenuStackViewController,
-          &app()->m_quantitativeTabViewController,
+          &m_graphMenuStackViewController, &app()->m_tabViewController,
           &m_graphMenuStackViewController,
           app()->snapshot()->categoricalGraphViewModel()),
       m_categoricalGraphController(&m_graphMenuStackViewController,
@@ -157,8 +151,8 @@ App::GraphTab::GraphTab()
           &m_alternateDataTypeController,
           Escher::StackViewController::Style::WhiteUniform),
       m_graphMenuAlternateEmptyViewController(
-          &app()->m_quantitativeTabViewController,
-          &m_graphMenuStackViewController, app()) {}
+          &app()->m_tabViewController, &m_graphMenuStackViewController, app()) {
+}
 
 App::CalculationTab::CalculationTab()
     : m_calculationController(&m_calculationAlternateEmptyViewController,
@@ -167,7 +161,7 @@ App::CalculationTab::CalculationTab()
       m_calculationAlternateEmptyViewController(&m_calculationHeader,
                                                 &m_calculationController,
                                                 &m_calculationController),
-      m_calculationHeader(&app()->m_quantitativeTabViewController,
+      m_calculationHeader(&app()->m_tabViewController,
                           &m_calculationAlternateEmptyViewController,
                           &m_calculationController) {}
 
@@ -175,11 +169,9 @@ App::App(Snapshot* snapshot)
     : StoreApp(snapshot, &m_inputViewController),
       m_store(snapshot->userPreferences()),
       m_categoricalStore(snapshot->categoricalTableData()),
-      m_inputViewController(&m_modalViewController,
-                            &m_quantitativeTabViewController,
+      m_inputViewController(&m_modalViewController, &m_tabViewController,
                             MathLayoutFieldDelegate::Default()),
-      m_quantitativeTabViewController(&m_inputViewController, snapshot,
-                                      &m_quantitativeTabs) {
+      m_tabViewController(&m_inputViewController, snapshot, &m_tabs) {
   // Order used in m_graphController constructor
   assert(GraphViewModel::IndexOfGraphView(
              GraphViewModel::GraphView::Histogram) == 0);

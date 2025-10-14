@@ -112,7 +112,7 @@ SystemExpression ExpressionModel::expressionReduced(
           userExpression, GlobalContextAccessor::Context(),
           complexFormat(record),
           GlobalPreferences::SharedGlobalPreferences()->angleUnit(), false,
-          Poincare::ReductionTarget::User,
+          Poincare::ReductionTarget::SystemForApproximation,
           Poincare::SymbolicComputation::ReplaceDefinedSymbols,
           &reductionFailure);
       if (reductionFailure) {

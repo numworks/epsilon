@@ -89,6 +89,40 @@ class StaticVector : public AbstractStaticVector<T> {
     }
   }
 
+  /* NOTE: Explicitely defining the copy and move constructors and assignement
+   * operators allows to only copy the real values in the vector, not the
+   * garbage values after m_size */
+
+  constexpr StaticVector(const StaticVector<T, CAPACITY>& other) {
+    for (const T& value : other) {
+      this->push(value);
+    }
+  }
+
+  constexpr StaticVector(StaticVector<T, CAPACITY>&& other) {
+    for (T& value : other) {
+      this->push(std::move(value));
+    }
+  }
+
+  constexpr StaticVector<T, CAPACITY>& operator=(
+      const StaticVector<T, CAPACITY>& other) {
+    this->m_size = 0;
+    for (const T& value : other) {
+      this->push(value);
+    }
+    return *this;
+  }
+
+  constexpr StaticVector<T, CAPACITY>& operator=(
+      StaticVector<T, CAPACITY>&& other) {
+    this->m_size = 0;
+    for (T& value : other) {
+      this->push(std::move(value));
+    }
+    return *this;
+  }
+
   constexpr size_t capacity() const { return CAPACITY; }
   constexpr bool isFull() const { return this->m_size == CAPACITY; }
   constexpr std::span<T> span() {

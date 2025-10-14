@@ -64,8 +64,7 @@ $(addprefix expression/, \
   projection.cpp \
   random.cpp \
   rational.cpp \
-  sequence.cpp:-nopool \
-  expression_or_float.cpp:-nopool \
+  sequence.cpp \
   set.cpp \
   simplification.cpp \
   symbol.cpp \
@@ -141,6 +140,7 @@ $(addprefix pool/, \
     circuit_breaker_checkpoint.cpp \
     exception_checkpoint.cpp \
     expression.cpp \
+    expression_or_float.cpp \
     layout.cpp \
     pool.cpp \
     pool_checkpoint.cpp \

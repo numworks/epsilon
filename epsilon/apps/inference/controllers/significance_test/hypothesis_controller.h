@@ -70,6 +70,8 @@ class HypothesisController
   void loadHypothesisParam();
   const char* symbolPrefix();
 
+  bool hasHaDropdown() const;
+
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;
   constexpr static int k_cellBufferSize =
@@ -84,7 +86,12 @@ class HypothesisController
   ParameterCell m_h0;
   Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
                    Escher::DropdownWidget>
-      m_ha;
+      m_haWithDropdown;
+  Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
+                   Escher::BufferTextView<10>>
+      m_haNoDropdown;
+  Escher::AbstractMenuCell* m_ha = nullptr;
+
   Escher::Dropdown m_haDropdown;
   Escher::ButtonCell m_next;
 

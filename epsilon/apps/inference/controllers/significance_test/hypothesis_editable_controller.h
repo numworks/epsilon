@@ -13,6 +13,7 @@
 #include <escher/text_field_delegate.h>
 #include <escher/view.h>
 
+#include "hypothesis_controller.h"
 #include "inference/controllers/comparison_operator_popup_data_source.h"
 #include "inference/controllers/dataset_controller.h"
 #include "inference/controllers/input_controller.h"
@@ -20,30 +21,18 @@
 
 namespace Inference {
 
-class HypothesisEditableController
-    : public Escher::ExplicitSelectableListViewController,
-      public Escher::TextFieldDelegate,
-      public Escher::DropdownCallback {
+class HypothesisEditableController : public HypothesisController,
+                                     public Escher::TextFieldDelegate,
+                                     public Escher::DropdownCallback {
  public:
   HypothesisEditableController(Escher::StackViewController* parent,
                                InputController* inputController,
                                InputStoreController* inputStoreController,
                                DatasetController* datasetController,
                                SignificanceTest* test);
-  static bool ButtonAction(HypothesisEditableController* controller, void* s);
 
   // SelectableListViewController
-  ViewController::TitlesDisplay titlesDisplay() const override {
-    return ViewController::TitlesDisplay::DisplayLastTitle;
-  };
-  const char* title() const override;
-  bool handleEvent(Ion::Events::Event event) override;
   const Escher::HighlightCell* cell(int i) const override;
-  int numberOfRows() const override { return 3; }
-  KDCoordinate separatorBeforeRow(int row) const override {
-    return cell(row) == &m_next ? k_defaultRowSeparator : 0;
-  }
-  bool canStoreCellAtRow(int row) override { return false; }
 
   // TextFieldDelegate
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
@@ -68,39 +57,21 @@ class HypothesisEditableController
 
  private:
   void loadHypothesisParam();
-  const char* symbolPrefix();
-
-  bool hasHaDropdown() const;
+  const char* symbolPrefix() const;
 
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;
   constexpr static int k_cellBufferSize =
       7 /* μ1-μ2 */ + 1 /* = */ +
       Constants::k_shortFloatNumberOfChars /* float */ + 1 /* \0 */;
-  InputController* m_inputController;
-  InputStoreController* m_inputStoreController;
-  DatasetController* m_datasetController;
 
   ComparisonOperatorPopupDataSource m_operatorDataSource;
 
   ParameterCell m_h0;
   Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
                    Escher::DropdownWidget>
-      m_haWithDropdown;
-  Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
-                   Escher::BufferTextView<10>>
-      m_haNoDropdown;
-  Escher::AbstractMenuCell* m_ha = nullptr;
-
+      m_ha;
   Escher::Dropdown m_haDropdown;
-  Escher::ButtonCell m_next;
-
-  constexpr static int k_titleBufferSize =
-      Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
-  /* m_titleBuffer is declared as mutable so that ViewController::title() can
-   * remain const-qualified in the generic case. */
-  mutable char m_titleBuffer[k_titleBufferSize];
-  SignificanceTest* m_test;
 };
 
 }  // namespace Inference

@@ -37,11 +37,11 @@ const char* FunctionParameterController::title() const {
              : I18n::translate(I18n::Message::Options);
 }
 
-HighlightCell* FunctionParameterController::cell(int row) {
+const HighlightCell* FunctionParameterController::cell(int row) const {
   assert(0 <= row && row < numberOfRows());
-  HighlightCell* const cells[] = {&m_detailsCell,     &m_colorCell,
-                                  &m_derivativesCell, &m_functionDomainCell,
-                                  &m_enableCell,      &m_deleteCell};
+  const HighlightCell* const cells[] = {
+      &m_detailsCell,        &m_colorCell,  &m_derivativesCell,
+      &m_functionDomainCell, &m_enableCell, &m_deleteCell};
   static_assert(std::size(cells) == k_numberOfRows);
   return cells[row];
 }

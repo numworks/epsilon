@@ -22,7 +22,7 @@ class FunctionParameterController : public Shared::ListParameterController,
   FunctionParameterController(Escher::Responder* parentResponder);
   void setRecord(Ion::Storage::Record record) override;
   // MemoizedListViewDataSource
-  Escher::HighlightCell* cell(int row) override;
+  const Escher::HighlightCell* cell(int row) const override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfRows; }

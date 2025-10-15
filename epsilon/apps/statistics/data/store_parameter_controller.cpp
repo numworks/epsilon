@@ -60,7 +60,7 @@ int StoreParameterController::numberOfRows() const {
              : Shared::StoreParameterController::numberOfRows() + 1;
 }
 
-Escher::AbstractMenuCell* StoreParameterController::cell(int row) {
+const Escher::AbstractMenuCell* StoreParameterController::cell(int row) const {
   assert(row >= 0 && row < numberOfRows());
   if (m_isCumulatedFrequencyColumnSelected && row == k_hideCFIndex) {
     return &m_hideCumulatedFrequencyCell;

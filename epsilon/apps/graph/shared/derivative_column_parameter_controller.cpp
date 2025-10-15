@@ -50,7 +50,7 @@ bool DerivativeColumnParameterController::handleEvent(
   return false;
 }
 
-HighlightCell* DerivativeColumnParameterController::cell(int row) {
+const HighlightCell* DerivativeColumnParameterController::cell(int row) const {
   assert(0 <= row && row <= numberOfRows());
   if (row == 0) {
     return &m_colorCell;

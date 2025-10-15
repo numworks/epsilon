@@ -15,7 +15,9 @@ class ComparisonOperatorPopupDataSource
 
   ComparisonOperatorPopupDataSource(SignificanceTest* test) : m_test(test) {}
   int numberOfRows() const override { return k_numberOfOperators; }
-  Escher::HighlightCell* cell(int row) override { return &m_cells[row]; }
+  const Escher::HighlightCell* cell(int row) const override {
+    return &m_cells[row];
+  }
   void updateMessages();
 
  private:

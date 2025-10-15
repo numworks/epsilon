@@ -76,7 +76,7 @@ class CurveParameterController
                                    f);
   }
 
-  const Escher::HighlightCell* cell(int row) const;
+  const Escher::HighlightCell* cell(int row) const override;
   Escher::HighlightCell* cell(int row) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;

@@ -19,7 +19,7 @@ class StoreParameterController : public ColumnParameterController {
                            StoreColumnHelper* storeColumnHelper);
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfCells; }
-  Escher::AbstractMenuCell* cell(int row) override;
+  const Escher::AbstractMenuCell* cell(int row) const override;
   void viewWillAppear() override;
   void initializeColumnParameters() override;
 

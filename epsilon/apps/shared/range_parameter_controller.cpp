@@ -48,11 +48,6 @@ const HighlightCell* RangeParameterController::cell(int row) const {
   return cells[row];
 }
 
-HighlightCell* RangeParameterController::cell(int row) {
-  return const_cast<Escher::HighlightCell*>(
-      const_cast<const RangeParameterController*>(this)->cell(row));
-}
-
 void RangeParameterController::fillCells() {
   constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
   constexpr size_t bufferSize =
@@ -127,7 +122,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     m_confirmPopUpController.presentModally();
     return true;
   }
-  HighlightCell* cell = this->cell(selectedRow());
+  const HighlightCell* cell = this->cell(selectedRow());
   if (cell == &m_normalizeCell &&
       m_normalizeCell.canBeActivatedByEvent(event)) {
     m_normalizeCell.setHighlighted(false);
@@ -136,14 +131,14 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if ((cell == &m_xRangeCell || cell == &m_yRangeCell) &&
-      static_cast<MenuCell*>(cell)->canBeActivatedByEvent(event)) {
+      static_cast<const MenuCell*>(cell)->canBeActivatedByEvent(event)) {
     m_singleInteractiveCurveViewRangeController.setAxis(
         cell == &m_xRangeCell ? OMG::Axis::Horizontal : OMG::Axis::Vertical);
     stackController()->push(&m_singleInteractiveCurveViewRangeController);
     return true;
   }
   if (cell == &m_gridTypeCell &&
-      static_cast<MenuCell*>(cell)->canBeActivatedByEvent(event)) {
+      static_cast<const MenuCell*>(cell)->canBeActivatedByEvent(event)) {
     stackController()->push(&m_gridTypeController);
     return true;
   }

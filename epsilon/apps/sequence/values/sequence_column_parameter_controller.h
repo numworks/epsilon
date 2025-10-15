@@ -17,7 +17,7 @@ class SequenceColumnParameterController
 
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
-  Escher::HighlightCell* cell(int row) override {
+  const Escher::HighlightCell* cell(int row) const override {
     assert(row == 0);
     return &m_showSumCell;
   }

@@ -23,7 +23,7 @@ class CurveParameterController
   bool handleEvent(Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record);
   int numberOfRows() const override { return k_numberOfRows; };
-  Escher::HighlightCell* cell(int row) override;
+  const Escher::HighlightCell* cell(int row) const override;
 
  private:
   constexpr static int k_numberOfRows = 3;

@@ -60,6 +60,10 @@ class InputStoreController : public InputCategoricalController,
   class DropdownDataSource : public Escher::ExplicitListViewDataSource {
    public:
     int numberOfRows() const override { return k_numberOfRows; }
+    const Escher::HighlightCell* cell(int row) const override {
+      assert(0 <= row && row < k_numberOfRows);
+      return &m_cells[row];
+    }
     Escher::HighlightCell* cell(int row) override {
       assert(0 <= row && row < k_numberOfRows);
       return &m_cells[row];

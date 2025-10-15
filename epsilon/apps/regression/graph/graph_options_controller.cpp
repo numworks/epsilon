@@ -202,11 +202,6 @@ const HighlightCell* GraphOptionsController::cell(int row) const {
   return cells[row];
 }
 
-HighlightCell* GraphOptionsController::cell(int row) {
-  return const_cast<Escher::HighlightCell*>(
-      const_cast<const GraphOptionsController*>(this)->cell(row));
-}
-
 bool GraphOptionsController::displayRegressionEquationCell() const {
   return m_store->coefficientsAreDefined(
       m_graphController->selectedSeriesIndex());

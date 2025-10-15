@@ -44,10 +44,10 @@ ClearColumnHelper* ValuesParameterController::clearColumnHelper() {
   return m_valuesController;
 }
 
-HighlightCell* ValuesParameterController::cell(int row) {
+const HighlightCell* ValuesParameterController::cell(int row) const {
   assert(row >= 0);
   assert(row < k_totalNumberOfCell);
-  HighlightCell* cells[] = {&m_clearColumn, &m_setInterval};
+  const HighlightCell* cells[] = {&m_clearColumn, &m_setInterval};
   static_assert(
       std::size(cells) == k_totalNumberOfCell,
       "Shared::ValuesParameterController::k_totalNumberOfCell is deprecated.");

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <escher/highlight_cell.h>
 #include <escher/list_view_data_source.h>
 #include <escher/table_size_1D_manager.h>
 
@@ -25,7 +26,11 @@ class ExplicitListViewDataSource : public ListViewDataSource {
   void initWidth(TableView* tableView) override;
 
  protected:
-  virtual HighlightCell* cell(int row) = 0;
+  virtual const HighlightCell* cell(int row) const = 0;
+  virtual HighlightCell* cell(int row) {
+    return const_cast<HighlightCell*>(
+        const_cast<const ExplicitListViewDataSource*>(this)->cell(row));
+  }
   KDCoordinate nonMemoizedRowHeight(int row) override final;
 
  private:

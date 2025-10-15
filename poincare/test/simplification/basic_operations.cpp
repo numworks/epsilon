@@ -8,7 +8,7 @@ QUIZ_CASE(pcj_simplification_addition) {
   simplifies_to("1/x^2+3", "3+1/x^2");
   simplifies_to("1+x", "x+1");
   simplifies_to("1/2+1/3+1/4+1/5+1/6+1/7", "223/140");
-  simplifies_to("1+x+4-y-2x", "5-(x+y)");
+  simplifies_to("1+x+4-y-2x", "-x-y+5");
   simplifies_to("2+1", "3");
   simplifies_to("1+2", "3");
   simplifies_to("1+2+3+4+5+6+7", "28");

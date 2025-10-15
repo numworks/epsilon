@@ -8,6 +8,9 @@
 #include <inference/models/inference_model.h>
 #include <ion/events.h>
 
+#include "significance_test/hypothesis_controller.h"
+#include "significance_test/hypothesis_display_only_controller.h"
+
 namespace Inference {
 
 class HypothesisController;
@@ -24,12 +27,14 @@ class TestController
                            Escher::ChevronView>,
           k_numberOfTests> {
  public:
-  TestController(Escher::StackViewController* parentResponder,
-                 HypothesisController* hypothesisController,
-                 TypeController* typeController,
-                 CategoricalTypeController* categoricalController,
-                 InputStoreController* inputStoreController,
-                 InputController* inputController, InferenceModel* inference);
+  TestController(
+      Escher::StackViewController* parentResponder,
+      HypothesisController* hypothesisController,
+      HypothesisDisplayOnlyController* HypothesisDisplayOnlyController,
+      TypeController* typeController,
+      CategoricalTypeController* categoricalController,
+      InputStoreController* inputStoreController,
+      InputController* inputController, InferenceModel* inference);
   void stackOpenPage(Escher::ViewController* nextPage) override;
   bool handleEvent(Ion::Events::Event e) override;
   const char* title() const override;
@@ -48,6 +53,7 @@ class TestController
 
  private:
   HypothesisController* m_hypothesisController;
+  HypothesisDisplayOnlyController* m_HypothesisDisplayOnlyController;
   TypeController* m_typeController;
   InputController* m_inputController;
   CategoricalTypeController* m_categoricalController;

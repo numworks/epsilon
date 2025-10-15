@@ -18,6 +18,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/store/input_store_controller.cpp \
   controllers/store/store_table_cell.cpp \
   controllers/significance_test/hypothesis_controller.cpp \
+  controllers/significance_test/hypothesis_display_only_controller.cpp \
   controllers/significance_test/legend_view.cpp \
   controllers/significance_test/test_curve_view.cpp \
   controllers/significance_test/test_graph_controller.cpp \

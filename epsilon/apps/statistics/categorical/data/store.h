@@ -62,6 +62,7 @@ class Store {
     return m_table->m_groupStatus[col] == GroupStatus::Active;
   }
   bool isGroupEmpty(int col) const;
+  bool hasActiveGroups() const;
 
   // Data
   float getValue(int col, int row) const {

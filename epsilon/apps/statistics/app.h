@@ -121,7 +121,7 @@ class App : public Shared::StoreApp,
   // depending on dataType)
   bool isEmpty() const override {
     return snapshot()->dataTypeViewModel()->isCategorical()
-               ? false
+               ? !m_categoricalStore.hasActiveGroups()
                : !m_store.hasActiveSeries();
   }
   I18n::Message emptyMessage() override { return I18n::Message::NoDataToPlot; }
@@ -193,7 +193,6 @@ class App : public Shared::StoreApp,
     Categorical::PieGraphController m_pieGraphController;
     Escher::ButtonRowController m_pieGraphHeader;
     Categorical::GraphTypeController m_categoricalGraphTypeController;
-    // GraphAlternateDelegate m_graphAlternateDelegate;
     Escher::AlternateViewController m_categoricalGraphController;
     // General controllers
     Escher::AlternateViewController m_alternateDataTypeController;

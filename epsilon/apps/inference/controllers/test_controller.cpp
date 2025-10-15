@@ -17,15 +17,17 @@ using namespace Escher;
 
 namespace Inference {
 
-TestController::TestController(StackViewController* parentResponder,
-                               HypothesisController* hypothesisController,
-                               TypeController* typeController,
-                               CategoricalTypeController* categoricalController,
-                               InputStoreController* inputStoreController,
-                               InputController* inputController,
-                               InferenceModel* inference)
+TestController::TestController(
+    StackViewController* parentResponder,
+    HypothesisController* hypothesisController,
+    HypothesisDisplayOnlyController* HypothesisDisplayOnlyController,
+    TypeController* typeController,
+    CategoricalTypeController* categoricalController,
+    InputStoreController* inputStoreController,
+    InputController* inputController, InferenceModel* inference)
     : UniformSelectableListController(parentResponder),
       m_hypothesisController(hypothesisController),
+      m_HypothesisDisplayOnlyController(HypothesisDisplayOnlyController),
       m_typeController(typeController),
       m_inputController(inputController),
       m_categoricalController(categoricalController),
@@ -93,7 +95,11 @@ bool TestController::handleEvent(Ion::Events::Event event) {
   } else if (m_inference->numberOfAvailableStatistics() > 1) {
     controller = m_typeController;
   } else if (m_inference->hasHypothesisParameters()) {
-    controller = m_hypothesisController;
+    if (m_inference->testType() == TestType::ANOVA) {
+      controller = m_HypothesisDisplayOnlyController;
+    } else {
+      controller = m_hypothesisController;
+    }
   } else if (m_inference->testType() == TestType::Slope) {
     controller = m_inputStoreController;
   } else {

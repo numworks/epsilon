@@ -18,6 +18,7 @@
 #include "controllers/input_controller.h"
 #include "controllers/results_controller.h"
 #include "controllers/significance_test/hypothesis_controller.h"
+#include "controllers/significance_test/hypothesis_display_only_controller.h"
 #include "controllers/significance_test/test_graph_controller.h"
 #include "controllers/store/input_store_controller.h"
 #include "controllers/test_controller.h"
@@ -130,6 +131,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   TypeController m_typeController;
   CategoricalTypeController m_categoricalTypeController;
   HypothesisController m_hypothesisController;
+  HypothesisDisplayOnlyController m_hypothesisDisplayOnlyController;
   DatasetController m_datasetController;
   TestController m_testController;
   Shared::MenuController m_menuController;

@@ -29,7 +29,8 @@ class VariableArray : public OMG::StaticVector<OMG::String<k_maxVariableSize>,
   void push(const char* variable) {
     assert(m_size < capacity());
     assert(variable && strlen(variable) < k_maxVariableSize);
-    m_data[m_size] = std::string_view{variable, strlen(variable) + 1};
+    m_data[m_size] = OMG::String<k_maxVariableSize>(
+        std::string_view{variable, strlen(variable) + 1});
     m_size++;
   }
 

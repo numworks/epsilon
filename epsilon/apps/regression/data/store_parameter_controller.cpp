@@ -28,7 +28,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return Shared::StoreParameterController::handleEvent(event);
 }
 
-AbstractMenuCell* StoreParameterController::cell(int row) {
+const AbstractMenuCell* StoreParameterController::cell(int row) const {
   assert(row >= 0 && row < numberOfRows());
   if (row == k_changeRegressionCellIndex) {
     return &m_changeRegressionCell;

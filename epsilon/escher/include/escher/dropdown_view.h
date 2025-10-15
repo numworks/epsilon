@@ -83,7 +83,9 @@ class Dropdown : public PopupItemView, public Responder {
       return m_listViewDataSource->numberOfRows();
     }
     KDCoordinate defaultColumnWidth() override;
-    HighlightCell* cell(int row) override { return &m_popupViews[row]; }
+    const HighlightCell* cell(int row) const override {
+      return &m_popupViews[row];
+    }
 
     HighlightCell* innerCellAtRow(int row);
     void init();

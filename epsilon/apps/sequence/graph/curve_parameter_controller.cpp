@@ -66,10 +66,10 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   return ExplicitSelectableListViewController::handleEvent(event);
 }
 
-HighlightCell* CurveParameterController::cell(int row) {
+const HighlightCell* CurveParameterController::cell(int row) const {
   assert(0 <= row && row < k_numberOfRows);
-  HighlightCell* cells[k_numberOfRows] = {&m_sumCell, &m_cobwebCell,
-                                          &m_goToCell};
+  const HighlightCell* cells[k_numberOfRows] = {&m_sumCell, &m_cobwebCell,
+                                                &m_goToCell};
   return cells[row];
 }
 

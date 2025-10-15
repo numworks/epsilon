@@ -110,11 +110,6 @@ const HighlightCell* HypothesisController::cell(int row) const {
   return cells[row];
 }
 
-HighlightCell* HypothesisController::cell(int row) {
-  return const_cast<Escher::HighlightCell*>(
-      const_cast<const HypothesisController*>(this)->cell(row));
-}
-
 void HypothesisController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::HasBecomeFirst) {

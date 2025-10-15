@@ -77,10 +77,10 @@ void ScriptParameterController::handleResponderChainEvent(
   }
 }
 
-AbstractMenuCell* ScriptParameterController::cell(int row) {
+const AbstractMenuCell* ScriptParameterController::cell(int row) const {
   assert(row >= 0);
   assert(row < k_totalNumberOfCell);
-  AbstractMenuCell* cells[k_totalNumberOfCell] = {
+  const AbstractMenuCell* cells[k_totalNumberOfCell] = {
       &m_executeScript, &m_renameScript, &m_autoImportScript, &m_deleteScript};
   return cells[row];
 }

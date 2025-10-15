@@ -41,8 +41,8 @@ CalculationParameterController::CalculationParameterController(
   m_preimageCell.label()->setMessage(I18n::Message::Preimage);
 }
 
-HighlightCell* CalculationParameterController::cell(int row) {
-  HighlightCell* cells[k_numberOfRows] = {
+const HighlightCell* CalculationParameterController::cell(int row) const {
+  const HighlightCell* cells[k_numberOfRows] = {
       &m_preimageCell, &m_intersectionCell, &m_maximumCell,
       &m_minimumCell,  &m_rootCell,         &m_slopeCell,
       &m_tangentCell,  &m_integralCell,     &m_areaCell};

@@ -65,6 +65,10 @@ class UniformSelectableListController
       Responder* parent, SelectableListViewDelegate* tableDelegate = nullptr)
       : ExplicitSelectableListViewController(parent, tableDelegate) {}
   int numberOfRows() const override final { return NumberOfCells; }
+  const Cell* cell(int row) const override final {
+    assert(0 <= row && row < NumberOfCells);
+    return &m_cells[row];
+  }
   Cell* cell(int row) override final {
     assert(0 <= row && row < NumberOfCells);
     return &m_cells[row];

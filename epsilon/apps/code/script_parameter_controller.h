@@ -29,7 +29,7 @@ class ScriptParameterController
   void viewWillAppear() override;
 
   /* MemoizedListViewDataSource */
-  Escher::AbstractMenuCell* cell(int row) override;
+  const Escher::AbstractMenuCell* cell(int row) const override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
 
  protected:

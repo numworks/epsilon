@@ -41,7 +41,8 @@ FunctionModelsParameterController::FunctionModelsParameterController(
   }
 }
 
-Escher::HighlightCell* FunctionModelsParameterController::cell(int row) {
+const Escher::HighlightCell* FunctionModelsParameterController::cell(
+    int row) const {
   assert(0 <= row && row < k_numberOfExpressionCells);
   return &m_modelCells[row];
 }

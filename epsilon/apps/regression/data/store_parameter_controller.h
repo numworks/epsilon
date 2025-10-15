@@ -19,7 +19,7 @@ class StoreParameterController : public Shared::StoreParameterController {
   int numberOfRows() const override {
     return Shared::StoreParameterController::numberOfRows() + 1;
   }
-  Escher::AbstractMenuCell* cell(int row) override;
+  const Escher::AbstractMenuCell* cell(int row) const override;
   void viewWillAppear() override;
 
  private:

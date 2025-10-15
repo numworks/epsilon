@@ -33,7 +33,7 @@ class ListParameterController : public Shared::ListParameterController,
       KDPoint previousOffset, bool withinTemporarySelection) override;
 
   // MemoizedListViewDataSource
-  Escher::HighlightCell* cell(int row) override;
+  const Escher::HighlightCell* cell(int row) const override;
   void viewWillAppear() override;
   int numberOfRows() const override {
     return numberOfNonInheritedCells() +

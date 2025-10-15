@@ -73,15 +73,15 @@ void ListParameterController::listViewDidChangeSelectionAndDidScroll(
   }
 }
 
-HighlightCell* ListParameterController::cell(int row) {
+const HighlightCell* ListParameterController::cell(int row) const {
   assert(0 <= row && row < numberOfRows());
   if (displayNotationCell()) {
-    HighlightCell* const cellsWithNotation[] = {&m_colorCell, &m_firstRankCell,
-                                                &m_notationCell, &m_enableCell,
-                                                &m_deleteCell};
+    const HighlightCell* const cellsWithNotation[] = {
+        &m_colorCell, &m_firstRankCell, &m_notationCell, &m_enableCell,
+        &m_deleteCell};
     return cellsWithNotation[row];
   } else {
-    HighlightCell* const cellsWithoutNotation[] = {
+    const HighlightCell* const cellsWithoutNotation[] = {
         &m_colorCell, &m_firstRankCell, &m_enableCell, &m_deleteCell};
     return cellsWithoutNotation[row];
   }

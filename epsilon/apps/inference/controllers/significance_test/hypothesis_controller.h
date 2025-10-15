@@ -38,8 +38,7 @@ class HypothesisController
   };
   const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
-  const Escher::HighlightCell* cell(int i) const;
-  Escher::HighlightCell* cell(int i) override;
+  const Escher::HighlightCell* cell(int i) const override;
   int numberOfRows() const override { return 3; }
   KDCoordinate separatorBeforeRow(int row) const override {
     return cell(row) == &m_next ? k_defaultRowSeparator : 0;

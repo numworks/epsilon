@@ -31,7 +31,7 @@ class DerivativeColumnParameterController
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return 2; }
-  Escher::HighlightCell* cell(int row) override;
+  const Escher::HighlightCell* cell(int row) const override;
   void setRecord(Ion::Storage::Record record, int derivationOrder);
   void setParameterDelegate(ParameterDelegate* parameterDelegate) {
     m_parameterDelegate = parameterDelegate;

@@ -118,9 +118,10 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
     return constWidget(CellWidget::Type::Accessory)->layout();
   }
 
-  bool canBeActivatedByEvent(Ion::Events::Event event) {
+  bool canBeActivatedByEvent(Ion::Events::Event event) const {
     // This is only done on accessory for now but could also done on (sub)label
-    return widget(CellWidget::Type::Accessory)->canBeActivatedByEvent(event);
+    return constWidget(CellWidget::Type::Accessory)
+        ->canBeActivatedByEvent(event);
   }
 
   void initSize(KDCoordinate width) override;

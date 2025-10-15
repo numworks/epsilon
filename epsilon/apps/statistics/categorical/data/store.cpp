@@ -37,6 +37,15 @@ void Store::recomputeDimensions() {
   assert(0 < m_numberOfRows && m_numberOfRows <= k_maxNumberOfCategory);
 }
 
+bool Store::hasActiveGroups() const {
+  for (int group = 0; group < m_numberOfColumns; ++group) {
+    if (isGroupActive(group)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 bool Store::isGroupEmpty(int col) const {
   assert(0 <= col && col < k_maxNumberOfGroups);
   if (m_table->m_groupStatus[col] == GroupStatus::Hidden) {

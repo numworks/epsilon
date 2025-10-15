@@ -123,7 +123,8 @@ void App::StoreTab::switchActiveVariant(DataTypeViewModel::DataType type,
 }
 
 App::GraphTab::GraphTab()
-    : m_normalProbabilityController(
+    :  // Quantitative
+      m_normalProbabilityController(
           &m_normalProbabilityAlternateEmptyViewController,
           &m_normalProbabilityHeader, &app()->m_tabViewController,
           &m_graphMenuStackViewController, &m_graphTypeController,
@@ -175,6 +176,8 @@ App::GraphTab::GraphTab()
       m_categoricalGraphController(&m_graphMenuStackViewController,
                                    &m_categoricalGraphTypeController,
                                    {&m_barGraphHeader, &m_pieGraphHeader}),
+
+      // General controllers
       m_alternateDataTypeController(
           &m_graphMenuStackViewController, app(),
           {&m_graphController, &m_categoricalGraphController}),

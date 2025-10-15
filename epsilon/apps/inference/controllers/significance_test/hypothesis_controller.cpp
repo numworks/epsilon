@@ -39,9 +39,11 @@ HypothesisController::HypothesisController(
       m_test(test) {
   m_h0.label()->setLayout("H"_l ^ KSubscriptL("0"_l));
   m_h0.subLabel()->setMessage(I18n::Message::H0Sub);
-  m_ha.label()->setLayout("H"_l ^ KSubscriptL("a"_l));
-  m_ha.subLabel()->setMessage(I18n::Message::HaSub);
-  m_ha.accessory()->setDropdown(&m_haDropdown);
+  m_haWithDropdown.label()->setLayout("H"_l ^ KSubscriptL("a"_l));
+  m_haNoDropdown.label()->setLayout("H"_l ^ KSubscriptL("a"_l));
+  m_haWithDropdown.subLabel()->setMessage(I18n::Message::HaSub);
+  m_haNoDropdown.subLabel()->setMessage(I18n::Message::HaSub);
+  m_ha = &m_haNoDropdown;
 }
 
 const char* HypothesisController::title() const {
@@ -106,17 +108,30 @@ const char* HypothesisController::symbolPrefix() {
 }
 
 const HighlightCell* HypothesisController::cell(int row) const {
-  const HighlightCell* cells[] = {&m_h0, &m_ha, &m_next};
+  const HighlightCell* cells[] = {&m_h0, m_ha, &m_next};
   return cells[row];
+}
+
+bool HypothesisController::hasHaDropdown() const {
+  return m_test->testType() != TestType::ANOVA;
 }
 
 void HypothesisController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
     selectRow(0);
-    m_haDropdown.selectRow(
-        static_cast<int>(m_test->hypothesis()->m_alternative));
-    m_haDropdown.init();
+    if (hasHaDropdown()) {
+      m_haWithDropdown.accessory()->setDropdown(&m_haDropdown);
+      m_haDropdown.selectRow(
+          static_cast<int>(m_test->hypothesis()->m_alternative));
+      m_haDropdown.init();
+      m_ha = &m_haWithDropdown;
+    } else {
+      m_haNoDropdown.accessory()->setText(
+          Poincare::Inference::SignificanceTest::HypothesisSymbol(
+              m_test->testType()));
+      m_ha = &m_haNoDropdown;
+    }
     loadHypothesisParam();
     App::app()->setFirstResponder(&m_selectableListView);
   } else {

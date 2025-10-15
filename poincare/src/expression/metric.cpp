@@ -169,8 +169,9 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
     case Type::Mult: {
       result += GetAddMultMetric(e);
       if (willBeBeautified) {
-        // Ignore cost of multiplication in (-A)
-        if (e->child(0)->isMinusOne() && e->numberOfChildren() == 2) {
+        // Ignore cost of multiplication in (-A), unless it's (-1)*(A+B)
+        if (e->child(0)->isMinusOne() && e->numberOfChildren() == 2 &&
+            !e->child(1)->isAdd()) {
           assert(result == GetAddMultMetric(e));
           result = 0.f;
         }

@@ -60,9 +60,8 @@ QUIZ_CASE(solver_linear_system) {
                                       {"x=√(5)t+t", "y=t"});
   assert_solves_to_infinite_solutions({"x=x", "y=y"}, {"x=t2", "y=t1"});
 #endif
-
   assert_solves_to_infinite_solutions({"x+y+z=0"},
-                                      {"x=-(t1+t2)", "y=t2", "z=t1"});
+                                      {"x=-t1-t2", "y=t2", "z=t1"});
   assert_solves_to_infinite_solutions({"x+y+z=0", "x+2y+3z=0"},
                                       {"x=t", "y=-2t", "z=t"});
 
@@ -461,7 +460,7 @@ QUIZ_CASE(solver_symbolic_computation) {
   PoincareTest::store("x", "0", symbolStore);
   assert_solves_to_infinite_solutions(
       {"D=0", "b=0", "c=0", "x+y+z+t=0"},
-      {"D=0", "b=0", "c=0", "t=-(t1+t2)", "y=t2", "z=t1"}, symbolStore);
+      {"D=0", "b=0", "c=0", "t=-t1-t2", "y=t2", "z=t1"}, symbolStore);
   symbolStore.reset();
 
   // Long variable names

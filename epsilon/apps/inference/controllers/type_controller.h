@@ -11,7 +11,7 @@
 
 #include "dataset_controller.h"
 #include "input_controller.h"
-#include "significance_test/hypothesis_controller.h"
+#include "significance_test/hypothesis_editable_controller.h"
 
 namespace Inference {
 
@@ -22,7 +22,7 @@ class TypeController
           3> {
  public:
   TypeController(Escher::StackViewController* parent,
-                 HypothesisController* hypothesisController,
+                 HypothesisEditableController* hypothesisEditableController,
                  InputController* intervalInputController,
                  DatasetController* datasetController,
                  InferenceModel* inference);
@@ -42,7 +42,7 @@ class TypeController
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
-  HypothesisController* m_hypothesisController;
+  HypothesisEditableController* m_hypothesisEditableController;
   InputController* m_inputController;
   DatasetController* m_datasetController;
 

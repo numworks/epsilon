@@ -8,19 +8,19 @@
 #include <poincare/statistics/inference.h>
 
 #include "inference/models/inference_model.h"
-#include "significance_test/hypothesis_controller.h"
+#include "significance_test/hypothesis_editable_controller.h"
 
 using namespace Escher;
 
 namespace Inference {
 
-TypeController::TypeController(StackViewController* parent,
-                               HypothesisController* hypothesisController,
-                               InputController* inputController,
-                               DatasetController* datasetController,
-                               InferenceModel* inference)
+TypeController::TypeController(
+    StackViewController* parent,
+    HypothesisEditableController* hypothesisEditableController,
+    InputController* inputController, DatasetController* datasetController,
+    InferenceModel* inference)
     : UniformSelectableListController(parent),
-      m_hypothesisController(hypothesisController),
+      m_hypothesisEditableController(hypothesisEditableController),
       m_inputController(inputController),
       m_datasetController(datasetController),
       m_inference(inference) {
@@ -55,7 +55,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
   }
   ViewController* controller = m_inputController;
   if (m_inference->hasHypothesisParameters()) {
-    controller = m_hypothesisController;
+    controller = m_hypothesisEditableController;
   } else if (m_inference->canChooseDataset()) {
     /* Reset row of DatasetController here and not in
      * viewWillAppear or initView because we want

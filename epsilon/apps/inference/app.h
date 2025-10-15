@@ -17,8 +17,8 @@
 #include "controllers/dynamic_cells_data_source.h"
 #include "controllers/input_controller.h"
 #include "controllers/results_controller.h"
-#include "controllers/significance_test/hypothesis_controller.h"
 #include "controllers/significance_test/hypothesis_display_only_controller.h"
+#include "controllers/significance_test/hypothesis_editable_controller.h"
 #include "controllers/significance_test/test_graph_controller.h"
 #include "controllers/store/input_store_controller.h"
 #include "controllers/test_controller.h"
@@ -130,7 +130,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   InputController m_inputController;
   TypeController m_typeController;
   CategoricalTypeController m_categoricalTypeController;
-  HypothesisController m_hypothesisController;
+  HypothesisEditableController m_hypothesisEditableController;
   HypothesisDisplayOnlyController m_hypothesisDisplayOnlyController;
   DatasetController m_datasetController;
   TestController m_testController;

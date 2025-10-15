@@ -1,4 +1,4 @@
-#include "hypothesis_controller.h"
+#include "hypothesis_editable_controller.h"
 
 #include <apps/apps_container.h>
 #include <apps/apps_container_helper.h>
@@ -21,7 +21,7 @@ using namespace Escher;
 
 namespace Inference {
 
-HypothesisController::HypothesisController(
+HypothesisEditableController::HypothesisEditableController(
     Escher::StackViewController* parent, InputController* inputController,
     InputStoreController* inputStoreController,
     DatasetController* datasetController, SignificanceTest* test)
@@ -33,8 +33,8 @@ HypothesisController::HypothesisController(
       m_h0(&m_selectableListView, this),
       m_haDropdown(&m_selectableListView, &m_operatorDataSource, this),
       m_next(&m_selectableListView, I18n::Message::Next,
-             Invocation::Builder<HypothesisController>(
-                 &HypothesisController::ButtonAction, this),
+             Invocation::Builder<HypothesisEditableController>(
+                 &HypothesisEditableController::ButtonAction, this),
              ButtonCell::Style::EmbossedLight),
       m_test(test) {
   m_h0.label()->setLayout("H"_l ^ KSubscriptL("0"_l));
@@ -46,20 +46,20 @@ HypothesisController::HypothesisController(
   m_ha = &m_haNoDropdown;
 }
 
-const char* HypothesisController::title() const {
+const char* HypothesisEditableController::title() const {
   Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),
                                 I18n::translate(m_test->title()),
                                 I18n::translate(I18n::Message::Test));
   return m_titleBuffer;
 }
 
-bool HypothesisController::handleEvent(Ion::Events::Event event) {
+bool HypothesisEditableController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
 // TextFieldDelegate
 
-bool HypothesisController::textFieldDidReceiveEvent(
+bool HypothesisEditableController::textFieldDidReceiveEvent(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   // If the textField is not editable, then it shouldn't enter responder chain.
   assert(selectedRow() == 0 && m_h0.textFieldIsEditable(textField));
@@ -72,7 +72,7 @@ bool HypothesisController::textFieldDidReceiveEvent(
   return false;
 }
 
-bool HypothesisController::textFieldDidFinishEditing(
+bool HypothesisEditableController::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   double h0 =
       Poincare::UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
@@ -92,31 +92,31 @@ bool HypothesisController::textFieldDidFinishEditing(
   return true;
 }
 
-void HypothesisController::textFieldDidAbortEditing(
+void HypothesisEditableController::textFieldDidAbortEditing(
     AbstractTextField* textField) {
   // Reload params to add "p=..."
   loadHypothesisParam();
 }
 
-void HypothesisController::onDropdownSelected(int selectedRow) {
+void HypothesisEditableController::onDropdownSelected(int selectedRow) {
   m_test->hypothesis()->m_alternative =
       ComparisonOperatorPopupDataSource::OperatorTypeForRow(selectedRow);
 }
 
-const char* HypothesisController::symbolPrefix() {
+const char* HypothesisEditableController::symbolPrefix() {
   return m_test->hypothesisSymbol();
 }
 
-const HighlightCell* HypothesisController::cell(int row) const {
+const HighlightCell* HypothesisEditableController::cell(int row) const {
   const HighlightCell* cells[] = {&m_h0, m_ha, &m_next};
   return cells[row];
 }
 
-bool HypothesisController::hasHaDropdown() const {
+bool HypothesisEditableController::hasHaDropdown() const {
   return m_test->testType() != TestType::ANOVA;
 }
 
-void HypothesisController::handleResponderChainEvent(
+void HypothesisEditableController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
     selectRow(0);
@@ -139,8 +139,8 @@ void HypothesisController::handleResponderChainEvent(
   }
 }
 
-bool HypothesisController::ButtonAction(HypothesisController* controller,
-                                        void* s) {
+bool HypothesisEditableController::ButtonAction(
+    HypothesisEditableController* controller, void* s) {
   if (controller->m_test->testType() == TestType::ANOVA) {
     // TODO: open the next ANOVA controller
     return true;
@@ -159,7 +159,7 @@ bool HypothesisController::ButtonAction(HypothesisController* controller,
   return true;
 }
 
-void HypothesisController::loadHypothesisParam() {
+void HypothesisEditableController::loadHypothesisParam() {
   constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];
   Poincare::Print::CustomPrintf(

@@ -12,8 +12,8 @@
 
 namespace Inference {
 
-/* This controller is similar to HypothesisController, but the hypothesis data
- * is only shown as a list, the fields are not editable */
+/* This controller is similar to HypothesisEditableController, but the
+ * hypothesis data is only shown as a list, the fields are not editable */
 class HypothesisDisplayOnlyController
     : public Escher::ExplicitSelectableListViewController {
  public:

@@ -10,7 +10,7 @@
 
 #include "chi_square/categorical_type_controller.h"
 #include "inference/models/aliases.h"
-#include "significance_test/hypothesis_controller.h"
+#include "significance_test/hypothesis_editable_controller.h"
 #include "type_controller.h"
 
 using namespace Escher;
@@ -19,14 +19,14 @@ namespace Inference {
 
 TestController::TestController(
     StackViewController* parentResponder,
-    HypothesisController* hypothesisController,
+    HypothesisEditableController* hypothesisEditableController,
     HypothesisDisplayOnlyController* HypothesisDisplayOnlyController,
     TypeController* typeController,
     CategoricalTypeController* categoricalController,
     InputStoreController* inputStoreController,
     InputController* inputController, InferenceModel* inference)
     : UniformSelectableListController(parentResponder),
-      m_hypothesisController(hypothesisController),
+      m_hypothesisEditableController(hypothesisEditableController),
       m_HypothesisDisplayOnlyController(HypothesisDisplayOnlyController),
       m_typeController(typeController),
       m_inputController(inputController),
@@ -98,7 +98,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     if (m_inference->testType() == TestType::ANOVA) {
       controller = m_HypothesisDisplayOnlyController;
     } else {
-      controller = m_hypothesisController;
+      controller = m_hypothesisEditableController;
     }
   } else if (m_inference->testType() == TestType::Slope) {
     controller = m_inputStoreController;

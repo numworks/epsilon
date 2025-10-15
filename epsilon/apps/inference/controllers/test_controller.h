@@ -8,12 +8,12 @@
 #include <inference/models/inference_model.h>
 #include <ion/events.h>
 
-#include "significance_test/hypothesis_controller.h"
 #include "significance_test/hypothesis_display_only_controller.h"
+#include "significance_test/hypothesis_editable_controller.h"
 
 namespace Inference {
 
-class HypothesisController;
+class HypothesisEditableController;
 class CategoricalTypeController;
 class TypeController;
 class InputController;
@@ -29,7 +29,7 @@ class TestController
  public:
   TestController(
       Escher::StackViewController* parentResponder,
-      HypothesisController* hypothesisController,
+      HypothesisEditableController* hypothesisEditableController,
       HypothesisDisplayOnlyController* HypothesisDisplayOnlyController,
       TypeController* typeController,
       CategoricalTypeController* categoricalController,
@@ -52,7 +52,7 @@ class TestController
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
-  HypothesisController* m_hypothesisController;
+  HypothesisEditableController* m_hypothesisEditableController;
   HypothesisDisplayOnlyController* m_HypothesisDisplayOnlyController;
   TypeController* m_typeController;
   InputController* m_inputController;

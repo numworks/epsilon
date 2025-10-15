@@ -25,10 +25,12 @@ class Store {
     Hidden,  // Inactive because User chose to (the group can be empty or not)
   };
 
+  static constexpr int k_labelLength = 12;  // 11 (from spec) + \x00
+
  public:
   static constexpr int k_maxNumberOfGroups = 6;
   static constexpr int k_maxNumberOfCategory = 10;
-  using Label = char[11 + 1];  // 11 (from spec) + \x00
+  using Label = char[k_labelLength];
 
   /* Subpart of the [Store] that will be stored in the snapshot */
   struct TableData {

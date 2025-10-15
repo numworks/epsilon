@@ -1,6 +1,7 @@
 #include "rf_column_parameter_controller.h"
 
 #include <escher/app.h>
+#include <poincare/print.h>
 
 namespace Statistics::Categorical {
 

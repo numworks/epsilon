@@ -20,17 +20,17 @@
 
 namespace Inference {
 
-class HypothesisController
+class HypothesisEditableController
     : public Escher::ExplicitSelectableListViewController,
       public Escher::TextFieldDelegate,
       public Escher::DropdownCallback {
  public:
-  HypothesisController(Escher::StackViewController* parent,
-                       InputController* inputController,
-                       InputStoreController* inputStoreController,
-                       DatasetController* datasetController,
-                       SignificanceTest* test);
-  static bool ButtonAction(HypothesisController* controller, void* s);
+  HypothesisEditableController(Escher::StackViewController* parent,
+                               InputController* inputController,
+                               InputStoreController* inputStoreController,
+                               DatasetController* datasetController,
+                               SignificanceTest* test);
+  static bool ButtonAction(HypothesisEditableController* controller, void* s);
 
   // SelectableListViewController
   ViewController::TitlesDisplay titlesDisplay() const override {

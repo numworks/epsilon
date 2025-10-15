@@ -51,13 +51,13 @@ App::App(Snapshot* snapshot)
                           &m_testGraphController, &m_intervalGraphController),
       m_inputController(&m_stackViewController, &m_resultsController,
                         snapshot->inference()),
-      m_typeController(&m_stackViewController, &m_hypothesisController,
+      m_typeController(&m_stackViewController, &m_hypothesisEditableController,
                        &m_inputController, &m_datasetController,
                        snapshot->inference()),
       m_categoricalTypeController(
           &m_stackViewController, static_cast<Chi2Test*>(snapshot->inference()),
           &m_inputGoodnessController, &m_inputHomogeneityController),
-      m_hypothesisController(
+      m_hypothesisEditableController(
           &m_stackViewController, &m_inputController, &m_inputStoreController1,
           &m_datasetController,
           static_cast<SignificanceTest*>(snapshot->inference())),
@@ -67,7 +67,7 @@ App::App(Snapshot* snapshot)
           static_cast<SignificanceTest*>(snapshot->inference())),
       m_datasetController(&m_stackViewController, &m_inputController,
                           &m_inputStoreController1, snapshot->inference()),
-      m_testController(&m_stackViewController, &m_hypothesisController,
+      m_testController(&m_stackViewController, &m_hypothesisEditableController,
                        &m_hypothesisDisplayOnlyController, &m_typeController,
                        &m_categoricalTypeController, &m_inputStoreController1,
                        &m_inputController, snapshot->inference()),
@@ -147,7 +147,7 @@ void App::selectSubApp(int subAppIndex) {
   if (subAppIndex >= 0 && snapshot()->inference()->initializeSubApp(
                               static_cast<SubApp>(subAppIndex))) {
     m_testController.selectRow(0);
-    m_hypothesisController.selectRow(0);
+    m_hypothesisEditableController.selectRow(0);
     m_typeController.selectRow(0);
   }
 }

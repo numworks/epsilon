@@ -18,6 +18,7 @@ Store::TableData::TableData() {
        data++) {
     *data = NAN;
   }
+  m_selectedGroupForPieGraph = 0;
 }
 
 void Store::recomputeDimensions() {
@@ -44,6 +45,14 @@ bool Store::hasActiveGroups() const {
     }
   }
   return false;
+}
+
+int Store::numberOfActiveGroups() const {
+  int numberOfActiveGroups = 0;
+  for (int group = 0; group < m_numberOfColumns; ++group) {
+    numberOfActiveGroups += isGroupActive(group);
+  }
+  return numberOfActiveGroups;
 }
 
 bool Store::isGroupEmpty(int col) const {

@@ -44,6 +44,7 @@ class Store {
     std::array<bool, k_maxNumberOfGroups> m_showRelativeFreqColumn = {};
     std::array<Label, k_maxNumberOfCategory> m_categoryLabels = {};
     float m_data[k_maxNumberOfGroups][k_maxNumberOfCategory];
+    uint8_t m_selectedGroupForPieGraph;
   };
 
   Store(TableData* tableData) : m_table(tableData) {
@@ -63,6 +64,7 @@ class Store {
   }
   bool isGroupEmpty(int col) const;
   bool hasActiveGroups() const;
+  int numberOfActiveGroups() const;
 
   // Data
   float getValue(int col, int row) const {
@@ -100,6 +102,16 @@ class Store {
     m_table->m_showRelativeFreqColumn[col] = active;
   }
   float getRelativeFrequency(int col, int row) const;
+
+  // Selected group in pie graph
+  int getSelectedGroupForPieGraph() {
+    return m_table->m_selectedGroupForPieGraph;
+  }
+  void setSelectedGroupForPieGraph(int group) {
+    assert(0 <= group && group < k_maxNumberOfGroups);
+    assert(isGroupActive(group));
+    m_table->m_selectedGroupForPieGraph = group;
+  }
 
  private:
   void recomputeDimensions();

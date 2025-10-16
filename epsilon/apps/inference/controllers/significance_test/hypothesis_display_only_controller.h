@@ -24,6 +24,9 @@ class HypothesisDisplayOnlyController : public HypothesisController {
   using CellType = Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
                                     Escher::BufferTextView<10>>;
 
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
+
  private:
   CellType m_h0;
   CellType m_ha;

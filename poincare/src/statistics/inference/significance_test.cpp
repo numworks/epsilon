@@ -35,7 +35,6 @@ const char* HypothesisSymbol(TestType testType) {
     case TestType::TwoProportions:
       return "p1-p2";
     case TestType::ANOVA:
-      return "μi≠μj";
     case TestType::OneMean:
       return "μ";
     case TestType::TwoMeans:
@@ -54,9 +53,6 @@ Poincare::Layout HypothesisLayout(TestType testType) {
   }
   if (testType == TestType::TwoMeans) {
     return "μ"_l ^ KSubscriptL("1"_l) ^ "-"_l ^ "μ"_l ^ KSubscriptL("2"_l);
-  }
-  if (testType == TestType::ANOVA) {
-    return "μ"_l ^ KSubscriptL("i"_l) ^ "≠"_l ^ "μ"_l ^ KSubscriptL("j"_l);
   }
   return Layout::String(HypothesisSymbol(testType));
 }

@@ -20,6 +20,24 @@ const Escher::HighlightCell* HypothesisDisplayOnlyController::cell(
   return cells[row];
 }
 
+constexpr static const char* h0Description(TestType testType) {
+  if (testType != TestType::ANOVA) {
+    // Only ANOVA has a read-only hypothesis controller
+    assert(false);
+    OMG::unreachable();
+  }
+  return "μi=μj";
+}
+
+constexpr static const char* haDescription(TestType testType) {
+  if (testType != TestType::ANOVA) {
+    // Only ANOVA has a read-only hypothesis controller
+    assert(false);
+    OMG::unreachable();
+  }
+  return "μi≠μj";
+}
+
 void HypothesisDisplayOnlyController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
@@ -28,12 +46,8 @@ void HypothesisDisplayOnlyController::handleResponderChainEvent(
      * This means that m_test->testType() does not point to a specific test type
      * in the constructor. Data that depends on the test type has to be updated
      * in functions that are called when the controller becomes active. */
-    m_h0.accessory()->setText(
-        Poincare::Inference::SignificanceTest::HypothesisSymbol(
-            m_test->testType()));
-    m_ha.accessory()->setText(
-        Poincare::Inference::SignificanceTest::HypothesisSymbol(
-            m_test->testType()));
+    m_h0.accessory()->setText(h0Description(m_test->testType()));
+    m_ha.accessory()->setText(haDescription(m_test->testType()));
     m_selectableListView.reloadData();
   }
   HypothesisController::handleResponderChainEvent(event);

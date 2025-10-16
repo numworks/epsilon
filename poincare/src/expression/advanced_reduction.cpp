@@ -11,6 +11,19 @@
 
 namespace Poincare::Internal {
 
+/* This Debug level can be changed from 0 to 4:
+ * - 0 : No assertions
+ * - 1 : Free assertions
+ * - 2 : Costly assertions run only once per approximation
+ * - 3 : Costly assertions
+ * - 4 : Very costly assertions */
+#define DEBUG_LEVEL 2
+
+#define ASSERT_IF_LEVEL(lvl, cond) \
+  if (DEBUG_LEVEL >= (lvl)) {      \
+    assert(cond);                  \
+  }
+
 #define VERBOSE_REDUCTION 0
 
 #if !DEBUG
@@ -83,7 +96,7 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(
   editedExpression->removeTree();
 
 #if VERBOSE_REDUCTION >= 1
-  assert(s_indent == 0);
+  ASSERT_IF_LEVEL(1, s_indent == 0);
   std::cout << "Best path metric is: " << ctx.m_bestMetric << "\n";
 #endif
 
@@ -102,9 +115,9 @@ bool AdvancedReduction::Reduce(Tree* e, ReductionTarget reductionTarget) {
    * "hidden" lists. The List::BubbleUp function fails when the tree has
    * randomized descendants, so this case is excluded. This exception is not
    * critical for the advanced reduction performance. */
-  assert(e->isList() || !Dimension::IsList(e) ||
-         e->hasDescendantSatisfying(
-             [](const Tree* e) { return e->isRandomized(); }));
+  ASSERT_IF_LEVEL(2, e->isList() || !Dimension::IsList(e) ||
+                         e->hasDescendantSatisfying(
+                             [](const Tree* e) { return e->isRandomized(); }));
 
   if (!(e->isList())) {
     return ReduceIndependantElement(e, reductionTarget);
@@ -151,7 +164,7 @@ bool AdvancedReduction::ReduceIndependantElement(
   }
   LOG(1, "Final tree is : ", LogExpression(logTree, true));
   logTree->removeTree();
-  assert(s_indent == 0);
+  ASSERT_IF_LEVEL(1, s_indent == 0);
 #endif
   return best_path.apply(e);
 }
@@ -209,7 +222,7 @@ bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
 void AdvancedReduction::CrcCollection::decreaseMaxDepth() {
 #if VERBOSE_REDUCTION >= 4
   LogIndent();
-  assert(isFull());
+  ASSERT_IF_LEVEL(1, isFull());
   std::cout << "CrcCollection had a " << (int)m_maxDepth
             << " max depth and is full. \n";
 #endif
@@ -247,7 +260,7 @@ void AdvancedReduction::CrcCollection::decreaseMaxDepth() {
 }
 
 const Tree* NextNodeSkippingIgnoredTrees(const Tree* e) {
-  assert(!AdvancedOperation::CanSkipTree(e));
+  ASSERT_IF_LEVEL(1, !AdvancedOperation::CanSkipTree(e));
   const Tree* next = e->nextNode();
   while (next->block() < SharedTreeStack->lastBlock() &&
          AdvancedOperation::CanSkipTree(next)) {
@@ -259,15 +272,18 @@ const Tree* NextNodeSkippingIgnoredTrees(const Tree* e) {
 bool AdvancedReduction::Direction::applyNextNode(const Tree** u,
                                                  const Tree* root) const {
   // Optimization: No trees are expected after root, so we can use lastBlock()
-  assert(isNextNode());
+  ASSERT_IF_LEVEL(1, isNextNode());
   const Tree* next = NextNodeSkippingIgnoredTrees(*u);
 
-  assert((next->block() < SharedTreeStack->lastBlock()) ==
-         next->hasAncestor(root, false));
+  ASSERT_IF_LEVEL(1, (next->block() < SharedTreeStack->lastBlock()) ==
+                         next->hasAncestor(root, false));
   /* TODO We would like this second assert instead of the one above. But we
    * cannot because we apply a path in [ReduceIndependantElement], and there the
    * tree is not guaranteed to be last on TreeStack */
-  // assert(root->nextTree() == SharedTreeStack->lastBlock() && *u >= root);
+#if 0
+  ASSERT_IF_LEVEL(
+      1, root->nextTree() == SharedTreeStack->lastBlock() && *u >= root);
+#endif
 
   if (!(next->block() < SharedTreeStack->lastBlock())) {
     return false;
@@ -275,7 +291,7 @@ bool AdvancedReduction::Direction::applyNextNode(const Tree** u,
   static_assert(k_baseNextNodeType > 0);
   for (uint8_t i = m_type - 1; i >= k_baseNextNodeType; i--) {
     next = NextNodeSkippingIgnoredTrees(next);
-    assert(next->block() < SharedTreeStack->lastBlock());
+    ASSERT_IF_LEVEL(1, next->block() < SharedTreeStack->lastBlock());
   }
   *u = next;
   return true;
@@ -283,8 +299,8 @@ bool AdvancedReduction::Direction::applyNextNode(const Tree** u,
 
 bool AdvancedReduction::Direction::applyContractOrExpand(Tree** u,
                                                          Tree* root) const {
-  assert(isContract() || isExpand());
-  assert(!AdvancedOperation::CanSkipTree(*u));
+  ASSERT_IF_LEVEL(1, isContract() || isExpand());
+  ASSERT_IF_LEVEL(1, !AdvancedOperation::CanSkipTree(*u));
 
   if (!(isContract() ? ShallowContract : ShallowExpand)(*u, false)) {
     return false;
@@ -315,7 +331,7 @@ void AdvancedReduction::Direction::log(bool addLineReturn) const {
   } else if (isContract()) {
     std::cout << "Contract";
   } else {
-    assert(isExpand());
+    ASSERT_IF_LEVEL(1, isExpand());
     std::cout << "Expand";
   }
   if (addLineReturn) {
@@ -346,20 +362,20 @@ bool AdvancedReduction::Path::apply(Tree* root) const {
   bool rootChanged = false;
   for (uint8_t i = 0; i < length(); i++) {
     [[maybe_unused]] bool didApply = m_stack[i].apply(&e, root, &rootChanged);
-    assert(didApply);
+    ASSERT_IF_LEVEL(1, didApply);
   }
   return rootChanged;
 }
 
 void AdvancedReduction::Path::popBaseDirection() {
-  assert(m_length > 0);
+  ASSERT_IF_LEVEL(1, m_length > 0);
   if (!m_stack[m_length - 1].decrement()) {
     m_length--;
   }
 }
 
 void AdvancedReduction::Path::popWholeDirection() {
-  assert(m_length > 0);
+  ASSERT_IF_LEVEL(1, m_length > 0);
   --m_length;
 }
 
@@ -453,12 +469,12 @@ bool AdvancedReduction::PrivateReduce(const Tree* e, Context* ctx,
     if (i > 0) {
       [[maybe_unused]] bool hasAppendPath =
           ctx->m_path.append(Direction::NextNode(i));
-      assert(hasAppendPath);
+      ASSERT_IF_LEVEL(1, hasAppendPath);
     }
     if (i == Direction::k_maxNextNodeAmount) {
       /* NextNode direction has to be split in two whole directions in the
        * path to handle more than 254 consecutive NextNode */
-      assert(fullExploration);
+      ASSERT_IF_LEVEL(1, fullExploration);
       fullExploration = PrivateReduce(target, ctx, false);
       if (ctx->shouldEarlyExit()) {
         VERBOSE_OUTDENT(3);
@@ -466,7 +482,7 @@ bool AdvancedReduction::PrivateReduce(const Tree* e, Context* ctx,
       }
     }
     /* 254 to 1 NextNode handled here */
-    assert(i <= Direction::k_maxNextNodeAmount);
+    ASSERT_IF_LEVEL(1, i <= Direction::k_maxNextNodeAmount);
     for (; i >= 1; --i) {
       // It will be impossible to add C||E after our NextNodes: stop here
       if (!ctx->canAppendDirection()) {
@@ -498,8 +514,8 @@ bool AdvancedReduction::PrivateReduce(const Tree* e, Context* ctx,
 bool inline AdvancedReduction::DuplicateRootAndReduceDirection(
     const Tree* target, Context* ctx, Direction dir) {
   const Tree* oldRoot = ctx->m_root;
-  assert(oldRoot <= target && target < oldRoot->nextTree());
   Tree* newRoot = oldRoot->cloneTree();
+  ASSERT_IF_LEVEL(1, oldRoot <= target && target < newRoot);
   Tree* newTarget = target - oldRoot + newRoot;
   ctx->m_root = newRoot;
   bool result = ReduceDirection(newTarget, newRoot, ctx, dir);
@@ -510,9 +526,9 @@ bool inline AdvancedReduction::DuplicateRootAndReduceDirection(
 
 bool inline AdvancedReduction::ReduceDirection(Tree* e, Tree* root,
                                                Context* ctx, Direction dir) {
-  assert(!dir.isNextNode());
-  assert(ctx->canAppendDirection());
-  assert(ctx->m_root == root);
+  ASSERT_IF_LEVEL(1, !dir.isNextNode());
+  ASSERT_IF_LEVEL(1, ctx->canAppendDirection());
+  ASSERT_IF_LEVEL(1, ctx->m_root == root);
   Tree* target = e;
   if (!dir.applyContractOrExpand(&target, root)) {
     LOG(3, "Nothing to ", dir.log());
@@ -528,9 +544,10 @@ bool inline AdvancedReduction::ReduceDirection(Tree* e, Tree* root,
     if (ctx->m_bestHash == hash &&
         ctx->m_bestPath.length() > ctx->m_path.length()) {
       // If this is the best reduction, with a shorter path, use it
-      assert(ctx->m_bestMetric ==
-             Metric::GetMetric(ctx->m_root, ctx->m_reductionTarget));
-      assert(ctx->canAppendDirection());
+      ASSERT_IF_LEVEL(
+          2, ctx->m_bestMetric ==
+                 Metric::GetMetric(ctx->m_root, ctx->m_reductionTarget));
+      ASSERT_IF_LEVEL(1, ctx->canAppendDirection());
       ctx->m_path.append(dir);
       ctx->m_bestPath = ctx->m_path;
       ctx->m_path.popWholeDirection();
@@ -543,9 +560,9 @@ bool inline AdvancedReduction::ReduceDirection(Tree* e, Tree* root,
   LOG(2, "", dir.log(false));
   LOG(2, ": ", LogExpression(ctx->m_root), false);
 
-  assert(ctx->canAppendDirection());
+  ASSERT_IF_LEVEL(1, ctx->canAppendDirection());
   [[maybe_unused]] bool canAddDir = ctx->m_path.append(dir);
-  assert(canAddDir);
+  ASSERT_IF_LEVEL(1, canAddDir);
 
   // Successfully applied C||E dir and result is unexplored: compute metric
   UpdateBestMetric(ctx);
@@ -587,10 +604,10 @@ bool AdvancedReduction::ReduceContractThenExpand(const Tree* e, Context* ctx) {
 
 bool AdvancedReduction::UpwardSystematicReduce(Tree* root, const Tree* tree) {
   if (root == tree) {
-    assert(!SystematicReduction::DeepReduce(root));
+    ASSERT_IF_LEVEL(4, !SystematicReduction::DeepReduce(root));
     return true;
   }
-  assert(root < tree);
+  ASSERT_IF_LEVEL(1, root < tree);
   for (Tree* child : root->children()) {
     if (UpwardSystematicReduce(child, tree)) {
       SystematicReduction::ShallowReduce(root);
@@ -661,7 +678,7 @@ bool AdvancedReduction::PrivateDeepExpand(Tree* e,
     SystematicReduction::DeepReduce(e);
     // TODO_PCJ: Find a solution so we don't have to run this twice.
     bool temp = PrivateDeepExpand(e, shallowExpand);
-    assert(!temp || !PrivateDeepExpand(e, shallowExpand));
+    ASSERT_IF_LEVEL(3, !temp || !PrivateDeepExpand(e, shallowExpand));
     (void)temp;
   }
   return changed;
@@ -679,7 +696,7 @@ bool AdvancedReduction::TryAllOperations(Tree* e,
    * exp(A+B+C) = exp(A)*exp(B)*exp(C) */
   int consecutiveFailures = 0;
   int i = 0;
-  assert(!SystematicReduction::DeepReduce(e));
+  ASSERT_IF_LEVEL(3, !SystematicReduction::DeepReduce(e));
   while (consecutiveFailures < numberOfOperations) {
     uint32_t hash = e->hash();
     [[maybe_unused]] bool hasAppliedAdvancedOperation =
@@ -691,10 +708,10 @@ bool AdvancedReduction::TryAllOperations(Tree* e,
      * It could be relaxed to (!hasChangedExpression ||
      * hasAppliedAdvancedOperation) in case some of those operations cannot be
      * refactored. */
-    assert(hasAppliedAdvancedOperation == hasChangedExpression);
+    ASSERT_IF_LEVEL(1, hasAppliedAdvancedOperation == hasChangedExpression);
     consecutiveFailures = hasChangedExpression ? 0 : consecutiveFailures + 1;
     // All operations should preserve e's reduced status
-    assert(!SystematicReduction::DeepReduce(e));
+    ASSERT_IF_LEVEL(4, !SystematicReduction::DeepReduce(e));
     i++;
   }
   return i > numberOfOperations;
@@ -703,10 +720,10 @@ bool AdvancedReduction::TryAllOperations(Tree* e,
 bool AdvancedReduction::TryOneOperation(Tree* e,
                                         const Tree::Operation* operations,
                                         int numberOfOperations) {
-  assert(!SystematicReduction::DeepReduce(e));
+  ASSERT_IF_LEVEL(3, !SystematicReduction::DeepReduce(e));
   for (int i = 0; i < numberOfOperations; i++) {
     if (operations[i](e)) {
-      assert(!SystematicReduction::DeepReduce(e));
+      ASSERT_IF_LEVEL(4, !SystematicReduction::DeepReduce(e));
       return true;
     }
   }

@@ -88,7 +88,7 @@ bool Logarithm::ReduceLn(Tree* e) {
   }
   PatternMatching::Context ctx;
   if (PatternMatching::Match(child, KPow(KA, KB), &ctx) &&
-      ctx.getTree(KA)->isPositiveInteger() && ctx.getTree(KB)->isInteger()) {
+      ctx.getTree(KA)->isPositiveRational() && ctx.getTree(KB)->isInteger()) {
     assert(GetComplexSign(ctx.getTree(KA)).imagSign().isNull() &&
            GetComplexSign(ctx.getTree(KA)).realSign().isStrictlyPositive());
     e->moveTreeOverTree(PatternMatching::CreateReduce(KMult(KB, KLn(KA)), ctx));

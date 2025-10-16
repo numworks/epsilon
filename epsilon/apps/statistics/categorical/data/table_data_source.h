@@ -56,9 +56,11 @@ class TableViewDataSource : public Escher::TableViewDataSource {
 
   // Shared::TableViewDataSource
   constexpr static int k_rowHeight = Escher::Metric::SmallEditableCellHeight;
+  KDCoordinate defaultRowHeight() override { return k_rowHeight; }
   KDCoordinate nonMemoizedRowHeight(int row) override { return k_rowHeight; }
   // NOTE for now, same as Shared::EditableCellTableViewController::k_cellWidth;
   constexpr static int k_columnWidth = 102;
+  KDCoordinate defaultColumnWidth() override { return k_columnWidth; }
   KDCoordinate nonMemoizedColumnWidth(int column) override {
     return k_columnWidth;
   }
@@ -74,6 +76,12 @@ class TableViewDataSource : public Escher::TableViewDataSource {
 
  private:
   void prepareHeaderCell(Escher::HighlightCell* cell, int column);
+  Escher::TableSize1DManager* columnWidthManager() override {
+    return &m_columnSizeManager;
+  }
+  Escher::TableSize1DManager* rowHeightManager() override {
+    return &m_rowSizeManager;
+  }
 
   constexpr static int k_maxNumberOfHeaderCells =
       (Ion::Display::Width - k_columnWidth) / k_columnWidth + 2;
@@ -85,6 +93,8 @@ class TableViewDataSource : public Escher::TableViewDataSource {
   constexpr static int k_maxNumberOfNonEditableHeaderCells =
       k_maxNumberOfEditableCells / 2;
 
+  Escher::RegularTableSize1DManager m_columnSizeManager;
+  Escher::RegularTableSize1DManager m_rowSizeManager;
   std::array<Shared::BufferFunctionTitleCell, k_maxNumberOfHeaderCells>
       m_headerCells;
   std::array<EvenOddBufferCell, k_maxNumberOfVerticalHeaderCells>

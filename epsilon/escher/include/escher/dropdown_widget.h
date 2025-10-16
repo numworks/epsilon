@@ -14,9 +14,16 @@ class DropdownWidget : public CellWidget {
   void setDropdown(Dropdown* dropdown) { m_dropdown = dropdown; }
 
   // CellWidget
-  const View* view() const override { return m_dropdown; }
-  Responder* responder() override { return m_dropdown; }
+  const View* view() const override {
+    assert(m_dropdown != nullptr);
+    return m_dropdown;
+  }
+  Responder* responder() override {
+    assert(m_dropdown != nullptr);
+    return m_dropdown;
+  }
   void setHighlighted(bool highlighted) override {
+    assert(m_dropdown != nullptr);
     m_dropdown->setHighlighted(highlighted);
   }
   bool alwaysAlignWithLabelAsAccessory() const override { return true; }
@@ -25,7 +32,7 @@ class DropdownWidget : public CellWidget {
   }
 
  private:
-  Dropdown* m_dropdown;
+  Dropdown* m_dropdown = nullptr;
 };
 
 }  // namespace Escher

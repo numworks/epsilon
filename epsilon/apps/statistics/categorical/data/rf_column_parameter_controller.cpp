@@ -12,12 +12,9 @@ bool RFColumnParameterController::handleEvent(Ion::Events::Event event) {
   if (!cell->canBeActivatedByEvent(event)) {
     return false;
   }
-  if (cell == &m_hideRFColumnCell) {
-    m_store->setRelativeFrequencyColumn(m_group, false);
-    m_stackViewController->pop();
-    return true;
-  }
-  return false;
+  m_store->setRelativeFrequencyColumn(m_group, false);
+  m_stackViewController->pop();
+  return true;
 }
 
 void RFColumnParameterController::setGroup(int group) {

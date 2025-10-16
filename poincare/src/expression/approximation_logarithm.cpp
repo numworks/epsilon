@@ -6,57 +6,26 @@
 namespace Poincare::Internal::Approximation::Private {
 
 template <typename T>
-struct BaseAndExponentApproximation {
-  std::complex<T> base;
-  T exponent;
-};
-
-template <typename T>
-BaseAndExponentApproximation<T> ApproximateLnOfPower(
-    const Tree* e, const Approximation::Context* ctx) {
-  assert(e->isLogarithm());
-  const Tree* lnChild = e->child(0);
-  if (!lnChild->isPow()) {
-    return BaseAndExponentApproximation<T>{PrivateToComplex<T>(lnChild, ctx),
-                                           1.0};
-  }
-  // ln(a^b)
-  // For a more precise approximation, we compute b*ln(a)
-  std::complex<T> a = PrivateToComplex<T>(lnChild->child(0), ctx);
-  std::complex<T> b = PrivateToComplex<T>(lnChild->child(1), ctx);
-  if ((a.imag() == 0) && (b.imag() == 0) && !std::isnan(a.real()) &&
-      !std::isnan(b.real()) && (a.real() >= 0)) {
-    return BaseAndExponentApproximation<T>{.base = a, .exponent = b.real()};
-  }
-  return BaseAndExponentApproximation<T>{
-      .base = PrivateToComplex<T>(lnChild, ctx), .exponent = 1.0};
-}
-
-template <typename T>
 std::complex<T> ApproximateUserLogarithm(const Tree* e,
                                          const Approximation::Context* ctx) {
   assert(e->isLnUser());
-  BaseAndExponentApproximation<T> approximationElements =
-      ApproximateLnOfPower<T>(e, ctx);
+  std::complex<T> childApproximation = PrivateToComplex<T>(e->child(0), ctx);
   if (ctx && ctx->m_complexFormat == ComplexFormat::Real &&
-      (approximationElements.base.real() < 0 ||
-       approximationElements.base.imag() != 0)) {
+      (childApproximation.real() < 0 || childApproximation.imag() != 0)) {
     return NonReal<T>();
   }
-  if (approximationElements.base == std::complex<T>(0.0)) {
+  if (childApproximation == std::complex<T>(0.0)) {
     return NAN;
   }
-  return approximationElements.exponent * std::log(approximationElements.base);
+  return std::log(childApproximation);
 }
 
 template <typename T>
 std::complex<T> ApproximateSystemLogarithm(const Tree* e,
                                            const Approximation::Context* ctx) {
   assert(e->isLn() || e->isLog());
-  BaseAndExponentApproximation<T> approximationElements =
-      ApproximateLnOfPower<T>(e, ctx);
-  return approximationElements.exponent *
-         Private::ComplexLogarithm<T>(approximationElements.base, e->isLog());
+  return Private::ComplexLogarithm<T>(PrivateToComplex<T>(e->child(0), ctx),
+                                      e->isLog());
 }
 
 template <typename T>

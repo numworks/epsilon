@@ -97,7 +97,7 @@ QUIZ_CASE(pcj_approximation_logarithm) {
   approximates_to<double>("log(6,7)", "0.9207822211616");
   approximates_to<float>("log(5)", "0.69897");
   approximates_to<double>("ln(5)", "1.6094379124341");
-  approximates_to<float>("ln(10^2025)", 4662.735);
+  simplified_approximates_to<float>("ln(10^2025)", "4662.735");
 
   approximates_to<float>("log(2+5×i,64)", "0.4048317+0.2862042×i",
                          k_cartesianCtx);

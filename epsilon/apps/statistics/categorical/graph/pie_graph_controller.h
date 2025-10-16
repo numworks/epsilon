@@ -1,7 +1,7 @@
 #pragma once
 
 #include <apps/i18n.h>
-#include <escher/alternate_empty_view_controller.h>
+#include <escher/buffer_text_view.h>
 #include <escher/button_row_controller.h>
 #include <escher/tab_view_controller.h>
 
@@ -11,8 +11,7 @@
 
 namespace Statistics::Categorical {
 
-class PieGraphController : public Escher::AlternateEmptyViewController,
-                           public Escher::AlternateEmptyViewDelegate,
+class PieGraphController : public Escher::ViewController,
                            public GraphButtonRowDelegate {
  public:
   PieGraphController(Escher::Responder* parentResponder,
@@ -20,7 +19,7 @@ class PieGraphController : public Escher::AlternateEmptyViewController,
                      Escher::TabViewController* tabController,
                      Escher::StackViewController* stackViewController,
                      Escher::ViewController* typeViewController, Store* store)
-      : Escher::AlternateEmptyViewController(parentResponder, this, this),
+      : Escher::ViewController(parentResponder),
         GraphButtonRowDelegate(header, stackViewController, this,
                                typeViewController),
         m_displayedDataButton(
@@ -35,7 +34,8 @@ class PieGraphController : public Escher::AlternateEmptyViewController,
         m_displayedDataController(this, tabController, stackViewController,
                                   store),
         m_store(store),
-        m_tabController(tabController) {}
+        m_tabController(tabController),
+        m_isPieGraphSelected(true) {}
 
   void initView() override {
     if (!m_store->isGroupActive(m_store->getSelectedGroupForPieGraph())) {
@@ -48,6 +48,16 @@ class PieGraphController : public Escher::AlternateEmptyViewController,
       OMG::unreachable();
     }
   }
+
+  void viewWillAppear() override {
+    assert(m_store->isGroupActive(m_store->getSelectedGroupForPieGraph()));
+    int group = m_store->getSelectedGroupForPieGraph();
+    char buffer[sizeof(Store::Label)];
+    m_store->getGroupName(group, buffer, sizeof(buffer));
+    m_view.setTitleText(buffer);
+  }
+
+  Escher::View* view() override { return &m_view; }
 
   // ButtonRowDelegate
   int numberOfButtons(
@@ -70,7 +80,9 @@ class PieGraphController : public Escher::AlternateEmptyViewController,
   void handleResponderChainEvent(
       Responder::ResponderChainEvent event) override {
     if (event.type == ResponderChainEventType::HasBecomeFirst) {
-      header()->setSelectedButton(0);
+      if (!m_isPieGraphSelected) {
+        header()->setSelectedButton(0);
+      }
     }
   }
 
@@ -82,52 +94,82 @@ class PieGraphController : public Escher::AlternateEmptyViewController,
         m_tabController->selectTab();
         return true;
       }
-      /*
-      if (event == Ion::Events::Down &&
-          m_store->hasActiveSeries(activeSeriesMethod())) {
+      if (event == Ion::Events::Down) {
         header()->setSelectedButton(-1);
-        dataView()->setDisplayBanner(true);
-        dataView()->selectViewForSeries(selectedSeries());
-        highlightSelection();
-        reloadBannerView();
+        m_isPieGraphSelected = true;
         Escher::App::app()->setFirstResponder(this);
         return true;
       }
-      return buttonAtIndex(selectedButton,
-                           Escher::ButtonRowController::Position::Top)
-          ->handleEvent(event);
+      return false;
     }
-    assert(selectedSeries() >= 0 &&
-           m_store->hasActiveSeries(activeSeriesMethod()));
-    bool isVerticalEvent =
-        (event == Ion::Events::Down || event == Ion::Events::Up);
-    if ((isVerticalEvent || event == Ion::Events::Left ||
-         event == Ion::Events::Right)) {
-      if (isVerticalEvent ? moveSelectionVertically(event.direction())
-                          : moveSelectionHorizontally(event.direction())) {
-        if (reloadBannerView()) {
-          dataView()->reload();
-        }
-        return true;
-      }
-    */
+    if (event == Ion::Events::Up) {
+      m_isPieGraphSelected = false;
+      header()->setSelectedButton(0);
+      return true;
+    }
+    if (event == Ion::Events::Left || event == Ion::Events::Right) {
+      // TODO handle category changes
+      return true;
     }
     return false;
   }
 
-  // TEMP: AlternateEmptyViewDelegate
-  bool isEmpty() const override { return true; }
-  I18n::Message emptyMessage() override { return I18n::Message::PieGraph; }
-  Escher::Responder* responderWhenEmpty() override { return this; }
   void pushDataSelectionMenu() {
     stackController()->push(&m_displayedDataController);
   }
 
  private:
+  class ContentView : public Escher::View {
+   public:
+    ContentView()
+        : m_groupTitleView({.style = {.font = KDFont::Size::Small},
+                            .horizontalAlignment = KDGlyph::k_alignCenter}),
+          m_pieGraphView(KDColorRed),
+          m_sideBannerView(Escher::Palette::GrayMiddle) {}
+
+    void drawRect(KDContext* ctx, KDRect rect) const override {
+      ctx->fillRect(bounds(), KDColorBlack);
+    }
+    void setTitleText(const char* text) { m_groupTitleView.setText(text); }
+
+   private:
+    void layoutSubviews(bool force) override {
+      KDRect b = bounds();
+      constexpr int k_titleHeight = 30;
+      setChildFrame(&m_groupTitleView, KDRect(0, 0, b.height(), k_titleHeight),
+                    force);
+      setChildFrame(
+          &m_pieGraphView,
+          KDRect(0, k_titleHeight, b.height(), b.height() - k_titleHeight),
+          force);
+      setChildFrame(&m_sideBannerView,
+                    KDRect(b.height(), 0, b.width() - b.height(), b.height()),
+                    force);
+    }
+    int numberOfSubviews() const override { return 3; }
+    View* subviewAtIndex(int index) override {
+      switch (index) {
+        case 0:
+          return &m_groupTitleView;
+        case 1:
+          return &m_pieGraphView;
+        default:
+          assert(index == 2);
+          return &m_sideBannerView;
+      }
+    }
+
+    Escher::BufferTextView<sizeof(Store::Label)> m_groupTitleView;
+    Escher::SolidColorView m_pieGraphView;    // TEMP placeholder
+    Escher::SolidColorView m_sideBannerView;  // TEMP placeholder
+  };
+
+  ContentView m_view;
   Escher::SimpleButtonCell m_displayedDataButton;
   DisplayedDataController m_displayedDataController;
   Store* m_store;
   Escher::TabViewController* m_tabController;
+  bool m_isPieGraphSelected;
 };
 
 }  // namespace Statistics::Categorical

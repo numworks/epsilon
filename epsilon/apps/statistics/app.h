@@ -168,8 +168,9 @@ class App : public Shared::StoreApp,
     Escher::ViewController* top() override {
       return &m_graphMenuAlternateEmptyViewController;
     }
-    // TODO union the 2 exclusive sets of controller (for space): useless
-    // because StoreTab is bigger (for now)
+    /* TODO We could save space by doing an union of the 2 exclusive sets of
+     * controller. It's useless for now because StoreTab is bigger.
+     * See [ControllersVariant] in [StoreTab] for implementation */
 
     // Quantitative controllers
     NormalProbabilityController m_normalProbabilityController;
@@ -218,10 +219,10 @@ class App : public Shared::StoreApp,
   Escher::TabUnion<StoreTab, GraphTab, CalculationTab> m_tabs;
   Escher::TabUnionViewController m_tabViewController;
 
-  // NOTE: If this breaks optimizing the bigger tab is needed, see TODO in
-  // GraphTab
-  static_assert(sizeof(StoreTab) > sizeof(GraphTab));
-  static_assert(sizeof(StoreTab) > sizeof(CalculationTab));
+  static_assert(sizeof(StoreTab) > sizeof(GraphTab),
+                "GraphTab should be optimized. See TODO in GraphTab.");
+  static_assert(sizeof(StoreTab) > sizeof(CalculationTab),
+                "CalculationTab should be optimized. See TODO in GraphTab.");
 };
 
 }  // namespace Statistics

@@ -42,7 +42,8 @@ bool DataTypeController::handleEvent(Ion::Events::Event event) {
     DataTypeViewModel::DataType newDataType =
         DataTypeViewModel::DataTypeAtIndex(selectedRow());
     if (m_dataTypeModel->selectedDataType() != newDataType) {
-      // NOTE: switching active variant before changing type in model
+      /* NOTE: switching active variant before changing type in model.
+       * See comment in [switchActiveVariant] */
       Statistics::App::app()->m_tabs.tab<App::StoreTab>()->switchActiveVariant(
           newDataType);
       m_dataTypeModel->selectDataType(newDataType);

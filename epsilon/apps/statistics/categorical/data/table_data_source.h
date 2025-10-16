@@ -75,10 +75,15 @@ class TableViewDataSource : public Escher::TableViewDataSource {
  private:
   void prepareHeaderCell(Escher::HighlightCell* cell, int column);
 
-  constexpr static int k_maxNumberOfHeaderCells = 5;
-  constexpr static int k_maxNumberOfVerticalHeaderCells = 9;
-  constexpr static int k_maxNumberOfNonEditableHeaderCells = 18;
-  constexpr static int k_maxNumberOfEditableCells = 32;
+  constexpr static int k_maxNumberOfHeaderCells =
+      (Ion::Display::Width - k_columnWidth) / k_columnWidth + 2;
+  constexpr static int k_maxNumberOfVerticalHeaderCells =
+      (Ion::Display::Height - 3 * Escher::Metric::TitleBarHeight) / k_rowHeight;
+
+  constexpr static int k_maxNumberOfEditableCells =
+      k_maxNumberOfHeaderCells * k_maxNumberOfVerticalHeaderCells;
+  constexpr static int k_maxNumberOfNonEditableHeaderCells =
+      k_maxNumberOfEditableCells / 2;
 
   std::array<Shared::BufferFunctionTitleCell, k_maxNumberOfHeaderCells>
       m_headerCells;

@@ -493,7 +493,8 @@ std::complex<T> BasicToComplex(const Tree* e, const Context* ctx) {
       return std::exp(PrivateToComplexRecursive<T>(e->child(0), ctx));
     case Type::Log:
     case Type::Ln: {
-      return Private::ApproximateSystemLogarithm<T>(e, ctx);
+      return Private::ComplexLogarithm<T>(PrivateToComplex<T>(e->child(0), ctx),
+                                          e->isLog());
     }
     case Type::LogBase: {
       std::complex<T> a = PrivateToComplexRecursive<T>(e->child(0), ctx);
@@ -1015,7 +1016,16 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
     case Type::PhysicalConstant:
       return PhysicalConstant::GetProperties(e).m_value;
     case Type::LnUser: {
-      return Private::ApproximateUserLogarithm<T>(e, ctx);
+      std::complex<T> childApproximation =
+          PrivateToComplex<T>(e->child(0), ctx);
+      if (ctx && ctx->m_complexFormat == ComplexFormat::Real &&
+          (childApproximation.real() < 0 || childApproximation.imag() != 0)) {
+        return NonReal<T>();
+      }
+      if (childApproximation == std::complex<T>(0.0)) {
+        return NAN;
+      }
+      return std::log(childApproximation);
     }
     case Type::Store:
       return PrivateToComplexRecursive<T>(e->child(0), ctx);

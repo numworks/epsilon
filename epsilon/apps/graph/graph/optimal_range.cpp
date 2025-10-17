@@ -258,14 +258,16 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
     assert(xRangeRatio == 1.f || yRangeRatio == 1.f);
 
     float rangeRatio = xRangeRatio + yRangeRatio - 1.0f;
-    /* Normalization is also enforced in Zoom::range when ranges are close.
-     * rangeRatio is therefore either 1 or higher than Zoom's ratio. */
+    /* Normalization is also enforced in Zoom::range up to
+     * Zoom::k_maxNormalizationRatio. rangeRatio is therefore either 1
+     * (normalization did not need to be forced) or bigger. */
+    assert(rangeRatio >= 1.0f);
     constexpr float k_maximalRatio = 5.f;
-    assert(rangeRatio == 1.0f ||
-           rangeRatio >= Zoom<float>::k_maxNormalizationRatio);
     static_assert(k_maximalRatio > Zoom<float>::k_maxNormalizationRatio,
                   "k_maximalRatio is too small to ever be reached.");
-    if (rangeRatio > k_maximalRatio) {
+    constexpr float k_maxRelativeRatio =
+        k_maximalRatio / Zoom<float>::k_maxNormalizationRatio;
+    if (rangeRatio > k_maxRelativeRatio) {
       newRange = unNormalizedRange;
     }
   }

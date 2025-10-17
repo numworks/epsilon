@@ -228,6 +228,8 @@ bool Expression::isTrigonometryFunction() const {
   return tree()->isTrigonometryFunction();
 }
 
+bool Expression::isParametric() const { return tree()->isParametric(); }
+
 bool Expression::allChildrenAreUndefined() const {
   return !tree()->hasChildSatisfying(
       [](const Tree* e) { return !e->isUndefined(); });

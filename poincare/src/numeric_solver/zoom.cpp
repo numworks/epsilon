@@ -618,10 +618,23 @@ Range2D<T> Zoom<T>::prettyRange(bool forceNormalization) const {
     normalizeY = yLength < yLengthNormalized;
   }
   if (!(normalizeX || normalizeY)) {
-    return saneRange;
+    // Normalize as much as you can anyway, only by extending the range.
+    /* Note: we could also try to shrink the second range after extending the
+     * first one, to get even closer to normalization. */
+    if (xLength < xLengthNormalized && !xRangeIsForced) {
+      xLengthNormalized = xLength * Zoom<T>::k_maxNormalizationRatio;
+      normalizeX = true;
+    } else if (yLength < yLengthNormalized && !yRangeIsForced) {
+      yLengthNormalized = yLength * Zoom<T>::k_maxNormalizationRatio;
+      normalizeY = true;
+    } else {
+      return saneRange;
+    }
   }
   assert(normalizeX != normalizeY);
 
+  /* Shift new range to ensure interesting range is contained in it, and if
+   * possible centered on it. */
   Range1D<T>* rangeToEdit;
   const Range1D<T>* interestingRange;
   T normalLength;

@@ -60,6 +60,11 @@ RANGE(Pair, AbsLayout, CurlyBracesLayout)
 // CondensedSum(sumSymbol, start, end)
 NODE(CondensedSum, SUM_AND_PRODUCT, 3)
 
+// WARNING: For all parametric, the function/integrand node is the last child
+// in the layout tree, but is the first child when the 1D layout is built.
+// This behaviour is scattered around the codebase (mainly in the layoutter and
+// the parser).
+
 // Diff(Symbol, SymbolValue, Order, Derivand)
 /* FIXME isNthDerivative wastes an extra metablock so it can be initialized by
  * the ktree */

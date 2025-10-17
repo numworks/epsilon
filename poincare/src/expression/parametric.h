@@ -33,6 +33,11 @@ class Parametric {
    * derivation */
   constexpr static ComplexSign k_continuousVariableSign = ComplexSign::Real();
 
+  /* WARNING: For all parametric, the function/integrand node is the last child
+   * in the layout tree, but is the first child when the 1D layout is built.
+   * This behaviour is scattered around the codebase (mainly in the layoutter
+   * and the parser). */
+
   constexpr static uint8_t k_localVariableId = 0;
   constexpr static uint8_t k_variableIndex = 0;
 

@@ -34,7 +34,6 @@ const char* HypothesisSymbol(TestType testType) {
       return "p";
     case TestType::TwoProportions:
       return "p1-p2";
-    case TestType::ANOVA:
     case TestType::OneMean:
       return "μ";
     case TestType::TwoMeans:
@@ -42,7 +41,7 @@ const char* HypothesisSymbol(TestType testType) {
     case TestType::Slope:
       return "β";
     default:
-      // Chi2 doesn't have a visible hypothesis
+      // Chi2 and ANOVA do not need an hypothesis symbol
       OMG::unreachable();
   }
 }

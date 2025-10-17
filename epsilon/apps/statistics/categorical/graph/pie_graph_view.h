@@ -14,57 +14,69 @@ namespace Statistics::Categorical {
 // TODO: this class is very linked to the Categorical store atm, it shouldn't be
 class PieGraphView : public Escher::View {
  public:
-  PieGraphView(Store* store) : m_store(store) {
-    for (float& f : m_cumulatedAngles) {
-      f = k_inactiveCategory;
-    }
-  }
+  PieGraphView(Store* store) : m_store(store), m_numberOfActiveCategories(0) {}
 
   void toggleSelection(bool select) {
     if (m_isSelectionActive != select) {
       m_isSelectionActive = select;
+      if (m_isSelectionActive) {
+        m_selectedCategoryOriginalColor = m_insideColors[m_selectedCategory];
+        m_insideColors[m_selectedCategory] = k_selectedColor;
+      } else {
+        m_insideColors[m_selectedCategory] = m_selectedCategoryOriginalColor;
+      }
       markWholeFrameAsDirty();
     }
   }
 
   void nextCategory(int direction) {
-    if (direction < 0) {
-      direction = -1;
-    } else {
-      direction = 1;
+    if (m_isSelectionActive) {
+      m_insideColors[m_selectedCategory] = m_selectedCategoryOriginalColor;
     }
-    for (int i = 0; i < Store::k_maxNumberOfCategory; ++i) {
-      m_selectedCategory += direction;
-      m_selectedCategory %= Store::k_maxNumberOfCategory;
-      assert(0 <= m_selectedCategory &&
-             m_selectedCategory < Store::k_maxNumberOfCategory);
-      if (m_cumulatedAngles[m_selectedCategory] != k_inactiveCategory) {
-        markWholeFrameAsDirty();
-        return;
-      }
+    m_selectedCategory += direction < 0 ? -1 : 1;
+    m_selectedCategory %= m_numberOfActiveCategories;
+    if (m_isSelectionActive) {
+      m_selectedCategoryOriginalColor = m_insideColors[m_selectedCategory];
+      m_insideColors[m_selectedCategory] = k_selectedColor;
     }
-    OMG::unreachable();  // No active category
+    markWholeFrameAsDirty();
   }
 
   void setGroup(int group) {
+    m_numberOfActiveCategories = 0;
     m_selectedCategory = UINT8_MAX;
     float cumulatedAngle = 0;
-    for (int cat = 0; cat < Store::k_maxNumberOfCategory; ++cat) {
-      float rf = m_store->getRelativeFrequency(group, cat);
+    // static_assert(Store::k_maxNumberOfCategory <=
+    // Escher::Palette::numberOfLightDataColors());
+    // static_assert(Store::k_maxNumberOfCategory <=
+    // Escher::Palette::numberOfDataColors());
+    for (int globalCatIndex = 0; globalCatIndex < Store::k_maxNumberOfCategory;
+         ++globalCatIndex) {
+      float rf = m_store->getRelativeFrequency(group, globalCatIndex);
       if (std::isnan(rf)) {
-        m_cumulatedAngles[cat] = k_inactiveCategory;
         continue;
       }
+      int localCatIndex = m_numberOfActiveCategories;
+      m_insideColors[localCatIndex] =
+          Escher::Palette::DataColorLight[globalCatIndex];
+      m_borderColors[localCatIndex] =
+          Escher::Palette::DataColor[globalCatIndex];
       cumulatedAngle += 2 * M_PI * rf;
-      m_cumulatedAngles[cat] = cumulatedAngle;
+      m_cumulatedAngles[localCatIndex] = cumulatedAngle;
       if (m_selectedCategory == UINT8_MAX) {
         // Set the selectedCategory to the first active category
-        m_selectedCategory = cat;
+        m_selectedCategory = localCatIndex;
+        if (m_isSelectionActive) {
+          m_selectedCategoryOriginalColor = m_insideColors[localCatIndex];
+          m_insideColors[localCatIndex] = k_selectedColor;
+        }
       }
+      ++m_numberOfActiveCategories;
     }
   }
 
   void drawRect(KDContext* ctx, KDRect rect) const override {
+    assert(m_numberOfActiveCategories > 0);
     constexpr int k_frambufferHeight = 149;
     constexpr int k_frambufferWidth = 5;
     assert(bounds().width() % k_frambufferWidth == 0);
@@ -74,20 +86,13 @@ class PieGraphView : public Escher::View {
 
     const KDPoint center = KDPoint(bounds().width() / 2, bounds().height() / 2);
 
-    // NOTE: memoize the color array for faster access
-    KDColor colors[Escher::Palette::numberOfLightDataColors()];
-    memcpy(colors, Escher::Palette::DataColorLight, sizeof(colors));
-    if (m_isSelectionActive) {
-      colors[m_selectedCategory] = k_selectedColor;
-    }
-
     Ion::Display::waitForVBlank();  // Not sure it's useful
     for (int layerStart = bounds().width() - k_frambufferWidth; layerStart >= 0;
          layerStart -= k_frambufferWidth) {
       KDColor* pixels = &framebuffer[0][0];
       for (int j = 0; j < k_frambufferHeight; ++j) {
         for (int i = 0; i < k_frambufferWidth; ++i) {
-          *(pixels++) = pointColor(i + layerStart, j, center, colors);
+          *(pixels++) = pointColor(i + layerStart, j, center);
         }
       }
       KDRect layerRect =
@@ -110,8 +115,7 @@ class PieGraphView : public Escher::View {
   }
 
   // TODO handle single category pie chart (no border)
-  KDColor pointColor(KDCoordinate x, KDCoordinate y, KDPoint center,
-                     KDColor* mainColors) const {
+  KDColor pointColor(KDCoordinate x, KDCoordinate y, KDPoint center) const {
     KDCoordinate centeredX = x - center.x();
     KDCoordinate centeredY =
         center.y() - y;  // inverted because Y grows downwards on the screen
@@ -128,26 +132,28 @@ class PieGraphView : public Escher::View {
                              static_cast<float>(centeredY));
     angle = (angle < 0) ? angle + 2 * M_PI : angle;
 
-    for (int i = 0; i < Store::k_maxNumberOfCategory; ++i) {
-      if (m_cumulatedAngles[i] == k_inactiveCategory) {
-        continue;
-      }
+    for (int i = 0; i < m_numberOfActiveCategories; ++i) {
       if (angle < m_cumulatedAngles[i]) {
         if (!isCloseToRing) {
-          return mainColors[i];
+          return m_insideColors[i];
         }
         uint8_t alpha = std::fabs(distanceToRing) / k_border * UINT8_MAX;
         return KDColor::Blend(
-            distanceToRing < 0 ? mainColors[i] : k_outsideColor,
-            Escher::Palette::DataColor[i], alpha);
+            distanceToRing < 0 ? m_insideColors[i] : k_outsideColor,
+            m_borderColors[i], alpha);
       }
+      // Close to a category transition
     }
     return KDColorBlack;
   }
 
   float m_cumulatedAngles[Store::k_maxNumberOfCategory];
+  KDColor m_borderColors[Store::k_maxNumberOfCategory];
+  KDColor m_insideColors[Store::k_maxNumberOfCategory];
+  KDColor m_selectedCategoryOriginalColor;
   Store* m_store;
   uint8_t m_selectedCategory;
+  uint8_t m_numberOfActiveCategories;
   bool m_isSelectionActive;
 };
 

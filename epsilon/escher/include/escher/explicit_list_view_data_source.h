@@ -16,6 +16,8 @@ class ExplicitListViewDataSource : public ListViewDataSource {
 
   int typeAtRow(int row) const override final { return row; }
   int reusableCellCount(int type) const override final { return 1; }
+
+  // TODO: reusableCell should have a const and a non-const version
   HighlightCell* reusableCell(int index, int type) override final {
     return cell(type);
   }

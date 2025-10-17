@@ -8,6 +8,7 @@
 #include "../../graph/graph_button_row_delegate.h"
 #include "../data/store.h"
 #include "pie_displayed_data_controller.h"
+#include "pie_graph_view.h"
 
 namespace Statistics::Categorical {
 
@@ -22,6 +23,7 @@ class PieGraphController : public Escher::ViewController,
       : Escher::ViewController(parentResponder),
         GraphButtonRowDelegate(header, stackViewController, this,
                                typeViewController),
+        m_view(store),
         m_displayedDataButton(
             this, I18n::Message::DisplayedData,
             Escher::Invocation::Builder<PieGraphController>(
@@ -55,6 +57,9 @@ class PieGraphController : public Escher::ViewController,
     char buffer[sizeof(Store::Label)];
     m_store->getGroupName(group, buffer, sizeof(buffer));
     m_view.setTitleText(buffer);
+    m_view.m_pieGraphView.setGroup(group);
+    m_isPieGraphSelected = true;
+    m_view.m_pieGraphView.toggleSelection(true);
   }
 
   Escher::View* view() override { return &m_view; }
@@ -87,8 +92,7 @@ class PieGraphController : public Escher::ViewController,
   }
 
   bool handleEvent(Ion::Events::Event event) override {
-    int selectedButton = header()->selectedButton();
-    if (selectedButton >= 0) {
+    if (header()->selectedButton() >= 0) {
       if (event == Ion::Events::Up || event == Ion::Events::Back) {
         header()->setSelectedButton(-1);
         m_tabController->selectTab();
@@ -97,18 +101,24 @@ class PieGraphController : public Escher::ViewController,
       if (event == Ion::Events::Down) {
         header()->setSelectedButton(-1);
         m_isPieGraphSelected = true;
+        m_view.m_pieGraphView.toggleSelection(m_isPieGraphSelected);
         Escher::App::app()->setFirstResponder(this);
         return true;
       }
       return false;
     }
-    if (event == Ion::Events::Up) {
+    if (event == Ion::Events::Up || event == Ion::Events::Back) {
       m_isPieGraphSelected = false;
-      header()->setSelectedButton(0);
+      m_view.m_pieGraphView.toggleSelection(m_isPieGraphSelected);
+      if (event == Ion::Events::Up) {
+        header()->setSelectedButton(0);
+      } else {
+        m_tabController->selectTab();
+      }
       return true;
     }
     if (event == Ion::Events::Left || event == Ion::Events::Right) {
-      // TODO handle category changes
+      m_view.m_pieGraphView.nextCategory(event == Ion::Events::Right ? 1 : -1);
       return true;
     }
     return false;
@@ -120,31 +130,37 @@ class PieGraphController : public Escher::ViewController,
 
  private:
   class ContentView : public Escher::View {
+    Escher::BufferTextView<sizeof(Store::Label)> m_groupTitleView;
+
    public:
-    ContentView()
+    PieGraphView m_pieGraphView;              // TEMP placeholder
+    Escher::SolidColorView m_sideBannerView;  // TEMP placeholder
+
+    ContentView(Store* store)
         : m_groupTitleView({.style = {.font = KDFont::Size::Small},
                             .horizontalAlignment = KDGlyph::k_alignCenter}),
-          m_pieGraphView(KDColorRed),
+          m_pieGraphView(store),
           m_sideBannerView(Escher::Palette::GrayMiddle) {}
 
-    void drawRect(KDContext* ctx, KDRect rect) const override {
-      ctx->fillRect(bounds(), KDColorBlack);
-    }
     void setTitleText(const char* text) { m_groupTitleView.setText(text); }
 
    private:
     void layoutSubviews(bool force) override {
       KDRect b = bounds();
-      constexpr int k_titleHeight = 30;
-      setChildFrame(&m_groupTitleView, KDRect(0, 0, b.height(), k_titleHeight),
-                    force);
+      /* Almost like a square, but not quite to make it simple to draw the pie
+       * graph. See implementation and comments in [PieGraphView] */
+      const int leftSideWidth = b.height() + 5 - b.height() % 5;
+      constexpr int k_titleHeight = 25;
+      setChildFrame(&m_groupTitleView,
+                    KDRect(0, 0, leftSideWidth, k_titleHeight), force);
       setChildFrame(
           &m_pieGraphView,
-          KDRect(0, k_titleHeight, b.height(), b.height() - k_titleHeight),
+          KDRect(0, k_titleHeight, leftSideWidth, b.height() - k_titleHeight),
           force);
-      setChildFrame(&m_sideBannerView,
-                    KDRect(b.height(), 0, b.width() - b.height(), b.height()),
-                    force);
+      setChildFrame(
+          &m_sideBannerView,
+          KDRect(leftSideWidth, 0, b.width() - leftSideWidth, b.height()),
+          force);
     }
     int numberOfSubviews() const override { return 3; }
     View* subviewAtIndex(int index) override {
@@ -158,10 +174,6 @@ class PieGraphController : public Escher::ViewController,
           return &m_sideBannerView;
       }
     }
-
-    Escher::BufferTextView<sizeof(Store::Label)> m_groupTitleView;
-    Escher::SolidColorView m_pieGraphView;    // TEMP placeholder
-    Escher::SolidColorView m_sideBannerView;  // TEMP placeholder
   };
 
   ContentView m_view;

@@ -234,6 +234,10 @@ NODE(Var, BASE, 0, {
 })
 
 // 4 - Parametric types
+// WARNING: For all parametric, the function/integrand node is the last child
+// in the layout tree, but is the first child when the 1D layout is built.
+// This behaviour is scattered around the codebase (mainly in the layoutter and
+// the parser).
 
 // Sum(Symbol, LowerBound, UpperBound, Function)
 NODE(Sum, SUM_AND_PRODUCT, 4)

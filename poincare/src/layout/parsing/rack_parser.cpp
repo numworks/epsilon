@@ -901,7 +901,9 @@ struct ParameterData {
   size_t length;
 };
 ParameterData ParameterFromParenthesisLayout(const Tree* parenthesesLayout) {
-  assert(parenthesesLayout->isParenthesesLayout());
+  if (!parenthesesLayout->isParenthesesLayout()) {
+    return ParameterData{.start = nullptr, .length = 0};
+  }
   /* The Parentheses layout is as follows:
     <Parentheses>
       <RackSimple>

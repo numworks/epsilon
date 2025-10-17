@@ -142,23 +142,20 @@ void CalculationParameterController::fillAreaCell() {
   char secondPlaceHolder[bufferSize];
   if (!ShouldDisplayChevronInAreaCell()) {
     // If there are only 2 functions, display "Area between f(x) and g(x)"
-    size_t numberOfChars =
-        UTF8Helper::WriteCodePoint(secondPlaceHolder, bufferSize, ' ');
     Ion::Storage::Record secondRecord =
         AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(
             0, m_record);
     OMG::ExpiringPointer<ContinuousFunction> secondFunction =
         App::app()->functionStore().modelForRecord(secondRecord);
-    secondFunction->nameWithArgument(secondPlaceHolder + numberOfChars,
-                                     bufferSize - numberOfChars);
-    if (strcmp(mainFunctionName, secondPlaceHolder + numberOfChars) == 0) {
+    secondFunction->nameWithArgument(secondPlaceHolder, bufferSize);
+    if (strcmp(mainFunctionName, secondPlaceHolder) == 0) {
       // If both functions are name "y", display "Area between curves"
       m_areaCell.label()->setMessageWithPlaceholders(
           I18n::Message::AreaBetweenCurves);
       return;
     }
   } else {
-    // If there are more than 2 functions, display "Area between f(x) and"
+    // If there are more than 2 functions, display "Area between f(x) and "
     secondPlaceHolder[0] = 0;
   }
   bool labelFitsInBuffer = m_areaCell.label()->unsafeSetMessageWithPlaceholders(

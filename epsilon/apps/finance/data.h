@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <assert.h>
+#include <omg/utf8_helper.h>
 
 #include <new>
 
@@ -161,6 +162,12 @@ class CompoundInterestData : public InterestData {
   }
   uint8_t numberOfUnknowns() const override { return k_numberOfUnknowns; }
   I18n::Message dropdownMessageAtIndex(int index) const override {
+    /* FinanceEnd message is padded with space because the dropdown
+     * does not handle varying sizes correctly. */
+    assert(UTF8Helper::StringGlyphLength(
+               I18n::translate(I18n::Message::FinanceBeginning)) ==
+           UTF8Helper::StringGlyphLength(
+               I18n::translate(I18n::Message::FinanceEnd)));
     return index == 0 ? I18n::Message::FinanceBeginning
                       : I18n::Message::FinanceEnd;
   }

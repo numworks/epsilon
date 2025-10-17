@@ -23,7 +23,6 @@ const Escher::HighlightCell* HypothesisDisplayOnlyController::cell(
 constexpr static const char* h0Description(TestType testType) {
   if (testType != TestType::ANOVA) {
     // Only ANOVA has a read-only hypothesis controller
-    assert(false);
     OMG::unreachable();
   }
   return "μi=μj";
@@ -32,7 +31,6 @@ constexpr static const char* h0Description(TestType testType) {
 constexpr static const char* haDescription(TestType testType) {
   if (testType != TestType::ANOVA) {
     // Only ANOVA has a read-only hypothesis controller
-    assert(false);
     OMG::unreachable();
   }
   return "μi≠μj";

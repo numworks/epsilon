@@ -34,7 +34,6 @@ class RFColumnParameterController
   void setGroup(int group);
 
  private:
-  constexpr static int k_numberOfCells = 1;
   constexpr static int k_titleBufferSize = 23 + 2;  // "RF" or "FR"
   // mutable because title() needs to be const
   mutable char m_titleBuffer[k_titleBufferSize];

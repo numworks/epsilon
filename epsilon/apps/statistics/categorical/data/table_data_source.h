@@ -83,15 +83,14 @@ class TableViewDataSource : public Escher::TableViewDataSource,
 
   constexpr static int k_maxNumberOfEditableCells =
       k_maxNumberOfHeaderCells * k_maxNumberOfVerticalHeaderCells;
-  constexpr static int k_maxNumberOfNonEditableHeaderCells =
-      k_maxNumberOfEditableCells / 2;
-  static_assert(k_maxNumberOfEditableCells % 2 == 0);
+  constexpr static int k_maxNumberOfNonEditableCells =
+      (k_maxNumberOfHeaderCells + 1) * k_maxNumberOfVerticalHeaderCells / 2;
 
   std::array<Shared::BufferFunctionTitleCell, k_maxNumberOfHeaderCells>
       m_headerCells;
   std::array<EvenOddBufferCell, k_maxNumberOfVerticalHeaderCells>
       m_verticalHeaderCells;
-  std::array<EvenOddBufferCell, k_maxNumberOfNonEditableHeaderCells>
+  std::array<EvenOddBufferCell, k_maxNumberOfNonEditableCells>
       m_nonEditableCells;
   std::array<EvenOddEditableCell, k_maxNumberOfEditableCells> m_editableCells;
   Escher::SolidColorCell m_topLeftCell;

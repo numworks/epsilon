@@ -13,7 +13,8 @@ namespace Statistics::Categorical {
 
 /* DataSource for the categorical table. Contains the reusable cells used in the
  * table and fills them accordingly */
-class TableViewDataSource : public Escher::TableViewDataSource {
+class TableViewDataSource : public Escher::TableViewDataSource,
+                            public Escher::RegularTableSize1DManager {
   static constexpr int k_numberOfSignificantDigits =
       Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision;
 
@@ -72,12 +73,8 @@ class TableViewDataSource : public Escher::TableViewDataSource {
 
  private:
   void prepareHeaderCell(Escher::HighlightCell* cell, int column);
-  Escher::TableSize1DManager* columnWidthManager() override {
-    return &m_columnSizeManager;
-  }
-  Escher::TableSize1DManager* rowHeightManager() override {
-    return &m_rowSizeManager;
-  }
+  Escher::TableSize1DManager* columnWidthManager() override { return this; }
+  Escher::TableSize1DManager* rowHeightManager() override { return this; }
 
   constexpr static int k_maxNumberOfHeaderCells =
       (Ion::Display::Width - k_columnWidth) / k_columnWidth + 2;
@@ -89,8 +86,6 @@ class TableViewDataSource : public Escher::TableViewDataSource {
   constexpr static int k_maxNumberOfNonEditableHeaderCells =
       k_maxNumberOfEditableCells / 2;
 
-  Escher::RegularTableSize1DManager m_columnSizeManager;
-  Escher::RegularTableSize1DManager m_rowSizeManager;
   std::array<Shared::BufferFunctionTitleCell, k_maxNumberOfHeaderCells>
       m_headerCells;
   std::array<EvenOddBufferCell, k_maxNumberOfVerticalHeaderCells>

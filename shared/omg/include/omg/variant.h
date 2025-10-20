@@ -85,6 +85,12 @@ class Variant {
     variants.deinit(type);
   }
 
+  // Delete all other constructors
+  Variant(const Variant&) = delete;
+  Variant& operator=(const Variant&) = delete;
+  Variant(Variant&&) = delete;
+  Variant& operator=(Variant&&) = delete;
+
   void deinit() {
     if (type != k_notInit) {
       variants.deinit(type);
@@ -125,6 +131,12 @@ class Variant2 {
  public:
   Variant2() : type(k_notInit){};
   ~Variant2() { deinit(); }
+
+  // Delete all other constructors
+  Variant2(const Variant2&) = delete;
+  Variant2& operator=(const Variant2&) = delete;
+  Variant2(Variant2&&) = delete;
+  Variant2& operator=(Variant2&&) = delete;
 
   template <typename A>
   bool has() const {

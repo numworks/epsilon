@@ -168,7 +168,7 @@ class App : public Shared::StoreApp,
     Escher::ViewController* top() override {
       return &m_graphMenuAlternateEmptyViewController;
     }
-    /* TODO We could save space by doing an union of the 2 exclusive sets of
+    /* TODO: We could save space by doing an union of the 2 exclusive sets of
      * controller. It's useless for now because StoreTab is bigger.
      * See [ControllersVariant] in [StoreTab] for implementation */
 

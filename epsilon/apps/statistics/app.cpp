@@ -83,7 +83,7 @@ App::StoreTab::StoreTab()
 void App::StoreTab::switchActiveVariant(DataTypeViewModel::DataType type,
                                         bool destroy) {
   if (destroy) {
-    /* The dataType is direclty fetch from the model in the variant
+    /* The dataType is directly fetched from the model in the variant
      * destructor. It's expected that the viewModel still holds the old dataType
      */
     assert(App::app()->snapshot()->dataTypeViewModel()->selectedDataType() !=

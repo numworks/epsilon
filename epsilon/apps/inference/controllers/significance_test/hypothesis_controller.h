@@ -14,7 +14,7 @@ class ControllerContainer;
 class HypothesisController
     : public Escher::ExplicitSelectableListViewController {
  public:
-  HypothesisController(Escher::StackViewController* parent,
+  HypothesisController(Responder* parent,
                        ControllerContainer* controllerContainer,
                        SignificanceTest* test);
 

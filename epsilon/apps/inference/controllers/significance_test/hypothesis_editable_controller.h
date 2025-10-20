@@ -25,7 +25,7 @@ class HypothesisEditableController : public HypothesisController,
                                      public Escher::TextFieldDelegate,
                                      public Escher::DropdownCallback {
  public:
-  HypothesisEditableController(Escher::StackViewController* parent,
+  HypothesisEditableController(Responder* parent,
                                ControllerContainer* controllerContainer,
                                SignificanceTest* test);
 

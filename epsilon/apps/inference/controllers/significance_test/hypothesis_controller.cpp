@@ -9,8 +9,8 @@ using namespace Escher;
 namespace Inference {
 
 HypothesisController::HypothesisController(
-    Escher::StackViewController* parent,
-    ControllerContainer* controllerContainer, SignificanceTest* test)
+    Responder* parent, ControllerContainer* controllerContainer,
+    SignificanceTest* test)
     : Escher::ExplicitSelectableListViewController(parent),
       m_next(&m_selectableListView, I18n::Message::Next,
              Invocation::Builder<HypothesisController>(

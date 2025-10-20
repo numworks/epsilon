@@ -131,7 +131,7 @@ int TableViewDataSource::reusableCellCount(int type) const {
     case k_typeOfInnerCells:
       return k_maxNumberOfEditableCells;
     case k_typeOfRFCells:
-      return k_maxNumberOfNonEditableHeaderCells;
+      return k_maxNumberOfNonEditableCells;
   }
   OMG::unreachable();
 }

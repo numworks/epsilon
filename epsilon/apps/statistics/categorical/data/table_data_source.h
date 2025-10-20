@@ -85,6 +85,7 @@ class TableViewDataSource : public Escher::TableViewDataSource,
       k_maxNumberOfHeaderCells * k_maxNumberOfVerticalHeaderCells;
   constexpr static int k_maxNumberOfNonEditableHeaderCells =
       k_maxNumberOfEditableCells / 2;
+  static_assert(k_maxNumberOfEditableCells % 2 == 0);
 
   std::array<Shared::BufferFunctionTitleCell, k_maxNumberOfHeaderCells>
       m_headerCells;

@@ -122,8 +122,8 @@ class Variant {
 
  private:
   static constexpr uint8_t k_notInit = -1;
-  uint8_t type = k_notInit;
   Internal::VariantInternalStorage<Arg...> variants;
+  uint8_t type = k_notInit;
 };
 
 template <typename One, typename Two>
@@ -196,11 +196,11 @@ class Variant2 {
   }
 
   static constexpr uint8_t k_notInit = -1;
-  uint8_t type = k_notInit;
   union {
     One one;
     Two two;
   };
+  uint8_t type = k_notInit;
   static_assert(!std::is_same_v<One, Two>);
 };
 

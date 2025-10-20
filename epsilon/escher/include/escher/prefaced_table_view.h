@@ -44,6 +44,10 @@ class PrefacedTableView : public View,
     m_prefacedDelegate = delegate;
   }
 
+  void reloadPrefaceCellAtColumn(int col) {
+    m_rowPrefaceView.reloadCellAtLocation(col, 0);
+  }
+
   virtual void resetSizeAndOffsetMemoization();
 
  protected:

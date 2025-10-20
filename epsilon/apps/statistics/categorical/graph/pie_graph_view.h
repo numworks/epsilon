@@ -33,8 +33,12 @@ class PieGraphView : public Escher::View {
     if (m_isSelectionActive) {
       m_insideColors[m_selectedCategory] = m_selectedCategoryOriginalColor;
     }
-    m_selectedCategory += direction < 0 ? -1 : 1;
-    m_selectedCategory %= m_numberOfActiveCategories;
+    if (direction < 0 && m_selectedCategory == 0) {
+      m_selectedCategory = m_numberOfActiveCategories - 1;
+    } else {
+      m_selectedCategory += direction < 0 ? -1 : 1;
+      m_selectedCategory %= m_numberOfActiveCategories;
+    }
     if (m_isSelectionActive) {
       m_selectedCategoryOriginalColor = m_insideColors[m_selectedCategory];
       m_insideColors[m_selectedCategory] = k_selectedColor;

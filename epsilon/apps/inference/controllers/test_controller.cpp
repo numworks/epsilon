@@ -8,30 +8,18 @@
 #include <escher/view_controller.h>
 #include <poincare/statistics/inference.h>
 
-#include "chi_square/categorical_type_controller.h"
+#include "controller_container.h"
 #include "inference/models/aliases.h"
-#include "significance_test/hypothesis_editable_controller.h"
-#include "type_controller.h"
 
 using namespace Escher;
 
 namespace Inference {
 
-TestController::TestController(
-    StackViewController* parentResponder,
-    HypothesisEditableController* hypothesisEditableController,
-    HypothesisDisplayOnlyController* HypothesisDisplayOnlyController,
-    TypeController* typeController,
-    CategoricalTypeController* categoricalController,
-    InputStoreController* inputStoreController,
-    InputController* inputController, InferenceModel* inference)
+TestController::TestController(StackViewController* parentResponder,
+                               ControllerContainer* controllerContainer,
+                               InferenceModel* inference)
     : UniformSelectableListController(parentResponder),
-      m_hypothesisEditableController(hypothesisEditableController),
-      m_HypothesisDisplayOnlyController(HypothesisDisplayOnlyController),
-      m_typeController(typeController),
-      m_inputController(inputController),
-      m_categoricalController(categoricalController),
-      m_inputStoreController(inputStoreController),
+      m_controllerContainer(controllerContainer),
       m_inference(inference) {
   cell(k_indexOfOneProp)->label()->setMessage(I18n::Message::OneProportion);
   cell(k_indexOfOneMean)->label()->setMessage(I18n::Message::OneMean);
@@ -91,19 +79,19 @@ bool TestController::handleEvent(Ion::Events::Event event) {
   }
   bool statChanged = m_inference->initializeTest(testType);
   if (m_inference->testType() == TestType::Chi2) {
-    controller = m_categoricalController;
+    controller = &m_controllerContainer->m_categoricalTypeController;
   } else if (m_inference->numberOfAvailableStatistics() > 1) {
-    controller = m_typeController;
+    controller = &m_controllerContainer->m_typeController;
   } else if (m_inference->hasHypothesisParameters()) {
     if (m_inference->testType() == TestType::ANOVA) {
-      controller = m_HypothesisDisplayOnlyController;
+      controller = &m_controllerContainer->m_hypothesisDisplayOnlyController;
     } else {
-      controller = m_hypothesisEditableController;
+      controller = &m_controllerContainer->m_hypothesisEditableController;
     }
   } else if (m_inference->testType() == TestType::Slope) {
-    controller = m_inputStoreController;
+    controller = &m_controllerContainer->m_inputStoreController1;
   } else {
-    controller = m_inputController;
+    controller = &m_controllerContainer->m_inputController;
   }
   if (statChanged) {
     controller->selectRow(0);

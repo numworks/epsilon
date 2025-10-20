@@ -1,13 +1,13 @@
 #include "hypothesis_display_only_controller.h"
 
+#include "../controller_container.h"
+
 namespace Inference {
 
 HypothesisDisplayOnlyController::HypothesisDisplayOnlyController(
-    Escher::StackViewController* parent, InputController* inputController,
-    InputStoreController* inputStoreController,
-    DatasetController* datasetController, SignificanceTest* test)
-    : HypothesisController(parent, inputController, inputStoreController,
-                           datasetController, test) {
+    Escher::StackViewController* parent,
+    ControllerContainer* controllerContainer, SignificanceTest* test)
+    : HypothesisController(parent, controllerContainer, test) {
   m_h0.label()->setLayout("H"_l ^ KSubscriptL("0"_l));
   m_h0.subLabel()->setMessage(I18n::Message::H0Sub);
   m_ha.label()->setLayout("H"_l ^ KSubscriptL("a"_l));

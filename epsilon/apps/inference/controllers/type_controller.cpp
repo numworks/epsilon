@@ -7,22 +7,18 @@
 #include <poincare/print.h>
 #include <poincare/statistics/inference.h>
 
+#include "controller_container.h"
 #include "inference/models/inference_model.h"
-#include "significance_test/hypothesis_editable_controller.h"
 
 using namespace Escher;
 
 namespace Inference {
 
-TypeController::TypeController(
-    StackViewController* parent,
-    HypothesisEditableController* hypothesisEditableController,
-    InputController* inputController, DatasetController* datasetController,
-    InferenceModel* inference)
+TypeController::TypeController(StackViewController* parent,
+                               ControllerContainer* controllerContainer,
+                               InferenceModel* inference)
     : UniformSelectableListController(parent),
-      m_hypothesisEditableController(hypothesisEditableController),
-      m_inputController(inputController),
-      m_datasetController(datasetController),
+      m_controllerContainer(controllerContainer),
       m_inference(inference) {
   m_selectableListView.margins()->setBottom(0);
   // Init selection
@@ -53,15 +49,15 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     assert(selRow == k_indexOfPooledTest);
     type = StatisticType::TPooled;
   }
-  ViewController* controller = m_inputController;
+  ViewController* controller = &m_controllerContainer->m_inputController;
   if (m_inference->hasHypothesisParameters()) {
-    controller = m_hypothesisEditableController;
+    controller = &m_controllerContainer->m_hypothesisEditableController;
   } else if (m_inference->canChooseDataset()) {
     /* Reset row of DatasetController here and not in
      * viewWillAppear or initView because we want
      * to save row when we come back from results. */
-    m_datasetController->selectRow(0);
-    controller = m_datasetController;
+    m_controllerContainer->m_datasetController.selectRow(0);
+    controller = &m_controllerContainer->m_datasetController;
   }
   assert(controller != nullptr);
   m_inference->initializeDistribution(type);

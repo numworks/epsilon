@@ -24,55 +24,68 @@ App* App::Snapshot::unpack(Container* container) {
 
 App::App(Snapshot* snapshot)
     : MathApp(snapshot, &m_inputViewController),
-      m_testGraphController(
-          &m_stackViewController,
-          static_cast<SignificanceTest*>(snapshot->inference())),
-      m_intervalGraphController(
-          &m_stackViewController,
-          static_cast<ConfidenceInterval*>(snapshot->inference())),
-      m_homogeneityResultsController(
-          &m_stackViewController, &m_resultsController,
-          static_cast<HomogeneityTest*>(snapshot->inference())),
-      m_inputHomogeneityController(
-          &m_stackViewController, &m_homogeneityResultsController,
-          static_cast<HomogeneityTest*>(snapshot->inference())),
-      m_goodnessResultsController(
-          &m_stackViewController, &m_testGraphController,
-          &m_intervalGraphController,
-          static_cast<GoodnessTest*>(snapshot->inference())),
-      m_inputGoodnessController(
-          &m_stackViewController, &m_goodnessResultsController,
-          static_cast<GoodnessTest*>(snapshot->inference())),
-      m_inputStoreController1(&m_stackViewController, &m_resultsController, 0,
-                              &m_inputStoreController2, snapshot->inference()),
-      m_inputStoreController2(&m_stackViewController, &m_resultsController, 1,
-                              nullptr, snapshot->inference()),
-      m_resultsController(&m_stackViewController, snapshot->inference(),
-                          &m_testGraphController, &m_intervalGraphController),
-      m_inputController(&m_stackViewController, &m_resultsController,
-                        snapshot->inference()),
-      m_typeController(&m_stackViewController, &m_hypothesisEditableController,
-                       &m_inputController, &m_datasetController,
-                       snapshot->inference()),
-      m_categoricalTypeController(
-          &m_stackViewController, static_cast<Chi2Test*>(snapshot->inference()),
-          &m_inputGoodnessController, &m_inputHomogeneityController),
-      m_hypothesisEditableController(
-          &m_stackViewController, &m_inputController, &m_inputStoreController1,
-          &m_datasetController,
-          static_cast<SignificanceTest*>(snapshot->inference())),
-      m_hypothesisDisplayOnlyController(
-          &m_stackViewController, &m_inputController, &m_inputStoreController1,
-          &m_datasetController,
-          static_cast<SignificanceTest*>(snapshot->inference())),
-      m_datasetController(&m_stackViewController, &m_inputController,
-                          &m_inputStoreController1, snapshot->inference()),
-      m_testController(&m_stackViewController, &m_hypothesisEditableController,
-                       &m_hypothesisDisplayOnlyController, &m_typeController,
-                       &m_categoricalTypeController, &m_inputStoreController1,
-                       &m_inputController, snapshot->inference()),
+      m_controllerContainer{
+          .m_testGraphController{
+              &m_stackViewController,
+              static_cast<SignificanceTest*>(snapshot->inference())},
+          .m_intervalGraphController{
+              &m_stackViewController,
+              static_cast<ConfidenceInterval*>(snapshot->inference())},
+          .m_homogeneityResultsController{
+              &m_stackViewController,
+              &m_controllerContainer.m_resultsController,
+              static_cast<HomogeneityTest*>(snapshot->inference())},
+          .m_inputHomogeneityController{
+              &m_stackViewController,
+              &m_controllerContainer.m_homogeneityResultsController,
+              static_cast<HomogeneityTest*>(snapshot->inference())},
+          .m_goodnessResultsController{
+              &m_stackViewController,
+              &m_controllerContainer.m_testGraphController,
+              &m_controllerContainer.m_intervalGraphController,
+              static_cast<GoodnessTest*>(snapshot->inference())},
+          .m_inputGoodnessController{
+              &m_stackViewController,
+              &m_controllerContainer.m_goodnessResultsController,
+              static_cast<GoodnessTest*>(snapshot->inference())},
+          .m_inputStoreController1{
+              &m_stackViewController,
+              &m_controllerContainer.m_resultsController, 0,
+              &m_controllerContainer.m_inputStoreController2,
+              snapshot->inference()},
+          .m_inputStoreController2{&m_stackViewController,
+                                   &m_controllerContainer.m_resultsController,
+                                   1, nullptr, snapshot->inference()},
+          .m_resultsController{
+              &m_stackViewController, snapshot->inference(),
+              &m_controllerContainer.m_testGraphController,
+              &m_controllerContainer.m_intervalGraphController},
+          .m_inputController{&m_stackViewController,
+                             &m_controllerContainer.m_resultsController,
+                             snapshot->inference()},
+          .m_typeController{&m_stackViewController, &m_controllerContainer,
+                            snapshot->inference()},
+          .m_categoricalTypeController{
+              &m_stackViewController,
+              static_cast<Chi2Test*>(snapshot->inference()),
+              &m_controllerContainer.m_inputGoodnessController,
+              &m_controllerContainer.m_inputHomogeneityController},
+          .m_hypothesisEditableController{
+              &m_stackViewController, &m_controllerContainer,
+              static_cast<SignificanceTest*>(snapshot->inference())},
+          .m_hypothesisDisplayOnlyController{
+              &m_stackViewController, &m_controllerContainer,
+              static_cast<SignificanceTest*>(snapshot->inference())},
+          .m_datasetController{&m_stackViewController,
+                               &m_controllerContainer.m_inputController,
+                               &m_controllerContainer.m_inputStoreController1,
+                               snapshot->inference()},
+          .m_testController{&m_stackViewController, &m_controllerContainer,
+                            snapshot->inference()}},
       m_menuController(
-          &m_stackViewController, {&m_testController, &m_testController},
+          &m_stackViewController,
+          {&m_controllerContainer.m_testController,
+           &m_controllerContainer.m_testController},
           {{I18n::Message::Tests, I18n::Message::TestDescr},
            {I18n::Message::Intervals, I18n::Message::IntervalDescr}},
           {ImageStore::SignificanceTest, ImageStore::ConfidenceInterval}, this),
@@ -91,8 +104,8 @@ void App::didBecomeActive(Window* window) {
   bool stop = false;
   bool resultsWereRecomputed = false;
   for (int i = 0; i < queueLength; i++) {
-    /* The queue is refilled dynamically when "stackOpenPage"ing which prevents
-     * from popping until the queue is empty. */
+    /* The queue is refilled dynamically when "stackOpenPage"ing
+     * which prevents from popping until the queue is empty. */
     Escher::ViewController* controller = queue->queuePop();
     if (stop) {
       continue;
@@ -100,8 +113,8 @@ void App::didBecomeActive(Window* window) {
     currentController->stackOpenPage(controller);
     currentController = controller;
 
-    if ((currentController == &m_inputStoreController1) ||
-        (currentController == &m_inputStoreController2)) {
+    if ((currentController == &m_controllerContainer.m_inputStoreController1) ||
+        (currentController == &m_controllerContainer.m_inputStoreController2)) {
       // X1/Y1 data might have changed outside the app.
       if (!snapshot()->inference()->validateInputs()) {
         // If input were invalidated, just stop here.
@@ -112,7 +125,8 @@ void App::didBecomeActive(Window* window) {
         resultsWereRecomputed = true;
       }
     } else if (resultsWereRecomputed &&
-               currentController == &m_resultsController &&
+               currentController ==
+                   &m_controllerContainer.m_resultsController &&
                !snapshot()->inference()->isGraphable()) {
       // The results changed and can't be graphed anymore
       stop = true;
@@ -146,9 +160,9 @@ void App::cleanBuffer(DynamicCellsDataSourceDestructor* destructor) {
 void App::selectSubApp(int subAppIndex) {
   if (subAppIndex >= 0 && snapshot()->inference()->initializeSubApp(
                               static_cast<SubApp>(subAppIndex))) {
-    m_testController.selectRow(0);
-    m_hypothesisEditableController.selectRow(0);
-    m_typeController.selectRow(0);
+    m_controllerContainer.m_testController.selectRow(0);
+    m_controllerContainer.m_hypothesisEditableController.selectRow(0);
+    m_controllerContainer.m_typeController.selectRow(0);
   }
 }
 

@@ -78,7 +78,7 @@ class Variant {
   static constexpr uint8_t k_notInit = -1;
 
  public:
-  Variant() : type(k_notInit) {};
+  Variant() : type(k_notInit){};
   ~Variant() {
     assert(type != k_notInit);
     variants.deinit(type);
@@ -115,7 +115,7 @@ class Variant {
 template <typename One, typename Two>
 class Variant2 {
  public:
-  Variant2() : type(k_notInit) {};
+  Variant2() : type(k_notInit){};
   ~Variant2() { deinit(); }
 
   template <typename A>

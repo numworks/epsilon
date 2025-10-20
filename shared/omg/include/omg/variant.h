@@ -36,13 +36,16 @@ class VariantInternalStorage<T, Ts...> {
     }
   }
 
+  /* NOTE: [req_type] is used in ASSERTIONS to check if the fetched type is
+   * indeed the currently stored type */
   template <typename A>
   A& get(uint8_t req_type) {
     if constexpr (std::is_same_v<A, T>) {
       assert(req_type == 0);
       return data;
     } else {
-      return others.template get<A>(--req_type);
+      --req_type;
+      return others.template get<A>(req_type);
     }
   }
 
@@ -75,8 +78,6 @@ class VariantInternalStorage<T, Ts...> {
 
 template <typename... Arg>
 class Variant {
-  static constexpr uint8_t k_notInit = -1;
-
  public:
   Variant() : type(k_notInit){};
   ~Variant() {
@@ -91,11 +92,17 @@ class Variant {
     type = k_notInit;
   }
 
+  /* Same as [get<A>] but without asserting that the fetched type is the
+   * stored typed.
+   * This is useful when simultaneously needing pointers to 2 distinct members
+   * (such as in a parent constructor) */
   template <typename A>
   A& unsafe_get() {
     return variants.template unsafe_get<A>();
   };
 
+  /* Returns the fetched type.
+   * In ASSERTIONS, checks if the fetched type is indeed the stored type */
   template <typename A>
   A& get() {
     return variants.template get<A>(type);
@@ -108,7 +115,8 @@ class Variant {
   }
 
  private:
-  uint8_t type;
+  static constexpr uint8_t k_notInit = -1;
+  uint8_t type = k_notInit;
   Internal::VariantInternalStorage<Arg...> variants;
 };
 
@@ -119,7 +127,7 @@ class Variant2 {
   ~Variant2() { deinit(); }
 
   template <typename A>
-  bool has() {
+  bool has() const {
     return (std::is_same_v<A, One> && type == 0) ||
            (std::is_same_v<A, Two> && type == 1);
   }
@@ -176,11 +184,12 @@ class Variant2 {
   }
 
   static constexpr uint8_t k_notInit = -1;
-  uint8_t type;
+  uint8_t type = k_notInit;
   union {
     One one;
     Two two;
   };
+  static_assert(!std::is_same_v<One, Two>);
 };
 
 }  // namespace OMG

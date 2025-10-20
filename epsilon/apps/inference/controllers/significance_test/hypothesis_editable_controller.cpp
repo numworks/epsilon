@@ -6,16 +6,15 @@
 #include <shared/poincare_helpers.h>
 #include <string.h>
 
+#include "../controller_container.h"
 #include "inference/app.h"
 
 namespace Inference {
 
 HypothesisEditableController::HypothesisEditableController(
-    Escher::StackViewController* parent, InputController* inputController,
-    InputStoreController* inputStoreController,
-    DatasetController* datasetController, SignificanceTest* test)
-    : HypothesisController(parent, inputController, inputStoreController,
-                           datasetController, test),
+    Escher::StackViewController* parent,
+    ControllerContainer* controllerContainer, SignificanceTest* test)
+    : HypothesisController(parent, controllerContainer, test),
       m_operatorDataSource(test),
       m_h0(&m_selectableListView, this),
       m_haDropdown(&m_selectableListView, &m_operatorDataSource, this) {

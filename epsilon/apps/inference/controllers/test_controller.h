@@ -8,16 +8,9 @@
 #include <inference/models/inference_model.h>
 #include <ion/events.h>
 
-#include "significance_test/hypothesis_display_only_controller.h"
-#include "significance_test/hypothesis_editable_controller.h"
-
 namespace Inference {
 
-class HypothesisEditableController;
-class CategoricalTypeController;
-class TypeController;
-class InputController;
-class InputStoreController;
+class ControllerContainer;
 
 static constexpr int k_numberOfTests = 7;
 
@@ -27,14 +20,9 @@ class TestController
                            Escher::ChevronView>,
           k_numberOfTests> {
  public:
-  TestController(
-      Escher::StackViewController* parentResponder,
-      HypothesisEditableController* hypothesisEditableController,
-      HypothesisDisplayOnlyController* HypothesisDisplayOnlyController,
-      TypeController* typeController,
-      CategoricalTypeController* categoricalController,
-      InputStoreController* inputStoreController,
-      InputController* inputController, InferenceModel* inference);
+  TestController(Escher::StackViewController* parentResponder,
+                 ControllerContainer* controllerContainer,
+                 InferenceModel* inference);
   void stackOpenPage(Escher::ViewController* nextPage) override;
   bool handleEvent(Ion::Events::Event e) override;
   const char* title() const override;
@@ -52,12 +40,7 @@ class TestController
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
-  HypothesisEditableController* m_hypothesisEditableController;
-  HypothesisDisplayOnlyController* m_HypothesisDisplayOnlyController;
-  TypeController* m_typeController;
-  InputController* m_inputController;
-  CategoricalTypeController* m_categoricalController;
-  InputStoreController* m_inputStoreController;
+  ControllerContainer* m_controllerContainer;
   InferenceModel* m_inference;
 };
 

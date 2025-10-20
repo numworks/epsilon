@@ -15,20 +15,18 @@
 
 #include "hypothesis_controller.h"
 #include "inference/controllers/comparison_operator_popup_data_source.h"
-#include "inference/controllers/dataset_controller.h"
 #include "inference/controllers/input_controller.h"
-#include "inference/controllers/store/input_store_controller.h"
 
 namespace Inference {
+
+class ControllerContainer;
 
 class HypothesisEditableController : public HypothesisController,
                                      public Escher::TextFieldDelegate,
                                      public Escher::DropdownCallback {
  public:
   HypothesisEditableController(Escher::StackViewController* parent,
-                               InputController* inputController,
-                               InputStoreController* inputStoreController,
-                               DatasetController* datasetController,
+                               ControllerContainer* controllerContainer,
                                SignificanceTest* test);
 
   // SelectableListViewController

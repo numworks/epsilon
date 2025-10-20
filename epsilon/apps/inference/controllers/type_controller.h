@@ -1,19 +1,20 @@
 #pragma once
 
+#include <apps/inference/models/inference_model.h>
 #include <escher/chevron_view.h>
 #include <escher/highlight_cell.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
+#include <escher/selectable_list_view.h>
+#include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 #include <ion/events.h>
 
-#include "dataset_controller.h"
-#include "input_controller.h"
-#include "significance_test/hypothesis_editable_controller.h"
-
 namespace Inference {
+
+class ControllerContainer;
 
 class TypeController
     : public Escher::UniformSelectableListController<
@@ -22,9 +23,7 @@ class TypeController
           3> {
  public:
   TypeController(Escher::StackViewController* parent,
-                 HypothesisEditableController* hypothesisEditableController,
-                 InputController* intervalInputController,
-                 DatasetController* datasetController,
+                 ControllerContainer* controllerContainer,
                  InferenceModel* inference);
   const char* title() const override;
   ViewController::TitlesDisplay titlesDisplay() const override {
@@ -42,9 +41,7 @@ class TypeController
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
-  HypothesisEditableController* m_hypothesisEditableController;
-  InputController* m_inputController;
-  DatasetController* m_datasetController;
+  ControllerContainer* m_controllerContainer;
 
   constexpr static int k_titleBufferSize =
       sizeof("intervalle pour une moyenne à deux échantillons");

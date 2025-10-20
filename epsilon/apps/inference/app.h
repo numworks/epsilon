@@ -7,22 +7,8 @@
 #include <escher/stack_view_controller.h>
 #include <omg/ring_buffer.h>
 
-#include "controllers/chi_square/categorical_type_controller.h"
-#include "controllers/chi_square/input_goodness_controller.h"
-#include "controllers/chi_square/input_homogeneity_controller.h"
-#include "controllers/chi_square/results_goodness_controller.h"
-#include "controllers/chi_square/results_homogeneity_controller.h"
-#include "controllers/confidence_interval/interval_graph_controller.h"
-#include "controllers/dataset_controller.h"
+#include "controllers/controller_container.h"
 #include "controllers/dynamic_cells_data_source.h"
-#include "controllers/input_controller.h"
-#include "controllers/results_controller.h"
-#include "controllers/significance_test/hypothesis_display_only_controller.h"
-#include "controllers/significance_test/hypothesis_editable_controller.h"
-#include "controllers/significance_test/test_graph_controller.h"
-#include "controllers/store/input_store_controller.h"
-#include "controllers/test_controller.h"
-#include "controllers/type_controller.h"
 #include "models/inference_buffer.h"
 
 namespace Inference {
@@ -118,22 +104,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   }
 
   // Controllers
-  TestGraphController m_testGraphController;
-  IntervalGraphController m_intervalGraphController;
-  ResultsHomogeneityTabController m_homogeneityResultsController;
-  InputHomogeneityController m_inputHomogeneityController;
-  ResultsGoodnessTabController m_goodnessResultsController;
-  InputGoodnessController m_inputGoodnessController;
-  InputStoreController m_inputStoreController1;
-  InputStoreController m_inputStoreController2;
-  ResultsController m_resultsController;
-  InputController m_inputController;
-  TypeController m_typeController;
-  CategoricalTypeController m_categoricalTypeController;
-  HypothesisEditableController m_hypothesisEditableController;
-  HypothesisDisplayOnlyController m_hypothesisDisplayOnlyController;
-  DatasetController m_datasetController;
-  TestController m_testController;
+  ControllerContainer m_controllerContainer;
   Shared::MenuController m_menuController;
   LargeStackViewController m_stackViewController;
   Escher::InputViewController m_inputViewController;

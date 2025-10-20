@@ -5,20 +5,17 @@
 #include <escher/menu_cell.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
-
-#include "inference/controllers/dataset_controller.h"
-#include "inference/controllers/input_controller.h"
-#include "inference/controllers/store/input_store_controller.h"
+#include <inference/models/significance_test.h>
 
 namespace Inference {
+
+class ControllerContainer;
 
 class HypothesisController
     : public Escher::ExplicitSelectableListViewController {
  public:
   HypothesisController(Escher::StackViewController* parent,
-                       InputController* inputController,
-                       InputStoreController* inputStoreController,
-                       DatasetController* datasetController,
+                       ControllerContainer* controllerContainer,
                        SignificanceTest* test);
 
   static bool ButtonAction(HypothesisController* controller, void* s);
@@ -42,9 +39,7 @@ class HypothesisController
   SignificanceTest* m_test;
 
  private:
-  InputController* m_inputController;
-  InputStoreController* m_inputStoreController;
-  DatasetController* m_datasetController;
+  ControllerContainer* m_controllerContainer;
 
   constexpr static int k_titleBufferSize =
       Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);

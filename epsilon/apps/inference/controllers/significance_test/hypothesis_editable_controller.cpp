@@ -12,8 +12,8 @@
 namespace Inference {
 
 HypothesisEditableController::HypothesisEditableController(
-    Escher::StackViewController* parent,
-    ControllerContainer* controllerContainer, SignificanceTest* test)
+    Responder* parent, ControllerContainer* controllerContainer,
+    SignificanceTest* test)
     : HypothesisController(parent, controllerContainer, test),
       m_operatorDataSource(test),
       m_h0(&m_selectableListView, this),

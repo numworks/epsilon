@@ -13,7 +13,7 @@ class ControllerContainer;
 
 class HypothesisDisplayOnlyController : public HypothesisController {
  public:
-  HypothesisDisplayOnlyController(Escher::StackViewController* parent,
+  HypothesisDisplayOnlyController(Responder* parent,
                                   ControllerContainer* controllerContainer,
                                   SignificanceTest* test);
 

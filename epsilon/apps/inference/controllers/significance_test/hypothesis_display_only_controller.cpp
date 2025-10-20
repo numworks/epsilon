@@ -5,8 +5,8 @@
 namespace Inference {
 
 HypothesisDisplayOnlyController::HypothesisDisplayOnlyController(
-    Escher::StackViewController* parent,
-    ControllerContainer* controllerContainer, SignificanceTest* test)
+    Responder* parent, ControllerContainer* controllerContainer,
+    SignificanceTest* test)
     : HypothesisController(parent, controllerContainer, test) {
   m_h0.label()->setLayout("H"_l ^ KSubscriptL("0"_l));
   m_h0.subLabel()->setMessage(I18n::Message::H0Sub);

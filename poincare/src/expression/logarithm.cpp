@@ -269,6 +269,7 @@ bool Logarithm::ContractLn(Tree* e) {
   if (PatternMatching::Match(e, KMult(KA, KLn(KB)), &ctx) &&
       ctx.getTree(KA)->isRational() &&
       !Rational::Numerator(ctx.getTree(KA)).isOne() &&
+      !Rational::Numerator(ctx.getTree(KA)).isMinusOne() &&
       !ctx.getTree(KB)->isZero()) {
     TreeRef a = Rational::Numerator(ctx.getTree(KA)).pushOnTreeStack();
     const Tree* b = ctx.getTree(KB);

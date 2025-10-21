@@ -30,6 +30,8 @@ class KDContext {
   }
   void drawAntialiasedLine(float x1, float y1, float x2, float y2, KDColor c,
                            KDColor background);
+  void drawAntialiasedBicoloredLine(float x1, float y1, float x2, float y2,
+                                    KDColor c, KDColor c2);
 
   // Rect
   void fillRect(KDRect rect, KDColor color);

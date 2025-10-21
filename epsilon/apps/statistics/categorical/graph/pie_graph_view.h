@@ -104,6 +104,21 @@ class PieGraphView : public Escher::View {
       ctx->fillRectWithPixels(layerRect, &framebuffer[0][0],
                               &framebuffer[0][0]);
     }
+    if (m_numberOfActiveCategories > 1) {
+      /* NOTE: Drawing the anti-aliased separation lines in reverse order
+       * because it looks better.
+       * Otherwise the vertical line separating category 0 and N-1 is too
+       * dominant in the center */
+      for (int i = m_numberOfActiveCategories - 1; i >= 0; --i) {
+        float sin = std::sin(m_cumulatedAngles[i]);
+        float cos = std::cos(m_cumulatedAngles[i]);
+        float edgeX = center.x() + k_fradius * sin,
+              edgeY = center.y() - k_fradius * cos;
+        ctx->drawAntialiasedBicoloredLine(
+            center.x(), center.y(), edgeX, edgeY, m_borderColors[i],
+            m_borderColors[(i + 1) % m_numberOfActiveCategories]);
+      }
+    }
   }
 
  private:
@@ -146,7 +161,6 @@ class PieGraphView : public Escher::View {
             distanceToRing < 0 ? m_insideColors[i] : k_outsideColor,
             m_borderColors[i], alpha);
       }
-      // Close to a category transition
     }
     return KDColorBlack;
   }

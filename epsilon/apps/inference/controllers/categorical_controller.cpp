@@ -4,6 +4,7 @@
 
 #include "inference/app.h"
 #include "inference/constants.h"
+#include "inference/controllers/inference_controller.h"
 #include "inference/text_helpers.h"
 
 using namespace Escher;
@@ -218,8 +219,8 @@ void CategoricalController::initWidth(TableView* tableView) {
 InputCategoricalController::InputCategoricalController(
     StackViewController* parent, ViewController* nextController,
     InferenceModel* model, Invocation invocation, uint8_t pageIndex)
-    : CategoricalController(parent, nextController, invocation),
-      m_inference(model),
+    : InferenceController(model),
+      CategoricalController(parent, nextController, invocation),
       m_significanceCell(&m_selectableListView, this),
       m_pageIndex(pageIndex) {}
 
@@ -237,11 +238,11 @@ bool InputCategoricalController::textFieldDidFinishEditing(
     return false;
   }
   int i = indexOfEditedParameterAtIndex(m_selectableListView.selectedRow());
-  if (!m_inference->authorizedParameterAtIndex(p, i)) {
+  if (!m_inferenceModel->authorizedParameterAtIndex(p, i)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  m_inference->setParameterAtIndex(p, i);
+  m_inferenceModel->setParameterAtIndex(p, i);
   /* Alpha and DegreeOfFreedom cannot be negative. However, DegreeOfFreedom
    * can be computed to a negative when there are no rows.
    * In that case, the degreeOfFreedom cell should display nothing. */
@@ -255,12 +256,12 @@ bool InputCategoricalController::textFieldDidFinishEditing(
 
 bool InputCategoricalController::ButtonAction(
     InputCategoricalController* controller, void* s) {
-  if (!controller->m_inference->validateInputs(
+  if (!controller->m_inferenceModel->validateInputs(
           static_cast<uint8_t>(controller->m_pageIndex))) {
     App::app()->displayWarning(I18n::Message::InvalidInputs);
     return false;
   }
-  controller->m_inference->compute();
+  controller->m_inferenceModel->compute();
   return CategoricalController::ButtonAction(controller, s);
 }
 
@@ -270,10 +271,10 @@ bool InputCategoricalController::handleEvent(Ion::Events::Event event) {
 
 void InputCategoricalController::viewWillAppear() {
   // Significance cell
-  PrintValueInTextHolder(m_inference->threshold(),
+  PrintValueInTextHolder(m_inferenceModel->threshold(),
                          m_significanceCell.textField(), true, true);
-  m_significanceCell.setMessages(m_inference->thresholdName(),
-                                 m_inference->thresholdDescription());
+  m_significanceCell.setMessages(m_inferenceModel->thresholdName(),
+                                 m_inferenceModel->thresholdDescription());
 
   categoricalTableCell()->recomputeDimensionsAndReload(true, true);
 }

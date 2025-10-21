@@ -4,6 +4,7 @@
 
 #include "categorical_cell.h"
 #include "categorical_table_cell.h"
+#include "inference/controllers/inference_controller.h"
 #include "inference/models/input_table_from_store.h"
 
 namespace Inference {
@@ -100,7 +101,8 @@ class CategoricalController
 /* Common Controller between InputHomogeneityController and
  * InputGoodnessController. */
 
-class InputCategoricalController : public CategoricalController,
+class InputCategoricalController : public InferenceController,
+                                   public CategoricalController,
                                    public Shared::ParameterTextFieldDelegate {
  public:
   InputCategoricalController(Escher::StackViewController* parent,
@@ -132,12 +134,11 @@ class InputCategoricalController : public CategoricalController,
   int indexOfNextCell() const override { return indexOfSignificanceCell() + 1; }
   virtual int indexOfEditedParameterAtIndex(int index) const {
     assert(index == indexOfSignificanceCell());
-    return m_inference->indexOfThreshold();
+    return m_inferenceModel->indexOfThreshold();
   }
 
   const Escher::HighlightCell* privateExplicitCellAtRow(int row) const override;
 
-  InferenceModel* m_inference;
   InputCategoricalCell<Escher::MessageTextView> m_significanceCell;
 
   /* There can be several instances of InputCategoricalController, each

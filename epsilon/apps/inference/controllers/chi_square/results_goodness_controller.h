@@ -2,18 +2,19 @@
 
 #include <escher/tab_view_controller.h>
 
+#include "../inference_controller.h"
 #include "inference/controllers/categorical_controller.h"
 #include "inference/controllers/results_controller.h"
 #include "results_goodness_table_cell.h"
 
 namespace Inference {
 
-class ResultsGoodnessTabController : public Escher::TabViewController,
+class ResultsGoodnessTabController : public InferenceController,
+                                     public Escher::TabViewController,
                                      public Escher::TabViewDataSource {
  public:
   ResultsGoodnessTabController(Escher::Responder* parent,
-                               TestGraphController* testGraphController,
-                               IntervalGraphController* intervalGraphController,
+                               ControllerContainer* controllerContainer,
                                GoodnessTest* inference);
 
   // Responder

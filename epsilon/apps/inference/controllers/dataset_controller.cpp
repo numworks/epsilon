@@ -1,15 +1,15 @@
 #include "dataset_controller.h"
 
+#include "controller_container.h"
+#include "inference_controller.h"
+
 namespace Inference {
 
 DatasetController::DatasetController(Escher::StackViewController* parent,
-                                     InputController* inputController,
-                                     InputStoreController* storeController,
+                                     ControllerContainer* controllerContainer,
                                      InferenceModel* inference)
-    : UniformSelectableListController(parent),
-      m_inputController(inputController),
-      m_storeController(storeController),
-      m_inference(inference) {
+    : InferenceController(inference, controllerContainer),
+      UniformSelectableListController(parent) {
   cell(k_indexOfInputStatisticsCell)
       ->label()
       ->setMessage(I18n::Message::InputStatistics);
@@ -22,14 +22,14 @@ bool DatasetController::handleEvent(Ion::Events::Event event) {
   }
   int row = selectedRow();
 
-  InputTable* tableModel = m_inference->table();
+  InputTable* tableModel = m_inferenceModel->table();
   if (row == k_indexOfInputStatisticsCell) {
-    tableModel->unsetSeries(m_inference);
-    stackOpenPage(m_inputController);
+    tableModel->unsetSeries(m_inferenceModel);
+    stackOpenPage(&m_controllerContainer->m_inputController);
   } else {
     assert(row == k_indexOfDatasetCell);
-    m_storeController->initSeriesSelection();
-    stackOpenPage(m_storeController);
+    m_controllerContainer->m_inputStoreController1.initSeriesSelection();
+    stackOpenPage(&m_controllerContainer->m_inputStoreController1);
   }
   return true;
 }

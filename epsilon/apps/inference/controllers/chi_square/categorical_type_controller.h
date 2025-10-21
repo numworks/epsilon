@@ -9,6 +9,7 @@
 #include <escher/stack_view_controller.h>
 #include <ion/events.h>
 
+#include "../inference_controller.h"
 #include "inference/models/chi2_test.h"
 
 namespace Inference {
@@ -17,15 +18,15 @@ class InputGoodnessController;
 class InputHomogeneityController;
 
 class CategoricalTypeController
-    : public Escher::UniformSelectableListController<
+    : public InferenceController,
+      public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::ChevronView>,
           2> {
  public:
-  CategoricalTypeController(
-      Escher::StackViewController* parent, Chi2Test* inference,
-      InputGoodnessController* inputGoodnessController,
-      InputHomogeneityController* inputHomogeneityController);
+  CategoricalTypeController(Escher::StackViewController* parent,
+                            Chi2Test* inference,
+                            ControllerContainer* controllerContainer);
   ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
@@ -37,11 +38,6 @@ class CategoricalTypeController
 
   constexpr static int k_indexOfGoodnessCell = 0;
   constexpr static int k_indexOfHomogeneityCell = 1;
-
- private:
-  Chi2Test* m_inference;
-  InputGoodnessController* m_inputGoodnessController;
-  InputHomogeneityController* m_inputHomogeneityController;
 };
 
 }  // namespace Inference

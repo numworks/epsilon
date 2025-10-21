@@ -1,5 +1,7 @@
 #include "results_homogeneity_controller.h"
 
+#include "inference/controllers/inference_controller.h"
+
 using namespace Escher;
 
 namespace Inference {
@@ -9,7 +11,8 @@ namespace Inference {
 ResultsHomogeneityTabController::ResultsHomogeneityTabController(
     Escher::StackViewController* parent, Escher::ViewController* nextController,
     HomogeneityTest* inference)
-    : TabViewController(
+    : InferenceController(inference),
+      TabViewController(
           parent, this,
           {&m_expectedValuesController, &m_contributionsController}),
       m_tableController(nextController, inference),

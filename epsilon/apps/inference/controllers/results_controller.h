@@ -7,10 +7,9 @@
 #include <escher/menu_cell.h>
 #include <escher/stack_view_controller.h>
 
-#include "confidence_interval/interval_graph_controller.h"
 #include "inference/controllers/dynamic_cells_data_source.h"
 #include "inference/models/inference_model.h"
-#include "significance_test/test_graph_controller.h"
+#include "inference_controller.h"
 
 namespace Inference {
 
@@ -18,13 +17,13 @@ using ResultCell = Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
                                     Escher::FloatBufferTextView<>>;
 
 class ResultsController
-    : public Escher::ListWithTopAndBottomController,
+    : public InferenceController,
+      public Escher::ListWithTopAndBottomController,
       public DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>,
       public DynamicCellsDataSourceDelegate<ResultCell> {
  public:
   ResultsController(Escher::Responder* parent, InferenceModel* inference,
-                    TestGraphController* testGraphController,
-                    IntervalGraphController* intervalGraphController,
+                    ControllerContainer* controllerContainer,
                     bool enableHeadline = true);
 
   static bool ButtonAction(ResultsController* controller, void* s);
@@ -41,7 +40,7 @@ class ResultsController
   int reusableCellCount(int type) const override;
   int typeAtRow(int row) const override;
   KDCoordinate separatorBeforeRow(int row) const override {
-    return row == m_inference->secondResultSectionStart() ||
+    return row == m_inferenceModel->secondResultSectionStart() ||
                    typeAtRow(row) == k_buttonCellType
                ? k_defaultRowSeparator
                : 0;
@@ -55,10 +54,8 @@ class ResultsController
 
  protected:
   Escher::MessageTextView m_title;
-  InferenceModel* m_inference;
+  ControllerContainer* m_controllerContainer;
 
-  TestGraphController* m_testGraphController;
-  IntervalGraphController* m_intervalGraphController;
   constexpr static int k_titleBufferSize = 50;
   /* m_titleBuffer is declared as mutable so that ViewController::title() can
    * remain const-qualified in the generic case. */

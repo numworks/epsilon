@@ -17,7 +17,7 @@ InputGoodnessController::InputGoodnessController(
 }
 
 void InputGoodnessController::updateDegreeOfFreedomCell() {
-  PrintValueInTextHolder(m_inference->degreeOfFreedom(),
+  PrintValueInTextHolder(m_inferenceModel->degreeOfFreedom(),
                          m_degreeOfFreedomCell.textField(), true, true, true);
 }
 
@@ -40,7 +40,8 @@ const HighlightCell* InputGoodnessController::privateExplicitCellAtRow(
 
 int InputGoodnessController::indexOfEditedParameterAtIndex(int index) const {
   if (index == k_indexOfDegreesOfFreedom) {
-    return static_cast<GoodnessTest*>(m_inference)->indexOfDegreesOfFreedom();
+    return static_cast<GoodnessTest*>(m_inferenceModel)
+        ->indexOfDegreesOfFreedom();
   }
   return InputCategoricalController::indexOfEditedParameterAtIndex(index);
 }

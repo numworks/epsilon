@@ -2,30 +2,34 @@
 
 #include <poincare/print.h>
 
+#include "inference/controllers/inference_controller.h"
+#include "inference/models/significance_test.h"
+
 namespace Inference {
 
 TestGraphController::TestGraphController(Escher::StackViewController* stack,
                                          SignificanceTest* test)
-    : Escher::ViewController(stack),
+    : InferenceController(test),
+      Escher::ViewController(stack),
       m_graphView(test),
-      m_test(test),
       m_zoom(0) {}
 
 Escher::ViewController::TitlesDisplay TestGraphController::titlesDisplay()
     const {
   // TODO: improve StackViewController way of picking Stack titles to display
-  if (m_test->testType() == TestType::Chi2 &&
-      m_test->categoricalType() == CategoricalType::GoodnessOfFit) {
+  if (significanceTestModel()->testType() == TestType::Chi2 &&
+      significanceTestModel()->categoricalType() ==
+          CategoricalType::GoodnessOfFit) {
     return ViewController::TitlesDisplay::DisplayLastAndThirdToLast;
   }
-  if (m_test->canChooseDataset()) {
+  if (significanceTestModel()->canChooseDataset()) {
     return ViewController::TitlesDisplay(0b10111);
   }
   return ViewController::TitlesDisplay::DisplayLastFourTitles;
 }
 
 const char* TestGraphController::title() const {
-  m_test->setGraphTitle(m_titleBuffer, sizeof(m_titleBuffer));
+  significanceTestModel()->setGraphTitle(m_titleBuffer, sizeof(m_titleBuffer));
   return m_titleBuffer;
 }
 
@@ -34,7 +38,8 @@ void TestGraphController::handleResponderChainEvent(
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
     m_zoom = 0;
     m_zoomSide = true;
-    m_mayBeZoomed = m_test->computeCurveViewRange(0, m_zoomSide);
+    m_mayBeZoomed =
+        significanceTestModel()->computeCurveViewRange(0, m_zoomSide);
     m_graphView.setDisplayHint(m_mayBeZoomed);
     m_graphView.reload();
   } else {
@@ -50,10 +55,10 @@ bool TestGraphController::handleEvent(Ion::Events::Event event) {
     m_zoom++;
   } else if (event == Ion::Events::Minus && m_zoom > 0) {
     m_zoom--;
-  } else if (m_zoom > 0 && m_test->hasTwoSides() &&
+  } else if (m_zoom > 0 && significanceTestModel()->hasTwoSides() &&
              event == Ion::Events::Left && m_zoomSide) {
     m_zoomSide = false;
-  } else if (m_zoom > 0 && m_test->hasTwoSides() &&
+  } else if (m_zoom > 0 && significanceTestModel()->hasTwoSides() &&
              event == Ion::Events::Right && !m_zoomSide) {
     m_zoomSide = true;
   } else if (!event.isKeyPress() || event == Ion::Events::Back ||
@@ -61,7 +66,7 @@ bool TestGraphController::handleEvent(Ion::Events::Event event) {
     return false;
   } else if (!m_graphView.displayHint() && event != Ion::Events::Shift &&
              event != Ion::Events::Plus && event != Ion::Events::Minus &&
-             (!m_test->hasTwoSides() ||
+             (!significanceTestModel()->hasTwoSides() ||
               (event != Ion::Events::Left && event != Ion::Events::Right))) {
     m_graphView.setDisplayHint(true);
     m_graphView.reload();
@@ -70,8 +75,8 @@ bool TestGraphController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   m_graphView.setDisplayHint(false);
-  m_test->computeCurveViewRange(static_cast<float>(m_zoom) / k_zoomSteps,
-                                m_zoomSide);
+  significanceTestModel()->computeCurveViewRange(
+      static_cast<float>(m_zoom) / k_zoomSteps, m_zoomSide);
   m_graphView.reload();
   return true;
 }

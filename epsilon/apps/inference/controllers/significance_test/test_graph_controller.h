@@ -3,12 +3,14 @@
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 
+#include "../inference_controller.h"
 #include "inference/constants.h"
-#include "inference/controllers/significance_test/test_graph_view.h"
+#include "test_graph_view.h"
 
 namespace Inference {
 
-class TestGraphController : public Escher::ViewController {
+class TestGraphController : public InferenceController,
+                            public Escher::ViewController {
  public:
   TestGraphController(Escher::StackViewController* stack,
                       SignificanceTest* test);
@@ -28,7 +30,6 @@ class TestGraphController : public Escher::ViewController {
    * remain const-qualified in the generic case. */
   mutable char m_titleBuffer[k_titleBufferSize];
   TestGraphView m_graphView;
-  SignificanceTest* m_test;
   /* When the test curve has two interesting sides, we can choose to zoom on
    * the left or the right side. */
   bool m_zoomSide;

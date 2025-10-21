@@ -4,13 +4,15 @@
 #include <inference/app.h>
 #include <poincare/print.h>
 
+#include "inference/controllers/inference_controller.h"
+
 namespace Inference {
 
 IntervalGraphController::IntervalGraphController(
     Escher::StackViewController* stack, ConfidenceInterval* interval)
-    : Escher::ViewController(stack),
+    : InferenceController(interval),
+      Escher::ViewController(stack),
       m_graphView(interval, &m_selectedIntervalIndex),
-      m_interval(interval),
       m_currentEstimate(0.0),
       m_currentMarginOfError(0.0),
       m_currentThreshold(0.0) {}
@@ -21,13 +23,13 @@ Escher::ViewController::TitlesDisplay IntervalGraphController::titlesDisplay()
 }
 
 const char* IntervalGraphController::title() const {
-  m_interval->setGraphTitleForValue(m_currentMarginOfError, m_titleBuffer,
-                                    sizeof(m_titleBuffer));
+  confidenceIntervalModel()->setGraphTitleForValue(
+      m_currentMarginOfError, m_titleBuffer, sizeof(m_titleBuffer));
   return m_titleBuffer;
 }
 
 void IntervalGraphController::viewWillAppear() {
-  m_interval->computeCurveViewRange();
+  confidenceIntervalModel()->computeCurveViewRange();
   resetSelectedInterval();
 }
 
@@ -67,37 +69,38 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
 
 void IntervalGraphController::setResultTitleForCurrentValues(
     char* buffer, size_t bufferSize, bool resultIsTopPage) const {
-  m_interval->setResultTitleForValues(m_currentEstimate, m_currentThreshold,
-                                      buffer, bufferSize, resultIsTopPage);
+  confidenceIntervalModel()->setResultTitleForValues(
+      m_currentEstimate, m_currentThreshold, buffer, bufferSize,
+      resultIsTopPage);
 }
 
 void IntervalGraphController::selectAdjacentInterval(bool goUp) {
   m_selectedIntervalIndex += goUp ? -1 : 1;
-  double currentThreshold = m_interval->threshold();
+  double currentThreshold = confidenceIntervalModel()->threshold();
   /* Temporarily change the threshold to compute the values displayed in
    * conclusionView, in titles and in the clipboard */
-  m_interval->setThreshold(
+  confidenceIntervalModel()->setThreshold(
       ConfidenceInterval::DisplayedIntervalThresholdAtIndex(
           currentThreshold, m_selectedIntervalIndex));
-  m_interval->compute();
+  confidenceIntervalModel()->compute();
   saveIntervalValues();
-  m_interval->setThreshold(currentThreshold);
-  m_interval->compute();
+  confidenceIntervalModel()->setThreshold(currentThreshold);
+  confidenceIntervalModel()->compute();
   intervalDidChange();
 }
 
 void IntervalGraphController::resetSelectedInterval() {
   m_selectedIntervalIndex =
       ConfidenceInterval::MainDisplayedIntervalThresholdIndex(
-          m_interval->threshold());
+          confidenceIntervalModel()->threshold());
   saveIntervalValues();
   intervalDidChange();
 }
 
 void IntervalGraphController::saveIntervalValues() {
-  m_currentEstimate = m_interval->estimate();
-  m_currentMarginOfError = m_interval->marginOfError();
-  m_currentThreshold = m_interval->threshold();
+  m_currentEstimate = confidenceIntervalModel()->estimate();
+  m_currentMarginOfError = confidenceIntervalModel()->marginOfError();
+  m_currentThreshold = confidenceIntervalModel()->threshold();
 }
 
 void IntervalGraphController::intervalDidChange() {

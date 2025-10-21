@@ -4,23 +4,20 @@
 #include <escher/stack_view_controller.h>
 #include <poincare/statistics/inference.h>
 
+#include "../controller_container.h"
 #include "inference/app.h"
-#include "input_goodness_controller.h"
-#include "input_homogeneity_controller.h"
+#include "inference/controllers/inference_controller.h"
 
 using namespace Inference;
 
 CategoricalTypeController::CategoricalTypeController(
     Escher::StackViewController* parent, Chi2Test* inference,
-    InputGoodnessController* inputGoodnessController,
-    InputHomogeneityController* inputHomogeneityController)
-    : Escher::UniformSelectableListController<
+    ControllerContainer* controllerContainer)
+    : InferenceController(inference, controllerContainer),
+      Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::ChevronView>,
-          k_numberOfCells>(parent),
-      m_inference(inference),
-      m_inputGoodnessController(inputGoodnessController),
-      m_inputHomogeneityController(inputHomogeneityController) {
+          k_numberOfCells>(parent) {
   selectRow(0);  // Select first row by default
   cell(k_indexOfGoodnessCell)
       ->label()
@@ -35,7 +32,7 @@ CategoricalTypeController::CategoricalTypeController(
 
 void CategoricalTypeController::stackOpenPage(
     Escher::ViewController* nextPage) {
-  selectRow(static_cast<int>(m_inference->categoricalType()));
+  selectRow(static_cast<int>(m_inferenceModel->categoricalType()));
   ViewController::stackOpenPage(nextPage);
 }
 
@@ -46,17 +43,17 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
     CategoricalType type;
     switch (selectedRow()) {
       case k_indexOfGoodnessCell:
-        controller = m_inputGoodnessController;
+        controller = &m_controllerContainer->m_inputGoodnessController;
         type = CategoricalType::GoodnessOfFit;
         break;
       default:
         assert(selectedRow() == k_indexOfHomogeneityCell);
-        controller = m_inputHomogeneityController;
+        controller = &m_controllerContainer->m_inputHomogeneityController;
         type = CategoricalType::Homogeneity;
         break;
     }
     assert(controller != nullptr);
-    if (m_inference->initializeCategoricalType(type)) {
+    if (m_inferenceModel->initializeCategoricalType(type)) {
       controller->selectRow(0);
     }
     stackOpenPage(controller);

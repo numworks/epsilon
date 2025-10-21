@@ -6,6 +6,7 @@
 
 #include "inference/controllers/dynamic_cells_data_source.h"
 #include "inference/models/inference_model.h"
+#include "inference_controller.h"
 #include "results_controller.h"
 
 namespace Inference {
@@ -14,7 +15,8 @@ using ParameterCell = Escher::MenuCellWithEditableText<Escher::LayoutView,
                                                        Escher::MessageTextView>;
 
 class InputController
-    : public Shared::FloatParameterController<double>,
+    : public InferenceController,
+      public Shared::FloatParameterController<double>,
       public DynamicCellsDataSource<ParameterCell, k_maxNumberOfParameterCell>,
       public DynamicCellsDataSourceDelegate<ParameterCell> {
   friend class InputStoreController;
@@ -39,10 +41,10 @@ class InputController
                   ResultsController* resultsController,
                   InferenceModel* inference);
   int numberOfRows() const override {
-    return m_inference->numberOfParameters() + 1 /* button */;
+    return m_inferenceModel->numberOfParameters() + 1 /* button */;
   }
   const char* title() const override {
-    InputTitle(this, m_inference, m_titleBuffer, k_titleBufferSize);
+    InputTitle(this, m_inferenceModel, m_titleBuffer, k_titleBufferSize);
     return m_titleBuffer;
   }
   ViewController::TitlesDisplay titlesDisplay() const override;
@@ -62,7 +64,7 @@ class InputController
 
  protected:
   double parameterAtIndex(int i) override {
-    return m_inference->parameterAtIndex(i);
+    return m_inferenceModel->parameterAtIndex(i);
   }
 
  private:
@@ -75,7 +77,6 @@ class InputController
   /* m_titleBuffer is declared as mutable so that ViewController::title() can
    * remain const-qualified in the generic case. */
   mutable char m_titleBuffer[k_titleBufferSize];
-  InferenceModel* m_inference;
   ResultsController* m_resultsController;
 
   constexpr static int k_significanceCellType = 2;

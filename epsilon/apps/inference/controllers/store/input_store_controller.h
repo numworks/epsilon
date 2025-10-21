@@ -25,15 +25,15 @@ class InputStoreController : public InputCategoricalController,
 
   // ViewController
   const char* title() const override {
-    InputController::InputTitle(this, m_inference, m_titleBuffer,
+    InputController::InputTitle(this, m_inferenceModel, m_titleBuffer,
                                 InputController::k_titleBufferSize);
     return m_titleBuffer;
   }
   ViewController::TitlesDisplay titlesDisplay() const override {
-    if (m_inference->subApp() == SubApp::ConfidenceInterval) {
+    if (m_inferenceModel->subApp() == SubApp::ConfidenceInterval) {
       return ViewController::TitlesDisplay::DisplayLastTitle;
     }
-    if (!m_inference->canChooseDataset()) {
+    if (!m_inferenceModel->canChooseDataset()) {
       return ViewController::TitlesDisplay::DisplayLastTwoTitles;
     }
     if (m_pageIndex == 0) {
@@ -108,8 +108,8 @@ class InputStoreController : public InputCategoricalController,
     return m_storeTableCell.store();
   }
   int numberOfExtraParameters() const {
-    return m_inference->statisticType() == StatisticType::Z
-               ? m_inference->testType() == TestType::TwoMeans ? 2 : 1
+    return m_inferenceModel->statisticType() == StatisticType::Z
+               ? m_inferenceModel->testType() == TestType::TwoMeans ? 2 : 1
                : 0;
   }
   int indexOfEditedParameterAtIndex(int index) const override;
@@ -122,7 +122,7 @@ class InputStoreController : public InputCategoricalController,
   void setAllParameterCellsVisible();
 
   bool shouldDisplayTwoPages() const {
-    return m_inference->testType() == TestType::TwoMeans;
+    return m_inferenceModel->testType() == TestType::TwoMeans;
   }
 
   bool areAllParameterCellsInvisible() const;

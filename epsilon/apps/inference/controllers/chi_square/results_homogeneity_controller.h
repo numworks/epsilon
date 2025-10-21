@@ -3,6 +3,7 @@
 #include <escher/tab_view_controller.h>
 
 #include "inference/controllers/categorical_controller.h"
+#include "inference/controllers/inference_controller.h"
 #include "results_homogeneity_table_cell.h"
 
 namespace Inference {
@@ -38,7 +39,8 @@ class ResultsHomogeneityController : public CategoricalController {
   ResultsHomogeneityTableCell m_resultsHomogeneityTable;
 };
 
-class ResultsHomogeneityTabController : public Escher::TabViewController,
+class ResultsHomogeneityTabController : public InferenceController,
+                                        public Escher::TabViewController,
                                         public Escher::TabViewDataSource {
  public:
   ResultsHomogeneityTabController(Escher::StackViewController* parent,

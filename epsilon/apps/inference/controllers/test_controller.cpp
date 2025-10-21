@@ -9,6 +9,7 @@
 #include <poincare/statistics/inference.h>
 
 #include "controller_container.h"
+#include "inference/controllers/inference_controller.h"
 #include "inference/models/aliases.h"
 
 using namespace Escher;
@@ -18,9 +19,8 @@ namespace Inference {
 TestController::TestController(StackViewController* parentResponder,
                                ControllerContainer* controllerContainer,
                                InferenceModel* inference)
-    : UniformSelectableListController(parentResponder),
-      m_controllerContainer(controllerContainer),
-      m_inference(inference) {
+    : InferenceController(inference, controllerContainer),
+      UniformSelectableListController(parentResponder) {
   cell(k_indexOfOneProp)->label()->setMessage(I18n::Message::OneProportion);
   cell(k_indexOfOneMean)->label()->setMessage(I18n::Message::OneMean);
   cell(k_indexOfTwoProps)->label()->setMessage(I18n::Message::TwoProportions);
@@ -34,11 +34,11 @@ TestController::TestController(StackViewController* parentResponder,
 }
 
 const char* TestController::title() const {
-  return I18n::translate(m_inference->subAppTitle());
+  return I18n::translate(m_inferenceModel->subAppTitle());
 }
 
 void TestController::stackOpenPage(ViewController* nextPage) {
-  TestType type = m_inference->testType();
+  TestType type = m_inferenceModel->testType();
   selectRow(static_cast<int>(type));
   ViewController::stackOpenPage(nextPage);
 }
@@ -77,18 +77,18 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     assert(selectedRow() == k_indexOfChiSquare);
     testType = TestType::Chi2;
   }
-  bool statChanged = m_inference->initializeTest(testType);
-  if (m_inference->testType() == TestType::Chi2) {
+  bool statChanged = m_inferenceModel->initializeTest(testType);
+  if (m_inferenceModel->testType() == TestType::Chi2) {
     controller = &m_controllerContainer->m_categoricalTypeController;
-  } else if (m_inference->numberOfAvailableStatistics() > 1) {
+  } else if (m_inferenceModel->numberOfAvailableStatistics() > 1) {
     controller = &m_controllerContainer->m_typeController;
-  } else if (m_inference->hasHypothesisParameters()) {
-    if (m_inference->testType() == TestType::ANOVA) {
+  } else if (m_inferenceModel->hasHypothesisParameters()) {
+    if (m_inferenceModel->testType() == TestType::ANOVA) {
       controller = &m_controllerContainer->m_hypothesisDisplayOnlyController;
     } else {
       controller = &m_controllerContainer->m_hypothesisEditableController;
     }
-  } else if (m_inference->testType() == TestType::Slope) {
+  } else if (m_inferenceModel->testType() == TestType::Slope) {
     controller = &m_controllerContainer->m_inputStoreController1;
   } else {
     controller = &m_controllerContainer->m_inputController;
@@ -103,26 +103,26 @@ bool TestController::handleEvent(Ion::Events::Event event) {
 void TestController::viewWillAppear() {
   cell(k_indexOfOneProp)
       ->subLabel()
-      ->setMessage(m_inference->zStatisticMessage());
+      ->setMessage(m_inferenceModel->zStatisticMessage());
   cell(k_indexOfOneMean)
       ->subLabel()
-      ->setMessage(m_inference->tOrZStatisticMessage());
+      ->setMessage(m_inferenceModel->tOrZStatisticMessage());
   cell(k_indexOfTwoProps)
       ->subLabel()
-      ->setMessage(m_inference->zStatisticMessage());
+      ->setMessage(m_inferenceModel->zStatisticMessage());
   cell(k_indexOfTwoMeans)
       ->subLabel()
-      ->setMessage(m_inference->tOrZStatisticMessage());
+      ->setMessage(m_inferenceModel->tOrZStatisticMessage());
   /* Chi-square and ANOVA are only available in the Test sub-app, not in the
    * Interval sub-app */
   cell(k_indexOfChiSquare)
-      ->setVisible(m_inference->subApp() == SubApp::SignificanceTest);
+      ->setVisible(m_inferenceModel->subApp() == SubApp::SignificanceTest);
   cell(k_indexOfANOVA)
-      ->setVisible(m_inference->subApp() == SubApp::SignificanceTest);
+      ->setVisible(m_inferenceModel->subApp() == SubApp::SignificanceTest);
   cell(k_indexOfANOVA)->subLabel()->setMessage(I18n::Message::FTest);
   cell(k_indexOfSlope)
       ->subLabel()
-      ->setMessage(m_inference->tStatisticMessage());
+      ->setMessage(m_inferenceModel->tStatisticMessage());
 }
 
 }  // namespace Inference

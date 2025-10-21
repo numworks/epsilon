@@ -12,12 +12,13 @@
 #include <escher/view_controller.h>
 #include <ion/events.h>
 
+#include "inference_controller.h"
+
 namespace Inference {
 
-class ControllerContainer;
-
 class TypeController
-    : public Escher::UniformSelectableListController<
+    : public InferenceController,
+      public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::ChevronView>,
           3> {
@@ -41,15 +42,11 @@ class TypeController
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
-  ControllerContainer* m_controllerContainer;
-
   constexpr static int k_titleBufferSize =
       sizeof("intervalle pour une moyenne à deux échantillons");
   /* m_titleBuffer is declared as mutable so that ViewController::title() can
    * remain const-qualified in the generic case. */
   mutable char m_titleBuffer[k_titleBufferSize];
-
-  InferenceModel* m_inference;
 };
 
 }  // namespace Inference

@@ -8,6 +8,7 @@
 #include <poincare/statistics/inference.h>
 
 #include "controller_container.h"
+#include "inference/controllers/inference_controller.h"
 #include "inference/models/inference_model.h"
 
 using namespace Escher;
@@ -17,9 +18,8 @@ namespace Inference {
 TypeController::TypeController(StackViewController* parent,
                                ControllerContainer* controllerContainer,
                                InferenceModel* inference)
-    : UniformSelectableListController(parent),
-      m_controllerContainer(controllerContainer),
-      m_inference(inference) {
+    : InferenceController(inference, controllerContainer),
+      UniformSelectableListController(parent) {
   m_selectableListView.margins()->setBottom(0);
   // Init selection
   selectRow(0);
@@ -50,9 +50,9 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     type = StatisticType::TPooled;
   }
   ViewController* controller = &m_controllerContainer->m_inputController;
-  if (m_inference->hasHypothesisParameters()) {
+  if (m_inferenceModel->hasHypothesisParameters()) {
     controller = &m_controllerContainer->m_hypothesisEditableController;
-  } else if (m_inference->canChooseDataset()) {
+  } else if (m_inferenceModel->canChooseDataset()) {
     /* Reset row of DatasetController here and not in
      * viewWillAppear or initView because we want
      * to save row when we come back from results. */
@@ -60,14 +60,14 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     controller = &m_controllerContainer->m_datasetController;
   }
   assert(controller != nullptr);
-  m_inference->initializeDistribution(type);
+  m_inferenceModel->initializeDistribution(type);
   stackOpenPage(controller);
   return true;
 }
 
 const char* TypeController::title() const {
-  I18n::Message format = m_inference->distributionTitle();
-  I18n::Message testOrInterval = m_inference->subAppBasicTitle();
+  I18n::Message format = m_inferenceModel->distributionTitle();
+  I18n::Message testOrInterval = m_inferenceModel->subAppBasicTitle();
   Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),
                                 I18n::translate(format),
                                 I18n::translate(testOrInterval));
@@ -75,7 +75,7 @@ const char* TypeController::title() const {
 }
 
 void TypeController::stackOpenPage(ViewController* nextPage) {
-  switch (m_inference->statisticType()) {
+  switch (m_inferenceModel->statisticType()) {
     case StatisticType::T:
       selectRow(k_indexOfTTest);
       break;
@@ -83,7 +83,7 @@ void TypeController::stackOpenPage(ViewController* nextPage) {
       selectRow(k_indexOfPooledTest);
       break;
     default:
-      assert(m_inference->statisticType() == StatisticType::Z);
+      assert(m_inferenceModel->statisticType() == StatisticType::Z);
       selectRow(k_indexOfZTest);
       break;
   }
@@ -91,13 +91,17 @@ void TypeController::stackOpenPage(ViewController* nextPage) {
 }
 
 void TypeController::viewWillAppear() {
-  cell(k_indexOfTTest)->label()->setMessage(m_inference->tDistributionName());
+  cell(k_indexOfTTest)
+      ->label()
+      ->setMessage(m_inferenceModel->tDistributionName());
   cell(k_indexOfPooledTest)
       ->label()
-      ->setMessage(m_inference->tPooledDistributionName());
-  cell(k_indexOfZTest)->label()->setMessage(m_inference->zDistributionName());
+      ->setMessage(m_inferenceModel->tPooledDistributionName());
+  cell(k_indexOfZTest)
+      ->label()
+      ->setMessage(m_inferenceModel->zDistributionName());
   cell(k_indexOfPooledTest)
-      ->setVisible(m_inference->numberOfAvailableStatistics() ==
+      ->setVisible(m_inferenceModel->numberOfAvailableStatistics() ==
                    numberOfRows());
 }
 

@@ -1,17 +1,20 @@
 #include "results_goodness_controller.h"
 
+#include "inference/controllers/controller_container.h"
+
 namespace Inference {
 
 // ResultsGoodnessTabController
 
 ResultsGoodnessTabController::ResultsGoodnessTabController(
-    Escher::Responder* parent, TestGraphController* testGraphController,
-    IntervalGraphController* intervalGraphController, GoodnessTest* inference)
-    : TabViewController(parent, this,
+    Escher::Responder* parent, ControllerContainer* controllerContainer,
+    GoodnessTest* inference)
+    : InferenceController(inference),
+      TabViewController(parent, this,
                         {&m_resultsController, &m_contributionsController}),
-      m_resultsController(this, inference, testGraphController,
-                          intervalGraphController, false),
-      m_contributionsController(this, testGraphController, inference) {}
+      m_resultsController(this, inference, controllerContainer, false),
+      m_contributionsController(
+          this, &controllerContainer->m_testGraphController, inference) {}
 
 bool ResultsGoodnessTabController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
@@ -24,7 +27,7 @@ bool ResultsGoodnessTabController::handleEvent(Ion::Events::Event event) {
 // ResultsGoodnessTabController::MainResultsController
 
 const char* ResultsGoodnessTabController::MainResultsController::title() const {
-  m_inference->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer), true);
+  m_inferenceModel->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer), true);
   return m_titleBuffer;
 }
 

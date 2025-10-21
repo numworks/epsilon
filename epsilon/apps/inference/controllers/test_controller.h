@@ -8,6 +8,8 @@
 #include <inference/models/inference_model.h>
 #include <ion/events.h>
 
+#include "inference_controller.h"
+
 namespace Inference {
 
 class ControllerContainer;
@@ -15,7 +17,8 @@ class ControllerContainer;
 static constexpr int k_numberOfTests = 7;
 
 class TestController
-    : public Escher::UniformSelectableListController<
+    : public InferenceController,
+      public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::ChevronView>,
           k_numberOfTests> {
@@ -38,10 +41,6 @@ class TestController
 
  protected:
   void handleResponderChainEvent(ResponderChainEvent event) override;
-
- private:
-  ControllerContainer* m_controllerContainer;
-  InferenceModel* m_inference;
 };
 
 }  // namespace Inference

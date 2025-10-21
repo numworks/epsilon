@@ -69,6 +69,10 @@ $(call rule_for_object, \
   $$(WINDRES) $$(WRFLAGS) $$< -O coff -o $$@ \
 )
 
+# Define a helpful prerequesite for targets that should always be rebuilt
+.PHONY: FORCE
+FORCE: ;
+
 # Auxiliary binaries compiled for the host are built in their own directory.
 include $(PATH_haussmann)/src/rules/tools.mak
 

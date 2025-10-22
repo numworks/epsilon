@@ -32,19 +32,16 @@ App::App(Snapshot* snapshot)
               &m_stackViewController,
               static_cast<ConfidenceInterval*>(snapshot->inference())},
           .m_homogeneityResultsController{
-              &m_stackViewController,
-              &m_controllerContainer.m_resultsController,
+              &m_stackViewController, &m_controllerContainer,
               static_cast<HomogeneityTest*>(snapshot->inference())},
           .m_inputHomogeneityController{
-              &m_stackViewController,
-              &m_controllerContainer.m_homogeneityResultsController,
+              &m_stackViewController, &m_controllerContainer,
               static_cast<HomogeneityTest*>(snapshot->inference())},
           .m_goodnessResultsController{
               &m_stackViewController, &m_controllerContainer,
               static_cast<GoodnessTest*>(snapshot->inference())},
           .m_inputGoodnessController{
-              &m_stackViewController,
-              &m_controllerContainer.m_goodnessResultsController,
+              &m_stackViewController, &m_controllerContainer,
               static_cast<GoodnessTest*>(snapshot->inference())},
           .m_inputStoreController1{
               &m_stackViewController,
@@ -56,8 +53,7 @@ App::App(Snapshot* snapshot)
                                    1, nullptr, snapshot->inference()},
           .m_resultsController{&m_stackViewController, snapshot->inference(),
                                &m_controllerContainer},
-          .m_inputController{&m_stackViewController,
-                             &m_controllerContainer.m_resultsController,
+          .m_inputController{&m_stackViewController, &m_controllerContainer,
                              snapshot->inference()},
           .m_typeController{&m_stackViewController, &m_controllerContainer,
                             snapshot->inference()},

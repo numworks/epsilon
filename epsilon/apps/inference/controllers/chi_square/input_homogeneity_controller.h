@@ -7,10 +7,9 @@ namespace Inference {
 
 class InputHomogeneityController : public InputCategoricalController {
  public:
-  InputHomogeneityController(
-      Escher::StackViewController* parent,
-      Escher::ViewController* homogeneityResultsController,
-      HomogeneityTest* inference);
+  InputHomogeneityController(Escher::StackViewController* parent,
+                             ControllerContainer* controllerContainer,
+                             HomogeneityTest* inference);
 
   // ViewController
   const char* title() const override {

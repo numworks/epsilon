@@ -36,16 +36,13 @@ class VariantInternalStorage<T, Ts...> {
     }
   }
 
-  /* NOTE: [type] is used in ASSERTIONS to check if the fetched type is
-   * indeed the currently stored type */
   template <typename A>
-  A& get(uint8_t type) {
+  bool has(uint8_t type) {
     if constexpr (std::is_same_v<A, T>) {
-      assert(type == 0);
-      return m_data;
+      return type == 0;
     } else {
       --type;
-      return m_others.template get<A>(type);
+      return m_others.template has<A>(type);
     }
   }
 
@@ -109,7 +106,13 @@ class Variant {
    * In ASSERTIONS, checks if the fetched type is indeed the stored type */
   template <typename A>
   A& get() {
-    return m_variants.template get<A>(m_type);
+    assert(m_variants.template has<A>(m_type));
+    return unsafe_get<A>();
+  };
+
+  template <typename A>
+  bool has() {
+    return m_variants.template has<A>(m_type);
   };
 
   template <typename A, typename... Args>

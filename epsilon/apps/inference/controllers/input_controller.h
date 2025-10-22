@@ -38,7 +38,7 @@ class InputController
                          size_t titleBufferSize);
 
   InputController(Escher::StackViewController* parent,
-                  ResultsController* resultsController,
+                  ControllerContainer* controllerContainer,
                   InferenceModel* inference);
   int numberOfRows() const override {
     return m_inferenceModel->numberOfParameters() + 1 /* button */;
@@ -77,7 +77,6 @@ class InputController
   /* m_titleBuffer is declared as mutable so that ViewController::title() can
    * remain const-qualified in the generic case. */
   mutable char m_titleBuffer[k_titleBufferSize];
-  ResultsController* m_resultsController;
 
   constexpr static int k_significanceCellType = 2;
 

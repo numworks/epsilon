@@ -44,7 +44,7 @@ class ResultsHomogeneityTabController : public InferenceController,
                                         public Escher::TabViewDataSource {
  public:
   ResultsHomogeneityTabController(Escher::StackViewController* parent,
-                                  Escher::ViewController* nextController,
+                                  ControllerContainer* controllerContainer,
                                   HomogeneityTest* inference);
 
   ViewController::TitlesDisplay titlesDisplay() const override {

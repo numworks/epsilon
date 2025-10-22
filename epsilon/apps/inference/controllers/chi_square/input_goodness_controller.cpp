@@ -1,14 +1,16 @@
 #include "input_goodness_controller.h"
 
+#include "inference/controllers/controller_container.h"
+
 using namespace Escher;
 
 namespace Inference {
 
 InputGoodnessController::InputGoodnessController(
-    StackViewController* parent, ViewController* resultsController,
+    StackViewController* parent, ControllerContainer* controllerContainer,
     GoodnessTest* inference)
     : InputCategoricalController(
-          parent, resultsController, inference,
+          parent, &controllerContainer->m_goodnessResultsController, inference,
           Invocation::Builder<InputCategoricalController>(
               &InputCategoricalController::ButtonAction, this)),
       m_degreeOfFreedomCell(&m_selectableListView, this),

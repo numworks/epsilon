@@ -7,6 +7,7 @@
 
 #include "inference/app.h"
 #include "inference/constants.h"
+#include "inference/controllers/controller_container.h"
 #include "inference/controllers/inference_controller.h"
 #include "inference/text_helpers.h"
 #include "results_controller.h"
@@ -15,12 +16,11 @@ using namespace Escher;
 using namespace Inference;
 
 InputController::InputController(Escher::StackViewController* parent,
-                                 ResultsController* resultsController,
+                                 ControllerContainer* controllerContainer,
                                  InferenceModel* inference)
-    : InferenceController(inference),
+    : InferenceController(inference, controllerContainer),
       FloatParameterController<double>(parent, &m_messageView),
       DynamicCellsDataSource<ParameterCell, k_maxNumberOfParameterCell>(this),
-      m_resultsController(resultsController),
       m_significanceCell(&m_selectableListView, this),
       m_messageView(I18n::Message::InputStatistics, k_messageFormat) {
   m_okButton.setMessage(I18n::Message::Next);
@@ -120,7 +120,7 @@ void InputController::buttonAction() {
     return;
   }
   m_inferenceModel->compute();
-  stackOpenPage(m_resultsController);
+  stackOpenPage(&m_controllerContainer->m_resultsController);
 }
 
 void InputController::fillCellForRow(Escher::HighlightCell* cell, int row) {

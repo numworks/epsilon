@@ -30,47 +30,48 @@ class VariantInternalStorage<T, Ts...> {
   template <typename A>
   A& unsafe_get() {
     if constexpr (std::is_same_v<A, T>) {
-      return data;
+      return m_data;
     } else {
-      return others.template unsafe_get<A>();
+      return m_others.template unsafe_get<A>();
     }
   }
 
-  /* NOTE: [req_type] is used in ASSERTIONS to check if the fetched type is
+  /* NOTE: [type] is used in ASSERTIONS to check if the fetched type is
    * indeed the currently stored type */
   template <typename A>
-  A& get(uint8_t req_type) {
+  A& get(uint8_t type) {
     if constexpr (std::is_same_v<A, T>) {
-      assert(req_type == 0);
-      return data;
+      assert(type == 0);
+      return m_data;
     } else {
-      --req_type;
-      return others.template get<A>(req_type);
+      --type;
+      return m_others.template get<A>(type);
     }
   }
 
   template <typename A, typename... Args>
   uint8_t init(Args... args) {
     if constexpr (std::is_same_v<A, T>) {
-      new (&data) A(args...);
+      new (&m_data) A(args...);
       return 0;
     } else {
-      return 1 + others.template init<A>(args...);
+      return 1 + m_others.template init<A>(args...);
     }
   }
 
   void deinit(uint8_t type) {
     if (type == 0) {
-      data.~T();
+      m_data.~T();
     } else {
-      return others.deinit(--type);
+      --type;
+      return m_others.deinit(type);
     }
   }
 
  private:
   union {
-    T data;
-    VariantInternalStorage<Ts...> others;
+    T m_data;
+    VariantInternalStorage<Ts...> m_others;
   };
 };
 
@@ -79,10 +80,10 @@ class VariantInternalStorage<T, Ts...> {
 template <typename... Arg>
 class Variant {
  public:
-  Variant() : type(k_notInit){};
+  Variant() = default;
   ~Variant() {
-    assert(type != k_notInit);
-    variants.deinit(type);
+    assert(m_type != k_notInit);
+    m_variants.deinit(m_type);
   }
 
   // Delete all other constructors
@@ -92,10 +93,10 @@ class Variant {
   Variant& operator=(Variant&&) = delete;
 
   void deinit() {
-    if (type != k_notInit) {
-      variants.deinit(type);
+    if (m_type != k_notInit) {
+      m_variants.deinit(m_type);
     }
-    type = k_notInit;
+    m_type = k_notInit;
   }
 
   /* Same as [get<A>] but without asserting that the fetched type is the
@@ -104,32 +105,32 @@ class Variant {
    * (such as in a parent constructor) */
   template <typename A>
   A& unsafe_get() {
-    return variants.template unsafe_get<A>();
+    return m_variants.template unsafe_get<A>();
   };
 
   /* Returns the fetched type.
    * In ASSERTIONS, checks if the fetched type is indeed the stored type */
   template <typename A>
   A& get() {
-    return variants.template get<A>(type);
+    return m_variants.template get<A>(m_type);
   };
 
   template <typename A, typename... Args>
   void init(Args... args) {
-    assert(type == k_notInit);
-    type = variants.template init<A>(args...);
+    assert(m_type == k_notInit);
+    m_type = m_variants.template init<A>(args...);
   }
 
  private:
   static constexpr uint8_t k_notInit = -1;
-  Internal::VariantInternalStorage<Arg...> variants;
-  uint8_t type = k_notInit;
+  Internal::VariantInternalStorage<Arg...> m_variants;
+  uint8_t m_type = k_notInit;
 };
 
 template <typename One, typename Two>
 class Variant2 {
  public:
-  Variant2() : type(k_notInit){};
+  Variant2() = default;
   ~Variant2() { deinit(); }
 
   // Delete all other constructors
@@ -140,18 +141,18 @@ class Variant2 {
 
   template <typename A>
   bool has() const {
-    return (std::is_same_v<A, One> && type == 0) ||
-           (std::is_same_v<A, Two> && type == 1);
+    return (std::is_same_v<A, One> && m_type == 0) ||
+           (std::is_same_v<A, Two> && m_type == 1);
   }
 
   template <typename A>
   A& get() {
     if constexpr (std::is_same_v<A, One>) {
-      assert(type == 0);
-      return one;
+      assert(m_type == 0);
+      return m_one;
     } else if constexpr (std::is_same_v<A, Two>) {
-      assert(type == 1);
-      return two;
+      assert(m_type == 1);
+      return m_two;
     } else {
       OMG::unreachable();
     }
@@ -160,9 +161,9 @@ class Variant2 {
   template <typename A>
   A& unsafe_get() {
     if constexpr (std::is_same_v<A, One>) {
-      return one;
+      return m_one;
     } else if constexpr (std::is_same_v<A, Two>) {
-      return two;
+      return m_two;
     } else {
       OMG::unreachable();
     }
@@ -172,35 +173,35 @@ class Variant2 {
   A& init(Args... args) {
     deinit();
     if constexpr (std::is_same_v<A, One>) {
-      type = 0;
-      new (&one) A(args...);
-      return one;
+      m_type = 0;
+      new (&m_one) A(args...);
+      return m_one;
     } else if constexpr (std::is_same_v<A, Two>) {
-      new (&two) A(args...);
-      type = 1;
-      return two;
+      new (&m_two) A(args...);
+      m_type = 1;
+      return m_two;
     } else {
       OMG::unreachable();
     }
   }
 
   void deinit() {
-    if (type == 0) {
-      one.~One();
-    } else if (type == 1) {
-      two.~Two();
+    if (m_type == 0) {
+      m_one.~One();
+    } else if (m_type == 1) {
+      m_two.~Two();
     } else {
-      assert(type == k_notInit);
+      assert(m_type == k_notInit);
     }
-    type = k_notInit;
+    m_type = k_notInit;
   }
 
   static constexpr uint8_t k_notInit = -1;
   union {
-    One one;
-    Two two;
+    One m_one;
+    Two m_two;
   };
-  uint8_t type = k_notInit;
+  uint8_t m_type = k_notInit;
   static_assert(!std::is_same_v<One, Two>);
 };
 

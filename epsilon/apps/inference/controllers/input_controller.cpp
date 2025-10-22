@@ -51,34 +51,23 @@ void InputController::InputTitle(const Escher::ViewController* vc,
     assert(inference->subApp() == SubApp::SignificanceTest);
     const SignificanceTest* signifTest =
         static_cast<const SignificanceTest*>(inference);
-    /* H0:<first symbol>=<firstParam>
-     * Ha:<first symbol><operator symbol><firstParams>
-     * α=<threshold> */
-    const char* symbol = signifTest->hypothesisSymbol();
-    const char* op = Poincare::Comparison::OperatorString(
-        signifTest->hypothesis()->m_alternative);
-    StackViewController* stackViewControllerResponder =
-        static_cast<StackViewController*>(vc->parentResponder());
     constexpr int k_maxNumberOfGlyphs =
         Escher::Metric::MaxNumberOfSmallGlyphsInDisplayWidth;
+    StackViewController* stackViewControllerResponder =
+        static_cast<StackViewController*>(vc->parentResponder());
     if (stackViewControllerResponder->topViewController() != vc) {
       Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
           titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
-          k_maxNumberOfGlyphs, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed", symbol,
-          signifTest->hypothesis()->m_h0,
-          Poincare::Preferences::PrintFloatMode::Decimal, symbol, op,
-          signifTest->hypothesis()->m_h0,
-          Poincare::Preferences::PrintFloatMode::Decimal,
-          signifTest->threshold(),
-          Poincare::Preferences::PrintFloatMode::Decimal);
+          k_maxNumberOfGlyphs, "H0:%s Ha:%s α=%s",
+          signifTest->h0Description().data(),
+          signifTest->hADescription().data(),
+          signifTest->thresholdValueDescription().data());
     } else {
       Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
           titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
-          k_maxNumberOfGlyphs, "H0:%s=%*.*ed Ha:%s%s%*.*ed", symbol,
-          signifTest->hypothesis()->m_h0,
-          Poincare::Preferences::PrintFloatMode::Decimal, symbol, op,
-          signifTest->hypothesis()->m_h0,
-          Poincare::Preferences::PrintFloatMode::Decimal);
+          k_maxNumberOfGlyphs, "H0:%s Ha:%s",
+          signifTest->h0Description().data(),
+          signifTest->hADescription().data());
     }
   } else {
     Poincare::Print::CustomPrintf(titleBuffer, titleBufferSize,

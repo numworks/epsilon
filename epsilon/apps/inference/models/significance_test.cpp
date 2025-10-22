@@ -21,6 +21,40 @@ void SignificanceTest::setGraphTitle(char* buffer, size_t bufferSize) const {
       Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
+static constexpr int k_maxNumberOfGlyphs =
+    Escher::Metric::MaxNumberOfSmallGlyphsInDisplayWidth;
+
+SignificanceTest::DescriptionBuffer SignificanceTest::h0Description() const {
+  DescriptionBuffer buffer;
+  // <first symbol>=<firstParam>
+  Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
+      buffer.data(), buffer.size(), k_hypothesisValueSignificantDigits,
+      k_maxNumberOfGlyphs, "%s=%*.*ed", hypothesisSymbol(), hypothesis()->m_h0,
+      Poincare::Preferences::PrintFloatMode::Decimal);
+  return buffer;
+}
+
+SignificanceTest::DescriptionBuffer SignificanceTest::hADescription() const {
+  DescriptionBuffer buffer;
+  // <first symbol><operator symbol><firstParams>
+  Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
+      buffer.data(), buffer.size(), k_hypothesisValueSignificantDigits,
+      k_maxNumberOfGlyphs, "%s%s%*.*ed", hypothesisSymbol(),
+      Poincare::Comparison::OperatorString(hypothesis()->m_alternative),
+      hypothesis()->m_h0, Poincare::Preferences::PrintFloatMode::Decimal);
+  return buffer;
+}
+
+SignificanceTest::DescriptionBuffer
+SignificanceTest::thresholdValueDescription() const {
+  DescriptionBuffer buffer;
+  Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
+      buffer.data(), buffer.size(), k_hypothesisValueSignificantDigits,
+      k_maxNumberOfGlyphs, "%*.*ed", threshold(),
+      Poincare::Preferences::PrintFloatMode::Decimal);
+  return buffer;
+}
+
 void SignificanceTest::initParameters() {
   m_hypothesis =
       Poincare::Inference::SignificanceTest::DefaultHypothesis(testType());

@@ -30,6 +30,17 @@ class SignificanceTest : public InferenceModel {
   const char* hypothesisSymbol() const {
     return Poincare::Inference::SignificanceTest::HypothesisSymbol(testType());
   }
+
+  constexpr static int k_hypothesisValueSignificantDigits =
+      Poincare::Preferences::VeryShortNumberOfSignificantDigits;
+
+  constexpr static size_t k_descriptionBufferSize = 15;
+  using DescriptionBuffer = std::array<char, k_descriptionBufferSize>;
+
+  DescriptionBuffer h0Description() const;
+  DescriptionBuffer hADescription() const;
+  DescriptionBuffer thresholdValueDescription() const;
+
   bool isValidH0(double h0) {
     return Poincare::Inference::SignificanceTest::IsH0Valid(testType(), h0);
   }

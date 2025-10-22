@@ -13,10 +13,8 @@ class InputStoreController : public InputCategoricalController,
                              Escher::DropdownCallback {
  public:
   InputStoreController(Escher::StackViewController* parent,
-                       Escher::ViewController* nextController,
-                       uint8_t pageIndex,
-                       InputStoreController* nextInputStoreController,
-                       InferenceModel* inference);
+                       ControllerContainer* controllerContainer,
+                       InferenceModel* inference, uint8_t pageIndex);
 
   static bool ButtonAction(InputStoreController* controller, void* s);
 

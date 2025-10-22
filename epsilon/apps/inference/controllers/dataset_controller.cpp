@@ -22,6 +22,11 @@ bool DatasetController::handleEvent(Ion::Events::Event event) {
   }
   int row = selectedRow();
 
+  if (m_inferenceModel->testType() == TestType::ANOVA) {
+    // TODO: open the next ANOVA controller
+    return true;
+  }
+
   InputTable* tableModel = m_inferenceModel->table();
   if (row == k_indexOfInputStatisticsCell) {
     tableModel->unsetSeries(m_inferenceModel);

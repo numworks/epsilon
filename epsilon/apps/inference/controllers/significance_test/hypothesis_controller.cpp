@@ -41,10 +41,6 @@ void HypothesisController::handleResponderChainEvent(
 
 bool HypothesisController::ButtonAction(HypothesisController* controller,
                                         void* s) {
-  if (controller->m_test->testType() == TestType::ANOVA) {
-    // TODO: open the next ANOVA controller
-    return true;
-  }
   ViewController* nextController =
       &controller->m_controllerContainer->m_inputController;
   if (controller->m_test->testType() == TestType::Slope) {

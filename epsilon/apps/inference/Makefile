@@ -2,21 +2,21 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   app.cpp \
   controllers/dynamic_cells_data_source.cpp \
   controllers/chi_square/categorical_type_controller.cpp \
-  controllers/chi_square/homogeneity_data_source.cpp \
   controllers/chi_square/input_goodness_controller.cpp \
-  controllers/chi_square/input_goodness_table_cell.cpp \
   controllers/chi_square/input_homogeneity_controller.cpp \
-  controllers/chi_square/input_homogeneity_table_cell.cpp \
   controllers/chi_square/results_goodness_controller.cpp \
-  controllers/chi_square/results_goodness_table_cell.cpp \
   controllers/chi_square/results_homogeneity_controller.cpp \
-  controllers/chi_square/results_homogeneity_table_cell.cpp \
   controllers/confidence_interval/interval_conclusion_view.cpp \
   controllers/confidence_interval/interval_curve_view.cpp \
   controllers/confidence_interval/interval_graph_controller.cpp \
   controllers/confidence_interval/interval_graph_view.cpp \
   controllers/store/input_store_controller.cpp \
   controllers/store/store_table_cell.cpp \
+  controllers/tables/homogeneity_data_source.cpp \
+  controllers/tables/input_goodness_table_cell.cpp \
+  controllers/tables/input_homogeneity_table_cell.cpp \
+  controllers/tables/results_goodness_table_cell.cpp \
+  controllers/tables/results_homogeneity_table_cell.cpp \
   controllers/significance_test/hypothesis_controller.cpp \
   controllers/significance_test/hypothesis_editable_controller.cpp \
   controllers/significance_test/hypothesis_display_only_controller.cpp \

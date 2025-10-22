@@ -3,7 +3,7 @@
 #include <omg/print.h>
 #include <shared/column_parameter_controller.h>
 
-#include "input_homogeneity_controller.h"
+#include "inference/controllers/chi_square/input_homogeneity_controller.h"
 
 using namespace Escher;
 

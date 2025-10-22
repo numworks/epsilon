@@ -2,7 +2,7 @@
 
 #include <shared/column_parameter_controller.h>
 
-#include "input_goodness_controller.h"
+#include "inference/controllers/chi_square/input_goodness_controller.h"
 
 using namespace Escher;
 

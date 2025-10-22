@@ -16,11 +16,13 @@ class DatasetController
       public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::ChevronView>,
-          OneMeanStatistic::k_numberOfDatasetOptions> {
+          InputTableFromStore::k_numberOfDatasetOptions> {
  public:
   DatasetController(Escher::StackViewController* parent,
                     ControllerContainer* controllerContainer,
                     InferenceModel* inference);
+
+  void initView() override;
 
   const char* title() const override {
     InputController::InputTitle(this, m_inferenceModel, m_titleBuffer,
@@ -35,8 +37,16 @@ class DatasetController
   bool handleEvent(Ion::Events::Event) override;
 
  private:
-  constexpr static int k_indexOfInputStatisticsCell = 0;
-  constexpr static int k_indexOfDatasetCell = 1;
+  enum class Options {
+    InputStatisticsAndInputDataset,  // For One-Mean
+    InputDataAndInputStatistics      // For ANOVA
+  };
+
+  Options getListOptions() const;
+
+  int indexOfInputStatisticsCell() const;
+  int indexOfDatasetCell() const;
+  int indexOfInputDataCell() const;
 
   /* m_titleBuffer is declared as mutable so that ViewController::title() can
    * remain const-qualified in the generic case. */

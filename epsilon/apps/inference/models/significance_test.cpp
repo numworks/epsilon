@@ -25,6 +25,9 @@ static constexpr int k_maxNumberOfGlyphs =
     Escher::Metric::MaxNumberOfSmallGlyphsInDisplayWidth;
 
 SignificanceTest::DescriptionBuffer SignificanceTest::h0Description() const {
+  if (testType() == TestType::ANOVA) {
+    return DescriptionBuffer{"μi=μj"};
+  }
   DescriptionBuffer buffer;
   // <first symbol>=<firstParam>
   Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
@@ -35,6 +38,9 @@ SignificanceTest::DescriptionBuffer SignificanceTest::h0Description() const {
 }
 
 SignificanceTest::DescriptionBuffer SignificanceTest::hADescription() const {
+  if (testType() == TestType::ANOVA) {
+    return DescriptionBuffer{"μi≠μj"};
+  }
   DescriptionBuffer buffer;
   // <first symbol><operator symbol><firstParams>
   Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(

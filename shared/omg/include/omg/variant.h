@@ -9,7 +9,11 @@
 
 namespace OMG {
 namespace Internal {
-// Forward declaration
+
+/* Forward declaration of [VariantInternalStorage].
+ * It is a union storage to store any number of types.
+ * It has no runtime type checking, and thus should only be used by
+ * [OMG::Variant] */
 template <typename... Ts>
 class VariantInternalStorage;
 
@@ -74,6 +78,12 @@ class VariantInternalStorage<T, Ts...> {
 
 }  // namespace Internal
 
+/* [Variant] is our custom implementation of std::variant.
+ * It allows building a type-safe union with any number of stored type.
+ * This implementation use a [VariantInternalStorage] that recursively store the
+ * requested types.
+ * See also [OMG::Variant2] when storing only 2 types.
+ *  */
 template <typename... Arg>
 class Variant {
  public:
@@ -127,6 +137,16 @@ class Variant {
   uint8_t m_type = k_notInit;
 };
 
+/* [Variant2] is a simpler alternative to OMG::Variant.
+ * It allows building a type-safe union with 2 stored type.
+ * This implementation use a simple union.
+ * See also [OMG::Variant] when storing more than 2 types.
+ * Depending on usage we may remove one implementation in favor of
+ * the other.
+ * [Variant2] could easily allow storing more than 2 types by
+ * increasing the number of templated types, at the cost of writing more
+ * boilerplate:
+ * [template <typename One, typename Two, typename Three = None, ...>] */
 template <typename One, typename Two>
 class Variant2 {
  public:

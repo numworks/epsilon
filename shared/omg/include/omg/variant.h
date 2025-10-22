@@ -81,10 +81,7 @@ template <typename... Arg>
 class Variant {
  public:
   Variant() = default;
-  ~Variant() {
-    assert(m_type != k_notInit);
-    m_variants.deinit(m_type);
-  }
+  ~Variant() { deinit(); }
 
   // Delete all other constructors
   Variant(const Variant&) = delete;

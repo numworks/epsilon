@@ -6,6 +6,7 @@
 
 #include "inference/controllers/dynamic_cells_data_source.h"
 #include "inference/models/inference_model.h"
+#include "inference/models/significance_test.h"
 #include "inference_controller.h"
 #include "results_controller.h"
 
@@ -23,7 +24,7 @@ class InputController
 
  public:
   constexpr static int k_numberOfTitleSignificantDigits =
-      Poincare::Preferences::VeryShortNumberOfSignificantDigits;
+      SignificanceTest::k_hypothesisValueSignificantDigits;
   constexpr static int k_titleBufferSize =
       sizeof("H0:μ1-μ2= Ha:μ1-μ2≠ α=") +  // longest possible
       3 * (Poincare::PrintFloat::charSizeForFloatsWithPrecision(

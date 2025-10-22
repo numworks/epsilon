@@ -129,7 +129,8 @@ class InferenceModel : public Shared::StatisticalDistribution {
   void setThreshold(double s) { m_threshold = s; }
 
   bool canChooseDataset() const {
-    return testType() == TestType::OneMean || testType() == TestType::TwoMeans;
+    return testType() == TestType::OneMean ||
+           testType() == TestType::TwoMeans || testType() == TestType::ANOVA;
   }
   bool hasTable() const {
     return canChooseDataset() || testType() == TestType::Slope ||

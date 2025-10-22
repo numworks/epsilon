@@ -2,7 +2,7 @@
 
 #include "inference/controllers/categorical_cell.h"
 #include "inference/controllers/categorical_controller.h"
-#include "input_goodness_table_cell.h"
+#include "inference/controllers/tables/input_goodness_table_cell.h"
 
 namespace Inference {
 

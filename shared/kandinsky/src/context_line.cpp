@@ -100,29 +100,24 @@ void KDContext::drawAntialiasedLine(float x1, float y1, float x2, float y2,
   }
 }
 
-void KDContext::drawAntialiasedBicoloredLine(float x1, float y1, float x2,
-                                             float y2, KDColor lineColor,
-                                             KDColor lineColor2) {
-  /* On the basis of Xiaolin Wu's line algorithm
-   * https://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm,
-   * modified to draw a bi-colored line */
+void KDContext::drawAntialiasedLineAutoBackground(float x1, float y1, float x2,
+                                                  float y2, KDColor lineColor) {
+  /* Implements Xiaolin Wu's line algorithm
+   * https://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm */
 
   bool steep = std::fabs(y2 - y1) > std::fabs(x2 - x1);
   if (steep) {
     std::swap(x1, y1);
     std::swap(x2, y2);
-    std::swap(lineColor, lineColor2);
   }
   if (x1 > x2) {
     std::swap(x1, x2);
     std::swap(y1, y2);
-    std::swap(lineColor, lineColor2);
   }
 
   float dx = x2 - x1;
   float dy = y2 - y1;
   double gradient = (dx == 0) ? 1 : static_cast<double>(dy) / dx;
-  KDColor middle = KDColor::Blend(lineColor, lineColor2, 128u);
   KDColor background, background2;
 
   for (int x = x1; x <= x2; x++) {
@@ -135,20 +130,14 @@ void KDContext::drawAntialiasedBicoloredLine(float x1, float y1, float x2,
              &background);
     getPixel(steep ? KDPoint(yAbove + 1, x) : KDPoint(x, yAbove + 1),
              &background2);
-    KDColor colorBelowBelow = KDColor::Blend(background, lineColor, alpha);
-    KDColor colorBelow = KDColor::Blend(lineColor, middle, alpha);
-    KDColor colorAbove = KDColor::Blend(middle, lineColor2, alpha);
-    KDColor colorAboveAbove = KDColor::Blend(lineColor2, background2, alpha);
+    KDColor colorBelow = KDColor::Blend(background, lineColor, alpha);
+    KDColor colorAbove = KDColor::Blend(lineColor, background2, alpha);
     if (steep) {
-      setPixel(KDPoint(yBelow - 1, x), colorBelowBelow);
       setPixel(KDPoint(yBelow, x), colorBelow);
       setPixel(KDPoint(yAbove, x), colorAbove);
-      setPixel(KDPoint(yAbove + 1, x), colorAboveAbove);
     } else {
-      setPixel(KDPoint(x, yBelow - 1), colorBelowBelow);
       setPixel(KDPoint(x, yBelow), colorBelow);
       setPixel(KDPoint(x, yAbove), colorAbove);
-      setPixel(KDPoint(x, yAbove + 1), colorAboveAbove);
     }
   }
 }

@@ -135,16 +135,18 @@ class PieGraphView : public Escher::View, public PieGraphViewDataSource {
         float cos = std::cos(m_cumulatedAngles[i]);
         float edgeX = center.x() + k_fradius * sin,
               edgeY = center.y() - k_fradius * cos;
-        ctx->drawAntialiasedBicoloredLine(
-            center.x(), center.y(), edgeX, edgeY, m_borderColors[i],
-            m_borderColors[(i + 1) % m_numberOfActiveCategories]);
+        KDColor blend = KDColor::Blend(
+            m_borderColors[i],
+            m_borderColors[(i + 1) % m_numberOfActiveCategories], 128);
+        ctx->drawAntialiasedLineAutoBackground(center.x(), center.y(), edgeX,
+                                               edgeY, blend);
       }
     }
   }
 
  private:
   static constexpr KDCoordinate k_radius = 70;
-  static constexpr float k_border = 3.;
+  static constexpr float k_border = 2.;
   static constexpr float k_fradius = static_cast<float>(k_radius);
 
   static float DistToCenter(float centeredX, float centeredY) {

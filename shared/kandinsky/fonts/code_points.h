@@ -17,7 +17,9 @@ constexpr
 #if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x23,  // # // NUMBER SIGN
         0x24,  // $ // DOLLAR SIGN
+#endif
         0x25,  // % // PERCENT SIGN
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x26,  // & // AMPERSAND
 #endif
         0x27,  // ' // APOSTROPHE

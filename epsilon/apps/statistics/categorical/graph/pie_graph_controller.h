@@ -58,8 +58,9 @@ class PieGraphController : public Escher::ViewController,
     m_store->getGroupName(group, buffer, sizeof(buffer));
     m_view.setTitleText(buffer);
     m_view.m_pieGraphView.setGroup(group);
-    m_isPieGraphSelected = true;
     m_view.m_pieGraphView.toggleSelection(true);
+    m_view.m_pieGraphView.reload();
+    m_isPieGraphSelected = true;
   }
 
   Escher::View* view() override { return &m_view; }
@@ -119,6 +120,7 @@ class PieGraphController : public Escher::ViewController,
     }
     if (event == Ion::Events::Left || event == Ion::Events::Right) {
       m_view.m_pieGraphView.nextCategory(event == Ion::Events::Right ? 1 : -1);
+      m_view.m_pieGraphView.reload();
       return true;
     }
     return false;

@@ -11,10 +11,10 @@
 
 namespace Statistics::Categorical {
 
-// TODO: this class is very linked to the Categorical store atm, it shouldn't be
-class PieGraphView : public Escher::View {
+class PieGraphViewDataSource {
  public:
-  PieGraphView(Store* store) : m_store(store), m_numberOfActiveCategories(0) {}
+  PieGraphViewDataSource(Store* store)
+      : m_store(store), m_numberOfActiveCategories(0) {}
 
   void toggleSelection(bool select) {
     if (m_isSelectionActive != select) {
@@ -25,11 +25,10 @@ class PieGraphView : public Escher::View {
       } else {
         m_insideColors[m_selectedCategory] = m_selectedCategoryOriginalColor;
       }
-      markWholeFrameAsDirty();
     }
   }
 
-  void nextCategory(int direction) {
+  int nextCategory(int direction) {
     if (m_isSelectionActive) {
       m_insideColors[m_selectedCategory] = m_selectedCategoryOriginalColor;
     }
@@ -43,7 +42,7 @@ class PieGraphView : public Escher::View {
       m_selectedCategoryOriginalColor = m_insideColors[m_selectedCategory];
       m_insideColors[m_selectedCategory] = k_selectedColor;
     }
-    markWholeFrameAsDirty();
+    return m_toGlobalCategories[m_selectedCategory];
   }
 
   void setGroup(int group) {
@@ -65,6 +64,7 @@ class PieGraphView : public Escher::View {
           Escher::Palette::DataColorLight[globalCatIndex];
       m_borderColors[localCatIndex] =
           Escher::Palette::DataColor[globalCatIndex];
+      m_toGlobalCategories[localCatIndex] = globalCatIndex;
       cumulatedAngle += 2 * M_PI * rf;
       m_cumulatedAngles[localCatIndex] = cumulatedAngle;
       if (m_selectedCategory == UINT8_MAX) {
@@ -78,6 +78,27 @@ class PieGraphView : public Escher::View {
       ++m_numberOfActiveCategories;
     }
   }
+
+ protected:
+  static constexpr KDColor k_selectedColor = Escher::Palette::YellowDark;
+  static constexpr KDColor k_outsideColor = KDColorWhite;
+  float m_cumulatedAngles[Store::k_maxNumberOfCategory];
+  uint8_t m_toGlobalCategories[Store::k_maxNumberOfCategory];
+  KDColor m_borderColors[Store::k_maxNumberOfCategory];
+  KDColor m_insideColors[Store::k_maxNumberOfCategory];
+  KDColor m_selectedCategoryOriginalColor;
+  Store* m_store;
+  uint8_t m_selectedCategory;
+  uint8_t m_numberOfActiveCategories;
+  bool m_isSelectionActive;
+};
+
+// TODO: this class is very linked to the Categorical store atm, it shouldn't be
+class PieGraphView : public Escher::View, public PieGraphViewDataSource {
+ public:
+  PieGraphView(Store* store) : PieGraphViewDataSource(store) {}
+
+  void reload() { markWholeFrameAsDirty(); }
 
   void drawRect(KDContext* ctx, KDRect rect) const override {
     assert(m_numberOfActiveCategories > 0);
@@ -125,15 +146,11 @@ class PieGraphView : public Escher::View {
   static constexpr KDCoordinate k_radius = 70;
   static constexpr float k_border = 3.;
   static constexpr float k_fradius = static_cast<float>(k_radius);
-  static constexpr float k_inactiveCategory = -1.;
-  static constexpr KDColor k_selectedColor = Escher::Palette::YellowDark;
-  static constexpr KDColor k_outsideColor = KDColorWhite;
 
   static float DistToCenter(float centeredX, float centeredY) {
     return (centeredX * centeredX + centeredY * centeredY) / k_fradius;
   }
 
-  // TODO handle single category pie chart (no border)
   KDColor pointColor(KDCoordinate x, KDCoordinate y, KDPoint center) const {
     KDCoordinate centeredX = x - center.x();
     KDCoordinate centeredY =
@@ -164,15 +181,6 @@ class PieGraphView : public Escher::View {
     }
     return KDColorBlack;
   }
-
-  float m_cumulatedAngles[Store::k_maxNumberOfCategory];
-  KDColor m_borderColors[Store::k_maxNumberOfCategory];
-  KDColor m_insideColors[Store::k_maxNumberOfCategory];
-  KDColor m_selectedCategoryOriginalColor;
-  Store* m_store;
-  uint8_t m_selectedCategory;
-  uint8_t m_numberOfActiveCategories;
-  bool m_isSelectionActive;
 };
 
 }  // namespace Statistics::Categorical

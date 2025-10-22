@@ -2,6 +2,7 @@
 
 #include <omg/utf8_helper.h>
 
+#include "inference/controllers/controller_container.h"
 #include "inference/models/input_table_from_store.h"
 #include "inference/text_helpers.h"
 
@@ -11,13 +12,14 @@ using namespace Poincare;
 namespace Inference {
 
 InputStoreController::InputStoreController(
-    StackViewController* parent, ViewController* nextController,
-    uint8_t pageIndex, InputStoreController* nextInputStoreController,
-    InferenceModel* inference)
-    : InputCategoricalController(parent, nextController, inference,
-                                 Invocation::Builder<InputStoreController>(
-                                     &InputStoreController::ButtonAction, this),
-                                 pageIndex),
+    Escher::StackViewController* parent,
+    ControllerContainer* controllerContainer, InferenceModel* inference,
+    uint8_t pageIndex)
+    : InputCategoricalController(
+          parent, &controllerContainer->m_resultsController, inference,
+          Invocation::Builder<InputStoreController>(
+              &InputStoreController::ButtonAction, this),
+          pageIndex),
       m_dropdownCell(&m_selectableListView, &m_dropdownDataSource, this),
       m_extraParameters{
           InputCategoricalCell<LayoutView>(&m_selectableListView, this),
@@ -30,8 +32,10 @@ InputStoreController::InputStoreController(
       m_loadedSubApp(SubApp::SignificanceTest),
       m_loadedStatistic(StatisticType::T),
       m_loadedTest(TestType::OneProportion),
-      m_nextInputStoreController(nextInputStoreController),
-      m_nextOtherController(nextController) {
+      m_nextInputStoreController(
+          pageIndex == 0 ? &controllerContainer->m_inputStoreController2
+                         : nullptr),
+      m_nextOtherController(&controllerContainer->m_resultsController) {
   m_storeParameterController.selectRow(0);
   m_selectableListView.margins()->setTop(Metric::CommonMargins.top());
   m_storeTableCell.selectableTableView()->margins()->setTop(

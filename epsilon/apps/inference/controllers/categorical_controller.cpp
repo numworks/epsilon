@@ -25,6 +25,7 @@ CategoricalController::CategoricalController(Responder* parent,
 
 bool CategoricalController::ButtonAction(CategoricalController* controller,
                                          void* s) {
+  assert(controller->m_nextController != nullptr);
   controller->stackOpenPage(controller->m_nextController);
   return true;
 }

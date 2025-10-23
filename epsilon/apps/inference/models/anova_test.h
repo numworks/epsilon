@@ -9,6 +9,12 @@ namespace Inference {
 
 class ANOVATest : public SignificanceTest, public InputTable {
  public:
+  static constexpr size_t k_maxNumberOfGroups = 6;
+  static constexpr size_t k_maxNumberOfValuesPerGroup = 10;
+
+  constexpr static int k_maxNumberOfColumns = k_maxNumberOfGroups;
+  constexpr static int k_maxNumberOfRows = k_maxNumberOfValuesPerGroup;
+
   constexpr TestType testType() const override { return TestType::ANOVA; }
   constexpr StatisticType statisticType() const override {
     return StatisticType::F;
@@ -30,8 +36,8 @@ class ANOVATest : public SignificanceTest, public InputTable {
   void recomputeData() override {
     // TODO;
   }
-  int maxNumberOfColumns() const override { return k_maxNumberOfGroups; }
-  int maxNumberOfRows() const override { return k_maxNumberOfValuesPerGroup; }
+  int maxNumberOfColumns() const override { return k_maxNumberOfColumns; }
+  int maxNumberOfRows() const override { return k_maxNumberOfRows; }
 
   Index2D initialDimensions() const override {
     return Index2D{.row = 2, .col = 2};
@@ -61,8 +67,6 @@ class ANOVATest : public SignificanceTest, public InputTable {
     return false;
   }
 
-  static constexpr size_t k_maxNumberOfGroups = 6;
-  static constexpr size_t k_maxNumberOfValuesPerGroup = 10;
   static_assert(
       k_maxNumberOfGroups <=
       Poincare::Inference::SignificanceTest::FTest::k_maxNumberOfGroups);

@@ -2,32 +2,73 @@
 
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
+#include <escher/even_odd_buffer_text_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/palette.h>
+#include <escher/solid_color_view.h>
 #include <escher/view.h>
+#include <shared/poincare_helpers.h>
 
 #include "../data/store.h"
 
 namespace Statistics::Categorical {
 
 class PieBannerView : public Escher::View {
+  static constexpr KDColor k_backgroundColor = Escher::Palette::GrayMiddle;
+  static constexpr KDGlyph::Format labelFormat = {
+      .style = {.backgroundColor = k_backgroundColor,
+                .font = KDFont::Size::Small}};
+  static constexpr KDGlyph::Format valueFormat = {
+      .style = {.backgroundColor = k_backgroundColor,
+                .font = KDFont::Size::Small},
+      .horizontalAlignment = KDGlyph::k_alignRight};
+
  public:
   PieBannerView(Store* store)
       : m_categoryTitle({.style = {.backgroundColor = k_backgroundColor},
                          .horizontalAlignment = KDGlyph::k_alignCenter}),
-        m_store(store) {}
+        m_colorLabel(labelFormat),
+        m_freqLabel(labelFormat),
+        m_relativeLabel(labelFormat),
+        m_colorCell(k_backgroundColor, k_backgroundColor, 1),
+        m_freqValue(valueFormat),
+        m_relativeValue(valueFormat),
+        m_store(store) {
+    fillWithMessageAndColon(&m_colorLabel, I18n::Message::Color);
+    fillWithMessageAndColon(&m_freqLabel, I18n::Message::Frequency);
+    fillWithMessageAndColon(&m_relativeLabel, I18n::Message::Relative);
+  }
 
   void toggleSelection(bool isSelected) {
     if (m_isSelected != isSelected) {
       m_isSelected = isSelected;
+      markWholeFrameAsDirty();
     }
   }
 
   void setCategory(int category) {
     if (m_category != category) {
       m_category = category;
-      char buffer[20];
+      char buffer[sizeof(Store::Label)];
       m_store->getCategoryName(m_category, buffer, sizeof(buffer));
+      m_colorCell.setColors(Escher::Palette::DataColorLight[m_category],
+                            Escher::Palette::DataColor[m_category]);
       m_categoryTitle.setText(buffer);
+      constexpr int bufferSize =
+          Poincare::PrintFloat::charSizeForFloatsWithPrecision(k_precision);
+      char floatBuffer[bufferSize] = "";
+      float p = m_store->getValue(m_group, m_category);
+      Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
+          p, floatBuffer, bufferSize, k_precision,
+          GlobalPreferences::SharedGlobalPreferences()->displayMode());
+      m_freqValue.setText(floatBuffer);
+      p = m_store->getRelativeFrequency(m_group, m_category);
+      Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
+          p, floatBuffer, bufferSize, k_precision,
+          GlobalPreferences::SharedGlobalPreferences()->displayMode());
+      m_relativeValue.setText(floatBuffer);
+      layoutSubviews(false);
+      markWholeFrameAsDirty();
     }
   }
 
@@ -35,30 +76,119 @@ class PieBannerView : public Escher::View {
     if (m_group != group) {
       m_group = group;
       m_category = k_invalidGroupOrCategory;
+      markWholeFrameAsDirty();
     }
   }
 
-  void reload() { markWholeFrameAsDirty(); }
-
  private:
-  static constexpr KDColor k_backgroundColor = Escher::Palette::GrayMiddle;
+  void fillWithMessageAndColon(Escher::TextView* textView,
+                               I18n::Message message) {
+    char buffer[20];
+    Poincare::Print::CustomPrintf(buffer, sizeof(buffer),
+                                  "%s:", I18n::translate(message));
+    textView->setText(buffer);
+  }
+
   void drawRect(KDContext* ctx, KDRect rect) const override {
     ctx->fillRect(bounds(), k_backgroundColor);
   }
 
   void layoutSubviews(bool force = false) override {
-    KDRect titleRect = KDRect(0, 0, bounds().width(), 50);
+    KDCoordinate height = 0;
+    KDRect titleRect = KDRect(0, 0, bounds().width(), 40);
     setChildFrame(&m_categoryTitle, titleRect, force);
+    height += titleRect.height();
+
+    constexpr KDCoordinate k_verticalMargin = 15;
+    constexpr KDCoordinate k_horizontalMargin = 5;
+
+    // Color label and cell
+    constexpr KDCoordinate k_colorCellWidth = 40;
+    constexpr KDCoordinate k_textHeigth = 20;
+    constexpr KDCoordinate k_colorCellHeigth = 15;
+    KDRect colorTextRect =
+        KDRect(k_verticalMargin, height, bounds().width() - k_verticalMargin,
+               k_textHeigth);
+    setChildFrame(&m_colorLabel, colorTextRect, force);
+    KDRect colorCellRect =
+        KDRect(bounds().width() - k_verticalMargin - k_colorCellWidth, height,
+               k_colorCellWidth, k_colorCellHeigth);
+    setChildFrame(&m_colorCell, colorCellRect, force);
+    height += colorTextRect.height() + k_horizontalMargin;
+
+    // Frequency label
+    KDRect freqTextRect =
+        KDRect(k_verticalMargin, height, bounds().width() - k_verticalMargin,
+               k_textHeigth);
+    setChildFrame(&m_freqLabel, freqTextRect, force);
+
+    // Frequency value
+    KDSize labelSize = m_freqLabel.minimalSizeForOptimalDisplay();
+    KDSize valueSize = m_freqValue.minimalSizeForOptimalDisplay();
+    if (labelSize.width() + valueSize.width() + 2 * k_verticalMargin >
+        bounds().width()) {
+      height += k_textHeigth;
+    }
+    KDRect freqValueRect =
+        KDRect(bounds().width() - k_verticalMargin - valueSize.width(), height,
+               valueSize.width(), k_textHeigth);
+    setChildFrame(&m_freqValue, freqValueRect, force);
+    height += freqTextRect.height() + k_horizontalMargin;
+
+    // Relative label and value
+    KDRect relativeTextRect =
+        KDRect(k_verticalMargin, height, bounds().width() - k_verticalMargin,
+               k_textHeigth);
+    setChildFrame(&m_relativeLabel, relativeTextRect, force);
+
+    // Relative value
+    labelSize = m_relativeLabel.minimalSizeForOptimalDisplay();
+    valueSize = m_relativeValue.minimalSizeForOptimalDisplay();
+    if (labelSize.width() + valueSize.width() + 2 * k_verticalMargin >
+        bounds().width()) {
+      height += k_textHeigth;
+    }
+    KDRect relativeValueRect =
+        KDRect(bounds().width() - k_verticalMargin - valueSize.width(), height,
+               valueSize.width(), k_textHeigth);
+    setChildFrame(&m_relativeValue, relativeValueRect, force);
   }
 
-  Escher::View* subviewAtIndex(int index) override { return &m_categoryTitle; }
+  Escher::View* subviewAtIndex(int index) override {
+    switch (index) {
+      case 0:
+        return &m_categoryTitle;
+      case 1:
+        return &m_colorLabel;
+      case 2:
+        return &m_freqLabel;
+      case 3:
+        return &m_relativeLabel;
+      case 4:
+        return &m_colorCell;
+      case 5:
+        return &m_freqValue;
+      case 6:
+        return &m_relativeValue;
+    }
+    OMG::unreachable();
+  }
+
   int numberOfSubviews() const override {
     if (!m_isSelected) {
       return 0;
     }
-    return 1;
+    return 7;
   }
-  Escher::BufferTextView<20> m_categoryTitle;
+  static constexpr int k_precision =
+      Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision;
+  Escher::BufferTextView<sizeof(Store::Label)> m_categoryTitle;
+  Escher::BufferTextView<9> m_colorLabel;
+  Escher::BufferTextView<14> m_freqLabel;
+  Escher::BufferTextView<13> m_relativeLabel;
+  Escher::SolidColorWithBorderView m_colorCell;
+  Escher::FloatBufferTextView<k_precision> m_freqValue;
+  Escher::FloatBufferTextView<k_precision> m_relativeValue;
   Store* m_store;
   static constexpr uint8_t k_invalidGroupOrCategory = UINT8_MAX;
   uint8_t m_category = k_invalidGroupOrCategory;

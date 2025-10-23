@@ -90,24 +90,14 @@ make -C sample_cpp PLATFORM=simulator debug
 
 ### Web simulator
 
-#### Additional Setup
-
-Depending on you system:
-- Windows:
-```shell
-./setup_web.ps1
-```
-- Others:
-```shell
-chmod +x setup_web.sh & ./setup_web.sh
-```
-
 #### Launch a server
 
 On a separate shell, run
 ```shell
 make -C sample_cpp server
 ```
+
+You'll need EMSDK install as instructed in [Web](epsilon_simulators/web/README.md).
 
 #### Build and run your app
 

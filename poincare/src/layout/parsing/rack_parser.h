@@ -43,9 +43,12 @@ class RackParser {
         m_waitingSlashForMixedFraction(false),
         m_root(rack) {}
 
+  // parse returns the expression or nullptr if a syntax error was encountered
   Tree* parse();
 
  private:
+  // All the private parseSomething methods may raise ParseFail
+  Tree* parseRack();
   Tree* parseUntil(Token::Type stoppingType, TreeRef leftHandSide = TreeRef());
   Tree* parseExpressionWithRightwardsArrow(size_t rightwardsArrowPosition);
   Tree* initializeFirstTokenAndParseUntilEnd();

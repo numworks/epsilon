@@ -33,6 +33,16 @@
 namespace Poincare::Internal {
 
 Tree* RackParser::parse() {
+  ExceptionTry { return parseRack(); }
+  ExceptionCatch(type) {
+    if (type != ExceptionType::ParseFail) {
+      TreeStackCheckpoint::Raise(type);
+    }
+  }
+  return nullptr;
+}
+
+Tree* RackParser::parseRack() {
   bool isTopLevel = m_parsingContext.metadata.isTopLevelRack;
   /* This can be unset as it won't be used anymore. This ensures it's not
    * passed to subsequent calls to Parser::Parse */
@@ -45,32 +55,23 @@ Tree* RackParser::parse() {
     m_parsingContext.metadata.isAssignmentDeclaration = true;
   }
 
-  ExceptionTry {
-    for (IndexedChild<const Tree*> child : m_root->indexedChildren()) {
-      if (child.index < m_tokenizer.currentPosition() ||
-          child.index >= m_tokenizer.endPosition()) {
-        continue;
-      }
-      if (child->treeIsIdenticalTo("→"_cl)) {
-        // Rightwards arrow are only allowed in the root rack of the layout
-        if (!isTopLevel) {
-          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-        }
-        return parseExpressionWithRightwardsArrow(child.index);
-      }
+  for (IndexedChild<const Tree*> child : m_root->indexedChildren()) {
+    if (child.index < m_tokenizer.currentPosition() ||
+        child.index >= m_tokenizer.endPosition()) {
+      continue;
     }
-    Tree* result = initializeFirstTokenAndParseUntilEnd();
-    // Only 1 tree has been created.
-    assert(result &&
-           result->nextTree()->block() == SharedTreeStack->lastBlock());
-    return result;
-  }
-  ExceptionCatch(type) {
-    if (type != ExceptionType::ParseFail) {
-      TreeStackCheckpoint::Raise(type);
+    if (child->treeIsIdenticalTo("→"_cl)) {
+      // Rightwards arrow are only allowed in the root rack of the layout
+      if (!isTopLevel) {
+        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      }
+      return parseExpressionWithRightwardsArrow(child.index);
     }
   }
-  return nullptr;
+  Tree* result = initializeFirstTokenAndParseUntilEnd();
+  // Only 1 tree has been created.
+  assert(result && result->nextTree()->block() == SharedTreeStack->lastBlock());
+  return result;
 }
 
 static inline void turnIntoBinaryNode(const Tree* node, TreeRef& leftHandSide,
@@ -564,10 +565,7 @@ void RackParser::parseImplicitAdditionBetweenUnits(TreeRef& leftHandSide,
   newParsingContext.metadata.isImplicitAdditionBetweenUnits = true;
   RackParser subParser(m_root, newParsingContext, start,
                        start + m_currentToken.length());
-  leftHandSide = subParser.parse();
-  if (leftHandSide.isUninitialized()) {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
+  leftHandSide = subParser.parseRack();
   isThereImplicitOperator();
 }
 
@@ -1389,12 +1387,7 @@ Tree* RackParser::parseCommaSeparatedList(bool isFirstToken) {
     RackParser subParser(m_nextToken.firstLayout()->nextNode(),
                          newParsingContext);
     popToken();
-    Tree* result = subParser.parse();
-    if (!result) {
-      // Failure while parsing the list.
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-    }
-    return result;
+    return subParser.parseRack();
   }
   TreeRef list = List::PushEmpty();
   if (m_nextToken.is(Token::Type::EndOfStream)) {

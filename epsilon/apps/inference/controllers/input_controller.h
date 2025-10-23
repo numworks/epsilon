@@ -4,7 +4,7 @@
 #include <escher/highlight_cell.h>
 #include <escher/menu_cell_with_editable_text.h>
 
-#include "inference/controllers/dynamic_cells_data_source.h"
+#include "inference/controllers/tables/dynamic_cells_data_source.h"
 #include "inference/models/inference_model.h"
 #include "inference/models/significance_test.h"
 #include "inference_controller.h"

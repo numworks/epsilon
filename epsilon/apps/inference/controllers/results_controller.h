@@ -7,7 +7,7 @@
 #include <escher/menu_cell.h>
 #include <escher/stack_view_controller.h>
 
-#include "inference/controllers/dynamic_cells_data_source.h"
+#include "inference/controllers/tables/dynamic_cells_data_source.h"
 #include "inference/models/inference_model.h"
 #include "inference_controller.h"
 

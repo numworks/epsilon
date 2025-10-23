@@ -1,6 +1,6 @@
 #pragma once
 
-#include "inference/controllers/categorical_table_cell.h"
+#include "inference/controllers/tables/categorical_table_cell.h"
 #include "inference/models/input_table_from_store.h"
 #include "inference/models/one_mean_statistic.h"
 #include "inference/models/slope_t_statistic.h"

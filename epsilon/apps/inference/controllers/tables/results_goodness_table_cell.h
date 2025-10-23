@@ -1,6 +1,6 @@
 #pragma once
 
-#include "inference/controllers/categorical_controller.h"
+#include "categorical_controller.h"
 #include "inference/models/goodness_test.h"
 
 namespace Inference {

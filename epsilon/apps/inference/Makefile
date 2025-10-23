@@ -1,6 +1,5 @@
 SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   app.cpp \
-  controllers/dynamic_cells_data_source.cpp \
   controllers/chi_square/categorical_type_controller.cpp \
   controllers/chi_square/input_goodness_controller.cpp \
   controllers/chi_square/input_homogeneity_controller.cpp \
@@ -12,6 +11,10 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/confidence_interval/interval_graph_view.cpp \
   controllers/store/input_store_controller.cpp \
   controllers/store/store_table_cell.cpp \
+  controllers/tables/categorical_cell.cpp \
+  controllers/tables/categorical_controller.cpp \
+  controllers/tables/categorical_table_cell.cpp \
+  controllers/tables/dynamic_cells_data_source.cpp \
   controllers/tables/homogeneity_data_source.cpp \
   controllers/tables/input_goodness_table_cell.cpp \
   controllers/tables/input_homogeneity_table_cell.cpp \
@@ -25,9 +28,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/significance_test/test_graph_controller.cpp \
   controllers/significance_test/test_graph_view.cpp \
   controllers/significance_test/zoom_hint_view.cpp \
-  controllers/categorical_cell.cpp \
-  controllers/categorical_controller.cpp \
-  controllers/categorical_table_cell.cpp \
   controllers/comparison_operator_popup_data_source.cpp \
   controllers/dataset_controller.cpp \
   controllers/input_controller.cpp \

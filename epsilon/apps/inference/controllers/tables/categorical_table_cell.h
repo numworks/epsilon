@@ -10,7 +10,7 @@
 #include <shared/parameter_text_field_delegate.h>
 
 #include "categorical_table_view_data_source.h"
-#include "inference/controllers/dynamic_cells_data_source.h"
+#include "dynamic_cells_data_source.h"
 #include "inference/models/inference_model.h"
 #include "inference/models/input_table.h"
 

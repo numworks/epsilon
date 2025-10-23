@@ -2,8 +2,8 @@
 
 #include <escher/buffer_text_highlight_cell.h>
 
-#include "../categorical_controller.h"
-#include "../input_controller.h"
+#include "inference/controllers/input_controller.h"
+#include "inference/controllers/tables/categorical_controller.h"
 #include "store_column_parameter_controller.h"
 #include "store_table_cell.h"
 

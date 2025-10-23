@@ -34,6 +34,9 @@ App::App(Snapshot* snapshot)
           .m_homogeneityResultsController{
               &m_stackViewController, &m_controllerContainer,
               static_cast<HomogeneityTest*>(snapshot->inference())},
+          .m_inputANOVAController{
+              &m_stackViewController, &m_controllerContainer,
+              static_cast<ANOVATest*>(snapshot->inference())},
           .m_inputHomogeneityController{
               &m_stackViewController, &m_controllerContainer,
               static_cast<HomogeneityTest*>(snapshot->inference())},

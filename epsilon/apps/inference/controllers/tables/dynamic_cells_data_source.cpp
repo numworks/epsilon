@@ -2,6 +2,7 @@
 
 #include <new>
 
+#include "anova_data_source.h"
 #include "homogeneity_data_source.h"
 #include "inference/app.h"
 #include "inference/controllers/results_controller.h"
@@ -71,6 +72,12 @@ Escher::HighlightCell* DynamicCellsDataSource<T, N>::cell(int i) {
   return &m_cells[i];
 }
 
+template class DynamicCellsDataSource<
+    InferenceEvenOddBufferCell,
+    ANOVATableDimensions::k_numberOfHeaderReusableCells>;
+template class DynamicCellsDataSource<
+    InferenceEvenOddEditableCell,
+    ANOVATableDimensions::k_numberOfInnerReusableCells>;
 template class DynamicCellsDataSource<
     InferenceEvenOddBufferCell,
     HomogeneityTableDimensions::k_numberOfHeaderReusableCells>;

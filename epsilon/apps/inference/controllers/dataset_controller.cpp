@@ -102,7 +102,7 @@ bool DatasetController::handleEvent(Ion::Events::Event event) {
   }
   if (row == indexOfInputDataCell()) {
     if (m_inferenceModel->testType() == TestType::ANOVA) {
-      // TODO: table for ANOVA model
+      stackOpenPage(&m_controllerContainer->m_inputANOVAController);
       return true;
     }
     stackOpenPage(&m_controllerContainer->m_inputHomogeneityController);

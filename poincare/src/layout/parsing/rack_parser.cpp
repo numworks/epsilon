@@ -32,32 +32,29 @@
 
 namespace Poincare::Internal::Parser {
 
-Tree* RackParser::parseRack() {
-  bool isTopLevel = m_parsingContext.metadata.isTopLevelRack;
-  /* This can be unset as it won't be used anymore. This ensures it's not
-   * passed to subsequent calls to Parser::Parse */
-  m_parsingContext.metadata.isTopLevelRack = false;
-
-  if (isTopLevel && m_parsingContext.params.isAssignment) {
+Tree* RackParser::parseTopLevelRack() {
+  if (m_parsingContext.params.isAssignment) {
     /* If the rack is the top-level rack and we are parsing for assignment,
      * we set isAssignmentDeclaration to true so that the first token
      * can be parsed as a CustomIdentifier */
     m_parsingContext.metadata.isAssignmentDeclaration = true;
   }
 
+  // Handle stores and unit conversions
   for (IndexedChild<const Tree*> child : m_root->indexedChildren()) {
     if (child.index < m_tokenizer.currentPosition() ||
         child.index >= m_tokenizer.endPosition()) {
       continue;
     }
     if (child->treeIsIdenticalTo("→"_cl)) {
-      // Rightwards arrow are only allowed in the root rack of the layout
-      if (!isTopLevel) {
-        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-      }
       return parseExpressionWithRightwardsArrow(child.index);
     }
   }
+
+  return parseRack();
+}
+
+Tree* RackParser::parseRack() {
   Tree* result = initializeFirstTokenAndParseUntilEnd();
   // Only 1 tree has been created.
   assert(result && result->nextTree()->block() == SharedTreeStack->lastBlock());
@@ -97,7 +94,13 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
   // Step 1. Parse as unitConversion
   m_parsingContext.metadata.isUnitConversion = true;
   State previousState = currentState();
-  ExceptionTry { return initializeFirstTokenAndParseUntilEnd(); }
+  ExceptionTry {
+    m_nextToken = m_tokenizer.popToken();
+    TreeRef leftHandSide = parseUntil(Token::Type::RightwardsArrow);
+    m_nextToken = m_tokenizer.popToken();
+    parseUnitConversion(leftHandSide);
+    return leftHandSide;
+  }
   ExceptionCatch(type) {
     if (type != ExceptionType::ParseFail) {
       TreeStackCheckpoint::Raise(type);
@@ -162,7 +165,7 @@ Tree* RackParser::parseUntil(Token::Type stoppingType, TreeRef leftHandSide) {
                                           Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
       &RackParser::parseUnexpected,          // Token::Type::EndOfStream
-      &RackParser::parseRightwardsArrow,     // Token::Type::RightwardsArrow
+      &RackParser::parseUnexpected,          // Token::Type::RightwardsArrow
       &RackParser::parseAssignmentEqual,     // Token::Type::AssignmentEqual
       &RackParser::parseUnexpected,          // Token::Type::RightBracket
       &RackParser::parseUnexpected,          // Token::Type::RightParenthesis
@@ -210,7 +213,6 @@ Tree* RackParser::parseUntil(Token::Type stoppingType, TreeRef leftHandSide) {
       &RackParser::function == tokenParsers[static_cast<int>(token)], \
       "Wrong order of TokenParsers");
   assert_order(Token::Type::EndOfStream, parseUnexpected);
-  assert_order(Token::Type::RightwardsArrow, parseRightwardsArrow);
   assert_order(Token::Type::RightBracket, parseUnexpected);
   assert_order(Token::Type::RightParenthesis, parseUnexpected);
   assert_order(Token::Type::RightBrace, parseUnexpected);
@@ -661,8 +663,8 @@ void RackParser::parseAssignmentEqual(TreeRef& leftHandSide,
   leftHandSide->cloneNodeAtNode(KEqual);
 }
 
-void RackParser::parseRightwardsArrow(TreeRef& leftHandSide,
-                                      Token::Type stoppingType) {
+void RackParser::parseUnitConversion(TreeRef& leftHandSide,
+                                     Token::Type stoppingType) {
   /* Rightwards arrow can either be UnitConvert or Store.
    * The expression 3a->m is a store of 3*a into the variable m
    * The expression 3mm->m is a unit conversion of 3mm into meters
@@ -679,8 +681,8 @@ void RackParser::parseRightwardsArrow(TreeRef& leftHandSide,
    * If you arrive here, you should always be in a unit conversion.
    * */
 
-  if (leftHandSide.isUninitialized() ||
-      !m_parsingContext.metadata.isUnitConversion) {
+  assert(m_parsingContext.metadata.isUnitConversion);
+  if (leftHandSide.isUninitialized()) {
     // Left-hand side missing or not in a unit conversion
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }

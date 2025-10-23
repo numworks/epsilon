@@ -15,10 +15,6 @@
 
 namespace Poincare::Internal::Parser {
 
-/* TODO_PCJ: This class closely follows Poincare::Parser. Last update was on
- * 5fa0f7c. When Poincare::Parser is removed, updated  with latest changes and
- * remove this comment. */
-
 class RackParser {
  public:
   enum class Status { Success, Progress, Error };
@@ -45,6 +41,7 @@ class RackParser {
   /* All the parseSomething methods may raise ParseFail and should return
    * a valid expression otherwise (not nullptr). */
   Tree* parseRack();
+  Tree* parseTopLevelRack();
 
  private:
   Tree* parseUntil(Token::Type stoppingType, TreeRef leftHandSide = TreeRef());
@@ -125,8 +122,8 @@ class RackParser {
     parseBinaryLogicalOperator(Type::LogicalNor, leftHandSide, stoppingType);
   }
 
-  void parseRightwardsArrow(TreeRef& leftHandSide,
-                            Token::Type stoppingType = (Token::Type)0);
+  void parseUnitConversion(TreeRef& leftHandSide,
+                           Token::Type stoppingType = (Token::Type)0);
   void parseLeftSuperscript(TreeRef& leftHandSide,
                             Token::Type stoppingType = (Token::Type)0);
   void parseList(TreeRef& leftHandSide,
@@ -194,7 +191,6 @@ class RackParser {
   Tokenizer m_tokenizer;
   Token m_currentToken;
   Token m_nextToken;
-  bool m_isTopLevel;
   bool m_pendingImplicitOperator;
   bool m_waitingSlashForMixedFraction;
   const Tree* m_root;

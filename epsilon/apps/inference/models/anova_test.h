@@ -2,11 +2,12 @@
 
 #include <omg/vector.h>
 
+#include "input_table.h"
 #include "significance_test.h"
 
 namespace Inference {
 
-class ANOVATest : public SignificanceTest {
+class ANOVATest : public SignificanceTest, public InputTable {
  public:
   constexpr TestType testType() const override { return TestType::ANOVA; }
   constexpr StatisticType statisticType() const override {
@@ -14,6 +15,27 @@ class ANOVATest : public SignificanceTest {
   }
 
   void compute() override;
+
+  // InputTable
+  InputTable* table() override { return this; }
+
+  uint8_t numberOfSeries() const override { return 0; }
+
+  void setValueAtPosition(double value, int row, int column) override;
+
+  double valueAtPosition(int row, int column) const override;
+
+  bool authorizedValueAtPosition(double p, int row, int column) const override;
+
+  void recomputeData() override {
+    // TODO;
+  }
+  int maxNumberOfColumns() const override { return k_maxNumberOfGroups; }
+  int maxNumberOfRows() const override { return k_maxNumberOfValuesPerGroup; }
+
+  Index2D initialDimensions() const override {
+    return Index2D{.row = 2, .col = 2};
+  }
 
   using GroupValues = Poincare::Inference::SignificanceTest::FTest::Values;
 
@@ -26,10 +48,7 @@ class ANOVATest : public SignificanceTest {
 
  private:
   // Inference
-  double* parametersArray() override {
-    assert(false);
-    return nullptr;
-  }
+  double* parametersArray() override { return nullptr; }
   float computeXMax() const override {
     // TODO
     return 1;
@@ -43,9 +62,11 @@ class ANOVATest : public SignificanceTest {
   }
 
   static constexpr size_t k_maxNumberOfGroups = 6;
+  static constexpr size_t k_maxNumberOfValuesPerGroup = 10;
   static_assert(
       k_maxNumberOfGroups <=
       Poincare::Inference::SignificanceTest::FTest::k_maxNumberOfGroups);
+  static_assert(k_maxNumberOfValuesPerGroup <= GroupValues{}.capacity());
 
   OMG::StaticVector<GroupValues, k_maxNumberOfGroups> m_groups;
 };

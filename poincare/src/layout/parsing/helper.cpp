@@ -11,6 +11,24 @@
 
 namespace Poincare::Internal::Parser {
 
+bool ParsingHelper::CanBeCustomIdentifier(UnicodeDecoder& decoder,
+                                          size_t length) {
+#if TODO_PCJ
+  ParsingContext parsingContext{.param = {.preserveInput = true}};
+  Tokenizer tokenizer(decoder, &parsingContext);
+  Token t = tokenizer.popToken();
+  if (t.type() != Token::Type::CustomIdentifier ||
+      t.length() != decoder.end() - decoder.start() ||
+      !SymbolHelper::NameLengthIsValid(t.text(), t.length())) {
+    return false;
+  }
+  return true;
+#else
+  return (length == static_cast<size_t>(-1) ? decoder.end() - decoder.start()
+                                            : length) <= 7;
+#endif
+}
+
 bool ParsingHelper::IsLogicalOperator(LayoutSpan name,
                                       Token::Type* returnType) {
 #if POINCARE_BOOLEAN
@@ -126,7 +144,7 @@ bool ParsingHelper::ParameterText(UnicodeDecoder& varDecoder,
   startOfVariable = varDecoder.position();
   size_t lengthOfVariable = endOfVariable - startOfVariable - 1;
 
-  if (!Tokenizer::CanBeCustomIdentifier(varDecoder, lengthOfVariable)) {
+  if (!CanBeCustomIdentifier(varDecoder, lengthOfVariable)) {
     return false;
   }
   varDecoder.unsafeSetPosition(startOfVariable);

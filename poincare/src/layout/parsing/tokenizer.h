@@ -43,8 +43,6 @@ class Tokenizer {
   }
 
   static bool IsIdentifierMaterial(const CodePoint c);
-  static bool CanBeCustomIdentifier(UnicodeDecoder& decoder,
-                                    size_t length = -1);
 
  private:
   constexpr static int k_maxNumberOfIdentifiersInList =

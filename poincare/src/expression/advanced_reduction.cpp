@@ -682,12 +682,18 @@ bool AdvancedReduction::TryAllOperations(Tree* e,
   assert(!SystematicReduction::DeepReduce(e));
   while (consecutiveFailures < numberOfOperations) {
     uint32_t hash = e->hash();
-    [[maybe_unused]] bool changed = operations[i % numberOfOperations](e);
-    bool hashChanged = hash != e->hash();
-    // This assertion should help catch useless advanced operations
-    assert(changed == hashChanged);
-    consecutiveFailures = hashChanged ? 0 : consecutiveFailures + 1;
-    // EveryOperation should preserve e's reduced status
+    [[maybe_unused]] bool hasAppliedAdvancedOperation =
+        operations[i % numberOfOperations](e);
+    bool hasChangedExpression = hash != e->hash();
+    /* This assertion should help catch useless advanced operations, i.e.
+     * operations which are negated by the systematic reduction and thus return
+     * an identical expression.
+     * It could be relaxed to (!hasChangedExpression ||
+     * hasAppliedAdvancedOperation) in case some of those operations cannot be
+     * refactored. */
+    assert(hasAppliedAdvancedOperation == hasChangedExpression);
+    consecutiveFailures = hasChangedExpression ? 0 : consecutiveFailures + 1;
+    // All operations should preserve e's reduced status
     assert(!SystematicReduction::DeepReduce(e));
     i++;
   }

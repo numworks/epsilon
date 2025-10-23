@@ -68,10 +68,14 @@ bool ColumnParameterController::textFieldShouldFinishEditing(
 bool ColumnParameterController::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   const char* name = textField->draftText();
+  // Remove last glyph until size if below limit
+  while (UTF8Helper::StringGlyphLength(name) > Store::k_labelGlyphLength ||
+         strlen(name) > Store::k_labelLength) {
+    UTF8Helper::RemovePreviousGlyph(name,
+                                    const_cast<char*>(name + strlen(name)));
+  }
   m_store->setGroupName(name, m_column);
-  char buffer[20];
-  m_store->getGroupName(m_column, buffer, sizeof(buffer));
-  m_columnNameCell.textField()->setText(buffer);
+  m_columnNameCell.textField()->setText(name);
   m_selectableListView.reloadSelectedCell();
   if (event == Ion::Events::Down) {
     m_selectableListView.handleEvent(event);
@@ -88,7 +92,7 @@ const Escher::AbstractMenuCell* ColumnParameterController::cell(int row) const {
 }
 
 const char* ColumnParameterController::title() const {
-  char buffer[20];
+  char buffer[sizeof(Store::Label)];
   m_store->getGroupName(m_column, buffer, sizeof(buffer));
   Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),
                                 I18n::translate(I18n::Message::ColumnOptions),
@@ -101,7 +105,7 @@ void ColumnParameterController::setColumn(int col) {
   m_showInGraphCell.accessory()->setState(m_store->isGroupActive(m_column));
   m_relativeFreqCell.accessory()->setState(
       m_store->isRelativeFrequencyColumnActive(m_column));
-  char buffer[20];
+  char buffer[sizeof(Store::Label)];
   m_store->getGroupName(col, buffer, sizeof(buffer));
   m_columnNameCell.textField()->setText(buffer);
   m_selectableListView.selectRow(0);

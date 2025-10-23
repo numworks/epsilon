@@ -211,7 +211,7 @@ void StoreController::recomputeDimensionsAndReload(bool force) {
 }
 
 void StoreController::popupConfirmation(bool forColumn, int dataColOrRow) {
-  char buffer[20];
+  char buffer[sizeof(Store::Label)];
   if (forColumn) {
     m_store->getGroupName(dataColOrRow, buffer, sizeof(buffer));
     m_deleteColumnConfirmPopUpController.setMessageWithPlaceholders(

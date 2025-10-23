@@ -39,10 +39,14 @@ bool RowParameterController::handleEvent(Ion::Events::Event event) {
 bool RowParameterController::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   const char* name = textField->draftText();
+  // Remove last glyph until size if below limit
+  while (UTF8Helper::StringGlyphLength(name) > Store::k_labelGlyphLength ||
+         strlen(name) > Store::k_labelLength) {
+    UTF8Helper::RemovePreviousGlyph(name,
+                                    const_cast<char*>(name + strlen(name)));
+  }
   m_store->setCategoryName(name, m_row);
-  char buffer[20];
-  m_store->getCategoryName(m_row, buffer, sizeof(buffer));
-  m_rowNameCell.textField()->setText(buffer);
+  m_rowNameCell.textField()->setText(name);
   m_selectableListView.reloadSelectedCell();
   if (event == Ion::Events::Down) {
     m_selectableListView.handleEvent(event);
@@ -60,7 +64,7 @@ const Escher::AbstractMenuCell* RowParameterController::cell(int row) const {
 }
 
 const char* RowParameterController::title() const {
-  char buffer[20];
+  char buffer[sizeof(Store::Label)];
   m_store->getCategoryName(m_row, buffer, sizeof(buffer));
   Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),
                                 I18n::translate(I18n::Message::RowOptions),
@@ -70,7 +74,7 @@ const char* RowParameterController::title() const {
 
 void RowParameterController::setRow(int row) {
   m_row = row;
-  char buffer[20];
+  char buffer[sizeof(Store::Label)];
   m_store->getCategoryName(row, buffer, sizeof(buffer));
   m_rowNameCell.textField()->setText(buffer);
   m_selectableListView.selectRow(0);

@@ -13,13 +13,18 @@
 
 namespace Inference {
 
+namespace ResultsControllerDimensions {
+constexpr static int k_numberOfReusableCells = 8;
+}
+
 using ResultCell = Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
                                     Escher::FloatBufferTextView<>>;
 
 class ResultsController
     : public InferenceController,
       public Escher::ListWithTopAndBottomController,
-      public DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>,
+      public DynamicCellsDataSource<
+          ResultCell, ResultsControllerDimensions::k_numberOfReusableCells>,
       public DynamicCellsDataSourceDelegate<ResultCell> {
  public:
   ResultsController(Escher::Responder* parent, InferenceModel* inference,

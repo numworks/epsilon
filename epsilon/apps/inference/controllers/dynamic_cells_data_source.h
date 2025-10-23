@@ -54,8 +54,4 @@ class DynamicCellsDataSourceDelegate {
   virtual Escher::SelectableTableView* tableView() = 0;
 };
 
-constexpr int k_resultDataSourceNumberOfReusableCells = 8;
-constexpr int k_maxNumberOfResultCells =
-    k_resultDataSourceNumberOfReusableCells;
-
 }  // namespace Inference

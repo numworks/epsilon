@@ -9,6 +9,7 @@
 
 #include "controllers/controller_container.h"
 #include "controllers/dynamic_cells_data_source.h"
+#include "inference/controllers/results_controller.h"
 #include "inference/controllers/tables/homogeneity_data_source.h"
 #include "models/inference_buffer.h"
 
@@ -71,7 +72,8 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
 
   constexpr static int k_bufferSize =  // 21056
       std::max(
-          {sizeof(ResultCell) * k_maxNumberOfResultCells,
+          {sizeof(ResultCell) *
+               ResultsControllerDimensions::k_numberOfReusableCells,
            sizeof(ParameterCell) *
                InputControllerDimensions::k_maxNumberOfParameterCell,
            sizeof(InferenceEvenOddBufferCell) *

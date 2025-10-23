@@ -12,13 +12,39 @@
 
 namespace Inference {
 
+namespace HomogeneityTableDimensions {
+constexpr static int k_columnWidth = 82;
+// 5 - we take into account the potential "Total" column
+constexpr static int k_numberOfReusableColumns =
+    std::min(Ion::Display::Width / k_columnWidth + 2,
+             HomogeneityTest::k_maxNumberOfColumns + 1);
+// std::min(12, 9 + 1) - we take into account the potential "Total" row
+constexpr static int k_maxNumberOfReusableRows =
+    std::min(CategoricalTableViewDataSource::k_maxNumberOfReusableRows,
+             HomogeneityTest::k_maxNumberOfRows + 1);
+// 5 * 10
+constexpr static int k_numberOfInnerReusableCells =
+    k_maxNumberOfReusableRows * k_numberOfReusableColumns;
+
+// -1 takes the hidden top left cell into account
+// 5 + 10 - 1
+constexpr static int k_numberOfHeaderReusableCells =
+    k_numberOfReusableColumns + k_maxNumberOfReusableRows - 1;
+}  // namespace HomogeneityTableDimensions
+
+using HomogeneityHeaderCellsDataSource = DynamicCellsDataSource<
+    InferenceEvenOddBufferCell,
+    HomogeneityTableDimensions::k_numberOfHeaderReusableCells>;
+
+using InputHomogeneityInnerCellsDataSource = DynamicCellsDataSource<
+    InferenceEvenOddEditableCell,
+    HomogeneityTableDimensions::k_numberOfInnerReusableCells>;
+
 /* This class wraps a TableViewDataSource by adding a Row & Column header around
  * it. Specifically meant for InputHomogeneity and HomogeneityResults. */
 class HomogeneityTableDataSource
     : public CategoricalTableViewDataSource,
-      public DynamicCellsDataSource<
-          InferenceEvenOddBufferCell,
-          k_homogeneityTableNumberOfReusableHeaderCells>,
+      public HomogeneityHeaderCellsDataSource,
       public DynamicCellsDataSourceDelegate<InferenceEvenOddBufferCell> {
  public:
   HomogeneityTableDataSource();
@@ -38,18 +64,12 @@ class HomogeneityTableDataSource
   // DynamicCellsDataSource
   void initCell(InferenceEvenOddBufferCell, void* cell, int index) override;
 
-  constexpr static int k_columnWidth = 82;
-  // 5 - we take into account the potential "Total" column
+  constexpr static int k_columnWidth =
+      HomogeneityTableDimensions::k_columnWidth;
   constexpr static int k_numberOfReusableColumns =
-      std::min(Ion::Display::Width / k_columnWidth + 2,
-               HomogeneityTest::k_maxNumberOfColumns + 1);
-  // std::min(12, 9 + 1) - we take into account the potential "Total" row
+      HomogeneityTableDimensions::k_numberOfReusableColumns;
   constexpr static int k_maxNumberOfReusableRows =
-      std::min(CategoricalTableViewDataSource::k_maxNumberOfReusableRows,
-               HomogeneityTest::k_maxNumberOfRows + 1);
-  // 5 * 10
-  constexpr static int k_numberOfReusableCells =
-      k_maxNumberOfReusableRows * k_numberOfReusableColumns;
+      HomogeneityTableDimensions::k_maxNumberOfReusableRows;
 
  protected:
   constexpr static int k_maxNumberOfColumns =

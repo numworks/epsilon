@@ -9,9 +9,7 @@ using namespace Escher;
 namespace Inference {
 
 HomogeneityTableDataSource::HomogeneityTableDataSource()
-    : DynamicCellsDataSource<InferenceEvenOddBufferCell,
-                             k_homogeneityTableNumberOfReusableHeaderCells>(
-          this),
+    : HomogeneityHeaderCellsDataSource(this),
       m_headerPrefix(I18n::Message::Group),
       m_topLeftCell(Escher::Palette::WallScreenDark) {}
 
@@ -24,9 +22,10 @@ int HomogeneityTableDataSource::reusableCellCount(int type) const {
   if (type == k_typeOfTopLeftCell) {
     return 1;
   } else if (type == k_typeOfHeaderCells) {
-    return k_maxNumberOfReusableRows + k_numberOfReusableColumns;
+    return k_maxNumberOfReusableRows +
+           HomogeneityTableDimensions::k_numberOfReusableColumns;
   }
-  return k_numberOfReusableCells;
+  return HomogeneityTableDimensions::k_numberOfInnerReusableCells;
 }
 
 HighlightCell* HomogeneityTableDataSource::reusableCell(int i, int type) {

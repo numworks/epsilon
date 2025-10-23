@@ -35,19 +35,13 @@ class PieBannerView : public Escher::View {
                                I18n::Message message);
 
   void drawRect(KDContext* ctx, KDRect rect) const override {
-    ctx->fillRect(bounds(), k_backgroundColor);
+    ctx->fillRect(bounds(), m_isSelected ? k_backgroundColor : KDColorWhite);
   }
 
+  int numberOfSubviews() const override { return m_isSelected ? 7 : 0; }
   void layoutSubviews(bool force = false) override;
-
   Escher::View* subviewAtIndex(int index) override;
 
-  int numberOfSubviews() const override {
-    if (!m_isSelected) {
-      return 0;
-    }
-    return 7;
-  }
   static constexpr int k_precision =
       Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision;
   Escher::BufferTextView<sizeof(Store::Label)> m_categoryTitle;

@@ -68,10 +68,7 @@ Escher::HighlightCell* DynamicCellsDataSource<T, N>::cell(int i) {
   assert(m_cells);
   return &m_cells[i];
 }
-static_assert(k_inputControllerNumberOfReusableCells ==
-                  InputController::k_numberOfReusableCells,
-              "k_inputControllerNumberOfReusableCells should be updated with "
-              "InputController::k_numberOfReusableCells");
+
 static_assert(k_goodnessContributionsTableNumberOfReusableCells ==
               Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
                   Escher::Metric::SmallEditableCellHeight,
@@ -96,6 +93,6 @@ template class DynamicCellsDataSource<
 template class DynamicCellsDataSource<
     Escher::MenuCellWithEditableText<Escher::LayoutView,
                                      Escher::MessageTextView>,
-    k_maxNumberOfParameterCell>;
+    InputController::k_numberOfReusableCells>;
 template class DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>;
 }  // namespace Inference

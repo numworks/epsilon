@@ -14,7 +14,9 @@ namespace Statistics::Categorical {
 class PieGraphViewDataSource {
  public:
   PieGraphViewDataSource(Store* store)
-      : m_store(store), m_numberOfActiveCategories(0) {}
+      : m_store(store),
+        m_numberOfActiveCategories(0),
+        m_isSelectionActive(true) {}
 
   void toggleSelection(bool select) {
     if (m_isSelectionActive != select) {

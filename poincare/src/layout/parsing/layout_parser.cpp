@@ -11,7 +11,7 @@
 
 #include "rack_parser.h"
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::Parser {
 
 Type ExpressionType(LayoutType type) {
   switch (type) {
@@ -223,4 +223,4 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
   }
 }
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Parser

@@ -9,7 +9,7 @@
 
 #include "tokenizer.h"
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::Parser {
 
 bool ParsingHelper::IsLogicalOperator(LayoutSpan name,
                                       Token::Type* returnType) {
@@ -206,4 +206,4 @@ bool ParsingHelper::ParameterText(LayoutSpanDecoder* varDecoder,
   return true;
 }
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Parser

@@ -7,6 +7,8 @@ namespace Poincare::Internal {
 
 class Builtin;
 
+namespace Parser {
+
 class ParsingHelper {
  public:
   static bool IsLogicalOperator(LayoutSpan name, Token::Type* returnType);
@@ -27,4 +29,5 @@ class ParsingHelper {
   constexpr static int k_indexOfParameter1D = 1;
 };
 
+}  // namespace Parser
 }  // namespace Poincare::Internal

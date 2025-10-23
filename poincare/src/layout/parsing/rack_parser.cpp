@@ -30,7 +30,7 @@
 #include "layout_parser.h"
 #include "parsing_context.h"
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::Parser {
 
 Tree* RackParser::parseRack() {
   bool isTopLevel = m_parsingContext.metadata.isTopLevelRack;
@@ -1584,4 +1584,4 @@ void RackParser::setState(const State& state) {
   m_waitingSlashForMixedFraction = state.waitingSlashForMixedFraction;
 }
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Parser

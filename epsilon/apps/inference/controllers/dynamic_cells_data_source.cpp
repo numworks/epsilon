@@ -3,6 +3,7 @@
 #include <new>
 
 #include "inference/app.h"
+#include "inference/controllers/results_controller.h"
 #include "inference/controllers/tables/homogeneity_data_source.h"
 #include "inference/controllers/tables/results_goodness_table_cell.h"
 
@@ -89,5 +90,6 @@ template class DynamicCellsDataSource<
     Escher::MenuCellWithEditableText<Escher::LayoutView,
                                      Escher::MessageTextView>,
     InputController::k_numberOfReusableCells>;
-template class DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>;
+template class DynamicCellsDataSource<
+    ResultCell, ResultsControllerDimensions::k_numberOfReusableCells>;
 }  // namespace Inference

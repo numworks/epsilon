@@ -17,7 +17,9 @@ ResultsController::ResultsController(Responder* parent,
     : InferenceController(inference),
       ListWithTopAndBottomController(parent,
                                      enableHeadline ? &m_title : nullptr),
-      DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>(this),
+      DynamicCellsDataSource<
+          ResultCell, ResultsControllerDimensions::k_numberOfReusableCells>(
+          this),
       m_title(I18n::Message::CalculatedValues, k_messageFormat),
       m_controllerContainer(controllerContainer),
       m_titleBuffer{0},

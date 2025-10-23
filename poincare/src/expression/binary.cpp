@@ -2,6 +2,7 @@
 
 #include <omg/unreachable.h>
 #include <omg/utf8_helper.h>
+#include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
@@ -242,5 +243,155 @@ bool Binary::ReducePiecewise(Tree* piecewise) {
   }
   return changed;
 }
+
+#if POINCARE_PIECEWISE
+
+bool Binary::MakeLenient(Tree* e) {
+  // Booleans should have been reduced out.
+  assert(!e->isBoolean());
+  if (e->isComparison()) {
+    switch (e->type()) {
+      case Type::Inferior:
+        e->cloneNodeOverNode(KInferiorEqual);
+        break;
+      case Type::Superior:
+        e->cloneNodeOverNode(KSuperiorEqual);
+        break;
+      case Type::NotEqual:
+        e->cloneTreeOverTree(KTrue);
+        return true;
+      case Type::InferiorEqual:
+      case Type::SuperiorEqual:
+      case Type::Equal:
+        return true;
+      default:
+        OMG::unreachable();
+    }
+    assert(!ReduceComparison(e));
+    return true;
+  }
+  if (!e->isLogicalOperator()) {
+    return false;
+  }
+  bool result = false;
+  switch (e->type()) {
+    case Type::LogicalNot:
+      result = MakeStrict(e->child(0));
+      break;
+    case Type::LogicalAnd:
+    case Type::LogicalOr:
+      result = MakeLenient(e->child(0)) && MakeLenient(e->child(1));
+      break;
+    case Type::LogicalXor:
+      // TODO: Not handled for now. It should be expanded into a!b+!ab first
+      result = false;
+      break;
+    case Type::LogicalNor:
+    case Type::LogicalNand:
+      // Nor and Nand should have been projected.
+      // result = MakeStrict(e->child(0)) && MakeStrict(e->child(1));
+    default:
+      OMG::unreachable();
+  }
+  if (result) {
+    ReduceBooleanOperator(e);
+  }
+  return result;
+}
+
+bool Binary::MakeStrict(Tree* e) {
+  // Booleans should have been reduced out.
+  assert(!e->isBoolean());
+  if (e->isComparison()) {
+    switch (e->type()) {
+      case Type::Inferior:
+      case Type::Superior:
+      case Type::NotEqual:
+        return true;
+      case Type::InferiorEqual:
+        e->cloneNodeOverNode(KInferior);
+        break;
+      case Type::SuperiorEqual:
+        e->cloneNodeOverNode(KSuperior);
+        break;
+      case Type::Equal:
+        e->cloneTreeOverTree(KFalse);
+        return true;
+
+      default:
+        OMG::unreachable();
+    }
+    assert(!ReduceComparison(e));
+    return true;
+  }
+  if (!e->isLogicalOperator()) {
+    return false;
+  }
+  bool result = false;
+  switch (e->type()) {
+    case Type::LogicalNot:
+      result = MakeLenient(e->child(0));
+      break;
+    case Type::LogicalAnd:
+    case Type::LogicalOr:
+      result = MakeStrict(e->child(0)) && MakeStrict(e->child(1));
+      break;
+    case Type::LogicalXor:
+      // TODO: Not handled for now. It should be expanded into a!b+!ab first
+      result = false;
+      break;
+    case Type::LogicalNor:
+    case Type::LogicalNand:
+      // Nor and Nand should have been projected.
+      // result = MakeLenient(e->child(0)) && MakeLenient(e->child(1));
+    default:
+      OMG::unreachable();
+  }
+  if (result) {
+    ReduceBooleanOperator(e);
+  }
+  return result;
+}  // namespace Poincare::Internal
+
+Tree* Binary::ReducePiecewiseDerivative(const Tree* symbol,
+                                        const Tree* symbolValue,
+                                        const Tree* order,
+                                        const Tree* derivand) {
+  assert(derivand->isPiecewise());
+  int numberOfChildren = derivand->numberOfChildren();
+  Tree* result = derivand->cloneNode();
+  for (IndexedChild<const Tree*> derivandChild : derivand->indexedChildren()) {
+    if (derivandChild.index % 2 == 0) {
+      // Derive branch
+      PatternMatching::CreateReduce(
+          KDiff(KA, KB, KC, KD),
+          {.KA = symbol, .KB = symbolValue, .KC = order, .KD = derivandChild},
+          {.KD = 1});
+    } else {
+      // Clone strict condition and leave scope.
+      Tree* strictCondition = derivandChild->cloneTree();
+      if (!Binary::MakeStrict(strictCondition)) {
+        SharedTreeStack->flushFromBlock(result);
+        return nullptr;
+      }
+      Variables::LeaveScopeWithReplacement(strictCondition, symbolValue, true,
+                                           false);
+      numberOfChildren += 2;
+      KUndef->cloneTree();
+      // Clone nonStrict condition and leave scope.
+      strictCondition = derivandChild->cloneTree();
+      if (!Binary::MakeLenient(strictCondition)) {
+        SharedTreeStack->flushFromBlock(result);
+        return nullptr;
+      }
+      Variables::LeaveScopeWithReplacement(strictCondition, symbolValue, true,
+                                           false);
+    }
+  }
+  NAry::SetNumberOfChildren(result, numberOfChildren);
+  SystematicReduction::ShallowReduce(result);
+  return result;
+}
+#endif
 
 }  // namespace Poincare::Internal

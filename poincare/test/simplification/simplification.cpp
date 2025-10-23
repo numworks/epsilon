@@ -593,6 +593,17 @@ QUIZ_CASE(pcj_simplification_piecewise) {
   simplifies_to("piecewise(-x/x,x>0,0)", "piecewise(dep(-1,{x^0}),x>0,0)");
   simplifies_to("piecewise(3,4>0,2,2<a)", "undef",
                 {.m_symbolic = SymbolicComputation::ReplaceAllSymbols});
+  simplifies_to("diff(piecewise(1,x>1,2,x>=2,3,x<3,4,x<=4,7),x,x)",
+                "piecewise(0,x>1,undef,x>=1,0,x>2,undef,x>=2,0,x<3,undef,x<=3,"
+                "0,x<4,undef,x<=4,0)");
+  simplifies_to("diff(piecewise(5,x=5,6,x!=6,7),x,x)",
+                "piecewise(undef,x=5,0,x!=6,undef)");
+  simplifies_to("diff(piecewise(0,x>3,x,not x=1,-x),x,x)",
+                "piecewise(0,x>3,undef,x≥3,1,not x=1,undef)");
+  simplifies_to("diff(piecewise(-x,2>x>=3,x),x,x)",
+                "piecewise(-1,2>x and x>3,undef,2≥x and x≥3,1)");
+  simplifies_to("diff(piecewise(-x,x<1 nor x>=2,x),x,x)",
+                "piecewise(-1,not (x≤1 or x≥2),undef,not (x<1 or x>2),1)");
 }
 
 QUIZ_CASE(pcj_simplification_distributions) {

@@ -3,6 +3,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
+#include "binary.h"
 #include "dependency.h"
 #include "dimension.h"
 #include "infinity.h"
@@ -44,6 +45,17 @@ bool Derivation::Reduce(Tree* e) {
     SystematicReduction::ShallowReduce(pointDiff);
     e->moveTreeOverTree(pointDiff);
     return true;
+  }
+#endif
+#if POINCARE_PIECEWISE
+  if (constDerivand->isPiecewise()) {
+    Tree* result = Binary::ReducePiecewiseDerivative(symbol, symbolValue, order,
+                                                     constDerivand);
+    if (result) {
+      e->moveTreeOverTree(result);
+      return true;
+    }
+    return false;
   }
 #endif
 

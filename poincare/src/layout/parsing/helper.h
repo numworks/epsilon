@@ -11,6 +11,8 @@ namespace Parser {
 
 class ParsingHelper {
  public:
+  static bool CanBeCustomIdentifier(UnicodeDecoder& decoder,
+                                    size_t length = -1);
   static bool IsLogicalOperator(LayoutSpan name, Token::Type* returnType);
   static bool ExtractInteger(const Tree* e, int* value);
   static const Builtin* GetInverseFunction(const Builtin* builtin);

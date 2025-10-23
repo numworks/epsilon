@@ -20,23 +20,6 @@ Token::Type TokenizerFailure(const char* reason) {
   return Token::Type::Undefined;
 }
 
-bool Tokenizer::CanBeCustomIdentifier(UnicodeDecoder& decoder, size_t length) {
-#if TODO_PCJ
-  ParsingContext parsingContext{.param = {.preserveInput = true}};
-  Tokenizer tokenizer(decoder, &parsingContext);
-  Token t = tokenizer.popToken();
-  if (t.type() != Token::Type::CustomIdentifier ||
-      t.length() != decoder.end() - decoder.start() ||
-      !SymbolHelper::NameLengthIsValid(t.text(), t.length())) {
-    return false;
-  }
-  return true;
-#else
-  return (length == static_cast<size_t>(-1) ? decoder.end() - decoder.start()
-                                            : length) <= 7;
-#endif
-}
-
 const CodePoint Tokenizer::nextCodePoint(PopTest popTest, bool* testResult) {
   LayoutSpanDecoder save = m_decoder;
   CodePoint c = m_decoder.nextCodePoint();

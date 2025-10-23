@@ -8,7 +8,6 @@
 #include "k_tree.h"
 #include "layout_serializer.h"
 #include "parsing/helper.h"
-#include "parsing/tokenizer.h"
 #include "rack_layout_decoder.h"
 
 using namespace Poincare::Internal;
@@ -278,7 +277,7 @@ static bool isValidXNTParameter(const Tree* xnt) {
     return false;
   }
   RackLayoutDecoder decoder(xnt);
-  return Tokenizer::CanBeCustomIdentifier(decoder);
+  return Parser::ParsingHelper::CanBeCustomIdentifier(decoder);
 }
 
 bool FindXNTSymbol2D(const Tree* layout, const Tree* root, char* buffer,

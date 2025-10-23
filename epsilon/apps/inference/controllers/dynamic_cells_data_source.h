@@ -55,8 +55,6 @@ class DynamicCellsDataSourceDelegate {
 };
 
 // static assertion in implementation
-constexpr int k_doubleColumnTableNumberOfReusableCells = 48;
-// static assertion in implementation
 constexpr int k_goodnessContributionsTableNumberOfReusableCells = 33;
 constexpr int k_inputControllerNumberOfReusableCells = 8;
 constexpr int k_maxNumberOfParameterCell =

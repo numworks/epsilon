@@ -69,13 +69,10 @@ Escher::HighlightCell* DynamicCellsDataSource<T, N>::cell(int i) {
   return &m_cells[i];
 }
 
-static_assert(k_doubleColumnTableNumberOfReusableCells ==
-                  InputGoodnessTableCell::k_numberOfReusableCells,
-              "k_doubleColumnTableNumberOfReusableCells should be updated with "
-              "InputGoodnessTableCell::k_numberOfReusableCells");
-static_assert(k_doubleColumnTableNumberOfReusableCells ==
+static_assert(DoubleColumnTableDimensions::k_numberOfReusableCells ==
                   StoreTableCell::k_numberOfReusableCells,
-              "k_doubleColumnTableNumberOfReusableCells should be updated with "
+              "DoubleColumnTableDimensions::k_numberOfReusableCells should be "
+              "updated with "
               "StoreTableCell::k_numberOfReusableCells");
 static_assert(k_inputControllerNumberOfReusableCells ==
                   InputController::k_numberOfReusableCells,
@@ -99,8 +96,9 @@ template class DynamicCellsDataSource<
 template class DynamicCellsDataSource<
     InferenceEvenOddBufferCell,
     k_goodnessContributionsTableNumberOfReusableCells>;
-template class DynamicCellsDataSource<InferenceEvenOddEditableCell,
-                                      k_doubleColumnTableNumberOfReusableCells>;
+template class DynamicCellsDataSource<
+    InferenceEvenOddEditableCell,
+    DoubleColumnTableDimensions::k_numberOfReusableCells>;
 template class DynamicCellsDataSource<
     Escher::MenuCellWithEditableText<Escher::LayoutView,
                                      Escher::MessageTextView>,

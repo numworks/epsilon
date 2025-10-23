@@ -12,6 +12,10 @@ class InputANOVAController : public InputCategoricalController {
                        ControllerContainer* controllerContainer,
                        ANOVATest* inferenceModel);
 
+  ViewController::TitlesDisplay titlesDisplay() const override {
+    return ViewController::TitlesDisplay::SameAsPreviousPage;
+  };
+
  private:
   int indexOfSignificanceCell() const override {
     return indexOfTableCell() + 1;

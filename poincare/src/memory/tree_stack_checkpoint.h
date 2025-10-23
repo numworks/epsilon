@@ -4,6 +4,7 @@
 #include <setjmp.h>
 
 #include "block.h"
+#include "tree_stack.h"
 
 /* Usage:
 

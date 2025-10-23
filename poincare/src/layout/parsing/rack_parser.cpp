@@ -32,16 +32,6 @@
 
 namespace Poincare::Internal {
 
-Tree* RackParser::parse() {
-  ExceptionTry { return parseRack(); }
-  ExceptionCatch(type) {
-    if (type != ExceptionType::ParseFail) {
-      TreeStackCheckpoint::Raise(type);
-    }
-  }
-  return nullptr;
-}
-
 Tree* RackParser::parseRack() {
   bool isTopLevel = m_parsingContext.metadata.isTopLevelRack;
   /* This can be unset as it won't be used anymore. This ensures it's not

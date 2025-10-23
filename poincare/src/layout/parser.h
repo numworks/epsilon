@@ -10,14 +10,13 @@ namespace Poincare::Internal {
 
 namespace Parser {
 
-// Parses a top-level layout.
-inline Tree* Parse(const Tree* l,
-                   const SymbolContext& symbolContext = EmptySymbolContext{},
-                   ParserHelper::ParsingParameters params = {}) {
-  return LayoutParser::Parse(l, {.context = &symbolContext,
-                                 .params = params,
-                                 .metadata = {.isTopLevelRack = true}});
-}
+/* Besides this entrypoint, the parser is divided into RackParser and
+ * LayoutParser to follow the Rack/Layouts alternance. */
+
+// Parse a top-level layout. Return nullptr if a syntax error is encountered.
+Tree* Parse(const Tree* l,
+            const SymbolContext& symbolContext = EmptySymbolContext{},
+            ParserHelper::ParsingParameters params = {});
 
 }  // namespace Parser
 

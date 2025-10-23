@@ -8,7 +8,7 @@
 #include <omg/ring_buffer.h>
 
 #include "controllers/controller_container.h"
-#include "controllers/dynamic_cells_data_source.h"
+#include "controllers/tables/dynamic_cells_data_source.h"
 #include "inference/controllers/results_controller.h"
 #include "inference/controllers/tables/homogeneity_data_source.h"
 #include "models/inference_buffer.h"

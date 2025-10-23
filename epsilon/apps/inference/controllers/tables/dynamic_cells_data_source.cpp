@@ -2,10 +2,10 @@
 
 #include <new>
 
+#include "homogeneity_data_source.h"
 #include "inference/app.h"
 #include "inference/controllers/results_controller.h"
-#include "inference/controllers/tables/homogeneity_data_source.h"
-#include "inference/controllers/tables/results_goodness_table_cell.h"
+#include "results_goodness_table_cell.h"
 
 using namespace Escher;
 

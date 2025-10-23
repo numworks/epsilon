@@ -142,18 +142,9 @@ class Comparison : public OExpression {
   ComparisonNode::OperatorType operatorAtIndex(int i) const {
     return node()->operatorAtIndex(i);
   }
-  /* Returns Undefined if contains an equal. */
-  OExpression cloneWithStrictOperators() const {
-    return cloneWithStrictOrLenientOperators(true);
-  }
-  /* Changes not equal into equal. */
-  OExpression cloneWithLenientOperators() const {
-    return cloneWithStrictOrLenientOperators(false);
-  }
   int numberOfOperators() const { return node()->numberOfOperators(); }
 
  private:
-  OExpression cloneWithStrictOrLenientOperators(bool strict) const;
   ComparisonNode* node() const {
     return static_cast<ComparisonNode*>(OExpression::node());
   }

@@ -348,33 +348,4 @@ OExpression Comparison::shallowReduce(ReductionContext reductionContext) {
   return result;
 }
 
-OExpression Comparison::cloneWithStrictOrLenientOperators(bool strict) const {
-  // operators[strict] is strict if strict == 1 and lenient if strict == 0
-  constexpr ComparisonNode::OperatorType inferiorOperators[] = {
-      ComparisonNode::OperatorType::InferiorEqual,
-      ComparisonNode::OperatorType::Inferior};
-  constexpr ComparisonNode::OperatorType superiorOperators[] = {
-      ComparisonNode::OperatorType::SuperiorEqual,
-      ComparisonNode::OperatorType::Superior};
-  int n = numberOfOperators();
-  OExpression result = clone();
-  ComparisonNode::OperatorType* operatorsList =
-      static_cast<Comparison&>(result).node()->listOfOperators();
-  for (int i = 0; i < n; i++) {
-    if (strict && operatorsList[i] == ComparisonNode::OperatorType::Equal) {
-      return Undefined::Builder();
-    } else if (!strict &&
-               operatorsList[i] == ComparisonNode::OperatorType::NotEqual) {
-      operatorsList[i] = ComparisonNode::OperatorType::Equal;
-    } else if (operatorsList[i] ==
-               inferiorOperators[static_cast<int>(!strict)]) {
-      operatorsList[i] = inferiorOperators[static_cast<int>(strict)];
-    } else if (operatorsList[i] ==
-               superiorOperators[static_cast<int>(!strict)]) {
-      operatorsList[i] = superiorOperators[static_cast<int>(strict)];
-    }
-  }
-  return result;
-}
-
 }  // namespace Poincare

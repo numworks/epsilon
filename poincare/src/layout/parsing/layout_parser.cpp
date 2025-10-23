@@ -58,7 +58,7 @@ Type ExpressionType(LayoutType type) {
 Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
   if (l->isRackLayout()) {
     // TODO: should be inlined in the caller
-    return RackParser(l, parsingContext).parse();
+    return RackParser(l, parsingContext).parseRack();
   }
 
   // From now on, rack cannot be top level
@@ -80,7 +80,7 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
     case LayoutType::Parentheses:
     case LayoutType::CurlyBraces: {
       parsingContext.metadata.isCommaSeparatedList = true;
-      Tree* list = RackParser(l->child(0), parsingContext).parse();
+      Tree* list = RackParser(l->child(0), parsingContext).parseRack();
       if (!list) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }

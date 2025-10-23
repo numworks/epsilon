@@ -113,6 +113,7 @@ $(addprefix layout/, \
   layout_memoization.cpp:-nopool \
   layouter.cpp \
   multiplication_symbol.cpp \
+  parser.cpp \
   parsing/helper.cpp \
   parsing/latex_parser.cpp \
   parsing/layout_parser.cpp \

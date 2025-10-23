@@ -33,10 +33,6 @@ class PiecewiseOperatorNode final : public ExpressionNode {
   int indexOfFirstTrueCondition(
       const ApproximationContext& approximationContext) const;
 
-  // Derivation
-  bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                OExpression symbolValue) override;
-
  private:
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,

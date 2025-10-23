@@ -604,6 +604,10 @@ QUIZ_CASE(pcj_simplification_piecewise) {
                 "piecewise(-1,2>x and x>3,undef,2≥x and x≥3,1)");
   simplifies_to("diff(piecewise(-x,x<1 nor x>=2,x),x,x)",
                 "piecewise(-1,not (x≤1 or x≥2),undef,not (x<1 or x>2),1)");
+  simplifies_to("diff(piecewise(1,x>1 xor x>=2,0),x,x)",
+                "diff(piecewise(1,x>1 xor x>=2,0),x,x)");
+  simplifies_to("diff(piecewise(1,piecewise(True, x=1, False),0),x,x)",
+                "diff(piecewise(1,piecewise(True, x=1, False),0),x,x)");
 }
 
 QUIZ_CASE(pcj_simplification_distributions) {

@@ -8,6 +8,8 @@
 
 namespace Poincare::Inference::SignificanceTest::FTest {
 
+bool IsObservedValueValid(double value) { return !std::isnan(value); }
+
 struct GroupData {
   int nSamples;
   double mean;

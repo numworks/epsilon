@@ -266,6 +266,9 @@ static constexpr size_t k_maxNumberOfGroupValues = 40;
 using Values = OMG::StaticVector<double, k_maxNumberOfGroupValues>;
 
 StatisticResults ComputeStatisticResults(std::span<const Values> groups);
+
+bool IsObservedValueValid(double value);
+
 }  // namespace FTest
 
 }  // namespace SignificanceTest

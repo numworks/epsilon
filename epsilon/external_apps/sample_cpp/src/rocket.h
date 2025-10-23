@@ -13,7 +13,7 @@ class Rocket {
   void setLocation(int x, int y);
   void forward();
   bool tryToKill(Alien* a);
-  bool off() const { return m_y < 0; }
+  bool off() const { return m_y < k_length / 2; }
   constexpr static int k_period = 5;
 
  private:

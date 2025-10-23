@@ -135,6 +135,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       assert(f->properties().isCartesian());
       canComputeIntersections[i] = true;
       bool alongY = f->isAlongY();
+      bool isLine = f->properties().isLine();
       Range1D<float>* bounds = alongY ? &yBounds : &xBounds;
       // Use the intersection between the definition domain of f and the bounds
       float tMin = std::clamp(f->tMin(), bounds->min(), bounds->max());
@@ -150,14 +151,15 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
         intervalMax = Coordinate2D<float>(tMax, alongY ? c.x() : c.y());
       }
 
-      zoom.fitPointsOfInterest(evaluator<float>, &fModel, alongY, false,
-                               evaluator<double>, canComputeIntersections + i);
+      zoom.fitPointsOfInterest(evaluator<float>, &fModel, alongY,
+                               isLine && !alongY, evaluator<double>,
+                               canComputeIntersections + i);
       zoom.fitBounds(evaluator<float>, &fModel, alongY);
       if (f->numberOfSubCurves() > 1) {
         assert(f->numberOfSubCurves() == 2);
-        zoom.fitPointsOfInterest(evaluatorSecondCurve<float>, &fModel, alongY,
-                                 false, evaluatorSecondCurve<double>,
-                                 canComputeIntersections + i);
+        zoom.fitPointsOfInterest(
+            evaluatorSecondCurve<float>, &fModel, alongY, isLine && !alongY,
+            evaluatorSecondCurve<double>, canComputeIntersections + i);
         zoom.fitBounds(evaluatorSecondCurve<float>, &fModel, alongY);
       }
 

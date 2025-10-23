@@ -10,6 +10,7 @@
 #include "chi_square/results_homogeneity_controller.h"
 #include "confidence_interval/interval_graph_controller.h"
 #include "dataset_controller.h"
+#include "input_anova_controller.h"
 #include "input_controller.h"
 #include "results_controller.h"
 #include "significance_test/hypothesis_display_only_controller.h"
@@ -26,6 +27,7 @@ class ControllerContainer {
   TestGraphController m_testGraphController;
   IntervalGraphController m_intervalGraphController;
   ResultsHomogeneityTabController m_homogeneityResultsController;
+  InputANOVAController m_inputANOVAController;
   InputHomogeneityController m_inputHomogeneityController;
   ResultsGoodnessTabController m_goodnessResultsController;
   InputGoodnessController m_inputGoodnessController;

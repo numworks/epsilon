@@ -80,6 +80,10 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
                (HomogeneityTableDimensions::k_numberOfHeaderReusableCells +
                 HomogeneityTableDimensions::k_numberOfInnerReusableCells),
            sizeof(InferenceEvenOddEditableCell) *
+                   ANOVATableDimensions::k_numberOfInnerReusableCells +
+               sizeof(InferenceEvenOddBufferCell) *
+                   ANOVATableDimensions::k_numberOfHeaderReusableCells,
+           sizeof(InferenceEvenOddEditableCell) *
                    HomogeneityTableDimensions::k_numberOfInnerReusableCells +
                sizeof(InferenceEvenOddBufferCell) *
                    HomogeneityTableDimensions::k_numberOfHeaderReusableCells,

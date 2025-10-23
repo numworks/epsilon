@@ -45,7 +45,7 @@ class PieGraphViewDataSource {
     return m_toGlobalCategories[m_selectedCategory];
   }
 
-  void setGroup(int group) {
+  int setGroup(int group) {
     m_numberOfActiveCategories = 0;
     m_selectedCategory = UINT8_MAX;
     float cumulatedAngle = 0;
@@ -77,6 +77,7 @@ class PieGraphViewDataSource {
       }
       ++m_numberOfActiveCategories;
     }
+    return m_toGlobalCategories[m_selectedCategory];
   }
 
  protected:

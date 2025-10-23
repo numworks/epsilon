@@ -7,6 +7,7 @@
 
 #include "../../graph/graph_button_row_delegate.h"
 #include "../data/store.h"
+#include "pie_banner_view.h"
 #include "pie_displayed_data_controller.h"
 #include "pie_graph_view.h"
 
@@ -54,13 +55,9 @@ class PieGraphController : public Escher::ViewController,
   void viewWillAppear() override {
     assert(m_store->isGroupActive(m_store->getSelectedGroupForPieGraph()));
     int group = m_store->getSelectedGroupForPieGraph();
-    char buffer[sizeof(Store::Label)];
-    m_store->getGroupName(group, buffer, sizeof(buffer));
-    m_view.setTitleText(buffer);
-    m_view.m_pieGraphView.setGroup(group);
-    m_view.m_pieGraphView.toggleSelection(true);
-    m_view.m_pieGraphView.reload();
+    m_view.setGroup(group, m_store);
     m_isPieGraphSelected = true;
+    m_view.toggleSelection(m_isPieGraphSelected);
   }
 
   Escher::View* view() override { return &m_view; }
@@ -102,7 +99,7 @@ class PieGraphController : public Escher::ViewController,
       if (event == Ion::Events::Down) {
         header()->setSelectedButton(-1);
         m_isPieGraphSelected = true;
-        m_view.m_pieGraphView.toggleSelection(m_isPieGraphSelected);
+        m_view.toggleSelection(m_isPieGraphSelected);
         Escher::App::app()->setFirstResponder(this);
         return true;
       }
@@ -110,7 +107,7 @@ class PieGraphController : public Escher::ViewController,
     }
     if (event == Ion::Events::Up || event == Ion::Events::Back) {
       m_isPieGraphSelected = false;
-      m_view.m_pieGraphView.toggleSelection(m_isPieGraphSelected);
+      m_view.toggleSelection(m_isPieGraphSelected);
       if (event == Ion::Events::Up) {
         header()->setSelectedButton(0);
       } else {
@@ -119,8 +116,7 @@ class PieGraphController : public Escher::ViewController,
       return true;
     }
     if (event == Ion::Events::Left || event == Ion::Events::Right) {
-      m_view.m_pieGraphView.nextCategory(event == Ion::Events::Right ? 1 : -1);
-      m_view.m_pieGraphView.reload();
+      m_view.nextActiveCategory(event == Ion::Events::Right ? 1 : -1);
       return true;
     }
     return false;
@@ -132,21 +128,41 @@ class PieGraphController : public Escher::ViewController,
 
  private:
   class ContentView : public Escher::View {
-    Escher::BufferTextView<sizeof(Store::Label)> m_groupTitleView;
-
    public:
-    PieGraphView m_pieGraphView;              // TEMP placeholder
-    Escher::SolidColorView m_sideBannerView;  // TEMP placeholder
-
     ContentView(Store* store)
         : m_groupTitleView({.style = {.font = KDFont::Size::Small},
                             .horizontalAlignment = KDGlyph::k_alignCenter}),
           m_pieGraphView(store),
-          m_sideBannerView(Escher::Palette::GrayMiddle) {}
+          m_sideBannerView(store) {}
 
-    void setTitleText(const char* text) { m_groupTitleView.setText(text); }
+    void setGroup(int group, Store* store) {
+      char buffer[sizeof(Store::Label)];
+      store->getGroupName(group, buffer, sizeof(buffer));
+      m_groupTitleView.setText(buffer);
+      int selectedCategory = m_pieGraphView.setGroup(group);
+      m_sideBannerView.setGroup(group);
+      m_sideBannerView.setCategory(selectedCategory);
+      reload();
+    }
+
+    void toggleSelection(bool isSelected) {
+      m_pieGraphView.toggleSelection(isSelected);
+      m_sideBannerView.toggleSelection(isSelected);
+      reload();
+    }
+
+    void nextActiveCategory(int direction) {
+      int selectedCategory = m_pieGraphView.nextCategory(direction);
+      m_sideBannerView.setCategory(selectedCategory);
+      reload();
+    }
 
    private:
+    void reload() {
+      m_pieGraphView.reload();
+      m_sideBannerView.reload();
+    }
+
     void layoutSubviews(bool force) override {
       KDRect b = bounds();
       /* Almost like a square, but not quite to make it simple to draw the pie
@@ -176,6 +192,10 @@ class PieGraphController : public Escher::ViewController,
           return &m_sideBannerView;
       }
     }
+
+    Escher::BufferTextView<sizeof(Store::Label)> m_groupTitleView;
+    PieGraphView m_pieGraphView;
+    PieBannerView m_sideBannerView;
   };
 
   ContentView m_view;
@@ -184,6 +204,8 @@ class PieGraphController : public Escher::ViewController,
   Store* m_store;
   Escher::TabViewController* m_tabController;
   bool m_isPieGraphSelected;
+  uint8_t m_selectedCategory;
+  uint8_t m_numberOfActiveCategories;
 };
 
 }  // namespace Statistics::Categorical

@@ -179,7 +179,7 @@ static bool findParameteredFunction1D(UnicodeDecoder& decoder,
       case ',':
         if (functionLevel == 0) {
           numberOfCommas++;
-          if (numberOfCommas > ParsingHelper::k_indexOfParameter1D) {
+          if (numberOfCommas > Parser::ParsingHelper::k_indexOfParameter1D) {
             /* We are only interested in the 2 first children.
              * Look for one in level. */
             functionLevel++;
@@ -216,16 +216,16 @@ bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
   if (findParameteredFunction1D(decoder, &functionIndex, &childIndex)) {
     assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
     assert(0 <= childIndex &&
-           childIndex <= ParsingHelper::k_indexOfParameter1D);
+           childIndex <= Parser::ParsingHelper::k_indexOfParameter1D);
     CodePoint xnt = CodePointAtIndexInCycle(
         xntIndex, k_parameteredFunctions[functionIndex].XNTcycle, cycleSize);
     size_t size = UTF8Decoder::CodePointToChars(xnt, buffer, bufferSize);
     buffer[size] = 0;
-    if (childIndex == ParsingHelper::k_indexOfMainExpression1D) {
+    if (childIndex == Parser::ParsingHelper::k_indexOfMainExpression1D) {
       size_t parameterStart;
       size_t parameterLength;
-      if (ParsingHelper::ParameterText(decoder, &parameterStart,
-                                       &parameterLength) &&
+      if (Parser::ParsingHelper::ParameterText(decoder, &parameterStart,
+                                               &parameterLength) &&
           parameterLength != 0) {
         decoder.printInBuffer(buffer, bufferSize, parameterLength);
         assert(buffer[parameterLength] == 0);

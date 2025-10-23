@@ -461,7 +461,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
     return Token::Type::SpecialIdentifier;
   }
   Token::Type logicalOperatorType;
-  if (ParsingHelper::IsLogicalOperator(span, &logicalOperatorType)) {
+  if (Parser::ParsingHelper::IsLogicalOperator(span, &logicalOperatorType)) {
     return logicalOperatorType;
   }
   if (CodePointLayout::IsCodePoint(start, '_')) {

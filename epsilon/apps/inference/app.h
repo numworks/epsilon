@@ -81,7 +81,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
                sizeof(InferenceEvenOddBufferCell) *
                    HomogeneityTableDimensions::k_numberOfHeaderReusableCells,
            sizeof(InferenceEvenOddEditableCell) *
-               k_doubleColumnTableNumberOfReusableCells});
+               DoubleColumnTableDimensions::k_numberOfReusableCells});
 
   // Shared::MenuControllerDelegate
   void selectSubApp(int subAppIndex) override;

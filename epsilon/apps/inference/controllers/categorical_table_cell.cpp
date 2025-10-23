@@ -230,8 +230,7 @@ DoubleColumnTableCell::DoubleColumnTableCell(
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, inference,
                                 scrollViewDelegate),
-      DynamicCellsDataSource<InferenceEvenOddEditableCell,
-                             k_doubleColumnTableNumberOfReusableCells>(this) {}
+      DoubleColumnTableCellsDataSource(this) {}
 
 int DoubleColumnTableCell::reusableCellCount(int type) const {
   if (type == k_typeOfHeaderCells) {

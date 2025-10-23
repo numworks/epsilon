@@ -121,12 +121,26 @@ class InputCategoricalTableCell
   int m_numberOfColumns;
 };
 
-class DoubleColumnTableCell
-    : public InputCategoricalTableCell,
-      public CategoricalTableViewDataSource,
-      public DynamicCellsDataSource<InferenceEvenOddEditableCell,
-                                    k_doubleColumnTableNumberOfReusableCells> {
+namespace DoubleColumnTableDimensions {
+constexpr static int k_maxNumberOfColumns =
+    InputTable::k_maxNumberOfStoreColumns;
+constexpr static int k_numberOfReusableCells =
+    k_maxNumberOfColumns *
+    CategoricalTableViewDataSource::k_maxNumberOfReusableRows;
+
+};  // namespace DoubleColumnTableDimensions
+
+using DoubleColumnTableCellsDataSource = DynamicCellsDataSource<
+    InferenceEvenOddEditableCell,
+    DoubleColumnTableDimensions::k_numberOfReusableCells>;
+
+class DoubleColumnTableCell : public InputCategoricalTableCell,
+                              public CategoricalTableViewDataSource,
+                              public DoubleColumnTableCellsDataSource {
  public:
+  constexpr static int k_maxNumberOfColumns =
+      DoubleColumnTableDimensions::k_maxNumberOfColumns;
+
   DoubleColumnTableCell(Escher::Responder* parentResponder,
                         InferenceModel* inference,
                         Escher::ScrollViewDelegate* scrollViewDelegate);
@@ -153,10 +167,6 @@ class DoubleColumnTableCell
   Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;
   }
-
-  constexpr static int k_maxNumberOfColumns = 4;
-  constexpr static int k_numberOfReusableCells =
-      k_maxNumberOfColumns * k_maxNumberOfReusableRows;
 
  private:
   KDCoordinate nonMemoizedColumnWidth(int column) override {

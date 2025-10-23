@@ -57,19 +57,24 @@ void InputController::InputTitle(const Escher::ViewController* vc,
         Escher::Metric::MaxNumberOfSmallGlyphsInDisplayWidth;
     StackViewController* stackViewControllerResponder =
         static_cast<StackViewController*>(vc->parentResponder());
-    if (stackViewControllerResponder->topViewController() != vc) {
+    bool shouldHideSignificanceLevel =
+        (stackViewControllerResponder->topViewController() == vc) ||
+        (signifTest->testType() == Poincare::Inference::TestType::ANOVA &&
+         stackViewControllerResponder->topViewController()->titlesDisplay() ==
+             TitlesDisplay::SameAsPreviousPage);
+    if (shouldHideSignificanceLevel) {
+      Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
+          titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
+          k_maxNumberOfGlyphs, "H0:%s Ha:%s",
+          signifTest->h0Description().data(),
+          signifTest->hADescription().data());
+    } else {
       Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
           titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
           k_maxNumberOfGlyphs, "H0:%s Ha:%s α=%s",
           signifTest->h0Description().data(),
           signifTest->hADescription().data(),
           signifTest->thresholdValueDescription().data());
-    } else {
-      Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
-          titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
-          k_maxNumberOfGlyphs, "H0:%s Ha:%s",
-          signifTest->h0Description().data(),
-          signifTest->hADescription().data());
     }
   } else {
     Poincare::Print::CustomPrintf(titleBuffer, titleBufferSize,

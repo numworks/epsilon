@@ -19,7 +19,7 @@ class StoreTableCell : public DoubleColumnTableCell,
                  Escher::ScrollViewDelegate* scrollViewDelegate);
 
   constexpr static int k_numberOfReusableCells =
-      InputTable::k_maxNumberOfStoreColumns * k_maxNumberOfReusableRows;
+      DoubleColumnTableDimensions::k_numberOfReusableCells;
 
   // SelectableTableViewDelegate
   int numberOfRowsAtColumn(const Escher::SelectableTableView* t,

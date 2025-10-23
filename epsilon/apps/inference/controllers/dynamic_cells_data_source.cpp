@@ -68,12 +68,6 @@ Escher::HighlightCell* DynamicCellsDataSource<T, N>::cell(int i) {
   assert(m_cells);
   return &m_cells[i];
 }
-
-static_assert(DoubleColumnTableDimensions::k_numberOfReusableCells ==
-                  StoreTableCell::k_numberOfReusableCells,
-              "DoubleColumnTableDimensions::k_numberOfReusableCells should be "
-              "updated with "
-              "StoreTableCell::k_numberOfReusableCells");
 static_assert(k_inputControllerNumberOfReusableCells ==
                   InputController::k_numberOfReusableCells,
               "k_inputControllerNumberOfReusableCells should be updated with "

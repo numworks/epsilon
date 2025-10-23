@@ -24,54 +24,7 @@ App* App::Snapshot::unpack(Container* container) {
 
 App::App(Snapshot* snapshot)
     : MathApp(snapshot, &m_inputViewController),
-      m_controllerContainer{
-          .m_testGraphController{
-              &m_stackViewController,
-              static_cast<SignificanceTest*>(snapshot->inference())},
-          .m_intervalGraphController{
-              &m_stackViewController,
-              static_cast<ConfidenceInterval*>(snapshot->inference())},
-          .m_homogeneityResultsController{
-              &m_stackViewController, &m_controllerContainer,
-              static_cast<HomogeneityTest*>(snapshot->inference())},
-          .m_inputANOVAController{
-              &m_stackViewController, &m_controllerContainer,
-              static_cast<ANOVATest*>(snapshot->inference())},
-          .m_inputHomogeneityController{
-              &m_stackViewController, &m_controllerContainer,
-              static_cast<HomogeneityTest*>(snapshot->inference())},
-          .m_goodnessResultsController{
-              &m_stackViewController, &m_controllerContainer,
-              static_cast<GoodnessTest*>(snapshot->inference())},
-          .m_inputGoodnessController{
-              &m_stackViewController, &m_controllerContainer,
-              static_cast<GoodnessTest*>(snapshot->inference())},
-          .m_inputStoreController1{&m_stackViewController,
-                                   &m_controllerContainer,
-                                   snapshot->inference(), 0},
-          .m_inputStoreController2{&m_stackViewController,
-                                   &m_controllerContainer,
-                                   snapshot->inference(), 1},
-          .m_resultsController{&m_stackViewController, snapshot->inference(),
-                               &m_controllerContainer},
-          .m_inputController{&m_stackViewController, &m_controllerContainer,
-                             snapshot->inference()},
-          .m_typeController{&m_stackViewController, &m_controllerContainer,
-                            snapshot->inference()},
-          .m_categoricalTypeController{
-              &m_stackViewController,
-              static_cast<Chi2Test*>(snapshot->inference()),
-              &m_controllerContainer},
-          .m_hypothesisEditableController{
-              &m_stackViewController, &m_controllerContainer,
-              static_cast<SignificanceTest*>(snapshot->inference())},
-          .m_hypothesisDisplayOnlyController{
-              &m_stackViewController, &m_controllerContainer,
-              static_cast<SignificanceTest*>(snapshot->inference())},
-          .m_datasetController{&m_stackViewController, &m_controllerContainer,
-                               snapshot->inference()},
-          .m_testController{&m_stackViewController, &m_controllerContainer,
-                            snapshot->inference()}},
+      m_controllerContainer{&m_stackViewController, snapshot->inference()},
       m_menuController(
           &m_stackViewController,
           {&m_controllerContainer.m_testController,

@@ -24,6 +24,41 @@ namespace Inference {
 
 class ControllerContainer {
  public:
+  ControllerContainer(Escher::StackViewController* stackViewController,
+                      InferenceModel* inferenceModel)
+      : m_testGraphController{stackViewController,
+                              static_cast<SignificanceTest*>(inferenceModel)},
+        m_intervalGraphController{
+            stackViewController,
+            static_cast<ConfidenceInterval*>(inferenceModel)},
+        m_homogeneityResultsController{
+            stackViewController, this,
+            static_cast<HomogeneityTest*>(inferenceModel)},
+        m_inputANOVAController{stackViewController, this,
+                               static_cast<ANOVATest*>(inferenceModel)},
+        m_inputHomogeneityController{
+            stackViewController, this,
+            static_cast<HomogeneityTest*>(inferenceModel)},
+        m_goodnessResultsController{stackViewController, this,
+                                    static_cast<GoodnessTest*>(inferenceModel)},
+        m_inputGoodnessController{stackViewController, this,
+                                  static_cast<GoodnessTest*>(inferenceModel)},
+        m_inputStoreController1{stackViewController, this, inferenceModel, 0},
+        m_inputStoreController2{stackViewController, this, inferenceModel, 1},
+        m_resultsController{stackViewController, inferenceModel, this},
+        m_inputController{stackViewController, this, inferenceModel},
+        m_typeController{stackViewController, this, inferenceModel},
+        m_categoricalTypeController{
+            stackViewController, static_cast<Chi2Test*>(inferenceModel), this},
+        m_hypothesisEditableController{
+            stackViewController, this,
+            static_cast<SignificanceTest*>(inferenceModel)},
+        m_hypothesisDisplayOnlyController{
+            stackViewController, this,
+            static_cast<SignificanceTest*>(inferenceModel)},
+        m_datasetController{stackViewController, this, inferenceModel},
+        m_testController{stackViewController, this, inferenceModel} {}
+
   TestGraphController m_testGraphController;
   IntervalGraphController m_intervalGraphController;
   ResultsHomogeneityTabController m_homogeneityResultsController;

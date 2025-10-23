@@ -8,8 +8,9 @@ ResultGoodnessContributionsTable::ResultGoodnessContributionsTable(
     Escher::Responder* parent, CategoricalController* parentController,
     GoodnessTest* inference, Escher::ScrollViewDelegate* scrollViewDelegate)
     : CategoricalTableCell(parent, this, scrollViewDelegate),
-      DynamicCellsDataSource<InferenceEvenOddBufferCell,
-                             k_goodnessContributionsTableNumberOfReusableCells>(
+      DynamicCellsDataSource<
+          InferenceEvenOddBufferCell,
+          ResultsGoodnessContributionsDimensions::k_numberOfReusableCells>(
           this),
       m_inference(inference),
       m_parentController(parentController) {

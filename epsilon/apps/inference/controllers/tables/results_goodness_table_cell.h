@@ -5,6 +5,13 @@
 
 namespace Inference {
 
+namespace ResultsGoodnessContributionsDimensions {
+static constexpr int k_numberOfReusableCells =
+    Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
+        Escher::Metric::SmallEditableCellHeight, Escher::Metric::TabHeight) *
+    3;
+}
+
 /* This is the controller for the table in the Contributions tab in
  * the GOF Test results. It contains 3 columns: Expected ; Observed ;
  * Contributions. */
@@ -13,7 +20,7 @@ class ResultGoodnessContributionsTable
       public CategoricalTableViewDataSource,
       public DynamicCellsDataSource<
           InferenceEvenOddBufferCell,
-          k_goodnessContributionsTableNumberOfReusableCells>,
+          ResultsGoodnessContributionsDimensions::k_numberOfReusableCells>,
       public DynamicCellsDataSourceDelegate<InferenceEvenOddBufferCell> {
  public:
   ResultGoodnessContributionsTable(
@@ -31,7 +38,7 @@ class ResultGoodnessContributionsTable
     return cell(index);
   }
   int reusableCellCount(int type) const override {
-    return k_goodnessContributionsTableNumberOfReusableCells;
+    return ResultsGoodnessContributionsDimensions::k_numberOfReusableCells;
   }
 
   // DynamicCellsDataSource

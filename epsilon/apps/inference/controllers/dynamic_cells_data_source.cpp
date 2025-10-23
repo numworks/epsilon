@@ -4,6 +4,7 @@
 
 #include "inference/app.h"
 #include "inference/controllers/tables/homogeneity_data_source.h"
+#include "inference/controllers/tables/results_goodness_table_cell.h"
 
 using namespace Escher;
 
@@ -69,12 +70,6 @@ Escher::HighlightCell* DynamicCellsDataSource<T, N>::cell(int i) {
   return &m_cells[i];
 }
 
-static_assert(k_goodnessContributionsTableNumberOfReusableCells ==
-              Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
-                  Escher::Metric::SmallEditableCellHeight,
-                  Escher::Metric::TabHeight) *
-                  3);
-
 template class DynamicCellsDataSource<
     InferenceEvenOddBufferCell,
     HomogeneityTableDimensions::k_numberOfHeaderReusableCells>;
@@ -86,7 +81,7 @@ template class DynamicCellsDataSource<
     HomogeneityTableDimensions::k_numberOfInnerReusableCells>;
 template class DynamicCellsDataSource<
     InferenceEvenOddBufferCell,
-    k_goodnessContributionsTableNumberOfReusableCells>;
+    ResultsGoodnessContributionsDimensions::k_numberOfReusableCells>;
 template class DynamicCellsDataSource<
     InferenceEvenOddEditableCell,
     DoubleColumnTableDimensions::k_numberOfReusableCells>;

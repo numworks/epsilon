@@ -26,4 +26,26 @@ void SolidColorView::logAttributes(std::ostream& os) const {
 }
 #endif
 
+SolidColorWithBorderView::SolidColorWithBorderView(KDColor border,
+                                                   KDColor color,
+                                                   KDCoordinate borderWidth)
+    : View(), m_color(color), m_border(border), m_borderWidth(borderWidth) {}
+
+void SolidColorWithBorderView::setColors(KDColor color, KDColor border) {
+  if (m_color != color || m_border != border) {
+    m_color = color;
+    m_border = border;
+    markWholeFrameAsDirty();
+  }
+}
+
+void SolidColorWithBorderView::drawRect(KDContext* ctx, KDRect rect) const {
+  ctx->fillRect(bounds(), m_border);
+  KDRect insideRect =
+      KDRect(bounds().x() + m_borderWidth, bounds().y() + m_borderWidth,
+             bounds().width() - 2 * m_borderWidth,
+             bounds().height() - 2 * m_borderWidth);
+  ctx->fillRect(insideRect, m_color);
+}
+
 }  // namespace Escher

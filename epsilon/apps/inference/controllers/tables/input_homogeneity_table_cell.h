@@ -8,12 +8,13 @@ namespace Inference {
 
 class InputHomogeneityController;
 
-class InputHomogeneityTableCell
-    : public InputCategoricalTableCell,
-      public HomogeneityTableDataSource,
-      public DynamicCellsDataSource<
-          InferenceEvenOddEditableCell,
-          k_homogeneityTableNumberOfReusableInnerCells> {
+using InputHomogeneityInnerCellsDataSource =
+    DynamicCellsDataSource<InferenceEvenOddEditableCell,
+                           k_homogeneityTableNumberOfReusableInnerCells>;
+
+class InputHomogeneityTableCell : public InputCategoricalTableCell,
+                                  public HomogeneityTableDataSource,
+                                  public InputHomogeneityInnerCellsDataSource {
  public:
   InputHomogeneityTableCell(
       Escher::Responder* parentResponder, HomogeneityTest* test,
@@ -53,9 +54,7 @@ class InputHomogeneityTableCell
 
   // HomogeneityTableViewDataSource
   Escher::HighlightCell* innerCell(int i) override {
-    return DynamicCellsDataSource<
-        InferenceEvenOddEditableCell,
-        k_homogeneityTableNumberOfReusableInnerCells>::cell(i);
+    return InputHomogeneityInnerCellsDataSource::cell(i);
   }
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;

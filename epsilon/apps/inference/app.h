@@ -72,7 +72,8 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   constexpr static int k_bufferSize =  // 21056
       std::max(
           {sizeof(ResultCell) * k_maxNumberOfResultCells,
-           sizeof(ParameterCell) * k_maxNumberOfParameterCell,
+           sizeof(ParameterCell) *
+               InputControllerDimensions::k_maxNumberOfParameterCell,
            sizeof(InferenceEvenOddBufferCell) *
                (HomogeneityTableDimensions::k_numberOfHeaderReusableCells +
                 HomogeneityTableDimensions::k_numberOfInnerReusableCells),

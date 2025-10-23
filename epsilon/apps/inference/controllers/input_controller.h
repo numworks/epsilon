@@ -12,13 +12,22 @@
 
 namespace Inference {
 
+namespace InputControllerDimensions {
+static constexpr int k_maxNumberOfParameterCell =
+    Ion::Display::Height /
+        Escher::AbstractMenuCell::k_minimalLargeFontCellHeight +
+    2;
+
+}  // namespace InputControllerDimensions
+
 using ParameterCell = Escher::MenuCellWithEditableText<Escher::LayoutView,
                                                        Escher::MessageTextView>;
 
 class InputController
     : public InferenceController,
       public Shared::FloatParameterController<double>,
-      public DynamicCellsDataSource<ParameterCell, k_maxNumberOfParameterCell>,
+      public DynamicCellsDataSource<
+          ParameterCell, InputControllerDimensions::k_maxNumberOfParameterCell>,
       public DynamicCellsDataSourceDelegate<ParameterCell> {
   friend class InputStoreController;
 
@@ -30,9 +39,7 @@ class InputController
       3 * (Poincare::PrintFloat::charSizeForFloatsWithPrecision(
               k_numberOfTitleSignificantDigits));
   constexpr static int k_numberOfReusableCells =
-      Ion::Display::Height /
-          Escher::AbstractMenuCell::k_minimalLargeFontCellHeight +
-      2;
+      InputControllerDimensions::k_maxNumberOfParameterCell;
 
   static void InputTitle(const Escher::ViewController* vc,
                          const InferenceModel* inference, char* titleBuffer,

@@ -4,8 +4,6 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/symbol_context.h>
 
-#include "parsing/layout_parser.h"
-
 namespace Poincare::Internal {
 
 namespace Parser {

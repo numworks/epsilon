@@ -7,9 +7,6 @@ namespace Poincare::Internal {
 
 /* These metadata are filled and used during parsing  */
 struct ParsingMetadata {
-  /* isTopLevelRack: true if the current rack is the top-level rack of the
-   * layout */
-  bool isTopLevelRack = false;
   /* this is set to true when parsing the name of a var/function if isAssignment
    * is true in ParsingParameters. */
   bool isAssignmentDeclaration = false;

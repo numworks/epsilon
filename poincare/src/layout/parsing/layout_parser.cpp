@@ -61,9 +61,6 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
     return RackParser(l, parsingContext).parseRack();
   }
 
-  // From now on, rack cannot be top level
-  parsingContext.metadata.isTopLevelRack = false;
-
   switch (l->layoutType()) {
     case LayoutType::VerticalOffset:
     case LayoutType::AsciiCodePoint:

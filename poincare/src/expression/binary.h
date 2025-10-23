@@ -25,6 +25,28 @@ class Binary {
   static bool ReduceComparison(Tree* e);
 
   static bool ReducePiecewise(Tree* e);
+#if POINCARE_PIECEWISE
+  /* Return the derivative of a piecewise derivand. Return nullptr if unhandled.
+   * If all conditions are handled, distribute derivation on branches, and add
+   * undef branches at each condition breakpoints. For example:
+   * piecewise(f1(x),  x>1,
+   *           f2(x),  x≤2,
+   *           f3(x),  x=3,
+   *           f4(x),  x≠4,
+   *           f5(x))
+   * Is derived to
+   * piecewise(f'1(x), x>1,   undef,  x≥1,
+   *           f'2(x), x<2,   undef,  x≤2,
+   *           f'3(x), false, undef,  x=3,
+   *           f'4(x), x≠4,   undef,  true,
+   *           f'5(x))
+   * And then reduced.
+   */
+  static Tree* ReducePiecewiseDerivative(const Tree* symbol,
+                                         const Tree* symbolValue,
+                                         const Tree* order,
+                                         const Tree* derivand);
+#endif
 
  private:
   constexpr static const char* k_logicalNotName = "not";
@@ -44,6 +66,23 @@ class Binary {
 #else
   constexpr static int k_numberOfOperators = 0;
   constexpr static TypeAndName k_operatorNames[0] = {};
+#endif
+
+#if POINCARE_PIECEWISE
+  /* Make reduced piecewise condition [e] lenient.
+   * Return false if unhandled. Examples :
+   * a > b  is turned into a >= b
+   * a <= b is turned into a <= b
+   * a != b is turned into True
+   * xor(a > b, a >= c) returns false. */
+  static bool MakeLenient(Tree* e);
+  /* Make reduced piecewise condition [e] strict.
+   * Return false if unhandled. Examples :
+   * a >= b is turned into a > b
+   * a < b  is turned into a < b
+   * a = b  is turned into False
+   * xor(a > b, a >= c) returns false. */
+  static bool MakeStrict(Tree* e);
 #endif
 
   struct OperatorForType {

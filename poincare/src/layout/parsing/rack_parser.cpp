@@ -113,7 +113,6 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
   m_tokenizer.skipTree(rightwardsArrowPosition + 1);
   TreeRef rightHandSide = initializeFirstTokenAndParseUntilEnd();
   if (m_nextToken.is(Token::Type::EndOfStream) &&
-      !rightHandSide.isUninitialized() &&
       (rightHandSide
            ->isUserSymbol() ||  // RightHandSide must be symbol or function.
        (rightHandSide->isUserFunction() &&
@@ -138,6 +137,7 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
     TreeRef leftHandSide = parseUntil(Token::Type::RightwardsArrow);
     leftHandSide->swapWithTree(rightHandSide);
     turnIntoBinaryNode(KStore, leftHandSide, rightHandSide);
+    assert(!leftHandSide.isUninitialized());
     return leftHandSide;
   }
   TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -151,6 +151,7 @@ Tree* RackParser::initializeFirstTokenAndParseUntilEnd() {
   } else {
     result = parseUntil(Token::Type::EndOfStream);
   }
+  assert(!result.isUninitialized());
   return result;
 }
 
@@ -368,7 +369,7 @@ uint32_t NumberOfTrailingZerosDigits(LayoutSpanDecoder decoder) {
 
 void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
-    // FIXME
+    // A number cannot follow directly an other valid expression
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
@@ -693,7 +694,6 @@ void RackParser::parseRightwardsArrow(TreeRef& leftHandSide,
 
   TreeRef rightHandSide = parseUntil(stoppingType);
   if (!m_nextToken.is(Token::Type::EndOfStream) ||
-      rightHandSide.isUninitialized() ||
       !Units::IsCombinationOfUnits(rightHandSide) ||
       (!Units::HasUnit(leftHandSide) && !leftIsSymbolWithUnits &&
        !Units::IsPureAngleUnit(rightHandSide))) {
@@ -713,9 +713,6 @@ void RackParser::parseLogicalOperatorNot(TreeRef& leftHandSide,
   }
   // Parse until Not so that not A and B = (not A) and B
   TreeRef rightHandSide = parseUntil(std::max(stoppingType, Token::Type::Not));
-  if (rightHandSide.isUninitialized()) {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
   rightHandSide->cloneNodeAtNode(KLogicalNot);
   leftHandSide = rightHandSide;
 #else
@@ -747,9 +744,6 @@ void RackParser::parseBinaryLogicalOperator(Type operatorType,
     newStoppingType = Token::Type::Or;
   }
   TreeRef rightHandSide = parseUntil(std::max(stoppingType, newStoppingType));
-  if (rightHandSide.isUninitialized()) {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
   Tree* node = SharedTreeStack->pushBlock(operatorType);
   leftHandSide->moveNodeAtNode(node);
 }
@@ -1395,10 +1389,7 @@ Tree* RackParser::parseCommaSeparatedList(bool isFirstToken) {
 
 void RackParser::parseList(TreeRef& leftHandSide, Token::Type stoppingType) {
 #if POINCARE_LIST
-  if (!leftHandSide.isUninitialized()) {
-    // TODO: should assert(leftHandSide.isUninitialized());
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
+  assert(leftHandSide.isUninitialized());
   if (!popTokenIfType(Token::Type::RightBrace)) {
     leftHandSide = parseCommaSeparatedList(true);
     assert(!leftHandSide.isUninitialized());
@@ -1447,15 +1438,13 @@ void RackParser::parseLayout(TreeRef& leftHandSide, Token::Type stoppingType) {
 
 void RackParser::parseSuperscript(TreeRef& leftHandSide,
                                   Token::Type stoppingType) {
-  const Tree* layout = m_currentToken.firstLayout();
   if (leftHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
+  const Tree* layout = m_currentToken.firstLayout();
   TreeRef rightHandSide =
       LayoutParser::Parse(layout->child(0), m_parsingContext);
-  if (rightHandSide.isUninitialized()) {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
+  assert(!rightHandSide.isUninitialized());
   if (popTokenIfType(Token::Type::Superscript)) {
     // a^b^c -> a^(b^c)
     parseSuperscript(rightHandSide);
@@ -1472,16 +1461,15 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
   }
   const Tree* layout = m_currentToken.firstLayout();
   TreeRef base = LayoutParser::Parse(layout->child(0), m_parsingContext);
-  if (base.isUninitialized()) {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
+  assert(!base.isUninitialized());
   popToken();
   if (m_currentToken.type() != Token::Type::ReservedFunction) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   TreeRef log;
   parseReservedFunction(log, Token::Type::ImplicitTimes);
-  if (log.isUninitialized() || !log->isLog()) {
+  assert(!log.isUninitialized());
+  if (!log->isLog()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   // Turn log into logBase

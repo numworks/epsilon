@@ -42,7 +42,8 @@ class RackParser {
         m_waitingSlashForMixedFraction(false),
         m_root(rack) {}
 
-  // All the parseSomething methods may raise ParseFail
+  /* All the parseSomething methods may raise ParseFail and should return
+   * a valid expression otherwise (not nullptr). */
   Tree* parseRack();
 
  private:

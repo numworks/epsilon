@@ -3,6 +3,7 @@
 #include <new>
 
 #include "inference/app.h"
+#include "inference/controllers/tables/homogeneity_data_source.h"
 
 using namespace Escher;
 
@@ -68,17 +69,6 @@ Escher::HighlightCell* DynamicCellsDataSource<T, N>::cell(int i) {
   return &m_cells[i];
 }
 
-// -1 takes the hidden top left cell into account
-static_assert(k_homogeneityTableNumberOfReusableHeaderCells ==
-                  HomogeneityTableDataSource::k_numberOfReusableColumns +
-                      HomogeneityTableDataSource::k_maxNumberOfReusableRows - 1,
-              "k_homogeneityTableNumberOfReusableHeaderCells should be updated "
-              "with HomogeneityTableDataSource::k_numberOfReusableColumns and "
-              "HomogeneityTableDataSource::k_maxNumberOfReusableRows");
-static_assert(k_homogeneityTableNumberOfReusableInnerCells ==
-                  HomogeneityTableDataSource::k_numberOfReusableCells,
-              "k_homogeneityTableNumberOfReusableHeaderCells should be updated "
-              "with HomogeneityTableDataSource::k_numberOfReusableCells");
 static_assert(k_doubleColumnTableNumberOfReusableCells ==
                   InputGoodnessTableCell::k_numberOfReusableCells,
               "k_doubleColumnTableNumberOfReusableCells should be updated with "
@@ -96,12 +86,16 @@ static_assert(k_goodnessContributionsTableNumberOfReusableCells ==
                   Escher::Metric::SmallEditableCellHeight,
                   Escher::Metric::TabHeight) *
                   3);
+
 template class DynamicCellsDataSource<
-    InferenceEvenOddBufferCell, k_homogeneityTableNumberOfReusableHeaderCells>;
+    InferenceEvenOddBufferCell,
+    HomogeneityTableDimensions::k_numberOfHeaderReusableCells>;
 template class DynamicCellsDataSource<
-    InferenceEvenOddBufferCell, k_homogeneityTableNumberOfReusableInnerCells>;
+    InferenceEvenOddBufferCell,
+    HomogeneityTableDimensions::k_numberOfInnerReusableCells>;
 template class DynamicCellsDataSource<
-    InferenceEvenOddEditableCell, k_homogeneityTableNumberOfReusableInnerCells>;
+    InferenceEvenOddEditableCell,
+    HomogeneityTableDimensions::k_numberOfInnerReusableCells>;
 template class DynamicCellsDataSource<
     InferenceEvenOddBufferCell,
     k_goodnessContributionsTableNumberOfReusableCells>;

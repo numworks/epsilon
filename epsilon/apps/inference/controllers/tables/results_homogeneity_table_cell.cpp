@@ -1,6 +1,7 @@
 #include "results_homogeneity_table_cell.h"
 
 #include "inference/controllers/chi_square/results_homogeneity_controller.h"
+#include "inference/controllers/tables/homogeneity_data_source.h"
 #include "inference/models/chi2_test.h"
 
 using namespace Escher;
@@ -12,9 +13,7 @@ ResultsHomogeneityTableCell::ResultsHomogeneityTableCell(
     ResultsHomogeneityController* resultsTableController,
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : CategoricalTableCell(parentResponder, this, scrollViewDelegate),
-      DynamicCellsDataSource<InferenceEvenOddBufferCell,
-                             k_homogeneityTableNumberOfReusableInnerCells>(
-          this),
+      ResultsHomogeneityInnerCellsDataSource(this),
       m_inference(test),
       m_mode(Mode::ExpectedValue),
       m_resultsTableController(resultsTableController) {
@@ -91,26 +90,17 @@ void ResultsHomogeneityTableCell::fillInnerCellForLocation(
 }
 
 void ResultsHomogeneityTableCell::createCells() {
-  if (DynamicCellsDataSource<
-          InferenceEvenOddBufferCell,
-          k_homogeneityTableNumberOfReusableHeaderCells>::m_cells == nullptr) {
-    DynamicCellsDataSource<InferenceEvenOddBufferCell,
-                           k_homogeneityTableNumberOfReusableHeaderCells>::
-        createCellsWithOffset(0);
-    DynamicCellsDataSource<InferenceEvenOddBufferCell,
-                           k_homogeneityTableNumberOfReusableInnerCells>::
-        createCellsWithOffset(k_homogeneityTableNumberOfReusableHeaderCells *
-                              sizeof(InferenceEvenOddBufferCell));
+  if (HomogeneityHeaderCellsDataSource::m_cells == nullptr) {
+    HomogeneityHeaderCellsDataSource::createCellsWithOffset(0);
+    ResultsHomogeneityInnerCellsDataSource::createCellsWithOffset(
+        HomogeneityTableDimensions::k_numberOfHeaderReusableCells *
+        sizeof(InferenceEvenOddBufferCell));
   }
 }
 
 void ResultsHomogeneityTableCell::destroyCells() {
-  DynamicCellsDataSource<
-      InferenceEvenOddBufferCell,
-      k_homogeneityTableNumberOfReusableInnerCells>::destroyCells();
-  DynamicCellsDataSource<
-      InferenceEvenOddBufferCell,
-      k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
+  ResultsHomogeneityInnerCellsDataSource::destroyCells();
+  HomogeneityHeaderCellsDataSource::destroyCells();
 }
 
 CategoricalController* ResultsHomogeneityTableCell::categoricalController() {

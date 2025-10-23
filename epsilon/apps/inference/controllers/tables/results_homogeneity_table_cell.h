@@ -2,18 +2,21 @@
 
 #include "homogeneity_data_source.h"
 #include "inference/controllers/categorical_table_cell.h"
+#include "inference/controllers/dynamic_cells_data_source.h"
 #include "inference/models/homogeneity_test.h"
 
 namespace Inference {
 
 class ResultsHomogeneityController;
 
+using ResultsHomogeneityInnerCellsDataSource = DynamicCellsDataSource<
+    InferenceEvenOddBufferCell,
+    HomogeneityTableDimensions::k_numberOfInnerReusableCells>;
+
 class ResultsHomogeneityTableCell
     : public CategoricalTableCell,
       public HomogeneityTableDataSource,
-      public DynamicCellsDataSource<
-          InferenceEvenOddBufferCell,
-          k_homogeneityTableNumberOfReusableInnerCells> {
+      public ResultsHomogeneityInnerCellsDataSource {
  public:
   ResultsHomogeneityTableCell(
       Escher::Responder* parentResponder, HomogeneityTest* test,
@@ -60,7 +63,7 @@ class ResultsHomogeneityTableCell
   Escher::HighlightCell* innerCell(int i) override {
     return DynamicCellsDataSource<
         InferenceEvenOddBufferCell,
-        k_homogeneityTableNumberOfReusableInnerCells>::cell(i);
+        HomogeneityTableDimensions::k_numberOfInnerReusableCells>::cell(i);
   }
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;

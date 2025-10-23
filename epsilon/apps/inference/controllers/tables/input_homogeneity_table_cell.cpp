@@ -3,6 +3,7 @@
 #include <omg/print.h>
 #include <shared/column_parameter_controller.h>
 
+#include "homogeneity_data_source.h"
 #include "inference/controllers/chi_square/input_homogeneity_controller.h"
 
 using namespace Escher;
@@ -64,23 +65,17 @@ void InputHomogeneityTableCell::fillInnerCellForLocation(
 }
 
 void InputHomogeneityTableCell::createCells() {
-  if (DynamicCellsDataSource<
-          InferenceEvenOddBufferCell,
-          k_homogeneityTableNumberOfReusableHeaderCells>::m_cells == nullptr) {
-    DynamicCellsDataSource<InferenceEvenOddBufferCell,
-                           k_homogeneityTableNumberOfReusableHeaderCells>::
-        createCellsWithOffset(0);
+  if (HomogeneityHeaderCellsDataSource::m_cells == nullptr) {
+    HomogeneityHeaderCellsDataSource::createCellsWithOffset(0);
     InputHomogeneityInnerCellsDataSource::createCellsWithOffset(
-        k_homogeneityTableNumberOfReusableHeaderCells *
+        HomogeneityTableDimensions::k_numberOfHeaderReusableCells *
         sizeof(InferenceEvenOddBufferCell));
   }
 }
 
 void InputHomogeneityTableCell::destroyCells() {
   InputHomogeneityInnerCellsDataSource::destroyCells();
-  DynamicCellsDataSource<
-      InferenceEvenOddBufferCell,
-      k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
+  HomogeneityHeaderCellsDataSource::destroyCells();
 }
 
 CategoricalController* InputHomogeneityTableCell::categoricalController() {

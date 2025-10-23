@@ -9,6 +9,7 @@
 
 #include "controllers/controller_container.h"
 #include "controllers/dynamic_cells_data_source.h"
+#include "inference/controllers/tables/homogeneity_data_source.h"
 #include "models/inference_buffer.h"
 
 namespace Inference {
@@ -69,17 +70,18 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   void cleanBuffer(DynamicCellsDataSourceDestructor* destructor);
 
   constexpr static int k_bufferSize =  // 21056
-      std::max({sizeof(ResultCell) * k_maxNumberOfResultCells,
-                sizeof(ParameterCell) * k_maxNumberOfParameterCell,
-                sizeof(InferenceEvenOddBufferCell) *
-                    (k_homogeneityTableNumberOfReusableHeaderCells +
-                     k_homogeneityTableNumberOfReusableInnerCells),
-                sizeof(InferenceEvenOddEditableCell) *
-                        k_homogeneityTableNumberOfReusableInnerCells +
-                    sizeof(InferenceEvenOddBufferCell) *
-                        k_homogeneityTableNumberOfReusableHeaderCells,
-                sizeof(InferenceEvenOddEditableCell) *
-                    k_doubleColumnTableNumberOfReusableCells});
+      std::max(
+          {sizeof(ResultCell) * k_maxNumberOfResultCells,
+           sizeof(ParameterCell) * k_maxNumberOfParameterCell,
+           sizeof(InferenceEvenOddBufferCell) *
+               (HomogeneityTableDimensions::k_numberOfHeaderReusableCells +
+                HomogeneityTableDimensions::k_numberOfInnerReusableCells),
+           sizeof(InferenceEvenOddEditableCell) *
+                   HomogeneityTableDimensions::k_numberOfInnerReusableCells +
+               sizeof(InferenceEvenOddBufferCell) *
+                   HomogeneityTableDimensions::k_numberOfHeaderReusableCells,
+           sizeof(InferenceEvenOddEditableCell) *
+               k_doubleColumnTableNumberOfReusableCells});
 
   // Shared::MenuControllerDelegate
   void selectSubApp(int subAppIndex) override;

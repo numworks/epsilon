@@ -8,10 +8,6 @@ namespace Inference {
 
 class InputHomogeneityController;
 
-using InputHomogeneityInnerCellsDataSource =
-    DynamicCellsDataSource<InferenceEvenOddEditableCell,
-                           k_homogeneityTableNumberOfReusableInnerCells>;
-
 class InputHomogeneityTableCell : public InputCategoricalTableCell,
                                   public HomogeneityTableDataSource,
                                   public InputHomogeneityInnerCellsDataSource {

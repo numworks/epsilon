@@ -158,10 +158,7 @@ class PieGraphController : public Escher::ViewController,
     }
 
    private:
-    void reload() {
-      m_pieGraphView.reload();
-      m_sideBannerView.reload();
-    }
+    void reload() { m_pieGraphView.reload(); }
 
     void layoutSubviews(bool force) override {
       KDRect b = bounds();

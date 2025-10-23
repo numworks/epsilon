@@ -20,4 +20,19 @@ class SolidColorView : public View {
   KDColor m_color;
 };
 
+class SolidColorWithBorderView : public View {
+ public:
+  SolidColorWithBorderView(KDColor color, KDColor border,
+                           KDCoordinate borderWidth);
+
+  void setColors(KDColor inside, KDColor border);
+  void setBorderWidth(KDCoordinate width);
+  void drawRect(KDContext* ctx, KDRect rect) const override;
+
+ private:
+  KDColor m_color;
+  KDColor m_border;
+  KDCoordinate m_borderWidth;
+};
+
 }  // namespace Escher

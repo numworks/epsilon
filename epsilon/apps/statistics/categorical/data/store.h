@@ -14,7 +14,7 @@ struct TableDimension {
   int row;
 };
 
-/* Store the the categorical statistics app, contains:
+/* Store for the categorical statistics app, contains:
  * The snapshoted data [TableData]
  * And memoized data (like sum for each group) */
 class Store {
@@ -25,12 +25,13 @@ class Store {
     Hidden,  // Inactive because User chose to (the group can be empty or not)
   };
 
-  static constexpr int k_labelLength = 12;  // 11 (from spec) + \x00
-
  public:
+  static constexpr int k_labelGlyphLength = 11;  // 11 (from spec)
+  // +4 to allow 2 or 3 combining CodePoint
+  static constexpr int k_labelLength = k_labelGlyphLength + 4;
   static constexpr int k_maxNumberOfGroups = 6;
   static constexpr int k_maxNumberOfCategory = 10;
-  using Label = char[k_labelLength];
+  using Label = char[k_labelLength + 1];  // + \x00
 
   /* Subpart of the [Store] that will be stored in the snapshot */
   struct TableData {

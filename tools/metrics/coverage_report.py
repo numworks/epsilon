@@ -43,12 +43,24 @@ class Diff:
         }
 
 
+def getStatus(base, head):
+    if head > base:
+        return "🔼"
+    elif head < base:
+        return "🔽"
+    else:
+        return "⏸️"
+
+
 def format_summary(base_summary: Summary, head_summary: Summary):
+    rateStatus = getStatus(base_summary.percentage, head_summary.percentage)
+    hitsStatus = getStatus(base_summary.hits, head_summary.hits)
+    totalStatus = getStatus(base_summary.total, head_summary.total)
     return f"""
-  |                       |                     **BASE**                      |                     **HEAD**                      |
-  |-----------------------|:-------------------------------------------------:|:-------------------------------------------------:|
-  |  Line coverage rate   |           {base_summary.percentage} %             |            {head_summary.percentage} %            |
-  |     Hits / Total      |     {base_summary.hits} / {base_summary.total}    |    {head_summary.hits} / {head_summary.total}     |"""
+  |                       |                     **BASE**                      |                     **HEAD**                      |                     **Status**                    |
+  |-----------------------|:-------------------------------------------------:|:-------------------------------------------------:|:-------------------------------------------------:|
+  |  Line coverage rate   |           {base_summary.percentage} %             |            {head_summary.percentage} %            |                   {rateStatus}                    |
+  |     Hits / Total      |     {base_summary.hits} / {base_summary.total}    |    {head_summary.hits} / {head_summary.total}     |            {hitsStatus} / {totalStatus}           |"""
 
 
 def format_diff(diff: Diff):

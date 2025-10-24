@@ -10,8 +10,7 @@ InputANOVAController::InputANOVAController(
     StackViewController* parent, ControllerContainer* controllerContainer,
     ANOVATest* inference)
     : InputCategoricalController(
-          parent, &controllerContainer->m_homogeneityResultsController,
-          inference,
+          parent, &controllerContainer->m_resultsANOVAController, inference,
           Invocation::Builder<InputCategoricalController>(
               &InputCategoricalController::ButtonAction, this)),
       m_inputANOVATable(&m_selectableListView, inference, this, this) {}

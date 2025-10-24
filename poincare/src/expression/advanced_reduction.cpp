@@ -19,9 +19,9 @@ namespace Poincare::Internal {
  * - 4 : Very costly assertions */
 #define DEBUG_LEVEL 2
 
-#define ASSERT_IF_LEVEL(lvl, cond) \
-  if (DEBUG_LEVEL >= (lvl)) {      \
-    assert(cond);                  \
+#define ASSERT_IF_LEVEL(lvl, cond)      \
+  if constexpr (DEBUG_LEVEL >= (lvl)) { \
+    assert(cond);                       \
   }
 
 #define VERBOSE_REDUCTION 0
@@ -31,13 +31,13 @@ namespace Poincare::Internal {
 #endif
 
 #if VERBOSE_REDUCTION > 0
-#define VERBOSE_INDENT(lvl)         \
-  if (VERBOSE_REDUCTION >= (lvl)) { \
-    ++s_indent;                     \
+#define VERBOSE_INDENT(lvl)                   \
+  if constexpr (VERBOSE_REDUCTION >= (lvl)) { \
+    ++s_indent;                               \
   }
-#define VERBOSE_OUTDENT(lvl)        \
-  if (VERBOSE_REDUCTION >= (lvl)) { \
-    --s_indent;                     \
+#define VERBOSE_OUTDENT(lvl)                  \
+  if constexpr (VERBOSE_REDUCTION >= (lvl)) { \
+    --s_indent;                               \
   }
 
 /* LOG_INDENT should not be used directly, it is only there as a way to create
@@ -45,7 +45,7 @@ namespace Poincare::Internal {
  * LOG(1, "Test", ()) => print Test with indent
  * LOG(1, "Test", (), false) => print Test without indent */
 #define LOG_INDENT(lvl, str, object, indent, default, ...) \
-  if (VERBOSE_REDUCTION >= (lvl)) {                        \
+  if constexpr (VERBOSE_REDUCTION >= (lvl)) {              \
     if (indent) LogIndent();                               \
     std::cout << str;                                      \
     object;                                                \

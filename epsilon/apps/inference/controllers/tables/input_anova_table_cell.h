@@ -27,7 +27,7 @@ class InputANOVATableCell : public InputCategoricalTableCell,
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
   bool canStoreCellAtLocation(int column, int row) override {
-    return column > 0 && row > 0;
+    return column >= 0 && row > 0;
   }
 
   // DynamicCellsDataSource
@@ -45,7 +45,7 @@ class InputANOVATableCell : public InputCategoricalTableCell,
   size_t fillColumnName(int column, char* buffer) override;
 
   // CategoricalTableViewDataSource
-  int relativeColumn(int column) const override { return column - 1; }
+  int relativeColumn(int column) const override { return column; }
 
   // ANOVATableViewDataSource
   Escher::HighlightCell* innerCell(int i) override {

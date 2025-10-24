@@ -40,7 +40,7 @@ class ANOVATest : public SignificanceTest, public InputTable {
   int maxNumberOfRows() const override { return k_maxNumberOfRows; }
 
   Index2D initialDimensions() const override {
-    return Index2D{.row = 2, .col = 2};
+    return Index2D{.row = 2, .col = 3};
   }
 
   using GroupValues = Poincare::Inference::SignificanceTest::FTest::Values;

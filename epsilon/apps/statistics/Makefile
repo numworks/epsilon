@@ -49,6 +49,8 @@ SOURCES_apps += $(addprefix $(PATH_apps)/statistics/,$(addsuffix :-test, \
     data/table_data_source.cpp \
     graph/graph_view_model.cpp \
     graph/pie_banner_view.cpp \
+    graph/pie_displayed_data_controller.cpp \
+    graph/pie_graph_controller.cpp \
     graph/pie_graph_view.cpp \
   ) \
 ) \

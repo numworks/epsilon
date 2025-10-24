@@ -54,6 +54,7 @@ class KDRect {
   constexpr KDPoint topRight() const { return KDPoint(right(), top()); }
   constexpr KDPoint bottomLeft() const { return KDPoint(left(), bottom()); }
   constexpr KDPoint bottomRight() const { return KDPoint(right(), bottom()); }
+  constexpr bool isValid() const { return size().isValid(); }
 
   bool operator==(const KDRect& other) const {
     return (origin() == other.origin() && size() == other.size());

@@ -22,7 +22,8 @@ constexpr static int k_maxNumberOfReusableRows =
              ANOVATest::k_maxNumberOfRows);
 constexpr static int k_numberOfInnerReusableCells =
     k_maxNumberOfReusableRows * k_numberOfReusableColumns;
-constexpr static int k_numberOfHeaderReusableCells = k_numberOfReusableColumns;
+constexpr static int k_numberOfInputHeaderReusableCells =
+    k_numberOfReusableColumns;
 }  // namespace ANOVATableDimensions
 
 // This class wraps a TableViewDataSource by adding a Column header around it.

@@ -82,7 +82,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
            sizeof(InferenceEvenOddEditableCell) *
                    ANOVATableDimensions::k_numberOfInnerReusableCells +
                sizeof(InferenceEvenOddBufferCell) *
-                   ANOVATableDimensions::k_numberOfHeaderReusableCells,
+                   ANOVATableDimensions::k_numberOfInputHeaderReusableCells,
            sizeof(InferenceEvenOddEditableCell) *
                    HomogeneityTableDimensions::k_numberOfInnerReusableCells +
                sizeof(InferenceEvenOddBufferCell) *

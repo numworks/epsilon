@@ -122,17 +122,17 @@ bool AdvancedReduction::Reduce(Tree* e, ReductionTarget reductionTarget) {
 
   bool changed = false;
   if (!(e->isList())) {
-    changed = ReduceIndependantElement(e, reductionTarget);
+    changed = ReduceIndependentElement(e, reductionTarget);
   } else {
     for (Tree* child : e->children()) {
-      changed = ReduceIndependantElement(child, reductionTarget) || changed;
+      changed = ReduceIndependentElement(child, reductionTarget) || changed;
     }
   }
   ASSERT_IF_LEVEL(2, !changed || !SystematicReduction::DeepReduce(e));
   return changed;
 }
 
-bool AdvancedReduction::ReduceIndependantElement(
+bool AdvancedReduction::ReduceIndependentElement(
     Tree* e, ReductionTarget reductionTarget) {
   Path best_path{};
   ExceptionTry { best_path = FindBestReduction(e, reductionTarget); }
@@ -281,7 +281,7 @@ bool AdvancedReduction::Direction::applyNextNode(const Tree** u,
   ASSERT_IF_LEVEL(1, (next->block() < SharedTreeStack->lastBlock()) ==
                          next->hasAncestor(root, false));
   /* TODO We would like this second assert instead of the one above. But we
-   * cannot because we apply a path in [ReduceIndependantElement], and there the
+   * cannot because we apply a path in [ReduceIndependentElement], and there the
    * tree is not guaranteed to be last on TreeStack */
 #if 0
   ASSERT_IF_LEVEL(

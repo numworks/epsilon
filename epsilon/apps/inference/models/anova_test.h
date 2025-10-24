@@ -20,6 +20,13 @@ class ANOVATest : public SignificanceTest, public InputTable {
     return StatisticType::F;
   }
 
+  Poincare::Distribution::ParametersArray<double> distributionParameters()
+      const override {
+    return Poincare::Inference::DistributionParameters(
+        statisticType(), m_results.between.degreesOfFreedom,
+        m_results.within.degreesOfFreedom);
+  }
+
   void compute() override;
 
   // InputTable

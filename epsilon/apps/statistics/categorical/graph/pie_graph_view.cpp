@@ -74,26 +74,26 @@ int PieGraphViewDataSource::setGroup(int group) {
 
 void PieGraphView::drawRect(KDContext* ctx, KDRect rect) const {
   assert(m_numberOfActiveCategories > 0);
-  constexpr int k_frambufferHeight = 149;
-  constexpr int k_frambufferWidth = 5;
-  assert(bounds().width() % k_frambufferWidth == 0);
-  assert(bounds().height() == k_frambufferHeight);
+  constexpr int k_framebufferHeight = 149;
+  constexpr int k_framebufferWidth = 5;
+  assert(bounds().width() % k_framebufferWidth == 0);
+  assert(bounds().height() == k_framebufferHeight);
 
-  KDColor framebuffer[k_frambufferHeight][k_frambufferWidth];
+  KDColor framebuffer[k_framebufferHeight][k_framebufferWidth];
 
   const KDPoint center = KDPoint(bounds().width() / 2, bounds().height() / 2);
 
   Ion::Display::waitForVBlank();  // Not sure it's useful
-  for (int layerStart = bounds().width() - k_frambufferWidth; layerStart >= 0;
-       layerStart -= k_frambufferWidth) {
+  for (int layerStart = bounds().width() - k_framebufferWidth; layerStart >= 0;
+       layerStart -= k_framebufferWidth) {
     KDColor* pixels = &framebuffer[0][0];
-    for (int j = 0; j < k_frambufferHeight; ++j) {
-      for (int i = 0; i < k_frambufferWidth; ++i) {
+    for (int j = 0; j < k_framebufferHeight; ++j) {
+      for (int i = 0; i < k_framebufferWidth; ++i) {
         *(pixels++) = pointColor(i + layerStart, j, center);
       }
     }
     KDRect layerRect =
-        KDRect(layerStart, 0, k_frambufferWidth, k_frambufferHeight);
+        KDRect(layerStart, 0, k_framebufferWidth, k_framebufferHeight);
     ctx->fillRectWithPixels(layerRect, &framebuffer[0][0], &framebuffer[0][0]);
   }
   if (m_numberOfActiveCategories > 1) {

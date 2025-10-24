@@ -78,22 +78,22 @@ void PieBannerView::layoutSubviews(bool force) {
 
   // Color label and cell
   constexpr KDCoordinate k_colorCellWidth = 40;
-  constexpr KDCoordinate k_textHeigth = 20;
-  constexpr KDCoordinate k_colorCellHeigth = 15;
+  constexpr KDCoordinate k_textHeight = 20;
+  constexpr KDCoordinate k_colorCellHeight = 15;
   KDRect colorTextRect =
       KDRect(k_verticalMargin, height, bounds().width() - k_verticalMargin,
-             k_textHeigth);
+             k_textHeight);
   setChildFrame(&m_colorLabel, colorTextRect, force);
   KDRect colorCellRect =
       KDRect(bounds().width() - k_verticalMargin - k_colorCellWidth, height,
-             k_colorCellWidth, k_colorCellHeigth);
+             k_colorCellWidth, k_colorCellHeight);
   setChildFrame(&m_colorCell, colorCellRect, force);
   height += colorTextRect.height() + k_horizontalMargin;
 
   // Frequency label
   KDRect freqTextRect =
       KDRect(k_verticalMargin, height, bounds().width() - k_verticalMargin,
-             k_textHeigth);
+             k_textHeight);
   setChildFrame(&m_freqLabel, freqTextRect, force);
 
   // Frequency value
@@ -101,18 +101,18 @@ void PieBannerView::layoutSubviews(bool force) {
   KDSize valueSize = m_freqValue.minimalSizeForOptimalDisplay();
   if (labelSize.width() + valueSize.width() + 2 * k_verticalMargin >
       bounds().width()) {
-    height += k_textHeigth;
+    height += k_textHeight;
   }
   KDRect freqValueRect =
       KDRect(bounds().width() - k_verticalMargin - valueSize.width(), height,
-             valueSize.width(), k_textHeigth);
+             valueSize.width(), k_textHeight);
   setChildFrame(&m_freqValue, freqValueRect, force);
   height += freqTextRect.height() + k_horizontalMargin;
 
   // Relative label and value
   KDRect relativeTextRect =
       KDRect(k_verticalMargin, height, bounds().width() - k_verticalMargin,
-             k_textHeigth);
+             k_textHeight);
   setChildFrame(&m_relativeLabel, relativeTextRect, force);
 
   // Relative value
@@ -120,11 +120,11 @@ void PieBannerView::layoutSubviews(bool force) {
   valueSize = m_relativeValue.minimalSizeForOptimalDisplay();
   if (labelSize.width() + valueSize.width() + 2 * k_verticalMargin >
       bounds().width()) {
-    height += k_textHeigth;
+    height += k_textHeight;
   }
   KDRect relativeValueRect =
       KDRect(bounds().width() - k_verticalMargin - valueSize.width(), height,
-             valueSize.width(), k_textHeigth);
+             valueSize.width(), k_textHeight);
   setChildFrame(&m_relativeValue, relativeValueRect, force);
 }
 

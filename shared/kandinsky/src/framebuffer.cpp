@@ -9,6 +9,7 @@ KDRect KDFrameBuffer::bounds() { return KDRect(KDPointZero, m_size); }
 
 KDColor* KDFrameBuffer::pixelAddress(KDPoint p) const {
   assert(p.x() >= 0 && p.y() >= 0 && m_size.isValid());
+  assert(p.x() < m_size.width() && p.y() < m_size.height());
   return m_pixels + p.x() + p.y() * m_size.width();
 }
 

@@ -126,10 +126,8 @@ void KDContext::drawAntialiasedLineAutoBackground(float x1, float y1, float x2,
     int yAbove = yBelow + 1;
     float fractionalPart = y - yBelow;
     uint8_t alpha = 255u * fractionalPart;
-    getPixel(steep ? KDPoint(yBelow - 1, x) : KDPoint(x, yBelow - 1),
-             &background);
-    getPixel(steep ? KDPoint(yAbove + 1, x) : KDPoint(x, yAbove + 1),
-             &background2);
+    getPixel(steep ? KDPoint(yBelow, x) : KDPoint(x, yBelow), &background);
+    getPixel(steep ? KDPoint(yAbove, x) : KDPoint(x, yAbove), &background2);
     KDColor colorBelow = KDColor::Blend(background, lineColor, alpha);
     KDColor colorAbove = KDColor::Blend(lineColor, background2, alpha);
     if (steep) {

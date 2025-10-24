@@ -42,10 +42,10 @@ int PieGraphViewDataSource::setGroup(int group) {
   m_numberOfActiveCategories = 0;
   m_selectedCategory = UINT8_MAX;
   float cumulatedAngle = 0;
-  // static_assert(Store::k_maxNumberOfCategory <=
-  // Escher::Palette::numberOfLightDataColors());
-  // static_assert(Store::k_maxNumberOfCategory <=
-  // Escher::Palette::numberOfDataColors());
+  static_assert(Store::k_maxNumberOfCategory <=
+                Escher::Palette::numberOfLightDataColors());
+  static_assert(Store::k_maxNumberOfCategory <=
+                Escher::Palette::numberOfDataColors());
   for (int globalCatIndex = 0; globalCatIndex < Store::k_maxNumberOfCategory;
        ++globalCatIndex) {
     float rf = m_store->getRelativeFrequency(group, globalCatIndex);

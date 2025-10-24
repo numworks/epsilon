@@ -14,7 +14,7 @@ namespace Poincare::Internal {
 /* This Debug level can be changed from 0 to 4:
  * - 0 : No assertions
  * - 1 : Free assertions
- * - 2 : Costly assertions run only once per approximation
+ * - 2 : Costly assertions run only once per reduction
  * - 3 : Costly assertions
  * - 4 : Very costly assertions */
 #define DEBUG_LEVEL 2
@@ -118,6 +118,7 @@ bool AdvancedReduction::Reduce(Tree* e, ReductionTarget reductionTarget) {
   ASSERT_IF_LEVEL(2, e->isList() || !Dimension::IsList(e) ||
                          e->hasDescendantSatisfying(
                              [](const Tree* e) { return e->isRandomized(); }));
+  ASSERT_IF_LEVEL(2, !SystematicReduction::DeepReduce(e));
 
   if (!(e->isList())) {
     return ReduceIndependantElement(e, reductionTarget);

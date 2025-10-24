@@ -10,7 +10,7 @@ DisplayedDataController::DisplayedDataController(
           parentResponder),
       m_tabController(tabViewController),
       m_stackViewController(stackView),
-      m_store(store){};
+      m_store(store) {}
 
 void DisplayedDataController::initView() {
   int selectedGroup = m_store->getSelectedGroupForPieGraph();

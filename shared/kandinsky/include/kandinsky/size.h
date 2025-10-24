@@ -15,6 +15,7 @@ class KDSize {
   constexpr KDSize(KDSizeStruct s) : m_struct{s} {}
   constexpr KDCoordinate width() const { return m_struct.width; }
   constexpr KDCoordinate height() const { return m_struct.height; }
+  constexpr bool isValid() const { return width() >= 0 && height() >= 0; }
   bool operator==(const KDSize& other) const {
     return m_struct.width == other.m_struct.width &&
            m_struct.height == other.m_struct.height;

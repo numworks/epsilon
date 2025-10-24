@@ -150,7 +150,7 @@ class Variant {
 template <typename One, typename Two>
 class Variant2 {
  public:
-  Variant2() = default;
+  Variant2(){};
   ~Variant2() { deinit(); }
 
   // Delete all other constructors

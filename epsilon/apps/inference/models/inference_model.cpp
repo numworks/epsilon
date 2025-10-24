@@ -4,6 +4,7 @@
 #include <apps/shared/global_store.h>
 #include <inference/app.h>
 #include <omg/unreachable.h>
+#include <poincare/statistics/distribution.h>
 #include <poincare/statistics/inference.h>
 
 #include "anova_test.h"
@@ -235,6 +236,11 @@ float InferenceModel::computeYMax() const {
                 ? 0.5
                 : canonicalDensityFunction(m_degreesOfFreedom - 1) * 1.2;
       break;
+    case Poincare::Distribution::Type::Fisher: {
+      max = Poincare::Distribution::ComputeYMax(
+          Poincare::Distribution::Type::Fisher, distributionParameters());
+      break;
+    }
     default:
       OMG::unreachable();
   }

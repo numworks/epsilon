@@ -4,61 +4,56 @@
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/solid_color_cell.h>
 
-#include <algorithm>
-
+#include "anova_table_dimensions.h"
 #include "categorical_table_view_data_source.h"
 #include "dynamic_cells_data_source.h"
 #include "inference/models/anova_test.h"
 
 namespace Inference {
 
-namespace ANOVATableDimensions {
-// TODO: shared value with ChiSquare / Homogeneity
-constexpr static int k_columnWidth = 82;
-constexpr static int k_numberOfReusableColumns = std::min(
-    Ion::Display::Width / k_columnWidth + 2, ANOVATest::k_maxNumberOfColumns);
-constexpr static int k_maxNumberOfReusableRows =
-    std::min(CategoricalTableViewDataSource::k_maxNumberOfReusableRows,
-             ANOVATest::k_maxNumberOfRows);
-constexpr static int k_numberOfInnerReusableCells =
-    k_maxNumberOfReusableRows * k_numberOfReusableColumns;
-constexpr static int k_numberOfInputHeaderReusableCells =
-    k_numberOfReusableColumns;
-}  // namespace ANOVATableDimensions
+// TODO: factorize with HomogeneityResults
 
-// This class wraps a TableViewDataSource by adding a Column header around it.
-class ANOVATableDataSource
+/* This class wraps a TableViewDataSource by adding a Row & Column header around
+ * it. */
+class ResultsANOVADataSource
     : public CategoricalTableViewDataSource,
       public DynamicCellsDataSource<InferenceEvenOddBufferCell>,
       public DynamicCellsDataSourceDelegate<InferenceEvenOddBufferCell> {
  public:
-  ANOVATableDataSource();
+  ResultsANOVADataSource();
 
   // TableViewDataSource
   int numberOfRows() const override { return innerNumberOfRows() + 1; }
-  int numberOfColumns() const override { return innerNumberOfColumns(); }
+  int numberOfColumns() const override { return innerNumberOfColumns() + 1; }
   int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
   Escher::HighlightCell* reusableCell(int i, int type) override;
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
+  bool canSelectCellAtLocation(int column, int row) override {
+    return typeAtLocation(column, row) != k_typeOfTopLeftCell;
+  }
 
   // DynamicCellsDataSource
+
+  void createCells() override;
+
   void initCell(InferenceEvenOddBufferCell, void* cell, int index) override;
 
   constexpr static int k_columnWidth = ANOVATableDimensions::k_columnWidth;
+
   constexpr static int k_numberOfReusableColumns =
       ANOVATableDimensions::k_numberOfReusableColumns;
+  // TODO: ANOVATableDimensions::k_numberOfResultRows?
   constexpr static int k_maxNumberOfReusableRows =
       ANOVATableDimensions::k_maxNumberOfReusableRows;
 
  protected:
   constexpr static int k_maxNumberOfColumns = ANOVATest::k_maxNumberOfColumns;
-  constexpr static int k_maxNumberOfInnerRows = ANOVATest::k_maxNumberOfRows;
-  constexpr static int k_maxNumberOfRows = k_maxNumberOfInnerRows + 1;
+  // TODO: ANOVATableDimensions::k_numberOfResultRows?
+  constexpr static int k_maxNumberOfRows = ANOVATest::k_maxNumberOfRows;
 
   KDCoordinate nonMemoizedColumnWidth(int column) override {
-    assert(column >= 0 && column < k_maxNumberOfColumns);
     return k_columnWidth;
   }
   virtual int innerNumberOfRows() const = 0;
@@ -68,9 +63,11 @@ class ANOVATableDataSource
   virtual Escher::HighlightCell* innerCell(int i) = 0;
 
  private:
-  constexpr static int k_headerTranslationBufferSize = 20;
+  constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;
+  constexpr static int k_headerTranslationBuffer = 20;
 
   I18n::Message m_headerPrefix;
+  Escher::SolidColorCell m_topLeftCell;
 };
 
 }  // namespace Inference

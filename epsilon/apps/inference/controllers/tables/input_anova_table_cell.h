@@ -1,8 +1,8 @@
 #pragma once
 
-#include "anova_data_source.h"
 #include "categorical_table_cell.h"
 #include "inference/models/anova_test.h"
+#include "input_anova_data_source.h"
 
 namespace Inference {
 
@@ -10,7 +10,7 @@ class InputANOVAController;
 
 class InputANOVATableCell
     : public InputCategoricalTableCell,
-      public ANOVATableDataSource,
+      public InputANOVADataSource,
       public DynamicCellsDataSource<InferenceEvenOddEditableCell> {
  public:
   InputANOVATableCell(Escher::Responder* parentResponder, ANOVATest* test,

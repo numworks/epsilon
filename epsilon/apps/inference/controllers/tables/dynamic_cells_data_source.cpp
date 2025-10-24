@@ -2,10 +2,10 @@
 
 #include <new>
 
-#include "anova_data_source.h"
 #include "homogeneity_data_source.h"
 #include "inference/app.h"
 #include "inference/controllers/results_controller.h"
+#include "input_anova_data_source.h"
 #include "results_goodness_table_cell.h"
 
 using namespace Escher;

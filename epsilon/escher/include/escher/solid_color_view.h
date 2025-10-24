@@ -26,7 +26,10 @@ class SolidColorWithBorderView : public View {
                            KDCoordinate borderWidth);
 
   void setColors(KDColor inside, KDColor border);
-  void setBorderWidth(KDCoordinate width);
+  void setBorderWidth(KDCoordinate width) {
+    assert(width >= 0);
+    m_borderWidth = width;
+  }
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  private:

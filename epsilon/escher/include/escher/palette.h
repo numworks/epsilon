@@ -34,20 +34,28 @@ class Palette {
   constexpr static KDColor Turquoise = KDColor::RGB24(0x60c1ec);
   constexpr static KDColor TurquoiseLight = KDColor::RGB24(0xd0edff);
   constexpr static KDColor Pink = KDColor::RGB24(0xffabb6);
+  constexpr static KDColor PinkLight = KDColor::RGB24(0xffe3e7);
   constexpr static KDColor Blue = KDColor::RGB24(0x5075f2);
   constexpr static KDColor BlueLight = KDColor::RGB24(0xdce3fd);
   constexpr static KDColor Orange = KDColor::RGB24(0xfe871f);
+  constexpr static KDColor OrangeLight = KDColor::RGB24(0xffc89a);
   constexpr static KDColor Green = KDColor::RGB24(0x50c102);
   constexpr static KDColor GreenLight = KDColor::RGB24(0xdcf3cc);
   constexpr static KDColor Brown = KDColor::RGB24(0x8d7350);
   constexpr static KDColor Purple = KDColor::RGB24(0x6e2d79);
   constexpr static KDColor BlueishGray = KDColor::RGB24(0x919ea4);
   constexpr static KDColor Cyan = KDColor::RGB24(0x00ffff);
+  constexpr static KDColor Violet = KDColor::RGB24(0x8d37e9);
+  constexpr static KDColor VioletLight = KDColor::RGB24(0xd7b3ff);
+  constexpr static KDColor Mint = KDColor::RGB24(0x00c6b1);
+  constexpr static KDColor MintLight = KDColor::RGB24(0xb1fef7);
+
   constexpr static KDColor DataColor[] = {Red,     Blue,      Green, YellowDark,
-                                          Magenta, Turquoise, Pink,  Orange};
-  constexpr static KDColor DataColorLight[] = {RedLight,     BlueLight,
-                                               GreenLight,   YellowLight,
-                                               MagentaLight, TurquoiseLight};
+                                          Magenta, Turquoise, Pink,  Orange,
+                                          Violet,  Mint};
+  constexpr static KDColor DataColorLight[] = {
+      RedLight,       BlueLight, GreenLight,  YellowLight, MagentaLight,
+      TurquoiseLight, PinkLight, OrangeLight, VioletLight, MintLight};
 
   constexpr static size_t numberOfDataColors() { return std::size(DataColor); }
   constexpr static size_t numberOfLightDataColors() {

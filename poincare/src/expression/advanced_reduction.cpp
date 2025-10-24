@@ -120,13 +120,15 @@ bool AdvancedReduction::Reduce(Tree* e, ReductionTarget reductionTarget) {
                              [](const Tree* e) { return e->isRandomized(); }));
   ASSERT_IF_LEVEL(2, !SystematicReduction::DeepReduce(e));
 
-  if (!(e->isList())) {
-    return ReduceIndependantElement(e, reductionTarget);
-  }
   bool changed = false;
-  for (Tree* child : e->children()) {
-    changed = ReduceIndependantElement(child, reductionTarget) || changed;
+  if (!(e->isList())) {
+    changed = ReduceIndependantElement(e, reductionTarget);
+  } else {
+    for (Tree* child : e->children()) {
+      changed = ReduceIndependantElement(child, reductionTarget) || changed;
+    }
   }
+  ASSERT_IF_LEVEL(2, !changed || !SystematicReduction::DeepReduce(e));
   return changed;
 }
 

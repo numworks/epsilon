@@ -436,26 +436,23 @@ QUIZ_CASE(graph_function_properties) {
                              .m_conicShape = Poincare::Conic::Shape::Ellipse,
                              .m_isOfDegreeTwo = true,
                              .m_numberOfSubCurves = 2});
+    /* When implicit plots are disabled, these conics are still identified to
+     * allow better graphing, but details are hidden. */
     assert_check_function_properties(
-        "x=y^2", noImplicitPlot
-                     ? k_bannedProperties
-                     : FunctionProperties{
-                           .m_caption = I18n::Message::ParabolaType,
-                           .m_conicShape = Poincare::Conic::Shape::Parabola,
-                           .m_isOfDegreeTwo = true,
-                           .m_numberOfSubCurves = 2});
-    /* When implicit plots are disabled, these conics are no longer identified
-     * to hide details */
+        "x=y^2", FunctionProperties{
+                     .m_caption = noImplicitPlot ? I18n::Message::Equation
+                                                 : I18n::Message::ParabolaType,
+                     .m_conicShape = Poincare::Conic::Shape::Parabola,
+                     .m_isOfDegreeTwo = true,
+                     .m_numberOfSubCurves = 2});
     assert_check_function_properties(
-        "y=x^2",
-        noImplicitPlot
-            ? k_cartesianEquationProperties
-            : FunctionProperties{
-                  .m_caption = I18n::Message::ParabolaType,
-                  .m_curveParameterType = ContinuousFunctionProperties::
-                      CurveParameterType::CartesianFunction,
-                  .m_conicShape = Poincare::Conic::Shape::Parabola,
-                  .m_isOfDegreeTwo = false});
+        "y=x^2", FunctionProperties{
+                     .m_caption = noImplicitPlot ? I18n::Message::Equation
+                                                 : I18n::Message::ParabolaType,
+                     .m_curveParameterType = ContinuousFunctionProperties::
+                         CurveParameterType::CartesianFunction,
+                     .m_conicShape = Poincare::Conic::Shape::Parabola,
+                     .m_isOfDegreeTwo = false});
     assert_check_function_properties(
         "x^2-2*y^2=12",
         noImplicitPlot ? k_bannedProperties

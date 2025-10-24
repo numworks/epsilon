@@ -12,6 +12,8 @@
 
 namespace Statistics::Categorical {
 
+/* Main controller of the pie graph page.
+ * Handles events and contains the 3 subviews (title, pie graph and banner). */
 class PieGraphController : public Escher::ViewController,
                            public GraphButtonRowDelegate {
  public:

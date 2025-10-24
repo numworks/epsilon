@@ -23,7 +23,7 @@ void InputANOVATableCell::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (selectedRow() < 0) {
-      selectColumn(1);
+      selectColumn(0);
     }
     CategoricalTableCell::handleResponderChainEvent(event);
   } else {
@@ -34,11 +34,10 @@ void InputANOVATableCell::handleResponderChainEvent(
 void InputANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
                                               int column, int row) {
   ANOVATableDataSource::fillCellForLocation(cell, column, row);
-  if ((column == 0 && row != 0 && row == numberOfRows() - 1 &&
-       row < k_maxNumberOfRows) ||
-      (row == 0 && column != 0 && column == numberOfColumns() - 1 &&
-       column < k_maxNumberOfColumns)) {
-    /* The last column/row is empty and has its title grayed out. */
+  if ((row == 0 && column == numberOfColumns() - 1 &&
+       column < k_maxNumberOfColumns - 1)) {
+    /* The last header has its title grayed out, except if the column is the
+     * last possible column. */
     static_cast<InferenceEvenOddBufferCell*>(cell)->setTextColor(
         Palette::GrayDark);
   }

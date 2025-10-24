@@ -180,8 +180,8 @@ class InferenceModel : public Shared::StatisticalDistribution {
   Poincare::Distribution::Type distributionType() const {
     return Poincare::Inference::DistributionType(statisticType());
   }
-  Poincare::Distribution::ParametersArray<double> distributionParameters()
-      const {
+  virtual Poincare::Distribution::ParametersArray<double>
+  distributionParameters() const {
     return Poincare::Inference::DistributionParameters(statisticType(),
                                                        m_degreesOfFreedom);
   }

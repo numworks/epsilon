@@ -165,7 +165,7 @@ class AdvancedReduction {
   [[nodiscard]] static Path FindBestReduction(const Tree* e,
                                               ReductionTarget reductionTarget);
 
-  static bool ReduceIndependantElement(Tree* e,
+  static bool ReduceIndependentElement(Tree* e,
                                        ReductionTarget reductionTarget);
 
   /* Internal entrypoint for AdvancedReduction. Handles NextNode operations.

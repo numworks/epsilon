@@ -396,29 +396,29 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
   setCurveParameterType(yDeg == 2 ? CurveParameterType::Default
                                   : CurveParameterType::CartesianFunction);
 
-  if (xDeg >= 1 && xDeg <= 2 &&
-      !ExamModeManager::ExamMode().forbidImplicitPlots()) {
-    /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
-     * details. Otherwise, try to identify a conic.
-     * For instance, x*y=1 as an hyperbola. */
+  if (xDeg >= 1 && xDeg <= 2) {
+    // Try to identify a conic. For instance, x*y=1 is an hyperbola.
     CartesianConic equationConic =
         CartesianConic(analyzedExpression, Function::k_unknownName);
     setConicShape(equationConic.conicType().shape);
-    switch (conicShape()) {
-      case Conic::Shape::Hyperbola:
-        setCaption(I18n::Message::HyperbolaType);
-        return;
-      case Conic::Shape::Parabola:
-        setCaption(I18n::Message::ParabolaType);
-        return;
-      case Conic::Shape::Ellipse:
-        setCaption(I18n::Message::EllipseType);
-        return;
-      case Conic::Shape::Circle:
-        setCaption(I18n::Message::CircleType);
-        return;
-      default:;
-        // A conic could not be identified.
+    if (!ExamModeManager::ExamMode().forbidImplicitPlots()) {
+      // If implicit plots are forbidden, hide details.
+      switch (conicShape()) {
+        case Conic::Shape::Hyperbola:
+          setCaption(I18n::Message::HyperbolaType);
+          return;
+        case Conic::Shape::Parabola:
+          setCaption(I18n::Message::ParabolaType);
+          return;
+        case Conic::Shape::Ellipse:
+          setCaption(I18n::Message::EllipseType);
+          return;
+        case Conic::Shape::Circle:
+          setCaption(I18n::Message::CircleType);
+          return;
+        default:;
+          // A conic could not be identified.
+      }
     }
   }
 }

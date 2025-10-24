@@ -11,6 +11,9 @@
 
 namespace Statistics::Categorical {
 
+/* DataSource for the PieGraph.
+ * Computes and stores the cumulated angles for each section, as well as their
+ * color */
 class PieGraphViewDataSource {
  public:
   PieGraphViewDataSource(Store* store);
@@ -33,7 +36,9 @@ class PieGraphViewDataSource {
   bool m_isSelectionActive;
 };
 
-// TODO: this class is very linked to the Categorical store atm, it shouldn't be
+/* A pie chart: given a data source, produces a pie graph representing the
+ * data.
+ * TODO: extract this class into a standalone shared class if necessary */
 class PieGraphView : public Escher::View, public PieGraphViewDataSource {
  public:
   PieGraphView(Store* store) : PieGraphViewDataSource(store) {}

@@ -13,6 +13,8 @@
 
 namespace Statistics::Categorical {
 
+/* Side banner view of the pie graph. Displays various information about the
+ * selected category */
 class PieBannerView : public Escher::View {
   static constexpr KDColor k_backgroundColor = Escher::Palette::GrayMiddle;
   static constexpr KDGlyph::Format labelFormat = {

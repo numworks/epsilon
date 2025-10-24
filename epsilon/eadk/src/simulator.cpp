@@ -19,7 +19,15 @@ void _eadk_keyboard_scan_do_scan() {
    * the virtual calculator". */
   Ion::Events::Event e = Ion::Events::getPlatformEvent();
   preemptive_termination(e);
-  s_state = Ion::Keyboard::scan();
+  /* NOTE: Keyboard::scan is enough on native simulators, but the virtual
+   * keyboard of the web simulator push its event via the Keyboard::Queue, so
+   * popState is necessary to not miss any events.
+   * TODO: repeating events (via long presses) on the web virtual keyboard is
+   * not handled */
+  s_state = Ion::Keyboard::popState();
+  if (s_state == Ion::Keyboard::State(-1)) {
+    s_state = Ion::Keyboard::scan();
+  }
 }
 
 uint32_t _eadk_keyboard_scan_low() { return s_state & UINT32_MAX; }

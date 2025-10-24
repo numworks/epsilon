@@ -155,6 +155,8 @@ void sortQuizCases() {
       nullptr, quiz_number_of_cases);
 }
 
+bool sPrintToleratedTests = false;
+
 void ion_main(int argc, const char* const argv[]) {
   sortQuizCases();
   const char* testFilter = nullptr;

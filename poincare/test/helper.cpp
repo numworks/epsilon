@@ -15,8 +15,6 @@
 
 using namespace Poincare::Internal;
 
-bool sPrintToleratedTests = false;
-
 /* TODO_PCJ: Use quiz_tolerate_print_if_failure instead of quiz_assert in tests
  * commented as TODO_PCJ */
 void quiz_tolerate_print_if_failure(bool test, const char* input,

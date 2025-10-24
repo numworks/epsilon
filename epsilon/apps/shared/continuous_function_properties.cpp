@@ -290,12 +290,12 @@ void ContinuousFunctionProperties::update(
     }
   }
 
-  if (ExamModeManager::ExamMode().forbidImplicitPlots()) {
-    CodePoint symbol = willBeAlongX ? k_ordinateSymbol : UCodePointUnknown;
-    if (!IsExplicitEquation(inputEquation, symbol)) {
-      setErrorStatusAndUpdateCaption(Status::Banned);
-      return;
-    }
+  if (ExamModeManager::ExamMode().forbidImplicitPlots() &&
+      !(IsExplicitEquation(inputEquation, k_ordinateSymbol) ||
+        IsExplicitEquation(inputEquation, UCodePointUnknown))) {
+    // Only equations of the form y = f(x) or x = f(y) are allowed
+    setErrorStatusAndUpdateCaption(Status::Banned);
+    return;
   }
 
   assert(analyzedExpression.dimension(symbolContext).isScalar());

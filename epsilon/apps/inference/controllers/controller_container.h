@@ -12,6 +12,7 @@
 #include "dataset_controller.h"
 #include "input_anova_controller.h"
 #include "input_controller.h"
+#include "results_anova_controller.h"
 #include "results_controller.h"
 #include "significance_test/hypothesis_display_only_controller.h"
 #include "significance_test/hypothesis_editable_controller.h"
@@ -36,6 +37,8 @@ class ControllerContainer {
             static_cast<HomogeneityTest*>(inferenceModel)},
         m_inputANOVAController{stackViewController, this,
                                static_cast<ANOVATest*>(inferenceModel)},
+        m_resultsANOVAController{stackViewController, this,
+                                 static_cast<ANOVATest*>(inferenceModel)},
         m_inputHomogeneityController{
             stackViewController, this,
             static_cast<HomogeneityTest*>(inferenceModel)},
@@ -63,6 +66,7 @@ class ControllerContainer {
   IntervalGraphController m_intervalGraphController;
   ResultsHomogeneityTabController m_homogeneityResultsController;
   InputANOVAController m_inputANOVAController;
+  ResultsANOVAController m_resultsANOVAController;
   InputHomogeneityController m_inputHomogeneityController;
   ResultsGoodnessTabController m_goodnessResultsController;
   InputGoodnessController m_inputGoodnessController;

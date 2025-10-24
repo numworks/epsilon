@@ -1,4 +1,4 @@
-#include "anova_data_source.h"
+#include "input_anova_data_source.h"
 
 #include <escher/even_odd_editable_text_cell.h>
 #include <poincare/print.h>
@@ -8,30 +8,30 @@ using namespace Escher;
 
 namespace Inference {
 
-ANOVATableDataSource::ANOVATableDataSource()
+InputANOVADataSource::InputANOVADataSource()
     : DynamicCellsDataSource<InferenceEvenOddBufferCell>(this),
       m_headerPrefix(I18n::Message::Group) {}
 
-void ANOVATableDataSource::initCell(InferenceEvenOddBufferCell, void* cell,
+void InputANOVADataSource::initCell(InferenceEvenOddBufferCell, void* cell,
                                     int index) {
   static_cast<InferenceEvenOddBufferCell*>(cell)->setFont(KDFont::Size::Small);
 }
 
-int ANOVATableDataSource::reusableCellCount(int type) const {
+int InputANOVADataSource::reusableCellCount(int type) const {
   if (type == k_typeOfHeaderCells) {
     return k_maxNumberOfReusableRows + k_numberOfReusableColumns;
   }
   return ANOVATableDimensions::k_numberOfInnerReusableCells;
 }
 
-HighlightCell* ANOVATableDataSource::reusableCell(int i, int type) {
+HighlightCell* InputANOVADataSource::reusableCell(int i, int type) {
   if (type == k_typeOfHeaderCells) {
     return cell(i);
   }
   return innerCell(i);
 }
 
-int ANOVATableDataSource::typeAtLocation(int column, int row) const {
+int InputANOVADataSource::typeAtLocation(int column, int row) const {
   assert(column >= 0 && row >= 0);
   assert(column < k_maxNumberOfColumns && row <= k_maxNumberOfRows);
   if (row == 0) {
@@ -40,7 +40,7 @@ int ANOVATableDataSource::typeAtLocation(int column, int row) const {
   return k_typeOfInnerCells;
 }
 
-void ANOVATableDataSource::fillCellForLocation(Escher::HighlightCell* cell,
+void InputANOVADataSource::fillCellForLocation(Escher::HighlightCell* cell,
                                                int column, int row) {
   assert(column >= 0 && row >= 0);
   assert(column < k_maxNumberOfColumns && row <= k_maxNumberOfRows);

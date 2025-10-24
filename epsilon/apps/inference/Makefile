@@ -11,7 +11,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/confidence_interval/interval_graph_view.cpp \
   controllers/store/input_store_controller.cpp \
   controllers/store/store_table_cell.cpp \
-  controllers/tables/anova_data_source.cpp \
+  controllers/tables/input_anova_data_source.cpp \
   controllers/tables/categorical_cell.cpp \
   controllers/tables/categorical_controller.cpp \
   controllers/tables/categorical_table_cell.cpp \
@@ -20,6 +20,8 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/tables/input_anova_table_cell.cpp \
   controllers/tables/input_goodness_table_cell.cpp \
   controllers/tables/input_homogeneity_table_cell.cpp \
+  controllers/tables/results_anova_data_source.cpp \
+  controllers/tables/results_anova_table_cell.cpp \
   controllers/tables/results_goodness_table_cell.cpp \
   controllers/tables/results_homogeneity_table_cell.cpp \
   controllers/significance_test/hypothesis_controller.cpp \
@@ -34,6 +36,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/dataset_controller.cpp \
   controllers/input_anova_controller.cpp \
   controllers/input_controller.cpp \
+  controllers/results_anova_controller.cpp \
   controllers/results_controller.cpp \
   controllers/test_controller.cpp \
   controllers/type_controller.cpp \

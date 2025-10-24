@@ -15,15 +15,16 @@ DatasetController::DatasetController(Escher::StackViewController* parent,
       UniformSelectableListController(parent) {}
 
 DatasetController::Options DatasetController::getListOptions() const {
-  if ((m_inferenceModel->testType() == TestType::OneMean) ||
-      (m_inferenceModel->testType() == TestType::TwoMeans)) {
-    return Options::InputStatisticsAndInputDataset;
+  switch (m_inferenceModel->testType()) {
+    case TestType::OneMean:
+    case TestType::TwoMeans:
+      return Options::InputStatisticsAndInputDataset;
+    case TestType::ANOVA:
+      return Options::InputDataAndInputStatistics;
+    default:
+      // Other tests do not use the DatasetController
+      OMG::unreachable();
   }
-  if (m_inferenceModel->testType() == TestType::ANOVA) {
-    return Options::InputDataAndInputStatistics;
-  }
-  // Other tests do not use the DatasetController
-  OMG::unreachable();
 }
 
 int DatasetController::indexOfInputStatisticsCell() const {
@@ -32,6 +33,8 @@ int DatasetController::indexOfInputStatisticsCell() const {
       return 0;
     case Options::InputDataAndInputStatistics:
       return 1;
+    default:
+      OMG::unreachable();
   }
 }
 
@@ -41,6 +44,8 @@ int DatasetController::indexOfDatasetCell() const {
       return 1;
     case Options::InputDataAndInputStatistics:
       return -1;
+    default:
+      OMG::unreachable();
   }
 }
 
@@ -50,15 +55,17 @@ int DatasetController::indexOfInputDataCell() const {
       return -1;
     case Options::InputDataAndInputStatistics:
       return 0;
+    default:
+      OMG::unreachable();
   }
 }
 
 void DatasetController::initView() {
+  cell(indexOfInputStatisticsCell())
+      ->label()
+      ->setMessage(I18n::Message::InputStatistics);
   switch (getListOptions()) {
     case Options::InputStatisticsAndInputDataset: {
-      cell(indexOfInputStatisticsCell())
-          ->label()
-          ->setMessage(I18n::Message::InputStatistics);
       cell(indexOfDatasetCell())
           ->label()
           ->setMessage(I18n::Message::UseADataSet);
@@ -68,9 +75,6 @@ void DatasetController::initView() {
       cell(indexOfInputDataCell())
           ->label()
           ->setMessage(I18n::Message::InputData);
-      cell(indexOfInputStatisticsCell())
-          ->label()
-          ->setMessage(I18n::Message::InputStatistics);
       break;
     }
   }

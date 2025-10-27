@@ -34,4 +34,4 @@ jobs:
         with:
           name: unsigned-device-builds
           path: epsilon/output/release/*/epsilon*dfu
-          retention-days: 7
+          retention-days: 3

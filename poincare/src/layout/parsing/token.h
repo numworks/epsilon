@@ -13,7 +13,7 @@ namespace Poincare::Internal {
 
 class Token {
  public:
-  enum class Type {
+  enum class Type : uint8_t {
     // Ordered from lower to higher precedence to make Parser's job easier
     EndOfStream = 0,  // Must be the first
     RightwardsArrow,
@@ -69,11 +69,11 @@ class Token {
   }
 
   Token(Type type = Type::Undefined)
-      : m_type(type), m_firstLayout(), m_length(0){};
+      : m_firstLayout(), m_length(0), m_type(type){};
   Token(Type type, const Layout* layout, size_t length = 1)
-      : m_type(type), m_firstLayout(layout), m_length(length){};
+      : m_firstLayout(layout), m_length(length), m_type(type){};
   Token(Type type, LayoutSpan span)
-      : m_type(type), m_firstLayout(span.data()), m_length(span.size()){};
+      : m_firstLayout(span.data()), m_length(span.size()), m_type(type){};
 
   Type type() const { return m_type; }
   void setType(Type t) { m_type = t; }
@@ -95,9 +95,9 @@ class Token {
   LayoutSpan toSpan() const { return LayoutSpan(m_firstLayout, m_length); }
 
  private:
-  Type m_type;
   const Layout* m_firstLayout;
-  size_t m_length;
+  uint16_t m_length;
+  Type m_type;
 };
 
 }  // namespace Poincare::Internal

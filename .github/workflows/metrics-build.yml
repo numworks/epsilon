@@ -87,4 +87,4 @@ jobs:
         with:
           name: metrics-output
           path: metrics-output/
-          retention-days: 7
+          retention-days: 3

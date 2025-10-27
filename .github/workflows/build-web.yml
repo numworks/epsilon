@@ -31,10 +31,10 @@ jobs:
         with:
           name: epsilon.html
           path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/web/epsilon.html
-          retention-days: 7
+          retention-days: 3
       - name: Upload htmlpack.zip
         uses: actions/upload-artifact@v4
         with:
           name: htmlpack.zip
           path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/web/epsilon.htmlpack.zip
-          retention-days: 7
+          retention-days: 3

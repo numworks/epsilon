@@ -25,10 +25,10 @@ jobs:
         with:
           name: unsigned-epsilon-android.apk
           path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/android/epsilon_aligned.apk
-          retention-days: 7
+          retention-days: 3
       - name: Upload debug symbols
         uses: actions/upload-artifact@v4
         with:
           name: android-debug-symbols.zip
           path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/android/app/outputs/native-debug-symbols/release/native-debug-symbols.zip
-          retention-days: 7
+          retention-days: 3

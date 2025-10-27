@@ -142,7 +142,7 @@ jobs:
         with:
           name: epsilon.html
           path: epsilon/output/debug/optimized/web/epsilon.html
-          retention-days: 7
+          retention-days: 3
   linux:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
@@ -230,11 +230,11 @@ jobs:
           name: poincarejs.zip
           # TODO move poincarejs output path inside poincare
           path: poincare/poincarejs/output/release/foxglove/poincarejs.zip
-          retention-days: 7
+          retention-days: 3
   coverage:
     name: Code Coverage
     needs: linux
     uses: ./.github/workflows/code_coverage.yml
     with:
       project-path: epsilon
-      coverage-scope: ""
+      coverage-scope: ''

@@ -22,6 +22,9 @@ void checkForSpaceshipAlienCollisions(Alien aliens[], int numberOfAliens,
     if (aliens[i].tryToHit(spaceship)) {
       EADK::Display::pushRectUniform(EADK::Screen::Rect, Red);
       while (1) {
+        int32_t timeout = 300;
+        [[maybe_unused]] EADK::Keyboard::Event event =
+            EADK::Keyboard::getEvent(&timeout);
       }
     }
   }

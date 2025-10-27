@@ -506,11 +506,10 @@ class State {
   inline bool keyDown(Key k) const {
     return eadk_keyboard_key_down(
         *reinterpret_cast<const eadk_keyboard_state_t*>(this), (eadk_key_t)k);
-    // return (m_bitField>>(uint8_t)k) & 1;
   }
 
  private:
-  uint64_t m_bitField;
+  [[maybe_unused]] uint64_t m_bitField;
 };
 static_assert(sizeof(EADK::Keyboard::State) == sizeof(eadk_keyboard_state_t),
               "EADK::Keyboard::State should match eadk_keyboard_state_t");

@@ -512,7 +512,7 @@ class State {
   }
 
  private:
-  uint64_t m_bitField;
+  [[maybe_unused]] uint64_t m_bitField;
 };
 static_assert(sizeof(EADK::Keyboard::State) == sizeof(eadk_keyboard_state_t),
               "EADK::Keyboard::State should match eadk_keyboard_state_t");

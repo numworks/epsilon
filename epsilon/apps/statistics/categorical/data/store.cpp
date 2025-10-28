@@ -4,7 +4,7 @@
 
 namespace Statistics::Categorical {
 
-Store::TableData::TableData() {
+Store::TableData::TableData() : m_selectedGroupForPieGraph(0) {
   for (int group = 0; group < k_maxNumberOfGroups; ++group) {
     m_groupLabels[group][0] = '\x00';
     m_groupStatus[group] = GroupStatus::Empty;
@@ -18,7 +18,6 @@ Store::TableData::TableData() {
        data++) {
     *data = NAN;
   }
-  m_selectedGroupForPieGraph = 0;
 }
 
 void Store::recomputeDimensions() {

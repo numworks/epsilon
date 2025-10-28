@@ -46,7 +46,7 @@ class Tokenizer {
 
  private:
   constexpr static int k_maxNumberOfIdentifiersInList =
-      10;  // Used for m_storedIdentifiersList
+      POINCARE_TOKENIZER_STORED_IDENTIFIERS_LIST_LENGTH;
   typedef bool (*PopTest)(CodePoint c);
   const CodePoint nextCodePoint(PopTest popTest, bool* testResult = nullptr);
 

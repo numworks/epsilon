@@ -17,13 +17,26 @@ namespace Statistics::Categorical {
  * selected category */
 class PieBannerView : public Escher::View {
   static constexpr KDColor k_backgroundColor = Escher::Palette::GrayMiddle;
-  static constexpr KDGlyph::Format labelFormat = {
+  static constexpr KDGlyph::Format k_titleFormat = {
+      .style = {.backgroundColor = k_backgroundColor},
+      .horizontalAlignment = KDGlyph::k_alignCenter};
+  static constexpr KDGlyph::Format k_labelFormat = {
       .style = {.backgroundColor = k_backgroundColor,
                 .font = KDFont::Size::Small}};
-  static constexpr KDGlyph::Format valueFormat = {
+  static constexpr KDGlyph::Format k_valueFormat = {
       .style = {.backgroundColor = k_backgroundColor,
                 .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignRight};
+
+  static constexpr KDCoordinate k_titleCellWidth = 40;
+  static constexpr KDCoordinate k_colorCellHeight = 15;
+  static constexpr KDCoordinate k_colorCellWidth = 40;
+  static constexpr KDCoordinate k_textHeight = 20;
+
+  static constexpr KDCoordinate k_leftRightMargin = 15;
+  static constexpr KDCoordinate k_topBottomMargin = 5;
+
+  static constexpr int k_numberOfSubviews = 7;
 
  public:
   PieBannerView(Store* store);
@@ -33,14 +46,13 @@ class PieBannerView : public Escher::View {
   void setGroup(int group);
 
  private:
-  void fillWithMessageAndColon(Escher::TextView* textView,
-                               I18n::Message message);
-
   void drawRect(KDContext* ctx, KDRect rect) const override {
     ctx->fillRect(bounds(), m_isSelected ? k_backgroundColor : KDColorWhite);
   }
 
-  int numberOfSubviews() const override { return m_isSelected ? 7 : 0; }
+  int numberOfSubviews() const override {
+    return m_isSelected ? k_numberOfSubviews : 0;
+  }
   void layoutSubviews(bool force = false) override;
   Escher::View* subviewAtIndex(int index) override;
 

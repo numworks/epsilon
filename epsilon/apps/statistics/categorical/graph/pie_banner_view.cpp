@@ -3,19 +3,26 @@
 
 namespace Statistics::Categorical {
 
+static void FillWithMessageAndColon(Escher::TextView* textView,
+                                    I18n::Message message) {
+  char buffer[20];
+  Poincare::Print::CustomPrintf(buffer, sizeof(buffer),
+                                "%s:", I18n::translate(message));
+  textView->setText(buffer);
+}
+
 PieBannerView::PieBannerView(Store* store)
-    : m_categoryTitle({.style = {.backgroundColor = k_backgroundColor},
-                       .horizontalAlignment = KDGlyph::k_alignCenter}),
-      m_colorLabel(labelFormat),
-      m_freqLabel(labelFormat),
-      m_relativeLabel(labelFormat),
+    : m_categoryTitle(k_titleFormat),
+      m_colorLabel(k_labelFormat),
+      m_freqLabel(k_labelFormat),
+      m_relativeLabel(k_labelFormat),
       m_colorCell(k_backgroundColor, k_backgroundColor, 1),
-      m_freqValue(valueFormat),
-      m_relativeValue(valueFormat),
+      m_freqValue(k_valueFormat),
+      m_relativeValue(k_valueFormat),
       m_store(store) {
-  fillWithMessageAndColon(&m_colorLabel, I18n::Message::Color);
-  fillWithMessageAndColon(&m_freqLabel, I18n::Message::Frequency);
-  fillWithMessageAndColon(&m_relativeLabel, I18n::Message::Relative);
+  FillWithMessageAndColon(&m_colorLabel, I18n::Message::Color);
+  FillWithMessageAndColon(&m_freqLabel, I18n::Message::Frequency);
+  FillWithMessageAndColon(&m_relativeLabel, I18n::Message::Relative);
 }
 
 void PieBannerView::toggleSelection(bool isSelected) {
@@ -59,93 +66,55 @@ void PieBannerView::setGroup(int group) {
   }
 }
 
-void PieBannerView::fillWithMessageAndColon(Escher::TextView* textView,
-                                            I18n::Message message) {
-  char buffer[20];
-  Poincare::Print::CustomPrintf(buffer, sizeof(buffer),
-                                "%s:", I18n::translate(message));
-  textView->setText(buffer);
-}
-
 void PieBannerView::layoutSubviews(bool force) {
   KDCoordinate height = 0;
-  KDRect titleRect = KDRect(0, 0, bounds().width(), 40);
+  KDRect titleRect = KDRect(0, 0, bounds().width(), k_titleCellWidth);
   setChildFrame(&m_categoryTitle, titleRect, force);
   height += titleRect.height();
 
-  constexpr KDCoordinate k_verticalMargin = 15;
-  constexpr KDCoordinate k_horizontalMargin = 5;
-
   // Color label and cell
-  constexpr KDCoordinate k_colorCellWidth = 40;
-  constexpr KDCoordinate k_textHeight = 20;
-  constexpr KDCoordinate k_colorCellHeight = 15;
   KDRect colorTextRect =
-      KDRect(k_verticalMargin, height, bounds().width() - k_verticalMargin,
+      KDRect(k_leftRightMargin, height, bounds().width() - k_leftRightMargin,
              k_textHeight);
   setChildFrame(&m_colorLabel, colorTextRect, force);
   KDRect colorCellRect =
-      KDRect(bounds().width() - k_verticalMargin - k_colorCellWidth, height,
+      KDRect(bounds().width() - k_leftRightMargin - k_colorCellWidth, height,
              k_colorCellWidth, k_colorCellHeight);
   setChildFrame(&m_colorCell, colorCellRect, force);
-  height += colorTextRect.height() + k_horizontalMargin;
+  height += colorTextRect.height() + k_topBottomMargin;
 
-  // Frequency label
-  KDRect freqTextRect =
-      KDRect(k_verticalMargin, height, bounds().width() - k_verticalMargin,
-             k_textHeight);
-  setChildFrame(&m_freqLabel, freqTextRect, force);
+  // Frequency and Relative subviews
+  struct LabelAndValue {
+    Escher::View* label;
+    Escher::View* value;
+  } subviews[2] = {{.label = &m_freqLabel, .value = &m_freqValue},
+                   {.label = &m_relativeLabel, .value = &m_relativeValue}};
+  for (LabelAndValue& subview : subviews) {
+    KDRect textRect =
+        KDRect(k_leftRightMargin, height, bounds().width() - k_leftRightMargin,
+               k_textHeight);
+    setChildFrame(subview.label, textRect, force);
 
-  // Frequency value
-  KDSize labelSize = m_freqLabel.minimalSizeForOptimalDisplay();
-  KDSize valueSize = m_freqValue.minimalSizeForOptimalDisplay();
-  if (labelSize.width() + valueSize.width() + 2 * k_verticalMargin >
-      bounds().width()) {
-    height += k_textHeight;
+    KDSize labelSize = subview.label->minimalSizeForOptimalDisplay();
+    KDSize valueSize = subview.value->minimalSizeForOptimalDisplay();
+    if (labelSize.width() + valueSize.width() + 2 * k_leftRightMargin >
+        bounds().width()) {
+      height += k_textHeight;
+    }
+    KDRect valueRect =
+        KDRect(bounds().width() - k_leftRightMargin - valueSize.width(), height,
+               valueSize.width(), k_textHeight);
+    setChildFrame(subview.value, valueRect, force);
+    height += textRect.height() + k_topBottomMargin;
   }
-  KDRect freqValueRect =
-      KDRect(bounds().width() - k_verticalMargin - valueSize.width(), height,
-             valueSize.width(), k_textHeight);
-  setChildFrame(&m_freqValue, freqValueRect, force);
-  height += freqTextRect.height() + k_horizontalMargin;
-
-  // Relative label and value
-  KDRect relativeTextRect =
-      KDRect(k_verticalMargin, height, bounds().width() - k_verticalMargin,
-             k_textHeight);
-  setChildFrame(&m_relativeLabel, relativeTextRect, force);
-
-  // Relative value
-  labelSize = m_relativeLabel.minimalSizeForOptimalDisplay();
-  valueSize = m_relativeValue.minimalSizeForOptimalDisplay();
-  if (labelSize.width() + valueSize.width() + 2 * k_verticalMargin >
-      bounds().width()) {
-    height += k_textHeight;
-  }
-  KDRect relativeValueRect =
-      KDRect(bounds().width() - k_verticalMargin - valueSize.width(), height,
-             valueSize.width(), k_textHeight);
-  setChildFrame(&m_relativeValue, relativeValueRect, force);
 }
 
 Escher::View* PieBannerView::subviewAtIndex(int index) {
-  switch (index) {
-    case 0:
-      return &m_categoryTitle;
-    case 1:
-      return &m_colorLabel;
-    case 2:
-      return &m_freqLabel;
-    case 3:
-      return &m_relativeLabel;
-    case 4:
-      return &m_colorCell;
-    case 5:
-      return &m_freqValue;
-    case 6:
-      return &m_relativeValue;
-  }
-  OMG::unreachable();
+  Escher::View* views[k_numberOfSubviews] = {
+      &m_categoryTitle, &m_colorLabel, &m_freqLabel,    &m_relativeLabel,
+      &m_colorCell,     &m_freqValue,  &m_relativeValue};
+  assert(0 <= index && index < k_numberOfSubviews);
+  return views[index];
 }
 
 }  // namespace Statistics::Categorical

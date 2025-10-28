@@ -26,12 +26,23 @@ class KDContext {
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);
   void drawAntialiasedLine(KDPoint p1, KDPoint p2, KDColor c,
                            KDColor background) {
-    drawAntialiasedLine(p1.x(), p1.y(), p2.x(), p2.y(), c, background);
+    privateDrawAntialiasedLine(p1.x(), p1.y(), p2.x(), p2.y(), c, false,
+                               background);
   }
   void drawAntialiasedLine(float x1, float y1, float x2, float y2, KDColor c,
-                           KDColor background);
+                           KDColor background) {
+    privateDrawAntialiasedLine(x1, y1, x2, y2, c, false, background);
+  }
+  /* Draws an anti-aliased line from [(x1,y1)] to [(x2,y2)] of color [c].
+   * The anti-aliased effect is achieved by blending into the existing
+   * background.
+   * NOTE: if the line is drawn on a uniform background, use
+   * [drawAntialiasedLine] instead */
   void drawAntialiasedLineAutoBackground(float x1, float y1, float x2, float y2,
-                                         KDColor c);
+                                         KDColor c) {
+    // NOTE: the background color given will be ignored anyway
+    privateDrawAntialiasedLine(x1, y1, x2, y2, c, true, KDColorWhite);
+  }
 
   // Rect
   void fillRect(KDRect rect, KDColor color);
@@ -62,6 +73,9 @@ class KDContext {
   KDRect relativeRect(KDRect rect);
 
  private:
+  void privateDrawAntialiasedLine(float x1, float y1, float x2, float y2,
+                                  KDColor lineColor, bool autoBackground,
+                                  KDColor background);
   KDPoint alignAndDrawSingleLineString(const char* text, KDPoint p,
                                        KDSize frame, float horizontalAlignment,
                                        KDGlyph::Style style, int maxLength);

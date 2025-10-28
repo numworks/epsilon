@@ -58,10 +58,11 @@ void PieBannerView::setCategory(int category) {
   }
 }
 
-void PieBannerView::setGroup(int group) {
+void PieBannerView::setGroup(int group, int category) {
   if (m_group != group) {
     m_group = group;
     m_category = k_invalidGroupOrCategory;
+    setCategory(category);
     markWholeFrameAsDirty();
   }
 }

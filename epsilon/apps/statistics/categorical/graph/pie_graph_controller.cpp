@@ -116,8 +116,7 @@ void PieGraphController::ContentView::setGroup(int group, Store* store) {
   store->getGroupName(group, buffer, sizeof(buffer));
   m_groupTitleView.setText(buffer);
   int selectedCategory = m_pieGraphView.setGroup(group);
-  m_sideBannerView.setGroup(group);
-  m_sideBannerView.setCategory(selectedCategory);
+  m_sideBannerView.setGroup(group, selectedCategory);
   reload();
 }
 

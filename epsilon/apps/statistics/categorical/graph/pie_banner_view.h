@@ -43,7 +43,7 @@ class PieBannerView : public Escher::View {
 
   void toggleSelection(bool isSelected);
   void setCategory(int category);
-  void setGroup(int group);
+  void setGroup(int group, int category);
 
  private:
   void drawRect(KDContext* ctx, KDRect rect) const override {
@@ -69,7 +69,7 @@ class PieBannerView : public Escher::View {
   static constexpr uint8_t k_invalidGroupOrCategory = UINT8_MAX;
   uint8_t m_category = k_invalidGroupOrCategory;
   uint8_t m_group = k_invalidGroupOrCategory;
-  bool m_isSelected = true;
+  bool m_isSelected = false;
 };
 
 }  // namespace Statistics::Categorical

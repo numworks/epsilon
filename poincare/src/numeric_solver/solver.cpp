@@ -4,9 +4,9 @@
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/sign.h>
+#include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/pattern_matching.h>
 
-#include "poincare/src/expression/variables.h"
 #include "solver_algorithms.h"
 
 using namespace Poincare::Internal;
@@ -128,26 +128,27 @@ typename Solver<T>::Solution Solver<T>::next(const Tree* e, BracketTest test,
 }
 
 template <typename T>
-typename Solver<T>::Solution Solver<T>::nextRoot(const Tree* e) {
+typename Solver<T>::DetailedRoot Solver<T>::nextDetailedRoot(const Tree* e) {
+  DetailedRoot nanRoot = {.solution = Solution(), .nullDescendant = nullptr};
   if (e->hasDescendantSatisfying(
           [](const Tree* e) { return e->isRandomized(); })) {
-    return Solution();
+    return nanRoot;
   }
 
   switch (e->type()) {
     case Type::Mult:
       /* x*y = 0 => x = 0 or y = 0 */
-      return registerRoot(nextRootInMultiplication(e));
+      return registerDetailedRoot(nextRootInMultiplication(e));
 
     case Type::Add:
     case Type::Sub:
-      return registerRoot(nextRootInAddition(e));
+      return registerDetailedRoot(nextRootInAddition(e));
 
     case Type::Pow:
     case Type::Root:
     case Type::Div:
       /* f(x,y) = 0 => x = 0 */
-      return registerRoot(nextPossibleRootInChild(e, 0));
+      return registerDetailedRoot(nextPossibleRootInChild(e, 0));
 
     case Type::Abs:
     case Type::ATan:
@@ -155,21 +156,21 @@ typename Solver<T>::Solution Solver<T>::nextRoot(const Tree* e) {
     case Type::Opposite:
     case Type::Sqrt:
       /* f(x) = 0 <=> x = 0 */
-      return nextRoot(e->child(0));
+      return nextDetailedRoot(e->child(0));
 
     case Type::Dep:
-      return registerRoot(nextRootInDependency(e));
+      return registerDetailedRoot(nextRootInDependency(e));
 
     default:
       if (!GetComplexSign(e).canBeNull()) {
-        return Solution();
+        return nanRoot;
       }
 
       Solution res = next(e, EvenOrOddRootInBracket, CompositeBrentForRoot);
       if (res.interest() != Interest::None) {
         res.setInterest(Interest::Root);
       }
-      return res;
+      return {.solution = res, .nullDescendant = e};
   }
 }
 
@@ -545,12 +546,13 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
 }
 
 template <typename T>
-T Solver<T>::nextPossibleRootInChild(const Tree* e, int childIndex) const {
+typename Solver<T>::DetailedRootX Solver<T>::nextPossibleRootInChild(
+    const Tree* e, int childIndex) const {
   Solver<T> solver = *this;
   const Tree* child = e->child(childIndex);
-  T xRoot;
-  while (std::isfinite(
-      xRoot = solver.nextRoot(child).x())) {  // assignment in condition
+  DetailedRoot root;
+  while (std::isfinite((root = solver.nextDetailedRoot(child))
+                           .solution.x())) {  // assignment in condition
     /* Check the result in case another term is undefined,
      * e.g. (x+1)*ln(x) for x =- 1.
      *
@@ -563,37 +565,38 @@ T Solver<T>::nextPossibleRootInChild(const Tree* e, int childIndex) const {
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
     T value =
-        Approximation::To<T>(ebis, xRoot,
+        Approximation::To<T>(ebis, root.solution.x(),
                              Approximation::Parameters{.isRootAndCanHaveRandom =
                                                            true});  // m_unknown
     ebis->removeTree();
-    if (std::fabs(value) < NullTolerance(xRoot)) {
-      return xRoot;
+    if (std::fabs(value) < NullTolerance(root.solution.x())) {
+      return {.x = root.solution.x(), .nullDescendant = root.nullDescendant};
     }
   }
-  return k_NAN;
+  return k_nanRootX;
 }
 
 template <typename T>
-T Solver<T>::nextRootInChildren(const Tree* e, ExpressionTestAuxiliary test,
-                                void* aux) const {
-  T xRoot = k_NAN;
+typename Solver<T>::DetailedRootX Solver<T>::nextRootInChildren(
+    const Tree* e, ExpressionTestAuxiliary test, void* aux) const {
+  DetailedRootX root = k_nanRootX;
   int n = e->numberOfChildren();
   for (int i = 0; i < n; i++) {
     if (test(e->child(i), m_context, aux)) {
-      T xRootChild = nextPossibleRootInChild(e, i);
-      if (std::isfinite(xRootChild) &&
-          (!std::isfinite(xRoot) ||
-           std::fabs(m_xStart - xRootChild) < std::fabs(m_xStart - xRoot))) {
-        xRoot = xRootChild;
+      DetailedRootX rootChild = nextPossibleRootInChild(e, i);
+      if (std::isfinite(rootChild.x) &&
+          (!std::isfinite(root.x) ||
+           std::fabs(m_xStart - rootChild.x) < std::fabs(m_xStart - root.x))) {
+        root = rootChild;
       }
     }
   }
-  return xRoot;
+  return root;
 }
 
 template <typename T>
-T Solver<T>::nextRootInMultiplication(const Tree* e) const {
+typename Solver<T>::DetailedRootX Solver<T>::nextRootInMultiplication(
+    const Tree* e) const {
   assert(e->isMult());
   return nextRootInChildren(
       e, [](const Tree*, const SymbolContext&, void*) { return true; },
@@ -601,7 +604,8 @@ T Solver<T>::nextRootInMultiplication(const Tree* e) const {
 }
 
 template <typename T>
-T Solver<T>::nextRootInAddition(const Tree* e) const {
+typename Solver<T>::DetailedRootX Solver<T>::nextRootInAddition(
+    const Tree* e) const {
   /* Special case for expressions of the form "f(x)^a+g(x)", with:
    * - f(x) and g(x) sharing a root x0
    * - f(x) being defined only on one side of x0
@@ -632,31 +636,58 @@ T Solver<T>::nextRootInAddition(const Tree* e) const {
           return k_zero < exponent && exponent < static_cast<T>(1.);
         });
       };
-  T xChildrenRoot = nextRootInChildren(e, test, const_cast<Solver<T>*>(this));
+  DetailedRootX childrenRoot =
+      nextRootInChildren(e, test, const_cast<Solver<T>*>(this));
   Solver<T> solver = *this;
-  T xRoot = solver.next(e, EvenOrOddRootInBracket, CompositeBrentForRoot).x();
-  if (!std::isfinite(xRoot) ||
-      std::fabs(xChildrenRoot - m_xStart) < std::fabs(xRoot - m_xStart)) {
-    xRoot = xChildrenRoot;
+  DetailedRootX root = {
+      .x = solver.next(e, EvenOrOddRootInBracket, CompositeBrentForRoot).x(),
+      .nullDescendant = e};
+  if (!std::isfinite(root.x) ||
+      std::fabs(childrenRoot.x - m_xStart) < std::fabs(root.x - m_xStart)) {
+    root = childrenRoot;
   }
-  return xRoot;
+  return root;
 }
 
 template <typename T>
-T Solver<T>::nextRootInDependency(const Tree* e) const {
+typename Solver<T>::DetailedRootX Solver<T>::nextRootInDependency(
+    const Tree* e) const {
   assert(e->isDep());
   Solver<T> solver = *this;
   const Tree* main = Dependency::Main(e);
-  // Find root in main
-  Solution root = solver.nextRoot(main);
-  // Check that the dependencies of the solution are not undefined
-  while (root.interest() == Interest::Root &&
-         std::isnan(Approximation::To<T>(
-             e, root.x(),
-             Approximation::Parameters{.isRootAndCanHaveRandom = true}))) {
-    root = solver.nextRoot(main);
+  const Tree* depsList = Dependency::Dependencies(e);
+
+  DetailedRoot root;
+  // Find root in main and then check that the dependencies are not undefined
+  while (std::isfinite((root = solver.nextDetailedRoot(main)).solution.x())) {
+    /* Replace nullDescendant by 0 in deps list. This ensures that approximation
+     * errors do not invalidate the dependencies check.
+     *
+     * For example, when solving `sqrt(0.5x^2-1)=0`, the expression has a
+     * dependency on `RealPos(0.5x^2-1)`. One of the found root found is
+     * slightly below `sqrt(2)`, which makes the dependency undefined. By
+     * replacing `0.5x^2-1` by `0`, we ensure that this dependency check doesn't
+     * fail.
+     */
+    Tree* depsListClone = depsList->cloneTree();
+    depsListClone->deepReplaceWith(root.nullDescendant, 0_e);
+    bool definedDeps = true;
+    for (const Tree* childDep : depsListClone->children()) {
+      T value = Approximation::To<T>(
+          childDep, root.solution.x(),
+          Approximation::Parameters{.isRootAndCanHaveRandom = true});
+      if (std::isnan(value)) {
+        definedDeps = false;
+        break;
+      }
+    }
+    depsListClone->removeTree();
+    if (definedDeps) {
+      break;
+    }
   }
-  return root.x();
+
+  return {.x = root.solution.x(), .nullDescendant = root.nullDescendant};
 }
 
 template <typename T>
@@ -895,7 +926,8 @@ template void Solver<double>::reset(double, double, double);
 template Solver<double>::Solution Solver<double>::next(
     FunctionEvaluation, const void*, BracketTest, HoneResult,
     DiscontinuityEvaluation discontinuityTest);
-template Solver<double>::Solution Solver<double>::nextRoot(const Tree*);
+template Solver<double>::DetailedRoot Solver<double>::nextDetailedRoot(
+    const Tree*);
 template Solver<double>::Solution Solver<double>::nextMinimum(const Tree*);
 template Solver<double>::Solution Solver<double>::nextIntersection(
     const Tree*, const Tree*, const Tree**);

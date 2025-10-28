@@ -3,8 +3,16 @@
 #include "helpers.h"
 
 QUIZ_CASE(solver_solving_range) {
+  // Real solver
   assert_solves_with_auto_solving_range("20000=400*1.12^x", {34.51927});
   assert_solves_with_auto_solving_range("1.3052=1.002*1.005^x", {53.00373});
+  // Properly handle dependencies
+  assert_solves_with_auto_solving_range("sqrt(0.5x^2-1)=0",
+                                        {-1.41421356, 1.41421356});
+  assert_solves_with_auto_solving_range("(x+3)*(x-3)*sqrt(0.5x^2-1)=0",
+                                        {-3, -1.41421356, 1.41421356, 3});
+
+  // Cartesian solver
   setComplexFormatAndAngleUnit(Cartesian, Radian);
   assert_auto_solving_range_is("cos(x)=0", -15.5654296875, 15.5654296875);
   assert_solves_with_auto_solving_range(

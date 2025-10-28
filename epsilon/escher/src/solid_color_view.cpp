@@ -48,4 +48,17 @@ void SolidColorWithBorderView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(insideRect, m_color);
 }
 
+#if ESCHER_VIEW_LOGGING
+const char* SolidColorWithBorderView::className() const {
+  return "SolidColorWithBorderView";
+}
+
+void SolidColorWithBorderView::logAttributes(std::ostream& os) const {
+  View::logAttributes(os);
+  os << " color=\"" << (int)m_color << '"';
+  os << " borderColor=\"" << (int)m_border << '"';
+  os << " width=\"" << m_borderWidth << '"';
+}
+#endif
+
 }  // namespace Escher

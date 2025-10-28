@@ -44,7 +44,7 @@ jobs:
   device:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.device))) }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.device)) }}
     strategy:
       matrix:
         model: [n0110, n0115, n0120]
@@ -65,7 +65,7 @@ jobs:
   windows:
     timeout-minutes: 15
     runs-on: windows-latest
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.windows))) }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.windows)) }}
     defaults:
       run:
         shell: msys2 {0}
@@ -173,7 +173,7 @@ jobs:
   macos:
     timeout-minutes: 15
     runs-on: macOS-latest
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.macos))) }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.macos)) }}
     env:
       MAKEFLAGS: '-j2'
     steps:

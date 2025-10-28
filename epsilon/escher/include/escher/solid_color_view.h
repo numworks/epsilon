@@ -4,6 +4,7 @@
 
 namespace Escher {
 
+/* A simple view filled with a single color */
 class SolidColorView : public View {
  public:
   SolidColorView(KDColor color);
@@ -20,6 +21,8 @@ class SolidColorView : public View {
   KDColor m_color;
 };
 
+/* A simple view filled with a single color, with a border of customizable width
+ * and color */
 class SolidColorWithBorderView : public View {
  public:
   SolidColorWithBorderView(KDColor color, KDColor border,
@@ -31,6 +34,12 @@ class SolidColorWithBorderView : public View {
     m_borderWidth = width;
   }
   void drawRect(KDContext* ctx, KDRect rect) const override;
+
+ protected:
+#if ESCHER_VIEW_LOGGING
+  const char* className() const override;
+  void logAttributes(std::ostream& os) const override;
+#endif
 
  private:
   KDColor m_color;

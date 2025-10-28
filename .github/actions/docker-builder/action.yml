@@ -2,7 +2,7 @@ name: Build Docker container and define variable DOCKER_RUN to run it
 
 description: |
   Build Docker container and define DOCKER_RUN variable.
-  It binds CCACHE_DIR and pass MAKEFLAGS to the container.
+  It passes MAKEFLAGS to the container.
 
 inputs:
   platform:
@@ -24,7 +24,4 @@ runs:
     - name: Define DOCKER_RUN environment variable
       shell: bash
       run: |
-        CACHE_FOLDER=/tmp/ccache
-        mkdir -p $CACHE_FOLDER
-        CACHE_FLAGS="--env CCACHE_DIR=/cache --mount type=bind,source=$CACHE_FOLDER,target=/cache"
-        echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) $CACHE_FLAGS --env MAKEFLAGS --mount type=bind,source=.,target=/monorepo oasis-builder-${{ inputs.platform }}:latest sh -c" >> $GITHUB_ENV
+        echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) --env MAKEFLAGS --mount type=bind,source=.,target=/monorepo oasis-builder-${{ inputs.platform }}:latest sh -c" >> $GITHUB_ENV

@@ -26,7 +26,7 @@ chmod +x build/setup.sh & build/setup.sh
 
 ### Second time setup
 
-Make sure your environnement variable `EMSDK` has been set to the emsdk clone you installed the first time.
+Make sure your environment variable `EMSDK` has been set to the emsdk clone you installed the first time.
 
 ## Simulator
 

@@ -20,16 +20,12 @@ void DisplayedDataController::initView() {
       cell(i)->setVisible(false);
       continue;
     }
-    cell(i)->label()->setGlyphFormat(Escher::GlyphsView::FormatForWidgetType(
-        Escher::CellWidget::Type::Label));
-    char buffer[20];
+    char buffer[sizeof(Store::Label)];
     m_store->getGroupName(i, buffer, sizeof(buffer));
     cell(i)->label()->setText(buffer);
     cell(i)->setVisible(true);
-    if (i == selectedGroup) {
-      selectRow(i);
-    }
   }
+  selectRow(selectedGroup);
 }
 
 bool DisplayedDataController::handleEvent(Ion::Events::Event event) {

@@ -97,7 +97,7 @@ On a separate shell, run
 make -C sample_cpp server
 ```
 
-You'll need EMSDK install as instructed in [Web](epsilon_simulators/web/README.md).
+You'll need EMSDK installed as instructed in [Web](epsilon_simulators/web/README.md).
 
 #### Build and run your app
 

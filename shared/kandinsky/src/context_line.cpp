@@ -63,8 +63,10 @@ void KDContext::drawLine(KDPoint p1, KDPoint p2, KDColor c) {
   }
 }
 
-void KDContext::drawAntialiasedLine(float x1, float y1, float x2, float y2,
-                                    KDColor c, KDColor background) {
+void KDContext::privateDrawAntialiasedLine(float x1, float y1, float x2,
+                                           float y2, KDColor lineColor,
+                                           bool autoBackground,
+                                           KDColor background) {
   /* Implements Xiaolin Wu's line algorithm
    * https://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm */
 
@@ -81,44 +83,8 @@ void KDContext::drawAntialiasedLine(float x1, float y1, float x2, float y2,
   float dx = x2 - x1;
   float dy = y2 - y1;
   double gradient = (dx == 0) ? 1 : static_cast<double>(dy) / dx;
-
-  for (int x = x1; x <= x2; x++) {
-    double y = y1 + gradient * (x - x1);
-    int yBelow = std::floor(y);
-    int yAbove = yBelow + 1;
-    float fractionalPart = y - yBelow;
-    uint8_t alpha = 255u * (1 - fractionalPart);
-    KDColor colorBelow = KDColor::Blend(c, background, alpha);
-    KDColor colorAbove = KDColor::Blend(c, background, 255 - alpha);
-    if (steep) {
-      setPixel(KDPoint(yBelow, x), colorBelow);
-      setPixel(KDPoint(yAbove, x), colorAbove);
-    } else {
-      setPixel(KDPoint(x, yBelow), colorBelow);
-      setPixel(KDPoint(x, yAbove), colorAbove);
-    }
-  }
-}
-
-void KDContext::drawAntialiasedLineAutoBackground(float x1, float y1, float x2,
-                                                  float y2, KDColor lineColor) {
-  /* Implements Xiaolin Wu's line algorithm
-   * https://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm */
-
-  bool steep = std::fabs(y2 - y1) > std::fabs(x2 - x1);
-  if (steep) {
-    std::swap(x1, y1);
-    std::swap(x2, y2);
-  }
-  if (x1 > x2) {
-    std::swap(x1, x2);
-    std::swap(y1, y2);
-  }
-
-  float dx = x2 - x1;
-  float dy = y2 - y1;
-  double gradient = (dx == 0) ? 1 : static_cast<double>(dy) / dx;
-  KDColor background, background2;
+  KDColor background1 = background, background2 = background;
+  KDPoint pixelBelow(0, 0), pixelAbove(0, 0);
 
   for (int x = x1; x <= x2; x++) {
     double y = y1 + gradient * (x - x1);
@@ -126,16 +92,20 @@ void KDContext::drawAntialiasedLineAutoBackground(float x1, float y1, float x2,
     int yAbove = yBelow + 1;
     float fractionalPart = y - yBelow;
     uint8_t alpha = 255u * fractionalPart;
-    getPixel(steep ? KDPoint(yBelow, x) : KDPoint(x, yBelow), &background);
-    getPixel(steep ? KDPoint(yAbove, x) : KDPoint(x, yAbove), &background2);
-    KDColor colorBelow = KDColor::Blend(background, lineColor, alpha);
-    KDColor colorAbove = KDColor::Blend(lineColor, background2, alpha);
     if (steep) {
-      setPixel(KDPoint(yBelow, x), colorBelow);
-      setPixel(KDPoint(yAbove, x), colorAbove);
+      pixelBelow = KDPoint(yBelow, x);
+      pixelAbove = KDPoint(yAbove, x);
     } else {
-      setPixel(KDPoint(x, yBelow), colorBelow);
-      setPixel(KDPoint(x, yAbove), colorAbove);
+      pixelBelow = KDPoint(x, yBelow);
+      pixelAbove = KDPoint(x, yAbove);
     }
+    if (autoBackground) {
+      getPixel(pixelBelow, &background1);
+      getPixel(pixelAbove, &background2);
+    }
+    KDColor colorBelow = KDColor::Blend(background1, lineColor, alpha);
+    KDColor colorAbove = KDColor::Blend(lineColor, background2, alpha);
+    setPixel(pixelBelow, colorBelow);
+    setPixel(pixelAbove, colorAbove);
   }
 }

@@ -41,7 +41,7 @@ jobs:
   device:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.device)) }}
+    if: ${{ (fromJSON(github.event.inputs.device)) }}
     strategy:
       matrix:
         model: [n0110, n0115, n0120]
@@ -61,7 +61,7 @@ jobs:
   windows:
     timeout-minutes: 15
     runs-on: windows-latest
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.windows)) }}
+    if: ${{ (fromJSON(github.event.inputs.windows)) }}
     defaults:
       run:
         shell: msys2 {0}
@@ -88,7 +88,7 @@ jobs:
   web:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.web)) }}
+    if: ${{ fromJSON(github.event.inputs.web) }}
     env:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
@@ -135,14 +135,13 @@ jobs:
         if: steps.run-tests.outcome == 'failure'
         run: $DOCKER_RUN "rm -f core; epsilon/output/debug/optimized/linux/epsilon_test.bin --headless --limit-stack-usage || (eu-stack --core core; exit 1)"
       - uses: actions/upload-artifact@v4
-        if: ${{ fromJSON(vars.ADVANCED_JOBS) }}
         with:
           name: epsilon-linux.bin
           path: epsilon/output/debug/optimized/linux/epsilon.bin
   macos:
     timeout-minutes: 15
     runs-on: macOS-latest
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.macos)) }}
+    if: ${{ (fromJSON(github.event.inputs.macos)) }}
     env:
       MAKEFLAGS: '-j2'
     steps:

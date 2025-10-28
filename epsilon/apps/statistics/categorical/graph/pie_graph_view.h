@@ -43,17 +43,15 @@ class PieGraphView : public Escher::View, public PieGraphViewDataSource {
  public:
   PieGraphView(Store* store) : PieGraphViewDataSource(store) {}
 
+  static constexpr int k_framebufferWidth = 5;
   void reload() { markWholeFrameAsDirty(); }
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  private:
   static constexpr KDCoordinate k_radius = 70;
   static constexpr float k_fradius = static_cast<float>(k_radius);
-  static constexpr float k_border = 2.;
+  static constexpr float k_border = 1.f;
 
-  static float DistToCenter(float centeredX, float centeredY) {
-    return (centeredX * centeredX + centeredY * centeredY) / k_fradius;
-  }
   KDColor pointColor(KDCoordinate x, KDCoordinate y, KDPoint center) const;
 };
 

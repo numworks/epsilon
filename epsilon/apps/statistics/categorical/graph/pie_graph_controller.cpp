@@ -136,7 +136,8 @@ void PieGraphController::ContentView::layoutSubviews(bool force) {
   KDRect b = bounds();
   /* Almost like a square, but not quite to make it simple to draw the pie
    * graph. See implementation and comments in [PieGraphView] */
-  const int leftSideWidth = b.height() + 5 - b.height() % 5;
+  const int leftSideWidth = b.height() + PieGraphView::k_framebufferWidth -
+                            b.height() % PieGraphView::k_framebufferWidth;
   constexpr int k_titleHeight = 25;
   setChildFrame(&m_groupTitleView, KDRect(0, 0, leftSideWidth, k_titleHeight),
                 force);

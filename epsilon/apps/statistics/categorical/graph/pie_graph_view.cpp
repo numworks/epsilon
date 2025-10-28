@@ -73,9 +73,10 @@ int PieGraphViewDataSource::setGroup(int group) {
 }
 
 void PieGraphView::drawRect(KDContext* ctx, KDRect rect) const {
+  /* TODO: improve this code to only redraw dirty areas.
+   * See flicker in N0110/N0115 */
   assert(m_numberOfActiveCategories > 0);
   constexpr int k_framebufferHeight = 149;
-  constexpr int k_framebufferWidth = 5;
   assert(bounds().width() % k_framebufferWidth == 0);
   assert(bounds().height() == k_framebufferHeight);
 
@@ -83,7 +84,6 @@ void PieGraphView::drawRect(KDContext* ctx, KDRect rect) const {
 
   const KDPoint center = KDPoint(bounds().width() / 2, bounds().height() / 2);
 
-  Ion::Display::waitForVBlank();  // Not sure it's useful
   for (int layerStart = bounds().width() - k_framebufferWidth; layerStart >= 0;
        layerStart -= k_framebufferWidth) {
     KDColor* pixels = &framebuffer[0][0];
@@ -115,17 +115,22 @@ void PieGraphView::drawRect(KDContext* ctx, KDRect rect) const {
   }
 }
 
+static float Norm(float centeredX, float centeredY) {
+  return std::sqrt(centeredX * centeredX + centeredY * centeredY);
+}
+
 KDColor PieGraphView::pointColor(KDCoordinate x, KDCoordinate y,
                                  KDPoint center) const {
   KDCoordinate centeredX = x - center.x();
   KDCoordinate centeredY =
       center.y() - y;  // inverted because Y grows downwards on the screen
-  float distanceToCenter = DistToCenter(centeredX, centeredY);
-  if (distanceToCenter >= k_fradius + k_border) {
-    return k_outsideColor;
-  }
+  float distanceToCenter = Norm(centeredX, centeredY);
   // Negative means inside
   float distanceToRing = distanceToCenter - k_fradius;
+  if (distanceToRing >= k_border) {
+    // Outside the disk and outside anti-aliased border range
+    return k_outsideColor;
+  }
   float isCloseToRing = std::fabs(distanceToRing) < k_border;
 
   // Clockwise angle: 0° is Up, 90° is Right
@@ -135,16 +140,20 @@ KDColor PieGraphView::pointColor(KDCoordinate x, KDCoordinate y,
 
   for (int i = 0; i < m_numberOfActiveCategories; ++i) {
     if (angle < m_cumulatedAngles[i]) {
+      // In the i-th section
       if (!isCloseToRing) {
+        // Fully inside the disk
         return m_insideColors[i];
       }
+      /* Close to the anti-aliased border.
+       * Depending on sign, blending with inside or outside color */
       uint8_t alpha = std::fabs(distanceToRing) / k_border * UINT8_MAX;
       return KDColor::Blend(
           distanceToRing < 0 ? m_insideColors[i] : k_outsideColor,
           m_borderColors[i], alpha);
     }
   }
-  return KDColorBlack;
+  OMG::unreachable();
 }
 
 }  // namespace Statistics::Categorical

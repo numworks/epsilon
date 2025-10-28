@@ -138,7 +138,9 @@ class Solver {
   Solution next(FunctionEvaluation f, const void* aux, BracketTest test,
                 HoneResult hone,
                 DiscontinuityEvaluation discontinuityTest = nullptr);
-  Solution nextRoot(const Internal::Tree* e);
+  Solution nextRoot(const Internal::Tree* e) {
+    return nextDetailedRoot(e).solution;
+  }
   Solution nextRoot(FunctionEvaluation f, const void* aux) {
     return next(f, aux, EvenOrOddRootInBracket, CompositeBrentForRoot);
   }
@@ -215,15 +217,32 @@ class Solver {
   static T MinimalStep(T x, T slope = static_cast<T>(1.));
   bool validSolution(T x) const;
   T nextX(T x, T direction, T slope) const;
-  T nextPossibleRootInChild(const Internal::Tree* e, int childIndex) const;
+
+  /* Stores the root and a pointer to the minimal sub-expression
+   * that evaluates to zero (mainly used for dependencies handling) */
+  struct DetailedRoot {
+    Solution solution;
+    const Internal::Tree* nullDescendant = nullptr;
+  };
+  struct DetailedRootX {
+    T x;
+    const Internal::Tree* nullDescendant = nullptr;
+  };
+  constexpr static DetailedRootX k_nanRootX = {.x = k_NAN,
+                                               .nullDescendant = nullptr};
+
+  DetailedRoot nextDetailedRoot(const Internal::Tree* e);
+  DetailedRootX nextPossibleRootInChild(const Internal::Tree* e,
+                                        int childIndex) const;
   typedef bool (*ExpressionTestAuxiliary)(const Internal::Tree* e,
                                           const SymbolContext& symbolContext,
                                           void* auxiliary);
-  T nextRootInChildren(const Internal::Tree* e, ExpressionTestAuxiliary test,
-                       void* aux) const;
-  T nextRootInMultiplication(const Internal::Tree* m) const;
-  T nextRootInAddition(const Internal::Tree* m) const;
-  T nextRootInDependency(const Internal::Tree* m) const;
+  DetailedRootX nextRootInChildren(const Internal::Tree* e,
+                                   ExpressionTestAuxiliary test,
+                                   void* aux) const;
+  DetailedRootX nextRootInMultiplication(const Internal::Tree* m) const;
+  DetailedRootX nextRootInAddition(const Internal::Tree* m) const;
+  DetailedRootX nextRootInDependency(const Internal::Tree* m) const;
   void honeAndRoundSolution(FunctionEvaluation f, const void* aux,
                             Coordinate2D<T> start, Coordinate2D<T> end,
                             Interest interest, HoneResult hone,
@@ -237,8 +256,10 @@ class Solver {
       DiscontinuityEvaluation discontinuityTest);
 
   Solution registerSolution(Solution solution, bool wasQueued = false);
-  Solution registerRoot(T x) {
-    return registerSolution(Solution(x, k_zero, Interest::Root));
+  DetailedRoot registerDetailedRoot(DetailedRootX rootAbscissa) {
+    return {.solution = registerSolution(
+                Solution(rootAbscissa.x, k_zero, Interest::Root)),
+            .nullDescendant = rootAbscissa.nullDescendant};
   }
 
   Interest TestBetween(Coordinate2D<T> a, Coordinate2D<T> b, BracketTest test,

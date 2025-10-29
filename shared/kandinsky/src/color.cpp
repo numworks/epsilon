@@ -13,7 +13,7 @@ KDColor KDColor::Blend(KDColor first, KDColor second, uint8_t alpha) {
   if (alpha == 0) {
     return second;
   }
-  if (alpha == 0xFF) {
+  if (alpha == UINT8_MAX) {
     return first;
   }
   if (first == second) {
@@ -23,7 +23,7 @@ KDColor KDColor::Blend(KDColor first, KDColor second, uint8_t alpha) {
   /* We want to do first*alpha + second*(1-alpha)
    * First and Second are RRRRR GGGGGG BBBBB */
 
-  uint16_t oneMinusAlpha = 0x100 - alpha;
+  uint8_t oneMinusAlpha = UINT8_MAX - alpha;
   uint16_t red = first.red() * alpha + second.red() * oneMinusAlpha;
   uint16_t green = first.green() * alpha + second.green() * oneMinusAlpha;
   uint16_t blue = first.blue() * alpha + second.blue() * oneMinusAlpha;

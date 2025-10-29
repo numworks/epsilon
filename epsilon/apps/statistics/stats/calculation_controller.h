@@ -8,7 +8,7 @@
 
 #include <array>
 
-#include "../statistics_type_view_model.h"
+#include "../shared/statistics_type_view_model.h"
 #include "../store.h"
 #include "calculation_selectable_table_view.h"
 

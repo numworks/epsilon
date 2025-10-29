@@ -1,7 +1,7 @@
 
 #include "statistics_type_controller.h"
 
-#include "app.h"
+#include "../app.h"
 #include "statistics_type_view_model.h"
 
 namespace Statistics {

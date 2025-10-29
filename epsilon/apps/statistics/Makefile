@@ -38,8 +38,8 @@ SOURCES_apps += $(addprefix $(PATH_apps)/statistics/,$(addsuffix :-test, \
   histogram_icon.png \
   cumulative_icon.png \
   statistics_normal_icon.png \
-  statistics_type_controller.cpp \
-  statistics_type_view_model.cpp \
+  shared/statistics_type_controller.cpp \
+  shared/statistics_type_view_model.cpp \
   $(addprefix categorical/, \
     data/column_parameter_controller.cpp \
     data/rf_column_parameter_controller.cpp \

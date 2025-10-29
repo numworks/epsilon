@@ -5,7 +5,7 @@
 #include <escher/button_row_controller.h>
 #include <escher/tab_view_controller.h>
 
-#include "../../graph/graph_button_row_delegate.h"
+#include "../../shared/graph_button_row_delegate.h"
 
 namespace Statistics::Categorical {
 

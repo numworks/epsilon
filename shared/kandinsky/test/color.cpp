@@ -81,7 +81,7 @@ QUIZ_CASE(kandinsky_color_hsv) {
       KDColor::HSVColor({39.0, 0.808, 255.0}),   // YellowDark
       KDColor::HSVColor({327.0, 0.984, 255.0}),  // Magenta
       KDColor::HSVColor({198.0, 0.593, 236.0}),  // Turquoise
-      KDColor::HSVColor({352.0, 0.329, 255.0}),  // Pink
+      KDColor::HSVColor({350.0, 0.40, 255.0}),   // Pink
       KDColor::HSVColor({28.0, 0.878, 254.0}),   // Orange
   };
   static_assert(std::size(dataColorsConversion) <=

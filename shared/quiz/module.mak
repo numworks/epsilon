@@ -1,5 +1,6 @@
 $(call create_module,quiz,1,$(addprefix src/, \
-  assertions.cpp \
+  assertions.cpp:-qemu \
+  assertions_qemu.cpp:+qemu \
   i18n.cpp:+epsilon \
   symbols.cpp \
   runner.cpp \

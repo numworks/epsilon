@@ -2,6 +2,7 @@
 #include <apps/global_preferences.h>
 #include <apps/init.h>
 #include <apps/shared/global_store.h>
+#include <ion/storage/file_system.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/init.h>
 #include <poincare/pool.h>
@@ -35,6 +36,7 @@ void flushGlobalData() {
   Shared::GlobalContextAccessor::SequenceStore().removeAll();
   Shared::GlobalContextAccessor::SequenceCache().resetCache();
   Shared::GlobalContextAccessor::ContinuousFunctionStore().removeAll();
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   flushGlobalDataNoPool();
   // No PoolObject should leak after a unit test.

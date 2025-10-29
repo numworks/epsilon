@@ -1,6 +1,7 @@
 #include <ion.h>
 #include <omg/list.h>
 #include <poincare/print.h>
+#include <stdlib.h>
 
 #include "quiz.h"
 #include "runner_helpers.h"
@@ -136,6 +137,7 @@ static inline void ion_main_inner(const char* testFilter,
   time = Ion::Timing::millis() - time;
   Poincare::Print::CustomPrintf(buffer, k_bufferSize, "DURATION: %i ms", time);
   quiz_print(buffer);
+  exit(0);
 #ifdef PLATFORM_DEVICE
   while (1) {
     Ion::Timing::msleep(100000);

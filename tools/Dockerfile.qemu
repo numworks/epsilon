@@ -1,0 +1,23 @@
+# Dockerfile used by the CI
+
+FROM debian:bookworm-slim
+
+WORKDIR /runner
+
+RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/assume-yes && \
+    apt-get update && \
+    apt-get upgrade && \
+    apt-get install --no-install-recommends sudo
+
+RUN apt-get install build-essential git python3 python3-venv ninja-build pkg-config glib-2.0-dev
+
+COPY qemu /qemu
+
+WORKDIR /qemu
+RUN ./configure --target-list=arm-softmmu --without-default-features --without-default-devices --with-devices-arm=numworks
+
+RUN ninja -C build
+
+ENV PATH=/qemu/build:$PATH
+
+WORKDIR /monorepo

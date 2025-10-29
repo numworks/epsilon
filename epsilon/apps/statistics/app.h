@@ -17,7 +17,7 @@
 #include "graph/graph_view_model.h"
 #include "graph/histogram_main_controller.h"
 #include "graph/normal_probability_controller.h"
-#include "statistics_type_controller.h"
+#include "shared/statistics_type_controller.h"
 #include "stats/calculation_controller.h"
 #include "store.h"
 

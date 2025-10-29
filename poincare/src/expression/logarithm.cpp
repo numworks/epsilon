@@ -57,8 +57,8 @@ bool Logarithm::ReduceLn(Tree* e) {
     e->cloneTreeOverTree(0_e);
     return true;
   }
-  /* Because reduction goes bottom-up, ln(0) is not immediatly reduced, to allow
-   * exp(x*ln(0)) to be properly reduced */
+  /* Because reduction goes bottom-up, ln(0) is not immediately reduced, to
+   * allow exp(x*ln(0)) to be properly reduced */
   if (child->isZero()) {
     return false;
   }

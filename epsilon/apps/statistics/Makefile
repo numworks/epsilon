@@ -31,6 +31,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/statistics/,$(addsuffix :-test, \
   data/store_controller.cpp \
   data/store_parameter_controller.cpp \
   app.cpp \
+  $(addprefix assets/, \
   stat_icon.png \
   bar_icon.png \
   pie_icon.png \
@@ -38,6 +39,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/statistics/,$(addsuffix :-test, \
   histogram_icon.png \
   cumulative_icon.png \
   statistics_normal_icon.png \
+  ) \
   shared/statistics_type_controller.cpp \
   shared/statistics_type_view_model.cpp \
   $(addprefix categorical/, \
@@ -58,11 +60,11 @@ SOURCES_apps += $(addprefix $(PATH_apps)/statistics/,$(addsuffix :-test, \
   test/store.cpp:+test \
 )
 
-$(call depends_on_image,apps/statistics/app.cpp,apps/statistics/stat_icon.png)
+$(call depends_on_image,apps/statistics/app.cpp,apps/statistics/assets/stat_icon.png)
 
 $(call depends_on_transparent_image, \
 apps/statistics/graph/graph_view_model.cpp, \
-$(addprefix apps/statistics/, \
+$(addprefix apps/statistics/assets/, \
   box_icon.png \
   histogram_icon.png \
   cumulative_icon.png \
@@ -71,7 +73,7 @@ $(addprefix apps/statistics/, \
 
 $(call depends_on_transparent_image, \
 apps/statistics/categorical/graph/graph_view_model.cpp, \
-$(addprefix apps/statistics/, \
+$(addprefix apps/statistics/assets/, \
   bar_icon.png \
   pie_icon.png \
 ))

@@ -4,7 +4,7 @@
 #include <escher/button_row_controller.h>
 #include <escher/tab_view_controller.h>
 
-#include "../../graph/graph_button_row_delegate.h"
+#include "../../shared/graph_button_row_delegate.h"
 #include "../data/store.h"
 #include "pie_banner_view.h"
 #include "pie_displayed_data_controller.h"

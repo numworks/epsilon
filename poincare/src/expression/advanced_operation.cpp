@@ -254,8 +254,9 @@ bool AdvancedOperation::ExpandMult(Tree* e) {
    * multiplications of additions. We therefore rely on ContractMult for atomic
    * contractions that improve the metric. */
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(e, KMult(KA_s, KAdd(KB, KC_p), KD_s), &ctx) &&
-      (ctx.getNumberOfTrees(KA) != 0 || ctx.getNumberOfTrees(KD) != 0)) {
+  if (e->isMult() &&
+      PatternMatching::Match(e, KMult(KA_s, KAdd(KB, KC_p), KD_s), &ctx)) {
+    assert(ctx.getNumberOfTrees(KA) != 0 || ctx.getNumberOfTrees(KD) != 0);
     int numberOfTerms = 1 + ctx.getNumberOfTrees(KC);
     Tree* result = SharedTreeStack->pushAdd(numberOfTerms);
     const Tree* term = ctx.getTree(KB);

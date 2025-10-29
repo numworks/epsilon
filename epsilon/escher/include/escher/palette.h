@@ -33,7 +33,7 @@ class Palette {
   constexpr static KDColor MagentaLight = KDColor::RGB24(0xffd9eb);
   constexpr static KDColor Turquoise = KDColor::RGB24(0x60c1ec);
   constexpr static KDColor TurquoiseLight = KDColor::RGB24(0xd0edff);
-  constexpr static KDColor Pink = KDColor::RGB24(0xffabb6);
+  constexpr static KDColor Pink = KDColor::RGB24(0xff99aa);
   constexpr static KDColor PinkLight = KDColor::RGB24(0xffe3e7);
   constexpr static KDColor Blue = KDColor::RGB24(0x5075f2);
   constexpr static KDColor BlueLight = KDColor::RGB24(0xdce3fd);

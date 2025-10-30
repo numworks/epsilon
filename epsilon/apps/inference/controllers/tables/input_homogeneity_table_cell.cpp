@@ -1,6 +1,6 @@
 #include "input_homogeneity_table_cell.h"
 
-#include <omg/print.h>
+#include <poincare/print.h>
 #include <shared/column_parameter_controller.h>
 
 #include "homogeneity_data_source.h"
@@ -45,15 +45,9 @@ void InputHomogeneityTableCell::fillCellForLocation(Escher::HighlightCell* cell,
 }
 
 size_t InputHomogeneityTableCell::fillColumnName(int column, char* buffer) {
-  constexpr size_t bufferSize =
-      Shared::ColumnParameterController::k_titleBufferSize;
-  size_t length =
-      strlcpy(buffer, I18n::translate(I18n::Message::Group), bufferSize);
-  buffer[length++] = ' ';
-  length += OMG::Print::IntLeft(column, buffer + length, bufferSize - length);
-  buffer[length] = 0;
-  assert(length < Shared::ColumnParameterController::k_titleBufferSize);
-  return length;
+  return Poincare::Print::CustomPrintf(
+      buffer, Shared::ColumnParameterController::k_titleBufferSize, "%s %i",
+      I18n::translate(I18n::Message::Group), column);
 }
 
 void InputHomogeneityTableCell::fillInnerCellForLocation(

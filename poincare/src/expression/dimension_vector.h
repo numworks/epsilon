@@ -38,7 +38,7 @@ struct SIVector {
     }
     return numberOfOnes == 1;
   }
-  constexpr bool isEmpty() const { return supportSize() == 0; }
+  constexpr bool isEmpty() const { return *this == SIVector::Empty(); }
   constexpr static SIVector Empty() { return {}; }
   constexpr bool isUndef() const { return *this == Undef(); }
   /* Vector for UndefUnit. Values do not matter since UndefUnit is meant to have
@@ -156,6 +156,7 @@ struct SIVector {
 static_assert(sizeof(SIVector) ==
               sizeof(uint8_t) * SIVector::k_numberOfBaseUnits);
 static_assert(SIVector::Empty().isEmpty());
+static_assert(SIVector::Empty().supportSize() == 0);
 
 }  // namespace Units
 }  // namespace Poincare::Internal

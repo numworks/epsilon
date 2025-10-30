@@ -26,8 +26,8 @@ void SolidColorView::logAttributes(std::ostream& os) const {
 }
 #endif
 
-SolidColorWithBorderView::SolidColorWithBorderView(KDColor border,
-                                                   KDColor color,
+SolidColorWithBorderView::SolidColorWithBorderView(KDColor color,
+                                                   KDColor border,
                                                    KDCoordinate borderWidth)
     : View(), m_color(color), m_border(border), m_borderWidth(borderWidth) {}
 

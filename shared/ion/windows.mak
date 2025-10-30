@@ -12,7 +12,7 @@ SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/, \
   shared/journal.cpp \
 )
 
-SOURCES_ion += ion/src/shared/collect_registers.cpp
+SOURCES_ion += $(PATH_ion)/src/shared/collect_registers.cpp
 
 _ion_simulator_files := 1
 _ion_external_apps := 1
@@ -21,7 +21,7 @@ _ion_external_apps := 1
 $(call all_objects_for,$(PATH_ion)/src/simulator/windows/resources.rc): WRFLAGS += -I $(OUTPUT_DIRECTORY)
 $(call all_objects_for,$(PATH_ion)/src/simulator/windows/resources.rc): $(addprefix $(OUTPUT_DIRECTORY)/,logo.ico)
 
-$(addprefix $(OUTPUT_DIRECTORY)/,logo.ico): ion/src/simulator/assets/logo.svg | $$(@D)/.
+$(addprefix $(OUTPUT_DIRECTORY)/,logo.ico): $(PATH_ion)/src/simulator/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)
 	magick convert -background "#FFB734" -resize 256x256 MSVG:$< $@
 
@@ -39,9 +39,9 @@ $(addprefix $(PATH_ion)/src/simulator/assets/, \
   $(_ion_simulator_background) \
   $(_ion_simulator_backgrounds_generated)
 
-$(addprefix $(OUTPUT_DIRECTORY)/$(PATH_ion)/src/simulator/windows/,resources_gen.rc images.h): $(_ion_simulator_assets) | $$(@D)/.
+$(call generated_sources_for, $(addprefix $(PATH_ion)/src/simulator/windows/,resources_gen.rc images.h)): $(_ion_simulator_assets) | $$(@D)/.
 	$(call rule_label,RESGEN)
 	$(PYTHON) $(PATH_ion)/src/simulator/windows/resgen.py $^ -o $@
 
-$(call all_objects_for,$(PATH_ion)/src/simulator/windows/platform_images.cpp): $(OUTPUT_DIRECTORY)/$(PATH_ion)/src/simulator/windows/images.h
-$(call all_objects_for,$(PATH_ion)/src/simulator/windows/resources.rc): $(OUTPUT_DIRECTORY)/$(PATH_ion)/src/simulator/windows/resources_gen.rc
+$(call all_objects_for,$(PATH_ion)/src/simulator/windows/platform_images.cpp): $(call generated_sources_for, $(PATH_ion)/src/simulator/windows/images.h)
+$(call all_objects_for,$(PATH_ion)/src/simulator/windows/resources.rc): $(call generated_sources_for, $(PATH_ion)/src/simulator/windows/resources_gen.rc)

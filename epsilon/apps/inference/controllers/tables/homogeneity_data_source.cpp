@@ -71,7 +71,7 @@ void HomogeneityTableDataSource::fillCellForLocation(
       assert(row - 1 <= 'Z' - 'A');
       digit = 'A' + (row - 1);
     }
-    constexpr int bufferSize = k_headerTranslationBuffer;
+    constexpr int bufferSize = k_headerTranslationBufferSize;
     char txt[bufferSize];
     Poincare::Print::CustomPrintf(txt, bufferSize, "%s %c",
                                   I18n::translate(m_headerPrefix), digit);

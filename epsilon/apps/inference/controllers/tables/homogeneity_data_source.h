@@ -87,7 +87,7 @@ class HomogeneityTableDataSource
 
  private:
   constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;
-  constexpr static int k_headerTranslationBuffer = 20;
+  constexpr static int k_headerTranslationBufferSize = 20;
 
   I18n::Message m_headerPrefix;
   Escher::SolidColorCell m_topLeftCell;

@@ -73,7 +73,7 @@ class ANOVATableDataSource
   virtual Escher::HighlightCell* innerCell(int i) = 0;
 
  private:
-  constexpr static int k_headerTranslationBuffer = 20;
+  constexpr static int k_headerTranslationBufferSize = 20;
 
   I18n::Message m_headerPrefix;
 };

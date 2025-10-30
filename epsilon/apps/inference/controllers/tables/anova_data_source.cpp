@@ -18,8 +18,7 @@ void ANOVATableDataSource::initCell(InferenceEvenOddBufferCell, void* cell,
 
 int ANOVATableDataSource::reusableCellCount(int type) const {
   if (type == k_typeOfHeaderCells) {
-    return k_maxNumberOfReusableRows +
-           ANOVATableDimensions::k_numberOfReusableColumns;
+    return k_maxNumberOfReusableRows + k_numberOfReusableColumns;
   }
   return ANOVATableDimensions::k_numberOfInnerReusableCells;
 }
@@ -51,7 +50,7 @@ void ANOVATableDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     myCell->setEven(true);
     assert(column <= '9' - '1');
     digit = '1' + column;
-    constexpr int bufferSize = k_headerTranslationBuffer;
+    constexpr int bufferSize = k_headerTranslationBufferSize;
     char txt[bufferSize];
     Poincare::Print::CustomPrintf(txt, bufferSize, "%s %c",
                                   I18n::translate(m_headerPrefix), digit);

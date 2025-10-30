@@ -176,13 +176,15 @@ bool KDFont::CanBeWrittenWithGlyphs(const char* text) {
   UTF8Decoder decoder(text);
   CodePoint cp = decoder.nextCodePoint();
   while (cp != UCodePointNull) {
-    if (
+    if ((
 #if KANDINSKY_FONT_LARGE_FONT
-        privateLargeFont.indexForCodePoint(cp) ==
-            k_indexForReplacementCharacterCodePoint ||
+            privateLargeFont.indexForCodePoint(cp) ==
+                k_indexForReplacementCharacterCodePoint ||
 #endif
-        privateSmallFont.indexForCodePoint(cp) ==
-            k_indexForReplacementCharacterCodePoint) {
+            privateSmallFont.indexForCodePoint(cp) ==
+                k_indexForReplacementCharacterCodePoint) &&
+        cp != CodePoint('\n')) {
+      // Allow \n, this is useful for saved session with pasted content
       return false;
     }
     cp = decoder.nextCodePoint();

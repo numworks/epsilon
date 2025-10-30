@@ -14,7 +14,9 @@ class ResultsANOVAController : public CategoricalController {
                          ControllerContainer* controllerContainer,
                          ANOVATest* inferenceModel);
 
-  const char* title() const override { return ""; }
+  ViewController::TitlesDisplay titlesDisplay() const override {
+    return ViewController::TitlesDisplay::SameAsPreviousPage;
+  };
 
   // TODO: titleDisplay
 

@@ -5,8 +5,6 @@
 #include "inference/app.h"
 #include "inference/constants.h"
 #include "inference/controllers/inference_controller.h"
-#include "inference/models/aliases.h"
-#include "inference/models/anova_test.h"
 #include "inference/text_helpers.h"
 
 using namespace Escher;
@@ -263,9 +261,6 @@ bool InputCategoricalController::ButtonAction(
           static_cast<uint8_t>(controller->m_pageIndex))) {
     App::app()->displayWarning(I18n::Message::InvalidInputs);
     return false;
-  }
-  if (controller->m_inferenceModel->testType() == TestType::ANOVA) {
-    return true;
   }
   controller->m_inferenceModel->compute();
   return CategoricalController::ButtonAction(controller, s);

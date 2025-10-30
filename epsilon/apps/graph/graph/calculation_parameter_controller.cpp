@@ -29,7 +29,9 @@ CalculationParameterController::CalculationParameterController(
       m_maximumGraphController(nullptr, graphView, bannerView, range, cursor),
       m_rootGraphController(nullptr, graphView, bannerView, range, cursor),
       m_intersectionGraphController(nullptr, graphView, bannerView, range,
-                                    cursor) {
+                                    cursor),
+      m_intersectionRegionGraphController(nullptr, graphView, bannerView, range,
+                                          cursor) {
   m_intersectionCell.label()->setMessage(I18n::Message::PointOfIntersection);
   m_intersectionRegionCell.label()->setMessage(
       I18n::Message::RegionOfIntersection);
@@ -114,7 +116,7 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
     push(&m_intersectionGraphController, true);
   } else if (cell == &m_intersectionRegionCell) {
     assert(shouldDisplayIntersectionRegionCell());
-    // TODO: push(&m_intersectionRegionGraphController, true);
+    push(&m_intersectionRegionGraphController, true);
   } else if (cell == &m_rootCell) {
     assert(function()->properties().isCartesian());
     push(&m_rootGraphController, true);

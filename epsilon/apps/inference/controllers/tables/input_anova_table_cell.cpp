@@ -4,6 +4,7 @@
 #include <shared/column_parameter_controller.h>
 
 #include "inference/controllers/input_anova_controller.h"
+#include "inference/controllers/tables/anova_table_dimensions.h"
 #include "input_anova_data_source.h"
 
 using namespace Escher;
@@ -62,10 +63,10 @@ void InputANOVATableCell::fillInnerCellForLocation(Escher::HighlightCell* cell,
 void InputANOVATableCell::createCells() {
   if (DynamicCellsDataSource<InferenceEvenOddBufferCell>::m_cells == nullptr) {
     DynamicCellsDataSource<InferenceEvenOddBufferCell>::createCellsWithOffset(
-        ANOVATableDimensions::k_numberOfInputHeaderReusableCells, 0);
+        ANOVATableDimensions::k_numberOfInputHeaderCells, 0);
     DynamicCellsDataSource<InferenceEvenOddEditableCell>::createCellsWithOffset(
-        ANOVATableDimensions::k_numberOfInnerReusableCells,
-        ANOVATableDimensions::k_numberOfInputHeaderReusableCells *
+        ANOVATableDimensions::k_numberOfInputInnerCells,
+        ANOVATableDimensions::k_numberOfInputHeaderCells *
             sizeof(InferenceEvenOddBufferCell));
   }
 }

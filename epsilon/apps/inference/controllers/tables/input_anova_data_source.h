@@ -32,9 +32,9 @@ class InputANOVADataSource
 
   constexpr static int k_columnWidth = ANOVATableDimensions::k_columnWidth;
   constexpr static int k_numberOfReusableColumns =
-      ANOVATableDimensions::k_numberOfReusableColumns;
+      ANOVATableDimensions::k_numberOfInputColumns;
   constexpr static int k_maxNumberOfReusableRows =
-      ANOVATableDimensions::k_maxNumberOfReusableRows;
+      ANOVATableDimensions::k_numberOfInputInnerRows;
 
  protected:
   constexpr static int k_maxNumberOfColumns = ANOVATest::k_maxNumberOfColumns;

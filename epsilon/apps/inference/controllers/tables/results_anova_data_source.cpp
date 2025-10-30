@@ -16,8 +16,9 @@ ResultsANOVADataSource::ResultsANOVADataSource()
 void ResultsANOVADataSource::createCells() {
   if (DynamicCellsDataSource<InferenceEvenOddBufferCell>::m_cells == nullptr) {
     DynamicCellsDataSource<InferenceEvenOddBufferCell>::createCellsWithOffset(
-        ANOVATableDimensions::k_numberOfResultsHeaderReusableCells +
-            ANOVATableDimensions::k_numberOfInnerReusableCells,
+        ANOVATableDimensions::k_numberOfResultsHeaderCells +
+            // TODO: update variable
+            ANOVATableDimensions::k_numberOfInputInnerCells,
         0);
   }
 }
@@ -32,9 +33,9 @@ int ResultsANOVADataSource::reusableCellCount(int type) const {
     return 1;
   } else if (type == k_typeOfHeaderCells) {
     return k_maxNumberOfReusableRows +
-           ANOVATableDimensions::k_numberOfReusableColumns;
+           ANOVATableDimensions::k_numberOfInputColumns;
   }
-  return ANOVATableDimensions::k_numberOfInnerReusableCells;
+  return ANOVATableDimensions::k_numberOfInputInnerCells;
 }
 
 HighlightCell* ResultsANOVADataSource::reusableCell(int i, int type) {

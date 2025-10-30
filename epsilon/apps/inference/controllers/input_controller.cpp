@@ -2,6 +2,7 @@
 
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/stack_view_controller.h>
+#include <escher/view_controller.h>
 #include <poincare/print.h>
 #include <poincare/statistics/inference.h>
 
@@ -44,6 +45,20 @@ void InputController::initCell(ParameterCell, void* cell, int index) {
   c->setDelegate(this);
 }
 
+static bool shouldDisplaySignificanceLevelForANOVA(
+    const StackViewController* stackViewController) {
+  /* This is a sort of hack knowing the order of pages for the ANOVA test. The
+   * first controller which has the SameAsPreviousPage property is
+   * InputANOVAController, it should not display the significance level. The
+   * second controller with SameAsPreviousPage is ResultsANOVAController and it
+   * should display the significance level (which was set in
+   * InputANOVAController). */
+  return (stackViewController->topViewController()->titlesDisplay() ==
+          Escher::ViewController::TitlesDisplay::SameAsPreviousPage) &&
+         !(stackViewController->secondTopViewController()->titlesDisplay() ==
+           Escher::ViewController::TitlesDisplay::SameAsPreviousPage);
+}
+
 void InputController::InputTitle(const Escher::ViewController* vc,
                                  const InferenceModel* inference,
                                  char* titleBuffer, size_t titleBufferSize) {
@@ -58,8 +73,7 @@ void InputController::InputTitle(const Escher::ViewController* vc,
     bool shouldHideSignificanceLevel =
         (stackViewControllerResponder->topViewController() == vc) ||
         (signifTest->testType() == Poincare::Inference::TestType::ANOVA &&
-         stackViewControllerResponder->topViewController()->titlesDisplay() ==
-             TitlesDisplay::SameAsPreviousPage);
+         shouldDisplaySignificanceLevelForANOVA(stackViewControllerResponder));
     if (shouldHideSignificanceLevel) {
       Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
           titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,

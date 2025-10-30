@@ -18,9 +18,7 @@ static constexpr int k_numberOfReusableCells =
 class ResultGoodnessContributionsTable
     : public CategoricalTableCell,
       public CategoricalTableViewDataSource,
-      public DynamicCellsDataSource<
-          InferenceEvenOddBufferCell,
-          ResultsGoodnessContributionsDimensions::k_numberOfReusableCells>,
+      public DynamicCellsDataSource<InferenceEvenOddBufferCell>,
       public DynamicCellsDataSourceDelegate<InferenceEvenOddBufferCell> {
  public:
   ResultGoodnessContributionsTable(
@@ -45,6 +43,8 @@ class ResultGoodnessContributionsTable
   Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;
   }
+
+  void createCells() override;
 
   // CategoricalTableCell
   CategoricalTableViewDataSource* tableViewDataSource() override {

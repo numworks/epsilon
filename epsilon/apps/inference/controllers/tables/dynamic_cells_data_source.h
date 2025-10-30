@@ -24,7 +24,7 @@ class DynamicCellsDataSourceDestructor {
   virtual Escher::SelectableTableView* dynamicCellsTableView() = 0;
 };
 
-template <typename T, int N>
+template <typename T>
 class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   /* Cells are created at in the App::buffer. If not overriden, the cells are
    * created on the left-edge of the buffer. 'createCells' can be overriden to
@@ -35,16 +35,19 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
       : m_cells(nullptr), m_delegate(delegate) {}
   ~DynamicCellsDataSource();
   Escher::HighlightCell* cell(int i);
-  virtual void createCells();
+  virtual void createCells() = 0;
   void destroyCells() override;
   Escher::SelectableTableView* dynamicCellsTableView() override {
     return m_delegate->tableView();
   }
 
  protected:
-  void createCellsWithOffset(size_t offset);
+  void createCellsWithOffset(int numberOfCells, size_t offset);
   T* m_cells;
   DynamicCellsDataSourceDelegate<T>* m_delegate;
+
+ private:
+  int m_numberOfAllocatedCells = 0;
 };
 
 template <typename T>

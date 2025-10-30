@@ -230,7 +230,7 @@ DoubleColumnTableCell::DoubleColumnTableCell(
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, inference,
                                 scrollViewDelegate),
-      DoubleColumnTableCellsDataSource(this) {}
+      DynamicCellsDataSource<InferenceEvenOddEditableCell>(this) {}
 
 int DoubleColumnTableCell::reusableCellCount(int type) const {
   if (type == k_typeOfHeaderCells) {
@@ -257,6 +257,14 @@ void DoubleColumnTableCell::fillCellForLocation(Escher::HighlightCell* cell,
       static_cast<InferenceEvenOddEditableCell*>(cell);
   fillValueCellForLocation(myCell->editableTextCell()->textField(), myCell,
                            column, row - 1, tableModel());
+}
+
+void DoubleColumnTableCell::createCells() {
+  if (DynamicCellsDataSource<InferenceEvenOddEditableCell>::m_cells ==
+      nullptr) {
+    DynamicCellsDataSource<InferenceEvenOddEditableCell>::createCellsWithOffset(
+        DoubleColumnTableDimensions::k_numberOfReusableCells, 0);
+  }
 }
 
 }  // namespace Inference

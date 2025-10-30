@@ -16,7 +16,7 @@ InputHomogeneityTableCell::InputHomogeneityTableCell(
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, test,
                                 scrollViewDelegate),
-      InputHomogeneityInnerCellsDataSource(this),
+      DynamicCellsDataSource<InferenceEvenOddEditableCell>(this),
       m_inputHomogeneityController(inputHomogeneityController) {}
 
 void InputHomogeneityTableCell::handleResponderChainEvent(
@@ -59,17 +59,19 @@ void InputHomogeneityTableCell::fillInnerCellForLocation(
 }
 
 void InputHomogeneityTableCell::createCells() {
-  if (HomogeneityHeaderCellsDataSource::m_cells == nullptr) {
-    HomogeneityHeaderCellsDataSource::createCellsWithOffset(0);
-    InputHomogeneityInnerCellsDataSource::createCellsWithOffset(
+  if (DynamicCellsDataSource<InferenceEvenOddBufferCell>::m_cells == nullptr) {
+    DynamicCellsDataSource<InferenceEvenOddBufferCell>::createCellsWithOffset(
+        HomogeneityTableDimensions::k_numberOfHeaderReusableCells, 0);
+    DynamicCellsDataSource<InferenceEvenOddEditableCell>::createCellsWithOffset(
+        HomogeneityTableDimensions::k_numberOfInnerReusableCells,
         HomogeneityTableDimensions::k_numberOfHeaderReusableCells *
-        sizeof(InferenceEvenOddBufferCell));
+            sizeof(InferenceEvenOddBufferCell));
   }
 }
 
 void InputHomogeneityTableCell::destroyCells() {
-  InputHomogeneityInnerCellsDataSource::destroyCells();
-  HomogeneityHeaderCellsDataSource::destroyCells();
+  DynamicCellsDataSource<InferenceEvenOddEditableCell>::destroyCells();
+  DynamicCellsDataSource<InferenceEvenOddBufferCell>::destroyCells();
 }
 
 CategoricalController* InputHomogeneityTableCell::categoricalController() {

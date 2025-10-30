@@ -12,39 +12,33 @@ using namespace Escher;
 
 namespace Inference {
 
-template <typename T, int N>
-DynamicCellsDataSource<T, N>::~DynamicCellsDataSource() {
+template <typename T>
+DynamicCellsDataSource<T>::~DynamicCellsDataSource() {
   if (m_cells) {
     destroyCells();
   }
 }
 
-template <typename T, int N>
-void DynamicCellsDataSource<T, N>::createCells() {
-  if (m_cells == nullptr) {
-    createCellsWithOffset(0);
-  }
-}
-
-template <typename T, int N>
-void DynamicCellsDataSource<T, N>::createCellsWithOffset(size_t offset) {
+template <typename T>
+void DynamicCellsDataSource<T>::createCellsWithOffset(int numberOfCells,
+                                                      size_t offset) {
   assert(m_cells == nullptr);
-  static_assert(sizeof(T) * N <= App::k_bufferSize,
-                "Inference::App::m_buffer is not large enough");
-  assert(offset + sizeof(T) * N <= App::k_bufferSize);
+  assert(sizeof(T) * numberOfCells <= App::k_bufferSize);
+  assert(offset + sizeof(T) * numberOfCells <= App::k_bufferSize);
   if (offset == 0) {
     /* The buffer gets entirely clean only when creating cells from the
      * beginning of the buffer. */
     App::app()->cleanBuffer(this);
   }
-  m_cells = new (App::app()->buffer(offset)) T[N];
-  for (int i = 0; i < N; i++) {
+  m_cells = new (App::app()->buffer(offset)) T[numberOfCells];
+  for (int i = 0; i < numberOfCells; i++) {
     m_delegate->initCell(T(), &m_cells[i], i);
   }
+  m_numberOfAllocatedCells += numberOfCells;
 }
 
-template <typename T, int N>
-void DynamicCellsDataSource<T, N>::destroyCells() {
+template <typename T>
+void DynamicCellsDataSource<T>::destroyCells() {
   if (m_cells) {
     /* We manually call T destructor since we cannot use 'delete' due to the
      * placement new.
@@ -53,7 +47,7 @@ void DynamicCellsDataSource<T, N>::destroyCells() {
      * methods but no virtual destructor; the compiler might think we forgot
      * some virtualization here but we didn't - we don't want to call a derived
      * destructor of children T class. */
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < m_numberOfAllocatedCells; i++) {
       // Make sure not to keep the first responder pointing on a destroyed cell
       Responder* cellResponder = m_cells[i].responder();
       Responder* appFirstResponder = App::app()->firstResponder();
@@ -64,39 +58,17 @@ void DynamicCellsDataSource<T, N>::destroyCells() {
     }
   }
   m_cells = nullptr;
+  m_numberOfAllocatedCells = 0;
 }
 
-template <typename T, int N>
-Escher::HighlightCell* DynamicCellsDataSource<T, N>::cell(int i) {
+template <typename T>
+Escher::HighlightCell* DynamicCellsDataSource<T>::cell(int i) {
   assert(m_cells);
   return &m_cells[i];
 }
 
-template class DynamicCellsDataSource<
-    InferenceEvenOddBufferCell,
-    ANOVATableDimensions::k_numberOfHeaderReusableCells>;
-template class DynamicCellsDataSource<
-    InferenceEvenOddEditableCell,
-    ANOVATableDimensions::k_numberOfInnerReusableCells>;
-template class DynamicCellsDataSource<
-    InferenceEvenOddBufferCell,
-    HomogeneityTableDimensions::k_numberOfHeaderReusableCells>;
-template class DynamicCellsDataSource<
-    InferenceEvenOddBufferCell,
-    HomogeneityTableDimensions::k_numberOfInnerReusableCells>;
-template class DynamicCellsDataSource<
-    InferenceEvenOddEditableCell,
-    HomogeneityTableDimensions::k_numberOfInnerReusableCells>;
-template class DynamicCellsDataSource<
-    InferenceEvenOddBufferCell,
-    ResultsGoodnessContributionsDimensions::k_numberOfReusableCells>;
-template class DynamicCellsDataSource<
-    InferenceEvenOddEditableCell,
-    DoubleColumnTableDimensions::k_numberOfReusableCells>;
-template class DynamicCellsDataSource<
-    Escher::MenuCellWithEditableText<Escher::LayoutView,
-                                     Escher::MessageTextView>,
-    InputController::k_numberOfReusableCells>;
-template class DynamicCellsDataSource<
-    ResultCell, ResultsControllerDimensions::k_numberOfReusableCells>;
+template class DynamicCellsDataSource<InferenceEvenOddBufferCell>;
+template class DynamicCellsDataSource<InferenceEvenOddEditableCell>;
+template class DynamicCellsDataSource<ParameterCell>;
+template class DynamicCellsDataSource<ResultCell>;
 }  // namespace Inference

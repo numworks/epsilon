@@ -9,7 +9,8 @@ using namespace Escher;
 namespace Inference {
 
 ANOVATableDataSource::ANOVATableDataSource()
-    : ANOVAHeaderCellsDataSource(this), m_headerPrefix(I18n::Message::Group) {}
+    : DynamicCellsDataSource<InferenceEvenOddBufferCell>(this),
+      m_headerPrefix(I18n::Message::Group) {}
 
 void ANOVATableDataSource::initCell(InferenceEvenOddBufferCell, void* cell,
                                     int index) {

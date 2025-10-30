@@ -13,7 +13,6 @@ ResultsHomogeneityTableCell::ResultsHomogeneityTableCell(
     ResultsHomogeneityController* resultsTableController,
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : CategoricalTableCell(parentResponder, this, scrollViewDelegate),
-      ResultsHomogeneityInnerCellsDataSource(this),
       m_inference(test),
       m_mode(Mode::ExpectedValue),
       m_resultsTableController(resultsTableController) {
@@ -90,17 +89,12 @@ void ResultsHomogeneityTableCell::fillInnerCellForLocation(
 }
 
 void ResultsHomogeneityTableCell::createCells() {
-  if (HomogeneityHeaderCellsDataSource::m_cells == nullptr) {
-    HomogeneityHeaderCellsDataSource::createCellsWithOffset(0);
-    ResultsHomogeneityInnerCellsDataSource::createCellsWithOffset(
-        HomogeneityTableDimensions::k_numberOfHeaderReusableCells *
-        sizeof(InferenceEvenOddBufferCell));
+  if (DynamicCellsDataSource<InferenceEvenOddBufferCell>::m_cells == nullptr) {
+    DynamicCellsDataSource<InferenceEvenOddBufferCell>::createCellsWithOffset(
+        HomogeneityTableDimensions::k_numberOfHeaderReusableCells +
+            HomogeneityTableDimensions::k_numberOfInnerReusableCells,
+        0);
   }
-}
-
-void ResultsHomogeneityTableCell::destroyCells() {
-  ResultsHomogeneityInnerCellsDataSource::destroyCells();
-  HomogeneityHeaderCellsDataSource::destroyCells();
 }
 
 CategoricalController* ResultsHomogeneityTableCell::categoricalController() {

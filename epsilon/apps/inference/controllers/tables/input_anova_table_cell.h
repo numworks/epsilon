@@ -8,9 +8,10 @@ namespace Inference {
 
 class InputANOVAController;
 
-class InputANOVATableCell : public InputCategoricalTableCell,
-                            public ANOVATableDataSource,
-                            public InputANOVAInnerCellsDataSource {
+class InputANOVATableCell
+    : public InputCategoricalTableCell,
+      public ANOVATableDataSource,
+      public DynamicCellsDataSource<InferenceEvenOddEditableCell> {
  public:
   InputANOVATableCell(Escher::Responder* parentResponder, ANOVATest* test,
                       InputANOVAController* inputANOVAController,
@@ -51,7 +52,7 @@ class InputANOVATableCell : public InputCategoricalTableCell,
 
   // ANOVATableViewDataSource
   Escher::HighlightCell* innerCell(int i) override {
-    return InputANOVAInnerCellsDataSource::cell(i);
+    return DynamicCellsDataSource<InferenceEvenOddEditableCell>::cell(i);
   }
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;

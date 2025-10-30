@@ -22,19 +22,16 @@ void PieGraphViewDataSource::toggleSelection(bool select) {
 }
 
 int PieGraphViewDataSource::nextCategory(int direction) {
-  if (m_isSelectionActive) {
-    m_insideColors[m_selectedCategory] = m_selectedCategoryOriginalColor;
-  }
+  assert(m_isSelectionActive);  // Cannot change category if not selected
+  m_insideColors[m_selectedCategory] = m_selectedCategoryOriginalColor;
   if (direction < 0 && m_selectedCategory == 0) {
     m_selectedCategory = m_numberOfActiveCategories - 1;
   } else {
     m_selectedCategory += direction < 0 ? -1 : 1;
     m_selectedCategory %= m_numberOfActiveCategories;
   }
-  if (m_isSelectionActive) {
-    m_selectedCategoryOriginalColor = m_insideColors[m_selectedCategory];
-    m_insideColors[m_selectedCategory] = k_selectedColor;
-  }
+  m_selectedCategoryOriginalColor = m_insideColors[m_selectedCategory];
+  m_insideColors[m_selectedCategory] = k_selectedColor;
   return m_toGlobalCategories[m_selectedCategory];
 }
 

@@ -13,6 +13,7 @@
 #include "graph_view.h"
 #include "integral_graph_controller.h"
 #include "intersection_graph_controller.h"
+#include "intersection_region_graph_controller.h"
 #include "preimage_parameter_controller.h"
 #include "root_graph_controller.h"
 #include "tangent_graph_controller.h"
@@ -95,6 +96,7 @@ class CalculationParameterController
   MaximumGraphController m_maximumGraphController;
   RootGraphController m_rootGraphController;
   IntersectionGraphController m_intersectionGraphController;
+  IntersectionRegionGraphController m_intersectionRegionGraphController;
 };
 
 }  // namespace Graph

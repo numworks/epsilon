@@ -18,9 +18,13 @@ constexpr static int k_numberOfInputInnerRows =
 constexpr static int k_numberOfInputInnerCells =
     k_numberOfInputInnerRows * k_numberOfInputColumns;
 constexpr static int k_numberOfInputHeaderCells = k_numberOfInputColumns;
+
 constexpr static int k_numberOfResultInnerRows = 3;
+constexpr static int k_numberOfResultInnerColumns = 2;
+constexpr static int k_numberOfResultsInnerCells =
+    k_numberOfResultInnerRows * k_numberOfResultInnerColumns;
 constexpr static int k_numberOfResultsHeaderCells =
-    k_numberOfInputColumns + k_numberOfResultInnerRows + 1;
+    k_numberOfResultInnerColumns + k_numberOfResultInnerRows;
 }  // namespace ANOVATableDimensions
 
 }  // namespace Inference

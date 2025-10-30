@@ -43,14 +43,9 @@ class ResultsANOVATableCell : public CategoricalTableCell,
 
  private:
   // ANOVATableViewDataSource
-  /* The totals are not displayed when in Contribution mode. */
-  int innerNumberOfRows() const override {
-    // TODO: is this true?
-    return k_maxNumberOfRows;
-  }
+  int innerNumberOfRows() const override { return k_numberOfReusableRows; }
   int innerNumberOfColumns() const override {
-    // TODO: is this true?
-    return k_maxNumberOfColumns;
+    return k_numberOfReusableColumns;
   }
   Escher::HighlightCell* innerCell(int i) override {
     return cell(i + ANOVATableDimensions::k_numberOfResultsHeaderCells);

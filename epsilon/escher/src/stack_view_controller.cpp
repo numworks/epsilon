@@ -41,6 +41,16 @@ const ViewController* StackViewController::secondTopViewController() const {
   return stackSlot(m_size - 2);
 }
 
+const ViewController* StackViewController::onTopViewController(
+    uint8_t index) const {
+  // index = 0 corresponds to topViewController()
+  // index = 1 corresponds to secondTopViewController()
+  if (m_size < index + 1) {
+    return nullptr;
+  }
+  return stackSlot(m_size - 1 - index);
+}
+
 void StackViewController::push(ViewController* vc) {
   /* Add the frame to the model */
   pushModel(vc);

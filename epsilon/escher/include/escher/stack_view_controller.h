@@ -32,6 +32,8 @@ class StackViewController : public ViewController {
   const ViewController* topViewController() const;
   ViewController* topViewController();
   const ViewController* secondTopViewController() const;
+  // Get a ViewController in the stack counting from the top
+  const ViewController* onTopViewController(uint8_t index) const;
   const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void initView() override;

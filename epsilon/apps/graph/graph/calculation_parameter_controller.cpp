@@ -31,6 +31,8 @@ CalculationParameterController::CalculationParameterController(
       m_intersectionGraphController(nullptr, graphView, bannerView, range,
                                     cursor) {
   m_intersectionCell.label()->setMessage(I18n::Message::PointOfIntersection);
+  m_intersectionRegionCell.label()->setMessage(
+      I18n::Message::RegionOfIntersection);
   m_minimumCell.label()->setMessage(I18n::Message::Minimum);
   m_maximumCell.label()->setMessage(I18n::Message::Maximum);
   m_integralCell.label()->setMessage(I18n::Message::Integral);
@@ -43,9 +45,10 @@ CalculationParameterController::CalculationParameterController(
 
 const HighlightCell* CalculationParameterController::cell(int row) const {
   const HighlightCell* cells[k_numberOfRows] = {
-      &m_preimageCell, &m_intersectionCell, &m_maximumCell,
-      &m_minimumCell,  &m_rootCell,         &m_slopeCell,
-      &m_tangentCell,  &m_integralCell,     &m_areaCell};
+      &m_preimageCell, &m_intersectionCell, &m_intersectionRegionCell,
+      &m_maximumCell,  &m_minimumCell,      &m_rootCell,
+      &m_slopeCell,    &m_tangentCell,      &m_integralCell,
+      &m_areaCell};
   return cells[row];
 }
 
@@ -109,6 +112,9 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   } else if (cell == &m_intersectionCell) {
     assert(shouldDisplayIntersectionCell());
     push(&m_intersectionGraphController, true);
+  } else if (cell == &m_intersectionRegionCell) {
+    assert(shouldDisplayIntersectionRegionCell());
+    // TODO: push(&m_intersectionRegionGraphController, true);
   } else if (cell == &m_rootCell) {
     assert(function()->properties().isCartesian());
     push(&m_rootGraphController, true);
@@ -183,6 +189,7 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   m_tangentCell.setVisible(isEquality && !isOfDegreeTwo);
   m_preimageCell.setVisible(isSimpleCartesianEquality);
   m_intersectionCell.setVisible(shouldDisplayIntersectionCell());
+  m_intersectionRegionCell.setVisible(shouldDisplayIntersectionRegionCell());
   m_maximumCell.setVisible(isSimpleCartesianEquality);
   m_minimumCell.setVisible(isSimpleCartesianEquality);
   m_rootCell.setVisible(isSimpleCartesianEquality);
@@ -193,13 +200,20 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 bool CalculationParameterController::shouldDisplayIntersectionCell() const {
-  /* Intersection is handled between all active functions having one subcurve,
-   * except Polar and Parametric. */
+  // Intersection is handled between all active intersectable functions
   ContinuousFunctionStore* store = &App::app()->functionStore();
-  /* Intersection row is displayed if there is at least two intersectable
-   * functions. */
+  // At least two intersectable functions are needed.
   return function()->shouldDisplayIntersections() &&
          store->numberOfIntersectableFunctions() > 1;
+}
+
+bool CalculationParameterController::shouldDisplayIntersectionRegionCell()
+    const {
+  // Intersection is handled between all active inequality functions
+  ContinuousFunctionStore* store = &App::app()->functionStore();
+  // At least two inequalities functions are needed.
+  return !function()->properties().isEquality() &&
+         store->numberOfInequalityFunctions() > 1;
 }
 
 bool CalculationParameterController::shouldDisplayAreaCell() const {

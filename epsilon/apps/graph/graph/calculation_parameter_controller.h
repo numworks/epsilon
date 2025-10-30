@@ -41,10 +41,11 @@ class CalculationParameterController
   void setRecord(Ion::Storage::Record record);
 
  private:
-  constexpr static int k_numberOfRows = 9;
+  constexpr static int k_numberOfRows = 10;
   template <class T>
   void push(T* controller, bool pop);
   bool shouldDisplayIntersectionCell() const;
+  bool shouldDisplayIntersectionRegionCell() const;
   bool shouldDisplayAreaCell() const;
   static bool ShouldDisplayChevronInAreaCell();
   OMG::ExpiringPointer<Shared::ContinuousFunction> function() const;
@@ -72,6 +73,7 @@ class CalculationParameterController
                    Escher::ChevronView>
       m_preimageCell;
   Escher::MenuCell<Escher::MessageTextView> m_intersectionCell;
+  Escher::MenuCell<Escher::MessageTextView> m_intersectionRegionCell;
   Escher::MenuCell<Escher::MessageTextView> m_minimumCell;
   Escher::MenuCell<Escher::MessageTextView> m_maximumCell;
   Escher::MenuCell<Escher::MessageTextView> m_integralCell;

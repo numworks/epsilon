@@ -45,6 +45,9 @@ class ContinuousFunctionStore : public FunctionStore {
   int numberOfIntersectableFunctions() const {
     return numberOfModelsSatisfyingTest(&IsFunctionIntersectable, nullptr);
   }
+  int numberOfInequalityFunctions() const {
+    return numberOfModelsSatisfyingTest(&IsFunctionActiveInequality, nullptr);
+  }
   int numberOfAreaCompatibleFunctions() const {
     return numberOfModelsSatisfyingTest(&IsFunctionAreaCompatible, nullptr);
   }
@@ -109,6 +112,13 @@ class ContinuousFunctionStore : public FunctionStore {
            symbolType == static_cast<const ContinuousFunction*>(model)
                              ->properties()
                              .symbolType();
+  }
+  static bool IsFunctionActiveInequality(const ExpressionModelHandle* model,
+                                         const void* context) {
+    return IsFunctionActive(model, context) &&
+           !(static_cast<const ContinuousFunction*>(model)
+                 ->properties()
+                 .isEquality());
   }
   static bool IsFunctionIntersectable(const ExpressionModelHandle* model,
                                       const void* context) {

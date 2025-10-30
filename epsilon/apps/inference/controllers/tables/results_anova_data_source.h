@@ -43,14 +43,14 @@ class ResultsANOVADataSource
   constexpr static int k_columnWidth = ANOVATableDimensions::k_columnWidth;
 
   constexpr static int k_numberOfReusableColumns =
-      ANOVATableDimensions::k_numberOfReusableColumns;
-  // TODO: ANOVATableDimensions::k_numberOfResultRows?
+      ANOVATableDimensions::k_numberOfInputColumns;
+  // TODO: ANOVATableDimensions::k_numberOfResultInnerRows?
   constexpr static int k_maxNumberOfReusableRows =
-      ANOVATableDimensions::k_maxNumberOfReusableRows;
+      ANOVATableDimensions::k_numberOfInputInnerRows;
 
  protected:
   constexpr static int k_maxNumberOfColumns = ANOVATest::k_maxNumberOfColumns;
-  // TODO: ANOVATableDimensions::k_numberOfResultRows?
+  // TODO: ANOVATableDimensions::k_numberOfResultInnerRows?
   constexpr static int k_maxNumberOfRows = ANOVATest::k_maxNumberOfRows;
 
   KDCoordinate nonMemoizedColumnWidth(int column) override {

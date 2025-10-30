@@ -4,6 +4,8 @@
 #include <poincare/print.h>
 #include <string.h>
 
+#include "anova_table_dimensions.h"
+
 using namespace Escher;
 
 namespace Inference {
@@ -17,8 +19,7 @@ void ResultsANOVADataSource::createCells() {
   if (DynamicCellsDataSource<InferenceEvenOddBufferCell>::m_cells == nullptr) {
     DynamicCellsDataSource<InferenceEvenOddBufferCell>::createCellsWithOffset(
         ANOVATableDimensions::k_numberOfResultsHeaderCells +
-            // TODO: update variable
-            ANOVATableDimensions::k_numberOfInputInnerCells,
+            ANOVATableDimensions::k_numberOfResultsInnerCells,
         0);
   }
 }
@@ -32,10 +33,9 @@ int ResultsANOVADataSource::reusableCellCount(int type) const {
   if (type == k_typeOfTopLeftCell) {
     return 1;
   } else if (type == k_typeOfHeaderCells) {
-    return k_maxNumberOfReusableRows +
-           ANOVATableDimensions::k_numberOfInputColumns;
+    return ANOVATableDimensions::k_numberOfResultsHeaderCells;
   }
-  return ANOVATableDimensions::k_numberOfInputInnerCells;
+  return ANOVATableDimensions::k_numberOfResultsInnerCells;
 }
 
 HighlightCell* ResultsANOVADataSource::reusableCell(int i, int type) {

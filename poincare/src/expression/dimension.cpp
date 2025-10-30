@@ -412,7 +412,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
         }
       }
       // Forbid units * matrices
-      return unitVector.isEmpty() || cols == 0;
+      return cols == 0 || unitVector.isEmpty();
     }
     case Type::Pow:
     case Type::PowReal: {

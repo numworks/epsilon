@@ -20,13 +20,11 @@ bool ANOVATest::authorizedValueAtPosition(double p, int row, int column) const {
 void ANOVATest::setValueAtPosition(double value, int row, int column) {
   assert(row >= 0 && column >= 0);
   if (column > m_groups.size()) {
-    // Is this even possible?
     return;
   }
   if (column < m_groups.size()) {
     GroupValues& groupValues = m_groups[column];
     if (row > groupValues.size()) {
-      // Is this even possible?
       return;
     }
     if (row < groupValues.size()) {
@@ -48,12 +46,10 @@ void ANOVATest::setValueAtPosition(double value, int row, int column) {
 double ANOVATest::valueAtPosition(int row, int column) const {
   assert(row >= 0 && column >= 0);
   if (column >= m_groups.size()) {
-    // Is this even possible?
     return NAN;
   }
   const GroupValues& groupValues = m_groups[column];
   if (row >= groupValues.size()) {
-    // Is this even possible?
     return NAN;
   }
   return groupValues[row];

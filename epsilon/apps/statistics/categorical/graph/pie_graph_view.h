@@ -19,7 +19,12 @@ class PieGraphViewDataSource {
   PieGraphViewDataSource(Store* store);
 
   void toggleSelection(bool select);
+  /* Select the next non-empty category in the given [direction]
+   * ( >0 clockwise and <0 counterclockwise)
+   * returns the selected category store index */
   int nextCategory(int direction);
+  /* Set the group to display and selects the first non-empty category
+   * returns the selected category store index */
   int setGroup(int group);
 
  protected:

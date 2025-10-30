@@ -392,6 +392,7 @@ bool AbstractScrollableMultipleLayoutsView::handleEvent(
          selectedSubviewPosition() == SubviewPosition::Left &&
          centeredLayoutIsVisibleOnTheRight)) {
       setSelectedSubviewPosition(SubviewPosition::Center);
+      reloadScroll();
       return true;
     }
     // Select left
@@ -402,6 +403,7 @@ bool AbstractScrollableMultipleLayoutsView::handleEvent(
          selectedSubviewPosition() == SubviewPosition::Center &&
          leftIsVisible)) {
       setSelectedSubviewPosition(SubviewPosition::Left);
+      reloadScroll();
       return true;
     }
     if ((event == Ion::Events::Right &&
@@ -411,6 +413,7 @@ bool AbstractScrollableMultipleLayoutsView::handleEvent(
          selectedSubviewPosition() == SubviewPosition::Left &&
          rightLayoutIsVisible)) {
       setSelectedSubviewPosition(SubviewPosition::Right);
+      reloadScroll();
       return true;
     }
   }

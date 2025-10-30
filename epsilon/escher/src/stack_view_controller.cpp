@@ -110,14 +110,16 @@ void StackViewController::setupActiveView() {
   ViewController* vc = topViewController();
   if (vc) {
     vc->initView();
-    ViewController::TitlesDisplay topHeaderDisplayParameter =
-        vc->titlesDisplay();
-    if (topHeaderDisplayParameter == TitlesDisplay::SameAsPreviousPage) {
-      updateStack(secondTopViewController()->titlesDisplay(), m_size - 1);
-    } else {
-      updateStack(topHeaderDisplayParameter, m_size);
+    uint8_t indexOfFirstParentWithOwnTitle = 0;
+    while (
+        onTopViewController(indexOfFirstParentWithOwnTitle)->titlesDisplay() ==
+        TitlesDisplay::SameAsPreviousPage) {
+      ++indexOfFirstParentWithOwnTitle;
     }
-
+    assert(m_size >= indexOfFirstParentWithOwnTitle);
+    updateStack(
+        onTopViewController(indexOfFirstParentWithOwnTitle)->titlesDisplay(),
+        m_size - indexOfFirstParentWithOwnTitle);
     m_view.setContentView(vc->view());
     vc->viewWillAppear();
   }

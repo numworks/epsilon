@@ -21,14 +21,11 @@ InputANOVATableCell::InputANOVATableCell(
 
 void InputANOVATableCell::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::HasBecomeFirst) {
-    if (selectedRow() < 0) {
-      selectColumn(0);
-    }
-    CategoricalTableCell::handleResponderChainEvent(event);
-  } else {
-    CategoricalTableCell::handleResponderChainEvent(event);
+  if ((event.type == ResponderChainEventType::HasBecomeFirst) &&
+      (selectedRow() < 0)) {
+    selectColumn(0);
   }
+  CategoricalTableCell::handleResponderChainEvent(event);
 }
 
 void InputANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,

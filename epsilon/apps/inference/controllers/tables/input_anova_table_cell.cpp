@@ -30,6 +30,7 @@ void InputANOVATableCell::handleResponderChainEvent(
 
 void InputANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
                                               int column, int row) {
+  assert(column >= 0 && row >= 0);
   ANOVATableDataSource::fillCellForLocation(cell, column, row);
   if ((row == 0 && column == numberOfColumns() - 1 &&
        column < k_maxNumberOfColumns - 1)) {

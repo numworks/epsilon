@@ -17,9 +17,7 @@ ResultsController::ResultsController(Responder* parent,
     : InferenceController(inference),
       ListWithTopAndBottomController(parent,
                                      enableHeadline ? &m_title : nullptr),
-      DynamicCellsDataSource<
-          ResultCell, ResultsControllerDimensions::k_numberOfReusableCells>(
-          this),
+      DynamicCellsDataSource<ResultCell>(this),
       m_title(I18n::Message::CalculatedValues, k_messageFormat),
       m_controllerContainer(controllerContainer),
       m_titleBuffer{0},
@@ -134,6 +132,13 @@ KDCoordinate ResultsController::nonMemoizedRowHeight(int row) {
   }
   assert(typeAtRow(row) == k_buttonCellType);
   return m_next.minimalSizeForOptimalDisplay().height();
+}
+
+void ResultsController::createCells() {
+  if (DynamicCellsDataSource<ResultCell>::m_cells == nullptr) {
+    DynamicCellsDataSource<ResultCell>::createCellsWithOffset(
+        ResultsControllerDimensions::k_numberOfReusableCells, 0);
+  }
 }
 
 }  // namespace Inference

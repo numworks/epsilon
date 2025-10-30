@@ -9,7 +9,7 @@ using namespace Escher;
 namespace Inference {
 
 HomogeneityTableDataSource::HomogeneityTableDataSource()
-    : HomogeneityHeaderCellsDataSource(this),
+    : DynamicCellsDataSource<InferenceEvenOddBufferCell>(this),
       m_headerPrefix(I18n::Message::Group),
       m_topLeftCell(Escher::Palette::WallScreenDark) {}
 

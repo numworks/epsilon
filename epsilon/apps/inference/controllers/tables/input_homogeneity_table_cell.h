@@ -8,9 +8,10 @@ namespace Inference {
 
 class InputHomogeneityController;
 
-class InputHomogeneityTableCell : public InputCategoricalTableCell,
-                                  public HomogeneityTableDataSource,
-                                  public InputHomogeneityInnerCellsDataSource {
+class InputHomogeneityTableCell
+    : public InputCategoricalTableCell,
+      public HomogeneityTableDataSource,
+      public DynamicCellsDataSource<InferenceEvenOddEditableCell> {
  public:
   InputHomogeneityTableCell(
       Escher::Responder* parentResponder, HomogeneityTest* test,
@@ -50,7 +51,7 @@ class InputHomogeneityTableCell : public InputCategoricalTableCell,
 
   // HomogeneityTableViewDataSource
   Escher::HighlightCell* innerCell(int i) override {
-    return InputHomogeneityInnerCellsDataSource::cell(i);
+    return DynamicCellsDataSource<InferenceEvenOddEditableCell>::cell(i);
   }
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;

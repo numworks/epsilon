@@ -130,13 +130,10 @@ constexpr static int k_numberOfReusableCells =
 
 };  // namespace DoubleColumnTableDimensions
 
-using DoubleColumnTableCellsDataSource = DynamicCellsDataSource<
-    InferenceEvenOddEditableCell,
-    DoubleColumnTableDimensions::k_numberOfReusableCells>;
-
-class DoubleColumnTableCell : public InputCategoricalTableCell,
-                              public CategoricalTableViewDataSource,
-                              public DoubleColumnTableCellsDataSource {
+class DoubleColumnTableCell
+    : public InputCategoricalTableCell,
+      public CategoricalTableViewDataSource,
+      public DynamicCellsDataSource<InferenceEvenOddEditableCell> {
  public:
   constexpr static int k_maxNumberOfColumns =
       DoubleColumnTableDimensions::k_maxNumberOfColumns;
@@ -167,6 +164,8 @@ class DoubleColumnTableCell : public InputCategoricalTableCell,
   Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;
   }
+
+  void createCells() override;
 
  private:
   KDCoordinate nonMemoizedColumnWidth(int column) override {

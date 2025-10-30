@@ -8,10 +8,7 @@ ResultGoodnessContributionsTable::ResultGoodnessContributionsTable(
     Escher::Responder* parent, CategoricalController* parentController,
     GoodnessTest* inference, Escher::ScrollViewDelegate* scrollViewDelegate)
     : CategoricalTableCell(parent, this, scrollViewDelegate),
-      DynamicCellsDataSource<
-          InferenceEvenOddBufferCell,
-          ResultsGoodnessContributionsDimensions::k_numberOfReusableCells>(
-          this),
+      DynamicCellsDataSource<InferenceEvenOddBufferCell>(this),
       m_inference(inference),
       m_parentController(parentController) {
   m_selectableTableView.margins()->setBottom(0);
@@ -47,6 +44,13 @@ void ResultGoodnessContributionsTable::fillCellForLocation(
 KDCoordinate ResultGoodnessContributionsTable::nonMemoizedColumnWidth(
     int column) {
   return k_columnsWidth[column];
+}
+
+void ResultGoodnessContributionsTable::createCells() {
+  if (DynamicCellsDataSource<InferenceEvenOddBufferCell>::m_cells == nullptr) {
+    DynamicCellsDataSource<InferenceEvenOddBufferCell>::createCellsWithOffset(
+        ResultsGoodnessContributionsDimensions::k_numberOfReusableCells, 0);
+  }
 }
 
 }  // namespace Inference

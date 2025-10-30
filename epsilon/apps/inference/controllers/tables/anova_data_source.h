@@ -25,18 +25,10 @@ constexpr static int k_numberOfInnerReusableCells =
 constexpr static int k_numberOfHeaderReusableCells = k_numberOfReusableColumns;
 }  // namespace ANOVATableDimensions
 
-using ANOVAHeaderCellsDataSource =
-    DynamicCellsDataSource<InferenceEvenOddBufferCell,
-                           ANOVATableDimensions::k_numberOfHeaderReusableCells>;
-
-using InputANOVAInnerCellsDataSource =
-    DynamicCellsDataSource<InferenceEvenOddEditableCell,
-                           ANOVATableDimensions::k_numberOfInnerReusableCells>;
-
 // This class wraps a TableViewDataSource by adding a Column header around it.
 class ANOVATableDataSource
     : public CategoricalTableViewDataSource,
-      public ANOVAHeaderCellsDataSource,
+      public DynamicCellsDataSource<InferenceEvenOddBufferCell>,
       public DynamicCellsDataSourceDelegate<InferenceEvenOddBufferCell> {
  public:
   ANOVATableDataSource();

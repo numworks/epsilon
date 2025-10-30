@@ -20,9 +20,7 @@ InputController::InputController(Escher::StackViewController* parent,
                                  InferenceModel* inference)
     : InferenceController(inference, controllerContainer),
       FloatParameterController<double>(parent, &m_messageView),
-      DynamicCellsDataSource<
-          ParameterCell, InputControllerDimensions::k_maxNumberOfParameterCell>(
-          this),
+      DynamicCellsDataSource<ParameterCell>(this),
       m_significanceCell(&m_selectableListView, this),
       m_messageView(I18n::Message::InputStatistics, k_messageFormat) {
   m_okButton.setMessage(I18n::Message::Next);
@@ -177,4 +175,11 @@ bool InputController::setParameterAtIndex(int parameterIndex, double f) {
   }
   m_inferenceModel->setParameterAtIndex(f, parameterIndex);
   return true;
+}
+
+void InputController::createCells() {
+  if (DynamicCellsDataSource<ParameterCell>::m_cells == nullptr) {
+    DynamicCellsDataSource<ParameterCell>::createCellsWithOffset(
+        InputControllerDimensions::k_maxNumberOfParameterCell, 0);
+  }
 }

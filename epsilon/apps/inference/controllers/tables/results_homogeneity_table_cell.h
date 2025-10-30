@@ -9,14 +9,8 @@ namespace Inference {
 
 class ResultsHomogeneityController;
 
-using ResultsHomogeneityInnerCellsDataSource = DynamicCellsDataSource<
-    InferenceEvenOddBufferCell,
-    HomogeneityTableDimensions::k_numberOfInnerReusableCells>;
-
-class ResultsHomogeneityTableCell
-    : public CategoricalTableCell,
-      public HomogeneityTableDataSource,
-      public ResultsHomogeneityInnerCellsDataSource {
+class ResultsHomogeneityTableCell : public CategoricalTableCell,
+                                    public HomogeneityTableDataSource {
  public:
   ResultsHomogeneityTableCell(
       Escher::Responder* parentResponder, HomogeneityTest* test,
@@ -45,6 +39,7 @@ class ResultsHomogeneityTableCell
   Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;
   }
+
   void createCells() override;
 
  protected:
@@ -61,16 +56,12 @@ class ResultsHomogeneityTableCell
     return m_inference->numberOfDataColumns() + (m_mode == Mode::ExpectedValue);
   }
   Escher::HighlightCell* innerCell(int i) override {
-    return DynamicCellsDataSource<
-        InferenceEvenOddBufferCell,
-        HomogeneityTableDimensions::k_numberOfInnerReusableCells>::cell(i);
+    return DynamicCellsDataSource<InferenceEvenOddBufferCell>::cell(
+        i + HomogeneityTableDimensions::k_numberOfHeaderReusableCells);
   }
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;
   CategoricalController* categoricalController() override;
-
-  // DynamicCellsDataSource
-  void destroyCells() override;
 
   HomogeneityTest* m_inference;
   Mode m_mode;

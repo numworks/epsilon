@@ -16,7 +16,7 @@ InputANOVATableCell::InputANOVATableCell(
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, test,
                                 scrollViewDelegate),
-      InputANOVAInnerCellsDataSource(this),
+      DynamicCellsDataSource<InferenceEvenOddEditableCell>(this),
       m_inputANOVAController(inputANOVAController) {}
 
 void InputANOVATableCell::handleResponderChainEvent(
@@ -60,17 +60,19 @@ void InputANOVATableCell::fillInnerCellForLocation(Escher::HighlightCell* cell,
 }
 
 void InputANOVATableCell::createCells() {
-  if (ANOVAHeaderCellsDataSource::m_cells == nullptr) {
-    ANOVAHeaderCellsDataSource::createCellsWithOffset(0);
-    InputANOVAInnerCellsDataSource::createCellsWithOffset(
+  if (DynamicCellsDataSource<InferenceEvenOddBufferCell>::m_cells == nullptr) {
+    DynamicCellsDataSource<InferenceEvenOddBufferCell>::createCellsWithOffset(
+        ANOVATableDimensions::k_numberOfHeaderReusableCells, 0);
+    DynamicCellsDataSource<InferenceEvenOddEditableCell>::createCellsWithOffset(
+        ANOVATableDimensions::k_numberOfInnerReusableCells,
         ANOVATableDimensions::k_numberOfHeaderReusableCells *
-        sizeof(InferenceEvenOddBufferCell));
+            sizeof(InferenceEvenOddBufferCell));
   }
 }
 
 void InputANOVATableCell::destroyCells() {
-  InputANOVAInnerCellsDataSource::destroyCells();
-  ANOVAHeaderCellsDataSource::destroyCells();
+  DynamicCellsDataSource<InferenceEvenOddEditableCell>::destroyCells();
+  DynamicCellsDataSource<InferenceEvenOddBufferCell>::destroyCells();
 }
 
 CategoricalController* InputANOVATableCell::categoricalController() {

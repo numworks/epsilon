@@ -32,19 +32,11 @@ constexpr static int k_numberOfHeaderReusableCells =
     k_numberOfReusableColumns + k_maxNumberOfReusableRows - 1;
 }  // namespace HomogeneityTableDimensions
 
-using HomogeneityHeaderCellsDataSource = DynamicCellsDataSource<
-    InferenceEvenOddBufferCell,
-    HomogeneityTableDimensions::k_numberOfHeaderReusableCells>;
-
-using InputHomogeneityInnerCellsDataSource = DynamicCellsDataSource<
-    InferenceEvenOddEditableCell,
-    HomogeneityTableDimensions::k_numberOfInnerReusableCells>;
-
 /* This class wraps a TableViewDataSource by adding a Row & Column header around
  * it. Specifically meant for InputHomogeneity and HomogeneityResults. */
 class HomogeneityTableDataSource
     : public CategoricalTableViewDataSource,
-      public HomogeneityHeaderCellsDataSource,
+      public DynamicCellsDataSource<InferenceEvenOddBufferCell>,
       public DynamicCellsDataSourceDelegate<InferenceEvenOddBufferCell> {
  public:
   HomogeneityTableDataSource();

@@ -23,12 +23,10 @@ static constexpr int k_maxNumberOfParameterCell =
 using ParameterCell = Escher::MenuCellWithEditableText<Escher::LayoutView,
                                                        Escher::MessageTextView>;
 
-class InputController
-    : public InferenceController,
-      public Shared::FloatParameterController<double>,
-      public DynamicCellsDataSource<
-          ParameterCell, InputControllerDimensions::k_maxNumberOfParameterCell>,
-      public DynamicCellsDataSourceDelegate<ParameterCell> {
+class InputController : public InferenceController,
+                        public Shared::FloatParameterController<double>,
+                        public DynamicCellsDataSource<ParameterCell>,
+                        public DynamicCellsDataSourceDelegate<ParameterCell> {
   friend class InputStoreController;
 
  public:
@@ -69,6 +67,8 @@ class InputController
   Escher::SelectableTableView* tableView() override {
     return &m_selectableListView;
   }
+
+  void createCells() override;
 
  protected:
   double parameterAtIndex(int i) override {

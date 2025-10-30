@@ -24,14 +24,16 @@ WithCurves::Pattern::Pattern(bool s0, bool s1, bool s2, bool s3, KDColor color,
 WithCurves::Pattern::Pattern(int s, KDColor color, KDColor backgroundColor)
     : Pattern(s == 0, s == 1, s == 2, s == 3, color, backgroundColor) {}
 
-void WithCurves::Pattern::drawInLine(const AbstractPlotView* plotView,
-                                     KDContext* ctx, KDRect rect,
-                                     OMG::Axis parallel, float position,
-                                     float min, float max) const {
-  OMG::Axis perpendicular = OMG::OtherAxis(parallel);
+KDCoordinate WithCurves::Pattern::drawInLine(
+    const AbstractPlotView* plotView, KDContext* ctx, KDRect rect,
+    OMG::Axis parallel, float position, float min, float max,
+    KDCoordinate coordinateToSkip) const {
   KDCoordinate posC =
-      plotView->floatToKDCoordinatePixel(perpendicular, position);
-
+      plotView->floatToKDCoordinatePixel(OMG::OtherAxis(parallel), position);
+  if (posC == coordinateToSkip) {
+    // Line has already been plotted at this coordinate.
+    return posC;
+  }
   KDColor firstColor, secondColor;
   if (posC % (k_size / 2) == 0) {
     firstColor = m_c0;
@@ -48,7 +50,7 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView* plotView,
       plotView->drawStraightSegment(ctx, rect, parallel, position, min, max,
                                     m_cBackground);
     }
-    return;
+    return posC;
   }
 
   if (max < min) {
@@ -67,7 +69,7 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView* plotView,
     maxC = std::min(temp, static_cast<KDCoordinate>(rect.bottom() + 1));
   }
   if (minC >= maxC) {
-    return;
+    return posC;
   }
 
   if (posC % k_size >= k_size / 2) {
@@ -93,6 +95,7 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView* plotView,
                     color);
     }
   }
+  return posC;
 }
 
 // WithCurves::CurveDrawing
@@ -194,7 +197,7 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView* plotView,
                                         int remainingIterations,
                                         DiscontinuityTest discontinuity) const {
   assert(plotView);
-  drawPattern(plotView, ctx, rect, t2, xy2);
+  KDCoordinate t2PatternCoordinate = drawPattern(plotView, ctx, rect, t2, xy2);
 
   bool isFirstDot = std::isnan(t1);
   bool isLeftDotValid = std::isfinite(xy1.x()) && std::isfinite(xy1.y());
@@ -267,7 +270,8 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView* plotView,
       }
     }
     if (straightJoinDots) {
-      drawPattern(plotView, ctx, rect, t12, xy12);
+      // Skip draw pattern if it is at the same coordinate as the first time
+      drawPattern(plotView, ctx, rect, t12, xy12, t2PatternCoordinate);
       plotView->straightJoinDots(ctx, rect, p1, p2, m_color, m_thick);
       return;
     }
@@ -307,9 +311,9 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView* plotView,
            discontinuous ? m_discontinuity : NoDiscontinuity);
 }
 
-void WithCurves::CurveDrawing::drawPattern(
+KDCoordinate WithCurves::CurveDrawing::drawPattern(
     const AbstractPlotView* plotView, KDContext* ctx, KDRect rect, float t,
-    Poincare::Coordinate2D<float> xy) const {
+    Poincare::Coordinate2D<float> xy, KDCoordinate coordinateToSkip) const {
   // Draw a line with the pattern
   float (Coordinate2D<float>::*abscissa)() const =
       m_axis == OMG::Axis::Horizontal ? &Coordinate2D<float>::x
@@ -333,9 +337,11 @@ void WithCurves::CurveDrawing::drawPattern(
   }
   if (!(std::isnan(patternMin) || std::isnan(patternMax)) &&
       patternMin != patternMax && m_patternStart <= t && t < m_patternEnd) {
-    m_pattern.drawInLine(plotView, ctx, rect, OMG::OtherAxis(m_axis),
-                         (xy.*abscissa)(), patternMin, patternMax);
+    return m_pattern.drawInLine(plotView, ctx, rect, OMG::OtherAxis(m_axis),
+                                (xy.*abscissa)(), patternMin, patternMax,
+                                coordinateToSkip);
   }
+  return KDCoordinate(-1);
 }
 
 // WithCurves

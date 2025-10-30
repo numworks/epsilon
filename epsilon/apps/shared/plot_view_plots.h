@@ -66,9 +66,11 @@ class WithCurves {
             KDColor backgroundColor = k_transparent);
     Pattern(int s, KDColor color, KDColor backgroundColor = k_transparent);
 
-    void drawInLine(const AbstractPlotView* plotView, KDContext* ctx,
-                    KDRect rect, OMG::Axis parallel, float position, float min,
-                    float max) const;
+    // Return KDCoordinate at which the line has been drawn.
+    KDCoordinate drawInLine(const AbstractPlotView* plotView, KDContext* ctx,
+                            KDRect rect, OMG::Axis parallel, float position,
+                            float min, float max,
+                            KDCoordinate coordinateToSkip) const;
 
    private:
     constexpr static size_t k_size = 4;
@@ -108,9 +110,11 @@ class WithCurves {
                   float t1, Poincare::Coordinate2D<float> xy1, float t2,
                   Poincare::Coordinate2D<float> xy2, int remainingIterations,
                   DiscontinuityTest discontinuity) const;
-    void drawPattern(const AbstractPlotView* plotView, KDContext* ctx,
-                     KDRect rect, float t,
-                     Poincare::Coordinate2D<float> xy) const;
+    // Return KDCoordinate at which the line has been drawn. -1 otherwise.
+    KDCoordinate drawPattern(
+        const AbstractPlotView* plotView, KDContext* ctx, KDRect rect, float t,
+        Poincare::Coordinate2D<float> xy,
+        KDCoordinate coordinateToSkip = KDCoordinate(-1)) const;
 
     Curve2D m_curve;
     Curve2D m_patternLowerBound;

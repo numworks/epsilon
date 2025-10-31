@@ -146,7 +146,7 @@ size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
     const Poincare::Layout& l, const SymbolContext& symbolContext) {
-  setCache(nullptr);
+  tidyCache();
   bool wasCartesian = properties().isCartesian();
   /* About to set the content, the symbol does not matter here yet. We don't use
    * ExpressionModelHandle::setContent implementation to avoid calling symbol()
@@ -217,7 +217,7 @@ KDColor ContinuousFunction::subCurveColor(int subCurveIndex) const {
 }
 
 void ContinuousFunction::updateModel(bool wasCartesian) {
-  setCache(nullptr);
+  tidyCache();
   m_model.resetProperties();  // Reset model's properties.
   properties();               // update properties.
   if (wasCartesian != properties().isCartesian() ||
@@ -380,13 +380,13 @@ double ContinuousFunction::approximateSlope(double t) const {
 void ContinuousFunction::setTMin(float tMin) {
   assert(!recordData()->tAuto());
   recordData()->setTMin(tMin);
-  setCache(nullptr);
+  tidyCache();
 }
 
 void ContinuousFunction::setTMax(float tMax) {
   assert(!recordData()->tAuto());
   recordData()->setTMax(tMax);
-  setCache(nullptr);
+  tidyCache();
 }
 
 void ContinuousFunction::setTAuto(bool tAuto) {
@@ -396,7 +396,7 @@ void ContinuousFunction::setTAuto(bool tAuto) {
   /* Domain either was or will be auto. Reset values anyway in case model has
    * been updated or angle unit changed. */
   recordData()->setTAuto(tAuto);
-  setCache(nullptr);
+  tidyCache();
   if (tAuto) {
     // No need to update Tmin or Tmax since the auto value will be returned
     return;

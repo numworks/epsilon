@@ -264,6 +264,7 @@ Ion::Storage::Record GlobalStore::UserNamedRecordWithBaseName(
 
 void GlobalStore::tidyStores() {
   s_sequenceStore->tidyDownstreamPoolFrom();
+  s_continuousFunctionStore->tidyCaches();
   s_continuousFunctionStore->tidyDownstreamPoolFrom();
 }
 

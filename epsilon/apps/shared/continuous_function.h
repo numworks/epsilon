@@ -74,6 +74,8 @@ class ContinuousFunction : public Function {
       const Poincare::SymbolContext& symbolContext) override;
   void tidyDownstreamPoolFrom(
       const Poincare::PoolObject* treePoolCursor = nullptr) const override;
+  // Tidy cache
+  void tidyCache() const override { m_cache = nullptr; }
 
   /* Properties */
 
@@ -223,7 +225,7 @@ class ContinuousFunction : public Function {
 
   ContinuousFunctionCache* cache() const { return m_cache; }
   void setCache(ContinuousFunctionCache* v) { m_cache = v; }
-  void didBecomeInactive() override { m_cache = nullptr; }
+  void didBecomeInactive() override { tidyCache(); }
 
   constexpr static char k_unnamedRecordFirstChar = '?';
 

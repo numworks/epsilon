@@ -23,7 +23,7 @@ void assert_check_cartesian_cache_against_function(
     ContinuousFunction* function, ContinuousFunctionCache* cache, float tMin) {
   /* We set the cache to nullptr to force the evaluation (otherwise we would be
    * comparing the cache against itself). */
-  function->setCache(nullptr);
+  function->tidyCache();
 
   float t;
   for (int i = 0; i < Ion::Display::Width; i++) {
@@ -84,7 +84,7 @@ void assert_check_polar_cache_against_function(
     function->evaluateXYAtParameter(t);
   }
 
-  function->setCache(nullptr);
+  function->tidyCache();
   for (int i = 0; i < Ion::Display::Width / 2; i++) {
     t = tMin + i * cache->step();
     Coordinate2D<float> cacheValues = cache->valueForParameter(function, t, 0);

@@ -76,6 +76,13 @@ void ContinuousFunctionStore::fillLastFreeColors(bool* colorIsFree) const {
   }
 }
 
+void ContinuousFunctionStore::tidyCaches() const {
+  // Tidy the cache of all memoized models
+  for (int i = 0; i < maxNumberOfMemoizedModels(); i++) {
+    memoizedModelAtIndex(i)->tidyCache();
+  }
+}
+
 KDColor ContinuousFunctionStore::colorForNewModel() const {
   // Check first last functions colors until there is at most 1 free color
   constexpr int paletteSize = std::size(Palette::DataColor);

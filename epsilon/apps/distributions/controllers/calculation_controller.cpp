@@ -85,8 +85,10 @@ CalculationController::CalculationController(
 }
 
 void CalculationController::reinitCalculation() {
-  setCalculationAccordingToIndex(0, true);
-  m_dropdown.selectRow(0);
+  int calculationIndex =
+      static_cast<int>(m_distribution->preferredCalculationType());
+  setCalculationAccordingToIndex(calculationIndex, true);
+  m_dropdown.selectRow(calculationIndex);
 }
 
 void CalculationController::handleResponderChainEvent(

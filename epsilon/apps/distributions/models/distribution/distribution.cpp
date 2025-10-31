@@ -67,6 +67,12 @@ bool Distribution::isContinuous() const {
 bool Distribution::isSymmetrical() const {
   return Poincare::Distribution::IsSymmetrical(m_distribution);
 }
+Calculation::Type Distribution::preferredCalculationType() const {
+  return Poincare::Distribution::PrefersLeftSideForProbabilityIntegration(
+             m_distribution)
+             ? Calculation::Type::LeftIntegral
+             : Calculation::Type::RightIntegral;
+}
 double Distribution::meanAbscissa() const {
   return Poincare::Distribution::MeanAbscissa(m_distribution,
                                               constParametersArray());

@@ -100,8 +100,8 @@ PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
   const Tree* target = clone ? clone : e;
   Dimension dim = Dimension::Get(target, context.m_symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
-  PointOrRealScalar<T> result = dim.isScalar() ? PointOrRealScalar<T>(NAN)
-                                               : PointOrRealScalar<T>(NAN, NAN);
+  PointOrRealScalar<T> result = dim.isPoint() ? PointOrRealScalar<T>(NAN, NAN)
+                                              : PointOrRealScalar<T>(NAN);
   if (!context.m_localContext || !(std::isnan(context.variable(0).real()) ||
                                    std::isnan(context.variable(0).imag()))) {
     T xScalar, yScalar;

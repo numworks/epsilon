@@ -18,14 +18,14 @@ void ContinuousFunctionCache::PrepareForCaching(void* fun,
      * of the function we are trying to draw is greater than the number of
      * available caches, so we just tell the function to not lookup any cache.
      */
-    function->setCache(nullptr);
+    function->tidyCache();
     return;
   }
 
   if (function->isAlongY()) {
     /* Ignore cache on vertical line functions because it wouldn't be usefull
      * caching either x or y values on such simple curves. */
-    function->setCache(nullptr);
+    function->tidyCache();
     return;
   }
 
@@ -34,7 +34,7 @@ void ContinuousFunctionCache::PrepareForCaching(void* fun,
      * by 1 for cache hits. As an added safety, we add another buffer of
      * k_cacheHitTolerance, raising the threshold for caching to three times
      * the tolerance. */
-    function->setCache(nullptr);
+    function->tidyCache();
     return;
   }
   if (function->cache() != cache) {
@@ -106,11 +106,9 @@ void ContinuousFunctionCache::setRange(float tMin, float tStep) {
 int ContinuousFunctionCache::indexForParameter(
     const ContinuousFunction* function, float t, int curveIndex) const {
   assert(!std::isnan(t));
-  if (m_tStep == 0) {
-    // Cache have been invalidated, and PrepareForCaching wasn't call yet.
-    // TODO: Avoid this situation.
-    return -1;
-  }
+  /* Cache have been invalidated. Either tidyCache or PrepareForCaching should
+   * have been called before any evaluation. */
+  assert(m_tStep != 0);
   if (curveIndex != 0 || std::isinf(t)) {
     /* TODO: For now, second curves are not cached. It may (or not) be slightly
      * better to cache both, but it should also be handled in pan. */

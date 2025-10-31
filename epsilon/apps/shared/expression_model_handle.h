@@ -37,6 +37,8 @@ class ExpressionModelHandle : public Ion::Storage::Record {
       const Poincare::PoolObject* treePoolCursor = nullptr) const {
     model()->tidyDownstreamPoolFrom(treePoolCursor);
   }
+  // Tidy any cache pointer held by the model
+  virtual void tidyCache() const {}
   virtual Ion::Storage::Record::ErrorStatus setContent(
       const Poincare::Layout& l, const Poincare::SymbolContext& symbolContext) {
     return editableModel()->setContent(this, l, symbolContext, symbol());

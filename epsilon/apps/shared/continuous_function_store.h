@@ -66,6 +66,7 @@ class ContinuousFunctionStore : public FunctionStore {
     return OMG::ExpiringPointer<const ContinuousFunction>(
         static_cast<const ContinuousFunction*>(privateModelForRecord(record)));
   }
+  void tidyCaches() const;
   void setCachesContainer(CachesContainer* container) {
     m_cachesContainer = container;
   }

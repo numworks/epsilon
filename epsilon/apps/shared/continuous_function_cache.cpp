@@ -106,6 +106,11 @@ void ContinuousFunctionCache::setRange(float tMin, float tStep) {
 int ContinuousFunctionCache::indexForParameter(
     const ContinuousFunction* function, float t, int curveIndex) const {
   assert(!std::isnan(t));
+  if (m_tStep == 0) {
+    // Cache have been invalidated, and PrepareForCaching wasn't call yet.
+    // TODO: Avoid this situation.
+    return -1;
+  }
   if (curveIndex != 0 || std::isinf(t)) {
     /* TODO: For now, second curves are not cached. It may (or not) be slightly
      * better to cache both, but it should also be handled in pan. */

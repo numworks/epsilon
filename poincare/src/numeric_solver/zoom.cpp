@@ -430,7 +430,7 @@ Interest Zoom<T>::PointIsInteresting(Coordinate2D<T> a, Coordinate2D<T> b,
    * FIXME Tolerance for detecting approximation errors should be computed by
    * analysing the input expression. */
   constexpr T k_tolerance = static_cast<T>(4.) * Solver<T>::k_relativePrecision;
-  if ((res == Interest::LocalMinimum || res == Interest::LocalMaximum) &&
+  if ((res == Interest::Minimum || res == Interest::Maximum) &&
       (std::fabs((a.y() - b.y()) / b.x()) < k_tolerance ||
        std::fabs((a.y() - b.y()) / b.y()) < k_tolerance)) {
     return Interest::None;
@@ -494,8 +494,7 @@ Coordinate2D<T> Zoom<T>::HonePoint(typename Solver<T>::FunctionEvaluation f,
    * diverges, it is more likely we have found an even vertical asymptote. */
   bool isDiscontinuous =
       discontinuous == OMG::Troolean::True ||
-      ((interest == Interest::LocalMinimum ||
-        interest == Interest::LocalMaximum) &&
+      ((interest == Interest::Minimum || interest == Interest::Maximum) &&
        (std::max((pu.y() - pa.y()) / (pu.x() - pa.x()),
                  (pv.y() - pb.y()) / (pv.x() - pb.x())) > k_tolerance));
   /* If the function is discontinuous around the solution (e.g. 1/x^2), we

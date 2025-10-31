@@ -351,11 +351,11 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
     return xy;
   }
   Coordinate2D<T> res;
-  if (interest == Interest::LocalMinimum) {
+  if (interest == Interest::Minimum) {
     res = SafeBrentMinimum(f, aux, xMin, xMax, interest, xPrecision,
                            discontinuous);
   } else {
-    assert(interest == Interest::LocalMaximum);
+    assert(interest == Interest::Maximum);
     res = SafeBrentMaximum(f, aux, xMin, xMax, interest, xPrecision,
                            discontinuous);
   }
@@ -749,8 +749,8 @@ void Solver<T>::honeAndRoundSolution(
     }
     if (fRoundX == fx ||
         (interest == Interest::Root && std::fabs(fRoundX) < std::fabs(fx)) ||
-        (interest == Interest::LocalMinimum && fRoundX < fx) ||
-        (interest == Interest::LocalMaximum && fRoundX > fx)) {
+        (interest == Interest::Minimum && fRoundX < fx) ||
+        (interest == Interest::Maximum && fRoundX > fx)) {
       // Round is better
       xy.setX(roundX);
       if (xy.y() == fx) {

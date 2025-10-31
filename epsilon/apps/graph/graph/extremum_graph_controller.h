@@ -14,7 +14,7 @@ class MinimumGraphController : public CalculationGraphController {
 
  private:
   Poincare::Interest specialInterest() const override {
-    return Poincare::Interest::LocalMinimum;
+    return Poincare::Interest::Minimum;
   }
 };
 
@@ -28,7 +28,7 @@ class MaximumGraphController : public CalculationGraphController {
 
  private:
   Poincare::Interest specialInterest() const override {
-    return Poincare::Interest::LocalMaximum;
+    return Poincare::Interest::Maximum;
   }
 };
 

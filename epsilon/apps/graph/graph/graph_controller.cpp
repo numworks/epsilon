@@ -378,12 +378,12 @@ void GraphController::reloadBannerViewForCursorOnFunction(
   /* The interests are sorted from most important to lowest, in case there is
    * not enough space on the banner to display all of them. */
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
-          cursorX, cursorY, Interest::LocalMinimum)) {
+          cursorX, cursorY, Interest::Minimum)) {
     assert(!function->isAlongY());
     bannerView()->addInterestMessage(I18n::Message::Minimum);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
-          cursorX, cursorY, Interest::LocalMaximum)) {
+          cursorX, cursorY, Interest::Maximum)) {
     assert(!function->isAlongY());
     bannerView()->addInterestMessage(I18n::Message::Maximum);
   }

@@ -20,12 +20,12 @@ class SolverTests {
 
   static Interest MinimumInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
                                    Coordinate2D<T> c, const void*) {
-    return BoolToInterest(HasMinimum(a, b, c), Interest::LocalMinimum);
+    return BoolToInterest(HasMinimum(a, b, c), Interest::Minimum);
   }
 
   static Interest MaximumInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
                                    Coordinate2D<T> c, const void*) {
-    return BoolToInterest(HasMaximum(a, b, c), Interest::LocalMaximum);
+    return BoolToInterest(HasMaximum(a, b, c), Interest::Maximum);
   }
 
   static Interest EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b,

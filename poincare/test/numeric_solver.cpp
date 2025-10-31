@@ -38,10 +38,10 @@ void assert_next_solution_is(const char* expression,
     case Interest::Root:
       observed = solver->nextRoot(e);
       break;
-    case Interest::LocalMinimum:
+    case Interest::Minimum:
       observed = solver->nextMinimum(e);
       break;
-    case Interest::LocalMaximum:
+    case Interest::Maximum:
       observed = solver->nextMaximum(e);
       break;
     default:
@@ -90,14 +90,14 @@ void assert_minima_are(
     const char* expression, double start, double end,
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
     AngleUnit angleUnit = AngleUnit::Degree) {
-  assert_solutions_are(expression, start, end, expected, Interest::LocalMinimum,
+  assert_solutions_are(expression, start, end, expected, Interest::Minimum,
                        angleUnit, nullptr);
 }
 void assert_maxima_are(
     const char* expression, double start, double end,
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
     AngleUnit angleUnit = AngleUnit::Degree) {
-  assert_solutions_are(expression, start, end, expected, Interest::LocalMaximum,
+  assert_solutions_are(expression, start, end, expected, Interest::Maximum,
                        angleUnit, nullptr);
 }
 void assert_intersections_are(

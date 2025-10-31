@@ -225,9 +225,9 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
           App::app()->graphController()->pointsOfInterestForRecord(record);
       if (std::isfinite(derivative.toRealScalar()) &&
           (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(),
-                                                      Interest::LocalMaximum) ||
-           pointsOfInterest->hasInterestAtCoordinates(
-               cursor->x(), cursor->y(), Interest::LocalMinimum))) {
+                                                      Interest::Maximum) ||
+           pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(),
+                                                      Interest::Minimum))) {
         derivative = PointOrRealScalar<double>(0.);
       }
     }

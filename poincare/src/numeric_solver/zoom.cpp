@@ -1,11 +1,14 @@
 #include <poincare/numeric_solver/zoom.h>
 #include <poincare/range.h>
 #include <poincare/src/expression/approximation.h>
+#include <poincare/src/numeric_solver/solver_tests.h>
 #include <string.h>
 
 #include "solver_algorithms.h"
 
 namespace Poincare {
+
+using namespace Poincare::Internal;
 
 // HorizontalAsymptoteHelper
 
@@ -148,8 +151,8 @@ template <typename T>
 static Interest pointIsInterestingHelper(Coordinate2D<T> a, Coordinate2D<T> b,
                                          Coordinate2D<T> c, const void* aux) {
   typename Solver<T>::BracketTest tests[] = {
-      Solver<T>::OddRootInBracket, Solver<T>::MinimumInBracket,
-      Solver<T>::MaximumInBracket, Solver<T>::UndefinedInBracket};
+      SolverTests<T>::OddRootInBracket, SolverTests<T>::MinimumInBracket,
+      SolverTests<T>::MaximumInBracket, SolverTests<T>::DiscontinuityAtEdge};
   Interest interest = Interest::None;
   for (typename Solver<T>::BracketTest& test : tests) {
     interest = test(a, b, c, aux);
@@ -234,9 +237,10 @@ bool Zoom<T>::fitRoots(Function2D<T> f, const void* model, Range1D<T> bounds,
     return (p->fDouble(t, p->model).*p->ordinateDouble)();
   };
   bool leftInterrupted, rightInterrupted;
-  bool didFit = fitWithSolver(
-      bounds, &leftInterrupted, &rightInterrupted, evaluator, &params,
-      Solver<T>::EvenOrOddRootInBracket, HoneRoot, vertical, evaluatorDouble);
+  bool didFit =
+      fitWithSolver(bounds, &leftInterrupted, &rightInterrupted, evaluator,
+                    &params, SolverTests<T>::EvenOrOddRootInBracket, HoneRoot,
+                    vertical, evaluatorDouble);
   if (finiteNumberOfPoints) {
     *finiteNumberOfPoints =
         *finiteNumberOfPoints && !leftInterrupted && !rightInterrupted;
@@ -260,7 +264,7 @@ void Zoom<T>::fitIntersections(Function2D<T> f1, const void* model1,
   };
   bool dummy;
   fitWithSolver(bounds, &dummy, &dummy, evaluator, &params,
-                Solver<T>::OddRootInBracket, HoneIntersection, vertical);
+                SolverTests<T>::OddRootInBracket, HoneIntersection, vertical);
 }
 
 template <typename T>
@@ -295,7 +299,7 @@ void Zoom<T>::fitConditions(const Internal::Tree* piecewise,
   };
   typename Solver<T>::BracketTest test = [](Coordinate2D<T> a, Coordinate2D<T>,
                                             Coordinate2D<T> c, const void*) {
-    return Solver<T>::BoolToInterest(a.y() != c.y(), Interest::Discontinuity);
+    return a.y() != c.y() ? Interest::Discontinuity : Interest::None;
   };
   typename Solver<T>::HoneResult hone =
       [](typename Solver<T>::FunctionEvaluation, const void* aux, T a, T b,
@@ -506,8 +510,8 @@ Coordinate2D<T> Zoom<T>::HoneRoot(typename Solver<T>::FunctionEvaluation f,
                                   const void* aux, T a, T b, Interest interest,
                                   T precision, OMG::Troolean discontinuous) {
   Coordinate2D<T> pa, pu, pv, pb;
-  honeHelper(f, aux, a, b, interest, Solver<T>::EvenOrOddRootInBracket, &pa,
-             &pu, &pv, &pb);
+  honeHelper(f, aux, a, b, interest, SolverTests<T>::EvenOrOddRootInBracket,
+             &pa, &pu, &pv, &pb);
 /* The following if condition was supposed to discard vertical asymptotes but it
  * seems to be irrelevant for now since the autozoom also focuses on asymptotes.
  * Removing it thus changes nothing and avoids discarding false positives.

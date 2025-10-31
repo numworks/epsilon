@@ -31,6 +31,7 @@ class SolverAlgorithms {
       double ax, double bx, double xPrecision,
       Solver<double>::FunctionEvaluation f, const void* aux,
       double* resultEvaluation = nullptr);
+
   template <typename T>
   static T CumulativeDistributiveInverseForNDefinedFunction(
       T* probability, typename Solver<T>::FunctionEvaluation f,

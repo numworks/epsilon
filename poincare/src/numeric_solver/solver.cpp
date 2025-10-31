@@ -6,6 +6,7 @@
 #include <poincare/src/expression/properties.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/numeric_solver/solver_tests.h>
 
 #include "solver_algorithms.h"
 
@@ -122,7 +123,7 @@ typename Solver<T>::Solution Solver<T>::next(const Tree* e, BracketTest test,
                                 Approximation::Parameters{.optimize = true});
   };
 
-  return next(f, e, test, hone, &DiscontinuityTestBetweenPoints);
+  return next(f, e, test, hone, &SolverTests<T>::IsDiscontinuousInBracket);
 }
 
 template <typename T>
@@ -165,12 +166,20 @@ typename Solver<T>::DetailedRoot Solver<T>::nextDetailedRoot(const Tree* e) {
         return nanRoot;
       }
 
-      Solution res = next(e, EvenOrOddRootInBracket, CompositeBrentForRoot);
+      Solution res = next(e, SolverTests<T>::EvenOrOddRootInBracket,
+                          CompositeBrentForRoot);
       if (res.interest != Interest::None) {
         res.interest = Interest::Root;
       }
       return {.solution = res, .nullDescendant = e};
   }
+}
+
+template <typename T>
+typename Solver<T>::Solution Solver<T>::nextRoot(FunctionEvaluation f,
+                                                 const void* aux) {
+  return next(f, aux, SolverTests<T>::EvenOrOddRootInBracket,
+              CompositeBrentForRoot);
 }
 
 template <typename T>
@@ -180,7 +189,18 @@ typename Solver<T>::Solution Solver<T>::nextMinimum(const Tree* e) {
    *   it every time)
    * - since d(f°g) = dg×df°g, if f is known to be monotonous (i.e. df≠0), look
    *   for the extrema of g. */
-  return next(e, MinimumInBracket, SafeBrentMinimum);
+  return next(e, SolverTests<T>::MinimumInBracket, SafeBrentMinimum);
+}
+
+template <typename T>
+typename Solver<T>::Solution Solver<T>::nextMaximum(const Internal::Tree* e) {
+  return next(e, SolverTests<T>::MaximumInBracket, SafeBrentMaximum);
+}
+
+template <typename T>
+typename Solver<T>::Solution Solver<T>::nextDiscontinuity(
+    const Internal::Tree* e) {
+  return next(e, SolverTests<T>::DiscontinuityInBracket, DummyHone);
 }
 
 template <typename T>
@@ -273,19 +293,6 @@ void Solver<T>::stretch() {
 }
 
 template <typename T>
-Interest Solver<T>::EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
-                                           Coordinate2D<T> c, const void* aux) {
-  Interest root = OddRootInBracket(a, b, c, aux);
-  if (root != Interest::None) {
-    return root;
-  }
-  /* FIXME Check the sign of a,b and c. A minimum can only be a root if b is
-   * positive. */
-  Interest extremum = MinimumInBracket(a, b, c, aux);
-  return extremum == Interest::None ? MaximumInBracket(a, b, c, aux) : extremum;
-}
-
-template <typename T>
 Coordinate2D<T> Solver<T>::SafeBrentMinimum(FunctionEvaluation f,
                                             const void* aux, T xMin, T xMax,
                                             Interest interest, T xPrecision,
@@ -355,15 +362,6 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
   return std::isfinite(res.x()) && std::fabs(res.y()) < NullTolerance(res.x())
              ? res
              : Coordinate2D<T>();
-}
-
-template <typename T>
-bool Solver<T>::DiscontinuityTestBetweenPoints(Coordinate2D<T> a,
-                                               Coordinate2D<T> b,
-                                               const void* aux) {
-  const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
-  return UndefinedTestBetweenPoints(a, b, aux) ||
-         Continuity::IsDiscontinuousOnInterval<T>(e, a.x(), b.x());
 }
 
 template <typename T>
@@ -634,7 +632,10 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootInAddition(
       nextRootSearchingInChildren(e, test, const_cast<Solver<T>*>(this));
   Solver<T> solver = *this;
   DetailedRootX root = {
-      .x = solver.next(e, EvenOrOddRootInBracket, CompositeBrentForRoot).x,
+      .x = solver
+               .next(e, SolverTests<T>::EvenOrOddRootInBracket,
+                     CompositeBrentForRoot)
+               .x,
       .nullDescendant = e};
   if (!std::isfinite(root.x) ||
       std::fabs(childrenRoot.x - m_xStart) < std::fabs(root.x - m_xStart)) {
@@ -764,19 +765,6 @@ void Solver<T>::honeAndRoundSolution(
 }
 
 template <typename T>
-bool Solver<T>::DiscontinuityTestAtPoints(Coordinate2D<T> a, Coordinate2D<T> b,
-                                          const void* aux) {
-  if (std::isnan(a.y()) && std::isnan(b.y())) {
-    return false;
-  }
-  if (std::isnan(a.y()) || std::isnan(b.y())) {
-    return true;
-  }
-  return std::abs(b.y() - a.y()) >= NullTolerance(a.y()) &&
-         DiscontinuityTestBetweenPoints(a, b, aux);
-}
-
-template <typename T>
 void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
                                                   const void* aux,
                                                   Coordinate2D<T> start,
@@ -790,7 +778,7 @@ void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
   Coordinate2D<T> right = end;
   if (!FindMinimalIntervalContainingDiscontinuity(
           f, aux, &left, &middle, &right, precision,
-          DiscontinuityTestBetweenPoints)) {
+          SolverTests<T>::IsDiscontinuousInBracket)) {
     return;
   }
 
@@ -812,8 +800,10 @@ void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
   left.setY(MagicRound(f(left.x(), aux)));
   right.setY(MagicRound(f(right.x(), aux)));
 
-  bool leftIsDiscontinuous = DiscontinuityTestAtPoints(left, middle, aux);
-  bool rightIsDiscontinuous = DiscontinuityTestAtPoints(middle, right, aux);
+  bool leftIsDiscontinuous =
+      SolverTests<T>::IsDiscontinuousInBracket(left, middle, aux);
+  bool rightIsDiscontinuous =
+      SolverTests<T>::IsDiscontinuousInBracket(middle, right, aux);
   if (!leftIsDiscontinuous && !rightIsDiscontinuous) {
     // No discontinuity
     return;
@@ -915,39 +905,9 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
 
 // Explicit template instantiations
 
-template Solver<double>::Solver(double, double, const SymbolContext&);
-template void Solver<double>::reset(double, double, double);
-template Solver<double>::Solution Solver<double>::next(
-    FunctionEvaluation, const void*, BracketTest, HoneResult,
-    DiscontinuityEvaluation discontinuityTest);
-template Solver<double>::DetailedRoot Solver<double>::nextDetailedRoot(
-    const Tree*);
-template Solver<double>::Solution Solver<double>::nextMinimum(const Tree*);
-template Solver<double>::Solution Solver<double>::nextIntersection(const Tree*,
-                                                                   const Tree*,
-                                                                   bool,
-                                                                   const Tree*);
-template Solver<double>::Solution Solver<double>::nextIntersection(const Tree*,
-                                                                   const Tree*,
-                                                                   bool);
+template class Solver<double>;
 
-template void Solver<double>::stretch();
-template Coordinate2D<double> Solver<double>::SafeBrentMaximum(
-    FunctionEvaluation, const void*, double, double, Interest, double,
-    OMG::Troolean);
-template double Solver<double>::DefaultSearchStepForAmplitude(double);
-template bool Solver<double>::FunctionSeemsConstantOnTheInterval(
-    Solver<double>::FunctionEvaluation f, const void* aux, double xMin,
-    double xMax);
-template bool Solver<double>::DiscontinuityTestBetweenPoints(
-    Coordinate2D<double>, Coordinate2D<double>, const void*);
-template Tree* Solver<double>::FunctionDifferenceForIntersection(
-    const Tree* f, const Tree* g, bool areAlongSameAxis);
-
-template Interest Solver<float>::EvenOrOddRootInBracket(Coordinate2D<float>,
-                                                        Coordinate2D<float>,
-                                                        Coordinate2D<float>,
-                                                        const void*);
+// Solver float cannot use all the features of Solver double
 template Solver<float>::Solver(float, float, const SymbolContext&);
 template void Solver<float>::reset(float, float, float);
 template Solver<float>::Solution Solver<float>::next(

@@ -66,40 +66,6 @@ class Solver {
   }
   static T DefaultSearchStepForAmplitude(T intervalAmplitude);
 
-  // BracketTest default implementations
-  constexpr static Interest BoolToInterest(bool v, Interest t,
-                                           Interest f = Interest::None) {
-    return v ? t : f;
-  }
-  static Interest OddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
-                                   Coordinate2D<T> c, const void*) {
-    return BoolToInterest(
-        (a.y() < 0. && 0. < c.y()) || (c.y() < 0. && 0. < a.y()),
-        Interest::Root);
-  }
-  static Interest EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
-                                         Coordinate2D<T> c, const void*);
-  static Interest MinimumInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
-                                   Coordinate2D<T> c, const void*) {
-    return BoolToInterest(b.y() < a.y() && b.y() < c.y(),
-                          Interest::LocalMinimum);
-  }
-  static Interest MaximumInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
-                                   Coordinate2D<T> c, const void*) {
-    return BoolToInterest(a.y() < b.y() && c.y() < b.y(),
-                          Interest::LocalMaximum);
-  }
-  static Interest UndefinedInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
-                                     Coordinate2D<T> c, const void* aux) {
-    return BoolToInterest(UndefinedTestBetweenPoints(a, c, aux),
-                          Interest::Discontinuity);
-  }
-  static Interest DiscontinuityInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
-                                         Coordinate2D<T> c, const void* aux) {
-    return BoolToInterest(DiscontinuityTestBetweenPoints(a, c, aux),
-                          Interest::ReachedDiscontinuity);
-  }
-
   // If areAlongSameAxis, f-g is computed. Else, a->g(f(a))-a is computed
   static Internal::Tree* FunctionDifferenceForIntersection(
       const Internal::Tree* f, const Internal::Tree* g, bool areAlongSameAxis);
@@ -121,16 +87,10 @@ class Solver {
   Solution nextRoot(const Internal::Tree* e) {
     return nextDetailedRoot(e).solution;
   }
-  Solution nextRoot(FunctionEvaluation f, const void* aux) {
-    return next(f, aux, EvenOrOddRootInBracket, CompositeBrentForRoot);
-  }
+  Solution nextRoot(FunctionEvaluation f, const void* aux);
   Solution nextMinimum(const Internal::Tree* e);
-  Solution nextMaximum(const Internal::Tree* e) {
-    return next(e, MaximumInBracket, SafeBrentMaximum);
-  }
-  Solution nextDiscontinuity(const Internal::Tree* e) {
-    return next(e, DiscontinuityInBracket, DummyHone);
-  }
+  Solution nextMaximum(const Internal::Tree* e);
+  Solution nextDiscontinuity(const Internal::Tree* e);
 
   /* Difference between the two functions may be passed to save computations
    * (see FunctionDifferenceForIntersection), when the function is called
@@ -179,16 +139,6 @@ class Solver {
     return Coordinate2D<T>();
   }
 
-  static bool UndefinedTestBetweenPoints(Coordinate2D<T> a, Coordinate2D<T> b,
-                                         const void*) {
-    return (std::isfinite(a.y()) && std::isnan(b.y())) ||
-           (std::isfinite(b.y()) && std::isnan(a.y()));
-  }
-  static bool DiscontinuityTestBetweenPoints(Coordinate2D<T> a,
-                                             Coordinate2D<T> b,
-                                             const void* aux);
-  static bool DiscontinuityTestAtPoints(Coordinate2D<T> a, Coordinate2D<T> b,
-                                        const void* aux);
   static bool FunctionSeemsConstantOnTheInterval(
       Solver<T>::FunctionEvaluation f, const void* aux, T xMin, T xMax);
 

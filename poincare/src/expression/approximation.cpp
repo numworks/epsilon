@@ -96,32 +96,11 @@ PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
                                          const Context& context) {
   assert(Dimension::DeepCheck(e, context.m_symbolContext));
   assert(!params.optimize);
-  Tree* clone = PrepareTreeAndContext<T>(e, params, context);
-  const Tree* target = clone ? clone : e;
-  Dimension dim = Dimension::Get(target, context.m_symbolContext);
+  Dimension dim = Dimension::Get(e, context.m_symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
-  PointOrRealScalar<T> result = dim.isPoint() ? PointOrRealScalar<T>(NAN, NAN)
-                                              : PointOrRealScalar<T>(NAN);
-  if (!context.m_localContext || !(std::isnan(context.variable(0).real()) ||
-                                   std::isnan(context.variable(0).imag()))) {
-    T xScalar, yScalar;
-    if (dim.isPoint()) {
-      Context pointEvaluationContext = context;
-      pointEvaluationContext.m_pointElement = 0;
-      xScalar = PrivateTo<T>(target, &pointEvaluationContext);
-      pointEvaluationContext.m_pointElement = 1;
-      yScalar = PrivateTo<T>(target, &pointEvaluationContext);
-    } else {
-      yScalar = PrivateTo<T>(target, &context);
-    }
-    result = dim.isPoint() ? PointOrRealScalar<T>(xScalar, yScalar)
-                           : PointOrRealScalar<T>(yScalar);
-  }
-  if (clone) {
-    clone->removeTree();
-  }
-  return result;
-};
+  return dim.isPoint() ? PointOrRealScalar<T>(ToPoint<T>(e, params, context))
+                       : PointOrRealScalar<T>(To<T>(e, params, context));
+}
 
 template <typename T>
 PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
@@ -159,7 +138,18 @@ T To(const Tree* e, Parameters params, const Context& context) {
   }
   assert(context.m_listElement != -1 ||
          !Dimension::IsList(e, context.m_symbolContext));
-  return ToPointOrRealScalar<T>(e, params, context).toRealScalar();
+  assert(!params.optimize);
+  Tree* clone = PrepareTreeAndContext<T>(e, params, context);
+  const Tree* target = clone ? clone : e;
+  if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
+                                 std::isnan(context.variable(0).imag()))) {
+    return NAN;
+  }
+  T result = PrivateTo<T>(target, &context);
+  if (clone) {
+    clone->removeTree();
+  }
+  return result;
 };
 
 template <typename T>
@@ -176,8 +166,25 @@ Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
                         const Context& context) {
   assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
          Dimension::Get(e, context.m_symbolContext).isPoint());
-  return ToPointOrRealScalar<T>(e, params, context).toPoint();
-};
+  assert(!params.optimize);
+  Tree* clone = PrepareTreeAndContext<T>(e, params, context);
+  const Tree* target = clone ? clone : e;
+  if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
+                                 std::isnan(context.variable(0).imag()))) {
+    return Coordinate2D<T>(NAN, NAN);
+  }
+  T xScalar, yScalar;
+  Context pointEvaluationContext = context;
+  pointEvaluationContext.m_pointElement = 0;
+  xScalar = PrivateTo<T>(target, &pointEvaluationContext);
+  pointEvaluationContext.m_pointElement = 1;
+  yScalar = PrivateTo<T>(target, &pointEvaluationContext);
+  Coordinate2D<T> result(xScalar, yScalar);
+  if (clone) {
+    clone->removeTree();
+  }
+  return result;
+}
 
 template <typename T>
 Tree* Private::ToComplexTree(const Tree* e, const Context* ctx) {

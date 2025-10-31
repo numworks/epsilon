@@ -10,6 +10,9 @@ namespace Poincare {
 template <typename T>
 class PointOrRealScalar {
  public:
+  PointOrRealScalar(Coordinate2D<T> point) : m_x(point.x()), m_y(point.y()) {
+    assert(isPoint());
+  }
   PointOrRealScalar(T x, T y) : m_x(x), m_y(y) { assert(isPoint()); }
   PointOrRealScalar(T y) : m_x(OMG::SignalingNan<T>()), m_y(y) {
     assert(isRealScalar());

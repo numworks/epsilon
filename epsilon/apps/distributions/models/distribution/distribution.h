@@ -26,6 +26,7 @@ class Distribution : public Shared::StatisticalDistribution {
   Poincare::Distribution::Type type() const { return m_distribution; }
   bool isContinuous() const;
   bool isSymmetrical() const;
+  Calculation::Type preferredCalculationType() const;
   double meanAbscissa() const;
 
   // Parameters

@@ -78,18 +78,21 @@ struct TypeDescription {
   std::array<double, k_maxNumberOfParameters> defaultParameters;
   bool isContinuous;
   bool isSymmetrical;
+  bool prefersLeftSideForProbabilityIntegration;
 };
 constexpr TypeDescription k_typeDescriptions[] = {
-    {Type::Binomial, 2, {"n", "p"}, {20., 0.5}, false, false},
-    {Type::Uniform, 2, {"a", "b"}, {-1., 1.}, true, true},
-    {Type::Exponential, 1, {"λ"}, {1.0}, true, false},
-    {Type::Normal, 2, {"μ", "σ"}, {0., 1.}, true, true},
-    {Type::Chi2, 1, {"k"}, {1.}, true, false},
-    {Type::Student, 1, {"k"}, {1.}, true, true},
-    {Type::Geometric, 1, {"p"}, {0.5}, false, false},
-    {Type::Hypergeometric, 3, {"N", "K", "n"}, {100., 60., 50.}, false, false},
-    {Type::Poisson, 1, {"λ"}, {4.}, false, false},
-    {Type::Fisher, 2, {"d1", "d2"}, {1., 1.}, true, false},
+    // clang-format off
+    {Type::Binomial, 2, {"n", "p"}, {20., 0.5}, false, false, true},
+    {Type::Uniform, 2, {"a", "b"}, {-1., 1.}, true, true, true},
+    {Type::Exponential, 1, {"λ"}, {1.0}, true, false, true},
+    {Type::Normal, 2, {"μ", "σ"}, {0., 1.}, true, true, true},
+    {Type::Chi2, 1, {"k"}, {1.}, true, false, false},
+    {Type::Student, 1, {"k"}, {1.}, true, true, true},
+    {Type::Geometric, 1, {"p"}, {0.5}, false, false, true},
+    {Type::Hypergeometric, 3, {"N", "K", "n"}, {100., 60., 50.}, false, false, true},
+    {Type::Poisson, 1, {"λ"}, {4.}, false, false, true},
+    {Type::Fisher, 2, {"d1", "d2"}, {1., 1.}, true, false, true},
+    // clang-format on
 };
 
 constexpr static TypeDescription DescriptionForType(Type type) {
@@ -122,6 +125,11 @@ constexpr bool IsContinuous(Type type) {
 
 constexpr bool IsSymmetrical(Type type) {
   return detail::DescriptionForType(type).isSymmetrical;
+}
+
+constexpr bool PrefersLeftSideForProbabilityIntegration(Type type) {
+  return detail::DescriptionForType(type)
+      .prefersLeftSideForProbabilityIntegration;
 }
 
 template <typename T>

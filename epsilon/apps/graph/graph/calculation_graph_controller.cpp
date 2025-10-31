@@ -79,7 +79,7 @@ void CalculationGraphController::viewWillAppear() {
     m_cursor->moveTo(pointOfInterest.x(), pointOfInterest.x(),
                      pointOfInterest.y());
     m_graphView->cursorView()->setHighlighted(specialInterest() !=
-                                              Solver<double>::Interest::None);
+                                              Interest::None);
     m_bannerView->setDisplayParameters({.showOrdinate = true});
     reloadBannerView();
     panToMakeCursorVisible();

@@ -46,8 +46,8 @@ class CalculationGraphController
   Shared::ContinuousFunctionStore* functionStore() const;
   Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(
       double start, double y, OMG::HorizontalDirection direction, bool stretch);
-  virtual Poincare::Solver<double>::Interest specialInterest() const {
-    return Poincare::Solver<double>::Interest::None;
+  virtual Poincare::Interest specialInterest() const {
+    return Poincare::Interest::None;
   }
   virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(
       double start, double max, double y, bool stretch) {

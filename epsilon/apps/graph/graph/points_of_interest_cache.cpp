@@ -52,18 +52,16 @@ bool PointsOfInterestCache::computeUntilNthPoint(int n) {
   return true;
 }
 
-bool PointsOfInterestCache::PointFitInterest(
-    PointOfInterest poi, Solver<double>::Interest interest) {
-  return interest == Solver<double>::Interest::None ||
-         poi.interest == interest ||
-         (interest == Solver<double>::Interest::Intersection &&
-          poi.interest == Solver<double>::Interest::UnreachedIntersection);
+bool PointsOfInterestCache::PointFitInterest(PointOfInterest poi,
+                                             Interest interest) {
+  return interest == Interest::None || poi.interest == interest ||
+         (interest == Interest::Intersection &&
+          poi.interest == Interest::UnreachedIntersection);
 }
 
-int PointsOfInterestCache::numberOfPoints(
-    Solver<double>::Interest interest) const {
+int PointsOfInterestCache::numberOfPoints(Interest interest) const {
   int n = numberOfPoints();
-  if (interest == Poincare::Solver<double>::Interest::None) {
+  if (interest == Poincare::Interest::None) {
     return n;
   }
   int result = 0;
@@ -76,8 +74,8 @@ int PointsOfInterestCache::numberOfPoints(
 }
 
 PointOfInterest PointsOfInterestCache::firstPointInDirection(
-    double xStart, double xEnd, double yStart, bool stretch,
-    Solver<double>::Interest interest, int subCurveIndex, bool alongX) {
+    double xStart, double xEnd, double yStart, bool stretch, Interest interest,
+    int subCurveIndex, bool alongX) {
   if (xStart == xEnd) {
     return PointOfInterest();
   }
@@ -115,15 +113,14 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
         (subCurveIndex >= 0 && p.subCurveIndex != subCurveIndex)) {
       continue;
     }
-    if (p.interest == Solver<double>::Interest::UnreachedDiscontinuity &&
+    if (p.interest == Interest::UnreachedDiscontinuity &&
         direction * (i + direction) <= direction * lastIndex) {
       /* Select in priority the reached discontinuity point: if the point is an
        * unreached discontinuity, check if there is a reached discontinuity at
        * the same abscissa. */
       PointOfInterest pNext = pointAtIndex(i + direction);
       double xNext = alongX ? pNext.x() : pNext.abscissa;
-      if (pNext.interest == Solver<double>::Interest::ReachedDiscontinuity &&
-          xNext == x) {
+      if (pNext.interest == Interest::ReachedDiscontinuity && xNext == x) {
         return pNext;
       }
     }
@@ -132,8 +129,8 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
   return PointOfInterest{};
 }
 
-bool PointsOfInterestCache::hasInterestAtCoordinates(
-    double x, double y, Solver<double>::Interest interest) const {
+bool PointsOfInterestCache::hasInterestAtCoordinates(double x, double y,
+                                                     Interest interest) const {
   int n = numberOfPoints();
   for (int i = 0; i < n; i++) {
     PointOfInterest p = pointAtIndex(i);
@@ -145,11 +142,10 @@ bool PointsOfInterestCache::hasInterestAtCoordinates(
 }
 
 bool PointsOfInterestCache::hasDisplayableInterestAtCoordinates(
-    double x, double y, Poincare::Solver<double>::Interest interest,
+    double x, double y, Poincare::Interest interest,
     bool allInterestsAreDisplayed) const {
-  if (!canDisplayPoints(allInterestsAreDisplayed
-                            ? Poincare::Solver<double>::Interest::None
-                            : interest)) {
+  if (!canDisplayPoints(allInterestsAreDisplayed ? Poincare::Interest::None
+                                                 : interest)) {
     // Ignore interest point if it is not displayed.
     return false;
   }
@@ -158,7 +154,7 @@ bool PointsOfInterestCache::hasDisplayableInterestAtCoordinates(
 
 bool PointsOfInterestCache::hasDisplayableUnreachedInterestAtCoordinates(
     double x, double y) const {
-  using Interest = Poincare::Solver<double>::Interest;
+  using Interest = Poincare::Interest;
   for (Interest interest :
        {Interest::UnreachedDiscontinuity, Interest::UnreachedIntersection}) {
     if (canDisplayPoints(interest) &&
@@ -253,7 +249,7 @@ PointOfInterest findYIntercept(void* searchContext) {
         return {xy.x(),
                 xy.y(),
                 0,
-                Solver<double>::Interest::YIntercept,
+                Interest::YIntercept,
                 f->isAlongY(),
                 static_cast<uint8_t>(subCurve)};
       }
@@ -324,7 +320,7 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
     if (solution.x >= ctx->start &&
         (solution.x < ctx->end ||
          (solution.x == ctx->end && ctx->lastSegment))) {
-      assert(solution.interest == Solver<double>::Interest::Intersection);
+      assert(solution.interest == Interest::Intersection);
       diff->removeTree();
       /* If alongY(), no need to swap x and y here, since
        * expressionApproximated already returned x as abscissa and y as
@@ -333,7 +329,7 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
           solution.x,
           solution.y,
           static_cast<uint32_t>(ctx->otherRecord),
-          Solver<double>::Interest::Intersection,
+          Interest::Intersection,
           ctx->model()->isAlongY(),
           ctx->subCounter1,
       };
@@ -392,7 +388,7 @@ PointOfInterest findIntersections(void* searchContext) {
           continue;
         }
         if (fIsStrict || gIsStrict) {
-          poi.interest = Solver<double>::Interest::UnreachedIntersection;
+          poi.interest = Interest::UnreachedIntersection;
         }
         return poi;
       }

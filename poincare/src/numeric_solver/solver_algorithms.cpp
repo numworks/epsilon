@@ -114,11 +114,11 @@ T SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
 
 Coordinate2D<double> SolverAlgorithms::BrentRoot(
     Solver<double>::FunctionEvaluation f, const void* aux, double xMin,
-    double xMax, Solver<double>::Interest interest, double xPrecision) {
+    double xMax, Interest interest, double xPrecision) {
   if (xMax < xMin) {
     return BrentRoot(f, aux, xMax, xMin, interest, xPrecision);
   }
-  assert(interest == Solver<double>::Interest::Root);
+  assert(interest == Interest::Root);
   assert(xMin < xMax);
   assert((f(xMin, aux) <= 0. && 0. <= f(xMax, aux)) ||
          (f(xMax, aux) <= 0. && 0. <= f(xMin, aux)));
@@ -199,7 +199,7 @@ Coordinate2D<double> SolverAlgorithms::BrentRoot(
 
 Coordinate2D<double> SolverAlgorithms::BrentMinimum(
     Solver<double>::FunctionEvaluation f, const void* aux, double xMin,
-    double xMax, Solver<double>::Interest interest, double xPrecision) {
+    double xMax, Interest interest, double xPrecision) {
   assert(xMin < xMax);
   double a = xMin;
   double b = xMax;

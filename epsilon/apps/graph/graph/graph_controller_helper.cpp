@@ -224,12 +224,10 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
       PointsOfInterestCache* pointsOfInterest =
           App::app()->graphController()->pointsOfInterestForRecord(record);
       if (std::isfinite(derivative.toRealScalar()) &&
-          (pointsOfInterest->hasInterestAtCoordinates(
-               cursor->x(), cursor->y(),
-               Solver<double>::Interest::LocalMaximum) ||
+          (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(),
+                                                      Interest::LocalMaximum) ||
            pointsOfInterest->hasInterestAtCoordinates(
-               cursor->x(), cursor->y(),
-               Solver<double>::Interest::LocalMinimum))) {
+               cursor->x(), cursor->y(), Interest::LocalMinimum))) {
         derivative = PointOrRealScalar<double>(0.);
       }
     }
@@ -272,8 +270,7 @@ bool GraphControllerHelper::snapToInterestAndUpdateCursor(
       App::app()
           ->graphController()
           ->pointsOfInterestForSelectedRecord()
-          ->firstPointInDirection(start, end, NAN, false,
-                                  Solver<double>::Interest::None,
+          ->firstPointInDirection(start, end, NAN, false, Interest::None,
                                   subCurveIndex);
   Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
   if (!std::isfinite(nextPointOfInterestXY.x())) {
@@ -281,11 +278,10 @@ bool GraphControllerHelper::snapToInterestAndUpdateCursor(
   }
   cursor->moveTo(nextPointOfInterest.abscissa, nextPointOfInterestXY.x(),
                  nextPointOfInterestXY.y());
-  setCursorIsRing(forceRing ||
-                  nextPointOfInterest.interest ==
-                      Solver<double>::Interest::UnreachedDiscontinuity ||
-                  nextPointOfInterest.interest ==
-                      Solver<double>::Interest::UnreachedIntersection);
+  setCursorIsRing(
+      forceRing ||
+      nextPointOfInterest.interest == Interest::UnreachedDiscontinuity ||
+      nextPointOfInterest.interest == Interest::UnreachedIntersection);
 
   return true;
 }

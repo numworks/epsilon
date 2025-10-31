@@ -193,10 +193,9 @@ Tree* AbstractTreeStack::pushPointOfInterest(double abscissa, double ordinate,
                                              bool inverted,
                                              uint8_t subCurveIndex) {
   Tree* result = pushBlock(Type::PointOfInterest);
-  PointOfInterest p = {
-      abscissa, ordinate,
-      data,     static_cast<Solver<double>::Interest>(interest),
-      inverted, subCurveIndex};
+  PointOfInterest p = {abscissa, ordinate,
+                       data,     static_cast<Interest>(interest),
+                       inverted, subCurveIndex};
   // Copy content of data as if it was blocks
   insertBlocks(lastBlock(), reinterpret_cast<Block*>(&p),
                sizeof(CustomTypeStructs::PointOfInterestNode));

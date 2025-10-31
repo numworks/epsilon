@@ -10,30 +10,14 @@
 #include <algorithm>
 #include <cmath>
 
+#include "point_of_interest.h"
+
 /* TODO_PCJ: Change signatures to preparedFunctions instead of Trees. */
 namespace Poincare {
 
 template <typename T>
 class Solver {
  public:
-  enum class Interest : uint8_t {
-    None,
-    Root,
-    LocalMinimum,
-    LocalMaximum,
-    GlobalMinimum,
-    GlobalMaximum,
-    Discontinuity,
-    ReachedDiscontinuity,    // Discontinuity where f(x) is defined
-    UnreachedDiscontinuity,  // Discontinuity where f(x) is undefined
-    Intersection,
-    // Intersection involving at least one strict inequation
-    UnreachedIntersection,
-    HorizontalAsymptote,
-    YIntercept,
-    Other,
-  };
-
   struct Solution {
     T x;
     T y;

@@ -14,7 +14,7 @@ using Poincare::AngleUnit;
 using Poincare::SymbolContext;
 using namespace Poincare::Internal;
 
-typedef Poincare::Solver<double>::Interest Interest;
+typedef Poincare::Interest Interest;
 typedef Poincare::Solver<double>::Solution Solution;
 
 void assert_next_solution_is(const char* expression,

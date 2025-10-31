@@ -13,8 +13,8 @@ class RootGraphController : public CalculationGraphController {
   const char* title() const override;
 
  private:
-  Poincare::Solver<double>::Interest specialInterest() const override {
-    return Poincare::Solver<double>::Interest::Root;
+  Poincare::Interest specialInterest() const override {
+    return Poincare::Interest::Root;
   }
 };
 

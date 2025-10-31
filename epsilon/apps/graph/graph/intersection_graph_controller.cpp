@@ -67,7 +67,7 @@ Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(
   }
   if (!p.isUninitialized()) {
     App::app()->graphController()->setCursorIsRing(
-        p.interest == Solver<double>::Interest::UnreachedIntersection);
+        p.interest == Interest::UnreachedIntersection);
   }
   return p.xy();
 }

@@ -33,11 +33,9 @@ void Solver<T>::reset(T xStart, T xEnd, T searchStep) {
 }
 
 template <typename T>
-typename Solver<T>::Interest Solver<T>::TestBetween(Coordinate2D<T> a,
-                                                    Coordinate2D<T> b,
-                                                    BracketTest test,
-                                                    FunctionEvaluation f,
-                                                    const void* aux) {
+Interest Solver<T>::TestBetween(Coordinate2D<T> a, Coordinate2D<T> b,
+                                BracketTest test, FunctionEvaluation f,
+                                const void* aux) {
   T x = (a.x() + b.x()) / 2.;
   Coordinate2D<T> middle(x, f(x, aux));
   return test(a, middle, b, aux);
@@ -275,8 +273,8 @@ void Solver<T>::stretch() {
 }
 
 template <typename T>
-typename Solver<T>::Interest Solver<T>::EvenOrOddRootInBracket(
-    Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void* aux) {
+Interest Solver<T>::EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
+                                           Coordinate2D<T> c, const void* aux) {
   Interest root = OddRootInBracket(a, b, c, aux);
   if (root != Interest::None) {
     return root;
@@ -946,8 +944,10 @@ template bool Solver<double>::DiscontinuityTestBetweenPoints(
 template Tree* Solver<double>::FunctionDifferenceForIntersection(
     const Tree* f, const Tree* g, bool areAlongSameAxis);
 
-template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(
-    Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>, const void*);
+template Interest Solver<float>::EvenOrOddRootInBracket(Coordinate2D<float>,
+                                                        Coordinate2D<float>,
+                                                        Coordinate2D<float>,
+                                                        const void*);
 template Solver<float>::Solver(float, float, const SymbolContext&);
 template void Solver<float>::reset(float, float, float);
 template Solver<float>::Solution Solver<float>::next(

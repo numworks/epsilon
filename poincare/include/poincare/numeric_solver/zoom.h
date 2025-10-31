@@ -152,21 +152,17 @@ class Zoom {
   constexpr static int k_defaultMaxPointsOnOneSide = 20;
   constexpr static int k_defaultThresholdForFunctionsExceedingNbOfPoints = 3;
 
-  static typename Solver<T>::Interest PointIsInteresting(Coordinate2D<T> a,
-                                                         Coordinate2D<T> b,
-                                                         Coordinate2D<T> c,
-                                                         const void* aux);
+  static Interest PointIsInteresting(Coordinate2D<T> a, Coordinate2D<T> b,
+                                     Coordinate2D<T> c, const void* aux);
   static Coordinate2D<T> HonePoint(typename Solver<T>::FunctionEvaluation f,
-                                   const void* aux, T a, T b,
-                                   typename Solver<T>::Interest, T precision,
-                                   OMG::Troolean discontinuous);
+                                   const void* aux, T a, T b, Interest,
+                                   T precision, OMG::Troolean discontinuous);
   static Coordinate2D<T> HoneRoot(typename Solver<T>::FunctionEvaluation f,
-                                  const void* aux, T a, T b,
-                                  typename Solver<T>::Interest, T precision,
-                                  OMG::Troolean discontinuous);
+                                  const void* aux, T a, T b, Interest,
+                                  T precision, OMG::Troolean discontinuous);
   static Coordinate2D<T> HoneIntersection(
       typename Solver<T>::FunctionEvaluation f, const void* aux, T a, T b,
-      typename Solver<T>::Interest, T precision, OMG::Troolean discontinuous);
+      Interest, T precision, OMG::Troolean discontinuous);
 
   Range2D<T> sanitize2DHelper(Range2D<T> range) const;
   Range2D<T> sanitizedRange() const {

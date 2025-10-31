@@ -26,7 +26,7 @@ class PointsOfInterestCache {
   }
 
   int numberOfPoints() const { return m_list.numberOfPoints(); }
-  int numberOfPoints(Poincare::Solver<double>::Interest interest) const;
+  int numberOfPoints(Poincare::Interest interest) const;
   Poincare::PointOfInterest pointAtIndex(int i) const {
     return m_list.pointAtIndex(i);
   }
@@ -43,28 +43,25 @@ class PointsOfInterestCache {
    * the Y axis on some functions). */
   Poincare::PointOfInterest firstPointInDirection(
       double xStart, double xEnd, double yStart, bool stretch,
-      Poincare::Solver<double>::Interest interest =
-          Poincare::Solver<double>::Interest::None,
+      Poincare::Interest interest = Poincare::Interest::None,
       int subCurveIndex = -1, bool alongX = false);
   bool hasInterestAtCoordinates(
       double x, double y,
-      Poincare::Solver<double>::Interest interest =
-          Poincare::Solver<double>::Interest::None) const;
+      Poincare::Interest interest = Poincare::Interest::None) const;
   bool hasDisplayableInterestAtCoordinates(
       double x, double y,
-      Poincare::Solver<double>::Interest interest =
-          Poincare::Solver<double>::Interest::None,
+      Poincare::Interest interest = Poincare::Interest::None,
       bool allInterestsAreDisplayed = true) const;
   bool hasDisplayableUnreachedInterestAtCoordinates(double x, double y) const;
 
-  bool canDisplayPoints(Poincare::Solver<double>::Interest interest =
-                            Poincare::Solver<double>::Interest::None) const {
+  bool canDisplayPoints(
+      Poincare::Interest interest = Poincare::Interest::None) const {
     return !m_interestingPointsOverflowPool &&
            (numberOfPoints(interest) <= k_maxNumberOfDisplayablePoints);
   }
 
   static bool PointFitInterest(Poincare::PointOfInterest poi,
-                               Poincare::Solver<double>::Interest interest);
+                               Poincare::Interest interest);
 
  private:
   constexpr static int k_maxNumberOfDisplayablePoints = 64;

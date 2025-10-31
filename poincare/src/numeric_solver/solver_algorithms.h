@@ -19,13 +19,11 @@ class SolverAlgorithms {
    * use the Solver<double> API. */
   static Coordinate2D<double> BrentRoot(Solver<double>::FunctionEvaluation f,
                                         const void* aux, double xMin,
-                                        double xMax,
-                                        Solver<double>::Interest interest,
+                                        double xMax, Interest interest,
                                         double xPrecision);
   static Coordinate2D<double> BrentMinimum(Solver<double>::FunctionEvaluation f,
                                            const void* aux, double xMin,
-                                           double xMax,
-                                           Solver<double>::Interest interest,
+                                           double xMax, Interest interest,
                                            double xPrecision);
 
   /* Numeric functions for statistics and probability. */

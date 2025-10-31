@@ -1,14 +1,33 @@
 #pragma once
 
-#include <poincare/numeric_solver/solver.h>
+#include <poincare/coordinate_2D.h>
+#include <stdint.h>
 
 namespace Poincare {
+
+enum class Interest : uint8_t {
+  None,
+  Root,
+  LocalMinimum,
+  LocalMaximum,
+  GlobalMinimum,
+  GlobalMaximum,
+  Discontinuity,
+  ReachedDiscontinuity,    // Discontinuity where f(x) is defined
+  UnreachedDiscontinuity,  // Discontinuity where f(x) is undefined
+  Intersection,
+  // Intersection involving at least one strict inequation
+  UnreachedIntersection,
+  HorizontalAsymptote,
+  YIntercept,
+  Other,
+};
 
 struct PointOfInterest {
   double abscissa = NAN;
   double ordinate;
   uint32_t data;
-  Solver<double>::Interest interest;
+  Interest interest;
   bool inverted;
   uint8_t subCurveIndex;
 

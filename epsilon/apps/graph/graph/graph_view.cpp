@@ -18,7 +18,7 @@ GraphView::GraphView(InteractiveCurveViewRange* graphRange,
       m_interestView(this),
       m_areaIndex(0),
       m_nextPointOfInterestIndex(0),
-      m_interest(Solver<double>::Interest::None),
+      m_interest(Interest::None),
       m_computePointsOfInterest(false),
       m_tangentDisplay(false),
       m_intersectionRegion(false) {}
@@ -758,16 +758,15 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect,
     Coordinate2D<float> dotCoordinates =
         static_cast<Coordinate2D<float>>(p.xy());
     if (lastBlackDot == dotCoordinates &&
-        p.interest == Solver<double>::Interest::ReachedDiscontinuity) {
+        p.interest == Interest::ReachedDiscontinuity) {
       /* Reached discontinuity dots are drawn in the color of the function, but
        * a dot is already drawn in black at the same coordinates. */
       continue;
     }
 
-    bool isRing =
-        isStrictInequality ||
-        p.interest == Solver<double>::Interest::UnreachedDiscontinuity ||
-        p.interest == Solver<double>::Interest::UnreachedIntersection;
+    bool isRing = isStrictInequality ||
+                  p.interest == Interest::UnreachedDiscontinuity ||
+                  p.interest == Interest::UnreachedIntersection;
 
     KDRect dotRelativeRect = dotRect(k_dotSize, dotCoordinates, isRing);
     /* If the dot intersects the dirty rect, force the redraw.
@@ -790,11 +789,10 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect,
     // Refresh expiring pointer
     OMG::ExpiringPointer<ContinuousFunction> f =
         functionStore()->modelForRecord(selectedRec);
-    KDColor color =
-        p.interest == Solver<double>::Interest::ReachedDiscontinuity ||
-                p.interest == Solver<double>::Interest::UnreachedDiscontinuity
-            ? f->color()
-            : Escher::Palette::GrayDarkest;
+    KDColor color = p.interest == Interest::ReachedDiscontinuity ||
+                            p.interest == Interest::UnreachedDiscontinuity
+                        ? f->color()
+                        : Escher::Palette::GrayDarkest;
     if (isRing) {
       drawRing(ctx, rect, k_dotSize, dotCoordinates, color, false);
     } else {

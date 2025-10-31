@@ -23,7 +23,12 @@ cd epsilon
 
 To build and run epsilon, setup your device using the following command in your terminal (Msys2, Terminal.app, xterm…)
 ```shell
-chmod +x build/setup.sh & build/setup.sh
+chmod +x tools/setup.sh && tools/setup.sh
+```
+
+On **Windows**, in the Msys2 environment, you may need to restore the symlinks:
+```shell
+chmod +x tools/restore_symlinks.sh && tools/restore_symlinks.sh
 ```
 
 ## Run Epsilon on your computer

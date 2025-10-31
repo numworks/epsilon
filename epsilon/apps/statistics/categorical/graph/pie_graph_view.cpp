@@ -101,8 +101,8 @@ void PieGraphView::drawRect(KDContext* ctx, KDRect rect) const {
     for (int i = m_numberOfActiveCategories - 1; i >= 0; --i) {
       float sin = std::sin(m_cumulatedAngles[i]);
       float cos = std::cos(m_cumulatedAngles[i]);
-      float edgeX = center.x() + k_fradius * sin,
-            edgeY = center.y() - k_fradius * cos;
+      float edgeX = center.x() + (k_fradius - .7) * sin,
+            edgeY = center.y() - (k_fradius - .7) * cos;
       KDColor blend = KDColor::Blend(
           m_borderColors[i],
           m_borderColors[(i + 1) % m_numberOfActiveCategories], 128);

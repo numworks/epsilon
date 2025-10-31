@@ -132,10 +132,10 @@ template <typename T>
 T To(const Tree* e, Parameters params, const Context& context) {
   // Units are tolerated in scalar approximation (replaced with SI ratios).
   assert(Dimension::DeepCheck(e, context.m_symbolContext));
+#if ASSERTIONS
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
-  if (!(dim.isScalar() || dim.isUnit())) {
-    return NAN;
-  }
+  assert(dim.isScalar() || dim.isUnit());
+#endif
   assert(context.m_listElement != -1 ||
          !Dimension::IsList(e, context.m_symbolContext));
   assert(!params.optimize);

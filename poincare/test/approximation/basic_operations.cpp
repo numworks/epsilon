@@ -8,7 +8,6 @@ QUIZ_CASE(pcj_approximation_addition) {
   approximates_to<double>("2+i+4+i", "6+2×i", k_cartesianCtx);
 
   // Matrices
-  approximates_to<float>("[[1,2][3,4][5,6]]+[[1,2][3,4][5,6]]", NAN);
   approximates_to<float>("[[1,2][3,4][5,6]]+3", "undef");
   approximates_to<double>("[[1,2+i][3,4][5,6]]+3+i", "undef", k_cartesianCtx);
   approximates_to<float>("3+[[1,2][3,4][5,6]]", "undef");
@@ -38,7 +37,6 @@ QUIZ_CASE(pcj_approximation_multiplication) {
   approximates_to<double>("(3+i)×(4+i)", "11+7×i", k_cartesianCtx);
 
   // Matrices
-  approximates_to<float>("[[1,2][3,4][5,6]]×2", NAN);
   approximates_to<float>("[[1,2][3,4][5,6]]×2", "[[2,4][6,8][10,12]]");
   approximates_to<double>("[[1,2+i][3,4][5,6]]×(3+i)",
                           "[[3+i,5+5×i][9+3×i,12+4×i][15+5×i,18+6×i]]",
@@ -70,7 +68,8 @@ QUIZ_CASE(pcj_approximation_multiplication) {
 QUIZ_CASE(pcj_approximation_substraction) {
   approximates_to<float>("1-2", -1.0f);
   approximates_to<double>("(1)-(4+i)", NAN);
-  approximates_to<float>("[[1,2][3,4][5,6]]-[[3,2][3,4][5,6]]", NAN);
+  approximates_to<float>("[[1,2][3,4][5,6]]-[[3,2][3,4][5,6]]",
+                         "[[-2,0][0,0][0,0]]");
   approximates_to<float>("1-2", "-1");
   approximates_to<double>("3+i-(4+i)", "-1", k_cartesianCtx);
 
@@ -100,7 +99,6 @@ QUIZ_CASE(pcj_approximation_substraction) {
 QUIZ_CASE(pcj_approximation_division) {
   approximates_to<float>("1/2", 0.5f);
   approximates_to<float>("(3+i)/(4+i)", NAN);
-  approximates_to<float>("[[1,2][3,4][5,6]]/2", NAN);
   approximates_to<float>("1/2", "0.5");
   approximates_to<double>("(3+i)/(4+i)", "0.76470588235294+0.058823529411765×i",
                           k_cartesianCtx);
@@ -178,7 +176,7 @@ QUIZ_CASE(pcj_approximation_power) {
 
   approximates_to<float>("2^3", 8.0f);
   approximates_to<double>("(3+i)^(4+i)", NAN, k_cartesianCtx);
-  approximates_to<float>("[[1,2][3,4]]^2", NAN);
+  approximates_to<float>("[[1,2][3,4]]^2", "[[7,10][15,22]]");
 
   approximates_to<float>("2^3", "8");
   approximates_to<double>("(3+i)^4", "28+96×i", k_cartesianCtx);

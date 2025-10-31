@@ -34,25 +34,17 @@ class Solver {
     Other,
   };
 
-  class Solution {
-   public:
-    Solution(Coordinate2D<T> xy = Coordinate2D<T>(k_NAN, k_NAN),
-             Interest interest = Interest::None)
-        : m_xy(xy), m_interest(interest) {}
-    Solution(T x, T y, Interest interest)
-        : Solution(Coordinate2D<T>(x, y), interest) {}
+  struct Solution {
+    T x;
+    T y;
+    Interest interest;
 
-    Coordinate2D<T> xy() const { return m_xy; }
-    Interest interest() const { return m_interest; }
-    T x() const { return m_xy.x(); }
-    T y() const { return m_xy.y(); }
-
-    void setInterest(Interest interest) { m_interest = interest; }
-    void setY(T y) { return m_xy.setY(y); }
-
-   private:
-    Coordinate2D<T> m_xy;
-    Interest m_interest;
+    constexpr Solution(T xValue, T yValue, Interest interestValue)
+        : x(xValue), y(yValue), interest(interestValue) {}
+    constexpr Solution(Coordinate2D<T> p, Interest interestValue)
+        : x(p.x()), y(p.y()), interest(interestValue) {}
+    constexpr Solution() : x(k_NAN), y(k_NAN), interest(Interest::None) {}
+    constexpr operator Coordinate2D<T>() const { return Coordinate2D<T>(x, y); }
   };
 
   // We can have at most 3 solutions at the same abscissa

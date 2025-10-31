@@ -972,7 +972,7 @@ SolverResult ApproximateSolve(const Tree* equationList,
   TreeRef resultList = List::PushEmpty();
 
   for (size_t i = 0; i <= maxNumberOfSolutions; i++) {
-    double root = solver.nextRoot(preparedEquation).x();
+    double root = solver.nextRoot(preparedEquation).x;
     if (root < range.min()) {
       i--;
       continue;

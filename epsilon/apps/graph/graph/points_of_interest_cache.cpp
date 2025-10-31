@@ -291,16 +291,17 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
     while (std::isfinite(
         (solution = (ctx->solver.*next)(
              f->expressionApproximated()) /* assignment in expression */)
-            .x())) {
+            .x)) {
       /* Loop over finite solutions to exhaust solutions out of the interval
        * without returning NAN. */
-      if (solution.xy().xIsIn(ctx->start, ctx->end, true, ctx->lastSegment)) {
+      if (solution.x >= ctx->start &&
+          (solution.x < ctx->end ||
+           (solution.x == ctx->end && ctx->lastSegment))) {
         /* If alongY(), no need to swap x and y here, since
          * expressionApproximated already returned x as abscissa and y as
          * ordinate. */
         return {
-            solution.x(),        solution.y(),  0,
-            solution.interest(), f->isAlongY(), 0,
+            solution.x, solution.y, 0, solution.interest, f->isAlongY(), 0,
         };
       }
     }
@@ -317,19 +318,20 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
   Internal::Tree* diff =
       ctx->solver.FunctionDifferenceForIntersection(f, g, alongSameAxis);
   while (std::isfinite(
-      (solution = ctx->solver.nextIntersection(f, g, alongSameAxis, diff))
-          .x())) {
+      (solution = ctx->solver.nextIntersection(f, g, alongSameAxis, diff)).x)) {
     /* Loop over finite solutions to exhaust solutions out of the interval
      * without returning NAN. */
-    if (solution.xy().xIsIn(ctx->start, ctx->end, true, false)) {
-      assert(solution.interest() == Solver<double>::Interest::Intersection);
+    if (solution.x >= ctx->start &&
+        (solution.x < ctx->end ||
+         (solution.x == ctx->end && ctx->lastSegment))) {
+      assert(solution.interest == Solver<double>::Interest::Intersection);
       diff->removeTree();
       /* If alongY(), no need to swap x and y here, since
        * expressionApproximated already returned x as abscissa and y as
        * ordinate. */
       return {
-          solution.x(),
-          solution.y(),
+          solution.x,
+          solution.y,
           static_cast<uint32_t>(ctx->otherRecord),
           Solver<double>::Interest::Intersection,
           ctx->model()->isAlongY(),

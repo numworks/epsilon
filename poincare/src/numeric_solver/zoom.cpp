@@ -169,7 +169,7 @@ void Zoom<T>::fitPointsOfInterest(Function2D<T> f, const void* model,
                                   Function2D<double> fDouble,
                                   bool* finiteNumberOfPoints) {
   HorizontalAsymptoteHelper asymptotes(bounds.center());
-  T(Coordinate2D<T>::*ordinate)
+  T (Coordinate2D<T>::*ordinate)
   () const = vertical ? &Coordinate2D<T>::x : &Coordinate2D<T>::y;
   double (Coordinate2D<double>::*ordinateDouble)() const =
       vertical ? &Coordinate2D<double>::x : &Coordinate2D<double>::y;
@@ -216,7 +216,7 @@ template <typename T>
 bool Zoom<T>::fitRoots(Function2D<T> f, const void* model, Range1D<T> bounds,
                        bool vertical, Function2D<double> fDouble,
                        bool* finiteNumberOfPoints) {
-  T(Coordinate2D<T>::*ordinate)
+  T (Coordinate2D<T>::*ordinate)
   () const = vertical ? &Coordinate2D<T>::x : &Coordinate2D<T>::y;
   double (Coordinate2D<double>::*ordinateDouble)() const =
       vertical ? &Coordinate2D<double>::x : &Coordinate2D<double>::y;
@@ -327,7 +327,7 @@ void Zoom<T>::fitMagnitude(Function2D<T> f, const void* model,
   T nSum = static_cast<T>(0.), pSum = static_cast<T>(0.);
   int nPop = 0, pPop = 0;
 
-  T(Coordinate2D<T>::*ordinate)
+  T (Coordinate2D<T>::*ordinate)
   () const = vertical ? &Coordinate2D<T>::x : &Coordinate2D<T>::y;
   Range2D<T> saneRange = sanitizedRange();
   Range1D<T> xRange = *(vertical ? saneRange.y() : saneRange.x());
@@ -827,18 +827,18 @@ bool Zoom<T>::fitWithSolverHelper(
   typename Solver<T>::Solution p;
   bool didFit = false;
   while (std::isfinite((p = solver.next(evaluator, aux, test, hone))
-                           .x())) {  // assignment in condition
+                           .x)) {  // assignment in condition
     if (sizeof(T) < sizeof(double) && fDouble != nullptr &&
-        p.interest() == Solver<T>::Interest::Discontinuity &&
-        std::isnan(p.y()) && std::isfinite(fDouble(p.x(), aux))) {
+        p.interest == Solver<T>::Interest::Discontinuity && std::isnan(p.y) &&
+        std::isfinite(fDouble(p.x, aux))) {
       /* The function evaluates to NAN in single-precision only. It is likely
        * we have reached the limits of the T type, such as when
        * evaluating y=(e^x-1)/(e^x+1) for x~90 (which leads to ∞/∞). */
       return didFit;
     }
-    privateFitPoint(p.xy(), vertical);
+    privateFitPoint(p, vertical);
     didFit = true;
-    if (p.interest() == Solver<T>::Interest::Root) {
+    if (p.interest == Solver<T>::Interest::Root) {
       nRoots++;
     } else {
       nOthers++;

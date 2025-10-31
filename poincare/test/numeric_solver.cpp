@@ -54,13 +54,13 @@ void assert_next_solution_is(const char* expression,
   constexpr double relativePrecision =
       2. * OMG::Float::SquareRoot<double>(2. * OMG::Float::Epsilon<double>());
   quiz_assert_print_if_failure(
-      std::isnan(observed.x()) == std::isnan(expected.x()), expression);
+      std::isnan(observed.x) == std::isnan(expected.x()), expression);
   if (std::isfinite(expected.x())) {
     quiz_assert_print_if_failure(
-        relatively_equal(observed.x(), expected.x(), relativePrecision),
+        relatively_equal(observed.x, expected.x(), relativePrecision),
         expression);
     quiz_assert_print_if_failure(
-        relatively_equal(observed.y(), expected.y(), relativePrecision),
+        relatively_equal(observed.y, expected.y(), relativePrecision),
         expression);
   }
 }

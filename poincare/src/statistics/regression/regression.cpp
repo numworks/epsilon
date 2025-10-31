@@ -55,7 +55,7 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
   // TODO: use y+evaluate() instead of yTree+e in nextIntersection
   Poincare::Solver solver = Poincare::Solver(xMin, xMax, symbolContext);
   solver.stretch();
-  double result = solver.nextRoot(diff).x();
+  double result = solver.nextRoot(diff).x;
   diff->removeTree();
   return result;
 }

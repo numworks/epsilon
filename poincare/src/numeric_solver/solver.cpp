@@ -168,8 +168,8 @@ typename Solver<T>::DetailedRoot Solver<T>::nextDetailedRoot(const Tree* e) {
       }
 
       Solution res = next(e, EvenOrOddRootInBracket, CompositeBrentForRoot);
-      if (res.interest() != Interest::None) {
-        res.setInterest(Interest::Root);
+      if (res.interest != Interest::None) {
+        res.interest = Interest::Root;
       }
       return {.solution = res, .nullDescendant = e};
   }
@@ -217,11 +217,11 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
     const Tree* e1, const Tree* e2, bool areAlongSameAxis,
     const Tree* difference) {
   Solution root = nextRoot(difference);
-  if (root.interest() != Interest::Root) {
-    assert(root.interest() == Interest::None);
+  if (root.interest != Interest::Root) {
+    assert(root.interest == Interest::None);
     return Solution{};
   }
-  T x = root.x();
+  T x = root.x;
   T y =
       Approximation::To<T>(e1, x, Approximation::Parameters{.optimize = true});
   // The secondImage is a "y" if areAlongSameAxis=true, or an "x" otherwise
@@ -548,7 +548,7 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootSearchingInChild(
   const Tree* child = e->child(childIndex);
   DetailedRoot root;
   while (std::isfinite((root = solver.nextDetailedRoot(child))
-                           .solution.x())) {  // assignment in condition
+                           .solution.x)) {  // assignment in condition
     /* Check the result in case another term is undefined,
      * e.g. (x+1)*ln(x) for x =- 1.
      *
@@ -561,11 +561,11 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootSearchingInChild(
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
     T value = Approximation::To<T>(
-        ebis, root.solution.x(),
+        ebis, root.solution.x,
         Approximation::Parameters{.optimize = true});  // m_unknown
     ebis->removeTree();
-    if (std::fabs(value) < NullTolerance(root.solution.x())) {
-      return {.x = root.solution.x(), .nullDescendant = root.nullDescendant};
+    if (std::fabs(value) < NullTolerance(root.solution.x)) {
+      return {.x = root.solution.x, .nullDescendant = root.nullDescendant};
     }
   }
   return k_nanRootX;
@@ -636,7 +636,7 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootInAddition(
       nextRootSearchingInChildren(e, test, const_cast<Solver<T>*>(this));
   Solver<T> solver = *this;
   DetailedRootX root = {
-      .x = solver.next(e, EvenOrOddRootInBracket, CompositeBrentForRoot).x(),
+      .x = solver.next(e, EvenOrOddRootInBracket, CompositeBrentForRoot).x,
       .nullDescendant = e};
   if (!std::isfinite(root.x) ||
       std::fabs(childrenRoot.x - m_xStart) < std::fabs(root.x - m_xStart)) {
@@ -655,7 +655,7 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootInDependency(
 
   DetailedRoot root;
   // Find root in main and then check that the dependencies are not undefined
-  while (std::isfinite((root = solver.nextDetailedRoot(main)).solution.x())) {
+  while (std::isfinite((root = solver.nextDetailedRoot(main)).solution.x)) {
     /* Replace nullDescendant by 0 in deps list. This ensures that approximation
      * errors do not invalidate the dependencies check.
      *
@@ -670,7 +670,7 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootInDependency(
     bool definedDeps = true;
     for (const Tree* childDep : depsListClone->children()) {
       T value =
-          Approximation::To<T>(childDep, root.solution.x(),
+          Approximation::To<T>(childDep, root.solution.x,
                                Approximation::Parameters{.optimize = true});
       if (std::isnan(value)) {
         definedDeps = false;
@@ -683,7 +683,7 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootInDependency(
     }
   }
 
-  return {.x = root.solution.x(), .nullDescendant = root.nullDescendant};
+  return {.x = root.solution.x, .nullDescendant = root.nullDescendant};
 }
 
 template <typename T>
@@ -857,16 +857,16 @@ void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
 template <typename T>
 typename Solver<T>::Solution Solver<T>::registerSolution(Solution solution,
                                                          bool wasQueued) {
-  if (std::isnan(solution.x())) {
+  if (std::isnan(solution.x)) {
     return Solution();
   }
-  assert((wasQueued && solution.x() == m_xStart) ||
-         (!wasQueued && validSolution(solution.x())));
-  if (std::fabs(solution.y()) < NullTolerance(solution.x())) {
-    solution.setY(k_zero);
+  assert((wasQueued && solution.x == m_xStart) ||
+         (!wasQueued && validSolution(solution.x)));
+  if (std::fabs(solution.y) < NullTolerance(solution.x)) {
+    solution.y = k_zero;
   }
-  m_xStart = solution.x();
-  assert((solution.interest() == Interest::None) == std::isnan(solution.x()));
+  m_xStart = solution.x;
+  assert((solution.interest == Interest::None) == std::isnan(solution.x));
   return solution;
 }
 

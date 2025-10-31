@@ -71,6 +71,16 @@ void Store::setGroupActive(bool active, int col) {
   }
 }
 
+bool Store::isCategoryActive(int row) const {
+  assert(0 <= row && row < k_maxNumberOfCategory);
+  for (int col = 0; col < m_numberOfColumns; ++col) {
+    if (std::isfinite(m_table->m_data[col][row])) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void Store::setValue(float data, int col, int row) {
   assert(std::isfinite(data));
   assert(0 <= col && col < k_maxNumberOfGroups);

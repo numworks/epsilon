@@ -23,6 +23,10 @@ class PrefacedTwiceTableView : public PrefacedTableView {
                                        m_mainTableView->margins()->right());
   }
 
+  void reloadPrefaceCellAtRow(int row) {
+    m_columnPrefaceView.reloadCellAtLocation(0, row);
+  }
+
  private:
   // View
   int numberOfSubviews() const override { return 6; }

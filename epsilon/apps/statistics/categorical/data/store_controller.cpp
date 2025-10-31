@@ -206,7 +206,9 @@ void StoreController::recomputeDimensionsAndReload(bool force) {
     m_selectableTableView.reloadCellAtLocation(col, row);
     // Reload header cell to update color
     m_selectableTableView.reloadCellAtLocation(col, 0);
+    m_selectableTableView.reloadCellAtLocation(0, row);
     m_prefacedTableView.reloadPrefaceCellAtColumn(col);
+    m_prefacedTableView.reloadPrefaceCellAtRow(row);
   }
 }
 

@@ -66,6 +66,8 @@ class Store {
   bool hasActiveGroups() const;
   int numberOfActiveGroups() const;
 
+  bool isCategoryActive(int row) const;
+
   // Data
   float getValue(int col, int row) const {
     assert(0 <= col && col < k_maxNumberOfGroups);

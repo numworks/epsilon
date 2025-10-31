@@ -56,7 +56,9 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     char txt[20];
     store()->getCategoryName(dataRow(row), txt, sizeof(txt));
     myCell->setText(txt);
-    myCell->setTextColor(KDColorBlack);
+    myCell->setTextColor(store()->isCategoryActive(dataRow(row))
+                             ? KDColorBlack
+                             : Escher::Palette::GrayDark);
   } else if (type == k_typeOfInnerCells) {
     float p = store()->getValue(dataColumn(column), dataRow(row));
     EvenOddEditableCell* editableCell = static_cast<EvenOddEditableCell*>(cell);

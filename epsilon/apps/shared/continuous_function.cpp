@@ -166,7 +166,6 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
 void ContinuousFunction::tidyDownstreamPoolFrom(
     const PoolObject* treePoolCursor) const {
   ExpressionModelHandle::tidyDownstreamPoolFrom(treePoolCursor);
-  m_cache = nullptr;
 }
 
 bool ContinuousFunction::isNamed() const {

@@ -65,7 +65,7 @@ QUIZ_CASE(pcj_approximation_multiplication) {
   approximates_to<double>("{1,2,3}×[[4,5,6]]", "undef");
 }
 
-QUIZ_CASE(pcj_approximation_substraction) {
+QUIZ_CASE(pcj_approximation_subtraction) {
   approximates_to<float>("1-2", -1.0f);
   approximates_to<double>("(1)-(4+i)", NAN);
   approximates_to<float>("[[1,2][3,4][5,6]]-[[3,2][3,4][5,6]]",

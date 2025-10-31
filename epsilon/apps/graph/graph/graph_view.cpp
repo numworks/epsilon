@@ -484,8 +484,8 @@ void GraphView::drawTangent(KDContext* ctx, KDRect rect,
   bool foundFirstVisibleDot = false;
   for (int i = 0; i < numberOfCandidateDots; i++) {
     Coordinate2D<float> currentDot = candidateDots[i];
-    if (!currentDot.xIsIn(minAbscissa, maxAbscissa, true, true) ||
-        !currentDot.yIsIn(minOrdinate, maxOrdinate, true, true)) {
+    if (currentDot.x() < minAbscissa || currentDot.x() > maxAbscissa ||
+        currentDot.y() < minOrdinate || currentDot.y() > maxOrdinate) {
       // Dot is not in window
       continue;
     }

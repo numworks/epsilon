@@ -125,8 +125,8 @@ template <typename T>
 Tree* ToTree(const Tree* e, Parameters params,
              const Context& context = Context());
 
-/* Approximate to real any scalar, unit or list with a list element. Return
- * NAN otherwise. */
+/* Approximate [e] to real any scalar, unit. [e] must be of scalar or unit
+ * dimension (or a list of such dimension with a list element in context). */
 template <typename T>
 T To(const Tree* e, Parameters params, const Context& context = Context());
 

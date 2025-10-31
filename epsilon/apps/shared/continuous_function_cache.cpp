@@ -23,7 +23,7 @@ void ContinuousFunctionCache::PrepareForCaching(void* fun,
   }
 
   if (function->isAlongY()) {
-    /* Ignore cache on vertical line functions because it wouldn't be usefull
+    /* Ignore cache on vertical line functions because it wouldn't be useful
      * caching either x or y values on such simple curves. */
     function->tidyCache();
     return;
@@ -106,7 +106,7 @@ void ContinuousFunctionCache::setRange(float tMin, float tStep) {
 int ContinuousFunctionCache::indexForParameter(
     const ContinuousFunction* function, float t, int curveIndex) const {
   assert(!std::isnan(t));
-  /* Cache have been invalidated. Either tidyCache or PrepareForCaching should
+  /* Cache has been invalidated. Either tidyCache or PrepareForCaching should
    * have been called before any evaluation. */
   assert(m_tStep != 0);
   if (curveIndex != 0 || std::isinf(t)) {

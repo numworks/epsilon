@@ -60,6 +60,8 @@ void WorkingBuffer::garbageCollect(
   m_remainingSize += (m_start - localStart);
   m_start = localStart;
   uint8_t* digits = nullptr;
+  const uint8_t* treeStackEnd = reinterpret_cast<uint8_t*>(
+      SharedTreeStack->firstBlock() + SharedTreeStack->maxNumberOfBlocks());
   for (IntegerHandler* integer : keptIntegers) {
     /* Immediate digits are actually directly stored within the integer handler
      * object */
@@ -67,9 +69,11 @@ void WorkingBuffer::garbageCollect(
       // keptIntegers list should be sorted by increasing digits address.
       assert(digits < integer->digits());
       digits = integer->digits();
-      if (digits < m_start) {
-        assert(digits + integer->numberOfDigits() * sizeof(uint8_t) <= m_start);
-        // Some IntegerHandler have their digits stored in TreeStack's trees.
+      /* Some IntegerHandler have their digits stored outside of the
+       * WorkingBuffer and should be ignored by the garbage collection. */
+      if (digits < m_start || digits >= treeStackEnd) {
+        assert(!SharedTreeStack->contains(reinterpret_cast<Block*>(digits)) ||
+               digits + integer->numberOfDigits() * sizeof(uint8_t) <= m_start);
         continue;
       }
       assert(digits + integer->numberOfDigits() * sizeof(uint8_t) <=

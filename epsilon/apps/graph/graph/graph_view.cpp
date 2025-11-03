@@ -20,11 +20,12 @@ GraphView::GraphView(InteractiveCurveViewRange* graphRange,
       m_nextPointOfInterestIndex(0),
       m_interest(Solver<double>::Interest::None),
       m_computePointsOfInterest(false),
-      m_tangentDisplay(false) {}
+      m_tangentDisplay(false),
+      m_intersectionRegion(false) {}
 
 void GraphView::reload(bool resetInterrupted, bool force,
                        bool forceRedrawAxes) {
-  if (m_tangentDisplay) {
+  if (m_tangentDisplay || m_intersectionRegion) {
     markRectAsDirty(boundsWithoutBanner());
     forceRedrawAxes = true;
   }
@@ -145,6 +146,14 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   drawTangent(ctx, rect, record);
 }
 
+void GraphView::drawInequalitiesIntersection(KDContext* ctx,
+                                             KDRect rect) const {
+  if (!m_intersectionRegion) {
+    return;
+  }
+  // TODO: Draw the intersection region
+}
+
 void GraphView::tidyModel(int i, const PoolObject* treePoolCursor) const {
   functionStore()
       ->modelForRecord(functionStore()->activeRecordAtIndex(i))
@@ -223,7 +232,9 @@ void GraphView::drawCartesian(KDContext* ctx, KDRect rect,
                               DiscontinuityTest discontinuity,
                               OMG::Axis axis) const {
   assert(f->properties().isCartesian());
-  ContinuousFunctionProperties::AreaType area = f->properties().areaType();
+  ContinuousFunctionProperties::AreaType area =
+      m_intersectionRegion ? ContinuousFunctionProperties::AreaType::None
+                           : f->properties().areaType();
   bool hasTwoCurves = (f->numberOfSubCurves() == 2);
 
   // - Define the bounds of the colored area

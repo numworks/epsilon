@@ -32,6 +32,7 @@ class GraphView : public Shared::FunctionGraphView,
   int numberOfDrawnRecords() const override;
   void drawRecord(Ion::Storage::Record record, int index, KDContext* ctx,
                   KDRect rect, bool firstDrawnRecord) const override;
+  void drawInequalitiesIntersection(KDContext* ctx, KDRect rect) const override;
   void tidyModel(int i,
                  const Poincare::PoolObject* treePoolCursor) const override;
   void setFocus(bool focus) override;
@@ -43,6 +44,10 @@ class GraphView : public Shared::FunctionGraphView,
   void resumePointsOfInterestDrawing();
 
   void setTangentDisplay(bool display) { m_tangentDisplay = display; }
+
+  void setIntersectionRegionDisplay(bool display) {
+    m_intersectionRegion = display;
+  }
 
  private:
   constexpr static int k_externRectMargin = 2;
@@ -85,6 +90,7 @@ class GraphView : public Shared::FunctionGraphView,
   Poincare::Solver<double>::Interest m_interest;
   bool m_computePointsOfInterest;
   bool m_tangentDisplay;
+  bool m_intersectionRegion;
 };
 
 }  // namespace Graph

@@ -42,6 +42,7 @@ I18n::Message GraphController::emptyMessage() {
 
 void GraphController::viewWillAppear() {
   m_view.setTangentDisplay(false);
+  m_view.setIntersectionRegionDisplay(false);
   m_view.setInterest(Solver<double>::Interest::None);
   m_cursorView.resetMemoization();
   m_view.setCursorView(&m_cursorView);

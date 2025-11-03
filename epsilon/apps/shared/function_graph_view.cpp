@@ -15,6 +15,8 @@ namespace Shared {
 
 void FunctionGraphPolicy::drawPlot(const AbstractPlotView* plotView,
                                    KDContext* ctx, KDRect rect) const {
+  // Draw inequalities intersection region before drawing curves
+  drawInequalitiesIntersection(ctx, rect);
   int n = numberOfDrawnRecords();
   int selectedIndex = selectedRecordIndex();
   bool firstDrawnRecord = true;

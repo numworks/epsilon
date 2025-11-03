@@ -22,6 +22,8 @@ class FunctionGraphPolicy {
   virtual int numberOfDrawnRecords() const = 0;
   virtual void drawRecord(Ion::Storage::Record record, int index, KDContext*,
                           KDRect, bool firstDrawnRecord) const = 0;
+  virtual void drawInequalitiesIntersection(KDContext* ctx,
+                                            KDRect rect) const {};
   virtual void tidyModel(int i,
                          const Poincare::PoolObject* treePoolCursor) const = 0;
   virtual int selectedRecordIndex() const = 0;

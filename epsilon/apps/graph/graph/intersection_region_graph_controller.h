@@ -12,6 +12,11 @@ class IntersectionRegionGraphController : public IntersectionGraphController {
   const char* title() const override {
     return I18n::translate(I18n::Message::RegionOfIntersectionTitle);
   }
+
+  void viewWillAppear() override {
+    m_graphView->setIntersectionRegionDisplay(true);
+    IntersectionGraphController::viewWillAppear();
+  }
 };
 
 }  // namespace Graph

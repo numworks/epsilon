@@ -111,6 +111,8 @@ void StackViewController::setupActiveView() {
   if (vc) {
     vc->initView();
     uint8_t indexOfFirstParentWithOwnTitle = 0;
+    // The first stack controllercannot have TitlesDisplay::SameAsPreviousPage
+    assert(stackSlot(0)->titlesDisplay() != TitlesDisplay::SameAsPreviousPage);
     while (
         onTopViewController(indexOfFirstParentWithOwnTitle)->titlesDisplay() ==
         TitlesDisplay::SameAsPreviousPage) {

@@ -64,6 +64,7 @@ void ResultsANOVADataSource::fillCellForLocation(Escher::HighlightCell* cell,
     InferenceEvenOddBufferCell* myCell =
         static_cast<InferenceEvenOddBufferCell*>(cell);
     if (row == 0) {
+      // Column title
       assert(column == 1 || column == 2);
       if (column == 1) {
         myCell->setText(I18n::translate(I18n::Message::Between));
@@ -71,7 +72,9 @@ void ResultsANOVADataSource::fillCellForLocation(Escher::HighlightCell* cell,
         myCell->setText(I18n::translate(I18n::Message::Within));
       }
       myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+      myCell->setEven(true);
     } else {
+      // Row title
       assert(row == 1 || row == 2 || row == 3);
       if (row == 1) {
         myCell->setText(I18n::translate(I18n::Message::SquareSum));
@@ -81,6 +84,7 @@ void ResultsANOVADataSource::fillCellForLocation(Escher::HighlightCell* cell,
         myCell->setText(I18n::translate(I18n::Message::MeanSquares));
       }
       myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+      myCell->setEven(static_cast<bool>((row + 1) % 2));
     }
     myCell->setTextColor(KDColorBlack);
   } else {

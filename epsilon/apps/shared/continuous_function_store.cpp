@@ -77,7 +77,6 @@ void ContinuousFunctionStore::fillLastFreeColors(bool* colorIsFree) const {
 }
 
 void ContinuousFunctionStore::tidyCaches() const {
-  // Tidy the cache of all memoized models
   for (int i = 0; i < maxNumberOfMemoizedModels(); i++) {
     memoizedModelAtIndex(i)->tidyCache();
   }

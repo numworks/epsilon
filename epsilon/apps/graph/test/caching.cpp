@@ -15,8 +15,8 @@ namespace Shared {
 // Helper class friend of ContinuousFunctionCache to access its private methods
 class CacheTestHelper {
  public:
-  static bool HasValueInCache(ContinuousFunction* function,
-                              ContinuousFunctionCache* cache, float t) {
+  static bool HasValueInCache(const ContinuousFunction* function,
+                              const ContinuousFunctionCache* cache, float t) {
     return cache->indexForParameter(function, t, 0) >= 0;
   }
 };

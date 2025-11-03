@@ -1,11 +1,11 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/global_store.h>
+#include <poincare/test/helper.h>
 #include <quiz.h>
 
 #include <cmath>
 
 #include "helper.h"
-#include "poincare/test/helper.h"
 
 using namespace Poincare;
 using namespace Shared;

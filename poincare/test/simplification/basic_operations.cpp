@@ -1,5 +1,6 @@
+#include <poincare/test/helper.h>
+
 #include "helper.h"
-#include "poincare/test/helper.h"
 
 using namespace Poincare::Internal;
 using namespace Poincare;

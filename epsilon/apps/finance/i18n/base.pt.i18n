@@ -1,5 +1,5 @@
 FinanceApp = "Finanças"
-FinanceAppCapital = "FINANCAS"
+FinanceAppCapital = "FINANÇAS"
 SimpleInterest = "Juros simples"
 SimpleInterestDescription = "Juros calculados uma vez"
 CompoundInterest = "Juros compostos"

@@ -5,12 +5,12 @@
 namespace Inference {
 
 void ANOVATest::compute() {
-  using namespace Poincare::Inference::SignificanceTest::FTest;
+  m_results =
+      Poincare::Inference::SignificanceTest::FTest::ComputeStatisticResults(
+          m_groups.span());
 
-  StatisticResults results = ComputeStatisticResults(m_groups.span());
-
-  m_testCriticalValue = results.statistic;
-  m_pValue = results.pValue;
+  m_testCriticalValue = m_results.statistic;
+  m_pValue = m_results.pValue;
 }
 
 bool ANOVATest::authorizedValueAtPosition(double p, int row, int column) const {

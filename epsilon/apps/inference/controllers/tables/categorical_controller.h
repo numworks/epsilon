@@ -56,6 +56,8 @@ class CategoricalController
 
   void initView() override;
 
+  void viewWillAppear() override;
+
   virtual int indexOfTableCell() const { return 0; }
   void didScroll();
 

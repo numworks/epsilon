@@ -7,8 +7,11 @@
 namespace Shared {
 
 class ContinuousFunction;
+class CacheTestHelper;
 
 class ContinuousFunctionCache {
+  friend CacheTestHelper;
+
  public:
   static void PrepareForCaching(void* fun, ContinuousFunctionCache* cache,
                                 float tMin, float tStep);

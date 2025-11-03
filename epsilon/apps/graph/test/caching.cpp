@@ -10,6 +10,19 @@
 using namespace Poincare;
 using namespace Shared;
 
+namespace Shared {
+
+// Helper class friend of ContinuousFunctionCache to access its private methods
+class CacheTestHelper {
+ public:
+  static bool HasValueInCache(ContinuousFunction* function,
+                              ContinuousFunctionCache* cache, float t) {
+    return cache->indexForParameter(function, t, 0) >= 0;
+  }
+};
+
+}  // namespace Shared
+
 namespace Graph {
 
 void assert_float_equals(
@@ -93,6 +106,9 @@ void assert_check_polar_cache_against_function(
   function->tidyCache();
   for (int i = 0; i < Ion::Display::Width / 2; i++) {
     t = tMin + i * cache->step();
+    /* Otherwise, cache->valueForParameter would fallback on
+     * function->evaluateXYAtParameter. */
+    QUIZ_ASSERT(CacheTestHelper::HasValueInCache(function, cache, t));
     Coordinate2D<float> cacheValues = cache->valueForParameter(function, t, 0);
     Coordinate2D<float> functionValues = function->evaluateXYAtParameter(t);
     assert_float_equals(cacheValues.x(), functionValues.x());

@@ -53,7 +53,10 @@ def getStatus(base, head):
 
 
 def format_summary(base_summary: Summary, head_summary: Summary):
-    rateStatus = getStatus(base_summary.percentage, head_summary.percentage)
+    # summary.percentage has too few significant digits, so we recompute the status from hits and total
+    rateStatus = getStatus(
+        base_summary.hits * head_summary.total, head_summary.hits * base_summary.total
+    )
     hitsStatus = getStatus(base_summary.hits, head_summary.hits)
     totalStatus = getStatus(base_summary.total, head_summary.total)
     return f"""

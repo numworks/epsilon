@@ -95,7 +95,6 @@ template <typename T>
 PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
                                          const Context& context) {
   assert(Dimension::DeepCheck(e, context.m_symbolContext));
-  assert(!params.optimize);
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
   return dim.isPoint() ? PointOrRealScalar<T>(ToPoint<T>(e, params, context))

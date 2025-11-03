@@ -25,6 +25,8 @@ constexpr static int k_numberOfResultsInnerCells =
     k_numberOfResultInnerRows * k_numberOfResultInnerColumns;
 constexpr static int k_numberOfResultsHeaderCells =
     k_numberOfResultInnerColumns + k_numberOfResultInnerRows;
+
+constexpr static int k_resultTitleColumnWidth = 200;
 }  // namespace ANOVATableDimensions
 
 }  // namespace Inference

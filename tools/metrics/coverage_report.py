@@ -53,7 +53,8 @@ def getStatus(base, head):
 
 
 def format_summary(base_summary: Summary, head_summary: Summary):
-    # summary.percentage has too few significant digits, so we recompute the status from hits and total
+    # summary.percentage has too few significant digits, so we recompute the status from hits and total.
+    # Using cross-multiplication to compare the rates.
     rateStatus = getStatus(
         base_summary.hits * head_summary.total, head_summary.hits * base_summary.total
     )

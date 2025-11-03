@@ -205,7 +205,13 @@ def main():
                     print("Comparing crc32 of", scenario_name, bold(green("OK")))
                 else:
                     fails = fails + 1
-                    print("Comparing crc32 of", scenario_name, bold(red("FAILED")), "Got CRC", computed_crc32)
+                    print(
+                        "Comparing crc32 of",
+                        scenario_name,
+                        bold(red("FAILED")),
+                        "Got CRC",
+                        computed_crc32,
+                    )
 
                 # Take screenshot at each step
                 if not success and not args.no_screenshots:

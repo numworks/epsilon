@@ -12,7 +12,6 @@ namespace Inference {
 
 ResultsANOVADataSource::ResultsANOVADataSource()
     : DynamicCellsDataSource<SmallFontEvenOddBufferTextCell>(this),
-      m_headerPrefix(I18n::Message::Group),
       m_topLeftCell(Escher::Palette::WallScreenDark) {}
 
 void ResultsANOVADataSource::createCells() {
@@ -64,25 +63,25 @@ void ResultsANOVADataSource::fillCellForLocation(Escher::HighlightCell* cell,
   if (type == k_typeOfHeaderCells) {
     InferenceEvenOddBufferCell* myCell =
         static_cast<InferenceEvenOddBufferCell*>(cell);
-    char digit;
     if (row == 0) {
+      assert(column == 1 || column == 2);
+      if (column == 1) {
+        myCell->setText(I18n::translate(I18n::Message::Between));
+      } else {
+        myCell->setText(I18n::translate(I18n::Message::Within));
+      }
       myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-      myCell->setFont(KDFont::Size::Small);
-      myCell->setEven(true);
-      assert(column - 1 <= '9' - '1');
-      digit = '1' + (column - 1);
     } else {
-      myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-      myCell->setFont(KDFont::Size::Small);
-      myCell->setEven(row % 2 == 0);
-      assert(row - 1 <= 'Z' - 'A');
-      digit = 'A' + (row - 1);
+      assert(row == 1 || row == 2 || row == 3);
+      if (row == 1) {
+        myCell->setText(I18n::translate(I18n::Message::SquareSum));
+      } else if (row == 2) {
+        myCell->setText(I18n::translate(I18n::Message::DegreesOfFreedom));
+      } else {
+        myCell->setText(I18n::translate(I18n::Message::MeanSquares));
+      }
+      myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
     }
-    constexpr int bufferSize = k_headerTranslationBuffer;
-    char txt[bufferSize];
-    Poincare::Print::CustomPrintf(txt, bufferSize, "%s %c",
-                                  I18n::translate(m_headerPrefix), digit);
-    myCell->setText(txt);
     myCell->setTextColor(KDColorBlack);
   } else {
     assert(type == k_typeOfInnerCells);

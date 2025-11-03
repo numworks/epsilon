@@ -40,7 +40,8 @@ Tree* RackParser::parseTopLevelRack() {
     m_parsingContext.metadata.isAssignmentDeclaration = true;
   }
 
-  // Handle stores and unit conversions
+  /* Rightwards arrows are only allowed in the root rack of the layout
+   * -> handle stores and unit conversions here */
   for (IndexedChild<const Tree*> child : m_root->indexedChildren()) {
     if (child.index < m_tokenizer.currentPosition() ||
         child.index >= m_tokenizer.endPosition()) {
@@ -371,7 +372,7 @@ uint32_t NumberOfTrailingZerosDigits(LayoutSpanDecoder decoder) {
 
 void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
-    // A number cannot follow directly an other valid expression
+    // A number cannot follow directly another valid expression
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
 

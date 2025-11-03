@@ -40,8 +40,6 @@ class ResultsANOVADataSource
 
   void initCell(InferenceEvenOddBufferCell, void* cell, int index) override;
 
-  constexpr static int k_columnWidth = ANOVATableDimensions::k_columnWidth;
-
   constexpr static int k_numberOfReusableColumns =
       ANOVATableDimensions::k_numberOfResultInnerColumns;
   constexpr static int k_numberOfReusableRows =
@@ -49,7 +47,8 @@ class ResultsANOVADataSource
 
  protected:
   KDCoordinate nonMemoizedColumnWidth(int column) override {
-    return k_columnWidth;
+    return column == 0 ? ANOVATableDimensions::k_resultTitleColumnWidth
+                       : ANOVATableDimensions::k_columnWidth;
   }
   virtual int innerNumberOfRows() const = 0;
   virtual int innerNumberOfColumns() const = 0;

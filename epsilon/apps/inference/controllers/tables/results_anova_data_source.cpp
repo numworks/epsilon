@@ -11,22 +11,19 @@ using namespace Escher;
 namespace Inference {
 
 ResultsANOVADataSource::ResultsANOVADataSource()
-    : DynamicCellsDataSource<InferenceEvenOddBufferCell>(this),
+    : DynamicCellsDataSource<SmallFontEvenOddBufferTextCell>(this),
       m_headerPrefix(I18n::Message::Group),
       m_topLeftCell(Escher::Palette::WallScreenDark) {}
 
 void ResultsANOVADataSource::createCells() {
-  if (DynamicCellsDataSource<InferenceEvenOddBufferCell>::m_cells == nullptr) {
-    DynamicCellsDataSource<InferenceEvenOddBufferCell>::createCellsWithOffset(
-        ANOVATableDimensions::k_numberOfResultsHeaderCells +
-            ANOVATableDimensions::k_numberOfResultsInnerCells,
-        0);
+  if (DynamicCellsDataSource<SmallFontEvenOddBufferTextCell>::m_cells ==
+      nullptr) {
+    DynamicCellsDataSource<SmallFontEvenOddBufferTextCell>::
+        createCellsWithOffset(
+            ANOVATableDimensions::k_numberOfResultsHeaderCells +
+                ANOVATableDimensions::k_numberOfResultsInnerCells,
+            0);
   }
-}
-
-void ResultsANOVADataSource::initCell(InferenceEvenOddBufferCell, void* cell,
-                                      int index) {
-  static_cast<InferenceEvenOddBufferCell*>(cell)->setFont(KDFont::Size::Small);
 }
 
 int ResultsANOVADataSource::reusableCellCount(int type) const {

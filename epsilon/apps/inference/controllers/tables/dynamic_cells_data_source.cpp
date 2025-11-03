@@ -71,4 +71,5 @@ template class DynamicCellsDataSource<InferenceEvenOddBufferCell>;
 template class DynamicCellsDataSource<InferenceEvenOddEditableCell>;
 template class DynamicCellsDataSource<ParameterCell>;
 template class DynamicCellsDataSource<ResultCell>;
+template class DynamicCellsDataSource<SmallFontEvenOddBufferTextCell>;
 }  // namespace Inference

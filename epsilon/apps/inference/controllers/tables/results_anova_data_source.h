@@ -17,8 +17,9 @@ namespace Inference {
  * it. */
 class ResultsANOVADataSource
     : public CategoricalTableViewDataSource,
-      public DynamicCellsDataSource<InferenceEvenOddBufferCell>,
-      public DynamicCellsDataSourceDelegate<InferenceEvenOddBufferCell> {
+      public DynamicCellsDataSource<Escher::SmallFontEvenOddBufferTextCell>,
+      public DynamicCellsDataSourceDelegate<
+          Escher::SmallFontEvenOddBufferTextCell> {
  public:
   ResultsANOVADataSource();
 
@@ -37,8 +38,6 @@ class ResultsANOVADataSource
   // DynamicCellsDataSource
 
   void createCells() override;
-
-  void initCell(InferenceEvenOddBufferCell, void* cell, int index) override;
 
   constexpr static int k_numberOfReusableColumns =
       ANOVATableDimensions::k_numberOfResultInnerColumns;

@@ -1,5 +1,7 @@
 #include "results_anova_table_cell.h"
 
+#include <omg/unreachable.h>
+
 #include "inference/controllers/results_anova_controller.h"
 #include "inference/models/anova_test.h"
 #include "results_anova_data_source.h"
@@ -51,13 +53,30 @@ void ResultsANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
 
 void ResultsANOVATableCell::fillInnerCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
+  assert(row >= 0 && row < k_numberOfInnerRows);
+  assert(column >= 0 && column < k_numberOfInnerColumns);
+
   InferenceEvenOddBufferCell* myCell =
       static_cast<InferenceEvenOddBufferCell*>(cell);
 
-  // TODO
+  const ANOVATest::CalculatedValues& values =
+      (column == 0) ? m_inference->results().between
+                    : m_inference->results().within;
 
-  double value = m_inference->pValue();
-  PrintValueInTextHolder(value, myCell);
+  switch (row) {
+    case 0:
+      PrintValueInTextHolder(values.sumOfSquares, myCell);
+      break;
+    case 1:
+      PrintValueInTextHolder(values.degreesOfFreedom, myCell);
+      break;
+    case 2:
+      PrintValueInTextHolder(values.meanSquares, myCell);
+      break;
+    default:
+      OMG::unreachable();
+  }
+
   myCell->setEven(row % 2 == 1);
 }
 

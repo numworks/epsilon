@@ -52,6 +52,13 @@ class ANOVATest : public SignificanceTest, public InputTable {
     }
   }
 
+  using Results =
+      Poincare::Inference::SignificanceTest::FTest::StatisticResults;
+  using CalculatedValues =
+      Poincare::Inference::SignificanceTest::FTest::CalculatedValues;
+
+  const Results& results() const { return m_results; }
+
  private:
   // Inference
   double* parametersArray() override { return nullptr; }
@@ -73,6 +80,8 @@ class ANOVATest : public SignificanceTest, public InputTable {
   static_assert(k_maxNumberOfValuesPerGroup <= GroupValues{}.capacity());
 
   OMG::StaticVector<GroupValues, k_maxNumberOfGroups> m_groups;
+
+  Results m_results;
 };
 
 }  // namespace Inference

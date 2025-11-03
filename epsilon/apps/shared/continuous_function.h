@@ -72,8 +72,6 @@ class ContinuousFunction : public Function {
   Ion::Storage::Record::ErrorStatus setContent(
       const Poincare::Layout& l,
       const Poincare::SymbolContext& symbolContext) override;
-  void tidyDownstreamPoolFrom(
-      const Poincare::PoolObject* treePoolCursor = nullptr) const override;
   void tidyCache() const override { m_cache = nullptr; }
 
   /* Properties */

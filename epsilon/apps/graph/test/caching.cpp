@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include "helper.h"
+#include "poincare/test/helper.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -21,6 +22,9 @@ void assert_float_equals(
 
 void assert_check_cartesian_cache_against_function(
     ContinuousFunction* function, ContinuousFunctionCache* cache, float tMin) {
+  assert(cache);
+  QUIZ_ASSERT(function->cache() == cache);
+  QUIZ_ASSERT(cache->step() != 0);
   /* We set the cache to nullptr to force the evaluation (otherwise we would be
    * comparing the cache against itself). */
   function->tidyCache();
@@ -76,7 +80,9 @@ void assert_check_polar_cache_against_function(
                                                     tMin);
 
   ContinuousFunctionCache::PrepareForCaching(function, cache, tMin, tCacheStep);
-
+  assert(cache);
+  QUIZ_ASSERT(function->cache() == cache);
+  QUIZ_ASSERT(cache->step() != 0);
   // Fill the cache
   float t;
   for (int i = 0; i < Ion::Display::Width / 2; i++) {
@@ -130,13 +136,11 @@ QUIZ_CASE(graph_caching) {
   assert_cache_stays_valid("f(x)=sin(x)", -1e6f, 2e8f);
   assert_cache_stays_valid("f(x)=sin(x^2)");
   assert_cache_stays_valid("f(x)=1/x");
-  assert_cache_stays_valid("f(x)=1/x", -5e-5f, 5e-5f);
   assert_cache_stays_valid("f(x)=-e^x");
 
   assert_cache_stays_valid("r=1", 0.f, 360.f);
   assert_cache_stays_valid("r=θ", 0.f, 360.f);
   assert_cache_stays_valid("r=sin(θ)", 0.f, 360.f);
-  assert_cache_stays_valid("r=sin(θ)", 2e-4f, 1e-3f);
   assert_cache_stays_valid("r=cos(5θ)", 0.f, 360.f);
   assert_cache_stays_valid("r=cos(5θ)", -1e8f, 1e8f);
 

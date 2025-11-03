@@ -10,6 +10,7 @@ namespace Poincare::Internal {
 
 namespace {
 
+#if POINCARE_EXAM_MODE
 bool isPrimeFactorization(const Tree* expression) {
   /* A prime factorization can only be built with integers, powers of integers,
    * and a multiplication. */
@@ -38,6 +39,7 @@ bool exactExpressionIsForbidden(const Tree* exactOutput) {
       (exactOutput->isNumber() && !exactOutput->isMathematicalConstant()) ||
       isFraction || isPrimeFactorization(exactOutput));
 }
+#endif
 
 bool neverDisplayExactOutput(const Tree* exactOutput,
                              const SymbolContext& symbolContext) {

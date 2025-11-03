@@ -163,11 +163,6 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
   return error;
 }
 
-void ContinuousFunction::tidyDownstreamPoolFrom(
-    const PoolObject* treePoolCursor) const {
-  ExpressionModelHandle::tidyDownstreamPoolFrom(treePoolCursor);
-}
-
 bool ContinuousFunction::isNamed() const {
   // Unnamed functions have a fullname starting with k_unnamedRecordFirstChar
   const char* recordFullName = fullName();

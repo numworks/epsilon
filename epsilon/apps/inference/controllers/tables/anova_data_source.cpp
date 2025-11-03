@@ -31,6 +31,8 @@ HighlightCell* ANOVATableDataSource::reusableCell(int i, int type) {
 }
 
 int ANOVATableDataSource::typeAtLocation(int column, int row) const {
+  assert(column >= 0 && row >= 0);
+  assert(column < k_maxNumberOfColumns && row <= k_maxNumberOfRows);
   if (row == 0) {
     return k_typeOfHeaderCells;
   }
@@ -39,6 +41,8 @@ int ANOVATableDataSource::typeAtLocation(int column, int row) const {
 
 void ANOVATableDataSource::fillCellForLocation(Escher::HighlightCell* cell,
                                                int column, int row) {
+  assert(column >= 0 && row >= 0);
+  assert(column < k_maxNumberOfColumns && row <= k_maxNumberOfRows);
   int type = typeAtLocation(column, row);
   if (type == k_typeOfHeaderCells) {
     InferenceEvenOddBufferCell* myCell =

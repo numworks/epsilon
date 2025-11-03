@@ -61,9 +61,11 @@ class ANOVATableDataSource
 
  protected:
   constexpr static int k_maxNumberOfColumns = ANOVATest::k_maxNumberOfColumns;
-  constexpr static int k_maxNumberOfRows = ANOVATest::k_maxNumberOfRows;
+  constexpr static int k_maxNumberOfInnerRows = ANOVATest::k_maxNumberOfRows;
+  constexpr static int k_maxNumberOfRows = k_maxNumberOfInnerRows + 1;
 
   KDCoordinate nonMemoizedColumnWidth(int column) override {
+    assert(column >= 0 && column < k_maxNumberOfColumns);
     return k_columnWidth;
   }
   virtual int innerNumberOfRows() const = 0;

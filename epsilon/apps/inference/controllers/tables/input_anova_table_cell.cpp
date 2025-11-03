@@ -31,6 +31,7 @@ void InputANOVATableCell::handleResponderChainEvent(
 void InputANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
                                               int column, int row) {
   assert(column >= 0 && row >= 0);
+  assert(column < k_maxNumberOfColumns && row < k_maxNumberOfRows);
   ANOVATableDataSource::fillCellForLocation(cell, column, row);
   if ((row == 0 && column == numberOfColumns() - 1 &&
        column < k_maxNumberOfColumns - 1)) {
@@ -42,6 +43,7 @@ void InputANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
 }
 
 size_t InputANOVATableCell::fillColumnName(int column, char* buffer) {
+  assert(column >= 0 && column < k_maxNumberOfColumns);
   return Poincare::Print::CustomPrintf(
       buffer, Shared::ColumnParameterController::k_titleBufferSize, "%s %i",
       I18n::translate(I18n::Message::Group), column);
@@ -49,6 +51,8 @@ size_t InputANOVATableCell::fillColumnName(int column, char* buffer) {
 
 void InputANOVATableCell::fillInnerCellForLocation(Escher::HighlightCell* cell,
                                                    int column, int row) {
+  assert(column >= 0 && row >= 0);
+  assert(column < k_maxNumberOfColumns && row < k_maxNumberOfInnerRows);
   InferenceEvenOddEditableCell* myCell =
       static_cast<InferenceEvenOddEditableCell*>(cell);
   fillValueCellForLocation(myCell->editableTextCell()->textField(), myCell,

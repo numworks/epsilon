@@ -27,6 +27,8 @@ class InputANOVATableCell : public InputCategoricalTableCell,
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
   bool canStoreCellAtLocation(int column, int row) override {
+    assert(column >= 0 && row >= 0);
+    assert(column < k_maxNumberOfColumns && row < k_maxNumberOfRows);
     return column >= 0 && row > 0;
   }
 

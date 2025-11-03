@@ -207,6 +207,12 @@ void CategoricalController::initView() {
   SelectableListViewController::initView();
 }
 
+void CategoricalController::viewWillAppear() {
+  m_selectableListView.selectRow(-1);
+  m_selectableListView.resetScroll();
+  m_selectableListView.reloadData(false);
+}
+
 void CategoricalController::initWidth(TableView* tableView) {
   ListViewDataSource::initWidth(tableView);
   int n = numberOfRows();

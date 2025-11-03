@@ -85,7 +85,7 @@ def parse_summary(output_txt: str):
     for line in lines:
         if line.lstrip().startswith("lines"):
             percentage, hits, total = parse.search(": {}% ({} of {} lines)", line)
-            line_summary = Summary(percentage, hits, total)
+            line_summary = Summary(float(percentage), int(hits), int(total))
     return line_summary
 
 

@@ -39,9 +39,9 @@ class ResultsANOVADataSource
 
   void createCells() override;
 
-  constexpr static int k_numberOfReusableColumns =
+  constexpr static int k_numberOfInnerColumns =
       ANOVATableDimensions::k_numberOfResultInnerColumns;
-  constexpr static int k_numberOfReusableRows =
+  constexpr static int k_numberOfInnerRows =
       ANOVATableDimensions::k_numberOfResultInnerRows;
 
  protected:

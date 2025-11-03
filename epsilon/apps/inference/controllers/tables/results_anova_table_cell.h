@@ -43,10 +43,8 @@ class ResultsANOVATableCell : public CategoricalTableCell,
 
  private:
   // ANOVATableViewDataSource
-  int innerNumberOfRows() const override { return k_numberOfReusableRows; }
-  int innerNumberOfColumns() const override {
-    return k_numberOfReusableColumns;
-  }
+  int innerNumberOfRows() const override { return k_numberOfInnerRows; }
+  int innerNumberOfColumns() const override { return k_numberOfInnerColumns; }
   Escher::HighlightCell* innerCell(int i) override {
     return cell(i + ANOVATableDimensions::k_numberOfResultsHeaderCells);
   }

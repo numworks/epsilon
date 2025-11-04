@@ -33,6 +33,7 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
 
   CellType* cell(int i) {
     assert(m_cells);
+    assert(i >= 0 && i < m_numberOfAllocatedCells);
     return &m_cells[i];
   }
 
@@ -67,10 +68,12 @@ class DoubleDynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
 
   CellType1* cellType1(int i) {
     assert(m_cells1);
+    assert(i >= 0 && i < m_numberOfAllocatedCells1);
     return &m_cells1[i];
   }
   CellType2* cellType2(int i) {
     assert(m_cells2);
+    assert(i >= 0 && i < m_numberOfAllocatedCells2);
     return &m_cells2[i];
   }
 

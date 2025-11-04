@@ -65,7 +65,7 @@ class Range1D {
   }
 
   void extend(T t, T limit);
-  void zoom(T ratio, T center);
+  void zoom(T ratio, T center, T limit = k_maxFloat);
   void stretchEachBoundBy(T shift, T limit = k_maxFloat);
   void stretchIfTooSmall(T shift = static_cast<T>(-1.), T limit = k_maxFloat);
 
@@ -110,9 +110,9 @@ class Range2D {
     m_x.extend(p.x(), limit);
     m_y.extend(p.y(), limit);
   }
-  void zoom(T ratio, Coordinate2D<T> p) {
-    m_x.zoom(ratio, p.x());
-    m_y.zoom(ratio, p.y());
+  void zoom(T ratio, Coordinate2D<T> p, T limit = Range1D<T>::k_maxFloat) {
+    m_x.zoom(ratio, p.x(), limit);
+    m_y.zoom(ratio, p.y(), limit);
   }
   // Return false if failed
   bool setRatio(T r, bool shrink, T limit);

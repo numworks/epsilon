@@ -37,9 +37,11 @@ void Range1D<T>::extend(T t, T limit) {
 }
 
 template <typename T>
-void Range1D<T>::zoom(T ratio, T center) {
-  m_min = (m_min - center) * ratio + center;
-  m_max = (m_max - center) * ratio + center;
+void Range1D<T>::zoom(T ratio, T center, T limit) {
+  assert(ratio >= k_zero);
+  m_min = std::max((m_min - center) * ratio + center, -limit);
+  m_max = std::min((m_max - center) * ratio + center, limit);
+  stretchIfTooSmall(-1, limit);
 }
 
 template <typename T>

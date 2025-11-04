@@ -21,7 +21,7 @@ int InputANOVADataSource::reusableCellCount(int type) const {
   if (type == k_typeOfHeaderCells) {
     return k_maxNumberOfReusableRows + k_numberOfReusableColumns;
   }
-  return ANOVATableDimensions::k_numberOfInputInnerCells;
+  return ANOVATableDimensions::k_numberOfInputInnerReusableCells;
 }
 
 HighlightCell* InputANOVADataSource::reusableCell(int i, int type) {

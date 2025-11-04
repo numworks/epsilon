@@ -15,9 +15,10 @@ constexpr static int k_numberOfInputColumns = std::min(
 constexpr static int k_numberOfInputInnerRows =
     std::min(CategoricalTableViewDataSource::k_maxNumberOfReusableRows,
              ANOVATest::k_maxNumberOfRows);
-constexpr static int k_numberOfInputInnerCells =
+constexpr static int k_numberOfInputInnerReusableCells =
     k_numberOfInputInnerRows * k_numberOfInputColumns;
-constexpr static int k_numberOfInputHeaderCells = k_numberOfInputColumns;
+constexpr static int k_numberOfInputHeaderReusableCells =
+    k_numberOfInputColumns;
 
 constexpr static int k_numberOfResultInnerRows = 3;
 constexpr static int k_numberOfResultInnerColumns = 2;

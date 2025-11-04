@@ -24,6 +24,7 @@ class Zoom {
  public:
   constexpr static T k_minNormalizationRatio = static_cast<T>(0.15);
   constexpr static T k_maxNormalizationRatio = static_cast<T>(3.33);
+  constexpr static T k_lineZoomOutRatio = static_cast<T>(2.0);
   /* Sanitize will turn any random range into a range fit for display (see
    * comment on range() method below), that includes the original range. */
   static Range2D<T> Sanitize(Range2D<T> range, T normalRatio, T maxFloat);

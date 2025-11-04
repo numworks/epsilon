@@ -80,6 +80,8 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
   zoom.setForcedRange(forcedRange);
   bool tryNormalizedRange = false;
 
+  bool onlyLines = true;
+  bool onlyLinearLines = true;
   for (int i = 0; i < nbFunctions; i++) {
     Coordinate2D<float> intervalMin = Coordinate2D<float>(NAN, NAN);
     Coordinate2D<float> intervalMax = intervalMin;
@@ -90,11 +92,13 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
                                         .ctx = &symbolContext};
     tryNormalizedRange |= f->properties().enforcePlotNormalization();
     if (f->approximationBasedOnCostlyAlgorithms()) {
+      onlyLines = false;
       continue;
     }
     if (f->properties().isPolar() || f->properties().isInversePolar() ||
         f->properties().isParametric()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
+      onlyLines = false;
       PreparedFunctionPoint e = f->parametricForm().getPreparedFunction(
           Shared::Function::k_unknownName);
       // Compute the ordinate range of x(t) and y(t)
@@ -128,14 +132,22 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
           parametricExpressionEvaluator<float, 0>(f->tMax(), &e).y(),
           parametricExpressionEvaluator<float, 1>(f->tMax(), &e).y());
     } else if (f->properties().isScatterPlot()) {
+      onlyLines = false;
       for (Coordinate2D<float> p : f->iterateScatterPlot()) {
         zoom.fitPoint(p);
       }
     } else {
       assert(f->properties().isCartesian());
+      bool isLine = f->properties().isLine();
+      if (isLine) {
+        onlyLinearLines =
+            onlyLinearLines && std::fabs(evaluator<float>(0, &fModel).y()) <=
+                                   OMG::Float::Epsilon<float>();
+      } else {
+        onlyLines = false;
+      }
       canComputeIntersections[i] = true;
       bool alongY = f->isAlongY();
-      bool isLine = f->properties().isLine();
       Range1D<float>* bounds = alongY ? &yBounds : &xBounds;
       // Use the intersection between the definition domain of f and the bounds
       float tMin = std::clamp(f->tMin(), bounds->min(), bounds->max());
@@ -201,6 +213,10 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
     if (std::isfinite(intervalMax.x()) && std::isfinite(intervalMax.y())) {
       zoom.fitPoint(intervalMax);
     }
+  }
+  if (onlyLines && !onlyLinearLines) {
+    // Zoom out on non-linear lines to show y-intercept better
+    zoom.zoom(Zoom<float>::k_lineZoomOutRatio);
   }
 
   if (computeY) {

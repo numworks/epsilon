@@ -57,30 +57,22 @@ void InputHomogeneityTableCell::fillInnerCellForLocation(
                            column, row, tableModel());
 }
 
-void InputHomogeneityTableCell::createCells() {
-  if (DynamicCellsDataSource<InferenceEvenOddBufferCell>::m_cells == nullptr) {
-    DynamicCellsDataSource<InferenceEvenOddBufferCell>::createCellsWithOffset(
-        HomogeneityTableDimensions::k_numberOfHeaderReusableCells, 0);
-    DynamicCellsDataSource<InferenceEvenOddEditableCell>::createCellsWithOffset(
-        HomogeneityTableDimensions::k_numberOfInnerReusableCells,
-        HomogeneityTableDimensions::k_numberOfHeaderReusableCells *
-            sizeof(InferenceEvenOddBufferCell));
-  }
-}
-
-void InputHomogeneityTableCell::destroyCells() {
-  DynamicCellsDataSource<InferenceEvenOddEditableCell>::destroyCells();
-  DynamicCellsDataSource<InferenceEvenOddBufferCell>::destroyCells();
-}
-
 CategoricalController* InputHomogeneityTableCell::categoricalController() {
   return m_inputHomogeneityController;
 }
 
-void InputHomogeneityTableCell::initCell(InferenceEvenOddEditableCell* cell,
-                                         int index) {
+void InputHomogeneityTableCell::initCellType2(
+    InferenceEvenOddEditableCell* cell) {
   cell->setParentResponder(&m_selectableTableView);
   cell->editableTextCell()->textField()->setDelegate(this);
+}
+
+void InputHomogeneityTableCell::createCells() {
+  if (m_cells1 == nullptr) {
+    createCellsWithCount(
+        HomogeneityTableDimensions::k_numberOfHeaderReusableCells,
+        HomogeneityTableDimensions::k_numberOfInnerReusableCells);
+  }
 }
 
 }  // namespace Inference

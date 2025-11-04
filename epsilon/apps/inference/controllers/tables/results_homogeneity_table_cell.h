@@ -9,8 +9,10 @@ namespace Inference {
 
 class ResultsHomogeneityController;
 
-class ResultsHomogeneityTableCell : public CategoricalTableCell,
-                                    public HomogeneityTableDataSource {
+class ResultsHomogeneityTableCell
+    : public CategoricalTableCell,
+      public HomogeneityTableDataSource,
+      public DynamicCellsDataSource<InferenceEvenOddBufferCell> {
  public:
   ResultsHomogeneityTableCell(
       Escher::Responder* parentResponder, HomogeneityTest* test,
@@ -55,10 +57,12 @@ class ResultsHomogeneityTableCell : public CategoricalTableCell,
   int innerNumberOfColumns() const override {
     return m_inference->numberOfDataColumns() + (m_mode == Mode::ExpectedValue);
   }
+
+  Escher::HighlightCell* headerCell(int i) override { return cell(i); }
   Escher::HighlightCell* innerCell(int i) override {
-    return DynamicCellsDataSource<InferenceEvenOddBufferCell>::cell(
-        i + HomogeneityTableDimensions::k_numberOfHeaderReusableCells);
+    return cell(i + HomogeneityTableDimensions::k_numberOfHeaderReusableCells);
   }
+
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;
   CategoricalController* categoricalController() override;

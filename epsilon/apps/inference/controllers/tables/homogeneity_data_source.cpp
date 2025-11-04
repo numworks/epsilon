@@ -4,6 +4,8 @@
 #include <poincare/print.h>
 #include <string.h>
 
+#include "dynamic_cells_data_source.h"
+
 using namespace Escher;
 
 namespace Inference {
@@ -11,11 +13,6 @@ namespace Inference {
 HomogeneityTableDataSource::HomogeneityTableDataSource()
     : m_headerPrefix(I18n::Message::Group),
       m_topLeftCell(Escher::Palette::WallScreenDark) {}
-
-void HomogeneityTableDataSource::initCell(InferenceEvenOddBufferCell* cell,
-                                          int index) {
-  cell->setFont(KDFont::Size::Small);
-}
 
 int HomogeneityTableDataSource::reusableCellCount(int type) const {
   if (type == k_typeOfTopLeftCell) {
@@ -25,16 +22,6 @@ int HomogeneityTableDataSource::reusableCellCount(int type) const {
            HomogeneityTableDimensions::k_numberOfReusableColumns;
   }
   return HomogeneityTableDimensions::k_numberOfInnerReusableCells;
-}
-
-HighlightCell* HomogeneityTableDataSource::reusableCell(int i, int type) {
-  if (type == k_typeOfTopLeftCell) {
-    assert(i == 0);
-    return &m_topLeftCell;
-  } else if (type == k_typeOfHeaderCells) {
-    return cell(i);
-  }
-  return innerCell(i);
 }
 
 int HomogeneityTableDataSource::typeAtLocation(int column, int row) const {
@@ -80,6 +67,16 @@ void HomogeneityTableDataSource::fillCellForLocation(
     assert(type == k_typeOfInnerCells);
     fillInnerCellForLocation(cell, column - 1, row - 1);
   }
+}
+
+HighlightCell* HomogeneityTableDataSource::reusableCell(int i, int type) {
+  if (type == k_typeOfTopLeftCell) {
+    assert(i == 0);
+    return &m_topLeftCell;
+  } else if (type == k_typeOfHeaderCells) {
+    return headerCell(i);
+  }
+  return innerCell(i);
 }
 
 }  // namespace Inference

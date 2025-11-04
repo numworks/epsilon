@@ -8,7 +8,6 @@ ResultGoodnessContributionsTable::ResultGoodnessContributionsTable(
     Escher::Responder* parent, CategoricalController* parentController,
     GoodnessTest* inference, Escher::ScrollViewDelegate* scrollViewDelegate)
     : CategoricalTableCell(parent, this, scrollViewDelegate),
-      DynamicCellsDataSource<InferenceEvenOddBufferCell>(this),
       m_inference(inference),
       m_parentController(parentController) {
   m_selectableTableView.margins()->setBottom(0);

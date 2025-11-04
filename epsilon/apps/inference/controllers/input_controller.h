@@ -25,8 +25,7 @@ using ParameterCell = Escher::MenuCellWithEditableText<Escher::LayoutView,
 
 class InputController : public InferenceController,
                         public Shared::FloatParameterController<double>,
-                        public DynamicCellsDataSource<ParameterCell>,
-                        public DynamicCellsDataSourceDelegate<ParameterCell> {
+                        public DynamicCellsDataSource<ParameterCell> {
   friend class InputStoreController;
 
  public:
@@ -63,7 +62,7 @@ class InputController : public InferenceController,
   KDCoordinate separatorBeforeRow(int row) const override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
 
-  void initCell(ParameterCell, void* cell, int index) override;
+  void initCell(Escher::HighlightCell* cell, int index) override;
   Escher::SelectableTableView* tableView() override {
     return &m_selectableListView;
   }

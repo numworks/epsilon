@@ -16,7 +16,6 @@ InputHomogeneityTableCell::InputHomogeneityTableCell(
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, test,
                                 scrollViewDelegate),
-      DynamicCellsDataSource<InferenceEvenOddEditableCell>(this),
       m_inputHomogeneityController(inputHomogeneityController) {}
 
 void InputHomogeneityTableCell::handleResponderChainEvent(
@@ -76,6 +75,14 @@ void InputHomogeneityTableCell::destroyCells() {
 
 CategoricalController* InputHomogeneityTableCell::categoricalController() {
   return m_inputHomogeneityController;
+}
+
+void InputHomogeneityTableCell::initCell(Escher::HighlightCell* cell,
+                                         int index) {
+  InferenceEvenOddEditableCell* c =
+      static_cast<InferenceEvenOddEditableCell*>(cell);
+  c->setParentResponder(&m_selectableTableView);
+  c->editableTextCell()->textField()->setDelegate(this);
 }
 
 }  // namespace Inference

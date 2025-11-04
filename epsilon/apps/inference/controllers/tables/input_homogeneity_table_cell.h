@@ -33,10 +33,15 @@ class InputHomogeneityTableCell
   }
 
   // DynamicCellsDataSource
+
+  void createCells() override;
+
+  // DynamicCellsDataSource
   Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;
   }
-  void createCells() override;
+
+  void initCell(Escher::HighlightCell* cell, int index) override;
 
  protected:
   // Responder

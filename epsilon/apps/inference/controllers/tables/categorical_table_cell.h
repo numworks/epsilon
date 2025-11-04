@@ -69,11 +69,9 @@ class CategoricalTableCell : public Escher::HighlightCell,
   }
 };
 
-class InputCategoricalTableCell
-    : public CategoricalTableCell,
-      public Shared::MathTextFieldDelegate,
-      public DynamicCellsDataSourceDelegate<InferenceEvenOddEditableCell>,
-      public Shared::ClearColumnHelper {
+class InputCategoricalTableCell : public CategoricalTableCell,
+                                  public Shared::MathTextFieldDelegate,
+                                  public Shared::ClearColumnHelper {
  public:
   InputCategoricalTableCell(Escher::Responder* parentResponder,
                             Escher::TableViewDataSource* dataSource,
@@ -88,9 +86,6 @@ class InputCategoricalTableCell
 
   // Responder
   bool handleEvent(Ion::Events::Event e) override;
-
-  // DynamicCellsDataSourceDelegate<InferenceEvenOddEditableCell>
-  void initCell(InferenceEvenOddEditableCell, void* cell, int index) override;
 
   bool recomputeDimensions();
   virtual bool recomputeDimensionsAndReload(bool forceReloadTable = false,

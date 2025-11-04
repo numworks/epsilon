@@ -36,8 +36,7 @@ constexpr static int k_numberOfHeaderReusableCells =
  * it. Specifically meant for InputHomogeneity and HomogeneityResults. */
 class HomogeneityTableDataSource
     : public CategoricalTableViewDataSource,
-      public DynamicCellsDataSource<InferenceEvenOddBufferCell>,
-      public DynamicCellsDataSourceDelegate<InferenceEvenOddBufferCell> {
+      public DynamicCellsDataSource<InferenceEvenOddBufferCell> {
  public:
   HomogeneityTableDataSource();
 
@@ -54,7 +53,7 @@ class HomogeneityTableDataSource
   }
 
   // DynamicCellsDataSource
-  void initCell(InferenceEvenOddBufferCell, void* cell, int index) override;
+  void initCell(Escher::HighlightCell* cell, int index) override;
 
   constexpr static int k_columnWidth =
       HomogeneityTableDimensions::k_columnWidth;

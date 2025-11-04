@@ -18,8 +18,7 @@ static constexpr int k_numberOfReusableCells =
 class ResultGoodnessContributionsTable
     : public CategoricalTableCell,
       public CategoricalTableViewDataSource,
-      public DynamicCellsDataSource<InferenceEvenOddBufferCell>,
-      public DynamicCellsDataSourceDelegate<InferenceEvenOddBufferCell> {
+      public DynamicCellsDataSource<InferenceEvenOddBufferCell> {
  public:
   ResultGoodnessContributionsTable(
       Escher::Responder* parent, CategoricalController* parentController,

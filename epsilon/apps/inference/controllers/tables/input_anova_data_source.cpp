@@ -8,9 +8,6 @@ using namespace Escher;
 
 namespace Inference {
 
-InputANOVADataSource::InputANOVADataSource()
-    : DynamicCellsDataSource<InferenceEvenOddBufferCell>(this) {}
-
 int InputANOVADataSource::reusableCellCount(int type) const {
   if (type == k_typeOfHeaderCells) {
     return k_maxNumberOfReusableRows + k_numberOfReusableColumns;

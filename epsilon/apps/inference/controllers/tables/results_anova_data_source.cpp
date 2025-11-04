@@ -11,8 +11,7 @@ using namespace Escher;
 namespace Inference {
 
 ResultsANOVADataSource::ResultsANOVADataSource()
-    : DynamicCellsDataSource<SmallFontEvenOddBufferTextCell>(this),
-      m_topLeftCell(Escher::Palette::WallScreenDark) {}
+    : m_topLeftCell(Escher::Palette::WallScreenDark) {}
 
 void ResultsANOVADataSource::createCells() {
   if (DynamicCellsDataSource<SmallFontEvenOddBufferTextCell>::m_cells ==

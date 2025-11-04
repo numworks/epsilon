@@ -32,7 +32,7 @@ void DynamicCellsDataSource<T>::createCellsWithOffset(int numberOfCells,
   }
   m_cells = new (App::app()->buffer(offset)) T[numberOfCells];
   for (int i = 0; i < numberOfCells; i++) {
-    m_delegate->initCell(T(), &m_cells[i], i);
+    initCell(&m_cells[i], i);
   }
   m_numberOfAllocatedCells += numberOfCells;
 }

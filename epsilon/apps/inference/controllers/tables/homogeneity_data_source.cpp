@@ -9,12 +9,11 @@ using namespace Escher;
 namespace Inference {
 
 HomogeneityTableDataSource::HomogeneityTableDataSource()
-    : DynamicCellsDataSource<InferenceEvenOddBufferCell>(this),
-      m_headerPrefix(I18n::Message::Group),
+    : m_headerPrefix(I18n::Message::Group),
       m_topLeftCell(Escher::Palette::WallScreenDark) {}
 
-void HomogeneityTableDataSource::initCell(InferenceEvenOddBufferCell,
-                                          void* cell, int index) {
+void HomogeneityTableDataSource::initCell(Escher::HighlightCell* cell,
+                                          int index) {
   static_cast<InferenceEvenOddBufferCell*>(cell)->setFont(KDFont::Size::Small);
 }
 

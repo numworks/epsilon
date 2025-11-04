@@ -17,7 +17,6 @@ InputANOVATableCell::InputANOVATableCell(
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, test,
                                 scrollViewDelegate),
-      DynamicCellsDataSource<InferenceEvenOddEditableCell>(this),
       m_inputANOVAController(inputANOVAController),
       m_headerPrefix(I18n::Message::Group) {}
 
@@ -100,6 +99,13 @@ void InputANOVATableCell::destroyCells() {
 
 CategoricalController* InputANOVATableCell::categoricalController() {
   return m_inputANOVAController;
+}
+
+void InputANOVATableCell::initCell(Escher::HighlightCell* cell, int index) {
+  InferenceEvenOddEditableCell* c =
+      static_cast<InferenceEvenOddEditableCell*>(cell);
+  c->setParentResponder(&m_selectableTableView);
+  c->editableTextCell()->textField()->setDelegate(this);
 }
 
 }  // namespace Inference

@@ -26,6 +26,9 @@ class InputANOVATableCell
   int innerNumberOfRows() const override { return m_numberOfRows; }
   int innerNumberOfColumns() const override { return m_numberOfColumns; }
 
+  // DynamicCellsDataSource
+  void initCell(Escher::HighlightCell* cell, int index) override;
+
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
 

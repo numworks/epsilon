@@ -133,14 +133,6 @@ bool InputCategoricalTableCell::handleEvent(Ion::Events::Event event) {
   return CategoricalTableCell::handleEvent(event);
 }
 
-void InputCategoricalTableCell::initCell(InferenceEvenOddEditableCell,
-                                         void* cell, int index) {
-  InferenceEvenOddEditableCell* c =
-      static_cast<InferenceEvenOddEditableCell*>(cell);
-  c->setParentResponder(&m_selectableTableView);
-  c->editableTextCell()->textField()->setDelegate(this);
-}
-
 bool InputCategoricalTableCell::deleteSelectedValue() {
   int row = m_selectableTableView.selectedRow(),
       col = m_selectableTableView.selectedColumn();
@@ -229,8 +221,7 @@ DoubleColumnTableCell::DoubleColumnTableCell(
     Escher::Responder* parentResponder, InferenceModel* inference,
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, inference,
-                                scrollViewDelegate),
-      DynamicCellsDataSource<InferenceEvenOddEditableCell>(this) {}
+                                scrollViewDelegate) {}
 
 int DoubleColumnTableCell::reusableCellCount(int type) const {
   if (type == k_typeOfHeaderCells) {

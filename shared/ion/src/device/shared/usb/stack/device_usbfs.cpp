@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <scandium/shared/drivers/usb.h>
 #include <stm32u083/usb.h>
 #include <stm32u083/usb_sram.h>
 
@@ -67,7 +68,12 @@ void Device::poll() {
     m_softDisconnect = true;
   }
 
-  // TODO: USB RESET should be handled as well
+  if (USBFS::ISTR::Read().getRST_DCON()) {
+    // Handle BUS reset event
+    Hal::Usb::SetupAfterBusReset();
+    // The ISTR has rc_w0 flags, this clears RST_DCON only
+    USBFS::ISTR::New(0xFFFFFFFF).setRST_DCON(false).write();
+  }
 }
 
 bool Device::isSoftDisconnected() const { return m_softDisconnect; }

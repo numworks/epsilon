@@ -6,6 +6,7 @@
 
 #include "arithmetic.h"
 #include "k_tree.h"
+#include "poincare/src/memory/tree_helpers.h"
 #include "rational.h"
 #include "sign.h"
 #include "systematic_reduction.h"
@@ -283,18 +284,83 @@ bool Logarithm::ContractLn(Tree* e) {
     a->removeTree();
     return true;
   }
-  /* Note: We could avoid PushAdditionCorrection if inside an exponential.
-   * Adding this special case doesn't seem worth it. */
-  // A?+ ln(B) +C?+ ln(D) +E? = A+C+ ln(BD) +E+ i*(arg(B) + arg(D) - arg(BD))
-  if (PatternMatching::Match(e, KAdd(KA_s, KLn(KB), KC_s, KLn(KD), KE_s),
-                             &ctx)) {
-    const Tree* a = ctx.getTree(KB);
-    const Tree* b = ctx.getTree(KD);
-    TreeRef c = PushAdditionCorrection(a, b);
-    ctx.setNode(KF, c, 1, false);
-    e->moveTreeOverTree(PatternMatching::CreateReduce(
-        KAdd(KA_s, KC_s, KLn(KMult(KB, KD)), KE_s, KF), ctx));
-    c->removeTree();
+
+  /* ... + ln(A) + ... + ln(B) + ... - ln(C) + ... =
+   * ... + ln(AB/C) + i*(arg(A) + arg(B) + arg(1/C) - arg(AB/C)) */
+  if (e->isAdd()) {
+    // Clone e to work at the end of the treestack
+    TreeRef clone = e->cloneTree();
+    int numberOfCloneChildren = clone->numberOfChildren();
+    TreeRef lnChildren = KMult.node<0>->cloneNode();
+    int numberOfLnChildren = 0;
+
+    // Identify ln and -ln children
+    Internal::TreeRef end = pushEndMarker(clone);
+    Internal::Tree* child = clone->nextNode();
+    while (child != end) {
+      if (child->isLn()) {
+        // Extract A from ln(A)
+        child->child(0)->detachTree();
+        child->removeNode();
+        NAry::SetNumberOfChildren(lnChildren, ++numberOfLnChildren);
+        NAry::SetNumberOfChildren(clone, --numberOfCloneChildren);
+      } else if (PatternMatching::MatchReplaceReduce(
+                     child, KMult(-1_e, KLn(KA)), KPow(KA, -1_e))) {
+        // Extract 1/A from -ln(A)
+        child->detachTree();
+        NAry::SetNumberOfChildren(lnChildren, ++numberOfLnChildren);
+        NAry::SetNumberOfChildren(clone, --numberOfCloneChildren);
+      } else {
+        child = child->nextTree();
+      }
+    }
+    removeMarker(end);
+
+    if (numberOfLnChildren == 0 || numberOfLnChildren == 1) {
+      // No possible contraction
+      lnChildren->removeTree();
+      clone->removeTree();
+      return false;
+    }
+
+    /* Push correction by computing either:
+     * - the π-interval for arg(A) + arg(B) + ...
+     * - i*(arg(A) + arg(B) + ... - arg(A*B*...))
+     * Note: We could avoid adding a correction if inside an exponential.
+     * Adding this special case doesn't seem worth it. */
+    TreeRef correction;
+    PiInterval interval = PiInterval::Arg(GetComplexSign(1_e));
+    for (Tree* child : lnChildren->children()) {
+      interval =
+          PiInterval::Add(interval, PiInterval::Arg(GetComplexSign(child)));
+    }
+    if (interval.maxK() == interval.minK()) {
+      // π-interval is known, push correction i*k*2π
+      correction = PushIK2Pi(interval.maxK());
+      // Reduce lnChildren for later
+      SystematicReduction::ShallowReduce(lnChildren);
+    } else {
+      TreeRef argSum = KAdd.node<0>->cloneNode();
+      for (Tree* child : lnChildren->children()) {
+        Tree* arg = KArg->cloneNode();
+        child->cloneTree();
+        SystematicReduction::ShallowReduce(arg);
+        NAry::AddChild(argSum, arg);
+      }
+      SystematicReduction::ShallowReduce(argSum);
+      SystematicReduction::ShallowReduce(lnChildren);
+      correction = PatternMatching::CreateReduce(
+          KMult(KAdd(KA, KMult(-1_e, KArg(KB))), i_e),
+          {.KA = argSum, .KB = lnChildren});
+      argSum->removeTree();
+    }
+
+    lnChildren->cloneNodeAtNode(KLn);
+    SystematicReduction::ShallowReduce(lnChildren);
+    // Add ln product and correction
+    NAry::SetNumberOfChildren(clone, numberOfCloneChildren + 2);
+    SystematicReduction::ShallowReduce(clone);
+    e->moveTreeOverTree(clone);
     return true;
   }
   return false;

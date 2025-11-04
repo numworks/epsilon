@@ -58,7 +58,7 @@ class Zoom {
     m_thresholdForFunctionsExceedingNbOfPoints =
         thresholdForFunctionsExceedingNbOfPoints;
   }
-  /* These four functions will extend both X and Y axes. */
+  /* These five functions will extend both X and Y axes. */
   void fitPoint(Coordinate2D<T> xy, bool flipped = false, T leftMargin = 0.f,
                 T rightMargin = 0.f, T bottomMargin = 0.f, T topMargin = 0.f);
   void fitPointsOfInterest(Function2D<T> f, const void* model,
@@ -70,6 +70,7 @@ class Zoom {
                 bool* finiteNumberOfPoints = nullptr);
   void fitIntersections(Function2D<T> f1, const void* model1, Function2D<T> f2,
                         const void* model2, bool vertical = false);
+  void zoom(T ratio);
   /* Piecewise should be a prepared function. */
   void fitConditions(const Internal::Tree* piecewise,
                      Function2D<T> fullFunction, const void* model,

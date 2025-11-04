@@ -256,6 +256,11 @@ void Zoom<T>::fitIntersections(Function2D<T> f1, const void* model1,
 }
 
 template <typename T>
+void Zoom<T>::zoom(T ratio) {
+  m_interestingRange.zoom(ratio, m_interestingRange.center(), m_maxFloat);
+}
+
+template <typename T>
 void Zoom<T>::fitConditions(const Internal::Tree* piecewise,
                             Function2D<T> fullFunction, const void* model,
                             bool vertical) {

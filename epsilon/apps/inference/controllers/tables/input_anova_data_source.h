@@ -24,8 +24,6 @@ class InputANOVADataSource
   int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
   Escher::HighlightCell* reusableCell(int i, int type) override;
-  void fillCellForLocation(Escher::HighlightCell* cell, int column,
-                           int row) override;
 
   // DynamicCellsDataSource
   void initCell(InferenceEvenOddBufferCell, void* cell, int index) override;
@@ -48,11 +46,6 @@ class InputANOVADataSource
   virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                         int row) = 0;
   virtual Escher::HighlightCell* innerCell(int i) = 0;
-
- private:
-  constexpr static int k_headerTranslationBufferSize = 20;
-
-  I18n::Message m_headerPrefix;
 };
 
 }  // namespace Inference

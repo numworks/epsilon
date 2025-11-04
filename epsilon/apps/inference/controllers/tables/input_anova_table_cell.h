@@ -25,8 +25,10 @@ class InputANOVATableCell
   // CategoricalTableViewDataSource
   int innerNumberOfRows() const override { return m_numberOfRows; }
   int innerNumberOfColumns() const override { return m_numberOfColumns; }
+
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
+
   bool canStoreCellAtLocation(int column, int row) override {
     assert(column >= 0 && row >= 0);
     assert(column < k_maxNumberOfColumns && row < k_maxNumberOfRows);
@@ -44,6 +46,8 @@ class InputANOVATableCell
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
+  constexpr static int k_headerTranslationBufferSize = 20;
+
   // ClearColumnHelper
   size_t fillColumnName(int column, char* buffer) override;
 
@@ -60,7 +64,9 @@ class InputANOVATableCell
 
   // DynamicCellsDataSource
   void destroyCells() override;
+
   InputANOVAController* m_inputANOVAController;
+  I18n::Message m_headerPrefix;
 };
 
 }  // namespace Inference

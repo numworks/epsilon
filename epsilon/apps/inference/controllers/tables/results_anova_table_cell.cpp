@@ -44,11 +44,6 @@ void ResultsANOVATableCell::drawRect(KDContext* ctx, KDRect rect) const {
                 m_selectableTableView.backgroundColor());
 }
 
-void ResultsANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
-                                                int column, int row) {
-  ResultsANOVADataSource::fillCellForLocation(cell, column, row);
-}
-
 void ResultsANOVATableCell::fillInnerCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
   assert(row >= 0 && row < k_numberOfInnerRows);
@@ -76,6 +71,45 @@ void ResultsANOVATableCell::fillInnerCellForLocation(
   }
 
   myCell->setEven(row % 2 == 1);
+}
+
+void ResultsANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
+                                                int column, int row) {
+  int type = typeAtLocation(column, row);
+  if (type == k_typeOfTopLeftCell) {
+    return;
+  }
+  if (type == k_typeOfHeaderCells) {
+    InferenceEvenOddBufferCell* myCell =
+        static_cast<InferenceEvenOddBufferCell*>(cell);
+    if (row == 0) {
+      // Column title
+      assert(column == 1 || column == 2);
+      if (column == 1) {
+        myCell->setText(I18n::translate(I18n::Message::Between));
+      } else {
+        myCell->setText(I18n::translate(I18n::Message::Within));
+      }
+      myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+      myCell->setEven(true);
+    } else {
+      // Row title
+      assert(row == 1 || row == 2 || row == 3);
+      if (row == 1) {
+        myCell->setText(I18n::translate(I18n::Message::SquareSum));
+      } else if (row == 2) {
+        myCell->setText(I18n::translate(I18n::Message::DegreesOfFreedom));
+      } else {
+        myCell->setText(I18n::translate(I18n::Message::MeanSquares));
+      }
+      myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+      myCell->setEven(static_cast<bool>((row + 1) % 2));
+    }
+    myCell->setTextColor(KDColorBlack);
+  } else {
+    assert(type == k_typeOfInnerCells);
+    fillInnerCellForLocation(cell, column - 1, row - 1);
+  }
 }
 
 CategoricalController* ResultsANOVATableCell::categoricalController() {

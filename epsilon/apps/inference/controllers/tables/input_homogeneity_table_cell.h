@@ -41,7 +41,7 @@ class InputHomogeneityTableCell
     return &m_selectableTableView;
   }
 
-  void initCell(Escher::HighlightCell* cell, int index) override;
+  void initCell(InferenceEvenOddEditableCell* cell, int index) override;
 
  protected:
   // Responder

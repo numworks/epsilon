@@ -13,7 +13,8 @@ namespace Inference {
 // This class wraps a TableViewDataSource by adding a Column header around it.
 class InputANOVADataSource
     : public CategoricalTableViewDataSource,
-      public DynamicCellsDataSource<InferenceEvenOddBufferCell> {
+      public DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
+                                          InferenceEvenOddEditableCell> {
  public:
   InputANOVADataSource() = default;
 
@@ -24,7 +25,9 @@ class InputANOVADataSource
   int typeAtLocation(int column, int row) const override;
   Escher::HighlightCell* reusableCell(int i, int type) override;
 
-  // DynamicCellsDataSource
+  // DoubleDynamicCellsDataSource
+
+  void createCells() override;
 
   constexpr static int k_columnWidth = ANOVATableDimensions::k_columnWidth;
   constexpr static int k_numberOfReusableColumns =
@@ -43,7 +46,8 @@ class InputANOVADataSource
   }
   virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                         int row) = 0;
-  virtual Escher::HighlightCell* innerCell(int i) = 0;
+
+  Escher::HighlightCell* innerCell(int i) { return cellType2(i); }
 };
 
 }  // namespace Inference

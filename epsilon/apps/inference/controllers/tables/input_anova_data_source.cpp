@@ -17,7 +17,7 @@ int InputANOVADataSource::reusableCellCount(int type) const {
 
 HighlightCell* InputANOVADataSource::reusableCell(int i, int type) {
   if (type == k_typeOfHeaderCells) {
-    return cell(i);
+    return cellType1(i);
   }
   return innerCell(i);
 }
@@ -29,6 +29,14 @@ int InputANOVADataSource::typeAtLocation(int column, int row) const {
     return k_typeOfHeaderCells;
   }
   return k_typeOfInnerCells;
+}
+
+void InputANOVADataSource::createCells() {
+  if (m_cells1 == nullptr) {
+    createCellsWithCount(
+        ANOVATableDimensions::k_numberOfInputHeaderReusableCells,
+        ANOVATableDimensions::k_numberOfInputInnerReusableCells);
+  }
 }
 
 }  // namespace Inference

@@ -81,31 +81,14 @@ void InputANOVATableCell::fillInnerCellForLocation(Escher::HighlightCell* cell,
                            column, row, tableModel());
 }
 
-void InputANOVATableCell::createCells() {
-  if (DynamicCellsDataSource<InferenceEvenOddBufferCell>::m_cells == nullptr) {
-    DynamicCellsDataSource<InferenceEvenOddBufferCell>::createCellsWithOffset(
-        ANOVATableDimensions::k_numberOfInputHeaderReusableCells, 0);
-    DynamicCellsDataSource<InferenceEvenOddEditableCell>::createCellsWithOffset(
-        ANOVATableDimensions::k_numberOfInputInnerReusableCells,
-        ANOVATableDimensions::k_numberOfInputHeaderReusableCells *
-            sizeof(InferenceEvenOddBufferCell));
-  }
-}
-
-void InputANOVATableCell::destroyCells() {
-  DynamicCellsDataSource<InferenceEvenOddEditableCell>::destroyCells();
-  DynamicCellsDataSource<InferenceEvenOddBufferCell>::destroyCells();
-}
-
 CategoricalController* InputANOVATableCell::categoricalController() {
   return m_inputANOVAController;
 }
 
-void InputANOVATableCell::initCell(Escher::HighlightCell* cell, int index) {
-  InferenceEvenOddEditableCell* c =
-      static_cast<InferenceEvenOddEditableCell*>(cell);
-  c->setParentResponder(&m_selectableTableView);
-  c->editableTextCell()->textField()->setDelegate(this);
+void InputANOVATableCell::initCellType2(InferenceEvenOddEditableCell* cell,
+                                        int index) {
+  cell->setParentResponder(&m_selectableTableView);
+  cell->editableTextCell()->textField()->setDelegate(this);
 }
 
 }  // namespace Inference

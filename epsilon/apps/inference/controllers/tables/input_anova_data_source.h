@@ -26,7 +26,6 @@ class InputANOVADataSource
   Escher::HighlightCell* reusableCell(int i, int type) override;
 
   // DynamicCellsDataSource
-  void initCell(InferenceEvenOddBufferCell, void* cell, int index) override;
 
   constexpr static int k_columnWidth = ANOVATableDimensions::k_columnWidth;
   constexpr static int k_numberOfReusableColumns =

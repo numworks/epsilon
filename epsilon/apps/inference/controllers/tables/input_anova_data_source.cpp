@@ -11,11 +11,6 @@ namespace Inference {
 InputANOVADataSource::InputANOVADataSource()
     : DynamicCellsDataSource<InferenceEvenOddBufferCell>(this) {}
 
-void InputANOVADataSource::initCell(InferenceEvenOddBufferCell, void* cell,
-                                    int index) {
-  static_cast<InferenceEvenOddBufferCell*>(cell)->setFont(KDFont::Size::Small);
-}
-
 int InputANOVADataSource::reusableCellCount(int type) const {
   if (type == k_typeOfHeaderCells) {
     return k_maxNumberOfReusableRows + k_numberOfReusableColumns;

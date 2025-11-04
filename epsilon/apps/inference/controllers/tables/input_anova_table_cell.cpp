@@ -63,10 +63,10 @@ void InputANOVATableCell::fillInnerCellForLocation(Escher::HighlightCell* cell,
 void InputANOVATableCell::createCells() {
   if (DynamicCellsDataSource<InferenceEvenOddBufferCell>::m_cells == nullptr) {
     DynamicCellsDataSource<InferenceEvenOddBufferCell>::createCellsWithOffset(
-        ANOVATableDimensions::k_numberOfInputHeaderCells, 0);
+        ANOVATableDimensions::k_numberOfInputHeaderReusableCells, 0);
     DynamicCellsDataSource<InferenceEvenOddEditableCell>::createCellsWithOffset(
-        ANOVATableDimensions::k_numberOfInputInnerCells,
-        ANOVATableDimensions::k_numberOfInputHeaderCells *
+        ANOVATableDimensions::k_numberOfInputInnerReusableCells,
+        ANOVATableDimensions::k_numberOfInputHeaderReusableCells *
             sizeof(InferenceEvenOddBufferCell));
   }
 }

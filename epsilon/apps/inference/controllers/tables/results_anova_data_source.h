@@ -49,14 +49,16 @@ class ResultsANOVADataSource
     return column == 0 ? ANOVATableDimensions::k_resultTitleColumnWidth
                        : ANOVATableDimensions::k_columnWidth;
   }
-  virtual int innerNumberOfRows() const = 0;
-  virtual int innerNumberOfColumns() const = 0;
   virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                         int row) = 0;
   virtual Escher::HighlightCell* innerCell(int i) = 0;
 
  private:
   constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;
+
+  // CategoricalTableViewDataSource
+  int innerNumberOfRows() const override { return k_numberOfInnerRows; }
+  int innerNumberOfColumns() const override { return k_numberOfInnerColumns; }
 
   Escher::SolidColorCell m_topLeftCell;
 };

@@ -38,10 +38,9 @@ KDCoordinate InputController::nonMemoizedRowHeight(int row) {
   return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
 }
 
-void InputController::initCell(Escher::HighlightCell* cell, int index) {
-  ParameterCell* c = static_cast<ParameterCell*>(cell);
-  c->setParentResponder(&m_selectableListView);
-  c->setDelegate(this);
+void InputController::initCell(ParameterCell* cell, int index) {
+  cell->setParentResponder(&m_selectableListView);
+  cell->setDelegate(this);
 }
 
 static bool shouldDisplaySignificanceLevelForANOVA(

@@ -53,7 +53,7 @@ class HomogeneityTableDataSource
   }
 
   // DynamicCellsDataSource
-  void initCell(Escher::HighlightCell* cell, int index) override;
+  void initCell(InferenceEvenOddBufferCell* cell, int index) override;
 
   constexpr static int k_columnWidth =
       HomogeneityTableDimensions::k_columnWidth;

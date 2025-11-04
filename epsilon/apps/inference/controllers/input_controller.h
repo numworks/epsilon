@@ -62,7 +62,7 @@ class InputController : public InferenceController,
   KDCoordinate separatorBeforeRow(int row) const override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
 
-  void initCell(Escher::HighlightCell* cell, int index) override;
+  void initCell(ParameterCell* cell, int index) override;
   Escher::SelectableTableView* tableView() override {
     return &m_selectableListView;
   }

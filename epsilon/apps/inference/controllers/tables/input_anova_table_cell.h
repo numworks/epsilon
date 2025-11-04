@@ -8,10 +8,8 @@ namespace Inference {
 
 class InputANOVAController;
 
-class InputANOVATableCell
-    : public InputCategoricalTableCell,
-      public InputANOVADataSource,
-      public DynamicCellsDataSource<InferenceEvenOddEditableCell> {
+class InputANOVATableCell : public InputCategoricalTableCell,
+                            public InputANOVADataSource {
  public:
   InputANOVATableCell(Escher::Responder* parentResponder, ANOVATest* test,
                       InputANOVAController* inputANOVAController,
@@ -26,9 +24,6 @@ class InputANOVATableCell
   int innerNumberOfRows() const override { return m_numberOfRows; }
   int innerNumberOfColumns() const override { return m_numberOfColumns; }
 
-  // DynamicCellsDataSource
-  void initCell(Escher::HighlightCell* cell, int index) override;
-
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
 
@@ -38,11 +33,12 @@ class InputANOVATableCell
     return column >= 0 && row > 0;
   }
 
-  // DynamicCellsDataSource
+  // DoubleDynamicCellsDataSource
   Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;
   }
-  void createCells() override;
+
+  void initCellType2(InferenceEvenOddEditableCell* cell, int index) override;
 
  protected:
   // Responder
@@ -57,16 +53,9 @@ class InputANOVATableCell
   // CategoricalTableViewDataSource
   int relativeColumn(int column) const override { return column; }
 
-  // ANOVATableViewDataSource
-  Escher::HighlightCell* innerCell(int i) override {
-    return DynamicCellsDataSource<InferenceEvenOddEditableCell>::cell(i);
-  }
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;
   CategoricalController* categoricalController() override;
-
-  // DynamicCellsDataSource
-  void destroyCells() override;
 
   InputANOVAController* m_inputANOVAController;
   I18n::Message m_headerPrefix;

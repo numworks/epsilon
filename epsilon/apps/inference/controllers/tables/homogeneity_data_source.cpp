@@ -12,9 +12,9 @@ HomogeneityTableDataSource::HomogeneityTableDataSource()
     : m_headerPrefix(I18n::Message::Group),
       m_topLeftCell(Escher::Palette::WallScreenDark) {}
 
-void HomogeneityTableDataSource::initCell(Escher::HighlightCell* cell,
+void HomogeneityTableDataSource::initCell(InferenceEvenOddBufferCell* cell,
                                           int index) {
-  static_cast<InferenceEvenOddBufferCell*>(cell)->setFont(KDFont::Size::Small);
+  cell->setFont(KDFont::Size::Small);
 }
 
 int HomogeneityTableDataSource::reusableCellCount(int type) const {

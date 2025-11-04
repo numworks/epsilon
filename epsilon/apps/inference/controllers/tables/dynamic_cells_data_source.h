@@ -21,7 +21,7 @@ class DynamicCellsDataSourceDestructor {
   virtual Escher::SelectableTableView* dynamicCellsTableView() = 0;
 };
 
-template <typename T>
+template <typename CellType>
 class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   /* Cells are created at in the App::buffer. If not overriden, the cells are
    * created on the left-edge of the buffer. 'createCells' can be overriden to
@@ -30,23 +30,69 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
  public:
   DynamicCellsDataSource() : m_cells(nullptr) {}
   ~DynamicCellsDataSource();
-  Escher::HighlightCell* cell(int i);
+
+  CellType* cell(int i) {
+    assert(m_cells);
+    return &m_cells[i];
+  }
+
+  virtual void initCell(CellType* cell, int index) {}
+
   virtual void createCells() = 0;
 
-  virtual void initCell(Escher::HighlightCell* cell, int index) {}
-  virtual Escher::SelectableTableView* tableView() = 0;
-
   void destroyCells() override;
+
+  virtual Escher::SelectableTableView* tableView() = 0;
   Escher::SelectableTableView* dynamicCellsTableView() override {
     return tableView();
   }
 
  protected:
   void createCellsWithOffset(int numberOfCells, size_t offset);
-  T* m_cells;
+  CellType* m_cells;
 
  private:
   int m_numberOfAllocatedCells = 0;
+};
+
+template <typename CellType1, typename CellType2>
+class DoubleDynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
+ public:
+  DoubleDynamicCellsDataSource() : m_cells1(nullptr), m_cells2(nullptr) {}
+  ~DoubleDynamicCellsDataSource();
+
+  virtual void createCells() = 0;
+
+  void createCellsWithCount(int numberOfCellsType1, int numberOfCellsType2);
+
+  CellType1* cellType1(int i) {
+    assert(m_cells1);
+    return &m_cells1[i];
+  }
+  CellType2* cellType2(int i) {
+    assert(m_cells2);
+    return &m_cells2[i];
+  }
+
+  virtual void initCellType1(CellType1* cell, int index) {}
+  virtual void initCellType2(CellType2* cell, int index) {}
+
+  void destroyCells() override;
+
+  virtual Escher::SelectableTableView* tableView() = 0;
+  Escher::SelectableTableView* dynamicCellsTableView() override {
+    return tableView();
+  }
+
+ protected:
+  void createCellsType1(int numberOfCells);
+  void createCellsType2(int numberOfCells);
+  CellType1* m_cells1;
+  CellType2* m_cells2;
+
+ private:
+  int m_numberOfAllocatedCells1 = 0;
+  int m_numberOfAllocatedCells2 = 0;
 };
 
 }  // namespace Inference

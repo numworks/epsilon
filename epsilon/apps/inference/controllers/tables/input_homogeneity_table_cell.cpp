@@ -77,12 +77,10 @@ CategoricalController* InputHomogeneityTableCell::categoricalController() {
   return m_inputHomogeneityController;
 }
 
-void InputHomogeneityTableCell::initCell(Escher::HighlightCell* cell,
+void InputHomogeneityTableCell::initCell(InferenceEvenOddEditableCell* cell,
                                          int index) {
-  InferenceEvenOddEditableCell* c =
-      static_cast<InferenceEvenOddEditableCell*>(cell);
-  c->setParentResponder(&m_selectableTableView);
-  c->editableTextCell()->textField()->setDelegate(this);
+  cell->setParentResponder(&m_selectableTableView);
+  cell->editableTextCell()->textField()->setDelegate(this);
 }
 
 }  // namespace Inference

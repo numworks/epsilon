@@ -1,7 +1,7 @@
 UnitAndConstant = "Eenheden en constanten"
 UnitTimeMenu = "Tijd"
 UnitTimeSecond = "Seconde"
-UnitTimeSecondMilli = "MilliSeconde"
+UnitTimeSecondMilli = "Milliseconde"
 UnitTimeSecondMicro = "Microseconde"
 UnitTimeSecondNano = "Nanoseconde"
 UnitTimeMinute = "Minuut"

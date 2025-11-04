@@ -85,8 +85,7 @@ CategoricalController* InputANOVATableCell::categoricalController() {
   return m_inputANOVAController;
 }
 
-void InputANOVATableCell::initCellType2(InferenceEvenOddEditableCell* cell,
-                                        int index) {
+void InputANOVATableCell::initCellType2(InferenceEvenOddEditableCell* cell) {
   cell->setParentResponder(&m_selectableTableView);
   cell->editableTextCell()->textField()->setDelegate(this);
 }

@@ -27,7 +27,7 @@ void DynamicCellsDataSource<CellType>::createCellsWithOffset(int numberOfCells,
   }
   m_cells = new (App::app()->buffer(offset)) CellType[numberOfCells];
   for (int i = 0; i < numberOfCells; i++) {
-    initCell(&m_cells[i], i);
+    initCell(&m_cells[i]);
   }
   m_numberOfAllocatedCells += numberOfCells;
 }
@@ -71,7 +71,7 @@ void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCellsType1(
   App::app()->cleanBuffer(this);
   m_cells1 = new (App::app()->buffer(0)) CellType1[numberOfCells];
   for (int i = 0; i < numberOfCells; i++) {
-    initCellType1(&m_cells1[i], i);
+    initCellType1(&m_cells1[i]);
   }
   m_numberOfAllocatedCells1 += numberOfCells;
 }
@@ -88,13 +88,12 @@ void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCellsType2(
       new (App::app()->buffer(sizeof(CellType1) * m_numberOfAllocatedCells1))
           CellType2[numberOfCells];
   for (int i = 0; i < numberOfCells; i++) {
-    initCellType2(&m_cells2[i], i);
+    initCellType2(&m_cells2[i]);
   }
   m_numberOfAllocatedCells2 += numberOfCells;
 }
 
 template <typename CellType1, typename CellType2>
-
 void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCellsWithCount(
     int numberOfCellsType1, int numberOfCellsType2) {
   createCellsType1(numberOfCellsType1);

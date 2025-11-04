@@ -7,7 +7,6 @@
 #include <algorithm>
 
 #include "categorical_table_view_data_source.h"
-#include "dynamic_cells_data_source.h"
 #include "inference/models/homogeneity_test.h"
 
 namespace Inference {
@@ -34,9 +33,7 @@ constexpr static int k_numberOfHeaderReusableCells =
 
 /* This class wraps a TableViewDataSource by adding a Row & Column header around
  * it. Specifically meant for InputHomogeneity and HomogeneityResults. */
-class HomogeneityTableDataSource
-    : public CategoricalTableViewDataSource,
-      public DynamicCellsDataSource<InferenceEvenOddBufferCell> {
+class HomogeneityTableDataSource : public CategoricalTableViewDataSource {
  public:
   HomogeneityTableDataSource();
 
@@ -51,9 +48,6 @@ class HomogeneityTableDataSource
   bool canSelectCellAtLocation(int column, int row) override {
     return typeAtLocation(column, row) != k_typeOfTopLeftCell;
   }
-
-  // DynamicCellsDataSource
-  void initCell(InferenceEvenOddBufferCell* cell, int index) override;
 
   constexpr static int k_columnWidth =
       HomogeneityTableDimensions::k_columnWidth;
@@ -72,6 +66,8 @@ class HomogeneityTableDataSource
   }
   virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                         int row) = 0;
+
+  virtual Escher::HighlightCell* headerCell(int i) = 0;
   virtual Escher::HighlightCell* innerCell(int i) = 0;
 
  private:

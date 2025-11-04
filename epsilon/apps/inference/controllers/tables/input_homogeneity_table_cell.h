@@ -1,6 +1,7 @@
 #pragma once
 
 #include "categorical_table_cell.h"
+#include "dynamic_cells_data_source.h"
 #include "homogeneity_data_source.h"
 #include "inference/models/homogeneity_test.h"
 
@@ -11,7 +12,8 @@ class InputHomogeneityController;
 class InputHomogeneityTableCell
     : public InputCategoricalTableCell,
       public HomogeneityTableDataSource,
-      public DynamicCellsDataSource<InferenceEvenOddEditableCell> {
+      public DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
+                                          InferenceEvenOddEditableCell> {
  public:
   InputHomogeneityTableCell(
       Escher::Responder* parentResponder, HomogeneityTest* test,
@@ -32,16 +34,15 @@ class InputHomogeneityTableCell
     return column > 0 && row > 0;
   }
 
-  // DynamicCellsDataSource
+  // DoubleDynamicCellsDataSource
 
   void createCells() override;
 
-  // DynamicCellsDataSource
   Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;
   }
 
-  void initCell(InferenceEvenOddEditableCell* cell, int index) override;
+  void initCellType2(InferenceEvenOddEditableCell* cell) override;
 
  protected:
   // Responder
@@ -54,16 +55,13 @@ class InputHomogeneityTableCell
   // CategoricalTableViewDataSource
   int relativeColumn(int column) const override { return column - 1; }
 
-  // HomogeneityTableViewDataSource
-  Escher::HighlightCell* innerCell(int i) override {
-    return DynamicCellsDataSource<InferenceEvenOddEditableCell>::cell(i);
-  }
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;
   CategoricalController* categoricalController() override;
 
-  // DynamicCellsDataSource
-  void destroyCells() override;
+  Escher::HighlightCell* headerCell(int i) override { return cellType1(i); }
+  Escher::HighlightCell* innerCell(int i) override { return cellType2(i); }
+
   InputHomogeneityController* m_inputHomogeneityController;
 };
 

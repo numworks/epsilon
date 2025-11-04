@@ -32,10 +32,8 @@ void ResultsANOVATableCell::handleResponderChainEvent(
       selectRow(1);
       selectColumn(1);
     }
-    CategoricalTableCell::handleResponderChainEvent(event);
-  } else {
-    CategoricalTableCell::handleResponderChainEvent(event);
   }
+  CategoricalTableCell::handleResponderChainEvent(event);
 }
 
 void ResultsANOVATableCell::drawRect(KDContext* ctx, KDRect rect) const {

@@ -23,7 +23,7 @@ class InputHomogeneityTableCell
     return this;
   }
 
-  // DataSource
+  // CategoricalTableViewDataSource
   int innerNumberOfRows() const override { return m_numberOfRows; }
   int innerNumberOfColumns() const override { return m_numberOfColumns; }
   void fillCellForLocation(Escher::HighlightCell* cell, int column,

@@ -42,6 +42,9 @@ class CategoricalTableViewDataSource : public Escher::TableViewDataSource {
       2;
 
   KDCoordinate nonMemoizedRowHeight(int row) override { return k_rowHeight; }
+
+  virtual int innerNumberOfRows() const { return numberOfRows(); }
+  virtual int innerNumberOfColumns() const { return numberOfColumns(); }
 };
 
 }  // namespace Inference

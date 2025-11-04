@@ -42,9 +42,6 @@ class ResultsANOVATableCell : public CategoricalTableCell,
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
-  // ANOVATableViewDataSource
-  int innerNumberOfRows() const override { return k_numberOfInnerRows; }
-  int innerNumberOfColumns() const override { return k_numberOfInnerColumns; }
   Escher::HighlightCell* innerCell(int i) override {
     return cell(i + ANOVATableDimensions::k_numberOfResultsHeaderCells);
   }

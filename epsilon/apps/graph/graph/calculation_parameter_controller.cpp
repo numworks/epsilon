@@ -211,11 +211,14 @@ bool CalculationParameterController::shouldDisplayIntersectionCell() const {
 
 bool CalculationParameterController::shouldDisplayIntersectionRegionCell()
     const {
-  // Intersection is handled between all active inequality functions
+  // Intersection region is handled between all active inequality functions
+  if (function()->properties().isEquality()) {
+    return false;
+  }
   ContinuousFunctionStore* store = &App::app()->functionStore();
-  // At least two inequalities functions are needed.
-  return !function()->properties().isEquality() &&
-         store->numberOfInequalityFunctions() > 1;
+  int numberOfInequalities = store->numberOfInequalityFunctions();
+  // At least two inequalities functions are needed. Limit to 8.
+  return numberOfInequalities > 1 && numberOfInequalities <= 8;
 }
 
 bool CalculationParameterController::shouldDisplayAreaCell() const {

@@ -37,7 +37,7 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
     return &m_cells[i];
   }
 
-  virtual void initCell(CellType* cell, int index) {}
+  virtual void initCell(CellType* cell) {}
 
   virtual void createCells() = 0;
 
@@ -77,8 +77,8 @@ class DoubleDynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
     return &m_cells2[i];
   }
 
-  virtual void initCellType1(CellType1* cell, int index) {}
-  virtual void initCellType2(CellType2* cell, int index) {}
+  virtual void initCellType1(CellType1* cell) {}
+  virtual void initCellType2(CellType2* cell) {}
 
   void destroyCells() override;
 
@@ -88,12 +88,13 @@ class DoubleDynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   }
 
  protected:
-  void createCellsType1(int numberOfCells);
-  void createCellsType2(int numberOfCells);
   CellType1* m_cells1;
   CellType2* m_cells2;
 
  private:
+  void createCellsType1(int numberOfCells);
+  void createCellsType2(int numberOfCells);
+
   int m_numberOfAllocatedCells1 = 0;
   int m_numberOfAllocatedCells2 = 0;
 };

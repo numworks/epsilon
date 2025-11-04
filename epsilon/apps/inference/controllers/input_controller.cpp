@@ -38,7 +38,7 @@ KDCoordinate InputController::nonMemoizedRowHeight(int row) {
   return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
 }
 
-void InputController::initCell(ParameterCell* cell, int index) {
+void InputController::initCell(ParameterCell* cell) {
   cell->setParentResponder(&m_selectableListView);
   cell->setDelegate(this);
 }

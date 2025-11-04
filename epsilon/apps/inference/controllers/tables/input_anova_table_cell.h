@@ -38,7 +38,7 @@ class InputANOVATableCell : public InputCategoricalTableCell,
     return &m_selectableTableView;
   }
 
-  void initCellType2(InferenceEvenOddEditableCell* cell, int index) override;
+  void initCellType2(InferenceEvenOddEditableCell* cell) override;
 
  protected:
   // Responder

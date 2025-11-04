@@ -29,8 +29,7 @@ class ResultsANOVADataSource
   int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
   Escher::HighlightCell* reusableCell(int i, int type) override;
-  void fillCellForLocation(Escher::HighlightCell* cell, int column,
-                           int row) override;
+
   bool canSelectCellAtLocation(int column, int row) override {
     return typeAtLocation(column, row) != k_typeOfTopLeftCell;
   }
@@ -45,6 +44,8 @@ class ResultsANOVADataSource
       ANOVATableDimensions::k_numberOfResultInnerRows;
 
  protected:
+  constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;
+
   KDCoordinate nonMemoizedColumnWidth(int column) override {
     return column == 0 ? ANOVATableDimensions::k_resultTitleColumnWidth
                        : ANOVATableDimensions::k_columnWidth;
@@ -54,8 +55,6 @@ class ResultsANOVADataSource
   virtual Escher::HighlightCell* innerCell(int i) = 0;
 
  private:
-  constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;
-
   // CategoricalTableViewDataSource
   int innerNumberOfRows() const override { return k_numberOfInnerRows; }
   int innerNumberOfColumns() const override { return k_numberOfInnerColumns; }

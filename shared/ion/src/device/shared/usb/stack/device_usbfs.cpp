@@ -71,6 +71,8 @@ void Device::poll() {
   if (USBFS::ISTR::Read().getRST_DCON()) {
     // Handle BUS reset event
     Hal::Usb::SetupAfterBusReset();
+    m_addressToSet = 0;
+    m_ep0.reset();
     // The ISTR has rc_w0 flags, this clears RST_DCON only
     USBFS::ISTR::New(0xFFFFFFFF).setRST_DCON(false).write();
   }

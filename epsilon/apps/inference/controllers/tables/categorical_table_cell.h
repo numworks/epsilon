@@ -160,6 +160,8 @@ class DoubleColumnTableCell
     return &m_selectableTableView;
   }
 
+  void initCell(InferenceEvenOddEditableCell* cell) override;
+
   void createCells() override;
 
  private:

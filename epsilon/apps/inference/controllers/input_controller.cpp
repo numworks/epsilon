@@ -21,7 +21,6 @@ InputController::InputController(Escher::StackViewController* parent,
                                  InferenceModel* inference)
     : InferenceController(inference, controllerContainer),
       FloatParameterController<double>(parent, &m_messageView),
-      DynamicCellsDataSource<ParameterCell>(this),
       m_significanceCell(&m_selectableListView, this),
       m_messageView(I18n::Message::InputStatistics, k_messageFormat) {
   m_okButton.setMessage(I18n::Message::Next);
@@ -39,7 +38,7 @@ KDCoordinate InputController::nonMemoizedRowHeight(int row) {
   return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
 }
 
-void InputController::initCell(ParameterCell, void* cell, int index) {
+void InputController::initCell(Escher::HighlightCell* cell, int index) {
   ParameterCell* c = static_cast<ParameterCell*>(cell);
   c->setParentResponder(&m_selectableListView);
   c->setDelegate(this);

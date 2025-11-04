@@ -13,10 +13,9 @@ namespace Inference {
 // This class wraps a TableViewDataSource by adding a Column header around it.
 class InputANOVADataSource
     : public CategoricalTableViewDataSource,
-      public DynamicCellsDataSource<InferenceEvenOddBufferCell>,
-      public DynamicCellsDataSourceDelegate<InferenceEvenOddBufferCell> {
+      public DynamicCellsDataSource<InferenceEvenOddBufferCell> {
  public:
-  InputANOVADataSource();
+  InputANOVADataSource() = default;
 
   // TableViewDataSource
   int numberOfRows() const override { return innerNumberOfRows() + 1; }

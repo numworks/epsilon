@@ -17,9 +17,7 @@ namespace Inference {
  * it. */
 class ResultsANOVADataSource
     : public CategoricalTableViewDataSource,
-      public DynamicCellsDataSource<Escher::SmallFontEvenOddBufferTextCell>,
-      public DynamicCellsDataSourceDelegate<
-          Escher::SmallFontEvenOddBufferTextCell> {
+      public DynamicCellsDataSource<Escher::SmallFontEvenOddBufferTextCell> {
  public:
   ResultsANOVADataSource();
 

@@ -15,9 +15,6 @@ using InferenceEvenOddBufferCell = Escher::FloatEvenOddBufferTextCell<
 using InferenceEvenOddEditableCell = Escher::EvenOddEditableTextCell<
     Poincare::Preferences::ShortNumberOfSignificantDigits>;
 
-template <typename T>
-class DynamicCellsDataSourceDelegate;
-
 class DynamicCellsDataSourceDestructor {
  public:
   virtual void destroyCells() = 0;
@@ -31,30 +28,25 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
    * create different types of cells with a specific offset in the buffer using
    * 'createCellsWithOffset'.   */
  public:
-  DynamicCellsDataSource(DynamicCellsDataSourceDelegate<T>* delegate)
-      : m_cells(nullptr), m_delegate(delegate) {}
+  DynamicCellsDataSource() : m_cells(nullptr) {}
   ~DynamicCellsDataSource();
   Escher::HighlightCell* cell(int i);
   virtual void createCells() = 0;
+
+  virtual void initCell(Escher::HighlightCell* cell, int index) {}
+  virtual Escher::SelectableTableView* tableView() = 0;
+
   void destroyCells() override;
   Escher::SelectableTableView* dynamicCellsTableView() override {
-    return m_delegate->tableView();
+    return tableView();
   }
 
  protected:
   void createCellsWithOffset(int numberOfCells, size_t offset);
   T* m_cells;
-  DynamicCellsDataSourceDelegate<T>* m_delegate;
 
  private:
   int m_numberOfAllocatedCells = 0;
-};
-
-template <typename T>
-class DynamicCellsDataSourceDelegate {
- public:
-  virtual void initCell(T, void* cell, int index) {}
-  virtual Escher::SelectableTableView* tableView() = 0;
 };
 
 }  // namespace Inference

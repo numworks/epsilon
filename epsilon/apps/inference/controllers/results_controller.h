@@ -22,8 +22,7 @@ using ResultCell = Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
 
 class ResultsController : public InferenceController,
                           public Escher::ListWithTopAndBottomController,
-                          public DynamicCellsDataSource<ResultCell>,
-                          public DynamicCellsDataSourceDelegate<ResultCell> {
+                          public DynamicCellsDataSource<ResultCell> {
  public:
   ResultsController(Escher::Responder* parent, InferenceModel* inference,
                     ControllerContainer* controllerContainer,
@@ -50,7 +49,7 @@ class ResultsController : public InferenceController,
   }
   KDCoordinate nonMemoizedRowHeight(int row) override;
 
-  // DynamicCellsDataSourceDelegate
+  // DynamicCellsDataSource
   Escher::SelectableListView* tableView() override {
     return &m_selectableListView;
   }

@@ -258,4 +258,9 @@ void DoubleColumnTableCell::createCells() {
   }
 }
 
+void DoubleColumnTableCell::initCell(InferenceEvenOddEditableCell* cell) {
+  cell->setParentResponder(&m_selectableTableView);
+  cell->editableTextCell()->textField()->setDelegate(this);
+}
+
 }  // namespace Inference

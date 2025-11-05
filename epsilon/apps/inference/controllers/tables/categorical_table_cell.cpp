@@ -236,7 +236,7 @@ HighlightCell* DoubleColumnTableCell::reusableCell(int i, int type) {
     assert(i < k_maxNumberOfColumns);
     return headerCell(i);
   }
-  return cell(i);
+  return dynamicCell(i);
 }
 
 void DoubleColumnTableCell::fillCellForLocation(Escher::HighlightCell* cell,

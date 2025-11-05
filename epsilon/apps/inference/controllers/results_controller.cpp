@@ -104,7 +104,7 @@ void ResultsController::fillCellForRow(HighlightCell* cell, int row) {
 
 HighlightCell* ResultsController::reusableCell(int index, int type) {
   if (type == k_resultCellType) {
-    return cell(index);
+    return dynamicCell(index);
   }
   assert(type == k_buttonCellType);
   return &m_next;

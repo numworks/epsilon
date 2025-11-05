@@ -4,7 +4,6 @@
 
 #include "inference/controllers/results_anova_controller.h"
 #include "inference/models/anova_test.h"
-#include "results_anova_data_source.h"
 
 using namespace Escher;
 

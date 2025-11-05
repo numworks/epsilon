@@ -4,9 +4,8 @@
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/solid_color_cell.h>
 
-#include "anova_table_dimensions.h"
 #include "categorical_table_view_data_source.h"
-#include "inference/models/anova_test.h"
+#include "table_dimensions.h"
 
 namespace Inference {
 
@@ -14,9 +13,10 @@ namespace Inference {
 
 /* This class wraps a TableViewDataSource by adding a Row & Column header around
  * it. */
-class ResultsANOVADataSource : public CategoricalTableViewDataSource {
+class OneColumnOneRowHeaderTableDataSource
+    : public CategoricalTableViewDataSource {
  public:
-  ResultsANOVADataSource();
+  OneColumnOneRowHeaderTableDataSource();
 
   // TableViewDataSource
   int numberOfRows() const override { return innerNumberOfRows() + 1; }
@@ -29,28 +29,13 @@ class ResultsANOVADataSource : public CategoricalTableViewDataSource {
     return typeAtLocation(column, row) != k_typeOfTopLeftCell;
   }
 
-  constexpr static int k_numberOfInnerColumns =
-      ANOVATableDimensions::k_resultBetweenWithinShape.inner.columns;
-  constexpr static int k_numberOfInnerRows =
-      ANOVATableDimensions::k_resultBetweenWithinShape.inner.rows;
-
  protected:
   constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;
-
-  KDCoordinate nonMemoizedColumnWidth(int column) override {
-    return column == 0 ? ANOVATableDimensions::k_resultTitleColumnWidth
-                       : ANOVATableDimensions::k_columnWidth;
-  }
 
   virtual ReusableCellCounts reusableCellCounts() const = 0;
 
   virtual Escher::HighlightCell* reusableHeaderCell(int i) = 0;
   virtual Escher::HighlightCell* reusableInnerCell(int i) = 0;
-
- private:
-  // CategoricalTableViewDataSource
-  int innerNumberOfRows() const override { return k_numberOfInnerRows; }
-  int innerNumberOfColumns() const override { return k_numberOfInnerColumns; }
 
   Escher::SolidColorCell m_topLeftCell;
 };

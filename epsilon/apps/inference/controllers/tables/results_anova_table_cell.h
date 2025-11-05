@@ -4,7 +4,7 @@
 #include "dynamic_cells_data_source.h"
 #include "inference/controllers/tables/anova_table_dimensions.h"
 #include "inference/models/anova_test.h"
-#include "results_anova_data_source.h"
+#include "one_column_one_row_header_table_data_source.h"
 
 namespace Inference {
 
@@ -12,9 +12,14 @@ class ResultsANOVAController;
 
 class ResultsANOVATableCell
     : public CategoricalTableCell,
-      public ResultsANOVADataSource,
+      public OneColumnOneRowHeaderTableDataSource,
       public DynamicCellsDataSource<Escher::SmallFontEvenOddBufferTextCell> {
  public:
+  constexpr static int k_numberOfInnerColumns =
+      ANOVATableDimensions::k_resultBetweenWithinShape.inner.columns;
+  constexpr static int k_numberOfInnerRows =
+      ANOVATableDimensions::k_resultBetweenWithinShape.inner.rows;
+
   ResultsANOVATableCell(Escher::Responder* parentResponder, ANOVATest* test,
                         ResultsANOVAController* resultsTableController,
                         Escher::ScrollViewDelegate* scrollViewDelegate);
@@ -61,10 +66,19 @@ class ResultsANOVATableCell
     return dynamicCell(i + reusableCellCounts().categories.header);
   }
 
+  KDCoordinate nonMemoizedColumnWidth(int column) override {
+    return column == 0 ? ANOVATableDimensions::k_resultTitleColumnWidth
+                       : ANOVATableDimensions::k_columnWidth;
+  }
+
  private:
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row);
   CategoricalController* categoricalController() override;
+
+  // CategoricalTableViewDataSource
+  int innerNumberOfRows() const override { return k_numberOfInnerRows; }
+  int innerNumberOfColumns() const override { return k_numberOfInnerColumns; }
 
   ANOVATest* m_inference;
   ResultsANOVAController* m_resultsTableController;

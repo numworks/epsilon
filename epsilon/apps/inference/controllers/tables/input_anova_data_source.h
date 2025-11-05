@@ -5,16 +5,12 @@
 
 #include "anova_table_dimensions.h"
 #include "categorical_table_view_data_source.h"
-#include "dynamic_cells_data_source.h"
 #include "inference/models/anova_test.h"
 
 namespace Inference {
 
 // This class wraps a TableViewDataSource by adding a Column header around it.
-class InputANOVADataSource
-    : public CategoricalTableViewDataSource,
-      public DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
-                                          InferenceEvenOddEditableCell> {
+class InputANOVADataSource : public CategoricalTableViewDataSource {
  public:
   InputANOVADataSource() = default;
 
@@ -24,15 +20,6 @@ class InputANOVADataSource
   int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
   Escher::HighlightCell* reusableCell(int i, int type) override;
-
-  // DoubleDynamicCellsDataSource
-
-  int numberOfDynamicCellsType1() override {
-    return ANOVATableDimensions::k_numberOfInputHeaderReusableCells;
-  }
-  int numberOfDynamicCellsType2() override {
-    return ANOVATableDimensions::k_numberOfInputInnerReusableCells;
-  }
 
   constexpr static int k_columnWidth = ANOVATableDimensions::k_columnWidth;
   constexpr static int k_numberOfReusableColumns =
@@ -52,7 +39,8 @@ class InputANOVADataSource
   virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                         int row) = 0;
 
-  Escher::HighlightCell* innerCell(int i) { return cellType2(i); }
+  virtual Escher::HighlightCell* headerCell(int i) = 0;
+  virtual Escher::HighlightCell* innerCell(int i) = 0;
 };
 
 }  // namespace Inference

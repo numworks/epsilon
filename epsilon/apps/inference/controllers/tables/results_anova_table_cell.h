@@ -10,8 +10,10 @@ namespace Inference {
 
 class ResultsANOVAController;
 
-class ResultsANOVATableCell : public CategoricalTableCell,
-                              public ResultsANOVADataSource {
+class ResultsANOVATableCell
+    : public CategoricalTableCell,
+      public ResultsANOVADataSource,
+      public DynamicCellsDataSource<Escher::SmallFontEvenOddBufferTextCell> {
  public:
   ResultsANOVATableCell(Escher::Responder* parentResponder, ANOVATest* test,
                         ResultsANOVAController* resultsTableController,
@@ -37,14 +39,21 @@ class ResultsANOVATableCell : public CategoricalTableCell,
     return &m_selectableTableView;
   }
 
+  int numberOfDynamicCells() override {
+    return ANOVATableDimensions::k_numberOfResultsHeaderCells +
+           ANOVATableDimensions::k_numberOfResultsInnerCells;
+  }
+
  protected:
   // Responder
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
- private:
+  Escher::HighlightCell* headerCell(int i) override { return dynamicCell(i); }
   Escher::HighlightCell* innerCell(int i) override {
     return dynamicCell(i + ANOVATableDimensions::k_numberOfResultsHeaderCells);
   }
+
+ private:
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;
   CategoricalController* categoricalController() override;

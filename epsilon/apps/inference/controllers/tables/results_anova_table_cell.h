@@ -57,7 +57,7 @@ class ResultsANOVATableCell
 
  private:
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
-                                int row) override;
+                                int row);
   CategoricalController* categoricalController() override;
 
   ANOVATest* m_inference;

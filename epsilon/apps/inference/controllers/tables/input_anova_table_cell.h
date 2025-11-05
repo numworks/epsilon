@@ -73,7 +73,7 @@ class InputANOVATableCell
   int relativeColumn(int column) const override { return column; }
 
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
-                                int row) override;
+                                int row);
   CategoricalController* categoricalController() override;
 
   InputANOVAController* m_inputANOVAController;

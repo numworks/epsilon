@@ -4,7 +4,7 @@
 
 #include "inference/controllers/inference_controller.h"
 #include "inference/controllers/tables/categorical_controller.h"
-#include "tables/results_anova_table_cell.h"
+#include "tables/results_between_within_table_cell.h"
 
 namespace Inference {
 
@@ -22,11 +22,11 @@ class ResultsANOVAController : public CategoricalController {
 
  private:
   CategoricalTableCell* categoricalTableCell() override {
-    return &m_resultsANOVATable;
+    return &m_resultsBetweenWithinTable;
   }
   void createDynamicCells() override;
 
-  ResultsANOVATableCell m_resultsANOVATable;
+  ResultsBetweenWithinTableCell m_resultsBetweenWithinTable;
 };
 
 }  // namespace Inference

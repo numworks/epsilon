@@ -10,7 +10,7 @@ namespace Inference {
 
 class ResultsANOVAController;
 
-class ResultsANOVATableCell
+class ResultsBetweenWithinTableCell
     : public CategoricalTableCell,
       public OneHeaderColumnOneHeaderRowTableDataSource,
       public DynamicCellsDataSource<Escher::SmallFontEvenOddBufferTextCell> {
@@ -20,9 +20,10 @@ class ResultsANOVATableCell
   constexpr static int k_numberOfInnerRows =
       ANOVATableDimensions::k_resultBetweenWithinShape.inner.rows;
 
-  ResultsANOVATableCell(Escher::Responder* parentResponder, ANOVATest* test,
-                        ResultsANOVAController* resultsTableController,
-                        Escher::ScrollViewDelegate* scrollViewDelegate);
+  ResultsBetweenWithinTableCell(Escher::Responder* parentResponder,
+                                ANOVATest* test,
+                                ResultsANOVAController* resultsTableController,
+                                Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // View
   void drawRect(KDContext* ctx, KDRect rect) const override;

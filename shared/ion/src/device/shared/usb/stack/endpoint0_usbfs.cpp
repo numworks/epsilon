@@ -187,7 +187,14 @@ void Endpoint0::clearForOutTransactions(uint16_t wLength) {
   m_transferBufferLength = 0;
   m_state = (wLength > k_maxPacketSize) ? State::DataOut : State::LastDataOut;
   assert(CHEP0R::GetSTATRX() == Status::NAK);
-  CHEP0R::SetSTATTX(Status::Stall);
+  /* From RM0503 36.5.2 Control transfers in Device mode:
+   * At all data stages before the last, the unused direction must be set to
+   * STALL.  While enabling the last data stage, the opposite direction must be
+   * set to NAK, so that, if the host reverses the transfer direction (to
+   * perform the status stage) immediately, it is kept waiting for the
+   * completion of the control operation. */
+  CHEP0R::SetSTATTX(m_state == State::LastDataOut ? Status::NAK
+                                                  : Status::Stall);
   CHEP0R::SetSTATRX(Status::Valid);
 }
 

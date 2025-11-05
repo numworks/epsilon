@@ -1,9 +1,10 @@
 #pragma once
 
+#include "anova_table_dimensions.h"
 #include "categorical_table_cell.h"
 #include "dynamic_cells_data_source.h"
 #include "inference/models/anova_test.h"
-#include "input_anova_data_source.h"
+#include "one_column_header_table_data_source.h"
 
 namespace Inference {
 
@@ -11,10 +12,21 @@ class InputANOVAController;
 
 class InputANOVATableCell
     : public InputCategoricalTableCell,
-      public InputANOVADataSource,
+      public OneColumnHeaderTableDataSource,
       public DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
                                           InferenceEvenOddEditableCell> {
  public:
+  constexpr static int k_maxNumberOfColumns = ANOVATest::k_maxNumberOfColumns;
+  constexpr static int k_maxNumberOfInnerRows = ANOVATest::k_maxNumberOfRows;
+  constexpr static int k_maxNumberOfRows = k_maxNumberOfInnerRows + 1;
+
+  constexpr static int k_maxNumberOfReusableRows =
+      ANOVATableDimensions::k_numberOfInputInnerRows;
+  constexpr static int k_numberOfReusableColumns =
+      ANOVATableDimensions::k_numberOfInputColumns;
+
+  constexpr static int k_columnWidth = ANOVATableDimensions::k_columnWidth;
+
   InputANOVATableCell(Escher::Responder* parentResponder, ANOVATest* test,
                       InputANOVAController* inputANOVAController,
                       Escher::ScrollViewDelegate* scrollViewDelegate);
@@ -27,6 +39,14 @@ class InputANOVATableCell
   // CategoricalTableViewDataSource
   int innerNumberOfRows() const override { return m_numberOfRows; }
   int innerNumberOfColumns() const override { return m_numberOfColumns; }
+
+  int maxNumberOfRows() const override { return k_maxNumberOfRows; }
+  int maxNumberOfColumn() const override { return k_maxNumberOfColumns; }
+
+  KDCoordinate nonMemoizedColumnWidth(int column) override {
+    assert(column >= 0 && column < k_maxNumberOfColumns);
+    return k_columnWidth;
+  }
 
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
@@ -42,13 +62,6 @@ class InputANOVATableCell
     return &m_selectableTableView;
   }
 
-  int numberOfDynamicCellsType1() const override {
-    return ANOVATableDimensions::k_numberOfInputHeaderReusableCells;
-  }
-  int numberOfDynamicCellsType2() const override {
-    return ANOVATableDimensions::k_numberOfInputInnerReusableCells;
-  }
-
   void initCellType2(InferenceEvenOddEditableCell* cell) override;
 
  protected:
@@ -56,11 +69,34 @@ class InputANOVATableCell
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // DataSource
+  int numberOfReusableRows() const override {
+    return k_maxNumberOfReusableRows;
+  }
+  int numberOfReusableColumns(int type) const override {
+    return k_numberOfReusableColumns;
+  }
+
+  int numberOfReusableHeaderCells() const override {
+    return ANOVATableDimensions::k_numberOfInputHeaderReusableCells;
+  }
+  int numberOfReusableInnerCells() const override {
+    return ANOVATableDimensions::k_numberOfInputInnerReusableCells;
+  }
+
   Escher::HighlightCell* reusableHeaderCell(int i) override {
     return cellType1(i);
   }
   Escher::HighlightCell* reusableInnerCell(int i) override {
     return cellType2(i);
+  }
+
+  // DoubleDynamicCellsDataSource
+
+  int numberOfDynamicCellsType1() const override {
+    return numberOfReusableHeaderCells();
+  }
+  int numberOfDynamicCellsType2() const override {
+    return numberOfReusableInnerCells();
   }
 
  private:

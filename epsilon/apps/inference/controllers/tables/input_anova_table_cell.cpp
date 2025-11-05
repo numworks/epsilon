@@ -5,7 +5,6 @@
 
 #include "inference/controllers/input_anova_controller.h"
 #include "inference/controllers/tables/anova_table_dimensions.h"
-#include "input_anova_data_source.h"
 
 using namespace Escher;
 

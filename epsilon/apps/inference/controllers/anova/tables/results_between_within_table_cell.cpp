@@ -11,11 +11,11 @@ namespace Inference {
 
 ResultsBetweenWithinTableCell::ResultsBetweenWithinTableCell(
     Escher::Responder* parentResponder, ANOVATest* test,
-    ResultsANOVAController* resultsTableController,
+    BetweenWithinController* betweenWithinTableController,
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : CategoricalTableCell(parentResponder, this, scrollViewDelegate),
       m_inference(test),
-      m_resultsTableController(resultsTableController) {
+      m_betweenWithinTableController(betweenWithinTableController) {
   m_selectableTableView.margins()->setBottom(Metric::CellSeparatorThickness);
 }
 
@@ -113,7 +113,7 @@ void ResultsBetweenWithinTableCell::fillCellForLocation(
 }
 
 CategoricalController* ResultsBetweenWithinTableCell::categoricalController() {
-  return m_resultsTableController;
+  return m_betweenWithinTableController;
 }
 
 }  // namespace Inference

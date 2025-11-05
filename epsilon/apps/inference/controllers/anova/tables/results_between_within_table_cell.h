@@ -8,7 +8,7 @@
 
 namespace Inference {
 
-class ResultsANOVAController;
+class BetweenWithinController;
 
 class ResultsBetweenWithinTableCell
     : public CategoricalTableCell,
@@ -20,10 +20,10 @@ class ResultsBetweenWithinTableCell
   constexpr static int k_numberOfInnerRows =
       ANOVATableDimensions::k_resultBetweenWithinShape.inner.rows;
 
-  ResultsBetweenWithinTableCell(Escher::Responder* parentResponder,
-                                ANOVATest* test,
-                                ResultsANOVAController* resultsTableController,
-                                Escher::ScrollViewDelegate* scrollViewDelegate);
+  ResultsBetweenWithinTableCell(
+      Escher::Responder* parentResponder, ANOVATest* test,
+      BetweenWithinController* betweenWithinTableController,
+      Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // View
   void drawRect(KDContext* ctx, KDRect rect) const override;
@@ -82,7 +82,7 @@ class ResultsBetweenWithinTableCell
   CategoricalController* categoricalController() override;
 
   ANOVATest* m_inference;
-  ResultsANOVAController* m_resultsTableController;
+  BetweenWithinController* m_betweenWithinTableController;
 };
 
 }  // namespace Inference

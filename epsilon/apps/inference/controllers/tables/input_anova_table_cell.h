@@ -66,11 +66,9 @@ class InputANOVATableCell
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // DataSource
-  int numberOfReusableRows() const override {
-    return ANOVATableDimensions::k_inputShape.reusable.dimensions.rows;
-  }
-  int numberOfReusableColumns() const override {
-    return ANOVATableDimensions::k_inputShape.reusable.dimensions.columns;
+
+  ReusableCellCounts reusableCellCounts() const override {
+    return ANOVATableDimensions::k_inputShape.reusable;
   }
 
   Escher::HighlightCell* reusableHeaderCell(int i) override {
@@ -83,10 +81,10 @@ class InputANOVATableCell
   // DoubleDynamicCellsDataSource
 
   int numberOfDynamicCellsType1() const override {
-    return numberOfReusableHeaderCells();
+    return reusableCellCounts().categories.header;
   }
   int numberOfDynamicCellsType2() const override {
-    return numberOfReusableInnerCells();
+    return reusableCellCounts().categories.inner;
   }
 
  private:

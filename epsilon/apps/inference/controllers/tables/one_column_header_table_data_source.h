@@ -4,6 +4,7 @@
 #include <escher/even_odd_buffer_text_cell.h>
 
 #include "categorical_table_view_data_source.h"
+#include "table_dimensions.h"
 
 namespace Inference {
 
@@ -23,13 +24,7 @@ class OneColumnHeaderTableDataSource : public CategoricalTableViewDataSource {
   virtual int maxNumberOfColumn() const = 0;
 
  protected:
-  virtual int numberOfReusableRows() const = 0;
-  virtual int numberOfReusableColumns() const = 0;
-
-  int numberOfReusableHeaderCells() const { return numberOfReusableColumns(); }
-  int numberOfReusableInnerCells() const {
-    return numberOfReusableColumns() * numberOfReusableRows();
-  }
+  virtual ReusableCellCounts reusableCellCounts() const = 0;
 
   virtual Escher::HighlightCell* reusableHeaderCell(int i) = 0;
   virtual Escher::HighlightCell* reusableInnerCell(int i) = 0;

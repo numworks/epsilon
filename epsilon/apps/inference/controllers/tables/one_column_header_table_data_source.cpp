@@ -10,9 +10,9 @@ namespace Inference {
 
 int OneColumnHeaderTableDataSource::reusableCellCount(int type) const {
   if (type == k_typeOfHeaderCells) {
-    return numberOfReusableHeaderCells();
+    return reusableCellCounts().categories.header;
   }
-  return numberOfReusableInnerCells();
+  return reusableCellCounts().categories.inner;
 }
 
 HighlightCell* OneColumnHeaderTableDataSource::reusableCell(int i, int type) {

@@ -3,7 +3,7 @@
 #include <poincare/print.h>
 #include <shared/column_parameter_controller.h>
 
-#include "inference/controllers/input_anova_controller.h"
+#include "inference/controllers/anova/input_anova_controller.h"
 
 using namespace Escher;
 

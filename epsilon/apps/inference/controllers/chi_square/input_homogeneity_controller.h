@@ -1,7 +1,7 @@
 #pragma once
 
 #include "inference/controllers/tables/categorical_controller.h"
-#include "inference/controllers/tables/input_homogeneity_table_cell.h"
+#include "tables/input_homogeneity_table_cell.h"
 
 namespace Inference {
 

@@ -1,10 +1,19 @@
 SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   app.cpp \
+  controllers/anova/input_anova_controller.cpp \
+  controllers/anova/results_anova_controller.cpp \
+  controllers/anova/tables/results_anova_table_cell.cpp \
+  controllers/anova/tables/input_anova_table_cell.cpp \
   controllers/chi_square/categorical_type_controller.cpp \
   controllers/chi_square/input_goodness_controller.cpp \
   controllers/chi_square/input_homogeneity_controller.cpp \
   controllers/chi_square/results_goodness_controller.cpp \
   controllers/chi_square/results_homogeneity_controller.cpp \
+  controllers/chi_square/tables/homogeneity_data_source.cpp \
+  controllers/chi_square/tables/results_goodness_table_cell.cpp \
+  controllers/chi_square/tables/results_homogeneity_table_cell.cpp \
+  controllers/chi_square/tables/input_goodness_table_cell.cpp \
+  controllers/chi_square/tables/input_homogeneity_table_cell.cpp \
   controllers/confidence_interval/interval_conclusion_view.cpp \
   controllers/confidence_interval/interval_curve_view.cpp \
   controllers/confidence_interval/interval_graph_controller.cpp \
@@ -15,15 +24,8 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/tables/categorical_controller.cpp \
   controllers/tables/categorical_table_cell.cpp \
   controllers/tables/dynamic_cells_data_source.cpp \
-  controllers/tables/homogeneity_data_source.cpp \
-  controllers/tables/input_anova_table_cell.cpp \
-  controllers/tables/input_goodness_table_cell.cpp \
-  controllers/tables/input_homogeneity_table_cell.cpp \
   controllers/tables/one_header_row_table_data_source.cpp \
   controllers/tables/one_header_column_one_header_row_table_data_source.cpp \
-  controllers/tables/results_anova_table_cell.cpp \
-  controllers/tables/results_goodness_table_cell.cpp \
-  controllers/tables/results_homogeneity_table_cell.cpp \
   controllers/significance_test/hypothesis_controller.cpp \
   controllers/significance_test/hypothesis_editable_controller.cpp \
   controllers/significance_test/hypothesis_display_only_controller.cpp \
@@ -34,9 +36,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/significance_test/zoom_hint_view.cpp \
   controllers/comparison_operator_popup_data_source.cpp \
   controllers/dataset_controller.cpp \
-  controllers/input_anova_controller.cpp \
   controllers/input_controller.cpp \
-  controllers/results_anova_controller.cpp \
   controllers/results_controller.cpp \
   controllers/test_controller.cpp \
   controllers/type_controller.cpp \

@@ -1,10 +1,10 @@
 #pragma once
 
 #include "anova_table_dimensions.h"
-#include "categorical_table_cell.h"
-#include "dynamic_cells_data_source.h"
+#include "inference/controllers/tables/categorical_table_cell.h"
+#include "inference/controllers/tables/dynamic_cells_data_source.h"
+#include "inference/controllers/tables/one_header_column_one_header_row_table_data_source.h"
 #include "inference/models/anova_test.h"
-#include "one_header_column_one_header_row_table_data_source.h"
 
 namespace Inference {
 

@@ -1,19 +1,15 @@
-#include "results_anova_data_source.h"
+#include "one_column_one_row_header_table_data_source.h"
 
 #include <escher/even_odd_editable_text_cell.h>
-#include <poincare/print.h>
-#include <string.h>
-
-#include "anova_table_dimensions.h"
 
 using namespace Escher;
 
 namespace Inference {
 
-ResultsANOVADataSource::ResultsANOVADataSource()
+OneColumnOneRowHeaderTableDataSource::OneColumnOneRowHeaderTableDataSource()
     : m_topLeftCell(Escher::Palette::WallScreenDark) {}
 
-int ResultsANOVADataSource::reusableCellCount(int type) const {
+int OneColumnOneRowHeaderTableDataSource::reusableCellCount(int type) const {
   if (type == k_typeOfTopLeftCell) {
     return 1;
   } else if (type == k_typeOfHeaderCells) {
@@ -22,7 +18,8 @@ int ResultsANOVADataSource::reusableCellCount(int type) const {
   return reusableCellCounts().categories.inner;
 }
 
-HighlightCell* ResultsANOVADataSource::reusableCell(int i, int type) {
+HighlightCell* OneColumnOneRowHeaderTableDataSource::reusableCell(int i,
+                                                                  int type) {
   if (type == k_typeOfTopLeftCell) {
     assert(i == 0);
     return &m_topLeftCell;
@@ -32,7 +29,8 @@ HighlightCell* ResultsANOVADataSource::reusableCell(int i, int type) {
   return reusableInnerCell(i);
 }
 
-int ResultsANOVADataSource::typeAtLocation(int column, int row) const {
+int OneColumnOneRowHeaderTableDataSource::typeAtLocation(int column,
+                                                         int row) const {
   if (column == 0 && row == 0) {
     return k_typeOfTopLeftCell;
   }

@@ -22,14 +22,15 @@ constexpr static TableShape k_inputShape = TableShape{
         .columns = std::min(Ion::Display::Width / k_columnWidth + 2,
                             ANOVATest::k_maxNumberOfColumns)})};
 
-constexpr static int k_numberOfResultInnerRows = 3;
-constexpr static int k_numberOfResultInnerColumns = 2;
-constexpr static int k_numberOfResultsInnerCells =
-    k_numberOfResultInnerRows * k_numberOfResultInnerColumns;
-constexpr static int k_numberOfResultsHeaderCells =
-    k_numberOfResultInnerColumns + k_numberOfResultInnerRows;
-
 constexpr static int k_resultTitleColumnWidth = 200;
+
+constexpr static TableShape k_resultBetweenWithinShape =
+    TableShape{.inner = InnerTableDimensions{.rows = 3, .columns = 2},
+               .reusable = ReusableCountsOneRowOneColumnHeader(
+                   /* The "reusable" dimension is the same as the "normal"
+                      dimension because the dimension is small.*/
+                   ReusableCellDimensions{.rows = 3, .columns = 2})};
+
 }  // namespace ANOVATableDimensions
 
 }  // namespace Inference

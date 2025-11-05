@@ -40,19 +40,25 @@ class ResultsANOVATableCell
   }
 
   int numberOfDynamicCells() const override {
-    return ANOVATableDimensions::k_numberOfResultsHeaderCells +
-           ANOVATableDimensions::k_numberOfResultsInnerCells;
+    return reusableCellCounts().categories.header +
+           reusableCellCounts().categories.inner;
   }
 
  protected:
   // Responder
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
+  // DataSource
+
+  ReusableCellCounts reusableCellCounts() const override {
+    return ANOVATableDimensions::k_resultBetweenWithinShape.reusable;
+  }
+
   Escher::HighlightCell* reusableHeaderCell(int i) override {
     return dynamicCell(i);
   }
   Escher::HighlightCell* reusableInnerCell(int i) override {
-    return dynamicCell(i + ANOVATableDimensions::k_numberOfResultsHeaderCells);
+    return dynamicCell(i + reusableCellCounts().categories.header);
   }
 
  private:

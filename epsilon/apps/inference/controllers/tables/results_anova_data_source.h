@@ -30,9 +30,9 @@ class ResultsANOVADataSource : public CategoricalTableViewDataSource {
   }
 
   constexpr static int k_numberOfInnerColumns =
-      ANOVATableDimensions::k_numberOfResultInnerColumns;
+      ANOVATableDimensions::k_resultBetweenWithinShape.inner.columns;
   constexpr static int k_numberOfInnerRows =
-      ANOVATableDimensions::k_numberOfResultInnerRows;
+      ANOVATableDimensions::k_resultBetweenWithinShape.inner.rows;
 
  protected:
   constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;
@@ -41,6 +41,8 @@ class ResultsANOVADataSource : public CategoricalTableViewDataSource {
     return column == 0 ? ANOVATableDimensions::k_resultTitleColumnWidth
                        : ANOVATableDimensions::k_columnWidth;
   }
+
+  virtual ReusableCellCounts reusableCellCounts() const = 0;
 
   virtual Escher::HighlightCell* reusableHeaderCell(int i) = 0;
   virtual Escher::HighlightCell* reusableInnerCell(int i) = 0;

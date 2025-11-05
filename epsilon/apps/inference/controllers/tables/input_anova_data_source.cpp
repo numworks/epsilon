@@ -17,9 +17,9 @@ int InputANOVADataSource::reusableCellCount(int type) const {
 
 HighlightCell* InputANOVADataSource::reusableCell(int i, int type) {
   if (type == k_typeOfHeaderCells) {
-    return headerCell(i);
+    return reusableHeaderCell(i);
   }
-  return innerCell(i);
+  return reusableInnerCell(i);
 }
 
 int InputANOVADataSource::typeAtLocation(int column, int row) const {

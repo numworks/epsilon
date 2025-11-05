@@ -67,8 +67,8 @@ class HomogeneityTableDataSource : public CategoricalTableViewDataSource {
   virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                         int row) = 0;
 
-  virtual Escher::HighlightCell* headerCell(int i) = 0;
-  virtual Escher::HighlightCell* innerCell(int i) = 0;
+  virtual Escher::HighlightCell* reusableHeaderCell(int i) = 0;
+  virtual Escher::HighlightCell* reusableInnerCell(int i) = 0;
 
  private:
   constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;

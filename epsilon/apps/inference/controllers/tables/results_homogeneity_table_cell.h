@@ -61,8 +61,10 @@ class ResultsHomogeneityTableCell
     return m_inference->numberOfDataColumns() + (m_mode == Mode::ExpectedValue);
   }
 
-  Escher::HighlightCell* headerCell(int i) override { return dynamicCell(i); }
-  Escher::HighlightCell* innerCell(int i) override {
+  Escher::HighlightCell* reusableHeaderCell(int i) override {
+    return dynamicCell(i);
+  }
+  Escher::HighlightCell* reusableInnerCell(int i) override {
     return dynamicCell(
         i + HomogeneityTableDimensions::k_numberOfHeaderReusableCells);
   }

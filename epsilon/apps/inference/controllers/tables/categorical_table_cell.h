@@ -172,7 +172,7 @@ class DoubleColumnTableCell
   }
   // CategoricalTableViewDataSource
   int relativeColumn(int column) const override { return column; }
-  virtual Escher::HighlightCell* headerCell(int index) = 0;
+  virtual Escher::HighlightCell* reusableHeaderCell(int index) = 0;
 };
 
 }  // namespace Inference

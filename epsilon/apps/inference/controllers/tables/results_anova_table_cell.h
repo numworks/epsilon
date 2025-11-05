@@ -48,8 +48,10 @@ class ResultsANOVATableCell
   // Responder
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
-  Escher::HighlightCell* headerCell(int i) override { return dynamicCell(i); }
-  Escher::HighlightCell* innerCell(int i) override {
+  Escher::HighlightCell* reusableHeaderCell(int i) override {
+    return dynamicCell(i);
+  }
+  Escher::HighlightCell* reusableInnerCell(int i) override {
     return dynamicCell(i + ANOVATableDimensions::k_numberOfResultsHeaderCells);
   }
 

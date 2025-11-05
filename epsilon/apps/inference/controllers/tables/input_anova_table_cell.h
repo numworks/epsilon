@@ -16,14 +16,11 @@ class InputANOVATableCell
       public DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
                                           InferenceEvenOddEditableCell> {
  public:
-  constexpr static int k_maxNumberOfColumns = ANOVATest::k_maxNumberOfColumns;
-  constexpr static int k_maxNumberOfInnerRows = ANOVATest::k_maxNumberOfRows;
+  constexpr static int k_maxNumberOfColumns =
+      ANOVATableDimensions::k_inputShape.inner.columns;
+  constexpr static int k_maxNumberOfInnerRows =
+      ANOVATableDimensions::k_inputShape.inner.rows;
   constexpr static int k_maxNumberOfRows = k_maxNumberOfInnerRows + 1;
-
-  constexpr static int k_maxNumberOfReusableRows =
-      ANOVATableDimensions::k_numberOfInputInnerRows;
-  constexpr static int k_numberOfReusableColumns =
-      ANOVATableDimensions::k_numberOfInputColumns;
 
   constexpr static int k_columnWidth = ANOVATableDimensions::k_columnWidth;
 
@@ -70,17 +67,10 @@ class InputANOVATableCell
 
   // DataSource
   int numberOfReusableRows() const override {
-    return k_maxNumberOfReusableRows;
+    return ANOVATableDimensions::k_inputShape.reusable.dimensions.rows;
   }
-  int numberOfReusableColumns(int type) const override {
-    return k_numberOfReusableColumns;
-  }
-
-  int numberOfReusableHeaderCells() const override {
-    return ANOVATableDimensions::k_numberOfInputHeaderReusableCells;
-  }
-  int numberOfReusableInnerCells() const override {
-    return ANOVATableDimensions::k_numberOfInputInnerReusableCells;
+  int numberOfReusableColumns() const override {
+    return ANOVATableDimensions::k_inputShape.reusable.dimensions.columns;
   }
 
   Escher::HighlightCell* reusableHeaderCell(int i) override {

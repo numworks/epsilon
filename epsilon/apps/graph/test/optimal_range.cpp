@@ -89,7 +89,7 @@ void quiz_assert_optimal_range_is(
 QUIZ_CASE(graph_optimal_range) {
   quiz_assert_optimal_range_is(
       {"y=35000*1.06^(x-1)", "y=40000+2500(x-1)"},
-      Range2D<float>(-167.873, 12.7, -382182.6, 69400));
+      Range2D<float>(-278.0457, 122.9105, -382182.6, 69400));
 
   /* Following tests have been imported from screenshot testing */
 
@@ -99,7 +99,7 @@ QUIZ_CASE(graph_optimal_range) {
 
   // grapher_autozoom_2
   quiz_assert_optimal_range_is({"y=1000", "y=1001", "y=1003"},
-                               Range2D<float>(-0.005, 0.005, 1000, 1003));
+                               Range2D<float>(-0.0111, 0.0111, 1000, 1003));
 
   // grapher_autozoom_3
   quiz_assert_optimal_range_is({"y=e^(x)", "y=x", "y=ln(x)"},
@@ -107,7 +107,7 @@ QUIZ_CASE(graph_optimal_range) {
 
   // grapher_autozoom_4
   quiz_assert_optimal_range_is({"y=sin(x)", "y=cos(x)"},
-                               Range2D<float>(-7.85742, 7.85742, -1, 1));
+                               Range2D<float>(-7.85742, 7.85742, -2.22, 2.22));
 
   // grapher_autozoom_5
   quiz_assert_optimal_range_is({"y=x", "x^2+y^2+x×y+x+y=0", "r1(θ)=cos(θ)"},
@@ -115,7 +115,7 @@ QUIZ_CASE(graph_optimal_range) {
 
   // grapher_autozoom_6
   quiz_assert_optimal_range_is({"y=x^3"},
-                               Range2D<float>(-10, 10, -163.115, 163.116));
+                               Range2D<float>(-22.2, 22.2, -163.115, 163.116));
 
   // grapher_autozoom_7
   quiz_assert_optimal_range_is(
@@ -125,15 +125,15 @@ QUIZ_CASE(graph_optimal_range) {
   // grapher_autozoom_8
   quiz_assert_optimal_range_is(
       {"y=(x-2)^2+3", "y=(-x+9)^2-5"},
-      Range2D<float>(2.00148, 11.2441, -4.99998, 54.6362));
+      Range2D<float>(-3.636548, 16.88217, -4.99998, 54.6362));
 
   // grapher_autozoom_9
   quiz_assert_optimal_range_is({"y=x^2+1", "y=x^2-2"},
-                               Range2D<float>(-4.71031, 4.71031, -2, 3.0047));
+                               Range2D<float>(-3.143241, 3.143241, -2, 3.0047));
 
   // grapher_autozoom_10
   quiz_assert_optimal_range_is({"f(t)=(2×t+1,t^3-2×t+5)"},
-                               Range2D<float>(-399, 401, -7999595, 7999605),
+                               Range2D<float>(-887, 889, -7999595, 7999605),
                                {Range1D<float>(-200, 200)});
 
   // grapher_autozoom_11
@@ -147,37 +147,38 @@ QUIZ_CASE(graph_optimal_range) {
 
   // grapher_autozoom_13
   quiz_assert_optimal_range_is(
-      {"y=35×x+75"}, Range2D<float>(-3.216797, 1.072266, -37.58789, 112.5));
+      {"y=35×x+75"}, Range2D<float>(-5.833125, 3.688594, -37.58789, 112.5));
 
   // grapher_autozoom_14
   quiz_assert_optimal_range_is(
-      {"y=1/35×x+75"}, Range2D<float>(-3941.319, 1313.773, -37.60911, 112.5));
+      {"y=1/35×x+75"}, Range2D<float>(-3941.319, 1313.773, -129.2422, 204));
 
   // grapher_autozoom_15
   quiz_assert_optimal_range_is(
-      {"y=x^3+6×x+5"}, Range2D<float>(-10.7609, 9.23909, -397.16, 212.637));
+      {"y=x^3+6×x+5"}, Range2D<float>(-22.96091, 21.43909, -397.16, 212.637));
 
   // grapher_autozoom_16
-  quiz_assert_optimal_range_is({"y=x", "y=√(x)-1", "y=x^2+2.3"},
-                               Range2D<float>(0, 7.39197, -1, 36.6899));
+  quiz_assert_optimal_range_is(
+      {"y=x", "y=√(x)-1", "y=x^2+2.3"},
+      Range2D<float>(-4.509105, 11.90108, -1, 36.6899));
 
   // grapher_autozoom_piecewise_1
   quiz_assert_optimal_range_is({"f(x)=piecewise(-x+102,x<99,3,x<101,x-97)"},
                                Range2D<float>(93.0712, 103.465, 3, 8.52197));
 
   // grapher_autozoom_piecewise_2
-  quiz_assert_optimal_range_is(
-      {"f(x)=1+piecewise(2,x<100,4)"},
-      Range2D<float>(93.478, 103.059, 1.45516, 6.54484));
+  quiz_assert_optimal_range_is({"f(x)=1+piecewise(2,x<100,4)"},
+                               Range2D<float>(93.478, 103.059, 1.78, 6.22));
 
   // grapher_autozoom_trig_intersections
-  quiz_assert_optimal_range_is({"y=-10×cos(x/12)+13", "y=10×cos(x)+13"},
-                               Range2D<float>(-113.191, 113.191, 3, 23));
+  quiz_assert_optimal_range_is(
+      {"y=-10×cos(x/12)+13", "y=10×cos(x)+13"},
+      Range2D<float>(-113.191, 113.191, -9.200001, 35.2));
 
   // grapher_autozoom_large_intersection
   quiz_assert_optimal_range_is(
       {"y=x^3-3×x^2-3×x+8", "y=1000"},
-      Range2D<float>(-1.66992, 11.1953, -2.65685, 1000));
+      Range2D<float>(-9.519616, 19.04383, -2.65685, 1000));
 
   // grapher_autozoom_forced_x_range
   quiz_assert_optimal_range_is({"y=x^2"}, Range2D<float>(-10, 10, 0, 10.625));
@@ -194,26 +195,30 @@ QUIZ_CASE(graph_optimal_range) {
 
   // Autozoom on interval
   quiz_assert_optimal_range_is({"f(x)=√((4-7x)^2+1)"},
-                               Range2D<float>(0, 3, 1.000002, 17.02939),
+                               Range2D<float>(-1.83, 4.83, 1.000002, 17.02939),
                                {Range1D<float>(0, 3)});
   quiz_assert_optimal_range_is({"f(t)=(3/t,t^3*exp(-2t))"},
-                               Range2D<float>(0.5, 3, 0.00132715, 0.1680314),
+                               Range2D<float>(0.5, 3, -0.1003624, 0.269721),
                                {Range1D<float>(1, 6)});
   quiz_assert_optimal_range_is({"f(t)=(2tan(t)+1,2sec(t)^2+3)"},
                                Range2D<float>(-3.037914, 6.093452, 5, 9.851038),
                                {Range1D<float>(-0.8, 1)});
   // TODO: Improve xMax
-  quiz_assert_optimal_range_is(
-      {"y=cos(x)"}, Range2D<float>(0, 5.372952e7, -0.9999649, 0.9999729),
-      {Range1D<float>(0, INFINITY)});
+  quiz_assert_optimal_range_is({"y=cos(x)"},
+                               Range2D<float>(0, 5.372952e7, -2.829928, 1.61),
+                               {Range1D<float>(0, INFINITY)});
 
   // Lines
   quiz_assert_optimal_range_is(
-      {"y=6x+120"}, Range2D<float>(-30.03664, 10.01221, -60.21983, 180));
+      {"y=6x+120"}, Range2D<float>(-54.46644, 34.44201, -60.21983, 180));
   quiz_assert_optimal_range_is(
       {"y=0.6x+120"}, Range2D<float>(-326.1865, 125.9607, -60.20319, 180));
   quiz_assert_optimal_range_is(
       {"y=x+90", "y=-x-15"}, Range2D<float>(-242.691, 152.6031, -67.5, 142.5));
+  quiz_assert_optimal_range_is({"y=10x"},
+                               Range2D<float>(-22.2, 22.2, -100, 100));
+  quiz_assert_optimal_range_is({"y=0.01x"},
+                               Range2D<float>(-10, 10, -0.222, 0.222));
 }
 
 }  // namespace Graph

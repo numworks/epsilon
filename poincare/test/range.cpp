@@ -105,18 +105,20 @@ QUIZ_CASE(pcj_range_1d_extend) {
 
 void assert_range_zooms_to(Range1D<float> r1, float r, float c,
                            Range1D<float> r2) {
-  r1.zoom(r, c);
+  r1.zoom(r, c, Range1D<float>::k_maxFloat);
   quiz_assert(OMG::EqualOrBothNan(r1.min(), r2.min()));
   quiz_assert(OMG::EqualOrBothNan(r1.max(), r2.max()));
 }
 
 QUIZ_CASE(pcj_range_1d_zoom) {
-  assert_range_zooms_to(Range1D<float>(NAN, NAN), NAN, NAN,
-                        Range1D<float>(NAN, NAN));
-  assert_range_zooms_to(Range1D<float>(NAN, NAN), 2, 1.23,
-                        Range1D<float>(NAN, NAN));
-  assert_range_zooms_to(Range1D<float>(0, 0), 2, 0, Range1D<float>(0, 0));
-  assert_range_zooms_to(Range1D<float>(0, 0), 2, 1, Range1D<float>(-1, -1));
+  // Stretched if too small
+  assert_range_zooms_to(Range1D<float>(0, 0), 2, 0,
+                        Range1D<float>(-0.005, 0.005));
+  assert_range_zooms_to(Range1D<float>(0, 0), 2, 1,
+                        Range1D<float>(-1.005, -0.995));
+  // Limited if too big
+  assert_range_zooms_to(Range1D<float>(-1E35, 1E35), 2, 0,
+                        Range1D<float>(-1E35, 1E35));
   assert_range_zooms_to(Range1D<float>(-1, 1), 2, 0, Range1D<float>(-2, 2));
   assert_range_zooms_to(Range1D<float>(-1, 1), 2, -1, Range1D<float>(-1, 3));
   assert_range_zooms_to(Range1D<float>(-1, 1), 2, 1, Range1D<float>(-3, 1));

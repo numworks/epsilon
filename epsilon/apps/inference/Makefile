@@ -11,7 +11,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/confidence_interval/interval_graph_view.cpp \
   controllers/store/input_store_controller.cpp \
   controllers/store/store_table_cell.cpp \
-  controllers/tables/input_anova_data_source.cpp \
+  controllers/tables/one_column_header_table_data_source.cpp \
   controllers/tables/categorical_cell.cpp \
   controllers/tables/categorical_controller.cpp \
   controllers/tables/categorical_table_cell.cpp \

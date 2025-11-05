@@ -2,13 +2,44 @@
 
 #include <escher/tab_view_controller.h>
 
+#include "escher/responder.h"
 #include "inference/controllers/inference_controller.h"
 #include "inference/controllers/tables/categorical_controller.h"
 #include "tables/results_between_within_table_cell.h"
 
 namespace Inference {
 
-class ResultsANOVAController : public CategoricalController {
+class BetweenWithinController : public CategoricalController {
+ public:
+  BetweenWithinController(Escher::Responder* parentResponder,
+                          ControllerContainer* controllerContainer,
+                          ANOVATest* inference);
+
+  void stackOpenPage(ViewController* nextPage) override {
+    tabController()->stackOpenPage(nextPage);
+  }
+
+  Escher::TabViewController* tabController() {
+    return static_cast<Escher::TabViewController*>(parentResponder());
+  }
+
+  // Escher::ViewController
+  const char* title() const override {
+    return I18n::translate(I18n::Message::CalculatedValues);
+  }
+
+ private:
+  virtual CategoricalTableCell* categoricalTableCell() override {
+    return &m_resultsBetweenWithinTable;
+  }
+  void createDynamicCells() override;
+
+  ResultsBetweenWithinTableCell m_resultsBetweenWithinTable;
+};
+
+class ResultsANOVAController : public InferenceController,
+                               public Escher::TabViewController,
+                               public Escher::TabViewDataSource {
  public:
   ResultsANOVAController(Escher::StackViewController* parent,
                          ControllerContainer* controllerContainer,
@@ -18,15 +49,17 @@ class ResultsANOVAController : public CategoricalController {
     return ViewController::TitlesDisplay::SameAsPreviousPage;
   };
 
-  // TODO: titleDisplay
+  // Responder
+  bool handleEvent(Ion::Events::Event event) override;
+
+  KDColor tabBackgroundColor() const override {
+    return Escher::Palette::GrayDark;
+  }
 
  private:
-  CategoricalTableCell* categoricalTableCell() override {
-    return &m_resultsBetweenWithinTable;
-  }
-  void createDynamicCells() override;
-
-  ResultsBetweenWithinTableCell m_resultsBetweenWithinTable;
+  BetweenWithinController m_firstTabController;
+  // TODO: other result controller
+  BetweenWithinController m_secondTabController;
 };
 
 }  // namespace Inference

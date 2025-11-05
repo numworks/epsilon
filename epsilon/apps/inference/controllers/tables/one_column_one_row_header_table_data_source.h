@@ -9,8 +9,6 @@
 
 namespace Inference {
 
-// TODO: factorize with HomogeneityResults
-
 /* This class wraps a TableViewDataSource by adding a Row & Column header around
  * it. */
 class OneColumnOneRowHeaderTableDataSource

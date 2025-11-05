@@ -7,7 +7,9 @@
 #include <algorithm>
 
 #include "categorical_table_view_data_source.h"
+#include "inference/controllers/tables/table_dimensions.h"
 #include "inference/models/homogeneity_test.h"
+#include "one_column_one_row_header_table_data_source.h"
 
 namespace Inference {
 
@@ -31,23 +33,17 @@ constexpr static int k_numberOfHeaderReusableCells =
     k_numberOfReusableColumns + k_maxNumberOfReusableRows - 1;
 }  // namespace HomogeneityTableDimensions
 
-/* This class wraps a TableViewDataSource by adding a Row & Column header around
- * it. Specifically meant for InputHomogeneity and HomogeneityResults. */
-class HomogeneityTableDataSource : public CategoricalTableViewDataSource {
+/* This class specializes OneColumnOneRowHeaderTableDataSource with the header
+ * data (group names) and dimensions for InputHomogeneity and
+ * HomogeneityResults. */
+class HomogeneityTableDataSource : public OneColumnOneRowHeaderTableDataSource {
  public:
   HomogeneityTableDataSource();
 
   // TableViewDataSource
-  int numberOfRows() const override { return innerNumberOfRows() + 1; }
-  int numberOfColumns() const override { return innerNumberOfColumns() + 1; }
-  int reusableCellCount(int type) const override;
-  int typeAtLocation(int column, int row) const override;
-  Escher::HighlightCell* reusableCell(int i, int type) override;
+
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
-  bool canSelectCellAtLocation(int column, int row) override {
-    return typeAtLocation(column, row) != k_typeOfTopLeftCell;
-  }
 
   constexpr static int k_columnWidth =
       HomogeneityTableDimensions::k_columnWidth;
@@ -67,15 +63,17 @@ class HomogeneityTableDataSource : public CategoricalTableViewDataSource {
   virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                         int row) = 0;
 
-  virtual Escher::HighlightCell* reusableHeaderCell(int i) = 0;
-  virtual Escher::HighlightCell* reusableInnerCell(int i) = 0;
+  ReusableCellCounts reusableCellCounts() const override {
+    return ReusableCountsOneRowOneColumnHeader(
+        ReusableCellDimensions{.rows = k_maxNumberOfReusableRows,
+                               .columns = k_numberOfReusableColumns});
+  };
 
  private:
   constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;
   constexpr static int k_headerTranslationBufferSize = 20;
 
   I18n::Message m_headerPrefix;
-  Escher::SolidColorCell m_topLeftCell;
 };
 
 }  // namespace Inference

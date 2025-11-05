@@ -11,28 +11,7 @@ using namespace Escher;
 namespace Inference {
 
 HomogeneityTableDataSource::HomogeneityTableDataSource()
-    : m_headerPrefix(I18n::Message::Group),
-      m_topLeftCell(Escher::Palette::WallScreenDark) {}
-
-int HomogeneityTableDataSource::reusableCellCount(int type) const {
-  if (type == k_typeOfTopLeftCell) {
-    return 1;
-  } else if (type == k_typeOfHeaderCells) {
-    return k_maxNumberOfReusableRows +
-           HomogeneityTableDimensions::k_numberOfReusableColumns;
-  }
-  return HomogeneityTableDimensions::k_numberOfInnerReusableCells;
-}
-
-int HomogeneityTableDataSource::typeAtLocation(int column, int row) const {
-  if (column == 0 && row == 0) {
-    return k_typeOfTopLeftCell;
-  }
-  if (column == 0 || row == 0) {
-    return k_typeOfHeaderCells;
-  }
-  return k_typeOfInnerCells;
-}
+    : m_headerPrefix(I18n::Message::Group) {}
 
 void HomogeneityTableDataSource::fillCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
@@ -67,16 +46,6 @@ void HomogeneityTableDataSource::fillCellForLocation(
     assert(type == k_typeOfInnerCells);
     fillInnerCellForLocation(cell, column - 1, row - 1);
   }
-}
-
-HighlightCell* HomogeneityTableDataSource::reusableCell(int i, int type) {
-  if (type == k_typeOfTopLeftCell) {
-    assert(i == 0);
-    return &m_topLeftCell;
-  } else if (type == k_typeOfHeaderCells) {
-    return reusableHeaderCell(i);
-  }
-  return reusableInnerCell(i);
 }
 
 }  // namespace Inference

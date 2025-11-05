@@ -1,6 +1,7 @@
 #pragma once
 
 #include "categorical_table_cell.h"
+#include "dynamic_cells_data_source.h"
 #include "inference/models/anova_test.h"
 #include "input_anova_data_source.h"
 
@@ -8,8 +9,11 @@ namespace Inference {
 
 class InputANOVAController;
 
-class InputANOVATableCell : public InputCategoricalTableCell,
-                            public InputANOVADataSource {
+class InputANOVATableCell
+    : public InputCategoricalTableCell,
+      public InputANOVADataSource,
+      public DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
+                                          InferenceEvenOddEditableCell> {
  public:
   InputANOVATableCell(Escher::Responder* parentResponder, ANOVATest* test,
                       InputANOVAController* inputANOVAController,
@@ -38,11 +42,22 @@ class InputANOVATableCell : public InputCategoricalTableCell,
     return &m_selectableTableView;
   }
 
+  int numberOfDynamicCellsType1() override {
+    return ANOVATableDimensions::k_numberOfInputHeaderReusableCells;
+  }
+  int numberOfDynamicCellsType2() override {
+    return ANOVATableDimensions::k_numberOfInputInnerReusableCells;
+  }
+
   void initCellType2(InferenceEvenOddEditableCell* cell) override;
 
  protected:
   // Responder
   void handleResponderChainEvent(ResponderChainEvent event) override;
+
+  // DataSource
+  Escher::HighlightCell* headerCell(int i) override { return cellType1(i); }
+  Escher::HighlightCell* innerCell(int i) override { return cellType2(i); }
 
  private:
   constexpr static int k_headerTranslationBufferSize = 20;

@@ -6,6 +6,7 @@
 #include "inference/controllers/inference_controller.h"
 #include "inference/controllers/tables/categorical_controller.h"
 #include "tables/results_between_within_table_cell.h"
+#include "tables/results_statistics_table_cell.h"
 
 namespace Inference {
 
@@ -37,6 +38,34 @@ class BetweenWithinController : public CategoricalController {
   ResultsBetweenWithinTableCell m_resultsBetweenWithinTable;
 };
 
+class StatisticsController : public CategoricalController {
+ public:
+  StatisticsController(Escher::Responder* parentResponder,
+                       ControllerContainer* controllerContainer,
+                       ANOVATest* inference);
+
+  void stackOpenPage(ViewController* nextPage) override {
+    tabController()->stackOpenPage(nextPage);
+  }
+
+  Escher::TabViewController* tabController() {
+    return static_cast<Escher::TabViewController*>(parentResponder());
+  }
+
+  // Escher::ViewController
+  const char* title() const override {
+    return I18n::translate(I18n::Message::InputStatistics);
+  }
+
+ private:
+  virtual CategoricalTableCell* categoricalTableCell() override {
+    return &m_resultsStatisticsTable;
+  }
+  void createDynamicCells() override;
+
+  ResultsStatisticsTableCell m_resultsStatisticsTable;
+};
+
 class ResultsANOVAController : public InferenceController,
                                public Escher::TabViewController,
                                public Escher::TabViewDataSource {
@@ -58,8 +87,7 @@ class ResultsANOVAController : public InferenceController,
 
  private:
   BetweenWithinController m_firstTabController;
-  // TODO: other result controller
-  BetweenWithinController m_secondTabController;
+  StatisticsController m_secondTabController;
 };
 
 }  // namespace Inference

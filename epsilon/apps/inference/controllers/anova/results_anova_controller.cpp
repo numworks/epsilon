@@ -41,4 +41,18 @@ void BetweenWithinController::createDynamicCells() {
   m_resultsBetweenWithinTable.createCells();
 }
 
+// StatisticsController
+StatisticsController::StatisticsController(
+    Escher::Responder* parent, ControllerContainer* controllerContainer,
+    ANOVATest* inferenceModel)
+    : CategoricalController(parent, &controllerContainer->m_testGraphController,
+                            Invocation::Builder<CategoricalController>(
+                                &CategoricalController::ButtonAction, this)),
+      m_resultsStatisticsTable(&m_selectableListView, inferenceModel, this,
+                               this) {}
+
+void StatisticsController::createDynamicCells() {
+  m_resultsStatisticsTable.createCells();
+}
+
 }  // namespace Inference

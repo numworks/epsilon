@@ -162,7 +162,7 @@ class DoubleColumnTableCell
 
   void initCell(InferenceEvenOddEditableCell* cell) override;
 
-  int numberOfDynamicCells() override {
+  int numberOfDynamicCells() const override {
     return DoubleColumnTableDimensions::k_numberOfReusableCells;
   }
 

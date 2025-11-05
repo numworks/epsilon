@@ -39,7 +39,7 @@ class ResultsANOVATableCell
     return &m_selectableTableView;
   }
 
-  int numberOfDynamicCells() override {
+  int numberOfDynamicCells() const override {
     return ANOVATableDimensions::k_numberOfResultsHeaderCells +
            ANOVATableDimensions::k_numberOfResultsInnerCells;
   }

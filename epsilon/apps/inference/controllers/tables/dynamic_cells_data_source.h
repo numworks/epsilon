@@ -31,7 +31,7 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   DynamicCellsDataSource() : m_cells(nullptr) {}
   ~DynamicCellsDataSource();
 
-  virtual int numberOfDynamicCells() = 0;
+  virtual int numberOfDynamicCells() const = 0;
 
   CellType* dynamicCell(int i) {
     assert(m_cells);
@@ -66,8 +66,8 @@ class DoubleDynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   DoubleDynamicCellsDataSource() : m_cells1(nullptr), m_cells2(nullptr) {}
   ~DoubleDynamicCellsDataSource();
 
-  virtual int numberOfDynamicCellsType1() = 0;
-  virtual int numberOfDynamicCellsType2() = 0;
+  virtual int numberOfDynamicCellsType1() const = 0;
+  virtual int numberOfDynamicCellsType2() const = 0;
 
   CellType1* cellType1(int i) {
     assert(m_cells1);

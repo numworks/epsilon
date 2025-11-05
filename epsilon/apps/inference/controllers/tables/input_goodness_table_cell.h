@@ -32,7 +32,7 @@ class InputGoodnessTableCell : public DoubleColumnTableCell {
   // ClearColumnHelper
   size_t fillColumnName(int column, char* buffer) override;
 
-  Escher::HighlightCell* headerCell(int index) override {
+  Escher::HighlightCell* reusableHeaderCell(int index) override {
     return &m_header[index];
   }
   GoodnessTest* inference() { return static_cast<GoodnessTest*>(m_inference); }

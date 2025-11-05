@@ -39,7 +39,7 @@ class StoreTableCell : public DoubleColumnTableCell,
   }
 
  private:
-  Escher::HighlightCell* headerCell(int index) override {
+  Escher::HighlightCell* reusableHeaderCell(int index) override {
     return &m_header[index];
   }
   void fillCellForLocation(Escher::HighlightCell* cell, int column,

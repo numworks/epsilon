@@ -64,8 +64,12 @@ class InputHomogeneityTableCell
                                 int row) override;
   CategoricalController* categoricalController() override;
 
-  Escher::HighlightCell* headerCell(int i) override { return cellType1(i); }
-  Escher::HighlightCell* innerCell(int i) override { return cellType2(i); }
+  Escher::HighlightCell* reusableHeaderCell(int i) override {
+    return cellType1(i);
+  }
+  Escher::HighlightCell* reusableInnerCell(int i) override {
+    return cellType2(i);
+  }
 
   InputHomogeneityController* m_inputHomogeneityController;
 };

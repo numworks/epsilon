@@ -27,9 +27,9 @@ HighlightCell* ResultsANOVADataSource::reusableCell(int i, int type) {
     assert(i == 0);
     return &m_topLeftCell;
   } else if (type == k_typeOfHeaderCells) {
-    return headerCell(i);
+    return reusableHeaderCell(i);
   }
-  return innerCell(i);
+  return reusableInnerCell(i);
 }
 
 int ResultsANOVADataSource::typeAtLocation(int column, int row) const {

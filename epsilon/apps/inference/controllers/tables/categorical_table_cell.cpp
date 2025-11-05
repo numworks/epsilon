@@ -234,7 +234,7 @@ HighlightCell* DoubleColumnTableCell::reusableCell(int i, int type) {
   assert(i < reusableCellCount(type));
   if (type == k_typeOfHeaderCells) {
     assert(i < k_maxNumberOfColumns);
-    return headerCell(i);
+    return reusableHeaderCell(i);
   }
   return dynamicCell(i);
 }

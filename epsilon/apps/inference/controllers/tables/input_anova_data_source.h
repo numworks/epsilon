@@ -36,8 +36,6 @@ class InputANOVADataSource : public CategoricalTableViewDataSource {
     assert(column >= 0 && column < k_maxNumberOfColumns);
     return k_columnWidth;
   }
-  virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
-                                        int row) = 0;
 
   virtual Escher::HighlightCell* reusableHeaderCell(int i) = 0;
   virtual Escher::HighlightCell* reusableInnerCell(int i) = 0;

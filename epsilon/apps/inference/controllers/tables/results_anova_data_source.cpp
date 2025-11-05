@@ -17,9 +17,9 @@ int ResultsANOVADataSource::reusableCellCount(int type) const {
   if (type == k_typeOfTopLeftCell) {
     return 1;
   } else if (type == k_typeOfHeaderCells) {
-    return ANOVATableDimensions::k_numberOfResultsHeaderCells;
+    return reusableCellCounts().categories.header;
   }
-  return ANOVATableDimensions::k_numberOfResultsInnerCells;
+  return reusableCellCounts().categories.inner;
 }
 
 HighlightCell* ResultsANOVADataSource::reusableCell(int i, int type) {

@@ -4,7 +4,7 @@
 
 #include "inference/controllers/inference_controller.h"
 #include "inference/controllers/tables/categorical_controller.h"
-#include "inference/controllers/tables/results_homogeneity_table_cell.h"
+#include "tables/results_homogeneity_table_cell.h"
 
 namespace Inference {
 

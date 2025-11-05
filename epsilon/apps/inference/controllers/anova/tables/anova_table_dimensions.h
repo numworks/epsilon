@@ -2,9 +2,9 @@
 
 #include <algorithm>
 
-#include "categorical_table_view_data_source.h"
+#include "inference/controllers/tables/categorical_table_view_data_source.h"
+#include "inference/controllers/tables/table_dimensions.h"
 #include "inference/models/anova_test.h"
-#include "table_dimensions.h"
 
 namespace Inference {
 

@@ -3,6 +3,8 @@
 #include <escher/view_controller.h>
 #include <omg/unreachable.h>
 
+#include "anova/input_anova_controller.h"
+#include "anova/results_anova_controller.h"
 #include "chi_square/categorical_type_controller.h"
 #include "chi_square/input_goodness_controller.h"
 #include "chi_square/input_homogeneity_controller.h"
@@ -10,9 +12,7 @@
 #include "chi_square/results_homogeneity_controller.h"
 #include "confidence_interval/interval_graph_controller.h"
 #include "dataset_controller.h"
-#include "input_anova_controller.h"
 #include "input_controller.h"
-#include "results_anova_controller.h"
 #include "results_controller.h"
 #include "significance_test/hypothesis_display_only_controller.h"
 #include "significance_test/hypothesis_editable_controller.h"

@@ -2,9 +2,8 @@
 
 #include <escher/even_odd_editable_text_cell.h>
 #include <poincare/print.h>
-#include <string.h>
 
-#include "dynamic_cells_data_source.h"
+#include "inference/controllers/tables/dynamic_cells_data_source.h"
 
 using namespace Escher;
 

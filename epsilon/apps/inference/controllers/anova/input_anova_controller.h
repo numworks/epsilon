@@ -1,8 +1,8 @@
 #pragma once
 
 #include "inference/controllers/tables/categorical_controller.h"
-#include "inference/controllers/tables/input_anova_table_cell.h"
 #include "inference/models/anova_test.h"
+#include "tables/input_anova_table_cell.h"
 
 namespace Inference {
 

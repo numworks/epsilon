@@ -43,7 +43,7 @@ class ResultsANOVATableCell : public CategoricalTableCell,
 
  private:
   Escher::HighlightCell* innerCell(int i) override {
-    return cell(i + ANOVATableDimensions::k_numberOfResultsHeaderCells);
+    return dynamicCell(i + ANOVATableDimensions::k_numberOfResultsHeaderCells);
   }
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;

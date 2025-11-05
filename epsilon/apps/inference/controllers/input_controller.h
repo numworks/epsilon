@@ -67,7 +67,7 @@ class InputController : public InferenceController,
     return &m_selectableListView;
   }
 
-  int numberOfCells() override {
+  int numberOfDynamicCells() override {
     return InputControllerDimensions::k_maxNumberOfParameterCell;
   }
 

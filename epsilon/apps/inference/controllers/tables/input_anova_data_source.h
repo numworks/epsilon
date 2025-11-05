@@ -27,10 +27,10 @@ class InputANOVADataSource
 
   // DoubleDynamicCellsDataSource
 
-  int numberOfCellsType1() override {
+  int numberOfDynamicCellsType1() override {
     return ANOVATableDimensions::k_numberOfInputHeaderReusableCells;
   }
-  int numberOfCellsType2() override {
+  int numberOfDynamicCellsType2() override {
     return ANOVATableDimensions::k_numberOfInputInnerReusableCells;
   }
 

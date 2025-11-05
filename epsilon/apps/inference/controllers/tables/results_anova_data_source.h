@@ -34,7 +34,7 @@ class ResultsANOVADataSource
 
   // DynamicCellsDataSource
 
-  int numberOfCells() override {
+  int numberOfDynamicCells() override {
     return ANOVATableDimensions::k_numberOfResultsHeaderCells +
            ANOVATableDimensions::k_numberOfResultsInnerCells;
   }

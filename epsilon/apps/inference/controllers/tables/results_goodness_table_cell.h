@@ -32,7 +32,7 @@ class ResultGoodnessContributionsTable
   // TableViewDataSource
   KDCoordinate nonMemoizedColumnWidth(int column) override;
   Escher::HighlightCell* reusableCell(int index, int type) override {
-    return cell(index);
+    return dynamicCell(index);
   }
   int reusableCellCount(int type) const override {
     return ResultsGoodnessContributionsDimensions::k_numberOfReusableCells;
@@ -43,7 +43,7 @@ class ResultGoodnessContributionsTable
     return &m_selectableTableView;
   }
 
-  int numberOfCells() override {
+  int numberOfDynamicCells() override {
     return ResultsGoodnessContributionsDimensions::k_numberOfReusableCells;
   }
 

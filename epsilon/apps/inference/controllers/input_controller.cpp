@@ -160,7 +160,7 @@ int InputController::reusableParameterCellCount(int type) const {
 HighlightCell* InputController::reusableParameterCell(int index, int type) {
   if (type == k_parameterCellType) {
     assert(index >= 0 && index < k_numberOfReusableCells);
-    return cell(index);
+    return dynamicCell(index);
   }
   assert(type == k_significanceCellType);
   return &m_significanceCell;

@@ -19,14 +19,14 @@ void DynamicCellsDataSource<CellType>::createCells() {
   if (m_cells != nullptr) {
     return;
   }
-  assert(sizeof(CellType) * numberOfCells() <= App::k_bufferSize);
-  assert(sizeof(CellType) * numberOfCells() <= App::k_bufferSize);
+  assert(sizeof(CellType) * numberOfDynamicCells() <= App::k_bufferSize);
+  assert(sizeof(CellType) * numberOfDynamicCells() <= App::k_bufferSize);
   App::app()->cleanBuffer(this);
-  m_cells = new (App::app()->buffer(0)) CellType[numberOfCells()];
-  for (int i = 0; i < numberOfCells(); i++) {
+  m_cells = new (App::app()->buffer(0)) CellType[numberOfDynamicCells()];
+  for (int i = 0; i < numberOfDynamicCells(); i++) {
     initCell(&m_cells[i]);
   }
-  m_numberOfAllocatedCells = numberOfCells();
+  m_numberOfAllocatedCells = numberOfDynamicCells();
 }
 
 template <typename CellType>
@@ -66,28 +66,29 @@ template <typename CellType1, typename CellType2>
 void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCellsType1() {
   assert(m_cells1 == nullptr);
   assert(m_cells2 == nullptr);
-  assert(sizeof(CellType1) * numberOfCellsType1() <= App::k_bufferSize);
+  assert(sizeof(CellType1) * numberOfDynamicCellsType1() <= App::k_bufferSize);
   App::app()->cleanBuffer(this);
-  m_cells1 = new (App::app()->buffer(0)) CellType1[numberOfCellsType1()];
-  for (int i = 0; i < numberOfCellsType1(); i++) {
+  m_cells1 = new (App::app()->buffer(0)) CellType1[numberOfDynamicCellsType1()];
+  for (int i = 0; i < numberOfDynamicCellsType1(); i++) {
     initCellType1(&m_cells1[i]);
   }
-  m_numberOfAllocatedCells1 = numberOfCellsType1();
+  m_numberOfAllocatedCells1 = numberOfDynamicCellsType1();
 }
 
 template <typename CellType1, typename CellType2>
 void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCellsType2() {
   assert(m_cells1 != nullptr);
   assert(m_cells2 == nullptr);
-  assert(sizeof(CellType1) * numberOfCellsType1() +
-             sizeof(CellType2) * numberOfCellsType2() <=
+  assert(sizeof(CellType1) * numberOfDynamicCellsType1() +
+             sizeof(CellType2) * numberOfDynamicCellsType2() <=
          App::k_bufferSize);
-  m_cells2 = new (App::app()->buffer(sizeof(CellType1) * numberOfCellsType1()))
-      CellType2[numberOfCellsType2()];
-  for (int i = 0; i < numberOfCellsType2(); i++) {
+  m_cells2 =
+      new (App::app()->buffer(sizeof(CellType1) * numberOfDynamicCellsType1()))
+          CellType2[numberOfDynamicCellsType2()];
+  for (int i = 0; i < numberOfDynamicCellsType2(); i++) {
     initCellType2(&m_cells2[i]);
   }
-  m_numberOfAllocatedCells2 = numberOfCellsType2();
+  m_numberOfAllocatedCells2 = numberOfDynamicCellsType2();
 }
 
 template <typename CellType1, typename CellType2>

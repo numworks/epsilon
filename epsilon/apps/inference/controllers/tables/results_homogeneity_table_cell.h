@@ -42,7 +42,7 @@ class ResultsHomogeneityTableCell
     return &m_selectableTableView;
   }
 
-  int numberOfCells() override {
+  int numberOfDynamicCells() override {
     return HomogeneityTableDimensions::k_numberOfHeaderReusableCells +
            HomogeneityTableDimensions::k_numberOfInnerReusableCells;
   }
@@ -61,9 +61,10 @@ class ResultsHomogeneityTableCell
     return m_inference->numberOfDataColumns() + (m_mode == Mode::ExpectedValue);
   }
 
-  Escher::HighlightCell* headerCell(int i) override { return cell(i); }
+  Escher::HighlightCell* headerCell(int i) override { return dynamicCell(i); }
   Escher::HighlightCell* innerCell(int i) override {
-    return cell(i + HomogeneityTableDimensions::k_numberOfHeaderReusableCells);
+    return dynamicCell(
+        i + HomogeneityTableDimensions::k_numberOfHeaderReusableCells);
   }
 
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,

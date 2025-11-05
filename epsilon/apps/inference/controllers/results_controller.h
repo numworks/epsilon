@@ -54,7 +54,7 @@ class ResultsController : public InferenceController,
     return &m_selectableListView;
   }
 
-  int numberOfCells() override {
+  int numberOfDynamicCells() override {
     return ResultsControllerDimensions::k_numberOfReusableCells;
   }
 

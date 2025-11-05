@@ -31,11 +31,11 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   DynamicCellsDataSource() : m_cells(nullptr) {}
   ~DynamicCellsDataSource();
 
-  virtual int numberOfCells() = 0;
+  virtual int numberOfDynamicCells() = 0;
 
-  CellType* cell(int i) {
+  CellType* dynamicCell(int i) {
     assert(m_cells);
-    assert(i >= 0 && i < numberOfCells());
+    assert(i >= 0 && i < numberOfDynamicCells());
     return &m_cells[i];
   }
 
@@ -55,8 +55,8 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
 
  private:
   /* Note: this class members is needed because the constructor and destructor
-   * of DynamicCellsDataSource cannot use the numberOfCells() pure virtual
-   * function */
+   * of DynamicCellsDataSource cannot use the numberOfDynamicCells() pure
+   * virtual function */
   int m_numberOfAllocatedCells = 0;
 };
 
@@ -66,17 +66,17 @@ class DoubleDynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   DoubleDynamicCellsDataSource() : m_cells1(nullptr), m_cells2(nullptr) {}
   ~DoubleDynamicCellsDataSource();
 
-  virtual int numberOfCellsType1() = 0;
-  virtual int numberOfCellsType2() = 0;
+  virtual int numberOfDynamicCellsType1() = 0;
+  virtual int numberOfDynamicCellsType2() = 0;
 
   CellType1* cellType1(int i) {
     assert(m_cells1);
-    assert(i >= 0 && i < numberOfCellsType1());
+    assert(i >= 0 && i < numberOfDynamicCellsType1());
     return &m_cells1[i];
   }
   CellType2* cellType2(int i) {
     assert(m_cells2);
-    assert(i >= 0 && i < numberOfCellsType2());
+    assert(i >= 0 && i < numberOfDynamicCellsType2());
     return &m_cells2[i];
   }
 
@@ -100,8 +100,8 @@ class DoubleDynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   CellType2* m_cells2;
 
   /* Note: these class members are needed because the constructor and destructor
-   * of DoubleDynamicCellsDataSource cannot use the numberOfCells() pure virtual
-   * functions */
+   * of DoubleDynamicCellsDataSource cannot use the numberOfDynamicCells() pure
+   * virtual functions */
   int m_numberOfAllocatedCells1 = 0;
   int m_numberOfAllocatedCells2 = 0;
 };

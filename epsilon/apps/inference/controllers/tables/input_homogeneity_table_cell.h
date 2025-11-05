@@ -36,10 +36,10 @@ class InputHomogeneityTableCell
 
   // DoubleDynamicCellsDataSource
 
-  int numberOfCellsType1() override {
+  int numberOfDynamicCellsType1() override {
     return HomogeneityTableDimensions::k_numberOfHeaderReusableCells;
   }
-  int numberOfCellsType2() override {
+  int numberOfDynamicCellsType2() override {
     return HomogeneityTableDimensions::k_numberOfInnerReusableCells;
   }
 

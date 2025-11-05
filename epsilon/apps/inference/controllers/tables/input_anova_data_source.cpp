@@ -31,12 +31,4 @@ int InputANOVADataSource::typeAtLocation(int column, int row) const {
   return k_typeOfInnerCells;
 }
 
-void InputANOVADataSource::createCells() {
-  if (m_cells1 == nullptr) {
-    createCellsWithCount(
-        ANOVATableDimensions::k_numberOfInputHeaderReusableCells,
-        ANOVATableDimensions::k_numberOfInputInnerReusableCells);
-  }
-}
-
 }  // namespace Inference

@@ -31,17 +31,19 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   DynamicCellsDataSource() : m_cells(nullptr) {}
   ~DynamicCellsDataSource();
 
+  virtual int numberOfCells() = 0;
+
   CellType* cell(int i) {
     assert(m_cells);
-    assert(i >= 0 && i < m_numberOfAllocatedCells);
+    assert(i >= 0 && i < numberOfCells());
     return &m_cells[i];
   }
 
-  virtual void initCell(CellType* cell) {}
-
-  virtual void createCells() = 0;
+  void createCells();
 
   void destroyCells() override;
+
+  virtual void initCell(CellType* cell) {}
 
   virtual Escher::SelectableTableView* tableView() = 0;
   Escher::SelectableTableView* dynamicCellsTableView() override {
@@ -49,10 +51,12 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   }
 
  protected:
-  void createCellsWithOffset(int numberOfCells, size_t offset);
   CellType* m_cells;
 
  private:
+  /* Note: this class members is needed because the constructor and destructor
+   * of DynamicCellsDataSource cannot use the numberOfCells() pure virtual
+   * function */
   int m_numberOfAllocatedCells = 0;
 };
 
@@ -62,39 +66,42 @@ class DoubleDynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   DoubleDynamicCellsDataSource() : m_cells1(nullptr), m_cells2(nullptr) {}
   ~DoubleDynamicCellsDataSource();
 
-  virtual void createCells() = 0;
-
-  void createCellsWithCount(int numberOfCellsType1, int numberOfCellsType2);
+  virtual int numberOfCellsType1() = 0;
+  virtual int numberOfCellsType2() = 0;
 
   CellType1* cellType1(int i) {
     assert(m_cells1);
-    assert(i >= 0 && i < m_numberOfAllocatedCells1);
+    assert(i >= 0 && i < numberOfCellsType1());
     return &m_cells1[i];
   }
   CellType2* cellType2(int i) {
     assert(m_cells2);
-    assert(i >= 0 && i < m_numberOfAllocatedCells2);
+    assert(i >= 0 && i < numberOfCellsType2());
     return &m_cells2[i];
   }
 
-  virtual void initCellType1(CellType1* cell) {}
-  virtual void initCellType2(CellType2* cell) {}
+  void createCells();
 
   void destroyCells() override;
+
+  virtual void initCellType1(CellType1* cell) {}
+  virtual void initCellType2(CellType2* cell) {}
 
   virtual Escher::SelectableTableView* tableView() = 0;
   Escher::SelectableTableView* dynamicCellsTableView() override {
     return tableView();
   }
 
- protected:
+ private:
+  void createCellsType1();
+  void createCellsType2();
+
   CellType1* m_cells1;
   CellType2* m_cells2;
 
- private:
-  void createCellsType1(int numberOfCells);
-  void createCellsType2(int numberOfCells);
-
+  /* Note: these class members are needed because the constructor and destructor
+   * of DoubleDynamicCellsDataSource cannot use the numberOfCells() pure virtual
+   * functions */
   int m_numberOfAllocatedCells1 = 0;
   int m_numberOfAllocatedCells2 = 0;
 };

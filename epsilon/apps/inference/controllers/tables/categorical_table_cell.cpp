@@ -250,14 +250,6 @@ void DoubleColumnTableCell::fillCellForLocation(Escher::HighlightCell* cell,
                            column, row - 1, tableModel());
 }
 
-void DoubleColumnTableCell::createCells() {
-  if (DynamicCellsDataSource<InferenceEvenOddEditableCell>::m_cells ==
-      nullptr) {
-    DynamicCellsDataSource<InferenceEvenOddEditableCell>::createCellsWithOffset(
-        DoubleColumnTableDimensions::k_numberOfReusableCells, 0);
-  }
-}
-
 void DoubleColumnTableCell::initCell(InferenceEvenOddEditableCell* cell) {
   cell->setParentResponder(&m_selectableTableView);
   cell->editableTextCell()->textField()->setDelegate(this);

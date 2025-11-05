@@ -133,11 +133,4 @@ KDCoordinate ResultsController::nonMemoizedRowHeight(int row) {
   return m_next.minimalSizeForOptimalDisplay().height();
 }
 
-void ResultsController::createCells() {
-  if (DynamicCellsDataSource<ResultCell>::m_cells == nullptr) {
-    DynamicCellsDataSource<ResultCell>::createCellsWithOffset(
-        ResultsControllerDimensions::k_numberOfReusableCells, 0);
-  }
-}
-
 }  // namespace Inference

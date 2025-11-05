@@ -67,12 +67,4 @@ void InputHomogeneityTableCell::initCellType2(
   cell->editableTextCell()->textField()->setDelegate(this);
 }
 
-void InputHomogeneityTableCell::createCells() {
-  if (m_cells1 == nullptr) {
-    createCellsWithCount(
-        HomogeneityTableDimensions::k_numberOfHeaderReusableCells,
-        HomogeneityTableDimensions::k_numberOfInnerReusableCells);
-  }
-}
-
 }  // namespace Inference

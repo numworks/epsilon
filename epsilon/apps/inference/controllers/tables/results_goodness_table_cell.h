@@ -43,7 +43,9 @@ class ResultGoodnessContributionsTable
     return &m_selectableTableView;
   }
 
-  void createCells() override;
+  int numberOfCells() override {
+    return ResultsGoodnessContributionsDimensions::k_numberOfReusableCells;
+  }
 
   // CategoricalTableCell
   CategoricalTableViewDataSource* tableViewDataSource() override {

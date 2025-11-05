@@ -36,7 +36,12 @@ class InputHomogeneityTableCell
 
   // DoubleDynamicCellsDataSource
 
-  void createCells() override;
+  int numberOfCellsType1() override {
+    return HomogeneityTableDimensions::k_numberOfHeaderReusableCells;
+  }
+  int numberOfCellsType2() override {
+    return HomogeneityTableDimensions::k_numberOfInnerReusableCells;
+  }
 
   Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;

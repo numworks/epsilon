@@ -191,10 +191,3 @@ bool InputController::setParameterAtIndex(int parameterIndex, double f) {
   m_inferenceModel->setParameterAtIndex(f, parameterIndex);
   return true;
 }
-
-void InputController::createCells() {
-  if (DynamicCellsDataSource<ParameterCell>::m_cells == nullptr) {
-    DynamicCellsDataSource<ParameterCell>::createCellsWithOffset(
-        InputControllerDimensions::k_maxNumberOfParameterCell, 0);
-  }
-}

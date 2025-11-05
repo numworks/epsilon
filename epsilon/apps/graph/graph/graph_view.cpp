@@ -146,12 +146,109 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   drawTangent(ctx, rect, record);
 }
 
+// Return true if (x,y) is in the region defined by f
+bool IsInRegion(const ContinuousFunction* f, float x, float y) {
+  ContinuousFunctionProperties::AreaType area = f->properties().areaType();
+  assert(area != ContinuousFunctionProperties::AreaType::None);
+  // Use tIn, tOut and fOut to generalize for f along x or y
+  float tIn = f->isAlongY() ? y : x;
+  float tOut = f->isAlongY() ? x : y;
+  Coordinate2D<float> evaluation = f->evaluateXYAtParameter(tIn, 0);
+  float fOut = f->isAlongY() ? evaluation.x() : evaluation.y();
+  switch (area) {
+    case ContinuousFunctionProperties::AreaType::Above:
+      return tOut > fOut;
+    case ContinuousFunctionProperties::AreaType::Below:
+      return tOut < fOut;
+    default: {
+      if (area == ContinuousFunctionProperties::AreaType::Inside &&
+          tOut >= fOut) {
+        // Early escape second curve evaluation
+        return false;
+      }
+      // Evaluate the second curve too
+      Coordinate2D<float> evaluation2 = f->evaluateXYAtParameter(tIn, 1);
+      float fOut2 = f->isAlongY() ? evaluation2.x() : evaluation2.y();
+      assert(fOut2 <= fOut || std::isnan(fOut) || std::isnan(fOut2));
+      switch (area) {
+        case ContinuousFunctionProperties::AreaType::Inside: {
+          assert(tOut < fOut);
+          return fOut2 < tOut;
+        }
+        case ContinuousFunctionProperties::AreaType::Outside: {
+          return fOut2 > tOut || tOut > fOut || std::isnan(fOut) ||
+                 std::isnan(fOut2);
+        }
+        default:
+          OMG::unreachable();
+      }
+    }
+  }
+  OMG::unreachable();
+}
+
+/* Since area colors only one every 8 pixels, we can afford to check every
+ * pixels with every functions. THis is different from the area drawn in
+ * drawCartesian, which draws segments as each curve is drawn. */
 void GraphView::drawInequalitiesIntersection(KDContext* ctx,
                                              KDRect rect) const {
   if (!m_intersectionRegion) {
     return;
   }
-  // TODO: Draw the intersection region
+  // Retrieve active inequalities functions
+  /* TODO Factorize 4 with
+   * CalculationParameterController::shouldDisplayIntersectionRegionCell */
+  const ContinuousFunction* functions[8];
+  int n = numberOfDrawnRecords();
+  int numberOfInequalities = 0;
+  for (int i = 0; i < n; i++) {
+    Ion::Storage::Record record = initModelBeforeDrawingPlot(i);
+    OMG::ExpiringPointer<ContinuousFunction> f =
+        functionStore()->modelForRecord(record);
+    if (f->properties().isEquality()) {
+      continue;
+    }
+    functions[numberOfInequalities++] = f.pointer();
+  }
+  // offset everything by 1 so it's prettier
+  KDCoordinate firstX = rect.left() + 1;
+  KDCoordinate firstY = rect.top() + 1;
+  // Color 1/8 pixel with the following pattern :
+  /*  0 1 2 3 i/j
+   * --------
+   * -#---#--   0
+   * --------
+   * ---#---#   1
+   * --------
+   * -#---#--   2
+   * --------
+   * ---#---#   3
+   */
+  KDCoordinate numberOfXPixels = (rect.right() - firstX) / 2;
+  KDCoordinate numberOfYPixels = (rect.bottom() - rect.top()) / 2;
+  for (int i = 0; i < numberOfXPixels; i++) {
+    KDCoordinate XCoord = firstX + i * 2;
+    float x = pixelToFloat(OMG::Axis::Horizontal, XCoord);
+    for (int j = 0; j < numberOfYPixels; j++) {
+      if (i % 2 != j % 2) {
+        continue;
+      }
+      KDCoordinate YCoord = firstY + j * 2;
+      float y = pixelToFloat(OMG::Axis::Vertical, YCoord);
+
+      bool inRegion = true;
+      for (int index = 0; index < numberOfInequalities; index++) {
+        inRegion = IsInRegion(functions[index], x, y);
+        if (!inRegion) {
+          break;
+        }
+      }
+      if (!inRegion) {
+        continue;
+      }
+      ctx->setPixel(KDPoint(XCoord, YCoord), KDColorBlack);
+    }
+  }
 }
 
 void GraphView::tidyModel(int i, const PoolObject* treePoolCursor) const {

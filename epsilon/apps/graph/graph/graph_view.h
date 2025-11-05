@@ -32,6 +32,7 @@ class GraphView : public Shared::FunctionGraphView,
   int numberOfDrawnRecords() const override;
   void drawRecord(Ion::Storage::Record record, int index, KDContext* ctx,
                   KDRect rect, bool firstDrawnRecord) const override;
+  // Color the area intersected by all active inequalities
   void drawInequalitiesIntersection(KDContext* ctx, KDRect rect) const override;
   void tidyModel(int i,
                  const Poincare::PoolObject* treePoolCursor) const override;

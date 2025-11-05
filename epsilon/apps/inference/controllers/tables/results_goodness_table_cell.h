@@ -43,7 +43,7 @@ class ResultGoodnessContributionsTable
     return &m_selectableTableView;
   }
 
-  int numberOfDynamicCells() override {
+  int numberOfDynamicCells() const override {
     return ResultsGoodnessContributionsDimensions::k_numberOfReusableCells;
   }
 

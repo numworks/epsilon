@@ -42,7 +42,7 @@ class ResultsHomogeneityTableCell
     return &m_selectableTableView;
   }
 
-  int numberOfDynamicCells() override {
+  int numberOfDynamicCells() const override {
     return HomogeneityTableDimensions::k_numberOfHeaderReusableCells +
            HomogeneityTableDimensions::k_numberOfInnerReusableCells;
   }

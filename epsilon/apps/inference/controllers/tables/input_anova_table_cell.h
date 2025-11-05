@@ -42,10 +42,10 @@ class InputANOVATableCell
     return &m_selectableTableView;
   }
 
-  int numberOfDynamicCellsType1() override {
+  int numberOfDynamicCellsType1() const override {
     return ANOVATableDimensions::k_numberOfInputHeaderReusableCells;
   }
-  int numberOfDynamicCellsType2() override {
+  int numberOfDynamicCellsType2() const override {
     return ANOVATableDimensions::k_numberOfInputInnerReusableCells;
   }
 

@@ -12,10 +12,11 @@ ResultsANOVAController::ResultsANOVAController(
     : CategoricalController(parent, &controllerContainer->m_testGraphController,
                             Invocation::Builder<CategoricalController>(
                                 &CategoricalController::ButtonAction, this)),
-      m_resultsANOVATable(&m_selectableListView, inferenceModel, this, this) {}
+      m_resultsBetweenWithinTable(&m_selectableListView, inferenceModel, this,
+                                  this) {}
 
 void ResultsANOVAController::createDynamicCells() {
-  m_resultsANOVATable.createCells();
+  m_resultsBetweenWithinTable.createCells();
 }
 
 }  // namespace Inference

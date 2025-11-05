@@ -1,4 +1,4 @@
-#include "results_anova_table_cell.h"
+#include "results_between_within_table_cell.h"
 
 #include <omg/unreachable.h>
 
@@ -9,7 +9,7 @@ using namespace Escher;
 
 namespace Inference {
 
-ResultsANOVATableCell::ResultsANOVATableCell(
+ResultsBetweenWithinTableCell::ResultsBetweenWithinTableCell(
     Escher::Responder* parentResponder, ANOVATest* test,
     ResultsANOVAController* resultsTableController,
     Escher::ScrollViewDelegate* scrollViewDelegate)
@@ -19,7 +19,7 @@ ResultsANOVATableCell::ResultsANOVATableCell(
   m_selectableTableView.margins()->setBottom(Metric::CellSeparatorThickness);
 }
 
-void ResultsANOVATableCell::handleResponderChainEvent(
+void ResultsBetweenWithinTableCell::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (selectedRow() < 0) {
@@ -35,7 +35,8 @@ void ResultsANOVATableCell::handleResponderChainEvent(
   CategoricalTableCell::handleResponderChainEvent(event);
 }
 
-void ResultsANOVATableCell::drawRect(KDContext* ctx, KDRect rect) const {
+void ResultsBetweenWithinTableCell::drawRect(KDContext* ctx,
+                                             KDRect rect) const {
   CategoricalTableCell::drawRect(ctx, rect);
   // Draw over the next cell border to hide it
   ctx->fillRect(KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
@@ -43,7 +44,7 @@ void ResultsANOVATableCell::drawRect(KDContext* ctx, KDRect rect) const {
                 m_selectableTableView.backgroundColor());
 }
 
-void ResultsANOVATableCell::fillInnerCellForLocation(
+void ResultsBetweenWithinTableCell::fillInnerCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
   assert(row >= 0 && row < k_numberOfInnerRows);
   assert(column >= 0 && column < k_numberOfInnerColumns);
@@ -72,8 +73,8 @@ void ResultsANOVATableCell::fillInnerCellForLocation(
   myCell->setEven(row % 2 == 1);
 }
 
-void ResultsANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
-                                                int column, int row) {
+void ResultsBetweenWithinTableCell::fillCellForLocation(
+    Escher::HighlightCell* cell, int column, int row) {
   int type = typeAtLocation(column, row);
   if (type == k_typeOfTopLeftCell) {
     return;
@@ -111,7 +112,7 @@ void ResultsANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
   }
 }
 
-CategoricalController* ResultsANOVATableCell::categoricalController() {
+CategoricalController* ResultsBetweenWithinTableCell::categoricalController() {
   return m_resultsTableController;
 }
 

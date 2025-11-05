@@ -45,11 +45,4 @@ KDCoordinate ResultGoodnessContributionsTable::nonMemoizedColumnWidth(
   return k_columnsWidth[column];
 }
 
-void ResultGoodnessContributionsTable::createCells() {
-  if (DynamicCellsDataSource<InferenceEvenOddBufferCell>::m_cells == nullptr) {
-    DynamicCellsDataSource<InferenceEvenOddBufferCell>::createCellsWithOffset(
-        ResultsGoodnessContributionsDimensions::k_numberOfReusableCells, 0);
-  }
-}
-
 }  // namespace Inference

@@ -67,7 +67,9 @@ class InputController : public InferenceController,
     return &m_selectableListView;
   }
 
-  void createCells() override;
+  int numberOfCells() override {
+    return InputControllerDimensions::k_maxNumberOfParameterCell;
+  }
 
  protected:
   double parameterAtIndex(int i) override {

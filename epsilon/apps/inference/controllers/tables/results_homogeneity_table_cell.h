@@ -42,7 +42,10 @@ class ResultsHomogeneityTableCell
     return &m_selectableTableView;
   }
 
-  void createCells() override;
+  int numberOfCells() override {
+    return HomogeneityTableDimensions::k_numberOfHeaderReusableCells +
+           HomogeneityTableDimensions::k_numberOfInnerReusableCells;
+  }
 
  protected:
   // Responder

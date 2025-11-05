@@ -13,17 +13,6 @@ namespace Inference {
 ResultsANOVADataSource::ResultsANOVADataSource()
     : m_topLeftCell(Escher::Palette::WallScreenDark) {}
 
-void ResultsANOVADataSource::createCells() {
-  if (DynamicCellsDataSource<SmallFontEvenOddBufferTextCell>::m_cells ==
-      nullptr) {
-    DynamicCellsDataSource<SmallFontEvenOddBufferTextCell>::
-        createCellsWithOffset(
-            ANOVATableDimensions::k_numberOfResultsHeaderCells +
-                ANOVATableDimensions::k_numberOfResultsInnerCells,
-            0);
-  }
-}
-
 int ResultsANOVADataSource::reusableCellCount(int type) const {
   if (type == k_typeOfTopLeftCell) {
     return 1;

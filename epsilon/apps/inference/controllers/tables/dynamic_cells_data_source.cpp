@@ -15,45 +15,45 @@ DynamicCellsDataSource<CellType>::~DynamicCellsDataSource() {
 }
 
 template <typename CellType>
-void DynamicCellsDataSource<CellType>::createCellsWithOffset(int numberOfCells,
-                                                             size_t offset) {
-  assert(m_cells == nullptr);
-  assert(sizeof(CellType) * numberOfCells <= App::k_bufferSize);
-  assert(offset + sizeof(CellType) * numberOfCells <= App::k_bufferSize);
-  if (offset == 0) {
-    /* The buffer gets entirely clean only when creating cells from the
-     * beginning of the buffer. */
-    App::app()->cleanBuffer(this);
+void DynamicCellsDataSource<CellType>::createCells() {
+  if (m_cells != nullptr) {
+    return;
   }
-  m_cells = new (App::app()->buffer(offset)) CellType[numberOfCells];
-  for (int i = 0; i < numberOfCells; i++) {
+  assert(sizeof(CellType) * numberOfCells() <= App::k_bufferSize);
+  assert(sizeof(CellType) * numberOfCells() <= App::k_bufferSize);
+  App::app()->cleanBuffer(this);
+  m_cells = new (App::app()->buffer(0)) CellType[numberOfCells()];
+  for (int i = 0; i < numberOfCells(); i++) {
     initCell(&m_cells[i]);
   }
-  m_numberOfAllocatedCells += numberOfCells;
+  m_numberOfAllocatedCells = numberOfCells();
 }
 
 template <typename CellType>
 void DynamicCellsDataSource<CellType>::destroyCells() {
-  if (m_cells) {
-    /* We manually call T destructor since we cannot use 'delete' due to the
-     * placement new.
-     * Note Bene: we qualify the destructor call (by prefixing it by its class
-     * name) to avoid a compiler warning: T is not a final class and has virtual
-     * methods but no virtual destructor; the compiler might think we forgot
-     * some virtualization here but we didn't - we don't want to call a derived
-     * destructor of children T class. */
-    for (int i = 0; i < m_numberOfAllocatedCells; i++) {
-      // Make sure not to keep the first responder pointing on a destroyed cell
-      Responder* cellResponder = m_cells[i].responder();
-      Responder* appFirstResponder = App::app()->firstResponder();
-      if (appFirstResponder && appFirstResponder->hasAncestor(cellResponder)) {
-        App::app()->setFirstResponder(nullptr);
-      }
-      m_cells[i].CellType::~CellType();
-    }
+  if (!m_cells) {
+    assert(m_numberOfAllocatedCells == 0);
+    return;
   }
-  m_cells = nullptr;
+  assert(m_numberOfAllocatedCells > 0);
+  /* We manually call T destructor since we cannot use 'delete' due to the
+   * placement new.
+   * Note Bene: we qualify the destructor call (by prefixing it by its class
+   * name) to avoid a compiler warning: T is not a final class and has virtual
+   * methods but no virtual destructor; the compiler might think we forgot
+   * some virtualization here but we didn't - we don't want to call a derived
+   * destructor of children T class. */
+  for (int i = 0; i < m_numberOfAllocatedCells; i++) {
+    // Make sure not to keep the first responder pointing on a destroyed cell
+    Responder* cellResponder = m_cells[i].responder();
+    Responder* appFirstResponder = App::app()->firstResponder();
+    if (appFirstResponder && appFirstResponder->hasAncestor(cellResponder)) {
+      App::app()->setFirstResponder(nullptr);
+    }
+    m_cells[i].CellType::~CellType();
+  }
   m_numberOfAllocatedCells = 0;
+  m_cells = nullptr;
 }
 
 template <typename CellType1, typename CellType2>
@@ -63,71 +63,75 @@ DoubleDynamicCellsDataSource<CellType1,
 }
 
 template <typename CellType1, typename CellType2>
-void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCellsType1(
-    int numberOfCells) {
+void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCellsType1() {
   assert(m_cells1 == nullptr);
   assert(m_cells2 == nullptr);
-  assert(sizeof(CellType1) * numberOfCells <= App::k_bufferSize);
+  assert(sizeof(CellType1) * numberOfCellsType1() <= App::k_bufferSize);
   App::app()->cleanBuffer(this);
-  m_cells1 = new (App::app()->buffer(0)) CellType1[numberOfCells];
-  for (int i = 0; i < numberOfCells; i++) {
+  m_cells1 = new (App::app()->buffer(0)) CellType1[numberOfCellsType1()];
+  for (int i = 0; i < numberOfCellsType1(); i++) {
     initCellType1(&m_cells1[i]);
   }
-  m_numberOfAllocatedCells1 += numberOfCells;
+  m_numberOfAllocatedCells1 = numberOfCellsType1();
 }
 
 template <typename CellType1, typename CellType2>
-void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCellsType2(
-    int numberOfCells) {
+void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCellsType2() {
   assert(m_cells1 != nullptr);
   assert(m_cells2 == nullptr);
-  assert(sizeof(CellType1) * m_numberOfAllocatedCells1 +
-             sizeof(CellType2) * numberOfCells <=
+  assert(sizeof(CellType1) * numberOfCellsType1() +
+             sizeof(CellType2) * numberOfCellsType2() <=
          App::k_bufferSize);
-  m_cells2 =
-      new (App::app()->buffer(sizeof(CellType1) * m_numberOfAllocatedCells1))
-          CellType2[numberOfCells];
-  for (int i = 0; i < numberOfCells; i++) {
+  m_cells2 = new (App::app()->buffer(sizeof(CellType1) * numberOfCellsType1()))
+      CellType2[numberOfCellsType2()];
+  for (int i = 0; i < numberOfCellsType2(); i++) {
     initCellType2(&m_cells2[i]);
   }
-  m_numberOfAllocatedCells2 += numberOfCells;
+  m_numberOfAllocatedCells2 = numberOfCellsType2();
 }
 
 template <typename CellType1, typename CellType2>
-void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCellsWithCount(
-    int numberOfCellsType1, int numberOfCellsType2) {
-  createCellsType1(numberOfCellsType1);
-  createCellsType2(numberOfCellsType2);
+void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCells() {
+  if (m_cells1 == nullptr) {
+    createCellsType1();
+    createCellsType2();
+  }
 }
 
 template <typename CellType1, typename CellType2>
 void DoubleDynamicCellsDataSource<CellType1, CellType2>::destroyCells() {
-  if (m_cells1) {
-    for (int i = 0; i < m_numberOfAllocatedCells1; i++) {
-      // Make sure not to keep the first responder pointing on a destroyed cell
-      Responder* cellResponder = m_cells1[i].responder();
-      Responder* appFirstResponder = App::app()->firstResponder();
-      if (appFirstResponder && appFirstResponder->hasAncestor(cellResponder)) {
-        App::app()->setFirstResponder(nullptr);
-      }
-      m_cells1[i].CellType1::~CellType1();
-    }
+  if (!m_cells1) {
+    assert(m_numberOfAllocatedCells1 == 0);
+    assert(!m_cells2);
+    assert(m_numberOfAllocatedCells2 == 0);
+    return;
   }
-  if (m_cells2) {
-    for (int i = 0; i < m_numberOfAllocatedCells2; i++) {
-      // Make sure not to keep the first responder pointing on a destroyed cell
-      Responder* cellResponder = m_cells2[i].responder();
-      Responder* appFirstResponder = App::app()->firstResponder();
-      if (appFirstResponder && appFirstResponder->hasAncestor(cellResponder)) {
-        App::app()->setFirstResponder(nullptr);
-      }
-      m_cells2[i].CellType2::~CellType2();
+  assert(m_numberOfAllocatedCells1 > 0);
+  assert(m_cells2);
+  assert(m_numberOfAllocatedCells2 > 0);
+  for (int i = 0; i < m_numberOfAllocatedCells1; i++) {
+    // Make sure not to keep the first responder pointing on a destroyed cell
+    Responder* cellResponder = m_cells1[i].responder();
+    Responder* appFirstResponder = App::app()->firstResponder();
+    if (appFirstResponder && appFirstResponder->hasAncestor(cellResponder)) {
+      App::app()->setFirstResponder(nullptr);
     }
+    m_cells1[i].CellType1::~CellType1();
   }
   m_cells1 = nullptr;
-  m_cells2 = nullptr;
   m_numberOfAllocatedCells1 = 0;
+
+  for (int i = 0; i < m_numberOfAllocatedCells2; i++) {
+    // Make sure not to keep the first responder pointing on a destroyed cell
+    Responder* cellResponder = m_cells2[i].responder();
+    Responder* appFirstResponder = App::app()->firstResponder();
+    if (appFirstResponder && appFirstResponder->hasAncestor(cellResponder)) {
+      App::app()->setFirstResponder(nullptr);
+    }
+    m_cells2[i].CellType2::~CellType2();
+  }
   m_numberOfAllocatedCells2 = 0;
+  m_cells2 = nullptr;
 }
 
 template class DynamicCellsDataSource<InferenceEvenOddBufferCell>;

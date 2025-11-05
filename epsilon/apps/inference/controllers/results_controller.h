@@ -54,7 +54,9 @@ class ResultsController : public InferenceController,
     return &m_selectableListView;
   }
 
-  void createCells() override;
+  int numberOfCells() override {
+    return ResultsControllerDimensions::k_numberOfReusableCells;
+  }
 
  protected:
   Escher::MessageTextView m_title;

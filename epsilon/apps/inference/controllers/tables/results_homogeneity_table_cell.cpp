@@ -88,15 +88,6 @@ void ResultsHomogeneityTableCell::fillInnerCellForLocation(
   myCell->setEven(row % 2 == 1);
 }
 
-void ResultsHomogeneityTableCell::createCells() {
-  if (DynamicCellsDataSource<InferenceEvenOddBufferCell>::m_cells == nullptr) {
-    DynamicCellsDataSource<InferenceEvenOddBufferCell>::createCellsWithOffset(
-        HomogeneityTableDimensions::k_numberOfHeaderReusableCells +
-            HomogeneityTableDimensions::k_numberOfInnerReusableCells,
-        0);
-  }
-}
-
 CategoricalController* ResultsHomogeneityTableCell::categoricalController() {
   return m_resultsTableController;
 }

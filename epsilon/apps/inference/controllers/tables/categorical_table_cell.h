@@ -162,7 +162,9 @@ class DoubleColumnTableCell
 
   void initCell(InferenceEvenOddEditableCell* cell) override;
 
-  void createCells() override;
+  int numberOfCells() override {
+    return DoubleColumnTableDimensions::k_numberOfReusableCells;
+  }
 
  private:
   KDCoordinate nonMemoizedColumnWidth(int column) override {

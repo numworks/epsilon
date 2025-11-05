@@ -27,7 +27,12 @@ class InputANOVADataSource
 
   // DoubleDynamicCellsDataSource
 
-  void createCells() override;
+  int numberOfCellsType1() override {
+    return ANOVATableDimensions::k_numberOfInputHeaderReusableCells;
+  }
+  int numberOfCellsType2() override {
+    return ANOVATableDimensions::k_numberOfInputInnerReusableCells;
+  }
 
   constexpr static int k_columnWidth = ANOVATableDimensions::k_columnWidth;
   constexpr static int k_numberOfReusableColumns =

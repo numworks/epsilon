@@ -10,6 +10,7 @@
 #include "controllers/controller_container.h"
 #include "controllers/tables/dynamic_cells_data_source.h"
 #include "inference/controllers/results_controller.h"
+#include "inference/controllers/tables/anova_table_dimensions.h"
 #include "inference/controllers/tables/homogeneity_data_source.h"
 #include "models/inference_buffer.h"
 
@@ -80,9 +81,11 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
                (HomogeneityTableDimensions::k_numberOfHeaderReusableCells +
                 HomogeneityTableDimensions::k_numberOfInnerReusableCells),
            sizeof(InferenceEvenOddEditableCell) *
-                   ANOVATableDimensions::k_numberOfInputInnerReusableCells +
+                   ANOVATableDimensions::k_inputShape.reusable.categories
+                       .inner +
                sizeof(InferenceEvenOddBufferCell) *
-                   ANOVATableDimensions::k_numberOfInputHeaderReusableCells,
+                   ANOVATableDimensions::k_inputShape.reusable.categories
+                       .header,
            sizeof(InferenceEvenOddEditableCell) *
                    HomogeneityTableDimensions::k_numberOfInnerReusableCells +
                sizeof(InferenceEvenOddBufferCell) *

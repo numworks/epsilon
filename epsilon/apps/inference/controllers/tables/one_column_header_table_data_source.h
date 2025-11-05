@@ -23,11 +23,13 @@ class OneColumnHeaderTableDataSource : public CategoricalTableViewDataSource {
   virtual int maxNumberOfColumn() const = 0;
 
  protected:
-  virtual int numberOfReusableHeaderCells() const = 0;
-  virtual int numberOfReusableInnerCells() const = 0;
-
   virtual int numberOfReusableRows() const = 0;
   virtual int numberOfReusableColumns() const = 0;
+
+  int numberOfReusableHeaderCells() const { return numberOfReusableColumns(); }
+  int numberOfReusableInnerCells() const {
+    return numberOfReusableColumns() * numberOfReusableRows();
+  }
 
   virtual Escher::HighlightCell* reusableHeaderCell(int i) = 0;
   virtual Escher::HighlightCell* reusableInnerCell(int i) = 0;

@@ -4,6 +4,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/anova/results_anova_controller.cpp \
   controllers/anova/tables/input_anova_table_cell.cpp \
   controllers/anova/tables/results_between_within_table_cell.cpp \
+  controllers/anova/tables/results_statistics_table_cell.cpp \
   controllers/chi_square/categorical_type_controller.cpp \
   controllers/chi_square/input_goodness_controller.cpp \
   controllers/chi_square/input_homogeneity_controller.cpp \

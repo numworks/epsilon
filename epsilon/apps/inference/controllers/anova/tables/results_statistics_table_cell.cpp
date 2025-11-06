@@ -1,6 +1,7 @@
 #include "results_statistics_table_cell.h"
 
 #include <omg/unreachable.h>
+#include <poincare/print.h>
 
 #include "inference/controllers/anova/results_anova_controller.h"
 #include "inference/models/anova_test.h"
@@ -65,6 +66,9 @@ void ResultsStatisticsTableCell::fillInnerCellForLocation(
     case 2:
       PrintValueInTextHolder(values.meanSquares, myCell);
       break;
+    case 3:
+      PrintValueInTextHolder(-1, myCell);
+      break;
     default:
       OMG::unreachable();
   }
@@ -83,23 +87,38 @@ void ResultsStatisticsTableCell::fillCellForLocation(
         static_cast<InferenceEvenOddBufferCell*>(cell);
     if (row == 0) {
       // Column title
-      assert(column == 1 || column == 2);
-      if (column == 1) {
-        myCell->setText(I18n::translate(I18n::Message::Between));
-      } else {
-        myCell->setText(I18n::translate(I18n::Message::Within));
-      }
+      assert(column <= numberOfColumns());
+      // TODO: simplify and factorize with InputANOVATableCell
+      char digit;
+      int groupIndex = column - 1;
+      assert(groupIndex <= '9' - '1');
+      digit = '1' + groupIndex;
+      constexpr int bufferSize = 20;
+      char txt[bufferSize];
+      Poincare::Print::CustomPrintf(txt, bufferSize, "%s %c",
+                                    I18n::translate(I18n::Message::Group),
+                                    digit);
+      myCell->setText(txt);
       myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
       myCell->setEven(true);
     } else {
       // Row title
-      assert(row == 1 || row == 2 || row == 3);
-      if (row == 1) {
-        myCell->setText(I18n::translate(I18n::Message::SquareSum));
-      } else if (row == 2) {
-        myCell->setText(I18n::translate(I18n::Message::DegreesOfFreedom));
-      } else {
-        myCell->setText(I18n::translate(I18n::Message::MeanSquares));
+      assert(row == 1 || row == 2 || row == 3 || row == 4);
+      switch (row) {
+        case 1:
+          myCell->setText(I18n::translate(I18n::Message::SampleSize));
+          break;
+        case 2:
+          myCell->setText(I18n::translate(I18n::Message::SampleMean));
+          break;
+        case 3:
+          myCell->setText(I18n::translate(I18n::Message::SampleSTD));
+          break;
+        case 4:
+          myCell->setText(I18n::translate(I18n::Message::SampleVariance));
+          break;
+        default:
+          OMG::unreachable();
       }
       myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
       myCell->setEven(static_cast<bool>((row + 1) % 2));

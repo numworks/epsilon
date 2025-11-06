@@ -43,6 +43,8 @@ class ANOVATest : public SignificanceTest, public InputTable {
     return Index2D{.row = 2, .col = 3};
   }
 
+  int numberOfGroups() const { return m_groups.size(); }
+
   using GroupValues = Poincare::Inference::SignificanceTest::FTest::Values;
 
   void setValues(std::span<const GroupValues> data) {

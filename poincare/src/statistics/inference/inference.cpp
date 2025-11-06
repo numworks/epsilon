@@ -77,6 +77,8 @@ const char* CriticalValueSymbol(StatisticType statisticType) {
       return "z";
     case Distribution::Type::Chi2:
       return "χ2";
+    case Distribution::Type::Fisher:
+      return "F";
     default:
       OMG::unreachable();
   }

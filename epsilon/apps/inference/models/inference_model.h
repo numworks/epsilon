@@ -164,7 +164,8 @@ class InferenceModel : public Shared::StatisticalDistribution {
   bool showDegreesOfFreedomInResults() const {
     return Poincare::Inference::HasDegreesOfFreedom(type()) &&
            !(testType() == TestType::Chi2 &&
-             categoricalType() == CategoricalType::GoodnessOfFit);
+             categoricalType() == CategoricalType::GoodnessOfFit) &&
+           !(testType() == TestType::ANOVA);
   }
   double degreeOfFreedom() const { return m_degreesOfFreedom; }
 

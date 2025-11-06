@@ -31,7 +31,7 @@ bool ResultsANOVAController::handleEvent(Ion::Events::Event event) {
 BetweenWithinController::BetweenWithinController(
     Escher::Responder* parent, ControllerContainer* controllerContainer,
     ANOVATest* inferenceModel)
-    : CategoricalController(parent, &controllerContainer->m_testGraphController,
+    : CategoricalController(parent, &controllerContainer->m_resultsController,
                             Invocation::Builder<CategoricalController>(
                                 &CategoricalController::ButtonAction, this)),
       m_resultsBetweenWithinTable(&m_selectableListView, inferenceModel, this,
@@ -45,7 +45,7 @@ void BetweenWithinController::createDynamicCells() {
 StatisticsController::StatisticsController(
     Escher::Responder* parent, ControllerContainer* controllerContainer,
     ANOVATest* inferenceModel)
-    : CategoricalController(parent, &controllerContainer->m_testGraphController,
+    : CategoricalController(parent, &controllerContainer->m_resultsController,
                             Invocation::Builder<CategoricalController>(
                                 &CategoricalController::ButtonAction, this)),
       m_resultsStatisticsTable(&m_selectableListView, inferenceModel, this,

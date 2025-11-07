@@ -416,12 +416,11 @@ bool Parametric::Explicit(Tree* e) {
   Dependency::RemoveDependencies(numberOfTerms);
   AdvancedReduction::DeepExpandAlgebraic(numberOfTerms);
   Dependency::RemoveDependencies(numberOfTerms);
-  // TODO: larger type than uint8
-  if (!Integer::Is<uint8_t>(numberOfTerms)) {
+  if (!Integer::Is<uint16_t>(numberOfTerms)) {
     numberOfTerms->removeTree();
     return false;
   }
-  uint8_t nbTerms = Integer::Handler(numberOfTerms).to<uint8_t>();
+  uint16_t nbTerms = Integer::Handler(numberOfTerms).to<uint16_t>();
   numberOfTerms->removeTree();
   Tree* result;
   if (isSum) {
@@ -430,7 +429,7 @@ bool Parametric::Explicit(Tree* e) {
   } else {
     result = (1_e)->cloneTree();
   }
-  for (uint8_t step = 0; step < nbTerms; step++) {
+  for (uint16_t step = 0; step < nbTerms; step++) {
     // Create k value at this step
     Tree* value = SharedTreeStack->pushAdd(2);
     lowerBound->cloneTree();

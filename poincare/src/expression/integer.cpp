@@ -917,6 +917,7 @@ template float IntegerHandler::to<float>() const;
 template double IntegerHandler::to<double>() const;
 template uint64_t IntegerHandler::to<uint64_t>() const;
 template uint32_t IntegerHandler::to<uint32_t>() const;
+template uint16_t IntegerHandler::to<uint16_t>() const;
 template uint8_t IntegerHandler::to<uint8_t>() const;
 template int8_t IntegerHandler::to<int8_t>() const;
 template int IntegerHandler::to<int>() const;

@@ -46,6 +46,7 @@ class ANOVATest : public SignificanceTest, public InputTable {
   int numberOfGroups() const { return m_groups.size(); }
 
   using GroupValues = Poincare::Inference::SignificanceTest::FTest::Values;
+  using GroupData = Poincare::Inference::SignificanceTest::FTest::GroupData;
 
   void setValues(std::span<const GroupValues> data) {
     m_groups.clear();
@@ -60,6 +61,11 @@ class ANOVATest : public SignificanceTest, public InputTable {
       Poincare::Inference::SignificanceTest::FTest::CalculatedValues;
 
   const Results& results() const { return m_results; }
+
+  const GroupData& groupStatistics(int groupIndex) const {
+    assert(groupIndex >= 0 && groupIndex < numberOfGroups());
+    return m_groupData[groupIndex];
+  }
 
  private:
   // Inference
@@ -82,7 +88,7 @@ class ANOVATest : public SignificanceTest, public InputTable {
   static_assert(k_maxNumberOfValuesPerGroup <= GroupValues{}.capacity());
 
   OMG::StaticVector<GroupValues, k_maxNumberOfGroups> m_groups;
-
+  OMG::StaticVector<GroupData, k_maxNumberOfGroups> m_groupData;
   Results m_results;
 };
 

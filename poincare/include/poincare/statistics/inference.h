@@ -242,6 +242,15 @@ Results Compute(const DataTable* contributions, double degreesOfFreedom);
 
 namespace FTest {
 
+struct GroupData {
+  int nSamples;
+  double mean;
+  double stdDeviation;
+  double variance;
+  double sumOfValues;
+  double sumOfSquaredValues;
+};
+
 struct CalculatedValues {
   double sumOfSquares;
   int degreesOfFreedom;
@@ -265,7 +274,11 @@ static constexpr size_t k_maxNumberOfGroupValues = 40;
 
 using Values = OMG::StaticVector<double, k_maxNumberOfGroupValues>;
 
+GroupData ComputeGroupData(const Values& values);
+
 StatisticResults ComputeStatisticResults(std::span<const Values> groups);
+
+StatisticResults ComputeStatisticResults(std::span<const GroupData> groupData);
 
 bool IsObservedValueValid(double value);
 

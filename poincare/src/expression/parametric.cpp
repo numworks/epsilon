@@ -411,18 +411,18 @@ bool Parametric::Explicit(Tree* e) {
   const Tree* lowerBound = e->child(k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
   const Tree* child = upperBound->nextTree();
-  Tree* boundsDifference = PatternMatching::CreateReduce(
-      KAdd(KA, KMult(-1_e, KB)), {.KA = upperBound, .KB = lowerBound});
-  Dependency::RemoveDependencies(boundsDifference);
-  AdvancedReduction::DeepExpandAlgebraic(boundsDifference);
-  Dependency::RemoveDependencies(boundsDifference);
+  Tree* numberOfTerms = PatternMatching::CreateReduce(
+      KAdd(KA, KMult(-1_e, KB), 1_e), {.KA = upperBound, .KB = lowerBound});
+  Dependency::RemoveDependencies(numberOfTerms);
+  AdvancedReduction::DeepExpandAlgebraic(numberOfTerms);
+  Dependency::RemoveDependencies(numberOfTerms);
   // TODO: larger type than uint8
-  if (!Integer::Is<uint8_t>(boundsDifference)) {
-    boundsDifference->removeTree();
+  if (!Integer::Is<uint8_t>(numberOfTerms)) {
+    numberOfTerms->removeTree();
     return false;
   }
-  int numberOfTerms = Integer::Handler(boundsDifference).to<uint8_t>() + 1;
-  boundsDifference->removeTree();
+  uint8_t nbTerms = Integer::Handler(numberOfTerms).to<uint8_t>();
+  numberOfTerms->removeTree();
   Tree* result;
   if (isSum) {
     Dimension d = Dimension::Get(child);
@@ -430,7 +430,7 @@ bool Parametric::Explicit(Tree* e) {
   } else {
     result = (1_e)->cloneTree();
   }
-  for (uint8_t step = 0; step < numberOfTerms; step++) {
+  for (uint8_t step = 0; step < nbTerms; step++) {
     // Create k value at this step
     Tree* value = SharedTreeStack->pushAdd(2);
     lowerBound->cloneTree();

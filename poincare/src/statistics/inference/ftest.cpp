@@ -10,13 +10,6 @@ namespace Poincare::Inference::SignificanceTest::FTest {
 
 bool IsObservedValueValid(double value) { return !std::isnan(value); }
 
-struct GroupData {
-  int nSamples;
-  double mean;
-  double sumOfValues;
-  double sumOfSquaredValues;
-};
-
 struct GlobalData {
   int nSamples;
   double mean;
@@ -29,6 +22,8 @@ GroupData ComputeGroupData(const Values& values) {
       Poincare::StatisticsDataset<Values::value_type>(&vector);
   return GroupData{.nSamples = dataset.datasetLength(),
                    .mean = dataset.mean(),
+                   .stdDeviation = dataset.sampleStandardDeviation(),
+                   .variance = dataset.variance(),
                    .sumOfValues = dataset.weightedSum(),
                    .sumOfSquaredValues = dataset.squaredSum()};
 }
@@ -89,16 +84,10 @@ double Statistic(const CalculatedValues& withinValues,
   return betweenValues.meanSquares / withinValues.meanSquares;
 }
 
-StatisticResults ComputeStatisticResults(std::span<const Values> groups) {
-  assert(groups.size() <= k_maxNumberOfGroups);
-  std::array<GroupData, k_maxNumberOfGroups> groupDataArray;
-  std::transform(groups.begin(), groups.end(), groupDataArray.begin(),
-                 ComputeGroupData);
-  std::span<GroupData> groupDataList =
-      std::span<GroupData>{groupDataArray.data(), groups.size()};
-  GlobalData globalData = ComputeGlobalData(groupDataList);
-  CalculatedValues within = ComputeWithin(globalData, groupDataList);
-  CalculatedValues between = ComputeBetween(globalData, groupDataList);
+StatisticResults ComputeStatisticResults(std::span<const GroupData> groupData) {
+  GlobalData globalData = ComputeGlobalData(groupData);
+  CalculatedValues within = ComputeWithin(globalData, groupData);
+  CalculatedValues between = ComputeBetween(globalData, groupData);
 
   double statistic = Statistic(within, between);
   double pValue = Internal::Inference::SignificanceTest::ComputePValue(
@@ -108,6 +97,15 @@ StatisticResults ComputeStatisticResults(std::span<const Values> groups) {
                           .pValue = pValue,
                           .between = between,
                           .within = within};
+}
+
+StatisticResults ComputeStatisticResults(std::span<const Values> groups) {
+  assert(groups.size() <= k_maxNumberOfGroups);
+  std::array<GroupData, k_maxNumberOfGroups> groupDataArray;
+  std::transform(groups.begin(), groups.end(), groupDataArray.begin(),
+                 ComputeGroupData);
+  return ComputeStatisticResults(
+      std::span<GroupData>{groupDataArray.data(), groups.size()});
 }
 
 }  // namespace Poincare::Inference::SignificanceTest::FTest

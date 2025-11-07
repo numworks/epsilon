@@ -26,10 +26,6 @@ class AbstractStaticVector {
 
   constexpr size_t size() const { return m_size; }
   constexpr void clear() { m_size = 0; }
-  constexpr void resize(size_t size) {
-    assert(size <= m_size);
-    m_size = size;
-  }
 
   constexpr const T& operator[](size_t index) const {
     assert(index < m_size);
@@ -121,6 +117,17 @@ class StaticVector : public AbstractStaticVector<T> {
       this->push(std::move(value));
     }
     return *this;
+  }
+
+  constexpr void resize(size_t size) {
+    assert(size <= capacity());
+    if (size > this->m_size) {
+      // Default-initialize extra elements
+      for (size_t i = this->m_size; i < size; ++i) {
+        m_data[i] = T{};
+      }
+    }
+    this->m_size = size;
   }
 
   constexpr size_t capacity() const { return CAPACITY; }

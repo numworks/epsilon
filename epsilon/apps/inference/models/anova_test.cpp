@@ -5,9 +5,14 @@
 namespace Inference {
 
 void ANOVATest::compute() {
-  m_results =
-      Poincare::Inference::SignificanceTest::FTest::ComputeStatisticResults(
-          m_groups.span());
+  using namespace Poincare::Inference::SignificanceTest::FTest;
+
+  m_groupData.resize(m_groups.size());
+  std::transform(m_groups.begin(), m_groups.end(), m_groupData.begin(),
+                 ComputeGroupData);
+  assert(m_groupData.size() == m_groups.size());
+
+  m_results = ComputeStatisticResults(m_groupData.span());
 
   m_testCriticalValue = m_results.statistic;
   m_pValue = m_results.pValue;

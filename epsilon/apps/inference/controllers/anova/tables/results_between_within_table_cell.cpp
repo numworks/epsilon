@@ -46,8 +46,8 @@ void ResultsBetweenWithinTableCell::drawRect(KDContext* ctx,
 
 void ResultsBetweenWithinTableCell::fillInnerCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
-  assert(row >= 0 && row < k_numberOfInnerRows);
-  assert(column >= 0 && column < k_numberOfInnerColumns);
+  assert(row >= 0 && row < innerNumberOfRows());
+  assert(column >= 0 && column < innerNumberOfColumns());
 
   InferenceEvenOddBufferCell* myCell =
       static_cast<InferenceEvenOddBufferCell*>(cell);
@@ -75,6 +75,9 @@ void ResultsBetweenWithinTableCell::fillInnerCellForLocation(
 
 void ResultsBetweenWithinTableCell::fillCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
+  assert(row >= 0 && row < numberOfRows());
+  assert(column >= 0 && column < numberOfColumns());
+
   int type = typeAtLocation(column, row);
   if (type == k_typeOfTopLeftCell) {
     return;

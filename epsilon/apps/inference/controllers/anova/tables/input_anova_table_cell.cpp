@@ -36,7 +36,7 @@ size_t InputANOVATableCell::fillColumnName(int column, char* buffer) {
 void InputANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
                                               int column, int row) {
   assert(column >= 0 && row >= 0);
-  assert(column < k_maxNumberOfColumns && row <= k_maxNumberOfRows);
+  assert(column < numberOfColumns() && row <= numberOfRows());
   int type = typeAtLocation(column, row);
   if (type == k_typeOfHeaderCells) {
     InferenceEvenOddBufferCell* myCell =
@@ -71,7 +71,7 @@ void InputANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
 void InputANOVATableCell::fillInnerCellForLocation(Escher::HighlightCell* cell,
                                                    int column, int row) {
   assert(column >= 0 && row >= 0);
-  assert(column < k_maxNumberOfColumns && row < k_maxNumberOfInnerRows);
+  assert(column < innerNumberOfColumns() && row < innerNumberOfRows());
   InferenceEvenOddEditableCell* myCell =
       static_cast<InferenceEvenOddEditableCell*>(cell);
   fillValueCellForLocation(myCell->editableTextCell()->textField(), myCell,

@@ -140,6 +140,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       assert(f->properties().isCartesian());
       bool isLine = f->properties().isLine();
       if (isLine) {
+        // Affine function is linear if f(0) = 0
         onlyLinearLines =
             onlyLinearLines && std::fabs(evaluator<float>(0, &fModel).y()) <=
                                    OMG::Float::Epsilon<float>();

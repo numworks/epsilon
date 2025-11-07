@@ -14,6 +14,7 @@ class GraphView : public Shared::FunctionGraphView,
   friend class InterestView;
 
  public:
+  constexpr static int k_maxNumberOfInequalitiesInIntersectionRegion = 8;
   GraphView(Shared::InteractiveCurveViewRange* graphRange,
             Shared::CurveViewCursor* cursor, Shared::BannerView* bannerView,
             Shared::MemoizedCursorView* cursorView);

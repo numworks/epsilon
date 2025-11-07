@@ -7,6 +7,9 @@ QUIZ_CASE(pcj_approximation_parametrics) {
   approximates_to<double>("sum(2+n×i,n,1,5)", "10+15×i", k_cartesianCtx);
   approximates_to<double>("sum(2+n×i,n,1,5)", "10+15×i", k_cartesianCtx);
 
+  simplified_approximates_to<double>("sum((-1)^k/(2k+1), k, 0, 400)",
+                                     "0.78602160382469");
+
   approximates_to<float>("product(n,n, 4, 10)", "604800");
   approximates_to<double>("product(n,n, 4, 10)", "604800");
   approximates_to<float>("product(2+k×i,k, 1, 5)", "-100-540×i",

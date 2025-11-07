@@ -52,22 +52,21 @@ void ResultsStatisticsTableCell::fillInnerCellForLocation(
   InferenceEvenOddBufferCell* myCell =
       static_cast<InferenceEvenOddBufferCell*>(cell);
 
-  const ANOVATest::CalculatedValues& values =
-      (column == 0) ? m_inference->results().between
-                    : m_inference->results().within;
+  const ANOVATest::GroupData& groupStatistics =
+      m_inference->groupStatistics(column);
 
   switch (row) {
     case 0:
-      PrintValueInTextHolder(values.sumOfSquares, myCell);
+      PrintValueInTextHolder(groupStatistics.nSamples, myCell);
       break;
     case 1:
-      PrintValueInTextHolder(values.degreesOfFreedom, myCell);
+      PrintValueInTextHolder(groupStatistics.mean, myCell);
       break;
     case 2:
-      PrintValueInTextHolder(values.meanSquares, myCell);
+      PrintValueInTextHolder(groupStatistics.stdDeviation, myCell);
       break;
     case 3:
-      PrintValueInTextHolder(-1, myCell);
+      PrintValueInTextHolder(groupStatistics.variance, myCell);
       break;
     default:
       OMG::unreachable();

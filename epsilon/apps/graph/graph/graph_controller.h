@@ -18,6 +18,7 @@ namespace Graph {
 class GraphController : public Shared::FunctionGraphController,
                         public GraphControllerHelper {
   friend class IntersectionGraphController;
+  friend class IntersectionRegionGraphController;
 
  public:
   GraphController(

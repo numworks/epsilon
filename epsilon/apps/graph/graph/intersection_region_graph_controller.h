@@ -15,8 +15,18 @@ class IntersectionRegionGraphController : public IntersectionGraphController {
 
   void viewWillAppear() override {
     m_graphView->setIntersectionRegionDisplay(true);
+    m_selectedRecordIndex = 0;
     IntersectionGraphController::viewWillAppear();
   }
+
+ private:
+  /* Unlike IntersectionGraphController's implementation, we only look at
+   * intersections between inequalities, and also include intersections between
+   * other inequalities than the selected one. */
+  Poincare::Coordinate2D<double> computeNewPointOfInterest(
+      double start, double max, bool stretch) override;
+
+  int m_selectedRecordIndex = 0;
 };
 
 }  // namespace Graph

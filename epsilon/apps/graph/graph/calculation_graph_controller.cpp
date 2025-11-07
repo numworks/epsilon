@@ -111,10 +111,9 @@ CalculationGraphController::computeNewPointOfInterestFromAbscissa(
 }
 
 PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(
-    double start, double max, bool stretch) {
+    PointsOfInterestCache* pointsOfInterest, double start, double max,
+    bool stretch) {
   // Compute at least 1 point of interest before displaying the view
-  PointsOfInterestCache* pointsOfInterest =
-      App::app()->graphController()->pointsOfInterestForSelectedRecord();
   while (pointsOfInterest->numberOfPoints(specialInterest()) == 0 &&
          !pointsOfInterest->isFullyComputed()) {
     if (!pointsOfInterest->computeNextStep(false)) {
@@ -126,6 +125,13 @@ PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(
   }
   return pointsOfInterest->firstPointInDirection(start, max, stretch,
                                                  specialInterest());
+}
+
+PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(
+    double start, double max, bool stretch) {
+  return computeAtLeastOnePointOfInterest(
+      App::app()->graphController()->pointsOfInterestForSelectedRecord(), start,
+      max, stretch);
 }
 
 ContinuousFunctionStore* CalculationGraphController::functionStore() const {

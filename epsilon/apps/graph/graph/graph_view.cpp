@@ -196,9 +196,8 @@ void GraphView::drawInequalitiesIntersection(KDContext* ctx,
     return;
   }
   // Retrieve active inequalities functions
-  /* TODO Factorize 4 with
-   * CalculationParameterController::shouldDisplayIntersectionRegionCell */
-  const ContinuousFunction* functions[8];
+  const ContinuousFunction*
+      functions[k_maxNumberOfInequalitiesInIntersectionRegion];
   int n = numberOfDrawnRecords();
   int numberOfInequalities = 0;
   for (int i = 0; i < n; i++) {

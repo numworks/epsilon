@@ -217,8 +217,10 @@ bool CalculationParameterController::shouldDisplayIntersectionRegionCell()
   }
   ContinuousFunctionStore* store = &App::app()->functionStore();
   int numberOfInequalities = store->numberOfInequalityFunctions();
-  // At least two inequalities functions are needed. Limit to 8.
-  return numberOfInequalities > 1 && numberOfInequalities <= 8;
+  // At least two inequalities functions are needed.
+  return numberOfInequalities > 1 &&
+         numberOfInequalities <=
+             GraphView::k_maxNumberOfInequalitiesInIntersectionRegion;
 }
 
 bool CalculationParameterController::shouldDisplayAreaCell() const {

@@ -12,6 +12,7 @@
 namespace Graph {
 
 class App;
+class PointsOfInterestCache;
 
 class CalculationGraphController
     : public Shared::SimpleInteractiveCurveViewController,
@@ -52,6 +53,9 @@ class CalculationGraphController
       double start, double max, bool stretch) {
     return computeAtLeastOnePointOfInterest(start, max, stretch).xy();
   }
+  Poincare::PointOfInterest computeAtLeastOnePointOfInterest(
+      PointsOfInterestCache* pointsOfInterest, double start, double max,
+      bool stretch);
   Poincare::PointOfInterest computeAtLeastOnePointOfInterest(double start,
                                                              double max,
                                                              bool stretch);

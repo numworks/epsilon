@@ -12,6 +12,9 @@ class IntersectionGraphController : public CalculationGraphController {
                               Shared::CurveViewCursor* cursor);
   const char* title() const override;
 
+ protected:
+  Ion::Storage::Record m_intersectedRecord;
+
  private:
   void reloadBannerView() override;
   Poincare::Solver<double>::Interest specialInterest() const override {
@@ -19,8 +22,6 @@ class IntersectionGraphController : public CalculationGraphController {
   }
   Poincare::Coordinate2D<double> computeNewPointOfInterest(
       double start, double max, bool stretch) override;
-
-  Ion::Storage::Record m_intersectedRecord;
 };
 
 }  // namespace Graph

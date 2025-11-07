@@ -46,8 +46,8 @@ void ResultsStatisticsTableCell::drawRect(KDContext* ctx, KDRect rect) const {
 
 void ResultsStatisticsTableCell::fillInnerCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
-  assert(row >= 0 && row < k_numberOfInnerRows);
-  assert(column >= 0 && column < k_numberOfInnerColumns);
+  assert(row >= 0 && row < innerNumberOfRows());
+  assert(column >= 0 && column < innerNumberOfColumns());
 
   InferenceEvenOddBufferCell* myCell =
       static_cast<InferenceEvenOddBufferCell*>(cell);
@@ -77,6 +77,9 @@ void ResultsStatisticsTableCell::fillInnerCellForLocation(
 
 void ResultsStatisticsTableCell::fillCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
+  assert(row >= 0 && row < numberOfRows());
+  assert(column >= 0 && column < numberOfColumns());
+
   int type = typeAtLocation(column, row);
   if (type == k_typeOfTopLeftCell) {
     return;
@@ -86,7 +89,6 @@ void ResultsStatisticsTableCell::fillCellForLocation(
         static_cast<InferenceEvenOddBufferCell*>(cell);
     if (row == 0) {
       // Column title
-      assert(column <= numberOfColumns());
       // TODO: simplify and factorize with InputANOVATableCell
       char digit;
       int groupIndex = column - 1;

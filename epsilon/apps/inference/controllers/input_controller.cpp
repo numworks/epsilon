@@ -59,6 +59,9 @@ static bool shouldDisplaySignificanceLevelForANOVA(
            Escher::ViewController::TitlesDisplay::SameAsPreviousPage);
 }
 
+/* TODO: This method probably belongs somewhere else. It should be made easier
+ * to know whether to display the significance level in the title, without using
+ * complicated conditions as in shouldDisplaySignificanceLevelForANOVA. */
 void InputController::InputTitle(const Escher::ViewController* vc,
                                  const InferenceModel* inference,
                                  char* titleBuffer, size_t titleBufferSize) {

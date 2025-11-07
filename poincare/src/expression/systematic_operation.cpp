@@ -279,9 +279,8 @@ bool SystematicOperation::ReducePowerReal(Tree* e) {
    */
   Tree* x = e->child(0);
   Tree* y = x->nextTree();
-  ComplexSign ySign = GetComplexSign(y);
   // x can be a matrix. This is handled with Pow.
-  if (Infinity::IsPlusOrMinusInfinity(y) || ySign.isInteger()) {
+  if (Infinity::IsPlusOrMinusInfinity(y) || y->isInteger()) {
     ConvertPowerRealToPower(e);
     return true;
   }

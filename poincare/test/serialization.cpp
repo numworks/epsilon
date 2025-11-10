@@ -430,3 +430,9 @@ QUIZ_CASE(pcj_serialization_derivative) {
   assert_expression_parses_and_serializes_to("f^(3)(x)", "f^(3)(x)",
                                              symbolStore);
 }
+
+QUIZ_CASE(pcj_serialization_comparison) {
+  // Check that factorials don't interfere with equal signs
+  assert_expression_parses_and_serializes_to("4000!4=9", "4000!×4=9");
+  assert_expression_parses_and_serializes_to("4000!4!=9", "4000!×4≠9");
+}

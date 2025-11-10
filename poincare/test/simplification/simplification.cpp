@@ -109,6 +109,8 @@ QUIZ_CASE(pcj_simplification_contraction) {
                     KTrig(KMult(1_e / 7_e, π_e), 1_e)),
               KAdd(KTrig(KMult(2_e / 63_e, π_e), 1_e),
                    KTrig(KMult(16_e / 63_e, π_e), 1_e)));
+  // ln(2)-ln(3) = ln(2/3)
+  contract_to(KAdd(KLn(2_e), KMult(-1_e, KLn(3_e))), KLn(2_e / 3_e));
 }
 
 QUIZ_CASE(pcj_simplification_variables) {
@@ -533,7 +535,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
                 k_cartesianCtx);
   simplifies_to(
       "ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
-      "dep(0,{0×ln(y×abs(x)×sign(y)),nonNull(abs(x)),nonNull(abs(y))})",
+      "dep(0,{0×ln(abs(x)),0×ln(abs(y)),nonNull(abs(x)),nonNull(abs(y))})",
       k_cartesianCtx);
   simplifies_to("log(14142135623731/5000000000000)",
                 "log(14142135623731/5000000000000)");

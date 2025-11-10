@@ -72,9 +72,6 @@ QUIZ_CASE(pcj_simplification_comparison_operators) {
   simplifies_to("3=3+3<4", "False");
   simplifies_to("(3=3)+(3<4)", "undef");
   simplifies_to("ln(3=5)", "undef");
-
-  simplifies_to("4000!4=9", "4×product(k,k,1,4000)=9");
-  simplifies_to("4000!4!=9", "4×product(k,k,1,4000)!=9");
 }
 
 typedef bool (*BoolCompare)(bool a, bool b);

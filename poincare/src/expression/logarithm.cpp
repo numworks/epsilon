@@ -3,10 +3,10 @@
 #include <limits.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/memory/tree_helpers.h>
 
 #include "arithmetic.h"
 #include "k_tree.h"
-#include "poincare/src/memory/tree_helpers.h"
 #include "rational.h"
 #include "sign.h"
 #include "systematic_reduction.h"
@@ -295,8 +295,9 @@ bool Logarithm::ContractLn(Tree* e) {
     int numberOfLnChildren = 0;
 
     // Identify ln and -ln children
-    Internal::TreeRef end = pushEndMarker(clone);
-    Internal::Tree* child = clone->nextNode();
+    TreeRef end = pushEndMarker(clone);
+    assert(clone->numberOfChildren() > 0);
+    Tree* child = clone->child(0);
     while (child != end) {
       if (child->isLn()) {
         // Extract A from ln(A)

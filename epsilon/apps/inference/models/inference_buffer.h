@@ -2,6 +2,7 @@
 
 #include <new>
 
+#include "anova_test.h"
 #include "goodness_test.h"
 #include "homogeneity_test.h"
 #include "one_mean_interval.h"
@@ -38,6 +39,7 @@ union InferenceBuffer {
 
  private:
   // Tests
+  ANOVATest m_anovaTest;
   OneMeanTTest m_oneMeanTTest;
   OneMeanZTest m_oneMeanZTest;
   OneProportionZTest m_oneProportionZTest;

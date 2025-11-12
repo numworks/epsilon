@@ -63,10 +63,10 @@ void ResultsStatisticsTableCell::fillInnerCellForLocation(
       PrintValueInTextHolder(groupStatistics.mean, myCell);
       break;
     case 2:
-      PrintValueInTextHolder(groupStatistics.stdDeviation, myCell);
+      PrintValueInTextHolder(groupStatistics.sampleStdDeviation, myCell);
       break;
     case 3:
-      PrintValueInTextHolder(groupStatistics.variance, myCell);
+      PrintValueInTextHolder(groupStatistics.sampleVariance, myCell);
       break;
     default:
       OMG::unreachable();

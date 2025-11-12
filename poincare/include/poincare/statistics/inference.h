@@ -245,8 +245,8 @@ namespace FTest {
 struct GroupData {
   int nSamples;
   double mean;
-  double stdDeviation;
-  double variance;
+  double sampleStdDeviation;
+  double sampleVariance;
   double sumOfValues;
   double sumOfSquaredValues;
 };

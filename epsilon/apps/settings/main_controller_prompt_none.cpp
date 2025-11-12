@@ -23,6 +23,7 @@ constexpr MessageTree s_modelMenu[] = {
 constexpr MessageTree s_model =
     MessageTree(I18n::Message::SettingsApp, s_modelMenu);
 
-constexpr int s_aboutIndex = 10;
+constexpr int s_aboutIndex = 12;
+static_assert(s_modelMenu[s_aboutIndex].label() == I18n::Message::About);
 
 }  // namespace Settings

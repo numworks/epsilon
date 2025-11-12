@@ -12,7 +12,7 @@ $(call document_extension,hex,Extract Intel .hex from ELF file)
 
 $(OUTPUT_DIRECTORY)/%.dfu: $(OUTPUT_DIRECTORY)/%.elf
 	$(call rule_label,DFU)
-	$(PYTHON) tools/device/elf2dfu.py -i $< -o $@
+	$(PYTHON) tools/device/elf2dfu.py -i $< -o $@ -u $(USBVIDPID)
 
 $(call document_extension,dfu)
 

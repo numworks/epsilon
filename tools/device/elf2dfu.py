@@ -175,9 +175,14 @@ def elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose):
 
 
 parser = argparse.ArgumentParser(description="Convert an ELF file to DfuSe.")
-parser.add_argument("-i", metavar="ELF_FILE", help="Input ELF file", nargs="+")
-parser.add_argument("-o", metavar="DFU_FILE", help="Output DfuSe file")
+parser.add_argument(
+    "-i", metavar="ELF_FILE", help="Input ELF file", nargs="+", required=True
+)
+parser.add_argument("-o", metavar="DFU_FILE", help="Output DfuSe file", required=True)
+parser.add_argument(
+    "-u", metavar="USB_VID_PID", help="Target device VID:PID", required=True
+)
 parser.add_argument("-v", "--verbose", action="store_true", help="Show verbose output")
 
 args = parser.parse_args()
-elf2dfu(args.i, "0x0483:0xa291", args.o, args.verbose)
+elf2dfu(args.i, args.u, args.o, args.verbose)

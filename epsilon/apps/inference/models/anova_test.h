@@ -70,14 +70,8 @@ class ANOVATest : public SignificanceTest, public InputTable {
  private:
   // Inference
   double* parametersArray() override { return nullptr; }
-  float computeXMax() const override {
-    // TODO
-    return 1;
-  }
-  float computeXMin() const override {
-    // TODO
-    return -1;
-  }
+
+  float computeXMin() const override { return 0.f; }
   bool shouldForbidZoom(float alpha, float criticalValue) override {
     return false;
   }

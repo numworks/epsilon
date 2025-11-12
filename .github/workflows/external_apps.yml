@@ -19,19 +19,21 @@ jobs:
         uses: numworks/setup-arm-toolchain@latest
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Setup
-        run: tools/setup.sh
+      - name: Build container and define DOCKER_RUN
+        uses: ./.github/actions/docker-builder
+        with:
+          platform: device
       - uses: actions/setup-node@v4
         with:
           node-version: latest
       - name: Setup nwlink
-        run: npm install -g nwlink
+        run: $DOCKER_RUN "npm install -g nwlink"
       - name: Build sample_c for device
-        run: make -C epsilon/external_apps/sample_c PLATFORM=device build
+        run: $DOCKER_RUN "make -C epsilon/external_apps/sample_c PLATFORM=device build"
       - name: Build sample_cpp for device
-        run: make -C epsilon/external_apps/sample_cpp PLATFORM=device build
+        run: $DOCKER_RUN "make -C epsilon/external_apps/sample_cpp PLATFORM=device build"
       - name: Build rpn_cpp for device
-        run: make -C epsilon/external_apps/rpn_cpp PLATFORM=device build
+        run: $DOCKER_RUN "make -C epsilon/external_apps/rpn_cpp PLATFORM=device build"
   rust_app:
     runs-on: ubuntu-latest
     steps:

@@ -6,7 +6,7 @@
 
 #### Install EMSDK
 
-From the [external_apps folder](/external_apps), depending on you system, run
+From the [external_apps folder](/external_apps), depending on your system, run
 - Windows:
 ```shell
 ./setup_web.ps1

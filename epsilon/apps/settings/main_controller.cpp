@@ -91,7 +91,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences* preferences = GlobalPreferences::SharedGlobalPreferences();
   int index = selectedRow();
   if (event == Ion::Events::Zero) {
-    int aboutIndex = s_aboutIndex - hideExamModes();
+    int aboutIndex = s_aboutIndex - !hasExamModeCell() - !hasPressToTestCell() -
+                     !hasTestModeCell();
     if (index != aboutIndex) {
       m_selectableListView.selectCell(aboutIndex);
       return true;

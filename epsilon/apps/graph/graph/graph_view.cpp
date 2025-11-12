@@ -669,12 +669,19 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
   } else {
     // Draw points of interest for all active inequalities.
     int numberOfActiveFunctions = functionStore()->numberOfActiveFunctions();
+    bool firstActiveInequality = true;
     for (int i = 0; i < numberOfActiveFunctions; i++) {
       Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
       OMG::ExpiringPointer<Shared::ContinuousFunction> f =
           functionStore()->modelForRecord(record);
       if (!f->properties().isEquality()) {
-        drawPointsOfInterest(ctx, rect, record, shouldComputePoints);
+        /* Optimisation : skip the first active inequality since we only draw
+         *                intersections. */
+        if (firstActiveInequality) {
+          firstActiveInequality = false;
+        } else {
+          drawPointsOfInterest(ctx, rect, record, shouldComputePoints);
+        }
       }
     }
   }

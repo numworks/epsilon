@@ -287,7 +287,11 @@ bool Logarithm::ContractLn(Tree* e) {
 
   /* ... + ln(A) + ... + ln(B) + ... - ln(C) + ... =
    * ... + ln(AB/C) + i*(arg(A) + arg(B) + arg(1/C) - arg(AB/C)) */
-  if (e->isAdd()) {
+  ctx = PatternMatching::Context();
+  if (e->isAdd() &&
+      (PatternMatching::Match(e, KAdd(KA_s, KLn(KB), KC_s), &ctx) ||
+       PatternMatching::Match(e, KAdd(KA_s, KMult(-1_e, KLn(KB)), KC_s),
+                              &ctx))) {
     // Clone e to work at the end of the treestack
     TreeRef clone = e->cloneTree();
     int numberOfCloneChildren = clone->numberOfChildren();

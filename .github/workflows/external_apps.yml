@@ -26,8 +26,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: latest
-      - name: Setup nwlink
-        run: $DOCKER_RUN "npm install -g nwlink"
       - name: Build sample_c for device
         run: $DOCKER_RUN "make -C epsilon/external_apps/sample_c PLATFORM=device build"
       - name: Build sample_cpp for device

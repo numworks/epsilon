@@ -112,7 +112,7 @@ install_linux_binary_deps() {
     sudo apt-get install -y parallel
     # format.mak requires prettier
     sudo apt-get install -y npm
-    sudo npm install -g prettier
+    sudo npm install -g prettier nwlink
     sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-15 100
     install_latest_lcov
   fi

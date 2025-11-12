@@ -18,14 +18,13 @@ jobs:
         uses: actions/checkout@v4
       - name: Read Emscripten version
         run: echo "EMSDK_VERSION=$(cat .emsdk-version)" >> $GITHUB_ENV
-      - name: Download emscripten
-        uses: numworks/setup-emscripten@latest
+      - name: Build container and define DOCKER_RUN
+        uses: ./.github/actions/docker-builder
         with:
-          sdk: ${{ env.EMSDK_VERSION }}
-      - name: Setup
-        run: tools/setup.sh --only-simulator
+          platform: web
+          emsdk-version: ${{ env.EMSDK_VERSION }}
       - name: Build
-        run: make DEBUG=$DEBUG PLATFORM=web epsilon.html epsilon.htmlpack.zip
+        run: $DOCKER_RUN "make DEBUG=$DEBUG PLATFORM=web epsilon.html epsilon.htmlpack.zip"
       - name: Upload epsilon.html
         uses: actions/upload-artifact@v4
         with:

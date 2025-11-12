@@ -44,6 +44,11 @@ double StatisticsStore::sampleStandardDeviation(int series) const {
   return m_datasets[series].sampleStandardDeviation();
 }
 
+double StatisticsStore::sampleVariance(int series) const {
+  assert(series >= 0);
+  return m_datasets[series].sampleVariance();
+}
+
 bool StatisticsStore::deleteValueAtIndex(int series, int i, int j,
                                          bool authorizeNonEmptyRowDeletion,
                                          bool delayUpdate) {

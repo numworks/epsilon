@@ -226,8 +226,7 @@ double Store::variance(int series) const {
 }
 
 double Store::sampleVariance(int series) const {
-  double sampleStddev = sampleStandardDeviation(series);
-  return sampleStddev * sampleStddev;
+  return m_datasets[series].sampleVariance();
 }
 
 /* Below is the equivalence between quartiles and cumulated population, for the

@@ -22,8 +22,8 @@ GroupData ComputeGroupData(const Values& values) {
       Poincare::StatisticsDataset<Values::value_type>(&vector);
   return GroupData{.nSamples = dataset.datasetLength(),
                    .mean = dataset.mean(),
-                   .stdDeviation = dataset.sampleStandardDeviation(),
-                   .variance = dataset.variance(),
+                   .sampleStdDeviation = dataset.sampleStandardDeviation(),
+                   .sampleVariance = dataset.sampleVariance(),
                    .sumOfValues = dataset.weightedSum(),
                    .sumOfSquaredValues = dataset.squaredSum()};
 }

@@ -205,12 +205,16 @@ class PiInterval {
   bool m_maxIsInclusive;
 };
 
-// If possible, find k such that arg(A) + arg(B) = arg(AB) + 2iπk
-bool CanGetArgSumModulo(const Tree* a, const Tree* b, int* k) {
-  // a and b are not always known, find an interval for the sum of their arg.
-  assert(!a->isZero() && !b->isZero());
-  PiInterval interval = PiInterval::Add(PiInterval::Arg(GetComplexSign(a)),
-                                        PiInterval::Arg(GetComplexSign(b)));
+// If possible, find k such that arg(A) + arg(B) + ... = arg(A*B*...) + 2iπk
+bool CanGetArgSumModulo(const Tree* firstTree, int numberOfTrees, int* k) {
+  // Find an interval for the sum of the arguments
+  PiInterval interval = PiInterval::Arg(GetComplexSign(1_e));
+  const Tree* tree = firstTree;
+  for (int i = 0; i < numberOfTrees; i++) {
+    assert(!tree->isZero());
+    interval = PiInterval::Add(interval, PiInterval::Arg(GetComplexSign(tree)));
+    tree = tree->nextTree();
+  }
   assert(interval.maxK() <= 1 && interval.minK() >= -1);
   *k = interval.maxK();
   return *k == interval.minK();
@@ -252,16 +256,46 @@ Tree* PushProductCorrection(const Tree* a, const Tree* b) {
       {.KA = a, .KB = b});
 }
 
-Tree* PushAdditionCorrection(const Tree* a, const Tree* b) {
-  // ln(A) + ln(B) - ln(A*B) = k*2π*i = (arg(A) + arg(B) - arg(A*B))*i
+Tree* PushAdditionCorrection(const Tree* firstTree, int numberOfTrees) {
+  /* Push correction by computing either:
+   * - if possible, the π-interval for arg(A) + arg(B) + ...
+   *   such that ln(A) + ln(B) + ... - ln(A*B*...) = k*2π*i
+   * - otherwise, (arg(A) + arg(B) + ... - arg(A*B*...))*i */
   int k;
-  if (CanGetArgSumModulo(a, b, &k)) {
+  if (CanGetArgSumModulo(firstTree, numberOfTrees, &k)) {
     return PushIK2Pi(k);
   }
-  // Push arg(A) + arg(B) - arg(AB)
-  return PatternMatching::CreateReduce(
-      KMult(KAdd(KArg(KA), KArg(KB), KMult(-1_e, KArg(KMult(KA, KB)))), i_e),
-      {.KA = a, .KB = b});
+
+  // Create arg(A) + arg(B) + ...
+  TreeRef argSum = KAdd.node<0>->cloneNode();
+  const Tree* tree = firstTree;
+  for (int i = 0; i < numberOfTrees; i++) {
+    Tree* arg = KArg->cloneNode();
+    tree->cloneTree();
+    SystematicReduction::ShallowReduce(arg);
+    NAry::AddChild(argSum, arg);
+    tree = tree->nextTree();
+  }
+  SystematicReduction::ShallowReduce(argSum);
+
+  // Create arg(A*B*...)
+  TreeRef multArg = KMult.node<0>->cloneNode();
+  tree = firstTree;
+  for (int i = 0; i < numberOfTrees; i++) {
+    Tree* child = tree->cloneTree();
+    NAry::AddChild(multArg, child);
+    tree = tree->nextTree();
+  }
+  SystematicReduction::ShallowReduce(multArg);
+  multArg->cloneNodeAtNode(KArg);
+  SystematicReduction::ShallowReduce(multArg);
+
+  // Create correction as (sum(arg) - arg(prod))*i
+  TreeRef correction = PatternMatching::CreateReduce(
+      KMult(KAdd(KA, KMult(-1_e, KB)), i_e), {.KA = argSum, .KB = multArg});
+  argSum->removeTree();
+  multArg->removeTree();
+  return correction;
 }
 
 bool Logarithm::ContractLn(Tree* e) {
@@ -328,38 +362,9 @@ bool Logarithm::ContractLn(Tree* e) {
       return false;
     }
 
-    /* Push correction by computing either:
-     * - the π-interval for arg(A) + arg(B) + ...
-     * - i*(arg(A) + arg(B) + ... - arg(A*B*...))
-     * Note: We could avoid adding a correction if inside an exponential.
-     * Adding this special case doesn't seem worth it. */
-    TreeRef correction;
-    PiInterval interval = PiInterval::Arg(GetComplexSign(1_e));
-    for (Tree* child : lnChildren->children()) {
-      interval =
-          PiInterval::Add(interval, PiInterval::Arg(GetComplexSign(child)));
-    }
-    if (interval.maxK() == interval.minK()) {
-      // π-interval is known, push correction i*k*2π
-      correction = PushIK2Pi(interval.maxK());
-      // Reduce lnChildren for later
-      SystematicReduction::ShallowReduce(lnChildren);
-    } else {
-      TreeRef argSum = KAdd.node<0>->cloneNode();
-      for (Tree* child : lnChildren->children()) {
-        Tree* arg = KArg->cloneNode();
-        child->cloneTree();
-        SystematicReduction::ShallowReduce(arg);
-        NAry::AddChild(argSum, arg);
-      }
-      SystematicReduction::ShallowReduce(argSum);
-      SystematicReduction::ShallowReduce(lnChildren);
-      correction = PatternMatching::CreateReduce(
-          KMult(KAdd(KA, KMult(-1_e, KArg(KB))), i_e),
-          {.KA = argSum, .KB = lnChildren});
-      argSum->removeTree();
-    }
-
+    PushAdditionCorrection(lnChildren->child(0),
+                           lnChildren->numberOfChildren());
+    SystematicReduction::ShallowReduce(lnChildren);
     lnChildren->cloneNodeAtNode(KLn);
     SystematicReduction::ShallowReduce(lnChildren);
     // Add ln product and correction
@@ -383,13 +388,14 @@ bool Logarithm::ExpandLn(Tree* e) {
   // ln(A*B?) = ln(A) + ln(B) - i*(arg(A) + arg(B) - arg(AB))
   if (PatternMatching::Match(e, KLn(KMult(KA, KB_p)), &ctx)) {
     // Since KB_p can match multiple trees, we need them as a single tree.
-    const Tree* a = ctx.getTree(KA);
+    TreeRef a = ctx.getTree(KA)->cloneTree();
     TreeRef b = PatternMatching::CreateReduce(KMult(KB_p), ctx);
-    TreeRef c = PushAdditionCorrection(a, b);
+    TreeRef c = PushAdditionCorrection(a, 2);
     e->moveTreeOverTree(PatternMatching::CreateReduce(
         KAdd(KLn(KA), KLn(KB), KMult(-1_e, KC)), {.KA = a, .KB = b, .KC = c}));
     c->removeTree();
     b->removeTree();
+    a->removeTree();
     return true;
   }
   // ln(A^B) = B*ln(A) - i*(B*arg(A) - arg(A^B))

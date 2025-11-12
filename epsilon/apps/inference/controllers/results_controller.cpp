@@ -31,6 +31,9 @@ ViewController::TitlesDisplay ResultsController::titlesDisplay() const {
        m_inferenceModel->categoricalType() == CategoricalType::GoodnessOfFit)) {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
+  if (m_inferenceModel->testType() == TestType::ANOVA) {
+    return ViewController::TitlesDisplay::SameAsPreviousPage;
+  }
   return m_inferenceModel->canChooseDataset()
              ? TitlesDisplay(0b1011)
              : ViewController::TitlesDisplay::DisplayLastThreeTitles;

@@ -19,6 +19,7 @@ class StatisticsStore : public DoublePairStore {
   double mean(int series) const;
   double standardDeviation(int series) const;
   double sampleStandardDeviation(int series) const;
+  double sampleVariance(int series) const;
 
   // DoublePairStore
   char columnNamePrefixAtIndex(int column) const override {

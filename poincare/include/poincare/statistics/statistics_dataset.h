@@ -143,6 +143,8 @@ class StatisticsDataset {
   T mean() const { return weightedSum() / totalWeight(); }
   T variance() const;
   T standardDeviation() const { return std::sqrt(variance()); }
+
+  T sampleVariance() const { return std::pow(sampleStandardDeviation(), 2); }
   T sampleStandardDeviation() const;
 
   T firstQuartile() const;

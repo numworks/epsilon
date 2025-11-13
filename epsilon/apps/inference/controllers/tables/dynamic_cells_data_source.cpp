@@ -71,7 +71,7 @@ void DoubleDynamicCellsDataSource<HeaderCellType,
          App::k_bufferSize);
   App::app()->cleanBuffer(this);
   m_headerCells =
-      new (App::app()->buffer(0)) HeaderCellType[numberOfDynamicHeaderCells()];
+      new (App::app()->buffer()) HeaderCellType[numberOfDynamicHeaderCells()];
   for (int i = 0; i < numberOfDynamicHeaderCells(); i++) {
     initHeaderCell(&m_headerCells[i]);
   }

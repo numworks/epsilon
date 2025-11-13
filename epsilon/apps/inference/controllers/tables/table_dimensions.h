@@ -3,7 +3,8 @@
 namespace Inference {
 
 /* Dimensions of "reusable cells", which are the number of cells that can appear
- * on screen at the same time. */
+ * on screen at the same time. These dimensions take the "inner" table into
+ * account. */
 struct ReusableCellDimensions {
   int rows;
   int columns;

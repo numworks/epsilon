@@ -56,7 +56,7 @@ class StatisticsController : public CategoricalController {
 
   // Escher::ViewController
   const char* title() const override {
-    return I18n::translate(I18n::Message::InputStatistics);
+    return I18n::translate(I18n::Message::StatsApp);
   }
 
  private:

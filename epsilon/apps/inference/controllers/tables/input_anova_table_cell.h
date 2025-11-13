@@ -4,7 +4,7 @@
 #include "categorical_table_cell.h"
 #include "dynamic_cells_data_source.h"
 #include "inference/models/anova_test.h"
-#include "one_column_header_table_data_source.h"
+#include "one_header_row_table_data_source.h"
 
 namespace Inference {
 
@@ -12,7 +12,7 @@ class InputANOVAController;
 
 class InputANOVATableCell
     : public InputCategoricalTableCell,
-      public OneColumnHeaderTableDataSource,
+      public OneHeaderRowTableDataSource,
       public DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
                                           InferenceEvenOddEditableCell> {
  public:

@@ -1,19 +1,16 @@
 #include "helper.h"
 #include "poincare/preferences.h"
+#include "quiz.h"
+#include "quiz/src/symbols.h"
 
 using namespace Poincare;
 using namespace Poincare::Internal;
 using UnitFormat = Poincare::Preferences::UnitFormat;
 
 QUIZ_CASE(pcj_simplification_unit) {
-  ProjectionContext replaceSymbolCtx = {
-      .m_symbolic = SymbolicComputation::ReplaceAllSymbols};
   simplifies_to("12_m", "12×_m");
   simplifies_to("1_s", "1×_s");
-  simplifies_to("1_m+1_s", "undef");
   simplifies_to("1_m+1_yd", "1.9144×_m");
-  simplifies_to("1_m+x", "undef");
-  simplifies_to("1_m+0", "undef");
   simplifies_to("1_mm+1_km", "1000.001×_m");
   simplifies_to("2_month×7_dm", "3681720×_s×_m");
   simplifies_to("2×_m/_m", "2");
@@ -23,16 +20,9 @@ QUIZ_CASE(pcj_simplification_unit) {
   // NOTE: We only allow simple int operations in unit exponents
   simplifies_to("_s^-1", "1×_s^(-1)");
   simplifies_to("_s^(4-2^3+2×3)", "1×_s^2");
-  simplifies_to("_s^floor(1)", "undef");
-  simplifies_to("_s^ceil(2)", "undef");
   // NOTE: this is a test for ReduceSortedAddition, see comment there
   simplifies_to("0×_A + π×_A - π×_A", "0×_A");
   simplifies_to("sum(_s,x,2,0)", "0×_s");
-  /* NOTE: Order of units should not matter. If an overflow can occur when
-   * reordering the multiplication, we return undef, even if no overflow
-   * technically happened */
-  simplifies_to("_s^127 * _s^(-1) * _s", "undef");
-  simplifies_to("_s^127 * _s * _s^(-1)", "undef");
 #if 0
   // See comment in DeepCheckDimensions
   simplifies_to("abs(-3.3_m)", "3.3×_m");
@@ -42,6 +32,10 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("normcdf(0,20,3)×_s", "1.3083978345207ᴇ-11×_s");
   simplifies_to("17_nohm*3+2_nOhm", "53×_nΩ");
   simplifies_to("1/(1/_A)", "1×_A");
+  simplifies_to("log(_s×x/(_s×y))",
+                "dep(log(x/y),{nonNull(x),nonNull(1/"
+                "(1×10^0×y)),realPos((1×10^0×x)/(1×10^0×y))})",
+                k_keepAllSymbolsCtx);
 
   // No unit conversion
   // TODO: should return 1×_m+1×_cm
@@ -67,51 +61,10 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("(2_K)^2", "4×_K^2");
   simplifies_to("_cKπ23", "72.256631032565×_cK");
 
-  // Undefined
-  simplifies_to("2_°C-1_°C", "undef");
-  simplifies_to("2_°C+2_K", "undef");
-  simplifies_to("2_K+2_°C", "undef");
-  simplifies_to("2_K×2_°C", "undef");
-  simplifies_to("1/_°C", "undef");
-  simplifies_to("(1_°C)^2", "undef");
-  simplifies_to("tan(2_m)", "undef");
-  simplifies_to("tan(2_rad^2)", "undef");
-  // TODO_PCJ : Wasn't exact before
-  simplifies_to("π×_rad×_°", "π^2/180×_rad^2");
-  simplifies_to("(_A×x)^2×_s", "undef", replaceSymbolCtx);
-  simplifies_to("log(_s×x/(_s×y))",
-                "dep(log(x/y),{nonNull(x),nonNull(1/"
-                "(1×10^0×y)),realPos((1×10^0×x)/(1×10^0×y))})",
-                k_keepAllSymbolsCtx);
-
-  // BestRepresentative
-  simplifies_to("1_m+1_km", "1.001×_km",
-                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
-  simplifies_to("1ᴇ-9_s", "1×_ns",
-                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
-  simplifies_to("1234_g", "1.234×_kg",
-                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
-  simplifies_to("10^(-6)_m^3", "1×_cm^3",
-                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
-  simplifies_to("12345×_tbsp", "182.54261122453×_L",
-                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
-  // TODO_PCJ: Should be -173.15×_°C
-  simplifies_to("100×_K", "100×_K",
-                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
-  simplifies_to("3.6×_MN×_m", "3.6×_MJ",
-                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
-
   // TODO: Decide on implicit '_' parsing
   //   simplifies_to("1m+1km", "1_m+1_km" /  "m+k×m" / "m+km" );
   //   simplifies_to("1m+1s", "undef" / "m+s");
   //   simplifies_to("1m+x", "m+x" / "undef");
-
-  // UnitFormat
-  simplifies_to("1609.344_m", "1.609344×_km",
-                {.m_unitFormat = UnitFormat::Imperial,
-                 .m_unitDisplay = UnitDisplay::AutomaticMetric});
-  simplifies_to("2×π×_cK", "6.2831853071796×_cK",
-                {.m_unitFormat = UnitFormat::Imperial});
 
   // Implicit additions
   simplifies_to("3h300min", "28800×_s");
@@ -146,8 +99,54 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("0.2_rad", "1/5×_rad");
   simplifies_to("-0.2_rad", "-1/5×_rad");
   simplifies_to("0.2_rad^2", "1/5×_rad^2");
+  // TODO_PCJ : Wasn't exact before
+  simplifies_to("π×_rad×_°", "π^2/180×_rad^2");
+}
 
-  // Decomposition
+QUIZ_CASE(pcj_simplification_unit_automatic) {
+  // BestRepresentative
+  simplifies_to("1_m+1_km", "1.001×_km",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("1ᴇ-9_s", "1×_ns",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("1234_g", "1.234×_kg",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("10^(-6)_m^3", "1×_cm^3",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("12345×_tbsp", "182.54261122453×_L",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  // TODO_PCJ: Should be -173.15×_°C
+  simplifies_to("100×_K", "100×_K",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("3.6×_MN×_m", "3.6×_MJ",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+}
+
+QUIZ_CASE(pcj_simplification_unit_basicSI) {
+  simplifies_to("_km", "1000×_m", {.m_unitDisplay = UnitDisplay::BasicSI});
+  // TODO_PCJ: Order of units, should be 0.06×_m^(-1)×_s
+  simplifies_to("_min/_km", "0.06×_s×_m^(-1)",
+                {.m_unitDisplay = UnitDisplay::BasicSI});
+  simplifies_to("_km^3", "1000000000×_m^3",
+                {.m_unitDisplay = UnitDisplay::BasicSI});
+  simplifies_to("1_m+_km", "1001×_m", {.m_unitDisplay = UnitDisplay::BasicSI});
+  simplifies_to("_L^2×3×_s", "3ᴇ-6×_m^6×_s",
+                {.m_unitDisplay = UnitDisplay::BasicSI});
+  simplifies_to("1000000_cm", "10000×_m",
+                {.m_unitDisplay = UnitDisplay::BasicSI});
+  simplifies_to("(-1/2)×_'", "-π/21600×_rad",
+                {.m_unitDisplay = UnitDisplay::BasicSI});
+  simplifies_to("-11.1×_°C", "262.05×_K",
+                {.m_unitDisplay = UnitDisplay::BasicSI});
+  simplifies_to("-4×_°F", "253.15×_K", {.m_unitDisplay = UnitDisplay::BasicSI});
+}
+
+QUIZ_CASE(pcj_simplification_unit_conversion) {
+  simplifies_to("180×_°→_rad", "π×_rad", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("91.44_cm→_yd", "1×_yd");
+}
+
+QUIZ_CASE(pcj_simplification_unit_decomposition) {
   simplifies_to("123_m", "undef",
                 {.m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("1241_yd", "undef",
@@ -203,8 +202,9 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("1×_m^3", "undef",
                 {.m_unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Decomposition});
+}
 
-  // Equivalent
+QUIZ_CASE(pcj_simplification_unit_equivalent) {
   simplifies_to("3_s", "undef", {.m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("3_ft^3", "84.950539776×_L",
                 {.m_unitDisplay = UnitDisplay::Equivalent});
@@ -265,26 +265,45 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("1×_m/_s", "undef",
                 {.m_unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
+}
 
-  // International System
-  simplifies_to("_km", "1000×_m", {.m_unitDisplay = UnitDisplay::BasicSI});
-  // TODO_PCJ: Order of units, should be 0.06×_m^(-1)×_s
-  simplifies_to("_min/_km", "0.06×_s×_m^(-1)",
-                {.m_unitDisplay = UnitDisplay::BasicSI});
-  simplifies_to("_km^3", "1000000000×_m^3",
-                {.m_unitDisplay = UnitDisplay::BasicSI});
-  simplifies_to("1_m+_km", "1001×_m", {.m_unitDisplay = UnitDisplay::BasicSI});
-  simplifies_to("_L^2×3×_s", "3ᴇ-6×_m^6×_s",
-                {.m_unitDisplay = UnitDisplay::BasicSI});
-  simplifies_to("1000000_cm", "10000×_m",
-                {.m_unitDisplay = UnitDisplay::BasicSI});
-  simplifies_to("(-1/2)×_'", "-π/21600×_rad",
-                {.m_unitDisplay = UnitDisplay::BasicSI});
-  simplifies_to("-11.1×_°C", "262.05×_K",
-                {.m_unitDisplay = UnitDisplay::BasicSI});
-  simplifies_to("-4×_°F", "253.15×_K", {.m_unitDisplay = UnitDisplay::BasicSI});
+QUIZ_CASE(pcj_simplification_unit_imperial) {
+  simplifies_to("1609.344_m", "1.609344×_km",
+                {.m_unitFormat = UnitFormat::Imperial,
+                 .m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("2×π×_cK", "6.2831853071796×_cK",
+                {.m_unitFormat = UnitFormat::Imperial});
+}
 
-  // Conversions
-  simplifies_to("180×_°→_rad", "π×_rad", {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("91.44_cm→_yd", "1×_yd");
+QUIZ_CASE(pcj_simplification_unit_undef) {
+  ProjectionContext replaceSymbolCtx = {
+      .m_symbolic = SymbolicComputation::ReplaceAllSymbols};
+
+  // Non homogeneous
+  simplifies_to("1_m+1_s", "undef");
+  simplifies_to("1_m+x", "undef");
+  simplifies_to("1_m+0", "undef");
+
+  // Temperature
+  simplifies_to("2_°C-1_°C", "undef");
+  simplifies_to("2_°C+2_K", "undef");
+  simplifies_to("2_K+2_°C", "undef");
+  simplifies_to("2_K×2_°C", "undef");
+  simplifies_to("1/_°C", "undef");
+  simplifies_to("(1_°C)^2", "undef");
+
+  // Exponent overflow
+  /* NOTE: Order of units should not matter. If an overflow can occur when
+   * reordering the multiplication, we return undef, even if no overflow
+   * technically happened */
+  simplifies_to("_s^127 * _s^(-1) * _s", "undef");
+  simplifies_to("_s^127 * _s * _s^(-1)", "undef");
+
+  // Only allow simple int operations in unit exponents
+  simplifies_to("_s^floor(1)", "undef");
+  simplifies_to("_s^ceil(2)", "undef");
+
+  simplifies_to("tan(2_m)", "undef");
+  simplifies_to("tan(2_rad^2)", "undef");
+  simplifies_to("(_A×x)^2×_s", "undef", replaceSymbolCtx);
 }

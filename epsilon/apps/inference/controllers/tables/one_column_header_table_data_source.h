@@ -11,8 +11,6 @@ namespace Inference {
 // This class wraps a TableViewDataSource by adding a Column header above it.
 class OneColumnHeaderTableDataSource : public CategoricalTableViewDataSource {
  public:
-  OneColumnHeaderTableDataSource() = default;
-
   // TableViewDataSource
   int numberOfRows() const override { return innerNumberOfRows() + 1; }
   int numberOfColumns() const override { return innerNumberOfColumns(); }

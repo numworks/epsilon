@@ -16,9 +16,9 @@ class ResultsStatisticsTableCell
       public DynamicCellsDataSource<Escher::SmallFontEvenOddBufferTextCell> {
  public:
   constexpr static int k_numberOfInnerColumns =
-      ANOVATableDimensions::k_resultGroupStatistics.inner.columns;
+      ANOVATableDimensions::k_resultGroupStatisticsShape.inner.columns;
   constexpr static int k_numberOfInnerRows =
-      ANOVATableDimensions::k_resultGroupStatistics.inner.rows;
+      ANOVATableDimensions::k_resultGroupStatisticsShape.inner.rows;
 
   ResultsStatisticsTableCell(Escher::Responder* parentResponder,
                              ANOVATest* test,
@@ -57,7 +57,7 @@ class ResultsStatisticsTableCell
   // DataSource
 
   ReusableCellCounts reusableCellCounts() const override {
-    return ANOVATableDimensions::k_resultGroupStatistics.reusable;
+    return ANOVATableDimensions::k_resultGroupStatisticsShape.reusable;
   }
 
   Escher::HighlightCell* reusableHeaderCell(int i) override {

@@ -680,6 +680,9 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
         if (firstActiveInequality) {
           firstActiveInequality = false;
         } else {
+          /* m_nextPointOfInterestIndex can't properly function with multiple
+           * records. Reset it here to force redraw every points. */
+          m_nextPointOfInterestIndex = 0;
           drawPointsOfInterest(ctx, rect, record, shouldComputePoints);
         }
       }

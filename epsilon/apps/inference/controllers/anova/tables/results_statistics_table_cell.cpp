@@ -70,7 +70,7 @@ constexpr static const char* HeaderAtRow(int row) {
     case 1:
       return I18n::translate(I18n::Message::SampleMean);
     case 2:
-      return I18n::translate(I18n::Message::SampleSTD);
+      return I18n::translate(I18n::Message::SampleSTDShort);
     case 3:
       return I18n::translate(I18n::Message::SampleVariance);
     default:

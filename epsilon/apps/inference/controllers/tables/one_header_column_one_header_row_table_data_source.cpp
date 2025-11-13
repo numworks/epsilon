@@ -1,4 +1,4 @@
-#include "one_column_one_row_header_table_data_source.h"
+#include "one_header_column_one_header_row_table_data_source.h"
 
 #include <escher/even_odd_editable_text_cell.h>
 
@@ -6,10 +6,12 @@ using namespace Escher;
 
 namespace Inference {
 
-OneColumnOneRowHeaderTableDataSource::OneColumnOneRowHeaderTableDataSource()
+OneHeaderColumnOneHeaderRowTableDataSource::
+    OneHeaderColumnOneHeaderRowTableDataSource()
     : m_topLeftCell(Escher::Palette::WallScreenDark) {}
 
-int OneColumnOneRowHeaderTableDataSource::reusableCellCount(int type) const {
+int OneHeaderColumnOneHeaderRowTableDataSource::reusableCellCount(
+    int type) const {
   if (type == k_typeOfTopLeftCell) {
     return 1;
   } else if (type == k_typeOfHeaderCells) {
@@ -18,8 +20,8 @@ int OneColumnOneRowHeaderTableDataSource::reusableCellCount(int type) const {
   return reusableCellCounts().categories.inner;
 }
 
-HighlightCell* OneColumnOneRowHeaderTableDataSource::reusableCell(int i,
-                                                                  int type) {
+HighlightCell* OneHeaderColumnOneHeaderRowTableDataSource::reusableCell(
+    int i, int type) {
   if (type == k_typeOfTopLeftCell) {
     assert(i == 0);
     return &m_topLeftCell;
@@ -29,8 +31,8 @@ HighlightCell* OneColumnOneRowHeaderTableDataSource::reusableCell(int i,
   return reusableInnerCell(i);
 }
 
-int OneColumnOneRowHeaderTableDataSource::typeAtLocation(int column,
-                                                         int row) const {
+int OneHeaderColumnOneHeaderRowTableDataSource::typeAtLocation(int column,
+                                                               int row) const {
   if (column == 0 && row == 0) {
     return k_typeOfTopLeftCell;
   }

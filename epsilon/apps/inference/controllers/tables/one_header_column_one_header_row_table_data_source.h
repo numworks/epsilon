@@ -11,10 +11,10 @@ namespace Inference {
 
 /* This class wraps a TableViewDataSource by adding a Row & Column header around
  * it. */
-class OneColumnOneRowHeaderTableDataSource
+class OneHeaderColumnOneHeaderRowTableDataSource
     : public CategoricalTableViewDataSource {
  public:
-  OneColumnOneRowHeaderTableDataSource();
+  OneHeaderColumnOneHeaderRowTableDataSource();
 
   // TableViewDataSource
   int numberOfRows() const override { return innerNumberOfRows() + 1; }

@@ -121,31 +121,6 @@ void assert_parsed_unit_simplify_to_with_prefixes(
 #endif
 
 QUIZ_CASE(poincare_simplification_units) {
-  /* SI base units */
-  assert_parsed_expression_simplify_to("_s", "1×_s");
-  assert_parsed_expression_simplify_to("_m", "1×_m");
-  assert_parsed_expression_simplify_to("_kg", "1×_kg");
-  assert_parsed_expression_simplify_to("_A", "1×_A");
-  assert_parsed_expression_simplify_to("_K", "1×_K");
-  assert_parsed_expression_simplify_to("_mol", "1×_mol");
-  assert_parsed_expression_simplify_to("_cd", "1×_cd");
-  assert_parsed_expression_simplify_to("-_s", "-1×_s");
-
-  /* Inverses of SI base units */
-  assert_parsed_expression_simplify_to("_s^-1", "1×_s^(-1)");
-  assert_parsed_expression_simplify_to("_m^-1", "1×_m^(-1)");
-  assert_parsed_expression_simplify_to("_kg^-1", "1×_kg^(-1)");
-  assert_parsed_expression_simplify_to("_A^-1", "1×_A^(-1)");
-  assert_parsed_expression_simplify_to("_K^-1", "1×_K^(-1)");
-  assert_parsed_expression_simplify_to("_mol^-1", "1×_mol^(-1)");
-  assert_parsed_expression_simplify_to("_cd^-1", "1×_cd^(-1)");
-
-  /* Power of SI units */
-  assert_parsed_expression_simplify_to("_s^3", "1×_s^3");
-  assert_parsed_expression_simplify_to("_m^2", "1×_m^2");
-  assert_parsed_expression_simplify_to("_m^3", "1×_m^3");
-  assert_parsed_expression_simplify_to("_m^(1/2)", "1×_m^(1/2)");
-
   /* Possible improvements */
   /* Ignored derived metrics :
    * -> Possible solution : Favor unities from user input. We do not want to
@@ -166,27 +141,6 @@ QUIZ_CASE(poincare_simplification_units) {
    * FIXME : int8_t norm metric overflow, only visible with a non constant norm
    * assert_parsed_expression_simplify_to("_C^130", "1×_C^130"); */
   assert_parsed_expression_simplify_to("_m_s^-2", "1×_m×_s^(-2)");
-
-  /* SI derived units with special names and symbols */
-  assert_parsed_expression_simplify_to("_kg×_m×_s^(-2)", "1×_N");
-  assert_parsed_expression_simplify_to("_kg×_m^(-1)×_s^(-2)", "1×_Pa");
-  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)", "1×_J");
-  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-3)", "1×_W");
-  assert_parsed_expression_simplify_to("_A×_s", "1×_C");
-  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-3)×_A^(-1)", "1×_V");
-  assert_parsed_expression_simplify_to("_m^(-2)×_kg^(-1)×_s^4×_A^2", "1×_F");
-  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-3)×_A^(-2)", "1×_Ω");
-  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_A^(-1)", "1×_Wb");
-  assert_parsed_expression_simplify_to("_kg×_s^(-2)×_A^(-1)", "1×_T");
-  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_A^(-2)", "1×_H");
-  assert_parsed_expression_simplify_to("_mol×_s^-1", "1×_kat");
-
-  /* Displayed order of magnitude */
-  assert_parsed_expression_simplify_to("100_kg", "100×_kg");
-  assert_parsed_expression_simplify_to("1_min", "1×_min");
-  assert_parsed_expression_simplify_to("0.1_m", "1×_dm");
-  assert_parsed_expression_simplify_to("180_MΩ", "180×_MΩ");
-  assert_parsed_expression_simplify_to("180_MH", "180×_MH");
 
   /* Test simplification of all possible (prefixed) unit symbols.
    * Some symbols are however excluded:
@@ -266,17 +220,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_L", "1×_dm^3");
   assert_parsed_expression_simplify_to("_ha", "10000×_m^2");
 
-  /* Imperial units */
-  assert_parsed_expression_simplify_to("_lgtn", "1.0160469088×_t");
-  assert_parsed_expression_simplify_to("_lgtn", "1.12×_shtn", User, Radian,
-                                       Imperial);
-  assert_parsed_expression_simplify_to("_in", "2.54×_cm");
-  assert_parsed_expression_simplify_to("_in", "1×_in", User, Radian, Imperial);
-  assert_parsed_expression_simplify_to("_ft", "1×_ft", User, Radian, Imperial);
-  assert_parsed_expression_simplify_to("_yd", "1×_yd", User, Radian, Imperial);
-  assert_parsed_expression_simplify_to("1_qt", "1×_qt", User, Radian, Imperial);
-  assert_parsed_expression_simplify_to("1_qt", "946.352946×_cm^3");
-
   /* Tests for non-absolute units */
   assert_parsed_expression_simplify_to("273.15×_K→_°C", "0×_°C");
   assert_parsed_expression_simplify_to("0×_°C", "0×_°C");
@@ -296,17 +239,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("°C→x", "_°C→x");
   assert_parsed_expression_simplify_to("123°C→x", "123×_°C→x");
   assert_parsed_expression_simplify_to("-4.56°C→x", "-4.56×_°C→x");
-
-  /* Rational exponents */
-  assert_parsed_expression_simplify_to("√(_m)", "1×_m^(1/2)");
-  assert_parsed_expression_simplify_to("√(_N)", "1×_kg^(1/2)×_m^(1/2)×_s^(-1)");
-  assert_parsed_expression_simplify_to("√(_N)",
-                                       "1.5527410012845×_lb^(1/2)×_yd^(1/"
-                                       "2)×_s^(-1)",
-                                       User, Radian, Imperial);
-  assert_parsed_expression_simplify_to("_C^0.3", "1×_A^(3/10)×_s^(3/10)");
-  assert_parsed_expression_simplify_to("_kat_kg^-2.8",
-                                       "1×_mol×_kg^(-14/5)×_s^(-1)");
 
   /* Unit sum/subtract */
   assert_parsed_expression_simplify_to("_m+_m", "2×_m");

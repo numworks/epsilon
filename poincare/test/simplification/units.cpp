@@ -1,13 +1,50 @@
 #include "helper.h"
 #include "poincare/preferences.h"
 #include "quiz.h"
-#include "quiz/src/symbols.h"
 
 using namespace Poincare;
 using namespace Poincare::Internal;
 using UnitFormat = Poincare::Preferences::UnitFormat;
 
 QUIZ_CASE(pcj_simplification_unit) {
+  // SI base units
+  simplifies_to("_s", "1×_s");
+  simplifies_to("_m", "1×_m");
+  simplifies_to("_kg", "1×_kg");
+  simplifies_to("_A", "1×_A");
+  simplifies_to("_K", "1×_K");
+  simplifies_to("_mol", "1×_mol");
+  simplifies_to("_cd", "1×_cd");
+  simplifies_to("-_s", "-1×_s");
+
+  // Inverses of SI base units
+  simplifies_to("_s^-1", "1×_s^(-1)");
+  simplifies_to("_m^-1", "1×_m^(-1)");
+  simplifies_to("_kg^-1", "1×_kg^(-1)");
+  simplifies_to("_A^-1", "1×_A^(-1)");
+  simplifies_to("_K^-1", "1×_K^(-1)");
+  simplifies_to("_mol^-1", "1×_mol^(-1)");
+  simplifies_to("_cd^-1", "1×_cd^(-1)");
+
+  // Power of SI units
+  simplifies_to("_s^3", "1×_s^3");
+  simplifies_to("_m^2", "1×_m^2");
+  simplifies_to("_m^3", "1×_m^3");
+
+  // SI derived units with special names and symbols
+  simplifies_to("_kg×_m×_s^(-2)", "1×_N");
+  simplifies_to("_kg×_m^(-1)×_s^(-2)", "1×_Pa");
+  simplifies_to("_kg×_m^2×_s^(-2)", "1×_J");
+  simplifies_to("_kg×_m^2×_s^(-3)", "1×_W");
+  simplifies_to("_A×_s", "1×_C");
+  simplifies_to("_kg×_m^2×_s^(-3)×_A^(-1)", "1×_V");
+  simplifies_to("_m^(-2)×_kg^(-1)×_s^4×_A^2", "1×_F");
+  simplifies_to("_kg×_m^2×_s^(-3)×_A^(-2)", "1×_Ω");
+  simplifies_to("_kg×_m^2×_s^(-2)×_A^(-1)", "1×_Wb");
+  simplifies_to("_kg×_s^(-2)×_A^(-1)", "1×_T");
+  simplifies_to("_kg×_m^2×_s^(-2)×_A^(-2)", "1×_H");
+  simplifies_to("_mol×_s^-1", "1×_kat");
+
   simplifies_to("12_m", "12×_m");
   simplifies_to("1_s", "1×_s");
   simplifies_to("1_m+1_yd", "1.9144×_m");
@@ -119,6 +156,18 @@ QUIZ_CASE(pcj_simplification_unit_automatic) {
   simplifies_to("100×_K", "100×_K",
                 {.m_unitDisplay = UnitDisplay::AutomaticMetric});
   simplifies_to("3.6×_MN×_m", "3.6×_MJ",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+
+  // Order of magnitude
+  simplifies_to("100_kg", "100×_kg",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("1_min", "1×_min",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("0.1_m", "1×_dm",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("180_MΩ", "180×_MΩ",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("180_MH", "180×_MH",
                 {.m_unitDisplay = UnitDisplay::AutomaticMetric});
 }
 
@@ -273,6 +322,40 @@ QUIZ_CASE(pcj_simplification_unit_imperial) {
                  .m_unitDisplay = UnitDisplay::AutomaticMetric});
   simplifies_to("2×π×_cK", "6.2831853071796×_cK",
                 {.m_unitFormat = UnitFormat::Imperial});
+  simplifies_to("_lgtn", "1.0160469088×_t",
+                {.m_unitFormat = UnitFormat::Imperial,
+                 .m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("_lgtn", "1.12×_shtn",
+                {
+                    .m_unitFormat = UnitFormat::Imperial,
+                    .m_unitDisplay = UnitDisplay::AutomaticImperial,
+                });
+  simplifies_to("_in", "2.54×_cm",
+                {.m_unitFormat = UnitFormat::Imperial,
+                 .m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("_in", "1×_in",
+                {
+                    .m_unitFormat = UnitFormat::Imperial,
+                    .m_unitDisplay = UnitDisplay::AutomaticImperial,
+                });
+  simplifies_to("_ft", "1×_ft",
+                {
+                    .m_unitFormat = UnitFormat::Imperial,
+                    .m_unitDisplay = UnitDisplay::AutomaticImperial,
+                });
+  simplifies_to("_yd", "1×_yd",
+                {
+                    .m_unitFormat = UnitFormat::Imperial,
+                    .m_unitDisplay = UnitDisplay::AutomaticImperial,
+                });
+  simplifies_to("1_qt", "1×_qt",
+                {
+                    .m_unitFormat = UnitFormat::Imperial,
+                    .m_unitDisplay = UnitDisplay::AutomaticImperial,
+                });
+  simplifies_to("1_qt", "9.46352946×_dL",
+                {.m_unitFormat = UnitFormat::Imperial,
+                 .m_unitDisplay = UnitDisplay::AutomaticMetric});
 }
 
 QUIZ_CASE(pcj_simplification_unit_undef) {
@@ -302,6 +385,20 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
   // Only allow simple int operations in unit exponents
   simplifies_to("_s^floor(1)", "undef");
   simplifies_to("_s^ceil(2)", "undef");
+
+#if TODO_PCJ  // handle non-integer exponents
+  simplifies_to("_m^(1/2)", "1×_m^(1/2)");
+  simplifies_to("√(_m)", "1×_m^(1/2)");
+  simplifies_to("√(_N)", "1×_kg^(1/2)×_m^(1/2)×_s^(-1)");
+  simplifies_to("√(_N)",
+                "1.5527410012845×_lb^(1/2)×_yd^(1/"
+                "2)×_s^(-1)",
+                {
+                    .m_unitFormat = UnitFormat::Imperial,
+                });
+  simplifies_to("_C^0.3", "1×_A^(3/10)×_s^(3/10)");
+  simplifies_to("_kat_kg^-2.8", "1×_mol×_kg^(-14/5)×_s^(-1)");
+#endif
 
   simplifies_to("tan(2_m)", "undef");
   simplifies_to("tan(2_rad^2)", "undef");

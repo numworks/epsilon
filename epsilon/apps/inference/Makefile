@@ -19,7 +19,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/tables/input_anova_table_cell.cpp \
   controllers/tables/input_goodness_table_cell.cpp \
   controllers/tables/input_homogeneity_table_cell.cpp \
-  controllers/tables/one_column_header_table_data_source.cpp \
+  controllers/tables/one_header_row_table_data_source.cpp \
   controllers/tables/one_column_one_row_header_table_data_source.cpp \
   controllers/tables/results_anova_table_cell.cpp \
   controllers/tables/results_goodness_table_cell.cpp \

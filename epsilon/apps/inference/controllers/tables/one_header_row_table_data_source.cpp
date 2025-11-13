@@ -1,4 +1,4 @@
-#include "one_column_header_table_data_source.h"
+#include "one_header_row_table_data_source.h"
 
 #include <escher/even_odd_editable_text_cell.h>
 #include <poincare/print.h>
@@ -8,21 +8,21 @@ using namespace Escher;
 
 namespace Inference {
 
-int OneColumnHeaderTableDataSource::reusableCellCount(int type) const {
+int OneHeaderRowTableDataSource::reusableCellCount(int type) const {
   if (type == k_typeOfHeaderCells) {
     return reusableCellCounts().categories.header;
   }
   return reusableCellCounts().categories.inner;
 }
 
-HighlightCell* OneColumnHeaderTableDataSource::reusableCell(int i, int type) {
+HighlightCell* OneHeaderRowTableDataSource::reusableCell(int i, int type) {
   if (type == k_typeOfHeaderCells) {
     return reusableHeaderCell(i);
   }
   return reusableInnerCell(i);
 }
 
-int OneColumnHeaderTableDataSource::typeAtLocation(int column, int row) const {
+int OneHeaderRowTableDataSource::typeAtLocation(int column, int row) const {
   assert(column >= 0 && row >= 0);
   assert(column < maxNumberOfColumn() && row <= maxNumberOfRows());
   if (row == 0) {

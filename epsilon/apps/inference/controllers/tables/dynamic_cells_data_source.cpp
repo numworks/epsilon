@@ -38,7 +38,7 @@ void DynamicCellsDataSource<CellType>::destroyCells() {
   assert(m_numberOfAllocatedCells > 0);
   /* We manually call T destructor since we cannot use 'delete' due to the
    * placement new.
-   * Note Bene: we qualify the destructor call (by prefixing it by its class
+   * Nota Bene: we qualify the destructor call (by prefixing it by its class
    * name) to avoid a compiler warning: T is not a final class and has virtual
    * methods but no virtual destructor; the compiler might think we forgot
    * some virtualization here but we didn't - we don't want to call a derived

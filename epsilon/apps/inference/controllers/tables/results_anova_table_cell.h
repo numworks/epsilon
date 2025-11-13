@@ -1,8 +1,8 @@
 #pragma once
 
+#include "anova_table_dimensions.h"
 #include "categorical_table_cell.h"
 #include "dynamic_cells_data_source.h"
-#include "inference/controllers/tables/anova_table_dimensions.h"
 #include "inference/models/anova_test.h"
 #include "one_column_one_row_header_table_data_source.h"
 

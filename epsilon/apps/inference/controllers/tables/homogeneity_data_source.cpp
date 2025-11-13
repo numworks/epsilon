@@ -10,9 +10,6 @@ using namespace Escher;
 
 namespace Inference {
 
-HomogeneityTableDataSource::HomogeneityTableDataSource()
-    : m_headerPrefix(I18n::Message::Group) {}
-
 void HomogeneityTableDataSource::fillCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
   int type = typeAtLocation(column, row);
@@ -39,7 +36,7 @@ void HomogeneityTableDataSource::fillCellForLocation(
     constexpr int bufferSize = k_headerTranslationBufferSize;
     char txt[bufferSize];
     Poincare::Print::CustomPrintf(txt, bufferSize, "%s %c",
-                                  I18n::translate(m_headerPrefix), digit);
+                                  I18n::translate(I18n::Message::Group), digit);
     myCell->setText(txt);
     myCell->setTextColor(KDColorBlack);
   } else {

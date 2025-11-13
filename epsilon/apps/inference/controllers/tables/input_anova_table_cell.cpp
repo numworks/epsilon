@@ -15,8 +15,7 @@ InputANOVATableCell::InputANOVATableCell(
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, test,
                                 scrollViewDelegate),
-      m_inputANOVAController(inputANOVAController),
-      m_headerPrefix(I18n::Message::Group) {}
+      m_inputANOVAController(inputANOVAController) {}
 
 void InputANOVATableCell::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
@@ -52,7 +51,7 @@ void InputANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
     constexpr int bufferSize = k_headerTranslationBufferSize;
     char txt[bufferSize];
     Poincare::Print::CustomPrintf(txt, bufferSize, "%s %c",
-                                  I18n::translate(m_headerPrefix), digit);
+                                  I18n::translate(I18n::Message::Group), digit);
     myCell->setText(txt);
     myCell->setTextColor(KDColorBlack);
   } else {

@@ -38,8 +38,6 @@ constexpr static int k_numberOfHeaderReusableCells =
  * HomogeneityResults. */
 class HomogeneityTableDataSource : public OneColumnOneRowHeaderTableDataSource {
  public:
-  HomogeneityTableDataSource();
-
   // TableViewDataSource
 
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
@@ -72,8 +70,6 @@ class HomogeneityTableDataSource : public OneColumnOneRowHeaderTableDataSource {
  private:
   constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;
   constexpr static int k_headerTranslationBufferSize = 20;
-
-  I18n::Message m_headerPrefix;
 };
 
 }  // namespace Inference

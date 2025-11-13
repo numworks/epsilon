@@ -26,6 +26,17 @@ class IntersectionRegionGraphController : public IntersectionGraphController {
   Poincare::Coordinate2D<double> computeNewPointOfInterest(
       double start, double max, bool stretch) override;
 
+  struct PointOfInterestData {
+    Poincare::Coordinate2D<double> coordinate;
+    Ion::Storage::Record record;
+    Ion::Storage::Record intersectedRecord;
+    bool isUnreachedIntersection;
+  };
+
+  void updateBestPointOfInterestForRecord(Ion::Storage::Record record,
+                                          double start, double max,
+                                          bool stretch, bool directionIsRight,
+                                          PointOfInterestData& bestPoint);
   int m_selectedRecordIndex = 0;
 };
 

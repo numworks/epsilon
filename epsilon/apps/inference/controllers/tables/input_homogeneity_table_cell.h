@@ -26,8 +26,6 @@ class InputHomogeneityTableCell
   }
 
   // CategoricalTableViewDataSource
-  int innerNumberOfRows() const override { return m_numberOfRows; }
-  int innerNumberOfColumns() const override { return m_numberOfColumns; }
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
   bool canStoreCellAtLocation(int column, int row) override {
@@ -52,6 +50,10 @@ class InputHomogeneityTableCell
  protected:
   // Responder
   void handleResponderChainEvent(ResponderChainEvent event) override;
+
+  // CategoricalTableViewDataSource
+  int innerNumberOfRows() const override { return m_numberOfRows; }
+  int innerNumberOfColumns() const override { return m_numberOfColumns; }
 
  private:
   // ClearColumnHelper

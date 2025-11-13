@@ -71,14 +71,14 @@ class ResultsANOVATableCell
                        : ANOVATableDimensions::k_columnWidth;
   }
 
+  // CategoricalTableViewDataSource
+  int innerNumberOfRows() const override { return k_numberOfInnerRows; }
+  int innerNumberOfColumns() const override { return k_numberOfInnerColumns; }
+
  private:
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row);
   CategoricalController* categoricalController() override;
-
-  // CategoricalTableViewDataSource
-  int innerNumberOfRows() const override { return k_numberOfInnerRows; }
-  int innerNumberOfColumns() const override { return k_numberOfInnerColumns; }
 
   ANOVATest* m_inference;
   ResultsANOVAController* m_resultsTableController;

@@ -34,8 +34,6 @@ class InputANOVATableCell
   }
 
   // CategoricalTableViewDataSource
-  int innerNumberOfRows() const override { return m_numberOfRows; }
-  int innerNumberOfColumns() const override { return m_numberOfColumns; }
 
   int maxNumberOfRows() const override { return k_maxNumberOfRows; }
   int maxNumberOfColumn() const override { return k_maxNumberOfColumns; }
@@ -77,6 +75,11 @@ class InputANOVATableCell
   Escher::HighlightCell* reusableInnerCell(int i) override {
     return cellType2(i);
   }
+
+  // CategoricalTableViewDataSource
+
+  int innerNumberOfRows() const override { return m_numberOfRows; }
+  int innerNumberOfColumns() const override { return m_numberOfColumns; }
 
   // DoubleDynamicCellsDataSource
 

@@ -51,7 +51,6 @@ class ResultsHomogeneityTableCell
   // Responder
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
- private:
   // HomogeneityTableViewDataSource
   /* The totals are not displayed when in Contribution mode. */
   int innerNumberOfRows() const override {
@@ -61,6 +60,7 @@ class ResultsHomogeneityTableCell
     return m_inference->numberOfDataColumns() + (m_mode == Mode::ExpectedValue);
   }
 
+ private:
   Escher::HighlightCell* reusableHeaderCell(int i) override {
     return dynamicCell(i);
   }

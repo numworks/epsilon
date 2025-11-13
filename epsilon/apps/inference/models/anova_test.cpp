@@ -85,4 +85,9 @@ bool ANOVATest::deleteValueAtPosition(int row, int column) {
   return true;
 }
 
+void ANOVATest::deleteValuesInColumn(int column) {
+  assert(column >= 0 && column < m_groups.size());
+  m_groups.removeAt(column);
+}
+
 }  // namespace Inference

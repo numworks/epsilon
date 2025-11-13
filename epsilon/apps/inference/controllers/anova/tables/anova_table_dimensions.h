@@ -31,7 +31,7 @@ constexpr static TableShape k_resultBetweenWithinShape =
                       dimension because the dimension is small.*/
                    ReusableCellDimensions{.rows = 3, .columns = 2})};
 
-constexpr static TableShape k_resultGroupStatistics = TableShape{
+constexpr static TableShape k_resultGroupStatisticsShape = TableShape{
     .inner = InnerTableDimensions{.rows = 4,
                                   .columns = ANOVATest::k_maxNumberOfColumns},
     .reusable = ReusableCountsOneRowOneColumnHeader(

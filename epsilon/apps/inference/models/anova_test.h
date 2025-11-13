@@ -15,6 +15,7 @@ class ANOVATest : public SignificanceTest, public InputTable {
   constexpr static int k_maxNumberOfColumns = k_maxNumberOfGroups;
   constexpr static int k_maxNumberOfRows = k_maxNumberOfValuesPerGroup;
 
+  // InferenceModel
   constexpr TestType testType() const override { return TestType::ANOVA; }
   constexpr StatisticType statisticType() const override {
     return StatisticType::F;
@@ -43,9 +44,8 @@ class ANOVATest : public SignificanceTest, public InputTable {
 
   bool authorizedValueAtPosition(double p, int row, int column) const override;
 
-  void recomputeData() override {
-    // TODO;
-  }
+  void recomputeData() override {}
+
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; }
   int maxNumberOfRows() const override { return k_maxNumberOfRows; }
 
@@ -78,7 +78,7 @@ class ANOVATest : public SignificanceTest, public InputTable {
   }
 
  private:
-  // Inference
+  // InferenceModel
   double* parametersArray() override { return nullptr; }
 
   float computeXMin() const override { return 0.f; }

@@ -6,6 +6,7 @@
 
 #include "../helpers/symbol_store.h"
 #include "helper.h"
+#include "poincare/test/helper.h"
 
 using namespace Poincare::Internal;
 using Poincare::ComplexFormat;
@@ -539,6 +540,15 @@ QUIZ_CASE(pcj_simplification_logarithm) {
       k_cartesianCtx);
   simplifies_to("log(14142135623731/5000000000000)",
                 "log(14142135623731/5000000000000)");
+  simplifies_to(
+      "-ln(arccos(x))-ln(arcsin(x))-ln(arctan(x))-ln("
+      "arccot(x))-ln(arcsec(x))-ln(arccsc(x))",
+      "dep(-ln(arccos(x))-ln(arccos(1/x))-ln(arcsin(x))-ln(arcsin(1/"
+      "x))-ln(arctan(x))-ln(π/2-arctan(x)),{nonNull(arccos(1/"
+      "x)),nonNull(arccos(x)),nonNull(arcsin(1/"
+      "x)),nonNull(arcsin(x)),nonNull(arctan(x)),nonNull(arccos(0)-arctan(x))}"
+      ")",
+      k_cartesianCtx);
 
   // Use complex logarithm internally
   simplifies_to("√(x^2)", "√(x^2)", k_cartesianCtx);

@@ -9,7 +9,7 @@
 #include "categorical_table_view_data_source.h"
 #include "inference/controllers/tables/table_dimensions.h"
 #include "inference/models/homogeneity_test.h"
-#include "one_column_one_row_header_table_data_source.h"
+#include "one_header_column_one_header_row_table_data_source.h"
 
 namespace Inference {
 
@@ -33,10 +33,11 @@ constexpr static int k_numberOfHeaderReusableCells =
     k_numberOfReusableColumns + k_maxNumberOfReusableRows - 1;
 }  // namespace HomogeneityTableDimensions
 
-/* This class specializes OneColumnOneRowHeaderTableDataSource with the header
- * data (group names) and dimensions for InputHomogeneity and
+/* This class specializes OneHeaderColumnOneHeaderRowTableDataSource with the
+ * header data (group names) and dimensions for InputHomogeneity and
  * HomogeneityResults. */
-class HomogeneityTableDataSource : public OneColumnOneRowHeaderTableDataSource {
+class HomogeneityTableDataSource
+    : public OneHeaderColumnOneHeaderRowTableDataSource {
  public:
   // TableViewDataSource
 

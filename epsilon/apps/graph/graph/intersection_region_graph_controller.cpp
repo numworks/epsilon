@@ -6,7 +6,7 @@ using namespace Poincare;
 
 namespace Graph {
 
-// Return true if x is a closer than bestX in the given direction
+// Return true if x is closer than bestX in the given direction
 bool IsBetterPoint(bool directionIsRight, double x, double bestX) {
   return (directionIsRight && x < bestX) || (!directionIsRight && x > bestX);
 }

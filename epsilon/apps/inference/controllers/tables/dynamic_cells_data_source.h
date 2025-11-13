@@ -60,32 +60,33 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   int m_numberOfAllocatedCells = 0;
 };
 
-template <typename CellType1, typename CellType2>
+template <typename HeaderCellType, typename InnerCellType>
 class DoubleDynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
  public:
-  DoubleDynamicCellsDataSource() : m_cells1(nullptr), m_cells2(nullptr) {}
+  DoubleDynamicCellsDataSource()
+      : m_headerCells(nullptr), m_innerCells(nullptr) {}
   ~DoubleDynamicCellsDataSource();
 
-  virtual int numberOfDynamicCellsType1() const = 0;
-  virtual int numberOfDynamicCellsType2() const = 0;
+  virtual int numberOfDynamicHeaderCells() const = 0;
+  virtual int numberOfDynamicInnerCells() const = 0;
 
-  CellType1* cellType1(int i) {
-    assert(m_cells1);
-    assert(i >= 0 && i < numberOfDynamicCellsType1());
-    return &m_cells1[i];
+  HeaderCellType* cellType1(int i) {
+    assert(m_headerCells);
+    assert(i >= 0 && i < numberOfDynamicHeaderCells());
+    return &m_headerCells[i];
   }
-  CellType2* cellType2(int i) {
-    assert(m_cells2);
-    assert(i >= 0 && i < numberOfDynamicCellsType2());
-    return &m_cells2[i];
+  InnerCellType* cellType2(int i) {
+    assert(m_innerCells);
+    assert(i >= 0 && i < numberOfDynamicInnerCells());
+    return &m_innerCells[i];
   }
 
   void createCells();
 
   void destroyCells() override;
 
-  virtual void initCellType1(CellType1* cell) {}
-  virtual void initCellType2(CellType2* cell) {}
+  virtual void initHeaderCell(HeaderCellType* cell) {}
+  virtual void initInnerCell(InnerCellType* cell) {}
 
   virtual Escher::SelectableTableView* tableView() = 0;
   Escher::SelectableTableView* dynamicCellsTableView() override {
@@ -93,17 +94,17 @@ class DoubleDynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   }
 
  private:
-  void createCellsType1();
-  void createCellsType2();
+  void createHeaderCells();
+  void createInnerCells();
 
-  CellType1* m_cells1;
-  CellType2* m_cells2;
+  HeaderCellType* m_headerCells;
+  InnerCellType* m_innerCells;
 
   /* Note: these class members are needed because the constructor and destructor
    * of DoubleDynamicCellsDataSource cannot use the numberOfDynamicCells() pure
    * virtual functions */
-  int m_numberOfAllocatedCells1 = 0;
-  int m_numberOfAllocatedCells2 = 0;
+  int m_numberOfAllocatedHeaderCells = 0;
+  int m_numberOfAllocatedInnerCells = 0;
 };
 
 }  // namespace Inference

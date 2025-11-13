@@ -59,7 +59,7 @@ class InputANOVATableCell
     return &m_selectableTableView;
   }
 
-  void initCellType2(InferenceEvenOddEditableCell* cell) override;
+  void initInnerCell(InferenceEvenOddEditableCell* cell) override;
 
  protected:
   // Responder
@@ -80,10 +80,10 @@ class InputANOVATableCell
 
   // DoubleDynamicCellsDataSource
 
-  int numberOfDynamicCellsType1() const override {
+  int numberOfDynamicHeaderCells() const override {
     return reusableCellCounts().categories.header;
   }
-  int numberOfDynamicCellsType2() const override {
+  int numberOfDynamicInnerCells() const override {
     return reusableCellCounts().categories.inner;
   }
 

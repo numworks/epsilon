@@ -61,7 +61,7 @@ CategoricalController* InputHomogeneityTableCell::categoricalController() {
   return m_inputHomogeneityController;
 }
 
-void InputHomogeneityTableCell::initCellType2(
+void InputHomogeneityTableCell::initInnerCell(
     InferenceEvenOddEditableCell* cell) {
   cell->setParentResponder(&m_selectableTableView);
   cell->editableTextCell()->textField()->setDelegate(this);

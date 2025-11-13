@@ -4,7 +4,6 @@
 #include <shared/column_parameter_controller.h>
 
 #include "inference/controllers/input_anova_controller.h"
-#include "inference/controllers/tables/anova_table_dimensions.h"
 
 using namespace Escher;
 

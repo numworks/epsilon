@@ -36,10 +36,10 @@ class InputHomogeneityTableCell
 
   // DoubleDynamicCellsDataSource
 
-  int numberOfDynamicCellsType1() const override {
+  int numberOfDynamicHeaderCells() const override {
     return HomogeneityTableDimensions::k_numberOfHeaderReusableCells;
   }
-  int numberOfDynamicCellsType2() const override {
+  int numberOfDynamicInnerCells() const override {
     return HomogeneityTableDimensions::k_numberOfInnerReusableCells;
   }
 
@@ -47,7 +47,7 @@ class InputHomogeneityTableCell
     return &m_selectableTableView;
   }
 
-  void initCellType2(InferenceEvenOddEditableCell* cell) override;
+  void initInnerCell(InferenceEvenOddEditableCell* cell) override;
 
  protected:
   // Responder

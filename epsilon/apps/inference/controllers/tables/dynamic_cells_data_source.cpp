@@ -56,83 +56,89 @@ void DynamicCellsDataSource<CellType>::destroyCells() {
   m_cells = nullptr;
 }
 
-template <typename CellType1, typename CellType2>
-DoubleDynamicCellsDataSource<CellType1,
-                             CellType2>::~DoubleDynamicCellsDataSource() {
+template <typename HeaderCellType, typename InnerCellType>
+DoubleDynamicCellsDataSource<HeaderCellType,
+                             InnerCellType>::~DoubleDynamicCellsDataSource() {
   destroyCells();
 }
 
-template <typename CellType1, typename CellType2>
-void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCellsType1() {
-  assert(m_cells1 == nullptr);
-  assert(m_cells2 == nullptr);
-  assert(sizeof(CellType1) * numberOfDynamicCellsType1() <= App::k_bufferSize);
-  App::app()->cleanBuffer(this);
-  m_cells1 = new (App::app()->buffer(0)) CellType1[numberOfDynamicCellsType1()];
-  for (int i = 0; i < numberOfDynamicCellsType1(); i++) {
-    initCellType1(&m_cells1[i]);
-  }
-  m_numberOfAllocatedCells1 = numberOfDynamicCellsType1();
-}
-
-template <typename CellType1, typename CellType2>
-void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCellsType2() {
-  assert(m_cells1 != nullptr);
-  assert(m_cells2 == nullptr);
-  assert(sizeof(CellType1) * numberOfDynamicCellsType1() +
-             sizeof(CellType2) * numberOfDynamicCellsType2() <=
+template <typename HeaderCellType, typename InnerCellType>
+void DoubleDynamicCellsDataSource<HeaderCellType,
+                                  InnerCellType>::createHeaderCells() {
+  assert(m_headerCells == nullptr);
+  assert(m_innerCells == nullptr);
+  assert(sizeof(HeaderCellType) * numberOfDynamicHeaderCells() <=
          App::k_bufferSize);
-  m_cells2 =
-      new (App::app()->buffer(sizeof(CellType1) * numberOfDynamicCellsType1()))
-          CellType2[numberOfDynamicCellsType2()];
-  for (int i = 0; i < numberOfDynamicCellsType2(); i++) {
-    initCellType2(&m_cells2[i]);
+  App::app()->cleanBuffer(this);
+  m_headerCells =
+      new (App::app()->buffer(0)) HeaderCellType[numberOfDynamicHeaderCells()];
+  for (int i = 0; i < numberOfDynamicHeaderCells(); i++) {
+    initHeaderCell(&m_headerCells[i]);
   }
-  m_numberOfAllocatedCells2 = numberOfDynamicCellsType2();
+  m_numberOfAllocatedHeaderCells = numberOfDynamicHeaderCells();
 }
 
-template <typename CellType1, typename CellType2>
-void DoubleDynamicCellsDataSource<CellType1, CellType2>::createCells() {
-  if (m_cells1 == nullptr) {
-    createCellsType1();
-    createCellsType2();
+template <typename HeaderCellType, typename InnerCellType>
+void DoubleDynamicCellsDataSource<HeaderCellType,
+                                  InnerCellType>::createInnerCells() {
+  assert(m_headerCells != nullptr);
+  assert(m_innerCells == nullptr);
+  assert(sizeof(HeaderCellType) * numberOfDynamicHeaderCells() +
+             sizeof(InnerCellType) * numberOfDynamicInnerCells() <=
+         App::k_bufferSize);
+  m_innerCells = new (
+      App::app()->buffer(sizeof(HeaderCellType) * numberOfDynamicHeaderCells()))
+      InnerCellType[numberOfDynamicInnerCells()];
+  for (int i = 0; i < numberOfDynamicInnerCells(); i++) {
+    initInnerCell(&m_innerCells[i]);
+  }
+  m_numberOfAllocatedInnerCells = numberOfDynamicInnerCells();
+}
+
+template <typename HeaderCellType, typename InnerCellType>
+void DoubleDynamicCellsDataSource<HeaderCellType,
+                                  InnerCellType>::createCells() {
+  if (m_headerCells == nullptr) {
+    createHeaderCells();
+    createInnerCells();
   }
 }
 
-template <typename CellType1, typename CellType2>
-void DoubleDynamicCellsDataSource<CellType1, CellType2>::destroyCells() {
-  if (!m_cells1) {
-    assert(m_numberOfAllocatedCells1 == 0);
-    assert(!m_cells2);
-    assert(m_numberOfAllocatedCells2 == 0);
+template <typename HeaderCellType, typename InnerCellType>
+void DoubleDynamicCellsDataSource<HeaderCellType,
+                                  InnerCellType>::destroyCells() {
+  if (!m_headerCells) {
+    assert(m_numberOfAllocatedHeaderCells == 0);
+    assert(!m_innerCells);
+    assert(m_numberOfAllocatedInnerCells == 0);
     return;
   }
-  assert(m_numberOfAllocatedCells1 > 0);
-  assert(m_cells2);
-  assert(m_numberOfAllocatedCells2 > 0);
-  for (int i = 0; i < m_numberOfAllocatedCells1; i++) {
+  assert(m_numberOfAllocatedHeaderCells > 0);
+  assert(m_innerCells);
+  assert(m_numberOfAllocatedInnerCells > 0);
+  for (int i = 0; i < m_numberOfAllocatedHeaderCells; i++) {
     // Make sure not to keep the first responder pointing on a destroyed cell
-    Responder* cellResponder = m_cells1[i].responder();
+    Responder* cellResponder = m_headerCells[i].responder();
     Responder* appFirstResponder = App::app()->firstResponder();
     if (appFirstResponder && appFirstResponder->hasAncestor(cellResponder)) {
       App::app()->setFirstResponder(nullptr);
     }
-    m_cells1[i].CellType1::~CellType1();
+    m_headerCells[i].HeaderCellType::~HeaderCellType();
   }
-  m_cells1 = nullptr;
-  m_numberOfAllocatedCells1 = 0;
+  m_headerCells = nullptr;
+  m_numberOfAllocatedHeaderCells = 0;
 
-  for (int i = 0; i < m_numberOfAllocatedCells2; i++) {
+  for (int i = 0; i < m_numberOfAllocatedInnerCells; i++) {
     // Make sure not to keep the first responder pointing on a destroyed cell
-    Responder* cellResponder = m_cells2[i].responder();
+    Responder* cellResponder = m_innerCells[i].responder();
     Responder* appFirstResponder = App::app()->firstResponder();
     if (appFirstResponder && appFirstResponder->hasAncestor(cellResponder)) {
       App::app()->setFirstResponder(nullptr);
     }
-    m_cells2[i].CellType2::~CellType2();
+    m_innerCells[i].InnerCellType::~InnerCellType();
   }
-  m_numberOfAllocatedCells2 = 0;
-  m_cells2 = nullptr;
+  m_numberOfAllocatedInnerCells = 0;
+  m_innerCells = nullptr;
 }
 
 template class DynamicCellsDataSource<InferenceEvenOddBufferCell>;

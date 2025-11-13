@@ -188,7 +188,7 @@ bool IsInRegion(const ContinuousFunction* f, float x, float y) {
 }
 
 /* Since area colors only one every 8 pixels, we can afford to check every
- * pixels with every functions. THis is different from the area drawn in
+ * pixels with every functions. This is different from the area drawn in
  * drawCartesian, which draws segments as each curve is drawn. */
 void GraphView::drawInequalitiesIntersection(KDContext* ctx,
                                              KDRect rect) const {
@@ -199,6 +199,7 @@ void GraphView::drawInequalitiesIntersection(KDContext* ctx,
   const ContinuousFunction*
       functions[k_maxNumberOfInequalitiesInIntersectionRegion];
   int n = numberOfDrawnRecords();
+  assert(n <= k_maxNumberOfInequalitiesInIntersectionRegion);
   int numberOfInequalities = 0;
   for (int i = 0; i < n; i++) {
     Ion::Storage::Record record = initModelBeforeDrawingPlot(i);

@@ -24,6 +24,7 @@ bool ANOVATest::authorizedValueAtPosition(double p, int row, int column) const {
 
 void ANOVATest::setValueAtPosition(double value, int row, int column) {
   assert(row >= 0 && column >= 0);
+  assert(!std::isnan(value));
   if (column > m_groups.size()) {
     return;
   }
@@ -58,6 +59,26 @@ double ANOVATest::valueAtPosition(int row, int column) const {
     return NAN;
   }
   return groupValues[row];
+}
+
+bool ANOVATest::deleteValueAtPosition(int row, int column) {
+  assert(row >= 0 && column >= 0);
+  if (column >= m_groups.size()) {
+    return false;
+  }
+  GroupValues& groupValues = m_groups[column];
+  if (row >= groupValues.size()) {
+    return false;
+  }
+  if (groupValues.size() == 1) {
+    assert(row == 0);
+    // Remove group
+    m_groups.removeAt(column);
+    return true;
+  }
+  // Remove value from group
+  groupValues.removeAt(row);
+  return true;
 }
 
 }  // namespace Inference

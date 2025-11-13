@@ -207,6 +207,7 @@ class PiInterval {
 
 // If possible, find k such that arg(A) + arg(B) + ... = arg(A*B*...) + 2iπk
 bool CanGetArgSumModulo(const Tree* firstTree, int numberOfTrees, int* k) {
+  assert(numberOfTrees > 0);
   // Find an interval for the sum of the arguments
   PiInterval interval = PiInterval::Arg(GetComplexSign(1_e));
   const Tree* tree = firstTree;
@@ -215,7 +216,8 @@ bool CanGetArgSumModulo(const Tree* firstTree, int numberOfTrees, int* k) {
     interval = PiInterval::Add(interval, PiInterval::Arg(GetComplexSign(tree)));
     tree = tree->nextTree();
   }
-  assert(interval.maxK() <= 1 && interval.minK() >= -1);
+  assert(interval.maxK() <= numberOfTrees / 2 &&
+         interval.minK() >= -numberOfTrees / 2);
   *k = interval.maxK();
   return *k == interval.minK();
 }
@@ -355,7 +357,8 @@ bool Logarithm::ContractLn(Tree* e) {
     }
     removeMarker(end);
 
-    if (numberOfLnChildren == 0 || numberOfLnChildren == 1) {
+    assert(numberOfLnChildren > 0);
+    if (numberOfLnChildren == 1) {
       // No possible contraction
       lnChildren->removeTree();
       clone->removeTree();

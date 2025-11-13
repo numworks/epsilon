@@ -104,7 +104,6 @@ class InputANOVATableCell
   CategoricalController* categoricalController() override;
 
   InputANOVAController* m_inputANOVAController;
-  I18n::Message m_headerPrefix;
 };
 
 }  // namespace Inference

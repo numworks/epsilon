@@ -30,7 +30,7 @@ size_t InputANOVATableCell::fillColumnName(int column, char* buffer) {
   assert(column >= 0 && column < k_maxNumberOfColumns);
   return Poincare::Print::CustomPrintf(
       buffer, Shared::ColumnParameterController::k_titleBufferSize, "%s %i",
-      I18n::translate(I18n::Message::Group), column);
+      I18n::translate(I18n::Message::Group), column + 1);
 }
 
 void InputANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,

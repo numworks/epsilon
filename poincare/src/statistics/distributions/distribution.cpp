@@ -246,6 +246,12 @@ T GetFisherMode(Type type, const ParametersArray<T>& parameters) {
     const float d2 = parameters[1];
     return (d1 - 2.0f) / d1 * d2 / (d2 + 2.0f);
   }
+  if (d1 == 2.0f) {
+    // For d1=2, the probability density function has value 1 at x=0.
+    return 0.0;
+  }
+  /* For d1 = 1, the probability density function has no maximum, the function
+   * goes to infinity for x->0. */
   return NAN;
 }
 

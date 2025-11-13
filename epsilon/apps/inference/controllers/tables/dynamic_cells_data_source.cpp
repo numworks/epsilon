@@ -114,8 +114,6 @@ void DoubleDynamicCellsDataSource<HeaderCellType,
     return;
   }
   assert(m_numberOfAllocatedHeaderCells > 0);
-  assert(m_innerCells);
-  assert(m_numberOfAllocatedInnerCells > 0);
   for (int i = 0; i < m_numberOfAllocatedHeaderCells; i++) {
     // Make sure not to keep the first responder pointing on a destroyed cell
     Responder* cellResponder = m_headerCells[i].responder();
@@ -128,6 +126,8 @@ void DoubleDynamicCellsDataSource<HeaderCellType,
   m_headerCells = nullptr;
   m_numberOfAllocatedHeaderCells = 0;
 
+  assert(m_innerCells);
+  assert(m_numberOfAllocatedInnerCells > 0);
   for (int i = 0; i < m_numberOfAllocatedInnerCells; i++) {
     // Make sure not to keep the first responder pointing on a destroyed cell
     Responder* cellResponder = m_innerCells[i].responder();

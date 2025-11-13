@@ -28,6 +28,8 @@ class ANOVATest : public SignificanceTest, public InputTable {
         m_results.within.degreesOfFreedom);
   }
 
+  bool validateInputs(int /* pageIndex */) override;
+
   void compute() override;
 
   // InputTable

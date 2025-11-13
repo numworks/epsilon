@@ -18,6 +18,10 @@ void ANOVATest::compute() {
   m_pValue = m_results.pValue;
 }
 
+bool ANOVATest::validateInputs(int /* pageIndex */) {
+  return m_groups.size() >= 2;
+}
+
 bool ANOVATest::authorizedValueAtPosition(double p, int row, int column) const {
   return Poincare::Inference::SignificanceTest::FTest::IsObservedValueValid(p);
 }

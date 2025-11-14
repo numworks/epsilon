@@ -67,8 +67,6 @@ class PieGraphController : public Escher::ViewController,
   Store* m_store;
   Escher::TabViewController* m_tabController;
   bool m_isPieGraphSelected;
-  uint8_t m_selectedCategory;
-  uint8_t m_numberOfActiveCategories;
 };
 
 }  // namespace Statistics::Categorical

@@ -107,7 +107,7 @@ void ResultsStatisticsTableCell::fillCellForLocation(
   if (type == k_typeOfHeaderCells) {
     if (row == 0) {
       // Column title
-      // TODO: simplify and factorize with InputANOVATableCell
+      // TODO: simplify and factorize with InputDataANOVATableCell
       char digit;
       int groupIndex = column - 1;
       assert(groupIndex <= '9' - '1');

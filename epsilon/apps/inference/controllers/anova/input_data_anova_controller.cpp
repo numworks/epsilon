@@ -1,4 +1,4 @@
-#include "input_anova_controller.h"
+#include "input_data_anova_controller.h"
 
 #include "inference/controllers/controller_container.h"
 
@@ -6,7 +6,7 @@ using namespace Escher;
 
 namespace Inference {
 
-InputANOVAController::InputANOVAController(
+InputDataANOVAController::InputDataANOVAController(
     StackViewController* parent, ControllerContainer* controllerContainer,
     ANOVATest* inference)
     : InputCategoricalController(
@@ -15,7 +15,7 @@ InputANOVAController::InputANOVAController(
               &InputCategoricalController::ButtonAction, this)),
       m_inputANOVATable(&m_selectableListView, inference, this, this) {}
 
-void InputANOVAController::createDynamicCells() {
+void InputDataANOVAController::createDynamicCells() {
   m_inputANOVATable.createCells();
 }
 

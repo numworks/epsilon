@@ -47,10 +47,10 @@ static bool shouldDisplaySignificanceLevelForANOVA(
     const StackViewController* stackViewController) {
   /* This is a sort of hack knowing the order of pages for the ANOVA test. The
    * first controller which has the SameAsPreviousPage property is
-   * InputANOVAController, it should not display the significance level. The
+   * InputDataANOVAController, it should not display the significance level. The
    * second controller with SameAsPreviousPage is ResultsANOVAController and it
    * should display the significance level (which was set in
-   * InputANOVAController). */
+   * InputDataANOVAController). */
   return (stackViewController->topViewController()->titlesDisplay() ==
           Escher::ViewController::TitlesDisplay::SameAsPreviousPage) &&
          !(stackViewController->secondTopViewController()->titlesDisplay() ==

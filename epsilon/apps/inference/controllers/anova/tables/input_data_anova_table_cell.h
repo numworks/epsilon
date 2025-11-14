@@ -8,9 +8,9 @@
 
 namespace Inference {
 
-class InputANOVAController;
+class InputDataANOVAController;
 
-class InputANOVATableCell
+class InputDataANOVATableCell
     : public InputCategoricalTableCell,
       public OneHeaderRowTableDataSource,
       public DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
@@ -24,9 +24,9 @@ class InputANOVATableCell
 
   constexpr static int k_columnWidth = ANOVATableDimensions::k_columnWidth;
 
-  InputANOVATableCell(Escher::Responder* parentResponder, ANOVATest* test,
-                      InputANOVAController* inputANOVAController,
-                      Escher::ScrollViewDelegate* scrollViewDelegate);
+  InputDataANOVATableCell(Escher::Responder* parentResponder, ANOVATest* test,
+                          InputDataANOVAController* InputDataANOVAController,
+                          Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // InputCategoricalTableCell
   CategoricalTableViewDataSource* tableViewDataSource() override {
@@ -103,7 +103,7 @@ class InputANOVATableCell
                                 int row);
   CategoricalController* categoricalController() override;
 
-  InputANOVAController* m_inputANOVAController;
+  InputDataANOVAController* m_InputDataANOVAController;
 };
 
 }  // namespace Inference

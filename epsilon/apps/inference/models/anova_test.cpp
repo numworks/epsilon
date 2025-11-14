@@ -28,6 +28,8 @@ bool ANOVATest::authorizedValueAtPosition(double p, int row, int column) const {
 
 void ANOVATest::setValueAtPosition(double value, int row, int column) {
   assert(row >= 0 && column >= 0);
+  /* setValueAtPosition is not used for deletion in ANOVATest, the passed value
+   * must be a "real" value. */
   assert(!std::isnan(value));
   if (column > m_groups.size()) {
     return;

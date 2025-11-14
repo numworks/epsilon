@@ -2,7 +2,7 @@
 
 #include <apps/shared/store_controller.h>
 
-#include "../shared/statistics_type_controller.h"
+#include "../../shared/statistics_type_controller.h"
 #include "../store.h"
 #include "store_parameter_controller.h"
 

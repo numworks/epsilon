@@ -9,7 +9,7 @@
 
 #include <cmath>
 
-#include "../app.h"
+#include "../../app.h"
 
 using namespace Poincare;
 using namespace Shared;

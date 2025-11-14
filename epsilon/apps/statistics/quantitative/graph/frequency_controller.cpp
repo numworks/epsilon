@@ -6,7 +6,7 @@
 #include <omg/utf8_helper.h>
 #include <poincare/print.h>
 
-#include "../app.h"
+#include "../../app.h"
 #include "apps/shared/poincare_helpers.h"
 
 namespace Statistics {

@@ -46,9 +46,9 @@ class TableViewDataSource : public Escher::TableViewDataSource,
     int groupNumber;
   };
   ColumnInfo columnInfo(int col) const;
-  /* Given a column in the selectableTable returns the corresponding
+  /* Given a column in the selectableTable, returns the corresponding
    * column/group in the tableData.
-   * Asserts that the given column is not a RF column */
+   * Asserts that the given column is not a RF column. */
   int dataColumn(int col);
   int dataRow(int row) const {
     assert(row > 0);

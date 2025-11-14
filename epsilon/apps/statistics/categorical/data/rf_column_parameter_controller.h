@@ -10,8 +10,8 @@
 
 namespace Statistics::Categorical {
 
-/* Controller for the parameter menu of the RF column headers.
- * Allows hiding of the column for the selected group */
+/* Controller for the parameter menu of the relative frequency (RF) column
+ * headers. Allows hiding the column for the selected group */
 class RFColumnParameterController
     : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView>, 1> {
@@ -29,7 +29,7 @@ class RFColumnParameterController
   bool handleEvent(Ion::Events::Event event) override;
   const char* title() const override;
 
-  /* Set the group/col that is being selected on the tableData
+  /* Set the group/column that is being selected on the tableData
    * Should be called before pushing this viewController on the stack */
   void setGroup(int group);
 

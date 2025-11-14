@@ -15,8 +15,8 @@ struct TableDimension {
 };
 
 /* Store for the categorical statistics app, contains:
- * The snapshoted data [TableData]
- * And memoized data (like sum for each group) */
+ * - the snapshot data [TableData]
+ * - memoized data (like sum for each group) */
 class Store {
  private:
   enum class GroupStatus : uint8_t {
@@ -94,7 +94,7 @@ class Store {
   void clearColumn(int col);
   void clearRow(int row);
 
-  // RF releated
+  // RF related
   bool isRelativeFrequencyColumnActive(int col) const {
     assert(0 <= col && col < k_maxNumberOfGroups);
     return m_table->m_showRelativeFreqColumn[col];

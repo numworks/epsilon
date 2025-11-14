@@ -13,18 +13,18 @@ namespace Statistics::Categorical {
 
 /* DataSource for the PieGraph.
  * Computes and stores the cumulated angles for each section, as well as their
- * color */
+ * color. */
 class PieGraphViewDataSource {
  public:
   PieGraphViewDataSource(Store* store);
 
   void toggleSelection(bool select);
   /* Select the next non-empty category in the given [direction]
-   * ( >0 clockwise and <0 counterclockwise)
-   * returns the selected category store index */
+   * (>0 clockwise and <0 counterclockwise) and
+   * return the selected category store index */
   int nextCategory(int direction);
-  /* Set the group to display and selects the first non-empty category
-   * returns the selected category store index */
+  /* Set the group to display, select the first non-empty category and
+   * return the selected category store index */
   int setGroup(int group);
 
  protected:

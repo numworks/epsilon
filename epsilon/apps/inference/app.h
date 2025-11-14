@@ -81,10 +81,10 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
                (HomogeneityTableDimensions::k_numberOfHeaderReusableCells +
                 HomogeneityTableDimensions::k_numberOfInnerReusableCells),
            sizeof(InferenceEvenOddEditableCell) *
-                   ANOVATableDimensions::k_inputShape.reusable.categories
+                   ANOVA::ANOVATableDimensions::k_inputShape.reusable.categories
                        .inner +
                sizeof(InferenceEvenOddBufferCell) *
-                   ANOVATableDimensions::k_inputShape.reusable.categories
+                   ANOVA::ANOVATableDimensions::k_inputShape.reusable.categories
                        .header,
            sizeof(InferenceEvenOddEditableCell) *
                    HomogeneityTableDimensions::k_numberOfInnerReusableCells +

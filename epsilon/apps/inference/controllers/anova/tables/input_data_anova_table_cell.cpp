@@ -7,7 +7,7 @@
 
 using namespace Escher;
 
-namespace Inference {
+namespace Inference::ANOVA {
 
 InputDataANOVATableCell::InputDataANOVATableCell(
     Escher::Responder* parentResponder, ANOVATest* test,
@@ -88,4 +88,4 @@ void InputDataANOVATableCell::initInnerCell(
   cell->editableTextCell()->textField()->setDelegate(this);
 }
 
-}  // namespace Inference
+}  // namespace Inference::ANOVA

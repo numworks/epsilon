@@ -65,8 +65,8 @@ class ControllerContainer {
   TestGraphController m_testGraphController;
   IntervalGraphController m_intervalGraphController;
   ResultsHomogeneityTabController m_homogeneityResultsController;
-  InputDataANOVAController m_InputDataANOVAController;
-  ResultsANOVAController m_resultsANOVAController;
+  ANOVA::InputDataANOVAController m_InputDataANOVAController;
+  ANOVA::ResultsANOVAController m_resultsANOVAController;
   InputHomogeneityController m_inputHomogeneityController;
   ResultsGoodnessTabController m_goodnessResultsController;
   InputGoodnessController m_inputGoodnessController;

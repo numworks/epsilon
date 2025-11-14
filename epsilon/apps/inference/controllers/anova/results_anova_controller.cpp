@@ -7,7 +7,7 @@
 
 using namespace Escher;
 
-namespace Inference {
+namespace Inference::ANOVA {
 
 // ResultsANOVAController
 
@@ -56,4 +56,4 @@ void StatisticsController::createDynamicCells() {
   m_resultsStatisticsTable.createCells();
 }
 
-}  // namespace Inference
+}  // namespace Inference::ANOVA

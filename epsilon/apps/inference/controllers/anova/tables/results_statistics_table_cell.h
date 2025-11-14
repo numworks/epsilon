@@ -6,7 +6,7 @@
 #include "inference/controllers/tables/one_header_column_one_header_row_table_data_source.h"
 #include "inference/models/anova_test.h"
 
-namespace Inference {
+namespace Inference::ANOVA {
 
 class StatisticsController;
 
@@ -87,4 +87,4 @@ class ResultsStatisticsTableCell
   StatisticsController* m_statisticsResultsController;
 };
 
-}  // namespace Inference
+}  // namespace Inference::ANOVA

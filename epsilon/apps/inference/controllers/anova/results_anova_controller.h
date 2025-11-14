@@ -8,7 +8,7 @@
 #include "tables/results_between_within_table_cell.h"
 #include "tables/results_statistics_table_cell.h"
 
-namespace Inference {
+namespace Inference::ANOVA {
 
 /* This controller displays the "between" and "within" statistics results
  * (degrees of freedom, square sum, mean squares) of the ANOVA test. */
@@ -92,4 +92,4 @@ class ResultsANOVAController : public InferenceController,
   StatisticsController m_secondTabController;
 };
 
-}  // namespace Inference
+}  // namespace Inference::ANOVA

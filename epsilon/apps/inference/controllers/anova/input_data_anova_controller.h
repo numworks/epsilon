@@ -4,7 +4,7 @@
 #include "inference/models/anova_test.h"
 #include "tables/input_data_anova_table_cell.h"
 
-namespace Inference {
+namespace Inference::ANOVA {
 
 class InputDataANOVAController : public InputCategoricalController {
  public:
@@ -28,4 +28,4 @@ class InputDataANOVAController : public InputCategoricalController {
   InputDataANOVATableCell m_inputANOVATable;
 };
 
-}  // namespace Inference
+}  // namespace Inference::ANOVA

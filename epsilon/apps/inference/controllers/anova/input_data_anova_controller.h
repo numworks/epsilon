@@ -2,15 +2,15 @@
 
 #include "inference/controllers/tables/categorical_controller.h"
 #include "inference/models/anova_test.h"
-#include "tables/input_anova_table_cell.h"
+#include "tables/input_data_anova_table_cell.h"
 
 namespace Inference {
 
-class InputANOVAController : public InputCategoricalController {
+class InputDataANOVAController : public InputCategoricalController {
  public:
-  InputANOVAController(Escher::StackViewController* parent,
-                       ControllerContainer* controllerContainer,
-                       ANOVATest* inferenceModel);
+  InputDataANOVAController(Escher::StackViewController* parent,
+                           ControllerContainer* controllerContainer,
+                           ANOVATest* inferenceModel);
 
   ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::SameAsPreviousPage;
@@ -25,7 +25,7 @@ class InputANOVAController : public InputCategoricalController {
   }
   void createDynamicCells() override;
 
-  InputANOVATableCell m_inputANOVATable;
+  InputDataANOVATableCell m_inputANOVATable;
 };
 
 }  // namespace Inference

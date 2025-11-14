@@ -3,7 +3,7 @@
 #include <escher/view_controller.h>
 #include <omg/unreachable.h>
 
-#include "anova/input_anova_controller.h"
+#include "anova/input_data_anova_controller.h"
 #include "anova/results_anova_controller.h"
 #include "chi_square/categorical_type_controller.h"
 #include "chi_square/input_goodness_controller.h"
@@ -35,8 +35,8 @@ class ControllerContainer {
         m_homogeneityResultsController{
             stackViewController, this,
             static_cast<HomogeneityTest*>(inferenceModel)},
-        m_inputANOVAController{stackViewController, this,
-                               static_cast<ANOVATest*>(inferenceModel)},
+        m_InputDataANOVAController{stackViewController, this,
+                                   static_cast<ANOVATest*>(inferenceModel)},
         m_resultsANOVAController{stackViewController, this,
                                  static_cast<ANOVATest*>(inferenceModel)},
         m_inputHomogeneityController{
@@ -65,7 +65,7 @@ class ControllerContainer {
   TestGraphController m_testGraphController;
   IntervalGraphController m_intervalGraphController;
   ResultsHomogeneityTabController m_homogeneityResultsController;
-  InputANOVAController m_inputANOVAController;
+  InputDataANOVAController m_InputDataANOVAController;
   ResultsANOVAController m_resultsANOVAController;
   InputHomogeneityController m_inputHomogeneityController;
   ResultsGoodnessTabController m_goodnessResultsController;

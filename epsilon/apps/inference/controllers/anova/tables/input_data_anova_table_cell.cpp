@@ -1,23 +1,23 @@
-#include "input_anova_table_cell.h"
+#include "input_data_anova_table_cell.h"
 
 #include <poincare/print.h>
 #include <shared/column_parameter_controller.h>
 
-#include "inference/controllers/anova/input_anova_controller.h"
+#include "inference/controllers/anova/input_data_anova_controller.h"
 
 using namespace Escher;
 
 namespace Inference {
 
-InputANOVATableCell::InputANOVATableCell(
+InputDataANOVATableCell::InputDataANOVATableCell(
     Escher::Responder* parentResponder, ANOVATest* test,
-    InputANOVAController* inputANOVAController,
+    InputDataANOVAController* InputDataANOVAController,
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, test,
                                 scrollViewDelegate),
-      m_inputANOVAController(inputANOVAController) {}
+      m_InputDataANOVAController(InputDataANOVAController) {}
 
-void InputANOVATableCell::handleResponderChainEvent(
+void InputDataANOVATableCell::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if ((event.type == ResponderChainEventType::HasBecomeFirst) &&
       (selectedRow() < 0)) {
@@ -26,15 +26,15 @@ void InputANOVATableCell::handleResponderChainEvent(
   CategoricalTableCell::handleResponderChainEvent(event);
 }
 
-size_t InputANOVATableCell::fillColumnName(int column, char* buffer) {
+size_t InputDataANOVATableCell::fillColumnName(int column, char* buffer) {
   assert(column >= 0 && column < k_maxNumberOfColumns);
   return Poincare::Print::CustomPrintf(
       buffer, Shared::ColumnParameterController::k_titleBufferSize, "%s %i",
       I18n::translate(I18n::Message::Group), column + 1);
 }
 
-void InputANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
-                                              int column, int row) {
+void InputDataANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
+                                                  int column, int row) {
   assert(column >= 0 && row >= 0);
   assert(column < numberOfColumns() && row <= numberOfRows());
   int type = typeAtLocation(column, row);
@@ -68,8 +68,8 @@ void InputANOVATableCell::fillCellForLocation(Escher::HighlightCell* cell,
   }
 }
 
-void InputANOVATableCell::fillInnerCellForLocation(Escher::HighlightCell* cell,
-                                                   int column, int row) {
+void InputDataANOVATableCell::fillInnerCellForLocation(
+    Escher::HighlightCell* cell, int column, int row) {
   assert(column >= 0 && row >= 0);
   assert(column < innerNumberOfColumns() && row < innerNumberOfRows());
   InferenceEvenOddEditableCell* myCell =
@@ -78,11 +78,12 @@ void InputANOVATableCell::fillInnerCellForLocation(Escher::HighlightCell* cell,
                            column, row, tableModel());
 }
 
-CategoricalController* InputANOVATableCell::categoricalController() {
-  return m_inputANOVAController;
+CategoricalController* InputDataANOVATableCell::categoricalController() {
+  return m_InputDataANOVAController;
 }
 
-void InputANOVATableCell::initInnerCell(InferenceEvenOddEditableCell* cell) {
+void InputDataANOVATableCell::initInnerCell(
+    InferenceEvenOddEditableCell* cell) {
   cell->setParentResponder(&m_selectableTableView);
   cell->editableTextCell()->textField()->setDelegate(this);
 }

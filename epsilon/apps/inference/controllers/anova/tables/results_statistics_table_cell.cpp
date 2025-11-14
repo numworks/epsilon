@@ -44,6 +44,40 @@ void ResultsStatisticsTableCell::drawRect(KDContext* ctx, KDRect rect) const {
                 m_selectableTableView.backgroundColor());
 }
 
+constexpr static double GroupStatisticsResultAtRow(
+    const ANOVATest::GroupData& groupStatistics, int row) {
+  assert(row >= 0 && row <= 3);
+  switch (row) {
+    case 0:
+      return groupStatistics.nSamples;
+    case 1:
+      return groupStatistics.mean;
+    case 2:
+      return groupStatistics.sampleStdDeviation;
+    case 3:
+      return groupStatistics.sampleVariance;
+    default:
+      OMG::unreachable();
+  }
+}
+
+// The row index refers to the "inner" table
+constexpr static const char* HeaderAtRow(int row) {
+  assert(row >= 0 && row <= 3);
+  switch (row) {
+    case 0:
+      return I18n::translate(I18n::Message::SampleSize);
+    case 1:
+      return I18n::translate(I18n::Message::SampleMean);
+    case 2:
+      return I18n::translate(I18n::Message::SampleSTD);
+    case 3:
+      return I18n::translate(I18n::Message::SampleVariance);
+    default:
+      OMG::unreachable();
+  }
+}
+
 void ResultsStatisticsTableCell::fillInnerCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
   assert(row >= 0 && row < innerNumberOfRows());
@@ -55,23 +89,8 @@ void ResultsStatisticsTableCell::fillInnerCellForLocation(
   const ANOVATest::GroupData& groupStatistics =
       m_inference->groupStatistics(column);
 
-  switch (row) {
-    case 0:
-      PrintValueInTextHolder(groupStatistics.nSamples, myCell);
-      break;
-    case 1:
-      PrintValueInTextHolder(groupStatistics.mean, myCell);
-      break;
-    case 2:
-      PrintValueInTextHolder(groupStatistics.sampleStdDeviation, myCell);
-      break;
-    case 3:
-      PrintValueInTextHolder(groupStatistics.sampleVariance, myCell);
-      break;
-    default:
-      OMG::unreachable();
-  }
-
+  PrintValueInTextHolder(GroupStatisticsResultAtRow(groupStatistics, row),
+                         myCell);
   myCell->setEven(row % 2 == 1);
 }
 
@@ -103,23 +122,7 @@ void ResultsStatisticsTableCell::fillCellForLocation(
       myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     } else {
       // Row title
-      assert(row == 1 || row == 2 || row == 3 || row == 4);
-      switch (row) {
-        case 1:
-          myCell->setText(I18n::translate(I18n::Message::SampleSize));
-          break;
-        case 2:
-          myCell->setText(I18n::translate(I18n::Message::SampleMean));
-          break;
-        case 3:
-          myCell->setText(I18n::translate(I18n::Message::SampleSTD));
-          break;
-        case 4:
-          myCell->setText(I18n::translate(I18n::Message::SampleVariance));
-          break;
-        default:
-          OMG::unreachable();
-      }
+      myCell->setText(HeaderAtRow(row - 1));
       myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
     }
     myCell->setEven(static_cast<bool>((row + 1) % 2));

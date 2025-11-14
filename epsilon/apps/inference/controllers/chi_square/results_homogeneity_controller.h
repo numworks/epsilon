@@ -4,7 +4,7 @@
 
 #include "inference/controllers/inference_controller.h"
 #include "inference/controllers/tables/categorical_controller.h"
-#include "tables/results_homogeneity_table_cell.h"
+#include "tables/results_homogeneity_table.h"
 
 namespace Inference {
 
@@ -22,7 +22,7 @@ class ResultsHomogeneityController : public CategoricalController {
     tabController()->stackOpenPage(nextPage);
   }
 
-  void setMode(ResultsHomogeneityTableCell::Mode mode) {
+  void setMode(ResultsHomogeneityTable::Mode mode) {
     m_resultsHomogeneityTable.setMode(mode);
   }
 
@@ -36,7 +36,7 @@ class ResultsHomogeneityController : public CategoricalController {
     return &m_resultsHomogeneityTable;
   }
   void createDynamicCells() override;
-  ResultsHomogeneityTableCell m_resultsHomogeneityTable;
+  ResultsHomogeneityTable m_resultsHomogeneityTable;
 };
 
 class ResultsHomogeneityTabController : public InferenceController,
@@ -66,7 +66,7 @@ class ResultsHomogeneityTabController : public InferenceController,
     void viewWillAppear() override { m_tableController->viewWillAppear(); }
 
    protected:
-    void switchToTableWithMode(ResultsHomogeneityTableCell::Mode mode);
+    void switchToTableWithMode(ResultsHomogeneityTable::Mode mode);
     ResultsHomogeneityController* m_tableController;
     void handleResponderChainEvent(
         Responder::ResponderChainEvent event) override {
@@ -86,7 +86,7 @@ class ResultsHomogeneityTabController : public InferenceController,
           I18n::Message::HomogeneityResultsExpectedValuesTitle);
     }
     void viewWillAppear() override {
-      switchToTableWithMode(ResultsHomogeneityTableCell::Mode::ExpectedValue);
+      switchToTableWithMode(ResultsHomogeneityTable::Mode::ExpectedValue);
       SingleModeController::viewWillAppear();
     }
   };
@@ -98,7 +98,7 @@ class ResultsHomogeneityTabController : public InferenceController,
       return I18n::translate(I18n::Message::Contributions);
     }
     void viewWillAppear() override {
-      switchToTableWithMode(ResultsHomogeneityTableCell::Mode::Contribution);
+      switchToTableWithMode(ResultsHomogeneityTable::Mode::Contribution);
       SingleModeController::viewWillAppear();
     }
   };

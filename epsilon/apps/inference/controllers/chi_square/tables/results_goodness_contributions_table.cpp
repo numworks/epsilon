@@ -1,4 +1,4 @@
-#include "results_goodness_table_cell.h"
+#include "results_goodness_contributions_table.h"
 
 #include <poincare/print.h>
 

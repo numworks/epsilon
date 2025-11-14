@@ -2,7 +2,7 @@
 
 #include "inference/controllers/tables/categorical_cell.h"
 #include "inference/controllers/tables/categorical_controller.h"
-#include "tables/input_goodness_table_cell.h"
+#include "tables/input_goodness_table.h"
 
 namespace Inference {
 
@@ -26,7 +26,7 @@ class InputGoodnessController : public InputCategoricalController {
   constexpr static int k_indexOfDegreesOfFreedom = 1;
 
   InputCategoricalTableCell* categoricalTableCell() override {
-    return &m_inputGoodnessTableCell;
+    return &m_InputGoodnessTable;
   }
   void createDynamicCells() override;
   int indexOfSignificanceCell() const override {
@@ -36,7 +36,7 @@ class InputGoodnessController : public InputCategoricalController {
   const Escher::HighlightCell* privateExplicitCellAtRow(int row) const override;
 
   InputCategoricalCell<Escher::MessageTextView> m_degreeOfFreedomCell;
-  InputGoodnessTableCell m_inputGoodnessTableCell;
+  InputGoodnessTable m_InputGoodnessTable;
 };
 
 }  // namespace Inference

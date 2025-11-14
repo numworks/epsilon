@@ -1,7 +1,7 @@
 #pragma once
 
 #include "inference/controllers/tables/categorical_controller.h"
-#include "tables/input_homogeneity_table_cell.h"
+#include "tables/input_homogeneity_table.h"
 
 namespace Inference {
 
@@ -25,7 +25,7 @@ class InputHomogeneityController : public InputCategoricalController {
   }
   void createDynamicCells() override;
 
-  InputHomogeneityTableCell m_inputHomogeneityTable;
+  InputHomogeneityTable m_inputHomogeneityTable;
 };
 
 }  // namespace Inference

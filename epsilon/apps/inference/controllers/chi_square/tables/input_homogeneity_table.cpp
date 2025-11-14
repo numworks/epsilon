@@ -1,4 +1,4 @@
-#include "input_homogeneity_table_cell.h"
+#include "input_homogeneity_table.h"
 
 #include <poincare/print.h>
 #include <shared/column_parameter_controller.h>
@@ -10,7 +10,7 @@ using namespace Escher;
 
 namespace Inference {
 
-InputHomogeneityTableCell::InputHomogeneityTableCell(
+InputHomogeneityTable::InputHomogeneityTable(
     Escher::Responder* parentResponder, HomogeneityTest* test,
     InputHomogeneityController* inputHomogeneityController,
     Escher::ScrollViewDelegate* scrollViewDelegate)
@@ -18,7 +18,7 @@ InputHomogeneityTableCell::InputHomogeneityTableCell(
                                 scrollViewDelegate),
       m_inputHomogeneityController(inputHomogeneityController) {}
 
-void InputHomogeneityTableCell::handleResponderChainEvent(
+void InputHomogeneityTable::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (selectedRow() < 0) {
@@ -30,8 +30,8 @@ void InputHomogeneityTableCell::handleResponderChainEvent(
   }
 }
 
-void InputHomogeneityTableCell::fillCellForLocation(Escher::HighlightCell* cell,
-                                                    int column, int row) {
+void InputHomogeneityTable::fillCellForLocation(Escher::HighlightCell* cell,
+                                                int column, int row) {
   HomogeneityTableDataSource::fillCellForLocation(cell, column, row);
   if ((column == 0 && row != 0 && row == numberOfRows() - 1 &&
        row < k_maxNumberOfRows) ||
@@ -43,13 +43,13 @@ void InputHomogeneityTableCell::fillCellForLocation(Escher::HighlightCell* cell,
   }
 }
 
-size_t InputHomogeneityTableCell::fillColumnName(int column, char* buffer) {
+size_t InputHomogeneityTable::fillColumnName(int column, char* buffer) {
   return Poincare::Print::CustomPrintf(
       buffer, Shared::ColumnParameterController::k_titleBufferSize, "%s %i",
       I18n::translate(I18n::Message::Group), column);
 }
 
-void InputHomogeneityTableCell::fillInnerCellForLocation(
+void InputHomogeneityTable::fillInnerCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
   InferenceEvenOddEditableCell* myCell =
       static_cast<InferenceEvenOddEditableCell*>(cell);
@@ -57,12 +57,11 @@ void InputHomogeneityTableCell::fillInnerCellForLocation(
                            column, row, tableModel());
 }
 
-CategoricalController* InputHomogeneityTableCell::categoricalController() {
+CategoricalController* InputHomogeneityTable::categoricalController() {
   return m_inputHomogeneityController;
 }
 
-void InputHomogeneityTableCell::initInnerCell(
-    InferenceEvenOddEditableCell* cell) {
+void InputHomogeneityTable::initInnerCell(InferenceEvenOddEditableCell* cell) {
   cell->setParentResponder(&m_selectableTableView);
   cell->editableTextCell()->textField()->setDelegate(this);
 }

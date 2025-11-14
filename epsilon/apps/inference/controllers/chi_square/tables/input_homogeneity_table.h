@@ -9,16 +9,16 @@ namespace Inference {
 
 class InputHomogeneityController;
 
-class InputHomogeneityTableCell
+class InputHomogeneityTable
     : public InputCategoricalTableCell,
       public HomogeneityTableDataSource,
       public DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
                                           InferenceEvenOddEditableCell> {
  public:
-  InputHomogeneityTableCell(
-      Escher::Responder* parentResponder, HomogeneityTest* test,
-      InputHomogeneityController* inputHomogeneityController,
-      Escher::ScrollViewDelegate* scrollViewDelegate);
+  InputHomogeneityTable(Escher::Responder* parentResponder,
+                        HomogeneityTest* test,
+                        InputHomogeneityController* inputHomogeneityController,
+                        Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // InputCategoricalTableCell
   CategoricalTableViewDataSource* tableViewDataSource() override {

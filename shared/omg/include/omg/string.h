@@ -100,6 +100,13 @@ class String {
     return result;
   }
 
+  // (String + char) concatenation
+  constexpr String<CAPACITY>& operator+=(char right) {
+    assert(m_length + 1 < CAPACITY);
+    m_data[m_length++] = right;
+    return *this;
+  }
+
  private:
   size_type m_length = 0;
   value_type m_data[CAPACITY];

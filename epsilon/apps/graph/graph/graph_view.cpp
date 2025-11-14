@@ -25,7 +25,7 @@ GraphView::GraphView(InteractiveCurveViewRange* graphRange,
 
 void GraphView::reload(bool resetInterrupted, bool force,
                        bool forceRedrawAxes) {
-  if (m_tangentDisplay || m_intersectionRegion) {
+  if (m_tangentDisplay) {
     markRectAsDirty(boundsWithoutBanner());
     forceRedrawAxes = true;
   }

@@ -24,7 +24,7 @@ runs:
     - name: Define DOCKER_RUN environment variable
       shell: bash
       run: |
-        CACHE_FOLDER=$(pwd)/../../ccache
+        CACHE_FOLDER=/tmp/ccache
         mkdir -p $CACHE_FOLDER
         CACHE_FLAGS="--env CCACHE_DIR=/cache --mount type=bind,source=$CACHE_FOLDER,target=/cache"
         echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) $CACHE_FLAGS --env MAKEFLAGS --mount type=bind,source=.,target=/monorepo oasis-builder-${{ inputs.platform }}:latest sh -c" >> $GITHUB_ENV

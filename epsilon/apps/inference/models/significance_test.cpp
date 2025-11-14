@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "aliases.h"
+
 namespace Inference {
 
 void SignificanceTest::setGraphTitle(char* buffer, size_t bufferSize) const {
@@ -188,6 +190,7 @@ bool SignificanceTest::computeCurveViewRange(float transition, bool zoomSide) {
   if (std::isinf(targetYMax)) {
     /* The probability density function could be infinite in x=0. This is the
      * case for the Fisher distribution. */
+    assert(type() == StatisticType::F);
     targetYMax = 5.0f;
   }
   float cMin = computeXMin();

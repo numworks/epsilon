@@ -16,8 +16,7 @@ using GraphTypeCell =
     Escher::MenuCell<Escher::TransparentImageView, Escher::MessageTextView>;
 
 class GraphTypeController
-    : public Escher::AlternateEmptyViewDelegate,
-      public Escher::AlternateViewDelegate,
+    : public Escher::AlternateViewDelegate,
       public Escher::UniformSelectableListController<GraphTypeCell, 2> {
  public:
   GraphTypeController(Escher::Responder* parentResponder,
@@ -28,7 +27,8 @@ class GraphTypeController
             parentResponder),
         m_tabController(tabViewController),
         m_stackViewController(stackView),
-        m_graphViewModel(graphViewModel) {
+        m_graphViewModel(graphViewModel),
+        m_viewHasBeenSelected(false) {
     selectRow(GraphViewModel::IndexOfGraphView(
         m_graphViewModel->selectedGraphView()));
     for (uint8_t i = 0; i < GraphViewModel::k_numberOfGraphViews; i++) {
@@ -45,16 +45,15 @@ class GraphTypeController
   // UniformSelectableListController
   bool handleEvent(Ion::Events::Event event) override {
     if ((event == Ion::Events::Up && selectedRow() == 0) ||
-        (event == Ion::Events::Back
-         /* && m_store->graphViewHasBeenInvalidated()*/)) {
-      /* If m_store->graphViewHasBeenInvalidated(), there isn't a previously
-       * selected graph view, so Back selects the tab instead. */
+        (event == Ion::Events::Back && !m_viewHasBeenSelected)) {
+      /* If no view has been selected then there is no previous graph view to go
+       * back to, so Back selects the tab instead. */
       m_tabController->selectTab();
       return true;
     }
     if (event == Ion::Events::OK || event == Ion::Events::EXE ||
         event == Ion::Events::Right) {
-      // m_store->graphViewHasBeenSelected();
+      m_viewHasBeenSelected = true;
       m_graphViewModel->selectGraphView(
           GraphViewModel::GraphViewAtIndex(selectedRow()));
       m_stackViewController->pop();
@@ -76,24 +75,17 @@ class GraphTypeController
   }
   void activeViewDidBecomeFirstResponder(
       Escher::ViewController* activeViewController) override {
-    // if (m_store->graphViewHasBeenInvalidated()) {
-    // m_stackViewController->push(this);
-    // } else {
-    Escher::App::app()->setFirstResponder(activeViewController);
-    // }
-  }
-
-  // AlternateEmptyViewDelegate (showing graph selection menu or empty)
-  bool isEmpty() const override { return false; }
-  I18n::Message emptyMessage() override { return I18n::Message::Categorical; }
-  Escher::Responder* responderWhenEmpty() override {
-    m_tabController->selectTab();
-    return m_tabController;
+    if (!m_viewHasBeenSelected) {
+      m_stackViewController->push(this);
+    } else {
+      Escher::App::app()->setFirstResponder(activeViewController);
+    }
   }
 
   Escher::TabViewController* m_tabController;
   Escher::StackViewController* m_stackViewController;
   GraphViewModel* m_graphViewModel;
+  bool m_viewHasBeenSelected;
 };
 
 }  // namespace Statistics::Categorical

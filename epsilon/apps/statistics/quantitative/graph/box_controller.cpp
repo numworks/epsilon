@@ -3,8 +3,6 @@
 #include <apps/global_preferences.h>
 #include <poincare/print.h>
 
-#include "../app.h"
-
 using namespace Poincare;
 using namespace Shared;
 using namespace Escher;

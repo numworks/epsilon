@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "../app.h"
+#include "../../app.h"
 
 using namespace Shared;
 using namespace Escher;

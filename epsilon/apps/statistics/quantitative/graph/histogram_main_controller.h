@@ -3,7 +3,7 @@
 #include <escher/tab_view_controller.h>
 #include <poincare/range.h>
 
-#include "../shared/graph_button_row_delegate.h"
+#include "../../shared/graph_button_row_delegate.h"
 #include "../store.h"
 #include "banner_delegate.h"
 #include "histogram_list_controller.h"

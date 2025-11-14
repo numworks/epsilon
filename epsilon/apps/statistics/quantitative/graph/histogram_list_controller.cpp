@@ -1,7 +1,7 @@
 #include "histogram_list_controller.h"
 
-#include "../app.h"
-#include "statistics/graph/histogram_view.h"
+#include "../../app.h"
+#include "histogram_view.h"
 
 namespace Statistics {
 

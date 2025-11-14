@@ -3,7 +3,7 @@
 #include <escher/tab_view_controller.h>
 #include <escher/view_controller.h>
 
-#include "../shared/graph_button_row_delegate.h"
+#include "../../shared/graph_button_row_delegate.h"
 #include "../store.h"
 #include "data_view.h"
 

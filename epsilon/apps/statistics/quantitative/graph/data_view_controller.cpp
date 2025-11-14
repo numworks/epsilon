@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <escher/container.h>
 
-#include "../app.h"
+#include "../../app.h"
 
 namespace Statistics {
 

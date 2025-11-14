@@ -26,11 +26,11 @@ class String {
  public:
   // Constructors
 
-  String() = default;
+  constexpr String() = default;
 
-  String(const String& other) = default;
+  constexpr String(const String& other) = default;
 
-  String(const char_type* string, size_type stringLength) {
+  constexpr String(const char_type* string, size_type stringLength) {
     assert(stringLength <= CAPACITY);
     size_type i = 0;
     while (i < stringLength) {
@@ -38,7 +38,7 @@ class String {
     }
   }
 
-  String(const char_type* string) {
+  constexpr explicit String(const char_type* string) {
     size_type i = 0;
     while (*(string + i) != '\0') {
       assert(i <= CAPACITY);
@@ -46,9 +46,10 @@ class String {
     }
   }
 
-  explicit String(std::string_view view) : String(view.data(), view.length()) {}
+  constexpr explicit String(std::string_view view)
+      : String(view.data(), view.length()) {}
 
-  String(std::initializer_list<char_type> characters) {
+  constexpr String(std::initializer_list<char_type> characters) {
     assert(characters.size() <= CAPACITY);
     for (const char_type& element : characters) {
       (*this)[m_length++] = element;
@@ -56,40 +57,41 @@ class String {
   }
 
   // Implicit conversion to an std::string_view
-  operator std::string_view() const {
+  constexpr operator std::string_view() const {
     return std::string_view(data(), length());
   }
 
   // Assignement
 
-  String& operator=(const String& other) = default;
+  constexpr String& operator=(const String& other) = default;
 
-  String& operator=(std::string_view view) {
+  constexpr String& operator=(std::string_view view) {
     *this = String(view);
     return *this;
   }
 
   // Methods
 
-  const_reference operator[](size_type index) const {
+  constexpr const_reference operator[](size_type index) const {
     assert(index < m_length);
     return m_data[index];
   }
-  reference operator[](size_type index) {
+  constexpr reference operator[](size_type index) {
     assert(index < m_length);
     return m_data[index];
   }
 
-  size_type length() const { return m_length; }
-  size_type capacity() const { return CAPACITY; }
-  const char_type* data() const { return m_data; }
-  char_type* data() { return m_data; }
+  constexpr size_type length() const { return m_length; }
+  constexpr size_type capacity() const { return CAPACITY; }
+  constexpr const char_type* data() const { return m_data; }
+  constexpr char_type* data() { return m_data; }
 
   // Operators
 
   // (String + String) concatenation
   template <size_t R_CAPACITY>
-  String<CAPACITY + R_CAPACITY> operator+(const String<R_CAPACITY>& right) {
+  constexpr String<CAPACITY + R_CAPACITY> operator+(
+      const String<R_CAPACITY>& right) {
     String<CAPACITY + R_CAPACITY> result(m_data, m_length);
     size_type i = 0;
     while (i < right.m_length) {

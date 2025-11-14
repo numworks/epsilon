@@ -10,7 +10,7 @@ namespace Inference::ANOVA {
 
 class StatisticsController;
 
-class ResultsStatisticsTableCell
+class ResultsStatisticsTable
     : public CategoricalTableCell,
       public OneHeaderColumnOneHeaderRowTableDataSource,
       public DynamicCellsDataSource<Escher::SmallFontEvenOddBufferTextCell> {
@@ -20,10 +20,9 @@ class ResultsStatisticsTableCell
   constexpr static int k_numberOfInnerRows =
       TableDimensions::k_resultGroupStatisticsShape.inner.rows;
 
-  ResultsStatisticsTableCell(Escher::Responder* parentResponder,
-                             ANOVATest* test,
-                             StatisticsController* statisticsTableController,
-                             Escher::ScrollViewDelegate* scrollViewDelegate);
+  ResultsStatisticsTable(Escher::Responder* parentResponder, ANOVATest* test,
+                         StatisticsController* statisticsTableController,
+                         Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // View
   void drawRect(KDContext* ctx, KDRect rect) const override;

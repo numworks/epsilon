@@ -9,15 +9,15 @@ namespace Inference {
 
 class ResultsHomogeneityController;
 
-class ResultsHomogeneityTableCell
+class ResultsHomogeneityTable
     : public CategoricalTableCell,
       public HomogeneityTableDataSource,
       public DynamicCellsDataSource<InferenceEvenOddBufferCell> {
  public:
-  ResultsHomogeneityTableCell(
-      Escher::Responder* parentResponder, HomogeneityTest* test,
-      ResultsHomogeneityController* resultsTableController,
-      Escher::ScrollViewDelegate* scrollViewDelegate);
+  ResultsHomogeneityTable(Escher::Responder* parentResponder,
+                          HomogeneityTest* test,
+                          ResultsHomogeneityController* resultsTableController,
+                          Escher::ScrollViewDelegate* scrollViewDelegate);
 
   enum class Mode : bool { ExpectedValue, Contribution };
   void setMode(Mode mode) { m_mode = mode; }

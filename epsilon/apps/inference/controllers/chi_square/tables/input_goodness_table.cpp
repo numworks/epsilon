@@ -1,4 +1,4 @@
-#include "input_goodness_table_cell.h"
+#include "input_goodness_table.h"
 
 #include <shared/column_parameter_controller.h>
 
@@ -8,7 +8,7 @@ using namespace Escher;
 
 namespace Inference {
 
-InputGoodnessTableCell::InputGoodnessTableCell(
+InputGoodnessTable::InputGoodnessTable(
     Responder* parentResponder, GoodnessTest* test,
     InputGoodnessController* inputGoodnessController,
     Escher::ScrollViewDelegate* scrollViewDelegate)
@@ -20,8 +20,9 @@ InputGoodnessTableCell::InputGoodnessTableCell(
   }
 }
 
-bool InputGoodnessTableCell::recomputeDimensionsAndReload(
-    bool forceReloadTable, bool forceReloadPage, bool forceReloadCell) {
+bool InputGoodnessTable::recomputeDimensionsAndReload(bool forceReloadTable,
+                                                      bool forceReloadPage,
+                                                      bool forceReloadCell) {
   // Update degree of freedom if Number of non-empty rows changed
   if (InputCategoricalTableCell::recomputeDimensionsAndReload(
           forceReloadTable, forceReloadPage, forceReloadCell)) {
@@ -33,12 +34,12 @@ bool InputGoodnessTableCell::recomputeDimensionsAndReload(
   return false;
 }
 
-size_t InputGoodnessTableCell::fillColumnName(int column, char* buffer) {
+size_t InputGoodnessTable::fillColumnName(int column, char* buffer) {
   return strlcpy(buffer, I18n::translate(k_columnHeaders[column]),
                  Shared::ColumnParameterController::k_titleBufferSize);
 }
 
-CategoricalController* InputGoodnessTableCell::categoricalController() {
+CategoricalController* InputGoodnessTable::categoricalController() {
   return m_inputGoodnessController;
 }
 

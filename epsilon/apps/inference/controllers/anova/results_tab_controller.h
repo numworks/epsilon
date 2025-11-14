@@ -5,8 +5,8 @@
 
 #include "inference/controllers/inference_controller.h"
 #include "inference/controllers/tables/categorical_controller.h"
-#include "tables/results_between_within_table_cell.h"
-#include "tables/results_statistics_table_cell.h"
+#include "tables/results_between_within_table.h"
+#include "tables/results_statistics_table.h"
 
 namespace Inference::ANOVA {
 
@@ -65,7 +65,7 @@ class StatisticsController : public CategoricalController {
   }
   void createDynamicCells() override;
 
-  ResultsStatisticsTableCell m_resultsStatisticsTable;
+  ResultsStatisticsTable m_resultsStatisticsTable;
 };
 
 class ResultsTabController : public InferenceController,

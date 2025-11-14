@@ -51,7 +51,7 @@ bool ResultsHomogeneityController::handleEvent(Ion::Events::Event event) {
 // SingleModeController
 
 void ResultsHomogeneityTabController::SingleModeController::
-    switchToTableWithMode(ResultsHomogeneityTableCell::Mode mode) {
+    switchToTableWithMode(ResultsHomogeneityTable::Mode mode) {
   m_tableController->setMode(mode);
   m_tableController->setParentResponder(this);
 }

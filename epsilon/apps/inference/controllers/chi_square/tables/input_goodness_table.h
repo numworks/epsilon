@@ -11,11 +11,11 @@ namespace Inference {
 
 class InputGoodnessController;
 
-class InputGoodnessTableCell : public DoubleColumnTableCell {
+class InputGoodnessTable : public DoubleColumnTableCell {
  public:
-  InputGoodnessTableCell(Escher::Responder* parentResponder, GoodnessTest* test,
-                         InputGoodnessController* inputGoodnessController,
-                         Escher::ScrollViewDelegate* scrollViewDelegate);
+  InputGoodnessTable(Escher::Responder* parentResponder, GoodnessTest* test,
+                     InputGoodnessController* inputGoodnessController,
+                     Escher::ScrollViewDelegate* scrollViewDelegate);
 
   bool recomputeDimensionsAndReload(bool forceReloadTable = false,
                                     bool forceReloadPage = false,

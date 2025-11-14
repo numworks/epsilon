@@ -5,7 +5,7 @@
 #include "../inference_controller.h"
 #include "inference/controllers/results_controller.h"
 #include "inference/controllers/tables/categorical_controller.h"
-#include "tables/results_goodness_table_cell.h"
+#include "tables/results_goodness_contributions_table.h"
 
 namespace Inference {
 

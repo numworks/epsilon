@@ -10,7 +10,7 @@ namespace Inference::ANOVA {
 
 class InputDataController;
 
-class InputDataTableCell
+class InputDataTable
     : public InputCategoricalTableCell,
       public OneHeaderRowTableDataSource,
       public DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
@@ -24,9 +24,9 @@ class InputDataTableCell
 
   constexpr static int k_columnWidth = TableDimensions::k_columnWidth;
 
-  InputDataTableCell(Escher::Responder* parentResponder, ANOVATest* test,
-                     InputDataController* InputDataController,
-                     Escher::ScrollViewDelegate* scrollViewDelegate);
+  InputDataTable(Escher::Responder* parentResponder, ANOVATest* test,
+                 InputDataController* InputDataController,
+                 Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // InputCategoricalTableCell
   CategoricalTableViewDataSource* tableViewDataSource() override {

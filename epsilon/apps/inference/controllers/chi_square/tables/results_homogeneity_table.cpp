@@ -1,4 +1,4 @@
-#include "results_homogeneity_table_cell.h"
+#include "results_homogeneity_table.h"
 
 #include "homogeneity_data_source.h"
 #include "inference/controllers/chi_square/results_homogeneity_controller.h"
@@ -8,7 +8,7 @@ using namespace Escher;
 
 namespace Inference {
 
-ResultsHomogeneityTableCell::ResultsHomogeneityTableCell(
+ResultsHomogeneityTable::ResultsHomogeneityTable(
     Escher::Responder* parentResponder, HomogeneityTest* test,
     ResultsHomogeneityController* resultsTableController,
     Escher::ScrollViewDelegate* scrollViewDelegate)
@@ -19,7 +19,7 @@ ResultsHomogeneityTableCell::ResultsHomogeneityTableCell(
   m_selectableTableView.margins()->setBottom(Metric::CellSeparatorThickness);
 }
 
-void ResultsHomogeneityTableCell::handleResponderChainEvent(
+void ResultsHomogeneityTable::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (selectedRow() < 0) {
@@ -37,7 +37,7 @@ void ResultsHomogeneityTableCell::handleResponderChainEvent(
   }
 }
 
-void ResultsHomogeneityTableCell::drawRect(KDContext* ctx, KDRect rect) const {
+void ResultsHomogeneityTable::drawRect(KDContext* ctx, KDRect rect) const {
   CategoricalTableCell::drawRect(ctx, rect);
   // Draw over the next cell border to hide it
   ctx->fillRect(KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
@@ -45,8 +45,8 @@ void ResultsHomogeneityTableCell::drawRect(KDContext* ctx, KDRect rect) const {
                 m_selectableTableView.backgroundColor());
 }
 
-void ResultsHomogeneityTableCell::fillCellForLocation(
-    Escher::HighlightCell* cell, int column, int row) {
+void ResultsHomogeneityTable::fillCellForLocation(Escher::HighlightCell* cell,
+                                                  int column, int row) {
   if (m_mode == Mode::ExpectedValue &&
       ((column == 0 && row == innerNumberOfRows()) ||
        (row == 0 && column == innerNumberOfColumns()))) {
@@ -61,7 +61,7 @@ void ResultsHomogeneityTableCell::fillCellForLocation(
   }
 }
 
-void ResultsHomogeneityTableCell::fillInnerCellForLocation(
+void ResultsHomogeneityTable::fillInnerCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
   InferenceEvenOddBufferCell* myCell =
       static_cast<InferenceEvenOddBufferCell*>(cell);
@@ -88,7 +88,7 @@ void ResultsHomogeneityTableCell::fillInnerCellForLocation(
   myCell->setEven(row % 2 == 1);
 }
 
-CategoricalController* ResultsHomogeneityTableCell::categoricalController() {
+CategoricalController* ResultsHomogeneityTable::categoricalController() {
   return m_resultsTableController;
 }
 

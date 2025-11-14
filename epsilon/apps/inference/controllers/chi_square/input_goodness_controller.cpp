@@ -14,7 +14,7 @@ InputGoodnessController::InputGoodnessController(
           Invocation::Builder<InputCategoricalController>(
               &InputCategoricalController::ButtonAction, this)),
       m_degreeOfFreedomCell(&m_selectableListView, this),
-      m_inputGoodnessTableCell(&m_selectableListView, inference, this, this) {
+      m_InputGoodnessTable(&m_selectableListView, inference, this, this) {
   m_degreeOfFreedomCell.setMessages(I18n::Message::DegreesOfFreedom);
 }
 
@@ -29,7 +29,7 @@ void InputGoodnessController::viewWillAppear() {
 }
 
 void InputGoodnessController::createDynamicCells() {
-  m_inputGoodnessTableCell.createCells();
+  m_InputGoodnessTable.createCells();
 }
 
 const HighlightCell* InputGoodnessController::privateExplicitCellAtRow(

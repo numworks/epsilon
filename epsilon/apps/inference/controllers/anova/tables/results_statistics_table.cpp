@@ -1,4 +1,4 @@
-#include "results_statistics_table_cell.h"
+#include "results_statistics_table.h"
 
 #include <omg/unreachable.h>
 #include <poincare/print.h>
@@ -10,7 +10,7 @@ using namespace Escher;
 
 namespace Inference::ANOVA {
 
-ResultsStatisticsTableCell::ResultsStatisticsTableCell(
+ResultsStatisticsTable::ResultsStatisticsTable(
     Escher::Responder* parentResponder, ANOVATest* test,
     StatisticsController* statisticsTableController,
     Escher::ScrollViewDelegate* scrollViewDelegate)
@@ -20,7 +20,7 @@ ResultsStatisticsTableCell::ResultsStatisticsTableCell(
   m_selectableTableView.margins()->setBottom(Metric::CellSeparatorThickness);
 }
 
-void ResultsStatisticsTableCell::handleResponderChainEvent(
+void ResultsStatisticsTable::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (selectedRow() < 0) {
@@ -36,7 +36,7 @@ void ResultsStatisticsTableCell::handleResponderChainEvent(
   CategoricalTableCell::handleResponderChainEvent(event);
 }
 
-void ResultsStatisticsTableCell::drawRect(KDContext* ctx, KDRect rect) const {
+void ResultsStatisticsTable::drawRect(KDContext* ctx, KDRect rect) const {
   CategoricalTableCell::drawRect(ctx, rect);
   // Draw over the next cell border to hide it
   ctx->fillRect(KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
@@ -78,7 +78,7 @@ constexpr static const char* HeaderAtRow(int row) {
   }
 }
 
-void ResultsStatisticsTableCell::fillInnerCellForLocation(
+void ResultsStatisticsTable::fillInnerCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
   assert(row >= 0 && row < innerNumberOfRows());
   assert(column >= 0 && column < innerNumberOfColumns());
@@ -93,8 +93,8 @@ void ResultsStatisticsTableCell::fillInnerCellForLocation(
                          myCell);
 }
 
-void ResultsStatisticsTableCell::fillCellForLocation(
-    Escher::HighlightCell* cell, int column, int row) {
+void ResultsStatisticsTable::fillCellForLocation(Escher::HighlightCell* cell,
+                                                 int column, int row) {
   assert(row >= 0 && row < numberOfRows());
   assert(column >= 0 && column < numberOfColumns());
 
@@ -107,7 +107,7 @@ void ResultsStatisticsTableCell::fillCellForLocation(
   if (type == k_typeOfHeaderCells) {
     if (row == 0) {
       // Column title
-      // TODO: simplify and factorize with InputDataTableCell
+      // TODO: simplify and factorize with InputDataTable
       char digit;
       int groupIndex = column - 1;
       assert(groupIndex <= '9' - '1');
@@ -132,7 +132,7 @@ void ResultsStatisticsTableCell::fillCellForLocation(
   myCell->setEven(row % 2 == 0);
 }
 
-CategoricalController* ResultsStatisticsTableCell::categoricalController() {
+CategoricalController* ResultsStatisticsTable::categoricalController() {
   return m_statisticsResultsController;
 }
 

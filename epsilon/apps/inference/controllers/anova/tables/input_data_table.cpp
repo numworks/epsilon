@@ -1,4 +1,4 @@
-#include "input_data_table_cell.h"
+#include "input_data_table.h"
 
 #include <poincare/print.h>
 #include <shared/column_parameter_controller.h>
@@ -9,15 +9,15 @@ using namespace Escher;
 
 namespace Inference::ANOVA {
 
-InputDataTableCell::InputDataTableCell(
-    Escher::Responder* parentResponder, ANOVATest* test,
-    InputDataController* InputDataController,
-    Escher::ScrollViewDelegate* scrollViewDelegate)
+InputDataTable::InputDataTable(Escher::Responder* parentResponder,
+                               ANOVATest* test,
+                               InputDataController* InputDataController,
+                               Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, test,
                                 scrollViewDelegate),
       m_InputDataController(InputDataController) {}
 
-void InputDataTableCell::handleResponderChainEvent(
+void InputDataTable::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if ((event.type == ResponderChainEventType::HasBecomeFirst) &&
       (selectedRow() < 0)) {
@@ -26,15 +26,15 @@ void InputDataTableCell::handleResponderChainEvent(
   CategoricalTableCell::handleResponderChainEvent(event);
 }
 
-size_t InputDataTableCell::fillColumnName(int column, char* buffer) {
+size_t InputDataTable::fillColumnName(int column, char* buffer) {
   assert(column >= 0 && column < k_maxNumberOfColumns);
   return Poincare::Print::CustomPrintf(
       buffer, Shared::ColumnParameterController::k_titleBufferSize, "%s %i",
       I18n::translate(I18n::Message::Group), column + 1);
 }
 
-void InputDataTableCell::fillCellForLocation(Escher::HighlightCell* cell,
-                                             int column, int row) {
+void InputDataTable::fillCellForLocation(Escher::HighlightCell* cell,
+                                         int column, int row) {
   assert(column >= 0 && row >= 0);
   assert(column < numberOfColumns() && row <= numberOfRows());
   int type = typeAtLocation(column, row);
@@ -68,8 +68,8 @@ void InputDataTableCell::fillCellForLocation(Escher::HighlightCell* cell,
   }
 }
 
-void InputDataTableCell::fillInnerCellForLocation(Escher::HighlightCell* cell,
-                                                  int column, int row) {
+void InputDataTable::fillInnerCellForLocation(Escher::HighlightCell* cell,
+                                              int column, int row) {
   assert(column >= 0 && row >= 0);
   assert(column < innerNumberOfColumns() && row < innerNumberOfRows());
   InferenceEvenOddEditableCell* myCell =
@@ -78,11 +78,11 @@ void InputDataTableCell::fillInnerCellForLocation(Escher::HighlightCell* cell,
                            column, row, tableModel());
 }
 
-CategoricalController* InputDataTableCell::categoricalController() {
+CategoricalController* InputDataTable::categoricalController() {
   return m_InputDataController;
 }
 
-void InputDataTableCell::initInnerCell(InferenceEvenOddEditableCell* cell) {
+void InputDataTable::initInnerCell(InferenceEvenOddEditableCell* cell) {
   cell->setParentResponder(&m_selectableTableView);
   cell->editableTextCell()->textField()->setDelegate(this);
 }

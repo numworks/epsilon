@@ -2,7 +2,7 @@
 
 #include "inference/controllers/tables/categorical_controller.h"
 #include "inference/models/anova_test.h"
-#include "tables/input_data_table_cell.h"
+#include "tables/input_data_table.h"
 
 namespace Inference::ANOVA {
 
@@ -25,7 +25,7 @@ class InputDataController : public InputCategoricalController {
   }
   void createDynamicCells() override;
 
-  InputDataTableCell m_inputANOVATable;
+  InputDataTable m_inputANOVATable;
 };
 
 }  // namespace Inference::ANOVA

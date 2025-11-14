@@ -2,19 +2,19 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   app.cpp \
   controllers/anova/input_data_controller.cpp \
   controllers/anova/results_tab_controller.cpp \
-  controllers/anova/tables/input_data_table_cell.cpp \
-  controllers/anova/tables/results_between_within_table_cell.cpp \
-  controllers/anova/tables/results_statistics_table_cell.cpp \
+  controllers/anova/tables/input_data_table.cpp \
+  controllers/anova/tables/results_between_within_table.cpp \
+  controllers/anova/tables/results_statistics_table.cpp \
   controllers/chi_square/categorical_type_controller.cpp \
   controllers/chi_square/input_goodness_controller.cpp \
   controllers/chi_square/input_homogeneity_controller.cpp \
   controllers/chi_square/results_goodness_controller.cpp \
   controllers/chi_square/results_homogeneity_controller.cpp \
   controllers/chi_square/tables/homogeneity_data_source.cpp \
-  controllers/chi_square/tables/results_goodness_table_cell.cpp \
-  controllers/chi_square/tables/results_homogeneity_table_cell.cpp \
-  controllers/chi_square/tables/input_goodness_table_cell.cpp \
-  controllers/chi_square/tables/input_homogeneity_table_cell.cpp \
+  controllers/chi_square/tables/results_goodness_contributions_table.cpp \
+  controllers/chi_square/tables/results_homogeneity_table.cpp \
+  controllers/chi_square/tables/input_goodness_table.cpp \
+  controllers/chi_square/tables/input_homogeneity_table.cpp \
   controllers/confidence_interval/interval_conclusion_view.cpp \
   controllers/confidence_interval/interval_curve_view.cpp \
   controllers/confidence_interval/interval_graph_controller.cpp \

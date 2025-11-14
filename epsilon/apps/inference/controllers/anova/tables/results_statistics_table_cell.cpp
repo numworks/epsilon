@@ -91,7 +91,6 @@ void ResultsStatisticsTableCell::fillInnerCellForLocation(
 
   PrintValueInTextHolder(GroupStatisticsResultAtRow(groupStatistics, row),
                          myCell);
-  myCell->setEven(row % 2 == 1);
 }
 
 void ResultsStatisticsTableCell::fillCellForLocation(
@@ -103,9 +102,9 @@ void ResultsStatisticsTableCell::fillCellForLocation(
   if (type == k_typeOfTopLeftCell) {
     return;
   }
+  InferenceEvenOddBufferCell* myCell =
+      static_cast<InferenceEvenOddBufferCell*>(cell);
   if (type == k_typeOfHeaderCells) {
-    InferenceEvenOddBufferCell* myCell =
-        static_cast<InferenceEvenOddBufferCell*>(cell);
     if (row == 0) {
       // Column title
       // TODO: simplify and factorize with InputANOVATableCell
@@ -125,12 +124,12 @@ void ResultsStatisticsTableCell::fillCellForLocation(
       myCell->setText(HeaderAtRow(row - 1));
       myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
     }
-    myCell->setEven(static_cast<bool>((row + 1) % 2));
     myCell->setTextColor(KDColorBlack);
   } else {
     assert(type == k_typeOfInnerCells);
     fillInnerCellForLocation(cell, column - 1, row - 1);
   }
+  myCell->setEven(row % 2 == 0);
 }
 
 CategoricalController* ResultsStatisticsTableCell::categoricalController() {

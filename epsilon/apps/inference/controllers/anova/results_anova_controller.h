@@ -10,6 +10,8 @@
 
 namespace Inference {
 
+/* This controller displays the "between" and "within" statistics results
+ * (degrees of freedom, square sum, mean squares) of the ANOVA test. */
 class BetweenWithinController : public CategoricalController {
  public:
   BetweenWithinController(Escher::Responder* parentResponder,

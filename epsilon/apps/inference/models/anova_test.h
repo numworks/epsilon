@@ -42,7 +42,7 @@ class ANOVATest : public SignificanceTest, public InputTable {
   double valueAtPosition(int row, int column) const override;
 
   // Return true if the group data was changed
-  virtual bool deleteValueAtPosition(int row, int column) override;
+  bool deleteValueAtPosition(int row, int column) override;
 
   void deleteValuesInColumn(int column) override;
 

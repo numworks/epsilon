@@ -6,7 +6,7 @@
 #include "inference/controllers/tables/table_dimensions.h"
 #include "inference/models/anova_test.h"
 
-namespace Inference {
+namespace Inference::ANOVA {
 
 namespace ANOVATableDimensions {
 // TODO: shared value with ChiSquare / Homogeneity
@@ -44,4 +44,4 @@ constexpr static TableShape k_resultGroupStatisticsShape = TableShape{
 
 }  // namespace ANOVATableDimensions
 
-}  // namespace Inference
+}  // namespace Inference::ANOVA

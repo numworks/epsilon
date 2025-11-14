@@ -4,7 +4,7 @@
 
 using namespace Escher;
 
-namespace Inference {
+namespace Inference::ANOVA {
 
 InputDataANOVAController::InputDataANOVAController(
     StackViewController* parent, ControllerContainer* controllerContainer,
@@ -19,4 +19,4 @@ void InputDataANOVAController::createDynamicCells() {
   m_inputANOVATable.createCells();
 }
 
-}  // namespace Inference
+}  // namespace Inference::ANOVA

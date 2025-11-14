@@ -7,7 +7,7 @@
 
 using namespace Escher;
 
-namespace Inference {
+namespace Inference::ANOVA {
 
 ResultsBetweenWithinTableCell::ResultsBetweenWithinTableCell(
     Escher::Responder* parentResponder, ANOVATest* test,
@@ -119,4 +119,4 @@ CategoricalController* ResultsBetweenWithinTableCell::categoricalController() {
   return m_betweenWithinTableController;
 }
 
-}  // namespace Inference
+}  // namespace Inference::ANOVA

@@ -8,7 +8,7 @@
 
 using namespace Escher;
 
-namespace Inference {
+namespace Inference::ANOVA {
 
 ResultsStatisticsTableCell::ResultsStatisticsTableCell(
     Escher::Responder* parentResponder, ANOVATest* test,
@@ -136,4 +136,4 @@ CategoricalController* ResultsStatisticsTableCell::categoricalController() {
   return m_statisticsResultsController;
 }
 
-}  // namespace Inference
+}  // namespace Inference::ANOVA

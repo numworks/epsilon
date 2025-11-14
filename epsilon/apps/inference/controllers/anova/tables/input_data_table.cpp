@@ -1,9 +1,9 @@
 #include "input_data_table.h"
 
-#include <poincare/print.h>
 #include <shared/column_parameter_controller.h>
 
 #include "inference/controllers/anova/input_data_controller.h"
+#include "inference/controllers/tables/header_titles.h"
 
 using namespace Escher;
 
@@ -28,9 +28,11 @@ void InputDataTable::handleResponderChainEvent(
 
 size_t InputDataTable::fillColumnName(int column, char* buffer) {
   assert(column >= 0 && column < k_maxNumberOfColumns);
-  return Poincare::Print::CustomPrintf(
-      buffer, Shared::ColumnParameterController::k_titleBufferSize, "%s %i",
-      I18n::translate(I18n::Message::Group), column + 1);
+  OMG::String<k_groupTitleBufferSize> groupTitle =
+      GroupTitle(column, I18n::translate(I18n::Message::Group));
+  strlcpy(buffer, groupTitle.data(),
+          Shared::ColumnParameterController::k_titleBufferSize);
+  return groupTitle.length();
 }
 
 void InputDataTable::fillCellForLocation(Escher::HighlightCell* cell,
@@ -41,18 +43,13 @@ void InputDataTable::fillCellForLocation(Escher::HighlightCell* cell,
   if (type == k_typeOfHeaderCells) {
     InferenceEvenOddBufferCell* myCell =
         static_cast<InferenceEvenOddBufferCell*>(cell);
-    char digit;
     assert(row == 0);
     myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     myCell->setFont(KDFont::Size::Small);
     myCell->setEven(true);
-    assert(column <= '9' - '1');
-    digit = '1' + column;
-    constexpr int bufferSize = k_headerTranslationBufferSize;
-    char txt[bufferSize];
-    Poincare::Print::CustomPrintf(txt, bufferSize, "%s %c",
-                                  I18n::translate(I18n::Message::Group), digit);
-    myCell->setText(txt);
+    OMG::String<k_groupTitleBufferSize> groupTitle =
+        GroupTitle(column, I18n::translate(I18n::Message::Group));
+    myCell->setText(groupTitle.data());
     myCell->setTextColor(KDColorBlack);
   } else {
     assert(type == k_typeOfInnerCells);

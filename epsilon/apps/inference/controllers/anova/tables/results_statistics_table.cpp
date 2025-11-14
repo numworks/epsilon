@@ -1,9 +1,9 @@
 #include "results_statistics_table.h"
 
 #include <omg/unreachable.h>
-#include <poincare/print.h>
 
 #include "inference/controllers/anova/results_tab_controller.h"
+#include "inference/controllers/tables/header_titles.h"
 #include "inference/models/anova_test.h"
 
 using namespace Escher;
@@ -107,23 +107,14 @@ void ResultsStatisticsTable::fillCellForLocation(Escher::HighlightCell* cell,
   if (type == k_typeOfHeaderCells) {
     if (row == 0) {
       // Column title
-      // TODO: simplify and factorize with InputDataTable
-      char digit;
-      int groupIndex = column - 1;
-      assert(groupIndex <= '9' - '1');
-      digit = '1' + groupIndex;
-      constexpr int bufferSize = 20;
-      char txt[bufferSize];
-      Poincare::Print::CustomPrintf(txt, bufferSize, "%s %c",
-                                    I18n::translate(I18n::Message::Group),
-                                    digit);
-      myCell->setText(txt);
-      myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+      OMG::String<k_groupTitleBufferSize> groupTitle =
+          GroupTitle(column - 1, I18n::translate(I18n::Message::Group));
+      myCell->setText(groupTitle.data());
     } else {
       // Row title
       myCell->setText(HeaderAtRow(row - 1));
-      myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
     }
+    myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
     myCell->setTextColor(KDColorBlack);
   } else {
     assert(type == k_typeOfInnerCells);

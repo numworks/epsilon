@@ -107,6 +107,15 @@ class String {
     return *this;
   }
 
+  // (String + list of char) concatenation
+  constexpr String<CAPACITY>& operator+=(std::initializer_list<char> right) {
+    assert(m_length + right.size() < CAPACITY);
+    for (char c : right) {
+      *this += c;
+    }
+    return *this;
+  }
+
  private:
   size_type m_length = 0;
   value_type m_data[CAPACITY];

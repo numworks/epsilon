@@ -82,13 +82,13 @@ class TableViewDataSource : public Escher::TableViewDataSource,
   constexpr static int k_statisticsTabHeight = 22;
   constexpr static int k_typeOfDataRowHeight = 26;
   // Account for title bar, statistics tab, type of data tab and header cell row
-  constexpr static int k_availableHeigthForVerticalHeaderCells =
+  constexpr static int k_availableHeightForVerticalHeaderCells =
       Ion::Display::Height - Escher::Metric::TitleBarHeight -
       k_statisticsTabHeight - k_typeOfDataRowHeight - k_rowHeight;
   /* [Cropped cells] + [available height] / [row height]
    * TODO: Only 1 cropped cell should be visible in practice */
   constexpr static int k_maxNumberOfVerticalHeaderCells =
-      2 + k_availableHeigthForVerticalHeaderCells / k_rowHeight;
+      2 + k_availableHeightForVerticalHeaderCells / k_rowHeight;
 
   constexpr static int k_maxNumberOfEditableCells =
       k_maxNumberOfHeaderCells * k_maxNumberOfVerticalHeaderCells;

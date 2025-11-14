@@ -8,6 +8,7 @@
 #include <poincare/print.h>
 
 #include <algorithm>
+#include <cmath>
 
 namespace Inference {
 
@@ -183,6 +184,11 @@ bool SignificanceTest::computeCurveViewRange(float transition, bool zoomSide) {
   if (targetYMax == 0.f) {
     // Arbitrary value to provide some zoom if targetYMax is null
     targetYMax = 1.0f;
+  }
+  if (std::isinf(targetYMax)) {
+    /* The probability density function could be infinite in x=0. This is the
+     * case for the Fisher distribution. */
+    targetYMax = 5.0f;
   }
   float cMin = computeXMin();
   float cMax = computeXMax();

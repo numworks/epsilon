@@ -1,8 +1,8 @@
 #pragma once
 
+#include <escher/responder.h>
 #include <escher/tab_view_controller.h>
 
-#include "escher/responder.h"
 #include "inference/controllers/inference_controller.h"
 #include "inference/controllers/tables/categorical_controller.h"
 #include "tables/results_between_within_table_cell.h"

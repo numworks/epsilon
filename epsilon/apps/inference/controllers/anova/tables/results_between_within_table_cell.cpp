@@ -2,7 +2,7 @@
 
 #include <omg/unreachable.h>
 
-#include "inference/controllers/anova/results_anova_controller.h"
+#include "inference/controllers/anova/results_tab_controller.h"
 #include "inference/models/anova_test.h"
 
 using namespace Escher;

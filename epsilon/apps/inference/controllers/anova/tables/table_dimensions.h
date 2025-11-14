@@ -6,9 +6,8 @@
 #include "inference/controllers/tables/table_dimensions.h"
 #include "inference/models/anova_test.h"
 
-namespace Inference::ANOVA {
+namespace Inference::ANOVA::TableDimensions {
 
-namespace ANOVATableDimensions {
 // TODO: shared value with ChiSquare / Homogeneity
 constexpr static int k_columnWidth = 82;
 
@@ -42,6 +41,4 @@ constexpr static TableShape k_resultGroupStatisticsShape = TableShape{
             .columns = std::min(Ion::Display::Width / k_columnWidth + 2,
                                 ANOVATest::k_maxNumberOfColumns)})};
 
-}  // namespace ANOVATableDimensions
-
-}  // namespace Inference::ANOVA
+}  // namespace Inference::ANOVA::TableDimensions

@@ -3,7 +3,7 @@
 #include <omg/unreachable.h>
 #include <poincare/print.h>
 
-#include "inference/controllers/anova/results_anova_controller.h"
+#include "inference/controllers/anova/results_tab_controller.h"
 #include "inference/models/anova_test.h"
 
 using namespace Escher;
@@ -107,7 +107,7 @@ void ResultsStatisticsTableCell::fillCellForLocation(
   if (type == k_typeOfHeaderCells) {
     if (row == 0) {
       // Column title
-      // TODO: simplify and factorize with InputDataANOVATableCell
+      // TODO: simplify and factorize with InputDataTableCell
       char digit;
       int groupIndex = column - 1;
       assert(groupIndex <= '9' - '1');

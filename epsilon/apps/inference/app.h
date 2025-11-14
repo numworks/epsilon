@@ -7,7 +7,7 @@
 #include <escher/stack_view_controller.h>
 #include <omg/ring_buffer.h>
 
-#include "controllers/anova/tables/anova_table_dimensions.h"
+#include "controllers/anova/tables/table_dimensions.h"
 #include "controllers/chi_square/tables/homogeneity_data_source.h"
 #include "controllers/controller_container.h"
 #include "controllers/results_controller.h"
@@ -81,10 +81,10 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
                (HomogeneityTableDimensions::k_numberOfHeaderReusableCells +
                 HomogeneityTableDimensions::k_numberOfInnerReusableCells),
            sizeof(InferenceEvenOddEditableCell) *
-                   ANOVA::ANOVATableDimensions::k_inputShape.reusable.categories
+                   ANOVA::TableDimensions::k_inputShape.reusable.categories
                        .inner +
                sizeof(InferenceEvenOddBufferCell) *
-                   ANOVA::ANOVATableDimensions::k_inputShape.reusable.categories
+                   ANOVA::TableDimensions::k_inputShape.reusable.categories
                        .header,
            sizeof(InferenceEvenOddEditableCell) *
                    HomogeneityTableDimensions::k_numberOfInnerReusableCells +

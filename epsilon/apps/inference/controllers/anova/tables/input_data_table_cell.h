@@ -1,32 +1,32 @@
 #pragma once
 
-#include "anova_table_dimensions.h"
 #include "inference/controllers/tables/categorical_table_cell.h"
 #include "inference/controllers/tables/dynamic_cells_data_source.h"
 #include "inference/controllers/tables/one_header_row_table_data_source.h"
 #include "inference/models/anova_test.h"
+#include "table_dimensions.h"
 
 namespace Inference::ANOVA {
 
-class InputDataANOVAController;
+class InputDataController;
 
-class InputDataANOVATableCell
+class InputDataTableCell
     : public InputCategoricalTableCell,
       public OneHeaderRowTableDataSource,
       public DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
                                           InferenceEvenOddEditableCell> {
  public:
   constexpr static int k_maxNumberOfColumns =
-      ANOVATableDimensions::k_inputShape.inner.columns;
+      TableDimensions::k_inputShape.inner.columns;
   constexpr static int k_maxNumberOfInnerRows =
-      ANOVATableDimensions::k_inputShape.inner.rows;
+      TableDimensions::k_inputShape.inner.rows;
   constexpr static int k_maxNumberOfRows = k_maxNumberOfInnerRows + 1;
 
-  constexpr static int k_columnWidth = ANOVATableDimensions::k_columnWidth;
+  constexpr static int k_columnWidth = TableDimensions::k_columnWidth;
 
-  InputDataANOVATableCell(Escher::Responder* parentResponder, ANOVATest* test,
-                          InputDataANOVAController* InputDataANOVAController,
-                          Escher::ScrollViewDelegate* scrollViewDelegate);
+  InputDataTableCell(Escher::Responder* parentResponder, ANOVATest* test,
+                     InputDataController* InputDataController,
+                     Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // InputCategoricalTableCell
   CategoricalTableViewDataSource* tableViewDataSource() override {
@@ -66,7 +66,7 @@ class InputDataANOVATableCell
   // DataSource
 
   ReusableCellCounts reusableCellCounts() const override {
-    return ANOVATableDimensions::k_inputShape.reusable;
+    return TableDimensions::k_inputShape.reusable;
   }
 
   Escher::HighlightCell* reusableHeaderCell(int i) override {
@@ -103,7 +103,7 @@ class InputDataANOVATableCell
                                 int row);
   CategoricalController* categoricalController() override;
 
-  InputDataANOVAController* m_InputDataANOVAController;
+  InputDataController* m_InputDataController;
 };
 
 }  // namespace Inference::ANOVA

@@ -1,4 +1,4 @@
-#include "results_anova_controller.h"
+#include "results_tab_controller.h"
 
 #include <escher/responder.h>
 
@@ -9,9 +9,9 @@ using namespace Escher;
 
 namespace Inference::ANOVA {
 
-// ResultsANOVAController
+// ResultsTabController
 
-ResultsANOVAController::ResultsANOVAController(
+ResultsTabController::ResultsTabController(
     Escher::StackViewController* parent,
     ControllerContainer* controllerContainer, ANOVATest* inferenceModel)
     : InferenceController(inferenceModel),
@@ -20,7 +20,7 @@ ResultsANOVAController::ResultsANOVAController(
       m_firstTabController(this, controllerContainer, inferenceModel),
       m_secondTabController(this, controllerContainer, inferenceModel) {}
 
-bool ResultsANOVAController::handleEvent(Ion::Events::Event event) {
+bool ResultsTabController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     selectTab();
     return true;

@@ -102,7 +102,7 @@ void PieGraphView::drawRect(KDContext* ctx, KDRect rect) const {
       float sin = std::sin(m_cumulatedAngles[i]);
       float cos = std::cos(m_cumulatedAngles[i]);
       /* NOTE: On some angles, drawing the edge of length [k_fradius] is too
-       * long and draws outside the perimeter border, reducing this by this
+       * long and draws outside the perimeter border, reducing this by a
        * small amount allows not going over the edge */
       float edgeX = center.x() + (k_fradius - .7) * sin,
             edgeY = center.y() - (k_fradius - .7) * cos;

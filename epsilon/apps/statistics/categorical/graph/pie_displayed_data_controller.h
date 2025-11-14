@@ -13,7 +13,7 @@ namespace Statistics::Categorical {
 using GroupLabelCell =
     Escher::MenuCell<Escher::BufferTextView<sizeof(Store::Label)>>;
 
-/* Menu controller to chose the displayed pie chart (group) */
+/* Menu controller to choose the displayed pie chart (group) */
 class DisplayedDataController
     : public Escher::UniformSelectableListController<
           GroupLabelCell, Store::k_maxNumberOfGroups> {

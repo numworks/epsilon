@@ -68,13 +68,13 @@ class StatisticsController : public CategoricalController {
   ResultsStatisticsTableCell m_resultsStatisticsTable;
 };
 
-class ResultsANOVAController : public InferenceController,
-                               public Escher::TabViewController,
-                               public Escher::TabViewDataSource {
+class ResultsTabController : public InferenceController,
+                             public Escher::TabViewController,
+                             public Escher::TabViewDataSource {
  public:
-  ResultsANOVAController(Escher::StackViewController* parent,
-                         ControllerContainer* controllerContainer,
-                         ANOVATest* inferenceModel);
+  ResultsTabController(Escher::StackViewController* parent,
+                       ControllerContainer* controllerContainer,
+                       ANOVATest* inferenceModel);
 
   ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::SameAsPreviousPage;

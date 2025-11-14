@@ -1,10 +1,10 @@
 #pragma once
 
-#include "anova_table_dimensions.h"
 #include "inference/controllers/tables/categorical_table_cell.h"
 #include "inference/controllers/tables/dynamic_cells_data_source.h"
 #include "inference/controllers/tables/one_header_column_one_header_row_table_data_source.h"
 #include "inference/models/anova_test.h"
+#include "table_dimensions.h"
 
 namespace Inference::ANOVA {
 
@@ -16,9 +16,9 @@ class ResultsBetweenWithinTableCell
       public DynamicCellsDataSource<Escher::SmallFontEvenOddBufferTextCell> {
  public:
   constexpr static int k_numberOfInnerColumns =
-      ANOVATableDimensions::k_resultBetweenWithinShape.inner.columns;
+      TableDimensions::k_resultBetweenWithinShape.inner.columns;
   constexpr static int k_numberOfInnerRows =
-      ANOVATableDimensions::k_resultBetweenWithinShape.inner.rows;
+      TableDimensions::k_resultBetweenWithinShape.inner.rows;
 
   ResultsBetweenWithinTableCell(
       Escher::Responder* parentResponder, ANOVATest* test,
@@ -57,7 +57,7 @@ class ResultsBetweenWithinTableCell
   // DataSource
 
   ReusableCellCounts reusableCellCounts() const override {
-    return ANOVATableDimensions::k_resultBetweenWithinShape.reusable;
+    return TableDimensions::k_resultBetweenWithinShape.reusable;
   }
 
   Escher::HighlightCell* reusableHeaderCell(int i) override {
@@ -68,8 +68,8 @@ class ResultsBetweenWithinTableCell
   }
 
   KDCoordinate nonMemoizedColumnWidth(int column) override {
-    return column == 0 ? ANOVATableDimensions::k_resultTitleColumnWidth
-                       : ANOVATableDimensions::k_columnWidth;
+    return column == 0 ? TableDimensions::k_resultTitleColumnWidth
+                       : TableDimensions::k_columnWidth;
   }
 
   // CategoricalTableViewDataSource

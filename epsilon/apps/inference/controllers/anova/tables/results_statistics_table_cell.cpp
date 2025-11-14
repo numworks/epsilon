@@ -101,7 +101,6 @@ void ResultsStatisticsTableCell::fillCellForLocation(
                                     digit);
       myCell->setText(txt);
       myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-      myCell->setEven(true);
     } else {
       // Row title
       assert(row == 1 || row == 2 || row == 3 || row == 4);
@@ -122,8 +121,8 @@ void ResultsStatisticsTableCell::fillCellForLocation(
           OMG::unreachable();
       }
       myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-      myCell->setEven(static_cast<bool>((row + 1) % 2));
     }
+    myCell->setEven(static_cast<bool>((row + 1) % 2));
     myCell->setTextColor(KDColorBlack);
   } else {
     assert(type == k_typeOfInnerCells);

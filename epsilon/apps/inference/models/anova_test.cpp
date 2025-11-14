@@ -2,6 +2,8 @@
 
 #include <poincare/statistics/inference.h>
 
+#include <cmath>
+
 namespace Inference {
 
 void ANOVATest::compute() {
@@ -19,7 +21,17 @@ void ANOVATest::compute() {
 }
 
 bool ANOVATest::validateInputs(int /* pageIndex */) {
-  return m_groups.size() >= 2;
+  if (m_groups.size() < 2) {
+    return false;
+  }
+  for (const GroupValues& group : m_groups) {
+    for (double value : group) {
+      if (std::isnan(value)) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 bool ANOVATest::authorizedValueAtPosition(double p, int row, int column) const {
@@ -31,28 +43,27 @@ void ANOVATest::setValueAtPosition(double value, int row, int column) {
   /* setValueAtPosition is not used for deletion in ANOVATest, the passed value
    * must be a "real" value. */
   assert(!std::isnan(value));
-  if (column > m_groups.size()) {
-    return;
-  }
-  if (column < m_groups.size()) {
-    GroupValues& groupValues = m_groups[column];
-    if (row > groupValues.size()) {
-      return;
+
+  if (m_groups.size() <= column) {
+    // Create one or more new groups
+    for (int i = m_groups.size(); i <= column; ++i) {
+      m_groups.push(GroupValues{});
     }
-    if (row < groupValues.size()) {
-      groupValues[row] = value;
-      return;
-    }
-    assert(row == groupValues.size());
-    groupValues.push(value);
+  }
+  assert(m_groups.size() > column);
+
+  GroupValues& groupValues = m_groups[column];
+  if (groupValues.size() > row) {
+    // Replace an existing value
+    groupValues[row] = value;
     return;
   }
-  assert(column == m_groups.size());
-  if (row > 0) {
-    // TODO: check that this acceptable
-    return;
+  // If needed, insert empty values in the group before the new value
+  for (int i = groupValues.size(); i < row; ++i) {
+    groupValues.push(k_undefinedValue);
   }
-  m_groups.push(GroupValues{value});
+  assert(groupValues.size() == row);
+  groupValues.push(value);
 }
 
 double ANOVATest::valueAtPosition(int row, int column) const {
@@ -76,14 +87,19 @@ bool ANOVATest::deleteValueAtPosition(int row, int column) {
   if (row >= groupValues.size()) {
     return false;
   }
-  if (groupValues.size() == 1) {
-    assert(row == 0);
-    // Remove group
-    m_groups.removeAt(column);
-    return true;
-  }
+
   // Remove value from group
   groupValues.removeAt(row);
+  // Remove potential empty values on top of the vector
+  while (std::isnan(groupValues.last())) {
+    groupValues.pop();
+  }
+
+  if (groupValues.size() == 0) {
+    // Remove group
+    m_groups.removeAt(column);
+  }
+
   return true;
 }
 

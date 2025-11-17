@@ -10,11 +10,11 @@ namespace Inference::ANOVA {
 
 class InputStatisticsController;
 
-class InputStatisticsTable
-    : public InputCategoricalTableCell,
-      public OneHeaderColumnOneHeaderRowTableDataSource,
-      public DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
-                                          InferenceEvenOddEditableCell> {
+class InputStatisticsTable : public InputCategoricalTableCell,
+                             public OneHeaderColumnOneHeaderRowTableDataSource,
+                             public DoubleDynamicCellsDataSource<
+                                 Escher::SmallFontEvenOddBufferTextCell,
+                                 InferenceEvenOddEditableCell> {
  public:
   constexpr static int k_numberOfInnerColumns =
       TableDimensions::k_inputStatisticsShape.inner.columns;

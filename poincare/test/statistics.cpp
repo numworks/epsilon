@@ -26,7 +26,8 @@ QUIZ_CASE(pcj_statistics_anova) {
                                   Values{1, 3, 3, 2, 1, 4, 2, 3, 2},
                                   Values{3, 4, 2, 4, 5, 2, 4, 5}};
 
-  StatisticResults statisticResults = ComputeStatisticResults(groups);
+  StatisticResults statisticResults =
+      ComputeStatisticResults(std::span<const Values>(groups));
   assert_roughly_equal(statisticResults.statistic, 3.1776, k_precision1);
   assert_roughly_equal(statisticResults.pValue, 0.0623, k_precision1);
 

@@ -91,7 +91,7 @@ bool ANOVATest::deleteValueAtPosition(int row, int column) {
   // Remove value from group
   groupValues.removeAt(row);
   // Remove potential empty values on top of the vector
-  while (std::isnan(groupValues.last())) {
+  while ((groupValues.size() > 0) && (std::isnan(groupValues.last()))) {
     groupValues.pop();
   }
 

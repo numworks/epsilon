@@ -497,6 +497,31 @@ QUIZ_CASE(pcj_simplification_advanced) {
   simplifies_to("(x+y)^3-x^3-y^3-3*y^2*x-3*y*x^2", "0");
   // TODO_PCJ: we used to reduce to (π+1)/(π+2)
   simplifies_to("1/(1+1/(1+π))", "1/(1+1/(1+π))");
+
+  // Rational Factorization
+  simplifies_to("(1+√(2))/3", "(1+√(2))/3");
+  simplifies_to("(1-√(2))/3", "(1-√(2))/3");
+  simplifies_to("-(1+√(2))/3", "-(1+√(2))/3");
+  simplifies_to("(-1+√(2))/3", "(-1+√(2))/3");
+  simplifies_to("1/3+√(2)/3", "(1+√(2))/3");
+  simplifies_to("1/3-√(2)/3", "(1-√(2))/3");
+  simplifies_to("-1/3-√(2)/3", "-(1+√(2))/3");
+  simplifies_to("-1/3+√(2)/3", "(-1+√(2))/3");
+  simplifies_to("(2+√(2))/3", "(2+√(2))/3");
+  simplifies_to("(2-√(2))/3", "(2-√(2))/3");
+  simplifies_to("-(2+√(2))/3", "-(2+√(2))/3");
+  simplifies_to("(-2+√(2))/3", "(-2+√(2))/3");
+  simplifies_to("2/3+√(2)/3", "(2+√(2))/3");
+  simplifies_to("2/3-√(2)/3", "(2-√(2))/3");
+  simplifies_to("-2/3-√(2)/3", "-(2+√(2))/3");
+  simplifies_to("-2/3+√(2)/3", "(-2+√(2))/3");
+  simplifies_to("x/3+2/3", "(x+2)/3");
+  // Maybe "2×(x+1/3)" ?
+  simplifies_to("2×x+2/3", "2×x+2/3");
+  // Maybe "2×(x+2/3)" ?
+  simplifies_to("2×x+4/3", "2×x+4/3");
+  // Maybe "(x+1/2)/3" ?
+  simplifies_to("x/3+1/6", "x/3+1/6");
 }
 
 QUIZ_CASE(pcj_simplification_logarithm) {

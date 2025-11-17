@@ -70,12 +70,12 @@ class DoubleDynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   virtual int numberOfDynamicHeaderCells() const = 0;
   virtual int numberOfDynamicInnerCells() const = 0;
 
-  HeaderCellType* cellType1(int i) {
+  HeaderCellType* dynamicHeaderCell(int i) {
     assert(m_headerCells);
     assert(i >= 0 && i < numberOfDynamicHeaderCells());
     return &m_headerCells[i];
   }
-  InnerCellType* cellType2(int i) {
+  InnerCellType* dynamicInnerCell(int i) {
     assert(m_innerCells);
     assert(i >= 0 && i < numberOfDynamicInnerCells());
     return &m_innerCells[i];

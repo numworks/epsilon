@@ -67,10 +67,10 @@ class InputHomogeneityTable
   CategoricalController* categoricalController() override;
 
   Escher::HighlightCell* reusableHeaderCell(int i) override {
-    return cellType1(i);
+    return dynamicHeaderCell(i);
   }
   Escher::HighlightCell* reusableInnerCell(int i) override {
-    return cellType2(i);
+    return dynamicInnerCell(i);
   }
 
   InputHomogeneityController* m_inputHomogeneityController;

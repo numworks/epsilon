@@ -2,7 +2,7 @@
 
 #include "inference/controllers/tables/categorical_table_cell.h"
 #include "inference/controllers/tables/dynamic_cells_data_source.h"
-#include "inference/controllers/tables/one_header_row_table_data_source.h"
+#include "inference/controllers/tables/one_header_column_one_header_row_table_data_source.h"
 #include "inference/models/anova_test.h"
 #include "table_dimensions.h"
 
@@ -12,15 +12,14 @@ class InputStatisticsController;
 
 class InputStatisticsTable
     : public InputCategoricalTableCell,
-      public OneHeaderRowTableDataSource,
+      public OneHeaderColumnOneHeaderRowTableDataSource,
       public DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
                                           InferenceEvenOddEditableCell> {
  public:
-  constexpr static int k_maxNumberOfColumns =
-      TableDimensions::k_inputShape.inner.columns;
-  constexpr static int k_maxNumberOfInnerRows =
-      TableDimensions::k_inputShape.inner.rows;
-  constexpr static int k_maxNumberOfRows = k_maxNumberOfInnerRows + 1;
+  constexpr static int k_numberOfInnerColumns =
+      TableDimensions::k_inputStatisticsShape.inner.columns;
+  constexpr static int k_numberOfInnerRows =
+      TableDimensions::k_inputStatisticsShape.inner.rows;
 
   constexpr static int k_columnWidth = TableDimensions::k_columnWidth;
 
@@ -33,14 +32,10 @@ class InputStatisticsTable
     return this;
   }
 
-  // CategoricalTableViewDataSource
-
-  int maxNumberOfRows() const override { return k_maxNumberOfRows; }
-  int maxNumberOfColumn() const override { return k_maxNumberOfColumns; }
-
   KDCoordinate nonMemoizedColumnWidth(int column) override {
-    assert(column >= 0 && column < k_maxNumberOfColumns);
-    return k_columnWidth;
+    assert(column >= 0 && column < numberOfColumns());
+    return column == 0 ? TableDimensions::k_resultTitleColumnWidth
+                       : TableDimensions::k_columnWidth;
   }
 
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
@@ -48,7 +43,7 @@ class InputStatisticsTable
 
   bool canStoreCellAtLocation(int column, int row) override {
     assert(column >= 0 && row >= 0);
-    assert(column < k_maxNumberOfColumns && row < k_maxNumberOfRows);
+    assert(column < numberOfColumns() && row < numberOfRows());
     return column >= 0 && row > 0;
   }
 
@@ -66,7 +61,7 @@ class InputStatisticsTable
   // DataSource
 
   ReusableCellCounts reusableCellCounts() const override {
-    return TableDimensions::k_inputShape.reusable;
+    return TableDimensions::k_inputStatisticsShape.reusable;
   }
 
   Escher::HighlightCell* reusableHeaderCell(int i) override {
@@ -75,11 +70,6 @@ class InputStatisticsTable
   Escher::HighlightCell* reusableInnerCell(int i) override {
     return dynamicInnerCell(i);
   }
-
-  // CategoricalTableViewDataSource
-
-  int innerNumberOfRows() const override { return m_numberOfRows; }
-  int innerNumberOfColumns() const override { return m_numberOfColumns; }
 
   // DoubleDynamicCellsDataSource
 
@@ -97,7 +87,11 @@ class InputStatisticsTable
   size_t fillColumnName(int column, char* buffer) override;
 
   // CategoricalTableViewDataSource
-  int relativeColumn(int column) const override { return column; }
+  int relativeColumn(int column) const override { return column - 1; }
+
+  // CategoricalTableViewDataSource
+  int innerNumberOfRows() const override { return k_numberOfInnerRows; }
+  int innerNumberOfColumns() const override { return m_numberOfColumns; }
 
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row);

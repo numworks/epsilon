@@ -17,9 +17,9 @@ class InputDataTable
                                           InferenceEvenOddEditableCell> {
  public:
   constexpr static int k_maxNumberOfColumns =
-      TableDimensions::k_inputShape.inner.columns;
+      TableDimensions::k_inputDataShape.inner.columns;
   constexpr static int k_maxNumberOfInnerRows =
-      TableDimensions::k_inputShape.inner.rows;
+      TableDimensions::k_inputDataShape.inner.rows;
   constexpr static int k_maxNumberOfRows = k_maxNumberOfInnerRows + 1;
 
   constexpr static int k_columnWidth = TableDimensions::k_columnWidth;
@@ -66,7 +66,7 @@ class InputDataTable
   // DataSource
 
   ReusableCellCounts reusableCellCounts() const override {
-    return TableDimensions::k_inputShape.reusable;
+    return TableDimensions::k_inputDataShape.reusable;
   }
 
   Escher::HighlightCell* reusableHeaderCell(int i) override {

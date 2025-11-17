@@ -36,10 +36,22 @@ class AbstractStaticVector {
     return m_data[index];
   }
 
-  constexpr const T& first() const { return m_data[0]; }
-  constexpr T& first() { return m_data[0]; }
-  constexpr const T& last() const { return m_data[m_size - 1]; }
-  constexpr T& last() { return m_data[m_size - 1]; }
+  constexpr const T& first() const {
+    assert(m_size > 0);
+    return m_data[0];
+  }
+  constexpr T& first() {
+    assert(m_size > 0);
+    return m_data[0];
+  }
+  constexpr const T& last() const {
+    assert(m_size > 0);
+    return m_data[m_size - 1];
+  }
+  constexpr T& last() {
+    assert(m_size > 0);
+    return m_data[m_size - 1];
+  }
 
   constexpr iterator begin() { return m_data; }
   constexpr const_iterator begin() const { return m_data; }

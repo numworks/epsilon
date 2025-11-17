@@ -11,11 +11,11 @@ namespace Inference::ANOVA {
 
 InputDataTable::InputDataTable(Escher::Responder* parentResponder,
                                ANOVATest* test,
-                               InputDataController* InputDataController,
+                               InputDataController* inputDataController,
                                Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, test,
                                 scrollViewDelegate),
-      m_InputDataController(InputDataController) {}
+      m_inputDataController(inputDataController) {}
 
 void InputDataTable::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
@@ -79,7 +79,7 @@ void InputDataTable::fillInnerCellForLocation(Escher::HighlightCell* cell,
 }
 
 CategoricalController* InputDataTable::categoricalController() {
-  return m_InputDataController;
+  return m_inputDataController;
 }
 
 void InputDataTable::initInnerCell(InferenceEvenOddEditableCell* cell) {

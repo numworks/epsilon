@@ -25,7 +25,7 @@ class InputDataTable
   constexpr static int k_columnWidth = TableDimensions::k_columnWidth;
 
   InputDataTable(Escher::Responder* parentResponder, ANOVATest* test,
-                 InputDataController* InputDataController,
+                 InputDataController* inputDataController,
                  Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // InputCategoricalTableCell
@@ -103,7 +103,7 @@ class InputDataTable
                                 int row);
   CategoricalController* categoricalController() override;
 
-  InputDataController* m_InputDataController;
+  InputDataController* m_inputDataController;
 };
 
 }  // namespace Inference::ANOVA

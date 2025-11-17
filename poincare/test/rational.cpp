@@ -215,6 +215,12 @@ QUIZ_CASE(pcj_rational_multiplication) {
                    -1_e, 8_e);
 }
 
+QUIZ_CASE(pcj_rational_non_zero_division) {
+  assert_operation(1_e, 2_e, 2_e, 1_e, Rational::NonZeroDivision, 1_e, 4_e);
+  assert_operation(23515_e, 7_e, 23515_e, 2_e, Rational::NonZeroDivision, 2_e,
+                   7_e);
+}
+
 static inline Tree* IntegerPowerNoOverflow(const Tree* e1, const Tree* e2) {
   Rational::IntegerOperationResult result = Rational::IntegerPower(e1, e2);
   assert(!result.hasOverflown);

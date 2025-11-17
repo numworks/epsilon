@@ -207,6 +207,18 @@ Tree* Rational::Multiplication(const Tree* e1, const Tree* e2) {
   return result;
 }
 
+Tree* Rational::NonZeroDivision(const Tree* e1, const Tree* e2) {
+  assert(!e2->isZero());
+  Tree* newNumerator =
+      IntegerHandler::Multiplication(Numerator(e1), Denominator(e2));
+  Tree* newDenominator =
+      IntegerHandler::Multiplication(Denominator(e1), Numerator(e2));
+  TreeRef result = Rational::Push(newNumerator, newDenominator);
+  newDenominator->removeTree();
+  newNumerator->removeTree();
+  return result;
+}
+
 Rational::IntegerOperationResult Rational::IntegerPower(const Tree* e1,
                                                         const Tree* e2) {
   assert(!(e1->isZero() && Sign(e2).isNegative()));

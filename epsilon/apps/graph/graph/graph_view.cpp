@@ -187,9 +187,9 @@ bool IsInRegion(const ContinuousFunction* f, float x, float y) {
   OMG::unreachable();
 }
 
-/* Since area colors only one every 8 pixels, we can afford to check every
- * pixels with every functions. This is different from the area drawn in
- * drawCartesian, which draws segments as each curve is drawn. */
+/* Since area colors only one every 8 pixels, we can afford to check all pixels
+ * with all functions. This is different from the area drawn in drawCartesian,
+ * which draws segments as each curve is drawn. */
 void GraphView::drawInequalitiesIntersection(KDContext* ctx,
                                              KDRect rect) const {
   if (!m_intersectionRegion) {
@@ -227,8 +227,8 @@ void GraphView::drawInequalitiesIntersection(KDContext* ctx,
   KDCoordinate numberOfXPixels = (rect.right() - firstX) / 2;
   KDCoordinate numberOfYPixels = (rect.bottom() - rect.top()) / 2;
   for (int i = 0; i < numberOfXPixels; i++) {
-    KDCoordinate XCoord = firstX + i * 2;
-    float x = pixelToFloat(OMG::Axis::Horizontal, XCoord);
+    KDCoordinate xCoord = firstX + i * 2;
+    float x = pixelToFloat(OMG::Axis::Horizontal, xCoord);
     for (int j = 0; j < numberOfYPixels; j++) {
       if (i % 2 != j % 2) {
         continue;
@@ -246,7 +246,7 @@ void GraphView::drawInequalitiesIntersection(KDContext* ctx,
       if (!inRegion) {
         continue;
       }
-      ctx->setPixel(KDPoint(XCoord, YCoord), KDColorBlack);
+      ctx->setPixel(KDPoint(xCoord, YCoord), KDColorBlack);
     }
   }
 }
@@ -329,6 +329,7 @@ void GraphView::drawCartesian(KDContext* ctx, KDRect rect,
                               DiscontinuityTest discontinuity,
                               OMG::Axis axis) const {
   assert(f->properties().isCartesian());
+  // No need to draw any area if already done in drawInequalitiesIntersection
   ContinuousFunctionProperties::AreaType area =
       m_intersectionRegion ? ContinuousFunctionProperties::AreaType::None
                            : f->properties().areaType();

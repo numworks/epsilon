@@ -149,4 +149,7 @@ template class DynamicCellsDataSource<SmallFontEvenOddBufferTextCell>;
 
 template class DoubleDynamicCellsDataSource<InferenceEvenOddBufferCell,
                                             InferenceEvenOddEditableCell>;
+template class DoubleDynamicCellsDataSource<
+    Escher::SmallFontEvenOddBufferTextCell, InferenceEvenOddEditableCell>;
+
 }  // namespace Inference

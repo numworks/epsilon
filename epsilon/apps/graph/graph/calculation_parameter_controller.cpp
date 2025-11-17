@@ -211,6 +211,7 @@ bool CalculationParameterController::shouldDisplayIntersectionCell() const {
 
 bool CalculationParameterController::shouldDisplayIntersectionRegionCell()
     const {
+  assert(function()->isActive());
   // Intersection region is handled between all active inequality functions
   if (function()->properties().isEquality()) {
     return false;

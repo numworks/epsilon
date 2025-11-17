@@ -102,8 +102,6 @@ IntersectionRegionGraphController::computeNewPointOfInterest(double start,
   m_selectedRecordIndex =
       functionStore()->indexOfRecordAmongActiveRecords(bestPoint.record);
   m_intersectedRecord = bestPoint.intersectedRecord;
-  // Skip setRecord call to avoid unnecessary redraw.
-  // setRecord(bestPoint.record);
   App::app()->graphController()->setCursorIsRing(
       bestPoint.isUnreachedIntersection);
   return bestPoint.coordinate;

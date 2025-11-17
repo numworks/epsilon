@@ -99,11 +99,6 @@ class ANOVATest : public SignificanceTest, public InputTable {
     }
   }
 
-  bool setStatisticParameter(double value, int parameterIndex, int groupIndex);
-  double statisticParameter(int parameterIndex, int groupIndex) const;
-  // Return true if the number of groups was changed
-  bool deleteStatisticParameter(int parameterIndex, int groupIndex);
-
   using Results =
       Poincare::Inference::SignificanceTest::FTest::StatisticResults;
   using CalculatedValues =
@@ -117,6 +112,15 @@ class ANOVATest : public SignificanceTest, public InputTable {
   }
 
  private:
+  void setGroupValue(double value, int row, int column);
+  double groupValue(int row, int column) const;
+  bool deleteGroupValue(int row, int column);
+
+  void setStatisticParameter(double value, int parameterIndex, int groupIndex);
+  double statisticParameter(int parameterIndex, int groupIndex) const;
+  // Return true if the number of groups was changed
+  bool deleteStatisticParameter(int parameterIndex, int groupIndex);
+
   // InferenceModel
   double* parametersArray() override { return nullptr; }
 

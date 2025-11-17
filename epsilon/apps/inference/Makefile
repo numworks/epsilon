@@ -1,8 +1,10 @@
 SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   app.cpp \
   controllers/anova/input_data_controller.cpp \
+  controllers/anova/input_statistics_controller.cpp \
   controllers/anova/results_tab_controller.cpp \
   controllers/anova/tables/input_data_table.cpp \
+  controllers/anova/tables/input_statistics_table.cpp \
   controllers/anova/tables/results_between_within_table.cpp \
   controllers/anova/tables/results_statistics_table.cpp \
   controllers/chi_square/categorical_type_controller.cpp \

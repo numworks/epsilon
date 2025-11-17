@@ -88,7 +88,7 @@ bool DatasetController::handleEvent(Ion::Events::Event event) {
 
   if (row == indexOfInputStatisticsCell()) {
     if (m_inferenceModel->testType() == TestType::ANOVA) {
-      // TODO: table for ANOVA model
+      stackOpenPage(&m_controllerContainer->m_inputStatisticsController);
       return true;
     }
     m_inferenceModel->table()->unsetSeries(m_inferenceModel);

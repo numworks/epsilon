@@ -4,6 +4,7 @@
 #include <omg/unreachable.h>
 
 #include "anova/input_data_controller.h"
+#include "anova/input_statistics_controller.h"
 #include "anova/results_tab_controller.h"
 #include "chi_square/categorical_type_controller.h"
 #include "chi_square/input_goodness_controller.h"
@@ -37,6 +38,8 @@ class ControllerContainer {
             static_cast<HomogeneityTest*>(inferenceModel)},
         m_inputDataController{stackViewController, this,
                               static_cast<ANOVATest*>(inferenceModel)},
+        m_inputStatisticsController{stackViewController, this,
+                                    static_cast<ANOVATest*>(inferenceModel)},
         m_resultsTabController{stackViewController, this,
                                static_cast<ANOVATest*>(inferenceModel)},
         m_inputHomogeneityController{
@@ -66,6 +69,7 @@ class ControllerContainer {
   IntervalGraphController m_intervalGraphController;
   ResultsHomogeneityTabController m_homogeneityResultsController;
   ANOVA::InputDataController m_inputDataController;
+  ANOVA::InputStatisticsController m_inputStatisticsController;
   ANOVA::ResultsTabController m_resultsTabController;
   InputHomogeneityController m_inputHomogeneityController;
   ResultsGoodnessTabController m_goodnessResultsController;

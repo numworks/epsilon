@@ -27,37 +27,61 @@ void InputStatisticsTable::handleResponderChainEvent(
 }
 
 size_t InputStatisticsTable::fillColumnName(int column, char* buffer) {
-  assert(column >= 0 && column < k_maxNumberOfColumns);
+  assert(column >= 0 && column < numberOfColumns());
   OMG::String<k_groupTitleBufferSize> groupTitle =
-      GroupTitle(column, I18n::translate(I18n::Message::Group));
+      GroupTitle(column - 1, I18n::translate(I18n::Message::Group));
   strlcpy(buffer, groupTitle.data(),
           Shared::ColumnParameterController::k_titleBufferSize);
   return groupTitle.length();
 }
 
+// The row index refers to the "inner" table
+constexpr static const char* HeaderAtRow(int row) {
+  assert(row >= 0 && row <= 3);
+  switch (row) {
+    case 0:
+      return I18n::translate(I18n::Message::SampleSize);
+    case 1:
+      return I18n::translate(I18n::Message::SampleMean);
+    case 2:
+      return I18n::translate(I18n::Message::SampleSTDShort);
+    default:
+      OMG::unreachable();
+  }
+}
+
 void InputStatisticsTable::fillCellForLocation(Escher::HighlightCell* cell,
                                                int column, int row) {
-  assert(column >= 0 && row >= 0);
-  assert(column < numberOfColumns() && row <= numberOfRows());
+  assert(row >= 0 && row < numberOfRows());
+  assert(column >= 0 && column < numberOfColumns());
+
   int type = typeAtLocation(column, row);
+  if (type == k_typeOfTopLeftCell) {
+    return;
+  }
+  InferenceEvenOddBufferCell* myCell =
+      static_cast<InferenceEvenOddBufferCell*>(cell);
   if (type == k_typeOfHeaderCells) {
-    InferenceEvenOddBufferCell* myCell =
-        static_cast<InferenceEvenOddBufferCell*>(cell);
-    assert(row == 0);
-    myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-    myCell->setFont(KDFont::Size::Small);
-    myCell->setEven(true);
-    OMG::String<k_groupTitleBufferSize> groupTitle =
-        GroupTitle(column, I18n::translate(I18n::Message::Group));
-    myCell->setText(groupTitle.data());
+    if (row == 0) {
+      // Column title
+      OMG::String<k_groupTitleBufferSize> groupTitle =
+          GroupTitle(column - 1, I18n::translate(I18n::Message::Group));
+      myCell->setText(groupTitle.data());
+      myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+    } else {
+      // Row title
+      myCell->setText(HeaderAtRow(row - 1));
+      myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+    }
     myCell->setTextColor(KDColorBlack);
   } else {
     assert(type == k_typeOfInnerCells);
-    fillInnerCellForLocation(cell, column, row - 1);
+    fillInnerCellForLocation(cell, column - 1, row - 1);
   }
+  myCell->setEven(row % 2 == 0);
 
   if ((row == 0 && column == numberOfColumns() - 1 &&
-       column < k_maxNumberOfColumns - 1)) {
+       column < k_numberOfInnerColumns - 1)) {
     /* The last header has its title grayed out, except if the column is the
      * last possible column. */
     static_cast<InferenceEvenOddBufferCell*>(cell)->setTextColor(

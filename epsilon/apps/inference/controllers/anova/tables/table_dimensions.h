@@ -11,7 +11,7 @@ namespace Inference::ANOVA::TableDimensions {
 // TODO: shared value with ChiSquare / Homogeneity
 constexpr static int k_columnWidth = 82;
 
-constexpr static TableShape k_inputShape = TableShape{
+constexpr static TableShape k_inputDataShape = TableShape{
     .inner = InnerTableDimensions{.rows = ANOVATest::k_maxNumberOfRows,
                                   .columns = ANOVATest::k_maxNumberOfColumns},
     .reusable = ReusableCountsOneColumnHeader(ReusableCellDimensions{
@@ -22,6 +22,17 @@ constexpr static TableShape k_inputShape = TableShape{
                             ANOVATest::k_maxNumberOfColumns)})};
 
 constexpr static int k_resultTitleColumnWidth = 200;
+
+constexpr static TableShape k_inputStatisticsShape = TableShape{
+    .inner = InnerTableDimensions{.rows = 3,
+                                  .columns = ANOVATest::k_maxNumberOfColumns},
+    .reusable = ReusableCountsOneRowOneColumnHeader(
+        /* The "reusable" number of rows are the same as the "normal" number of
+           rows because the dimension is small.*/
+        ReusableCellDimensions{
+            .rows = 3,
+            .columns = std::min(Ion::Display::Width / k_columnWidth + 3,
+                                ANOVATest::k_maxNumberOfColumns)})};
 
 constexpr static TableShape k_resultBetweenWithinShape =
     TableShape{.inner = InnerTableDimensions{.rows = 3, .columns = 2},

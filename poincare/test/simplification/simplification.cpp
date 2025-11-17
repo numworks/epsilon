@@ -434,7 +434,7 @@ QUIZ_CASE(pcj_simplification_power) {
   // Denesting of square roots
   simplifies_to("√(2+√(3))", "(√(2)+√(6))/2");
   simplifies_to("√(3-√(7))", "√(3-√(7))");
-  simplifies_to("√(-2+√(3))", "√(2)×(-1/2+√(3)/2)×i", k_cartesianCtx);
+  simplifies_to("√(-2+√(3))", "(-√(2)+√(6))/2×i", k_cartesianCtx);
   simplifies_to("√(-3-√(8))", "(1+√(2))×i", k_cartesianCtx);
   simplifies_to("√(17+4×√(13))", "2+√(13)");
   simplifies_to("√(√(1058)-√(896))", "root(2,4)×(4-√(7))", k_cartesianCtx);
@@ -681,13 +681,11 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
 }
 
 QUIZ_CASE(pcj_simplification_rational_power) {
-  // TODO: Fix or improve these cases
   // a^b/2 / a^c/2 => a^(b-c)/2
   simplifies_to("3^(3/2)/(3^(7/2))", "1/9");
-  simplifies_to("3^(π/2)/(3^(e/2))", "3^(π/2-e/2)");  // "3^((π-e)/2)"
+  simplifies_to("3^(π/2)/(3^(e/2))", "3^((π-e)/2)");
   // 1/(√a+√b) => (√a-√b)/(a-b)
-  simplifies_to("1/(√(3)+√(5))",
-                "-(√(3)-√(5))/2");  // TODO: Metric "(√(3)-√(5))/2"
+  simplifies_to("1/(√(3)+√(5))", "(-√(3)+√(5))/2");
   simplifies_to("1/(√(3)-√(5))", "-(√(3)+√(5))/2");
   simplifies_to("1/(√(120)+2√(30))", "√(30)/120");
   // 1/√a => √a/a
@@ -727,11 +725,10 @@ QUIZ_CASE(pcj_euclidean_division) {
 }
 
 QUIZ_CASE(pcj_simplification_roots) {
-  simplifies_to("1/√(2+√(3))", "-(√(2)-√(6))/2");
+  simplifies_to("1/√(2+√(3))", "(-√(2)+√(6))/2");
   simplifies_to("1/√(-2×√(3)+3×√(2))", "√(√(2)/2+√(3)/3)");
   simplifies_to("1/√(-4+√(17))", "√(4+√(17))");
-  // TODO: simplify the minus sign
-  simplifies_to("1/√(-3+√(19))", "√(-(-3-√(19))/10)");
+  simplifies_to("1/√(-3+√(19))", "√((3+√(19))/10)");
 
   simplifies_to("root(48,3)", "2*root(6,3)");
   simplifies_to("root(81,3)", "3*root(3,3)");

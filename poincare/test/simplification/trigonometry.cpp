@@ -11,8 +11,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("cos({0,π/2,π,3π/2,-4π})", "{1,0,-1,0,1}");
   simplifies_to("sin({0,π/2,π,3π/2,-4π})", "{0,1,0,-1,0}");
   // test π/12 in top-right quadrant
-  simplifies_to("cos({π/12,-19π/12})", "{(√(2)+√(6))/4,(√(2)×(-1+√(3)))/4}");
-  simplifies_to("sin({π/12,-19π/12})", "{(√(2)×(-1+√(3)))/4,(√(2)+√(6))/4}");
+  simplifies_to("cos({π/12,-19π/12})", "{(√(2)+√(6))/4,(-√(2)+√(6))/4}");
+  simplifies_to("sin({π/12,-19π/12})", "{(-√(2)+√(6))/4,(√(2)+√(6))/4}");
   // test π/10 in top-left quadrant
   simplifies_to("cos({66π/10,-31π/10})", "{-(-1+√(5))/4,-√((5+√(5))/8)}");
   simplifies_to("sin({66π/10,-31π/10})", "{√((5+√(5))/8),(-1+√(5))/4}");
@@ -497,7 +497,7 @@ QUIZ_CASE(pcj_simplification_trigonometry_hyperbolic) {
   simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
   // TODO: Should simplify to 0
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
-                "-tanh(x)-(-sinh(x)^2/(2×cosh(x)^2)-1/2)×tanh(2×x)");
+                "-tanh(x)+((tanh(x)^2+1)×tanh(2×x))/2");
   simplifies_to("arcosh(5)", "arcosh(5)", k_cartesianCtx);
   simplifies_to("arcosh(5)-ln(5+√(24))", "0", k_cartesianCtx);
   simplifies_to("arcosh(cosh(x))", "abs(x)", k_cartesianCtx);

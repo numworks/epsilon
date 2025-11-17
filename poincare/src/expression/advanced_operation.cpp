@@ -5,6 +5,7 @@
 
 #include "integer.h"
 #include "k_tree.h"
+#include "rational.h"
 #include "sign.h"
 #include "systematic_reduction.h"
 #include "variables.h"
@@ -273,6 +274,75 @@ bool AdvancedOperation::ExpandMult(Tree* e) {
   return false;
 }
 
+// Only the first child of a multiplication is considered as a factor
+const Tree* GetFactor(const Tree* e) { return e->isMult() ? e->child(0) : e; }
+
+// Push a clone of e stripped from what would GetFactor return
+Tree* PushNonFactors(const Tree* e) {
+  if (!e->isMult()) {
+    return (1_e)->cloneTree();
+  }
+  assert(e->numberOfChildren() > 1);
+  Tree* result = e->cloneTree();
+  NAry::RemoveChildAtIndex(result, 0);
+  NAry::SquashIfUnary(result);
+  return result;
+}
+
+/* PushCommonFactor pushes a common factor found in an addition. The common
+ * factor can be any tree if found in every terms. Otherwise, it looks for a
+ * rational number (different from 1, with numerator -1 or 1) that can factor
+ * the sign or denominator of each terms. */
+Tree* PushCommonFactor(const Tree* e) {
+  assert(e->isAdd());
+  Tree* commonFactor = nullptr;
+  for (const Tree* child : e->children()) {
+    const Tree* localFactor = GetFactor(child);
+    // Escape cases where one of the terms is 1
+    if (localFactor->isOne() || localFactor->isFloat()) {
+      if (commonFactor) {
+        commonFactor->removeTree();
+      }
+      return nullptr;
+    }
+    if (commonFactor == nullptr) {
+      commonFactor = localFactor->cloneTree();
+      continue;
+    }
+    if (commonFactor->treeIsIdenticalTo(localFactor)) {
+      continue;
+    }
+    if (!commonFactor->isRational() || !localFactor->isRational()) {
+      commonFactor->removeTree();
+      return nullptr;
+    }
+    bool negativeCommonFactor = commonFactor->isNegativeRational();
+    if (negativeCommonFactor && localFactor->isPositiveRational()) {
+      Rational::SetSign(commonFactor, NonStrictSign::Positive);
+      negativeCommonFactor = false;
+      if (commonFactor->treeIsIdenticalTo(localFactor)) {
+        continue;
+      }
+    }
+    IntegerHandler commonDenominator = Rational::Denominator(commonFactor);
+    if (IntegerHandler::Compare(Rational::Denominator(localFactor),
+                                commonDenominator) != 0 ||
+        (commonDenominator.isOne() && !negativeCommonFactor)) {
+      commonFactor->removeTree();
+      return nullptr;
+    }
+    IntegerHandler commonNumerator = Rational::Numerator(commonFactor);
+    if (commonNumerator.isOne() || commonNumerator.isMinusOne()) {
+      continue;
+    }
+    // Remove commonFactor's numerator, keep its sign
+    commonFactor->moveTreeOverTree(Rational::Push(
+        IntegerHandler(negativeCommonFactor ? -1 : 1), commonDenominator));
+  }
+  assert(commonFactor && !commonFactor->isOne());
+  return commonFactor;
+}
+
 bool AdvancedOperation::ContractMult(Tree* e) {
   /* A? * B^C * D^C * E? = A? * (BD)^C * E? with B or D addition as there is a
    * systematic operation that expands back the Pow if B*D is kept as a Mult
@@ -300,42 +370,30 @@ bool AdvancedOperation::ContractMult(Tree* e) {
     return false;
   }
 
-  // Find a common factor in an addition of multiplications
-  // Only look for first term of each multiplication.
+  /* Find a common factor in an addition of multiplications.
+   * Handle rational denominators and -1 but look for first term of each
+   * multiplication only. */
   // A + A*B + A * C + A * D + ... = A * (1 + B + C + D + ...)
-  // TODO: should also work with factor A and -A
-  const Tree* commonFactor = nullptr;
-  const Tree* currentCommonFactor = nullptr;
-  bool commonFactorIsEverywhere = true;
-  assert(e->numberOfChildren() > 1);
-  for (const Tree* child : e->children()) {
-    currentCommonFactor = child->isMult() ? child->child(0) : child;
-    if (commonFactor == nullptr) {
-      commonFactor = currentCommonFactor;
-      continue;
-    }
-    if (!commonFactor->treeIsIdenticalTo(currentCommonFactor)) {
-      commonFactorIsEverywhere = false;
-      break;
-    }
-  }
-  if (commonFactorIsEverywhere) {
-    Tree* result = SharedTreeStack->pushMult(2);
-    assert(commonFactor != nullptr);
+  Tree* commonFactor = PushCommonFactor(e);
+  if (commonFactor) {
+    TreeRef result = SharedTreeStack->pushMult(2);
     commonFactor->cloneTree();
-    Tree* subResult = SharedTreeStack->pushAdd(e->numberOfChildren());
+    TreeRef resultNonFactor = SharedTreeStack->pushAdd(e->numberOfChildren());
     for (const Tree* child : e->children()) {
-      if (child->isMult() && child->numberOfChildren() > 2) {
-        Tree* subMult = child->cloneTree();
-        NAry::RemoveChildAtIndex(subMult, 0);
-        assert(!SystematicReduction::ShallowReduce(subMult));
-      } else if (child->isMult() && child->numberOfChildren() == 2) {
-        child->child(1)->cloneTree();
-      } else {
-        SharedTreeStack->pushOne();
+      const Tree* localFactor = GetFactor(child);
+      if (localFactor->treeIsIdenticalTo(commonFactor)) {
+        PushNonFactors(child);
+        continue;
       }
+      assert(commonFactor->isRational() && localFactor->isRational());
+      Tree* newChild = SharedTreeStack->pushMult(2);
+      assert(!commonFactor->isZero());
+      Rational::NonZeroDivision(localFactor, commonFactor);
+      PushNonFactors(child);
+      SystematicReduction::ShallowReduce(newChild);
     }
-    SystematicReduction::ShallowReduce(subResult);
+    commonFactor->removeTree();
+    SystematicReduction::ShallowReduce(resultNonFactor);
     SystematicReduction::ShallowReduce(result);
     e->moveTreeOverTree(result);
     return true;

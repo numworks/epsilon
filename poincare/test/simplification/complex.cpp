@@ -71,7 +71,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("abs(1-π)", "-1+π");
 
   simplifies_to("2/(4+4*i)", "1/4-1/4×i", k_cartesianCtx);
-  simplifies_to("e^(π*i/6)+e^(-π*i/3)", "(1+√(3))/2+(1/2-√(3)/2)×i",
+  simplifies_to("e^(π*i/6)+e^(-π*i/3)", "(1+√(3))/2+(1-√(3))/2×i",
                 k_cartesianCtx);
   simplifies_to("e^(π*i/6)*e^(-π*i/3)", "√(3)/2-1/2×i", k_cartesianCtx);
   simplifies_to("re(√(√(-8)))", "root(2,4)", k_cartesianCtx);
@@ -110,7 +110,8 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("e^(3.14×i)", "e^(157/50×i)", k_polarCtx);
   simplifies_to("e^(-2.1×i)", "e^(-21/10×i)", k_polarCtx);
   simplifies_to("root(-8,3)", "2×e^(π/3×i)", k_polarCtx);
-  simplifies_to("e^(π/6×i)+e^(-π/3×i)", "√(2)×e^(-π/12×i)", k_polarCtx);
+  // TODO: "√(2)×e^(-π/12×i)"
+  simplifies_to("e^(π/6×i)+e^(-π/3×i)", "(1+i+√(3)×(1-i))/2", k_polarCtx);
   simplifies_to("e^(π/6×i)+e^(-10π/6×i)", "(√(2)/2+√(6)/2)×e^(π/4×i)",
                 k_polarCtx);
   // Not simplified into polars

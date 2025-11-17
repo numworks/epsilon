@@ -260,19 +260,13 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
     // Only one of the ranges has been altered
     assert(xRangeRatio == 1.f || yRangeRatio == 1.f);
 
+    /* Normalization is also partially enforced in Zoom::range up to a variable
+     * max ratio. We want to avoid to apply more than double this
+     * pseudo-normalization. */
     float rangeRatio = xRangeRatio + yRangeRatio - 1.0f;
-    if (rangeRatio > 1.0f) {
-      /* The altered range has been extended. Normalization is also enforced in
-       * Zoom::range up to Zoom::k_maxNormalizationRatio, so forcing
-       * normalization extends it even further. */
-      constexpr float k_maximalRatio = 5.f;
-      static_assert(k_maximalRatio > Zoom<float>::k_maxNormalizationRatio,
-                    "k_maximalRatio is too small to ever be reached.");
-      constexpr float k_maxRelativeRatio =
-          k_maximalRatio / Zoom<float>::k_maxNormalizationRatio;
-      if (rangeRatio > k_maxRelativeRatio) {
-        newRange = unNormalizedRange;
-      }
+    constexpr float k_maxRangeRatio = 2.f;
+    if (rangeRatio > k_maxRangeRatio) {
+      newRange = unNormalizedRange;
     }
   }
 

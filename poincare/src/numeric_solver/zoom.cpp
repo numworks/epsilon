@@ -592,40 +592,59 @@ void editRange(Range1D<T>* rangeToEdit, T newLength,
 }
 
 template <typename T>
-struct NormalizationData {
-  T initialLength;
-  T normalRatio;
-  T normalizedLength;
-  T upperBound;
-  T lowerBound;
-  T resultLength;
-  bool isForced;
-};
+T Zoom<T>::maxNormalizationRatio(bool xAxis) const {
+  /* Make the ratio depend on the normal ratio to make it consistent when the
+   * aspect ratio is extended in one direction.
+   * We use the square root of the normal ratio so that the ratios are
+   * symmetric:
+   * - If the window is 1:1, both ratios are 2.5
+   * - If the window is 1:4, the X ratio is 5 and the Y ratio is 1.25
+   * - If the window is 4:1, the X ratio is 1.25 and the Y ratio is 5
+   */
+  T ratio =
+      Zoom<T>::k_defaultMaxNormalizationRatio * std::sqrt(normalRatio(xAxis));
+  /* Clamp to avoid extreme ratios. The value defaultRatio^3 is chosen because
+   * it's the symmetric of a ratio of 1.0 on the other axis.
+   * If one of the max ratios is below 1, it means the normal ratio is above
+   * defaultRatio^2, which mean the other max ratio is above defaultRatio^3.
+   * */
+  constexpr T k_cubedMaxNormalizationRatio =
+      Zoom<T>::k_defaultMaxNormalizationRatio *
+      Zoom<T>::k_defaultMaxNormalizationRatio *
+      Zoom<T>::k_defaultMaxNormalizationRatio;
+  return std::clamp(ratio, static_cast<T>(1.0), k_cubedMaxNormalizationRatio);
+}
 
 template <typename T>
-NormalizationData<T> computeNormalizationData(
-    T normalRatio, const Range1D<T>* saneRange,
-    const Range1D<T>* orthogonalSaneRange, const Range1D<T>* interestingRange,
-    bool isForced) {
-  NormalizationData<T> data;
-  data.initialLength = saneRange->length();
-  data.normalRatio = normalRatio;
-  data.normalizedLength = orthogonalSaneRange->length() * data.normalRatio;
+Zoom<T>::NormalizationData Zoom<T>::computeNormalizationData(
+    bool xAxis, const Range2D<T>& saneRange) const {
+  NormalizationData data;
+
+  data.initialLength =
+      xAxis ? saneRange.x()->length() : saneRange.y()->length();
+  data.isForced =
+      xAxis ? !m_forcedRange.x()->isNan() : !m_forcedRange.y()->isNan();
+
+  T orthogonalSaneRangeLength =
+      xAxis ? saneRange.y()->length() : saneRange.x()->length();
+  data.normalRatio = normalRatio(xAxis);
+  data.normalizedLength = orthogonalSaneRangeLength * data.normalRatio;
+
   /* - The normalized range makes up for at least 15% of the range. This is to
    * prevent that, by shrinking the range, the other axis becomes too long
    * for the remaining visible part of the curve.
    * - The normalized range must fit the interesting range. We only count the
    * interesting range for this part as discarding the part that comes from
    * the magnitude is not an issue. */
-  T interestingLength = std::isnan(interestingRange->length())
-                            ? static_cast<T>(0.)
-                            : interestingRange->length();
+  T interestingLength = xAxis ? m_interestingRange.x()->length()
+                              : m_interestingRange.y()->length();
   data.lowerBound = std::max(
-      data.initialLength * Zoom<T>::k_minNormalizationRatio, interestingLength);
-  /* The range (interesting + magnitude) cannot be stretched by more than 2.22
-   * times the normalized range (i.e. the curve does not appear squeezed). */
-  data.upperBound = data.initialLength * Zoom<T>::k_maxNormalizationRatio;
-  data.isForced = isForced;
+      data.initialLength * Zoom<T>::k_minNormalizationRatio,
+      std::isnan(interestingLength) ? static_cast<T>(0.) : interestingLength);
+  /* The range (interesting + magnitude) cannot be stretched by more than a
+   * max ratio (i.e. the curve does not appear squeezed). */
+  data.upperBound = data.initialLength * maxNormalizationRatio(xAxis);
+
   data.resultLength = data.initialLength;
   return data;
 }
@@ -645,12 +664,8 @@ Range2D<T> Zoom<T>::prettyRange(bool forceNormalization) const {
       m_maxFloat);
   saneRange = sanitize2DHelper(saneRange);
 
-  NormalizationData<T> xData = computeNormalizationData<T>(
-      static_cast<T>(1.) / m_normalRatio, saneRange.x(), saneRange.y(),
-      m_interestingRange.x(), xRangeIsForced);
-  NormalizationData<T> yData =
-      computeNormalizationData<T>(m_normalRatio, saneRange.y(), saneRange.x(),
-                                  m_interestingRange.y(), yRangeIsForced);
+  NormalizationData xData = computeNormalizationData(true, saneRange);
+  NormalizationData yData = computeNormalizationData(false, saneRange);
 
   // Checks if xRange is just -defaultHalfLength to defaultHalfLength
   bool xIsDefaultRange = !xRangeIsForced && (m_interestingRange.x()->isNan() ||
@@ -665,15 +680,15 @@ Range2D<T> Zoom<T>::prettyRange(bool forceNormalization) const {
    *   than shrinking them, as shrinking might cut out interesting parts of
    *   the curve.
    * - is not already at default range. If X is just [-10;10] because only 0
-   *   or 1 points were fitted, we prefer adjusting Y to avoid expanding X again
-   *   when it was already expanded to the default range. This apply for example
-   *   when autozooming on x^2.
+   *   or 1 points were fitted, we prefer adjusting Y to avoid expanding X
+   *   again when it was already expanded to the default range. This apply for
+   *   example when autozooming on x^2.
    */
   bool prioritizeYChanges =
       xRangeIsForced || (xWillShrink && !yRangeIsForced) || xIsDefaultRange;
 
-  NormalizationData<T>& primary = prioritizeYChanges ? yData : xData;
-  NormalizationData<T>& secondary = prioritizeYChanges ? xData : yData;
+  NormalizationData& primary = prioritizeYChanges ? yData : xData;
+  NormalizationData& secondary = prioritizeYChanges ? xData : yData;
 
   if (forceNormalization) {
     // Just normalize the primary axis
@@ -754,13 +769,13 @@ bool Zoom<T>::fitWithSolverHelper(
    *   are an infinite number of points. As such there is no need to display
    *   all of them, and we backtrack to a savedRange. This trick improves the
    *   display of periodic function, which would otherwise appear cramped.
-   *   The savedRange is created when either the number of roots, or the number
-   *   of other points of interest cross a threshold. Roots and other interests
-   *   are splitted so that cos(x) and cos(x)+2 have the same range.
+   *   The savedRange is created when either the number of roots, or the
+   *   number of other points of interest cross a threshold. Roots and other
+   *   interests are splitted so that cos(x) and cos(x)+2 have the same range.
    *
    *   TODO: We should probably find a better way to detect the period of
-   *         periodic functions, so that we show one or two period instead of a
-   *         fixed number of points of interest. */
+   *         periodic functions, so that we show one or two period instead of
+   *         a fixed number of points of interest. */
   assert(interrupted);
   *interrupted = false;
   Solver<T> solver(start, end);

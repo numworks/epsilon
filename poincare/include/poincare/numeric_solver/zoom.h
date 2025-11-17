@@ -22,9 +22,8 @@ class Zoom {
   friend class ::ZoomTest<T>;
 
  public:
-  constexpr static T k_minNormalizationRatio = static_cast<T>(0.15);
-  constexpr static T k_maxNormalizationRatio = static_cast<T>(2.22);
   constexpr static T k_lineZoomOutRatio = static_cast<T>(2.0);
+
   /* Sanitize will turn any random range into a range fit for display (see
    * comment on range() method below), that includes the original range. */
   static Range2D<T> Sanitize(Range2D<T> range, T normalRatio, T maxFloat);
@@ -161,7 +160,31 @@ class Zoom {
   Range2D<T> sanitizedRange() const {
     return sanitize2DHelper(m_interestingRange);
   }
+
+  constexpr static T k_defaultMaxNormalizationRatio = static_cast<T>(2.5);
+  constexpr static T k_minNormalizationRatio = static_cast<T>(0.15);
+  T normalRatio(bool xAxis) const {
+    return xAxis ? 1 / m_normalRatio : m_normalRatio;
+  }
+  /* For Epsilon's display ratio ~(53:100) this returns:
+   * For X axis: 2.5 / sqrt(0.53) ~ 3.43
+   * For Y axis: 2.5 * sqrt(0.53) ~ 1.82 */
+  T maxNormalizationRatio(bool xAxis) const;
+
+  struct NormalizationData {
+    T initialLength;
+    T normalRatio;
+    T normalizedLength;
+    T upperBound;
+    T lowerBound;
+    T resultLength;
+    bool isForced;
+  };
+  NormalizationData computeNormalizationData(bool xAxis,
+                                             const Range2D<T>& saneRange) const;
+
   Range2D<T> prettyRange(bool forceNormalization) const;
+
   bool fitWithSolver(
       bool* leftInterrupted, bool* rightInterrupted,
       typename Solver<T>::FunctionEvaluation evaluator, const void* aux,

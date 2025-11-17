@@ -38,14 +38,10 @@ class ANOVATest : public SignificanceTest, public InputTable {
   uint8_t numberOfSeries() const override { return 0; }
 
   void setValueAtPosition(double value, int row, int column) override;
-
   double valueAtPosition(int row, int column) const override;
-
   // Return true if the group data was changed
   bool deleteValueAtPosition(int row, int column) override;
-
   void deleteValuesInColumn(int column) override;
-
   bool authorizedValueAtPosition(double p, int row, int column) const override;
 
   void recomputeData() override {}
@@ -59,6 +55,33 @@ class ANOVATest : public SignificanceTest, public InputTable {
 
   int numberOfGroups() const { return m_groups.size(); }
 
+  class InputStatisticsData {
+   public:
+    double parameter(int parameterIndex) const;
+    double& parameter(int parameterIndex);
+
+    double numberOfSamples() const { return m_nSamples; }
+    double mean() const { return m_mean; }
+    double sampleStdDeviation() const { return m_sampleStdDeviation; }
+
+    static bool IsValueAcceptable(double value, int parameterIndex);
+    void set(double value, int parameterIndex);
+
+    void unsetStatisticParameter(int parameterIndex);
+
+    bool isUnset() const {
+      return std::isnan(m_nSamples) && std::isnan(m_mean) &&
+             std::isnan(m_sampleStdDeviation);
+    }
+
+    constexpr static int k_numberOfParameters = 3;
+
+   private:
+    double m_nSamples = k_undefinedValue;
+    double m_mean = k_undefinedValue;
+    double m_sampleStdDeviation = k_undefinedValue;
+  };
+
   using GroupValues = Poincare::Inference::SignificanceTest::FTest::Values;
   using GroupData = Poincare::Inference::SignificanceTest::FTest::GroupData;
 
@@ -68,6 +91,11 @@ class ANOVATest : public SignificanceTest, public InputTable {
       m_groups.push(group);
     }
   }
+
+  bool setStatisticParameter(double value, int parameterIndex, int groupIndex);
+  double statisticParameter(int parameterIndex, int groupIndex) const;
+  // Return true if the number of groups was changed
+  bool deleteStatisticParameter(int parameterIndex, int groupIndex);
 
   using Results =
       Poincare::Inference::SignificanceTest::FTest::StatisticResults;
@@ -95,7 +123,10 @@ class ANOVATest : public SignificanceTest, public InputTable {
       Poincare::Inference::SignificanceTest::FTest::k_maxNumberOfGroups);
   static_assert(k_maxNumberOfValuesPerGroup <= GroupValues{}.capacity());
 
+  // TODO: variant
   OMG::StaticVector<GroupValues, k_maxNumberOfGroups> m_groups;
+  OMG::StaticVector<InputStatisticsData, k_maxNumberOfGroups> m_inputStatistics;
+
   OMG::StaticVector<GroupData, k_maxNumberOfGroups> m_groupData;
   Results m_results;
 };

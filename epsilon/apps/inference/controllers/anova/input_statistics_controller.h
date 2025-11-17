@@ -16,6 +16,8 @@ class InputStatisticsController : public InputCategoricalController {
     return ViewController::TitlesDisplay::SameAsPreviousPage;
   };
 
+  void initView() override;
+
  private:
   int indexOfSignificanceCell() const override {
     return indexOfTableCell() + 1;

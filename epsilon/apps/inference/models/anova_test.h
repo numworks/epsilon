@@ -53,7 +53,14 @@ class ANOVATest : public SignificanceTest, public InputTable {
     return Index2D{.row = 2, .col = 3};
   }
 
-  int numberOfGroups() const { return m_groups.size(); }
+  enum class InputMode : bool { Values, Statistics };
+
+  void setInputMode(InputMode mode) { m_inputMode = mode; }
+
+  int numberOfGroups() const {
+    return (m_inputMode == InputMode::Values) ? m_groups.size()
+                                              : m_inputStatistics.size();
+  }
 
   class InputStatisticsData {
    public:
@@ -129,6 +136,8 @@ class ANOVATest : public SignificanceTest, public InputTable {
 
   OMG::StaticVector<GroupData, k_maxNumberOfGroups> m_groupData;
   Results m_results;
+
+  InputMode m_inputMode = InputMode::Values;
 };
 
 }  // namespace Inference

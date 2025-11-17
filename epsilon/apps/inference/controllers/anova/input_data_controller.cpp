@@ -1,6 +1,7 @@
 #include "input_data_controller.h"
 
 #include "inference/controllers/controller_container.h"
+#include "inference/controllers/tables/categorical_controller.h"
 
 using namespace Escher;
 
@@ -17,6 +18,13 @@ InputDataController::InputDataController(
 
 void InputDataController::createDynamicCells() {
   m_inputANOVATable.createCells();
+}
+
+void InputDataController::initView() {
+  assert(m_inferenceModel->testType() == TestType::ANOVA);
+  static_cast<ANOVATest*>(m_inferenceModel)
+      ->setInputMode(ANOVATest::InputMode::Values);
+  InputCategoricalController::initView();
 }
 
 }  // namespace Inference::ANOVA

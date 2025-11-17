@@ -19,4 +19,11 @@ void InputStatisticsController::createDynamicCells() {
   m_inputANOVATable.createCells();
 }
 
+void InputStatisticsController::initView() {
+  assert(m_inferenceModel->testType() == TestType::ANOVA);
+  static_cast<ANOVATest*>(m_inferenceModel)
+      ->setInputMode(ANOVATest::InputMode::Statistics);
+  InputCategoricalController::initView();
+}
+
 }  // namespace Inference::ANOVA

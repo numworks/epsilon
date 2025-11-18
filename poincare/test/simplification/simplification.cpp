@@ -442,6 +442,8 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("(-8)^(1/3)-1-√(3)×i", "0", k_cartesianCtx);
   simplifies_to("√(-3)-√(3)×i", "0", k_cartesianCtx);
   simplifies_to("(√(2+√(3))+√(2-√(3))×i)^2", "2×√(3)+2i", k_cartesianCtx);
+  simplifies_to("√(2+√(4.5))", "root(2,4)+2^(3/4)/2", k_cartesianCtx);
+  simplifies_to("√(2-√(4.5))", "((-1+√(2))×2^(3/4))/2×i", k_cartesianCtx);
 
   // Development of mult and integer power
   simplifies_to("π*(π+1)", "π^2+π");

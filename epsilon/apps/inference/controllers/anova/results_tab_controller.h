@@ -16,13 +16,18 @@ class BetweenWithinController : public CategoricalController {
  public:
   BetweenWithinController(Escher::Responder* parentResponder,
                           ControllerContainer* controllerContainer,
-                          ANOVATest* inference);
+                          ANOVATest* inference, bool isStandalone);
 
   void stackOpenPage(ViewController* nextPage) override {
-    tabController()->stackOpenPage(nextPage);
+    if (m_isStandalone) {
+      CategoricalController::stackOpenPage(nextPage);
+    } else {
+      tabController()->stackOpenPage(nextPage);
+    }
   }
 
   Escher::TabViewController* tabController() {
+    assert(!m_isStandalone);
     return static_cast<Escher::TabViewController*>(parentResponder());
   }
 
@@ -31,6 +36,10 @@ class BetweenWithinController : public CategoricalController {
     return I18n::translate(I18n::Message::CalculatedValues);
   }
 
+  ViewController::TitlesDisplay titlesDisplay() const override {
+    return ViewController::TitlesDisplay::SameAsPreviousPage;
+  };
+
  private:
   virtual CategoricalTableCell* categoricalTableCell() override {
     return &m_resultsBetweenWithinTable;
@@ -38,6 +47,9 @@ class BetweenWithinController : public CategoricalController {
   void createDynamicCells() override;
 
   ResultsBetweenWithinTableCell m_resultsBetweenWithinTable;
+
+  // False if integrated in a tab controller, true otherwise
+  bool m_isStandalone;
 };
 
 class StatisticsController : public CategoricalController {

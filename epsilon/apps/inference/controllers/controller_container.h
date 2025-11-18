@@ -42,6 +42,9 @@ class ControllerContainer {
                                     static_cast<ANOVATest*>(inferenceModel)},
         m_resultsTabController{stackViewController, this,
                                static_cast<ANOVATest*>(inferenceModel)},
+        m_resultsBetweenWithinController{
+            stackViewController, this, static_cast<ANOVATest*>(inferenceModel),
+            true},
         m_inputHomogeneityController{
             stackViewController, this,
             static_cast<HomogeneityTest*>(inferenceModel)},
@@ -71,6 +74,7 @@ class ControllerContainer {
   ANOVA::InputDataController m_inputDataController;
   ANOVA::InputStatisticsController m_inputStatisticsController;
   ANOVA::ResultsTabController m_resultsTabController;
+  ANOVA::BetweenWithinController m_resultsBetweenWithinController;
   InputHomogeneityController m_inputHomogeneityController;
   ResultsGoodnessTabController m_goodnessResultsController;
   InputGoodnessController m_inputGoodnessController;

@@ -17,7 +17,7 @@ ResultsTabController::ResultsTabController(
     : InferenceController(inferenceModel),
       TabViewController(parent, this,
                         {&m_firstTabController, &m_secondTabController}),
-      m_firstTabController(this, controllerContainer, inferenceModel),
+      m_firstTabController(this, controllerContainer, inferenceModel, false),
       m_secondTabController(this, controllerContainer, inferenceModel) {}
 
 bool ResultsTabController::handleEvent(Ion::Events::Event event) {
@@ -31,12 +31,13 @@ bool ResultsTabController::handleEvent(Ion::Events::Event event) {
 // BetweenWithinController
 BetweenWithinController::BetweenWithinController(
     Escher::Responder* parent, ControllerContainer* controllerContainer,
-    ANOVATest* inferenceModel)
+    ANOVATest* inferenceModel, bool isStandalone)
     : CategoricalController(parent, &controllerContainer->m_resultsController,
                             Invocation::Builder<CategoricalController>(
                                 &CategoricalController::ButtonAction, this)),
       m_resultsBetweenWithinTable(&m_selectableListView, inferenceModel, this,
-                                  this) {}
+                                  this),
+      m_isStandalone(isStandalone) {}
 
 void BetweenWithinController::createDynamicCells() {
   m_resultsBetweenWithinTable.createCells();

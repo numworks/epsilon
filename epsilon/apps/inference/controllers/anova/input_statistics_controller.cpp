@@ -10,7 +10,8 @@ InputStatisticsController::InputStatisticsController(
     StackViewController* parent, ControllerContainer* controllerContainer,
     ANOVATest* inference)
     : InputCategoricalController(
-          parent, &controllerContainer->m_resultsTabController, inference,
+          parent, &controllerContainer->m_resultsBetweenWithinController,
+          inference,
           Invocation::Builder<InputCategoricalController>(
               &InputCategoricalController::ButtonAction, this)),
       m_inputANOVATable(&m_selectableListView, inference, this, this) {}

@@ -76,16 +76,28 @@ void ANOVATest::InputStatisticsData::unsetStatisticParameter(
   parameter(parameterIndex) = k_undefinedValue;
 }
 
-void ANOVATest::compute() {
+void ANOVATest::computeGroupData() {
   using namespace Poincare::Inference::SignificanceTest::FTest;
 
-  m_groupData.resize(m_groups.size());
-  std::transform(m_groups.begin(), m_groups.end(), m_groupData.begin(),
-                 ComputeGroupData);
-  assert(m_groupData.size() == m_groups.size());
+  m_groupData.resize(numberOfGroups());
+  switch (m_inputMode) {
+    case InputMode::Values:
+      std::transform(m_groups.begin(), m_groups.end(), m_groupData.begin(),
+                     ComputeGroupData);
+      break;
+    case InputMode::Statistics:
+      std::transform(m_inputStatistics.begin(), m_inputStatistics.end(),
+                     m_groupData.begin(), GroupDataFromInputStatistics);
+      break;
+    default:
+      OMG::unreachable();
+  }
+  assert(m_groupData.size() == numberOfGroups());
+}
 
+void ANOVATest::compute() {
+  computeGroupData();
   m_results = ComputeStatisticResults(m_groupData.span());
-
   m_testCriticalValue = m_results.statistic;
   m_pValue = m_results.pValue;
 }

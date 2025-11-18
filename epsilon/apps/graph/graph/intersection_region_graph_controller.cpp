@@ -51,21 +51,20 @@ void IntersectionRegionGraphController::updateBestPointOfInterestForRecord(
           bestPoint.record = record;
           bestPoint.intersectedRecord = intersectedRecord;
           if (!isAlongY) {
-            // No need to explore further
+            // Interest points are ordered, no need to explore further
             return;
           }
         }
       }
     }
-    if (start == p.x() && !stretch) {
-      // This should only happen with functions along Y.
-      assert(isAlongY);
-      // computeAtLeastOnePointOfInterest would return the same point again.
+    double nextStart = p.x();
+    if (isAlongY && !IsBetterPoint(directionIsRight, start, nextStart)) {
       /* TODO: computeAtLeastOnePointOfInterest doesn't handle well functions
-       * along Y. If multiple points of interest are at the same x coordinate,
-       * only one can be returned. */
+       * along Y and can find interest points out of [start, max] range. */
+      // Escape to prevent potential infinite loops
       return;
     }
+    assert(IsBetterPoint(directionIsRight, start, nextStart));
     // Try another point of interest
     start = p.x();
     // Prevent finding the same point again

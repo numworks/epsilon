@@ -123,6 +123,8 @@ class ANOVATest : public SignificanceTest, public InputTable {
   bool deleteStatisticParameter(int parameterIndex, int groupIndex);
   bool validateStatisticInputs() const;
 
+  void computeGroupData();
+
   // InferenceModel
   double* parametersArray() override { return nullptr; }
 

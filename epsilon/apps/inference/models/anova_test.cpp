@@ -45,7 +45,7 @@ void ANOVATest::computeGroupData() {
   switch (m_inputMode) {
     case InputMode::Values:
       std::transform(m_groups.begin(), m_groups.end(), m_groupData.begin(),
-                     ComputeGroupData);
+                     GroupDataFromValues);
       break;
     case InputMode::Statistics:
       std::transform(m_inputStatistics.begin(), m_inputStatistics.end(),

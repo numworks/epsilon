@@ -36,9 +36,6 @@ class ResultsBetweenWithinTableCell
   // DataSource
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
-  bool canStoreCellAtLocation(int column, int row) override {
-    return column > 0 && row > 0;
-  }
 
   // DynamicCellsDataSource
   Escher::SelectableTableView* tableView() override {

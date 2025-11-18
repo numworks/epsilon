@@ -41,12 +41,6 @@ class InputStatisticsTable
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
 
-  bool canStoreCellAtLocation(int column, int row) override {
-    assert(column >= 0 && row >= 0);
-    assert(column < numberOfColumns() && row < numberOfRows());
-    return column >= 0 && row > 0;
-  }
-
   // DoubleDynamicCellsDataSource
   Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;

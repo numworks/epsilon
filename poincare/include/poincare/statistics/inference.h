@@ -242,6 +242,29 @@ Results Compute(const DataTable* contributions, double degreesOfFreedom);
 
 namespace FTest {
 
+class StatisticsData {
+ public:
+  StatisticsData(double nSamples, double mean, double sampleStdDeviation)
+      : m_nSamples(nSamples),
+        m_mean(mean),
+        m_sampleStdDeviation(sampleStdDeviation) {}
+
+  double numberOfSamples() const { return m_nSamples; }
+  double mean() const { return m_mean; }
+  double sampleStdDeviation() const { return m_sampleStdDeviation; }
+
+  void set(double value, int parameterIndex);
+
+  static bool IsValueAcceptable(double value, int parameterIndex);
+
+  constexpr static int k_numberOfParameters = 3;
+
+ private:
+  double m_nSamples;
+  double m_mean;
+  double m_sampleStdDeviation;
+};
+
 struct GroupData {
   int nSamples;
   double mean;
@@ -274,6 +297,7 @@ static constexpr size_t k_maxNumberOfGroupValues = 40;
 
 using Values = OMG::StaticVector<double, k_maxNumberOfGroupValues>;
 
+GroupData GroupDataFromStatisticsData(const StatisticsData& statisticsData);
 GroupData ComputeGroupData(const Values& values);
 
 StatisticResults ComputeStatisticResults(std::span<const Values> groups);

@@ -8,12 +8,57 @@
 
 namespace Poincare::Inference::SignificanceTest::FTest {
 
+bool StatisticsData::IsValueAcceptable(double value, int parameterIndex) {
+  assert(parameterIndex >= 0 && parameterIndex < k_numberOfParameters);
+  assert(!std::isnan(value));
+  /* There must be two samples per group at the very minimun for statistic
+   * calculations to make any sense */
+  if (parameterIndex == 0 && (value < 2.0 || std::floor(value) != value)) {
+    return false;
+  }
+  // Sample standard deviation must be a positive number
+  if (parameterIndex == 2 && (value < 0.0)) {
+    return false;
+  }
+  return true;
+}
+
+void StatisticsData::set(double value, int parameterIndex) {
+  switch (parameterIndex) {
+    case 0:
+      m_nSamples = value;
+      return;
+    case 1:
+      m_mean = value;
+      return;
+    case 2:
+      m_sampleStdDeviation = value;
+      return;
+    default:
+      OMG::unreachable();
+  }
+}
+
 bool IsObservedValueValid(double value) { return !std::isnan(value); }
 
 struct GlobalData {
   int nSamples;
   double mean;
 };
+
+GroupData GroupDataFromStatisticsData(const StatisticsData& statisticsData) {
+  int n = statisticsData.numberOfSamples();
+  double mean = statisticsData.mean();
+  double sampleStdDev = statisticsData.sampleStdDeviation();
+  double sampleVariance = sampleStdDev * sampleStdDev;
+  return GroupData{
+      .nSamples = n,
+      .mean = mean,
+      .sampleStdDeviation = sampleStdDev,
+      .sampleVariance = sampleVariance,
+      .sumOfValues = n * mean,
+      .sumOfSquaredValues = n * mean * mean + (n - 1) * sampleVariance};
+}
 
 GroupData ComputeGroupData(const Values& values) {
   Poincare::VectorDatasetColumn<Values::value_type, k_maxNumberOfGroupValues>

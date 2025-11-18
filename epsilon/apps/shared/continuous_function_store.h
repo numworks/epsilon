@@ -115,10 +115,7 @@ class ContinuousFunctionStore : public FunctionStore {
   }
   static bool IsFunctionActiveInequality(const ExpressionModelHandle* model,
                                          const void* context) {
-    return IsFunctionActive(model, context) &&
-           !(static_cast<const ContinuousFunction*>(model)
-                 ->properties()
-                 .isEquality());
+    return static_cast<const ContinuousFunction*>(model)->isActiveInequality();
   }
   static bool IsFunctionIntersectable(const ExpressionModelHandle* model,
                                       const void* context) {

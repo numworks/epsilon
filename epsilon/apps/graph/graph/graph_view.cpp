@@ -205,7 +205,7 @@ void GraphView::drawInequalitiesIntersection(KDContext* ctx,
     Ion::Storage::Record record = initModelBeforeDrawingPlot(i);
     OMG::ExpiringPointer<ContinuousFunction> f =
         functionStore()->modelForRecord(record);
-    if (f->properties().isEquality()) {
+    if (!f->isActiveInequality()) {
       continue;
     }
     functions[numberOfInequalities++] = f.pointer();
@@ -674,9 +674,7 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
     bool firstActiveInequality = true;
     for (int i = 0; i < numberOfActiveFunctions; i++) {
       Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
-      OMG::ExpiringPointer<Shared::ContinuousFunction> f =
-          functionStore()->modelForRecord(record);
-      if (!f->properties().isEquality()) {
+      if (functionStore()->modelForRecord(record)->isActiveInequality()) {
         /* Optimisation : skip the first active inequality since we only draw
          *                intersections. */
         if (firstActiveInequality) {

@@ -16,7 +16,7 @@ void IntersectionRegionGraphController::updateBestPointOfInterestForRecord(
     bool directionIsRight, PointOfInterestData& bestPoint) {
   OMG::ExpiringPointer<Shared::ContinuousFunction> f =
       functionStore()->modelForRecord(record);
-  if (f->properties().isEquality()) {
+  if (!f->isActiveInequality()) {
     // Only display intersections with inequalities
     return;
   }
@@ -40,10 +40,9 @@ void IntersectionRegionGraphController::updateBestPointOfInterestForRecord(
            IsBetterPoint(directionIsRight, p.y(), bestPoint.coordinate.y()))) {
         Ion::Storage::Record intersectedRecord = Ion::Storage::Record(p.data);
         // Only display intersections with inequalities
-        if (!functionStore()
-                 ->modelForRecord(intersectedRecord)
-                 ->properties()
-                 .isEquality()) {
+        if (functionStore()
+                ->modelForRecord(intersectedRecord)
+                ->isActiveInequality()) {
           // Update best point of interest
           bestPoint.coordinate = p.xy();
           bestPoint.isUnreachedIntersection =

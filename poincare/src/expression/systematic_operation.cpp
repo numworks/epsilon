@@ -617,7 +617,15 @@ static bool ReduceNestedRadicals(Tree* e) {
         {.KA = y, .KB = z});
     if (delta->isRational()) {
       /* √(a√b+c√d) = √(√(w)) * √(x) * (√u+√v) with
-       * u = (y+∂)/2 and v = (y-∂)/2 */
+       * u = (y+∂)/2 and v = (y-∂)/2
+       * If a and c are not the same sign then y < 0, which
+       * invalidates the formula. We change the equation to:
+       * √(a√b+c√d) = √(√(w)) * √(-x) * √(-y-√z)
+       * - x -> -x
+       * - y -> -y
+       * - √(y-√z) = √u-√v */
+      bool shouldInvertSign =
+          Rational::Numerator(a).sign() != Rational::Numerator(c).sign();
       result = PatternMatching::CreateReduce(
           KMult(KPow(KA, 1_e / 4_e), KPow(KMult(KE, KB), 1_e / 2_e),
                 KAdd(KPow(KMult(KAdd(KMult(KE, KC), KD), 1_e / 2_e), 1_e / 2_e),
@@ -628,13 +636,7 @@ static bool ReduceNestedRadicals(Tree* e) {
            .KB = x,
            .KC = y,
            .KD = delta,
-           /* If a and c are not the same sign then y < 0, which
-            * invalidates the formula. We change the equation to:
-            * √(a√b+c√d) = √(√(w)) * √(-x) * √(-y-√z)
-            * - x -> -x
-            * - y -> -y
-            * - √(y-√z) = √u-√v */
-           .KE = (Rational::Sign(a) == Rational::Sign(c)) ? 1_e : -1_e});
+           .KE = shouldInvertSign ? -1_e : 1_e});
     }
     delta->removeTree();
     z->removeTree();

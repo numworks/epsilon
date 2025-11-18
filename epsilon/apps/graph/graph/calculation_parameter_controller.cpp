@@ -213,7 +213,7 @@ bool CalculationParameterController::shouldDisplayIntersectionRegionCell()
     const {
   assert(function()->isActive());
   // Intersection region is handled between all active inequality functions
-  if (function()->properties().isEquality()) {
+  if (!function()->isActiveInequality()) {
     return false;
   }
   ContinuousFunctionStore* store = &App::app()->functionStore();

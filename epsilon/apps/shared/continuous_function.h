@@ -93,6 +93,9 @@ class ContinuousFunction : public Function {
     return !properties().isScatterPlot() && isActive() &&
            properties().canComputeIntersectionsWithFunctionsAlongSameVariable();
   }
+  bool isActiveInequality() const {
+    return isActive() && !properties().isEquality();
+  }
   bool isDiscontinuousOnFloatInterval(float minBound, float maxBound) const;
   // Compute line parameters (slope and intercept) from ContinuousFunction
   void getLineParameters(double* slope, double* intercept) const;

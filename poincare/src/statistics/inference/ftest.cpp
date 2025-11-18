@@ -60,7 +60,7 @@ GroupData GroupDataFromStatisticsData(const StatisticsData& statisticsData) {
       .sumOfSquaredValues = n * mean * mean + (n - 1) * sampleVariance};
 }
 
-GroupData ComputeGroupData(const Values& values) {
+GroupData GroupDataFromValues(const Values& values) {
   Poincare::VectorDatasetColumn<Values::value_type, k_maxNumberOfGroupValues>
       vector{values};
   Poincare::StatisticsDataset<Values::value_type> dataset =
@@ -148,7 +148,7 @@ StatisticResults ComputeStatisticResults(std::span<const Values> groups) {
   assert(groups.size() <= k_maxNumberOfGroups);
   std::array<GroupData, k_maxNumberOfGroups> groupDataArray;
   std::transform(groups.begin(), groups.end(), groupDataArray.begin(),
-                 ComputeGroupData);
+                 GroupDataFromValues);
   return ComputeStatisticResults(
       std::span<GroupData>{groupDataArray.data(), groups.size()});
 }

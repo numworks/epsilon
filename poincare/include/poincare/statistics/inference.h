@@ -298,7 +298,7 @@ static constexpr size_t k_maxNumberOfGroupValues = 40;
 using Values = OMG::StaticVector<double, k_maxNumberOfGroupValues>;
 
 GroupData GroupDataFromStatisticsData(const StatisticsData& statisticsData);
-GroupData ComputeGroupData(const Values& values);
+GroupData GroupDataFromValues(const Values& values);
 
 StatisticResults ComputeStatisticResults(std::span<const Values> groups);
 

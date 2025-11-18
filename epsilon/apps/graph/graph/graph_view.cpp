@@ -233,8 +233,8 @@ void GraphView::drawInequalitiesIntersection(KDContext* ctx,
       if (i % 2 != j % 2) {
         continue;
       }
-      KDCoordinate YCoord = firstY + j * 2;
-      float y = pixelToFloat(OMG::Axis::Vertical, YCoord);
+      KDCoordinate yCoord = firstY + j * 2;
+      float y = pixelToFloat(OMG::Axis::Vertical, yCoord);
 
       bool inRegion = true;
       for (int index = 0; index < numberOfInequalities; index++) {
@@ -246,7 +246,7 @@ void GraphView::drawInequalitiesIntersection(KDContext* ctx,
       if (!inRegion) {
         continue;
       }
-      ctx->setPixel(KDPoint(xCoord, YCoord), KDColorBlack);
+      ctx->setPixel(KDPoint(xCoord, yCoord), KDColorBlack);
     }
   }
 }

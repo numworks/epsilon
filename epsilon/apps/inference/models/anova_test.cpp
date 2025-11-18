@@ -91,17 +91,17 @@ void ANOVATest::compute() {
 }
 
 bool ANOVATest::validateInputs(int /* pageIndex */) {
-  if (m_groups.size() < 2) {
+  if (numberOfGroups() < 2) {
     return false;
   }
-  for (const GroupValues& group : m_groups) {
-    for (double value : group) {
-      if (std::isnan(value)) {
-        return false;
-      }
-    }
+  switch (m_inputMode) {
+    case InputMode::Values:
+      return validateGroupInputs();
+    case InputMode::Statistics:
+      return validateStatisticInputs();
+    default:
+      OMG::unreachable();
   }
-  return true;
 }
 
 void ANOVATest::setValueAtPosition(double value, int row, int column) {
@@ -228,6 +228,17 @@ bool ANOVATest::deleteGroupValue(int valueIndex, int groupIndex) {
   return true;
 }
 
+bool ANOVATest::validateGroupInputs() const {
+  for (const GroupValues& group : m_groups) {
+    for (double value : group) {
+      if (std::isnan(value)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 void ANOVATest::setStatisticParameter(double value, int parameterIndex,
                                       int groupIndex) {
   assert(parameterIndex >= 0 &&
@@ -263,6 +274,16 @@ bool ANOVATest::deleteStatisticParameter(int parameterIndex, int groupIndex) {
     m_inputStatistics.removeAt(groupIndex);
   }
 
+  return true;
+}
+
+bool ANOVATest::validateStatisticInputs() const {
+  for (const InputStatisticsData& groupStatisticData : m_inputStatistics) {
+    if (std::isnan(groupStatisticData.numberOfSamples()) ||
+        std::isnan(groupStatisticData.mean()) ||
+        std::isnan(groupStatisticData.sampleStdDeviation()))
+      return false;
+  }
   return true;
 }
 

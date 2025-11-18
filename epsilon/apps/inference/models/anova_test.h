@@ -115,11 +115,13 @@ class ANOVATest : public SignificanceTest, public InputTable {
   void setGroupValue(double value, int row, int column);
   double groupValue(int row, int column) const;
   bool deleteGroupValue(int row, int column);
+  bool validateGroupInputs() const;
 
   void setStatisticParameter(double value, int parameterIndex, int groupIndex);
   double statisticParameter(int parameterIndex, int groupIndex) const;
   // Return true if the number of groups was changed
   bool deleteStatisticParameter(int parameterIndex, int groupIndex);
+  bool validateStatisticInputs() const;
 
   // InferenceModel
   double* parametersArray() override { return nullptr; }

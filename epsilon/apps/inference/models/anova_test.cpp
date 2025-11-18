@@ -56,7 +56,9 @@ bool ANOVATest::InputStatisticsData::IsValueAcceptable(double value,
                                                        int parameterIndex) {
   assert(parameterIndex >= 0 && parameterIndex < k_numberOfParameters);
   assert(!std::isnan(value));
-  if (parameterIndex == 0 && (value < 1.0 || std::floor(value) != value)) {
+  /* There must be two samples per group at the very minimun for statistic
+   * calculations to make any sense */
+  if (parameterIndex == 0 && (value < 2.0 || std::floor(value) != value)) {
     return false;
   }
   // Sample standard deviation must be a positive number
@@ -242,6 +244,11 @@ bool ANOVATest::deleteGroupValue(int valueIndex, int groupIndex) {
 
 bool ANOVATest::validateGroupInputs() const {
   for (const GroupValues& group : m_groups) {
+    /* There must be two samples per group at the very minimun for statistic
+     * calculations to make any sense */
+    if (group.size() < 2) {
+      return false;
+    }
     for (double value : group) {
       if (std::isnan(value)) {
         return false;

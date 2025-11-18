@@ -7,23 +7,9 @@
 
 namespace Inference {
 
-ANOVATest::GroupData GroupDataFromInputStatistics(
-    const ANOVATest::InputStatisticsData& inputData) {
-  int n = inputData.numberOfSamples();
-  double mean = inputData.mean();
-  double sampleStdDev = inputData.sampleStdDeviation();
-  double sampleVariance = sampleStdDev * sampleStdDev;
-  return ANOVATest::GroupData{
-      .nSamples = n,
-      .mean = mean,
-      .sampleStdDeviation = sampleStdDev,
-      .sampleVariance = sampleVariance,
-      .sumOfValues = n * mean,
-      .sumOfSquaredValues = n * mean * mean + (n - 1) * sampleVariance};
-}
-
 double ANOVATest::InputStatisticsData::parameter(int parameterIndex) const {
-  assert(parameterIndex >= 0 && parameterIndex < k_numberOfParameters);
+  assert(parameterIndex >= 0 &&
+         parameterIndex < StatisticsData::k_numberOfParameters);
   switch (parameterIndex) {
     case 0:
       return numberOfSamples();
@@ -36,44 +22,20 @@ double ANOVATest::InputStatisticsData::parameter(int parameterIndex) const {
   }
 }
 
-double& ANOVATest::InputStatisticsData::parameter(int parameterIndex) {
-  assert(parameterIndex >= 0 && parameterIndex < k_numberOfParameters);
-  switch (parameterIndex) {
-    case 0:
-      return m_nSamples;
-    case 1:
-      return m_mean;
-    case 2:
-      return m_sampleStdDeviation;
-    default:
-      OMG::unreachable();
-  }
-}
-
-bool ANOVATest::InputStatisticsData::IsValueAcceptable(double value,
-                                                       int parameterIndex) {
-  assert(parameterIndex >= 0 && parameterIndex < k_numberOfParameters);
-  assert(!std::isnan(value));
-  /* There must be two samples per group at the very minimum for statistic
-   * calculations to make any sense */
-  if (parameterIndex == 0 && (value < 2.0 || std::floor(value) != value)) {
-    return false;
-  }
-  // Sample standard deviation must be a positive number
-  if (parameterIndex == 2 && (value < 0.0)) {
-    return false;
-  }
-  return true;
-}
-
 void ANOVATest::InputStatisticsData::set(double value, int parameterIndex) {
-  assert(IsValueAcceptable(value, parameterIndex));
-  parameter(parameterIndex) = value;
+  assert(StatisticsData::IsValueAcceptable(value, parameterIndex));
+  m_statisticsData.set(value, parameterIndex);
 }
 
 void ANOVATest::InputStatisticsData::unsetStatisticParameter(
     int parameterIndex) {
-  parameter(parameterIndex) = k_undefinedValue;
+  m_statisticsData.set(k_undefinedValue, parameterIndex);
+}
+
+ANOVATest::GroupData GroupDataFromInputStatisticsData(
+    const ANOVATest::InputStatisticsData& inputData) {
+  return Poincare::Inference::SignificanceTest::FTest::
+      GroupDataFromStatisticsData(inputData.statisticsData());
 }
 
 void ANOVATest::computeGroupData() {
@@ -87,7 +49,7 @@ void ANOVATest::computeGroupData() {
       break;
     case InputMode::Statistics:
       std::transform(m_inputStatistics.begin(), m_inputStatistics.end(),
-                     m_groupData.begin(), GroupDataFromInputStatistics);
+                     m_groupData.begin(), GroupDataFromInputStatisticsData);
       break;
     default:
       OMG::unreachable();
@@ -169,7 +131,7 @@ bool ANOVATest::authorizedValueAtPosition(double p, int row, int column) const {
       return Poincare::Inference::SignificanceTest::FTest::IsObservedValueValid(
           p);
     case InputMode::Statistics:
-      return InputStatisticsData::IsValueAcceptable(p, row);
+      return StatisticsData::IsValueAcceptable(p, row);
     default:
       OMG::unreachable();
   }
@@ -259,7 +221,7 @@ bool ANOVATest::validateGroupInputs() const {
 void ANOVATest::setStatisticParameter(double value, int parameterIndex,
                                       int groupIndex) {
   assert(parameterIndex >= 0 &&
-         parameterIndex < InputStatisticsData::k_numberOfParameters);
+         parameterIndex < StatisticsData::k_numberOfParameters);
   assert(groupIndex >= 0);
   if (groupIndex >= numberOfGroups()) {
     for (int i = numberOfGroups(); i <= groupIndex; ++i) {
@@ -271,7 +233,7 @@ void ANOVATest::setStatisticParameter(double value, int parameterIndex,
 
 double ANOVATest::statisticParameter(int parameterIndex, int groupIndex) const {
   assert(parameterIndex >= 0 && groupIndex >= 0);
-  if (parameterIndex >= InputStatisticsData::k_numberOfParameters ||
+  if (parameterIndex >= StatisticsData::k_numberOfParameters ||
       groupIndex >= m_inputStatistics.size()) {
     return k_undefinedValue;
   }
@@ -280,7 +242,7 @@ double ANOVATest::statisticParameter(int parameterIndex, int groupIndex) const {
 
 bool ANOVATest::deleteStatisticParameter(int parameterIndex, int groupIndex) {
   assert(parameterIndex >= 0 && groupIndex >= 0);
-  assert(parameterIndex < InputStatisticsData::k_numberOfParameters);
+  assert(parameterIndex < StatisticsData::k_numberOfParameters);
   if (groupIndex >= m_inputStatistics.size()) {
     return false;
   }

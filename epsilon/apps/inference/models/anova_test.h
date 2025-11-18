@@ -62,31 +62,36 @@ class ANOVATest : public SignificanceTest, public InputTable {
                                               : m_inputStatistics.size();
   }
 
+  using StatisticsData =
+      Poincare::Inference::SignificanceTest::FTest::StatisticsData;
+
   class InputStatisticsData {
    public:
     double parameter(int parameterIndex) const;
-    double& parameter(int parameterIndex);
 
-    double numberOfSamples() const { return m_nSamples; }
-    double mean() const { return m_mean; }
-    double sampleStdDeviation() const { return m_sampleStdDeviation; }
+    double numberOfSamples() const {
+      return m_statisticsData.numberOfSamples();
+    }
+    double mean() const { return m_statisticsData.mean(); }
+    double sampleStdDeviation() const {
+      return m_statisticsData.sampleStdDeviation();
+    }
 
-    static bool IsValueAcceptable(double value, int parameterIndex);
     void set(double value, int parameterIndex);
 
     void unsetStatisticParameter(int parameterIndex);
 
     bool isUnset() const {
-      return std::isnan(m_nSamples) && std::isnan(m_mean) &&
-             std::isnan(m_sampleStdDeviation);
+      return std::isnan(m_statisticsData.numberOfSamples()) &&
+             std::isnan(m_statisticsData.mean()) &&
+             std::isnan(m_statisticsData.sampleStdDeviation());
     }
 
-    constexpr static int k_numberOfParameters = 3;
+    const StatisticsData& statisticsData() const { return m_statisticsData; }
 
    private:
-    double m_nSamples = k_undefinedValue;
-    double m_mean = k_undefinedValue;
-    double m_sampleStdDeviation = k_undefinedValue;
+    StatisticsData m_statisticsData{k_undefinedValue, k_undefinedValue,
+                                    k_undefinedValue};
   };
 
   using GroupValues = Poincare::Inference::SignificanceTest::FTest::Values;

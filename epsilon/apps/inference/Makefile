@@ -30,6 +30,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/tables/header_titles.cpp \
   controllers/tables/one_header_row_table_data_source.cpp \
   controllers/tables/one_header_column_one_header_row_table_data_source.cpp \
+  controllers/tables/two_header_columns_one_header_row_table_data_source.cpp \
   controllers/significance_test/hypothesis_controller.cpp \
   controllers/significance_test/hypothesis_editable_controller.cpp \
   controllers/significance_test/hypothesis_display_only_controller.cpp \

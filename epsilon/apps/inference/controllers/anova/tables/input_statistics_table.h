@@ -2,7 +2,7 @@
 
 #include "inference/controllers/tables/categorical_table_cell.h"
 #include "inference/controllers/tables/dynamic_cells_data_source.h"
-#include "inference/controllers/tables/one_header_column_one_header_row_table_data_source.h"
+#include "inference/controllers/tables/two_header_columns_one_header_row_table_data_source.h"
 #include "inference/models/anova_test.h"
 #include "table_dimensions.h"
 
@@ -11,7 +11,7 @@ namespace Inference::ANOVA {
 class InputStatisticsController;
 
 class InputStatisticsTable : public InputCategoricalTableCell,
-                             public OneHeaderColumnOneHeaderRowTableDataSource,
+                             public TwoHeaderColumnsOneHeaderRowTableDataSource,
                              public DoubleDynamicCellsDataSource<
                                  Escher::SmallFontEvenOddBufferTextCell,
                                  InferenceEvenOddEditableCell> {
@@ -34,7 +34,8 @@ class InputStatisticsTable : public InputCategoricalTableCell,
 
   KDCoordinate nonMemoizedColumnWidth(int column) override {
     assert(column >= 0 && column < numberOfColumns());
-    return column == 0 ? TableDimensions::k_resultTitleColumnWidth
+    return column <= 1 ? column == 0 ? TableDimensions::k_resultTitleColumnWidth
+                                     : TableDimensions::k_symbolColumnWidth
                        : TableDimensions::k_columnWidth;
   }
 
@@ -81,7 +82,7 @@ class InputStatisticsTable : public InputCategoricalTableCell,
   size_t fillColumnName(int column, char* buffer) override;
 
   // CategoricalTableViewDataSource
-  int relativeColumn(int column) const override { return column - 1; }
+  int relativeColumn(int column) const override { return column - 2; }
 
   // CategoricalTableViewDataSource
   int innerNumberOfRows() const override { return k_numberOfInnerRows; }

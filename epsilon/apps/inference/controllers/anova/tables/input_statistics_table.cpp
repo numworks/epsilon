@@ -49,6 +49,20 @@ constexpr static const char* HeaderAtRow(int row) {
   }
 }
 
+constexpr static const char* SymbolAtRow(int row) {
+  assert(row >= 0 && row <= 3);
+  switch (row) {
+    case 0:
+      return I18n::translate(I18n::Message::N);
+    case 1:
+      return I18n::translate(I18n::Message::MeanSymbol);
+    case 2:
+      return I18n::translate(I18n::Message::S);
+    default:
+      OMG::unreachable();
+  }
+}
+
 void InputStatisticsTable::fillCellForLocation(Escher::HighlightCell* cell,
                                                int column, int row) {
   assert(row >= 0 && row < numberOfRows());
@@ -66,19 +80,21 @@ void InputStatisticsTable::fillCellForLocation(Escher::HighlightCell* cell,
       OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(column - 2);
       myCell->setText(groupTitle.data());
       myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+      myCell->setTextColor(KDColorBlack);
     } else {
       assert(column <= 1);
       if (column == 0) {
         // Row title
         myCell->setText(HeaderAtRow(row - 1));
         myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+        myCell->setTextColor(KDColorBlack);
       } else {
         // Row symbol
-        myCell->setText("df");
-        myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+        myCell->setText(SymbolAtRow(row - 1));
+        myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+        myCell->setTextColor(Palette::GrayDark);
       }
     }
-    myCell->setTextColor(KDColorBlack);
   } else {
     assert(type == k_typeOfInnerCells);
     fillInnerCellForLocation(cell, column - 2, row - 1);

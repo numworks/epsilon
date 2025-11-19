@@ -47,12 +47,13 @@ struct GlobalData {
 };
 
 GroupData GroupDataFromStatisticsData(const StatisticsData& statisticsData) {
-  int n = statisticsData.numberOfSamples();
+  double n = statisticsData.numberOfSamples();
+  assert(n >= 0 && std::round(n) == n);
   double mean = statisticsData.mean();
   double sampleStdDev = statisticsData.sampleStdDeviation();
   double sampleVariance = sampleStdDev * sampleStdDev;
   return GroupData{
-      .nSamples = n,
+      .nSamples = static_cast<int>(n),
       .mean = mean,
       .sampleStdDeviation = sampleStdDev,
       .sampleVariance = sampleVariance,

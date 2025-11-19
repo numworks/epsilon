@@ -301,7 +301,8 @@ GroupData GroupDataFromStatisticsData(const StatisticsData& statisticsData);
 GroupData GroupDataFromValues(const Values& values);
 
 StatisticResults ComputeStatisticResults(std::span<const Values> groups);
-
+StatisticResults ComputeStatisticResults(
+    std::span<const StatisticsData> groupStatistics);
 StatisticResults ComputeStatisticResults(std::span<const GroupData> groupData);
 
 bool IsObservedValueValid(double value);

@@ -23,10 +23,12 @@ constexpr static TableShape k_inputDataShape = TableShape{
 
 constexpr static int k_resultTitleColumnWidth = 200;
 
+constexpr static int k_symbolColumnWidth = 25;
+
 constexpr static TableShape k_inputStatisticsShape = TableShape{
     .inner = InnerTableDimensions{.rows = 3,
                                   .columns = ANOVATest::k_maxNumberOfColumns},
-    .reusable = ReusableCountsOneRowOneColumnHeader(
+    .reusable = ReusableCountsTwoColumnHeadersOneRowHeader(
         /* The "reusable" number of rows are the same as the "normal" number of
            rows because the dimension is small.*/
         ReusableCellDimensions{

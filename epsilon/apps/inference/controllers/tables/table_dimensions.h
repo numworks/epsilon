@@ -48,4 +48,13 @@ constexpr ReusableCellCounts ReusableCountsOneRowOneColumnHeader(
                                 .inner = dimensions.columns * dimensions.rows}};
 }
 
+constexpr ReusableCellCounts ReusableCountsTwoColumnHeadersOneRowHeader(
+    ReusableCellDimensions dimensions) {
+  return ReusableCellCounts{
+      .dimensions = dimensions,
+      .categories = ReusableCellCategories{
+          .header = 2 * dimensions.rows + dimensions.columns,
+          .inner = dimensions.columns * dimensions.rows}};
+}
+
 }  // namespace Inference

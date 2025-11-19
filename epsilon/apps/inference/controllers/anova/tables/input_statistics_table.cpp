@@ -63,18 +63,25 @@ void InputStatisticsTable::fillCellForLocation(Escher::HighlightCell* cell,
   if (type == k_typeOfHeaderCells) {
     if (row == 0) {
       // Column title
-      OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(column - 1);
+      OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(column - 2);
       myCell->setText(groupTitle.data());
       myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     } else {
-      // Row title
-      myCell->setText(HeaderAtRow(row - 1));
-      myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+      assert(column <= 1);
+      if (column == 0) {
+        // Row title
+        myCell->setText(HeaderAtRow(row - 1));
+        myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+      } else {
+        // Row symbol
+        myCell->setText("df");
+        myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+      }
     }
     myCell->setTextColor(KDColorBlack);
   } else {
     assert(type == k_typeOfInnerCells);
-    fillInnerCellForLocation(cell, column - 1, row - 1);
+    fillInnerCellForLocation(cell, column - 2, row - 1);
   }
   myCell->setEven(row % 2 == 0);
 

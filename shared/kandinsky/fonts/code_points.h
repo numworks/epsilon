@@ -145,9 +145,7 @@ constexpr
         0x300,  //  ̀ // COMBINING GRAVE ACCENT
         0x301,  //  ́ // COMBINING ACUTE ACCENT
         0x302,  //  ̂ // COMBINING CIRCUMFLEX ACCENT
-#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x303,  //  ̃ // COMBINING TILDE
-#endif
         0x305,  //  ̅ // COMBINING OVERLINE
         0x308,  //  ̈ // COMBINING DIAERESIS
 #if !KANDINSKY_CODEPOINTS_SCANDIUM
@@ -200,8 +198,8 @@ constexpr
 #endif
 #if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x27E8,  // ⟨ // LEFT ANGLE BRACKET
-        0x27E9,  // ⟩ // RIGHT ANGLE BRACKET
 #endif
+        0x27E9,  // ⟩ // RIGHT ANGLE BRACKET
         0xFFFD,  // � // REPLACEMENT CHARACTER
 };
 

@@ -2,6 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <apps/shared/double_pair_table_controller.h>
+#include <apps/shared/table_dimensions.h>
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_expression_cell.h>
@@ -89,11 +90,8 @@ class CalculationController : public Shared::DoublePairTableController {
                                  27, Escher::EvenOddCell::k_horizontalMargin),
                              k_minCalculationCellWidth);
   // Symbol column
-  constexpr static int k_symbolColumnMaxNumberOfChars = 3;
   constexpr static KDCoordinate k_symbolColumnWidth =
-      Escher::Metric::SmallFontCellWidth(
-          k_symbolColumnMaxNumberOfChars,
-          Escher::Metric::CellVerticalElementMargin);
+      Shared::TableDimensions::k_symbolColumnWidth;
 
   // TableViewDataSource
   KDCoordinate nonMemoizedColumnWidth(int column) override;

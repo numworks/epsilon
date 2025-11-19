@@ -11,6 +11,7 @@
 
 #include "double_pair_store.h"
 #include "tab_table_controller.h"
+#include "table_dimensions.h"
 
 namespace Shared {
 
@@ -66,10 +67,8 @@ class DoublePairTableController
   // Cell sizes
   constexpr static KDCoordinate k_cellHeight =
       Escher::Metric::SmallEditableCellHeight;
-  constexpr static int k_titleNumberOfChars = 22;
   constexpr static KDCoordinate k_calculationTitleCellWidth =
-      Escher::Metric::SmallFontCellWidth(
-          k_titleNumberOfChars, Escher::Metric::CellVerticalElementMargin);
+      TableDimensions::k_rowTitleCellColumnWidth;
   // Cell types
   constexpr static int k_hideableCellType = 0;
   constexpr static int k_seriesTitleCellType = 1;

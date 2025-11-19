@@ -1,5 +1,7 @@
 #pragma once
 
+#include <apps/shared/table_dimensions.h>
+
 #include <algorithm>
 
 #include "inference/controllers/tables/categorical_table_view_data_source.h"
@@ -11,6 +13,13 @@ namespace Inference::ANOVA::TableDimensions {
 // TODO: shared value with ChiSquare / Homogeneity
 constexpr static int k_columnWidth = 82;
 
+// Temporary because some titles don't fit in
+constexpr static int k_resultTitleColumnWidth =
+    Shared::TableDimensions::k_rowTitleCellColumnWidth + 20;
+
+constexpr static int k_symbolColumnWidth =
+    Shared::TableDimensions::k_symbolColumnWidth;
+
 constexpr static TableShape k_inputDataShape = TableShape{
     .inner = InnerTableDimensions{.rows = ANOVATest::k_maxNumberOfRows,
                                   .columns = ANOVATest::k_maxNumberOfColumns},
@@ -20,10 +29,6 @@ constexpr static TableShape k_inputDataShape = TableShape{
                      ANOVATest::k_maxNumberOfRows),
         .columns = std::min(Ion::Display::Width / k_columnWidth + 2,
                             ANOVATest::k_maxNumberOfColumns)})};
-
-constexpr static int k_resultTitleColumnWidth = 200;
-
-constexpr static int k_symbolColumnWidth = 25;
 
 constexpr static TableShape k_inputStatisticsShape = TableShape{
     .inner = InnerTableDimensions{.rows = 3,

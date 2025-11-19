@@ -153,4 +153,14 @@ StatisticResults ComputeStatisticResults(std::span<const Values> groups) {
       std::span<GroupData>{groupDataArray.data(), groups.size()});
 }
 
+StatisticResults ComputeStatisticResults(
+    std::span<const StatisticsData> groupStatistics) {
+  assert(groupStatistics.size() <= k_maxNumberOfGroups);
+  std::array<GroupData, k_maxNumberOfGroups> groupDataArray;
+  std::transform(groupStatistics.begin(), groupStatistics.end(),
+                 groupDataArray.begin(), GroupDataFromStatisticsData);
+  return ComputeStatisticResults(
+      std::span<GroupData>{groupDataArray.data(), groupStatistics.size()});
+}
+
 }  // namespace Poincare::Inference::SignificanceTest::FTest

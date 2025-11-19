@@ -39,9 +39,9 @@ constexpr static const char* HeaderAtRow(int row) {
   assert(row >= 0 && row < 3);
   switch (row) {
     case 0:
-      return I18n::translate(I18n::Message::SampleSize);
+      return I18n::translate(I18n::Message::SampleSizeShort);
     case 1:
-      return I18n::translate(I18n::Message::SampleMean);
+      return I18n::translate(I18n::Message::SampleMeanShort);
     case 2:
       return I18n::translate(I18n::Message::SampleSTDShort);
     default:

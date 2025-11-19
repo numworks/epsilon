@@ -13,9 +13,8 @@ namespace Inference::ANOVA::TableDimensions {
 // TODO: shared value with ChiSquare / Homogeneity
 constexpr static int k_columnWidth = 82;
 
-// Temporary because some titles don't fit in
 constexpr static int k_resultTitleColumnWidth =
-    Shared::TableDimensions::k_rowTitleCellColumnWidth + 20;
+    Shared::TableDimensions::k_rowTitleCellColumnWidth;
 
 constexpr static int k_symbolColumnWidth =
     Shared::TableDimensions::k_symbolColumnWidth;

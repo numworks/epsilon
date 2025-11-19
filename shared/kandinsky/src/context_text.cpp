@@ -109,7 +109,15 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
             ->setGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
         codePoint = decoder.nextCodePoint();
         while (codePoint.isCombining()) {
+#if KANDINSKY_FONT_VARIABLE_WIDTH
+          if (KDFont::GlyphWidth(style.font, codePoint) != width) {
+            /* Hack: i is finer than an accent in Scandium, remove the dot
+             * before stamping the acute accent. */
+            glyphBuffer.grayscaleBuffer()[2] = 0;
+          }
+#else
           assert(KDFont::GlyphWidth(style.font, codePoint) == width);
+#endif
           KDFont::Font(style.font)
               ->accumulateGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
           codePointPointer = decoder.stringPosition();

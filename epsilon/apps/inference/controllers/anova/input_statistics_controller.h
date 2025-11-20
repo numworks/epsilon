@@ -25,7 +25,7 @@ class InputStatisticsController : public InputCategoricalController {
   InputCategoricalTableCell* categoricalTableCell() override {
     return &m_inputANOVATable;
   }
-  void createDynamicCells() override;
+  void createDynamicCells() override { m_inputANOVATable.createCells(); }
 
   InputStatisticsTable m_inputANOVATable;
 };

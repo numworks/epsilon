@@ -63,13 +63,12 @@ constexpr static const char* HeaderAtRow(int row) {
 constexpr static const char* SymbolAtRow(int row) {
   assert(row >= 0 && row <= ResultsBetweenWithinTableCell::k_numberOfInnerRows);
   switch (row) {
-    // TODO: internationalization
     case 0:
-      return "SS";
+      return I18n::translate(I18n::Message::SquareSumSymbol);
     case 1:
-      return "df";
+      return I18n::translate(I18n::Message::DegreesOfFreedomSymbol);
     case 2:
-      return "MS";
+      return I18n::translate(I18n::Message::MeanSquaresSymbol);
     default:
       OMG::unreachable();
   }

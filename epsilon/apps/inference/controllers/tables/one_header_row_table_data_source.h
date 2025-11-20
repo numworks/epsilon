@@ -12,8 +12,6 @@ namespace Inference {
 class OneHeaderRowTableDataSource : public CategoricalTableViewDataSource {
  public:
   // TableViewDataSource
-  int numberOfRows() const override { return innerNumberOfRows() + 1; }
-  int numberOfColumns() const override { return innerNumberOfColumns(); }
   int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
   Escher::HighlightCell* reusableCell(int i, int type) override;
@@ -22,6 +20,9 @@ class OneHeaderRowTableDataSource : public CategoricalTableViewDataSource {
   virtual int maxNumberOfColumn() const = 0;
 
  protected:
+  int numberOfHeaderRows() const override { return 1; }
+  int numberOfHeaderColumns() const override { return 0; }
+
   virtual ReusableCellCounts reusableCellCounts() const = 0;
 
   virtual Escher::HighlightCell* reusableHeaderCell(int i) = 0;

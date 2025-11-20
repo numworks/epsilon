@@ -57,10 +57,14 @@ class ResultGoodnessContributionsTable
 
   // TableViewDataSource
   int numberOfRows() const override {
-    return 1 + m_inference->numberOfDataRows();
+    return numberOfHeaderRows() + m_inference->numberOfDataRows();
   }
   int numberOfColumns() const override { return 3; }
   int typeAtLocation(int column, int row) const override { return 0; }
+
+ protected:
+  int numberOfHeaderRows() const override { return 1; }
+  int numberOfHeaderColumns() const override { return 0; }
 
  private:
   constexpr static I18n::Message k_titles[] = {I18n::Message::Observed,

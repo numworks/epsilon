@@ -138,7 +138,7 @@ class ANOVATest : public SignificanceTest, public InputTable {
       Poincare::Inference::SignificanceTest::FTest::k_maxNumberOfGroups);
   static_assert(k_maxNumberOfValuesPerGroup <= GroupValues{}.capacity());
 
-  // TODO: variant
+  // TODO: variant to share memory space between m_groups and m_groupData
   OMG::StaticVector<GroupValues, k_maxNumberOfGroups> m_groups;
   OMG::StaticVector<InputStatisticsData, k_maxNumberOfGroups> m_inputStatistics;
 

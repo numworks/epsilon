@@ -48,7 +48,7 @@ class Rational final {
     result->moveTreeOverTree(Multiplication(result, e3, others...));
     return result;
   }
-  // Return the rational result of e1/e2, with e2 != 0
+  // Return the rational result of the e1/e2, with e1, e2 rationals and e2 != 0
   static Tree* NonZeroDivision(const Tree* e1, const Tree* e2);
   struct IntegerOperationResult {
     Tree* tree;

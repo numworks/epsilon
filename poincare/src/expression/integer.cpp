@@ -279,33 +279,47 @@ uint8_t IntegerHandler::numberOfDigits() const {
 
 IntegerHandler::DigitCounts IntegerHandler::numberOfBase10DigitsWithoutSign(
     WorkingBuffer* workingBuffer) const {
-  // TODO: This method should be optimized because udiv is a costly function
-  // assert(!isOverflow());
+  if (isZero()) {
+    return 1;
+  }
   uint8_t* const localStart = workingBuffer->localStart();
-  int numberOfDigits = 1;
+  int numberOfDigits = 0;
   IntegerHandler base(10);
-  bool countingZeros = true;
+  IntegerHandler comparison = 1;
+  while (true) {
+    if (Ucmp(comparison, *this) > 0) {
+      break;
+    }
+    /* oneDigitOverflow is set to allow comparison to be just greater than the
+     * max integer. */
+    comparison = Mult(comparison, base, workingBuffer, true);
+    workingBuffer->garbageCollect({&base, &comparison}, localStart);
+    numberOfDigits++;
+  }
+  workingBuffer->garbageCollect({}, localStart);
+  return {numberOfDigits, numberOfZeroesAtTheEnd(workingBuffer)};
+}
+
+int IntegerHandler::numberOfZeroesAtTheEnd(WorkingBuffer* workingBuffer) const {
+  // assert(!isOverflow());
+  if (isZero()) {
+    return 1;
+  }
+  uint8_t* const localStart = workingBuffer->localStart();
+  IntegerHandler base(10);
   int numberOfZeroes = 0;
   IntegerHandler quotient = *this;
   while (true) {
     DivisionResult<IntegerHandler> result = Udiv(quotient, base, workingBuffer);
     quotient = result.quotient;
-    if (countingZeros) {
-      if (result.remainder.isZero()) {
-        numberOfZeroes++;
-      } else {
-        // Stop counting zeroes as soon as a digit isn't null
-        countingZeros = false;
-      }
-    }
-    if (quotient.isZero()) {
+    if (quotient.isZero() || !result.remainder.isZero()) {
       break;
     }
+    numberOfZeroes++;
     workingBuffer->garbageCollect({&base, &quotient}, localStart);
-    numberOfDigits++;
   }
   workingBuffer->garbageCollect({}, localStart);
-  return {numberOfDigits, numberOfZeroes};
+  return numberOfZeroes;
 }
 
 template <typename T>

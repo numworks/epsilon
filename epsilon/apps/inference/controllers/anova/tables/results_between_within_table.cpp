@@ -44,18 +44,81 @@ void ResultsBetweenWithinTableCell::drawRect(KDContext* ctx,
                 m_selectableTableView.backgroundColor());
 }
 
+// The row index refers to the "inner" table
+constexpr static const char* HeaderAtRow(int row) {
+  assert(row >= 0 && row <= ResultsBetweenWithinTableCell::k_numberOfInnerRows);
+  switch (row) {
+    case 0:
+      return I18n::translate(I18n::Message::SquareSum);
+    case 1:
+      return I18n::translate(I18n::Message::DegreesOfFreedom);
+    case 2:
+      return I18n::translate(I18n::Message::MeanSquares);
+    default:
+      OMG::unreachable();
+  }
+}
+
+// The row index refers to the "inner" table
+constexpr static const char* SymbolAtRow(int row) {
+  assert(row >= 0 && row <= ResultsBetweenWithinTableCell::k_numberOfInnerRows);
+  switch (row) {
+    // TODO: internationalization
+    case 0:
+      return "SS";
+    case 1:
+      return "df";
+    case 2:
+      return "MS";
+    default:
+      OMG::unreachable();
+  }
+}
+
+void ResultsBetweenWithinTableCell::fillHeaderCellForLocation(
+    Escher::HighlightCell* cell, int column, int row) {
+  headerCellType* myCell = static_cast<headerCellType*>(cell);
+
+  if (row < numberOfHeaderRows()) {
+    int innerColumnIndex = column - numberOfHeaderColumns();
+    assert(innerColumnIndex <= k_numberOfInnerColumns);
+    // Column title
+    switch (innerColumnIndex) {
+      case 0:
+        myCell->setText(I18n::translate(I18n::Message::Between));
+        break;
+      case 1:
+        myCell->setText(I18n::translate(I18n::Message::Within));
+        break;
+      default:
+        OMG::unreachable();
+    }
+    myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+  } else {
+    assert(column < numberOfHeaderColumns());
+    if (column == 0) {
+      // Row title
+      myCell->setText(HeaderAtRow(row - numberOfHeaderRows()));
+      myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+      myCell->setTextColor(KDColorBlack);
+    } else {
+      assert(column == 1);
+      // Row symbol
+      myCell->setText(SymbolAtRow(row - numberOfHeaderRows()));
+      myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+      myCell->setTextColor(Palette::GrayDark);
+    }
+  }
+}
+
 void ResultsBetweenWithinTableCell::fillInnerCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
   assert(row >= 0 && row < innerNumberOfRows());
   assert(column >= 0 && column < innerNumberOfColumns());
-
-  InferenceEvenOddBufferCell* myCell =
-      static_cast<InferenceEvenOddBufferCell*>(cell);
-
+  innerCellType* myCell = static_cast<innerCellType*>(cell);
   const ANOVATest::CalculatedValues& values =
       (column == 0) ? m_inference->results().between
                     : m_inference->results().within;
-
   switch (row) {
     case 0:
       PrintValueInTextHolder(values.sumOfSquares, myCell);
@@ -68,50 +131,6 @@ void ResultsBetweenWithinTableCell::fillInnerCellForLocation(
       break;
     default:
       OMG::unreachable();
-  }
-
-  myCell->setEven(row % 2 == 1);
-}
-
-void ResultsBetweenWithinTableCell::fillCellForLocation(
-    Escher::HighlightCell* cell, int column, int row) {
-  assert(row >= 0 && row < numberOfRows());
-  assert(column >= 0 && column < numberOfColumns());
-
-  int type = typeAtLocation(column, row);
-  if (type == k_typeOfTopLeftCell) {
-    return;
-  }
-  if (type == k_typeOfHeaderCells) {
-    InferenceEvenOddBufferCell* myCell =
-        static_cast<InferenceEvenOddBufferCell*>(cell);
-    if (row == 0) {
-      // Column title
-      assert(column == 1 || column == 2);
-      if (column == 1) {
-        myCell->setText(I18n::translate(I18n::Message::Between));
-      } else {
-        myCell->setText(I18n::translate(I18n::Message::Within));
-      }
-      myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-      myCell->setEven(true);
-    } else {
-      // Row title
-      assert(row == 1 || row == 2 || row == 3);
-      if (row == 1) {
-        myCell->setText(I18n::translate(I18n::Message::SquareSum));
-      } else if (row == 2) {
-        myCell->setText(I18n::translate(I18n::Message::DegreesOfFreedom));
-      } else {
-        myCell->setText(I18n::translate(I18n::Message::MeanSquares));
-      }
-      myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-      myCell->setEven(static_cast<bool>((row + 1) % 2));
-    }
-    myCell->setTextColor(KDColorBlack);
-  } else {
-    assert(type == k_typeOfInnerCells);
-    fillInnerCellForLocation(cell, column - 1, row - 1);
   }
 }
 

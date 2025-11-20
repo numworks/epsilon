@@ -42,7 +42,7 @@ constexpr static TableShape k_inputStatisticsShape = TableShape{
 
 constexpr static TableShape k_resultBetweenWithinShape =
     TableShape{.inner = InnerTableDimensions{.rows = 3, .columns = 2},
-               .reusable = ReusableCountsOneRowOneColumnHeader(
+               .reusable = ReusableCountsTwoColumnHeadersOneRowHeader(
                    /* The "reusable" dimension is the same as the "normal"
                       dimension because the dimension is small.*/
                    ReusableCellDimensions{.rows = 3, .columns = 2})};

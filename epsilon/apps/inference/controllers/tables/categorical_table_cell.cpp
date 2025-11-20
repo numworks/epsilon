@@ -127,6 +127,9 @@ bool InputCategoricalTableCell::handleEvent(Ion::Events::Event event) {
     deleteSelectedValue();
     return true;
   } else if (event == Ion::Events::Backspace || event == Ion::Events::Clear) {
+    if (!isColumnClearable(column)) {
+      return true;
+    }
     presentClearSelectedColumnPopupIfClearable();
     return true;
   }

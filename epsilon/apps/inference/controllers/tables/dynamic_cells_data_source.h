@@ -28,6 +28,9 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
    * create different types of cells with a specific offset in the buffer using
    * 'createCellsWithOffset'. */
  public:
+  using headerCellType = CellType;
+  using innerCellType = CellType;
+
   DynamicCellsDataSource() : m_cells(nullptr) {}
   ~DynamicCellsDataSource();
 
@@ -63,6 +66,9 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
 template <typename HeaderCellType, typename InnerCellType>
 class DoubleDynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
  public:
+  using headerCellType = HeaderCellType;
+  using innerCellType = InnerCellType;
+
   DoubleDynamicCellsDataSource()
       : m_headerCells(nullptr), m_innerCells(nullptr) {}
   ~DoubleDynamicCellsDataSource();

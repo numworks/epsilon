@@ -2,6 +2,7 @@
 #include <ion/console.h>
 #include <ion/display.h>
 #include <ion/events.h>
+#include <stdlib.h>
 
 /* Ad hoc functions to avoid requiring Poincare::PrintInt, which also needs a
  * sizeable part of liba. */
@@ -36,6 +37,5 @@ void __assert(const char* expression, const char* file, int line) {
   buffer[length] = '\0';
   Ion::Console::writeLine(buffer);
 
-  while (true)
-    ;
+  exit(1);
 }

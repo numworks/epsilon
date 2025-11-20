@@ -53,6 +53,7 @@ $(addprefix device/shared/drivers/, \
   board_unprivileged.cpp \
   console_display.cpp:+consoledisplay \
   dfu_interfaces.cpp \
+  exit.cpp:+test \
   flash_information.cpp \
   read_only_memory.cpp \
   trampoline.cpp \

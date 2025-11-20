@@ -50,7 +50,7 @@ constexpr static TableShape k_resultBetweenWithinShape =
 constexpr static TableShape k_resultGroupStatisticsShape = TableShape{
     .inner = InnerTableDimensions{.rows = 4,
                                   .columns = ANOVATest::k_maxNumberOfColumns},
-    .reusable = ReusableCountsOneRowOneColumnHeader(
+    .reusable = ReusableCountsTwoColumnHeadersOneRowHeader(
         /* The "reusable" number of rows are the same as the "normal" number of
            rows because the dimension is small.*/
         ReusableCellDimensions{

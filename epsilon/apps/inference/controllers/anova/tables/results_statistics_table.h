@@ -2,7 +2,7 @@
 
 #include "inference/controllers/tables/categorical_table_cell.h"
 #include "inference/controllers/tables/dynamic_cells_data_source.h"
-#include "inference/controllers/tables/one_header_column_one_header_row_table_data_source.h"
+#include "inference/controllers/tables/two_header_columns_one_header_row_table_data_source.h"
 #include "inference/models/anova_test.h"
 #include "table_dimensions.h"
 
@@ -12,7 +12,7 @@ class StatisticsController;
 
 class ResultsStatisticsTable
     : public CategoricalTableCell,
-      public OneHeaderColumnOneHeaderRowTableDataSource,
+      public TwoHeaderColumnsOneHeaderRowTableDataSource,
       public DynamicCellsDataSource<Escher::SmallFontEvenOddBufferTextCell> {
  public:
   constexpr static int k_numberOfInnerColumns =
@@ -31,10 +31,6 @@ class ResultsStatisticsTable
   CategoricalTableViewDataSource* tableViewDataSource() override {
     return this;
   }
-
-  // DataSource
-  void fillCellForLocation(Escher::HighlightCell* cell, int column,
-                           int row) override;
 
   // DynamicCellsDataSource
   Escher::SelectableTableView* tableView() override {
@@ -64,13 +60,20 @@ class ResultsStatisticsTable
   }
 
   KDCoordinate nonMemoizedColumnWidth(int column) override {
-    return column == 0 ? TableDimensions::k_resultTitleColumnWidth
-                       : TableDimensions::k_columnWidth;
+    assert(column >= 0 && column < numberOfColumns());
+    return column < numberOfHeaderColumns()
+               ? column == 0 ? TableDimensions::k_resultTitleColumnWidth
+                             : TableDimensions::k_symbolColumnWidth
+               : TableDimensions::k_columnWidth;
   }
 
- private:
+  void fillHeaderCellForLocation(Escher::HighlightCell* cell, int column,
+                                 int row) override;
+
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
-                                int row);
+                                int row) override;
+
+ private:
   CategoricalController* categoricalController() override;
 
   // CategoricalTableViewDataSource

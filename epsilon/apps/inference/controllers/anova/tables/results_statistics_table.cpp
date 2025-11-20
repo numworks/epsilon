@@ -63,7 +63,7 @@ constexpr static double GroupStatisticsResultAtRow(
 
 // The row index refers to the "inner" table
 constexpr static const char* HeaderAtRow(int row) {
-  assert(row >= 0 && row <= 3);
+  assert(row >= 0 && row <= ResultsStatisticsTable::k_numberOfInnerRows);
   switch (row) {
     case 0:
       return I18n::translate(I18n::Message::SampleSizeShort);
@@ -78,48 +78,60 @@ constexpr static const char* HeaderAtRow(int row) {
   }
 }
 
+// The row index refers to the "inner" table
+constexpr static const char* SymbolAtRow(int row) {
+  assert(row >= 0 && row <= ResultsStatisticsTable::k_numberOfInnerRows);
+  switch (row) {
+    case 0:
+      return I18n::translate(I18n::Message::N);
+    case 1:
+      return I18n::translate(I18n::Message::MeanSymbol);
+    case 2:
+      return I18n::translate(I18n::Message::S);
+    case 3:
+      return I18n::translate(I18n::Message::SampleVarianceSymbol);
+    default:
+      OMG::unreachable();
+  }
+}
+
+void ResultsStatisticsTable::fillHeaderCellForLocation(
+    Escher::HighlightCell* cell, int column, int row) {
+  headerCellType* myCell = static_cast<headerCellType*>(cell);
+  if (row < numberOfHeaderRows()) {
+    int innerColumnIndex = column - numberOfHeaderColumns();
+    // Column title
+    OMG::String<k_groupTitleBufferSize> groupTitle =
+        GroupTitle(innerColumnIndex);
+    myCell->setText(groupTitle.data());
+    myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+    myCell->setTextColor(KDColorBlack);
+  } else {
+    assert(column < numberOfHeaderColumns());
+    if (column == 0) {
+      // Row title
+      myCell->setText(HeaderAtRow(row - numberOfHeaderRows()));
+      myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+      myCell->setTextColor(KDColorBlack);
+    } else {
+      assert(column == 1);
+      // Row symbol
+      myCell->setText(SymbolAtRow(row - numberOfHeaderRows()));
+      myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+      myCell->setTextColor(Palette::GrayDark);
+    }
+  }
+}
+
 void ResultsStatisticsTable::fillInnerCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
   assert(row >= 0 && row < innerNumberOfRows());
   assert(column >= 0 && column < innerNumberOfColumns());
-
-  InferenceEvenOddBufferCell* myCell =
-      static_cast<InferenceEvenOddBufferCell*>(cell);
-
+  innerCellType* myCell = static_cast<innerCellType*>(cell);
   const ANOVATest::GroupData& groupStatistics =
       m_inference->groupStatistics(column);
-
   PrintValueInTextHolder(GroupStatisticsResultAtRow(groupStatistics, row),
                          myCell);
-}
-
-void ResultsStatisticsTable::fillCellForLocation(Escher::HighlightCell* cell,
-                                                 int column, int row) {
-  assert(row >= 0 && row < numberOfRows());
-  assert(column >= 0 && column < numberOfColumns());
-
-  int type = typeAtLocation(column, row);
-  if (type == k_typeOfTopLeftCell) {
-    return;
-  }
-  InferenceEvenOddBufferCell* myCell =
-      static_cast<InferenceEvenOddBufferCell*>(cell);
-  if (type == k_typeOfHeaderCells) {
-    if (row == 0) {
-      // Column title
-      OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(column - 1);
-      myCell->setText(groupTitle.data());
-    } else {
-      // Row title
-      myCell->setText(HeaderAtRow(row - 1));
-    }
-    myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-    myCell->setTextColor(KDColorBlack);
-  } else {
-    assert(type == k_typeOfInnerCells);
-    fillInnerCellForLocation(cell, column - 1, row - 1);
-  }
-  myCell->setEven(row % 2 == 0);
 }
 
 CategoricalController* ResultsStatisticsTable::categoricalController() {

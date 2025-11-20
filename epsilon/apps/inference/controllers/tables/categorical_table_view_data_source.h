@@ -32,6 +32,13 @@ class CategoricalTableViewDataSource : public Escher::TableViewDataSource {
     return column > 0 ? k_borderBetweenColumns : 0;
   }
 
+  int numberOfRows() const override {
+    return innerNumberOfRows() + numberOfHeaderRows();
+  }
+  int numberOfColumns() const override {
+    return innerNumberOfColumns() + numberOfHeaderColumns();
+  }
+
  protected:
   constexpr static int k_typeOfHeaderCells = k_typeOfInnerCells + 1;
 
@@ -45,6 +52,11 @@ class CategoricalTableViewDataSource : public Escher::TableViewDataSource {
 
   virtual int innerNumberOfRows() const { return numberOfRows(); }
   virtual int innerNumberOfColumns() const { return numberOfColumns(); }
+
+  // Header rows are column titles
+  virtual int numberOfHeaderRows() const = 0;
+  // Header columns are row titles
+  virtual int numberOfHeaderColumns() const = 0;
 };
 
 }  // namespace Inference

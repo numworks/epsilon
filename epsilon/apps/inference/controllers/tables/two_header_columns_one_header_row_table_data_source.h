@@ -18,8 +18,6 @@ class TwoHeaderColumnsOneHeaderRowTableDataSource
   TwoHeaderColumnsOneHeaderRowTableDataSource();
 
   // TableViewDataSource
-  int numberOfRows() const override { return innerNumberOfRows() + 1; }
-  int numberOfColumns() const override { return innerNumberOfColumns() + 2; }
   int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
   Escher::HighlightCell* reusableCell(int i, int type) override;
@@ -32,6 +30,9 @@ class TwoHeaderColumnsOneHeaderRowTableDataSource
 
  protected:
   constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;
+
+  int numberOfHeaderRows() const override { return 1; }
+  int numberOfHeaderColumns() const override { return 2; }
 
   virtual ReusableCellCounts reusableCellCounts() const = 0;
 

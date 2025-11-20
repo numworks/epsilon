@@ -181,6 +181,10 @@ bool Rational::SetSign(Tree* e, NonStrictSign sign) {
 }
 
 Tree* Rational::Addition(const Tree* e1, const Tree* e2) {
+  if (e1->isInteger() && e2->isInteger()) {
+    // Early return if there are no denominators
+    return IntegerHandler::Addition(Numerator(e1), Numerator(e2));
+  }
   // a/b + c/d
   Tree* ad = IntegerHandler::Multiplication(Numerator(e1), Denominator(e2));
   Tree* cb = IntegerHandler::Multiplication(Numerator(e2), Denominator(e1));
@@ -199,6 +203,10 @@ Tree* Rational::Addition(const Tree* e1, const Tree* e2) {
 Tree* Rational::Multiplication(const Tree* e1, const Tree* e2) {
   Tree* newNumerator =
       IntegerHandler::Multiplication(Numerator(e1), Numerator(e2));
+  if (e1->isInteger() && e2->isInteger()) {
+    // Early return if there are no denominators
+    return newNumerator;
+  }
   Tree* newDenominator =
       IntegerHandler::Multiplication(Denominator(e1), Denominator(e2));
   TreeRef result = Rational::Push(newNumerator, newDenominator);

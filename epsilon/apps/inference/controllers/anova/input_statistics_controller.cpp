@@ -16,10 +16,6 @@ InputStatisticsController::InputStatisticsController(
               &InputCategoricalController::ButtonAction, this)),
       m_inputANOVATable(&m_selectableListView, inference, this, this) {}
 
-void InputStatisticsController::createDynamicCells() {
-  m_inputANOVATable.createCells();
-}
-
 void InputStatisticsController::initView() {
   assert(m_inferenceModel->testType() == TestType::ANOVA);
   static_cast<ANOVATest*>(m_inferenceModel)

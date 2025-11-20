@@ -64,25 +64,6 @@ constexpr static const char* SymbolAtRow(int row) {
   }
 }
 
-void InputStatisticsTable::fillCellForLocation(Escher::HighlightCell* cell,
-                                               int column, int row) {
-  assert(row >= 0 && row < numberOfRows());
-  assert(column >= 0 && column < numberOfColumns());
-
-  int type = typeAtLocation(column, row);
-  if (type == k_typeOfTopLeftCell) {
-    return;
-  }
-  if (type == k_typeOfHeaderCells) {
-    fillHeaderCellForLocation(cell, column, row);
-  } else {
-    assert(type == k_typeOfInnerCells);
-    fillInnerCellForLocation(cell, column - numberOfHeaderColumns(),
-                             row - numberOfHeaderRows());
-  }
-  static_cast<InferenceEvenOddBufferCell*>(cell)->setEven(row % 2 == 0);
-}
-
 void InputStatisticsTable::fillHeaderCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
   InferenceEvenOddBufferCell* myCell =

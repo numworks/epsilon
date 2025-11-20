@@ -40,9 +40,6 @@ class InputStatisticsTable : public InputCategoricalTableCell,
                : TableDimensions::k_columnWidth;
   }
 
-  void fillCellForLocation(Escher::HighlightCell* cell, int column,
-                           int row) override;
-
   // DoubleDynamicCellsDataSource
   Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;
@@ -77,10 +74,10 @@ class InputStatisticsTable : public InputCategoricalTableCell,
   }
 
   void fillHeaderCellForLocation(Escher::HighlightCell* cell, int column,
-                                 int row);
+                                 int row) override;
 
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
-                                int row);
+                                int row) override;
 
  private:
   constexpr static int k_headerTranslationBufferSize = 20;

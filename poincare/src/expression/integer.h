@@ -269,6 +269,7 @@ class IntegerHandler final {
   // Returns number of digits and number of consecutive zeroes at the end
   DigitCounts numberOfBase10DigitsWithoutSign(
       WorkingBuffer* workingBuffer) const;
+  int numberOfZeroesAtTheEnd(WorkingBuffer* workingBuffer) const;
   size_t serialize(char* buffer, size_t bufferSize,
                    WorkingBuffer* workingBuffer) const;
   void removeZeroAtTheEnd(int minimalNumbersOfDigits,

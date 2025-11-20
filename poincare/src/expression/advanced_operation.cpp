@@ -274,7 +274,10 @@ bool AdvancedOperation::ExpandMult(Tree* e) {
   return false;
 }
 
-// Only the first child of a multiplication is considered as a factor
+/* Only the first child of a multiplication is considered as a potential factor.
+ * This simplifies multiplication contraction, relies on expression order
+ * (favoring rationals), and could limit some factorization where a common
+ * factor is hidden after a non-common one.  */
 const Tree* GetFactor(const Tree* e) { return e->isMult() ? e->child(0) : e; }
 
 // Push a clone of e stripped from what would GetFactor return
@@ -292,7 +295,19 @@ Tree* PushNonFactors(const Tree* e) {
 /* PushCommonFactor pushes a common factor found in an addition. The common
  * factor can be any tree if found in every terms. Otherwise, it looks for a
  * rational number (different from 1, with numerator -1 or 1) that can factor
- * the sign or denominator of each terms. */
+ * the sign or denominator of each terms. For example :
+ * - Common factor:
+ *     (-1+x)^-1×(-1+3×x)+(-1+x)^-1×(-3×x^2+x^3) ->  (-1+x)^-1
+ *     π + π×x^2                                 ->  π
+ *     3/2 + (3/2)×x                             ->  3/2
+ * - Common denominator:
+ *      3/2 - (5/2)×x                            ->  1/2
+ *     -1/3 - (2/3)×x                            -> -1/3
+ *     -3/2 - (3/7)×x                            -> -1
+ * - No Common factor:
+ *     π + 2×π×exp(1/2×Ln(2))
+ *     -3/2 + (3/7)×x
+ */
 Tree* PushCommonFactor(const Tree* e) {
   assert(e->isAdd());
   Tree* commonFactor = nullptr;
@@ -313,31 +328,48 @@ Tree* PushCommonFactor(const Tree* e) {
       continue;
     }
     if (!commonFactor->isRational() || !localFactor->isRational()) {
+      // Cannot find a common ground between the two factors. Ex: 2/3 and π
       commonFactor->removeTree();
       return nullptr;
     }
+    // Find a common ground between different rational factors
     bool negativeCommonFactor = commonFactor->isNegativeRational();
     if (negativeCommonFactor && localFactor->isPositiveRational()) {
+      // CommonFactor must be turned positive.
+      if (commonFactor->isMinusOne()) {
+        // Cannot find a common ground between the two factors. Ex: -1 and 3/2
+        commonFactor->removeTree();
+        return nullptr;
+      }
       Rational::SetSign(commonFactor, NonStrictSign::Positive);
       negativeCommonFactor = false;
       if (commonFactor->treeIsIdenticalTo(localFactor)) {
+        // Ex: With -3/2 and 3/2, return 3/2
         continue;
       }
-    }
-    IntegerHandler commonDenominator = Rational::Denominator(commonFactor);
-    if (IntegerHandler::Compare(Rational::Denominator(localFactor),
-                                commonDenominator) != 0 ||
-        (commonDenominator.isOne() && !negativeCommonFactor)) {
-      commonFactor->removeTree();
-      return nullptr;
-    }
-    IntegerHandler commonNumerator = Rational::Numerator(commonFactor);
-    if (commonNumerator.isOne() || commonNumerator.isMinusOne()) {
+    } else if (commonFactor->isMinusOne()) {
+      // CommonFactor can stay -1. Ex: With -1 and -2/3, return -1
       continue;
     }
-    // Remove commonFactor's numerator, keep its sign
-    commonFactor->moveTreeOverTree(Rational::Push(
-        IntegerHandler(negativeCommonFactor ? -1 : 1), commonDenominator));
+    // Find a common ground between different rational factors of identical sign
+    IntegerHandler commonDenominator = Rational::Denominator(commonFactor);
+    if (!commonDenominator.isOne() &&
+        IntegerHandler::Compare(Rational::Denominator(localFactor),
+                                commonDenominator) == 0) {
+      // Identical denominators: remove numerator and preserve sign
+      // Ex: With -2/7 and -5/7, return -1/7
+      commonFactor->moveTreeOverTree(Rational::Push(
+          IntegerHandler(negativeCommonFactor ? -1 : 1), commonDenominator));
+      continue;
+    }
+    if (negativeCommonFactor) {
+      // Both factors are different, but negative: return -1
+      commonFactor->cloneTreeOverTree(-1_e);
+      continue;
+    }
+    // Cannot find a common ground between the two factors. Ex: 2/3 and 5/7
+    commonFactor->removeTree();
+    return nullptr;
   }
   assert(commonFactor && !commonFactor->isOne());
   return commonFactor;

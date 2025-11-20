@@ -28,7 +28,8 @@ void InputStatisticsTable::handleResponderChainEvent(
 
 size_t InputStatisticsTable::fillColumnName(int column, char* buffer) {
   assert(column >= 0 && column < numberOfColumns());
-  OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(column - 1);
+  OMG::String<k_groupTitleBufferSize> groupTitle =
+      GroupTitle(column - numberOfHeaderColumns() + 1);
   strlcpy(buffer, groupTitle.data(),
           Shared::ColumnParameterController::k_titleBufferSize);
   return groupTitle.length();
@@ -36,7 +37,7 @@ size_t InputStatisticsTable::fillColumnName(int column, char* buffer) {
 
 // The row index refers to the "inner" table
 constexpr static const char* HeaderAtRow(int row) {
-  assert(row >= 0 && row < 3);
+  assert(row >= 0 && row < InputStatisticsTable::k_numberOfInnerRows);
   switch (row) {
     case 0:
       return I18n::translate(I18n::Message::SampleSizeShort);
@@ -50,7 +51,7 @@ constexpr static const char* HeaderAtRow(int row) {
 }
 
 constexpr static const char* SymbolAtRow(int row) {
-  assert(row >= 0 && row <= 3);
+  assert(row >= 0 && row <= InputStatisticsTable::k_numberOfInnerRows);
   switch (row) {
     case 0:
       return I18n::translate(I18n::Message::N);
@@ -72,41 +73,48 @@ void InputStatisticsTable::fillCellForLocation(Escher::HighlightCell* cell,
   if (type == k_typeOfTopLeftCell) {
     return;
   }
-  InferenceEvenOddBufferCell* myCell =
-      static_cast<InferenceEvenOddBufferCell*>(cell);
   if (type == k_typeOfHeaderCells) {
-    if (row == 0) {
-      // Column title
-      OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(column - 2);
-      myCell->setText(groupTitle.data());
-      myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-      myCell->setTextColor(KDColorBlack);
-    } else {
-      assert(column <= 1);
-      if (column == 0) {
-        // Row title
-        myCell->setText(HeaderAtRow(row - 1));
-        myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-        myCell->setTextColor(KDColorBlack);
-      } else {
-        // Row symbol
-        myCell->setText(SymbolAtRow(row - 1));
-        myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-        myCell->setTextColor(Palette::GrayDark);
-      }
-    }
+    fillHeaderCellForLocation(cell, column, row);
   } else {
     assert(type == k_typeOfInnerCells);
-    fillInnerCellForLocation(cell, column - 2, row - 1);
+    fillInnerCellForLocation(cell, column - numberOfHeaderColumns(),
+                             row - numberOfHeaderRows());
   }
-  myCell->setEven(row % 2 == 0);
+  static_cast<InferenceEvenOddBufferCell*>(cell)->setEven(row % 2 == 0);
+}
 
-  if ((row == 0 && column == numberOfColumns() - 1 &&
-       column < k_numberOfInnerColumns - 1)) {
-    /* The last header has its title grayed out, except if the column is the
-     * last possible column. */
-    static_cast<InferenceEvenOddBufferCell*>(cell)->setTextColor(
-        Palette::GrayDark);
+void InputStatisticsTable::fillHeaderCellForLocation(
+    Escher::HighlightCell* cell, int column, int row) {
+  InferenceEvenOddBufferCell* myCell =
+      static_cast<InferenceEvenOddBufferCell*>(cell);
+  if (row < numberOfHeaderRows()) {
+    int innerColumnIndex = column - numberOfHeaderColumns();
+    // Column title
+    OMG::String<k_groupTitleBufferSize> groupTitle =
+        GroupTitle(innerColumnIndex);
+    myCell->setText(groupTitle.data());
+    myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+    myCell->setTextColor(KDColorBlack);
+    if (innerColumnIndex == innerNumberOfColumns() - 1 &&
+        innerColumnIndex < k_numberOfInnerColumns - 1) {
+      /* The last header has its title grayed out, except if the column is the
+       * last possible column. */
+      myCell->setTextColor(Palette::GrayDark);
+    }
+  } else {
+    assert(column < numberOfHeaderColumns());
+    if (column == 0) {
+      // Row title
+      myCell->setText(HeaderAtRow(row - numberOfHeaderRows()));
+      myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+      myCell->setTextColor(KDColorBlack);
+    } else {
+      assert(column == 1);
+      // Row symbol
+      myCell->setText(SymbolAtRow(row - numberOfHeaderRows()));
+      myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+      myCell->setTextColor(Palette::GrayDark);
+    }
   }
 }
 

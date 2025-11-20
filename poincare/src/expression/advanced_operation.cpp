@@ -312,29 +312,29 @@ Tree* PushCommonFactor(const Tree* e) {
   assert(e->isAdd());
   Tree* commonFactor = nullptr;
   for (const Tree* child : e->children()) {
-    const Tree* localFactor = GetFactor(child);
+    const Tree* childFactor = GetFactor(child);
     // Escape cases where one of the terms is 1
-    if (localFactor->isOne()) {
+    if (childFactor->isOne()) {
       if (commonFactor) {
         commonFactor->removeTree();
       }
       return nullptr;
     }
     if (commonFactor == nullptr) {
-      commonFactor = localFactor->cloneTree();
+      commonFactor = childFactor->cloneTree();
       continue;
     }
-    if (commonFactor->treeIsIdenticalTo(localFactor)) {
+    if (commonFactor->treeIsIdenticalTo(childFactor)) {
       continue;
     }
-    if (!commonFactor->isRational() || !localFactor->isRational()) {
+    if (!commonFactor->isRational() || !childFactor->isRational()) {
       // Cannot find a common ground between the two factors. Ex: 2/3 and π
       commonFactor->removeTree();
       return nullptr;
     }
     // Find a common ground between different rational factors
     bool negativeCommonFactor = commonFactor->isNegativeRational();
-    if (negativeCommonFactor && localFactor->isPositiveRational()) {
+    if (negativeCommonFactor && childFactor->isPositiveRational()) {
       // CommonFactor must be turned positive.
       if (commonFactor->isMinusOne()) {
         // Cannot find a common ground between the two factors. Ex: -1 and 3/2
@@ -343,7 +343,7 @@ Tree* PushCommonFactor(const Tree* e) {
       }
       Rational::SetSign(commonFactor, NonStrictSign::Positive);
       negativeCommonFactor = false;
-      if (commonFactor->treeIsIdenticalTo(localFactor)) {
+      if (commonFactor->treeIsIdenticalTo(childFactor)) {
         // Ex: With -3/2 and 3/2, return 3/2
         continue;
       }
@@ -354,7 +354,7 @@ Tree* PushCommonFactor(const Tree* e) {
     // Find a common ground between different rational factors of identical sign
     IntegerHandler commonDenominator = Rational::Denominator(commonFactor);
     if (!commonDenominator.isOne() &&
-        IntegerHandler::Compare(Rational::Denominator(localFactor),
+        IntegerHandler::Compare(Rational::Denominator(childFactor),
                                 commonDenominator) == 0) {
       // Identical denominators: remove numerator and preserve sign
       // Ex: With -2/7 and -5/7, return -1/7

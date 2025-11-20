@@ -34,9 +34,10 @@ class InputStatisticsTable : public InputCategoricalTableCell,
 
   KDCoordinate nonMemoizedColumnWidth(int column) override {
     assert(column >= 0 && column < numberOfColumns());
-    return column <= 1 ? column == 0 ? TableDimensions::k_resultTitleColumnWidth
-                                     : TableDimensions::k_symbolColumnWidth
-                       : TableDimensions::k_columnWidth;
+    return column < numberOfHeaderColumns()
+               ? column == 0 ? TableDimensions::k_resultTitleColumnWidth
+                             : TableDimensions::k_symbolColumnWidth
+               : TableDimensions::k_columnWidth;
   }
 
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
@@ -75,6 +76,12 @@ class InputStatisticsTable : public InputCategoricalTableCell,
     return reusableCellCounts().categories.inner;
   }
 
+  void fillHeaderCellForLocation(Escher::HighlightCell* cell, int column,
+                                 int row);
+
+  void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
+                                int row);
+
  private:
   constexpr static int k_headerTranslationBufferSize = 20;
 
@@ -88,8 +95,6 @@ class InputStatisticsTable : public InputCategoricalTableCell,
   int innerNumberOfRows() const override { return k_numberOfInnerRows; }
   int innerNumberOfColumns() const override { return m_numberOfColumns; }
 
-  void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
-                                int row);
   CategoricalController* categoricalController() override;
 
   InputStatisticsController* m_inputStatisticsController;

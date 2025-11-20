@@ -208,7 +208,7 @@ Tree* Rational::Multiplication(const Tree* e1, const Tree* e2) {
 }
 
 Tree* Rational::NonZeroDivision(const Tree* e1, const Tree* e2) {
-  assert(!e2->isZero());
+  assert(e1->isRational() && e2->isRational() && !e2->isZero());
   Tree* newNumerator =
       IntegerHandler::Multiplication(Numerator(e1), Denominator(e2));
   Tree* newDenominator =

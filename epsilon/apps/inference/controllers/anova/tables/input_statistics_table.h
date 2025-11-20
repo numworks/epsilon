@@ -45,7 +45,7 @@ class InputStatisticsTable : public InputCategoricalTableCell,
     return &m_selectableTableView;
   }
 
-  void initInnerCell(InferenceEvenOddEditableCell* cell) override;
+  void initInnerCell(innerCellType* cell) override;
 
  protected:
   // Responder

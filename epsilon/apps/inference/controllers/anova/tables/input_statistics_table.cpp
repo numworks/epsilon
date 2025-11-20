@@ -66,8 +66,7 @@ constexpr static const char* SymbolAtRow(int row) {
 
 void InputStatisticsTable::fillHeaderCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
-  InferenceEvenOddBufferCell* myCell =
-      static_cast<InferenceEvenOddBufferCell*>(cell);
+  headerCellType* myCell = static_cast<headerCellType*>(cell);
   if (row < numberOfHeaderRows()) {
     int innerColumnIndex = column - numberOfHeaderColumns();
     // Column title
@@ -103,8 +102,7 @@ void InputStatisticsTable::fillInnerCellForLocation(Escher::HighlightCell* cell,
                                                     int column, int row) {
   assert(column >= 0 && row >= 0);
   assert(column < innerNumberOfColumns() && row < innerNumberOfRows());
-  InferenceEvenOddEditableCell* myCell =
-      static_cast<InferenceEvenOddEditableCell*>(cell);
+  innerCellType* myCell = static_cast<innerCellType*>(cell);
   fillValueCellForLocation(myCell->editableTextCell()->textField(), myCell,
                            column, row, tableModel());
 }
@@ -113,7 +111,7 @@ CategoricalController* InputStatisticsTable::categoricalController() {
   return m_inputStatisticsController;
 }
 
-void InputStatisticsTable::initInnerCell(InferenceEvenOddEditableCell* cell) {
+void InputStatisticsTable::initInnerCell(innerCellType* cell) {
   cell->setParentResponder(&m_selectableTableView);
   cell->editableTextCell()->textField()->setDelegate(this);
 }

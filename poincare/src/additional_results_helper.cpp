@@ -421,7 +421,7 @@ static Tree* BestConvergentOfContinuedFraction(const SystemExpression rational,
                                               {.KA = q0, .KB = a_k, .KC = q1});
     a_k->removeTree();
 
-    if (Integer::Handler(q).totalNumberOfBase10DigitsWithoutSign() >
+    if (Integer::Handler(q).numberOfBase10DigitsWithoutSign().numberOfDigits >
         maxDenominatorDigits) {
       // Stop if the next denominator has too many digits
       q->removeTree();

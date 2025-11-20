@@ -3,10 +3,7 @@ $(call assert_defined,ION_variant)
 $(call create_module,ion,1, $(patsubst %, test/%:+test, \
   crc32.cpp \
   events.cpp \
-  exam_bytes.cpp:-no_exam \
-  exam_mode.cpp:-no_exam \
   keyboard.cpp \
-  storage.cpp  \
 ))
 
 _ion_display_width_epsilon = 320

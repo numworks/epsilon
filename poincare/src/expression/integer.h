@@ -222,10 +222,6 @@ class IntegerHandler final {
     WorkingBuffer workingBuffer;
     return numberOfBase10DigitsWithoutSign(&workingBuffer);
   }
-  int totalNumberOfBase10DigitsWithoutSign() const {
-    DigitCounts counts = numberOfBase10DigitsWithoutSign();
-    return counts.numberOfDigits + counts.numberOfZerosAtTheEnd;
-  }
 
   /* Return a fast, but [under/over]estimated number of digits in base 10 using
    * number of digits in base [k_digitBase]. */

@@ -299,7 +299,7 @@ Tree* PushCommonFactor(const Tree* e) {
   for (const Tree* child : e->children()) {
     const Tree* localFactor = GetFactor(child);
     // Escape cases where one of the terms is 1
-    if (localFactor->isOne() || localFactor->isFloat()) {
+    if (localFactor->isOne()) {
       if (commonFactor) {
         commonFactor->removeTree();
       }

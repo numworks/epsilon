@@ -31,6 +31,21 @@ HighlightCell* TwoHeaderColumnsOneHeaderRowTableDataSource::reusableCell(
   return reusableInnerCell(i);
 }
 
+KDCoordinate TwoHeaderColumnsOneHeaderRowTableDataSource::separatorBeforeColumn(
+    int column) const {
+  assert(column >= 0);
+  switch (column) {
+    case 1:
+      // No separation between the two title columns
+      return 0;
+    case 2:
+      // Separator after row titles
+      return Escher::Metric::TableSeparatorThickness;
+    default:
+      return CategoricalTableViewDataSource::separatorBeforeColumn(column);
+  }
+}
+
 int TwoHeaderColumnsOneHeaderRowTableDataSource::typeAtLocation(int column,
                                                                 int row) const {
   if (column <= 1 && row == 0) {

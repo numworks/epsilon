@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <escher/even_odd_buffer_text_cell.h>
+#include <escher/metric.h>
 #include <escher/solid_color_cell.h>
 
 #include "categorical_table_view_data_source.h"
@@ -26,6 +27,8 @@ class TwoHeaderColumnsOneHeaderRowTableDataSource
   bool canSelectCellAtLocation(int column, int row) override {
     return typeAtLocation(column, row) != k_typeOfTopLeftCell;
   }
+
+  KDCoordinate separatorBeforeColumn(int column) const override;
 
  protected:
   constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;

@@ -28,6 +28,9 @@ class TwoHeaderColumnsOneHeaderRowTableDataSource
 
   KDCoordinate separatorBeforeColumn(int column) const override;
 
+  void fillCellForLocation(Escher::HighlightCell* cell, int column,
+                           int row) override;
+
  protected:
   constexpr static int k_typeOfTopLeftCell = k_typeOfHeaderCells + 1;
 
@@ -38,6 +41,12 @@ class TwoHeaderColumnsOneHeaderRowTableDataSource
 
   virtual Escher::HighlightCell* reusableHeaderCell(int i) = 0;
   virtual Escher::HighlightCell* reusableInnerCell(int i) = 0;
+
+  virtual void fillHeaderCellForLocation(Escher::HighlightCell* cell,
+                                         int column, int row) = 0;
+
+  virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
+                                        int row) = 0;
 
   Escher::SolidColorCell m_topLeftCell;
 };

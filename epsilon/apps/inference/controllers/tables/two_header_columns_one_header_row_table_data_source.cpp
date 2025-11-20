@@ -57,4 +57,23 @@ int TwoHeaderColumnsOneHeaderRowTableDataSource::typeAtLocation(int column,
   return k_typeOfInnerCells;
 }
 
+void TwoHeaderColumnsOneHeaderRowTableDataSource::fillCellForLocation(
+    Escher::HighlightCell* cell, int column, int row) {
+  assert(row >= 0 && row < numberOfRows());
+  assert(column >= 0 && column < numberOfColumns());
+
+  int type = typeAtLocation(column, row);
+  if (type == k_typeOfTopLeftCell) {
+    return;
+  }
+  if (type == k_typeOfHeaderCells) {
+    fillHeaderCellForLocation(cell, column, row);
+  } else {
+    assert(type == k_typeOfInnerCells);
+    fillInnerCellForLocation(cell, column - numberOfHeaderColumns(),
+                             row - numberOfHeaderRows());
+  }
+  static_cast<EvenOddCell*>(cell)->setEven(row % 2 == 0);
+}
+
 }  // namespace Inference

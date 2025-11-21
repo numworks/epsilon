@@ -249,6 +249,8 @@ class IntegerHandler final {
   static IntegerHandler Mult(const IntegerHandler& a, const IntegerHandler& b,
                              WorkingBuffer* workingBuffer,
                              bool oneDigitOverflow = false);
+  static IntegerHandler Pow(const IntegerHandler& a, const IntegerHandler& b,
+                            WorkingBuffer* workingBuffer);
   static DivisionResult<IntegerHandler> Udiv(const IntegerHandler& a,
                                              const IntegerHandler& b,
                                              WorkingBuffer* workingBuffer);

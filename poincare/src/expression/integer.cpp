@@ -827,39 +827,45 @@ IntegerHandler IntegerHandler::multiplyByPowerOfBase(
   return mult;
 }
 
-Tree* IntegerHandler::Power(const IntegerHandler& i, const IntegerHandler& j) {
+IntegerHandler IntegerHandler::Pow(const IntegerHandler& i,
+                                   const IntegerHandler& j,
+                                   WorkingBuffer* workingBuffer) {
   assert(j.sign() == NonStrictSign::Positive);
   if (j.isZero()) {
     // TODO: handle 0^0.
     assert(!i.isZero());
-    return Integer::Push(1);
+    return IntegerHandler(1);
   }
   // Exponentiate by squaring : i^j = (i*i)^(j/2) * i^(j%2)
   IntegerHandler i1(1);
   IntegerHandler i2(i);
   IntegerHandler exp(j);
-  WorkingBuffer workingBuffer;
-  uint8_t* const localStart = workingBuffer.localStart();
+  uint8_t* const localStart = workingBuffer->localStart();
   while (!exp.isOne()) {
-    auto [quotient, remainder] = Udiv(exp, IntegerHandler(2), &workingBuffer);
+    auto [quotient, remainder] = Udiv(exp, IntegerHandler(2), workingBuffer);
     exp = quotient;
     /* The integers given to garbageCollect have to be sorted. We keep trace of
      * the order of exp and i1 in order to respect this assertion. */
     bool i1AfterExp = false;
     if (remainder.isOne()) {
-      IntegerHandler i1i2 = Mult(i1, i2, &workingBuffer);
-      workingBuffer.garbageCollect({&i2, &exp, &i1i2}, localStart);
+      IntegerHandler i1i2 = Mult(i1, i2, workingBuffer);
+      workingBuffer->garbageCollect({&i2, &exp, &i1i2}, localStart);
       i1 = i1i2;
       i1AfterExp = true;
     }
-    IntegerHandler squaredI2 = Mult(i2, i2, &workingBuffer);
-    workingBuffer.garbageCollect(
+    IntegerHandler squaredI2 = Mult(i2, i2, workingBuffer);
+    workingBuffer->garbageCollect(
         {i1AfterExp ? &exp : &i1, i1AfterExp ? &i1 : &exp, &squaredI2},
         localStart);
     i2 = squaredI2;
   }
-  workingBuffer.garbageCollect({&i1, &i2}, localStart);
-  return Mult(i1, i2, &workingBuffer).pushOnTreeStack();
+  workingBuffer->garbageCollect({&i1, &i2}, localStart);
+  return Mult(i1, i2, workingBuffer);
+}
+
+Tree* IntegerHandler::Power(const IntegerHandler& i, const IntegerHandler& j) {
+  WorkingBuffer workingBuffer;
+  return Pow(i, j, &workingBuffer).pushOnTreeStack();
 }
 
 Tree* IntegerHandler::Factorial(const IntegerHandler& i) {

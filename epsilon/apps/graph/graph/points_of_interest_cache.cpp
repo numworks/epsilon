@@ -223,6 +223,8 @@ struct PointSearchContext {
   }
 };
 
+/* TODO: When alongY, this interest point is later converted to a Root. This
+ * could be done earlier to limit risks of miss-interpretation.*/
 PointOfInterest findYIntercept(void* searchContext) {
   PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
   if (ctx->start < 0.f && 0.f < ctx->end) {
@@ -233,6 +235,7 @@ PointOfInterest findYIntercept(void* searchContext) {
       Coordinate2D<double> xy = f->evaluateXYAtParameter(0., subCurve);
       if (std::isfinite(xy.x()) && std::isfinite(xy.y())) {
         if (f->isAlongY()) {
+          // evaluateXYAtParameter has swapped x and y. Revert it.
           xy = Coordinate2D<double>(xy.y(), xy.x());
         }
         return {xy.x(),
@@ -247,6 +250,8 @@ PointOfInterest findYIntercept(void* searchContext) {
   return PointOfInterest{};
 }
 
+/* TODO: When alongY, this interest point is later converted to a YIntercept.
+ * This could be done earlier to limit risks of miss-interpretation.*/
 PointOfInterest findRootOrExtremum(void* searchContext) {
   PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
 
@@ -278,6 +283,9 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
       /* Loop over finite solutions to exhaust solutions out of the interval
        * without returning NAN. */
       if (solution.xy().xIsIn(ctx->start, ctx->end, true, ctx->lastSegment)) {
+        /* If alongY(), no need to swap x and y here, since
+         * expressionApproximated already returned x as abscissa and y as
+         * ordinate. */
         return {
             solution.x(),        solution.y(),  0,
             solution.interest(), f->isAlongY(), 0,
@@ -301,13 +309,15 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
                             f, g, const_cast<const Internal::Tree**>(&diff))
                       : ctx->solver.nextIntersectionAlongDifferentAxis(
                             f, g, const_cast<const Internal::Tree**>(&diff)))
-
           .x())) {
     /* Loop over finite solutions to exhaust solutions out of the interval
      * without returning NAN. */
     if (solution.xy().xIsIn(ctx->start, ctx->end, true, false)) {
       assert(solution.interest() == Solver<double>::Interest::Intersection);
       diff->removeTree();
+      /* If alongY(), no need to swap x and y here, since
+       * expressionApproximated already returned x as abscissa and y as
+       * ordinate. */
       return {
           solution.x(),
           solution.y(),

@@ -779,10 +779,19 @@ int IntegerHandler::estimatedNumberOfBase10DigitsWithoutSign(
   float estimation = std::ceil(estimatedNumberOfDigitsBase256 *
                                std::log10(static_cast<float>(k_digitBase)));
   assert(estimation > 0.f && estimation < static_cast<float>(INT_MAX));
+#if ASSERTIONS
+  static bool recurse = false;
+  bool wasRecursing = recurse;
+  recurse = true;
+#endif
   int estimatedNumberOfDigitsBase10 = static_cast<int>(estimation);
-  assert(estimatedNumberOfDigitsBase10 == numberOfBase10DigitsWithoutSign() ||
-         overEstimated == (estimatedNumberOfDigitsBase10 >
-                           numberOfBase10DigitsWithoutSign()));
+  assert(wasRecursing ||
+         (estimatedNumberOfDigitsBase10 == numberOfBase10DigitsWithoutSign() ||
+          overEstimated == (estimatedNumberOfDigitsBase10 >
+                            numberOfBase10DigitsWithoutSign())));
+#if ASSERTIONS
+  recurse = false;
+#endif
   return estimatedNumberOfDigitsBase10;
 }
 

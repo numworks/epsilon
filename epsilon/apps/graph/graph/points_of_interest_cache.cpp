@@ -313,7 +313,7 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
           solution.y(),
           static_cast<uint32_t>(ctx->otherRecord),
           Solver<double>::Interest::Intersection,
-          false,
+          ctx->model()->isAlongY(),
           0,
       };
     }
@@ -370,7 +370,6 @@ PointOfInterest findIntersections(void* searchContext) {
         if (poi.isUninitialized()) {
           continue;
         }
-        poi.inverted = fAlongY;
         if (fIsStrict || gIsStrict) {
           poi.interest = Solver<double>::Interest::UnreachedIntersection;
         }

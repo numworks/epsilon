@@ -277,7 +277,7 @@ uint8_t IntegerHandler::numberOfDigits() const {
   return OMG::Arithmetic::CeilDivision<uint8_t>(nbOfDigits, sizeof(T));
 }
 
-IntegerHandler::DigitCounts IntegerHandler::numberOfBase10DigitsWithoutSign(
+int IntegerHandler::numberOfBase10DigitsWithoutSign(
     WorkingBuffer* workingBuffer) const {
   if (isZero()) {
     return 1;
@@ -297,7 +297,7 @@ IntegerHandler::DigitCounts IntegerHandler::numberOfBase10DigitsWithoutSign(
     numberOfDigits++;
   }
   workingBuffer->garbageCollect({}, localStart);
-  return {numberOfDigits, numberOfZeroesAtTheEnd(workingBuffer)};
+  return numberOfDigits;
 }
 
 int IntegerHandler::numberOfZeroesAtTheEnd(WorkingBuffer* workingBuffer) const {
@@ -774,10 +774,9 @@ int IntegerHandler::estimatedNumberOfBase10DigitsWithoutSign(
                                std::log10(static_cast<float>(k_digitBase)));
   assert(estimation > 0.f && estimation < static_cast<float>(INT_MAX));
   int estimatedNumberOfDigitsBase10 = static_cast<int>(estimation);
-  assert(estimatedNumberOfDigitsBase10 ==
-             numberOfBase10DigitsWithoutSign().numberOfDigits ||
+  assert(estimatedNumberOfDigitsBase10 == numberOfBase10DigitsWithoutSign() ||
          overEstimated == (estimatedNumberOfDigitsBase10 >
-                           numberOfBase10DigitsWithoutSign().numberOfDigits));
+                           numberOfBase10DigitsWithoutSign()));
   return estimatedNumberOfDigitsBase10;
 }
 

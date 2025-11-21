@@ -72,9 +72,8 @@ void assert_number_of_digits_and_zeroes(IntegerHandler a, int numberOfDigits,
               numberOfDigits);
   quiz_assert(a.estimatedNumberOfBase10DigitsWithoutSign(false) <=
               numberOfDigits);
-  IntegerHandler::DigitCounts digitCount = a.numberOfBase10DigitsWithoutSign();
-  quiz_assert(digitCount.numberOfDigits == numberOfDigits);
-  quiz_assert(digitCount.numberOfZerosAtTheEnd == numberOfZeroes);
+  quiz_assert(a.numberOfBase10DigitsWithoutSign() == numberOfDigits);
+  quiz_assert(a.numberOfZeroesAtTheEnd() == numberOfZeroes);
 }
 
 QUIZ_CASE(pcj_integer_properties) {

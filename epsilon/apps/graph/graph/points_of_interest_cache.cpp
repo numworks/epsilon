@@ -94,12 +94,12 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
        i += direction) {
     PointOfInterest p = pointAtIndex(i);
     /* NOTE using a margin of error here to avoid return the same
-     * PointOfInterest twice or skipping a PointOfInterest when p.abscissa is
+     * PointOfInterest twice or skipping a PointOfInterest when p.x() is
      * very close to start or end */
-    if (direction * p.abscissa < direction * start + (!stretch * margin)) {
+    if (direction * p.x() < direction * start + (!stretch * margin)) {
       continue;
     }
-    if (direction * p.abscissa > direction * end - (!stretch * margin)) {
+    if (direction * p.x() > direction * end - (!stretch * margin)) {
       break;
     }
     if (PointFitInterest(p, interest) && p.subCurveIndex == subCurveIndex) {

@@ -77,11 +77,18 @@ int PointsOfInterestCache::numberOfPoints(
 
 PointOfInterest PointsOfInterestCache::firstPointInDirection(
     double start, double end, double y, bool stretch,
-    Solver<double>::Interest interest, int subCurveIndex) {
+    Solver<double>::Interest interest, int subCurveIndex, bool alongX) {
+  /* If alongX is false, no interest points are expected at a same abscissa with
+   * a different ordinate. */
+  assert(alongX || std::isnan(y));
   if (start == end) {
     return PointOfInterest();
   }
-  m_list.sort();
+  if (alongX) {
+    m_list.sortX();
+  } else {
+    m_list.sortAbscissa();
+  }
   int n = numberOfPoints();
   int direction = start > end ? -1 : 1;
   int firstIndex = 0;
@@ -93,16 +100,18 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
   for (int i = firstIndex; direction * i <= direction * lastIndex;
        i += direction) {
     PointOfInterest p = pointAtIndex(i);
+    double xEq = alongX ? p.x() : p.abscissa;
+    double yEq = alongX ? p.y() : p.ordinate;
     /* NOTE using a margin of error here to avoid return the same
      * PointOfInterest twice or skipping a PointOfInterest when p.x() is
      * very close to start or end */
-    if (direction * p.x() < direction * start + (!stretch * margin)) {
-      if (p.x() != start || std::isnan(y) ||
-          direction * p.y() < direction * y + (!stretch * margin)) {
+    if (direction * xEq < direction * start + (!stretch * margin)) {
+      if (xEq != start || std::isnan(y) ||
+          direction * yEq < direction * y + (!stretch * margin)) {
         continue;
       }
     }
-    if (direction * p.x() > direction * end - (!stretch * margin)) {
+    if (direction * xEq > direction * end - (!stretch * margin)) {
       break;
     }
     if (PointFitInterest(p, interest) && p.subCurveIndex == subCurveIndex) {
@@ -112,8 +121,9 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
       if (p.interest == Solver<double>::Interest::UnreachedDiscontinuity &&
           direction * (i + direction) <= direction * lastIndex) {
         PointOfInterest nextP = pointAtIndex(i + direction);
+        double nextXEq = alongX ? nextP.x() : nextP.abscissa;
         if (nextP.interest == Solver<double>::Interest::ReachedDiscontinuity &&
-            nextP.x() == p.x()) {
+            nextXEq == xEq) {
           return nextP;
         }
       }

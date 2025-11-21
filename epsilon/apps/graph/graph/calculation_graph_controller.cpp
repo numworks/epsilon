@@ -124,7 +124,7 @@ PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(
     }
   }
   return pointsOfInterest->firstPointInDirection(start, max, y, stretch,
-                                                 specialInterest());
+                                                 specialInterest(), 0, true);
 }
 
 PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(

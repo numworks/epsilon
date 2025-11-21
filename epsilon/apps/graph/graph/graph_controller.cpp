@@ -96,6 +96,8 @@ PointsOfInterestCache* GraphController::pointsOfInterestForRecord(
 
   // Set bounds of cache
   if (f->isAlongY()) {
+    // Functions along Y have no bounds
+    assert(!std::isfinite(f->tMin()) && !std::isfinite(f->tMax()));
     cache->setBounds(m_graphRange->yMin(), m_graphRange->yMax());
   } else {
     float tMin = f->tMin();

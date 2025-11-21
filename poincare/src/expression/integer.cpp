@@ -283,9 +283,15 @@ int IntegerHandler::numberOfBase10DigitsWithoutSign(
     return 1;
   }
   uint8_t* const localStart = workingBuffer->localStart();
-  int numberOfDigits = 0;
   IntegerHandler base(10);
+  int numberOfDigits = 0;
   IntegerHandler comparison = 1;
+  if (this->numberOfDigits() > 2) {
+    // 2 is an arbitrary limit for a number large enough to justify estimate+pow
+    // Start with 10^underestimate
+    numberOfDigits = estimatedNumberOfBase10DigitsWithoutSign(false);
+    comparison = Pow(base, IntegerHandler(numberOfDigits), workingBuffer);
+  }
   while (true) {
     if (Ucmp(comparison, *this) > 0) {
       break;

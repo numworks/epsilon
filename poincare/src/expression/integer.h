@@ -212,15 +212,14 @@ class IntegerHandler final {
     return serialize(buffer, bufferSize, &workingBuffer);
   }
 
-  struct DigitCounts {
-    int numberOfDigits;
-    int numberOfZerosAtTheEnd;
-  };
-
-  // Returns number of digits and number of consecutive zeroes at the end
-  DigitCounts numberOfBase10DigitsWithoutSign() const {
+  int numberOfBase10DigitsWithoutSign() const {
     WorkingBuffer workingBuffer;
     return numberOfBase10DigitsWithoutSign(&workingBuffer);
+  }
+
+  int numberOfZeroesAtTheEnd() const {
+    WorkingBuffer workingBuffer;
+    return numberOfZeroesAtTheEnd(&workingBuffer);
   }
 
   /* Return a fast, but [under/over]estimated number of digits in base 10 using
@@ -266,10 +265,10 @@ class IntegerHandler final {
   void sanitize();
   [[maybe_unused]] bool digitsAreContainedIn(const void* start,
                                              const void* end) const;
-  // Returns number of digits and number of consecutive zeroes at the end
-  DigitCounts numberOfBase10DigitsWithoutSign(
-      WorkingBuffer* workingBuffer) const;
+
+  int numberOfBase10DigitsWithoutSign(WorkingBuffer* workingBuffer) const;
   int numberOfZeroesAtTheEnd(WorkingBuffer* workingBuffer) const;
+
   size_t serialize(char* buffer, size_t bufferSize,
                    WorkingBuffer* workingBuffer) const;
   void removeZeroAtTheEnd(int minimalNumbersOfDigits,

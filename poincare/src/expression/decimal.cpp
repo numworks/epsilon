@@ -57,7 +57,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
   // Round the integer if m_mantissa > 10^numberOfSignificantDigits-1
   IntegerHandler m = Integer::Handler(unsignedMantissa);
   int numberOfDigitsInMantissa =
-      m.numberOfBase10DigitsWithoutSign(&workingBuffer).numberOfDigits;
+      m.numberOfBase10DigitsWithoutSign(&workingBuffer);
   exponent = numberOfDigitsInMantissa - 1 - exponent;
   if (numberOfDigitsInMantissa > numberOfSignificantDigits) {
     int exp = numberOfDigitsInMantissa - numberOfSignificantDigits;
@@ -74,7 +74,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
     if (IntegerHandler::Compare(d.remainder, boundary) >= 0) {
       m = IntegerHandler::Sum(m, IntegerHandler(1), false, &workingBuffer);
       // if 9999 was rounded to 10000, we need to update exponent and mantissa
-      if (m.numberOfBase10DigitsWithoutSign(&workingBuffer).numberOfDigits >
+      if (m.numberOfBase10DigitsWithoutSign(&workingBuffer) >
           numberOfSignificantDigits) {
         exponent++;
         m = IntegerHandler::Udiv(m, IntegerHandler(10), &workingBuffer)
@@ -94,7 +94,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
     int numberOfZeroesToAddForEngineering =
         PrintFloat::EngineeringNumberOfZeroesToAdd(
             minimalNumberOfMantissaDigits,
-            m.numberOfBase10DigitsWithoutSign(&workingBuffer).numberOfDigits);
+            m.numberOfBase10DigitsWithoutSign(&workingBuffer));
     if (numberOfZeroesToAddForEngineering > 0) {
       for (int i = 0; i < numberOfZeroesToAddForEngineering; i++) {
         m = IntegerHandler::Mult(m, IntegerHandler(10), &workingBuffer);
@@ -140,8 +140,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
     return std::min(currentChar, bufferSize - 1);
   }
   // Mantissa has already been cropped to fit.
-  assert(m.numberOfBase10DigitsWithoutSign(&workingBuffer).numberOfDigits ==
-         mantissaLength);
+  assert(m.numberOfBase10DigitsWithoutSign(&workingBuffer) == mantissaLength);
   int numberOfBase10DigitsWithoutSign = mantissaLength;
 
   /* We force scientific mode if the number of digits before the dot is superior

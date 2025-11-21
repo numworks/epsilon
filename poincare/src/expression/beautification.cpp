@@ -308,10 +308,9 @@ bool ShallowBeautifyBigInteger(Tree* e, void* context) {
     // Early escape: number is obviously too small
     return false;
   }
-  IntegerHandler::DigitCounts digitCount =
-      integer.numberOfBase10DigitsWithoutSign();
-  int nbOfDigits = digitCount.numberOfDigits;
-  int nbOf0sAtTheEnd = digitCount.numberOfZerosAtTheEnd;
+
+  int nbOfDigits = integer.numberOfBase10DigitsWithoutSign();
+  int nbOf0sAtTheEnd = integer.numberOfZeroesAtTheEnd();
   int nbOfSignificantDigits = nbOfDigits - nbOf0sAtTheEnd;
 
   if (nbOfDigits <= k_comfortableNumberOfDigits ||

@@ -64,7 +64,7 @@ void CalculationGraphController::viewWillAppear() {
   assert(!m_record.isNull());
   // Allow points of interest at m_graphRange->xMin()
   Coordinate2D<double> pointOfInterest = computeNewPointOfInterestFromAbscissa(
-      m_graphRange->xMin(), OMG::Direction::Right(), true);
+      m_graphRange->xMin(), -INFINITY, OMG::Direction::Right(), true);
   if (std::isnan(pointOfInterest.x())) {
     m_isActive = false;
     m_graphView->setCursorView(nullptr);
@@ -102,16 +102,16 @@ void CalculationGraphController::reloadBannerView() {
 
 Coordinate2D<double>
 CalculationGraphController::computeNewPointOfInterestFromAbscissa(
-    double start, OMG::HorizontalDirection direction, bool stretch) {
+    double start, double y, OMG::HorizontalDirection direction, bool stretch) {
   double max =
       direction.isRight() ? m_graphRange->xMax() : m_graphRange->xMin();
   functionStore()->modelForRecord(m_record)->trimResolutionInterval(&start,
                                                                     &max);
-  return computeNewPointOfInterest(start, max, stretch);
+  return computeNewPointOfInterest(start, max, y, stretch);
 }
 
 PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(
-    PointsOfInterestCache* pointsOfInterest, double start, double max,
+    PointsOfInterestCache* pointsOfInterest, double start, double max, double y,
     bool stretch) {
   // Compute at least 1 point of interest before displaying the view
   while (pointsOfInterest->numberOfPoints(specialInterest()) == 0 &&
@@ -123,15 +123,15 @@ PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(
       break;
     }
   }
-  return pointsOfInterest->firstPointInDirection(start, max, stretch,
+  return pointsOfInterest->firstPointInDirection(start, max, y, stretch,
                                                  specialInterest());
 }
 
 PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(
-    double start, double max, bool stretch) {
+    double start, double max, double y, bool stretch) {
   return computeAtLeastOnePointOfInterest(
       App::app()->graphController()->pointsOfInterestForSelectedRecord(), start,
-      max, stretch);
+      max, y, stretch);
 }
 
 ContinuousFunctionStore* CalculationGraphController::functionStore() const {
@@ -144,7 +144,8 @@ bool CalculationGraphController::moveCursorHorizontally(
     return false;
   }
   Coordinate2D<double> newPointOfInterest =
-      computeNewPointOfInterestFromAbscissa(m_cursor->x(), direction, false);
+      computeNewPointOfInterestFromAbscissa(m_cursor->x(), m_cursor->y(),
+                                            direction, false);
   if (std::isnan(newPointOfInterest.x())) {
     return false;
   }

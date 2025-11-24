@@ -272,8 +272,9 @@ bool GraphControllerHelper::snapToInterestAndUpdateCursor(
       App::app()
           ->graphController()
           ->pointsOfInterestForSelectedRecord()
-          ->firstPointInDirection(
-              start, end, false, Solver<double>::Interest::None, subCurveIndex);
+          ->firstPointInDirection(start, end, NAN, false,
+                                  Solver<double>::Interest::None,
+                                  subCurveIndex);
   Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
   if (!std::isfinite(nextPointOfInterestXY.x())) {
     return false;

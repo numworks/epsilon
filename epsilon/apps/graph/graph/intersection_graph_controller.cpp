@@ -60,8 +60,8 @@ void IntersectionGraphController::reloadBannerView() {
 }
 
 Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(
-    double start, double max, bool stretch) {
-  PointOfInterest p = computeAtLeastOnePointOfInterest(start, max, stretch);
+    double start, double max, double y, bool stretch) {
+  PointOfInterest p = computeAtLeastOnePointOfInterest(start, max, y, stretch);
   if (!p.isUninitialized()) {
     m_intersectedRecord = Ion::Storage::Record(p.data);
   }

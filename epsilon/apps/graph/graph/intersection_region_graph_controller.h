@@ -24,7 +24,7 @@ class IntersectionRegionGraphController : public IntersectionGraphController {
    * intersections between inequalities, and also include intersections between
    * other inequalities than the selected one. */
   Poincare::Coordinate2D<double> computeNewPointOfInterest(
-      double start, double max, bool stretch) override;
+      double start, double max, double y, bool stretch) override;
 
   struct PointOfInterestData {
     Poincare::Coordinate2D<double> coordinate;
@@ -34,7 +34,7 @@ class IntersectionRegionGraphController : public IntersectionGraphController {
   };
 
   void updateBestPointOfInterestForRecord(Ion::Storage::Record record,
-                                          double start, double max,
+                                          double start, double max, double y,
                                           bool stretch, bool directionIsRight,
                                           PointOfInterestData& bestPoint);
   int m_selectedRecordIndex = 0;

@@ -12,8 +12,8 @@ bool IsBetterPoint(bool directionIsRight, double x, double bestX) {
 }
 
 void IntersectionRegionGraphController::updateBestPointOfInterestForRecord(
-    Ion::Storage::Record record, double start, double max, bool stretch,
-    bool directionIsRight, PointOfInterestData& bestPoint) {
+    Ion::Storage::Record record, double start, double max, double y,
+    bool stretch, bool directionIsRight, PointOfInterestData& bestPoint) {
   OMG::ExpiringPointer<Shared::ContinuousFunction> f =
       functionStore()->modelForRecord(record);
   if (!f->isActiveInequality()) {
@@ -24,7 +24,7 @@ void IntersectionRegionGraphController::updateBestPointOfInterestForRecord(
   while (true) {
     PointOfInterest p = computeAtLeastOnePointOfInterest(
         App::app()->graphController()->pointsOfInterestForRecord(record), start,
-        max, stretch);
+        max, y, stretch);
     if (p.isUninitialized()) {
       // No more points of interest for this record
       return;
@@ -75,6 +75,7 @@ void IntersectionRegionGraphController::updateBestPointOfInterestForRecord(
 Coordinate2D<double>
 IntersectionRegionGraphController::computeNewPointOfInterest(double start,
                                                              double max,
+                                                             double y,
                                                              bool stretch) {
   // Infer direction from start and max
   bool directionIsRight = start <= max;
@@ -88,7 +89,7 @@ IntersectionRegionGraphController::computeNewPointOfInterest(double start,
          m_selectedRecordIndex < numberOfActiveFunctions);
   for (int i = 0; i < numberOfActiveFunctions; i++) {
     updateBestPointOfInterestForRecord(functionStore()->activeRecordAtIndex(i),
-                                       start, max, stretch, directionIsRight,
+                                       start, max, y, stretch, directionIsRight,
                                        bestPoint);
   }
 

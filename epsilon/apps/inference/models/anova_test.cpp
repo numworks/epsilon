@@ -242,7 +242,7 @@ bool ANOVATest::deleteGroupValue(int valueIndex, int groupIndex) {
 
 bool ANOVATest::validateGroupInputs() const {
   for (const GroupValues& group : m_groups) {
-    /* There must be two samples per group at the very minimun for statistic
+    /* There must be two samples per group at the very minimum for statistic
      * calculations to make any sense */
     if (group.size() < 2) {
       return false;

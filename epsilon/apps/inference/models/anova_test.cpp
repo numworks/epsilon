@@ -19,9 +19,7 @@ ANOVATest::GroupData GroupDataFromInputStatistics(
       .sampleStdDeviation = sampleStdDev,
       .sampleVariance = sampleVariance,
       .sumOfValues = n * mean,
-      // TODO: check this calculation
-      .sumOfSquaredValues =
-          n * mean * mean + (n - 1) * sampleVariance * sampleVariance};
+      .sumOfSquaredValues = n * mean * mean + (n - 1) * sampleVariance};
 }
 
 double ANOVATest::InputStatisticsData::parameter(int parameterIndex) const {

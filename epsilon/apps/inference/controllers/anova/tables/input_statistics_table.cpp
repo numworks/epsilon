@@ -36,7 +36,7 @@ size_t InputStatisticsTable::fillColumnName(int column, char* buffer) {
 
 // The row index refers to the "inner" table
 constexpr static const char* HeaderAtRow(int row) {
-  assert(row >= 0 && row <= 3);
+  assert(row >= 0 && row < 3);
   switch (row) {
     case 0:
       return I18n::translate(I18n::Message::SampleSize);

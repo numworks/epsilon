@@ -20,8 +20,7 @@ void HomogeneityTableDataSource::fillCellForLocation(
         static_cast<InferenceEvenOddBufferCell*>(cell);
     bool isRowHeader = row == 0;
     OMG::String<k_groupTitleBufferSize> groupTitle =
-        GroupTitle(isRowHeader ? column - 1 : row - 1,
-                   I18n::translate(I18n::Message::Group), !isRowHeader);
+        GroupTitle(isRowHeader ? column - 1 : row - 1, !isRowHeader);
     myCell->setText(groupTitle.data());
     myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     myCell->setFont(KDFont::Size::Small);

@@ -28,8 +28,7 @@ void InputStatisticsTable::handleResponderChainEvent(
 
 size_t InputStatisticsTable::fillColumnName(int column, char* buffer) {
   assert(column >= 0 && column < numberOfColumns());
-  OMG::String<k_groupTitleBufferSize> groupTitle =
-      GroupTitle(column - 1, I18n::translate(I18n::Message::Group));
+  OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(column - 1);
   strlcpy(buffer, groupTitle.data(),
           Shared::ColumnParameterController::k_titleBufferSize);
   return groupTitle.length();
@@ -64,8 +63,7 @@ void InputStatisticsTable::fillCellForLocation(Escher::HighlightCell* cell,
   if (type == k_typeOfHeaderCells) {
     if (row == 0) {
       // Column title
-      OMG::String<k_groupTitleBufferSize> groupTitle =
-          GroupTitle(column - 1, I18n::translate(I18n::Message::Group));
+      OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(column - 1);
       myCell->setText(groupTitle.data());
       myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     } else {

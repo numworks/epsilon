@@ -102,14 +102,14 @@ class String {
 
   // (String + char) concatenation
   constexpr String<CAPACITY>& operator+=(char right) {
-    assert(m_length + 1 < CAPACITY);
+    assert(m_length + 1 <= CAPACITY);
     m_data[m_length++] = right;
     return *this;
   }
 
   // (String + list of char) concatenation
   constexpr String<CAPACITY>& operator+=(std::initializer_list<char> right) {
-    assert(m_length + right.size() < CAPACITY);
+    assert(m_length + right.size() <= CAPACITY);
     for (char c : right) {
       *this += c;
     }

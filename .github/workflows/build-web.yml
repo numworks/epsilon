@@ -12,7 +12,7 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS_LARGE) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

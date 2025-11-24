@@ -58,6 +58,9 @@ GroupData GroupDataFromStatisticsData(const StatisticsData& statisticsData) {
       .sampleStdDeviation = sampleStdDev,
       .sampleVariance = sampleVariance,
       .sumOfValues = n * mean,
+      /* The sum of squared value can be deduced from the mean and the sample
+       * variance, knowing that mean = (1/n) * sum(x_i) and
+       * sampleVariance = (1/(n-1)) * sum((x_i - mean)^2) */
       .sumOfSquaredValues = n * mean * mean + (n - 1) * sampleVariance};
 }
 

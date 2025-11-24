@@ -56,7 +56,7 @@ bool ANOVATest::InputStatisticsData::IsValueAcceptable(double value,
                                                        int parameterIndex) {
   assert(parameterIndex >= 0 && parameterIndex < k_numberOfParameters);
   assert(!std::isnan(value));
-  /* There must be two samples per group at the very minimun for statistic
+  /* There must be two samples per group at the very minimum for statistic
    * calculations to make any sense */
   if (parameterIndex == 0 && (value < 2.0 || std::floor(value) != value)) {
     return false;

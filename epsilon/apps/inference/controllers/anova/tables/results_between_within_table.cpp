@@ -46,7 +46,7 @@ void ResultsBetweenWithinTableCell::drawRect(KDContext* ctx,
 
 // The row index refers to the "inner" table
 constexpr static const char* HeaderAtRow(int row) {
-  assert(row >= 0 && row <= ResultsBetweenWithinTableCell::k_numberOfInnerRows);
+  assert(row >= 0 && row < ResultsBetweenWithinTableCell::k_numberOfInnerRows);
   switch (row) {
     case 0:
       return I18n::translate(I18n::Message::SquareSum);
@@ -61,7 +61,7 @@ constexpr static const char* HeaderAtRow(int row) {
 
 // The row index refers to the "inner" table
 constexpr static const char* SymbolAtRow(int row) {
-  assert(row >= 0 && row <= ResultsBetweenWithinTableCell::k_numberOfInnerRows);
+  assert(row >= 0 && row < ResultsBetweenWithinTableCell::k_numberOfInnerRows);
   switch (row) {
     case 0:
       return I18n::translate(I18n::Message::SquareSumSymbol);

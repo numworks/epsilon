@@ -420,9 +420,9 @@ bool AdvancedOperation::ContractMult(Tree* e) {
       assert(commonFactor->isRational() && localFactor->isRational());
       Tree* newChild = SharedTreeStack->pushMult(2);
       assert(!commonFactor->isZero());
-      // For exemple, with commonFactor 1/5, and child -4π/5 push -4 here
+      // For example, with commonFactor 1/5, and child (-4/5)*π push -4 here
       Rational::NonZeroDivision(localFactor, commonFactor);
-      // For example, with child -4π/5, push π here
+      // For example, with (-4/5)*π, push π here
       PushNonFactors(child);
       SystematicReduction::ShallowReduce(newChild);
     }

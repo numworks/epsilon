@@ -32,10 +32,10 @@ class TextPair {
   ReplacementRule m_rule;
 };
 
-// Returns the number of occurences of a code point in a string
+// Returns the number of occurrences of a code point in a string
 int CountOccurrences(const char* s, CodePoint c);
 
-/* Returns the first occurence of a code point in a string, the position of the
+/* Returns the first occurrence of a code point in a string, the position of the
  * null terminating char otherwise. */
 const char* CodePointSearch(const char* s, CodePoint c,
                             const char* stoppingPosition = nullptr);
@@ -44,7 +44,7 @@ const char* CodePointSearch(const char* s, CodePoint c,
 bool HasCodePoint(const char* s, CodePoint c,
                   const char* stoppingPosition = nullptr);
 
-/* Returns the first occurence of a code point that is not c in a string,
+/* Returns the first occurrence of a code point that is not c in a string,
  * stopping at the null-terminating char or the start of string. */
 const char* NotCodePointSearch(const char* s, CodePoint c,
                                bool goingLeft = false,
@@ -61,9 +61,9 @@ void RemoveCodePoint(char* buffer, CodePoint c,
                      const char** indexToUpdate = nullptr,
                      const char* stoppingPosition = nullptr);
 
-/* Slides a string by a number of chars. If slidingSize < 0, the string is
- * slided to the left losing the first chars. Returns true if successful.
- * Exemples :
+/* Slides a string by a number of chars. If slidingSize < 0, the string is slid
+ * to the left losing the first chars. Returns true if successful.
+ * Examples :
  * SlideStringByNumberOfChar("12345", 2, 8) gives "1212345" and returns true.
  * SlideStringByNumberOfChar("12345", 2, 6) gives "12345" and returns false.
  * SlideStringByNumberOfChar("12345", -2, 6) gives "345" and returns true.*/

@@ -51,7 +51,7 @@ constexpr static const char* HeaderAtRow(int row) {
 }
 
 constexpr static const char* SymbolAtRow(int row) {
-  assert(row >= 0 && row <= InputStatisticsTable::k_numberOfInnerRows);
+  assert(row >= 0 && row < InputStatisticsTable::k_numberOfInnerRows);
   switch (row) {
     case 0:
       return I18n::translate(I18n::Message::N);

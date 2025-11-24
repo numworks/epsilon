@@ -63,7 +63,7 @@ constexpr static double GroupStatisticsResultAtRow(
 
 // The row index refers to the "inner" table
 constexpr static const char* HeaderAtRow(int row) {
-  assert(row >= 0 && row <= ResultsStatisticsTable::k_numberOfInnerRows);
+  assert(row >= 0 && row < ResultsStatisticsTable::k_numberOfInnerRows);
   switch (row) {
     case 0:
       return I18n::translate(I18n::Message::SampleSizeShort);
@@ -80,7 +80,7 @@ constexpr static const char* HeaderAtRow(int row) {
 
 // The row index refers to the "inner" table
 constexpr static const char* SymbolAtRow(int row) {
-  assert(row >= 0 && row <= ResultsStatisticsTable::k_numberOfInnerRows);
+  assert(row >= 0 && row < ResultsStatisticsTable::k_numberOfInnerRows);
   switch (row) {
     case 0:
       return I18n::translate(I18n::Message::N);

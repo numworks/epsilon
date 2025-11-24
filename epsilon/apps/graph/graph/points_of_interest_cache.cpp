@@ -76,8 +76,8 @@ int PointsOfInterestCache::numberOfPoints(
 }
 
 PointOfInterest PointsOfInterestCache::firstPointInDirection(
-    double start, double end, bool stretch, Solver<double>::Interest interest,
-    int subCurveIndex) {
+    double start, double end, double y, bool stretch,
+    Solver<double>::Interest interest, int subCurveIndex) {
   if (start == end) {
     return PointOfInterest();
   }
@@ -97,7 +97,10 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
      * PointOfInterest twice or skipping a PointOfInterest when p.x() is
      * very close to start or end */
     if (direction * p.x() < direction * start + (!stretch * margin)) {
-      continue;
+      if (p.x() != start || std::isnan(y) ||
+          direction * p.y() < direction * y + (!stretch * margin)) {
+        continue;
+      }
     }
     if (direction * p.x() > direction * end - (!stretch * margin)) {
       break;

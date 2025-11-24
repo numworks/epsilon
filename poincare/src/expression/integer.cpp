@@ -291,6 +291,8 @@ int IntegerHandler::numberOfBase10DigitsWithoutSign(
     // Start with 10^underestimate
     numberOfDigits = estimatedNumberOfBase10DigitsWithoutSign(false);
     comparison = Pow(base, IntegerHandler(numberOfDigits), workingBuffer);
+    assert(Ucmp(Pow(base, IntegerHandler(numberOfDigits - 1), workingBuffer),
+                *this) <= 0);
   }
   while (true) {
     if (Ucmp(comparison, *this) > 0) {
@@ -779,19 +781,9 @@ int IntegerHandler::estimatedNumberOfBase10DigitsWithoutSign(
   float estimation = std::ceil(estimatedNumberOfDigitsBase256 *
                                std::log10(static_cast<float>(k_digitBase)));
   assert(estimation > 0.f && estimation < static_cast<float>(INT_MAX));
-#if ASSERTIONS
-  static bool recurse = false;
-  bool wasRecursing = recurse;
-  recurse = true;
-#endif
   int estimatedNumberOfDigitsBase10 = static_cast<int>(estimation);
-  assert(wasRecursing ||
-         (estimatedNumberOfDigitsBase10 == numberOfBase10DigitsWithoutSign() ||
-          overEstimated == (estimatedNumberOfDigitsBase10 >
-                            numberOfBase10DigitsWithoutSign())));
-#if ASSERTIONS
-  recurse = false;
-#endif
+  assert(!overEstimated ||
+         estimatedNumberOfDigitsBase10 >= numberOfBase10DigitsWithoutSign());
   return estimatedNumberOfDigitsBase10;
 }
 

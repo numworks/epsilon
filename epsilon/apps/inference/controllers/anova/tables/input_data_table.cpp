@@ -28,8 +28,7 @@ void InputDataTable::handleResponderChainEvent(
 
 size_t InputDataTable::fillColumnName(int column, char* buffer) {
   assert(column >= 0 && column < k_maxNumberOfColumns);
-  OMG::String<k_groupTitleBufferSize> groupTitle =
-      GroupTitle(column, I18n::translate(I18n::Message::Group));
+  OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(column);
   strlcpy(buffer, groupTitle.data(),
           Shared::ColumnParameterController::k_titleBufferSize);
   return groupTitle.length();
@@ -47,8 +46,7 @@ void InputDataTable::fillCellForLocation(Escher::HighlightCell* cell,
     myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     myCell->setFont(KDFont::Size::Small);
     myCell->setEven(true);
-    OMG::String<k_groupTitleBufferSize> groupTitle =
-        GroupTitle(column, I18n::translate(I18n::Message::Group));
+    OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(column);
     myCell->setText(groupTitle.data());
     myCell->setTextColor(KDColorBlack);
   } else {

@@ -107,8 +107,7 @@ void ResultsStatisticsTable::fillCellForLocation(Escher::HighlightCell* cell,
   if (type == k_typeOfHeaderCells) {
     if (row == 0) {
       // Column title
-      OMG::String<k_groupTitleBufferSize> groupTitle =
-          GroupTitle(column - 1, I18n::translate(I18n::Message::Group));
+      OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(column - 1);
       myCell->setText(groupTitle.data());
     } else {
       // Row title

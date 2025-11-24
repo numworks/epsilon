@@ -27,6 +27,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/tables/categorical_controller.cpp \
   controllers/tables/categorical_table_cell.cpp \
   controllers/tables/dynamic_cells_data_source.cpp \
+  controllers/tables/header_titles.cpp \
   controllers/tables/one_header_row_table_data_source.cpp \
   controllers/tables/one_header_column_one_header_row_table_data_source.cpp \
   controllers/significance_test/hypothesis_controller.cpp \

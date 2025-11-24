@@ -29,7 +29,7 @@ void InputStatisticsTable::handleResponderChainEvent(
 size_t InputStatisticsTable::fillColumnName(int column, char* buffer) {
   assert(column >= 0 && column < numberOfColumns());
   OMG::String<k_groupTitleBufferSize> groupTitle =
-      GroupTitle(column - numberOfHeaderColumns() + 1);
+      GroupTitle(column - numberOfHeaderColumns());
   strlcpy(buffer, groupTitle.data(),
           Shared::ColumnParameterController::k_titleBufferSize);
   return groupTitle.length();

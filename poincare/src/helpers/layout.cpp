@@ -173,7 +173,7 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
      * - cursorRack differs from outputRack, or parentheses are being laid out
      * in linear mode
      * - a non-decimal digit is encountered (except for the first -).
-     * For exemple, 1*10^-50+2*10^50*i has been laid out as 1ᴇ-50+2ᴇ50i
+     * For example, 1*10^-50+2*10^50*i has been laid out as 1ᴇ-50+2ᴇ50i
      * A multiplication operator has to be added in some cases. */
     bool exponentIsBeingLaidOut =
         (outputRack != cursorRack || parenthesesAreNeeded);

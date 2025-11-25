@@ -246,7 +246,7 @@ KDRect ScrollView::BarDecorator::layoutIndicators(
   KDCoordinate hBarFrameBreadth = k_barsFrameBreadth * hBarIsVisible;
   KDCoordinate vBarFrameBreadth = k_barsFrameBreadth * vBarIsVisible;
 
-  // Mark the vertical and horizontal rects as dirty id needed
+  // Mark the vertical and horizontal rects as dirty if needed
   *dirtyRect1 = hBarWasVisible == hBarIsVisible
                     ? KDRectZero
                     : KDRect(frame.width() - k_barsFrameBreadth, 0,

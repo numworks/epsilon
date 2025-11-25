@@ -124,13 +124,13 @@ void ResultsStatisticsTable::fillHeaderCellForLocation(
 }
 
 void ResultsStatisticsTable::fillInnerCellForLocation(
-    Escher::HighlightCell* cell, int column, int row) {
-  assert(row >= 0 && row < innerNumberOfRows());
-  assert(column >= 0 && column < innerNumberOfColumns());
+    Escher::HighlightCell* cell, int innerColumn, int innerRow) {
+  assert(innerRow >= 0 && innerRow < innerNumberOfRows());
+  assert(innerColumn >= 0 && innerColumn < innerNumberOfColumns());
   innerCellType* myCell = static_cast<innerCellType*>(cell);
   const ANOVATest::GroupData& groupStatistics =
-      m_inference->groupStatistics(column);
-  PrintValueInTextHolder(GroupStatisticsResultAtRow(groupStatistics, row),
+      m_inference->groupStatistics(innerColumn);
+  PrintValueInTextHolder(GroupStatisticsResultAtRow(groupStatistics, innerRow),
                          myCell);
 }
 

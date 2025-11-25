@@ -70,8 +70,8 @@ class ResultsStatisticsTable
   void fillHeaderCellForLocation(Escher::HighlightCell* cell, int column,
                                  int row) override;
 
-  void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
-                                int row) override;
+  void fillInnerCellForLocation(Escher::HighlightCell* cell, int innerColumn,
+                                int innerRow) override;
 
  private:
   CategoricalController* categoricalController() override;

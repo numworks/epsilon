@@ -99,12 +99,14 @@ void InputStatisticsTable::fillHeaderCellForLocation(
 }
 
 void InputStatisticsTable::fillInnerCellForLocation(Escher::HighlightCell* cell,
-                                                    int column, int row) {
-  assert(column >= 0 && row >= 0);
-  assert(column < innerNumberOfColumns() && row < innerNumberOfRows());
+                                                    int innerColumn,
+                                                    int innerRow) {
+  assert(innerColumn >= 0 && innerRow >= 0);
+  assert(innerColumn < innerNumberOfColumns() &&
+         innerRow < innerNumberOfRows());
   innerCellType* myCell = static_cast<innerCellType*>(cell);
   fillValueCellForLocation(myCell->editableTextCell()->textField(), myCell,
-                           column, row, tableModel());
+                           innerColumn, innerRow, tableModel());
 }
 
 CategoricalController* InputStatisticsTable::categoricalController() {

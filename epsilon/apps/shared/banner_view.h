@@ -23,7 +23,7 @@ class BannerView : public Escher::View {
   KDSize minimalSizeForOptimalDisplay() const override;
   KDCoordinate minimalHeightForOptimalDisplayGivenWidth(
       KDCoordinate width) const;
-  void reload() { layoutSubviews(); }
+  virtual void reload() { layoutSubviews(); }
 
   class LabelledView : public Escher::View {
    public:

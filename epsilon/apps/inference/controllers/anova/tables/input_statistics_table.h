@@ -86,7 +86,9 @@ class InputStatisticsTable : public InputCategoricalTableCell,
   size_t fillColumnName(int column, char* buffer) override;
 
   // CategoricalTableViewDataSource
-  int relativeColumn(int column) const override { return column - 2; }
+  int relativeColumn(int column) const override {
+    return column - numberOfHeaderColumns();
+  }
 
   // CategoricalTableViewDataSource
   int innerNumberOfRows() const override { return k_numberOfInnerRows; }

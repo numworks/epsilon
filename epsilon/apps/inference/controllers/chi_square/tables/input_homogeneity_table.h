@@ -60,7 +60,9 @@ class InputHomogeneityTable
   size_t fillColumnName(int column, char* buffer) override;
 
   // CategoricalTableViewDataSource
-  int relativeColumn(int column) const override { return column - 1; }
+  int relativeColumn(int column) const override {
+    return column - numberOfHeaderColumns();
+  }
 
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
                                 int row) override;

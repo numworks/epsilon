@@ -29,7 +29,7 @@ void InputStatisticsTable::handleResponderChainEvent(
 size_t InputStatisticsTable::fillColumnName(int column, char* buffer) {
   assert(column >= 0 && column < numberOfColumns());
   OMG::String<k_groupTitleBufferSize> groupTitle =
-      GroupTitle(column - numberOfHeaderColumns());
+      GroupTitle(relativeColumn(column));
   strlcpy(buffer, groupTitle.data(),
           Shared::ColumnParameterController::k_titleBufferSize);
   return groupTitle.length();
@@ -68,7 +68,7 @@ void InputStatisticsTable::fillHeaderCellForLocation(
     Escher::HighlightCell* cell, int column, int row) {
   headerCellType* myCell = static_cast<headerCellType*>(cell);
   if (row < numberOfHeaderRows()) {
-    int innerColumnIndex = column - numberOfHeaderColumns();
+    int innerColumnIndex = relativeColumn(column);
     // Column title
     OMG::String<k_groupTitleBufferSize> groupTitle =
         GroupTitle(innerColumnIndex);

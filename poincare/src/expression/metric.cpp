@@ -35,6 +35,9 @@ constexpr static float GetTypeMetric(Type type) {
     case Type::IntegerNegBig:
     case Type::IntegerPosBig:
       return k_defaultMetric / 2.f;
+    case Type::RationalNegShort:
+    case Type::RationalNegBig:
+      return k_defaultMetric * 2.f;
     default:
       return k_defaultMetric;
     case Type::PowReal:

@@ -6,77 +6,64 @@
 #include <escher/tab_view_controller.h>
 
 #include "../../shared/graph_button_row_delegate.h"
+#include "../data/store.h"
+#include "bar_banner_view.h"
+#include "bar_graph_view.h"
 
 namespace Statistics::Categorical {
 
-class BarGraphController : public Escher::AlternateEmptyViewController,
-                           public Escher::AlternateEmptyViewDelegate,
+/* Main controller of the bar graph page.
+ * Handles events and contains the 2 subviews (bar graph and banner). */
+class BarGraphController : public Escher::ViewController,
                            public GraphButtonRowDelegate {
  public:
   BarGraphController(Escher::Responder* parentResponder,
                      Escher::ButtonRowController* header,
                      Escher::TabViewController* tabController,
                      Escher::StackViewController* stackViewController,
-                     Escher::ViewController* typeViewController)
-      : Escher::AlternateEmptyViewController(parentResponder, this, this),
+                     Escher::ViewController* typeViewController, Store* store)
+      : Escher::ViewController(parentResponder),
         GraphButtonRowDelegate(header, stackViewController, this,
                                typeViewController),
+        m_view(store),
         m_tabController(tabController) {}
 
-  void handleResponderChainEvent(
-      Responder::ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::HasBecomeFirst) {
-      header()->setSelectedButton(0);
-    }
-  }
-
-  bool handleEvent(Ion::Events::Event event) override {
-    int selectedButton = header()->selectedButton();
-    if (selectedButton >= 0) {
-      if (event == Ion::Events::Up || event == Ion::Events::Back) {
-        header()->setSelectedButton(-1);
-        m_tabController->selectTab();
-        return true;
-      }
-      /*
-      if (event == Ion::Events::Down &&
-          m_store->hasActiveSeries(activeSeriesMethod())) {
-        header()->setSelectedButton(-1);
-        dataView()->setDisplayBanner(true);
-        dataView()->selectViewForSeries(selectedSeries());
-        highlightSelection();
-        reloadBannerView();
-        Escher::App::app()->setFirstResponder(this);
-        return true;
-      }
-      return buttonAtIndex(selectedButton,
-                           Escher::ButtonRowController::Position::Top)
-          ->handleEvent(event);
-    }
-    assert(selectedSeries() >= 0 &&
-           m_store->hasActiveSeries(activeSeriesMethod()));
-    bool isVerticalEvent =
-        (event == Ion::Events::Down || event == Ion::Events::Up);
-    if ((isVerticalEvent || event == Ion::Events::Left ||
-         event == Ion::Events::Right)) {
-      if (isVerticalEvent ? moveSelectionVertically(event.direction())
-                          : moveSelectionHorizontally(event.direction())) {
-        if (reloadBannerView()) {
-          dataView()->reload();
-        }
-        return true;
-      }
-    */
-    }
-    return false;
-  }
-
-  // TEMP: AlternateEmptyViewDelegate
-  bool isEmpty() const override { return true; }
-  I18n::Message emptyMessage() override { return I18n::Message::BarGraph; }
-  Escher::Responder* responderWhenEmpty() override { return this; }
+  void initView() override;
+  void viewWillAppear() override;
+  Escher::View* view() override { return &m_view; }
+  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 
  private:
+  class ContentView : public Escher::View {
+    friend class BarGraphController;
+
+   public:
+    ContentView(Store* store);
+
+    void toggleSelection(bool isSelected) {
+      m_isBarGraphSelected = isSelected;
+      m_barGraphView.toggleSelection(isSelected);
+      m_bannerView.toggleSelection(isSelected);
+    };
+    bool isBarGraphSelected() const { return m_isBarGraphSelected; }
+    /* Select the next active category and group in direction, or return with
+     * the current selection if there is none. */
+    void selectNextActiveValue(int direction);
+    void updateBannerView();
+
+   private:
+    int numberOfSubviews() const override { return 2; }
+    void layoutSubviews(bool force = false) override;
+    View* subviewAtIndex(int index) override;
+
+    Store* m_store;
+    BarGraphView m_barGraphView;
+    BarBannerView m_bannerView;
+    bool m_isBarGraphSelected;
+  };
+
+  ContentView m_view;
   Escher::TabViewController* m_tabController;
 };
 

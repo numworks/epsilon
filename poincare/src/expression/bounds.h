@@ -35,7 +35,7 @@ class Bounds {
     spread(ulp);
   };
   constexpr Bounds() = default;
-  static constexpr Bounds Invalid() { return Bounds(); }
+  constexpr static Bounds Invalid() { return Bounds(); }
   static Bounds Mult(const Tree* e);
   static Bounds Add(const Tree* e);
   static Bounds Pow(const Tree* e);

@@ -22,7 +22,7 @@ QUIZ_CASE(omg_string) {
   std::string_view helloStringView(helloCString);
   quiz_assert(helloStringView.length() == helloString.length());
 
-  static constexpr size_t k_bufferLength = 10;
+  constexpr static size_t k_bufferLength = 10;
   char buffer[k_bufferLength];
   helloStringView.copy(buffer, helloStringView.length());
   quiz_assert(std::string_view(buffer, helloStringView.length()) ==

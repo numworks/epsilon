@@ -14,7 +14,7 @@ class DatasetColumn {
 template <typename T, size_t CAPACITY>
 class VectorDatasetColumn : public DatasetColumn<T> {
  public:
-  static constexpr size_t k_capacity = CAPACITY;
+  constexpr static size_t k_capacity = CAPACITY;
 
   using vector_type = OMG::StaticVector<T, k_capacity>;
 

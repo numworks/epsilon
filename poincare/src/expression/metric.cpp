@@ -18,7 +18,7 @@ namespace {
 
 constexpr static float k_defaultMetric = 1.f;
 
-static constexpr float GetTypeMetric(Type type) {
+constexpr static float GetTypeMetric(Type type) {
   switch (type) {
     case Type::Add:
     case Type::Mult:
@@ -51,13 +51,13 @@ static constexpr float GetTypeMetric(Type type) {
 
 /* Add/Mult Metric must depend on its number of children to ensure that if A is
  * better than B*C, A*D will also be better than B*C*D. */
-static constexpr float GetAddMultMetric(int numberOfChildren) {
+constexpr static float GetAddMultMetric(int numberOfChildren) {
   static_assert(GetTypeMetric(Type::Mult) == 0.f);
   static_assert(GetTypeMetric(Type::Add) == 0.f);
   return k_defaultMetric * (numberOfChildren - 1);
 }
 
-static constexpr float GetAddMultMetric(const Tree* e) {
+constexpr static float GetAddMultMetric(const Tree* e) {
   assert(e->isAdd() || e->isMult());
   return GetAddMultMetric(e->numberOfChildren());
 }

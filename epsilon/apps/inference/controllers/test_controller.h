@@ -14,7 +14,7 @@ namespace Inference {
 
 class ControllerContainer;
 
-static constexpr int k_numberOfTests = 7;
+constexpr static int k_numberOfTests = 7;
 
 class TestController
     : public InferenceController,

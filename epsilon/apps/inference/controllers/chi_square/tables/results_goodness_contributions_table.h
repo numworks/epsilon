@@ -6,7 +6,7 @@
 namespace Inference {
 
 namespace ResultsGoodnessContributionsDimensions {
-static constexpr int k_numberOfReusableCells =
+constexpr static int k_numberOfReusableCells =
     Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
         Escher::Metric::SmallEditableCellHeight, Escher::Metric::TabHeight) *
     3;

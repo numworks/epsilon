@@ -132,7 +132,7 @@ class Variant {
   }
 
  private:
-  static constexpr uint8_t k_notInit = -1;
+  constexpr static uint8_t k_notInit = -1;
   Internal::VariantInternalStorage<Arg...> m_variants;
   uint8_t m_type = k_notInit;
 };
@@ -216,7 +216,7 @@ class Variant2 {
     m_type = k_notInit;
   }
 
-  static constexpr uint8_t k_notInit = -1;
+  constexpr static uint8_t k_notInit = -1;
   union {
     One m_one;
     Two m_two;

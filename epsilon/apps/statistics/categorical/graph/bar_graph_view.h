@@ -60,18 +60,18 @@ class BarGraphView : public Escher::ScrollView,
     KDSize minimalSizeForOptimalDisplay() const override;
 
    private:
-    static constexpr KDCoordinate k_totalHeight = 137;
-    static constexpr KDCoordinate k_verticalMargin = 10;
-    static constexpr KDCoordinate k_maxBarHeight = 100;
-    static constexpr KDCoordinate k_axisHeight = 2;
-    static constexpr KDCoordinate k_legendHeight = 25;
+    constexpr static KDCoordinate k_totalHeight = 137;
+    constexpr static KDCoordinate k_verticalMargin = 10;
+    constexpr static KDCoordinate k_maxBarHeight = 100;
+    constexpr static KDCoordinate k_axisHeight = 2;
+    constexpr static KDCoordinate k_legendHeight = 25;
     static_assert(k_totalHeight == k_legendHeight + k_axisHeight +
                                        k_maxBarHeight + k_verticalMargin,
                   "Total height is incorrectly split.");
-    static constexpr KDCoordinate k_horizontalMargin = 20;
-    static constexpr KDCoordinate k_barWidth = 20;
-    static constexpr KDCoordinate k_border = 1;
-    static constexpr KDColor k_selectedColor = Escher::Palette::YellowDark;
+    constexpr static KDCoordinate k_horizontalMargin = 20;
+    constexpr static KDCoordinate k_barWidth = 20;
+    constexpr static KDCoordinate k_border = 1;
+    constexpr static KDColor k_selectedColor = Escher::Palette::YellowDark;
     Store* m_store;
     int m_selectedCategory;
     int m_selectedGroup;

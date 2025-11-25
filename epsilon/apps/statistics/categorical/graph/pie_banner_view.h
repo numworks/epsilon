@@ -16,27 +16,27 @@ namespace Statistics::Categorical {
 /* Side banner view of the pie graph. Displays various information about the
  * selected category */
 class PieBannerView : public Escher::View {
-  static constexpr KDColor k_backgroundColor = Escher::Palette::GrayMiddle;
-  static constexpr KDGlyph::Format k_titleFormat = {
+  constexpr static KDColor k_backgroundColor = Escher::Palette::GrayMiddle;
+  constexpr static KDGlyph::Format k_titleFormat = {
       .style = {.backgroundColor = k_backgroundColor},
       .horizontalAlignment = KDGlyph::k_alignCenter};
-  static constexpr KDGlyph::Format k_labelFormat = {
+  constexpr static KDGlyph::Format k_labelFormat = {
       .style = {.backgroundColor = k_backgroundColor,
                 .font = KDFont::Size::Small}};
-  static constexpr KDGlyph::Format k_valueFormat = {
+  constexpr static KDGlyph::Format k_valueFormat = {
       .style = {.backgroundColor = k_backgroundColor,
                 .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignRight};
 
-  static constexpr KDCoordinate k_titleCellWidth = 40;
-  static constexpr KDCoordinate k_colorCellHeight = 15;
-  static constexpr KDCoordinate k_colorCellWidth = 40;
-  static constexpr KDCoordinate k_textHeight = 20;
+  constexpr static KDCoordinate k_titleCellWidth = 40;
+  constexpr static KDCoordinate k_colorCellHeight = 15;
+  constexpr static KDCoordinate k_colorCellWidth = 40;
+  constexpr static KDCoordinate k_textHeight = 20;
 
-  static constexpr KDCoordinate k_leftRightMargin = 15;
-  static constexpr KDCoordinate k_topBottomMargin = 5;
+  constexpr static KDCoordinate k_leftRightMargin = 15;
+  constexpr static KDCoordinate k_topBottomMargin = 5;
 
-  static constexpr int k_numberOfSubviews = 7;
+  constexpr static int k_numberOfSubviews = 7;
 
  public:
   PieBannerView(Store* store);
@@ -56,7 +56,7 @@ class PieBannerView : public Escher::View {
   void layoutSubviews(bool force = false) override;
   Escher::View* subviewAtIndex(int index) override;
 
-  static constexpr int k_precision =
+  constexpr static int k_precision =
       Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision;
   Escher::BufferTextView<sizeof(Store::Label)> m_categoryTitle;
   Escher::BufferTextView<9> m_colorLabel;
@@ -66,7 +66,7 @@ class PieBannerView : public Escher::View {
   Escher::FloatBufferTextView<k_precision> m_freqValue;
   Escher::FloatBufferTextView<k_precision> m_relativeValue;
   Store* m_store;
-  static constexpr uint8_t k_invalidGroupOrCategory = UINT8_MAX;
+  constexpr static uint8_t k_invalidGroupOrCategory = UINT8_MAX;
   uint8_t m_category = k_invalidGroupOrCategory;
   uint8_t m_group = k_invalidGroupOrCategory;
   bool m_isSelected = false;

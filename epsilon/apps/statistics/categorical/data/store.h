@@ -26,11 +26,11 @@ class Store {
   };
 
  public:
-  static constexpr int k_labelGlyphLength = 11;  // 11 (from spec)
+  constexpr static int k_labelGlyphLength = 11;  // 11 (from spec)
   // +4 to allow 2 or 3 combining CodePoint
-  static constexpr int k_labelLength = k_labelGlyphLength + 4;
-  static constexpr int k_maxNumberOfGroups = 6;
-  static constexpr int k_maxNumberOfCategory = 10;
+  constexpr static int k_labelLength = k_labelGlyphLength + 4;
+  constexpr static int k_maxNumberOfGroups = 6;
+  constexpr static int k_maxNumberOfCategory = 10;
   using Label = char[k_labelLength + 1];  // + \x00
 
   /* Subpart of the [Store] that will be stored in the snapshot */

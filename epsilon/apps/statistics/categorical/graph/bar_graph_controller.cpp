@@ -114,7 +114,7 @@ void BarGraphController::ContentView::updateBannerView() {
   int group = m_barGraphView.selectedGroup();
   int category = m_barGraphView.selectedCategory();
 
-  static constexpr int k_precision =
+  constexpr static int k_precision =
       Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision;
   Poincare::Preferences::PrintFloatMode displayMode =
       GlobalPreferences::SharedGlobalPreferences()->displayMode();

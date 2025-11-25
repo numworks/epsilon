@@ -18,8 +18,8 @@ QUIZ_CASE(pcj_statistics_dataset) {
   // TODO: unit tests to be continued
 }
 
-static constexpr double k_precision1 = 1e-3;
-static constexpr double k_precision2 = 1e-2;
+constexpr static double k_precision1 = 1e-3;
+constexpr static double k_precision2 = 1e-2;
 
 QUIZ_CASE(pcj_statistics_anova_from_values) {
   using namespace Poincare::Inference::SignificanceTest::FTest;

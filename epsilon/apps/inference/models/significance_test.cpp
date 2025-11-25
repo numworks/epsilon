@@ -24,7 +24,7 @@ void SignificanceTest::setGraphTitle(char* buffer, size_t bufferSize) const {
       Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-static constexpr int k_maxNumberOfGlyphs =
+constexpr static int k_maxNumberOfGlyphs =
     Escher::Metric::MaxNumberOfSmallGlyphsInDisplayWidth;
 
 SignificanceTest::DescriptionBuffer SignificanceTest::h0Description() const {

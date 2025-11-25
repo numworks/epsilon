@@ -561,39 +561,70 @@ Range2D<T> Zoom<T>::sanitize2DHelper(Range2D<T> range) const {
   return Range2D<T>(xRange, yRange);
 }
 
+/* Shifts new range to ensure interesting range is contained in it, and if
+ * possible centered on it. */
 template <typename T>
-static bool lengthCompatibleWithNormalization(T length, T lengthNormalized,
-                                              T interestingLength) {
-  return
-      /* The range (interesting + magnitude) makes up for at least 30% of the
-       * normalized range (i.e. the curve does not appear squeezed). */
-      lengthNormalized <= length * Zoom<T>::k_maxNormalizationRatio &&
-      /* The normalized range makes up for at least 15% of the range. This is to
-       * prevent that, by shrinking the range, the other axis becomes too long
-       * for the remaining visible part of the curve. */
-      lengthNormalized >= length * Zoom<T>::k_minNormalizationRatio &&
-      /* The normalized range can fit the interesting range. We only count the
-       * interesting range for this part as discarding the part that comes from
-       * the magnitude is not an issue. */
-      interestingLength <= lengthNormalized;
+void editRange(Range1D<T>* rangeToEdit, T newLength,
+               const Range1D<T>* interestingRange, T maxFloat) {
+  if (newLength == rangeToEdit->length()) {
+    return;
+  }
+  T interestingCenter = interestingRange->isNan() ? rangeToEdit->center()
+                                                  : interestingRange->center();
+  assert(std::isfinite(interestingCenter));
+  T portionOverInterestingCenter =
+      (rangeToEdit->max() - interestingCenter) / rangeToEdit->length();
+  T lengthOverCenter = portionOverInterestingCenter * newLength;
+  T lengthUnderCenter = newLength - lengthOverCenter;
+  if (!interestingRange->isNan() &&
+      interestingCenter - lengthUnderCenter > interestingRange->min()) {
+    *rangeToEdit = Range1D<T>(interestingRange->min(),
+                              interestingRange->min() + newLength, maxFloat);
+  } else if (!interestingRange->isNan() &&
+             interestingCenter + lengthOverCenter < interestingRange->max()) {
+    *rangeToEdit = Range1D<T>(interestingRange->max() - newLength,
+                              interestingRange->max(), maxFloat);
+  } else {
+    *rangeToEdit = Range1D<T>(interestingCenter - lengthUnderCenter,
+                              interestingCenter + lengthOverCenter, maxFloat);
+  }
 }
 
 template <typename T>
-bool Zoom<T>::xLengthCompatibleWithNormalization(T xLength,
-                                                 T xLengthNormalized) const {
-  return lengthCompatibleWithNormalization(xLength, xLengthNormalized,
-                                           m_interestingRange.x()->length());
-}
+struct NormalizationData {
+  T initialLength;
+  T normalRatio;
+  T normalizedLength;
+  T upperBound;
+  T lowerBound;
+  T resultLength;
+  bool isForced;
+};
 
 template <typename T>
-bool Zoom<T>::yLengthCompatibleWithNormalization(T yLength,
-                                                 T yLengthNormalized) const {
-  return lengthCompatibleWithNormalization(yLength, yLengthNormalized,
-                                           m_interestingRange.y()->length()) &&
-         /* If X range is forced, the normalized Y range must fit the magnitude
-            Y range, otherwise it will crop some values. */
-         (m_forcedRange.x()->isNan() ||
-          m_magnitudeRange.y()->length() <= yLengthNormalized);
+NormalizationData<T> computeNormalizationData(
+    T normalRatio, const Range1D<T>* saneRange,
+    const Range1D<T>* orthogonalSaneRange, const Range1D<T>* interestingRange,
+    bool isForced) {
+  NormalizationData<T> data;
+  data.initialLength = saneRange->length();
+  data.normalRatio = normalRatio;
+  data.normalizedLength = orthogonalSaneRange->length() * data.normalRatio;
+  /* - The normalized range makes up for at least 15% of the range. This is to
+   * prevent that, by shrinking the range, the other axis becomes too long
+   * for the remaining visible part of the curve.
+   * - The normalized range must fit the interesting range. We only count the
+   * interesting range for this part as discarding the part that comes from
+   * the magnitude is not an issue. */
+  data.lowerBound =
+      std::max(data.initialLength * Zoom<T>::k_minNormalizationRatio,
+               interestingRange->length());
+  /* The range (interesting + magnitude) cannot be stretched by more than 2.22
+   * times the normalized range (i.e. the curve does not appear squeezed). */
+  data.upperBound = data.initialLength * Zoom<T>::k_maxNormalizationRatio;
+  data.isForced = isForced;
+  data.resultLength = data.initialLength;
+  return data;
 }
 
 template <typename T>
@@ -611,75 +642,49 @@ Range2D<T> Zoom<T>::prettyRange(bool forceNormalization) const {
       m_maxFloat);
   saneRange = sanitize2DHelper(saneRange);
 
-  T xLength = saneRange.x()->length();
-  T yLength = saneRange.y()->length();
-  T xLengthNormalized = yLength / m_normalRatio;
-  T yLengthNormalized = xLength * m_normalRatio;
+  NormalizationData<T> xData = computeNormalizationData<T>(
+      static_cast<T>(1.) / m_normalRatio, saneRange.x(), saneRange.y(),
+      m_interestingRange.x(), xRangeIsForced);
+  NormalizationData<T> yData =
+      computeNormalizationData<T>(m_normalRatio, saneRange.y(), saneRange.x(),
+                                  m_interestingRange.y(), yRangeIsForced);
 
-  bool normalizeX = !xRangeIsForced &&
-                    (forceNormalization || xLengthCompatibleWithNormalization(
-                                               xLength, xLengthNormalized));
-  bool normalizeY = !yRangeIsForced &&
-                    (forceNormalization || yLengthCompatibleWithNormalization(
-                                               yLength, yLengthNormalized));
-  if (normalizeX && normalizeY) {
-    /* Both axes are good candidates for normalization, pick the one that does
-     * not lead to the range being shrunk. */
-    normalizeX = xLength < xLengthNormalized;
-    normalizeY = yLength < yLengthNormalized;
-  }
-  if (!(normalizeX || normalizeY)) {
-    // Normalize as much as you can anyway, only by extending the range.
-    /* Note: we could also try to shrink the second range after extending the
-     * first one, to get even closer to normalization. */
-    if (xLength < xLengthNormalized && !xRangeIsForced) {
-      xLengthNormalized = xLength * Zoom<T>::k_maxNormalizationRatio;
-      normalizeX = true;
-    } else if (yLength < yLengthNormalized && !yRangeIsForced) {
-      yLengthNormalized = yLength * Zoom<T>::k_maxNormalizationRatio;
-      normalizeY = true;
-    } else {
-      return saneRange;
+  bool xWillShrink = xData.normalizedLength < xData.initialLength;
+  /* Prioritize changes on the axis that
+   * - is not forced
+   * - will be expanded by normalization. We prefer expanding ranges rather
+   *   than shrinking them, as shrinking might cut out interesting parts of
+   *   the curve. */
+  bool prioritizeYChanges = xRangeIsForced || (xWillShrink && !yRangeIsForced);
+
+  NormalizationData<T>& primary = prioritizeYChanges ? yData : xData;
+  NormalizationData<T>& secondary = prioritizeYChanges ? xData : yData;
+
+  if (forceNormalization) {
+    // Just normalize the primary axis
+    primary.resultLength = primary.normalizedLength;
+  } else {
+    // Normalize the primary axis up to the allowed bounds
+    primary.resultLength = std::clamp(primary.normalizedLength,
+                                      primary.lowerBound, primary.upperBound);
+    /* If normalization isn't reached yet but could be  by adjusting the
+     * secondary axis, do it */
+    if (primary.resultLength != primary.normalizedLength &&
+        !secondary.isForced) {
+      T secondaryNormalizedLength =
+          primary.resultLength * secondary.normalRatio;
+      if (secondaryNormalizedLength <= secondary.upperBound &&
+          secondaryNormalizedLength >= secondary.lowerBound) {
+        // Normalization can be reached by shrinking/expanding secondary axis
+        secondary.resultLength = secondaryNormalizedLength;
+      }
     }
   }
-  assert(normalizeX != normalizeY);
 
-  /* Shift new range to ensure interesting range is contained in it, and if
-   * possible centered on it. */
-  Range1D<T>* rangeToEdit;
-  const Range1D<T>* interestingRange;
-  T normalLength;
-  if (normalizeX) {
-    rangeToEdit = saneRange.x();
-    interestingRange = m_interestingRange.x();
-    normalLength = xLengthNormalized;
-  } else {
-    rangeToEdit = saneRange.y();
-    interestingRange = m_interestingRange.y();
-    normalLength = yLengthNormalized;
-  }
-
-  T interestingCenter = interestingRange->isNan() ? rangeToEdit->center()
-                                                  : interestingRange->center();
-  assert(std::isfinite(interestingCenter));
-  T portionOverInterestingCenter =
-      (rangeToEdit->max() - interestingCenter) / rangeToEdit->length();
-  T lengthOverCenter = portionOverInterestingCenter * normalLength;
-  T lengthUnderCenter = normalLength - lengthOverCenter;
-  if (!interestingRange->isNan() &&
-      interestingCenter - lengthUnderCenter > interestingRange->min()) {
-    *rangeToEdit =
-        Range1D<T>(interestingRange->min(),
-                   interestingRange->min() + normalLength, m_maxFloat);
-  } else if (!interestingRange->isNan() &&
-             interestingCenter + lengthOverCenter < interestingRange->max()) {
-    *rangeToEdit = Range1D<T>(interestingRange->max() - normalLength,
-                              interestingRange->max(), m_maxFloat);
-  } else {
-    *rangeToEdit = Range1D<T>(interestingCenter - lengthUnderCenter,
-                              interestingCenter + lengthOverCenter, m_maxFloat);
-  }
-
+  editRange<T>(saneRange.x(), xData.resultLength, m_interestingRange.x(),
+               m_maxFloat);
+  editRange<T>(saneRange.y(), yData.resultLength, m_interestingRange.y(),
+               m_maxFloat);
   return saneRange;
 }
 

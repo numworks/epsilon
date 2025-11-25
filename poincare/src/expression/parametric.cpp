@@ -48,15 +48,15 @@ bool Parametric::IsFunctionIndex(int i, const Tree* e) {
   return i == FunctionIndex(e);
 }
 
-ComplexSign Parametric::VariableSign(const Tree* e) {
+ComplexProperties Parametric::VariableProperties(const Tree* e) {
   switch (e->type()) {
     case Type::Diff:
     case Type::Integral:
-      return k_continuousVariableSign;
+      return k_continuousVariableProperties;
     case Type::ListSequence:
     case Type::Sum:
     case Type::Product:
-      return k_discreteVariableSign;
+      return k_discreteVariableProperties;
     default:
       OMG::unreachable();
   }
@@ -64,12 +64,12 @@ ComplexSign Parametric::VariableSign(const Tree* e) {
 
 Tree* ReduceSumOrProductAux(const Tree* e, const Tree* lowerBound,
                             const Tree* upperBound, const Tree* function,
-                            ComplexSign sign) {
+                            ComplexProperties properties) {
   assert(e->isSum() || e->isProduct());
   bool isSum = e->isSum();
 
   // If a > b: sum(f(k),k,a,b) = 0 and prod(f(k),k,a,b) = 1
-  if (sign.realSign().isStrictlyNegative()) {
+  if (properties.realSign().isStrictlyNegative()) {
     Dimension dim = Dimension::Get(function);
     Tree* result;
     if (dim.isMatrix()) {
@@ -88,7 +88,7 @@ Tree* ReduceSumOrProductAux(const Tree* e, const Tree* lowerBound,
   }
 
   // If a=b, no need to wait for advanced reduction to explicit
-  if (sign.realSign().isNull()) {
+  if (properties.realSign().isNull()) {
     Tree* result = e->cloneTree();
     if (Parametric::Explicit(result)) {
       return result;
@@ -191,29 +191,30 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
     return e->hasDescendantSatisfying(
         [](const Tree* child) { return child->isUserSymbol(); });
   };
-  ComplexSign signLowerBound = GetComplexSign(lowerBound);
-  ComplexSign signUpperBound = GetComplexSign(upperBound);
-  if (signLowerBound.isNonReal() || signUpperBound.isNonReal()) {
+  ComplexProperties propertiesLowerBound = GetComplexProperties(lowerBound);
+  ComplexProperties propertiesUpperBound = GetComplexProperties(upperBound);
+  if (propertiesLowerBound.isNonReal() || propertiesUpperBound.isNonReal()) {
     // NOTE: catches bounds like: i, k+i
     Undefined::ReplaceTreeWithDimensionedType(e, Type::UndefOutOfDefinition);
     return true;
   }
-  ComplexSign sign = ComplexSignOfDifference(upperBound, lowerBound);
+  ComplexProperties propertiesDifference =
+      ComplexPropertiesOfDifference(upperBound, lowerBound);
   /* Since child should be reduced at this point, ensure bounds are integer or
    * contains UserSymbol (CAS) */
-  if (!signLowerBound.isInteger() || !signUpperBound.isInteger()) {
+  if (!propertiesLowerBound.isInteger() || !propertiesUpperBound.isInteger()) {
     bool boundsHaveSymbol =
         HasUserSymbol(lowerBound) || HasUserSymbol(upperBound);
-    if (!boundsHaveSymbol || sign.isNonReal()) {
+    if (!boundsHaveSymbol || propertiesDifference.isNonReal()) {
       // NOTE: catches bounds like: π
       Undefined::ReplaceTreeWithDimensionedType(e, Type::UndefOutOfDefinition);
       return true;
     }
-    if (!sign.isReal()) {
+    if (!propertiesDifference.isReal()) {
       // NOTE: catches bounds like: k×i
       return false;
     }
-    assert(boundsHaveSymbol && sign.isReal());
+    assert(boundsHaveSymbol && propertiesDifference.isReal());
     // TODO: Introduce piecewise for inverted bounds:
     // sum(...,k,j) => {sum(...,k,j) if k<=j else 0}
     // NOTE: Dependencies will catch bounds like: k+π
@@ -222,12 +223,13 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   const Tree* function = upperBound->nextTree();
   static_assert(k_lowerBoundIndex + 1 == k_upperBoundIndex &&
                 k_upperBoundIndex + 1 == k_integrandIndex);
-  TreeRef result =
-      ReduceSumOrProductAux(e, lowerBound, upperBound, function, sign);
+  TreeRef result = ReduceSumOrProductAux(e, lowerBound, upperBound, function,
+                                         propertiesDifference);
   if (!result) {
     return false;
   }
-  // TODO: Skip the dependency if signLowerBound+signUpperBound are `isInteger`
+  // TODO: Skip the dependency if propertiesLowerBound+propertiesUpperBound are
+  // `isInteger`
   e->moveTreeOverTree(PatternMatching::CreateReduce(
       KDep(KA, KDepList(KRealInteger(KB), KRealInteger(KC))),
       {.KA = result, .KB = lowerBound, .KC = upperBound}));
@@ -288,11 +290,12 @@ bool Parametric::ContractSum(Tree* e) {
   if (PatternMatching::Match(
           e, KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KB, KF, KD))),
           &ctx)) {
-    ComplexSign sign =
-        ComplexSignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
-    Sign realSign = sign.realSign();
-    if (sign.isReal() && (realSign.isNull() || realSign.isStrictlyPositive() ||
-                          realSign.isStrictlyNegative())) {
+    ComplexProperties properties =
+        ComplexPropertiesOfDifference(ctx.getTree(KC), ctx.getTree(KF));
+    Sign realSign = properties.realSign();
+    if (properties.isReal() &&
+        (realSign.isNull() || realSign.isStrictlyPositive() ||
+         realSign.isStrictlyNegative())) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyPositive()
               ? PatternMatching::CreateReduce(
@@ -314,11 +317,12 @@ bool Parametric::ContractSum(Tree* e) {
   if (PatternMatching::Match(
           e, KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KF, KC, KD))),
           &ctx)) {
-    ComplexSign sign =
-        ComplexSignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
-    Sign realSign = sign.realSign();
-    if (sign.isReal() && (realSign.isNull() || realSign.isStrictlyPositive() ||
-                          realSign.isStrictlyNegative())) {
+    ComplexProperties properties =
+        ComplexPropertiesOfDifference(ctx.getTree(KB), ctx.getTree(KF));
+    Sign realSign = properties.realSign();
+    if (properties.isReal() &&
+        (realSign.isNull() || realSign.isStrictlyPositive() ||
+         realSign.isStrictlyNegative())) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyNegative()
               ? PatternMatching::CreateReduce(
@@ -351,11 +355,12 @@ bool Parametric::ContractProduct(Tree* e) {
           e,
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KB, KF, KD), -1_e)),
           &ctx)) {
-    ComplexSign sign =
-        ComplexSignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
-    Sign realSign = sign.realSign();
-    if (sign.isReal() && (realSign.isNull() || realSign.isStrictlyPositive() ||
-                          realSign.isStrictlyNegative())) {
+    ComplexProperties properties =
+        ComplexPropertiesOfDifference(ctx.getTree(KC), ctx.getTree(KF));
+    Sign realSign = properties.realSign();
+    if (properties.isReal() &&
+        (realSign.isNull() || realSign.isStrictlyPositive() ||
+         realSign.isStrictlyNegative())) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyPositive()
               ? PatternMatching::CreateReduce(
@@ -378,11 +383,12 @@ bool Parametric::ContractProduct(Tree* e) {
           e,
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KF, KC, KD), -1_e)),
           &ctx)) {
-    ComplexSign sign =
-        ComplexSignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
-    Sign realSign = sign.realSign();
-    if (sign.isReal() && (realSign.isNull() || realSign.isStrictlyPositive() ||
-                          realSign.isStrictlyNegative())) {
+    ComplexProperties properties =
+        ComplexPropertiesOfDifference(ctx.getTree(KB), ctx.getTree(KF));
+    Sign realSign = properties.realSign();
+    if (properties.isReal() &&
+        (realSign.isNull() || realSign.isStrictlyPositive() ||
+         realSign.isStrictlyNegative())) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyNegative()
               ? PatternMatching::CreateReduce(

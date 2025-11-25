@@ -247,7 +247,7 @@ bool IsDefinedIfChildIsDefined(const Tree* e) {
   return e->isOfType({Type::Trig, Type::Abs, Type::Exp, Type::Re, Type::Im,
                       Type::ATrig, Type::ATanRad, Type::Ln}) ||
          (e->isPow() && e->child(1)->isStrictlyPositiveRational()) ||
-         (e->isSign() && GetComplexSign(e->child(0)).isReal());
+         (e->isSign() && GetComplexProperties(e->child(0)).isReal());
 }
 
 // Check presence of undefined patterns e.g. inf-inf or inf*0
@@ -259,9 +259,9 @@ bool CanBeUndefWithInfinity(const Tree* e) {
     bool canContainImagPlusInfinity = false;
     bool canContainImagMinusInfinity = false;
     for (const Tree* child : e->children()) {
-      ComplexSign s = GetComplexSign(child);
-      Sign realSign = s.realSign();
-      Sign imagSign = s.imagSign();
+      ComplexProperties properties = GetComplexProperties(child);
+      Sign realSign = properties.realSign();
+      Sign imagSign = properties.imagSign();
       bool canBeRealPlusInfinity =
           realSign.canBeInfinite() && realSign.canBeStrictlyPositive();
       bool canBeRealMinusInfinity =
@@ -291,11 +291,11 @@ bool CanBeUndefWithInfinity(const Tree* e) {
         // TODO handle non-scalar trees here (matrix, list)
         continue;
       }
-      ComplexSign s = GetComplexSign(child);
-      Sign realSign = s.realSign();
-      Sign imagSign = s.imagSign();
+      ComplexProperties properties = GetComplexProperties(child);
+      Sign realSign = properties.realSign();
+      Sign imagSign = properties.imagSign();
       bool canBeRealOrImagNull = realSign.canBeNull() || imagSign.canBeNull();
-      bool canBeRealOrImagInfinity = s.canBeInfinite();
+      bool canBeRealOrImagInfinity = properties.canBeInfinite();
 
       if ((canBeRealOrImagNull && canContainInfinity) ||
           (canBeRealOrImagInfinity && canContainNull)) {
@@ -350,14 +350,15 @@ bool ReduceDependencies(Tree* dependencies) {
   TreeRef end = pushEndMarker(dependencies);
   while (dependency != end) {
     if (dependency->isReal()) {
-      ComplexSign signX = GetComplexSign(dependency->child(0));
-      if (signX.isNonReal()) {
+      ComplexProperties propertiesX =
+          GetComplexProperties(dependency->child(0));
+      if (propertiesX.isNonReal()) {
         // {real(x)} = {undef} if x is non real
         dependency->cloneTreeOverTree(KUndef);
         removeMarker(end);
         return true;
       }
-      if (signX.isReal()) {
+      if (propertiesX.isReal()) {
         // dep(..., {real(x)}) = dep(..., {x}) if x is real
         dependency->moveTreeOverTree(dependency->child(0));
         changed = true;
@@ -392,14 +393,14 @@ bool ReduceDependencies(Tree* dependencies) {
       changed = true;
       continue;
     } else if (dependency->isNonNull()) {
-      ComplexSign sign = GetComplexSign(dependency->child(0));
-      if (sign.isNull()) {
+      ComplexProperties properties = GetComplexProperties(dependency->child(0));
+      if (properties.isNull()) {
         // dep(..., {nonNull(x)}) = dep(..., {undef}) if x is null
         dependency->cloneTreeOverTree(KUndef);
         removeMarker(end);
         return true;
       }
-      if (!sign.canBeNull()) {
+      if (!properties.canBeNull()) {
         // dep(..., {nonNull(x)}) = dep(..., {x}) if x is non null
         dependency->moveTreeOverTree(dependency->child(0));
         changed = true;
@@ -423,29 +424,30 @@ bool ReduceDependencies(Tree* dependencies) {
         continue;
       }
     } else if (dependency->isRealPos()) {
-      ComplexSign sign = GetComplexSign(dependency->child(0));
-      if (sign.isNonReal() || sign.realSign().isStrictlyNegative()) {
+      ComplexProperties properties = GetComplexProperties(dependency->child(0));
+      if (properties.isNonReal() ||
+          properties.realSign().isStrictlyNegative()) {
         /* dep(..., {realPos(x)},) = dep(..., {nonreal}) if x is not real
          * positive */
         dependency->cloneTreeOverTree(KNonReal);
         changed = true;
         continue;
       }
-      if (sign.isReal() && sign.realSign().isPositive()) {
+      if (properties.isReal() && properties.realSign().isPositive()) {
         // dep(..., {realPos(x)}) = dep(..., {x}) if x is real and positive
         dependency->moveTreeOverTree(dependency->child(0));
         changed = true;
         continue;
       }
     } else if (dependency->isRealInteger()) {
-      ComplexSign sign = GetComplexSign(dependency->child(0));
-      if (sign.isNonReal()) {
+      ComplexProperties properties = GetComplexProperties(dependency->child(0));
+      if (properties.isNonReal()) {
         /* dep(..., {realInteger(x)},) = dep(..., {undef}) if x is not real */
         dependency->cloneTreeOverTree(KUndef);
         changed = true;
         continue;
       }
-      if (sign.isReal() && sign.realSign().isInteger()) {
+      if (properties.isReal() && properties.realSign().isInteger()) {
         // dep(..., {realInteger(x)}) = dep(..., {x}) if x is real and integer
         dependency->moveTreeOverTree(dependency->child(0));
         changed = true;

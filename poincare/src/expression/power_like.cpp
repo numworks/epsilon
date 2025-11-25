@@ -61,13 +61,13 @@ bool PowerLike::ExpandRationalPower(Tree* e, const Tree* base,
 }
 
 bool PowerLike::ReducePowerOfZero(Tree* e, const Tree* power) {
-  ComplexSign indexSign = GetComplexSign(power);
-  if (indexSign.realSign().isStrictlyPositive()) {
+  ComplexProperties powerProperties = GetComplexProperties(power);
+  if (powerProperties.realSign().isStrictlyPositive()) {
     // 0^x is always defined.
     e->cloneTreeOverTree(0_e);
     return true;
   }
-  if (!indexSign.realSign().canBeStrictlyPositive()) {
+  if (!powerProperties.realSign().canBeStrictlyPositive()) {
     // 0^x cannot be defined
     e->cloneTreeOverTree(KOutOfDefinition);
     return true;

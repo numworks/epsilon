@@ -171,7 +171,8 @@ static PreprocessingResult PreprocessEquationList(
 
   /* The symbols should be replaced in this order :
    *  - User functions (because they can hide UserSymbols and local symbols)
-   *  - UserSymbols into unkowns (because they have a different complexSign)
+   *  - UserSymbols into unkowns (because they have a different
+   * ComplexProperties)
    *  - Local symbols into variables (Done in ProjectAndReduce)
    *  - Reduction (Done in ProjectAndReduce). */
 
@@ -184,9 +185,10 @@ static PreprocessingResult PreprocessEquationList(
 
   for (size_t i = 0; i < equationMetadata.unknownVariables.size(); i++) {
     const char* variable = equationMetadata.unknownVariables[i].data();
-    // TODO: Use a more precise complexSign when possible for better reduction.
+    // TODO: Use a more precise ComplexProperties when possible for better
+    // reduction.
     Variables::ReplaceSymbol(reducedEquationList, variable, i,
-                             ComplexSign::Finite());
+                             ComplexProperties::Finite());
   }
 
   // Step 3.4. Project (replace local symbols) and reduce
@@ -234,7 +236,7 @@ static Tree* GetLinearCoefficients(const Tree* equation,
     // TODO: PolynomialParser::Parse may need to handle more block types.
     // TODO: Use user settings for a RealUnkown sign ?
     Tree* polynomial = PolynomialParser::Parse(
-        eq, Variables::Variable(i, ComplexSign::Finite()));
+        eq, Variables::Variable(i, ComplexProperties::Finite()));
     if (!polynomial) {
       // equation is not polynomial
       SharedTreeStack->dropBlocksFrom(result);
@@ -475,7 +477,7 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
       }
       // Push a finite variable starting from firstExtraVariableId
       SharedTreeStack->pushVar(firstExtraVariableId + numberOfExtraVariables,
-                               ComplexSign::Finite());
+                               ComplexProperties::Finite());
       numberOfExtraVariables++;
       rows = m + 1;
       Matrix::SetDimensions(matrix, ++m, n + 1);
@@ -594,7 +596,7 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
   // Solve without dependencies
   Tree* equationWithoutDep = Dependency::SafeMain(equation)->cloneTree();
   Tree* polynomial = PolynomialParser::Parse(
-      equationWithoutDep, Variables::Variable(0, ComplexSign::Finite()));
+      equationWithoutDep, Variables::Variable(0, ComplexProperties::Finite()));
   if (!polynomial) {
     SharedTreeStack->dropBlocksFrom(equation);
     return {.error = Error::RequireApproximateSolution,
@@ -805,7 +807,8 @@ SolverResult ExactSolve(const Tree* equationList,
       assert(solutionList->isList());
       if (projectionContext.m_complexFormat == ComplexFormat::Real) {
         for (int i = solutionList->numberOfChildren() - 1; i >= 0; i--) {
-          if (!SignOfTreeOrApproximation(solutionList->child(i)).isReal()) {
+          if (!PropertiesOfTreeOrApproximation(solutionList->child(i))
+                   .isReal()) {
             NAry::RemoveChildAtIndex(solutionList, i);
           }
         }

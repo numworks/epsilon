@@ -153,7 +153,7 @@ class AbstractTreeStack : public BlockStack {
   }
 #endif
 
-  Tree* pushVar(uint8_t id, ComplexSign sign);
+  Tree* pushVar(uint8_t id, ComplexProperties properties);
 
   Tree* pushRandom(uint8_t seed);
   Tree* pushRandInt(uint8_t seed);

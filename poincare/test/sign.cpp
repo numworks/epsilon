@@ -12,20 +12,22 @@ using namespace Poincare;
 using namespace Poincare::Internal;
 
 static_assert(Sign::Zero().isNull() && Sign::Zero().isInteger());
+static_assert(ComplexProperties::FromValue(
+                  ComplexProperties::RealInteger().getRealValue(),
+                  ComplexProperties::RealInteger().getImagValue()) ==
+              ComplexProperties::RealInteger());
 static_assert(
-    ComplexSign::FromValue(ComplexSign::RealInteger().getRealValue(),
-                           ComplexSign::RealInteger().getImagValue()) ==
-    ComplexSign::RealInteger());
-static_assert(ComplexSign::FromValue(ComplexSign::Real().getRealValue(),
-                                     ComplexSign::Real().getImagValue()) ==
-              ComplexSign::Real());
-static_assert(ComplexSign::FromValue(ComplexSign::Unknown().getRealValue(),
-                                     ComplexSign::Unknown().getImagValue()) ==
-              ComplexSign::Unknown());
-static_assert(ComplexSign::Unknown().isUnknown());
-static_assert(ComplexSign::Real().isReal());
-static_assert(ComplexSign::RealInteger().isReal() &&
-              ComplexSign::RealInteger().isInteger());
+    ComplexProperties::FromValue(ComplexProperties::Real().getRealValue(),
+                                 ComplexProperties::Real().getImagValue()) ==
+    ComplexProperties::Real());
+static_assert(
+    ComplexProperties::FromValue(ComplexProperties::Unknown().getRealValue(),
+                                 ComplexProperties::Unknown().getImagValue()) ==
+    ComplexProperties::Unknown());
+static_assert(ComplexProperties::Unknown().isUnknown());
+static_assert(ComplexProperties::Real().isReal());
+static_assert(ComplexProperties::RealInteger().isReal() &&
+              ComplexProperties::RealInteger().isInteger());
 
 namespace Poincare {
 extern Sign RelaxIntegerProperty(Sign s);
@@ -298,7 +300,7 @@ QUIZ_CASE(pcj_sign_methods) {
   quiz_assert(Add(Sign::Unknown(), Sign::Unknown()) == Sign::Unknown());
 }
 
-void assert_sign(const char* input, ComplexSign expectedSign,
+void assert_sign(const char* input, ComplexProperties expectedProperties,
                  ComplexFormat complexFormat = ComplexFormat::Cartesian,
                  Strategy strategy = Strategy::Default) {
   Tree* expression = parse(input);
@@ -306,15 +308,15 @@ void assert_sign(const char* input, ComplexSign expectedSign,
                            .m_strategy = strategy,
                            .m_advanceReduce = false};
   Simplification::ToSystem(expression, &ctx);
-  bool result = GetComplexSign(expression) == expectedSign;
+  bool result = GetComplexProperties(expression) == expectedProperties;
 #if POINCARE_TREE_LOG
   if (!result) {
     std::cout << input << " -> ";
     expression->logSerialize();
     std::cout << "\t\t\tWrong Sign: ";
-    GetComplexSign(expression).log();
+    GetComplexProperties(expression).log();
     std::cout << "\t\t\tInstead of: ";
-    expectedSign.log();
+    expectedProperties.log();
   }
 #endif
   quiz_assert(result);
@@ -322,15 +324,16 @@ void assert_sign(const char* input, ComplexSign expectedSign,
 }
 
 void assert_sign(const char* input, Sign expectedSign) {
-  assert_sign(input, ComplexSign(expectedSign, Sign::Zero()));
+  assert_sign(input, ComplexProperties(expectedSign, Sign::Zero()));
 }
 
 QUIZ_CASE(pcj_sign) {
   assert_sign("2", Sign::FiniteStrictlyPositiveInteger());
   assert_sign("-2.5", Sign::FiniteStrictlyNegative());
-  assert_sign("π", ComplexSign(Sign::FiniteStrictlyPositive(), Sign::Zero()),
+  assert_sign("π",
+              ComplexProperties(Sign::FiniteStrictlyPositive(), Sign::Zero()),
               ComplexFormat::Cartesian, Strategy::ApproximateToFloat);
-  assert_sign("inf", ComplexSign(Sign::StrictlyPositive(), Sign::Zero()),
+  assert_sign("inf", ComplexProperties(Sign::StrictlyPositive(), Sign::Zero()),
               ComplexFormat::Cartesian, Strategy::ApproximateToFloat);
 
   assert_sign("2+π", Sign::FiniteStrictlyPositive());
@@ -340,58 +343,60 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("π-22/7", Sign::FiniteStrictlyNegative());
   assert_sign("3 * abs(cos(x)) * -2", Sign::FiniteNegative());
 
-  assert_sign("x", ComplexSign::RealFinite());
-  assert_sign("5+i*(x+i*y)", ComplexSign::Finite());
-  assert_sign("5+i*y", ComplexSign(Sign::FiniteStrictlyPositiveInteger(),
-                                   Sign::Finite()));
-  assert_sign("5+i*(x+i*y)", ComplexSign::Finite());
+  assert_sign("x", ComplexProperties::RealFinite());
+  assert_sign("5+i*(x+i*y)", ComplexProperties::Finite());
+  assert_sign("5+i*y", ComplexProperties(Sign::FiniteStrictlyPositiveInteger(),
+                                         Sign::Finite()));
+  assert_sign("5+i*(x+i*y)", ComplexProperties::Finite());
   assert_sign("x^2", Sign::FinitePositive());
   assert_sign("x^2+y^2", Sign::FinitePositive());
   assert_sign("0.5*ln(x^2+y^2)", Sign::Unknown());
   assert_sign("e^(0.5*ln(x^2+y^2))", Sign::Positive());
+  assert_sign("(abs(x)+i)*abs(abs(x)-i)",
+              ComplexProperties(Sign::FinitePositive(),
+                                Sign::FiniteStrictlyPositive()));
   assert_sign(
-      "(abs(x)+i)*abs(abs(x)-i)",
-      ComplexSign(Sign::FinitePositive(), Sign::FiniteStrictlyPositive()));
-  assert_sign("e^(0.5*ln(12))+i*re(ln(2+i))",
-              ComplexSign(Sign::FiniteStrictlyPositive(), Sign::Finite()));
-  assert_sign(
-      "re(abs(x)-i)+i*arg(2+i)",
-      ComplexSign(Sign::FinitePositive(), Sign::FiniteStrictlyPositive()));
+      "e^(0.5*ln(12))+i*re(ln(2+i))",
+      ComplexProperties(Sign::FiniteStrictlyPositive(), Sign::Finite()));
+  assert_sign("re(abs(x)-i)+i*arg(2+i)",
+              ComplexProperties(Sign::FinitePositive(),
+                                Sign::FiniteStrictlyPositive()));
 
   // cos
   assert_sign("cos(3)", Sign::Finite());
   assert_sign("cos(2i)", Sign::StrictlyPositive());
   assert_sign("cos(-2i)", Sign::StrictlyPositive());
-  assert_sign("cos(3+2i)", ComplexSign::Unknown());
+  assert_sign("cos(3+2i)", ComplexProperties::Unknown());
 
   // sin
   assert_sign("sin(3)", Sign::Finite());
   assert_sign("sin(2i)",
-              ComplexSign(Sign::Zero(), Sign::FiniteStrictlyPositive()));
+              ComplexProperties(Sign::Zero(), Sign::FiniteStrictlyPositive()));
   assert_sign("sin(-2i)",
-              ComplexSign(Sign::Zero(), Sign::FiniteStrictlyNegative()));
-  assert_sign("sin(3+2i)", ComplexSign::Unknown());
+              ComplexProperties(Sign::Zero(), Sign::FiniteStrictlyNegative()));
+  assert_sign("sin(3+2i)", ComplexProperties::Unknown());
 
   // ln
-  assert_sign("ln(0)", ComplexSign::Unknown());
+  assert_sign("ln(0)", ComplexProperties::Unknown());
   assert_sign("ln(3)", Sign::FiniteStrictlyPositive());
-  assert_sign("ln(-3)",
-              ComplexSign(Sign::Finite(), Sign::FiniteStrictlyPositive()));
-  assert_sign("ln(ln(3))", ComplexSign(Sign::Finite(), Sign::Zero()));
-  assert_sign("ln(4+i)",
-              ComplexSign(Sign::Finite(), Sign::FiniteStrictlyPositive()));
-  assert_sign("ln(4-i)",
-              ComplexSign(Sign::Finite(), Sign::FiniteStrictlyNegative()));
-  assert_sign("ln(ln(x+i*y)i)", ComplexSign(Sign::Unknown(), Sign::Finite()));
+  assert_sign("ln(-3)", ComplexProperties(Sign::Finite(),
+                                          Sign::FiniteStrictlyPositive()));
+  assert_sign("ln(ln(3))", ComplexProperties(Sign::Finite(), Sign::Zero()));
+  assert_sign("ln(4+i)", ComplexProperties(Sign::Finite(),
+                                           Sign::FiniteStrictlyPositive()));
+  assert_sign("ln(4-i)", ComplexProperties(Sign::Finite(),
+                                           Sign::FiniteStrictlyNegative()));
+  assert_sign("ln(ln(x+i*y)i)",
+              ComplexProperties(Sign::Unknown(), Sign::Finite()));
 
   // power
   assert_sign("0^5", Sign::Zero());
   assert_sign("(1+3*i)^0", Sign::FiniteStrictlyPositiveInteger());
   assert_sign("(1+i)^4",
-              ComplexSign(Sign::FiniteInteger(), Sign::FiniteInteger()));
+              ComplexProperties(Sign::FiniteInteger(), Sign::FiniteInteger()));
   assert_sign("(5+i)^3",
-              ComplexSign(Sign::FiniteInteger(), Sign::FiniteInteger()));
-  assert_sign("(5-i)^(-1)", ComplexSign(Sign::Finite(), Sign::Finite()));
+              ComplexProperties(Sign::FiniteInteger(), Sign::FiniteInteger()));
+  assert_sign("(5-i)^(-1)", ComplexProperties(Sign::Finite(), Sign::Finite()));
 
   // arg
   assert_sign("arg(5)", Sign::Zero());
@@ -401,15 +406,15 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("arg(3 - i)", Sign::FiniteStrictlyNegative());
 
   // inf
-  assert_sign("e^(arg(x+i*y)×i)", ComplexSign::Finite());
+  assert_sign("e^(arg(x+i*y)×i)", ComplexProperties::Finite());
   assert_sign("inf", Sign::StrictlyPositive());
   assert_sign("-inf", Sign::StrictlyNegative());
   /* This case has been carefully crafted to enforce the following order in the
    * addition: integer + unknown integer + non integer */
   assert_sign("1+floor(x)*(1+i)+floor(y)*(1+π+i)",
-              ComplexSign(Sign::Finite(), Sign::FiniteInteger()));
+              ComplexProperties(Sign::Finite(), Sign::FiniteInteger()));
   assert_sign("1+floor(x)*(1+i)",
-              ComplexSign(Sign::FiniteInteger(), Sign::FiniteInteger()));
+              ComplexProperties(Sign::FiniteInteger(), Sign::FiniteInteger()));
 
   // euclidean division
   assert_sign("quo(5, 2)", Sign::FinitePositiveInteger());
@@ -431,10 +436,10 @@ void assert_projected_is_null(const char* input, OMG::Troolean isNull) {
   Tree* e = parse(input);
   ProjectionContext context;
   Simplification::ToSystem(e, &context);
-  ComplexSign sign = GetComplexSign(e);
+  ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(
-      OMG::TrooleanAnd(sign.imagSign().trooleanIsNull(),
-                       sign.realSign().trooleanIsNull()) == isNull,
+      OMG::TrooleanAnd(properties.imagSign().trooleanIsNull(),
+                       properties.realSign().trooleanIsNull()) == isNull,
       input);
   e->removeTree();
 }
@@ -480,10 +485,11 @@ void assert_projected_is_positive(const char* input, OMG::Troolean isPositive) {
   Tree* e = parse(input);
   ProjectionContext context;
   Simplification::ToSystem(e, &context);
-  ComplexSign sign = GetComplexSign(e);
+  ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(
-      OMG::TrooleanAnd(sign.imagSign().trooleanIsNull(),
-                       sign.realSign().trooleanIsPositive()) == isPositive,
+      OMG::TrooleanAnd(properties.imagSign().trooleanIsNull(),
+                       properties.realSign().trooleanIsPositive()) ==
+          isPositive,
       input);
   e->removeTree();
 }
@@ -543,10 +549,11 @@ void assert_reduced_is_positive(
       .m_advanceReduce = false};
   Tree* e = parse(input, symbolContext);
   Simplification::ProjectAndReduce(e, &projCtx);
-  ComplexSign sign = GetComplexSign(e);
+  ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(
-      OMG::TrooleanAnd(sign.imagSign().trooleanIsNull(),
-                       sign.realSign().trooleanIsPositive()) == isPositive,
+      OMG::TrooleanAnd(properties.imagSign().trooleanIsNull(),
+                       properties.realSign().trooleanIsPositive()) ==
+          isPositive,
       input);
   e->removeTree();
 }
@@ -592,7 +599,7 @@ void assert_sign_sets_to(const char* input,
   Tree* e = parse(input);
   ProjectionContext projCtx;
   Simplification::ProjectAndReduce(e, &projCtx);
-  ComplexSign eSign = GetComplexSign(e);
+  ComplexProperties eSign = GetComplexProperties(e);
   bool eIsPositive = OMG::TrooleanToBool(
       OMG::TrooleanAnd(eSign.imagSign().trooleanIsNull(),
                        eSign.realSign().trooleanIsPositive()));
@@ -600,10 +607,10 @@ void assert_sign_sets_to(const char* input,
 
   assert(e->isNumber());
   Number::SetSign(e, isPositive);
-  ComplexSign newSign = GetComplexSign(e);
+  ComplexProperties newProperties = GetComplexProperties(e);
   bool newIsPositive = OMG::TrooleanToBool(
-      OMG::TrooleanAnd(newSign.imagSign().trooleanIsNull(),
-                       newSign.realSign().trooleanIsPositive()));
+      OMG::TrooleanAnd(newProperties.imagSign().trooleanIsNull(),
+                       newProperties.realSign().trooleanIsPositive()));
   double eNewValue = Approximation::To<double>(e, Approximation::Parameters{});
 
   quiz_assert(newIsPositive == (isPositive == NonStrictSign::Positive));
@@ -640,8 +647,8 @@ void assert_projected_is_real_or_not(const char* input, bool isReal = true) {
   Tree* e = parse(input);
   ProjectionContext context;
   Simplification::ToSystem(e, &context);
-  ComplexSign sign = GetComplexSign(e);
-  quiz_assert_print_if_failure(sign.isReal() == isReal, input);
+  ComplexProperties properties = GetComplexProperties(e);
+  quiz_assert_print_if_failure(properties.isReal() == isReal, input);
   e->removeTree();
 }
 

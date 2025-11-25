@@ -95,9 +95,9 @@ bool PrepareExpressionForApproximation(Tree* e) {
 void PrepareFunctionForApproximation(Tree* e, const char* variable,
                                      bool variableIsReal) {
   assert(Simplification::IsSystem(e));
-  Variables::ReplaceSymbol(
-      e, variable, 0,
-      variableIsReal ? ComplexSign::Real() : ComplexSign::Unknown());
+  Variables::ReplaceSymbol(e, variable, 0,
+                           variableIsReal ? ComplexProperties::Real()
+                                          : ComplexProperties::Unknown());
   /* All symbols should already have been replaced by their definition.
    * Leftover symbols can be replaced by undefined. */
   Projection::DeepReplaceUserNamed(

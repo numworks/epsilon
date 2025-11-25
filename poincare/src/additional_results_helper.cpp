@@ -267,7 +267,7 @@ bool AdditionalResultsHelper::HasInverseTrigo(
     Tree* output = approximateOutput.tree()->cloneTree();
     ProjectionContext ctx{.m_complexFormat = ComplexFormat::Cartesian};
     Internal::Simplification::ToSystem(output, &ctx);
-    result = GetComplexSign(output).isReal();
+    result = GetComplexProperties(output).isReal();
     output->removeTree();
   }
   return result;
@@ -602,7 +602,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
                                        isApproximate)) {
       determinant = (KUndefUnhandled)->cloneTree();
     }
-    // TODO: Use ComplexSign or approximation to handle more complex cases
+    // TODO: Use ComplexProperties or approximation to handle more complex cases
     bool determinantIsUndefinedOrNull =
         determinant->isUndefined() || determinant->isZero();
     Internal::Dimension dimension =

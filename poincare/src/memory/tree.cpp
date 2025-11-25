@@ -110,8 +110,8 @@ void Tree::logAttributes(std::ostream& stream) const {
   }
   if (isVar()) {
     stream << " id=\"" << static_cast<int>(Variables::Id(this)) << "\"";
-    stream << " sign=\"";
-    Variables::GetComplexSign(this).log(stream, false);
+    stream << " properties=\"";
+    Variables::GetComplexProperties(this).log(stream, false);
     stream << "\"";
   }
   if (isUserNamed()) {

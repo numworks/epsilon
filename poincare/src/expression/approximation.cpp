@@ -621,7 +621,7 @@ std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
       Tree* definitionClone = definition->cloneTree();
       // Only approximate child once and use local context.
       Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
-                               ComplexSign::Unknown());
+                               ComplexProperties::Unknown());
       Context ctxCopy = *ctx;
       LocalContext localCtx = LocalContext(x, ctx->m_localContext);
       ctxCopy.m_localContext = &localCtx;
@@ -1397,7 +1397,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     Tree* definitionClone = definition->cloneTree();
     // Only approximate child once and use local context.
     Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
-                             ComplexSign::Unknown());
+                             ComplexProperties::Unknown());
     Context ctxCopy = *ctx;
     LocalContext localCtx = LocalContext(x, ctx->m_localContext);
     ctxCopy.m_localContext = &localCtx;
@@ -1625,7 +1625,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       Tree* definitionClone = definition->cloneTree();
       // Only approximate child once and use local context.
       Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
-                               ComplexSign::Unknown());
+                               ComplexProperties::Unknown());
       Context ctxCopy = *ctx;
       LocalContext localCtx = LocalContext(x, ctx->m_localContext);
       ctxCopy.m_localContext = &localCtx;
@@ -1862,7 +1862,7 @@ bool Private::PrivateApproximateAndReplaceEveryScalar(Tree* e,
 }
 
 Tree* ExtractRealPart(const Tree* e) {
-  if (GetComplexSign(e).isReal()) {
+  if (GetComplexProperties(e).isReal()) {
     return e->cloneTree();
   }
   std::complex<double> value = PrivateToComplex<double>(e, nullptr);

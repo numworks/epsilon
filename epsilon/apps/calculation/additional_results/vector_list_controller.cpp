@@ -76,8 +76,8 @@ void VectorListController::computeAdditionalResults(
   assert(normalized.numberOfChildren() == 2);
   UserExpression angle = UserExpression::Create(
       KACos(KA), {.KA = normalized.cloneChildAtIndex(0)});
-  /* ComplexSign needs a reduced expression. Using approximation here, but a
-   * reduction would also work. */
+  /* Sign needs a reduced expression. Using approximation here, but a reduction
+   * would also work. */
   SystemExpression yApprox = PoincareHelpers::ApproximateUser<double>(
       normalized.cloneChildAtIndex(1), symbolContext, complexFormat(),
       angleUnit());

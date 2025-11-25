@@ -162,7 +162,7 @@ typename Solver<T>::DetailedRoot Solver<T>::nextDetailedRoot(const Tree* e) {
       return registerDetailedRoot(nextRootInDependency(e));
 
     default:
-      if (!GetComplexSign(e).canBeNull()) {
+      if (!GetComplexProperties(e).canBeNull()) {
         return nanRoot;
       }
 

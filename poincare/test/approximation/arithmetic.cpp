@@ -104,8 +104,8 @@ QUIZ_CASE(pcj_approximation_floor_ceil_integer) {
   const char* expr2 = "ceil(x * (x+1)^(-1) + x^2 * (x+1)^(-1))";
   Tree* t1 = parse(expr1);
   Tree* t2 = parse(expr2);
-  Variables::ReplaceSymbol(t1, "x"_e, 0, ComplexSign::RealFinite());
-  Variables::ReplaceSymbol(t2, "x"_e, 0, ComplexSign::RealFinite());
+  Variables::ReplaceSymbol(t1, "x"_e, 0, ComplexProperties::RealFinite());
+  Variables::ReplaceSymbol(t2, "x"_e, 0, ComplexProperties::RealFinite());
   Approximation::Context ctx;
   Approximation::Private::LocalContext localCtx =
       Approximation::Private::LocalContext(0.0, nullptr);

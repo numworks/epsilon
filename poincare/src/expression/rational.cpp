@@ -338,22 +338,22 @@ OMG::Troolean Rational::AbsSmallerThanPi(const Tree* e) {
                                      : OMG::Troolean::False;
 }
 
-ComplexSign Rational::ComplexSignOfLn(const Tree* e) {
+ComplexProperties Rational::ComplexPropertiesOfLn(const Tree* e) {
   assert(e->isLn());
   const Tree* child = e->child(0);
   assert(child->isRational());
   if (child->isOne()) {
-    return ComplexSign(Sign::Zero(), Sign::Zero());
+    return ComplexProperties(Sign::Zero(), Sign::Zero());
   }
   if (child->isStrictlyPositiveRational()) {
     /* Check if the child is greater than one to determine sign */
     class Sign realSign = Internal::Rational::IsGreaterThanOne(child)
                               ? Sign::FiniteStrictlyPositive()
                               : Sign::FiniteStrictlyNegative();
-    return ComplexSign(realSign, Sign::Zero());
+    return ComplexProperties(realSign, Sign::Zero());
   }
   if (child->isMinusOne()) {
-    return ComplexSign(Sign::Zero(), Sign::FiniteStrictlyPositive());
+    return ComplexProperties(Sign::Zero(), Sign::FiniteStrictlyPositive());
   }
   if (child->isStrictlyNegativeRational()) {
     /* Reverse the sign of Numerator to be able to compare it with Denominator
@@ -364,10 +364,10 @@ ComplexSign Rational::ComplexSignOfLn(const Tree* e) {
         IntegerHandler::Compare(numerator, Rational::Denominator(child)) > 0
             ? Sign::FiniteStrictlyPositive()
             : Sign::FiniteStrictlyNegative();
-    return ComplexSign(realSign, Sign::FiniteStrictlyPositive());
+    return ComplexProperties(realSign, Sign::FiniteStrictlyPositive());
   }
   assert(child->isZero());
-  return ComplexSign::Unknown();
+  return ComplexProperties::Unknown();
 }
 
 bool Rational::IsMinusHalf(const Tree* e) {

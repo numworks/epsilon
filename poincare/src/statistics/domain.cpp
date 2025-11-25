@@ -12,16 +12,16 @@ OMG::Troolean Contains<const Tree*>(const Tree* e, Type type) {
     return OMG::Troolean::False;
   }
 
-  ComplexSign sign = GetComplexSign(e);
+  ComplexProperties properties = GetComplexProperties(e);
 
-  if (!sign.isReal()) {
+  if (!properties.isReal()) {
     return OMG::Troolean::Unknown;
   }
 
-  OMG::Troolean isPositive = sign.realSign().isPositive() ? OMG::Troolean::True
-                             : sign.realSign().canBeStrictlyPositive()
-                                 ? OMG::Troolean::Unknown
-                                 : OMG::Troolean::False;
+  OMG::Troolean isPositive =
+      properties.realSign().isPositive()              ? OMG::Troolean::True
+      : properties.realSign().canBeStrictlyPositive() ? OMG::Troolean::Unknown
+                                                      : OMG::Troolean::False;
   if (type & k_onlyPositive) {
     if (isPositive != OMG::Troolean::True) {
       return isPositive;

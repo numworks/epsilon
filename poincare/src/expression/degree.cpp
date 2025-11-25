@@ -60,8 +60,9 @@ int Degree::PrivateGet(const Tree* e, const Tree* symbol) {
             return k_unknown;
           }
           if (degree != 0) {
-            if (!child->isInteger() ||
-                GetComplexSign(child).realSign().canBeStrictlyNegative()) {
+            if (!child->isInteger() || GetComplexProperties(child)
+                                           .realSign()
+                                           .canBeStrictlyNegative()) {
               return k_unknown;
             }
             IntegerHandler handler = Integer::Handler(child);

@@ -490,11 +490,11 @@ bool PolynomialParser::HasNonNullCoefficients(
 
   assert(highestDegreeCoefficientIsPositive);
   const Tree* child = coefList->child(degree);
-  ComplexSign sign = GetComplexSign(child);
-  if (!sign.isReal()) {
+  ComplexProperties properties = GetComplexProperties(child);
+  if (!properties.isReal()) {
     *highestDegreeCoefficientIsPositive = OMG::Troolean::Unknown;
   } else {
-    Sign realSign = sign.realSign();
+    Sign realSign = properties.realSign();
     OMG::Troolean isPositive = realSign.trooleanIsStrictlyPositive();
     if (isPositive == OMG::Troolean::Unknown) {
       // Approximate for a better estimation.
@@ -509,9 +509,9 @@ bool PolynomialParser::HasNonNullCoefficients(
   }
 
   for (const Tree* child : coefList->children()) {
-    ComplexSign sign = GetComplexSign(child);
-    bool isNull = sign.isNull();
-    if (!isNull && sign.canBeNull()) {
+    ComplexProperties properties = GetComplexProperties(child);
+    bool isNull = properties.isNull();
+    if (!isNull && properties.canBeNull()) {
       // Unsure if null, approximation to be more precise, assuming nan is null
       std::complex<double> approximation =
           Approximation::ToComplex<double>(child, Approximation::Parameters{});

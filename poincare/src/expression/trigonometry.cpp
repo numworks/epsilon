@@ -189,7 +189,7 @@ static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
 /* Reduce to principal argument in ]-π,π] if the argument is of the form
  * r*π with r rational */
 bool Trigonometry::ReduceArgumentToPrincipal(Tree* e) {
-  assert(GetComplexSign(e).isReal());
+  assert(GetComplexProperties(e).isReal());
   const Tree* piFactor = GetPiFactor(e);
   if (piFactor) {
     TreeRef simplifiedPiFactor =
@@ -216,9 +216,11 @@ bool Trigonometry::ReduceTrig(Tree* e) {
   bool changed = ReduceTrigSecondElement(secondArgument, &isOpposed);
   assert(secondArgument->isZero() || secondArgument->isOne());
   bool isSin = secondArgument->isOne();
-  ComplexSign s = GetComplexSign(firstArgument);
-  bool isRealStrictlyNegative = s.isReal() && s.realSign().isStrictlyNegative();
-  bool isRealPositive = s.isReal() && s.realSign().isPositive();
+  ComplexProperties properties = GetComplexProperties(firstArgument);
+  bool isRealStrictlyNegative =
+      properties.isReal() && properties.realSign().isStrictlyNegative();
+  bool isRealPositive =
+      properties.isReal() && properties.realSign().isPositive();
   if ((isRealStrictlyNegative && PatternMatching::MatchReplaceReduce(
                                      firstArgument, KA, KMult(-1_e, KA))) ||
       (!isRealPositive &&
@@ -288,7 +290,7 @@ bool Trigonometry::ReduceTrig(Tree* e) {
   }
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KTrig(KATanRad(KA), KB), &ctx) &&
-      GetComplexSign(ctx.getTree(KA)).isReal()) {
+      GetComplexProperties(ctx.getTree(KA)).isReal()) {
     // cos(atan(x)) -> 1/sqrt(1+x^2) and sin(atan(x))-> x/sqrt(1+x^2) for x real
     const Tree* pattern =
         ctx.getTree(KB)->isZero()
@@ -334,7 +336,7 @@ static Tree* ReduceATrigOfTrig(const Tree* arg, Type type) {
   /* asin(sin(i*x)) = i*x, acos(cos(i*x)) = i*abs(i*x) and atan(tan(i*x)) = i*x
    * for x real */
   Tree* result = nullptr;
-  if (GetComplexSign(arg).isPureIm()) {
+  if (GetComplexProperties(arg).isPureIm()) {
     if (type == Type::Sin || type == Type::Tan) {
       result = arg->cloneTree();
     } else {
@@ -405,12 +407,13 @@ bool Trigonometry::ReduceATrig(Tree* e) {
   }
   Tree* arg = e->child(0);
   bool isAsin = arg->nextTree()->isOne();
-  ComplexSign argSign = GetComplexSign(arg);
-  if (!argSign.isReal()) {
+  ComplexProperties argProperties = GetComplexProperties(arg);
+  if (!argProperties.isReal()) {
     return false;
   }
   bool changed = false;
-  bool argIsOpposed = !argSign.isNull() && argSign.realSign().isNegative();
+  bool argIsOpposed =
+      !argProperties.isNull() && argProperties.realSign().isNegative();
   if (argIsOpposed) {
     changed = true;
     PatternMatching::MatchReplaceReduce(arg, KA, KMult(-1_e, KA));
@@ -504,8 +507,8 @@ static Tree* GetAtanTanArg(const Tree* e) {
 bool Trigonometry::ReduceArcTangentRad(Tree* e) {
   assert(e->isATanRad());
   Tree* arg = e->child(0);
-  ComplexSign argSign = GetComplexSign(arg);
-  Sign argRealSign = argSign.realSign();
+  ComplexProperties argProperties = GetComplexProperties(arg);
+  Sign argRealSign = argProperties.realSign();
   /* Oppose the argument if arg is negative, or if sign is unknown and there is
    * a -1 factor. Last case allows solving atan(-tan(x)). */
   PatternMatching::Context ctx;
@@ -529,7 +532,7 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
       return true;
     }
   }
-  if (!argSign.isReal()) {
+  if (!argProperties.isReal()) {
     return false;
   }
   if (PatternMatching::Match(arg, KMult(-1_e, KAdd(KA_s)), &ctx)) {
@@ -562,13 +565,13 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
   ctx = PatternMatching::Context();
   if (PatternMatching::Match(eMain, KATanRad(KPow(KA, -1_e)), &ctx)) {
     // atan(1/x) = sign(x)*π/2-atan(x) if sign(x) is known and non-null
-    ComplexSign s = GetComplexSign(ctx.getTree(KA));
-    if (!s.isReal() || !(s.realSign().isStrictlyPositive() ||
-                         s.realSign().isStrictlyNegative())) {
+    ComplexProperties properties = GetComplexProperties(ctx.getTree(KA));
+    if (!properties.isReal() || !(properties.realSign().isStrictlyPositive() ||
+                                  properties.realSign().isStrictlyNegative())) {
       return false;
     }
     e->moveTreeOverTree(PatternMatching::CreateReduce(
-        s.realSign().isStrictlyPositive()
+        properties.realSign().isStrictlyPositive()
             ? KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KATanRad(KA)))
             : KAdd(KMult(π_e, -1_e / 2_e), KMult(-1_e, KATanRad(KA))),
         ctx));
@@ -581,7 +584,7 @@ bool Trigonometry::ReduceArCosH(Tree* e) {
 #if POINCARE_TRIGONOMETRY_HYPERBOLIC
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KArCosH(KTrig(KA, 0_e)), &ctx) &&
-      GetComplexSign(ctx.getTree(KA)).isPureIm()) {
+      GetComplexProperties(ctx.getTree(KA)).isPureIm()) {
     // acosh(cos(x)) = abs(x) for x pure imaginary
     e->moveTreeOverTree(PatternMatching::CreateReduce(KAbs(KA), ctx));
     return true;

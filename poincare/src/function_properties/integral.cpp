@@ -18,7 +18,8 @@ Tree* BuildIntegralTree(const SystemExpression& expression,
                         const SystemExpression& lowerBound,
                         const SystemExpression& upperBound) {
   Tree* function = expression.tree()->cloneTree();
-  Variables::ReplaceSymbol(function, variableName, 0, ComplexSign::Real());
+  Variables::ReplaceSymbol(function, variableName, 0,
+                           ComplexProperties::Real());
   // Sort again, since Var and UserSymbol don't sort the same way.
   NAry::DeepSort(function);
 

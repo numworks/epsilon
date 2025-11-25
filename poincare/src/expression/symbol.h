@@ -33,7 +33,7 @@ const char* GetName(const Tree* e);
 bool IsNamed(const Tree* e, const char* name);
 bool IsUserSymbol(const Tree* e, const char* name);
 
-ComplexSign GetComplexSign(const Tree* e);
+ComplexProperties GetComplexProperties(const Tree* e);
 
 bool InvolvesCircularity(const Tree* e,
                          const Poincare::SymbolContext& symbolContext);

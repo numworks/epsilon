@@ -275,6 +275,6 @@ bool SystematicReduction::Switch(Tree* e) {
   }
 }
 
-// TODO: NonNull(x) should be reduced using ComplexSign::canBeNull()
+// TODO: NonNull(x) should be reduced using ComplexProperties::canBeNull()
 
 }  // namespace Poincare::Internal

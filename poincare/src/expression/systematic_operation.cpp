@@ -117,7 +117,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
 
   if (Infinity::IsPlusOrMinusInfinity(n) &&
       (base->isOne() || base->isMinusOne() ||
-       GetComplexSign(base).isNonReal())) {
+       GetComplexProperties(base).isNonReal())) {
     // (±1)^(±inf) -> undef
     // complex^(±inf) -> undef
     e->cloneTreeOverTree(KUndef);
@@ -135,20 +135,20 @@ bool SystematicOperation::ReducePower(Tree* e) {
       e->cloneTreeOverTree(KUndef);
       return true;
     }
-    ComplexSign nSign = GetComplexSign(n);
-    if (nSign.isNonReal()) {
+    ComplexProperties nProperties = GetComplexProperties(n);
+    if (nProperties.isNonReal()) {
       // (±inf)^i -> undef
       e->cloneTreeOverTree(KUndef);
       return true;
     }
     if (n->isInteger() || Infinity::IsPlusOrMinusInfinity(n)) {
-      assert(nSign.isReal());
-      if (nSign.realSign().isNegative()) {
+      assert(nProperties.isReal());
+      if (nProperties.realSign().isNegative()) {
         // (±inf)^neg -> 0
         e->cloneTreeOverTree(0_e);
         return true;
       }
-      if (nSign.realSign().isPositive()) {
+      if (nProperties.realSign().isPositive()) {
         if (base->isInf()) {
           // inf^pos -> inf
           e->cloneTreeOverTree(KInf);
@@ -197,7 +197,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
   }
   // base^0 -> 1
   if (n->isZero()) {
-    if (GetComplexSign(base).canBeNull()) {
+    if (GetComplexProperties(base).canBeNull()) {
       return PatternMatching::MatchReplace(e, KA, KDep(1_e, KDepList(KA)));
     }
     e->cloneTreeOverTree(1_e);
@@ -223,11 +223,11 @@ bool SystematicOperation::ReducePower(Tree* e) {
   if (base->isPow()) {
     TreeRef p = base->child(1);
     assert(p->nextTree() == static_cast<Tree*>(n));
-    ComplexSign nSign = GetComplexSign(n);
-    ComplexSign pSign = GetComplexSign(p);
-    assert(nSign.isReal() && pSign.isReal());
-    if (nSign.realSign().canBeStrictlyNegative() &&
-        pSign.realSign().canBeStrictlyNegative()) {
+    ComplexProperties nProperties = GetComplexProperties(n);
+    ComplexProperties pProperties = GetComplexProperties(p);
+    assert(nProperties.isReal() && pProperties.isReal());
+    if (nProperties.realSign().canBeStrictlyNegative() &&
+        pProperties.realSign().canBeStrictlyNegative()) {
       // Add a dependency in case p*n becomes positive (ex: 1/(1/x))
       return PatternMatching::MatchReplaceReduce(
           e, KPow(KPow(KA, KB), KC),
@@ -286,9 +286,9 @@ bool SystematicOperation::ReducePowerReal(Tree* e) {
   }
   // Matrix of non-integer power has been ruled out in dimension check.
   assert(Dimension::Get(e).isScalarOrUnit());
-  ComplexSign xSign = GetComplexSign(x);
+  ComplexProperties xProperties = GetComplexProperties(x);
   if (Infinity::IsPlusOrMinusInfinity(x) ||
-      (xSign.isReal() && xSign.realSign().isPositive())) {
+      (xProperties.isReal() && xProperties.realSign().isPositive())) {
     ConvertPowerRealToPower(e);
     return true;
   }
@@ -303,7 +303,7 @@ bool SystematicOperation::ReducePowerReal(Tree* e) {
   // y is simplified, both p and q can't be even
   assert(!qIsEven || !pIsEven);
 
-  bool xNegative = xSign.realSign().isStrictlyNegative();
+  bool xNegative = xProperties.realSign().isStrictlyNegative();
 
   if (!pIsEven && !xNegative) {
     // We don't know enough to reduce further.
@@ -337,7 +337,7 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   PatternMatching::Context ctx;
   if (PatternMatching::Match(child, KExp(KMult(KA_p, i_e)), &ctx)) {
     Tree* arg = PatternMatching::CreateReduce(KMult(KA_p), ctx);
-    if (GetComplexSign(arg).isReal() &&
+    if (GetComplexProperties(arg).isReal() &&
         Trigonometry::ReduceArgumentToPrincipal(arg)) {
       e->moveTreeOverTree(arg);
       return true;
@@ -354,16 +354,17 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
     child->cloneTree();
     bool changed = false;
     for (Tree* multChild : child->children()) {
-      ComplexSign sign = GetComplexSign(multChild);
-      if (sign.isReal() && sign.realSign().hasKnownSign() &&
+      ComplexProperties properties = GetComplexProperties(multChild);
+      if (properties.isReal() && properties.realSign().hasKnownSign() &&
           !multChild->isMinusOne()) {
-        if (sign.canBeNull()) {
+        if (properties.canBeNull()) {
           // arg(|x|*z) -> arg(z), {|x|*z, NonNull(|x|)}
           NAry::AddChild(depList, PatternMatching::Create(KNonNull(KA),
                                                           {.KA = multChild}));
         }
-        assert(!sign.isNull() && !multChild->isOne());
-        multChild->cloneTreeOverTree(sign.realSign().isPositive() ? 1_e : -1_e);
+        assert(!properties.isNull() && !multChild->isOne());
+        multChild->cloneTreeOverTree(properties.realSign().isPositive() ? 1_e
+                                                                        : -1_e);
         changed = true;
       }
     }
@@ -379,7 +380,7 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   }
 
   // arg(x + iy) = atan2(y, x)
-  ComplexSign childSign = GetComplexSign(child);
+  ComplexProperties childSign = GetComplexProperties(child);
   Sign realSign = childSign.realSign();
   if (realSign.hasKnownStrictSign()) {
     Sign imagSign = childSign.imagSign();
@@ -428,7 +429,7 @@ bool ReduceSimpleComplexPart(Tree* e, bool childIsPure, bool childIsPureReal) {
     return true;
   }
   const Tree* child = e->child(0);
-  if (child->isExp() && GetComplexSign(child->child(0)).isPureIm()) {
+  if (child->isExp() && GetComplexProperties(child->child(0)).isPureIm()) {
     // This shortcuts the advanced reduction step exp(iA) -> cos(A) + i*sin(A)
     // re(exp(A)) = cos(-i*A), im(exp(A)) = sin(-i*A) if A is pure imaginary
     e->moveTreeOverTree(PatternMatching::CreateReduce(
@@ -447,8 +448,9 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
   const Tree* mainChild = e->child(0);
   // Note : We could also escape here if addition's complex sign is pure.
   if (!mainChild->isAdd()) {
-    ComplexSign childSign = GetComplexSign(mainChild);
-    return ReduceSimpleComplexPart(e, childSign.isPure(), childSign.isReal());
+    ComplexProperties childProperties = GetComplexProperties(mainChild);
+    return ReduceSimpleComplexPart(e, childProperties.isPure(),
+                                   childProperties.isReal());
   }
   /* With A not pure, B real and C imaginary pure :
    * re(A+B+C) = dep(re(A) + B, {C}) and im(A+B+C) = dep(im(A) - i*C, {B}) */
@@ -462,12 +464,12 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
   SharedTreeStack->pushAdd(0);
 
   for (const Tree* addChild : mainChild->children()) {
-    ComplexSign sign = GetComplexSign(addChild);
-    NAry::AddChild(
-        (sign.isPure() ? sign.isReal() ? realChildren : imaginaryChildren
-                       : otherChildren)
-            ->child(0),
-        addChild->cloneTree());
+    ComplexProperties properties = GetComplexProperties(addChild);
+    NAry::AddChild((properties.isPure()
+                        ? properties.isReal() ? realChildren : imaginaryChildren
+                        : otherChildren)
+                       ->child(0),
+                   addChild->cloneTree());
   }
 
   if (otherChildren->child(0)->numberOfChildren() ==
@@ -493,20 +495,20 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
   return true;
 }
 
-static const Tree* TreeFromSign(ComplexSign sign) {
-  if (sign.isNull()) {
+static const Tree* TreeFromSign(ComplexProperties properties) {
+  if (properties.isNull()) {
     return 0_e;
   }
   constexpr const Tree* nullTree = static_cast<const Tree*>(nullptr);
-  if (sign.isReal()) {
-    return sign.realSign().isStrictlyNegative()   ? -1_e
-           : sign.realSign().isStrictlyPositive() ? 1_e
-                                                  : nullTree;
+  if (properties.isReal()) {
+    return properties.realSign().isStrictlyNegative()   ? -1_e
+           : properties.realSign().isStrictlyPositive() ? 1_e
+                                                        : nullTree;
   }
-  if (sign.isPureIm()) {
-    return sign.imagSign().isStrictlyNegative()   ? KMult(-1_e, i_e)
-           : sign.imagSign().isStrictlyPositive() ? i_e
-                                                  : nullTree;
+  if (properties.isPureIm()) {
+    return properties.imagSign().isStrictlyNegative()   ? KMult(-1_e, i_e)
+           : properties.imagSign().isStrictlyPositive() ? i_e
+                                                        : nullTree;
   }
   return nullTree;
 }
@@ -519,8 +521,8 @@ bool SystematicOperation::ReduceSign(Tree* e) {
     assert(!ReduceSign(e));
     return true;
   }
-  ComplexSign sign = GetComplexSign(child);
-  const Tree* result = TreeFromSign(sign);
+  ComplexProperties properties = GetComplexProperties(child);
+  const Tree* result = TreeFromSign(properties);
   /* Could use sign(z) = exp(i*arg(z)) but ignore for now.
    * TODO: when implementing this, see comment in
    * `ReduceMultiplicationWithInf` to avoid infinite loops. */
@@ -803,7 +805,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
      * exp(arg(exp(A*i))*i) -> exp(A*i) is always true.
      * TODO: Bring A back in ]-π,π] if possible. */
     if (PatternMatching::Match(e, KExp(KMult(KArg(KExp(KA)), i_e)), &ctx) &&
-        GetComplexSign(ctx.getTree(KA)).isPureIm()) {
+        GetComplexProperties(ctx.getTree(KA)).isPureIm()) {
       // KExp(KA) has already been reduced, no need to reduce further
       e->moveTreeOverTree(PatternMatching::Create(KExp(KA), ctx));
       return true;
@@ -837,7 +839,7 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
       int currentChild = 0;
       Tree* c = expChild->child(0);
       while (currentChild < numberOfChildren) {
-        if (GetComplexSign(c).isPureIm()) {
+        if (GetComplexProperties(c).isPureIm()) {
           c->detachTree();
           --numberOfChildren;
           ++numberOfDep;
@@ -858,7 +860,7 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
         SharedTreeStack->flushFromBlock(depList);
       }
       return numberOfDep > 0;
-    } else if (GetComplexSign(expChild).isPureIm()) {
+    } else if (GetComplexProperties(expChild).isPureIm()) {
       // |e^x| = dep(1, {|e^x|}) when x is pure imaginary
       e->cloneNodeAtNode(KDepList.node<1>);
       e->cloneTreeAtNode(1_e);
@@ -866,12 +868,13 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
       return true;
     }
   }
-  ComplexSign complexSign = GetComplexSign(child);
-  if (!complexSign.isPure()) {
+  ComplexProperties complexProperties = GetComplexProperties(child);
+  if (!complexProperties.isPure()) {
     return false;
   }
-  bool isReal = complexSign.isReal();
-  Sign sign = isReal ? complexSign.realSign() : complexSign.imagSign();
+  bool isReal = complexProperties.isReal();
+  Sign sign =
+      isReal ? complexProperties.realSign() : complexProperties.imagSign();
   if (sign.canBeStrictlyNegative() && sign.canBeStrictlyPositive()) {
     return false;
   }

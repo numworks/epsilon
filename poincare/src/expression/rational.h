@@ -62,7 +62,7 @@ class Rational final {
   static bool IsStrictlyPositiveUnderOne(const Tree* e);
   static OMG::Troolean AbsSmallerThanPi(const Tree* e);
 
-  static Poincare::ComplexSign ComplexSignOfLn(const Tree* e);
+  static Poincare::ComplexProperties ComplexPropertiesOfLn(const Tree* e);
 
   static bool IsMinusHalf(const Tree* e);
 

@@ -1048,8 +1048,8 @@ bool Layouter::implicitAddition(const Tree* addition) {
           child->child(1)->isUnitOrPhysicalConstant())) {
       return false;
     }
-    ComplexSign sign = GetComplexSign(child->child(0));
-    if (!sign.isReal() || !sign.realSign().isPositive()) {
+    ComplexProperties properties = GetComplexProperties(child->child(0));
+    if (!properties.isReal() || !properties.realSign().isPositive()) {
       return false;
     }
     /*  Check if the layout of the addition contains an 'ᴇ'.

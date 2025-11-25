@@ -13,13 +13,13 @@ namespace Poincare::Internal {
  *
  * For instance:  x + sum(x + 2k, k, 0, n) => \0 + sum(\1 + 2*\0, k, 0, \1)
  *
- * Variable are also given a complex sign restrained by the context. */
+ * Variable are also given complex properties restrained by the context. */
 
 namespace Variables {
 // Used to store a Variable constant tree on the stack.
 class Variable {
  public:
-  Variable(uint8_t id, ComplexSign sign);
+  Variable(uint8_t id, ComplexProperties properties);
   operator const Tree*() const { return Tree::FromBlocks(m_blocks); }
 
  private:
@@ -50,7 +50,7 @@ bool HasUserSymbols(const Tree* e, bool checkForUserFunctions = false);
 bool ProjectLocalVariablesToId(Tree* e, uint8_t depth = 0);
 bool BeautifyToName(Tree* e, uint8_t depth = 0);
 uint8_t Id(const Tree* variable);
-ComplexSign GetComplexSign(const Tree* variable);
+ComplexProperties GetComplexProperties(const Tree* variable);
 
 // On projected expressions
 bool HasVariables(const Tree* e);
@@ -68,8 +68,10 @@ bool Replace(Tree* e, int id, const TreeRef& value, bool leave = false,
              bool reduce = true);
 
 // Replace symbol with Var<id>
-bool ReplaceSymbol(Tree* e, const char* symbol, int id, ComplexSign sign);
-bool ReplaceSymbol(Tree* e, const Tree* symbol, int id, ComplexSign sign);
+bool ReplaceSymbol(Tree* e, const char* symbol, int id,
+                   ComplexProperties properties);
+bool ReplaceSymbol(Tree* e, const Tree* symbol, int id,
+                   ComplexProperties properties);
 void ReplaceUserFunctionOrSequenceWithTree(Tree* e, const Tree* replacement);
 bool ReplaceSymbolWithTree(Tree* e, const Tree* symbol,
                            const Tree* replacement);

@@ -4,6 +4,7 @@
 #include <poincare/src/expression/rational.h>
 
 #include "number.h"
+#include "poincare/sign.h"
 
 namespace Poincare::Internal {
 
@@ -13,15 +14,16 @@ constexpr static double TrigDerivative(double x, bool isCos) {
   return isCos ? -std::sin(x) : std::cos(x);
 }
 
-Sign Bounds::Sign(const Tree* e) {
+Poincare::Properties Bounds::Properties(const Tree* e) {
   Bounds bounds = Compute(e);
   if (!bounds.exists()) {
-    return Sign::Unknown();
+    return Properties::Unknown();
   }
   // NOTE: Can be null if neither strictly negative or positive
-  return Poincare::Sign(
-      !(bounds.isStrictlyNegative() || bounds.isStrictlyPositive()),
-      0 < bounds.upper(), bounds.lower() < 0, true, false);
+  return Poincare::Properties(
+      Sign(!(bounds.isStrictlyNegative() || bounds.isStrictlyPositive()),
+           0 < bounds.upper(), bounds.lower() < 0),
+      true, false);
 }
 
 Bounds Bounds::Compute(const Tree* e) {

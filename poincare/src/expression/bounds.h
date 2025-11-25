@@ -10,9 +10,9 @@ namespace Poincare::Internal {
 
 class Bounds {
  public:
-  /* Get the sign of a Tree via double bounds, originally created to improve
-   * the sign of difference e.g. pi - 1/2 */
-  static Poincare::Sign Sign(const Tree* e);
+  /* Get the properties of a Tree via double bounds, originally created to
+   * improve the properties of difference e.g. pi - 1/2 */
+  static Poincare::Properties Properties(const Tree* e);
 
   // Compute upper and lower bounds of a Tree
   static Bounds Compute(const Tree* e);

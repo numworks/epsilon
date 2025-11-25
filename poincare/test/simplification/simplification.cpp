@@ -492,7 +492,7 @@ QUIZ_CASE(pcj_simplification_advanced) {
   simplifies_to(
       "cos(b)×cos(a)-1/2×cos(b)×cos(a)-1/2×sin(b)×sin(a)+1/2×cos(b)×cos(a)+1/"
       "4×cos(b+a)-1/4×cos(b-a)-cos(a+b)",
-      "(3×cos(a)×cos(b))/4-(3×cos(a+b))/4-(3×sin(a)×sin(b))/4");
+      "(cos(a)×cos(b))/4-cos(-a+b)/4+(sin(a)×sin(b))/4");
   simplifies_to("1/(i-1)^2", "1/2×i", k_cartesianCtx);
   simplifies_to("(x+y)^3-x^3-y^3-3*y^2*x-3*y*x^2", "0");
   // TODO_PCJ: we used to reduce to (π+1)/(π+2)
@@ -522,6 +522,7 @@ QUIZ_CASE(pcj_simplification_advanced) {
   simplifies_to("2×x+4/3", "2×x+4/3");
   // Maybe "(x+1/2)/3" ?
   simplifies_to("x/3+1/6", "x/3+1/6");
+  simplifies_to("-(-5+√(29))/2", "(5-√(29))/2");
 }
 
 QUIZ_CASE(pcj_simplification_logarithm) {

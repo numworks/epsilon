@@ -99,11 +99,10 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to("0x^2=0", {"x=t"});
   setComplexFormatAndAngleUnit(Cartesian, Radian);
   assert_solves_to({"x+i×y=0", "x+y×exp(i×π/3)=3"},
-                   {"x=3/2+(-3-3×√(3)/2)×i", "y=3+3/2×√(3)+3/2×i"});
+                   {"x=3/2-3×(2+√(3))/2×i", "y=3+3/2×√(3)+3/2×i"});
   setComplexFormatAndAngleUnit(Polar, Radian);
-  assert_solves_to(
-      {"x+i×y=0", "x+y×exp(i×π/3)=3"},
-      {"x=3×(√(2)/2+√(6)/2)×e^(-5iπ/12)", "y=(3×(√(2)+√(6))×e^(iπ/12))/2"});
+  assert_solves_to({"x+i×y=0", "x+y×exp(i×π/3)=3"},
+                   {"x=-3×i/(e^(π×i/3)-i)", "y=(3×(√(2)+√(6))×e^(iπ/12))/2"});
 
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);
@@ -131,7 +130,7 @@ QUIZ_CASE(solver_quadratic) {
   assert_solves_to("3×x^2-4x+4=2",
                    {"x=2/3-√(2)/3×i", "x=2/3+√(2)/3×i", "delta=-8"});
   assert_solves_to("x^2+x+1=3×x^2+π×x-√(5)",
-                   {"x=-(-1+π+√(9-2×π+π^2+8×√(5)))/4",
+                   {"x=(1-π-√(9-2×π+π^2+8×√(5)))/4",
                     "x=(1-π+√(9-2×π+π^2+8×√(5)))/4", "delta=9-2×π+π^2+8×√(5)"});
 
   assert_solves_to("x^2+(1+2^(-52))*x+0.25+2^(-53)=0",

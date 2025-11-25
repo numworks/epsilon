@@ -14,7 +14,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("cos({π/12,-19π/12})", "{(√(2)+√(6))/4,(-√(2)+√(6))/4}");
   simplifies_to("sin({π/12,-19π/12})", "{(-√(2)+√(6))/4,(√(2)+√(6))/4}");
   // test π/10 in top-left quadrant
-  simplifies_to("cos({66π/10,-31π/10})", "{-(-1+√(5))/4,-√((5+√(5))/8)}");
+  simplifies_to("cos({66π/10,-31π/10})", "{(1-√(5))/4,-√((5+√(5))/8)}");
   simplifies_to("sin({66π/10,-31π/10})", "{√((5+√(5))/8),(-1+√(5))/4}");
   // test π/8 in bottom-left quadrant
   simplifies_to("cos({9π/8,59π/8})", "{-√(2+√(2))/2,-√(2-√(2))/2}");
@@ -24,7 +24,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin({22π/6,11π/6})", "{-√(3)/2,-1/2}");
   // test π/5 in all quadrants
   simplifies_to("cos({6π/5,-33π/5,18π/5,-π/5})",
-                "{-(1+√(5))/4,-(-1+√(5))/4,(-1+√(5))/4,(1+√(5))/4}");
+                "{-(1+√(5))/4,(1-√(5))/4,(-1+√(5))/4,(1+√(5))/4}");
   simplifies_to("sin({π/5,2π/5,3π/5,-6π/5})",
                 "{√((5-√(5))/8),√((5+√(5))/8),√((5+√(5))/8),√((5-√(5))/8)}");
   // test π/4 in all quadrants

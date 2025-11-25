@@ -64,13 +64,14 @@ void InputDataTable::fillCellForLocation(Escher::HighlightCell* cell,
 }
 
 void InputDataTable::fillInnerCellForLocation(Escher::HighlightCell* cell,
-                                              int column, int row) {
-  assert(column >= 0 && row >= 0);
-  assert(column < innerNumberOfColumns() && row < innerNumberOfRows());
+                                              int innerColumn, int innerRow) {
+  assert(innerColumn >= 0 && innerRow >= 0);
+  assert(innerColumn < innerNumberOfColumns() &&
+         innerRow < innerNumberOfRows());
   InferenceEvenOddEditableCell* myCell =
       static_cast<InferenceEvenOddEditableCell*>(cell);
   fillValueCellForLocation(myCell->editableTextCell()->textField(), myCell,
-                           column, row, tableModel());
+                           innerColumn, innerRow, tableModel());
 }
 
 CategoricalController* InputDataTable::categoricalController() {

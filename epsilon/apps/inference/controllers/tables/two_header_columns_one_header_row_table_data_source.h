@@ -45,8 +45,8 @@ class TwoHeaderColumnsOneHeaderRowTableDataSource
   virtual void fillHeaderCellForLocation(Escher::HighlightCell* cell,
                                          int column, int row) = 0;
 
-  virtual void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
-                                        int row) = 0;
+  virtual void fillInnerCellForLocation(Escher::HighlightCell* cell,
+                                        int innerColumn, int innerRow) = 0;
 
   Escher::SolidColorCell m_topLeftCell;
 };

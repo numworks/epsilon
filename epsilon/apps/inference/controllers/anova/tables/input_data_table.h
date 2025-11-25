@@ -95,8 +95,8 @@ class InputDataTable
     return column - numberOfHeaderColumns();
   }
 
-  void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
-                                int row);
+  void fillInnerCellForLocation(Escher::HighlightCell* cell, int innerColumn,
+                                int innerRow);
   CategoricalController* categoricalController() override;
 
   InputDataController* m_inputDataController;

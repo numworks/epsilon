@@ -111,14 +111,14 @@ void ResultsBetweenWithinTableCell::fillHeaderCellForLocation(
 }
 
 void ResultsBetweenWithinTableCell::fillInnerCellForLocation(
-    Escher::HighlightCell* cell, int column, int row) {
-  assert(row >= 0 && row < innerNumberOfRows());
-  assert(column >= 0 && column < innerNumberOfColumns());
+    Escher::HighlightCell* cell, int innerColumn, int innerRow) {
+  assert(innerRow >= 0 && innerRow < innerNumberOfRows());
+  assert(innerColumn >= 0 && innerColumn < innerNumberOfColumns());
   innerCellType* myCell = static_cast<innerCellType*>(cell);
   const ANOVATest::CalculatedValues& values =
-      (column == 0) ? m_inference->results().between
-                    : m_inference->results().within;
-  switch (row) {
+      (innerColumn == 0) ? m_inference->results().between
+                         : m_inference->results().within;
+  switch (innerRow) {
     case 0:
       PrintValueInTextHolder(values.sumOfSquares, myCell);
       break;

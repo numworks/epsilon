@@ -7,8 +7,14 @@ using namespace Poincare;
 namespace Graph {
 
 // Return true if x is closer than bestX in the given direction
-bool IsBetterPoint(bool directionIsRight, double x, double bestX) {
+bool IsBetterValue(bool directionIsRight, double x, double bestX) {
   return (directionIsRight && x < bestX) || (!directionIsRight && x > bestX);
+}
+
+bool IsBetterPoint(bool directionIsRight, double x, double bestX, double y,
+                   double bestY) {
+  return IsBetterValue(directionIsRight, x, bestX) ||
+         (x == bestX && IsBetterValue(directionIsRight, y, bestY));
 }
 
 void IntersectionRegionGraphController::updateBestPointOfInterestForRecord(
@@ -30,14 +36,13 @@ void IntersectionRegionGraphController::updateBestPointOfInterestForRecord(
       return;
     }
     // Point of interest can be out of range with functions along Y.
-    if (!isAlongY || (IsBetterPoint(directionIsRight, start, p.x()) &&
-                      IsBetterPoint(directionIsRight, p.x(), max))) {
-      assert(IsBetterPoint(directionIsRight, start, p.x()) &&
-             IsBetterPoint(directionIsRight, p.x(), max));
-      // Point must be better in x, or in y with functions along Y at same x.
-      if (IsBetterPoint(directionIsRight, p.x(), bestPoint.coordinate.x()) ||
-          (isAlongY && p.x() == bestPoint.coordinate.x() &&
-           IsBetterPoint(directionIsRight, p.y(), bestPoint.coordinate.y()))) {
+    if (!isAlongY || (IsBetterPoint(directionIsRight, start, p.x(), y, p.y()) &&
+                      IsBetterValue(directionIsRight, p.x(), max))) {
+      assert(IsBetterPoint(directionIsRight, start, p.x(), y, p.y()) &&
+             IsBetterValue(directionIsRight, p.x(), max));
+      // Point must be better in x, or in y at same x.
+      if (IsBetterPoint(directionIsRight, p.x(), bestPoint.coordinate.x(),
+                        p.y(), bestPoint.coordinate.y())) {
         Ion::Storage::Record intersectedRecord = Ion::Storage::Record(p.data);
         // Only display intersections with inequalities
         if (functionStore()
@@ -49,23 +54,17 @@ void IntersectionRegionGraphController::updateBestPointOfInterestForRecord(
               (p.interest == Solver<double>::Interest::UnreachedIntersection);
           bestPoint.record = record;
           bestPoint.intersectedRecord = intersectedRecord;
-          if (!isAlongY) {
-            // Interest points are ordered, no need to explore further
-            return;
-          }
+          // Interest points are ordered, no need to explore further
+          return;
         }
       }
     }
     double nextStart = p.x();
-    if (isAlongY && !IsBetterPoint(directionIsRight, start, nextStart)) {
-      /* TODO: computeAtLeastOnePointOfInterest doesn't handle well functions
-       * along Y and can find interest points out of [start, max] range. */
-      // Escape to prevent potential infinite loops
-      return;
-    }
-    assert(IsBetterPoint(directionIsRight, start, nextStart));
+    double nextY = p.y();
+    assert(IsBetterPoint(directionIsRight, start, nextStart, y, nextY));
     // Try another point of interest
-    start = p.x();
+    start = nextStart;
+    y = nextY;
     // Prevent finding the same point again
     stretch = false;
   }
@@ -80,9 +79,9 @@ IntersectionRegionGraphController::computeNewPointOfInterest(double start,
   // Infer direction from start and max
   bool directionIsRight = start <= max;
   // Initialize best point of interest
-  PointOfInterestData bestPoint{
-      .coordinate =
-          Coordinate2D<double>(directionIsRight ? INFINITY : -INFINITY, 0)};
+  double bestValue = directionIsRight ? INFINITY : -INFINITY;
+  PointOfInterestData bestPoint{.coordinate =
+                                    Coordinate2D<double>(bestValue, bestValue)};
   // Iterate on all active functions
   int numberOfActiveFunctions = functionStore()->numberOfActiveFunctions();
   assert(m_selectedRecordIndex >= 0 &&

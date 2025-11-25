@@ -33,13 +33,13 @@ class BarGraphView : public Escher::ScrollView,
   // Handle selection
   void toggleSelection(bool isSelected) {
     m_contentView.m_isSelected = isSelected;
-    reload();
+    reloadSelectedBar();
   }
   void updateSelectedBar(int category, int group);
   void scrollToSelectedBar();
 
   // Redraw
-  void reload() { markWholeFrameAsDirty(); }
+  void reloadSelectedBar();
 
   class ContentView : public Escher::View {
     friend class BarGraphView;
@@ -55,6 +55,8 @@ class BarGraphView : public Escher::ScrollView,
                       float maxValue) const;
     KDCoordinate categoriesWidth() const;
     KDRect frameForActiveCategory(int category) const;
+    KDRect frameForActiveBar(int category, int group,
+                             bool padWithOffset = false) const;
     KDSize minimalSizeForOptimalDisplay() const override;
 
    private:

@@ -3,33 +3,36 @@
 namespace Statistics::Categorical {
 
 void BarGraphView::updateSelectedBar(int category, int group) {
+  reloadSelectedBar();
   m_contentView.m_selectedCategory = category;
   m_contentView.m_selectedGroup = group;
-  reload();
+  reloadSelectedBar();
   scrollToSelectedBar();
 }
 
+void BarGraphView::reloadSelectedBar() {
+  if (isSelectedActive()) {
+    KDRect barFrame =
+        m_contentView.frameForActiveBar(selectedCategory(), selectedGroup());
+    markRectAsDirty(barFrame.relativeTo(contentOffset()));
+  }
+}
+
 void BarGraphView::scrollToSelectedBar() {
-  KDRect categoryFrame =
-      m_contentView.frameForActiveCategory(m_contentView.m_selectedCategory);
-  // Remove the width of the other bars
-  categoryFrame.setSize(
-      KDSize(categoryFrame.width() -
-                 ContentView::k_barWidth *
-                     (m_contentView.m_store->numberOfActiveGroups() - 1),
-             categoryFrame.height()));
-  // Move to the selected bar
-  KDRect barFrame = categoryFrame.translatedBy(KDPoint(
-      ContentView::k_barWidth * m_contentView.m_store->indexInActiveGroups(
-                                    m_contentView.m_selectedGroup),
-      0));
+  KDPoint previousContentOffset = contentOffset();
+  KDRect barFrame = m_contentView.frameForActiveBar(selectedCategory(),
+                                                    selectedGroup(), true);
   // Scroll to the bar with margin
   scrollToContentRect(barFrame.paddedWith(ContentView::k_horizontalMargin));
+  if (previousContentOffset != contentOffset()) {
+    markWholeFrameAsDirty();
+  }
 }
 
 /* ContentView */
 
 void BarGraphView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
+  // Draw background
   ctx->fillRect(rect, KDColorWhite);
   // Draw axis
   ctx->drawLine(KDPoint(0, bounds().height() - k_legendHeight - k_axisHeight),
@@ -113,6 +116,21 @@ KDRect BarGraphView::ContentView::frameForActiveCategory(int category) const {
       k_horizontalMargin + m_store->indexInActiveCategories(category) *
                                (k_horizontalMargin + categoryWidth),
       k_verticalMargin, categoryWidth, bounds().height() - k_verticalMargin);
+}
+
+KDRect BarGraphView::ContentView::frameForActiveBar(int category, int group,
+                                                    bool padWithOffset) const {
+  assert(m_store->isGroupActive(group));
+  KDRect categoryFrame = frameForActiveCategory(category);
+  KDCoordinate centerOffset =
+      (categoryFrame.width() - m_store->numberOfActiveGroups() * k_barWidth) /
+      2;
+  KDRect barFrame = categoryFrame.translatedBy(
+      KDPoint(centerOffset +
+                  ContentView::k_barWidth * m_store->indexInActiveGroups(group),
+              0));
+  barFrame.setSize(KDSize(k_barWidth, barFrame.height()));
+  return padWithOffset ? barFrame.paddedWith(centerOffset) : barFrame;
 }
 
 KDCoordinate BarGraphView::ContentView::categoriesWidth() const {

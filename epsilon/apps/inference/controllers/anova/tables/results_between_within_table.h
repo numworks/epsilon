@@ -72,8 +72,12 @@ class ResultsBetweenWithinTableCell
   int innerNumberOfRows() const override { return k_numberOfInnerRows; }
   int innerNumberOfColumns() const override { return k_numberOfInnerColumns; }
 
-  void fillHeaderCellForLocation(Escher::HighlightCell* cell, int column,
-                                 int row) override;
+  void fillColumnTitleForLocation(Escher::HighlightCell* cell,
+                                  int innerColumn) override;
+  void fillRowTitleForLocation(Escher::HighlightCell* cell,
+                               int innerRow) override;
+  void fillRowSymbolForLocation(Escher::HighlightCell* cell,
+                                int innerRow) override;
 
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int innerColumn,
                                 int innerRow) override;

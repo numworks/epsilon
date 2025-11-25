@@ -67,8 +67,12 @@ class ResultsStatisticsTable
                : TableDimensions::k_columnWidth;
   }
 
-  void fillHeaderCellForLocation(Escher::HighlightCell* cell, int column,
-                                 int row) override;
+  void fillColumnTitleForLocation(Escher::HighlightCell* cell,
+                                  int innerColumn) override;
+  void fillRowTitleForLocation(Escher::HighlightCell* cell,
+                               int innerRow) override;
+  void fillRowSymbolForLocation(Escher::HighlightCell* cell,
+                                int innerRow) override;
 
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int innerColumn,
                                 int innerRow) override;

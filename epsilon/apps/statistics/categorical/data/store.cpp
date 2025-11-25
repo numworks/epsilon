@@ -71,6 +71,18 @@ void Store::setGroupActive(bool active, int col) {
   }
 }
 
+int Store::indexInActiveGroups(int group) const {
+  assert(0 <= group && group < k_maxNumberOfGroups);
+  assert(isGroupActive(group));
+  int index = -1;
+  for (int col = 0; col <= group; ++col) {
+    if (isGroupActive(col)) {
+      index++;
+    }
+  }
+  return index;
+}
+
 bool Store::isCategoryActive(int row) const {
   assert(0 <= row && row < k_maxNumberOfCategory);
   for (int col = 0; col < m_numberOfColumns; ++col) {
@@ -79,6 +91,26 @@ bool Store::isCategoryActive(int row) const {
     }
   }
   return false;
+}
+
+int Store::numberOfActiveCategories() const {
+  int numberOfActiveCategories = 0;
+  for (int category = 0; category < m_numberOfRows; ++category) {
+    numberOfActiveCategories += isCategoryActive(category);
+  }
+  return numberOfActiveCategories;
+}
+
+int Store::indexInActiveCategories(int category) const {
+  assert(0 <= category && category < k_maxNumberOfCategory);
+  assert(isCategoryActive(category));
+  int index = -1;
+  for (int row = 0; row <= category; ++row) {
+    if (isCategoryActive(row)) {
+      index++;
+    }
+  }
+  return index;
 }
 
 void Store::setValue(float data, int col, int row) {
@@ -93,6 +125,19 @@ void Store::setValue(float data, int col, int row) {
   m_numberOfColumns = std::max(m_numberOfColumns, col + 1);
   m_numberOfRows = std::max(m_numberOfRows, row + 1);
   recomputeSum(col);
+}
+
+float Store::getMaxTableValue() const {
+  float maxValue = 0.0f;
+  for (int col = 0; col < m_numberOfColumns; ++col) {
+    for (int row = 0; row < m_numberOfRows; ++row) {
+      float value = m_table->m_data[col][row];
+      if (std::isfinite(value) && value > maxValue) {
+        maxValue = value;
+      }
+    }
+  }
+  return maxValue;
 }
 
 void Store::getGroupName(int col, char* buffer, int bufferSize) const {

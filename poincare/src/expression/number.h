@@ -22,7 +22,10 @@ class Number {
   }
   static Tree* Addition(const Tree* e1, const Tree* e2);
   static Tree* Multiplication(const Tree* e1, const Tree* e2);
-  static Poincare::Sign Sign(const Tree* e);
+  static Poincare::Properties Properties(const Tree* e);
+  static inline Poincare::Sign Sign(const Tree* e) {
+    return Number::Properties(e).sign();
+  }
   static bool SetSign(Tree* e, NonStrictSign sign);
 };
 

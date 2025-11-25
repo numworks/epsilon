@@ -10,6 +10,7 @@
 #include "dimension.h"
 #include "k_tree.h"
 #include "parametric.h"
+#include "poincare/sign.h"
 #include "rational.h"
 #include "set.h"
 #include "systematic_reduction.h"
@@ -260,16 +261,20 @@ bool CanBeUndefWithInfinity(const Tree* e) {
     bool canContainImagMinusInfinity = false;
     for (const Tree* child : e->children()) {
       ComplexProperties properties = GetComplexProperties(child);
-      Sign realSign = properties.realSign();
-      Sign imagSign = properties.imagSign();
+      Properties realProperties = properties.realProperties();
+      Properties imagProperties = properties.imagProperties();
       bool canBeRealPlusInfinity =
-          realSign.canBeInfinite() && realSign.canBeStrictlyPositive();
+          realProperties.canBeInfinite() &&
+          realProperties.sign().canBeStrictlyPositive();
       bool canBeRealMinusInfinity =
-          realSign.canBeInfinite() && realSign.canBeStrictlyNegative();
+          realProperties.canBeInfinite() &&
+          realProperties.sign().canBeStrictlyNegative();
       bool canBeImagPlusInfinity =
-          imagSign.canBeInfinite() && imagSign.canBeStrictlyPositive();
+          imagProperties.canBeInfinite() &&
+          imagProperties.sign().canBeStrictlyPositive();
       bool canBeImagMinusInfinity =
-          imagSign.canBeInfinite() && imagSign.canBeStrictlyNegative();
+          imagProperties.canBeInfinite() &&
+          imagProperties.sign().canBeStrictlyNegative();
 
       if ((canBeRealPlusInfinity && canContainRealMinusInfinity) ||
           (canBeRealMinusInfinity && canContainRealPlusInfinity) ||
@@ -447,7 +452,7 @@ bool ReduceDependencies(Tree* dependencies) {
         changed = true;
         continue;
       }
-      if (properties.isReal() && properties.realSign().isInteger()) {
+      if (properties.isReal() && properties.realProperties().isInteger()) {
         // dep(..., {realInteger(x)}) = dep(..., {x}) if x is real and integer
         dependency->moveTreeOverTree(dependency->child(0));
         changed = true;

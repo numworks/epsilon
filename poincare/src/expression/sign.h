@@ -5,9 +5,9 @@
 
 namespace Poincare::Internal {
 
-ComplexProperties GetComplexProperties(const Tree* e);
-
 Sign GetSign(const Tree* e);
+Properties GetProperties(const Tree* e);
+ComplexProperties GetComplexProperties(const Tree* e);
 
 /* Properties of e1 - e2 so that e1 < e2 <=> ComplexPropertiesOfDifference(e1,
  * e2) < 0 and so on. Beware that the difference may be real while the trees

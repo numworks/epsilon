@@ -55,14 +55,14 @@ static bool ProcessSpecialUndefinedPatterns(Tree* e) {
 
 #if ASSERTIONS
 template <typename T>
-inline static bool AreConsistent(const Sign& sign, const T& value) {
+inline static bool AreConsistent(const Properties& properties, const T& value) {
   static_assert(std::is_arithmetic<T>());
 
   return std::isnan(value) ||
-         (((value > 0 && sign.canBeStrictlyPositive()) ||
-           (value < 0 && sign.canBeStrictlyNegative()) ||
-           (value == 0 && sign.canBeNull())) &&
-          (sign.canBeNonInteger() ||
+         (((value > 0 && properties.sign().canBeStrictlyPositive()) ||
+           (value < 0 && properties.sign().canBeStrictlyNegative()) ||
+           (value == 0 && properties.sign().canBeNull())) &&
+          (properties.canBeNonInteger() ||
            OMG::Float::RoughlyEqual<T>(value, std::round(value),
                                        100 * OMG::Float::EpsilonLax<T>())));
 }

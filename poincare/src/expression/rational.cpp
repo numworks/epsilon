@@ -5,6 +5,7 @@
 #include <poincare/src/memory/value_block.h>
 
 #include "k_tree.h"
+#include "poincare/sign.h"
 
 #if POINCARE_TREE_STACK_VISUALIZATION
 #include <poincare/src/memory/visualization.h>
@@ -229,14 +230,14 @@ Tree* Rational::NonZeroDivision(const Tree* e1, const Tree* e2) {
 
 Rational::IntegerOperationResult Rational::IntegerPower(const Tree* e1,
                                                         const Tree* e2) {
-  assert(!(e1->isZero() && Sign(e2).isNegative()));
+  assert(!(e1->isZero() && Properties(e2).sign().isNegative()));
   ExceptionTry {
     IntegerHandler absJ = Integer::Handler(e2);
     absJ.setSign(NonStrictSign::Positive);
     Tree* newNumerator = IntegerHandler::Power(Numerator(e1), absJ);
     Tree* newDenominator = IntegerHandler::Power(Denominator(e1), absJ);
     TreeRef result =
-        Sign(e2).isNegative()
+        Properties(e2).sign().isNegative()
             ? Rational::PushIrreducible(newDenominator, newNumerator)
             : Rational::PushIrreducible(newNumerator, newDenominator);
     newDenominator->removeTree();
@@ -343,28 +344,31 @@ ComplexProperties Rational::ComplexPropertiesOfLn(const Tree* e) {
   const Tree* child = e->child(0);
   assert(child->isRational());
   if (child->isOne()) {
-    return ComplexProperties(Sign::Zero(), Sign::Zero());
+    return ComplexProperties(Properties::Zero(), Properties::Zero());
   }
   if (child->isStrictlyPositiveRational()) {
     /* Check if the child is greater than one to determine sign */
-    class Sign realSign = Internal::Rational::IsGreaterThanOne(child)
-                              ? Sign::FiniteStrictlyPositive()
-                              : Sign::FiniteStrictlyNegative();
-    return ComplexProperties(realSign, Sign::Zero());
+    class Properties realProperties =
+        Internal::Rational::IsGreaterThanOne(child)
+            ? Properties::FiniteStrictlyPositive()
+            : Properties::FiniteStrictlyNegative();
+    return ComplexProperties(realProperties, Properties::Zero());
   }
   if (child->isMinusOne()) {
-    return ComplexProperties(Sign::Zero(), Sign::FiniteStrictlyPositive());
+    return ComplexProperties(Properties::Zero(),
+                             Properties::FiniteStrictlyPositive());
   }
   if (child->isStrictlyNegativeRational()) {
     /* Reverse the sign of Numerator to be able to compare it with Denominator
      * and see if the absolute value is greater than one */
     IntegerHandler numerator = Rational::Numerator(child);
     numerator.setSign(NonStrictSign::Positive);
-    class Sign realSign =
+    class Properties realProperties =
         IntegerHandler::Compare(numerator, Rational::Denominator(child)) > 0
-            ? Sign::FiniteStrictlyPositive()
-            : Sign::FiniteStrictlyNegative();
-    return ComplexProperties(realSign, Sign::FiniteStrictlyPositive());
+            ? Properties::FiniteStrictlyPositive()
+            : Properties::FiniteStrictlyNegative();
+    return ComplexProperties(realProperties,
+                             Properties::FiniteStrictlyPositive());
   }
   assert(child->isZero());
   return ComplexProperties::Unknown();

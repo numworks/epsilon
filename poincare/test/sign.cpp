@@ -1,3 +1,5 @@
+#include "poincare/sign.h"
+
 #include <poincare/src/expression/number.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/sign.h>
@@ -11,7 +13,8 @@
 using namespace Poincare;
 using namespace Poincare::Internal;
 
-static_assert(Sign::Zero().isNull() && Sign::Zero().isInteger());
+static_assert(Properties::Zero().sign().isNull() &&
+              Properties::Zero().isInteger());
 static_assert(ComplexProperties::FromValue(
                   ComplexProperties::RealInteger().getRealValue(),
                   ComplexProperties::RealInteger().getImagValue()) ==
@@ -30,11 +33,14 @@ static_assert(ComplexProperties::RealInteger().isReal() &&
               ComplexProperties::RealInteger().isInteger());
 
 namespace Poincare {
-extern Sign RelaxIntegerProperty(Sign s);
-extern Sign DecimalFunction(Sign s, Type type);
+extern Properties RelaxIntegerProperty(Properties p);
+extern Properties DecimalFunction(Properties p, Type type);
 extern Sign Opposite(Sign s);
+extern Properties Opposite(Properties p);
 extern Sign Mult(Sign s1, Sign s2);
+extern Properties Mult(Properties p1, Properties p2);
 extern Sign Add(Sign s1, Sign s2);
+extern Properties Add(Properties p1, Properties p2);
 }  // namespace Poincare
 
 QUIZ_CASE(pcj_sign_methods) {
@@ -49,129 +55,6 @@ QUIZ_CASE(pcj_sign_methods) {
   quiz_assert((Sign::StrictlyPositive() || Sign::Negative()) ==
               Sign::Unknown());
   quiz_assert((Sign::Positive() || Sign::Negative()) == Sign::Unknown());
-  quiz_assert((Sign::Finite() || Sign::Unknown()) == Sign::Unknown());
-
-  // RelaxIntegerProperty
-  quiz_assert(RelaxIntegerProperty(Sign::Zero()) == Sign::Zero());
-  quiz_assert(RelaxIntegerProperty(Sign::NonNull()) == Sign::NonNull());
-  quiz_assert(RelaxIntegerProperty(Sign::StrictlyPositive()) ==
-              Sign::StrictlyPositive());
-  quiz_assert(RelaxIntegerProperty(Sign::Positive()) == Sign::Positive());
-  quiz_assert(RelaxIntegerProperty(Sign::StrictlyNegative()) ==
-              Sign::StrictlyNegative());
-  quiz_assert(RelaxIntegerProperty(Sign::Negative()) == Sign::Negative());
-  quiz_assert(RelaxIntegerProperty(Sign::Unknown()) == Sign::Unknown());
-  quiz_assert(RelaxIntegerProperty(Sign::StrictlyPositiveInteger()) ==
-              Sign::StrictlyPositive());
-  quiz_assert(RelaxIntegerProperty(Sign::PositiveInteger()) ==
-              Sign::Positive());
-  quiz_assert(RelaxIntegerProperty(Sign::StrictlyNegativeInteger()) ==
-              Sign::StrictlyNegative());
-  quiz_assert(RelaxIntegerProperty(Sign::NegativeInteger()) ==
-              Sign::Negative());
-  quiz_assert(RelaxIntegerProperty(Sign::NonNullInteger()) == Sign::NonNull());
-  quiz_assert(RelaxIntegerProperty(Sign::Integer()) == Sign::Unknown());
-  quiz_assert(RelaxIntegerProperty(Sign::FiniteInteger()) == Sign::Finite());
-  quiz_assert(RelaxIntegerProperty(Sign::FiniteStrictlyPositiveInteger()) ==
-              Sign::FiniteStrictlyPositive());
-
-  // Ceil
-  quiz_assert(DecimalFunction(Sign::Zero(), Type::Ceil) == Sign::Zero());
-  quiz_assert(DecimalFunction(Sign::NonNull(), Type::Ceil) == Sign::Integer());
-  quiz_assert(DecimalFunction(Sign::StrictlyPositive(), Type::Ceil) ==
-              Sign::StrictlyPositiveInteger());
-  quiz_assert(DecimalFunction(Sign::Positive(), Type::Ceil) ==
-              Sign::PositiveInteger());
-  quiz_assert(DecimalFunction(Sign::StrictlyNegative(), Type::Ceil) ==
-              Sign::NegativeInteger());
-  quiz_assert(DecimalFunction(Sign::Negative(), Type::Ceil) ==
-              Sign::NegativeInteger());
-  quiz_assert(DecimalFunction(Sign::Unknown(), Type::Ceil) == Sign::Integer());
-  quiz_assert(DecimalFunction(Sign::StrictlyPositiveInteger(), Type::Ceil) ==
-              Sign::StrictlyPositiveInteger());
-  quiz_assert(DecimalFunction(Sign::PositiveInteger(), Type::Ceil) ==
-              Sign::PositiveInteger());
-  quiz_assert(DecimalFunction(Sign::StrictlyNegativeInteger(), Type::Ceil) ==
-              Sign::StrictlyNegativeInteger());
-  quiz_assert(DecimalFunction(Sign::NegativeInteger(), Type::Ceil) ==
-              Sign::NegativeInteger());
-  quiz_assert(DecimalFunction(Sign::NonNullInteger(), Type::Ceil) ==
-              Sign::NonNullInteger());
-  quiz_assert(DecimalFunction(Sign::Integer(), Type::Ceil) == Sign::Integer());
-
-  // Floor
-  quiz_assert(DecimalFunction(Sign::Zero(), Type::Floor) == Sign::Zero());
-  quiz_assert(DecimalFunction(Sign::NonNull(), Type::Floor) == Sign::Integer());
-  quiz_assert(DecimalFunction(Sign::StrictlyPositive(), Type::Floor) ==
-              Sign::PositiveInteger());
-  quiz_assert(DecimalFunction(Sign::Positive(), Type::Floor) ==
-              Sign::PositiveInteger());
-  quiz_assert(DecimalFunction(Sign::StrictlyNegative(), Type::Floor) ==
-              Sign::StrictlyNegativeInteger());
-  quiz_assert(DecimalFunction(Sign::Negative(), Type::Floor) ==
-              Sign::NegativeInteger());
-  quiz_assert(DecimalFunction(Sign::Unknown(), Type::Floor) == Sign::Integer());
-  quiz_assert(DecimalFunction(Sign::StrictlyPositiveInteger(), Type::Floor) ==
-              Sign::StrictlyPositiveInteger());
-  quiz_assert(DecimalFunction(Sign::PositiveInteger(), Type::Floor) ==
-              Sign::PositiveInteger());
-  quiz_assert(DecimalFunction(Sign::StrictlyNegativeInteger(), Type::Floor) ==
-              Sign::StrictlyNegativeInteger());
-  quiz_assert(DecimalFunction(Sign::NegativeInteger(), Type::Floor) ==
-              Sign::NegativeInteger());
-  quiz_assert(DecimalFunction(Sign::NonNullInteger(), Type::Floor) ==
-              Sign::NonNullInteger());
-  quiz_assert(DecimalFunction(Sign::Integer(), Type::Floor) == Sign::Integer());
-
-  // Frac
-  quiz_assert(DecimalFunction(Sign::Zero(), Type::Frac) == Sign::Zero());
-  quiz_assert(DecimalFunction(Sign::NonNull(), Type::Frac) ==
-              Sign::FinitePositive());
-  quiz_assert(DecimalFunction(Sign::StrictlyPositive(), Type::Frac) ==
-              Sign::FinitePositive());
-  quiz_assert(DecimalFunction(Sign::Positive(), Type::Frac) ==
-              Sign::FinitePositive());
-  quiz_assert(DecimalFunction(Sign::StrictlyNegative(), Type::Frac) ==
-              Sign::FinitePositive());
-  quiz_assert(DecimalFunction(Sign::Negative(), Type::Frac) ==
-              Sign::FinitePositive());
-  quiz_assert(DecimalFunction(Sign::Unknown(), Type::Frac) ==
-              Sign::FinitePositive());
-  quiz_assert(DecimalFunction(Sign::StrictlyPositiveInteger(), Type::Frac) ==
-              Sign::Zero());
-  quiz_assert(DecimalFunction(Sign::PositiveInteger(), Type::Frac) ==
-              Sign::Zero());
-  quiz_assert(DecimalFunction(Sign::StrictlyNegativeInteger(), Type::Frac) ==
-              Sign::Zero());
-  quiz_assert(DecimalFunction(Sign::NegativeInteger(), Type::Frac) ==
-              Sign::Zero());
-  quiz_assert(DecimalFunction(Sign::NonNullInteger(), Type::Frac) ==
-              Sign::Zero());
-  quiz_assert(DecimalFunction(Sign::Integer(), Type::Frac) == Sign::Zero());
-
-  // Round
-  quiz_assert(DecimalFunction(Sign::Zero(), Type::Round) == Sign::Zero());
-  quiz_assert(DecimalFunction(Sign::NonNull(), Type::Round) == Sign::Unknown());
-  quiz_assert(DecimalFunction(Sign::StrictlyPositive(), Type::Round) ==
-              Sign::Positive());
-  quiz_assert(DecimalFunction(Sign::Positive(), Type::Round) ==
-              Sign::Positive());
-  quiz_assert(DecimalFunction(Sign::StrictlyNegative(), Type::Round) ==
-              Sign::Negative());
-  quiz_assert(DecimalFunction(Sign::Negative(), Type::Round) ==
-              Sign::Negative());
-  quiz_assert(DecimalFunction(Sign::Unknown(), Type::Round) == Sign::Unknown());
-  quiz_assert(DecimalFunction(Sign::StrictlyPositiveInteger(), Type::Round) ==
-              Sign::PositiveInteger());
-  quiz_assert(DecimalFunction(Sign::PositiveInteger(), Type::Round) ==
-              Sign::PositiveInteger());
-  quiz_assert(DecimalFunction(Sign::StrictlyNegativeInteger(), Type::Round) ==
-              Sign::NegativeInteger());
-  quiz_assert(DecimalFunction(Sign::NegativeInteger(), Type::Round) ==
-              Sign::NegativeInteger());
-  quiz_assert(DecimalFunction(Sign::NonNullInteger(), Type::Round) ==
-              Sign::Integer());
-  quiz_assert(DecimalFunction(Sign::Integer(), Type::Round) == Sign::Integer());
 
   // Opposite
   quiz_assert(Opposite(Sign::Zero()) == Sign::Zero());
@@ -181,17 +64,6 @@ QUIZ_CASE(pcj_sign_methods) {
   quiz_assert(Opposite(Sign::StrictlyNegative()) == Sign::StrictlyPositive());
   quiz_assert(Opposite(Sign::Negative()) == Sign::Positive());
   quiz_assert(Opposite(Sign::Unknown()) == Sign::Unknown());
-  quiz_assert(Opposite(Sign::StrictlyPositiveInteger()) ==
-              Sign::StrictlyNegativeInteger());
-  quiz_assert(Opposite(Sign::PositiveInteger()) == Sign::NegativeInteger());
-  quiz_assert(Opposite(Sign::StrictlyNegativeInteger()) ==
-              Sign::StrictlyPositiveInteger());
-  quiz_assert(Opposite(Sign::NegativeInteger()) == Sign::PositiveInteger());
-  quiz_assert(Opposite(Sign::NonNullInteger()) == Sign::NonNullInteger());
-  quiz_assert(Opposite(Sign::Integer()) == Sign::Integer());
-  quiz_assert(Opposite(Sign::FiniteInteger()) == Sign::FiniteInteger());
-  quiz_assert(Opposite(Sign::FiniteStrictlyPositive()) ==
-              Sign::FiniteStrictlyNegative());
 
   // Mult(..., Zero)
   quiz_assert(Mult(Sign::Zero(), Sign::Zero()) == Sign::Zero());
@@ -210,7 +82,6 @@ QUIZ_CASE(pcj_sign_methods) {
               Sign::NonNull());
   quiz_assert(Mult(Sign::Negative(), Sign::NonNull()) == Sign::Unknown());
   quiz_assert(Mult(Sign::Unknown(), Sign::NonNull()) == Sign::Unknown());
-  quiz_assert(Mult(Sign::Finite(), Sign::NonNull()) == Sign::Unknown());
   //  Mult(..., StrictlyPositive)
   quiz_assert(Mult(Sign::StrictlyPositive(), Sign::StrictlyPositive()) ==
               Sign::StrictlyPositive());
@@ -240,7 +111,6 @@ QUIZ_CASE(pcj_sign_methods) {
   quiz_assert(Mult(Sign::Unknown(), Sign::Negative()) == Sign::Unknown());
   // Mult(..., Unknown)
   quiz_assert(Mult(Sign::Unknown(), Sign::Unknown()) == Sign::Unknown());
-  quiz_assert(Mult(Sign::Finite(), Sign::Unknown()) == Sign::Unknown());
 
   // Add(..., Zero)
   quiz_assert(Add(Sign::Zero(), Sign::Zero()) == Sign::Zero());
@@ -251,7 +121,6 @@ QUIZ_CASE(pcj_sign_methods) {
   quiz_assert(Add(Sign::StrictlyNegative(), Sign::Zero()) ==
               Sign::StrictlyNegative());
   quiz_assert(Add(Sign::Negative(), Sign::Zero()) == Sign::Negative());
-  quiz_assert(Add(Sign::Finite(), Sign::Zero()) == Sign::Finite());
   quiz_assert(Add(Sign::Unknown(), Sign::Zero()) == Sign::Unknown());
   // Add(..., NonNull)
   quiz_assert(Add(Sign::NonNull(), Sign::NonNull()) == Sign::Unknown());
@@ -278,8 +147,6 @@ QUIZ_CASE(pcj_sign_methods) {
   quiz_assert(Add(Sign::StrictlyNegative(), Sign::Positive()) ==
               Sign::Unknown());
   quiz_assert(Add(Sign::Negative(), Sign::Positive()) == Sign::Unknown());
-  quiz_assert(Add(Sign::FinitePositive(), Sign::Positive()) ==
-              Sign::Positive());
   quiz_assert(Add(Sign::Unknown(), Sign::Positive()) == Sign::Unknown());
   // Add(..., StrictlyNegative)
   quiz_assert(Add(Sign::StrictlyNegative(), Sign::StrictlyNegative()) ==
@@ -290,19 +157,356 @@ QUIZ_CASE(pcj_sign_methods) {
               Sign::Unknown());
   // Add(..., Negative)
   quiz_assert(Add(Sign::Negative(), Sign::Negative()) == Sign::Negative());
-  quiz_assert(Add(Sign::FiniteNegative(), Sign::Negative()) ==
-              Sign::Negative());
   quiz_assert(Add(Sign::Unknown(), Sign::Negative()) == Sign::Unknown());
-  // Add(.., Finite)
-  quiz_assert(Add(Sign::Finite(), Sign::Finite()) == Sign::Finite());
-  quiz_assert(Add(Sign::Unknown(), Sign::Finite()) == Sign::Unknown());
   // Add(..., Unknown)
   quiz_assert(Add(Sign::Unknown(), Sign::Unknown()) == Sign::Unknown());
 }
 
-void assert_sign(const char* input, ComplexProperties expectedProperties,
-                 ComplexFormat complexFormat = ComplexFormat::Cartesian,
-                 Strategy strategy = Strategy::Default) {
+QUIZ_CASE(pcj_properties_methods) {
+  // OR operator
+  quiz_assert((Properties::Zero() || Properties::NonNull()) ==
+              Properties::Unknown());
+  quiz_assert((Properties::Zero() || Properties::StrictlyPositive()) ==
+              Properties::Positive());
+  quiz_assert((Properties::Zero() || Properties::StrictlyNegative()) ==
+              Properties::Negative());
+  quiz_assert((Properties::StrictlyPositive() ||
+               Properties::StrictlyNegative()) == Properties::NonNull());
+  quiz_assert((Properties::Positive() || Properties::StrictlyNegative()) ==
+              Properties::Unknown());
+  quiz_assert((Properties::StrictlyPositive() || Properties::Negative()) ==
+              Properties::Unknown());
+  quiz_assert((Properties::Positive() || Properties::Negative()) ==
+              Properties::Unknown());
+  quiz_assert((Properties::Finite() || Properties::Unknown()) ==
+              Properties::Unknown());
+
+  // Opposite
+  quiz_assert(Opposite(Properties::Zero()) == Properties::Zero());
+  quiz_assert(Opposite(Properties::NonNull()) == Properties::NonNull());
+  quiz_assert(Opposite(Properties::StrictlyPositive()) ==
+              Properties::StrictlyNegative());
+  quiz_assert(Opposite(Properties::Positive()) == Properties::Negative());
+  quiz_assert(Opposite(Properties::StrictlyNegative()) ==
+              Properties::StrictlyPositive());
+  quiz_assert(Opposite(Properties::Negative()) == Properties::Positive());
+  quiz_assert(Opposite(Properties::Unknown()) == Properties::Unknown());
+  quiz_assert(Opposite(Properties::StrictlyPositiveInteger()) ==
+              Properties::StrictlyNegativeInteger());
+  quiz_assert(Opposite(Properties::PositiveInteger()) ==
+              Properties::NegativeInteger());
+  quiz_assert(Opposite(Properties::StrictlyNegativeInteger()) ==
+              Properties::StrictlyPositiveInteger());
+  quiz_assert(Opposite(Properties::NegativeInteger()) ==
+              Properties::PositiveInteger());
+  quiz_assert(Opposite(Properties::NonNullInteger()) ==
+              Properties::NonNullInteger());
+  quiz_assert(Opposite(Properties::Integer()) == Properties::Integer());
+  quiz_assert(Opposite(Properties::FiniteInteger()) ==
+              Properties::FiniteInteger());
+  quiz_assert(Opposite(Properties::FiniteStrictlyPositive()) ==
+              Properties::FiniteStrictlyNegative());
+
+  // Mult(..., Zero)
+  quiz_assert(Mult(Properties::Zero(), Properties::Zero()) ==
+              Properties::Zero());
+  quiz_assert(Mult(Properties::NonNull(), Properties::Zero()) ==
+              Properties::Zero());
+  quiz_assert(Mult(Properties::StrictlyPositive(), Properties::Zero()) ==
+              Properties::Zero());
+  quiz_assert(Mult(Properties::Positive(), Properties::Zero()) ==
+              Properties::Zero());
+  quiz_assert(Mult(Properties::StrictlyNegative(), Properties::Zero()) ==
+              Properties::Zero());
+  quiz_assert(Mult(Properties::Negative(), Properties::Zero()) ==
+              Properties::Zero());
+  quiz_assert(Mult(Properties::Unknown(), Properties::Zero()) ==
+              Properties::Zero());
+  // Mult(..., NonNull)
+  quiz_assert(Mult(Properties::NonNull(), Properties::NonNull()) ==
+              Properties::NonNull());
+  quiz_assert(Mult(Properties::StrictlyPositive(), Properties::NonNull()) ==
+              Properties::NonNull());
+  quiz_assert(Mult(Properties::Positive(), Properties::NonNull()) ==
+              Properties::Unknown());
+  quiz_assert(Mult(Properties::StrictlyNegative(), Properties::NonNull()) ==
+              Properties::NonNull());
+  quiz_assert(Mult(Properties::Negative(), Properties::NonNull()) ==
+              Properties::Unknown());
+  quiz_assert(Mult(Properties::Unknown(), Properties::NonNull()) ==
+              Properties::Unknown());
+  quiz_assert(Mult(Properties::Finite(), Properties::NonNull()) ==
+              Properties::Unknown());
+  //  Mult(..., StrictlyPositive)
+  quiz_assert(
+      Mult(Properties::StrictlyPositive(), Properties::StrictlyPositive()) ==
+      Properties::StrictlyPositive());
+  quiz_assert(Mult(Properties::Positive(), Properties::StrictlyPositive()) ==
+              Properties::Positive());
+  quiz_assert(
+      Mult(Properties::StrictlyNegative(), Properties::StrictlyPositive()) ==
+      Properties::StrictlyNegative());
+  quiz_assert(Mult(Properties::Negative(), Properties::StrictlyPositive()) ==
+              Properties::Negative());
+  quiz_assert(Mult(Properties::Unknown(), Properties::StrictlyPositive()) ==
+              Properties::Unknown());
+  // Mult(..., Positive)
+  quiz_assert(Mult(Properties::Positive(), Properties::Positive()) ==
+              Properties::Positive());
+  quiz_assert(Mult(Properties::StrictlyNegative(), Properties::Positive()) ==
+              Properties::Negative());
+  quiz_assert(Mult(Properties::Negative(), Properties::Positive()) ==
+              Properties::Negative());
+  quiz_assert(Mult(Properties::Unknown(), Properties::Positive()) ==
+              Properties::Unknown());
+  // Mult(..., StrictlyNegative)
+  quiz_assert(
+      Mult(Properties::StrictlyNegative(), Properties::StrictlyNegative()) ==
+      Properties::StrictlyPositive());
+  quiz_assert(Mult(Properties::Negative(), Properties::StrictlyNegative()) ==
+              Properties::Positive());
+  quiz_assert(Mult(Properties::Unknown(), Properties::StrictlyNegative()) ==
+              Properties::Unknown());
+  // Mult(..., Negative)
+  quiz_assert(Mult(Properties::Negative(), Properties::Negative()) ==
+              Properties::Positive());
+  quiz_assert(Mult(Properties::Unknown(), Properties::Negative()) ==
+              Properties::Unknown());
+  // Mult(..., Unknown)
+  quiz_assert(Mult(Properties::Unknown(), Properties::Unknown()) ==
+              Properties::Unknown());
+  quiz_assert(Mult(Properties::Finite(), Properties::Unknown()) ==
+              Properties::Unknown());
+
+  // Add(..., Zero)
+  quiz_assert(Add(Properties::Zero(), Properties::Zero()) ==
+              Properties::Zero());
+  quiz_assert(Add(Properties::NonNull(), Properties::Zero()) ==
+              Properties::NonNull());
+  quiz_assert(Add(Properties::StrictlyPositive(), Properties::Zero()) ==
+              Properties::StrictlyPositive());
+  quiz_assert(Add(Properties::Positive(), Properties::Zero()) ==
+              Properties::Positive());
+  quiz_assert(Add(Properties::StrictlyNegative(), Properties::Zero()) ==
+              Properties::StrictlyNegative());
+  quiz_assert(Add(Properties::Negative(), Properties::Zero()) ==
+              Properties::Negative());
+  quiz_assert(Add(Properties::Finite(), Properties::Zero()) ==
+              Properties::Finite());
+  quiz_assert(Add(Properties::Unknown(), Properties::Zero()) ==
+              Properties::Unknown());
+  // Add(..., NonNull)
+  quiz_assert(Add(Properties::NonNull(), Properties::NonNull()) ==
+              Properties::Unknown());
+  quiz_assert(Add(Properties::StrictlyPositive(), Properties::NonNull()) ==
+              Properties::Unknown());
+  quiz_assert(Add(Properties::Positive(), Properties::NonNull()) ==
+              Properties::Unknown());
+  quiz_assert(Add(Properties::StrictlyNegative(), Properties::NonNull()) ==
+              Properties::Unknown());
+  quiz_assert(Add(Properties::Negative(), Properties::NonNull()) ==
+              Properties::Unknown());
+  quiz_assert(Add(Properties::Unknown(), Properties::NonNull()) ==
+              Properties::Unknown());
+  // Add(..., StrictlyPositive)
+  quiz_assert(
+      Add(Properties::StrictlyPositive(), Properties::StrictlyPositive()) ==
+      Properties::StrictlyPositive());
+  quiz_assert(Add(Properties::Positive(), Properties::StrictlyPositive()) ==
+              Properties::StrictlyPositive());
+  quiz_assert(Add(Properties::StrictlyNegative(),
+                  Properties::StrictlyPositive()) == Properties::Unknown());
+  quiz_assert(Add(Properties::Negative(), Properties::StrictlyPositive()) ==
+              Properties::Unknown());
+  quiz_assert(Add(Properties::Unknown(), Properties::StrictlyPositive()) ==
+              Properties::Unknown());
+  // Add(..., Positive)
+  quiz_assert(Add(Properties::Positive(), Properties::Positive()) ==
+              Properties::Positive());
+  quiz_assert(Add(Properties::StrictlyNegative(), Properties::Positive()) ==
+              Properties::Unknown());
+  quiz_assert(Add(Properties::Negative(), Properties::Positive()) ==
+              Properties::Unknown());
+  quiz_assert(Add(Properties::FinitePositive(), Properties::Positive()) ==
+              Properties::Positive());
+  quiz_assert(Add(Properties::Unknown(), Properties::Positive()) ==
+              Properties::Unknown());
+  // Add(..., StrictlyNegative)
+  quiz_assert(
+      Add(Properties::StrictlyNegative(), Properties::StrictlyNegative()) ==
+      Properties::StrictlyNegative());
+  quiz_assert(Add(Properties::Negative(), Properties::StrictlyNegative()) ==
+              Properties::StrictlyNegative());
+  quiz_assert(Add(Properties::Unknown(), Properties::StrictlyNegative()) ==
+              Properties::Unknown());
+  // Add(..., Negative)
+  quiz_assert(Add(Properties::Negative(), Properties::Negative()) ==
+              Properties::Negative());
+  quiz_assert(Add(Properties::FiniteNegative(), Properties::Negative()) ==
+              Properties::Negative());
+  quiz_assert(Add(Properties::Unknown(), Properties::Negative()) ==
+              Properties::Unknown());
+  // Add(.., Finite)
+  quiz_assert(Add(Properties::Finite(), Properties::Finite()) ==
+              Properties::Finite());
+  quiz_assert(Add(Properties::Unknown(), Properties::Finite()) ==
+              Properties::Unknown());
+  // Add(..., Unknown)
+  quiz_assert(Add(Properties::Unknown(), Properties::Unknown()) ==
+              Properties::Unknown());
+
+  // RelaxIntegerProperty
+  quiz_assert(RelaxIntegerProperty(Properties::Zero()) == Properties::Zero());
+  quiz_assert(RelaxIntegerProperty(Properties::NonNull()) ==
+              Properties::NonNull());
+  quiz_assert(RelaxIntegerProperty(Properties::StrictlyPositive()) ==
+              Properties::StrictlyPositive());
+  quiz_assert(RelaxIntegerProperty(Properties::Positive()) ==
+              Properties::Positive());
+  quiz_assert(RelaxIntegerProperty(Properties::StrictlyNegative()) ==
+              Properties::StrictlyNegative());
+  quiz_assert(RelaxIntegerProperty(Properties::Negative()) ==
+              Properties::Negative());
+  quiz_assert(RelaxIntegerProperty(Properties::Unknown()) ==
+              Properties::Unknown());
+  quiz_assert(RelaxIntegerProperty(Properties::StrictlyPositiveInteger()) ==
+              Properties::StrictlyPositive());
+  quiz_assert(RelaxIntegerProperty(Properties::PositiveInteger()) ==
+              Properties::Positive());
+  quiz_assert(RelaxIntegerProperty(Properties::StrictlyNegativeInteger()) ==
+              Properties::StrictlyNegative());
+  quiz_assert(RelaxIntegerProperty(Properties::NegativeInteger()) ==
+              Properties::Negative());
+  quiz_assert(RelaxIntegerProperty(Properties::NonNullInteger()) ==
+              Properties::NonNull());
+  quiz_assert(RelaxIntegerProperty(Properties::Integer()) ==
+              Properties::Unknown());
+  quiz_assert(RelaxIntegerProperty(Properties::FiniteInteger()) ==
+              Properties::Finite());
+  quiz_assert(
+      RelaxIntegerProperty(Properties::FiniteStrictlyPositiveInteger()) ==
+      Properties::FiniteStrictlyPositive());
+
+  // Ceil
+  quiz_assert(DecimalFunction(Properties::Zero(), Type::Ceil) ==
+              Properties::Zero());
+  quiz_assert(DecimalFunction(Properties::NonNull(), Type::Ceil) ==
+              Properties::Integer());
+  quiz_assert(DecimalFunction(Properties::StrictlyPositive(), Type::Ceil) ==
+              Properties::StrictlyPositiveInteger());
+  quiz_assert(DecimalFunction(Properties::Positive(), Type::Ceil) ==
+              Properties::PositiveInteger());
+  quiz_assert(DecimalFunction(Properties::StrictlyNegative(), Type::Ceil) ==
+              Properties::NegativeInteger());
+  quiz_assert(DecimalFunction(Properties::Negative(), Type::Ceil) ==
+              Properties::NegativeInteger());
+  quiz_assert(DecimalFunction(Properties::Unknown(), Type::Ceil) ==
+              Properties::Integer());
+  quiz_assert(
+      DecimalFunction(Properties::StrictlyPositiveInteger(), Type::Ceil) ==
+      Properties::StrictlyPositiveInteger());
+  quiz_assert(DecimalFunction(Properties::PositiveInteger(), Type::Ceil) ==
+              Properties::PositiveInteger());
+  quiz_assert(
+      DecimalFunction(Properties::StrictlyNegativeInteger(), Type::Ceil) ==
+      Properties::StrictlyNegativeInteger());
+  quiz_assert(DecimalFunction(Properties::NegativeInteger(), Type::Ceil) ==
+              Properties::NegativeInteger());
+  quiz_assert(DecimalFunction(Properties::NonNullInteger(), Type::Ceil) ==
+              Properties::NonNullInteger());
+  quiz_assert(DecimalFunction(Properties::Integer(), Type::Ceil) ==
+              Properties::Integer());
+
+  // Floor
+  quiz_assert(DecimalFunction(Properties::Zero(), Type::Floor) ==
+              Properties::Zero());
+  quiz_assert(DecimalFunction(Properties::NonNull(), Type::Floor) ==
+              Properties::Integer());
+  quiz_assert(DecimalFunction(Properties::StrictlyPositive(), Type::Floor) ==
+              Properties::PositiveInteger());
+  quiz_assert(DecimalFunction(Properties::Positive(), Type::Floor) ==
+              Properties::PositiveInteger());
+  quiz_assert(DecimalFunction(Properties::StrictlyNegative(), Type::Floor) ==
+              Properties::StrictlyNegativeInteger());
+  quiz_assert(DecimalFunction(Properties::Negative(), Type::Floor) ==
+              Properties::NegativeInteger());
+  quiz_assert(DecimalFunction(Properties::Unknown(), Type::Floor) ==
+              Properties::Integer());
+  quiz_assert(
+      DecimalFunction(Properties::StrictlyPositiveInteger(), Type::Floor) ==
+      Properties::StrictlyPositiveInteger());
+  quiz_assert(DecimalFunction(Properties::PositiveInteger(), Type::Floor) ==
+              Properties::PositiveInteger());
+  quiz_assert(
+      DecimalFunction(Properties::StrictlyNegativeInteger(), Type::Floor) ==
+      Properties::StrictlyNegativeInteger());
+  quiz_assert(DecimalFunction(Properties::NegativeInteger(), Type::Floor) ==
+              Properties::NegativeInteger());
+  quiz_assert(DecimalFunction(Properties::NonNullInteger(), Type::Floor) ==
+              Properties::NonNullInteger());
+  quiz_assert(DecimalFunction(Properties::Integer(), Type::Floor) ==
+              Properties::Integer());
+
+  // Frac
+  quiz_assert(DecimalFunction(Properties::Zero(), Type::Frac) ==
+              Properties::Zero());
+  quiz_assert(DecimalFunction(Properties::NonNull(), Type::Frac) ==
+              Properties::FinitePositive());
+  quiz_assert(DecimalFunction(Properties::StrictlyPositive(), Type::Frac) ==
+              Properties::FinitePositive());
+  quiz_assert(DecimalFunction(Properties::Positive(), Type::Frac) ==
+              Properties::FinitePositive());
+  quiz_assert(DecimalFunction(Properties::StrictlyNegative(), Type::Frac) ==
+              Properties::FinitePositive());
+  quiz_assert(DecimalFunction(Properties::Negative(), Type::Frac) ==
+              Properties::FinitePositive());
+  quiz_assert(DecimalFunction(Properties::Unknown(), Type::Frac) ==
+              Properties::FinitePositive());
+  quiz_assert(DecimalFunction(Properties::StrictlyPositiveInteger(),
+                              Type::Frac) == Properties::Zero());
+  quiz_assert(DecimalFunction(Properties::PositiveInteger(), Type::Frac) ==
+              Properties::Zero());
+  quiz_assert(DecimalFunction(Properties::StrictlyNegativeInteger(),
+                              Type::Frac) == Properties::Zero());
+  quiz_assert(DecimalFunction(Properties::NegativeInteger(), Type::Frac) ==
+              Properties::Zero());
+  quiz_assert(DecimalFunction(Properties::NonNullInteger(), Type::Frac) ==
+              Properties::Zero());
+  quiz_assert(DecimalFunction(Properties::Integer(), Type::Frac) ==
+              Properties::Zero());
+
+  // Round
+  quiz_assert(DecimalFunction(Properties::Zero(), Type::Round) ==
+              Properties::Zero());
+  quiz_assert(DecimalFunction(Properties::NonNull(), Type::Round) ==
+              Properties::Unknown());
+  quiz_assert(DecimalFunction(Properties::StrictlyPositive(), Type::Round) ==
+              Properties::Positive());
+  quiz_assert(DecimalFunction(Properties::Positive(), Type::Round) ==
+              Properties::Positive());
+  quiz_assert(DecimalFunction(Properties::StrictlyNegative(), Type::Round) ==
+              Properties::Negative());
+  quiz_assert(DecimalFunction(Properties::Negative(), Type::Round) ==
+              Properties::Negative());
+  quiz_assert(DecimalFunction(Properties::Unknown(), Type::Round) ==
+              Properties::Unknown());
+  quiz_assert(DecimalFunction(Properties::StrictlyPositiveInteger(),
+                              Type::Round) == Properties::PositiveInteger());
+  quiz_assert(DecimalFunction(Properties::PositiveInteger(), Type::Round) ==
+              Properties::PositiveInteger());
+  quiz_assert(DecimalFunction(Properties::StrictlyNegativeInteger(),
+                              Type::Round) == Properties::NegativeInteger());
+  quiz_assert(DecimalFunction(Properties::NegativeInteger(), Type::Round) ==
+              Properties::NegativeInteger());
+  quiz_assert(DecimalFunction(Properties::NonNullInteger(), Type::Round) ==
+              Properties::Integer());
+  quiz_assert(DecimalFunction(Properties::Integer(), Type::Round) ==
+              Properties::Integer());
+}
+
+void assert_properties(const char* input, ComplexProperties expectedProperties,
+                       ComplexFormat complexFormat = ComplexFormat::Cartesian,
+                       Strategy strategy = Strategy::Default) {
   Tree* expression = parse(input);
   ProjectionContext ctx = {.m_complexFormat = complexFormat,
                            .m_strategy = strategy,
@@ -313,7 +517,7 @@ void assert_sign(const char* input, ComplexProperties expectedProperties,
   if (!result) {
     std::cout << input << " -> ";
     expression->logSerialize();
-    std::cout << "\t\t\tWrong Sign: ";
+    std::cout << "\t\t\tWrong Properties: ";
     GetComplexProperties(expression).log();
     std::cout << "\t\t\tInstead of: ";
     expectedProperties.log();
@@ -323,113 +527,127 @@ void assert_sign(const char* input, ComplexProperties expectedProperties,
   expression->removeTree();
 }
 
-void assert_sign(const char* input, Sign expectedSign) {
-  assert_sign(input, ComplexProperties(expectedSign, Sign::Zero()));
+void assert_properties(const char* input, Properties expectedProperties) {
+  assert_properties(input,
+                    ComplexProperties(expectedProperties, Properties::Zero()));
 }
 
-QUIZ_CASE(pcj_sign) {
-  assert_sign("2", Sign::FiniteStrictlyPositiveInteger());
-  assert_sign("-2.5", Sign::FiniteStrictlyNegative());
-  assert_sign("π",
-              ComplexProperties(Sign::FiniteStrictlyPositive(), Sign::Zero()),
-              ComplexFormat::Cartesian, Strategy::ApproximateToFloat);
-  assert_sign("inf", ComplexProperties(Sign::StrictlyPositive(), Sign::Zero()),
-              ComplexFormat::Cartesian, Strategy::ApproximateToFloat);
+QUIZ_CASE(pcj_properties) {
+  assert_properties("2", Properties::FiniteStrictlyPositiveInteger());
+  assert_properties("-2.5", Properties::FiniteStrictlyNegative());
+  assert_properties("π",
+                    ComplexProperties(Properties::FiniteStrictlyPositive(),
+                                      Properties::Zero()),
+                    ComplexFormat::Cartesian, Strategy::ApproximateToFloat);
+  assert_properties(
+      "inf",
+      ComplexProperties(Properties::StrictlyPositive(), Properties::Zero()),
+      ComplexFormat::Cartesian, Strategy::ApproximateToFloat);
 
-  assert_sign("2+π", Sign::FiniteStrictlyPositive());
-  assert_sign("√(2)-2", Sign::FiniteStrictlyNegative());
-  assert_sign("π-2*ln(π)", Sign::FiniteStrictlyPositive());
-  assert_sign("√(535)-e^π+log(2)", Sign::FiniteStrictlyPositive());
-  assert_sign("π-22/7", Sign::FiniteStrictlyNegative());
-  assert_sign("3 * abs(cos(x)) * -2", Sign::FiniteNegative());
+  assert_properties("2+π", Properties::FiniteStrictlyPositive());
+  assert_properties("√(2)-2", Properties::FiniteStrictlyNegative());
+  assert_properties("π-2*ln(π)", Properties::FiniteStrictlyPositive());
+  assert_properties("√(535)-e^π+log(2)", Properties::FiniteStrictlyPositive());
+  assert_properties("π-22/7", Properties::FiniteStrictlyNegative());
+  assert_properties("3 * abs(cos(x)) * -2", Properties::FiniteNegative());
 
-  assert_sign("x", ComplexProperties::RealFinite());
-  assert_sign("5+i*(x+i*y)", ComplexProperties::Finite());
-  assert_sign("5+i*y", ComplexProperties(Sign::FiniteStrictlyPositiveInteger(),
-                                         Sign::Finite()));
-  assert_sign("5+i*(x+i*y)", ComplexProperties::Finite());
-  assert_sign("x^2", Sign::FinitePositive());
-  assert_sign("x^2+y^2", Sign::FinitePositive());
-  assert_sign("0.5*ln(x^2+y^2)", Sign::Unknown());
-  assert_sign("e^(0.5*ln(x^2+y^2))", Sign::Positive());
-  assert_sign("(abs(x)+i)*abs(abs(x)-i)",
-              ComplexProperties(Sign::FinitePositive(),
-                                Sign::FiniteStrictlyPositive()));
-  assert_sign(
-      "e^(0.5*ln(12))+i*re(ln(2+i))",
-      ComplexProperties(Sign::FiniteStrictlyPositive(), Sign::Finite()));
-  assert_sign("re(abs(x)-i)+i*arg(2+i)",
-              ComplexProperties(Sign::FinitePositive(),
-                                Sign::FiniteStrictlyPositive()));
+  assert_properties("x", ComplexProperties::RealFinite());
+  assert_properties("5+i*(x+i*y)", ComplexProperties::Finite());
+  assert_properties(
+      "5+i*y", ComplexProperties(Properties::FiniteStrictlyPositiveInteger(),
+                                 Properties::Finite()));
+  assert_properties("5+i*(x+i*y)", ComplexProperties::Finite());
+  assert_properties("x^2", Properties::FinitePositive());
+  assert_properties("x^2+y^2", Properties::FinitePositive());
+  assert_properties("0.5*ln(x^2+y^2)", Properties::Unknown());
+  assert_properties("e^(0.5*ln(x^2+y^2))", Properties::Positive());
+  assert_properties("(abs(x)+i)*abs(abs(x)-i)",
+                    ComplexProperties(Properties::FinitePositive(),
+                                      Properties::FiniteStrictlyPositive()));
+  assert_properties("e^(0.5*ln(12))+i*re(ln(2+i))",
+                    ComplexProperties(Properties::FiniteStrictlyPositive(),
+                                      Properties::Finite()));
+  assert_properties("re(abs(x)-i)+i*arg(2+i)",
+                    ComplexProperties(Properties::FinitePositive(),
+                                      Properties::FiniteStrictlyPositive()));
 
   // cos
-  assert_sign("cos(3)", Sign::Finite());
-  assert_sign("cos(2i)", Sign::StrictlyPositive());
-  assert_sign("cos(-2i)", Sign::StrictlyPositive());
-  assert_sign("cos(3+2i)", ComplexProperties::Unknown());
+  assert_properties("cos(3)", Properties::Finite());
+  assert_properties("cos(2i)", Properties::StrictlyPositive());
+  assert_properties("cos(-2i)", Properties::StrictlyPositive());
+  assert_properties("cos(3+2i)", ComplexProperties::Unknown());
 
   // sin
-  assert_sign("sin(3)", Sign::Finite());
-  assert_sign("sin(2i)",
-              ComplexProperties(Sign::Zero(), Sign::FiniteStrictlyPositive()));
-  assert_sign("sin(-2i)",
-              ComplexProperties(Sign::Zero(), Sign::FiniteStrictlyNegative()));
-  assert_sign("sin(3+2i)", ComplexProperties::Unknown());
+  assert_properties("sin(3)", Properties::Finite());
+  assert_properties("sin(2i)",
+                    ComplexProperties(Properties::Zero(),
+                                      Properties::FiniteStrictlyPositive()));
+  assert_properties("sin(-2i)",
+                    ComplexProperties(Properties::Zero(),
+                                      Properties::FiniteStrictlyNegative()));
+  assert_properties("sin(3+2i)", ComplexProperties::Unknown());
 
   // ln
-  assert_sign("ln(0)", ComplexProperties::Unknown());
-  assert_sign("ln(3)", Sign::FiniteStrictlyPositive());
-  assert_sign("ln(-3)", ComplexProperties(Sign::Finite(),
-                                          Sign::FiniteStrictlyPositive()));
-  assert_sign("ln(ln(3))", ComplexProperties(Sign::Finite(), Sign::Zero()));
-  assert_sign("ln(4+i)", ComplexProperties(Sign::Finite(),
-                                           Sign::FiniteStrictlyPositive()));
-  assert_sign("ln(4-i)", ComplexProperties(Sign::Finite(),
-                                           Sign::FiniteStrictlyNegative()));
-  assert_sign("ln(ln(x+i*y)i)",
-              ComplexProperties(Sign::Unknown(), Sign::Finite()));
+  assert_properties("ln(0)", ComplexProperties::Unknown());
+  assert_properties("ln(3)", Properties::FiniteStrictlyPositive());
+  assert_properties("ln(-3)",
+                    ComplexProperties(Properties::Finite(),
+                                      Properties::FiniteStrictlyPositive()));
+  assert_properties(
+      "ln(ln(3))", ComplexProperties(Properties::Finite(), Properties::Zero()));
+  assert_properties("ln(4+i)",
+                    ComplexProperties(Properties::Finite(),
+                                      Properties::FiniteStrictlyPositive()));
+  assert_properties("ln(4-i)",
+                    ComplexProperties(Properties::Finite(),
+                                      Properties::FiniteStrictlyNegative()));
+  assert_properties("ln(ln(x+i*y)i)", ComplexProperties(Properties::Unknown(),
+                                                        Properties::Finite()));
 
   // power
-  assert_sign("0^5", Sign::Zero());
-  assert_sign("(1+3*i)^0", Sign::FiniteStrictlyPositiveInteger());
-  assert_sign("(1+i)^4",
-              ComplexProperties(Sign::FiniteInteger(), Sign::FiniteInteger()));
-  assert_sign("(5+i)^3",
-              ComplexProperties(Sign::FiniteInteger(), Sign::FiniteInteger()));
-  assert_sign("(5-i)^(-1)", ComplexProperties(Sign::Finite(), Sign::Finite()));
+  assert_properties("0^5", Properties::Zero());
+  assert_properties("(1+3*i)^0", Properties::FiniteStrictlyPositiveInteger());
+  assert_properties("(1+i)^4", ComplexProperties(Properties::FiniteInteger(),
+                                                 Properties::FiniteInteger()));
+  assert_properties("(5+i)^3", ComplexProperties(Properties::FiniteInteger(),
+                                                 Properties::FiniteInteger()));
+  assert_properties("(5-i)^(-1)", ComplexProperties(Properties::Finite(),
+                                                    Properties::Finite()));
 
   // arg
-  assert_sign("arg(5)", Sign::Zero());
-  assert_sign("arg(-5)", Sign::FiniteStrictlyPositive());
-  assert_sign("arg(ln(3+i*inf))", Sign::FiniteStrictlyPositive());
-  assert_sign("arg(3+i)", Sign::FiniteStrictlyPositive());
-  assert_sign("arg(3 - i)", Sign::FiniteStrictlyNegative());
+  assert_properties("arg(5)", Properties::Zero());
+  assert_properties("arg(-5)", Properties::FiniteStrictlyPositive());
+  assert_properties("arg(ln(3+i*inf))", Properties::FiniteStrictlyPositive());
+  assert_properties("arg(3+i)", Properties::FiniteStrictlyPositive());
+  assert_properties("arg(3 - i)", Properties::FiniteStrictlyNegative());
 
   // inf
-  assert_sign("e^(arg(x+i*y)×i)", ComplexProperties::Finite());
-  assert_sign("inf", Sign::StrictlyPositive());
-  assert_sign("-inf", Sign::StrictlyNegative());
+  assert_properties("e^(arg(x+i*y)×i)", ComplexProperties::Finite());
+  assert_properties("inf", Properties::StrictlyPositive());
+  assert_properties("-inf", Properties::StrictlyNegative());
   /* This case has been carefully crafted to enforce the following order in the
    * addition: integer + unknown integer + non integer */
-  assert_sign("1+floor(x)*(1+i)+floor(y)*(1+π+i)",
-              ComplexProperties(Sign::Finite(), Sign::FiniteInteger()));
-  assert_sign("1+floor(x)*(1+i)",
-              ComplexProperties(Sign::FiniteInteger(), Sign::FiniteInteger()));
+  assert_properties(
+      "1+floor(x)*(1+i)+floor(y)*(1+π+i)",
+      ComplexProperties(Properties::Finite(), Properties::FiniteInteger()));
+  assert_properties("1+floor(x)*(1+i)",
+                    ComplexProperties(Properties::FiniteInteger(),
+                                      Properties::FiniteInteger()));
 
   // euclidean division
-  assert_sign("quo(5, 2)", Sign::FinitePositiveInteger());
-  assert_sign("rem(5, 2)", Sign::FinitePositiveInteger());
-  assert_sign("quo(5, -2)", Sign::FiniteNegativeInteger());
-  assert_sign("rem(5, -2)", Sign::FinitePositiveInteger());
-  assert_sign("quo(-5, -2)", Sign::FinitePositiveInteger());
-  assert_sign("rem(-5, -2)", Sign::FinitePositiveInteger());
-  assert_sign("quo(-5, 2)", Sign::FiniteNegativeInteger());
-  assert_sign("rem(-5, 2)", Sign::FinitePositiveInteger());
+  assert_properties("quo(5, 2)", Properties::FinitePositiveInteger());
+  assert_properties("rem(5, 2)", Properties::FinitePositiveInteger());
+  assert_properties("quo(5, -2)", Properties::FiniteNegativeInteger());
+  assert_properties("rem(5, -2)", Properties::FinitePositiveInteger());
+  assert_properties("quo(-5, -2)", Properties::FinitePositiveInteger());
+  assert_properties("rem(-5, -2)", Properties::FinitePositiveInteger());
+  assert_properties("quo(-5, 2)", Properties::FiniteNegativeInteger());
+  assert_properties("rem(-5, 2)", Properties::FinitePositiveInteger());
 
   // binomial
-  assert_sign("binomial(4,3)", Sign::Integer());
-  assert_sign("binomial(-2,-1)", Sign::Integer());
-  assert_sign("binomial(0.25,1)", Sign::Unknown());
+  assert_properties("binomial(4,3)", Properties::Integer());
+  assert_properties("binomial(-2,-1)", Properties::Integer());
+  assert_properties("binomial(0.25,1)", Properties::Unknown());
 }
 
 void assert_projected_is_null(const char* input, OMG::Troolean isNull) {

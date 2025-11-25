@@ -54,10 +54,10 @@ static bool integer_handler_same_absolute_value(IntegerHandler a,
 }
 
 static void assert_properties(const Tree* numerator, const Tree* denominator,
-                              Type expectedType, Sign sign) {
+                              Type expectedType, Properties properties) {
   Tree* r = Rational::Push(numerator, denominator);
   quiz_assert(r->type() == expectedType);
-  quiz_assert(sign == Rational::Sign(r));
+  quiz_assert(properties == Rational::Properties(r));
   integer_handler_same_absolute_value(Integer::Handler(numerator),
                                       Rational::Numerator(r));
   integer_handler_same_absolute_value(Integer::Handler(denominator),
@@ -67,25 +67,26 @@ static void assert_properties(const Tree* numerator, const Tree* denominator,
 
 QUIZ_CASE(pcj_rational_properties) {
   assert_properties(3_e, 8_e, Type::RationalPosShort,
-                    Sign::FiniteStrictlyPositive());
+                    Properties::FiniteStrictlyPositive());
   assert_properties(-1_e, 255_e, Type::RationalNegShort,
-                    Sign::FiniteStrictlyNegative());
+                    Properties::FiniteStrictlyNegative());
   assert_properties(1_e, -1_e, Type::MinusOne,
-                    Sign::FiniteStrictlyNegativeInteger());
-  assert_properties(-1_e, -2_e, Type::Half, Sign::FiniteStrictlyPositive());
+                    Properties::FiniteStrictlyNegativeInteger());
+  assert_properties(-1_e, -2_e, Type::Half,
+                    Properties::FiniteStrictlyPositive());
   assert_properties(127_e, -255_e, Type::RationalNegShort,
-                    Sign::FiniteStrictlyNegative());
-  assert_properties(0_e, 5_e, Type::Zero, Sign::Zero());
+                    Properties::FiniteStrictlyNegative());
+  assert_properties(0_e, 5_e, Type::Zero, Properties::Zero());
   assert_properties(32134123_e, 812312312_e, Type::RationalPosBig,
-                    Sign::FiniteStrictlyPositive());
+                    Properties::FiniteStrictlyPositive());
   assert_properties(32134123_e, -812312312_e, Type::RationalNegBig,
-                    Sign::FiniteStrictlyNegative());
+                    Properties::FiniteStrictlyNegative());
   assert_properties(-32134123_e, 812312312_e, Type::RationalNegBig,
-                    Sign::FiniteStrictlyNegative());
+                    Properties::FiniteStrictlyNegative());
   assert_properties(-32134123_e, -812312312_e, Type::RationalPosBig,
-                    Sign::FiniteStrictlyPositive());
-  assert_properties(0_e, 812312312_e, Type::Zero, Sign::Zero());
-  assert_properties(0_e, -812312312_e, Type::Zero, Sign::Zero());
+                    Properties::FiniteStrictlyPositive());
+  assert_properties(0_e, 812312312_e, Type::Zero, Properties::Zero());
+  assert_properties(0_e, -812312312_e, Type::Zero, Properties::Zero());
 }
 
 static void assert_set_sign(const Tree* iNumerator, const Tree* iDenominator,
@@ -112,28 +113,33 @@ QUIZ_CASE(pcj_rational_sign_of_ln) {
   quiz_assert(Rational::ComplexPropertiesOfLn(KLn(1_e)) ==
               ComplexProperties::Zero());
   quiz_assert(Rational::ComplexPropertiesOfLn(KLn(2_e)) ==
-              ComplexProperties(Sign::FiniteStrictlyPositive(), Sign::Zero()));
+              ComplexProperties(Properties::FiniteStrictlyPositive(),
+                                Properties::Zero()));
   quiz_assert(Rational::ComplexPropertiesOfLn(KLn(1_e / 4_e)) ==
-              ComplexProperties(Sign::FiniteStrictlyNegative(), Sign::Zero()));
+              ComplexProperties(Properties::FiniteStrictlyNegative(),
+                                Properties::Zero()));
   quiz_assert(Rational::ComplexPropertiesOfLn(KLn(10_e / 11_e)) ==
-              ComplexProperties(Sign::FiniteStrictlyNegative(), Sign::Zero()));
+              ComplexProperties(Properties::FiniteStrictlyNegative(),
+                                Properties::Zero()));
   const Tree* veryBig = Integer::Push(UINT_MAX);
   const Tree* lessBig = Integer::Push(UINT_MAX - 1);
   const Tree* ln = SharedTreeStack->pushLn();
   Tree* rational = Rational::Push(veryBig, lessBig);
   quiz_assert(Rational::ComplexPropertiesOfLn(ln) ==
-              ComplexProperties(Sign::FiniteStrictlyPositive(), Sign::Zero()));
+              ComplexProperties(Properties::FiniteStrictlyPositive(),
+                                Properties::Zero()));
   quiz_assert(Rational::ComplexPropertiesOfLn(KLn(-1_e)) ==
-              ComplexProperties(Sign::Zero(), Sign::FiniteStrictlyPositive()));
+              ComplexProperties(Properties::Zero(),
+                                Properties::FiniteStrictlyPositive()));
   quiz_assert(Rational::ComplexPropertiesOfLn(KLn(-4_e / 3_e)) ==
-              ComplexProperties(Sign::FiniteStrictlyPositive(),
-                                Sign::FiniteStrictlyPositive()));
+              ComplexProperties(Properties::FiniteStrictlyPositive(),
+                                Properties::FiniteStrictlyPositive()));
   rational->removeTree();
   Rational::Push(lessBig, veryBig);
   Rational::SetSign(rational, NonStrictSign::Negative);
   quiz_assert(Rational::ComplexPropertiesOfLn(ln) ==
-              ComplexProperties(Sign::FiniteStrictlyNegative(),
-                                Sign::FiniteStrictlyPositive()));
+              ComplexProperties(Properties::FiniteStrictlyNegative(),
+                                Properties::FiniteStrictlyPositive()));
 }
 
 static void assert_irreducible_form(const Tree* iNumerator,

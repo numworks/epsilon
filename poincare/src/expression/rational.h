@@ -23,10 +23,14 @@ class Rational final {
   static T To(const Tree* e);
   static IntegerHandler Numerator(const Tree* e);
   static IntegerHandler Denominator(const Tree* e);
-  static Poincare::Sign Sign(const Tree* e) {
-    return Poincare::Sign(e->isZero(), e->isStrictlyPositiveRational(),
-                          e->isStrictlyNegativeRational(), !e->isInteger(),
-                          false);
+  static inline Poincare::Properties Properties(const Tree* e) {
+    return Poincare::Properties(
+        Poincare::Sign(e->isZero(), e->isStrictlyPositiveRational(),
+                       e->isStrictlyNegativeRational()),
+        !e->isInteger(), false);
+  }
+  static inline Poincare::Sign Sign(const Tree* e) {
+    return Properties(e).sign();
   }
   static bool SetSign(Tree* e, NonStrictSign sign);
 

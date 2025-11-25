@@ -21,7 +21,7 @@ on:
 jobs:
   binary-size:
     timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS_LARGE) }}
     env:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }} PLATFORM=${{ inputs.platform }}
     steps:

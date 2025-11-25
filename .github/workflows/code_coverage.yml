@@ -10,7 +10,7 @@ on:
 jobs:
   coverage:
     timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS_LARGE) }}
     env:
       MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} TOOLCHAIN=host-gcc PLATFORM=simulator DEBUG=1 ASSERTIONS=0"
       COVERAGE_OUTPUT_DIR: '${{ inputs.project-path }}/output/debug/no_assert/linux/coverage'

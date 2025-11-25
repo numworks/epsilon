@@ -161,7 +161,8 @@ App::GraphTab::GraphTab()
       // Categorical
       m_barGraphController(
           &m_barGraphHeader, &m_barGraphHeader, &app()->m_tabViewController,
-          &m_graphMenuStackViewController, &m_categoricalGraphTypeController),
+          &m_graphMenuStackViewController, &m_categoricalGraphTypeController,
+          &app()->m_categoricalStore),
       m_barGraphHeader(&m_graphController, &m_barGraphController,
                        &m_barGraphController),
       m_pieGraphController(

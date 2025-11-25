@@ -9,8 +9,8 @@ struct Arguments {
 
 struct ArgumentNames {
 #define BOOL_ARG(variable, longForm, shortForm, desc) \
-  static constexpr const char* variable = longForm;
+  constexpr static const char* variable = longForm;
 #define TEXT_ARG(variable, longForm, shortForm, desc, argName) \
-  static constexpr const char* variable = longForm;
+  constexpr static const char* variable = longForm;
 #include "arguments.inc"
 };

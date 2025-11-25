@@ -118,7 +118,7 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
   /* For optimization purposes, the next() function can be called when m_length
    * is 0, but only once. After this last call, m_layout becomes invalid as well
    */
-  static constexpr uint16_t k_outOfRange = UINT16_MAX;
+  constexpr static uint16_t k_outOfRange = UINT16_MAX;
 #endif
 
   void next();

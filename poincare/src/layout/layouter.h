@@ -34,7 +34,7 @@ struct LayouterParameters {
   Preferences::PrintFloatMode floatMode = Preferences::PrintFloatMode::Decimal;
   OMG::Base base = OMG::Base::Decimal;
 #if POINCARE_NO_E_EXPONENT
-  static constexpr bool useTenPowerInsteadOfE = true;
+  constexpr static bool useTenPowerInsteadOfE = true;
 #else
   bool useTenPowerInsteadOfE = false;
 #endif

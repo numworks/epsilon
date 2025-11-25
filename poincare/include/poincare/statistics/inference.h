@@ -287,13 +287,13 @@ struct StatisticResults {
   CalculatedValues within;
 };
 
-static constexpr size_t k_maxNumberOfGroups = 6;
+constexpr static size_t k_maxNumberOfGroups = 6;
 
 /* NOTE: the number of values per group cannot be more than ~70, otherwise the
  * total allocated size of group values
  * (k_maxNumberOfGroups*k_maxNumberOfGroupValues) becomes too big for the stack
  * and this leads to runtime crashes. */
-static constexpr size_t k_maxNumberOfGroupValues = 40;
+constexpr static size_t k_maxNumberOfGroupValues = 40;
 
 using Values = OMG::StaticVector<double, k_maxNumberOfGroupValues>;
 

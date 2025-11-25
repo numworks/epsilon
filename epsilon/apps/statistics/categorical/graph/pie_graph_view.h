@@ -28,8 +28,8 @@ class PieGraphViewDataSource {
   int setGroup(int group);
 
  protected:
-  static constexpr KDColor k_selectedColor = Escher::Palette::YellowDark;
-  static constexpr KDColor k_outsideColor = KDColorWhite;
+  constexpr static KDColor k_selectedColor = Escher::Palette::YellowDark;
+  constexpr static KDColor k_outsideColor = KDColorWhite;
   float m_cumulatedAngles[Store::k_maxNumberOfCategory];
   uint8_t m_toGlobalCategories[Store::k_maxNumberOfCategory];
   KDColor m_borderColors[Store::k_maxNumberOfCategory];
@@ -48,14 +48,14 @@ class PieGraphView : public Escher::View, public PieGraphViewDataSource {
  public:
   PieGraphView(Store* store) : PieGraphViewDataSource(store) {}
 
-  static constexpr int k_framebufferWidth = 5;
+  constexpr static int k_framebufferWidth = 5;
   void reload() { markWholeFrameAsDirty(); }
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  private:
-  static constexpr KDCoordinate k_radius = 70;
-  static constexpr float k_fradius = static_cast<float>(k_radius);
-  static constexpr float k_border = 1.f;
+  constexpr static KDCoordinate k_radius = 70;
+  constexpr static float k_fradius = static_cast<float>(k_radius);
+  constexpr static float k_border = 1.f;
 
   KDColor pointColor(KDCoordinate x, KDCoordinate y, KDPoint center) const;
 };

@@ -69,7 +69,7 @@ class SymbolStore : public Poincare::SymbolStoreInterface {
       std::string_view symbolName) const;
   SymbolWithExpression* findSymbolInStore(std::string_view symbolName);
 
-  static constexpr size_t k_maxSymbols = 10;
+  constexpr static size_t k_maxSymbols = 10;
   using SymbolTable = OMG::StaticVector<SymbolWithExpression, k_maxSymbols>;
   SymbolTable m_symbolTable;
 };

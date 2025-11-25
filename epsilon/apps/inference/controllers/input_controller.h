@@ -13,7 +13,7 @@
 namespace Inference {
 
 namespace InputControllerDimensions {
-static constexpr int k_maxNumberOfParameterCell =
+constexpr static int k_maxNumberOfParameterCell =
     Ion::Display::Height /
         Escher::AbstractMenuCell::k_minimalLargeFontCellHeight +
     2;

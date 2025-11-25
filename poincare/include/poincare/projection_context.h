@@ -10,7 +10,7 @@ struct ProjectionContext {
 #if POINCARE_COMPLEX
   ComplexFormat m_complexFormat = ComplexFormat::Real;
 #else
-  static constexpr ComplexFormat m_complexFormat = ComplexFormat::Real;
+  constexpr static ComplexFormat m_complexFormat = ComplexFormat::Real;
 #endif
   AngleUnit m_angleUnit = AngleUnit::Radian;
   Strategy m_strategy = Strategy::Default;

@@ -82,8 +82,8 @@ class StoreController : public Shared::TabTableController,
   bool recomputeDimensions();
   void recomputeDimensionsAndReload(bool force);
 
-  static constexpr int k_maxNumberOfColumns = Store::k_maxNumberOfGroups + 1;
-  static constexpr int k_maxNumberOfRows = Store::k_maxNumberOfCategory + 1;
+  constexpr static int k_maxNumberOfColumns = Store::k_maxNumberOfGroups + 1;
+  constexpr static int k_maxNumberOfRows = Store::k_maxNumberOfCategory + 1;
 
   Escher::SimpleButtonCell m_dataTypeButton;
   Shared::BufferPopUpController m_deleteColumnConfirmPopUpController;

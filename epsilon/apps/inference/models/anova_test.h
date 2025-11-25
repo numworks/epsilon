@@ -9,8 +9,8 @@ namespace Inference {
 
 class ANOVATest : public SignificanceTest, public InputTable {
  public:
-  static constexpr size_t k_maxNumberOfGroups = 6;
-  static constexpr size_t k_maxNumberOfValuesPerGroup = 12;
+  constexpr static size_t k_maxNumberOfGroups = 6;
+  constexpr static size_t k_maxNumberOfValuesPerGroup = 12;
 
   constexpr static int k_maxNumberOfColumns = k_maxNumberOfGroups;
   constexpr static int k_maxNumberOfRows = k_maxNumberOfValuesPerGroup;

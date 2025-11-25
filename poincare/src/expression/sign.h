@@ -5,13 +5,14 @@
 
 namespace Poincare::Internal {
 
-ComplexSign GetComplexSign(const Tree* e);
+ComplexProperties GetComplexProperties(const Tree* e);
 
 Sign GetSign(const Tree* e);
 
-/* Sign of e1 - e2 so that e1 < e2 <=> SignOfDifference(e1, e2) < 0 and so on.
- * Beware that the difference may be real while the trees were complexes. */
-ComplexSign ComplexSignOfDifference(const Tree* e1, const Tree* e2);
+/* Properties of e1 - e2 so that e1 < e2 <=> ComplexPropertiesOfDifference(e1,
+ * e2) < 0 and so on. Beware that the difference may be real while the trees
+ * were complexes. */
+ComplexProperties ComplexPropertiesOfDifference(const Tree* e1, const Tree* e2);
 
 // TODO : Sign could be used instead of NonStrictSign and StrictSign
 
@@ -27,8 +28,8 @@ inline NonStrictSign InvertSign(NonStrictSign sign) {
   return static_cast<NonStrictSign>(-static_cast<int8_t>(sign));
 }
 
-/* Return the Tree sign if it is known, otherwise return the sign of the
- * approximated value */
-ComplexSign SignOfTreeOrApproximation(const Tree* e);
+/* Return the Tree properties if they are known, otherwise return the properties
+ * of the approximated value */
+ComplexProperties PropertiesOfTreeOrApproximation(const Tree* e);
 
 }  // namespace Poincare::Internal

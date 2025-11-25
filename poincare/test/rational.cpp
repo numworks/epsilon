@@ -107,31 +107,33 @@ QUIZ_CASE(pcj_rational_set_sign) {
 }
 
 QUIZ_CASE(pcj_rational_sign_of_ln) {
-  quiz_assert(Rational::ComplexSignOfLn(KLn(0_e)) == ComplexSign::Unknown());
-  quiz_assert(Rational::ComplexSignOfLn(KLn(1_e)) == ComplexSign::Zero());
-  quiz_assert(Rational::ComplexSignOfLn(KLn(2_e)) ==
-              ComplexSign(Sign::FiniteStrictlyPositive(), Sign::Zero()));
-  quiz_assert(Rational::ComplexSignOfLn(KLn(1_e / 4_e)) ==
-              ComplexSign(Sign::FiniteStrictlyNegative(), Sign::Zero()));
-  quiz_assert(Rational::ComplexSignOfLn(KLn(10_e / 11_e)) ==
-              ComplexSign(Sign::FiniteStrictlyNegative(), Sign::Zero()));
+  quiz_assert(Rational::ComplexPropertiesOfLn(KLn(0_e)) ==
+              ComplexProperties::Unknown());
+  quiz_assert(Rational::ComplexPropertiesOfLn(KLn(1_e)) ==
+              ComplexProperties::Zero());
+  quiz_assert(Rational::ComplexPropertiesOfLn(KLn(2_e)) ==
+              ComplexProperties(Sign::FiniteStrictlyPositive(), Sign::Zero()));
+  quiz_assert(Rational::ComplexPropertiesOfLn(KLn(1_e / 4_e)) ==
+              ComplexProperties(Sign::FiniteStrictlyNegative(), Sign::Zero()));
+  quiz_assert(Rational::ComplexPropertiesOfLn(KLn(10_e / 11_e)) ==
+              ComplexProperties(Sign::FiniteStrictlyNegative(), Sign::Zero()));
   const Tree* veryBig = Integer::Push(UINT_MAX);
   const Tree* lessBig = Integer::Push(UINT_MAX - 1);
   const Tree* ln = SharedTreeStack->pushLn();
   Tree* rational = Rational::Push(veryBig, lessBig);
-  quiz_assert(Rational::ComplexSignOfLn(ln) ==
-              ComplexSign(Sign::FiniteStrictlyPositive(), Sign::Zero()));
-  quiz_assert(Rational::ComplexSignOfLn(KLn(-1_e)) ==
-              ComplexSign(Sign::Zero(), Sign::FiniteStrictlyPositive()));
-  quiz_assert(Rational::ComplexSignOfLn(KLn(-4_e / 3_e)) ==
-              ComplexSign(Sign::FiniteStrictlyPositive(),
-                          Sign::FiniteStrictlyPositive()));
+  quiz_assert(Rational::ComplexPropertiesOfLn(ln) ==
+              ComplexProperties(Sign::FiniteStrictlyPositive(), Sign::Zero()));
+  quiz_assert(Rational::ComplexPropertiesOfLn(KLn(-1_e)) ==
+              ComplexProperties(Sign::Zero(), Sign::FiniteStrictlyPositive()));
+  quiz_assert(Rational::ComplexPropertiesOfLn(KLn(-4_e / 3_e)) ==
+              ComplexProperties(Sign::FiniteStrictlyPositive(),
+                                Sign::FiniteStrictlyPositive()));
   rational->removeTree();
   Rational::Push(lessBig, veryBig);
   Rational::SetSign(rational, NonStrictSign::Negative);
-  quiz_assert(Rational::ComplexSignOfLn(ln) ==
-              ComplexSign(Sign::FiniteStrictlyNegative(),
-                          Sign::FiniteStrictlyPositive()));
+  quiz_assert(Rational::ComplexPropertiesOfLn(ln) ==
+              ComplexProperties(Sign::FiniteStrictlyNegative(),
+                                Sign::FiniteStrictlyPositive()));
 }
 
 static void assert_irreducible_form(const Tree* iNumerator,

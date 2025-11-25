@@ -33,11 +33,12 @@ bool Symbol::IsUserSymbol(const Tree* e, const char* name) {
   return IsNamed(e, name);
 }
 
-ComplexSign Symbol::GetComplexSign(const Tree* e) {
+ComplexProperties Symbol::GetComplexProperties(const Tree* e) {
   /* Undefined global variables are considered scalar (and real finite for
    * UserSymbols) */
   assert(e->isUserNamed());
-  return e->isUserSymbol() ? ComplexSign::RealFinite() : ComplexSign::Unknown();
+  return e->isUserSymbol() ? ComplexProperties::RealFinite()
+                           : ComplexProperties::Unknown();
 }
 
 bool involvesCircularity(const Tree* e,

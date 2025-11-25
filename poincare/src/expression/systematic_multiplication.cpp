@@ -27,12 +27,12 @@ static Tree* powerMerge(int* numberOfDependencies, const Tree* child,
   /* Dependencies need to be added when one of the expressions to be merged was
    * under a negative exponent. */
   // dep(t^(m+n), {t^m}) if m <= 0
-  if (!GetComplexSign(expChild).realSign().isStrictlyPositive()) {
+  if (!GetComplexProperties(expChild).realSign().isStrictlyPositive()) {
     child->cloneTree();
     (*numberOfDependencies)++;
   }
   // dep(t^(m+n), {t^n}) if n <= 0
-  if (!GetComplexSign(expNext).realSign().isStrictlyPositive()) {
+  if (!GetComplexProperties(expNext).realSign().isStrictlyPositive()) {
     next->cloneTree();
     (*numberOfDependencies)++;
   }

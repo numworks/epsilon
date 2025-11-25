@@ -46,7 +46,7 @@ bool ExpandImReIfNotInfinite(Tree* e) {
   if (PatternMatching::Match(e, KAdd(KA_s, KMult(KB_s, KIm(KC), KD_s), KE_s),
                              &ctx)) {
     const Tree* kc = ctx.getTree(KC);
-    const Sign realSign = GetComplexSign(kc).realSign();
+    const Sign realSign = GetComplexProperties(kc).realSign();
     /* - Pattern is only true if re(C) is finite
      * - At least one member of the addition must be non-empty to prevent
      * infinitely expanding */
@@ -63,7 +63,7 @@ bool ExpandImReIfNotInfinite(Tree* e) {
   if (PatternMatching::Match(e, KAdd(KA_s, KMult(KB_s, KRe(KC), KD_s), KE_s),
                              &ctx)) {
     const Tree* kc = ctx.getTree(KC);
-    const Sign imagSign = GetComplexSign(kc).imagSign();
+    const Sign imagSign = GetComplexProperties(kc).imagSign();
     /* - Pattern is only true if im(C) is finite
      * - At least one member of the addition must be non-empty to prevent
      * infinitely expanding */
@@ -104,8 +104,8 @@ bool AdvancedOperation::ExpandImRe(Tree* e) {
 bool AdvancedOperation::ContractAbs(Tree* e) {
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KAbs(KAdd(KExp(KA), KExp(KB))), &ctx)) {
-    if (GetComplexSign(ctx.getTree(KA)).isPureIm() &&
-        GetComplexSign(ctx.getTree(KB)).isPureIm()) {
+    if (GetComplexProperties(ctx.getTree(KA)).isPureIm() &&
+        GetComplexProperties(ctx.getTree(KB)).isPureIm()) {
       // |exp(A) + exp(B)| = √(2+2*cos((B-A)*i)) for A and B pure imaginary
       e->moveTreeOverTree(PatternMatching::CreateReduce(
           KExp(KMult(
@@ -147,7 +147,7 @@ bool AdvancedOperation::ExpandAbs(Tree* e) {
   }
   if ((PatternMatching::Match(e, KAbs(KExp(KMult(KA, KLn(KB)))), &ctx) ||
        PatternMatching::Match(e, KAbs(KPow(KB, KA)), &ctx)) &&
-      GetComplexSign(ctx.getTree(KA)).isReal()) {
+      GetComplexProperties(ctx.getTree(KA)).isReal()) {
     // |B^A| = |B|^A for A real
     e->moveTreeOverTree(
         e->child(0)->isExp()
@@ -156,7 +156,7 @@ bool AdvancedOperation::ExpandAbs(Tree* e) {
     return true;
   }
   if (PatternMatching::Match(e, KAbs(KA), &ctx) &&
-      GetComplexSign(ctx.getTree(KA)).isReal()) {
+      GetComplexProperties(ctx.getTree(KA)).isReal()) {
     // |A| = A*sign(A) for A real
     e->moveTreeOverTree(
         PatternMatching::CreateReduce(KMult(KA, KSign(KA)), ctx));
@@ -173,8 +173,9 @@ bool AdvancedOperation::ExpandExp(Tree* e) {
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
       ctx.getTree(KA)->isHalf()) {
-    ComplexSign sign = GetComplexSign(ctx.getTree(KB));
-    if (!sign.imagSign().isNull() && sign.imagSign().hasKnownStrictSign()) {
+    ComplexProperties properties = GetComplexProperties(ctx.getTree(KB));
+    if (!properties.imagSign().isNull() &&
+        properties.imagSign().hasKnownStrictSign()) {
       /* e = √(a+bi) with b not null and of known sign
        *
        * Re(e):           √(1/2 * (√(a^2+b^2)+a))
@@ -188,7 +189,8 @@ bool AdvancedOperation::ExpandExp(Tree* e) {
                      KC)),
           {.KA = re,
            .KB = abs,
-           .KC = sign.imagSign().isStrictlyPositive() ? i_e : KMult(-1_e, i_e),
+           .KC = properties.imagSign().isStrictlyPositive() ? i_e
+                                                            : KMult(-1_e, i_e),
            .KH = 1_e / 2_e});
       e->moveTreeOverTree(res);
       SharedTreeStack->flushFromBlock(re);
@@ -219,10 +221,10 @@ bool AdvancedOperation::ContractExp(Tree* e) {
                              KMult(KA_s, KExp(KMult(KB_p, KLn(KC))), KD_s,
                                    KExp(KMult(KB_p, KLn(KE))), KF_s),
                              &ctx)) {
-    ComplexSign cSign = GetComplexSign(ctx.getTree(KC));
-    if (cSign.isReal() && cSign.realSign().isPositive()) {
-      ComplexSign eSign = GetComplexSign(ctx.getTree(KE));
-      if (eSign.isReal() && eSign.realSign().isPositive()) {
+    ComplexProperties propertiesC = GetComplexProperties(ctx.getTree(KC));
+    if (propertiesC.isReal() && propertiesC.realSign().isPositive()) {
+      ComplexProperties propertiesE = GetComplexProperties(ctx.getTree(KE));
+      if (propertiesE.isReal() && propertiesE.realSign().isPositive()) {
         Tree* contracted = PatternMatching::CreateReduce(
             KMult(KA_s, KExp(KMult(KB_p, KLn(KMult(KC, KE)))), KD_s, KF_s),
             ctx);
@@ -459,9 +461,9 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
   PatternMatching::Context ctx;
   // 1/(A+iB) -> (A-B*i) / (A^2+B^2)
   if (PatternMatching::Match(e, KPow(KA, -1_e), &ctx)) {
-    ComplexSign s = GetComplexSign(ctx.getTree(KA));
+    ComplexProperties properties = GetComplexProperties(ctx.getTree(KA));
     // Filter out infinite and pure expressions for useful and accurate results
-    if (!s.isPure() && !s.canBeInfinite()) {
+    if (!properties.isPure() && !properties.canBeInfinite()) {
       e->moveTreeOverTree(PatternMatching::CreateReduce(
           KMult(KAdd(KRe(KA), KMult(-1_e, KIm(KA), i_e)),
                 KPow(KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e)), -1_e)),
@@ -574,10 +576,10 @@ bool AdvancedOperation::ExpandComplexArgument(Tree* e) {
   }
   // arg(x + iy) = atan2(y, x)
   const Tree* child = e->child(0);
-  ComplexSign childSign = GetComplexSign(child);
-  Sign realSign = childSign.realSign();
+  ComplexProperties childProperties = GetComplexProperties(child);
+  Sign realSign = childProperties.realSign();
   if (realSign.hasKnownStrictSign()) {
-    Sign imagSign = childSign.imagSign();
+    Sign imagSign = childProperties.imagSign();
     // Cases handled in systematic simplification
     assert(!(realSign.isNull() && imagSign.hasKnownStrictSign()) &&
            !imagSign.isNull());

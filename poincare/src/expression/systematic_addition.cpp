@@ -64,7 +64,7 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
     // Merge numbers
     merge = Number::Addition(child, next);
   } else if (Infinity::IsPlusOrMinusInfinity(next) &&
-             GetComplexSign(child).isFinite()) {
+             GetComplexProperties(child).isFinite()) {
     // x ± inf -> ± inf if x is finite
     next->moveTreeOverTree(PatternMatching::Create(KDep(KA, KDepList(KB)),
                                                    {.KA = next, .KB = child}));

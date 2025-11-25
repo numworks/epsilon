@@ -17,7 +17,7 @@ bool Logarithm::ReduceLn(Tree* e) {
   Tree* child = e->child(0);
   if (child->isExp()) {
     const Tree* x = child->child(0);
-    if (GetComplexSign(child->child(0)).isReal()) {
+    if (GetComplexProperties(child->child(0)).isReal()) {
       // ln(exp(x)) -> x if x is real
       e->removeNode();
       e->removeNode();
@@ -91,8 +91,9 @@ bool Logarithm::ReduceLn(Tree* e) {
   if (PatternMatching::Match(child, KPow(KA, KB), &ctx) &&
       ctx.getTree(KA)->isPositiveRational() && ctx.getTree(KB)->isInteger()) {
     // ln(a^b) -> b*ln(a) if b is an integer and a is a positive rational
-    assert(GetComplexSign(ctx.getTree(KA)).imagSign().isNull() &&
-           GetComplexSign(ctx.getTree(KA)).realSign().isStrictlyPositive());
+    assert(
+        GetComplexProperties(ctx.getTree(KA)).imagSign().isNull() &&
+        GetComplexProperties(ctx.getTree(KA)).realSign().isStrictlyPositive());
     e->moveTreeOverTree(PatternMatching::CreateReduce(KMult(KB, KLn(KA)), ctx));
     return true;
   }
@@ -118,12 +119,12 @@ class PiInterval {
                   : PiInterval(a.m_max * b, a.m_maxIsInclusive, a.m_min * b,
                                a.m_minIsInclusive);
   }
-  static PiInterval Arg(ComplexSign sign) {
+  static PiInterval Arg(ComplexProperties properties) {
     PiInterval result;
-    bool realCanBeNegative = sign.realSign().canBeStrictlyNegative();
-    bool realCanBeNull = sign.realSign().canBeNull();
-    bool realCanBePositive = sign.realSign().canBeStrictlyPositive();
-    if (sign.imagSign().canBeStrictlyNegative()) {
+    bool realCanBeNegative = properties.realSign().canBeStrictlyNegative();
+    bool realCanBeNull = properties.realSign().canBeNull();
+    bool realCanBePositive = properties.realSign().canBeStrictlyPositive();
+    if (properties.imagSign().canBeStrictlyNegative()) {
       if (realCanBeNegative) {
         result.unionWith(PiInterval(-2, false, -1, false));
       }
@@ -134,7 +135,7 @@ class PiInterval {
         result.unionWith(PiInterval(-1, false, 0, false));
       }
     }
-    if (sign.imagSign().canBeNull()) {
+    if (properties.imagSign().canBeNull()) {
       if (realCanBeNegative) {
         result.unionWith(PiInterval(2, true, 2, true));
       }
@@ -145,7 +146,7 @@ class PiInterval {
         result.unionWith(PiInterval(0, true, 0, true));
       }
     }
-    if (sign.imagSign().canBeStrictlyPositive()) {
+    if (properties.imagSign().canBeStrictlyPositive()) {
       if (realCanBeNegative) {
         result.unionWith(PiInterval(1, false, 2, false));
       }
@@ -209,11 +210,12 @@ class PiInterval {
 bool CanGetArgSumModulo(const Tree* firstTree, int numberOfTrees, int* k) {
   assert(numberOfTrees > 0);
   // Find an interval for the sum of the arguments
-  PiInterval interval = PiInterval::Arg(GetComplexSign(1_e));
+  PiInterval interval = PiInterval::Arg(GetComplexProperties(1_e));
   const Tree* tree = firstTree;
   for (int i = 0; i < numberOfTrees; i++) {
     assert(!tree->isZero());
-    interval = PiInterval::Add(interval, PiInterval::Arg(GetComplexSign(tree)));
+    interval =
+        PiInterval::Add(interval, PiInterval::Arg(GetComplexProperties(tree)));
     tree = tree->nextTree();
   }
   assert(interval.maxK() <= numberOfTrees / 2 &&
@@ -230,7 +232,7 @@ bool CanGetArgProdModulo(const Tree* a, const Tree* b, int* k) {
   }
   int bValue = Integer::Handler(b).to<int>();
   PiInterval interval =
-      PiInterval::Mult(PiInterval::Arg(GetComplexSign(a)), bValue);
+      PiInterval::Mult(PiInterval::Arg(GetComplexProperties(a)), bValue);
   *k = interval.maxK();
   return *k == interval.minK();
 }

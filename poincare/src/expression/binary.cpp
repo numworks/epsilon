@@ -144,29 +144,30 @@ bool Binary::ReduceComparison(Tree* e) {
   assert(e->numberOfChildren() == 2);
   // a < b => a - b < 0 ?
   if (e->isInequality()) {
-    ComplexSign signA = GetComplexSign(e->child(0));
-    ComplexSign signB = GetComplexSign(e->child(1));
-    if (signA.isNonReal() || signB.isNonReal()) {
+    ComplexProperties propertiesA = GetComplexProperties(e->child(0));
+    ComplexProperties propertiesB = GetComplexProperties(e->child(1));
+    if (propertiesA.isNonReal() || propertiesB.isNonReal()) {
       e->cloneTreeOverTree(KUndefBoolean);
       return true;
     }
     // Do not reduce inequalities if we are not sure to have reals
-    if (!(signA.isReal() && signB.isReal())) {
+    if (!(propertiesA.isReal() && propertiesB.isReal())) {
       return false;
     }
   }
-  ComplexSign complexSign = ComplexSignOfDifference(e->child(0), e->child(1));
+  ComplexProperties complexProperties =
+      ComplexPropertiesOfDifference(e->child(0), e->child(1));
   const Tree* result = nullptr;
   if (!e->isInequality()) {
     // = or !=
-    if (complexSign.isNull()) {
+    if (complexProperties.isNull()) {
       result = e->isEqual() ? KTrue : KFalse;
-    } else if (!complexSign.canBeNull()) {
+    } else if (!complexProperties.canBeNull()) {
       result = e->isEqual() ? KFalse : KTrue;
     }
   } else {
-    assert(complexSign.isReal());
-    Sign sign = complexSign.realSign();
+    assert(complexProperties.isReal());
+    Sign sign = complexProperties.realSign();
     OMG::Troolean isPositive = sign.trooleanIsPositive();
     OMG::Troolean isStrictlyPositive = sign.trooleanIsStrictlyPositive();
     switch (e->type()) {

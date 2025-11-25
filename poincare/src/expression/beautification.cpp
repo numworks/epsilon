@@ -526,7 +526,7 @@ bool ApplyComplexFormat(Tree* e, Dimension dim,
     return false;
   }
   if (format == ComplexFormat::Real) {
-    if (dim.isScalar() && GetComplexSign(e).isNonReal()) {
+    if (dim.isScalar() && GetComplexProperties(e).isNonReal()) {
       // Real format is the default, no need to apply it.
       e->cloneTreeOverTree(KNonReal);
       return true;

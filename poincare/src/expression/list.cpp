@@ -175,11 +175,12 @@ static bool IsValidCoefficientsList(const Tree* coefficients) {
    * At least one of them must be non null. */
   bool hasNonNull = false;
   for (const Tree* child : coefficients->children()) {
-    ComplexSign s = GetComplexSign(child);
-    if (s.canBeNonReal() || s.realSign().canBeStrictlyNegative()) {
+    ComplexProperties properties = GetComplexProperties(child);
+    if (properties.canBeNonReal() ||
+        properties.realSign().canBeStrictlyNegative()) {
       return false;
     }
-    hasNonNull = hasNonNull || !s.canBeNull();
+    hasNonNull = hasNonNull || !properties.canBeNull();
   }
   return hasNonNull;
 }

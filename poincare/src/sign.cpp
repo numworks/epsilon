@@ -117,51 +117,52 @@ void Sign::log(std::ostream& stream, bool endOfLine) const {
 }
 #endif
 
-ComplexSign RelaxIntegerProperty(ComplexSign s) {
-  return ComplexSign(RelaxIntegerProperty(s.realSign()),
-                     RelaxIntegerProperty(s.imagSign()));
+ComplexProperties RelaxIntegerProperty(ComplexProperties p) {
+  return ComplexProperties(RelaxIntegerProperty(p.realSign()),
+                           RelaxIntegerProperty(p.imagSign()));
 }
 
-ComplexSign Abs(ComplexSign s) {
-  return ComplexSign(
-      Sign(s.canBeNull(), !s.isNull(), false,
-           s.canBeNonInteger() || !s.isPure(), s.canBeInfinite()),
+ComplexProperties Abs(ComplexProperties p) {
+  return ComplexProperties(
+      Sign(p.canBeNull(), !p.isNull(), false,
+           p.canBeNonInteger() || !p.isPure(), p.canBeInfinite()),
       Sign::Zero());
 }
 
-ComplexSign ArcCosine(ComplexSign s) {
+ComplexProperties ArcCosine(ComplexProperties p) {
   // re(acos(z)) cannot be infinite, im(acos(z)) is finite if abs(z) is finite
-  Sign re = s.realSign();
-  Sign im = s.imagSign();
-  return ComplexSign(Sign(re.canBeStrictlyPositive(), true, false, true, false),
-                     Sign(im.canBeNull(),
-                          im.canBeStrictlyNegative() ||
-                              (im.canBeNull() && re.canBeStrictlyPositive()),
-                          im.canBeStrictlyPositive() ||
-                              (im.canBeNull() && re.canBeStrictlyNegative()),
-                          true, s.canBeInfinite()));
+  Sign re = p.realSign();
+  Sign im = p.imagSign();
+  return ComplexProperties(
+      Sign(re.canBeStrictlyPositive(), true, false, true, false),
+      Sign(im.canBeNull(),
+           im.canBeStrictlyNegative() ||
+               (im.canBeNull() && re.canBeStrictlyPositive()),
+           im.canBeStrictlyPositive() ||
+               (im.canBeNull() && re.canBeStrictlyNegative()),
+           true, p.canBeInfinite()));
 }
 
-ComplexSign ArcSine(ComplexSign s) {
+ComplexProperties ArcSine(ComplexProperties p) {
   /* - the sign of re(asin(z)) is always the same as re(z)
    * - the sign of im(asin(z)) is always the same as im(z) except when re(z)!=0
    *   and im(z)=0: im(asin(x)) = {>0 if x<-1, =0 if -1<=x<=1, and <0 if x>1}
    * - re(asin(z)) cannot be infinite, im(asin(z)) is finite if abs(z) is finite
    */
-  Sign realSign = RelaxIntegerProperty(s.realSign());
-  Sign imagSign = RelaxIntegerProperty(s.imagSign());
+  Sign realSign = RelaxIntegerProperty(p.realSign());
+  Sign imagSign = RelaxIntegerProperty(p.imagSign());
   if (imagSign.canBeNull() && realSign.canBeNonNull()) {
     imagSign = imagSign || Sign(true, realSign.canBeStrictlyNegative(),
                                 realSign.canBeStrictlyPositive());
   }
-  if (s.canBeInfinite()) {
+  if (p.canBeInfinite()) {
     imagSign = RelaxFiniteProperty(imagSign);
   }
   realSign = realSign && Sign(true, true, true, true, false);
-  return ComplexSign(realSign, imagSign);
+  return ComplexProperties(realSign, imagSign);
 }
 
-ComplexSign ArcTangent(ComplexSign s) {
+ComplexProperties ArcTangent(ComplexProperties p) {
   /* - the sign of im(atan(z)) is always the same as im(z)
    * - the sign of re(atan(z)) is always the same as re(z) except when im(z)!=0
    *   z=i*y: re(atan(i*y)) = {-π/2 if y<-1, 0 if -1<y<1, and π/2 if y>1}
@@ -169,8 +170,8 @@ ComplexSign ArcTangent(ComplexSign s) {
    *   re(z) != 0 (accounts for the fact that im(atan(z)) is infinite for z=i or
    * -i)
    */
-  Sign realSign = RelaxIntegerProperty(s.realSign());
-  Sign imagSign = RelaxIntegerProperty(s.imagSign());
+  Sign realSign = RelaxIntegerProperty(p.realSign());
+  Sign imagSign = RelaxIntegerProperty(p.imagSign());
   if (realSign.canBeNull() && imagSign.canBeNonNull()) {
     realSign = realSign || Sign(true, imagSign.canBeStrictlyPositive(),
                                 imagSign.canBeStrictlyNegative());
@@ -181,18 +182,18 @@ ComplexSign ArcTangent(ComplexSign s) {
   } else {
     imagSign = RelaxFiniteProperty(imagSign);
   }
-  return ComplexSign(realSign, imagSign);
+  return ComplexProperties(realSign, imagSign);
 }
 
-ComplexSign ComplexArgument(ComplexSign s) {
+ComplexProperties ComplexArgument(ComplexProperties p) {
   /* arg(z) ∈ ]-π,π].
    * arg(z) > 0 if im(z) > 0,
    * arg(z) < 0 if im(z) < 0,
    * arg(z) = 0 if im(z) = 0 and re(z) >= 0,
    * arg(z) = π if im(z) = 0 and re(z) < 0 */
-  Sign re = s.realSign();
-  Sign im = s.imagSign();
-  return ComplexSign(
+  Sign re = p.realSign();
+  Sign im = p.imagSign();
+  return ComplexProperties(
       Sign(im.canBeNull() && (re.canBeNull() || re.canBeStrictlyPositive()),
            (im.canBeNull() && re.canBeStrictlyNegative()) ||
                im.canBeStrictlyPositive(),
@@ -200,83 +201,88 @@ ComplexSign ComplexArgument(ComplexSign s) {
       Sign::Zero());
 }
 
-ComplexSign Ln(const Internal::Tree* e) {
+ComplexProperties Ln(const Internal::Tree* e) {
   const Internal::Tree* child = e->child(0);
   if (child->isRational()) {
-    return Internal::Rational::ComplexSignOfLn(e);
+    return Internal::Rational::ComplexPropertiesOfLn(e);
   }
   /* z = |z|e^(i*arg(z))
    * re(ln(z)) = ln(|z|)
    * im(ln(z)) = arg(z) */
-  ComplexSign s = GetComplexSign(child);
+  ComplexProperties p = GetComplexProperties(child);
   Sign realSign =
-      (s.isFinite() && !s.canBeNull()) ? Sign::Finite() : Sign::Unknown();
-  return ComplexSign(realSign, ComplexArgument(s).realSign());
+      (p.isFinite() && !p.canBeNull()) ? Sign::Finite() : Sign::Unknown();
+  return ComplexProperties(realSign, ComplexArgument(p).realSign());
 }
 
-ComplexSign Trig(ComplexSign s, bool isSin) {
-  if (s.isPureIm()) {
-    return isSin ? ComplexSign(Sign::Zero(), RelaxIntegerProperty(s.imagSign()))
-                 : ComplexSign::RealStrictlyPositive();
+ComplexProperties Trig(ComplexProperties p, bool isSin) {
+  if (p.isPureIm()) {
+    return isSin ? ComplexProperties(Sign::Zero(),
+                                     RelaxIntegerProperty(p.imagSign()))
+                 : ComplexProperties::RealStrictlyPositive();
   }
-  return ComplexSign(s.isReal() ? Sign::Finite() : Sign::Unknown(),
-                     s.isReal() ? Sign::Zero() : Sign::Unknown());
+  return ComplexProperties(p.isReal() ? Sign::Finite() : Sign::Unknown(),
+                           p.isReal() ? Sign::Zero() : Sign::Unknown());
 }
 
-ComplexSign Mult(ComplexSign s1, ComplexSign s2) {
-  Sign a = Add(Mult(s1.realSign(), s2.realSign()),
-               Opposite(Mult(s1.imagSign(), s2.imagSign())));
-  Sign b = Add(Mult(s1.realSign(), s2.imagSign()),
-               Mult(s1.imagSign(), s2.realSign()));
-  return ComplexSign(a, b);
+ComplexProperties Mult(ComplexProperties p1, ComplexProperties p2) {
+  Sign a = Add(Mult(p1.realSign(), p2.realSign()),
+               Opposite(Mult(p1.imagSign(), p2.imagSign())));
+  Sign b = Add(Mult(p1.realSign(), p2.imagSign()),
+               Mult(p1.imagSign(), p2.realSign()));
+  return ComplexProperties(a, b);
 }
 
-ComplexSign Add(ComplexSign s1, ComplexSign s2) {
-  return ComplexSign(Add(s1.realSign(), s2.realSign()),
-                     Add(s1.imagSign(), s2.imagSign()));
+ComplexProperties Add(ComplexProperties p1, ComplexProperties p2) {
+  return ComplexProperties(Add(p1.realSign(), p2.realSign()),
+                           Add(p1.imagSign(), p2.imagSign()));
 }
 
-ComplexSign ExponentialReal(Sign s) {
+ComplexProperties ExponentialReal(Sign s) {
   // exp(-inf) = 0, necessary so that x^y = exp(y*ln(x)) can be null.
-  return s.isNull() ? ComplexSign::RealFiniteStrictlyPositiveInteger()  // 1
-         : !s.canBeInfinite() ? ComplexSign::RealFiniteStrictlyPositive()
-         : !s.canBeStrictlyNegative() ? ComplexSign::RealStrictlyPositive()
-                                      : ComplexSign::RealPositive();
+  return s.isNull()
+             ? ComplexProperties::RealFiniteStrictlyPositiveInteger()  // 1
+         : !s.canBeInfinite() ? ComplexProperties::RealFiniteStrictlyPositive()
+         : !s.canBeStrictlyNegative()
+             ? ComplexProperties::RealStrictlyPositive()
+             : ComplexProperties::RealPositive();
 }
 
-ComplexSign ExponentialImag(Sign s) {
+ComplexProperties ExponentialImag(Sign s) {
   // exp(i*x) is on the unit circle
-  return s.isNull() ? ComplexSign::RealFiniteStrictlyPositiveInteger()  // 1
-                    : ComplexSign::Finite();
+  return s.isNull()
+             ? ComplexProperties::RealFiniteStrictlyPositiveInteger()  // 1
+             : ComplexProperties::Finite();
 }
 
-ComplexSign Exponential(ComplexSign s) {
+ComplexProperties Exponential(ComplexProperties p) {
   // exp(x + y*i) = exp(x) * exp(y*i)
-  return Mult(ExponentialReal(s.realSign()), ExponentialImag(s.imagSign()));
+  return Mult(ExponentialReal(p.realSign()), ExponentialImag(p.imagSign()));
 }
 
 // Note: we could get more info on canBeInfinite
-ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
+ComplexProperties Power(ComplexProperties base, ComplexProperties exp,
+                        bool expIsTwo) {
   if (base.isReal() && base.realSign().isStrictlyPositive() && exp.isReal() &&
       exp.realSign().isStrictlyPositive()) {
     // b^e with b and e strictly positive reals gives strictly positive real,
     // integer only if both b and e are integer
-    return ComplexSign(Sign(false, true, false,
-                            base.realSign().canBeNonInteger() ||
-                                exp.realSign().canBeNonInteger(),
-                            !(base.isFinite() && exp.isFinite())),
-                       Sign::Zero());
+    return ComplexProperties(Sign(false, true, false,
+                                  base.realSign().canBeNonInteger() ||
+                                      exp.realSign().canBeNonInteger(),
+                                  !(base.isFinite() && exp.isFinite())),
+                             Sign::Zero());
   }
   if (exp.canBeNonReal() || exp.canBeNonInteger()) {
-    return ComplexSign::Unknown();
+    return ComplexProperties::Unknown();
   }
   if (base.isNull()) {
     // 0^exp = 0
-    return ComplexSign::Zero();
+    return ComplexProperties::Zero();
   }
   if (exp.isNull()) {
     // base^0 = 1
-    return ComplexSign::RealFiniteStrictlyPositiveInteger();
+    return ComplexProperties::RealFiniteStrictlyPositiveInteger();
   }
   bool canBeNonInteger = base.canBeNonInteger() || !exp.realSign().isPositive();
   /* If base can be null and exp can be strictly negative, then the result may
@@ -287,214 +293,222 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
   if (base.isReal()) {
     bool canBeNull = base.realSign().canBeNull();
     bool isPositive = expIsTwo || base.realSign().isPositive();
-    return ComplexSign(
+    return ComplexProperties(
         Sign(canBeNull, true, !isPositive, canBeNonInteger, canBeInfinite),
         Sign::Zero());
   }
   Sign sign = Sign(true, true, true, canBeNonInteger, canBeInfinite);
-  return ComplexSign(sign, sign);
+  return ComplexProperties(sign, sign);
 }
 
-ComplexSign TypeSign(ComplexSign s) {
+ComplexProperties TypeSign(ComplexProperties p) {
   Sign realSign =
-      Sign(s.realSign().canBeNull(), s.realSign().canBeStrictlyPositive(),
-           s.realSign().canBeStrictlyNegative(), !s.isPure(), false);
+      Sign(p.realSign().canBeNull(), p.realSign().canBeStrictlyPositive(),
+           p.realSign().canBeStrictlyNegative(), !p.isPure(), false);
   Sign imagSign =
-      Sign(s.imagSign().canBeNull(), s.imagSign().canBeStrictlyPositive(),
-           s.imagSign().canBeStrictlyNegative(), !s.isPure(), false);
-  return ComplexSign(realSign, imagSign);
+      Sign(p.imagSign().canBeNull(), p.imagSign().canBeStrictlyPositive(),
+           p.imagSign().canBeStrictlyNegative(), !p.isPure(), false);
+  return ComplexProperties(realSign, imagSign);
 }
 
-ComplexSign PercentAddition(ComplexSign s1, ComplexSign s2) {
-  return Add(s1, Mult(s1, RelaxIntegerProperty(s2)));
+ComplexProperties PercentAddition(ComplexProperties p1, ComplexProperties p2) {
+  return Add(p1, Mult(p1, RelaxIntegerProperty(p2)));
 }
 
-ComplexSign Quotient(ComplexSign s1, ComplexSign s2) {
+ComplexProperties Quotient(ComplexProperties p1, ComplexProperties p2) {
   // a = q*b + r with 0 ≤ r < |b| and a, b, q, r integers and b ≠ 0
-  Sign s1Real = s1.realSign();
-  Sign s2Real = s2.realSign();
+  Sign s1Real = p1.realSign();
+  Sign s2Real = p2.realSign();
   if (!s1Real.hasKnownSign() || !s2Real.hasKnownSign()) {
-    return ComplexSign(Sign::FiniteInteger(), Sign::Zero());
+    return ComplexProperties(Sign::FiniteInteger(), Sign::Zero());
   }
   /* If a and b have the same sign, q is positive.
    * If a and b have opposite signs, q is negative. */
-  return ComplexSign(s1Real.isPositive() == s2Real.isPositive()
-                         ? Sign::FinitePositiveInteger()
-                         : Sign::FiniteNegativeInteger(),
-                     Sign::Zero());
+  return ComplexProperties(s1Real.isPositive() == s2Real.isPositive()
+                               ? Sign::FinitePositiveInteger()
+                               : Sign::FiniteNegativeInteger(),
+                           Sign::Zero());
 }
 
-ComplexSign Binomial(ComplexSign sN) {
+ComplexProperties Binomial(ComplexProperties p) {
   /* Bin(n, k) is only defined for n and k real, and k integer.
    * It is always real, and integer if n is an integer. */
-  return ComplexSign(
-      sN.realSign().isInteger() ? Sign::Integer() : Sign::Unknown(),
+  return ComplexProperties(
+      p.realSign().isInteger() ? Sign::Integer() : Sign::Unknown(),
       Sign::Zero());
 }
 
 namespace Internal {
 
 // Note: A complex function plotter can be used to fill in these methods.
-ComplexSign GetComplexSign(const Tree* e) {
+ComplexProperties GetComplexProperties(const Tree* e) {
   assert(Dimension::Get(e).isScalarOrUnit());
   if (e->isNumber()) {
-    return ComplexSign(Number::Sign(e), Sign::Zero());
+    return ComplexProperties(Number::Sign(e), Sign::Zero());
   } else if (e->isDecimal()) {
-    return ComplexSign(Number::Sign(e->child(0)), Sign::Zero());
+    return ComplexProperties(Number::Sign(e->child(0)), Sign::Zero());
   } else if (e->isUserNamed()) {
-    return Symbol::GetComplexSign(e);
+    return Symbol::GetComplexProperties(e);
   }
   switch (e->type()) {
     case Type::Mult: {
-      ComplexSign s = ComplexSign::RealFiniteStrictlyPositiveInteger();  // 1
+      ComplexProperties p =
+          ComplexProperties::RealFiniteStrictlyPositiveInteger();  // 1
       for (const Tree* c : e->children()) {
-        s = Mult(s, GetComplexSign(c));
-        if (s.isUnknown() || s.isNull()) {
+        p = Mult(p, GetComplexProperties(c));
+        if (p.isUnknown() || p.isNull()) {
           break;
         }
       }
-      return s;
+      return p;
     }
     case Type::Add: {
-      ComplexSign s = ComplexSign::Zero();
+      ComplexProperties p = ComplexProperties::Zero();
       for (const Tree* c : e->children()) {
-        s = Add(s, GetComplexSign(c));
-        if (s.isUnknown()) {
+        p = Add(p, GetComplexProperties(c));
+        if (p.isUnknown()) {
           break;
         }
       }
-      if (s.isReal() && s.realSign().isFinite() &&
-          !s.realSign().hasKnownStrictSign()) {
-        assert(s.imagSign().isNull());
+      if (p.isReal() && p.realSign().isFinite() &&
+          !p.realSign().hasKnownStrictSign()) {
+        assert(p.imagSign().isNull());
         Sign realSign = Bounds::Sign(e);
         if (realSign != Sign::Unknown()) {
-          return ComplexSign(realSign, Sign::Zero());
+          return ComplexProperties(realSign, Sign::Zero());
         }
       }
-      return s;
+      return p;
     }
     case Type::PowReal:
     case Type::Pow:
-      return Power(GetComplexSign(e->child(0)), GetComplexSign(e->child(1)),
-                   e->child(1)->isTwo());
+      return Power(GetComplexProperties(e->child(0)),
+                   GetComplexProperties(e->child(1)), e->child(1)->isTwo());
     case Type::Norm:
       // Child isn't a scalar
-      return ComplexSign(Sign::Positive(), Sign::Zero());
+      return ComplexProperties(Sign::Positive(), Sign::Zero());
     case Type::Abs:
-      return Abs(GetComplexSign(e->child(0)));
+      return Abs(GetComplexProperties(e->child(0)));
     case Type::Exp:
-      return Exponential(GetComplexSign(e->child(0)));
+      return Exponential(GetComplexProperties(e->child(0)));
     case Type::Ln:
       return Ln(e);
     case Type::Re:
-      return ComplexSign(GetComplexSign(e->child(0)).realSign(), Sign::Zero());
+      return ComplexProperties(GetComplexProperties(e->child(0)).realSign(),
+                               Sign::Zero());
     case Type::Im:
-      return ComplexSign(GetComplexSign(e->child(0)).imagSign(), Sign::Zero());
+      return ComplexProperties(GetComplexProperties(e->child(0)).imagSign(),
+                               Sign::Zero());
     case Type::Var:
-      return Variables::GetComplexSign(e);
+      return Variables::GetComplexProperties(e);
     case Type::ComplexI:
-      return ComplexSign(Sign::Zero(), Sign::FiniteStrictlyPositiveInteger());
+      return ComplexProperties(Sign::Zero(),
+                               Sign::FiniteStrictlyPositiveInteger());
     case Type::Trig:
       assert(e->child(1)->isOne() || e->child(1)->isZero());
-      return Trig(GetComplexSign(e->child(0)), e->child(1)->isOne());
+      return Trig(GetComplexProperties(e->child(0)), e->child(1)->isOne());
     case Type::ATanRad:
-      return ArcTangent(GetComplexSign(e->child(0)));
+      return ArcTangent(GetComplexProperties(e->child(0)));
     case Type::Arg:
-      return ComplexArgument(GetComplexSign(e->child(0)));
+      return ComplexArgument(GetComplexProperties(e->child(0)));
     case Type::Dep:
-      return GetComplexSign(Dependency::Main(e));
+      return GetComplexProperties(Dependency::Main(e));
     case Type::Inf:
-      return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());
+      return ComplexProperties(Sign::StrictlyPositive(), Sign::Zero());
     case Type::PhysicalConstant:
     case Type::Unit:
       // Units are considered equivalent to their SI ratio
-      return ComplexSign(Sign::FinitePositive(), Sign::Zero());
+      return ComplexProperties(Sign::FinitePositive(), Sign::Zero());
     case Type::ATrig:
       assert(e->child(1)->isOne() || e->child(1)->isZero());
-      return e->child(1)->isOne() ? ArcSine(GetComplexSign(e->child(0)))
-                                  : ArcCosine(GetComplexSign(e->child(0)));
+      return e->child(1)->isOne()
+                 ? ArcSine(GetComplexProperties(e->child(0)))
+                 : ArcCosine(GetComplexProperties(e->child(0)));
     case Type::Ceil:
     case Type::Floor:
     case Type::Frac:
     case Type::Round:
-      return ComplexSign(
-          DecimalFunction(GetComplexSign(e->child(0)).realSign(), e->type()),
+      return ComplexProperties(
+          DecimalFunction(GetComplexProperties(e->child(0)).realSign(),
+                          e->type()),
           Sign::Zero());
     case Type::Random:
-      return ComplexSign(Sign::FinitePositive(), Sign::Zero());
+      return ComplexProperties(Sign::FinitePositive(), Sign::Zero());
     case Type::RandInt:
-      return ComplexSign(Sign::FiniteInteger(), Sign::Zero());
+      return ComplexProperties(Sign::FiniteInteger(), Sign::Zero());
     case Type::Sign:
-      return TypeSign(GetComplexSign(e->child(0)));
+      return TypeSign(GetComplexProperties(e->child(0)));
     case Type::Factor:
-      return GetComplexSign(e->child(0));
+      return GetComplexProperties(e->child(0));
     case Type::GCD:
     case Type::LCM:
     case Type::Permute:
     case Type::Rem:
-      return ComplexSign(Sign::FinitePositiveInteger(), Sign::Zero());
+      return ComplexProperties(Sign::FinitePositiveInteger(), Sign::Zero());
     case Type::Quo:
-      return Quotient(GetComplexSign(e->child(0)), GetComplexSign(e->child(1)));
+      return Quotient(GetComplexProperties(e->child(0)),
+                      GetComplexProperties(e->child(1)));
     case Type::PercentSimple:
-      return RelaxIntegerProperty(GetComplexSign(e->child(0)));
+      return RelaxIntegerProperty(GetComplexProperties(e->child(0)));
     case Type::PercentAddition:
-      return PercentAddition(GetComplexSign(e->child(0)),
-                             GetComplexSign(e->child(1)));
+      return PercentAddition(GetComplexProperties(e->child(0)),
+                             GetComplexProperties(e->child(1)));
     case Type::Fact:
-      return ComplexSign::RealStrictlyPositiveInteger();
+      return ComplexProperties::RealStrictlyPositiveInteger();
     case Type::Binomial:
-      return Binomial(GetComplexSign(e->child(0)));
+      return Binomial(GetComplexProperties(e->child(0)));
     case Type::Diff:
-      return ComplexSign::Real();
+      return ComplexProperties::Real();
 #if 0
     // Activate these cases if necessary
     case Type::ATan:
-      return ArcTangent(GetComplexSign(e->child(0)));
+      return ArcTangent(GetComplexProperties(e->child(0)));
     case Type::MixedFraction:
-      return Add(GetComplexSign(e->child(0)), GetComplexSign(e->child(1)));
+      return Add(GetComplexProperties(e->child(0)), GetComplexProperties(e->child(1)));
     case Type::Parentheses:
-      return GetComplexSign(e->child(0));
+      return GetComplexProperties(e->child(0));
 #endif
     default:
-      return ComplexSign::Unknown();
+      return ComplexProperties::Unknown();
   }
 }
 
 Sign GetSign(const Tree* e) {
-  assert(GetComplexSign(e).isReal());
-  return GetComplexSign(e).realSign();
+  assert(GetComplexProperties(e).isReal());
+  return GetComplexProperties(e).realSign();
 }
 
-ComplexSign ComplexSignOfDifference(const Tree* e1, const Tree* e2) {
+ComplexProperties ComplexPropertiesOfDifference(const Tree* e1,
+                                                const Tree* e2) {
   Tree* difference = PatternMatching::CreateReduce(KAdd(KA, KMult(-1_e, KB)),
                                                    {.KA = e1, .KB = e2});
-  ComplexSign result = GetComplexSign(difference);
+  ComplexProperties result = GetComplexProperties(difference);
   if (AdvancedReduction::DeepExpandAlgebraic(difference)) {
     /* We do not use advance reduction here but it might be useful to expand
      * Mult since we are creating an Add with Mult */
-    result = result && GetComplexSign(difference);
+    result = result && GetComplexProperties(difference);
   }
   difference->removeTree();
   return result;
 }
 
-ComplexSign SignOfTreeOrApproximation(const Tree* e) {
+ComplexProperties PropertiesOfTreeOrApproximation(const Tree* e) {
   assert(Dimension::IsNonListScalar(e));
-  ComplexSign sign = GetComplexSign(e);
-  if (!sign.realSign().hasKnownStrictSign() ||
-      !sign.imagSign().hasKnownStrictSign()) {
+  ComplexProperties properties = GetComplexProperties(e);
+  if (!properties.realSign().hasKnownStrictSign() ||
+      !properties.imagSign().hasKnownStrictSign()) {
     Tree* approximation =
         Approximation::ToTree<double>(e, Approximation::Parameters{});
-    sign = GetComplexSign(approximation);
+    properties = GetComplexProperties(approximation);
     approximation->removeTree();
   }
-  return sign;
+  return properties;
 }
 
 }  // namespace Internal
 
 #if POINCARE_TREE_LOG
-void ComplexSign::log(std::ostream& stream, bool endOfLine) const {
+void ComplexProperties::log(std::ostream& stream, bool endOfLine) const {
   stream << "(";
   realSign().log(stream, false);
   stream << ") + i*(";

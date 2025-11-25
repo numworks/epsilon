@@ -453,7 +453,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
 bool Projection::Expand(Tree* e) {
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KATanRad(KA), &ctx) &&
-      GetComplexSign(ctx.getTree(KA)).isReal()) {
+      GetComplexProperties(ctx.getTree(KA)).isReal()) {
     // atan(A) -> asin(A/Sqrt(1 + A^2)) for A real
     e->moveTreeOverTree(PatternMatching::CreateReduce(
         KATrig(
@@ -464,8 +464,8 @@ bool Projection::Expand(Tree* e) {
   }
 #if POINCARE_TRIGONOMETRY_HYPERBOLIC
   if (PatternMatching::Match(e, KArCosH(KA), &ctx)) {
-    ComplexSign signOfChild = GetComplexSign(ctx.getTree(KA));
-    if (signOfChild.isReal() && signOfChild.realSign().isPositive()) {
+    ComplexProperties childProperties = GetComplexProperties(ctx.getTree(KA));
+    if (childProperties.isReal() && childProperties.realSign().isPositive()) {
       // ArCosh(A) -> ln(A+sqrt(A^2-1)) for A real and positive
       /* Warning: formula holds for x real and ≥ 1, but it seems to work for x ≥
        * -1 using the principal branches of acosh and ln. TODO: Find a proof of

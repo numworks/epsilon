@@ -178,15 +178,17 @@ constexpr auto KVar = KTree<Type::Var, Id, realSign, imagSign>();
 // Discrete local variable
 template <uint8_t Id>
 constexpr auto KDiscreteVar =
-    KTree<Type::Var, Id, Parametric::k_discreteVariableSign.getRealValue(),
-          Parametric::k_discreteVariableSign.getImagValue()>();
+    KTree<Type::Var, Id,
+          Parametric::k_discreteVariableProperties.getRealValue(),
+          Parametric::k_discreteVariableProperties.getImagValue()>();
 constexpr auto KVarK = KDiscreteVar<Parametric::k_localVariableId>;
 
 // Continuous local variable
 template <uint8_t Id>
 constexpr auto KContinuousVar =
-    KTree<Type::Var, Id, Parametric::k_continuousVariableSign.getRealValue(),
-          Parametric::k_continuousVariableSign.getImagValue()>();
+    KTree<Type::Var, Id,
+          Parametric::k_continuousVariableProperties.getRealValue(),
+          Parametric::k_continuousVariableProperties.getImagValue()>();
 constexpr auto KVarX = KContinuousVar<Parametric::k_localVariableId>;
 
 // Default UserSymbol in functions

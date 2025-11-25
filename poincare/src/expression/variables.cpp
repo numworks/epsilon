@@ -14,8 +14,8 @@
 
 namespace Poincare::Internal {
 
-Variables::Variable::Variable(uint8_t id, ComplexSign sign) {
-  Tree* temp = SharedTreeStack->pushVar(id, sign);
+Variables::Variable::Variable(uint8_t id, ComplexProperties properties) {
+  Tree* temp = SharedTreeStack->pushVar(id, properties);
   assert(k_size == temp->treeSize());
   temp->copyTreeTo(m_blocks);
   temp->removeTree();
@@ -26,9 +26,10 @@ uint8_t Variables::Id(const Tree* variable) {
   return variable->nodeValue(0);
 }
 
-ComplexSign Variables::GetComplexSign(const Tree* variable) {
+ComplexProperties Variables::GetComplexProperties(const Tree* variable) {
   assert(variable->isVar());
-  return ComplexSign::FromValue(variable->nodeValue(1), variable->nodeValue(2));
+  return ComplexProperties::FromValue(variable->nodeValue(1),
+                                      variable->nodeValue(2));
 }
 
 uint8_t Variables::Private::ToId(const Tree* variables, const char* name,
@@ -164,15 +165,15 @@ bool Variables::Replace(Tree* e, int id, const TreeRef& value, bool leave,
 }
 
 bool Variables::ReplaceSymbol(Tree* e, const Tree* symbol, int id,
-                              ComplexSign sign) {
+                              ComplexProperties properties) {
   assert(symbol->isUserSymbol());
-  return ReplaceSymbol(e, Symbol::GetName(symbol), id, sign);
+  return ReplaceSymbol(e, Symbol::GetName(symbol), id, properties);
 }
 
 bool Variables::ReplaceSymbol(Tree* e, const char* symbol, int id,
-                              ComplexSign sign) {
+                              ComplexProperties properties) {
   if (Symbol::IsUserSymbol(e, symbol)) {
-    Tree* var = SharedTreeStack->pushVar(static_cast<uint8_t>(id), sign);
+    Tree* var = SharedTreeStack->pushVar(static_cast<uint8_t>(id), properties);
     e->moveTreeOverTree(var);
     return true;
   }
@@ -184,10 +185,10 @@ bool Variables::ReplaceSymbol(Tree* e, const char* symbol, int id,
       // No need to continue if symbol is hidden by a local definition
       if (!Symbol::IsUserSymbol(e->child(Parametric::k_variableIndex),
                                 symbol)) {
-        changed = ReplaceSymbol(child, symbol, id + 1, sign) || changed;
+        changed = ReplaceSymbol(child, symbol, id + 1, properties) || changed;
       }
     } else {
-      changed = ReplaceSymbol(child, symbol, id, sign) || changed;
+      changed = ReplaceSymbol(child, symbol, id, properties) || changed;
     }
   }
   return changed;
@@ -247,7 +248,7 @@ bool Variables::ProjectLocalVariablesToId(Tree* e, uint8_t depth) {
     } else if (isParametric && Parametric::IsFunctionIndex(child.index, e)) {
       // Project local variable
       changed = ReplaceSymbol(child, e->child(Parametric::k_variableIndex), 0,
-                              Parametric::VariableSign(e)) ||
+                              Parametric::VariableProperties(e)) ||
                 changed;
       changed = ProjectLocalVariablesToId(child, depth + 1) || changed;
     } else {

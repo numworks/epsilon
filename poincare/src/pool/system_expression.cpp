@@ -173,7 +173,7 @@ SystemExpression SystemExpression::getReducedDerivative(
   Integer::Push(derivationOrder);
   Tree* derivand = tree()->cloneTree();
   Variables::ReplaceSymbol(derivand, symbol, 0,
-                           Parametric::VariableSign(result));
+                           Parametric::VariableProperties(result));
   // Check dimension again as the diff may have changed it.
   if (!Internal::Dimension::DeepCheck(result)) {
     result->cloneTreeOverTree(KUndefUnhandledDimension);
@@ -232,9 +232,9 @@ SystemExpression SystemExpression::removeUndefAndComplexListElements() const {
   for (int i = 0; i < n; i++) {
     if (child->isUndefined() ||
         (Internal::Dimension::Get(child).isScalar() &&
-         GetComplexSign(child).isNonReal()) ||
+         GetComplexProperties(child).isNonReal()) ||
         (child->isPoint() && child->hasChildSatisfying([](const Tree* e) {
-          return e->isUndefined() || GetComplexSign(e).isNonReal();
+          return e->isUndefined() || GetComplexProperties(e).isNonReal();
         }))) {
       child->removeTree();
       remainingChildren--;

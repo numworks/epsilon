@@ -67,11 +67,11 @@ inline static bool AreConsistent(const Sign& sign, const T& value) {
                                        100 * OMG::Float::EpsilonLax<T>())));
 }
 template <typename T>
-inline static bool AreConsistent(const ComplexSign& sign,
+inline static bool AreConsistent(const ComplexProperties& properties,
                                  const std::complex<T>& value) {
   return std::isnan(value.real()) || std::isnan(value.imag()) ||
-         (AreConsistent(sign.realSign(), value.real()) &&
-          AreConsistent(sign.imagSign(), value.imag()));
+         (AreConsistent(properties.realSign(), value.real()) &&
+          AreConsistent(properties.imagSign(), value.imag()));
 }
 #endif
 

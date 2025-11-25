@@ -924,7 +924,7 @@ void Integer::SetSign(Tree* e, NonStrictSign sign) {
 
 OMG::Troolean Integer::IsRationalInteger(const Tree* e) {
   if (!Dimension::Get(e).isScalar() || e->isMathematicalConstant() ||
-      e->treeIsIdenticalTo(KExp(1_e)) || GetComplexSign(e).isNonReal()) {
+      e->treeIsIdenticalTo(KExp(1_e)) || GetComplexProperties(e).isNonReal()) {
     return OMG::Troolean::False;
   }
   return e->isRational()
@@ -936,7 +936,7 @@ OMG::Troolean Integer::IsPositiveRationalInteger(const Tree* e) {
   return OMG::TrooleanAnd(
       IsRationalInteger(e),
       OMG::TrooleanNot(
-          GetComplexSign(e).realSign().trooleanIsStrictlyNegative()));
+          GetComplexProperties(e).realSign().trooleanIsStrictlyNegative()));
 }
 
 template float IntegerHandler::to<float>() const;

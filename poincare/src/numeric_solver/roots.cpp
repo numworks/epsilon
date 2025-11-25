@@ -50,8 +50,9 @@ Tree* Roots::PrivateQuadratic(const Tree* a, const Tree* b, const Tree* c,
   if (discriminant->isUndefined()) {
     return discriminant->cloneTree();
   }
-  ComplexSign deltaSign = SignOfTreeOrApproximation(discriminant);
-  if (deltaSign.isNull()) {
+  ComplexProperties deltaProperties =
+      PropertiesOfTreeOrApproximation(discriminant);
+  if (deltaProperties.isNull()) {
     // -B/2A
     return PatternMatching::CreateReduce(
         KList(KMult(-1_e / 2_e, KB, KPow(KA, -1_e))), {.KA = a, .KB = b});
@@ -66,8 +67,8 @@ Tree* Roots::PrivateQuadratic(const Tree* a, const Tree* b, const Tree* c,
       KMult(1_e / 2_e, KAdd(KMult(-1_e, KB), KExp(KMult(1_e / 2_e, KLn(KC)))),
             KPow(KA, -1_e)),
       {.KA = a, .KB = b, .KC = discriminant});
-  ComplexSign aSign = SignOfTreeOrApproximation(a);
-  if (aSign.isReal() && aSign.realSign().isNegative()) {
+  ComplexProperties aProperties = PropertiesOfTreeOrApproximation(a);
+  if (aProperties.isReal() && aProperties.realSign().isNegative()) {
     /* Switch roots for a consistent order.
      * Quadratic may be called from grapher with coefficients b an c that cannot
      * be approximated (because they depend on variables. We therefore use a's
@@ -114,10 +115,10 @@ Tree* Roots::PrivateCubic(const Tree* a, const Tree* b, const Tree* c,
   }
 
   /* Cases in which some coefficients are zero. */
-  if (GetComplexSign(a).isNull()) {
+  if (GetComplexProperties(a).isNull()) {
     return Roots::PrivateQuadratic(b, c, d);
   }
-  if (GetComplexSign(d).isNull()) {
+  if (GetComplexProperties(d).isNull()) {
     /* When d is null the obvious root is zero. To avoid complexifying the
      * remaining quadratic polynomial expression with further calculations, we
      * directly call the quadratic solver for a, b, and c. */
@@ -137,7 +138,7 @@ Tree* Roots::PrivateCubic(const Tree* a, const Tree* b, const Tree* c,
     }
     return allRoots;
   }
-  if (GetComplexSign(b).isNull() && GetComplexSign(c).isNull()) {
+  if (GetComplexProperties(b).isNull() && GetComplexProperties(c).isNull()) {
     /* We compute the three solutions here because they are quite simple, and
      * to avoid generating very complex coefficients when creating the remaining
      * quadratic equation. */
@@ -165,12 +166,13 @@ Tree* Roots::PrivateCubic(const Tree* a, const Tree* b, const Tree* c,
 
 Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
                                          const Tree* discriminant) {
-  ComplexSign discriminantSign = SignOfTreeOrApproximation(discriminant);
-  assert(discriminantSign.isReal());
+  ComplexProperties discriminantProperties =
+      PropertiesOfTreeOrApproximation(discriminant);
+  assert(discriminantProperties.isReal());
   TreeRef approximatedRoots =
       Approximation::ToTree<double>(roots, Approximation::Parameters{});
   assert(approximatedRoots->isList());
-  if (discriminantSign.realSign().isPositive()) {
+  if (discriminantProperties.realSign().isPositive()) {
     // If the discriminant is positive or zero, all roots are real.
     for (Tree* root : approximatedRoots->children()) {
       // Even when root contains a non-negligeable imaginary part, we remove it
@@ -239,7 +241,7 @@ bool Roots::IsRoot(const Tree* value, const Tree* a, const Tree* b,
 Tree* Roots::CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
                                           const Tree* c, const Tree* d,
                                           Tree* r) {
-  assert(!GetComplexSign(r).isNull());
+  assert(!GetComplexProperties(r).isNull());
   /* If r is a non zero root of "ax^3+bx^2+cx+d", we can factorize the
    * polynomial as "(x-r)*(ax^2+β*x+γ)", with "β =b+a*r" and γ=-d/r */
   TreeRef beta = PatternMatching::CreateReduce(KAdd(KB, KMult(KA, KH)),
@@ -264,8 +266,9 @@ Tree* CubicRootSignAware(const Tree* e) {
    * cubic root of -1. Selecting -1 as the principal cubic root simplifies
    * further calculations, in which the expression will be multiplied by the
    * cube roots of unity. */
-  ComplexSign sign = GetComplexSign(e);
-  bool shouldRevertSign = sign.isReal() && sign.realSign().isNegative();
+  ComplexProperties properties = GetComplexProperties(e);
+  bool shouldRevertSign =
+      properties.isReal() && properties.realSign().isNegative();
   return shouldRevertSign
              ? PatternMatching::CreateReduce(
                    KMult(-1_e, KPow(KMult(-1_e, KA), KPow(3_e, -1_e))),
@@ -428,7 +431,7 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
     return roots;
   }
 
-  if (SignOfTreeOrApproximation(delta).isNull()) {
+  if (PropertiesOfTreeOrApproximation(delta).isNull()) {
     Tree* rootList = CubicRootsNullDiscriminant(a, b, c, d);
     return rootList;
   }
@@ -442,7 +445,7 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
   }
 
   /* If the discriminant is not zero, then the Cardano number cannot be zero. */
-  assert(!SignOfTreeOrApproximation(cardano).isNull());
+  assert(!PropertiesOfTreeOrApproximation(cardano).isNull());
 
   TreeRef rootList = SharedTreeStack->pushList(3);
   CardanoRoot(a, b, cardano, delta0, 0);
@@ -458,10 +461,10 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
     // the polynomial coefficients are all real, remove these small imaginary
     // parts.
     rootList->moveTreeOverTree(
-        (SignOfTreeOrApproximation(a).isReal() &&
-         SignOfTreeOrApproximation(b).isReal() &&
-         SignOfTreeOrApproximation(c).isReal() &&
-         SignOfTreeOrApproximation(d).isReal())
+        (PropertiesOfTreeOrApproximation(a).isReal() &&
+         PropertiesOfTreeOrApproximation(b).isReal() &&
+         PropertiesOfTreeOrApproximation(c).isReal() &&
+         PropertiesOfTreeOrApproximation(d).isReal())
             ? Roots::ApproximateRootsOfRealCubic(rootList, delta)
             : Approximation::ToTree<double>(rootList,
                                             Approximation::Parameters{}));
@@ -477,7 +480,7 @@ Tree* Roots::CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
   Tree* delta0 = Delta0(a, b, c);
 
   // clang-format off
-  TreeRef rootList = SignOfTreeOrApproximation(delta0).isNull()
+  TreeRef rootList = PropertiesOfTreeOrApproximation(delta0).isNull()
     ?
       // "-b/3a" is a triple root
       PatternMatching::CreateReduce(
@@ -535,12 +538,13 @@ Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1) {
    * - otherwise, ± takes the sign of delta1. This way, we do not run the risk
    * of subtracting two very close numbers when delta0 << delta1. */
 
-  if (SignOfTreeOrApproximation(delta0).isNull()) {
+  if (PropertiesOfTreeOrApproximation(delta0).isNull()) {
     return PatternMatching::CreateReduce(KPow(KA, 1_e / 3_e), {.KA = delta1});
   }
 
-  const Tree* signDelta1 =
-      SignOfTreeOrApproximation(delta1).realSign().isPositive() ? 1_e : -1_e;
+  const Tree* delta1Properties =
+      PropertiesOfTreeOrApproximation(delta1).realSign().isPositive() ? 1_e
+                                                                      : -1_e;
   // clang-format off
   return PatternMatching::CreateReduce(
     KPow(
@@ -556,14 +560,14 @@ Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1) {
               1_e / 2_e))),
         1_e / 2_e),
       1_e / 3_e),
-    {.KA = delta0, .KB = delta1, .KC = signDelta1});
+    {.KA = delta0, .KB = delta1, .KC = delta1Properties});
   // clang-format on
 }
 
 Tree* Roots::CardanoRoot(const Tree* a, const Tree* b, const Tree* cardano,
                          const Tree* delta0, uint8_t k) {
   assert(k == 0 || k == 1 || k == 2);
-  assert(!SignOfTreeOrApproximation(cardano).isNull());
+  assert(!PropertiesOfTreeOrApproximation(cardano).isNull());
 
   /* -(b + C + delta0/(C))/(3a) is a root of the cubic, where C is the Cardano
    * number multiplied by any cubic root of unity. All roots are listed by

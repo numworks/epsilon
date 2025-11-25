@@ -25,13 +25,14 @@ class Parametric {
   static uint8_t FunctionIndex(const Tree* e);
   static uint8_t FunctionIndex(TypeBlock type);
 
-  static ComplexSign VariableSign(const Tree* e);
+  static ComplexProperties VariableProperties(const Tree* e);
 
-  constexpr static ComplexSign k_discreteVariableSign =
-      ComplexSign::RealInteger();
+  constexpr static ComplexProperties k_discreteVariableProperties =
+      ComplexProperties::RealInteger();
   /* TODO: Should instead depend on the bounds for integral and symbol value for
    * derivation */
-  constexpr static ComplexSign k_continuousVariableSign = ComplexSign::Real();
+  constexpr static ComplexProperties k_continuousVariableProperties =
+      ComplexProperties::Real();
 
   /* WARNING: For all parametric, the function/integrand node is the last child
    * in the layout tree, but is the first child when the 1D layout is built.

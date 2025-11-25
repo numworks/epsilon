@@ -204,12 +204,14 @@ class Sign {
   bool m_canBeInfinite : 1;
 };
 
-class ComplexSign {
+class ComplexProperties {
  public:
-  constexpr ComplexSign(Sign realSign, Sign imagSign)
+  constexpr ComplexProperties(Sign realSign, Sign imagSign)
       : m_realValue(realSign.getValue()), m_imagValue(imagSign.getValue()) {}
-  constexpr static ComplexSign FromValue(uint8_t realValue, uint8_t imagValue) {
-    return ComplexSign(Sign::FromValue(realValue), Sign::FromValue(imagValue));
+  constexpr static ComplexProperties FromValue(uint8_t realValue,
+                                               uint8_t imagValue) {
+    return ComplexProperties(Sign::FromValue(realValue),
+                             Sign::FromValue(imagValue));
   }
 
   constexpr uint8_t getRealValue() const { return m_realValue; }
@@ -242,52 +244,53 @@ class ComplexSign {
     return realSign().canBeInfinite() || imagSign().canBeInfinite();
   }
 
-  bool operator==(const ComplexSign&) const = default;
+  bool operator==(const ComplexProperties&) const = default;
   /* OR operator on both real and imaginary signs. See Sign operators.
    * Real() || Zero() = Real() */
-  ComplexSign operator||(const ComplexSign& other) const {
-    return ComplexSign(realSign() || other.realSign(),
-                       imagSign() || other.imagSign());
+  ComplexProperties operator||(const ComplexProperties& other) const {
+    return ComplexProperties(realSign() || other.realSign(),
+                             imagSign() || other.imagSign());
   }
   /* AND operator on both real and imaginary signs. See Sign operators.
    * Real() && Zero() = Zero() */
-  ComplexSign operator&&(const ComplexSign& other) const {
-    return ComplexSign(realSign() && other.realSign(),
-                       imagSign() && other.imagSign());
+  ComplexProperties operator&&(const ComplexProperties& other) const {
+    return ComplexProperties(realSign() && other.realSign(),
+                             imagSign() && other.imagSign());
   }
 
-  constexpr static ComplexSign RealInteger() {
-    return ComplexSign(Sign::Integer(), Sign::Zero());
+  constexpr static ComplexProperties RealInteger() {
+    return ComplexProperties(Sign::Integer(), Sign::Zero());
   }
-  constexpr static ComplexSign Real() {
-    return ComplexSign(Sign::Unknown(), Sign::Zero());
+  constexpr static ComplexProperties Real() {
+    return ComplexProperties(Sign::Unknown(), Sign::Zero());
   }
-  constexpr static ComplexSign RealFinite() {
-    return ComplexSign(Sign::Finite(), Sign::Zero());
+  constexpr static ComplexProperties RealFinite() {
+    return ComplexProperties(Sign::Finite(), Sign::Zero());
   }
-  constexpr static ComplexSign Unknown() {
-    return ComplexSign(Sign::Unknown(), Sign::Unknown());
+  constexpr static ComplexProperties Unknown() {
+    return ComplexProperties(Sign::Unknown(), Sign::Unknown());
   }
-  constexpr static ComplexSign Finite() {
-    return ComplexSign(Sign::Finite(), Sign::Finite());
+  constexpr static ComplexProperties Finite() {
+    return ComplexProperties(Sign::Finite(), Sign::Finite());
   }
-  constexpr static ComplexSign Zero() {
-    return ComplexSign(Sign::Zero(), Sign::Zero());
+  constexpr static ComplexProperties Zero() {
+    return ComplexProperties(Sign::Zero(), Sign::Zero());
   }
-  constexpr static ComplexSign RealPositive() {
-    return ComplexSign(Sign::Positive(), Sign::Zero());
+  constexpr static ComplexProperties RealPositive() {
+    return ComplexProperties(Sign::Positive(), Sign::Zero());
   }
-  constexpr static ComplexSign RealStrictlyPositive() {
-    return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());
+  constexpr static ComplexProperties RealStrictlyPositive() {
+    return ComplexProperties(Sign::StrictlyPositive(), Sign::Zero());
   }
-  constexpr static ComplexSign RealFiniteStrictlyPositive() {
-    return ComplexSign(Sign::FiniteStrictlyPositive(), Sign::Zero());
+  constexpr static ComplexProperties RealFiniteStrictlyPositive() {
+    return ComplexProperties(Sign::FiniteStrictlyPositive(), Sign::Zero());
   }
-  constexpr static ComplexSign RealStrictlyPositiveInteger() {
-    return ComplexSign(Sign::StrictlyPositiveInteger(), Sign::Zero());
+  constexpr static ComplexProperties RealStrictlyPositiveInteger() {
+    return ComplexProperties(Sign::StrictlyPositiveInteger(), Sign::Zero());
   }
-  constexpr static ComplexSign RealFiniteStrictlyPositiveInteger() {
-    return ComplexSign(Sign::FiniteStrictlyPositiveInteger(), Sign::Zero());
+  constexpr static ComplexProperties RealFiniteStrictlyPositiveInteger() {
+    return ComplexProperties(Sign::FiniteStrictlyPositiveInteger(),
+                             Sign::Zero());
   }
 
 #if POINCARE_TREE_LOG
@@ -301,6 +304,6 @@ class ComplexSign {
 };
 
 static_assert(sizeof(Sign) == sizeof(uint8_t));
-static_assert(sizeof(ComplexSign) == 2 * sizeof(uint8_t));
+static_assert(sizeof(ComplexProperties) == 2 * sizeof(uint8_t));
 
 }  // namespace Poincare

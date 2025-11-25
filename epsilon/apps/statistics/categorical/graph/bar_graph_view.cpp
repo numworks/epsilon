@@ -1,0 +1,153 @@
+#include "bar_graph_view.h"
+
+namespace Statistics::Categorical {
+
+void BarGraphView::updateSelectedBar(int category, int group) {
+  m_contentView.m_selectedCategory = category;
+  m_contentView.m_selectedGroup = group;
+  reload();
+  scrollToSelectedBar();
+}
+
+void BarGraphView::scrollToSelectedBar() {
+  KDRect categoryFrame =
+      m_contentView.frameForActiveCategory(m_contentView.m_selectedCategory);
+  // Remove the width of the other bars
+  categoryFrame.setSize(
+      KDSize(categoryFrame.width() -
+                 ContentView::k_barWidth *
+                     (m_contentView.m_store->numberOfActiveGroups() - 1),
+             categoryFrame.height()));
+  // Move to the selected bar
+  KDRect barFrame = categoryFrame.translatedBy(KDPoint(
+      ContentView::k_barWidth * m_contentView.m_store->indexInActiveGroups(
+                                    m_contentView.m_selectedGroup),
+      0));
+  // Scroll to the bar with margin
+  scrollToContentRect(barFrame.paddedWith(ContentView::k_horizontalMargin));
+}
+
+/* ContentView */
+
+void BarGraphView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
+  ctx->fillRect(rect, KDColorWhite);
+  // Draw axis
+  ctx->drawLine(KDPoint(0, bounds().height() - k_legendHeight - k_axisHeight),
+                KDPoint(bounds().width(),
+                        bounds().height() - k_legendHeight - k_axisHeight),
+                KDColorBlack);
+  // Draw categories
+  float maxBarValue = m_store->getMaxTableValue();
+  for (int category = 0; category < m_store->currentDimension().row;
+       ++category) {
+    if (m_store->isCategoryActive(category)) {
+      drawCategory(ctx, frameForActiveCategory(category), category,
+                   maxBarValue);
+    }
+  }
+}
+
+void BarGraphView::ContentView::drawCategory(KDContext* ctx, KDRect rect,
+                                             int category,
+                                             float maxValue) const {
+  KDCoordinate xOffset = rect.x();
+  KDCoordinate yOffset = rect.y();
+
+  // Draw legend
+  char buffer[sizeof(Store::Label)];
+  m_store->getCategoryName(category, buffer, sizeof(buffer));
+  ctx->alignAndDrawString(buffer, KDPoint(xOffset, yOffset + k_maxBarHeight),
+                          KDSize(rect.width(), k_legendHeight),
+                          {.style = {.font = KDFont::Size::Small},
+                           .horizontalAlignment = KDGlyph::k_alignCenter,
+                           .verticalAlignment = KDGlyph::k_alignCenter});
+
+  // Draw bars
+  if (maxValue == 0.0f) {
+    // All bars have a height of 0
+    return;
+  }
+  KDCoordinate centerOffset =
+      (rect.width() - m_store->numberOfActiveGroups() * k_barWidth) / 2;
+  xOffset += centerOffset;
+  for (int group = 0; group < m_store->currentDimension().col; ++group) {
+    if (!m_store->isGroupActive(group)) {
+      continue;
+    }
+    // Draw bar
+    float value = m_store->getValue(group, category);
+    KDCoordinate barHeight = (value / maxValue) * k_maxBarHeight;
+    KDRect barRect(xOffset, yOffset + k_maxBarHeight - barHeight, k_barWidth,
+                   barHeight);
+    ctx->fillRect(barRect, m_isSelected && (category == m_selectedCategory &&
+                                            group == m_selectedGroup)
+                               ? k_selectedColor
+                               : Escher::Palette::DataColorLight[group]);
+    // Draw borders
+    KDColor borderColor = Escher::Palette::DataColor[group];
+    if (barRect.width() > 0 && barRect.height() > 0) {
+      // Left
+      ctx->fillRect(KDRect(xOffset, yOffset + k_maxBarHeight - barHeight,
+                           k_border, barHeight),
+                    borderColor);
+      // Top
+      ctx->fillRect(KDRect(xOffset, yOffset + k_maxBarHeight - barHeight,
+                           k_barWidth, k_border),
+                    borderColor);
+      // Right
+      ctx->fillRect(
+          KDRect(xOffset + k_barWidth - k_border,
+                 yOffset + k_maxBarHeight - barHeight, k_border, barHeight),
+          borderColor);
+    }
+    xOffset += k_barWidth;
+  }
+}
+
+KDRect BarGraphView::ContentView::frameForActiveCategory(int category) const {
+  assert(m_store->isCategoryActive(category));
+  KDCoordinate categoryWidth = categoriesWidth();
+  /* Add an horizontal margin on the left, between categories and on the right.
+   * Add a vertical margin at the top. */
+  return KDRect(
+      k_horizontalMargin + m_store->indexInActiveCategories(category) *
+                               (k_horizontalMargin + categoryWidth),
+      k_verticalMargin, categoryWidth, bounds().height() - k_verticalMargin);
+}
+
+KDCoordinate BarGraphView::ContentView::categoriesWidth() const {
+  // Compute the max width of category names
+  KDCoordinate maxNameWidth = 0;
+  for (int category = 0; category < m_store->currentDimension().row;
+       ++category) {
+    if (!m_store->isCategoryActive(category)) {
+      continue;
+    }
+    char buffer[sizeof(Store::Label)];
+    m_store->getCategoryName(category, buffer, sizeof(buffer));
+    KDCoordinate nameWidth =
+        KDFont::Font(KDFont::Size::Small)->stringSize(buffer).width();
+    if (nameWidth > maxNameWidth) {
+      maxNameWidth = nameWidth;
+    }
+  }
+
+  // Compute the total width of all group bars
+  KDCoordinate barsWidth = k_barWidth * m_store->numberOfActiveGroups();
+
+  return std::max(maxNameWidth, barsWidth);
+}
+
+KDSize BarGraphView::ContentView::minimalSizeForOptimalDisplay() const {
+  /* There is an horizontal margin on the left of each category and one at the
+   * end.
+   * Width should be at least as long as the display width so that the content
+   * takes all the available space. */
+  KDCoordinate width = (categoriesWidth() + k_horizontalMargin) *
+                           m_store->numberOfActiveCategories() +
+                       k_horizontalMargin;
+  KDCoordinate displayWidth = Ion::Display::Width;
+  return KDSize(std::max(width, displayWidth), k_totalHeight);
+}
+
+}  // namespace Statistics::Categorical

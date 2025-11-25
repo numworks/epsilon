@@ -65,8 +65,11 @@ class Store {
   bool isGroupEmpty(int col) const;
   bool hasActiveGroups() const;
   int numberOfActiveGroups() const;
+  int indexInActiveGroups(int group) const;
 
   bool isCategoryActive(int row) const;
+  int numberOfActiveCategories() const;
+  int indexInActiveCategories(int category) const;
 
   // Data
   float getValue(int col, int row) const {
@@ -76,6 +79,7 @@ class Store {
   }
   void setValue(float data, int col, int row);
   bool authorizedValue(float data) { return data >= 0; }
+  float getMaxTableValue() const;
 
   // Labels
   void getGroupName(int col, char* buffer, int bufferSize) const;

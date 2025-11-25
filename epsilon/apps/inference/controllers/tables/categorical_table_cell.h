@@ -143,10 +143,6 @@ class DoubleColumnTableCell
   }
 
   // DataSource
-  int numberOfRows() const override {
-    return m_numberOfRows + numberOfHeaderRows();
-  }  // Add header
-  int numberOfColumns() const override { return m_numberOfColumns; }
   int reusableCellCount(int type) const override;
   Escher::HighlightCell* reusableCell(int i, int type) override;
   int typeAtLocation(int column, int row) const override {
@@ -170,6 +166,9 @@ class DoubleColumnTableCell
  protected:
   int numberOfHeaderRows() const override { return 1; }
   int numberOfHeaderColumns() const override { return 0; }
+
+  int innerNumberOfRows() const override { return m_numberOfRows; }
+  int innerNumberOfColumns() const override { return m_numberOfColumns; }
 
  private:
   KDCoordinate nonMemoizedColumnWidth(int column) override {

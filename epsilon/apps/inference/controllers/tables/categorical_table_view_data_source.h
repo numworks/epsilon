@@ -32,10 +32,10 @@ class CategoricalTableViewDataSource : public Escher::TableViewDataSource {
     return column > 0 ? k_borderBetweenColumns : 0;
   }
 
-  int numberOfRows() const override {
+  int numberOfRows() const override final {
     return innerNumberOfRows() + numberOfHeaderRows();
   }
-  int numberOfColumns() const override {
+  int numberOfColumns() const override final {
     return innerNumberOfColumns() + numberOfHeaderColumns();
   }
 
@@ -50,8 +50,8 @@ class CategoricalTableViewDataSource : public Escher::TableViewDataSource {
 
   KDCoordinate nonMemoizedRowHeight(int row) override { return k_rowHeight; }
 
-  virtual int innerNumberOfRows() const { return numberOfRows(); }
-  virtual int innerNumberOfColumns() const { return numberOfColumns(); }
+  virtual int innerNumberOfRows() const = 0;
+  virtual int innerNumberOfColumns() const = 0;
 
   // Header rows are column titles
   virtual int numberOfHeaderRows() const = 0;

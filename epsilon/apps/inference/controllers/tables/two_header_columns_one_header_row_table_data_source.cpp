@@ -76,4 +76,19 @@ void TwoHeaderColumnsOneHeaderRowTableDataSource::fillCellForLocation(
   static_cast<EvenOddCell*>(cell)->setEven(row % 2 == 0);
 }
 
+void TwoHeaderColumnsOneHeaderRowTableDataSource::fillHeaderCellForLocation(
+    Escher::HighlightCell* cell, int column, int row) {
+  if (row < numberOfHeaderRows()) {
+    fillColumnTitleForLocation(cell, column - numberOfHeaderColumns());
+  } else {
+    assert(column < numberOfHeaderColumns());
+    if (column == 0) {
+      fillRowTitleForLocation(cell, row - numberOfHeaderRows());
+    } else {
+      assert(column == 1);
+      fillRowSymbolForLocation(cell, row - numberOfHeaderRows());
+    }
+  }
+}
+
 }  // namespace Inference

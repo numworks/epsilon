@@ -74,40 +74,38 @@ constexpr static const char* SymbolAtRow(int row) {
   }
 }
 
-void ResultsBetweenWithinTableCell::fillHeaderCellForLocation(
-    Escher::HighlightCell* cell, int column, int row) {
+void ResultsBetweenWithinTableCell::fillColumnTitleForLocation(
+    Escher::HighlightCell* cell, int innerColumn) {
+  assert(innerColumn >= 0 && innerColumn < innerNumberOfColumns());
   headerCellType* myCell = static_cast<headerCellType*>(cell);
-
-  if (row < numberOfHeaderRows()) {
-    int innerColumnIndex = column - numberOfHeaderColumns();
-    assert(innerColumnIndex <= k_numberOfInnerColumns);
-    // Column title
-    switch (innerColumnIndex) {
-      case 0:
-        myCell->setText(I18n::translate(I18n::Message::Between));
-        break;
-      case 1:
-        myCell->setText(I18n::translate(I18n::Message::Within));
-        break;
-      default:
-        OMG::unreachable();
-    }
-    myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-  } else {
-    assert(column < numberOfHeaderColumns());
-    if (column == 0) {
-      // Row title
-      myCell->setText(HeaderAtRow(row - numberOfHeaderRows()));
-      myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-      myCell->setTextColor(KDColorBlack);
-    } else {
-      assert(column == 1);
-      // Row symbol
-      myCell->setText(SymbolAtRow(row - numberOfHeaderRows()));
-      myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-      myCell->setTextColor(Palette::GrayDark);
-    }
+  switch (innerColumn) {
+    case 0:
+      myCell->setText(I18n::translate(I18n::Message::Between));
+      break;
+    case 1:
+      myCell->setText(I18n::translate(I18n::Message::Within));
+      break;
+    default:
+      OMG::unreachable();
   }
+  myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+}
+void ResultsBetweenWithinTableCell::fillRowTitleForLocation(
+    Escher::HighlightCell* cell, int innerRow) {
+  assert(innerRow >= 0 && innerRow < innerNumberOfRows());
+  headerCellType* myCell = static_cast<headerCellType*>(cell);
+  myCell->setText(HeaderAtRow(innerRow));
+  myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+  myCell->setTextColor(KDColorBlack);
+}
+
+void ResultsBetweenWithinTableCell::fillRowSymbolForLocation(
+    Escher::HighlightCell* cell, int innerRow) {
+  assert(innerRow >= 0 && innerRow < innerNumberOfRows());
+  headerCellType* myCell = static_cast<headerCellType*>(cell);
+  myCell->setText(SymbolAtRow(innerRow));
+  myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+  myCell->setTextColor(Palette::GrayDark);
 }
 
 void ResultsBetweenWithinTableCell::fillInnerCellForLocation(

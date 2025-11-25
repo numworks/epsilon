@@ -42,8 +42,15 @@ class TwoHeaderColumnsOneHeaderRowTableDataSource
   virtual Escher::HighlightCell* reusableHeaderCell(int i) = 0;
   virtual Escher::HighlightCell* reusableInnerCell(int i) = 0;
 
-  virtual void fillHeaderCellForLocation(Escher::HighlightCell* cell,
-                                         int column, int row) = 0;
+  void fillHeaderCellForLocation(Escher::HighlightCell* cell, int column,
+                                 int row);
+
+  virtual void fillColumnTitleForLocation(Escher::HighlightCell* cell,
+                                          int innerColumn) = 0;
+  virtual void fillRowTitleForLocation(Escher::HighlightCell* cell,
+                                       int innerRow) = 0;
+  virtual void fillRowSymbolForLocation(Escher::HighlightCell* cell,
+                                        int innerRow) = 0;
 
   virtual void fillInnerCellForLocation(Escher::HighlightCell* cell,
                                         int innerColumn, int innerRow) = 0;

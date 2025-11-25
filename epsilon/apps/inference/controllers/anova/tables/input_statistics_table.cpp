@@ -64,38 +64,37 @@ constexpr static const char* SymbolAtRow(int row) {
   }
 }
 
-void InputStatisticsTable::fillHeaderCellForLocation(
-    Escher::HighlightCell* cell, int column, int row) {
+void InputStatisticsTable::fillColumnTitleForLocation(
+    Escher::HighlightCell* cell, int innerColumn) {
+  assert(innerColumn >= 0 && innerColumn < innerNumberOfColumns());
   headerCellType* myCell = static_cast<headerCellType*>(cell);
-  if (row < numberOfHeaderRows()) {
-    int innerColumnIndex = relativeColumn(column);
-    // Column title
-    OMG::String<k_groupTitleBufferSize> groupTitle =
-        GroupTitle(innerColumnIndex);
-    myCell->setText(groupTitle.data());
-    myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-    myCell->setTextColor(KDColorBlack);
-    if (innerColumnIndex == innerNumberOfColumns() - 1 &&
-        innerColumnIndex < k_numberOfInnerColumns - 1) {
-      /* The last header has its title grayed out, except if the column is the
-       * last possible column. */
-      myCell->setTextColor(Palette::GrayDark);
-    }
-  } else {
-    assert(column < numberOfHeaderColumns());
-    if (column == 0) {
-      // Row title
-      myCell->setText(HeaderAtRow(row - numberOfHeaderRows()));
-      myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-      myCell->setTextColor(KDColorBlack);
-    } else {
-      assert(column == 1);
-      // Row symbol
-      myCell->setText(SymbolAtRow(row - numberOfHeaderRows()));
-      myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-      myCell->setTextColor(Palette::GrayDark);
-    }
+  OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(innerColumn);
+  myCell->setText(groupTitle.data());
+  myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+  myCell->setTextColor(KDColorBlack);
+  if (innerColumn == innerNumberOfColumns() - 1 &&
+      innerColumn < k_numberOfInnerColumns - 1) {
+    /* The last header has its title grayed out, except if the column is the
+     * last possible column. */
+    myCell->setTextColor(Palette::GrayDark);
   }
+}
+void InputStatisticsTable::fillRowTitleForLocation(Escher::HighlightCell* cell,
+                                                   int innerRow) {
+  assert(innerRow >= 0 && innerRow < innerNumberOfRows());
+  headerCellType* myCell = static_cast<headerCellType*>(cell);
+  myCell->setText(HeaderAtRow(innerRow));
+  myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
+  myCell->setTextColor(KDColorBlack);
+}
+
+void InputStatisticsTable::fillRowSymbolForLocation(Escher::HighlightCell* cell,
+                                                    int innerRow) {
+  assert(innerRow >= 0 && innerRow < innerNumberOfRows());
+  headerCellType* myCell = static_cast<headerCellType*>(cell);
+  myCell->setText(SymbolAtRow(innerRow));
+  myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
+  myCell->setTextColor(Palette::GrayDark);
 }
 
 void InputStatisticsTable::fillInnerCellForLocation(Escher::HighlightCell* cell,

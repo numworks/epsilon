@@ -630,17 +630,30 @@ Zoom<T>::NormalizationData Zoom<T>::computeNormalizationData(
   data.normalRatio = normalRatio(xAxis);
   data.normalizedLength = orthogonalSaneRangeLength * data.normalRatio;
 
-  /* - The normalized range makes up for at least 15% of the range. This is to
+  /* The normalized range makes up for at least 15% of the range. This is to
    * prevent that, by shrinking the range, the other axis becomes too long
-   * for the remaining visible part of the curve.
-   * - The normalized range must fit the interesting range. We only count the
+   * for the remaining visible part of the curve. */
+  data.lowerBound = data.initialLength * Zoom<T>::k_minNormalizationRatio;
+
+  /* The normalized range must fit the interesting range. We only count the
    * interesting range for this part as discarding the part that comes from
    * the magnitude is not an issue. */
   T interestingLength = xAxis ? m_interestingRange.x()->length()
                               : m_interestingRange.y()->length();
-  data.lowerBound = std::max(
-      data.initialLength * Zoom<T>::k_minNormalizationRatio,
-      std::isnan(interestingLength) ? static_cast<T>(0.) : interestingLength);
+  if (!std::isnan(interestingLength)) {
+    data.lowerBound = std::max(interestingLength, data.lowerBound);
+  }
+
+  /* If the other axis range is forced, the normalized range must fit the
+   * magnitude range, otherwise it could crop too many values. */
+  T magnitudeLength =
+      xAxis ? m_magnitudeRange.x()->length() : m_magnitudeRange.y()->length();
+  bool otherAxisIsForced =
+      xAxis ? !m_forcedRange.y()->isNan() : !m_forcedRange.x()->isNan();
+  if (otherAxisIsForced && !std::isnan(magnitudeLength)) {
+    data.lowerBound = std::max(magnitudeLength, data.lowerBound);
+  }
+
   /* The range (interesting + magnitude) cannot be stretched by more than a
    * max ratio (i.e. the curve does not appear squeezed). */
   data.upperBound = data.initialLength * maxNormalizationRatio(xAxis);

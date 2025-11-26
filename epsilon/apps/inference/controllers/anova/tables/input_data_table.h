@@ -94,6 +94,7 @@ class InputDataTable
   int relativeColumn(int column) const override {
     return column - numberOfHeaderColumns();
   }
+  int relativeRow(int row) const override { return row - numberOfHeaderRows(); }
 
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int innerColumn,
                                 int innerRow);

@@ -67,6 +67,12 @@ class ResultGoodnessContributionsTable
   }
   int innerNumberOfColumns() const override { return 3; }
 
+  // CategoricalTableViewDataSource
+  int relativeColumn(int column) const override {
+    return column - numberOfHeaderColumns();
+  }
+  int relativeRow(int row) const override { return row - numberOfHeaderRows(); }
+
  private:
   constexpr static I18n::Message k_titles[] = {I18n::Message::Observed,
                                                I18n::Message::Expected,

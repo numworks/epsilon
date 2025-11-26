@@ -60,6 +60,12 @@ class ResultsHomogeneityTable
     return m_inference->numberOfDataColumns() + (m_mode == Mode::ExpectedValue);
   }
 
+  // CategoricalTableViewDataSource
+  int relativeColumn(int column) const override {
+    return column - numberOfHeaderColumns();
+  }
+  int relativeRow(int row) const override { return row - numberOfHeaderRows(); }
+
  private:
   Escher::HighlightCell* reusableHeaderCell(int i) override {
     return dynamicCell(i);

@@ -1,4 +1,5 @@
 #include <poincare/numeric_solver/zoom.h>
+#include <poincare/range.h>
 #include <poincare/src/expression/approximation.h>
 #include <string.h>
 
@@ -649,13 +650,25 @@ Range2D<T> Zoom<T>::prettyRange(bool forceNormalization) const {
       computeNormalizationData<T>(m_normalRatio, saneRange.y(), saneRange.x(),
                                   m_interestingRange.y(), yRangeIsForced);
 
+  // Checks if xRange is just -defaultHalfLength to defaultHalfLength
+  bool xIsDefaultRange = !xRangeIsForced && (m_interestingRange.x()->isNan() ||
+                                             m_interestingRange.x()->length() <
+                                                 Range1D<T>::k_minLength);
+  // Checks if normalization on x axis would shrink it
   bool xWillShrink = xData.normalizedLength < xData.initialLength;
+
   /* Prioritize changes on the axis that
    * - is not forced
    * - will be expanded by normalization. We prefer expanding ranges rather
    *   than shrinking them, as shrinking might cut out interesting parts of
-   *   the curve. */
-  bool prioritizeYChanges = xRangeIsForced || (xWillShrink && !yRangeIsForced);
+   *   the curve.
+   * - is not already at default range. If X is just [-10;10] because only 0
+   *   or 1 points were fitted, we prefer adjusting Y to avoid expanding X again
+   *   when it was already expanded to the default range. This apply for example
+   *   when autozooming on x^2.
+   */
+  bool prioritizeYChanges =
+      xRangeIsForced || (xWillShrink && !yRangeIsForced) || xIsDefaultRange;
 
   NormalizationData<T>& primary = prioritizeYChanges ? yData : xData;
   NormalizationData<T>& secondary = prioritizeYChanges ? xData : yData;

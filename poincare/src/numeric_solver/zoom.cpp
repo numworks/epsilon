@@ -617,9 +617,11 @@ NormalizationData<T> computeNormalizationData(
    * - The normalized range must fit the interesting range. We only count the
    * interesting range for this part as discarding the part that comes from
    * the magnitude is not an issue. */
-  data.lowerBound =
-      std::max(data.initialLength * Zoom<T>::k_minNormalizationRatio,
-               interestingRange->length());
+  T interestingLength = std::isnan(interestingRange->length())
+                            ? static_cast<T>(0.)
+                            : interestingRange->length();
+  data.lowerBound = std::max(
+      data.initialLength * Zoom<T>::k_minNormalizationRatio, interestingLength);
   /* The range (interesting + magnitude) cannot be stretched by more than 2.22
    * times the normalized range (i.e. the curve does not appear squeezed). */
   data.upperBound = data.initialLength * Zoom<T>::k_maxNormalizationRatio;

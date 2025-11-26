@@ -24,6 +24,10 @@ class Rational final {
   static T To(const Tree* e);
   static IntegerHandler Numerator(const Tree* e);
   static IntegerHandler Denominator(const Tree* e);
+  static inline bool IsNonIntegerRational(const Tree* e) {
+    return e->isRational() && !e->isInteger();
+  }
+
   static inline Poincare::Properties Properties(const Tree* e) {
     return Poincare::Properties(
         Poincare::Sign(e->isZero(), e->isStrictlyPositiveRational(),

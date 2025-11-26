@@ -77,6 +77,12 @@ class ResultsStatisticsTable
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int innerColumn,
                                 int innerRow) override;
 
+  // CategoricalTableViewDataSource
+  int relativeColumn(int column) const override {
+    return column - numberOfHeaderColumns();
+  }
+  int relativeRow(int row) const override { return row - numberOfHeaderRows(); }
+
  private:
   CategoricalController* categoricalController() override;
 

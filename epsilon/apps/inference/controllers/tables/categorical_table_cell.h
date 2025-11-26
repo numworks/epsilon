@@ -62,6 +62,9 @@ class CategoricalTableCell : public Escher::HighlightCell,
 
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
+  virtual int relativeColumn(int column) const = 0;
+  virtual int relativeRow(int row) const = 0;
+
  private:
   int numberOfSubviews() const override { return 1; }
   Escher::View* subviewAtIndex(int i) override {
@@ -104,8 +107,6 @@ class InputCategoricalTableCell : public CategoricalTableCell,
     return relativeColumn(column) >= 0;
   }
 
-  virtual int relativeColumn(int column) const = 0;
-  int relativeRow(int row) { return row - 1; }
   bool deleteSelectedValue();
   const InputTable* constTableModel() const {
     return const_cast<InputCategoricalTableCell*>(this)->tableModel();
@@ -178,6 +179,7 @@ class DoubleColumnTableCell
   int relativeColumn(int column) const override {
     return column - numberOfHeaderColumns();
   }
+  int relativeRow(int row) const override { return row - numberOfHeaderRows(); }
   virtual Escher::HighlightCell* reusableHeaderCell(int index) = 0;
 };
 

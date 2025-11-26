@@ -309,9 +309,9 @@ void Zoom<T>::fitConditions(const Internal::Tree* piecewise,
 template <typename T>
 void Zoom<T>::fitMagnitude(Function2D<T> f, const void* model,
                            bool cropOutliers, bool vertical) {
-  /* We compute the log mean value of the expression, which gives an idea of the
-   * order of magnitude of the function, to crop the Y axis. */
-  constexpr T aboutZero = Solver<T>::k_minimalAbsoluteStep;
+  /* We compute the log mean value of the expression (translated by ±1), which
+   * gives an idea of the order of magnitude of the function, to crop the Y
+   * axis. */
   Range1D<T> sample;
   T nSum = static_cast<T>(0.), pSum = static_cast<T>(0.);
   int nPop = 0, pPop = 0;
@@ -330,10 +330,11 @@ void Zoom<T>::fitMagnitude(Function2D<T> f, const void* model,
       continue;
     }
     T yAbs = std::fabs(y);
-    if (!(yAbs > aboutZero)) {  // Negated to account for NANs
+    if (std::isnan(yAbs)) {
       continue;
     }
-    T yLog = std::log(yAbs);
+    // Translate by one to mitigate the effect of small values.
+    T yLog = std::log(yAbs + static_cast<T>(1.));
     if (y < static_cast<T>(0.)) {
       nSum += yLog;
       nPop++;
@@ -346,15 +347,24 @@ void Zoom<T>::fitMagnitude(Function2D<T> f, const void* model,
   Range1D<T>* magnitudeRange =
       vertical ? m_magnitudeRange.x() : m_magnitudeRange.y();
   T yMax = sample.max();
+  /* Formula: mean = e^(logMean + 1) - 1
+   * - We add 1 inside the exp (i.e. mulitply by e) so that linear function y=x
+   * has a mean of the same order of magnitude as its maximum.
+   * (Geometric mean of y=x on [0; N] is N/e)
+   * - We remove 1 outside the exponential to compensate for the earlier
+   * translation of +1
+   */
   if (pPop > 0) {
     assert(cropOutliers);
-    yMax = std::min(yMax, std::exp(pSum / pPop + static_cast<T>(1.)));
+    yMax = std::min(
+        yMax, std::exp(pSum / pPop + static_cast<T>(1.)) - static_cast<T>(1.));
   }
   magnitudeRange->extend(yMax, m_maxFloat);
   T yMin = sample.min();
   if (nPop > 0) {
     assert(cropOutliers);
-    yMin = std::max(yMin, -std::exp(nSum / nPop + static_cast<T>(1.)));
+    yMin = std::max(
+        yMin, -std::exp(nSum / nPop + static_cast<T>(1.)) + static_cast<T>(1.));
   }
   magnitudeRange->extend(yMin, m_maxFloat);
 }

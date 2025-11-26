@@ -20,11 +20,6 @@ void abort() {
 #endif
 }
 
-void exit(int code) {
-  while (1) {
-  }
-}
-
 void __attribute__((noinline)) start() {
   Ion::Device::Init::configureRAM();
   Ion::Init();

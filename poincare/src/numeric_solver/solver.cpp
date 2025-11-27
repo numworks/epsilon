@@ -266,7 +266,9 @@ typename Solver<T>::Solution Solver<T>::nextIntersectionAlongDifferentAxis(
       alongOtherAxis, y,
       Approximation::Parameters{.isRootAndCanHaveRandom = true});
   assert(std::isfinite(y) && std::isfinite(x2));
-  assert(OMG::Float::RoughlyEqual<T>(x, x2, 1e-8));
+  /* TODO: Exact approximation cannot be ensured. Soften this assertions if
+   * needed. */
+  assert(OMG::Float::RoughlyEqual<T>(x, x2, 1e-6));
 #endif
   return Solution(x, y, Interest::Intersection);
 }

@@ -55,8 +55,9 @@ double AreaBetweenCurvesGraphController::cursorNextStep(
       App::app()
           ->graphController()
           ->pointsOfInterestForRecord(selectedRecord())
+          // Area between curves only handle functions with one subCurve
           ->firstPointInDirection(position, nextSnap, NAN, false,
-                                  Solver<double>::Interest::Intersection)
+                                  Solver<double>::Interest::Intersection, 0)
           .xy();
   if (std::isfinite(nextIntersection.x())) {
     return nextIntersection.x();

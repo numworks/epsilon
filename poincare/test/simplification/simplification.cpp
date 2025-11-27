@@ -538,7 +538,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(6)", "ln(2)+ln(3)");
   simplifies_to("log(6)", "log(2)+log(3)");
   simplifies_to("ln(6^2)", "2×ln(2)+2×ln(3)");
-  simplifies_to("ln(1/999999)", "-(3×ln(3)+ln(7)+ln(11)+ln(13)+ln(37))");
+  simplifies_to("ln(1/999999)", "-3×ln(3)-ln(7)-ln(11)-ln(13)-ln(37)");
   simplifies_to("300×ln(2)", "300×ln(2)");
   simplifies_to("ln(ln(25))", "ln(2)+ln(ln(5))");
   simplifies_to("log(log(25))", "log(log(5))+log(2)");

@@ -176,9 +176,9 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
     case Type::Mult: {
       result += GetAddMultMetric(e);
       if (willBeBeautified) {
-        // Ignore cost of multiplication in (-A), unless it's (-1)*(A+B)
+        // Ignore cost of multiplication in (-A) if A is a simple expression
         if (e->child(0)->isMinusOne() && e->numberOfChildren() == 2 &&
-            !e->child(1)->isAdd()) {
+            (!e->child(1)->isNAry())) {
           assert(result == GetAddMultMetric(e));
           result = 0.f;
         }
@@ -238,7 +238,6 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
           PatternMatching::Match(
               e, KAdd(KA_s, KMult(KB, KC), KD_s, KMult(KB, KE), KF_s), &ctx)) {
         /* Ignore cost of having developed B*(C+E) into B*C + B*E when B:
-         * - is not minus one
          * - is not a rational
          * - is not the inverse of an expression
          * - is small enough (<= k_defaultMetric)
@@ -249,7 +248,7 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
          * We can bound M(B) with k_defaultMetric (otherwise contracted form
          * will be preferred). */
         const Tree* factor = ctx.getTree(KB);
-        if (!factor->isMinusOne() && !Rational::IsNonIntegerRational(factor) &&
+        if (!Rational::IsNonIntegerRational(factor) &&
             !(factor->isPow() && factor->child(1)->isMinusOne())) {
           result -= GetAddMultMetric(2);
           result -= k_defaultMetric;

@@ -164,9 +164,7 @@ class Zoom {
   T normalRatio(bool xAxis) const {
     return xAxis ? 1 / m_normalRatio : m_normalRatio;
   }
-  /* For Epsilon's display ratio ~(53:100) this returns:
-   * For X axis: 1.618 / sqrt(0.53) ~ 2.22
-   * For Y axis: 1.618 * sqrt(0.53) ~ 1.18 */
+
   T maxNormalizationRatio(bool xAxis) const;
 
   struct NormalizationData {

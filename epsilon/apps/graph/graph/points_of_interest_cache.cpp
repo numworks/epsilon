@@ -114,7 +114,8 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
     if (direction * xEq > direction * end - (!stretch * margin)) {
       break;
     }
-    if (PointFitInterest(p, interest) && p.subCurveIndex == subCurveIndex) {
+    if (PointFitInterest(p, interest) &&
+        ((subCurveIndex == -1) || (p.subCurveIndex == subCurveIndex))) {
       /* Select in priority the reached discontinuity point: if the point is an
        * unreached discontinuity, check if there is a reached discontinuity at
        * the same abscissa. */
@@ -337,7 +338,7 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
           static_cast<uint32_t>(ctx->otherRecord),
           Solver<double>::Interest::Intersection,
           ctx->model()->isAlongY(),
-          0,
+          ctx->subCounter1,
       };
     }
   }

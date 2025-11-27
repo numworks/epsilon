@@ -36,12 +36,13 @@ class PointsOfInterestCache {
   bool computeNextStep(bool allowUserInterruptions);
 
   /* Use true [alongX] if next interest point should be found along the X axis.
-   * Otherwise, the abscissa is used (which can be alongY on some functions). */
+   * Otherwise, the abscissa is used (which can be alongY on some functions).
+   * Use -1 [subCurveIndex] if all subCurves should be considered. */
   Poincare::PointOfInterest firstPointInDirection(
       double start, double end, double y, bool stretch,
       Poincare::Solver<double>::Interest interest =
           Poincare::Solver<double>::Interest::None,
-      int subCurveIndex = 0, bool alongX = false);
+      int subCurveIndex = -1, bool alongX = false);
   bool hasInterestAtCoordinates(
       double x, double y,
       Poincare::Solver<double>::Interest interest =

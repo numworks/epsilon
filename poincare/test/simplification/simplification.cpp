@@ -525,6 +525,7 @@ QUIZ_CASE(pcj_simplification_advanced) {
   // Maybe "(x+1/2)/3" ?
   simplifies_to("x/3+1/6", "x/3+1/6");
   simplifies_to("-(-5+√(29))/2", "(5-√(29))/2");
+  simplifies_to("4×π/3+5×√(2)/3", "(4×π+5×√(2))/3");
 }
 
 QUIZ_CASE(pcj_simplification_logarithm) {

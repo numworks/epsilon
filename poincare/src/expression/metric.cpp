@@ -182,6 +182,11 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
           assert(result == GetAddMultMetric(e));
           result = 0.f;
         }
+        // Reduce cost of multiplication by an integer ("n*A")
+        else if (e->child(0)->isInteger()) {
+          assert(result == GetAddMultMetric(e));
+          result = result - 1.f / 3.f;
+        }
         /* Trigonometry with complexes is beautified into hyperbolic
          * trigonometry (cosh, sinh, asinh and atanh)*/
         // TODO: cost difference between trig and hyperbolic trig
@@ -194,7 +199,6 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
             PatternMatching::Match(
                 e, KMult(KA_s, KATanRad(KMult(KB_s, i_e)), KC_s, i_e), &ctx)) {
           if (ctx.getNumberOfTrees(KB) == 1) {
-            assert(result == GetAddMultMetric(e));
             result = 0.f;
           }
           result +=

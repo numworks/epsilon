@@ -593,16 +593,17 @@ void editRange(Range1D<T>* rangeToEdit, T newLength,
 
 template <typename T>
 T Zoom<T>::maxNormalizationRatio(bool xAxis) const {
-  /* Golden ratio. If the screen is 1:1, the curve should take up at least
-   * 1/φ (≈61.8%) of the screen after normalization. */
-  constexpr T k_defaultMaxNormalizationRatio = static_cast<T>(1.618033);
+  /* If the screen is 1:1, the curve should take up at least
+   * 50% of the screen on each axis after normalization. */
+  constexpr T k_defaultMaxNormalizationRatio = static_cast<T>(2);
   /* Make the ratio depend on the normal ratio to make it consistent when the
    * aspect ratio is extended in one direction.
    * We use the square root of the normal ratio so that the ratios are
    * symmetric:
-   * - If the window is 1:1, both ratios are 1.618
-   * - If the window is 1:2, the X ratio is 2.28 and the Y ratio is 1.144
-   * - If the window is 2:1, the X ratio is 1.144 and the Y ratio is 2.28
+   * - If the window is 1:1, both ratios are 2
+   * - If the window is 1:2, the X ratio is 2.82 and the Y ratio is 1.414
+   * (1:2 is more or less the display of Epsilon)
+   * - If the window is 2:1, the X ratio is 1.414 and the Y ratio is 2.82
    */
   T ratio = k_defaultMaxNormalizationRatio * std::sqrt(normalRatio(xAxis));
   /* Clamp to avoid extreme ratios. The value defaultRatio^3 is chosen because

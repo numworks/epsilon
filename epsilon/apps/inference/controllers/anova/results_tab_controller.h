@@ -96,7 +96,7 @@ class ResultsTabController : public InferenceController,
   bool handleEvent(Ion::Events::Event event) override;
 
   KDColor tabBackgroundColor() const override {
-    return Escher::Palette::GrayDark;
+    return Escher::Palette::GrayDarkMiddle;
   }
 
  private:

@@ -21,7 +21,7 @@ void BarBannerView::drawRect(KDContext* ctx, KDRect rect) const {
 
 void BarBannerView::toggleSelection(bool isSelected) {
   m_isSelected = isSelected;
-  reload();
+  markWholeFrameAsDirty();
 }
 
 View* BarBannerView::subviewAtIndex(int index) {

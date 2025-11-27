@@ -16,7 +16,6 @@ class BarBannerView : public Shared::BannerView {
   BannerBufferTextView* relativeFrequencyView() { return &m_relativeFrequency; }
 
   void drawRect(KDContext* ctx, KDRect rect) const override;
-  void reload() override { markWholeFrameAsDirty(); }
   void toggleSelection(bool isSelected);
 
  private:

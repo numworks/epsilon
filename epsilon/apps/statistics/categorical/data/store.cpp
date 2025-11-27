@@ -86,7 +86,8 @@ int Store::indexInActiveGroups(int group) const {
 bool Store::isCategoryActive(int row) const {
   assert(0 <= row && row < k_maxNumberOfCategory);
   for (int col = 0; col < m_numberOfColumns; ++col) {
-    if (std::isfinite(m_table->m_data[col][row])) {
+    if (std::isfinite(m_table->m_data[col][row]) && isGroupActive(col)) {
+      // Value is considered active only if its group is active
       return true;
     }
   }

@@ -593,6 +593,7 @@ void editRange(Range1D<T>* rangeToEdit, T newLength,
 
 template <typename T>
 T Zoom<T>::maxNormalizationRatio(bool xAxis) const {
+  constexpr T k_defaultMaxNormalizationRatio = static_cast<T>(2.5);
   /* Make the ratio depend on the normal ratio to make it consistent when the
    * aspect ratio is extended in one direction.
    * We use the square root of the normal ratio so that the ratios are
@@ -601,23 +602,23 @@ T Zoom<T>::maxNormalizationRatio(bool xAxis) const {
    * - If the window is 1:4, the X ratio is 5 and the Y ratio is 1.25
    * - If the window is 4:1, the X ratio is 1.25 and the Y ratio is 5
    */
-  T ratio =
-      Zoom<T>::k_defaultMaxNormalizationRatio * std::sqrt(normalRatio(xAxis));
+  T ratio = k_defaultMaxNormalizationRatio * std::sqrt(normalRatio(xAxis));
   /* Clamp to avoid extreme ratios. The value defaultRatio^3 is chosen because
    * it's the symmetric of a ratio of 1.0 on the other axis.
    * If one of the max ratios is below 1, it means the normal ratio is above
    * defaultRatio^2, which mean the other max ratio is above defaultRatio^3.
    * */
-  constexpr T k_cubedMaxNormalizationRatio =
-      Zoom<T>::k_defaultMaxNormalizationRatio *
-      Zoom<T>::k_defaultMaxNormalizationRatio *
-      Zoom<T>::k_defaultMaxNormalizationRatio;
+  constexpr T k_cubedMaxNormalizationRatio = k_defaultMaxNormalizationRatio *
+                                             k_defaultMaxNormalizationRatio *
+                                             k_defaultMaxNormalizationRatio;
   return std::clamp(ratio, static_cast<T>(1.0), k_cubedMaxNormalizationRatio);
 }
 
 template <typename T>
 Zoom<T>::NormalizationData Zoom<T>::computeNormalizationData(
     bool xAxis, const Range2D<T>& saneRange) const {
+  constexpr T k_minNormalizationRatio = static_cast<T>(0.15);
+
   NormalizationData data;
 
   data.initialLength =
@@ -633,7 +634,7 @@ Zoom<T>::NormalizationData Zoom<T>::computeNormalizationData(
   /* The normalized range makes up for at least 15% of the range. This is to
    * prevent that, by shrinking the range, the other axis becomes too long
    * for the remaining visible part of the curve. */
-  data.lowerBound = data.initialLength * Zoom<T>::k_minNormalizationRatio;
+  data.lowerBound = data.initialLength * k_minNormalizationRatio;
 
   /* The normalized range must fit the interesting range. We only count the
    * interesting range for this part as discarding the part that comes from

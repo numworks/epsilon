@@ -161,8 +161,6 @@ class Zoom {
     return sanitize2DHelper(m_interestingRange);
   }
 
-  constexpr static T k_defaultMaxNormalizationRatio = static_cast<T>(2.5);
-  constexpr static T k_minNormalizationRatio = static_cast<T>(0.15);
   T normalRatio(bool xAxis) const {
     return xAxis ? 1 / m_normalRatio : m_normalRatio;
   }

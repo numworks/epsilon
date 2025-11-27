@@ -103,8 +103,8 @@ void BarGraphController::ContentView::selectNextActiveValue(int direction) {
         return;
       }
     }
-  } while (!m_store->isCategoryActive(nextCategory) ||
-           !m_store->isGroupActive(nextGroup));
+  } while (!m_store->isGroupActive(nextGroup) ||
+           !std::isfinite(m_store->getValue(nextGroup, nextCategory)));
 
   m_barGraphView.updateSelectedBar(nextCategory, nextGroup);
   updateBannerView();

@@ -4,12 +4,9 @@
 #include <ion/src/shared/init.h>
 #include <shared/boot/rt0.h>
 #include <shared/drivers/usb.h>
+#include <stdlib.h>
 
 #include "isr.h"
-
-extern "C" {
-void abort();
-}
 
 void abort() {
 #if DEBUG

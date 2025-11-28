@@ -1,4 +1,5 @@
 #include <poincare/function_properties/integral.h>
+#include <poincare/helpers/decimal.h>
 #include <poincare/prepared_function.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/degree.h>
@@ -67,22 +68,7 @@ SystemExpression SystemExpression::Builder(
 }
 
 SystemExpression SystemExpression::DecimalBuilderFromDouble(double value) {
-  // TODO: this is a workaround until we port old Decimal::Builder(double)
-  char buffer[PrintFloat::k_maxFloatCharSize];
-  PrintFloat::PrintFloat::ConvertFloatToText(
-      value, buffer, PrintFloat::k_maxFloatCharSize,
-      PrintFloat::k_maxFloatGlyphLength,
-      PrintFloat::k_maxNumberOfSignificantDigits,
-      Preferences::PrintFloatMode::Decimal);
-  assert(buffer[0] != 0);
-  Tree* layout = RackFromText(buffer);
-  assert(layout);
-  TreeRef expression = Parser::Parse(layout, EmptySymbolContext{});
-  // expression is only made of numbers and simple nodes, no need for contextes.
-  layout->removeTree();
-  ProjectionContext context = {};
-  Simplification::ProjectAndReduce(expression, &context);
-  return SystemExpression::Builder(static_cast<Tree*>(expression));
+  return SystemExpression::Builder(Poincare::DecimalBuilderFromDouble(value));
 }
 
 SystemExpression SystemExpression::RationalBuilder(int32_t numerator,

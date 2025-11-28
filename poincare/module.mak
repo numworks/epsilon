@@ -88,6 +88,7 @@ $(addprefix function_properties/, \
 ) \
 $(addprefix helpers/, \
   cas.cpp:-nopool \
+  decimal.cpp \
   expression_equal_sign.cpp:-nopool \
   layout.cpp \
   polynomial_pool.cpp:-nopool \

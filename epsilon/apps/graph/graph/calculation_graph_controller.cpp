@@ -123,6 +123,7 @@ PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(
       break;
     }
   }
+  // Order interest points along X axis, do not filter out by subCurveIndex.
   return pointsOfInterest->firstPointInDirection(start, max, y, stretch,
                                                  specialInterest(), -1, true);
 }

@@ -78,15 +78,16 @@ int PointsOfInterestCache::numberOfPoints(
 PointOfInterest PointsOfInterestCache::firstPointInDirection(
     double start, double end, double y, bool stretch,
     Solver<double>::Interest interest, int subCurveIndex, bool alongX) {
-  /* If alongX is false, no interest points are expected at a same abscissa with
-   * a different ordinate. */
-  assert(alongX || std::isnan(y));
   if (start == end) {
     return PointOfInterest();
   }
   if (alongX) {
     m_list.sortX();
   } else {
+    /* Expecting a subCurve filter and no parameter y. Otherwise, sortAbscissa
+     * should handle points of interests at same abscissa. */
+    assert(subCurveIndex >= 0);
+    assert(std::isnan(y));
     m_list.sortAbscissa();
   }
   int n = numberOfPoints();
@@ -103,7 +104,7 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
     double xEq = alongX ? p.x() : p.abscissa;
     double yEq = alongX ? p.y() : p.ordinate;
     /* NOTE using a margin of error here to avoid return the same
-     * PointOfInterest twice or skipping a PointOfInterest when p.x() is
+     * PointOfInterest twice or skipping a PointOfInterest when xEq is
      * very close to start or end */
     if (direction * xEq < direction * start + (!stretch * margin)) {
       if (xEq != start || std::isnan(y) ||

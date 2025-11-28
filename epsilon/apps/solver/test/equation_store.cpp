@@ -101,6 +101,7 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to({"x+i×y=0", "x+y×exp(i×π/3)=3"},
                    {"x=3/2-3×(2+√(3))/2×i", "y=3+3/2×√(3)+3/2×i"});
   setComplexFormatAndAngleUnit(Polar, Radian);
+  // TODO: polar form is broken
   assert_solves_to({"x+i×y=0", "x+y×exp(i×π/3)=3"},
                    {"x=-3×i/(e^(π×i/3)-i)", "y=(3×(√(2)+√(6))×e^(iπ/12))/2"});
 

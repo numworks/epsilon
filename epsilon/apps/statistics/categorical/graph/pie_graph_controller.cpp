@@ -143,13 +143,13 @@ void PieGraphController::ContentView::layoutSubviews(bool force) {
   constexpr int k_titleHeight = 25;
   setChildFrame(&m_groupTitleView, KDRect(0, 0, leftSideWidth, k_titleHeight),
                 force);
+  setChildFrame(&m_sideBannerView,
+                KDRect(leftSideWidth, 0, b.width() - leftSideWidth, b.height()),
+                force);
   setChildFrame(
       &m_pieGraphView,
       KDRect(0, k_titleHeight, leftSideWidth, b.height() - k_titleHeight),
       force);
-  setChildFrame(&m_sideBannerView,
-                KDRect(leftSideWidth, 0, b.width() - leftSideWidth, b.height()),
-                force);
 }
 
 Escher::View* PieGraphController::ContentView::subviewAtIndex(int index) {
@@ -157,10 +157,10 @@ Escher::View* PieGraphController::ContentView::subviewAtIndex(int index) {
     case 0:
       return &m_groupTitleView;
     case 1:
-      return &m_pieGraphView;
+      return &m_sideBannerView;
     default:
       assert(index == 2);
-      return &m_sideBannerView;
+      return &m_pieGraphView;
   }
 }
 

@@ -51,7 +51,11 @@ class PieGraphController : public Escher::ViewController,
 
    private:
     void reload() { m_pieGraphView.reload(); }
-
+    void drawRect(KDContext* ctx, KDRect rect) const override {
+      /* The pie graph takes some time to render. Draw a white background to
+       * avoid weird screen after Off/On. */
+      ctx->fillRect(relativeChildFrame(&m_pieGraphView), KDColorWhite);
+    }
     int numberOfSubviews() const override { return 3; }
     void layoutSubviews(bool force) override;
     View* subviewAtIndex(int index) override;

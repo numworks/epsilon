@@ -1,5 +1,7 @@
 #include "header_titles.h"
 
+#include <string.h>
+
 namespace Inference {
 
 OMG::String<k_groupTitleBufferSize> GroupTitle(int groupIndex,

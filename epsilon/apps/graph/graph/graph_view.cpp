@@ -173,7 +173,8 @@ bool IsInRegion(const ContinuousFunction* f, float x, float y) {
       switch (area) {
         case ContinuousFunctionProperties::AreaType::Inside: {
           assert(std::isnan(fOut) || tOut < fOut);
-          return !std::isnan(fOut) && !std::isnan(fOut2) && fOut2 < tOut;
+          // Relying on NAN < tOut being false here
+          return !std::isnan(fOut) && fOut2 < tOut;
         }
         case ContinuousFunctionProperties::AreaType::Outside: {
           return fOut2 > tOut || tOut > fOut || std::isnan(fOut) ||

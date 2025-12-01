@@ -40,6 +40,9 @@ class NormalProbabilityController : public PlotController,
   double resultAtIndex(int series, int i) const override {
     return m_store->normalProbabilityResultAtIndex(series, i);
   }
+  /*  Note that drawSeriesZScoreLine can set y and v to NAN in case the z-score
+   * line does not exist (this happens if all data points in the series have the
+   * same value) */
   bool drawSeriesZScoreLine(int series, float* x, float* y, float* u,
                             float* v) const override;
 

@@ -79,7 +79,8 @@ void PlotViewPolicy::drawSeriesCurve(const AbstractPlotView* plotView,
     previousY = y;
   }
   float x, y, u, v;
-  if (m_plotController->drawSeriesZScoreLine(series, &x, &y, &u, &v)) {
+  if (m_plotController->drawSeriesZScoreLine(series, &x, &y, &u, &v) &&
+      !std::isnan(y) && !std::isnan(v)) {
     // Using brighter colors for the lines
     color = Store::colorLightOfSeriesAtIndex(series);
     plotView->drawSegment(ctx, rect, Coordinate2D<float>(x, y),

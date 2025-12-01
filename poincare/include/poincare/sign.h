@@ -138,19 +138,22 @@ class Properties {
  public:
   constexpr Properties(Sign sign, bool canBeNonInteger,
                        bool canBeInfinite = true)
-      : m_canBeNull(sign.canBeNull()),
-        m_canBeStrictlyPositive(sign.canBeStrictlyPositive()),
-        m_canBeStrictlyNegative(sign.canBeStrictlyNegative()),
-        m_canBeNonInteger(canBeNonInteger && (sign.canBeStrictlyPositive() ||
-                                              sign.canBeStrictlyNegative())),
-        m_canBeInfinite(canBeInfinite && (sign.canBeStrictlyPositive() ||
-                                          sign.canBeStrictlyNegative())) {
-    /* By ensuring its members can't be modified, Properties always remain
-     * valid. */
-    assert(isValid());
-  }
+      : Properties(sign.canBeNull(), sign.canBeStrictlyPositive(),
+                   sign.canBeStrictlyNegative(), canBeNonInteger,
+                   canBeInfinite) {}
 
   constexpr explicit Properties(Sign sign) : Properties(sign, true, true) {}
+
+  constexpr Properties(bool canBeNull, bool canBeStrictlyPositive,
+                       bool canBeStrictlyNegative, bool canBeNonInteger,
+                       bool canBeInfinite = true)
+      : m_canBeNull(canBeNull),
+        m_canBeStrictlyPositive(canBeStrictlyPositive),
+        m_canBeStrictlyNegative(canBeStrictlyNegative),
+        m_canBeNonInteger(canBeNonInteger &&
+                          (canBeStrictlyPositive || canBeStrictlyNegative)),
+        m_canBeInfinite(canBeInfinite &&
+                        (canBeStrictlyPositive || canBeStrictlyNegative)) {}
 
   constexpr Sign sign() const {
     return Sign(m_canBeNull, m_canBeStrictlyPositive, m_canBeStrictlyNegative);

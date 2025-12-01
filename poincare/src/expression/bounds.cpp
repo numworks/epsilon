@@ -4,7 +4,6 @@
 #include <poincare/src/expression/rational.h>
 
 #include "number.h"
-#include "poincare/sign.h"
 
 namespace Poincare::Internal {
 
@@ -21,9 +20,8 @@ Poincare::Properties Bounds::Properties(const Tree* e) {
   }
   // NOTE: Can be null if neither strictly negative or positive
   return Poincare::Properties(
-      Sign(!(bounds.isStrictlyNegative() || bounds.isStrictlyPositive()),
-           0 < bounds.upper(), bounds.lower() < 0),
-      true, false);
+      !(bounds.isStrictlyNegative() || bounds.isStrictlyPositive()),
+      0 < bounds.upper(), bounds.lower() < 0, true, false);
 }
 
 Bounds Bounds::Compute(const Tree* e) {

@@ -633,7 +633,12 @@ template <typename T>
 T StatisticsDataset<T>::normalProbabilityZScoreLineAtAbscissa(T x) const {
   T meanValue = mean();
   T sigmaValue = standardDeviation();
-  assert(sigmaValue != 0.0);
+  if (sigmaValue == 0.0) {
+    /* If the standard deviation is zero, it means that all data points have the
+     * same value. In this case, we cannot plot the z-score line, and NAN is
+     * returned. */
+    return NAN;
+  }
   return (x - meanValue) / sigmaValue;
 }
 

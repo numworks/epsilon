@@ -29,7 +29,7 @@ class Sign {
       : m_canBeNull(canBeNull),
         m_canBeStrictlyPositive(canBeStrictlyPositive),
         m_canBeStrictlyNegative(canBeStrictlyNegative) {
-    // By ensuring its members can't be modified, a Sign always remain valid.
+    // By ensuring its members can't be modified, a Sign always remains valid.
     assert(isValid());
   }
   constexpr static Sign FromValue(uint8_t value) {
@@ -58,7 +58,7 @@ class Sign {
   constexpr bool isNegative() const { return !m_canBeStrictlyPositive; }
   constexpr bool isPositive() const { return !m_canBeStrictlyNegative; }
 
-  // Has no informations
+  // No information
   constexpr bool isUnknown() const {
     return m_canBeNull && m_canBeStrictlyPositive && m_canBeStrictlyNegative;
   }
@@ -169,7 +169,7 @@ class Properties {
   constexpr bool isInteger() const { return !m_canBeNonInteger; }
   constexpr bool isFinite() const { return !m_canBeInfinite; }
 
-  // Has no informations
+  // No information
   constexpr bool isUnknown() const {
     return m_canBeNull && m_canBeStrictlyPositive && m_canBeStrictlyNegative &&
            m_canBeNonInteger && m_canBeInfinite;

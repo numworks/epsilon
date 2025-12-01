@@ -1,6 +1,6 @@
 #pragma once
 
-#include <poincare/sign.h>
+#include <poincare/properties.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/symbol_context.h>
 

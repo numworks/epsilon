@@ -1,7 +1,6 @@
-#include "poincare/sign.h"
-
 #include <poincare/src/expression/number.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/properties.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/expression/variables.h>
@@ -9,6 +8,8 @@
 
 #include "helper.h"
 #include "helpers/symbol_store.h"
+#include "poincare/properties.h"
+#include "poincare/sign.h"
 
 using namespace Poincare;
 using namespace Poincare::Internal;

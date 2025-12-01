@@ -1,8 +1,8 @@
 #include <limits.h>
 #include <poincare/include/poincare/additional_results_helper.h>
-#include <poincare/sign.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
+#include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/system_expression.h>
 #include <quiz.h>

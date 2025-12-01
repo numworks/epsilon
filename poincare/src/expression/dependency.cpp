@@ -11,6 +11,7 @@
 #include "k_tree.h"
 #include "parametric.h"
 #include "poincare/sign.h"
+#include "properties.h"
 #include "rational.h"
 #include "set.h"
 #include "systematic_reduction.h"

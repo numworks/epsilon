@@ -1,7 +1,6 @@
 #pragma once
 
 #include <omg/arithmetic.h>
-#include <poincare/sign.h>
 #include <poincare/src/memory/k_tree.h>
 
 #include <bit>

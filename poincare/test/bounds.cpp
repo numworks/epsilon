@@ -1,6 +1,6 @@
 #include <poincare/src/expression/bounds.h>
 #include <poincare/src/expression/k_tree.h>
-#include <poincare/src/expression/sign.h>
+#include <poincare/src/expression/properties.h>
 #include <poincare/src/layout/k_tree.h>
 
 #include "helper.h"

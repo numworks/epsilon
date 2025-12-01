@@ -1,6 +1,7 @@
 #pragma once
 
 #include <omg/troolean.h>
+#include <poincare/properties.h>
 #include <poincare/sign.h>
 #include <poincare/src/memory/tree.h>
 

@@ -3,6 +3,8 @@
 #include <apps/global_preferences.h>
 #include <escher/container.h>
 
+#include <cmath>
+
 namespace Statistics::Categorical {
 
 void BarGraphController::initView() {

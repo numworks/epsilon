@@ -10,8 +10,8 @@
 #include "k_tree.h"
 #include "order.h"
 #include "poincare/sign.h"
+#include "properties.h"
 #include "rational.h"
-#include "sign.h"
 #include "systematic_reduction.h"
 #include "trigonometry_exact_formulas.h"
 

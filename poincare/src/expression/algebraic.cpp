@@ -1,6 +1,5 @@
 #include "algebraic.h"
 
-#include <poincare/sign.h>
 #include <poincare/src/memory/n_ary.h>
 
 #include "k_tree.h"

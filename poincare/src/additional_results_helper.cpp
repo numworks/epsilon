@@ -10,6 +10,7 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/properties.h>
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>

@@ -14,8 +14,8 @@
 #include "list.h"
 #include "matrix.h"
 #include "power_like.h"
+#include "properties.h"
 #include "rational.h"
-#include "sign.h"
 #include "systematic_reduction.h"
 #include "trigonometry.h"
 

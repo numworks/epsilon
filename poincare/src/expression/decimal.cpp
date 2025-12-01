@@ -9,6 +9,7 @@
 #include <poincare/src/memory/tree_stack.h>
 
 #include <algorithm>
+#include <cmath>
 
 #include "integer.h"
 

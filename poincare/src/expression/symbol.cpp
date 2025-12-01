@@ -1,6 +1,6 @@
 #include "symbol.h"
 
-#include <poincare/sign.h>
+#include <poincare/properties.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <string.h>
 

@@ -3,7 +3,7 @@
 #include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/k_tree.h>
-#include <poincare/src/expression/sign.h>
+#include <poincare/src/expression/properties.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/pattern_matching.h>
 

@@ -166,7 +166,7 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
   float result = GetTypeMetric(e->type());
   if (Rational::IsNonIntegerRational(e) &&
       (Rational::Numerator(e).isOne() || Rational::Numerator(e).isMinusOne())) {
-    result = result * (1.f / 2.f);
+    result = result / 2.f;
   }
   /* Some functions must have the smallest children possible, so we increase the
    * cost of all children inside the parent expression with a coefficient. */

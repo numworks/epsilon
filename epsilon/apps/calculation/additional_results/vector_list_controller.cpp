@@ -7,7 +7,6 @@
 #include <poincare/helpers/trigonometry.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/sign.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/trigonometry.h>
 #include <string.h>

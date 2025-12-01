@@ -1,9 +1,9 @@
 #include <limits.h>
 #include <poincare/print.h>
-#include <poincare/sign.h>
 #include <poincare/src/expression/arithmetic.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <quiz.h>
 

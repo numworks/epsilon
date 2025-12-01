@@ -2,6 +2,7 @@
 #include <escher/scrollable_multiple_layouts_view.h>
 
 #include <algorithm>
+#include <cmath>
 
 using namespace Poincare;
 

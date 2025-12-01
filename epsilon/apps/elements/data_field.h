@@ -4,6 +4,8 @@
 #include <poincare/layout.h>
 #include <stddef.h>
 
+#include <cmath>
+
 #include "palette.h"
 
 namespace Elements {

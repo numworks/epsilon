@@ -10,7 +10,7 @@
 #include "advanced_reduction.h"
 #include "approximation.h"
 #include "k_tree.h"
-#include "sign.h"
+#include "properties.h"
 #include "simplification.h"
 #include "systematic_reduction.h"
 #include "variables.h"

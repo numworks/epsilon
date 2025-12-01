@@ -7,9 +7,11 @@
 #include <poincare/src/memory/value_block.h>
 
 #include <algorithm>
+#include <cmath>
 
 #include "dimension.h"
 #include "k_tree.h"
+#include "properties.h"
 #include "rational.h"
 
 #if POINCARE_TREE_STACK_VISUALIZATION

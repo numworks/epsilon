@@ -1,7 +1,6 @@
 
 #include <omg/float.h>
 #include <poincare/src/expression/approximation.h>
-#include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/expression/trigonometry_exact_formulas.h>
 

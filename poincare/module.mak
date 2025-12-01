@@ -5,6 +5,7 @@ _sources_poincare_minimal := $(addprefix src/, \
   preferences.cpp \
   print_float.cpp \
   sign.cpp \
+  properties.cpp \
 )
 
 _sources_poincare_preferences := $(addprefix src/, \
@@ -254,7 +255,7 @@ _sources_poincare_test := $(addprefix test/, \
   roots.cpp \
   serialization.cpp \
   set.cpp \
-  sign.cpp \
+  sign_and_properties.cpp \
   statistics.cpp \
   tree_stack.cpp \
   trigonometry_exact_formulas.cpp \

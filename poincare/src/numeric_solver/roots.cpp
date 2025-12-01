@@ -2,7 +2,7 @@
 
 #include <omg/float.h>
 #include <omg/list.h>
-#include <poincare/sign.h>
+#include <poincare/properties.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/arithmetic.h>
@@ -10,8 +10,8 @@
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/order.h>
+#include <poincare/src/expression/properties.h>
 #include <poincare/src/expression/rational.h>
-#include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_ref.h>

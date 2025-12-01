@@ -1,7 +1,7 @@
 #pragma once
 
 #include <poincare/helpers/symbol.h>
-#include <poincare/sign.h>
+#include <poincare/properties.h>
 #include <poincare/symbol_context.h>
 
 #include "k_tree.h"

@@ -9,8 +9,8 @@
 
 #include "dependency.h"
 #include "k_tree.h"
+#include "properties.h"
 #include "rational.h"
-#include "sign.h"
 
 namespace Poincare::Internal {
 

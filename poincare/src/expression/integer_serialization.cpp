@@ -1,6 +1,7 @@
 #include <omg/utf8_helper.h>
 #include <poincare/print_float.h>
-#include <poincare/sign.h>
+
+#include <cmath>
 
 #include "integer.h"
 

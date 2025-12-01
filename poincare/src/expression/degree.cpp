@@ -2,7 +2,7 @@
 
 #include "advanced_reduction.h"
 #include "integer.h"
-#include "sign.h"
+#include "properties.h"
 #include "simplification.h"
 #include "symbol.h"
 #include "systematic_reduction.h"

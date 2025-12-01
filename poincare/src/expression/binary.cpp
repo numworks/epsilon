@@ -7,7 +7,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "k_tree.h"
-#include "sign.h"
+#include "properties.h"
 
 namespace Poincare::Internal {
 

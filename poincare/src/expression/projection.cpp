@@ -8,7 +8,7 @@
 #include "decimal.h"
 #include "dependency.h"
 #include "k_tree.h"
-#include "sign.h"
+#include "properties.h"
 #include "symbol.h"
 #include "units/representatives.h"
 #include "units/unit.h"

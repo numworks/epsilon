@@ -9,7 +9,7 @@
 #include "integer.h"
 #include "k_tree.h"
 #include "matrix.h"
-#include "sign.h"
+#include "properties.h"
 #include "systematic_reduction.h"
 #include "undefined.h"
 #include "units/unit.h"

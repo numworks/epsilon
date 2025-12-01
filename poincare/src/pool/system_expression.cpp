@@ -5,6 +5,7 @@
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/polynomial.h>
+#include <poincare/src/expression/properties.h>
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/symbol.h>

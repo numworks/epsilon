@@ -167,7 +167,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     assert(selectedRow() == -1);
     return true;
   }
-  if (event == Ion::Events::Backspace) {
+  if (event == Ion::Events::Backspace && header()->selectedButton() == -1) {
     handleDeleteEvent();
     return true;
   }

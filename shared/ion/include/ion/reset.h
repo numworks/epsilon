@@ -7,7 +7,7 @@ namespace Reset {
 
 void core();
 
-enum class ResetType : uint8_t {
+enum class ResetType : bool {
   Hardware,  // POWER on, NRST pin
   Software   // crash or Reset::core()
 };

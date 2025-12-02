@@ -215,7 +215,9 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       zoom.fitPoint(intervalMax);
     }
   }
-  if (onlyLines && !onlyLinearLines) {
+  if (onlyLines && !onlyLinearLines && zoom.hasInterestingRange()) {
+    /* NOTE: zoom.hasInterestingRange() could be asserted if line functions
+     * always produced a valid interesting range */
     // Zoom out on non-linear lines to show y-intercept better
     zoom.zoom(Zoom<float>::k_lineZoomOutRatio);
   }

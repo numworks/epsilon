@@ -35,11 +35,14 @@ class PointsOfInterestCache {
   // Return false it has been interrupted by the pool or the user (if allowed)
   bool computeNextStep(bool allowUserInterruptions);
 
-  /* Use true [alongX] if next interest point should be found along the X axis.
-   * Otherwise, the abscissa is used (which can be alongY on some functions).
-   * Use -1 [subCurveIndex] if all subCurves should be considered. */
+  /* Return the first PointOfInterest between [xStart] and [xEnd]. Direction is
+   * inferred from [xStart] and [xEnd] order. Use [interest] to filter the type
+   * of PointOfInterest searched and a positive [subCurveIndex]to restrict the
+   * search to a given subCurve. Use true [alongX] if next interest point should
+   * be found along the X axis. Otherwise, the abscissa is used (which can be
+   * the Y axis on some functions). */
   Poincare::PointOfInterest firstPointInDirection(
-      double start, double end, double y, bool stretch,
+      double xStart, double xEnd, double yStart, bool stretch,
       Poincare::Solver<double>::Interest interest =
           Poincare::Solver<double>::Interest::None,
       int subCurveIndex = -1, bool alongX = false);

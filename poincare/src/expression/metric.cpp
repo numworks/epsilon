@@ -199,6 +199,7 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
             PatternMatching::Match(
                 e, KMult(KA_s, KATanRad(KMult(KB_s, i_e)), KC_s, i_e), &ctx)) {
           if (ctx.getNumberOfTrees(KB) == 1) {
+            assert(result <= GetAddMultMetric(e));
             result = 0.f;
           }
           result +=

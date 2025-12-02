@@ -24,7 +24,7 @@ AppIterator Apps::begin() const { return AppIterator(nullptr); }
 
 int numberOfApps(bool isExamModeActive) { return 0; }
 
-void deleteApps(bool isExamModeActive) {}
+void deleteApps(bool isExamModeActive, bool keepAfterCrash) {}
 
 bool allowThirdParty() { return false; }
 

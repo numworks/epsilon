@@ -76,43 +76,43 @@ int PointsOfInterestCache::numberOfPoints(
 }
 
 PointOfInterest PointsOfInterestCache::firstPointInDirection(
-    double start, double end, double y, bool stretch,
+    double xStart, double xEnd, double yStart, bool stretch,
     Solver<double>::Interest interest, int subCurveIndex, bool alongX) {
-  if (start == end) {
+  if (xStart == xEnd) {
     return PointOfInterest();
   }
   if (alongX) {
     m_list.sortX();
   } else {
-    /* Expecting a subCurve filter and no parameter y. Otherwise, sortAbscissa
-     * should handle points of interests at same abscissa. */
+    /* Expecting a subCurve filter and no parameter yStart. Otherwise,
+     * sortAbscissa should handle points of interests at same abscissa. */
     assert(subCurveIndex >= 0);
-    assert(std::isnan(y));
+    assert(std::isnan(yStart));
     m_list.sortAbscissa();
   }
   int n = numberOfPoints();
-  int direction = start > end ? -1 : 1;
+  int direction = xStart > xEnd ? -1 : 1;
   int firstIndex = 0;
   int lastIndex = n - 1;
   if (direction < 0) {
     std::swap(firstIndex, lastIndex);
   }
-  double margin = fabs(start - end) / 1e8;
+  double margin = fabs(xStart - xEnd) / 1e8;
   for (int i = firstIndex; direction * i <= direction * lastIndex;
        i += direction) {
     PointOfInterest p = pointAtIndex(i);
-    double xEq = alongX ? p.x() : p.abscissa;
-    double yEq = alongX ? p.y() : p.ordinate;
+    double x = alongX ? p.x() : p.abscissa;
+    double y = alongX ? p.y() : p.ordinate;
     /* NOTE using a margin of error here to avoid returning the same
-     * PointOfInterest twice or skipping a PointOfInterest when xEq is
-     * very close to start or end */
-    if (direction * xEq < direction * start + (!stretch * margin)) {
-      if (xEq != start || std::isnan(y) ||
-          direction * yEq < direction * y + (!stretch * margin)) {
+     * PointOfInterest twice or skipping a PointOfInterest when x is
+     * very close to xStart or xEnd */
+    if (direction * x < direction * xStart + (!stretch * margin)) {
+      if (x != xStart || std::isnan(yStart) ||
+          direction * y < direction * yStart + (!stretch * margin)) {
         continue;
       }
     }
-    if (direction * xEq > direction * end - (!stretch * margin)) {
+    if (direction * x > direction * xEnd - (!stretch * margin)) {
       break;
     }
     if (PointFitInterest(p, interest) &&
@@ -122,11 +122,11 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
        * the same abscissa. */
       if (p.interest == Solver<double>::Interest::UnreachedDiscontinuity &&
           direction * (i + direction) <= direction * lastIndex) {
-        PointOfInterest nextP = pointAtIndex(i + direction);
-        double nextXEq = alongX ? nextP.x() : nextP.abscissa;
-        if (nextP.interest == Solver<double>::Interest::ReachedDiscontinuity &&
-            nextXEq == xEq) {
-          return nextP;
+        PointOfInterest pNext = pointAtIndex(i + direction);
+        double xNext = alongX ? pNext.x() : pNext.abscissa;
+        if (pNext.interest == Solver<double>::Interest::ReachedDiscontinuity &&
+            xNext == x) {
+          return pNext;
         }
       }
       return p;

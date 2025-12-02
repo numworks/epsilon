@@ -518,7 +518,7 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler& a,
                                     WorkingBuffer* workingBuffer,
                                     bool oneDigitOverflow) {
   uint8_t* const localStart = workingBuffer->localStart();
-  // TODO: would be Karatsuba or Toom-Cook multiplication worth it?
+  // TODO: would Karatsuba or Toom-Cook multiplication be worth it?
   // TODO: optimize for squaring?
   uint8_t size = std::min(
       a.numberOfDigits<native_uint_t>() + b.numberOfDigits<native_uint_t>(),

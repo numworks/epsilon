@@ -60,7 +60,9 @@ class Store {
   // Group status
   void setGroupActive(bool active, int col);
   bool isGroupActive(int col) const {
-    return m_table->m_groupStatus[col] == GroupStatus::Active;
+    // Group is inactive if the sum of its values is null
+    return m_table->m_groupStatus[col] == GroupStatus::Active &&
+           m_sumOfCategories[col] > 0;
   }
   bool isGroupEmpty(int col) const;
   bool hasActiveGroups() const;

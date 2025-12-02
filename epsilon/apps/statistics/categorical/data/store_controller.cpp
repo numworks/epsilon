@@ -67,7 +67,7 @@ bool StoreController::textFieldShouldFinishEditing(
 
 bool StoreController::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
-  double p = ParseInputFloatValue<double>(textField->draftText());
+  float p = ParseInputFloatValue<float>(textField->draftText());
   if (HasUndefinedValue(p)) {
     return false;
   }

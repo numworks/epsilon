@@ -103,7 +103,7 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
     PointOfInterest p = pointAtIndex(i);
     double xEq = alongX ? p.x() : p.abscissa;
     double yEq = alongX ? p.y() : p.ordinate;
-    /* NOTE using a margin of error here to avoid return the same
+    /* NOTE using a margin of error here to avoid returning the same
      * PointOfInterest twice or skipping a PointOfInterest when xEq is
      * very close to start or end */
     if (direction * xEq < direction * start + (!stretch * margin)) {

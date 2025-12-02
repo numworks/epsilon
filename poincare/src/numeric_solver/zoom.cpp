@@ -257,6 +257,7 @@ void Zoom<T>::fitIntersections(Function2D<T> f1, const void* model1,
 
 template <typename T>
 void Zoom<T>::zoom(T ratio) {
+  assert(!m_interestingRange.y()->isNan());
   m_interestingRange.zoom(ratio, m_interestingRange.center(), m_maxFloat);
 }
 

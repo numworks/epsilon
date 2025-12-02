@@ -58,30 +58,20 @@ PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
   return pointFromTree(pointAddressInTree(m_list.tree(), i));
 }
 
-void PointsOfInterestList::sortX() {
+void PointsOfInterestList::sort(bool alongX) {
   Internal::Tree* editableList = m_list.tree()->cloneTree();
   OMG::List::Sort(
       [](int i, int j, void* ctx, int n) {
         Internal::Tree* l = static_cast<Internal::Tree*>(ctx);
         pointAddressInTree(l, i)->swapWithTree(pointAddressInTree(l, j));
       },
+      alongX ?
       [](int i, int j, void* ctx, int n) {
         Internal::Tree* l = static_cast<Internal::Tree*>(ctx);
         PointOfInterest pi = pointFromTree(pointAddressInTree(l, i));
         PointOfInterest pj = pointFromTree(pointAddressInTree(l, j));
         return (pi.x() == pj.x()) ? pi.y() >= pj.y() : pi.x() >= pj.x();
-      },
-      editableList, numberOfPoints());
-  m_list = SystemExpression::Builder(editableList);
-}
-
-void PointsOfInterestList::sortAbscissa() {
-  Internal::Tree* editableList = m_list.tree()->cloneTree();
-  OMG::List::Sort(
-      [](int i, int j, void* ctx, int n) {
-        Internal::Tree* l = static_cast<Internal::Tree*>(ctx);
-        pointAddressInTree(l, i)->swapWithTree(pointAddressInTree(l, j));
-      },
+      } :
       [](int i, int j, void* ctx, int n) {
         Internal::Tree* l = static_cast<Internal::Tree*>(ctx);
         PointOfInterest pi = pointFromTree(pointAddressInTree(l, i));

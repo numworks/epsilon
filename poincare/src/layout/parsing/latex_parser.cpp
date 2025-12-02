@@ -156,6 +156,7 @@ constexpr static LatexTokenChild nthDiffAtAToken[] = {
     {"}", k_noChild}};
 
 // Code points
+constexpr static LatexTokenChild userSpaceToken[] = {{"\\ ", k_noChild}};
 constexpr static LatexTokenChild middleDotToken[] = {{"\\cdot", k_noChild}};
 constexpr static LatexTokenChild multiplicationSignToken[] = {
     {"\\times", k_noChild}};
@@ -175,7 +176,7 @@ constexpr static LatexTokenChild textToken[] = {{"\\text{", 0},
                                                 {"}", k_noChild}};
 constexpr static LatexTokenChild operatorToken[] = {{"\\operatorname{", 0},
                                                     {"}", k_noChild}};
-constexpr static LatexTokenChild spaceToken[] = {{" ", k_noChild}};
+constexpr static LatexTokenChild systemSpaceToken[] = {{" ", k_noChild}};
 /* TODO: Currently we are working with MathQuill which doesn't recognize the
  * special characters spacings. See
  * https://github.com/desmosinc/mathquill/blob/f71f190ee067a9a2a33683cdb02b43333b9b240e/src/commands/math/advancedSymbols.ts#L224
@@ -313,6 +314,9 @@ constexpr static LatexLayoutRule k_rules[] = {
 
     /* WARNING: The order matters here, since we want "\left(" to be checked
      * before "\le" */
+    // Code points
+    // Space
+    CODEPOINT_RULE(userSpaceToken, ' '),
     // Middle Dot
     CODEPOINT_RULE(middleDotToken, UCodePointMiddleDot),
     // Multiplication sign
@@ -339,7 +343,7 @@ constexpr static LatexLayoutRule k_rules[] = {
     // Tokens that do nothing
     DO_NOTHING_RULE(textToken),
     DO_NOTHING_RULE(operatorToken),
-    DO_NOTHING_RULE(spaceToken),
+    DO_NOTHING_RULE(systemSpaceToken),
     // DO_NOTHING_RULE(commaToken),
     DO_NOTHING_RULE(escapeToken),
     DO_NOTHING_RULE(systemBraceToken),

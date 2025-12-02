@@ -38,7 +38,9 @@ class Properties {
     assert(isValid());
   }
 
-  constexpr Sign sign() const {
+  /* sign() is often used to retrieve a property such as canBeNull(), so it is
+   * worth to inline it to allow the member to be accessed directly. */
+  [[gnu::always_inline]] constexpr Sign sign() const {
     return Sign(m_canBeNull, m_canBeStrictlyPositive, m_canBeStrictlyNegative);
   }
 

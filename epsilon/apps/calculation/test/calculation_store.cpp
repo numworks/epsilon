@@ -421,7 +421,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       nullptr, "1", &store);
   assertCalculationIs("6i'log(14,10)", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation,
-                      "6rad·(((π·log(2))/10800)i+((π·log(7))/10800)i)",
+                      "1rad·(((π·log(2))/1800)i+((π·log(7))/1800)i)",
                       "0.0020003707872rad·i", &store);
   assertCalculationIs("i'log(14,10)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation,

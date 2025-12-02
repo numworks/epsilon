@@ -17,6 +17,7 @@ namespace Poincare::Internal {
 namespace {
 
 constexpr static float k_defaultMetric = 1.f;
+constexpr static float k_integerMultiplicationReductionFactor = 2.f / 3.f;
 
 constexpr static float GetTypeMetric(Type type) {
   switch (type) {
@@ -184,8 +185,7 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
         }
         // Reduce cost of multiplication by an integer ("n*A")
         else if (e->child(0)->isInteger()) {
-          assert(result == GetAddMultMetric(e));
-          result = result - 1.f / 3.f;
+          result = result * k_integerMultiplicationReductionFactor;
         }
         /* Trigonometry with complexes is beautified into hyperbolic
          * trigonometry (cosh, sinh, asinh and atanh)*/

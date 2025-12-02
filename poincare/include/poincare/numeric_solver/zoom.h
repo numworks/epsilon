@@ -45,6 +45,10 @@ class Zoom {
     // assert(m_normalRatio <  static_cast<T>(1.));
   }
 
+  bool hasInterestingRange() const {
+    return !m_interestingRange.x()->isNan() && !m_interestingRange.y()->isNan();
+  }
+
   /* This method is guaranteed to return a displayable range, that is a range
    * with non-nan bounds, and non-empty axes of some minimal length, with
    * bounds smaller than maxFloat in absolute value.

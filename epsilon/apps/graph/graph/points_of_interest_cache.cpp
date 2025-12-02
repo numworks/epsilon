@@ -97,40 +97,38 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
   if (direction < 0) {
     std::swap(firstIndex, lastIndex);
   }
-  double margin = fabs(xStart - xEnd) / 1e8;
   for (int i = firstIndex; direction * i <= direction * lastIndex;
        i += direction) {
     PointOfInterest p = pointAtIndex(i);
     double x = alongX ? p.x() : p.abscissa;
-    double y = alongX ? p.y() : p.ordinate;
-    /* NOTE using a margin of error here to avoid returning the same
-     * PointOfInterest twice or skipping a PointOfInterest when x is
-     * very close to xStart or xEnd */
-    if (direction * x < direction * xStart + (!stretch * margin)) {
-      if (x != xStart || std::isnan(yStart) ||
-          direction * y < direction * yStart + (!stretch * margin)) {
-        continue;
-      }
-    }
-    if (direction * x > direction * xEnd - (!stretch * margin)) {
+    if (direction * x >= direction * xEnd) {
       break;
     }
-    if (PointFitInterest(p, interest) &&
-        ((subCurveIndex == -1) || (p.subCurveIndex == subCurveIndex))) {
+    if (direction * x < direction * xStart) {
+      continue;
+    }
+    double y = alongX ? p.y() : p.ordinate;
+    if (x == xStart &&
+        (std::isnan(yStart) || direction * y <= direction * yStart)) {
+      continue;
+    }
+    if (!PointFitInterest(p, interest) ||
+        (subCurveIndex >= 0 && p.subCurveIndex != subCurveIndex)) {
+      continue;
+    }
+    if (p.interest == Solver<double>::Interest::UnreachedDiscontinuity &&
+        direction * (i + direction) <= direction * lastIndex) {
       /* Select in priority the reached discontinuity point: if the point is an
        * unreached discontinuity, check if there is a reached discontinuity at
        * the same abscissa. */
-      if (p.interest == Solver<double>::Interest::UnreachedDiscontinuity &&
-          direction * (i + direction) <= direction * lastIndex) {
-        PointOfInterest pNext = pointAtIndex(i + direction);
-        double xNext = alongX ? pNext.x() : pNext.abscissa;
-        if (pNext.interest == Solver<double>::Interest::ReachedDiscontinuity &&
-            xNext == x) {
-          return pNext;
-        }
+      PointOfInterest pNext = pointAtIndex(i + direction);
+      double xNext = alongX ? pNext.x() : pNext.abscissa;
+      if (pNext.interest == Solver<double>::Interest::ReachedDiscontinuity &&
+          xNext == x) {
+        return pNext;
       }
-      return p;
     }
+    return p;
   }
   return PointOfInterest{};
 }

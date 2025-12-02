@@ -252,23 +252,22 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
         newRange.x()->length() / unNormalizedRange.x()->length();
     float yRangeRatio =
         newRange.y()->length() / unNormalizedRange.y()->length();
-    // Only one of the ranges has been increased
-    assert(xRangeRatio >= 1.f && yRangeRatio >= 1.f);
     // Only one of the ranges has been altered
     assert(xRangeRatio == 1.f || yRangeRatio == 1.f);
 
     float rangeRatio = xRangeRatio + yRangeRatio - 1.0f;
-    /* Normalization is also enforced in Zoom::range up to
-     * Zoom::k_maxNormalizationRatio. rangeRatio is therefore either 1
-     * (normalization did not need to be forced) or bigger. */
-    assert(rangeRatio >= 1.0f);
-    constexpr float k_maximalRatio = 5.f;
-    static_assert(k_maximalRatio > Zoom<float>::k_maxNormalizationRatio,
-                  "k_maximalRatio is too small to ever be reached.");
-    constexpr float k_maxRelativeRatio =
-        k_maximalRatio / Zoom<float>::k_maxNormalizationRatio;
-    if (rangeRatio > k_maxRelativeRatio) {
-      newRange = unNormalizedRange;
+    if (rangeRatio > 1.0f) {
+      /* The altered range has been extended. Normalization is also enforced in
+       * Zoom::range up to Zoom::k_maxNormalizationRatio, so forcing
+       * normalization extends it even further. */
+      constexpr float k_maximalRatio = 5.f;
+      static_assert(k_maximalRatio > Zoom<float>::k_maxNormalizationRatio,
+                    "k_maximalRatio is too small to ever be reached.");
+      constexpr float k_maxRelativeRatio =
+          k_maximalRatio / Zoom<float>::k_maxNormalizationRatio;
+      if (rangeRatio > k_maxRelativeRatio) {
+        newRange = unNormalizedRange;
+      }
     }
   }
 

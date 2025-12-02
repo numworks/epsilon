@@ -155,6 +155,10 @@ bool IsInRegion(const ContinuousFunction* f, float x, float y) {
   float tOut = f->isAlongY() ? x : y;
   Coordinate2D<float> evaluation = f->evaluateXYAtParameter(tIn, 0);
   float fOut = f->isAlongY() ? evaluation.x() : evaluation.y();
+  if (std::isnan(fOut)) {
+    // Only Outside area is in region with a NAN fOut
+    return area == ContinuousFunctionProperties::AreaType::Outside;
+  }
   switch (area) {
     case ContinuousFunctionProperties::AreaType::Above:
       return tOut > fOut;
@@ -169,16 +173,15 @@ bool IsInRegion(const ContinuousFunction* f, float x, float y) {
       // Evaluate the second curve too
       Coordinate2D<float> evaluation2 = f->evaluateXYAtParameter(tIn, 1);
       float fOut2 = f->isAlongY() ? evaluation2.x() : evaluation2.y();
-      assert(fOut2 <= fOut || std::isnan(fOut) || std::isnan(fOut2));
+      assert(!std::isnan(fOut) && (std::isnan(fOut2) || fOut2 <= fOut));
       switch (area) {
         case ContinuousFunctionProperties::AreaType::Inside: {
-          assert(std::isnan(fOut) || tOut < fOut);
+          assert(tOut < fOut);
           // Relying on NAN < tOut being false here
-          return !std::isnan(fOut) && fOut2 < tOut;
+          return fOut2 < tOut;
         }
         case ContinuousFunctionProperties::AreaType::Outside: {
-          return fOut2 > tOut || tOut > fOut || std::isnan(fOut) ||
-                 std::isnan(fOut2);
+          return std::isnan(fOut2) || fOut2 > tOut || tOut > fOut;
         }
         default:
           OMG::unreachable();

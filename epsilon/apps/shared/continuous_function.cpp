@@ -840,7 +840,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     }
     /* Happens when:
      * - The input text is too long and "f(x)=" can't be inserted.
-     * - When inputting amiguous equations like "x+y>2>y".
+     * - When inputting ambiguous equations like "x+y>2>y".
      * - When result is uninitialized because of circular definition.  */
     return UserExpression::Undefined();
   }

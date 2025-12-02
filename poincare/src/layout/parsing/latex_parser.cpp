@@ -757,9 +757,13 @@ void BuildIntegrandChildFromLatex(const char** latexString,
   const char* integrandStart = *latexString;
 
   while (**latexString != 0) {
-    if (**latexString == 'd') {
+    /* Ignore the space between the integrand and the 'd'
+     * This space will appear when converting integral back to latex, but it
+     * is not mandatory to parse the integral correctly. */
+    if (**latexString == 'd' || strncmp(*latexString, "\\ d", 3) == 0) {
       // We might have found the end of the integrand
-      const char* dPosition = *latexString;
+      const char* dPosition =
+          **latexString == 'd' ? *latexString : *latexString + 2;
 
       // --- Step 2.1 --- Find the identifier string surrounding the `d`
       /* Example: ∫3+abcdxyz1
@@ -830,8 +834,8 @@ void BuildIntegrandChildFromLatex(const char** latexString,
     /* We're at the end of the string and the 'd' couldn't be found */
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  // Skip 'd'
-  *latexString += 1;
+  // Skip 'd' or '\ d'
+  *latexString += (**latexString == 'd' ? 1 : 3);
 }
 
 void BuildIntegralVariableChildFromLatex(const char** latexString,

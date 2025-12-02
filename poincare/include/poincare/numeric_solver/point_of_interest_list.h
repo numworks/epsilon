@@ -18,10 +18,9 @@ class PointsOfInterestList {
   /* Consume the argument, and steal its children. */
   bool merge(Expression&);
 
-  // Sort the interest points on their x coordinate
-  void sortX();
-  // Sort the interest points on their abscissa
-  void sortAbscissa();
+  /* Sort the interest points on their x coordinate if [alongX], or on their
+   * abscissa otherwise. */
+  void sort(bool alongX);
   // Filter out interest of abscissa not between [start] and [end]
   void filterOutOfBounds(double start, double end);
 

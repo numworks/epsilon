@@ -37,7 +37,7 @@ class PointsOfInterestCache {
 
   /* Return the first PointOfInterest between [xStart] and [xEnd]. Direction is
    * inferred from [xStart] and [xEnd] order. Use [interest] to filter the type
-   * of PointOfInterest searched and a positive [subCurveIndex]to restrict the
+   * of PointOfInterest searched and a positive [subCurveIndex] to restrict the
    * search to a given subCurve. Use true [alongX] if next interest point should
    * be found along the X axis. Otherwise, the abscissa is used (which can be
    * the Y axis on some functions). */

@@ -81,15 +81,9 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
   if (xStart == xEnd) {
     return PointOfInterest();
   }
-  if (alongX) {
-    m_list.sortX();
-  } else {
-    /* Expecting a subCurve filter and no parameter yStart. Otherwise,
-     * sortAbscissa should handle points of interests at same abscissa. */
-    assert(subCurveIndex >= 0);
-    assert(std::isnan(yStart));
-    m_list.sortAbscissa();
-  }
+  // yStart parameter is only expected when finding points along X.
+  assert(std::isnan(yStart) || alongX);
+  m_list.sort(alongX);
   int n = numberOfPoints();
   int direction = xStart > xEnd ? -1 : 1;
   int firstIndex = 0;

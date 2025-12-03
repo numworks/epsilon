@@ -511,7 +511,7 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
       if (row < n && col == cols - 1) {
         /* Replace the solution in the equation list to check later that it
          * respects the dependencies. */
-        Variables::Replace(equationListClone, row, child);
+        Variables::Replace(equationListClone, row, child, false, false);
         /* Reduce the solution. RowCanonize only applies systematic reduction,
          * so we need to apply advanced reduction.
          * TODO: Should rowCanonize advance reduce ? */
@@ -676,7 +676,7 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
       Tree* clonedEquation = SharedTreeStack->pushDep();
       (0_e)->cloneNode();
       Dependency::Dependencies(equation)->cloneTree();
-      Variables::Replace(clonedEquation, 0, solution);
+      Variables::Replace(clonedEquation, 0, solution, false, false);
       Dependency::DeepRemoveUselessDependencies(clonedEquation);
       bool invalidSolution = clonedEquation->isUndefined();
       bool remainingDependency = clonedEquation->isDep();

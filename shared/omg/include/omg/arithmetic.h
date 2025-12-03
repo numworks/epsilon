@@ -1,5 +1,7 @@
 #pragma once
 
+#include <assert.h>
+#include <limits.h>
 #include <omg/bit_helper.h>
 #include <stddef.h>
 
@@ -40,6 +42,28 @@ constexpr size_t NumberOfDigits(uint64_t value) {
              : CeilDivision<size_t>(
                    OMG::BitHelper::numberOfBitsToCountUpTo(value + 1),
                    OMG::BitHelper::k_numberOfBitsInByte);
+}
+
+struct AdditionOverflowResult {
+  bool hasOverflown;
+  int value;
+};
+constexpr AdditionOverflowResult OverflowCheckAddition(int a, int b) {
+  int value = 0;
+  bool hasOverflown = __builtin_add_overflow(a, b, &value);
+  return AdditionOverflowResult{hasOverflown, value};
+}
+
+/* If a+b would be greater than INT_MAX or lower than INT_MIN, clamp the result
+ * to INT_MAX or INT_MIN */
+constexpr int ClampedAddition(int a, int b) {
+  AdditionOverflowResult result = OverflowCheckAddition(a, b);
+  if (result.hasOverflown) {
+    // An overflow can only occur if "a" and "b" have the same sign
+    assert((a > 0 && b > 0) || (a < 0 && b < 0));
+    return a > 0 ? INT_MAX : INT_MIN;
+  }
+  return result.value;
 }
 
 // uint64_t ?

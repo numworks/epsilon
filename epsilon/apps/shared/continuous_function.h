@@ -420,6 +420,10 @@ class ContinuousFunction : public Function {
    private:
     static CodePoint CodePointForSymbol(const Poincare::UserExpression& symbol);
 
+    // Rename record to a hidden record name
+    Ion::Storage::Record::ErrorStatus renameRecordToHidden(
+        Ion::Storage::Record* record) const;
+
     // Return address of the record's expression
     void* expressionAddress(const Ion::Storage::Record* record) const override;
     // Return size of the record's expression

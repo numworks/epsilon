@@ -967,6 +967,18 @@ PreparedFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
 }
 
 Ion::Storage::Record::ErrorStatus
+ContinuousFunction::Model::renameRecordToHidden(
+    Ion::Storage::Record* record) const {
+  char name[k_maxDefaultNameSize];
+  size_t length = UTF8Helper::WriteCodePoint(name, k_maxDefaultNameSize,
+                                             k_unnamedRecordFirstChar);
+  Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
+      name, length, k_maxDefaultNameSize, Ion::Storage::functionExtension);
+  return Ion::Storage::Record::SetBaseNameWithExtension(
+      record, name, Ion::Storage::functionExtension);
+}
+
+Ion::Storage::Record::ErrorStatus
 ContinuousFunction::Model::renameRecordIfNeeded(
     Ion::Storage::Record* record) const {
   /* Use ExpressionModel::expressionClone because it does not alter
@@ -996,14 +1008,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(
       // Record is already unnamed (and hidden).
       return error;
     }
-    // Rename record with a hidden record name.
-    char name[k_maxDefaultNameSize];
-    size_t length = UTF8Helper::WriteCodePoint(name, k_maxDefaultNameSize,
-                                               k_unnamedRecordFirstChar);
-    Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
-        name, length, k_maxDefaultNameSize, Ion::Storage::functionExtension);
-    error = Ion::Storage::Record::SetBaseNameWithExtension(
-        record, name, Ion::Storage::functionExtension);
+    error = renameRecordToHidden(record);
   }
   return error;
 }

@@ -151,6 +151,15 @@ PiInterval PiInterval::Arg(ComplexProperties properties) {
       result.unionWith(PiInterval(0, false, 1, false));
     }
   }
+  if (result == k_neutralInterval) {
+    /*  We don't have precise information on the interval, the result variable
+     * did not change. This can happen if the expression has a complex sign of
+     * zero (only realSign().canBeNull() and imagSign().canBeNull() are true).
+     * This is possible even if the expression itself is not zero (for example
+     * floor(i)) */
+    return k_defaultInterval;
+  }
+
   return result;
 }
 
@@ -181,8 +190,7 @@ bool CanGetArgSumModulo(const Tree* firstTree, int numberOfTrees, int* k) {
         PiInterval::Add(interval, PiInterval::Arg(GetComplexProperties(tree)));
     tree = tree->nextTree();
   }
-  assert(interval.maxK() <= numberOfTrees / 2 &&
-         interval.minK() >= -numberOfTrees / 2);
+  assert(interval.minK() <= interval.maxK());
   *k = interval.maxK();
   return *k == interval.minK();
 }

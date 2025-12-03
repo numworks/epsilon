@@ -37,15 +37,17 @@ class PiInterval {
   static PiInterval Add(PiInterval a, PiInterval b);
   static PiInterval Mult(PiInterval a, int b);
   static PiInterval Arg(ComplexProperties properties);
+
   // Return k such that max bound is in ]-π + 2kπ, π + 2kπ]
   inline int maxK() const {
     // m_maxIsInclusive doesn't matter.
-    return DivideRoundDown(m_max + 1, 4);
+    return DivideRoundDown(OMG::Arithmetic::ClampedAddition(m_max, 1), 4);
   }
   // Return k such that min bound is in ]-π + 2kπ, π + 2kπ]
   inline int minK() const {
     // ]-π, ...] {-2, false} is 0 and [-π, ...] {-2, true} is -1
-    return DivideRoundDown(m_min + !m_minIsInclusive + 1, 4);
+    return DivideRoundDown(
+        OMG::Arithmetic::ClampedAddition(m_min, !m_minIsInclusive + 1), 4);
   }
 
   constexpr bool operator==(const PiInterval&) const = default;

@@ -1,6 +1,7 @@
 #include "logarithm.h"
 
 #include <limits.h>
+#include <omg/arithmetic.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_helpers.h>
@@ -101,8 +102,9 @@ bool Logarithm::ReduceLn(Tree* e) {
 }
 
 PiInterval PiInterval::Add(PiInterval a, PiInterval b) {
-  return PiInterval(a.m_min + b.m_min, a.m_minIsInclusive && b.m_minIsInclusive,
-                    a.m_max + b.m_max,
+  return PiInterval(OMG::Arithmetic::ClampedAddition(a.m_min, b.m_min),
+                    a.m_minIsInclusive && b.m_minIsInclusive,
+                    OMG::Arithmetic::ClampedAddition(a.m_max, b.m_max),
                     a.m_maxIsInclusive && b.m_maxIsInclusive);
 }
 

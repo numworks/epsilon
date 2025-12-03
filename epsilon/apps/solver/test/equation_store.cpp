@@ -10,6 +10,8 @@ QUIZ_CASE(solver_error) {
   // Denominator containing variable
   assert_solves_to_error("80=x^2/(3(x-50)+√(2x+9(x-50)^2))",
                          RequireApproximateSolution);
+  // Unsolved dependency
+  assert_solves_to_error("0arccos(0.9b)=0", EquationUnhandled);
 
   setComplexFormatAndAngleUnit(Cartesian, Radian);
   assert_solves_to_error("cos(x)=0", RequireApproximateSolution);

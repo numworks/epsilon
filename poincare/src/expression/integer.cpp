@@ -68,16 +68,18 @@ void WorkingBuffer::garbageCollect(
     /* Immediate digits are actually directly stored within the integer handler
      * object */
     if (!integer->usesImmediateDigit()) {
-      // keptIntegers list should be sorted by increasing digits address.
-      assert(digits < integer->digits());
-      digits = integer->digits();
+      uint8_t* newDigits = integer->digits();
       /* Some IntegerHandler have their digits stored outside of the
        * WorkingBuffer and should be ignored by the garbage collection. */
-      if (digits < m_start || digits >= treeStackEnd) {
-        assert(!SharedTreeStack->contains(reinterpret_cast<Block*>(digits)) ||
-               digits + integer->numberOfDigits() * sizeof(uint8_t) <= m_start);
+      if (newDigits < m_start || newDigits >= treeStackEnd) {
+        assert(
+            !SharedTreeStack->contains(reinterpret_cast<Block*>(newDigits)) ||
+            newDigits + integer->numberOfDigits() * sizeof(uint8_t) <= m_start);
         continue;
       }
+      // keptIntegers list should be sorted by increasing digits address.
+      assert(digits < newDigits);
+      digits = newDigits;
       assert(digits + integer->numberOfDigits() * sizeof(uint8_t) <=
              previousEnd);
       uint8_t nbOfDigits = integer->numberOfDigits();

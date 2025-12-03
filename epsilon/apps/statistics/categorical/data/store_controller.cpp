@@ -127,7 +127,8 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     Escher::App::app()->setFirstResponder(this);
     return true;
   }
-  if (event == Ion::Events::Backspace) {
+  if (event == Ion::Events::Backspace && selectedRow() >= 0 &&
+      selectedColumn() >= 0) {
     int col = m_selectableTableView.selectedColumn(),
         row = m_selectableTableView.selectedRow();
     if (typeAtLocation(col, row) == k_typeOfInnerCells) {

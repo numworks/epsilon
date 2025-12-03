@@ -115,6 +115,34 @@ $(call create_goal,eraser, \
   omg.minimal \
 )
 
+.PHONY: binpack
+binpack:
+ifndef IN_FACTORY
+	@echo "\033[0;31mWARNING\033[0m You are building a binpack."
+	@echo "You must specify where this binpack will be used."
+	@echo "Please set the IN_FACTORY environment variable to either:"
+	@echo "  - 0 for use in diagnostic"
+	@echo "  - 1 for use in production"
+	@exit -1
+endif
+ifeq ($(IN_FACTORY),0)
+	@echo "\033[0;31mWARNING\033[0m You are building a binpack with IN_FACTORY=0"
+endif
+	rm -rf output/binpack
+	mkdir -p output/binpack
+	# $(MAKE) clean
+	$(MAKE) IN_FACTORY=$(IN_FACTORY) flasher.bin bench.ram.dfu epsilon.onboarding.update.dfu
+	cp $(subst binpack,flasher,$(OUTPUT_DIRECTORY))/flasher.bin output/binpack
+	cp $(subst binpack,bench,$(OUTPUT_DIRECTORY)/bench.ram.dfu) output/binpack
+	cp $(subst binpack,epsilon,$(OUTPUT_DIRECTORY))/epsilon.onboarding.update.dfu output/binpack
+	# $(MAKE) clean
+	cd output/binpack && for binary in flasher.bin; do shasum -a 256 -b $${binary} > $${binary}.sha256;done
+	cd output && tar cvfz binpack-`git rev-parse HEAD | head -c 7`.$(PLATFORM).tgz binpack
+	@echo "Binpack created as \033[0;32moutput/binpack-`git rev-parse HEAD | head -c 7`.$(PLATFORM).tgz\033[0m"
+	@echo "\033[0;31mWARNING\033[0m Files bench.ram.dfu and epsilon.official.onboarding.update.dfu need to be signed"
+	rm -rf output/binpack
+
+
 eraser%: EMBED_EXTRA_DATA := 1
 
 .PHONY: custom_userland.flash

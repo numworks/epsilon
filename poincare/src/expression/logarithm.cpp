@@ -100,111 +100,74 @@ bool Logarithm::ReduceLn(Tree* e) {
   return false;
 }
 
-/* Using integers to represent bounds around multiples of π/2.
- *       -2     -1      0      1      2
- *  ------|------|------|------|------|------
- *       -π    -π/2     0     π/2     π
- * For both bounds, we store the integer and a boolean for inclusive/exclusive.
- * For example, ]-π, π/2] is ({-2, false},{1, true}) */
-class PiInterval {
- public:
-  static PiInterval Add(PiInterval a, PiInterval b) {
-    return PiInterval(
-        a.m_min + b.m_min, a.m_minIsInclusive && b.m_minIsInclusive,
-        a.m_max + b.m_max, a.m_maxIsInclusive && b.m_maxIsInclusive);
-  }
-  static PiInterval Mult(PiInterval a, int b) {
-    return b >= 0 ? PiInterval(a.m_min * b, a.m_minIsInclusive, a.m_max * b,
-                               a.m_maxIsInclusive)
-                  : PiInterval(a.m_max * b, a.m_maxIsInclusive, a.m_min * b,
-                               a.m_minIsInclusive);
-  }
-  static PiInterval Arg(ComplexProperties properties) {
-    PiInterval result;
-    bool realCanBeNegative = properties.realSign().canBeStrictlyNegative();
-    bool realCanBeNull = properties.realSign().canBeNull();
-    bool realCanBePositive = properties.realSign().canBeStrictlyPositive();
-    if (properties.imagSign().canBeStrictlyNegative()) {
-      if (realCanBeNegative) {
-        result.unionWith(PiInterval(-2, false, -1, false));
-      }
-      if (realCanBeNull) {
-        result.unionWith(PiInterval(-1, true, -1, true));
-      }
-      if (realCanBePositive) {
-        result.unionWith(PiInterval(-1, false, 0, false));
-      }
-    }
-    if (properties.imagSign().canBeNull()) {
-      if (realCanBeNegative) {
-        result.unionWith(PiInterval(2, true, 2, true));
-      }
-      if (realCanBeNull) {
-        // Ignore this case
-      }
-      if (realCanBePositive) {
-        result.unionWith(PiInterval(0, true, 0, true));
-      }
-    }
-    if (properties.imagSign().canBeStrictlyPositive()) {
-      if (realCanBeNegative) {
-        result.unionWith(PiInterval(1, false, 2, false));
-      }
-      if (realCanBeNull) {
-        result.unionWith(PiInterval(1, true, 1, true));
-      }
-      if (realCanBePositive) {
-        result.unionWith(PiInterval(0, false, 1, false));
-      }
-    }
-    return result;
-  }
-  // Return k such that max bound is in ]-π + 2kπ, π + 2kπ]
-  int maxK() const {
-    // m_maxIsInclusive doesn't matter.
-    return DivideRoundDown(m_max + 1, 4);
-  }
-  // Return k such that min bound is in ]-π + 2kπ, π + 2kπ]
-  int minK() const {
-    // ]-π, ...] {-2, false} is 0 and [-π, ...] {-2, true} is -1
-    return DivideRoundDown(m_min + !m_minIsInclusive + 1, 4);
-  }
+PiInterval PiInterval::Add(PiInterval a, PiInterval b) {
+  return PiInterval(a.m_min + b.m_min, a.m_minIsInclusive && b.m_minIsInclusive,
+                    a.m_max + b.m_max,
+                    a.m_maxIsInclusive && b.m_maxIsInclusive);
+}
 
- private:
-  // We want DivideRoundDown(-1, 4) to be -1
-  inline static int DivideRoundDown(int num, int den) {
-    int result = num / den;
-    if (num < 0 && -num % den != 0) {
-      // -1/4 is 0 but -4/4 is -1, we expect -1 for both.
-      result -= 1;
+PiInterval PiInterval::Mult(PiInterval a, int b) {
+  return b >= 0 ? PiInterval(a.m_min * b, a.m_minIsInclusive, a.m_max * b,
+                             a.m_maxIsInclusive)
+                : PiInterval(a.m_max * b, a.m_maxIsInclusive, a.m_min * b,
+                             a.m_minIsInclusive);
+}
+
+PiInterval PiInterval::Arg(ComplexProperties properties) {
+  PiInterval result;
+  bool realCanBeNegative = properties.realSign().canBeStrictlyNegative();
+  bool realCanBeNull = properties.realSign().canBeNull();
+  bool realCanBePositive = properties.realSign().canBeStrictlyPositive();
+  if (properties.imagSign().canBeStrictlyNegative()) {
+    if (realCanBeNegative) {
+      result.unionWith(PiInterval(-2, false, -1, false));
     }
-    return result;
-  }
-  PiInterval() : PiInterval(INT_MAX, true, INT_MIN, true) {}
-  PiInterval(int min, bool minIsInclusive, int max, bool maxIsInclusive)
-      : m_min(min),
-        m_minIsInclusive(minIsInclusive),
-        m_max(max),
-        m_maxIsInclusive(maxIsInclusive) {}
-  void unionWith(PiInterval other) {
-    if (m_min > other.m_min) {
-      m_min = other.m_min;
-      m_minIsInclusive = other.m_minIsInclusive;
-    } else if (m_min == other.m_min && other.m_minIsInclusive) {
-      m_minIsInclusive = true;
+    if (realCanBeNull) {
+      result.unionWith(PiInterval(-1, true, -1, true));
     }
-    if (m_max < other.m_max) {
-      m_max = other.m_max;
-      m_maxIsInclusive = other.m_maxIsInclusive;
-    } else if (m_max == other.m_max && other.m_maxIsInclusive) {
-      m_maxIsInclusive = true;
+    if (realCanBePositive) {
+      result.unionWith(PiInterval(-1, false, 0, false));
     }
   }
-  int m_min;
-  bool m_minIsInclusive;
-  int m_max;
-  bool m_maxIsInclusive;
-};
+  if (properties.imagSign().canBeNull()) {
+    if (realCanBeNegative) {
+      result.unionWith(PiInterval(2, true, 2, true));
+    }
+    if (realCanBeNull) {
+      // Ignore this case
+    }
+    if (realCanBePositive) {
+      result.unionWith(PiInterval(0, true, 0, true));
+    }
+  }
+  if (properties.imagSign().canBeStrictlyPositive()) {
+    if (realCanBeNegative) {
+      result.unionWith(PiInterval(1, false, 2, false));
+    }
+    if (realCanBeNull) {
+      result.unionWith(PiInterval(1, true, 1, true));
+    }
+    if (realCanBePositive) {
+      result.unionWith(PiInterval(0, false, 1, false));
+    }
+  }
+  return result;
+}
+
+void PiInterval::unionWith(PiInterval other) {
+  if (m_min > other.m_min) {
+    m_min = other.m_min;
+    m_minIsInclusive = other.m_minIsInclusive;
+  } else if (m_min == other.m_min && other.m_minIsInclusive) {
+    m_minIsInclusive = true;
+  }
+  if (m_max < other.m_max) {
+    m_max = other.m_max;
+    m_maxIsInclusive = other.m_maxIsInclusive;
+  } else if (m_max == other.m_max && other.m_maxIsInclusive) {
+    m_maxIsInclusive = true;
+  }
+}
 
 // If possible, find k such that arg(A) + arg(B) + ... = arg(A*B*...) + 2iπk
 bool CanGetArgSumModulo(const Tree* firstTree, int numberOfTrees, int* k) {

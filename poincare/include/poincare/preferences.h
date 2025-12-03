@@ -90,7 +90,8 @@ class Preferences {
   enum class TranslateBuiltins : uint8_t {
     No = 0,
     TranslateToFrench,
-    // TODO: support other languages
+    TranslateToPortuguese,
+    TranslateToDutch,
   };
   enum class ParabolaParameter : uint8_t { Default, FocalLength };
   enum class MethodForQuartiles : bool { MedianOfSublist, CumulatedFrequency };

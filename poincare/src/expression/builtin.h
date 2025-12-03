@@ -118,18 +118,9 @@ constexpr static Aliases k_squareRootAliases = "\01√\00sqrt\00";
 }  // namespace BuiltinsAliases
 
 #if POINCARE_TRANSLATE_BUILTINS
-
-#define GET3RD(_1, _2, _3, ...) _3
-
-#define BUILTIN_TRANSLATIONS_1(type, a) \
-  { type, a }
-#define BUILTIN_TRANSLATIONS_2(type, a, b) \
-  BUILTIN_TRANSLATIONS_1(type, a), { type, b }
-
-#define BUILTIN_TRANSLATIONS(type, ...)                               \
-  GET3RD(__VA_ARGS__, BUILTIN_TRANSLATIONS_2, BUILTIN_TRANSLATIONS_1) \
-  (type, __VA_ARGS__)
-
+// The order should match TranslateBuiltins enum
+#define BUILTIN_TRANSLATIONS(type, en, fr, pt, nl) \
+  {type, en}, {type, fr}, {type, pt}, { type, nl }
 #else
 #define BUILTIN_TRANSLATIONS(type, a, ...) \
   { type, a }
@@ -182,8 +173,8 @@ constexpr static Builtin s_builtins[] = {
     {Type::Re, "re"},
     {Type::Im, "im"},
 #endif
-    BUILTIN_TRANSLATIONS(Type::GCD, "gcd", "PGCD"),
-    BUILTIN_TRANSLATIONS(Type::LCM, "lcm", "PPCM"),
+    BUILTIN_TRANSLATIONS(Type::GCD, "gcd", "PGCD", "gcd", "gcd"),
+    BUILTIN_TRANSLATIONS(Type::LCM, "lcm", "PPCM", "lcm", "lcm"),
     {Type::Quo, "quo"},
     {Type::Rem, "rem"},
 #if POINCARE_EUCLIDEAN_DIVISION
@@ -191,8 +182,8 @@ constexpr static Builtin s_builtins[] = {
      * never parse it, we use a little hack here with quotient as the first
      * alias and remainder as the second. */
     BUILTIN_TRANSLATIONS(Type::EuclideanDivisionResult,
-                         "\01Quotient\00Remainder\00",
-                         "\01Quotient\00Reste\00"),
+                         "\01Quotient\00Remainder\00", "\01Quotient\00Reste\00",
+                         "\01Quociente\00Resto\00", "\01Quotiënt\00Rest\00"),
 #endif
     {Type::Factor, "factor"},
     {Type::Frac, "frac"},

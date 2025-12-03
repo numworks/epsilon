@@ -27,6 +27,13 @@ class Logarithm final {
  * For example, ]-π, π/2] is ({-2, false},{1, true}) */
 class PiInterval {
  public:
+  constexpr PiInterval(int min, bool minIsInclusive, int max,
+                       bool maxIsInclusive)
+      : m_min(min),
+        m_minIsInclusive(minIsInclusive),
+        m_max(max),
+        m_maxIsInclusive(maxIsInclusive) {}
+
   static PiInterval Add(PiInterval a, PiInterval b);
   static PiInterval Mult(PiInterval a, int b);
   static PiInterval Arg(ComplexProperties properties);
@@ -51,12 +58,7 @@ class PiInterval {
     }
     return result;
   }
-  PiInterval() : PiInterval(INT_MAX, true, INT_MIN, true) {}
-  PiInterval(int min, bool minIsInclusive, int max, bool maxIsInclusive)
-      : m_min(min),
-        m_minIsInclusive(minIsInclusive),
-        m_max(max),
-        m_maxIsInclusive(maxIsInclusive) {}
+
   void unionWith(PiInterval other);
 
   int m_min;
@@ -64,5 +66,11 @@ class PiInterval {
   int m_max;
   bool m_maxIsInclusive;
 };
+
+static constexpr PiInterval k_neutralInterval =
+    PiInterval(INT_MAX, true, INT_MIN, true);
+
+static constexpr PiInterval k_defaultInterval =
+    PiInterval(INT_MIN, true, INT_MAX, true);
 
 }  // namespace Poincare::Internal

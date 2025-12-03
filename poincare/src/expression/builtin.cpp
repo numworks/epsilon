@@ -19,7 +19,7 @@ constexpr static Aliases s_customIdentifiers[] = {
 
 constexpr static Builtin s_specialIdentifiers[] = {
     BUILTIN_TRANSLATIONS(Type::Undef, BuiltinsAliases::k_undefinedAlias,
-                         "indéfini"),
+                         "indéfini", "indefinido", "ongedefinieerd"),
 #if POINCARE_COMPLEX_BUILTINS
     {Type::NonReal, "nonreal"},
 #endif
@@ -27,8 +27,10 @@ constexpr static Builtin s_specialIdentifiers[] = {
     {Type::Inf, BuiltinsAliases::k_infinityAliases},
 #if POINCARE_BOOLEAN
     BUILTIN_TRANSLATIONS(Type::False, "\01False\00false\00",
-                         "\01Faux\00faux\00"),
-    BUILTIN_TRANSLATIONS(Type::True, "\01True\00true\00", "\01Vrai\00vrai\00"),
+                         "\01Faux\00faux\00", "\01Falso\00falso\00",
+                         "\01Onwaar\00onwaar\00"),
+    BUILTIN_TRANSLATIONS(Type::True, "\01True\00true\00", "\01Vrai\00vrai\00",
+                         "\01Verdadeiro\00verdadeiro\00", "\01Waar\00waar\00"),
 #endif
     {Type::Pi, BuiltinsAliases::k_piAliases},
     {Type::EulerE, "e"},

@@ -186,6 +186,14 @@ constexpr static Builtin s_builtins[] = {
     BUILTIN_TRANSLATIONS(Type::LCM, "lcm", "PPCM"),
     {Type::Quo, "quo"},
     {Type::Rem, "rem"},
+#if POINCARE_EUCLIDEAN_DIVISION
+    /* Since EuclideanDivisionResult is the only type with two texts and we
+     * never parse it, we use a little hack here with quotient as the first
+     * alias and remainder as the second. */
+    BUILTIN_TRANSLATIONS(Type::EuclideanDivisionResult,
+                         "\01Quotient\00Remainder\00",
+                         "\01Quotient\00Reste\00"),
+#endif
     {Type::Factor, "factor"},
     {Type::Frac, "frac"},
     {Type::Round, "round"},

@@ -591,16 +591,23 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
       layoutInfixOperator(parentRack, expression,
                           CodePoint(UCodePointAssertion));
       break;
-    case Type::EuclideanDivisionResult:
-      PushCodePoint(parentRack, 'Q');
+    case Type::EuclideanDivisionResult: {
+      Aliases::Iterator<Aliases> iterator =
+          Builtin::GetReservedFunction(Type::EuclideanDivisionResult,
+                                       SharedPreferences->translateBuiltins())
+              ->aliases()
+              ->begin();
+      layoutText(parentRack, *iterator);
       PushCodePoint(parentRack, '=');
       layoutExpression(parentRack, child, k_commaPriority);
       child = child->nextTree();
+      ++iterator;
       PushCodePoint(parentRack, ',');
-      PushCodePoint(parentRack, 'R');
+      layoutText(parentRack, *iterator);
       PushCodePoint(parentRack, '=');
       layoutExpression(parentRack, child, k_commaPriority);
       break;
+    }
     case Type::Zero:
     case Type::MinusOne:
     case Type::One:

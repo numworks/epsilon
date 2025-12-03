@@ -68,14 +68,15 @@ ContinuousFunction::ContinuousFunction(Ion::Storage::Record record)
    *  now be updated as the function f(x), so the record needs a renaming.
    * */
   if (!record.isNull()) {
-    Ion::Storage::Record::ErrorStatus error = updateNameIfNeeded();
+    Ion::Storage::Record::ErrorStatus error = updateNameIfNeeded(true);
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     (void)error;
   }
 }
 
-Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded() {
-  return m_model.renameRecordIfNeeded(this);
+Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded(
+    bool isNewRecordCreation) {
+  return m_model.renameRecordIfNeeded(this, isNewRecordCreation);
 }
 
 size_t ContinuousFunction::nameWithoutArgument(char* buffer, size_t bufferSize,
@@ -156,7 +157,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
       m_model.setContent(this, l, symbolContext, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
     // Set proper name
-    error = updateNameIfNeeded();
+    error = updateNameIfNeeded(false);
     // Update model
     updateModel(wasCartesian);
   }
@@ -980,18 +981,24 @@ ContinuousFunction::Model::renameRecordToHidden(
 
 Ion::Storage::Record::ErrorStatus
 ContinuousFunction::Model::renameRecordIfNeeded(
-    Ion::Storage::Record* record) const {
+    Ion::Storage::Record* record, bool isNewRecordCreation) const {
   /* Use ExpressionModel::expressionClone because it does not alter
    * the left-hand side of "f(x)=" and "f(t)=", which allows the name
    * of the function to be found. */
   UserExpression newExpression = ExpressionModel::expressionClone(record);
+  if (newExpression.isUninitialized()) {
+    if (isNewRecordCreation) {
+      /* The expression is not set because we are in the process of creating a
+       * new record. */
+      return Ion::Storage::Record::ErrorStatus::None;
+    }
+    /* The expression is not set because an undefined expression has been set
+     * to the record. We need to hide the record (notably in the varbox), this
+     * is done by changing the record name to an "hidden" name. */
+    return renameRecordToHidden(record);
+  }
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::Record::ErrorStatus::None;
-  if (newExpression.isUninitialized()) {
-    /* The expression is not set, the record will be named later or is already
-     * correctly named by GlobalStore. */
-    return error;
-  }
   if (record->hasExtension(Ion::Storage::functionExtension)) {
     if (IsFunctionAssignment(newExpression)) {
       const UserExpression function = newExpression.cloneChildAtIndex(0);

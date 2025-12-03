@@ -42,7 +42,8 @@ class ContinuousFunction : public Function {
   ContinuousFunctionProperties properties() const {
     return m_model.properties(this);
   }
-  Ion::Storage::Record::ErrorStatus updateNameIfNeeded();
+  Ion::Storage::Record::ErrorStatus updateNameIfNeeded(
+      bool isNewRecordCreation);
 
   /* Function */
 
@@ -399,7 +400,7 @@ class ContinuousFunction : public Function {
         const Ion::Storage::Record* record) const;
     // Rename the record if needed. Record pointer might get corrupted.
     Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(
-        Ion::Storage::Record* record) const;
+        Ion::Storage::Record* record, bool isNewRecordCreation) const;
     // Build the expression from layout, handling f(x)=... cartesian equations
     Poincare::UserExpression buildExpressionFromLayout(
         Poincare::Layout l, CodePoint symbol = 0,

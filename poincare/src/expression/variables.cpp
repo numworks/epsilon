@@ -156,7 +156,9 @@ bool Variables::Replace(Tree* e, int id, const TreeRef& value, bool leave,
   for (IndexedChild<Tree*> child : e->indexedChildren()) {
     int updatedId =
         id + (isParametric && Parametric::IsFunctionIndex(child.index, e));
-    changed = Replace(child, updatedId, value, leave, reduce) || changed;
+    changed = Replace(child, updatedId, value, leave,
+                      child->isDepList() ? false : reduce) ||
+              changed;
   }
   if (reduce && changed) {
     SystematicReduction::ShallowReduce(e);

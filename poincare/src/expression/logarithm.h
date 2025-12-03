@@ -48,6 +48,8 @@ class PiInterval {
     return DivideRoundDown(m_min + !m_minIsInclusive + 1, 4);
   }
 
+  constexpr bool operator==(const PiInterval&) const = default;
+
  private:
   // We want DivideRoundDown(-1, 4) to be -1
   inline static int DivideRoundDown(int num, int den) {

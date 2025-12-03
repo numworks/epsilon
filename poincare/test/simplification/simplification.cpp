@@ -6,7 +6,9 @@
 
 #include "../helpers/symbol_store.h"
 #include "helper.h"
+#include "poincare/src/expression/logarithm.h"
 #include "poincare/test/helper.h"
+#include "quiz.h"
 
 using namespace Poincare::Internal;
 using Poincare::ComplexFormat;
@@ -526,6 +528,18 @@ QUIZ_CASE(pcj_simplification_advanced) {
   simplifies_to("x/3+1/6", "x/3+1/6");
   simplifies_to("-(-5+√(29))/2", "(5-√(29))/2");
   simplifies_to("4×π/3+5×√(2)/3", "(4×π+5×√(2))/3");
+}
+
+QUIZ_CASE(pcj_simplification_pi_interval) {
+  quiz_assert(PiInterval::Add(PiInterval(1, true, 1, true),
+                              PiInterval(10, true, 11, true)) ==
+              PiInterval(11, true, 12, true));
+  quiz_assert(PiInterval::Add(PiInterval(0, true, 2, true),
+                              PiInterval(-1, true, 1, false)) ==
+              PiInterval(-1, true, 3, false));
+  quiz_assert(
+      PiInterval::Add(PiInterval(-3, false, -1, false), k_defaultInterval) ==
+      PiInterval(INT_MIN, false, INT_MAX - 1, false));
 }
 
 QUIZ_CASE(pcj_simplification_logarithm) {

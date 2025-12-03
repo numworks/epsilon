@@ -114,7 +114,7 @@ PiInterval PiInterval::Mult(PiInterval a, int b) {
 }
 
 PiInterval PiInterval::Arg(ComplexProperties properties) {
-  PiInterval result;
+  PiInterval result = k_neutralInterval;
   bool realCanBeNegative = properties.realSign().canBeStrictlyNegative();
   bool realCanBeNull = properties.realSign().canBeNull();
   bool realCanBePositive = properties.realSign().canBeStrictlyPositive();

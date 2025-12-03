@@ -101,10 +101,15 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
     if (direction * x < direction * xStart) {
       continue;
     }
-    double y = alongX ? p.y() : p.ordinate;
-    if (x == xStart &&
-        (std::isnan(yStart) || direction * y <= direction * yStart)) {
-      continue;
+    /* Use RoughlyEqual because interest point can be too close. This can happen
+     * when an intersection is detected twice at an almost identical abscissa.
+     */
+    if (OMG::Float::RoughlyEqual<double>(x, xStart, 1e-8)) {
+      double y = alongX ? p.y() : p.ordinate;
+      if (std::isnan(yStart) || direction * y < direction * yStart ||
+          OMG::Float::RoughlyEqual<double>(y, yStart, 1e-8)) {
+        continue;
+      }
     }
     if (!PointFitInterest(p, interest) ||
         (subCurveIndex >= 0 && p.subCurveIndex != subCurveIndex)) {

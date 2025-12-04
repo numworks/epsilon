@@ -63,6 +63,12 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("ceil(x)", "ceil(x)");
   simplifies_to("ceil(-x)", "-floor(x)");
   simplifies_to("ceil(1+i)", "undef", k_cartesianCtx);
+  simplifies_to("√(floor(i))", "undef");
+  simplifies_to("√(floor(floor(i)))", "undef");
+  simplifies_to("√(floor(acos(3)))", "undef");
+  simplifies_to("√(floor(x))", "√(floor(x))");
+  simplifies_to("√(floor(acos(x)))",
+                "dep(√(floor(arccos(x))),{piecewise(0,abs(x)≤1,nonreal)})");
   simplifies_to("frac(8/3)", "2/3");
   simplifies_to("frac(-1.3)", "7/10");
   simplifies_to("floor(x)+frac(x)", "dep(x,{floor(x)})");

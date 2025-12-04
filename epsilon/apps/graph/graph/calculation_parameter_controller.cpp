@@ -187,17 +187,18 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   bool isCartesian = properties.isCartesian();
   bool isOfDegreeTwo = properties.isOfDegreeTwo();
   bool isSimpleCartesianEquality = isCartesian && isEquality && !isOfDegreeTwo;
+  bool isAlongY = properties.isAlongY();
   assert(isCartesian || properties.isPolar() || properties.isParametric());
-  m_tangentCell.setVisible(isEquality && !isOfDegreeTwo);
-  m_preimageCell.setVisible(isSimpleCartesianEquality);
+  m_tangentCell.setVisible(isEquality && !isOfDegreeTwo && !isAlongY);
+  m_preimageCell.setVisible(isSimpleCartesianEquality && !isAlongY);
   m_intersectionCell.setVisible(shouldDisplayIntersectionCell());
   m_intersectionRegionCell.setVisible(shouldDisplayIntersectionRegionCell());
-  m_maximumCell.setVisible(isSimpleCartesianEquality);
-  m_minimumCell.setVisible(isSimpleCartesianEquality);
-  m_rootCell.setVisible(isSimpleCartesianEquality);
-  m_slopeCell.setVisible(!isCartesian && isEquality);
-  m_integralCell.setVisible(isSimpleCartesianEquality);
-  m_areaCell.setVisible(shouldDisplayAreaCell() && isEquality);
+  m_maximumCell.setVisible(isSimpleCartesianEquality && !isAlongY);
+  m_minimumCell.setVisible(isSimpleCartesianEquality && !isAlongY);
+  m_rootCell.setVisible(isSimpleCartesianEquality && !isAlongY);
+  m_slopeCell.setVisible(!isCartesian && isEquality && !isAlongY);
+  m_integralCell.setVisible(isSimpleCartesianEquality && !isAlongY);
+  m_areaCell.setVisible(shouldDisplayAreaCell() && isEquality && !isAlongY);
   m_selectableListView.resetSizeAndOffsetMemoization();
 }
 

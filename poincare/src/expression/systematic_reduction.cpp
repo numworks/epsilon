@@ -98,11 +98,12 @@ bool SystematicReduction::ShallowReduceAux(Tree* e, bool isList) {
   if (changed) {
     assert(Dimension::DeepCheck(e));
     if (!e->isUndefined()) {
-      assert(Dimension::Get(e) == dimBefore);
       // TODO decide the output of undef ListSort
       /* TODO This assert should always be valid regardless of Undefined state
        * if we output a list of undef/matrix of undef etc... */
       assert(Dimension::ListLength(e) == lenBefore);
+      // Dimension can be lost for empty lists
+      assert(lenBefore == 0 || Dimension::Get(e) == dimBefore);
     }
   }
 #endif

@@ -148,7 +148,6 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
   SimpleKTrees::KTree sampleStdDev =
       KMult(stdDev, KPow(KAdd(1_e, KPow(KAdd(KC, -1_e), -1_e)), 1_e / 2_e));
   PatternMatching::Context ctx({.KA = list, .KB = coefficients});
-  ctx.setInvolvesList(true);
   if (type.isSampleStdDev()) {
     Tree* n = coefficients->isOne()
                   ? Integer::Push(Dimension::ListLength(list))
@@ -203,7 +202,6 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
     return KUndef->cloneNode();
   }
   PatternMatching::Context ctx({.KA = list, .KB = coefficients});
-  ctx.setInvolvesList(true);
   return PatternMatching::CreateReduce(
       KMult(KListSum(KMult(KA, KB)), KPow(KListSum(KB), -1_e)), ctx);
 #else

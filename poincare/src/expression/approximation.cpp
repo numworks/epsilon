@@ -351,6 +351,7 @@ static std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
  * otherwise */
 std::complex<float> Private::HelperUndefDependencies(const Tree* dep,
                                                      const Context* ctx) {
+  assert(ctx);
   // Dependency children may have different dimensions.
   std::complex<float> undefValue = std::complex<float>(0);
   for (const Tree* child : Dependency::Dependencies(dep)->children()) {
@@ -775,13 +776,14 @@ std::complex<T> MatrixToComplex(const Tree* e, const Context* ctx) {
 
 template <typename T>
 std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
+  assert(ctx);
   Context tempCtx(*ctx);
   switch (e->type()) {
     case Type::List:
-      assert(ctx && ctx->m_listElement != -1);
+      assert(ctx->m_listElement != -1);
       return PrivateToComplexRecursive<T>(e->child(ctx->m_listElement), ctx);
     case Type::ListSequence: {
-      assert(ctx && ctx->m_listElement != -1);
+      assert(ctx->m_listElement != -1);
       // epsilon sequences starts at one
       Context ctxCopy = *ctx;
       LocalContext localCtx =
@@ -803,14 +805,13 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       if (i < 0 || i >= Dimension::ListLength(values, ctx->m_symbolContext)) {
         return NAN;
       }
-      assert(ctx);
       tempCtx.m_listElement = i;
       std::complex<T> result = PrivateToComplexRecursive<T>(values, &tempCtx);
       ctx->updateRandomContext(tempCtx.m_randomContext);
       return result;
     }
     case Type::ListSlice: {
-      assert(ctx && ctx->m_listElement != -1);
+      assert(ctx->m_listElement != -1);
       const Tree* values = e->child(0);
       const Tree* startIndex = e->child(1);
       assert(Integer::Is<uint8_t>(startIndex));
@@ -824,7 +825,6 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
     }
     case Type::ListSum:
     case Type::ListProduct: {
-      assert(ctx);
       const Tree* values = e->child(0);
       int length = Dimension::ListLength(values, ctx->m_symbolContext);
       std::complex<T> result = e->isListSum() ? 0 : 1;
@@ -838,7 +838,6 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
     }
     case Type::Min:
     case Type::Max: {
-      assert(ctx);
       const Tree* values = e->child(0);
       int length = Dimension::ListLength(values, ctx->m_symbolContext);
       assert(length > 0);
@@ -861,7 +860,6 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
     case Type::StdDev:
     case Type::SampleStdDev:
     case Type::Variance: {
-      assert(ctx);
       const Tree* values = e->child(0);
       const Tree* coefficients = e->child(1);
       int length = Dimension::ListLength(values, ctx->m_symbolContext);
@@ -1012,6 +1010,7 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
      * handled at this point. */
     case Type::Unit: {
       T approxSI = Units::Unit::GetValue(e);
+      assert(ctx);
       /* For angle units, convert to angle value in the context. Do not convert
        * if angle unit is None. */
       return (Units::IsPureAngleUnit(e) && ctx->m_angleUnit != AngleUnit::None)
@@ -1508,6 +1507,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       bool resultIsMatrix = false;
       Tree* result = nullptr;
       for (const Tree* child : e->children()) {
+        assert(ctx);
         bool childIsMatrix =
             Dimension::Get(child, ctx->m_symbolContext).isMatrix();
         Tree* approx = childIsMatrix ? ToMatrix<T>(child, ctx)
@@ -1573,6 +1573,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       return result;
     }
     case Type::Dim: {
+      assert(ctx);
       Dimension dim = Dimension::Get(e->child(0), ctx->m_symbolContext);
       assert(dim.isMatrix());
       Tree* result = SharedTreeStack->pushMatrix(1, 2);
@@ -1641,6 +1642,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
 
 template <typename T>
 T Private::PrivateTo(const Tree* e, const Context* ctx) {
+  assert(ctx);
 #if ASSERTIONS
   Dimension dim = Dimension::Get(e, ctx->m_symbolContext);
 #endif
@@ -1837,6 +1839,7 @@ static bool MergeChildrenOfMultOrAdd(Tree* e) {
 template <typename T>
 bool Private::PrivateApproximateAndReplaceEveryScalar(Tree* e,
                                                       const Context* ctx) {
+  assert(ctx);
   if (Approximation::CanApproximate(e) &&
       Dimension::IsNonListScalar(e, ctx->m_symbolContext)) {
     e->moveTreeOverTree(

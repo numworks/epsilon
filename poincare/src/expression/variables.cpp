@@ -157,6 +157,8 @@ bool Variables::Replace(Tree* e, int id, const TreeRef& value, bool leave,
     int updatedId =
         id + (isParametric && Parametric::IsFunctionIndex(child.index, e));
     changed = Replace(child, updatedId, value, leave,
+                      /* Leave dependencies unreduced in the systematic
+                       * reduction (they are handled separately). */
                       child->isDepList() ? false : reduce) ||
               changed;
   }

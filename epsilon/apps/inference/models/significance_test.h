@@ -34,7 +34,7 @@ class SignificanceTest : public InferenceModel {
   constexpr static int k_hypothesisValueSignificantDigits =
       Poincare::Preferences::VeryShortNumberOfSignificantDigits;
 
-  constexpr static size_t k_descriptionBufferSize = 15;
+  constexpr static size_t k_descriptionBufferSize = sizeof("μ1-μ2≠-1000");
   using DescriptionBuffer = std::array<char, k_descriptionBufferSize>;
 
   DescriptionBuffer h0Description() const;

@@ -119,10 +119,6 @@ class PatternMatching {
       m_numberOfTrees[tag] = numberOfTrees;
     }
     bool isUninitialized() const;
-    /* When the source or pattern of the pattern matching is susceptible to
-     * contain list, [involvesList] should be set to [true] */
-    void setInvolvesList(bool involvesList) { m_involvesList = involvesList; }
-    bool involvesList() const { return m_involvesList; }
 
 #if POINCARE_TREE_LOG
     __attribute__((__used__)) void log() const;
@@ -146,7 +142,6 @@ class PatternMatching {
     bool m_checkScope = true;
     static_assert(sizeof(m_scopes) == sizeof(m_scopeArray));
 #endif
-    bool m_involvesList = false;
   };
 
 #ifndef PLATFORM_DEVICE

@@ -33,6 +33,9 @@ class Metric {
   /* This metric is unreachable by any tree, but if a tree is considered to have
    * this metric then [CannotBeReducedFurther] is [true] */
   constexpr static float k_perfectMetric = 0.f;
+  /* Limit the metric to an arbitrary value, to avoid the loss of precision with
+   * very big floats. */
+  constexpr static float k_maxMetric = 100000.f;
 
 #endif
 };

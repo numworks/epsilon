@@ -320,7 +320,7 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
   for (const Tree* child : e->children()) {
     result += GetTrueMetric(child, reductionTarget) * childrenCoeff;
   }
-  return result;
+  return std::min(result, k_maxMetric);
 }
 
 float Metric::GetMetric(const Tree* e, ReductionTarget reductionTarget) {

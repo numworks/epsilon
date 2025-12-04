@@ -170,6 +170,7 @@ class RackParser {
 
   // Save and restore parser state
   struct State {
+    ParsingContext parsingContext;
     Tokenizer::State tokenizerState;
     Token currentToken;
     Token nextToken;
@@ -178,6 +179,7 @@ class RackParser {
   };
   State currentState() const {
     return State{
+        .parsingContext = m_parsingContext,
         .tokenizerState = m_tokenizer.currentState(),
         .currentToken = m_currentToken,
         .nextToken = m_nextToken,

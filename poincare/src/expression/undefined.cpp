@@ -5,7 +5,7 @@
 #include "dimension.h"
 #include "integer.h"
 #include "k_tree.h"
-#include "matrix.h"
+#include "list.h"
 
 namespace Poincare::Internal {
 
@@ -26,7 +26,6 @@ Tree* Undefined::CreateTreeWithDimensionedType(const Tree* e, Type type) {
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   int length = Dimension::ListLength(e);
   if (length >= 0) {
-    // Push ListSequence instead of a list to delay its expansion.
     SharedTreeStack->pushListSequence();
     "k"_e->cloneTree();
     Integer::Push(length);
@@ -56,6 +55,10 @@ Tree* Undefined::CreateTreeWithDimensionedType(const Tree* e, Type type) {
     } else {
       SharedTreeStack->pushBlock(type);
     }
+  }
+  if (length >= 0) {
+    // Expand list sequence to list
+    List::BubbleUp(result);
   }
   return result;
 }

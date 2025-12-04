@@ -19,7 +19,8 @@ struct List {
   static Tree* GetElement(const Tree* e, int k, Tree::Operation reduction);
 
   /* Turn the list expression into an explicit list. */
-  static bool BubbleUp(Tree* e, Tree::Operation reduction);
+  static bool BubbleUp(
+      Tree* e, Tree::Operation reduction = [](Tree* t) { return false; });
 
   static Tree* Fold(const Tree* list, TypeBlock type);
   static Tree* Mean(const Tree* list, const Tree* coefficients);

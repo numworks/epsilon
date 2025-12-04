@@ -529,7 +529,9 @@ QUIZ_CASE(pcj_simplification_advanced) {
 }
 
 QUIZ_CASE(pcj_simplification_logarithm) {
+  // Big numbers in logarithms
   simplifies_to("log(10^2022)", "2022");
+  simplifies_to("3/log(3000000000)", "3×(log(2,3000000000)+log(5,3000000000))");
 
   simplifies_to("log(3,27)", "1/3");
   simplifies_to("log(27,3)", "3");

@@ -14,6 +14,7 @@
 #include "integer.h"
 #include "k_tree.h"
 #include "parametric.h"
+#include "poincare/src/expression/properties.h"
 #include "projection.h"
 #include "rational.h"
 #include "systematic_reduction.h"
@@ -111,6 +112,12 @@ bool Arithmetic::ReduceFloor(Tree* e) {
   assert(Dimension::Get(child).isScalar());
   if (Dimension::IsList(child)) {
     return false;
+  }
+
+  // Reduce to undefined if the child is a complex number
+  if (GetComplexProperties(child).isNonReal()) {
+    e->moveTreeOverTree(KUndef->cloneTree());
+    return true;
   }
 
   /* Use the Bounds API. A Floor expression is reduced to an integer if and only

@@ -189,7 +189,9 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
             context->ctx->clippingRect()
                 .relativeTo(context->ctx->origin())
                 .left()) {
-      context->index++;
+      if (child) {
+        context->index++;
+      }
       return;
     }
     LayoutStyle childStyle = context->style;
@@ -209,7 +211,9 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
       EmptyRectangle::DrawEmptyRectangle(
           context->ctx, p, s_font, context->style.requiredPlaceholderColor);
     }
-    context->index++;
+    if (child) {
+      context->index++;
+    }
   };
   RackLayout::IterBetweenIndexes(l, 0, l->numberOfChildren(), iter, &context,
                                  showEmpty);

@@ -253,9 +253,6 @@ bool IsSystem(const Tree* e) {
 bool ReduceSystem(Tree* e, bool advanced, ReductionTarget reductionTarget) {
   bool changed = SystematicReduction::DeepReduce(e);
   assert(!SystematicReduction::DeepReduce(e));
-#if POINCARE_LIST
-  changed = List::BubbleUp(e, SystematicReduction::ShallowReduce) || changed;
-#endif
   if (advanced) {
     changed = AdvancedReduction::Reduce(e, reductionTarget) || changed;
   }

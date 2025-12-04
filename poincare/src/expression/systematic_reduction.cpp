@@ -147,6 +147,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e, bool isList) {
     }
   }
   bool bubbleUpFloat = false, bubbleUpDependency = false, bubbleUpUndef = false;
+  bool bubbleUpList = TypeBlock::ProducesList(e->type());
   for (const Tree* child : e->children()) {
     if (child->isFloat()) {
       bubbleUpFloat = true;
@@ -154,6 +155,8 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e, bool isList) {
       bubbleUpDependency = true;
     } else if (child->isUndefined()) {
       bubbleUpUndef = true;
+    } else if (!bubbleUpList && TypeBlock::ProducesList(child->type())) {
+      bubbleUpList = true;
     }
   }
 
@@ -161,6 +164,11 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e, bool isList) {
     /* dep(nonreal,{...}) can be undef, so we can't replace the whole expression
      * with nonreal */
     bubbleUpUndef = false;
+  }
+
+  if (bubbleUpList && List::BubbleUp(e, ShallowReduce)) {
+    assert(!ShallowReduce(e));
+    return true;
   }
 
   if (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(e)) {

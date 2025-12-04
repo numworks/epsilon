@@ -145,7 +145,11 @@ class TypeBlock : public Block {
   }
 
   static bool ProducesList(Type type) {
+#if POINCARE_LIST
     return IsOfType(type, {Type::List, Type::ListSequence, Type::RandIntNoRep});
+#else
+    return false;
+#endif
   }
 
   // Their next metaBlock contains the numberOfChildren

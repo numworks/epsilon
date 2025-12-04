@@ -1507,9 +1507,9 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       bool resultIsMatrix = false;
       Tree* result = nullptr;
       for (const Tree* child : e->children()) {
-        assert(ctx);
-        bool childIsMatrix =
-            Dimension::Get(child, ctx->m_symbolContext).isMatrix();
+        bool childIsMatrix = (ctx ? Dimension::Get(child, ctx->m_symbolContext)
+                                  : Dimension::Get(child))
+                                 .isMatrix();
         Tree* approx = childIsMatrix ? ToMatrix<T>(child, ctx)
                                      : ToComplexTree<T>(child, ctx);
         if (result == nullptr) {
@@ -1573,8 +1573,8 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       return result;
     }
     case Type::Dim: {
-      assert(ctx);
-      Dimension dim = Dimension::Get(e->child(0), ctx->m_symbolContext);
+      Dimension dim = ctx ? Dimension::Get(e->child(0), ctx->m_symbolContext)
+                          : Dimension::Get(e->child(0));
       assert(dim.isMatrix());
       Tree* result = SharedTreeStack->pushMatrix(1, 2);
       SharedTreeStack->pushFloat(T(dim.matrix.rows));

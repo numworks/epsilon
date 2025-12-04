@@ -968,8 +968,7 @@ PreparedFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
 }
 
 Ion::Storage::Record::ErrorStatus
-ContinuousFunction::Model::renameRecordToHidden(
-    Ion::Storage::Record* record) const {
+ContinuousFunction::Model::RenameRecordToHidden(Ion::Storage::Record* record) {
   char name[k_maxDefaultNameSize];
   size_t length = UTF8Helper::WriteCodePoint(name, k_maxDefaultNameSize,
                                              k_unnamedRecordFirstChar);
@@ -995,7 +994,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(
     /* The expression is not set because an undefined expression has been set
      * to the record. We need to hide the record (notably in the varbox), this
      * is done by changing the record name to an "hidden" name. */
-    return renameRecordToHidden(record);
+    return RenameRecordToHidden(record);
   }
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::Record::ErrorStatus::None;
@@ -1015,7 +1014,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(
       // Record is already unnamed (and hidden).
       return error;
     }
-    error = renameRecordToHidden(record);
+    error = RenameRecordToHidden(record);
   }
   return error;
 }

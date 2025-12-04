@@ -71,7 +71,15 @@ bool Arithmetic::ReduceEuclideanDivision(Tree* e) {
 
 bool Arithmetic::ReduceFloor(Tree* e) {
   assert(e->isFloor());
+
   Tree* child = e->child(0);
+
+  // Reduce to undefined if the child is a complex number
+  if (GetComplexProperties(child).isNonReal()) {
+    e->cloneTreeOverTree(KUndef);
+    return true;
+  }
+
   if (child->isRational()) {
     DivisionResult div = IntegerHandler::Division(Rational::Numerator(child),
                                                   Rational::Denominator(child));
@@ -112,12 +120,6 @@ bool Arithmetic::ReduceFloor(Tree* e) {
   assert(Dimension::Get(child).isScalar());
   if (Dimension::IsList(child)) {
     return false;
-  }
-
-  // Reduce to undefined if the child is a complex number
-  if (GetComplexProperties(child).isNonReal()) {
-    e->moveTreeOverTree(KUndef->cloneTree());
-    return true;
   }
 
   /* Use the Bounds API. A Floor expression is reduced to an integer if and only

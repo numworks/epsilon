@@ -122,6 +122,7 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
        (rightHandSide->isUserFunction() &&
         rightHandSide->child(0)->isUserSymbol()))) {
     setState(previousState);
+    m_parsingContext.metadata.isUnitConversion = false;
     m_parsingContext.metadata.isAssignmentDeclaration = false;
     Poincare::EmptySymbolContext tempContext = Poincare::EmptySymbolContext();
     // This is instantiated outside the condition so that the pointer is not
@@ -1568,6 +1569,9 @@ bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
 }
 
 void RackParser::setState(const State& state) {
+  m_parsingContext.context = state.parsingContext.context;
+  // m_parsingContext.params is const
+  m_parsingContext.metadata = state.parsingContext.metadata;
   m_tokenizer.setState(state.tokenizerState);
   m_currentToken = state.currentToken;
   m_nextToken = state.nextToken;

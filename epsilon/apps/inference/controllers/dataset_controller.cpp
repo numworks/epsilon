@@ -8,6 +8,12 @@
 
 namespace Inference {
 
+void DatasetControllerCell::updateLabelAndReload(I18n::Message message) {
+  label()->setMessage(message);
+  // Re-layout subviews
+  layoutSubviews();
+}
+
 DatasetController::DatasetController(Escher::StackViewController* parent,
                                      ControllerContainer* controllerContainer,
                                      InferenceModel* inference)
@@ -62,19 +68,16 @@ int DatasetController::indexOfInputDataCell() const {
 
 void DatasetController::initView() {
   cell(indexOfInputStatisticsCell())
-      ->label()
-      ->setMessage(I18n::Message::InputStatistics);
+      ->updateLabelAndReload(I18n::Message::InputStatistics);
   switch (getListOptions()) {
     case Options::InputStatisticsAndInputDataset: {
       cell(indexOfDatasetCell())
-          ->label()
-          ->setMessage(I18n::Message::UseADataSet);
+          ->updateLabelAndReload(I18n::Message::UseADataSet);
       break;
     }
     case Options::InputDataAndInputStatistics: {
       cell(indexOfInputDataCell())
-          ->label()
-          ->setMessage(I18n::Message::InputData);
+          ->updateLabelAndReload(I18n::Message::InputData);
       break;
     }
   }

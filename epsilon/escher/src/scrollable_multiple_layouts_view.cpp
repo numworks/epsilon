@@ -231,14 +231,23 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
 KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
     privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const {
   KDCoordinate width = 0;
-  KDCoordinate height = 0;
+  KDCoordinate maxAboveBaseline = 0;
+  KDCoordinate maxUnderBaseline = 0;
+
+  KDCoordinate leftBaseline = 0;
+  KDCoordinate centerBaseline = 0;
+  KDCoordinate rightBaseline = 0;
+  KDCoordinate viewBaseline =
+      baseline(&leftBaseline, &centerBaseline, &rightBaseline);
 
   KDSize leftSize = KDSizeZero;
   if (leftLayoutView() && !leftLayoutView()->layout().isUninitialized()) {
     leftSize = leftLayoutView()->minimalSizeForOptimalDisplay();
     width += leftSize.width() +
              AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
-    height = std::max(height, leftSize.height());
+    maxAboveBaseline = std::max(maxAboveBaseline, leftBaseline);
+    maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline,
+                                              leftSize.height() - leftBaseline);
   }
 
   KDSize centerSize = KDSizeZero;
@@ -247,7 +256,9 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
     width += centerSize.width() +
              2 * AbstractScrollableMultipleLayoutsView::k_horizontalMargin +
              m_approximateSign.minimalSizeForOptimalDisplay().width();
-    height = std::max(height, centerSize.height());
+    maxAboveBaseline = std::max(maxAboveBaseline, centerBaseline);
+    maxUnderBaseline = std::max<KDCoordinate>(
+        maxUnderBaseline, centerSize.height() - centerBaseline);
   }
 
   KDSize rightSize = KDSizeZero;
@@ -255,8 +266,11 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
     rightSize = m_rightLayoutView.minimalSizeForOptimalDisplay();
     width += rightSize.width();
   }
+  maxAboveBaseline = std::max(maxAboveBaseline, rightBaseline);
+  maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline,
+                                            rightSize.height() - rightBaseline);
 
-  height = std::max(height, rightSize.height());
+  KDCoordinate height = maxAboveBaseline + maxUnderBaseline;
 
   return KDSize(width, height);
 }

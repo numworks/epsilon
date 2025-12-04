@@ -71,10 +71,12 @@ class PiInterval {
   bool m_maxIsInclusive;
 };
 
-static constexpr PiInterval k_neutralInterval =
+// k_emptyInterval.unionWith(I) will return I for all intervals
+static constexpr PiInterval k_emptyInterval =
     PiInterval(INT_MAX, true, INT_MIN, true);
 
-static constexpr PiInterval k_defaultInterval =
+// k_emptyInterval.unionWith(I) will return k_unknownInterval for all intervals
+static constexpr PiInterval k_unknownInterval =
     PiInterval(INT_MIN, true, INT_MAX, true);
 
 }  // namespace Poincare::Internal

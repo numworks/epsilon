@@ -538,7 +538,7 @@ QUIZ_CASE(pcj_simplification_pi_interval) {
                               PiInterval(-1, true, 1, false)) ==
               PiInterval(-1, true, 3, false));
   quiz_assert(
-      PiInterval::Add(PiInterval(-3, false, -1, false), k_defaultInterval) ==
+      PiInterval::Add(PiInterval(-3, false, -1, false), k_unknownInterval) ==
       PiInterval(INT_MIN, false, INT_MAX - 1, false));
 }
 

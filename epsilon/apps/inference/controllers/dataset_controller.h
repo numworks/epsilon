@@ -11,12 +11,25 @@
 
 namespace Inference {
 
-class DatasetController
-    : public InferenceController,
-      public Escher::UniformSelectableListController<
-          Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
-                           Escher::ChevronView>,
-          InputTableFromStore::k_numberOfDatasetOptions> {
+class DatasetControllerCell
+    : public Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                              Escher::ChevronView> {
+ public:
+  using Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                         Escher::ChevronView>::MenuCell;
+  /* DatasetController is a UniformSelectableListController that doesn't allow
+   * fillCellForRow override. We can't set the message on constructor since they
+   * are changed on initView, which is called after the cells have been laid
+   * out. As a result, we allow the cells to be re-laid out after changing the
+   * label here. This exception could be removed by reworking the entire
+   * DatasetController structure, at the cost of some optimisations. */
+  void updateLabelAndReload(I18n::Message message);
+};
+
+class DatasetController : public InferenceController,
+                          public Escher::UniformSelectableListController<
+                              DatasetControllerCell,
+                              InputTableFromStore::k_numberOfDatasetOptions> {
  public:
   DatasetController(Escher::StackViewController* parent,
                     ControllerContainer* controllerContainer,

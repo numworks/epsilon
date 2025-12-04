@@ -66,6 +66,4 @@ constexpr int ClampedAddition(int a, int b) {
   return result.value;
 }
 
-// uint64_t ?
-
 }  // namespace OMG::Arithmetic

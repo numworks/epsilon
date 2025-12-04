@@ -116,7 +116,7 @@ PiInterval PiInterval::Mult(PiInterval a, int b) {
 }
 
 PiInterval PiInterval::Arg(ComplexProperties properties) {
-  PiInterval result = k_neutralInterval;
+  PiInterval result = k_emptyInterval;
   bool realCanBeNegative = properties.realSign().canBeStrictlyNegative();
   bool realCanBeNull = properties.realSign().canBeNull();
   bool realCanBePositive = properties.realSign().canBeStrictlyPositive();
@@ -153,13 +153,13 @@ PiInterval PiInterval::Arg(ComplexProperties properties) {
       result.unionWith(PiInterval(0, false, 1, false));
     }
   }
-  if (result == k_neutralInterval) {
+  if (result == k_emptyInterval) {
     /*  We don't have precise information on the interval, the result variable
      * did not change. This can happen if the expression has a complex sign of
      * zero (only realSign().canBeNull() and imagSign().canBeNull() are true).
      * This is possible even if the expression itself is not zero (for example
      * floor(i)) */
-    return k_defaultInterval;
+    return k_unknownInterval;
   }
 
   return result;

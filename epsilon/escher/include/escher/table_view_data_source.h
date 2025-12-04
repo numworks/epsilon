@@ -18,7 +18,7 @@ class TableViewDataSource {
   friend class ListWithTopAndBottomController;
 
  public:
-  // TODO: Factorize ovelap and separator
+  // TODO: Factorize overlap and separator
   constexpr static KDCoordinate k_defaultRowSeparator =
       Escher::Metric::CommonMenuMargin + Escher::Metric::CellSeparatorThickness;
 

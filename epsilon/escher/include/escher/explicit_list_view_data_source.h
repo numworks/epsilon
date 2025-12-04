@@ -7,7 +7,7 @@
 namespace Escher {
 
 /* This class is a ListViewDataSource where each cell has its own type. It
- * basically means that the reusableCell mecanism is erased which results in
+ * basically means that the reusableCell mechanism is erased which results in
  * easier manipulation of heterogeneous cells but should not be used in list
  * with a long or dynamic cell count. */
 class ExplicitListViewDataSource : public ListViewDataSource {

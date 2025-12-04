@@ -57,12 +57,10 @@ bool StoreController::textFieldShouldFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
          (event == Ion::Events::Right &&
-          m_selectableTableView.selectedColumn() < numberOfColumns() - 1) ||
-         (event == Ion::Events::Left &&
-          m_selectableTableView.selectedColumn() > 0) ||
-         (event == Ion::Events::Down &&
-          m_selectableTableView.selectedRow() < numberOfRows()) ||
-         (event == Ion::Events::Up && m_selectableTableView.selectedRow() > 0);
+          selectedColumn() < numberOfColumns() - 1) ||
+         (event == Ion::Events::Left && selectedColumn() > 0) ||
+         (event == Ion::Events::Down && selectedRow() < numberOfRows()) ||
+         (event == Ion::Events::Up && selectedRow() > 0);
 }
 
 bool StoreController::textFieldDidFinishEditing(
@@ -71,8 +69,7 @@ bool StoreController::textFieldDidFinishEditing(
   if (HasUndefinedValue(p)) {
     return false;
   }
-  int row = m_selectableTableView.selectedRow(),
-      col = m_selectableTableView.selectedColumn();
+  int row = selectedRow(), col = selectedColumn();
   if (!m_store->authorizedValue(p)) {
     Escher::App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
@@ -129,8 +126,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Backspace && selectedRow() >= 0 &&
       selectedColumn() >= 0) {
-    int col = m_selectableTableView.selectedColumn(),
-        row = m_selectableTableView.selectedRow();
+    int row = selectedRow(), col = selectedColumn();
     if (typeAtLocation(col, row) == k_typeOfInnerCells) {
       ColumnInfo info = columnInfo(col);
       if (info.isDataColumn) {
@@ -159,7 +155,6 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
       if (info.isDataColumn) {
         m_columnParameterController.setColumn(info.groupNumber);
         m_stackViewController->push(&m_columnParameterController);
-
       } else {
         m_rfColumnParameterController.setGroup(info.groupNumber);
         m_stackViewController->push(&m_rfColumnParameterController);
@@ -170,7 +165,6 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
       m_stackViewController->push(&m_rowParameterController);
       return true;
     }
-    return false;
   }
   return false;
 }
@@ -199,8 +193,8 @@ bool StoreController::recomputeDimensions() {
 }
 
 void StoreController::recomputeDimensionsAndReload(bool force) {
-  int col = m_selectableTableView.selectedColumn();
-  int row = m_selectableTableView.selectedRow();
+  int col = selectedColumn();
+  int row = selectedRow();
   if (recomputeDimensions() || force) {
     m_selectableTableView.reloadData(true);
   } else {

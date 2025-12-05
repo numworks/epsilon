@@ -59,7 +59,7 @@ Tree* List::GetElement(const Tree* e, int k, Tree::Operation reduction) {
         result = e->cloneNode();
         if (e->isDepList()) {
           // Do not attempt to reduce conditions of dependency
-          reduction = [](Tree*) { return false; };
+          reduction = k_emptyOperation;
         }
       }
       for (const Tree* child : e->children()) {

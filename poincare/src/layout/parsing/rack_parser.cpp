@@ -92,9 +92,10 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
    *   but abc->x is understood as a*b*c->x
    * */
 
+  m_parsingContext.metadata.isUnitConversion = false;
+  State previousState = currentState();
   // Step 1. Parse as unitConversion
   m_parsingContext.metadata.isUnitConversion = true;
-  State previousState = currentState();
   ExceptionTry {
     m_nextToken = m_tokenizer.popToken();
     TreeRef leftHandSide = parseUntil(Token::Type::RightwardsArrow);
@@ -110,42 +111,40 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
     setState(previousState);
   }
 
-  m_parsingContext.metadata.isUnitConversion = false;
-
   // Step 2. Parse as assignment, starting with rightHandSide.
+  assert(!m_parsingContext.metadata.isUnitConversion);
   m_parsingContext.metadata.isAssignmentDeclaration = true;
   m_tokenizer.skipTree(rightwardsArrowPosition + 1);
   TreeRef rightHandSide = initializeFirstTokenAndParseUntilEnd();
-  if (m_nextToken.is(Token::Type::EndOfStream) &&
-      (rightHandSide
-           ->isUserSymbol() ||  // RightHandSide must be symbol or function.
-       (rightHandSide->isUserFunction() &&
-        rightHandSide->child(0)->isUserSymbol()))) {
-    setState(previousState);
-    m_parsingContext.metadata.isUnitConversion = false;
-    m_parsingContext.metadata.isAssignmentDeclaration = false;
-    Poincare::EmptySymbolContext tempContext = Poincare::EmptySymbolContext();
-    // This is instantiated outside the condition so that the pointer is not
-    // lost.
-    Poincare::TreeVariableContext assignmentContext("", &tempContext);
-    if (rightHandSide->isUserFunction()) {
-      /* If assigning a function, set the function parameter in the context
-       * for parsing leftHandSide.
-       * This is to ensure that 3g->f(g) is correctly parsed */
-      TreeRef functionParameter = rightHandSide->child(0);
-      assignmentContext = Poincare::TreeVariableContext(
-          Symbol::GetName(functionParameter), m_parsingContext.context);
-      m_parsingContext.context = &assignmentContext;
-    }
-    // Parse leftHandSide
-    m_nextToken = m_tokenizer.popToken();
-    TreeRef leftHandSide = parseUntil(Token::Type::RightwardsArrow);
-    leftHandSide->swapWithTree(rightHandSide);
-    turnIntoBinaryNode(KStore, leftHandSide, rightHandSide);
-    assert(!leftHandSide.isUninitialized());
-    return leftHandSide;
+  if (!m_nextToken.is(Token::Type::EndOfStream) ||
+      !(rightHandSide->isUserSymbol() ||
+        (rightHandSide->isUserFunction() &&
+         rightHandSide->child(0)->isUserSymbol()))) {
+    // RightHandSide must be symbol or function.
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  setState(previousState);
+  assert(!m_parsingContext.metadata.isUnitConversion);
+  m_parsingContext.metadata.isAssignmentDeclaration = false;
+  Poincare::EmptySymbolContext tempContext = Poincare::EmptySymbolContext();
+  // This is instantiated outside the condition so that the pointer is not lost.
+  Poincare::TreeVariableContext assignmentContext("", &tempContext);
+  if (rightHandSide->isUserFunction()) {
+    /* If assigning a function, set the function parameter in the context for
+     * parsing leftHandSide. This is to ensure that 3g->f(g) is correctly parsed
+     */
+    TreeRef functionParameter = rightHandSide->child(0);
+    assignmentContext = Poincare::TreeVariableContext(
+        Symbol::GetName(functionParameter), m_parsingContext.context);
+    m_parsingContext.context = &assignmentContext;
+  }
+  // Parse leftHandSide
+  m_nextToken = m_tokenizer.popToken();
+  TreeRef leftHandSide = parseUntil(Token::Type::RightwardsArrow);
+  leftHandSide->swapWithTree(rightHandSide);
+  turnIntoBinaryNode(KStore, leftHandSide, rightHandSide);
+  assert(!leftHandSide.isUninitialized());
+  return leftHandSide;
 }
 
 Tree* RackParser::initializeFirstTokenAndParseUntilEnd() {

@@ -234,7 +234,11 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
       KDep(KA, KDepList(KRealInteger(KB), KRealInteger(KC))),
       {.KA = result, .KB = lowerBound, .KC = upperBound}));
   result->removeTree();
-  Dependency::ShallowRemoveUselessDependencies(e);
+  if (e->isDep()) {
+    Dependency::ShallowRemoveUselessDependencies(e);
+  } else {
+    assert(e->isUndefined());
+  }
   return true;
 }
 

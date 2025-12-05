@@ -31,12 +31,24 @@ class SignificanceTest : public InferenceModel {
     return Poincare::Inference::SignificanceTest::HypothesisSymbol(testType());
   }
 
+  const char* alternativeHypothesisOperator() const {
+    return Poincare::Comparison::OperatorString(hypothesis()->m_alternative);
+  }
+
+  double hypothesisValue() const { return hypothesis()->m_h0; }
+
   constexpr static int k_hypothesisValueSignificantDigits =
       Poincare::Preferences::VeryShortNumberOfSignificantDigits;
 
   constexpr static size_t k_descriptionBufferSize = sizeof("μ1-μ2≠-1000");
   using DescriptionBuffer = std::array<char, k_descriptionBufferSize>;
 
+  /* The three following methods return a fixed-size string (of size
+   * k_descriptionBufferSize). However if these informations neeed to be
+   * combined to display something like "H0:... Ha:... α=...", the float numbers
+   * precision need to be adapted depending on the maximum size of the complete
+   * buffer. In this case, it's best to format the whole string (see
+   * InputController::InputTitle). */
   DescriptionBuffer h0Description() const;
   DescriptionBuffer hADescription() const;
   DescriptionBuffer thresholdValueDescription() const;

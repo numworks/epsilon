@@ -592,6 +592,7 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
                           CodePoint(UCodePointAssertion));
       break;
     case Type::EuclideanDivisionResult: {
+      // Small hack described in poincare/src/expression/builtin.h
       Aliases::Iterator<Aliases> iterator =
           Builtin::GetReservedFunction(Type::EuclideanDivisionResult,
                                        SharedPreferences->translateBuiltins())

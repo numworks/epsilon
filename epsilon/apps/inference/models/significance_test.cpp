@@ -35,7 +35,7 @@ SignificanceTest::DescriptionBuffer SignificanceTest::h0Description() const {
   // <first symbol>=<firstParam>
   Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
       buffer.data(), buffer.size(), k_hypothesisValueSignificantDigits,
-      k_maxNumberOfGlyphs, "%s=%*.*ed", hypothesisSymbol(), hypothesis()->m_h0,
+      k_maxNumberOfGlyphs, "%s=%*.*ed", hypothesisSymbol(), hypothesisValue(),
       Poincare::Preferences::PrintFloatMode::Decimal);
   return buffer;
 }
@@ -49,8 +49,8 @@ SignificanceTest::DescriptionBuffer SignificanceTest::hADescription() const {
   Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
       buffer.data(), buffer.size(), k_hypothesisValueSignificantDigits,
       k_maxNumberOfGlyphs, "%s%s%*.*ed", hypothesisSymbol(),
-      Poincare::Comparison::OperatorString(hypothesis()->m_alternative),
-      hypothesis()->m_h0, Poincare::Preferences::PrintFloatMode::Decimal);
+      alternativeHypothesisOperator(), hypothesisValue(),
+      Poincare::Preferences::PrintFloatMode::Decimal);
   return buffer;
 }
 

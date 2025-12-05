@@ -75,25 +75,51 @@ void InputController::InputTitle(const Escher::ViewController* vc,
         (stackViewControllerResponder->topViewController() == vc) ||
         (signifTest->testType() == Poincare::Inference::TestType::ANOVA &&
          shouldDisplaySignificanceLevelForANOVA(stackViewControllerResponder));
+    if (signifTest->testType() == Poincare::Inference::TestType::ANOVA) {
+      // ANOVA has a special format for the hypothesis description
+      if (shouldHideSignificanceLevel) {
+        Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
+            titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
+            k_maxNumberOfGlyphs, "H0:%s Ha:%s",
+            signifTest->h0Description().data(),
+            signifTest->hADescription().data());
+        return;
+      }
+      Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
+          titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
+          k_maxNumberOfGlyphs, "H0:%s Ha:%s α=%*.*ed",
+          signifTest->h0Description().data(),
+          signifTest->hADescription().data(), signifTest->threshold(),
+          Poincare::Preferences::PrintFloatMode::Decimal);
+      return;
+    }
     if (shouldHideSignificanceLevel) {
       Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
           titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
-          k_maxNumberOfGlyphs, "H0:%s Ha:%s",
-          signifTest->h0Description().data(),
-          signifTest->hADescription().data());
-    } else {
-      Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
-          titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
-          k_maxNumberOfGlyphs, "H0:%s Ha:%s α=%s",
-          signifTest->h0Description().data(),
-          signifTest->hADescription().data(),
-          signifTest->thresholdValueDescription().data());
+          k_maxNumberOfGlyphs, "H0:%s=%*.*ed Ha:%s%s%*.*ed",
+          signifTest->hypothesisSymbol(), signifTest->hypothesisValue(),
+          Poincare::Preferences::PrintFloatMode::Decimal,
+          signifTest->hypothesisSymbol(),
+          signifTest->alternativeHypothesisOperator(),
+          signifTest->hypothesisValue(),
+          Poincare::Preferences::PrintFloatMode::Decimal);
+      return;
     }
-  } else {
-    Poincare::Print::CustomPrintf(titleBuffer, titleBufferSize,
-                                  I18n::translate(inference->title()),
-                                  I18n::translate(I18n::Message::Interval));
+    Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
+        titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
+        k_maxNumberOfGlyphs, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed",
+        signifTest->hypothesisSymbol(), signifTest->hypothesisValue(),
+        Poincare::Preferences::PrintFloatMode::Decimal,
+        signifTest->hypothesisSymbol(),
+        signifTest->alternativeHypothesisOperator(),
+        signifTest->hypothesisValue(),
+        Poincare::Preferences::PrintFloatMode::Decimal, signifTest->threshold(),
+        Poincare::Preferences::PrintFloatMode::Decimal);
+    return;
   }
+  Poincare::Print::CustomPrintf(titleBuffer, titleBufferSize,
+                                I18n::translate(inference->title()),
+                                I18n::translate(I18n::Message::Interval));
 }
 
 ViewController::TitlesDisplay InputController::titlesDisplay() const {

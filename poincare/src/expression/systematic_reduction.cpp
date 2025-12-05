@@ -59,7 +59,8 @@ bool SystematicReduction::ShallowReduce(Tree* e) {
       /* TODO This assert should always be valid regardless of Undefined state
        * if we output a list of undef/matrix of undef etc... */
       assert(Dimension::ListLength(e) == lenBefore);
-      // Dimension can be lost for empty lists
+      /* Dimension is lost in empty lists.
+       * E.g. {}=1 (boolean dimension) is reduced to {} (scalar dimension) */
       assert(lenBefore == 0 || Dimension::Get(e) == dimBefore);
     }
   }

@@ -316,9 +316,11 @@ bool Dimension::DeepCheckDimensions(
     if (!e->isPiecewise() && !e->isParentheses() && !e->isDep() &&
         !e->isDepList() && !e->isList() && !e->isListSort() &&
         !e->isListSequence() &&
+        !(child->isList() && child->numberOfChildren() == 0) &&
         childDim.isBoolean() != e->isLogicalOperatorOrBoolean()) {
       /* Only piecewises, parenthesis, dependencies, lists and boolean operators
        * can have boolean child. Boolean operators must have boolean child.
+       * Empty lists which have been bubbled up are tolerated.
        * TODO: UserFunctions taking boolean parameters are not handled. If we
        * handle it, things should be reworked in UserFunction approximation too.
        */
@@ -492,11 +494,14 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
       for (int i = 0; i < e->numberOfChildren(); i++) {
         if (i % 2 == 1) {
           if (!childDim[i].isBoolean()) {
+            const Tree* child = e->child(i);
+            if (child->isList() && child->numberOfChildren() == 0) {
+              // Empty lists which have been bubbled up are tolerated
+              continue;
+            }
             return false;
           }
-          continue;
-        }
-        if (childDim[i] != childDim[0]) {
+        } else if (childDim[i] != childDim[0]) {
           return false;
         }
       }

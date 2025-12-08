@@ -113,6 +113,12 @@ QUIZ_CASE(pcj_approximation_logarithm) {
   // WARNING: evaluate on branch cut can be multi-valued
   approximates_to<double>("ln(-4)", "1.3862943611199+3.1415926535898×i",
                           k_cartesianCtx);
+
+  // Calculations involving a potential integer overflow
+  simplified_approximates_to<float>("-8.314×ln(5/558)", "39.19985");
+  simplified_approximates_to<float>("(1/((1/900)-(1/769)))×ln(5.2)",
+                                    "-8710.202");
+  simplified_approximates_to<float>("(-8.314×(5/6))×ln(5/6)", "1.263184");
 }
 
 QUIZ_CASE(pcj_approximation_abs) {

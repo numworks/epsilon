@@ -462,24 +462,6 @@ OExpression OMatrix::determinant(const ReductionContext &reductionContext,
   return result;
 }
 
-OExpression OMatrix::dot(OMatrix *b,
-                         const ReductionContext &reductionContext) const {
-  // Dot product is defined between two vectors of same size and type
-  assert(isVector() && vectorType() == b->vectorType() &&
-         numberOfChildren() == b->numberOfChildren());
-  Addition sum = Addition::Builder();
-  int childrenNumber = numberOfChildren();
-  for (int j = 0; j < childrenNumber; j++) {
-    OExpression product = Multiplication::Builder(
-        const_cast<OMatrix *>(this)->childAtIndex(j).clone(),
-        const_cast<OMatrix *>(b)->childAtIndex(j).clone());
-    sum.addChildAtIndexInPlace(product, sum.numberOfChildren(),
-                               sum.numberOfChildren());
-    product.shallowReduce(reductionContext);
-  }
-  return std::move(sum);
-}
-
 OMatrix OMatrix::cross(OMatrix *b,
                        const ReductionContext &reductionContext) const {
   // Cross product is defined between two vectors of size 3 and of same type.

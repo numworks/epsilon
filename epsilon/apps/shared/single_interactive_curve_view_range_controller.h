@@ -49,7 +49,7 @@ class SingleInteractiveCurveViewRangeController
   constexpr static FloatType k_minimumStepValue = 1e-8;
   constexpr static FloatType k_maximumStepValue = 1e8;
 
-  // Step value must be strictly postive and not contain random numbers.
+  // Step value must be strictly positive and not contain random numbers.
   static bool IsValidStepValue(ParameterType value) {
     FloatType floatValue = PoincareHelpers::ToFloat(value);
     return (std::isnan(floatValue) || (floatValue > k_minimumStepValue &&

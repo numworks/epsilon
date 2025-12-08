@@ -44,13 +44,16 @@ class SingleInteractiveCurveViewRangeController
     return index == 0 ? I18n::Message::Minimum : I18n::Message::Maximum;
   }
 
-  // Arbitrary value, avoids numeric issues with very small step values
+  /* Arbitrary values, avoids numeric issues and a slow graph display with very
+   * small or very large step values */
   constexpr static FloatType k_minimumStepValue = 1e-8;
+  constexpr static FloatType k_maximumStepValue = 1e8;
 
   // Step value must be strictly postive and not contain random numbers.
   static bool IsValidStepValue(ParameterType value) {
     FloatType floatValue = PoincareHelpers::ToFloat(value);
-    return (std::isnan(floatValue) || floatValue > k_minimumStepValue) &&
+    return (std::isnan(floatValue) || (floatValue > k_minimumStepValue &&
+                                       floatValue < k_maximumStepValue)) &&
            (value.expression().isUninitialized() ||
             !value.expression().hasRandomNumber());
   }

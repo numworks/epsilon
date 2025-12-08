@@ -462,32 +462,6 @@ OExpression OMatrix::determinant(const ReductionContext &reductionContext,
   return result;
 }
 
-OMatrix OMatrix::cross(OMatrix *b,
-                       const ReductionContext &reductionContext) const {
-  // Cross product is defined between two vectors of size 3 and of same type.
-  assert(isVector() && vectorType() == b->vectorType() &&
-         numberOfChildren() == 3 && b->numberOfChildren() == 3);
-  OMatrix matrix = OMatrix::Builder();
-  for (int j = 0; j < 3; j++) {
-    int j1 = (j + 1) % 3;
-    int j2 = (j + 2) % 3;
-    OExpression a1b2 = Multiplication::Builder(
-        const_cast<OMatrix *>(this)->childAtIndex(j1).clone(),
-        const_cast<OMatrix *>(b)->childAtIndex(j2).clone());
-    OExpression a2b1 = Multiplication::Builder(
-        const_cast<OMatrix *>(this)->childAtIndex(j2).clone(),
-        const_cast<OMatrix *>(b)->childAtIndex(j1).clone());
-    OExpression difference = Subtraction::Builder(a1b2, a2b1);
-    a1b2.shallowReduce(reductionContext);
-    a2b1.shallowReduce(reductionContext);
-    matrix.addChildAtIndexInPlace(difference, matrix.numberOfChildren(),
-                                  matrix.numberOfChildren());
-    difference.shallowReduce(reductionContext);
-  }
-  matrix.setDimensions(numberOfRows(), numberOfColumns());
-  return matrix;
-}
-
 OExpression OMatrix::shallowReduce(ReductionContext reductionContext) {
   if (node()->hasMatrixOrListChild(reductionContext.context())) {
     return replaceWithUndefinedInPlace();

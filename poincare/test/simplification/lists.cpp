@@ -28,6 +28,7 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("{1,2}*{3,4}", "{3,8}");
   simplifies_to("{0,1}=0", "{True,False}");
   simplifies_to("{}=1", "{}");
+  simplifies_to("asin({})", "{}");
   simplifies_to("sequence(k, k, 2)<0", "{False,False}");
   simplifies_to("sequence(k<0, k, 2)", "{False,False}");
   simplifies_to("sequence(2*k, k, 3)+1", "{3,5,7}");

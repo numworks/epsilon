@@ -44,9 +44,9 @@ class SignificanceTest : public InferenceModel {
   using DescriptionBuffer = std::array<char, k_descriptionBufferSize>;
 
   /* The three following methods return a fixed-size string (of size
-   * k_descriptionBufferSize). However if these informations neeed to be
-   * combined to display something like "H0:... Ha:... α=...", the float numbers
-   * precision need to be adapted depending on the maximum size of the complete
+   * k_descriptionBufferSize). However if these informations need to be combined
+   * to display something like "H0:... Ha:... α=...", the float numbers
+   * precision must be adapted depending on the maximum size of the complete
    * buffer. In this case, it's best to format the whole string (see
    * InputController::InputTitle). */
   DescriptionBuffer h0Description() const;

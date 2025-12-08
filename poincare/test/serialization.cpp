@@ -159,6 +159,27 @@ QUIZ_CASE(pcj_serialization_expression_or_float) {
 
   assert_expression_or_float_serializes_to(
       ExpressionOrFloat::Builder(
+          UserExpression::Builder(KDiv(KMult(7_e, π_e), 30_e)),
+          approximationFunction),
+      "7π/30");
+  assert_expression_or_float_serializes_to(
+      ExpressionOrFloat::Builder(
+          UserExpression::Builder(KOpposite(KDiv(KMult(7_e, π_e), 30_e))),
+          approximationFunction),
+      "-7π/30");
+  assert_expression_or_float_serializes_to(
+      ExpressionOrFloat::Builder(
+          UserExpression::Builder(KDiv(KMult(23_e, π_e), 30_e)),
+          approximationFunction),
+      "2.408554");
+  assert_expression_or_float_serializes_to(
+      ExpressionOrFloat::Builder(
+          UserExpression::Builder(KOpposite(KDiv(KMult(23_e, π_e), 30_e))),
+          approximationFunction),
+      "-2.408554");
+
+  assert_expression_or_float_serializes_to(
+      ExpressionOrFloat::Builder(
           UserExpression::Builder(KDiv(KMult(10_e, π_e), 3_e)),
           approximationFunction),
       "", Preferences::PrintFloatMode::Decimal,

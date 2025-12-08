@@ -361,6 +361,7 @@ bool Arithmetic::ReduceBinomial(Tree* e) {
     if (Order::CompareSystem(n, k_maxNValue) > 0) {
       return false;
     }
+    // binomial(n, k) = binomial(n, n - k) if n - k < k
     Tree* nMinusK =
         IntegerHandler::Subtraction(Integer::Handler(n), Integer::Handler(k));
     if (Order::CompareSystem(nMinusK, k) < 0) {

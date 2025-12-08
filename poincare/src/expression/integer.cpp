@@ -927,13 +927,15 @@ void Integer::SetSign(Tree* e, NonStrictSign sign) {
 }
 
 OMG::Troolean Integer::IsRationalInteger(const Tree* e) {
-  if (!Dimension::Get(e).isScalar() || e->isMathematicalConstant() ||
-      e->treeIsIdenticalTo(KExp(1_e)) || GetComplexProperties(e).isNonReal()) {
+  if (e->isInteger()) {
+    return OMG::Troolean::True;
+  }
+  if (e->isRational() || e->isMathematicalConstant() ||
+      e->treeIsIdenticalTo(KExp(1_e)) || !Dimension::Get(e).isScalar() ||
+      GetComplexProperties(e).isNonReal()) {
     return OMG::Troolean::False;
   }
-  return e->isRational()
-             ? (e->isInteger() ? OMG::Troolean::True : OMG::Troolean::False)
-             : OMG::Troolean::Unknown;
+  return OMG::Troolean::Unknown;
 }
 
 OMG::Troolean Integer::IsPositiveRationalInteger(const Tree* e) {

@@ -462,26 +462,6 @@ OExpression OMatrix::determinant(const ReductionContext &reductionContext,
   return result;
 }
 
-OExpression OMatrix::norm(const ReductionContext &reductionContext) const {
-  // Norm is defined on vectors only
-  assert(isVector());
-  Addition sum = Addition::Builder();
-  int childrenNumber = numberOfChildren();
-  for (int j = 0; j < childrenNumber; j++) {
-    OExpression absValue = AbsoluteValue::Builder(
-        const_cast<OMatrix *>(this)->childAtIndex(j).clone());
-    OExpression squaredAbsValue =
-        Power::Builder(absValue, Rational::Builder(2));
-    absValue.shallowReduce(reductionContext);
-    sum.addChildAtIndexInPlace(squaredAbsValue, sum.numberOfChildren(),
-                               sum.numberOfChildren());
-    squaredAbsValue.shallowReduce(reductionContext);
-  }
-  OExpression result = SquareRoot::Builder(sum);
-  sum.shallowReduce(reductionContext);
-  return result;
-}
-
 OExpression OMatrix::dot(OMatrix *b,
                          const ReductionContext &reductionContext) const {
   // Dot product is defined between two vectors of same size and type

@@ -3,6 +3,7 @@
 #include <omg/float.h>
 #include <omg/round.h>
 #include <poincare/print_float.h>
+#include <poincare/src/expression/properties.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack.h>
@@ -764,6 +765,12 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
    * just be approximated, but it allows better approximation, especially when
    * the expected result is 0. */
   SystematicReduction::DeepReduce(e);
+  if (GetComplexProperties(e).isNonReal()) {
+    // Forbid complex numbers with units
+    extractedUnits->removeTree();
+    e->cloneTreeOverTree(KUndef);
+    return true;
+  }
   assert(extractedUnits && e->nextTree() == extractedUnits);
   bool treeRemoved = RemoveNonUnits(extractedUnits, true);
   // Warning : extractedUnits isn't just e's dimension. 2_m + _yd -> _m + _yd

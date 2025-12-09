@@ -237,8 +237,7 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
   KDCoordinate leftBaseline = 0;
   KDCoordinate centerBaseline = 0;
   KDCoordinate rightBaseline = 0;
-  KDCoordinate viewBaseline =
-      baseline(&leftBaseline, &centerBaseline, &rightBaseline);
+  baseline(&leftBaseline, &centerBaseline, &rightBaseline);
 
   KDSize leftSize = KDSizeZero;
   if (leftLayoutView() && !leftLayoutView()->layout().isUninitialized()) {

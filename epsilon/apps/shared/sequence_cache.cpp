@@ -75,10 +75,13 @@ double* SequenceCache::valuesPointer(int sequenceIndex,
   return values;
 }
 
-void SequenceCache::shiftValuesRight(int sequenceIndex,
-                                     bool intermediateComputation, int delta) {
+void SequenceCache::shiftCacheRight(int sequenceIndex,
+                                    bool intermediateComputation, int delta) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   assert(delta > 0);
+  // Shift ranks
+  *(rankPointer(sequenceIndex, intermediateComputation)) += delta;
+  // Shift values
   if (delta >= k_storageDepth) {
     resetValuesOfSequence(sequenceIndex, intermediateComputation);
     return;
@@ -129,13 +132,10 @@ void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
   int* currentRank = rankPointer(sequenceIndex, intermediateComputation);
   double* values = valuesPointer(sequenceIndex, intermediateComputation);
 
-  // First we increment the rank
-  *currentRank += step;
+  // Increment the rank and shift the values
+  shiftCacheRight(sequenceIndex, intermediateComputation, step);
 
-  // Then we shift the values
-  shiftValuesRight(sequenceIndex, intermediateComputation, step);
-
-  // We approximate the value at new rank
+  // Approximate the value at new rank
   double otherCacheValue =
       storedValueOfSequenceAtRank(sequenceIndex, *currentRank);
   if (!OMG::IsSignalingNan(otherCacheValue)) {
@@ -162,9 +162,9 @@ void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
     if (targetRank != *currentRank) {
       assert(intermediateComputation && targetRank > *currentRank);
       // approximateAtContextRank altered the intermediate cache, re-shift it.
-      int delta = targetRank - *currentRank;
-      *currentRank = targetRank;
-      shiftValuesRight(sequenceIndex, intermediateComputation, delta);
+      shiftCacheRight(sequenceIndex, intermediateComputation,
+                      targetRank - *currentRank);
+      assert(targetRank == *currentRank);
     }
     *values = newValue;
 

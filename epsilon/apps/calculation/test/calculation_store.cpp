@@ -378,6 +378,21 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Hidden, "0", nullptr, &store);
 
+  // Logarithm of a big number
+  assertCalculationIs(
+      "-8.314×ln(5/558)", DisplayOutput::ExactAndApproximateToggle,
+      EqualSign::Approximation, "-((4157(-ln(2)-2·ln(3)+ln(5)-ln(31)))/500)",
+      "39.199853609261", &store);
+  assertCalculationIs("(1/((1/900)-(1/769)))×ln(5.2)",
+                      DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Approximation,
+                      "(-692100·ln(2)+692100·ln(5)-692100·ln(13))/131",
+                      "-8710.2033188475", &store);
+  assertCalculationIs(
+      "(-8.314×(5/6))×ln(5/6)", DisplayOutput::ExactAndApproximateToggle,
+      EqualSign::Approximation, "-((4157(-ln(2)-ln(3)+ln(5)))/600)",
+      "1.2631845193208", &store);
+
   // Exact output that have dependencies are not displayed
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "2", nullptr, &store);

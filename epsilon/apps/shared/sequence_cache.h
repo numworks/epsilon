@@ -44,8 +44,9 @@ class SequenceCache {
     return *(rankPointer(sequenceIndex, intermediateComputation));
   }
   double* valuesPointer(int sequenceIndex, bool intermediateComputation);
-  void shiftValuesRight(int sequenceIndex, bool intermediateComputation,
-                        int delta);
+  // Shift rank and stored values by [delta] to the right (to higher ranks)
+  void shiftCacheRight(int sequenceIndex, bool intermediateComputation,
+                       int delta);
   void stepRanks(int sequenceIndex, bool intermediateComputation, int step);
   void resetValuesOfSequence(int sequenceIndex, bool intermediateComputation);
   void resetRanksAndValuesOfSequence(int sequenceIndex,

@@ -144,9 +144,10 @@ bool DFUInterface::processDownloadRequest(uint16_t wLength,
     // Leave DFU routine: Reset the device and jump to application code
     m_state = State::dfuMANIFESTSYNC;
   } else {
-    // Prepare to receive the download data
-    m_ep0->clearForOutTransactions(wLength);
-    m_state = State::dfuDNLOADSYNC;
+    /* This function is called by setupIn and handles only IN and empty OUT
+     * transaction. Actual downloads (and setting State::dfuDNLOADSYNC) are
+     * handled by wholeDataReceivedCallback. */
+    assert(false);
   }
   return true;
 }

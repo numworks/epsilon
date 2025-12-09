@@ -409,9 +409,7 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
   simplifies_to("1_m+0", "undef");
   simplifies_to("1+_s", "undef");
   simplifies_to("0+_A", "undef");
-#if TODO_PCJ  // Handle units with complex numbers
   simplifies_to("i _A", "undef");
-#endif
   simplifies_to("_A+i", "undef");
   simplifies_to("_m+_s", "undef");
   simplifies_to("_m^2+_m", "undef");

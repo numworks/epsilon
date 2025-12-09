@@ -1,6 +1,7 @@
 #include <poincare/src/expression/units/unit.h>
 #include <poincare/user_expression.h>
 
+#include "../helpers/symbol_store.h"
 #include "helper.h"
 #include "poincare/preferences.h"
 #include "quiz.h"
@@ -346,13 +347,46 @@ QUIZ_CASE(pcj_simplification_unit_basicSI) {
 }
 
 QUIZ_CASE(pcj_simplification_unit_conversion) {
+  // Angle
   simplifies_to("180×_°→_rad", "π×_rad", {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("91.44_cm→_yd", "1×_yd");
+  simplifies_to("0_°→_rad", "0×_rad");
+  simplifies_to("180_°→_rad", "π×_rad");
+  simplifies_to("π_rad→_'", "10800×_'");
+  simplifies_to("1_°+60_'+3600_\"→_°", "3×_°");
+  simplifies_to("1°+60'+3600\"→°", "3×_°");
 
+  // Temperature
   simplifies_to("100×_°C→_K", "373.15×_K");
   simplifies_to("-100×_°C→_K", "173.15×_K");
   // TODO: should be 0×_°C
   simplifies_to("273.15×_K→_°C", "-5.6843418860808ᴇ-14×_°C");
+  simplifies_to("0_K→_°C", "-273.15×_°C");
+  simplifies_to("0_°C→_K", "273.15×_K");
+  simplifies_to("_°C→_K", "274.15×_K");
+  simplifies_to("0_K→_°F", "-459.67×_°F");
+  simplifies_to("0_°F→_K", "255.37222222222×_K");
+  simplifies_to("_°F→_K", "255.92777777778×_K");
+
+  simplifies_to("91.44_cm→_yd", "1×_yd");
+  simplifies_to("10_m/_s→_km/_h", "36×_km×_h^(-1)");
+  simplifies_to("2_m→_km×_m/_m", "0.002×_km");
+  simplifies_to("10_m/_s→_km/_h", "36×_km×_h^(-1)");
+  simplifies_to("10_m^2→_mm×_km", "10×_mm×_km");
+  simplifies_to("2_h+2_min→_s", "7320×_s");
+  simplifies_to("2×_kg×_m^2×_s^(-2)→_J", "2×_J");
+  simplifies_to("4×_min→_s^3/_s^2", "240×_s");
+  simplifies_to("4×_N×3_N×2_N→_N^3", "24×_N^3");
+  simplifies_to("-5_cm→_m", "-0.05×_m");
+  simplifies_to("-5_cm→_m", "-0.05×_m", {.m_unitFormat = UnitFormat::Imperial});
+  simplifies_to("10_m/_s→_km", "undef");
+  simplifies_to("_hplanck→_eV×_s", "4.1356676969239ᴇ-15×_s×_eV");
+
+  PoincareTest::SymbolStore symbolStore;
+  PoincareTest::store("2_kg→a", symbolStore);
+  ProjectionContext replaceSymbolCtx = {
+      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+      .m_context = symbolStore};
+  simplifies_to("a→g", "2000×_g", replaceSymbolCtx);
 }
 
 QUIZ_CASE(pcj_simplification_unit_decomposition) {
@@ -673,6 +707,7 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
                 });
   simplifies_to("_C^0.3", "1×_A^(3/10)×_s^(3/10)");
   simplifies_to("_kat_kg^-2.8", "1×_mol×_kg^(-14/5)×_s^(-1)");
+  simplifies_to("300000×_m^3→_km^(2.3+0.7)", "3ᴇ-4×_km^3");
 #endif
 
   // Invalid operations

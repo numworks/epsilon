@@ -237,10 +237,12 @@ void HistogramMainController::initRangeParameters() {
 }
 
 void HistogramMainController::initBarParameters() {
-  Poincare::Range1D<double> xRange = activeSeriesRange();
-  m_histogramRange.setXRange(xRange.min(), xRange.max());
+  /* TODO: uniformize float / double usage: activeSeriesRange() is a
+   * double-precision range, while m_histogramRange is single-precision range */
+  Poincare::Range1D<double> activeRange = activeSeriesRange();
+  m_histogramRange.setXRange(activeRange.min(), activeRange.max());
 
-  m_store->setFirstDrawnBarAbscissa(xRange.min());
+  m_store->setFirstDrawnBarAbscissa(m_histogramRange.xMin());
   double barWidth =
       Shared::PoincareHelpers::ToFloat<double>(m_histogramRange.xGridUnit());
   if (barWidth <= 0.0) {
@@ -256,13 +258,14 @@ void HistogramMainController::initBarParameters() {
    * loss of precision. */
   int numberOfBars = HistogramRange::k_maxNumberOfBars;
   while (!HistogramParameterController::AuthorizedBarWidth(
-             barWidth, xRange.min(), m_store) &&
+             barWidth, m_histogramRange.xMin(), m_store) &&
          numberOfBars > 0) {
     numberOfBars--;
-    barWidth = (xRange.length()) / numberOfBars;
+    barWidth =
+        (m_histogramRange.xMax() - m_histogramRange.xMin()) / numberOfBars;
   }
   assert(HistogramParameterController::AuthorizedBarWidth(
-      barWidth, xRange.min(), m_store));
+      barWidth, m_histogramRange.xMin(), m_store));
   bool allValuesAreIntegers = true;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     if (allValuesAreIntegers && m_store->seriesIsActive(i)) {
@@ -275,14 +278,14 @@ void HistogramMainController::initBarParameters() {
     if (GlobalPreferences::SharedGlobalPreferences()->histogramOffset() ==
         CountryPreferences::HistogramsOffset::OnIntegerValues) {
       // Bars are offsetted right to center the bars around the labels.
-      xRange.setMinKeepingValid(xRange.min() - barWidth / 2.0);
-      m_store->setFirstDrawnBarAbscissa(xRange.min());
       m_histogramRange.setXRange(m_histogramRange.xMin() - barWidth / 2.0,
                                  m_histogramRange.xMax());
+      m_store->setFirstDrawnBarAbscissa(m_histogramRange.xMin());
     }
   }
-  assert(barWidth > 0.0 && std::ceil((xRange.length()) / barWidth) <=
-                               HistogramRange::k_maxNumberOfBars);
+  assert(barWidth > 0.0 &&
+         std::ceil((m_histogramRange.xMax() - m_histogramRange.xMin()) /
+                   barWidth) <= HistogramRange::k_maxNumberOfBars);
   m_store->setBarWidth(barWidth);
 }
 

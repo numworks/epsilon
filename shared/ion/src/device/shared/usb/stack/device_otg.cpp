@@ -90,6 +90,8 @@ void Device::detach() {
   OTG.DCTL()->setSDIS(true);
 }
 
+void Device::idleCallback(SetupPacket* request) {}
+
 void Device::setAddress(uint8_t address) { OTG.DCFG()->setDAD(address); }
 
 }  // namespace USB

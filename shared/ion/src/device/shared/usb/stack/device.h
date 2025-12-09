@@ -34,6 +34,7 @@ class Device : public RequestRecipient {
   bool processSetupInRequest(SetupPacket* request, uint8_t* transferBuffer,
                              uint16_t* transferBufferLength,
                              uint16_t transferBufferMaxLength) override;
+  void idleCallback(SetupPacket* request) override;
   Endpoint0 m_ep0;
 
  private:

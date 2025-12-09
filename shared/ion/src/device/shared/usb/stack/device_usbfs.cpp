@@ -51,11 +51,6 @@ void Device::poll() {
     CHEP0R::ClearVTTX();
     m_ep0.processINpacket();
 
-    if (m_addressToSet) {
-      STM32U083::USB::DADDR::Read().setADD(m_addressToSet).write();
-      m_addressToSet = 0;
-    }
-
     assert(CHEP0R::GetSTATRX() == Status::Valid ||
            CHEP0R::GetSTATTX() == Status::Valid);
   }
@@ -86,7 +81,19 @@ void Device::detach() {
   m_softDisconnect = true;
 }
 
-void Device::setAddress(uint8_t address) { m_addressToSet = address; }
+void Device::setAddress(uint8_t address) {
+  /* The actual address set is delayed to the idleCallback because we need to
+   * answer to the status packet on the old address. The F7/H7 USB peripheral
+   * seems to delay the address change in hardware… */
+  m_addressToSet = address;
+}
+
+void Device::idleCallback(SetupPacket* request) {
+  if (m_addressToSet) {
+    STM32U083::USB::DADDR::Read().setADD(m_addressToSet).write();
+    m_addressToSet = 0;
+  }
+}
 
 }  // namespace USB
 }  // namespace Device

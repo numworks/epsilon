@@ -9,12 +9,11 @@
 #include "approximation.h"
 #include "dependency.h"
 #include "integer.h"
+#include "list.h"
 #include "matrix.h"
 #include "number.h"
 #include "parametric.h"
 #include "physical_constant.h"
-#include "projection.h"
-#include "random.h"
 #include "rational.h"
 #include "symbol.h"
 #include "units/representatives.h"
@@ -315,8 +314,7 @@ bool Dimension::DeepCheckDimensions(
     }
     if (!e->isPiecewise() && !e->isParentheses() && !e->isDep() &&
         !e->isDepList() && !e->isList() && !e->isListSort() &&
-        !e->isListSequence() &&
-        !(child->isList() && child->numberOfChildren() == 0) &&
+        !e->isListSequence() && !List::IsEmptyList(child) &&
         childDim.isBoolean() != e->isLogicalOperatorOrBoolean()) {
       /* Only piecewises, parenthesis, dependencies, lists and boolean operators
        * can have boolean child. Boolean operators must have boolean child.
@@ -495,7 +493,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
         if (i % 2 == 1) {
           if (!childDim[i].isBoolean()) {
             const Tree* child = e->child(i);
-            if (child->isList() && child->numberOfChildren() == 0) {
+            if (List::IsEmptyList(child)) {
               // Empty lists which have been bubbled up are tolerated
               continue;
             }

@@ -21,7 +21,8 @@ void MessageView::drawRect(KDContext* ctx, KDRect rect) const {
 }
 
 View* MessageView::subviewAtIndex(int index) {
-  if (index >= m_messageTextViews.size()) {
+  assert(index >= 0);
+  if (index >= static_cast<int>(m_messageTextViews.size())) {
     assert(false);
     return nullptr;
   }

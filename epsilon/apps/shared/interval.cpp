@@ -34,9 +34,9 @@ double Interval::element(int i) {
 }
 
 void Interval::setElement(int i, double f) {
-  assert(i <= numberOfElements() && i < k_maxNumberOfElements);
+  assert(i >= 0 && i <= numberOfElements() && i < k_maxNumberOfElements);
   computeElements();
-  if (i == m_intervalBuffer.size()) {
+  if (i == static_cast<int>(m_intervalBuffer.size())) {
     m_intervalBuffer.push(f);
   } else {
     m_intervalBuffer[i] = f;
@@ -90,7 +90,7 @@ void Interval::computeElements() {
   // Save some calls to std::pow(10.0, -precision)
   constexpr double ratioThreshold = 10e-14;
   bool checkForElementZero = (m_parameters.start() < 0.0);
-  for (int i = 0; i < numberOfElements; i += 1) {
+  for (size_t i = 0; i < numberOfElements; i += 1) {
     if (checkForElementZero && i > 0 &&
         std::abs(1.0 + m_parameters.start() / (i * m_parameters.step())) <
             ratioThreshold) {

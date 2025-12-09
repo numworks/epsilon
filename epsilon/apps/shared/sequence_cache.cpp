@@ -129,8 +129,8 @@ void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
   // Update computation state
   m_isInsideComputation = true;
 
-  int* currentRank = rankPointer(sequenceIndex, intermediateComputation);
-  double* values = valuesPointer(sequenceIndex, intermediateComputation);
+  int* const currentRank = rankPointer(sequenceIndex, intermediateComputation);
+  double* const values = valuesPointer(sequenceIndex, intermediateComputation);
 
   // Increment the rank and shift the values
   shiftCacheRight(sequenceIndex, intermediateComputation, step);
@@ -153,11 +153,9 @@ void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
     const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
     assert(s->isDefined());
 
-    assert(rank(sequenceIndex, intermediateComputation) == *currentRank);
     int targetRank = *currentRank;
     double newValue =
         s->approximateAtContextRank(targetRank, intermediateComputation);
-    assert(rank(sequenceIndex, intermediateComputation) == *currentRank);
 
     if (targetRank != *currentRank) {
       assert(intermediateComputation && targetRank > *currentRank);

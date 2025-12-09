@@ -1,3 +1,6 @@
+#include <poincare/src/expression/units/unit.h>
+#include <poincare/user_expression.h>
+
 #include "helper.h"
 #include "poincare/preferences.h"
 #include "quiz.h"
@@ -6,7 +9,43 @@ using namespace Poincare;
 using namespace Poincare::Internal;
 using UnitFormat = Poincare::Preferences::UnitFormat;
 
+void assert_parsed_units_simplify_to_with_prefixes() {
+  const Units::Representative* const* representatives =
+      Units::Representative::DefaultRepresentatives();
+  for (int i = 0; i < Units::Representative::k_numberOfDimensions; i++) {
+    const Units::Representative* representative = representatives[i];
+    if (representative->numberOfRepresentatives() == 0) {
+      // Some dimensions have no representative (e.g. Speed)
+      continue;
+    }
+    int numberOfPrefixes;
+    const Units::Prefix* prefixes;
+    constexpr static size_t bufferSize = 12;
+    char buffer[bufferSize] = "1×";
+    if (representative->isOutputPrefixable()) {
+      numberOfPrefixes = Units::Prefix::k_numberOfPrefixes;
+      prefixes = Units::Unit::k_prefixes;
+    } else {
+      numberOfPrefixes = 1;
+      prefixes = Units::Prefix::EmptyPrefix();
+    }
+    for (int j = 0; j < numberOfPrefixes; j++) {
+      if (representative->canPrefix(prefixes + j, true) &&
+          representative->canPrefix(prefixes + j, false)) {
+        UserExpression unit = UserExpression::Builder(
+            Units::Unit::Push(representative, prefixes + j));
+        unit.serialize(
+            std::span<char>(buffer + strlen("1×"), bufferSize - strlen("1×")));
+        simplifies_to(buffer, buffer);
+      }
+    }
+  }
+}
+
 QUIZ_CASE(pcj_simplification_unit) {
+  // Parse units with prefixes
+  assert_parsed_units_simplify_to_with_prefixes();
+
   // SI base units
   simplifies_to("_s", "1×_s");
   simplifies_to("_m", "1×_m");

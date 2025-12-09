@@ -438,10 +438,10 @@ class Speed : public Helper<Speed> {
     R none;
   };
 
+  int numberOfRepresentatives() const override { return 0; }
   const Representative* representativesOfSameDimension() const override {
     return nullptr;
-  };
-
+  }
   const Representative* bestRepresentativeAndPrefix(
       double value, double exponent, Preferences::UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override {

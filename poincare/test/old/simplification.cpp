@@ -93,33 +93,6 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("ln(inf)*0", "undef");
 }
 
-#if 0
-void assert_parsed_unit_simplify_to_with_prefixes(
-    const OUnit::Representative* representative) {
-  int numberOfPrefixes;
-  const OUnit::Prefix* prefixes;
-  constexpr static size_t bufferSize = 12;
-  char buffer[bufferSize] = "1×";
-  if (representative->isOutputPrefixable()) {
-    numberOfPrefixes = OUnit::Prefix::k_numberOfPrefixes;
-    prefixes = OUnit::k_prefixes;
-  } else {
-    numberOfPrefixes = 1;
-    prefixes = OUnit::Prefix::EmptyPrefix();
-  }
-  for (int i = 0; i < numberOfPrefixes; i++) {
-    if (representative->canPrefix(prefixes + i, true) &&
-        representative->canPrefix(prefixes + i, false)) {
-      OUnit::Builder(representative, prefixes + i)
-          .serialize(buffer + strlen("1×"), bufferSize - strlen("1×"),
-                     DecimalMode,
-                     Preferences::VeryShortNumberOfSignificantDigits);
-      assert_parsed_expression_simplify_to(buffer, buffer);
-    }
-  }
-}
-#endif
-
 QUIZ_CASE(poincare_simplification_units) {
   /* Possible improvements */
   /* Ignored derived metrics :
@@ -153,10 +126,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_week", "1×_week");
   assert_parsed_expression_simplify_to("_month", "1×_month");
   assert_parsed_expression_simplify_to("_year", "1×_year");
-#if 0
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_distanceRepresentatives);
-#endif
+
   assert_parsed_expression_simplify_to("_au", "1×_au");
   assert_parsed_expression_simplify_to("_ly", "1×_ly");
   assert_parsed_expression_simplify_to("_pc", "1×_pc");
@@ -164,55 +134,17 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_ft", "1×_ft", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_yd", "1×_yd", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_mi", "1×_mi", User, Radian, Imperial);
-#if 0
-  assert_parsed_unit_simplify_to_with_prefixes(OUnit::k_massRepresentatives);
-#endif
+
   assert_parsed_expression_simplify_to("_t", "1×_t");
   assert_parsed_expression_simplify_to("_oz", "1×_oz", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_lb", "1×_lb", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_shtn", "1×_shtn", User, Radian,
                                        Imperial);
-#if 0
-  assert_parsed_unit_simplify_to_with_prefixes(OUnit::k_currentRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_temperatureRepresentatives);
-#endif
+
   assert_parsed_expression_simplify_to("_°C", "1×_°C");
   assert_parsed_expression_simplify_to("_°F", "1×_°F");
-#if 0
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_amountOfSubstanceRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_luminousIntensityRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(OUnit::k_forceRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_pressureRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_pressureRepresentatives + 1);
-#endif
+
   assert_parsed_expression_simplify_to("_atm", "1×_atm");
-#if 0
-  assert_parsed_unit_simplify_to_with_prefixes(OUnit::k_energyRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(OUnit::k_energyRepresentatives +
-                                               1);
-  assert_parsed_unit_simplify_to_with_prefixes(OUnit::k_powerRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_electricChargeRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_electricPotentialRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_electricCapacitanceRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_electricResistanceRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_magneticFieldRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_magneticFluxRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_inductanceRepresentatives);
-  assert_parsed_unit_simplify_to_with_prefixes(
-      OUnit::k_catalyticActivityRepresentatives);
-#endif
 
   /* Units that do not appear as output */
   assert_parsed_expression_simplify_to("_Hz", "1×_s^(-1)");

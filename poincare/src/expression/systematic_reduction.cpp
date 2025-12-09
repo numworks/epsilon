@@ -49,7 +49,7 @@ bool SystematicReduction::ShallowReduce(Tree* e) {
   int lenBefore = Dimension::ListLength(e);
 #endif
   bool changed = SystematicReduction::BubbleUpFromChildren(e);
-  assert(!(changed && Switch(e)));  // TODO: ???????
+  assert(!(changed && Switch(e)));
   changed = changed || Switch(e);
 #if ASSERTIONS
   if (changed) {

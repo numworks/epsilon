@@ -34,6 +34,7 @@ class DFUInterface : public Interface {
                                  uint16_t* transferBufferLength) override;
   void wholeDataSentCallback(SetupPacket* request, uint8_t* transferBuffer,
                              uint16_t* transferBufferLength) override;
+  void idleCallback(SetupPacket* request) override;
   bool isErasingAndWriting() const { return m_isErasingAndWriting; }
 
  protected:

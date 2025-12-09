@@ -545,15 +545,12 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
     case Type::ListSlice:
       return Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2));
-#if 0
-    /* TODO: Should be handled but caused dimensional issues later on,
-     * notably because of Re and Im not being handle
-     * Once reactivated, should also reactivate unit.cpp and pcj_simp_unit */
+    /* Note: This might cause dimensional issues, notably because of Re and Im
+     * not being handled. */
     case Type::Abs:
       // case Type::Sqrt:  TODO: Handle _m^(1/2)
       unitsAllowed = true;
       break;
-#endif
     case Type::Matrix:
       break;
     case Type::AngleUnitContext:

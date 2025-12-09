@@ -64,6 +64,7 @@ class SequenceCache {
   int m_mainRanks[k_numberOfSequences];
   int m_intermediateRanks[k_numberOfSequences];
 
+  // Used to detect and escape infinite loops in stepRanks.
   int m_smallestRankBeingComputed[k_numberOfSequences];
   OMG::Troolean m_sequenceIsNotComputable[k_numberOfSequences];
 

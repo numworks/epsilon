@@ -167,6 +167,8 @@ QUIZ_CASE(pcj_serialization_expression_or_float) {
           UserExpression::Builder(KOpposite(KDiv(KMult(7_e, π_e), 30_e))),
           approximationFunction),
       "-7π/30");
+  /* When the expression is too long, ExpressionOrFloat stores the approximation
+   * instead */
   assert_expression_or_float_serializes_to(
       ExpressionOrFloat::Builder(
           UserExpression::Builder(KDiv(KMult(23_e, π_e), 30_e)),

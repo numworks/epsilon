@@ -109,25 +109,28 @@ void Endpoint0::processINpacket() {
     case State::DataIn:
       sendSomeData();
       break;
-    case State::LastDataIn:
+    case State::LastDataIn: {
       m_state = State::StatusOut;
-      // Prepare to receive the OUT Data[] transaction.
-      OTG.DOEPCTL0()->setCNAK(true);
-      break;
-    case State::StatusIn: {
-      m_state = State::Idle;
-      // All the data has been received. Callback the request recipient.
+      // All the data has been sent. Callback the request recipient.
+      /* USB 9.2.6 The device is expected to "complete" processing of the
+       * request before it allows the Status stage to complete successfully. */
       uint8_t type = static_cast<uint8_t>(m_request.recipientType());
       if (type == 0) {
         // Device recipient
-        m_requestRecipients[0]->wholeDataReceivedCallback(
-            &m_request, m_largeBuffer, &m_transferBufferLength);
+        m_requestRecipients[0]->wholeDataSentCallback(&m_request, m_largeBuffer,
+                                                      &m_transferBufferLength);
       } else {
         // Interface recipient
-        m_requestRecipients[1]->wholeDataReceivedCallback(
-            &m_request, m_largeBuffer, &m_transferBufferLength);
+        m_requestRecipients[1]->wholeDataSentCallback(&m_request, m_largeBuffer,
+                                                      &m_transferBufferLength);
       }
-    } break;
+      // Prepare to receive the StatusOut packet
+      OTG.DOEPCTL0()->setCNAK(true);
+      break;
+    }
+    case State::StatusIn:
+      m_state = State::Idle;
+      break;
     default:
       stallTransaction();
   }
@@ -143,29 +146,32 @@ void Endpoint0::processOUTpacket() {
         m_state = State::LastDataOut;
       }
       break;
-    case State::LastDataOut:
+    case State::LastDataOut: {
       if (receiveSomeData() < 0) {
         break;
       }
-      // Send the DATA1[] to the host.
+      // All the data has been received. Callback the request recipient.
+      /* USB 9.2.6 The device is expected to "complete" processing of the
+       * request before it allows the Status stage to complete successfully. */
+      uint8_t type = static_cast<uint8_t>(m_request.recipientType());
+      if (type == 0) {
+        // Device recipient
+        m_requestRecipients[0]->wholeDataReceivedCallback(
+            &m_request, m_largeBuffer, &m_transferBufferLength);
+      } else {
+        // Interface recipient
+        m_requestRecipients[1]->wholeDataReceivedCallback(
+            &m_request, m_largeBuffer, &m_transferBufferLength);
+      }
+      // Send the StatusIn to the host
       writePacket(NULL, 0);
       m_state = State::StatusIn;
       break;
+    }
     case State::StatusOut: {
       // Read the DATA1[] sent by the host.
       readPacket(NULL, 0);
       m_state = State::Idle;
-      // All the data has been sent. Callback the request recipient.
-      uint8_t type = static_cast<uint8_t>(m_request.recipientType());
-      if (type == 0) {
-        // Device recipient
-        m_requestRecipients[0]->wholeDataSentCallback(&m_request, m_largeBuffer,
-                                                      &m_transferBufferLength);
-      } else {
-        // Interface recipient
-        m_requestRecipients[1]->wholeDataSentCallback(&m_request, m_largeBuffer,
-                                                      &m_transferBufferLength);
-      }
     } break;
     default:
       stallTransaction();

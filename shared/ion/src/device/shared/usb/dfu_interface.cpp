@@ -69,18 +69,7 @@ void DFUInterface::wholeDataSentCallback(SetupPacket* request,
                                          uint16_t* transferBufferLength) {
   if (request->bRequest() == (uint8_t)DFURequest::GetStatus) {
     // Do any needed action after the GetStatus request.
-    if (m_state == State::dfuMANIFEST) {
-      /* If we leave the DFU and reset immediately, dfu-util outputs an error:
-       * "File downloaded successfully
-       *  dfu-util: Error during download get_status"
-       * If we sleep 1us here, there is no error. We put 1ms for security.
-       * This error might be due to the USB connection being cut too soon after
-       * the last USB exchange, so the host does not have time to process the
-       * answer received for the last GetStatus request. */
-      Ion::Timing::msleep(1);
-      // Leave DFU routine: Leave DFU, reset device, jump to application code
-      leaveDFUAndReset();
-    } else if (m_state == State::dfuDNBUSY) {
+    if (m_state == State::dfuDNBUSY) {
       if (m_largeBufferLength != 0) {
         // Here, copy the data from the transfer buffer to the flash memory
         writeOnMemory();
@@ -89,6 +78,24 @@ void DFUInterface::wholeDataSentCallback(SetupPacket* request,
       eraseMemoryIfNeeded();
       m_state = State::dfuDNLOADIDLE;
     }
+  }
+}
+
+void DFUInterface::idleCallback(SetupPacket* request) {
+  /* This request needs to be done after the status since it will break the
+   * communication channel. */
+  if (request->bRequest() == (uint8_t)DFURequest::GetStatus &&
+      m_state == State::dfuMANIFEST) {
+    /* If we leave the DFU and reset immediately, dfu-util outputs an error:
+     * "File downloaded successfully
+     *  dfu-util: Error during download get_status"
+     * If we sleep 1us here, there is no error. We put 1ms for security.
+     * This error might be due to the USB connection being cut too soon after
+     * the last USB exchange, so the host does not have time to process the
+     * answer received for the last GetStatus request. */
+    Ion::Timing::msleep(1);
+    // Leave DFU routine: Leave DFU, reset device, jump to application code
+    leaveDFUAndReset();
   }
 }
 

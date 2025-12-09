@@ -13,6 +13,10 @@ struct List {
     return list->numberOfChildren();
   }
 
+  static bool IsEmptyList(const Tree* e) {
+    return e->isList() && e->numberOfChildren() == 0;
+  }
+
   /* Evaluate the list expression and return its k-th value or nullptr.
    * For instance: 2+{3,4} -> 5
    * Intermediary results go through reduction. */

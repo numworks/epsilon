@@ -212,6 +212,11 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("cos(π_rad/4)", "√(2)/2", k_degreeCtx);
   simplifies_to("cot((π/4)_rad)", "1", k_gradianCtx);
   simplifies_to("1_m+π_m+√(2)_m-cos(15)_m", "6.3154941288217×_m");
+  simplifies_to("abs(-3.3_m)", "3.3×_m");
+  simplifies_to("abs(_s)", "1×_s");
+  simplifies_to("abs(3_m)", "3×_m");
+  // abs(units) is forbidden for complex values
+  simplifies_to("abs(-3i*_m)", "undef");
 
   // No unit conversion
   // TODO: should return 1×_m+1×_cm
@@ -719,11 +724,7 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
   simplifies_to("sign(-2_m)", "undef");
   simplifies_to("sign(4_m)", "undef");
   simplifies_to("sign(_s)", "undef");
-#if TODO_PCJ  // handle abs and sqrt
-  // See comment in DeepCheckDimensions
-  simplifies_to("abs(-3.3_m)", "3.3×_m");
-  simplifies_to("abs(_s)", "1×_s");
-  simplifies_to("abs(3_m)", "3×_m");
+#if TODO_PCJ  // handle sqrt
   simplifies_to("√(16×_m^2)", "4×_m");
 #endif
   simplifies_to("abs(2_m) + ceil(3_m) + floor(4_m) + round(5_m, 1)", "undef");

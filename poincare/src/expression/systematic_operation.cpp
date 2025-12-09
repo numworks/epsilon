@@ -818,13 +818,14 @@ bool SystematicOperation::ReduceExp(Tree* e) {
 bool SystematicOperation::ReduceAbs(Tree* e) {
   assert(e->isAbs());
   Tree* child = e->child(0);
+  bool hasUnit = Dimension::Get(child).isUnit();
   if (child->isAbs()) {
     // ||x|| -> |x|
     child->removeNode();
     assert(!ReduceAbs(e));
     return true;
   }
-  if (child->isExp()) {
+  if (!hasUnit && child->isExp()) {
     Tree* expChild = child->child(0);
     /* |e^(x+y+z)| = dep(|e^(x+z)|, {y}) if y is pure imaginary
      * This shortcuts at least two advanced reduction step:
@@ -869,6 +870,11 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
     }
   }
   ComplexProperties complexProperties = GetComplexProperties(child);
+  if (hasUnit && !complexProperties.isReal()) {
+    // Do not handle abs with non real units
+    e->cloneTreeOverTree(KUndef);
+    return true;
+  }
   if (!complexProperties.isPure()) {
     return false;
   }

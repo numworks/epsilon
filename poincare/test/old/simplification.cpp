@@ -160,14 +160,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("100×_°C→_K", "373.15×_K");
   assert_parsed_expression_simplify_to("-100×_°C→_K", "173.15×_K");
   assert_parsed_expression_simplify_to("(12_m/6_m)×_°C", "2×_°C");
-  assert_parsed_expression_simplify_to("_°C+_°C", "undef");
-  assert_parsed_expression_simplify_to("_°C+_°F", "undef");
-  assert_parsed_expression_simplify_to("_K+_°F", "undef");
-  assert_parsed_expression_simplify_to("2*20_°F", "undef");
-  assert_parsed_expression_simplify_to("_°C^2", "undef");
-  assert_parsed_expression_simplify_to("1/(-3_°C)", "undef");
-  assert_parsed_expression_simplify_to("-1×100×_°C→_K", "undef");
-  assert_parsed_expression_simplify_to("_K×_°C", "undef");
   assert_parsed_expression_simplify_to("°C→x", "_°C→x");
   assert_parsed_expression_simplify_to("123°C→x", "123×_°C→x");
   assert_parsed_expression_simplify_to("-4.56°C→x", "-4.56×_°C→x");
@@ -273,117 +265,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_kg×_s^(-3)×_K^(-4)",
                                        "1×_K^(-4)×_kg×_s^(-3)");
 
-  /* Keep SI units for infinity float results, Remove unit for undefined
-   * expression */
-  assert_parsed_expression_simplify_to("inf×_s", "∞×_s");
-  assert_parsed_expression_simplify_to("-inf×_oz", "-∞×_kg");
-  assert_parsed_expression_simplify_to("2_s+3_s-5_s", "0×_s");
-  assert_parsed_expression_simplify_to("log(0)×_s", "undef");
-  assert_parsed_expression_simplify_to("log(undef)*_s", "undef");
-
-  /* Units with invalid exponent */
-  assert_parsed_expression_simplify_to("_s^(_s)", "undef");
-  assert_parsed_expression_simplify_to("_s^(π)", "undef");
-
-  /* Inhomogeneous expressions */
-  assert_parsed_expression_simplify_to("1+_s", "undef");
-  assert_parsed_expression_simplify_to("0+_A", "undef");
-  assert_parsed_expression_simplify_to("i_A", "undef");
-  assert_parsed_expression_simplify_to("_A+i", "undef");
-  assert_parsed_expression_simplify_to("_m+_s", "undef");
-  assert_parsed_expression_simplify_to("_m^2+_m", "undef");
-  assert_parsed_expression_simplify_to("acos(_s)", "undef");
-  assert_parsed_expression_simplify_to("arcosh(_s)", "undef");
-  assert_parsed_expression_simplify_to("arg(_s)", "undef");
-  assert_parsed_expression_simplify_to("asin(_s)", "undef");
-  assert_parsed_expression_simplify_to("arsinh(_s)", "undef");
-  assert_parsed_expression_simplify_to("arctan(_s)", "undef");
-  assert_parsed_expression_simplify_to("artanh(_s)", "undef");
-  assert_parsed_expression_simplify_to("binomcdf(_s,2,3)", "undef");
-  assert_parsed_expression_simplify_to("binomcdf(2,_s,3)", "undef");
-  assert_parsed_expression_simplify_to("binomcdf(2,3,_s)", "undef");
-  assert_parsed_expression_simplify_to("binomial(_s,2)", "undef");
-  assert_parsed_expression_simplify_to("binomial(2,_s)", "undef");
-  assert_parsed_expression_simplify_to("binompdf(_s,2,3)", "undef");
-  assert_parsed_expression_simplify_to("binompdf(2,_s,3)", "undef");
-  assert_parsed_expression_simplify_to("binompdf(2,3,_s)", "undef");
-  assert_parsed_expression_simplify_to("conj(_s)", "undef");
-  assert_parsed_expression_simplify_to("cos(_s)", "undef");
-  assert_parsed_expression_simplify_to("cosh(_s)", "undef");
-  assert_parsed_expression_simplify_to("cross(_s,[[1][2][3]])", "undef");
-  assert_parsed_expression_simplify_to("det(_s)", "undef");
-  assert_parsed_expression_simplify_to("det([[_s]])", "undef");
-  assert_parsed_expression_simplify_to("det([[cos(3gon)]])",
-                                       "cos(\U000000123×π\U00000013/200)");
-  assert_parsed_expression_simplify_to("diff(_s,x,0)", "undef");
-  assert_parsed_expression_simplify_to("diff(0,x,_s)", "undef");
-  assert_parsed_expression_simplify_to("dim(_s)", "undef");
-  assert_parsed_expression_simplify_to("dot(_s,[[1][2][3]])", "undef");
-  assert_parsed_expression_simplify_to("factor(_s)", "undef");
-  assert_parsed_expression_simplify_to("(_s)!", "undef");
-  assert_parsed_expression_simplify_to("frac(_s)", "undef");
-  assert_parsed_expression_simplify_to("gcd(1,_s)", "undef");
-  assert_parsed_expression_simplify_to("gcd(_s,1)", "undef");
-  assert_parsed_expression_simplify_to("gcd(1,2,3,_s)", "undef");
-  assert_parsed_expression_simplify_to("identity(_s)", "undef");
-  assert_parsed_expression_simplify_to("im(_s)", "undef");
-  assert_parsed_expression_simplify_to("int(_s,x,0,1)", "undef");
-  assert_parsed_expression_simplify_to("int(0,x,_s,1)", "undef");
-  assert_parsed_expression_simplify_to("int(0,x,0,_s)", "undef");
-  assert_parsed_expression_simplify_to("invbinom(_s,2,3)", "undef");
-  assert_parsed_expression_simplify_to("invbinom(2,_s,3)", "undef");
-  assert_parsed_expression_simplify_to("invbinom(2,3,_s)", "undef");
-  assert_parsed_expression_simplify_to("invnorm(_s,2,3)", "undef");
-  assert_parsed_expression_simplify_to("invnorm(2,_s,3)", "undef");
-  assert_parsed_expression_simplify_to("invnorm(2,3,_s)", "undef");
-  assert_parsed_expression_simplify_to("inverse(_s)", "undef");
-  assert_parsed_expression_simplify_to("lcm(1,_s)", "undef");
-  assert_parsed_expression_simplify_to("lcm(_s,1)", "undef");
-  assert_parsed_expression_simplify_to("lcm(1,2,3,_s)", "undef");
-  assert_parsed_expression_simplify_to("ln(_s)", "undef");
-  assert_parsed_expression_simplify_to("log(_s)", "undef");
-  assert_parsed_expression_simplify_to("log(_s,2)", "undef");
-  assert_parsed_expression_simplify_to("log(1,_s)", "undef");
-  assert_parsed_expression_simplify_to("log(_N^2,_N)", "undef");
-  assert_parsed_expression_simplify_to("norm(_s)", "undef");
-  assert_parsed_expression_simplify_to("normcdf(_s,2,3)", "undef");
-  assert_parsed_expression_simplify_to("normcdf(2,_s,3)", "undef");
-  assert_parsed_expression_simplify_to("normcdf(2,3,_s)", "undef");
-  assert_parsed_expression_simplify_to("normcdfrange(_s,2,3,4)", "undef");
-  assert_parsed_expression_simplify_to("normcdfrange(2,_s,3,4)", "undef");
-  assert_parsed_expression_simplify_to("normcdfrange(2,3,_s,4)", "undef");
-  assert_parsed_expression_simplify_to("normcdfrange(2,3,4,_s)", "undef");
-  assert_parsed_expression_simplify_to("normpdf(_s,2,3)", "undef");
-  assert_parsed_expression_simplify_to("normpdf(2,_s,3)", "undef");
-  assert_parsed_expression_simplify_to("normpdf(2,3,_s)", "undef");
-  assert_parsed_expression_simplify_to("permute(_s,2)", "undef");
-  assert_parsed_expression_simplify_to("permute(2,_s)", "undef");
-  assert_parsed_expression_simplify_to("product(_s,x,0,1)", "undef");
-  assert_parsed_expression_simplify_to("product(1,x,_s,1)", "undef");
-  assert_parsed_expression_simplify_to("product(1,x,0,_s)", "undef");
-  assert_parsed_expression_simplify_to("quo(_s,1)", "undef");
-  assert_parsed_expression_simplify_to("quo(1,_s)", "undef");
-  assert_parsed_expression_simplify_to("re(_s)", "undef");
-  assert_parsed_expression_simplify_to("ref(_s)", "undef");
-  assert_parsed_expression_simplify_to("ref([[_s]])", "undef");
-  assert_parsed_expression_simplify_to("ref([[cos(3gon)]])", "[[1]]");
-  assert_parsed_expression_simplify_to("rem(_s,1)", "undef");
-  assert_parsed_expression_simplify_to("rem(1,_s)", "undef");
-  assert_parsed_expression_simplify_to("round(1,_s)", "undef");
-  assert_parsed_expression_simplify_to("round(1_s,_s)", "undef");
-  assert_parsed_expression_simplify_to("round(1_s,0.1)", "undef");
-  assert_parsed_expression_simplify_to("round(1_s,0.1)+abs(1_s)", "undef");
-  assert_parsed_expression_simplify_to("rref(_s)", "undef");
-  assert_parsed_expression_simplify_to("sin(_s)", "undef");
-  assert_parsed_expression_simplify_to("sinh(_s)", "undef");
-  assert_parsed_expression_simplify_to("sum(_s,x,0,1)", "undef");
-  assert_parsed_expression_simplify_to("sum(0,x,_s,1)", "undef");
-  assert_parsed_expression_simplify_to("sum(0,x,0,_s)", "undef");
-  assert_parsed_expression_simplify_to("tan(_s)", "undef");
-  assert_parsed_expression_simplify_to("tanh(_s)", "undef");
-  assert_parsed_expression_simplify_to("trace(_s)", "undef");
-  assert_parsed_expression_simplify_to("transpose(_s)", "undef");
-
   /* Valid expressions */
   assert_parsed_expression_simplify_to("-2×_A", "-2×_A");
   assert_parsed_expression_simplify_to("cos(1_s/1_s)", "cos(1)");
@@ -397,17 +278,6 @@ QUIZ_CASE(poincare_simplification_units) {
                                        User, Radian, Imperial);
   assert_parsed_expression_simplify_to("abs(_s)", "1×_s");
   assert_parsed_expression_simplify_to("abs(3_m)", "3×_m");
-  assert_parsed_expression_simplify_to("ceil(3.3_m)", "undef");
-  assert_parsed_expression_simplify_to("floor(_s)", "undef");
-  assert_parsed_expression_simplify_to("floor(3.3_m)", "undef");
-  assert_parsed_expression_simplify_to("round(3.3_m, 0)", "undef");
-  assert_parsed_expression_simplify_to("round(_s,1)", "undef");
-  assert_parsed_expression_simplify_to("sign(-2_m)", "undef");
-  assert_parsed_expression_simplify_to("sign(4_m)", "undef");
-  assert_parsed_expression_simplify_to("sign(_s)", "undef");
-  assert_parsed_expression_simplify_to(
-      "abs(2_m) + ceil(3_m) + floor(4_m) + round(5_m, 1)", "undef");
-  assert_parsed_expression_simplify_to("sign(3_m) + 2", "undef");
   assert_parsed_expression_simplify_to("1/_m+1/_km", "1.001×_m^(-1)");
   assert_parsed_expression_simplify_to("10000_kg", "10×_t");
   assert_parsed_expression_simplify_to("1000000_kg", "1×_kt");

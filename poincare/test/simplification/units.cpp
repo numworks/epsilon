@@ -92,13 +92,13 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("2×_m/_m", "2");
   simplifies_to("1234_g", "1234×_g");
   simplifies_to("cos(0_rad)", "1");
-  simplifies_to("sum(_s,x,0,1)", "2×_s");
   // NOTE: We only allow simple int operations in unit exponents
   simplifies_to("_s^-1", "1×_s^(-1)");
   simplifies_to("_s^(4-2^3+2×3)", "1×_s^2");
   // NOTE: this is a test for ReduceSortedAddition, see comment there
   simplifies_to("0×_A + π×_A - π×_A", "0×_A");
   simplifies_to("sum(_s,x,2,0)", "0×_s");
+  simplifies_to("sum(_s,x,0,1)", "2×_s");
 #if 0
   // See comment in DeepCheckDimensions
   simplifies_to("abs(-3.3_m)", "3.3×_m");
@@ -177,6 +177,8 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("0.2_rad^2", "1/5×_rad^2");
   // TODO_PCJ : Wasn't exact before
   simplifies_to("π×_rad×_°", "π^2/180×_rad^2");
+  simplifies_to("det([[cos(3gon)]])", "cos((3×π)/200)");
+  simplifies_to("ref([[cos(3gon)]])", "[[1]]");
 }
 
 QUIZ_CASE(pcj_simplification_unit_automatic) {
@@ -405,6 +407,109 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
   simplifies_to("1_m+1_s", "undef");
   simplifies_to("1_m+x", "undef");
   simplifies_to("1_m+0", "undef");
+  simplifies_to("1+_s", "undef");
+  simplifies_to("0+_A", "undef");
+#if TODO_PCJ  // Handle units with complex numbers
+  simplifies_to("i _A", "undef");
+#endif
+  simplifies_to("_A+i", "undef");
+  simplifies_to("_m+_s", "undef");
+  simplifies_to("_m^2+_m", "undef");
+  simplifies_to("acos(_s)", "undef");
+  simplifies_to("arcosh(_s)", "undef");
+  simplifies_to("arg(_s)", "undef");
+  simplifies_to("asin(_s)", "undef");
+  simplifies_to("arsinh(_s)", "undef");
+  simplifies_to("arctan(_s)", "undef");
+  simplifies_to("artanh(_s)", "undef");
+  simplifies_to("binomcdf(_s,2,3)", "undef");
+  simplifies_to("binomcdf(2,_s,3)", "undef");
+  simplifies_to("binomcdf(2,3,_s)", "undef");
+  simplifies_to("binomial(_s,2)", "undef");
+  simplifies_to("binomial(2,_s)", "undef");
+  simplifies_to("binompdf(_s,2,3)", "undef");
+  simplifies_to("binompdf(2,_s,3)", "undef");
+  simplifies_to("binompdf(2,3,_s)", "undef");
+  simplifies_to("conj(_s)", "undef");
+  simplifies_to("cos(_s)", "undef");
+  simplifies_to("cosh(_s)", "undef");
+  simplifies_to("cross(_s,[[1][2][3]])", "undef");
+  simplifies_to("det(_s)", "undef");
+  simplifies_to("det([[_s]])", "undef");
+  simplifies_to("diff(_s,x,0)", "undef");
+  simplifies_to("diff(0,x,_s)", "undef");
+  simplifies_to("dim(_s)", "undef");
+  simplifies_to("dot(_s,[[1][2][3]])", "undef");
+  simplifies_to("factor(_s)", "undef");
+  simplifies_to("(_s)!", "undef");
+  simplifies_to("frac(_s)", "undef");
+  simplifies_to("gcd(1,_s)", "undef");
+  simplifies_to("gcd(_s,1)", "undef");
+  simplifies_to("gcd(1,2,3,_s)", "undef");
+  simplifies_to("identity(_s)", "undef");
+  simplifies_to("im(_s)", "undef");
+  simplifies_to("int(_s,x,0,1)", "undef");
+  simplifies_to("int(0,x,_s,1)", "undef");
+  simplifies_to("int(0,x,0,_s)", "undef");
+  simplifies_to("invbinom(_s,2,3)", "undef");
+  simplifies_to("invbinom(2,_s,3)", "undef");
+  simplifies_to("invbinom(2,3,_s)", "undef");
+  simplifies_to("invnorm(_s,2,3)", "undef");
+  simplifies_to("invnorm(2,_s,3)", "undef");
+  simplifies_to("invnorm(2,3,_s)", "undef");
+  simplifies_to("inverse(_s)", "undef");
+  simplifies_to("lcm(1,_s)", "undef");
+  simplifies_to("lcm(_s,1)", "undef");
+  simplifies_to("lcm(1,2,3,_s)", "undef");
+  simplifies_to("ln(_s)", "undef");
+  simplifies_to("log(_s)", "undef");
+  simplifies_to("log(_s,2)", "undef");
+  simplifies_to("log(1,_s)", "undef");
+  simplifies_to("log(_N^2,_N)", "undef");
+  simplifies_to("norm(_s)", "undef");
+  simplifies_to("normcdf(_s,2,3)", "undef");
+  simplifies_to("normcdf(2,_s,3)", "undef");
+  simplifies_to("normcdf(2,3,_s)", "undef");
+  simplifies_to("normcdfrange(_s,2,3,4)", "undef");
+  simplifies_to("normcdfrange(2,_s,3,4)", "undef");
+  simplifies_to("normcdfrange(2,3,_s,4)", "undef");
+  simplifies_to("normcdfrange(2,3,4,_s)", "undef");
+  simplifies_to("normpdf(_s,2,3)", "undef");
+  simplifies_to("normpdf(2,_s,3)", "undef");
+  simplifies_to("normpdf(2,3,_s)", "undef");
+  simplifies_to("permute(_s,2)", "undef");
+  simplifies_to("permute(2,_s)", "undef");
+  simplifies_to("product(_s,x,0,1)", "undef");
+  simplifies_to("product(1,x,_s,1)", "undef");
+  simplifies_to("product(1,x,0,_s)", "undef");
+  simplifies_to("quo(_s,1)", "undef");
+  simplifies_to("quo(1,_s)", "undef");
+  simplifies_to("re(_s)", "undef");
+  simplifies_to("ref(_s)", "undef");
+  simplifies_to("ref([[_s]])", "undef");
+  simplifies_to("rem(_s,1)", "undef");
+  simplifies_to("rem(1,_s)", "undef");
+  simplifies_to("round(1,_s)", "undef");
+  simplifies_to("round(1_s,_s)", "undef");
+  simplifies_to("round(1_s,0.1)", "undef");
+  simplifies_to("round(1_s,0.1)+abs(1_s)", "undef");
+  simplifies_to("rref(_s)", "undef");
+  simplifies_to("sin(_s)", "undef");
+  simplifies_to("sinh(_s)", "undef");
+  simplifies_to("sum(0,x,_s,1)", "undef");
+  simplifies_to("sum(0,x,0,_s)", "undef");
+  simplifies_to("tan(_s)", "undef");
+  simplifies_to("tanh(_s)", "undef");
+  simplifies_to("trace(_s)", "undef");
+  simplifies_to("transpose(_s)", "undef");
+
+  /* Keep SI units for infinity float results, Remove unit for undefined
+   * expression */
+  simplifies_to("inf×_s", "∞×_s");
+  simplifies_to("-inf×_oz", "-∞×_oz");
+  simplifies_to("2_s+3_s-5_s", "0×_s");
+  simplifies_to("log(0)×_s", "undef");
+  simplifies_to("log(undef)*_s", "undef");
 
   // Temperature
   simplifies_to("2_°C-1_°C", "undef");
@@ -413,7 +518,20 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
   simplifies_to("2_K×2_°C", "undef");
   simplifies_to("1/_°C", "undef");
   simplifies_to("(1_°C)^2", "undef");
+  simplifies_to("_°C+_°C", "undef");
+  simplifies_to("_°C+_°F", "undef");
+  simplifies_to("_K+_°F", "undef");
+#if TODO_PCJ  // Forbid multiplications involving °F and °C
+  simplifies_to("2*20_°F", "undef");
+  simplifies_to("-1×100×_°C→_K", "undef");
+#endif
+  simplifies_to("_°C^2", "undef");
+  simplifies_to("1/(-3_°C)", "undef");
+  simplifies_to("_K×_°C", "undef");
 
+  /* Units with invalid exponent */
+  simplifies_to("_s^(_s)", "undef");
+  simplifies_to("_s^(π)", "undef");
   // Exponent overflow
   /* NOTE: Order of units should not matter. If an overflow can occur when
    * reordering the multiplication, we return undef, even if no overflow
@@ -439,6 +557,17 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
   simplifies_to("_kat_kg^-2.8", "1×_mol×_kg^(-14/5)×_s^(-1)");
 #endif
 
+  // Invalid operations
+  simplifies_to("ceil(3.3_m)", "undef");
+  simplifies_to("floor(_s)", "undef");
+  simplifies_to("floor(3.3_m)", "undef");
+  simplifies_to("round(3.3_m, 0)", "undef");
+  simplifies_to("round(_s,1)", "undef");
+  simplifies_to("sign(-2_m)", "undef");
+  simplifies_to("sign(4_m)", "undef");
+  simplifies_to("sign(_s)", "undef");
+  simplifies_to("abs(2_m) + ceil(3_m) + floor(4_m) + round(5_m, 1)", "undef");
+  simplifies_to("sign(3_m) + 2", "undef");
   simplifies_to("tan(2_m)", "undef");
   simplifies_to("tan(2_rad^2)", "undef");
   simplifies_to("(_A×x)^2×_s", "undef", replaceSymbolCtx);

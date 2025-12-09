@@ -1382,13 +1382,11 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
             SymbolHeight(KDFont::Size::Large) - 2;
         constexpr KDCoordinate k_maxSymbolWidth =
             SymbolWidth(KDFont::Size::Large);
-        /* TODO: make symbolPixel an array with two static dimensions and not a
-         * VLA. But currently the algorithm relies on the second array dimension
-         * matching the real size of SymbolWidth(s_font) */
-        uint8_t symbolPixel[k_maxSymbolHeight][SymbolWidth(s_font)];
+        KDCoordinate symbolHeight = SymbolHeight(s_font) - 2;
+        KDCoordinate symbolWidth = SymbolWidth(s_font);
+        uint8_t symbolPixel[k_maxSymbolHeight][k_maxSymbolWidth];
         memset(symbolPixel, 0xFF, sizeof(symbolPixel));
 
-        KDCoordinate symbolHeight = SymbolHeight(s_font) - 2;
         for (int i = 0; i <= symbolHeight / 2; i++) {
           for (int j = 0; j < Sum::k_significantPixelWidth; j++) {
             // Add an offset of i / 2 to match how data are stored
@@ -1398,11 +1396,19 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
           }
         }
 
+        // Copy the relevant region into a 1D array
+        uint8_t maskBuffer[k_maxSymbolHeight * k_maxSymbolWidth];
+        for (int i = 0; i < symbolHeight; i++) {
+          for (int j = 0; j < symbolWidth; j++) {
+            maskBuffer[i * symbolWidth + j] = symbolPixel[i][j];
+          }
+        }
+
         KDColor workingBuffer[k_maxSymbolWidth * k_maxSymbolHeight];
-        KDRect symbolFrame(left, top + 1, SymbolWidth(s_font), symbolHeight);
-        ctx->fillRectWithMask(
-            symbolFrame, style.glyphColor, style.backgroundColor,
-            (const uint8_t*)symbolPixel, (KDColor*)workingBuffer);
+        KDRect symbolFrame(left, top + 1, symbolWidth, symbolHeight);
+        ctx->fillRectWithMask(symbolFrame, style.glyphColor,
+                              style.backgroundColor, (const uint8_t*)maskBuffer,
+                              (KDColor*)workingBuffer);
       }
       // Render the "="
       KDSize variableSize = Size(l->child(k_variableIndex));

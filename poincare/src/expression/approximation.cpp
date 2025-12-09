@@ -362,10 +362,8 @@ std::complex<float> Private::HelperUndefDependencies(const Tree* dep,
       // Only update to nonreal if there is no undef to respect priority
       if (IsNonReal(c) && undefValue == std::complex<float>(0)) {
         undefValue = c;
-      } else if (std::isnan(c.real())) {
+      } else if (std::isnan(c.real()) || std::isnan(c.imag())) {
         undefValue = NAN;
-      } else {
-        assert(!std::isnan(c.imag()));
       }
     } else {
       Tree* a = PrivateToTree<float>(

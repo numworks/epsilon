@@ -346,7 +346,10 @@ class Integer {
   static void SetSign(Tree* e, NonStrictSign sign);
 
   /* Return True for rational integers, Unknown for potential non-rational
-   * integers and False for non-integers */
+   * integers and False for non-integers. For example :
+   * 24, 3, -2 will return True
+   * 2/3, π, 3i, [[1]] will return False
+   * Anything else, like floor(π), π^π or cos(5) will return Unkown. */
   static OMG::Troolean IsRationalInteger(const Tree* e);
   /* Return True for positive rational integers, Unknown for potential
    * non-rational positive integers and False for non-integers or negative

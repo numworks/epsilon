@@ -72,7 +72,7 @@ void Endpoint0::processINpacket() {
     }
     case State::StatusIn: {
       m_state = State::Idle;
-      // All the data has been received. Callback the request recipient.
+      requestRecipient()->idleCallback(&m_request);
       CHEP0R::SetSTATRX(Status::Valid);
       CHEP0R::SetSTATTX(Status::NAK);
       break;
@@ -113,6 +113,7 @@ void Endpoint0::processOUTpacket() {
       // Read the DATA1[] sent by the host.
       readPacket(NULL, 0);
       m_state = State::Idle;
+      requestRecipient()->idleCallback(&m_request);
       CHEP0R::SetEPKIND(false);
       CHEP0R::SetSTATRX(Status::Valid);
       CHEP0R::SetSTATTX(Status::NAK);

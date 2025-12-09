@@ -114,6 +114,7 @@ void Endpoint0::processINpacket() {
     }
     case State::StatusIn:
       m_state = State::Idle;
+      requestRecipient()->idleCallback(&m_request);
       break;
     default:
       stallTransaction();
@@ -144,11 +145,12 @@ void Endpoint0::processOUTpacket() {
       m_state = State::StatusIn;
       break;
     }
-    case State::StatusOut: {
+    case State::StatusOut:
       // Read the DATA1[] sent by the host.
       readPacket(NULL, 0);
       m_state = State::Idle;
-    } break;
+      requestRecipient()->idleCallback(&m_request);
+      break;
     default:
       stallTransaction();
   }

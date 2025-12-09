@@ -152,8 +152,22 @@ void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
     }
     const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
     assert(s->isDefined());
-    *values = s->approximateAtContextRank(
-        rank(sequenceIndex, intermediateComputation), intermediateComputation);
+
+    assert(rank(sequenceIndex, intermediateComputation) == *currentRank);
+    int targetRank = *currentRank;
+    double newValue =
+        s->approximateAtContextRank(targetRank, intermediateComputation);
+    assert(rank(sequenceIndex, intermediateComputation) == *currentRank);
+
+    if (targetRank != *currentRank) {
+      assert(intermediateComputation && targetRank > *currentRank);
+      // approximateAtContextRank altered the intermediate cache, re-shift it.
+      int delta = targetRank - *currentRank;
+      *currentRank = targetRank;
+      shiftValuesRight(sequenceIndex, intermediateComputation, delta);
+    }
+    *values = newValue;
+
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
     // Store value in initial storage if rank is in the right range
     int offset = rankForInitialValuesStorage(sequenceIndex) - *currentRank;

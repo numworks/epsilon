@@ -43,9 +43,6 @@ void assert_parsed_units_simplify_to_with_prefixes() {
 }
 
 QUIZ_CASE(pcj_simplification_unit) {
-  // Parse units with prefixes
-  assert_parsed_units_simplify_to_with_prefixes();
-
   // SI base units
   simplifies_to("_s", "1×_s");
   simplifies_to("_m", "1×_m");
@@ -70,6 +67,33 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("_m^2", "1×_m^2");
   simplifies_to("_m^3", "1×_m^3");
 
+  // Parse units with prefixes
+  assert_parsed_units_simplify_to_with_prefixes();
+  simplifies_to("_min", "1×_min");
+  simplifies_to("_h", "1×_h");
+  simplifies_to("_day", "1×_day");
+  simplifies_to("_week", "1×_week");
+  simplifies_to("_month", "1×_month");
+  simplifies_to("_year", "1×_year");
+  simplifies_to("_au", "1×_au");
+  simplifies_to("_ly", "1×_ly");
+  simplifies_to("_pc", "1×_pc");
+  simplifies_to("_in", "1×_in");
+  simplifies_to("_ft", "1×_ft");
+  simplifies_to("_yd", "1×_yd");
+  simplifies_to("_mi", "1×_mi");
+  simplifies_to("_t", "1×_t");
+  simplifies_to("_oz", "1×_oz");
+  simplifies_to("_lb", "1×_lb");
+  simplifies_to("_shtn", "1×_shtn");
+  simplifies_to("_°C", "1×_°C");
+  simplifies_to("_°F", "1×_°F");
+  simplifies_to("_atm", "1×_atm");
+  simplifies_to("_Hz", "1×_Hz");
+  simplifies_to("_S", "1×_S");
+  simplifies_to("_L", "1×_L");
+  simplifies_to("_ha", "1×_ha");
+
   // SI derived units with special names and symbols
   simplifies_to("_kg×_m×_s^(-2)", "1×_N");
   simplifies_to("_kg×_m^(-1)×_s^(-2)", "1×_Pa");
@@ -84,8 +108,82 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("_kg×_m^2×_s^(-2)×_A^(-2)", "1×_H");
   simplifies_to("_mol×_s^-1", "1×_kat");
 
-  simplifies_to("12_m", "12×_m");
-  simplifies_to("1_s", "1×_s");
+  // Usual physical quantities
+  simplifies_to("_A×_s×_m^(-3)", "1×_C×_m^(-3)");  // Charge density
+  simplifies_to("_kg×_m×_s^(-3)×_K^(-1)",
+                "1×_N×_s^(-1)×_K^(-1)");  // Thermal conductivity _W×_m^-1×_K^-1
+  simplifies_to("_K×_kg^(-1)×_m^(-2)×_s^3",
+                "1×_K×_W^(-1)");  // Thermal resistance
+  simplifies_to("_kg×_m×_s^(-3)×_A^(-1)", "1×_V×_m^(-1)");  // Electrical field
+  simplifies_to("_kg×_m^2×_s^(-1)",
+                "1×_s×_J");  // Action
+  simplifies_to("_kg×_m^2×_s^(-2)×_K^(-1)",
+                "1×_J×_K^(-1)");  // Entropy | Heat capacity
+  simplifies_to(
+      "_m^2×_s^(-2)×_K^(-1)",
+      "1×_m^2×_K^(-1)×_s^(-2)");  // Specific heat capacity _J×_K^-1×_kg^-1
+  simplifies_to("_kg×_m^2×_s^(-2)×_K^(-1)×_mol^(-1)",
+                "1×_J×_K^(-1)×_mol^(-1)");  // Molar heat capacity
+  simplifies_to("_kg×_m^(-1)×_s^(-2)×_K^(-1)",
+                "1×_Pa×_K^(-1)");  // Volumetric heat capacity _J×_K^-1×_m^-3
+  simplifies_to(
+      "_kg×_s^(-3)×_K^(-1)",
+      "1×_kg×_K^(-1)×_s^(-3)");  // Heat transfer coefficient _W×_m^-2×_K^-1
+  simplifies_to("_kg×_m^2×_s^(-3)×_K^(-1)",
+                "1×_W×_K^(-1)");  // Thermal conductivity
+  simplifies_to("_kg^(-1)×_m^(-3)×_s^3×_A^2",
+                "1×_m^(-1)×_Ω^(-1)");  // Electrical conductivity _S×_m^-1
+  simplifies_to("_kg×_s^(-2)", "1×_kg×_s^(-2)");  // Stiffness _N×_m^-1
+  simplifies_to("_kg×_m^(-1)×_s^(-3)",
+                "1×_Pa×_s^(-1)");  // Power density _W×_m^-3
+  simplifies_to("_kg×_m^3×_s^(-3)×_A^(-1)",
+                "1×_m×_V");  // Electric flux
+  simplifies_to(
+      "_K×_kg^(-1)×_s^(3)",
+      "1×_s^3×_K×_kg^(-1)");  // Superficial thermal resistance _m^2×_K×_W^-1
+  simplifies_to("_kg^(-1)×_m^(-2)×_s^2", "1×_J^(-1)");  // Thermodynamic beta
+  simplifies_to("_kg×_m^(-1)×_s^(-1)",
+                "1×_s×_Pa");                        // Dynamic viscosity
+  simplifies_to("_m^2×_s^(-2)", "1×_m^2×_s^(-2)");  // Gray/Sievert _J×_kg^(-1)
+  simplifies_to("_m^2×_kg×_s^(-1)", "1×_s×_J");   // Angular momentum _N×_m×_s
+  simplifies_to("_m^(-1)×_kg×_s^(-2)", "1×_Pa");  // Energy density _J×_m^-3
+  simplifies_to("_m×_kg×_s^(-3)", "1×_N×_s^(-1)");  // Spectral power _W×_m^-1
+  simplifies_to("_m×_kg^(-1)×_s^2", "1×_Pa^(-1)");  // Compressibility
+  simplifies_to(
+      "_kg^(-1)×_s^3×_A^2×_mol^(-1)",
+      "1×_m^2×_mol^(-1)×_Ω^(-1)");  // Molar conductivity _S×_m^2×_mol^-1
+  simplifies_to("_m^(-2)×_s×_A", "1×_C×_m^(-2)");    // Polarization density
+  simplifies_to("_kg^(-1)×_s×_A", "1×_C×_kg^(-1)");  // Exposure
+  simplifies_to("_kg×_m^3×_s^(-3)×_A^(-2)",
+                "1×_m×_Ω");                        // Electrical resistivity
+  simplifies_to("_m^(-1)×_s×_A", "1×_C×_m^(-1)");  // Dipole moment
+  simplifies_to("_kg^(-1)×_s^2×_A",
+                "1×_T^(-1)");  // Electron mobility _m^2×_V^-1×_s^-1
+  simplifies_to("_m^(-2)×_kg^(-1)×_s^2×_A^2",
+                "1×_H^(-1)");  // Magnetic reluctance
+  simplifies_to("_m×_kg×_s^(-2)×_A^(-1)",
+                "1×_N×_A^(-1)");  // Magnetic vector potential _Wb×_m^-1 and
+                                  // Magnetic rigidity _T×_m
+  simplifies_to("_m^3×_kg×_s^(-2)×_A^(-1)", "1×_m×_Wb");  // Magnetic moment
+  simplifies_to("_m^(-1)×_kg^(-1)×_s^2×_A^2",
+                "1×_A^2×_N^(-1)");  // Magnetic susceptibility _H^-1×_m
+
+  // Physical constants
+  // Gravitational constant G _N×_m^2×_kg^-2
+  simplifies_to("_kg^(-1)×_m^3×_s^(-2)", "1×_m^3×_kg^(-1)×_s^(-2)");
+  // Vacuum electric permittivity µ0 _H×_m^-1
+  simplifies_to("_kg×_m×_s^(-2)×_A^(-2)", "1×_N×_A^(-2)");
+  // Vacuum magnetic permeability 𝝴0
+  simplifies_to("_A^2×_s^4×_kg^(-1)×_m^(-3)", "1×_F×_m^(-1)");
+  // Stefan–Boltzmann constant _W×_m^-2×_K^-4
+  simplifies_to("_kg×_s^(-3)×_K^(-4)", "1×_kg×_s^(-3)×_K^(-4)");
+
+  // Unit operations
+  simplifies_to("_C^3", "1×_C^3");
+  simplifies_to("-2×_A", "-2×_A");
+  simplifies_to("_m*_s^-2", "1×_m×_s^(-2)");
+  simplifies_to("_m+_m", "2×_m");
+  simplifies_to("_m-_m", "0×_m");
   simplifies_to("1_m+1_yd", "1.9144×_m");
   simplifies_to("1_mm+1_km", "1000.001×_m");
   simplifies_to("2_month×7_dm", "3681720×_s×_m");
@@ -99,10 +197,6 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("0×_A + π×_A - π×_A", "0×_A");
   simplifies_to("sum(_s,x,2,0)", "0×_s");
   simplifies_to("sum(_s,x,0,1)", "2×_s");
-#if 0
-  // See comment in DeepCheckDimensions
-  simplifies_to("abs(-3.3_m)", "3.3×_m");
-#endif
   simplifies_to("10^(-6)_m^3", "1ᴇ-6×_m^3");
   simplifies_to("1000000_cm", "1000000×_cm");
   simplifies_to("normcdf(0,20,3)×_s", "1.3083978345207ᴇ-11×_s");
@@ -112,6 +206,11 @@ QUIZ_CASE(pcj_simplification_unit) {
                 "dep(log(x/y),{nonNull(x),nonNull(1/"
                 "(1×10^0×y)),realPos((1×10^0×x)/(1×10^0×y))})",
                 k_keepAllSymbolsCtx);
+  simplifies_to("cos(1_s/1_s)", "cos(1)");
+  simplifies_to("sin(90_°)", "1");
+  simplifies_to("cos(π_rad/4)", "√(2)/2", k_degreeCtx);
+  simplifies_to("cot((π/4)_rad)", "1", k_gradianCtx);
+  simplifies_to("1_m+π_m+√(2)_m-cos(15)_m", "6.3154941288217×_m");
 
   // No unit conversion
   // TODO: should return 1×_m+1×_cm
@@ -136,6 +235,13 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("1/_K", "1×_K^(-1)");
   simplifies_to("(2_K)^2", "4×_K^2");
   simplifies_to("_cKπ23", "72.256631032565×_cK");
+  simplifies_to("0×_°C", "0×_°C");
+  simplifies_to("-32×_°F", "-32×_°F");
+  simplifies_to("273.16×_K", "273.16×_K");
+  simplifies_to("(12_m/6_m)×_°C", "2×_°C");
+  simplifies_to("°C→x", "1×_°C→x");
+  simplifies_to("123°C→x", "123×_°C→x");
+  simplifies_to("-4.56°C→x", "-4.56×_°C→x");
 
   // TODO: Decide on implicit '_' parsing
   //   simplifies_to("1m+1km", "1_m+1_km" /  "m+k×m" / "m+km" );
@@ -202,14 +308,22 @@ QUIZ_CASE(pcj_simplification_unit_automatic) {
   // Order of magnitude
   simplifies_to("100_kg", "100×_kg",
                 {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("10000_kg", "10×_t",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("1000000_kg", "1×_kt",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
   simplifies_to("1_min", "1×_min",
                 {.m_unitDisplay = UnitDisplay::AutomaticMetric});
   simplifies_to("0.1_m", "1×_dm",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("1/_m+1/_km", "1.001×_m^(-1)",
                 {.m_unitDisplay = UnitDisplay::AutomaticMetric});
   simplifies_to("180_MΩ", "180×_MΩ",
                 {.m_unitDisplay = UnitDisplay::AutomaticMetric});
   simplifies_to("180_MH", "180×_MH",
                 {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("1×_A×_kg", "2.2046226218488×_A×_lb",
+                {.m_unitDisplay = UnitDisplay::AutomaticImperial});
 }
 
 QUIZ_CASE(pcj_simplification_unit_basicSI) {
@@ -234,6 +348,11 @@ QUIZ_CASE(pcj_simplification_unit_basicSI) {
 QUIZ_CASE(pcj_simplification_unit_conversion) {
   simplifies_to("180×_°→_rad", "π×_rad", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("91.44_cm→_yd", "1×_yd");
+
+  simplifies_to("100×_°C→_K", "373.15×_K");
+  simplifies_to("-100×_°C→_K", "173.15×_K");
+  // TODO: should be 0×_°C
+  simplifies_to("273.15×_K→_°C", "-5.6843418860808ᴇ-14×_°C");
 }
 
 QUIZ_CASE(pcj_simplification_unit_decomposition) {
@@ -544,6 +663,7 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
 #if TODO_PCJ  // handle non-integer exponents
   simplifies_to("_m^(1/2)", "1×_m^(1/2)");
   simplifies_to("√(_m)", "1×_m^(1/2)");
+  simplifies_to("_N^(1/2)", "1×_N^(1/2)");
   simplifies_to("√(_N)", "1×_kg^(1/2)×_m^(1/2)×_s^(-1)");
   simplifies_to("√(_N)",
                 "1.5527410012845×_lb^(1/2)×_yd^(1/"
@@ -564,6 +684,13 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
   simplifies_to("sign(-2_m)", "undef");
   simplifies_to("sign(4_m)", "undef");
   simplifies_to("sign(_s)", "undef");
+#if TODO_PCJ  // handle abs and sqrt
+  // See comment in DeepCheckDimensions
+  simplifies_to("abs(-3.3_m)", "3.3×_m");
+  simplifies_to("abs(_s)", "1×_s");
+  simplifies_to("abs(3_m)", "3×_m");
+  simplifies_to("√(16×_m^2)", "4×_m");
+#endif
   simplifies_to("abs(2_m) + ceil(3_m) + floor(4_m) + round(5_m, 1)", "undef");
   simplifies_to("sign(3_m) + 2", "undef");
   simplifies_to("tan(2_m)", "undef");

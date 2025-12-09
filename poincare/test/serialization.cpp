@@ -153,9 +153,9 @@ QUIZ_CASE(pcj_serialization_expression_or_float) {
       "2π/30");
   assert_expression_or_float_serializes_to(
       ExpressionOrFloat::Builder(
-          UserExpression::Builder(KMult(-1_e, KDiv(KMult(2_e, π_e), 30_e))),
+          UserExpression::Builder(KOpposite(KDiv(KMult(2_e, π_e), 30_e))),
           approximationFunction),
-      "-0.2094395");
+      "-2π/30");
 
   assert_expression_or_float_serializes_to(
       ExpressionOrFloat::Builder(

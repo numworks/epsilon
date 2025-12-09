@@ -49,17 +49,8 @@ void Endpoint0::readAndDispatchSetupPacket() {
   m_request = SetupPacket(m_largeBuffer);
   uint16_t maxBufferLength = std::min(m_request.wLength(), MaxTransferSize);
 
-  // Forward the request to the request recipient
-  uint8_t type = static_cast<uint8_t>(m_request.recipientType());
-  if (type == 0) {
-    // Device recipient
-    m_requestRecipients[0]->processSetupRequest(
-        &m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
-  } else {
-    // Interface recipient
-    m_requestRecipients[1]->processSetupRequest(
-        &m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
-  }
+  requestRecipient()->processSetupRequest(
+      &m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
 }
 
 void Endpoint0::processINpacket() {
@@ -74,16 +65,8 @@ void Endpoint0::processINpacket() {
       CHEP0R::SetSTATRX(Status::NAK);
       CHEP0R::SetEPKIND(true);  // STATUS_OUT
       // All the data has been sent. Callback the request recipient.
-      uint8_t type = static_cast<uint8_t>(m_request.recipientType());
-      if (type == 0) {
-        // Device recipient
-        m_requestRecipients[0]->wholeDataSentCallback(&m_request, m_largeBuffer,
-                                                      &m_transferBufferLength);
-      } else {
-        // Interface recipient
-        m_requestRecipients[1]->wholeDataSentCallback(&m_request, m_largeBuffer,
-                                                      &m_transferBufferLength);
-      }
+      requestRecipient()->wholeDataSentCallback(&m_request, m_largeBuffer,
+                                                &m_transferBufferLength);
       CHEP0R::SetSTATRX(Status::Valid);
       break;
     }
@@ -118,16 +101,8 @@ void Endpoint0::processOUTpacket() {
         break;
       }
       CHEP0R::SetSTATTX(Status::NAK);
-      uint8_t type = static_cast<uint8_t>(m_request.recipientType());
-      if (type == 0) {
-        // Device recipient
-        m_requestRecipients[0]->wholeDataReceivedCallback(
-            &m_request, m_largeBuffer, &m_transferBufferLength);
-      } else {
-        // Interface recipient
-        m_requestRecipients[1]->wholeDataReceivedCallback(
-            &m_request, m_largeBuffer, &m_transferBufferLength);
-      }
+      requestRecipient()->wholeDataReceivedCallback(&m_request, m_largeBuffer,
+                                                    &m_transferBufferLength);
       // Send the DATA1[] to the host.
       writePacket(NULL, 0);
       CHEP0R::SetSTATTX(Status::Valid);

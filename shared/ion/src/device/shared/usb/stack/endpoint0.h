@@ -53,6 +53,9 @@ class Endpoint0 {
   int receiveSomeData();
   uint16_t readPacket(void* buffer, uint16_t length);
   uint16_t writePacket(const void* buffer, uint16_t length);
+  RequestRecipient* requestRecipient() {
+    return m_requestRecipients[static_cast<uint8_t>(m_request.recipientType())];
+  }
 
   // When sending large data stored in the buffer, the offset keeps tracks of
   // which data packet should be sent next.

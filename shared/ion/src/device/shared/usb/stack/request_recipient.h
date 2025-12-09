@@ -13,12 +13,16 @@ class RequestRecipient {
   bool processSetupRequest(SetupPacket* request, uint8_t* transferBuffer,
                            uint16_t* transferBufferLength,
                            uint16_t transferBufferMaxLength);
+  // Triggered between LastDataOut and StatusOut
   virtual void wholeDataReceivedCallback(SetupPacket* request,
                                          uint8_t* transferBuffer,
                                          uint16_t* transferBufferLength) {}
+  // Triggered between LastDataIn and StatusIn
   virtual void wholeDataSentCallback(SetupPacket* request,
                                      uint8_t* transferBuffer,
                                      uint16_t* transferBufferLength) {}
+  // Triggered after StatusOut or StatusIn
+  virtual void idleCallback(SetupPacket* request) {}
 
  protected:
   virtual bool processSetupInRequest(SetupPacket* request,

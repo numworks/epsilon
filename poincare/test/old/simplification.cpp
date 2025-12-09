@@ -323,44 +323,6 @@ QUIZ_CASE(poincare_simplification_logarithm) {
   assert_parsed_expression_simplify_to("log(4,10)", "2×log(2)");
 }
 
-QUIZ_CASE(poincare_simplification_unit_convert) {
-  assert_parsed_expression_simplify_to("10_m/_s→_km/_h",
-                                       "36×_km×_h^\x12-1\x13");
-  assert_parsed_expression_simplify_to("2_m→_km×_m/_m", "0.002×_km");
-  assert_parsed_expression_simplify_to("10_m/_s→_km/_h",
-                                       "36×_km×_h^\x12-1\x13");
-  assert_parsed_expression_simplify_to("10_m^2→_mm×_km", "10×_km×_mm");
-  assert_parsed_expression_simplify_to("2_h+2_min→_s", "7320×_s");
-  assert_parsed_expression_simplify_to("2×_kg×_m^2×_s^(-2)→_J", "2×_J");
-  assert_parsed_expression_simplify_to("300000×_m^3→_km^(2.3+0.7)",
-                                       "3ᴇ-4×_km^3");
-  assert_parsed_expression_simplify_to("4×_min→_s^3/_s^2", "240×_s");
-  assert_parsed_expression_simplify_to("4×_N×3_N×2_N→_N^3", "24×_N^3");
-  assert_parsed_expression_simplify_to("-5_cm→_m", "-0.05×_m");
-  assert_parsed_expression_simplify_to("-5_cm→_m", "-0.05×_m", User, Radian,
-                                       Imperial);
-  assert_parsed_expression_simplify_to("10_m/_s→_km", "undef");
-
-  assert_parsed_expression_simplify_to("π_rad→_'", "10800×_'");
-  assert_parsed_expression_simplify_to("1_°+60_'+3600_\"→_°", "3×_°");
-  assert_parsed_expression_simplify_to("1°+60'+3600\"→°", "3×_°");
-  assert_parsed_expression_simplify_to("0_K→_°C", "-273.15×_°C");
-  assert_parsed_expression_simplify_to("0_°C→_K", "273.15×_K");
-  assert_parsed_expression_simplify_to("_°C→_K", "274.15×_K");
-  assert_parsed_expression_simplify_to("0_K→_°F", "-459.67×_°F");
-  assert_parsed_expression_simplify_to("0_°F→_K", "255.37222222222×_K");
-  assert_parsed_expression_simplify_to("_°F→_K", "255.92777777778×_K");
-
-  assert_parsed_expression_simplify_to("0_°→_rad", "0×_rad");
-  assert_parsed_expression_simplify_to("180_°→_rad", "π×_rad");
-
-  assert_parsed_expression_simplify_to("_hplanck→_eV×_s",
-                                       "4.1356676969239ᴇ-15×_eV×_s");
-  PoincareTest::SymbolStore symbolStore;
-  store("2_kg→a", symbolStore);
-  assert_parsed_expression_simplify_to("a→g", "2000×_g", symbolStore);
-}
-
 QUIZ_CASE(poincare_simplification_reduction_target) {
   // Replace sin/cos-->tan for ReductionTarget = User
   assert_parsed_expression_simplify_to(

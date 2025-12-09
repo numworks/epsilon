@@ -92,16 +92,8 @@ void Endpoint0::readAndDispatchSetupPacket() {
   uint16_t maxBufferLength = std::min(m_request.wLength(), MaxTransferSize);
 
   // Forward the request to the request recipient
-  uint8_t type = static_cast<uint8_t>(m_request.recipientType());
-  if (type == 0) {
-    // Device recipient
-    m_requestRecipients[0]->processSetupRequest(
-        &m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
-  } else {
-    // Interface recipient
-    m_requestRecipients[1]->processSetupRequest(
-        &m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
-  }
+  requestRecipient()->processSetupRequest(
+      &m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
 }
 
 void Endpoint0::processINpacket() {
@@ -114,16 +106,8 @@ void Endpoint0::processINpacket() {
       // All the data has been sent. Callback the request recipient.
       /* USB 9.2.6 The device is expected to "complete" processing of the
        * request before it allows the Status stage to complete successfully. */
-      uint8_t type = static_cast<uint8_t>(m_request.recipientType());
-      if (type == 0) {
-        // Device recipient
-        m_requestRecipients[0]->wholeDataSentCallback(&m_request, m_largeBuffer,
-                                                      &m_transferBufferLength);
-      } else {
-        // Interface recipient
-        m_requestRecipients[1]->wholeDataSentCallback(&m_request, m_largeBuffer,
-                                                      &m_transferBufferLength);
-      }
+      requestRecipient()->wholeDataSentCallback(&m_request, m_largeBuffer,
+                                                &m_transferBufferLength);
       // Prepare to receive the StatusOut packet
       OTG.DOEPCTL0()->setCNAK(true);
       break;
@@ -153,16 +137,8 @@ void Endpoint0::processOUTpacket() {
       // All the data has been received. Callback the request recipient.
       /* USB 9.2.6 The device is expected to "complete" processing of the
        * request before it allows the Status stage to complete successfully. */
-      uint8_t type = static_cast<uint8_t>(m_request.recipientType());
-      if (type == 0) {
-        // Device recipient
-        m_requestRecipients[0]->wholeDataReceivedCallback(
-            &m_request, m_largeBuffer, &m_transferBufferLength);
-      } else {
-        // Interface recipient
-        m_requestRecipients[1]->wholeDataReceivedCallback(
-            &m_request, m_largeBuffer, &m_transferBufferLength);
-      }
+      requestRecipient()->wholeDataReceivedCallback(&m_request, m_largeBuffer,
+                                                    &m_transferBufferLength);
       // Send the StatusIn to the host
       writePacket(NULL, 0);
       m_state = State::StatusIn;

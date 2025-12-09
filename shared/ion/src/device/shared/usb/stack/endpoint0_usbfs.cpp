@@ -214,7 +214,7 @@ uint16_t Endpoint0::writePacket(const void* buffer, uint16_t length) {
     return 0;
   }
 
-  assert(length < Hal::Usb::k_txBufferLen);
+  assert(length <= Hal::Usb::k_txBufferLen);
   if (length) {
     // We cannot use memcpy this because we need the access to be 4 by 4
     for (int i = 0; i < (length + 3) / 4; i++) {

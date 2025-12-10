@@ -109,8 +109,9 @@ QUIZ_CASE(pcj_approximation_complex_format) {
   // approximates_to<float>("-2ᴇ20+2ᴇ20×i", "2.828427ᴇ20×e^(2.356194×i)",
   // k_polarCtx);
   approximates_to<double>("1ᴇ155-1ᴇ155×i", "1ᴇ155-1ᴇ155×i", k_cartesianCtx);
-  approximates_to<double>("1ᴇ155-1ᴇ155×i", "∞×e^(-0.785398163397×i)",
-                          k_polarCtx, 12);
+  approximates_to<double>("1ᴇ155-1ᴇ155×i",
+                          "1.41421356237ᴇ155×e^(-0.785398163397×i)", k_polarCtx,
+                          12);
 #if 0  // TODO_PCJ: nonreal not correctly bubbled up
   approximates_to<float>("-2ᴇ100+2ᴇ100×i", "-∞+∞×i");
   approximates_to<double>("-2ᴇ360+2ᴇ360×i", "-∞+∞×i");

@@ -357,12 +357,15 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
       ComplexProperties properties = GetComplexProperties(multChild);
       if (properties.isReal() && properties.realSign().hasKnownSign() &&
           !multChild->isMinusOne()) {
+        /* If the ComplexProperties can ensure that multChild is null, the
+         * multiplication by a null expression should have been detected and
+         * reduced sooner. Same if multChild is one. */
+        assert(!properties.isNull() && !multChild->isOne());
         if (properties.canBeNull()) {
           // arg(|x|*z) -> arg(z), {|x|*z, NonNull(|x|)}
           NAry::AddChild(depList, PatternMatching::Create(KNonNull(KA),
                                                           {.KA = multChild}));
         }
-        assert(!properties.isNull() && !multChild->isOne());
         multChild->cloneTreeOverTree(properties.realSign().isPositive() ? 1_e
                                                                         : -1_e);
         changed = true;

@@ -52,6 +52,18 @@ void simplifies_to(const char* input, const char* output,
       preserveInput);
 }
 
+void simplifies_to(const Tree* input, const char* output,
+                   ProjectionContext projectionContext, bool preserveInput) {
+  process_tree_and_compare(
+      input, output,
+      [](Tree* tree, ProjectionContext projectionContext) {
+        simplify(tree, projectionContext, true);
+      },
+      projectionContext,
+      Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits,
+      preserveInput);
+}
+
 void projects_and_reduces_to(const char* input, const char* output,
                              ProjectionContext projectionContext) {
   process_tree_and_compare(

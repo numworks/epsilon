@@ -1007,3 +1007,14 @@ QUIZ_CASE(pcj_simplification_capped) {
   quiz_assert(!Simplification::Simplify(bigTree, ProjectionContext()));
 #endif
 }
+
+QUIZ_CASE(pcj_tree_simplification) {
+  simplifies_to(KACos(23_fe), "3.828168×i",
+                {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to(KACos(KMult(3.5_fe, i_e)), "arccos(3.5×i)",
+                {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to(KACos(KAdd(23_fe, KMult(3.5_fe, i_e))), "arccos(23+3.5×i)",
+                {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to(KACos(KAdd(1_fe, i_e)), "arccos(1+i)",
+                {.m_complexFormat = ComplexFormat::Cartesian});
+}

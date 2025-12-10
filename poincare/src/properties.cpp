@@ -346,10 +346,6 @@ ComplexProperties TypeProperties(ComplexProperties s) {
   return ComplexProperties(realProperties, imagProperties);
 }
 
-ComplexProperties PercentAddition(ComplexProperties s1, ComplexProperties s2) {
-  return Add(s1, Mult(s1, RelaxIntegerProperty(s2)));
-}
-
 ComplexProperties Quotient(ComplexProperties p1, ComplexProperties p2) {
   // a = q*b + r with 0 ≤ r < |b| and a, b, q, r integers and b ≠ 0
   Sign s1Real = p1.realSign();
@@ -492,10 +488,14 @@ ComplexProperties GetComplexProperties(const Tree* e) {
       return Quotient(GetComplexProperties(e->child(0)),
                       GetComplexProperties(e->child(1)));
     case Type::PercentSimple:
-      return RelaxIntegerProperty(GetComplexProperties(e->child(0)));
     case Type::PercentAddition:
-      return PercentAddition(GetComplexProperties(e->child(0)),
-                             GetComplexProperties(e->child(1)));
+      /* Percents are very special and are left unsimplified. The
+       * ComplexProperties should not analyze the properties of the expression
+       * inside a Percent node, otherwise the properties might be in
+       * contradiction with some assertions. For example if PercentSimple(Zero)
+       * was analyzed as "isNull" by the ComplexProperties, it might break an
+       * assertion that there should be no null factor in a multiplication. */
+      return ComplexProperties::Unknown();
     case Type::Fact:
       return ComplexProperties::RealStrictlyPositiveInteger();
     case Type::Binomial:

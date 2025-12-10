@@ -73,3 +73,21 @@ QUIZ_CASE(pcj_statistics_anova_from_statistics) {
   assert_roughly_equal(statisticResults.statistic, 3.1776, k_precision1);
   assert_roughly_equal(statisticResults.pValue, 0.0623, k_precision1);
 }
+
+QUIZ_CASE(pcj_statistics_anova_all_same_values) {
+  using namespace Poincare::Inference::SignificanceTest::FTest;
+
+  std::array<Values, 2> groups = {Values{1, 1}, Values{1, 1}};
+
+  StatisticResults statisticResults =
+      ComputeStatisticResults(std::span<const Values>(groups));
+  quiz_assert(std::isnan(statisticResults.statistic));
+  quiz_assert(std::isnan(statisticResults.pValue));
+
+  quiz_assert(statisticResults.between.degreesOfFreedom == 1);
+  assert_roughly_equal(statisticResults.between.sumOfSquares, 0., k_precision2);
+  assert_roughly_equal(statisticResults.between.meanSquares, 0., k_precision2);
+  quiz_assert(statisticResults.within.degreesOfFreedom == 2);
+  assert_roughly_equal(statisticResults.within.sumOfSquares, 0., k_precision2);
+  assert_roughly_equal(statisticResults.within.meanSquares, 0., k_precision2);
+}

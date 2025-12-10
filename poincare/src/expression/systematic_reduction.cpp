@@ -23,6 +23,17 @@ bool SystematicReduction::DeepReduce(Tree* e) {
     // Never reduce any dependencies
     return false;
   }
+  if (e->isAngleUnitContext()) {
+    assert(e->child(0)->isOfType({Type::Cos, Type::Sin, Type::Tan, Type::ACos,
+                                  Type::ASin, Type::ATan}) &&
+           e->child(0)->numberOfChildren() == 1);
+    /* This can happen during early beautification in
+     * ShallowBeautifyAngleFunctions. Skip shallow reduction of the un-projected
+     * node to avoid calling approximation without the angle unit context. */
+    bool result = DeepReduce(e->child(0)->child(0));
+    assert(!ShallowReduce(e));
+    return result;
+  }
   /* Although they are also flattened in ShallowReduce, flattening
    * here could save multiple ShallowReduce and flatten calls. */
   bool modified = (e->isMult() || e->isAdd()) && NAry::Flatten(e);

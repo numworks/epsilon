@@ -32,6 +32,12 @@ Tree* Sequence::PushInitialConditionName(const Tree* sequence,
   return result;
 }
 
+bool Sequence::ExpressionHasValidDimension(const Tree* e,
+                                           const SymbolContext& symbolContext) {
+  return Dimension::DeepCheck(e, symbolContext) &&
+         Dimension::IsNonListScalar(e, symbolContext);
+}
+
 /* Returns true if the main expression of a sequence is invalid.
  * Parameters are:
  * - e -> sequence's main expression
@@ -45,8 +51,7 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
     const Tree* e, const SymbolContext& symbolContext, const char* name,
     Type type, int initialRank, bool shiftedNotation, bool recursion,
     bool systemSymbol, bool otherSequences) {
-  if (!Dimension::DeepCheck(e, symbolContext) ||
-      !Dimension::IsNonListScalar(e, symbolContext)) {
+  if (!ExpressionHasValidDimension(e, symbolContext)) {
     return true;
   }
   const Tree* skipUntil = e;

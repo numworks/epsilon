@@ -19,6 +19,8 @@ class Sequence {
   static Tree* PushInitialConditionName(const Tree* sequence,
                                         bool isFirstCondition = true);
 
+  static bool ExpressionHasValidDimension(const Tree* e,
+                                          const SymbolContext& symbolContext);
   static bool MainExpressionContainsForbiddenTerms(
       const Tree* e, const SymbolContext& symbolContext, const char* name,
       Type type, int initialRank, bool shiftedNotation, bool recursion,

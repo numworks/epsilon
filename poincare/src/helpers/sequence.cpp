@@ -36,6 +36,12 @@ void SequenceHelper::SetFirstRank(Layout l, uint8_t firstRank) {
   Internal::SequenceLayout::SetFirstRank(l.tree()->child(0), firstRank);
 }
 
+bool SequenceHelper::ExpressionHasValidDimension(
+    UserExpression e, const SymbolContext& symbolContext) {
+  return Internal::Sequence::ExpressionHasValidDimension(e.tree(),
+                                                         symbolContext);
+}
+
 bool SequenceHelper::MainExpressionContainsForbiddenTerms(
     UserExpression e, const SymbolContext& symbolContext, const char* name,
     Type type, int initialRank, RecursiveNotation notation, bool recursion,

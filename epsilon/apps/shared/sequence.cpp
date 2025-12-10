@@ -212,20 +212,37 @@ double Sequence::approximateAtContextRank(int rank,
   }
   if (rank >= firstNonInitialRank()) {
     // TODO: Prepared function of expressionReduced could be memoized.
-    return expressionReduced()
-        .getPreparedFunction(Function::k_unknownName)
+    SystemExpression e = expressionReduced();
+    /* A non scalar main expression should have been caught in
+     * Sequence::approximateAtRank with sequenceIsNotComputable in cache. */
+    assert(Poincare::Dimension(e).isScalar());
+    // TODO: getPreparedFunction does an unnecessary dimension check here.
+    return e.getPreparedFunction(Function::k_unknownName)
         .approximateToRealScalarWithValue(static_cast<double>(
             rank -
             (recursiveNotation() == RecursiveNotation::Default ? order() : 0)));
   }
+  // Initial conditions
   assert(type() != Type::Explicit);
+  // Counting on the initial values cache to minimize dimension computation.
   SystemExpression e;
   if (rank == initialRank()) {
+    if (!SequenceHelper::ExpressionHasValidDimension(
+            firstInitialConditionExpressionClone(),
+            GlobalContextAccessor::SequenceContext())) {
+      return NAN;
+    }
     e = firstInitialConditionExpressionReduced();
   } else {
     assert(type() == Type::DoubleRecurrence);
+    if (!SequenceHelper::ExpressionHasValidDimension(
+            secondInitialConditionExpressionClone(),
+            GlobalContextAccessor::SequenceContext())) {
+      return NAN;
+    }
     e = secondInitialConditionExpressionReduced();
   }
+  assert(Poincare::Dimension(e).isScalar());
   return e.approximateSystemToRealScalar<double>();
 }
 

@@ -879,6 +879,18 @@ QUIZ_CASE(sequence_evaluation) {
     check_sequences_defined_by(results, types, definitions, conditions1,
                                conditions2);
   }
+  // u(n+2) = n+2, u(0) = 0, u(1) = {1,2}
+  {
+    double results[SequenceStore::k_maxNumberOfSequences][10] = {
+        {0.0, NAN, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {}, {}};
+    types[0] = Sequence::Type::DoubleRecurrence;
+    definitions[0] = "n+2";
+    conditions1[0] = "0";
+    conditions2[0] = "{1,2}";
+    definitions[1] = nullptr;
+    check_sequences_defined_by(results, types, definitions, conditions1,
+                               conditions2);
+  }
 }
 
 QUIZ_CASE(sequence_store) {

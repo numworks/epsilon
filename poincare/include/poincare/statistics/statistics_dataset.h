@@ -60,12 +60,6 @@ class StatisticsDataset {
   friend class StatisticsDatasetFromTable;
 
  public:
-#if TODO_PCJ
-  static StatisticsDataset<T> BuildFromChildren(
-      const ExpressionNode* e, const ApproximationContext& approximationContext,
-      ListComplex<T> evaluationArray[]);
-#endif
-
   StatisticsDataset(const DatasetColumn<T>* values,
                     const DatasetColumn<T>* weights, bool lnOfValues = false,
                     bool oppositeOfValues = false)

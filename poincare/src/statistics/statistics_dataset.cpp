@@ -16,33 +16,6 @@ double StatisticsCalculationOptions::transformValue(double value,
   return lnOfValues(column) ? std::log(value) : value;
 }
 
-#if TODO_PCJ
-template <typename T>
-StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(
-    const ExpressionNode* e, const ApproximationContext& approximationContext,
-    ListComplex<T> evaluationArray[]) {
-  int n = e->numberOfChildren();
-  if (n == 0) {
-    return StatisticsDataset<T>();
-  }
-  for (int i = 0; i < std::min(n, 2); i++) {
-    Evaluation<T> childEval =
-        e->childAtIndex(i)->approximate(T(), approximationContext);
-    if (childEval.otype() != EvaluationNode<T>::Type::ListComplex) {
-      return StatisticsDataset<T>();
-    }
-    evaluationArray[i] = static_cast<ListComplex<T>&>(childEval);
-  }
-  if (n > 1 && evaluationArray[0].numberOfChildren() !=
-                   evaluationArray[1].numberOfChildren()) {
-    return StatisticsDataset<T>();
-  }
-  return n == 1
-             ? StatisticsDataset<T>(&evaluationArray[0])
-             : StatisticsDataset<T>(&evaluationArray[0], &evaluationArray[1]);
-}
-#endif
-
 template <typename T>
 T StatisticsDataset<T>::valueAtIndex(int index) const {
   assert(index >= 0 && index < m_values->length());

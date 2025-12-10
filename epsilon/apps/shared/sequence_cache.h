@@ -58,7 +58,8 @@ class SequenceCache {
    * values stored in m_intermediateValues. */
   double m_initialValues[k_numberOfSequences][k_storageDepth];
 
-  // If ranks are {9,5,4} then values are {{u9,u8,u7}, {v5,v4,v3}, {w4,w3,w2}}.
+  /* If ranks are {9,7,20} then values are {{u9,u8,u7,u6,u5,u4},
+   * {v7,v6,v5,v4,v3,v2}, {w20,w19,w18,w17,w16,w15}}. */
   double m_mainValues[k_numberOfSequences][k_storageDepth];
   double m_intermediateValues[k_numberOfSequences][k_storageDepth];
   int m_mainRanks[k_numberOfSequences];

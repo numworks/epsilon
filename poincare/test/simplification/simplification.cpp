@@ -453,6 +453,9 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("(π-1)^2", "π^2+1-2×π");
   simplifies_to("(π+1)^3", "π^3+3×π^2+1+3×π");
   simplifies_to("(π+1)^(-2)", "1/(π^2+1+2×π)");
+
+  // With a percent
+  simplifies_to("√(5×0%)", "√(5×0/100)");
 }
 
 QUIZ_CASE(pcj_simplification_advanced) {

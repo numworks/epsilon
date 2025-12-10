@@ -854,8 +854,8 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
         NAry::SetNumberOfChildren(expChild, numberOfChildren);
         NAry::SetNumberOfChildren(depListAdd, numberOfDep);
         ReduceAddOrMult(expChild);
-        ReduceExp(child);
-        ReduceAbs(e);
+        SystematicReduction::ShallowReduce(child);
+        SystematicReduction::ShallowReduce(e);
         e->nextTree()->moveTreeBeforeNode(depList);
         e->cloneNodeAtNode(KDep);
       } else {

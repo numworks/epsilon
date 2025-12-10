@@ -567,6 +567,7 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
   simplifies_to("1+_s", "undef");
   simplifies_to("0+_A", "undef");
   simplifies_to("i _A", "undef");
+  simplifies_to("ln(cos(3)i) _s", "undef", k_cartesianCtx);
   simplifies_to("_A+i", "undef");
   simplifies_to("_m+_s", "undef");
   simplifies_to("_m^2+_m", "undef");

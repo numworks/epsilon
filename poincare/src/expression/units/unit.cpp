@@ -895,6 +895,12 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
       value /=
           Approximation::To<double>(inputUnits, Approximation::Parameters{});
     }
+    if (std::isnan(value)) {
+      // Return undef to avoid displaying undef * unit
+      inputUnits->removeTree();
+      e->cloneTreeOverTree(KUndef);
+      return;
+    }
     e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));
     // Multiply value and inputUnits.
     assert(e->nextTree() == inputUnits);

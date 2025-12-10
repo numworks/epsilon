@@ -18,8 +18,8 @@ bool StatisticsData::IsValueAcceptable(double value, int parameterIndex) {
   if (parameterIndex == 0 && (value < 2.0 || std::floor(value) != value)) {
     return false;
   }
-  // Sample standard deviation must be a positive number
-  if (parameterIndex == 2 && (value < 0.0)) {
+  // Sample standard deviation must be a strictly positive number
+  if (parameterIndex == 2 && (value <= 0.0)) {
     return false;
   }
   return true;

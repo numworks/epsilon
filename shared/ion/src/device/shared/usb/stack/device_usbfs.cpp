@@ -55,6 +55,8 @@ void Device::poll() {
            CHEP0R::GetSTATTX() == Status::Valid);
   }
 
+#if 0
+  // TODO handle USB suspend
   if (USBFS::ISTR::Read().getSUSP()) {
     // Suspend event, no traffic was received for 3ms
     USBFS::CNTR::Read().setSUSPEN(true).write();
@@ -62,6 +64,7 @@ void Device::poll() {
       ;
     m_softDisconnect = true;
   }
+#endif
 
   if (USBFS::ISTR::Read().getRST_DCON()) {
     // Handle BUS reset event

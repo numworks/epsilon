@@ -1,5 +1,6 @@
 #include "anova_test.h"
 
+#include <omg/algorithm.h>
 #include <omg/unreachable.h>
 #include <poincare/statistics/inference.h>
 
@@ -213,6 +214,10 @@ bool ANOVATest::validateGroupInputs() const {
       if (std::isnan(value)) {
         return false;
       }
+    }
+    if (OMG::AllEqual(group.begin(), group.end())) {
+      // A group must not have a standard deviation of zero
+      return false;
     }
   }
   return true;

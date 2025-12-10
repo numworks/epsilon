@@ -80,6 +80,20 @@ bool SystematicReduction::ShallowReduce(Tree* e) {
   return changed;
 }
 
+// f*i
+bool IsApproximatedScalarImag(const Tree* e) {
+  return e->isMult() && e->numberOfChildren() == 2 && e->child(0)->isFloat() &&
+         e->child(1)->isComplexI();
+}
+
+/* If the expression could be the output of ApproximateAndReplaceEveryScalar :
+ * Of the form f, f*i or f+f*i */
+bool IsApproximatedScalar(const Tree* e) {
+  return e->isFloat() || IsApproximatedScalarImag(e) ||
+         (e->isAdd() && e->numberOfChildren() == 2 && e->child(0)->isFloat() &&
+          IsApproximatedScalarImag(e->child(1)));
+}
+
 bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
   /* Before systematic reduction, look for things to bubble-up in children. At
    * this step, only children have been shallowReduced. By doing this before
@@ -105,7 +119,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
   bool bubbleUpFloat = false, bubbleUpDependency = false, bubbleUpUndef = false;
   bool bubbleUpList = TypeBlock::ProducesList(e->type());
   for (const Tree* child : e->children()) {
-    if (child->isFloat()) {
+    if (IsApproximatedScalar(child)) {
       bubbleUpFloat = true;
     } else if (child->isDep()) {
       bubbleUpDependency = true;

@@ -695,8 +695,8 @@ QUIZ_CASE(pcj_sign_is_zero) {
   assert_projected_is_null("_W", OMG::Troolean::Unknown);
   assert_projected_is_null("0/(3/7)", OMG::Troolean::True);
   assert_projected_is_null("sqrt(2/5)", OMG::Troolean::False);
-  assert_projected_is_null("0+1%", OMG::Troolean::True);
-  assert_projected_is_null("1+1%", OMG::Troolean::False);
+  assert_projected_is_null("0+1%", OMG::Troolean::Unknown);
+  assert_projected_is_null("1+1%", OMG::Troolean::Unknown);
   assert_projected_is_null("1-1%", OMG::Troolean::Unknown);
 }
 
@@ -804,8 +804,8 @@ QUIZ_CASE(pcj_sign_reduced_is_positive) {
                              EmptySymbolContext{}, ComplexFormat::Real);
   assert_reduced_is_positive("sign(π)", OMG::Troolean::True);
   assert_reduced_is_positive("sign(-π)", OMG::Troolean::False);
-  assert_reduced_is_positive("1%", OMG::Troolean::True);
-  assert_reduced_is_positive("-1+1%", OMG::Troolean::False);
+  assert_reduced_is_positive("1%", OMG::Troolean::Unknown);
+  assert_reduced_is_positive("-1+1%", OMG::Troolean::Unknown);
   assert_reduced_is_positive("1-1%", OMG::Troolean::Unknown);
   assert_reduced_is_positive("a", OMG::Troolean::Unknown);
   PoincareTest::SymbolStore symbolStore;

@@ -317,7 +317,7 @@ QUIZ_CASE(pcj_simplification_functions_of_lists) {
   simplifies_to("{2,3.4}-{0.1,3.1}", "{19/10,3/10}");
   simplifies_to("tan({0,π/4})", "{0,1}");
   simplifies_to("{}%", "{}");
-  simplifies_to("abs({1}%)", "{1/100}");
+  simplifies_to("abs({1}%)", "{abs(1/100)}");
   simplifies_to("2+{5,10}%", "{2×(1+5/100),2×(1+10/100)}");
   simplifies_to("rem(sort({i})^4,0)", "{undef}");
 }

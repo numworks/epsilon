@@ -4,7 +4,6 @@
 #include "../helpers/symbol_store.h"
 #include "helper.h"
 #include "poincare/preferences.h"
-#include "quiz.h"
 
 using namespace Poincare;
 using namespace Poincare::Internal;

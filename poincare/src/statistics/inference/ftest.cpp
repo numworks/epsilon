@@ -4,6 +4,8 @@
 #include <poincare/statistics/dataset_column.h>
 #include <poincare/statistics/inference.h>
 
+#include <cmath>
+
 #include "poincare/comparison_operator.h"
 
 namespace Poincare::Inference::SignificanceTest::FTest {
@@ -129,7 +131,12 @@ CalculatedValues ComputeWithin(const GlobalData& globalData,
 
 double Statistic(const CalculatedValues& withinValues,
                  const CalculatedValues& betweenValues) {
-  assert(std::abs(withinValues.meanSquares) > OMG::Float::EpsilonLax<double>());
+  if (std::abs(withinValues.meanSquares) < OMG::Float::EpsilonLax<double>()) {
+    /* The F-test statistic is undefined if the within mean squares value is
+     * zero. We don't test for exact equality as there could have been rounding
+     * errors during the ComputeWithin calculation. */
+    return NAN;
+  }
   return betweenValues.meanSquares / withinValues.meanSquares;
 }
 

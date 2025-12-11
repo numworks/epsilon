@@ -56,7 +56,7 @@ def section_size(file, section_name):
     for section in elffile.iter_sections():
         if section.name == section_name:
             return section.data_size
-    return None
+    return 0
 
 
 def app_sizes(file):

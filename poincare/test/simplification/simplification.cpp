@@ -1020,6 +1020,6 @@ QUIZ_CASE(pcj_tree_simplification) {
   simplifies_to(KACos(KAdd(1_fe, i_e)),
                 KAdd(0.90455687046051_fe, KMult(-1.0612751245499_fe, i_e)),
                 {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to(KRef(KMatrix<1, 2>(0_fe, i_e)), KMatrix<1, 2>(1_fe, KUndef),
+  simplifies_to(KRef(KMatrix<1, 2>(0_fe, i_e)), KMatrix<1, 2>(0_fe, 1_fe),
                 {.m_complexFormat = ComplexFormat::Cartesian});
 }

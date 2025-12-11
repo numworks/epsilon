@@ -155,7 +155,7 @@ void Tree::logAttributes(std::ostream& stream) const {
   }
 }
 
-void Tree::logSerialize(std::ostream& stream) const {
+void Tree::logSerialize(std::ostream& stream, bool lineReturn) const {
   assert(isExpression() || isRackOrLayout());
   Tree* layout = isExpression()
                      ? Layouter::LayoutExpression(
@@ -166,7 +166,10 @@ void Tree::logSerialize(std::ostream& stream) const {
   char buffer[bufferSize];
   LayoutSerializer::Serialize(layout, buffer);
   layout->removeTree();
-  stream << buffer << "\n";
+  stream << buffer;
+  if (lineReturn) {
+    stream << "\n";
+  }
 }
 
 void Tree::logBlocks(std::ostream& stream, bool recursive,

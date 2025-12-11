@@ -28,6 +28,8 @@ _sources_ion_userland_svc := $(addprefix device/userland/drivers/, \
 
 _sources_ion_userland := \
 $(addprefix device/userland/boot/, \
+  abort.cpp:-test \
+  abort_freeze.cpp:+test \
   isr.cpp \
   rt0.cpp \
 ) \

@@ -225,6 +225,17 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
   return Solution(x, (y1 + y2) / 2., Interest::Intersection);
 }
 
+// Build the g(f(a))-a expression
+Tree* PushDifferenceOfOppositeAxisFunctions(const Tree* f, const Tree* g) {
+  Tree* difference = SharedTreeStack->pushAdd(2);
+  // Creating g(f(a))
+  Tree* gOfFOfa = g->cloneTree();
+  Variables::Replace(gOfFOfa, 0, f, false, false);
+  // Cloning -a
+  PatternMatching::Create(KMult(-1_e, KVarX));
+  return difference;
+}
+
 template <typename T>
 typename Solver<T>::Solution Solver<T>::nextIntersectionAlongDifferentAxis(
     const Tree* alongMainAxis, const Tree* alongOtherAxis,
@@ -245,12 +256,8 @@ typename Solver<T>::Solution Solver<T>::nextIntersectionAlongDifferentAxis(
      * Either pass ProjectionContext(m_complexFormat,
      * m_angleUnit, ReductionTarget::SystemForAnalysis, UnitFormat::Metric,
      * m_context) or ensure expression is projected. */
-    *memoizedDifference = SharedTreeStack->pushAdd(2);
-    // Creating g(f(a))
-    Tree* gOfFOfa = alongOtherAxis->cloneTree();
-    Variables::Replace(gOfFOfa, 0, alongMainAxis, false, false);
-    // Cloning -a
-    PatternMatching::Create(KMult(-1_e, KVarX));
+    *memoizedDifference =
+        PushDifferenceOfOppositeAxisFunctions(alongMainAxis, alongOtherAxis);
   }
   Solution root = nextRoot(*memoizedDifference);
   if (root.interest() != Interest::Root) {

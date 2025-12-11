@@ -70,11 +70,6 @@ $(addprefix shared/, \
   storage/record_name_verifier.cpp \
   storage/record.cpp \
 ) \
-$(addprefix ../test/, \
-  exam_bytes.cpp:+test \
-  exam_mode.cpp:+test \
-  storage.cpp:+test \
-) \
   $(_sources_ion_userland_svc)
 
 ifneq ($(ION_LOG_EVENTS_NAME),0)

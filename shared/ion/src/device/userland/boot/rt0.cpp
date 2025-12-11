@@ -8,15 +8,6 @@
 
 #include "isr.h"
 
-void abort() {
-#if DEBUG
-  while (1) {
-  }
-#else
-  Ion::Reset::core();
-#endif
-}
-
 void __attribute__((noinline)) start() {
   Ion::Device::Init::configureRAM();
   Ion::Init();

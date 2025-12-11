@@ -127,8 +127,8 @@ void process_tree_and_compare(const Tree* expression, const Tree* expected,
           expressionClone, projectionContext.m_reductionTarget);
       const char* metricText =
           expectedMetric > expressionMetric
-              ? " (better "
-              : (expectedMetric == expressionMetric ? " (same " : " (worse ");
+              ? "better"
+              : (expectedMetric == expressionMetric ? "same" : "worse");
       if (input) {
         std::cout << input;
       } else {
@@ -141,8 +141,8 @@ void process_tree_and_compare(const Tree* expression, const Tree* expected,
 #endif
       }
       std::cout << " processed to " << processedBuffer << " instead of "
-                << output << metricText << expressionMetric << " vs "
-                << expectedMetric << ")" << std::endl;
+                << output << " (" << metricText << " " << expressionMetric
+                << " vs " << expectedMetric << ")" << std::endl;
     }
 #endif
     quiz_assert(ok);

@@ -31,7 +31,7 @@ SFLAGS_ion += \
 
 PRIVATE_SFLAGS_ion += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \
-  -DPATCH_LEVEL=\"$(PATCH_LEVEL)\" \
+  -DCOMMIT_HASH=\"$(COMMIT_HASH)\" \
   -DION_VARIANT_$(call upper,$(ION_variant))
 
 ION_STORAGE_LOG ?= 0

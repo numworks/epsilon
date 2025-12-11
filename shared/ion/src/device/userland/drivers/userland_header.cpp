@@ -43,8 +43,8 @@ const char* epsilonVersion() {
   return Ion::Device::Board::kernelHeader()->epsilonVersion();
 }
 
-const char* patchLevel() {
-  return Ion::Device::Board::kernelHeader()->patchLevel();
+const char* commitHash() {
+  return Ion::Device::Board::kernelHeader()->commitHash();
 }
 
 }  // namespace Ion

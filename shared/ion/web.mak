@@ -95,7 +95,7 @@ $(call generated_sources_for, app/src/simulator_%html): $(_ion_web_path)/simulat
 		-MD -MP \
 		-DEM_MODULE_NAME=$(APP_NAME) \
 		-DEM_MODULE_JS='"$*js"' \
-		-DPATCH_LEVEL=\"$(PATCH_LEVEL)\" \
+		-DCOMMIT_HASH=\"$(COMMIT_HASH)\" \
 		-DEPSILON_VERSION=\"$(APP_VERSION)\" \
 		-DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_variant)) \
 		-DION_DISPLAY_HEIGHT=$(_ion_display_height_$(ION_variant)) \

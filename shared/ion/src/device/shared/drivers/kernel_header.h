@@ -51,10 +51,10 @@ class KernelHeader {
       comparedPreviousDotPosition = comparedDotPosition;
     }
   }
-  const char* patchLevel() const {
+  const char* commitHash() const {
     assert(m_header == Magic);
     assert(m_footer == Magic);
-    return m_patchLevel;
+    return m_commitHash;
   }
   constexpr static size_t k_epsilonVersionSize = 8;
 
@@ -62,7 +62,7 @@ class KernelHeader {
   constexpr static uint32_t Magic = 0xDEC00DF0;
   uint32_t m_header;
   const char m_epsilonVersion[k_epsilonVersionSize];
-  const char m_patchLevel[8];
+  const char m_commitHash[8];
   uint32_t m_footer;
 };
 

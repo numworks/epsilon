@@ -130,7 +130,13 @@ void process_tree_and_compare(const Tree* expression, const Tree* expected,
       if (input) {
         std::cout << input;
       } else {
+#if POINCARE_TREE_LOG
         expression->logSerializeWithoutLineReturn();
+#else
+        char inputBuffer[bufferSize];
+        serialize_expression(expression, inputBuffer, nbOfSignificantDigits);
+        std::cout << inputBuffer;
+#endif
       }
       std::cout << " processed to " << processedBuffer << " instead of "
                 << output << metricText << expressionMetric << " vs "

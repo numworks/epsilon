@@ -31,6 +31,7 @@ bool SystematicReduction::DeepReduce(Tree* e) {
      * ShallowBeautifyAngleFunctions. Skip shallow reduction of the un-projected
      * node to avoid calling approximation without the angle unit context. */
     bool result = DeepReduce(e->child(0)->child(0));
+    // Skip ShallowReduce on AngleUnitContext because no change is expected
     assert(!ShallowReduce(e));
     return result;
   }

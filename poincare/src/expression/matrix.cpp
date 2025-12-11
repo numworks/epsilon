@@ -7,7 +7,6 @@
 
 #include "approximation.h"
 #include "dependency.h"
-#include "float_helper.h"
 #include "integer.h"
 #include "k_tree.h"
 #include "number.h"
@@ -246,9 +245,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
       float pivot = std::abs(
           Approximation::Private::PrivateToComplex<float>(pivotChild, ctx));
       // Handle very low pivots
-      if (pivot == 0.0f &&
-          !(pivotChild->isZero() ||
-            (pivotChild->isFloat() && FloatHelper::FloatTo(pivotChild) == 0))) {
+      if (pivot == 0.0f && !(Number::IsNull(pivotChild))) {
         pivot = FLT_MIN;
       }
 

@@ -73,22 +73,27 @@ void check_sequences_defined_by(
 
   for (int j = 0; j < 10; j++) {
     for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+      double un;
       if (seqs[i]->isDefined()) {
-        double un = seqs[i]->evaluateXYAtParameter((double)j).y();
-        bool isEqual = OMG::Float::RoughlyEqual<double>(
-            un, result[i][j], OMG::Float::EpsilonLax<double>(), true);
-        constexpr size_t bufferSize = 100;
-        char buffer[bufferSize];
-        static_assert(SequenceStore::k_maxNumberOfSequences == 3);
-        char sequenceName[SequenceStore::k_maxNumberOfSequences] = {'u', 'v',
-                                                                    'w'};
-        Poincare::Print::CustomPrintf(
-            buffer, bufferSize, "%c(%i)=%s=%*.*ed instead of %*.*ed.",
-            sequenceName[i], j, sequences.definitions[i], un,
-            Preferences::PrintFloatMode::Decimal, 7, result[i][j],
-            Preferences::PrintFloatMode::Decimal, 7);
-        quiz_assert_print_if_failure(isEqual, buffer);
+        un = seqs[i]->evaluateXYAtParameter((double)j).y();
+      } else if (sequences.definitions[i] != nullptr) {
+        un = NAN;
+      } else {
+        continue;
       }
+      bool isEqual = OMG::Float::RoughlyEqual<double>(
+          un, result[i][j], OMG::Float::EpsilonLax<double>(), true);
+      constexpr size_t bufferSize = 100;
+      char buffer[bufferSize];
+      static_assert(SequenceStore::k_maxNumberOfSequences == 3);
+      char sequenceName[SequenceStore::k_maxNumberOfSequences] = {'u', 'v',
+                                                                  'w'};
+      Poincare::Print::CustomPrintf(
+          buffer, bufferSize, "%c(%i)=%s=%*.*ed instead of %*.*ed.",
+          sequenceName[i], j, sequences.definitions[i], un,
+          Preferences::PrintFloatMode::Decimal, 7, result[i][j],
+          Preferences::PrintFloatMode::Decimal, 7);
+      quiz_assert_print_if_failure(isEqual, buffer);
     }
   }
   GlobalContextAccessor::SequenceStore().removeAll();

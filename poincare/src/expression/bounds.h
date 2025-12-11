@@ -59,9 +59,7 @@ class Bounds {
   void spread(unsigned int ulp_precision = 1);
   /* Check bounds are well defined */
   bool exists() const {
-    // Both bounds are valid or neither
-    assert(std::isfinite(m_lower) == std::isfinite(m_upper));
-    return std::isfinite(m_lower);
+    return std::isfinite(m_lower) && std::isfinite(m_upper);
   }
   /* Check if bounds exists and is valid, meaning either:
    * [lower <= upper < 0],

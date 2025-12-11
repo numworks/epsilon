@@ -261,7 +261,11 @@ typename Solver<T>::Solution Solver<T>::nextIntersectionAlongDifferentAxis(
   assert(std::isfinite(y) && std::isfinite(x2));
   /* Note: Exact approximation cannot be ensured. Soften this assertion
    * if needed. */
-  assert(OMG::Float::RoughlyEqual<T>(x, x2, 1e-6));
+  constexpr T k_relativeThreshold = 1e-6;
+  constexpr T k_absoluteThreshold = 1e-6;
+  assert(OMG::Float::RelativelyEqual(x, x2, k_relativeThreshold) ||
+         OMG::Float::RoughlyEqual(x - x2, 0., k_absoluteThreshold));
+
 #endif
   return Solution(x, y, Interest::Intersection);
 }

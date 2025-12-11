@@ -37,5 +37,5 @@ void __assert(const char* expression, const char* file, int line) {
   buffer[length] = '\0';
   Ion::Console::writeLine(buffer);
 
-  exit(1);
+  abort();
 }

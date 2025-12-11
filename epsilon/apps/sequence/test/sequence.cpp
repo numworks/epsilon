@@ -79,8 +79,12 @@ void check_sequences_defined_by(
             un, result[i][j], OMG::Float::EpsilonLax<double>(), true);
         constexpr size_t bufferSize = 100;
         char buffer[bufferSize];
+        static_assert(SequenceStore::k_maxNumberOfSequences == 3);
+        char sequenceName[SequenceStore::k_maxNumberOfSequences] = {'u', 'v',
+                                                                    'w'};
         Poincare::Print::CustomPrintf(
-            buffer, bufferSize, "%*.*ed instead of %*.*ed.", un,
+            buffer, bufferSize, "%c(%i)=%s=%*.*ed instead of %*.*ed.",
+            sequenceName[i], j, sequences.definitions[i], un,
             Preferences::PrintFloatMode::Decimal, 7, result[i][j],
             Preferences::PrintFloatMode::Decimal, 7);
         quiz_assert_print_if_failure(isEqual, buffer);

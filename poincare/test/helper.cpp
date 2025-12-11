@@ -89,6 +89,9 @@ void process_tree_and_compare(const Tree* expression, const Tree* expected,
                               Poincare::ProjectionContext projectionContext,
                               int nbOfSignificantDigits, const char* input,
                               const char* output) {
+  /* If expected output has been given has serialized tree, we can't expect a
+   * perfect tree match through parsing and serialization. */
+  bool fallbackOnSerialization = (output != nullptr);
   int previousNumberOfTrees = SharedTreeStack->numberOfTrees();
   if (!expression || !expected) {
     // Parsing failed
@@ -113,12 +116,11 @@ void process_tree_and_compare(const Tree* expression, const Tree* expected,
     }
     serialize_expression(expressionClone, processedBuffer,
                          nbOfSignificantDigits);
-    bool visuallyOk = strcmp(output, processedBuffer) == 0;
-    if (visuallyOk) {
-      ok = true;
+    if (fallbackOnSerialization) {
+      ok = strcmp(output, processedBuffer) == 0;
     }
 #ifndef PLATFORM_DEVICE
-    else {
+    if (!ok) {
       float expectedMetric =
           Metric::GetMetric(expected, projectionContext.m_reductionTarget);
       float expressionMetric = Metric::GetMetric(

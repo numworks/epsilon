@@ -66,8 +66,7 @@ void process_tree_and_compare(
     Poincare::ProjectionContext projectionContext,
     int nbOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits,
-    bool preserveInput = true, const char* input = nullptr,
-    const char* output = nullptr);
+    const char* input = nullptr, const char* output = nullptr);
 void process_tree_and_compare(
     const char* input, const char* output, ProcessTree process,
     Poincare::ProjectionContext projectionContext,

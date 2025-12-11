@@ -79,7 +79,7 @@ void process_tree_and_compare(const char* input, const char* output,
   Tree* expected = parse(output, projectionContext.m_context,
                          {.preserveInput = preserveInput});
   process_tree_and_compare(expression, expected, process, projectionContext,
-                           nbOfSignificantDigits, preserveInput, input, output);
+                           nbOfSignificantDigits, input, output);
   expected->removeTree();
   expression->removeTree();
 }
@@ -87,8 +87,8 @@ void process_tree_and_compare(const char* input, const char* output,
 void process_tree_and_compare(const Tree* expression, const Tree* expected,
                               ProcessTree process,
                               Poincare::ProjectionContext projectionContext,
-                              int nbOfSignificantDigits, bool preserveInput,
-                              const char* input, const char* output) {
+                              int nbOfSignificantDigits, const char* input,
+                              const char* output) {
   int previousNumberOfTrees = SharedTreeStack->numberOfTrees();
   if (!expression || !expected) {
     // Parsing failed

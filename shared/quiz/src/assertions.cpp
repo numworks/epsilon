@@ -10,6 +10,6 @@ void quiz_assert(bool condition) {
     if (sSkipAssertions) {
       return;
     }
-    exit(1);
+    abort();
   }
 }

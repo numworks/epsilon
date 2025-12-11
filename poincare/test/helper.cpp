@@ -124,9 +124,14 @@ void process_tree_and_compare(const Tree* expression, const char* output,
           expectedMetric > expressionMetric
               ? " (better "
               : (expectedMetric == expressionMetric ? " (same " : " (worse ");
-      std::cout << (input ? input : "input tree") << " processed to " << buffer
-                << " instead of " << output << metricText << expressionMetric
-                << " vs " << expectedMetric << ")" << std::endl;
+      if (input) {
+        std::cout << input;
+      } else {
+        expression->logSerializeWithoutLineReturn();
+      }
+      std::cout << " processed to " << buffer << " instead of " << output
+                << metricText << expressionMetric << " vs " << expectedMetric
+                << ")" << std::endl;
     }
 #endif
     quiz_assert(ok);

@@ -27,12 +27,12 @@ class UserlandHeader {
     }
     return true;
   }
-  static void ExtractExpectedEpsilonVersion(
-      uint32_t address, char buffer[KernelHeader::k_epsilonVersionSize]) {
+  static void ExtractExpectedSoftwareVersion(
+      uint32_t address, char buffer[KernelHeader::k_softwareVersionSize]) {
     assert(ValidAddress(address));
     UserlandHeader* info = reinterpret_cast<UserlandHeader*>(address);
-    strlcpy(buffer, info->m_expectedEpsilonVersion,
-            KernelHeader::k_epsilonVersionSize);
+    strlcpy(buffer, info->m_expectedSoftwareVersion,
+            KernelHeader::k_softwareVersionSize);
   }
   void* externalAppsAddressFlash() const { return m_externalAppsFlashStart; }
   size_t externalAppsSizeFlash() const {
@@ -43,7 +43,7 @@ class UserlandHeader {
  private:
   constexpr static uint32_t Magic = 0xDEC0EDFE;
   uint32_t m_header;
-  const char m_expectedEpsilonVersion[8];
+  const char m_expectedSoftwareVersion[8];
   void* m_storageAddressRAM;
   size_t m_storageSizeRAM;
   /* We store the range addresses of external apps memory because storing the

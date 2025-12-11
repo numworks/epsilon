@@ -30,7 +30,7 @@ SFLAGS_ion += \
   -DION_KEYBOARD_HAS_ALPHA=$(if $(findstring epsilon,$(ION_variant)),1,0)
 
 PRIVATE_SFLAGS_ion += \
-  -DEPSILON_VERSION=\"$(APP_VERSION)\" \
+  -DSOFTWARE_VERSION=\"$(APP_VERSION)\" \
   -DCOMMIT_HASH=\"$(COMMIT_HASH)\" \
   -DION_VARIANT_$(call upper,$(ION_variant))
 

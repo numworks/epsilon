@@ -9,7 +9,7 @@
 #include "../shared/state_file.h"
 #include "../shared/window.h"
 
-const char* IonSoftwareVersion() { return Ion::epsilonVersion(); }
+const char* IonSoftwareVersion() { return Ion::softwareVersion(); }
 
 const char* IonPatchLevel() { return Ion::commitHash(); }
 

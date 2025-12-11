@@ -11,14 +11,14 @@ namespace Device {
 class KernelHeader {
  public:
   constexpr KernelHeader();
-  const char* epsilonVersion() const {
+  const char* softwareVersion() const {
     assert(m_header == Magic);
     assert(m_footer == Magic);
-    return m_epsilonVersion;
+    return m_softwareVersion;
   }
   // TODO: add tests
-  int epsilonVersionComparedTo(const char* version) {
-    const char* previousDotPosition = m_epsilonVersion;
+  int softwareVersionComparedTo(const char* version) {
+    const char* previousDotPosition = m_softwareVersion;
     const char* comparedPreviousDotPosition = version;
     while (true) {
       const char* dotPosition = strchr(previousDotPosition + 1, '.');
@@ -56,12 +56,12 @@ class KernelHeader {
     assert(m_footer == Magic);
     return m_commitHash;
   }
-  constexpr static size_t k_epsilonVersionSize = 8;
+  constexpr static size_t k_softwareVersionSize = 8;
 
  private:
   constexpr static uint32_t Magic = 0xDEC00DF0;
   uint32_t m_header;
-  const char m_epsilonVersion[k_epsilonVersionSize];
+  const char m_softwareVersion[k_softwareVersionSize];
   const char m_commitHash[8];
   uint32_t m_footer;
 };

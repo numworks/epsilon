@@ -37,7 +37,7 @@ void ion_main(int argc, const char* const argv[]);
 
 namespace Ion {
 
-const char* epsilonVersion();
+const char* softwareVersion();
 const char* kernelVersion();
 const char* commitHash();
 const char* fccId();

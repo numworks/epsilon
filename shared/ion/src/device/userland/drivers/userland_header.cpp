@@ -4,8 +4,8 @@
 #include "board.h"
 #include "persisting_bytes.h"
 
-#ifndef EPSILON_VERSION
-#error This file expects EPSILON_VERSION to be defined
+#ifndef SOFTWARE_VERSION
+#error This file expects SOFTWARE_VERSION to be defined
 #endif
 
 extern "C" {
@@ -23,7 +23,7 @@ namespace Device {
 
 constexpr UserlandHeader::UserlandHeader()
     : m_header(Magic),
-      m_expectedEpsilonVersion{EPSILON_VERSION},
+      m_expectedSoftwareVersion{SOFTWARE_VERSION},
       m_storageAddressRAM(&Ion::Storage::FileSystem::sharedFileSystem),
       m_storageSizeRAM(Ion::Storage::FileSystem::k_totalSize),
       m_externalAppsFlashStart(&_external_apps_flash_start),
@@ -39,8 +39,8 @@ k_userlandHeader;
 
 }  // namespace Device
 
-const char* epsilonVersion() {
-  return Ion::Device::Board::kernelHeader()->epsilonVersion();
+const char* softwareVersion() {
+  return Ion::Device::Board::kernelHeader()->softwareVersion();
 }
 
 const char* commitHash() {

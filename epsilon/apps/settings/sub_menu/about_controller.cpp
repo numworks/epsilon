@@ -54,7 +54,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
 
       using TextGetter = const char* (*)();
       constexpr TextGetter k_textGettersCycle[] = {
-          &Ion::epsilonVersion, &Ion::commitHash, &Ion::pcbVersion,
+          &Ion::softwareVersion, &Ion::commitHash, &Ion::pcbVersion,
           &Ion::compilationFlags, &Ion::runningBootloader};
       constexpr int k_nGetters = std::size(k_textGettersCycle);
 
@@ -97,7 +97,7 @@ KDCoordinate AboutController::nonMemoizedRowHeight(int row) {
 void AboutController::viewWillAppear() {
   const char* messages[k_totalNumberOfCell] = {
     deviceName(),
-    Ion::epsilonVersion(),
+    Ion::softwareVersion(),
     Ion::serialNumber(),
     Ion::fccId(),
 #if TERMS_OF_USE

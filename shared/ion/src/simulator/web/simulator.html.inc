@@ -33,7 +33,7 @@
       var ModuleAsync = {};
       var Module = {
           UTF8ToString: (x => x),
-          _IonSoftwareVersion: (() => EPSILON_VERSION),
+          _IonSoftwareVersion: (() => SOFTWARE_VERSION),
           _IonPatchLevel: (() => COMMIT_HASH)
           };
 Calculator(ModuleAsync);

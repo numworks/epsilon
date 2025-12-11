@@ -40,7 +40,7 @@ static inline bool loadFileHeader(const char* header) {
   if (strncmp(magic, sMagic, sMagicLength) != 0) {
     return false;
   }
-  if (strncmp(version, epsilonVersion(), sVersionLength) != 0 &&
+  if (strncmp(version, softwareVersion(), sVersionLength) != 0 &&
       strncmp(version, sWildcardVersion, sVersionLength) != 0) {
     return false;
   }
@@ -203,7 +203,7 @@ static inline bool save(FILE* f) {
     return false;
   }
 #else
-  if (fwrite(epsilonVersion(), sVersionLength, 1, f) != 1) {
+  if (fwrite(softwareVersion(), sVersionLength, 1, f) != 1) {
     return false;
   }
 #endif

@@ -1,6 +1,6 @@
 #include <ion.h>
 
-const char* Ion::epsilonVersion() { return EPSILON_VERSION; }
+const char* Ion::softwareVersion() { return SOFTWARE_VERSION; }
 
 const char* Ion::commitHash() { return COMMIT_HASH; }
 

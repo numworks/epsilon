@@ -124,6 +124,10 @@ class Solver {
                           Interest::ReachedDiscontinuity);
   }
 
+  // If areAlongSameAxis, f-g is computed. Else, a->g(f(a))-a is computed
+  static Internal::Tree* FunctionDifferenceForIntersection(
+      const Internal::Tree* f, const Internal::Tree* g, bool areAlongSameAxis);
+
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */
   Solver(T xStart, T xEnd,
@@ -151,18 +155,22 @@ class Solver {
   Solution nextDiscontinuity(const Internal::Tree* e) {
     return next(e, DiscontinuityInBracket, DummyHone);
   }
-  /* Caller of nextIntersection may provide a place to store the difference
-   * between the two expressions, in case the method needs to be called several
-   * times in a row. */
-  Solution nextIntersection(
-      const Internal::Tree* e1, const Internal::Tree* e2,
-      const Internal::Tree** memoizedDifference = nullptr);
-  /* Caller of nextIntersectionAlongDifferentAxis may provide a place to store
-   * the difference between the two expressions, in case the method needs to be
-   * called several times in a row. */
+
+  /* Difference between the two functions may be passed to save computations,
+   * when the function is called several times */
+  Solution nextIntersection(const Internal::Tree* e1, const Internal::Tree* e2,
+                            const Internal::Tree* difference);
+  Solution nextIntersection(const Internal::Tree* e1, const Internal::Tree* e2);
+
+  /* Difference between the two functions may be passed to save computations,
+   * when the function is called several times */
   Solution nextIntersectionAlongDifferentAxis(
       const Internal::Tree* alongMainAxis, const Internal::Tree* alongOtherAxis,
-      const Internal::Tree** memoizedDifference = nullptr);
+      const Internal::Tree* difference);
+  Solution nextIntersectionAlongDifferentAxis(
+      const Internal::Tree* alongMainAxis,
+      const Internal::Tree* alongOtherAxis);
+
   /* Stretch the interval to include the previous bounds. This allows finding
    * solutions in [xStart,xEnd], as otherwise all resolution is done on an open
    * interval. */

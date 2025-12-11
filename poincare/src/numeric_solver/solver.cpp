@@ -185,27 +185,34 @@ typename Solver<T>::Solution Solver<T>::nextMinimum(const Tree* e) {
 }
 
 template <typename T>
+Internal::Tree* Solver<T>::FunctionDifferenceForIntersection(
+    const Internal::Tree* f, const Internal::Tree* g, bool areAlongSameAxis) {
+  /* TODO: simplify if we decide that functions should be simplified. Either
+   * pass ProjectionContext(m_complexFormat, m_angleUnit,
+   * ReductionTarget::SystemForAnalysis, UnitFormat::Metric, m_context) or
+   * ensure expression is projected. */
+  if (areAlongSameAxis) {
+    return PatternMatching::Create(KAdd(KA, KMult(-1_e, KB)),
+                                   {.KA = f, .KB = g});
+  }
+  // Build the g(f(a))-a expression
+  Tree* difference = SharedTreeStack->pushAdd(2);
+  // Creating g(f(a))
+  Tree* gOfFOfa = g->cloneTree();
+  Variables::Replace(gOfFOfa, 0, f, false, false);
+  // Cloning -a
+  PatternMatching::Create(KMult(-1_e, KVarX));
+  return difference;
+}
+
+template <typename T>
 typename Solver<T>::Solution Solver<T>::nextIntersection(
-    const Tree* e1, const Tree* e2, const Tree** memoizedDifference) {
-  if (!memoizedDifference) {
-    Tree* diff = nullptr;
-    Solution result = nextIntersection(e1, e2, const_cast<const Tree**>(&diff));
-    diff->removeTree();
-    return result;
-  }
-  assert(memoizedDifference);
-  if (*memoizedDifference == nullptr) {
-    /* TODO: simplify if we decide that functions should be simplified.
-     * Either pass ProjectionContext(m_complexFormat,
-     * m_angleUnit, ReductionTarget::SystemForAnalysis, UnitFormat::Metric,
-     * m_context) or ensure expression is projected. */
-    *memoizedDifference = PatternMatching::Create(KAdd(KA, KMult(-1_e, KB)),
-                                                  {.KA = e1, .KB = e2});
-  }
-  Solution root = nextRoot(*memoizedDifference);
+    const Tree* e1, const Tree* e2, const Tree* difference) {
+  Solution root = nextRoot(difference);
   if (root.interest() != Interest::Root) {
     assert(root.interest() == Interest::None);
-    return Solution();
+    assert(difference);
+    return Solution{};
   }
   T x = root.x();
   T y1 = Approximation::To<T>(
@@ -218,51 +225,24 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
      * difference yields an infinite or a nan value when e1 or e2 is
      * evaluated. It means the intersection was incorrectly computed, and the
      * search continues. */
-    return nextIntersection(e1, e2, memoizedDifference);
+    return nextIntersection(e1, e2, difference);
   }
-  /* Result is not always exactly the same due to approximation errors. Take
-   * the middle of the two values. */
+  /* Result is not always exactly the same due to approximation errors.
+   * Take the middle of the two values. */
   return Solution(x, (y1 + y2) / 2., Interest::Intersection);
 }
 
-// Build the g(f(a))-a expression
-Tree* PushDifferenceOfOppositeAxisFunctions(const Tree* f, const Tree* g) {
-  Tree* difference = SharedTreeStack->pushAdd(2);
-  // Creating g(f(a))
-  Tree* gOfFOfa = g->cloneTree();
-  Variables::Replace(gOfFOfa, 0, f, false, false);
-  // Cloning -a
-  PatternMatching::Create(KMult(-1_e, KVarX));
-  return difference;
-}
-
+/*  TODO: nextIntersectionAlongDifferentAxis should handle escape cases the same
+ * way as nextIntersection to uniformize the behavior. The two functions should
+ * be merged. */
 template <typename T>
 typename Solver<T>::Solution Solver<T>::nextIntersectionAlongDifferentAxis(
     const Tree* alongMainAxis, const Tree* alongOtherAxis,
-    const Tree** memoizedDifference) {
-  /* NOTE For simplicity we will call f the tree alongMainAxis and g the other
-   * This method finds intersection points between f and g by finding roots of:
-   * g(f(a))-a */
-  if (!memoizedDifference) {
-    Tree* diff = nullptr;
-    Solution result = nextIntersectionAlongDifferentAxis(
-        alongMainAxis, alongOtherAxis, const_cast<const Tree**>(&diff));
-    diff->removeTree();
-    return result;
-  }
-  assert(memoizedDifference);
-  if (*memoizedDifference == nullptr) {
-    /* TODO: simplify if we decide that functions should be simplified.
-     * Either pass ProjectionContext(m_complexFormat,
-     * m_angleUnit, ReductionTarget::SystemForAnalysis, UnitFormat::Metric,
-     * m_context) or ensure expression is projected. */
-    *memoizedDifference =
-        PushDifferenceOfOppositeAxisFunctions(alongMainAxis, alongOtherAxis);
-  }
-  Solution root = nextRoot(*memoizedDifference);
+    const Tree* difference) {
+  Solution root = nextRoot(difference);
   if (root.interest() != Interest::Root) {
     assert(root.interest() == Interest::None);
-    return Solution();
+    return Solution{};
   }
   T x = root.x();
   T y = Approximation::To<T>(
@@ -273,11 +253,34 @@ typename Solver<T>::Solution Solver<T>::nextIntersectionAlongDifferentAxis(
       alongOtherAxis, y,
       Approximation::Parameters{.isRootAndCanHaveRandom = true});
   assert(std::isfinite(y) && std::isfinite(x2));
-  /* Note: Exact approximation cannot be ensured. Soften this assertion if
-   * needed. */
+  /* Note: Exact approximation cannot be ensured. Soften this assertion
+   * if needed. */
   assert(OMG::Float::RoughlyEqual<T>(x, x2, 1e-6));
 #endif
   return Solution(x, y, Interest::Intersection);
+}
+
+template <typename T>
+typename Solver<T>::Solution Solver<T>::nextIntersection(const Tree* e1,
+                                                         const Tree* e2) {
+  Tree* difference = FunctionDifferenceForIntersection(e1, e2, true);
+  Solution result = nextIntersection(e1, e2, difference);
+  difference->removeTree();
+  return result;
+}
+
+template <typename T>
+typename Solver<T>::Solution Solver<T>::nextIntersectionAlongDifferentAxis(
+    const Tree* alongMainAxis, const Tree* alongOtherAxis) {
+  /* NOTE For simplicity we will call f the tree alongMainAxis and g the
+   * other. This method finds intersection points between f and g by
+   * finding roots of: g(f(a))-a */
+  Tree* difference =
+      FunctionDifferenceForIntersection(alongMainAxis, alongOtherAxis, false);
+  Solution result = nextIntersectionAlongDifferentAxis(
+      alongMainAxis, alongOtherAxis, difference);
+  difference->removeTree();
+  return result;
 }
 
 template <typename T>
@@ -938,11 +941,17 @@ template Solver<double>::Solution Solver<double>::next(
 template Solver<double>::DetailedRoot Solver<double>::nextDetailedRoot(
     const Tree*);
 template Solver<double>::Solution Solver<double>::nextMinimum(const Tree*);
-template Solver<double>::Solution Solver<double>::nextIntersection(
-    const Tree*, const Tree*, const Tree**);
+template Solver<double>::Solution Solver<double>::nextIntersection(const Tree*,
+                                                                   const Tree*,
+                                                                   const Tree*);
+template Solver<double>::Solution Solver<double>::nextIntersection(const Tree*,
+                                                                   const Tree*);
 template Solver<double>::Solution
 Solver<double>::nextIntersectionAlongDifferentAxis(const Tree*, const Tree*,
-                                                   const Tree**);
+                                                   const Tree*);
+template Solver<double>::Solution
+Solver<double>::nextIntersectionAlongDifferentAxis(const Tree*, const Tree*);
+
 template void Solver<double>::stretch();
 template Coordinate2D<double> Solver<double>::SafeBrentMaximum(
     FunctionEvaluation, const void*, double, double, Interest, double,
@@ -953,6 +962,8 @@ template bool Solver<double>::FunctionSeemsConstantOnTheInterval(
     double xMax);
 template bool Solver<double>::DiscontinuityTestBetweenPoints(
     Coordinate2D<double>, Coordinate2D<double>, const void*);
+template Tree* Solver<double>::FunctionDifferenceForIntersection(
+    const Tree* f, const Tree* g, bool areAlongSameAxis);
 
 template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(
     Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>, const void*);

@@ -89,7 +89,7 @@ void process_tree_and_compare(const Tree* expression, const Tree* expected,
                               Poincare::ProjectionContext projectionContext,
                               int nbOfSignificantDigits, const char* input,
                               const char* output) {
-  /* If expected output has been given has serialized tree, we can't expect a
+  /* If expected output has been given as a serialized tree, we can't expect a
    * perfect tree match through parsing and serialization. */
   /* TODO: use (output != nullptr) instead, but it would require uniform float
    * numbers approximation across all platforms for tests to pass this way. */

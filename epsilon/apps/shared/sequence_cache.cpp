@@ -98,6 +98,7 @@ void SequenceCache::shiftCacheRight(int sequenceIndex,
 }
 
 void SequenceCache::stepUntilRank(int sequenceIndex, int rank) {
+  // TODO: Do not step ranks when the rank is in m_initialValues
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   bool intermediateComputation = m_isInsideComputation;
   const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);

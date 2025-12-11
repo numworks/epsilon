@@ -269,7 +269,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
      * expression) if expression is actually null. For examples,
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
     Tree* candidate = Child(matrix, iPivot, k);
-    if (candidate->isZero() ||
+    if (Number::IsNull(candidate) ||
         (approximate &&
          std::abs(Approximation::Private::PrivateToComplex<float>(candidate,
                                                                   ctx)) == 0)) {

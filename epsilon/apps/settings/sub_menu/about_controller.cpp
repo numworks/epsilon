@@ -54,7 +54,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
 
       using TextGetter = const char* (*)();
       constexpr TextGetter k_textGettersCycle[] = {
-          &Ion::epsilonVersion, &Ion::patchLevel, &Ion::pcbVersion,
+          &Ion::epsilonVersion, &Ion::commitHash, &Ion::pcbVersion,
           &Ion::compilationFlags, &Ion::runningBootloader};
       constexpr int k_nGetters = std::size(k_textGettersCycle);
 

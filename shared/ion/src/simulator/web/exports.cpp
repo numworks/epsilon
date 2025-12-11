@@ -11,7 +11,7 @@
 
 const char* IonSoftwareVersion() { return Ion::epsilonVersion(); }
 
-const char* IonPatchLevel() { return Ion::patchLevel(); }
+const char* IonPatchLevel() { return Ion::commitHash(); }
 
 void IonSimulatorKeyboardKeyDown(int keyIndex) {
   Ion::Keyboard::Key key = Ion::Keyboard::ValidKeys[keyIndex];

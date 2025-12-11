@@ -39,7 +39,7 @@ namespace Ion {
 
 const char* epsilonVersion();
 const char* kernelVersion();
-const char* patchLevel();
+const char* commitHash();
 const char* fccId();
 const char* serialNumber();
 const char* pcbVersion();

@@ -77,7 +77,7 @@ $(call all_objects_for,$(SOURCES_poincare_cli)): $(KANDINSKY_fonts_dependencies)
 
 PRIVATE_SFLAGS_poincare_cli += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \
-  -DPATCH_LEVEL=\"$(PATCH_LEVEL)\"
+  -DCOMMIT_HASH=\"$(COMMIT_HASH)\"
 
 LDFLAGS_poincare_cli += -ledit
 

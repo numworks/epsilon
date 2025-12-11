@@ -317,10 +317,7 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
   Internal::Tree* diff =
       ctx->solver.FunctionDifferenceForIntersection(f, g, alongSameAxis);
   while (std::isfinite(
-      (solution =
-           alongSameAxis
-               ? ctx->solver.nextIntersection(f, g, diff)
-               : ctx->solver.nextIntersectionAlongDifferentAxis(f, g, diff))
+      (solution = ctx->solver.nextIntersection(f, g, alongSameAxis, diff))
           .x())) {
     /* Loop over finite solutions to exhaust solutions out of the interval
      * without returning NAN. */

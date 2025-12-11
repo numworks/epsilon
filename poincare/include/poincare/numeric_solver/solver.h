@@ -156,20 +156,14 @@ class Solver {
     return next(e, DiscontinuityInBracket, DummyHone);
   }
 
-  /* Difference between the two functions may be passed to save computations,
-   * when the function is called several times */
+  /* Difference between the two functions may be passed to save computations
+   * (see FunctionDifferenceForIntersection), when the function is called
+   * several times */
   Solution nextIntersection(const Internal::Tree* e1, const Internal::Tree* e2,
+                            bool areAlongSameAxis,
                             const Internal::Tree* difference);
-  Solution nextIntersection(const Internal::Tree* e1, const Internal::Tree* e2);
-
-  /* Difference between the two functions may be passed to save computations,
-   * when the function is called several times */
-  Solution nextIntersectionAlongDifferentAxis(
-      const Internal::Tree* alongMainAxis, const Internal::Tree* alongOtherAxis,
-      const Internal::Tree* difference);
-  Solution nextIntersectionAlongDifferentAxis(
-      const Internal::Tree* alongMainAxis,
-      const Internal::Tree* alongOtherAxis);
+  Solution nextIntersection(const Internal::Tree* e1, const Internal::Tree* e2,
+                            bool areAlongSameAxis = true);
 
   /* Stretch the interval to include the previous bounds. This allows finding
    * solutions in [xStart,xEnd], as otherwise all resolution is done on an open

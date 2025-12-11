@@ -202,6 +202,12 @@ Internal::Tree* Solver<T>::FunctionDifferenceForIntersection(
   Variables::Replace(gOfFOfa, 0, f, false, false);
   // Cloning -a
   PatternMatching::Create(KMult(-1_e, KVarX));
+  /* If f is a dependency expression, add the dependencies of f to the result.
+   * This is because if g is a constant function, f will not appear in
+   * a->g(f(a)) and the dependencies of f could get lost. */
+  if (f->isDep()) {
+    Dependency::AddDependencies(difference, Dependency::Dependencies(f));
+  }
   return difference;
 }
 

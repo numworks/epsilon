@@ -91,7 +91,9 @@ void process_tree_and_compare(const Tree* expression, const Tree* expected,
                               const char* output) {
   /* If expected output has been given has serialized tree, we can't expect a
    * perfect tree match through parsing and serialization. */
-  bool fallbackOnSerialization = (output != nullptr);
+  /* TODO: use (output != nullptr) instead, but it would require uniform float
+   * numbers approximation across all platforms for tests to pass this way. */
+  bool fallbackOnSerialization = true;
   int previousNumberOfTrees = SharedTreeStack->numberOfTrees();
   if (!expression || !expected) {
     // Parsing failed

@@ -57,6 +57,7 @@ $(addprefix device/shared/drivers/, \
   dfu_interfaces.cpp \
   exit.cpp:+test \
   flash_information.cpp \
+  pcb_version.cpp \
   read_only_memory.cpp \
   trampoline.cpp \
   usb_unprivileged.cpp \

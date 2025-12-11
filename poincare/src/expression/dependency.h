@@ -36,6 +36,14 @@ struct Dependency {
     assert(e->child(k_dependenciesIndex)->isDepList());
     return e->child(k_dependenciesIndex);
   }
+
+  /* If e does not already have dependencies, turn e into a Dependency node.
+   * Then, in all cases, add "dependency" to the list of dependencies. */
+  static void AddDependency(Tree* e, const Tree* dependency);
+  /* Same as AddDependency but "dependencies" is an N-Ary tree containing the
+   * dependencies to be added */
+  static void AddDependencies(Tree* e, const Tree* dependencies);
+
   static bool DeepBubbleUpDependencies(Tree* e);
   static bool ShallowBubbleUpDependencies(Tree* e);
   static bool DeepRemoveUselessDependencies(Tree* e);

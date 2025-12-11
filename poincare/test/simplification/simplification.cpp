@@ -1009,12 +1009,15 @@ QUIZ_CASE(pcj_simplification_capped) {
 }
 
 QUIZ_CASE(pcj_tree_simplification) {
-  simplifies_to(KACos(23_fe), "3.828168×i",
+  simplifies_to(KACos(23_fe), KMult(3.828168_fe, i_e),
                 {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to(KACos(KMult(3.5_fe, i_e)), "1.570796-1.96572×i",
+  simplifies_to(KACos(KMult(3.5_fe, i_e)),
+                KAdd(1.570796_fe, KMult(-1.96572_fe, i_e)),
                 {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to(KACos(KAdd(23_fe, KMult(3.5_fe, i_e))), "0.1511529-3.839647×i",
+  simplifies_to(KACos(KAdd(23_fe, KMult(3.5_fe, i_e))),
+                KAdd(0.1511529_fe, KMult(-3.839647_fe, i_e)),
                 {.m_complexFormat = ComplexFormat::Cartesian});
-  simplifies_to(KACos(KAdd(1_fe, i_e)), "0.9045569-1.061275×i",
+  simplifies_to(KACos(KAdd(1_fe, i_e)),
+                KAdd(0.9045569_fe, KMult(-1.061275_fe, i_e)),
                 {.m_complexFormat = ComplexFormat::Cartesian});
 }

@@ -76,25 +76,23 @@ void process_tree_and_compare(const char* input, const char* output,
                               int nbOfSignificantDigits, bool preserveInput) {
   Tree* expression = parse(input, projectionContext.m_context,
                            {.preserveInput = preserveInput});
-  process_tree_and_compare(expression, output, process, projectionContext,
-                           nbOfSignificantDigits, preserveInput, input);
+  Tree* expected = parse(output, projectionContext.m_context,
+                         {.preserveInput = preserveInput});
+  process_tree_and_compare(expression, expected, process, projectionContext,
+                           nbOfSignificantDigits, preserveInput, input, output);
+  expected->removeTree();
   expression->removeTree();
 }
 
-void process_tree_and_compare(const Tree* expression, const char* output,
+void process_tree_and_compare(const Tree* expression, const Tree* expected,
                               ProcessTree process,
                               Poincare::ProjectionContext projectionContext,
                               int nbOfSignificantDigits, bool preserveInput,
-                              const char* input) {
+                              const char* input, const char* output) {
   int previousNumberOfTrees = SharedTreeStack->numberOfTrees();
-  Tree* expected = parse(output, projectionContext.m_context,
-                         {.preserveInput = preserveInput});
   if (!expression || !expected) {
     // Parsing failed
     quiz_assert(false);
-    if (expected) {
-      expected->removeTree();
-    }
     return;
   }
   Tree* expressionClone = expression->cloneTree();
@@ -102,15 +100,20 @@ void process_tree_and_compare(const Tree* expression, const char* output,
   if (!expressionClone) {
     // process failed
     quiz_assert(false);
-    expected->removeTree();
     return;
   }
   bool ok = expressionClone->treeIsIdenticalTo(expected);
   if (!ok) {
     constexpr size_t bufferSize = 1024;
-    char buffer[bufferSize];
-    serialize_expression(expressionClone, buffer, nbOfSignificantDigits);
-    bool visuallyOk = strcmp(output, buffer) == 0;
+    char processedBuffer[bufferSize];
+    char outputBuffer[bufferSize];
+    if (!output) {
+      serialize_expression(expected, outputBuffer, nbOfSignificantDigits);
+      output = outputBuffer;
+    }
+    serialize_expression(expressionClone, processedBuffer,
+                         nbOfSignificantDigits);
+    bool visuallyOk = strcmp(output, processedBuffer) == 0;
     if (visuallyOk) {
       ok = true;
     }
@@ -129,15 +132,14 @@ void process_tree_and_compare(const Tree* expression, const char* output,
       } else {
         expression->logSerializeWithoutLineReturn();
       }
-      std::cout << " processed to " << buffer << " instead of " << output
-                << metricText << expressionMetric << " vs " << expectedMetric
-                << ")" << std::endl;
+      std::cout << " processed to " << processedBuffer << " instead of "
+                << output << metricText << expressionMetric << " vs "
+                << expectedMetric << ")" << std::endl;
     }
 #endif
     quiz_assert(ok);
   }
   expressionClone->removeTree();
-  expected->removeTree();
   assert(SharedTreeStack->numberOfTrees() == previousNumberOfTrees);
 }
 

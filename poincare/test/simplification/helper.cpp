@@ -52,7 +52,7 @@ void simplifies_to(const char* input, const char* output,
       preserveInput);
 }
 
-void simplifies_to(const Tree* input, const char* output,
+void simplifies_to(const Tree* input, const Tree* output,
                    ProjectionContext projectionContext, bool preserveInput) {
   process_tree_and_compare(
       input, output,

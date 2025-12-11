@@ -61,11 +61,13 @@ typedef void (*ProcessTree)(Poincare::Internal::Tree*,
                             Poincare::ProjectionContext projectionContext);
 
 void process_tree_and_compare(
-    const Poincare::Internal::Tree* expression, const char* output,
-    ProcessTree process, Poincare::ProjectionContext projectionContext,
+    const Poincare::Internal::Tree* expression,
+    const Poincare::Internal::Tree* expected, ProcessTree process,
+    Poincare::ProjectionContext projectionContext,
     int nbOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits,
-    bool preserveInput = true, const char* input = nullptr);
+    bool preserveInput = true, const char* input = nullptr,
+    const char* output = nullptr);
 void process_tree_and_compare(
     const char* input, const char* output, ProcessTree process,
     Poincare::ProjectionContext projectionContext,

@@ -20,7 +20,8 @@ void reduces_to_tree(const Poincare::Internal::Tree* input,
 void simplifies_to(const char* input, const char* output,
                    Poincare::ProjectionContext projectionContext = k_realCtx,
                    bool preserveInput = true);
-void simplifies_to(const Poincare::Internal::Tree* input, const char* output,
+void simplifies_to(const Poincare::Internal::Tree* input,
+                   const Poincare::Internal::Tree* output,
                    Poincare::ProjectionContext projectionContext = k_realCtx,
                    bool preserveInput = true);
 void projects_and_reduces_to(

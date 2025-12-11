@@ -54,10 +54,13 @@ QUIZ_CASE(pcj_bounds_Properties) {
   assert_bounds_properties_are(KAbs(KTrig(π_e, 0_e)),
                                Properties::FinitePositive());
 
-  // Unkown
+  // Unknown
   assert_bounds_properties_are(i_e, Properties::Unknown());
   assert_reduced_bounds_properties_are("1+i", Properties::Unknown());
   assert_reduced_bounds_properties_are("{1}", Properties::Unknown());
   assert_bounds_properties_are(KLn(KPow(KLn(2_e), 7000_e)),
                                Properties::Unknown());
+  assert_bounds_properties_are(
+      KMult(KExp(KMult(3000_e, KTrig(9000_e, 0_e))), 10_e),
+      Properties::Unknown());
 }

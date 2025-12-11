@@ -38,7 +38,8 @@ Tree* List::GetElement(const Tree* e, int k, Tree::Operation reduction) {
       return nullptr;  // Should be projected on approximation.
     case Type::ListSort:
     case Type::Median:
-      return nullptr;  // If their are still there, their bubble-up failed
+      // If they have not been reduced out, then their bubble-up failed
+      return nullptr;
     case Type::ListSlice: {
       assert(Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2)));
@@ -51,8 +52,10 @@ Tree* List::GetElement(const Tree* e, int k, Tree::Operation reduction) {
         return nullptr;
       }
       Tree* result = nullptr;
-      if (e->isRandInt() && Random::GetSeed(e) > 0) {
-        // Cannot clone e directly as it has a non-zero seed
+      if (e->isRandInt() && Random::GetSeed(e) > 0 && Dimension::IsList(e)) {
+        /* If a randint has a list child, the resulting bubbled up list cannot
+         * have the same seed for all randints. Add the element index to the
+         * seed. */
         result = (KRandInt)->cloneNode();
         Random::SetSeed(result, Random::GetSeed(e) + k);
       } else {

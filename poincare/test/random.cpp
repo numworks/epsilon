@@ -105,6 +105,7 @@ QUIZ_CASE(pcj_random_seeds) {
   simplify_and_compare_approximates_list<double>("sequence(random(), k, 2)",
                                                  false);
   simplify_and_compare_approximates_list<double>("random() + {0,0}", true);
+  simplify_and_compare_approximates_list<float>("randint(7)+{1,1}", true);
   // Ensures both numerator and denominator of tan's projection have same seed.
   project_and_compare_approximates<double>("tan(randint(0,1))", "sin(1)/cos(0)",
                                            false);

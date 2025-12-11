@@ -213,7 +213,8 @@ Internal::Tree* Solver<T>::FunctionDifferenceForIntersection(
 
 template <typename T>
 typename Solver<T>::Solution Solver<T>::nextIntersection(
-    const Tree* e1, const Tree* e2, const Tree* difference) {
+    const Tree* e1, const Tree* e2, bool areAlongSameAxis,
+    const Tree* difference) {
   Solution root = nextRoot(difference);
   if (root.interest() != Interest::Root) {
     assert(root.interest() == Interest::None);
@@ -221,74 +222,44 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
     return Solution{};
   }
   T x = root.x();
-  T y1 = Approximation::To<T>(
+  T y = Approximation::To<T>(
       e1, x, Approximation::Parameters{.isRootAndCanHaveRandom = true});
-  T y2 = Approximation::To<T>(
-      e2, x, Approximation::Parameters{.isRootAndCanHaveRandom = true});
-  if (!std::isfinite(y1) || !std::isfinite(y2)) {
+  // The secondImage is a "y" if areAlongSameAxis=true, or an "x" otherwise
+  T secondImage = Approximation::To<T>(
+      e2, areAlongSameAxis ? x : y,
+      Approximation::Parameters{.isRootAndCanHaveRandom = true});
+  if (!std::isfinite(y) || !std::isfinite(secondImage)) {
     /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
      * or undef expressions in specific points like x^2/x, the root of the
      * difference yields an infinite or a nan value when e1 or e2 is
      * evaluated. It means the intersection was incorrectly computed, and the
      * search continues. */
-    return nextIntersection(e1, e2, difference);
+    return nextIntersection(e1, e2, areAlongSameAxis, difference);
   }
-  /* Result is not always exactly the same due to approximation errors.
-   * Take the middle of the two values. */
-  return Solution(x, (y1 + y2) / 2., Interest::Intersection);
-}
-
-/*  TODO: nextIntersectionAlongDifferentAxis should handle escape cases the same
- * way as nextIntersection to uniformize the behavior. The two functions should
- * be merged. */
-template <typename T>
-typename Solver<T>::Solution Solver<T>::nextIntersectionAlongDifferentAxis(
-    const Tree* alongMainAxis, const Tree* alongOtherAxis,
-    const Tree* difference) {
-  Solution root = nextRoot(difference);
-  if (root.interest() != Interest::Root) {
-    assert(root.interest() == Interest::None);
-    return Solution{};
-  }
-  T x = root.x();
-  T y = Approximation::To<T>(
-      alongMainAxis, x,
-      Approximation::Parameters{.isRootAndCanHaveRandom = true});
-#if ASSERTIONS
-  T x2 = Approximation::To<T>(
-      alongOtherAxis, y,
-      Approximation::Parameters{.isRootAndCanHaveRandom = true});
-  assert(std::isfinite(y) && std::isfinite(x2));
   /* Note: Exact approximation cannot be ensured. Soften this assertion
    * if needed. */
+#if ASSERTIONS
+  T comparedTo = areAlongSameAxis ? y : x;
   constexpr T k_relativeThreshold = 1e-6;
   constexpr T k_absoluteThreshold = 1e-6;
-  assert(OMG::Float::RelativelyEqual(x, x2, k_relativeThreshold) ||
-         OMG::Float::RoughlyEqual(x - x2, 0., k_absoluteThreshold));
-
+  assert(OMG::Float::RelativelyEqual(secondImage, comparedTo,
+                                     k_relativeThreshold) ||
+         OMG::Float::RoughlyEqual(secondImage - comparedTo, 0.,
+                                  k_absoluteThreshold));
 #endif
-  return Solution(x, y, Interest::Intersection);
+  /* In the areAlongSameAxis case, take the middle of the two approximated "y"
+   * values */
+  return areAlongSameAxis
+             ? Solution(x, (y + secondImage) / 2., Interest::Intersection)
+             : Solution(x, y, Interest::Intersection);
 }
 
 template <typename T>
-typename Solver<T>::Solution Solver<T>::nextIntersection(const Tree* e1,
-                                                         const Tree* e2) {
-  Tree* difference = FunctionDifferenceForIntersection(e1, e2, true);
-  Solution result = nextIntersection(e1, e2, difference);
-  difference->removeTree();
-  return result;
-}
-
-template <typename T>
-typename Solver<T>::Solution Solver<T>::nextIntersectionAlongDifferentAxis(
-    const Tree* alongMainAxis, const Tree* alongOtherAxis) {
-  /* NOTE For simplicity we will call f the tree alongMainAxis and g the
-   * other. This method finds intersection points between f and g by
-   * finding roots of: g(f(a))-a */
+typename Solver<T>::Solution Solver<T>::nextIntersection(
+    const Tree* e1, const Tree* e2, bool areAlongSameAxis) {
   Tree* difference =
-      FunctionDifferenceForIntersection(alongMainAxis, alongOtherAxis, false);
-  Solution result = nextIntersectionAlongDifferentAxis(
-      alongMainAxis, alongOtherAxis, difference);
+      FunctionDifferenceForIntersection(e1, e2, areAlongSameAxis);
+  Solution result = nextIntersection(e1, e2, areAlongSameAxis, difference);
   difference->removeTree();
   return result;
 }
@@ -953,14 +924,11 @@ template Solver<double>::DetailedRoot Solver<double>::nextDetailedRoot(
 template Solver<double>::Solution Solver<double>::nextMinimum(const Tree*);
 template Solver<double>::Solution Solver<double>::nextIntersection(const Tree*,
                                                                    const Tree*,
+                                                                   bool,
                                                                    const Tree*);
 template Solver<double>::Solution Solver<double>::nextIntersection(const Tree*,
-                                                                   const Tree*);
-template Solver<double>::Solution
-Solver<double>::nextIntersectionAlongDifferentAxis(const Tree*, const Tree*,
-                                                   const Tree*);
-template Solver<double>::Solution
-Solver<double>::nextIntersectionAlongDifferentAxis(const Tree*, const Tree*);
+                                                                   const Tree*,
+                                                                   bool);
 
 template void Solver<double>::stretch();
 template Coordinate2D<double> Solver<double>::SafeBrentMaximum(

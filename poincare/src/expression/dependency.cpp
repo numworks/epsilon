@@ -20,6 +20,27 @@
 
 namespace Poincare::Internal {
 
+void Dependency::AddDependency(Tree* e, const Tree* dependency) {
+  if (!e->isDep()) {
+    // Create the dependency list containing "dependency"
+    e->nextTree()->moveTreeOverTree(
+        PatternMatching::Create(KDepList(KA), {.KA = dependency}));
+    // Turn e into a dependency
+    e->cloneNodeAtNode(KDep);
+  } else {
+    // Add dependency to the existing depList
+    Tree* depList = e->child(k_dependenciesIndex);
+    NAry::AddChild(depList, dependency->cloneTree());
+  }
+}
+
+void Dependency::AddDependencies(Tree* e, const Tree* dependencies) {
+  assert(dependencies->isNAry());
+  for (const Tree* child : dependencies->children()) {
+    Dependency::AddDependency(e, child);
+  }
+}
+
 bool Dependency::DeepBubbleUpDependencies(Tree* e) {
   return Tree::ApplyShallowBottomUp(
       e, [](Tree* e, void* context) { return ShallowBubbleUpDependencies(e); });

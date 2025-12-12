@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include "../app.h"
+#include "poincare/helpers/sequence.h"
 #include "shared/global_store.h"
 
 using namespace Shared;
@@ -121,10 +122,10 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
 
 bool ListController::isAcceptableExpression(
     const UserExpression expression, const SymbolContext& symbolContext) {
-  // Do not accept any OperatorType.
+  // Only accept scalar values
   return MathLayoutFieldDelegate::isAcceptableExpression(expression,
                                                          symbolContext) &&
-         !expression.isComparison();
+         SequenceHelper::IsOfValidDimension(expression, symbolContext);
 }
 
 void ListController::editExpression(Ion::Events::Event event) {

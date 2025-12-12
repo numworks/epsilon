@@ -30,6 +30,8 @@ class FloatHelper {
     return e->isSingleFloat() ? FloatTo(e) : DoubleTo(e);
   }
   static bool SetSign(Tree* e, NonStrictSign sign);
+
+  static Tree* PushOppositeFloatTree(const Tree* e);
 };
 
 }  // namespace Poincare::Internal

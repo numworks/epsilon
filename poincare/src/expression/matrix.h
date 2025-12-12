@@ -70,7 +70,6 @@ struct Matrix {
   constexpr static int k_failedToCanonizeRank = -1;
   /* Return k_failedToCanonizeRank if the matrix could not be canonized
    * (might contain undefined or invalid values) */
-  static int Rank(const Tree* matrix);
   static int CanonizeAndRank(Tree* matrix, bool forceCanonization = false);
   static int RankOfCanonized(const Tree* matrix);
   static Tree* Inverse(const Tree* matrix, bool approximate = false,

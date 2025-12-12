@@ -32,8 +32,8 @@ Tree* Sequence::PushInitialConditionName(const Tree* sequence,
   return result;
 }
 
-bool Sequence::ExpressionHasValidDimension(const Tree* e,
-                                           const SymbolContext& symbolContext) {
+bool ExpressionHasValidDimension(const Tree* e,
+                                 const SymbolContext& symbolContext) {
   return Dimension::DeepCheck(e, symbolContext) &&
          Dimension::IsNonListScalar(e, symbolContext);
 }
@@ -51,9 +51,7 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
     const Tree* e, const SymbolContext& symbolContext, const char* name,
     Type type, int initialRank, bool shiftedNotation, bool recursion,
     bool systemSymbol, bool otherSequences) {
-  if (!ExpressionHasValidDimension(e, symbolContext)) {
-    return true;
-  }
+  assert(ExpressionHasValidDimension(e, symbolContext));
   const Tree* skipUntil = e;
   for (const Tree* d : e->selfAndDescendants()) {
     if (d < skipUntil) {
@@ -115,28 +113,34 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
   }
   return false;
 }
+
 // Return true if the main expression and initial conditions are scalar
 bool Sequence::IsOfValidDimension(const Tree* e,
                                   const SymbolContext& symbolContext) {
   const Tree* mainExpression =
       e->isSequence() ? e->child(k_mainExpressionIndex) : e;
-  bool isScalar = Dimension::Get(mainExpression, symbolContext).isScalar();
+  if (!ExpressionHasValidDimension(mainExpression, symbolContext)) {
+    return false;
+  }
   if (!e->isSequence() || e->isSequenceExplicit()) {
-    return isScalar;
+    // No initial conditions to check
+    return true;
   }
-  assert(k_firstInitialConditionIndex == k_mainExpressionIndex + 2);
+
+  static_assert(k_firstInitialConditionIndex == k_mainExpressionIndex + 2);
   const Tree* firstInitialCondition = mainExpression->nextTree()->nextTree();
-  isScalar = isScalar &&
-             Dimension::Get(firstInitialCondition, symbolContext).isScalar();
-  if (e->isSequenceSingleRecurrence()) {
-    return isScalar;
+  if (!ExpressionHasValidDimension(firstInitialCondition, symbolContext)) {
+    return false;
   }
+  if (e->isSequenceSingleRecurrence()) {
+    return true;
+  }
+
   assert(e->isSequenceDoubleRecurrence());
-  assert(k_secondInitialConditionIndex == k_firstInitialConditionIndex + 1);
+  static_assert(k_secondInitialConditionIndex ==
+                k_firstInitialConditionIndex + 1);
   const Tree* secondInitialCondition = firstInitialCondition->nextTree();
-  isScalar = isScalar &&
-             Dimension::Get(secondInitialCondition, symbolContext).isScalar();
-  return isScalar;
+  return ExpressionHasValidDimension(secondInitialCondition, symbolContext);
 }
 
 Tree* Sequence::InitialExpression(const char* name, Type type,

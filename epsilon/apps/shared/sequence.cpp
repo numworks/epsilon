@@ -227,19 +227,9 @@ double Sequence::approximateAtContextRank(int rank,
   // Counting on the initial values cache to minimize dimension computation.
   SystemExpression e;
   if (rank == initialRank()) {
-    if (!SequenceHelper::ExpressionHasValidDimension(
-            firstInitialConditionExpressionClone(),
-            GlobalContextAccessor::SequenceContext())) {
-      return NAN;
-    }
     e = firstInitialConditionExpressionReduced();
   } else {
     assert(type() == Type::DoubleRecurrence);
-    if (!SequenceHelper::ExpressionHasValidDimension(
-            secondInitialConditionExpressionClone(),
-            GlobalContextAccessor::SequenceContext())) {
-      return NAN;
-    }
     e = secondInitialConditionExpressionReduced();
   }
   assert(Poincare::Dimension(e).isScalar());

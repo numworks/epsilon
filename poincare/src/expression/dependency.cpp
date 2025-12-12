@@ -23,7 +23,7 @@ namespace Poincare::Internal {
 void Dependency::AddDependency(Tree* e, const Tree* dependency) {
   if (!e->isDep()) {
     // Create the dependency list containing "dependency"
-    e->nextTree()->moveTreeOverTree(
+    e->nextTree()->moveTreeBeforeNode(
         PatternMatching::Create(KDepList(KA), {.KA = dependency}));
     // Turn e into a dependency
     e->cloneNodeAtNode(KDep);

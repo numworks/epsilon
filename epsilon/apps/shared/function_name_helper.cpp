@@ -13,9 +13,9 @@ namespace FunctionNameHelper {
 
 size_t AddSuffixForParametricComponent(char* baseName, size_t baseNameLength,
                                        size_t bufferSize, bool first) {
-  return UTF8Helper::WriteCodePoint(baseName + baseNameLength,
-                                    bufferSize - baseNameLength,
-                                    first ? 'x' : 'y');
+  return UTF8Helper::WriteCodePoint(
+      baseName + baseNameLength, bufferSize - baseNameLength,
+      first ? CodePoints::k_cartesianSymbol : CodePoints::k_ordinateSymbol);
 }
 
 size_t ParametricComponentNameWithArgument(Shared::ContinuousFunction* f,

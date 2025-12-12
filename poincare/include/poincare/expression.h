@@ -133,6 +133,13 @@ class Expression : public PoolHandle {
     return isUninitialized() ? nullptr : object()->tree();
   }
 
+#if POINCARE_TREE_LOG
+  void logSerialize(std::ostream& stream) const;
+  __attribute__((__used__)) void logSerialize() const {
+    logSerialize(std::cout);
+  }
+#endif
+
  protected:
   static Expression ExpressionFromAddress(const void* address, size_t size);
   static PoolHandle BuildPoolHandleFromTree(const Internal::Tree* tree);

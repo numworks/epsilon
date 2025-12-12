@@ -262,4 +262,10 @@ PoolHandle Expression::BuildPoolHandleFromTree(const Tree* tree) {
   return PoolHandle::Build(node);
 }
 
+#if POINCARE_TREE_LOG
+void Expression::logSerialize(std::ostream& stream) const {
+  tree()->logSerialize(stream);
+}
+#endif
+
 }  // namespace Poincare

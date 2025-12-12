@@ -495,6 +495,7 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
       break;
     }
     case Type::Det:
+      // Note: We used to have explicit formulas for dimensions 1, 2 and 3
       if (RowCanonize(child, true, &result)) {
         break;
       }

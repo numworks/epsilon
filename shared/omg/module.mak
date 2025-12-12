@@ -28,6 +28,7 @@ _sources_omg_lz4only := $(addprefix src/external/lz4/, \
 )
 
 _sources_omg_test := $(addprefix test/, \
+  algorithm.cpp \
   arithmetic.cpp \
   bit_helper.cpp \
   memory.cpp \

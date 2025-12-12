@@ -127,11 +127,6 @@ void Properties::log(std::ostream& stream, bool endOfLine) const {
 }
 #endif
 
-ComplexProperties RelaxIntegerProperty(ComplexProperties properties) {
-  return ComplexProperties(RelaxIntegerProperty(properties.realProperties()),
-                           RelaxIntegerProperty(properties.imagProperties()));
-}
-
 ComplexProperties Abs(ComplexProperties properties) {
   return ComplexProperties(
       Properties(Sign(properties.canBeNull(), !properties.isNull(), false),

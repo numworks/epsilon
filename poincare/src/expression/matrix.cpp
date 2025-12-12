@@ -375,8 +375,8 @@ int Matrix::RankOfCanonized(const Tree* matrix) {
   int i = rank - 1;
   while (i >= 0) {
     int j = NumberOfColumns(matrix) - 1;
-    // TODO: Handle OMG::Troolean::Unknown. See rowCanonize comment
-    while (j >= i && Child(matrix, i, j)->isZero()) {
+    // TODO: Handle OMG::Troolean::Unknown. See RowCanonize comment
+    while (j >= i && Number::IsNull(Child(matrix, i, j))) {
       j--;
     }
     if (j <= i - 1) {

@@ -218,7 +218,6 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
   Solution root = nextRoot(difference);
   if (root.interest() != Interest::Root) {
     assert(root.interest() == Interest::None);
-    assert(difference);
     return Solution{};
   }
   T x = root.x();

@@ -1,6 +1,7 @@
 #include "beautification.h"
 
 #include <poincare/preferences.h>
+#include <poincare/src/expression/float_helper.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
@@ -38,6 +39,7 @@ bool ShallowBeautifyAngleFunctions(Tree* e, void* context);
 bool ShallowBeautifyPercent(Tree* e);
 bool ShallowBeautifyBigInteger(Tree* e, void* context);
 bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context);
+bool ShallowBeautifyNegativeFloats(Tree* e, void* context);
 bool ShallowBeautifyPowerOfTangent(Tree* e, void* context);
 bool ShallowBeautify(Tree* e, void* context);
 bool ShallowBeautifySpecialDisplays(Tree* e, void* context);
@@ -349,6 +351,8 @@ bool ApplyBeautificationSteps(Tree* e,
       Tree::ApplyShallowTopDown(e, ShallowBeautifyOppositesDivisionsRoots) ||
       changed;
   changed =
+      Tree::ApplyShallowTopDown(e, ShallowBeautifyNegativeFloats) || changed;
+  changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifyPowerOfTangent) || changed;
   changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifySpecialDisplays) || changed;
@@ -396,6 +400,17 @@ bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context) {
     return true;
   }
 
+  return false;
+}
+
+bool ShallowBeautifyNegativeFloats(Tree* e, void* context) {
+  /*  Negative floats are beautified to an opposite of a positive number. This
+   * is consistent with how negative   integers, rationals and decimals are
+   * beautified. */
+  if (e->isFloat() && Number::Sign(e).isStrictlyNegative()) {
+    e->moveTreeOverTree(Internal::FloatHelper::PushOppositeFloatTree(e));
+    return true;
+  }
   return false;
 }
 

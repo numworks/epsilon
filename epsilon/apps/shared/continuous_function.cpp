@@ -642,7 +642,6 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
       /* Escape simple y=f(x) equations, using SystemForApproximation reduction
        * target to match f(x)= behavior.
        * TODO : implement a more general solution for any implicit curves. */
-      static_assert(ContinuousFunctionProperties::k_ordinateName[0] == 'y');
       UserExpression cartesianEquation =
           expressionEquation(record).equivalentCartesianEquation();
       if (!cartesianEquation.isUninitialized()) {

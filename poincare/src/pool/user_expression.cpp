@@ -1,4 +1,5 @@
 #include <poincare/cas.h>
+#include <poincare/code_points.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/helpers/symbol_pool.h>
 #include <poincare/layout.h>
@@ -240,6 +241,7 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
 
 UserExpression UserExpression::equivalentCartesianEquation() const {
   const Tree* t = tree();
+  static_assert(CodePoints::k_ordinateSymbol == 'y');
   // Looking for KSub("y"_e, [something without "y"_e])
   if (t->isSub() && Symbol::IsUserSymbol(t->child(0), "y") &&
       !(t->child(1)->hasDescendantSatisfying(

@@ -18,7 +18,9 @@ QUIZ_CASE(pcj_matrix) {
 
   const Tree* w1 = KMatrix<2, 3>(1_e, 2_e, 3_e, 4_e, 5_e, 6_e);
   const Tree* w2 = KMatrix<3, 1>(7_e, 8_e, 9_e);
-  QUIZ_ASSERT(Matrix::Rank(w2) == 1);
+  Tree* w2Clone = w2->cloneTree();
+  QUIZ_ASSERT(Matrix::CanonizeAndRank(w2Clone) == 1);
+  w2Clone->removeTree();
   assert_trees_are_equal(Matrix::Multiplication(w1, w2),
                          KMatrix<2, 1>(50_e, 122_e));
   assert_trees_are_equal(Matrix::Multiplication(w1, Matrix::Identity(3_e)), w1);
@@ -34,7 +36,7 @@ QUIZ_CASE(pcj_matrix) {
 static inline void assert_has_rank(const char* exp, int rank) {
   Tree* e = parse(exp);
   quiz_assert(e->isMatrix());
-  quiz_assert(rank == Matrix::Rank(e));
+  quiz_assert(rank == Matrix::CanonizeAndRank(e));
   e->removeTree();
 }
 

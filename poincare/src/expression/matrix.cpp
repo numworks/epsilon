@@ -358,18 +358,6 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
   return true;
 }
 
-int Matrix::Rank(const Tree* matrix) {
-  Tree* copy = matrix->cloneTree();
-  if (RowCanonize(copy)) {
-    int rank = RankOfCanonized(copy);
-    copy->removeTree();
-    return rank;
-  } else {
-    copy->removeTree();
-    return k_failedToCanonizeRank;
-  }
-}
-
 int Matrix::CanonizeAndRank(Tree* matrix, bool forceCanonization) {
   /* TODO: At the moment, we need to create an approximation context to be
    * passed to RowCanonize. Approximation should be reworked so that creating

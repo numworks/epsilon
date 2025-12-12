@@ -115,6 +115,29 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
   }
   return false;
 }
+// Return true if the main expression and initial conditions are scalar
+bool Sequence::IsOfValidDimension(const Tree* e,
+                                  const SymbolContext& symbolContext) {
+  const Tree* mainExpression =
+      e->isSequence() ? e->child(k_mainExpressionIndex) : e;
+  bool isScalar = Dimension::Get(mainExpression, symbolContext).isScalar();
+  if (!e->isSequence() || e->isSequenceExplicit()) {
+    return isScalar;
+  }
+  assert(k_firstInitialConditionIndex == k_mainExpressionIndex + 2);
+  const Tree* firstInitialCondition = mainExpression->nextTree()->nextTree();
+  isScalar = isScalar &&
+             Dimension::Get(firstInitialCondition, symbolContext).isScalar();
+  if (e->isSequenceSingleRecurrence()) {
+    return isScalar;
+  }
+  assert(e->isSequenceDoubleRecurrence());
+  assert(k_secondInitialConditionIndex == k_firstInitialConditionIndex + 1);
+  const Tree* secondInitialCondition = firstInitialCondition->nextTree();
+  isScalar = isScalar &&
+             Dimension::Get(secondInitialCondition, symbolContext).isScalar();
+  return isScalar;
+}
 
 Tree* Sequence::InitialExpression(const char* name, Type type,
                                   bool shiftedNotation) {

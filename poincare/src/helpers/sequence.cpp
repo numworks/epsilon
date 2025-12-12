@@ -52,6 +52,11 @@ bool SequenceHelper::MainExpressionContainsForbiddenTerms(
       otherSequences);
 }
 
+bool SequenceHelper::IsOfValidDimension(UserExpression e,
+                                        const SymbolContext& symbolContext) {
+  return Internal::Sequence::IsOfValidDimension(e.tree(), symbolContext);
+}
+
 UserExpression SequenceHelper::InitialExpression(const char* name, Type type,
                                                  RecursiveNotation notation) {
   return UserExpression::Builder(Internal::Sequence::InitialExpression(

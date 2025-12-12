@@ -25,6 +25,8 @@ class Sequence {
       const Tree* e, const SymbolContext& symbolContext, const char* name,
       Type type, int initialRank, bool shiftedNotation, bool recursion,
       bool systemSymbol, bool otherSequences);
+  static bool IsOfValidDimension(const Tree* e,
+                                 const SymbolContext& symbolContext);
   static Tree* InitialExpression(const char* name, Type type,
                                  bool shiftedNotation);
   static void UpdateMainExpressionForNotation(Tree* e, Type type,

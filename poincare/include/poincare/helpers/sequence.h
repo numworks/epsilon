@@ -26,8 +26,6 @@ Layout ExtractExpressionAtRow(Layout l, int row = 0);
 void SetFirstRank(Layout l, uint8_t firstRank);
 
 // Expression
-bool ExpressionHasValidDimension(UserExpression e,
-                                 const SymbolContext& symbolContext);
 bool MainExpressionContainsForbiddenTerms(
     UserExpression e, const SymbolContext& symbolContext, const char* name,
     Type type, int initialRank, RecursiveNotation notation, bool recursion,

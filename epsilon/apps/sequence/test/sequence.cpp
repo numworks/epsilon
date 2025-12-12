@@ -43,6 +43,8 @@ Sequence* AddSequence(Sequence::Type type, const char* definition,
     assert(err == Ion::Storage::Record::ErrorStatus::None);
   }
   (void)err;  // Silence compilation warning.
+  // u should be defined if a definition was given
+  assert((definition != nullptr) == (u->isDefined()));
   return u;
 }
 
@@ -73,14 +75,10 @@ void check_sequences_defined_by(
 
   for (int j = 0; j < 10; j++) {
     for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-      double un;
-      if (seqs[i]->isDefined()) {
-        un = seqs[i]->evaluateXYAtParameter((double)j).y();
-      } else if (sequences.definitions[i] != nullptr) {
-        un = NAN;
-      } else {
+      if (!seqs[i]->isDefined()) {
         continue;
       }
+      double un = seqs[i]->evaluateXYAtParameter((double)j).y();
       bool isEqual = OMG::Float::RoughlyEqual<double>(
           un, result[i][j], OMG::Float::EpsilonLax<double>(), true);
       constexpr size_t bufferSize = 100;
@@ -770,7 +768,7 @@ QUIZ_CASE(sequence_evaluation) {
     sequences.types[0] = Sequence::Type::Explicit;
     sequences.types[1] = Sequence::Type::Explicit;
     sequences.types[2] = Sequence::Type::Explicit;
-    sequences.definitions[0] = "|u(0)|";
+    sequences.definitions[0] = "abs(u(0))";
     sequences.definitions[1] = "floor(v(0))";
     sequences.definitions[2] = "ceil(w(0))";
     check_sequences_defined_by(results, sequences);
@@ -909,9 +907,9 @@ QUIZ_CASE(sequence_order) {
   const SequenceContext* sequenceContext =
       &GlobalContextAccessor::SequenceContext();
 
-  Sequence* u = AddSequence(Sequence::Type::Explicit, "", nullptr, nullptr);
+  Sequence* u = AddSequence(Sequence::Type::Explicit, "1", nullptr, nullptr);
   quiz_assert(u->fullName()[0] == 'u');
-  Sequence* v = AddSequence(Sequence::Type::Explicit, "", nullptr, nullptr);
+  Sequence* v = AddSequence(Sequence::Type::Explicit, "2", nullptr, nullptr);
   quiz_assert(v->fullName()[0] == 'v');
   Sequence* w = AddSequence(Sequence::Type::Explicit, "3", nullptr, nullptr);
   quiz_assert(w->fullName()[0] == 'w');

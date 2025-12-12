@@ -57,7 +57,11 @@ struct Matrix {
                               const Approximation::Context* ctx = nullptr);
   static Tree* Transpose(const Tree* matrix);
   /* Return true if the matrix has been successfully canonized, false otherwise.
-   * In the latter case, leave determinant uninitialized. */
+   * In the latter case, leave determinant uninitialized. A canonized matrix is
+   * in its row echelon form (reduced if [reducedForm]). If [approximate] is
+   * true, everything will be approximated. A reduced expression is otherwise
+   * expected. If [forceCanonization] is false, canonization will be escaped if
+   * any term cannot be approximated. */
   static bool RowCanonize(Tree* matrix, bool reducedForm = true,
                           Tree** determinant = nullptr,
                           bool approximate = false,

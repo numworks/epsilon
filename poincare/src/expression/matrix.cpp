@@ -79,12 +79,14 @@ Tree* Matrix::Transpose(const Tree* matrix) {
   uint8_t rows = NumberOfRows(matrix);
   uint8_t cols = NumberOfColumns(matrix);
   if (rows == 1 || cols == 1) {
+    // Only dimensions need to be changed
     Tree* result = matrix->cloneTree();
     SetNumberOfRows(result, cols);
     SetNumberOfColumns(result, rows);
     return result;
   }
   Tree* result = SharedTreeStack->pushMatrix(cols, rows);
+  // Memoize the beginning of each row
   const Tree* rowsM[k_maximumSize];
   const Tree* child = matrix->child(0);
   for (int row = 0; row < rows; row++) {
@@ -93,6 +95,7 @@ Tree* Matrix::Transpose(const Tree* matrix) {
       child = child->nextTree();
     }
   }
+  // Clone the first tree of each rows and update rowsM to next column
   for (int col = 0; col < cols; col++) {
     for (int row = 0; row < rows; row++) {
       rowsM[row]->cloneTree();
@@ -210,11 +213,8 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
   // The matrix children have to be reduced to be able to spot 0
   assert(approximate || !SystematicReduction::DeepReduce(matrix));
 
-  int m = NumberOfRows(matrix);
-  int n = NumberOfColumns(matrix);
-
-  // Check that all values are valid
   if (!forceCanonization) {
+    // Check that all values are valid
     for (const Tree* child : matrix->children()) {
       if (child->isUndefined() || !Approximation::CanApproximate(child)) {
         return false;
@@ -227,6 +227,8 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
     det = SharedTreeStack->pushMult(0);
   }
 
+  int m = NumberOfRows(matrix);
+  int n = NumberOfColumns(matrix);
   int h = 0;  // row pivot
   int k = 0;  // column pivot
 
@@ -306,7 +308,6 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
               KMult(KA, KPow(KB, -1_e)), {.KA = opHJ, .KB = divisor}));
           Dependency::DeepRemoveUselessDependencies(opHJ);
         }
-        // TODO_PCJ: Dependency
       }
       divisor->cloneTreeOverTree(1_e);
 
@@ -336,7 +337,6 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
                 {.KA = opIJ, .KB = opHJ, .KC = factor}));
             Dependency::DeepRemoveUselessDependencies(opIJ);
           }
-          // TODO_PCJ: Dependency
         }
         factor->cloneTreeOverTree(0_e);
       }
@@ -425,7 +425,7 @@ Tree* Matrix::Inverse(const Tree* matrix, bool approximate,
     return matrixAI;
   }
 
-  // Check inversibility
+  // Check invertibility
   if (canonized) {
     for (int i = 0; i < dim; i++) {
       if (!Child(matrixAI, i, i)->isOne()) {

@@ -45,12 +45,15 @@ void DoublePairStore::initListsFromStorage(bool delayUpdate) {
       if (listData.size == 0) {
         continue;
       }
-      SystemExpression e = SystemExpression::ExpressionFromAddress(
-          listData.buffer, listData.size);
+      UserExpression e =
+          UserExpression::ExpressionFromAddress(listData.buffer, listData.size);
       if (!e.isList()) {
         continue;
       }
-      setList(e, s, i, true);
+
+      bool reductionFailure = false;
+      setList(e.cloneAndReduce({}, &reductionFailure), s, i, true);
+      assert(!reductionFailure);
     }
     updateSeries(s, delayUpdate);
   }

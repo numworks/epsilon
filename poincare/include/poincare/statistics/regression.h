@@ -1,6 +1,5 @@
 #pragma once
 
-#include <poincare/code_points.h>
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
 #include <poincare/symbol_context.h>
@@ -54,8 +53,6 @@ class Regression {
    * warning. */
   virtual ~Regression() = default;
 #endif
-
-  constexpr static char k_xSymbol = CodePoints::k_cartesianSymbol;
 
   // --- Static properties ---
 

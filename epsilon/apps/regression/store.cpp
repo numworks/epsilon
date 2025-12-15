@@ -4,6 +4,7 @@
 #include <float.h>
 #include <ion/storage/file_system.h>
 #include <omg/print.h>
+#include <poincare/code_points.h>
 #include <poincare/helpers/symbol_pool.h>
 #include <poincare/preferences.h>
 #include <string.h>
@@ -336,7 +337,7 @@ void Store::storeRegressionFunction(int series,
   char name[k_functionNameSize];
   BuildFunctionName(series, name, k_functionNameSize);
   expression.replaceSymbolWithUnknown(
-      SymbolHelper::BuildSymbol(Model::k_xSymbol));
+      SymbolHelper::BuildSymbol(CodePoints::k_cartesianSymbol));
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       name, Ion::Storage::regressionExtension, expression.addressInPool(),
       expression.size(), true);

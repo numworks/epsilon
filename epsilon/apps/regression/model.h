@@ -61,10 +61,9 @@ class Model {
   double residualStandardDeviation(const Store* store, int series,
                                    const double* modelCoefficients);
 
-  constexpr static auto k_numberOfModels =
+  constexpr static int k_numberOfModels =
       Poincare::Regression::k_numberOfModels;
-  constexpr static auto k_xSymbol = Poincare::Regression::k_xSymbol;
-  constexpr static auto k_maxNumberOfCoefficients =
+  constexpr static int k_maxNumberOfCoefficients =
       Poincare::Regression::k_maxNumberOfCoefficients;
 
  private:

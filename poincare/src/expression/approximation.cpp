@@ -1640,13 +1640,16 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
 
 template <typename T>
 T Private::PrivateTo(const Tree* e, const Context* ctx) {
-  assert(ctx);
 #if ASSERTIONS
+  assert(ctx);
   Dimension dim = Dimension::Get(e, ctx->m_symbolContext);
+  assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
+  // m_listElement is needed to approximate lists to scalars
+  assert(ctx->m_listElement != -1 ||
+         !Dimension::IsList(e, ctx->m_symbolContext));
+  // m_pointElement is needed to approximate points to scalars
+  assert(ctx->m_pointElement != -1 || !dim.isPoint());
 #endif
-  assert((dim.isScalar() && (ctx->m_listElement != -1 ||
-                             !Dimension::IsList(e, ctx->m_symbolContext))) ||
-         (dim.isPoint() && ctx->m_pointElement != -1) || dim.isUnit());
   std::complex<T> value = PrivateToComplex<T>(e, ctx);
   // Remove signaling nan
   return value.imag() == 0 && !IsNonReal(value) ? value.real() : NAN;
@@ -1654,8 +1657,7 @@ T Private::PrivateTo(const Tree* e, const Context* ctx) {
 
 template <typename T>
 T ToLocalContext(const Tree* e, const Context* ctx, T x) {
-  assert(ctx);
-  Context ctxCopy(*ctx);
+  Context ctxCopy = ctx ? Context(*ctx) : Context();
   LocalContext localCtx(x, ctxCopy.m_localContext);
   ctxCopy.m_localContext = &localCtx;
   return PrivateTo<T>(e, &ctxCopy);

@@ -8,7 +8,6 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
-#include "approximation.h"
 #include "bounds.h"
 #include "dimension.h"
 #include "integer.h"

@@ -179,6 +179,10 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("norm([[1][2][3]])", "√(14)");
   simplifies_to("norm([[1,i+1,π,-5]])", "√(π^2+28)", k_cartesianCtx);
   simplifies_to("norm([[2,3,6]])", "7");
+
+  // Approximation context
+  simplifies_to("inverse([[int(floor(x),x,0,1)]])",
+                "[[1/int(floor(x),x,0,1)]]");
 }
 
 QUIZ_CASE(pcj_simplification_functions_of_matrices) {

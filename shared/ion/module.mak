@@ -1,6 +1,6 @@
 $(call assert_defined,ION_variant)
 
-$(call create_module,ion,1, $(patsubst %, test/%:+test, \
+$(call create_module,ion,1, $(patsubst %, src/test/%:+test, \
   crc32.cpp \
   events.cpp \
   keyboard.cpp \

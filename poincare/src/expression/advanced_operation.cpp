@@ -513,16 +513,14 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
   // Binomial theorem
   // (A + B?)^n = sum(binomial(n, k) * A^k * B^(n-k), k, 0, n)
   bool matched = PatternMatching::Match(e, KPow(KAdd(KA, KB_p), KC), &ctx) &&
-                 ctx.getTree(KC)->isInteger();
+                 !ctx.getTree(KC)->isMinusOne();
+  assert(!matched || ctx.getTree(KC)->isInteger());
   if (matched) {
     IntegerHandler exp = Integer::Handler(ctx.getTree(KC));
-    if (exp.isMinusOne()) {
-      matched = false;
-    } else {
-      exp.setSign(NonStrictSign::Positive);
-      /* Do not expand power strictly greater than 9,  */
-      matched = IntegerHandler::Compare(exp, IntegerHandler(9)) <= 0;
-    }
+    assert(!exp.isMinusOne());
+    exp.setSign(NonStrictSign::Positive);
+    // Do not expand power strictly greater than 9
+    matched = IntegerHandler::Compare(exp, IntegerHandler(9)) <= 0;
   }
   if (matched) {
     // a^n and b^n are out of the sum to avoid dependencies in a^0 and b^0
@@ -537,9 +535,10 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
     TreeRef scopedKB = PatternMatching::Create(KAdd(KB_p), ctx);
     Variables::EnterScope(scopedKB);
     ctx.setNode(KE, scopedKB, 1, false, 1);
-    TreeRef scopedKC = ctx.getTree(KC)->cloneTree();
-    Variables::EnterScope(scopedKC);
-    ctx.setNode(KF, scopedKC, 1, false, 1);
+    // No need to clone and enter scope with KC since it contains no variables
+    assert(ctx.getTree(KC)->isInteger());
+    ctx.setNode(KF, ctx.getTree(KC), 1, false, 1);
+    // Use Abs(KC) and Abs(KF) since [inverse] handles negative exponents
     e->moveTreeOverTree(PatternMatching::CreateReduce(
         KAdd(KPow(KA, KAbs(KC)),
              KSum("k"_e, 1_e, KAdd(KAbs(KC), -1_e),
@@ -547,7 +546,7 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
                         KPow(KE, KAdd(KAbs(KF), KMult(-1_e, KVarK))))),
              KPow(KAdd(KB_p), KAbs(KC))),
         ctx));
-    // Removing scopedKA, scopedKB and scopedKC
+    // Removing scopedKA, and scopedKB
     SharedTreeStack->flushFromBlock(scopedKA);
     Parametric::Explicit(e);
     if (inverse) {

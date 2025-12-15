@@ -67,11 +67,11 @@ Division::DivisionComponentsResult Division::GetDivisionComponents(
        * i is not in the last position, it is either intentional or a bug in the
        * order, so leave it where it is. */
       factorsOuterNumerator = factor->cloneTree();
-    } else if (factor->isRational()) {
-      if (factor->isOne()) {
+    } else if (factor->isRational() || factor->isFloat()) {
+      if (Number::IsOne(factor)) {
         // Special case: add a unary numeral factor if r = 1
         factorsNumerator = factor->cloneTree();
-      } else {
+      } else if (factor->isRational()) {
         IntegerHandler rNum = Rational::Numerator(factor);
         if (rNum.isMinusOne()) {
           needOpposite = !needOpposite;
@@ -87,7 +87,15 @@ Division::DivisionComponentsResult Division::GetDivisionComponents(
           // TODO_PCJ: if rDen is overflow, return -inf
           factorsDenominator = rDen.pushOnTreeStack();
         }
+      } else {
+        assert(factor->isFloat());
+        factorsNumerator = factor->cloneTree();
+        factorsDenominator = (1_e)->cloneTree();
+        if (Number::SetSign(factorsNumerator, NonStrictSign::Positive)) {
+          needOpposite = !needOpposite;
+        }
       }
+
     } else if (factor->isPow() || factor->isPowReal()) {
       Tree* pow = factor->cloneTree();
       Tree* base = pow->child(0);

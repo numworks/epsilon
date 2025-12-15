@@ -156,7 +156,8 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
     assert(e->isDep());
     /* e->child(0) may now be reduced again. This could unlock further
      * simplifications. */
-    ShallowReduce(e->child(0)) && ShallowReduce(e);
+    ShallowReduce(e->child(0));
+    ShallowReduce(e);
     return true;
   }
 

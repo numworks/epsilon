@@ -121,7 +121,7 @@ Tree* ReduceSumOrProductAux(const Tree* e, const Tree* lowerBound,
   }
 
   // sum(f,k,m,n) = (1+n-m)*f and prod(f,k,m,n) = f^(1+n-m)
-  if (!Variables::HasVariable(function, Parametric::k_localVariableId)) {
+  if (!Variables::HasVariable(function, Parametric::k_localVariableId, true)) {
     // TODO: add ceil around bounds
     constexpr SimpleKTrees::KTree numberOfTerms =
         KAdd(1_e, KA, KMult(-1_e, KB));
@@ -142,7 +142,7 @@ Tree* ReduceSumOrProductAux(const Tree* e, const Tree* lowerBound,
     Tree* function = sum->child(Parametric::k_integrandIndex);
     Tree* child = function->child(0);
     for (int i = 0; i < nbChildren; i++) {
-      if (!Variables::HasVariable(child, Parametric::k_localVariableId)) {
+      if (!Variables::HasVariable(child, Parametric::k_localVariableId, true)) {
         Variables::LeaveScope(child);
         child->detachTree();
         nbChildrenRemoved++;
@@ -172,7 +172,7 @@ Tree* ReduceSumOrProductAux(const Tree* e, const Tree* lowerBound,
     assert(function->child(1)->isInteger());
     // If a wasn't an integer, we would need to add Variables::LeaveScope(a)
     assert(!Variables::HasVariable(function->child(1),
-                                   Parametric::k_localVariableId));
+                                   Parametric::k_localVariableId, true));
     // Move the node Pow before the Prod
     result->moveNodeAtNode(result->child(Parametric::k_integrandIndex));
     // Shallow reduce the Prod

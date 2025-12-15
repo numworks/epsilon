@@ -208,6 +208,14 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
 bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
                          bool approximate, const Approximation::Context* ctx,
                          bool forceCanonization) {
+  if (!ctx) {
+    /* TODO: At the moment, we need to create an approximation context.
+     * Approximation should be reworked so that creating such a context is not
+     * needed.  */
+    Approximation::Context approximationContext{};
+    return RowCanonize(matrix, reducedForm, determinant, approximate,
+                       &approximationContext, forceCanonization);
+  }
   // If determinant is given, it must be nullptr.
   assert(!determinant || !*determinant);
   // The matrix children have to be reduced to be able to spot 0
@@ -359,12 +367,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
 }
 
 int Matrix::CanonizeAndRank(Tree* matrix, bool forceCanonization) {
-  /* TODO: At the moment, we need to create an approximation context to be
-   * passed to RowCanonize. Approximation should be reworked so that creating
-   * such a context is not needed.  */
-  Approximation::Context approximationContext{};
-  if (RowCanonize(matrix, true, nullptr, false, &approximationContext,
-                  forceCanonization)) {
+  if (RowCanonize(matrix, true, nullptr, false, nullptr, forceCanonization)) {
     return RankOfCanonized(matrix);
   }
   return k_failedToCanonizeRank;

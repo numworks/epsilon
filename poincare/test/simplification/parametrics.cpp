@@ -60,6 +60,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
                 "dep(n+1,{sum(k^0,k,0,n),sum(1/k,k,0,n),realInteger(n)})");
   simplifies_to("sum(k/k,k,-1,n)",
                 "dep(n+2,{sum(k^0,k,-1,n),sum(1/k,k,-1,n),realInteger(n)})");
+  simplifies_to("sum(0/random(),k,0,5)", "dep(0,{sum(0/random(),k,0,5)})");
   simplifies_to("sum((-1)^k/(2k+1), k, 0, 255)",
                 "18534452038497714704555227529659036647750770461868482383639336"
                 "57727103093417167512471158879045627521151942783088930004297154"
@@ -102,6 +103,9 @@ QUIZ_CASE(pcj_simplification_parametric) {
       "dep(b×product(k,k,a,b)^2,{sum(nonNull(k),k,a,b),sum(realPos(k),k,a,b),"
       "nonNull(b),realPos(b),realInteger(a),realInteger(b)})");
   simplifies_to("product(exp(2k),k,0,y)", "dep(e^(y^2+y),{realInteger(y)})");
+
+  simplifies_to("e^(random()×sum(cos(k),k,0,10))",
+                "e^(random()×sum(cos(k),k,0,10))");
 
   // expand sum
   simplifies_to("sum(k^3+4,k,n,n+3)-16",
@@ -466,4 +470,7 @@ QUIZ_CASE(pcj_simplification_integral) {
   simplifies_to("int(1/x,x,1,2)", "int(1/x,x,1,2)");
   // Cannot integrate at complex bounds
   simplifies_to("int(x^2,x,0,i)", "undef");
+  // Random nodes
+  simplifies_to("int(random(),x,0,1)", "int(random(),x,0,1)");
+  simplifies_to("int(random()*x,x,0,1)", "int(random()×x,x,0,1)");
 }

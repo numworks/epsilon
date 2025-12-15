@@ -458,6 +458,9 @@ bool AdvancedOperation::ContractMult(Tree* e) {
 }
 
 bool AdvancedOperation::ExpandPower(Tree* e) {
+  if (!e->isPow()) {
+    return false;
+  }
   // (A?*B)^C = A^C * B^C is currently in SystematicSimplification
   PatternMatching::Context ctx;
   // 1/(A+iB) -> (A-B*i) / (A^2+B^2)

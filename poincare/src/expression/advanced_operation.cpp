@@ -6,6 +6,7 @@
 #include "integer.h"
 #include "k_tree.h"
 #include "properties.h"
+#include "random.h"
 #include "rational.h"
 #include "sign.h"
 #include "systematic_reduction.h"
@@ -513,7 +514,7 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
   // Binomial theorem
   // (A + B?)^n = sum(binomial(n, k) * A^k * B^(n-k), k, 0, n)
   bool matched = PatternMatching::Match(e, KPow(KAdd(KA, KB_p), KC), &ctx) &&
-                 !ctx.getTree(KC)->isMinusOne();
+                 !ctx.getTree(KC)->isMinusOne() && !Random::HasRandom(e);
   assert(!matched || ctx.getTree(KC)->isInteger());
   if (matched) {
     IntegerHandler exp = Integer::Handler(ctx.getTree(KC));

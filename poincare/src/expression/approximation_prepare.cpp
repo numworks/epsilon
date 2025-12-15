@@ -68,12 +68,15 @@ static bool ShallowExpandIntegrals(Tree* e, void* ctx) {
   if (!e->isIntegral()) {
     return false;
   }
+  const Tree* lowerBound = e->child(Parametric::k_lowerBoundIndex);
+  const Tree* upperBound = e->child(Parametric::k_upperBoundIndex);
+  const Tree* integrand = e->child(Parametric::k_integrandIndex);
   Tree* insertAt = e->nextTree();
   // Rewrite the integrand to be able to compute it directly at abscissa b - x
-  Tree* upperIntegrand = RewriteIntegrandNear(e->child(3), e->child(2));
+  Tree* upperIntegrand = RewriteIntegrandNear(integrand, upperBound);
   insertAt->moveTreeAtNode(upperIntegrand);
   // Same near a + x
-  Tree* lowerIntegrand = RewriteIntegrandNear(e->child(3), e->child(1));
+  Tree* lowerIntegrand = RewriteIntegrandNear(integrand, lowerBound);
   insertAt->moveTreeAtNode(lowerIntegrand);
   e->cloneNodeOverNode(KIntegralWithAlternatives);
   return true;

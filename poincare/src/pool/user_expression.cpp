@@ -239,13 +239,15 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
                                         symbolContext);
 }
 
+constexpr char ordinateName[] = {CodePoints::k_ordinateSymbol, 0};
+
 UserExpression UserExpression::equivalentCartesianEquation() const {
   const Tree* t = tree();
-  static_assert(CodePoints::k_ordinateSymbol == 'y');
   // Looking for KSub("y"_e, [something without "y"_e])
-  if (t->isSub() && Symbol::IsUserSymbol(t->child(0), "y") &&
-      !(t->child(1)->hasDescendantSatisfying(
-          [](const Tree* e) { return Symbol::IsUserSymbol(e, "y"); }))) {
+  if (t->isSub() && Symbol::IsUserSymbol(t->child(0), ordinateName) &&
+      !(t->child(1)->hasDescendantSatisfying([](const Tree* e) {
+        return Symbol::IsUserSymbol(e, ordinateName);
+      }))) {
     return UserExpression::Builder(t->child(1));
   }
   return UserExpression();

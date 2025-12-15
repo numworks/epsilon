@@ -182,15 +182,13 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
     return FillColumnStatus::DataNotSuitable;
   }
 
-  bool reductionFailure = false;
   SystemExpression reduced = PoincareHelpers::CloneAndReduce(
       formula, storeAppContext,
       GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
       GlobalPreferences::SharedGlobalPreferences()->angleUnit(), true,
-      Poincare::ReductionTarget::User, SymbolicComputation::ReplaceAllSymbols,
-      &reductionFailure);
+      Poincare::ReductionTarget::User, SymbolicComputation::ReplaceAllSymbols);
 
-  if (reductionFailure || reduced.isUndefined()) {
+  if (reduced.isFailedSimplification() || reduced.isUndefined()) {
     return FillColumnStatus::DataNotSuitable;
   }
 

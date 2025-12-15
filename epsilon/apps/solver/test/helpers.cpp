@@ -151,7 +151,6 @@ static void compareSolutions(SystemOfEquations* system,
      * a const char * we need to add parentheses that are not necessary when
      * creating an expression from a layout. */
 
-    bool reductionFailure = false;
     ProjectionContext projCtx{
         .m_complexFormat = ComplexFormat::Cartesian,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
@@ -159,8 +158,9 @@ static void compareSolutions(SystemOfEquations* system,
         .m_advanceReduce = false};
     SystemExpression expectedExpression =
         UserExpression::Parse(expectedValue, tempContext)
-            .cloneAndReduce(projCtx, &reductionFailure);
-    quiz_assert(!reductionFailure && !expectedExpression.isUninitialized());
+            .cloneAndReduce(projCtx);
+    quiz_assert(!expectedExpression.isUninitialized() &&
+                !expectedExpression.isFailedSimplification());
 
     Layout obtainedLayout = system->solution(i)->exactLayout();
     if (obtainedLayout.isUninitialized()) {
@@ -180,8 +180,10 @@ static void compareSolutions(SystemOfEquations* system,
         .m_context = tempContext,
         .m_advanceReduce = false};
     SystemExpression obtainedExpression =
-        parsedExpression.cloneAndReduce(projCtx2, &reductionFailure);
-    quiz_assert(!reductionFailure && !obtainedExpression.isUninitialized());
+        parsedExpression.cloneAndReduce(projCtx2);
+    quiz_assert(!obtainedExpression.isUninitialized() &&
+                !obtainedExpression.isFailedSimplification());
+
 #if 0
     quiz_assert(
         !expectedExpression.isUninitialized() &&

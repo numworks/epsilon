@@ -114,8 +114,9 @@ class UserExpression : public Expression {
 
   /* Other helpers */
 
-  SystemExpression cloneAndReduce(const ProjectionContext& projectionContext,
-                                  bool* reductionFailure) const;
+  // Returns KFailedSimplification if the reduction failed
+  SystemExpression cloneAndReduce(
+      const ProjectionContext& projectionContext) const;
   template <typename T>
   SystemExpression approximateUserToTree(
       AngleUnit angleUnit, ComplexFormat complexFormat,

@@ -577,12 +577,12 @@ SystemExpression getSystemExpressionForApproximation(
   if (equation.isUninitialized()) {
     return SystemExpression();
   }
-  bool reductionFailure = false;
   SystemExpression resultForApproximation = PoincareHelpers::CloneAndReduce(
       equation, GlobalContextAccessor::Context(), complexFormat, angleUnit,
       false, ReductionTarget::SystemForApproximation,
-      SymbolicComputation::KeepAllSymbols, &reductionFailure);
-  assert(!resultForApproximation.isUninitialized() && !reductionFailure);
+      SymbolicComputation::KeepAllSymbols);
+  assert(!resultForApproximation.isUninitialized() &&
+         !resultForApproximation.isFailedSimplification());
   if (resultForApproximation.numberOfDescendants(true) <
       analysisExpression.numberOfDescendants(true)) {
     return resultForApproximation;
@@ -743,15 +743,11 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   if (!equation.isUndefined()) {
-    bool reductionFailure = false;
     result = PoincareHelpers::CloneAndReduce(
         equation, GlobalContextAccessor::Context(), complexFormat, angleUnit,
         false, ReductionTarget::SystemForAnalysis,
         // Symbols have already been replaced.
-        SymbolicComputation::KeepAllSymbols, &reductionFailure);
-    if (reductionFailure) {
-      result = SystemExpression::Builder(KFailedSimplification);
-    }
+        SymbolicComputation::KeepAllSymbols);
     assert(!result.isUninitialized());
   } else {
     result = SystemExpression::Undefined();

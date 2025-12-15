@@ -107,17 +107,12 @@ SystemExpression ExpressionModel::expressionReduced(
       /* 'Simplify' routine might need to call expressionReduced on the very
        * same function. So we need to keep a valid m_expression while executing
        * 'Simplify'. Thus, we use a temporary expression. */
-      bool reductionFailure = false;
       m_expression = PoincareHelpers::CloneAndReduce(
           userExpression, GlobalContextAccessor::Context(),
           complexFormat(record),
           GlobalPreferences::SharedGlobalPreferences()->angleUnit(), false,
           Poincare::ReductionTarget::SystemForApproximation,
-          Poincare::SymbolicComputation::ReplaceDefinedSymbols,
-          &reductionFailure);
-      if (reductionFailure) {
-        m_expression = SystemExpression::Builder(KFailedSimplification);
-      }
+          Poincare::SymbolicComputation::ReplaceDefinedSymbols);
     }
   }
   return m_expression;

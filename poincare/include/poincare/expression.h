@@ -109,6 +109,7 @@ class Expression : public PoolHandle {
   bool isStore() const;
   bool isUndefined() const;
   bool isUndefinedOrNonReal() const;
+  bool isFailedSimplification() const;
   bool isUserFunction() const;
   bool isUserSymbol() const;
   bool isVector() const;

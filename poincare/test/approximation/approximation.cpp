@@ -331,6 +331,8 @@ QUIZ_CASE(pcj_prepare_expression) {
                                 KMult(KVarX, KContinuousVar<k_varId>),
                                 KAdd(KMult(KVarX, KContinuousVar<k_varId>),
                                      KPow(KContinuousVar<k_varId>, 2_e))));
+  assert_expression_prepares_to(KIntegral("t"_e, 0_e, KRandomSeeded<1>, KVarX),
+                                KIntegral("t"_e, 0_e, KRandomSeeded<1>, KVarX));
 }
 
 QUIZ_CASE(pcj_approximation_capped) {

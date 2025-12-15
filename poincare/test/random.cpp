@@ -1,5 +1,6 @@
 #include <omg/float.h>
 #include <poincare/k_tree.h>
+#include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/projection.h>
 
@@ -220,4 +221,14 @@ QUIZ_CASE(pcj_random_no_duplicates) {
   assert_no_duplicates_in_list<float>("randintnorep(-5,5,10)");
   assert_no_duplicates_in_list<float>("randintnorep(-100,99,200)");
   assert_no_duplicates_in_list<float>("randintnorep(1234,5678,20)");
+}
+
+QUIZ_CASE(pcj_random_scopes) {
+  // Power is not expanded with random nodes
+  Tree* e = (KPow(KAdd(2_e, KRandom), 7_e))->cloneTree();
+  quiz_assert(!AdvancedReduction::DeepExpandAlgebraic(e));
+  // Power is expanded otherwise.
+  e->cloneTreeOverTree(KPow(KAdd(2_e, π_e), 7_e));
+  quiz_assert(AdvancedReduction::DeepExpandAlgebraic(e));
+  e->removeTree();
 }

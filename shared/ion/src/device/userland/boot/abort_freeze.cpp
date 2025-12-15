@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-void abort() {
+void __attribute__((noinline)) abort() {
   while (true) {
   }
 }

@@ -52,11 +52,11 @@ $(addprefix simulator/shared/, \
   window_headless.cpp:+test \
   dummy/read_only_memory.cpp \
 ) \
-) \
-$(addprefix $(PATH_ion)/test/, \
+$(addprefix test/, \
   exam_bytes.cpp:+test \
   exam_mode.cpp:+test \
   storage.cpp:+test \
+) \
 )
 
 SFLAGS_ion += \

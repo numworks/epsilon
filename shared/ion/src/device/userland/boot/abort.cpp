@@ -3,7 +3,7 @@
 #endif
 #include <stdlib.h>
 
-void abort() {
+void __attribute__((noinline)) abort() {
 #if DEBUG
   while (true) {
   }

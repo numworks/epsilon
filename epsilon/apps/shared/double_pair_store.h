@@ -62,7 +62,7 @@ class DoublePairStore {
            bool setOtherColumnToDefaultIfEmpty = false);
   /* TODO: The "delayUpdate" parameter is kept for consistency but is currently
    * always called with true. Should it be removed ? */
-  bool setList(Poincare::SystemExpression& List, int series, int i,
+  bool setList(Poincare::SystemExpression list, int series, int i,
                bool delayUpdate = false,
                bool setOtherColumnToDefaultIfEmpty = false);
 

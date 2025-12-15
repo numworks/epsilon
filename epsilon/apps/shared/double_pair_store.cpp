@@ -130,7 +130,7 @@ bool DoublePairStore::set(double f, int series, int i, int j, bool delayUpdate,
   return updateSeries(series, delayUpdate);
 }
 
-bool DoublePairStore::setList(SystemExpression& list, int series, int i,
+bool DoublePairStore::setList(SystemExpression list, int series, int i,
                               bool delayUpdate,
                               bool setOtherColumnToDefaultIfEmpty) {
   /* Approximate the list to turn it into list of doubles since we do not

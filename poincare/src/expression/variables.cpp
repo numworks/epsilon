@@ -311,15 +311,15 @@ bool Variables::HasVariable(const Tree* e, const Tree* variable) {
   return HasVariable(e, Id(variable));
 }
 
-bool Variables::HasVariable(const Tree* e, int id) {
-  if (IsVariableWithId(e, id)) {
+bool Variables::HasVariable(const Tree* e, int id, bool checkForRandom) {
+  if (IsVariableWithId(e, id) || (checkForRandom && e->isRandomized())) {
     return true;
   }
   bool isParametric = e->isParametric();
   for (IndexedChild<const Tree*> child : e->indexedChildren()) {
     int updatedId =
         id + (isParametric && Parametric::IsFunctionIndex(child.index, e));
-    if (HasVariable(child, updatedId)) {
+    if (HasVariable(child, updatedId, checkForRandom)) {
       return true;
     }
   }

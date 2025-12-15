@@ -98,7 +98,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
           TreeRef set = SharedTreeStack->pushDepList(numberOfDependencies);
           for (int j = 0; j < numberOfDependencies; j++) {
             if (Variables::HasVariable(childSet->child(0),
-                                       Parametric::k_localVariableId)) {
+                                       Parametric::k_localVariableId, true)) {
               /* Clone the entire parametric tree with detached dependency
                * instead of child */
               e->cloneNode();

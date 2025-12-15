@@ -58,7 +58,8 @@ bool HasVariables(const Tree* e);
 // On projected expressions
 bool IsVariableWithId(const Tree* e, int id);
 bool HasVariable(const Tree* e, const Tree* variable);
-bool HasVariable(const Tree* e, int id);
+// if [checkForRandom] is true, also return true if a Random node is found
+bool HasVariable(const Tree* e, int id, bool checkForRandom = false);
 
 // Replace occurrences of variable with value and reduce inside e
 bool Replace(Tree* e, const Tree* variable, const Tree* value, bool reduce);

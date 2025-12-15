@@ -40,20 +40,20 @@ bool ExpressionParameterController::textFieldDidFinishEditing(
   const char* text = textField->draftText();
   UserExpression parsedExpression =
       UserExpression::Parse(text, App::app()->localContext());
-  if (parsedExpression.isUninitialized()) {
-    setParameterAtIndex(innerSelectedRow(), ExpressionOrFloat());
-  } else {
-    if (!Poincare::Dimension(parsedExpression).isScalar()) {
-      App::app()->displayWarning(I18n::Message::UndefinedValue);
-      return false;
-    }
-    ExpressionOrFloat currentExpression =
-        ExpressionOrFloat::Builder(parsedExpression.cloneAndTrySimplify({}),
-                                   PoincareHelpers::ApproximateToRealScalar);
-    if (hasUndefinedValue(text, currentExpression, innerSelectedRow()) ||
-        !setParameterAtIndex(innerSelectedRow(), currentExpression)) {
-      return false;
-    }
+  bool isInitialized = !parsedExpression.isUninitialized();
+
+  if (isInitialized && !Poincare::Dimension(parsedExpression).isScalar()) {
+    App::app()->displayWarning(I18n::Message::UndefinedValue);
+    return false;
+  }
+  ExpressionOrFloat currentExpression =
+      isInitialized
+          ? ExpressionOrFloat::Builder(parsedExpression.cloneAndTrySimplify({}),
+                                       PoincareHelpers::ApproximateToRealScalar)
+          : ExpressionOrFloat{};
+  if (hasUndefinedValue(text, currentExpression, innerSelectedRow()) ||
+      !setParameterAtIndex(innerSelectedRow(), currentExpression)) {
+    return false;
   }
   m_selectableListView.reloadSelectedCell();
   m_selectableListView.reloadData();

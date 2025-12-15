@@ -179,10 +179,15 @@ bool Dimension::DeepCheckListLength(
       }
       return true;
     }
+    case Type::DepList:
+      // List length does not need to be coherent in DepLists
+      return true;
     default: {
       assert(!e->isListToScalar());
       int thisLength = k_nonListListLength;
-      for (int i = 0; i < e->numberOfChildren(); i++) {
+      /* Only check the first child for a Dep node: the dependencies can have a
+       * different length. */
+      for (int i = 0; i < (e->isDep() ? 1 : e->numberOfChildren()); i++) {
         if (childLength[i] == k_nonListListLength) {
           continue;
         }

@@ -67,16 +67,14 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
       Poincare::SymbolHelper::BuildSequence(
           name, Poincare::SymbolHelper::SystemSymbol());
   function.replaceSymbolWithUnknown(sequenceSymbol);
-  bool reductionFailure = false;
   Poincare::ProjectionContext projCtx = {
       .m_complexFormat =
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = App::app()->localContext()};
-  Poincare::SystemExpression reducedFunction =
-      function.cloneAndReduce(projCtx, &reductionFailure);
-  assert(!reductionFailure);
+  Poincare::SystemExpression reducedFunction = function.cloneAndReduce(projCtx);
+  assert(!reducedFunction.isFailedSimplification());
   Poincare::PreparedFunction preparedFunction =
       reducedFunction.getPreparedFunction(Shared::Function::k_unknownName);
   Curve2DEvaluation<float> evaluateFunction = [](float t, const void* model,

@@ -367,10 +367,7 @@ bool AdditionalResultsHelper::HasPositiveInteger(
 // True if reduced output is a rational but not an integer
 bool AdditionalResultsHelper::HasRational(
     const Poincare::UserExpression exactOutput) {
-  bool reductionFailure = false;
-  SystemExpression e =
-      exactOutput.cloneAndReduce({.m_advanceReduce = false}, &reductionFailure);
-  assert(!reductionFailure);
+  SystemExpression e = exactOutput.cloneAndReduce({.m_advanceReduce = false});
   return (!e.tree()->isInteger() && e.tree()->isRational());
 }
 

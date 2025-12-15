@@ -24,11 +24,8 @@ void RationalListController::computeAdditionalResults(
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
   UserExpression e = exactOutput;
   assert(!e.isUninitialized());
-  bool reductionFailure = false;
-  SystemExpression eReduced =
-      e.cloneAndReduce({.m_advanceReduce = false}, &reductionFailure);
-  assert(!reductionFailure);
-  assert(eReduced.tree()->isRational());
+  SystemExpression eReduced = e.cloneAndReduce({.m_advanceReduce = false});
+  assert(!eReduced.isFailedSimplification() && eReduced.tree()->isRational());
 
   Layout approximateFraction =
       AdditionalResultsHelper::CreateRationalApproximation(eReduced);

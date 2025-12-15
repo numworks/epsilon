@@ -51,9 +51,9 @@ void DoublePairStore::initListsFromStorage(bool delayUpdate) {
         continue;
       }
 
-      bool reductionFailure = false;
-      setList(e.cloneAndReduce({}, &reductionFailure), s, i, true);
-      assert(!reductionFailure);
+      SystemExpression reducedList = e.cloneAndReduce({});
+      assert(!reducedList.isFailedSimplification());
+      setList(reducedList, s, i, true);
     }
     updateSeries(s, delayUpdate);
   }

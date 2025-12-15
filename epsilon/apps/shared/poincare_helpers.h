@@ -138,13 +138,10 @@ inline Poincare::SystemExpression CloneAndReduce(
     Poincare::UserExpression e, const Poincare::SymbolContext& symbolContext,
     Poincare::ComplexFormat complexFormat, Poincare::AngleUnit angleUnit,
     bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
-    Poincare::SymbolicComputation symbolicComputation, bool* reductionFailure) {
-  assert(reductionFailure);
-  return e.cloneAndReduce(
-      ProjectionContextForParameters(e, symbolContext, complexFormat, angleUnit,
-                                     updateComplexFormatWithExpression, target,
-                                     symbolicComputation),
-      reductionFailure);
+    Poincare::SymbolicComputation symbolicComputation) {
+  return e.cloneAndReduce(ProjectionContextForParameters(
+      e, symbolContext, complexFormat, angleUnit,
+      updateComplexFormatWithExpression, target, symbolicComputation));
 }
 
 // ===== Misc =====

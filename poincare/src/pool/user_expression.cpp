@@ -178,14 +178,10 @@ UserExpression UserExpression::cloneAndTrySimplify(
 }
 
 SystemExpression UserExpression::cloneAndReduce(
-    const ProjectionContext& projectionContext, bool* reductionFailure) const {
-  assert(reductionFailure);
+    const ProjectionContext& projectionContext) const {
   Tree* e = tree()->cloneTree();
-  bool reductionSuccess = Simplification::Simplify(e, projectionContext, false);
-  if (reductionFailure) {
-    /* TODO: In case of reductionFailure, returned expression is actually a
-     * UserExpression ([this]). */
-    *reductionFailure = !reductionSuccess;
+  if (!Simplification::Simplify(e, projectionContext, false)) {
+    e->cloneTreeOverTree(KFailedSimplification);
   }
   return SystemExpression::Builder(e);
 }

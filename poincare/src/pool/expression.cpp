@@ -154,6 +154,9 @@ bool Expression::isUndefined() const {
   return tree()->isUndefined() && !tree()->isNonReal();
 }
 bool Expression::isUndefinedOrNonReal() const { return tree()->isUndefined(); }
+bool Expression::isFailedSimplification() const {
+  return tree()->isUndefFailedSimplification();
+}
 
 bool Expression::isMatrix() const { return tree()->isMatrix(); }
 

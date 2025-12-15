@@ -29,16 +29,14 @@ void FunctionListController::computeAdditionalResults(
       AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
           input, k_symbolName, &abscissa);
 
-  bool reductionFailure = false;
   PreparedFunction simplifiedExpression =
       PoincareHelpers::CloneAndReduce(
           inputClone, App::app()->localContext(), complexFormat(), angleUnit(),
           false, ReductionTarget::User,
-          SymbolicComputation::ReplaceDefinedSymbols, &reductionFailure)
+          SymbolicComputation::ReplaceDefinedSymbols)
           .getPreparedFunction(k_symbolName, true);
-  /* Reduction should always succeed when in the additional results, as they are
-   * blocked if the Calculation had a reduction failure. */
-  assert(!simplifiedExpression.isUninitialized() && !reductionFailure);
+  assert(!simplifiedExpression.isUninitialized() &&
+         !simplifiedExpression.isFailedSimplification());
 
   /* Use the approximate expression to compute the ordinate to ensure that
    * it's coherent with the output of the calculation.

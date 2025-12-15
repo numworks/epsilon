@@ -6,6 +6,7 @@
 #include "beautification.h"
 #include "dependency.h"
 #include "k_tree.h"
+#include "random.h"
 #include "simplification.h"
 #include "systematic_reduction.h"
 #include "variables.h"
@@ -71,6 +72,10 @@ static bool ShallowExpandIntegrals(Tree* e, void* ctx) {
   const Tree* lowerBound = e->child(Parametric::k_lowerBoundIndex);
   const Tree* upperBound = e->child(Parametric::k_upperBoundIndex);
   const Tree* integrand = e->child(Parametric::k_integrandIndex);
+  // Random in bounds are not handled here
+  if (Random::HasRandom(lowerBound) || Random::HasRandom(upperBound)) {
+    return false;
+  }
   Tree* insertAt = e->nextTree();
   // Rewrite the integrand to be able to compute it directly at abscissa b - x
   Tree* upperIntegrand = RewriteIntegrandNear(integrand, upperBound);

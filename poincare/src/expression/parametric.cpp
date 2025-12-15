@@ -10,6 +10,7 @@
 #include "k_tree.h"
 #include "matrix.h"
 #include "properties.h"
+#include "random.h"
 #include "systematic_reduction.h"
 #include "undefined.h"
 #include "units/unit.h"
@@ -466,6 +467,9 @@ bool Parametric::ExpandExpOfSum(Tree* e) {
                              &ctx)) {
     // KA and KF need to enter KProduct scope
     TreeRef a = PatternMatching::Create(KMult(KA_s), ctx);
+    if (Random::HasRandom(a)) {
+      return false;
+    }
     Variables::EnterScope(a);
     ctx.setNode(KA, a, 1, false, 1);
     TreeRef f = PatternMatching::Create(KMult(KF_s), ctx);

@@ -73,9 +73,11 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
       const Tree* integrandBase = integrand->child(0);
       const Tree* integrandExp = integrandBase->nextTree();
       if (integrandExp->isPositiveInteger() &&
-          Variables::IsVariableWithId(integrandBase, 0)) {
+          Variables::IsVariableWithId(integrandBase,
+                                      Parametric::k_localVariableId)) {
         /* int(x^n, x, a, b) = 1/(n+1) * (b^(n+1) - a^(n+1))
          * if n is a positive integer */
+        // No need to LeaveScope on n since it is only an integer.
         return PatternMatching::CreateReduce(
             KMult(KPow(KAdd(KC, 1_e), -1_e),
                   KAdd(KPow(KB, KAdd(KC, 1_e)),
@@ -87,12 +89,13 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
     case Type::Trig: {
       PatternMatching::Context ctx;
       if (PatternMatching::Match(integrand->child(0), KMult(KA_s, KB), &ctx) &&
-          Variables::IsVariableWithId(ctx.getTree(KB), 0)) {
+          Variables::IsVariableWithId(ctx.getTree(KB),
+                                      Parametric::k_localVariableId)) {
         Tree* constant = PatternMatching::Create(KMult(KA_s), ctx);
         if (Variables::CanEnterOrLeaveScope(constant)) {
-          // TODO: !!! Call leaveScope on constant
           /* int(sin(c*x), x, a, b) = 1/c * (cos(c*a) - cos(c*b))
            * int(cos(c*x), x, a, b) = 1/c * (sin(c*b) - sin(c*a)) */
+          Variables::LeaveScope(constant);
           bool isSin = integrand->child(1)->isOne();
           TreeRef result = PatternMatching::CreateReduce(
               KMult(KPow(KC, -1_e),
@@ -107,6 +110,7 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
           constant->removeTree();
           return result;
         }
+        constant->removeTree();
       }
     }
 

@@ -32,7 +32,7 @@ class FloatHelper {
   static bool SetSign(Tree* e, NonStrictSign sign);
 
   // e must be a Float tree with a strictly negative value
-  static Tree* PushOppositeFloatTree(const Tree* e);
+  static void ToOppositeFloat(Tree* e);
 };
 
 }  // namespace Poincare::Internal

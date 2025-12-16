@@ -408,7 +408,7 @@ bool ShallowBeautifyNegativeFloats(Tree* e, void* context) {
    * is consistent with how negative integers, rationals and decimals are
    * beautified. */
   if (e->isFloat() && Number::Sign(e).isStrictlyNegative()) {
-    e->moveTreeOverTree(Internal::FloatHelper::PushOppositeFloatTree(e));
+    FloatHelper::ToOppositeFloat(e);
     return true;
   }
   return false;

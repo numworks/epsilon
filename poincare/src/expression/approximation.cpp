@@ -789,7 +789,8 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       ctxCopy.m_localContext = &localCtx;
       // Reset random context
       ctxCopy.m_randomContext = Random::Context();
-      return PrivateToComplexRecursive<T>(e->child(2), &ctxCopy);
+      return PrivateToComplexRecursive<T>(
+          e->child(Parametric::FunctionIndex(e)), &ctxCopy);
     }
     case Type::Dim: {
       int n = Dimension::ListLength(e->child(0), ctx->m_symbolContext);
@@ -1363,7 +1364,8 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     ctxCopy.m_localContext = &localCtx;
     // Reset random context
     ctxCopy.m_randomContext = Random::Context();
-    return PrivateToBoolean<T>(e->child(2), &ctxCopy);
+    return PrivateToBoolean<T>(e->child(Parametric::FunctionIndex(e)),
+                               &ctxCopy);
   }
   if (e->isUndefBoolean()) {
     return BooleanOrUndefined::Undef();
@@ -1372,7 +1374,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     if (UndefDependencies<T>(e, ctx) != std::complex<T>(0.0)) {
       return BooleanOrUndefined::Undef();
     }
-    return PrivateToBoolean<T>(e->child(0), ctx);
+    return PrivateToBoolean<T>(Dependency::Main(e), ctx);
   }
   if (e->isUserFunction() || e->isUserSymbol()) {
     // TODO: Factorize with ToMatrix and UserNamedToComplex

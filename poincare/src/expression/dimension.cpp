@@ -241,8 +241,8 @@ int Dimension::ListLength(const Tree* e,
     case Type::List:
       return e->numberOfChildren();
     case Type::ListSequence: {
-      float n =
-          Approximation::To<float>(e->child(1), Approximation::Parameters{});
+      float n = Approximation::To<float>(e->child(Parametric::k_valueIndex),
+                                         Approximation::Parameters{});
       assert(std::floor(n) == n);
       assert(n >= 0 && n <= NAry::k_maxNumberOfChildren);
       return n;
@@ -538,7 +538,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
       return true;
     case Type::ListElement:
     case Type::ListSequence: {
-      if (hasUnitChild || !IsIntegerExpression(e->child(1))) {
+      if (hasUnitChild ||
+          !IsIntegerExpression(e->child(Parametric::k_valueIndex))) {
         return false;
       }
       float n =

@@ -16,40 +16,41 @@
 #include "units/unit.h"
 #include "variables.h"
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::Parametric {
 
-uint8_t Parametric::FunctionIndex(const Tree* e) {
-  return FunctionIndex(e->type());
-}
+uint8_t FunctionIndex(const Tree* e) { return FunctionIndex(e->type()); }
 
-uint8_t Parametric::FunctionIndex(TypeBlock type) {
+uint8_t FunctionIndex(TypeBlock type) {
   switch (type) {
     case Type::ListSequence:
     case Type::ListSequenceLayout:
-      return 2;
+      return k_listSequenceArgumentIndex;
     case Type::Diff:
     case Type::DiffLayout:
+      return k_derivandIndex;
     case Type::Integral:
     case Type::IntegralLayout:
     case Type::IntegralWithAlternatives:
+      return k_integrandIndex;
     case Type::Sum:
     case Type::SumLayout:
+      return k_sumArgumentIndex;
     case Type::Product:
     case Type::ProductLayout:
-      return k_integrandIndex;
+      return k_prodArgumentIndex;
     default:
       OMG::unreachable();
   }
 }
 
-bool Parametric::IsFunctionIndex(int i, const Tree* e) {
+bool IsFunctionIndex(int i, const Tree* e) {
   if (e->isIntegralWithAlternatives()) {
     return i >= 3;
   }
   return i == FunctionIndex(e);
 }
 
-ComplexProperties Parametric::VariableProperties(const Tree* e) {
+ComplexProperties VariableProperties(const Tree* e) {
   switch (e->type()) {
     case Type::Diff:
     case Type::Integral:
@@ -184,7 +185,7 @@ Tree* ReduceSumOrProductAux(const Tree* e, const Tree* lowerBound,
   return nullptr;
 }
 
-bool Parametric::ReduceSumOrProduct(Tree* e) {
+bool ReduceSumOrProduct(Tree* e) {
   const Tree* lowerBound = e->child(k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
   constexpr bool (*HasUserSymbol)(const Tree*) = [](const Tree* e) {
@@ -243,7 +244,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   return true;
 }
 
-bool Parametric::ExpandSum(Tree* e) {
+bool ExpandSum(Tree* e) {
   return e->isSum() &&
          // sum(f+g,k,a,b) = sum(f,k,a,b) + sum(g,k,a,b)
          (PatternMatching::MatchReplaceReduce(
@@ -253,7 +254,7 @@ bool Parametric::ExpandSum(Tree* e) {
           Explicit(e));
 }
 
-bool Parametric::ExpandProduct(Tree* e) {
+bool ExpandProduct(Tree* e) {
   return e->isProduct() &&
          // prod(f*g,k,a,b) = prod(f,k,a,b) * prod(g,k,a,b)
          (PatternMatching::MatchReplaceReduce(
@@ -282,7 +283,7 @@ bool Parametric::ExpandProduct(Tree* e) {
  *   sum(v(k), k, min(c,b), max(a,d))
  */
 
-bool Parametric::ContractSum(Tree* e) {
+bool ContractSum(Tree* e) {
   /* TODO: handle any form:
    * - KAdd(KA_s, KSum, KB_s, KMult(KSum, -1_e), KC_s)
    * - KAdd(KA_s, KMult(KSum, -1_e), KB_s, KSum, KC_s) */
@@ -346,7 +347,7 @@ bool Parametric::ContractSum(Tree* e) {
   return false;
 }
 
-bool Parametric::ContractProduct(Tree* e) {
+bool ContractProduct(Tree* e) {
   /* TODO: handle any form:
    * - KMult(KA_s, KProduct, KB_s, KPow(KProduct, -1_e), KC_s)
    * - KMult(KA_s, KPow(KProduct, -1_e), KB_s, KProduct, KC_s) */
@@ -411,7 +412,7 @@ bool Parametric::ContractProduct(Tree* e) {
   return false;
 }
 
-bool Parametric::Explicit(Tree* e) {
+bool Explicit(Tree* e) {
   if (!(e->isSum() || e->isProduct())) {
     return false;
   }
@@ -458,7 +459,7 @@ bool Parametric::Explicit(Tree* e) {
   return true;
 }
 
-bool Parametric::ExpandExpOfSum(Tree* e) {
+bool ExpandExpOfSum(Tree* e) {
   // TODO: factorize with AdvancedOperation::ExpandExp
   // exp(a*sum(f(k),k,m,n)*b) = product(exp(a*f(k)*b),k,m,n)
   PatternMatching::Context ctx;
@@ -482,11 +483,11 @@ bool Parametric::ExpandExpOfSum(Tree* e) {
   return false;
 }
 
-bool Parametric::ContractProductOfExp(Tree* e) {
+bool ContractProductOfExp(Tree* e) {
   // TODO: factorize with AdvancedOperation::ContractExp
   // product(exp(f(k)),k,m,n) = exp(sum(f(k),k,m,n))
   return PatternMatching::MatchReplaceReduce(e, KProduct(KA, KB, KC, KExp(KD)),
                                              KExp(KSum(KA, KB, KC, KD)));
 }
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Parametric

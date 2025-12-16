@@ -7,44 +7,64 @@ namespace Poincare::Internal {
 
 /* In nodes that introduce a variable, the variable is the first child, the
  * child expression last and bounds are in between. The variable is always
- * refered as Variable 0 in the child expression. */
+ * referred as Variable 0 in the child expression. */
 
-class Parametric {
- public:
-  static bool ReduceSumOrProduct(Tree* e);
-  static bool ExpandSum(Tree* e);
-  static bool ExpandProduct(Tree* e);
-  static bool ContractSum(Tree* e);
-  static bool ContractProduct(Tree* e);
-  static bool Explicit(Tree* e);
-  static bool ExpandExpOfSum(Tree* e);
-  static bool ContractProductOfExp(Tree* e);
+namespace Parametric {
 
-  // Accepts layout and expressions
-  static bool IsFunctionIndex(int i, const Tree* e);
-  static uint8_t FunctionIndex(const Tree* e);
-  static uint8_t FunctionIndex(TypeBlock type);
+bool ReduceSumOrProduct(Tree* e);
+bool ExpandSum(Tree* e);
+bool ExpandProduct(Tree* e);
+bool ContractSum(Tree* e);
+bool ContractProduct(Tree* e);
+bool Explicit(Tree* e);
+bool ExpandExpOfSum(Tree* e);
+bool ContractProductOfExp(Tree* e);
 
-  static ComplexProperties VariableProperties(const Tree* e);
+// Accepts layout and expressions
+bool IsFunctionIndex(int i, const Tree* e);
+uint8_t FunctionIndex(const Tree* e);
+uint8_t FunctionIndex(TypeBlock type);
 
-  constexpr static ComplexProperties k_discreteVariableProperties =
-      ComplexProperties::RealInteger();
-  /* TODO: Should instead depend on the bounds for integral and symbol value for
-   * derivation */
-  constexpr static ComplexProperties k_continuousVariableProperties =
-      ComplexProperties::Real();
+ComplexProperties VariableProperties(const Tree* e);
 
-  /* WARNING: For all parametric, the function/integrand node is the last child
-   * in the layout tree, but is the first child when the 1D layout is built.
-   * This behaviour is scattered around the codebase (mainly in the layoutter
-   * and the parser). */
+constexpr static ComplexProperties k_discreteVariableProperties =
+    ComplexProperties::RealInteger();
+/* TODO: Should instead depend on the bounds for integral and symbol value for
+ * derivation */
+constexpr static ComplexProperties k_continuousVariableProperties =
+    ComplexProperties::Real();
 
-  constexpr static uint8_t k_localVariableId = 0;
-  constexpr static uint8_t k_variableIndex = 0;
+/* Note: Incidentally, because 2D layout are organised the same, these indexes
+ * are the same as in poincare/src/layout/indices.h. They may conflict if both
+ * files are included. */
+constexpr static uint8_t k_localVariableId = 0;
+constexpr static uint8_t k_variableIndex = 0;
 
-  constexpr static uint8_t k_lowerBoundIndex = 1;
-  constexpr static uint8_t k_upperBoundIndex = 2;
-  constexpr static uint8_t k_integrandIndex = 3;
-};
+/* WARNING: For all parametric, the function/integrand node is the last child in
+ * the layout tree, but is the first child when the 1D layout is built. This
+ * behaviour is scattered around the codebase (mainly in the layouter and the
+ * parser). */
+
+// Sum
+constexpr static uint8_t k_sumArgumentIndex = 3;
+// Product
+constexpr static uint8_t k_prodArgumentIndex = 3;
+// Diff
+constexpr static uint8_t k_derivandIndex = 3;
+// Integral and IntegralWithAlternatives
+constexpr static uint8_t k_integrandIndex = 3;
+// ListSequence
+constexpr static uint8_t k_listSequenceArgumentIndex = 2;
+
+// Sum, Product, Integral, and IntegralWithAlternatives
+constexpr static uint8_t k_lowerBoundIndex = 1;
+constexpr static uint8_t k_upperBoundIndex = 2;
+// Diff and ListSequence
+constexpr static uint8_t k_valueIndex = 1;
+
+// Diff
+constexpr static uint8_t k_orderIndex = 2;
+
+}  // namespace Parametric
 
 }  // namespace Poincare::Internal

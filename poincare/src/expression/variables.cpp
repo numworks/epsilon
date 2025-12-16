@@ -1,6 +1,7 @@
 #include "variables.h"
 
 #include <omg/unreachable.h>
+#include <poincare/src/expression/parametric.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <poincare/symbol_context.h>
@@ -308,7 +309,13 @@ bool Variables::HasVariables(const Tree* e) {
 bool Variables::HasVariable(const Tree* e, const Tree* variable) {
   // TODO: variable must have the same scope as e
   assert(variable->isVar());
-  return HasVariable(e, Id(variable));
+  return Private::HasVariableOrMaybeRandom(e, Id(variable), false);
+}
+
+bool Variables::CanEnterOrLeaveScope(const Tree* e) {
+  // Local variables and random nodes cannot enter or leave scope.
+  return !Private::HasVariableOrMaybeRandom(e, Parametric::k_localVariableId,
+                                            true);
 }
 
 bool Variables::Private::HasVariableOrMaybeRandom(const Tree* e, int id,

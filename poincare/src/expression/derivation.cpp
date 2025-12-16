@@ -7,11 +7,10 @@
 #include "dependency.h"
 #include "dimension.h"
 #include "infinity.h"
+#include "integer.h"
 #include "k_tree.h"
 #include "poincare/src/memory/type_enum.h"
 #include "random.h"
-#include "rational.h"
-#include "set.h"
 #include "systematic_reduction.h"
 #include "variables.h"
 
@@ -142,7 +141,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     // TODO: is the derivative of something nonreal still nonreal?
     return derivand->cloneTree();
   }
-  if (!Variables::HasVariable(derivand, 0)) {
+  if (Variables::CanEnterOrLeaveScope(derivand)) {
     if (Infinity::IsPlusOrMinusInfinity(derivand)) {
       return KUndef->cloneTree();
     }

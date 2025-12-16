@@ -17,8 +17,10 @@ bool FloatHelper::SetSign(Tree* e, NonStrictSign sign) {
 }
 
 Tree* FloatHelper::PushOppositeFloatTree(const Tree* e) {
+  assert(e->isFloat());
   Tree* opposite = SharedTreeStack->pushOpposite();
   double value = -To(e);
+  assert(value > 0);
   if (e->isSingleFloat()) {
     SharedTreeStack->pushSingleFloat(value);
   } else {

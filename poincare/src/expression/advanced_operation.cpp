@@ -513,51 +513,53 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
 #if POINCARE_SUM_AND_PRODUCT
   // Binomial theorem
   // (A + B?)^n = sum(binomial(n, k) * A^k * B^(n-k), k, 0, n)
-  bool matched = PatternMatching::Match(e, KPow(KAdd(KA, KB_p), KC), &ctx) &&
-                 !ctx.getTree(KC)->isMinusOne() && !Random::HasRandom(e);
-  assert(!matched || ctx.getTree(KC)->isInteger());
-  if (matched) {
-    IntegerHandler exp = Integer::Handler(ctx.getTree(KC));
-    assert(!exp.isMinusOne());
-    exp.setSign(NonStrictSign::Positive);
-    // Do not expand power strictly greater than 9
-    matched = IntegerHandler::Compare(exp, IntegerHandler(9)) <= 0;
+  if (!PatternMatching::Match(e, KPow(KAdd(KA, KB_p), KC), &ctx) ||
+      ctx.getTree(KC)->isMinusOne() || Random::HasRandom(e)) {
+    return false;
   }
-  if (matched) {
-    // a^n and b^n are out of the sum to avoid dependencies in a^0 and b^0
-    bool inverse = ctx.getTree(KC)->isNegativeInteger();
-    /* a, b and n requires 2 trees each:
-     * - one outside any scope (resp.: KA, KB and KC)
-     * - one in KSum scope     (resp.: KD, KE and KF)
-     */
-    TreeRef scopedKA = ctx.getTree(KA)->cloneTree();
-    Variables::EnterScope(scopedKA);
-    ctx.setNode(KD, scopedKA, 1, false, 1);
-    TreeRef scopedKB = PatternMatching::Create(KAdd(KB_p), ctx);
-    Variables::EnterScope(scopedKB);
-    ctx.setNode(KE, scopedKB, 1, false, 1);
-    // No need to clone and enter scope with KC since it contains no variables
-    assert(ctx.getTree(KC)->isInteger());
-    ctx.setNode(KF, ctx.getTree(KC), 1, false, 1);
-    // Use Abs(KC) and Abs(KF) since [inverse] handles negative exponents
-    e->moveTreeOverTree(PatternMatching::CreateReduce(
-        KAdd(KPow(KA, KAbs(KC)),
-             KSum("k"_e, 1_e, KAdd(KAbs(KC), -1_e),
-                  KMult(KBinomial(KAbs(KF), KVarK), KPow(KD, KVarK),
-                        KPow(KE, KAdd(KAbs(KF), KMult(-1_e, KVarK))))),
-             KPow(KAdd(KB_p), KAbs(KC))),
-        ctx));
-    // Removing scopedKA, and scopedKB
-    SharedTreeStack->flushFromBlock(scopedKA);
-    Parametric::Explicit(e);
-    if (inverse) {
-      PatternMatching::MatchReplaceReduce(e, KA, KPow(KA, -1_e));
-    }
-    return true;
-  }
-#endif
+  assert(ctx.getTree(KC)->isInteger());
+  IntegerHandler exp = Integer::Handler(ctx.getTree(KC));
+  assert(!exp.isMinusOne());
+  exp.setSign(NonStrictSign::Positive);
 
+  if (IntegerHandler::Compare(exp, IntegerHandler(9)) > 0) {
+    // Do not expand power strictly greater than 9
+    return false;
+  }
+
+  // a^n and b^n are out of the sum to avoid dependencies in a^0 and b^0
+  bool inverse = ctx.getTree(KC)->isNegativeInteger();
+  /* a, b and n requires 2 trees each:
+   * - one outside any scope (resp.: KA, KB and KC)
+   * - one in KSum scope     (resp.: KD, KE and KF)
+   */
+  TreeRef scopedKA = ctx.getTree(KA)->cloneTree();
+  Variables::EnterScope(scopedKA);
+  ctx.setNode(KD, scopedKA, 1, false, 1);
+  TreeRef scopedKB = PatternMatching::Create(KAdd(KB_p), ctx);
+  Variables::EnterScope(scopedKB);
+  ctx.setNode(KE, scopedKB, 1, false, 1);
+  // No need to clone and enter scope with KC since it contains no variables
+  assert(ctx.getTree(KC)->isInteger());
+  ctx.setNode(KF, ctx.getTree(KC), 1, false, 1);
+  // Use Abs(KC) and Abs(KF) since [inverse] handles negative exponents
+  e->moveTreeOverTree(PatternMatching::CreateReduce(
+      KAdd(KPow(KA, KAbs(KC)),
+           KSum("k"_e, 1_e, KAdd(KAbs(KC), -1_e),
+                KMult(KBinomial(KAbs(KF), KVarK), KPow(KD, KVarK),
+                      KPow(KE, KAdd(KAbs(KF), KMult(-1_e, KVarK))))),
+           KPow(KAdd(KB_p), KAbs(KC))),
+      ctx));
+  // Removing scopedKA, and scopedKB
+  SharedTreeStack->flushFromBlock(scopedKA);
+  Parametric::Explicit(e);
+  if (inverse) {
+    PatternMatching::MatchReplaceReduce(e, KA, KPow(KA, -1_e));
+  }
+  return true;
+#else
   return false;
+#endif
 }
 
 bool AdvancedOperation::ExpandCeilFloor(Tree* e) {

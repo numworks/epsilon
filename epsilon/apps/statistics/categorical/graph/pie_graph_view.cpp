@@ -10,28 +10,17 @@ PieGraphViewDataSource::PieGraphViewDataSource(Store* store)
       m_isSelectionActive(true) {}
 
 void PieGraphViewDataSource::toggleSelection(bool select) {
-  if (m_isSelectionActive != select) {
-    m_isSelectionActive = select;
-    if (m_isSelectionActive) {
-      m_selectedCategoryOriginalColor = m_insideColors[m_selectedCategory];
-      m_insideColors[m_selectedCategory] = k_selectedColor;
-    } else {
-      m_insideColors[m_selectedCategory] = m_selectedCategoryOriginalColor;
-    }
-  }
+  m_isSelectionActive = select;
 }
 
 int PieGraphViewDataSource::nextCategory(int direction) {
   assert(m_isSelectionActive);  // Cannot change category if not selected
-  m_insideColors[m_selectedCategory] = m_selectedCategoryOriginalColor;
   if (direction < 0 && m_selectedCategory == 0) {
     m_selectedCategory = m_numberOfActiveCategories - 1;
   } else {
     m_selectedCategory += direction < 0 ? -1 : 1;
     m_selectedCategory %= m_numberOfActiveCategories;
   }
-  m_selectedCategoryOriginalColor = m_insideColors[m_selectedCategory];
-  m_insideColors[m_selectedCategory] = k_selectedColor;
   return m_toGlobalCategories[m_selectedCategory];
 }
 
@@ -59,10 +48,6 @@ int PieGraphViewDataSource::setGroup(int group) {
     if (m_selectedCategory == UINT8_MAX) {
       // Set the selectedCategory to the first active category
       m_selectedCategory = localCatIndex;
-      if (m_isSelectionActive) {
-        m_selectedCategoryOriginalColor = m_insideColors[localCatIndex];
-        m_insideColors[localCatIndex] = k_selectedColor;
-      }
     }
     ++m_numberOfActiveCategories;
   }
@@ -131,7 +116,6 @@ KDColor PieGraphView::pointColor(KDCoordinate x, KDCoordinate y,
     // Outside the disk and outside anti-aliased border range
     return k_outsideColor;
   }
-  float isCloseToRing = std::fabs(distanceToRing) < k_border;
 
   // Clockwise angle: 0° is Up, 90° is Right
   float angle =
@@ -141,13 +125,28 @@ KDColor PieGraphView::pointColor(KDCoordinate x, KDCoordinate y,
   for (int i = 0; i < m_numberOfActiveCategories; ++i) {
     if (angle < m_cumulatedAngles[i]) {
       // In the i-th section
+      float insideBorderWidth = (m_isSelectionActive && i == m_selectedCategory)
+                                    ? k_selectedBorder - k_border
+                                    : 0;
+      float isCloseToRing =
+          std::fabs(distanceToRing) < insideBorderWidth + k_border;
       if (!isCloseToRing) {
         // Fully inside the disk
         return m_insideColors[i];
       }
       /* Close to the anti-aliased border.
-       * Depending on sign, blending with inside or outside color */
-      uint8_t alpha = std::fabs(distanceToRing) / k_border * UINT8_MAX;
+       * Depending on sign, blending with inside or outside color. */
+      assert((distanceToRing >= 0 && distanceToRing <= k_border) ||
+             (std::fabs(distanceToRing) < insideBorderWidth) ||
+             (std::fabs(distanceToRing) - insideBorderWidth <= k_border));
+      uint8_t alpha =
+          distanceToRing >= 0
+              ? distanceToRing / k_border *
+                    UINT8_MAX  // Outside the ring, edge of the border
+          : std::fabs(distanceToRing) < insideBorderWidth
+              ? 0  // Inside the ring, inside the border
+              : (std::fabs(distanceToRing) - insideBorderWidth) / k_border *
+                    UINT8_MAX;  // Inside the ring, edge of the border
       return KDColor::Blend(
           distanceToRing < 0 ? m_insideColors[i] : k_outsideColor,
           m_borderColors[i], alpha);

@@ -28,13 +28,14 @@ class PieGraphViewDataSource {
   int setGroup(int group);
 
  protected:
-  constexpr static KDColor k_selectedColor = Escher::Palette::YellowDark;
   constexpr static KDColor k_outsideColor = KDColorWhite;
   float m_cumulatedAngles[Store::k_maxNumberOfCategory];
   uint8_t m_toGlobalCategories[Store::k_maxNumberOfCategory];
+  /* Note: Now that colors do not change depending on selection, having
+   * m_borderColors and m_insideColors might not be worth it anymore and we
+   * could use Escher::Palette::DataColor directly. */
   KDColor m_borderColors[Store::k_maxNumberOfCategory];
   KDColor m_insideColors[Store::k_maxNumberOfCategory];
-  KDColor m_selectedCategoryOriginalColor;
   Store* m_store;
   uint8_t m_selectedCategory;
   uint8_t m_numberOfActiveCategories;
@@ -56,6 +57,7 @@ class PieGraphView : public Escher::View, public PieGraphViewDataSource {
   constexpr static KDCoordinate k_radius = 70;
   constexpr static float k_fradius = static_cast<float>(k_radius);
   constexpr static float k_border = 1.f;
+  constexpr static float k_selectedBorder = 6.f;
 
   KDColor pointColor(KDCoordinate x, KDCoordinate y, KDPoint center) const;
 };

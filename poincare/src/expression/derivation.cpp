@@ -19,6 +19,10 @@ namespace Poincare::Internal {
 bool Derivation::Reduce(Tree* e) {
   // Tree's children are expected to have been reduced beforehand.
   assert(e->isDiff());
+  static_assert(Parametric::k_variableIndex == 0 &&
+                Parametric::k_variableIndex + 1 == Parametric::k_valueIndex &&
+                Parametric::k_valueIndex + 1 == Parametric::k_orderIndex &&
+                Parametric::k_orderIndex + 1 == Parametric::k_derivandIndex);
   const Tree* symbol = e->child(0);
   const Tree* symbolValue = symbol->nextTree();
   const Tree* order = symbolValue->nextTree();

@@ -405,7 +405,7 @@ bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context) {
 
 bool ShallowBeautifyNegativeFloats(Tree* e, void* context) {
   /*  Negative floats are beautified to an opposite of a positive number. This
-   * is consistent with how negative   integers, rationals and decimals are
+   * is consistent with how negative integers, rationals and decimals are
    * beautified. */
   if (e->isFloat() && Number::Sign(e).isStrictlyNegative()) {
     e->moveTreeOverTree(Internal::FloatHelper::PushOppositeFloatTree(e));

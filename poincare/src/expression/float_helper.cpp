@@ -18,7 +18,6 @@ bool FloatHelper::SetSign(Tree* e, NonStrictSign sign) {
 
 void FloatHelper::ToOppositeFloat(Tree* e) {
   assert(e->isFloat());
-  assert(To(e) < 0);
   Tree* opposite = SharedTreeStack->pushOpposite();
   Tree* valueTree = e->cloneTree();
   [[maybe_unused]] bool positiveSignWasSet =

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <poincare/properties.h>
+#include <poincare/src/expression/parametric.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/symbol_context.h>
 
@@ -64,8 +65,10 @@ bool HasVariable(const Tree* e, const Tree* variable);
 inline bool HasVariable(const Tree* e, int id) {
   return Private::HasVariableOrMaybeRandom(e, id, false);
 }
-inline bool HasVariableOrRandom(const Tree* e, int id) {
-  return Private::HasVariableOrMaybeRandom(e, id, true);
+inline bool CanEnterOrLeaveScope(const Tree* e) {
+  // Local variables and random nodes cannot enter or leave scope.
+  return !Private::HasVariableOrMaybeRandom(e, Parametric::k_localVariableId,
+                                            true);
 }
 
 // Replace occurrences of variable with value and reduce inside e

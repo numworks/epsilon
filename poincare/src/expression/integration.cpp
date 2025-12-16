@@ -15,7 +15,7 @@ namespace Poincare::Internal {
 
 static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
                        const Tree* integrand, bool force) {
-  if (!Variables::HasVariableOrRandom(integrand, 0)) {
+  if (Variables::CanEnterOrLeaveScope(integrand)) {
     // int(c, x, a, b) = c*(b-a) if c does not depend on x
     Tree* result = integrand->cloneTree();
     Variables::LeaveScope(result);
@@ -38,9 +38,9 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
       TreeRef constant = SharedTreeStack->pushMult(0);
       TreeRef remainingIntegrand = SharedTreeStack->pushMult(0);
       for (const Tree* child : integrand->children()) {
-        NAry::AddChild(Variables::HasVariableOrRandom(child, 0)
-                           ? remainingIntegrand
-                           : constant,
+        NAry::AddChild(Variables::CanEnterOrLeaveScope(child)
+                           ? constant
+                           : remainingIntegrand,
                        child->cloneTree());
       }
       if (constant->numberOfChildren() > 0) {

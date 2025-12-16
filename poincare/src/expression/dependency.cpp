@@ -97,8 +97,10 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
           int numberOfDependencies = childSet->numberOfChildren();
           TreeRef set = SharedTreeStack->pushDepList(numberOfDependencies);
           for (int j = 0; j < numberOfDependencies; j++) {
-            if (Variables::HasVariableOrRandom(childSet->child(0),
-                                               Parametric::k_localVariableId)) {
+            if (Variables::CanEnterOrLeaveScope(childSet->child(0))) {
+              // Dependency can be detached out of parametric's scope.
+              Variables::LeaveScope(NAry::DetachChildAtIndex(childSet, 0));
+            } else {
               /* Clone the entire parametric tree with detached dependency
                * instead of child */
               e->cloneNode();
@@ -109,9 +111,6 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
                   NAry::DetachChildAtIndex(childSet, 0);
                 }
               }
-            } else {
-              // Dependency can be detached out of parametric's scope.
-              Variables::LeaveScope(NAry::DetachChildAtIndex(childSet, 0));
             }
           }
           childSet->removeTree();

@@ -74,7 +74,6 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
       .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = App::app()->localContext()};
   Poincare::SystemExpression reducedFunction = function.cloneAndReduce(projCtx);
-  assert(!reducedFunction.isFailedSimplification());
   Poincare::PreparedFunction preparedFunction =
       reducedFunction.getPreparedFunction(Shared::Function::k_unknownName);
   Curve2DEvaluation<float> evaluateFunction = [](float t, const void* model,

@@ -71,7 +71,7 @@ class BarGraphView : public Escher::ScrollView,
     constexpr static KDCoordinate k_horizontalMargin = 20;
     constexpr static KDCoordinate k_barWidth = 20;
     constexpr static KDCoordinate k_border = 1;
-    constexpr static KDColor k_selectedColor = Escher::Palette::YellowDark;
+    constexpr static KDCoordinate k_selectedBorder = 4;
     Store* m_store;
     int m_selectedCategory;
     int m_selectedGroup;

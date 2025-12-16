@@ -89,7 +89,8 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
       if (PatternMatching::Match(integrand->child(0), KMult(KA_s, KB), &ctx) &&
           Variables::IsVariableWithId(ctx.getTree(KB), 0)) {
         Tree* constant = PatternMatching::Create(KMult(KA_s), ctx);
-        if (!Variables::HasVariable(constant, 0)) {
+        if (Variables::CanEnterOrLeaveScope(constant)) {
+          // TODO: !!! Call leaveScope on constant
           /* int(sin(c*x), x, a, b) = 1/c * (cos(c*a) - cos(c*b))
            * int(cos(c*x), x, a, b) = 1/c * (sin(c*b) - sin(c*a)) */
           bool isSin = integrand->child(1)->isOne();

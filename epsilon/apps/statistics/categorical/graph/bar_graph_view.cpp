@@ -82,25 +82,27 @@ void BarGraphView::ContentView::drawCategory(KDContext* ctx, KDRect rect,
     KDCoordinate barHeight = (value / maxValue) * k_maxBarHeight;
     KDRect barRect(xOffset, yOffset + k_maxBarHeight - barHeight, k_barWidth,
                    barHeight);
-    ctx->fillRect(barRect, m_isSelected && (category == m_selectedCategory &&
-                                            group == m_selectedGroup)
-                               ? k_selectedColor
-                               : Escher::Palette::DataColorLight[group]);
+    ctx->fillRect(barRect, Escher::Palette::DataColorLight[group]);
     // Draw borders
     KDColor borderColor = Escher::Palette::DataColor[group];
+    KDCoordinate borderWidth =
+        m_isSelected &&
+                (category == m_selectedCategory && group == m_selectedGroup)
+            ? k_selectedBorder
+            : k_border;
     if (barRect.width() > 0 && barRect.height() > 0) {
       // Left
       ctx->fillRect(KDRect(xOffset, yOffset + k_maxBarHeight - barHeight,
-                           k_border, barHeight),
+                           borderWidth, barHeight),
                     borderColor);
       // Top
       ctx->fillRect(KDRect(xOffset, yOffset + k_maxBarHeight - barHeight,
-                           k_barWidth, k_border),
+                           k_barWidth, borderWidth),
                     borderColor);
       // Right
       ctx->fillRect(
-          KDRect(xOffset + k_barWidth - k_border,
-                 yOffset + k_maxBarHeight - barHeight, k_border, barHeight),
+          KDRect(xOffset + k_barWidth - borderWidth,
+                 yOffset + k_maxBarHeight - barHeight, borderWidth, barHeight),
           borderColor);
     }
     xOffset += k_barWidth;

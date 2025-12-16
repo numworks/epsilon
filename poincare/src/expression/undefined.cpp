@@ -18,7 +18,7 @@ bool Undefined::CanBeUndefined(const Tree* e) {
 
 bool Undefined::CanHaveUndefinedChild(const Tree* e, int childIndex) {
   return !CanBeUndefined(e) || (e->isPiecewise() && childIndex % 2 == 0) ||
-         (e->isListSequence() && childIndex == 2);
+         (e->isListSequence() && Parametric::IsFunctionIndex(childIndex, e));
 }
 
 Tree* Undefined::CreateTreeWithDimensionedType(const Tree* e, Type type) {

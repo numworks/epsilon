@@ -28,7 +28,7 @@ Tree* List::GetElement(const Tree* e, int k, Tree::Operation reduction) {
       if (Random::HasRandom(e)) {
         return nullptr;
       }
-      Tree* result = e->child(2)->cloneTree();
+      Tree* result = e->child(Parametric::FunctionIndex(e))->cloneTree();
       TreeRef value = Integer::Push(k + 1);
       Variables::Replace(result, 0, value, true);
       value->removeTree();

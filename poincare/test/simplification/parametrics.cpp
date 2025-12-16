@@ -459,6 +459,9 @@ QUIZ_CASE(pcj_simplification_integral) {
   simplifies_to("int(3cos(2x)-sin(3x), x, -π,3π)", "0");
   simplifies_to("int(15×sin(12466×x),x,0,60)", "(15×(1-cos(747960)))/12466");
   simplifies_to("int(i*cos(x),x,-1,1)", "2×sin(1)×i");
+  simplifies_to("int(sin(random()*x),x,0,π)", "int(sin(random()×x),x,0,π)");
+  simplifies_to("diff(int(sin(floor(y)*x),x,0,π),y,1.2)",
+                "-2×diff(floor(y),y,6/5)");
   // Derivation of integral
   simplifies_to("diff(int(x^2*t/2,t,0,1),x,y)", "y/2");
   simplifies_to("diff(int(x^2/2+t,t,0,1),x,y)", "y");

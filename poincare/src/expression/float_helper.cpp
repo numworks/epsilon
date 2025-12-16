@@ -1,5 +1,6 @@
 #include "float_helper.h"
 
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/tree_stack.h>
 
 namespace Poincare::Internal {
@@ -18,12 +19,10 @@ bool FloatHelper::SetSign(Tree* e, NonStrictSign sign) {
 
 void FloatHelper::ToOppositeFloat(Tree* e) {
   assert(e->isFloat());
-  Tree* opposite = SharedTreeStack->pushOpposite();
-  Tree* valueTree = e->cloneTree();
   [[maybe_unused]] bool positiveSignWasSet =
-      SetSign(valueTree, NonStrictSign::Positive);
+      SetSign(e, NonStrictSign::Positive);
   assert(positiveSignWasSet);
-  e->moveTreeOverTree(opposite);
+  e->cloneNodeAtNode(KOpposite);
 }
 
 }  // namespace Poincare::Internal

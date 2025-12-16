@@ -194,14 +194,16 @@ QUIZ_CASE(pcj_approximation_power) {
   // TODO_PCJ: approximation of exp(i×π) != approximation of e^(i×π)
   approximates_to<float>("e^(i×π)", "-1", k_cartesianCtx);
   approximates_to<double>("e^(i×π)", "-1", k_cartesianCtx);
-  approximates_to<float>("e^(i×π+2)", "-7.389055", k_cartesianCtx);
+  // -7.389054 on simulator, -7.389056 on device
+  approximates_to<float>("e^(i×π+2)", "-7.38906", k_cartesianCtx, 6);
   approximates_to<double>("e^(i×π+2)", "-7.3890560989307", k_cartesianCtx);
   approximates_to<double>("(-1)^2", "1");
   approximates_to<double>("(-1)^3", "-1");
   approximates_to<float>("(-1)^(1/3)", "0.5+0.8660254×i", k_cartesianCtx);
   approximates_to<double>("(-1)^(1/3)", "0.5+0.86602540378444×i",
                           k_cartesianCtx);
-  approximates_to<float>("e^(i×π/3)", "0.5000001+0.8660254×i", k_cartesianCtx);
+  // 0.5000001+0.8660254×i on simulator, 0.5+0.8660254×i on device
+  approximates_to<float>("e^(i×π/3)", "0.5+0.866025×i", k_cartesianCtx, 6);
   approximates_to<double>("e^(i×π/3)", "0.5+0.86602540378444×i",
                           k_cartesianCtx);
   approximates_to<float>("i^(2/3)", "0.5+0.8660254×i", k_cartesianCtx);

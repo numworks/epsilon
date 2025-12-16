@@ -37,6 +37,9 @@ void GetUserSymbols(
     const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
 uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
 const Tree* ToSymbol(const Tree* variables, uint8_t id);
+// if [checkForRandom] is true, also return true if a Random node is found
+bool HasVariableOrMaybeRandom(const Tree* e, int id,
+                              bool checkForRandom = false);
 }  // namespace Private
 
 /* Push a Set with the free user symbols of the expression. Look inside
@@ -58,8 +61,12 @@ bool HasVariables(const Tree* e);
 // On projected expressions
 bool IsVariableWithId(const Tree* e, int id);
 bool HasVariable(const Tree* e, const Tree* variable);
-// if [checkForRandom] is true, also return true if a Random node is found
-bool HasVariable(const Tree* e, int id, bool checkForRandom = false);
+inline bool HasVariable(const Tree* e, int id) {
+  return Private::HasVariableOrMaybeRandom(e, id, false);
+}
+inline bool HasVariableOrRandom(const Tree* e, int id) {
+  return Private::HasVariableOrMaybeRandom(e, id, true);
+}
 
 // Replace occurrences of variable with value and reduce inside e
 bool Replace(Tree* e, const Tree* variable, const Tree* value, bool reduce);

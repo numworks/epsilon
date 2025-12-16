@@ -145,9 +145,3 @@ QUIZ_CASE(pcj_simplification_multiplication) {
   simplifies_to("((1.63871ᴇ182)^(1/256))*((1.93871ᴇ157)^(1/256))",
                 "root(1.93871×10^157,256)×root(1.63871×10^182,256)");
 }
-
-QUIZ_CASE(pcj_simplification_root) {
-  simplifies_to("root(4,3)", "root(4,3)");
-  simplifies_to("root(4,π)", "2^(2/π)");
-  simplifies_to("root(27,3)", "3");
-}

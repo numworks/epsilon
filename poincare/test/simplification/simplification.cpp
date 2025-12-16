@@ -783,6 +783,10 @@ QUIZ_CASE(pcj_simplification_roots) {
   simplifies_to("2*root(81,3)", "6*root(3,3)");
   simplifies_to("7*root(81,3)", "21*root(3,3)");
   simplifies_to("21*root(3,3)", "21*root(3,3)");
+
+  simplifies_to("root(4,3)", "root(4,3)");
+  simplifies_to("root(4,π)", "2^(2/π)");
+  simplifies_to("root(27,3)", "3");
 }
 
 QUIZ_CASE(pcj_simplification_undef) {

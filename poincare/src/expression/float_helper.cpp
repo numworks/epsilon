@@ -16,17 +16,15 @@ bool FloatHelper::SetSign(Tree* e, NonStrictSign sign) {
   return true;
 }
 
-Tree* FloatHelper::PushOppositeFloatTree(const Tree* e) {
+void FloatHelper::ToOppositeFloat(Tree* e) {
   assert(e->isFloat());
+  assert(To(e) < 0);
   Tree* opposite = SharedTreeStack->pushOpposite();
-  double value = -To(e);
-  assert(value > 0);
-  if (e->isSingleFloat()) {
-    SharedTreeStack->pushSingleFloat(value);
-  } else {
-    SharedTreeStack->pushDoubleFloat(value);
-  }
-  return opposite;
+  Tree* valueTree = e->cloneTree();
+  [[maybe_unused]] bool positiveSignWasSet =
+      SetSign(valueTree, NonStrictSign::Positive);
+  assert(positiveSignWasSet);
+  e->moveTreeOverTree(opposite);
 }
 
 }  // namespace Poincare::Internal

@@ -1474,6 +1474,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
     return m;
   }
   switch (e->type()) {
+#if POINCARE_MATRIX
     case Type::Parentheses:
       return ToMatrix<T>(e->child(0), ctx);
     case Type::Add: {
@@ -1633,6 +1634,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       definitionClone->removeTree();
       return result;
     }
+#if POINCARE_SUM_AND_PRODUCT
     case Type::Sum:
     case Type::Product: {
       // TODO: Factorize with same code in AnalysisToComplex
@@ -1680,6 +1682,8 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       child->removeTree();
       return result;
     }
+#endif
+#endif
     default:
       OMG::unreachable();
   }

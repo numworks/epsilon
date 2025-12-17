@@ -459,8 +459,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
              childDim[Parametric::k_lowerBoundIndex].isScalar() &&
              childDim[Parametric::k_upperBoundIndex].isScalar() &&
              (!e->isProduct() ||
-              childDim[Parametric::k_integrandIndex].isScalar() ||
-              childDim[Parametric::k_integrandIndex].isSquareMatrix());
+              childDim[Parametric::k_prodArgumentIndex].isScalar() ||
+              childDim[Parametric::k_prodArgumentIndex].isSquareMatrix());
 
     // Matrices
     case Type::Dim:

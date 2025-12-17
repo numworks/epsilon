@@ -517,8 +517,11 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
       ctx.getTree(KC)->isMinusOne() || Random::HasRandom(e)) {
     return false;
   }
-  assert(ctx.getTree(KC)->isInteger());
-  IntegerHandler exp = Integer::Handler(ctx.getTree(KC));
+  const Tree* expTree = ctx.getTree(KC);
+  // Since e has been reduced, expTree is an integer different from 0 or 1
+  assert(expTree->isInteger() &&
+         !expTree->isOfType({Type::MinusOne, Type::Zero, Type::One}));
+  IntegerHandler exp = Integer::Handler(expTree);
   assert(!exp.isMinusOne());
   exp.setSign(NonStrictSign::Positive);
 
@@ -528,7 +531,7 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
   }
 
   // a^n and b^n are out of the sum to avoid dependencies in a^0 and b^0
-  bool inverse = ctx.getTree(KC)->isNegativeInteger();
+  bool inverse = expTree->isNegativeInteger();
   /* a, b and n requires 2 trees each:
    * - one outside any scope (resp.: KA, KB and KC)
    * - one in KSum scope     (resp.: KD, KE and KF)
@@ -540,8 +543,8 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
   Variables::EnterScope(scopedKB);
   ctx.setNode(KE, scopedKB, 1, false, 1);
   // No need to clone and enter scope with KC since it contains no variables
-  assert(ctx.getTree(KC)->isInteger());
-  ctx.setNode(KF, ctx.getTree(KC), 1, false, 1);
+  assert(!Variables::HasVariables(expTree));
+  ctx.setNode(KF, expTree, 1, false, 1);
   // Use Abs(KC) and Abs(KF) since [inverse] handles negative exponents
   e->moveTreeOverTree(PatternMatching::CreateReduce(
       KAdd(KPow(KA, KAbs(KC)),

@@ -1547,7 +1547,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       const Tree* index = base->nextTree();
       T value = PrivateTo<T>(index, ctx);
       if (std::isnan(value) || value != std::round(value)) {
-        return KUndef->cloneTree();
+        return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
       }
       Tree* result = ToMatrix<T>(base, ctx);
       result->moveTreeOverTree(Matrix::Power(result, value, true, ctx));
@@ -1601,8 +1601,8 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       std::complex<T> undef = UndefDependencies<T>(e, ctx);
       return (undef == std::complex<T>(0.0))
                  ? ToMatrix<T>(Dependency::Main(e), ctx)
-                 : (IsNonReal(undef) ? KNonReal->cloneTree()
-                                     : KUndef->cloneTree());
+                 : Undefined::CreateTreeWithDimensionedType(
+                       e, (IsNonReal(undef) ? Type::NonReal : Type::Undef));
     }
     case Type::UserFunction:
     case Type::UserSymbol: {
@@ -1620,8 +1620,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
        * UserFunction are forbidden in dimension check anyway. */
       std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
-        /* NOTE: this is problematic as the returned tree is not isMatrix */
-        return KUndef->cloneTree();
+        return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
       }
       Tree* definitionClone = definition->cloneTree();
       // Only approximate child once and use local context.
@@ -1636,8 +1635,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
     }
     default:;
   }
-  /* NOTE: this is problematic as the returned tree is not isMatrix */
-  return KUndef->cloneTree();
+  return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
 }
 
 template <typename T>

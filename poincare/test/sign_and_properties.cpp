@@ -862,9 +862,11 @@ QUIZ_CASE(pcj_sign_set) {
   assert_sign_sets_to("0.123", NonStrictSign::Negative);
 }
 
+// Use Real complex format, unless input contains Complex elements (i, re, ...)
 void assert_projected_is_real_or_not(const char* input, bool isReal = true) {
   Tree* e = parse(input);
   ProjectionContext context;
+  Projection::UpdateComplexFormatWithExpressionInput(e, context);
   Simplification::ToSystem(e, &context);
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(properties.isReal() == isReal, input);
@@ -1010,10 +1012,9 @@ QUIZ_CASE(pcj_sign_is_real) {
   assert_projected_is_not_real("i");
 
   // Power
-  /* TODO: Should be real
-   * assert_projected_is_real("2^3.4"); */
+  assert_projected_is_real("2^3.4");
   assert_projected_is_real("(-2)^(-3)");
   assert_projected_is_not_real("i^3.4");
   assert_projected_is_not_real("2^(3.4i)");
-  assert_projected_is_not_real("(-2)^0.4");
+  assert_projected_is_real("(-2)^0.4");
 }

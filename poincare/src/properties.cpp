@@ -287,8 +287,14 @@ ComplexProperties Exponential(ComplexProperties properties) {
 }
 
 // Note: we could get more info on canBeInfinite
-ComplexProperties Power(ComplexProperties base, ComplexProperties exp,
-                        bool expIsTwo) {
+ComplexProperties Power(const Internal::Tree* e) {
+  ComplexProperties base = GetComplexProperties(e->child(0));
+  ComplexProperties exp = GetComplexProperties(e->child(1));
+  bool expIsTwo = e->child(1)->isTwo();
+  /* PowReal can either be real or "NonReal" undefined node. Ignoring NonReal
+   * allows for better properties when PowReal is defined. */
+  bool isUndefinedOrReal = e->isPowReal();
+
   if (base.isReal() && base.realSign().isStrictlyPositive() && exp.isReal() &&
       exp.realSign().isStrictlyPositive()) {
     // b^e with b and e strictly positive reals gives strictly positive real,
@@ -301,7 +307,9 @@ ComplexProperties Power(ComplexProperties base, ComplexProperties exp,
         Properties::Zero());
   }
   if (exp.canBeNonReal() || exp.canBeNonInteger()) {
-    return ComplexProperties::Unknown();
+    return isUndefinedOrReal
+               ? ComplexProperties(Properties::Unknown(), Properties::Zero())
+               : ComplexProperties::Unknown();
   }
   if (base.isNull()) {
     // 0^exp = 0
@@ -326,7 +334,8 @@ ComplexProperties Power(ComplexProperties base, ComplexProperties exp,
   }
   Properties properties =
       Properties(Sign(true, true, true), canBeNonInteger, canBeInfinite);
-  return ComplexProperties(properties, properties);
+  return ComplexProperties(properties,
+                           isUndefinedOrReal ? Properties::Zero() : properties);
 }
 
 ComplexProperties TypeProperties(ComplexProperties s) {
@@ -410,8 +419,7 @@ ComplexProperties GetComplexProperties(const Tree* e) {
     }
     case Type::PowReal:
     case Type::Pow:
-      return Power(GetComplexProperties(e->child(0)),
-                   GetComplexProperties(e->child(1)), e->child(1)->isTwo());
+      return Power(e);
     case Type::Norm:
       // Child isn't a scalar
       return ComplexProperties(Properties::Positive(), Properties::Zero());

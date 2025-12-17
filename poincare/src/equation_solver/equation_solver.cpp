@@ -410,12 +410,12 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
   for (uint8_t row = 0; row < rows; row++) {
     bool allCoefficientsNull = true;
     for (uint8_t col = 0; col < n; col++) {
-      if (allCoefficientsNull && !GetSign(coefficient).isNull()) {
+      if (allCoefficientsNull && !GetComplexProperties(coefficient).isNull()) {
         allCoefficientsNull = false;
       }
       coefficient = coefficient->nextTree();
     }
-    if (allCoefficientsNull && !GetSign(coefficient).isNull()) {
+    if (allCoefficientsNull && !GetComplexProperties(coefficient).isNull()) {
       /* Row describes an equation of the form '0=b', the system has no
        * solution. */
       matrix->removeTree();

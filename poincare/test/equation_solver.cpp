@@ -73,6 +73,7 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"1"}, {}, projCtx);
   check_solutions({"0^P"}, {}, projCtx,
                   EquationSolver::Error::EquationUnhandled);
+  check_solutions({"0", "(-sin(3))^(1/2)"}, {}, projCtx);
   check_solutions({"a-b", "b-c", "c-d", "d-f", "f-g", "g-a", "a+b+c+d+f+g+1"},
                   {"-1/6", "-1/6", "-1/6", "-1/6", "-1/6", "-1/6"}, projCtx);
   // User variables

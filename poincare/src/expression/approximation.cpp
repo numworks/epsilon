@@ -1633,7 +1633,55 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       definitionClone->removeTree();
       return result;
     }
-    default:;
+    case Type::Sum:
+    case Type::Product: {
+      // TODO: Factorize with same code in AnalysisToComplex
+      const Tree* lowerBoundChild = e->child(Parametric::k_lowerBoundIndex);
+      std::complex<T> low = PrivateToComplex<T>(lowerBoundChild, ctx);
+      if (low.imag() != 0 || (int)low.real() != low.real()) {
+        return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
+      }
+      assert(!Undefined::IsUndefined(low));
+      const Tree* upperBoundChild = lowerBoundChild->nextTree();
+      std::complex<T> up = PrivateToComplex<T>(upperBoundChild, ctx);
+      if (up.imag() != 0 || (int)up.real() != up.real()) {
+        return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
+      }
+      assert(!Undefined::IsUndefined(up));
+      int lowerBound = low.real();
+      int upperBound = up.real();
+      // Cloning here to avoid modifying function argument `e`
+      Tree* child = upperBoundChild->nextTree()->cloneTree();
+      Context ctxCopy = ctx ? *ctx : Context();
+      /* We ApproximateAndReplaceEveryScalar here to avoid approximate complex
+       * constants on every round of the sum/product computation */
+      ApproximateAndReplaceEveryScalar<T>(child, ctxCopy);
+      LocalContext localCtx = LocalContext(NAN, ctxCopy.m_localContext);
+      ctxCopy.m_localContext = &localCtx;
+      Dimension dim = Dimension::Get(child, ctxCopy.m_symbolContext);
+      assert(dim.isMatrix());
+      assert(e->isSum() || dim.isSquareMatrix());
+      TreeRef result =
+          e->isSum() ? Matrix::Zero(dim.matrix) : Matrix::Identity(dim.matrix);
+      for (int k = lowerBound; k <= upperBound; k++) {
+        ctxCopy.setLocalValue(k);
+        // Reset random context
+        ctxCopy.m_randomContext = Random::Context(true);
+        TreeRef value = ToMatrix<T>(child, &ctxCopy);
+        if (e->isSum()) {
+          result->moveTreeOverTree(
+              Matrix::Addition(result, value, true, &ctxCopy));
+        } else {
+          result->moveTreeOverTree(
+              Matrix::Multiplication(result, value, true, &ctxCopy));
+        }
+        value->removeTree();
+      }
+      child->removeTree();
+      return result;
+    }
+    default:
+      OMG::unreachable();
   }
   return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
 }

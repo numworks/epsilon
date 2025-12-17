@@ -16,7 +16,8 @@ QUIZ_CASE(pcj_approximation_addition) {
                          "[[2,4][6,8][10,12]]");
   approximates_to<double>("[[1,2+i][3,4][5,6]]+[[1,2+i][3,4][5,6]]",
                           "[[2,4+2×i][6,8][10,12]]", k_cartesianCtx);
-  approximates_to<double>("0×sum([[0]],k,2,4)^2", "undef");
+  approximates_to<double>("0×sum([[0]],k,2,4)^2", "[[0]]");
+  approximates_to<double>("sum([[k,2]]*k,k,2,4)", "[[29,18]]");
 
   // Lists
   approximates_to<float>("{1,2,3}+10", "{11,12,13}");
@@ -52,6 +53,8 @@ QUIZ_CASE(pcj_approximation_multiplication) {
       "[[1,2+i][3,4][5,6]]×[[1,2+i,3,4][5,6+i,7,8]]",
       "[[11+5×i,13+9×i,17+7×i,20+8×i][23,30+7×i,37,44][35,46+11×i,57,68]]",
       k_cartesianCtx);
+  approximates_to<double>("product([[k,2][-2,0]]*k,k,2,4)",
+                          "[[0,96][-384,-288]]");
 
   // Lists
   approximates_to<float>("{1,2,3}×10", "{10,20,30}");

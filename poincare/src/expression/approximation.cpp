@@ -642,27 +642,44 @@ std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
   }
 }
 
+struct ParametricBoundOutput {
+  int low;
+  int up;
+  bool isDefined;
+};
+
+// Extract the lower and upper bounds of a Parametric Sum or Product
+template <typename T>
+ParametricBoundOutput GetParametricBoundOutput(const Tree* e,
+                                               const Context* ctx) {
+  const Tree* lowerBoundChild = e->child(Parametric::k_lowerBoundIndex);
+  std::complex<T> low = PrivateToComplex<T>(lowerBoundChild, ctx);
+  if (low.imag() != 0 || (int)low.real() != low.real()) {
+    return {0, 0, false};
+  }
+  assert(!Undefined::IsUndefined(low));
+  const Tree* upperBoundChild = lowerBoundChild->nextTree();
+  std::complex<T> up = PrivateToComplex<T>(upperBoundChild, ctx);
+  if (up.imag() != 0 || (int)up.real() != up.real()) {
+    return {0, 0, false};
+  }
+  assert(!Undefined::IsUndefined(up));
+  return {static_cast<int>(low.real()), static_cast<int>(up.real()), true};
+}
+
 template <typename T>
 std::complex<T> AnalysisToComplex(const Tree* e, const Context* ctx) {
   switch (e->type()) {
     case Type::Sum:
     case Type::Product: {
-      const Tree* lowerBoundChild = e->child(Parametric::k_lowerBoundIndex);
-      std::complex<T> low = PrivateToComplexRecursive<T>(lowerBoundChild, ctx);
-      if (low.imag() != 0 || (int)low.real() != low.real()) {
+      ParametricBoundOutput bounds = GetParametricBoundOutput<T>(e, ctx);
+      if (!bounds.isDefined) {
         return NAN;
       }
-      assert(!Undefined::IsUndefined(low));
-      const Tree* upperBoundChild = lowerBoundChild->nextTree();
-      std::complex<T> up = PrivateToComplexRecursive<T>(upperBoundChild, ctx);
-      if (up.imag() != 0 || (int)up.real() != up.real()) {
-        return NAN;
-      }
-      assert(!Undefined::IsUndefined(up));
-      int lowerBound = low.real();
-      int upperBound = up.real();
       // Cloning here to avoid modifying function argument `e`
-      Tree* child = upperBoundChild->nextTree()->cloneTree();
+      static_assert(Parametric::k_sumArgumentIndex ==
+                    Parametric::k_prodArgumentIndex);
+      Tree* child = e->child(Parametric::k_sumArgumentIndex)->cloneTree();
       Context ctxCopy = ctx ? *ctx : Context();
       /* We ApproximateAndReplaceEveryScalar here to avoid approximating complex
        * constants on every round of the sum/product computation */
@@ -670,7 +687,7 @@ std::complex<T> AnalysisToComplex(const Tree* e, const Context* ctx) {
       LocalContext localCtx = LocalContext(NAN, ctxCopy.m_localContext);
       ctxCopy.m_localContext = &localCtx;
       std::complex<T> result = e->isSum() ? 0 : 1;
-      for (int k = lowerBound; k <= upperBound; k++) {
+      for (int k = bounds.low; k <= bounds.up; k++) {
         ctxCopy.setLocalValue(k);
         // Reset random context
         ctxCopy.m_randomContext = Random::Context(true);
@@ -1637,23 +1654,15 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
 #if POINCARE_SUM_AND_PRODUCT
     case Type::Sum:
     case Type::Product: {
-      // TODO: Factorize with same code in AnalysisToComplex
-      const Tree* lowerBoundChild = e->child(Parametric::k_lowerBoundIndex);
-      std::complex<T> low = PrivateToComplex<T>(lowerBoundChild, ctx);
-      if (low.imag() != 0 || (int)low.real() != low.real()) {
+      ParametricBoundOutput bounds = GetParametricBoundOutput<T>(e, ctx);
+      if (!bounds.isDefined) {
         return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
       }
-      assert(!Undefined::IsUndefined(low));
-      const Tree* upperBoundChild = lowerBoundChild->nextTree();
-      std::complex<T> up = PrivateToComplex<T>(upperBoundChild, ctx);
-      if (up.imag() != 0 || (int)up.real() != up.real()) {
-        return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
-      }
-      assert(!Undefined::IsUndefined(up));
-      int lowerBound = low.real();
-      int upperBound = up.real();
+      // TODO: Factorize with same code in AnalysisToComplex without slowing it
       // Cloning here to avoid modifying function argument `e`
-      Tree* child = upperBoundChild->nextTree()->cloneTree();
+      static_assert(Parametric::k_sumArgumentIndex ==
+                    Parametric::k_prodArgumentIndex);
+      Tree* child = e->child(Parametric::k_sumArgumentIndex)->cloneTree();
       Context ctxCopy = ctx ? *ctx : Context();
       /* We ApproximateAndReplaceEveryScalar here to avoid approximating complex
        * constants on every round of the sum/product computation */
@@ -1665,7 +1674,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       assert(e->isSum() || dim.isSquareMatrix());
       TreeRef result =
           e->isSum() ? Matrix::Zero(dim.matrix) : Matrix::Identity(dim.matrix);
-      for (int k = lowerBound; k <= upperBound; k++) {
+      for (int k = bounds.low; k <= bounds.up; k++) {
         ctxCopy.setLocalValue(k);
         // Reset random context
         ctxCopy.m_randomContext = Random::Context(true);
@@ -1677,6 +1686,8 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
           result->moveTreeOverTree(
               Matrix::Multiplication(result, value, true, &ctxCopy));
         }
+        /* Unlike to AnalysisToComplex, skip early undef escape case for
+         * simplicity. */
         value->removeTree();
       }
       child->removeTree();

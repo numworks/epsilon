@@ -1686,8 +1686,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
           result->moveTreeOverTree(
               Matrix::Multiplication(result, value, true, &ctxCopy));
         }
-        /* Unlike to AnalysisToComplex, skip early undef escape case for
-         * simplicity. */
+        // Unlike AnalysisToComplex, skip early undef escape case for simplicity
         value->removeTree();
       }
       child->removeTree();

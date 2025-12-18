@@ -664,7 +664,7 @@ std::complex<T> AnalysisToComplex(const Tree* e, const Context* ctx) {
       // Cloning here to avoid modifying function argument `e`
       Tree* child = upperBoundChild->nextTree()->cloneTree();
       Context ctxCopy = ctx ? *ctx : Context();
-      /* We ApproximateAndReplaceEveryScalar here to avoid approximate complex
+      /* We ApproximateAndReplaceEveryScalar here to avoid approximating complex
        * constants on every round of the sum/product computation */
       ApproximateAndReplaceEveryScalar<T>(child, ctxCopy);
       LocalContext localCtx = LocalContext(NAN, ctxCopy.m_localContext);
@@ -1655,7 +1655,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       // Cloning here to avoid modifying function argument `e`
       Tree* child = upperBoundChild->nextTree()->cloneTree();
       Context ctxCopy = ctx ? *ctx : Context();
-      /* We ApproximateAndReplaceEveryScalar here to avoid approximate complex
+      /* We ApproximateAndReplaceEveryScalar here to avoid approximating complex
        * constants on every round of the sum/product computation */
       ApproximateAndReplaceEveryScalar<T>(child, ctxCopy);
       LocalContext localCtx = LocalContext(NAN, ctxCopy.m_localContext);

@@ -121,9 +121,17 @@ class UserExpression : public Expression {
   SystemExpression approximateUserToTree(
       AngleUnit angleUnit, ComplexFormat complexFormat,
       const SymbolContext& symbolContext) const;
-  // Approximate real scalar or unit
+  // Approximate real scalar (returns NAN for non real scalars)
   template <typename T>
   T approximateToRealScalar(
+      AngleUnit angleUnit = AngleUnit::None,
+      ComplexFormat complexFormat = ComplexFormat::None,
+      const SymbolContext& symbolContext = EmptySymbolContext{}) const;
+  // Approximate scalar part of unit expression (returns NAN for non units)
+  /* TODO_PCJ: This method is almost never used, and we might prefer to split it
+   * into "removeUnit" and "approximateToRealScalar" methods */
+  template <typename T>
+  T approximateUnitToRealScalar(
       AngleUnit angleUnit = AngleUnit::None,
       ComplexFormat complexFormat = ComplexFormat::None,
       const SymbolContext& symbolContext = EmptySymbolContext{}) const;
@@ -231,6 +239,12 @@ class UserExpression : public Expression {
 
   UserExpression privateCloneAndSimplify(
       const ProjectionContext& context, bool* reductionFailure = nullptr) const;
+
+  template <typename T>
+  T privateApproximateToRealScalar(
+      AngleUnit angleUnit = AngleUnit::None,
+      ComplexFormat complexFormat = ComplexFormat::None,
+      const SymbolContext& symbolContext = EmptySymbolContext{}) const;
 };
 
 }  // namespace Poincare

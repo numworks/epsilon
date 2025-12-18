@@ -162,11 +162,9 @@ bool AdditionalResultsType::HasUnit(
   // HasUnit is only called when exactOutput has Units
   assert(exactOutput.hasUnit());
 #if 1  // TODO_PCJ
-  if (!exactOutput.dimension().isUnit()) {
-    return false;
-  }
-  // Assume units that cancel themselves have been removed by simplification.
-  double value = exactOutput.approximateToRealScalar<double>(
+  /* Assume units that cancel themselves have been removed by simplification.
+   * Returns NaN if dimension isn't unit */
+  double value = exactOutput.approximateUnitToRealScalar<double>(
       calculationPreferences.angleUnit, calculationPreferences.complexFormat);
   /* TODO_PCJ: For now we assume there will always be AdditionalOutputs to
    * display if approximation is finite. We should simplify the exact output

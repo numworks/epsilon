@@ -198,17 +198,41 @@ UserExpression UserExpression::privateCloneAndSimplify(
 }
 
 template <typename T>
-T UserExpression::approximateToRealScalar(
+T UserExpression::privateApproximateToRealScalar(
     AngleUnit angleUnit, ComplexFormat complexFormat,
     const SymbolContext& symbolContext) const {
   static_assert(std::is_floating_point_v<T>);
-  assert(Poincare::Dimension(*this, symbolContext).isScalar() ||
-         Poincare::Dimension(*this, symbolContext).isUnit());
   return Approximation::To<T>(
       tree(),
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
       Approximation::Context(angleUnit, complexFormat, symbolContext));
+}
+
+template <typename T>
+T UserExpression::approximateToRealScalar(
+    AngleUnit angleUnit, ComplexFormat complexFormat,
+    const SymbolContext& symbolContext) const {
+  static_assert(std::is_floating_point_v<T>);
+  Poincare::Dimension dimension = Poincare::Dimension(*this, symbolContext);
+  if (!dimension.isScalar()) {
+    return NAN;
+  }
+  return privateApproximateToRealScalar<T>(angleUnit, complexFormat,
+                                           symbolContext);
+}
+
+template <typename T>
+T UserExpression::approximateUnitToRealScalar(
+    AngleUnit angleUnit, ComplexFormat complexFormat,
+    const SymbolContext& symbolContext) const {
+  static_assert(std::is_floating_point_v<T>);
+  Poincare::Dimension dimension = Poincare::Dimension(*this, symbolContext);
+  if (!dimension.isUnit()) {
+    return NAN;
+  }
+  return privateApproximateToRealScalar<T>(angleUnit, complexFormat,
+                                           symbolContext);
 }
 
 template <typename T>
@@ -227,10 +251,6 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
   bool reductionFailure;
   exp = exp.cloneAndSimplify(ctx, &reductionFailure);
   assert(!exp.isUninitialized());
-  Poincare::Dimension dimension = Poincare::Dimension(exp, symbolContext);
-  if (!dimension.isScalar()) {
-    return NAN;
-  }
   return exp.approximateToRealScalar<T>(ctx.m_angleUnit, ctx.m_complexFormat,
                                         symbolContext);
 }
@@ -624,9 +644,17 @@ template UserExpression UserExpression::cloneAndApproximate<float>(
     ProjectionContext&) const;
 template UserExpression UserExpression::cloneAndApproximate<double>(
     ProjectionContext&) const;
+template float UserExpression::privateApproximateToRealScalar<float>(
+    AngleUnit, ComplexFormat, const SymbolContext&) const;
+template double UserExpression::privateApproximateToRealScalar<double>(
+    AngleUnit, ComplexFormat, const SymbolContext&) const;
 template float UserExpression::approximateToRealScalar<float>(
     AngleUnit, ComplexFormat, const SymbolContext&) const;
 template double UserExpression::approximateToRealScalar<double>(
+    AngleUnit, ComplexFormat, const SymbolContext&) const;
+template float UserExpression::approximateUnitToRealScalar<float>(
+    AngleUnit, ComplexFormat, const SymbolContext&) const;
+template double UserExpression::approximateUnitToRealScalar<double>(
     AngleUnit, ComplexFormat, const SymbolContext&) const;
 template bool UserExpression::hasDefinedComplexApproximation<float>(
     AngleUnit, ComplexFormat, const SymbolContext&, float*, float*) const;

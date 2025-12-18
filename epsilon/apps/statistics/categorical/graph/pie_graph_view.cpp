@@ -1,5 +1,6 @@
 #include "pie_graph_view.h"
 
+#include <algorithm>
 #include <cmath>
 
 namespace Statistics::Categorical {
@@ -106,6 +107,12 @@ static float Norm(float centeredX, float centeredY) {
 
 KDColor PieGraphView::pointColor(KDCoordinate x, KDCoordinate y,
                                  KDPoint center) const {
+  /* Layout of the pie graph colors:
+   * center      k_fradius-insideBorderWidth   k_fradius+k_border
+   * |                        |                        |
+   * | inside color  | blend  | border color  | blend  | outside color |
+   *                 |                        |
+   * k_fradius-insideBorderWidth-k_border  k_fradius (ring)          */
   KDCoordinate centeredX = x - center.x();
   KDCoordinate centeredY =
       center.y() - y;  // inverted because Y grows downwards on the screen
@@ -128,25 +135,22 @@ KDColor PieGraphView::pointColor(KDCoordinate x, KDCoordinate y,
       float insideBorderWidth = (m_isSelectionActive && i == m_selectedCategory)
                                     ? k_selectedBorder - k_border
                                     : 0;
-      float isCloseToRing =
-          std::fabs(distanceToRing) < insideBorderWidth + k_border;
-      if (!isCloseToRing) {
+      if (-distanceToRing > insideBorderWidth + k_border) {
         // Fully inside the disk
         return m_insideColors[i];
       }
-      /* Close to the anti-aliased border.
+      if (distanceToRing < 0 && -distanceToRing < insideBorderWidth) {
+        // Fully inside the border
+        return m_borderColors[i];
+      }
+      /* Close to the anti-aliased edge of the border.
        * Depending on sign, blending with inside or outside color. */
-      assert((distanceToRing >= 0 && distanceToRing <= k_border) ||
-             (std::fabs(distanceToRing) < insideBorderWidth) ||
-             (std::fabs(distanceToRing) - insideBorderWidth <= k_border));
-      uint8_t alpha =
-          distanceToRing >= 0
-              ? distanceToRing / k_border *
-                    UINT8_MAX  // Outside the ring, edge of the border
-          : std::fabs(distanceToRing) < insideBorderWidth
-              ? 0  // Inside the ring, inside the border
-              : (std::fabs(distanceToRing) - insideBorderWidth) / k_border *
-                    UINT8_MAX;  // Inside the ring, edge of the border
+      float distanceToEdge = distanceToRing >= 0
+                                 ? distanceToRing
+                                 : -distanceToRing - insideBorderWidth;
+      assert(distanceToEdge >= 0);
+      assert(distanceToEdge <= k_border);
+      uint8_t alpha = distanceToEdge / k_border * UINT8_MAX;
       return KDColor::Blend(
           distanceToRing < 0 ? m_insideColors[i] : k_outsideColor,
           m_borderColors[i], alpha);

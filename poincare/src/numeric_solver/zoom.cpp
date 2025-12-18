@@ -334,7 +334,7 @@ void Zoom<T>::fitMagnitude(Function2D<T> f, const void* model,
     if (std::isnan(yAbs)) {
       continue;
     }
-    // Translate by one to mitigate the effect of small values.
+    // NOTE: Translate by +1 to mitigate the effect of small values.
     T yLog = std::log(yAbs + static_cast<T>(1.));
     if (y < static_cast<T>(0.)) {
       nSum += yLog;
@@ -349,11 +349,11 @@ void Zoom<T>::fitMagnitude(Function2D<T> f, const void* model,
       vertical ? m_magnitudeRange.x() : m_magnitudeRange.y();
   T yMax = sample.max();
   /* Formula: mean = e^(logMean + 1) - 1
-   * - We add 1 inside the exp (i.e. mulitply by e) so that linear function y=x
+   * - We add 1 inside the exp (i.e. multiply by e) so that linear function y=x
    * has a mean of the same order of magnitude as its maximum.
    * (Geometric mean of y=x on [0; N] is N/e)
    * - We remove 1 outside the exponential to compensate for the earlier
-   * translation of +1
+   * translation of +1 in the for-loop above (see "NOTE").
    */
   if (pPop > 0) {
     assert(cropOutliers);
@@ -609,7 +609,7 @@ T Zoom<T>::maxNormalizationRatio(bool xAxis) const {
   /* Clamp to avoid extreme ratios. The value defaultRatio^3 is chosen because
    * it's the symmetric of a ratio of 1.0 on the other axis.
    * If one of the max ratios is below 1, it means the normal ratio is above
-   * defaultRatio^2, which mean the other max ratio is above defaultRatio^3.
+   * defaultRatio^2, which means the other max ratio is above defaultRatio^3.
    * */
   constexpr T k_cubedMaxNormalizationRatio = k_defaultMaxNormalizationRatio *
                                              k_defaultMaxNormalizationRatio *
@@ -697,7 +697,7 @@ Range2D<T> Zoom<T>::prettyRange(bool forceNormalization) const {
    *   the curve.
    * - is not already at default range. If X is just [-10;10] because only 0
    *   or 1 points were fitted, we prefer adjusting Y to avoid expanding X
-   *   again when it was already expanded to the default range. This apply for
+   *   again when it was already expanded to the default range. This applies for
    *   example when autozooming on x^2.
    */
   bool prioritizeYChanges =
@@ -713,7 +713,7 @@ Range2D<T> Zoom<T>::prettyRange(bool forceNormalization) const {
     // Normalize the primary axis up to the allowed bounds
     primary.resultLength = std::clamp(primary.normalizedLength,
                                       primary.lowerBound, primary.upperBound);
-    /* If normalization isn't reached yet but could be  by adjusting the
+    /* If normalization isn't reached yet but could be by adjusting the
      * secondary axis, do it */
     if (primary.resultLength != primary.normalizedLength &&
         !secondary.isForced) {
@@ -787,7 +787,7 @@ bool Zoom<T>::fitWithSolverHelper(
    *   display of periodic function, which would otherwise appear cramped.
    *   The savedRange is created when either the number of roots, or the
    *   number of other points of interest cross a threshold. Roots and other
-   *   interests are splitted so that cos(x) and cos(x)+2 have the same range.
+   *   interests are split so that cos(x) and cos(x)+2 have the same range.
    *
    *   TODO: We should probably find a better way to detect the period of
    *         periodic functions, so that we show one or two period instead of

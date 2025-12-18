@@ -409,6 +409,8 @@ Tree* Matrix::Inverse(const Tree* matrix, bool approximate,
       (i == j ? 1_e : 0_e)->cloneTree();
     }
   }
+  // Floats from A might need to be bubbled up in I
+  SystematicReduction::ShallowReduce(matrixAI);
   // Compute the inverse
   bool canonized = RowCanonize(matrixAI, true, nullptr, approximate, ctx);
   if (!canonized && !approximate) {

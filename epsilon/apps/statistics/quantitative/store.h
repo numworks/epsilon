@@ -31,19 +31,19 @@ class Store : public Shared::StatisticsStore {
   int relativeColumn(int column) const override;
 
   // Histogram bars
-  double barWidth() const { return userPreferences()->barWidth(); }
-  void setBarWidth(double barWidth);
-  double firstDrawnBarAbscissa() const {
+  float barWidth() const { return userPreferences()->barWidth(); }
+  void setBarWidth(float barWidth);
+  float firstDrawnBarAbscissa() const {
     return userPreferences()->firstDrawnBarAbscissa();
   }
-  void setFirstDrawnBarAbscissa(double firstDrawnBarAbscissa) {
+  void setFirstDrawnBarAbscissa(float firstDrawnBarAbscissa) {
     userPreferences()->setFirstDrawnBarAbscissa(firstDrawnBarAbscissa);
   }
-  double heightOfBarAtIndex(int series, int index) const;
-  double maxHeightOfBar(int series) const;
-  double heightOfBarAtValue(int series, double value) const;
-  double startOfBarAtIndex(int series, int index) const;
-  double endOfBarAtIndex(int series, int index) const;
+  float heightOfBarAtIndex(int series, int index) const;
+  float maxHeightOfBar(int series) const;
+  float heightOfBarAtValue(int series, double value) const;
+  float startOfBarAtIndex(int series, int index) const;
+  float endOfBarAtIndex(int series, int index) const;
   int numberOfBars(int series) const;
   // Box plot
   bool displayOutliers() const { return userPreferences()->displayOutliers(); }

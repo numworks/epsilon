@@ -701,7 +701,7 @@ Range2D<T> Zoom<T>::prettyRange(bool forceNormalization) const {
    *   example when autozooming on x^2.
    */
   bool prioritizeYChanges =
-      xRangeIsForced || (xWillShrink && !yRangeIsForced) || xIsDefaultRange;
+      xRangeIsForced || (!yRangeIsForced && (xWillShrink || xIsDefaultRange));
 
   NormalizationData& primary = prioritizeYChanges ? yData : xData;
   NormalizationData& secondary = prioritizeYChanges ? xData : yData;

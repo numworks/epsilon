@@ -8,6 +8,9 @@
 template <typename T>
 void approximates_to(const Poincare::Internal::Tree* n, T f);
 template <typename T>
+void approximates_to(const Poincare::Internal::Tree* n,
+                     const Poincare::Internal::Tree* expected);
+template <typename T>
 void approximates_to(
     const char* input, T f,
     const Poincare::ProjectionContext& projectionContext = k_realCtx);

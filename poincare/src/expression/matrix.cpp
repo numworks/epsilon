@@ -352,16 +352,17 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
       k++;
     }
   }
+  if (!approximate) {
+    SystematicReduction::ShallowReduce(matrix);
+  }
   if (determinant) {
     if (approximate) {
       Approximation::Private::ToComplexTreeInplace(det, ctx);
     } else {
       SystematicReduction::ShallowReduce(det);
     }
+    // Warning: always set determinant last as it is not a TreeRef
     *determinant = det;
-  }
-  if (!approximate) {
-    SystematicReduction::ShallowReduce(matrix);
   }
   return true;
 }

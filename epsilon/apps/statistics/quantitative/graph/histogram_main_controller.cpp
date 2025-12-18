@@ -243,16 +243,10 @@ void HistogramMainController::initBarParameters() {
   m_histogramRange.setXRange(activeRange.min(), activeRange.max());
 
   m_store->setFirstDrawnBarAbscissa(m_histogramRange.xMin());
-  double barWidth =
-      Shared::PoincareHelpers::ToFloat<double>(m_histogramRange.xGridUnit());
-  if (barWidth <= 0.0) {
-    barWidth = 1.0;
-  } else {
-    // Round the bar width, as we convert from float to double
-    const double precision = 7.0;  // FLT_EPS ~= 1e-7
-    const double logBarWidth = OMG::IEEE754<double>::exponentBase10(barWidth);
-    const double truncateFactor = std::pow(10.0, precision - logBarWidth);
-    barWidth = std::round(barWidth * truncateFactor) / truncateFactor;
+  float barWidth =
+      Shared::PoincareHelpers::ToFloat<float>(m_histogramRange.xGridUnit());
+  if (barWidth <= 0.f) {
+    barWidth = 1.f;
   }
   /* Start numberOfBars at k_maxNumberOfBars - 1 for extra margin in case of a
    * loss of precision. */

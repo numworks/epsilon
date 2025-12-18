@@ -13,7 +13,7 @@ class HistogramRange : public Shared::MemoizedCurveViewRange {
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int series, int index);
 
-  constexpr static double k_maxNumberOfBars = 10000.0;
+  constexpr static float k_maxNumberOfBars = 10000.f;
   constexpr static float k_displayTopMarginRatio = 0.1f;
   constexpr static float k_displayRightMarginRatio = 0.04f;
   constexpr static int k_bottomMargin = 20;

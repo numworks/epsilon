@@ -171,8 +171,8 @@ class Zoom {
     T initialLength;
     T normalRatio;
     T normalizedLength;
-    T upperBound;
-    T lowerBound;
+    T maxLength;
+    T minLength;
     T resultLength;
     bool isForced;
   };

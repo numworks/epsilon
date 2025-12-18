@@ -636,7 +636,7 @@ Zoom<T>::NormalizationData Zoom<T>::computeNormalizationData(
    * prevent that, by shrinking the range, the other axis becomes too long
    * for the remaining visible part of the curve. */
   constexpr T k_minNormalizationRatio = static_cast<T>(0.15);
-  data.lowerBound = data.initialLength * k_minNormalizationRatio;
+  data.minLength = data.initialLength * k_minNormalizationRatio;
 
   /* The normalized range must fit the interesting range. We only count the
    * interesting range for this part as discarding the part that comes from
@@ -644,7 +644,7 @@ Zoom<T>::NormalizationData Zoom<T>::computeNormalizationData(
   T interestingLength = xAxis ? m_interestingRange.x()->length()
                               : m_interestingRange.y()->length();
   if (!std::isnan(interestingLength)) {
-    data.lowerBound = std::max(interestingLength, data.lowerBound);
+    data.minLength = std::max(interestingLength, data.minLength);
   }
 
   /* If the other axis range is forced, the normalized range must fit the
@@ -654,12 +654,12 @@ Zoom<T>::NormalizationData Zoom<T>::computeNormalizationData(
   bool otherAxisIsForced =
       xAxis ? !m_forcedRange.y()->isNan() : !m_forcedRange.x()->isNan();
   if (otherAxisIsForced && !std::isnan(magnitudeLength)) {
-    data.lowerBound = std::max(magnitudeLength, data.lowerBound);
+    data.minLength = std::max(magnitudeLength, data.minLength);
   }
 
   /* The range (interesting + magnitude) cannot be stretched by more than a
    * max ratio (i.e. the curve does not appear squeezed). */
-  data.upperBound = data.initialLength * maxNormalizationRatio(xAxis);
+  data.maxLength = data.initialLength * maxNormalizationRatio(xAxis);
 
   data.resultLength = data.initialLength;
   return data;
@@ -712,15 +712,15 @@ Range2D<T> Zoom<T>::prettyRange(bool forceNormalization) const {
   } else {
     // Normalize the primary axis up to the allowed bounds
     primary.resultLength = std::clamp(primary.normalizedLength,
-                                      primary.lowerBound, primary.upperBound);
+                                      primary.minLength, primary.maxLength);
     /* If normalization isn't reached yet but could be by adjusting the
      * secondary axis, do it */
     if (primary.resultLength != primary.normalizedLength &&
         !secondary.isForced) {
       T secondaryNormalizedLength =
           primary.resultLength * secondary.normalRatio;
-      if (secondaryNormalizedLength <= secondary.upperBound &&
-          secondaryNormalizedLength >= secondary.lowerBound) {
+      if (secondaryNormalizedLength <= secondary.maxLength &&
+          secondaryNormalizedLength >= secondary.minLength) {
         // Normalization can be reached by shrinking/expanding secondary axis
         secondary.resultLength = secondaryNormalizedLength;
       }

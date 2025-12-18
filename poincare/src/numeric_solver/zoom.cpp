@@ -565,8 +565,8 @@ Range2D<T> Zoom<T>::sanitize2DHelper(Range2D<T> range) const {
 /* Shifts new range to ensure interesting range is contained in it, and if
  * possible centered on it. */
 template <typename T>
-void editRange(Range1D<T>* rangeToEdit, T newLength,
-               const Range1D<T>* interestingRange, T maxFloat) {
+void editSaneRangeLength(Range1D<T>* rangeToEdit, T newLength,
+                         const Range1D<T>* interestingRange, T maxFloat) {
   if (newLength == rangeToEdit->length()) {
     return;
   }
@@ -727,10 +727,10 @@ Range2D<T> Zoom<T>::prettyRange(bool forceNormalization) const {
     }
   }
 
-  editRange<T>(saneRange.x(), xData.resultLength, m_interestingRange.x(),
-               m_maxFloat);
-  editRange<T>(saneRange.y(), yData.resultLength, m_interestingRange.y(),
-               m_maxFloat);
+  editSaneRangeLength<T>(saneRange.x(), xData.resultLength,
+                         m_interestingRange.x(), m_maxFloat);
+  editSaneRangeLength<T>(saneRange.y(), yData.resultLength,
+                         m_interestingRange.y(), m_maxFloat);
   return saneRange;
 }
 

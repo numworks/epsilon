@@ -862,7 +862,9 @@ QUIZ_CASE(pcj_sign_set) {
   assert_sign_sets_to("0.123", NonStrictSign::Negative);
 }
 
-// Use Real complex format, unless input contains Complex elements (i, re, ...)
+/* Use Real complex format by default, and Cartesian complex format if input
+ * contains Complex elements (i, re, ...).
+ * See UpdateComplexFormatWithExpressionInput. */
 void assert_projected_is_real_or_not(const char* input, bool isReal = true) {
   Tree* e = parse(input);
   ProjectionContext context;

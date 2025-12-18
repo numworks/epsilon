@@ -44,17 +44,17 @@ def loadable_sections(elf_file, address_prefix="", name_suffix=""):
     return sections
 
 
-def generate_dfu_file(targets, usb_vid_pid, dfu_file):
+def generate_dfu_file(targets, usb_vid_pid, dfu_file, altsetting_offset):
     data = b""
     for t, target in enumerate(targets):
         target_data = b""
-        alt_setting = 0
+        alt_setting = altsetting_offset
         for image in target:
             if (image["address"] >= 0x20000000 and image["address"] < 0x20040000) or (
                 image["address"] >= 0x24000000 and image["address"] < 0x24040000
             ):
-                # sRAM corresponds to the alternate setting 1
-                alt_setting = 1
+                # sRAM alt setting is one greater than flash alt setting
+                alt_setting = altsetting_offset + 1
             # Pad the image to 8 bytes, this seems to be needed
             pad = (8 - len(image["data"]) % 8) % 8
             image["data"] = image["data"] + bytes(bytearray(8)[0:pad])
@@ -147,7 +147,7 @@ def add_sections_to_targets(targets, sections, elf_file, verbose):
 PERSISTING_BYTES_SECTION_NAME = "persisting_bytes_buffer"
 
 
-def elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose):
+def elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose, altsetting_offset):
     targets = []
     for elf_file in elf_files:
         sections = loadable_sections(elf_file)
@@ -171,7 +171,7 @@ def elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose):
 
     # Sort targets by increasing address
     sorted_targets = sorted(targets, key=lambda t: t["address"])
-    generate_dfu_file([sorted_targets], usb_vid_pid, dfu_file)
+    generate_dfu_file([sorted_targets], usb_vid_pid, dfu_file, altsetting_offset)
 
 
 parser = argparse.ArgumentParser(description="Convert an ELF file to DfuSe.")
@@ -183,6 +183,13 @@ parser.add_argument(
     "-u", metavar="USB_VID_PID", help="Target device VID:PID", required=True
 )
 parser.add_argument("-v", "--verbose", action="store_true", help="Show verbose output")
+parser.add_argument(
+    "--altsetting-offset",
+    metavar="N",
+    type=int,
+    default=0,
+    help="Offset for alternate setting numbering",
+)
 
 args = parser.parse_args()
-elf2dfu(args.i, args.u, args.o, args.verbose)
+elf2dfu(args.i, args.u, args.o, args.verbose, args.altsetting_offset)

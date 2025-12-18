@@ -34,66 +34,27 @@ jobs:
         run: $DOCKER_RUN "touch ${{ env.COVERAGE_OUTPUT_DIR }}/base_summary.txt && make -C ${{ inputs.project-path }} coverage | grep \"coverage rate:\" --text -A 4 > ${{ env.COVERAGE_OUTPUT_DIR }}/base_summary.txt"
       - name: Rename base.info
         run: mv ${{ env.COVERAGE_OUTPUT_DIR }}/code_coverage.info ${{ env.COVERAGE_OUTPUT_DIR }}/base.info
-      - name: Upload BASE coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: base.info
-          path: ${{ env.COVERAGE_OUTPUT_DIR }}/base.info
-          retention-days: 2
-      - name: Upload BASE coverage summary
-        uses: actions/upload-artifact@v4
-        with:
-          name: base_summary
-          path: ${{ env.COVERAGE_OUTPUT_DIR }}/base_summary.txt
-          retention-days: 2
+      - name: Move BASE coverage files to temp
+        run: |
+          mv ${{ env.COVERAGE_OUTPUT_DIR }}/base.info $RUNNER_TEMP/base.info
+          mv ${{ env.COVERAGE_OUTPUT_DIR }}/base_summary.txt $RUNNER_TEMP/base_summary.txt
       - name: Checkout current branch
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+      - name: Move BASE coverage files back from temp
+        run: |
+          mkdir -p ${{ env.COVERAGE_OUTPUT_DIR }}
+          mv $RUNNER_TEMP/base.info ${{ env.COVERAGE_OUTPUT_DIR }}/base.info
+          mv $RUNNER_TEMP/base_summary.txt ${{ env.COVERAGE_OUTPUT_DIR }}/base_summary.txt
       - name: Build HEAD coverage target
         run: $DOCKER_RUN "make -C ${{ inputs.project-path }} coverage"
       - name: Rename head.info
         run: mv ${{ env.COVERAGE_OUTPUT_DIR }}/code_coverage.info ${{ env.COVERAGE_OUTPUT_DIR }}/head.info
-      - name: Upload HEAD coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: head.info
-          path: ${{ env.COVERAGE_OUTPUT_DIR }}/head.info
-          retention-days: 2
-      - name: Download BASE info # needed because the checkout action cleaned the "output" folder
-        uses: actions/download-artifact@v4
-        with:
-          name: base.info
-          path: ${{ env.COVERAGE_OUTPUT_DIR }}
-      - name: Download BASE coverage summary
-        uses: actions/download-artifact@v4
-        with:
-          name: base_summary
-          path: ${{ env.COVERAGE_OUTPUT_DIR }}
       - name: Generate diff file
         run: $DOCKER_RUN "touch ${{ env.COVERAGE_OUTPUT_DIR }}/diff.txt && /usr/local/share/lcov/support-scripts/gitdiff ${{ inputs.coverage-scope }} --prefix \$(pwd) ${{ steps.common_ancestor.outputs.commit_sha }} ${{ github.event.pull_request.head.sha }} > ${{ env.COVERAGE_OUTPUT_DIR }}/diff.txt"
-      - name: Upload diff file # useful for debug
-        id: diff
-        uses: actions/upload-artifact@v4
-        with:
-          name: diff
-          path: ${{ env.COVERAGE_OUTPUT_DIR }}/diff.txt
-          retention-days: 2
       - name: Generate coverage report
         run: $DOCKER_RUN "touch ${{ env.COVERAGE_OUTPUT_DIR }}/genhtml_output.txt && genhtml ${{ env.COVERAGE_OUTPUT_DIR }}/head.info -o ${{ env.COVERAGE_OUTPUT_DIR }}/report --baseline-file ${{ env.COVERAGE_OUTPUT_DIR }}/base.info --diff-file ${{ env.COVERAGE_OUTPUT_DIR }}/diff.txt --no-function-coverage --ignore-errors empty,path | grep \"coverage rate:\" -A 40 > ${{ env.COVERAGE_OUTPUT_DIR }}/genhtml_output.txt"
-      - name: Upload report
-        id: report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage_report
-          path: ${{ env.COVERAGE_OUTPUT_DIR }}/report
-          retention-days: 2
-      - name: Upload genhtml output # useful for debugging
-        uses: actions/upload-artifact@v4
-        with:
-          name: genhtml_output
-          path: ${{ env.COVERAGE_OUTPUT_DIR }}/genhtml_output.txt
-          retention-days: 2
       # TODO: next steps should be in a separate workflow for safety reasons
       - name: Format report into markdown tables
         run: |
@@ -114,7 +75,6 @@ jobs:
             var base_commit = "${{ steps.shorten_commits.outputs.base_sha }}";
             var summary = fs.readFileSync('${{ env.COVERAGE_OUTPUT_DIR }}/summary.md');
             var differential = fs.readFileSync('${{ env.COVERAGE_OUTPUT_DIR }}/differential.md');
-            var artifact_url = "${{ github.server_url }}/${{ github.repository }}//actions/runs/${{ github.run_id }}/artifacts/${{ steps.report.outputs.artifact-id }}"
 
             const body = (
               "### ${{ inputs.project-path == 'scandium' && 'Scandium' || 'Epsilon' }} Coverage report "
@@ -122,8 +82,6 @@ jobs:
               + summary
               + "#### Differences with base branch (" + base_commit + ")\n\n"
               + differential
-              + "\n\nDownload full report: "
-              + artifact_url
             )
             const pr_number = context.issue.number
 

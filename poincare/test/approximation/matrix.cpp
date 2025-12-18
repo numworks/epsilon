@@ -108,4 +108,9 @@ QUIZ_CASE(pcj_approximation_matrix) {
   approximates_to<float>("ref(cross([[0]],[[0]]))", "undef");
   approximates_to<float>("trace(cross([[0]],[[0]]))", "undef");
   approximates_to<float>("transpose(cross([[0]],[[0]]))", "undef");
+
+  approximates_to<float>(KDep(KMatrix<1, 1>(1_e), KDepList(KUndef)),
+                         KMatrix<1, 1>(KUndef));
+  approximates_to<float>(KDep(KMatrix<1, 1>(1_e), KDepList(1_e)),
+                         KMatrix<1, 1>(1_fe));
 }

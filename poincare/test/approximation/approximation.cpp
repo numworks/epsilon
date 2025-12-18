@@ -86,6 +86,7 @@ QUIZ_CASE(pcj_approximation_piecewise) {
   approximates_to<float>("piecewise(3,0>1,4,0>2,5,0<6,2)", "5");
   approximates_to<float>("piecewise(3,0<1,4,0<2,5,0<6,2)", "3");
   approximates_to<float>("piecewise(3,1<0,2,3=4)", "undef");
+  approximates_to<float>("piecewise([[1,2]],sin(3)<0,[[2,1]])", "[[2,1]]");
 }
 
 QUIZ_CASE(pcj_approximation_logarithm) {

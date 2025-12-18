@@ -30,6 +30,28 @@ void approximates_to(const Tree* n, T f) {
 }
 
 template <typename T>
+void approximates_to(const Tree* n, const Tree* expected) {
+  Tree* approx = Approximation::ToTree<T>(
+      n,
+      Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                .projectLocalVariables = true},
+      Approximation::Context(AngleUnit::Radian, ComplexFormat::Real));
+  bool result = approx->treeIsIdenticalTo(expected);
+#if POINCARE_TREE_LOG
+  if (!result) {
+    std::cout << "Approximation test failure with: ";
+    n->logSerializeWithoutLineReturn();
+    std::cout << " approximated to ";
+    approx->logSerializeWithoutLineReturn();
+    std::cout << " instead of ";
+    expected->logSerialize();
+  }
+#endif
+  quiz_assert(result);
+  approx->removeTree();
+}
+
+template <typename T>
 void approximates_to(const char* input, T f,
                      const ProjectionContext& projectionContext) {
   Tree* expression = parse(input, projectionContext.m_context);
@@ -188,6 +210,9 @@ void approximates_to_keeping_symbols(const char* expression,
 
 template void approximates_to<float>(const Tree* n, float f);
 template void approximates_to<double>(const Tree* n, double f);
+
+template void approximates_to<float>(const Tree* n, const Tree* expected);
+template void approximates_to<double>(const Tree* n, const Tree* expected);
 
 template void approximates_to<float>(
     const char* input, float f, const ProjectionContext& projectionContext);

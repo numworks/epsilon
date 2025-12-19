@@ -446,9 +446,9 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView* plotView,
       continue;
     }
     KDCoordinate barWidth;
-    /* If m_fillBar is true, we fill the space between one bar and the next
+    /* If m_fillBars is true, we fill the space between one bar and the next
      * (e.g. histograms in the Statistics app). Otherwise, we only draw a thin
-     * bar on lefmost pixels (e.g. histograms for discrete distributions). */
+     * bar on leftmost pixels (e.g. histograms for discrete distributions). */
     if (m_fillBars) {
       barWidth = leftOfNextBar - left;
     } else {

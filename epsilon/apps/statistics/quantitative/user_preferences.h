@@ -11,8 +11,8 @@ namespace Statistics {
 class UserPreferences : public Shared::DoublePairStorePreferences {
  public:
   UserPreferences()
-      : m_barWidth(1.0),
-        m_firstDrawnBarAbscissa(0.0),
+      : m_barWidth(1.f),
+        m_firstDrawnBarAbscissa(0.f),
         m_displayOutliers(false),
         m_displayCumulatedFrequencies{false, false, false} {}
 

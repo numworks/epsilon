@@ -501,6 +501,11 @@ QUIZ_CASE(calculation_big_expressions) {
   CalculationStore store(calculationBuffer, calculationBufferSize);
   assertCalculationIs("identity(37)", DisplayOutput::ExactOnly,
                       EqualSign::Hidden, "undef", nullptr, &store);
+  // Integer overflow
+  assertCalculationIs(
+      "20^23×20^23×20^23×20^23×20^23×20^23×25^23×20^23×20^23×20^23×20^23×20^"
+      "23×20^23×25^23",
+      DisplayOutput::ApproximateOnly, EqualSign::Hidden, nullptr, "∞", &store);
 }
 
 void assertMainCalculationOutputIs(const char* input, const char* output,

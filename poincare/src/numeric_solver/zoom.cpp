@@ -618,7 +618,7 @@ T Zoom<T>::maxNormalizationRatio(bool xAxis) const {
 }
 
 template <typename T>
-Zoom<T>::NormalizationData Zoom<T>::computeNormalizationData(
+typename Zoom<T>::NormalizationData Zoom<T>::computeNormalizationData(
     bool xAxis, const Range2D<T>& saneRange) const {
   NormalizationData data;
 

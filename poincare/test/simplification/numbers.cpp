@@ -81,11 +81,6 @@ QUIZ_CASE(pcj_simplification_based_integer) {
   simplifies_to("0x2A", "42");
 }
 
-QUIZ_CASE(pcj_simplification_large_integer_no_crash) {
-  simplifies_to("diff(x,x,0,100000000000)", "diff(x,x,0,100000000000)");
-  simplifies_to("40000000000ln(10)", "40000000000×ln(2)+40000000000×ln(5)");
-}
-
 QUIZ_CASE(pcj_simplification_large_numbers) {
   simplifies_to("123450000000000000000000000000", "1.2345×10^29");
   simplifies_to("123450000000000000000000000000/(5×7)", "(2.469×10^28)/7");
@@ -107,6 +102,9 @@ QUIZ_CASE(pcj_simplification_large_numbers) {
                 "1234567890123456789012345678901000000000000000");
   simplifies_to("2^101*2", "5070602400912917605986812821504");
   simplifies_to("2.3×10^45", "2.3×10^45");
+
+  simplifies_to("diff(x,x,0,100000000000)", "diff(x,x,0,100000000000)");
+  simplifies_to("40000000000ln(10)", "40000000000×ln(2)+40000000000×ln(5)");
 }
 
 QUIZ_CASE(poincare_simplification_rational) {

@@ -114,6 +114,12 @@ QUIZ_CASE(pcj_simplification_contraction) {
                    KTrig(KMult(16_e / 63_e, π_e), 1_e)));
   // ln(2)-ln(3) = ln(2/3)
   contract_to(KAdd(KLn(2_e), KMult(-1_e, KLn(3_e))), KLn(2_e / 3_e));
+  // Piecewise children must not be sorted.
+  contract_to(
+      KPiecewise(KVarX, KInferior(KVarX, 0_e), KMult(-1_e, KVarK),
+                 KSuperior(KVarX, 0_e), KAdd(KLn(2_e), KMult(-1_e, KLn(3_e)))),
+      KPiecewise(KVarX, KInferior(KVarX, 0_e), KMult(-1_e, KVarK),
+                 KSuperior(KVarX, 0_e), KLn(2_e / 3_e)));
 }
 
 QUIZ_CASE(pcj_simplification_variables) {

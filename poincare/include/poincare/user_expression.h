@@ -73,15 +73,14 @@ class UserExpression : public Expression {
     return static_cast<UserExpression&>(clone);
   }
 
-  /* Non-const methods */
-  // TODO: Rework them as cloneAnd* methods.
-  void replaceSymbolWithExpression(const UserExpression& symbol,
-                                   const Expression& expression,
-                                   bool onlySecondTerm = false);
-  void replaceSymbolWithUnknown(const UserExpression& symbol,
-                                bool onlySecondTerm = false);
-  void replaceUnknownWithSymbol(CodePoint symbol);
+  UserExpression cloneAndReplaceSymbolWithExpression(
+      const UserExpression& symbol, const Expression& expression,
+      bool onlySecondTerm = false) const;
+  UserExpression cloneAndReplaceSymbolWithUnknown(
+      const UserExpression& symbol, bool onlySecondTerm = false) const;
+  UserExpression cloneAndReplaceUnknownWithSymbol(CodePoint symbol) const;
 
+  // TODO: Rework replaceSymbols as a const cloneAnd* methods.
   void replaceSymbols(const Poincare::SymbolContext& symbolContext,
                       SymbolicComputation symbolic =
                           SymbolicComputation::ReplaceDefinedSymbols);

@@ -65,8 +65,8 @@ Layout GlobalStore::LayoutForRecord(Ion::Storage::Record record) {
       symbol = CodePoints::k_cartesianSymbol;
     }
     UserExpression expression =
-        UserExpression::Builder(ExpressionForUserFunction(record));
-    expression.replaceUnknownWithSymbol(symbol);
+        UserExpression::Builder(ExpressionForUserFunction(record))
+            .cloneAndReplaceUnknownWithSymbol(symbol);
     return PoincareHelpers::CreateLayout(expression,
                                          Escher::App::app()->localContext());
   } else {
@@ -132,8 +132,8 @@ bool GlobalStore::setExpressionForUserNamed(
   if (e.isUninitialized()) {
     e = UserExpression::Undefined();
   }
-  UserExpression finalExpression = expression.clone();
-  finalExpression.replaceSymbolWithExpression(symbol, e);
+  UserExpression finalExpression =
+      expression.cloneAndReplaceSymbolWithExpression(symbol, e);
 
   // Set the expression in the storage depending on the symbol type
   if (symbol.isUserSymbol()) {
@@ -143,7 +143,8 @@ bool GlobalStore::setExpressionForUserNamed(
   }
   const UserExpression childSymbol = symbol.cloneChildAtIndex(0);
   assert(symbol.isUserFunction() && childSymbol.isUserSymbol());
-  finalExpression.replaceSymbolWithUnknown(childSymbol);
+  finalExpression =
+      finalExpression.cloneAndReplaceSymbolWithUnknown(childSymbol);
   UserExpression symbolToStore = symbol;
   if (!(SymbolHelper::IsSymbol(childSymbol, CodePoints::k_cartesianSymbol) ||
         SymbolHelper::IsSymbol(childSymbol, CodePoints::k_polarSymbol) ||

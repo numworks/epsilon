@@ -336,7 +336,7 @@ void Store::storeRegressionFunction(int series,
   }
   char name[k_functionNameSize];
   BuildFunctionName(series, name, k_functionNameSize);
-  expression.replaceSymbolWithUnknown(
+  expression = expression.cloneAndReplaceSymbolWithUnknown(
       SymbolHelper::BuildSymbol(CodePoints::k_cartesianSymbol));
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       name, Ion::Storage::regressionExtension, expression.addressInPool(),

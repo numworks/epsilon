@@ -51,7 +51,6 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
       KDColor::Blend(sequence->color(), KDColorWhite, k_curveFadeRatio);
   const SequenceContext& context =
       reinterpret_cast<const SequenceContext&>(App::app()->localContext());
-  Poincare::UserExpression function = sequence->expressionClone();
 
   /* Replace initial term by its value, to avoid replacing it by a wrong value
    * at next step */
@@ -60,13 +59,16 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
           name, Poincare::UserExpression::Builder(sequence->initialRank()));
   Poincare::SystemExpression initialExpression =
       sequence->firstInitialConditionExpressionReduced();
-  function.replaceSymbolWithExpression(initialSymbol, initialExpression);
-
   // Replace u(n) by n: u(n) becomes the variable
   Poincare::UserExpression sequenceSymbol =
       Poincare::SymbolHelper::BuildSequence(
           name, Poincare::SymbolHelper::SystemSymbol());
-  function.replaceSymbolWithUnknown(sequenceSymbol);
+
+  Poincare::UserExpression function =
+      sequence->expressionClone()
+          .cloneAndReplaceSymbolWithExpression(initialSymbol, initialExpression)
+          .cloneAndReplaceSymbolWithUnknown(sequenceSymbol);
+
   Poincare::ProjectionContext projCtx = {
       .m_complexFormat =
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),

@@ -94,7 +94,8 @@ UserExpression CalculationStore::ansExpression() const {
 void CalculationStore::replaceAnsInExpression(
     UserExpression& expression) const {
   UserExpression ansSymbol = SymbolHelper::Ans();
-  expression.replaceSymbolWithExpression(ansSymbol, ansExpression());
+  expression = expression.cloneAndReplaceSymbolWithExpression(ansSymbol,
+                                                              ansExpression());
 }
 
 static bool compute(Poincare::UserExpression inputExpression,

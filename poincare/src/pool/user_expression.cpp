@@ -376,36 +376,32 @@ size_t UserExpression::serialize(std::span<char> buffer, bool compactMode,
   return length;
 }
 
-void UserExpression::replaceSymbolWithExpression(const UserExpression& symbol,
-                                                 const Expression& expression,
-                                                 bool onlySecondTerm) {
-  /* TODO_PCJ: Handle functions and sequences as well. See
-   * replaceSymbolWithExpression implementations. */
+UserExpression UserExpression::cloneAndReplaceSymbolWithExpression(
+    const UserExpression& symbol, const Expression& expression,
+    bool onlySecondTerm) const {
+  /* TODO_PCJ: Handle functions and sequences as well. See ReplaceSymbolWithTree
+   * implementations. */
   if (isUninitialized()) {
-    return;
+    return UserExpression();
   }
   assert(symbol.tree()->isUserNamed());
   Tree* result = tree()->cloneTree();
   assert(!onlySecondTerm || result->numberOfChildren() >= 2);
-  if (Variables::ReplaceSymbolWithTree(
-          onlySecondTerm ? result->child(1) : result, symbol.tree(),
-          expression.tree())) {
-    *this = UserExpression::Builder(result);
-    return;
-  }
-  result->removeTree();
-  return;
+  Variables::ReplaceSymbolWithTree(onlySecondTerm ? result->child(1) : result,
+                                   symbol.tree(), expression.tree());
+  return UserExpression::Builder(result);
 }
 
-void UserExpression::replaceSymbolWithUnknown(const UserExpression& symbol,
-                                              bool onlySecondTerm) {
-  return replaceSymbolWithExpression(symbol, SymbolHelper::SystemSymbol(),
-                                     onlySecondTerm);
+UserExpression UserExpression::cloneAndReplaceSymbolWithUnknown(
+    const UserExpression& symbol, bool onlySecondTerm) const {
+  return cloneAndReplaceSymbolWithExpression(
+      symbol, SymbolHelper::SystemSymbol(), onlySecondTerm);
 }
 
-void UserExpression::replaceUnknownWithSymbol(CodePoint symbol) {
-  return replaceSymbolWithExpression(SymbolHelper::SystemSymbol(),
-                                     SymbolHelper::BuildSymbol(symbol));
+UserExpression UserExpression::cloneAndReplaceUnknownWithSymbol(
+    CodePoint symbol) const {
+  return cloneAndReplaceSymbolWithExpression(SymbolHelper::SystemSymbol(),
+                                             SymbolHelper::BuildSymbol(symbol));
 }
 
 void UserExpression::replaceSymbols(

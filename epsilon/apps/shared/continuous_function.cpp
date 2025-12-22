@@ -792,8 +792,7 @@ UserExpression ContinuousFunction::Model::originalEquation(
   if (unknownSymbolEquation.isUninitialized() || symbol == UCodePointUnknown) {
     return unknownSymbolEquation;
   }
-  unknownSymbolEquation.replaceUnknownWithSymbol(symbol);
-  return unknownSymbolEquation;
+  return unknownSymbolEquation.cloneAndReplaceUnknownWithSymbol(symbol);
 }
 
 bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
@@ -897,7 +896,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
      * symbols nested in function, which is not a supported behavior anyway.
      * TODO: Make a consistent behavior calculation/additional_results using a
      *       VariableContext to temporary disable y's predefinition. */
-    result.replaceSymbolWithExpression(
+    result = result.cloneAndReplaceSymbolWithExpression(
         SymbolHelper::BuildSymbol(k_ordinateSymbol),
         SymbolHelper::BuildSymbol(UCodePointTemporaryUnknown));
   }
@@ -909,7 +908,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     return UserExpression::Undefined();
   }
   if (isUnnamedFunction) {
-    result.replaceSymbolWithExpression(
+    result = result.cloneAndReplaceSymbolWithExpression(
         SymbolHelper::BuildSymbol(UCodePointTemporaryUnknown),
         SymbolHelper::BuildSymbol(k_ordinateSymbol));
   }

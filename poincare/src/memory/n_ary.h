@@ -28,20 +28,20 @@ inline bool SquashIfPossible(Tree* nary) {
          (SquashIfEmpty(nary) || SquashIfUnary(nary));
 }
 inline bool CanBeSorted(const Tree* e) {
-  assert(!e->isNAry() ||
-         // Types that can be sorted
-         e->isOfType(
-             {Type::DepList, Type::GCD, Type::LCM, Type::Add, Type::Mult}) ||
-         // Types that should not always be sorted
+  // NAry types that can always be sorted:
+  bool result = e->isNAry() && e->isOfType({Type::Add, Type::Mult, Type::GCD,
+                                            Type::LCM, Type::DepList});
+  // If this assertion fails, add missing type in the list above or below.
+  assert(result || !e->isNAry() ||
+         // NAry Types that can't always be sorted:
          e->isOfType({Type::Distribution, Type::List, Type::Piecewise,
                       Type::Polynomial}));
-  return e->isNAry() && e->isOfType({Type::DepList, Type::GCD, Type::LCM,
-                                     Type::Add, Type::Mult});
+  return result;
 }
 bool Sanitize(Tree* nary);
-// Sort a nary that isn't order-dependent
+// Sort a nary that can be sorted (see CanBeSorted)
 bool Sort(Tree* nary, Order::OrderType order = Order::OrderType::System);
-// Sort a nary that isn't order-dependent or a list
+// Sort a nary that can be sorted (see CanBeSorted) or a list
 bool SortMayBeList(Tree* nary,
                    Order::OrderType order = Order::OrderType::System);
 void SortedInsertChild(Tree* nary, Tree* child,

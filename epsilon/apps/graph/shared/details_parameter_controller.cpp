@@ -54,7 +54,7 @@ void DetailsParameterController::fillCellForRow(HighlightCell* cell, int row) {
   } else {
     myCell->label()->setMessage(detailsTitle(row - 1));
     double value = detailsValue(row - 1);
-    if (row - 1 == 0 && functionIsNonVerticalLine()) {
+    if (row - 1 == 0 && isNonVerticalLineEquation()) {
       assert(std::isnan(value));
       /* For the line's equation cell, we want the detail description (y=mx+b)
        * to be displayed as the value would : a large font accessory. */
@@ -85,7 +85,7 @@ void DetailsParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
   if (!m_record.isNull()) {
     OMG::ExpiringPointer<const Shared::ContinuousFunction> f = function();
-    if (functionIsNonVerticalLine()) {
+    if (isNonVerticalLineEquation()) {
       double slope, intercept;
       f->getLineParameters(&slope, &intercept);
       setLineDetailsValues(slope, intercept);
@@ -106,7 +106,7 @@ int DetailsParameterController::detailsNumberOfSections() const {
   if (examMode.forbidGraphDetails()) {
     return 0;
   }
-  if (functionIsNonVerticalLine()) {
+  if (isNonVerticalLineEquation()) {
     return k_lineDetailsSections;
   }
   if (examMode.forbidImplicitPlots()) {
@@ -143,7 +143,7 @@ DetailsParameterController::function() const {
 I18n::Message DetailsParameterController::detailsTitle(int i) const {
   assert(i < detailsNumberOfSections());
 
-  if (functionIsNonVerticalLine()) {
+  if (isNonVerticalLineEquation()) {
     constexpr I18n::Message k_titles[k_lineDetailsSections] = {
         I18n::Message::Equation,
         I18n::Message::M,
@@ -197,7 +197,7 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
 
 I18n::Message DetailsParameterController::detailsDescription(int i) const {
   assert(i < detailsNumberOfSections());
-  if (functionIsNonVerticalLine()) {
+  if (isNonVerticalLineEquation()) {
     constexpr I18n::Message k_descriptions[k_lineDetailsSections] = {
         I18n::Message::LineEquationDescription,
         I18n::Message::LineSlopeDescription,
@@ -253,7 +253,7 @@ I18n::Message DetailsParameterController::detailsDescription(int i) const {
 
 void DetailsParameterController::setLineDetailsValues(double slope,
                                                       double intercept) {
-  assert(functionIsNonVerticalLine());
+  assert(isNonVerticalLineEquation());
   m_detailValues[0] = NAN;
   m_detailValues[1] = slope;
   m_detailValues[2] = intercept;

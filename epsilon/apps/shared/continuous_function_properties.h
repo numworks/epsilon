@@ -163,11 +163,21 @@ class ContinuousFunctionProperties {
   }
   bool canComputeTangent() const { return canDisplayDerivative(); }
 
-  bool isLine() const {
+  bool isLineEquation() const {
     return getCurveParameterType() == CurveParameterType::VerticalLine ||
            getCurveParameterType() == CurveParameterType::HorizontalLine ||
            getCurveParameterType() == CurveParameterType::Line;
   }
+  bool isCartesianLine() const {
+    return isLineEquation() ||
+           /* TODO: Checking the caption is dirty but it's currently the only
+            * variable that keeps the computed cartesian function type. */
+           (getCurveParameterType() == CurveParameterType::CartesianFunction &&
+            (m_caption == I18n::Message::ConstantType ||
+             m_caption == I18n::Message::AffineType ||
+             m_caption == I18n::Message::LinearType));
+  }
+
   bool isConic() const {
     return conicShape() != Poincare::Conic::Shape::Undefined;
   }

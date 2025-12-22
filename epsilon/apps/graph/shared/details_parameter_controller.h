@@ -60,8 +60,8 @@ class DetailsParameterController
   constexpr static int k_numberOfDataPoints = 7;  // max + 1 for plot type
   // Return record's Continuous Function pointer
   OMG::ExpiringPointer<const Shared::ContinuousFunction> function() const;
-  bool functionIsNonVerticalLine() const {
-    return function()->properties().isLine() &&
+  bool isNonVerticalLineEquation() const {
+    return function()->properties().isLineEquation() &&
            !function()->properties().isAlongY();
   }
   // Title of given section in ContinuousFunction's detail menu

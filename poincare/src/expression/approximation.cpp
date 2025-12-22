@@ -924,7 +924,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       Tree* sortedList = nullptr;
       ExceptionTry {
         sortedList = list->cloneTree();
-        NAry::Sort(sortedList, Order::OrderType::RealLine);
+        NAry::SortMayBeList(sortedList, Order::OrderType::RealLine);
       }
       ExceptionCatch(exc) {
         if (exc == ExceptionType::SortFail) {
@@ -1367,7 +1367,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     /* TODO we are computing all elements and sorting the list for all
      * elements, this is awful */
     Tree* list = ToList<T>(e->child(0), ctx);
-    NAry::Sort(list);
+    NAry::SortMayBeList(list);
     BooleanOrUndefined result = PrivateToBoolean<T>(list, ctx);
     list->removeTree();
     return result;

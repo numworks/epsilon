@@ -404,16 +404,16 @@ UserExpression UserExpression::cloneAndReplaceUnknownWithSymbol(
                                              SymbolHelper::BuildSymbol(symbol));
 }
 
-void UserExpression::replaceSymbols(
+UserExpression UserExpression::cloneAndReplaceSymbols(
     const Poincare::SymbolContext& symbolContext,
-    SymbolicComputation symbolic) {
+    SymbolicComputation symbolic) const {
   /* Caution: must be called on an unprojected expression!
    * Indeed, the projection of the replacements has to be done at the same time
    * as the rest of the expression (otherwise inconsistencies could appear like
    * with random for example). */
   Tree* clone = tree()->cloneTree();
   Projection::DeepReplaceUserNamed(clone, symbolContext, symbolic);
-  *this = UserExpression::Builder(clone);
+  return UserExpression::Builder(clone);
 }
 
 bool UserExpression::IsIgnoredSymbol(
@@ -474,8 +474,8 @@ bool UserExpression::recursivelyMatches(UserExpressionTrinaryTest test,
     assert(replaceSymbols == SymbolicComputation::ReplaceDefinedSymbols ||
            tree()->isUserFunction());
     // Undefined symbols must be preserved.
-    UserExpression e = clone();
-    e.replaceSymbols(symbolContext, SymbolicComputation::ReplaceDefinedSymbols);
+    UserExpression e = cloneAndReplaceSymbols(
+        symbolContext, SymbolicComputation::ReplaceDefinedSymbols);
     return !e.isUninitialized() &&
            e.recursivelyMatches(test, symbolContext,
                                 SymbolicComputation::KeepAllSymbols, auxiliary,

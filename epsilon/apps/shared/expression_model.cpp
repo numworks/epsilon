@@ -47,8 +47,8 @@ void ExpressionModel::text(const Storage::Record* record, char* buffer,
 
 bool ExpressionModel::isCircularlyDefined(const Storage::Record* record) const {
   if (m_circular == -1) {
-    UserExpression e = expressionClone(record);
-    e.replaceSymbols(GlobalContextAccessor::Context());
+    UserExpression e = expressionClone(record).cloneAndReplaceSymbols(
+        GlobalContextAccessor::Context());
     m_circular = e.isUninitialized();
   }
   return m_circular;

@@ -376,13 +376,13 @@ size_t UserExpression::serialize(std::span<char> buffer, bool compactMode,
   return length;
 }
 
-bool UserExpression::replaceSymbolWithExpression(const UserExpression& symbol,
+void UserExpression::replaceSymbolWithExpression(const UserExpression& symbol,
                                                  const Expression& expression,
                                                  bool onlySecondTerm) {
   /* TODO_PCJ: Handle functions and sequences as well. See
    * replaceSymbolWithExpression implementations. */
   if (isUninitialized()) {
-    return false;
+    return;
   }
   assert(symbol.tree()->isUserNamed());
   Tree* result = tree()->cloneTree();
@@ -391,19 +391,19 @@ bool UserExpression::replaceSymbolWithExpression(const UserExpression& symbol,
           onlySecondTerm ? result->child(1) : result, symbol.tree(),
           expression.tree())) {
     *this = UserExpression::Builder(result);
-    return true;
+    return;
   }
   result->removeTree();
-  return false;
+  return;
 }
 
-bool UserExpression::replaceSymbolWithUnknown(const UserExpression& symbol,
+void UserExpression::replaceSymbolWithUnknown(const UserExpression& symbol,
                                               bool onlySecondTerm) {
   return replaceSymbolWithExpression(symbol, SymbolHelper::SystemSymbol(),
                                      onlySecondTerm);
 }
 
-bool UserExpression::replaceUnknownWithSymbol(CodePoint symbol) {
+void UserExpression::replaceUnknownWithSymbol(CodePoint symbol) {
   return replaceSymbolWithExpression(SymbolHelper::SystemSymbol(),
                                      SymbolHelper::BuildSymbol(symbol));
 }

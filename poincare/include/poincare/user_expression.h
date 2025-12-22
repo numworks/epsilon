@@ -75,12 +75,12 @@ class UserExpression : public Expression {
 
   /* Non-const methods */
   // TODO: Rework them as cloneAnd* methods.
-  bool replaceSymbolWithExpression(const UserExpression& symbol,
+  void replaceSymbolWithExpression(const UserExpression& symbol,
                                    const Expression& expression,
                                    bool onlySecondTerm = false);
-  bool replaceSymbolWithUnknown(const UserExpression& symbol,
+  void replaceSymbolWithUnknown(const UserExpression& symbol,
                                 bool onlySecondTerm = false);
-  bool replaceUnknownWithSymbol(CodePoint symbol);
+  void replaceUnknownWithSymbol(CodePoint symbol);
 
   bool replaceSymbols(const Poincare::SymbolContext& symbolContext,
                       SymbolicComputation symbolic =

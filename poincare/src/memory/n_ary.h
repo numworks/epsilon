@@ -27,8 +27,23 @@ inline bool SquashIfPossible(Tree* nary) {
   return (nary->isAdd() || nary->isMult()) &&
          (SquashIfEmpty(nary) || SquashIfUnary(nary));
 }
+inline bool CanBeSorted(const Tree* e) {
+  assert(!e->isNAry() ||
+         // Types that can be sorted
+         e->isOfType(
+             {Type::DepList, Type::GCD, Type::LCM, Type::Add, Type::Mult}) ||
+         // Types that should not always be sorted
+         e->isOfType({Type::Distribution, Type::List, Type::Piecewise,
+                      Type::Polynomial}));
+  return e->isNAry() && e->isOfType({Type::DepList, Type::GCD, Type::LCM,
+                                     Type::Add, Type::Mult});
+}
 bool Sanitize(Tree* nary);
+// Sort a nary that isn't order-dependent
 bool Sort(Tree* nary, Order::OrderType order = Order::OrderType::System);
+// Sort a nary that isn't order-dependent or a list
+bool SortMayBeList(Tree* nary,
+                   Order::OrderType order = Order::OrderType::System);
 void SortedInsertChild(Tree* nary, Tree* child,
                        Order::OrderType order = Order::OrderType::System);
 bool DeepSort(Tree* expression,

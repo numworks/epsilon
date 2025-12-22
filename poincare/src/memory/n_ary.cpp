@@ -138,7 +138,13 @@ bool NAry::Sanitize(Tree* nary) {
 }
 
 bool NAry::Sort(Tree* nary, Order::OrderType order) {
-  assert(nary->isNAry());
+  assert(CanBeSorted(nary));
+  return SortMayBeList(nary, order);
+}
+
+bool NAry::SortMayBeList(Tree* nary, Order::OrderType order) {
+  // List may occasionally be sorted
+  assert(CanBeSorted(nary) || nary->isList());
   const uint8_t numberOfChildren = nary->numberOfChildren();
   if (numberOfChildren < 2) {
     return false;
@@ -205,7 +211,7 @@ push:
 }
 
 void NAry::SortedInsertChild(Tree* nary, Tree* child, Order::OrderType order) {
-  assert(nary->isNAry());
+  assert(CanBeSorted(nary));
   Tree* children[k_maxNumberOfChildren];
   for (uint8_t index = 0; const Tree* child : nary->children()) {
     children[index++] = const_cast<Tree*>(child);
@@ -228,7 +234,7 @@ bool NAry::DeepSort(Tree* expression, Order::OrderType order) {
   for (Tree* child : expression->children()) {
     changed = DeepSort(child, order) || changed;
   }
-  if (expression->isNAry()) {
+  if (CanBeSorted(expression)) {
     changed = Sort(expression, order) || changed;
   }
   return changed;

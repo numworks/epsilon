@@ -138,7 +138,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       }
     } else {
       assert(f->properties().isCartesian());
-      bool isLine = f->properties().isLine();
+      bool isLine = f->properties().isCartesianLine();
       if (isLine) {
         // Affine function is linear if f(0) = 0
         onlyLinearLines =

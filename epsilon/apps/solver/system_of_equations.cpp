@@ -170,8 +170,14 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     i++;
   }
 
-  assert(m_solutionMetadata.solutionType == SolutionType::Formal ||
-         !exact.clone().replaceSymbols(symbolContext));
+#if ASSERTIONS
+  if (m_solutionMetadata.solutionType != SolutionType::Formal) {
+    // Solution should not have any defined symbols.
+    UserExpression e = exact.clone();
+    e.replaceSymbols(symbolContext, SymbolicComputation::ReplaceDefinedSymbols);
+    assert(e.isIdenticalTo(exact));
+  }
+#endif
 
   forbidExactSolution =
       forbidExactSolution || CAS::ShouldOnlyDisplayApproximation(

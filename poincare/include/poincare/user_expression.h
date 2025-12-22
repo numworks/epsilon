@@ -82,7 +82,7 @@ class UserExpression : public Expression {
                                 bool onlySecondTerm = false);
   void replaceUnknownWithSymbol(CodePoint symbol);
 
-  bool replaceSymbols(const Poincare::SymbolContext& symbolContext,
+  void replaceSymbols(const Poincare::SymbolContext& symbolContext,
                       SymbolicComputation symbolic =
                           SymbolicComputation::ReplaceDefinedSymbols);
 

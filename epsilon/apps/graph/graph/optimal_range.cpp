@@ -257,15 +257,12 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
         newRange.x()->length() / unNormalizedRange.x()->length();
     float yRangeRatio =
         newRange.y()->length() / unNormalizedRange.y()->length();
-    // Only one of the ranges has been altered
-    assert(xRangeRatio == 1.f || yRangeRatio == 1.f);
 
     /* Normalization is also partially enforced in Zoom::range up to a variable
      * max ratio. We want to avoid to apply more than double this
      * pseudo-normalization. */
-    float rangeRatio = xRangeRatio + yRangeRatio - 1.0f;
     constexpr float k_maxRangeRatio = 2.f;
-    if (rangeRatio > k_maxRangeRatio) {
+    if (std::max(xRangeRatio, yRangeRatio) > k_maxRangeRatio) {
       newRange = unNormalizedRange;
     }
   }

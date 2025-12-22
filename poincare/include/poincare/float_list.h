@@ -10,9 +10,10 @@ class FloatList : public SystemExpression, public DatasetColumn<T> {
  public:
   static FloatList<T> Builder();
 
-  void addValue(T value);
-  void replaceValueAtIndex(T value, int index);
-  void removeValueAtIndex(int index);
+  FloatList cloneAndAddValue(T value) const;
+  FloatList cloneAndReplaceValueAtIndex(T value, int index) const;
+  FloatList cloneAndRemoveValueAtIndex(int index) const;
+
   T valueAtIndex(int index) const override;
   int length() const override {
     return isUninitialized() ? 0 : numberOfChildren();

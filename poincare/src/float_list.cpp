@@ -27,35 +27,33 @@ FloatList<T> FloatList<T>::Builder() {
   return static_cast<FloatList<T>&>(expr);
 }
 
-/* TODO: Avoid changing a PoolHandle in place. This happens in addValueAtIndex,
- * replaceValueAtIndex and removeValueAtIndex. */
-
 template <typename T>
-void FloatList<T>::addValue(T value) {
+FloatList<T> FloatList<T>::cloneAndAddValue(T value) const {
   Tree* clone = tree()->cloneTree();
   TreeRef newChild = SharedTreeStack->pushFloat(value);
   NAry::SetNumberOfChildren(clone, clone->numberOfChildren() + 1);
   SystemExpression temp = SystemExpression::Builder(clone);
-  *this = static_cast<FloatList<T>&>(temp);
+  return static_cast<FloatList<T>&>(temp);
 }
 
 template <typename T>
-void FloatList<T>::replaceValueAtIndex(T value, int index) {
+FloatList<T> FloatList<T>::cloneAndReplaceValueAtIndex(T value,
+                                                       int index) const {
   assert(index < numberOfChildren());
   Tree* clone = tree()->cloneTree();
   Tree* child = floatNodeAtIndex<T>(clone, index);
   child->nodeValueBlock(0)->set<T>(value);
   SystemExpression temp = SystemExpression::Builder(clone);
-  *this = static_cast<FloatList<T>&>(temp);
+  return static_cast<FloatList<T>&>(temp);
 }
 
 template <typename T>
-void FloatList<T>::removeValueAtIndex(int index) {
+FloatList<T> FloatList<T>::cloneAndRemoveValueAtIndex(int index) const {
   assert(index < numberOfChildren());
   Tree* clone = tree()->cloneTree();
   NAry::RemoveChildAtIndex(clone, index);
   SystemExpression temp = SystemExpression::Builder(clone);
-  *this = static_cast<FloatList<T>&>(temp);
+  return static_cast<FloatList<T>&>(temp);
 }
 
 template <typename T>

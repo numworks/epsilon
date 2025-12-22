@@ -120,11 +120,12 @@ bool DoublePairStore::set(double f, int series, int i, int j, bool delayUpdate,
   assert(j <= numberOfPairsOfSeries(series));
   if (j >= lengthOfColumn(series, i)) {
     for (int k = lengthOfColumn(series, i); k < j; k++) {
-      m_dataLists[series][i].addValue(NAN);
+      m_dataLists[series][i] = m_dataLists[series][i].cloneAndAddValue(NAN);
     }
-    m_dataLists[series][i].addValue(f);
+    m_dataLists[series][i] = m_dataLists[series][i].cloneAndAddValue(f);
   } else {
-    m_dataLists[series][i].replaceValueAtIndex(f, j);
+    m_dataLists[series][i] =
+        m_dataLists[series][i].cloneAndReplaceValueAtIndex(f, j);
   }
   int otherI = i == 0 ? 1 : 0;
   if (setOtherColumnToDefaultIfEmpty && j >= lengthOfColumn(series, otherI)) {
@@ -144,7 +145,9 @@ bool DoublePairStore::setList(SystemExpression list, int series, int i,
       std::max(list.numberOfChildren(), lengthOfColumn(series, i));
   for (int j = 0; j < newListLength; j++) {
     if (j >= list.numberOfChildren()) {
-      m_dataLists[series][i].removeValueAtIndex(list.numberOfChildren());
+      m_dataLists[series][i] =
+          m_dataLists[series][i].cloneAndRemoveValueAtIndex(
+              list.numberOfChildren());
       continue;
     }
     double evaluation =
@@ -414,7 +417,8 @@ void DoublePairStore::deleteTrailingUndef(int series, int i) {
     if (!std::isnan(get(series, i, j))) {
       return;
     }
-    m_dataLists[series][i].removeValueAtIndex(j);
+    m_dataLists[series][i] =
+        m_dataLists[series][i].cloneAndRemoveValueAtIndex(j);
   }
 }
 
@@ -425,7 +429,8 @@ void DoublePairStore::deletePairsOfUndef(int series) {
     if (std::isnan(get(series, 0, j)) && std::isnan(get(series, 1, j))) {
       for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
         if (j < lengthOfColumn(series, i)) {
-          m_dataLists[series][i].removeValueAtIndex(j);
+          m_dataLists[series][i] =
+              m_dataLists[series][i].cloneAndRemoveValueAtIndex(j);
         }
       }
       j--;

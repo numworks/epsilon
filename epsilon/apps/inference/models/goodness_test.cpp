@@ -30,7 +30,7 @@ GoodnessTest::GoodnessTest() {
 void GoodnessTest::init() {
   m_contributions = Poincare::FloatList<double>::Builder();
   for (int j = 0; j < k_maxNumberOfRows; j++) {
-    m_contributions.addValue(k_undefinedValue);
+    m_contributions = m_contributions.cloneAndAddValue(k_undefinedValue);
   }
 }
 
@@ -117,7 +117,7 @@ double GoodnessTest::valueAtPosition(int row, int column) const {
 
 void GoodnessTest::setValueAtPosition(double value, int row, int column) {
   if (column == Column::Contribution) {
-    m_contributions.replaceValueAtIndex(value, row);
+    m_contributions = m_contributions.cloneAndReplaceValueAtIndex(value, row);
     return;
   }
   invalidateNumberOfRows();

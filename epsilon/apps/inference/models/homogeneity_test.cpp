@@ -20,8 +20,10 @@ void HomogeneityTest::init() {
     m_expectedValues[i] = Poincare::FloatList<double>::Builder();
     m_contributions[i] = Poincare::FloatList<double>::Builder();
     for (int j = 0; j < k_maxNumberOfRows; j++) {
-      m_expectedValues[i].addValue(k_undefinedValue);
-      m_contributions[i].addValue(k_undefinedValue);
+      m_expectedValues[i] =
+          m_expectedValues[i].cloneAndAddValue(k_undefinedValue);
+      m_contributions[i] =
+          m_contributions[i].cloneAndAddValue(k_undefinedValue);
     }
   }
 }
@@ -82,11 +84,13 @@ void HomogeneityTest::setDataValueAtLocation(DataType type, double value,
     return;
   }
   if (type == DataType::Expected) {
-    m_expectedValues[col].replaceValueAtIndex(value, row);
+    m_expectedValues[col] =
+        m_expectedValues[col].cloneAndReplaceValueAtIndex(value, row);
     return;
   }
   assert(type == DataType::Contribution);
-  m_contributions[col].replaceValueAtIndex(value, row);
+  m_contributions[col] =
+      m_contributions[col].cloneAndReplaceValueAtIndex(value, row);
 }
 
 bool HomogeneityTest::validateInputs(int pageIndex) {

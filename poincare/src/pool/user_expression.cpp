@@ -408,7 +408,7 @@ void UserExpression::replaceUnknownWithSymbol(CodePoint symbol) {
                                      SymbolHelper::BuildSymbol(symbol));
 }
 
-bool UserExpression::replaceSymbols(
+void UserExpression::replaceSymbols(
     const Poincare::SymbolContext& symbolContext,
     SymbolicComputation symbolic) {
   /* Caution: must be called on an unprojected expression!
@@ -416,10 +416,8 @@ bool UserExpression::replaceSymbols(
    * as the rest of the expression (otherwise inconsistencies could appear like
    * with random for example). */
   Tree* clone = tree()->cloneTree();
-  bool didReplace =
-      Projection::DeepReplaceUserNamed(clone, symbolContext, symbolic);
+  Projection::DeepReplaceUserNamed(clone, symbolContext, symbolic);
   *this = UserExpression::Builder(clone);
-  return didReplace;
 }
 
 bool UserExpression::IsIgnoredSymbol(

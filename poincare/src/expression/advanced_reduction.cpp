@@ -643,7 +643,7 @@ bool AdvancedReduction::PrivateDeepContract(
    *   sorted: exp(1/8*ln(3))*exp(1/8*ln(8))
    * TODO: This is enough for now, but if need be feel free to upgrade this Sort
    * to a full DeepReduce. */
-  if (changed && e->isNAry()) {
+  if (changed && NAry::CanBeSorted(e)) {
     NAry::Sort(e);
   }
 

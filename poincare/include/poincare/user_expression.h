@@ -80,10 +80,10 @@ class UserExpression : public Expression {
       const UserExpression& symbol, bool onlySecondTerm = false) const;
   UserExpression cloneAndReplaceUnknownWithSymbol(CodePoint symbol) const;
 
-  // TODO: Rework replaceSymbols as a const cloneAnd* methods.
-  void replaceSymbols(const Poincare::SymbolContext& symbolContext,
-                      SymbolicComputation symbolic =
-                          SymbolicComputation::ReplaceDefinedSymbols);
+  UserExpression cloneAndReplaceSymbols(
+      const Poincare::SymbolContext& symbolContext,
+      SymbolicComputation symbolic =
+          SymbolicComputation::ReplaceDefinedSymbols) const;
 
   ComplexFormat preferedComplexFormat(
       ComplexFormat complexFormat, const SymbolContext& symbolContext,

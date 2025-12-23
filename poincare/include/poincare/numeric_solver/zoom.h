@@ -65,6 +65,8 @@ class Zoom {
   /* These five functions will extend both X and Y axes. */
   void fitPoint(Coordinate2D<T> xy, bool flipped = false, T leftMargin = 0.f,
                 T rightMargin = 0.f, T bottomMargin = 0.f, T topMargin = 0.f);
+  /* WARNING: For the 3 following methods (fitPointsOfInterest, fitRoots,
+   * fitIntersections), the bounds must have been set beforehand. */
   void fitPointsOfInterest(Function2D<T> f, const void* model,
                            bool vertical = false, bool fitYIntercept = false,
                            Function2D<double> fDouble = nullptr,

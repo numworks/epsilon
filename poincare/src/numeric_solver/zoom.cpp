@@ -160,6 +160,7 @@ void Zoom<T>::fitPointsOfInterest(Function2D<T> f, const void* model,
                                   bool vertical, bool fitYIntercept,
                                   Function2D<double> fDouble,
                                   bool* finiteNumberOfPoints) {
+  assert(!std::isnan(m_bounds.min()) && !std::isnan(m_bounds.max()));
   HorizontalAsymptoteHelper asymptotes(m_bounds.center());
   T(Coordinate2D<T>::*ordinate)
   () const = vertical ? &Coordinate2D<T>::x : &Coordinate2D<T>::y;
@@ -742,6 +743,7 @@ bool Zoom<T>::fitWithSolver(
     bool vertical, Solver<double>::FunctionEvaluation fDouble,
     typename Solver<T>::BracketTest testForCenterOfInterval) {
   assert(leftInterrupted && rightInterrupted);
+  assert(!std::isnan(m_bounds.min()) && !std::isnan(m_bounds.max()));
 
   /* Pick margin large enough to detect an extremum around zero, for some
    * particularly flat function such as (x+10)(x-10). */

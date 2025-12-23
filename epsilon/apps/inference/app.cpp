@@ -121,8 +121,8 @@ void App::Snapshot::tidy() {
 }
 
 void App::Snapshot::reset() {
-  Shared::SharedApp::Snapshot::reset();
   m_pageQueue.reset();
+  Shared::SharedApp::Snapshot::reset();
 }
 
 bool App::storageCanChangeForRecordName(

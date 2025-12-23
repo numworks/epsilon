@@ -169,7 +169,7 @@ void Zoom<T>::fitPointsOfInterest(Function2D<T> f, const void* model,
                                   bool* finiteNumberOfPoints) {
   assert(!std::isnan(m_bounds.min()) && !std::isnan(m_bounds.max()));
   HorizontalAsymptoteHelper asymptotes(m_bounds.center());
-  T(Coordinate2D<T>::*ordinate)
+  T (Coordinate2D<T>::*ordinate)
   () const = vertical ? &Coordinate2D<T>::x : &Coordinate2D<T>::y;
   double (Coordinate2D<double>::*ordinateDouble)() const =
       vertical ? &Coordinate2D<double>::x : &Coordinate2D<double>::y;
@@ -379,7 +379,8 @@ void Zoom<T>::fitMagnitude(Function2D<T> f, const void* model,
 }
 
 template <typename T>
-void Zoom<T>::fitBounds(Function2D<T> f, const void* model, bool vertical) {
+void Zoom<T>::fitCenterOfBounds(Function2D<T> f, const void* model,
+                                bool vertical) {
   T tMin = m_bounds.min(), tMax = m_bounds.max();
   if (std::fabs(tMin) >= m_maxFloat || std::fabs(tMax) >= m_maxFloat) {
     return;

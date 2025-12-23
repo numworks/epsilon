@@ -174,6 +174,20 @@ QUIZ_CASE(distributions_results_normal) {
       &distribution, -2, 0.0038303805675897287);
   assert_finite_integral_between_abscissas_is(&distribution, -1., 0,
                                               0.2524608663050898);
+
+  // Test unknown parameters
+  distribution.setParameterAtIndex(0.f, 0);
+  distribution.setParameterAtIndex(NAN, 1);
+  distribution.computeUnknownParameterForProbabilityAndBound(0.69146225, 0.5,
+                                                             true);
+  assert_roughly_equal<float>(distribution.parameterAtIndex(1), 1.f, 1e-5f);
+
+  distribution.setParameterAtIndex(1.f, 1);
+  distribution.setParameterAtIndex(NAN, 0);
+  distribution.computeUnknownParameterForProbabilityAndBound(0.5, 8.15915e+47,
+                                                             true);
+  assert_roughly_equal<float>(distribution.parameterAtIndex(0),
+                              8.1591500000000001E+47);
 }
 
 QUIZ_CASE(distributions_results_chi_squared) {

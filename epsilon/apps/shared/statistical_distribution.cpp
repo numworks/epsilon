@@ -6,7 +6,11 @@ StatisticalDistribution::StatisticalDistribution() : MemoizedCurveViewRange() {}
 
 void StatisticalDistribution::computeCurveViewRange() {
   // x range
-  protectedSetXRange(computeXMin(), computeXMax());
+  Poincare::Range1D<float> xRange(computeXMin(), computeXMax());
+  if (xRange.isNan()) {
+    xRange = DefaultXRange();
+  }
+  protectedSetXRange(xRange);
 
   // y range
   Poincare::Range1D<float> yRange(computeYMin(), computeYMax());

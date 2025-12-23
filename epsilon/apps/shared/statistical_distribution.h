@@ -63,7 +63,10 @@ class StatisticalDistribution : public MemoizedCurveViewRange {
 
  private:
   static const Poincare::Range1D<float> DefaultYRange() {
-    return Poincare::Range1D<float>(-k_displayBottomMarginRatio, 1);
+    return Poincare::Range1D<float>(-k_displayBottomMarginRatio, 1.f);
+  }
+  static const Poincare::Range1D<float> DefaultXRange() {
+    return Poincare::Range1D<float>(-k_displayLeftMarginRatio, 10.f);
   }
 };
 

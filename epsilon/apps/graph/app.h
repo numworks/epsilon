@@ -37,9 +37,10 @@ class App : public Shared::FunctionApp {
     }
 
    private:
+    constexpr static size_t k_numberOfIntervals =
+        Shared::ContinuousFunctionProperties::k_numberOfVariableSymbolTypes;
     Shared::InteractiveCurveViewRange m_graphRange;
-    Shared::Interval m_interval
-        [Shared::ContinuousFunctionProperties::k_numberOfVariableSymbolTypes];
+    Shared::Interval m_interval[k_numberOfIntervals];
   };
   static App* app() { return static_cast<App*>(Escher::App::app()); }
   Snapshot* snapshot() {

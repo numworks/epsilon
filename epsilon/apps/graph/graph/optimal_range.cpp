@@ -83,8 +83,6 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
   bool onlyLines = true;
   bool onlyLinearLines = true;
   for (int i = 0; i < nbFunctions; i++) {
-    Coordinate2D<float> intervalMin = Coordinate2D<float>(NAN, NAN);
-    Coordinate2D<float> intervalMax = intervalMin;
     canComputeIntersections[i] = false;
     OMG::ExpiringPointer<const ContinuousFunction> f =
         store->modelForRecord(store->activeRecordAtIndex(i));
@@ -112,12 +110,18 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       for (int coordinate = 0; coordinate < 2; coordinate++) {
         Zoom zoomAlongCoordinate(
             NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
+
+        // Fit bounds
+        zoomAlongCoordinate.fitFunctionAtEdges(
+            Range1D<float>(f->tMin(), f->tMax()), floatEvaluators[coordinate],
+            &e, false);
+
+        // Fit the points of interest of x(t) or y(t)
         zoomAlongCoordinate.setBounds(f->tMin(), f->tMax());
         zoomAlongCoordinate.fitPointsOfInterest(floatEvaluators[coordinate], &e,
                                                 false, false,
                                                 doubleEvaluators[coordinate]);
-        zoomAlongCoordinate.fitCenterOfBounds(floatEvaluators[coordinate], &e,
-                                              false);
+
         ranges[coordinate] = *zoomAlongCoordinate.range(false, false).y();
       }
 
@@ -125,13 +129,6 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       zoom.fitPoint(Coordinate2D<float>(ranges[0].max(), ranges[1].max()));
       zoom.fitPoint(Coordinate2D<float>(ranges[0].min(), ranges[1].min()));
 
-      // Since function is defined on an interval, add interval edges
-      intervalMin = Coordinate2D<float>(
-          parametricExpressionEvaluator<float, 0>(f->tMin(), &e).y(),
-          parametricExpressionEvaluator<float, 1>(f->tMin(), &e).y());
-      intervalMax = Coordinate2D<float>(
-          parametricExpressionEvaluator<float, 0>(f->tMax(), &e).y(),
-          parametricExpressionEvaluator<float, 1>(f->tMax(), &e).y());
     } else if (f->properties().isScatterPlot()) {
       onlyLines = false;
       for (Coordinate2D<float> p : f->iterateScatterPlot()) {
@@ -150,32 +147,27 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       }
       canComputeIntersections[i] = true;
       bool alongY = f->isAlongY();
+
+      zoom.fitFunctionAtEdges(Range1D<float>(f->tMin(), f->tMax()),
+                              evaluator<float>, &fModel, alongY);
+
       Range1D<float>* bounds = alongY ? &yBounds : &xBounds;
       // Use the intersection between the definition domain of f and the bounds
       float tMin = std::clamp(f->tMin(), bounds->min(), bounds->max());
       float tMax = std::clamp(f->tMax(), bounds->min(), bounds->max());
       zoom.setBounds(tMin, tMax);
 
-      // If function is defined on an interval, add interval edges
-      if (tMin == f->tMin()) {
-        Coordinate2D<float> c(evaluator<float>(tMin, &fModel));
-        intervalMin = Coordinate2D<float>(tMin, alongY ? c.x() : c.y());
-      }
-      if (tMax == f->tMax()) {
-        Coordinate2D<float> c(evaluator<float>(tMax, &fModel));
-        intervalMax = Coordinate2D<float>(tMax, alongY ? c.x() : c.y());
-      }
-
       zoom.fitPointsOfInterest(evaluator<float>, &fModel, alongY,
                                isLine && !alongY, evaluator<double>,
                                canComputeIntersections + i);
-      zoom.fitCenterOfBounds(evaluator<float>, &fModel, alongY);
+
       if (f->numberOfSubCurves() > 1) {
         assert(f->numberOfSubCurves() == 2);
+        zoom.fitFunctionAtEdges(Range1D<float>(f->tMin(), f->tMax()),
+                                evaluatorSecondCurve<float>, &fModel, alongY);
         zoom.fitPointsOfInterest(
             evaluatorSecondCurve<float>, &fModel, alongY, isLine && !alongY,
             evaluatorSecondCurve<double>, canComputeIntersections + i);
-        zoom.fitCenterOfBounds(evaluatorSecondCurve<float>, &fModel, alongY);
       }
 
       /* Special case for piecewise functions: we want to display the branch
@@ -209,12 +201,6 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
           }
         }
       }
-    }
-    if (std::isfinite(intervalMin.x()) && std::isfinite(intervalMin.y())) {
-      zoom.fitPoint(intervalMin);
-    }
-    if (std::isfinite(intervalMax.x()) && std::isfinite(intervalMax.y())) {
-      zoom.fitPoint(intervalMax);
     }
   }
   if (onlyLines && !onlyLinearLines && zoom.hasInterestingRange()) {

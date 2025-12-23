@@ -379,23 +379,31 @@ void Zoom<T>::fitMagnitude(Function2D<T> f, const void* model,
 }
 
 template <typename T>
-void Zoom<T>::fitCenterOfBounds(Function2D<T> f, const void* model,
-                                bool vertical) {
-  T tMin = m_bounds.min(), tMax = m_bounds.max();
-  if (std::fabs(tMin) >= m_maxFloat || std::fabs(tMax) >= m_maxFloat) {
-    return;
-  }
-  // Fit the middle of the interval if it's finite
-  T tMiddle = (tMin + tMax) / 2;
-  Coordinate2D<T> middle(f(tMiddle, model));
-  Coordinate2D<T> pointToFit = vertical ? Coordinate2D<T>(tMiddle, middle.x())
-                                        : Coordinate2D<T>(tMiddle, middle.y());
-  privateFitPoint(pointToFit, vertical);
+void Zoom<T>::fitFunctionAtEdges(Range1D<T> range, Function2D<T> f,
+                                 const void* model, bool vertical) {
+  T tMin = range.min(), tMax = range.max();
+  T bounds[2] = {tMin, tMax};
 
-  /* Set the default half length in case the middle is the only point
-   * in the interesting range */
-  T halfLength = (tMax - tMin) / 2;
-  m_defaultHalfLength = std::min(m_defaultHalfLength, halfLength);
+  bool minIsFinite = !std::isnan(tMin) && std::fabs(tMin) < m_maxFloat;
+  bool maxIsFinite = !std::isnan(tMax) && std::fabs(tMax) < m_maxFloat;
+  bool boundIsFinite[2] = {minIsFinite, maxIsFinite};
+
+  for (int i = 0; i < 2; i++) {
+    if (!boundIsFinite[i]) {
+      continue;
+    }
+    T t = bounds[i];
+    Coordinate2D<T> eval(f(t, model));
+    Coordinate2D<T> pointToFit =
+        vertical ? Coordinate2D<T>(t, eval.x()) : Coordinate2D<T>(t, eval.y());
+    if (std::isfinite(pointToFit.x()) && std::isfinite(pointToFit.y())) {
+      privateFitPoint(pointToFit, vertical);
+    } else {
+      /* If the function diverges at the bound, we still want to fit the
+       * abscissa */
+      fitAbscissa(t, vertical);
+    }
+  }
 }
 
 // Zoom - Private
@@ -563,8 +571,9 @@ static Range1D<T> sanitation1DHelper(Range1D<T> range, Range1D<T> forcedRange,
 
 template <typename T>
 Range2D<T> Zoom<T>::sanitize2DHelper(Range2D<T> range) const {
-  Range1D<T> xRange = sanitation1DHelper(*range.x(), *m_forcedRange.x(),
-                                         m_defaultHalfLength, m_maxFloat);
+  Range1D<T> xRange =
+      sanitation1DHelper(*range.x(), *m_forcedRange.x(),
+                         Range1D<T>::k_defaultHalfLength, m_maxFloat);
   Range1D<T> yRange = sanitation1DHelper(
       *range.y(), *m_forcedRange.y(),
       xRange.length() * static_cast<T>(0.5) * m_normalRatio, m_maxFloat);

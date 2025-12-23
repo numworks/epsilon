@@ -816,12 +816,14 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
     case Type::ListElement: {
       const Tree* values = e->child(0);
       const Tree* index = e->child(1);
-      assert(Integer::Is<uint8_t>(index));
-      int i = Integer::Handler(index).to<uint8_t>() - 1;
-      if (i < 0 || i >= Dimension::ListLength(values, ctx->m_symbolContext)) {
+      T indexValue = PrivateTo<T>(index, ctx);
+      assert(indexValue == std::floor(indexValue));
+      if (indexValue < 1 ||
+          indexValue > Dimension::ListLength(values, ctx->m_symbolContext)) {
         return NAN;
       }
-      tempCtx.m_listElement = i;
+      assert(indexValue >= 1 && indexValue <= INT16_MAX);
+      tempCtx.m_listElement = static_cast<int16_t>(indexValue) - 1;
       std::complex<T> result = PrivateToComplexRecursive<T>(values, &tempCtx);
       ctx->updateRandomContext(tempCtx.m_randomContext);
       return result;

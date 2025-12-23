@@ -28,6 +28,7 @@ QUIZ_CASE(pcj_approximation_list) {
   approximates_to<float>("L(-5,3)", "undef", {.m_context = symbolStore});
   approximates_to<float>("L(3,1)", "{}", {.m_context = symbolStore});
   approximates_to<float>("L(8,9)", "{}", {.m_context = symbolStore});
+  approximates_to<float>("L(1^2)", "1", {.m_context = symbolStore});
 }
 
 QUIZ_CASE(pcj_approximation_lists_functions) {

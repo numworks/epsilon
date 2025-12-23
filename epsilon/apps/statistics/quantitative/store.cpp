@@ -34,49 +34,48 @@ int Store::relativeColumn(int i) const {
 
 /* Histogram bars */
 
-void Store::setBarWidth(float barWidth) {
-  assert(barWidth > 0.f);
+void Store::setBarWidth(double barWidth) {
+  assert(barWidth > 0.0);
   userPreferences()->setBarWidth(barWidth);
 }
 
-float Store::heightOfBarAtIndex(int series, int index) const {
+double Store::heightOfBarAtIndex(int series, int index) const {
   return m_datasets[series].heightOfBarAtIndex(index, barWidth(),
                                                firstDrawnBarAbscissa());
 }
 
-float Store::maxHeightOfBar(int series) const {
+double Store::maxHeightOfBar(int series) const {
   assert(seriesIsActive(series));
-  float maxHeight = -FLT_MAX;
-  float endOfBar = startOfBarAtIndex(series, 0);
+  double maxHeight = -DBL_MAX;
+  double endOfBar = startOfBarAtIndex(series, 0);
   const int myNumberOfBars = numberOfBars(series);
   for (int i = 0; i < myNumberOfBars; i++) {
     // Reuse previous endOfBarAtIndex result
-    float startOfBar = endOfBar;
+    double startOfBar = endOfBar;
     endOfBar = endOfBarAtIndex(series, i);
-    maxHeight = std::max(maxHeight, static_cast<float>(sumOfValuesBetween(
-                                        series, startOfBar, endOfBar)));
+    maxHeight =
+        std::max(maxHeight, sumOfValuesBetween(series, startOfBar, endOfBar));
   }
-  assert(maxHeight > 0.f);
+  assert(maxHeight > 0.0);
   return maxHeight;
 }
 
-float Store::heightOfBarAtValue(int series, double value) const {
-  float width = barWidth();
-  int barNumber =
-      std::floor((static_cast<float>(value) - firstDrawnBarAbscissa()) / width);
-  float lowerBound =
-      firstDrawnBarAbscissa() + static_cast<float>(barNumber) * width;
-  float upperBound =
-      firstDrawnBarAbscissa() + static_cast<float>(barNumber + 1) * width;
-  return static_cast<float>(sumOfValuesBetween(series, lowerBound, upperBound));
+double Store::heightOfBarAtValue(int series, double value) const {
+  double width = barWidth();
+  int barNumber = std::floor((value - firstDrawnBarAbscissa()) / width);
+  double lowerBound =
+      firstDrawnBarAbscissa() + static_cast<double>(barNumber) * width;
+  double upperBound =
+      firstDrawnBarAbscissa() + static_cast<double>(barNumber + 1) * width;
+  return sumOfValuesBetween(series, lowerBound, upperBound);
 }
 
-float Store::startOfBarAtIndex(int series, int index) const {
+double Store::startOfBarAtIndex(int series, int index) const {
   return m_datasets[series].startOfBarAtIndex(index, barWidth(),
                                               firstDrawnBarAbscissa());
 }
 
-float Store::endOfBarAtIndex(int series, int index) const {
+double Store::endOfBarAtIndex(int series, int index) const {
   return m_datasets[series].endOfBarAtIndex(index, barWidth(),
                                             firstDrawnBarAbscissa());
 }

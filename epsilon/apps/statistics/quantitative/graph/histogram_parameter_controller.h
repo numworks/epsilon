@@ -10,11 +10,11 @@
 namespace Statistics {
 
 class HistogramParameterController
-    : public Shared::FloatParameterController<float> {
+    : public Shared::FloatParameterController<double> {
  public:
   HistogramParameterController(Escher::Responder* parentResponder,
                                Store* store);
-  static bool AuthorizedBarWidth(float barWidth, float firstDrawnBarAbscissa,
+  static bool AuthorizedBarWidth(double barWidth, double firstDrawnBarAbscissa,
                                  Store* store);
 
   void viewWillAppear() override;
@@ -24,10 +24,10 @@ class HistogramParameterController
 
  private:
   constexpr static int k_numberOfCells = 2;
-  float extractParameterAtIndex(int index);
+  double extractParameterAtIndex(int index);
   bool handleEvent(Ion::Events::Event event) override;
-  float parameterAtIndex(int index) override;
-  bool setParameterAtIndex(int parameterIndex, float f) override;
+  double parameterAtIndex(int index) override;
+  bool setParameterAtIndex(int parameterIndex, double f) override;
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;
   Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
                                             int index) override;
@@ -35,16 +35,16 @@ class HistogramParameterController
     return k_numberOfCells;
   }
   void buttonAction() override;
-  bool authorizedParameters(float tempBarWidth,
-                            float tempFirstDrawnBarAbscissa);
+  bool authorizedParameters(double tempBarWidth,
+                            double tempFirstDrawnBarAbscissa);
   Escher::MenuCellWithEditableText<Escher::MessageTextView,
                                    Escher::MessageTextView>
       m_cells[k_numberOfCells];
   Store* m_store;
   Shared::MessagePopUpController m_confirmPopUpController;
   // Temporary parameters
-  float m_tempBarWidth;
-  float m_tempFirstDrawnBarAbscissa;
+  double m_tempBarWidth;
+  double m_tempFirstDrawnBarAbscissa;
 };
 
 }  // namespace Statistics

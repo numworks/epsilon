@@ -23,11 +23,11 @@ class UserPreferences : public Shared::DoublePairStorePreferences {
     m_displayCumulatedFrequencies[series] = value;
   }
 
-  float barWidth() { return m_barWidth; }
-  void setBarWidth(float value) { m_barWidth = value; }
+  double barWidth() { return m_barWidth; }
+  void setBarWidth(double value) { m_barWidth = value; }
 
-  float firstDrawnBarAbscissa() { return m_firstDrawnBarAbscissa; }
-  void setFirstDrawnBarAbscissa(float value) {
+  double firstDrawnBarAbscissa() { return m_firstDrawnBarAbscissa; }
+  void setFirstDrawnBarAbscissa(double value) {
     m_firstDrawnBarAbscissa = value;
   }
 
@@ -36,8 +36,8 @@ class UserPreferences : public Shared::DoublePairStorePreferences {
 
  private:
   // Graph preferences
-  float m_barWidth;
-  float m_firstDrawnBarAbscissa;
+  double m_barWidth;
+  double m_firstDrawnBarAbscissa;
   bool m_displayOutliers;
   // Cumulated frequencies column display
   bool m_displayCumulatedFrequencies[Shared::DoublePairStore::k_numberOfSeries];

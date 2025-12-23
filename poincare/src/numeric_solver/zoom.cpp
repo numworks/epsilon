@@ -110,6 +110,13 @@ static Range1D<T> computeNewBoundsAfterZoomingOut(T t, Range1D<T> oldRange,
 }
 
 template <typename T>
+void Zoom<T>::fitAbscissa(T value, bool vertical) {
+  Range1D<T>* range =
+      vertical ? m_interestingRange.y() : m_interestingRange.x();
+  range->extend(value, m_maxFloat);
+}
+
+template <typename T>
 void Zoom<T>::fitPoint(Coordinate2D<T> xy, bool flipped, T leftMargin,
                        T rightMargin, T bottomMargin, T topMargin) {
   T xL = m_interestingRange.x()->length(),

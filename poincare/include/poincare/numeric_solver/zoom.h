@@ -62,7 +62,9 @@ class Zoom {
     m_thresholdForFunctionsExceedingNbOfPoints =
         thresholdForFunctionsExceedingNbOfPoints;
   }
-  /* These five functions will extend both X and Y axes. */
+
+  /* -- Change both axes -- */
+
   void fitPoint(Coordinate2D<T> xy, bool flipped = false, T leftMargin = 0.f,
                 T rightMargin = 0.f, T bottomMargin = 0.f, T topMargin = 0.f);
   /* WARNING: For the 3 following methods (fitPointsOfInterest, fitRoots,
@@ -81,10 +83,15 @@ class Zoom {
   void fitConditions(const Internal::Tree* piecewise,
                      Function2D<T> fullFunction, const void* model,
                      bool vertical = false);
-  /* This function will only touch the Y axis. */
+  void fitBounds(Function2D<T> f, const void* model, bool vertical = false);
+
+  /* -- Only change one axis -- */
+
+  /* Adds the value to either X or Y axis range.*/
+  void fitAbscissa(T value, bool vertical = false);
+  /* Fits magnitude of the function on the interesting range */
   void fitMagnitude(Function2D<T> f, const void* model, bool cropOutliers,
                     bool vertical = false);
-  void fitBounds(Function2D<T> f, const void* model, bool vertical = false);
 
  private:
   class HorizontalAsymptoteHelper {

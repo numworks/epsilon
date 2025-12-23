@@ -122,6 +122,9 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
                                                 false, false,
                                                 doubleEvaluators[coordinate]);
 
+        // Fit magnitude on bounds
+        zoomAlongCoordinate.fitMagnitude(floatEvaluators[coordinate], &e, true);
+
         ranges[coordinate] = *zoomAlongCoordinate.range(false, false).y();
       }
 

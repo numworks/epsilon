@@ -14,7 +14,7 @@ namespace Statistics {
 
 HistogramParameterController::HistogramParameterController(
     Responder* parentResponder, Store* store)
-    : FloatParameterController<float>(parentResponder),
+    : FloatParameterController<double>(parentResponder),
       m_store(store),
       m_confirmPopUpController(
           Invocation::Builder<HistogramParameterController>(
@@ -51,7 +51,7 @@ KDCoordinate HistogramParameterController::nonMemoizedRowHeight(int row) {
     return m_cells[row].minimalSizeForOptimalDisplay().height();
   }
   assert(type == k_buttonCellType);
-  return Shared::FloatParameterController<float>::nonMemoizedRowHeight(row);
+  return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
 }
 
 bool HistogramParameterController::handleEvent(Ion::Events::Event event) {
@@ -65,18 +65,18 @@ bool HistogramParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-float HistogramParameterController::extractParameterAtIndex(int index) {
+double HistogramParameterController::extractParameterAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfCells);
   return index == 0 ? m_store->barWidth() : m_store->firstDrawnBarAbscissa();
 }
 
-float HistogramParameterController::parameterAtIndex(int index) {
+double HistogramParameterController::parameterAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfCells);
   return index == 0 ? m_tempBarWidth : m_tempFirstDrawnBarAbscissa;
 }
 
 bool HistogramParameterController::setParameterAtIndex(int parameterIndex,
-                                                       float value) {
+                                                       double value) {
   assert(parameterIndex == 0 || parameterIndex == 1);
   const double nextBarWidth = parameterIndex == 0 ? value : m_tempBarWidth;
   const double nextFirstDrawnBarAbscissa =
@@ -116,8 +116,8 @@ void HistogramParameterController::buttonAction() {
 }
 
 bool HistogramParameterController::authorizedParameters(
-    float barWidth, float firstDrawnBarAbscissa) {
-  if (barWidth < 0.f) {
+    double barWidth, double firstDrawnBarAbscissa) {
+  if (barWidth < 0.0) {
     // The bar width cannot be negative
     return false;
   }
@@ -130,7 +130,7 @@ bool HistogramParameterController::authorizedParameters(
   assert(DoublePairStore::k_numberOfSeries > 0);
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
     if (Shared::DoublePairStore::DefaultActiveSeriesTest(m_store, i) &&
-        static_cast<float>(m_store->maxValue(i)) < firstDrawnBarAbscissa) {
+        m_store->maxValue(i) < firstDrawnBarAbscissa) {
       return false;
     }
   }
@@ -138,21 +138,22 @@ bool HistogramParameterController::authorizedParameters(
 }
 
 bool HistogramParameterController::AuthorizedBarWidth(
-    float barWidth, float firstDrawnBarAbscissa, Store* store) {
+    double barWidth, double firstDrawnBarAbscissa, Store* store) {
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
     if (!Shared::DoublePairStore::DefaultActiveSeriesTest(store, i)) {
       continue;
     }
-    const float min =
-        std::min(static_cast<float>(store->minValue(i)), firstDrawnBarAbscissa);
-    const float max = static_cast<float>(store->maxValue(i));
-    float numberOfBars = std::ceil((max - min) / barWidth);
+    const double min = std::min(store->minValue(i), firstDrawnBarAbscissa);
+    const double max = store->maxValue(i);
+    double numberOfBars = std::ceil((max - min) / barWidth);
     // First escape case: if the bars are too thin or there is too much bars
     if (numberOfBars > HistogramRange::k_maxNumberOfBars
-        /* Second escape case:
+        /* Second escape case: Since interval width is computed in float, we
+         * need to check if the values are not too close.
          * If max == min then the interval goes from min to min + barWidth.
          * But if min == min + barWidth, the display is bugged. */
-        || (min == max && min + barWidth == min)) {
+        || (static_cast<float>(min) == static_cast<float>(max) &&
+            static_cast<float>(min + barWidth) == static_cast<float>(min))) {
       return false;
     }
   }

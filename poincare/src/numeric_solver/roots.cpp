@@ -129,12 +129,12 @@ Tree* Roots::PrivateCubic(const Tree* a, const Tree* b, const Tree* c,
     assert(allRoots->isList());
     /* TODO: We could refactor this by either:
      * - creating an NAry::RemoveDuplicates function, that would be called right
-     * after NAry::SortMayBeList. We could even make a shortcut that calls both
+     * after NAry::SortList. We could even make a shortcut that calls both
      * steps: NAry::SortAndRemoveDuplicates.
      * - designing and using a Set structure instead of a List. */
     if (!NAry::ContainsSame(allRoots, KTree(0_e))) {
       NAry::AddChild(allRoots, KTree(0_e)->cloneTree());
-      NAry::SortMayBeList(allRoots, Order::OrderType::ComplexLine);
+      NAry::SortList(allRoots, Order::OrderType::ComplexLine);
     }
     return allRoots;
   }
@@ -211,7 +211,7 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
 #endif
     realRoot->moveTreeOverTree(Approximation::ExtractRealPart(realRoot));
   }
-  NAry::SortMayBeList(approximatedRoots, Order::OrderType::ComplexLine);
+  NAry::SortList(approximatedRoots, Order::OrderType::ComplexLine);
   return approximatedRoots;
 }
 
@@ -253,7 +253,7 @@ Tree* Roots::CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
   gamma->removeTree();
   if (!NAry::ContainsSame(allRoots, r)) {
     NAry::AddChild(allRoots, r);
-    NAry::SortMayBeList(allRoots, Order::OrderType::ComplexLine);
+    NAry::SortList(allRoots, Order::OrderType::ComplexLine);
   } else {
     r->removeTree();
   }
@@ -290,7 +290,7 @@ Tree* Roots::CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
       KList(KA, KMult(KA, k_cubeRootOfUnity1), KMult(KA, k_cubeRootOfUnity2)),
       {.KA = baseRoot});
   baseRoot->removeTree();
-  NAry::SortMayBeList(rootList, Order::OrderType::ComplexLine);
+  NAry::SortList(rootList, Order::OrderType::ComplexLine);
   return rootList;
 }
 
@@ -469,7 +469,7 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
             : Approximation::ToTree<double>(rootList,
                                             Approximation::Parameters{}));
   }
-  NAry::SortMayBeList(rootList, Order::OrderType::ComplexLine);
+  NAry::SortList(rootList, Order::OrderType::ComplexLine);
   return rootList;
 }
 
@@ -505,7 +505,7 @@ Tree* Roots::CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
 
   delta0->removeTree();
 
-  NAry::SortMayBeList(rootList, Order::OrderType::ComplexLine);
+  NAry::SortList(rootList, Order::OrderType::ComplexLine);
   return rootList;
 }
 

@@ -933,7 +933,6 @@ SolverResult ApproximateSolve(const Tree* equationList,
     bool didFitRoots =
         zoom.fitRoots(evaluator<float>, model, false, evaluator<double>,
                       &finiteNumberOfSolutions);
-    zoom.fitCenterOfBounds(evaluator<float>, model, false);
     Range1D<float> finalRange = *(zoom.range(false, false).x());
     if (didFitRoots) {
       /* The range was computed from the solution found with a solver in float.

@@ -83,7 +83,10 @@ class Zoom {
   void fitConditions(const Internal::Tree* piecewise,
                      Function2D<T> fullFunction, const void* model,
                      bool vertical = false);
-  void fitBounds(Function2D<T> f, const void* model, bool vertical = false);
+  /* Adds the center of the bounds to the range, and shrink default half range
+   * if necessary. */
+  void fitCenterOfBounds(Function2D<T> f, const void* model,
+                         bool vertical = false);
 
   /* -- Only change one axis -- */
 

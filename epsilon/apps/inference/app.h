@@ -51,11 +51,11 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
 
    private:
     friend App;
+    InferenceBuffer m_inferenceBuffer;
     // TODO: optimize size of Stack
     OMG::RingBuffer<Escher::ViewController*,
                     LargeStackViewController::k_maxNumberOfChildren>
         m_pageQueue;
-    InferenceBuffer m_inferenceBuffer;
   };
 
   static App* app() { return static_cast<App*>(Escher::App::app()); }

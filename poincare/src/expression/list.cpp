@@ -338,7 +338,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
       if (!list->isList()) {
         return changed;
       }
-      ExceptionTry { NAry::SortMayBeList(list, Order::OrderType::RealLine); }
+      ExceptionTry { NAry::SortList(list, Order::OrderType::RealLine); }
       ExceptionCatch(exc) {
         if (exc == ExceptionType::SortFail) {
           if (Variables::HasVariables(e) || Variables::HasUserSymbols(e)) {

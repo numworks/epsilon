@@ -41,9 +41,8 @@ inline bool CanBeSorted(const Tree* e) {
 bool Sanitize(Tree* nary);
 // Sort a nary that can be sorted (see CanBeSorted)
 bool Sort(Tree* nary, Order::OrderType order = Order::OrderType::System);
-// Sort a nary that can be sorted (see CanBeSorted) or a list
-bool SortMayBeList(Tree* nary,
-                   Order::OrderType order = Order::OrderType::System);
+// Sort a list
+bool SortList(Tree* nary, Order::OrderType order = Order::OrderType::System);
 void SortedInsertChild(Tree* nary, Tree* child,
                        Order::OrderType order = Order::OrderType::System);
 bool DeepSort(Tree* expression,

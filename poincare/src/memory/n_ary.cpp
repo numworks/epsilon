@@ -137,14 +137,9 @@ bool NAry::Sanitize(Tree* nary) {
   return SquashIfPossible(nary) || flattened;
 }
 
-bool NAry::Sort(Tree* nary, Order::OrderType order) {
-  assert(CanBeSorted(nary));
-  return SortMayBeList(nary, order);
-}
-
-bool NAry::SortMayBeList(Tree* nary, Order::OrderType order) {
+bool PrivateSort(Tree* nary, Order::OrderType order) {
   // List may occasionally be sorted
-  assert(CanBeSorted(nary) || nary->isList());
+  assert(NAry::CanBeSorted(nary) || nary->isList());
   const uint8_t numberOfChildren = nary->numberOfChildren();
   if (numberOfChildren < 2) {
     return false;
@@ -158,8 +153,8 @@ bool NAry::SortMayBeList(Tree* nary, Order::OrderType order) {
     }
     return false;
   }
-  const Tree* children[k_maxNumberOfChildren];
-  uint8_t indexes[k_maxNumberOfChildren];
+  const Tree* children[NAry::k_maxNumberOfChildren];
+  uint8_t indexes[NAry::k_maxNumberOfChildren];
   for (uint8_t index = 0; const Tree* child : nary->children()) {
     children[index] = child;
     indexes[index] = index;
@@ -208,6 +203,16 @@ push:
   // replace nary with the sorted one
   nary->moveTreeOverTree(newNAry);
   return true;
+}
+
+bool NAry::Sort(Tree* nary, Order::OrderType order) {
+  assert(CanBeSorted(nary));
+  return PrivateSort(nary, order);
+}
+
+bool NAry::SortList(Tree* nary, Order::OrderType order) {
+  assert(nary->isList());
+  return PrivateSort(nary, order);
 }
 
 void NAry::SortedInsertChild(Tree* nary, Tree* child, Order::OrderType order) {

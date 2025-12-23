@@ -31,7 +31,7 @@ template <typename T>
 Range2D<T> Zoom<T>::Sanitize(Range2D<T> range, T normalYXRatio, T maxFloat) {
   /* Values for tMin and tMax actually do not matter here, as no function will
    * be evaluated to generate this zoom. */
-  Zoom zoom(-maxFloat, maxFloat, normalYXRatio, maxFloat);
+  Zoom zoom(normalYXRatio, maxFloat);
   zoom.m_interestingRange = range;
   return zoom.range(false, false);
 }
@@ -164,12 +164,12 @@ static typename Solver<T>::Interest pointIsInterestingHelper(Coordinate2D<T> a,
 
 template <typename T>
 void Zoom<T>::fitPointsOfInterest(Function2D<T> f, const void* model,
-                                  bool vertical, bool fitYIntercept,
+                                  Range1D<T> bounds, bool vertical,
+                                  bool fitYIntercept,
                                   Function2D<double> fDouble,
                                   bool* finiteNumberOfPoints) {
-  assert(!std::isnan(m_bounds.min()) && !std::isnan(m_bounds.max()));
-  HorizontalAsymptoteHelper asymptotes(m_bounds.center());
-  T (Coordinate2D<T>::*ordinate)
+  HorizontalAsymptoteHelper asymptotes(bounds.center());
+  T(Coordinate2D<T>::*ordinate)
   () const = vertical ? &Coordinate2D<T>::x : &Coordinate2D<T>::y;
   double (Coordinate2D<double>::*ordinateDouble)() const =
       vertical ? &Coordinate2D<double>::x : &Coordinate2D<double>::y;
@@ -194,7 +194,7 @@ void Zoom<T>::fitPointsOfInterest(Function2D<T> f, const void* model,
     fitPoint(f(0.0, model));
   }
   bool leftInterrupted, rightInterrupted;
-  fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator, &params,
+  fitWithSolver(bounds, &leftInterrupted, &rightInterrupted, evaluator, &params,
                 PointIsInteresting, HonePoint, vertical, evaluatorDouble,
                 pointIsInterestingHelper);
   /* If the search has been interrupted, the curve is supposed to have an
@@ -213,8 +213,9 @@ void Zoom<T>::fitPointsOfInterest(Function2D<T> f, const void* model,
 }
 
 template <typename T>
-bool Zoom<T>::fitRoots(Function2D<T> f, const void* model, bool vertical,
-                       Function2D<double> fDouble, bool* finiteNumberOfPoints) {
+bool Zoom<T>::fitRoots(Function2D<T> f, const void* model, Range1D<T> bounds,
+                       bool vertical, Function2D<double> fDouble,
+                       bool* finiteNumberOfPoints) {
   T(Coordinate2D<T>::*ordinate)
   () const = vertical ? &Coordinate2D<T>::x : &Coordinate2D<T>::y;
   double (Coordinate2D<double>::*ordinateDouble)() const =
@@ -235,9 +236,9 @@ bool Zoom<T>::fitRoots(Function2D<T> f, const void* model, bool vertical,
     return (p->fDouble(t, p->model).*p->ordinateDouble)();
   };
   bool leftInterrupted, rightInterrupted;
-  bool didFit = fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator,
-                              &params, Solver<T>::EvenOrOddRootInBracket,
-                              HoneRoot, vertical, evaluatorDouble);
+  bool didFit = fitWithSolver(
+      bounds, &leftInterrupted, &rightInterrupted, evaluator, &params,
+      Solver<T>::EvenOrOddRootInBracket, HoneRoot, vertical, evaluatorDouble);
   if (finiteNumberOfPoints) {
     *finiteNumberOfPoints =
         *finiteNumberOfPoints && !leftInterrupted && !rightInterrupted;
@@ -248,7 +249,7 @@ bool Zoom<T>::fitRoots(Function2D<T> f, const void* model, bool vertical,
 template <typename T>
 void Zoom<T>::fitIntersections(Function2D<T> f1, const void* model1,
                                Function2D<T> f2, const void* model2,
-                               bool vertical) {
+                               Range1D<T> bounds, bool vertical) {
   /* TODO Function x=f(y) are not intersectable right now, there is no need to
    * handle this case yet. */
   assert(!vertical);
@@ -260,8 +261,8 @@ void Zoom<T>::fitIntersections(Function2D<T> f1, const void* model1,
     return p->f1(t, p->model1).y() - p->f2(t, p->model2).y();
   };
   bool dummy;
-  fitWithSolver(&dummy, &dummy, evaluator, &params, Solver<T>::OddRootInBracket,
-                HoneIntersection, vertical);
+  fitWithSolver(bounds, &dummy, &dummy, evaluator, &params,
+                Solver<T>::OddRootInBracket, HoneIntersection, vertical);
 }
 
 template <typename T>
@@ -273,7 +274,7 @@ void Zoom<T>::zoom(T ratio) {
 template <typename T>
 void Zoom<T>::fitConditions(const Internal::Tree* piecewise,
                             Function2D<T> fullFunction, const void* model,
-                            bool vertical) {
+                            Range1D<T> bounds, bool vertical) {
   struct ConditionsParameters {
     Zoom* zoom;
     const Internal::Tree* piecewise;
@@ -309,7 +310,8 @@ void Zoom<T>::fitConditions(const Internal::Tree* piecewise,
         return params->fullFunction(b, params->model);
       };
   bool dummy;
-  fitWithSolver(&dummy, &dummy, evaluator, &params, test, hone, vertical);
+  fitWithSolver(bounds, &dummy, &dummy, evaluator, &params, test, hone,
+                vertical);
 #else
   OMG::unreachable();
 #endif
@@ -754,27 +756,31 @@ Range2D<T> Zoom<T>::prettyRange(bool forceNormalization) const {
 
 template <typename T>
 bool Zoom<T>::fitWithSolver(
-    bool* leftInterrupted, bool* rightInterrupted,
+    Range1D<T> inputBounds, bool* leftInterrupted, bool* rightInterrupted,
     typename Solver<T>::FunctionEvaluation evaluator, const void* aux,
     typename Solver<T>::BracketTest test, typename Solver<T>::HoneResult hone,
     bool vertical, Solver<double>::FunctionEvaluation fDouble,
     typename Solver<T>::BracketTest testForCenterOfInterval) {
   assert(leftInterrupted && rightInterrupted);
-  assert(!std::isnan(m_bounds.min()) && !std::isnan(m_bounds.max()));
+
+  Range1D<T> bounds =
+      inputBounds.isNan()
+          ? Range1D<T>(-m_maxFloat, m_maxFloat)
+          : Range1D<T>(inputBounds.min(), inputBounds.max(), m_maxFloat);
 
   /* Pick margin large enough to detect an extremum around zero, for some
    * particularly flat function such as (x+10)(x-10). */
   constexpr T k_marginAroundZero = 1e-2f;
 
-  T c = m_bounds.center();
+  T c = bounds.center();
   T d = std::max(k_marginAroundZero,
                  std::fabs(c * Solver<T>::k_relativePrecision));
   bool fitRight =
-      fitWithSolverHelper(c + d, m_bounds.max(), rightInterrupted, evaluator,
-                          aux, test, hone, vertical, fDouble);
+      fitWithSolverHelper(c + d, bounds.max(), rightInterrupted, evaluator, aux,
+                          test, hone, vertical, fDouble);
   bool fitLeft =
-      fitWithSolverHelper(c - d, m_bounds.min(), leftInterrupted, evaluator,
-                          aux, test, hone, vertical, fDouble);
+      fitWithSolverHelper(c - d, bounds.min(), leftInterrupted, evaluator, aux,
+                          test, hone, vertical, fDouble);
 
   Coordinate2D<T> p1(c - d, evaluator(c - d, aux));
   Coordinate2D<T> p2(c, evaluator(c, aux));

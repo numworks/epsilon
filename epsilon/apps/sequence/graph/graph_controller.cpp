@@ -97,8 +97,7 @@ Range2D<float> GraphController::optimalRange(
     *result.x() = *originalRange.x();
   }
   if (computeY) {
-    Zoom zoom(result.xMin(), result.xMax(),
-              InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
+    Zoom zoom(InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
     int nbOfActiveModels =
         functionOrSequenceContext().numberOfActiveFunctions();
     assert(nbOfActiveModels <= Shared::SequenceStore::k_maxNumberOfSequences);

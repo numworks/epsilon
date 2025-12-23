@@ -54,7 +54,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
                             const bool enforceNormalizedRange,
                             const SymbolContext& symbolContext) {
   constexpr float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
-  Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
+  Zoom zoom(InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
   if (store->memoizationOverflows()) {
     /* Do not compute autozoom if store is full because the computation is too
      * slow. */
@@ -107,19 +107,18 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       Function2D<double> doubleEvaluators[2] = {
           parametricExpressionEvaluator<double, 0>,
           parametricExpressionEvaluator<double, 1>};
+      Range1D<float> searchBounds(f->tMin(), f->tMax());
       for (int coordinate = 0; coordinate < 2; coordinate++) {
-        Zoom zoomAlongCoordinate(
-            NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
+        Zoom zoomAlongCoordinate(InteractiveCurveViewRange::NormalYXRatio(),
+                                 k_maxFloat);
 
         // Fit bounds
         zoomAlongCoordinate.fitFunctionAtEdges(
-            Range1D<float>(f->tMin(), f->tMax()), floatEvaluators[coordinate],
-            &e, false);
+            searchBounds, floatEvaluators[coordinate], &e, false);
 
         // Fit the points of interest of x(t) or y(t)
-        zoomAlongCoordinate.setBounds(f->tMin(), f->tMax());
         zoomAlongCoordinate.fitPointsOfInterest(floatEvaluators[coordinate], &e,
-                                                false, false,
+                                                searchBounds, false, false,
                                                 doubleEvaluators[coordinate]);
 
         // Fit magnitude on bounds
@@ -158,9 +157,9 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
       // Use the intersection between the definition domain of f and the bounds
       float tMin = std::clamp(f->tMin(), bounds->min(), bounds->max());
       float tMax = std::clamp(f->tMax(), bounds->min(), bounds->max());
-      zoom.setBounds(tMin, tMax);
+      Range1D<float> searchBounds(tMin, tMax);
 
-      zoom.fitPointsOfInterest(evaluator<float>, &fModel, alongY,
+      zoom.fitPointsOfInterest(evaluator<float>, &fModel, searchBounds, alongY,
                                isLine && !alongY, evaluator<double>,
                                canComputeIntersections + i);
 
@@ -168,9 +167,10 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
         assert(f->numberOfSubCurves() == 2);
         zoom.fitFunctionAtEdges(Range1D<float>(f->tMin(), f->tMax()),
                                 evaluatorSecondCurve<float>, &fModel, alongY);
-        zoom.fitPointsOfInterest(
-            evaluatorSecondCurve<float>, &fModel, alongY, isLine && !alongY,
-            evaluatorSecondCurve<double>, canComputeIntersections + i);
+        zoom.fitPointsOfInterest(evaluatorSecondCurve<float>, &fModel,
+                                 searchBounds, alongY, isLine && !alongY,
+                                 evaluatorSecondCurve<double>,
+                                 canComputeIntersections + i);
       }
 
       /* Special case for piecewise functions: we want to display the branch
@@ -183,7 +183,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
               [](const Internal::Tree* t) { return t->isPiecewise(); });
       if (piecewise) {
         zoom.fitConditions(PreparedFunction::Builder(piecewise),
-                           evaluator<float>, &fModel, alongY);
+                           evaluator<float>, &fModel, searchBounds, alongY);
       }
 
       if (canComputeIntersections[i] &&
@@ -200,7 +200,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
             ContinuousFunctionAndContext gModel{.func = g.operator->(),
                                                 .ctx = &symbolContext};
             zoom.fitIntersections(evaluator<float>, &fModel, evaluator<float>,
-                                  &gModel);
+                                  &gModel, searchBounds);
           }
         }
       }
@@ -217,7 +217,6 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
   }
 
   if (computeY) {
-    zoom.setBounds(xBounds.min(), xBounds.max());
     for (int i = 0; i < nbFunctions; i++) {
       OMG::ExpiringPointer<const ContinuousFunction> f =
           store->modelForRecord(store->activeRecordAtIndex(i));

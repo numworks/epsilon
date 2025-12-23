@@ -923,16 +923,13 @@ SolverResult ApproximateSolve(const Tree* equationList,
     constexpr float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
     // TODO: factor with InteractiveCurveViewRange::NormalYXRatio();
     constexpr float k_yxRatio = 3.06f / 5.76f;
-    Zoom zoom(NAN, NAN, k_yxRatio, k_maxFloatForAutoApproximateSolvingRange);
-    // Use the intersection between the definition domain of f and the bounds
-    zoom.setBounds(-k_maxFloatForAutoApproximateSolvingRange,
-                   k_maxFloatForAutoApproximateSolvingRange);
+    Zoom zoom(k_yxRatio, k_maxFloatForAutoApproximateSolvingRange);
     zoom.setMaxPointsOneSide(maxNumberOfSolutions, maxNumberOfSolutions / 2);
     const void* model = static_cast<const void*>(preparedEquation);
     bool finiteNumberOfSolutions = true;
     bool didFitRoots =
-        zoom.fitRoots(evaluator<float>, model, false, evaluator<double>,
-                      &finiteNumberOfSolutions);
+        zoom.fitRoots(evaluator<float>, model, Range1D<float>(), false,
+                      evaluator<double>, &finiteNumberOfSolutions);
     Range1D<float> finalRange = *(zoom.range(false, false).x());
     if (didFitRoots) {
       /* The range was computed from the solution found with a solver in float.

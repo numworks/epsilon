@@ -31,9 +31,8 @@ class Zoom {
     return Sanitize(Range2D<T>(), normalRatio, maxFloat);
   }
 
-  Zoom(T tMin, T tMax, T normalRatio, T maxFloat)
-      : m_bounds(tMin, tMax),
-        m_normalRatio(normalRatio),
+  Zoom(T normalRatio, T maxFloat)
+      : m_normalRatio(normalRatio),
         m_maxFloat(maxFloat),
         m_maxPointsOnOneSide(k_defaultMaxPointsOnOneSide),
         m_thresholdForFunctionsExceedingNbOfPoints(
@@ -53,7 +52,6 @@ class Zoom {
    * If beautify is false, the range will only be sanitized, without attempting
    * to improve its ratio. */
   Range2D<T> range(bool beautify, bool forceNormalization) const;
-  void setBounds(T min, T max) { m_bounds = Range1D<T>(min, max, m_maxFloat); }
   void setForcedRange(Range2D<T> range) { m_forcedRange = range; }
   void setMaxPointsOneSide(int maxPointOnOneSide,
                            int thresholdForFunctionsExceedingNbOfPoints) {
@@ -66,27 +64,29 @@ class Zoom {
 
   void fitPoint(Coordinate2D<T> xy, bool flipped = false, T leftMargin = 0.f,
                 T rightMargin = 0.f, T bottomMargin = 0.f, T topMargin = 0.f);
-  /* WARNING: For the 3 following methods (fitPointsOfInterest, fitRoots,
-   * fitIntersections), the bounds must have been set beforehand. */
+  /* For the following functions, the range will be set to -m_maxFloat,
+   * m_maxFloat if it's NAN */
   void fitPointsOfInterest(Function2D<T> f, const void* model,
-                           bool vertical = false, bool fitYIntercept = false,
+                           Range1D<T> bounds, bool vertical = false,
+                           bool fitYIntercept = false,
                            Function2D<double> fDouble = nullptr,
                            bool* finiteNumberOfPoints = nullptr);
-  bool fitRoots(Function2D<T> f, const void* model, bool vertical = false,
-                Function2D<double> fDouble = nullptr,
+  bool fitRoots(Function2D<T> f, const void* model, Range1D<T> bounds,
+                bool vertical = false, Function2D<double> fDouble = nullptr,
                 bool* finiteNumberOfPoints = nullptr);
   void fitIntersections(Function2D<T> f1, const void* model1, Function2D<T> f2,
-                        const void* model2, bool vertical = false);
-  void zoom(T ratio);
+                        const void* model2, Range1D<T> bounds,
+                        bool vertical = false);
   /* Piecewise should be a prepared function. */
   void fitConditions(const Internal::Tree* piecewise,
                      Function2D<T> fullFunction, const void* model,
-                     bool vertical = false);
+                     Range1D<T> bounds, bool vertical = false);
   /* Adds the range edge (evaluated with the function) if the edge is
    * finite (i.e. if it's below maxFloat). If the resulting point ordinate is
    * not finite, just add its abscissa to the abscissa range. */
   void fitFunctionAtEdges(Range1D<T> range, Function2D<T> f, const void* model,
                           bool vertical = false);
+  void zoom(T ratio);
 
   /* -- Only change one axis -- */
 
@@ -194,7 +194,7 @@ class Zoom {
   Range2D<T> prettyRange(bool forceNormalization) const;
 
   bool fitWithSolver(
-      bool* leftInterrupted, bool* rightInterrupted,
+      Range1D<T> bounds, bool* leftInterrupted, bool* rightInterrupted,
       typename Solver<T>::FunctionEvaluation evaluator, const void* aux,
       typename Solver<T>::BracketTest test, typename Solver<T>::HoneResult hone,
       bool vertical, Solver<double>::FunctionEvaluation fDouble = nullptr,
@@ -213,7 +213,6 @@ class Zoom {
   Range2D<T> m_interestingRange;
   Range2D<T> m_magnitudeRange;
   Range2D<T> m_forcedRange;
-  Range1D<T> m_bounds;
   SymbolContext* m_context;
   T m_normalRatio;
   const T m_maxFloat;

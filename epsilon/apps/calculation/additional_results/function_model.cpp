@@ -37,12 +37,12 @@ static Coordinate2D<T> evaluator(T t, const void* model) {
 
 void FunctionModel::recomputeViewRange() {
   constexpr float k_maxFloat = Shared::InteractiveCurveViewRange::k_maxFloat;
-  Zoom zoom(-k_maxFloat, k_maxFloat, 1 / k_xyRatio, k_maxFloat);
+  Zoom zoom(1 / k_xyRatio, k_maxFloat);
 
   // fitPointsOfInterest is not suited for sequences
   assert(!m_function.hasSequences());
-  zoom.fitPointsOfInterest(evaluator<float>, &m_function, false, false,
-                           evaluator<double>);
+  zoom.fitPointsOfInterest(evaluator<float>, &m_function, Range1D<float>(),
+                           false, false, evaluator<double>);
 
   zoom.fitPoint(Coordinate2D<float>(m_abscissa, m_ordinate));
   zoom.fitPoint(Coordinate2D<float>(0.0f, 0.0f));

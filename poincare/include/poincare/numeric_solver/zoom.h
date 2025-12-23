@@ -33,7 +33,6 @@ class Zoom {
 
   Zoom(T tMin, T tMax, T normalRatio, T maxFloat)
       : m_bounds(tMin, tMax),
-        m_defaultHalfLength(Range1D<T>::k_defaultHalfLength),
         m_normalRatio(normalRatio),
         m_maxFloat(maxFloat),
         m_maxPointsOnOneSide(k_defaultMaxPointsOnOneSide),
@@ -83,10 +82,11 @@ class Zoom {
   void fitConditions(const Internal::Tree* piecewise,
                      Function2D<T> fullFunction, const void* model,
                      bool vertical = false);
-  /* Adds the center of the bounds to the range, and shrink default half range
-   * if necessary. */
-  void fitCenterOfBounds(Function2D<T> f, const void* model,
-                         bool vertical = false);
+  /* Adds the range edge (evaluated with the function) if the edge is
+   * finite (i.e. if it's below maxFloat). If the resulting point ordinate is
+   * not finite, just add its abscissa to the abscissa range. */
+  void fitFunctionAtEdges(Range1D<T> range, Function2D<T> f, const void* model,
+                          bool vertical = false);
 
   /* -- Only change one axis -- */
 
@@ -215,7 +215,6 @@ class Zoom {
   Range2D<T> m_forcedRange;
   Range1D<T> m_bounds;
   SymbolContext* m_context;
-  T m_defaultHalfLength;
   T m_normalRatio;
   const T m_maxFloat;
   int m_maxPointsOnOneSide;

@@ -58,7 +58,7 @@ void CobwebController::viewWillAppear() {
 void CobwebController::setupRange() {
   /* Compute the bounding rect of the maximum number of values we will want to
    * draw such that we never need to move the view. */
-  Zoom zoom(0.f, INFINITY, InteractiveCurveViewRange::NormalYXRatio(),
+  Zoom zoom(InteractiveCurveViewRange::NormalYXRatio(),
             InteractiveCurveViewRange::k_maxFloat);
   for (int step = 0; step < CobwebGraphView::k_maximumNumberOfSteps; step++) {
     float value =

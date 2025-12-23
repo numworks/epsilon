@@ -20,9 +20,7 @@ constexpr double k_doubleRangeTolerance = 0.01;
 template <typename T>
 class ZoomTest {
  public:
-  ZoomTest(Range1D<T> bounds)
-      : m_zoom(bounds.min(), bounds.max(), k_normalRatio,
-               Range1D<T>::k_maxFloat) {}
+  ZoomTest() : m_zoom(k_normalRatio, Range1D<T>::k_maxFloat) {}
 
   Zoom<T>* zoom() { return &m_zoom; }
   Range2D<T> interestingRange() const { return m_zoom.m_interestingRange; }
@@ -78,9 +76,10 @@ template <typename T>
 void assert_points_of_interest_range_is(const char* expression,
                                         Range2D<T> expectedRange) {
   Tree* e = parseAndPrepareForApproximation(expression, ProjectionContext{});
-  ZoomTest zoom(Range1D<T>(-k_maxFloat, k_maxFloat));
-  zoom.zoom()->fitPointsOfInterest(expressionEvaluator<T>, e, false, false,
-                                   expressionEvaluator<double>);
+  ZoomTest<T> zoom;
+  zoom.zoom()->fitPointsOfInterest(expressionEvaluator<T>, e,
+                                   Range1D<T>(-k_maxFloat, k_maxFloat), false,
+                                   false, expressionEvaluator<double>);
   e->removeTree();
   assert_ranges_equal(zoom.interestingRange(), expectedRange, expression);
 }
@@ -148,9 +147,9 @@ void assert_intersections_range_is(const char* expression1,
       parseAndPrepareForApproximation(expression1, ProjectionContext{});
   TreeRef e2 =
       parseAndPrepareForApproximation(expression2, ProjectionContext{});
-  ZoomTest zoom(Range1D<float>(-k_maxFloat, k_maxFloat));
+  ZoomTest<float> zoom;
   zoom.zoom()->fitIntersections(expressionEvaluator, e1, expressionEvaluator,
-                                e2);
+                                e2, Range1D<float>(-k_maxFloat, k_maxFloat));
   e1->removeTree();
   e2->removeTree();
   assert_ranges_equal(zoom.interestingRange(), expectedRange, expression1);

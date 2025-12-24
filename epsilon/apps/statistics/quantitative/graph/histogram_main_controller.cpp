@@ -240,9 +240,9 @@ void HistogramMainController::initBarParameters() {
   /* TODO: uniformize float / double usage: activeSeriesRange() is a
    * double-precision range, while m_histogramRange is single-precision range */
   Poincare::Range1D<double> activeRange = activeSeriesRange();
+  m_store->setFirstDrawnBarAbscissa(activeRange.min());
   m_histogramRange.setXRange(activeRange.min(), activeRange.max());
 
-  m_store->setFirstDrawnBarAbscissa(m_histogramRange.xMin());
   double barWidth =
       Shared::PoincareHelpers::ToFloat<double>(m_histogramRange.xGridUnit());
   if (barWidth <= 0.0) {

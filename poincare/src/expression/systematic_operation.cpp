@@ -602,6 +602,12 @@ static bool ReduceNestedRadicals(Tree* e) {
                                               {.KA = a, .KB = b});
     Tree* c2d = PatternMatching::CreateReduce(KMult(KPow(KA, 2_e), KB),
                                               {.KA = c, .KB = d});
+    if (!a2b->isRational() || !c2d->isRational()) {
+      // At least one expression has not been reduced, they can't be compared
+      c2d->removeTree();
+      a2b->removeTree();
+      return false;
+    }
     bool a2bGreaterThanc2d = Rational::Compare(a2b, c2d) > 0;
     c2d->removeTree();
     a2b->removeTree();

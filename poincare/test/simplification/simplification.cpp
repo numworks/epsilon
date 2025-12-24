@@ -452,6 +452,8 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("(√(2+√(3))+√(2-√(3))×i)^2", "2×√(3)+2i", k_cartesianCtx);
   simplifies_to("√(2+√(4.5))", "root(2,4)+2^(3/4)/2", k_cartesianCtx);
   simplifies_to("√(2-√(4.5))", "(root(2,4)-2^(3/4)/2)×i", k_cartesianCtx);
+  simplifies_to("arctan(√(((((800^2)^2)^2)^2)^2√(8)))",
+                "arctan(2.81474976710656×10^46×2^(3/4))");
 
   // Development of mult and integer power
   simplifies_to("π*(π+1)", "π^2+π");

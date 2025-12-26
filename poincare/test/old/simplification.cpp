@@ -323,64 +323,6 @@ QUIZ_CASE(poincare_simplification_logarithm) {
   assert_parsed_expression_simplify_to("log(4,10)", "2×log(2)");
 }
 
-QUIZ_CASE(poincare_simplification_reduction_target) {
-  // Replace sin/cos-->tan for ReductionTarget = User
-  assert_parsed_expression_simplify_to(
-      "sin(x)/(cos(x)×cos(x))", "sin(x)/cos(x)^2", SystemForAnalysis, Radian,
-      MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
-  assert_parsed_expression_simplify_to(
-      "sin(x)/(cos(x)×cos(x))", "sin(x)/cos(x)^2", SystemForApproximation,
-      Radian, MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
-  assert_parsed_expression_simplify_to("sin(x)/(cos(x)×cos(x))",
-                                       "tan(x)/cos(x)", User);
-
-  // Factorize on the same denominator only for ReductionTarget = User
-  assert_parsed_expression_simplify_to("1/π+1/x", "1/π+1/x", SystemForAnalysis,
-                                       Radian, MetricUnitFormat, Cartesian,
-                                       ReplaceDefinedSymbols, false);
-  assert_parsed_expression_simplify_to(
-      "1/π+1/x", "1/π+1/x", SystemForApproximation, Radian, MetricUnitFormat,
-      Cartesian, ReplaceDefinedSymbols, false);
-  assert_parsed_expression_simplify_to("1/π+1/x", "(x+π)/(π×x)", User);
-
-  // Display in the form a+ib only for ReductionTarget = User
-  assert_parsed_expression_simplify_to("1/(1+i)", "1/(1+i)", SystemForAnalysis,
-                                       Radian, MetricUnitFormat, Cartesian,
-                                       ReplaceDefinedSymbols, false);
-  assert_parsed_expression_simplify_to(
-      "1/(1+i)", "1/2-1/2×i", SystemForApproximation, Radian, MetricUnitFormat,
-      Cartesian, ReplaceDefinedSymbols, false);
-  assert_parsed_expression_simplify_to("1/(1+i)", "1/2-1/2×i", User);
-  assert_parsed_expression_simplify_to(
-      "√(i×(i+2))", "√(-1+2×i)", SystemForApproximation, Radian,
-      MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
-
-  assert_parsed_expression_simplify_to(
-      "sign(abs(x))", "sign(abs(x))", SystemForApproximation, Radian,
-      MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
-  assert_parsed_expression_simplify_to("sign(abs(x))", "sign(abs(x))", User);
-
-  // Reduction of abs(x) depends on the target and the complex format
-  assert_parsed_expression_simplify_to(
-      "x/abs(x)", "dep(1/sign(x),{1/x})", SystemForAnalysis, Radian,
-      MetricUnitFormat, Real, ReplaceDefinedSymbols, false);
-  assert_parsed_expression_simplify_to("x/abs(x)", "x/abs(x)", User, Radian,
-                                       MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to(
-      "x/abs(x)", "x/abs(x)", SystemForAnalysis, Radian, MetricUnitFormat,
-      Cartesian, ReplaceDefinedSymbols, false);
-
-  // Expand multinome when ReductionTarget is not SystemForApproximation as it
-  // increases precision loss
-  assert_parsed_expression_simplify_to(
-      "(2+x)^2", "(x+2)^2", SystemForApproximation, Radian, MetricUnitFormat,
-      Cartesian, ReplaceDefinedSymbols, false);
-  assert_parsed_expression_simplify_to(
-      "(2+x)^2", "x^2+4×x+4", SystemForAnalysis, Radian, MetricUnitFormat,
-      Cartesian, ReplaceDefinedSymbols, false);
-  assert_parsed_expression_simplify_to("(2+x)^2", "x^2+4×x+4", User);
-}
-
 QUIZ_CASE(poincare_simplification_mix) {
   // Root at denominator
   assert_parsed_expression_simplify_to("1/(√(2)+√(3))", "√(3)-√(2)");

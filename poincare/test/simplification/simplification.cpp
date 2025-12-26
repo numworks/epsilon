@@ -1,13 +1,13 @@
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/logarithm.h>
 #include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/expression/units/k_units.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/tree_stack.h>
 
+#include "../helper.h"
 #include "../helpers/symbol_store.h"
 #include "helper.h"
-#include "poincare/src/expression/logarithm.h"
-#include "poincare/test/helper.h"
 #include "quiz.h"
 
 using namespace Poincare::Internal;
@@ -229,6 +229,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
   simplifies_to("(2+x)*(2-x)+(x+1)*(x-1)", "3");
   simplifies_to("abs(x)/x", "dep(sign(x),{x^0})");
+  simplifies_to("x/abs(x)", "dep(sign(x),{x^0})");
   simplifies_to("x^(1+abs(x)/x)", "dep(x^(1+sign(x)),{x^0})");
   simplifies_to("abs((-3)^ln(5))", "3^ln(5)", k_cartesianCtx);
   simplifies_to("abs(acos(2)^4)", "abs(acos(2))^4", k_cartesianCtx);
@@ -824,6 +825,8 @@ QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
       .m_reductionTarget = ReductionTarget::SystemForApproximation};
   ProjectionContext ctxForAnalysis = {.m_reductionTarget =
                                           ReductionTarget::SystemForAnalysis};
+  projects_and_reduces_to("(2+x)^2", "(x+2)^2", ctxForApproximation);
+  projects_and_reduces_to("(2+x)^2", "x^2+4×x+4", ctxForAnalysis);
   projects_and_reduces_to("(1+x)^3", "(x+1)^3", ctxForApproximation);
   projects_and_reduces_to("1+3×x+3×x^2+x^3-(1+x)^3", "0", ctxForApproximation);
   projects_and_reduces_to("(1+x)^3", "x^3+3×x^2+3×x+1", ctxForAnalysis);

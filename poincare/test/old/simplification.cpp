@@ -8,15 +8,6 @@
 using namespace Poincare;
 using namespace Poincare::Internal;
 
-QUIZ_CASE(poincare_simplification_decimal) {
-  // Big decimals are handled as m*10^e
-  assert_parsed_expression_simplify_to("1ᴇ1000", "10^1000");
-  assert_parsed_expression_simplify_to("-1ᴇ1000", "-10^1000");
-  assert_parsed_expression_simplify_to("1ᴇ-1000", "1/10^1000");
-  assert_parsed_expression_simplify_to("45.678ᴇ200", "45678×10^197");
-  assert_parsed_expression_simplify_to("-45.678ᴇ200", "-45678×10^197");
-}
-
 QUIZ_CASE(poincare_simplification_infinity) {
   // 0 and infinity
   assert_parsed_expression_simplify_to("0/0", "undef");

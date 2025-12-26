@@ -31,6 +31,13 @@ QUIZ_CASE(pcj_simplification_decimal) {
   simplifies_to("0000.000000ᴇ-2", "0");
   simplifies_to(".000000", "0");
   simplifies_to("0000", "0");
+
+  // Big decimals are handled as m*10^e
+  simplifies_to_no_beautif("1ᴇ1000", "10^1000");
+  simplifies_to_no_beautif("-1ᴇ1000", "-1×10^1000");
+  simplifies_to_no_beautif("1ᴇ-1000", "10^-1000");
+  simplifies_to_no_beautif("45.678ᴇ500", "45678×10^497");
+  simplifies_to_no_beautif("-45.678ᴇ500", "-45678×10^497");
 }
 
 QUIZ_CASE(pcj_simplification_float) {

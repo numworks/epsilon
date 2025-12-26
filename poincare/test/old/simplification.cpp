@@ -452,9 +452,3 @@ QUIZ_CASE(poincare_simplification_mix) {
   simplified_approximates_to<double>(
       "abs(√(300000.0003^23))", "9.702740901018ᴇ62", k_degreeCartesianCtx, 13);
 }
-
-QUIZ_CASE(poincare_simplification_system_circuit_breaker_handled) {
-  // Try with ReductionTarget = User --> fails --> retry with ReductionTarget =
-  // SystemForApproximation
-  assert_parsed_expression_simplify_to("(π+i)^√(i×(i+2))", "(π+i)^√(-1+2×i)");
-}

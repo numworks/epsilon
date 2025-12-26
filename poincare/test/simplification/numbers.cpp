@@ -107,7 +107,7 @@ QUIZ_CASE(pcj_simplification_large_numbers) {
   simplifies_to("40000000000ln(10)", "40000000000×ln(2)+40000000000×ln(5)");
 }
 
-QUIZ_CASE(poincare_simplification_rational) {
+QUIZ_CASE(pcj_simplification_rational) {
   // 1/k_maxParsedIntegerString
   constexpr static size_t k_bufferSizeOfMax = 32;
   char bufferMax[k_bufferSizeOfMax] = "1/";

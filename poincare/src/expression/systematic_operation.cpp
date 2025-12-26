@@ -13,6 +13,7 @@
 #include "k_tree.h"
 #include "list.h"
 #include "matrix.h"
+#include "poincare/src/memory/tree_helpers.h"
 #include "power_like.h"
 #include "properties.h"
 #include "rational.h"
@@ -582,35 +583,32 @@ bool SystematicOperation::ReduceDim(Tree* e) {
 }
 
 static bool ReduceNestedRadicals(Tree* e) {
-  TreeRef result;
   PatternMatching::Context ctx;
   const Tree* a;
   const Tree* b;
   const Tree* c;
   const Tree* d;
+  if (!PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KAdd(KA, KB)))),
+                              &ctx) ||
+      !SplitRadical(ctx.getTree(KA), &a, &b) ||
+      !SplitRadical(ctx.getTree(KB), &c, &d)) {
+    // Does not match √(a√b+c√d)
+    return false;
+  }
   /* √(a√b+c√d) = √(√(w)) * √(x) * √(y+√z) with
    * w = b, x = c, y = a/c and z = d/b,
    * possibly swapping a√b and c√d to ensure that y > √z */
-  if (PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KAdd(KA, KB)))),
-                             &ctx) &&
-      SplitRadical(ctx.getTree(KA), &a, &b) &&
-      SplitRadical(ctx.getTree(KB), &c, &d)) {
-    assert(a && b && c && d);
-    assert(!(b->isOne() && d->isOne()));
-    // Compare a^2*b and c^2*d to choose w, x, y and z such that that y^2 > z
-    Tree* a2b = PatternMatching::CreateReduce(KMult(KPow(KA, 2_e), KB),
-                                              {.KA = a, .KB = b});
-    Tree* c2d = PatternMatching::CreateReduce(KMult(KPow(KA, 2_e), KB),
-                                              {.KA = c, .KB = d});
-    if (!a2b->isRational() || !c2d->isRational()) {
-      // At least one expression has not been reduced, they can't be compared
-      c2d->removeTree();
-      a2b->removeTree();
-      return false;
-    }
+  assert(a && b && c && d);
+  assert(!(b->isOne() && d->isOne()));
+  TreeRef endMarker = KTree<MarkerBlock>()->cloneTree();
+  bool success = false;
+  // Compare a^2*b and c^2*d to choose w, x, y and z such that that y^2 > z
+  Tree* a2b = PatternMatching::CreateReduce(KMult(KPow(KA, 2_e), KB),
+                                            {.KA = a, .KB = b});
+  Tree* c2d = PatternMatching::CreateReduce(KMult(KPow(KA, 2_e), KB),
+                                            {.KA = c, .KB = d});
+  if (a2b->isRational() && c2d->isRational()) {
     bool a2bGreaterThanc2d = Rational::Compare(a2b, c2d) > 0;
-    c2d->removeTree();
-    a2b->removeTree();
     if (!a2bGreaterThanc2d) {
       std::swap(a, c);
       std::swap(b, d);
@@ -637,7 +635,7 @@ static bool ReduceNestedRadicals(Tree* e) {
        * - √(y-√z) = √u-√v */
       bool shouldInvertSign =
           Rational::Numerator(a).sign() != Rational::Numerator(c).sign();
-      result = PatternMatching::CreateReduce(
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
           KMult(KPow(KA, 1_e / 4_e), KPow(KMult(KE, KB), 1_e / 2_e),
                 KAdd(KPow(KMult(KAdd(KMult(KE, KC), KD), 1_e / 2_e), 1_e / 2_e),
                      KMult(KE, KPow(KMult(KAdd(KMult(KE, KC), KMult(-1_e, KD)),
@@ -647,19 +645,12 @@ static bool ReduceNestedRadicals(Tree* e) {
            .KB = x,
            .KC = y,
            .KD = delta,
-           .KE = shouldInvertSign ? -1_e : 1_e});
+           .KE = shouldInvertSign ? -1_e : 1_e}));
+      success = true;
     }
-    delta->removeTree();
-    z->removeTree();
-    y->removeTree();
-    x->removeTree();
-    w->removeTree();
   }
-  if (result) {
-    e->moveTreeOverTree(result);
-    return true;
-  }
-  return false;
+  SharedTreeStack->dropBlocksFrom(endMarker);
+  return success;
 }
 
 static bool ReduceSquareRoot(Tree* e) {

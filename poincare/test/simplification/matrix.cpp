@@ -51,6 +51,8 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("undef*[[2][4]]", "undef");
 
   // Power
+  simplifies_to("[[1,2][3,4]]^(-3)", "[[-59/4,27/4][81/8,-37/8]]");
+  simplifies_to("[[1,2][3,4]]^3", "[[37,54][81,118]]");
   simplifies_to("[[1,2,3][4,5,6][7,8,9]]^3",
                 "[[468,576,684][1062,1305,1548][1656,2034,2412]]");
   simplifies_to("[[1,2,3][4,5,6]]^(-1)", "undef");

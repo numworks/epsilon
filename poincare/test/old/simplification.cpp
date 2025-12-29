@@ -84,15 +84,6 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("ln(inf)*0", "undef");
 }
 
-QUIZ_CASE(poincare_simplification_power) {
-#if 0
-  // TODO_PCJ: these tests fail with emscripten
-  assert_parsed_expression_simplify_to("(-1)^(1/2)", "i");
-  assert_parsed_expression_simplify_to("(-1)^(-1/2)", "-i");
-  assert_parsed_expression_simplify_to("(-1)^(1/3)", "1/2+√(3)/2×i");
-#endif
-}
-
 QUIZ_CASE(poincare_simplification_logarithm) {
   assert_parsed_expression_simplify_to("log(0,0)", "undef");
   assert_parsed_expression_simplify_to("log(0,1)", "undef");

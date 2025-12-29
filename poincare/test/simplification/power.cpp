@@ -146,6 +146,9 @@ QUIZ_CASE(pcj_simplification_power_real_complex) {
    * simplified to 1 */
   simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))", "√(-1-i)×√(1-i)+√(2)×i",
                 k_cartesianCtx);
+  simplifies_to("(-1)^(1/2)", "i", k_cartesianCtx);
+  simplifies_to("(-1)^(-1/2)", "-i", k_cartesianCtx);
+  simplifies_to("(-1)^(1/3)", "1/2+√(3)/2×i", k_cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_roots) {

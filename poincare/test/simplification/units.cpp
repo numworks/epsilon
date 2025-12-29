@@ -180,6 +180,7 @@ QUIZ_CASE(pcj_simplification_unit) {
 
   // Unit operations
   simplifies_to("_C^3", "1×_C^3");
+  simplifies_to("(3_m^2)^3", "27×_m^6");
   simplifies_to("-2×_A", "-2×_A");
   simplifies_to("_m*_s^-2", "1×_m×_s^(-2)");
   simplifies_to("_m+_m", "2×_m");

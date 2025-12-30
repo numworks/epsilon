@@ -112,7 +112,8 @@ void FillHomogeneityExpectedValues(const DataTable* observedValues,
 }
 
 bool IsDegreesOfFreedomValid(double p) {
-  return p == std::round(p) && p >= 1.0;
+  return p == std::round(p) && p >= 1.0 &&
+         p <= static_cast<double>(k_maxCustomDegreesOfFreedom);
 }
 
 int ComputeDegreesOfFreedom(CategoricalType categoricalType,

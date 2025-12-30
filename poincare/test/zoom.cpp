@@ -161,6 +161,17 @@ QUIZ_CASE(pcj_zoom_fit_intersections) {
                                 Range2D<float>(0, 0.75, 0, 0.5631));
 }
 
+QUIZ_CASE(pcj_zoom_fit_abscissa) {
+  ZoomTest<float> zoom;
+  zoom.zoom()->fitAbscissa(0.f);
+  zoom.zoom()->fitAbscissa(1.f);
+  zoom.zoom()->fitAbscissa(-10.f, true);
+  zoom.zoom()->fitAbscissa(10.f, true);
+  assert_ranges_equal(zoom.interestingRange(),
+                      Range2D<float>(0.f, 1.f, -10.f, 10.f),
+                      "Zoom fit abscissa failed");
+}
+
 void assert_sanitized_range_is(Range2D<float> inputRange,
                                Range2D<float> expectedRange) {
   assert_ranges_equal(

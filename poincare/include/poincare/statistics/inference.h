@@ -213,6 +213,10 @@ struct TwoProportions {
 
 namespace Chi2 {
 
+/* Block user inputs with too many degrees of freedom, as this would create
+ * problems on the graph display. */
+constexpr static int k_maxCustomDegreesOfFreedom = 10000;
+
 enum class CategoricalType : uint8_t {
   // Order matter for cells order
   GoodnessOfFit,

@@ -112,9 +112,8 @@ SymbolContext::UserNamedType GlobalStore::expressionTypeForIdentifier(
 const Internal::Tree* GlobalStore::expressionForUserNamed(
     const Internal::Tree* symbol) const {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
-  Ion::Storage::Record r =
-      UserNamedRecordWithBaseName(SymbolHelper::GetName(symbol));
-  return ExpressionForSymbolAndRecord(symbol, r);
+  return TreeInStorage(
+      UserNamedRecordWithBaseName(SymbolHelper::GetName(symbol)));
 }
 
 bool GlobalStore::setExpressionForUserNamed(
@@ -126,8 +125,7 @@ bool GlobalStore::setExpressionForUserNamed(
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record =
       UserNamedRecordWithBaseName(SymbolHelper::GetName(symbol));
-  UserExpression e =
-      UserExpression::Builder(ExpressionForSymbolAndRecord(symbolTree, record));
+  UserExpression e = UserExpression::Builder(TreeInStorage(record));
   if (e.isUninitialized()) {
     e = UserExpression::Undefined();
   }
@@ -155,12 +153,6 @@ bool GlobalStore::setExpressionForUserNamed(
   }
   return setExpressionForUserFunction(finalExpression, symbolToStore, record) ==
          Ion::Storage::Record::ErrorStatus::None;
-}
-
-const Internal::Tree* GlobalStore::ExpressionForSymbolAndRecord(
-    const Internal::Tree* symbol, Ion::Storage::Record r) {
-  assert(symbol->isUserSymbol() || symbol->isUserFunction());
-  return TreeInStorage(r);
 }
 
 const Internal::Tree* GlobalStore::TreeInStorage(Ion::Storage::Record record) {

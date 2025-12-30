@@ -89,10 +89,6 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
   static const Poincare::Internal::Tree* TreeInStorage(
       Ion::Storage::Record record);
 
-  // Expression getter
-  static const Poincare::Internal::Tree* ExpressionForSymbolAndRecord(
-      const Poincare::Internal::Tree* symbol, Ion::Storage::Record r);
-
   // Expression setters
   /* This modifies the expression. */
   Ion::Storage::Record::ErrorStatus setExpressionForUserSymbol(

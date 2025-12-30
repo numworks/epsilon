@@ -80,11 +80,13 @@ QUIZ_CASE(pcj_latex_parser_latex_to_layout) {
       KDiffL("x"_l, "x"_l, "1"_l, "x"_l) ^ KSubscriptL("t=2"_l));
 
   // Symbols
-  assert_latex_layouts_to("\\ \\le\\ge\\cdot\\times\\degree\\to\\div\\infty",
+  assert_latex_layouts_to("\\ \\le\\ge\\cdot\\times\\degree˚º\\to\\div\\infty",
                           " "_l ^ KCodePointL<UCodePointInferiorEqual>() ^
                               KCodePointL<UCodePointSuperiorEqual>() ^
                               KCodePointL<UCodePointMiddleDot>() ^
                               KCodePointL<UCodePointMultiplicationSign>() ^
+                              KCodePointL<UCodePointDegreeSign>() ^
+                              KCodePointL<UCodePointDegreeSign>() ^
                               KCodePointL<UCodePointDegreeSign>() ^
                               KCodePointL<UCodePointRightwardsArrow>() ^
                               KCodePointL<'/'>() ^

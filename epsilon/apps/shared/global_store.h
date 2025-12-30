@@ -80,8 +80,8 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
   // Expression getters
   const Poincare::Internal::Tree* expressionForUserNamed(
       const Poincare::Internal::Tree* symbol) const override;
-  const Poincare::Internal::Tree* expressionForSymbolAndRecord(
-      const Poincare::Internal::Tree* symbol, Ion::Storage::Record r) const;
+  static const Poincare::Internal::Tree* ExpressionForSymbolAndRecord(
+      const Poincare::Internal::Tree* symbol, Ion::Storage::Record r);
   static const Poincare::Internal::Tree* ExpressionForUserSymbol(
       Ion::Storage::Record r);
   static const Poincare::Internal::Tree* ExpressionForUserFunction(

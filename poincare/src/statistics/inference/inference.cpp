@@ -256,9 +256,10 @@ ParametersArray ComputeSlopeParametersFromSeries(const Series& series) {
 }
 
 bool IsThresholdValid(double threshold) {
-  /* A threshold of 1.0 does not make sense mathematically speaking and can
-   * cause some results to be infinite. */
-  return Domain::ContainsFloat(threshold, Domain::Type::ZeroToOneExcluded);
+  /* A threshold of 0.0 or 1.0 does not make sense mathematically speaking and
+   * can cause some results to be infinite. */
+  return Domain::ContainsFloat(threshold,
+                               Domain::Type::ZeroExcludedToOneExcluded);
 }
 
 }  // namespace Poincare::Inference

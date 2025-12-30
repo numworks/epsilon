@@ -7,6 +7,7 @@
 #include <omg/memory.h>
 #include <omg/utf8_helper.h>
 #include <poincare/helpers/symbol_pool.h>
+#include <poincare/user_expression.h>
 #include <stddef.h>
 
 #include <algorithm>
@@ -40,13 +41,11 @@ void DoublePairStore::initListsFromStorage(bool delayUpdate) {
     for (int i = 0; i < k_numberOfColumnsPerSeries; i++) {
       // Get the data of X1, Y1, X2, Y2, V1, V2, etc. from storage
       fillColumnName(s, i, listName);
-      Record r = Record(listName, listExtension);
-      Record::Data listData = r.value();
-      if (listData.size == 0) {
+      Record record = Record(listName, listExtension);
+      if (record.value().size == 0) {
         continue;
       }
-      UserExpression e =
-          UserExpression::ExpressionFromAddress(listData.buffer, listData.size);
+      UserExpression e = GlobalStore::ExpressionFromStorage(record);
       if (!e.isList()) {
         continue;
       }

@@ -179,6 +179,10 @@ const Internal::Tree* GlobalStore::TreeInStorage(Ion::Storage::Record record) {
   return nullptr;
 }
 
+UserExpression GlobalStore::ExpressionFromStorage(Ion::Storage::Record record) {
+  return UserExpression::Builder(TreeInStorage(record));
+}
+
 Ion::Storage::Record::ErrorStatus GlobalStore::setExpressionForUserSymbol(
     UserExpression& expression, const char* name,
     Ion::Storage::Record previousRecord) {

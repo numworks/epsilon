@@ -34,6 +34,11 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
   // Storage information
   static bool UserNameIsFree(const char* baseName);
 
+  /* These direct accessors to an expression or a layout contained in a record
+   * should be avoided. expressionForUserNamed should be the preferred method.
+   */
+  static Poincare::UserExpression ExpressionFromStorage(
+      Ion::Storage::Record record);
   static Poincare::Layout LayoutForRecord(Ion::Storage::Record record);
 
   // Destroy records
@@ -50,6 +55,10 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
    * Otherwise, we would need the context and the angle unit to evaluate it */
   UserNamedType expressionTypeForIdentifier(
       std::string_view identifier) const override;
+
+  const Poincare::Internal::Tree* expressionForUserNamed(
+      const Poincare::Internal::Tree* symbol) const override;
+
   bool setExpressionForUserNamed(
       const Poincare::Internal::Tree* expression,
       const Poincare::Internal::Tree* symbol) override;
@@ -80,9 +89,7 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
   static const Poincare::Internal::Tree* TreeInStorage(
       Ion::Storage::Record record);
 
-  // Expression getters
-  const Poincare::Internal::Tree* expressionForUserNamed(
-      const Poincare::Internal::Tree* symbol) const override;
+  // Expression getter
   static const Poincare::Internal::Tree* ExpressionForSymbolAndRecord(
       const Poincare::Internal::Tree* symbol, Ion::Storage::Record r);
 

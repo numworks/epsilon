@@ -163,6 +163,13 @@ constexpr static LatexTokenChild multiplicationSignToken[] = {
 constexpr static LatexTokenChild lesserOrEqualToken[] = {{"\\le", k_noChild}};
 constexpr static LatexTokenChild greaterOrEqualToken[] = {{"\\ge", k_noChild}};
 constexpr static LatexTokenChild degreeToken[] = {{"\\degree", k_noChild}};
+/* These two alternative chars are:
+ * - the "Ring Above" diacritic ˚ (U+02DA)
+ * - the masculine ordinal indicator º (U+00BA)
+ * They are allowed as an alternative to the degree sign because their
+ * similarity with the degree symbol ° (U+00B0) can trick users. */
+constexpr static LatexTokenChild degreeAlt1Token[] = {{"˚", k_noChild}};
+constexpr static LatexTokenChild degreeAlt2Token[] = {{"º", k_noChild}};
 constexpr static LatexTokenChild rightwardsArrowToken[] = {{"\\to", k_noChild}};
 constexpr static LatexTokenChild northEastArrowToken[] = {
     {"\\nearrow", k_noChild}};
@@ -327,6 +334,8 @@ constexpr static LatexLayoutRule k_rules[] = {
     CODEPOINT_RULE(greaterOrEqualToken, UCodePointSuperiorEqual),
     // °
     CODEPOINT_RULE(degreeToken, UCodePointDegreeSign),
+    CODEPOINT_RULE(degreeAlt1Token, UCodePointDegreeSign),
+    CODEPOINT_RULE(degreeAlt2Token, UCodePointDegreeSign),
     // ->
     CODEPOINT_RULE(rightwardsArrowToken, UCodePointRightwardsArrow),
     // ↗

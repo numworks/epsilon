@@ -48,7 +48,7 @@ Layout GlobalStore::LayoutForRecord(Ion::Storage::Record record) {
       record.hasExtension(Ion::Storage::listExtension) ||
       record.hasExtension(Ion::Storage::matrixExtension)) {
     return PoincareHelpers::CreateLayout(
-        UserExpression::Builder(ExpressionForUserSymbol(record)),
+        UserExpression::Builder(TreeInStorage(record)),
         Escher::App::app()->localContext());
   } else if (record.hasExtension(Ion::Storage::functionExtension) ||
              record.hasExtension(Ion::Storage::parametricComponentExtension) ||
@@ -64,9 +64,8 @@ Layout GlobalStore::LayoutForRecord(Ion::Storage::Record record) {
       assert(record.hasExtension(Ion::Storage::regressionExtension));
       symbol = CodePoints::k_cartesianSymbol;
     }
-    UserExpression expression =
-        UserExpression::Builder(ExpressionForUserFunction(record))
-            .cloneAndReplaceUnknownWithSymbol(symbol);
+    UserExpression expression = UserExpression::Builder(TreeInStorage(record))
+                                    .cloneAndReplaceUnknownWithSymbol(symbol);
     return PoincareHelpers::CreateLayout(expression,
                                          Escher::App::app()->localContext());
   } else {
@@ -161,33 +160,21 @@ bool GlobalStore::setExpressionForUserNamed(
 const Internal::Tree* GlobalStore::ExpressionForSymbolAndRecord(
     const Internal::Tree* symbol, Ion::Storage::Record r) {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
-  return symbol->isUserSymbol() ? ExpressionForUserSymbol(r)
-                                : ExpressionForUserFunction(r);
+  return TreeInStorage(r);
 }
 
-const Internal::Tree* GlobalStore::ExpressionForUserSymbol(
-    Ion::Storage::Record r) {
-  if (!r.hasExtension(Ion::Storage::expressionExtension) &&
-      !r.hasExtension(Ion::Storage::listExtension) &&
-      !r.hasExtension(Ion::Storage::matrixExtension)) {
-    return UserExpression();
-  }
-  // An expression record value is the expression itself
-  Ion::Storage::Record::Data d = r.value();
-  return UserExpression::TreeFromAddress(d.buffer);
-}
-
-const Internal::Tree* GlobalStore::ExpressionForUserFunction(
-    Ion::Storage::Record r) {
-  if (r.hasExtension(Ion::Storage::parametricComponentExtension) ||
-      r.hasExtension(Ion::Storage::regressionExtension)) {
-    // A regression record value is the expression itself
-    Ion::Storage::Record::Data d = r.value();
-    return UserExpression::TreeFromAddress(d.buffer);
-  } else if (r.hasExtension(Ion::Storage::functionExtension)) {
+const Internal::Tree* GlobalStore::TreeInStorage(Ion::Storage::Record record) {
+  if (record.hasExtension(Ion::Storage::expressionExtension) ||
+      record.hasExtension(Ion::Storage::listExtension) ||
+      record.hasExtension(Ion::Storage::matrixExtension) ||
+      record.hasExtension(Ion::Storage::parametricComponentExtension) ||
+      record.hasExtension(Ion::Storage::regressionExtension)) {
+    // The expression can be accessed by directly reading the record value
+    return UserExpression::TreeFromAddress(record.value().buffer);
+  } else if (record.hasExtension(Ion::Storage::functionExtension)) {
     /* A function record value has metadata before the expression. To get the
      * expression, use the function record handle. */
-    return ContinuousFunction(r).expressionTree();
+    return ContinuousFunction(record).expressionTree();
   }
   return nullptr;
 }

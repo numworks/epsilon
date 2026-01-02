@@ -398,7 +398,7 @@ void Zoom<T>::fitFunctionAtEdges(Range1D<T> range, Function2D<T> f,
     Coordinate2D<T> eval(f(t, model));
     Coordinate2D<T> pointToFit =
         vertical ? Coordinate2D<T>(t, eval.x()) : Coordinate2D<T>(t, eval.y());
-    if (std::isfinite(pointToFit.x()) && std::isfinite(pointToFit.y())) {
+    if (std::isfinite(pointToFit.y())) {
       privateFitPoint(pointToFit, vertical);
     } else {
       /* If the function diverges at the bound, we still want to fit the

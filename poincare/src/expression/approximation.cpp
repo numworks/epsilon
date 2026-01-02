@@ -1834,6 +1834,10 @@ bool Private::SkipApproximation(TypeBlock type, TypeBlock parentType,
       return indexInParent >= 1 && !previousChildWasApproximated;
     case Type::ListSequence:
       return indexInParent == Parametric::k_valueIndex;
+    case Type::RandIntNoRep:
+      /* Never approximate last child of RandIntNoRep since it won't be
+       * approximated, and an integer child is expected in dimension check. */
+      return indexInParent == 2;
     case Type::Identity:
       return true;
     default:

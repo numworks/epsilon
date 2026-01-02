@@ -127,6 +127,8 @@ QUIZ_CASE(pcj_approximation_random) {
   projected_approximates_to<double>("randintnorep(1,10,0)", "{}");
   projected_approximates_to<double>("randintnorep(536427840,-2145711360,4)",
                                     "undef");
+  projected_approximates_to<double>("randintnorep(0,7,2)√(arcsin(6))",
+                                    "{nonreal,nonreal}");
 
   // Random lists can be sorted
   projected_approximates_to<float>("sort(randintnorep(1,4,4))", "{1,2,3,4}");

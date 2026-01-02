@@ -444,8 +444,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
       }
       float index =
           Approximation::To<float>(exponent, Approximation::Parameters{});
-      assert(!std::isnan(index) && std::round(index) == index);
-      if (index > static_cast<float>(INT8_MAX) ||
+      assert(!std::isfinite(index) || std::round(index) == index);
+      if (!std::isfinite(index) || index > static_cast<float>(INT8_MAX) ||
           (index < static_cast<float>(INT8_MIN))) {
         return false;
       }
@@ -476,9 +476,12 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
     case Type::Identity: {
 #if 0
       // TODO check for unknowns and display error message if not integral
-      return childDim[0].isScalar() && IsIntegerExpression(e->child(0)) &&
-             Approximation::To<float>(e->child(0),
-                                      Approximation::Parameters{}) > 0;
+      if (!childDim[0].isScalar() || !IsIntegerExpression(e->child(0))) {
+        return false;
+      }
+      float approx =
+          Approximation::To<float>(e->child(0), Approximation::Parameters{});
+      return std::isfinite(approx) && approx > 0;
 #endif
       const Tree* size = e->child(0);
       return size->isOne() || size->isTwo() || size->isIntegerPosShort();
@@ -544,8 +547,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
       }
       float n =
           Approximation::To<float>(e->child(1), Approximation::Parameters{});
-      assert(std::floor(n) == n);
-      return n >= 0 && n <= NAry::k_maxNumberOfChildren;
+      assert(!std::isfinite(n) || std::floor(n) == n);
+      return std::isfinite(n) && n >= 0 && n <= NAry::k_maxNumberOfChildren;
     }
     case Type::ListSlice:
       return Integer::Is<uint8_t>(e->child(1)) &&
@@ -572,14 +575,14 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
       // NOTE Using double approx here to ensure the bounds are respected
       double a =
           Approximation::To<double>(e->child(0), Approximation::Parameters{});
-      assert(std::floor(a) == a);
-      if (!(INT32_MIN <= a && a <= INT32_MAX)) {
+      assert(!std::isfinite(a) || std::floor(a) == a);
+      if (!std::isfinite(a) || INT32_MIN > a || a > INT32_MAX) {
         return false;
       }
       double b =
           Approximation::To<double>(e->child(1), Approximation::Parameters{});
-      assert(std::floor(b) == b);
-      if (!(INT32_MIN <= b && b <= INT32_MAX)) {
+      assert(!std::isfinite(b) || std::floor(b) == b);
+      if (!std::isfinite(b) || INT32_MIN > b || b > INT32_MAX) {
         return false;
       }
       uint8_t n = Integer::Handler(e->child(2)).to<uint8_t>();

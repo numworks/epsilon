@@ -817,6 +817,8 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       const Tree* values = e->child(0);
       const Tree* index = e->child(1);
       T indexValue = PrivateTo<T>(index, ctx);
+      // Dimension check should only allow finite index
+      assert(std::isfinite(indexValue));
       assert(indexValue == std::floor(indexValue));
       if (indexValue < 1 ||
           indexValue > Dimension::ListLength(values, ctx->m_symbolContext)) {

@@ -373,26 +373,6 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Equal, "-(10^45)-10^45i", "-(10^45)-(10^45)i",
                       &store);
 
-  // IntegerOverflow during reduction
-  assertCalculationIs("0^(10^600)",
-                      DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, "0", nullptr, &store);
-
-  // Logarithm of a big number
-  assertCalculationIs(
-      "-8.314×ln(5/558)", DisplayOutput::ExactAndApproximateToggle,
-      EqualSign::Approximation, "-((4157(-ln(2)-2·ln(3)+ln(5)-ln(31)))/500)",
-      "39.199853609261", &store);
-  assertCalculationIs("(1/((1/900)-(1/769)))×ln(5.2)",
-                      DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Approximation,
-                      "(-692100·ln(2)+692100·ln(5)-692100·ln(13))/131",
-                      "-8710.2033188475", &store);
-  assertCalculationIs(
-      "(-8.314×(5/6))×ln(5/6)", DisplayOutput::ExactAndApproximateToggle,
-      EqualSign::Approximation, "-((4157(-ln(2)-ln(3)+ln(5)))/600)",
-      "1.2631845193208", &store);
-
   // Exact output that have dependencies are not displayed
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "2", nullptr, &store);
@@ -498,6 +478,11 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 }
 
 QUIZ_CASE(calculation_big_expressions) {
+  uint8_t previousNumberOfSignificantDigits =
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+  GlobalPreferences::SharedGlobalPreferences()->setNumberOfSignificantDigits(
+      PrintFloat::k_maxNumberOfSignificantDigits);
+
   CalculationStore store(calculationBuffer, calculationBufferSize);
   assertCalculationIs("identity(37)", DisplayOutput::ExactOnly,
                       EqualSign::Hidden, "undef", nullptr, &store);
@@ -506,6 +491,34 @@ QUIZ_CASE(calculation_big_expressions) {
       "20^23×20^23×20^23×20^23×20^23×20^23×25^23×20^23×20^23×20^23×20^23×20^"
       "23×20^23×25^23",
       DisplayOutput::ApproximateOnly, EqualSign::Hidden, nullptr, "∞", &store);
+
+  // IntegerOverflow during reduction
+  assertCalculationIs("0^(10^600)",
+                      DisplayOutput::ApproximateIsIdenticalToExact,
+                      EqualSign::Hidden, "0", nullptr, &store);
+
+  // Logarithm of a big number
+  assertCalculationIs(
+      "-8.314×ln(5/558)", DisplayOutput::ExactAndApproximateToggle,
+      EqualSign::Approximation, "-((4157(-ln(2)-2·ln(3)+ln(5)-ln(31)))/500)",
+      "39.199853609261", &store);
+  assertCalculationIs("(1/((1/900)-(1/769)))×ln(5.2)",
+                      DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Approximation,
+                      "(-692100·ln(2)+692100·ln(5)-692100·ln(13))/131",
+                      "-8710.2033188475", &store);
+  assertCalculationIs(
+      "(-8.314×(5/6))×ln(5/6)", DisplayOutput::ExactAndApproximateToggle,
+      EqualSign::Approximation, "-((4157(-ln(2)-ln(3)+ln(5)))/600)",
+      "1.2631845193208", &store);
+  assertCalculationIs("(12×10^8)/(84000/(12+ln(1/((73/70)^280))))",
+                      DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Approximation,
+                      "(1200000/7)-4000000(-ln(2)-ln(5)-ln(7)+ln(73))",
+                      "3571.7750324415", &store);
+
+  GlobalPreferences::SharedGlobalPreferences()->setNumberOfSignificantDigits(
+      previousNumberOfSignificantDigits);
 }
 
 void assertMainCalculationOutputIs(const char* input, const char* output,

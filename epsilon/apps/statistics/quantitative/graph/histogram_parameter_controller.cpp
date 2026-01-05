@@ -117,7 +117,7 @@ void HistogramParameterController::buttonAction() {
 
 bool HistogramParameterController::authorizedParameters(
     double barWidth, double firstDrawnBarAbscissa) {
-  if (barWidth < 0.0) {
+  if (barWidth <= 0.0) {
     // The bar width cannot be negative
     return false;
   }

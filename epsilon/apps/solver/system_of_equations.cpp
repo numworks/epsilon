@@ -8,6 +8,7 @@
 #include <poincare/cas.h>
 #include <poincare/equation_solver/equation_solver_pool.h>
 #include <poincare/helpers/expression_equal_sign.h>
+#include <poincare/helpers/layout.h>
 #include <poincare/pool_variable_context.h>
 #include <poincare/range.h>
 #include <poincare/src/expression/approximation.h>
@@ -222,22 +223,30 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   if (!approximateLayout.isUninitialized() && !exactLayout.isUninitialized()) {
     char exactBuffer[::Constant::MaxSerializedExpressionSize];
     char approximateBuffer[::Constant::MaxSerializedExpressionSize];
-    [[maybe_unused]] size_t exactSerializationLength =
-        exactLayout.serialize(exactBuffer);
-    assert(exactSerializationLength <= ::Constant::MaxSerializedExpressionSize);
-    [[maybe_unused]] size_t approximateLength =
-        approximateLayout.serialize(approximateBuffer);
+    size_t exactSerializationLength = exactLayout.serialize(exactBuffer);
+    size_t approximateLength = approximateLayout.serialize(approximateBuffer);
+    /* The approximate expression should always be small enough to fit in a
+     * standard Escher buffer with size Constant::MaxSerializedExpressionSize.
+     * The exact expression however can potentially overflow the buffer size.
+     */
     assert(approximateLength <= ::Constant::MaxSerializedExpressionSize);
-    if (strcmp(exactBuffer, approximateBuffer) == 0) {
+    if (exactSerializationLength == LayoutHelpers::k_bufferOverflow) {
       exactLayout = Layout();
-    } else if (Poincare::IsCalculationOutputStrictEquality(
-                   exact, approximate,
-                   GlobalPreferences::SharedGlobalPreferences()
-                       ->numberOfSignificantDigits())) {
+    } else {
+      assert(exactSerializationLength <=
+             ::Constant::MaxSerializedExpressionSize);
+      if (strcmp(exactBuffer, approximateBuffer) == 0) {
+        exactLayout = Layout();
+      }
+    }
+    if (!exactLayout.isUninitialized() &&
+        Poincare::IsCalculationOutputStrictEquality(
+            exact, approximate,
+            GlobalPreferences::SharedGlobalPreferences()
+                ->numberOfSignificantDigits())) {
       exactAndApproximateAreEqual = true;
     }
   }
-
   assert(m_numberOfSolutions < k_maxNumberOfSolutions - 1);
   m_solutions[m_numberOfSolutions++] = Solution(
       exactLayout, approximateLayout, NAN, exactAndApproximateAreEqual);

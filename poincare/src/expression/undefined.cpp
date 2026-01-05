@@ -13,7 +13,7 @@ bool Undefined::CanBeUndefined(const Tree* e) {
   // Their elements can be undefined and it is never bubbled up.
   return e->isUndefined() ||
          !(e->isPoint() || e->isList() || e->isMatrix() || e->isUserSymbol() ||
-           e->isVar() || e->numberOfChildren() == 0);
+           e->isDepList() || e->isVar() || e->numberOfChildren() == 0);
 }
 
 bool Undefined::CanHaveUndefinedChild(const Tree* e, int childIndex) {
@@ -23,6 +23,7 @@ bool Undefined::CanHaveUndefinedChild(const Tree* e, int childIndex) {
 
 Tree* Undefined::CreateTreeWithDimensionedType(const Tree* e, Type type) {
   assert(TypeBlock::IsZero(type) || TypeBlock::IsUndefined(type));
+  assert(!e->isDepList());
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   int length = Dimension::ListLength(e);
   if (length >= 0) {

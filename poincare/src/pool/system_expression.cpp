@@ -187,15 +187,14 @@ SystemExpression SystemExpression::getReducedDerivative(
 
 PreparedFunction SystemExpression::getPreparedFunction(const char* symbolName,
                                                        bool scalarsOnly) const {
-  Tree* result = tree()->cloneTree();
   Internal::Dimension dimension = Internal::Dimension::Get(tree());
   if ((scalarsOnly &&
        (!dimension.isScalar() || Internal::Dimension::IsList(tree()))) ||
       (!dimension.isScalar() && !dimension.isPoint())) {
-    result->cloneTreeOverTree(KUndef);
-  } else {
-    Approximation::PrepareFunctionForApproximation(result, symbolName, true);
+    return PreparedFunction::Builder(KUndef);
   }
+  Tree* result = tree()->cloneTree();
+  Approximation::PrepareFunctionForApproximation(result, symbolName, true);
   return PreparedFunction::Builder(result);
 }
 

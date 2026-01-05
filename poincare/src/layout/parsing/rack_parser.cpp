@@ -1068,11 +1068,11 @@ void RackParser::parseCustomIdentifier(TreeRef& leftHandSide,
   assert(leftHandSide.isUninitialized());
   const Tree* l = m_currentToken.firstLayout();
   size_t length = m_currentToken.length();
-  constexpr int bufferSize = sizeof(CodePoint) * Symbol::k_maxNameSize;
-  if (length >= bufferSize) {
+  if (length >= Symbol::k_maxNameSize) {
     // Identifier name too long.
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
+  constexpr int bufferSize = sizeof(CodePoint) * Symbol::k_maxNameSize;
   char buffer[bufferSize];
   char* end = buffer + bufferSize;
   char* buf = buffer;

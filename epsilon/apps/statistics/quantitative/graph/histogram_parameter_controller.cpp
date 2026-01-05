@@ -118,7 +118,7 @@ void HistogramParameterController::buttonAction() {
 bool HistogramParameterController::authorizedParameters(
     double barWidth, double firstDrawnBarAbscissa) {
   if (barWidth <= 0.0) {
-    // The bar width cannot be negative
+    // The bar width must be strictly positive
     return false;
   }
   // TODO: Histogram range is in float so we can't go over k_maxFloat

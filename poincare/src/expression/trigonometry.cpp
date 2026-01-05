@@ -535,11 +535,12 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
   if (!argProperties.isReal()) {
     return false;
   }
+  bool changed = false;
   if (PatternMatching::Match(arg, KMult(-1_e, KAdd(KA_s)), &ctx)) {
     /* Expand the -1 to directly catch exact values such as (-1)*(-2+√3).
      * Advanced reduction will factorize it later if needed.
      * This shortcuts an advanced reduction step. */
-    AdvancedOperation::ExpandMult(arg);
+    changed = AdvancedOperation::ExpandMult(arg);
     // ExpandMult can create dependency, we need them to bubble-up
     if (arg->isDep()) {
       // e = atan(dep(arg))
@@ -577,7 +578,7 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
         ctx));
     return true;
   }
-  return false;
+  return changed;
 }
 
 bool Trigonometry::ReduceArCosH(Tree* e) {

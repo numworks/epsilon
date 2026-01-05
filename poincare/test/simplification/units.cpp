@@ -218,6 +218,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   // abs(units) is forbidden for complex values
   simplifies_to("abs(-3i*_m)", "undef");
   simplifies_to("1_m^((1-1)^0)", "undef");
+  simplifies_to("((0h0s)^2)^2", "0×_s^4");
 
   // No unit conversion
   // TODO: should return 1×_m+1×_cm

@@ -195,7 +195,9 @@ QUIZ_CASE(pcj_parse_layout) {
   quiz_assert(!is_parsable("f(f)"_l));
   assertLayoutParsesTo("sum"_l ^ KParenthesesL(KRackL(KCurlyBracesL("2"_l))),
                        KListSum(KList(2_e)));
-  quiz_assert(!is_parsable("a0123456789012345678901234567890123456789"_l));
+  // Custom identifier maximum length
+  quiz_assert(is_parsable("a123456"_l));
+  quiz_assert(!is_parsable("a1234567"_l));
 }
 
 // TODO: add test for pool memory exhaustion

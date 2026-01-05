@@ -120,6 +120,12 @@ bool AdvancedReduction::Reduce(Tree* e, ReductionTarget reductionTarget) {
                              [](const Tree* e) { return e->isRandomized(); }));
   ASSERT_IF_LEVEL(2, !SystematicReduction::DeepReduce(e));
 
+  if (Dimension::Get(e).isUnit()) {
+    /* No advanced reduction on units to avoid handling them in complex
+     * operations and preserve the dimension. */
+    return false;
+  }
+
   bool changed = false;
   if (!(e->isList())) {
     changed = ReduceIndependentElement(e, reductionTarget);

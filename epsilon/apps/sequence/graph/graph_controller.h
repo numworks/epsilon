@@ -41,6 +41,9 @@ class GraphController final : public Shared::FunctionGraphController {
   void moveToRank(int n);
 
  private:
+  // Cap number of steps to compute optimalRange.
+  constexpr static int k_maxOptimalRangeSteps = 1000;
+
   class SequenceSelectionController
       : public Shared::FunctionGraphController::FunctionSelectionController {
    public:

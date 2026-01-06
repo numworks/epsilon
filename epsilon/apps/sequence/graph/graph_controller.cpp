@@ -109,8 +109,14 @@ Range2D<float> GraphController::optimalRange(
     }
     int min = std::ceil(result.xMin());
     int max = std::floor(result.xMax());
+
+    int step =
+        std::ceil((result.xMax() - result.xMin()) / k_maxOptimalRangeSteps);
+    if (step < 1) {
+      step = 1;
+    }
     /* Loop first on abscissa so that sequences step ranks together. */
-    for (int n = min; n <= max; n++) {
+    for (int n = min; n <= max; n += step) {
       for (int i = 0; i < nbOfActiveModels; i++) {
         zoom.fitPoint(
             sequences[i]->evaluateXYAtParameter(static_cast<float>(n)));

@@ -29,11 +29,11 @@ class AbstractStaticVector {
 
   constexpr const T& operator[](size_t index) const {
     assert(index < m_size);
-    return m_data[index];
+    return *(m_data + index);
   }
   constexpr T& operator[](size_t index) {
     assert(index < m_size);
-    return m_data[index];
+    return *(m_data + index);
   }
 
   constexpr const T& first() const {

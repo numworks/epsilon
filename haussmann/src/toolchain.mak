@@ -46,6 +46,10 @@ CXXFLAGS := \
   -fno-threadsafe-statics \
   -std=c++20
 
+ifeq ($(STRICT_WARNINGS),1)
+CXXFLAGS += -Werror
+endif
+
 ifneq ($(_cxx_rtti),1)
 CXXFLAGS += -fno-rtti
 endif

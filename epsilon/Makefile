@@ -6,6 +6,7 @@ APP_VERSION := 24.0.0
 OUTPUT_ROOT := output
 DEBUG ?= 0
 PLATFORM ?= host
+STRICT_WARNINGS ?= 0
 
 ALL_SPECIAL_SUBDIRECTORIES := bootloader kernel coverage
 

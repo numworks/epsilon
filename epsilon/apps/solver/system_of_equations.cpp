@@ -224,13 +224,12 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     char exactBuffer[::Constant::MaxSerializedExpressionSize];
     char approximateBuffer[::Constant::MaxSerializedExpressionSize];
     size_t exactSerializationLength = exactLayout.serialize(exactBuffer);
-    [[maybe_unused]] size_t approximateLength =
-        approximateLayout.serialize(approximateBuffer);
     /* The approximate expression should always be small enough to fit in a
      * standard Escher buffer with size Constant::MaxSerializedExpressionSize.
      * The exact expression however can potentially overflow the buffer size.
      */
-    assert(approximateLength <= ::Constant::MaxSerializedExpressionSize);
+    assert(approximateLayout.serialize(approximateBuffer) <=
+           ::Constant::MaxSerializedExpressionSize);
     if (exactSerializationLength == LayoutHelpers::k_bufferOverflow) {
       exactLayout = Layout();
     } else {

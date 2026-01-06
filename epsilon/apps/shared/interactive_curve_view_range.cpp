@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <ion.h>
+#include <limits.h>
 #include <omg/ieee754.h>
 #include <omg/numeric_comparison.h>
 #include <poincare/circuit_breaker_checkpoint.h>
@@ -427,7 +428,13 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
   setZoomNormalize(isOrthonormal());
 }
 
+constexpr int k_largestTenFactor = 1000000000;
+static_assert(k_largestTenFactor < INT_MAX);
+static_assert(k_largestTenFactor > INT_MAX / 10);
+
 int ClosestPowerOfTenAbove(int number) {
+  // powerOfTen * 10 cannot be larger than INT_MAX
+  assert(number < k_largestTenFactor);
   int powerOfTen = 10;
   while (number > powerOfTen) {
     powerOfTen *= 10;
@@ -476,27 +483,26 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
   if (minNumberOfUnits <= numberOfUnits && numberOfUnits <= maxNumberOfUnits) {
     // Case 1
     return userGridUnit;
-  } else if (numberOfUnits < minNumberOfUnits) {
-    // Case 2
-    int k = ClosestTwoFiveTenFactorAbove(
-        static_cast<int>(std::ceil(minNumberOfUnits / numberOfUnits)));
-    assert(k <= std::floor(maxNumberOfUnits / numberOfUnits));
-    return ExpressionOrFloat::Builder(
-        UserExpression::Create(
-            KMult(KA, KPow(KB, -1_e)),
-            {.KA = userGridUnit.expression(), .KB = UserExpression::Builder(k)})
-            .cloneAndTrySimplify({}),
-        PoincareHelpers::ApproximateToRealScalar);
   }
-  assert(numberOfUnits > maxNumberOfUnits);
-  // Case 3
-  int k = ClosestTwoFiveTenFactorAbove(
-      static_cast<int>(std::ceil(numberOfUnits / maxNumberOfUnits)));
-  assert(k <= std::floor(numberOfUnits / minNumberOfUnits));
-
+  // Case 2 and 3
+  bool decreaseGridUnit = numberOfUnits < minNumberOfUnits;
+  assert(decreaseGridUnit || numberOfUnits > maxNumberOfUnits);
+  float ratio =
+      std::ceil(decreaseGridUnit ? (minNumberOfUnits / numberOfUnits)
+                                 : (numberOfUnits / maxNumberOfUnits));
+  assert(ratio >= 0.f);
+  // TODO: Escape is it happens
+  assert(ratio < k_largestTenFactor);
+  int k = ClosestTwoFiveTenFactorAbove(static_cast<int>(ratio));
+  assert(k <= std::floor(decreaseGridUnit ? maxNumberOfUnits / numberOfUnits
+                                          : numberOfUnits / minNumberOfUnits));
+  UserExpression factor = UserExpression::Builder(k);
+  if (decreaseGridUnit) {
+    factor = UserExpression::Create(KPow(KA, -1_e), {.KA = factor});
+  }
   return ExpressionOrFloat::Builder(
-      UserExpression::Create(KMult(KA, KB), {.KA = userGridUnit.expression(),
-                                             .KB = UserExpression::Builder(k)})
+      UserExpression::Create(KMult(KA, KB),
+                             {.KA = userGridUnit.expression(), .KB = factor})
           .cloneAndTrySimplify({}),
       PoincareHelpers::ApproximateToRealScalar);
 

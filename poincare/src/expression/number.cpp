@@ -87,8 +87,9 @@ Properties Number::Properties(const Tree* e) {
         return Properties::Unknown();
       }
       // Floats are not considered integer since they may have been rounded
+      // A zero float is not considered to be a strict zero
       return Poincare::Properties(
-          Poincare::Sign(value == 0, value > 0, value < 0), true,
+          Poincare::Sign(value == 0., value >= 0., value <= 0.), true,
           std::isinf(value));
     }
     default:

@@ -94,7 +94,7 @@ void process_tree_and_compare(const Tree* expression, const Tree* expected,
   /* TODO: use (output != nullptr) instead, but it would require uniform float
    * numbers approximation across all platforms for tests to pass this way. */
   bool fallbackOnSerialization = true;
-  int previousNumberOfTrees = SharedTreeStack->numberOfTrees();
+  [[maybe_unused]] int previousNumberOfTrees = SharedTreeStack->numberOfTrees();
   if (!expression || !expected) {
     // Parsing failed
     quiz_assert(false);

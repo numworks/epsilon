@@ -80,17 +80,18 @@ QUIZ_CASE(pcj_latex_parser_latex_to_layout) {
       KDiffL("x"_l, "x"_l, "1"_l, "x"_l) ^ KSubscriptL("t=2"_l));
 
   // Symbols
-  assert_latex_layouts_to("\\ \\le\\ge\\cdot\\times\\degree˚º\\to\\div\\infty",
-                          " "_l ^ KCodePointL<UCodePointInferiorEqual>() ^
-                              KCodePointL<UCodePointSuperiorEqual>() ^
-                              KCodePointL<UCodePointMiddleDot>() ^
-                              KCodePointL<UCodePointMultiplicationSign>() ^
-                              KCodePointL<UCodePointDegreeSign>() ^
-                              KCodePointL<UCodePointDegreeSign>() ^
-                              KCodePointL<UCodePointDegreeSign>() ^
-                              KCodePointL<UCodePointRightwardsArrow>() ^
-                              KCodePointL<'/'>() ^
-                              KCodePointL<UCodePointInfinity>());
+  assert_latex_layouts_to(
+      "\\ \\le\\ge\\cdot\\times\\degree˚º\\to\\div\\infty\\ne",
+      " "_l ^ KCodePointL<UCodePointInferiorEqual>() ^
+          KCodePointL<UCodePointSuperiorEqual>() ^
+          KCodePointL<UCodePointMiddleDot>() ^
+          KCodePointL<UCodePointMultiplicationSign>() ^
+          KCodePointL<UCodePointDegreeSign>() ^
+          KCodePointL<UCodePointDegreeSign>() ^
+          KCodePointL<UCodePointDegreeSign>() ^
+          KCodePointL<UCodePointRightwardsArrow>() ^ KCodePointL<'/'>() ^
+          KCodePointL<UCodePointInfinity>() ^
+          KCombinedCodePointL<'=', UCodePointCombiningLongSolidusOverlay>());
 }
 
 void assert_layout_convert_to_latex(const Tree* l, const char* latex,
@@ -156,6 +157,7 @@ QUIZ_CASE(pcj_latex_parser_layout_to_latex) {
           KCodePointL<UCodePointMultiplicationSign>() ^
           KCodePointL<UCodePointDegreeSign>() ^
           KCodePointL<UCodePointRightwardsArrow>() ^
-          KCodePointL<UCodePointInfinity>(),
-      "\\  \\le \\ge \\cdot \\times \\degree \\to \\infty ");
+          KCodePointL<UCodePointInfinity>() ^
+          KCombinedCodePointL<'=', UCodePointCombiningLongSolidusOverlay>(),
+      "\\  \\le \\ge \\cdot \\times \\degree \\to \\infty \\ne");
 }

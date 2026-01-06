@@ -162,6 +162,7 @@ constexpr static LatexTokenChild multiplicationSignToken[] = {
     {"\\times", k_noChild}};
 constexpr static LatexTokenChild lesserOrEqualToken[] = {{"\\le", k_noChild}};
 constexpr static LatexTokenChild greaterOrEqualToken[] = {{"\\ge", k_noChild}};
+constexpr static LatexTokenChild notEqualToken[] = {{"\\ne", k_noChild}};
 constexpr static LatexTokenChild degreeToken[] = {{"\\degree", k_noChild}};
 /* These two alternative chars are:
  * - the "Ring Above" diacritic ˚ (U+02DA)
@@ -231,6 +232,15 @@ struct LatexLayoutRule {
           return CodePointLayout::IsCodePoint(t, CODEPOINT);            \
         },                                                              \
         []() -> Tree* { return KCodePointL<CODEPOINT>()->cloneTree(); } \
+  }
+
+#define COMBINED_CODEPOINT_RULE(LATEX_TOKEN, CP, CB)                         \
+  {                                                                          \
+    LATEX_TOKEN, std::size(LATEX_TOKEN),                                     \
+        [](const Tree* t) -> bool {                                          \
+          return CodePointLayout::IsCombinedCodePoint(t, CP, CB);            \
+        },                                                                   \
+        []() -> Tree* { return KCombinedCodePointL<CP, CB>()->cloneTree(); } \
   }
 
 #define DO_NOTHING_RULE(LATEX_TOKEN)                    \
@@ -332,6 +342,11 @@ constexpr static LatexLayoutRule k_rules[] = {
     CODEPOINT_RULE(lesserOrEqualToken, UCodePointInferiorEqual),
     // >=
     CODEPOINT_RULE(greaterOrEqualToken, UCodePointSuperiorEqual),
+    // ≠
+    /* WARNING: We have to use a combining code point instead of ≠ (U+2260)
+     * directly as it's how it's layoutted in Poincare */
+    COMBINED_CODEPOINT_RULE(notEqualToken, '=',
+                            UCodePointCombiningLongSolidusOverlay),
     // °
     CODEPOINT_RULE(degreeToken, UCodePointDegreeSign),
     CODEPOINT_RULE(degreeAlt1Token, UCodePointDegreeSign),

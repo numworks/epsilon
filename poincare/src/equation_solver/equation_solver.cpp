@@ -607,7 +607,7 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
 
   const Tree* coefficients[PolynomialHelpers::NumberOfCoefficients(
       PolynomialHelpers::k_maxSolvableDegree)] = {};
-  int degree = Polynomial::Degree(polynomial);
+  size_t degree = Polynomial::Degree(polynomial);
   if (degree > PolynomialHelpers::k_maxSolvableDegree) {
     SharedTreeStack->dropBlocksFrom(equation);
     return {.error = Error::RequireApproximateSolution,
@@ -615,10 +615,11 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
             .solutionMetadata = solutionMetadata};
   }
 
-  int numberOfTerms = Polynomial::NumberOfTerms(polynomial);
+  size_t numberOfTerms = Polynomial::NumberOfTerms(polynomial);
   const Tree* coefficient = Polynomial::LeadingCoefficient(polynomial);
   for (size_t i = 0; i < numberOfTerms; i++) {
-    int exponent = Polynomial::ExponentAtIndex(polynomial, i);
+    size_t exponent =
+        Polynomial::ExponentAtIndex(polynomial, static_cast<int>(i));
     if (exponent < PolynomialHelpers::NumberOfCoefficients(
                        PolynomialHelpers::k_maxSolvableDegree)) {
       coefficients[exponent] = coefficient;
@@ -702,7 +703,7 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
   equation->removeTree();
 
   NAry::AddChild(solutionList, discriminant);
-  solutionMetadata.degree = degree;
+  solutionMetadata.degree = static_cast<int>(degree);
   return {.exactSolutionList = solutionList,
           .equationMetadata = equationMetadata,
           .solutionMetadata = solutionMetadata};

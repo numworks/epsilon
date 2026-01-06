@@ -86,7 +86,7 @@ QUIZ_CASE(kandinsky_color_hsv) {
   };
   static_assert(std::size(dataColorsConversion) <=
                 Escher::Palette::numberOfDataColors());
-  for (int i = 0; i < std::size(dataColorsConversion); i++) {
+  for (size_t i = 0; i < std::size(dataColorsConversion); i++) {
     KDColor conversionColor = KDColor::ConvertHSVToRGB(dataColorsConversion[i]);
     KDColor dataColor = Escher::Palette::DataColor[i];
     quiz_assert(conversionColor == dataColor);

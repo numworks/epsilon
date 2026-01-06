@@ -364,7 +364,7 @@ std::complex<float> Private::HelperUndefDependencies(const Tree* dep,
        * - return NAN if any element of the list is undefined
        * - always return NAN
        * - never return NAN (current solution) */
-      break;
+      continue;
     }
     Dimension dim = Dimension::Get(child, ctx->m_symbolContext);
     if (dim.isScalar()) {

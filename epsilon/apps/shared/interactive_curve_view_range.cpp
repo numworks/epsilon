@@ -491,11 +491,14 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
       std::ceil(decreaseGridUnit ? (minNumberOfUnits / numberOfUnits)
                                  : (numberOfUnits / maxNumberOfUnits));
   assert(ratio >= 0.f);
-  // TODO: Escape is it happens
-  assert(ratio < k_largestTenFactor);
-  int k = ClosestTwoFiveTenFactorAbove(static_cast<int>(ratio));
-  assert(k <= std::floor(decreaseGridUnit ? maxNumberOfUnits / numberOfUnits
-                                          : numberOfUnits / minNumberOfUnits));
+  // Default to largest possible ClosestTwoFiveTenFactorAbove output.
+  int k = k_largestTenFactor;
+  if (ratio < k_largestTenFactor) {
+    k = ClosestTwoFiveTenFactorAbove(static_cast<int>(ratio));
+    assert(k <= std::floor(decreaseGridUnit
+                               ? maxNumberOfUnits / numberOfUnits
+                               : numberOfUnits / minNumberOfUnits));
+  }
   UserExpression factor = UserExpression::Builder(k);
   if (decreaseGridUnit) {
     factor = UserExpression::Create(KPow(KA, -1_e), {.KA = factor});

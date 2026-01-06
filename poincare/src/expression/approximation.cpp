@@ -355,6 +355,17 @@ std::complex<float> Private::HelperUndefDependencies(const Tree* dep,
   // Dependency children may have different dimensions.
   std::complex<float> undefValue = std::complex<float>(0);
   for (const Tree* child : Dependency::Dependencies(dep)->children()) {
+    if (Dimension::IsList(child, ctx->m_symbolContext)) {
+      /* Ignore lists in dependencies. This is a temporary solution until we
+       * decide how to deal with them properly.
+       * TODO decide if they should:
+       * - not be here (might be possible once we bubble up lists and randoms
+       *   correctly and if we forbid lists in functions)
+       * - return NAN if any element of the list is undefined
+       * - always return NAN
+       * - never return NAN (current solution) */
+      break;
+    }
     Dimension dim = Dimension::Get(child, ctx->m_symbolContext);
     if (dim.isScalar()) {
       // Optimize most cases

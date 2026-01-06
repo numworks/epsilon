@@ -14,7 +14,8 @@ void testInterval(double start, double end, double step, double* elements,
   params->setStart(start);
   params->setEnd(end);
   params->setStep(step);
-  quiz_assert(testInterval.numberOfElements() == elementCount);
+  quiz_assert(static_cast<int>(testInterval.numberOfElements()) ==
+              elementCount);
   for (int i = 0; i < elementCount; ++i) {
     // ValueOfFloatAsDisplayed can be used to set each interval element.
     assert_roughly_equal<double>(testInterval.element(i), elements[i]);

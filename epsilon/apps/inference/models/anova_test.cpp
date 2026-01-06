@@ -144,7 +144,7 @@ void ANOVATest::setGroupValue(double value, int valueIndex, int groupIndex) {
    * must be a "real" value. */
   assert(!std::isnan(value));
 
-  if (m_groups.size() <= groupIndex) {
+  if (m_groups.size() <= static_cast<size_t>(groupIndex)) {
     // Create one or more new groups
     for (int i = m_groups.size(); i <= groupIndex; ++i) {
       m_groups.push(GroupValues{});
@@ -153,7 +153,7 @@ void ANOVATest::setGroupValue(double value, int valueIndex, int groupIndex) {
   assert(m_groups.size() > groupIndex);
 
   GroupValues& groupValues = m_groups[groupIndex];
-  if (groupValues.size() > valueIndex) {
+  if (groupValues.size() > static_cast<size_t>(valueIndex)) {
     // Replace an existing value
     groupValues[valueIndex] = value;
     return;
@@ -168,11 +168,11 @@ void ANOVATest::setGroupValue(double value, int valueIndex, int groupIndex) {
 
 double ANOVATest::groupValue(int valueIndex, int groupIndex) const {
   assert(valueIndex >= 0 && groupIndex >= 0);
-  if (groupIndex >= m_groups.size()) {
+  if (static_cast<size_t>(groupIndex) >= m_groups.size()) {
     return NAN;
   }
   const GroupValues& groupValues = m_groups[groupIndex];
-  if (valueIndex >= groupValues.size()) {
+  if (static_cast<size_t>(valueIndex) >= groupValues.size()) {
     return NAN;
   }
   return groupValues[valueIndex];
@@ -180,11 +180,11 @@ double ANOVATest::groupValue(int valueIndex, int groupIndex) const {
 
 bool ANOVATest::deleteGroupValue(int valueIndex, int groupIndex) {
   assert(valueIndex >= 0 && groupIndex >= 0);
-  if (groupIndex >= m_groups.size()) {
+  if (static_cast<size_t>(groupIndex) >= m_groups.size()) {
     return false;
   }
   GroupValues& groupValues = m_groups[groupIndex];
-  if (valueIndex >= groupValues.size()) {
+  if (static_cast<size_t>(valueIndex) >= groupValues.size()) {
     return false;
   }
 
@@ -239,7 +239,7 @@ void ANOVATest::setStatisticParameter(double value, int parameterIndex,
 double ANOVATest::statisticParameter(int parameterIndex, int groupIndex) const {
   assert(parameterIndex >= 0 && groupIndex >= 0);
   if (parameterIndex >= StatisticsData::k_numberOfParameters ||
-      groupIndex >= m_inputStatistics.size()) {
+      static_cast<size_t>(groupIndex) >= m_inputStatistics.size()) {
     return k_undefinedValue;
   }
   return m_inputStatistics[groupIndex].parameter(parameterIndex);
@@ -248,7 +248,7 @@ double ANOVATest::statisticParameter(int parameterIndex, int groupIndex) const {
 bool ANOVATest::deleteStatisticParameter(int parameterIndex, int groupIndex) {
   assert(parameterIndex >= 0 && groupIndex >= 0);
   assert(parameterIndex < StatisticsData::k_numberOfParameters);
-  if (groupIndex >= m_inputStatistics.size()) {
+  if (static_cast<size_t>(groupIndex) >= m_inputStatistics.size()) {
     return false;
   }
   InputStatisticsData& groupStatisticData = m_inputStatistics[groupIndex];

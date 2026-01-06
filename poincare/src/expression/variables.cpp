@@ -61,7 +61,11 @@ void Variables::Private::GetUserSymbols(
     return Set::Add(set, e);
   }
   if (e->isUserFunction()) {
-    assert(symbolContext.expressionForUserNamed(e));
+    const Tree* expression = symbolContext.expressionForUserNamed(e);
+    if (!expression) {
+      // The expression is not available or is invalid in the symbol store
+      return;
+    }
     /* If symbolContext is given, we look inside the user function definition.
      * Unknown symbol has to be discarded. */
     Tree* subSet = Set::PushEmpty();

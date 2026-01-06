@@ -127,10 +127,10 @@ static uint32_t RandIntNoRepInRangeOfIndex(uint32_t range, uint32_t seed,
   OMG_UNREACHABLE;
 }
 
-double PrivateApproximateRandIntNoRep(const Tree* randInNoRep,
+double PrivateApproximateRandIntNoRep(const Tree* randIntNoRep,
                                       const Approximation::Context* approxCtx,
                                       uint8_t seed) {
-  assert(randInNoRep->isRandIntNoRep());
+  assert(randIntNoRep->isRandIntNoRep());
   uint8_t lcgSeedIndex = seed;
   if (lcgSeedIndex <= 0 ||
       lcgSeedIndex > Random::Context::k_maxNumberOfVariables) {
@@ -145,16 +145,16 @@ double PrivateApproximateRandIntNoRep(const Tree* randInNoRep,
      * double not in a float */
     static_assert(std::is_same<double, Random::Context::VariableType>::value);
   }
-  double min = Approximation::Private::PrivateTo<double>(randInNoRep->child(0),
+  double min = Approximation::Private::PrivateTo<double>(randIntNoRep->child(0),
                                                          approxCtx);
-  double max = Approximation::Private::PrivateTo<double>(randInNoRep->child(1),
+  double max = Approximation::Private::PrivateTo<double>(randIntNoRep->child(1),
                                                          approxCtx);
   assert(min == std::round(min) && max == std::round(max));
 
   uint32_t range = static_cast<uint32_t>(max - min + 1);
 #if ASSERTIONS
   double length = Approximation::Private::PrivateTo<double>(
-      randInNoRep->child(2), approxCtx);
+      randIntNoRep->child(2), approxCtx);
   assert(0 <= approxCtx->m_listElement && approxCtx->m_listElement < length &&
          length <= range);
 #endif

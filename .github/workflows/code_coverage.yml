@@ -12,7 +12,7 @@ jobs:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS_LARGE) }}
     env:
-      MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} TOOLCHAIN=host-gcc PLATFORM=simulator DEBUG=1 ASSERTIONS=0"
+      MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1 TOOLCHAIN=host-gcc PLATFORM=simulator DEBUG=1 ASSERTIONS=0"
       COVERAGE_OUTPUT_DIR: '${{ inputs.project-path }}/output/debug/no_assert/linux/coverage'
     steps:
       - name: Fetch target branch and PR branch

@@ -147,7 +147,7 @@ jobs:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
     env:
-      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
+      MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"
     steps:
       - uses: actions/checkout@v4
 
@@ -208,7 +208,7 @@ jobs:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
     env:
-      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
+      MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4

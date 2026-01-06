@@ -345,7 +345,7 @@ OperatorSymbol OperatorSymbolBetween(LayoutShape left, LayoutShape right,
           return linearMode ? MultiplicationSign : Empty;
       }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

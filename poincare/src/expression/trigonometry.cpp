@@ -641,7 +641,7 @@ Type Trigonometry::GetInverseType(Type type) {
     case Type::Tan:
       return Type::ATan;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

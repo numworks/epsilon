@@ -150,7 +150,7 @@ SystemExpression ReplaceSymbolAndReduce(
         TreeStackCheckpoint::Raise(exc);
     }
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 /* TODO: Like similar methods, returned expression is not actually

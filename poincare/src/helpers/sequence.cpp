@@ -16,7 +16,7 @@ static Internal::Type GetType(SequenceHelper::Type sequenceType) {
     case SequenceHelper::Type::DoubleRecurrence:
       return Internal::Type::SequenceDoubleRecurrence;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

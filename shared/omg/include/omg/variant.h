@@ -21,7 +21,7 @@ class VariantInternalStorage;
 template <>
 class VariantInternalStorage<> {
  public:
-  void deinit(uint8_t type) { OMG::unreachable(); }
+  void deinit(uint8_t type) { OMG_UNREACHABLE; }
 };
 
 // Recursive case: store the first type and the rest
@@ -174,7 +174,7 @@ class Variant2 {
       assert(m_type == 1);
       return m_two;
     } else {
-      OMG::unreachable();
+      OMG_UNREACHABLE;
     }
   }
 
@@ -185,7 +185,7 @@ class Variant2 {
     } else if constexpr (std::is_same_v<A, Two>) {
       return m_two;
     } else {
-      OMG::unreachable();
+      OMG_UNREACHABLE;
     }
   }
 
@@ -201,7 +201,7 @@ class Variant2 {
       m_type = 1;
       return m_two;
     } else {
-      OMG::unreachable();
+      OMG_UNREACHABLE;
     }
   }
 

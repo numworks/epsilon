@@ -71,7 +71,7 @@ const char* EstimateSymbol(TestType testType) {
       return "b";
     default:
       // Chi2 doesn't have an interval estimate
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -89,7 +89,7 @@ Poincare::Layout EstimateLayout(Type type) {
       return KXBar ^ KSubscriptL("1"_l) ^ "-"_l ^ KXBar ^ KSubscriptL("2"_l);
     default:
       // Chi2 doesn't have an interval estimate
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -119,7 +119,7 @@ double DefaultParameterAtIndex(Type type, int index) {
           defaultParameters[Params::OneMean::N] = 16.;
           break;
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
       break;
     }
@@ -139,7 +139,7 @@ double DefaultParameterAtIndex(Type type, int index) {
       break;
     default:
       // Chi2 doesn't have an interval estimate
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
   return defaultParameters[index];
 }
@@ -181,7 +181,7 @@ double ComputeEstimate(TestType testType, const ParametersArray parameters) {
              parameters[Params::TwoMeans::X2];
     default:
       // Chi2 doesn't have an interval estimate
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -212,7 +212,7 @@ double ComputeStandardError(Type type, const ParametersArray parameters) {
       return parameters[Params::Slope::SE];
     default:
       // Chi2 doesn't have an interval estimate
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

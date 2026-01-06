@@ -45,7 +45,7 @@ constexpr bool IsTestCompatibleWithStatistic(TestType testType,
     case TestType::Slope:
       return statisticType == StatisticType::T;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -130,7 +130,7 @@ constexpr int NumberOfParameters(TestType testType) {
       // Special cases
       return 0;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

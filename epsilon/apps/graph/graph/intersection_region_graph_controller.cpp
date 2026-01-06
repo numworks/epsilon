@@ -68,7 +68,7 @@ void IntersectionRegionGraphController::updateBestPointOfInterestForRecord(
     // Prevent finding the same point again
     stretch = false;
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 Coordinate2D<double>

@@ -85,7 +85,7 @@ bool Simplify(Tree* t) {
 }
 ```
 
-## Use OMG::unreachable() to mark unreachable paths
+## Use OMG_UNREACHABLE to mark unreachable paths
 
 It is similar to `assert(false)` but will not need dummy returns to avoid warnings.
 
@@ -97,7 +97,7 @@ bool SomeFunction(Tree* e) {
       return true;
     ...
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 ```
 
@@ -109,7 +109,7 @@ bool SomeFunction(Tree* e) {
       return true;
     ...
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 ```

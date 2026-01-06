@@ -313,7 +313,7 @@ void Zoom<T>::fitConditions(const Internal::Tree* piecewise,
   fitWithSolver(bounds, &dummy, &dummy, evaluator, &params, test, hone,
                 vertical);
 #else
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 #endif
 }
 

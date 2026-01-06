@@ -73,9 +73,9 @@ I18n::Message Model::name() const {
     case Type::Median:
       return I18n::Message::MedianRegression;
     case Type::LogisticInternal:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 }  // namespace Regression

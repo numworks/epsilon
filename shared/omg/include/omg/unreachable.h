@@ -2,14 +2,12 @@
 
 #include "assert.h"
 
-namespace OMG {
-
 /* Raise an undefined behavior, equivalent to C++23 std::unreachable.
  * Use it instead of assert(false) to mark places that should not be reached.
- */
-[[noreturn]] inline void unreachable() {
-  assert(false);
-  __builtin_unreachable();
-}
-
-}  // namespace OMG
+ * This could be a OMG::unreachable() method, but we use a macro to shorten
+ * backtrace during fuzzer debugging. */
+#define OMG_UNREACHABLE      \
+  {                          \
+    assert(false);           \
+    __builtin_unreachable(); \
+  }

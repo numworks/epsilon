@@ -19,7 +19,7 @@ double ANOVATest::InputStatisticsData::parameter(int parameterIndex) const {
     case 2:
       return sampleStdDeviation();
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -53,7 +53,7 @@ void ANOVATest::computeGroupData() {
                      m_groupData.begin(), GroupDataFromInputStatisticsData);
       break;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
   assert(m_groupData.size() == numberOfGroups());
 }
@@ -75,7 +75,7 @@ bool ANOVATest::validateInputs(int /* pageIndex */) {
     case InputMode::Statistics:
       return validateStatisticInputs();
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -86,7 +86,7 @@ void ANOVATest::setValueAtPosition(double value, int row, int column) {
     case InputMode::Statistics:
       return setStatisticParameter(value, row, column);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -97,7 +97,7 @@ double ANOVATest::valueAtPosition(int row, int column) const {
     case InputMode::Statistics:
       return statisticParameter(row, column);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -108,7 +108,7 @@ bool ANOVATest::deleteValueAtPosition(int row, int column) {
     case InputMode::Statistics:
       return deleteStatisticParameter(row, column);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -122,7 +122,7 @@ void ANOVATest::deleteValuesInColumn(int column) {
       m_inputStatistics.removeAt(column);
       return;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -134,7 +134,7 @@ bool ANOVATest::authorizedValueAtPosition(double p, int row, int column) const {
     case InputMode::Statistics:
       return StatisticsData::IsValueAcceptable(p, row);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

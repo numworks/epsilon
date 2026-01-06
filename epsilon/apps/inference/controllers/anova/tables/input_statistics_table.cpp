@@ -46,7 +46,7 @@ constexpr static const char* HeaderAtRow(int row) {
     case 2:
       return I18n::translate(I18n::Message::SampleSTDShort);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -60,7 +60,7 @@ constexpr static const char* SymbolAtRow(int row) {
     case 2:
       return I18n::translate(I18n::Message::S);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

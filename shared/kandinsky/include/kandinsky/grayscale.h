@@ -24,6 +24,6 @@ constexpr KDColor KDGrayscaleToKDColor(KDGrayscale color) {
     case KDGrayscale::Brightest:
       return KDColor::RGB24(0x88968C);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }

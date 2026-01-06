@@ -357,7 +357,7 @@ Tree* PolynomialParser::Parse(Tree* e, const Tree* variable) {
     }
     TreeStackCheckpoint::Raise(exception);
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
   return nullptr;
 }
 

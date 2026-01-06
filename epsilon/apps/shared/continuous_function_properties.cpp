@@ -246,7 +246,7 @@ void ContinuousFunctionProperties::update(
         return;
       }
       default:
-        OMG::unreachable();
+        OMG_UNREACHABLE;
     }
   }
 
@@ -334,7 +334,7 @@ I18n::Message ContinuousFunctionProperties::captionForCartesianFunction(
     case FunctionType::CartesianType::Default:
       return I18n::Message::Function;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

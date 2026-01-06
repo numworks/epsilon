@@ -187,7 +187,7 @@ const Representative* Angle::DefaultRepresentativeForAngleUnit(
     case AngleUnit::Gradian:
       return &representatives.gradian;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

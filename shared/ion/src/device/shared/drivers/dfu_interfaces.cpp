@@ -31,7 +31,7 @@ const DFUInterfaceBackend* interface(int index) {
       return &k_RAMBackend;
     }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

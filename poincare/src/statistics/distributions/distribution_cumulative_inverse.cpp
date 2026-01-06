@@ -357,7 +357,7 @@ T CumulativeDistributiveInverseForProbability(
     case Type::Fisher:
       return fisherCumulativeDistributiveInverse(probability, parameters);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

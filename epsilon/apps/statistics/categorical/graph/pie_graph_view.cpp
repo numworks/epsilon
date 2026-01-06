@@ -156,7 +156,7 @@ KDColor PieGraphView::pointColor(KDCoordinate x, KDCoordinate y,
           m_borderColors[i], alpha);
     }
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 }  // namespace Statistics::Categorical

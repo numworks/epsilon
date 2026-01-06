@@ -68,7 +68,7 @@ constexpr I18n::Message Title(Poincare::Inference::Type type,
         case StatisticType::Z:
           return I18n::Message::HypothesisControllerTitleTwoMeansZ;
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     case TestType::OneProportion:
       return I18n::Message::HypothesisControllerTitleOneProp;
@@ -83,12 +83,12 @@ constexpr I18n::Message Title(Poincare::Inference::Type type,
         case CategoricalType::Homogeneity:
           return I18n::Message::InputHomogeneityControllerTitle;
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     case TestType::ANOVA:
       return I18n::Message::InputANOVAOneWayTitle;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -105,7 +105,7 @@ constexpr I18n::Message ParameterDescriptionAtIndex(
         case Params::OneMean::N:
           return I18n::Message::SampleSize;
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     case TestType::TwoMeans:
       switch (index) {
@@ -124,7 +124,7 @@ constexpr I18n::Message ParameterDescriptionAtIndex(
         case Params::TwoMeans::N2:
           return I18n::Message::Sample2Size;
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     case TestType::OneProportion:
       switch (index) {
@@ -133,7 +133,7 @@ constexpr I18n::Message ParameterDescriptionAtIndex(
         case Params::OneProportion::N:
           return I18n::Message::SampleSize;
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     case TestType::TwoProportions:
       switch (index) {
@@ -146,7 +146,7 @@ constexpr I18n::Message ParameterDescriptionAtIndex(
         case Params::TwoProportions::N2:
           return I18n::Message::Sample2Size;
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     case TestType::Slope:
       switch (index) {
@@ -157,7 +157,7 @@ constexpr I18n::Message ParameterDescriptionAtIndex(
         case Params::Slope::SE:
           return I18n::Message::StandardError;
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     default:
       return I18n::Message::Default;
@@ -193,7 +193,7 @@ constexpr I18n::Message TestEstimateDescription(TestType testType, int index) {
             TwoProportions::Pooled:
           return I18n::Message::PooledProportion;
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     default:
       return I18n::Message::Default;

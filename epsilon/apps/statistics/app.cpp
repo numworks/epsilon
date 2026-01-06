@@ -118,7 +118,7 @@ void App::StoreTab::switchActiveVariant(DataTypeViewModel::DataType type,
       break;
     }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

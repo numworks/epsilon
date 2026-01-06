@@ -26,7 +26,7 @@ class BinomialDistribution final : public TwoParametersDistribution {
       case Poincare::Distribution::Params::Binomial::P:
         return I18n::Message::SuccessProbability;
       default:
-        OMG::unreachable();
+        OMG_UNREACHABLE;
     }
   }
 };

@@ -26,7 +26,7 @@ class FisherDistribution final : public TwoParametersDistribution {
       case Poincare::Distribution::Params::Fisher::D2:
         return I18n::Message::D2FisherDefinition;
       default:
-        OMG::unreachable();
+        OMG_UNREACHABLE;
     }
   }
 };

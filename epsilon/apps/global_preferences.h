@@ -118,7 +118,7 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
     return Poincare::Preferences::TranslateBuiltins::No;
   }
   void setTranslateBuiltins(Poincare::Preferences::TranslateBuiltins) override {
-    OMG::unreachable();
+    OMG_UNREACHABLE;
   };
 
   const char* openIntervalChar(bool left) const {

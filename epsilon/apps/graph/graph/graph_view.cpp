@@ -181,11 +181,11 @@ bool IsInRegion(const ContinuousFunction* f, float x, float y) {
           return std::isnan(fOut2) || fOut2 > tOut;
         }
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     }
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 /* Since area colors only one every 8 pixels, we can afford to check all pixels

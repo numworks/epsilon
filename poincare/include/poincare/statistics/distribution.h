@@ -101,7 +101,7 @@ constexpr static TypeDescription DescriptionForType(Type type) {
       return desc;
     }
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 }  // namespace detail
 

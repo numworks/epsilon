@@ -55,7 +55,7 @@ constexpr static const char* HeaderAtRow(int row) {
     case 2:
       return I18n::translate(I18n::Message::MeanSquares);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -70,7 +70,7 @@ constexpr static const char* SymbolAtRow(int row) {
     case 2:
       return I18n::translate(I18n::Message::MeanSquaresSymbol);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -86,7 +86,7 @@ void ResultsBetweenWithinTableCell::fillColumnTitleForLocation(
       myCell->setText(I18n::translate(I18n::Message::Within));
       break;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
   myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
 }
@@ -127,7 +127,7 @@ void ResultsBetweenWithinTableCell::fillInnerCellForLocation(
       PrintValueInTextHolder(values.meanSquares, myCell);
       break;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

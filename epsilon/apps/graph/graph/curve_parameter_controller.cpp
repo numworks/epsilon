@@ -102,7 +102,7 @@ bool CurveParameterController::parameterAtIndexIsFirstComponent(
     case ParameterIndex::SecondDerivative2:
       return false;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -119,7 +119,7 @@ bool CurveParameterController::parameterAtIndexIsEditable(
     case ContinuousFunctionProperties::EditableParametersType::None:
       return false;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -177,7 +177,7 @@ double CurveParameterController::evaluateCurveAt(ParameterIndex index) const {
         case ParameterIndex::Image3:
           return function()->evaluateXYAtParameter(cursorT).y();
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     }
     default:

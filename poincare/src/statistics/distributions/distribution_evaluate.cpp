@@ -198,7 +198,7 @@ T EvaluateAtAbscissa(Type type, T x, const ParametersArray<T>& parameters) {
     case Type::Fisher:
       return evalFisher(x, parameters);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

@@ -205,7 +205,7 @@ inline KDCoordinate BracketWidth(const Layout* node) {
     case LayoutType::Parentheses:
       return Parenthesis::k_parenthesisWidth;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -223,7 +223,7 @@ inline KDCoordinate MinVerticalMargin(const Layout* node) {
     case LayoutType::Parentheses:
       return Parenthesis::k_minVerticalMargin;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 }  // namespace Pair

@@ -52,7 +52,7 @@ Properties DecimalFunction(Properties properties, Internal::Type type) {
       canBeNull = true;
       break;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
   return Properties(
       Sign(canBeNull, canBeStrictlyPositive, canBeStrictlyNegative),

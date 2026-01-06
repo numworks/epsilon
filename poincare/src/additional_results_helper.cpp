@@ -1,5 +1,6 @@
 #include <omg/float.h>
 #include <omg/ieee754.h>
+#include <omg/unreachable.h>
 #include <poincare/additional_results_helper.h>
 #include <poincare/src/expression/angle.h>
 #include <poincare/src/expression/approximation.h>
@@ -631,7 +632,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
      *    Computed from row echelon form to save computation time. */
     if (!Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr,
                                        isApproximate)) {
-      OMG::unreachable();
+      OMG_UNREACHABLE;
     }
     reducedRowEchelonFormL =
         CreateBeautifiedLayout(reducedRowEchelonForm, &ctx, dim, displayMode,

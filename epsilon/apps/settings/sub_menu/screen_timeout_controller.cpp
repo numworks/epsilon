@@ -67,7 +67,7 @@ ScreenTimeoutController::DimmingTimeLabel ScreenTimeoutController::toRowLabel(
     case k_fiveMinutes:
       return FiveMinutes;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -83,7 +83,7 @@ int ScreenTimeoutController::toDimmingTime(DimmingTimeLabel label) {
       return k_fiveMinutes;
     case NElements:
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

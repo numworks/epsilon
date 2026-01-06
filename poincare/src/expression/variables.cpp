@@ -40,7 +40,7 @@ uint8_t Variables::Private::ToId(const Tree* variables, const char* name,
       return child.index;
     }
   }
-  OMG::unreachable();  // Not found
+  OMG_UNREACHABLE;  // Not found
 }
 
 const Tree* Variables::Private::ToSymbol(const Tree* variables, uint8_t id) {

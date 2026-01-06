@@ -179,7 +179,7 @@ void Pool::IdentifierStack::remove(uint16_t j) {
       return;
     }
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 // Reset m_objectForIdentifierOffset for all available identifiers

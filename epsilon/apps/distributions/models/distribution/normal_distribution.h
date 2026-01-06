@@ -28,7 +28,7 @@ class NormalDistribution final : public TwoParametersDistribution {
       case Poincare::Distribution::Params::Normal::Sigma:
         return I18n::Message::StandardDeviationDefinition;
       default:
-        OMG::unreachable();
+        OMG_UNREACHABLE;
     }
   }
 };

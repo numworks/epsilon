@@ -168,7 +168,7 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
         type == Type::Variance ? variance : stdDev, ctx);
   }
 #else
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 #endif
 }
 
@@ -208,7 +208,7 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
   return PatternMatching::CreateReduce(
       KMult(KListSum(KMult(KA, KB)), KPow(KListSum(KB), -1_e)), ctx);
 #else
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 #endif
 }
 

@@ -20,7 +20,7 @@ T MeanAbscissa(Type type, const ParametersArray<T>& parameters) {
       return (parameters[Params::Uniform::A] + parameters[Params::Uniform::B]) /
              2.0;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -81,7 +81,7 @@ T ComputeXMin(Type type, const ParametersArray<T>& parameters) {
     case Type::Fisher:
       return 0.0f;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -121,7 +121,7 @@ T ComputeXMax(Type type, const ParametersArray<T>& parameters) {
     case Type::Fisher:
       return 5.0f;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -203,7 +203,7 @@ T ComputeYMax(Type type, const ParametersArray<T>& parameters) {
       return std::isnan(max) ? k_fisherDefaultMax : max;
     }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

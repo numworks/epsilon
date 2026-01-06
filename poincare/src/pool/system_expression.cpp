@@ -200,8 +200,7 @@ PreparedFunction SystemExpression::getPreparedFunction(const char* symbolName,
 
 template <typename T>
 T SystemExpression::approximateSystemToRealScalar() const {
-  Internal::Dimension dimension = Internal::Dimension::Get(tree());
-  if (!dimension.isScalar()) {
+  if (!Internal::Dimension::IsNonListScalar(tree())) {
     return NAN;
   }
   return Approximation::To<T>(

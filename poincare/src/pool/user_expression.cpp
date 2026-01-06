@@ -214,8 +214,7 @@ T UserExpression::approximateToRealScalar(
     AngleUnit angleUnit, ComplexFormat complexFormat,
     const SymbolContext& symbolContext) const {
   static_assert(std::is_floating_point_v<T>);
-  Poincare::Dimension dimension = Poincare::Dimension(*this, symbolContext);
-  if (!dimension.isScalar()) {
+  if (!Internal::Dimension::IsNonListScalar(tree(), symbolContext)) {
     return NAN;
   }
   return privateApproximateToRealScalar<T>(angleUnit, complexFormat,
@@ -228,7 +227,8 @@ T UserExpression::approximateUnitToRealScalar(
     const SymbolContext& symbolContext) const {
   static_assert(std::is_floating_point_v<T>);
   Poincare::Dimension dimension = Poincare::Dimension(*this, symbolContext);
-  if (!dimension.isUnit()) {
+  if (!dimension.isUnit() ||
+      Internal::Dimension::IsList(tree(), symbolContext)) {
     return NAN;
   }
   return privateApproximateToRealScalar<T>(angleUnit, complexFormat,

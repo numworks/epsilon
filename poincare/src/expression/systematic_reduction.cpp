@@ -113,7 +113,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
         assert(!ShallowReduce(e));
         return true;
       }
-      OMG::unreachable();
+      OMG_UNREACHABLE;
     }
   }
   bool bubbleUpFloat = false, bubbleUpDependency = false, bubbleUpUndef = false;

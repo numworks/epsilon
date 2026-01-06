@@ -27,7 +27,7 @@ T Number::To(const Tree* e) {
     case Type::DoubleFloat:
       return FloatHelper::DoubleTo(e);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

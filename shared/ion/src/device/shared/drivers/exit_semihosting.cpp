@@ -12,6 +12,6 @@ __attribute__((noreturn)) void exit(int code) {
   register int r1 asm("r1") =
       code == 0 ? ADP_Stopped_ApplicationExit : ADP_Stopped_RunTimeErrorUnknown;
   asm volatile("bkpt 0xAB" : : "r"(r0), "r"(r1) : "memory");
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 }

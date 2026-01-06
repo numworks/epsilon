@@ -29,7 +29,7 @@ DatasetController::Options DatasetController::getListOptions() const {
       return Options::InputDataAndInputStatistics;
     default:
       // Other tests do not use the DatasetController
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -40,7 +40,7 @@ int DatasetController::indexOfInputStatisticsCell() const {
     case Options::InputDataAndInputStatistics:
       return 1;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -51,7 +51,7 @@ int DatasetController::indexOfDatasetCell() const {
     case Options::InputDataAndInputStatistics:
       return -1;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -62,7 +62,7 @@ int DatasetController::indexOfInputDataCell() const {
     case Options::InputDataAndInputStatistics:
       return 0;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -111,7 +111,7 @@ bool DatasetController::handleEvent(Ion::Events::Event event) {
     stackOpenPage(&m_controllerContainer->m_inputHomogeneityController);
     return true;
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 }  // namespace Inference

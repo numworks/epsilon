@@ -81,11 +81,11 @@ const Regression* Regression::Get(Type type, AngleUnit angleUnit) {
         case AngleUnit::Gradian:
           return &trigonometricGrad;
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     }
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 int Regression::NumberOfCoefficients(Type type) {
@@ -112,7 +112,7 @@ int Regression::NumberOfCoefficients(Type type) {
     case Type::Quartic:
       return 5;
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 const char* Regression::Formula(Type type) {
@@ -147,7 +147,7 @@ const char* Regression::Formula(Type type) {
     case Type::Logistic:
       return "y=c/(1+a·exp(-b·x))";
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 const Poincare::Layout Regression::TemplateLayout(Type type) {
@@ -174,7 +174,7 @@ const Poincare::Layout Regression::TemplateLayout(Type type) {
     default:
       return Layout::String(Formula(type) + sizeof("y=") - 1);
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 Regression::Coefficients Regression::CoefficientsToMatchMean(
@@ -203,7 +203,7 @@ Regression::Coefficients Regression::CoefficientsToMatchMean(
       meanIndex = 4;
       break;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
   coefs[meanIndex] = mean;
   return coefs;

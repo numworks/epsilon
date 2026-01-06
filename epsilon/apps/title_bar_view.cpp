@@ -174,7 +174,7 @@ void TitleBarView::refreshPreferences() {
       angleMessage = I18n::Message::Gon;
       break;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
   Poincare::Print::CustomPrintf(buffer, k_preferenceTextSize, "%s%s",
                                 I18n::translate(floatModeMessage),

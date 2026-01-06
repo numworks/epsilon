@@ -579,7 +579,7 @@ bool SystematicOperation::ReduceDim(Tree* e) {
 #if POINCARE_LIST
   return List::ShallowApplyListOperators(e);
 #endif
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 static bool ReduceNestedRadicals(Tree* e) {

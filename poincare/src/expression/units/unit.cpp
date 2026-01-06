@@ -811,7 +811,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       e->cloneNodeAtNode(KMult.node<2>);
       break;
     case UnitDisplay::None:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
   if (!foundResult) {
     e->cloneTreeOverTree(KUndef);
@@ -1218,7 +1218,7 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
       Integer::Push(isVolume ? 3 : 2);
     }
   } else {
-    OMG::unreachable();
+    OMG_UNREACHABLE;
   }
   assert(e->nextTree() == units);
   // Select best prefix

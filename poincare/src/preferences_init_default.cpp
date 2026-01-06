@@ -21,7 +21,7 @@ class DefaultPreferences : public Preferences::Interface {
     return Preferences::TranslateBuiltins::No;
   }
   void setTranslateBuiltins(Preferences::TranslateBuiltins translate) override {
-    OMG::unreachable();
+    OMG_UNREACHABLE;
   }
   constexpr Preferences::ParabolaParameter parabolaParameter() const override {
     return Preferences::k_defaultParabolaParameter;

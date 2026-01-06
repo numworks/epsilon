@@ -57,7 +57,7 @@ constexpr static double GroupStatisticsResultAtRow(
     case 3:
       return groupStatistics.sampleVariance;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -74,7 +74,7 @@ constexpr static const char* HeaderAtRow(int row) {
     case 3:
       return I18n::translate(I18n::Message::SampleVariance);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -91,7 +91,7 @@ constexpr static const char* SymbolAtRow(int row) {
     case 3:
       return I18n::translate(I18n::Message::SampleVarianceSymbol);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

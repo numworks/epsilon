@@ -280,7 +280,7 @@ size_t LayoutSerializer::Serialize(const Tree* l, std::span<char> buffer) {
     }
     return LayoutHelpers::k_bufferOverflow;
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 }  // namespace Poincare::Internal

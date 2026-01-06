@@ -257,7 +257,7 @@ Tree* Private::PrivateToTree(const Tree* e, Dimension dim, const Context* ctx) {
     }
     return (boolean.value() ? KTrue : KFalse)->cloneTree();
 #else
-    OMG::unreachable();
+    OMG_UNREACHABLE;
 #endif
   }
   if (dim.isUnit()) {
@@ -533,7 +533,7 @@ std::complex<T> BasicToComplex(const Tree* e, const Context* ctx) {
       return std::isnan(c.real()) ? NAN : c.imag();
     }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -581,7 +581,7 @@ std::complex<T> AllTrigToComplex(const Tree* e, const Context* ctx) {
           Type::ATan, PrivateToComplexRecursive<T>(e->child(0), ctx),
           AngleUnit::Radian);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -638,7 +638,7 @@ std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
               Symbol::GetName(e), static_cast<int>(rank)));
     }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -744,7 +744,7 @@ std::complex<T> AnalysisToComplex(const Tree* e, const Context* ctx) {
     case Type::IntegralWithAlternatives:
       return ApproximateIntegral<T>(e, ctx);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -785,7 +785,7 @@ std::complex<T> MatrixToComplex(const Tree* e, const Context* ctx) {
       assert(ctx && ctx->m_pointElement != -1);
       return PrivateToComplexRecursive<T>(e->child(ctx->m_pointElement), ctx);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -962,7 +962,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       return median;
     }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -1055,7 +1055,7 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
     case Type::Store:
       return PrivateToComplexRecursive<T>(e->child(0), ctx);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -1449,7 +1449,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     case Type::LogicalXor:
       return a.value() ^ b.value();
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -1699,7 +1699,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
 #endif
 #endif
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
   return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
 }

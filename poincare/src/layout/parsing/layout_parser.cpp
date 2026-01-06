@@ -51,7 +51,7 @@ Type ExpressionType(LayoutType type) {
     case LayoutType::Point2D:
       return Type::Point;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

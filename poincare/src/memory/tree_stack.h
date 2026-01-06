@@ -105,7 +105,7 @@ class AbstractTreeStack : public BlockStack {
 #define PUSHER(F)          \
   template <class... Args> \
   Tree* push##F(Args...) { \
-    OMG::unreachable();    \
+    OMG_UNREACHABLE;       \
     return nullptr;        \
   }
 #define PUSHER_(F) PUSHER(F)

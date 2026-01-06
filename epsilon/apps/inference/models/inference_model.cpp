@@ -33,7 +33,7 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
             case StatisticType::Z:
               return new (target) OneMeanZTest();
             default:
-              OMG::unreachable();
+              OMG_UNREACHABLE;
           }
         case TestType::TwoMeans:
           switch (type.statisticType) {
@@ -44,7 +44,7 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
             case StatisticType::Z:
               return new (target) TwoMeansZTest();
             default:
-              OMG::unreachable();
+              OMG_UNREACHABLE;
           }
         case TestType::OneProportion:
           return new (target) OneProportionZTest();
@@ -61,10 +61,10 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
             case CategoricalType::Homogeneity:
               return new (target) HomogeneityTest();
             default:
-              OMG::unreachable();
+              OMG_UNREACHABLE;
           }
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     case SubApp::ConfidenceInterval:
       switch (type.testType) {
@@ -75,7 +75,7 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
             case StatisticType::Z:
               return new (target) OneMeanZInterval();
             default:
-              OMG::unreachable();
+              OMG_UNREACHABLE;
           }
         case TestType::TwoMeans:
           switch (type.statisticType) {
@@ -86,7 +86,7 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
             case StatisticType::Z:
               return new (target) TwoMeansZInterval();
             default:
-              OMG::unreachable();
+              OMG_UNREACHABLE;
           }
         case TestType::OneProportion:
           return new (target) OneProportionZInterval();
@@ -95,10 +95,10 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
         case TestType::Slope:
           return new (target) SlopeTInterval();
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -242,7 +242,7 @@ float InferenceModel::computeYMax() const {
       break;
     }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
   return (1 + Shared::StatisticalDistribution::k_displayTopMarginRatio) * max;
 }

@@ -39,7 +39,7 @@ Distribution::Type DistributionType(StatisticType statisticType) {
     case StatisticType::F:
       return Distribution::Type::Fisher;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -64,7 +64,7 @@ Distribution::ParametersArray<double> DistributionParameters(
     case Distribution::Type::Normal:
       return Distribution::ParametersArray<double>({0., 1.});
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -80,7 +80,7 @@ const char* CriticalValueSymbol(StatisticType statisticType) {
     case Distribution::Type::Fisher:
       return "F";
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -137,7 +137,7 @@ Poincare::Layout ParameterLayout(Type type, int index) {
     case TestType::Slope:
       return k_slopeLayouts[index];
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -155,7 +155,7 @@ bool IsParameterValid(Type type, double p, int index) {
         case Params::OneProportion::N:
           return Domain::ContainsFloat(p, Domain::Type::NStar);
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     }
     case TestType::OneMean:
@@ -172,7 +172,7 @@ bool IsParameterValid(Type type, double p, int index) {
           return Domain::ContainsFloat(p, Domain::Type::NStar) &&
                  (type.statisticType == StatisticType::Z || p >= 2.);
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     }
     case TestType::Slope:
@@ -184,10 +184,10 @@ bool IsParameterValid(Type type, double p, int index) {
         case Params::Slope::SE:
           return Domain::ContainsFloat(p, Domain::Type::RPlus);
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -293,7 +293,7 @@ double ComputeDegreesOfFreedom(Inference::Type type,
     default:
       // OneProportion, TwoProportions
       // Chi2, ANOVA are  handled separately
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

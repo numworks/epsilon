@@ -33,7 +33,7 @@ const char* Binary::OperatorName(TypeBlock type) {
       return name.name;
     }
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 Comparison::Operator Binary::ComparisonOperatorForType(TypeBlock type) {
@@ -43,7 +43,7 @@ Comparison::Operator Binary::ComparisonOperatorForType(TypeBlock type) {
       return opForType.op;
     }
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,
@@ -266,7 +266,7 @@ bool Binary::MakeLenient(Tree* e) {
       case Type::Equal:
         return true;
       default:
-        OMG::unreachable();
+        OMG_UNREACHABLE;
     }
     assert(!ReduceComparison(e));
     return true;
@@ -292,7 +292,7 @@ bool Binary::MakeLenient(Tree* e) {
       // Nor and Nand should have been projected.
       // result = MakeStrict(e->child(0)) && MakeStrict(e->child(1));
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
   if (result) {
     ReduceBooleanOperator(e);
@@ -320,7 +320,7 @@ bool Binary::MakeStrict(Tree* e) {
         return true;
 
       default:
-        OMG::unreachable();
+        OMG_UNREACHABLE;
     }
     assert(!ReduceComparison(e));
     return true;
@@ -346,7 +346,7 @@ bool Binary::MakeStrict(Tree* e) {
       // Nor and Nand should have been projected.
       // result = MakeLenient(e->child(0)) && MakeLenient(e->child(1));
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
   if (result) {
     ReduceBooleanOperator(e);

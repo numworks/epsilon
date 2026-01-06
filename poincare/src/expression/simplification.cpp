@@ -308,7 +308,7 @@ bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
       }
       break;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 
   return changed;

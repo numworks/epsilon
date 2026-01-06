@@ -39,7 +39,7 @@ uint8_t FunctionIndex(TypeBlock type) {
     case Type::ProductLayout:
       return k_prodArgumentIndex;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -60,7 +60,7 @@ ComplexProperties VariableProperties(const Tree* e) {
     case Type::Product:
       return k_discreteVariableProperties;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

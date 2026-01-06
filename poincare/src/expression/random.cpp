@@ -124,7 +124,7 @@ static uint32_t RandIntNoRepInRangeOfIndex(uint32_t range, uint32_t seed,
       }
     }
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 double PrivateApproximateRandIntNoRep(const Tree* randInNoRep,

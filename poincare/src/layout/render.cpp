@@ -711,7 +711,7 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
       return grid->positionOfChildAt(row, column, s_font);
     }
   };
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 KDCoordinate Render::Baseline(const Layout* l) {

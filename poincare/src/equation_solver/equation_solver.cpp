@@ -116,7 +116,7 @@ static PreprocessingResult PreprocessEquationList(
            equationMetadata.definedVariables.size() == 1);
       break;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 
   size_t expectedNumberOfUnknowns =
@@ -345,7 +345,7 @@ static Tree* GetNextParameterSymbol(size_t* parameterIndex,
     // Skip already used parameter indices in global variables
     symbol->removeTree();
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 /* Checks if the equationList is a linear system, and if so, computes the

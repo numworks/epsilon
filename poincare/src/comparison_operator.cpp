@@ -12,7 +12,7 @@ const char* Comparison::OperatorString(Comparison::Operator op) {
       return opString.mainString;
     }
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 const char* Comparison::OperatorAlternativeString(Comparison::Operator op) {
@@ -21,7 +21,7 @@ const char* Comparison::OperatorAlternativeString(Comparison::Operator op) {
       return opString.alternativeString;
     }
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 Comparison::Operator Comparison::OperatorReverseInferiorSuperior(

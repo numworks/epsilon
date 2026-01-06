@@ -29,7 +29,7 @@ T EvaluateAtAbscissa(Type method, const Abscissae<T> x,
       return Distribution::CumulativeDistributiveInverseForProbability(
           distribType, x[0], parameters);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -219,7 +219,7 @@ bool ShallowReduce(Type method, const Abscissae<const Tree*> abscissae,
       return shallowReduceInverse(abscissae, distribType, parameters,
                                   expression);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

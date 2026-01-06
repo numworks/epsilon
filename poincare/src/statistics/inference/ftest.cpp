@@ -37,7 +37,7 @@ void StatisticsData::set(double value, int parameterIndex) {
       m_sampleStdDeviation = value;
       return;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

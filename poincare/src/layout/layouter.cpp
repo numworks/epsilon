@@ -120,7 +120,7 @@ Tree* Layouter::LayoutExpression(const Tree* expression,
         TreeStackCheckpoint::Raise(exc);
     }
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 Tree* Layouter::UnsafeLayoutExpression(const Tree* expression,
@@ -901,7 +901,7 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
             parentRack, expression,
             TypeBlock::names[static_cast<uint8_t>(*expression->block())]);
 #else
-        OMG::unreachable();
+        OMG_UNREACHABLE;
 #endif
         break;
       }

@@ -35,7 +35,7 @@ void PieGraphController::initView() {
         return;
       }
     }
-    OMG::unreachable();
+    OMG_UNREACHABLE;
   }
 }
 

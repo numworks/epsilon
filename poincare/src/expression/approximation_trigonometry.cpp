@@ -132,7 +132,7 @@ std::complex<T> TrigonometricToComplex(TypeBlock type, std::complex<T> value,
       return piOverTwo - arctanValue;
     }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -186,7 +186,7 @@ std::complex<T> HyperbolicToComplex(TypeBlock type, std::complex<T> value) {
     }
 
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

@@ -30,7 +30,7 @@ class UniformDistribution final : public TwoParametersDistribution {
       case Poincare::Distribution::Params::Uniform::B:
         return I18n::Message::IntervalBDescr;
       default:
-        OMG::unreachable();
+        OMG_UNREACHABLE;
     }
   }
 };

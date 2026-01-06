@@ -151,7 +151,7 @@ class PatternMatching {
     static_assert(OMG::always_false<KT>,
                   "Match should not be called with a KTree as first argument, "
                   "source and pattern have probably been mixed up");
-    OMG::unreachable();
+    OMG_UNREACHABLE;
   }
 #endif
 
@@ -239,7 +239,7 @@ class PatternMatching {
         case LocalPattern:
           return m_localPatternEnd;
       }
-      OMG::unreachable();
+      OMG_UNREACHABLE;
     }
     static bool ReachedLimit(const Tree* node, const Block* end) {
       assert(node->block() <= end);

@@ -60,7 +60,7 @@ OMG::Troolean IsParameterValid(Type type, U val, int index,
     case Type::Fisher:
       return Domain::Contains(val, Domain::Type::RPlusStar);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

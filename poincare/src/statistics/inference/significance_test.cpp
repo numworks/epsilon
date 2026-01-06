@@ -24,7 +24,7 @@ bool IsH0Valid(TestType testType, double h0) {
     case TestType::Chi2:
       return true;
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -42,7 +42,7 @@ const char* HypothesisSymbol(TestType testType) {
       return "β";
     default:
       // Chi2 and ANOVA do not need an hypothesis symbol
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -94,10 +94,10 @@ Poincare::Layout EstimateLayoutAtIndex(TestType testType, int index) {
         case EstimatesOrder::TwoProportions::Pooled:
           return KRackL(KPHat);
         default:
-          OMG::unreachable();
+          OMG_UNREACHABLE;
       }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -115,7 +115,7 @@ Hypothesis DefaultHypothesis(TestType testType) {
     case TestType::Chi2:
       return Hypothesis{0., Comparison::Operator::Superior};
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -152,7 +152,7 @@ double DefaultParameterAtIndex(Type type, int index) {
       break;
     default:
       // Chi2 has no default parameters
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
   return defaultParameters[index];
 }
@@ -181,7 +181,7 @@ double ComputePValue(StatisticType statisticType,
       return 2.0 * Distribution::CumulativeDistributiveFunctionAtAbscissa(
                        distrib, -std::fabs(criticalValue), distribParams);
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -246,7 +246,7 @@ double ComputeCriticalValue(Type type, double h0,
              parameters[Params::Slope::SE];
     default:
       // Chi2 and ANOVA are special
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 

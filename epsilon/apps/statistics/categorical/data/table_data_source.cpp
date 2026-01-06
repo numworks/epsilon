@@ -119,7 +119,7 @@ Escher::HighlightCell* TableViewDataSource::reusableCell(int i, int type) {
     case k_typeOfRFCells:
       return &m_nonEditableCells[i];
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 int TableViewDataSource::reusableCellCount(int type) const {
@@ -135,7 +135,7 @@ int TableViewDataSource::reusableCellCount(int type) const {
     case k_typeOfRFCells:
       return k_maxNumberOfNonEditableCells;
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 TableViewDataSource::ColumnInfo TableViewDataSource::columnInfo(
@@ -156,7 +156,7 @@ TableViewDataSource::ColumnInfo TableViewDataSource::columnInfo(
     ++group;
     ++col;
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 int TableViewDataSource::dataColumn(int col) {

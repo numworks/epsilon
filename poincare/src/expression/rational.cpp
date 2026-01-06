@@ -65,7 +65,7 @@ IntegerHandler Rational::Numerator(const Tree* e) {
                                 : NonStrictSign::Positive);
     }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -99,7 +99,7 @@ IntegerHandler Rational::Denominator(const Tree* e) {
                             NonStrictSign::Positive);
     }
     default:
-      OMG::unreachable();
+      OMG_UNREACHABLE;
   }
 }
 
@@ -253,7 +253,7 @@ Rational::IntegerOperationResult Rational::IntegerPower(const Tree* e1,
     }
     TreeStackCheckpoint::Raise(type);
   }
-  OMG::unreachable();
+  OMG_UNREACHABLE;
 }
 
 bool Rational::IsIrreducible(const Tree* e) {

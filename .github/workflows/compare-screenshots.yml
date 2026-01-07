@@ -28,13 +28,13 @@ jobs:
         timeout-minutes: 15
         run: |
           $DOCKER_RUN "make \
-                       TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 \
+                       TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 VERBOSE=0 \
                        ARGS='--dataset tests/screenshots_dataset --no-screenshots' \
                        epsilon.compare"
       - name: Compare crc of screenshots (CAS)
         timeout-minutes: 15
         run: |
           $DOCKER_RUN "make \
-                       TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 \
+                       TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 VERBOSE=0 \
                        ARGS='--dataset tests/screenshots_dataset_cas --no-screenshots' \
                        epsilon.cas.compare"

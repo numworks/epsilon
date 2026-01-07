@@ -27,11 +27,11 @@ jobs:
         with:
           node-version: latest
       - name: Build sample_c for device
-        run: $DOCKER_RUN "make -C epsilon/external_apps/sample_c PLATFORM=device build"
+        run: $DOCKER_RUN "make -C epsilon/external_apps/sample_c VERBOSE=0 PLATFORM=device build"
       - name: Build sample_cpp for device
-        run: $DOCKER_RUN "make -C epsilon/external_apps/sample_cpp PLATFORM=device build"
+        run: $DOCKER_RUN "make -C epsilon/external_apps/sample_cpp VERBOSE=0 PLATFORM=device build"
       - name: Build rpn_cpp for device
-        run: $DOCKER_RUN "make -C epsilon/external_apps/rpn_cpp PLATFORM=device build"
+        run: $DOCKER_RUN "make -C epsilon/external_apps/rpn_cpp VERBOSE=0 PLATFORM=device build"
   rust_app:
     runs-on: ubuntu-latest
     steps:

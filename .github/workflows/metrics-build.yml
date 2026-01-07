@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS_LARGE) }}
     env:
-      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }} PLATFORM=${{ inputs.platform }}
+      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }} PLATFORM=${{ inputs.platform }} DEBUG=0 VERBOSE=0
     steps:
       - name: Fetch target branch and PR branch
         uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
           echo "goals=$GOALS" >> $GITHUB_OUTPUT
 
       - name: Build common ancestor
-        run: $DOCKER_RUN "make DEBUG=0 -C ${{ inputs.project-path }} ${{ steps.elfs.outputs.goals }}"
+        run: $DOCKER_RUN "make -C ${{ inputs.project-path }} ${{ steps.elfs.outputs.goals }}"
       - name: Save ancestor build
         run: mv ${{ inputs.project-path }}/output/release/${{ inputs.platform }} base
 
@@ -65,7 +65,7 @@ jobs:
         run: git checkout ${{ github.event.pull_request.head.sha }}
 
       - name: Build head
-        run: $DOCKER_RUN "make DEBUG=0 -C ${{ inputs.project-path }} ${{ steps.elfs.outputs.goals }}"
+        run: $DOCKER_RUN "make -C ${{ inputs.project-path }} ${{ steps.elfs.outputs.goals }}"
       - name: Save head build
         run: mv ${{ inputs.project-path }}/output/release/${{ inputs.platform }} head
 

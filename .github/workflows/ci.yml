@@ -158,7 +158,7 @@ jobs:
 
       # TODO_PCJ: Add ASAN=1 and TIDY=1
       - name: Build epsilon.bin and test.bin
-        run: $DOCKER_RUN "make -C epsilon TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin epsilon_test.bin"
+        run: $DOCKER_RUN "make -C epsilon TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 VERBOSE=0 epsilon.bin epsilon_test.bin"
       - name: Run unit tests (in parallel)
         run: |
           $DOCKER_RUN "parallel --halt now,fail=1 --keep-order epsilon/output/debug/optimized/linux/epsilon_test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)"
@@ -220,12 +220,12 @@ jobs:
           platform: web
           emsdk-version: ${{ env.EMSDK_VERSION }}
       - name: Run tests with ASSERTIONS=1
-        run: $DOCKER_RUN "make -j8 -C poincare/poincarejs PLATFORM=foxglove ASSERTIONS=1 poincare.js.run"
+        run: $DOCKER_RUN "make -j8 -C poincare/poincarejs PLATFORM=foxglove ASSERTIONS=1 VERBOSE=0 poincare.js.run"
       # Ensures that minification did not break the code
       - name: Run tests with ASSERTIONS=0
-        run: $DOCKER_RUN "make -j8 -C poincare/poincarejs PLATFORM=foxglove ASSERTIONS=0 poincare.js.run"
+        run: $DOCKER_RUN "make -j8 -C poincare/poincarejs PLATFORM=foxglove ASSERTIONS=0 VERBOSE=0 poincare.js.run"
       - name: Try building the whole zipped file
-        run: $DOCKER_RUN "make -C poincare/poincarejs poincarejs.zip"
+        run: $DOCKER_RUN "make -C poincare/poincarejs VERBOSE=0 poincarejs.zip"
       # Disabled due to artifact storage quotas
       # - uses: actions/upload-artifact@v4
       #   with:

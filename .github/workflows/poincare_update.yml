@@ -39,7 +39,7 @@ jobs:
         uses: ./.github/actions/docker-builder
 
       - name: Make head
-        run: $DOCKER_RUN "make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon_test.bin"
+        run: $DOCKER_RUN "make -C epsilon PLATFORM=simulator ASSERTIONS=1 VERBOSE=0 epsilon_test.bin"
       - name: Run head (in parallel)
         id: run-tests
         continue-on-error: true
@@ -63,7 +63,7 @@ jobs:
         run: git checkout ${{ steps.common_ancestor.outputs.commit_sha }}
 
       - name: Make ancestor
-        run: $DOCKER_RUN "make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon_test.bin"
+        run: $DOCKER_RUN "make -C epsilon PLATFORM=simulator ASSERTIONS=1 VERBOSE=0 epsilon_test.bin"
       - name: Run ancestor
         shell: bash
         run: |

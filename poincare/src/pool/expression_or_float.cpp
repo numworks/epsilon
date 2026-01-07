@@ -95,7 +95,8 @@ bool ExpressionOrFloat::operator==(const ExpressionOrFloat& other) const {
     return false;
   }
   if (hasNoExactExpression()) {
-    return (m_value == other.m_value);
+    return (m_value == other.m_value) ||
+           (std::isnan(m_value) && std::isnan(other.m_value));
   }
   const Internal::Tree* tree = Internal::Tree::FromBlocks(m_buffer.data());
   const Internal::Tree* otherTree =

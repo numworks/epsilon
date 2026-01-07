@@ -122,6 +122,8 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
       } else {
         return dataTree->cloneTree();
       }
+    } else {
+      assert(firstChild->nextTree()->isUserSymbol());
     }
     /* Store is an expression only for convenience. Only first child is to
      * be simplified. */

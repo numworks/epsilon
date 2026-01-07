@@ -185,6 +185,9 @@ QUIZ_CASE(calculation_ans) {
   assert_expression_serializes_to(lastCalculation->input(),
                                   "4.845143ᴇ6×1.0071^9");
 
+  assertAnsIs("s→C(x)", "_s", &store);
+  assertAnsIs("Ans→Ans", "undef", &store);
+
   store.deleteAll();
 }
 

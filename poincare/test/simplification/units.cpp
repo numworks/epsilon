@@ -697,6 +697,7 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
    * technically happened */
   simplifies_to("_s^127 * _s^(-1) * _s", "undef");
   simplifies_to("_s^127 * _s * _s^(-1)", "undef");
+  simplifies_to("3*_Hz^127*_Hz", "undef");
 
   // Only allow simple int operations in unit exponents
   simplifies_to("_s^floor(1)", "undef");

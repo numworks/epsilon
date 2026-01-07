@@ -108,7 +108,7 @@ struct SIVector {
   // Return false if operation overflowed.
   [[nodiscard]] constexpr bool setCoefficientAtIndex(uint8_t i,
                                                      int coefficient) {
-    return coefficient <= INT8_MAX && coefficient >= INT8_MIN &&
+    return coefficient <= INT8_MAX && coefficient > INT8_MIN &&
            setCoefficientAtIndex(i, static_cast<int8_t>(coefficient));
   }
 

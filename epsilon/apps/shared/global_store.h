@@ -86,7 +86,7 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
    * GlobalContextAccessor */
   GlobalStore() : m_sequenceContext(this, s_sequenceStore){};
 
-  static const Poincare::Internal::Tree* TreeInStorage(
+  static const Poincare::Internal::Tree* TreeFromStorage(
       Ion::Storage::Record record);
 
   // Expression setters

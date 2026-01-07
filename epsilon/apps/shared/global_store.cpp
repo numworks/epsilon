@@ -48,7 +48,7 @@ Layout GlobalStore::LayoutForRecord(Ion::Storage::Record record) {
       record.hasExtension(Ion::Storage::listExtension) ||
       record.hasExtension(Ion::Storage::matrixExtension)) {
     return PoincareHelpers::CreateLayout(
-        UserExpression::Builder(TreeInStorage(record)),
+        UserExpression::Builder(TreeFromStorage(record)),
         Escher::App::app()->localContext());
   } else if (record.hasExtension(Ion::Storage::functionExtension) ||
              record.hasExtension(Ion::Storage::parametricComponentExtension) ||
@@ -64,7 +64,7 @@ Layout GlobalStore::LayoutForRecord(Ion::Storage::Record record) {
       assert(record.hasExtension(Ion::Storage::regressionExtension));
       symbol = CodePoints::k_cartesianSymbol;
     }
-    UserExpression expression = UserExpression::Builder(TreeInStorage(record))
+    UserExpression expression = UserExpression::Builder(TreeFromStorage(record))
                                     .cloneAndReplaceUnknownWithSymbol(symbol);
     return PoincareHelpers::CreateLayout(expression,
                                          Escher::App::app()->localContext());
@@ -112,7 +112,7 @@ SymbolContext::UserNamedType GlobalStore::expressionTypeForIdentifier(
 const Internal::Tree* GlobalStore::expressionForUserNamed(
     const Internal::Tree* symbol) const {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
-  return TreeInStorage(
+  return TreeFromStorage(
       UserNamedRecordWithBaseName(SymbolHelper::GetName(symbol)));
 }
 
@@ -125,7 +125,7 @@ bool GlobalStore::setExpressionForUserNamed(
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record =
       UserNamedRecordWithBaseName(SymbolHelper::GetName(symbol));
-  UserExpression e = UserExpression::Builder(TreeInStorage(record));
+  UserExpression e = UserExpression::Builder(TreeFromStorage(record));
   if (e.isUninitialized()) {
     e = UserExpression::Undefined();
   }
@@ -155,7 +155,8 @@ bool GlobalStore::setExpressionForUserNamed(
          Ion::Storage::Record::ErrorStatus::None;
 }
 
-const Internal::Tree* GlobalStore::TreeInStorage(Ion::Storage::Record record) {
+const Internal::Tree* GlobalStore::TreeFromStorage(
+    Ion::Storage::Record record) {
   if (record.hasExtension(Ion::Storage::expressionExtension) ||
       record.hasExtension(Ion::Storage::listExtension) ||
       record.hasExtension(Ion::Storage::matrixExtension) ||
@@ -172,7 +173,7 @@ const Internal::Tree* GlobalStore::TreeInStorage(Ion::Storage::Record record) {
 }
 
 UserExpression GlobalStore::ExpressionFromStorage(Ion::Storage::Record record) {
-  return UserExpression::Builder(TreeInStorage(record));
+  return UserExpression::Builder(TreeFromStorage(record));
 }
 
 Ion::Storage::Record::ErrorStatus GlobalStore::setExpressionForUserSymbol(

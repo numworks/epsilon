@@ -19,7 +19,7 @@ $(call document_extension,dfu)
 
 $(OUTPUT_DIRECTORY)/%.flash: $(OUTPUT_DIRECTORY)/%.dfu
 	$(call rule_label,FLASH)
-	dfu-util -D $< $(if $(DFULEAVE),-s $(DFULEAVE):leave)
+	$(DFU) -D $< $(if $(DFULEAVE),-s $(DFULEAVE):leave)
 
 $(call document_extension,flash,Write <...>.dfu to a device. Define DFULEAVE to jump at an address after the write.)
 

@@ -7,6 +7,7 @@
 
 #include "approximation.h"
 #include "dependency.h"
+#include "infinity.h"
 #include "integer.h"
 #include "k_tree.h"
 #include "number.h"
@@ -224,7 +225,8 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
   if (!forceCanonization) {
     // Check that all values are valid
     for (const Tree* child : matrix->children()) {
-      if (child->isUndefined() || !Approximation::CanApproximate(child)) {
+      if (child->isUndefined() || Infinity::IsPlusOrMinusInfinity(child) ||
+          !Approximation::CanApproximate(child)) {
         return false;
       }
     }

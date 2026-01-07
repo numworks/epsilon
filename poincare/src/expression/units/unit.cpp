@@ -772,10 +772,9 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     return true;
   }
   assert(extractedUnits && e->nextTree() == extractedUnits);
-  bool treeRemoved = RemoveNonUnits(extractedUnits, true);
+  [[maybe_unused]] bool treeRemoved = RemoveNonUnits(extractedUnits, true);
   // Warning : extractedUnits isn't just e's dimension. 2_m + _yd -> _m + _yd
   assert(!treeRemoved);
-  (void)treeRemoved;
   // Take advantage of e being last tree.
   assert(extractedUnits);
   assert(dimension.unit.vector == Dimension::Get(extractedUnits).unit.vector);

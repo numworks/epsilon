@@ -46,13 +46,13 @@ void VectorListController::computeAdditionalResults(
   setLineAtIndex(index++, UserExpression(), norm, &ctx);
 
   // 2. Normalized vector
-  SystemExpression approximatedNorm = PoincareHelpers::ApproximateUser<double>(
-      norm, symbolContext, complexFormat(), angleUnit());
-  Sign sign = approximatedNorm.sign();
-  assert(!sign.canBeStrictlyNegative());
-  if (sign.canBeNull() || approximatedNorm.isPlusOrMinusInfinity()) {
+  double approximatedNorm =
+      PoincareHelpers::ApproximateToRealScalar<double>(norm);
+  if (std::isnan(approximatedNorm) ||
+      (std::abs(approximatedNorm) < OMG::Float::EpsilonLax<double>())) {
     return;
   }
+  assert(approximatedNorm > 0);
   UserExpression normalized =
       UserExpression::Create(KDiv(KA, KB), {.KA = exactClone, .KB = norm});
   bool reductionFailure = false;
@@ -80,7 +80,7 @@ void VectorListController::computeAdditionalResults(
   SystemExpression yApprox = PoincareHelpers::ApproximateUser<double>(
       normalized.cloneChildAtIndex(1), symbolContext, complexFormat(),
       angleUnit());
-  sign = yApprox.sign();
+  Sign sign = yApprox.sign();
   // HasVector should be false if any vector's child is complex.
   if (sign.canBeStrictlyNegative() && !sign.canBeStrictlyPositive()) {
     angle = UserExpression::Create(

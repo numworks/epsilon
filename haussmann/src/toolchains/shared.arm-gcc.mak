@@ -10,6 +10,8 @@ EXECUTABLE_EXTENSION := elf
 
 COMPILER_FAMILY := gcc
 
+DFU ?= dfu-util
+
 SFLAGS += \
   -fdata-sections \
   -ffreestanding \

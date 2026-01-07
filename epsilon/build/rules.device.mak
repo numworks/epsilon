@@ -168,8 +168,8 @@ endif
 ## The eraser flash requires `-a` option
 $(OUTPUT_DIRECTORY)/eraser.flash: $(OUTPUT_DIRECTORY)/eraser.dfu
 	$(call rule_label,FLASH)
-	dfu-util -D $< && \
-	dfu-util -a 1 -s $(DFULEAVE):leave
+	$(DFU) -D $< && \
+	$(DFU) -a 1 -s $(DFULEAVE):leave
 
 # Firmware component - bench
 

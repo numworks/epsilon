@@ -94,6 +94,12 @@ UserExpression CalculationStore::ansExpression() const {
 void CalculationStore::replaceAnsInExpression(
     UserExpression& expression) const {
   UserExpression ansSymbol = SymbolHelper::Ans();
+  if (expression.isStore() &&
+      expression.cloneChildAtIndex(1).isIdenticalTo(ansSymbol)) {
+    // Special case: store to Ans is always forbidden
+    expression = UserExpression::Undefined();
+    return;
+  }
   expression = expression.cloneAndReplaceSymbolWithExpression(ansSymbol,
                                                               ansExpression());
 }

@@ -10,6 +10,11 @@ STRICT_WARNINGS ?= 0
 
 ALL_SPECIAL_SUBDIRECTORIES := bootloader kernel coverage
 
+# Standard dfu-util will refuse to download a .dfu file if it contains sections
+# that the device does not expose, e.g. the bootloader section from epsilon.dfu
+# when flashing in rescue mode.
+DFU = $(PYTHON) tools/device/dfu.py
+
 GCC_MINIMUM_VERSION := 11
 CLANG_MINIMUM_VERSION := 14
 

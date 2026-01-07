@@ -82,7 +82,11 @@ void InteractiveCurveViewRange::setOffscreenYAxis(float f) {
 
 ExpressionOrFloat InteractiveCurveViewRange::computeGridUnit(OMG::Axis axis) {
   if (!gridUnitAuto(axis)) {
-    return computeGridUnitFromUserParameter(axis);
+    ExpressionOrFloat result = computeGridUnitFromUserParameter(axis);
+    if (result != ExpressionOrFloat()) {
+      return result;
+    }
+    // Invalid user-defined grid unit, fallback to automatic computation
   }
   ExpressionOrFloat computedGridUnit =
       MemoizedCurveViewRange::computeGridUnit(axis);
@@ -490,15 +494,14 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
   float ratio =
       std::ceil(decreaseGridUnit ? (minNumberOfUnits / numberOfUnits)
                                  : (numberOfUnits / maxNumberOfUnits));
-  assert(ratio >= 0.f);
-  // Default to largest possible ClosestTwoFiveTenFactorAbove output.
-  int k = k_largestTenFactor;
-  if (ratio < k_largestTenFactor) {
-    k = ClosestTwoFiveTenFactorAbove(static_cast<int>(ratio));
-    assert(k <= std::floor(decreaseGridUnit
-                               ? maxNumberOfUnits / numberOfUnits
-                               : numberOfUnits / minNumberOfUnits));
+  if (ratio >= k_largestTenFactor) {
+    // Escape if ClosestTwoFiveTenFactorAbove cannot be computed.
+    return ExpressionOrFloat();
   }
+  assert(ratio >= 0.f);
+  int k = ClosestTwoFiveTenFactorAbove(static_cast<int>(ratio));
+  assert(k <= std::floor(decreaseGridUnit ? maxNumberOfUnits / numberOfUnits
+                                          : numberOfUnits / minNumberOfUnits));
   UserExpression factor = UserExpression::Builder(k);
   if (decreaseGridUnit) {
     factor = UserExpression::Create(KPow(KA, -1_e), {.KA = factor});

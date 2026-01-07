@@ -158,8 +158,11 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("ref([[2,5][2,7]])", "[[1,5/2][0,1]]");
   simplifies_to("ref([[3,12][-4,1]])", "[[1,-1/4][0,1]]");
   simplifies_to("ref([[0,1][1ᴇ-100,1]])", "[[1,10^100][0,1]]");
-  // Can't canonize if a child cannot be approximated
+  // Can't canonize if a child cannot be approximated (or is not finite)
   simplifies_to("ref([[0,0][x,0]])", "ref([[0,0][x,0]])");
+  simplifies_to("ref([[0,random()][0,0]])", "ref([[0,random()][0,0]])");
+  simplifies_to("ref([[0,0][undef,0]])", "ref([[0,0][undef,0]])");
+  simplifies_to("ref([[inf,inf][0,0]])", "ref([[∞,∞][0,0]])");
 
   // Cross product
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");

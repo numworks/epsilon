@@ -22,8 +22,7 @@ Tree* DecimalBuilderFromDouble(double value) {
   assert(result);
   result->moveTreeOverTree(Parser::Parse(result, EmptySymbolContext{}));
   // result is only made of numbers and simple nodes, no need for context.
-  ProjectionContext context = {};
-  Simplification::ProjectAndReduce(result, &context);
+  Simplification::ProjectAndReduce(result, ProjectionContext{});
   return result;
 }
 

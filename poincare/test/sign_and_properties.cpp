@@ -758,14 +758,14 @@ void assert_reduced_is_positive(
     const SymbolContext& symbolContext = Poincare::EmptySymbolContext{},
     ComplexFormat complexFormat = ComplexFormat::Cartesian,
     AngleUnit angleUnit = AngleUnit::Radian) {
-  ProjectionContext projCtx = {
-      .m_complexFormat = complexFormat,
-      .m_angleUnit = angleUnit,
-      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = symbolContext,
-      .m_advanceReduce = false};
   Tree* e = parse(input, symbolContext);
-  Simplification::ProjectAndReduce(e, &projCtx);
+  Simplification::ProjectAndReduce(
+      e, ProjectionContext{
+             .m_complexFormat = complexFormat,
+             .m_angleUnit = angleUnit,
+             .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+             .m_context = symbolContext,
+             .m_advanceReduce = false});
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(
       OMG::TrooleanAnd(properties.imagSign().trooleanIsNull(),
@@ -814,8 +814,7 @@ QUIZ_CASE(pcj_sign_reduced_is_positive) {
 void assert_sign_sets_to(const char* input,
                          NonStrictSign isPositive = NonStrictSign::Positive) {
   Tree* e = parse(input);
-  ProjectionContext projCtx;
-  Simplification::ProjectAndReduce(e, &projCtx);
+  Simplification::ProjectAndReduce(e, ProjectionContext{});
   ComplexProperties eSign = GetComplexProperties(e);
   bool eIsPositive = OMG::TrooleanToBool(
       OMG::TrooleanAnd(eSign.imagSign().trooleanIsNull(),

@@ -15,29 +15,29 @@ using Shape = Conic::Shape;
 using CoordinateType = Conic::CoordinateType;
 
 CartesianConic buildCartesianConic(const char* expression) {
-  ProjectionContext projContext = {.m_complexFormat = ComplexFormat::Cartesian,
-                                   .m_advanceReduce = false};
   Tree* e = parse(expression);
-  Simplification::ProjectAndReduce(e, &projContext);
+  Simplification::ProjectAndReduce(
+      e, ProjectionContext{.m_complexFormat = ComplexFormat::Cartesian,
+                           .m_advanceReduce = false});
   return CartesianConic(SystemExpression::Builder(e));
 }
 
 PolarConic buildPolarConic(const char* expression) {
-  ProjectionContext projContext = {.m_complexFormat = ComplexFormat::Cartesian,
-                                   .m_advanceReduce = false};
   Tree* e = parse(expression);
-  Simplification::ProjectAndReduce(e, &projContext);
+  Simplification::ProjectAndReduce(
+      e, ProjectionContext{.m_complexFormat = ComplexFormat::Cartesian,
+                           .m_advanceReduce = false});
   return PolarConic(SystemExpression::Builder(e));
 }
 
 ParametricConic buildParametricConic(const char* expression) {
-  ProjectionContext projContext = {.m_complexFormat = ComplexFormat::Cartesian,
-                                   .m_advanceReduce = false};
   // Prevent t from being interpreted as ton
   Poincare::PoolVariableContext tContext(
       "t", UserExpression::Builder<float>(0.f), &k_emptySymbolContext);
   Tree* e = parse(expression, tContext);
-  Simplification::ProjectAndReduce(e, &projContext);
+  Simplification::ProjectAndReduce(
+      e, ProjectionContext{.m_complexFormat = ComplexFormat::Cartesian,
+                           .m_advanceReduce = false});
   return ParametricConic(SystemExpression::Builder(e));
 }
 

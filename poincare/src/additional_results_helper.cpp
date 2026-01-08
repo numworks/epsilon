@@ -49,12 +49,14 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
    * Use the reduction of frac part to compute modulo. */
   Tree* simplifiedAngle = PatternMatching::Create(
       KMult(KFrac(KDiv(KA, KB)), KB), {.KA = exactAngle, .KB = period});
-  ProjectionContext ctxCopy{*ctx};
   Poincare::Internal::Dimension dim =
-      Simplification::ProjectAndReduce(simplifiedAngle, &ctxCopy);
+      Simplification::ProjectAndReduce(simplifiedAngle, *ctx);
   bool isRationalOrMultipleOfPi =
       simplifiedAngle->isRational() ||
       Internal::Trigonometry::GetPiFactor(simplifiedAngle) != nullptr;
+  ProjectionContext ctxCopy{*ctx};
+  /* TODO: ctxCopy will become useless once BeautifyReduced takes a const
+   * ProjectionContext */
   Simplification::BeautifyReduced(simplifiedAngle, &ctxCopy, dim);
 
   Tree* approximateAngleTree = nullptr;
@@ -571,7 +573,7 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
                            .m_context = symbolContext,
                            .m_advanceReduce = false};
   Tree* e = approximateOutput.tree()->cloneTree();
-  Internal::Dimension dim = Simplification::ProjectAndReduce(e, &ctx);
+  Internal::Dimension dim = Simplification::ProjectAndReduce(e, ctx);
   assert(!dim.isUnit());
   return CreateBeautifiedLayout(
       e, &ctx, dim, Preferences::PrintFloatMode::Scientific,
@@ -589,7 +591,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   Tree* matrix =
       (isApproximate ? approximateOutput : exactOutput).tree()->cloneTree();
   // The expression must be reduced to call matrix methods.
-  Internal::Dimension dim = Simplification::ProjectAndReduce(matrix, &ctx);
+  Internal::Dimension dim = Simplification::ProjectAndReduce(matrix, ctx);
   bool isSquared = Internal::Matrix::NumberOfRows(matrix) ==
                    Internal::Matrix::NumberOfColumns(matrix);
 

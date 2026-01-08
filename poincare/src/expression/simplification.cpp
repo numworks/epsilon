@@ -135,7 +135,7 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
   assert(!e->hasDescendantSatisfying(
       [](const Tree* tree) { return tree->isStore(); }));
 
-  Dimension dim = ProjectAndReduce(e, projectionContext);
+  Dimension dim = ProjectAndReduce(e, *projectionContext);
   if (beautify) {
     BeautifyReduced(e, projectionContext, dim);
   }
@@ -148,13 +148,14 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
   return e;
 }
 
-Dimension ProjectAndReduce(Tree* e, ProjectionContext* projectionContext) {
+Dimension ProjectAndReduce(Tree* e,
+                           const ProjectionContext& projectionContext) {
   assert(!e->isStore());
-  Dimension dim = ToSystem(e, *projectionContext).dimension;
-  ReduceSystem(e, projectionContext->m_advanceReduce,
-               projectionContext->m_reductionTarget);
+  Dimension dim = ToSystem(e, projectionContext).dimension;
+  ReduceSystem(e, projectionContext.m_advanceReduce,
+               projectionContext.m_reductionTarget);
   // Non-approximated numbers or node may have appeared during reduction.
-  ApplyReductionStrategy(e, *projectionContext);
+  ApplyReductionStrategy(e, projectionContext);
   return dim;
 }
 

@@ -56,7 +56,7 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
   process_tree_and_compare(
       coefficients, expectedRoots,
       [](Tree* tree, Poincare::ProjectionContext projCtx) {
-        Dimension dimension = Simplification::ProjectAndReduce(tree, &projCtx);
+        Dimension dimension = Simplification::ProjectAndReduce(tree, projCtx);
         switch (tree->numberOfChildren()) {
           case 2:
             tree->moveTreeOverTree(

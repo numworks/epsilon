@@ -21,7 +21,7 @@ bool IsCalculationOutputStrictEquality(const UserExpression exact,
   // Approximate is projected to turn Pow(e, …) into Exp(…)
   assert(!approximate.isUninitialized());
   Internal::Tree* approximateProjected = approximate.tree()->cloneTree();
-  Internal::Simplification::ProjectAndReduce(approximateProjected, &ctxCopy);
+  Internal::Simplification::ProjectAndReduce(approximateProjected, ctxCopy);
   bool result = Internal::IsCalculationOutputStrictEquality(
       exactProjected, approximateProjected, numberOfSignificantDigits);
   approximateProjected->removeTree();

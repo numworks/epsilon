@@ -92,11 +92,11 @@ QUIZ_CASE(pcj_polynomial_operations) {
   assert_trees_are_equal(remainder, KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e));
 }
 
-void assert_polynomial_degree_is(Poincare::ProjectionContext projectionContext,
-                                 const char* input, int expectedDegree,
-                                 const char* symbolName = "x") {
+void assert_polynomial_degree_is(
+    const Poincare::ProjectionContext& projectionContext, const char* input,
+    int expectedDegree, const char* symbolName = "x") {
   Tree* expression = parse(input, projectionContext.m_context);
-  Simplification::ProjectAndReduce(expression, &projectionContext);
+  Simplification::ProjectAndReduce(expression, projectionContext);
   int degree = Degree::Get(expression, symbolName);
   quiz_assert(degree == expectedDegree);
   expression->removeTree();

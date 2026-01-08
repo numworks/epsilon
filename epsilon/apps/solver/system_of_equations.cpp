@@ -119,6 +119,19 @@ void SystemOfEquations::approximateSolve(const SymbolContext& symbolContext) {
   m_solutionMetadata = result.solutionMetadata;
   m_equationMetadata = result.equationMetadata;
 
+  if (result.error != Error::NoError) {
+    /* An error occurred that was not there during the exact solve. We can't
+     * solve this equation with approximation, so we return no solution and set
+     * the auto range to the widest range instead of [NAN, NAN]. */
+    if (m_isUsingAutoSolvingRange) {
+      m_approximateSolvingRange =
+          Poincare::Range1D<double>(-INFINITY, INFINITY);
+      m_memoizedAutoSolvingRange = m_approximateSolvingRange;
+    }
+    m_numberOfSolutions = 0;
+    return;
+  }
+
   // Store the range used to solve
   m_approximateSolvingRange = m_solutionMetadata.solvingRange;
   if (m_isUsingAutoSolvingRange) {

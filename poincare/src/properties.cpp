@@ -555,11 +555,22 @@ ComplexProperties PropertiesOfTreeOrApproximation(const Tree* e) {
 
 #if POINCARE_TREE_LOG
 void ComplexProperties::log(std::ostream& stream, bool endOfLine) const {
-  stream << "(";
-  realProperties().log(stream, false);
-  stream << ") + i*(";
-  imagProperties().log(stream, false);
-  stream << ")";
+  bool hasImagPart = !imagSign().isNull();
+  bool hasRealPart = !realSign().isNull();
+  if (hasImagPart && hasRealPart) {
+    stream << "(";
+  }
+  if (hasRealPart || !hasImagPart) {
+    realProperties().log(stream, false);
+  }
+  if (hasImagPart && hasRealPart) {
+    stream << ") + ";
+  }
+  if (hasImagPart) {
+    stream << "i*(";
+    imagProperties().log(stream, false);
+    stream << ")";
+  }
   if (endOfLine) {
     stream << "\n";
   }

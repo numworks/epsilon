@@ -349,6 +349,13 @@ QUIZ_CASE(solver_approximate) {
                                {3.0});
   assert_solves_numerically_to(".91×ln(x - 4) + 22.796 = 26", 0, 100,
                                {37.814142093595251});
+
+  setComplexFormatAndAngleUnit(Cartesian, Radian);
+  // ApproximateSolve failure
+  assert_solves_numerically_to("D*D*sqrt(tan(70*i*7*ln(7*log(7))))", -DBL_MAX,
+                               DBL_MAX, {}, Poincare::EmptySymbolContext{},
+                               "D");
+
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);
 }

@@ -169,7 +169,8 @@ struct ShallowSystemProjectArgs {
   bool m_hasNonKelvinTemperatureUnit;
 };
 
-bool Projection::DeepSystemProject(Tree* e, ProjectionContext projectionContext,
+bool Projection::DeepSystemProject(Tree* e,
+                                   const ProjectionContext& projectionContext,
                                    const Dimension& dimension) {
   bool changed = false;
   ShallowSystemProjectArgs args{

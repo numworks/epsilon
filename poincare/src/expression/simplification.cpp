@@ -19,7 +19,7 @@ namespace Poincare::Internal::Simplification {
 static Tree* ApplySimplify(const Tree* dataTree,
                            ProjectionContext* projectionContext, bool beautify);
 
-static bool HandleUnits(Tree* e, ProjectionContext* projectionContext,
+static bool HandleUnits(Tree* e, const ProjectionContext& projectionContext,
                         const Dimension& dimension);
 static bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
                           bool insideReduction);
@@ -170,7 +170,7 @@ bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext,
   assert(e->isUndefined() || dimension == Dimension::Get(e) ||
          (e->isList() &&
           (e->numberOfChildren() == 0 || e->child(0)->isUndefined())));
-  bool changed = HandleUnits(e, projectionContext, dimension);
+  bool changed = HandleUnits(e, *projectionContext, dimension);
   changed =
       Beautification::DeepBeautify(e, *projectionContext, dimension) || changed;
   return changed;
@@ -265,28 +265,28 @@ bool ReduceSystem(Tree* e, bool advanced, ReductionTarget reductionTarget) {
   return Dependency::DeepRemoveUselessDependencies(e) || changed;
 }
 
-bool HandleUnits(Tree* e, ProjectionContext* projectionContext,
+bool HandleUnits(Tree* e, const ProjectionContext& projectionContext,
                  const Dimension& dimension) {
   bool changed = false;
 #if POINCARE_UNIT
   if (!e->isUndefined() &&
       Units::Unit::ProjectToBestUnits(
-          e, dimension, projectionContext->m_unitDisplay,
-          projectionContext->m_angleUnit, projectionContext->m_unitFormat)) {
+          e, dimension, projectionContext.m_unitDisplay,
+          projectionContext.m_angleUnit, projectionContext.m_unitFormat)) {
     if (e->isUndefined()) {
       return true;
     }
     // Re-apply strategy to make sure introduced integers are floats.
-    if (projectionContext->m_strategy == Strategy::ApproximateToFloat) {
-      ApplyReductionStrategy(e, *projectionContext);
+    if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
+      ApplyReductionStrategy(e, projectionContext);
     }
-    ReduceSystem(e, false, projectionContext->m_reductionTarget);
+    ReduceSystem(e, false, projectionContext.m_reductionTarget);
     changed = true;
   }
   if (dimension.isUnit() && !dimension.isAngleUnit()) {
     // Only angle units are expected not to be approximated.
-    projectionContext->m_strategy = Strategy::ApproximateToFloat;
-    ApplyReductionStrategy(e, *projectionContext);
+    changed =
+        Approximation::ApproximateAndReplaceEveryScalar<double>(e) || changed;
   }
 #endif
   return changed;

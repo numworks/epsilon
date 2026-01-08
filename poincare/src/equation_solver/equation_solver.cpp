@@ -490,7 +490,7 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
      * approximation, the resolution would already have failed at
      * reduction of the equation list. */
     rank = Matrix::CanonizeAndRank(matrix, true);
-    if (rank == Matrix::k_failedToCanonizeRank) {
+    if (rank == Matrix::k_failedToCanonizeRank || rank != n) {
       matrix->removeTree();
       equationListWithoutDep->removeTree();
       return {.error = Error::EquationUndefined,

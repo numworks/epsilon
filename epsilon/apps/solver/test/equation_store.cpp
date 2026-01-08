@@ -13,6 +13,12 @@ QUIZ_CASE(solver_error) {
   // Unsolved dependency
   assert_solves_to_error("0arccos(0.9b)=0", EquationUnhandled);
 
+  // Undefined coefficient at approximation
+  assert_solves_to_error({"0=0", "x*(4000000000!)=0"}, EquationUndefined);
+
+  // NonReal coefficient at approximation
+  assert_solves_to_error({"0=0", "x*sqrt(sin(10))=0"}, EquationUndefined);
+
   setComplexFormatAndAngleUnit(Cartesian, Radian);
   assert_solves_to_error("cos(x)=0", RequireApproximateSolution);
 

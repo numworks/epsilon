@@ -774,6 +774,16 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
   assert(extractedUnits && e->nextTree() == extractedUnits);
   [[maybe_unused]] bool treeRemoved = RemoveNonUnits(extractedUnits, true);
   // Warning : extractedUnits isn't just e's dimension. 2_m + _yd -> _m + _yd
+#if !ASSERTIONS
+  /* RemoveNonUnits is not supposed to fail. However a failure here would make
+   * the program crash (because the following lines of code rely on the
+   * "extractedUnits" tree data being there). We thus implement a defensive
+   * early escape in release mode. */
+  if (treeRemoved) {
+    e->cloneTreeOverTree(KUndef);
+    return true;
+  }
+#endif
   assert(!treeRemoved);
   // Take advantage of e being last tree.
   assert(extractedUnits);

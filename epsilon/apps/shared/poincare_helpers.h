@@ -57,19 +57,6 @@ inline size_t ConvertFloatToTextWithDisplayMode(
 
 // ===== Approximation =====
 
-// Approximate to tree and keep units
-template <class T>
-inline Poincare::SystemExpression ApproximateUser(
-    Poincare::UserExpression e, const Poincare::SymbolContext& symbolContext,
-    Poincare::ComplexFormat complexFormat =
-        GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-    Poincare::AngleUnit angleUnit =
-        GlobalPreferences::SharedGlobalPreferences()->angleUnit()) {
-  return e.approximateUserToTree<T>(
-      GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-      e.preferedComplexFormat(complexFormat, symbolContext), symbolContext);
-}
-
 template <class T>
 inline Poincare::SystemExpression ApproximateSystem(
     Poincare::SystemExpression e) {

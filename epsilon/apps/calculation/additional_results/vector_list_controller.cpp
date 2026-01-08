@@ -77,12 +77,10 @@ void VectorListController::computeAdditionalResults(
       KACos(KA), {.KA = normalized.cloneChildAtIndex(0)});
   /* Sign needs a reduced expression. Using approximation here, but a reduction
    * would also work. */
-  SystemExpression yApprox = PoincareHelpers::ApproximateUser<double>(
-      normalized.cloneChildAtIndex(1), symbolContext, complexFormat(),
-      angleUnit());
-  Sign sign = yApprox.sign();
+  double yApprox = PoincareHelpers::ApproximateToRealScalar<double>(
+      normalized.cloneChildAtIndex(1));
   // HasVector should be false if any vector's child is complex.
-  if (sign.canBeStrictlyNegative() && !sign.canBeStrictlyPositive()) {
+  if (yApprox < 0.0) {
     angle = UserExpression::Create(
         KSub(KA, KB),
         {.KA = Trigonometry::Period(ctx.m_angleUnit), .KB = angle});

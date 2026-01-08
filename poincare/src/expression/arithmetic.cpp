@@ -276,9 +276,9 @@ bool Arithmetic::ExpandFactorial(Tree* e) {
                                       KProduct("k"_e, 1_e, KA, KVarK));
   /* Explicit the product directly to compute the factorial if the argument was
    * a rational */
-  if (e->isProduct() && e->child(2)->isRational()) {
-    assert(Integer::IsPositiveRationalInteger(e->child(2)) ==
-           OMG::Troolean::True);
+  if (e->isProduct() && e->child(Parametric::k_upperBoundIndex)->isRational()) {
+    assert(Integer::IsPositiveRationalInteger(
+               e->child(Parametric::k_upperBoundIndex)) == OMG::Troolean::True);
     Parametric::Explicit(e);
   }
   return true;

@@ -246,7 +246,7 @@ bool DeepBeautifyUnits(Tree* e) {
   return false;
 }
 
-bool DeepBeautify(Tree* e, ProjectionContext projectionContext,
+bool DeepBeautify(Tree* e, const ProjectionContext& projectionContext,
                   const Dimension& dimension) {
   assert(projectionContext.m_reductionTarget == ReductionTarget::User);
   bool changed = ApplyComplexFormat(

@@ -12,7 +12,8 @@ bool isExpectedExpression(const Tree* expr) {
   if (PatternMatching::Context ctx;
       PatternMatching::Match(expr, KMult(KA, KPow(10_e, KB)), &ctx) ||
       PatternMatching::Match(expr, KPow(10_e, KB), &ctx)) {
-    return (!ctx.getTree(KA) || ctx.getTree(KA)->isDecimal()) &&
+    return (!ctx.getTree(KA) ||
+            (ctx.getTree(KA)->isDecimal() || ctx.getTree(KA)->isInteger())) &&
            (ctx.getTree(KB)->isInteger() ||
             (ctx.getTree(KB)->isOpposite() &&
              ctx.getTree(KB)->child(0)->isInteger()));

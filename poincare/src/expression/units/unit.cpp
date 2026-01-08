@@ -862,7 +862,8 @@ bool Unit::DisplayImperialUnitsInOutput(const Tree* inputUnits) {
 
 Tree* Unit::ExactConvertToUnit(const Tree* e, TreeRef& targetUnit) {
   // Make sure targetUnit does not contain non-units or additions of units.
-  RemoveNonUnits(targetUnit, false);
+  [[maybe_unused]] bool treeRemoved = RemoveNonUnits(targetUnit, false);
+  assert(!treeRemoved);
   // Multiply e, targetUnit and inverse of targetUnit's SI value.
   Tree* unitClone = targetUnit->cloneTree();
   Tree::ApplyShallowTopDown(unitClone, Unit::ShallowRemoveUnit);
@@ -1125,7 +1126,8 @@ bool Unit::ApplyAutomaticInputDisplay(Tree* e, TreeRef& inputUnits) {
   /* TODO: Select the best possible choice if there are multiple units
            With _mm*_Hz+(_m+_km)*_s^-1 : _mm*_Hz, _m_s^-1 or _km_s^-1 ?
   */
-  RemoveNonUnits(inputUnits, false);
+  [[maybe_unused]] bool treeRemoved = RemoveNonUnits(inputUnits, false);
+  assert(!treeRemoved);
   if (inputUnits->isUnit() &&
       IsNonKelvinTemperature(GetRepresentative(inputUnits))) {
     // Handle non kelvin temperature conversion separately.

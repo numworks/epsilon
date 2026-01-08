@@ -248,6 +248,11 @@ class Unit {
   /* Remove subtrees that don't contain units. Return true if the entire tree
    * has been removed. Only Mult, Pow, and Add (if preserveAdd) are preserved.
    */
+  /* TODO: RemoveNonUnits should be made safer so that it cannot remove the
+   * whole tree being passed. Sub-trees of "e" could be removed, but callers of
+   * RemoveNonUnits (see ProjectToBestUnits) might rely on "e" still pointing to
+   * a valid tree. Instead of removing the tree, it could be replaced by
+   * "undef". */
   static bool RemoveNonUnits(Tree* e, bool preserveAdd);
   // Convert tree from base unit to target unit without approximation
   static Tree* ExactConvertToUnit(const Tree* e, TreeRef& targetUnit);

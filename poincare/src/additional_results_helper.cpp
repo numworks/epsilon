@@ -267,8 +267,8 @@ bool AdditionalResultsHelper::HasInverseTrigo(
     /* Projection is needed here for an accurate sign prediction, to avoid
      * additional result on complex inverse trigo */
     Tree* output = approximateOutput.tree()->cloneTree();
-    ProjectionContext ctx{.m_complexFormat = ComplexFormat::Cartesian};
-    Internal::Simplification::ToSystem(output, &ctx);
+    Internal::Simplification::ToSystem(
+        output, ProjectionContext{.m_complexFormat = ComplexFormat::Cartesian});
     result = GetComplexProperties(output).isReal();
     output->removeTree();
   }

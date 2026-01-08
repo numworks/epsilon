@@ -170,9 +170,10 @@ QUIZ_CASE(pcj_properties_has_matrix) {
   assert_expression_has_not_property("2*3+1", &Expression::isOfMatrixDimension);
 }
 
-void assert_projected_is_infinity(const char* input, ProjectionContext* projCtx,
+void assert_projected_is_infinity(const char* input,
+                                  const ProjectionContext& projCtx,
                                   bool isInfinity = true) {
-  Tree* e = parse(input, projCtx->m_context);
+  Tree* e = parse(input, projCtx.m_context);
   Simplification::ToSystem(e, projCtx);
   quiz_assert_print_if_failure(e->hasDescendantSatisfying([](const Tree* e) {
     return Internal::Infinity::IsPlusOrMinusInfinity(e);
@@ -186,22 +187,22 @@ QUIZ_CASE(pcj_properties_is_infinity) {
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = symbolStore,
   };
-  assert_projected_is_infinity("3.4+inf", &projCtx);
-  assert_projected_is_infinity("2.3+1", &projCtx, false);
-  assert_projected_is_infinity("a", &projCtx, false);
+  assert_projected_is_infinity("3.4+inf", projCtx);
+  assert_projected_is_infinity("2.3+1", projCtx, false);
+  assert_projected_is_infinity("a", projCtx, false);
 
   PoincareTest::store("42.3+inf→a", symbolStore);
-  assert_projected_is_infinity("a", &projCtx);
+  assert_projected_is_infinity("a", projCtx);
 
   PoincareTest::store("1+inf→x", symbolStore);
-  assert_projected_is_infinity("x", &projCtx);
-  assert_projected_is_infinity("diff(x^2,x,3)", &projCtx, false);
+  assert_projected_is_infinity("x", projCtx);
+  assert_projected_is_infinity("diff(x^2,x,3)", projCtx, false);
 }
 
 void assert_expression_has_variables(const char* input,
                                      const Tree* expectedVariables,
-                                     ProjectionContext* projCtx) {
-  Tree* e = parse(input, projCtx->m_context);
+                                     const ProjectionContext& projCtx) {
+  Tree* e = parse(input, projCtx.m_context);
   Simplification::ToSystem(e, projCtx);
   const Tree* variables = Variables::GetUserSymbols(e);
   assert_trees_are_equal(variables, expectedVariables);
@@ -218,64 +219,64 @@ QUIZ_CASE(pcj_properties_get_variables) {
       .m_context = symbolStore,
   };
 
-  assert_expression_has_variables("x+y", KList("x"_e, "y"_e), &projCtx);
+  assert_expression_has_variables("x+y", KList("x"_e, "y"_e), projCtx);
   assert_expression_has_variables("x+y+z+2w", KList("w"_e, "x"_e, "y"_e, "z"_e),
-                                  &projCtx);
+                                  projCtx);
   assert_expression_has_variables(
-      "a+x^2+2y+k!B", KList("B"_e, "a"_e, "k"_e, "x"_e, "y"_e), &projCtx);
+      "a+x^2+2y+k!B", KList("B"_e, "a"_e, "k"_e, "x"_e, "y"_e), projCtx);
 
   PoincareTest::store("x→BABA", symbolStore);
   PoincareTest::store("y→abab", symbolStore);
   assert_expression_has_variables("BABA+abab", KList("BABA"_e, "abab"_e),
-                                  &projCtx);
+                                  projCtx);
   PoincareTest::store("z→BBBBBB", symbolStore);
-  assert_expression_has_variables("BBBBBB", KList("BBBBBB"_e), &projCtx);
+  assert_expression_has_variables("BBBBBB", KList("BBBBBB"_e), projCtx);
   assert_expression_has_variables(
       "a+b+c+d+f+j+k+n+o+p+q+r",
       KList("a"_e, "b"_e, "c"_e, "d"_e, "f"_e, "j"_e, "k"_e, "n"_e, "o"_e,
             "p"_e, "q"_e, "r"_e),
-      &projCtx);
+      projCtx);
   PoincareTest::store("1+π×x+x^2+\"toto\"→f(x)", symbolStore);
   assert_expression_has_variables("f(\"tata\")",
-                                  KList("\"tata\""_e, "\"toto\""_e), &projCtx);
+                                  KList("\"tata\""_e, "\"toto\""_e), projCtx);
   symbolStore.reset();
 
-  assert_expression_has_variables("diff(3x,x,0)y-2", KList("y"_e), &projCtx);
+  assert_expression_has_variables("diff(3x,x,0)y-2", KList("y"_e), projCtx);
   assert_expression_has_variables(
-      "a+b+c+d+f+j", KList("a"_e, "b"_e, "c"_e, "d"_e, "f"_e, "j"_e), &projCtx);
+      "a+b+c+d+f+j", KList("a"_e, "b"_e, "c"_e, "d"_e, "f"_e, "j"_e), projCtx);
   assert_expression_has_variables("\"box\"+y×int(z,x,a,0)",
                                   KList("\"box\""_e, "a"_e, "y"_e, "z"_e),
-                                  &projCtx);
+                                  projCtx);
 
   PoincareTest::store("0→f(x)", symbolStore);
   PoincareTest::store("x→va", symbolStore);
-  assert_expression_has_variables("f(va)", KList("va"_e), &projCtx);
+  assert_expression_has_variables("f(va)", KList("va"_e), projCtx);
   symbolStore.reset();
 
   PoincareTest::store("12→a", symbolStore);
   PoincareTest::store("a→f(x)", symbolStore);
-  assert_expression_has_variables("f(x)", KList("a"_e, "x"_e), &projCtx);
+  assert_expression_has_variables("f(x)", KList("a"_e, "x"_e), projCtx);
   symbolStore.reset();
 
   PoincareTest::store("1→f(x)", symbolStore);
   PoincareTest::store("2→g(x)", symbolStore);
-  assert_expression_has_variables("f(g(x)+y)", KList("x"_e, "y"_e), &projCtx);
+  assert_expression_has_variables("f(g(x)+y)", KList("x"_e, "y"_e), projCtx);
   symbolStore.reset();
 
   PoincareTest::store("1→x", symbolStore);
-  assert_expression_has_variables("x+y", KList("x"_e, "y"_e), &projCtx);
+  assert_expression_has_variables("x+y", KList("x"_e, "y"_e), projCtx);
   symbolStore.reset();
 
   PoincareTest::store("1→a", symbolStore);
   PoincareTest::store("a+b+c→x", symbolStore);
-  assert_expression_has_variables("x+y", KList("x"_e, "y"_e), &projCtx);
+  assert_expression_has_variables("x+y", KList("x"_e, "y"_e), projCtx);
   symbolStore.reset();
 
   PoincareTest::store("b+c+x→a", symbolStore);
   PoincareTest::store("x+b→g(x)", symbolStore);
   PoincareTest::store("a+g(x+y)→f(x)", symbolStore);
   assert_expression_has_variables("f(x)", KList("a"_e, "b"_e, "x"_e, "y"_e),
-                                  &projCtx);
+                                  projCtx);
 }
 
 void assert_reduced_expression_has_polynomial_coefficient(

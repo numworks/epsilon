@@ -177,7 +177,7 @@ void projected_approximates_to(const char* input, const char* output,
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
-        Simplification::ToSystem(tree, &projectionContext);
+        Simplification::ToSystem(tree, projectionContext);
         tree->moveTreeOverTree(Approximation::ToTree<T>(
             tree,
             Approximation::Parameters{.isRootAndCanHaveRandom = true,

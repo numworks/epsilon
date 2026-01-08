@@ -40,11 +40,10 @@ void compare_approximates(const Tree* e1, const Tree* e2, bool equal,
 template <typename T>
 void project_and_compare_approximates(const char* input1, const char* input2,
                                       bool equal) {
-  Poincare::ProjectionContext ctx;
   Tree* e1 = parse(input1);
-  Simplification::ToSystem(e1, &ctx);
+  Simplification::ToSystem(e1, Poincare::ProjectionContext{});
   Tree* e2 = parse(input2);
-  Simplification::ToSystem(e2, &ctx);
+  Simplification::ToSystem(e2, Poincare::ProjectionContext{});
 
   compare_approximates<T>(
       e1, e2, equal, Approximation::Parameters{.isRootAndCanHaveRandom = true});

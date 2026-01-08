@@ -48,9 +48,9 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
   Tree* diff = SharedTreeStack->pushAdd(2);
   static_cast<const Tree*>(e)->cloneTree();
   SharedTreeStack->pushFloat(-y);
-  ProjectionContext projectionContext = ProjectionContext{
-      .m_complexFormat = ComplexFormat::Real, .m_angleUnit = angleUnit()};
-  Internal::Simplification::ToSystem(diff, &projectionContext);
+  Internal::Simplification::ToSystem(
+      diff, ProjectionContext{.m_complexFormat = ComplexFormat::Real,
+                              .m_angleUnit = angleUnit()});
   Approximation::PrepareFunctionForApproximation(diff, "x", true);
   // TODO: use y+evaluate() instead of yTree+e in nextIntersection
   Poincare::Solver solver = Poincare::Solver(xMin, xMax, symbolContext);

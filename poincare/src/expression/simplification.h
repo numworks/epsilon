@@ -20,7 +20,7 @@ struct ToSystemOutput {
   bool changed;
   Dimension dimension;
 };
-ToSystemOutput ToSystem(Tree* e, ProjectionContext* projectionContext);
+ToSystemOutput ToSystem(Tree* e, const ProjectionContext& projectionContext);
 #if ASSERTIONS
 bool IsSystem(const Tree* e);
 #endif

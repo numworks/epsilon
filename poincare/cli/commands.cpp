@@ -51,9 +51,8 @@ void printExpression(const Expression& expr) {
 // Command implementations
 void expandCommand(const std::vector<std::string>& args) {
   UserExpression s = getExpression(args);
-  ProjectionContext ctx = context();
   Internal::Tree* p = s.tree()->cloneTree();
-  Internal::Simplification::ToSystem(p, &ctx);
+  Internal::Simplification::ToSystem(p, context());
   Internal::SystematicReduction::DeepReduce(p);
   Internal::AdvancedReduction::DeepExpand(p);
   SystemExpression r = SystemExpression::Builder(p);
@@ -62,9 +61,8 @@ void expandCommand(const std::vector<std::string>& args) {
 
 void approximateCommand(const std::vector<std::string>& args) {
   UserExpression s = getExpression(args);
-  ProjectionContext ctx = context();
   Internal::Tree* p = s.tree()->cloneTree();
-  Internal::Simplification::ToSystem(p, &ctx);
+  Internal::Simplification::ToSystem(p, context());
   Internal::Tree* a = Internal::Approximation::ToTree<double>(p, {});
   Expression r = Expression::Builder(a);
   p->removeTree();

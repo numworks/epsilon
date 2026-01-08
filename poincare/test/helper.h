@@ -251,7 +251,7 @@ inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
     const char* function, Poincare::ProjectionContext ctx = {}) {
   constexpr const char* k_symbol = "x";
   Poincare::Internal::Tree* e = parse(function);
-  Poincare::Internal::Simplification::ToSystem(e, &ctx);
+  Poincare::Internal::Simplification::ToSystem(e, ctx);
   Poincare::Internal::Approximation::PrepareFunctionForApproximation(
       e, k_symbol, ctx.m_complexFormat == Poincare::ComplexFormat::Real);
   return e;

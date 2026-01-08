@@ -14,7 +14,7 @@ bool Simplify(Tree* e, const ProjectionContext& projectionContext,
 Dimension ProjectAndReduce(Tree* e, ProjectionContext* projectionContext);
 bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext,
                      const Dimension& dimension);
-bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext);
+bool PrepareForProjection(Tree* e, const ProjectionContext& projectionContext);
 
 struct ToSystemOutput {
   bool changed;

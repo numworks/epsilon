@@ -175,17 +175,17 @@ bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext,
   return changed;
 }
 
-bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext) {
+bool PrepareForProjection(Tree* e, const ProjectionContext& projectionContext) {
   // Seed random nodes before anything is merged/duplicated
   int previousMaxRandomSeed = Random::GetMaxSeed(e);
   int maxRandomSeed = Random::SeedRandomNodes(e, previousMaxRandomSeed);
   bool changed = maxRandomSeed > previousMaxRandomSeed;
   // Replace UserFunctions before projecting local variables
-  const SymbolicComputation symbolic = projectionContext->m_symbolic;
+  const SymbolicComputation symbolic = projectionContext.m_symbolic;
   if (symbolic != SymbolicComputation::KeepAllSymbols &&
       symbolic != SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     if (Projection::DeepReplaceUserNamed(
-            e, projectionContext->m_context,
+            e, projectionContext.m_context,
             SymbolicComputation::ReplaceDefinedFunctions)) {
       // Seed random nodes that may have appeared after replacing
       maxRandomSeed = Random::SeedRandomNodes(e, maxRandomSeed);
@@ -195,11 +195,11 @@ bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext) {
   changed = Variables::ProjectLocalVariablesToId(e) || changed;
   // Replace user named symbols after having projected local variables
   if (symbolic != SymbolicComputation::ReplaceDefinedFunctions) {
-    changed = Projection::DeepReplaceUserNamed(e, projectionContext->m_context,
+    changed = Projection::DeepReplaceUserNamed(e, projectionContext.m_context,
                                                symbolic) ||
               changed;
   } else {
-    assert(!Projection::DeepReplaceUserNamed(e, projectionContext->m_context,
+    assert(!Projection::DeepReplaceUserNamed(e, projectionContext.m_context,
                                              symbolic));
   }
   // No additional random nodes should have appeared
@@ -214,7 +214,7 @@ bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext) {
 
 ToSystemOutput ToSystem(Tree* e, ProjectionContext* projectionContext) {
   /* 1 - Prepare for projection */
-  bool changed = PrepareForProjection(e, projectionContext);
+  bool changed = PrepareForProjection(e, *projectionContext);
   /* 2 - Compute expression's dimension */
   Dimension dim = Dimension::Get(e);
   /* 3 - Apply projection strategy */

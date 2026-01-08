@@ -57,12 +57,6 @@ inline size_t ConvertFloatToTextWithDisplayMode(
 
 // ===== Approximation =====
 
-template <class T>
-inline Poincare::SystemExpression ApproximateSystem(
-    Poincare::SystemExpression e) {
-  return e.approximateSystemToTree<T>();
-}
-
 inline Poincare::ProjectionContext ProjectionContextForPreferences(
     const Poincare::UserExpression e,
     const Poincare::SymbolContext& symbolContext) {

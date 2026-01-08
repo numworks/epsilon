@@ -423,10 +423,12 @@ bool ShallowBeautifyPowerOfTangent(Tree* e, void* context) {
       PatternMatching::MatchReplace(
           e, KDiv(KMult(KA_s, KPow(KSin(KB), KC), KD_s), KPow(KCos(KB), KC)),
           KMult(KA_s, KPow(KTan(KB), KC), KD_s)) ||
+#if POINCARE_TRIGONOMETRY_ADVANCED
       // (cos(A))^n/(sin(A))^n -> (cot(A))^n
       PatternMatching::MatchReplace(
           e, KDiv(KMult(KA_s, KPow(KCos(KB), KC), KD_s), KPow(KSin(KB), KC)),
           KMult(KA_s, KPow(KCot(KB), KC), KD_s)) ||
+#endif
       // (sinh(A))^n/(cosh(A))^n -> (tanh(A))^n
       PatternMatching::MatchReplace(
           e, KDiv(KMult(KA_s, KPow(KSinH(KB), KC), KD_s), KPow(KCosH(KB), KC)),

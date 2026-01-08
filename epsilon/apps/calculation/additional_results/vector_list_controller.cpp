@@ -48,7 +48,7 @@ void VectorListController::computeAdditionalResults(
   // 2. Normalized vector
   double approximatedNorm =
       PoincareHelpers::ApproximateToRealScalar<double>(norm);
-  if (std::isnan(approximatedNorm) ||
+  if (!std::isfinite(approximatedNorm) ||
       (std::abs(approximatedNorm) < OMG::Float::EpsilonLax<double>())) {
     return;
   }

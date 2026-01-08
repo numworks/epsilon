@@ -445,8 +445,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
       float index =
           Approximation::To<float>(exponent, Approximation::Parameters{});
       assert(!std::isfinite(index) || std::round(index) == index);
-      if (!std::isfinite(index) || index > static_cast<float>(INT8_MAX) ||
-          (index <= static_cast<float>(INT8_MIN))) {
+      if (!std::isfinite(index) ||
+          !Units::SIVector::IsValidCoefficient(index)) {
         return false;
       }
       Units::SIVector unitVector = Units::SIVector::Empty();
@@ -685,9 +685,8 @@ Dimension Dimension::Get(const Tree* e,
             e->child(1), Approximation::Parameters{},
             Approximation::Context(AngleUnit::None, ComplexFormat::None,
                                    symbolContext));
-        assert(!std::isnan(index) && index <= static_cast<float>(INT8_MAX) &&
-               index > static_cast<float>(INT8_MIN) &&
-               std::round(index) == index);
+        assert(!std::isnan(index) && std::round(index) == index &&
+               Units::SIVector::IsValidCoefficient(static_cast<int>(index)));
         Units::SIVector unitVector = Units::SIVector::Empty();
         [[maybe_unused]] bool success = unitVector.addAllCoefficients(
             dim.unit.vector, static_cast<int8_t>(index));

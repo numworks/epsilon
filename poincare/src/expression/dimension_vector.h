@@ -105,10 +105,15 @@ struct SIVector {
     return true;
   }
 
+  static constexpr bool IsValidCoefficient(int coefficient) {
+    // Exclude INT8_MIN to keep coefficients symmetric
+    return coefficient <= INT8_MAX && coefficient > INT8_MIN;
+  }
+
   // Return false if operation overflowed.
   [[nodiscard]] constexpr bool setCoefficientAtIndex(uint8_t i,
                                                      int coefficient) {
-    return coefficient <= INT8_MAX && coefficient > INT8_MIN &&
+    return IsValidCoefficient(coefficient) &&
            setCoefficientAtIndex(i, static_cast<int8_t>(coefficient));
   }
 

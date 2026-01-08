@@ -1014,6 +1014,9 @@ bool Unit::RemoveNonUnits(Tree* e, bool preserveAdd) {
     default:
       // By default ignore units contained in tree.
       assert(!wasUnit);
+      /* If the above assertion breaks, it could be because DeepCheckDimensions
+       * and Dimension::Get allow for a type of node that is not handled in this
+       * function. */
       e->removeTree();
       didRemovedTree = true;
       break;

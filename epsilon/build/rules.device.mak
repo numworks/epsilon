@@ -198,3 +198,7 @@ $(call document_other_target,test.<flavors>.dfu)
 $(call rule_for_composite_dfu,epsilon,bootloader/bootloader.elf kernel/kernel.A%elf kernel/kernel.B%elf userland.A%elf userland.B%elf)
 $(call document_other_target,epsilon.<flavors>.dfu,Composite DFU file made of a bootloader and two kernel&userland)
 
+# Standard dfu-util will refuse to download a .dfu file if it contains sections
+# that the device does not expose, e.g. the bootloader section from epsilon.dfu
+# when flashing in rescue mode.
+$(OUTPUT_DIRECTORY)/epsilon%flash: DFU = $(PYTHON) tools/device/dfu.py

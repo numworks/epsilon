@@ -83,9 +83,3 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("log(inf,x)", "log(∞,x)");
   assert_parsed_expression_simplify_to("ln(inf)*0", "undef");
 }
-
-QUIZ_CASE(poincare_simplification_mix) {
-  // TODO_PCJ: broken on the CI but can't reproduce on bob with clang16
-  // assert_parsed_expression_simplify_to(
-  // "(√(2)+√(2)×i)/2(√(2)+√(2)×i)/2(√(2)+√(2)×i)/2", "√(2)/32-√(2)/32×i");
-}

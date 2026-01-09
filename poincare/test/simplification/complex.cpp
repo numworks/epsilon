@@ -103,6 +103,8 @@ QUIZ_CASE(pcj_simplification_complex) {
   // TODO: simplify to e^(-19683×ln(5)+10084×π)
   simplifies_to("root(5^((-i)3^9),i)", "e^(arg(1/5^(19683×i)))",
                 k_cartesianCtx);
+  simplifies_to("(√(2)+√(2)×i)/2(√(2)+√(2)×i)/2(√(2)+√(2)×i)/2",
+                "√(2)/32-√(2)/32×i", k_cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_polar) {

@@ -130,7 +130,8 @@ SystemExpression UserExpression::approximateUserToTree(
 
 bool UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* simplifiedExpression,
-    UserExpression* approximatedExpression, ProjectionContext& context) const {
+    UserExpression* approximatedExpression,
+    const ProjectionContext& context) const {
   // Step 1: simplify
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   bool reductionFailure = false;
@@ -145,7 +146,7 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
 
 template <typename T>
 UserExpression UserExpression::cloneAndApproximate(
-    ProjectionContext& context) const {
+    const ProjectionContext& context) const {
   Approximation::Context approxCtx(context.m_angleUnit, context.m_complexFormat,
                                    context.m_context);
   Tree* a;
@@ -635,9 +636,9 @@ template UserExpression UserExpression::Builder<float>(
 template UserExpression UserExpression::Builder<double>(
     PointOrRealScalar<double>);
 template UserExpression UserExpression::cloneAndApproximate<float>(
-    ProjectionContext&) const;
+    const ProjectionContext&) const;
 template UserExpression UserExpression::cloneAndApproximate<double>(
-    ProjectionContext&) const;
+    const ProjectionContext&) const;
 template float UserExpression::privateApproximateToRealScalar<float>(
     AngleUnit, ComplexFormat, const SymbolContext&) const;
 template double UserExpression::privateApproximateToRealScalar<double>(

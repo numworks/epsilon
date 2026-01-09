@@ -140,12 +140,11 @@ void approximates_to_boolean(const char* input,
 
 template <typename T>
 void assert_float_approximates_to(UserExpression f, const char* result) {
-  ProjectionContext projectionContext =
-      Poincare::ProjectionContext{.m_complexFormat = ComplexFormat::Cartesian,
-                                  .m_angleUnit = AngleUnit::Radian};
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
-  f.cloneAndApproximate<T>(projectionContext)
+  f.cloneAndApproximate<T>(
+       Poincare::ProjectionContext{.m_complexFormat = ComplexFormat::Cartesian,
+                                   .m_angleUnit = AngleUnit::Radian})
       .serialize(buffer, false, DecimalMode, numberOfDigits);
   quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
 }

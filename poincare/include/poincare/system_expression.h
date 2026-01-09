@@ -77,7 +77,7 @@ class SystemExpression : public Expression {
   // Expressions in parameters are outputs.
   void cloneAndBeautifyAndApproximate(UserExpression* beautifiedExpression,
                                       UserExpression* approximatedExpression,
-                                      ProjectionContext& context) const;
+                                      const ProjectionContext& context) const;
   UserExpression cloneAndBeautify(const ProjectionContext& context) const;
   /* Replace some UserSymbol into Var0 for
    * approximateToPointOrRealScalarWithValue. Returns undef if the expression's

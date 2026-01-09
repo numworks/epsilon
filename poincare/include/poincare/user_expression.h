@@ -99,14 +99,14 @@ class UserExpression : public Expression {
    * reduction status (success or failure) */
   bool cloneAndSimplifyAndApproximate(UserExpression* simplifiedExpression,
                                       UserExpression* approximatedExpression,
-                                      ProjectionContext& context) const;
+                                      const ProjectionContext& context) const;
   UserExpression cloneAndSimplify(const ProjectionContext& context,
                                   bool* reductionFailure) const;
   /* This version does not warn if simplification fails. In case of failure the
    * initial expression is returned. */
   UserExpression cloneAndTrySimplify(const ProjectionContext& context) const;
   template <typename T>
-  UserExpression cloneAndApproximate(ProjectionContext& context) const;
+  UserExpression cloneAndApproximate(const ProjectionContext& context) const;
 
   // If of the form y-f(x), return f(x). Return uninitialized otherwise.
   UserExpression equivalentCartesianEquation() const;

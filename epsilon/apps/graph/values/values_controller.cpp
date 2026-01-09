@@ -387,15 +387,15 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         &simplificationFailure,
         SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     UserExpression approximation;
-    Poincare::ProjectionContext projectionContext = {
-        .m_complexFormat =
-            GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-        .m_angleUnit =
-            GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-        .m_unitFormat =
-            GlobalPreferences::SharedGlobalPreferences()->unitFormat()};
-    e.cloneAndBeautifyAndApproximate(&result, &approximation,
-                                     projectionContext);
+    e.cloneAndBeautifyAndApproximate(
+        &result, &approximation,
+        Poincare::ProjectionContext{
+            .m_complexFormat =
+                GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+            .m_angleUnit =
+                GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+            .m_unitFormat =
+                GlobalPreferences::SharedGlobalPreferences()->unitFormat()});
     assert(!approximation.isUninitialized());
     /* Approximate in case of simplification failure, as we cannot display a
      * non-beautified expression. */

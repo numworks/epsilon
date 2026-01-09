@@ -308,7 +308,8 @@ void HistoryController::handleOK() {
   selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a);
   assert(i.preferedComplexFormat(
              selectedCalculation->calculationPreferences().complexFormat,
-             App::app()->localContext()) ==
+             App::app()->localContext(),
+             Poincare::SymbolicComputation::ReplaceDefinedSymbols) ==
          selectedCalculation->calculationPreferences().complexFormat);
 
   /* Reuse the same angle unit and updated complexFormat as when the calculation

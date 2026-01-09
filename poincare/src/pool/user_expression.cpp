@@ -323,8 +323,9 @@ bool UserExpression::hasDefinedComplexApproximation(
 bool UserExpression::isComplexScalar(
     Preferences::CalculationPreferences calculationPreferences,
     const SymbolContext& symbolContext) const {
-  ComplexFormat complexFormat = preferedComplexFormat(
-      calculationPreferences.complexFormat, symbolContext);
+  ComplexFormat complexFormat =
+      preferedComplexFormat(calculationPreferences.complexFormat, symbolContext,
+                            SymbolicComputation::ReplaceDefinedSymbols);
   AngleUnit angleUnit = calculationPreferences.angleUnit;
   if (hasDefinedComplexApproximation<double>(angleUnit, complexFormat,
                                              symbolContext)) {

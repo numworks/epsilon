@@ -285,13 +285,22 @@ bool Logarithm::ContractLn(Tree* e) {
       !ctx.getTree(KB)->isZero()) {
     TreeRef a = Rational::Numerator(ctx.getTree(KA)).pushOnTreeStack();
     const Tree* b = ctx.getTree(KB);
+    TreeRef pow =
+        PatternMatching::CreateReduce(KPow(KB, KA), {.KA = a, .KB = b});
+    if (pow->isPow()) {
+      // If the power cannot be reduced, ReduceLn will undo the Contract
+      pow->removeTree();
+      a->removeTree();
+      return false;
+    }
     TreeRef c = PushProductCorrection(b, a);
     TreeRef d = Rational::Denominator(ctx.getTree(KA)).pushOnTreeStack();
-    e->moveTreeOverTree(PatternMatching::CreateReduce(
-        KMult(KPow(KD, -1_e), KAdd(KLn(KPow(KB, KA)), KC)),
-        {.KA = a, .KB = b, .KC = c, .KD = d}));
+    e->moveTreeOverTree(
+        PatternMatching::CreateReduce(KMult(KPow(KD, -1_e), KAdd(KLn(KA), KC)),
+                                      {.KA = pow, .KC = c, .KD = d}));
     d->removeTree();
     c->removeTree();
+    pow->removeTree();
     a->removeTree();
     return true;
   }

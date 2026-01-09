@@ -12,7 +12,7 @@ bool Simplify(Tree* e, const ProjectionContext& projectionContext,
 
 // Simplification steps
 Dimension ProjectAndReduce(Tree* e, const ProjectionContext& projectionContext);
-bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext,
+bool BeautifyReduced(Tree* e, const ProjectionContext& projectionContext,
                      const Dimension& dimension);
 bool PrepareForProjection(Tree* e, const ProjectionContext& projectionContext);
 

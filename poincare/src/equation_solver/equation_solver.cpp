@@ -852,7 +852,7 @@ SolverResult ExactSolve(const Tree* equationList,
 
   // Beautify exact solutions
   assert(result.exactSolutionList);
-  Simplification::BeautifyReduced(result.exactSolutionList, &projectionContext,
+  Simplification::BeautifyReduced(result.exactSolutionList, projectionContext,
                                   preprocessingResult.dimension);
 
   // Beautify approximate solutions
@@ -861,7 +861,7 @@ SolverResult ExactSolve(const Tree* equationList,
     projectionContext.m_advanceReduce =
         projectionContext.m_complexFormat == ComplexFormat::Polar;
     Simplification::BeautifyReduced(result.approximateSolutionList,
-                                    &projectionContext,
+                                    projectionContext,
                                     preprocessingResult.dimension);
   }
 

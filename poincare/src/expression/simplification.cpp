@@ -137,7 +137,7 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
 
   Dimension dim = ProjectAndReduce(e, *projectionContext);
   if (beautify) {
-    BeautifyReduced(e, projectionContext, dim);
+    BeautifyReduced(e, *projectionContext, dim);
   }
 
   if (isStore) {
@@ -159,7 +159,7 @@ Dimension ProjectAndReduce(Tree* e,
   return dim;
 }
 
-bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext,
+bool BeautifyReduced(Tree* e, const ProjectionContext& projectionContext,
                      const Dimension& dimension) {
   assert(!e->isStore());
   // TODO: Should this be recomputed here ?
@@ -170,9 +170,9 @@ bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext,
   assert(e->isUndefined() || dimension == Dimension::Get(e) ||
          (e->isList() &&
           (e->numberOfChildren() == 0 || e->child(0)->isUndefined())));
-  bool changed = HandleUnits(e, *projectionContext, dimension);
+  bool changed = HandleUnits(e, projectionContext, dimension);
   changed =
-      Beautification::DeepBeautify(e, *projectionContext, dimension) || changed;
+      Beautification::DeepBeautify(e, projectionContext, dimension) || changed;
   return changed;
 }
 

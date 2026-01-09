@@ -77,7 +77,7 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
             // Not handled
             quiz_assert(false);
         }
-        Simplification::BeautifyReduced(tree, &projCtx, dimension);
+        Simplification::BeautifyReduced(tree, projCtx, dimension);
       },
       projCtx);
 }

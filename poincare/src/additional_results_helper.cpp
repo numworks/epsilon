@@ -53,10 +53,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   bool isRationalOrMultipleOfPi =
       simplifiedAngle->isRational() ||
       Internal::Trigonometry::GetPiFactor(simplifiedAngle) != nullptr;
-  ProjectionContext ctxCopy{*ctx};
-  /* TODO: ctxCopy will become useless once BeautifyReduced takes a const
-   * ProjectionContext */
-  Simplification::BeautifyReduced(simplifiedAngle, &ctxCopy, dim);
+  Simplification::BeautifyReduced(simplifiedAngle, *ctx, dim);
 
   Tree* approximateAngleTree = nullptr;
   if (!directTrigonometry) {
@@ -550,7 +547,7 @@ static Poincare::Layout CreateBeautifiedLayout(
     const Internal::Dimension& dimension,
     Preferences::PrintFloatMode displayMode,
     uint8_t numberOfSignificantDigits) {
-  Simplification::BeautifyReduced(reducedExpression, ctx, dimension);
+  Simplification::BeautifyReduced(reducedExpression, *ctx, dimension);
   Poincare::Layout layout =
       Poincare::Layout::Builder(Layouter::LayoutExpression(
           reducedExpression,

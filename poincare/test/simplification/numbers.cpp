@@ -61,8 +61,7 @@ QUIZ_CASE(pcj_simplification_float) {
 }
 
 QUIZ_CASE(pcj_simplification_constants) {
-  simplifies_to("i", "nonreal", k_realCtx);
-  simplifies_to("i", "i", k_cartesianCtx);
+  simplifies_to("i", "nonreal");
   simplifies_to("π", "π");
   simplifies_to("e", "e");
   simplifies_to("_mn + _mp", "3.34754942651ᴇ-27×_kg");

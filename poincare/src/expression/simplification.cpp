@@ -117,11 +117,11 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
     assert(beautify);
     const Tree* firstChild = dataTree->child(0);
     if (firstChild->nextTree()->isUserFunction()) {
-      if (CAS::Enabled()) {
-        projectionContext->m_symbolic = SymbolicComputation::KeepAllSymbols;
-      } else {
-        return dataTree->cloneTree();
-      }
+      /* Note: when CAS is enabled, we used to change the SymbolicComputation
+       * parameter to KeepAllSymbols when storing a function. However the
+       * SymbolicComputation should not be determined here but before entering
+       * the simplification pipeline. */
+      return dataTree->cloneTree();
     } else {
       assert(firstChild->nextTree()->isUserSymbol());
     }

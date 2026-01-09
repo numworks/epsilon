@@ -5,6 +5,8 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
+#include <cmath>
+
 #include "approximation.h"
 #include "dependency.h"
 #include "infinity.h"
@@ -206,6 +208,12 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
   return result;
 }
 
+// Approximate matrix child for pivot selection, abs is enough for this use case
+float ApproximateForPivot(const Tree* child,
+                          const Approximation::Context* ctx) {
+  return std::abs(Approximation::Private::PrivateToComplex<float>(child, ctx));
+}
+
 bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
                          bool approximate, const Approximation::Context* ctx,
                          bool forceCanonization) {
@@ -222,14 +230,19 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
   // The matrix children have to be reduced to be able to spot 0
   assert(approximate || !SystematicReduction::DeepReduce(matrix));
 
-  if (!forceCanonization) {
-    // Check that all values are valid
-    for (const Tree* child : matrix->children()) {
-      if (child->isUndefined() || Infinity::IsPlusOrMinusInfinity(child) ||
-          !Approximation::CanApproximate(child)) {
-        return false;
-      }
+  // Check that all values are valid
+  for (const Tree* child : matrix->children()) {
+    bool canApproximate = Approximation::CanApproximate(child);
+    if (!forceCanonization && !canApproximate) {
+      // Escape if a child cannot be approximated and forceCanonization is false
+      return false;
     }
+    if (canApproximate && !std::isfinite(ApproximateForPivot(child, ctx))) {
+      // Escape if a child that can be approximated has no finite approximation
+      return false;
+    }
+    // Undef and inf should have approximated to NAN value in previous step.
+    assert(!child->isUndefined() && !Infinity::IsPlusOrMinusInfinity(child));
   }
 
   TreeRef det;
@@ -254,8 +267,8 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
     while (iPivot_temp < m) {
       // Using float to find the biggest pivot is sufficient.
       Tree* pivotChild = Child(matrix, iPivot_temp, k);
-      float pivot = std::abs(
-          Approximation::Private::PrivateToComplex<float>(pivotChild, ctx));
+      float pivot = ApproximateForPivot(pivotChild, ctx);
+      assert(!std::isnan(pivot));
       // Handle very low pivots
       if (pivot == 0.0f && !(Number::IsNull(pivotChild))) {
         pivot = FLT_MIN;
@@ -279,9 +292,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
     Tree* candidate = Child(matrix, iPivot, k);
     if (Number::IsNull(candidate) ||
-        (approximate &&
-         std::abs(Approximation::Private::PrivateToComplex<float>(candidate,
-                                                                  ctx)) == 0)) {
+        (approximate && ApproximateForPivot(candidate, ctx) == 0.f)) {
       // No non-null coefficient in this column, skip
       k++;
       if (determinant) {

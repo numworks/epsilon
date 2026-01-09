@@ -168,6 +168,8 @@ QUIZ_CASE(pcj_approximation_root) {
   approximates_to<float>("root(5^((-i)3^9),i)", "3.504", k_cartesianCtx, 4);
   approximates_to<double>("root(5^((-i)3^9),i)", "3.5039410843", k_cartesianCtx,
                           11);
+  simplified_approximates_to<double>(
+      "abs(√(300000.0003^23))", "9.702740901018ᴇ62", k_degreeCartesianCtx, 13);
 }
 
 QUIZ_CASE(pcj_approximation_mixed_fraction) {

@@ -91,6 +91,18 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("re(1/2)", "1/2", k_cartesianCtx);
   simplifies_to("im(1+5×i)", "5", k_cartesianCtx);
   simplifies_to("re(1+5×i)", "1", k_cartesianCtx);
+
+  simplifies_to("i^(3/5)", "√((5-√(5))/8)+(1+√(5))/4×i", k_cartesianCtx);
+  simplifies_to("i*i*i*i", "1", k_cartesianCtx);
+  simplifies_to("√(-i)", "√(2)/2-√(2)/2×i", k_cartesianCtx);
+  simplifies_to("1/√(i)×(√(2)-i×√(2))", "-2×i", k_cartesianCtx);
+  simplifies_to("i^i", "e^(-π/2)", k_cartesianCtx);
+  simplifies_to("i/(1+i×√(x))", "i/(1+√(x)×i)", k_cartesianCtx);
+  simplifies_to("√(√(√(√(√(√(i))))))", "cos(π/128)+sin(π/128)×i",
+                k_cartesianCtx);
+  // TODO: simplify to e^(-19683×ln(5)+10084×π)
+  simplifies_to("root(5^((-i)3^9),i)", "e^(arg(1/5^(19683×i)))",
+                k_cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_polar) {

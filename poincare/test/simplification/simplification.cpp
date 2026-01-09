@@ -246,6 +246,25 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(i)", "1", k_cartesianCtx);
   simplifies_to("abs(√(√(√(√(√(√(i)))))))", "1", k_cartesianCtx);
   simplifies_to("abs(√(√(√(√(√(√(πi)))))))", "root(π,64)", k_cartesianCtx);
+  simplifies_to("abs(dim({4, 5}))", "2");
+
+  simplifies_to("tan(3)ln(2)+π", "π+tan(3)×ln(2)");
+  simplifies_to(
+      "3×P×Q×R+4×cos(2)-2×P×Q×R+P×Q×R+ln(3)+4×P×Q-5×P×Q×R+cos(3)×ln(5)+cos(2)-"
+      "45×cos(2)",
+      "P×Q×(-3×R+4)-40×cos(2)+ln(3)+cos(3)×ln(5)");
+  simplifies_to("2×P+3×cos(2)+3+4×ln(5)+5×P+2×ln(5)+1+0",
+                "7×P+4+3×cos(2)+6×ln(5)");
+  simplifies_to("2.3×P+3×cos(2)+3+4×ln(5)+5×P+2×ln(5)+1.2+0.235",
+                "(73×P)/10+887/200+3×cos(2)+6×ln(5)");
+  simplifies_to("2×P×Q×R+2.3×P×Q+3×P^2+5.2×P×Q×R+4×P^2",
+                "7×P^2+P×Q×((36×R)/5+23/10)");
+  simplifies_to("(P×Q)^2×P+4×P^3", "P^3×(Q^2+4)");
+  simplifies_to("(P×3)^2×P+4×P^3", "13×P^3");
+  simplifies_to("P^2^2×P+4×P^3", "P^5+4×P^3");
+  simplifies_to("0.5+4×P×Q-2.3+2×P×Q-2×Q×P^R-cos(4)+2×P^R×Q+P×Q×R×X",
+                "dep(P×Q×(R×X+6)-9/5-cos(4),{0×P^R})");
+  simplifies_to("P×cos(9)×i×i×ln(2)", "-P×cos(9)×ln(2)", k_cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_sign) {

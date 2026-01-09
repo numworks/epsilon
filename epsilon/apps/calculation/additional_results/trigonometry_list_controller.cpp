@@ -34,7 +34,7 @@ void TrigonometryListController::computeAdditionalResults(
   AdditionalResultsHelper::TrigonometryResults trigonometryResults =
       AdditionalResultsHelper::TrigonometryAngleHelper(
           input, exactOutput, approximateOutput, m_directTrigonometry,
-          m_calculationPreferences, &ctx, CAS::ShouldOnlyDisplayApproximation);
+          m_calculationPreferences, ctx, CAS::ShouldOnlyDisplayApproximation);
   m_isStrictlyEqual[0] = trigonometryResults.angleIsExact;
 
   UserExpression exactAngleWithUnit = UserExpression::Create(

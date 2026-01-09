@@ -33,13 +33,13 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput, bool directTrigonometry,
     Poincare::Preferences::CalculationPreferences calculationPreferences,
-    const ProjectionContext* ctx,
+    const ProjectionContext& ctx,
     ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation) {
-  const Tree* period = Angle::Period(ctx->m_angleUnit);
+  const Tree* period = Angle::Period(ctx.m_angleUnit);
   // Find the angle
   UserExpression exactAngle =
       directTrigonometry
-          ? ExtractExactAngleFromDirectTrigo(input, exactOutput, ctx->m_context,
+          ? ExtractExactAngleFromDirectTrigo(input, exactOutput, ctx.m_context,
                                              calculationPreferences)
           : exactOutput;
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
@@ -49,11 +49,11 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   Tree* simplifiedAngle = PatternMatching::Create(
       KMult(KFrac(KDiv(KA, KB)), KB), {.KA = exactAngle, .KB = period});
   Poincare::Internal::Dimension dim =
-      Simplification::ProjectAndReduce(simplifiedAngle, *ctx);
+      Simplification::ProjectAndReduce(simplifiedAngle, ctx);
   bool isRationalOrMultipleOfPi =
       simplifiedAngle->isRational() ||
       Internal::Trigonometry::GetPiFactor(simplifiedAngle) != nullptr;
-  Simplification::BeautifyReduced(simplifiedAngle, *ctx, dim);
+  Simplification::BeautifyReduced(simplifiedAngle, ctx, dim);
 
   Tree* approximateAngleTree = nullptr;
   if (!directTrigonometry) {
@@ -76,7 +76,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
           UserExpression::Builder(static_cast<const Tree*>(simplifiedAngle)),
           UserExpression::Builder(
               static_cast<const Tree*>(approximateAngleTree)),
-          ctx->m_context)) {
+          ctx.m_context)) {
     if (directTrigonometry) {
       assert(!approximateAngleTree);
       /* Do not approximate the FracPart, which could lead to truncation error
@@ -90,8 +90,8 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
       bool removePeriod =
           Approximation::To<double>(
               sine, Approximation::Parameters{.projectLocalVariables = true},
-              Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
-                                     ctx->m_context)) < 0;
+              Approximation::Context(ctx.m_angleUnit, ctx.m_complexFormat,
+                                     ctx.m_context)) < 0;
       sine->removeTree();
       if (removePeriod) {
         approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
@@ -102,9 +102,9 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
     approximateAngleTree->moveTreeOverTree(Approximation::ToTree<double>(
         approximateAngleTree,
         Approximation::Parameters{.projectLocalVariables = true},
-        Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
-                               ctx->m_context)));
-    Beautification::DeepBeautify(approximateAngleTree, *ctx);
+        Approximation::Context(ctx.m_angleUnit, ctx.m_complexFormat,
+                               ctx.m_context)));
+    Beautification::DeepBeautify(approximateAngleTree, ctx);
     exactAngle =
         UserExpression::Builder(static_cast<const Tree*>(approximateAngleTree));
     angleIsExact = false;
@@ -123,14 +123,14 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   double approximatedAngle = Approximation::To<double>(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
       Approximation::Parameters{.projectLocalVariables = true},
-      Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
-                             ctx->m_context));
+      Approximation::Context(ctx.m_angleUnit, ctx.m_complexFormat,
+                             ctx.m_context));
   if (approximateAngleTree) {
     approximateAngleTree->removeTree();
   }
   simplifiedAngle->removeTree();
   approximatedAngle = Poincare::Trigonometry::ConvertAngleToRadian(
-      approximatedAngle, ctx->m_angleUnit);
+      approximatedAngle, ctx.m_angleUnit);
   assert(0.0 <= approximatedAngle && approximatedAngle <= 2.0 * M_PI);
   return {.exactAngle = exactAngle,
           .approximatedAngle = approximatedAngle,
@@ -543,15 +543,15 @@ UserExpression AdditionalResultsHelper::CreateMixedFraction(
 
 // Eat reduced expression's tree and return a beautified layout
 static Poincare::Layout CreateBeautifiedLayout(
-    Tree* reducedExpression, ProjectionContext* ctx,
+    Tree* reducedExpression, const ProjectionContext& ctx,
     const Internal::Dimension& dimension,
     Preferences::PrintFloatMode displayMode,
     uint8_t numberOfSignificantDigits) {
-  Simplification::BeautifyReduced(reducedExpression, *ctx, dimension);
+  Simplification::BeautifyReduced(reducedExpression, ctx, dimension);
   Poincare::Layout layout =
       Poincare::Layout::Builder(Layouter::LayoutExpression(
           reducedExpression,
-          {.symbolContext = ctx->m_context,
+          {.symbolContext = ctx.m_context,
            .numberOfSignificantDigits = numberOfSignificantDigits,
            .floatMode = displayMode}));
   reducedExpression->removeTree();
@@ -572,7 +572,7 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
   Internal::Dimension dim = Simplification::ProjectAndReduce(e, ctx);
   assert(!dim.isUnit());
   return CreateBeautifiedLayout(
-      e, &ctx, dim, Preferences::PrintFloatMode::Scientific,
+      e, ctx, dim, Preferences::PrintFloatMode::Scientific,
       calculationPreferences.numberOfSignificantDigits);
 }
 
@@ -605,14 +605,14 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     Internal::Dimension dimension =
         Internal::Dimension::Get(determinant, ctx.m_context);
     determinantL = CreateBeautifiedLayout(
-        determinant, &ctx, dimension, displayMode, numberOfSignificantDigits);
+        determinant, ctx, dimension, displayMode, numberOfSignificantDigits);
     matrixClone->removeTree();
 
     /* 2. Matrix inverse if invertible matrix
      * A squared matrix is invertible if and only if determinant is non null */
     if (!determinantIsUndefinedOrNull) {
       Tree* inverse = Internal::Matrix::Inverse(matrix, isApproximate);
-      inverseL = CreateBeautifiedLayout(inverse, &ctx, dim, displayMode,
+      inverseL = CreateBeautifiedLayout(inverse, ctx, dim, displayMode,
                                         numberOfSignificantDigits);
     }
   }
@@ -623,7 +623,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
                                     isApproximate)) {
     // Clone layouted tree to preserve reducedRowEchelonForm for next step.
     rowEchelonFormL =
-        CreateBeautifiedLayout(reducedRowEchelonForm->cloneTree(), &ctx, dim,
+        CreateBeautifiedLayout(reducedRowEchelonForm->cloneTree(), ctx, dim,
                                displayMode, numberOfSignificantDigits);
 
     /* 4. Matrix reduced row echelon form
@@ -633,12 +633,12 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
       OMG_UNREACHABLE;
     }
     reducedRowEchelonFormL =
-        CreateBeautifiedLayout(reducedRowEchelonForm, &ctx, dim, displayMode,
+        CreateBeautifiedLayout(reducedRowEchelonForm, ctx, dim, displayMode,
                                numberOfSignificantDigits);
   } else {
     reducedRowEchelonForm->cloneTreeOverTree(KUndefUnhandled);
     rowEchelonFormL =
-        CreateBeautifiedLayout(reducedRowEchelonForm, &ctx, dim, displayMode,
+        CreateBeautifiedLayout(reducedRowEchelonForm, ctx, dim, displayMode,
                                numberOfSignificantDigits);
     reducedRowEchelonFormL = rowEchelonFormL.clone();
   }
@@ -647,8 +647,8 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   if (isSquared) {
     Tree* trace = Internal::Matrix::Trace(matrix);
     traceL = CreateBeautifiedLayout(
-        trace, &ctx, Internal::Dimension::Get(trace, ctx.m_context),
-        displayMode, numberOfSignificantDigits);
+        trace, ctx, Internal::Dimension::Get(trace, ctx.m_context), displayMode,
+        numberOfSignificantDigits);
   }
 
   matrix->removeTree();

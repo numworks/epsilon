@@ -17,7 +17,8 @@
 namespace Poincare::Internal::Simplification {
 
 static Tree* ApplySimplify(const Tree* dataTree,
-                           ProjectionContext* projectionContext, bool beautify);
+                           const ProjectionContext& projectionContext,
+                           bool beautify);
 
 static bool HandleUnits(Tree* e, const ProjectionContext& projectionContext,
                         const Dimension& dimension);
@@ -87,9 +88,8 @@ bool Simplify(Tree* e, const ProjectionContext& projectionContext,
 #if ASSERTIONS
     size_t treesNumber = SharedTreeStack->numberOfTrees();
 #endif
-    ProjectionContext contextCopy = projectionContext;
     // Clone the tree, simplify and raise an exception for pool overflow.
-    Tree* simplified = ApplySimplify(e, &contextCopy, beautify);
+    Tree* simplified = ApplySimplify(e, projectionContext, beautify);
     // Prevent from leaking: simplification creates exactly one tree.
     assert(SharedTreeStack->numberOfTrees() == treesNumber + 1);
     e->moveTreeOverTree(simplified);
@@ -106,8 +106,8 @@ bool Simplify(Tree* e, const ProjectionContext& projectionContext,
   return true;
 }
 
-Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
-                    bool beautify) {
+Tree* ApplySimplify(const Tree* dataTree,
+                    const ProjectionContext& projectionContext, bool beautify) {
   /* Store is an expression only for convenience. Only first child is to
    * be simplified. */
   bool isStore = dataTree->isStore();
@@ -135,9 +135,9 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
   assert(!e->hasDescendantSatisfying(
       [](const Tree* tree) { return tree->isStore(); }));
 
-  Dimension dim = ProjectAndReduce(e, *projectionContext);
+  Dimension dim = ProjectAndReduce(e, projectionContext);
   if (beautify) {
-    BeautifyReduced(e, *projectionContext, dim);
+    BeautifyReduced(e, projectionContext, dim);
   }
 
   if (isStore) {

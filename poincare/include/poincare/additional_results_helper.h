@@ -25,7 +25,7 @@ class AdditionalResultsHelper final {
       const UserExpression input, const UserExpression exactOutput,
       const UserExpression approximateOutput, bool directTrigonometry,
       Preferences::CalculationPreferences calculationPreferences,
-      const ProjectionContext* ctx,
+      const ProjectionContext& ctx,
       ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation);
 
   static UserExpression ExtractExactAngleFromDirectTrigo(

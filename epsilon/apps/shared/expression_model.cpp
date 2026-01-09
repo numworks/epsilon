@@ -59,7 +59,7 @@ ComplexFormat ExpressionModel::complexFormat(
   if (m_expressionComplexFormat == MemoizedComplexFormat::NotMemoized) {
     UserExpression expression = ExpressionModel::expressionClone(record);
     if (!expression.isUninitialized() &&
-        (expression.preferedComplexFormat(
+        (expression.preferredComplexFormat(
              ComplexFormat::Real, GlobalContextAccessor::Context(),
              Poincare::SymbolicComputation::ReplaceDefinedSymbols) !=
          ComplexFormat::Real)) {

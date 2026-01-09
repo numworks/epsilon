@@ -306,7 +306,7 @@ void HistoryController::handleOK() {
       calculationAtIndex(focusRow);
   UserExpression i, a, e;
   selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a);
-  assert(i.preferedComplexFormat(
+  assert(i.preferredComplexFormat(
              selectedCalculation->calculationPreferences().complexFormat,
              App::app()->localContext(),
              Poincare::SymbolicComputation::ReplaceDefinedSymbols) ==

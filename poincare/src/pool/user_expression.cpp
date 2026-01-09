@@ -270,7 +270,7 @@ UserExpression UserExpression::equivalentCartesianEquation() const {
   return UserExpression();
 }
 
-ComplexFormat UserExpression::preferedComplexFormat(
+ComplexFormat UserExpression::preferredComplexFormat(
     ComplexFormat complexFormat, const SymbolContext& symbolContext,
     SymbolicComputation replaceSymbols) const {
   ProjectionContext projectionContext = {
@@ -323,9 +323,9 @@ bool UserExpression::hasDefinedComplexApproximation(
 bool UserExpression::isComplexScalar(
     Preferences::CalculationPreferences calculationPreferences,
     const SymbolContext& symbolContext) const {
-  ComplexFormat complexFormat =
-      preferedComplexFormat(calculationPreferences.complexFormat, symbolContext,
-                            SymbolicComputation::ReplaceDefinedSymbols);
+  ComplexFormat complexFormat = preferredComplexFormat(
+      calculationPreferences.complexFormat, symbolContext,
+      SymbolicComputation::ReplaceDefinedSymbols);
   AngleUnit angleUnit = calculationPreferences.angleUnit;
   if (hasDefinedComplexApproximation<double>(angleUnit, complexFormat,
                                              symbolContext)) {

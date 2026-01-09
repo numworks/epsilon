@@ -241,9 +241,16 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   // Big numbers in logarithms
   simplifies_to("log(10^2022)", "2022");
   simplifies_to("3/log(3000000000)", "3×(log(2,3000000000)+log(5,3000000000))");
+  simplifies_to("ln(1881676377434183981909562699940347954480361860897069)",
+                "ln(1881676377434183981909562699940347954480361860897069)");
 
   simplifies_to("ln(i)", "π/2×i", k_cartesianCtx);
   simplifies_to("π×ln(2)+ln(4)", "(2+π)×ln(2)");
+  simplifies_to("log(10)", "1");
+  simplifies_to("log(100)", "2");
+  simplifies_to("log(1000000)", "6");
+  simplifies_to("log(10^24)", "24");
+  simplifies_to("log(10^(2+π))", "2+π");
   simplifies_to("ln(6)", "ln(2)+ln(3)");
   simplifies_to("log(6)", "log(2)+log(3)");
   simplifies_to("ln(6^2)", "2×ln(2)+2×ln(3)");
@@ -288,6 +295,34 @@ QUIZ_CASE(pcj_simplification_logarithm) {
       ")",
       k_cartesianCtx);
 
+  // Develop
+  simplifies_to("log(12925)", "log(11)+log(47)+2×log(5)");
+  simplifies_to("ln(12925)", "2×ln(5)+ln(11)+ln(47)");
+  simplifies_to("ln(2/3)", "ln(2)-ln(3)");
+  simplifies_to("log(1476225,5)", "2+10×log(3,5)");
+  simplifies_to("log(1742279/12925, 6)",
+                "log(7,6)+3×log(11,6)+log(17,6)-log(47,6)-2×log(5,6)");
+  simplifies_to("log(1742279/12925, -6)",
+                "-2×log(5,-6)+log(7,-6)+3×log(11,-6)+log(17,-6)-log(47,-6)",
+                k_cartesianCtx);
+  // TODO: should reduce to log(11,14)+log(3,14)+2×log(2,14)+5
+  simplifies_to("log(70992768,14)",
+                "7×log(2,14)+log(3,14)+5×log(7,14)+log(11,14)");
+  /* log(1002101470343) does no reduce to 3×log(10007) because it involves
+   * prime factors above k_biggestPrimeFactor */
+  simplifies_to("log(1002101470343)", "log(1002101470343)");
+
+  // Undefined
+  simplifies_to("log(0,0)", "undef");
+  simplifies_to("log(0,1)", "undef");
+  simplifies_to("log(1,0)", "undef");
+  simplifies_to("log(2,0)", "undef");
+  simplifies_to("log(0,14)", "undef");
+  simplifies_to("log(0,0.14)", "undef");
+  simplifies_to("log(0,0.14+i)", "undef");
+  simplifies_to("log(2,1)", "undef");
+  simplifies_to("log(x,1)", "undef");
+
   // Use complex logarithm internally
   simplifies_to("√(x^2)", "√(x^2)", k_cartesianCtx);
   simplifies_to("√(abs(x)^2)", "abs(x)", k_cartesianCtx);
@@ -319,8 +354,17 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(e^(i×π))", "π×i", k_cartesianCtx);
   simplifies_to("ln(e^(-i×π))", "π×i", k_cartesianCtx);
   simplifies_to("ln(e^(i×2×π))", "0", k_cartesianCtx);
-  // TODO: should simplify as ln(10) instead of ln(2)+ln(5)
+  simplifies_to("ln(√(2))", "ln(2)/2");
+  simplifies_to("ln(e^3)", "3");
+  simplifies_to("log(√(3),√(3))", "1");
+  simplifies_to("log(1/√(2))", "-log(2)/2");
+  simplifies_to("ln(e^(iπ/7))", "π/7×i", k_cartesianCtx);
+
+  /* TODO: should simplify as ln(10) instead of ln(2)+ln(5) and ln(14) instead
+   * of ln(2)+ln(7). */
   simplifies_to("e^log(πe)", "e^(log(π)+1/(ln(2)+ln(5)))");
+  simplifies_to("log(-i)", "-π/(2×(ln(2)+ln(5)))×i", k_cartesianCtx);
+  simplifies_to("log(1/6991712,14)", "-5-ln(13)/(ln(2)+ln(7))");
 
   // Log with base
   simplifies_to("log(3,27)", "1/3");
@@ -329,6 +373,11 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("2^log(3,2)", "3");
   simplifies_to("log(9,7)", "2×log(3,7)");
   simplifies_to("log(9,8)", "2×log(3,8)");
+  simplifies_to("log(4,10)", "2×log(2)");
   simplifies_to("log(3,7)+log(5,7)", "log(3,7)+log(5,7)");
   simplifies_to("log(3,8)+log(5,8)", "log(3,8)+log(5,8)");
+  simplifies_to("log(64,2)", "6");
+  simplifies_to("log(2,64)", "1/6");
+  // TODO: add shortcuts? works with +2 advanced reduction depth
+  simplifies_to("log((23π)^4,23π)", "4×(log(23,23×π)+log(π,23×π))");
 }

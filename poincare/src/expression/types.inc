@@ -389,8 +389,8 @@ RANGE(Undefined, NonReal, Undef)
 
 // 11 - Operations on expressions
 
-NODE(Store, BASE, 2)
-NODE(UnitConversion, BASE, 2)
+NODE(Store, RIGHTWARDS_ARROW, 2)
+NODE(UnitConversion, RIGHTWARDS_ARROW, 2)
 
 /* Used as intermediary step in beautification to hide context dependant nodes
  * during context-less simplification and approximation. */

@@ -40,6 +40,7 @@ Tree* RackParser::parseTopLevelRack() {
     m_parsingContext.metadata.isAssignmentDeclaration = true;
   }
 
+#if POINCARE_RIGHTWARDS_ARROW
   /* Rightwards arrows are only allowed in the root rack of the layout
    * -> handle stores and unit conversions here */
   for (IndexedChild<const Tree*> child : m_root->indexedChildren()) {
@@ -51,6 +52,7 @@ Tree* RackParser::parseTopLevelRack() {
       return parseExpressionWithRightwardsArrow(child.index);
     }
   }
+#endif
 
   return parseRack();
 }

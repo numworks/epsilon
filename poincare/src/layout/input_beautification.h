@@ -84,8 +84,10 @@ class InputBeautification {
                                     UCodePointCombiningLongSolidusOverlay>()
              ->cloneTree();
        }},
-      // Special char
+// Special char
+#if POINCARE_RIGHTWARDS_ARROW
       {"->", 0, [](TreeRef* parameters) { return "→"_cl->cloneTree(); }},
+#endif
       {"*", 0, [](TreeRef* parameters) { return "×"_cl->cloneTree(); }},
       {"''", 0,
        [](TreeRef* parameters) { return KCodePointL<u'"'>()->cloneTree(); }},

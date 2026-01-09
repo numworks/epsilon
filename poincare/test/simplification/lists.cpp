@@ -98,6 +98,7 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("{0,x}=1", "{False,undef}", replaceSymbolCtx);
   simplifies_to("{0,1,2,3,4,5,6,7,8,{9}}", "undef");
   simplifies_to("sequence(k*_Gs, k, 2)", "undef");
+  simplifies_to("sequence(random()[[11]],k,10)", "undef");
 
   simplifies_to("{}", "{}");
   // Lists can't contain matrix or lists

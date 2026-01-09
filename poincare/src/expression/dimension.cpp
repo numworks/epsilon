@@ -185,24 +185,25 @@ bool Dimension::DeepCheckListLength(
       return true;
     default: {
       assert(!e->isListToScalar());
-      int thisLength = k_nonListListLength;
+      int childrenLength = k_nonListListLength;
       for (int i = 0; i < e->numberOfChildren(); i++) {
         if (childLength[i] == k_nonListListLength) {
           continue;
         }
-        if (thisLength >= 0 && childLength[i] != thisLength) {
+        if (childrenLength >= 0 && childLength[i] != childrenLength) {
           // Children lists should have the same length
           return false;
         }
-        thisLength = childLength[i];
+        childrenLength = childLength[i];
       }
-      if (thisLength >= 0) {
-        // Lists are forbidden
-        if (e->isListSequence() || e->isRandIntNoRep()) {
+      if (childrenLength >= 0) {
+        if (TypeBlock::ProducesList(e->type())) {
+          // Nested lists are forbidden
           return false;
         }
         Dimension dim = Get(e, symbolContext);
         if (dim.isMatrix() || dim.isUnit()) {
+          // No lists with matrix or unit
           return false;
         }
       }
@@ -545,8 +546,15 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
           !IsIntegerExpression(e->child(Parametric::k_valueIndex))) {
         return false;
       }
-      float n =
-          Approximation::To<float>(e->child(1), Approximation::Parameters{});
+      if (e->isListSequence()) {
+        Dimension argumentDim =
+            childDim[Parametric::k_listSequenceArgumentIndex];
+        if (argumentDim.isMatrix() || argumentDim.isUnit()) {
+          return false;
+        }
+      }
+      float n = Approximation::To<float>(e->child(Parametric::k_valueIndex),
+                                         Approximation::Parameters{});
       assert(!std::isfinite(n) || std::floor(n) == n);
       return std::isfinite(n) && n >= 0 && n <= NAry::k_maxNumberOfChildren;
     }

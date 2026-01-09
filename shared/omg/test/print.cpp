@@ -1,6 +1,5 @@
 #include <omg/print.h>
 #include <poincare/test/helper.h>
-#include <poincare/test/old/helper.h>
 
 using namespace OMG;
 using namespace OMG::Print;

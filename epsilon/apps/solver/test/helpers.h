@@ -2,7 +2,6 @@
 
 #include <poincare/preferences.h>
 #include <poincare/symbol_context.h>
-#include <poincare/test/old/helper.h>
 
 #include <initializer_list>
 

@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <omg/list.h>
 #include <poincare/symbol_context.h>
-#include <poincare/test/old/helper.h>
+#include <poincare/test/float_helper.h>
 #include <poincare/trigonometry.h>
 #include <quiz.h>
 #include <string.h>

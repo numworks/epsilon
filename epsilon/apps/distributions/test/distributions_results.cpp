@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <float.h>
-#include <poincare/test/old/helper.h>
+#include <poincare/test/float_helper.h>
 #include <quiz.h>
 #include <string.h>
 

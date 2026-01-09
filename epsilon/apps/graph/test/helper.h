@@ -1,7 +1,6 @@
 #pragma once
 
 #include <apps/shared/continuous_function.h>
-#include <poincare/test/old/helper.h>
 
 #include "../app.h"
 

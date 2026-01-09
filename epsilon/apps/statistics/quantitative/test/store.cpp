@@ -3,7 +3,7 @@
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <assert.h>
-#include <poincare/test/old/helper.h>
+#include <poincare/test/float_helper.h>
 #include <quiz.h>
 
 #include <cmath>

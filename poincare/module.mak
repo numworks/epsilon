@@ -219,7 +219,6 @@ $(addprefix statistics/, \
 )
 
 _sources_poincare_test := $(addprefix test/, \
-  old/helper.cpp \
   additional_results_helper.cpp \
   beautification.cpp \
   bounds.cpp \

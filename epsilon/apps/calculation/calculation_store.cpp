@@ -132,10 +132,13 @@ static StorePreprocessResult preprocessStore(
                                  : SymbolicComputation::ReplaceDefinedSymbols};
 }
 
-static bool compute(Poincare::UserExpression inputExpression,
-                    Poincare::UserExpression& exactOutputExpression,
-                    Poincare::UserExpression& approximateOutputExpression,
-                    Poincare::ComplexFormat& complexFormat) {
+struct CalculationResult {
+  OutputExpressions outputs = {};
+  bool hasReductionFailure = false;
+};
+
+static CalculationResult compute(Poincare::UserExpression inputExpression,
+                                 Poincare::ComplexFormat& complexFormat) {
   assert(!inputExpression.isUninitialized());
 
   /* When CAS is not activated, all symbols should be replaced (unknown symbols
@@ -149,17 +152,22 @@ static bool compute(Poincare::UserExpression inputExpression,
   if (isStore) {
     StorePreprocessResult storeElements = preprocessStore(inputExpression);
     if (!storeElements.shouldReduceBeforeStore) {
-      exactOutputExpression = inputExpression.clone();
-      approximateOutputExpression =
-          exactOutputExpression.cloneAndApproximate<double>(ProjectionContext{
-              .m_complexFormat = complexFormat,
-              .m_angleUnit =
-                  GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-              .m_unitFormat =
-                  GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-              .m_symbolic = symbolicComputation,
-              .m_context = GlobalContextAccessor::Context()});
-      return true;
+      UserExpression exact = inputExpression.clone();
+
+      return CalculationResult{
+          .outputs = {.exact = exact,
+                      .approximate =
+                          exact.cloneAndApproximate<double>(ProjectionContext{
+                              .m_complexFormat = complexFormat,
+                              .m_angleUnit =
+                                  GlobalPreferences::SharedGlobalPreferences()
+                                      ->angleUnit(),
+                              .m_unitFormat =
+                                  GlobalPreferences::SharedGlobalPreferences()
+                                      ->unitFormat(),
+                              .m_symbolic = symbolicComputation,
+                              .m_context = GlobalContextAccessor::Context()})},
+          .hasReductionFailure = false};
     }
     symbolicComputation = storeElements.symbolicComputation;
     expressionToReduce = storeElements.expressionToReduce;
@@ -175,22 +183,18 @@ static bool compute(Poincare::UserExpression inputExpression,
       .m_symbolic = symbolicComputation,
       .m_context = GlobalContextAccessor::Context()};
 
-  bool reductionSuccess = expressionToReduce.cloneAndSimplifyAndApproximate(
-      &exactOutputExpression, &approximateOutputExpression, projContext);
-
+  OutputExpressions outputs;
+  bool reductionFailure = expressionToReduce.cloneAndSimplifyAndApproximate(
+      &outputs.exact, &outputs.approximate, projContext);
   if (isStore) {
     /*  Restore store structure in the exact output. The store operation itself
      * is performed by the processStore function. */
-    exactOutputExpression = StoreHelper::SetExpressionToStore(
-        inputExpression, exactOutputExpression);
+    outputs.exact =
+        StoreHelper::SetExpressionToStore(inputExpression, outputs.exact);
   }
-  return reductionSuccess;
+  return CalculationResult{.outputs = outputs,
+                           .hasReductionFailure = reductionFailure};
 }
-
-struct CalculationResult {
-  OutputExpressions outputs;
-  bool hasReductionFailure;
-};
 
 static CalculationResult computeInterruptible(
     Poincare::UserExpression inputExpression,
@@ -201,24 +205,22 @@ static CalculationResult computeInterruptible(
    * result. If we do so, don't forget to force the Calculation sign to be
    * approximative to avoid long computation to determine it.
    */
-  OutputExpressions outputs;
-  bool hasReductionFailure = false;
+  CalculationResult result;
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
-    hasReductionFailure = compute(inputExpression, outputs.exact,
-                                  outputs.approximate, complexFormat);
+    result = compute(inputExpression, complexFormat);
   } else {
     GlobalContextAccessor::SequenceStore().tidyDownstreamPoolFrom(
         checkpoint.endOfPoolBeforeCheckpoint());
     // If the output computation is interrupted, return undef
-    outputs = {UserExpression::Undefined(), UserExpression::Undefined()};
-    hasReductionFailure = true;
+    result = CalculationResult{OutputExpressions{UserExpression::Undefined(),
+                                                 UserExpression::Undefined()},
+                               true};
   }
-
-  assert(!outputs.exact.isUninitialized() &&
-         !outputs.approximate.isUninitialized());
-  return CalculationResult{outputs, hasReductionFailure};
+  assert(!result.outputs.exact.isUninitialized() &&
+         !result.outputs.approximate.isUninitialized());
+  return result;
 }
 
 /*  TODO: this method should be simplified so we can re-use more of what has

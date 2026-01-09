@@ -219,7 +219,13 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("1^(-inf)", "undef");
   simplifies_to("2^inf", "∞");
   simplifies_to("2^(-inf)", "0");
+  simplifies_to("(-1)^inf", "undef");
+  simplifies_to("(-1)^(-inf)", "undef");
   simplifies_to("x^inf", "e^(∞×sign(ln(x)))");
+  simplifies_to("i^inf", "undef", k_cartesianCtx);
+  simplifies_to("i^(-inf)", "undef", k_cartesianCtx);
+  simplifies_to("(3+4i)^inf", "undef", k_cartesianCtx);
+  simplifies_to("(3+4i)^(-inf)", "undef", k_cartesianCtx);
 
   // inf^x
   simplifies_to("inf^i", "undef");
@@ -236,10 +242,20 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("(-inf)^inf", "undef");  // complex inf
   simplifies_to("(-inf)^(-inf)", "0");
   simplifies_to("inf^x", "e^(∞×sign(x))");
+  simplifies_to("(-inf)^√(2)", "e^(∞+π×√(2)×i)");
+  simplifies_to("inf^0", "undef");
+  // TODO: should not simplify ??
+  simplifies_to("1^(x^inf)", "1");
+  simplifies_to("inf^(-1)", "0");
+  simplifies_to("(-inf)^(-1)", "0");
+  simplifies_to("inf^(-√(2))", "0");
+  simplifies_to("(-inf)^(-√(2))", "0");
+  simplifies_to("inf^2", "∞");
+  simplifies_to("(-inf)^2", "∞");
+  simplifies_to("inf^√(2)", "∞");
+  simplifies_to("1/inf+24", "24");
 
-  // functions
-  simplifies_to("exp(inf)", "∞");
-  simplifies_to("exp(-inf)", "0");
+  // Logarithm
   simplifies_to("log(inf,0)", "undef");
   simplifies_to("log(-inf,0)", "undef");
   simplifies_to("log(inf,1)", "undef");
@@ -249,6 +265,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
                 "dep(nonreal,{nonNull(x),realPos(x),ln(-∞)/ln(x)})");
   simplifies_to("log(-inf,x)", "dep((∞+π×i)/ln(x),{nonNull(x)})",
                 k_cartesianCtx);
+  simplifies_to("log(inf,3)", "∞");
   /* Should be nonreal, TODO return NonReal when evaluating PowReal(x) with x
    * non real */
   simplifies_to("log(inf,-3)", "undef");
@@ -265,6 +282,16 @@ QUIZ_CASE(pcj_simplification_infinity) {
   // TODO_PCJ simplifies_to("log(-inf,-inf)", "undef", k_cartesianCtx);
   simplifies_to("ln(inf)", "∞");
   simplifies_to("ln(-inf)", "nonreal");
+  simplifies_to("ln(inf)*0", "undef");
+  // TODO: simplify sign or simplify directly to -∞
+  simplifies_to("log(inf,0.3)", "∞×sign(1/(-ln(2)+ln(3)-ln(5)))");
+  simplifies_to("log(inf,x)", "dep(∞×sign(1/ln(x)),{nonNull(x)})",
+                k_cartesianCtx);
+
+  // Functions
+  simplifies_to("exp(inf)", "∞");
+  simplifies_to("exp(-inf)", "0");
+  simplifies_to("e^(inf)/inf", "undef");
   simplifies_to("cos(inf)", "undef");
   simplifies_to("cos(-inf)", "undef");
   simplifies_to("sin(inf)", "undef");
@@ -272,6 +299,14 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("atan(inf)", "π/2");
   simplifies_to("atan(-inf)", "-π/2");
   simplifies_to("atan(e^inf)", "π/2");
+
+  // Infinity and zero
+  simplifies_to("0/0", "undef");
+  simplifies_to("0/inf", "0");
+  simplifies_to("inf/0", "undef");
+  simplifies_to("0×inf", "undef");
+  simplifies_to("0×inf×π", "undef");
+  simplifies_to("3×inf/inf", "undef");
 }
 
 QUIZ_CASE(pcj_mixed_fraction) {

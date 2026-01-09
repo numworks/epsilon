@@ -132,6 +132,13 @@ QUIZ_CASE(pcj_approximation_infinity) {
   // (inf+i)×(2) = inf * 2 - 1 * 0 + i * (inf * 0 + 1 * 2), inf * 0 return NAN
   approximates_to<double>("(inf+i)×(2)", "undef", k_cartesianCtx);
 
+  // Big numbers
+  simplified_approximates_to<float>("1ᴇ10001", "∞");
+  simplified_approximates_to<float>("-1ᴇ1001", "-∞");
+  simplified_approximates_to<float>("-1ᴇ-1001", "0");
+  simplified_approximates_to<float>("1ᴇ-1001", "0");
+  simplified_approximates_to<float>("1×10^1000", "∞");
+
   // x^inf
   approximates_to<float>("(-2)^inf", "undef");  // complex inf
   approximates_to<float>("(-2)^(-inf)", "0");

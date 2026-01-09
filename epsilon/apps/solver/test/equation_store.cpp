@@ -115,12 +115,10 @@ QUIZ_CASE(solver_linear_system) {
 
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);
-#if 0
   /* Use an approxThreshold here because the expected exact result would take
    * too much chars for assert_solves_to. */
   assert_solves_to({"31=x×0.989^72"}, {"x=68.743"},
                    Poincare::EmptySymbolContext{}, 1e-5);
-#endif
 }
 
 QUIZ_CASE(solver_quadratic) {

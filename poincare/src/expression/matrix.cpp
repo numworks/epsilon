@@ -209,9 +209,9 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
 }
 
 // Approximate matrix child for pivot selection, abs is enough for this use case
-float ApproximateForPivot(const Tree* child,
-                          const Approximation::Context* ctx) {
-  return std::abs(Approximation::Private::PrivateToComplex<float>(child, ctx));
+double ApproximateForPivot(const Tree* child,
+                           const Approximation::Context* ctx) {
+  return std::abs(Approximation::Private::PrivateToComplex<double>(child, ctx));
 }
 
 bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
@@ -292,7 +292,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
     Tree* candidate = Child(matrix, iPivot, k);
     if (Number::IsNull(candidate) ||
-        (approximate && ApproximateForPivot(candidate, ctx) == 0.f)) {
+        (approximate && ApproximateForPivot(candidate, ctx) == 0.0)) {
       // No non-null coefficient in this column, skip
       k++;
       if (determinant) {

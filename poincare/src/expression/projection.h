@@ -12,10 +12,12 @@ namespace Poincare::Internal {
 
 class Projection {
  public:
-  /* Update complexFormat if tree contains i, Re, Im, Arg or Conj. Return true
-   * if updated. */
-  static bool UpdateComplexFormatWithExpressionInput(
-      const Tree* e, ProjectionContext& projectionContext);
+  /* Change the input complex format to Cartesian if the Tree contains i, Re,
+   * Im, Arg or Conj. */
+  static ComplexFormat PreferredComplexFormat(
+      const Tree* e, ComplexFormat userComplexFormat,
+      SymbolicComputation symbolicMode, const SymbolContext& symbolContext);
+
   /* User variables are fetched from the Context and replaced according to the
   SymbolicComputation strategy */
   static bool DeepReplaceUserNamed(Tree* e,

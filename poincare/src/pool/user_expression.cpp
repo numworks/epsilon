@@ -273,20 +273,8 @@ UserExpression UserExpression::equivalentCartesianEquation() const {
 ComplexFormat UserExpression::preferredComplexFormat(
     ComplexFormat userComplexFormat, const SymbolContext& symbolContext,
     SymbolicComputation symbolicMode) const {
-  ProjectionContext projectionContext = {
-      .m_complexFormat = userComplexFormat,
-      .m_symbolic = symbolicMode,
-      .m_context = symbolContext,
-  };
-  Internal::Projection::UpdateComplexFormatWithExpressionInput(
-      tree(), projectionContext);
-  return projectionContext.m_complexFormat;
-}
-
-bool UserExpression::updateProjectionContextWithPreferedComplexFormat(
-    ProjectionContext& context) const {
-  return Internal::Projection::UpdateComplexFormatWithExpressionInput(tree(),
-                                                                      context);
+  return Internal::Projection::PreferredComplexFormat(
+      tree(), userComplexFormat, symbolicMode, symbolContext);
 }
 
 template <typename T>

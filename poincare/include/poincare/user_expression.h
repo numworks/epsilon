@@ -85,12 +85,11 @@ class UserExpression : public Expression {
       SymbolicComputation symbolic =
           SymbolicComputation::ReplaceDefinedSymbols) const;
 
+  /* Change the user complex format from Real to Cartesian if the expression
+   * contains i, Re, Im, Arg or Conj. */
   ComplexFormat preferredComplexFormat(ComplexFormat userComplexFormat,
                                        const SymbolContext& symbolContext,
                                        SymbolicComputation symbolicMode) const;
-
-  bool updateProjectionContextWithPreferedComplexFormat(
-      ProjectionContext& projContext) const;
 
   /* UserExpression to UserExpression helpers */
 

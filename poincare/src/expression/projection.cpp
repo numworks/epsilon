@@ -149,20 +149,18 @@ bool hasComplexNodes(const Tree* e, SymbolicComputation symbolicMode,
   return false;
 }
 
-bool Projection::UpdateComplexFormatWithExpressionInput(
-    const Tree* e, ProjectionContext& projectionContext) {
+ComplexFormat Projection::PreferredComplexFormat(
+    const Tree* e, ComplexFormat userComplexFormat,
+    SymbolicComputation symbolicMode, const SymbolContext& symbolContext) {
   assert(e);
 #if POINCARE_COMPLEX
-  if (projectionContext.m_complexFormat == ComplexFormat::Real &&
-      !Symbol::InvolvesCircularity(e, projectionContext.m_context) &&
-      hasComplexNodes(e, projectionContext.m_symbolic,
-                      projectionContext.m_context)) {
-    projectionContext.m_complexFormat =
-        Preferences::k_defaultComplexFormatIfNotReal;
-    return true;
+  if (userComplexFormat == ComplexFormat::Real &&
+      !Symbol::InvolvesCircularity(e, symbolContext) &&
+      hasComplexNodes(e, symbolicMode, symbolContext)) {
+    return Preferences::k_defaultComplexFormatIfNotReal;
   }
 #endif
-  return false;
+  return userComplexFormat;
 }
 
 struct ShallowSystemProjectArgs {

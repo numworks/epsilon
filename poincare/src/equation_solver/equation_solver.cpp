@@ -155,9 +155,12 @@ static PreprocessingResult PreprocessEquationList(
 
   /* Step 2. Update complex format from equationList
    * NOTE: This must be done after deciding the symbolic computation mode */
+#if POINCARE_COMPLEX
+  projectionContext->m_complexFormat = Projection::PreferredComplexFormat(
+      equationList, projectionContext->m_complexFormat,
+      projectionContext->m_symbolic, projectionContext->m_context);
+#endif
 
-  Projection::UpdateComplexFormatWithExpressionInput(equationList,
-                                                     *projectionContext);
   equationMetadata.complexFormat = projectionContext->m_complexFormat;
 
   // Step 3. Clone and simplify the equations

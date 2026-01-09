@@ -861,11 +861,14 @@ QUIZ_CASE(pcj_sign_set) {
 
 /* Use Real complex format by default, and Cartesian complex format if input
  * contains Complex elements (i, re, ...).
- * See UpdateComplexFormatWithExpressionInput. */
+ * See PreferredComplexFormat. */
 void assert_projected_is_real_or_not(const char* input, bool isReal = true) {
   Tree* e = parse(input);
-  ProjectionContext context;
-  Projection::UpdateComplexFormatWithExpressionInput(e, context);
+  ProjectionContext context{
+      .m_complexFormat = Projection::PreferredComplexFormat(
+          e, ComplexFormat::Real,
+          SymbolicComputation::ReplaceAllSymbolsWithUndefined,
+          k_emptySymbolContext)};
   Simplification::ToSystem(e, context);
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(properties.isReal() == isReal, input);

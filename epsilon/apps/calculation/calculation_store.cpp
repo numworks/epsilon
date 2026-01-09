@@ -164,6 +164,9 @@ static bool compute(Poincare::UserExpression inputExpression,
     symbolicComputation = storeElements.symbolicComputation;
     expressionToReduce = storeElements.expressionToReduce;
   }
+  complexFormat = inputExpression.preferredComplexFormat(
+      complexFormat, GlobalContextAccessor::Context(), symbolicComputation);
+
   ProjectionContext projContext = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
@@ -171,10 +174,6 @@ static bool compute(Poincare::UserExpression inputExpression,
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_symbolic = symbolicComputation,
       .m_context = GlobalContextAccessor::Context()};
-  // Update complexFormat with input expression
-  expressionToReduce.updateProjectionContextWithPreferedComplexFormat(
-      projContext);
-  complexFormat = projContext.m_complexFormat;
 
   bool reductionSuccess = expressionToReduce.cloneAndSimplifyAndApproximate(
       &exactOutputExpression, &approximateOutputExpression, projContext);

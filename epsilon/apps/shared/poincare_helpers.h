@@ -60,15 +60,14 @@ inline size_t ConvertFloatToTextWithDisplayMode(
 inline Poincare::ProjectionContext ProjectionContextForPreferences(
     const Poincare::UserExpression e,
     const Poincare::SymbolContext& symbolContext) {
-  Poincare::ProjectionContext projectionContext = {
-      .m_complexFormat =
+  return Poincare::ProjectionContext{
+      .m_complexFormat = e.preferredComplexFormat(
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+          symbolContext, Poincare::SymbolicComputation::ReplaceDefinedSymbols),
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .m_unitFormat =
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_context = symbolContext};
-  e.updateProjectionContextWithPreferedComplexFormat(projectionContext);
-  return projectionContext;
 }
 
 // Approximate a real scalar expression. Contexts are not handled.
@@ -88,16 +87,17 @@ inline Poincare::ProjectionContext ProjectionContextForParameters(
     bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation) {
   Poincare::ProjectionContext projectionContext = {
-      .m_complexFormat = complexFormat,
+      .m_complexFormat =
+          updateComplexFormatWithExpression
+              ? e.preferredComplexFormat(complexFormat, symbolContext,
+                                         symbolicComputation)
+              : complexFormat,
       .m_angleUnit = angleUnit,
       .m_reductionTarget = target,
       .m_unitFormat =
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_symbolic = symbolicComputation,
       .m_context = symbolContext};
-  if (updateComplexFormatWithExpression) {
-    e.updateProjectionContextWithPreferedComplexFormat(projectionContext);
-  }
   return projectionContext;
 }
 

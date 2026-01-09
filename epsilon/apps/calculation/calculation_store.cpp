@@ -133,12 +133,13 @@ static StorePreprocessResult preprocessStore(
 }
 
 struct CalculationResult {
+  ComplexFormat complexFormat;
   OutputExpressions outputs = {};
   bool hasReductionFailure = false;
 };
 
 static CalculationResult compute(Poincare::UserExpression inputExpression,
-                                 Poincare::ComplexFormat& complexFormat) {
+                                 Poincare::ComplexFormat userComplexFormat) {
   assert(!inputExpression.isUninitialized());
 
   /* When CAS is not activated, all symbols should be replaced (unknown symbols
@@ -147,6 +148,11 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
       CAS::Enabled() ? SymbolicComputation::ReplaceDefinedSymbols
                      : SymbolicComputation::ReplaceAllSymbols;
   UserExpression expressionToReduce = inputExpression;
+
+  Poincare::ComplexFormat complexFormat =
+      inputExpression.preferredComplexFormat(userComplexFormat,
+                                             GlobalContextAccessor::Context(),
+                                             symbolicComputation);
 
   bool isStore = inputExpression.isStore();
   if (isStore) {
@@ -172,8 +178,6 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
     symbolicComputation = storeElements.symbolicComputation;
     expressionToReduce = storeElements.expressionToReduce;
   }
-  complexFormat = inputExpression.preferredComplexFormat(
-      complexFormat, GlobalContextAccessor::Context(), symbolicComputation);
 
   ProjectionContext projContext = {
       .m_complexFormat = complexFormat,
@@ -192,13 +196,14 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
     outputs.exact =
         StoreHelper::SetExpressionToStore(inputExpression, outputs.exact);
   }
-  return CalculationResult{.outputs = outputs,
+  return CalculationResult{.complexFormat = complexFormat,
+                           .outputs = outputs,
                            .hasReductionFailure = reductionFailure};
 }
 
 static CalculationResult computeInterruptible(
     Poincare::UserExpression inputExpression,
-    Poincare::ComplexFormat& complexFormat) {
+    Poincare::ComplexFormat userComplexFormat) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
    * simplification, we could still try to display the approximate result? When
    * interrupted during approximation, we could at least display the exact
@@ -209,12 +214,13 @@ static CalculationResult computeInterruptible(
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
-    result = compute(inputExpression, complexFormat);
+    result = compute(inputExpression, userComplexFormat);
   } else {
     GlobalContextAccessor::SequenceStore().tidyDownstreamPoolFrom(
         checkpoint.endOfPoolBeforeCheckpoint());
     // If the output computation is interrupted, return undef
-    result = CalculationResult{OutputExpressions{UserExpression::Undefined(),
+    result = CalculationResult{userComplexFormat,
+                               OutputExpressions{UserExpression::Undefined(),
                                                  UserExpression::Undefined()},
                                true};
   }
@@ -315,18 +321,16 @@ Poincare::UserExpression CalculationStore::parseInput(
 
 CalculationStore::CalculationElements CalculationStore::computeAndProcess(
     Poincare::UserExpression inputExpression) {
-  Poincare::ComplexFormat complexFormat =
-      GlobalPreferences::SharedGlobalPreferences()->complexFormat();
-
-  CalculationResult calculationResult =
-      computeInterruptible(inputExpression, complexFormat);
+  CalculationResult calculationResult = computeInterruptible(
+      inputExpression,
+      GlobalPreferences::SharedGlobalPreferences()->complexFormat());
 
   postProcessOutputs(calculationResult.outputs, inputExpression,
                      ExamModeManager::ExamMode().forbidUnits());
 
   return CalculationElements{inputExpression, calculationResult.outputs,
                              calculationResult.hasReductionFailure,
-                             complexFormat};
+                             calculationResult.complexFormat};
 }
 
 OMG::ExpiringPointer<Calculation> CalculationStore::push(

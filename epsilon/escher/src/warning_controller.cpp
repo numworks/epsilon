@@ -57,7 +57,8 @@ bool WarningController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   App::app()->modalViewController()->dismissModal();
-  return true;
+  // On simulator, the Home event is handled by parents too.
+  return event != Ion::Events::Home;
 }
 
 }  // namespace Escher

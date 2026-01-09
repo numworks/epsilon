@@ -85,9 +85,9 @@ class UserExpression : public Expression {
       SymbolicComputation symbolic =
           SymbolicComputation::ReplaceDefinedSymbols) const;
 
-  ComplexFormat preferredComplexFormat(
-      ComplexFormat complexFormat, const SymbolContext& symbolContext,
-      SymbolicComputation replaceSymbols) const;
+  ComplexFormat preferredComplexFormat(ComplexFormat userComplexFormat,
+                                       const SymbolContext& symbolContext,
+                                       SymbolicComputation symbolicMode) const;
 
   bool updateProjectionContextWithPreferedComplexFormat(
       ProjectionContext& projContext) const;

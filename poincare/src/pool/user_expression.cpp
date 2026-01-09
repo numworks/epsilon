@@ -271,11 +271,11 @@ UserExpression UserExpression::equivalentCartesianEquation() const {
 }
 
 ComplexFormat UserExpression::preferredComplexFormat(
-    ComplexFormat complexFormat, const SymbolContext& symbolContext,
-    SymbolicComputation replaceSymbols) const {
+    ComplexFormat userComplexFormat, const SymbolContext& symbolContext,
+    SymbolicComputation symbolicMode) const {
   ProjectionContext projectionContext = {
-      .m_complexFormat = complexFormat,
-      .m_symbolic = replaceSymbols,
+      .m_complexFormat = userComplexFormat,
+      .m_symbolic = symbolicMode,
       .m_context = symbolContext,
   };
   Internal::Projection::UpdateComplexFormatWithExpressionInput(

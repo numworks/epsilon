@@ -30,11 +30,15 @@ void FunctionListController::computeAdditionalResults(
           input, k_symbolName, &abscissa);
 
   PreparedFunction simplifiedExpression =
-      PoincareHelpers::CloneAndReduce(
-          inputClone, App::app()->localContext(), complexFormat(), angleUnit(),
-          false, ReductionTarget::User,
-          SymbolicComputation::ReplaceDefinedSymbols)
+      inputClone
+          .cloneAndReduce(ProjectionContext{
+              .m_complexFormat = complexFormat(),
+              .m_angleUnit = angleUnit(),
+              .m_reductionTarget = ReductionTarget::User,
+              .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+              .m_context = App::app()->localContext()})
           .getPreparedFunction(k_symbolName, true);
+
   assert(!simplifiedExpression.isUninitialized() &&
          !simplifiedExpression.isFailedSimplification());
 

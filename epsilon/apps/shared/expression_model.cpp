@@ -108,12 +108,13 @@ SystemExpression ExpressionModel::expressionReduced(
       /* 'Simplify' routine might need to call expressionReduced on the very
        * same function. So we need to keep a valid m_expression while executing
        * 'Simplify'. Thus, we use a temporary expression. */
-      m_expression = PoincareHelpers::CloneAndReduce(
-          userExpression, GlobalContextAccessor::Context(),
-          complexFormat(record),
-          GlobalPreferences::SharedGlobalPreferences()->angleUnit(), false,
-          Poincare::ReductionTarget::SystemForApproximation,
-          Poincare::SymbolicComputation::ReplaceDefinedSymbols);
+      m_expression = userExpression.cloneAndReduce(ProjectionContext{
+          .m_complexFormat = complexFormat(record),
+          .m_angleUnit =
+              GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+          .m_reductionTarget = ReductionTarget::SystemForApproximation,
+          .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+          .m_context = GlobalContextAccessor::Context()});
     }
   }
   return m_expression;

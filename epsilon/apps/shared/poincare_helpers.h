@@ -79,27 +79,6 @@ inline FloatType ApproximateToRealScalar(Poincare::UserExpression e) {
       GlobalPreferences::SharedGlobalPreferences()->complexFormat());
 }
 
-// ===== Reduction =====
-
-inline Poincare::SystemExpression CloneAndReduce(
-    Poincare::UserExpression e, const Poincare::SymbolContext& symbolContext,
-    Poincare::ComplexFormat complexFormat, Poincare::AngleUnit angleUnit,
-    bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
-    Poincare::SymbolicComputation symbolicComputation) {
-  return e.cloneAndReduce(Poincare::ProjectionContext{
-      .m_complexFormat =
-          updateComplexFormatWithExpression
-              ? e.preferredComplexFormat(complexFormat, symbolContext,
-                                         symbolicComputation)
-              : complexFormat,
-      .m_angleUnit = angleUnit,
-      .m_reductionTarget = target,
-      .m_unitFormat =
-          GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-      .m_symbolic = symbolicComputation,
-      .m_context = symbolContext});
-}
-
 // ===== Misc =====
 
 // Return the nearest number from t's representation with given precision.

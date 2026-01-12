@@ -81,12 +81,35 @@ inline FloatType ApproximateToRealScalar(Poincare::UserExpression e) {
 
 // ===== Reduction =====
 
-inline Poincare::ProjectionContext ProjectionContextForParameters(
+inline void CloneAndSimplify(
+    Poincare::UserExpression* e, const Poincare::SymbolContext& symbolContext,
+    Poincare::ComplexFormat complexFormat, Poincare::AngleUnit angleUnit,
+    bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
+    Poincare::SymbolicComputation symbolicComputation, bool* reductionFailure) {
+  assert(reductionFailure);
+  *e = e->cloneAndSimplify(
+      Poincare::ProjectionContext{
+          .m_complexFormat =
+              updateComplexFormatWithExpression
+                  ? e->preferredComplexFormat(complexFormat, symbolContext,
+                                              symbolicComputation)
+                  : complexFormat,
+          .m_angleUnit = angleUnit,
+          .m_reductionTarget = target,
+          .m_unitFormat =
+              GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+          .m_symbolic = symbolicComputation,
+          .m_context = symbolContext},
+      reductionFailure);
+  assert(!e->isUninitialized());
+}
+
+inline Poincare::SystemExpression CloneAndReduce(
     Poincare::UserExpression e, const Poincare::SymbolContext& symbolContext,
     Poincare::ComplexFormat complexFormat, Poincare::AngleUnit angleUnit,
     bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation) {
-  Poincare::ProjectionContext projectionContext = {
+  return e.cloneAndReduce(Poincare::ProjectionContext{
       .m_complexFormat =
           updateComplexFormatWithExpression
               ? e.preferredComplexFormat(complexFormat, symbolContext,
@@ -97,32 +120,7 @@ inline Poincare::ProjectionContext ProjectionContextForParameters(
       .m_unitFormat =
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_symbolic = symbolicComputation,
-      .m_context = symbolContext};
-  return projectionContext;
-}
-
-inline void CloneAndSimplify(
-    Poincare::UserExpression* e, const Poincare::SymbolContext& symbolContext,
-    Poincare::ComplexFormat complexFormat, Poincare::AngleUnit angleUnit,
-    bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
-    Poincare::SymbolicComputation symbolicComputation, bool* reductionFailure) {
-  assert(reductionFailure);
-  *e = e->cloneAndSimplify(
-      ProjectionContextForParameters(
-          *e, symbolContext, complexFormat, angleUnit,
-          updateComplexFormatWithExpression, target, symbolicComputation),
-      reductionFailure);
-  assert(!e->isUninitialized());
-}
-
-inline Poincare::SystemExpression CloneAndReduce(
-    Poincare::UserExpression e, const Poincare::SymbolContext& symbolContext,
-    Poincare::ComplexFormat complexFormat, Poincare::AngleUnit angleUnit,
-    bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
-    Poincare::SymbolicComputation symbolicComputation) {
-  return e.cloneAndReduce(ProjectionContextForParameters(
-      e, symbolContext, complexFormat, angleUnit,
-      updateComplexFormatWithExpression, target, symbolicComputation));
+      .m_context = symbolContext});
 }
 
 // ===== Misc =====

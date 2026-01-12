@@ -403,6 +403,12 @@ void TreeStackCursor::insertText(const char* text,
   while (codePoint != UCodePointNull) {
     assert(!codePoint.isCombining());
     CodePoint nextCodePoint = decoder.nextCodePoint();
+    if (codePoint == '\n') {
+      /* Line breaks are allowed in external texts for python. Ignore them in
+       * math fields. */
+      codePoint = nextCodePoint;
+      continue;
+    }
     if (codePoint == UCodePointEmpty) {
       codePoint = nextCodePoint;
       if (setCursorToFirstEmptyCodePoint) {

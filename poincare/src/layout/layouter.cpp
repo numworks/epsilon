@@ -628,6 +628,9 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
       layoutIntegerHandler(parentRack, Rational::Numerator(expression));
       PushCodePoint(parentRack, '/');
       layoutIntegerHandler(parentRack, Rational::Denominator(expression));
+      if (!Tree::s_isInLogSerialize) {
+        assert(false);
+      }
 #else
       // Expression should have been beautified before layouting
       assert(false);
@@ -900,6 +903,9 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
         layoutFunctionCall(
             parentRack, expression,
             TypeBlock::names[static_cast<uint8_t>(*expression->block())]);
+        if (!Tree::s_isInLogSerialize) {
+          OMG_UNREACHABLE;
+        }
 #else
         OMG_UNREACHABLE;
 #endif

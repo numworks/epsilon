@@ -74,6 +74,7 @@ class Tree : public TypeBlock {
   }
   void logSerializeWithoutLineReturn() const { logSerialize(std::cout, false); }
   void logSerialize(std::ostream& stream, bool lineReturn = true) const;
+  static bool s_isInLogSerialize;
 #endif
 
   // Get the i-th value block (after the type block)

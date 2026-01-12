@@ -155,7 +155,10 @@ void Tree::logAttributes(std::ostream& stream) const {
   }
 }
 
+bool Tree::s_isInLogSerialize = false;
+
 void Tree::logSerialize(std::ostream& stream, bool lineReturn) const {
+  s_isInLogSerialize = true;
   assert(isExpression() || isRackOrLayout());
   Tree* layout = isExpression()
                      ? Layouter::LayoutExpression(
@@ -170,6 +173,7 @@ void Tree::logSerialize(std::ostream& stream, bool lineReturn) const {
   if (lineReturn) {
     stream << "\n";
   }
+  s_isInLogSerialize = false;
 }
 
 void Tree::logBlocks(std::ostream& stream, bool recursive,

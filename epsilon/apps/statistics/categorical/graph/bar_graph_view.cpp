@@ -40,7 +40,7 @@ void BarGraphView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
                         bounds().height() - k_legendHeight - k_axisHeight),
                 KDColorBlack);
   // Draw categories
-  float maxBarValue = m_store->getMaxTableValue();
+  float maxBarValue = m_store->getMaxActiveTableValue();
   for (int category = 0; category < m_store->currentDimension().row;
        ++category) {
     if (m_store->isCategoryActive(category)) {

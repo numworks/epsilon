@@ -128,12 +128,13 @@ void Store::setValue(float data, int col, int row) {
   recomputeSum(col);
 }
 
-float Store::getMaxTableValue() const {
+float Store::getMaxActiveTableValue() const {
   float maxValue = 0.0f;
   for (int col = 0; col < m_numberOfColumns; ++col) {
     for (int row = 0; row < m_numberOfRows; ++row) {
       float value = m_table->m_data[col][row];
-      if (std::isfinite(value) && value > maxValue) {
+      if (isGroupActive(col) && std::isfinite(value) && value > maxValue) {
+        assert(isCategoryActive(row));
         maxValue = value;
       }
     }

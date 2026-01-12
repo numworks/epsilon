@@ -81,7 +81,7 @@ class Store {
   }
   void setValue(float data, int col, int row);
   bool authorizedValue(float data) { return data >= 0; }
-  float getMaxTableValue() const;
+  float getMaxActiveTableValue() const;
 
   // Labels
   void getGroupName(int col, char* buffer, int bufferSize) const;

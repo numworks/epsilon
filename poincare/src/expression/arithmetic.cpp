@@ -267,7 +267,21 @@ bool Arithmetic::ReduceFactorial(Tree* e) {
   if (childIsRationalPositiveInteger == OMG::Troolean::Unknown) {
     return false;
   }
+#if POINCARE_SUM_AND_PRODUCT
   return ExpandFactorial(e);
+#else
+  /* As we don't want to leak a Product in scandium, we keep the result of
+   * Expand only if it a rational. */
+  Tree* copy = e->cloneTree();
+  ExpandFactorial(copy);
+  if (copy->isRational()) {
+    e->moveTreeOverTree(copy);
+    return true;
+  } else {
+    SharedTreeStack->dropBlocksFrom(copy);
+    return false;
+  }
+#endif
 }
 
 bool Arithmetic::ExpandFactorial(Tree* e) {

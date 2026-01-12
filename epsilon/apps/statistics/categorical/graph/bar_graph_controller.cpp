@@ -44,6 +44,10 @@ bool BarGraphController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Up || event == Ion::Events::Back) {
+    if (event == Ion::Events::Up && m_view.isScrolledDown()) {
+      m_view.scrollVertical(false);
+      return true;
+    }
     m_view.toggleSelection(false);
     if (event == Ion::Events::Up) {
       header()->setSelectedButton(0);
@@ -54,6 +58,10 @@ bool BarGraphController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     m_view.selectNextActiveValue(event == Ion::Events::Right ? 1 : -1);
+    return true;
+  }
+  if (event == Ion::Events::Down && !m_view.isScrolledDown()) {
+    m_view.scrollVertical(true);
     return true;
   }
   return false;

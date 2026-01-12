@@ -41,11 +41,18 @@ class BarGraphController : public Escher::ViewController,
    public:
     ContentView(Store* store);
 
+    void scrollVertical(bool down) {
+      m_barGraphView.scrollToContentPoint(KDPoint(
+          m_barGraphView.contentOffset().x(), down ? bounds().height() : 0));
+    }
+    bool isScrolledDown() const {
+      return m_barGraphView.contentOffset().y() > 0;
+    }
     void toggleSelection(bool isSelected) {
       m_isBarGraphSelected = isSelected;
       m_barGraphView.toggleSelection(isSelected);
       m_bannerView.toggleSelection(isSelected);
-    };
+    }
     bool isBarGraphSelected() const { return m_isBarGraphSelected; }
     /* Select the next active category and group in direction, or return with
      * the current selection if there is none. */

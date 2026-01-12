@@ -40,11 +40,19 @@ void IntegerListController::computeAdditionalResults(
   }
   // Computing factorExpression
   UserExpression factor = UserExpression::Create(KFactor(KA), {.KA = integer});
+  assert(complexFormat() == factor.preferredComplexFormat(
+                                complexFormat(), App::app()->localContext(),
+                                SymbolicComputation::ReplaceDefinedSymbols));
   bool reductionFailure = false;
-  PoincareHelpers::CloneAndSimplify(
-      &factor, App::app()->localContext(), complexFormat(), angleUnit(), true,
-      Poincare::ReductionTarget::User,
-      SymbolicComputation::ReplaceDefinedSymbols, &reductionFailure);
+  factor = factor.cloneAndSimplify(
+      ProjectionContext{
+          .m_complexFormat = complexFormat(),
+          .m_angleUnit = angleUnit(),
+          .m_reductionTarget = Poincare::ReductionTarget::User,
+          .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+          .m_context = App::app()->localContext(),
+      },
+      &reductionFailure);
   if (!reductionFailure && !factor.isUndefined() &&
       !factor.tree()->treeIsIdenticalTo(1_e) &&
       !factor.tree()->treeIsIdenticalTo(0_e)) {

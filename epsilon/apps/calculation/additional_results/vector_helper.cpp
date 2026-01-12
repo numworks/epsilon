@@ -23,10 +23,21 @@ UserExpression BuildVectorNorm(
 
   UserExpression norm = UserExpression::Create(KNorm(KA), {.KA = exactOutput});
   bool reductionFailure = false;
-  PoincareHelpers::CloneAndSimplify(
-      &norm, symbolContext, calculationPreferences.complexFormat,
-      calculationPreferences.angleUnit, true, Poincare::ReductionTarget::User,
-      VectorListController::k_symbolicComputation, &reductionFailure);
+
+  assert(calculationPreferences.complexFormat ==
+         norm.preferredComplexFormat(
+             calculationPreferences.complexFormat, symbolContext,
+             VectorListController::k_symbolicComputation));
+  norm = norm.cloneAndSimplify(
+      ProjectionContext{
+          .m_complexFormat = calculationPreferences.complexFormat,
+          .m_angleUnit = calculationPreferences.angleUnit,
+          .m_reductionTarget = Poincare::ReductionTarget::User,
+          .m_symbolic = VectorListController::k_symbolicComputation,
+          .m_context = symbolContext,
+      },
+      &reductionFailure);
+
   return reductionFailure || norm.isUninitialized() || norm.isUndefined()
              ? UserExpression()
              : norm;

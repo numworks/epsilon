@@ -388,6 +388,11 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("cos(acos(75))", "75", k_degreeCartesianCtx);
   simplifies_to("acos(cos(12))", "12", k_degreeCartesianCtx);
   simplifies_to("acos(cos(720/7))", "720/7", k_degreeCartesianCtx);
+  simplifies_to(
+      "acos(√(e^(√(√(√(i*4))))))",
+      "dep(arccos(e^((cos(45/4)×root(2,4)+arg(e^(sin(45/4)×root(2,4)×i))×i)/"
+      "2)),{cos((180×π)/(16×π))×root(2,4),sin((180×π)/(16×π))×i})",
+      k_degreeCartesianCtx);
   // -- asin
   simplifies_to("asin(-1/2)", "-π/6", k_cartesianCtx);
   simplifies_to("asin(-1.2)", "-arcsin(6/5)", k_cartesianCtx);

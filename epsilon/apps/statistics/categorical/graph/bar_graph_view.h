@@ -60,9 +60,11 @@ class BarGraphView : public Escher::ScrollView,
     KDSize minimalSizeForOptimalDisplay() const override;
 
    private:
-    constexpr static KDCoordinate k_totalHeight = 137;
+    /* TODO: the total height should depend on the subview's height so that we
+     * take as much space as we can get. */
+    constexpr static KDCoordinate k_totalHeight = 131;
     constexpr static KDCoordinate k_verticalMargin = 10;
-    constexpr static KDCoordinate k_maxBarHeight = 100;
+    constexpr static KDCoordinate k_maxBarHeight = 94;
     constexpr static KDCoordinate k_axisHeight = 2;
     constexpr static KDCoordinate k_legendHeight = 25;
     static_assert(k_totalHeight == k_legendHeight + k_axisHeight +

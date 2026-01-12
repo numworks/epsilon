@@ -107,13 +107,22 @@ bool DeepBeautifyAngleFunctions(Tree* e,
   if (changed) {
     SystematicReduction::DeepReduce(e);
     if (projectionContext.m_advanceReduce && angleUnit != AngleUnit::Radian) {
-      /* Advanced reduction may create other trigonometric functions. Beautify
-       * them too, without re-applying advanced reduction to avoid infinite
-       * loops. */
+      /* Some ShallowBeautifyAngleFunctions steps add potential multiplication
+       * expansions that advanced reduction can apply if worth it. It is
+       * therefore re-applied. At this point, only the complex format and
+       * trigonometric nodes replacement have been applied, the advanced
+       * reduction can handle that thanks to AngleUnitContext nodes. See TODO in
+       * ShallowBeautifyAngleFunctions for improvement suggestions.
+       */
       AdvancedReduction::Reduce(e) &&
+          /* This Advanced reduction may create other trigonometric functions.
+           * If anything changed, try to beautify them again and reapply
+           * systematic reduction if needed. Do not call advanced reduction to
+           * avoid infinite loops. */
           Tree::ApplyShallowTopDown(e, ShallowBeautifyAngleFunctions,
                                     &angleUnit) &&
           SystematicReduction::DeepReduce(e);
+      // No further system trigonometric nodes should remain.
       assert(!Tree::ApplyShallowTopDown(e, ShallowBeautifyAngleFunctions,
                                         &angleUnit));
     }

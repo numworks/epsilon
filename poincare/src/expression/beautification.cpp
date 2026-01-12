@@ -107,7 +107,15 @@ bool DeepBeautifyAngleFunctions(Tree* e,
   if (changed) {
     SystematicReduction::DeepReduce(e);
     if (projectionContext.m_advanceReduce && angleUnit != AngleUnit::Radian) {
-      AdvancedReduction::Reduce(e);
+      /* Advanced reduction may create other trigonometric functions. Beautify
+       * them too, without re-applying advanced reduction to avoid infinite
+       * loops. */
+      AdvancedReduction::Reduce(e) &&
+          Tree::ApplyShallowTopDown(e, ShallowBeautifyAngleFunctions,
+                                    &angleUnit) &&
+          SystematicReduction::DeepReduce(e);
+      assert(!Tree::ApplyShallowTopDown(e, ShallowBeautifyAngleFunctions,
+                                        &angleUnit));
     }
     Dependency::DeepRemoveUselessDependencies(e);
   }

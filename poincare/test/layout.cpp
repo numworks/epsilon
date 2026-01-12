@@ -1,6 +1,7 @@
 #include <ion/display.h>
 #include <omg/unicode_helper.h>
 #include <poincare/context_with_parent.h>
+#include <poincare/helpers/layout.h>
 #include <poincare/layout.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/units/k_units.h>
@@ -651,4 +652,19 @@ QUIZ_CASE(pcj_layout_comparison) {
       KRackL(KProductL("a"_l, KRackL(), KRackL(KSqrtL("a"_l)), "b"_l));
   quiz_assert(e11.isIdenticalTo(e12));
   quiz_assert(!e11.isIdenticalTo(e13));
+}
+
+QUIZ_CASE(pcj_layout_turn_e_to_ten_power) {
+  {
+    Tree* l = "3ᴇ-4=0"_l->cloneTree();
+    Poincare::LayoutHelpers::TurnEToTenPowerLayout(l);
+    quiz_assert(
+        l->treeIsIdenticalTo("3×10"_l ^ KSuperscriptL("-4"_l) ^ "=0"_l));
+  }
+  {
+    Tree* l = "3-1ᴇ-456"_l->cloneTree();
+    Poincare::LayoutHelpers::TurnEToTenPowerLayout(l);
+    quiz_assert(l->treeIsIdenticalTo(
+        "3-"_l ^ KParenthesesL("10"_l ^ KSuperscriptL("-456"_l))));
+  }
 }

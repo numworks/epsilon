@@ -3,6 +3,7 @@
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/grid.h>
 #include <poincare/src/layout/k_tree.h>
+#include <poincare/src/layout/parsing/tokenizer.h>
 #include <poincare/src/layout/render_metrics.h>
 #include <poincare/src/memory/n_ary.h>
 
@@ -82,10 +83,11 @@ KDSize Point2DSizeGivenChildSize(KDSize childSize) {
 }
 
 bool isOperator(const Tree* l) {
-  return CodePointLayout::IsCodePoint(l, '-') ||
-         CodePointLayout::IsCodePoint(l, '+') ||
-         CodePointLayout::IsCodePoint(l, UCodePointMiddleDot) ||
-         CodePointLayout::IsCodePoint(l, UCodePointMultiplicationSign);
+  if (!l->isCodePointLayout()) {
+    return true;
+  }
+  class CodePoint c = CodePointLayout::GetCodePoint(l);
+  return !Tokenizer::IsIdentifierMaterial(c);
 }
 
 struct TurnChildEToTenPowerLayoutOutput {

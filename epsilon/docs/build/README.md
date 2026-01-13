@@ -64,7 +64,7 @@ Plug your calculator to the `The calculator is connected` menu.
 
 Build and flash the custom userland with the command
 ```shell
-make -j8 PLATFORM=n0120 custom_userland.flash
+make -j8 -C epsilon PLATFORM=n0120 custom_userland.flash
 ```
 
 The software should jump on your custom firmware with an `UNOFFICIAL SOFTWARE` warning:
@@ -94,21 +94,21 @@ The `custom_userland.flash` target detects the model and inactive slot of connec
 For example, with a `n0120` model, and an inactive slot B.
 - Build the corresponding target:
 ```shell
-make -j8 PLATFORM=n0120 epsilon_userland.B.dfu
+make -j8 PLATFORM=n0120 userland.B.dfu
 ```
 - Flash the built firmware and leave:
 ```shell
-python3 build/device/dfu.py -s 0x90410000:leave -D output/release/n0120/epsilon_userland.B.dfu
+python3 build/device/dfu.py -s 0x90410000:leave -D output/release/n0120/userland.B.dfu
 ```
 
 These two steps can be merged with the single target:
 ```shell
-make -j8 PLATFORM=n0120 DFULEAVE=0x90410000 epsilon_userland.B.flash
+make -j8 PLATFORM=n0120 DFULEAVE=0x90410000 userland.B.flash
 ```
 
 With an inactive slot A, the command would be:
 ```shell
-make -j8 PLATFORM=n0120 DFULEAVE=0x90010000 epsilon_userland.A.flash
+make -j8 PLATFORM=n0120 DFULEAVE=0x90010000 userland.A.flash
 ```
 
 </details>

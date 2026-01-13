@@ -128,8 +128,8 @@ inline double ToFloat(double value) { return value; }
 /* When an ExpressionOrFloat contains the expression variant, converting this
  * expression to a float is an approximation. The Poincare approximation API
  * requires an angle unit and a complex format in order to approximate the
- * expression. In the Epsilon apps symbolContext, the approximation should use
- * the user settings for angle unit and complex format. */
+ * expression. In the Epsilon apps context, the approximation should use the
+ * user settings for angle unit and complex format. */
 
 template <typename FloatType = float>
 FloatType ToFloat(Poincare::ExpressionOrFloat value) {

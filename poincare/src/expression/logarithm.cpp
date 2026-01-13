@@ -403,6 +403,13 @@ bool Logarithm::ExpandLn(Tree* e) {
       e, KLn(KExp(KA)),
       KAdd(KRe(KA), KMult(i_e, KArg(KExp(KMult(i_e, KIm(KA)))))));
 #else
+  if (!GetComplexProperties(e).isReal()) {
+    /* TODO: the expression should be real since we have no complex but the
+     * advanced reduction may be called during the beautification with less
+     * context. Get rid of this condition if we manage to avoid this second
+     * reduction. */
+    return false;
+  }
   /* In scandium, apply the rules only if A and B are known to be positive
    * instead of pushing the correction term. */
   PatternMatching::Context ctx;

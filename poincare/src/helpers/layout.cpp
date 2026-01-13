@@ -83,11 +83,11 @@ KDSize Point2DSizeGivenChildSize(KDSize childSize) {
 }
 
 bool isOperator(const Tree* l) {
-  if (!l->isCodePointLayout()) {
-    return true;
-  }
-  class CodePoint c = CodePointLayout::GetCodePoint(l);
-  return !Tokenizer::IsIdentifierMaterial(c);
+  return CodePointLayout::IsCodePoint(l, '=') ||
+         CodePointLayout::IsCodePoint(l, '-') ||
+         CodePointLayout::IsCodePoint(l, '+') ||
+         CodePointLayout::IsCodePoint(l, UCodePointMiddleDot) ||
+         CodePointLayout::IsCodePoint(l, UCodePointMultiplicationSign);
 }
 
 struct TurnChildEToTenPowerLayoutOutput {

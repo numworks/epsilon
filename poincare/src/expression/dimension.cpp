@@ -36,6 +36,7 @@ class LazyArray {
     }
   }
   T operator[](size_t index) {
+    assert(index < m_root->numberOfChildren());
     if (index == 0) {
       return m_element0;
     }

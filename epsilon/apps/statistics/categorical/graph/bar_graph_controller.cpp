@@ -94,8 +94,8 @@ void BarGraphController::ContentView::selectNextActiveValue(int direction) {
       } else {
         /* No active group and category in that direction, stay on the current
          * one */
-        nextCategory = currentCategory;
-        nextGroup = currentGroup;
+        // nextCategory = currentCategory;
+        // nextGroup = currentGroup;
         return;
       }
     } else {
@@ -108,8 +108,8 @@ void BarGraphController::ContentView::selectNextActiveValue(int direction) {
       } else {
         /* No active group and category in that direction, stay on the current
          * one */
-        nextCategory = currentCategory;
-        nextGroup = currentGroup;
+        // nextCategory = currentCategory;
+        // nextGroup = currentGroup;
         return;
       }
     }

@@ -335,7 +335,7 @@ typename StatisticsDataset<T>::ModeData StatisticsDataset<T>::modeData() const {
 
 template <typename T>
 T StatisticsDataset<T>::modeValueAtIndex(int index) const {
-  T result;
+  T result = NAN;
   computeMode(&m_memoizedModeData, index, &result);
   return result;
 }

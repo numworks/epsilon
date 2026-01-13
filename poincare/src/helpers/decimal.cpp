@@ -18,15 +18,13 @@ Tree* DecimalBuilderFromDouble(double value) {
       PrintFloat::k_maxNumberOfSignificantDigits,
       Preferences::PrintFloatMode::Decimal);
   assert(buffer[0] != 0);
-  Tree* layout = RackFromText(buffer);
-  assert(layout);
-  Tree* expression = Parser::Parse(layout, EmptySymbolContext{});
+  Tree* result = RackFromText(buffer);
+  assert(result);
+  result->moveTreeOverTree(Parser::Parse(result, EmptySymbolContext{}));
   // expression is only made of numbers and simple nodes, no need for contextes.
-  layout->removeTree();
-  expression = layout;
   ProjectionContext context = {};
-  Simplification::ProjectAndReduce(expression, &context);
-  return expression;
+  Simplification::ProjectAndReduce(result, &context);
+  return result;
 }
 
 };  // namespace Poincare

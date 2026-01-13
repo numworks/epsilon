@@ -116,6 +116,7 @@ bool DeepBeautifyAngleFunctions(Tree* e,
        */
       AdvancedReduction::Reduce(e) &&
           /* This Advanced reduction may create other trigonometric functions.
+           * For example, exp(B*i) = trig(B,0) + i*trig(B,1)
            * If anything changed, try to beautify them again and reapply
            * systematic reduction if needed. Do not call advanced reduction to
            * avoid infinite loops. */
@@ -163,6 +164,8 @@ bool ShallowBeautifyAngleFunctions(Tree* e, void* context) {
           KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
       /* This adds new potential multiplication expansions. An advanced
        * reduction in DeepBeautifyAngleFunctions may be needed.
+       * For example, trig(pi+180,0) -> cos(180/pi*(pi+180)) needs
+       * AdvancedReduction to get to cos(180+180^2/pi).
        * TODO: Call AdvancedReduction::Reduce in DeepBeautifyAngleFunctions only
        * if we went here. */
     }

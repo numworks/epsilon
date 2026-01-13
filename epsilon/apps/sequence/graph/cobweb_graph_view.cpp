@@ -60,10 +60,15 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   Poincare::SystemExpression initialExpression =
       sequence->firstInitialConditionExpressionReduced();
   // Replace u(n) by n: u(n) becomes the variable
+  Poincare::UserExpression sequenceParameter =
+      Poincare::SymbolHelper::SystemSymbol();
+  if (sequence->recursiveNotation() ==
+      Shared::Sequence::RecursiveNotation::Shifted) {
+    sequenceParameter = Poincare::UserExpression::Create(
+        KSub(KA, 1_e), {.KA = sequenceParameter});
+  }
   Poincare::UserExpression sequenceSymbol =
-      Poincare::SymbolHelper::BuildSequence(
-          name, Poincare::SymbolHelper::SystemSymbol());
-
+      Poincare::SymbolHelper::BuildSequence(name, sequenceParameter);
   Poincare::UserExpression function =
       sequence->expressionClone()
           .cloneAndReplaceSymbolWithExpression(initialSymbol, initialExpression)

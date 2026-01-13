@@ -18,6 +18,10 @@ namespace Shared {
 
 namespace PoincareHelpers {
 
+/* These methods are here to interface the Poincare public API with the global
+ * parameters fetched from the Epsilon app (user preferences, global context).
+ */
+
 // ===== Layout =====
 
 inline Poincare::Layout CreateLayout(

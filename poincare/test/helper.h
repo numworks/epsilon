@@ -19,6 +19,15 @@
 #include <iostream>
 #endif
 
+constexpr Poincare::ComplexFormat Real = Poincare::ComplexFormat::Real;
+constexpr Poincare::ComplexFormat Cartesian =
+    Poincare::ComplexFormat::Cartesian;
+constexpr Poincare::ComplexFormat Polar = Poincare::ComplexFormat::Polar;
+
+constexpr Poincare::AngleUnit Radian = Poincare::AngleUnit::Radian;
+constexpr Poincare::AngleUnit Degree = Poincare::AngleUnit::Degree;
+constexpr Poincare::AngleUnit Gradian = Poincare::AngleUnit::Gradian;
+
 constexpr Poincare::Preferences::PrintFloatMode DecimalMode =
     Poincare::Preferences::PrintFloatMode::Decimal;
 constexpr Poincare::Preferences::PrintFloatMode ScientificMode =
@@ -27,32 +36,23 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
     Poincare::Preferences::PrintFloatMode::Engineering;
 
 // Default context is realCtx
-constexpr Poincare::ProjectionContext k_realCtx = {
-    .m_complexFormat = Poincare::ComplexFormat::Real};
+constexpr Poincare::ProjectionContext k_realCtx = {.m_complexFormat = Real};
 
-constexpr Poincare::ProjectionContext k_cartesianCtx = {
-    .m_complexFormat = Poincare::ComplexFormat::Cartesian};
-constexpr Poincare::ProjectionContext k_polarCtx = {
-    .m_complexFormat = Poincare::ComplexFormat::Polar};
+constexpr Poincare::ProjectionContext k_cartesianCtx = {.m_complexFormat =
+                                                            Cartesian};
+constexpr Poincare::ProjectionContext k_polarCtx = {.m_complexFormat = Polar};
 
-constexpr Poincare::ProjectionContext k_degreeCtx = {
-    .m_angleUnit = Poincare::AngleUnit::Degree};
-constexpr Poincare::ProjectionContext k_gradianCtx = {
-    .m_angleUnit = Poincare::AngleUnit::Gradian};
+constexpr Poincare::ProjectionContext k_degreeCtx = {.m_angleUnit = Degree};
+constexpr Poincare::ProjectionContext k_gradianCtx = {.m_angleUnit = Gradian};
 
 constexpr Poincare::ProjectionContext k_degreeCartesianCtx = {
-    .m_complexFormat = Poincare::ComplexFormat::Cartesian,
-    .m_angleUnit = Poincare::AngleUnit::Degree};
+    .m_complexFormat = Cartesian, .m_angleUnit = Degree};
 constexpr Poincare::ProjectionContext k_gradianCartesianCtx = {
-    .m_complexFormat = Poincare::ComplexFormat::Cartesian,
-    .m_angleUnit = Poincare::AngleUnit::Gradian};
+    .m_complexFormat = Cartesian, .m_angleUnit = Gradian};
 constexpr Poincare::ProjectionContext k_degreePolarCtx = {
-    .m_complexFormat = Poincare::ComplexFormat::Polar,
-    .m_angleUnit = Poincare::AngleUnit::Degree};
+    .m_complexFormat = Polar, .m_angleUnit = Degree};
 constexpr Poincare::ProjectionContext k_gradianPolarCtx = {
-    .m_complexFormat = Poincare::ComplexFormat::Polar,
-    .m_angleUnit = Poincare::AngleUnit::Gradian};
-
+    .m_complexFormat = Polar, .m_angleUnit = Gradian};
 constexpr Poincare::ProjectionContext k_keepAllSymbolsCtx = {
     .m_symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
 };
@@ -253,7 +253,7 @@ inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
   Poincare::Internal::Tree* e = parse(function);
   Poincare::Internal::Simplification::ToSystem(e, ctx);
   Poincare::Internal::Approximation::PrepareFunctionForApproximation(
-      e, k_symbol, ctx.m_complexFormat == Poincare::ComplexFormat::Real);
+      e, k_symbol, ctx.m_complexFormat == Real);
   return e;
 }
 

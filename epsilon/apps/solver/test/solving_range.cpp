@@ -1,3 +1,4 @@
+#include <poincare/test/helper.h>
 #include <quiz.h>
 
 #include "helpers.h"

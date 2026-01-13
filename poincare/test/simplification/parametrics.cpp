@@ -394,7 +394,7 @@ QUIZ_CASE(pcj_simplification_derivative_for_approximation) {
   ProjectionContext ctxForApprox = {
       .m_reductionTarget = Poincare::ReductionTarget::SystemForApproximation};
   ProjectionContext cartesianCtxForApprox = {
-      .m_complexFormat = Poincare::ComplexFormat::Cartesian,
+      .m_complexFormat = Cartesian,
       .m_reductionTarget = Poincare::ReductionTarget::SystemForApproximation};
   projects_and_reduces_to("diff(ln(x),x,1)", "1", ctxForApprox);
   projects_and_reduces_to("diff(ln(x),x,2.2)", "5/11", ctxForApprox);

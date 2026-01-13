@@ -107,7 +107,7 @@ QUIZ_CASE(pcj_equation_solver) {
                   EquationSolver::Error::RequireApproximateSolution);
 
   // Complex format detection
-  projCtx.m_complexFormat = Poincare::ComplexFormat::Real;
+  projCtx.m_complexFormat = Real;
   PoincareTest::store("i→a", symbolStore);
   check_solutions({"x-a", "x-a+y-root(-1,3)"}, {"i", "1/2+√(3)/2×i"}, projCtx);
   check_solutions({"x-a", "x-a+y-root(-1,3)", "a-1"}, {"1", "1", "-1"},
@@ -125,7 +125,7 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"x^2*(x-1)/x"}, {"1", "1"}, projCtx);
   check_solutions({"x/x-1+x"}, {}, projCtx);
 
-  projCtx.m_complexFormat = Poincare::ComplexFormat::Cartesian;
+  projCtx.m_complexFormat = Cartesian;
   check_solutions({"x^2+1"}, {"-i", "i", "-4"}, projCtx,
                   EquationSolver::Error::NoError);
 }

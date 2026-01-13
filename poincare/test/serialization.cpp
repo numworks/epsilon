@@ -41,8 +41,7 @@ void assert_expression_or_float_serializes_to(
   char buffer[bufferSize];
   expressionOrFloat.writeText(
       buffer,
-      Poincare::ExpressionOrFloat::ApproximationParameters{
-          Poincare::AngleUnit::Radian, Poincare::ComplexFormat::Real},
+      Poincare::ExpressionOrFloat::ApproximationParameters{Radian, Real},
       numberOfSignificantDigits, printFloatMode, maxGlyphLength);
   quiz_assert_print_if_failure((strcmp(serialization, buffer) == 0),
                                serialization, serialization, buffer);

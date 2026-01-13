@@ -91,24 +91,19 @@ python3 build/device/dfu.py -l
 
 The `custom_userland.flash` target detects the model and inactive slot of connected device. It then flashes the appropriate firmware and jumps at the expected address.
 
-For example, with a `n0120` model, and an inactive slot B.
+For a `N0120` model running on slot A and with slot B inactive, the equivalent commands —to run in the epsilon folder— would be:
 - Build the corresponding target:
 ```shell
 make -j8 PLATFORM=n0120 userland.B.dfu
 ```
 - Flash the built firmware and leave:
 ```shell
-python3 build/device/dfu.py -s 0x90410000:leave -D output/release/n0120/userland.B.dfu
-```
-
-These two steps can be merged with the single target:
-```shell
-make -j8 PLATFORM=n0120 DFULEAVE=0x90410000 userland.B.flash
+python3 tools/device/dfu.py -s 0x90410000:leave -D output/release/n0120/userland.B.dfu
 ```
 
 With an inactive slot A, the command would be:
 ```shell
-make -j8 PLATFORM=n0120 DFULEAVE=0x90010000 userland.A.flash
+python3 tools/device/dfu.py -s 0x90010000:leave -D output/release/n0120/userland.A.dfu
 ```
 
 </details>

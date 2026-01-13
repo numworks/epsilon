@@ -27,7 +27,8 @@ class LazyArray {
   LazyArray(const Tree* root, const Poincare::SymbolContext& symbolContext,
             T (*getter)(const Tree* e,
                         const Poincare::SymbolContext& symbolContext))
-      : m_root(root),
+      : m_element0(),
+        m_root(root),
         m_ctx(symbolContext),
         m_getter(getter),
         m_lastAccessedIndex(0) {

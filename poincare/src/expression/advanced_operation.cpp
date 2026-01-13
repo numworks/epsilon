@@ -464,6 +464,7 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
   }
   // (A?*B)^C = A^C * B^C is currently in SystematicSimplification
   PatternMatching::Context ctx;
+#if POINCARE_COMPLEX
   // 1/(A+iB) -> (A-B*i) / (A^2+B^2)
   if (PatternMatching::Match(e, KPow(KA, -1_e), &ctx)) {
     ComplexProperties properties = GetComplexProperties(ctx.getTree(KA));
@@ -476,6 +477,7 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
       return true;
     }
   }
+#endif
 
   // (A + B + ...)^2 = (A^2 + 2*A*B + B^2 + ...): fully develop the square
   if (PatternMatching::Match(e, KPow(KA, 2_e), &ctx) &&

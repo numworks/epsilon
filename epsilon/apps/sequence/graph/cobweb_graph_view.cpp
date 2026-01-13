@@ -64,6 +64,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
       Poincare::SymbolHelper::SystemSymbol();
   if (sequence->recursiveNotation() ==
       Shared::Sequence::RecursiveNotation::Shifted) {
+    // If shifted, replace u(n-1) by n: u(n-1) becomes the variable
     sequenceParameter = Poincare::UserExpression::Create(
         KSub(KA, 1_e), {.KA = sequenceParameter});
   }

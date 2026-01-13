@@ -1316,6 +1316,7 @@ Tree* RackParser::parseFunctionParameters() {
 }
 
 void RackParser::parseMatrix(TreeRef& leftHandSide, Token::Type stoppingType) {
+#if POINCARE_MATRIX
   if (!leftHandSide.isUninitialized()) {
     // FIXME
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -1342,6 +1343,9 @@ void RackParser::parseMatrix(TreeRef& leftHandSide, Token::Type stoppingType) {
     leftHandSide = matrix;
   }
   isThereImplicitOperator();
+#else
+  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
 }
 
 Tree* RackParser::parseVector() {

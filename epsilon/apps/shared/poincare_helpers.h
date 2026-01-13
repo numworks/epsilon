@@ -12,6 +12,8 @@
 
 #include <type_traits>
 
+#include "global_store.h"
+
 namespace Shared {
 
 namespace PoincareHelpers {
@@ -55,19 +57,19 @@ inline size_t ConvertFloatToTextWithDisplayMode(
       .CharLength;
 }
 
-// ===== Approximation =====
+// ===== Simplification =====
 
 inline Poincare::ProjectionContext ProjectionContextForPreferences(
-    const Poincare::UserExpression e,
-    const Poincare::SymbolContext& symbolContext) {
+    const Poincare::UserExpression e) {
   return Poincare::ProjectionContext{
       .m_complexFormat = e.preferredComplexFormat(
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-          symbolContext, Poincare::SymbolicComputation::ReplaceDefinedSymbols),
+          GlobalContextAccessor::Context(),
+          Poincare::SymbolicComputation::ReplaceDefinedSymbols),
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .m_unitFormat =
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-      .m_context = symbolContext};
+      .m_context = GlobalContextAccessor::Context()};
 }
 
 // Approximate a real scalar expression. Contexts are not handled.

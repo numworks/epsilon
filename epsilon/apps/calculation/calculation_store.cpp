@@ -245,8 +245,7 @@ static void processStore(OutputExpressions& outputs,
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
   UserExpression valueApprox = value.cloneAndApproximate<double>(
-      PoincareHelpers::ProjectionContextForPreferences(
-          value, GlobalContextAccessor::Context()));
+      PoincareHelpers::ProjectionContextForPreferences(value));
   if (symbol.isUserSymbol() &&
       CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox,
                                           GlobalContextAccessor::Context())) {

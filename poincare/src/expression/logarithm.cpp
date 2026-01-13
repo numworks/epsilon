@@ -371,6 +371,7 @@ bool Logarithm::ExpandLn(Tree* e) {
   if (ExpandLnOnRational(e)) {
     return true;
   }
+#if POINCARE_COMPLEX
   PatternMatching::Context ctx;
   // ln(A*B?) = ln(A) + ln(B) - i*(arg(A) + arg(B) - arg(AB))
   if (PatternMatching::Match(e, KLn(KMult(KA, KB_p)), &ctx)) {
@@ -401,6 +402,34 @@ bool Logarithm::ExpandLn(Tree* e) {
   return PatternMatching::MatchReplaceReduce(
       e, KLn(KExp(KA)),
       KAdd(KRe(KA), KMult(i_e, KArg(KExp(KMult(i_e, KIm(KA)))))));
+#else
+  /* In scandium, apply the rules only if A and B are known to be positive
+   * instead of pushing the correction term. */
+  PatternMatching::Context ctx;
+  // ln(A*B?) = ln(A) + ln(B) if A and B are positive
+  if (PatternMatching::Match(e, KLn(KMult(KA, KB_p)), &ctx) &&
+      GetProperties(ctx.getTree(KA)).sign().isStrictlyPositive()) {
+    // Since KB_p can match multiple trees, we need them as a single tree.
+    TreeRef b = PatternMatching::CreateReduce(KMult(KB_p), ctx);
+    if (!GetProperties(b).sign().isStrictlyPositive()) {
+      b->removeTree();
+    } else {
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
+          KAdd(KLn(KA), KLn(KB)), {.KA = ctx.getTree(KA), .KB = b}));
+      b->removeTree();
+      return true;
+    }
+  }
+  // ln(A^B) = B*ln(A)
+  if (PatternMatching::Match(e, KLn(KPow(KA, KB)), &ctx) &&
+      GetProperties(ctx.getTree(KA)).sign().isStrictlyPositive() &&
+      GetProperties(ctx.getTree(KB)).sign().isStrictlyPositive()) {
+    e->moveTreeOverTree(
+        PatternMatching::CreateReduce(KAdd(KMult(KB, KLn(KA))), ctx));
+    return true;
+  }
+  return false;
+#endif
 }
 
 bool Logarithm::ExpandLnOnRational(Tree* e) {

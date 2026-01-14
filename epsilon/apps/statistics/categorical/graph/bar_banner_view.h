@@ -18,6 +18,9 @@ class BarBannerView : public Shared::BannerView {
   void drawRect(KDContext* ctx, KDRect rect) const override;
   void toggleSelection(bool isSelected);
 
+  constexpr static int k_precision =
+      Poincare::Preferences::LargeNumberOfSignificantDigits;
+
  private:
   constexpr static int k_numberOfSubviews = 4;
   int numberOfSubviews() const override {

@@ -208,11 +208,8 @@ def print_keys(f, background_values):
 
     for key, rect in key_values.items():
         for shape, keys in shapes.items():
-            if key in keys:
+            if int(key) in keys:
                 print_key(f, rect, shape)
-                break
-        else:
-            raise f"{key} has no shape"
 
 
 def print_after_keys(f):

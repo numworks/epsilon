@@ -61,7 +61,7 @@ def css(layout):
         ".calculator span:active",
         css_declaration("background-color", "rgba(0, 0, 0, 0.2)"),
     )
-    for key, rect in enumerate(layout["keys"].values()):
+    for key, rect in layout["keys"].items():
         css += css_rule(
             '.calculator span[data-key="%s"]' % key,
             css_rect_declarations(rect, background),
@@ -120,9 +120,8 @@ def html(layout):
     html += '  <div class="calculator loading">\n'
     html += '    <div class="loader"><span></span></div>\n'
     html += '    <canvas tabindex="1"></canvas>\n'
-    for key in range(len(layout["keys"])):
+    for key in layout["keys"]:
         html += '    <span data-key="%s"></span>\n' % key
-        # here
     html += "  </div>"
     html += "</div>"
     return html

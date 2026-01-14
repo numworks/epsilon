@@ -50,8 +50,8 @@ class LayoutSelection {
 
  private:
   const Tree* m_rackLayout;
-  int m_startPosition;
-  int m_endPosition;
+  uint16_t m_startPosition;
+  uint16_t m_endPosition;
 };
 
 }  // namespace Poincare::Internal

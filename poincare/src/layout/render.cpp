@@ -168,7 +168,7 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
     const Rack* rack;
     LayoutSelection selection;
     KDCoordinate rackBaseline;
-    int index;
+    uint16_t index;
   };
   Context context{ctx, p, style, l, selection, baseline, 0};
   RackLayout::Callback* iter = [](const Layout* child, KDSize childSize,

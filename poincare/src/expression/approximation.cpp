@@ -349,11 +349,12 @@ static std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
 
 /* Return highest order of undefined dependencies if there is at least one, zero
  * otherwise */
-std::complex<float> Private::HelperUndefDependencies(const Tree* dep,
-                                                     const Context* ctx) {
+template <typename T>
+std::complex<T> Private::HelperUndefDependencies(const Tree* dep,
+                                                 const Context* ctx) {
   assert(ctx);
   // Dependency children may have different dimensions.
-  std::complex<float> undefValue = std::complex<float>(0);
+  std::complex<T> undefValue = std::complex<T>(0);
   for (const Tree* child : Dependency::Dependencies(dep)->children()) {
     if (Dimension::IsList(child, ctx->m_symbolContext)) {
       /* Ignore lists in dependencies. This is a temporary solution until we
@@ -369,15 +370,15 @@ std::complex<float> Private::HelperUndefDependencies(const Tree* dep,
     Dimension dim = Dimension::Get(child, ctx->m_symbolContext);
     if (dim.isScalar()) {
       // Optimize most cases
-      std::complex<float> c = PrivateToComplex<float>(child, ctx);
+      std::complex<T> c = PrivateToComplex<T>(child, ctx);
       // Only update to nonreal if there is no undef to respect priority
-      if (IsNonReal(c) && undefValue == std::complex<float>(0)) {
+      if (IsNonReal(c) && undefValue == std::complex<T>(0)) {
         undefValue = c;
       } else if (std::isnan(c.real()) || std::isnan(c.imag())) {
         undefValue = NAN;
       }
     } else {
-      Tree* a = PrivateToTree<float>(
+      Tree* a = PrivateToTree<T>(
           child, Dimension::Get(child, ctx->m_symbolContext), ctx);
       if (a->isUndefined()) {
         undefValue = NAN;
@@ -391,7 +392,7 @@ std::complex<float> Private::HelperUndefDependencies(const Tree* dep,
 template <typename T>
 std::complex<T> Private::UndefDependencies(const Tree* dep,
                                            const Context* ctx) {
-  std::complex<float> res = HelperUndefDependencies(dep, ctx);
+  std::complex<T> res = HelperUndefDependencies<float>(dep, ctx);
   return IsNonReal(res) ? NonReal<T>() : std::complex<T>(res);
 }
 

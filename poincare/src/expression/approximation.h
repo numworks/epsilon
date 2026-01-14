@@ -247,8 +247,9 @@ std::complex<T> NonReal() {
   return std::complex<T>(OMG::SignalingNan<T>(), static_cast<T>(0));
 }
 
-std::complex<float> HelperUndefDependencies(const Tree* dep,
-                                            const Context* ctx);
+template <typename T>
+std::complex<T> HelperUndefDependencies(const Tree* dep, const Context* ctx);
+
 template <typename T>
 std::complex<T> UndefDependencies(const Tree* dep, const Context* ctx);
 

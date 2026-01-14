@@ -155,6 +155,7 @@ class RackParser {
   Tree* parseFunctionParameters();
   void parseListParameters(TreeRef& leftHandSide);
   Tree* parseCommaSeparatedList(bool isFirstToken = false);
+  Tree* parseCommaSeparatedListInChildRack();
   void privateParseTimes(TreeRef& leftHandSide, Token::Type stoppingType);
   void privateParseReservedFunction(TreeRef& leftHandSide,
                                     const Builtin* builtin);

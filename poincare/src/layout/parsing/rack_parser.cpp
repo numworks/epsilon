@@ -1366,6 +1366,20 @@ Tree* RackParser::parseVector() {
   return commaSeparatedList;
 }
 
+[[gnu::noinline]] Tree* RackParser::parseCommaSeparatedListInChildRack() {
+  /* This function is not inlined in parseCommaSeparatedList to avoid having a
+   * large stack that frame that can hold the subParser when the nested list is
+   * 1D. */
+  assert(m_nextToken.firstLayout()->nextNode()->isRackLayout());
+  // Parse the RackLayout as a comma separated list.
+  ParsingContext newParsingContext = m_parsingContext;
+  newParsingContext.metadata.isCommaSeparatedList = true;
+  RackParser subParser(m_nextToken.firstLayout()->nextNode(),
+                       newParsingContext);
+  popToken();
+  return subParser.parseRack();
+}
+
 Tree* RackParser::parseCommaSeparatedList(bool isFirstToken) {
   // Flag has already been used. Unset it.
   m_parsingContext.metadata.isCommaSeparatedList = false;
@@ -1373,14 +1387,7 @@ Tree* RackParser::parseCommaSeparatedList(bool isFirstToken) {
   // First rack's layout cannot be a comma separated list.
   if (!isFirstToken && m_nextToken.is(Token::Type::Layout) &&
       m_nextToken.firstLayout()->isParenthesesLayout()) {
-    assert(m_nextToken.firstLayout()->nextNode()->isRackLayout());
-    // Parse the RackLayout as a comma separated list.
-    ParsingContext newParsingContext = m_parsingContext;
-    newParsingContext.metadata.isCommaSeparatedList = true;
-    RackParser subParser(m_nextToken.firstLayout()->nextNode(),
-                         newParsingContext);
-    popToken();
-    return subParser.parseRack();
+    return parseCommaSeparatedListInChildRack();
   }
   TreeRef list = List::PushEmpty();
   if (m_nextToken.is(Token::Type::EndOfStream)) {

@@ -370,7 +370,7 @@ constexpr static const ReferenceValue k_timeReferences[] = {
 constexpr static const ReferenceValue k_velocityReferences[] = {
     ReferenceValue({I18n::Message::SnailSpeedTitle1,
                     I18n::Message::SnailSpeedTitle2,
-                    I18n::Message::SnailSpeedSubtitle, 0.01f}),
+                    I18n::Message::SnailSpeedSubtitle, 0.001f}),
     ReferenceValue({I18n::Message::HumanSpeedTitle1,
                     I18n::Message::HumanSpeedTitle2,
                     I18n::Message::HumanSpeedSubtitle, 2.8f}),

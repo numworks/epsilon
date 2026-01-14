@@ -120,8 +120,6 @@ void BarGraphController::ContentView::updateBannerView() {
   int group = m_barGraphView.selectedGroup();
   int category = m_barGraphView.selectedCategory();
 
-  constexpr static int k_precision =
-      Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision;
   Poincare::Preferences::PrintFloatMode displayMode =
       GlobalPreferences::SharedGlobalPreferences()->displayMode();
   constexpr static int k_bufferSize =
@@ -141,7 +139,7 @@ void BarGraphController::ContentView::updateBannerView() {
   Poincare::Print::CustomPrintf(buffer, k_bufferSize, "%s%s%*.*ef",
                                 I18n::translate(I18n::Message::Frequency),
                                 I18n::translate(I18n::Message::ColonConvention),
-                                freq, displayMode, k_precision);
+                                freq, displayMode, m_bannerView.k_precision);
   m_bannerView.frequencyView()->setText(buffer);
 
   // Relative frequency
@@ -149,7 +147,8 @@ void BarGraphController::ContentView::updateBannerView() {
   Poincare::Print::CustomPrintf(buffer, k_bufferSize, "%s%s%*.*ef",
                                 I18n::translate(I18n::Message::Relative),
                                 I18n::translate(I18n::Message::ColonConvention),
-                                relativeFreq, displayMode, k_precision);
+                                relativeFreq, displayMode,
+                                m_bannerView.k_precision);
   m_bannerView.relativeFrequencyView()->setText(buffer);
 
   m_bannerView.reload();

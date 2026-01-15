@@ -65,7 +65,8 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("arg(-3×(x+y×i))", "arg(-(x+y×i))", ctx);
   // TODO: Simplify arg between ]-π,π]
   simplifies_to("arg(e^(534/7×i))", "arg(e^(534/7×i))");
-  simplifies_to("arg(e^(3.1415×i))", "arg(e^(6283/2000×i))");
+  simplifies_to("arg(e^(3.1415×i))", "6283/2000");
+  simplifies_to("e^(i)*i", "e^((1+π/2)×i)", k_polarCtx);
   // TODO: Improve sign detection
   simplifies_to("abs(-1+π)", "-1+π");
   simplifies_to("abs(1-π)", "-1+π");

@@ -338,7 +338,8 @@ ComplexProperties Power(const Internal::Tree* e) {
                            isUndefinedOrReal ? Properties::Zero() : properties);
 }
 
-ComplexProperties TypeProperties(ComplexProperties s) {
+// Complex properties of the node Sign
+ComplexProperties SignNode(ComplexProperties s) {
   Properties realProperties = Properties(
       Sign(s.realSign().canBeNull(), s.realSign().canBeStrictlyPositive(),
            s.realSign().canBeStrictlyNegative()),
@@ -478,7 +479,7 @@ ComplexProperties GetComplexProperties(const Tree* e) {
     case Type::RandInt:
       return ComplexProperties(Properties::FiniteInteger(), Properties::Zero());
     case Type::Sign:
-      return TypeProperties(GetComplexProperties(e->child(0)));
+      return SignNode(GetComplexProperties(e->child(0)));
     case Type::Factor:
       return GetComplexProperties(e->child(0));
     case Type::GCD:

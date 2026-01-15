@@ -244,8 +244,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("inf^x", "e^(∞×sign(x))");
   simplifies_to("(-inf)^√(2)", "e^(∞+π×√(2)×i)");
   simplifies_to("inf^0", "undef");
-  // TODO: should not simplify ??
-  simplifies_to("1^(x^inf)", "1");
+  simplifies_to("1^(x^inf)", "dep(1,{0×e^(∞×sign(ln(x)))})");
   simplifies_to("inf^(-1)", "0");
   simplifies_to("(-inf)^(-1)", "0");
   simplifies_to("inf^(-√(2))", "0");

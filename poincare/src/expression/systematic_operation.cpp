@@ -150,8 +150,8 @@ bool SystematicOperation::ReducePower(Tree* e) {
       }
     }
   }
-  if (base->isOne()) {
-    // 1^x -> 1
+  if (base->isOne() && GetComplexProperties(n).isFinite()) {
+    // 1^x -> 1 if x is finite
     e->cloneTreeOverTree(1_e);
     return true;
   }

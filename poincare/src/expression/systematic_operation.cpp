@@ -221,7 +221,8 @@ bool SystematicOperation::ReducePower(Tree* e) {
   }
   // base^0 -> 1
   if (n->isZero()) {
-    if (GetComplexProperties(base).canBeNull()) {
+    ComplexProperties baseProperties = GetComplexProperties(base);
+    if (baseProperties.canBeNull() || baseProperties.canBeInfinite()) {
       return PatternMatching::MatchReplace(e, KA, KDep(1_e, KDepList(KA)));
     }
     e->cloneTreeOverTree(1_e);

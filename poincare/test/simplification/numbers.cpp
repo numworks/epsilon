@@ -280,7 +280,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("log(-inf,inf)", "undef", k_cartesianCtx);
   // TODO: simplify to undef
   simplifies_to("log(inf,-inf)", "∞×sign(1/(∞+π×i))", k_cartesianCtx);
-  // TODO_PCJ simplifies_to("log(-inf,-inf)", "undef", k_cartesianCtx);
+  simplifies_to("log(-inf,-inf)", "undef", k_cartesianCtx);
   simplifies_to("ln(inf)", "∞");
   simplifies_to("ln(-inf)", "nonreal");
   simplifies_to("ln(inf)*0", "undef");

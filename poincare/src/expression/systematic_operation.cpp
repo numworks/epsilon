@@ -8,6 +8,7 @@
 
 #include "approximation.h"
 #include "arithmetic.h"
+#include "bounds.h"
 #include "dependency.h"
 #include "infinity.h"
 #include "k_tree.h"
@@ -116,13 +117,38 @@ bool SystematicOperation::ReducePower(Tree* e) {
     return true;
   }
 
-  if (Infinity::IsPlusOrMinusInfinity(n) &&
-      (base->isOne() || base->isMinusOne() ||
-       GetComplexProperties(base).isNonReal())) {
-    // (±1)^(±inf) -> undef
-    // complex^(±inf) -> undef
-    e->cloneTreeOverTree(KUndef);
-    return true;
+  if (base->isZero()) {
+    return PowerLike::ReducePowerOfZero(e, n);
+  }
+  if (Infinity::IsPlusOrMinusInfinity(n)) {
+    ComplexProperties baseProperties = GetComplexProperties(base);
+    if (base->isOne() || base->isMinusOne() || baseProperties.isNonReal()) {
+      // (±1)^(±inf) -> undef
+      // complex^(±inf) -> undef
+      e->cloneTreeOverTree(KUndef);
+      return true;
+    }
+    if (baseProperties.realSign().hasKnownStrictSign()) {
+      Bounds bounds = Bounds::Compute(base);
+      bool absIsLowerThanOne = bounds.lower() > -1.0 && bounds.upper() < 1.0;
+      if (absIsLowerThanOne || bounds.lower() > 1.0 || bounds.upper() < -1.0) {
+        /* The signs of base and |base|-1 are known, we apply:
+         *   base \ n          | +inf  | -inf
+         * -------------------------------------
+         * positive && abs > 1 | inf   | 0
+         * positive && abs < 1 | 0     | inf
+         * negative && abs > 1 | undef | 0
+         * negative && abs < 1 | 0     | undef
+         */
+        if (baseProperties.realSign().isStrictlyPositive()) {
+          e->cloneTreeOverTree(n->isInf() == absIsLowerThanOne ? 0_e : KInf);
+        } else {
+          assert(baseProperties.realSign().isStrictlyNegative());
+          e->cloneTreeOverTree(n->isInf() == absIsLowerThanOne ? 0_e : KUndef);
+        }
+        return true;
+      }
+    }
   }
   if (base->isOne()) {
     // 1^x -> 1
@@ -162,9 +188,6 @@ bool SystematicOperation::ReducePower(Tree* e) {
         return true;
       }
     }
-  }
-  if (base->isZero()) {
-    return PowerLike::ReducePowerOfZero(e, n);
   }
   if (!n->isInteger()) {
     if (n->isRational() && base->isRational() && !base->isInteger()) {

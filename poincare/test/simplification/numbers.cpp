@@ -205,14 +205,14 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("f(x)-inf", "f(x)-∞", ctx);
 
   // x^inf
-  // TODO simplifies_to("(-2)^inf", "undef");  // complex inf
-  // TODO simplifies_to("(-2)^(-inf)", "0");
+  simplifies_to("(-2)^inf", "undef");
+  simplifies_to("(-2)^(-inf)", "0");
   simplifies_to("(-1)^inf", "undef");
   simplifies_to("(-1)^(-inf)", "undef");
-  // TODO simplifies_to("(-0.3)^inf", "0");
-  // TODO simplifies_to("(-0.3)^(-inf)", "undef");  // complex inf
+  simplifies_to("(-0.3)^inf", "0");
+  simplifies_to("(-0.3)^(-inf)", "undef");
   simplifies_to("0^inf", "0");
-  simplifies_to("0^(-inf)", "undef");  // complex inf
+  simplifies_to("0^(-inf)", "undef");
   simplifies_to("0.3^inf", "0");
   simplifies_to("0.3^(-inf)", "∞");
   simplifies_to("1^inf", "undef");
@@ -277,8 +277,9 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("log(x,inf)", "dep(0,{0×ln(x),nonNull(x),realPos(x)})");
   simplifies_to("log(x,-inf)", "dep(log(x,-∞),{nonNull(x)})", k_cartesianCtx);
   simplifies_to("log(inf,inf)", "undef");
-  // TODO_PCJ simplifies_to("log(-inf,inf)", "undef", k_cartesianCtx);
-  // TODO_PCJ simplifies_to("log(inf,-inf)", "undef", k_cartesianCtx);
+  simplifies_to("log(-inf,inf)", "undef", k_cartesianCtx);
+  // TODO: simplify to undef
+  simplifies_to("log(inf,-inf)", "∞×sign(1/(∞+π×i))", k_cartesianCtx);
   // TODO_PCJ simplifies_to("log(-inf,-inf)", "undef", k_cartesianCtx);
   simplifies_to("ln(inf)", "∞");
   simplifies_to("ln(-inf)", "nonreal");

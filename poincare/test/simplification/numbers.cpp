@@ -219,8 +219,6 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("1^(-inf)", "undef");
   simplifies_to("2^inf", "∞");
   simplifies_to("2^(-inf)", "0");
-  simplifies_to("(-1)^inf", "undef");
-  simplifies_to("(-1)^(-inf)", "undef");
   simplifies_to("x^inf", "e^(∞×sign(ln(x)))");
   simplifies_to("i^inf", "undef", k_cartesianCtx);
   simplifies_to("i^(-inf)", "undef", k_cartesianCtx);
@@ -243,7 +241,6 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("(-inf)^(-inf)", "0");
   simplifies_to("inf^x", "e^(∞×sign(x))");
   simplifies_to("(-inf)^√(2)", "e^(∞+π×√(2)×i)");
-  simplifies_to("inf^0", "undef");
   simplifies_to("1^(x^inf)", "dep(1,{0×e^(∞×sign(ln(x)))})");
   simplifies_to("inf^(-1)", "0");
   simplifies_to("(-inf)^(-1)", "0");

@@ -6,6 +6,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "advanced_operation.h"
+#include "bounds.h"
 #include "infinity.h"
 #include "k_tree.h"
 #include "order.h"
@@ -187,9 +188,15 @@ static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
 }
 
 /* Reduce to principal argument in ]-π,π] if the argument is of the form
- * r*π with r rational */
+ * r*π with r rational or if the argument is already in ]-π,π] */
 bool Trigonometry::ReduceArgumentToPrincipal(Tree* e) {
   assert(GetComplexProperties(e).isReal());
+  if (e->isArg() || e->isATanRad() ||
+      (e->isRational() &&
+       Rational::AbsSmallerThanPi(e) == OMG::Troolean::True)) {
+    // arg and atan are already in ]-π,π]
+    return true;
+  }
   const Tree* piFactor = GetPiFactor(e);
   if (piFactor) {
     TreeRef simplifiedPiFactor =
@@ -200,11 +207,14 @@ bool Trigonometry::ReduceArgumentToPrincipal(Tree* e) {
       simplifiedPiFactor->removeTree();
       return true;
     }
+  } else {
+    Bounds bounds = Bounds::Compute(e);
+    if (bounds.lower() > -M_PI && bounds.upper() <= M_PI) {
+      // Argument is already in ]-π,π]
+      return true;
+    }
   }
-  // arg and atan are already in ]-π,π]
-  return e->isArg() || e->isATanRad() ||
-         (e->isRational() &&
-          Rational::AbsSmallerThanPi(e) == OMG::Troolean::True);
+  return false;
 }
 
 bool Trigonometry::ReduceTrig(Tree* e) {

@@ -50,7 +50,7 @@ static bool ApproximationIsFinite(const Tree* e) {
 
 static Tree* BigPowerMerge(PowerLike::BaseAndExponent A,
                            PowerLike::BaseAndExponent B) {
-  // A^D*B^E => (A*B)^C*A^(D-C)*B^(E-C) or (A/B)^C*A^(D-C)*B^(E+C)
+  // A^D*B^E => F^C*A^(D±C)*B^(E±C) with F either A*B, A/B, B/A or 1/(A*B)
   assert(A.exponent->isInteger() && B.exponent->isInteger());
   assert(!A.exponent->isZero() && !B.exponent->isZero());
   // Find smallest exponent in absolute value

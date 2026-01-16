@@ -500,6 +500,12 @@ QUIZ_CASE(calculation_big_expressions) {
                       DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Hidden, "0", nullptr, &store);
 
+  // Rational overflow
+  assertCalculationIs("1.0089^77.5", DisplayOutput::ApproximateOnly,
+                      EqualSign::Hidden, nullptr, "undef", &store);
+  assertCalculationIs("1.00089^77.5", DisplayOutput::ApproximateOnly,
+                      EqualSign::Hidden, nullptr, "undef", &store);
+
   // Logarithm of a big number
   assertCalculationIs(
       "-8.314×ln(5/558)", DisplayOutput::ExactAndApproximateToggle,

@@ -32,6 +32,10 @@ class PowerLike {
   static bool ExpandRationalPower(Tree* e);
 
   static bool ReducePowerOfZero(Tree* e, const Tree* power);
+  static bool ReduceInfinityPower(Tree* e, const Tree* base,
+                                  bool isPlusInfinity);
+  static bool ReducePowerOfInfinity(Tree* e, const Tree* power,
+                                    bool isPlusInfinity);
 };
 
 }  // namespace Poincare::Internal

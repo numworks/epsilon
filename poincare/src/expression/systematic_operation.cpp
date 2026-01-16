@@ -8,7 +8,6 @@
 
 #include "approximation.h"
 #include "arithmetic.h"
-#include "bounds.h"
 #include "dependency.h"
 #include "infinity.h"
 #include "k_tree.h"
@@ -120,79 +119,18 @@ bool SystematicOperation::ReducePower(Tree* e) {
   if (base->isZero()) {
     return PowerLike::ReducePowerOfZero(e, n);
   }
-  if (Infinity::IsPlusOrMinusInfinity(n)) {
-    ComplexProperties baseProperties = GetComplexProperties(base);
-    if (base->isOne() || base->isMinusOne() || baseProperties.isNonReal()) {
-      // (±1)^(±inf) -> undef
-      // complex^(±inf) -> undef
-      e->cloneTreeOverTree(KUndef);
-      return true;
-    }
-    if (baseProperties.realSign().hasKnownStrictSign()) {
-      Bounds bounds = Bounds::Compute(base);
-      bool absIsStrictlyLowerThanOne =
-          bounds.lower() > -1.0 && bounds.upper() < 1.0;
-      bool absIsStrictlyGreaterThanOne =
-          bounds.lower() > 1.0 || bounds.upper() < -1.0;
-      if (absIsStrictlyLowerThanOne || absIsStrictlyGreaterThanOne) {
-        /* The signs of base and |base|-1 are known, we apply:
-         *   base \ n          | +inf  | -inf
-         * -------------------------------------
-         * positive && abs > 1 | inf   | 0
-         * positive && abs < 1 | 0     | inf
-         * negative && abs > 1 | undef | 0
-         * negative && abs < 1 | 0     | undef
-         */
-        if (baseProperties.realSign().isStrictlyPositive()) {
-          e->cloneTreeOverTree(n->isInf() == absIsStrictlyLowerThanOne ? 0_e
-                                                                       : KInf);
-        } else {
-          assert(baseProperties.realSign().isStrictlyNegative());
-          e->cloneTreeOverTree(
-              n->isInf() == absIsStrictlyLowerThanOne ? 0_e : KUndef);
-        }
-        return true;
-      }
-    }
+  if (Infinity::IsPlusOrMinusInfinity(n) &&
+      PowerLike::ReduceInfinityPower(e, base, n->isInf())) {
+    return true;
   }
   if (base->isOne() && GetComplexProperties(n).isFinite()) {
     // 1^x -> 1 if x is finite
     e->cloneTreeOverTree(1_e);
     return true;
   }
-  if (Infinity::IsPlusOrMinusInfinity(base)) {
-    if ((Infinity::IsMinusInfinity(base) && n->isInf()) || n->isZero()) {
-      // (-inf)^inf -> undef
-      // (±inf)^0 -> undef
-      e->cloneTreeOverTree(KUndef);
-      return true;
-    }
-    ComplexProperties nProperties = GetComplexProperties(n);
-    if (nProperties.isNonReal()) {
-      // (±inf)^i -> undef
-      e->cloneTreeOverTree(KUndef);
-      return true;
-    }
-    if (n->isInteger() || Infinity::IsPlusOrMinusInfinity(n)) {
-      assert(nProperties.isReal());
-      if (nProperties.realSign().isNegative()) {
-        // (±inf)^neg -> 0
-        e->cloneTreeOverTree(0_e);
-        return true;
-      }
-      if (nProperties.realSign().isPositive()) {
-        if (base->isInf()) {
-          // inf^pos -> inf
-          e->cloneTreeOverTree(KInf);
-          return true;
-        }
-        assert(Infinity::IsMinusInfinity(base));
-        // (-inf)^pos -> ±inf
-        e->moveTreeOverTree(PatternMatching::CreateReduce(
-            KMult(KPow(-1_e, KA), KInf), {.KA = n}));
-        return true;
-      }
-    }
+  if (Infinity::IsPlusOrMinusInfinity(base) &&
+      PowerLike::ReducePowerOfInfinity(e, n, base->isInf())) {
+    return true;
   }
   if (!n->isInteger()) {
     if (n->isRational() && base->isRational() && !base->isInteger()) {

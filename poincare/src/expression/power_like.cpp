@@ -2,6 +2,8 @@
 
 #include <poincare/src/memory/pattern_matching.h>
 
+#include "bounds.h"
+#include "infinity.h"
 #include "k_tree.h"
 #include "properties.h"
 #include "rational.h"
@@ -75,6 +77,84 @@ bool PowerLike::ReducePowerOfZero(Tree* e, const Tree* power) {
   }
   // Use a dependency as a fallback.
   return PatternMatching::MatchReplace(e, KA, KDep(0_e, KDepList(KA)));
+}
+
+bool PowerLike::ReduceInfinityPower(Tree* e, const Tree* base,
+                                    bool isPlusInfinity) {
+  assert(e->isPow() && Infinity::IsPlusOrMinusInfinity(e->child(1)));
+  assert(e->child(1)->isInf() == isPlusInfinity);
+  ComplexProperties baseProperties = GetComplexProperties(base);
+  if (base->isOne() || base->isMinusOne() || baseProperties.isNonReal()) {
+    // (±1)^(±inf) -> undef
+    // complex^(±inf) -> undef
+    e->cloneTreeOverTree(KUndef);
+    return true;
+  }
+  if (baseProperties.realSign().hasKnownStrictSign()) {
+    Bounds bounds = Bounds::Compute(base);
+    bool absIsStrictlyLowerThanOne =
+        bounds.lower() > -1.0 && bounds.upper() < 1.0;
+    bool absIsStrictlyGreaterThanOne =
+        bounds.lower() > 1.0 || bounds.upper() < -1.0;
+    if (absIsStrictlyLowerThanOne || absIsStrictlyGreaterThanOne) {
+      /* The signs of base and |base|-1 are known, we apply:
+       *   base \ power      | +inf  | -inf
+       * -------------------------------------
+       * positive && abs > 1 | inf   | 0
+       * positive && abs < 1 | 0     | inf
+       * negative && abs > 1 | undef | 0
+       * negative && abs < 1 | 0     | undef
+       */
+      if (baseProperties.realSign().isStrictlyPositive()) {
+        e->cloneTreeOverTree(
+            isPlusInfinity == absIsStrictlyLowerThanOne ? 0_e : KInf);
+      } else {
+        assert(baseProperties.realSign().isStrictlyNegative());
+        e->cloneTreeOverTree(
+            isPlusInfinity == absIsStrictlyLowerThanOne ? 0_e : KUndef);
+      }
+      return true;
+    }
+  }
+  return false;
+}
+
+bool PowerLike::ReducePowerOfInfinity(Tree* e, const Tree* power,
+                                      bool isPlusInfinity) {
+  assert(e->isPow() && Infinity::IsPlusOrMinusInfinity(e->child(0)));
+  assert(e->child(0)->isInf() == isPlusInfinity);
+  if ((!isPlusInfinity && power->isInf()) || power->isZero()) {
+    // (-inf)^inf -> undef
+    // (±inf)^0 -> undef
+    e->cloneTreeOverTree(KUndef);
+    return true;
+  }
+  ComplexProperties powerProperties = GetComplexProperties(power);
+  if (powerProperties.isNonReal()) {
+    // (±inf)^i -> undef
+    e->cloneTreeOverTree(KUndef);
+    return true;
+  }
+  if (power->isInteger() || Infinity::IsPlusOrMinusInfinity(power)) {
+    assert(powerProperties.isReal());
+    if (powerProperties.realSign().isNegative()) {
+      // (±inf)^neg -> 0
+      e->cloneTreeOverTree(0_e);
+      return true;
+    }
+    if (powerProperties.realSign().isPositive()) {
+      if (isPlusInfinity) {
+        // inf^pos -> inf
+        e->cloneTreeOverTree(KInf);
+        return true;
+      }
+      // (-inf)^pos -> ±inf
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
+          KMult(KPow(-1_e, KA), KInf), {.KA = power}));
+      return true;
+    }
+  }
+  return false;
 }
 
 }  // namespace Poincare::Internal

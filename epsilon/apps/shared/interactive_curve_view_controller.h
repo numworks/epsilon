@@ -102,11 +102,13 @@ class InteractiveCurveViewController
                                   int currentCurveIndex,
 
                                   int currentSubCurveIndex = 0,
-                                  int* newSubCurveIndex = nullptr) const;
+                                  int* newSubCurveIndex = nullptr,
+                                  float* nextT = nullptr) const;
   int selectedCurveIndex() const { return *m_selectedCurveIndex; }
   virtual Poincare::Coordinate2D<double> xyValues(
       int curveIndex, double t, int subCurveIndex = 0) const = 0;
   virtual bool suitableYValue(double y) const { return true; }
+  virtual bool suitableXValue(double x) const { return true; }
   virtual int numberOfCurves() const = 0;
   virtual int numberOfSubCurves(int curveIndex) const = 0;
   virtual bool isAlongY(int curveIndex) const = 0;
@@ -125,6 +127,10 @@ class InteractiveCurveViewController
     return k_maxNumberOfSubcurves * curveIndex + subCurveIndex;
   }
 
+  // Closest curve helper (along Y or along X)
+  int closestCurveIndex(OMG::VerticalDirection direction, int currentCurveIndex,
+                        int currentSubCurveIndex, int* newSubCurveIndex,
+                        bool alongY) const;
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isVertical,
                   bool isMin) const override;

@@ -384,6 +384,11 @@ bool GraphController::suitableYValue(double y) const {
          y <= interactiveCurveViewRange()->yMax();
 }
 
+bool GraphController::suitableXValue(double x) const {
+  return interactiveCurveViewRange()->xMin() <= x &&
+         x <= interactiveCurveViewRange()->xMax();
+}
+
 void GraphController::setRoundCrossCursorView() {
   /* At this point, the model (selected series and dot indices) should be up
    * to date. */

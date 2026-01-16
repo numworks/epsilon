@@ -216,14 +216,15 @@ bool FunctionGraphController::moveCursorVertically(
     OMG::VerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
   int nextSubCurve = 0;
+  float nextT = m_cursor->t();
   int nextCurve =
       nextCurveIndexVertically(direction, currentActiveFunctionIndex,
-                               m_selectedSubCurveIndex, &nextSubCurve);
+                               m_selectedSubCurveIndex, &nextSubCurve, &nextT);
   if (nextCurve < 0) {
     return false;
   }
 
-  moveCursorVerticallyToPosition(nextCurve, nextSubCurve, m_cursor->t());
+  moveCursorVerticallyToPosition(nextCurve, nextSubCurve, nextT);
   return true;
 }
 

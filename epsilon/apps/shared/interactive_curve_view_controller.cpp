@@ -238,27 +238,43 @@ bool InteractiveCurveViewController::isCursorVisibleAtPosition(
 
 int InteractiveCurveViewController::closestCurveIndexVertically(
     OMG::VerticalDirection direction, int currentCurveIndex,
-    int currentSubCurveIndex, int* newSubCurveIndex) const {
-  /* Vertical curves are quite hard to handle when moving the cursor.
-   * To simplify things here, we consider vertical curves as if it they were
-   * rotated by 90 degrees by swapping x and y when dealing with them. */
+    int currentSubCurveIndex, int* newSubCurveIndex, float* nextT) const {
+  // 1 - Search for closest curve along X at same abscissa
+  int nextCurveIndex =
+      closestCurveIndex(direction, currentCurveIndex, currentSubCurveIndex,
+                        newSubCurveIndex, false);
+  if (nextCurveIndex < 0) {
+    // 2 - Search for closest curve along Y at same ordinate
+    nextCurveIndex =
+        closestCurveIndex(direction, currentCurveIndex, currentSubCurveIndex,
+                          newSubCurveIndex, true);
+  }
+  if (nextT && nextCurveIndex >= 0) {
+    *nextT = isAlongY(nextCurveIndex) ? m_cursor->y() : m_cursor->x();
+  }
+  return nextCurveIndex;
+}
+
+int InteractiveCurveViewController::closestCurveIndex(
+    OMG::VerticalDirection direction, int currentCurveIndex,
+    int currentSubCurveIndex, int* newSubCurveIndex, bool alongY) const {
   double x = m_cursor->x();
   double y = m_cursor->y();
-  if (isAlongY(currentCurveIndex)) {
-    double temp = x;
-    x = y;
-    y = temp;
+  double t = alongY ? y : x;
+  double f = alongY ? x : y;
+  if (std::isnan(f)) {
+    f = direction.isUp() ? -INFINITY : INFINITY;
   }
-  if (std::isnan(y)) {
-    y = direction.isUp() ? -INFINITY : INFINITY;
-  }
-  double nextY = direction.isUp() ? DBL_MAX : -DBL_MAX;
+  double nextF = direction.isUp() ? DBL_MAX : -DBL_MAX;
   int nextCurveIndex = -1;
   int nextSubCurveIndex = 0;
   int curvesCount = numberOfCurves();
   for (int curveIndex = 0; curveIndex < curvesCount; curveIndex++) {
     int nSubCurves = numberOfSubCurves(curveIndex);
     assert(0 <= nSubCurves && nSubCurves <= k_maxNumberOfSubcurves);
+    if (isAlongY(curveIndex) != alongY) {
+      continue;
+    }
     for (int subCurveIndex = 0; subCurveIndex < nSubCurves; subCurveIndex++) {
       if (curveIndex == currentCurveIndex &&
           subCurveIndex == currentSubCurveIndex) {
@@ -266,26 +282,25 @@ int InteractiveCurveViewController::closestCurveIndexVertically(
         continue;
       }
       Poincare::Coordinate2D<double> newXY =
-          xyValues(curveIndex, x, subCurveIndex);
+          xyValues(curveIndex, t, subCurveIndex);
       double newY = newXY.y();
-      if (isAlongY(curveIndex)) {
-        newY = newXY.x();
-      }
-      if (!suitableYValue(newY)) {
+      double newX = newXY.x();
+      double newF = alongY ? newX : newY;
+      assert(newY == y || newX == x);
+      if (!suitableYValue(newY) || !suitableXValue(newX)) {
         continue;
       }
       bool isNextCurve = false;
-      /* Choosing the closest vertical curve is quite complex because we need to
-       * take care of curves that have the same value at the current x.
-       * When moving up, if several curves have the same value y1, we choose the
-       * curve:
+      /* Choosing the closest curve is quite complex because we need to take
+       * care of curves that have the same value at the current t. When moving
+       * up, if several curves have the same value f1, we choose the curve:
        * - Of index score lower than the current curve index score if the
-       *   current curve has the value y1 at the current x.
+       *   current curve has the value f1 at the current t.
        * - Of highest index score possible.
-       * When moving down, if several curves have the same value y1, we choose
+       * When moving down, if several curves have the same value f1, we choose
        * the curve:
        * - Of index score higher than the current curve index score if the
-       *   current curve has the value y1 at the current x.
+       *   current curve has the value f1 at the current t.
        * - Of lowest index score possible.
        * Index score is computed so that both primary and sub curve (with
        * a lesser weight) indexes are taken into account. */
@@ -293,28 +308,28 @@ int InteractiveCurveViewController::closestCurveIndexVertically(
           IndexScore(currentCurveIndex, currentSubCurveIndex);
       int newIndexScore = IndexScore(curveIndex, subCurveIndex);
       if (direction.isUp()) {
-        if (newY > y && newY < nextY) {
+        if (newF > f && newF < nextF) {
           isNextCurve = true;
-        } else if (newY == nextY) {
+        } else if (newF == nextF) {
           assert(newIndexScore > IndexScore(nextCurveIndex, nextSubCurveIndex));
-          if (newY != y || currentIndexScore < 0 ||
+          if (newF != f || currentIndexScore < 0 ||
               newIndexScore < currentIndexScore) {
             isNextCurve = true;
           }
-        } else if (newY == y && newIndexScore < currentIndexScore) {
+        } else if (newF == f && newIndexScore < currentIndexScore) {
           isNextCurve = true;
         }
       } else {
-        if (newY < y && newY > nextY) {
+        if (newF < f && newF > nextF) {
           isNextCurve = true;
-        } else if (newY == nextY) {
+        } else if (newF == nextF) {
           assert(newIndexScore > IndexScore(nextCurveIndex, nextSubCurveIndex));
-        } else if (newY == y && newIndexScore > currentIndexScore) {
+        } else if (newF == f && newIndexScore > currentIndexScore) {
           isNextCurve = true;
         }
       }
       if (isNextCurve) {
-        nextY = newY;
+        nextF = newF;
         nextCurveIndex = curveIndex;
         nextSubCurveIndex = subCurveIndex;
       }

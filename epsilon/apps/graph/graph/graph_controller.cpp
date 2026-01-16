@@ -175,13 +175,15 @@ void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible,
 int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
                                               int currentCurveIndex,
                                               int currentSubCurveIndex,
-                                              int* nextSubCurveIndex) const {
+                                              int* nextSubCurveIndex,
+                                              float* nextT) const {
   assert(nextSubCurveIndex != nullptr);
   int nbOfActiveFunctions = 0;
   if (functionOrSequenceContext().displaysOnlyCartesianFunctions(
           &nbOfActiveFunctions)) {
     return FunctionGraphController::nextCurveIndexVertically(
-        direction, currentCurveIndex, currentSubCurveIndex, nextSubCurveIndex);
+        direction, currentCurveIndex, currentSubCurveIndex, nextSubCurveIndex,
+        nextT);
   }
   // Handle for sub curve in current function
   if (direction.isDown()) {
@@ -277,19 +279,19 @@ void GraphController::openMenuForSelectedCurve() {
 bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
   int nextSubCurve = 0;
+  float nextT = m_cursor->t();
   int nextCurve =
       nextCurveIndexVertically(direction, currentActiveFunctionIndex,
-                               m_selectedSubCurveIndex, &nextSubCurve);
+                               m_selectedSubCurveIndex, &nextSubCurve, &nextT);
   if (nextCurve < 0) {
     return false;
   }
 
   OMG::ExpiringPointer<const ContinuousFunction> currentF =
       functionOrSequenceContext().modelForRecord(recordAtSelectedCurveIndex());
-  float nextT =
-      currentF->properties().isScatterPlot() && std::isfinite(m_cursor->x())
-          ? m_cursor->x()
-          : m_cursor->t();
+  if (currentF->properties().isScatterPlot() && std::isfinite(m_cursor->x())) {
+    nextT = m_cursor->x();
+  }
 
   OMG::ExpiringPointer<const ContinuousFunction> nextF =
       functionOrSequenceContext().modelForRecord(recordAtCurveIndex(nextCurve));

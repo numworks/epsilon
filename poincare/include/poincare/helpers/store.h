@@ -7,8 +7,8 @@ namespace Poincare {
 
 namespace StoreHelper {
 
-const UserExpression Value(const UserExpression& e);
-const UserExpression Symbol(const UserExpression& e);
+UserExpression Value(UserExpression e);
+UserExpression Symbol(UserExpression e);
 
 }  // namespace StoreHelper
 

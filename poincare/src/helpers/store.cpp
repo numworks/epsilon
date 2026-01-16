@@ -5,14 +5,14 @@
 
 namespace Poincare {
 
-const UserExpression StoreHelper::Value(const UserExpression& e) {
+UserExpression StoreHelper::Value(UserExpression e) {
   assert(!e.isUninitialized() && e.isStore());
   return e.cloneChildAtIndex(0);
 }
 
-const UserExpression StoreHelper::Symbol(const UserExpression& e) {
+UserExpression StoreHelper::Symbol(UserExpression e) {
   assert(!e.isUninitialized() && e.isStore());
-  const UserExpression symbol = e.cloneChildAtIndex(1);
+  UserExpression symbol = e.cloneChildAtIndex(1);
   assert(symbol.isUserSymbol() || symbol.isUserFunction());
   return symbol;
 }

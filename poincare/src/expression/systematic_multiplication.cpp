@@ -48,7 +48,7 @@ static bool ApproximationIsFinite(const Tree* e) {
   return std::isfinite(approx.real()) && std::isfinite(approx.imag());
 }
 
-// Factorize big powers by their biggest common exponent
+// Factorize two big powers by the smallest exponent
 static Tree* BigPowerMerge(PowerLike::BaseAndExponent A,
                            PowerLike::BaseAndExponent B) {
   // A^D*B^E => F^C*A^(D±C)*B^(E±C) with F either A*B, A/B, B/A or 1/(A*B)

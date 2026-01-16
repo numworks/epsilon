@@ -403,7 +403,12 @@ int IntegerHandler::Compare(const IntegerHandler& i, const IntegerHandler& j) {
   if (i.sign() != j.sign()) {
     return i.sign() == NonStrictSign::Negative ? -1 : 1;
   }
-  return static_cast<int8_t>(i.sign()) * Ucmp(i, j);
+  return static_cast<int8_t>(i.sign()) * CompareAbs(i, j);
+}
+
+int IntegerHandler::CompareAbs(const IntegerHandler& i,
+                               const IntegerHandler& j) {
+  return Ucmp(i, j);
 }
 
 int8_t IntegerHandler::Ucmp(const IntegerHandler& a, const IntegerHandler& b) {

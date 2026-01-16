@@ -253,8 +253,9 @@ bool AdvancedOperation::ContractExp(Tree* e) {
       // A? * exp(i*B) * C? * i = A * C * exp(i*(B+π/2))
       PatternMatching::MatchReplaceReduce(
           e, KMult(KA_s, KExp(KMult(i_e, KB_s)), KC_s, i_e),
-          KMult(KA_s, KC_s,
-                KExp(KMult(i_e, KAdd(KMult(KB_s), KMult(π_e, 1_e / 2_e))))));
+          KMult(KA_s,
+                KExp(KMult(i_e, KAdd(KMult(KB_s), KMult(π_e, 1_e / 2_e)))),
+                KC_s));
 }
 
 // A*(B+C+..)*(D+E+...) = A*B*D + A*B*E+...+A*C*D+...

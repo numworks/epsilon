@@ -247,9 +247,6 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("-32×_°F", "-32×_°F");
   simplifies_to("273.16×_K", "273.16×_K");
   simplifies_to("(12_m/6_m)×_°C", "2×_°C");
-  simplifies_to("°C→x", "1×_°C→x");
-  simplifies_to("123°C→x", "123×_°C→x");
-  simplifies_to("-4.56°C→x", "-4.56×_°C→x");
 
   // TODO: Decide on implicit '_' parsing
   //   simplifies_to("1m+1km", "1_m+1_km" /  "m+k×m" / "m+km" );

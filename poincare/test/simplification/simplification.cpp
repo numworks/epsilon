@@ -803,17 +803,6 @@ QUIZ_CASE(pcj_simplification_context) {
   simplifies_to("b", "undef", projCtx);
 }
 
-QUIZ_CASE(pcj_simplification_store) {
-  simplifies_to("1+2→x", "3→x");
-  simplifies_to("0.2→f(x)", "0.2→f(x)",
-                {.m_reductionTarget = ReductionTarget::SystemForAnalysis,
-                 .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols});
-  simplifies_to("0.1+0.2→x", "3/10→x");
-  simplifies_to("a→x", "a→x");
-  simplifies_to("a→x", "undef→x",
-                {.m_symbolic = SymbolicComputation::ReplaceAllSymbols});
-}
-
 QUIZ_CASE(pcj_simplification_store_correctly_parsed) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {

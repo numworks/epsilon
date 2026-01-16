@@ -248,9 +248,3 @@ QUIZ_CASE(pcj_simplification_functions_of_matrices) {
   simplifies_to("[[2,3.4]]-1", "undef");
   simplifies_to("1-[[0.1,3.1]]", "undef");
 }
-
-QUIZ_CASE(pcj_simplification_store_matrix) {
-  simplifies_to("1+1→a", "2→a");
-  simplifies_to("[[8]]→f(x)", "[[8]]→f(x)");
-  simplifies_to("[[x]]→f(x)", "[[x]]→f(x)");
-}

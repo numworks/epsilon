@@ -16,7 +16,7 @@
 
 namespace Poincare::Internal::Simplification {
 
-static Tree* ApplySimplify(const Tree* dataTree,
+static Tree* ApplySimplify(const Tree* input,
                            const ProjectionContext& projectionContext,
                            bool beautify);
 
@@ -106,44 +106,14 @@ bool Simplify(Tree* e, const ProjectionContext& projectionContext,
   return true;
 }
 
-Tree* ApplySimplify(const Tree* dataTree,
+Tree* ApplySimplify(const Tree* input,
                     const ProjectionContext& projectionContext, bool beautify) {
-  /* Store is an expression only for convenience. Only first child is to
-   * be simplified. */
-  bool isStore = dataTree->isStore();
-  Tree* e;
-  if (isStore) {
-    // Store might not be properly handled in reduced expressions.
-    assert(beautify);
-    const Tree* firstChild = dataTree->child(0);
-    if (firstChild->nextTree()->isUserFunction()) {
-      /* Note: when CAS is enabled, we used to change the SymbolicComputation
-       * parameter to KeepAllSymbols when storing a function. However the
-       * SymbolicComputation should not be determined here but before entering
-       * the simplification pipeline. */
-      return dataTree->cloneTree();
-    } else {
-      assert(firstChild->nextTree()->isUserSymbol());
-    }
-    /* Store is an expression only for convenience. Only first child is to
-     * be simplified. */
-    e = firstChild->cloneTree();
-  } else {
-    e = dataTree->cloneTree();
-  }
-
-  assert(!e->hasDescendantSatisfying(
+  assert(!input->hasDescendantSatisfying(
       [](const Tree* tree) { return tree->isStore(); }));
-
+  Tree* e = input->cloneTree();
   Dimension dim = ProjectAndReduce(e, projectionContext);
   if (beautify) {
     BeautifyReduced(e, projectionContext, dim);
-  }
-
-  if (isStore) {
-    // Restore the store structure
-    dataTree->child(1)->cloneTree();
-    e->cloneNodeAtNode(dataTree);
   }
   return e;
 }

@@ -313,6 +313,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("3/2→a", DisplayOutput::ExactAndApproximate,
                       EqualSign::Equal, "3/2", "1.5", &store);
   Shared::GlobalContextAccessor::Store().resetAll();
+  assertCalculationIs("x+x→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,
+                      "x+x", nullptr, &store);
+  Shared::GlobalContextAccessor::Store().resetAll();
   assertCalculationIs("3+x→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "3+x", nullptr, &store);
   Shared::GlobalContextAccessor::Store().resetAll();

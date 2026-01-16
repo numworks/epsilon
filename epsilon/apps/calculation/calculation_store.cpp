@@ -104,24 +104,88 @@ void CalculationStore::replaceAnsInExpression(
                                                               ansExpression());
 }
 
+struct StorePreprocessResult {
+  bool shouldReduceBeforeStore;
+  UserExpression expressionToReduce;
+  SymbolicComputation symbolicComputation;
+};
+
+static StorePreprocessResult preprocessStore(
+    Poincare::UserExpression storeExpression) {
+  assert(storeExpression.isStore());
+  bool isStoringFunction = false;
+  UserExpression expressionToStore = StoreHelper::Value(storeExpression);
+  UserExpression storeSymbol = StoreHelper::Symbol(storeExpression);
+  if (storeSymbol.isUserFunction()) {
+    isStoringFunction = true;
+  } else {
+    assert(storeSymbol.isUserSymbol());
+  }
+  return StorePreprocessResult{
+      /* The expression stored in a function is left unreduced, except when CAS
+         is enabled. Example x+x->f(x) is left as "x+x". The expression stored
+         in a symbol should be reduced before storing. */
+      .shouldReduceBeforeStore = (!isStoringFunction) || CAS::Enabled(),
+      .expressionToReduce = expressionToStore,
+      .symbolicComputation = isStoringFunction
+                                 ? SymbolicComputation::KeepAllSymbols
+                                 : SymbolicComputation::ReplaceDefinedSymbols};
+}
+
 static bool compute(Poincare::UserExpression inputExpression,
                     Poincare::UserExpression& exactOutputExpression,
                     Poincare::UserExpression& approximateOutputExpression,
                     Poincare::ComplexFormat& complexFormat) {
   assert(!inputExpression.isUninitialized());
+
+  /* When CAS is not activated, all symbols should be replaced (unknown symbols
+   * will turn to undef) */
+  SymbolicComputation symbolicComputation =
+      CAS::Enabled() ? SymbolicComputation::ReplaceDefinedSymbols
+                     : SymbolicComputation::ReplaceAllSymbols;
+  UserExpression expressionToReduce = inputExpression;
+
+  bool isStore = inputExpression.isStore();
+  if (isStore) {
+    StorePreprocessResult storeElements = preprocessStore(inputExpression);
+    if (!storeElements.shouldReduceBeforeStore) {
+      exactOutputExpression = inputExpression.clone();
+      approximateOutputExpression =
+          exactOutputExpression.cloneAndApproximate<double>(ProjectionContext{
+              .m_complexFormat = complexFormat,
+              .m_angleUnit =
+                  GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+              .m_unitFormat =
+                  GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+              .m_symbolic = symbolicComputation,
+              .m_context = GlobalContextAccessor::Context()});
+      return true;
+    }
+    symbolicComputation = storeElements.symbolicComputation;
+    expressionToReduce = storeElements.expressionToReduce;
+  }
   ProjectionContext projContext = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .m_unitFormat =
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-      .m_symbolic = CAS::Enabled() ? SymbolicComputation::ReplaceDefinedSymbols
-                                   : SymbolicComputation::ReplaceAllSymbols,
+      .m_symbolic = symbolicComputation,
       .m_context = GlobalContextAccessor::Context()};
   // Update complexFormat with input expression
-  inputExpression.updateProjectionContextWithPreferedComplexFormat(projContext);
+  expressionToReduce.updateProjectionContextWithPreferedComplexFormat(
+      projContext);
   complexFormat = projContext.m_complexFormat;
-  return inputExpression.cloneAndSimplifyAndApproximate(
+
+  bool reductionSuccess = expressionToReduce.cloneAndSimplifyAndApproximate(
       &exactOutputExpression, &approximateOutputExpression, projContext);
+
+  if (isStore) {
+    /*  Restore store structure in the exact output. The store operation itself
+     * is performed by the processStore function. */
+    exactOutputExpression = StoreHelper::SetExpressionToStore(
+        inputExpression, exactOutputExpression);
+  }
+  return reductionSuccess;
 }
 
 struct CalculationResult {
@@ -250,6 +314,7 @@ CalculationStore::CalculationElements CalculationStore::computeAndProcess(
     Poincare::UserExpression inputExpression) {
   Poincare::ComplexFormat complexFormat =
       GlobalPreferences::SharedGlobalPreferences()->complexFormat();
+
   CalculationResult calculationResult =
       computeInterruptible(inputExpression, complexFormat);
 

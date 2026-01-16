@@ -17,4 +17,13 @@ UserExpression StoreHelper::Symbol(UserExpression e) {
   return symbol;
 }
 
+UserExpression StoreHelper::SetExpressionToStore(UserExpression e,
+                                                 UserExpression valueToStore) {
+  assert(!e.isUninitialized() && e.isStore());
+  Internal::Tree* newStoreExpression = e.tree()->cloneTree();
+  newStoreExpression->child(0)->cloneTreeOverTree(valueToStore.tree());
+  UserExpression result = UserExpression::Builder(newStoreExpression);
+  return result;
+}
+
 }  // namespace Poincare

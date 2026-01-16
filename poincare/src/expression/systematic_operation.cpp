@@ -130,8 +130,11 @@ bool SystematicOperation::ReducePower(Tree* e) {
     }
     if (baseProperties.realSign().hasKnownStrictSign()) {
       Bounds bounds = Bounds::Compute(base);
-      bool absIsLowerThanOne = bounds.lower() > -1.0 && bounds.upper() < 1.0;
-      if (absIsLowerThanOne || bounds.lower() > 1.0 || bounds.upper() < -1.0) {
+      bool absIsStrictlyLowerThanOne =
+          bounds.lower() > -1.0 && bounds.upper() < 1.0;
+      bool absIsStrictlyGreaterThanOne =
+          bounds.lower() > 1.0 || bounds.upper() < -1.0;
+      if (absIsStrictlyLowerThanOne || absIsStrictlyGreaterThanOne) {
         /* The signs of base and |base|-1 are known, we apply:
          *   base \ n          | +inf  | -inf
          * -------------------------------------
@@ -141,10 +144,12 @@ bool SystematicOperation::ReducePower(Tree* e) {
          * negative && abs < 1 | 0     | undef
          */
         if (baseProperties.realSign().isStrictlyPositive()) {
-          e->cloneTreeOverTree(n->isInf() == absIsLowerThanOne ? 0_e : KInf);
+          e->cloneTreeOverTree(n->isInf() == absIsStrictlyLowerThanOne ? 0_e
+                                                                       : KInf);
         } else {
           assert(baseProperties.realSign().isStrictlyNegative());
-          e->cloneTreeOverTree(n->isInf() == absIsLowerThanOne ? 0_e : KUndef);
+          e->cloneTreeOverTree(
+              n->isInf() == absIsStrictlyLowerThanOne ? 0_e : KUndef);
         }
         return true;
       }

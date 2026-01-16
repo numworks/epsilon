@@ -338,7 +338,7 @@ ComplexProperties Power(const Internal::Tree* e) {
                            isUndefinedOrReal ? Properties::Zero() : properties);
 }
 
-// Complex properties of the node Sign
+// Complex properties of the Sign node
 ComplexProperties SignNode(ComplexProperties s) {
   Properties realProperties = Properties(
       Sign(s.realSign().canBeNull(), s.realSign().canBeStrictlyPositive(),

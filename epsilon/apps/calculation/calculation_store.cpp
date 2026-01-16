@@ -222,6 +222,8 @@ static CalculationResult computeInterruptible(
   return CalculationResult{outputs, hasReductionFailure};
 }
 
+/*  TODO: this method should be simplified so we can re-use more of what has
+ * been done in preprocessStore and compute */
 static void processStore(OutputExpressions& outputs,
                          Poincare::UserExpression input) {
   /* The global variable store performs the store and ensures that no symbol is

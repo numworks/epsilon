@@ -14,7 +14,7 @@
 
 namespace Poincare::Internal {
 
-static Tree* powerMerge(int* numberOfDependencies, const Tree* child,
+static Tree* PowerMerge(int* numberOfDependencies, const Tree* child,
                         const Tree* next, const Tree* base,
                         const Tree* expChild, const Tree* expNext) {
   Tree* merge = PatternMatching::CreateReduce(
@@ -39,7 +39,7 @@ static Tree* powerMerge(int* numberOfDependencies, const Tree* child,
   return merge;
 }
 
-static bool approximationIsFinite(const Tree* e) {
+static bool ApproximationIsFinite(const Tree* e) {
   if (!Approximation::CanApproximate(e)) {
     return false;
   }
@@ -91,7 +91,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
       merge = KUndef->cloneTree();
     } else {
       if (Dimension::IsNonListScalar(next)) {
-        if (approximationIsFinite(next)) {
+        if (ApproximationIsFinite(next)) {
           // 0 * x -> 0
           next->removeTree();
         } else {
@@ -149,7 +149,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
        * Mult(Pow(t, n), Exp(m, Ln(t))) by the systematic reduction step that
        * expands powers with a rational exponent outside of the [0, 1] range. */
       merge =
-          powerMerge(numberOfDependencies, child, next, childParameters.base,
+          PowerMerge(numberOfDependencies, child, next, childParameters.base,
                      childParameters.exponent, nextParameters.exponent);
     } else if (child->isPow() && next->isPow() &&
                childParameters.base->isRational() &&

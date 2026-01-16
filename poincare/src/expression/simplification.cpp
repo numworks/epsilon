@@ -287,6 +287,10 @@ bool HandleUnits(Tree* e, const ProjectionContext& projectionContext,
     // Only angle units are expected not to be approximated.
     changed =
         Approximation::ApproximateAndReplaceEveryScalar<double>(e) || changed;
+    /* Check that the expression after approximating scalars does not need to be
+     * reduced again. We used to reduce the expression here. If we find out this
+     * assertion breaks (when fuzzing), we can put it back. */
+    assert(!SystematicReduction::DeepReduce(e));
   }
 #endif
   return changed;

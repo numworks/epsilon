@@ -213,8 +213,7 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
     assert_expression_serializes_to(lastCalculation->input(),
                                     expectedStoredInput);
   }
-  /* To preserve the Poincare_update CI, we output a something whether or not
-   * the layouts can be compared. */
+
   if (expectedExactOutput) {
     assert(Calculation::Calculation::CanDisplayExact(expectedDisplay));
     if (outputLayouts.exact.isUninitialized()) {
@@ -225,11 +224,8 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
     }
   } else {
     assert(!Calculation::Calculation::CanDisplayExact(expectedDisplay));
-    quiz_assert_print_if_failure(true, input, "Uninitialized", "Uninitialized");
   }
 
-  /* To preserve the Poincare_update CI, we output a something whether or not
-   * the layouts can be compared. */
   if (expectedApproximateOutput && !skipApproximation) {
     assert(Calculation::Calculation::CanDisplayApproximate(expectedDisplay));
     if (outputLayouts.approximate.isUninitialized()) {
@@ -244,7 +240,6 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
      * as we can't compare it. */
     assert(skipApproximation ||
            !Calculation::Calculation::CanDisplayApproximate(expectedDisplay));
-    quiz_assert_print_if_failure(true, input, "Uninitialized", "Uninitialized");
   }
   store->deleteAll();
 }

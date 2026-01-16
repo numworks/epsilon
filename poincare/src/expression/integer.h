@@ -173,9 +173,10 @@ class IntegerHandler final {
   bool is() const;
 
   // Arithmetic
-  static int Compare(const IntegerHandler& a, const IntegerHandler& b);
-  // Compare absolute value of a with absolute value of b
-  static int CompareAbs(const IntegerHandler& a, const IntegerHandler& b);
+  // Compare value of a with b. Return -1, 0, or 1.
+  static int8_t Compare(const IntegerHandler& a, const IntegerHandler& b);
+  // Compare absolute value of a with absolute value of b. Return -1, 0, or 1.
+  static int8_t CompareAbs(const IntegerHandler& a, const IntegerHandler& b);
   static Tree* Addition(const IntegerHandler& a, const IntegerHandler& b);
   static Tree* Subtraction(const IntegerHandler& a, const IntegerHandler& b);
   static Tree* Multiplication(const IntegerHandler& a, const IntegerHandler& b);
@@ -231,8 +232,6 @@ class IntegerHandler final {
  private:
   constexpr static int k_digitBase =
       1 << sizeof(uint8_t) * OMG::BitHelper::k_numberOfBitsInByte;
-  static int8_t Ucmp(const IntegerHandler& a,
-                     const IntegerHandler& b);  // -1, 0, or 1
   /* Warning: Parse, Usum, Sum, Mult, Udiv, GCD return IntegerHandler whose
    * digits pointer is static working buffers. We could return Trees but we save
    * the projection onto the right node type for public methods.

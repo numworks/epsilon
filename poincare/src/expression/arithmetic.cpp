@@ -497,7 +497,7 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
   WorkingBuffer workingBuffer;
   uint8_t* const localStart = workingBuffer.localStart();
   FactorizedInteger result;
-  if (IntegerHandler::Ucmp(m, IntegerHandler(1)) <= 0) {
+  if (IntegerHandler::CompareAbs(m, IntegerHandler(1)) <= 0) {
     return result;
   }
 
@@ -510,7 +510,7 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
   bool stopCondition;
   do {
     stopCondition =
-        IntegerHandler::Ucmp(
+        IntegerHandler::CompareAbs(
             m, IntegerHandler::Mult(testedPrimeFactor, testedPrimeFactor,
                                     &workingBuffer)) > 0;
     DivisionResult<IntegerHandler> div =
@@ -546,7 +546,7 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
   } while (stopCondition && testedPrimeFactor < k_biggestPrimeFactor &&
            t < FactorizedInteger::k_maxNumberOfFactors);
   if (t == FactorizedInteger::k_maxNumberOfFactors ||
-      IntegerHandler::Ucmp(
+      IntegerHandler::CompareAbs(
           m, IntegerHandler::Mult(IntegerHandler(k_biggestPrimeFactor),
                                   IntegerHandler(k_biggestPrimeFactor),
                                   &workingBuffer)) > 0) {

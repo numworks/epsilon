@@ -295,11 +295,12 @@ int IntegerHandler::numberOfBase10DigitsWithoutSign(
     // Start with 10^underestimate
     numberOfDigits = estimatedNumberOfBase10DigitsWithoutSign(false);
     comparison = Pow(base, IntegerHandler(numberOfDigits), workingBuffer);
-    assert(Ucmp(Pow(base, IntegerHandler(numberOfDigits - 1), workingBuffer),
-                *this) <= 0);
+    assert(
+        CompareAbs(Pow(base, IntegerHandler(numberOfDigits - 1), workingBuffer),
+                   *this) <= 0);
   }
   while (true) {
-    if (Ucmp(comparison, *this) > 0) {
+    if (CompareAbs(comparison, *this) > 0) {
       break;
     }
     /* oneDigitOverflow is set to allow comparison to be just greater than the
@@ -399,19 +400,16 @@ IntegerHandler::operator uint8_t() const {
 
 /* Arithmetics */
 
-int IntegerHandler::Compare(const IntegerHandler& i, const IntegerHandler& j) {
-  if (i.sign() != j.sign()) {
-    return i.sign() == NonStrictSign::Negative ? -1 : 1;
+int8_t IntegerHandler::Compare(const IntegerHandler& a,
+                               const IntegerHandler& b) {
+  if (a.sign() != b.sign()) {
+    return a.sign() == NonStrictSign::Negative ? -1 : 1;
   }
-  return static_cast<int8_t>(i.sign()) * CompareAbs(i, j);
+  return static_cast<int8_t>(a.sign()) * CompareAbs(a, b);
 }
 
-int IntegerHandler::CompareAbs(const IntegerHandler& i,
-                               const IntegerHandler& j) {
-  return Ucmp(i, j);
-}
-
-int8_t IntegerHandler::Ucmp(const IntegerHandler& a, const IntegerHandler& b) {
+int8_t IntegerHandler::CompareAbs(const IntegerHandler& a,
+                                  const IntegerHandler& b) {
   if (a.numberOfDigits() < b.numberOfDigits()) {
     return -1;
   } else if (a.numberOfDigits() > b.numberOfDigits()) {
@@ -462,7 +460,7 @@ IntegerHandler IntegerHandler::Sum(const IntegerHandler& a,
      * 1/abs(a)>abs(b) : s = sign*udiff(a, b)
      * 2/abs(b)>abs(a) : s = sign*udiff(b, a)
      * sign? sign of the greater! */
-    if (Ucmp(a, b) >= 0) {
+    if (CompareAbs(a, b) >= 0) {
       usum = Usum(a, b, true, workingBuffer, oneDigitOverflow);
       usum.setSign(a.sign());
     } else {
@@ -635,7 +633,7 @@ DivisionResult<IntegerHandler> IntegerHandler::Udiv(
    * (Algorithm 1.6) */
   // TODO: implement Svoboda algorithm or divide and conquer methods
   assert(!denominator.isZero());
-  if (Ucmp(numerator, denominator) < 0) {
+  if (CompareAbs(numerator, denominator) < 0) {
     return {.quotient = static_cast<int8_t>(0), .remainder = numerator};
   }
   /* Let's call beta = 1 << 16 */
@@ -890,7 +888,7 @@ Tree* IntegerHandler::Factorial(const IntegerHandler& i) {
   IntegerHandler result(1);
   WorkingBuffer workingBuffer;
   uint8_t* const localStart = workingBuffer.localStart();
-  while (Ucmp(i, j) >= 0) {
+  while (CompareAbs(i, j) >= 0) {
     result = Mult(j, result, &workingBuffer);
     j = Usum(j, IntegerHandler(1), false, &workingBuffer);
     workingBuffer.garbageCollect({&result, &j}, localStart);

@@ -501,10 +501,14 @@ QUIZ_CASE(calculation_big_expressions) {
                       EqualSign::Hidden, "0", nullptr, &store);
 
   // Rational overflow
-  assertCalculationIs("1.0089^77.5", DisplayOutput::ApproximateOnly,
-                      EqualSign::Hidden, nullptr, "undef", &store);
-  assertCalculationIs("1.00089^77.5", DisplayOutput::ApproximateOnly,
-                      EqualSign::Hidden, nullptr, "undef", &store);
+  assertCalculationIs("1.0089^77.5", DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Approximation,
+                      "(3×(10089/10000)^77×√(1121))/100", "1.9871445394889",
+                      &store);
+  assertCalculationIs("1.00089^77.5", DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Approximation,
+                      "(3×(100089/100000)^77×√(111210))/1000",
+                      "1.0713765578743", &store);
 
   // Logarithm of a big number
   assertCalculationIs(

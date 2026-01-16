@@ -174,6 +174,7 @@ class IntegerHandler final {
 
   // Arithmetic
   static int Compare(const IntegerHandler& a, const IntegerHandler& b);
+  static int CompareAbs(const IntegerHandler& a, const IntegerHandler& b);
   static Tree* Addition(const IntegerHandler& a, const IntegerHandler& b);
   static Tree* Subtraction(const IntegerHandler& a, const IntegerHandler& b);
   static Tree* Multiplication(const IntegerHandler& a, const IntegerHandler& b);

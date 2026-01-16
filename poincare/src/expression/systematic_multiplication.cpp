@@ -48,6 +48,36 @@ static bool approximationIsFinite(const Tree* e) {
   return std::isfinite(approx.real()) && std::isfinite(approx.imag());
 }
 
+static Tree* BigPowerMerge(PowerLike::BaseAndExponent A,
+                           PowerLike::BaseAndExponent B) {
+  // A^D*B^E => (A*B)^C*A^(D-C)*B^(E-C) or (A/B)^C*A^(D-C)*B^(E+C)
+  assert(A.exponent->isInteger() && B.exponent->isInteger());
+  assert(!A.exponent->isZero() && !B.exponent->isZero());
+  // Find smallest exponent in absolute value
+  const Tree* commonExponent =
+      IntegerHandler::CompareAbs(Integer::Handler(A.exponent),
+                                 Integer::Handler(B.exponent)) < 0
+          ? A.exponent
+          : B.exponent;
+  // Factor A and B accordingly
+  // Use (A*B), (A/B), (B/A) or (1/(A*B)) under common exponent
+  Tree* result = PatternMatching::CreateReduce(
+      KMult(KPow(KMult(KPow(KA, KF), KPow(KB, KG)), KAbs(KC)),
+            KPow(KA, KAdd(KD, KMult(-1_e, KF, KAbs(KC)))),
+            KPow(KB, KAdd(KE, KMult(-1_e, KG, KAbs(KC))))),
+      {.KA = A.base,
+       .KB = B.base,
+       .KC = commonExponent,
+       .KD = A.exponent,
+       .KE = B.exponent,
+       .KF = (A.exponent->isNegativeInteger() ? -1_e : 1_e),
+       .KG = (B.exponent->isNegativeInteger() ? -1_e : 1_e)});
+
+  // At least one term should have been simplified out
+  assert(!result->isMult() || result->numberOfChildren() <= 2);
+  return result;
+}
+
 static bool MergeMultiplicationChildWithNext(Tree* child,
                                              int* numberOfDependencies,
                                              int* nbOfRemovedChildren) {
@@ -121,6 +151,17 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
       merge =
           powerMerge(numberOfDependencies, child, next, childParameters.base,
                      childParameters.exponent, nextParameters.exponent);
+    } else if (child->isPow() && next->isPow() &&
+               childParameters.base->isRational() &&
+               nextParameters.base->isRational()) {
+      /* Some rational powers may not reduce because of too big values.
+       * The exponents can be factored to reduce into a single big power.
+       * Some examples:
+       * 100^21 * 333^25 -> (33 300)^21 * 333^4
+       * 100^-21 * 333^25 -> (333/100)^21 * 333^4
+       * This reduces the number of big powers, and can make approximations or
+       * even reduction possible */
+      merge = BigPowerMerge(childParameters, nextParameters);
     }
   }
 

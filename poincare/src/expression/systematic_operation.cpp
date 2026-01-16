@@ -681,13 +681,18 @@ static bool ReduceSquareRoot(Tree* e) {
     DivisionResult<Tree*> div = IntegerHandler::Division(
         factorization.coefficients[i], IntegerHandler(2));
     Tree* factor = Integer::Push(factorization.factors[i]);
+    // IntegerPower failure is handled below
     TreeRef powerIn = Rational::IntegerPower(factor, div.remainder).tree;
     TreeRef powerOut = Rational::IntegerPower(factor, div.quotient).tree;
     factor->removeTree();
     div.remainder->removeTree();
     div.quotient->removeTree();
-    innerTerm->moveTreeOverTree(Rational::Multiplication(innerTerm, powerIn));
-    outerTerm->moveTreeOverTree(Rational::Multiplication(outerTerm, powerOut));
+    /* Using CreateReduce instead of Rational::Multiplication in case of
+     * IntegerPower failure. */
+    innerTerm->moveTreeOverTree(PatternMatching::CreateReduce(
+        KMult(KA, KB), {.KA = innerTerm, .KB = powerIn}));
+    outerTerm->moveTreeOverTree(PatternMatching::CreateReduce(
+        KMult(KA, KB), {.KA = outerTerm, .KB = powerOut}));
     powerOut->removeTree();
     powerIn->removeTree();
   }

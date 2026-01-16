@@ -111,6 +111,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t,
                                           int subCurveIndex = 0) const override;
   bool suitableYValue(double y) const override;
+  bool suitableXValue(double x) const override;
   int numberOfCurves() const override {
     return m_store->numberOfActiveSeries();
   }

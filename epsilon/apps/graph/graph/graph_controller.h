@@ -109,7 +109,8 @@ class GraphController : public Shared::FunctionGraphController,
                           int subCurveIndex = -1) override;
   int nextCurveIndexVertically(OMG::VerticalDirection direction,
                                int currentCurveIndex, int currentSubCurveIndex,
-                               int* nextSubCurveIndex) const override;
+                               int* nextSubCurveIndex,
+                               float* nextT) const override;
   double defaultCursorT(Ion::Storage::Record record,
                         bool ignoreMargins) override;
   const Shared::ContinuousFunctionContext& functionOrSequenceContext()

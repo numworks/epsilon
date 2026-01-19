@@ -403,4 +403,11 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   // TODO: for this to work, we must know the sign of cos(9)
   // simplifies_to("log(cos(9)^ln(6), 9)", "ln(6)×log(cos(9), 9)",
   // k_cartesianCtx);
+
+  // This case caused an uint8 overflow during prime factorization.
+  simplifies_to("256×ln(2)", "256×ln(2)");
+  simplifies_to("ln(2^256)",
+                "ln("
+                "11579208923731619542357098500868790785326998466564056403945758"
+                "4007913129639936)");
 }

@@ -263,6 +263,7 @@ InteractiveCurveViewController::closestCurveIndex(
   double nextF = direction.isUp() ? DBL_MAX : -DBL_MAX;
   int nextCurveIndex = -1;
   int nextSubCurveIndex = 0;
+  int indexScore = IndexScore(curveIndex, subCurveIndex);
   int curvesCount = numberOfCurves();
   for (int otherCurveIndex = 0; otherCurveIndex < curvesCount;
        otherCurveIndex++) {
@@ -301,7 +302,6 @@ InteractiveCurveViewController::closestCurveIndex(
        * - Of lowest index score possible.
        * Index score is computed so that both primary and sub curve (with
        * a lesser weight) indexes are taken into account. */
-      int indexScore = IndexScore(curveIndex, subCurveIndex);
       int newIndexScore = IndexScore(otherCurveIndex, otherSubCurveIndex);
       if (direction.isUp()) {
         if (newF > f && newF < nextF) {

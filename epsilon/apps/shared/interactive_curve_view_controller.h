@@ -104,9 +104,9 @@ class InteractiveCurveViewController
     double t;
   };
   // Closest vertical curve helper
-  CurveCursor closestCurveIndexVertically(OMG::VerticalDirection direction,
-                                          int currentCurveIndex,
-                                          int currentSubCurveIndex = 0) const;
+  virtual CurveCursor nextCurveIndexVertically(
+      OMG::VerticalDirection direction, int currentCurveIndex,
+      int currentSubCurveIndex = 0) const;
   int selectedCurveIndex() const { return *m_selectedCurveIndex; }
   virtual Poincare::Coordinate2D<double> xyValues(
       int curveIndex, double t, int subCurveIndex = 0) const = 0;

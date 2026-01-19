@@ -86,12 +86,6 @@ class FunctionGraphController : public InteractiveCurveViewController,
   virtual double defaultCursorT(Ion::Storage::Record record,
                                 bool ignoreMargins);
   virtual const FunctionContext& functionOrSequenceContext() const;
-  virtual CurveCursor nextCurveIndexVertically(OMG::VerticalDirection direction,
-                                               int currentCurveIndex,
-                                               int currentSubCurveIndex) const {
-    return closestCurveIndexVertically(direction, currentCurveIndex,
-                                       currentSubCurveIndex);
-  }
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange* range) const;
   Ion::Storage::Record recordAtCurveIndex(int curveIndex) const {
     return functionOrSequenceContext().activeRecordAtIndex(curveIndex);

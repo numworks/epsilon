@@ -238,23 +238,21 @@ bool InteractiveCurveViewController::isCursorVisibleAtPosition(
 
 InteractiveCurveViewController::CurveCursor
 InteractiveCurveViewController::nextCurveIndexVertically(
-    OMG::VerticalDirection direction, int currentCurveIndex,
-    int currentSubCurveIndex) const {
+    OMG::VerticalDirection direction, int curveIndex, int subCurveIndex) const {
   // 1 - Search for closest curve along X at same abscissa
-  CurveCursor curveCursor = closestCurveIndex(direction, currentCurveIndex,
-                                              currentSubCurveIndex, false);
+  CurveCursor curveCursor =
+      closestCurveIndex(direction, curveIndex, subCurveIndex, false);
   if (curveCursor.curveIndex < 0) {
     // 2 - Search for closest curve along Y at same ordinate
-    curveCursor = closestCurveIndex(direction, currentCurveIndex,
-                                    currentSubCurveIndex, true);
+    curveCursor = closestCurveIndex(direction, curveIndex, subCurveIndex, true);
   }
   return curveCursor;
 }
 
 InteractiveCurveViewController::CurveCursor
 InteractiveCurveViewController::closestCurveIndex(
-    OMG::VerticalDirection direction, int currentCurveIndex,
-    int currentSubCurveIndex, bool alongY) const {
+    OMG::VerticalDirection direction, int curveIndex, int subCurveIndex,
+    bool alongY) const {
   double x = m_cursor->x();
   double y = m_cursor->y();
   double t = alongY ? y : x;
@@ -266,20 +264,22 @@ InteractiveCurveViewController::closestCurveIndex(
   int nextCurveIndex = -1;
   int nextSubCurveIndex = 0;
   int curvesCount = numberOfCurves();
-  for (int curveIndex = 0; curveIndex < curvesCount; curveIndex++) {
-    int nSubCurves = numberOfSubCurves(curveIndex);
+  for (int otherCurveIndex = 0; otherCurveIndex < curvesCount;
+       otherCurveIndex++) {
+    int nSubCurves = numberOfSubCurves(otherCurveIndex);
     assert(0 <= nSubCurves && nSubCurves <= k_maxNumberOfSubcurves);
-    if (isAlongY(curveIndex) != alongY) {
+    if (isAlongY(otherCurveIndex) != alongY) {
       continue;
     }
-    for (int subCurveIndex = 0; subCurveIndex < nSubCurves; subCurveIndex++) {
-      if (curveIndex == currentCurveIndex &&
-          subCurveIndex == currentSubCurveIndex) {
+    for (int otherSubCurveIndex = 0; otherSubCurveIndex < nSubCurves;
+         otherSubCurveIndex++) {
+      if (otherCurveIndex == curveIndex &&
+          otherSubCurveIndex == subCurveIndex) {
         // Nothing to check for
         continue;
       }
       Poincare::Coordinate2D<double> newXY =
-          xyValues(curveIndex, t, subCurveIndex);
+          xyValues(otherCurveIndex, t, otherSubCurveIndex);
       double newY = newXY.y();
       double newX = newXY.x();
       double newF = alongY ? newX : newY;
@@ -301,19 +301,17 @@ InteractiveCurveViewController::closestCurveIndex(
        * - Of lowest index score possible.
        * Index score is computed so that both primary and sub curve (with
        * a lesser weight) indexes are taken into account. */
-      int currentIndexScore =
-          IndexScore(currentCurveIndex, currentSubCurveIndex);
-      int newIndexScore = IndexScore(curveIndex, subCurveIndex);
+      int indexScore = IndexScore(curveIndex, subCurveIndex);
+      int newIndexScore = IndexScore(otherCurveIndex, otherSubCurveIndex);
       if (direction.isUp()) {
         if (newF > f && newF < nextF) {
           isNextCurve = true;
         } else if (newF == nextF) {
           assert(newIndexScore > IndexScore(nextCurveIndex, nextSubCurveIndex));
-          if (newF != f || currentIndexScore < 0 ||
-              newIndexScore < currentIndexScore) {
+          if (newF != f || indexScore < 0 || newIndexScore < indexScore) {
             isNextCurve = true;
           }
-        } else if (newF == f && newIndexScore < currentIndexScore) {
+        } else if (newF == f && newIndexScore < indexScore) {
           isNextCurve = true;
         }
       } else {
@@ -321,14 +319,14 @@ InteractiveCurveViewController::closestCurveIndex(
           isNextCurve = true;
         } else if (newF == nextF) {
           assert(newIndexScore > IndexScore(nextCurveIndex, nextSubCurveIndex));
-        } else if (newF == f && newIndexScore > currentIndexScore) {
+        } else if (newF == f && newIndexScore > indexScore) {
           isNextCurve = true;
         }
       }
       if (isNextCurve) {
         nextF = newF;
-        nextCurveIndex = curveIndex;
-        nextSubCurveIndex = subCurveIndex;
+        nextCurveIndex = otherCurveIndex;
+        nextSubCurveIndex = otherSubCurveIndex;
       }
     }
   }

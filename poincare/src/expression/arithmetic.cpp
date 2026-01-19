@@ -563,6 +563,7 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
     result.numberOfFactors = FactorizedInteger::k_factorizationFailed;
     return result;
   }
+  assert(result.coefficients[t] < UINT8_MAX);
   result.coefficients[t]++;
   result.numberOfFactors = t + 1;
   return result;

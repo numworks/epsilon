@@ -287,7 +287,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
           recordAtCurveIndex(curveCursor.curveIndex));
   if (nextF->properties().isScatterPlot()) {
     double nextX = curveCursor.t;
-    curveCursor.t = -1;
+    curveCursor.t = -1.0;
     double previousX = -INFINITY;
     for (Coordinate2D<float> xy : nextF->iterateScatterPlot()) {
       if (xy.x() >= nextX) {

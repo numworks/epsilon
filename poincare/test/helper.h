@@ -74,9 +74,6 @@ void process_tree_and_compare(
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits,
     bool preserveInput = true);
 
-void quiz_tolerate_print_if_failure(bool test, const char* input,
-                                    const char* expected = "",
-                                    const char* observed = "");
 void quiz_assert_print_if_failure(bool test, const char* information,
                                   const char* expected = nullptr,
                                   const char* observed = nullptr);

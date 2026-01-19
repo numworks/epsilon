@@ -15,24 +15,6 @@
 
 using namespace Poincare::Internal;
 
-/* TODO_PCJ: Use quiz_tolerate_print_if_failure instead of quiz_assert in tests
- * commented as TODO_PCJ */
-void quiz_tolerate_print_if_failure(bool test, const char* input,
-                                    const char* expected,
-                                    const char* observed) {
-  constexpr int bufferSize = 500;
-  char buffer[bufferSize];
-  int i = Poincare::Print::UnsafeCustomPrintf(
-      buffer, bufferSize, "%s\t%s\t%s", test ? "OK" : "BAD", input, expected);
-  if (!test) {
-    Poincare::Print::UnsafeCustomPrintf(buffer + i, bufferSize - i, "\t%s",
-                                        observed);
-  }
-  if (sPrintToleratedTests) {
-    quiz_print(buffer);
-  }
-}
-
 void quiz_assert_print_if_failure(bool test, const char* information,
                                   const char* expected, const char* observed) {
   if (!test) {

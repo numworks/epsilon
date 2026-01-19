@@ -26,4 +26,3 @@ struct RegisterQuizCase {
 void quiz_assert(bool condition);
 void quiz_print(const char* message);
 extern bool sSkipAssertions;
-extern bool sPrintToleratedTests;

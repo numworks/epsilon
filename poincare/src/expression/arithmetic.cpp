@@ -517,8 +517,8 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
         IntegerHandler::Udiv(m, testedPrimeFactor, &workingBuffer);
     if (div.remainder.isZero()) {
       if (result.coefficients[t] == UINT8_MAX) {
-        /* Failed factorization because number as a factor with coef > UINT8_MAX
-         * like 2^300 */
+        /* Failed factorization because number has a factor with coef >
+         * UINT8_MAX like 2^300 */
         result.numberOfFactors = FactorizedInteger::k_factorizationFailed;
         return result;
       }
@@ -557,6 +557,12 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
     return result;
   }
   result.factors[t] = m.to<uint32_t>();
+  if (result.coefficients[t] == UINT8_MAX) {
+    /* Failed factorization because number has a factor with coeff > UINT8_MAX
+     * like 2^300 */
+    result.numberOfFactors = FactorizedInteger::k_factorizationFailed;
+    return result;
+  }
   result.coefficients[t]++;
   result.numberOfFactors = t + 1;
   return result;

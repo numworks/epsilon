@@ -331,4 +331,11 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("log(9,8)", "2×log(3,8)");
   simplifies_to("log(3,7)+log(5,7)", "log(3,7)+log(5,7)");
   simplifies_to("log(3,8)+log(5,8)", "log(3,8)+log(5,8)");
+
+  // This case caused an uint8 overflow during prime factorization.
+  simplifies_to("256×ln(2)", "256×ln(2)");
+  simplifies_to("ln(2^256)",
+                "ln("
+                "11579208923731619542357098500868790785326998466564056403945758"
+                "4007913129639936)");
 }

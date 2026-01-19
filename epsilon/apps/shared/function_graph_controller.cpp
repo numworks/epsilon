@@ -220,25 +220,25 @@ bool FunctionGraphController::moveCursorVertically(
   if (curveCursor.curveIndex < 0) {
     return false;
   }
-  moveCursorVerticallyToPosition(curveCursor.curveIndex,
-                                 curveCursor.subCurveIndex, curveCursor.t);
+  moveCursorVerticallyToPosition(curveCursor);
   return true;
 }
 
-void FunctionGraphController::moveCursorVerticallyToPosition(int nextCurve,
-                                                             int nextSubCurve,
-                                                             double nextT) {
+void FunctionGraphController::moveCursorVerticallyToPosition(
+    CurveCursor curveCursor) {
   // Clip the current t to the domain of the next function
   OMG::ExpiringPointer<const Function> f =
-      functionOrSequenceContext().modelForRecord(recordAtCurveIndex(nextCurve));
+      functionOrSequenceContext().modelForRecord(
+          recordAtCurveIndex(curveCursor.curveIndex));
   if (!std::isnan(f->tMin())) {
     assert(!std::isnan(f->tMax()));
-    nextT = std::min<double>(f->tMax(), std::max<double>(f->tMin(), nextT));
+    curveCursor.t =
+        std::min<double>(f->tMax(), std::max<double>(f->tMin(), curveCursor.t));
   }
   Poincare::Coordinate2D<double> cursorPosition =
-      f->evaluateXYAtParameter(nextT, nextSubCurve);
-  m_cursor->moveTo(nextT, cursorPosition.x(), cursorPosition.y());
-  selectCurveAtIndex(nextCurve, true, nextSubCurve);
+      f->evaluateXYAtParameter(curveCursor.t, curveCursor.subCurveIndex);
+  m_cursor->moveTo(curveCursor.t, cursorPosition.x(), cursorPosition.y());
+  selectCurveAtIndex(curveCursor.curveIndex, true, curveCursor.subCurveIndex);
   // Prevent the abscissaValue from edition if the function is along y
   Escher::Responder* responder = isAlongY(*m_selectedCurveIndex)
                                      ? static_cast<Responder*>(this)

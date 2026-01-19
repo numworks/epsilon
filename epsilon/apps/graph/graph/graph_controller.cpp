@@ -301,8 +301,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     }
   }
 
-  moveCursorVerticallyToPosition(curveCursor.curveIndex,
-                                 curveCursor.subCurveIndex, curveCursor.t);
+  moveCursorVerticallyToPosition(curveCursor);
   return true;
 }
 

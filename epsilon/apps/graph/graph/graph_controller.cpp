@@ -172,45 +172,37 @@ void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible,
                                               subCurveIndex);
 }
 
-int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
-                                              int currentCurveIndex,
-                                              int currentSubCurveIndex,
-                                              int* nextSubCurveIndex,
-                                              float* nextT) const {
-  assert(nextSubCurveIndex != nullptr);
+GraphController::CurveCursor GraphController::nextCurveIndexVertically(
+    OMG::VerticalDirection direction, int currentCurveIndex,
+    int currentSubCurveIndex) const {
   int nbOfActiveFunctions = 0;
   if (functionOrSequenceContext().displaysOnlyCartesianFunctions(
           &nbOfActiveFunctions)) {
     return FunctionGraphController::nextCurveIndexVertically(
-        direction, currentCurveIndex, currentSubCurveIndex, nextSubCurveIndex,
-        nextT);
+        direction, currentCurveIndex, currentSubCurveIndex);
   }
+  float t = m_cursor->t();
   // Handle for sub curve in current function
   if (direction.isDown()) {
     if (numberOfSubCurves(currentCurveIndex) > currentSubCurveIndex + 1) {
       // Switch to next sub curve
-      *nextSubCurveIndex = currentSubCurveIndex + 1;
-      return currentCurveIndex;
+      return {currentCurveIndex, currentSubCurveIndex + 1, t};
     }
   } else if (direction.isUp() && currentSubCurveIndex > 0) {
     // Switch to previous sub curve
-    *nextSubCurveIndex = currentSubCurveIndex - 1;
-    return currentCurveIndex;
+    return {currentCurveIndex, currentSubCurveIndex - 1, t};
   }
   // Go to the next function
   int nextActiveFunctionIndex = currentCurveIndex + (direction.isUp() ? -1 : 1);
   if (nextActiveFunctionIndex >= nbOfActiveFunctions ||
       nextActiveFunctionIndex < 0) {
-    return -1;
+    return {-1, 0, NAN};
   }
-  if (direction.isUp()) {
-    // Select last sub curve in next function when going up
-    *nextSubCurveIndex = numberOfSubCurves(nextActiveFunctionIndex) - 1;
-  } else {
-    // Select first sub curve in next function
-    *nextSubCurveIndex = 0;
-  }
-  return nextActiveFunctionIndex;
+  /* Select last sub curve in next function when going up and first sub curve in
+   * next function when going down. */
+  return {nextActiveFunctionIndex,
+          direction.isUp() ? numberOfSubCurves(nextActiveFunctionIndex) - 1 : 0,
+          t};
 }
 
 double GraphController::defaultCursorT(Ion::Storage::Record record,
@@ -278,40 +270,39 @@ void GraphController::openMenuForSelectedCurve() {
 
 bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
-  int nextSubCurve = 0;
-  float nextT = m_cursor->t();
-  int nextCurve =
-      nextCurveIndexVertically(direction, currentActiveFunctionIndex,
-                               m_selectedSubCurveIndex, &nextSubCurve, &nextT);
-  if (nextCurve < 0) {
+  CurveCursor curveCursor = nextCurveIndexVertically(
+      direction, currentActiveFunctionIndex, m_selectedSubCurveIndex);
+  if (curveCursor.curveIndex < 0) {
     return false;
   }
 
   OMG::ExpiringPointer<const ContinuousFunction> currentF =
       functionOrSequenceContext().modelForRecord(recordAtSelectedCurveIndex());
   if (currentF->properties().isScatterPlot() && std::isfinite(m_cursor->x())) {
-    nextT = m_cursor->x();
+    curveCursor.t = m_cursor->x();
   }
 
   OMG::ExpiringPointer<const ContinuousFunction> nextF =
-      functionOrSequenceContext().modelForRecord(recordAtCurveIndex(nextCurve));
+      functionOrSequenceContext().modelForRecord(
+          recordAtCurveIndex(curveCursor.curveIndex));
   if (nextF->properties().isScatterPlot()) {
-    double nextX = nextT;
-    nextT = -1;
+    double nextX = curveCursor.t;
+    curveCursor.t = -1;
     double previousX = -INFINITY;
     for (Coordinate2D<float> xy : nextF->iterateScatterPlot()) {
       if (xy.x() >= nextX) {
         if (xy.x() - nextX < nextX - previousX) {
-          ++nextT;
+          ++curveCursor.t;
         }
         break;
       }
-      ++nextT;
+      ++curveCursor.t;
       previousX = xy.x();
     }
   }
 
-  moveCursorVerticallyToPosition(nextCurve, nextSubCurve, nextT);
+  moveCursorVerticallyToPosition(curveCursor.curveIndex,
+                                 curveCursor.subCurveIndex, curveCursor.t);
   return true;
 }
 

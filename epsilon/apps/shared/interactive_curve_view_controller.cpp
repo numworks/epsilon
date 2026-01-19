@@ -236,28 +236,25 @@ bool InteractiveCurveViewController::isCursorVisibleAtPosition(
                     (ignoreMargins ? 0.f : cursorTopMarginRatio() * yRange)));
 }
 
-int InteractiveCurveViewController::closestCurveIndexVertically(
+InteractiveCurveViewController::CurveCursor
+InteractiveCurveViewController::closestCurveIndexVertically(
     OMG::VerticalDirection direction, int currentCurveIndex,
-    int currentSubCurveIndex, int* newSubCurveIndex, float* nextT) const {
+    int currentSubCurveIndex) const {
   // 1 - Search for closest curve along X at same abscissa
-  int nextCurveIndex =
-      closestCurveIndex(direction, currentCurveIndex, currentSubCurveIndex,
-                        newSubCurveIndex, false);
-  if (nextCurveIndex < 0) {
+  CurveCursor curveCursor = closestCurveIndex(direction, currentCurveIndex,
+                                              currentSubCurveIndex, false);
+  if (curveCursor.curveIndex < 0) {
     // 2 - Search for closest curve along Y at same ordinate
-    nextCurveIndex =
-        closestCurveIndex(direction, currentCurveIndex, currentSubCurveIndex,
-                          newSubCurveIndex, true);
+    curveCursor = closestCurveIndex(direction, currentCurveIndex,
+                                    currentSubCurveIndex, true);
   }
-  if (nextT && nextCurveIndex >= 0) {
-    *nextT = isAlongY(nextCurveIndex) ? m_cursor->y() : m_cursor->x();
-  }
-  return nextCurveIndex;
+  return curveCursor;
 }
 
-int InteractiveCurveViewController::closestCurveIndex(
+InteractiveCurveViewController::CurveCursor
+InteractiveCurveViewController::closestCurveIndex(
     OMG::VerticalDirection direction, int currentCurveIndex,
-    int currentSubCurveIndex, int* newSubCurveIndex, bool alongY) const {
+    int currentSubCurveIndex, bool alongY) const {
   double x = m_cursor->x();
   double y = m_cursor->y();
   double t = alongY ? y : x;
@@ -335,10 +332,9 @@ int InteractiveCurveViewController::closestCurveIndex(
       }
     }
   }
-  if (newSubCurveIndex) {
-    *newSubCurveIndex = nextSubCurveIndex;
-  }
-  return nextCurveIndex;
+  return {nextCurveIndex, nextSubCurveIndex,
+          static_cast<float>(
+              nextCurveIndex >= 0 ? isAlongY(nextCurveIndex) ? y : x : NAN)};
 }
 
 bool InteractiveCurveViewController::handleZoom(Ion::Events::Event event) {

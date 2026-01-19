@@ -101,7 +101,7 @@ class InteractiveCurveViewController
   struct CurveCursor {
     int curveIndex;
     int subCurveIndex;
-    float t;
+    double t;
   };
   // Closest vertical curve helper
   CurveCursor closestCurveIndexVertically(OMG::VerticalDirection direction,

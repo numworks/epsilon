@@ -333,8 +333,7 @@ InteractiveCurveViewController::closestCurveIndex(
     }
   }
   return {nextCurveIndex, nextSubCurveIndex,
-          static_cast<float>(
-              nextCurveIndex >= 0 ? isAlongY(nextCurveIndex) ? y : x : NAN)};
+          nextCurveIndex >= 0 ? isAlongY(nextCurveIndex) ? y : x : NAN};
 }
 
 bool InteractiveCurveViewController::handleZoom(Ion::Events::Event event) {

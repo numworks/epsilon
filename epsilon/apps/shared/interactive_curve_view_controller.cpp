@@ -237,7 +237,7 @@ bool InteractiveCurveViewController::isCursorVisibleAtPosition(
 }
 
 InteractiveCurveViewController::CurveCursor
-InteractiveCurveViewController::closestCurveIndexVertically(
+InteractiveCurveViewController::nextCurveIndexVertically(
     OMG::VerticalDirection direction, int currentCurveIndex,
     int currentSubCurveIndex) const {
   // 1 - Search for closest curve along X at same abscissa

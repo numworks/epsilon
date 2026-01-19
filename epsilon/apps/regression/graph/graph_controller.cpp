@@ -297,8 +297,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
   int selectedRegressionCurve =
       *m_selectedDotIndex == -1 ? *m_selectedCurveIndex : -1;
   int closestRegressionCurve =
-      closestCurveIndexVertically(direction, selectedRegressionCurve)
-          .curveIndex;
+      nextCurveIndexVertically(direction, selectedRegressionCurve).curveIndex;
 
   // Find the closest dot
   int closesDotSeries = -1;

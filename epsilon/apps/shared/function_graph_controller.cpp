@@ -215,16 +215,13 @@ void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
 bool FunctionGraphController::moveCursorVertically(
     OMG::VerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
-  int nextSubCurve = 0;
-  float nextT = m_cursor->t();
-  int nextCurve =
-      nextCurveIndexVertically(direction, currentActiveFunctionIndex,
-                               m_selectedSubCurveIndex, &nextSubCurve, &nextT);
-  if (nextCurve < 0) {
+  CurveCursor curveCursor = nextCurveIndexVertically(
+      direction, currentActiveFunctionIndex, m_selectedSubCurveIndex);
+  if (curveCursor.curveIndex < 0) {
     return false;
   }
-
-  moveCursorVerticallyToPosition(nextCurve, nextSubCurve, nextT);
+  moveCursorVerticallyToPosition(curveCursor.curveIndex,
+                                 curveCursor.subCurveIndex, curveCursor.t);
   return true;
 }
 

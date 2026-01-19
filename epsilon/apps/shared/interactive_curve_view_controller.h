@@ -97,13 +97,16 @@ class InteractiveCurveViewController
       double t) const = 0;
   virtual CurveSelectionController* curveSelectionController() const = 0;
 
+  // Cursor postion on a curve. A -1 [curveIndex] indicates no curve is selected
+  struct CurveCursor {
+    int curveIndex;
+    int subCurveIndex;
+    float t;
+  };
   // Closest vertical curve helper
-  int closestCurveIndexVertically(OMG::VerticalDirection direction,
-                                  int currentCurveIndex,
-
-                                  int currentSubCurveIndex = 0,
-                                  int* newSubCurveIndex = nullptr,
-                                  float* nextT = nullptr) const;
+  CurveCursor closestCurveIndexVertically(OMG::VerticalDirection direction,
+                                          int currentCurveIndex,
+                                          int currentSubCurveIndex = 0) const;
   int selectedCurveIndex() const { return *m_selectedCurveIndex; }
   virtual Poincare::Coordinate2D<double> xyValues(
       int curveIndex, double t, int subCurveIndex = 0) const = 0;
@@ -128,9 +131,9 @@ class InteractiveCurveViewController
   }
 
   // Closest curve helper (along Y or along X)
-  int closestCurveIndex(OMG::VerticalDirection direction, int currentCurveIndex,
-                        int currentSubCurveIndex, int* newSubCurveIndex,
-                        bool alongY) const;
+  CurveCursor closestCurveIndex(OMG::VerticalDirection direction,
+                                int currentCurveIndex, int currentSubCurveIndex,
+                                bool alongY) const;
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isVertical,
                   bool isMin) const override;

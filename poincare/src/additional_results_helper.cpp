@@ -15,7 +15,6 @@
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>
-#include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/expression/trigonometry.h>
 #include <poincare/src/expression/units/representatives.h>
 #include <poincare/src/expression/units/unit.h>
@@ -213,8 +212,8 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
     Tree::ApplyShallowTopDown(exactAngle, Units::Unit::ShallowRemoveUnit);
     exactAngle->cloneNodeAtNode(KMult.node<2>);
     Angle::RadTo(angleUnit)->cloneTree();
-    // Reduce again
-    SystematicReduction::ShallowReduce(exactAngle);
+    // Simplify again
+    Simplification::Simplify(exactAngle, projCtx);
   }
 
   // The angle must be real and finite.

@@ -180,16 +180,15 @@ GraphController::CurveCursor GraphController::nextCurveIndexVertically(
     return FunctionGraphController::nextCurveIndexVertically(
         direction, curveIndex, subCurveIndex);
   }
-  float t = m_cursor->t();
   // Handle for sub curve in current function
   if (direction.isDown()) {
     if (numberOfSubCurves(curveIndex) > subCurveIndex + 1) {
       // Switch to next sub curve
-      return {curveIndex, subCurveIndex + 1, t};
+      return {curveIndex, subCurveIndex + 1, m_cursor->t()};
     }
   } else if (direction.isUp() && subCurveIndex > 0) {
     // Switch to previous sub curve
-    return {curveIndex, subCurveIndex - 1, t};
+    return {curveIndex, subCurveIndex - 1, m_cursor->t()};
   }
   // Go to the next function
   int nextActiveFunctionIndex = curveIndex + (direction.isUp() ? -1 : 1);
@@ -201,7 +200,7 @@ GraphController::CurveCursor GraphController::nextCurveIndexVertically(
    * next function when going down. */
   return {nextActiveFunctionIndex,
           direction.isUp() ? numberOfSubCurves(nextActiveFunctionIndex) - 1 : 0,
-          t};
+          m_cursor->t()};
 }
 
 double GraphController::defaultCursorT(Ion::Storage::Record record,

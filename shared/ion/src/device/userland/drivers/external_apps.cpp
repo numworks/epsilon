@@ -151,9 +151,9 @@ int numberOfApps(bool isExamModeActive) {
 void deleteApps(bool isExamModeActive, bool keepAfterCrash) {
   if (keepAfterCrash &&
       Ion::Reset::lastResetType() == Ion::Reset::ResetType::Software) {
-    /* Keep external apps after a crash. A voluntary software reset (from the
-     * settings menu) will clear them beforehand so we don't need to make the
-     * difference here. */
+    /* Keep external apps after a software crash.
+     * A voluntary software reset (from the settings menu) calls with
+     * keepAfterCrash = false. */
     return;
   }
   for (App a : Apps(isExamModeActive)) {

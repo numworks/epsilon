@@ -6,6 +6,7 @@ namespace Ion {
 namespace Reset {
 
 void core();
+void coreActiveExamMode();
 
 enum class ResetType : bool {
   Hardware,  // POWER on, NRST pin

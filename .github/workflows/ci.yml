@@ -144,11 +144,11 @@ jobs:
       - run: $DOCKER_RUN "make -C epsilon PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html epsilon_test.js"
       - run: $DOCKER_RUN "node epsilon/output/debug/optimized/web/epsilon_test.js --headless --limit-stack-usage"
         timeout-minutes: 5
-      - uses: actions/upload-artifact@v4
+      - uses: ./.github/actions/upload-artifact
         with:
           name: epsilon.html
           path: epsilon/output/debug/optimized/web/epsilon.html
-          retention-days: 3
+          token: ${{ secrets.ARTEMIS_TOKEN }}
   linux:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
@@ -174,11 +174,12 @@ jobs:
       - name: Run unit tests sequentially (if parallel run failed)
         if: steps.run-tests.outcome == 'failure'
         run: $DOCKER_RUN "rm -f core; epsilon/output/debug/optimized/linux/epsilon_test.bin --headless --limit-stack-usage || (eu-stack --core core; exit 1)"
-      - uses: actions/upload-artifact@v4
-        if: ${{ fromJSON(vars.ADVANCED_JOBS) }}
+      - uses: ./.github/actions/upload-artifact
+        name: Upload artifact
         with:
           name: epsilon-linux.bin
           path: epsilon/output/debug/optimized/linux/epsilon.bin
+          token: ${{ secrets.ARTEMIS_TOKEN }}
   macos:
     timeout-minutes: 15
     runs-on: macOS-latest

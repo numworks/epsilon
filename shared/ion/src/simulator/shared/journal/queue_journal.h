@@ -29,7 +29,7 @@ class QueueJournal : public Ion::Events::Journal {
        *  1 <=len<= 9 = 1 event
        *  10<=len<=18 = 2 events
        *  19<=len<=27 = 3 events */
-      for (int i = 0;
+      for (size_t i = 0;
            i < (len + Ion::Events::sharedExternalTextBufferSize - 2) /
                    (Ion::Events::sharedExternalTextBufferSize - 1);
            ++i) {

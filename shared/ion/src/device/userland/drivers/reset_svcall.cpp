@@ -14,6 +14,15 @@ void core() {
   core_svcall();
 }
 
+/* To be called when exam mode is already known to be active, to avoid calling
+ * Ion::ExamMode::get() with an incoherent (exam mode)/(clearance level) pair.
+ * This function is specifically used when setting exam mode from a firmware
+ * with third-party apps. */
+void coreActiveExamMode() {
+  Ion::ExternalApps::deleteApps(true, false);
+  core_svcall();
+}
+
 ResetType SVC_ATTRIBUTES lastResetType() {
   SVC_RETURNING_R0(SVC_RESET_LAST_RESET_TYPE, ResetType)
 }

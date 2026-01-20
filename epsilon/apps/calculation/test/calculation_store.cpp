@@ -563,6 +563,17 @@ QUIZ_CASE(calculation_symbolic_computation) {
   assertMainCalculationOutputIs("f(x)", "3", &store);
   assertMainCalculationOutputIs("x+x+1+3+√(π)", "8+√(π)", &store);
 
+  assertCalculationIs("1+2→x", DisplayOutput::ApproximateIsIdenticalToExact,
+                      EqualSign::Hidden, "3", nullptr, &store);
+  assertCalculationIs("0.2→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,
+                      "0.2", nullptr, &store);
+  assertCalculationIs("0.1+0.2→x", DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Equal, "3/10", "0.3", &store);
+  assertCalculationIs("a→x", DisplayOutput::ApproximateOnly, EqualSign::Hidden,
+                      nullptr, "undef", &store);
+  assertCalculationIs("1+1→a", DisplayOutput::ApproximateIsIdenticalToExact,
+                      EqualSign::Hidden, "2", nullptr, &store);
+
   // Destroy records
   Shared::GlobalContextAccessor::Store().resetAll();
 
@@ -585,6 +596,20 @@ QUIZ_CASE(calculation_symbolic_computation) {
   assertCalculationIs("foo^(3)(1)", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr, "24", &store, "foo^(3)(1)");
   Shared::GlobalContextAccessor::Store().resetAll();
+
+  // Units
+  assertCalculationIs("°C→x", DisplayOutput::ApproximateOnly, EqualSign::Hidden,
+                      nullptr, "1°C", &store);
+  assertCalculationIs("123°C→x", DisplayOutput::ApproximateOnly,
+                      EqualSign::Hidden, nullptr, "123°C", &store);
+  assertCalculationIs("-4.56°C→x", DisplayOutput::ApproximateOnly,
+                      EqualSign::Hidden, nullptr, "-4.56°C", &store);
+  Shared::GlobalContextAccessor::Store().resetAll();
+
+  assertCalculationIs("[[8]]→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,
+                      "[[8]]", nullptr, &store);
+  assertCalculationIs("[[x]]→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,
+                      "[[x]]", nullptr, &store);
 
   // 1 - Predefined variable in fraction in integral
   assertMainCalculationOutputIs("int(x+1/x,x,1,2)", "2.193147", &store);

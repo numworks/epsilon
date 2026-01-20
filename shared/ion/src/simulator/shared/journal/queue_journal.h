@@ -14,7 +14,7 @@ namespace Journal {
 class QueueJournal : public Ion::Events::Journal {
  public:
   void pushEvent(Ion::Events::Event e) override {
-#if ION_KEYBOARD_RICH
+#if ION_VARIANT_EPSILON
     if (e == Ion::Events::Paste) {
       const char* systemBuffer = Ion::Clipboard::read();
       if (!systemBuffer) {

@@ -55,7 +55,7 @@ class LogJournal : public Ion::Events::Journal {
  public:
   void pushEvent(Event e) override {
     static bool lastEventWasNone = false;
-#if ION_KEYBOARD_RICH
+#if ION_VARIANT_EPSILON
     if (e == Ion::Events::Paste) {
       const char* systemBuffer = Ion::Clipboard::read();
       if (systemBuffer) {

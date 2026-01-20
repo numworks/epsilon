@@ -115,7 +115,7 @@ Event getEvent(int* timeout) {
     /* Keep track of whether the simulator is plugged or unplugged. */
     Ion::USB::togglePlug();
   }
-#if ION_KEYBOARD_RICH
+#if ION_VARIANT_EPSILON
   if (nextEvent == Ion::Events::Paste) {
     /* On the web simulator, the fetch and send functions in Clipboard will call
      * an emscripten_sleep, which requires all symbols currently on the stack to

@@ -250,3 +250,4 @@ jobs:
     with:
       project-path: epsilon
       coverage-scope: ''
+    secrets: inherit

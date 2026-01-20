@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <escher/tab_view_controller.h>
 #include <float.h>
+#include <omg/float.h>
 
 #include <cmath>
 
@@ -284,7 +285,9 @@ InteractiveCurveViewController::closestCurveIndex(
       double newY = newXY.y();
       double newX = newXY.x();
       double newF = alongY ? newX : newY;
-      assert(newY == y || newX == x);
+      // New point is expected to be either at same abscissa or at same ordinate
+      assert(OMG::Float::RoughlyEqual<double>(t, alongY ? newY : newX,
+                                              DBL_EPSILON));
       if (!suitableYValue(newY) || !suitableXValue(newX)) {
         continue;
       }

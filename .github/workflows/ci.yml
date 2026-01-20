@@ -14,7 +14,13 @@ on:
 
   workflow_dispatch:
     inputs:
+      linux:
+        type: boolean
+        default: false
       device:
+        type: boolean
+        default: false
+      poincarejs:
         type: boolean
         default: false
       android:
@@ -44,7 +50,7 @@ jobs:
   android:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.android)) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' || fromJSON(github.event.inputs.android))) }}
     steps:
       - uses: actions/checkout@v4
       - name: Build container and define DOCKER_RUN
@@ -60,7 +66,7 @@ jobs:
   device:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.device)) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' || fromJSON(github.event.inputs.device))) }}
     strategy:
       matrix:
         model: [n0110, n0115, n0120]
@@ -95,7 +101,7 @@ jobs:
   windows:
     timeout-minutes: 15
     runs-on: windows-latest
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.windows)) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' || fromJSON(github.event.inputs.windows))) }}
     defaults:
       run:
         shell: msys2 {0}
@@ -122,7 +128,7 @@ jobs:
   web:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.web)) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' || fromJSON(github.event.inputs.web))) }}
     env:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
@@ -146,6 +152,7 @@ jobs:
   linux:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    if: ${{ (github.event_name == 'pull_request' || fromJSON(github.event.inputs.linux)) }}
     env:
       MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"
     steps:
@@ -175,7 +182,7 @@ jobs:
   macos:
     timeout-minutes: 15
     runs-on: macOS-latest
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.macos)) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' || fromJSON(github.event.inputs.macos))) }}
     env:
       MAKEFLAGS: '-j2'
     steps:
@@ -191,7 +198,7 @@ jobs:
   ios:
     timeout-minutes: 15
     runs-on: macOS-latest
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.ios)) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' && fromJSON(github.event.inputs.ios))) }}
     env:
       MAKEFLAGS: '-j2'
     steps:
@@ -207,6 +214,7 @@ jobs:
   poincarejs:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    if: ${{ (github.event_name == 'pull_request' || fromJSON(github.event.inputs.poincarejs)) }}
     env:
       MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"
     steps:
@@ -234,6 +242,7 @@ jobs:
       #     path: poincare/poincarejs/output/release/foxglove/poincarejs.zip
       #     retention-days: 3
   coverage:
+    if: ${{ github.event_name == 'pull_request' }}
     name: Code Coverage
     needs: linux
     uses: ./.github/workflows/code_coverage.yml

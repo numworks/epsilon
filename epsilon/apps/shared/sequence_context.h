@@ -29,7 +29,7 @@ class SequenceContext final
    * and calls the parent context in other cases.
    * The other methods (setExpressionForUserNamed and
    * expressionForUserNamed) always call the parent context. */
-  Poincare::SymbolContext::UserNamedType expressionTypeForIdentifier(
+  Poincare::SymbolContext::SymbolType expressionTypeForIdentifier(
       std::string_view identifier) const override;
 
   // SequenceApproximationHelper::Context

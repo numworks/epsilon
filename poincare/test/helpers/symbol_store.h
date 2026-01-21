@@ -24,7 +24,7 @@ class SymbolStore : public Poincare::SymbolStoreInterface {
   const Poincare::Internal::Tree* expressionForUserNamed(
       const Poincare::Internal::Tree* symbol) const override;
 
-  UserNamedType expressionTypeForIdentifier(
+  SymbolType expressionTypeForIdentifier(
       std::string_view identifier) const override;
 
   bool setExpressionForUserNamed(
@@ -37,18 +37,18 @@ class SymbolStore : public Poincare::SymbolStoreInterface {
  private:
   class SymbolWithExpression {
    public:
-    SymbolWithExpression(std::string_view name, UserNamedType type,
+    SymbolWithExpression(std::string_view name, SymbolType type,
                          const Poincare::Internal::Tree* e);
     SymbolWithExpression() = default;
 
     std::string_view name() const { return m_name; }
-    UserNamedType type() const { return m_type; }
+    SymbolType type() const { return m_type; }
     const Poincare::Internal::Tree* expression() const;
 
    private:
     constexpr static size_t k_maxNameSize = 10;
     OMG::String<k_maxNameSize> m_name;
-    UserNamedType m_type;
+    SymbolType m_type;
     constexpr static size_t k_expressionBufferSize = 25;
     std::array<Poincare::Internal::Block, k_expressionBufferSize>
         m_expressionBuffer;
@@ -62,7 +62,7 @@ class SymbolStore : public Poincare::SymbolStoreInterface {
                                   std::string_view symbolName);
 
   bool push(const Poincare::Internal::Tree* expression,
-            std::string_view symbolName, UserNamedType symbolType);
+            std::string_view symbolName, SymbolType symbolType);
 
   // Returns a nullptr if the symbol does not exist in the store
   const SymbolWithExpression* findSymbolInStore(

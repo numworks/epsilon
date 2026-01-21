@@ -39,7 +39,7 @@ void store(const char* symbol, const char* expression,
 }
 
 SymbolStore::SymbolWithExpression::SymbolWithExpression(
-    std::string_view name, Poincare::SymbolContext::UserNamedType type,
+    std::string_view name, Poincare::SymbolContext::SymbolType type,
     const Tree* e)
     : m_type{type} {
   assert(name.length() <= k_maxNameSize);
@@ -62,11 +62,11 @@ const Tree* SymbolStore::expressionForUserNamed(const Tree* symbol) const {
   return existingSymbol->expression();
 }
 
-Poincare::SymbolContext::UserNamedType SymbolStore::expressionTypeForIdentifier(
+Poincare::SymbolContext::SymbolType SymbolStore::expressionTypeForIdentifier(
     std::string_view identifier) const {
   const SymbolWithExpression* existingSymbol = findSymbolInStore(identifier);
   if (!existingSymbol) {
-    return UserNamedType::None;
+    return SymbolType::None;
   }
   return existingSymbol->type();
 }
@@ -98,7 +98,7 @@ SymbolStore::SymbolWithExpression* SymbolStore::findSymbolInStore(
 }
 
 bool SymbolStore::push(const Tree* expression, std::string_view symbolName,
-                       UserNamedType symbolType) {
+                       SymbolType symbolType) {
   SymbolWithExpression* existingSymbol = findSymbolInStore(symbolName);
   if (existingSymbol) {
     *existingSymbol = SymbolWithExpression(symbolName, symbolType, expression);
@@ -110,9 +110,9 @@ bool SymbolStore::push(const Tree* expression, std::string_view symbolName,
 
 bool SymbolStore::setExpressionForUserSymbol(const Tree* expression,
                                              std::string_view symbolName) {
-  UserNamedType symbolType = UserNamedType::Symbol;
+  SymbolType symbolType = SymbolType::Symbol;
   if (expression->isList()) {
-    symbolType = UserNamedType::List;
+    symbolType = SymbolType::List;
   }
   return push(expression, symbolName, symbolType);
 }
@@ -131,8 +131,8 @@ bool SymbolStore::setExpressionForUserFunctionOrSequence(
 
   bool success =
       push(storedTree, SymbolNameFromTree(functionalSymbol),
-           functionalSymbol->isUserFunction() ? UserNamedType::Function
-                                              : UserNamedType::Sequence);
+           functionalSymbol->isUserFunction() ? SymbolType::Function
+                                              : SymbolType::Sequence);
   storedTree->removeTree();
   return success;
 }

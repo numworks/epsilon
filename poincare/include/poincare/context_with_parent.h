@@ -19,11 +19,11 @@ class ContextWithParent : public SymbolContext {
                            : nullptr;
   }
 
-  UserNamedType expressionTypeForIdentifier(
+  SymbolType expressionTypeForIdentifier(
       std::string_view identifier) const override {
     return m_parentContext
                ? m_parentContext->expressionTypeForIdentifier(identifier)
-               : UserNamedType::None;
+               : SymbolType::None;
   }
 
 #if POINCARE_UNIT

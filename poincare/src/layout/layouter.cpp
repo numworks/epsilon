@@ -440,7 +440,7 @@ void Layouter::layoutUnit(Tree* parentRack, const Tree* expression) {
   if (linearMode() || (!Unit::IsNameReserved(representative) &&
                        (m_parameters.symbolContext.useStrictUnitLayout() ||
                         m_parameters.symbolContext.expressionTypeForIdentifier(
-                            unitText) != SymbolContext::UserNamedType::None))) {
+                            unitText) != SymbolContext::SymbolType::None))) {
     PushCodePoint(parentRack, '_');
   }
 

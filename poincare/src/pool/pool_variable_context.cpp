@@ -4,10 +4,10 @@
 
 namespace Poincare {
 
-SymbolContext::UserNamedType PoolVariableContext::expressionTypeForIdentifier(
+SymbolContext::SymbolType PoolVariableContext::expressionTypeForIdentifier(
     std::string_view identifier) const {
   if ((m_name != nullptr) && (identifier == m_name)) {
-    return UserNamedType::Symbol;
+    return SymbolType::Symbol;
   }
   return ContextWithParent::expressionTypeForIdentifier(identifier);
 }

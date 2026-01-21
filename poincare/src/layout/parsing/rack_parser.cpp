@@ -1101,22 +1101,22 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
    * afterwards.
    * If preserveInput is true and the symbol is not defined, f(x) is always
    * parsed  as a function and u{n} as a sequence*/
-  Poincare::SymbolContext::UserNamedType idType =
-      Poincare::SymbolContext::UserNamedType::None;
+  Poincare::SymbolContext::SymbolType idType =
+      Poincare::SymbolContext::SymbolType::None;
   if (!m_parsingContext.metadata.isAssignmentDeclaration) {
     idType = m_parsingContext.context
                  ? m_parsingContext.context->expressionTypeForIdentifier(
                        std::string_view(name, length))
-                 : Poincare::SymbolContext::UserNamedType::None;
-    if (idType == Poincare::SymbolContext::UserNamedType::Symbol ||
+                 : Poincare::SymbolContext::SymbolType::None;
+    if (idType == Poincare::SymbolContext::SymbolType::Symbol ||
         (!m_parsingContext.params.preserveInput &&
-         idType == Poincare::SymbolContext::UserNamedType::None)) {
+         idType == Poincare::SymbolContext::SymbolType::None)) {
       leftHandSide = SharedTreeStack->pushUserSymbol(name);
       return;
     }
   }
 
-  if (idType == Poincare::SymbolContext::UserNamedType::List) {
+  if (idType == Poincare::SymbolContext::SymbolType::List) {
     leftHandSide = SharedTreeStack->pushUserSymbol(name);
     parseListParameters(leftHandSide);
     return;
@@ -1129,9 +1129,8 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
                               m_nextToken.firstLayout()->isParenthesesLayout();
   bool hasLeftParenthesis = m_nextToken.type() == Token::Type::LeftParenthesis;
 
-  if ((idType == Poincare::SymbolContext::UserNamedType::None &&
-       hasSubscript) ||
-      (idType == Poincare::SymbolContext::UserNamedType::Sequence)) {
+  if ((idType == Poincare::SymbolContext::SymbolType::None && hasSubscript) ||
+      (idType == Poincare::SymbolContext::SymbolType::Sequence)) {
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or if it's followed by a subscript, it's a
      * sequence call. */

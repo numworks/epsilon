@@ -22,15 +22,15 @@ class HistoryContext : public Poincare::SymbolContext {
     return m_history.size() - 1;
   }
 
-  UserNamedType expressionTypeForIdentifier(
+  SymbolType expressionTypeForIdentifier(
       std::string_view identifier) const override {
     if (!s_isInteractive) {
-      return UserNamedType::None;
+      return SymbolType::None;
     }
     if (identifier.length() < 2 || identifier[0] != 'o') {
-      return UserNamedType::None;
+      return SymbolType::None;
     }
-    return UserNamedType::Symbol;
+    return SymbolType::Symbol;
   }
 
   const Tree* expressionForUserNamed(const Tree* symbol) const override {

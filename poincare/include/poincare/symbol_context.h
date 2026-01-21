@@ -15,8 +15,8 @@ namespace Poincare {
 
 class SymbolContext {
  public:
-  enum class UserNamedType : uint8_t { None, Function, Sequence, Symbol, List };
-  virtual UserNamedType expressionTypeForIdentifier(
+  enum class SymbolType : uint8_t { None, Function, Sequence, Symbol, List };
+  virtual SymbolType expressionTypeForIdentifier(
       std::string_view identifier) const = 0;
 
   // TODO: return an Expression type
@@ -37,9 +37,9 @@ class SymbolContext {
 class EmptySymbolContext : public SymbolContext {
  public:
   // SymbolContext
-  UserNamedType expressionTypeForIdentifier(
+  SymbolType expressionTypeForIdentifier(
       std::string_view identifer) const override {
-    return UserNamedType::None;
+    return SymbolType::None;
   }
 
   const Internal::Tree* expressionForUserNamed(

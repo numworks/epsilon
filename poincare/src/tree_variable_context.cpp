@@ -4,10 +4,10 @@
 
 namespace Poincare {
 
-SymbolContext::UserNamedType TreeVariableContext::expressionTypeForIdentifier(
+SymbolContext::SymbolType TreeVariableContext::expressionTypeForIdentifier(
     std::string_view identifier) const {
   if ((m_name != nullptr) && (identifier == m_name)) {
-    return UserNamedType::Symbol;
+    return SymbolType::Symbol;
   }
   return ContextWithParent::expressionTypeForIdentifier(identifier);
 }

@@ -11,6 +11,8 @@ on:
       - 'epsilon/tests/**'
       - '**/scandium/**'
       - 'epsilon/external_apps/**'
+  # TODO many steps may be skipped when changes are all in
+  # shared/ion/src/device/**, split ci into simu/device ?
 
   workflow_dispatch:
     inputs:
@@ -260,6 +262,16 @@ jobs:
       #     # TODO move poincarejs output path inside poincare
       #     path: poincare/poincarejs/output/release/foxglove/poincarejs.zip
       #     retention-days: 3
+
+  screenshots:
+    if: ${{ github.event_name == 'pull_request' }}
+    name: Screenshots
+    uses: ./.github/workflows/compare-screenshots.yml
+    with:
+      project-path: epsilon
+      has-cas-dataset: true
+    secrets: inherit
+
   coverage:
     if: ${{ github.event_name == 'pull_request' }}
     name: Code Coverage

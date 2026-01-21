@@ -4,7 +4,6 @@ $(addprefix shared/, \
   display_context.cpp \
   events.cpp \
   events_modifier.cpp \
-  exam_mode.cpp \
   keyboard_queue.cpp \
   keyboard.cpp \
   layout_events/$(ION_variant)/layout_events.cpp \
@@ -40,7 +39,6 @@ $(addprefix simulator/shared/, \
   display.cpp \
   events.cpp \
   events_platform.cpp \
-  exam_bytes.cpp \
   framebuffer.cpp \
   init.cpp \
   keyboard.cpp \
@@ -53,11 +51,22 @@ $(addprefix simulator/shared/, \
   dummy/read_only_memory.cpp \
 ) \
 $(addprefix test/, \
-  exam_bytes.cpp:+test \
-  exam_mode.cpp:+test \
   storage.cpp:+test \
 ) \
 )
+
+ifeq ($(_ion_exam_mode_$(ION_variant)),1)
+SOURCES_ion += $(addprefix $(PATH_ion)/src/, \
+  shared/exam_mode.cpp \
+  simulator/shared/exam_bytes.cpp \
+  test/exam_bytes.cpp:+test \
+  test/exam_mode.cpp:+test \
+)
+else
+SOURCES_ion += $(addprefix $(PATH_ion)/src/, \
+  shared/dummy/exam_mode.cpp \
+)
+endif
 
 SFLAGS_ion += \
   -DION_EVENTS_JOURNAL

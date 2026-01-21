@@ -19,6 +19,9 @@ _ion_keyboard_columns = 6
 _ion_keyboard_rows_epsilon = 9
 _ion_keyboard_rows_scandium = 7
 
+_ion_exam_mode_epsilon := 1
+_ion_exam_mode_scandium := 0
+
 SFLAGS_ion += \
   -I$(PATH_ion)/include/ion/keyboard/$(ION_variant) \
   -DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_variant)) \

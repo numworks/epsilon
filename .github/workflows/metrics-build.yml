@@ -75,13 +75,22 @@ jobs:
           echo ${{ github.event.number }} > ./metrics-output/PR_number
           echo ${{ inputs.platform }} > ./metrics-output/platform
           echo -n ${{ inputs.project-path == 'scandium' && 'Scandium' || 'Epsilon' }} > ./metrics-output/project
-      - name: Binary size summary
-        run: $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base $(for e in ${{ steps.elfs.outputs.elfs-summary }}; do echo -n "base/$e "; done) @Head  $(for e in ${{ steps.elfs.outputs.elfs-summary }}; do echo -n "head/$e "; done) --sections @Flash .text .rodata .data @RAM .bss .data --summarize" > ./metrics-output/binary_size_summary
       - name: Binary size
-        run: $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "base/$e "; done) @Head  $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "head/$e "; done) --sections .text .rodata .bss .data" > ./metrics-output/binary_size
+        id: binary_size
+        run: |
+          echo "summary<<EOF" >> $GITHUB_OUTPUT
+          $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base $(for e in ${{ steps.elfs.outputs.elfs-summary }}; do echo -n "base/$e "; done) @Head  $(for e in ${{ steps.elfs.outputs.elfs-summary }}; do echo -n "head/$e "; done) --sections @Flash .text .rodata .data @RAM .bss .data --summarize" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "details<<EOF" >> $GITHUB_OUTPUT
+          $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "base/$e "; done) @Head  $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "head/$e "; done) --sections .text .rodata .bss .data" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
       - name: App sizes
         if: ${{ inputs.app-sizes }}
-        run: $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes" > ./metrics-output/app_sizes
+        id: apps_sizes
+        run: |
+          echo "details<<EOF" >> $GITHUB_OUTPUT
+          $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
       - name: Upload metrics output
         if: false
         uses: actions/upload-artifact@v4
@@ -91,6 +100,30 @@ jobs:
           retention-days: 3
       # Step copied temporarily from comment-metrics.yml
       - name: Add comment
+        uses: ./.github/actions/post-comment
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          pr-number: ${{ github.event.pull_request.number }}
+          body: |
+            ### ${{ inputs.project-path == 'scandium' && 'Scandium' || 'Epsilon' }} Binary size analysis
+
+            ${{ steps.binary_size.outputs.summary }}
+
+            <details>
+            <summary>Full details</summary>
+            ${{ inputs.app-sizes && '\n### Apps\n\n' || '' }}${{ inputs.app-sizes && steps.apps_sizes.outputs.details || '' }}
+
+
+            ### ${{ inputs.platform }}
+
+
+            ${{ steps.binary_size.outputs.details }}
+
+            </details>
+
+      - name: Add comment
+        if: false
         uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
@@ -131,30 +164,3 @@ jobs:
               + binary_size_model + "\n"
               + "</details>"
             );
-
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-
-            const oldComments = await github.paginate(
-              github.rest.issues.listComments,
-              {
-                owner, repo,
-                issue_number: pr_number,
-              }
-            );
-
-            const commentToUpdate = oldComments.findLast(comment =>
-              comment.user.login === 'github-actions[bot]' && comment.body.startsWith(body.slice(0,20))
-            )
-
-            if (commentToUpdate) {
-              await github.rest.issues.updateComment({
-                owner, repo, body,
-                comment_id: commentToUpdate.id,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner, repo, body,
-                issue_number: pr_number,
-              });
-            }

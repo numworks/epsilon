@@ -142,16 +142,31 @@ jobs:
           platform: web
           emsdk-version: ${{ env.EMSDK_VERSION }}
       - run: $DOCKER_RUN "make -C epsilon PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html"
-      - run: $DOCKER_RUN "make -C epsilon PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon_test.js"
-        if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' || fromJSON(github.event.inputs.web))) }}
-      - run: $DOCKER_RUN "node epsilon/output/debug/optimized/web/epsilon_test.js --headless --limit-stack-usage"
-        if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' || fromJSON(github.event.inputs.web))) }}
         timeout-minutes: 5
       - uses: ./.github/actions/upload-artifact
         with:
           name: epsilon.html
           path: epsilon/output/debug/optimized/web/epsilon.html
           token: ${{ secrets.ARTEMIS_TOKEN }}
+  web-tests:
+    timeout-minutes: 15
+    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' || fromJSON(github.event.inputs.web))) }}
+    env:
+      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Read Emscripten version
+        run: echo "EMSDK_VERSION=$(cat .emsdk-version)" >> $GITHUB_ENV
+      - name: Build container and define DOCKER_RUN
+        uses: ./.github/actions/docker-builder
+        with:
+          platform: web
+          emsdk-version: ${{ env.EMSDK_VERSION }}
+      - run: $DOCKER_RUN "make -C epsilon PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon_test.js"
+      - run: $DOCKER_RUN "node epsilon/output/debug/optimized/web/epsilon_test.js --headless --limit-stack-usage"
+        timeout-minutes: 5
   linux:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}

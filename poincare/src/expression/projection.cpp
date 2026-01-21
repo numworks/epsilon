@@ -81,7 +81,7 @@ bool Projection::ShallowReplaceUserNamed(
     return false;
   }
   // Get Definition
-  const Tree* definition = symbolContext.expressionForUserNamed(e);
+  const Tree* definition = symbolContext.expressionForSymbol(e);
   if (symbolic == SymbolicComputation::ReplaceAllSymbols && !definition) {
     e->cloneTreeOverTree(KNotDefined);
     return true;
@@ -138,7 +138,7 @@ bool hasComplexNodes(const Tree* e, SymbolicComputation symbolicComputation,
           [[fallthrough]];
         default: {
           const Tree* definition =
-              symbolContext.expressionForUserNamed(descendant);
+              symbolContext.expressionForSymbol(descendant);
           assert(definition != e);
           if (definition &&
               hasComplexNodes(definition, symbolicComputation, symbolContext)) {

@@ -13,16 +13,16 @@ class ContextWithParent : public SymbolContext {
       : m_parentContext(parentContext) {}
 
   // Context
-  const Internal::Tree* expressionForUserNamed(
+  const Internal::Tree* expressionForSymbol(
       const Internal::Tree* symbol) const override {
-    return m_parentContext ? m_parentContext->expressionForUserNamed(symbol)
+    return m_parentContext ? m_parentContext->expressionForSymbol(symbol)
                            : nullptr;
   }
 
-  SymbolType expressionTypeForIdentifier(
+  SymbolType symbolTypeForIdentifier(
       std::string_view identifier) const override {
     return m_parentContext
-               ? m_parentContext->expressionTypeForIdentifier(identifier)
+               ? m_parentContext->symbolTypeForIdentifier(identifier)
                : SymbolType::None;
   }
 

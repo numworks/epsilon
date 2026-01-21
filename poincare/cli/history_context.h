@@ -22,7 +22,7 @@ class HistoryContext : public Poincare::SymbolContext {
     return m_history.size() - 1;
   }
 
-  SymbolType expressionTypeForIdentifier(
+  SymbolType symbolTypeForIdentifier(
       std::string_view identifier) const override {
     if (!s_isInteractive) {
       return SymbolType::None;
@@ -33,7 +33,7 @@ class HistoryContext : public Poincare::SymbolContext {
     return SymbolType::Symbol;
   }
 
-  const Tree* expressionForUserNamed(const Tree* symbol) const override {
+  const Tree* expressionForSymbol(const Tree* symbol) const override {
     if (!s_isInteractive) {
       return nullptr;
     }

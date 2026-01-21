@@ -16,12 +16,12 @@ namespace Poincare {
 class SymbolContext {
  public:
   enum class SymbolType : uint8_t { None, Function, Sequence, Symbol, List };
-  virtual SymbolType expressionTypeForIdentifier(
+  virtual SymbolType symbolTypeForIdentifier(
       std::string_view identifier) const = 0;
 
   // TODO: return an Expression type
   /* The returned Tree* may live in the Pool or in the Storage. */
-  virtual const Internal::Tree* expressionForUserNamed(
+  virtual const Internal::Tree* expressionForSymbol(
       const Internal::Tree* symbol) const = 0;
 
 #if POINCARE_UNIT
@@ -37,12 +37,12 @@ class SymbolContext {
 class EmptySymbolContext : public SymbolContext {
  public:
   // SymbolContext
-  SymbolType expressionTypeForIdentifier(
+  SymbolType symbolTypeForIdentifier(
       std::string_view identifer) const override {
     return SymbolType::None;
   }
 
-  const Internal::Tree* expressionForUserNamed(
+  const Internal::Tree* expressionForSymbol(
       const Internal::Tree* symbol) const override {
     return nullptr;
   }

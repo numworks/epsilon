@@ -89,7 +89,7 @@ static PreprocessingResult PreprocessEquationList(
 
   for (Tree* userSymbol : userSymbols->children()) {
     const char* symbolName = Symbol::GetName(userSymbol);
-    if (symbolContext.expressionForUserNamed(userSymbol)) {
+    if (symbolContext.expressionForSymbol(userSymbol)) {
       if (!equationMetadata.definedVariables.isFull()) {
         equationMetadata.definedVariables.push(symbolName);
       }
@@ -342,7 +342,7 @@ static Tree* GetNextParameterSymbol(size_t* parameterIndex,
     parameterName[parameterNameLength] = 0;
     Tree* symbol =
         SharedTreeStack->pushUserSymbol(parameterName, parameterNameLength + 1);
-    if (!symbolContext.expressionForUserNamed(symbol)) {
+    if (!symbolContext.expressionForSymbol(symbol)) {
       return symbol;
     }
     // Skip already used parameter indices in global variables

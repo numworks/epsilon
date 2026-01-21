@@ -693,7 +693,7 @@ void RackParser::parseUnitConversion(TreeRef& leftHandSide,
   bool leftIsSymbolWithUnits = false;
   if (leftHandSide->isUserSymbol() && m_parsingContext.context) {
     const Tree* value =
-        m_parsingContext.context->expressionForUserNamed(leftHandSide);
+        m_parsingContext.context->expressionForSymbol(leftHandSide);
     leftIsSymbolWithUnits = value && Units::HasUnit(value);
   }
 
@@ -1105,7 +1105,7 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
       Poincare::SymbolContext::SymbolType::None;
   if (!m_parsingContext.metadata.isAssignmentDeclaration) {
     idType = m_parsingContext.context
-                 ? m_parsingContext.context->expressionTypeForIdentifier(
+                 ? m_parsingContext.context->symbolTypeForIdentifier(
                        std::string_view(name, length))
                  : Poincare::SymbolContext::SymbolType::None;
     if (idType == Poincare::SymbolContext::SymbolType::Symbol ||

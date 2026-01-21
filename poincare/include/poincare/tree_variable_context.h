@@ -16,10 +16,10 @@ class TreeVariableContext : public ContextWithParent {
       : TreeVariableContext(name, nullptr, parentContext) {}
 
   // Context
-  SymbolType expressionTypeForIdentifier(
+  SymbolType symbolTypeForIdentifier(
       std::string_view identifier) const override;
 
-  const Internal::Tree* expressionForUserNamed(
+  const Internal::Tree* expressionForSymbol(
       const Internal::Tree* symbol) const override;
 
  private:

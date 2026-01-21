@@ -496,7 +496,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
       (m_parsingContext->metadata.isAssignmentDeclaration ||
        m_parsingContext->params.preserveInput ||
        (m_parsingContext->context &&
-        m_parsingContext->context->expressionTypeForIdentifier(std::string_view(
+        m_parsingContext->context->symbolTypeForIdentifier(std::string_view(
             string, *length)) != SymbolContext::SymbolType::None))) {
     return Token::Type::CustomIdentifier;
   }

@@ -19,10 +19,10 @@ class PoolVariableContext : public ContextWithParent {
         m_value(symbol) {}
 
   // Context
-  SymbolType expressionTypeForIdentifier(
+  SymbolType symbolTypeForIdentifier(
       std::string_view identifier) const override;
 
-  const Internal::Tree* expressionForUserNamed(
+  const Internal::Tree* expressionForSymbol(
       const Internal::Tree* symbol) const override;
 
  private:

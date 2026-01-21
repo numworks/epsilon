@@ -17,7 +17,7 @@ SequenceContext::SequenceContext(const SymbolContext* parentContext,
                                  const SequenceStore* sequenceStore)
     : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {}
 
-SymbolContext::SymbolType SequenceContext::expressionTypeForIdentifier(
+SymbolContext::SymbolType SequenceContext::symbolTypeForIdentifier(
     std::string_view identifier) const {
   constexpr int numberOfSequencesNames =
       std::size(SequenceHelper::k_sequenceNames);
@@ -26,7 +26,7 @@ SymbolContext::SymbolType SequenceContext::expressionTypeForIdentifier(
       return SymbolContext::SymbolType::Sequence;
     }
   }
-  return ContextWithParent::expressionTypeForIdentifier(identifier);
+  return ContextWithParent::symbolTypeForIdentifier(identifier);
 }
 
 const Sequence* SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {

@@ -21,10 +21,10 @@ void store(const char* symbol, const char* expression,
 
 class SymbolStore : public Poincare::SymbolStoreInterface {
  public:
-  const Poincare::Internal::Tree* expressionForUserNamed(
+  const Poincare::Internal::Tree* expressionForSymbol(
       const Poincare::Internal::Tree* symbol) const override;
 
-  SymbolType expressionTypeForIdentifier(
+  SymbolType symbolTypeForIdentifier(
       std::string_view identifier) const override;
 
   bool setExpressionForUserNamed(

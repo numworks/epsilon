@@ -111,7 +111,7 @@ Tree* CloneAndReplaceFunctionDefinition(const Tree* e, const Tree* definition) {
  * definition otherwise. */
 const Tree* DefinitionWithCircularityCheck(const Tree* e,
                                            const SymbolContext& symbolContext) {
-  const Tree* definition = symbolContext.expressionForUserNamed(e);
+  const Tree* definition = symbolContext.expressionForSymbol(e);
   if (definition && Symbol::InvolvesCircularity(definition, symbolContext)) {
     return KUndef;
   }
@@ -165,7 +165,7 @@ bool Dimension::DeepCheckListLength(
     case Type::UserSymbol: {
       // UserSymbols in symbolContext should always be well defined
 #if ASSERTIONS
-      const Tree* definition = symbolContext.expressionForUserNamed(e);
+      const Tree* definition = symbolContext.expressionForSymbol(e);
       assert(!definition || DeepCheckListLength(definition, symbolContext));
 #endif
       return true;
@@ -265,7 +265,7 @@ int Dimension::ListLength(const Tree* e,
       assert(Integer::Is<uint8_t>(e->child(2)));
       return Integer::Handler(e->child(2)).to<uint8_t>();
     case Type::UserSymbol: {
-      const Tree* definition = symbolContext.expressionForUserNamed(e);
+      const Tree* definition = symbolContext.expressionForSymbol(e);
       if (definition) {
         return ListLength(definition, symbolContext);
       }
@@ -601,7 +601,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
     case Type::UserSymbol: {
       // UserSymbols in symbolContext should always be well defined
 #if ASSERTIONS
-      const Tree* definition = symbolContext.expressionForUserNamed(e);
+      const Tree* definition = symbolContext.expressionForSymbol(e);
       assert(!definition || DeepCheckDimensions(definition, symbolContext));
 #endif
       return true;
@@ -758,7 +758,7 @@ Dimension Dimension::Get(const Tree* e,
       return ListLength(e, symbolContext) > 0 ? Get(e->child(0), symbolContext)
                                               : Scalar();
     case Type::UserSymbol: {
-      const Tree* definition = symbolContext.expressionForUserNamed(e);
+      const Tree* definition = symbolContext.expressionForSymbol(e);
       if (definition) {
         return Get(definition, symbolContext);
       }

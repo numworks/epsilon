@@ -25,11 +25,11 @@ class SequenceContext final
   /* u{n}, v{n} and w{n} must be parsed as sequences in the sequence app
    * so that u{n} can be defined as a function of v{n} without v{n} being
    * already defined.
-   * So expressionTypeForIdentifier returns Type::Sequence for u, v and w,
+   * So symbolTypeForIdentifier returns Type::Sequence for u, v and w,
    * and calls the parent context in other cases.
    * The other methods (setExpressionForUserNamed and
-   * expressionForUserNamed) always call the parent context. */
-  Poincare::SymbolContext::SymbolType expressionTypeForIdentifier(
+   * expressionForSymbol) always call the parent context. */
+  Poincare::SymbolContext::SymbolType symbolTypeForIdentifier(
       std::string_view identifier) const override;
 
   // SequenceApproximationHelper::Context

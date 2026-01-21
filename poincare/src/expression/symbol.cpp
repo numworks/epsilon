@@ -91,7 +91,7 @@ bool involvesCircularity(const Tree* e,
     e->cloneTree();
   }
 
-  const Tree* definition = symbolContext.expressionForUserNamed(symbol);
+  const Tree* definition = symbolContext.expressionForSymbol(symbol);
   bool isCircular =
       definition && involvesCircularity(definition, symbolContext, maxDepth,
                                         visitedSymbols, numberOfVisitedSymbols);

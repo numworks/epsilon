@@ -615,7 +615,7 @@ std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
       if (!ctx) {
         return NAN;
       }
-      const Tree* definition = ctx->m_symbolContext.expressionForUserNamed(e);
+      const Tree* definition = ctx->m_symbolContext.expressionForSymbol(e);
       if (!definition) {
         return NAN;
       }
@@ -1413,7 +1413,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     // Global variable
     // Function of symbol cannot have a boolean dimension without a context.
     assert(ctx);
-    const Tree* definition = ctx->m_symbolContext.expressionForUserNamed(e);
+    const Tree* definition = ctx->m_symbolContext.expressionForSymbol(e);
     // Function of symbol cannot have a boolean dimension without a definition.
     assert(definition);
     if (e->isUserSymbol()) {
@@ -1643,7 +1643,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       // Global variable
       // Function of symbol cannot have a Matrix dimension without a context.
       assert(ctx);
-      const Tree* definition = ctx->m_symbolContext.expressionForUserNamed(e);
+      const Tree* definition = ctx->m_symbolContext.expressionForSymbol(e);
       // Function of symbol cannot have a Matrix dimension without a definition.
       assert(definition);
       if (e->isUserSymbol()) {

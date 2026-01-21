@@ -14,11 +14,11 @@ class StoreAppContext : public Poincare::ContextWithParent {
                   const SymbolContext* parentContext)
       : Poincare::ContextWithParent(parentContext), m_store(store) {}
 
-  Poincare::SymbolContext::SymbolType expressionTypeForIdentifier(
+  Poincare::SymbolContext::SymbolType symbolTypeForIdentifier(
       std::string_view identifier) const override {
     return m_store->isColumnName(identifier)
                ? Poincare::SymbolContext::SymbolType::List
-               : Poincare::ContextWithParent::expressionTypeForIdentifier(
+               : Poincare::ContextWithParent::symbolTypeForIdentifier(
                      identifier);
   }
 

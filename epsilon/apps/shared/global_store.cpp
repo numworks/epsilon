@@ -85,7 +85,7 @@ void GlobalStore::DestroyRecordsBaseNamedWithoutExtension(
   }
 }
 
-SymbolContext::SymbolType GlobalStore::expressionTypeForIdentifier(
+SymbolContext::SymbolType GlobalStore::symbolTypeForIdentifier(
     std::string_view identifier) const {
   const char* extension = Ion::Storage::FileSystem::sharedFileSystem
                               ->extensionOfRecordBaseNamedWithExtensions(
@@ -109,7 +109,7 @@ SymbolContext::SymbolType GlobalStore::expressionTypeForIdentifier(
   }
 }
 
-const Internal::Tree* GlobalStore::expressionForUserNamed(
+const Internal::Tree* GlobalStore::expressionForSymbol(
     const Internal::Tree* symbol) const {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
   return TreeFromStorage(

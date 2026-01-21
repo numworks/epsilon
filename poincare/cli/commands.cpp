@@ -79,8 +79,8 @@ void simplifyCommand(const std::vector<std::string>& args) {
 
 void logCommand(const std::vector<std::string>& args) {
   UserExpression e = getExpression(args);
-  if (s_historyContext.expressionForUserNamed(e)) {
-    s_historyContext.expressionForUserNamed(e)->log();
+  if (s_historyContext.expressionForSymbol(e)) {
+    s_historyContext.expressionForSymbol(e)->log();
   } else {
     e.tree()->log();
   }

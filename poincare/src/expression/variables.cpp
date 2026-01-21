@@ -61,7 +61,7 @@ void Variables::Private::GetUserSymbols(
     return Set::Add(set, e);
   }
   if (e->isUserFunction()) {
-    const Tree* expression = symbolContext.expressionForUserNamed(e);
+    const Tree* expression = symbolContext.expressionForSymbol(e);
     if (!expression) {
       // The expression is not available or is invalid in the symbol store
       return;
@@ -69,8 +69,7 @@ void Variables::Private::GetUserSymbols(
     /* If symbolContext is given, we look inside the user function definition.
      * Unknown symbol has to be discarded. */
     Tree* subSet = Set::PushEmpty();
-    GetUserSymbols(symbolContext.expressionForUserNamed(e), subSet,
-                   symbolContext);
+    GetUserSymbols(symbolContext.expressionForSymbol(e), subSet, symbolContext);
     Tree* symbolToRemove = KList(KUnknownSymbol)->cloneTree();
     subSet = Set::Difference(subSet, symbolToRemove);
     set = Set::Union(set, subSet);

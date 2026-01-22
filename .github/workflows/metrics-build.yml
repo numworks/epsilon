@@ -69,12 +69,6 @@ jobs:
       - name: Save head build
         run: mv ${{ inputs.project-path }}/output/release/${{ inputs.platform }} head
 
-      - name: Initialize metrics output
-        run: |
-          mkdir -p ./metrics-output
-          echo ${{ github.event.number }} > ./metrics-output/PR_number
-          echo ${{ inputs.platform }} > ./metrics-output/platform
-          echo -n ${{ inputs.project-path == 'scandium' && 'Scandium' || 'Epsilon' }} > ./metrics-output/project
       - name: Binary size
         id: binary_size
         run: |
@@ -91,14 +85,7 @@ jobs:
           echo "details<<EOF" >> $GITHUB_OUTPUT
           $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-      - name: Upload metrics output
-        if: false
-        uses: actions/upload-artifact@v4
-        with:
-          name: metrics-output
-          path: metrics-output/
-          retention-days: 3
-      # Step copied temporarily from comment-metrics.yml
+
       - name: Add comment
         uses: ./.github/actions/post-comment
         with:
@@ -121,46 +108,3 @@ jobs:
             ${{ steps.binary_size.outputs.details }}
 
             </details>
-
-      - name: Add comment
-        if: false
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            process.chdir('metrics-output')
-            var fs = require('fs');
-            var pr_number = Number(fs.readFileSync('./PR_number'));
-            var binary_size_summary = fs.readFileSync('./binary_size_summary');
-            var app_sizes;
-            if (fs.existsSync('./app_sizes')) {
-              app_sizes = fs.readFileSync('./app_sizes');
-            } else {
-              app_sizes = '';
-            }
-            var binary_size_model;
-            var model;
-            var project = '';
-            if (fs.existsSync('./binary_size_n0110')) {
-              binary_size_model = fs.readFileSync('./binary_size_n0110');
-              model = "N0110";
-            } else if (fs.existsSync('./binary_size_n0120')) {
-              binary_size_model = fs.readFileSync('./binary_size_n0120');
-              model = "N0120";
-            } else if (fs.existsSync('./binary_size')) {
-              binary_size_model = fs.readFileSync('./binary_size');
-              model = fs.readFileSync('./platform');
-              project = fs.readFileSync('./project') + ' ';
-            } else {
-              throw new Error("No binary_size found for either N0120 or N0110 .");
-            }
-
-            const body = (
-              "### " + project + "Binary size analysis\n\n"
-              + binary_size_summary + "\n"
-              + "<details>\n<summary>Full details</summary>\n\n"
-              + (app_sizes ? ("### Apps\n\n" + app_sizes + "\n\n") : '')
-              + "### " + model + "\n\n"
-              + binary_size_model + "\n"
-              + "</details>"
-            );

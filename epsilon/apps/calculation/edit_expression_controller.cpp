@@ -9,6 +9,7 @@
 #include <poincare/symbol_context.h>
 
 #include "app.h"
+#include "calculation/calculation_store.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -146,7 +147,8 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
   assert(&layoutField->context() == &GlobalContextAccessor::Context());
-  PoolVariableContext ansContext = m_calculationStore->createAnsContext();
+  CalculationStore::AnsContext ansContext =
+      m_calculationStore->createAnsContext();
   if (!layoutField->isEmpty()) {
     m_lastInput = layoutField->layout().clone();
   }

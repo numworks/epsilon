@@ -21,7 +21,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <poincare/symbol_context.h>
-#include <poincare/tree_variable_context.h>
+#include <poincare/variable_context.h>
 #include <stdlib.h>
 
 #include <algorithm>
@@ -130,14 +130,14 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
   m_parsingContext.metadata.isAssignmentDeclaration = false;
   Poincare::EmptySymbolContext tempContext = Poincare::EmptySymbolContext();
   // This is instantiated outside the condition so that the pointer is not lost.
-  Poincare::TreeVariableContext assignmentContext("", &tempContext);
+  Poincare::TreeVariableContext assignmentContext("", nullptr, &tempContext);
   if (rightHandSide->isUserFunction()) {
     /* If assigning a function, set the function parameter in the context for
      * parsing leftHandSide. This is to ensure that 3g->f(g) is correctly parsed
      */
     TreeRef functionParameter = rightHandSide->child(0);
     assignmentContext = Poincare::TreeVariableContext(
-        Symbol::GetName(functionParameter), m_parsingContext.context);
+        Symbol::GetName(functionParameter), nullptr, m_parsingContext.context);
     m_parsingContext.context = &assignmentContext;
   }
   // Parse leftHandSide
@@ -1014,7 +1014,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
     } else {
       // We must make sure that the parameter is parsed as a single variable.
       const Poincare::SymbolContext* oldContext = m_parsingContext.context;
-      Poincare::TreeVariableContext parameterContext(name, oldContext);
+      Poincare::TreeVariableContext parameterContext(name, nullptr, oldContext);
       m_parsingContext.context = &parameterContext;
       leftHandSide = parseFunctionParameters();
       m_parsingContext.context = oldContext;
@@ -1253,7 +1253,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
      */
     const Poincare::SymbolContext* previousContext = m_parsingContext.context;
     Poincare::TreeVariableContext functionAssignmentContext(
-        Symbol::GetName(parameter), m_parsingContext.context);
+        Symbol::GetName(parameter), nullptr, m_parsingContext.context);
     m_parsingContext.context = &functionAssignmentContext;
     // We have to parseUntil here so that we do not lose the
     // functionAssignmentContext pointer.

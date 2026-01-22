@@ -7,7 +7,7 @@
 #include <poincare/src/layout/sequence.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
-#include <poincare/tree_variable_context.h>
+#include <poincare/variable_context.h>
 
 #include "rack_parser.h"
 
@@ -177,7 +177,7 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
       /* TODO: The behaviour relative to the parametric expressions
        * is duplicated with RackParser::parseReservedFunction */
       bool isParametric = ref->isParametric();
-      TreeVariableContext parameterContext;  // For parametric
+      TreeVariableContext parameterContext(nullptr, nullptr);  // For parametric
 
       for (int i = 0; i < n; i++) {
         const SymbolContext* childContext = parsingContext.context;
@@ -207,8 +207,8 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
           if (!parsedChild->isUserSymbol()) {
             TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
           }
-          parameterContext = TreeVariableContext(Symbol::GetName(parsedChild),
-                                                 parsingContext.context);
+          parameterContext = TreeVariableContext(
+              Symbol::GetName(parsedChild), nullptr, parsingContext.context);
           /* Preparing the context for the function child relies on the variable
            * child being parsed first */
           static_assert(Parametric::k_variableIndex == 0);

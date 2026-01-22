@@ -9,7 +9,6 @@
 #include <poincare/equation_solver/equation_solver_pool.h>
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/helpers/layout.h>
-#include <poincare/pool_variable_context.h>
 #include <poincare/range.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/float_helper.h>

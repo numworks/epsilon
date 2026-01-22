@@ -304,7 +304,7 @@ Poincare::UserExpression CalculationStore::parseInput(
      * Setting Ans in the context makes it available during the parsing of the
      * input, namely to know if a rightwards arrow is a unit conversion or a
      * variable assignment. */
-    PoolVariableContext ansContext = createAnsContext();
+    AnsContext ansContext = createAnsContext();
     UserExpression inputExpression =
         UserExpression::Parse(inputLayout, ansContext);
     replaceAnsInExpression(inputExpression);
@@ -375,9 +375,9 @@ bool CalculationStore::preferencesHaveChanged() {
   return true;
 }
 
-PoolVariableContext CalculationStore::createAnsContext() {
-  return PoolVariableContext(SymbolHelper::AnsMainAlias(), ansExpression(),
-                             &GlobalContextAccessor::Context());
+CalculationStore::AnsContext CalculationStore::createAnsContext() {
+  return AnsContext(SymbolHelper::AnsMainAlias(), ansExpression(),
+                    &GlobalContextAccessor::Context());
 }
 
 // Private

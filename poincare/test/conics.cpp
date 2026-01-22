@@ -1,9 +1,9 @@
 #include <apps/shared/global_store.h>
 #include <ion/storage/file_system.h>
 #include <poincare/function_properties/conic.h>
-#include <poincare/pool_variable_context.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/symbol_context.h>
+#include <poincare/variable_context.h>
 
 #include "helper.h"
 #include "omg/float.h"
@@ -32,7 +32,7 @@ PolarConic buildPolarConic(const char* expression) {
 
 ParametricConic buildParametricConic(const char* expression) {
   // Prevent t from being interpreted as ton
-  Poincare::PoolVariableContext tContext(
+  Poincare::TreeVariableContext tContext(
       "t", UserExpression::Builder<float>(0.f), &k_emptySymbolContext);
   Tree* e = parse(expression, tContext);
   Simplification::ProjectAndReduce(

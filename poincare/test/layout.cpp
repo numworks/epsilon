@@ -16,8 +16,8 @@
 #include <poincare/src/layout/render.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/symbol_context.h>
-#include <poincare/tree_variable_context.h>
 #include <poincare/user_expression.h>
+#include <poincare/variable_context.h>
 
 // Used to test a different logarithmBasePosition. TODO: remove it
 #include <apps/global_preferences.h>

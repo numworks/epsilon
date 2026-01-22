@@ -5,11 +5,12 @@
 #include <ion/circuit_breaker.h>
 #include <omg/expiring_pointer.h>
 #include <omg/store.h>
-#include <poincare/pool_variable_context.h>
 #include <poincare/symbol_store_interface.h>
+#include <poincare/variable_context.h>
 #include <stddef.h>
 
 #include "calculation.h"
+#include "poincare/user_expression.h"
 
 namespace Calculation {
 
@@ -45,7 +46,8 @@ class CalculationStore
   void deleteCalculationAtIndex(int index);
   bool preferencesHaveChanged();
 
-  Poincare::PoolVariableContext createAnsContext();
+  using AnsContext = Poincare::VariableContext<Poincare::UserExpression>;
+  AnsContext createAnsContext();
 
   using Store::deleteAll;
   using Store::maximumSize;

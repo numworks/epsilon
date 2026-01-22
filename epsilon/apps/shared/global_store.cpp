@@ -85,35 +85,37 @@ void GlobalStore::DestroyRecordsBaseNamedWithoutExtension(
   }
 }
 
-SymbolContext::SymbolType GlobalStore::symbolTypeForIdentifier(
+SymbolContext::SymbolDescription GlobalStore::symbolDescriptionForIdentifier(
     std::string_view identifier) const {
   const char* extension = Ion::Storage::FileSystem::sharedFileSystem
                               ->extensionOfRecordBaseNamedWithExtensions(
                                   identifier.data(), identifier.length(),
                                   k_extensions, k_numberOfExtensions);
+
+  SymbolType type = SymbolType::None;
   if (extension == nullptr) {
-    return SymbolContext::SymbolType::None;
+    type = SymbolType::None;
   } else if (strcmp(extension, Ion::Storage::expressionExtension) == 0 ||
              strcmp(extension, Ion::Storage::matrixExtension) == 0) {
-    return SymbolContext::SymbolType::Symbol;
+    type = SymbolType::Symbol;
   } else if (strcmp(extension, Ion::Storage::functionExtension) == 0 ||
              strcmp(extension, Ion::Storage::parametricComponentExtension) ==
                  0 ||
              strcmp(extension, Ion::Storage::regressionExtension) == 0) {
-    return SymbolContext::SymbolType::Function;
+    type = SymbolType::Function;
   } else if (strcmp(extension, Ion::Storage::listExtension) == 0) {
-    return SymbolContext::SymbolType::List;
+    type = SymbolType::List;
   } else {
     assert(strcmp(extension, Ion::Storage::sequenceExtension) == 0);
-    return SymbolContext::SymbolType::Sequence;
+    type = SymbolType::Sequence;
   }
-}
 
-const Internal::Tree* GlobalStore::expressionForSymbol(
-    const Internal::Tree* symbol) const {
-  assert(symbol->isUserSymbol() || symbol->isUserFunction());
-  return TreeFromStorage(
-      UserNamedRecordWithBaseName(SymbolHelper::GetName(symbol)));
+  const Internal::Tree* tree = nullptr;
+  if (type != SymbolType::None && type != SymbolType::Sequence) {
+    tree = TreeFromStorage(UserNamedRecordWithBaseName(identifier.data()));
+  }
+
+  return {type, tree};
 }
 
 bool GlobalStore::setExpressionForUserNamed(

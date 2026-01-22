@@ -50,15 +50,6 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
   static void DeleteParametricComponentsOfRecord(Ion::Storage::Record record);
   static void StoreParametricComponentsOfRecord(Ion::Storage::Record record);
 
-  /* Expression for symbol
-   * The expression recorded in global context is already an expression.
-   * Otherwise, we would need the context and the angle unit to evaluate it */
-  SymbolType symbolTypeForIdentifier(
-      std::string_view identifier) const override;
-
-  const Poincare::Internal::Tree* expressionForSymbol(
-      const Poincare::Internal::Tree* symbol) const override;
-
   bool setExpressionForUserNamed(
       const Poincare::Internal::Tree* expression,
       const Poincare::Internal::Tree* symbol) override;
@@ -88,6 +79,12 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
 
   static const Poincare::Internal::Tree* TreeFromStorage(
       Ion::Storage::Record record);
+
+  // Symbol context override
+  /* The expression recorded in global context is already an expression.
+   * Otherwise, we would need the context and the angle unit to evaluate it */
+  SymbolDescription symbolDescriptionForIdentifier(
+      std::string_view identifier) const override;
 
   // Expression setters
   /* This modifies the expression. */

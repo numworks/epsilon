@@ -53,22 +53,13 @@ const Poincare::Internal::Tree* SymbolStore::SymbolWithExpression::expression()
   return Tree::FromBlocks(m_expressionBuffer.data());
 }
 
-const Tree* SymbolStore::expressionForSymbol(const Tree* symbol) const {
-  const SymbolWithExpression* existingSymbol =
-      findSymbolInStore(SymbolNameFromTree(symbol));
-  if (!existingSymbol) {
-    return nullptr;
-  }
-  return existingSymbol->expression();
-}
-
-Poincare::SymbolContext::SymbolType SymbolStore::symbolTypeForIdentifier(
-    std::string_view identifier) const {
+Poincare::SymbolContext::SymbolDescription
+SymbolStore::symbolDescriptionForIdentifier(std::string_view identifier) const {
   const SymbolWithExpression* existingSymbol = findSymbolInStore(identifier);
   if (!existingSymbol) {
-    return SymbolType::None;
+    return {};
   }
-  return existingSymbol->type();
+  return {existingSymbol->type(), existingSymbol->expression()};
 }
 
 const SymbolStore::SymbolWithExpression* SymbolStore::findSymbolInStore(

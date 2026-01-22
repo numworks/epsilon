@@ -17,16 +17,17 @@ SequenceContext::SequenceContext(const SymbolContext* parentContext,
                                  const SequenceStore* sequenceStore)
     : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {}
 
-SymbolContext::SymbolType SequenceContext::symbolTypeForIdentifier(
+SymbolContext::SymbolDescription
+SequenceContext::symbolDescriptionForIdentifier(
     std::string_view identifier) const {
   constexpr int numberOfSequencesNames =
       std::size(SequenceHelper::k_sequenceNames);
   for (int i = 0; i < numberOfSequencesNames; i++) {
     if (identifier == std::string_view(SequenceHelper::k_sequenceNames[i])) {
-      return SymbolContext::SymbolType::Sequence;
+      return {SymbolContext::SymbolType::Sequence, nullptr};
     }
   }
-  return ContextWithParent::symbolTypeForIdentifier(identifier);
+  return ContextWithParent::symbolDescriptionForIdentifier(identifier);
 }
 
 const Sequence* SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {

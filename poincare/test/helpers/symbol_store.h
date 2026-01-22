@@ -21,18 +21,17 @@ void store(const char* symbol, const char* expression,
 
 class SymbolStore : public Poincare::SymbolStoreInterface {
  public:
-  const Poincare::Internal::Tree* expressionForSymbol(
-      const Poincare::Internal::Tree* symbol) const override;
-
-  SymbolType symbolTypeForIdentifier(
-      std::string_view identifier) const override;
-
   bool setExpressionForUserNamed(
       const Poincare::Internal::Tree* expression,
       const Poincare::Internal::Tree* symbol) override;
 
   // Destroy all symbols
   void reset() { m_symbolTable.clear(); }
+
+ protected:
+  // Symbol Context override
+  SymbolDescription symbolDescriptionForIdentifier(
+      std::string_view identifier) const override;
 
  private:
   class SymbolWithExpression {

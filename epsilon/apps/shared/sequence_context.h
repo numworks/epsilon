@@ -20,18 +20,6 @@ class SequenceContext final
   SequenceContext(const Poincare::SymbolContext* parentContext,
                   const SequenceStore* sequenceStore);
 
-  // Context
-
-  /* u{n}, v{n} and w{n} must be parsed as sequences in the sequence app
-   * so that u{n} can be defined as a function of v{n} without v{n} being
-   * already defined.
-   * So symbolTypeForIdentifier returns Type::Sequence for u, v and w,
-   * and calls the parent context in other cases.
-   * The other methods (setExpressionForUserNamed and
-   * expressionForSymbol) always call the parent context. */
-  Poincare::SymbolContext::SymbolType symbolTypeForIdentifier(
-      std::string_view identifier) const override;
-
   // SequenceApproximationHelper::Context
   double approximateSequenceAtRank(const char* identifier,
                                    int rank) const override;
@@ -41,6 +29,21 @@ class SequenceContext final
   bool sequenceIsNotComputable(int sequenceIndex) const;
   void resetCache() const { cache()->resetCache(); }
   const Sequence* sequenceAtNameIndex(int sequenceIndex) const;
+
+ protected:
+  // Symbol Context override
+
+  /* This function always returns {type: Type::Sequence, expression: nullptr}
+   * for u, v and w.
+   * - Their type is always Sequence is so that u{n} can be defined as a
+   * function of v{n} without v{n} being already defined.
+   * - Their expression is always nullptr because sequence can only be
+   * approximated.
+   * TODO: We could add support for explicit sequences by returning their
+   * expression here. We would also need to change the assert in
+   * SymbolContext::expressionForSymbol accordingly. */
+  SymbolDescription symbolDescriptionForIdentifier(
+      std::string_view identifier) const override;
 
  private:
   constexpr static int k_numberOfSequences =

@@ -13,16 +13,20 @@ class Tree;
 
 namespace Poincare {
 
+class ContextWithParent;
+
 class SymbolContext {
+  friend class ContextWithParent;
+
  public:
   enum class SymbolType : uint8_t { None, Function, Sequence, Symbol, List };
-  virtual SymbolType symbolTypeForIdentifier(
-      std::string_view identifier) const = 0;
+  SymbolType symbolTypeForIdentifier(std::string_view identifier) const {
+    return symbolDescriptionForIdentifier(identifier).type;
+  }
 
   // TODO: return an Expression type
   /* The returned Tree* may live in the Pool or in the Storage. */
-  virtual const Internal::Tree* expressionForSymbol(
-      const Internal::Tree* symbol) const = 0;
+  const Internal::Tree* expressionForSymbol(const Internal::Tree* symbol) const;
 
 #if POINCARE_UNIT
   /* If true, "g" will never be parsed as a unit, and a unit will never
@@ -32,19 +36,23 @@ class SymbolContext {
    * and layouting, and it's related to how symbols are interpreted. */
   virtual bool useStrictUnitLayout() const { return false; }
 #endif
+
+ protected:
+  struct SymbolDescription {
+    SymbolType type = SymbolType::None;
+    // nullptr if type is None or no expression is associated to the symbol
+    const Internal::Tree* expression = nullptr;
+  };
+
+  virtual SymbolDescription symbolDescriptionForIdentifier(
+      std::string_view identifier) const = 0;
 };
 
 class EmptySymbolContext : public SymbolContext {
- public:
-  // SymbolContext
-  SymbolType symbolTypeForIdentifier(
-      std::string_view identifer) const override {
-    return SymbolType::None;
-  }
-
-  const Internal::Tree* expressionForSymbol(
-      const Internal::Tree* symbol) const override {
-    return nullptr;
+ protected:
+  SymbolDescription symbolDescriptionForIdentifier(
+      std::string_view identifier) const override {
+    return {};
   }
 };
 

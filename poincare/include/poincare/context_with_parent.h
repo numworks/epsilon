@@ -12,26 +12,20 @@ class ContextWithParent : public SymbolContext {
   ContextWithParent(const SymbolContext* parentContext)
       : m_parentContext(parentContext) {}
 
-  // Context
-  const Internal::Tree* expressionForSymbol(
-      const Internal::Tree* symbol) const override {
-    return m_parentContext ? m_parentContext->expressionForSymbol(symbol)
-                           : nullptr;
-  }
-
-  SymbolType symbolTypeForIdentifier(
-      std::string_view identifier) const override {
-    return m_parentContext
-               ? m_parentContext->symbolTypeForIdentifier(identifier)
-               : SymbolType::None;
-  }
-
 #if POINCARE_UNIT
   bool useStrictUnitLayout() const override {
     return m_parentContext ? m_parentContext->useStrictUnitLayout()
                            : SymbolContext::useStrictUnitLayout();
   }
 #endif
+
+ protected:
+  SymbolDescription symbolDescriptionForIdentifier(
+      std::string_view identifier) const override {
+    return m_parentContext
+               ? m_parentContext->symbolDescriptionForIdentifier(identifier)
+               : SymbolDescription{};
+  }
 
  private:
   const SymbolContext* m_parentContext;

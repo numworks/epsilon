@@ -18,12 +18,15 @@ class PoolVariableContext : public ContextWithParent {
         m_name(SymbolHelper::GetName(symbol)),
         m_value(symbol) {}
 
-  // Context
-  SymbolType symbolTypeForIdentifier(
-      std::string_view identifier) const override;
-
-  const Internal::Tree* expressionForSymbol(
-      const Internal::Tree* symbol) const override;
+ protected:
+  // Symbol Context override
+  SymbolDescription symbolDescriptionForIdentifier(
+      std::string_view identifier) const override {
+    if ((m_name != nullptr) && (identifier == m_name)) {
+      return {SymbolType::Symbol, m_value};
+    }
+    return ContextWithParent::symbolDescriptionForIdentifier(identifier);
+  }
 
  private:
   const char* m_name;

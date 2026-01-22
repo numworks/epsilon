@@ -22,33 +22,19 @@ class HistoryContext : public Poincare::SymbolContext {
     return m_history.size() - 1;
   }
 
-  SymbolType symbolTypeForIdentifier(
+ protected:
+  Poincare::SymbolContext::SymbolDescription symbolDescriptionForIdentifier(
       std::string_view identifier) const override {
-    if (!s_isInteractive) {
-      return SymbolType::None;
+    if (!s_isInteractive || identifier.length() < 2 || identifier[0] != 'o') {
+      return {};
     }
-    if (identifier.length() < 2 || identifier[0] != 'o') {
-      return SymbolType::None;
-    }
-    return SymbolType::Symbol;
-  }
-
-  const Tree* expressionForSymbol(const Tree* symbol) const override {
-    if (!s_isInteractive) {
-      return nullptr;
-    }
-    if (!symbol->isUserSymbol()) {
-      return nullptr;
-    }
-    const char* name = Symbol::GetName(symbol);
-    if (name[0] != 'o' || strlen(name) < 2) {
-      return nullptr;
-    }
-    int n = std::stoi(name + 1);
+    // Skip first character 'o'
+    std::string indexStr(identifier.substr(1));
+    int n = std::stoi(indexStr);
     if (n < 0 || n >= m_history.size()) {
-      return nullptr;
+      return {};
     }
-    return Tree::FromBlocks(m_history[n].data());
+    return {SymbolType::Symbol, Tree::FromBlocks(m_history[n].data())};
   }
 
  private:

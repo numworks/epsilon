@@ -150,7 +150,6 @@ $(addprefix pool/, \
     pool_handle.cpp \
     pool_layout_cursor.cpp \
     pool_object.cpp \
-    pool_variable_context.cpp \
     prepared_function.cpp \
     system_expression.cpp \
     user_expression.cpp \
@@ -209,13 +208,13 @@ $(addprefix statistics/, \
   statistics_dataset_column.cpp \
 ) \
   additional_results_helper.cpp:-nopool \
-  tree_variable_context.cpp \
   exam_mode.cpp \
   comparison_operator.cpp \
   float_list.cpp:-nopool \
   print.cpp \
   random.cpp \
   range.cpp \
+  symbol_context.cpp \
 )
 
 _sources_poincare_test := $(addprefix test/, \

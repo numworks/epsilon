@@ -368,15 +368,28 @@ const Tree* Tree::nextNode(size_t nodeSize) const {
   return Tree::FromBlocks(this + nodeSize);
 }
 
-size_t Tree::maxDepth() const {
-  size_t result = 0;
-  for (const Tree* child : children()) {
-    size_t childMaxDepth = child->maxDepth();
-    if (childMaxDepth > result) {
-      result = childMaxDepth;
+/* Recursively computes maxDepth and moves to the next tree
+ * Allows for a linear complexity on maxDepth computation */
+size_t maxDepthAndMoveToNextTree(const Tree** tree) {
+  Tree::NodeInfo cs = (*tree)->numberOfChildrenAndNodeSize();
+  assert(cs.nodeSize == (*tree)->nodeSize());
+  assert(cs.numberOfChildren == (*tree)->numberOfChildren());
+  *tree = (*tree)->nextNode(cs.nodeSize);
+
+  size_t maxChildDepth = 0;
+  for (int i = 0; i < cs.numberOfChildren; i++) {
+    size_t childDepth = maxDepthAndMoveToNextTree(tree);
+    if (childDepth > maxChildDepth) {
+      maxChildDepth = childDepth;
     }
   }
-  return result + 1;
+
+  return 1 + maxChildDepth;
+}
+
+size_t Tree::maxDepth() const {
+  const Tree* current = this;
+  return maxDepthAndMoveToNextTree(&current);
 }
 
 uint32_t Tree::hash() const {

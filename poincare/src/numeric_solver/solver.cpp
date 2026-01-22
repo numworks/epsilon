@@ -16,12 +16,11 @@ namespace Poincare {
 
 template <typename T>
 Solver<T>::Solver(T xStart, T xEnd, const SymbolContext& symbolContext)
-    : m_xStart(xStart),
-      m_xEnd(xEnd),
-      m_context(symbolContext),
+    : m_context(symbolContext),
       m_growthSpeed(sizeof(T) == sizeof(double) ? GrowthSpeed::Precise
                                                 : GrowthSpeed::Fast) {
-  setSearchStep(DefaultSearchStepForAmplitude(xEnd - xStart));
+  T searchStep = DefaultSearchStepForAmplitude(xEnd - xStart);
+  reset(xStart, xEnd, searchStep);
 }
 
 template <typename T>
@@ -29,7 +28,6 @@ void Solver<T>::reset(T xStart, T xEnd, T searchStep) {
   m_xStart = xStart;
   m_xEnd = xEnd;
   setSearchStep(searchStep);
-  stretch();
   m_solutionQueue = {};
 }
 

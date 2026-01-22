@@ -224,7 +224,10 @@ struct PointSearchContext {
 
   bool lastSegment;
 
-  void reinitSolver() { solver.reset(start, end, searchStep); }
+  void reinitSolver() {
+    solver.reset(start, end, searchStep);
+    solver.stretch();
+  }
 
   OMG::ExpiringPointer<ContinuousFunction> model() const {
     return store->modelForRecord(record);

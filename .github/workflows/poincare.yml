@@ -39,10 +39,9 @@ jobs:
         run: $DOCKER_RUN "make -j8 -C poincare/poincarejs PLATFORM=foxglove ASSERTIONS=0 VERBOSE=0 poincare.js.run"
       - name: Try building the whole zipped file
         run: $DOCKER_RUN "make -C poincare/poincarejs VERBOSE=0 poincarejs.zip"
-      # Disabled due to artifact storage quotas
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: poincarejs.zip
-      #     # TODO move poincarejs output path inside poincare
-      #     path: poincare/poincarejs/output/release/foxglove/poincarejs.zip
-      #     retention-days: 3
+      - uses: ./.github/actions/upload-artifact
+        with:
+          name: poincarejs.zip
+          # TODO move poincarejs output path inside poincare
+          path: poincare/poincarejs/output/release/foxglove/poincarejs.zip
+          token: ${{ secrets.ARTEMIS_TOKEN }}

@@ -2,9 +2,10 @@
 
 The [NumWorks calculator](https://www.numworks.com) allows you to install and run external apps created by yourself or the community.
 
-Resets or crashes will remove external apps from the device.
+Resets will remove external apps from the device.
 Since version 24.3.0, the external apps are only hidden in exam-mode,
 and are available again once the exam-mode is removed.
+Since version 25.0.0, the external apps are kept after most crashes. 
 
 Numworks provides a few example external apps:
 - [sample_c](sample_c): a C application plotting squares and using external data
@@ -34,7 +35,7 @@ on the `CALCULATOR IS CONNECTED` screen:
 
 ![Calculator is connected screenshot](epsilon/docs/calculator_connected.png)
 
-Then, run the following commad to build and install the app:
+Then, run the following command to build and install the app:
 ```shell
 make -C sample_cpp PLATFORM=device run
 ```
@@ -83,7 +84,7 @@ make -C sample_cpp PLATFORM=simulator run
 
 A native simulator should open directly on the app.
 
-You can also debug your app using `gcd` (or `lldb` on MacOS).
+You can also debug your app using `gdb` (or `lldb` on MacOS).
 ```shell
 make -C sample_cpp PLATFORM=simulator debug
 ```

@@ -1,4 +1,4 @@
-name: Build metrics
+name: Epsilon
 
 on:
   pull_request:
@@ -19,7 +19,7 @@ env:
 
 jobs:
   binary-size:
-    name: Epsilon
+    name: build metrics
     uses: ./.github/workflows/metrics-build.yml
     with:
       project-path: epsilon

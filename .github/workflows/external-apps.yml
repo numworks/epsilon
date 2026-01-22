@@ -1,4 +1,4 @@
-name: External Apps Build
+name: Epsilon / external apps
 on:
   pull_request:
     paths:
@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  c_cpp_apps:
+  c−cpp-apps:
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
     steps:
       - name: Install toolchain
@@ -32,7 +32,7 @@ jobs:
         run: $DOCKER_RUN "make -C epsilon/external_apps/sample_cpp VERBOSE=0 PLATFORM=device build"
       - name: Build rpn_cpp for device
         run: $DOCKER_RUN "make -C epsilon/external_apps/rpn_cpp VERBOSE=0 PLATFORM=device build"
-  rust_app:
+  rust-app:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

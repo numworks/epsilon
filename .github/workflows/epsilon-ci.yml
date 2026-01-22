@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Epsilon
 
 on:
   # Running CI on every push would be better, but ci performances are limited for now.
@@ -232,7 +232,6 @@ jobs:
 
   screenshots:
     if: ${{ github.event_name == 'pull_request' }}
-    name: Screenshots
     uses: ./.github/workflows/compare-screenshots.yml
     with:
       project-path: epsilon
@@ -241,9 +240,8 @@ jobs:
 
   coverage:
     if: ${{ github.event_name == 'pull_request' }}
-    name: Code Coverage
     needs: linux
-    uses: ./.github/workflows/code_coverage.yml
+    uses: ./.github/workflows/code-coverage.yml
     with:
       project-path: epsilon
       coverage-scope: ''

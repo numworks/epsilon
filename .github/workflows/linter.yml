@@ -1,4 +1,4 @@
-name: Lint Code Base
+name: Linter
 on:
   pull_request:
     paths:
@@ -16,8 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Lint Code Base
+  lint:
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
     steps:
       - name: Fetch target branch and PR branch

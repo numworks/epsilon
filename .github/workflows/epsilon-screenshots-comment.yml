@@ -1,0 +1,15 @@
+name: Epsilon
+
+on:
+  pull_request:
+    paths: epsilon/tests/*/*/crc32.txt
+
+concurrency:
+  group: ${{ github.workflow }}-epsilon-screenshots-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  screenshots:
+    uses: ./.github/workflows/screenshots-comment.yml
+    with:
+      project-path: epsilon

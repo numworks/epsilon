@@ -56,13 +56,13 @@ class Solver {
                                           const void*);
 
   constexpr static T k_relativePrecision = OMG::Float::Epsilon<T>();
+  constexpr static T k_sqrtRelativePrecision = OMG::Float::SqrtEpsilon<T>();
   constexpr static T k_minimalAbsoluteStep =
       2. * OMG::Float::SquareRoot<T>(2. * k_relativePrecision);
 
   static T NullTolerance(T x) {
-    return std::max(
-        k_relativePrecision,
-        OMG::Float::SquareRoot<T>(k_relativePrecision) * std::fabs(x));
+    return std::max(k_relativePrecision,
+                    k_sqrtRelativePrecision * std::fabs(x));
   }
   static T DefaultSearchStepForAmplitude(T intervalAmplitude);
 

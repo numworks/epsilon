@@ -34,7 +34,7 @@ class HistoryContext : public Poincare::SymbolContext {
     if (n < 0 || n >= m_history.size()) {
       return {};
     }
-    return {SymbolType::Symbol, Tree::FromBlocks(m_history[n].data())};
+    return {SymbolType::Variable, Tree::FromBlocks(m_history[n].data())};
   }
 
  private:

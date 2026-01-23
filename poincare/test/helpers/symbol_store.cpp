@@ -101,7 +101,7 @@ bool SymbolStore::push(const Tree* expression, std::string_view symbolName,
 
 bool SymbolStore::setExpressionForUserSymbol(const Tree* expression,
                                              std::string_view symbolName) {
-  SymbolType symbolType = SymbolType::Symbol;
+  SymbolType symbolType = SymbolType::Variable;
   if (expression->isList()) {
     symbolType = SymbolType::List;
   }

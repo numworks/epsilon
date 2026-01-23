@@ -20,7 +20,8 @@ class VariableContext : public ContextWithParent {
   SymbolDescription symbolDescriptionForIdentifier(
       std::string_view identifier) const override {
     if ((m_name != nullptr) && (identifier == m_name)) {
-      return {SymbolType::Symbol, static_cast<const Internal::Tree*>(m_value)};
+      return {SymbolType::Variable,
+              static_cast<const Internal::Tree*>(m_value)};
     }
     return ContextWithParent::symbolDescriptionForIdentifier(identifier);
   }

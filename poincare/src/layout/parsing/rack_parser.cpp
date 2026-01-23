@@ -1097,7 +1097,7 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
   }
 
   /* Check the context: if the identifier does not already exist as a function,
-   * seq or list, interpret it as a symbol, even if there are parentheses
+   * seq or list, interpret it as a variable, even if there are parentheses
    * afterwards.
    * If preserveInput is true and the symbol is not defined, f(x) is always
    * parsed  as a function and u{n} as a sequence*/
@@ -1107,7 +1107,7 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
                  ? m_parsingContext.context->symbolTypeForIdentifier(
                        std::string_view(name, length))
                  : SymbolContext::SymbolType::None;
-    if (idType == SymbolContext::SymbolType::Symbol ||
+    if (idType == SymbolContext::SymbolType::Variable ||
         (!m_parsingContext.params.preserveInput &&
          idType == SymbolContext::SymbolType::None)) {
       leftHandSide = SharedTreeStack->pushUserSymbol(name);

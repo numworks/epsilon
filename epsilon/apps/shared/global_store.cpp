@@ -97,7 +97,7 @@ SymbolContext::SymbolDescription GlobalStore::symbolDescriptionForIdentifier(
     type = SymbolType::None;
   } else if (strcmp(extension, Ion::Storage::expressionExtension) == 0 ||
              strcmp(extension, Ion::Storage::matrixExtension) == 0) {
-    type = SymbolType::Symbol;
+    type = SymbolType::Variable;
   } else if (strcmp(extension, Ion::Storage::functionExtension) == 0 ||
              strcmp(extension, Ion::Storage::parametricComponentExtension) ==
                  0 ||

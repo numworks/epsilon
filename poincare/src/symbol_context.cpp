@@ -17,7 +17,7 @@ const Tree* SymbolContext::expressionForSymbol(const Tree* symbol) const {
   SymbolDescription description = symbolDescriptionForIdentifier(identifier);
 
   bool isFunction = description.type == SymbolType::Function;
-  bool isSymbolOrList = description.type == SymbolType::Symbol ||
+  bool isSymbolOrList = description.type == SymbolType::Variable ||
                         description.type == SymbolType::List;
 
   if ((isFunction && symbol->isUserFunction()) ||

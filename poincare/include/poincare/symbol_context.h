@@ -19,7 +19,7 @@ class SymbolContext {
   friend class ContextWithParent;
 
  public:
-  enum class SymbolType : uint8_t { None, Function, Sequence, Symbol, List };
+  enum class SymbolType : uint8_t { None, Function, Sequence, Variable, List };
 
   SymbolType symbolTypeForIdentifier(std::string_view identifier) const {
     return symbolDescriptionForIdentifier(identifier).type;

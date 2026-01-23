@@ -530,15 +530,15 @@ QUIZ_CASE(pcj_parse_unit) {
   // m is meter
   assertLayoutParsesTo("m=3"_l, KEqual(KUnits::meter, 3_e));
   // m is symbol if isAssignment
-  assertLayoutParsesTo("m=3"_l, KEqual(KUserSymbol<"m">(), 3_e),
+  assertLayoutParsesTo("m=3"_l, KEqual(KUserVariable<"m">(), 3_e),
                        Poincare::EmptySymbolContext{}, {.isAssignment = true});
   // m is symbol if preserveInput
-  assertLayoutParsesTo("m=3"_l, KEqual(KUserSymbol<"m">(), 3_e),
+  assertLayoutParsesTo("m=3"_l, KEqual(KUserVariable<"m">(), 3_e),
                        Poincare::EmptySymbolContext{}, {.preserveInput = true});
   // m is symbol if the unit underscore is mandatory
   Poincare::EmptySymbolContext emptyContext;
   Poincare::StrictUnitContext symbolContext(&emptyContext);
-  assertLayoutParsesTo("3m"_l, KMult(3_e, KUserSymbol<"m">()), symbolContext);
+  assertLayoutParsesTo("3m"_l, KMult(3_e, KUserVariable<"m">()), symbolContext);
   // rad is always a unit
   assertLayoutParsesTo("3rad"_l, KMult(3_e, KUnits::radian), symbolContext);
 }

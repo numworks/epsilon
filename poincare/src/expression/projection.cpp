@@ -51,7 +51,7 @@ bool Projection::DeepReplaceUserNamed(
 }
 
 bool Projection::DeepReplaceUserNamedWithUndefined(Tree* e) {
-  if (e->isUserFunction() || (e->isUserSymbol())) {
+  if (e->isUserFunction() || (e->isUserVariable())) {
     e->cloneTreeOverTree(KNotDefined);
     return true;
   }
@@ -75,7 +75,7 @@ bool Projection::ShallowReplaceUserNamed(
   assert(symbolic != SymbolicComputation::KeepAllSymbols);
   bool eIsUserFunction = e->isUserFunction();
   if (!eIsUserFunction &&
-      (!e->isUserSymbol() ||
+      (!e->isUserVariable() ||
        symbolic == SymbolicComputation::ReplaceDefinedFunctions)) {
     // TODO: skip also system symbol?
     return false;
@@ -124,7 +124,7 @@ bool hasComplexNodes(const Tree* e, SymbolicComputation symbolicComputation,
       return true;
     }
     // Skip UserSequences.
-    if (descendant->isUserFunction() || descendant->isUserSymbol()) {
+    if (descendant->isUserFunction() || descendant->isUserVariable()) {
       /* We could factorize with DeepReplaceUserNamed but this avoid having to
        * clone the tree. */
       switch (symbolicComputation) {

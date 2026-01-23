@@ -559,7 +559,7 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
       // Add extra parentheses for -1^2 -> -(1^2) but not for -x^2
       bool addExtraParenthesis =
           expression->child(0)->isPow() &&
-          !expression->child(0)->child(0)->isUserSymbol();
+          !expression->child(0)->child(0)->isUserVariable();
       layoutExpression(
           parentRack, child,
           addExtraParenthesis ? k_forceParentheses : OperatorPriority(type));
@@ -643,7 +643,7 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
       if (expression->child(0)->treeIsIdenticalTo(
               Derivation::k_functionDerivativeVariable)) {
         assert(expression->lastChild()->isUserFunction() &&
-               expression->lastChild()->child(0)->isUserSymbol() &&
+               expression->lastChild()->child(0)->isUserVariable() &&
                expression->lastChild()->child(0)->treeIsIdenticalTo(
                    Derivation::k_functionDerivativeVariable));
         layoutText(parentRack, Symbol::GetName(expression->lastChild()));
@@ -729,7 +729,7 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
       layoutText(parentRack, PhysicalConstant::GetProperties(expression)
                                  .m_aliasesList.mainAlias());
       break;
-    case Type::UserSymbol:
+    case Type::UserVariable:
     case Type::UserSequence:
     case Type::UserFunction: {
       layoutText(parentRack, Symbol::GetName(expression));

@@ -23,7 +23,7 @@ Layout Regression::equationLayout(
     return Layout();
   }
   Tree* expr = SharedTreeStack->pushEqual();
-  SharedTreeStack->pushUserSymbol(ySymbol);
+  SharedTreeStack->pushUserVariable(ySymbol);
   formula.tree()->cloneTree();
   return UserExpression::Builder(expr).createLayout(displayMode,
                                                     significantDigits);

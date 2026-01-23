@@ -126,13 +126,13 @@ class AbstractTreeStack : public BlockStack {
   Tree* pushInteger(int32_t value);
   Tree* pushInteger(uint32_t value);
 
-  Tree* pushUserSymbol(const char* name) {
-    return pushUserSymbol(name, strlen(name) + 1);
+  Tree* pushUserVariable(const char* name) {
+    return pushUserVariable(name, strlen(name) + 1);
   }
 
-  Tree* pushUserSymbol(const char* name, size_t size) {
+  Tree* pushUserVariable(const char* name, size_t size) {
     // TODO: change size to length
-    return pushUserNamed(Type::UserSymbol, name, size);
+    return pushUserNamed(Type::UserVariable, name, size);
   }
 
   Tree* pushUserFunction(const char* name) {
@@ -238,7 +238,7 @@ class AbstractTreeStack : public BlockStack {
     return Tree::ConstTrees(Tree::FromBlocks(firstBlock()), numberOfTrees());
   }
 
-  // type should be UserSequence, UserFunction or UserSymbol
+  // type should be UserSequence, UserFunction or UserVariable
   Tree* pushUserNamed(TypeBlock type, const char* name, size_t size);
 };
 

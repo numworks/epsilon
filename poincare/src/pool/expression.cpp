@@ -180,7 +180,7 @@ bool Expression::isBoolean() const { return tree()->isBoolean(); }
 
 bool Expression::isList() const { return tree()->isList(); }
 
-bool Expression::isUserSymbol() const { return tree()->isUserSymbol(); }
+bool Expression::isUserVariable() const { return tree()->isUserVariable(); }
 
 bool Expression::isUserFunction() const { return tree()->isUserFunction(); }
 

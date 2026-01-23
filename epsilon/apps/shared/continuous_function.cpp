@@ -1019,7 +1019,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(
 CodePoint ContinuousFunction::Model::CodePointForSymbol(
     const UserExpression& symbol) {
   // Extract the CodePoint function's symbol. We know it is either x, t or θ
-  assert(symbol.isUserSymbol());
+  assert(symbol.isUserVariable());
   if (SymbolHelper::IsSymbol(symbol, k_cartesianSymbol)) {
     return k_cartesianSymbol;
   }

@@ -71,8 +71,9 @@ static PreprocessingResult PreprocessEquationList(
 
   // Step 1. Retrieve user symbols and infer the list of unknowns
   const SymbolContext& symbolContext = projectionContext->m_context;
-  Tree* userSymbols = Variables::GetUserSymbols(equationList, symbolContext);
-  assert(userSymbols->isList());
+  Tree* userVariables =
+      Variables::GetUserVariables(equationList, symbolContext);
+  assert(userVariables->isList());
 
   VariableArray undefinedVariables;
   /* The total number can be over the capacity of VariableArray. Either:
@@ -87,9 +88,9 @@ static PreprocessingResult PreprocessEquationList(
   size_t nDefinedVariables = 0;
   size_t nUndefinedVariables = 0;
 
-  for (Tree* userSymbol : userSymbols->children()) {
-    const char* symbolName = Symbol::GetName(userSymbol);
-    if (symbolContext.expressionForSymbol(userSymbol)) {
+  for (Tree* userVariable : userVariables->children()) {
+    const char* symbolName = Symbol::GetName(userVariable);
+    if (symbolContext.expressionForSymbol(userVariable)) {
       if (!equationMetadata.definedVariables.isFull()) {
         equationMetadata.definedVariables.push(symbolName);
       }
@@ -135,18 +136,18 @@ static PreprocessingResult PreprocessEquationList(
   }
 
   if (error != Error::NoError) {
-    userSymbols->removeTree();
+    userVariables->removeTree();
     return {.error = error, .equationMetadata = equationMetadata};
   }
 
   if (equationMetadata.overrideDefinedVariables) {
-    equationMetadata.unknownVariables.fillWithList(userSymbols);
+    equationMetadata.unknownVariables.fillWithList(userVariables);
   } else {
     equationMetadata.unknownVariables = undefinedVariables;
   }
 
   assert(equationMetadata.unknownVariables.size() == expectedNumberOfUnknowns);
-  userSymbols->removeTree();
+  userVariables->removeTree();
 
   projectionContext->m_symbolic =
       equationMetadata.overrideDefinedVariables
@@ -174,8 +175,8 @@ static PreprocessingResult PreprocessEquationList(
   }
 
   /* The symbols should be replaced in this order :
-   *  - User functions (because they can hide UserSymbols and local symbols)
-   *  - UserSymbols into unkowns (because they have a different
+   *  - User functions (because they can hide UserVariables and local symbols)
+   *  - UserVariables into unkowns (because they have a different
    * ComplexProperties)
    *  - Local symbols into variables (Done in ProjectAndReduce)
    *  - Reduction (Done in ProjectAndReduce). */
@@ -315,7 +316,7 @@ static uint32_t TagParametersUsedAsVariables(VariableArray variables) {
   return tags;
 }
 
-/* Return the userSymbol for the next additional parameter variable. */
+/* Return the userVariable for the next additional parameter variable. */
 static Tree* GetNextParameterSymbol(size_t* parameterIndex,
                                     uint32_t usedParameterIndices,
                                     const SymbolContext& symbolContext) {
@@ -340,8 +341,8 @@ static Tree* GetNextParameterSymbol(size_t* parameterIndex,
     assert(parameterNameLength >= 1 &&
            parameterNameLength < k_parameterNameSize);
     parameterName[parameterNameLength] = 0;
-    Tree* symbol =
-        SharedTreeStack->pushUserSymbol(parameterName, parameterNameLength + 1);
+    Tree* symbol = SharedTreeStack->pushUserVariable(parameterName,
+                                                     parameterNameLength + 1);
     if (!symbolContext.expressionForSymbol(symbol)) {
       return symbol;
     }

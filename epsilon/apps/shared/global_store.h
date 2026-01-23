@@ -88,7 +88,7 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
   // Expression setters
 
   /* This modifies the expression. */
-  Ion::Storage::Record::ErrorStatus setExpressionForUserSymbol(
+  Ion::Storage::Record::ErrorStatus setExpressionForUserVariable(
       Poincare::UserExpression& expression, const char* name,
       Ion::Storage::Record previousRecord);
   Ion::Storage::Record::ErrorStatus setExpressionForUserFunction(

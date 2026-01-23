@@ -119,7 +119,7 @@ static StorePreprocessResult preprocessStore(
   if (storeSymbol.isUserFunction()) {
     isStoringFunction = true;
   } else {
-    assert(storeSymbol.isUserSymbol());
+    assert(storeSymbol.isUserVariable());
   }
   return StorePreprocessResult{
       /* The expression stored in a function is left unreduced, except when CAS
@@ -245,7 +245,7 @@ static void processStore(OutputExpressions& outputs,
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
   UserExpression valueApprox = value.cloneAndApproximate<double>(
       PoincareHelpers::ProjectionContextForPreferences(value));
-  if (symbol.isUserSymbol() &&
+  if (symbol.isUserVariable() &&
       CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox,
                                           GlobalContextAccessor::Context())) {
     value = valueApprox;
@@ -254,7 +254,7 @@ static void processStore(OutputExpressions& outputs,
 /* TODO_PCJ: restore assert
 * Handle case of functions (3*x->f(x)): there should be no symbol except x */
 assert(!value.recursivelyMatches(
-[](const Expression e) { return e.isUserSymbol(); }));
+[](const Expression e) { return e.isUserVariable(); }));
 #endif
   if (GlobalContextAccessor::Store().setExpressionForUserNamed(value, symbol)) {
     outputs.exact = value;

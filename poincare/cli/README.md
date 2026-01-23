@@ -4,12 +4,13 @@ This is a dev tool to evaluate expressions using poincare with a simple,
 scriptable and comfortable command line interface.
 
 ### Interactive use
+
 ```
 $ make -f poincare/cli/Makefile poincare_cli.run
 > simplify 2x-x
 o0 = x
 > log o0
-<UserSymbol size="4" address="0x60000039c010" value="x"/>
+<UserVariable size="4" address="0x60000039c010" value="x"/>
 > ^D
 Exiting.
 ```
@@ -21,6 +22,7 @@ Commands may be abbreviated if the prefix is unique e.g. `s` = `simplify`.
 You can now experiment with poincare directly on bob or inside a container.
 
 ### Interactive debug
+
 ```lldb
 $ lldb ./output/debug/macos/arm64/poincare_cli.bin
 (lldb) target create "./output/debug/macos/arm64/poincare_cli.bin"
@@ -39,14 +41,15 @@ Process 17314 stopped
 ```
 
 If you went too far and want to restart you can just press Up to get the previous expression back.
+
 ```lldb
 (lldb) r
 [Press Up]
 > expand (x+y)^3
 ```
 
-
 ### Command line use
+
 ```
 $ ./output/debug/macos/arm64/poincare_cli.bin approx 2pi
 6.2831853071796
@@ -58,6 +61,7 @@ If you don't specify the operation, it defaults to `simplify`.
 Mind the shell expansions with `(`,`)` and `*`. Wrap with `""` if needed.
 
 ### Batch use
+
 ```
 $ cat in
 s acos(-1/√(2))
@@ -73,6 +77,7 @@ $ cat out
 
 Tip:
 Use it to compare versions and platforms:
+
 ```
 $ diff out_master out
 1c1
@@ -86,6 +91,7 @@ $ diff out_master out
 ```
 
 ### Bisect
+
 Use the `bisect.sh` helper script to find when an expression result has changed.
 For instance if 2+2 stopped being equal to 4, run:
 
@@ -114,6 +120,7 @@ $ ./output/debug/macos/arm64/poincare_cli.bin s 2+2
 ```
 
 ### TODO
+
 - add commands to get the dimension, the sign, dump the tree stack
 - get timing and stack usage info (like ipython's timeit)
 - set context, proposal `s cos(90) deg real`

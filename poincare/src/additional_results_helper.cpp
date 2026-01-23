@@ -278,7 +278,7 @@ const Tree* getNumericalValueTree(const Tree* e, bool* error) {
   assert(!*error);
   assert(!e->isDep());
   // Escape if e has a random node, a user symbol or inf
-  if (e->isRandomized() || e->isUserSymbol() || e->isInf()) {
+  if (e->isRandomized() || e->isUserVariable() || e->isInf()) {
     *error = true;
     return nullptr;
   }
@@ -332,7 +332,7 @@ UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
   assert(numericalValue);
   *value =
       Approximation::To<float>(numericalValue, Approximation::Parameters{});
-  numericalValue->moveTreeOverTree(SharedTreeStack->pushUserSymbol(symbol));
+  numericalValue->moveTreeOverTree(SharedTreeStack->pushUserVariable(symbol));
   return UserExpression::Builder(clone);
 }
 

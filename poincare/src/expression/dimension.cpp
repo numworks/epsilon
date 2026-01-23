@@ -162,8 +162,8 @@ bool Dimension::DeepCheckListLength(
       }
       return true;
     }
-    case Type::UserSymbol: {
-      // UserSymbols in symbolContext should always be well defined
+    case Type::UserVariable: {
+      // UserVariables in symbolContext should always be well defined
 #if ASSERTIONS
       const Tree* definition = symbolContext.expressionForSymbol(e);
       assert(!definition || DeepCheckListLength(definition, symbolContext));
@@ -264,7 +264,7 @@ int Dimension::ListLength(const Tree* e,
     case Type::RandIntNoRep:
       assert(Integer::Is<uint8_t>(e->child(2)));
       return Integer::Handler(e->child(2)).to<uint8_t>();
-    case Type::UserSymbol: {
+    case Type::UserVariable: {
       const Tree* definition = symbolContext.expressionForSymbol(e);
       if (definition) {
         return ListLength(definition, symbolContext);
@@ -598,8 +598,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
       uint8_t n = Integer::Handler(e->child(2)).to<uint8_t>();
       return a <= b && n <= b - a + 1;
     }
-    case Type::UserSymbol: {
-      // UserSymbols in symbolContext should always be well defined
+    case Type::UserVariable: {
+      // UserVariables in symbolContext should always be well defined
 #if ASSERTIONS
       const Tree* definition = symbolContext.expressionForSymbol(e);
       assert(!definition || DeepCheckDimensions(definition, symbolContext));
@@ -757,7 +757,7 @@ Dimension Dimension::Get(const Tree* e,
     case Type::List:
       return ListLength(e, symbolContext) > 0 ? Get(e->child(0), symbolContext)
                                               : Scalar();
-    case Type::UserSymbol: {
+    case Type::UserVariable: {
       const Tree* definition = symbolContext.expressionForSymbol(e);
       if (definition) {
         return Get(definition, symbolContext);

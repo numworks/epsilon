@@ -261,9 +261,9 @@ constexpr char ordinateName[] = {CodePoints::k_ordinateSymbol, 0};
 UserExpression UserExpression::equivalentCartesianEquation() const {
   const Tree* t = tree();
   // Looking for KSub("y"_e, [something without "y"_e])
-  if (t->isSub() && Symbol::IsUserSymbol(t->child(0), ordinateName) &&
+  if (t->isSub() && Symbol::IsUserVariable(t->child(0), ordinateName) &&
       !(t->child(1)->hasDescendantSatisfying([](const Tree* e) {
-        return Symbol::IsUserSymbol(e, ordinateName);
+        return Symbol::IsUserVariable(e, ordinateName);
       }))) {
     return UserExpression::Builder(t->child(1));
   }
@@ -408,7 +408,7 @@ UserExpression UserExpression::cloneAndReplaceSymbols(
 
 bool UserExpression::IsIgnoredSymbol(
     const UserExpression* e, UserExpression::IgnoredSymbols* ignoredSymbols) {
-  if (!e->tree()->isUserSymbol()) {
+  if (!e->tree()->isUserVariable()) {
     return false;
   }
   while (ignoredSymbols) {
@@ -451,14 +451,14 @@ bool UserExpression::recursivelyMatches(UserExpressionTrinaryTest test,
     return cloneChildAtIndex(0).recursivelyMatches(
         test, symbolContext, replaceSymbols, auxiliary, ignoredSymbols);
   }
-  if (tree()->isUserSymbol() || tree()->isUserFunction()) {
+  if (tree()->isUserVariable() || tree()->isUserFunction()) {
     assert(replaceSymbols == SymbolicComputation::ReplaceDefinedSymbols ||
            replaceSymbols == SymbolicComputation::ReplaceDefinedFunctions
            // We need only those cases for now
            || replaceSymbols == SymbolicComputation::KeepAllSymbols);
     if (replaceSymbols == SymbolicComputation::KeepAllSymbols ||
         (replaceSymbols == SymbolicComputation::ReplaceDefinedFunctions &&
-         tree()->isUserSymbol())) {
+         tree()->isUserVariable())) {
       return false;
     }
     assert(replaceSymbols == SymbolicComputation::ReplaceDefinedSymbols ||

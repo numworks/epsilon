@@ -241,7 +241,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
       ExceptionTry { result = Fold(e->child(0), e->type()); }
       ExceptionCatch(exc) {
         if (exc == ExceptionType::SortFail) {
-          if (Variables::HasVariables(e) || Variables::HasUserSymbols(e)) {
+          if (Variables::HasVariables(e) || Variables::HasUserVariables(e)) {
             // leave max({x,0}) unchanged
             // TODO: we could return undef with max({x,i})
             return false;
@@ -282,7 +282,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
         e->cloneTreeOverTree(KUndef);
         return true;
       }
-      if (Variables::HasVariables(e) || Variables::HasUserSymbols(e)) {
+      if (Variables::HasVariables(e) || Variables::HasUserVariables(e)) {
         // leave med({x,0}) unchanged
         // TODO: we could return undef with med({x,i})
         return false;
@@ -341,7 +341,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
       ExceptionTry { NAry::SortList(list, Order::OrderType::RealLine); }
       ExceptionCatch(exc) {
         if (exc == ExceptionType::SortFail) {
-          if (Variables::HasVariables(e) || Variables::HasUserSymbols(e)) {
+          if (Variables::HasVariables(e) || Variables::HasUserVariables(e)) {
             return changed;
           }
           /* Returning undef instead of the list changes the list length of the

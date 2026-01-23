@@ -86,7 +86,7 @@ float DegreeForSortingAddition(const Tree* e, bool symbolsOnly) {
       }
       return NAN;
     }
-    case Type::UserSymbol:
+    case Type::UserVariable:
     case Type::Var:
       return 1.;
     default:

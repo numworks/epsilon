@@ -204,7 +204,7 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
 
         if (isParametric && i == Parametric::k_variableIndex) {
           /* Store the variable child in the parameter context */
-          if (!parsedChild->isUserSymbol()) {
+          if (!parsedChild->isUserVariable()) {
             TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
           }
           parameterContext = TreeVariableContext(

@@ -11,12 +11,12 @@ namespace Poincare {
 using namespace Internal;
 
 bool SymbolHelper::IsTheta(UserExpression e) {
-  return e.isUserSymbol() &&
+  return e.isUserVariable() &&
          BuiltinsAliases::k_thetaAliases.contains(GetName(e));
 }
 
 bool SymbolHelper::IsSymbol(Expression e, CodePoint c) {
-  if (!e.isUserSymbol()) {
+  if (!e.isUserVariable()) {
     return false;
   }
   constexpr size_t bufferSize = CodePoint::MaxCodePointCharLength + 1;
@@ -40,7 +40,7 @@ UserExpression SymbolHelper::BuildSymbol(const char* name, int length) {
     length = strlen(name);
   }
   return UserExpression::Builder(
-      SharedTreeStack->pushUserSymbol(name, static_cast<size_t>(length + 1)));
+      SharedTreeStack->pushUserVariable(name, static_cast<size_t>(length + 1)));
 }
 
 UserExpression SymbolHelper::BuildSymbol(CodePoint name) {

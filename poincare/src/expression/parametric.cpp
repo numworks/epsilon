@@ -188,9 +188,9 @@ Tree* ReduceSumOrProductAux(const Tree* e, const Tree* lowerBound,
 bool ReduceSumOrProduct(Tree* e) {
   const Tree* lowerBound = e->child(k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
-  constexpr bool (*HasUserSymbol)(const Tree*) = [](const Tree* e) {
+  constexpr bool (*HasUserVariable)(const Tree*) = [](const Tree* e) {
     return e->hasDescendantSatisfying(
-        [](const Tree* child) { return child->isUserSymbol(); });
+        [](const Tree* child) { return child->isUserVariable(); });
   };
   ComplexProperties propertiesLowerBound = GetComplexProperties(lowerBound);
   ComplexProperties propertiesUpperBound = GetComplexProperties(upperBound);
@@ -202,10 +202,10 @@ bool ReduceSumOrProduct(Tree* e) {
   ComplexProperties propertiesDifference =
       ComplexPropertiesOfDifference(upperBound, lowerBound);
   /* Since child should be reduced at this point, ensure bounds are integer or
-   * contains UserSymbol (CAS) */
+   * contains UserVariable (CAS) */
   if (!propertiesLowerBound.isInteger() || !propertiesUpperBound.isInteger()) {
     bool boundsHaveSymbol =
-        HasUserSymbol(lowerBound) || HasUserSymbol(upperBound);
+        HasUserVariable(lowerBound) || HasUserVariable(upperBound);
     if (!boundsHaveSymbol || propertiesDifference.isNonReal()) {
       // NOTE: catches bounds like: π
       Undefined::ReplaceTreeWithDimensionedType(e, Type::UndefOutOfDefinition);

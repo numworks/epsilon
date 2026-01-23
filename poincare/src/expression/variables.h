@@ -6,10 +6,10 @@
 
 namespace Poincare::Internal {
 
-/* Textual UserSymbols in expressions are projected into de Bruijn indices. When
- * a scope (parametric) is entered, all the indices are shifted by one which
- * leaves room to represent the new local variable with the index \0. The user
- * symbol of the local variable is kept as an hint for the beautification.
+/* Textual UserVariables in expressions are projected into de Bruijn indices.
+ * When a scope (parametric) is entered, all the indices are shifted by one
+ * which leaves room to represent the new local variable with the index \0. The
+ * user symbol of the local variable is kept as an hint for the beautification.
  *
  * For instance:  x + sum(x + 2k, k, 0, n) => \0 + sum(\1 + 2*\0, k, 0, \1)
  *
@@ -32,7 +32,7 @@ namespace Private {
 void EnterOrLeaveScope(Tree* e, bool enter, int preserveUnder);
 /* Get the user symbols of e and push them in set. Look inside UserFunctions
  * definition if ctx is given. */
-void GetUserSymbols(
+void GetUserVariables(
     const Tree* e, Tree* set,
     const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
 uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
@@ -44,11 +44,11 @@ bool HasVariableOrMaybeRandom(const Tree* e, int id,
 
 /* Push a Set with the free user symbols of the expression. Look inside
  * UserFunctions definition if ctx is given. */
-Tree* GetUserSymbols(
+Tree* GetUserVariables(
     const Tree* e,
     const Poincare::SymbolContext& symbolContext = EmptySymbolContext{});
-// Ignore UserSymbols in parametric's variable
-bool HasUserSymbols(const Tree* e, bool checkForUserFunctions = false);
+// Ignore UserVariables in parametric's variable
+bool HasUserVariables(const Tree* e, bool checkForUserFunctions = false);
 
 bool ProjectLocalVariablesToId(Tree* e, uint8_t depth = 0);
 bool BeautifyToName(Tree* e, uint8_t depth = 0);

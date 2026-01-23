@@ -90,7 +90,7 @@ NODE(Add, BASE, NARY)
 
 RANGE(Algebraic, RationalNegBig, Add)
 
-NODE(UserSymbol, BASE, 0, {
+NODE(UserVariable, BASE, 0, {
   uint8_t size;
   char name[];
 })
@@ -105,7 +105,7 @@ NODE(UserFunction, BASE, 1, {
   char name[];
 })
 
-RANGE(UserNamed, UserSymbol, UserFunction)
+RANGE(UserNamed, UserVariable, UserFunction)
 
 NODE(Random, BASE, 0, { uint8_t seed; })
 NODE(RandInt, BASE, 2, { uint8_t seed; })

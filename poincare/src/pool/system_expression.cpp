@@ -118,13 +118,13 @@ SystemExpression ReplaceSymbolAndReduce(
     const SystemExpression& replaceSymbolWith, bool* reductionFailure,
     SymbolicComputation symbolic, bool reduce) {
   ExceptionTry {
-    Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
+    Tree* symbol = SharedTreeStack->pushUserVariable(symbolName);
     assert(Internal::Dimension::Get(replaceSymbolWith) ==
            Internal::Dimension::Get(symbol));
     TreeRef result = e.tree()->cloneTree();
     result->deepReplaceWith(symbol, replaceSymbolWith);
     symbol->removeTree();
-    if (Variables::HasUserSymbols(result, true)) {
+    if (Variables::HasUserVariables(result, true)) {
       // TODO: Only this case is used and handled for now.
       assert(symbolic == SymbolicComputation::ReplaceAllSymbolsWithUndefined);
       result->cloneTreeOverTree(KUndef);
@@ -169,9 +169,9 @@ SystemExpression SystemExpression::getReducedDerivative(
     const char* symbolName, int derivationOrder) const {
   Tree* result = SharedTreeStack->pushDiff();
   // Symbol (so that local variable is layouted to symbolName)
-  const Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
+  const Tree* symbol = SharedTreeStack->pushUserVariable(symbolName);
   // Symbol value (so that the derivative is evaluated at symbolName's value)
-  SharedTreeStack->pushUserSymbol(symbolName);
+  SharedTreeStack->pushUserVariable(symbolName);
   Integer::Push(derivationOrder);
   Tree* derivand = tree()->cloneTree();
   Variables::ReplaceSymbol(derivand, symbol, 0,

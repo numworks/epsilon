@@ -609,7 +609,7 @@ std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
       return std::complex<T>(z.real(), z.imag());
     }
     case Type::UserFunction:
-    case Type::UserSymbol: {
+    case Type::UserVariable: {
       // TODO: Factorize with PrivateToBoolean and ToMatrix
       // Global variable
       if (!ctx) {
@@ -619,7 +619,7 @@ std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
       if (!definition) {
         return NAN;
       }
-      if (e->isUserSymbol()) {
+      if (e->isUserVariable()) {
         return PrivateToComplex<T>(definition, ctx);
       }
       /* LocalContext only handles complex scalar, but non scalar children of
@@ -1269,7 +1269,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       return AllTrigToComplex<T>(e, ctx);
     case Type::Var:
     case Type::UserFunction:
-    case Type::UserSymbol:
+    case Type::UserVariable:
     case Type::UserSequence:
       return UserNamedToComplex<T>(e, ctx);
     case Type::Sum:
@@ -1408,7 +1408,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     }
     return PrivateToBoolean<T>(Dependency::Main(e), ctx);
   }
-  if (e->isUserFunction() || e->isUserSymbol()) {
+  if (e->isUserFunction() || e->isUserVariable()) {
     // TODO: Factorize with ToMatrix and UserNamedToComplex
     // Global variable
     // Function of symbol cannot have a boolean dimension without a context.
@@ -1416,7 +1416,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     const Tree* definition = ctx->m_symbolContext.expressionForSymbol(e);
     // Function of symbol cannot have a boolean dimension without a definition.
     assert(definition);
-    if (e->isUserSymbol()) {
+    if (e->isUserVariable()) {
       return PrivateToBoolean<T>(definition, ctx);
     }
     /* LocalContext only handles complex scalar, but non scalar children of
@@ -1638,7 +1638,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
                        e, (IsNonReal(undef) ? Type::NonReal : Type::Undef));
     }
     case Type::UserFunction:
-    case Type::UserSymbol: {
+    case Type::UserVariable: {
       // TODO: Factorize with PrivateToBoolean and UserNamedToComplex
       // Global variable
       // Function of symbol cannot have a Matrix dimension without a context.
@@ -1646,7 +1646,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       const Tree* definition = ctx->m_symbolContext.expressionForSymbol(e);
       // Function of symbol cannot have a Matrix dimension without a definition.
       assert(definition);
-      if (e->isUserSymbol()) {
+      if (e->isUserVariable()) {
         return ToMatrix<T>(definition, ctx);
       }
       /* LocalContext only handles complex scalar, but non scalar children of
@@ -1791,7 +1791,7 @@ bool CanApproximate(const Tree* e, bool approxLocalVar) {
 }
 
 bool Private::CanApproximate(const Tree* e, int firstNonApproximableVarId) {
-  if (e->isRandomized() || e->isUserSymbol() || e->isUserFunction() ||
+  if (e->isRandomized() || e->isUserVariable() || e->isUserFunction() ||
       (e->isVar() && Variables::Id(e) >= firstNonApproximableVarId) ||
       e->isDepList()) {
     return false;

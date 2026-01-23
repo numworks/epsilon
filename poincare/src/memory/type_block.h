@@ -223,7 +223,7 @@ class TypeBlock : public Block {
  private:
   inline constexpr size_t nodeSize(Type t, size_t numberOfMetaBlocks) const {
     switch (t) {
-      case Type::UserSymbol:
+      case Type::UserVariable:
       case Type::UserFunction:
 #if POINCARE_SEQUENCE
       case Type::UserSequence:

@@ -15,6 +15,7 @@ graph TD;
 ```
 
 Steps:
+
 - `Projection` removes `complexMode`, `angleUnit`, ...
 - `SystematicReduction` applies obvious reductions
 - `AdvancedReduction` finds the best reduced representation
@@ -22,12 +23,12 @@ Steps:
 - In practice, `Beautification` also prepares for `Layouter`
 
 Expression properties:
+
 - Projected Expressions are made of specific `Nodes`
 - Projected Expressions are independent from `ComplexMode`, `AngleUnit`, ...
 - Reduced Expressions are Projected Expressions
 
 These operations never need to be applied twice.
-
 
 ## Detailed steps
 
@@ -49,10 +50,10 @@ These operations never need to be applied twice.
 Since the next steps may duplicate parts of the expression, we need to seed each random node because a duplicated random node should evaluate to the same random number.
 
 For example, with this projection, both random should always approximate to the same value.
+
 ```math
 sinh(random())=\frac{e^{random()}-e^{-random()}}{2}
 ```
-
 
 <details>
 <summary>Exception with some parametrics</summary>
@@ -108,6 +109,7 @@ After random seeding and before projecting local symbols, global functions need 
 If a function has been replaced, random nodes are seeded again.
 
 For example if $f(x)=x+x+random()$, the expression $f(random())*f(0)$ has been:
+
 - Seeded to $f(random_1())*f(0)$
 - Replaced to $(random_1()+random_1()+random())*(0+0+random())$,
 - Seeded again to $(random_1()+random_1()+random_2())*(0+0+random_3())$
@@ -156,17 +158,17 @@ We considered two alternatives that weren't satisfying enough as of now. In the 
 
 They would behave like user functions.
 
-Impactful simplifications in applications using UserSymbols as reals are then impossible.
+Impactful simplifications in applications using UserVariables as reals are then impossible.
 
 For example, in Epsilon's Grapher, we analyze conics in `x` and `y` which will always be evaluated at real values.
 
 #### 2 - User symbols could store their own sign
 
-Just like variables, we could store the UserSymbol's sign in its node.
+Just like variables, we could store the UserVariable's sign in its node.
 
-We can no longer create UserSymbol Trees without needing a special context.
+We can no longer create UserVariable Trees without needing a special context.
 
-For example, when computing an expression's polynomial degree depending on `x`, its sign would be required to be able to create a UserSymbol tree to compare subtrees with.
+For example, when computing an expression's polynomial degree depending on `x`, its sign would be required to be able to create a UserVariable tree to compare subtrees with.
 
 However, we try not to rely on any context when manipulating projected expressions.
 
@@ -183,11 +185,15 @@ Some issues such as NonReal, division by zero or other undefinitions can still a
 ## Approximation strategy
 
 The simplification algorithm handles two simplification strategies:
- - `Default`: Default strategy.
+
+- `Default`: Default strategy.
+
 ```math
 ln(2)*x+\frac{1}{3}+random()*\pi
 ```
- - `ApproximateToFloat`: Everything that can be approximated to a float is approximated (everything but variables, random, expressions having children that cannot be approximated).
+
+- `ApproximateToFloat`: Everything that can be approximated to a float is approximated (everything but variables, random, expressions having children that cannot be approximated).
+
 ```math
 0.693*x+0.333+random()*3.14
 ```
@@ -201,6 +207,7 @@ Most of the time, we use the `Default` strategy and let the simplification handl
 ## Projection
 
 It is expected to:
+
 - Approximate everything that can be if strategy is `ApproximateToFloat`.
 - Reduce the number of equivalent representations of an expression (`Div(A,B)` -> `Mult(A, Pow(B, -1))`). It replaces nodes not handled by reduction with other nodes handled by reduction.
 - Un-contextualize the expression (remove complex format and angle units considerations from reduction algorithm)
@@ -217,40 +224,40 @@ $$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+π/2-atan(x)$$
 
 All projection operations can be found [here](/poincare/src/expression/projection.cpp), in method `ShallowSystemProject`.
 
-| Match | Replace |
-|---|---|
-| decimal{n}(A) | 10^(-n)×A |
-| cos(A) | trig(A×RadToAngleUnit, 0) |
-| sin(A) | trig(A×RadToAngleUnit, 1) |
-| acos(A) | atrig(A, 0)×RadToAngleUnit |
-| asin(A) | atrig(A, 1)×RadToAngleUnit |
-| atan(A) | atanRad(A)×RadToAngleUnit |
-| sqrt(A) | A^0.5 |
-| e^A | exp(A) |
-| A^B (with real complex format) | powerReal(A, B) |
-| ceil(A) | -floor(-A) |
-| frac(A) | A - floor(A) |
-| e | exp(1) |
-| conj(A) | re(A)-im(A)×i |
-| - A | (-1)×A |
-| A - B | A + (-1)×B |
-| A / B | A×B^-1 |
-| log(A, e) | ln(A) |
-| log(A) | ln(A)×ln(10)^(-1) |
-| log(A, B) | ln(A)×ln(B)^(-1) |
+| Match                                | Replace                                  |
+| ------------------------------------ | ---------------------------------------- |
+| decimal{n}(A)                        | 10^(-n)×A                                |
+| cos(A)                               | trig(A×RadToAngleUnit, 0)                |
+| sin(A)                               | trig(A×RadToAngleUnit, 1)                |
+| acos(A)                              | atrig(A, 0)×RadToAngleUnit               |
+| asin(A)                              | atrig(A, 1)×RadToAngleUnit               |
+| atan(A)                              | atanRad(A)×RadToAngleUnit                |
+| sqrt(A)                              | A^0.5                                    |
+| e^A                                  | exp(A)                                   |
+| A^B (with real complex format)       | powerReal(A, B)                          |
+| ceil(A)                              | -floor(-A)                               |
+| frac(A)                              | A - floor(A)                             |
+| e                                    | exp(1)                                   |
+| conj(A)                              | re(A)-im(A)×i                            |
+| - A                                  | (-1)×A                                   |
+| A - B                                | A + (-1)×B                               |
+| A / B                                | A×B^-1                                   |
+| log(A, e)                            | ln(A)                                    |
+| log(A)                               | ln(A)×ln(10)^(-1)                        |
+| log(A, B)                            | ln(A)×ln(B)^(-1)                         |
 | lnUser(A) (with real complex format) | dep(ln(A), {NoNull(A), powReal(A,1/2))}) |
-| lnUser(A) (otherwise) | dep(ln(A), {NoNull(A)}) |
-| sec(A) | 1/cos(A) |
-| csc(A) | 1/sin(A) |
-| cot(A) | cos(A)/sin(A) |
-| arcsec(A) | acos(1/A) |
-| arccsc(A) | asin(1/A) |
-| arccot(A) | π/2-atan(A) |
-| cosh(A) | cos(i×A) |
-| sinh(A) | -i×sin(i×A) |
-| tanh(A) | -i×tan(i×A) |
-| arsinh(A) | -i×asin(i×A) |
-| artanh(A) | -i×atan(i×A) |
+| lnUser(A) (otherwise)                | dep(ln(A), {NoNull(A)})                  |
+| sec(A)                               | 1/cos(A)                                 |
+| csc(A)                               | 1/sin(A)                                 |
+| cot(A)                               | cos(A)/sin(A)                            |
+| arcsec(A)                            | acos(1/A)                                |
+| arccsc(A)                            | asin(1/A)                                |
+| arccot(A)                            | π/2-atan(A)                              |
+| cosh(A)                              | cos(i×A)                                 |
+| sinh(A)                              | -i×sin(i×A)                              |
+| tanh(A)                              | -i×tan(i×A)                              |
+| arsinh(A)                            | -i×asin(i×A)                             |
+| artanh(A)                            | -i×atan(i×A)                             |
 
 </details>
 
@@ -271,16 +278,17 @@ This practice tends to slow down advanced reduction so we limit it to the very m
 
 See `Projection::Expand` in [projection code](/poincare/src/expression/projection.cpp).
 
-| Match | Replace |
-|---|---|
-| atan(A) | asin(A / sqrt(A^2 + 1)) |
-| arcosh(A) | ln(A + sqrt(A^2 - 1)) |
+| Match     | Replace                 |
+| --------- | ----------------------- |
+| atan(A)   | asin(A / sqrt(A^2 + 1)) |
+| arcosh(A) | ln(A + sqrt(A^2 - 1))   |
 
 </details>
 
 ## Systematic reduction
 
 It is expected to:
+
 - Be efficient and simple
 - Apply obvious and definitive changes
 - Do nothing if applied a second time
@@ -296,121 +304,122 @@ Dependencies are already bubbled-up at each shallow systematic reduce.
 
 See `SystematicReduction::Switch` [here](/poincare/src/expression/systematic_reduction.cpp).
 
-| Match | Replace |
-|---|---|
-| A+(B+C) | A+B+C |
-| A×(B×C) | A×B×C |
-| A+Dep(B, C) | Dep(A+B, C) |
-| 1^x | 1 |
-| 0^B (with re(B) <= 0) | undef |
-| 0^B (with re(B) > 0) | 0 |
-| 0^B | Dep(0, 0^B) |
-| A^B (with B not an integer) | exp(B×ln(A)) |
-| A^0 (with A != 0) | 1 |
-| A^0 | Dep(1, A^0) |
-| A^1 | A |
-| i^n | 1, i, -1 or -i |
-| (w^p)^n | w^(p×n) |
-| (w1×...×wk)^n | w1^n×...×wk^n |
-| exp(a)^b | exp(a×b) |
-| +(A) | A |
-| +() | 0 |
-| B + A | A + B |
-| 0 + A + B | A + B |
-| 2 + 4.1 | 6.1 |
-| 2×a + 4.1×a | 6.1×a |
-| ×(A) | A |
-| ×() | 1 |
-| B×A | A×B |
-| 2×4.1 | 8.2 |
-| 0×A | 0 |
-| 1×A×B | A×B |
-| t^m×t^n | t^(m+n) |
-| powerReal(A, B) (with A complex or positive, or B integer) | A^B |
-| powerReal(A, B) (with A negative, B negative rational p/q, q even) | unreal |
-| powerReal(A, B) (with A negative, B rational p/q, q odd) | ±abs(A)^B |
-| abs(abs(x)) | abs(x) |
-| abs(x) (when x is a number) | ±x |
-| trigDiff({1,1,0,0}, {1,0,1,0}) | {0, 1, 3, 0} |
-| trig(-x,y) | ±trig(x,y) |
-| trig(πn/120, B) (with some values of n) | exact value |
-| trig(atrig(A,B), B) | A |
-| trig(atrig(A,B), C) | sqrt(1-A^2) |
-| trig(±inf, A) | undef |
-| atrig(-x,1) | - atrig(x,1) |
-| atrig(-x,0) | π/2 - atrig(x,0) |
-| atrig(trig(π×y, i), j) (with y real for all following) | π/2 - atrig(trig(π×y, i), i) |
-| atrig(trig(π×y, 0), 0) (with ⌊y + π/2⌋ even) | π×(y - ⌊y + π/2⌋) |
-| atrig(trig(π×y, 0), 0) (with ⌊y + π/2⌋ odd) | π×(⌊y + π/2⌋ - y) |
-| atrig(trig(π×y, 1), 1) (with ⌊y⌋ even) | π×(y - ⌊y⌋) |
-| atrig(trig(π×y, 1), 1) (with ⌊y⌋ odd) | π×(y - ⌊y⌋ + 1) |
-| atrig(A,B) (with A one of the exact values) | exact value |
-| atrig(trig(i×x, 0), 0) (with x real) | abs(i×x) |
-| atrig(trig(i×x, 1), 1) (with x real) | i×x |
-| atan(tan(i×x)) (with x real) | i×x |
-| atan(tan(x)) (with x real) | x reduced to ]-π/2, π/2[ |
-| arcsin(-x) | -arcsin(x) |
-| arccos(-x) | π - arccos(x) |
-| atan({-1, 0, 1}) | {-π/4, 0, π/4} |
-| atan(-x) | -atan(x) |
-| acosh(cos(x)) (with x pure imaginary) | abs(x) |
-| cos(arcosh(x)×i) | x |
+| Match                                                                | Replace                                                                         |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| A+(B+C)                                                              | A+B+C                                                                           |
+| A×(B×C)                                                              | A×B×C                                                                           |
+| A+Dep(B, C)                                                          | Dep(A+B, C)                                                                     |
+| 1^x                                                                  | 1                                                                               |
+| 0^B (with re(B) <= 0)                                                | undef                                                                           |
+| 0^B (with re(B) > 0)                                                 | 0                                                                               |
+| 0^B                                                                  | Dep(0, 0^B)                                                                     |
+| A^B (with B not an integer)                                          | exp(B×ln(A))                                                                    |
+| A^0 (with A != 0)                                                    | 1                                                                               |
+| A^0                                                                  | Dep(1, A^0)                                                                     |
+| A^1                                                                  | A                                                                               |
+| i^n                                                                  | 1, i, -1 or -i                                                                  |
+| (w^p)^n                                                              | w^(p×n)                                                                         |
+| (w1×...×wk)^n                                                        | w1^n×...×wk^n                                                                   |
+| exp(a)^b                                                             | exp(a×b)                                                                        |
+| +(A)                                                                 | A                                                                               |
+| +()                                                                  | 0                                                                               |
+| B + A                                                                | A + B                                                                           |
+| 0 + A + B                                                            | A + B                                                                           |
+| 2 + 4.1                                                              | 6.1                                                                             |
+| 2×a + 4.1×a                                                          | 6.1×a                                                                           |
+| ×(A)                                                                 | A                                                                               |
+| ×()                                                                  | 1                                                                               |
+| B×A                                                                  | A×B                                                                             |
+| 2×4.1                                                                | 8.2                                                                             |
+| 0×A                                                                  | 0                                                                               |
+| 1×A×B                                                                | A×B                                                                             |
+| t^m×t^n                                                              | t^(m+n)                                                                         |
+| powerReal(A, B) (with A complex or positive, or B integer)           | A^B                                                                             |
+| powerReal(A, B) (with A negative, B negative rational p/q, q even)   | unreal                                                                          |
+| powerReal(A, B) (with A negative, B rational p/q, q odd)             | ±abs(A)^B                                                                       |
+| abs(abs(x))                                                          | abs(x)                                                                          |
+| abs(x) (when x is a number)                                          | ±x                                                                              |
+| trigDiff({1,1,0,0}, {1,0,1,0})                                       | {0, 1, 3, 0}                                                                    |
+| trig(-x,y)                                                           | ±trig(x,y)                                                                      |
+| trig(πn/120, B) (with some values of n)                              | exact value                                                                     |
+| trig(atrig(A,B), B)                                                  | A                                                                               |
+| trig(atrig(A,B), C)                                                  | sqrt(1-A^2)                                                                     |
+| trig(±inf, A)                                                        | undef                                                                           |
+| atrig(-x,1)                                                          | - atrig(x,1)                                                                    |
+| atrig(-x,0)                                                          | π/2 - atrig(x,0)                                                                |
+| atrig(trig(π×y, i), j) (with y real for all following)               | π/2 - atrig(trig(π×y, i), i)                                                    |
+| atrig(trig(π×y, 0), 0) (with ⌊y + π/2⌋ even)                         | π×(y - ⌊y + π/2⌋)                                                               |
+| atrig(trig(π×y, 0), 0) (with ⌊y + π/2⌋ odd)                          | π×(⌊y + π/2⌋ - y)                                                               |
+| atrig(trig(π×y, 1), 1) (with ⌊y⌋ even)                               | π×(y - ⌊y⌋)                                                                     |
+| atrig(trig(π×y, 1), 1) (with ⌊y⌋ odd)                                | π×(y - ⌊y⌋ + 1)                                                                 |
+| atrig(A,B) (with A one of the exact values)                          | exact value                                                                     |
+| atrig(trig(i×x, 0), 0) (with x real)                                 | abs(i×x)                                                                        |
+| atrig(trig(i×x, 1), 1) (with x real)                                 | i×x                                                                             |
+| atan(tan(i×x)) (with x real)                                         | i×x                                                                             |
+| atan(tan(x)) (with x real)                                           | x reduced to ]-π/2, π/2[                                                        |
+| arcsin(-x)                                                           | -arcsin(x)                                                                      |
+| arccos(-x)                                                           | π - arccos(x)                                                                   |
+| atan({-1, 0, 1})                                                     | {-π/4, 0, π/4}                                                                  |
+| atan(-x)                                                             | -atan(x)                                                                        |
+| acosh(cos(x)) (with x pure imaginary)                                | abs(x)                                                                          |
+| cos(arcosh(x)×i)                                                     | x                                                                               |
 | diff(A) (with all n children of A having a known partial derivative) | diff(child(A, 0))×partialDiff(A, 0) + ... + diff(child(A, n))×partialDiff(A, n) |
-| partialDiff(A×B×C×D, 2) | A×B×D |
-| partialDiff(A + B + C + D, 2) | 1 |
-| partialDiff(exp(x), 0) | exp(x) |
-| partialDiff(ln(x), 0) | 1/x |
-| partialDiff(Trig(x, n), 0) | Trig(x, n - 1) |
-| partialDiff(Trig(x, n), 1) | 0 |
-| partialDiff(x^n, 0) | n×x^(n - 1) |
-| partialDiff(x^n, 1) | 0 |
-| ln(exp(x)) (with x real) | x |
-| ln(-1) | iπ |
-| ln(i) | π/2×i |
-| ln(1) | 0 |
-| ln(inf) | inf |
-| ln(0) | -inf |
-| exp(ln(x)) | x |
-| exp(0) | 1 |
-| exp(inf) | inf |
-| exp(-inf) | 0 |
-| exp(B×ln(A)) (with B an integer) | A^B |
-| arg(0) | undef |
-| arg(x) (with re(x) = 0)| π/2 if im(x) > 0, -π/2 if im(x) < 0 |
-| arg(x) (with re(x) > 0) | arctan(im(x)/re(x)) |
-| arg(x) (with re(x) < 0 and im(x) >= 0) | arctan(im(x)/re(x)) + π |
-| arg(x) (with re(x) < 0 and im(x) < 0) | arctan(im(x)/re(x)) - π |
-| arg(e^(iA)) (with A real) | A reduced to ]-π,π] |
-| im(x) (with re(x) = 0) | -ix |
-| im(x) (with im(x) = 0) | 0 |
-| re(x) (with re(x) = 0) | 0 |
-| re(x) (with im(x) = 0) | x |
-| sum(k, k, m, n) | n(n + 1)/2 - (m - 1)m/2 |
-| sum(k^2, k, m, n) | n(n + 1)(2n + 1)/6 - (m - 1)(m)(2m - 1)/6 |
-| sum(f, k, m, n) (with f independent of k or random nodes) | f×(1 + n - m) |
-| sum(f, k, m, n) (with m > n) | 0 |
-| prod(f, k, m, n) (with f independent of k or random nodes) | f^(1 + n - m) |
-| prod(f, k, m, n) (with m > n) | 1 |
-| gcd(B, gcd(C, A)) | gcd(A, B, C) |
-| lcm(B, lcm(C, A)) | lcm(A, B, C) |
-| gcd(A) | A |
-| lcm(A) | A |
-| gcd(A, B) (with A, B integers) | exact value if A, B integers, undef otherwise |
-| lcm(A, B) (with A, B integers) | exact value if A, B integers, undef otherwise |
-| rem(A, 0) | undef |
-| quo(A, 0) | undef |
-| rem(A, B) (with A, B integers) | exact value |
-| quo(A, B) (with A, B integers) | exact value |
-| A! (with A positive integer) | exact value |
-| A! (else) | Prod(k, 1, A, k) |
-| binomial(n,k) (with valid n, k) | (n - 0)/(k - 0) × ... × (n - j)/(k - j) × ... × (n - k - 1)/(k - k + 1) |
-| permute(n, k) (with valid n, k) | n!/(n-k)! |
-| sign(A) | 0 / 1 / -1 if A sign is known |
-| ⌊A⌋ (with A rational) | exact value |
-| round(A, B) (with valid A, B) | floor(A×10^B + 1/2)×10^-B |
-| diff(dep(x, {ln(x), z}), x, y) | dep(diff(x, x, y), {diff(ln(x), x, y), z}) |
+| partialDiff(A×B×C×D, 2)                                              | A×B×D                                                                           |
+| partialDiff(A + B + C + D, 2)                                        | 1                                                                               |
+| partialDiff(exp(x), 0)                                               | exp(x)                                                                          |
+| partialDiff(ln(x), 0)                                                | 1/x                                                                             |
+| partialDiff(Trig(x, n), 0)                                           | Trig(x, n - 1)                                                                  |
+| partialDiff(Trig(x, n), 1)                                           | 0                                                                               |
+| partialDiff(x^n, 0)                                                  | n×x^(n - 1)                                                                     |
+| partialDiff(x^n, 1)                                                  | 0                                                                               |
+| ln(exp(x)) (with x real)                                             | x                                                                               |
+| ln(-1)                                                               | iπ                                                                              |
+| ln(i)                                                                | π/2×i                                                                           |
+| ln(1)                                                                | 0                                                                               |
+| ln(inf)                                                              | inf                                                                             |
+| ln(0)                                                                | -inf                                                                            |
+| exp(ln(x))                                                           | x                                                                               |
+| exp(0)                                                               | 1                                                                               |
+| exp(inf)                                                             | inf                                                                             |
+| exp(-inf)                                                            | 0                                                                               |
+| exp(B×ln(A)) (with B an integer)                                     | A^B                                                                             |
+| arg(0)                                                               | undef                                                                           |
+| arg(x) (with re(x) = 0)                                              | π/2 if im(x) > 0, -π/2 if im(x) < 0                                             |
+| arg(x) (with re(x) > 0)                                              | arctan(im(x)/re(x))                                                             |
+| arg(x) (with re(x) < 0 and im(x) >= 0)                               | arctan(im(x)/re(x)) + π                                                         |
+| arg(x) (with re(x) < 0 and im(x) < 0)                                | arctan(im(x)/re(x)) - π                                                         |
+| arg(e^(iA)) (with A real)                                            | A reduced to ]-π,π]                                                             |
+| im(x) (with re(x) = 0)                                               | -ix                                                                             |
+| im(x) (with im(x) = 0)                                               | 0                                                                               |
+| re(x) (with re(x) = 0)                                               | 0                                                                               |
+| re(x) (with im(x) = 0)                                               | x                                                                               |
+| sum(k, k, m, n)                                                      | n(n + 1)/2 - (m - 1)m/2                                                         |
+| sum(k^2, k, m, n)                                                    | n(n + 1)(2n + 1)/6 - (m - 1)(m)(2m - 1)/6                                       |
+| sum(f, k, m, n) (with f independent of k or random nodes)            | f×(1 + n - m)                                                                   |
+| sum(f, k, m, n) (with m > n)                                         | 0                                                                               |
+| prod(f, k, m, n) (with f independent of k or random nodes)           | f^(1 + n - m)                                                                   |
+| prod(f, k, m, n) (with m > n)                                        | 1                                                                               |
+| gcd(B, gcd(C, A))                                                    | gcd(A, B, C)                                                                    |
+| lcm(B, lcm(C, A))                                                    | lcm(A, B, C)                                                                    |
+| gcd(A)                                                               | A                                                                               |
+| lcm(A)                                                               | A                                                                               |
+| gcd(A, B) (with A, B integers)                                       | exact value if A, B integers, undef otherwise                                   |
+| lcm(A, B) (with A, B integers)                                       | exact value if A, B integers, undef otherwise                                   |
+| rem(A, 0)                                                            | undef                                                                           |
+| quo(A, 0)                                                            | undef                                                                           |
+| rem(A, B) (with A, B integers)                                       | exact value                                                                     |
+| quo(A, B) (with A, B integers)                                       | exact value                                                                     |
+| A! (with A positive integer)                                         | exact value                                                                     |
+| A! (else)                                                            | Prod(k, 1, A, k)                                                                |
+| binomial(n,k) (with valid n, k)                                      | (n - 0)/(k - 0) × ... × (n - j)/(k - j) × ... × (n - k - 1)/(k - k + 1)         |
+| permute(n, k) (with valid n, k)                                      | n!/(n-k)!                                                                       |
+| sign(A)                                                              | 0 / 1 / -1 if A sign is known                                                   |
+| ⌊A⌋ (with A rational)                                                | exact value                                                                     |
+| round(A, B) (with valid A, B)                                        | floor(A×10^B + 1/2)×10^-B                                                       |
+| diff(dep(x, {ln(x), z}), x, y)                                       | dep(diff(x, x, y), {diff(ln(x), x, y), z})                                      |
 
 The following methods directly reduce to their result:
+
 - listSort(L)
 - median(L)
 - dim(A)
@@ -482,6 +491,7 @@ For instance: `GetElement({2, 3, 4}, 1) -> 3` and `GetElement(ListSequence(2*k, 
 ## Advanced Reduction
 
 It is expected to:
+
 - Reduce any reducible expression if given enough resources
 - Do its best with limited resources
 - Be deterministic
@@ -498,20 +508,21 @@ Some expansion operations are used specifically to expand algebraic operations (
 
 See the list of operations in `k_contractOperations` and `k_expandOperations` [here](/poincare/src/expression/advanced_reduction.h).
 
-| Match | Replace |
-|---|---|
-| A?×\|B\|×\|C\|×D? | A×\|BC\|×D |
-| \|A×B?\| | \|A\|×\|B\| |
-| \|A\| | exp(ln(re(A)^2+im(A)^2)/2) |
-| exp(A?×i) | cos(A) + sin(A)×i |
-| exp(A + B?) | exp(A)×exp(B) |
-| A?×exp(B)×exp(C)×D? | A×exp(B + C)×D |
-| A? + cos(B) + C? ± sin(B)×i + D? | A + C + D + exp(±B×i) |
-| A?×(B + C?)×D? | A×B×D + A×C×D |
-| A? + B?×C×D? + E? + F?×C×G? + H? | A + C×(B×D + F×G) + E + H |
-| (A? + B)^2 | (A^2 + 2×A×B + B^2) |
-| (A + B?)^n = sum(binomial(n, k) * A^k * B^(n-k), k, 0, n)
-| 1/A with A not pure and never infinite | conj(A)/(A*conj(A)) |
+| Match                            | Replace                    |
+| -------------------------------- | -------------------------- |
+| A?×\|B\|×\|C\|×D?                | A×\|BC\|×D                 |
+| \|A×B?\|                         | \|A\|×\|B\|                |
+| \|A\|                            | exp(ln(re(A)^2+im(A)^2)/2) |
+| exp(A?×i)                        | cos(A) + sin(A)×i          |
+| exp(A + B?)                      | exp(A)×exp(B)              |
+| A?×exp(B)×exp(C)×D?              | A×exp(B + C)×D             |
+| A? + cos(B) + C? ± sin(B)×i + D? | A + C + D + exp(±B×i)      |
+| A?×(B + C?)×D?                   | A×B×D + A×C×D              |
+| A? + B?×C×D? + E? + F?×C×G? + H? | A + C×(B×D + F×G) + E + H  |
+| (A? + B)^2                       | (A^2 + 2×A×B + B^2)        |
+
+| (A + B?)^n = sum(binomial(n, k) _ A^k _ B^(n-k), k, 0, n)
+| 1/A with A not pure and never infinite | conj(A)/(A\*conj(A)) |
 | A×ln(B) (with A integer) | ln(B^A) + (A×arg(B) - arg(B^A))×i |
 | A? + ln(B) + C? + ln(D) + E? | A + C + ln(BD) + E + (arg(B) + arg(D) - arg(BD))×i |
 | ln(12/7) | 2×ln(2) + ln(3) - ln(7) |
@@ -564,7 +575,7 @@ The basic metric gives a default cost to all nodes and goes recursively through 
 For some functions, we aim to reduce the size of the expression inside them, so we increase the cost of all of their children with a multiplicative coefficient. Also, the metric of some expressions is reduced to other metrics.
 
 Examples (non exhaustive list):
-| Expression | Metric reduction |  |
+| Expression | Metric reduction | |
 |---|---|---|
 | m(-1 * A) | m(-1)+m(A) | ignore the cost of multiplication, since it will be beautified into -A |
 | m(LongInteger) | m(Integer)*size() | we prefer shorter numbers, same for LongRationals |
@@ -584,6 +595,7 @@ See `CannotBeReducedFurther` in [metric.h](/poincare/src/expression/metric.h).
 ## Reduce dependencies
 
 In this step, we remove useless dependencies from a dependency tree:
+
 - Break up simple dependencies into smaller bits (`dep(..,{x*y})` and `dep(..,{x+y})` become `dep(..,{x ,y})`).
 - Remove dependencies that are identical or contained in others dependencies, or in the main expression.
 - Remove dependencies that can be approximated to a value.
@@ -610,6 +622,7 @@ This step basically undoes earlier steps in the following order:
 This steps needs to be applied first, before any other beautification step that could prevent reduction or complex formatting.
 
 Depending on the complex format, we try to beautify the expression $A$ into one of this form :
+
 - Cartesian Form : $re(A)+i \times im(A)$
 - Polar Form : $|A| \times e^{i \times arg(A)}$
 - Default : $A$
@@ -681,8 +694,8 @@ graph TD;
 ```
 
 - Successful advanced reduction on
-$$-a^2-b^2+(a+b)^2+a(c+d)^2=a(2b+(c+d)^2)$$
-NextNode explorations are hidden for clarity.
+  $$-a^2-b^2+(a+b)^2+a(c+d)^2=a(2b+(c+d)^2)$$
+  NextNode explorations are hidden for clarity.
 
 ```mermaid
 graph TD;

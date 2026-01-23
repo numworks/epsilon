@@ -57,8 +57,8 @@ class SymbolStore : public Poincare::SymbolStoreInterface {
       const Poincare::Internal::Tree* expression,
       const Poincare::Internal::Tree* functionialSymbol);
 
-  bool setExpressionForUserSymbol(const Poincare::Internal::Tree* expression,
-                                  std::string_view symbolName);
+  bool setExpressionForUserVariable(const Poincare::Internal::Tree* expression,
+                                    std::string_view symbolName);
 
   bool push(const Poincare::Internal::Tree* expression,
             std::string_view symbolName, SymbolType symbolType);

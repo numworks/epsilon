@@ -167,7 +167,7 @@ LayoutShape LeftLayoutShape(const Tree* e) {
       return MoreLetters;
 #endif
 
-    case Type::UserSymbol:
+    case Type::UserVariable:
     case Type::UserFunction:
     case Type::UserSequence:
       return UTF8Helper::StringGlyphLength(Symbol::GetName(e)) <= 1
@@ -228,7 +228,7 @@ LayoutShape RightLayoutShape(const Tree* e) {
     case Type::UserSequence:
       return BoundaryPunctuation;
 
-    case Type::UserSymbol:
+    case Type::UserVariable:
       return LeftLayoutShape(e);
 
     default:

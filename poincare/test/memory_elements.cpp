@@ -167,13 +167,14 @@ QUIZ_CASE(pcj_type_block) {
                                                         .rational = false,
                                                         .number = false,
                                                         .userNamed = false}),
-      std::make_pair(Type::UserSymbol, TypeBlockProperties{.nAry = false,
-                                                           .expression = true,
-                                                           .layout = false,
-                                                           .integer = false,
-                                                           .rational = false,
-                                                           .number = false,
-                                                           .userNamed = true}),
+      std::make_pair(Type::UserVariable,
+                     TypeBlockProperties{.nAry = false,
+                                         .expression = true,
+                                         .layout = false,
+                                         .integer = false,
+                                         .rational = false,
+                                         .number = false,
+                                         .userNamed = true}),
       std::make_pair(Type::UserFunction,
                      TypeBlockProperties{.nAry = false,
                                          .expression = true,
@@ -465,18 +466,18 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
   assert_tree_equals_blocks(KSub(1_e, 2_e),
                             {TypeBlock(Type::Sub), Type::One, Type::Two});
   assert_tree_equals_blocks(
-      "var"_e, {TypeBlock(Type::UserSymbol), ValueBlock(4), ValueBlock('v'),
+      "var"_e, {TypeBlock(Type::UserVariable), ValueBlock(4), ValueBlock('v'),
                 ValueBlock('a'), ValueBlock('r'), ValueBlock(0)});
   assert_tree_equals_blocks(
       KFun<"f">("x"_e),
       {TypeBlock(Type::UserFunction), ValueBlock(2), ValueBlock('f'),
-       ValueBlock(0), TypeBlock(Type::UserSymbol), ValueBlock(2),
+       ValueBlock(0), TypeBlock(Type::UserVariable), ValueBlock(2),
        ValueBlock('x'), ValueBlock(0)});
   quiz_assert(KFun<"f0">->nodeSize() == 5);
   assert_tree_equals_blocks(
       KSeq<"u">("n0"_e),
       {TypeBlock(Type::UserSequence), ValueBlock(2), ValueBlock('u'),
-       ValueBlock(0), TypeBlock(Type::UserSymbol), ValueBlock(3),
+       ValueBlock(0), TypeBlock(Type::UserVariable), ValueBlock(3),
        ValueBlock('n'), ValueBlock('0'), ValueBlock(0)});
   quiz_assert(KSeq<"w">->nodeSize() == 4);
 }

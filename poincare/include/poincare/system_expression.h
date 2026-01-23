@@ -79,7 +79,7 @@ class SystemExpression : public Expression {
                                       UserExpression* approximatedExpression,
                                       const ProjectionContext& context) const;
   UserExpression cloneAndBeautify(const ProjectionContext& context) const;
-  /* Replace some UserSymbol into Var0 for
+  /* Replace some UserVariable into Var0 for
    * approximateToPointOrRealScalarWithValue. Returns undef if the expression's
    * dimension is not point or scalar. If scalarsOnly = true, returns undef if
    * it's a point or a list. */

@@ -26,8 +26,8 @@ bool Symbol::IsNamed(const Tree* e, const char* name) {
   return strcmp(GetName(e), name) == 0;
 }
 
-bool Symbol::IsUserSymbol(const Tree* e, const char* name) {
-  if (!e->isUserSymbol()) {
+bool Symbol::IsUserVariable(const Tree* e, const char* name) {
+  if (!e->isUserVariable()) {
     return false;
   }
   return IsNamed(e, name);
@@ -35,10 +35,10 @@ bool Symbol::IsUserSymbol(const Tree* e, const char* name) {
 
 ComplexProperties Symbol::GetComplexProperties(const Tree* e) {
   /* Undefined global variables are considered scalar (and real finite for
-   * UserSymbols) */
+   * UserVariables) */
   assert(e->isUserNamed());
-  return e->isUserSymbol() ? ComplexProperties::RealFinite()
-                           : ComplexProperties::Unknown();
+  return e->isUserVariable() ? ComplexProperties::RealFinite()
+                             : ComplexProperties::Unknown();
 }
 
 bool involvesCircularity(const Tree* e,
@@ -46,7 +46,7 @@ bool involvesCircularity(const Tree* e,
                          int maxDepth, const char** visitedSymbols,
                          int numberOfVisitedSymbols) {
   // Check for circularity only when a symbol/function is encountered
-  if (!e->isUserFunction() && !e->isUserSymbol()) {
+  if (!e->isUserFunction() && !e->isUserVariable()) {
     for (const Tree* child : e->children()) {
       if (involvesCircularity(child, symbolContext, maxDepth, visitedSymbols,
                               numberOfVisitedSymbols)) {

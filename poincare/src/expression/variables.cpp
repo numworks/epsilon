@@ -47,17 +47,17 @@ const Tree* Variables::Private::ToSymbol(const Tree* variables, uint8_t id) {
   return variables->child(id);
 }
 
-Tree* Variables::GetUserSymbols(const Tree* e,
-                                const Poincare::SymbolContext& symbolContext) {
+Tree* Variables::GetUserVariables(
+    const Tree* e, const Poincare::SymbolContext& symbolContext) {
   // TODO Is it worth to represent the empty set with nullptr ?
   Tree* set = Set::PushEmpty();
-  Private::GetUserSymbols(e, set, symbolContext);
+  Private::GetUserVariables(e, set, symbolContext);
   return set;
 }
 
-void Variables::Private::GetUserSymbols(
+void Variables::Private::GetUserVariables(
     const Tree* e, Tree* set, const Poincare::SymbolContext& symbolContext) {
-  if (e->isUserSymbol()) {
+  if (e->isUserVariable()) {
     return Set::Add(set, e);
   }
   if (e->isUserFunction()) {
@@ -69,30 +69,31 @@ void Variables::Private::GetUserSymbols(
     /* If symbolContext is given, we look inside the user function definition.
      * Unknown symbol has to be discarded. */
     Tree* subSet = Set::PushEmpty();
-    GetUserSymbols(symbolContext.expressionForSymbol(e), subSet, symbolContext);
+    GetUserVariables(symbolContext.expressionForSymbol(e), subSet,
+                     symbolContext);
     Tree* symbolToRemove = KList(KUnknownSymbol)->cloneTree();
     subSet = Set::Difference(subSet, symbolToRemove);
     set = Set::Union(set, subSet);
-    // Also get UserSymbols in the function's child.
+    // Also get UserVariables in the function's child.
   }
   bool isParametric = e->isParametric();
   for (IndexedChild<const Tree*> child : e->indexedChildren()) {
     if (isParametric && child.index == Parametric::k_variableIndex) {
     } else if (isParametric && Parametric::IsFunctionIndex(child.index, e)) {
       Tree* subSet = Set::PushEmpty();
-      GetUserSymbols(child, subSet, symbolContext);
+      GetUserVariables(child, subSet, symbolContext);
       Tree* boundSymbols = Set::PushEmpty();
       Set::Add(boundSymbols, e->child(Parametric::k_variableIndex));
       subSet = Set::Difference(subSet, boundSymbols);
       set = Set::Union(set, subSet);
     } else {
-      GetUserSymbols(child, set, symbolContext);
+      GetUserVariables(child, set, symbolContext);
     }
   }
 }
 
-bool Variables::HasUserSymbols(const Tree* e, bool checkForUserFunctions) {
-  if (e->isUserSymbol() || (checkForUserFunctions && e->isUserFunction())) {
+bool Variables::HasUserVariables(const Tree* e, bool checkForUserFunctions) {
+  if (e->isUserVariable() || (checkForUserFunctions && e->isUserFunction())) {
     return true;
   }
   bool isParametric = e->isParametric();
@@ -100,7 +101,7 @@ bool Variables::HasUserSymbols(const Tree* e, bool checkForUserFunctions) {
     if (isParametric && child.index == Parametric::k_variableIndex) {
       continue;
     }
-    if (HasUserSymbols(child, checkForUserFunctions)) {
+    if (HasUserVariables(child, checkForUserFunctions)) {
       return true;
     }
   }
@@ -174,13 +175,13 @@ bool Variables::Replace(Tree* e, int id, const TreeRef& value, bool leave,
 
 bool Variables::ReplaceSymbol(Tree* e, const Tree* symbol, int id,
                               ComplexProperties properties) {
-  assert(symbol->isUserSymbol());
+  assert(symbol->isUserVariable());
   return ReplaceSymbol(e, Symbol::GetName(symbol), id, properties);
 }
 
 bool Variables::ReplaceSymbol(Tree* e, const char* symbol, int id,
                               ComplexProperties properties) {
-  if (Symbol::IsUserSymbol(e, symbol)) {
+  if (Symbol::IsUserVariable(e, symbol)) {
     Tree* var = SharedTreeStack->pushVar(static_cast<uint8_t>(id), properties);
     e->moveTreeOverTree(var);
     return true;
@@ -191,8 +192,8 @@ bool Variables::ReplaceSymbol(Tree* e, const char* symbol, int id,
     if (isParametric && child.index == Parametric::k_variableIndex) {
     } else if (isParametric && Parametric::IsFunctionIndex(child.index, e)) {
       // No need to continue if symbol is hidden by a local definition
-      if (!Symbol::IsUserSymbol(e->child(Parametric::k_variableIndex),
-                                symbol)) {
+      if (!Symbol::IsUserVariable(e->child(Parametric::k_variableIndex),
+                                  symbol)) {
         changed = ReplaceSymbol(child, symbol, id + 1, properties) || changed;
       }
     } else {
@@ -235,11 +236,11 @@ bool Variables::ReplaceSymbolWithTree(Tree* e, const Tree* symbol,
     }
   }
   if (symbol->isUserNamed() && symbol->nodeIsIdenticalTo(e)) {
-    if (symbol->isUserSymbol() || symbol->treeIsIdenticalTo(e)) {
+    if (symbol->isUserVariable() || symbol->treeIsIdenticalTo(e)) {
       e->cloneTreeOverTree(replacement);
       return true;
     }
-    if (symbol->child(0)->isUserSymbol()) {
+    if (symbol->child(0)->isUserVariable()) {
       ReplaceUserFunctionOrSequenceWithTree(e, replacement);
       return true;
     }

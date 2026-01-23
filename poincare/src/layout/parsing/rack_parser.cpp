@@ -119,9 +119,9 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
   m_tokenizer.skipTree(rightwardsArrowPosition + 1);
   TreeRef rightHandSide = initializeFirstTokenAndParseUntilEnd();
   if (!m_nextToken.is(Token::Type::EndOfStream) ||
-      !(rightHandSide->isUserSymbol() ||
+      !(rightHandSide->isUserVariable() ||
         (rightHandSide->isUserFunction() &&
-         rightHandSide->child(0)->isUserSymbol()))) {
+         rightHandSide->child(0)->isUserVariable()))) {
     // RightHandSide must be symbol or function.
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -691,7 +691,7 @@ void RackParser::parseUnitConversion(TreeRef& leftHandSide,
   }
 
   bool leftIsSymbolWithUnits = false;
-  if (leftHandSide->isUserSymbol() && m_parsingContext.context) {
+  if (leftHandSide->isUserVariable() && m_parsingContext.context) {
     const Tree* value =
         m_parsingContext.context->expressionForSymbol(leftHandSide);
     leftIsSymbolWithUnits = value && Units::HasUnit(value);
@@ -875,7 +875,7 @@ static void PromoteBuiltin(TreeRef& parameterList, const Builtin* builtin) {
   parameterList->moveNodeOverNode(
       builtin->pushNode(parameterList->numberOfChildren()));
   if (TypeBlock(type).isParametric()) {
-    if (!parameterList->child(1)->isUserSymbol()) {
+    if (!parameterList->child(1)->isUserVariable()) {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
     // Move sub-expression at the end
@@ -1110,13 +1110,13 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
     if (idType == SymbolContext::SymbolType::Variable ||
         (!m_parsingContext.params.preserveInput &&
          idType == SymbolContext::SymbolType::None)) {
-      leftHandSide = SharedTreeStack->pushUserSymbol(name);
+      leftHandSide = SharedTreeStack->pushUserVariable(name);
       return;
     }
   }
 
   if (idType == SymbolContext::SymbolType::List) {
-    leftHandSide = SharedTreeStack->pushUserSymbol(name);
+    leftHandSide = SharedTreeStack->pushUserVariable(name);
     parseListParameters(leftHandSide);
     return;
   }
@@ -1209,7 +1209,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     if (derivationOrder > 0) {
       return false;
     }
-    leftHandSide = SharedTreeStack->pushUserSymbol(name);
+    leftHandSide = SharedTreeStack->pushUserVariable(name);
     return true;
   }
 
@@ -1218,7 +1218,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
   }
 
   parameter->moveTreeOverTree(parameter->child(0));
-  if (parameter->type() == Type::UserSymbol &&
+  if (parameter->type() == Type::UserVariable &&
       strncmp(Symbol::GetName(parameter), name, length) == 0) {
     // Function and variable must have distinct names.
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -1243,7 +1243,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
   }
 
   if (result->type() == Type::UserFunction &&
-      parameter->type() == Type::UserSymbol &&
+      parameter->type() == Type::UserVariable &&
       m_nextToken.type() == Token::Type::AssignmentEqual) {
     /* Set the parameter in the context to ensure that f(t)=t is not
      * understood as f(t)=1_t

@@ -11,7 +11,7 @@ namespace Poincare {
 const Tree* SymbolContext::expressionForSymbol(const Tree* symbol) const {
   /* Sequence don't have a Tree*. Ensure this method isn't called on them.
    * TODO: We could add support for explicit sequences here */
-  assert(symbol->isUserSymbol() || symbol->isUserFunction());
+  assert(symbol->isUserVariable() || symbol->isUserFunction());
 
   const char* identifier = Symbol::GetName(symbol);
   SymbolDescription description = symbolDescriptionForIdentifier(identifier);
@@ -21,7 +21,7 @@ const Tree* SymbolContext::expressionForSymbol(const Tree* symbol) const {
                         description.type == SymbolType::List;
 
   if ((isFunction && symbol->isUserFunction()) ||
-      (isSymbolOrList && symbol->isUserSymbol())) {
+      (isSymbolOrList && symbol->isUserVariable())) {
     return description.expression;
   }
 

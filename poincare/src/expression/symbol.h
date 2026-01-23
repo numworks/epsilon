@@ -31,7 +31,7 @@ inline uint8_t Length(const Tree* e) {
 char* CopyName(const Tree* e, char* buffer, size_t bufferSize);
 const char* GetName(const Tree* e);
 bool IsNamed(const Tree* e, const char* name);
-bool IsUserSymbol(const Tree* e, const char* name);
+bool IsUserVariable(const Tree* e, const char* name);
 
 ComplexProperties GetComplexProperties(const Tree* e);
 

@@ -422,7 +422,7 @@ void addChildToNAryWithDependencies(Tree* nary, const Tree* child,
 }
 
 Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
-  Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
+  Tree* symbol = SharedTreeStack->pushUserVariable(symbolName);
   Tree* poly = e->cloneTree();
   AdvancedReduction::DeepExpandAlgebraic(poly);
   TreeRef depList;

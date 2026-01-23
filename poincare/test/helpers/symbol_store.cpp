@@ -99,8 +99,8 @@ bool SymbolStore::push(const Tree* expression, std::string_view symbolName,
   return true;
 }
 
-bool SymbolStore::setExpressionForUserSymbol(const Tree* expression,
-                                             std::string_view symbolName) {
+bool SymbolStore::setExpressionForUserVariable(const Tree* expression,
+                                               std::string_view symbolName) {
   SymbolType symbolType = SymbolType::Variable;
   if (expression->isList()) {
     symbolType = SymbolType::List;
@@ -114,7 +114,7 @@ bool SymbolStore::setExpressionForUserFunctionOrSequence(
   assert(functionalSymbol->isUserFunction() ||
          functionalSymbol->isUserSequence());
   const Tree* variableSymbol = functionalSymbol->child(0);
-  assert(variableSymbol->isUserSymbol());
+  assert(variableSymbol->isUserVariable());
   // Replace the user symbol with KUnknown in the expression
   Tree* storedTree = expression->cloneTree();
   Poincare::Internal::Variables::ReplaceSymbolWithTree(
@@ -131,8 +131,8 @@ bool SymbolStore::setExpressionForUserFunctionOrSequence(
 bool SymbolStore::setExpressionForUserNamed(const Tree* expression,
                                             const Tree* symbol) {
   assert(symbol->isUserNamed());
-  if (symbol->isUserSymbol()) {
-    return setExpressionForUserSymbol(expression, SymbolNameFromTree(symbol));
+  if (symbol->isUserVariable()) {
+    return setExpressionForUserVariable(expression, SymbolNameFromTree(symbol));
   }
 
   return setExpressionForUserFunctionOrSequence(expression, symbol);

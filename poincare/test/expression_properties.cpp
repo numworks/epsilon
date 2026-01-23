@@ -204,7 +204,7 @@ void assert_expression_has_variables(const char* input,
                                      const ProjectionContext& projCtx) {
   Tree* e = parse(input, projCtx.m_context);
   Simplification::ToSystem(e, projCtx);
-  const Tree* variables = Variables::GetUserSymbols(e);
+  const Tree* variables = Variables::GetUserVariables(e);
   assert_trees_are_equal(variables, expectedVariables);
 }
 
@@ -439,7 +439,8 @@ void assert_reduced_deep_is_symbolic(const char* input,
       UserExpression::Builder(parse(input)).cloneAndReduce(ProjectionContext{});
   quiz_assert(!reducedExpression.isFailedSimplification());
   quiz_assert_print_if_failure(
-      Variables::HasUserSymbols(reducedExpression.tree()) == isSymbolic, input);
+      Variables::HasUserVariables(reducedExpression.tree()) == isSymbolic,
+      input);
 }
 
 QUIZ_CASE(pcj_properties_deep_is_symbolic) {

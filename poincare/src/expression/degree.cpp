@@ -12,7 +12,7 @@ using namespace Poincare::Internal;
 // By default, degree is -1 unless all children have a 0 degree.
 int Degree::PrivateGet(const Tree* e, const Tree* symbol) {
   switch (e->type()) {
-    case Type::UserSymbol:
+    case Type::UserVariable:
       return e->treeIsIdenticalTo(symbol) ? 1 : 0;
     case Type::Matrix:
     case Type::Store:
@@ -97,7 +97,7 @@ int Degree::PrivateGet(const Tree* e, const Tree* symbol) {
 
 int Degree::Get(const Tree* e, const Tree* symbol) {
   assert(Simplification::IsSystem(e));
-  assert(symbol->isUserSymbol());
+  assert(symbol->isUserVariable());
   if (e->isStore() || e->isUnitConversion()) {
     return k_unknown;
   }
@@ -111,7 +111,7 @@ int Degree::Get(const Tree* e, const Tree* symbol) {
 }
 
 int Degree::Get(const Tree* e, const char* symbolName) {
-  Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
+  Tree* symbol = SharedTreeStack->pushUserVariable(symbolName);
   int degree = Degree::Get(e, symbol);
   symbol->removeTree();
   return degree;

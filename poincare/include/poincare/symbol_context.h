@@ -30,7 +30,7 @@ class SymbolContext {
    * in the context is checked against the Tree* type. If they don't match
    * nullptr is returned.
    * Ex: if `f` is stored as a Function in the context but `symbol` is the
-   * UserSymbol `f`, nullptr is returned.
+   * UserVariable `f`, nullptr is returned.
    * TODO: return an Expression type*/
   const Internal::Tree* expressionForSymbol(const Internal::Tree* symbol) const;
 

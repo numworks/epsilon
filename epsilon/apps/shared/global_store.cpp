@@ -136,13 +136,13 @@ bool GlobalStore::setExpressionForUserNamed(
       expression.cloneAndReplaceSymbolWithExpression(symbol, e);
 
   // Set the expression in the storage depending on the symbol type
-  if (symbol.isUserSymbol()) {
-    return setExpressionForUserSymbol(finalExpression,
-                                      SymbolHelper::GetName(symbol), record) ==
+  if (symbol.isUserVariable()) {
+    return setExpressionForUserVariable(
+               finalExpression, SymbolHelper::GetName(symbol), record) ==
            Ion::Storage::Record::ErrorStatus::None;
   }
   const UserExpression childSymbol = symbol.cloneChildAtIndex(0);
-  assert(symbol.isUserFunction() && childSymbol.isUserSymbol());
+  assert(symbol.isUserFunction() && childSymbol.isUserVariable());
   finalExpression =
       finalExpression.cloneAndReplaceSymbolWithUnknown(childSymbol);
   UserExpression symbolToStore = symbol;
@@ -179,7 +179,7 @@ UserExpression GlobalStore::ExpressionFromStorage(Ion::Storage::Record record) {
   return UserExpression::Builder(TreeFromStorage(record));
 }
 
-Ion::Storage::Record::ErrorStatus GlobalStore::setExpressionForUserSymbol(
+Ion::Storage::Record::ErrorStatus GlobalStore::setExpressionForUserVariable(
     UserExpression& expression, const char* name,
     Ion::Storage::Record previousRecord) {
   bool storeApproximation =

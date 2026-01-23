@@ -190,13 +190,13 @@ constexpr auto KContinuousVar =
           Parametric::k_continuousVariableProperties.getImagValue()>();
 constexpr auto KVarX = KContinuousVar<Parametric::k_localVariableId>;
 
-// Default UserSymbol in functions
+// Default UserVariable in functions
 // TODO: Try to limit the usage of UCodePointUnknown
 constexpr auto KUnknownSymbol =
-    KTree<Type::UserSymbol, 2, static_cast<uint8_t>(UCodePointUnknown), 0>();
+    KTree<Type::UserVariable, 2, static_cast<uint8_t>(UCodePointUnknown), 0>();
 constexpr auto KTemporaryUnknownSymbol =
-    KTree<Type::UserSymbol, 2, static_cast<uint8_t>(UCodePointTemporaryUnknown),
-          0>();
+    KTree<Type::UserVariable, 2,
+          static_cast<uint8_t>(UCodePointTemporaryUnknown), 0>();
 
 // Booleans
 constexpr auto KEqual = KBinary<Type::Equal>();
@@ -497,22 +497,22 @@ consteval auto operator""_e() {
 // specialized from
 // https://stackoverflow.com/questions/60434033/how-do-i-expand-a-compile-time-stdarray-into-a-parameter-pack/60440611#60440611
 
-// KUserSymbol<"x">() or "x"_e
+// KUserVariable<"x">() or "x"_e
 
 template <String S,
           typename IS = decltype(std::make_index_sequence<S.size()>())>
-struct KUserSymbol;
+struct KUserVariable;
 
 template <String S, std::size_t... I>
-struct KUserSymbol<S, std::index_sequence<I...>>
-    : KTree<Type::UserSymbol, sizeof...(I), S[I]...> {
+struct KUserVariable<S, std::index_sequence<I...>>
+    : KTree<Type::UserVariable, sizeof...(I), S[I]...> {
   static_assert(!OMG::Print::IsDigit(S[0]),
                 "Integer literals should be written without quotes");
 };
 
 template <String S>
 consteval auto operator""_e() {
-  return KUserSymbol<S>();
+  return KUserVariable<S>();
 }
 
 // KFun<"f">("x"_e) and KSeq<"u">("n"_e)

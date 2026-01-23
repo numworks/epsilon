@@ -39,7 +39,7 @@ void GlobalStore::storageDidChangeForRecord(Ion::Storage::Record record) {
 }
 
 bool GlobalStore::UserNameIsFree(const char* baseName) {
-  return UserNamedRecordWithBaseName(baseName).isNull();
+  return UserSymbolRecordWithBaseName(baseName).isNull();
 }
 
 Layout GlobalStore::LayoutForRecord(Ion::Storage::Record record) {
@@ -113,21 +113,21 @@ SymbolContext::SymbolDescription GlobalStore::symbolDescriptionForIdentifier(
   const Internal::Tree* tree = nullptr;
   // Sequence don't have a Tree* in storage, and are handled in SequenceContext
   if (type != SymbolType::None && type != SymbolType::Sequence) {
-    tree = TreeFromStorage(UserNamedRecordWithBaseName(identifier.data()));
+    tree = TreeFromStorage(UserSymbolRecordWithBaseName(identifier.data()));
   }
 
   return {type, tree};
 }
 
-bool GlobalStore::setExpressionForUserNamed(
+bool GlobalStore::setExpressionForUserSymbol(
     const Internal::Tree* expressionTree, const Internal::Tree* symbolTree) {
-  assert(symbolTree->isUserNamed());
+  assert(symbolTree->isUserSymbol());
   UserExpression expression = UserExpression::Builder(expressionTree);
   UserExpression symbol = UserExpression::Builder(symbolTree);
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record =
-      UserNamedRecordWithBaseName(SymbolHelper::GetName(symbol));
+      UserSymbolRecordWithBaseName(SymbolHelper::GetName(symbol));
   UserExpression e = UserExpression::Builder(TreeFromStorage(record));
   if (e.isUninitialized()) {
     e = UserExpression::Undefined();
@@ -244,7 +244,7 @@ Ion::Storage::Record::ErrorStatus GlobalStore::setExpressionForUserFunction(
   return error;
 }
 
-Ion::Storage::Record GlobalStore::UserNamedRecordWithBaseName(
+Ion::Storage::Record GlobalStore::UserSymbolRecordWithBaseName(
     const char* name) {
   return Ion::Storage::FileSystem::sharedFileSystem
       ->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);

@@ -21,11 +21,11 @@ class Projection {
 
   /* User variables are fetched from the Context and replaced according to the
   SymbolicComputation strategy */
-  static bool DeepReplaceUserNamed(Tree* e,
-                                   const Poincare::SymbolContext& symbolContext,
-                                   SymbolicComputation symbolic);
+  static bool DeepReplaceUserSymbol(
+      Tree* e, const Poincare::SymbolContext& symbolContext,
+      SymbolicComputation symbolic);
   // All user variables are replaced with Undefined
-  static bool DeepReplaceUserNamedWithUndefined(Tree* e);
+  static bool DeepReplaceUserSymbolWithUndefined(Tree* e);
   static bool DeepSystemProject(Tree* e, const ProjectionContext& ctx = {},
                                 const Dimension& dimension = Dimension());
 
@@ -40,7 +40,7 @@ class Projection {
   static bool HasForbiddenDescendants(const Tree* e);
 
  private:
-  static bool ShallowReplaceUserNamed(
+  static bool ShallowReplaceUserSymbol(
       Tree* e, const Poincare::SymbolContext& symbolContext,
       SymbolicComputation symbolic);
   static bool ShallowSystemProject(Tree* e, void* ctx);

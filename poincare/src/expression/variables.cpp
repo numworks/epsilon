@@ -219,7 +219,7 @@ void Variables::ReplaceUserFunctionOrSequenceWithTree(Tree* e,
 }
 
 /* TODO: This could be factorized with other methods, such as Replace,
- * ReplaceSymbol or Projection::DeepReplaceUserNamed. */
+ * ReplaceSymbol or Projection::DeepReplaceUserSymbol. */
 bool Variables::ReplaceSymbolWithTree(Tree* e, const Tree* symbol,
                                       const Tree* replacement) {
   bool isParametric = e->isParametric();
@@ -235,7 +235,7 @@ bool Variables::ReplaceSymbolWithTree(Tree* e, const Tree* symbol,
       changed = ReplaceSymbolWithTree(child, symbol, replacement) || changed;
     }
   }
-  if (symbol->isUserNamed() && symbol->nodeIsIdenticalTo(e)) {
+  if (symbol->isUserSymbol() && symbol->nodeIsIdenticalTo(e)) {
     if (symbol->isUserVariable() || symbol->treeIsIdenticalTo(e)) {
       e->cloneTreeOverTree(replacement);
       return true;

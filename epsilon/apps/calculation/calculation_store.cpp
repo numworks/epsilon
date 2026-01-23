@@ -256,7 +256,8 @@ static void processStore(OutputExpressions& outputs,
 assert(!value.recursivelyMatches(
 [](const Expression e) { return e.isUserVariable(); }));
 #endif
-  if (GlobalContextAccessor::Store().setExpressionForUserNamed(value, symbol)) {
+  if (GlobalContextAccessor::Store().setExpressionForUserSymbol(value,
+                                                                symbol)) {
     outputs.exact = value;
     outputs.approximate = valueApprox;
     assert(!outputs.exact.isUninitialized() &&

@@ -374,7 +374,7 @@ UserExpression UserExpression::cloneAndReplaceSymbolWithExpression(
   if (isUninitialized()) {
     return UserExpression();
   }
-  assert(symbol.tree()->isUserNamed());
+  assert(symbol.tree()->isUserSymbol());
   Tree* result = tree()->cloneTree();
   assert(!onlySecondTerm || result->numberOfChildren() >= 2);
   Variables::ReplaceSymbolWithTree(onlySecondTerm ? result->child(1) : result,
@@ -402,7 +402,7 @@ UserExpression UserExpression::cloneAndReplaceSymbols(
    * as the rest of the expression (otherwise inconsistencies could appear like
    * with random for example). */
   Tree* clone = tree()->cloneTree();
-  Projection::DeepReplaceUserNamed(clone, symbolContext, symbolic);
+  Projection::DeepReplaceUserSymbol(clone, symbolContext, symbolic);
   return UserExpression::Builder(clone);
 }
 

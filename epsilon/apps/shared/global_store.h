@@ -50,7 +50,7 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
   static void DeleteParametricComponentsOfRecord(Ion::Storage::Record record);
   static void StoreParametricComponentsOfRecord(Ion::Storage::Record record);
 
-  bool setExpressionForUserNamed(
+  bool setExpressionForUserSymbol(
       const Poincare::Internal::Tree* expression,
       const Poincare::Internal::Tree* symbol) override;
   void storageDidChangeForRecord(const Ion::Storage::Record record);
@@ -96,7 +96,7 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
       const Poincare::UserExpression& symbol,
       Ion::Storage::Record previousRecord);
   // Record getter
-  static Ion::Storage::Record UserNamedRecordWithBaseName(const char* name);
+  static Ion::Storage::Record UserSymbolRecordWithBaseName(const char* name);
 
   SequenceContext m_sequenceContext;
 };

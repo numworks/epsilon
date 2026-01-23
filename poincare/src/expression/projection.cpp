@@ -16,7 +16,7 @@
 
 namespace Poincare::Internal {
 
-bool Projection::DeepReplaceUserNamed(
+bool Projection::DeepReplaceUserSymbol(
     Tree* e, const Poincare::SymbolContext& symbolContext,
     SymbolicComputation symbolic) {
   /* TODO_PCJ: in old poincare, we did not do anything for sequence trees (not
@@ -26,7 +26,7 @@ bool Projection::DeepReplaceUserNamed(
     return false;
   }
   if (symbolic == SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
-    return DeepReplaceUserNamedWithUndefined(e);
+    return DeepReplaceUserSymbolWithUndefined(e);
   }
   // Check for circularity
   if (Symbol::InvolvesCircularity(e, symbolContext)) {
@@ -34,7 +34,7 @@ bool Projection::DeepReplaceUserNamed(
     return true;
   }
   bool changed = false;
-  /* ShallowReplaceUserNamed may push and remove trees at the end of TreeStack.
+  /* ShallowReplaceUserSymbol may push and remove trees at the end of TreeStack.
    * We use a marker to keep track of the initial end position of e. */
   TreeRef marker = pushEndMarker(e);
   while (e->block() < marker->block()) {
@@ -43,14 +43,14 @@ bool Projection::DeepReplaceUserNamed(
       static_assert(Parametric::k_variableIndex == 0);
       e = e->nextNode()->nextTree();
     }
-    changed = ShallowReplaceUserNamed(e, symbolContext, symbolic) || changed;
+    changed = ShallowReplaceUserSymbol(e, symbolContext, symbolic) || changed;
     e = e->nextNode();
   }
   removeMarker(marker);
   return changed;
 }
 
-bool Projection::DeepReplaceUserNamedWithUndefined(Tree* e) {
+bool Projection::DeepReplaceUserSymbolWithUndefined(Tree* e) {
   if (e->isUserFunction() || (e->isUserVariable())) {
     e->cloneTreeOverTree(KNotDefined);
     return true;
@@ -61,16 +61,16 @@ bool Projection::DeepReplaceUserNamedWithUndefined(Tree* e) {
   /*  Do not replace the parametric variable symbol in
    * Parametric(variableSymbol, start, end, function) */
   for (Tree* child : childrenRange) {
-    changed = DeepReplaceUserNamedWithUndefined(child) || changed;
+    changed = DeepReplaceUserSymbolWithUndefined(child) || changed;
   }
   return changed;
 }
 
-bool Projection::ShallowReplaceUserNamed(
+bool Projection::ShallowReplaceUserSymbol(
     Tree* e, const Poincare::SymbolContext& symbolContext,
     SymbolicComputation symbolic) {
   /* ReplaceAllSymbolsWithUndefined and KeepAllSymbols are escaped in
-   * DeepReplaceUserNamed */
+   * DeepReplaceUserSymbol */
   assert(symbolic != SymbolicComputation::ReplaceAllSymbolsWithUndefined);
   assert(symbolic != SymbolicComputation::KeepAllSymbols);
   bool eIsUserFunction = e->isUserFunction();
@@ -97,7 +97,7 @@ bool Projection::ShallowReplaceUserNamed(
     e->cloneTreeOverTree(definition);
   }
   // Replace node again in case it has been replaced with another symbol
-  ShallowReplaceUserNamed(e, symbolContext, symbolic);
+  ShallowReplaceUserSymbol(e, symbolContext, symbolic);
   return true;
 }
 
@@ -125,7 +125,7 @@ bool hasComplexNodes(const Tree* e, SymbolicComputation symbolicComputation,
     }
     // Skip UserSequences.
     if (descendant->isUserFunction() || descendant->isUserVariable()) {
-      /* We could factorize with DeepReplaceUserNamed but this avoid having to
+      /* We could factorize with DeepReplaceUserSymbol but this avoid having to
        * clone the tree. */
       switch (symbolicComputation) {
         case SymbolicComputation::KeepAllSymbols:

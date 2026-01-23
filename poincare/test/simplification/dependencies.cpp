@@ -139,7 +139,7 @@ QUIZ_CASE(pcj_simplification_dependencies) {
 
   // Sequence
   // TODO: add sequence type to the symbol store
-  symbolStore.setExpressionForUserNamed(KUndef, KSeq<"u">("n"_e));
+  symbolStore.setExpressionForUserSymbol(KUndef, KSeq<"u">("n"_e));
   PoincareTest::store("3→f(x)", symbolStore);
   // Sequence are kept in dependency
   simplifies_to("f(u(n))", "dep(3,{u(n)})", projCtx);

@@ -105,7 +105,7 @@ NODE(UserFunction, BASE, 1, {
   char name[];
 })
 
-RANGE(UserNamed, UserVariable, UserFunction)
+RANGE(UserSymbol, UserVariable, UserFunction)
 
 NODE(Random, BASE, 0, { uint8_t seed; })
 NODE(RandInt, BASE, 2, { uint8_t seed; })

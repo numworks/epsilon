@@ -132,7 +132,7 @@ class AbstractTreeStack : public BlockStack {
 
   Tree* pushUserVariable(const char* name, size_t size) {
     // TODO: change size to length
-    return pushUserNamed(Type::UserVariable, name, size);
+    return pushUserSymbol(Type::UserVariable, name, size);
   }
 
   Tree* pushUserFunction(const char* name) {
@@ -140,7 +140,7 @@ class AbstractTreeStack : public BlockStack {
   }
 
   Tree* pushUserFunction(const char* name, size_t size) {
-    return pushUserNamed(Type::UserFunction, name, size);
+    return pushUserSymbol(Type::UserFunction, name, size);
   }
 
 #if POINCARE_SEQUENCE
@@ -149,7 +149,7 @@ class AbstractTreeStack : public BlockStack {
   }
 
   Tree* pushUserSequence(const char* name, size_t size) {
-    return pushUserNamed(Type::UserSequence, name, size);
+    return pushUserSymbol(Type::UserSequence, name, size);
   }
 #endif
 
@@ -239,7 +239,7 @@ class AbstractTreeStack : public BlockStack {
   }
 
   // type should be UserSequence, UserFunction or UserVariable
-  Tree* pushUserNamed(TypeBlock type, const char* name, size_t size);
+  Tree* pushUserSymbol(TypeBlock type, const char* name, size_t size);
 };
 
 template <size_t MaxNumberOfBlocks,

@@ -182,7 +182,7 @@ static PreprocessingResult PreprocessEquationList(
    *  - Reduction (Done in ProjectAndReduce). */
 
   // Step 3.2. Replace UserFunctions
-  Projection::DeepReplaceUserNamed(
+  Projection::DeepReplaceUserSymbol(
       reducedEquationList, symbolContext,
       SymbolicComputation::ReplaceDefinedFunctions);
 

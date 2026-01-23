@@ -58,9 +58,9 @@ Tree* AbstractTreeStack::pushInteger(uint32_t value) {
   return Integer::Push(value);
 }
 
-Tree* AbstractTreeStack::pushUserNamed(TypeBlock type, const char* name,
-                                       size_t size) {
-  assert(type.isUserNamed());
+Tree* AbstractTreeStack::pushUserSymbol(TypeBlock type, const char* name,
+                                        size_t size) {
+  assert(type.isUserSymbol());
   Tree* result = pushBlock(type);
   pushValueBlock(size);
   for (size_t i = 0; i < size - 1; i++) {

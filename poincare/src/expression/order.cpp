@@ -118,7 +118,7 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
     return -1;
   }
   assert(type1 == type2);
-  if (type1.isUserNamed()) {
+  if (type1.isUserSymbol()) {
     int nameComparison = CompareNames(e1, e2);
     if (nameComparison != 0) {
       // a(x) < b(y)

@@ -17,8 +17,8 @@ namespace Poincare {
 class SymbolStoreInterface : public SymbolContext {
  public:
   // TODO: the parameters should have Poincare::Expression types
-  virtual bool setExpressionForUserNamed(const Internal::Tree* expression,
-                                         const Internal::Tree* symbol) = 0;
+  virtual bool setExpressionForUserSymbol(const Internal::Tree* expression,
+                                          const Internal::Tree* symbol) = 0;
 };
 
 }  // namespace Poincare

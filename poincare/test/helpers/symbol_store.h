@@ -21,7 +21,7 @@ void store(const char* symbol, const char* expression,
 
 class SymbolStore : public Poincare::SymbolStoreInterface {
  public:
-  bool setExpressionForUserNamed(
+  bool setExpressionForUserSymbol(
       const Poincare::Internal::Tree* expression,
       const Poincare::Internal::Tree* symbol) override;
 

@@ -25,14 +25,14 @@ void store(const char* storeExpression,
            Poincare::SymbolStoreInterface& symbolStore) {
   Poincare::UserExpression storeUserExpression =
       Poincare::UserExpression::Parse(storeExpression, symbolStore);
-  symbolStore.setExpressionForUserNamed(
+  symbolStore.setExpressionForUserSymbol(
       Poincare::StoreHelper::Value(storeUserExpression),
       Poincare::StoreHelper::Symbol(storeUserExpression));
 }
 
 void store(const char* symbol, const char* expression,
            Poincare::SymbolStoreInterface& symbolStore) {
-  symbolStore.setExpressionForUserNamed(
+  symbolStore.setExpressionForUserSymbol(
       Poincare::UserExpression::Parse(expression, symbolStore),
       Poincare::UserExpression::Parse(symbol, symbolStore,
                                       ParsingParameters{.isAssignment = true}));
@@ -128,9 +128,9 @@ bool SymbolStore::setExpressionForUserFunctionOrSequence(
   return success;
 }
 
-bool SymbolStore::setExpressionForUserNamed(const Tree* expression,
-                                            const Tree* symbol) {
-  assert(symbol->isUserNamed());
+bool SymbolStore::setExpressionForUserSymbol(const Tree* expression,
+                                             const Tree* symbol) {
+  assert(symbol->isUserSymbol());
   if (symbol->isUserVariable()) {
     return setExpressionForUserVariable(expression, SymbolNameFromTree(symbol));
   }

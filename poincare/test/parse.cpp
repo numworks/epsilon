@@ -780,7 +780,7 @@ QUIZ_CASE(pcj_parse_sequences) {
                        Poincare::EmptySymbolContext(), {.preserveInput = true});
 
   PoincareTest::SymbolStore symbolStore;
-  symbolStore.setExpressionForUserNamed(1_e, KSeq<"u">(KUnknownSymbol));
+  symbolStore.setExpressionForUserSymbol(1_e, KSeq<"u">(KUnknownSymbol));
 
   // If u is defined as sequence, u(4) is parsed as a sequence
   assertLayoutParsesTo("u(4)"_l, expected, symbolStore);
@@ -790,7 +790,7 @@ QUIZ_CASE(pcj_parse_sequences) {
   assert(!is_parsable("u'(4)"_l, false, symbolStore));
 
   // Replace u definition
-  symbolStore.setExpressionForUserNamed(1_e, KFun<"u">(KUnknownSymbol));
+  symbolStore.setExpressionForUserSymbol(1_e, KFun<"u">(KUnknownSymbol));
   Tree* expected2 = SharedTreeStack->pushUserFunction("u");
   (4_e)->cloneTree();
 

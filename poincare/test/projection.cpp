@@ -69,15 +69,15 @@ void replaces_to(const Tree* input, const Tree* output,
                  const Poincare::SymbolContext& symbolContext,
                  Poincare::SymbolicComputation symbolicPolicy) {
   Tree* e = input->cloneTree();
-  Poincare::Internal::Projection::DeepReplaceUserNamed(e, symbolContext,
-                                                       symbolicPolicy);
+  Poincare::Internal::Projection::DeepReplaceUserSymbol(e, symbolContext,
+                                                        symbolicPolicy);
   quiz_assert(e->treeIsIdenticalTo(output));
   e->removeTree();
 }
 
 QUIZ_CASE(pcj_projection_variable_replacement) {
   PoincareTest::SymbolStore symbolStore;
-  symbolStore.setExpressionForUserNamed(3_e, "x"_e);
+  symbolStore.setExpressionForUserSymbol(3_e, "x"_e);
   replaces_to(KMult("x"_e, "y"_e), KMult("x"_e, "y"_e), symbolStore,
               Poincare::SymbolicComputation::KeepAllSymbols);
   replaces_to(KMult("x"_e, "y"_e), KMult(3_e, "y"_e), symbolStore,
@@ -87,8 +87,8 @@ QUIZ_CASE(pcj_projection_variable_replacement) {
   replaces_to(KMult("x"_e, "y"_e), KMult(KNotDefined, KNotDefined), symbolStore,
               Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
 
-  symbolStore.setExpressionForUserNamed(KPow(KUnknownSymbol, 2_e),
-                                        KFun<"f">(KUnknownSymbol));
+  symbolStore.setExpressionForUserSymbol(KPow(KUnknownSymbol, 2_e),
+                                         KFun<"f">(KUnknownSymbol));
   replaces_to(KFun<"f">(KAdd("x"_e, "y"_e)), KFun<"f">(KAdd("x"_e, "y"_e)),
               symbolStore, Poincare::SymbolicComputation::KeepAllSymbols);
   replaces_to(KFun<"f">(KAdd("x"_e, "y"_e)), KPow(KAdd("x"_e, "y"_e), 2_e),

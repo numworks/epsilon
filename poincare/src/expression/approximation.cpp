@@ -597,7 +597,7 @@ std::complex<T> AllTrigToComplex(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
+std::complex<T> UserSymbolToComplex(const Tree* e, const Context* ctx) {
   switch (e->type()) {
     case Type::Var: {
       // Local variable
@@ -1271,7 +1271,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     case Type::UserFunction:
     case Type::UserVariable:
     case Type::UserSequence:
-      return UserNamedToComplex<T>(e, ctx);
+      return UserSymbolToComplex<T>(e, ctx);
     case Type::Sum:
     case Type::Product:
     case Type::Diff:
@@ -1409,7 +1409,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     return PrivateToBoolean<T>(Dependency::Main(e), ctx);
   }
   if (e->isUserFunction() || e->isUserVariable()) {
-    // TODO: Factorize with ToMatrix and UserNamedToComplex
+    // TODO: Factorize with ToMatrix and UserSymbolToComplex
     // Global variable
     // Function of symbol cannot have a boolean dimension without a context.
     assert(ctx);
@@ -1639,7 +1639,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
     }
     case Type::UserFunction:
     case Type::UserVariable: {
-      // TODO: Factorize with PrivateToBoolean and UserNamedToComplex
+      // TODO: Factorize with PrivateToBoolean and UserSymbolToComplex
       // Global variable
       // Function of symbol cannot have a Matrix dimension without a context.
       assert(ctx);

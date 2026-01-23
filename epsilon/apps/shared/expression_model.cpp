@@ -131,7 +131,7 @@ UserExpression ExpressionModel::expressionClone(
    * The substitution of UCodePointUnknown back and forth is done in the
    * methods layout, setContent (through buildExpressionFromLayout), layout and
    * also in GlobalStore::symbolDescriptionForIdentifier and
-   * GlobalStore::setExpressionForUserNamed. When getting the expression,
+   * GlobalStore::setExpressionForUserSymbol. When getting the expression,
    * the substitutions may probably be gathered here.
    */
 }

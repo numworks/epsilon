@@ -9,20 +9,20 @@
 namespace Poincare::Internal {
 
 char* Symbol::CopyName(const Tree* e, char* buffer, size_t bufferSize) {
-  assert(e->isUserNamed());
+  assert(e->isUserSymbol());
   size_t length = Length(e);
   assert(GetName(e)[length] == 0);
   return buffer + strlcpy(buffer, GetName(e), std::min(bufferSize, length + 1));
 }
 
 const char* Symbol::GetName(const Tree* e) {
-  assert(e->isUserNamed());
+  assert(e->isUserSymbol());
   // BlockType, Size, Name
   return reinterpret_cast<const char*>(e->block()->nextNth(2));
 }
 
 bool Symbol::IsNamed(const Tree* e, const char* name) {
-  assert(e->isUserNamed());
+  assert(e->isUserSymbol());
   return strcmp(GetName(e), name) == 0;
 }
 
@@ -36,7 +36,7 @@ bool Symbol::IsUserVariable(const Tree* e, const char* name) {
 ComplexProperties Symbol::GetComplexProperties(const Tree* e) {
   /* Undefined global variables are considered scalar (and real finite for
    * UserVariables) */
-  assert(e->isUserNamed());
+  assert(e->isUserSymbol());
   return e->isUserVariable() ? ComplexProperties::RealFinite()
                              : ComplexProperties::Unknown();
 }

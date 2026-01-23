@@ -167,7 +167,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   if ((inputTree->isDirectTrigonometryFunction() ||
        inputTree->isDirectAdvancedTrigonometryFunction()) &&
       !inputTree->hasDescendantSatisfying(
-          [](const Tree* e) { return e->isUserNamed(); })) {
+          [](const Tree* e) { return e->isUserSymbol(); })) {
     /* Do not display trigonometric additional informations, in case the symbol
      * value is later modified/deleted in the storage and can't be retrieved.
      * Ex: 0->x; tan(x); 3->x; => The additional results of tan(x) become

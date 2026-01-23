@@ -114,7 +114,7 @@ void Tree::logAttributes(std::ostream& stream) const {
     Variables::GetComplexProperties(this).log(stream, false);
     stream << "\"";
   }
-  if (isUserNamed()) {
+  if (isUserSymbol()) {
     stream << " value=\"" << Symbol::GetName(this) << "\"";
   }
   if (isCodePointLayout()) {

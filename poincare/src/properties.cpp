@@ -385,7 +385,7 @@ ComplexProperties GetComplexProperties(const Tree* e) {
   } else if (e->isDecimal()) {
     return ComplexProperties(Number::Properties(e->child(0)),
                              Properties::Zero());
-  } else if (e->isUserNamed()) {
+  } else if (e->isUserSymbol()) {
     return Symbol::GetComplexProperties(e);
   }
   switch (e->type()) {

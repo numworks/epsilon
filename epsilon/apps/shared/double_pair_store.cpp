@@ -403,10 +403,10 @@ bool DoublePairStore::storeColumn(int series, int i) const {
     return true;
   }
   UserExpression listSymbol = SymbolHelper::BuildSymbol(name, nameLength);
-  /* TODO: add a flag to tell setExpressionForUserNamed not to reduce the
+  /* TODO: add a flag to tell setExpressionForUserSymbol not to reduce the
    * float list since there is nothing to reduce and it may be long. Break in
    * regression_trigonometric_4 to see the performance issue. */
-  return GlobalContextAccessor::Store().setExpressionForUserNamed(
+  return GlobalContextAccessor::Store().setExpressionForUserSymbol(
       m_dataLists[series][i], listSymbol);
 }
 

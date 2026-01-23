@@ -25,7 +25,7 @@ constexpr bool NameLengthIsValid(const char* name, size_t length) {
 }
 
 inline uint8_t Length(const Tree* e) {
-  assert(e->isUserNamed());
+  assert(e->isUserSymbol());
   return e->nodeValue(0) - 1;
 }
 char* CopyName(const Tree* e, char* buffer, size_t bufferSize);

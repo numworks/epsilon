@@ -20,12 +20,18 @@ class SymbolContext {
 
  public:
   enum class SymbolType : uint8_t { None, Function, Sequence, Symbol, List };
+
   SymbolType symbolTypeForIdentifier(std::string_view identifier) const {
     return symbolDescriptionForIdentifier(identifier).type;
   }
 
-  // TODO: return an Expression type
-  /* The returned Tree* may live in the Pool or in the Storage. */
+  /* Returns the tree stored in the context associated with the symbol. The
+   * returned Tree* may live in the Pool or in the Storage. The symbol type
+   * in the context is checked against the Tree* type. If they don't match
+   * nullptr is returned.
+   * Ex: if `f` is stored as a Function in the context but `symbol` is the
+   * UserSymbol `f`, nullptr is returned.
+   * TODO: return an Expression type*/
   const Internal::Tree* expressionForSymbol(const Internal::Tree* symbol) const;
 
 #if POINCARE_UNIT

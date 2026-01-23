@@ -33,15 +33,12 @@ class SequenceContext final
  protected:
   // Symbol Context override
 
-  /* This function always returns {type: Type::Sequence, expression: nullptr}
-   * for u, v and w.
-   * - Their type is always Sequence is so that u{n} can be defined as a
-   * function of v{n} without v{n} being already defined.
-   * - Their expression is always nullptr because sequence can only be
-   * approximated.
+  /* This function always returns Type::Sequence for u, v and w, so that they
+   * are always parsed as sequences, even if they are not defined yet.
+   * Their Tree* is always nullptr though, even if they are defined, because
+   * sequence don't have a Tree* and can only be approximated.
    * TODO: We could add support for explicit sequences by returning their
-   * expression here. We would also need to change the assert in
-   * SymbolContext::expressionForSymbol accordingly. */
+   * expression here */
   SymbolDescription symbolDescriptionForIdentifier(
       std::string_view identifier) const override;
 

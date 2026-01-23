@@ -111,6 +111,7 @@ SymbolContext::SymbolDescription GlobalStore::symbolDescriptionForIdentifier(
   }
 
   const Internal::Tree* tree = nullptr;
+  // Sequence don't have a Tree* in storage, and are handled in SequenceContext
   if (type != SymbolType::None && type != SymbolType::Sequence) {
     tree = TreeFromStorage(UserNamedRecordWithBaseName(identifier.data()));
   }

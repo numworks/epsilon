@@ -81,12 +81,12 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
       Ion::Storage::Record record);
 
   // Symbol context override
-  /* The expression recorded in global context is already an expression.
-   * Otherwise, we would need the context and the angle unit to evaluate it */
+
   SymbolDescription symbolDescriptionForIdentifier(
       std::string_view identifier) const override;
 
   // Expression setters
+
   /* This modifies the expression. */
   Ion::Storage::Record::ErrorStatus setExpressionForUserSymbol(
       Poincare::UserExpression& expression, const char* name,

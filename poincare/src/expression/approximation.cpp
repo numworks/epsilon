@@ -630,8 +630,8 @@ std::complex<T> UserSymbolToComplex(const Tree* e, const Context* ctx) {
       }
       Tree* definitionClone = definition->cloneTree();
       // Only approximate child once and use local context.
-      Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
-                               ComplexProperties::Unknown());
+      Variables::ReplaceUserVariable(definitionClone, KUnknownSymbol, 0,
+                                     ComplexProperties::Unknown());
       Context ctxCopy = *ctx;
       LocalContext localCtx = LocalContext(x, ctx->m_localContext);
       ctxCopy.m_localContext = &localCtx;
@@ -1427,8 +1427,8 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     }
     Tree* definitionClone = definition->cloneTree();
     // Only approximate child once and use local context.
-    Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
-                             ComplexProperties::Unknown());
+    Variables::ReplaceUserVariable(definitionClone, KUnknownSymbol, 0,
+                                   ComplexProperties::Unknown());
     Context ctxCopy = *ctx;
     LocalContext localCtx = LocalContext(x, ctx->m_localContext);
     ctxCopy.m_localContext = &localCtx;
@@ -1657,8 +1657,8 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       }
       Tree* definitionClone = definition->cloneTree();
       // Only approximate child once and use local context.
-      Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
-                               ComplexProperties::Unknown());
+      Variables::ReplaceUserVariable(definitionClone, KUnknownSymbol, 0,
+                                     ComplexProperties::Unknown());
       Context ctxCopy = *ctx;
       LocalContext localCtx = LocalContext(x, ctx->m_localContext);
       ctxCopy.m_localContext = &localCtx;

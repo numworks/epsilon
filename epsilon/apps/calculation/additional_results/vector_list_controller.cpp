@@ -100,10 +100,10 @@ void VectorListController::computeAdditionalResults(
   if (!std::isfinite(angleApproximation)) {
     return;
   }
-  setLineAtIndex(
-      index++,
-      Poincare::SymbolHelper::BuildSymbol(UCodePointGreekSmallLetterTheta),
-      angle, &ctx);
+  setLineAtIndex(index++,
+                 Poincare::SymbolHelper::BuildUserVariable(
+                     UCodePointGreekSmallLetterTheta),
+                 angle, &ctx);
 
   // 4. Illustration
   float xApproximation =

@@ -160,7 +160,7 @@ Layout ValuesController::functionTitleLayout(int column) {
   UserExpression sumExpression = UserExpression::Create(
       KSum("k"_e, KA, "n"_e, KB),
       {.KA = UserExpression::Builder(sequence->initialRank()),
-       .KB = Poincare::SymbolHelper::BuildSequence(
+       .KB = Poincare::SymbolHelper::BuildUserSequence(
            sequenceName, UserExpression::Builder("k"_e))});
   return sumExpression.createLayout(
       GlobalPreferences::SharedGlobalPreferences()->displayMode(),

@@ -146,13 +146,15 @@ bool GlobalStore::setExpressionForUserSymbol(
   finalExpression =
       finalExpression.cloneAndReplaceSymbolWithUnknown(childSymbol);
   UserExpression symbolToStore = symbol;
-  if (!(SymbolHelper::IsSymbol(childSymbol, CodePoints::k_cartesianSymbol) ||
-        SymbolHelper::IsSymbol(childSymbol, CodePoints::k_polarSymbol) ||
-        SymbolHelper::IsSymbol(childSymbol, CodePoints::k_parametricSymbol))) {
+  if (!(SymbolHelper::IsUserVariable(childSymbol,
+                                     CodePoints::k_cartesianSymbol) ||
+        SymbolHelper::IsUserVariable(childSymbol, CodePoints::k_polarSymbol) ||
+        SymbolHelper::IsUserVariable(childSymbol,
+                                     CodePoints::k_parametricSymbol))) {
     // Unsupported symbol. Fall back to the default cartesian function symbol
-    symbolToStore = Poincare::SymbolHelper::BuildFunction(
+    symbolToStore = Poincare::SymbolHelper::BuildUserFunction(
         SymbolHelper::GetName(symbolToStore),
-        SymbolHelper::BuildSymbol(CodePoints::k_cartesianSymbol));
+        SymbolHelper::BuildUserVariable(CodePoints::k_cartesianSymbol));
   }
   return setExpressionForUserFunction(finalExpression, symbolToStore, record) ==
          Ion::Storage::Record::ErrorStatus::None;

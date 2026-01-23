@@ -510,14 +510,14 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
    * something that does not depend on it. For example, using 'y' symbol:
    * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */
   return equation.isComparison() &&
-         SymbolHelper::IsSymbol(equation.cloneChildAtIndex(0), symbol) &&
+         SymbolHelper::IsUserVariable(equation.cloneChildAtIndex(0), symbol) &&
          !equation.cloneChildAtIndex(1).recursivelyMatches(
              [](const UserExpression e, const SymbolContext& symbolContext,
                 void* auxiliary) {
                const CodePoint* symbol =
                    static_cast<const CodePoint*>(auxiliary);
                return (!e.isUninitialized() &&
-                       SymbolHelper::IsSymbol(e, *symbol))
+                       SymbolHelper::IsUserVariable(e, *symbol))
                           ? OMG::Troolean::True
                           : OMG::Troolean::Unknown;
              },

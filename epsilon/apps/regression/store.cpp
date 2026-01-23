@@ -312,7 +312,7 @@ Model* Store::regressionModel(Model::Type type) const {
   return &s_model;
 }
 
-int Store::BuildFunctionName(int series, char* buffer, int bufferSize) {
+int Store::BuildUserFunctionName(int series, char* buffer, int bufferSize) {
   assert(bufferSize >= k_functionNameSize);
   size_t length = strlcpy(buffer, k_functionName, bufferSize);
   length +=
@@ -324,7 +324,7 @@ int Store::BuildFunctionName(int series, char* buffer, int bufferSize) {
 
 Ion::Storage::Record Store::functionRecord(int series) const {
   char name[k_functionNameSize];
-  BuildFunctionName(series, name, k_functionNameSize);
+  BuildUserFunctionName(series, name, k_functionNameSize);
   return Ion::Storage::FileSystem::sharedFileSystem
       ->recordBaseNamedWithExtension(name, Ion::Storage::regressionExtension);
 }
@@ -335,9 +335,9 @@ void Store::storeRegressionFunction(int series,
     return deleteRegressionFunction(series);
   }
   char name[k_functionNameSize];
-  BuildFunctionName(series, name, k_functionNameSize);
+  BuildUserFunctionName(series, name, k_functionNameSize);
   expression = expression.cloneAndReplaceSymbolWithUnknown(
-      SymbolHelper::BuildSymbol(CodePoints::k_cartesianSymbol));
+      SymbolHelper::BuildUserVariable(CodePoints::k_cartesianSymbol));
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       name, Ion::Storage::regressionExtension, expression.addressInPool(),
       expression.size(), true);

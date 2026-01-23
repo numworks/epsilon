@@ -70,12 +70,16 @@ bool Replace(Tree* e, int id, const Tree* value, bool leave = false,
 bool Replace(Tree* e, int id, const TreeRef& value, bool leave = false,
              bool reduce = true);
 
-// Replace symbol with Var<id>
-bool ReplaceSymbol(Tree* e, const char* symbol, int id,
-                   ComplexProperties properties);
-bool ReplaceSymbol(Tree* e, const Tree* symbol, int id,
-                   ComplexProperties properties);
+// Replace UserVariable with Var<id>
+bool ReplaceUserVariable(Tree* e, const char* variableName, int id,
+                         ComplexProperties properties);
+bool ReplaceUserVariable(Tree* e, const Tree* variable, int id,
+                         ComplexProperties properties);
+
+// Replace UserFunction or UserSequence with replacement
 void ReplaceUserFunctionOrSequenceWithTree(Tree* e, const Tree* replacement);
+
+// Replace any symbol with replacement
 bool ReplaceSymbolWithTree(Tree* e, const Tree* symbol,
                            const Tree* replacement);
 

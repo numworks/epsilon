@@ -105,7 +105,8 @@ bool ParametricComponentsNameError(UserExpression expression,
   const UserExpression function = expression.cloneChildAtIndex(0);
   const UserExpression functionSymbol = function.cloneChildAtIndex(0);
   const UserExpression point = expression.cloneChildAtIndex(1);
-  if (!SymbolHelper::IsSymbol(functionSymbol, CodePoints::k_parametricSymbol) ||
+  if (!SymbolHelper::IsUserVariable(functionSymbol,
+                                    CodePoints::k_parametricSymbol) ||
       !point.isPoint()) {
     // The user is not defining a parametric function
     return false;

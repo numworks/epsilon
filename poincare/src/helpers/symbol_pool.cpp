@@ -15,7 +15,7 @@ bool SymbolHelper::IsTheta(UserExpression e) {
          BuiltinsAliases::k_thetaAliases.contains(GetName(e));
 }
 
-bool SymbolHelper::IsSymbol(Expression e, CodePoint c) {
+bool SymbolHelper::IsUserVariable(Expression e, CodePoint c) {
   if (!e.isUserVariable()) {
     return false;
   }
@@ -31,7 +31,7 @@ const char* SymbolHelper::GetName(Expression e) {
   return Internal::Symbol::GetName(e.tree());
 }
 
-UserExpression SymbolHelper::BuildSymbol(const char* name, int length) {
+UserExpression SymbolHelper::BuildUserVariable(const char* name, int length) {
   if (length < 0) {
     length = strlen(name);
   }
@@ -43,17 +43,17 @@ UserExpression SymbolHelper::BuildSymbol(const char* name, int length) {
       SharedTreeStack->pushUserVariable(name, static_cast<size_t>(length + 1)));
 }
 
-UserExpression SymbolHelper::BuildSymbol(CodePoint name) {
+UserExpression SymbolHelper::BuildUserVariable(CodePoint name) {
   constexpr size_t bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char buffer[bufferSize];
   size_t codePointLength =
       UTF8Helper::WriteCodePoint(buffer, bufferSize - 1, name);
   assert(codePointLength < bufferSize);
-  return BuildSymbol(buffer, codePointLength);
+  return BuildUserVariable(buffer, codePointLength);
 }
 
-UserExpression SymbolHelper::BuildFunction(const char* name,
-                                           UserExpression child) {
+UserExpression SymbolHelper::BuildUserFunction(const char* name,
+                                               UserExpression child) {
   if (BuiltinsAliases::k_thetaAliases.contains(name)) {
     name = BuiltinsAliases::k_thetaAliases.mainAlias();
   }
@@ -64,8 +64,8 @@ UserExpression SymbolHelper::BuildFunction(const char* name,
   return UserExpression::Builder(e);
 }
 
-UserExpression SymbolHelper::BuildSequence(const char* name,
-                                           UserExpression child) {
+UserExpression SymbolHelper::BuildUserSequence(const char* name,
+                                               UserExpression child) {
   // If needed, handle theta like functions and symbols
   assert(!BuiltinsAliases::k_thetaAliases.contains(name));
   Internal::Tree* e =

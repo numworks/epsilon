@@ -246,8 +246,8 @@ Poincare::UserExpression ExpressionModel::buildExpressionFromLayout(
 Poincare::UserExpression ExpressionModel::ReplaceSymbolWithUnknown(
     Poincare::UserExpression e, CodePoint symbol, bool onlySecondTerm) {
   if (!e.isUninitialized() && symbol != 0) {
-    e = e.cloneAndReplaceSymbolWithUnknown(SymbolHelper::BuildSymbol(symbol),
-                                           onlySecondTerm);
+    e = e.cloneAndReplaceSymbolWithUnknown(
+        SymbolHelper::BuildUserVariable(symbol), onlySecondTerm);
   }
   return e;
 }

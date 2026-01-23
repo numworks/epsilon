@@ -147,17 +147,17 @@ UserExpression FormulaTemplateMenuController::templateExpressionForCell(
     char name2[DoublePairStore::k_columnNamesLength + 1];
     fillSumColumnNames(name1, name2);
     return UserExpression::Create(
-        KAdd(KA, KB), {.KA = SymbolHelper::BuildSymbol(
+        KAdd(KA, KB), {.KA = SymbolHelper::BuildUserVariable(
                            name1, DoublePairStore::k_columnNamesLength),
-                       .KB = SymbolHelper::BuildSymbol(
+                       .KB = SymbolHelper::BuildUserVariable(
                            name2, DoublePairStore::k_columnNamesLength)});
   }
   // Build the expression "V1"
   assert(cell == Cell::OtherApp && shouldDisplayOtherAppCell());
   char columnName[DoublePairStore::k_columnNamesLength + 1];
   fillOtherAppColumnName(columnName);
-  return SymbolHelper::BuildSymbol(columnName,
-                                   DoublePairStore::k_columnNamesLength);
+  return SymbolHelper::BuildUserVariable(columnName,
+                                         DoublePairStore::k_columnNamesLength);
 }
 
 void FormulaTemplateMenuController::computeUninitializedLayouts() {

@@ -173,15 +173,15 @@ bool Variables::Replace(Tree* e, int id, const TreeRef& value, bool leave,
   return changed;
 }
 
-bool Variables::ReplaceSymbol(Tree* e, const Tree* symbol, int id,
-                              ComplexProperties properties) {
-  assert(symbol->isUserVariable());
-  return ReplaceSymbol(e, Symbol::GetName(symbol), id, properties);
+bool Variables::ReplaceUserVariable(Tree* e, const Tree* variable, int id,
+                                    ComplexProperties properties) {
+  assert(variable->isUserVariable());
+  return ReplaceUserVariable(e, Symbol::GetName(variable), id, properties);
 }
 
-bool Variables::ReplaceSymbol(Tree* e, const char* symbol, int id,
-                              ComplexProperties properties) {
-  if (Symbol::IsUserVariable(e, symbol)) {
+bool Variables::ReplaceUserVariable(Tree* e, const char* variableName, int id,
+                                    ComplexProperties properties) {
+  if (Symbol::IsUserVariable(e, variableName)) {
     Tree* var = SharedTreeStack->pushVar(static_cast<uint8_t>(id), properties);
     e->moveTreeOverTree(var);
     return true;
@@ -193,11 +193,14 @@ bool Variables::ReplaceSymbol(Tree* e, const char* symbol, int id,
     } else if (isParametric && Parametric::IsFunctionIndex(child.index, e)) {
       // No need to continue if symbol is hidden by a local definition
       if (!Symbol::IsUserVariable(e->child(Parametric::k_variableIndex),
-                                  symbol)) {
-        changed = ReplaceSymbol(child, symbol, id + 1, properties) || changed;
+                                  variableName)) {
+        changed =
+            ReplaceUserVariable(child, variableName, id + 1, properties) ||
+            changed;
       }
     } else {
-      changed = ReplaceSymbol(child, symbol, id, properties) || changed;
+      changed =
+          ReplaceUserVariable(child, variableName, id, properties) || changed;
     }
   }
   return changed;
@@ -219,7 +222,7 @@ void Variables::ReplaceUserFunctionOrSequenceWithTree(Tree* e,
 }
 
 /* TODO: This could be factorized with other methods, such as Replace,
- * ReplaceSymbol or Projection::DeepReplaceUserSymbol. */
+ * ReplaceUserVariable or Projection::DeepReplaceUserSymbol. */
 bool Variables::ReplaceSymbolWithTree(Tree* e, const Tree* symbol,
                                       const Tree* replacement) {
   bool isParametric = e->isParametric();
@@ -256,9 +259,10 @@ bool Variables::ProjectLocalVariablesToId(Tree* e, uint8_t depth) {
     if (isParametric && child.index == Parametric::k_variableIndex) {
     } else if (isParametric && Parametric::IsFunctionIndex(child.index, e)) {
       // Project local variable
-      changed = ReplaceSymbol(child, e->child(Parametric::k_variableIndex), 0,
+      changed =
+          ReplaceUserVariable(child, e->child(Parametric::k_variableIndex), 0,
                               Parametric::VariableProperties(e)) ||
-                changed;
+          changed;
       changed = ProjectLocalVariablesToId(child, depth + 1) || changed;
     } else {
       changed = ProjectLocalVariablesToId(child, depth) || changed;

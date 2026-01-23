@@ -807,9 +807,9 @@ bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
     return false;
   }
   const UserExpression functionSymbol = leftExpression.cloneChildAtIndex(0);
-  return SymbolHelper::IsSymbol(functionSymbol, k_cartesianSymbol) ||
-         SymbolHelper::IsSymbol(functionSymbol, k_parametricSymbol) ||
-         SymbolHelper::IsSymbol(functionSymbol, k_polarSymbol);
+  return SymbolHelper::IsUserVariable(functionSymbol, k_cartesianSymbol) ||
+         SymbolHelper::IsUserVariable(functionSymbol, k_parametricSymbol) ||
+         SymbolHelper::IsUserVariable(functionSymbol, k_polarSymbol);
 }
 
 UserExpression ContinuousFunction::Model::expressionEquation(
@@ -876,12 +876,13 @@ UserExpression ContinuousFunction::Model::expressionEquation(
       leftExpression = ExpressionModel::ReplaceSymbolWithUnknown(
           leftExpression, codePointSymbol);
     }
-  } else if (SymbolHelper::IsSymbol(leftExpression, k_radiusSymbol) ||
-             SymbolHelper::IsSymbol(leftExpression, k_polarSymbol)) {
+  } else if (SymbolHelper::IsUserVariable(leftExpression, k_radiusSymbol) ||
+             SymbolHelper::IsUserVariable(leftExpression, k_polarSymbol)) {
     result = result.cloneChildAtIndex(1);
-    tempFunctionSymbol = SymbolHelper::IsSymbol(leftExpression, k_polarSymbol)
-                             ? ContinuousFunctionProperties::SymbolType::Radius
-                             : ContinuousFunctionProperties::SymbolType::Theta;
+    tempFunctionSymbol =
+        SymbolHelper::IsUserVariable(leftExpression, k_polarSymbol)
+            ? ContinuousFunctionProperties::SymbolType::Radius
+            : ContinuousFunctionProperties::SymbolType::Theta;
     isUnnamedFunction = false;
   }
   if (computedFunctionSymbol) {
@@ -900,8 +901,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
      * TODO: Make a consistent behavior calculation/additional_results using a
      *       VariableContext to temporary disable y's predefinition. */
     result = result.cloneAndReplaceSymbolWithExpression(
-        SymbolHelper::BuildSymbol(k_ordinateSymbol),
-        SymbolHelper::BuildSymbol(UCodePointTemporaryUnknown));
+        SymbolHelper::BuildUserVariable(k_ordinateSymbol),
+        SymbolHelper::BuildUserVariable(UCodePointTemporaryUnknown));
   }
   // Replace all defined symbols and functions to extract symbols
   result = result.cloneAndReplaceSymbols(GlobalContextAccessor::Context());
@@ -912,8 +913,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
   }
   if (isUnnamedFunction) {
     result = result.cloneAndReplaceSymbolWithExpression(
-        SymbolHelper::BuildSymbol(UCodePointTemporaryUnknown),
-        SymbolHelper::BuildSymbol(k_ordinateSymbol));
+        SymbolHelper::BuildUserVariable(UCodePointTemporaryUnknown),
+        SymbolHelper::BuildUserVariable(k_ordinateSymbol));
   }
   assert(!result.isUninitialized());
   return result;
@@ -1020,13 +1021,13 @@ CodePoint ContinuousFunction::Model::CodePointForSymbol(
     const UserExpression& symbol) {
   // Extract the CodePoint function's symbol. We know it is either x, t or θ
   assert(symbol.isUserVariable());
-  if (SymbolHelper::IsSymbol(symbol, k_cartesianSymbol)) {
+  if (SymbolHelper::IsUserVariable(symbol, k_cartesianSymbol)) {
     return k_cartesianSymbol;
   }
-  if (SymbolHelper::IsSymbol(symbol, k_polarSymbol)) {
+  if (SymbolHelper::IsUserVariable(symbol, k_polarSymbol)) {
     return k_polarSymbol;
   }
-  assert(SymbolHelper::IsSymbol(symbol, k_parametricSymbol));
+  assert(SymbolHelper::IsUserVariable(symbol, k_parametricSymbol));
   return k_parametricSymbol;
 }
 
@@ -1059,8 +1060,8 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
         expressionToStore, symbol, true);
   } else {
     if (expressionToStore.recursivelyMatches(SymbolHelper::IsTheta)) {
-      symbol = SymbolHelper::IsSymbol(expressionToStore.cloneChildAtIndex(0),
-                                      k_polarSymbol)
+      symbol = SymbolHelper::IsUserVariable(
+                   expressionToStore.cloneChildAtIndex(0), k_polarSymbol)
                    ? k_radiusSymbol
                    : k_polarSymbol;
     }

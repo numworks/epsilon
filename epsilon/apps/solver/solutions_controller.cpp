@@ -445,7 +445,7 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
       const char* symbolName =
           system->definedVariable(row - definedVariablesRow - 1);
       UserExpression symbol =
-          SymbolHelper::BuildSymbol(symbolName, strlen(symbolName));
+          SymbolHelper::BuildUserVariable(symbolName, strlen(symbolName));
       UserExpression value = UserExpression::Builder(
           App::app()->localContext().expressionForSymbol(symbol.tree()));
       Layout layout =
@@ -497,7 +497,7 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
   const char* symbolName =
       system->definedVariable(row - definedVariablesRow - 1);
   UserExpression symbol =
-      SymbolHelper::BuildSymbol(symbolName, strlen(symbolName));
+      SymbolHelper::BuildUserVariable(symbolName, strlen(symbolName));
   UserExpression value = UserExpression::Builder(
       App::app()->localContext().expressionForSymbol(symbol.tree()));
   Layout layout =

@@ -370,7 +370,7 @@ UserExpression UserExpression::cloneAndReplaceSymbolWithExpression(
     const UserExpression& symbol, const Expression& expression,
     bool onlySecondTerm) const {
   /* TODO_PCJ: Handle functions and sequences as well. See ReplaceSymbolWithTree
-   * implementations. */
+   * implementation. */
   if (isUninitialized()) {
     return UserExpression();
   }
@@ -390,8 +390,8 @@ UserExpression UserExpression::cloneAndReplaceSymbolWithUnknown(
 
 UserExpression UserExpression::cloneAndReplaceUnknownWithSymbol(
     CodePoint symbol) const {
-  return cloneAndReplaceSymbolWithExpression(SymbolHelper::SystemSymbol(),
-                                             SymbolHelper::BuildSymbol(symbol));
+  return cloneAndReplaceSymbolWithExpression(
+      SymbolHelper::SystemSymbol(), SymbolHelper::BuildUserVariable(symbol));
 }
 
 UserExpression UserExpression::cloneAndReplaceSymbols(

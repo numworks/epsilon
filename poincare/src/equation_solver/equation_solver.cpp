@@ -89,15 +89,15 @@ static PreprocessingResult PreprocessEquationList(
   size_t nUndefinedVariables = 0;
 
   for (Tree* userVariable : userVariables->children()) {
-    const char* symbolName = Symbol::GetName(userVariable);
+    const char* variableName = Symbol::GetName(userVariable);
     if (symbolContext.expressionForSymbol(userVariable)) {
       if (!equationMetadata.definedVariables.isFull()) {
-        equationMetadata.definedVariables.push(symbolName);
+        equationMetadata.definedVariables.push(variableName);
       }
       nDefinedVariables++;
     } else {
       if (!undefinedVariables.isFull()) {
-        undefinedVariables.push(symbolName);
+        undefinedVariables.push(variableName);
       }
       nUndefinedVariables++;
     }
@@ -192,8 +192,8 @@ static PreprocessingResult PreprocessEquationList(
     const char* variable = equationMetadata.unknownVariables[i].data();
     // TODO: Use a more precise ComplexProperties when possible for better
     // reduction.
-    Variables::ReplaceSymbol(reducedEquationList, variable, i,
-                             ComplexProperties::Finite());
+    Variables::ReplaceUserVariable(reducedEquationList, variable, i,
+                                   ComplexProperties::Finite());
   }
 
   // Step 3.4. Project (replace local symbols) and reduce

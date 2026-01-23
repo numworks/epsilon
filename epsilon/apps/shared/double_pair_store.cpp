@@ -402,7 +402,7 @@ bool DoublePairStore::storeColumn(int series, int i) const {
     Record(name, listExtension).destroy();
     return true;
   }
-  UserExpression listSymbol = SymbolHelper::BuildSymbol(name, nameLength);
+  UserExpression listSymbol = SymbolHelper::BuildUserVariable(name, nameLength);
   /* TODO: add a flag to tell setExpressionForUserSymbol not to reduce the
    * float list since there is nothing to reduce and it may be long. Break in
    * regression_trigonometric_4 to see the performance issue. */

@@ -55,7 +55,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   /* Replace initial term by its value, to avoid replacing it by a wrong value
    * at next step */
   Poincare::UserExpression initialSymbol =
-      Poincare::SymbolHelper::BuildSequence(
+      Poincare::SymbolHelper::BuildUserSequence(
           name, Poincare::UserExpression::Builder(sequence->initialRank()));
   Poincare::SystemExpression initialExpression =
       sequence->firstInitialConditionExpressionReduced();
@@ -69,7 +69,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
         KSub(KA, 1_e), {.KA = sequenceParameter});
   }
   Poincare::UserExpression sequenceSymbol =
-      Poincare::SymbolHelper::BuildSequence(name, sequenceParameter);
+      Poincare::SymbolHelper::BuildUserSequence(name, sequenceParameter);
   Poincare::UserExpression function =
       sequence->expressionClone()
           .cloneAndReplaceSymbolWithExpression(initialSymbol, initialExpression)

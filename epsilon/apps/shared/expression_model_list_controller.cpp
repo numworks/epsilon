@@ -242,11 +242,11 @@ static CodePoint symbolForEquation(UserExpression expression) {
          void* auxiliary) {
         CodePoint* symbol = static_cast<CodePoint*>(auxiliary);
         assert(symbol);
-        if (SymbolHelper::IsSymbol(e, CodePoints::k_polarSymbol)) {
+        if (SymbolHelper::IsUserVariable(e, CodePoints::k_polarSymbol)) {
           *symbol = CodePoints::k_polarSymbol;
           return true;
         }
-        if (SymbolHelper::IsSymbol(e, CodePoints::k_parametricSymbol)) {
+        if (SymbolHelper::IsUserVariable(e, CodePoints::k_parametricSymbol)) {
           *symbol = CodePoints::k_parametricSymbol;
           return true;
         }

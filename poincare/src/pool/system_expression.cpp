@@ -174,8 +174,8 @@ SystemExpression SystemExpression::getReducedDerivative(
   SharedTreeStack->pushUserVariable(symbolName);
   Integer::Push(derivationOrder);
   Tree* derivand = tree()->cloneTree();
-  Variables::ReplaceSymbol(derivand, symbol, 0,
-                           Parametric::VariableProperties(result));
+  Variables::ReplaceUserVariable(derivand, symbol, 0,
+                                 Parametric::VariableProperties(result));
   // Check dimension again as the diff may have changed it.
   if (!Internal::Dimension::DeepCheck(result)) {
     result->cloneTreeOverTree(KUndefUnhandledDimension);

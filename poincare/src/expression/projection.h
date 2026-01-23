@@ -12,8 +12,8 @@ namespace Poincare::Internal {
 
 class Projection {
  public:
-  /* Change the input complex format to Cartesian if the Tree contains i, Re,
-   * Im, Arg or Conj. */
+  /* Change the input complex format to Cartesian if the Tree contains some
+   * complex nodes */
   static ComplexFormat PreferredComplexFormat(
       const Tree* e, ComplexFormat userComplexFormat,
       SymbolicComputation symbolicMode, const SymbolContext& symbolContext);

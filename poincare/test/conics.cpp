@@ -32,7 +32,7 @@ PolarConic buildPolarConic(const char* expression) {
 
 ParametricConic buildParametricConic(const char* expression) {
   // Prevent t from being interpreted as ton
-  Poincare::TreeVariableContext tContext(
+  VariableContext<UserExpression> tContext(
       "t", UserExpression::Builder<float>(0.f), &k_emptySymbolContext);
   Tree* e = parse(expression, tContext);
   Simplification::ProjectAndReduce(

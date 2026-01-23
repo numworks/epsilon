@@ -128,16 +128,16 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
   setState(previousState);
   assert(!m_parsingContext.metadata.isUnitConversion);
   m_parsingContext.metadata.isAssignmentDeclaration = false;
-  Poincare::EmptySymbolContext tempContext = Poincare::EmptySymbolContext();
+  EmptySymbolContext tempContext = EmptySymbolContext();
   // This is instantiated outside the condition so that the pointer is not lost.
-  Poincare::TreeVariableContext assignmentContext("", nullptr, &tempContext);
+  TreeVariableContext assignmentContext("", nullptr, &tempContext);
   if (rightHandSide->isUserFunction()) {
     /* If assigning a function, set the function parameter in the context for
      * parsing leftHandSide. This is to ensure that 3g->f(g) is correctly parsed
      */
     TreeRef functionParameter = rightHandSide->child(0);
-    assignmentContext = Poincare::TreeVariableContext(
-        Symbol::GetName(functionParameter), nullptr, m_parsingContext.context);
+    assignmentContext = TreeVariableContext(Symbol::GetName(functionParameter),
+                                            nullptr, m_parsingContext.context);
     m_parsingContext.context = &assignmentContext;
   }
   // Parse leftHandSide
@@ -1013,8 +1013,8 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
       leftHandSide = parseFunctionParameters();
     } else {
       // We must make sure that the parameter is parsed as a single variable.
-      const Poincare::SymbolContext* oldContext = m_parsingContext.context;
-      Poincare::TreeVariableContext parameterContext(name, nullptr, oldContext);
+      const SymbolContext* oldContext = m_parsingContext.context;
+      TreeVariableContext parameterContext(name, nullptr, oldContext);
       m_parsingContext.context = &parameterContext;
       leftHandSide = parseFunctionParameters();
       m_parsingContext.context = oldContext;
@@ -1101,22 +1101,21 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
    * afterwards.
    * If preserveInput is true and the symbol is not defined, f(x) is always
    * parsed  as a function and u{n} as a sequence*/
-  Poincare::SymbolContext::SymbolType idType =
-      Poincare::SymbolContext::SymbolType::None;
+  SymbolContext::SymbolType idType = SymbolContext::SymbolType::None;
   if (!m_parsingContext.metadata.isAssignmentDeclaration) {
     idType = m_parsingContext.context
                  ? m_parsingContext.context->symbolTypeForIdentifier(
                        std::string_view(name, length))
-                 : Poincare::SymbolContext::SymbolType::None;
-    if (idType == Poincare::SymbolContext::SymbolType::Symbol ||
+                 : SymbolContext::SymbolType::None;
+    if (idType == SymbolContext::SymbolType::Symbol ||
         (!m_parsingContext.params.preserveInput &&
-         idType == Poincare::SymbolContext::SymbolType::None)) {
+         idType == SymbolContext::SymbolType::None)) {
       leftHandSide = SharedTreeStack->pushUserSymbol(name);
       return;
     }
   }
 
-  if (idType == Poincare::SymbolContext::SymbolType::List) {
+  if (idType == SymbolContext::SymbolType::List) {
     leftHandSide = SharedTreeStack->pushUserSymbol(name);
     parseListParameters(leftHandSide);
     return;
@@ -1129,8 +1128,8 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
                               m_nextToken.firstLayout()->isParenthesesLayout();
   bool hasLeftParenthesis = m_nextToken.type() == Token::Type::LeftParenthesis;
 
-  if ((idType == Poincare::SymbolContext::SymbolType::None && hasSubscript) ||
-      (idType == Poincare::SymbolContext::SymbolType::Sequence)) {
+  if ((idType == SymbolContext::SymbolType::None && hasSubscript) ||
+      (idType == SymbolContext::SymbolType::Sequence)) {
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or if it's followed by a subscript, it's a
      * sequence call. */
@@ -1251,8 +1250,8 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
      * If we decide that functions can be assigned with any parameter,
      * this will ensure that f(abc)=abc is understood like f(x)=x
      */
-    const Poincare::SymbolContext* previousContext = m_parsingContext.context;
-    Poincare::TreeVariableContext functionAssignmentContext(
+    const SymbolContext* previousContext = m_parsingContext.context;
+    TreeVariableContext functionAssignmentContext(
         Symbol::GetName(parameter), nullptr, m_parsingContext.context);
     m_parsingContext.context = &functionAssignmentContext;
     // We have to parseUntil here so that we do not lose the

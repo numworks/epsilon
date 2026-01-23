@@ -10,9 +10,9 @@ namespace Poincare {
 template <typename TreeWrapper>
 class VariableContext : public ContextWithParent {
  public:
-  VariableContext(const char* name, TreeWrapper variable,
+  VariableContext(const char* name, TreeWrapper value,
                   const SymbolContext* parentContext = nullptr)
-      : ContextWithParent(parentContext), m_name(name), m_variable(variable) {}
+      : ContextWithParent(parentContext), m_name(name), m_value(value) {}
 
  protected:
   // Symbol Context override
@@ -20,15 +20,14 @@ class VariableContext : public ContextWithParent {
   SymbolDescription symbolDescriptionForIdentifier(
       std::string_view identifier) const override {
     if ((m_name != nullptr) && (identifier == m_name)) {
-      return {SymbolType::Symbol,
-              static_cast<const Internal::Tree*>(m_variable)};
+      return {SymbolType::Symbol, static_cast<const Internal::Tree*>(m_value)};
     }
     return ContextWithParent::symbolDescriptionForIdentifier(identifier);
   }
 
  private:
   const char* m_name;
-  TreeWrapper m_variable;
+  TreeWrapper m_value;
 };
 
 using TreeVariableContext = VariableContext<const Internal::Tree*>;

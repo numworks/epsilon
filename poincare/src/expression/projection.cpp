@@ -101,18 +101,20 @@ bool Projection::ShallowReplaceUserNamed(
   return true;
 }
 
-bool hasComplexNodes(const Tree* e, SymbolicComputation symbolicMode,
+bool hasComplexNodes(const Tree* e, SymbolicComputation symbolicComputation,
                      const SymbolContext& symbolContext) {
   // If it lives in the pool, fetching definitions may invalidate it.
   bool mayReplaceSymbols =
-      (symbolicMode != SymbolicComputation::KeepAllSymbols &&
-       symbolicMode != SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+      (symbolicComputation != SymbolicComputation::KeepAllSymbols &&
+       symbolicComputation !=
+           SymbolicComputation::ReplaceAllSymbolsWithUndefined);
   if (mayReplaceSymbols && !SharedTreeStack->contains(e)) {
     /* Clone tree in treeStack to prevent address being invalidated while
      * fetching symbols definitions in the pool. TODO_PCJ: Fix this in
      * ExpressionForSymbolAndRecord method. */
     Tree* treeOnStack = e->cloneTree();
-    bool result = hasComplexNodes(treeOnStack, symbolicMode, symbolContext);
+    bool result =
+        hasComplexNodes(treeOnStack, symbolicComputation, symbolContext);
     treeOnStack->removeTree();
     return result;
   }
@@ -125,7 +127,7 @@ bool hasComplexNodes(const Tree* e, SymbolicComputation symbolicMode,
     if (descendant->isUserFunction() || descendant->isUserSymbol()) {
       /* We could factorize with DeepReplaceUserNamed but this avoid having to
        * clone the tree. */
-      switch (symbolicMode) {
+      switch (symbolicComputation) {
         case SymbolicComputation::KeepAllSymbols:
         case SymbolicComputation::ReplaceAllSymbolsWithUndefined:
           break;
@@ -139,7 +141,7 @@ bool hasComplexNodes(const Tree* e, SymbolicComputation symbolicMode,
               symbolContext.expressionForUserNamed(descendant);
           assert(definition != e);
           if (definition &&
-              hasComplexNodes(definition, symbolicMode, symbolContext)) {
+              hasComplexNodes(definition, symbolicComputation, symbolContext)) {
             return true;
           }
         }
@@ -151,12 +153,13 @@ bool hasComplexNodes(const Tree* e, SymbolicComputation symbolicMode,
 
 ComplexFormat Projection::PreferredComplexFormat(
     const Tree* e, ComplexFormat userComplexFormat,
-    SymbolicComputation symbolicMode, const SymbolContext& symbolContext) {
+    SymbolicComputation symbolicComputation,
+    const SymbolContext& symbolContext) {
   assert(e);
 #if POINCARE_COMPLEX
   if (userComplexFormat == ComplexFormat::Real &&
       !Symbol::InvolvesCircularity(e, symbolContext) &&
-      hasComplexNodes(e, symbolicMode, symbolContext)) {
+      hasComplexNodes(e, symbolicComputation, symbolContext)) {
     return Preferences::k_defaultComplexFormatIfNotReal;
   }
 #endif

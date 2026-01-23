@@ -16,7 +16,8 @@ class Projection {
    * complex nodes */
   static ComplexFormat PreferredComplexFormat(
       const Tree* e, ComplexFormat userComplexFormat,
-      SymbolicComputation symbolicMode, const SymbolContext& symbolContext);
+      SymbolicComputation symbolicComputation,
+      const SymbolContext& symbolContext);
 
   /* User variables are fetched from the Context and replaced according to the
   SymbolicComputation strategy */

@@ -87,9 +87,9 @@ class UserExpression : public Expression {
 
   /* Change the user complex format from Real to Cartesian if the expression
    * contains i, Re, Im, Arg or Conj. */
-  ComplexFormat preferredComplexFormat(ComplexFormat userComplexFormat,
-                                       const SymbolContext& symbolContext,
-                                       SymbolicComputation symbolicMode) const;
+  ComplexFormat preferredComplexFormat(
+      ComplexFormat userComplexFormat, const SymbolContext& symbolContext,
+      SymbolicComputation symbolicComputation) const;
 
   /* UserExpression to UserExpression helpers */
 

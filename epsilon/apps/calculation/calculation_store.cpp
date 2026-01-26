@@ -158,21 +158,20 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
   if (isStore) {
     StorePreprocessResult storeElements = preprocessStore(inputExpression);
     if (!storeElements.shouldReduceBeforeStore) {
-      UserExpression exact = inputExpression.clone();
-
       return CalculationResult{
-          .outputs = {.exact = exact,
-                      .approximate =
-                          exact.cloneAndApproximate<double>(ProjectionContext{
-                              .m_complexFormat = complexFormat,
-                              .m_angleUnit =
-                                  GlobalPreferences::SharedGlobalPreferences()
-                                      ->angleUnit(),
-                              .m_unitFormat =
-                                  GlobalPreferences::SharedGlobalPreferences()
-                                      ->unitFormat(),
-                              .m_symbolic = symbolicComputation,
-                              .m_context = GlobalContextAccessor::Context()})},
+          .outputs =
+              {.exact = inputExpression.clone(),
+               .approximate = inputExpression.cloneAndApproximate<double>(
+                   ProjectionContext{
+                       .m_complexFormat = complexFormat,
+                       .m_angleUnit =
+                           GlobalPreferences::SharedGlobalPreferences()
+                               ->angleUnit(),
+                       .m_unitFormat =
+                           GlobalPreferences::SharedGlobalPreferences()
+                               ->unitFormat(),
+                       .m_symbolic = symbolicComputation,
+                       .m_context = GlobalContextAccessor::Context()})},
           .hasReductionFailure = false};
     }
     symbolicComputation = storeElements.symbolicComputation;

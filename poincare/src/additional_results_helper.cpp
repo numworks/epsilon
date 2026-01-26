@@ -366,6 +366,8 @@ bool AdditionalResultsHelper::HasPositiveInteger(
 // True if reduced output is a rational but not an integer
 bool AdditionalResultsHelper::HasRational(
     const Poincare::UserExpression exactOutput) {
+  /* exactOutput is a beautified user expression. Rationals are beautified as
+   * div(numerator, denominator) or opposite(div(numerator, denominator)). */
   const Tree* exactTree = exactOutput.tree();
   if (exactTree->isOpposite()) {
     exactTree = exactTree->child(0);

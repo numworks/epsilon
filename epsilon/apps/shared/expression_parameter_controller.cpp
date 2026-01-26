@@ -48,8 +48,15 @@ bool ExpressionParameterController::textFieldDidFinishEditing(
   }
   ExpressionOrFloat currentExpression =
       isInitialized
-          ? ExpressionOrFloat::Builder(parsedExpression.cloneAndTrySimplify({}),
-                                       PoincareHelpers::ApproximateToRealScalar)
+          ? ExpressionOrFloat::Builder(
+                parsedExpression.cloneAndTrySimplify({
+                    .m_complexFormat =
+                        GlobalPreferences::SharedGlobalPreferences()
+                            ->complexFormat(),
+                    .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()
+                                       ->angleUnit(),
+                }),
+                PoincareHelpers::ApproximateToRealScalar)
           : ExpressionOrFloat{};
   if (hasUndefinedValue(text, currentExpression, innerSelectedRow()) ||
       !setParameterAtIndex(innerSelectedRow(), currentExpression)) {

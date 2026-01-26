@@ -256,7 +256,10 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
         Poincare::IsCalculationOutputStrictEquality(
             exact, approximate,
             GlobalPreferences::SharedGlobalPreferences()
-                ->numberOfSignificantDigits())) {
+                ->numberOfSignificantDigits(),
+            {.m_complexFormat = m_equationMetadata.complexFormat,
+             .m_angleUnit =
+                 GlobalPreferences::SharedGlobalPreferences()->angleUnit()})) {
       exactAndApproximateAreEqual = true;
     }
   }

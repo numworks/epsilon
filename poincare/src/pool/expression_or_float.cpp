@@ -56,9 +56,13 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
   UserExpression exactExpression = expression();
   float approximation =
       Approximate<float>(exactExpression, approximationParameters);
-  if (!IsCalculationOutputStrictEquality(exactExpression,
-                                         UserExpression::Builder(approximation),
-                                         numberOfSignificantDigits)) {
+  if (!IsCalculationOutputStrictEquality(
+          exactExpression, UserExpression::Builder(approximation),
+          numberOfSignificantDigits,
+          ProjectionContext{
+              .m_complexFormat = approximationParameters.complexFormat,
+              .m_angleUnit = approximationParameters.angleUnit,
+          })) {
     constexpr size_t k_bufferExactLength = 15;
     char exactSerialization[k_bufferExactLength];
     PrintFloat::TextLengths exactTextLengths =

@@ -61,7 +61,7 @@ inline size_t ConvertFloatToTextWithDisplayMode(
       .CharLength;
 }
 
-// ===== Simplification =====
+// ===== Simplification and Approximation =====
 
 inline Poincare::ProjectionContext ProjectionContextForPreferences(
     const Poincare::UserExpression e) {

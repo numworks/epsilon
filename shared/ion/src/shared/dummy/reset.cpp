@@ -5,7 +5,6 @@ namespace Reset {
 
 void core() {}
 void coreDeleteApps() {}
-void coreActiveExamMode() {}
 
 }  // namespace Reset
 }  // namespace Ion

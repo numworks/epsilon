@@ -67,7 +67,7 @@ void set(Configuration config) {
                                Authentication::ClearanceLevel::NumWorks) {
     /* The device will reset on official firmware, and pick up the
      * configuration left in the persisting bytes. */
-    Reset::coreActiveExamMode();
+    Reset::core();
   }
   updateLed(config);
   if (!config.isActive()) {

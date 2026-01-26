@@ -42,6 +42,9 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("factor(10007)", "10007");
   simplifies_to("factor(10007^2)", "undef");
   simplifies_to("factor(i)", "undef", k_cartesianCtx);
+  // Behavior of factor(-1) in a dependency
+  simplifies_to("asin(factor(i*i)b)",
+                "dep(arcsin(b×(-1)),{piecewise(0,abs(b×-1)≤1,nonreal)})");
 
   // Euclidean division
   simplifies_to("quo(23,5)", "4");

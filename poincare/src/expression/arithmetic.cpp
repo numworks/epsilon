@@ -211,7 +211,7 @@ bool Arithmetic::BeautifyFactor(Tree* e) {
     SystematicReduction::DeepReduce(child);
   }
   assert(child->isInteger());
-  if (child->isZero() || child->isOne()) {
+  if (child->isZero() || child->isOne() || child->isMinusOne()) {
     // Factor is an extended prime factorization
     e->moveTreeOverTree(child);
     return true;

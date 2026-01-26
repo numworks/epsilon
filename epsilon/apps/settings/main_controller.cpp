@@ -75,7 +75,7 @@ MainController::MainController(Responder* parentResponder)
       m_aboutController(this),
       m_resetController(Invocation::Builder<MainController>(
                             [](MainController* controller, void* sender) {
-                              Ion::Reset::core();
+                              Ion::Reset::coreDeleteApps();
                               return true;
                             },
                             this),

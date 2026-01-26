@@ -6,6 +6,10 @@ namespace Ion {
 namespace Reset {
 
 void core();
+/* Delete external apps before resetting.
+ * This is used specifically when resetting the device from the settings,
+ * because only hardware resets remove external apps at userland startup. */
+void coreDeleteApps();
 void coreActiveExamMode();
 
 enum class ResetType : bool {

@@ -392,7 +392,7 @@ std::complex<T> Private::HelperUndefDependencies(const Tree* dep,
 template <typename T>
 std::complex<T> Private::UndefDependencies(const Tree* dep,
                                            const Context* ctx) {
-  std::complex<T> res = HelperUndefDependencies<float>(dep, ctx);
+  std::complex<T> res = HelperUndefDependencies<T>(dep, ctx);
   return IsNonReal(res) ? NonReal<T>() : std::complex<T>(res);
 }
 

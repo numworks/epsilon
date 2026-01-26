@@ -257,6 +257,7 @@ bool CurveParameterController::confirmParameterAtIndex(ParameterIndex index,
     return true;
   }
   m_graphRange->setZoomAuto(false);
+  // f is not rounded to the displayed f (as it used to) for a better accuracy
   m_graphController->moveCursorAndCenterIfNeeded(f);
 
   return true;

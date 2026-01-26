@@ -3,14 +3,12 @@
 
 #include "dependency.h"
 #include "infinity.h"
+#include "integer.h"
 #include "k_tree.h"
 #include "matrix.h"
 #include "number.h"
 #include "power_like.h"
-#include "rational.h"
 #include "systematic_operation.h"
-#include "systematic_reduction.h"
-#include "units/unit.h"
 
 namespace Poincare::Internal {
 

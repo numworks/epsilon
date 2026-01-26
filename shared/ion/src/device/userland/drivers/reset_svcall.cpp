@@ -9,7 +9,9 @@ namespace Reset {
 
 void SVC_ATTRIBUTES core_svcall() { SVC_RETURNING_VOID(SVC_RESET_CORE) }
 
-void core() {
+void core() { core_svcall(); }
+
+void coreDeleteApps() {
   Ion::ExternalApps::deleteApps(Ion::ExamMode::get().isActive(), false);
   core_svcall();
 }

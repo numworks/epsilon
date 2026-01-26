@@ -366,8 +366,13 @@ bool AdditionalResultsHelper::HasPositiveInteger(
 // True if reduced output is a rational but not an integer
 bool AdditionalResultsHelper::HasRational(
     const Poincare::UserExpression exactOutput) {
-  SystemExpression e = exactOutput.cloneAndReduce({.m_advanceReduce = false});
-  return (!e.tree()->isInteger() && e.tree()->isRational());
+  const Tree* exactTree = exactOutput.tree();
+  if (exactTree->isOpposite()) {
+    exactTree = exactTree->child(0);
+  }
+  bool result = exactTree->isDiv() && exactTree->child(0)->isInteger() &&
+                exactTree->child(1)->isInteger();
+  return result;
 }
 
 /* For a rational x, return the closest rational convergent of the continued

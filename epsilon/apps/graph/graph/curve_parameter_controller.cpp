@@ -256,14 +256,6 @@ bool CurveParameterController::confirmParameterAtIndex(ParameterIndex index,
     m_preimageGraphController.setImage(f);
     return true;
   }
-  // If possible, round f so that we go to the evaluation of the displayed f
-  double pixelWidth =
-      (m_graphRange->xMax() - m_graphRange->xMin()) / Ion::Display::Width;
-  f = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-      f, App::app()->localContext(),
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits(),
-      pixelWidth, false);
-
   m_graphRange->setZoomAuto(false);
   m_graphController->moveCursorAndCenterIfNeeded(f);
 

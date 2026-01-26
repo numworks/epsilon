@@ -557,6 +557,7 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
   ProjectionContext ctx = {.m_complexFormat = ComplexFormat::Cartesian,
+                           .m_angleUnit = calculationPreferences.angleUnit,
                            .m_strategy = Strategy::ApproximateToFloat,
                            .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .m_context = symbolContext,

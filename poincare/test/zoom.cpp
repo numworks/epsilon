@@ -74,7 +74,9 @@ Coordinate2D<T> expressionEvaluator(T t, const void* model) {
 template <typename T>
 void assert_points_of_interest_range_is(const char* expression,
                                         Range2D<T> expectedRange) {
-  Tree* e = parseAndPrepareForApproximation(expression, ProjectionContext{});
+  Tree* e = parseAndPrepareForApproximation(
+      expression,
+      ProjectionContext{.m_angleUnit = Poincare::AngleUnit::Radian});
   ZoomTest<T> zoom;
   zoom.zoom()->fitPointsOfInterest(expressionEvaluator<T>, e,
                                    Range1D<T>(-k_maxFloat, k_maxFloat), false,

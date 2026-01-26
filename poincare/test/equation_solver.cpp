@@ -54,7 +54,8 @@ bool check_solutions(
 
 QUIZ_CASE(pcj_equation_solver) {
   PoincareTest::SymbolStore symbolStore;
-  Poincare::ProjectionContext projCtx = {.m_context = symbolStore};
+  Poincare::ProjectionContext projCtx = {
+      .m_angleUnit = Poincare::AngleUnit::Radian, .m_context = symbolStore};
 
   check_solutions({"x-3+y", "y-x+1"}, {"2", "1"}, projCtx);
   check_solutions({"x+x"}, {"0"}, projCtx);
@@ -133,7 +134,9 @@ QUIZ_CASE(pcj_equation_solver) {
 void check_range(const char* input, double min, double max) {
   Tree* equationList = TreeStack::SharedTreeStack->pushList(1);
   parse(input);
-  Poincare::ProjectionContext ctx;
+  Poincare::ProjectionContext ctx{
+      .m_angleUnit = Poincare::AngleUnit::Radian,
+  };
   EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
       equationList, ctx, Poincare::Range1D<double>(), 10);
   quiz_assert(result.solutionMetadata.solvingRange.min() == min);

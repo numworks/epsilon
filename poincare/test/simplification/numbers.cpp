@@ -41,17 +41,17 @@ QUIZ_CASE(pcj_simplification_decimal) {
 }
 
 QUIZ_CASE(pcj_simplification_float) {
-  simplifies_to("2", "2", {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("2.3", "2.3", {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("1+π", "4.1415926535898",
-                {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("1+π+x", "x+4.1415926535898",
-                {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("cos(x-x)", "1", {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("random()-random()", "random()-random()",
-                {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("y^3*x^-2", "y^3/x^2",
-                {.m_strategy = Strategy::ApproximateToFloat});
+  Poincare::ProjectionContext ctx = {
+      .m_angleUnit = Poincare::AngleUnit::Radian,
+      .m_strategy = Strategy::ApproximateToFloat,
+  };
+  simplifies_to("2", "2", ctx);
+  simplifies_to("2.3", "2.3", ctx);
+  simplifies_to("1+π", "4.1415926535898", ctx);
+  simplifies_to("1+π+x", "x+4.1415926535898", ctx);
+  simplifies_to("cos(x-x)", "1", ctx);
+  simplifies_to("random()-random()", "random()-random()", ctx);
+  simplifies_to("y^3*x^-2", "y^3/x^2", ctx);
 
   // This was raising asserts because of float approximation on flatten.
   Tree* u = (KMult(KPow(180_e, -1_e), π_e, KMult(180_de, "x"_e)))->cloneTree();

@@ -399,7 +399,9 @@ QUIZ_CASE(pcj_properties_list_of_points) {
 void assert_is_continuous_on_interval(const char* input, float x1, float x2,
                                       bool isContinuous) {
   UserExpression e1 = UserExpression::Builder(parse(input));
-  SystemExpression e2 = e1.cloneAndReduce(ProjectionContext{});
+  SystemExpression e2 = e1.cloneAndReduce(ProjectionContext{
+      .m_angleUnit = AngleUnit::Radian,
+  });
   quiz_assert(!e2.isFailedSimplification());
   PreparedFunction e3 = e2.getPreparedFunction("x", true);
   quiz_assert_print_if_failure(
@@ -435,8 +437,10 @@ QUIZ_CASE(pcj_properties_is_continuous) {
 
 void assert_reduced_deep_is_symbolic(const char* input,
                                      bool isSymbolic = true) {
-  SystemExpression reducedExpression =
-      UserExpression::Builder(parse(input)).cloneAndReduce(ProjectionContext{});
+  SystemExpression reducedExpression = UserExpression::Builder(parse(input))
+                                           .cloneAndReduce(ProjectionContext{
+                                               .m_angleUnit = AngleUnit::Radian,
+                                           });
   quiz_assert(!reducedExpression.isFailedSimplification());
   quiz_assert_print_if_failure(
       Variables::HasUserVariables(reducedExpression.tree()) == isSymbolic,

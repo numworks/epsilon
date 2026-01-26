@@ -36,11 +36,13 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
     Poincare::Preferences::PrintFloatMode::Engineering;
 
 // Default context is realCtx
-constexpr Poincare::ProjectionContext k_realCtx = {.m_complexFormat = Real};
+constexpr Poincare::ProjectionContext k_realCtx = {.m_complexFormat = Real,
+                                                   .m_angleUnit = Radian};
 
-constexpr Poincare::ProjectionContext k_cartesianCtx = {.m_complexFormat =
-                                                            Cartesian};
-constexpr Poincare::ProjectionContext k_polarCtx = {.m_complexFormat = Polar};
+constexpr Poincare::ProjectionContext k_cartesianCtx = {
+    .m_complexFormat = Cartesian, .m_angleUnit = Radian};
+constexpr Poincare::ProjectionContext k_polarCtx = {.m_complexFormat = Polar,
+                                                    .m_angleUnit = Radian};
 
 constexpr Poincare::ProjectionContext k_degreeCtx = {.m_angleUnit = Degree};
 constexpr Poincare::ProjectionContext k_gradianCtx = {.m_angleUnit = Gradian};
@@ -54,6 +56,7 @@ constexpr Poincare::ProjectionContext k_degreePolarCtx = {
 constexpr Poincare::ProjectionContext k_gradianPolarCtx = {
     .m_complexFormat = Polar, .m_angleUnit = Gradian};
 constexpr Poincare::ProjectionContext k_keepAllSymbolsCtx = {
+    .m_angleUnit = Radian,
     .m_symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
 };
 

@@ -7,10 +7,12 @@ using namespace Poincare::Internal;
 QUIZ_CASE(pcj_simplification_complex) {
   ProjectionContext ctx = {
       .m_complexFormat = ComplexFormat::Cartesian,
+      .m_angleUnit = AngleUnit::Radian,
       .m_symbolic = SymbolicComputation::KeepAllSymbols,
   };
   ProjectionContext PolarCtx = {
       .m_complexFormat = ComplexFormat::Polar,
+      .m_angleUnit = AngleUnit::Radian,
       .m_symbolic = SymbolicComputation::KeepAllSymbols,
   };
   simplifies_to("2×i×i", "-2", ctx);
@@ -310,6 +312,7 @@ QUIZ_CASE(pcj_simplification_complex_format) {
     PoincareTest::SymbolStore symbolStore;
     Poincare::ProjectionContext projCtx = {
         .m_complexFormat = ComplexFormat::Polar,
+        .m_angleUnit = AngleUnit::Radian,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = symbolStore};
     // a = 2 + i

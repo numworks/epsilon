@@ -11,6 +11,7 @@
 #include "quiz.h"
 
 using namespace Poincare::Internal;
+using Poincare::AngleUnit;
 using Poincare::ComplexFormat;
 using Poincare::ProjectionContext;
 using Poincare::ReductionTarget;
@@ -807,6 +808,7 @@ QUIZ_CASE(pcj_simplification_store_correctly_parsed) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
       .m_complexFormat = ComplexFormat::Cartesian,
+      .m_angleUnit = AngleUnit::Radian,
       .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = symbolStore};
   simplifies_to("abc", "a×b×c", projCtx, false);
@@ -852,17 +854,16 @@ QUIZ_CASE(pcj_simplification_capped) {
 }
 
 QUIZ_CASE(pcj_tree_simplification) {
-  simplifies_to(KACos(23_fe), KMult(3.8281684_fe, i_e),
-                {.m_complexFormat = ComplexFormat::Cartesian});
+  simplifies_to(KACos(23_fe), KMult(3.8281684_fe, i_e), k_cartesianCtx);
   simplifies_to(KACos(KMult(3.5_fe, i_e)),
                 KAdd(1.570796251297_fe, KMult(-1.9657205_fe, i_e)),
-                {.m_complexFormat = ComplexFormat::Cartesian});
+                k_cartesianCtx);
   simplifies_to(KACos(KAdd(23_fe, KMult(3.5_fe, i_e))),
                 KAdd(0.15115293_fe, KMult(-3.8396465778351_fe, i_e)),
-                {.m_complexFormat = ComplexFormat::Cartesian});
+                k_cartesianCtx);
   simplifies_to(KACos(KAdd(1_fe, i_e)),
                 KAdd(0.90455687046051_fe, KMult(-1.0612751245499_fe, i_e)),
-                {.m_complexFormat = ComplexFormat::Cartesian});
+                k_cartesianCtx);
   simplifies_to(KRef(KMatrix<1, 2>(0_fe, i_e)), KMatrix<1, 2>(0_fe, 1_fe),
-                {.m_complexFormat = ComplexFormat::Cartesian});
+                k_cartesianCtx);
 }

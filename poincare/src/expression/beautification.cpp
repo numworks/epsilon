@@ -564,6 +564,10 @@ bool ShallowBeautify(Tree* e, void* context) {
 bool ApplyComplexFormat(Tree* e, Dimension dim,
                         const ProjectionContext& projectionContext) {
   ComplexFormat format = projectionContext.m_complexFormat;
+  if (format == ComplexFormat::None) {
+    // None complex format is tolerated  in beautification
+    return false;
+  }
   if (e->isUndefined() || e->isFactor()) {
     return false;
   }

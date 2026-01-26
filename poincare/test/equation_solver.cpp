@@ -55,7 +55,9 @@ bool check_solutions(
 QUIZ_CASE(pcj_equation_solver) {
   PoincareTest::SymbolStore symbolStore;
   Poincare::ProjectionContext projCtx = {
-      .m_angleUnit = Poincare::AngleUnit::Radian, .m_context = symbolStore};
+      .m_complexFormat = Poincare::ComplexFormat::Real,
+      .m_angleUnit = Poincare::AngleUnit::Radian,
+      .m_context = symbolStore};
 
   check_solutions({"x-3+y", "y-x+1"}, {"2", "1"}, projCtx);
   check_solutions({"x+x"}, {"0"}, projCtx);

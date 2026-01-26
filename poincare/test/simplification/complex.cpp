@@ -162,6 +162,7 @@ QUIZ_CASE(pcj_simplification_complex_format) {
     // a = 2+i
     PoincareTest::SymbolStore symbolStore;
     Poincare::ProjectionContext projCtx = {
+        .m_complexFormat = ComplexFormat::Real,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = symbolStore};
     store("2+i→a", symbolStore);

@@ -659,9 +659,11 @@ QUIZ_CASE(pcj_simplification_undef) {
 
 QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
   ProjectionContext ctxForApproximation = {
+      .m_complexFormat = ComplexFormat::Real,
       .m_reductionTarget = ReductionTarget::SystemForApproximation};
-  ProjectionContext ctxForAnalysis = {.m_reductionTarget =
-                                          ReductionTarget::SystemForAnalysis};
+  ProjectionContext ctxForAnalysis = {
+      .m_complexFormat = ComplexFormat::Real,
+      .m_reductionTarget = ReductionTarget::SystemForAnalysis};
   projects_and_reduces_to("(2+x)^2", "(x+2)^2", ctxForApproximation);
   projects_and_reduces_to("(2+x)^2", "x^2+4×x+4", ctxForAnalysis);
   projects_and_reduces_to("(1+x)^3", "(x+1)^3", ctxForApproximation);

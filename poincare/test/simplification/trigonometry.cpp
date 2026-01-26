@@ -187,7 +187,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("re(2*acos(cos(x)))",
                 "dep(2×re(arccos(cos(x))),{0×im(arccos(cos(x))),0×im(π×arccos("
                 "cos(x))),piecewise(0,abs(cos((180×π×x)/(180×π)))≤1,nonreal)})",
-                {.m_angleUnit = AngleUnit::Degree});
+                {.m_complexFormat = ComplexFormat::Real,
+                 .m_angleUnit = AngleUnit::Degree});
   simplifies_to("tan(20)^2*tan(2)", "tan(2)*tan(20)^2");
 
   // atan(1/x)
@@ -428,7 +429,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   // If target != User, sin/cos is not reduced to tan(x)
   projects_and_reduces_to(
       "atan(sin(2/3)/cos(2/3))", "2/3",
-      {.m_angleUnit = Poincare::AngleUnit::Radian,
+      {.m_complexFormat = Poincare::ComplexFormat::Real,
+       .m_angleUnit = Poincare::AngleUnit::Radian,
        .m_reductionTarget = Poincare::ReductionTarget::SystemForAnalysis});
   simplifies_to("tan(atan(5/2))", "5/2");
   simplifies_to("atan(tan(5/2))", "5/2-π");

@@ -334,6 +334,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
     store("x/2→f(x)", symbolStore);
 
     ProjectionContext ctx = {
+        .m_complexFormat = Real,
         .m_angleUnit = Radian,
         .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = symbolStore};

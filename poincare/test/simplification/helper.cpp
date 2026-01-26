@@ -35,7 +35,7 @@ void contract_to(const Tree* input, const Tree* output) {
 
 void reduces_to_tree(const Tree* input, const Tree* output) {
   Tree* reduced = input->cloneTree();
-  simplify(reduced, {}, false);
+  simplify(reduced, {.m_complexFormat = ComplexFormat::Real}, false);
   assert_trees_are_equal(reduced, output);
   reduced->removeTree();
 }

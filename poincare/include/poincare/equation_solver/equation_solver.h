@@ -51,7 +51,7 @@ enum class Error {
   NonLinearSystem = 4,
   RequireApproximateSolution = 5,
   EquationUnhandled = 6,
-  DisabledInExamMode,  // TODO_PCJ
+  DisabledInExamMode,  // TODO_PCJ: this is epsilon-specific
 };
 
 enum class SolutionType : uint8_t {

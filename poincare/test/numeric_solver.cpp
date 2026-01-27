@@ -139,8 +139,9 @@ QUIZ_CASE(pcj_solver_roots) {
        R(-3.687536352063443), R(-5.127216097883478)},
       AngleUnit::Radian);
   assert_roots_are("√(x)+x", -10., 10., {R(0.)});
-  // TODO_PCJ: fix PowReal approximation with even denominator
-  // assert_roots_are("1.23x^(0.45)+6x^(0.78)", -10., 10., {R(0.)});
+#if TODO_PCJ  // Fix PowReal approximation with even denominator
+  assert_roots_are("1.23x^(0.45)+6x^(0.78)", -10., 10., {R(0.)});
+#endif
   assert_roots_are("√(x)-x", -10., 10., {R(0.), R(1.)});
   assert_roots_are("x-2√(x)", -10., 10., {R(0.), R(4.)});
   assert_roots_are("x+π+√(x+π)", -10., 10., {R(-3.1415926535897931)});

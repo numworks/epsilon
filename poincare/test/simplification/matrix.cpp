@@ -82,7 +82,10 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("det([[2,2][3,3]])", "0");
   simplifies_to("det([[1,2,3][4,5,6][7,8,9]])", "0");
   simplifies_to("det([[1,2,3][4,5,6][7,8,9]])", "0");
-#if TODO_PCJ  // Advanced reduction??
+#if TODO_PCJ
+  /* Currently simplifies to (5-8×π)×(-12+(36-72×π)/(5-8×π))
+   * We need baby expand steps to simplify this, because our current ExpandMult
+   * is too aggressive. */
   simplifies_to("det([[1,2,3][4π,5,6][7,8,9]])", "24×π-24");
 #endif
   simplifies_to("det(identity(5))", "1");

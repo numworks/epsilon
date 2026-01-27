@@ -118,13 +118,14 @@ QUIZ_CASE(pcj_approximation_division) {
   approximates_to<float>("[[1,2][3,4][5,6]]/2", "[[0.5,1][1.5,2][2.5,3]]");
   approximates_to<double>("[[1,2][3,4]]/[[3,4][6,9]]", "undef");
   approximates_to<double>("3/[[3,4][5,6]]", "undef");
-  // approximates_to<double>("(3+4i)/[[3,4][1,i]]",
-  // "[[1,4×i][i,-3×i]]");
-  /* TODO_PCJ: this test fails because of negligible real or imaginary parts.
+#if TODO_PCJ
+  /* This test fails because of negligible real or imaginary parts.
    * It currently approximates to
    * [[1+5.5511151231258ᴇ-17×i,-2.2204460492503ᴇ-16+4×i][i,-3×i]] or
    * [[1-1.1102230246252ᴇ-16×i,2.2204460492503ᴇ-16+4×i]
    *  [-1.1102230246252ᴇ-16+i,-2.2204460492503ᴇ-16-3×i]] on Linux */
+  approximates_to<double>("(3+4i)/[[3,4][1,i]]", "[[1,4×i][i,-3×i]]");
+#endif
 
   // Lists
   approximates_to<float>("{1,2,3}/10", "{0.1,0.2,0.3}");
@@ -172,8 +173,7 @@ QUIZ_CASE(pcj_approximation_power) {
   approximates_to<float>("√(-888888)", "942.8086×i", k_cartesianCtx);
   approximates_to<float>("1/(0.752^-0.245)", 0.9325527);
   approximates_to<float>("1/(0.75^-0.245)", 0.9319444);
-#if 0
-  // TODO_PCJ: should be a pure imaginary
+#if TODO_PCJ  // Should be a pure imaginary
   approximates_to<float>("(-888888)^(.5)", "7.118005ᴇ-5+942.8084×i",
                          k_cartesianCtx);
 #endif
@@ -195,9 +195,12 @@ QUIZ_CASE(pcj_approximation_power) {
   approximates_to<double>("1.0066666666667^60", "1.4898457083046");
   approximates_to<double>("1.0092^50", "1.5807460027336");
   approximates_to<float>("1.0092^50", "1.580744");
-  // TODO_PCJ: approximation of exp(i×π) != approximation of e^(i×π)
   approximates_to<float>("e^(i×π)", "-1", k_cartesianCtx);
   approximates_to<double>("e^(i×π)", "-1", k_cartesianCtx);
+#if TODO_PCJ  // approximation of exp(i×π) != approximation of e^(i×π)
+  approximates_to<float>("exp(i×π)", "-1", k_cartesianCtx);
+  approximates_to<double>("exp(i×π)", "-1", k_cartesianCtx);
+#endif
   // -7.389054 on simulator, -7.389056 on device
   approximates_to<float>("e^(i×π+2)", "-7.38906", k_cartesianCtx, 6);
   approximates_to<double>("e^(i×π+2)", "-7.3890560989307", k_cartesianCtx);
@@ -244,10 +247,13 @@ QUIZ_CASE(pcj_approximation_power) {
                                      k_realCtx, 13);
   approximates_to<float>("1.0092^(50)×ln(3/2)", "0.6409366");
   approximates_to<float>("1.0092^(20)", "1.201005");
-  // TODO_PCJ: failing power tests
-  // simplified_approximates_to<float>("1.0092^(20)", "1.2010050593402");
-  // simplified_approximates_to<float>("1.0092^(50)×ln(3/2)",
-  //                                   "6.4093734888993ᴇ-1");
+#if TODO_PCJ
+  /* Failing power tests, simplify to rationals with too many digits.
+   * This does not fail in calculation, to investigate. */
+  simplified_approximates_to<float>("1.0092^(20)", "1.2010050593402");
+  simplified_approximates_to<float>("1.0092^(50)×ln(3/2)",
+                                    "6.4093734888993ᴇ-1");
+#endif
 
   // Lists
   approximates_to<float>("{1,2,3}^2", "{1,4,9}");

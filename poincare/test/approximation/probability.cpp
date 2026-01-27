@@ -116,7 +116,7 @@ QUIZ_CASE(pcj_approximation_random) {
   projected_approximates_to<double>("randint(1, inf)", "undef");
   projected_approximates_to<double>("randint(-inf, 3)", "undef");
   projected_approximates_to<double>("randint(4, 3)", "undef");
-#if 0  // TODO_PCJ: limit randint bounds
+#if TODO_PCJ  // limit randint bounds
   projected_approximates_to<double>("randint(2, 23345678909876545678)",
                                     "undef");
 #endif

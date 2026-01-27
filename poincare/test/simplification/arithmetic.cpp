@@ -14,7 +14,7 @@ QUIZ_CASE(pcj_simplification_factorial) {
   simplifies_to("π!", "undef");
   simplifies_to("e!", "undef");
   simplifies_to("n!", "n!");
-#if TODO_PCJ  // TODO through parametric
+#if TODO_PCJ  // simplify through parametric
   simplifies_to("(n+1)!/n!", "n+1");
 #endif
   simplifies_to(

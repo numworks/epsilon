@@ -10,7 +10,7 @@ QUIZ_CASE(pcj_approximation_complex_format) {
   approximates_to<double>("0.1", "0.1");
   approximates_to<float>("0.1234567", "0.1234567");
   approximates_to<double>("0.123456789012345", "0.12345678901235");
-#if 0  // TODO_PCJ: nonreal not correctly bubbled up
+#if TODO_PCJ  // nonreal not correctly bubbled up
   projected_approximates_to<float>("1+2×i", "nonreal");
   projected_approximates_to<double>("1+i-i", "nonreal");
   projected_approximates_to<double>("3-i", "nonreal");
@@ -101,16 +101,18 @@ QUIZ_CASE(pcj_approximation_complex_format) {
 
   // Overflow
   approximates_to<float>("-2ᴇ20+2ᴇ20×i", "-2ᴇ20+2ᴇ20×i", k_cartesianCtx);
-  /* TODO_PCJ: this test fails on the device because libm hypotf (which is
+#if TODO_PCJ
+  /* This test fails on the device because libm hypotf (which is
    * called eventually by std::abs) is not accurate enough. We might change the
    * embedded libm? */
-  // approximates_to<float>("-2ᴇ20+2ᴇ20×i", "2.828427ᴇ20×e^(2.356194×i)",
-  // k_polarCtx);
+  approximates_to<float>("-2ᴇ20+2ᴇ20×i", "2.828427ᴇ20×e^(2.356194×i)",
+                         k_polarCtx);
+#endif
   approximates_to<double>("1ᴇ155-1ᴇ155×i", "1ᴇ155-1ᴇ155×i", k_cartesianCtx);
   approximates_to<double>("1ᴇ155-1ᴇ155×i",
                           "1.41421356237ᴇ155×e^(-0.785398163397×i)", k_polarCtx,
                           12);
-#if 0  // TODO_PCJ: nonreal not correctly bubbled up
+#if TODO_PCJ  // nonreal not correctly bubbled up
   approximates_to<float>("-2ᴇ100+2ᴇ100×i", "-∞+∞×i");
   approximates_to<double>("-2ᴇ360+2ᴇ360×i", "-∞+∞×i");
   approximates_to<float>("-2ᴇ100+2ᴇ10×i", "-∞+2ᴇ10×i");

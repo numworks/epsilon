@@ -309,9 +309,9 @@ QUIZ_CASE(pcj_approximation_trigonometry) {
   approximates_to<float>("arccot(0)", "1.570796");
   approximates_to<float>("arccot(-19.11604×i)", "180+3×i", k_degreeCartesianCtx,
                          6);
-  // TODO_PCJ: small real part instead of 0
-  // approximates_to<float>("arccot(19.11604×i)", "-3×i", k_degreeCartesianCtx,
-  // 6);
+#if TODO_PCJ  // small real part instead of 0
+  approximates_to<float>("arccot(19.11604×i)", "-3×i", k_degreeCartesianCtx, 6);
+#endif
   approximates_to<float>("arccot(-0.253182-0.928133×i)", "2.28319+1×i",
                          k_cartesianCtx, 6);
 

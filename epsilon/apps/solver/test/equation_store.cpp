@@ -26,7 +26,7 @@ QUIZ_CASE(solver_error) {
 
   assert_solves_to_error("x^2+y=0", NonLinearSystem);
 
-#if 0 /* TODO_PCJ: currently solves to NoError */
+#if TODO_PCJ  // Currently solves to NoError
   assert_solves_to_error("x^3+x^2+1=int(1/t,t,0,1)", EquationUndefined);
   assert_solves_to_error("x×(x^2×int(1/t,t,0,1)+1)=0", EquationUndefined);
 #endif
@@ -92,8 +92,10 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to_no_solution("x-x+2=0");
   assert_solves_to_no_solution("x/x-1+x=0");
 
-  /* TODO_PCJ: currently solves to EquationUndefined */
-  // assert_solves_to_no_solution("x+y=0*diff(tan(2x),x,0,x)");
+#if TODO_PCJ  // Resolve diff dependency, currently solves to EquationUndefined
+  assert_solves_to_infinite_solutions({"x+y=0*diff(tan(2x),x,0,x)"},
+                                      {"x=-t", "y=t"});
+#endif
 
   assert_solves_to("√(x)^(2)=-1", {"x=-1"});
   assert_solves_to("sin(asin(x))=2", {"x=2"});
@@ -158,7 +160,10 @@ QUIZ_CASE(solver_cubic) {
                    {"x=-1.465571232", "x=0.2327856159-0.7925519925×i",
                     "x=0.2327856159+0.7925519925×i", "delta=-31"});
 
-#if 0  // TODO_PCJ: integer overflow raised without a TreeStackCheckpoint
+#if TODO_PCJ
+  /* Integer overflow raised without a TreeStackCheckpoint?
+   * With 10^200 it works but we cannot parse delta correctly.
+   * With 10^150 it fails probably due to an integer overflow. */
   assert_solves_to("x^3+x^2=10^200", {"delta=-27×10^400+4×10^200"});
 #endif
 
@@ -352,11 +357,10 @@ QUIZ_CASE(solver_complex_real) {
   assert_solves_to("x*2+2i-10=0", "x=5-i");
   assert_solves_to_error("x+re(x)=2+i", RequireApproximateSolution);
 
-#if 0
-  // TODO_PCJ: currently solves to EquationUndefined instead of EquationNonReal
+#if TODO_PCJ
+  // Currently solves to EquationUndefined instead of EquationNonReal
   assert_solves_to_error("x-arcsin(10)=0", EquationNonReal);
-
-  // TODO_PCJ: currently solves to RequireApproximateSolution
+  // Currently solves to RequireApproximateSolution
   assert_solves_to_no_solution("√(x)^(2)=-1");
 #endif
 
@@ -364,7 +368,7 @@ QUIZ_CASE(solver_complex_real) {
 
   assert_solves_to("root(-8,3)*x+3=0", "x=3/2");
 
-#if 0  // TODO_PCJ: currently solves to NoError (without any solutions)
+#if TODO_PCJ  // Currently solves to NoError (without any solutions)
   assert_solves_to_error("x√(cot(4π/5))=0", EquationUndefined);
   assert_solves_to_error({"x√(cot(4π/5))=0", "0=0"}, EquationUndefined);
 #endif
@@ -418,8 +422,8 @@ QUIZ_CASE(solver_complex_polar) {
   assert_solves_to("x^2-√(-1)=0",
                    {"x=e^(-(3π/4)i)", "x=e^((π/4)i)", "delta=4e^((π/2)i)"});
 
-#if 0
-  /* TODO_PCJ: when the equation has form "ax^3 + d = 0", display approximate
+#if TODO_PCJ
+  /* When the equation has form "ax^3 + d = 0", display approximate
    * values instead of exact values if the expressions are too complicated */
   assert_solves_to("2x^3-e^(2iπ/7)=0",
                    {"x=(root(e^((2×π)/7×i)/2,3)×(-1+√(3)×i))/2",

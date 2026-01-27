@@ -131,8 +131,10 @@ QUIZ_CASE(pcj_approximation_derivatives) {
   approximates_to_float_and_double("diff(1/x,x,-2)", "-0.25");
   approximates_to_float_and_double("diff(x^3+5*x^2,x,0)", "0");
   approximates_to_float_and_double("diff(abs(x),x,0)", "0");  // "undef");
-  // TODO_PCJ: error too big on floats
-  // approximates_to<float>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
+#if TODO_PCJ  // Error gets too big in ApproximateDerivative on floats
+  approximates_to<float>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
+#endif
+  simplified_approximates_to<float>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
   approximates_to<double>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
   // On points
   approximates_to_float_and_double("diff((sin(t),cos(t)),t,π/2)", "(0,-1)");

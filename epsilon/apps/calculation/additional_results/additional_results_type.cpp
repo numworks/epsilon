@@ -78,7 +78,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   }
   if (HasPositiveInteger(exactOutput)) {
     type.integer = true;
-  } else if (HasRational(exactOutput)) {
+  } else if (exactOutput.isBeautifiedRational()) {
     type.rational = true;
   }
   if (type.isUninitialized()) {
@@ -273,12 +273,6 @@ bool AdditionalResultsType::HasPositiveInteger(
     const Poincare::UserExpression exactOutput) {
   assert(!exactOutput.hasUnit());
   return Poincare::AdditionalResultsHelper::HasPositiveInteger(exactOutput);
-}
-
-bool AdditionalResultsType::HasRational(
-    const Poincare::UserExpression exactOutput) {
-  assert(!exactOutput.hasUnit());
-  return Poincare::AdditionalResultsHelper::HasRational(exactOutput);
 }
 
 }  // namespace Calculation

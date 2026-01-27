@@ -363,20 +363,6 @@ bool AdditionalResultsHelper::HasPositiveInteger(
                  IntegerLiteral<k_maxPositiveInteger>{})) < 0;
 }
 
-// True if reduced output is a rational but not an integer
-bool AdditionalResultsHelper::HasRational(
-    const Poincare::UserExpression exactOutput) {
-  /* exactOutput is a beautified user expression. Rationals are beautified as
-   * div(numerator, denominator) or opposite(div(numerator, denominator)). */
-  const Tree* exactTree = exactOutput.tree();
-  if (exactTree->isOpposite()) {
-    exactTree = exactTree->child(0);
-  }
-  bool result = exactTree->isDiv() && exactTree->child(0)->isInteger() &&
-                exactTree->child(1)->isInteger();
-  return result;
-}
-
 /* For a rational x, return the closest rational convergent of the continued
  * fraction of x, with a limited number of digits on the denominator. */
 static Tree* BestConvergentOfContinuedFraction(const SystemExpression rational,

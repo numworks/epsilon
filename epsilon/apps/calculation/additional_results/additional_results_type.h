@@ -77,7 +77,6 @@ struct AdditionalResultsType {
           calculationPreferences,
       const Poincare::SymbolContext& symbolContext);
   static bool HasPositiveInteger(const Poincare::UserExpression);
-  static bool HasRational(const Poincare::UserExpression);
 };
 
 constexpr AdditionalResultsType NoAdditionalResult{.empty = true};

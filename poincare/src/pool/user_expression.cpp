@@ -596,9 +596,20 @@ bool UserExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
 bool UserExpression::isParsedNumber() const {
   const Internal::Tree* tree = this->tree();
   if (tree->isOpposite()) {
-    tree = tree->nextNode();
+    tree = tree->child(0);
   }
   return tree->isInteger() || tree->isDecimal();
+}
+
+bool UserExpression::isBeautifiedRational() const {
+  /* Rationals are beautified as div(numerator, denominator) or
+   * opposite(div(numerator, denominator)). */
+  const Internal::Tree* tree = this->tree();
+  if (tree->isOpposite()) {
+    tree = tree->child(0);
+  }
+  return tree->isDiv() && tree->child(0)->isInteger() &&
+         tree->child(1)->isInteger();
 }
 
 /* TODO: Find a better way to avoid duplication of Builder, clone, and

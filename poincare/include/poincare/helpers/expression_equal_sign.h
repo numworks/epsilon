@@ -9,6 +9,6 @@ namespace Poincare {
 bool IsCalculationOutputStrictEquality(const UserExpression exact,
                                        const UserExpression approximate,
                                        int numberOfSignificantDigits,
-                                       const ProjectionContext& ctx = {});
+                                       const ProjectionContext& ctx);
 
 }  // namespace Poincare

@@ -369,24 +369,22 @@ Tree* Binary::ReducePiecewiseDerivative(const Tree* symbol,
           {.KA = symbol, .KB = symbolValue, .KC = order, .KD = derivandChild},
           {.KD = 1});
     } else {
-      // Clone strict condition and leave scope.
-      Tree* strictCondition = derivandChild->cloneTree();
-      if (!Binary::MakeStrict(strictCondition)) {
+      // Clone condition, make it strict and leave scope.
+      Tree* condition = derivandChild->cloneTree();
+      if (!Binary::MakeStrict(condition)) {
         SharedTreeStack->flushFromBlock(result);
         return nullptr;
       }
-      Variables::LeaveScopeWithReplacement(strictCondition, symbolValue, true,
-                                           false);
+      Variables::LeaveScopeWithReplacement(condition, symbolValue, true, false);
       numberOfChildren += 2;
       KUndef->cloneTree();
-      // Clone nonStrict condition and leave scope.
-      strictCondition = derivandChild->cloneTree();
-      if (!Binary::MakeLenient(strictCondition)) {
+      // Clone condition, make it non strict and leave scope.
+      condition = derivandChild->cloneTree();
+      if (!Binary::MakeLenient(condition)) {
         SharedTreeStack->flushFromBlock(result);
         return nullptr;
       }
-      Variables::LeaveScopeWithReplacement(strictCondition, symbolValue, true,
-                                           false);
+      Variables::LeaveScopeWithReplacement(condition, symbolValue, true, false);
     }
   }
   NAry::SetNumberOfChildren(result, numberOfChildren);

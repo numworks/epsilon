@@ -33,6 +33,8 @@ class Runner {
   };
   TestsMetadata computeTestsMetadata();
 
+  bool testMatchesFilter(const char* testName, const char* filter) const;
+
   /* [testFilter] if set: only run tests starting with [testFilter]
    *
    * [fromFilter]

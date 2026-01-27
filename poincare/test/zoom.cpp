@@ -124,9 +124,8 @@ QUIZ_CASE(pcj_zoom_fit_points_of_interest) {
       "(e^x-1)/(e^x+1)", Range2D<float>(-2.309, 2.309, -0.819, 0.819));
   assert_points_of_interest_range_is(
       "(e^x-1)*(e^x+1)^(-1)", Range2D<float>(-2.309, 2.309, -0.819, 0.819));
-  // TODO_PCJ: this test fails with emscripten
-  // assert_points_of_interest_range_is("10-1/(3^x)",
-  // Range2D<float>(-2.096, 1.723, 0, 9.849));
+  assert_points_of_interest_range_is("10-1/(3^x)",
+                                     Range2D<float>(-2.096, 1.723, 0, 9.849));
   // TODO: should be focused on the right part of the curve ~(-1,3,0,8)
   assert_points_of_interest_range_is("x^x",
                                      Range2D<float>(-30.46, 0.3682, 0, 0.6922));

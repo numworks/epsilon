@@ -983,6 +983,10 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas(
       "0^(10^600)", {.integer = true, .function = true}, &store);
 
+  // Scientific notation
+  assertCalculationAdditionalResultTypeHas("2*10^35", {}, &store);
+  assertCalculationAdditionalResultTypeHas("(2*10^35)/7", {}, &store);
+
   GlobalPreferences::SharedGlobalPreferences()->setDisplayMode(
       Preferences::PrintFloatMode::Scientific);
   assertCalculationAdditionalResultTypeHas("e^(2+3)", {}, &store);

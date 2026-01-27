@@ -87,6 +87,6 @@ $(call create_goal,poincare_cli, \
   kandinsky \
   liba_bridge \
   omg \
-  poincare.defaultpreferences \
+  poincare \
   poincare_cli \
 )

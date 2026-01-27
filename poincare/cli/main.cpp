@@ -13,8 +13,11 @@
 #include <vector>
 
 #include "commands.h"
+#include "preferences.h"
 
 std::vector<std::string> commandNames;
+
+DefaultPreferences DefaultPreferences::s_sharedPreferences;
 
 void initializeCommands() {
   for (const auto& cmd : commands) {
@@ -125,7 +128,7 @@ int main(int argc, char* argv[]) {
 
   Ion::Simulator::Random::init();
   Ion::Init();
-  Poincare::Init();
+  Poincare::Init(&DefaultPreferences::s_sharedPreferences);
 
   if (argc > 1) {
     std::string line;

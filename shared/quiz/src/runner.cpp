@@ -97,7 +97,7 @@ bool Runner::testMatchesFilter(const char* testName, const char* filter) const {
   /* When ASAN=1, "python_numpy" reaches an assert due to an error in python
    * "RuntimeError: maximum recursion depth exceeded" */
   // TODO: pass this test even when ASAN=1
-  if (strcmp(quiz_case_names[i], "python_numpy") == 0) {
+  if (strcmp(testName, "python_numpy") == 0) {
     return false;
   }
 #endif
@@ -110,8 +110,8 @@ bool Runner::testMatchesFilter(const char* testName, const char* filter) const {
 using namespace Quiz;
 
 void ion_main(int argc, const char* const argv[]) {
-  volatile int stakTop;
-  Ion::setStackStart((void*)&stakTop);
+  volatile int stackTop;
+  Ion::setStackStart((void*)&stackTop);
 
   Cases::Sort();
   Runner::s_instance.parseArguments(argc, argv);

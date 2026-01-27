@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <cstring>
 
 #include "runner.h"

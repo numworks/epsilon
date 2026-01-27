@@ -121,16 +121,14 @@ class UserExpression : public Expression {
   // Approximate real scalar (returns NAN for non real scalars)
   template <typename T>
   T approximateToRealScalar(
-      AngleUnit angleUnit = AngleUnit::None,
-      ComplexFormat complexFormat = ComplexFormat::None,
+      AngleUnit angleUnit, ComplexFormat complexFormat = ComplexFormat::None,
       const SymbolContext& symbolContext = EmptySymbolContext{}) const;
   // Approximate scalar part of unit expression (returns NAN for non units)
   /* TODO_PCJ: This method is almost never used, and we might prefer to split it
    * into "removeUnit" and "approximateToRealScalar" methods */
   template <typename T>
   T approximateUnitToRealScalar(
-      AngleUnit angleUnit = AngleUnit::None,
-      ComplexFormat complexFormat = ComplexFormat::None,
+      AngleUnit angleUnit, ComplexFormat complexFormat = ComplexFormat::None,
       const SymbolContext& symbolContext = EmptySymbolContext{}) const;
 
   // Return NAN for all non real scalar expressions
@@ -242,8 +240,7 @@ class UserExpression : public Expression {
 
   template <typename T>
   T privateApproximateToRealScalar(
-      AngleUnit angleUnit = AngleUnit::None,
-      ComplexFormat complexFormat = ComplexFormat::None,
+      AngleUnit angleUnit, ComplexFormat complexFormat = ComplexFormat::None,
       const SymbolContext& symbolContext = EmptySymbolContext{}) const;
 };
 

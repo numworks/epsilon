@@ -140,6 +140,15 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
   assert(approximatedExpression && approximatedExpression->isUninitialized());
   *approximatedExpression =
       simplifiedExpression->cloneAndApproximate<double>(context);
+  /* Second approximation attempt.
+   * Condition: simplified expression is well defined, but approximation failed
+   * (it returned undef). This can happen if the simplified expression is a
+   * ratio of two very big numbers.
+   * Second strategy: approximate from the input expression. */
+  if (approximatedExpression->isUndefined() &&
+      !simplifiedExpression->isUndefinedOrNonReal()) {
+    *approximatedExpression = this->cloneAndApproximate<double>(context);
+  }
   return reductionFailure;
 }
 

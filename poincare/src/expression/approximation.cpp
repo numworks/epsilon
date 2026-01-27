@@ -1810,21 +1810,14 @@ bool Private::CanApproximate(const Tree* e, int firstNonApproximableVarId) {
   return true;
 }
 
-template <>
-bool Private::SkipApproximation<float>(TypeBlock type) {
-  return type.isSingleFloat() || type.isComplexI();
+bool Private::SkipApproximation(TypeBlock type) {
+  return type.isFloat() || type.isComplexI();
 }
 
-template <>
-bool Private::SkipApproximation<double>(TypeBlock type) {
-  return type.isDoubleFloat() || type.isComplexI();
-}
-
-template <typename T>
 bool Private::SkipApproximation(TypeBlock type, TypeBlock parentType,
                                 int indexInParent,
                                 bool previousChildWasApproximated) {
-  if (SkipApproximation<T>(type)) {
+  if (SkipApproximation(type)) {
     return true;
   }
   switch (parentType) {
@@ -1862,7 +1855,7 @@ bool ApproximateAndReplaceEveryScalar(Tree* e, const Context& context) {
     return ApproximateAndReplaceEveryScalar<float>(e, context);
   }
 
-  if (SkipApproximation<T>(e->type())) {
+  if (SkipApproximation(e->type())) {
     return false;
   }
   uint32_t hash = e->hash();
@@ -1923,8 +1916,8 @@ bool Private::PrivateApproximateAndReplaceEveryScalar(Tree* e,
   bool changed = false;
   bool previousChildWasApproximated = false;
   for (IndexedChild<Tree*> child : e->indexedChildren()) {
-    if (!SkipApproximation<T>(child->type(), e->type(), child.index,
-                              previousChildWasApproximated)) {
+    if (!SkipApproximation(child->type(), e->type(), child.index,
+                           previousChildWasApproximated)) {
       changed =
           PrivateApproximateAndReplaceEveryScalar<T>(child, ctx) || changed;
     }
@@ -2021,11 +2014,6 @@ template bool Private::PrivateApproximateAndReplaceEveryScalar<float>(
     Tree*, const Context*);
 template bool Private::PrivateApproximateAndReplaceEveryScalar<double>(
     Tree*, const Context*);
-
-template bool Private::SkipApproximation<float>(TypeBlock, TypeBlock, int,
-                                                bool);
-template bool Private::SkipApproximation<double>(TypeBlock, TypeBlock, int,
-                                                 bool);
 
 template Tree* Private::PrepareTree<float>(const Tree*, Parameters,
                                            const Context&);

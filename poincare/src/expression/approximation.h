@@ -256,9 +256,7 @@ bool ShallowPrepareForApproximation(Tree* e, void* ctx);
 
 template <typename T>
 bool PrivateApproximateAndReplaceEveryScalar(Tree* e, const Context* ctx);
-template <typename T>
 bool SkipApproximation(TypeBlock type);
-template <typename T>
 bool SkipApproximation(TypeBlock type, TypeBlock parentType, int indexInParent,
                        bool previousChildWasApproximated);
 

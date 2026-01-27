@@ -60,14 +60,12 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to({"x*int(e^(-2t),t,0,inf)=1"}, {"x=2"});
   assert_solves_to({"x=1+int(xe^(-2t),t,0,inf)"}, {"x=2"});
 
-#if 0 /* TODO_PCJ: incorrect number of solutions */
   assert_solves_to_infinite_solutions({"x-x=0"}, {"x=t"});
   assert_solves_to_infinite_solutions(
       {"t*arctan(0000000000000000000000000000000000000000)=0"}, {"t=t1"});
   assert_solves_to_infinite_solutions({"4y+(1-√(5))x=0", "x=(1+√(5))y"},
-                                      {"x=√(5)t+t", "y=t"});
+                                      {"x=t(1+√(5))", "y=t"});
   assert_solves_to_infinite_solutions({"x=x", "y=y"}, {"x=t2", "y=t1"});
-#endif
   assert_solves_to_infinite_solutions({"x+y+z=0"},
                                       {"x=-t1-t2", "y=t2", "z=t1"});
   assert_solves_to_infinite_solutions({"x+y+z=0", "x+2y+3z=0"},
@@ -126,14 +124,10 @@ QUIZ_CASE(solver_quadratic) {
 
   assert_solves_to("(x-3)^2=0", {"x=3", "delta=0"});
   assert_solves_to("(x-2π)(x/2-pi)=0", {"x=2π", "delta=0"});
-
-#if 0  // TODO_PCJ: the below equations fail to simplify
   assert_solves_to("(x-π)(x-ln(2))=0",
                    {"x=ln(2)", "x=π", "delta=ln(2)^2+π^2-2×π×ln(2)"});
   assert_solves_to("(x-√(2))(x-√(3))=0",
                    {"x=√(2)", "x=√(3)", "delta=5-2×√(6)"});
-#endif
-
   assert_solves_to("x^2+1=0", {"x=-i", "x=i", "delta=-4"});
   assert_solves_to("i/5×(x-3)^2=0", {"x=3", "delta=0"});
   assert_solves_to("2i×(x-3i)^2=0", {"x=3×i", "delta=0"});
@@ -239,23 +233,18 @@ QUIZ_CASE(solver_quadratic_real) {
   assert_solves_to("(x-2/3)(x+0.2)=0", {"x=-1/5", "x=2/3", "delta=169/225"});
   assert_solves_to("x^2+1", {"delta=-4"});
   assert_solves_to("x^3+3×x^2+3×x+0.7=0", {"x=-0.3305670499", "delta=-2.43"});
+  assert_solves_to("√(2)(x-√(3))(x-√(5))=0",
+                   {"x=√(3)", "x=√(5)", "delta=16-4×√(15)"});
   // Complex format is updated with input
   assert_solves_to("(x+i)(x-i)", {"x=-i", "x=i", "delta=-4"});
   assert_solves_to("(x-i)^2", {"x=i", "delta=0"});
 
-#if 0
-  // TODO_PCJ: fails to simplify
-  assert_solves_to("√(2)(x-√(3))(x-√(5))=0",
-                   {"x=√(3)", "x=√(5)", "delta=16-4×√(15)"});
+#if TODO_PCJ  // fails to simplify
   assert_solves_to("(x-7/3)(x-π)(x-log(3))=0",
                    {"x=log(3)", "x=7/3", "x=π", "delta=1.598007ᴇ1"});
-
-  /* TODO_PCJ: the following expression raises
-   * "assert(!layout->isSeparatorLayout())" on a "ThousandSeparator" layout in
-   * Tokenizer::popToken(). A possible element of explanation is that a quotient
-   * of two IntegerPosBig is created at some point */
-  assert_solves_to("(x-4.231)^3=0", {"x=4231/1000", "delta=0"});
 #endif
+
+  assert_solves_to("(x-4.231)^3=0", {"x=4231/1000", "delta=0"});
 }
 
 QUIZ_CASE(solver_cubic_real) {
@@ -265,17 +254,11 @@ QUIZ_CASE(solver_cubic_real) {
   assert_solves_to("x^3+x^2-15/4×x-9/2=0", {"x=-3/2", "x=2", "delta=0"});
 
   assert_solves_to("x^3+8/27=0", {"x=-2/3", "delta=-64/27"});
-
-#if 0  // TODO_PCJ: fails to simplify
   assert_solves_to("1/9×(x+√(2))^3=0", {"x=-√(2)", "delta=0"});
-#endif
 
   assert_solves_to("(x-1)(x-2)(x-3)=0", {"x=1", "x=2", "x=3", "delta=4"});
-
-#if 0  // TODO_PCJ: delta fails to simplify
   assert_solves_to("(x-√(3)/2)(x^2-x+6/4)=0",
-                   {"x=√(3)/2", "delta=(-465+180×√(3))/16"});
-#endif
+                   {"x=√(3)/2", "delta=-465/16+45/4×√(3)"});
 }
 
 QUIZ_CASE(solver_approximate) {
@@ -308,10 +291,8 @@ QUIZ_CASE(solver_approximate) {
   assert_solves_numerically_to("(x-1.00001)^2×(x+1.00001)^2=0", -1, 1, {});
   assert_solves_numerically_to("sin(x)=0", -180, 180, {-180, 0, 180});
 
-#if 0  // TODO_PCJ: currently solves to NoError
   assert_solves_to_error("conj(x)*x+1=0", RequireApproximateSolution);
   assert_solves_numerically_to("conj(x)*x+1=0", -100, 100, {});
-#endif
 
   assert_solves_to_error("(x-10)^7=0", RequireApproximateSolution);
   assert_solves_numerically_to("(x-10)^7=0", -100, 100, {10});
@@ -328,20 +309,13 @@ QUIZ_CASE(solver_approximate) {
   assert_solves_numerically_to("250e^(1.6x)=10^8", -10, 10, {8.062012});
   // Gentle slope, far from x=0
   assert_solves_numerically_to("10^(-4)×abs(x-10^4)=0", 9000, 11000, {10000});
-#if 0  // TODO_PCJ: the solution is not found
   // Steep slope, close to x=0
   assert_solves_numerically_to("10^4×abs(x-10^(-4))=0", -10, 10, {0.0001});
-#endif
-
   assert_solves_numerically_to("10^4×abs(x-10^(-4))+0.001=0", -10, 10, {});
 
-#if 0
-  /* TODO: This does not work in real-mode because abs(x) is reduced to
-   * sign(x)*x which does not always approximate to the same value. */
-  set_complex_format(Real);
-  assert_solves_numerically_to("10^4×abs(x-10^(-4))=0", -10, 10, {0.0001});
-#endif
   setComplexFormatAndAngleUnit(Real, Radian);
+  assert_solves_numerically_to("10^4×abs(x-10^(-4))=0", -10, 10, {0.0001});
+
   /* This tests triggers the escape case [std::fabs(end->x() - middle->x()) ==
    * 0] in Solver::FindMinimalIntervalContainingDiscontinuity.
    * TODO: This test finds roots that are wrong because of how the solver
@@ -425,13 +399,9 @@ QUIZ_CASE(solver_complex_cartesian) {
   assert_solves_to("x^2-√(-1)=0",
                    {"x=-√(2)/2-√(2)/2×i", "x=√(2)/2+√(2)/2×i", "delta=4i"});
   assert_solves_to("x+√(-1)×√(-1)=0", "x=1");
-  assert_solves_to("root(-8,3)*x+3=0",
-                   "x=-3/4+3/4×√(3)×i");  //  TODO_PCJ: force cartesian format
+  assert_solves_to("root(-8,3)*x+3=0", "x=-3/4+3/4×√(3)×i");
   assert_solves_to("x^2+x/x-1=0", {"delta=0"});
-
-  /* TODO_PCJ: The next equation finds x=0 as a solution (and not x=1), which is
-   * mathematically incorrect. */
-  // assert_solves_to("x^2*(x-1)/x=0", {"x=1", "delta=1"});
+  assert_solves_to("x^2*(x-1)/x=0", {"x=1", "delta=1"});
 
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);
@@ -444,15 +414,7 @@ QUIZ_CASE(solver_complex_polar) {
 
   assert_solves_to("x^2+x+1=0",
                    {"x=e^(-(2π/3)i)", "x=e^((2π/3)i)", "delta=3e^(πi)"});
-#if 0
-  /* TODO_PCJ: Improve polar format reduction (with double beautification in the
-   * solver, currently solves to
-   * (abs(3/8×abs(exp(2/3×Ln(-8)))×exp(arg(3/8×exp(2/3×Ln(-8)))×i))×
-   * exp(arg(3/8×abs(exp(2/3×Ln(-8)))×exp(arg(3/8×exp(2/3×Ln(-8)))×i))×i)
-   */
-  assert_solves_to("root(-8,3)*x+3=0",
-                   "x=(3×abs((-8)^(2/3)))/8×e^(arg((3×(-8)^(2/3))/8)×i)");
-#endif
+  assert_solves_to("root(-8,3)*x+3=0", "x=3/2×exp(2/3×π×i)");
   assert_solves_to("x^2-√(-1)=0",
                    {"x=e^(-(3π/4)i)", "x=e^((π/4)i)", "delta=4e^((π/2)i)"});
 

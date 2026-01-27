@@ -82,9 +82,7 @@ QUIZ_CASE(pcj_approximation_complex_format) {
   approximates_to<double>("3-i-3", "e^(-1.57079632679×i)", k_polarCtx, 12);
   // 2e^(i) has a too low precision in float on the web platform
   approximates_to<float>("3e^(2*i)", "3×e^(2×i)", k_polarCtx, 4);
-#if 0  // TODO_PCJ: approximates to -1*i, fix beautification?
   approximates_to<double>("2e^(-i)", "2×e^(-i)", k_polarCtx, 9);
-#endif
 
   approximates_to<float>("i", "e^(1.570796×i)", k_polarCtx);
   approximates_to<double>("√(-1)", "e^(1.5707963267949×i)", k_polarCtx);

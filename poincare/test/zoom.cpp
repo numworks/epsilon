@@ -127,9 +127,11 @@ QUIZ_CASE(pcj_zoom_fit_points_of_interest) {
   // TODO_PCJ: this test fails with emscripten
   // assert_points_of_interest_range_is("10-1/(3^x)",
   // Range2D<float>(-2.096, 1.723, 0, 9.849));
-  // FIXME assert_points_of_interest_range_is("x^x", Range2D<float>());
-  // TODO_PCJ: assert_points_of_interest_range_is(
-  // "root(x^3+1,3)-x", Range2D<float>(-1.733, 1.478, 0.119, 1.587));
+  // TODO: should be focused on the right part of the curve ~(-1,3,0,8)
+  assert_points_of_interest_range_is("x^x",
+                                     Range2D<float>(-30.46, 0.3682, 0, 0.6922));
+  assert_points_of_interest_range_is(
+      "root(x^3+1,3)-x", Range2D<float>(-1.733, 1.478, 0.119, 1.587));
   assert_points_of_interest_range_is(
       "sum((((-1)^k)*(x^(2k+1)))/((2k+1)!),k,0,4)",
       Range2D<float>(-4.968, 4.968, -1, 1));

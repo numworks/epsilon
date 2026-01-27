@@ -286,12 +286,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin(61200000)", "0", k_degreeCtx);
   simplifies_to("sin(61200180)", "0", k_degreeCtx);
   simplifies_to("sin(-61200180)", "0", k_degreeCtx);
-  /*  Currently simplifies to (√(2)×(-1+√(3)))/4.
-   * TODO: develop and contract */
-#if TODO_PCJ
-  simplifies_to("sin(15)", "(√(6)-√(2))/4", k_degreeCtx);
-  simplifies_to("sin(-15)", "(-√(6)+√(2))/4", k_degreeCtx);
-#endif
+  simplifies_to("sin(15)", "(-√(2)+√(6))/4", k_degreeCtx);
+  simplifies_to("sin(-15)", "(√(2)-√(6))/4", k_degreeCtx);
   simplifies_to("sin(-180×√(2))", "-sin(180×√(2))", k_degreeCtx);
   simplifies_to("sin(39330)", "1", k_degreeCtx);
   simplifies_to("sin(-765/2)", "-√(2-√(2))/2", k_degreeCtx);
@@ -322,11 +318,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("tan(41π/6)", "-√(3)/3");
   simplifies_to("tan(π/4+1000π)", "1");
   simplifies_to("tan(-π/3)", "-√(3)");
-  /*  Currently simplifies to -((-1+√(5))×√(2-(2×√(5))/5))/4.
-   * TODO: contract to -√(1-2×√(5)/5) */
-#if TODO_PCJ
-  simplifies_to("tan(-π/10)", "-√(1-2×√(5)/5)");
-#endif
+  // TODO: Should simplify to -√(1-2×√(5)/5)
+  simplifies_to("tan(-π/10)", "(1-√(5))/(4×√((5+√(5))/8))");
   simplifies_to("tan(0)", "0", k_degreeCtx);
   simplifies_to("tan(180)", "0", k_degreeCtx);
 #if TODO_PCJ

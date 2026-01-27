@@ -286,7 +286,6 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("0.2_rad", "1/5×_rad");
   simplifies_to("-0.2_rad", "-1/5×_rad");
   simplifies_to("0.2_rad^2", "1/5×_rad^2");
-  // TODO_PCJ : Wasn't exact before
   simplifies_to("π×_rad×_°", "π^2/180×_rad^2");
   simplifies_to("det([[cos(3gon)]])", "cos((3×π)/200)");
   simplifies_to("ref([[cos(3gon)]])", "[[1]]");

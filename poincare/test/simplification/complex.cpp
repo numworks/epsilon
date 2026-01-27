@@ -146,10 +146,9 @@ QUIZ_CASE(pcj_simplification_complex_format) {
   simplifies_to("√(-1)×√(-1)", "nonreal");
   simplifies_to("ln(-2)", "nonreal");
   simplifies_to("(-8)^(2/3)", "4");
-#if TODO_PCJ
   simplifies_to("(-8)^(2/5)", "2×root(2,5)");
-  simplifies_to("(-8)^(1/5)", "-root(8,5)");
-#endif
+  // TODO: simplify to -root(8,5)
+  simplifies_to("(-8)^(1/5)", "-(2^(3/5))");
   simplifies_to("(-8)^(1/4)", "nonreal");
   simplifies_to("(-8)^(1/3)", "-2");
   simplifies_to("[[1,2+√(-1)]]", "[[1,nonreal]]");

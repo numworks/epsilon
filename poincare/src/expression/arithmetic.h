@@ -1,5 +1,6 @@
 #pragma once
 
+#include <poincare/projection_context.h>
 #include <poincare/src/memory/tree.h>
 
 #include "integer.h"
@@ -32,7 +33,8 @@ class Arithmetic {
   static bool ReduceRound(Tree* e);
   static bool ReduceFactor(Tree* e);
 
-  static bool BeautifyFactor(Tree* e);
+  static bool BeautifyFactor(Tree* e,
+                             const ProjectionContext& projectionContext);
 
   // Turn binomial and permute into factorials
   static bool ReducePermute(Tree* e);

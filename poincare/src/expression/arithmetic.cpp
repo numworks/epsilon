@@ -191,7 +191,8 @@ bool Arithmetic::ReduceFactor(Tree* e) {
   return false;
 }
 
-bool Arithmetic::BeautifyFactor(Tree* e) {
+bool Arithmetic::BeautifyFactor(Tree* e,
+                                const ProjectionContext& projectionContext) {
   if (!e->isFactor()) {
     return false;
   }
@@ -207,7 +208,7 @@ bool Arithmetic::BeautifyFactor(Tree* e) {
   Tree* child = e->child(0);
   // Project and Reduce factor to cancel integer beautification
   if (!child->isInteger()) {
-    Projection::DeepSystemProject(child);
+    Projection::DeepSystemProject(child, projectionContext);
     SystematicReduction::DeepReduce(child);
   }
   assert(child->isInteger());

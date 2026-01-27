@@ -1,17 +1,18 @@
+#include <omg/unreachable.h>
 #include <poincare/src/expression/angle.h>
 #include <poincare/trigonometry.h>
 
 namespace Poincare {
 
 double Trigonometry::PiInAngleUnit(AngleUnit angleUnit) {
-  assert(angleUnit != AngleUnit::None);
   switch (angleUnit) {
+    case AngleUnit::None:
+      OMG_UNREACHABLE;
     case AngleUnit::Radian:
       return M_PI;
     case AngleUnit::Degree:
       return 180.0;
-    default:
-      assert(angleUnit == AngleUnit::Gradian);
+    case AngleUnit::Gradian:
       return 200.0;
   }
 }

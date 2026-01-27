@@ -12,27 +12,27 @@ class Angle {
  public:
   static const Tree* ToRad(AngleUnit angleUnit) {
     switch (angleUnit) {
+      case AngleUnit::None:
+        OMG_UNREACHABLE;
       case AngleUnit::Radian:
         return 1_e;
       case AngleUnit::Degree:
         return KMult(1_e / 180_e, π_e);
       case AngleUnit::Gradian:
         return KMult(1_e / 200_e, π_e);
-      default:
-        OMG_UNREACHABLE;
     }
   }
 
   static const Tree* RadTo(AngleUnit angleUnit) {
     switch (angleUnit) {
+      case AngleUnit::None:
+        OMG_UNREACHABLE;
       case AngleUnit::Radian:
         return 1_e;
       case AngleUnit::Degree:
         return KMult(180_e, KPow(π_e, -1_e));
       case AngleUnit::Gradian:
         return KMult(200_e, KPow(π_e, -1_e));
-      default:
-        OMG_UNREACHABLE;
     }
   }
 
@@ -40,12 +40,12 @@ class Angle {
     switch (angleUnit) {
       case AngleUnit::Degree:
         return 360_e;
+      case AngleUnit::None:
+        OMG_UNREACHABLE;
       case AngleUnit::Radian:
         return KMult(2_e, π_e);
       case AngleUnit::Gradian:
         return 400_e;
-      default:
-        OMG_UNREACHABLE;
     }
   }
 };

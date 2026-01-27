@@ -167,14 +167,14 @@ void TitleBarView::refreshPreferences() {
     case AngleUnit::Degree:
       angleMessage = I18n::Message::Deg;
       break;
+    case AngleUnit::None:
+      OMG_UNREACHABLE;
     case AngleUnit::Radian:
       angleMessage = I18n::Message::Rad;
       break;
     case AngleUnit::Gradian:
       angleMessage = I18n::Message::Gon;
       break;
-    default:
-      OMG_UNREACHABLE;
   }
   Poincare::Print::CustomPrintf(buffer, k_preferenceTextSize, "%s%s",
                                 I18n::translate(floatModeMessage),

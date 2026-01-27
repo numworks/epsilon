@@ -182,12 +182,12 @@ const Representative* Angle::DefaultRepresentativeForAngleUnit(
   switch (angleUnit) {
     case AngleUnit::Degree:
       return &representatives.degree;
+    case AngleUnit::None:
+      OMG_UNREACHABLE;
     case AngleUnit::Radian:
       return &representatives.radian;
     case AngleUnit::Gradian:
       return &representatives.gradian;
-    default:
-      OMG_UNREACHABLE;
   }
 }
 

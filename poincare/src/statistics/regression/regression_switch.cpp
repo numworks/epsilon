@@ -74,14 +74,14 @@ const Regression* Regression::Get(Type type, AngleUnit angleUnit) {
       return &median;
     case Type::Trigonometric: {
       switch (angleUnit) {
+        case AngleUnit::None:
+          OMG_UNREACHABLE;
         case AngleUnit::Radian:
           return &trigonometricRad;
         case AngleUnit::Degree:
           return &trigonometricDeg;
         case AngleUnit::Gradian:
           return &trigonometricGrad;
-        default:
-          OMG_UNREACHABLE;
       }
     }
   }

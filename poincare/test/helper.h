@@ -248,7 +248,7 @@ void assert_parse_to_integer_overflow(
                            Poincare::EmptySymbolContext{});
 
 inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
-    const char* function, Poincare::ProjectionContext ctx = {}) {
+    const char* function, Poincare::ProjectionContext ctx) {
   constexpr const char* k_symbol = "x";
   Poincare::Internal::Tree* e = parse(function);
   Poincare::Internal::Simplification::ToSystem(e, ctx);

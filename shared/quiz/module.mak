@@ -1,12 +1,11 @@
 $(call create_module,quiz,1,$(addprefix src/, \
-  assertions.cpp \
-  i18n.cpp:+epsilon \
-  symbols.cpp \
+  cases.cpp \
   runner.cpp \
-  runner_helpers.cpp \
-  runner_helpers_epsilon.cpp:+epsilon \
-  runner_helpers_scandium.cpp:+scandium \
-  stopwatch.cpp \
+  runner_arguments.cpp:+arguments \
+  runner_no_arguments.cpp:-arguments \
+  runner_exception.cpp:+exception \
+  runner_no_exception.cpp:-exception \
+  util.cpp \
 ))
 
 ifeq ($(TOOLCHAIN),emscripten)

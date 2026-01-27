@@ -18,6 +18,7 @@ $(call create_module,apps,1, \
   init.cpp:-test \
   lock_view.cpp:-test \
   main.cpp:-test \
+  quiz.cpp:+test \
   shift_alpha_lock_view.cpp:-test \
   suspend_timer.cpp:-test \
   title_bar_view.cpp:-test \

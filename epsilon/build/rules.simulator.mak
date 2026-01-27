@@ -29,7 +29,7 @@ $(call create_goal,epsilon_test, \
   omg.test \
   poincare.test \
   python.test \
-  quiz.epsilon \
+  quiz.exception.arguments \
   sdl \
 )
 

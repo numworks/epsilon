@@ -117,9 +117,6 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
       const override {
     return Poincare::Preferences::TranslateBuiltins::No;
   }
-  void setTranslateBuiltins(Poincare::Preferences::TranslateBuiltins) override {
-    OMG_UNREACHABLE;
-  };
 
   const char* openIntervalChar(bool left) const {
     /* This should be done by country instead of language. However, some

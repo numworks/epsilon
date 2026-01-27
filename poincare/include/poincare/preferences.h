@@ -117,8 +117,6 @@ class Preferences {
     virtual bool mixedFractionsAreEnabled() const = 0;
     virtual LogarithmBasePosition logarithmBasePosition() const = 0;
     virtual TranslateBuiltins translateBuiltins() const = 0;
-    // TODO: setTranslateBuiltins should only be accessible in Scandium
-    virtual void setTranslateBuiltins(TranslateBuiltins translate) = 0;
     virtual ParabolaParameter parabolaParameter() const = 0;
     virtual MethodForQuartiles methodForQuartiles() const = 0;
     bool operator==(const Interface&) const = default;

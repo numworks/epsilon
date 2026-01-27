@@ -21,10 +21,6 @@ class DefaultPreferences : public Poincare::Preferences::Interface {
   Poincare::Preferences::TranslateBuiltins translateBuiltins() const override {
     return Poincare::Preferences::TranslateBuiltins::No;
   }
-  void setTranslateBuiltins(
-      Poincare::Preferences::TranslateBuiltins translate) override {
-    OMG_UNREACHABLE;
-  }
   constexpr Poincare::Preferences::ParabolaParameter parabolaParameter()
       const override {
     return Poincare::Preferences::k_defaultParabolaParameter;

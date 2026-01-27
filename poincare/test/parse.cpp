@@ -1083,3 +1083,10 @@ QUIZ_CASE(pcj_parse_points) {
   assert_parsed_expression_is("(0,1)cos(3)",
                               KMult(KPoint(0_e, 1_e), KCos(3_e)));
 }
+
+QUIZ_CASE(pcj_parse_combined_codepoint) {
+  assert_parsed_expression_is("0≠1", KNotEqual(0_e, 1_e));
+  // We could parse this as the conjugate of z
+  assert_parsed_expression_is("z̄", KUserVariable<"z̄">());
+  assert_parsed_expression_is("p̂", KUserVariable<"p̂">());
+}

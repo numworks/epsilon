@@ -10,9 +10,9 @@ namespace Poincare::Internal {
 
 void RackFromTextRec(UTF8Decoder* decoder, Tree* parent,
                      const Tree* parentheses) {
-  CodePoint codePoint = decoder->nextCodePoint();
   assert(parent && parent->isNAry());
   assert(!parentheses || parentheses->layoutType() == LayoutType::Parentheses);
+  CodePoint codePoint = decoder->nextCodePoint();
   while (codePoint != UCodePointNull) {
     Tree* child;
     switch (codePoint) {
@@ -36,6 +36,17 @@ void RackFromTextRec(UTF8Decoder* decoder, Tree* parent,
         // Insert ')' codepoint if it has no matching left parenthesis
 #endif
       default:
+        if (codePoint.isCombining()) {
+          assert(parent->numberOfChildren() > 0);
+          // This codepoint should be combined with the previous one
+          NAry::RemoveChildAtIndex(parent, parent->numberOfChildren() - 1);
+          decoder->previousCodePoint();
+          CodePoint previousCodePoint = decoder->previousCodePoint();
+          child = CodePointLayout::PushCombined(previousCodePoint, codePoint);
+          decoder->nextCodePoint();
+          decoder->nextCodePoint();
+          break;
+        }
         child = CodePointLayout::Push(codePoint);
     }
     NAry::AddOrMergeChildAtIndex(parent, child, parent->numberOfChildren());

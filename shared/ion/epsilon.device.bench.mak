@@ -1,5 +1,5 @@
 _sources_ion_bench := $(addprefix device/core/device/bench/command/, \
-  adc.cpp \
+  adc_integer.cpp \
   backlight.cpp \
   charge.cpp \
   command.cpp \

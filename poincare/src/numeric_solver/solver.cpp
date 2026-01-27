@@ -232,17 +232,20 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
      * search continues. */
     return nextIntersection(e1, e2, areAlongSameAxis, difference);
   }
-  /* Note: Exact approximation cannot be ensured. Soften this assertion
-   * if needed. */
-#if ASSERTIONS
   T comparedTo = areAlongSameAxis ? y : x;
-  constexpr T k_relativeThreshold = 1e-6;
-  constexpr T k_absoluteThreshold = 1e-6;
-  assert(OMG::Float::RelativelyEqual(secondImage, comparedTo,
-                                     k_relativeThreshold) ||
-         OMG::Float::RoughlyEqual(secondImage - comparedTo, 0.,
-                                  k_absoluteThreshold));
-#endif
+  /* These thresholds are quite large because we cannot expect exact
+   * approximation. They could be lowered again if we find too many false
+   * intersections. */
+  constexpr T k_relativeThreshold = 1e-4;
+  constexpr T k_absoluteThreshold = 1e-4;
+  if (!OMG::Float::RelativelyEqual(secondImage, comparedTo,
+                                   k_relativeThreshold) &&
+      !OMG::Float::RoughlyEqual(secondImage - comparedTo, 0.,
+                                k_absoluteThreshold)) {
+    // Intersection is not accurate enough, continue searching
+    return nextIntersection(e1, e2, areAlongSameAxis, difference);
+  }
+
   /* In the areAlongSameAxis case, take the middle of the two approximated "y"
    * values */
   return areAlongSameAxis

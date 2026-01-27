@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-void Init(Preferences::Interface* preferences = nullptr,
+void Init(Preferences::Interface* preferences,
           const ExamMode* examModePtr = nullptr,
           const SequenceApproximationHelper::ContextInterface* sequenceContext =
               nullptr);

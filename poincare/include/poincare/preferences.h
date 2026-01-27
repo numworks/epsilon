@@ -122,7 +122,10 @@ class Preferences {
     bool operator==(const Interface&) const = default;
   };
 
-  static void Init(Interface* preferences) { s_preferences = preferences; }
+  static void Init(Interface* preferences) {
+    assert(preferences != nullptr);
+    s_preferences = preferences;
+  }
   Interface* operator->() const { return s_preferences; }
 
   static const Preferences PreferencesInstance;

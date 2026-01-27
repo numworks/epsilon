@@ -510,6 +510,10 @@ QUIZ_CASE(calculation_big_expressions) {
                       "(3×(100089/100000)^77×√(111210))/1000",
                       "1.0713765578743", &store);
 
+  // Big rational power
+  assertCalculationIs("1.04552^(-75.24)", DisplayOutput::ApproximateOnly,
+                      EqualSign::Hidden, nullptr, "0.035110285872751", &store);
+
   // Logarithm of a big number
   assertCalculationIs(
       "-8.314×ln(5/558)", DisplayOutput::ExactAndApproximateToggle,

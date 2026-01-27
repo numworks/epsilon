@@ -447,7 +447,7 @@ static Tree* BestConvergentOfContinuedFraction(const SystemExpression rational,
 /* Create a rational approximation (within ε) with limited digits in the
  * denominator. Return an uninitialized expression if not possible. */
 Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
-    const SystemExpression rational) {
+    const SystemExpression rational, const ProjectionContext& ctx) {
   Tree* result = BestConvergentOfContinuedFraction(
       rational, k_maxDenominatorDigitsForRationalApproximation);
   double rationalApprox = Approximation::To<double>(rational.tree(), {});
@@ -456,7 +456,7 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
       std::fabs(rationalApprox - resultApprox) <
           k_rationalApproximationPrecision) {
     // Result is not the same as the input and approximation is precise enough
-    Beautification::DeepBeautify(result);
+    Beautification::DeepBeautify(result, ctx);
     // Create the layout ~p/q
     TreeRef rack = Layouter::LayoutExpression(result);
     result->removeTree();
@@ -469,7 +469,7 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
 
 // Take a rational a/b and create the euclidean division a=b*q+r
 UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
-    SystemExpression rational) {
+    SystemExpression rational, const ProjectionContext& ctx) {
   assert(rational.isRational());
   IntegerHandler num = Rational::Numerator(rational);
   IntegerHandler den = Rational::Denominator(rational);
@@ -479,7 +479,7 @@ UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
   Tree* quotient = division.quotient->cloneTree();
   /* We beautify the quotient that may be negative and leave the rest unchanged
    * because we want to control the beautification order manually. */
-  Beautification::DeepBeautify(quotient);
+  Beautification::DeepBeautify(quotient, ctx);
   assert(denTree->isPositiveInteger() &&
          division.remainder->isPositiveInteger());
   UserExpression result = UserExpression::Builder(PatternMatching::Create(
@@ -498,7 +498,8 @@ UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
 }
 
 UserExpression AdditionalResultsHelper::CreateMixedFraction(
-    SystemExpression rational, bool mixedFractionsEnabled) {
+    SystemExpression rational, bool mixedFractionsEnabled,
+    const ProjectionContext& ctx) {
   assert(rational.isRational());
   IntegerHandler num = Rational::Numerator(rational);
   IntegerHandler den = Rational::Denominator(rational);
@@ -512,8 +513,8 @@ UserExpression AdditionalResultsHelper::CreateMixedFraction(
       Rational::Push(Integer::Handler(division.remainder), den);
   division.remainder->removeTree();
   // Beautify components separately
-  Beautification::DeepBeautify(integerPart);
-  Beautification::DeepBeautify(fractionPart);
+  Beautification::DeepBeautify(integerPart, ctx);
+  Beautification::DeepBeautify(fractionPart, ctx);
   // If mixed fractions are enabled
   if (mixedFractionsEnabled) {
     integerPart->cloneNodeAtNode(KMixedFraction);

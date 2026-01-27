@@ -54,10 +54,13 @@ class AdditionalResultsHelper final {
   constexpr static uint64_t k_maxPositiveInteger = 10000000000000000;
 
   /* Rational additional results */
-  static Layout CreateRationalApproximation(const SystemExpression rational);
-  static UserExpression CreateEuclideanDivision(SystemExpression rational);
+  static Layout CreateRationalApproximation(const SystemExpression rational,
+                                            const ProjectionContext& ctx);
+  static UserExpression CreateEuclideanDivision(SystemExpression rational,
+                                                const ProjectionContext& ctx);
   static UserExpression CreateMixedFraction(SystemExpression rational,
-                                            bool mixedFractionsEnabled);
+                                            bool mixedFractionsEnabled,
+                                            const ProjectionContext& ctx);
 
   /* Scientific notation additional results */
   static Layout ScientificLayout(

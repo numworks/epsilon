@@ -311,14 +311,13 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(floor(z), x, y)", "dep(0,{floor(z)})");
 
   // Piecewise
-#if TODO_PCJ
   simplifies_to("diff(piecewise(x,x≥1,-x,x≠0),x,x)",
-                "dep(piecewise(1,x>1,undef,x≥1,-1,"
-                "x≠0,undef,x=0),{piecewise(x,x≥1,-x,x≠0)})");
+                "piecewise(1,x>1,undef,x≥1,-1,x≠0,undef)");
   simplifies_to("diff(piecewise(x,x=1,2×x,x<5,3),x,x)",
-                "dep(piecewise(undef,x=1,2,x<5,undef,x≤5,0),{"
-                "piecewise(x,x=1,2×x,x<5,3)})");
-#endif
+                "piecewise(undef,x=1,2,x<5,undef,x≤5,0)");
+  simplifies_to("diff(piecewise(x+log(a),x≤0,cot(x)),x,x)",
+                "piecewise(dep(1,{nonNull(a),real(x+log(a)),realPos(a)}),x<0,"
+                "undef,x≤0,dep(-1-cot(x)^2,{tan(-x+π/2)}))");
 
   // Matrices
   simplifies_to("diff([[x]],x,x)", "undef");

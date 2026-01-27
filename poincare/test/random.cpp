@@ -43,8 +43,7 @@ void project_and_compare_approximates(const char* input1, const char* input2,
   Tree* e2 = parse(input2);
   Simplification::ToSystem(e2, Poincare::ProjectionContext{});
 
-  compare_approximates<T>(
-      e1, e2, equal, Approximation::Parameters{.isRootAndCanHaveRandom = true});
+  compare_approximates<T>(e1, e2, equal, Approximation::Parameters{});
   e2->removeTree();
   e1->removeTree();
   return;
@@ -56,8 +55,7 @@ void simplify_and_compare_approximates(const char* input1, const char* input2,
   Tree* e1 = parse_and_reduce(input1, true);
   Tree* e2 = parse_and_reduce(input2, true);
 
-  compare_approximates<T>(
-      e1, e2, equal, Approximation::Parameters{.isRootAndCanHaveRandom = true});
+  compare_approximates<T>(e1, e2, equal, Approximation::Parameters{});
   e2->removeTree();
   e1->removeTree();
   return;
@@ -69,8 +67,7 @@ void simplify_and_compare_approximates_list(const char* input, bool equal) {
   Tree* e = parse_and_reduce(input, true);
   assert(Dimension::ListLength(e) == 2);
   Tree* eApproximated = Approximation::ToTree<T>(
-      e, Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                   .projectLocalVariables = true});
+      e, Approximation::Parameters{.projectLocalVariables = true});
   T approx1 = Approximation::To<T>(eApproximated->child(0),
                                    Approximation::Parameters{});
   T approx2 = Approximation::To<T>(eApproximated->child(1),
@@ -112,9 +109,8 @@ QUIZ_CASE(pcj_random_seeds) {
 template <typename T>
 bool approximate_is_between_bounds(const Tree* e, T lowerBound, T upperBound) {
   bool result = true;
-  float approx = Approximation::To<float>(
-      e, Approximation::Parameters{.isRootAndCanHaveRandom = true},
-      Approximation::Context(Radian));
+  float approx = Approximation::To<float>(e, Approximation::Parameters{},
+                                          Approximation::Context(Radian));
   if (std::is_same<T, int>::value) {
     result = OMG::Float::RoughlyEqual(approx, std::round(approx),
                                       OMG::Float::EpsilonLax<float>());
@@ -146,8 +142,7 @@ void assert_approximate_is_int(const char* input, int lowerBound,
   if (Dimension::IsList(e)) {
     int length = Dimension::ListLength(e);
     Tree* eApproximated = Approximation::ToTree<float>(
-        e, Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                     .projectLocalVariables = true});
+        e, Approximation::Parameters{.projectLocalVariables = true});
     assert(length > 0);
     for (int i = 0; i < length; i++) {
       quiz_assert_print_if_failure(
@@ -197,8 +192,7 @@ void assert_no_duplicates_in_list(const char* expression) {
   // Sort list
   e->cloneNodeAtNode(KListSort);
   simplify(e, Poincare::ProjectionContext{}, false);
-  e->moveTreeOverTree(Approximation::ToTree<T>(
-      e, Approximation::Parameters{.isRootAndCanHaveRandom = true}));
+  e->moveTreeOverTree(Approximation::ToTree<T>(e, Approximation::Parameters{}));
   // Find duplicates
   assert(e->isList());
   int n = e->numberOfChildren();

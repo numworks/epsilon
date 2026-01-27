@@ -14,12 +14,6 @@ They return the approximated input under the requested dimension :
 
 ### Parameters
 
-#### isRootAndCanHaveRandom
-
-To use when the input tree is a root and may have random nodes.
-
-This sets up a memoization of the approximated values of various random nodes, handling random seeding and the `RandIntNoRep` tree.
-
 #### projectLocalVariables
 
 To use when the tree has not been projected and may have parametered nodes.

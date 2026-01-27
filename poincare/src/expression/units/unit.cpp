@@ -886,8 +886,7 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
       ((!unit2 && !unit1->isPhysicalConstant()) ||
        (unit2 && dimension.unit.vector == Speed::Dimension))) {
     assert(!dimension.isAngleUnit());
-    double value = Approximation::To<double>(
-        e, Approximation::Parameters{.isRootAndCanHaveRandom = true});
+    double value = Approximation::To<double>(e, Approximation::Parameters{});
     if (IsNonKelvinTemperature(GetRepresentative(unit1))) {
       value = KelvinValueToRepresentative(value, GetRepresentative(unit1));
     } else {

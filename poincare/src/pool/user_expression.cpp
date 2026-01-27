@@ -122,9 +122,7 @@ SystemExpression UserExpression::approximateUserToTree(
     AngleUnit angleUnit, ComplexFormat complexFormat,
     const SymbolContext& symbolContext) const {
   return SystemExpression::Builder(Approximation::ToTree<T>(
-      tree(),
-      Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                .projectLocalVariables = true},
+      tree(), Approximation::Parameters{.projectLocalVariables = true},
       Approximation::Context(angleUnit, complexFormat, symbolContext)));
 }
 
@@ -158,9 +156,7 @@ UserExpression UserExpression::cloneAndApproximate(
   } else {
     // Note: The non-beautified expression could be approximated instead.
     a = Approximation::ToTree<T>(
-        tree(),
-        Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                  .projectLocalVariables = true},
+        tree(), Approximation::Parameters{.projectLocalVariables = true},
         approxCtx);
     Beautification::DeepBeautify(a, context, Internal::Dimension::Get(a));
   }
@@ -204,9 +200,7 @@ T UserExpression::privateApproximateToRealScalar(
     const SymbolContext& symbolContext) const {
   static_assert(std::is_floating_point_v<T>);
   return Approximation::To<T>(
-      tree(),
-      Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                .projectLocalVariables = true},
+      tree(), Approximation::Parameters{.projectLocalVariables = true},
       Approximation::Context(angleUnit, complexFormat, symbolContext));
 }
 
@@ -287,9 +281,7 @@ bool UserExpression::hasDefinedComplexApproximation(
     return false;
   }
   std::complex<T> z = Approximation::ToComplex<T>(
-      tree(),
-      Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                .projectLocalVariables = true},
+      tree(), Approximation::Parameters{.projectLocalVariables = true},
       Approximation::Context(angleUnit, complexFormat, symbolContext));
   T b = z.imag();
   if (b == static_cast<T>(0.) || std::isinf(b) || std::isnan(b)) {

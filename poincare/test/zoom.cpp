@@ -68,8 +68,7 @@ template <typename T>
 Coordinate2D<T> expressionEvaluator(T t, const void* model) {
   const Tree* e = static_cast<const Tree*>(model);
   return Coordinate2D<T>(
-      t, Approximation::To<T>(
-             e, t, Approximation::Parameters{.isRootAndCanHaveRandom = true}));
+      t, Approximation::To<T>(e, t, Approximation::Parameters{}));
 }
 
 template <typename T>

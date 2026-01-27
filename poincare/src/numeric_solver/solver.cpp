@@ -120,8 +120,7 @@ typename Solver<T>::Solution Solver<T>::next(const Tree* e, BracketTest test,
    * context(ComplexFormat, AngleUnit) and replace defined symbols. */
   FunctionEvaluation f = [](T x, const void* aux) {
     const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
-    return Approximation::To<T>(
-        e, x, Approximation::Parameters{.isRootAndCanHaveRandom = true});
+    return Approximation::To<T>(e, x, Approximation::Parameters{});
   };
 
   return next(f, e, test, hone, &DiscontinuityTestBetweenPoints);
@@ -221,12 +220,10 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
     return Solution{};
   }
   T x = root.x();
-  T y = Approximation::To<T>(
-      e1, x, Approximation::Parameters{.isRootAndCanHaveRandom = true});
+  T y = Approximation::To<T>(e1, x, Approximation::Parameters{});
   // The secondImage is a "y" if areAlongSameAxis=true, or an "x" otherwise
-  T secondImage = Approximation::To<T>(
-      e2, areAlongSameAxis ? x : y,
-      Approximation::Parameters{.isRootAndCanHaveRandom = true});
+  T secondImage = Approximation::To<T>(e2, areAlongSameAxis ? x : y,
+                                       Approximation::Parameters{});
   if (!std::isfinite(y) || !std::isfinite(secondImage)) {
     /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
      * or undef expressions in specific points like x^2/x, the root of the
@@ -556,10 +553,8 @@ typename Solver<T>::DetailedRootX Solver<T>::nextPossibleRootInChild(
     ebis->child(childIndex)->cloneTreeOverTree(0_e);
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
-    T value =
-        Approximation::To<T>(ebis, root.solution.x(),
-                             Approximation::Parameters{.isRootAndCanHaveRandom =
-                                                           true});  // m_unknown
+    T value = Approximation::To<T>(ebis, root.solution.x(),
+                                   Approximation::Parameters{});  // m_unknown
     ebis->removeTree();
     if (std::fabs(value) < NullTolerance(root.solution.x())) {
       return {.x = root.solution.x(), .nullDescendant = root.nullDescendant};
@@ -665,9 +660,8 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootInDependency(
     depsListClone->deepReplaceWith(root.nullDescendant, 0_e);
     bool definedDeps = true;
     for (const Tree* childDep : depsListClone->children()) {
-      T value = Approximation::To<T>(
-          childDep, root.solution.x(),
-          Approximation::Parameters{.isRootAndCanHaveRandom = true});
+      T value = Approximation::To<T>(childDep, root.solution.x(),
+                                     Approximation::Parameters{});
       if (std::isnan(value)) {
         definedDeps = false;
         break;

@@ -218,19 +218,14 @@ Tree* Private::PrepareTreeAndContext(const Tree* e, Parameters params,
     clone = e->cloneTree();
     Variables::ProjectLocalVariablesToId(clone);
   }
-  if (params.isRootAndCanHaveRandom &&
-      !context.m_randomContext.m_isInitialized) {
-    /* Initialize randomContext only on root expressions to catch unsafe
-     * approximations of projected sub-expressions. */
-    context.m_randomContext.m_isInitialized = true;
-    // TODO_PCJ: RandIntNoRep needs to be seeded for a proper approximation.
-  }
+  /* The randomContext is initialized once, before starting the actual
+   * approximation */
+  context.m_randomContext.m_isInitialized = true;
   if (params.prepare || params.optimize) {
     assert(Simplification::IsSystem(e));
     if (!clone) {
       clone = e->cloneTree();
     }
-    assert(params.isRootAndCanHaveRandom);
     PrepareExpressionForApproximation(clone);
     if (params.optimize) {
       ApproximateAndReplaceEveryScalar<T>(clone, context);

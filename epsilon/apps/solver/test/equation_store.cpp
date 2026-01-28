@@ -300,6 +300,7 @@ QUIZ_CASE(solver_approximate) {
                                Poincare::EmptySymbolContext{}, "y");
   assert_solves_numerically_to("√(y+1)=0", -900, 1000, {-1},
                                Poincare::EmptySymbolContext{}, "y");
+  assert_solves_numerically_to("1.23x^(0.45)+6x^(0.78)=0", -10, 10, {0});
   // The ends of the interval are solutions
   assert_solves_numerically_to(
       "sin(x)=0", 0, 10000,

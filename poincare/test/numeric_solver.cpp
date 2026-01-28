@@ -140,7 +140,7 @@ QUIZ_CASE(pcj_solver_roots) {
       AngleUnit::Radian);
   assert_roots_are("√(x)+x", -10., 10., {R(0.)});
   assert_roots_are("1.23x^(0.45)+6x^(0.78)", -10., 10., {R(0.)});
-  // TODO: more precision, should be x=0 and x=1.4217
+  // TODO: improve precision, should be x=0 and x=1.4217
   assert_roots_are("-2x^(1.23)+x^(3.2)", -10., 10., {R(0.), R(1.42169719)});
   assert_roots_are("3(x-1)^(1.234)", -10., 10., {R(1.)});
   assert_roots_are("√(x)-x", -10., 10., {R(0.), R(1.)});

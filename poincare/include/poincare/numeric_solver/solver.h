@@ -234,14 +234,17 @@ class Solver {
                                                .nullDescendant = nullptr};
 
   DetailedRoot nextDetailedRoot(const Internal::Tree* e);
-  DetailedRootX nextPossibleRootInChild(const Internal::Tree* e,
-                                        int childIndex) const;
+  // Find the next root of the child which is also a root of the parent.
+  DetailedRootX nextRootSearchingInChild(const Internal::Tree* e,
+                                         int childIndex) const;
   typedef bool (*ExpressionTestAuxiliary)(const Internal::Tree* e,
                                           const SymbolContext& symbolContext,
                                           void* auxiliary);
-  DetailedRootX nextRootInChildren(const Internal::Tree* e,
-                                   ExpressionTestAuxiliary test,
-                                   void* aux) const;
+  /* Find the next root among the children statisfying the test, which is also a
+   * root of the parent. */
+  DetailedRootX nextRootSearchingInChildren(const Internal::Tree* e,
+                                            ExpressionTestAuxiliary test,
+                                            void* aux) const;
   DetailedRootX nextRootInMultiplication(const Internal::Tree* m) const;
   DetailedRootX nextRootInAddition(const Internal::Tree* m) const;
   DetailedRootX nextRootInDependency(const Internal::Tree* m) const;

@@ -247,6 +247,9 @@ std::complex<T> NonReal() {
 template <typename T>
 std::complex<T> HelperUndefDependencies(const Tree* dep, const Context* ctx);
 
+/* Returns an std::complex<T> that can be either std::complex<T>(0) (if all
+ * dependencies are defined) NonReal<T> (if one or more dependencies are
+ * NonReal) or std::complex<T>(NAN) if one or more dependencies are Undef) */
 template <typename T>
 std::complex<T> UndefDependencies(const Tree* dep, const Context* ctx);
 

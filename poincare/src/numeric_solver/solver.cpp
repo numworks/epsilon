@@ -145,6 +145,7 @@ typename Solver<T>::DetailedRoot Solver<T>::nextDetailedRoot(const Tree* e) {
       return registerDetailedRoot(nextRootInAddition(e));
 
     case Type::Pow:
+    case Type::PowReal:
     case Type::Root:
     case Type::Div:
       /* f(x,y) = 0 => x = 0 */

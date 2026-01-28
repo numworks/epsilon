@@ -22,6 +22,7 @@ class Angle {
       case AngleUnit::Gradian:
         return KMult(1_e / 200_e, π_e);
     }
+    OMG_UNREACHABLE;
   }
 
   static const Tree* RadTo(AngleUnit angleUnit) {
@@ -36,6 +37,7 @@ class Angle {
       case AngleUnit::Gradian:
         return KMult(200_e, KPow(π_e, -1_e));
     }
+    OMG_UNREACHABLE;
   }
 
   static const Tree* Period(AngleUnit angleUnit) {
@@ -50,6 +52,7 @@ class Angle {
       case AngleUnit::Gradian:
         return 400_e;
     }
+    OMG_UNREACHABLE;
   }
 };
 

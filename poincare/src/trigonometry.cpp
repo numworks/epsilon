@@ -16,6 +16,7 @@ double Trigonometry::PiInAngleUnit(AngleUnit angleUnit) {
     case AngleUnit::Gradian:
       return 200.0;
   }
+  OMG_UNREACHABLE;
 }
 
 double Trigonometry::ConvertAngleToRadian(double angle, AngleUnit angleUnit) {

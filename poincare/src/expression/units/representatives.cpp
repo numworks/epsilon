@@ -190,6 +190,7 @@ const Representative* Angle::DefaultRepresentativeForAngleUnit(
     case AngleUnit::Gradian:
       return &representatives.gradian;
   }
+  OMG_UNREACHABLE;
 }
 
 const Representative* Mass::bestRepresentativeAndPrefix(

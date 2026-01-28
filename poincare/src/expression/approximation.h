@@ -244,14 +244,18 @@ std::complex<T> NonReal() {
   return std::complex<T>(OMG::SignalingNan<T>(), static_cast<T>(0));
 }
 
-template <typename T>
-std::complex<T> HelperUndefDependencies(const Tree* dep, const Context* ctx);
+enum class DefinedStatus { Defined, NonReal, Undefined };
 
-/* Returns an std::complex<T> that can be either std::complex<T>(0) (if all
- * dependencies are defined) NonReal<T> (if one or more dependencies are
- * NonReal) or std::complex<T>(NAN) if one or more dependencies are Undef) */
+/* Returns a global DefinedStatus for all the dependencies. The DefinedStatus is
+ * prioritized: Defined if all dependencies are well defined, NonReal if one or
+ * more dependencies are NonReal but none is Undefined, Undefined otherwise. */
 template <typename T>
-std::complex<T> UndefDependencies(const Tree* dep, const Context* ctx);
+DefinedStatus AreDependenciesDefined(const Tree* dep, const Context* ctx);
+
+/* Convert a DefinedStatus to an std::complex<T> value: std::complex<T>{0} for
+ * Defined, NonReal<T>{} for NonReal, std::complex<T>(NAN) for Undef */
+template <typename T>
+std::complex<T> ToComplexValue(DefinedStatus status);
 
 // Expression must have been projected beforehand
 bool PrepareExpressionForApproximation(Tree* e);

@@ -339,14 +339,12 @@ static std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
   return c / d;
 }
 
-/* Return highest order of undefined dependencies if there is at least one, zero
- * otherwise */
 template <typename T>
-std::complex<T> Private::HelperUndefDependencies(const Tree* dep,
-                                                 const Context* ctx) {
+DefinedStatus Private::AreDependenciesDefined(const Tree* dep,
+                                              const Context* ctx) {
   assert(ctx);
   // Dependency children may have different dimensions.
-  std::complex<T> undefValue = std::complex<T>(0);
+  DefinedStatus status = DefinedStatus::Defined;
   for (const Tree* child : Dependency::Dependencies(dep)->children()) {
     if (Dimension::IsList(child, ctx->m_symbolContext)) {
       /* Ignore lists in dependencies. This is a temporary solution until we
@@ -364,28 +362,35 @@ std::complex<T> Private::HelperUndefDependencies(const Tree* dep,
       // Optimize most cases
       std::complex<T> c = PrivateToComplex<T>(child, ctx);
       // Only update to nonreal if there is no undef to respect priority
-      if (IsNonReal(c) && undefValue == std::complex<T>(0)) {
-        undefValue = c;
+      if (IsNonReal(c) && status == DefinedStatus::Defined) {
+        status = DefinedStatus::NonReal;
       } else if (std::isnan(c.real()) || std::isnan(c.imag())) {
-        undefValue = NAN;
+        status = DefinedStatus::Undefined;
       }
     } else {
       Tree* a = PrivateToTree<T>(
           child, Dimension::Get(child, ctx->m_symbolContext), ctx);
       if (a->isUndefined()) {
-        undefValue = NAN;
+        status = DefinedStatus::Undefined;
       }
       a->removeTree();
     }
   }
-  return undefValue;
+  return status;
 }
 
 template <typename T>
-std::complex<T> Private::UndefDependencies(const Tree* dep,
-                                           const Context* ctx) {
-  std::complex<T> res = HelperUndefDependencies<T>(dep, ctx);
-  return IsNonReal(res) ? NonReal<T>() : std::complex<T>(res);
+std::complex<T> Private::ToComplexValue(DefinedStatus status) {
+  switch (status) {
+    case DefinedStatus::Defined:
+      return std::complex<T>{0};
+    case DefinedStatus::NonReal:
+      return NonReal<T>();
+    case DefinedStatus::Undefined:
+      return std::complex<T>(NAN);
+    default:
+      OMG_UNREACHABLE
+  }
 }
 
 template <typename T>
@@ -1008,10 +1013,10 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
                                                        distribType, parameters);
     }
     case Type::Dep: {
-      std::complex<T> undef = UndefDependencies<T>(e, ctx);
-      return (undef == std::complex<T>(0.0))
+      DefinedStatus status = AreDependenciesDefined<T>(e, ctx);
+      return (status == DefinedStatus::Defined)
                  ? PrivateToComplexRecursive<T>(Dependency::Main(e), ctx)
-                 : undef;
+                 : ToComplexValue<T>(status);
     }
     case Type::NonNull: {
       std::complex<T> x = PrivateToComplexRecursive<T>(e->child(0), ctx);
@@ -1396,7 +1401,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     return BooleanOrUndefined::Undef();
   }
   if (e->isDep()) {
-    if (UndefDependencies<T>(e, ctx) != std::complex<T>(0.0)) {
+    if (AreDependenciesDefined<T>(e, ctx) != DefinedStatus::Defined) {
       return BooleanOrUndefined::Undef();
     }
     return PrivateToBoolean<T>(Dependency::Main(e), ctx);
@@ -1624,11 +1629,16 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       return ToMatrix<T>(branch, ctx);
     }
     case Type::Dep: {
-      std::complex<T> undef = UndefDependencies<T>(e, ctx);
-      return (undef == std::complex<T>(0.0))
-                 ? ToMatrix<T>(Dependency::Main(e), ctx)
-                 : Undefined::CreateTreeWithDimensionedType(
-                       e, (IsNonReal(undef) ? Type::NonReal : Type::Undef));
+      switch (AreDependenciesDefined<T>(e, ctx)) {
+        case DefinedStatus::Defined:
+          return ToMatrix<T>(Dependency::Main(e), ctx);
+        case DefinedStatus::NonReal:
+          return Undefined::CreateTreeWithDimensionedType(e, Type::NonReal);
+        case DefinedStatus::Undefined:
+          return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
+        default:
+          OMG_UNREACHABLE
+      }
     }
     case Type::UserFunction:
     case Type::UserVariable: {

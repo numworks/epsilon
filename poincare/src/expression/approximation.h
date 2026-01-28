@@ -253,8 +253,8 @@ template <typename T>
 Tree* PrivateToPoint(const Tree* e, const Context* ctx);
 
 // Tree must be of matrix dimension.
-template <typename T>
-Tree* ToMatrix(const Tree* e, const Context* ctx);
+Tree* ToMatrix(const Tree* e, FloatPrecision floatPrecision,
+               const Context* ctx);
 
 // Tree must be of list dimension.
 template <typename T>

@@ -5,7 +5,7 @@ namespace Poincare::Internal::Approximation::Private {
 
 template <typename T>
 std::complex<T> ApproximateTrace(const Tree* e, const Context* ctx) {
-  Tree* matrix = ToMatrix<T>(e, ctx);
+  Tree* matrix = ToMatrix(e, Approximation::Precision<T>::value, ctx);
   int n = Matrix::NumberOfRows(matrix);
   assert(n == Matrix::NumberOfColumns(matrix));
   std::complex<T> result = std::complex<T>(0);

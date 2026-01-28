@@ -263,8 +263,8 @@ Tree* Private::PrivateToTree(const Tree* e, Dimension dim, const Context* ctx) {
     return ToComplexTree<T>(e, ctx);
   }
   assert(dim.isPoint() || dim.isMatrix());
-  Tree* result =
-      dim.isPoint() ? PrivateToPoint<T>(e, ctx) : ToMatrix<T>(e, ctx);
+  Tree* result = dim.isPoint() ? PrivateToPoint<T>(e, ctx)
+                               : ToMatrix(e, Precision<T>::value, ctx);
   Undefined::ShallowBubbleUpUndef(result);
   return result;
 }
@@ -763,7 +763,7 @@ std::complex<T> MatrixToComplex(const Tree* e, const Context* ctx) {
   switch (e->type()) {
     case Type::Norm:
     case Type::Det: {
-      Tree* m = ToMatrix<T>(e->child(0), ctx);
+      Tree* m = ToMatrix(e->child(0), Precision<T>::value, ctx);
       Tree* value = nullptr;
       if (e->isDet()) {
         if (!Matrix::RowCanonize(m, true, &value, true, ctx)) {
@@ -782,8 +782,8 @@ std::complex<T> MatrixToComplex(const Tree* e, const Context* ctx) {
       return ApproximateTrace<T>(e->child(0), ctx);
     case Type::Dot: {
       // TODO use complex conjugate ?
-      Tree* u = ToMatrix<T>(e->child(0), ctx);
-      Tree* v = ToMatrix<T>(e->child(1), ctx);
+      Tree* u = ToMatrix(e->child(0), Precision<T>::value, ctx);
+      Tree* v = ToMatrix(e->child(1), Precision<T>::value, ctx);
       Tree* r = Vector::Dot(u, v);
       std::complex<T> result = PrivateToComplexRecursive<T>(r, ctx);
       r->removeTree();
@@ -1522,28 +1522,43 @@ Tree* Private::PrivateToPoint(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
+Tree* EvaluateMatrixPower(const Tree* e, const Context* ctx) {
+  const Tree* base = e->child(0);
+  const Tree* index = base->nextTree();
+  T value = PrivateTo<T>(index, ctx);
+  if (std::isnan(value) || value != std::round(value)) {
+    return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
+  }
+  Tree* result = ToMatrix(base, Precision<T>::value, ctx);
+  result->moveTreeOverTree(Matrix::Power(result, value, true, ctx));
+  return result;
+}
+
+Tree* Private::ToMatrix(const Tree* e, FloatPrecision floatPrecision,
+                        const Context* ctx) {
   /* TODO: Normal matrix nodes and operations with approximated children are
    * used to carry matrix approximation. A dedicated node that knows its
    * children have a fixed size would be more efficient. */
   if (e->isMatrix()) {
     Tree* m = e->cloneNode();
     for (const Tree* child : e->children()) {
-      ToComplexTree<T>(child, ctx);
+      floatPrecision == FloatPrecision::Single
+          ? ToComplexTree<float>(child, ctx)
+          : ToComplexTree<double>(child, ctx);
     }
     return m;
   }
   switch (e->type()) {
 #if POINCARE_MATRIX
     case Type::Parentheses:
-      return ToMatrix<T>(e->child(0), ctx);
+      return ToMatrix(e->child(0), floatPrecision, ctx);
     case Type::Add: {
       const Tree* child = e->child(0);
       int n = e->numberOfChildren() - 1;
-      Tree* result = ToMatrix<T>(child, ctx);
+      Tree* result = ToMatrix(child, floatPrecision, ctx);
       while (n--) {
         child = child->nextTree();
-        Tree* approximatedChild = ToMatrix<T>(child, ctx);
+        Tree* approximatedChild = ToMatrix(child, floatPrecision, ctx);
         Matrix::Addition(result, approximatedChild, true, ctx);
         approximatedChild->removeTree();
         result->removeTree();
@@ -1551,8 +1566,8 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       return result;
     }
     case Type::Sub: {
-      Tree* a = ToMatrix<T>(e->child(0), ctx);
-      Tree* b = ToMatrix<T>(e->child(1), ctx);
+      Tree* a = ToMatrix(e->child(0), floatPrecision, ctx);
+      Tree* b = ToMatrix(e->child(1), floatPrecision, ctx);
       b->moveTreeOverTree(Matrix::ScalarMultiplication(-1_e, b, true, ctx));
       Matrix::Addition(a, b, true, ctx);
       a->removeTree();
@@ -1560,7 +1575,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       return a;
     }
     case Type::Opposite: {
-      Tree* a = ToMatrix<T>(e->child(0), ctx);
+      Tree* a = ToMatrix(e->child(0), floatPrecision, ctx);
       return a->moveTreeOverTree(
           Matrix::ScalarMultiplication(-1_e, a, true, ctx));
     }
@@ -1571,8 +1586,11 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
         bool childIsMatrix = (ctx ? Dimension::Get(child, ctx->m_symbolContext)
                                   : Dimension::Get(child))
                                  .isMatrix();
-        Tree* approx = childIsMatrix ? ToMatrix<T>(child, ctx)
-                                     : ToComplexTree<T>(child, ctx);
+        Tree* approx = childIsMatrix
+                           ? ToMatrix(child, floatPrecision, ctx)
+                           : (floatPrecision == FloatPrecision::Single
+                                  ? ToComplexTree<float>(child, ctx)
+                                  : ToComplexTree<double>(child, ctx));
         if (result == nullptr) {
           resultIsMatrix = childIsMatrix;
           result = approx;
@@ -1592,11 +1610,12 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       return result;
     }
     case Type::Div: {
-      Tree* a = ToMatrix<T>(e->child(0), ctx);
+      Tree* a = ToMatrix(e->child(0), floatPrecision, ctx);
       Tree* s = KDiv->cloneNode();
       (1_e)->cloneTree();
       e->child(1)->cloneTree();
-      ToComplexTree<T>(s, ctx);
+      floatPrecision == FloatPrecision::Single ? ToComplexTree<float>(s, ctx)
+                                               : ToComplexTree<double>(s, ctx);
       s->removeTree();
       s->moveTreeOverTree(Matrix::ScalarMultiplication(s, a, true, ctx));
       a->removeTree();
@@ -1604,19 +1623,13 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
     }
     case Type::PowReal:
     case Type::Pow: {
-      const Tree* base = e->child(0);
-      const Tree* index = base->nextTree();
-      T value = PrivateTo<T>(index, ctx);
-      if (std::isnan(value) || value != std::round(value)) {
-        return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
-      }
-      Tree* result = ToMatrix<T>(base, ctx);
-      result->moveTreeOverTree(Matrix::Power(result, value, true, ctx));
-      return result;
+      return floatPrecision == FloatPrecision::Single
+                 ? EvaluateMatrixPower<float>(e, ctx)
+                 : EvaluateMatrixPower<double>(e, ctx);
     }
     case Type::Inverse:
     case Type::Transpose: {
-      Tree* result = ToMatrix<T>(e->child(0), ctx);
+      Tree* result = ToMatrix(e->child(0), floatPrecision, ctx);
       result->moveTreeOverTree(e->isInverse()
                                    ? Matrix::Inverse(result, true, ctx)
                                    : Matrix::Transpose(result));
@@ -1626,7 +1639,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       return Matrix::Identity(e->child(0));
     case Type::Ref:
     case Type::Rref: {
-      Tree* result = ToMatrix<T>(e->child(0), ctx);
+      Tree* result = ToMatrix(e->child(0), floatPrecision, ctx);
       if (!Matrix::RowCanonize(result, e->isRref(), nullptr, true, ctx)) {
         result->moveTreeOverTree(
             Matrix::Undef(Matrix::GetMatrixDimension(result)));
@@ -1638,30 +1651,46 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
                           : Dimension::Get(e->child(0));
       assert(dim.isMatrix());
       Tree* result = SharedTreeStack->pushMatrix(1, 2);
-      SharedTreeStack->pushFloat(T(dim.matrix.rows));
-      SharedTreeStack->pushFloat(T(dim.matrix.cols));
+      switch (floatPrecision) {
+        case FloatPrecision::Single: {
+          SharedTreeStack->pushSingleFloat(float(dim.matrix.rows));
+          SharedTreeStack->pushSingleFloat(float(dim.matrix.cols));
+          break;
+        }
+        case FloatPrecision::Double: {
+          SharedTreeStack->pushDoubleFloat(double(dim.matrix.rows));
+          SharedTreeStack->pushDoubleFloat(double(dim.matrix.cols));
+          break;
+        }
+        default:
+          OMG_UNREACHABLE
+      }
       return result;
     }
     case Type::Cross: {
-      Tree* u = ToMatrix<T>(e->child(0), ctx);
-      Tree* v = ToMatrix<T>(e->child(1), ctx);
+      Tree* u = ToMatrix(e->child(0), floatPrecision, ctx);
+      Tree* v = ToMatrix(e->child(1), floatPrecision, ctx);
       Vector::Cross(u, v);
       u->removeTree();
       u->removeTree();
       return u;
     }
     case Type::Piecewise: {
-      const Tree* branch = SelectPiecewiseBranch(e, Precision<T>::value, ctx);
+      const Tree* branch = SelectPiecewiseBranch(e, floatPrecision, ctx);
       if (!branch || branch->isUndefined()) {
         // SelectPiecewiseBranch may return KUndef to signal no active branches
         return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
       }
-      return ToMatrix<T>(branch, ctx);
+      return ToMatrix(branch, floatPrecision, ctx);
     }
     case Type::Dep: {
-      switch (AreDependenciesDefined<T>(e, ctx)) {
+      DefinedStatus dependencyDefinedStatus =
+          floatPrecision == FloatPrecision::Single
+              ? AreDependenciesDefined<float>(e, ctx)
+              : AreDependenciesDefined<double>(e, ctx);
+      switch (dependencyDefinedStatus) {
         case DefinedStatus::Defined:
-          return ToMatrix<T>(Dependency::Main(e), ctx);
+          return ToMatrix(Dependency::Main(e), floatPrecision, ctx);
         case DefinedStatus::NonReal:
           return Undefined::CreateTreeWithDimensionedType(e, Type::NonReal);
         case DefinedStatus::Undefined:
@@ -1680,11 +1709,12 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       // Function of symbol cannot have a Matrix dimension without a definition.
       assert(definition);
       if (e->isUserVariable()) {
-        return ToMatrix<T>(definition, ctx);
+        return ToMatrix(definition, floatPrecision, ctx);
       }
       /* LocalContext only handles complex scalar, but non scalar children of
        * UserFunction are forbidden in dimension check anyway. */
-      std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
+      // Local context uses a double abscissa
+      std::complex<double> x = PrivateToComplex<double>(e->child(0), ctx);
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
         return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
       }
@@ -1695,14 +1725,17 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       Context ctxCopy = *ctx;
       LocalContext localCtx = LocalContext(x, ctx->m_localContext);
       ctxCopy.m_localContext = &localCtx;
-      TreeRef result = ToMatrix<T>(definitionClone, &ctxCopy);
+      TreeRef result = ToMatrix(definitionClone, floatPrecision, &ctxCopy);
       definitionClone->removeTree();
       return result;
     }
 #if POINCARE_SUM_AND_PRODUCT
     case Type::Sum:
     case Type::Product: {
-      ParametricBoundOutput bounds = GetParametricBoundOutput<T>(e, ctx);
+      ParametricBoundOutput bounds =
+          floatPrecision == FloatPrecision::Single
+              ? GetParametricBoundOutput<float>(e, ctx)
+              : GetParametricBoundOutput<double>(e, ctx);
       if (!bounds.isDefined) {
         return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
       }
@@ -1714,7 +1747,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       Context ctxCopy = ctx ? *ctx : Context();
       /* We ApproximateAndReplaceEveryScalar here to avoid approximating complex
        * constants on every round of the sum/product computation */
-      ApproximateAndReplaceEveryScalar(child, Precision<T>::value, ctxCopy);
+      ApproximateAndReplaceEveryScalar(child, floatPrecision, ctxCopy);
       LocalContext localCtx = LocalContext(NAN, ctxCopy.m_localContext);
       ctxCopy.m_localContext = &localCtx;
       Dimension dim = Dimension::Get(child, ctxCopy.m_symbolContext);
@@ -1726,7 +1759,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
         ctxCopy.setLocalValue(k);
         // Reset random context
         ctxCopy.m_randomContext = Random::Context(true);
-        TreeRef value = ToMatrix<T>(child, &ctxCopy);
+        TreeRef value = ToMatrix(child, floatPrecision, &ctxCopy);
         if (e->isSum()) {
           result->moveTreeOverTree(
               Matrix::Addition(result, value, true, &ctxCopy));
@@ -1986,20 +2019,12 @@ Tree* ExtractRealPart(const Tree* e) {
   return SharedTreeStack->pushDoubleFloat(value.real());
 }
 
-/* TODO: not all this functions are worth templating on float and
- * double. ToComplex needs it but ToMatrix could take a bool and call the
- * correct ToComplex<T> as needed since the code is mostly independent of the
- * float type used in the tree. */
-
 template Tree* ToTree<float>(const Tree*, Parameters, const Context&);
 template Tree* ToTree<double>(const Tree*, Parameters, const Context&);
 
 template std::complex<float> ToComplex(const Tree*, Parameters, const Context&);
 template std::complex<double> ToComplex(const Tree*, Parameters,
                                         const Context&);
-
-template Tree* Private::ToMatrix<float>(const Tree*, const Context*);
-template Tree* Private::ToMatrix<double>(const Tree*, const Context*);
 
 template PointOrRealScalar<float> ToPointOrRealScalar(const Tree*, Parameters,
                                                       const Context&);

@@ -249,8 +249,8 @@ BooleanOrUndefined PrivateToBoolean(const Tree* e,
                                     const Context* ctx);
 
 // Tree must be of point dimension.
-template <typename T>
-Tree* PrivateToPoint(const Tree* e, const Context* ctx);
+Tree* PrivateToPoint(const Tree* e, FloatPrecision floatPrecision,
+                     const Context* ctx);
 
 // Tree must be of matrix dimension.
 Tree* ToMatrix(const Tree* e, FloatPrecision floatPrecision,

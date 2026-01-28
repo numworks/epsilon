@@ -260,7 +260,7 @@ Tree* Private::PrivateToTree(const Tree* e, Dimension dim, const Context* ctx) {
     return ToComplexTree<T>(e, ctx);
   }
   assert(dim.isPoint() || dim.isMatrix());
-  Tree* result = dim.isPoint() ? PrivateToPoint<T>(e, ctx)
+  Tree* result = dim.isPoint() ? PrivateToPoint(e, Precision<T>::value, ctx)
                                : ToMatrix(e, Precision<T>::value, ctx);
   Undefined::ShallowBubbleUpUndef(result);
   return result;
@@ -1505,15 +1505,17 @@ Tree* Private::ToList(const Tree* e, const Context* ctx) {
   return list;
 }
 
-template <typename T>
-Tree* Private::PrivateToPoint(const Tree* e, const Context* ctx) {
+Tree* Private::PrivateToPoint(const Tree* e, FloatPrecision floatPrecision,
+                              const Context* ctx) {
   assert(ctx);
   Context tempCtx(*ctx);
   Tree* point = SharedTreeStack->pushPoint();
   tempCtx.m_pointElement = 0;
-  ToComplexTree<T>(e, &tempCtx);
+  floatPrecision == FloatPrecision::Single ? ToComplexTree<float>(e, &tempCtx)
+                                           : ToComplexTree<double>(e, &tempCtx);
   tempCtx.m_pointElement = 1;
-  ToComplexTree<T>(e, &tempCtx);
+  floatPrecision == FloatPrecision::Single ? ToComplexTree<float>(e, &tempCtx)
+                                           : ToComplexTree<double>(e, &tempCtx);
   ctx->updateRandomContext(tempCtx.m_randomContext);
   return point;
 }
@@ -2058,9 +2060,6 @@ template std::complex<float> Private::PrivateToComplexRecursive(const Tree*,
 #endif
 template std::complex<double> Private::PrivateToComplexRecursive(
     const Tree*, const Context*);
-
-template Tree* Private::PrivateToPoint<float>(const Tree*, const Context*);
-template Tree* Private::PrivateToPoint<double>(const Tree*, const Context*);
 
 template float Private::PrivateTo(const Tree*, const Context*);
 template double Private::PrivateTo(const Tree*, const Context*);

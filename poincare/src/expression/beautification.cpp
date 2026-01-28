@@ -565,7 +565,7 @@ bool ApplyComplexFormat(Tree* e, Dimension dim,
                         const ProjectionContext& projectionContext) {
   ComplexFormat format = projectionContext.m_complexFormat;
   if (format == ComplexFormat::None) {
-    // None complex format is tolerated  in beautification
+    // None complex format is tolerated in beautification
     return false;
   }
   if (e->isUndefined() || e->isFactor()) {
@@ -573,10 +573,13 @@ bool ApplyComplexFormat(Tree* e, Dimension dim,
   }
   if (format == ComplexFormat::Real) {
     if (dim.isScalar() && GetComplexProperties(e).isNonReal()) {
-      // Real format is the default, no need to apply it.
+      /* Prevent beautification of non-real expressions in Real complex format.
+       * In some projects, complexFormat should have been updated beforehand if
+       * a complex result was expected.*/
       e->cloneTreeOverTree(KNonReal);
       return true;
     }
+    // Nothing to apply for Real complex format.
     return false;
   }
   return ApplyComplexFormatCartesianOrPolar(e, dim, projectionContext);

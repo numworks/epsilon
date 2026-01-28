@@ -240,7 +240,7 @@ class Solver {
   typedef bool (*ExpressionTestAuxiliary)(const Internal::Tree* e,
                                           const SymbolContext& symbolContext,
                                           void* auxiliary);
-  /* Find the next root among the children statisfying the test, which is also a
+  /* Find the next root among the children satisfying the test, which is also a
    * root of the parent. */
   DetailedRootX nextRootSearchingInChildren(const Internal::Tree* e,
                                             ExpressionTestAuxiliary test,

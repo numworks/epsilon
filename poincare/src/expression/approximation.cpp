@@ -112,15 +112,16 @@ PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
   return ToPointOrRealScalar<T>(e, params, contextCopy);
 }
 
-template <typename T>
-BooleanOrUndefined ToBoolean(const Tree* e, Parameters params,
-                             const Context& context) {
+BooleanOrUndefined ToBoolean(const Tree* e, FloatPrecision floatPrecision,
+                             Parameters params, const Context& context) {
   assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
          Dimension::Get(e, context.m_symbolContext).isBoolean());
   assert(!params.optimize);
-  Tree* clone = PrepareTree<T>(e, params, context);
+  Tree* clone = (floatPrecision == FloatPrecision::Single)
+                    ? PrepareTree<float>(e, params, context)
+                    : PrepareTree<double>(e, params, context);
   const Tree* target = clone ? clone : e;
-  BooleanOrUndefined b = PrivateToBoolean<T>(target, &context);
+  BooleanOrUndefined b = PrivateToBoolean(target, floatPrecision, &context);
   if (clone) {
     clone->removeTree();
   }
@@ -243,7 +244,7 @@ Tree* Private::PrivateToTree(const Tree* e, Dimension dim, const Context* ctx) {
 
   if (dim.isBoolean()) {
 #if POINCARE_BOOLEAN
-    BooleanOrUndefined boolean = PrivateToBoolean<T>(e, ctx);
+    BooleanOrUndefined boolean = PrivateToBoolean(e, Precision<T>::value, ctx);
     if (boolean.isUndefined()) {
       return KUndefBoolean->cloneTree();
     }
@@ -984,7 +985,7 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
       return PrivateToComplexRecursive<T>(e->child(0), &tempCtx);
     }
     case Type::Piecewise: {
-      const Tree* branch = SelectPiecewiseBranch<T>(e, ctx);
+      const Tree* branch = SelectPiecewiseBranch(e, Precision<T>::value, ctx);
       return branch ? PrivateToComplexRecursive<T>(branch, ctx) : NAN;
     }
     case Type::Distribution: {
@@ -1320,11 +1321,42 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
+BooleanOrUndefined InequalityToBoolean(const Tree* e, const Context* ctx) {
+  T a = PrivateTo<T>(e->child(0), ctx);
+  T b = PrivateTo<T>(e->child(1), ctx);
+  if (std::isnan(a) || std::isnan(b)) {
+    return BooleanOrUndefined::Undef();
+  }
+  if (e->isInferior()) {
+    return a < b;
+  }
+  if (e->isInferiorEqual()) {
+    return a <= b;
+  }
+  if (e->isSuperior()) {
+    return a > b;
+  }
+  assert(e->isSuperiorEqual());
+  return a >= b;
+}
+
+template <typename T>
+BooleanOrUndefined ComparisonToBoolean(const Tree* e, const Context* ctx) {
+  std::complex<T> a = PrivateToComplex<T>(e->child(0), ctx);
+  std::complex<T> b = PrivateToComplex<T>(e->child(1), ctx);
+  if (std::isnan(a.real()) || std::isnan(a.imag()) || std::isnan(b.real()) ||
+      std::isnan(b.imag())) {
+    return BooleanOrUndefined::Undef();
+  }
+  return e->isEqual() == (a == b);
+}
+
 BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
+                                             FloatPrecision floatPrecision,
                                              const Context* ctx) {
 #if POINCARE_NO_FLOAT_APPROXIMATION
-  if (sizeof(T) == sizeof(float)) {
-    return PrivateToBoolean<double>(e, ctx);
+  if (floatPrecision == FloatPrecision::Single) {
+    return PrivateToBoolean(e, FloatPrecision::Double, ctx);
   }
 #endif
   if (e->isTrue()) {
@@ -1334,54 +1366,45 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     return false;
   }
   if (e->isInequality()) {
-    T a = PrivateTo<T>(e->child(0), ctx);
-    T b = PrivateTo<T>(e->child(1), ctx);
-    if (std::isnan(a) || std::isnan(b)) {
-      return BooleanOrUndefined::Undef();
+    switch (floatPrecision) {
+      case FloatPrecision::Single:
+        return InequalityToBoolean<float>(e, ctx);
+      case FloatPrecision::Double:
+        return InequalityToBoolean<double>(e, ctx);
     }
-    if (e->isInferior()) {
-      return a < b;
-    }
-    if (e->isInferiorEqual()) {
-      return a <= b;
-    }
-    if (e->isSuperior()) {
-      return a > b;
-    }
-    assert(e->isSuperiorEqual());
-    return a >= b;
   }
   if (e->isComparison()) {
     assert(e->isEqual() || e->isNotEqual());
-    std::complex<T> a = PrivateToComplex<T>(e->child(0), ctx);
-    std::complex<T> b = PrivateToComplex<T>(e->child(1), ctx);
-    if (std::isnan(a.real()) || std::isnan(a.imag()) || std::isnan(b.real()) ||
-        std::isnan(b.imag())) {
-      return BooleanOrUndefined::Undef();
+    switch (floatPrecision) {
+      case FloatPrecision::Single:
+        return ComparisonToBoolean<float>(e, ctx);
+      case FloatPrecision::Double:
+        return ComparisonToBoolean<double>(e, ctx);
     }
-    return e->isEqual() == (a == b);
   }
   if (e->isPiecewise()) {
-    const Tree* branch = SelectPiecewiseBranch<T>(e, ctx);
+    const Tree* branch = SelectPiecewiseBranch(e, floatPrecision, ctx);
     if (!branch || branch->isUndefined()) {
       // SelectPiecewiseBranch may return KUndef to signal no active branches
       return BooleanOrUndefined::Undef();
     }
-    return PrivateToBoolean<T>(branch, ctx);
+    return PrivateToBoolean(branch, floatPrecision, ctx);
   }
   if (e->isList()) {
     assert(ctx && ctx->m_listElement != -1);
-    return PrivateToBoolean<T>(e->child(ctx->m_listElement), ctx);
+    return PrivateToBoolean(e->child(ctx->m_listElement), floatPrecision, ctx);
   }
   if (e->isParentheses()) {
-    return PrivateToBoolean<T>(e->child(0), ctx);
+    return PrivateToBoolean(e->child(0), floatPrecision, ctx);
   }
   if (e->isListSort()) {
     /* TODO we are computing all elements and sorting the list for all
      * elements, this is awful */
-    Tree* list = ToList<T>(e->child(0), ctx);
+    Tree* list = (floatPrecision == FloatPrecision::Single)
+                     ? ToList<float>(e->child(0), ctx)
+                     : ToList<double>(e->child(0), ctx);
     NAry::SortList(list);
-    BooleanOrUndefined result = PrivateToBoolean<T>(list, ctx);
+    BooleanOrUndefined result = PrivateToBoolean(list, floatPrecision, ctx);
     list->removeTree();
     return result;
   }
@@ -1394,17 +1417,21 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     ctxCopy.m_localContext = &localCtx;
     // Reset random context
     ctxCopy.m_randomContext = Random::Context();
-    return PrivateToBoolean<T>(e->child(Parametric::FunctionIndex(e)),
-                               &ctxCopy);
+    return PrivateToBoolean(e->child(Parametric::FunctionIndex(e)),
+                            floatPrecision, &ctxCopy);
   }
   if (e->isUndefBoolean()) {
     return BooleanOrUndefined::Undef();
   }
   if (e->isDep()) {
-    if (AreDependenciesDefined<T>(e, ctx) != DefinedStatus::Defined) {
+    DefinedStatus areDependenciesDefined =
+        (floatPrecision == FloatPrecision::Single)
+            ? AreDependenciesDefined<float>(e, ctx)
+            : AreDependenciesDefined<double>(e, ctx);
+    if (areDependenciesDefined != DefinedStatus::Defined) {
       return BooleanOrUndefined::Undef();
     }
-    return PrivateToBoolean<T>(Dependency::Main(e), ctx);
+    return PrivateToBoolean(Dependency::Main(e), floatPrecision, ctx);
   }
   if (e->isUserFunction() || e->isUserVariable()) {
     // TODO: Factorize with ToMatrix and UserSymbolToComplex
@@ -1415,11 +1442,13 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     // Function of symbol cannot have a boolean dimension without a definition.
     assert(definition);
     if (e->isUserVariable()) {
-      return PrivateToBoolean<T>(definition, ctx);
+      return PrivateToBoolean(definition, floatPrecision, ctx);
     }
     /* LocalContext only handles complex scalar, but non scalar children of
      * UserFunction are forbidden in dimension check anyway. */
-    std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
+
+    // Local context uses double precision
+    std::complex<double> x = PrivateToComplex<double>(e->child(0), ctx);
     if (std::isnan(x.real()) || std::isnan(x.imag())) {
       return BooleanOrUndefined::Undef();
     }
@@ -1430,19 +1459,20 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     Context ctxCopy = *ctx;
     LocalContext localCtx = LocalContext(x, ctx->m_localContext);
     ctxCopy.m_localContext = &localCtx;
-    BooleanOrUndefined result = PrivateToBoolean<T>(definitionClone, &ctxCopy);
+    BooleanOrUndefined result =
+        PrivateToBoolean(definitionClone, floatPrecision, &ctxCopy);
     definitionClone->removeTree();
     return result;
   }
   assert(e->isLogicalOperator());
-  BooleanOrUndefined a = PrivateToBoolean<T>(e->child(0), ctx);
+  BooleanOrUndefined a = PrivateToBoolean(e->child(0), floatPrecision, ctx);
   if (a.isUndefined()) {
     return a;
   }
   if (e->isLogicalNot()) {
     return !(a.value());
   }
-  BooleanOrUndefined b = PrivateToBoolean<T>(e->child(1), ctx);
+  BooleanOrUndefined b = PrivateToBoolean(e->child(1), floatPrecision, ctx);
   if (b.isUndefined()) {
     return b;
   }
@@ -1621,7 +1651,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       return u;
     }
     case Type::Piecewise: {
-      const Tree* branch = SelectPiecewiseBranch<T>(e, ctx);
+      const Tree* branch = SelectPiecewiseBranch(e, Precision<T>::value, ctx);
       if (!branch || branch->isUndefined()) {
         // SelectPiecewiseBranch may return KUndef to signal no active branches
         return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
@@ -1743,8 +1773,8 @@ T ToLocalContext(const Tree* e, const Context* ctx, T x) {
   return PrivateTo<T>(e, &ctxCopy);
 }
 
-template <typename T>
 const Tree* Private::SelectPiecewiseBranch(const Tree* piecewise,
+                                           FloatPrecision floatPrecision,
                                            const Context* ctx) {
   assert(piecewise->isPiecewise());
   int n = piecewise->numberOfChildren();
@@ -1757,7 +1787,7 @@ const Tree* Private::SelectPiecewiseBranch(const Tree* piecewise,
       return child;
     }
     const BooleanOrUndefined conditionEvaluation =
-        PrivateToBoolean<T>(condition, ctx);
+        PrivateToBoolean(condition, floatPrecision, ctx);
     if (conditionEvaluation.isUndefined()) {
       // TODO: return a dimensioned Undef
       return nullptr;
@@ -1783,7 +1813,8 @@ int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   LocalContext localCtx(x);
   Context ctx;
   ctx.m_localContext = &localCtx;
-  const Tree* branch = SelectPiecewiseBranch<T>(piecewise, &ctx);
+  const Tree* branch =
+      SelectPiecewiseBranch(piecewise, Precision<T>::value, &ctx);
   return !branch            ? k_unknownActiveBranch
          : branch == KUndef ? k_noActiveBranch
                             : piecewise->indexOfChild(branch);
@@ -1975,11 +2006,6 @@ template PointOrRealScalar<float> ToPointOrRealScalar(const Tree*, float,
 template PointOrRealScalar<double> ToPointOrRealScalar(const Tree*, double,
                                                        Parameters,
                                                        const Context&);
-
-template BooleanOrUndefined ToBoolean<float>(const Tree*, Parameters,
-                                             const Context&);
-template BooleanOrUndefined ToBoolean<double>(const Tree*, Parameters,
-                                              const Context&);
 
 template float To(const Tree*, Parameters, const Context&);
 template double To(const Tree*, Parameters, const Context&);

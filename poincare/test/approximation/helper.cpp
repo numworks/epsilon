@@ -101,8 +101,9 @@ void approximates_to_float_and_double(const char* expression,
 
 void approximates_to_boolean(const Tree* n,
                              Approximation::BooleanOrUndefined expected) {
-  Approximation::BooleanOrUndefined approx = Approximation::ToBoolean<float>(
-      n, Approximation::Parameters{.projectLocalVariables = true},
+  Approximation::BooleanOrUndefined approx = Approximation::ToBoolean(
+      n, Approximation::FloatPrecision::Single,
+      Approximation::Parameters{.projectLocalVariables = true},
       Approximation::Context(AngleUnit::Radian, ComplexFormat::Real));
   quiz_assert(approx.isUndefined() == expected.isUndefined());
   if (!approx.isUndefined()) {
@@ -114,8 +115,9 @@ void approximates_to_boolean(const char* input,
                              Approximation::BooleanOrUndefined expected,
                              const ProjectionContext& projectionContext) {
   Tree* expression = parse(input, projectionContext.m_context);
-  Approximation::BooleanOrUndefined approx = Approximation::ToBoolean<float>(
-      expression, Approximation::Parameters{.projectLocalVariables = true},
+  Approximation::BooleanOrUndefined approx = Approximation::ToBoolean(
+      expression, Approximation::FloatPrecision::Single,
+      Approximation::Parameters{.projectLocalVariables = true},
       Approximation::Context(projectionContext.m_angleUnit,
                              projectionContext.m_complexFormat,
                              projectionContext.m_context));

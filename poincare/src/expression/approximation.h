@@ -23,6 +23,27 @@ struct Dimension;
  * If not projected, additional context is expected (AngleUnit, ...) */
 
 namespace Approximation {
+
+// Precision of floating-point calculations
+enum class FloatPrecision { Single, Double };
+
+/* Helper struct to convert a float template type into a FloatPrecision value.
+ * Usage: Precision<T>::value.
+ * Note that the reverse operation is not possible. If FloatPrecision is passed
+ * as a function parameter, its value is not known at compile-time. So we are
+ * forced to conditionally call a "float" or "double" version of a template
+ * function dependending on the FloatPrecision value. */
+template <typename FloatType>
+struct Precision {};
+template <>
+struct Precision<float> {
+  constexpr static FloatPrecision value = FloatPrecision::Single;
+};
+template <>
+struct Precision<double> {
+  constexpr static FloatPrecision value = FloatPrecision::Double;
+};
+
 namespace Private {
 using VariableType = std::complex<double>;
 /* LocalContext is used to store the values of local variable of index 0.
@@ -151,8 +172,8 @@ template <typename T>
 Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
                         const Context& context = Context());
 
-template <typename T>
-BooleanOrUndefined ToBoolean(const Tree* e, Parameters params,
+BooleanOrUndefined ToBoolean(const Tree* e, FloatPrecision floatPrecision,
+                             Parameters params,
                              const Context& context = Context());
 
 /* Helpers */
@@ -224,8 +245,9 @@ template <typename T>
 T PrivateTo(const Tree* e, const Context* ctx);
 
 // Tree must be of boolean dimension.
-template <typename T>
-BooleanOrUndefined PrivateToBoolean(const Tree* e, const Context* ctx);
+BooleanOrUndefined PrivateToBoolean(const Tree* e,
+                                    FloatPrecision floatPrecision,
+                                    const Context* ctx);
 
 // Tree must be of point dimension.
 template <typename T>
@@ -309,8 +331,9 @@ std::complex<T> ComplexLogarithm(std::complex<T> c, bool isLog10);
 
 /* Approximate the conditions of a piecewise and return the tree corresponding
  * to the matching branch. Return nullptr if a condition was undefined. */
-template <typename T>
-const Tree* SelectPiecewiseBranch(const Tree* piecewise, const Context* ctx);
+const Tree* SelectPiecewiseBranch(const Tree* piecewise,
+                                  FloatPrecision floatPrecision,
+                                  const Context* ctx);
 
 template <typename T>
 std::complex<T> ApproximateTrace(const Tree* matrix, const Context* ctx);

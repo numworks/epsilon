@@ -170,7 +170,8 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
       PropertiesOfTreeOrApproximation(discriminant);
   assert(discriminantProperties.isReal());
   TreeRef approximatedRoots =
-      Approximation::ToTree<double>(roots, Approximation::Parameters{});
+      Approximation::ToTree(roots, Approximation::FloatPrecision::Double,
+                            Approximation::Parameters{});
   assert(approximatedRoots->isList());
   if (discriminantProperties.realSign().isPositive()) {
     // If the discriminant is positive or zero, all roots are real.
@@ -441,7 +442,8 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
   Tree* cardano = CardanoNumber(delta0, delta1);
   if (approximateCardanoNumber) {
     cardano->moveTreeOverTree(
-        Approximation::ToTree<double>(cardano, Approximation::Parameters{}));
+        Approximation::ToTree(cardano, Approximation::FloatPrecision::Double,
+                              Approximation::Parameters{}));
   }
 
   /* If the discriminant is not zero, then the Cardano number cannot be zero. */
@@ -466,8 +468,9 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
          PropertiesOfTreeOrApproximation(c).isReal() &&
          PropertiesOfTreeOrApproximation(d).isReal())
             ? Roots::ApproximateRootsOfRealCubic(rootList, delta)
-            : Approximation::ToTree<double>(rootList,
-                                            Approximation::Parameters{}));
+            : Approximation::ToTree(rootList,
+                                    Approximation::FloatPrecision::Double,
+                                    Approximation::Parameters{}));
   }
   NAry::SortList(rootList, Order::OrderType::ComplexLine);
   return rootList;

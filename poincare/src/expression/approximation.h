@@ -140,8 +140,7 @@ class BooleanOrUndefined {
 
 /* Approximation methods (with Parameters) */
 
-template <typename T>
-Tree* ToTree(const Tree* e, Parameters params,
+Tree* ToTree(const Tree* e, FloatPrecision floatPrecision, Parameters params,
              const Context& context = Context());
 
 /* Approximate [e] to a real. [e] must be of scalar or unit dimension (or a list
@@ -228,8 +227,8 @@ Tree* PrepareTree(const Tree* e, FloatPrecision floatPrecision,
                   Parameters params, const Context& context);
 
 // Tree can be of any dimension
-template <typename T>
-Tree* PrivateToTree(const Tree* e, Dimension dim, const Context* ctx);
+Tree* PrivateToTree(const Tree* e, FloatPrecision floatPrecision, Dimension dim,
+                    const Context* ctx);
 
 // Tree must be of scalar dimension or equivalent. Escape if tree is too deep.
 template <typename T>

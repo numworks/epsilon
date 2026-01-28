@@ -845,9 +845,9 @@ SolverResult ExactSolve(const Tree* equationList,
     Approximation::Context approxCtx(projectionContext.m_angleUnit,
                                      projectionContext.m_complexFormat,
                                      projectionContext.m_context);
-    result.approximateSolutionList = Approximation::ToTree<double>(
-        result.exactSolutionList, Approximation::Parameters{.prepare = true},
-        approxCtx);
+    result.approximateSolutionList = Approximation::ToTree(
+        result.exactSolutionList, Approximation::FloatPrecision::Double,
+        Approximation::Parameters{.prepare = true}, approxCtx);
   }
 
   /* Beautify result */

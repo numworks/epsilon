@@ -40,12 +40,12 @@ static_assert(!POINCARE_NO_FLOAT_APPROXIMATION ||
               "the double-only approximation is only available with scalars "
               "and booleans");
 
-template <typename T>
-Tree* ToTree(const Tree* e, Parameters params, const Context& context) {
+Tree* ToTree(const Tree* e, FloatPrecision floatPrecision, Parameters params,
+             const Context& context) {
   if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
     return KUndefUnhandledDimension->cloneTree();
   }
-  Tree* clone = PrepareTree(e, Precision<T>::value, params, context);
+  Tree* clone = PrepareTree(e, floatPrecision, params, context);
   if (params.optimize) {
     // Tree has already been approximated in PrepareTree
     assert(clone);
@@ -61,10 +61,10 @@ Tree* ToTree(const Tree* e, Parameters params, const Context& context) {
     Context listEvaluationContext = context;
     for (int i = 0; i < listLength; i++) {
       listEvaluationContext.m_listElement = i;
-      PrivateToTree<T>(target, dim, &listEvaluationContext);
+      PrivateToTree(target, floatPrecision, dim, &listEvaluationContext);
     }
   } else {
-    result = PrivateToTree<T>(target, dim, &context);
+    result = PrivateToTree(target, floatPrecision, dim, &context);
   }
   if (!clone) {
     return result;
@@ -231,8 +231,8 @@ Tree* Private::PrepareTree(const Tree* e, FloatPrecision floatPrecision,
   return clone;
 }
 
-template <typename T>
-Tree* Private::PrivateToTree(const Tree* e, Dimension dim, const Context* ctx) {
+Tree* Private::PrivateToTree(const Tree* e, FloatPrecision floatPrecision,
+                             Dimension dim, const Context* ctx) {
   /* TODO_PCJ: not all approximation methods come here, but this should always
    * be handled when approximating. */
   if (Projection::HasForbiddenDescendants(e)) {
@@ -241,7 +241,7 @@ Tree* Private::PrivateToTree(const Tree* e, Dimension dim, const Context* ctx) {
 
   if (dim.isBoolean()) {
 #if POINCARE_BOOLEAN
-    BooleanOrUndefined boolean = PrivateToBoolean(e, Precision<T>::value, ctx);
+    BooleanOrUndefined boolean = PrivateToBoolean(e, floatPrecision, ctx);
     if (boolean.isUndefined()) {
       return KUndefBoolean->cloneTree();
     }
@@ -253,15 +253,17 @@ Tree* Private::PrivateToTree(const Tree* e, Dimension dim, const Context* ctx) {
   if (dim.isUnit()) {
     // Preserve units and only replace scalar values.
     Tree* result = e->cloneTree();
-    PrivateApproximateAndReplaceEveryScalar(result, Precision<T>::value, ctx);
+    PrivateApproximateAndReplaceEveryScalar(result, floatPrecision, ctx);
     return result;
   }
   if (dim.isScalar()) {
-    return ToComplexTree<T>(e, ctx);
+    return floatPrecision == FloatPrecision::Single
+               ? ToComplexTree<float>(e, ctx)
+               : ToComplexTree<double>(e, ctx);
   }
   assert(dim.isPoint() || dim.isMatrix());
-  Tree* result = dim.isPoint() ? PrivateToPoint(e, Precision<T>::value, ctx)
-                               : ToMatrix(e, Precision<T>::value, ctx);
+  Tree* result = dim.isPoint() ? PrivateToPoint(e, floatPrecision, ctx)
+                               : ToMatrix(e, floatPrecision, ctx);
   Undefined::ShallowBubbleUpUndef(result);
   return result;
 }
@@ -366,8 +368,8 @@ DefinedStatus Private::AreDependenciesDefined(const Tree* dep,
         status = DefinedStatus::Undefined;
       }
     } else {
-      Tree* a = PrivateToTree<T>(
-          child, Dimension::Get(child, ctx->m_symbolContext), ctx);
+      Tree* a = PrivateToTree(child, Precision<T>::value,
+                              Dimension::Get(child, ctx->m_symbolContext), ctx);
       if (a->isUndefined()) {
         status = DefinedStatus::Undefined;
       }
@@ -1497,9 +1499,7 @@ Tree* Private::ToList(const Tree* e, FloatPrecision floatPrecision,
   Tree* list = SharedTreeStack->pushList(length);
   for (int i = 0; i < length; i++) {
     tempCtx.m_listElement = i;
-    floatPrecision == FloatPrecision::Single
-        ? PrivateToTree<float>(e, dimension, &tempCtx)
-        : PrivateToTree<double>(e, dimension, &tempCtx);
+    PrivateToTree(e, floatPrecision, dimension, &tempCtx);
   }
   ctx->updateRandomContext(tempCtx.m_randomContext);
   return list;
@@ -1982,10 +1982,8 @@ bool Private::PrivateApproximateAndReplaceEveryScalar(
   assert(ctx);
   if (Approximation::CanApproximate(e) &&
       Dimension::IsNonListScalar(e, ctx->m_symbolContext)) {
-    e->moveTreeOverTree(
-        floatPrecision == FloatPrecision::Single
-            ? PrivateToTree<float>(e, Dimension(DimensionType::Scalar), ctx)
-            : PrivateToTree<double>(e, Dimension(DimensionType::Scalar), ctx));
+    e->moveTreeOverTree(PrivateToTree(e, floatPrecision,
+                                      Dimension(DimensionType::Scalar), ctx));
     return true;
   }
   bool changed = false;
@@ -2017,9 +2015,6 @@ Tree* ExtractRealPart(const Tree* e) {
   std::complex<double> value = PrivateToComplex<double>(e, nullptr);
   return SharedTreeStack->pushDoubleFloat(value.real());
 }
-
-template Tree* ToTree<float>(const Tree*, Parameters, const Context&);
-template Tree* ToTree<double>(const Tree*, Parameters, const Context&);
 
 template std::complex<float> ToComplex(const Tree*, Parameters, const Context&);
 template std::complex<double> ToComplex(const Tree*, Parameters,

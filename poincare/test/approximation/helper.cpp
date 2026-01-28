@@ -29,8 +29,9 @@ void approximates_to(const Tree* n, T f) {
 
 template <typename T>
 void approximates_to(const Tree* n, const Tree* expected) {
-  Tree* approx = Approximation::ToTree<T>(
-      n, Approximation::Parameters{.projectLocalVariables = true},
+  Tree* approx = Approximation::ToTree(
+      n, Approximation::Precision<T>::value,
+      Approximation::Parameters{.projectLocalVariables = true},
       Approximation::Context(AngleUnit::Radian, ComplexFormat::Real));
   bool result = approx->treeIsIdenticalTo(expected);
 #if POINCARE_TREE_LOG
@@ -79,8 +80,9 @@ void approximates_to(const char* input, const char* output,
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
-        tree->moveTreeOverTree(Approximation::ToTree<T>(
-            tree, Approximation::Parameters{.projectLocalVariables = true},
+        tree->moveTreeOverTree(Approximation::ToTree(
+            tree, Approximation::Precision<T>::value,
+            Approximation::Parameters{.projectLocalVariables = true},
             Approximation::Context(projectionContext.m_angleUnit,
                                    projectionContext.m_complexFormat,
                                    projectionContext.m_context)));
@@ -147,8 +149,9 @@ void simplified_approximates_to(const char* input, const char* output,
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
         simplify(tree, projectionContext, false);
-        tree->moveTreeOverTree(Approximation::ToTree<T>(
-            tree, Approximation::Parameters{.projectLocalVariables = true},
+        tree->moveTreeOverTree(Approximation::ToTree(
+            tree, Approximation::Precision<T>::value,
+            Approximation::Parameters{.projectLocalVariables = true},
             Approximation::Context(projectionContext.m_angleUnit,
                                    projectionContext.m_complexFormat,
                                    projectionContext.m_context)));
@@ -165,8 +168,9 @@ void projected_approximates_to(const char* input, const char* output,
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
         Simplification::ToSystem(tree, projectionContext);
-        tree->moveTreeOverTree(Approximation::ToTree<T>(
-            tree, Approximation::Parameters{.prepare = true},
+        tree->moveTreeOverTree(Approximation::ToTree(
+            tree, Approximation::Precision<T>::value,
+            Approximation::Parameters{.prepare = true},
             Approximation::Context(projectionContext.m_angleUnit,
                                    projectionContext.m_complexFormat,
                                    projectionContext.m_context)));

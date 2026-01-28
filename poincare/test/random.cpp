@@ -70,8 +70,9 @@ template <typename T>
 void simplify_and_compare_approximates_list(const char* input, bool equal) {
   Tree* e = parse_and_reduce(input, true);
   assert(Dimension::ListLength(e) == 2);
-  Tree* eApproximated = Approximation::ToTree<T>(
-      e, Approximation::Parameters{.projectLocalVariables = true});
+  Tree* eApproximated = Approximation::ToTree(
+      e, Approximation::Precision<T>::value,
+      Approximation::Parameters{.projectLocalVariables = true});
   T approx1 = Approximation::To<T>(eApproximated->child(0),
                                    Approximation::Parameters{});
   T approx2 = Approximation::To<T>(eApproximated->child(1),
@@ -145,8 +146,9 @@ void assert_approximate_is_int(const char* input, int lowerBound,
   Tree* e = parse_and_reduce(input, true);
   if (Dimension::IsList(e)) {
     int length = Dimension::ListLength(e);
-    Tree* eApproximated = Approximation::ToTree<float>(
-        e, Approximation::Parameters{.projectLocalVariables = true});
+    Tree* eApproximated = Approximation::ToTree(
+        e, Approximation::FloatPrecision::Single,
+        Approximation::Parameters{.projectLocalVariables = true});
     assert(length > 0);
     for (int i = 0; i < length; i++) {
       quiz_assert_print_if_failure(
@@ -200,7 +202,8 @@ void assert_no_duplicates_in_list(const char* expression) {
                .m_angleUnit = Poincare::AngleUnit::Radian,
            },
            false);
-  e->moveTreeOverTree(Approximation::ToTree<T>(e, Approximation::Parameters{}));
+  e->moveTreeOverTree(Approximation::ToTree(
+      e, Approximation::Precision<T>::value, Approximation::Parameters{}));
   // Find duplicates
   assert(e->isList());
   int n = e->numberOfChildren();

@@ -88,8 +88,9 @@ SystemExpression SystemExpression::cloneChildAtIndex(int i) const {
 
 template <typename T>
 SystemExpression SystemExpression::approximateSystemToTree() const {
-  return SystemExpression::Builder(Approximation::ToTree<T>(
-      tree(), Approximation::Parameters{.prepare = true}));
+  return SystemExpression::Builder(
+      Approximation::ToTree(tree(), Approximation::Precision<T>::value,
+                            Approximation::Parameters{.prepare = true}));
 }
 
 void SystemExpression::cloneAndBeautifyAndApproximate(
@@ -218,8 +219,9 @@ SystemExpression SystemExpression::approximateListAndSort() const {
   assert(dimension().isList());
   Tree* clone = SharedTreeStack->pushListSort();
   tree()->cloneTree();
-  clone->moveTreeOverTree(Approximation::ToTree<T>(
-      clone, Approximation::Parameters{.prepare = true}));
+  clone->moveTreeOverTree(
+      Approximation::ToTree(clone, Approximation::Precision<T>::value,
+                            Approximation::Parameters{.prepare = true}));
   return SystemExpression::Builder(clone);
 }
 

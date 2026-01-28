@@ -63,7 +63,8 @@ void approximateCommand(const std::vector<std::string>& args) {
   UserExpression s = getExpression(args);
   Internal::Tree* p = s.tree()->cloneTree();
   Internal::Simplification::ToSystem(p, context());
-  Internal::Tree* a = Internal::Approximation::ToTree<double>(p, {});
+  Internal::Tree* a = Internal::Approximation::ToTree(
+      p, Approximation::FloatPrecision::Double, {});
   Expression r = Expression::Builder(a);
   p->removeTree();
   printExpression(r);

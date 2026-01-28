@@ -374,7 +374,8 @@ bool ApplyBeautificationSteps(Tree* e,
       Tree::ApplyShallowTopDown(e, ShallowBeautifyNegativeFloats) || changed;
   changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifyPowerOfTangent) || changed;
-  // Copy projectionContext to pass it as a void * in ApplyShallowTopDown
+  /* Copy projectionContext to pass it as a void * in ApplyShallowTopDown
+   * TODO : prevent this copy */
   ProjectionContext projectionContextCopy = projectionContext;
   changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifySpecialDisplays,

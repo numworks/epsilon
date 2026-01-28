@@ -184,6 +184,7 @@ const Representative* Angle::DefaultRepresentativeForAngleUnit(
       return &representatives.degree;
     case AngleUnit::None:
       OMG_UNREACHABLE;
+      [[fallthrough]];
     case AngleUnit::Radian:
       return &representatives.radian;
     case AngleUnit::Gradian:

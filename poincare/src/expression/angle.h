@@ -14,6 +14,7 @@ class Angle {
     switch (angleUnit) {
       case AngleUnit::None:
         OMG_UNREACHABLE;
+        [[fallthrough]];
       case AngleUnit::Radian:
         return 1_e;
       case AngleUnit::Degree:
@@ -27,6 +28,7 @@ class Angle {
     switch (angleUnit) {
       case AngleUnit::None:
         OMG_UNREACHABLE;
+        [[fallthrough]];
       case AngleUnit::Radian:
         return 1_e;
       case AngleUnit::Degree:
@@ -42,6 +44,7 @@ class Angle {
         return 360_e;
       case AngleUnit::None:
         OMG_UNREACHABLE;
+        [[fallthrough]];
       case AngleUnit::Radian:
         return KMult(2_e, π_e);
       case AngleUnit::Gradian:

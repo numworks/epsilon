@@ -76,6 +76,7 @@ const Regression* Regression::Get(Type type, AngleUnit angleUnit) {
       switch (angleUnit) {
         case AngleUnit::None:
           OMG_UNREACHABLE;
+          [[fallthrough]];
         case AngleUnit::Radian:
           return &trigonometricRad;
         case AngleUnit::Degree:

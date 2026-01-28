@@ -8,6 +8,7 @@ double Trigonometry::PiInAngleUnit(AngleUnit angleUnit) {
   switch (angleUnit) {
     case AngleUnit::None:
       OMG_UNREACHABLE;
+      [[fallthrough]];
     case AngleUnit::Radian:
       return M_PI;
     case AngleUnit::Degree:

@@ -169,6 +169,7 @@ void TitleBarView::refreshPreferences() {
       break;
     case AngleUnit::None:
       OMG_UNREACHABLE;
+      [[fallthrough]];
     case AngleUnit::Radian:
       angleMessage = I18n::Message::Rad;
       break;

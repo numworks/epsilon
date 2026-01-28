@@ -40,38 +40,52 @@ static_assert(!POINCARE_NO_FLOAT_APPROXIMATION ||
               "the double-only approximation is only available with scalars "
               "and booleans");
 
-Tree* ToTree(const Tree* e, FloatPrecision floatPrecision, Parameters params,
-             const Context& context) {
+template <typename ReturnType>
+ReturnType GenericTo(const Tree* e, FloatPrecision floatPrecision,
+                     Parameters params, const Context& context) {
+  // TODO: we would prefer to have an assertion here
   if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
+    // TODO: generic undef
     return KUndefUnhandledDimension->cloneTree();
   }
-  Tree* clone = PrepareTree(e, floatPrecision, params, context);
+  Tree* prepared = PrepareTree(e, floatPrecision, params, context);
+  ReturnType result = SpecificTo<ReturnType>(prepared ? prepared : e,
+                                             floatPrecision, params, context);
+  if (!prepared) {
+    return result;
+  }
+  assert(prepared->nextTree() == result);
+  prepared->removeTree();
+  return prepared;
+}
+
+Tree* ToTree(const Tree* e, FloatPrecision floatPrecision, Parameters params,
+             const Context& context) {
+  return GenericTo<Tree*>(e, floatPrecision, params, context);
+}
+
+template <>
+inline Tree* Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
+                                 Parameters params, const Context& context) {
   if (params.optimize) {
     // Tree has already been approximated in PrepareTree
-    assert(clone);
-    return clone;
+    return e->cloneTree();
   }
-  const Tree* target = clone ? clone : e;
   Tree* result;
-  Dimension dim = Dimension::Get(target, context.m_symbolContext);
-  int listLength = Dimension::ListLength(target, context.m_symbolContext);
+  Dimension dim = Dimension::Get(e, context.m_symbolContext);
+  int listLength = Dimension::ListLength(e, context.m_symbolContext);
   if (listLength != Dimension::k_nonListListLength) {
     assert(!dim.isMatrix());
     result = SharedTreeStack->pushList(listLength);
     Context listEvaluationContext = context;
     for (int i = 0; i < listLength; i++) {
       listEvaluationContext.m_listElement = i;
-      PrivateToTree(target, floatPrecision, dim, &listEvaluationContext);
+      PrivateToTree(e, floatPrecision, dim, &listEvaluationContext);
     }
   } else {
-    result = PrivateToTree(target, floatPrecision, dim, &context);
+    result = PrivateToTree(e, floatPrecision, dim, &context);
   }
-  if (!clone) {
-    return result;
-  }
-  assert(clone->nextTree() == result);
-  clone->removeTree();
-  return clone;
+  return result;
 }
 
 template <typename T>

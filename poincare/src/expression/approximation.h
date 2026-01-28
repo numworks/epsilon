@@ -146,6 +146,11 @@ class BooleanOrUndefined {
 
 /* Approximation methods (with Parameters) */
 
+// Common approximation pipeline for all return types
+template <typename ReturnType>
+ReturnType GenericTo(const Tree* e, FloatPrecision floatPrecision,
+                     Parameters params, const Context& context = Context());
+
 Tree* ToTree(const Tree* e, FloatPrecision floatPrecision, Parameters params,
              const Context& context = Context());
 
@@ -232,6 +237,12 @@ namespace Private {
 Tree* PrepareTree(const Tree* e, FloatPrecision floatPrecision,
                   Parameters params, const Context& context);
 
+/* Specific processing for the ReturnType. Must be overloaded for each specific
+ * ReturnType */
+template <typename ReturnType>
+ReturnType SpecificTo(const Tree* e, FloatPrecision floatPrecision,
+                      Parameters params, const Context& context);
+
 // Tree can be of any dimension
 Tree* PrivateToTree(const Tree* e, FloatPrecision floatPrecision, Dimension dim,
                     const Context* ctx);
@@ -271,9 +282,10 @@ std::complex<T> NonReal() {
 
 enum class DefinedStatus { Defined, NonReal, Undefined };
 
-/* Returns a global DefinedStatus for all the dependencies. The DefinedStatus is
- * prioritized: Defined if all dependencies are well defined, NonReal if one or
- * more dependencies are NonReal but none is Undefined, Undefined otherwise. */
+/* Returns a global DefinedStatus for all the dependencies. The DefinedStatus
+ * is prioritized: Defined if all dependencies are well defined, NonReal if
+ * one or more dependencies are NonReal but none is Undefined, Undefined
+ * otherwise. */
 template <typename T>
 DefinedStatus AreDependenciesDefined(const Tree* dep, const Context* ctx);
 

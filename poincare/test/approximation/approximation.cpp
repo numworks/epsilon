@@ -214,22 +214,26 @@ QUIZ_CASE(pcj_approximation_sign) {
 
 QUIZ_CASE(pcj_approximation_replace) {
   TreeRef ref1(KAdd(1_e, 2_e, 10.5_de));
-  quiz_assert(Approximation::ApproximateAndReplaceEveryScalar<double>(ref1));
+  quiz_assert(Approximation::ApproximateAndReplaceEveryScalar(
+      ref1, Approximation::FloatPrecision::Double));
   assert_trees_are_equal(ref1, 13.5_de);
 
   TreeRef ref2(
       KMult(2.0_de, KDiv("x"_e, KAdd(1_e, 2.0_de)), KAdd(1_e, 2_e, 10.5_de)));
-  quiz_assert(Approximation::ApproximateAndReplaceEveryScalar<double>(ref2));
+  quiz_assert(Approximation::ApproximateAndReplaceEveryScalar(
+      ref2, Approximation::FloatPrecision::Double));
   assert_trees_are_equal(ref2, KMult(KDiv("x"_e, 3.0_de), 27_de));
 
   TreeRef ref3(
       KMult(2.0_fe, KDiv("x"_e, KAdd(1_e, 2.0_de)), KAdd(1_e, 2_e, 10.5_de)));
-  quiz_assert(Approximation::ApproximateAndReplaceEveryScalar<double>(ref3));
+  quiz_assert(Approximation::ApproximateAndReplaceEveryScalar(
+      ref3, Approximation::FloatPrecision::Double));
   assert_trees_are_equal(ref3, KMult(KDiv("x"_e, 3.0_fe), 27_fe));
 
   TreeRef ref4(
       KMult(2.0_de, KDiv("x"_e, KAdd(1_e, 2.0_fe)), KAdd(1_e, 2_e, 10.5_fe)));
-  quiz_assert(Approximation::ApproximateAndReplaceEveryScalar<float>(ref4));
+  quiz_assert(Approximation::ApproximateAndReplaceEveryScalar(
+      ref4, Approximation::FloatPrecision::Single));
   assert_trees_are_equal(ref4, KMult(KDiv("x"_e, 3.0_fe), 27_fe));
 }
 

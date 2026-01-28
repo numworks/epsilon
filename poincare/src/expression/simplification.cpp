@@ -255,8 +255,9 @@ bool HandleUnits(Tree* e, const ProjectionContext& projectionContext,
   }
   if (dimension.isUnit() && !dimension.isAngleUnit()) {
     // Only angle units are expected not to be approximated.
-    changed =
-        Approximation::ApproximateAndReplaceEveryScalar<double>(e) || changed;
+    changed = Approximation::ApproximateAndReplaceEveryScalar(
+                  e, Approximation::FloatPrecision::Double) ||
+              changed;
     /* Check that the expression after approximating scalars does not need to be
      * reduced again. We used to reduce the expression here. If we find out this
      * assertion breaks (when fuzzing), we can put it back. */
@@ -274,10 +275,11 @@ bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
     case Strategy::Default:
       break;
     case Strategy::ApproximateToFloat:
-      changed = Approximation::ApproximateAndReplaceEveryScalar<double>(
-          e, Approximation::Context(projectionContext.m_angleUnit,
-                                    projectionContext.m_complexFormat,
-                                    projectionContext.m_context));
+      changed = Approximation::ApproximateAndReplaceEveryScalar(
+          e, Approximation::FloatPrecision::Double,
+          Approximation::Context(projectionContext.m_angleUnit,
+                                 projectionContext.m_complexFormat,
+                                 projectionContext.m_context));
       if (changed && insideReduction) {
         // NAries could be sorted again, some children may be merged.
         SystematicReduction::DeepReduce(e);

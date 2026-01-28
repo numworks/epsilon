@@ -176,7 +176,8 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
       }
     }
     // TODO_PCJ: Ensure the default Radian/Cartesian context is good enough.
-    Approximation::ApproximateAndReplaceEveryScalar<double>(approximation);
+    Approximation::ApproximateAndReplaceEveryScalar(
+        approximation, Approximation::FloatPrecision::Double);
     if (approximation->isUndefined()) {
       if (approximation->isNonReal()) {
         isNonReal = true;

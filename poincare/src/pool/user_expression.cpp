@@ -161,7 +161,8 @@ UserExpression UserExpression::cloneAndApproximate(
     a = tree()->cloneTree();
     /* We are using ApproximateAndReplaceEveryScalar to approximate
      * expressions with symbols such as π*x → 3.14*x. */
-    Approximation::ApproximateAndReplaceEveryScalar<T>(a, approxCtx);
+    Approximation::ApproximateAndReplaceEveryScalar(
+        a, Approximation::Precision<T>::value, approxCtx);
   } else {
     // Note: The non-beautified expression could be approximated instead.
     a = Approximation::ToTree<T>(

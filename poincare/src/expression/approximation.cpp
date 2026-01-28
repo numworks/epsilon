@@ -226,7 +226,7 @@ Tree* Private::PrepareTree(const Tree* e, Parameters params,
     }
     PrepareExpressionForApproximation(clone);
     if (params.optimize) {
-      ApproximateAndReplaceEveryScalar<T>(clone, context);
+      ApproximateAndReplaceEveryScalar(clone, Precision<T>::value, context);
       // TODO: factor common sub-expressions
       // TODO: apply Horner's method: a*x^2 + b*x + c => (a*x + b)*x + c ?
     }
@@ -256,7 +256,7 @@ Tree* Private::PrivateToTree(const Tree* e, Dimension dim, const Context* ctx) {
   if (dim.isUnit()) {
     // Preserve units and only replace scalar values.
     Tree* result = e->cloneTree();
-    PrivateApproximateAndReplaceEveryScalar<T>(result, ctx);
+    PrivateApproximateAndReplaceEveryScalar(result, Precision<T>::value, ctx);
     return result;
   }
   if (dim.isScalar()) {
@@ -693,7 +693,7 @@ std::complex<T> AnalysisToComplex(const Tree* e, const Context* ctx) {
       Context ctxCopy = ctx ? *ctx : Context();
       /* We ApproximateAndReplaceEveryScalar here to avoid approximating complex
        * constants on every round of the sum/product computation */
-      ApproximateAndReplaceEveryScalar<T>(child, ctxCopy);
+      ApproximateAndReplaceEveryScalar(child, Precision<T>::value, ctxCopy);
       LocalContext localCtx = LocalContext(NAN, ctxCopy.m_localContext);
       ctxCopy.m_localContext = &localCtx;
       std::complex<T> result = e->isSum() ? 0 : 1;
@@ -1714,7 +1714,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       Context ctxCopy = ctx ? *ctx : Context();
       /* We ApproximateAndReplaceEveryScalar here to avoid approximating complex
        * constants on every round of the sum/product computation */
-      ApproximateAndReplaceEveryScalar<T>(child, ctxCopy);
+      ApproximateAndReplaceEveryScalar(child, Precision<T>::value, ctxCopy);
       LocalContext localCtx = LocalContext(NAN, ctxCopy.m_localContext);
       ctxCopy.m_localContext = &localCtx;
       Dimension dim = Dimension::Get(child, ctxCopy.m_symbolContext);
@@ -1887,20 +1887,21 @@ bool Private::SkipApproximation(TypeBlock type, TypeBlock parentType,
   }
 }
 
-template <typename T>
-bool ApproximateAndReplaceEveryScalar(Tree* e, const Context& context) {
+bool ApproximateAndReplaceEveryScalar(Tree* e, FloatPrecision floatPrecision,
+                                      const Context& context) {
   // Prevent float to double conversion
-  if (sizeof(T) == sizeof(double) &&
+  if (floatPrecision == FloatPrecision::Double &&
       e->hasDescendantSatisfying(
           [](const Tree* e) { return e->isSingleFloat(); })) {
-    return ApproximateAndReplaceEveryScalar<float>(e, context);
+    return ApproximateAndReplaceEveryScalar(e, FloatPrecision::Single, context);
   }
 
   if (SkipApproximation(e->type())) {
     return false;
   }
   uint32_t hash = e->hash();
-  bool result = PrivateApproximateAndReplaceEveryScalar<T>(e, &context);
+  bool result =
+      PrivateApproximateAndReplaceEveryScalar(e, floatPrecision, &context);
   /* TODO: We compare the CRC32 to prevent expressions such as 1.0+i*1.0 from
    * returning true at every call. We should detect and skip them in
    * SkipApproximation instead. */
@@ -1944,14 +1945,15 @@ static bool MergeChildrenOfMultOrAdd(Tree* e) {
   return false;
 }
 
-template <typename T>
-bool Private::PrivateApproximateAndReplaceEveryScalar(Tree* e,
-                                                      const Context* ctx) {
+bool Private::PrivateApproximateAndReplaceEveryScalar(
+    Tree* e, FloatPrecision floatPrecision, const Context* ctx) {
   assert(ctx);
   if (Approximation::CanApproximate(e) &&
       Dimension::IsNonListScalar(e, ctx->m_symbolContext)) {
     e->moveTreeOverTree(
-        PrivateToTree<T>(e, Dimension(DimensionType::Scalar), ctx));
+        floatPrecision == FloatPrecision::Single
+            ? PrivateToTree<float>(e, Dimension(DimensionType::Scalar), ctx)
+            : PrivateToTree<double>(e, Dimension(DimensionType::Scalar), ctx));
     return true;
   }
   bool changed = false;
@@ -1960,14 +1962,18 @@ bool Private::PrivateApproximateAndReplaceEveryScalar(Tree* e,
     if (!SkipApproximation(child->type(), e->type(), child.index,
                            previousChildWasApproximated)) {
       changed =
-          PrivateApproximateAndReplaceEveryScalar<T>(child, ctx) || changed;
+          PrivateApproximateAndReplaceEveryScalar(child, floatPrecision, ctx) ||
+          changed;
     }
     previousChildWasApproximated = child->isFloat();
   }
   changed = Undefined::ShallowBubbleUpUndef(e) || changed;
   // Merge addition and multiplication's children while preserving order
   if (e->isAdd() || e->isMult()) {
-    changed = MergeChildrenOfMultOrAdd<T>(e) || changed;
+    changed = (floatPrecision == FloatPrecision::Single
+                   ? MergeChildrenOfMultOrAdd<float>(e)
+                   : MergeChildrenOfMultOrAdd<double>(e)) ||
+              changed;
   }
   return changed;
 }
@@ -2042,14 +2048,6 @@ template double ToLocalContext(const Tree*, const Context*, double);
 
 template int IndexOfActivePiecewiseBranchAt(const Tree*, float);
 template int IndexOfActivePiecewiseBranchAt(const Tree*, double);
-
-template bool ApproximateAndReplaceEveryScalar<float>(Tree*, const Context&);
-template bool ApproximateAndReplaceEveryScalar<double>(Tree*, const Context&);
-
-template bool Private::PrivateApproximateAndReplaceEveryScalar<float>(
-    Tree*, const Context*);
-template bool Private::PrivateApproximateAndReplaceEveryScalar<double>(
-    Tree*, const Context*);
 
 template Tree* Private::PrepareTree<float>(const Tree*, Parameters,
                                            const Context&);

@@ -146,8 +146,8 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
     return true;
   }
 
-  if (bubbleUpFloat &&
-      Approximation::ApproximateAndReplaceEveryScalar<double>(e)) {
+  if (bubbleUpFloat && Approximation::ApproximateAndReplaceEveryScalar(
+                           e, Approximation::FloatPrecision::Double)) {
     ShallowReduce(e);
     return true;
   }

@@ -678,9 +678,11 @@ Tree* GetPolarFormat(const Tree* e,
     hasReduced = AdvancedReduction::Reduce(arg) || hasReduced;
   }
   if (hasSingleFloats) {
-    Approximation::ApproximateAndReplaceEveryScalar<float>(arg);
+    Approximation::ApproximateAndReplaceEveryScalar(
+        arg, Approximation::FloatPrecision::Single);
   } else if (hasDoubleFloats) {
-    Approximation::ApproximateAndReplaceEveryScalar<double>(arg);
+    Approximation::ApproximateAndReplaceEveryScalar(
+        arg, Approximation::FloatPrecision::Double);
   }
   SharedTreeStack->pushComplexI();
   if (!hasReduced) {

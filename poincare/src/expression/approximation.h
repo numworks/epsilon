@@ -201,12 +201,11 @@ namespace Private {
 // Update the approximation's context. Return a clone of e if necessary.
 /* Note that the Context is const in this method although the random context
  * will be updated. This is taking advantage of the mutable m_randomContext.
- * This allows to call PrepareTreeAndContext in methods where the Context is
+ * This allows to call PrepareTree in methods where the Context is
  * const, without the need to create a copy of the whole Context just to update
  * the random context. */
 template <typename T>
-Tree* PrepareTreeAndContext(const Tree* e, Parameters params,
-                            const Context& context);
+Tree* PrepareTree(const Tree* e, Parameters params, const Context& context);
 
 // Tree can be of any dimension
 template <typename T>

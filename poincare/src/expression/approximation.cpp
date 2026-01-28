@@ -45,9 +45,9 @@ Tree* ToTree(const Tree* e, Parameters params, const Context& context) {
   if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
     return KUndefUnhandledDimension->cloneTree();
   }
-  Tree* clone = PrepareTreeAndContext<T>(e, params, context);
+  Tree* clone = PrepareTree<T>(e, params, context);
   if (params.optimize) {
-    // Tree has already been approximated in PrepareTreeAndContext
+    // Tree has already been approximated in PrepareTree
     assert(clone);
     return clone;
   }
@@ -82,7 +82,7 @@ std::complex<T> ToComplex(const Tree* e, Parameters params,
   }
   assert(Dimension::IsNonListScalar(e, context.m_symbolContext));
   assert(!params.optimize);
-  Tree* clone = PrepareTreeAndContext<T>(e, params, context);
+  Tree* clone = PrepareTree<T>(e, params, context);
   const Tree* target = clone ? clone : e;
   std::complex<T> c = PrivateToComplex<T>(target, &context);
   if (clone) {
@@ -118,7 +118,7 @@ BooleanOrUndefined ToBoolean(const Tree* e, Parameters params,
   assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
          Dimension::Get(e, context.m_symbolContext).isBoolean());
   assert(!params.optimize);
-  Tree* clone = PrepareTreeAndContext<T>(e, params, context);
+  Tree* clone = PrepareTree<T>(e, params, context);
   const Tree* target = clone ? clone : e;
   BooleanOrUndefined b = PrivateToBoolean<T>(target, &context);
   if (clone) {
@@ -138,7 +138,7 @@ T To(const Tree* e, Parameters params, const Context& context) {
   assert(context.m_listElement != -1 ||
          !Dimension::IsList(e, context.m_symbolContext));
   assert(!params.optimize);
-  Tree* clone = PrepareTreeAndContext<T>(e, params, context);
+  Tree* clone = PrepareTree<T>(e, params, context);
   const Tree* target = clone ? clone : e;
   if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
                                  std::isnan(context.variable(0).imag()))) {
@@ -166,7 +166,7 @@ Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
   assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
          Dimension::Get(e, context.m_symbolContext).isPoint());
   assert(!params.optimize);
-  Tree* clone = PrepareTreeAndContext<T>(e, params, context);
+  Tree* clone = PrepareTree<T>(e, params, context);
   const Tree* target = clone ? clone : e;
   if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
                                  std::isnan(context.variable(0).imag()))) {
@@ -210,8 +210,8 @@ Tree* Private::ToComplexTree(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-Tree* Private::PrepareTreeAndContext(const Tree* e, Parameters params,
-                                     const Context& context) {
+Tree* Private::PrepareTree(const Tree* e, Parameters params,
+                           const Context& context) {
   // Only clone if necessary
   Tree* clone = nullptr;
   if (params.projectLocalVariables) {
@@ -2027,9 +2027,9 @@ template bool Private::SkipApproximation<float>(TypeBlock, TypeBlock, int,
 template bool Private::SkipApproximation<double>(TypeBlock, TypeBlock, int,
                                                  bool);
 
-template Tree* Private::PrepareTreeAndContext<float>(const Tree*, Parameters,
-                                                     const Context&);
-template Tree* Private::PrepareTreeAndContext<double>(const Tree*, Parameters,
-                                                      const Context&);
+template Tree* Private::PrepareTree<float>(const Tree*, Parameters,
+                                           const Context&);
+template Tree* Private::PrepareTree<double>(const Tree*, Parameters,
+                                            const Context&);
 
 }  // namespace Poincare::Internal::Approximation

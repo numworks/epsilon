@@ -602,7 +602,7 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootInAddition(
   /* Special case for expressions of the form "f(x)^a+g(x)", with:
    * - f(x) and g(x) sharing a root x0
    * - f(x) being defined only on one side of x0
-   * - 0 < a < 1
+   * - 0 < a
    * Since the expression does not change sign around x0, the usual numerical
    * schemes won't work. We instead look for the zeroes of f, and check whether
    * they are zeroes of the whole expression. */
@@ -615,7 +615,7 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootInAddition(
           T exponent = k_NAN;
           if (e->type() == Type::Sqrt) {
             exponent = static_cast<T>(0.5);
-          } else if (e->type() == Type::Pow) {
+          } else if (e->type() == Type::Pow || e->type() == Type::PowReal) {
             exponent =
                 Approximation::To<T>(e->child(1), Approximation::Parameters{});
           } else if (e->type() == Type::Root) {
@@ -626,7 +626,7 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootInAddition(
           if (std::isnan(exponent)) {
             return false;
           }
-          return k_zero < exponent && exponent < static_cast<T>(1.);
+          return k_zero < exponent;
         });
       };
   DetailedRootX childrenRoot =

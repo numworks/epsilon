@@ -148,7 +148,7 @@ typename Solver<T>::DetailedRoot Solver<T>::nextDetailedRoot(const Tree* e) {
     case Type::Root:
     case Type::Div:
       /* f(x,y) = 0 => x = 0 */
-      return registerDetailedRoot(nextPossibleRootInChild(e, 0));
+      return registerDetailedRoot(nextRootSearchingInChild(e, 0));
 
     case Type::Abs:
     case Type::ATan:
@@ -539,7 +539,7 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
 }
 
 template <typename T>
-typename Solver<T>::DetailedRootX Solver<T>::nextPossibleRootInChild(
+typename Solver<T>::DetailedRootX Solver<T>::nextRootSearchingInChild(
     const Tree* e, int childIndex) const {
   Solver<T> solver = *this;
   const Tree* child = e->child(childIndex);
@@ -568,13 +568,13 @@ typename Solver<T>::DetailedRootX Solver<T>::nextPossibleRootInChild(
 }
 
 template <typename T>
-typename Solver<T>::DetailedRootX Solver<T>::nextRootInChildren(
+typename Solver<T>::DetailedRootX Solver<T>::nextRootSearchingInChildren(
     const Tree* e, ExpressionTestAuxiliary test, void* aux) const {
   DetailedRootX root = k_nanRootX;
   int n = e->numberOfChildren();
   for (int i = 0; i < n; i++) {
     if (test(e->child(i), m_context, aux)) {
-      DetailedRootX rootChild = nextPossibleRootInChild(e, i);
+      DetailedRootX rootChild = nextRootSearchingInChild(e, i);
       if (std::isfinite(rootChild.x) &&
           (!std::isfinite(root.x) ||
            std::fabs(m_xStart - rootChild.x) < std::fabs(m_xStart - root.x))) {
@@ -589,7 +589,7 @@ template <typename T>
 typename Solver<T>::DetailedRootX Solver<T>::nextRootInMultiplication(
     const Tree* e) const {
   assert(e->isMult());
-  return nextRootInChildren(
+  return nextRootSearchingInChildren(
       e, [](const Tree*, const SymbolContext&, void*) { return true; },
       nullptr);
 }
@@ -628,7 +628,7 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootInAddition(
         });
       };
   DetailedRootX childrenRoot =
-      nextRootInChildren(e, test, const_cast<Solver<T>*>(this));
+      nextRootSearchingInChildren(e, test, const_cast<Solver<T>*>(this));
   Solver<T> solver = *this;
   DetailedRootX root = {
       .x = solver.next(e, EvenOrOddRootInBracket, CompositeBrentForRoot).x(),

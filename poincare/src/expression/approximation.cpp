@@ -930,7 +930,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
     case Type::ListSort: {
       /* TODO we are computing all elements and sorting the list for all
        * elements, this is awful */
-      Tree* list = ToList<T>(e->child(0), ctx);
+      Tree* list = ToList(e->child(0), Precision<T>::value, ctx);
       // TODO: Remove this clone
       Tree* sortedList = nullptr;
       ExceptionTry {
@@ -954,11 +954,11 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       return result;
     }
     case Type::Median: {
-      Tree* list = ToList<T>(e->child(0), ctx);
+      Tree* list = ToList(e->child(0), Precision<T>::value, ctx);
       TreeDatasetColumn<T> values(list);
       T median;
       if (Dimension::IsList(e->child(1), ctx->m_symbolContext)) {
-        Tree* weightsList = ToList<T>(e->child(1), ctx);
+        Tree* weightsList = ToList(e->child(1), Precision<T>::value, ctx);
         TreeDatasetColumn<T> weights(weightsList);
         median = StatisticsDataset<T>(&values, &weights).median();
         weightsList->removeTree();
@@ -1397,9 +1397,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
   if (e->isListSort()) {
     /* TODO we are computing all elements and sorting the list for all
      * elements, this is awful */
-    Tree* list = (floatPrecision == FloatPrecision::Single)
-                     ? ToList<float>(e->child(0), ctx)
-                     : ToList<double>(e->child(0), ctx);
+    Tree* list = ToList(e->child(0), floatPrecision, ctx);
     NAry::SortList(list);
     BooleanOrUndefined result = PrivateToBoolean(list, floatPrecision, ctx);
     list->removeTree();
@@ -1489,8 +1487,8 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
   }
 }
 
-template <typename T>
-Tree* Private::ToList(const Tree* e, const Context* ctx) {
+Tree* Private::ToList(const Tree* e, FloatPrecision floatPrecision,
+                      const Context* ctx) {
   assert(ctx);
   Dimension dimension = Dimension::Get(e, ctx->m_symbolContext);
   int length = Dimension::ListLength(e, ctx->m_symbolContext);
@@ -1499,7 +1497,9 @@ Tree* Private::ToList(const Tree* e, const Context* ctx) {
   Tree* list = SharedTreeStack->pushList(length);
   for (int i = 0; i < length; i++) {
     tempCtx.m_listElement = i;
-    PrivateToTree<T>(e, dimension, &tempCtx);
+    floatPrecision == FloatPrecision::Single
+        ? PrivateToTree<float>(e, dimension, &tempCtx)
+        : PrivateToTree<double>(e, dimension, &tempCtx);
   }
   ctx->updateRandomContext(tempCtx.m_randomContext);
   return list;

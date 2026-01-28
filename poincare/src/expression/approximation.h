@@ -257,8 +257,7 @@ Tree* ToMatrix(const Tree* e, FloatPrecision floatPrecision,
                const Context* ctx);
 
 // Tree must be of list dimension.
-template <typename T>
-Tree* ToList(const Tree* e, const Context* ctx);
+Tree* ToList(const Tree* e, FloatPrecision floatPrecision, const Context* ctx);
 
 template <typename T>
 std::complex<T> NonReal() {

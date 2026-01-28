@@ -37,7 +37,6 @@ class Random {
     Context(bool isInitialized = true);
     constexpr static int k_maxNumberOfVariables = 16;
     VariableType m_list[k_maxNumberOfVariables];
-    bool m_isInitialized;
   };
   static_assert(Context::k_maxNumberOfVariables <= k_maxNumberOfSeeds);
   /* Takes a Tree containing random nodes (seeded, or not, up to maxSeed) and

@@ -218,9 +218,6 @@ Tree* Private::PrepareTreeAndContext(const Tree* e, Parameters params,
     clone = e->cloneTree();
     Variables::ProjectLocalVariablesToId(clone);
   }
-  /* The randomContext is initialized once, before starting the actual
-   * approximation */
-  context.m_randomContext.m_isInitialized = true;
   if (params.prepare || params.optimize) {
     assert(Simplification::IsSystem(e));
     if (!clone) {

@@ -139,12 +139,10 @@ QUIZ_CASE(pcj_solver_roots) {
        R(-3.687536352063443), R(-5.127216097883478)},
       AngleUnit::Radian);
   assert_roots_are("√(x)+x", -10., 10., {R(0.)});
-#if TODO_PCJ
-  /* PowReal is undefined for x<0 and we can't find a root at an endpoint of
-   * the definition domain. We should find a workaround. */
   assert_roots_are("1.23x^(0.45)+6x^(0.78)", -10., 10., {R(0.)});
-#endif
-  assert_roots_are("1.23x^(0.45)", -10., 10., {R(0.)});
+  // TODO: more precision, should be x=0 and x=1.4217
+  assert_roots_are("-2x^(1.23)+x^(3.2)", -10., 10., {R(0.), R(1.42169719)});
+  assert_roots_are("3(x-1)^(1.234)", -10., 10., {R(1.)});
   assert_roots_are("√(x)-x", -10., 10., {R(0.), R(1.)});
   assert_roots_are("x-2√(x)", -10., 10., {R(0.), R(4.)});
   assert_roots_are("x+π+√(x+π)", -10., 10., {R(-3.1415926535897931)});

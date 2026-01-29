@@ -228,6 +228,16 @@ Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
   assert(!params.optimize);
   Tree* clone = PrepareTree(e, Precision<T>::value, params, context);
   const Tree* target = clone ? clone : e;
+  Coordinate2D<T> result = PrivateToCoordinates<T>(target, context);
+  if (clone) {
+    clone->removeTree();
+  }
+  return result;
+}
+
+template <typename T>
+Coordinate2D<T> Private::PrivateToCoordinates(const Tree* e,
+                                              const Context& context) {
   if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
                                  std::isnan(context.variable(0).imag()))) {
     return Coordinate2D<T>(NAN, NAN);
@@ -235,14 +245,10 @@ Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
   T xScalar, yScalar;
   Context pointEvaluationContext = context;
   pointEvaluationContext.m_pointElement = 0;
-  xScalar = PrivateTo<T>(target, &pointEvaluationContext);
+  xScalar = PrivateTo<T>(e, &pointEvaluationContext);
   pointEvaluationContext.m_pointElement = 1;
-  yScalar = PrivateTo<T>(target, &pointEvaluationContext);
-  Coordinate2D<T> result(xScalar, yScalar);
-  if (clone) {
-    clone->removeTree();
-  }
-  return result;
+  yScalar = PrivateTo<T>(e, &pointEvaluationContext);
+  return Coordinate2D<T>(xScalar, yScalar);
 }
 
 template <typename T>

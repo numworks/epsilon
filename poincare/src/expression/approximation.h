@@ -270,6 +270,10 @@ BooleanOrUndefined PrivateToBoolean(const Tree* e,
                                     const Context* ctx);
 
 // Tree must be of point dimension.
+template <typename T>
+Coordinate2D<T> PrivateToCoordinates(const Tree* e, const Context& context);
+
+// Tree must be of point dimension.
 Tree* PrivateToPoint(const Tree* e, FloatPrecision floatPrecision,
                      const Context* ctx);
 

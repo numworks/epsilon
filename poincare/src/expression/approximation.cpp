@@ -59,6 +59,17 @@ Tree* PostProcessPreparedAndResult(Tree* prepared, Tree* result) {
   return prepared;
 }
 
+template <typename ReturnType, typename FloatType>
+ReturnType GenericTo(const Tree* e, FloatType abscissa, Parameters params,
+                     const Context& context) {
+  // TODO: rework the LocalContext creation workflow
+  Context contextCopy = context;
+  LocalContext localContext(abscissa, contextCopy.m_localContext);
+  contextCopy.m_localContext = &localContext;
+  return GenericTo<ReturnType>(e, Precision<FloatType>::value, params,
+                               contextCopy);
+}
+
 template <typename ReturnType>
 ReturnType GenericTo(const Tree* e, FloatPrecision floatPrecision,
                      Parameters params, const Context& context) {
@@ -243,11 +254,7 @@ inline double Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
 
 template <typename T>
 T To(const Tree* e, T abscissa, Parameters params, const Context& context) {
-  // TODO: rework the LocalContext creation workflow
-  Context contextCopy = context;
-  LocalContext localContext(abscissa, contextCopy.m_localContext);
-  contextCopy.m_localContext = &localContext;
-  return To<T>(e, params, contextCopy);
+  return GenericTo<T>(e, abscissa, params, context);
 }
 
 template <typename T>

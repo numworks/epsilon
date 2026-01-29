@@ -419,7 +419,6 @@ class Tree : public TypeBlock {
   }
 
  private:
-  bool replaceWith(const Tree* target, const Tree* replacement);
   Tree* cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
                 bool at = false);
   Tree* moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at = false);

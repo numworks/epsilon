@@ -576,7 +576,8 @@ bool Tree::deepReplaceWith(const Tree* target, const Tree* replacement) {
    * [this] to be preserved during replacement. */
   assert(SharedTreeStack->isAfter(replacement, this) &&
          SharedTreeStack->isAfter(target, this));
-  if (replaceWith(target, replacement)) {
+  if (treeIsIdenticalTo(target)) {
+    cloneTreeOverTree(replacement);
     return true;
   }
 #if ASSERTIONS
@@ -608,14 +609,6 @@ bool Tree::deepReplaceWith(const Tree* target, const Tree* replacement) {
     changed = childChanged || changed;
   }
   return changed;
-}
-
-bool Tree::replaceWith(const Tree* target, const Tree* replacement) {
-  if (treeIsIdenticalTo(target)) {
-    cloneTreeOverTree(replacement);
-    return true;
-  }
-  return false;
 }
 
 const Tree* Tree::firstDescendantSatisfying(Predicate predicate) const {

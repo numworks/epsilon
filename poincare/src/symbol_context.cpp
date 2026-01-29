@@ -9,9 +9,8 @@ using namespace Poincare::Internal;
 namespace Poincare {
 
 const Tree* SymbolContext::expressionForSymbol(const Tree* symbol) const {
-  /* Sequence don't have a Tree*. Ensure this method isn't called on them.
-   * TODO: We could add support for explicit sequences here */
-  assert(symbol->isUserVariable() || symbol->isUserFunction());
+  assert(symbol->isUserVariable() || symbol->isUserFunction() ||
+         symbol->isUserSequence());
 
   const char* identifier = Symbol::GetName(symbol);
   SymbolDescription description = symbolDescriptionForIdentifier(identifier);

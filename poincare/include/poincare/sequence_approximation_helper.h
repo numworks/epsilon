@@ -20,6 +20,8 @@ class SequenceApproximationHelper {
                                              int rank) const = 0;
   };
 
+  static bool IsInitialized() { return s_sequenceContext != nullptr; }
+
   static double ApproximateSequenceAtRank(const char* identifier, int rank) {
     return s_sequenceContext->approximateSequenceAtRank(identifier, rank);
   }

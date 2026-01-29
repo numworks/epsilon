@@ -760,6 +760,18 @@ std::complex<T> UserSymbolToComplex(const Tree* e, const Context* ctx) {
       std::complex<double> z = ctx->variable(Variables::Id(e));
       return std::complex<T>(z.real(), z.imag());
     }
+    case Type::UserSequence: {
+      T rank = PrivateTo<T>(e->child(0), ctx);
+      if (std::isnan(rank) || std::floor(rank) != rank) {
+        return NAN;
+      }
+      if (SequenceApproximationHelper::IsInitialized()) {
+        return static_cast<T>(
+            SequenceApproximationHelper::ApproximateSequenceAtRank(
+                Symbol::GetName(e), static_cast<int>(rank)));
+      }
+      [[fallthrough]];
+    }
     case Type::UserFunction:
     case Type::UserVariable: {
       // TODO: Factorize with PrivateToBoolean and ToMatrix
@@ -790,15 +802,6 @@ std::complex<T> UserSymbolToComplex(const Tree* e, const Context* ctx) {
       std::complex<T> result = PrivateToComplex<T>(definitionClone, &ctxCopy);
       definitionClone->removeTree();
       return result;
-    }
-    case Type::UserSequence: {
-      T rank = PrivateTo<T>(e->child(0), ctx);
-      if (std::isnan(rank) || std::floor(rank) != rank) {
-        return NAN;
-      }
-      return static_cast<T>(
-          SequenceApproximationHelper::ApproximateSequenceAtRank(
-              Symbol::GetName(e), static_cast<int>(rank)));
     }
     default:
       OMG_UNREACHABLE;

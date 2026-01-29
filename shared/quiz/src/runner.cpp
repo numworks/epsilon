@@ -10,7 +10,7 @@ static bool clearConsole() { return Ion::Console::clear(); }
 
 namespace Quiz {
 
-Runner Runner::s_instance;
+OMG::GlobalBox<Runner> Runner::s_instance;
 
 void Runner::innerRun() {
   constexpr int k_bufferSize = 64;
@@ -114,6 +114,7 @@ void ion_main(int argc, const char* const argv[]) {
   Ion::setStackStart((void*)&stackTop);
 
   Cases::Sort();
-  Runner::s_instance.parseArguments(argc, argv);
-  Runner::s_instance.run();
+  Runner::s_instance.init();
+  Runner::s_instance->parseArguments(argc, argv);
+  Runner::s_instance->run();
 }

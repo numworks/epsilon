@@ -1,11 +1,12 @@
 #pragma once
 
+#include <omg/global_box.h>
 #include <omg/unreachable.h>
 #include <poincare/preferences.h>
 
 class DefaultPreferences : public Poincare::Preferences::Interface {
  public:
-  static DefaultPreferences s_sharedPreferences;
+  static OMG::GlobalBox<DefaultPreferences> s_sharedPreferences;
 
   constexpr Poincare::Preferences::CombinatoricSymbols combinatoricSymbols()
       const override {

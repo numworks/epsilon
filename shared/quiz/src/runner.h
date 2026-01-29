@@ -1,13 +1,14 @@
 #pragma once
 
 #include <assert.h>
+#include <omg/global_box.h>
 #include <quiz.h>
 
 namespace Quiz {
 
 class Runner {
  public:
-  static Runner s_instance;
+  static OMG::GlobalBox<Runner> s_instance;
 
   Runner() = default;
 

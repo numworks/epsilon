@@ -171,15 +171,6 @@ template <typename T>
 T To(const Tree* e, T abscissa, Parameters params,
      const Context& context = Context());
 
-template <typename T>
-PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
-                                         const Context& context = Context());
-// Approximate with given value for VarX
-template <typename T>
-PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
-                                         Parameters params,
-                                         const Context& context = Context());
-
 BooleanOrUndefined ToBoolean(const Tree* e, FloatPrecision floatPrecision,
                              Parameters params,
                              const Context& context = Context());

@@ -179,12 +179,6 @@ inline std::complex<double> Private::SpecificTo(const Tree* e,
   return PrivateToComplex<double>(e, &context);
 };
 
-template <typename T>
-PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
-                                         const Context& context) {
-  return GenericTo<PointOrRealScalar<T>>(e, params, context);
-}
-
 template <>
 PointOrRealScalar<float> Private::UndefinedUnhandledDimension() {
   return PointOrRealScalar<float>(NAN, NAN);
@@ -225,13 +219,6 @@ PointOrRealScalar<double> Private::SpecificTo(const Tree* e,
                    e, floatPrecision, params, context))
              : PointOrRealScalar<double>(
                    GenericTo<double>(e, floatPrecision, params, context));
-}
-
-template <typename T>
-PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
-                                         Parameters params,
-                                         const Context& context) {
-  return GenericTo<PointOrRealScalar<T>>(e, abscissa, params, context);
 }
 
 BooleanOrUndefined ToBoolean(const Tree* e, FloatPrecision floatPrecision,
@@ -2214,18 +2201,10 @@ template std::complex<double> GenericTo(const Tree*, Parameters,
 template Coordinate2D<float> GenericTo(const Tree*, Parameters, const Context&);
 template Coordinate2D<double> GenericTo(const Tree*, Parameters,
                                         const Context&);
-
-template PointOrRealScalar<float> ToPointOrRealScalar(const Tree*, Parameters,
-                                                      const Context&);
-template PointOrRealScalar<double> ToPointOrRealScalar(const Tree*, Parameters,
-                                                       const Context&);
-
-template PointOrRealScalar<float> ToPointOrRealScalar(const Tree*, float,
-                                                      Parameters,
-                                                      const Context&);
-template PointOrRealScalar<double> ToPointOrRealScalar(const Tree*, double,
-                                                       Parameters,
-                                                       const Context&);
+template PointOrRealScalar<float> GenericTo(const Tree*, float, Parameters,
+                                            const Context&);
+template PointOrRealScalar<double> GenericTo(const Tree*, double, Parameters,
+                                             const Context&);
 
 template float To(const Tree*, Parameters, const Context&);
 template double To(const Tree*, Parameters, const Context&);

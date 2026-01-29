@@ -32,7 +32,7 @@ bool PreparedFunction::isDiscontinuousOnInterval(T minBound, T maxBound) const {
 template <typename T>
 PointOrRealScalar<T> PreparedFunction::approximateToPointOrRealScalarWithValue(
     T x) const {
-  return Internal::Approximation::ToPointOrRealScalar<T>(
+  return Internal::Approximation::GenericTo<PointOrRealScalar<T>>(
       tree(), x, Approximation::Parameters{});
 }
 

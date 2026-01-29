@@ -149,16 +149,21 @@ PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
 
 BooleanOrUndefined ToBoolean(const Tree* e, FloatPrecision floatPrecision,
                              Parameters params, const Context& context) {
-  assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
-         Dimension::Get(e, context.m_symbolContext).isBoolean());
+  return GenericTo<BooleanOrUndefined>(e, floatPrecision, params, context);
+};
+
+template <>
+BooleanOrUndefined Private::UndefinedUnhandledDimension() {
+  return BooleanOrUndefined::Undef();
+}
+
+template <>
+inline BooleanOrUndefined Private::SpecificTo(const Tree* e,
+                                              FloatPrecision floatPrecision,
+                                              Parameters params,
+                                              const Context& context) {
   assert(!params.optimize);
-  Tree* clone = PrepareTree(e, floatPrecision, params, context);
-  const Tree* target = clone ? clone : e;
-  BooleanOrUndefined b = PrivateToBoolean(target, floatPrecision, &context);
-  if (clone) {
-    clone->removeTree();
-  }
-  return b;
+  return PrivateToBoolean(e, floatPrecision, &context);
 };
 
 template <typename T>

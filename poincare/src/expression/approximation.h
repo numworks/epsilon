@@ -160,9 +160,6 @@ template <typename ReturnType, typename FloatType>
 ReturnType GenericTo(const Tree* e, FloatType abscissa, Parameters params,
                      const Context& context = Context());
 
-Tree* ToTree(const Tree* e, FloatPrecision floatPrecision, Parameters params,
-             const Context& context = Context());
-
 /* Approximate [e] to a real. [e] must be of scalar or unit dimension (or a list
  * of such dimension with a list element in context). */
 template <typename T>

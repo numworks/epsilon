@@ -99,7 +99,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
       }
     }
     assert(approximateAngleTree);
-    approximateAngleTree->moveTreeOverTree(Approximation::ToTree(
+    approximateAngleTree->moveTreeOverTree(Approximation::GenericTo<Tree*>(
         approximateAngleTree, Approximation::FloatPrecision::Double,
         Approximation::Parameters{.projectLocalVariables = true},
         Approximation::Context(ctx.m_angleUnit, ctx.m_complexFormat,

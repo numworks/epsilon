@@ -118,11 +118,6 @@ ReturnType GenericTo(const Tree* e, FloatPrecision floatPrecision,
   return PostProcessPreparedAndResult(prepared, result);
 }
 
-Tree* ToTree(const Tree* e, FloatPrecision floatPrecision, Parameters params,
-             const Context& context) {
-  return GenericTo<Tree*>(e, floatPrecision, params, context);
-}
-
 template <>
 Tree* Private::UndefinedUnhandledDimension() {
   return KUndefUnhandledDimension->cloneTree();
@@ -2222,6 +2217,9 @@ Tree* ExtractRealPart(const Tree* e) {
   std::complex<double> value = PrivateToComplex<double>(e, nullptr);
   return SharedTreeStack->pushDoubleFloat(value.real());
 }
+
+template Tree* GenericTo(const Tree*, FloatPrecision, Parameters,
+                         const Context&);
 
 template std::complex<float> ToComplex(const Tree*, Parameters, const Context&);
 template std::complex<double> ToComplex(const Tree*, Parameters,

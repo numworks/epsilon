@@ -121,7 +121,7 @@ template <typename T>
 SystemExpression UserExpression::approximateUserToTree(
     AngleUnit angleUnit, ComplexFormat complexFormat,
     const SymbolContext& symbolContext) const {
-  return SystemExpression::Builder(Approximation::ToTree(
+  return SystemExpression::Builder(Approximation::GenericTo<Tree*>(
       tree(), Approximation::Precision<T>::value,
       Approximation::Parameters{.projectLocalVariables = true},
       Approximation::Context(angleUnit, complexFormat, symbolContext)));
@@ -166,7 +166,7 @@ UserExpression UserExpression::cloneAndApproximate(
         a, Approximation::Precision<T>::value, approxCtx);
   } else {
     // Note: The non-beautified expression could be approximated instead.
-    a = Approximation::ToTree(
+    a = Approximation::GenericTo<Tree*>(
         tree(), Approximation::Precision<T>::value,
         Approximation::Parameters{.projectLocalVariables = true}, approxCtx);
     Beautification::DeepBeautify(a, context, Internal::Dimension::Get(a));

@@ -169,9 +169,9 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
   ComplexProperties discriminantProperties =
       PropertiesOfTreeOrApproximation(discriminant);
   assert(discriminantProperties.isReal());
-  TreeRef approximatedRoots =
-      Approximation::ToTree(roots, Approximation::FloatPrecision::Double,
-                            Approximation::Parameters{});
+  TreeRef approximatedRoots = Approximation::GenericTo<Tree*>(
+      roots, Approximation::FloatPrecision::Double,
+      Approximation::Parameters{});
   assert(approximatedRoots->isList());
   if (discriminantProperties.realSign().isPositive()) {
     // If the discriminant is positive or zero, all roots are real.
@@ -441,9 +441,9 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
   Tree* delta1 = Delta1(a, b, c, d);
   Tree* cardano = CardanoNumber(delta0, delta1);
   if (approximateCardanoNumber) {
-    cardano->moveTreeOverTree(
-        Approximation::ToTree(cardano, Approximation::FloatPrecision::Double,
-                              Approximation::Parameters{}));
+    cardano->moveTreeOverTree(Approximation::GenericTo<Tree*>(
+        cardano, Approximation::FloatPrecision::Double,
+        Approximation::Parameters{}));
   }
 
   /* If the discriminant is not zero, then the Cardano number cannot be zero. */
@@ -468,9 +468,9 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
          PropertiesOfTreeOrApproximation(c).isReal() &&
          PropertiesOfTreeOrApproximation(d).isReal())
             ? Roots::ApproximateRootsOfRealCubic(rootList, delta)
-            : Approximation::ToTree(rootList,
-                                    Approximation::FloatPrecision::Double,
-                                    Approximation::Parameters{}));
+            : Approximation::GenericTo<Tree*>(
+                  rootList, Approximation::FloatPrecision::Double,
+                  Approximation::Parameters{}));
   }
   NAry::SortList(rootList, Order::OrderType::ComplexLine);
   return rootList;

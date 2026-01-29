@@ -544,7 +544,7 @@ ComplexProperties PropertiesOfTreeOrApproximation(const Tree* e) {
   ComplexProperties properties = GetComplexProperties(e);
   if (!properties.realSign().hasKnownStrictSign() ||
       !properties.imagSign().hasKnownStrictSign()) {
-    Tree* approximation = Approximation::ToTree(
+    Tree* approximation = Approximation::GenericTo<Tree*>(
         e, Approximation::FloatPrecision::Double, Approximation::Parameters{});
     properties = GetComplexProperties(approximation);
     approximation->removeTree();

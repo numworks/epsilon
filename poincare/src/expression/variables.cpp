@@ -209,12 +209,13 @@ void Variables::ReplaceUserFunctionOrSequenceWithTree(Tree* e,
   // Otherwise, local variable scope should be handled.
   assert(!Variables::HasVariables(replacement));
   TreeRef evaluateAt = e->child(0)->cloneTree();
-  e->cloneTreeOverTree(replacement);
-  if (!e->deepReplaceWith(KUnknownSymbol, evaluateAt)) {
+  Tree* replacementClone = replacement->cloneTree();
+  if (!replacementClone->deepReplaceWith(KUnknownSymbol, evaluateAt)) {
     // If f(x) does not depend on x, add a dependency on x
-    e->moveTreeOverTree(PatternMatching::Create(KDep(KA, KDepList(KB)),
-                                                {.KA = e, .KB = evaluateAt}));
+    replacementClone->moveTreeOverTree(PatternMatching::Create(
+        KDep(KA, KDepList(KB)), {.KA = replacementClone, .KB = evaluateAt}));
   }
+  e->moveTreeOverTree(replacementClone);
   evaluateAt->removeTree();
 }
 

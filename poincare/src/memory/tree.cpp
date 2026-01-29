@@ -572,20 +572,10 @@ bool Tree::ApplyShallowBottomUp(Tree* t, ShallowOperation shallowOperation,
 }
 
 bool Tree::deepReplaceWith(const Tree* target, const Tree* replacement) {
+  /* [replacement] and [target] must be either out of the TreeStack, or before
+   * [this] to be preserved during replacement. */
   assert(SharedTreeStack->isAfter(replacement, this) &&
          SharedTreeStack->isAfter(target, this));
-  if (replaceWith(target, replacement)) {
-    return true;
-  }
-  bool changed = false;
-  for (Tree* child : children()) {
-    changed = child->deepReplaceWith(target, replacement) || changed;
-  }
-  return changed;
-}
-
-bool Tree::deepReplaceWith(const Tree* target, TreeRef& replacement) {
-  assert(SharedTreeStack->isAfter(target, this));
   if (replaceWith(target, replacement)) {
     return true;
   }

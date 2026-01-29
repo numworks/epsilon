@@ -112,18 +112,39 @@ inline Tree* Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
 template <typename T>
 std::complex<T> ToComplex(const Tree* e, Parameters params,
                           const Context& context) {
-  if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
-    return NAN;
-  }
-  assert(Dimension::IsNonListScalar(e, context.m_symbolContext));
+  return GenericTo<std::complex<T>>(e, Precision<T>::value, params, context);
+};
+
+template <>
+std::complex<float> Private::UndefinedUnhandledDimension() {
+  return std::complex<float>{NAN};
+}
+
+template <>
+std::complex<double> Private::UndefinedUnhandledDimension() {
+  return std::complex<double>{NAN};
+}
+
+template <>
+inline std::complex<float> Private::SpecificTo(const Tree* e,
+                                               FloatPrecision floatPrecision,
+                                               Parameters params,
+                                               const Context& context) {
+  assert(floatPrecision == FloatPrecision::Single);
   assert(!params.optimize);
-  Tree* clone = PrepareTree(e, Precision<T>::value, params, context);
-  const Tree* target = clone ? clone : e;
-  std::complex<T> c = PrivateToComplex<T>(target, &context);
-  if (clone) {
-    clone->removeTree();
-  }
-  return c;
+  assert(Dimension::IsNonListScalar(e, context.m_symbolContext));
+  return PrivateToComplex<float>(e, &context);
+};
+
+template <>
+inline std::complex<double> Private::SpecificTo(const Tree* e,
+                                                FloatPrecision floatPrecision,
+                                                Parameters params,
+                                                const Context& context) {
+  assert(floatPrecision == FloatPrecision::Double);
+  assert(!params.optimize);
+  assert(Dimension::IsNonListScalar(e, context.m_symbolContext));
+  return PrivateToComplex<double>(e, &context);
 };
 
 template <typename T>

@@ -32,11 +32,6 @@ class AbstractTreeStack : public BlockStack {
 
   size_t numberOfTrees() const;
 
-  // Will changing the modified tree alter the other tree ?
-  bool isAfter(const Tree* other, Tree* modified) {
-    return !contains(other->block()) || other < modified;
-  }
-
   // Initialize trees
   Tree* initFromAddress(const void* address, bool isTree = true) {
     return Tree::FromBlocks(BlockStack::initFromAddress(address, isTree));

@@ -29,7 +29,7 @@ void approximates_to(const Tree* n, T f) {
 
 template <typename T>
 void approximates_to(const Tree* n, const Tree* expected) {
-  Tree* approx = Approximation::GenericTo<Tree*>(
+  Tree* approx = Approximation::To<Tree*>(
       n, Approximation::Precision<T>::value,
       Approximation::Parameters{.projectLocalVariables = true},
       Approximation::Context(AngleUnit::Radian, ComplexFormat::Real));
@@ -80,7 +80,7 @@ void approximates_to(const char* input, const char* output,
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
-        tree->moveTreeOverTree(Approximation::GenericTo<Tree*>(
+        tree->moveTreeOverTree(Approximation::To<Tree*>(
             tree, Approximation::Precision<T>::value,
             Approximation::Parameters{.projectLocalVariables = true},
             Approximation::Context(projectionContext.m_angleUnit,
@@ -104,7 +104,7 @@ void approximates_to_float_and_double(const char* expression,
 void approximates_to_boolean(const Tree* n,
                              Approximation::BooleanOrUndefined expected) {
   Approximation::BooleanOrUndefined approx =
-      Approximation::GenericTo<Approximation::BooleanOrUndefined>(
+      Approximation::To<Approximation::BooleanOrUndefined>(
           n, Approximation::FloatPrecision::Single,
           Approximation::Parameters{.projectLocalVariables = true},
           Approximation::Context(AngleUnit::Radian, ComplexFormat::Real));
@@ -119,7 +119,7 @@ void approximates_to_boolean(const char* input,
                              const ProjectionContext& projectionContext) {
   Tree* expression = parse(input, projectionContext.m_context);
   Approximation::BooleanOrUndefined approx =
-      Approximation::GenericTo<Approximation::BooleanOrUndefined>(
+      Approximation::To<Approximation::BooleanOrUndefined>(
           expression, Approximation::FloatPrecision::Single,
           Approximation::Parameters{.projectLocalVariables = true},
           Approximation::Context(projectionContext.m_angleUnit,
@@ -151,7 +151,7 @@ void simplified_approximates_to(const char* input, const char* output,
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
         simplify(tree, projectionContext, false);
-        tree->moveTreeOverTree(Approximation::GenericTo<Tree*>(
+        tree->moveTreeOverTree(Approximation::To<Tree*>(
             tree, Approximation::Precision<T>::value,
             Approximation::Parameters{.projectLocalVariables = true},
             Approximation::Context(projectionContext.m_angleUnit,
@@ -170,7 +170,7 @@ void projected_approximates_to(const char* input, const char* output,
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
         Simplification::ToSystem(tree, projectionContext);
-        tree->moveTreeOverTree(Approximation::GenericTo<Tree*>(
+        tree->moveTreeOverTree(Approximation::To<Tree*>(
             tree, Approximation::Precision<T>::value,
             Approximation::Parameters{.prepare = true},
             Approximation::Context(projectionContext.m_angleUnit,

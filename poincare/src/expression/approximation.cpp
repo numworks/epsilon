@@ -81,8 +81,8 @@ struct FloatTypeAccessor<double> {
 };
 
 template <typename ReturnType, typename FloatType>
-ReturnType GenericTo(const Tree* e, FloatType abscissa, Parameters params,
-                     const Context& context) {
+ReturnType To(const Tree* e, FloatType abscissa, Parameters params,
+              const Context& context) {
   static_assert(
       std::is_same_v<FloatType, Tree*> ||
       std::is_same_v<FloatType, BooleanOrUndefined> ||
@@ -91,20 +91,18 @@ ReturnType GenericTo(const Tree* e, FloatType abscissa, Parameters params,
   Context contextCopy = context;
   LocalContext localContext(abscissa, contextCopy.m_localContext);
   contextCopy.m_localContext = &localContext;
-  return GenericTo<ReturnType>(e, Precision<FloatType>::value, params,
-                               contextCopy);
+  return To<ReturnType>(e, Precision<FloatType>::value, params, contextCopy);
 }
 
 template <typename ReturnType>
-ReturnType GenericTo(const Tree* e, Parameters params, const Context& context) {
+ReturnType To(const Tree* e, Parameters params, const Context& context) {
   using float_type = typename FloatTypeAccessor<ReturnType>::type;
-  return GenericTo<ReturnType>(e, Precision<float_type>::value, params,
-                               context);
+  return To<ReturnType>(e, Precision<float_type>::value, params, context);
 }
 
 template <typename ReturnType>
-ReturnType GenericTo(const Tree* e, FloatPrecision floatPrecision,
-                     Parameters params, const Context& context) {
+ReturnType To(const Tree* e, FloatPrecision floatPrecision, Parameters params,
+              const Context& context) {
   // TODO: we would prefer to have an assertion here
   if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
     return UndefinedUnhandledDimension<ReturnType>();
@@ -199,11 +197,10 @@ PointOrRealScalar<float> Private::SpecificTo(const Tree* e,
   assert(floatPrecision == FloatPrecision::Single);
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
-  return dim.isPoint()
-             ? PointOrRealScalar<float>(GenericTo<Coordinate2D<float>>(
-                   e, floatPrecision, params, context))
-             : PointOrRealScalar<float>(
-                   GenericTo<float>(e, floatPrecision, params, context));
+  return dim.isPoint() ? PointOrRealScalar<float>(To<Coordinate2D<float>>(
+                             e, floatPrecision, params, context))
+                       : PointOrRealScalar<float>(
+                             To<float>(e, floatPrecision, params, context));
 }
 
 template <>
@@ -214,11 +211,10 @@ PointOrRealScalar<double> Private::SpecificTo(const Tree* e,
   assert(floatPrecision == FloatPrecision::Double);
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
-  return dim.isPoint()
-             ? PointOrRealScalar<double>(GenericTo<Coordinate2D<double>>(
-                   e, floatPrecision, params, context))
-             : PointOrRealScalar<double>(
-                   GenericTo<double>(e, floatPrecision, params, context));
+  return dim.isPoint() ? PointOrRealScalar<double>(To<Coordinate2D<double>>(
+                             e, floatPrecision, params, context))
+                       : PointOrRealScalar<double>(
+                             To<double>(e, floatPrecision, params, context));
 }
 
 template <>
@@ -234,11 +230,6 @@ inline BooleanOrUndefined Private::SpecificTo(const Tree* e,
   assert(!params.optimize);
   return PrivateToBoolean(e, floatPrecision, &context);
 };
-
-template <typename T>
-T To(const Tree* e, Parameters params, const Context& context) {
-  return GenericTo<T>(e, params, context);
-}
 
 template <>
 float Private::UndefinedUnhandledDimension() {
@@ -288,11 +279,6 @@ inline double Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
   }
   return PrivateTo<double>(e, &context);
 };
-
-template <typename T>
-T To(const Tree* e, T abscissa, Parameters params, const Context& context) {
-  return GenericTo<T>(e, abscissa, params, context);
-}
 
 template <>
 Coordinate2D<float> Private::UndefinedUnhandledDimension() {
@@ -2188,27 +2174,21 @@ Tree* ExtractRealPart(const Tree* e) {
   return SharedTreeStack->pushDoubleFloat(value.real());
 }
 
-template Tree* GenericTo(const Tree*, FloatPrecision, Parameters,
-                         const Context&);
-template std::complex<float> GenericTo(const Tree*, Parameters, const Context&);
-template std::complex<double> GenericTo(const Tree*, Parameters,
-                                        const Context&);
-template Coordinate2D<float> GenericTo(const Tree*, Parameters, const Context&);
-template Coordinate2D<double> GenericTo(const Tree*, Parameters,
-                                        const Context&);
-template PointOrRealScalar<float> GenericTo(const Tree*, float, Parameters,
-                                            const Context&);
-template PointOrRealScalar<double> GenericTo(const Tree*, double, Parameters,
-                                             const Context&);
-
-template BooleanOrUndefined GenericTo(const Tree*, FloatPrecision, Parameters,
-                                      const Context&);
-
 template float To(const Tree*, Parameters, const Context&);
 template double To(const Tree*, Parameters, const Context&);
-
 template float To(const Tree*, float, Parameters, const Context&);
 template double To(const Tree*, double, Parameters, const Context&);
+template Tree* To(const Tree*, FloatPrecision, Parameters, const Context&);
+template std::complex<float> To(const Tree*, Parameters, const Context&);
+template std::complex<double> To(const Tree*, Parameters, const Context&);
+template Coordinate2D<float> To(const Tree*, Parameters, const Context&);
+template Coordinate2D<double> To(const Tree*, Parameters, const Context&);
+template PointOrRealScalar<float> To(const Tree*, float, Parameters,
+                                     const Context&);
+template PointOrRealScalar<double> To(const Tree*, double, Parameters,
+                                      const Context&);
+template BooleanOrUndefined To(const Tree*, FloatPrecision, Parameters,
+                               const Context&);
 
 template float FloatBinomial(float, float);
 template double FloatBinomial(double, double);

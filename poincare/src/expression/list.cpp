@@ -298,14 +298,14 @@ bool List::ShallowApplyListOperators(Tree* e) {
       if (hasWeightList) {
         // weights are approximated in place
         BubbleUp(weightsList, SystematicReduction::ShallowReduce);
-        weightsList->moveTreeOverTree(Approximation::GenericTo<Tree*>(
+        weightsList->moveTreeOverTree(Approximation::To<Tree*>(
             weightsList, Approximation::Precision<T>::value,
             Approximation::Parameters{}));
         assert(weightsList->isList());
       }
       /* values are not approximated in place since we need to keep the exact
        * values to return the exact median */
-      Tree* approximatedList = Approximation::GenericTo<Tree*>(
+      Tree* approximatedList = Approximation::To<Tree*>(
           valuesList, Approximation::Precision<T>::value,
           Approximation::Parameters{});
       assert(approximatedList->isList());

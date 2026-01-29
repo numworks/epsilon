@@ -148,28 +148,17 @@ class BooleanOrUndefined {
 
 // Common approximation pipeline for all return types
 template <typename ReturnType>
-ReturnType GenericTo(const Tree* e, FloatPrecision floatPrecision,
-                     Parameters params, const Context& context = Context());
+ReturnType To(const Tree* e, FloatPrecision floatPrecision, Parameters params,
+              const Context& context = Context());
 
 // In this version, the float precision is deduced from the ReturnType
 template <typename ReturnType>
-ReturnType GenericTo(const Tree* e, Parameters params,
-                     const Context& context = Context());
+ReturnType To(const Tree* e, Parameters params,
+              const Context& context = Context());
 
 template <typename ReturnType, typename FloatType>
-ReturnType GenericTo(const Tree* e, FloatType abscissa, Parameters params,
-                     const Context& context = Context());
-
-/* Approximate [e] to a real. [e] must be of scalar or unit dimension (or a list
- * of such dimension with a list element in context). */
-template <typename T>
-T To(const Tree* e, Parameters params, const Context& context = Context());
-
-/* Approximate to real any scalar, unit, list/point with a list/point element,
-with given value for VarX */
-template <typename T>
-T To(const Tree* e, T abscissa, Parameters params,
-     const Context& context = Context());
+ReturnType To(const Tree* e, FloatType abscissa, Parameters params,
+              const Context& context = Context());
 
 /* Helpers */
 
@@ -231,7 +220,7 @@ ReturnType SpecificTo(const Tree* e, FloatPrecision floatPrecision,
 /* Undefined value representing an unhandled dimension for the T type (Tree,
  * float / double, boolean etc.)
  * TODO: this template method and its specializations can disappear once we find
- * a way to assert the dimension check in GenericTo instead of returning an
+ * a way to assert the dimension check in To instead of returning an
  * undefined value. */
 template <typename T>
 T UndefinedUnhandledDimension();

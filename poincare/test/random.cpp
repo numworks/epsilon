@@ -70,7 +70,7 @@ template <typename T>
 void simplify_and_compare_approximates_list(const char* input, bool equal) {
   Tree* e = parse_and_reduce(input, true);
   assert(Dimension::ListLength(e) == 2);
-  Tree* eApproximated = Approximation::GenericTo<Tree*>(
+  Tree* eApproximated = Approximation::To<Tree*>(
       e, Approximation::Precision<T>::value,
       Approximation::Parameters{.projectLocalVariables = true});
   T approx1 = Approximation::To<T>(eApproximated->child(0),
@@ -146,7 +146,7 @@ void assert_approximate_is_int(const char* input, int lowerBound,
   Tree* e = parse_and_reduce(input, true);
   if (Dimension::IsList(e)) {
     int length = Dimension::ListLength(e);
-    Tree* eApproximated = Approximation::GenericTo<Tree*>(
+    Tree* eApproximated = Approximation::To<Tree*>(
         e, Approximation::FloatPrecision::Single,
         Approximation::Parameters{.projectLocalVariables = true});
     assert(length > 0);
@@ -202,7 +202,7 @@ void assert_no_duplicates_in_list(const char* expression) {
                .m_angleUnit = Poincare::AngleUnit::Radian,
            },
            false);
-  e->moveTreeOverTree(Approximation::GenericTo<Tree*>(
+  e->moveTreeOverTree(Approximation::To<Tree*>(
       e, Approximation::Precision<T>::value, Approximation::Parameters{}));
   // Find duplicates
   assert(e->isList());

@@ -288,12 +288,12 @@ int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
   if (dim.isPoint()) {
     assert(Dimension::Get(e2).isPoint());
     /* TODO: make less calls to Dimension::Get */
-    Coordinate2D<double> p1 = Approximation::GenericTo<Coordinate2D<double>>(
+    Coordinate2D<double> p1 = Approximation::To<Coordinate2D<double>>(
         e1, Approximation::Parameters{});
     if (std::isnan(p1.x()) || std::isnan(p1.y())) {
       TreeStackCheckpoint::Raise(ExceptionType::SortFail);
     }
-    Coordinate2D<double> p2 = Approximation::GenericTo<Coordinate2D<double>>(
+    Coordinate2D<double> p2 = Approximation::To<Coordinate2D<double>>(
         e2, Approximation::Parameters{});
     if (std::isnan(p2.x()) || std::isnan(p2.y())) {
       TreeStackCheckpoint::Raise(ExceptionType::SortFail);
@@ -320,10 +320,10 @@ int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
 int Order::ComplexLineCompare(const Tree* e1, const Tree* e2) {
   assert(Dimension::Get(e1).isScalar() && Dimension::Get(e2).isScalar());
   /* TODO: the approximations could be precomputed and called only once */
-  std::complex<double> v1 = Approximation::GenericTo<std::complex<double>>(
-      e1, Approximation::Parameters{});
-  std::complex<double> v2 = Approximation::GenericTo<std::complex<double>>(
-      e2, Approximation::Parameters{});
+  std::complex<double> v1 =
+      Approximation::To<std::complex<double>>(e1, Approximation::Parameters{});
+  std::complex<double> v2 =
+      Approximation::To<std::complex<double>>(e2, Approximation::Parameters{});
   /* Real numbers are ordered before complex numbers */
   if ((v1.imag() == 0) && (v2.imag() != 0)) {
     return -1;

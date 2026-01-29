@@ -574,8 +574,8 @@ bool ApplyComplexFormat(Tree* e, Dimension dim,
   if (format == ComplexFormat::Real) {
     if (dim.isScalar() && GetComplexProperties(e).isNonReal()) {
       /* Prevent beautification of non-real expressions in Real complex format.
-       * In some projects, complexFormat should have been updated beforehand if
-       * a complex result was expected.*/
+       * If a complex output was expected and can be handled, the complexFormat
+       * should have been updated beforehand using PreferredComplexFormat. */
       e->cloneTreeOverTree(KNonReal);
       return true;
     }

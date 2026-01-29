@@ -151,6 +151,11 @@ template <typename ReturnType>
 ReturnType GenericTo(const Tree* e, FloatPrecision floatPrecision,
                      Parameters params, const Context& context = Context());
 
+// In this version, the float precision is deduced from the ReturnType
+template <typename ReturnType>
+ReturnType GenericTo(const Tree* e, Parameters params,
+                     const Context& context = Context());
+
 template <typename ReturnType, typename FloatType>
 ReturnType GenericTo(const Tree* e, FloatType abscissa, Parameters params,
                      const Context& context = Context());

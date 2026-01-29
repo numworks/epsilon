@@ -7,6 +7,8 @@ namespace Poincare {
 template <typename T>
 class Coordinate2D final {
  public:
+  using value_type = T;
+
   Coordinate2D(T x, T y) : m_x(x), m_y(y) {}
   Coordinate2D() : Coordinate2D(NAN, NAN) {}
 

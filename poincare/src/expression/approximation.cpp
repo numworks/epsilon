@@ -59,15 +59,47 @@ Tree* PostProcessPreparedAndResult(Tree* prepared, Tree* result) {
   return prepared;
 }
 
+template <typename T>
+struct FloatTypeAccessor {
+  /* In the general case, the floating-point type can be accessed looking at the
+   * value_type type definition of T (for example
+   * std::complex<float>::value_type is float) */
+  using type = typename T::value_type;
+};
+
+/* The float and double types are special cases as they do not contain a
+ * value_type nested type. These two template specializations are there to
+ * redirect FloatTypeAccessor to the "float" or "double" type itself */
+template <>
+struct FloatTypeAccessor<float> {
+  using type = float;
+};
+
+template <>
+struct FloatTypeAccessor<double> {
+  using type = double;
+};
+
 template <typename ReturnType, typename FloatType>
 ReturnType GenericTo(const Tree* e, FloatType abscissa, Parameters params,
                      const Context& context) {
+  static_assert(
+      std::is_same_v<FloatType, Tree*> ||
+      std::is_same_v<FloatType, BooleanOrUndefined> ||
+      std::is_same_v<FloatType, typename FloatTypeAccessor<ReturnType>::type>);
   // TODO: rework the LocalContext creation workflow
   Context contextCopy = context;
   LocalContext localContext(abscissa, contextCopy.m_localContext);
   contextCopy.m_localContext = &localContext;
   return GenericTo<ReturnType>(e, Precision<FloatType>::value, params,
                                contextCopy);
+}
+
+template <typename ReturnType>
+ReturnType GenericTo(const Tree* e, Parameters params, const Context& context) {
+  using float_type = typename FloatTypeAccessor<ReturnType>::type;
+  return GenericTo<ReturnType>(e, Precision<float_type>::value, params,
+                               context);
 }
 
 template <typename ReturnType>
@@ -123,7 +155,7 @@ inline Tree* Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
 template <typename T>
 std::complex<T> ToComplex(const Tree* e, Parameters params,
                           const Context& context) {
-  return GenericTo<std::complex<T>>(e, Precision<T>::value, params, context);
+  return GenericTo<std::complex<T>>(e, params, context);
 };
 
 template <>
@@ -161,8 +193,7 @@ inline std::complex<double> Private::SpecificTo(const Tree* e,
 template <typename T>
 PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
                                          const Context& context) {
-  return GenericTo<PointOrRealScalar<T>>(e, Precision<T>::value, params,
-                                         context);
+  return GenericTo<PointOrRealScalar<T>>(e, params, context);
 }
 
 template <>
@@ -235,7 +266,7 @@ inline BooleanOrUndefined Private::SpecificTo(const Tree* e,
 
 template <typename T>
 T To(const Tree* e, Parameters params, const Context& context) {
-  return GenericTo<T>(e, Precision<T>::value, params, context);
+  return GenericTo<T>(e, params, context);
 }
 
 template <>
@@ -295,7 +326,7 @@ T To(const Tree* e, T abscissa, Parameters params, const Context& context) {
 template <typename T>
 Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
                         const Context& context) {
-  return GenericTo<Coordinate2D<T>>(e, Precision<T>::value, params, context);
+  return GenericTo<Coordinate2D<T>>(e, params, context);
 }
 
 template <>

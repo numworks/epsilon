@@ -268,6 +268,7 @@ _sources_poincare_test := $(addprefix test/, \
   ) \
   $(addprefix helpers/, \
     expression_equal_sign.cpp \
+    quiz.cpp \
     symbol_store.cpp \
   ) \
   $(addprefix pool/, \

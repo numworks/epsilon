@@ -19,9 +19,6 @@
 #include <poincare/user_expression.h>
 #include <poincare/variable_context.h>
 
-// Used to test a different logarithmBasePosition. TODO: remove it
-#include <apps/global_preferences.h>
-
 #include "helper.h"
 
 using namespace Poincare::Internal;
@@ -103,6 +100,8 @@ QUIZ_CASE(pcj_expression_to_layout) {
                                KParenthesesL("π+1"_l) ^ "log"_l ^
                                    KSubscriptL("3"_l) ^ KParenthesesL("7"_l));
 
+#warning "Restore country-specific logarithm layout test"
+#if 0
   GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::NL);
   assert(Poincare::SharedPreferences->logarithmBasePosition() ==
          Poincare::Preferences::LogarithmBasePosition::TopLeft);
@@ -111,6 +110,7 @@ QUIZ_CASE(pcj_expression_to_layout) {
                                    KPrefixSuperscriptL("3"_l) ^ "log"_l ^
                                    KParenthesesL("7"_l));
   GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::WW);
+#endif
 }
 
 void assert_expression_layouts_and_serializes_to(const Tree* expression,

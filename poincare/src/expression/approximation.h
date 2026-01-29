@@ -248,7 +248,10 @@ ReturnType SpecificTo(const Tree* e, FloatPrecision floatPrecision,
                       Parameters params, const Context& context);
 
 /* Undefined value representing an unhandled dimension for the T type (Tree,
- * float / double, boolean etc.) */
+ * float / double, boolean etc.)
+ * TODO: this template method and its specializations can disappear once we find
+ * a way to assert the dimension check in GenericTo instead of returning an
+ * undefined value. */
 template <typename T>
 T UndefinedUnhandledDimension();
 

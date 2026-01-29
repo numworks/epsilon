@@ -161,22 +161,57 @@ inline std::complex<double> Private::SpecificTo(const Tree* e,
 template <typename T>
 PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
                                          const Context& context) {
-  assert(Dimension::DeepCheck(e, context.m_symbolContext));
+  return GenericTo<PointOrRealScalar<T>>(e, Precision<T>::value, params,
+                                         context);
+}
+
+template <>
+PointOrRealScalar<float> Private::UndefinedUnhandledDimension() {
+  return PointOrRealScalar<float>(NAN, NAN);
+}
+
+template <>
+PointOrRealScalar<double> Private::UndefinedUnhandledDimension() {
+  return PointOrRealScalar<double>(NAN, NAN);
+}
+
+/* TODO: factorize SpecificTo<PointOrRealScalar<float>> and
+ * SpecificTo<PointOrRealScalar<double>> */
+template <>
+PointOrRealScalar<float> Private::SpecificTo(const Tree* e,
+                                             FloatPrecision floatPrecision,
+                                             Parameters params,
+                                             const Context& context) {
+  assert(floatPrecision == FloatPrecision::Single);
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
-  return dim.isPoint() ? PointOrRealScalar<T>(ToPoint<T>(e, params, context))
-                       : PointOrRealScalar<T>(To<T>(e, params, context));
+  return dim.isPoint()
+             ? PointOrRealScalar<float>(GenericTo<Coordinate2D<float>>(
+                   e, floatPrecision, params, context))
+             : PointOrRealScalar<float>(
+                   GenericTo<float>(e, floatPrecision, params, context));
+}
+
+template <>
+PointOrRealScalar<double> Private::SpecificTo(const Tree* e,
+                                              FloatPrecision floatPrecision,
+                                              Parameters params,
+                                              const Context& context) {
+  assert(floatPrecision == FloatPrecision::Double);
+  Dimension dim = Dimension::Get(e, context.m_symbolContext);
+  assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
+  return dim.isPoint()
+             ? PointOrRealScalar<double>(GenericTo<Coordinate2D<double>>(
+                   e, floatPrecision, params, context))
+             : PointOrRealScalar<double>(
+                   GenericTo<double>(e, floatPrecision, params, context));
 }
 
 template <typename T>
 PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
                                          Parameters params,
                                          const Context& context) {
-  // TODO: rework the LocalContext creation workflow
-  Context contextCopy = context;
-  LocalContext localContext(abscissa, contextCopy.m_localContext);
-  contextCopy.m_localContext = &localContext;
-  return ToPointOrRealScalar<T>(e, params, contextCopy);
+  return GenericTo<PointOrRealScalar<T>>(e, abscissa, params, context);
 }
 
 BooleanOrUndefined ToBoolean(const Tree* e, FloatPrecision floatPrecision,

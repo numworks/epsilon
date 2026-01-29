@@ -41,6 +41,25 @@ static_assert(!POINCARE_NO_FLOAT_APPROXIMATION ||
               "and booleans");
 
 template <typename ReturnType>
+ReturnType PostProcessPreparedAndResult(Tree* prepared, ReturnType result) {
+  assert(prepared);
+  prepared->removeTree();
+  return result;
+}
+
+Tree* PostProcessPreparedAndResult(Tree* prepared, Tree* result) {
+  /* If "result" is a Tree*, "prepared" (which is the tree just before "result")
+   * is removed first (if it is not empty) from the TreeStack, then the
+   * "prepared" pointer points to "result" data and can be returned. This is
+   * done to avoid using a TreeRef for "prepared".
+   * For other return types, this problem doesn't happen */
+  assert(prepared);
+  assert(prepared->nextTree() == result);
+  prepared->removeTree();
+  return prepared;
+}
+
+template <typename ReturnType>
 ReturnType GenericTo(const Tree* e, FloatPrecision floatPrecision,
                      Parameters params, const Context& context) {
   // TODO: we would prefer to have an assertion here
@@ -53,9 +72,7 @@ ReturnType GenericTo(const Tree* e, FloatPrecision floatPrecision,
   if (!prepared) {
     return result;
   }
-  assert(prepared->nextTree() == result);
-  prepared->removeTree();
-  return prepared;
+  return PostProcessPreparedAndResult(prepared, result);
 }
 
 Tree* ToTree(const Tree* e, FloatPrecision floatPrecision, Parameters params,

@@ -20,6 +20,7 @@
 #include <poincare/variable_context.h>
 
 #include "helper.h"
+#include "helpers/preferences.h"
 
 using namespace Poincare::Internal;
 
@@ -100,17 +101,14 @@ QUIZ_CASE(pcj_expression_to_layout) {
                                KParenthesesL("π+1"_l) ^ "log"_l ^
                                    KSubscriptL("3"_l) ^ KParenthesesL("7"_l));
 
-#warning "Restore country-specific logarithm layout test"
-#if 0
-  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::NL);
+  Poincare::MutablePreferences::s_instance->m_logarithmBasePosition =
+      Poincare::Preferences::LogarithmBasePosition::TopLeft;
   assert(Poincare::SharedPreferences->logarithmBasePosition() ==
          Poincare::Preferences::LogarithmBasePosition::TopLeft);
   assert_expression_layouts_as(KMult(KAdd(π_e, 1_e), KLogBase(7_e, 3_e)),
                                KParenthesesL("π+1"_l) ^ "·"_l ^
                                    KPrefixSuperscriptL("3"_l) ^ "log"_l ^
                                    KParenthesesL("7"_l));
-  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::WW);
-#endif
 }
 
 void assert_expression_layouts_and_serializes_to(const Tree* expression,

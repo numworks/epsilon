@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-struct MutablePreferences : public Preferences::Interface {
+struct MutablePreferences final : public Preferences::Interface {
   static OMG::GlobalBox<MutablePreferences> s_instance;
 
   Preferences::CombinatoricSymbols m_combinatoricSymbols =

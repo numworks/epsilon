@@ -17,6 +17,7 @@
 #include <quiz.h>
 
 #include "helper.h"
+#include "helpers/preferences.h"
 #include "helpers/symbol_store.h"
 
 using namespace Poincare::Internal;
@@ -621,9 +622,10 @@ QUIZ_CASE(pcj_parse_mixed_fraction) {
                        KMixedFraction(1_e, KDiv(2_e, 3_e)),
                        Poincare::EmptySymbolContext(), {.preserveInput = true});
 
-#warning "Restore mixed fraction parsing for US locale"
-#if 0
-  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::US);
+  assert_text_not_parsable("1 1/2");
+
+  Poincare::MutablePreferences::s_instance->m_mixedFractions =
+      Poincare::Preferences::MixedFractions::Enabled;
   assert(Poincare::SharedPreferences->mixedFractionsAreEnabled());
   assert_parsed_expression_is("1 2/3", KMixedFraction(1_e, KDiv(2_e, 3_e)));
   assert_parsed_expression_is(
@@ -638,11 +640,6 @@ QUIZ_CASE(pcj_parse_mixed_fraction) {
                               KMult(1_e, KParentheses(KDiv(e_e, 3_e))));
   assert_parsed_expression_is("1(2.5/3)",
                               KMult(1_e, KParentheses(KDiv(2.5_e, 3_e))));
-
-  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::WW);
-#endif
-
-  assert_text_not_parsable("1 1/2");
 }
 
 QUIZ_CASE(pcj_parse_derivative_apostrophe) {

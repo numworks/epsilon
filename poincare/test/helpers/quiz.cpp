@@ -21,6 +21,11 @@ void Env::Init() {
 
 void Env::Shutdown() {}
 
-void Env::Flush() { Internal::SharedTreeStack->flush(); }
+void Env::Flush() {
+  Internal::SharedTreeStack->flush();
+
+  MutablePreferences::s_instance.deinit();
+  MutablePreferences::s_instance.init();
+}
 
 }  // namespace Quiz

@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include "../helpers/preferences.h"
 #include "../helpers/symbol_store.h"
 #include "helper.h"
 
@@ -172,14 +173,11 @@ QUIZ_CASE(pcj_approximation_root) {
 }
 
 QUIZ_CASE(pcj_approximation_mixed_fraction) {
-#warning "Restore mixed fraction approximation tests when implemented"
-#if 0
-  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::US);
+  Poincare::MutablePreferences::s_instance->m_mixedFractions =
+      Poincare::Preferences::MixedFractions::Enabled;
   assert(Poincare::SharedPreferences->mixedFractionsAreEnabled());
   approximates_to<double>("1 1/2", 1.5);
   approximates_to<double>("-1 1/2", -1.5);
-  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::WW);
-#endif
 }
 
 QUIZ_CASE(pcj_approximation_percent) {

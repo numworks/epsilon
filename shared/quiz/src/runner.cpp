@@ -3,6 +3,7 @@
 #include <ion.h>
 #include <omg/unreachable.h>
 #include <poincare/print.h>
+#include <stdlib.h>
 
 #include "cases.h"
 
@@ -117,4 +118,5 @@ void ion_main(int argc, const char* const argv[]) {
   Runner::s_instance.init();
   Runner::s_instance->parseArguments(argc, argv);
   Runner::s_instance->run();
+  exit(0);
 }

@@ -329,6 +329,6 @@ QUIZ_CASE(pcj_simplification_mix_lists) {
   simplifies_to("[[{1,2},{3,4}][3,4]]", "undef");
   simplifies_to("{1,2}+[[1,2][3,4]]", "undef");
   simplifies_to("{1,2}*[[1,2][3,4]]", "undef");
-  // Lists of units are forbidden (TODO restore them?)
+  // Lists of units are not handled for now
   simplifies_to("{1_kg, 2_kg}+3_kg", "undef");
 }

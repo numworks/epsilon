@@ -37,15 +37,16 @@ void RackFromTextRec(UTF8Decoder* decoder, Tree* parent,
 #endif
       default:
         if (codePoint.isCombining()) {
-          assert(parent->numberOfChildren() > 0);
           // This codepoint should be combined with the previous one
-          NAry::RemoveChildAtIndex(parent, parent->numberOfChildren() - 1);
-          decoder->previousCodePoint();
-          CodePoint previousCodePoint = decoder->previousCodePoint();
-          child = CodePointLayout::PushCombined(previousCodePoint, codePoint);
-          decoder->nextCodePoint();
-          decoder->nextCodePoint();
-          break;
+          assert(parent->numberOfChildren() > 0);
+          Tree* lastChild = parent->lastChild();
+          assert(lastChild->isCodePointLayout());
+          CodePoint previousCodePoint =
+              CodePointLayout::GetCodePoint(lastChild);
+          lastChild->moveTreeOverTree(
+              CodePointLayout::PushCombined(previousCodePoint, codePoint));
+          codePoint = decoder->nextCodePoint();
+          continue;
         }
         child = CodePointLayout::Push(codePoint);
     }

@@ -210,8 +210,8 @@ T SystemExpression::approximateSystemToRealScalar() const {
 
 template <typename T>
 Coordinate2D<T> SystemExpression::approximateToPoint() const {
-  return Approximation::ToPoint<T>(tree(),
-                                   Approximation::Parameters{.prepare = true});
+  return Approximation::GenericTo<Coordinate2D<T>>(
+      tree(), Approximation::Parameters{.prepare = true});
 }
 
 template <typename T>

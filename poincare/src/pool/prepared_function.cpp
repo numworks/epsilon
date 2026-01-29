@@ -38,8 +38,8 @@ PointOrRealScalar<T> PreparedFunction::approximateToPointOrRealScalarWithValue(
 
 template <typename T>
 Coordinate2D<T> PreparedFunction::approximateToPoint() const {
-  return Approximation::ToPoint<T>(tree(),
-                                   Approximation::Parameters{.prepare = false});
+  return Approximation::GenericTo<Coordinate2D<T>>(
+      tree(), Approximation::Parameters{.prepare = false});
 }
 
 /* TODO: Find a better way to avoid duplication of Builder, clone, and

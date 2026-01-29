@@ -312,12 +312,6 @@ T To(const Tree* e, T abscissa, Parameters params, const Context& context) {
   return GenericTo<T>(e, abscissa, params, context);
 }
 
-template <typename T>
-Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
-                        const Context& context) {
-  return GenericTo<Coordinate2D<T>>(e, params, context);
-}
-
 template <>
 Coordinate2D<float> Private::UndefinedUnhandledDimension() {
   return Coordinate2D<float>{NAN, NAN};
@@ -2217,6 +2211,9 @@ template Tree* GenericTo(const Tree*, FloatPrecision, Parameters,
 template std::complex<float> GenericTo(const Tree*, Parameters, const Context&);
 template std::complex<double> GenericTo(const Tree*, Parameters,
                                         const Context&);
+template Coordinate2D<float> GenericTo(const Tree*, Parameters, const Context&);
+template Coordinate2D<double> GenericTo(const Tree*, Parameters,
+                                        const Context&);
 
 template PointOrRealScalar<float> ToPointOrRealScalar(const Tree*, Parameters,
                                                       const Context&);
@@ -2235,9 +2232,6 @@ template double To(const Tree*, Parameters, const Context&);
 
 template float To(const Tree*, float, Parameters, const Context&);
 template double To(const Tree*, double, Parameters, const Context&);
-
-template Coordinate2D<float> ToPoint(const Tree*, Parameters, const Context&);
-template Coordinate2D<double> ToPoint(const Tree*, Parameters, const Context&);
 
 template float FloatBinomial(float, float);
 template double FloatBinomial(double, double);

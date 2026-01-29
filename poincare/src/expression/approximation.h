@@ -180,10 +180,6 @@ PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
                                          Parameters params,
                                          const Context& context = Context());
 
-template <typename T>
-Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
-                        const Context& context = Context());
-
 BooleanOrUndefined ToBoolean(const Tree* e, FloatPrecision floatPrecision,
                              Parameters params,
                              const Context& context = Context());

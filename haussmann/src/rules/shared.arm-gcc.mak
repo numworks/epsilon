@@ -34,3 +34,12 @@ $(OUTPUT_DIRECTORY)/%.elf.size_tree: $(OUTPUT_DIRECTORY)/%.elf
 	$(PYTHON) tools/device/elf_size_tree.py $< $(if $(JSON),--json,--rich)
 
 $(call document_extension,elf.size_tree,Generate a size tree from the ELF file. Pass JSON=1 to generate a JSON file instead of a rich text output.)
+
+$(OUTPUT_DIRECTORY)/%.qemu: $(OUTPUT_DIRECTORY)/%.semihosting.bin
+	$(call rule_label,QEMU)
+	$(call assert_defined,QEMU_ARM)
+	$(call assert_defined,QEMU_ARM_FLAGS)
+	$(if $(shell command -v $(QEMU_ARM) 2> /dev/null),,$(error "QEMU_ARM ($(QEMU_ARM)) not found in PATH"))
+	$(QEMU_ARM) $(QEMU_ARM_FLAGS) -kernel $<
+
+$(call document_extension,qemu,Run the <...>.semihosting.bin file in QEMU.)

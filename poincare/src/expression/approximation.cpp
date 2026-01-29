@@ -189,8 +189,25 @@ inline BooleanOrUndefined Private::SpecificTo(const Tree* e,
 
 template <typename T>
 T To(const Tree* e, Parameters params, const Context& context) {
+  return GenericTo<T>(e, Precision<T>::value, params, context);
+}
+
+template <>
+float Private::UndefinedUnhandledDimension() {
+  return NAN;
+}
+
+template <>
+double Private::UndefinedUnhandledDimension() {
+  return NAN;
+}
+
+// TODO: factorize Private::SpecificTo<float> and Private::SpecificTo<double>
+template <>
+inline float Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
+                                 Parameters params, const Context& context) {
+  assert(floatPrecision == FloatPrecision::Single);
   // Units are tolerated in scalar approximation (replaced with SI ratios).
-  assert(Dimension::DeepCheck(e, context.m_symbolContext));
 #if ASSERTIONS
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
   assert(dim.isScalar() || dim.isUnit());
@@ -198,17 +215,30 @@ T To(const Tree* e, Parameters params, const Context& context) {
   assert(context.m_listElement != -1 ||
          !Dimension::IsList(e, context.m_symbolContext));
   assert(!params.optimize);
-  Tree* clone = PrepareTree(e, Precision<T>::value, params, context);
-  const Tree* target = clone ? clone : e;
   if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
                                  std::isnan(context.variable(0).imag()))) {
     return NAN;
   }
-  T result = PrivateTo<T>(target, &context);
-  if (clone) {
-    clone->removeTree();
+  return PrivateTo<float>(e, &context);
+};
+
+template <>
+inline double Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
+                                  Parameters params, const Context& context) {
+  assert(floatPrecision == FloatPrecision::Double);
+  // Units are tolerated in scalar approximation (replaced with SI ratios).
+#if ASSERTIONS
+  Dimension dim = Dimension::Get(e, context.m_symbolContext);
+  assert(dim.isScalar() || dim.isUnit());
+#endif
+  assert(context.m_listElement != -1 ||
+         !Dimension::IsList(e, context.m_symbolContext));
+  assert(!params.optimize);
+  if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
+                                 std::isnan(context.variable(0).imag()))) {
+    return NAN;
   }
-  return result;
+  return PrivateTo<double>(e, &context);
 };
 
 template <typename T>

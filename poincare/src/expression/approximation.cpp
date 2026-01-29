@@ -147,12 +147,6 @@ inline Tree* Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
   return result;
 }
 
-template <typename T>
-std::complex<T> ToComplex(const Tree* e, Parameters params,
-                          const Context& context) {
-  return GenericTo<std::complex<T>>(e, params, context);
-};
-
 template <>
 std::complex<float> Private::UndefinedUnhandledDimension() {
   return std::complex<float>{NAN};
@@ -2220,9 +2214,8 @@ Tree* ExtractRealPart(const Tree* e) {
 
 template Tree* GenericTo(const Tree*, FloatPrecision, Parameters,
                          const Context&);
-
-template std::complex<float> ToComplex(const Tree*, Parameters, const Context&);
-template std::complex<double> ToComplex(const Tree*, Parameters,
+template std::complex<float> GenericTo(const Tree*, Parameters, const Context&);
+template std::complex<double> GenericTo(const Tree*, Parameters,
                                         const Context&);
 
 template PointOrRealScalar<float> ToPointOrRealScalar(const Tree*, Parameters,

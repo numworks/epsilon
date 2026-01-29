@@ -350,10 +350,10 @@ QUIZ_CASE(pcj_approximation_capped) {
   }
   (1_e)->cloneTree();
 
-  quiz_assert(Approximation::ToComplex<float>(
+  quiz_assert(Approximation::GenericTo<std::complex<float>>(
                   almostBigTree, Approximation::Parameters()) == 1.f);
-  quiz_assert(std::isnan(
-      Approximation::ToComplex<float>(bigTree, Approximation::Parameters())
-          .real()));
+  quiz_assert(std::isnan(Approximation::GenericTo<std::complex<float>>(
+                             bigTree, Approximation::Parameters())
+                             .real()));
 #endif
 }

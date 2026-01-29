@@ -191,9 +191,12 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
       return approximatedRoots;
     }
     // The real root is the root with the smallest imaginary part
-    std::complex<float> r1Value = Approximation::ToComplex<float>(r1, {});
-    std::complex<float> r2Value = Approximation::ToComplex<float>(r2, {});
-    std::complex<float> r3Value = Approximation::ToComplex<float>(r3, {});
+    std::complex<float> r1Value =
+        Approximation::GenericTo<std::complex<float>>(r1, {});
+    std::complex<float> r2Value =
+        Approximation::GenericTo<std::complex<float>>(r2, {});
+    std::complex<float> r3Value =
+        Approximation::GenericTo<std::complex<float>>(r3, {});
     bool compareR1R2 = std::abs(r1Value.imag()) < std::abs(r2Value.imag());
     bool compareR2R3 = std::abs(r2Value.imag()) < std::abs(r3Value.imag());
     bool compareR1R3 = std::abs(r1Value.imag()) < std::abs(r3Value.imag());

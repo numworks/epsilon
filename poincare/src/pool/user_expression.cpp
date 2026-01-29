@@ -291,7 +291,7 @@ bool UserExpression::hasDefinedComplexApproximation(
       !Internal::Dimension::IsNonListScalar(tree())) {
     return false;
   }
-  std::complex<T> z = Approximation::ToComplex<T>(
+  std::complex<T> z = Approximation::GenericTo<std::complex<T>>(
       tree(), Approximation::Parameters{.projectLocalVariables = true},
       Approximation::Context(angleUnit, complexFormat, symbolContext));
   T b = z.imag();

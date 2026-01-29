@@ -41,8 +41,8 @@ static bool ApproximationIsFinite(const Tree* e) {
   if (!Approximation::CanApproximate(e)) {
     return false;
   }
-  std::complex<double> approx =
-      Approximation::ToComplex<double>(e, Approximation::Parameters{});
+  std::complex<double> approx = Approximation::GenericTo<std::complex<double>>(
+      e, Approximation::Parameters{});
   return std::isfinite(approx.real()) && std::isfinite(approx.imag());
 }
 

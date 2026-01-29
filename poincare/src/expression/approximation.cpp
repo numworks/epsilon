@@ -223,21 +223,43 @@ T To(const Tree* e, T abscissa, Parameters params, const Context& context) {
 template <typename T>
 Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
                         const Context& context) {
-  assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
-         Dimension::Get(e, context.m_symbolContext).isPoint());
+  return GenericTo<Coordinate2D<T>>(e, Precision<T>::value, params, context);
+}
+
+template <>
+Coordinate2D<float> Private::UndefinedUnhandledDimension() {
+  return Coordinate2D<float>{NAN, NAN};
+}
+
+template <>
+Coordinate2D<double> Private::UndefinedUnhandledDimension() {
+  return Coordinate2D<double>{NAN, NAN};
+}
+
+template <>
+inline Coordinate2D<float> Private::SpecificTo(const Tree* e,
+                                               FloatPrecision floatPrecision,
+                                               Parameters params,
+                                               const Context& context) {
   assert(!params.optimize);
-  Tree* clone = PrepareTree(e, Precision<T>::value, params, context);
-  const Tree* target = clone ? clone : e;
-  Coordinate2D<T> result = PrivateToCoordinates<T>(target, context);
-  if (clone) {
-    clone->removeTree();
-  }
-  return result;
+  assert(floatPrecision == FloatPrecision::Single);
+  return PrivateToCoordinates<float>(e, context);
+}
+
+template <>
+inline Coordinate2D<double> Private::SpecificTo(const Tree* e,
+                                                FloatPrecision floatPrecision,
+                                                Parameters params,
+                                                const Context& context) {
+  assert(!params.optimize);
+  assert(floatPrecision == FloatPrecision::Double);
+  return PrivateToCoordinates<double>(e, context);
 }
 
 template <typename T>
 Coordinate2D<T> Private::PrivateToCoordinates(const Tree* e,
                                               const Context& context) {
+  assert(Dimension::Get(e, context.m_symbolContext).isPoint());
   if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
                                  std::isnan(context.variable(0).imag()))) {
     return Coordinate2D<T>(NAN, NAN);

@@ -171,10 +171,6 @@ template <typename T>
 T To(const Tree* e, T abscissa, Parameters params,
      const Context& context = Context());
 
-BooleanOrUndefined ToBoolean(const Tree* e, FloatPrecision floatPrecision,
-                             Parameters params,
-                             const Context& context = Context());
-
 /* Helpers */
 
 /* Approximate expression at KVarX/K = x. tree must be of scalar dimension and

@@ -221,11 +221,6 @@ PointOrRealScalar<double> Private::SpecificTo(const Tree* e,
                    GenericTo<double>(e, floatPrecision, params, context));
 }
 
-BooleanOrUndefined ToBoolean(const Tree* e, FloatPrecision floatPrecision,
-                             Parameters params, const Context& context) {
-  return GenericTo<BooleanOrUndefined>(e, floatPrecision, params, context);
-};
-
 template <>
 BooleanOrUndefined Private::UndefinedUnhandledDimension() {
   return BooleanOrUndefined::Undef();
@@ -2205,6 +2200,9 @@ template PointOrRealScalar<float> GenericTo(const Tree*, float, Parameters,
                                             const Context&);
 template PointOrRealScalar<double> GenericTo(const Tree*, double, Parameters,
                                              const Context&);
+
+template BooleanOrUndefined GenericTo(const Tree*, FloatPrecision, Parameters,
+                                      const Context&);
 
 template float To(const Tree*, Parameters, const Context&);
 template double To(const Tree*, Parameters, const Context&);

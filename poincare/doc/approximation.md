@@ -1,16 +1,22 @@
 # Approximation API
 
-## Main entry points
+## Entry point
 
-These are methods taking an input `const Tree *`, `Parameters` and an optional `Context`.
+`Approximation::To` is the main approximation entry point.
+This method takes a `const Tree *` input, `Parameters` and an optional `Context`.
+The return type is a customization point of the template method.
+Available return types are:
+- `Tree*`
+- `float` / `double`
+- `std::complex<float>` / `std::complex<double>`
+- `Coordinate2D<float>` / `Coordinate2D<float>`
+- `PointOrRealScalar<float>` / `PointOrRealScalar<double>`
+- `BooleanOrUndefined`
 
-They return the approximated input under the requested dimension :
-- `ToTree` : Return a Tree.
-- `To` : Return a `double` or `float`, it is also overloaded to take an abscissa as parameter and replace Var0 with this value.
-- `ToComplex` :  Return a `std::complex`.
-- `ToPointOrRealScalar` : Return a `PointOrRealScalar`, also overloaded to take an abscissa.
-- `ToPoint` : Return a `Point`.
-- `ToBoolean` : Return an `Approximation::BooleanOrUndefined` value.
+Types which have both a `float` and a `double` version automatically set the float precision of the approximation algorithm to `FloatPrecision::Single` or `FloatPrecision::Double` respectively.
+For types which do not have a float type included (`Tree*` and `BooleanOrUndefined`), the `Approximation::To` overload with the `FloatPrecision` parameter must be used to specify the desired float precision.
+
+Another overload of `Approximation::To` allows to pass an abscissa (as a `float` or a `double` value). Var0 in the expression will be replaced by the value passed in this "abscissa" parameter. The float precision is automatically deduced from the "abscissa" float type.
 
 ### Parameters
 
@@ -32,7 +38,7 @@ This also greatly improve integral approximations.
 
 #### optimise
 
-In addition to `prepare` parameter, and only used in `ToTree`.
+In addition to `prepare` parameter, and only used for the `Tree*` return type of `Approximation::To`.
 
 The resulting Tree will have been optimized for successive approximations (for Grapher for example).
 

@@ -243,6 +243,11 @@ template <typename ReturnType>
 ReturnType SpecificTo(const Tree* e, FloatPrecision floatPrecision,
                       Parameters params, const Context& context);
 
+/* Undefined value representing an unhandled dimension for the T type (Tree,
+ * float / double, boolean etc.) */
+template <typename T>
+T UndefinedUnhandledDimension();
+
 // Tree can be of any dimension
 Tree* PrivateToTree(const Tree* e, FloatPrecision floatPrecision, Dimension dim,
                     const Context* ctx);

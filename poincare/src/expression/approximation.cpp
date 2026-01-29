@@ -45,8 +45,7 @@ ReturnType GenericTo(const Tree* e, FloatPrecision floatPrecision,
                      Parameters params, const Context& context) {
   // TODO: we would prefer to have an assertion here
   if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
-    // TODO: generic undef
-    return KUndefUnhandledDimension->cloneTree();
+    return UndefinedUnhandledDimension<ReturnType>();
   }
   Tree* prepared = PrepareTree(e, floatPrecision, params, context);
   ReturnType result = SpecificTo<ReturnType>(prepared ? prepared : e,
@@ -62,6 +61,11 @@ ReturnType GenericTo(const Tree* e, FloatPrecision floatPrecision,
 Tree* ToTree(const Tree* e, FloatPrecision floatPrecision, Parameters params,
              const Context& context) {
   return GenericTo<Tree*>(e, floatPrecision, params, context);
+}
+
+template <>
+Tree* Private::UndefinedUnhandledDimension() {
+  return KUndefUnhandledDimension->cloneTree();
 }
 
 template <>

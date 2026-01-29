@@ -181,6 +181,10 @@ class Tree : public TypeBlock {
                                    void* context = nullptr, bool check = true);
 
   bool deepReplaceWith(const Tree* target, const Tree* replacement);
+  /* Return true if [this] and [other] are both in the TreeStack and [this] is
+   * stored before other. This means altering [this] size will invalidate
+   * [other]. */
+  bool isInTreeStackBefore(const Tree* other) const;
 
   Tree* cloneTree() const;
   Tree* cloneNode() const;

@@ -572,10 +572,9 @@ bool Tree::ApplyShallowBottomUp(Tree* t, ShallowOperation shallowOperation,
 }
 
 bool Tree::deepReplaceWith(const Tree* target, const Tree* replacement) {
-  /* [replacement] and [target] must be either out of the TreeStack, or before
-   * [this] to be preserved during replacement. */
-  assert(SharedTreeStack->isAfter(replacement, this) &&
-         SharedTreeStack->isAfter(target, this));
+  // [replacement] and [target] must be preserved during replacement.
+  assert(!isInTreeStackBefore(target));
+  assert(!isInTreeStackBefore(replacement));
   if (treeIsIdenticalTo(target)) {
     cloneTreeOverTree(replacement);
     return true;
@@ -609,6 +608,11 @@ bool Tree::deepReplaceWith(const Tree* target, const Tree* replacement) {
     changed = childChanged || changed;
   }
   return changed;
+}
+
+bool Tree::isInTreeStackBefore(const Tree* other) const {
+  return SharedTreeStack->contains(this) && SharedTreeStack->contains(other) &&
+         other > this;
 }
 
 const Tree* Tree::firstDescendantSatisfying(Predicate predicate) const {

@@ -212,7 +212,7 @@ $(addprefix statistics/, \
   symbol_context.cpp \
 )
 
-_sources_poincare_test := $(addprefix test/, \
+_sources_poincare_test_cases := $(addprefix test/, \
   additional_results_helper.cpp \
   beautification.cpp \
   bounds.cpp \
@@ -222,8 +222,6 @@ _sources_poincare_test := $(addprefix test/, \
   equation_solver.cpp \
   exam_mode.cpp \
   expression_properties.cpp \
-  float_helper.cpp \
-  helper.cpp \
   input_beautification.cpp \
   integer.cpp \
   k_tree.cpp \
@@ -257,7 +255,6 @@ _sources_poincare_test := $(addprefix test/, \
     arithmetic.cpp \
     basic_operations.cpp \
     complex.cpp \
-    helper.cpp \
     lists.cpp \
     matrix.cpp \
     numbers.cpp \
@@ -267,9 +264,7 @@ _sources_poincare_test := $(addprefix test/, \
     units.cpp \
   ) \
   $(addprefix helpers/, \
-    expression_equal_sign.cpp \
     quiz.cpp \
-    symbol_store.cpp \
   ) \
   $(addprefix pool/, \
     helpers.cpp \
@@ -294,10 +289,21 @@ _sources_poincare_test := $(addprefix test/, \
   ) \
 )
 
+_sources_poincare_test_util := $(addprefix test/, \
+  float_helper.cpp \
+  helper.cpp \
+  $(addprefix helpers/, \
+    expression_equal_sign.cpp \
+    symbol_store.cpp \
+  ) \
+  approximation/helper.cpp \
+)
+
 $(call create_module,poincare,1, \
   $(_sources_poincare_minimal) \
   $(addsuffix :-minimal,$(_sources_poincare_extended)) \
-  $(addsuffix :+test,$(_sources_poincare_test)) \
+  $(addsuffix :+testcases,$(_sources_poincare_test_cases)) \
+  $(addsuffix :+testutil,$(_sources_poincare_test_util)) \
 )
 
 $(call assert_defined,KANDINSKY_fonts_dependencies)

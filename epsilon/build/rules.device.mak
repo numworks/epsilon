@@ -90,7 +90,7 @@ $(call create_goal,userland_test, \
   liba.aeabirt.armv7m.openbsd.test \
   libaxx.test \
   omg.test \
-  poincare \
+  poincare.testutil \
   python.test \
   quiz.exception \
 )

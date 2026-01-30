@@ -54,7 +54,7 @@ endif
 ## Poincare
 POINCARE_variant := epsilon
 $(call import_module,poincare,../../poincare)
-_poincare_test_modules += poincare.test
+_poincare_test_modules += poincare.testcases.testutil
 
 ## Quiz
 $(call import_module,quiz,../../shared/quiz)

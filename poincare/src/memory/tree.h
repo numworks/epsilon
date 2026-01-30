@@ -180,9 +180,10 @@ class Tree : public TypeBlock {
                                    ShallowOperation shallowOperation,
                                    void* context = nullptr, bool check = true);
 
+  // Replace subtrees identical to [target] with [replacement]
   bool deepReplaceWith(const Tree* target, const Tree* replacement);
   /* Return true if [this] and [other] are both in the TreeStack and [this] is
-   * stored before other. This means altering [this] size will invalidate
+   * stored before [other]. This means altering [this] size will invalidate
    * [other]. */
   bool isInTreeStackBefore(const Tree* other) const;
 

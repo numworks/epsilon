@@ -27,7 +27,7 @@ $(call create_goal,epsilon_test, \
   kandinsky.test \
   liba_bridge \
   omg.test \
-  poincare.test \
+  poincare \
   python.test \
   quiz.exception.arguments \
   sdl \

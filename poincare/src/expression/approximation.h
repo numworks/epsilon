@@ -26,6 +26,12 @@ namespace Approximation {
 
 // Precision of floating-point calculations
 enum class FloatPrecision { Single, Double };
+/* For a given function, if its body depends on the float type (for example if a
+ * float / double variable is declared), the function has to be templated with
+ the float type. However if the float type is not used in the function body, the
+ function should not be templated, to avoid a duplicate template instanciation
+ and gain binary size. To forward the float precision information to other
+ functions, a FloatPrecision parameter is passed as a function argument. */
 
 /* Helper struct to convert a float template type into a FloatPrecision value.
  * Usage: Precision<T>::value.

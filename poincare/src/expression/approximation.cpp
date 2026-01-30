@@ -380,14 +380,13 @@ DefinedStatus Private::AreDependenciesDefined(const Tree* dep,
 }
 
 template <typename T>
-std::complex<T> Private::ToComplexValue(DefinedStatus status) {
+std::complex<T> Private::ToUndefinedComplexValue(DefinedStatus status) {
   switch (status) {
-    case DefinedStatus::Defined:
-      return std::complex<T>{0};
     case DefinedStatus::NonReal:
       return NonReal<T>();
     case DefinedStatus::Undefined:
       return std::complex<T>(NAN);
+    case DefinedStatus::Defined:
     default:
       OMG_UNREACHABLE
   }
@@ -1016,7 +1015,7 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
       DefinedStatus status = AreDependenciesDefined<T>(e, ctx);
       return (status == DefinedStatus::Defined)
                  ? PrivateToComplexRecursive<T>(Dependency::Main(e), ctx)
-                 : ToComplexValue<T>(status);
+                 : ToUndefinedComplexValue<T>(status);
     }
     case Type::NonNull: {
       std::complex<T> x = PrivateToComplexRecursive<T>(e->child(0), ctx);

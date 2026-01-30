@@ -277,10 +277,11 @@ enum class DefinedStatus { Defined, NonReal, Undefined };
 template <typename T>
 DefinedStatus AreDependenciesDefined(const Tree* dep, const Context* ctx);
 
-/* Convert a DefinedStatus to an std::complex<T> value: std::complex<T>{0} for
- * Defined, NonReal<T>{} for NonReal, std::complex<T>(NAN) for Undef */
+/* Convert a DefinedStatus to an std::complex<T> value: NonReal<T>{} for NonReal
+ * and std::complex<T>(NAN) for Undef. ToUndefinedComplexValue is not callable
+ * on DefinedStatus::Defined. */
 template <typename T>
-std::complex<T> ToComplexValue(DefinedStatus status);
+std::complex<T> ToUndefinedComplexValue(DefinedStatus status);
 
 // Expression must have been projected beforehand
 bool PrepareExpressionForApproximation(Tree* e);

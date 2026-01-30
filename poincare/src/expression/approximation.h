@@ -291,8 +291,9 @@ bool PrivateApproximateAndReplaceEveryScalar(Tree* e,
                                              FloatPrecision floatPrecision,
                                              const Context* ctx);
 
-bool SkipApproximation(TypeBlock type);
-bool SkipApproximation(TypeBlock type, TypeBlock parentType, int indexInParent,
+bool SkipApproximation(TypeBlock type, FloatPrecision floatPrecision);
+bool SkipApproximation(TypeBlock type, FloatPrecision floatPrecision,
+                       TypeBlock parentType, int indexInParent,
                        bool previousChildWasApproximated);
 
 /* Variables with id >= firstNonApproximableVarId are considered not

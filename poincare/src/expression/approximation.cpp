@@ -1882,14 +1882,22 @@ bool Private::CanApproximate(const Tree* e, int firstNonApproximableVarId) {
   return true;
 }
 
-bool Private::SkipApproximation(TypeBlock type) {
-  return type.isFloat() || type.isComplexI();
+bool Private::SkipApproximation(TypeBlock type, FloatPrecision floatPrecision) {
+  if (type.isComplexI() || type.isSingleFloat()) {
+    return true;
+  }
+  if ((floatPrecision == FloatPrecision::Double) && type.isDoubleFloat()) {
+    /* If the precision is Single, double floats in the expressions are degraded
+     * to single floats to avoid having mixed levels of precision. */
+    return true;
+  }
+  return false;
 }
 
-bool Private::SkipApproximation(TypeBlock type, TypeBlock parentType,
-                                int indexInParent,
+bool Private::SkipApproximation(TypeBlock type, FloatPrecision floatPrecision,
+                                TypeBlock parentType, int indexInParent,
                                 bool previousChildWasApproximated) {
-  if (SkipApproximation(type)) {
+  if (SkipApproximation(type, floatPrecision)) {
     return true;
   }
   switch (parentType) {
@@ -1927,7 +1935,7 @@ bool ApproximateAndReplaceEveryScalar(Tree* e, FloatPrecision floatPrecision,
     return ApproximateAndReplaceEveryScalar(e, FloatPrecision::Single, context);
   }
 
-  if (SkipApproximation(e->type())) {
+  if (SkipApproximation(e->type(), floatPrecision)) {
     return false;
   }
   uint32_t hash = e->hash();
@@ -1988,8 +1996,8 @@ bool Private::PrivateApproximateAndReplaceEveryScalar(
   bool changed = false;
   bool previousChildWasApproximated = false;
   for (IndexedChild<Tree*> child : e->indexedChildren()) {
-    if (!SkipApproximation(child->type(), e->type(), child.index,
-                           previousChildWasApproximated)) {
+    if (!SkipApproximation(child->type(), floatPrecision, e->type(),
+                           child.index, previousChildWasApproximated)) {
       changed =
           PrivateApproximateAndReplaceEveryScalar(child, floatPrecision, ctx) ||
           changed;

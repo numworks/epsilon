@@ -14,6 +14,7 @@
 #include "k_tree.h"
 #include "number.h"
 #include "systematic_reduction.h"
+#include "undefined.h"
 #include "vector.h"
 
 namespace Poincare::Internal {
@@ -496,7 +497,7 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
     return false;
   }
   if (e->isRef() || e->isRref()) {
-    if (HasUndefinedChild(child)) {
+    if (Undefined::HasUndefinedChild(child)) {
       e->moveTreeOverTree(Undef(GetMatrixDimension(child)));
       return true;
     }
@@ -518,7 +519,7 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
       break;
     }
     case Type::Det:
-      if (HasUndefinedChild(child)) {
+      if (Undefined::HasUndefinedChild(child)) {
         e->cloneTreeOverTree(KUndef);
         return true;
       }

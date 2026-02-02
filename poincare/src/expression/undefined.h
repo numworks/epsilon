@@ -13,6 +13,12 @@ class Undefined {
   static bool ShallowBubbleUpUndef(Tree* e);
   static bool CanBeUndefined(const Tree* e);
   static bool CanHaveUndefinedChild(const Tree* e, int childIndex);
+  /* For types which can have both defined and undefined children, i.e. lists
+   * matrices and points. */
+  static bool HasUndefinedChild(const Tree* e) {
+    return e->hasDescendantSatisfying(
+        [](const Tree* e) { return e->isUndefined(); });
+  }
   /* Create a tree of type [type] with identical dimension to [e].
    * Example:
    * [e] is list and type is nonreal => {nonreal,...} with correct length.

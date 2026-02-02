@@ -2088,7 +2088,7 @@ bool Private::SkipApproximation(TypeBlock type, FloatPrecision floatPrecision,
   }
 }
 
-bool Private::ApproximateAndReplaceEveryScalar(Tree* e,
+void Private::ApproximateAndReplaceEveryScalar(Tree* e,
                                                FloatPrecision floatPrecision,
                                                const Context& context) {
   // Prevent float to double conversion
@@ -2097,17 +2097,10 @@ bool Private::ApproximateAndReplaceEveryScalar(Tree* e,
           [](const Tree* e) { return e->isSingleFloat(); })) {
     return ApproximateAndReplaceEveryScalar(e, FloatPrecision::Single, context);
   }
-
   if (SkipApproximation(e->type(), floatPrecision)) {
-    return false;
+    return;
   }
-  uint32_t hash = e->hash();
-  bool result =
-      ApproximateAndReplaceEveryScalarRecursive(e, floatPrecision, &context);
-  /* TODO: We compare the CRC32 to prevent expressions such as 1.0+i*1.0 from
-   * returning true at every call. We should detect and skip them in
-   * SkipApproximation instead. */
-  return result && hash != e->hash();
+  ApproximateAndReplaceEveryScalarRecursive(e, floatPrecision, &context);
 }
 
 template <typename T>
@@ -2147,35 +2140,30 @@ static bool MergeChildrenOfMultOrAdd(Tree* e) {
   return false;
 }
 
-bool Private::ApproximateAndReplaceEveryScalarRecursive(
+void Private::ApproximateAndReplaceEveryScalarRecursive(
     Tree* e, FloatPrecision floatPrecision, const Context* ctx) {
   assert(ctx);
   if (Approximation::CanApproximate(e) &&
       Dimension::IsNonListScalar(e, ctx->m_symbolContext)) {
     e->moveTreeOverTree(PrivateToTree(e, floatPrecision,
                                       Dimension(DimensionType::Scalar), ctx));
-    return true;
+    return;
   }
-  bool changed = false;
   bool previousChildWasApproximated = false;
   for (IndexedChild<Tree*> child : e->indexedChildren()) {
     if (!SkipApproximation(child->type(), floatPrecision, e->type(),
                            child.index, previousChildWasApproximated)) {
-      changed = ApproximateAndReplaceEveryScalarRecursive(child, floatPrecision,
-                                                          ctx) ||
-                changed;
+      ApproximateAndReplaceEveryScalarRecursive(child, floatPrecision, ctx);
     }
     previousChildWasApproximated = child->isFloat();
   }
-  changed = Undefined::ShallowBubbleUpUndef(e) || changed;
+  Undefined::ShallowBubbleUpUndef(e);
   // Merge addition and multiplication's children while preserving order
   if (e->isAdd() || e->isMult()) {
-    changed = (floatPrecision == FloatPrecision::Single
-                   ? MergeChildrenOfMultOrAdd<float>(e)
-                   : MergeChildrenOfMultOrAdd<double>(e)) ||
-              changed;
+    floatPrecision == FloatPrecision::Single
+        ? MergeChildrenOfMultOrAdd<float>(e)
+        : MergeChildrenOfMultOrAdd<double>(e);
   }
-  return changed;
 }
 
 Tree* ExtractRealPart(const Tree* e) {

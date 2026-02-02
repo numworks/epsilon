@@ -303,10 +303,10 @@ bool PrepareExpressionForApproximation(Tree* e);
 bool ShallowPrepareForApproximation(Tree* e, void* ctx);
 
 // Approximate every scalar subtree that can be approximated.
-bool ApproximateAndReplaceEveryScalar(Tree* e, FloatPrecision floatPrecision,
+void ApproximateAndReplaceEveryScalar(Tree* e, FloatPrecision floatPrecision,
                                       const Context& context = Context());
 
-bool ApproximateAndReplaceEveryScalarRecursive(Tree* e,
+void ApproximateAndReplaceEveryScalarRecursive(Tree* e,
                                                FloatPrecision floatPrecision,
                                                const Context* ctx);
 

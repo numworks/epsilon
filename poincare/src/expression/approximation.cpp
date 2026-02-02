@@ -84,8 +84,8 @@ template <typename ReturnType, typename FloatType>
 ReturnType To(const Tree* e, FloatType abscissa, Parameters params,
               const Context& context) {
   static_assert(
-      std::is_same_v<FloatType, Tree*> ||
-      std::is_same_v<FloatType, BooleanOrUndefined> ||
+      std::is_same_v<ReturnType, Tree*> ||
+      std::is_same_v<ReturnType, BooleanOrUndefined> ||
       std::is_same_v<FloatType, typename FloatTypeAccessor<ReturnType>::type>);
   // TODO: rework the LocalContext creation workflow
   Context contextCopy = context;

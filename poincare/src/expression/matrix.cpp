@@ -496,6 +496,10 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
     return false;
   }
   if (e->isRef() || e->isRref()) {
+    if (HasUndefinedChild(child)) {
+      e->moveTreeOverTree(Undef(GetMatrixDimension(child)));
+      return true;
+    }
     if (RowCanonize(child, e->isRref())) {
       e->removeNode();
       return true;
@@ -514,6 +518,10 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
       break;
     }
     case Type::Det:
+      if (HasUndefinedChild(child)) {
+        e->cloneTreeOverTree(KUndef);
+        return true;
+      }
       // Note: We used to have explicit formulas for dimensions 1, 2 and 3
       if (RowCanonize(child, true, &result)) {
         break;

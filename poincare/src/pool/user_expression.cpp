@@ -159,11 +159,11 @@ UserExpression UserExpression::cloneAndApproximate(
                                    context.m_context);
   Tree* a;
   if (CAS::Enabled()) {
-    a = tree()->cloneTree();
-    /* We are using ApproximateAndReplaceEveryScalar to approximate
-     * expressions with symbols such as π*x → 3.14*x. */
-    Approximation::ApproximateAndReplaceEveryScalar(
-        a, Approximation::Precision<T>::value, approxCtx);
+    /* We are using onlyReplaceNumerical to approximate expressions with symbols
+     * such as π*x → 3.14*x. */
+    a = Approximation::To<Tree*>(
+        tree(), Approximation::Precision<T>::value,
+        Approximation::Parameters{.onlyReplaceNumerical = true}, approxCtx);
   } else {
     // Note: The non-beautified expression could be approximated instead.
     a = Approximation::To<Tree*>(

@@ -663,8 +663,8 @@ Tree* GetPolarFormat(const Tree* e,
     return nullptr;
   }
   /* If this assert fails, an approximated node has been lost during systematic
-   * simplification, ApproximateAndReplaceEveryScalar should be called on abs
-   * like below with arg. */
+   * simplification, To<Tree*>{.onlyReplaceNumerical=true} should be called on
+   * abs like below with arg. */
   assert(
       !(hasSingleFloats || hasDoubleFloats) ||
       abs->hasDescendantSatisfying([](const Tree* e) { return e->isFloat(); }));
@@ -678,12 +678,17 @@ Tree* GetPolarFormat(const Tree* e,
     hasReduced = AdvancedReduction::Reduce(arg) || hasReduced;
   }
   if (hasSingleFloats) {
-    Approximation::ApproximateAndReplaceEveryScalar(
-        arg, Approximation::FloatPrecision::Single);
+    arg->moveTreeOverTree(
+        To<Tree*>(arg, Approximation::FloatPrecision::Single,
+                  Approximation::Parameters{.prepare = false,
+                                            .onlyReplaceNumerical = true}));
   } else if (hasDoubleFloats) {
-    Approximation::ApproximateAndReplaceEveryScalar(
-        arg, Approximation::FloatPrecision::Double);
+    arg->moveTreeOverTree(
+        To<Tree*>(arg, Approximation::FloatPrecision::Double,
+                  Approximation::Parameters{.prepare = false,
+                                            .onlyReplaceNumerical = true}));
   }
+
   SharedTreeStack->pushComplexI();
   if (!hasReduced) {
     result->removeTree();

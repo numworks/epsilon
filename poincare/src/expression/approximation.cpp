@@ -125,8 +125,6 @@ template <>
 Tree* Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
                           Parameters params, const Context& context) {
   if (params.onlyReplaceNumerical) {
-    // The expression should have been prepared before replacing its scalars
-    assert(params.prepare);
     Tree* result = e->cloneTree();
     ApproximateAndReplaceEveryScalar(result, floatPrecision, context);
     return result;

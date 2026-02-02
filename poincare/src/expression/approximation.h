@@ -76,10 +76,13 @@ struct Parameters {
   /* Last two parameters may only be used on projected expressions. */
   // Tree will be prepared for a more accurate approximation
   bool prepare = false;
-  /* Tree will be optimized for successive approximations (useful in function
-   * graph or solver for example) by approximating every subTree that can be
-   * approximated. It also implies prepare parameter is true. */
-  bool optimize = false;
+  /* Only numerical values are approximated, the rest is preserved (including
+   * randoms, variables, units, function symbols, depLists). For example "pi*x +
+   * 1/3" will be transformed into "3.14*x + 0.33". This is useful to optimize
+   * an expression for successive approximations (for example in function graph
+   * or solver). This parameter is only relevant when the return type is an
+   * expression (i.e. a Tree*). It also implies prepare parameter is true. */
+  bool onlyReplaceNumerical = false;
 };
 
 class Context {

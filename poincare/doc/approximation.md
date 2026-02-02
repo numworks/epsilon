@@ -36,13 +36,17 @@ For example, `x * y^(-1) * ln(x) * ln(10)^(-1)` will be replaced with `x * log(x
 
 This also greatly improve integral approximations.
 
-#### optimise
+#### onlyReplaceNumerical
 
-In addition to `prepare` parameter, and only used for the `Tree*` return type of `Approximation::To`.
+This parameter is only used for the `Tree*` return type of `Approximation::To`.
 
-The resulting Tree will have been optimized for successive approximations (for Grapher for example).
+The numerical parts of the expression are approximated, but randoms, variables, functions, etc. are left unchanged.
 
-In practice this means `ApproximateAndReplaceEveryScalar` will be applied on the tree.
+For example `pi*x + 1/3` is transformed into `3.14*x + 0.33`.
+
+This is useful to optimize an expression for successive approximations (for Grapher for example).
+
+In practice this means `ApproximateAndReplaceEveryScalar` is applied on the tree.
 
 ### Context
 

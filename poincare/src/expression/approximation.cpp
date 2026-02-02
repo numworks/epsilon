@@ -124,7 +124,7 @@ Tree* Private::UndefinedUnhandledDimension() {
 template <>
 Tree* Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
                           Parameters params, const Context& context) {
-  if (params.optimize) {
+  if (params.onlyReplaceNumerical) {
     // The expression should have been prepared before replacing its scalars
     assert(params.prepare);
     Tree* result = e->cloneTree();
@@ -181,8 +181,7 @@ std::complex<FloatType> Private::ToComplex(const Tree* e,
                                            Parameters params,
                                            const Context& context) {
   assert(Precision<FloatType>::value == floatPrecision);
-  // "optimize" only makes sense when the return type is a Tree*
-  assert(!params.optimize);
+  assert(!params.onlyReplaceNumerical);
   assert(Dimension::DeepCheck(e, context.m_symbolContext));
   assert(Dimension::IsNonListScalar(e, context.m_symbolContext));
   return PrivateToComplex<FloatType>(e, &context);
@@ -203,8 +202,7 @@ PointOrRealScalar<FloatType> Private::ToPointOrRealScalar(
     const Tree* e, FloatPrecision floatPrecision, Parameters params,
     const Context& context) {
   assert(floatPrecision == Precision<FloatType>::value);
-  // "optimize" only makes sense when the return type is a Tree*
-  assert(!params.optimize);
+  assert(!params.onlyReplaceNumerical);
   assert(Dimension::DeepCheck(e, context.m_symbolContext));
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
@@ -243,7 +241,7 @@ BooleanOrUndefined Private::SpecificTo(const Tree* e,
                                        FloatPrecision floatPrecision,
                                        Parameters params,
                                        const Context& context) {
-  assert(!params.optimize);
+  assert(!params.onlyReplaceNumerical);
   assert(Dimension::DeepCheck(e, context.m_symbolContext));
   return PrivateToBoolean(e, floatPrecision, &context);
 };
@@ -269,7 +267,7 @@ FloatType Private::ToFloat(const Tree* e, Parameters params,
 #endif
   assert(context.m_listElement != -1 ||
          !Dimension::IsList(e, context.m_symbolContext));
-  assert(!params.optimize);
+  assert(!params.onlyReplaceNumerical);
   if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
                                  std::isnan(context.variable(0).imag()))) {
     return FloatType{NAN};
@@ -306,7 +304,7 @@ Coordinate2D<float> Private::SpecificTo(const Tree* e,
                                         FloatPrecision floatPrecision,
                                         Parameters params,
                                         const Context& context) {
-  assert(!params.optimize);
+  assert(!params.onlyReplaceNumerical);
   assert(floatPrecision == FloatPrecision::Single);
   return PrivateToCoordinates<float>(e, context);
 }
@@ -316,7 +314,7 @@ Coordinate2D<double> Private::SpecificTo(const Tree* e,
                                          FloatPrecision floatPrecision,
                                          Parameters params,
                                          const Context& context) {
-  assert(!params.optimize);
+  assert(!params.onlyReplaceNumerical);
   assert(floatPrecision == FloatPrecision::Double);
   return PrivateToCoordinates<double>(e, context);
 }

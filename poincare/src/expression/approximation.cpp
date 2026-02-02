@@ -122,8 +122,8 @@ Tree* Private::UndefinedUnhandledDimension() {
 }
 
 template <>
-inline Tree* Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
-                                 Parameters params, const Context& context) {
+Tree* Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
+                          Parameters params, const Context& context) {
   if (params.optimize) {
     // Tree has already been approximated in PrepareTree
     return e->cloneTree();
@@ -156,10 +156,10 @@ std::complex<double> Private::UndefinedUnhandledDimension() {
 }
 
 template <>
-inline std::complex<float> Private::SpecificTo(const Tree* e,
-                                               FloatPrecision floatPrecision,
-                                               Parameters params,
-                                               const Context& context) {
+std::complex<float> Private::SpecificTo(const Tree* e,
+                                        FloatPrecision floatPrecision,
+                                        Parameters params,
+                                        const Context& context) {
   assert(floatPrecision == FloatPrecision::Single);
   assert(!params.optimize);
   assert(Dimension::IsNonListScalar(e, context.m_symbolContext));
@@ -167,10 +167,10 @@ inline std::complex<float> Private::SpecificTo(const Tree* e,
 };
 
 template <>
-inline std::complex<double> Private::SpecificTo(const Tree* e,
-                                                FloatPrecision floatPrecision,
-                                                Parameters params,
-                                                const Context& context) {
+std::complex<double> Private::SpecificTo(const Tree* e,
+                                         FloatPrecision floatPrecision,
+                                         Parameters params,
+                                         const Context& context) {
   assert(floatPrecision == FloatPrecision::Double);
   assert(!params.optimize);
   assert(Dimension::IsNonListScalar(e, context.m_symbolContext));
@@ -223,10 +223,10 @@ BooleanOrUndefined Private::UndefinedUnhandledDimension() {
 }
 
 template <>
-inline BooleanOrUndefined Private::SpecificTo(const Tree* e,
-                                              FloatPrecision floatPrecision,
-                                              Parameters params,
-                                              const Context& context) {
+BooleanOrUndefined Private::SpecificTo(const Tree* e,
+                                       FloatPrecision floatPrecision,
+                                       Parameters params,
+                                       const Context& context) {
   assert(!params.optimize);
   return PrivateToBoolean(e, floatPrecision, &context);
 };
@@ -243,8 +243,8 @@ double Private::UndefinedUnhandledDimension() {
 
 // TODO: factorize Private::SpecificTo<float> and Private::SpecificTo<double>
 template <>
-inline float Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
-                                 Parameters params, const Context& context) {
+float Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
+                          Parameters params, const Context& context) {
   assert(floatPrecision == FloatPrecision::Single);
   // Units are tolerated in scalar approximation (replaced with SI ratios).
 #if ASSERTIONS
@@ -262,8 +262,8 @@ inline float Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
 };
 
 template <>
-inline double Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
-                                  Parameters params, const Context& context) {
+double Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
+                           Parameters params, const Context& context) {
   assert(floatPrecision == FloatPrecision::Double);
   // Units are tolerated in scalar approximation (replaced with SI ratios).
 #if ASSERTIONS
@@ -291,20 +291,20 @@ Coordinate2D<double> Private::UndefinedUnhandledDimension() {
 }
 
 template <>
-inline Coordinate2D<float> Private::SpecificTo(const Tree* e,
-                                               FloatPrecision floatPrecision,
-                                               Parameters params,
-                                               const Context& context) {
+Coordinate2D<float> Private::SpecificTo(const Tree* e,
+                                        FloatPrecision floatPrecision,
+                                        Parameters params,
+                                        const Context& context) {
   assert(!params.optimize);
   assert(floatPrecision == FloatPrecision::Single);
   return PrivateToCoordinates<float>(e, context);
 }
 
 template <>
-inline Coordinate2D<double> Private::SpecificTo(const Tree* e,
-                                                FloatPrecision floatPrecision,
-                                                Parameters params,
-                                                const Context& context) {
+Coordinate2D<double> Private::SpecificTo(const Tree* e,
+                                         FloatPrecision floatPrecision,
+                                         Parameters params,
+                                         const Context& context) {
   assert(!params.optimize);
   assert(floatPrecision == FloatPrecision::Double);
   return PrivateToCoordinates<double>(e, context);

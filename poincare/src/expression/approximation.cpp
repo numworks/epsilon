@@ -125,25 +125,26 @@ template <>
 Tree* Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
                           Parameters params, const Context& context) {
   if (params.optimize) {
-    // Tree has already been approximated in PrepareTree
-    return e->cloneTree();
+    // The expression should have been prepared before replacing its scalars
+    assert(params.prepare);
+    Tree* result = e->cloneTree();
+    ApproximateAndReplaceEveryScalar(result, floatPrecision, context);
+    return result;
   }
   assert(Dimension::DeepCheck(e, context.m_symbolContext));
-  Tree* result;
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
   int listLength = Dimension::ListLength(e, context.m_symbolContext);
   if (listLength != Dimension::k_nonListListLength) {
     assert(!dim.isMatrix());
-    result = SharedTreeStack->pushList(listLength);
+    Tree* result = SharedTreeStack->pushList(listLength);
     Context listEvaluationContext = context;
     for (int i = 0; i < listLength; i++) {
       listEvaluationContext.m_listElement = i;
       PrivateToTree(e, floatPrecision, dim, &listEvaluationContext);
     }
-  } else {
-    result = PrivateToTree(e, floatPrecision, dim, &context);
+    return result;
   }
-  return result;
+  return PrivateToTree(e, floatPrecision, dim, &context);
 }
 
 template <>
@@ -370,17 +371,12 @@ Tree* Private::PrepareTree(const Tree* e, FloatPrecision floatPrecision,
     clone = e->cloneTree();
     Variables::ProjectLocalVariablesToId(clone);
   }
-  if (params.prepare || params.optimize) {
+  if (params.prepare) {
     assert(Simplification::IsSystem(e));
     if (!clone) {
       clone = e->cloneTree();
     }
     PrepareExpressionForApproximation(clone);
-    if (params.optimize) {
-      ApproximateAndReplaceEveryScalar(clone, floatPrecision, context);
-      // TODO: factor common sub-expressions
-      // TODO: apply Horner's method: a*x^2 + b*x + c => (a*x + b)*x + c ?
-    }
   }
   return clone;
 }

@@ -250,11 +250,10 @@ double Private::UndefinedUnhandledDimension() {
   return NAN;
 }
 
-// TODO: factorize Private::SpecificTo<float> and Private::SpecificTo<double>
-template <>
-float Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
-                          Parameters params, const Context& context) {
-  assert(floatPrecision == FloatPrecision::Single);
+template <typename FloatType>
+FloatType Private::ToFloat(const Tree* e, FloatPrecision floatPrecision,
+                           Parameters params, const Context& context) {
+  assert(floatPrecision == Precision<FloatType>::value);
   // Units are tolerated in scalar approximation (replaced with SI ratios).
 #if ASSERTIONS
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
@@ -265,28 +264,23 @@ float Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
   assert(!params.optimize);
   if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
                                  std::isnan(context.variable(0).imag()))) {
-    return NAN;
+    return FloatType{NAN};
   }
-  return PrivateTo<float>(e, &context);
+  return PrivateTo<FloatType>(e, &context);
+}
+
+template <>
+float Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
+                          Parameters params, const Context& context) {
+  assert(floatPrecision == FloatPrecision::Single);
+  return ToFloat<float>(e, floatPrecision, params, context);
 };
 
 template <>
 double Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
                            Parameters params, const Context& context) {
   assert(floatPrecision == FloatPrecision::Double);
-  // Units are tolerated in scalar approximation (replaced with SI ratios).
-#if ASSERTIONS
-  Dimension dim = Dimension::Get(e, context.m_symbolContext);
-  assert(dim.isScalar() || dim.isUnit());
-#endif
-  assert(context.m_listElement != -1 ||
-         !Dimension::IsList(e, context.m_symbolContext));
-  assert(!params.optimize);
-  if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
-                                 std::isnan(context.variable(0).imag()))) {
-    return NAN;
-  }
-  return PrivateTo<double>(e, &context);
+  return ToFloat<double>(e, floatPrecision, params, context);
 };
 
 template <>

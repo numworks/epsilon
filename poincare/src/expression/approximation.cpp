@@ -407,7 +407,7 @@ Tree* Private::PrivateToTree(const Tree* e, FloatPrecision floatPrecision,
   if (dim.isUnit()) {
     // Preserve units and only replace scalar values.
     Tree* result = e->cloneTree();
-    PrivateApproximateAndReplaceEveryScalar(result, floatPrecision, ctx);
+    ApproximateAndReplaceEveryScalarRecursive(result, floatPrecision, ctx);
     return result;
   }
   if (dim.isScalar()) {
@@ -2088,8 +2088,9 @@ bool Private::SkipApproximation(TypeBlock type, FloatPrecision floatPrecision,
   }
 }
 
-bool ApproximateAndReplaceEveryScalar(Tree* e, FloatPrecision floatPrecision,
-                                      const Context& context) {
+bool Private::ApproximateAndReplaceEveryScalar(Tree* e,
+                                               FloatPrecision floatPrecision,
+                                               const Context& context) {
   // Prevent float to double conversion
   if (floatPrecision == FloatPrecision::Double &&
       e->hasDescendantSatisfying(
@@ -2102,7 +2103,7 @@ bool ApproximateAndReplaceEveryScalar(Tree* e, FloatPrecision floatPrecision,
   }
   uint32_t hash = e->hash();
   bool result =
-      PrivateApproximateAndReplaceEveryScalar(e, floatPrecision, &context);
+      ApproximateAndReplaceEveryScalarRecursive(e, floatPrecision, &context);
   /* TODO: We compare the CRC32 to prevent expressions such as 1.0+i*1.0 from
    * returning true at every call. We should detect and skip them in
    * SkipApproximation instead. */
@@ -2146,7 +2147,7 @@ static bool MergeChildrenOfMultOrAdd(Tree* e) {
   return false;
 }
 
-bool Private::PrivateApproximateAndReplaceEveryScalar(
+bool Private::ApproximateAndReplaceEveryScalarRecursive(
     Tree* e, FloatPrecision floatPrecision, const Context* ctx) {
   assert(ctx);
   if (Approximation::CanApproximate(e) &&
@@ -2160,9 +2161,9 @@ bool Private::PrivateApproximateAndReplaceEveryScalar(
   for (IndexedChild<Tree*> child : e->indexedChildren()) {
     if (!SkipApproximation(child->type(), floatPrecision, e->type(),
                            child.index, previousChildWasApproximated)) {
-      changed =
-          PrivateApproximateAndReplaceEveryScalar(child, floatPrecision, ctx) ||
-          changed;
+      changed = ApproximateAndReplaceEveryScalarRecursive(child, floatPrecision,
+                                                          ctx) ||
+                changed;
     }
     previousChildWasApproximated = child->isFloat();
   }

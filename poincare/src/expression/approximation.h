@@ -182,10 +182,6 @@ void PrepareFunctionForApproximation(Tree* e, const char* variable,
 // Return false if e cannot be approximated to a defined value.
 bool CanApproximate(const Tree* e, bool approxLocalVar = false);
 
-// Approximate every scalar subtree that can be approximated.
-bool ApproximateAndReplaceEveryScalar(Tree* e, FloatPrecision floatPrecision,
-                                      const Context& context = Context());
-
 constexpr int k_noActiveBranch = -1;
 constexpr int k_unknownActiveBranch = -2;
 /* Returns k_noActiveBranch if every condition is false, it assumes there is no
@@ -306,9 +302,13 @@ std::complex<T> ToUndefinedComplexValue(DefinedStatus status);
 bool PrepareExpressionForApproximation(Tree* e);
 bool ShallowPrepareForApproximation(Tree* e, void* ctx);
 
-bool PrivateApproximateAndReplaceEveryScalar(Tree* e,
-                                             FloatPrecision floatPrecision,
-                                             const Context* ctx);
+// Approximate every scalar subtree that can be approximated.
+bool ApproximateAndReplaceEveryScalar(Tree* e, FloatPrecision floatPrecision,
+                                      const Context& context = Context());
+
+bool ApproximateAndReplaceEveryScalarRecursive(Tree* e,
+                                               FloatPrecision floatPrecision,
+                                               const Context* ctx);
 
 bool SkipApproximation(TypeBlock type, FloatPrecision floatPrecision);
 bool SkipApproximation(TypeBlock type, FloatPrecision floatPrecision,

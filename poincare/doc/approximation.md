@@ -64,13 +64,3 @@ All of them have a default value, that can be used when the information doesn't 
 A set of assertions across the approximation will ensure the right context has been provided.
 
 For example, approximating `cos(3)` with default angle unit `AngleUnit::None` will raise, but approximating `Trig(3,1)` will not.
-
-## Other entry points
-
-TODO: Some of them may be made private.
-
-### ApproximateAndReplaceEveryScalar
-
-Replace as much as possible all subtrees of the expression into floats.
-
-For instance : `(1+2+i)*(x+ln(12+3))` -> `(3.0+1.0*i)*(x+2.708)`

@@ -86,7 +86,7 @@ bool IsApproximatedScalarImag(const Tree* e) {
          e->child(1)->isComplexI();
 }
 
-/* If the expression could be the output of ApproximateAndReplaceEveryScalar :
+/* If the expression could be the output of an approximation:
  * Of the form f, f*i or f+f*i */
 bool IsApproximatedScalar(const Tree* e) {
   return e->isFloat() || IsApproximatedScalarImag(e) ||
@@ -146,8 +146,10 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
     return true;
   }
 
-  if (bubbleUpFloat && Approximation::ApproximateAndReplaceEveryScalar(
-                           e, Approximation::FloatPrecision::Double)) {
+  if (bubbleUpFloat &&
+      Approximation::Approximate(
+          e, Approximation::FloatPrecision::Double,
+          Approximation::Parameters{.onlyReplaceNumerical = true})) {
     ShallowReduce(e);
     return true;
   }

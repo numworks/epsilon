@@ -255,8 +255,9 @@ bool HandleUnits(Tree* e, const ProjectionContext& projectionContext,
   }
   if (dimension.isUnit() && !dimension.isAngleUnit()) {
     // Only angle units are expected not to be approximated.
-    changed = Approximation::ApproximateAndReplaceEveryScalar(
-                  e, Approximation::FloatPrecision::Double) ||
+    changed = Approximation::Approximate(
+                  e, Approximation::FloatPrecision::Double,
+                  Approximation::Parameters{.onlyReplaceNumerical = true}) ||
               changed;
     /* Check that the expression after approximating scalars does not need to be
      * reduced again. We used to reduce the expression here. If we find out this
@@ -275,8 +276,9 @@ bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
     case Strategy::Default:
       break;
     case Strategy::ApproximateToFloat:
-      changed = Approximation::ApproximateAndReplaceEveryScalar(
+      changed = Approximation::Approximate(
           e, Approximation::FloatPrecision::Double,
+          Approximation::Parameters{.onlyReplaceNumerical = true},
           Approximation::Context(projectionContext.m_angleUnit,
                                  projectionContext.m_complexFormat,
                                  projectionContext.m_context));

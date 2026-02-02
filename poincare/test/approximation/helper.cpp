@@ -190,8 +190,9 @@ void approximates_to_keeping_symbols(const char* expression,
       expression, simplifiedExpression,
       [](Tree* tree, ProjectionContext projectionContext) {
         Variables::ProjectLocalVariablesToId(tree);
-        Approximation::ApproximateAndReplaceEveryScalar(
+        Approximation::Approximate(
             tree, Approximation::Precision<T>::value,
+            Approximation::Parameters{.onlyReplaceNumerical = true},
             Approximation::Context(projectionContext.m_angleUnit,
                                    projectionContext.m_complexFormat,
                                    projectionContext.m_context));

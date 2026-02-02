@@ -870,18 +870,19 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
   Type type = e->type();
   bool changed = NAry::Flatten(e);
   if (changed) {
-    /* In case of successful flatten, approximateAndReplaceEveryScalar must be
-     * tried again to properly handle possible new float children. Approximate
-     * all children if one of them is already float. Return true if the entire
-     * tree have been approximated. */
+    /* In case of successful flatten, approximate (with onlyReplaceNumerical)
+     * must be tried again to properly handle possible new float children.
+     * Approximate all children if one of them is already float. Return true if
+     * the entire tree have been approximated. */
     if (e->hasChildSatisfying([](const Tree* e) { return e->isFloat(); }) &&
-        Approximation::ApproximateAndReplaceEveryScalar(
-            e, Approximation::FloatPrecision::Double)) {
+        Approximation::Approximate(
+            e, Approximation::FloatPrecision::Double,
+            Approximation::Parameters{.onlyReplaceNumerical = true})) {
       changed = true;
       if (e->type() != type) {
 #if ASSERTIONS
         PatternMatching::Context ctx;
-        /* Possible output of [ApproximateAndReplaceEveryScalar] include :
+        /* Possible output of an approximation include :
          * - float
          * - undef/nonreal
          * - float+float*i

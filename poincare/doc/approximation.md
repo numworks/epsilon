@@ -9,7 +9,7 @@ Available return types are:
 - `Tree*`
 - `float` / `double`
 - `std::complex<float>` / `std::complex<double>`
-- `Coordinate2D<float>` / `Coordinate2D<float>`
+- `Coordinate2D<float>` / `Coordinate2D<double>`
 - `PointOrRealScalar<float>` / `PointOrRealScalar<double>`
 - `BooleanOrUndefined`
 

@@ -128,6 +128,7 @@ Tree* Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
     // Tree has already been approximated in PrepareTree
     return e->cloneTree();
   }
+  assert(Dimension::DeepCheck(e, context.m_symbolContext));
   Tree* result;
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
   int listLength = Dimension::ListLength(e, context.m_symbolContext);
@@ -181,6 +182,7 @@ std::complex<FloatType> Private::ToComplex(const Tree* e,
   assert(Precision<FloatType>::value == floatPrecision);
   // "optimize" only makes sense when the return type is a Tree*
   assert(!params.optimize);
+  assert(Dimension::DeepCheck(e, context.m_symbolContext));
   assert(Dimension::IsNonListScalar(e, context.m_symbolContext));
   return PrivateToComplex<FloatType>(e, &context);
 }
@@ -202,6 +204,7 @@ PointOrRealScalar<FloatType> Private::ToPointOrRealScalar(
   assert(floatPrecision == Precision<FloatType>::value);
   // "optimize" only makes sense when the return type is a Tree*
   assert(!params.optimize);
+  assert(Dimension::DeepCheck(e, context.m_symbolContext));
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
   return dim.isPoint()
@@ -257,6 +260,7 @@ template <typename FloatType>
 FloatType Private::ToFloat(const Tree* e, FloatPrecision floatPrecision,
                            Parameters params, const Context& context) {
   assert(floatPrecision == Precision<FloatType>::value);
+  assert(Dimension::DeepCheck(e, context.m_symbolContext));
   // Units are tolerated in scalar approximation (replaced with SI ratios).
 #if ASSERTIONS
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
@@ -319,7 +323,8 @@ Coordinate2D<double> Private::SpecificTo(const Tree* e,
 template <typename T>
 Coordinate2D<T> Private::PrivateToCoordinates(const Tree* e,
                                               const Context& context) {
-  assert(Dimension::Get(e, context.m_symbolContext).isPoint());
+  assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
+         Dimension::Get(e, context.m_symbolContext).isPoint());
   if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
                                  std::isnan(context.variable(0).imag()))) {
     return Coordinate2D<T>(NAN, NAN);

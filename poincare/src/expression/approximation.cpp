@@ -2028,7 +2028,7 @@ bool Private::CanApproximate(const Tree* e, int firstNonApproximableVarId) {
     bool enterScope = false;
     if (e->isParametric()) {
       if (childIndex == Parametric::k_variableIndex) {
-        // Parametric's variable cant be approximated, but we never want to.
+        // Parametric's variable is only used when layouting, ignore it
         childIndex++;
         continue;
       }

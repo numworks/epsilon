@@ -217,6 +217,10 @@ template <typename ReturnType>
 ReturnType SpecificTo(const Tree* e, FloatPrecision floatPrecision,
                       Parameters params, const Context& context);
 
+template <typename FloatType>
+std::complex<FloatType> ToComplex(const Tree* e, FloatPrecision floatPrecision,
+                                  Parameters params, const Context& context);
+
 /* Undefined value representing an unhandled dimension for the T type (Tree,
  * float / double, boolean etc.)
  * TODO: this template method and its specializations can disappear once we find

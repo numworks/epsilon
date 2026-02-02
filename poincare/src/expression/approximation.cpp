@@ -161,9 +161,7 @@ std::complex<float> Private::SpecificTo(const Tree* e,
                                         Parameters params,
                                         const Context& context) {
   assert(floatPrecision == FloatPrecision::Single);
-  assert(!params.optimize);
-  assert(Dimension::IsNonListScalar(e, context.m_symbolContext));
-  return PrivateToComplex<float>(e, &context);
+  return ToComplex<float>(e, floatPrecision, params, context);
 };
 
 template <>
@@ -172,10 +170,19 @@ std::complex<double> Private::SpecificTo(const Tree* e,
                                          Parameters params,
                                          const Context& context) {
   assert(floatPrecision == FloatPrecision::Double);
+  return ToComplex<double>(e, floatPrecision, params, context);
+};
+
+template <typename FloatType>
+std::complex<FloatType> Private::ToComplex(const Tree* e,
+                                           FloatPrecision floatPrecision,
+                                           Parameters params,
+                                           const Context& context) {
+  assert(Precision<FloatType>::value == floatPrecision);
   assert(!params.optimize);
   assert(Dimension::IsNonListScalar(e, context.m_symbolContext));
-  return PrivateToComplex<double>(e, &context);
-};
+  return PrivateToComplex<FloatType>(e, &context);
+}
 
 template <>
 PointOrRealScalar<float> Private::UndefinedUnhandledDimension() {

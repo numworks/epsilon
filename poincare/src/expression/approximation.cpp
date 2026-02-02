@@ -1886,10 +1886,10 @@ bool Private::SkipApproximation(TypeBlock type, FloatPrecision floatPrecision) {
   if (type.isComplexI() || type.isSingleFloat()) {
     return true;
   }
-  if ((floatPrecision == FloatPrecision::Double) && type.isDoubleFloat()) {
+  if (type.isDoubleFloat()) {
     /* If the precision is Single, double floats in the expressions are degraded
      * to single floats to avoid having mixed levels of precision. */
-    return true;
+    return (floatPrecision == FloatPrecision::Double);
   }
   return false;
 }

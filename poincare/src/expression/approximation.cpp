@@ -116,6 +116,14 @@ ReturnType To(const Tree* e, FloatPrecision floatPrecision, Parameters params,
   return PostProcessPreparedAndResult(prepared, result);
 }
 
+bool Approximate(Tree* e, FloatPrecision floatPrecision, Parameters params,
+                 const Context& context) {
+  Tree* approximated = To<Tree*>(e, floatPrecision, params, context);
+  bool hasChanged = !approximated->treeIsIdenticalTo(e);
+  e->moveTreeOverTree(approximated);
+  return hasChanged;
+}
+
 template <>
 Tree* Private::UndefinedUnhandledDimension() {
   return KUndefUnhandledDimension->cloneTree();

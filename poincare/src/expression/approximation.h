@@ -163,6 +163,11 @@ template <typename ReturnType, typename FloatType>
 ReturnType To(const Tree* e, FloatType abscissa, Parameters params,
               const Context& context = Context());
 
+/* In-place approximation of a Tree*, returns true/false depending on whether
+ * the expression has been modified. */
+bool Approximate(Tree* e, FloatPrecision floatPrecision, Parameters params,
+                 const Context& context = Context());
+
 /* Helpers */
 
 /* Approximate expression at KVarX/K = x. tree must be of scalar dimension and

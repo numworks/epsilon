@@ -18,6 +18,8 @@ For types which do not have a float type included (`Tree*` and `BooleanOrUndefin
 
 Another overload of `Approximation::To` allows to pass an abscissa (as a `float` or a `double` value). Var0 in the expression will be replaced by the value passed in this "abscissa" parameter. The float precision is automatically deduced from the "abscissa" float type.
 
+`Approximate` is the in-place version of `To` (for `Tree*`).
+
 ### Parameters
 
 #### projectLocalVariables

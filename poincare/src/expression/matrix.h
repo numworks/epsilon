@@ -41,6 +41,10 @@ struct Matrix {
     assert(col < NumberOfColumns(matrix));
     return matrix->child(row * NumberOfColumns(matrix) + col);
   }
+  static bool HasUndefinedChild(const Tree* matrix) {
+    return matrix->hasDescendantSatisfying(
+        [](const Tree* e) { return e->isUndefined(); });
+  }
   static Tree* Zero(MatrixDimension d);
   static Tree* Undef(MatrixDimension d);
   static Tree* Identity(MatrixDimension d);

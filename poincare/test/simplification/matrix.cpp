@@ -89,6 +89,7 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("det([[0,2,-1][5,6,7][12,11,10]])", "85");
   simplifies_to("det([[1,2][3,4]])", "-2");
   simplifies_to("det([[b]])", "det([[b]])");
+  simplifies_to("det([[1,2][3,undef]])", "undef");
 
   // Dimension
   simplifies_to("dim(3)", "undef");
@@ -161,7 +162,7 @@ QUIZ_CASE(pcj_simplification_matrix) {
   // Can't canonize if a child cannot be approximated (or is not finite)
   simplifies_to("ref([[0,0][x,0]])", "ref([[0,0][x,0]])");
   simplifies_to("ref([[0,random()][0,0]])", "ref([[0,random()][0,0]])");
-  simplifies_to("ref([[0,0][undef,0]])", "ref([[0,0][undef,0]])");
+  simplifies_to("ref([[0,0][undef,0]])", "undef");
   simplifies_to("ref([[inf,inf][0,0]])", "ref([[∞,∞][0,0]])");
 
   // Cross product

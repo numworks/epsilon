@@ -194,20 +194,27 @@ PointOrRealScalar<double> Private::UndefinedUnhandledDimension() {
   return PointOrRealScalar<double>(NAN, NAN);
 }
 
-/* TODO: factorize SpecificTo<PointOrRealScalar<float>> and
- * SpecificTo<PointOrRealScalar<double>> */
+template <typename FloatType>
+PointOrRealScalar<FloatType> Private::ToPointOrRealScalar(
+    const Tree* e, FloatPrecision floatPrecision, Parameters params,
+    const Context& context) {
+  assert(floatPrecision == Precision<FloatType>::value);
+  Dimension dim = Dimension::Get(e, context.m_symbolContext);
+  assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
+  return dim.isPoint()
+             ? PointOrRealScalar<FloatType>(To<Coordinate2D<FloatType>>(
+                   e, floatPrecision, params, context))
+             : PointOrRealScalar<FloatType>(
+                   To<FloatType>(e, floatPrecision, params, context));
+}
+
 template <>
 PointOrRealScalar<float> Private::SpecificTo(const Tree* e,
                                              FloatPrecision floatPrecision,
                                              Parameters params,
                                              const Context& context) {
   assert(floatPrecision == FloatPrecision::Single);
-  Dimension dim = Dimension::Get(e, context.m_symbolContext);
-  assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
-  return dim.isPoint() ? PointOrRealScalar<float>(To<Coordinate2D<float>>(
-                             e, floatPrecision, params, context))
-                       : PointOrRealScalar<float>(
-                             To<float>(e, floatPrecision, params, context));
+  return ToPointOrRealScalar<float>(e, floatPrecision, params, context);
 }
 
 template <>
@@ -216,12 +223,7 @@ PointOrRealScalar<double> Private::SpecificTo(const Tree* e,
                                               Parameters params,
                                               const Context& context) {
   assert(floatPrecision == FloatPrecision::Double);
-  Dimension dim = Dimension::Get(e, context.m_symbolContext);
-  assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
-  return dim.isPoint() ? PointOrRealScalar<double>(To<Coordinate2D<double>>(
-                             e, floatPrecision, params, context))
-                       : PointOrRealScalar<double>(
-                             To<double>(e, floatPrecision, params, context));
+  return ToPointOrRealScalar<double>(e, floatPrecision, params, context);
 }
 
 template <>

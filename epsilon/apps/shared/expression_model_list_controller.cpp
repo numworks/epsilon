@@ -25,7 +25,8 @@ ExpressionModelListController::ExpressionModelListController(
     Responder* parentResponder, I18n::Message text)
     : ViewController(parentResponder),
       m_addNewModelCell({{.font = k_font}}),
-      m_editedCellIndex(-1) {
+      m_editedCellIndex(-1),
+      m_isAddingNewModel(false) {
   m_addNewModelCell.setMessage(text);
   m_addNewModelCell.setLeftMargin(k_newModelMargin);
 }
@@ -38,7 +39,7 @@ int ExpressionModelListController::numberOfRows() const {
   for (int i = 0; i < modelsCount; i++) {
     nRows += numberOfRowsForRecord(store->recordAtIndex(i));
   }
-  return nRows + hasAddEmptyRow();
+  return nRows + hasAddEmptyRow() + m_isAddingNewModel;
 }
 
 bool ExpressionModelListController::hasAddEmptyRow() const {
@@ -47,6 +48,16 @@ bool ExpressionModelListController::hasAddEmptyRow() const {
 
 bool ExpressionModelListController::isAddEmptyRow(int row) const {
   return row == numberOfRows() - 1 && hasAddEmptyRow();
+}
+
+bool ExpressionModelListController::isNewModelRow(int row) const {
+  if (!m_isAddingNewModel) {
+    return false;
+  }
+  int thisNumberOfRows = numberOfRows();
+  bool thisHasAddEmptyRow = hasAddEmptyRow();
+  return (row == thisNumberOfRows - 2 && thisHasAddEmptyRow) ||
+         (row == thisNumberOfRows - 1 && !thisHasAddEmptyRow);
 }
 
 int ExpressionModelListController::typeAtRow(int row) const {
@@ -98,6 +109,7 @@ bool ExpressionModelListController::handleEventOnExpression(
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(!layoutField()->isEditing());
+    assert(!m_isAddingNewModel);
     if (isAddEmptyRow(selectedRow())) {
       addNewModelAction();
       return true;
@@ -133,12 +145,7 @@ bool ExpressionModelListController::handleEventOnExpression(
     if (inTemplateMenu) {
       App::app()->modalViewController()->dismissModal();
     }
-    // If empty row is selected, try adding an empty model
-    if (isAddEmptyRow(selectedRow()) && !addEmptyModel()) {
-      // Adding an empty model failed
-      return true;
-    }
-    assert(!isAddEmptyRow(selectedRow()));
+    assert(!m_isAddingNewModel);
     editExpression(event);
     return true;
   }
@@ -146,9 +153,7 @@ bool ExpressionModelListController::handleEventOnExpression(
 }
 
 void ExpressionModelListController::addNewModelAction() {
-  if (addEmptyModel()) {
-    editExpression(Ion::Events::OK);
-  }
+  editExpression(Ion::Events::OK);
 }
 
 bool ExpressionModelListController::addEmptyModel() {
@@ -158,15 +163,20 @@ bool ExpressionModelListController::addEmptyModel() {
     return false;
   }
   assert(error == Ion::Storage::Record::ErrorStatus::None);
-  didChangeModelsList();
-  selectableListView()->reloadData();
+  m_isAddingNewModel = false;
   return true;
 }
 
 void ExpressionModelListController::editExpression(Ion::Events::Event event) {
   m_editedCellIndex = selectedRow();
+  Layout layoutForSelectedRecord = Layout();
+  if (isAddEmptyRow(m_editedCellIndex)) {
+    m_isAddingNewModel = true;
+  } else {
+    layoutForSelectedRecord = getLayoutForSelectedRecord();
+  }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    layoutField()->setLayout(getLayoutForSelectedRecord());
+    layoutField()->setLayout(layoutForSelectedRecord);
   }
   layoutField()->setEditing(true);
   App::app()->setFirstResponder(layoutField());
@@ -178,6 +188,13 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
 
 bool ExpressionModelListController::editSelectedRecordWithLayout(
     Layout layout) {
+  if (m_isAddingNewModel) {
+    // TODO: Add model and setContent at the same time
+    if (!addEmptyModel()) {
+      return false;
+    }
+  }
+  assert(!m_isAddingNewModel);
   Ion::Storage::Record record = selectedRecord();
   OMG::ExpiringPointer<ExpressionModelHandle> model =
       modelStore()->modelForRecord(record);
@@ -205,7 +222,7 @@ int ExpressionModelListController::modelIndexForRow(int row,
   if (row <= 0) {
     return row;
   }
-  if (isAddEmptyRow(row)) {
+  if (isNewModelRow(row) || isAddEmptyRow(row)) {
     return modelIndexForRow(row - 1) + 1;
   }
   int i = 0;
@@ -296,11 +313,17 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
 
 void ExpressionModelListController::layoutFieldDidAbortEditing(
     Escher::LayoutField* layoutField) {
+  m_isAddingNewModel = false;
   finishEdition();
 }
 
 Ion::Storage::Record ExpressionModelListController::recordAtRow(
     int row, int* relativeRow) const {
+  if (m_isAddingNewModel && row == m_editedCellIndex) {
+    // TODO: recordAtRow, or selectedRecord should not be called while
+    // [m_isAddingNewModel] is true.
+    return Ion::Storage::Record();
+  }
   return modelStore()->recordAtIndex(modelIndexForRow(row, relativeRow));
 }
 

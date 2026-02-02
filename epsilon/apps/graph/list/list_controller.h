@@ -71,7 +71,6 @@ class ListController : public Shared::FunctionListController,
                               CodePoint symbol) override;
   bool completeEquation(Escher::LayoutField* equationField,
                         CodePoint symbol) override;
-  void addNewModelAction() override;
   int maxNumberOfDisplayableRows() const override;
   Escher::HighlightCell* functionCells(int index) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;

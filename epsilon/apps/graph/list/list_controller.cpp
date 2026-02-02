@@ -165,6 +165,9 @@ void ListController::layoutFieldDidAbortEditing(
 
 CodePoint ListController::defaultXNT() {
   assert(selectedRow() >= 0);
+  if (m_isAddingNewModel) {
+    return AbstractMathFieldDelegate::defaultXNT();
+  }
   return modelStore()->modelForRecord(selectedRecord())->symbol();
 }
 
@@ -186,7 +189,9 @@ void ListController::editExpression(Ion::Events::Event event) {
 }
 
 bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
-  GlobalStore::DeleteParametricComponentsOfRecord(selectedRecord());
+  if (!m_isAddingNewModel) {
+    GlobalStore::DeleteParametricComponentsOfRecord(selectedRecord());
+  }
   bool result = FunctionListController::editSelectedRecordWithLayout(layout);
   GlobalStore::StoreParametricComponentsOfRecord(selectedRecord());
   return result;
@@ -273,11 +278,14 @@ HighlightCell* ListController::functionCells(int row) {
 
 void ListController::fillCellForRow(HighlightCell* cell, int row) {
   int type = typeAtRow(row);
-  if (type != k_addNewModelCellType) {
+  if (type == k_editableCellType && m_isAddingNewModel) {
+    static_cast<AbstractFunctionCell*>(cell)->setColor(Palette::GrayDark);
+  } else if (type != k_addNewModelCellType) {
     assert(type == k_expressionCellType || type == k_editableCellType);
     int relativeRow;
     OMG::ExpiringPointer<ContinuousFunction> f =
         modelStore()->modelForRecord(recordAtRow(row, &relativeRow));
+    assert(!f->isNull());
     int derivationOrder =
         derivationOrderFromRelativeRow(f.pointer(), relativeRow);
     if (type == k_expressionCellType) {
@@ -308,9 +316,8 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
           ->setParameterSelected(m_parameterColumnSelected);
     }
     // f can be null if the entry was just created and is still empty.
-    KDColor functionColor = (!f->isNull() && f->isActive())
-                                ? f->color(derivationOrder)
-                                : Palette::GrayDark;
+    KDColor functionColor =
+        f->isActive() ? f->color(derivationOrder) : Palette::GrayDark;
     static_cast<AbstractFunctionCell*>(cell)->setColor(functionColor);
   }
   FunctionListController::fillCellForRow(cell, row);
@@ -328,17 +335,6 @@ void ListController::hideDerivative(Ion::Storage::Record record,
     f->setDisplayPlotSecondDerivative(false);
   }
   stackController()->pop();
-}
-
-void ListController::addNewModelAction() {
-  Ion::Storage::Record::ErrorStatus error =
-      App::app()->functionStore().addEmptyModel();
-  if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
-    return;
-  }
-  assert(error == Ion::Storage::Record::ErrorStatus::None);
-
-  editExpression(Ion::Events::OK);
 }
 
 ContinuousFunctionStore* ListController::modelStore() const {

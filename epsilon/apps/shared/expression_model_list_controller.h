@@ -50,6 +50,7 @@ class ExpressionModelListController
   editableExpressionModelCell() = 0;
   bool hasAddEmptyRow() const;
   bool isAddEmptyRow(int row) const;
+  bool isNewModelRow(int row) const;
 
   // ListViewDataSource
   int numberOfRows() const override;
@@ -88,15 +89,16 @@ class ExpressionModelListController
                                    Ion::Events::Event event) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
   void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
+  bool addEmptyModel();
 
   // EditableCell
   virtual Escher::LayoutField* layoutField() = 0;
   int16_t m_editedCellIndex;
+  bool m_isAddingNewModel;
 
  private:
   virtual int maxNumberOfDisplayableRows() const = 0;
   void finishEdition();
-  bool addEmptyModel();
   virtual bool shouldCompleteEquation(Poincare::UserExpression expression,
                                       CodePoint symbol) {
     return false;

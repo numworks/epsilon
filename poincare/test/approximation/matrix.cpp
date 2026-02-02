@@ -48,6 +48,7 @@ QUIZ_CASE(pcj_approximation_matrix) {
   approximates_to<float>("rref([[0,2,-1][5,6,7][10,11,10]])",
                          "[[1,0,0][0,1,0][0,0,1]]");
   approximates_to<float>("ref([[0,-1][undef,10]])", "undef");
+  approximates_to<float>("ref(undef*0*[[0]])", "undef");
 
   approximates_to<float>("cross([[1][2][3]],[[4][7][8]])", "[[-5][4][-1]]");
   approximates_to<double>("cross([[1][2][3]],[[4][7][8]])", "[[-5][4][-1]]");

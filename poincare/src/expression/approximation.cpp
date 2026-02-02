@@ -1550,12 +1550,20 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
           result = approx;
           continue;
         }
+        /* The multiplication can have both scalar and matrix children. Handle
+         * all cases depending on the dimensions of the current result and the
+         * next child. */
         if (resultIsMatrix && childIsMatrix) {
           Matrix::Multiplication(result, approx, true, ctx);
         } else if (resultIsMatrix) {
           Matrix::ScalarMultiplication(approx, result, true, ctx);
-        } else {
+        } else if (childIsMatrix) {
           Matrix::ScalarMultiplication(result, approx, true, ctx);
+        } else {
+          Tree* mult = SharedTreeStack->pushMult(2);
+          result->cloneTree();
+          approx->cloneTree();
+          Approximation::Private::ToComplexTreeInplace(mult, ctx);
         }
         resultIsMatrix |= childIsMatrix;
         approx->removeTree();
@@ -1776,7 +1784,7 @@ template <typename T>
 int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   assert(piecewise->isPiecewise());
   /* TODO: Without randomContext, randomized nodes in piecewise's condition will
-   *       approximate to NAN. */
+   * approximate to NAN. */
   LocalContext localCtx(x);
   Context ctx;
   ctx.m_localContext = &localCtx;

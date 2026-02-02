@@ -179,6 +179,7 @@ std::complex<FloatType> Private::ToComplex(const Tree* e,
                                            Parameters params,
                                            const Context& context) {
   assert(Precision<FloatType>::value == floatPrecision);
+  // "optimize" only makes sense when the return type is a Tree*
   assert(!params.optimize);
   assert(Dimension::IsNonListScalar(e, context.m_symbolContext));
   return PrivateToComplex<FloatType>(e, &context);
@@ -199,6 +200,8 @@ PointOrRealScalar<FloatType> Private::ToPointOrRealScalar(
     const Tree* e, FloatPrecision floatPrecision, Parameters params,
     const Context& context) {
   assert(floatPrecision == Precision<FloatType>::value);
+  // "optimize" only makes sense when the return type is a Tree*
+  assert(!params.optimize);
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
   return dim.isPoint()

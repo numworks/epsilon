@@ -44,7 +44,9 @@ This parameter is only used for the `Tree*` return type of `Approximation::To`.
 
 The numerical parts of the expression are approximated, but randoms, variables, functions, etc. are left unchanged.
 
-For example `pi*x + 1/3` is transformed into `3.14*x + 0.33`.
+For example:
+- `pi*x + 1/3` -> `3.14*x + 0.33`.
+- `(1+2+i)*(x+ln(12+3))` -> `(3.0+1.0*i)*(x+2.708)`
 
 This is useful to optimize an expression for successive approximations (for Grapher for example).
 

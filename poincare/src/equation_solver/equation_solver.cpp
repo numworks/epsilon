@@ -10,6 +10,7 @@
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/matrix.h>
+#include <poincare/src/expression/number.h>
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/properties.h>
@@ -410,12 +411,12 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
   for (uint8_t row = 0; row < rows; row++) {
     bool allCoefficientsNull = true;
     for (uint8_t col = 0; col < n; col++) {
-      if (allCoefficientsNull && !GetComplexProperties(coefficient).isNull()) {
+      if (allCoefficientsNull && !Number::IsNull(coefficient)) {
         allCoefficientsNull = false;
       }
       coefficient = coefficient->nextTree();
     }
-    if (allCoefficientsNull && !GetComplexProperties(coefficient).isNull()) {
+    if (allCoefficientsNull && !Number::IsNull(coefficient)) {
       /* Row describes an equation of the form '0=b', the system has no
        * solution. */
       matrix->removeTree();
@@ -449,7 +450,7 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
       // Find the first variable with a non-null coefficient in the current row
       if (row >= 0) {
         for (int col = 0; firstVariableInRow < 0 && col < n; col++) {
-          if (!Matrix::Child(matrix, row, col)->isZero()) {
+          if (!Number::IsNull(Matrix::Child(matrix, row, col))) {
             firstVariableInRow = col;
           }
         }
@@ -485,6 +486,8 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
       variable--;
     }
 
+    // We added rows to the matrix, floats might need to be bubbled up.
+    SystematicReduction::ShallowReduce(matrix);
     /* forceCanonization = true so that canonization still happens even if
      * t.approximate() is NAN. If other children of ab had an undef
      * approximation, the resolution would already have failed at
@@ -540,7 +543,7 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
     }
     if (equation->isDep()) {
       // Approximate if the equation is monovariable and different from 0=0
-      Error error = (n == 1 && !Dependency::Main(equation)->isZero())
+      Error error = (n == 1 && !Number::IsNull(Dependency::Main(equation)))
                         ? Error::RequireApproximateSolution
                         : Error::EquationUnhandled;
       equationListClone->removeTree();

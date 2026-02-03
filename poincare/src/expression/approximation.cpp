@@ -132,12 +132,12 @@ Tree* Private::UndefinedUnhandledDimension() {
 template <>
 Tree* Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
                           Parameters params, const Context& context) {
+  assert(Dimension::DeepCheck(e, context.m_symbolContext));
   if (params.onlyReplaceNumerical) {
     Tree* result = e->cloneTree();
     ApproximateAndReplaceEveryScalar(result, floatPrecision, context);
     return result;
   }
-  assert(Dimension::DeepCheck(e, context.m_symbolContext));
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
   int listLength = Dimension::ListLength(e, context.m_symbolContext);
   if (listLength != Dimension::k_nonListListLength) {

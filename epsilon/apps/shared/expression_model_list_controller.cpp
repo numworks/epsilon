@@ -319,10 +319,8 @@ void ExpressionModelListController::layoutFieldDidAbortEditing(
 
 Ion::Storage::Record ExpressionModelListController::recordAtRow(
     int row, int* relativeRow) const {
-  if (isAddingNewModel() && row == m_editedCellIndex) {
-    // TODO: recordAtRow, or selectedRecord should not be called while here
-    return Ion::Storage::Record();
-  }
+  // There are no existing records for the model that is being added
+  assert(!isAddingNewModel() || row != m_editedCellIndex);
   return modelStore()->recordAtIndex(modelIndexForRow(row, relativeRow));
 }
 

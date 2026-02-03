@@ -116,11 +116,14 @@ bool ParametricComponentsNameError(UserExpression expression,
   assert(function.isUserFunction());
   strlcpy(functionName, SymbolHelper::GetName(function), bufferSize);
   size_t functionNameLength = strlen(functionName);
-  assert(f->fullName() != nullptr);
   bool willDefineNewParametricComponents =
-      GlobalStore::UserNameIsFree(functionName) ||
-      (strncmp(f->fullName(), functionName, functionNameLength) == 0 &&
-       !f->properties().isEnabledParametric());
+      GlobalStore::UserNameIsFree(functionName);
+  if (f) {
+    assert(f->fullName() != nullptr);
+    willDefineNewParametricComponents |=
+        (strncmp(f->fullName(), functionName, functionNameLength) == 0 &&
+         !f->properties().isEnabledParametric());
+  }
   if (willDefineNewParametricComponents &&
       !FunctionNameHelper::ParametricComponentsNamesAreFree(
           functionName, functionNameLength, bufferSize)) {

@@ -112,17 +112,28 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
                                                 Ion::Events::Event event) {
   if (event == Ion::Events::Toolbox) {
     // Set extra cells
-    int recurrenceDepth = -1;
-    int sequenceDefinition;
-    Shared::Sequence* sequence =
-        modelStore()->modelForRecord(selectedRecord(&sequenceDefinition));
-    if (sequenceDefinition == k_sequenceDefinition) {
-      recurrenceDepth = sequence->numberOfElements() - 1;
+    const char* sequenceName;
+    int recurrenceDepth;
+    SequenceHelper::RecursiveNotation notation;
+    if (isAddingNewModel()) {
+      sequenceName = SequenceStore::FirstAvailableName();
+      // New model are always explicit.
+      recurrenceDepth = 0;
+      notation = SequenceHelper::RecursiveNotation::Default;
+    } else {
+      int sequenceDefinition;
+      // FIXME: It seems sequenceDefinition will always be 0 here.
+      Shared::Sequence* sequence =
+          modelStore()->modelForRecord(selectedRecord(&sequenceDefinition));
+      sequenceName = sequence->fullName();
+      recurrenceDepth = (sequenceDefinition == k_sequenceDefinition)
+                            ? sequence->numberOfElements() - 1
+                            : -1;
+      notation = sequence->recursiveNotation();
     }
     m_sequenceToolboxDataSource.buildExtraCellsLayouts(
-        sequence->fullName(), recurrenceDepth,
-        sequence->recursiveNotation() ==
-            SequenceHelper::RecursiveNotation::Shifted);
+        sequenceName, recurrenceDepth,
+        notation == SequenceHelper::RecursiveNotation::Shifted);
   }
   return ExpressionModelListController::layoutFieldDidReceiveEvent(layoutField,
                                                                    event);

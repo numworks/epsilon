@@ -96,12 +96,13 @@ bool ListController::completeEquation(LayoutField* equationField,
   equationField->putCursorOnOneSide(OMG::Direction::Left());
   // Retrieve the edited function
   OMG::ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(selectedRecord());
+      isAddingNewModel() ? nullptr
+                         : modelStore()->modelForRecord(selectedRecord());
   constexpr size_t k_bufferSize =
       SymbolHelper::k_maxNameSize + sizeof("(θ)≥") - 1;
   char buffer[k_bufferSize];
-  if (f->isNull() || f->properties().status() ==
-                         ContinuousFunctionProperties::Status::Undefined) {
+  if (!f.pointer() || f->properties().status() ==
+                          ContinuousFunctionProperties::Status::Undefined) {
     // Function is new or undefined, complete the equation with a default name
     // Insert "f(x)=", with f the default function name and x the symbol
     fillWithDefaultFunctionEquation(buffer, k_bufferSize, symbol);
@@ -355,7 +356,8 @@ int ListController::derivationOrderFromRelativeRow(ContinuousFunction* f,
 
 bool ListController::isValidExpressionModel(UserExpression expression) {
   OMG::ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(selectedRecord());
+      isAddingNewModel() ? nullptr
+                         : modelStore()->modelForRecord(selectedRecord());
   if (FunctionNameHelper::ParametricComponentsNameError(expression,
                                                         f.pointer())) {
     App::app()->displayWarning(I18n::Message::ParametricNameError);

@@ -276,7 +276,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
       return true;
     }
     case Type::Median: {
-      if (Undefined::HasUndefinedChild(e) ||
+      if (Undefined::HasUndefinedDescendant(e) ||
           !(e->child(1)->isOne() || IsValidCoefficientsList(e->child(1)))) {
         e->cloneTreeOverTree(KUndef);
         return true;

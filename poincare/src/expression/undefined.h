@@ -15,7 +15,7 @@ class Undefined {
   static bool CanHaveUndefinedChild(const Tree* e, int childIndex);
   /* For types which can have both defined and undefined children, i.e. lists
    * matrices and points. */
-  static bool HasUndefinedChild(const Tree* e) {
+  static bool HasUndefinedDescendant(const Tree* e) {
     return e->hasDescendantSatisfying(
         [](const Tree* e) { return e->isUndefined(); });
   }

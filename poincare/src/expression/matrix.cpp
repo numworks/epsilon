@@ -497,7 +497,7 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
     return false;
   }
   if (e->isRef() || e->isRref()) {
-    if (Undefined::HasUndefinedChild(child)) {
+    if (Undefined::HasUndefinedDescendant(child)) {
       e->moveTreeOverTree(Undef(GetMatrixDimension(child)));
       return true;
     }
@@ -519,7 +519,7 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
       break;
     }
     case Type::Det:
-      if (Undefined::HasUndefinedChild(child)) {
+      if (Undefined::HasUndefinedDescendant(child)) {
         e->cloneTreeOverTree(KUndef);
         return true;
       }

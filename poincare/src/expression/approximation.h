@@ -218,8 +218,7 @@ ReturnType SpecificTo(const Tree* e, FloatPrecision floatPrecision,
                       Parameters params, const Context& context);
 
 template <typename FloatType>
-FloatType ToFloat(const Tree* e, FloatPrecision floatPrecision,
-                  Parameters params, const Context& context);
+FloatType ToFloat(const Tree* e, Parameters params, const Context& context);
 
 template <typename FloatType>
 std::complex<FloatType> ToComplex(const Tree* e, FloatPrecision floatPrecision,

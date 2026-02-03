@@ -257,9 +257,8 @@ double Private::UndefinedUnhandledDimension() {
 }
 
 template <typename FloatType>
-FloatType Private::ToFloat(const Tree* e, FloatPrecision floatPrecision,
-                           Parameters params, const Context& context) {
-  assert(floatPrecision == Precision<FloatType>::value);
+FloatType Private::ToFloat(const Tree* e, Parameters params,
+                           const Context& context) {
   assert(Dimension::DeepCheck(e, context.m_symbolContext));
   // Units are tolerated in scalar approximation (replaced with SI ratios).
 #if ASSERTIONS
@@ -280,14 +279,14 @@ template <>
 float Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
                           Parameters params, const Context& context) {
   assert(floatPrecision == FloatPrecision::Single);
-  return ToFloat<float>(e, floatPrecision, params, context);
+  return ToFloat<float>(e, params, context);
 };
 
 template <>
 double Private::SpecificTo(const Tree* e, FloatPrecision floatPrecision,
                            Parameters params, const Context& context) {
   assert(floatPrecision == FloatPrecision::Double);
-  return ToFloat<double>(e, floatPrecision, params, context);
+  return ToFloat<double>(e, params, context);
 };
 
 template <>

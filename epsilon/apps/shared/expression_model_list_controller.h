@@ -99,6 +99,8 @@ class ExpressionModelListController
   int16_t m_editedCellIndex;
 
  private:
+  // Always disable storing cells since they are equations.
+  bool canStoreCellAtRow(int row) override { return false; }
   virtual int maxNumberOfDisplayableRows() const = 0;
   void finishEdition();
   virtual bool shouldCompleteEquation(Poincare::UserExpression expression,

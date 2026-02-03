@@ -25,7 +25,6 @@ class ListController : public Shared::FunctionListController {
   void viewDidDisappear() override;
   /* ListViewDataSource */
   Escher::HighlightCell* reusableCell(int index, int type) override;
-  bool canStoreCellAtRow(int row) override { return false; }
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   /* Responder */
   void showLastSequence();

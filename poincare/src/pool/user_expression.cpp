@@ -157,18 +157,23 @@ UserExpression UserExpression::cloneAndApproximate(
     const ProjectionContext& context) const {
   Approximation::Context approxCtx(context.m_angleUnit, context.m_complexFormat,
                                    context.m_context);
-  Tree* a;
-  if (CAS::Enabled()) {
-    /* We are using onlyReplaceNumerical to approximate expressions with symbols
-     * such as π*x → 3.14*x. */
-    a = Approximation::To<Tree*>(
-        tree(), Approximation::Precision<T>::value,
-        Approximation::Parameters{.onlyReplaceNumerical = true}, approxCtx);
-  } else {
-    // Note: The non-beautified expression could be approximated instead.
-    a = Approximation::To<Tree*>(
-        tree(), Approximation::Precision<T>::value,
-        Approximation::Parameters{.projectLocalVariables = true}, approxCtx);
+  Tree* a = Approximation::To<Tree*>(
+      tree(), Approximation::Precision<T>::value,
+      Approximation::Parameters{
+          .projectLocalVariables = true,
+          /* When CAS is activated, onlyReplaceNumerical is used to approximate
+           * expressions with symbols such as π*x → 3.14*x. */
+          .onlyReplaceNumerical = CAS::Enabled()},
+      approxCtx);
+  /* There are several issues that currently prevent us from beautifying an
+   * approximated CAS expression:
+   * - the beautified exact expression and the beautified approximate expression
+   * can be equal but in a different order, for example "12y^2 - 12y + 2/y^3 =
+   * 12y^2 + 2/y^3 - 12y"
+   * - the complex format detection during beautification can make an assertion
+   * raise, for example "(x+1)*(pi+i)"
+   * TODO: solve these issues */
+  if (!CAS::Enabled()) {
     Beautification::DeepBeautify(a, context, Internal::Dimension::Get(a));
   }
   return UserExpression::Builder(a);

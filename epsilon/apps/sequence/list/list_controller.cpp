@@ -66,7 +66,7 @@ HighlightCell* ListController::reusableCell(int index, int type) {
 
 void ListController::fillCellForRow(HighlightCell* cell, int row) {
   int type = typeAtRow(row);
-  if (type == k_editableCellType && m_isAddingNewModel) {
+  if (type == k_editableCellType && isAddingNewModel()) {
     AbstractSequenceCell* sequenceCell =
         static_cast<AbstractSequenceCell*>(cell);
     sequenceCell->setColor(Palette::GrayDark);
@@ -94,7 +94,7 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
 
 void ListController::layoutFieldDidAbortEditing(LayoutField* layoutField) {
   ExpressionModelListController::layoutFieldDidAbortEditing(layoutField);
-  if (m_isAddingNewModel) {
+  if (isAddingNewModel()) {
     return;
   }
 
@@ -148,13 +148,13 @@ void ListController::editExpression(Ion::Events::Event event) {
 }
 
 bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
-  if (m_isAddingNewModel) {
+  if (isAddingNewModel()) {
     // TODO: Add model and setContent at the same time
     if (!addEmptyModel()) {
       return false;
     }
   }
-  assert(!m_isAddingNewModel);
+  assert(!isAddingNewModel());
   Ion::Storage::Record record = selectedRecord();
   Shared::Sequence* sequence = modelStore()->modelForRecord(record);
   Ion::Storage::Record::ErrorStatus error;

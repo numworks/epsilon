@@ -260,7 +260,7 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
 }
 
 void ListController::reloadBrace() {
-  if (modelStore()->numberOfModels() + m_isAddingNewModel <= 1) {
+  if (modelStore()->numberOfModels() + isAddingNewModel() <= 1) {
     m_equationListView.setBraceStyle(EquationListView::BraceStyle::None);
     m_expressionCells[0].setMargins({k_newModelMargin, 0});
     // Set editable cell margins to keep the text at the same place when editing

@@ -165,7 +165,7 @@ void ListController::layoutFieldDidAbortEditing(
 
 CodePoint ListController::defaultXNT() {
   assert(selectedRow() >= 0);
-  if (m_isAddingNewModel) {
+  if (isAddingNewModel()) {
     return AbstractMathFieldDelegate::defaultXNT();
   }
   return modelStore()->modelForRecord(selectedRecord())->symbol();
@@ -189,7 +189,7 @@ void ListController::editExpression(Ion::Events::Event event) {
 }
 
 bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
-  if (!m_isAddingNewModel) {
+  if (!isAddingNewModel()) {
     GlobalStore::DeleteParametricComponentsOfRecord(selectedRecord());
   }
   bool result = FunctionListController::editSelectedRecordWithLayout(layout);
@@ -278,7 +278,7 @@ HighlightCell* ListController::functionCells(int row) {
 
 void ListController::fillCellForRow(HighlightCell* cell, int row) {
   int type = typeAtRow(row);
-  if (type == k_editableCellType && m_isAddingNewModel) {
+  if (type == k_editableCellType && isAddingNewModel()) {
     static_cast<AbstractFunctionCell*>(cell)->setColor(Palette::GrayDark);
   } else if (type != k_addNewModelCellType) {
     assert(type == k_expressionCellType || type == k_editableCellType);

@@ -50,6 +50,8 @@ class ExpressionModelListController
   editableExpressionModelCell() = 0;
   bool hasAddEmptyRow() const;
   bool isAddEmptyRow(int row) const;
+  // If the edited cell is a new model
+  bool isAddingNewModel() const { return m_isAddingNewModel; }
   bool isNewModelRow(int row) const;
 
   // ListViewDataSource
@@ -94,7 +96,6 @@ class ExpressionModelListController
   // EditableCell
   virtual Escher::LayoutField* layoutField() = 0;
   int16_t m_editedCellIndex;
-  bool m_isAddingNewModel;
 
  private:
   virtual int maxNumberOfDisplayableRows() const = 0;
@@ -114,6 +115,7 @@ class ExpressionModelListController
   virtual int numberOfRowsForRecord(Ion::Storage::Record record) const {
     return 1;
   }
+  bool m_isAddingNewModel;
 };
 
 }  // namespace Shared

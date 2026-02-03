@@ -39,7 +39,7 @@ int ExpressionModelListController::numberOfRows() const {
   for (int i = 0; i < modelsCount; i++) {
     nRows += numberOfRowsForRecord(store->recordAtIndex(i));
   }
-  return nRows + hasAddEmptyRow() + m_isAddingNewModel;
+  return nRows + hasAddEmptyRow() + isAddingNewModel();
 }
 
 bool ExpressionModelListController::hasAddEmptyRow() const {
@@ -51,7 +51,7 @@ bool ExpressionModelListController::isAddEmptyRow(int row) const {
 }
 
 bool ExpressionModelListController::isNewModelRow(int row) const {
-  if (!m_isAddingNewModel) {
+  if (!isAddingNewModel()) {
     return false;
   }
   int thisNumberOfRows = numberOfRows();
@@ -109,7 +109,7 @@ bool ExpressionModelListController::handleEventOnExpression(
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(!layoutField()->isEditing());
-    assert(!m_isAddingNewModel);
+    assert(!isAddingNewModel());
     if (isAddEmptyRow(selectedRow())) {
       addNewModelAction();
       return true;
@@ -145,7 +145,7 @@ bool ExpressionModelListController::handleEventOnExpression(
     if (inTemplateMenu) {
       App::app()->modalViewController()->dismissModal();
     }
-    assert(!m_isAddingNewModel);
+    assert(!isAddingNewModel());
     editExpression(event);
     return true;
   }
@@ -188,13 +188,13 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
 
 bool ExpressionModelListController::editSelectedRecordWithLayout(
     Layout layout) {
-  if (m_isAddingNewModel) {
+  if (isAddingNewModel()) {
     // TODO: Add model and setContent at the same time
     if (!addEmptyModel()) {
       return false;
     }
   }
-  assert(!m_isAddingNewModel);
+  assert(!isAddingNewModel());
   Ion::Storage::Record record = selectedRecord();
   OMG::ExpiringPointer<ExpressionModelHandle> model =
       modelStore()->modelForRecord(record);
@@ -319,9 +319,8 @@ void ExpressionModelListController::layoutFieldDidAbortEditing(
 
 Ion::Storage::Record ExpressionModelListController::recordAtRow(
     int row, int* relativeRow) const {
-  if (m_isAddingNewModel && row == m_editedCellIndex) {
-    // TODO: recordAtRow, or selectedRecord should not be called while
-    // [m_isAddingNewModel] is true.
+  if (isAddingNewModel() && row == m_editedCellIndex) {
+    // TODO: recordAtRow, or selectedRecord should not be called while here
     return Ion::Storage::Record();
   }
   return modelStore()->recordAtIndex(modelIndexForRow(row, relativeRow));

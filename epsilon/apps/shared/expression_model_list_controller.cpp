@@ -199,7 +199,7 @@ bool ExpressionModelListController::removeModelRow(
 int ExpressionModelListController::modelIndexForRow(int row,
                                                     int* relativeRow) const {
   *relativeRow = 0;
-  if (row < 0) {
+  if (row <= 0) {
     return row;
   }
   if (isAddEmptyRow(row)) {
@@ -212,6 +212,8 @@ int ExpressionModelListController::modelIndexForRow(int row,
     assert(0 <= recordIndex && recordIndex < modelStore()->numberOfModels());
     Ion::Storage::Record record = modelStore()->recordAtIndex(recordIndex);
     const int numberOfRowsForCurrentRecord = numberOfRowsForRecord(record);
+    // Otherwise, do not early escape when row is 0
+    assert(numberOfRowsForCurrentRecord > 0);
     if (i <= row && row < i + numberOfRowsForCurrentRecord) {
       *relativeRow = row - i;
     }

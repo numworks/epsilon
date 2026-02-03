@@ -48,8 +48,9 @@ class ExpressionModelListController
 
   virtual Escher::EditableExpressionModelCell*
   editableExpressionModelCell() = 0;
-  bool hasAddEmptyRow() const;
-  bool isAddEmptyRow(int row) const;
+  // "Add element" row can be hidden if we reached the max number of models
+  bool hasAddElementRow() const;
+  bool isAddElementRow(int row) const;
   // If the edited cell is a new model
   bool isAddingNewModel() const { return m_isAddingNewModel; }
   bool isNewModelRow(int row) const;

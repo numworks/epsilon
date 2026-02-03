@@ -243,6 +243,7 @@ BooleanOrUndefined Private::SpecificTo(const Tree* e,
                                        Parameters params,
                                        const Context& context) {
   assert(!params.optimize);
+  assert(Dimension::DeepCheck(e, context.m_symbolContext));
   return PrivateToBoolean(e, floatPrecision, &context);
 };
 

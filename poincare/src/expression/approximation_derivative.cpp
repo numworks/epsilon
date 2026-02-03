@@ -142,14 +142,4 @@ T RiddersApproximation(int order, const Tree* child, T x, T h, T* error,
 template float ApproximateDerivative(const Tree*, float, int, const Context*);
 template double ApproximateDerivative(const Tree*, double, int, const Context*);
 
-template float GrowthRateAroundAbscissa(float, float, int, const Tree*,
-                                        const Context*);
-template double GrowthRateAroundAbscissa(double, double, int, const Tree*,
-                                         const Context*);
-
-template float RiddersApproximation(int, const Tree*, float, float, float*,
-                                    const Context*);
-template double RiddersApproximation(int, const Tree*, double, double, double*,
-                                     const Context*);
-
 }  // namespace Poincare::Internal::Approximation::Private

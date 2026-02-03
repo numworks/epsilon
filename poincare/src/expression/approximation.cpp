@@ -2209,17 +2209,11 @@ template BooleanOrUndefined To(const Tree*, FloatPrecision, Parameters,
 template float FloatBinomial(float, float);
 template double FloatBinomial(double, double);
 
+// TODO: Private methods should not appear in template instanciations
 template std::complex<float> Private::PrivateToComplex(const Tree*,
                                                        const Context*);
 template std::complex<double> Private::PrivateToComplex(const Tree*,
                                                         const Context*);
-
-#if !POINCARE_NO_FLOAT_APPROXIMATION
-template std::complex<float> Private::PrivateToComplexRecursive(const Tree*,
-                                                                const Context*);
-#endif
-template std::complex<double> Private::PrivateToComplexRecursive(
-    const Tree*, const Context*);
 
 template float Private::PrivateTo(const Tree*, const Context*);
 template double Private::PrivateTo(const Tree*, const Context*);

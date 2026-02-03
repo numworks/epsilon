@@ -270,7 +270,14 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
        * Using float to find the biggest pivot is sufficient. */
       Tree* pivotChild = Child(matrix, iPivot_temp, col);
       float pivot = ApproximateForPivot(pivotChild, ctx);
-      assert(!std::isnan(pivot));
+      assert(forceCanonization || !std::isnan(pivot));
+      if (std::isnan(pivot)) {
+        // Cannot canonize
+        if (determinant) {
+          det->removeTree();
+        }
+        return false;
+      }
       // Handle very low pivots
       if (pivot == 0.0f && !(Number::IsNull(pivotChild))) {
         pivot = FLT_MIN;

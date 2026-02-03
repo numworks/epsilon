@@ -87,13 +87,13 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
       /* acos has its values in [0,π[, use the sign of the sine to find the
        * right semicircle. */
       Tree* sine = PatternMatching::Create(KSin(KA), {.KA = exactAngle});
-      bool removePeriod =
-          Approximation::To<double>(
-              sine,
-              Approximation::Parameters{.projectLocalVariables = true,
-                                        .optimize = true},
-              Approximation::Context(ctx.m_angleUnit, ctx.m_complexFormat,
-                                     ctx.m_context)) < 0;
+      bool removePeriod = Approximation::To<double>(
+                              sine, Approximation::Parameters{
+                                        .projectLocalVariables = true,
+                                        .optimize = true,
+                                        .angleUnit = ctx.m_angleUnit,
+                                        .complexFormat = ctx.m_complexFormat,
+                                        .symbolContext = ctx.m_context}) < 0;
       sine->removeTree();
       if (removePeriod) {
         approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
@@ -104,9 +104,10 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
     approximateAngleTree->moveTreeOverTree(Approximation::To<Tree*>(
         approximateAngleTree, Approximation::FloatPrecision::Double,
         Approximation::Parameters{.projectLocalVariables = true,
-                                  .optimize = true},
-        Approximation::Context(ctx.m_angleUnit, ctx.m_complexFormat,
-                               ctx.m_context)));
+                                  .optimize = true,
+                                  .angleUnit = ctx.m_angleUnit,
+                                  .complexFormat = ctx.m_complexFormat,
+                                  .symbolContext = ctx.m_context}));
     Beautification::DeepBeautify(approximateAngleTree, ctx);
     exactAngle =
         UserExpression::Builder(static_cast<const Tree*>(approximateAngleTree));
@@ -126,9 +127,10 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   double approximatedAngle = Approximation::To<double>(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
       Approximation::Parameters{.projectLocalVariables = true,
-                                .optimize = true},
-      Approximation::Context(ctx.m_angleUnit, ctx.m_complexFormat,
-                             ctx.m_context));
+                                .optimize = true,
+                                .angleUnit = ctx.m_angleUnit,
+                                .complexFormat = ctx.m_complexFormat,
+                                .symbolContext = ctx.m_context});
   if (approximateAngleTree) {
     approximateAngleTree->removeTree();
   }
@@ -224,8 +226,10 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
       !std::isfinite(Approximation::To<float>(
           exactAngle,
           Approximation::Parameters{.projectLocalVariables = true,
-                                    .optimize = true},
-          Approximation::Context(angleUnit, complexFormat, symbolContext)))) {
+                                    .optimize = true,
+                                    .angleUnit = angleUnit,
+                                    .complexFormat = complexFormat,
+                                    .symbolContext = symbolContext}))) {
     exactAngle->removeTree();
     return UserExpression();
   }

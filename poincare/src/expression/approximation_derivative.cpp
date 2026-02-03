@@ -7,10 +7,10 @@ namespace Poincare::Internal::Approximation::Private {
 
 template <typename T>
 static T GrowthRateAroundAbscissa(T x, T h, int order, const Tree* child,
-                                  const Context* ctx);
+                                  Parameters params, const Context* ctx);
 template <typename T>
 static T RiddersApproximation(int order, const Tree* child, T x, T h, T* error,
-                              const Context* ctx);
+                              Parameters params, const Context* ctx);
 
 // TODO: Change coefficients?
 constexpr static double k_maxErrorRateOnApproximation = 0.001;
@@ -19,15 +19,15 @@ constexpr static double k_rateStepSize = 1.4;
 constexpr static double k_minSignificantError = 3e-11;
 
 template <typename T>
-T ApproximateDerivative(const Tree* child, T at, int order,
+T ApproximateDerivative(const Tree* child, T at, int order, Parameters params,
                         const Context* ctx) {
   /* TODO: Reduction is mapped on list, but not approximation.
    * Find a smart way of doing it. */
   assert(order >= 0);
   if (order == 0) {
-    return ToLocalContext<T>(child, ctx, at);
+    return ToLocalContext<T>(child, params, ctx, at);
   }
-  T functionValue = ApproximateDerivative(child, at, order - 1, ctx);
+  T functionValue = ApproximateDerivative(child, at, order - 1, params, ctx);
   if (std::isnan(functionValue)) {
     return NAN;
   }
@@ -39,7 +39,7 @@ T ApproximateDerivative(const Tree* child, T at, int order,
   do {
     T currentError;
     T currentResult =
-        RiddersApproximation(order, child, at, h, &currentError, ctx);
+        RiddersApproximation(order, child, at, h, &currentError, params, ctx);
     h /= static_cast<T>(10.0);
     if (std::isnan(currentError) || currentError > error) {
       continue;
@@ -79,15 +79,17 @@ T ApproximateDerivative(const Tree* child, T at, int order,
 
 template <typename T>
 T GrowthRateAroundAbscissa(T x, T h, int order, const Tree* child,
-                           const Context* ctx) {
-  T expressionPlus = ApproximateDerivative(child, x + h, order - 1, ctx);
-  T expressionMinus = ApproximateDerivative(child, x - h, order - 1, ctx);
+                           Parameters params, const Context* ctx) {
+  T expressionPlus =
+      ApproximateDerivative(child, x + h, order - 1, params, ctx);
+  T expressionMinus =
+      ApproximateDerivative(child, x - h, order - 1, params, ctx);
   return (expressionPlus - expressionMinus) / (h + h);
 }
 
 template <typename T>
 T RiddersApproximation(int order, const Tree* child, T x, T h, T* error,
-                       const Context* ctx) {
+                       Parameters params, const Context* ctx) {
   /* Ridders' Algorithm
    * Blibliography:
    * - Ridders, C.J.F. 1982, Advances in Helperering Software, vol. 4, no. 2,
@@ -106,7 +108,7 @@ T RiddersApproximation(int order, const Tree* child, T x, T h, T* error,
       a[i][j] = 1;
     }
   }
-  a[0][0] = GrowthRateAroundAbscissa(x, hh, order, child, ctx);
+  a[0][0] = GrowthRateAroundAbscissa(x, hh, order, child, params, ctx);
   T ans = 0;
   T errt = 0;
   // Loop on i: change the step size
@@ -115,7 +117,7 @@ T RiddersApproximation(int order, const Tree* child, T x, T h, T* error,
     // Make hh an exactly representable number
     volatile T temp = x + hh;
     hh = temp - x;
-    a[0][i] = GrowthRateAroundAbscissa(x, hh, order, child, ctx);
+    a[0][i] = GrowthRateAroundAbscissa(x, hh, order, child, params, ctx);
     T fac = k_rateStepSize * k_rateStepSize;
     // Loop on j: compute extrapolation for several orders
     for (int j = 1; j < 10; j++) {
@@ -139,7 +141,9 @@ T RiddersApproximation(int order, const Tree* child, T x, T h, T* error,
   return ans;
 }
 
-template float ApproximateDerivative(const Tree*, float, int, const Context*);
-template double ApproximateDerivative(const Tree*, double, int, const Context*);
+template float ApproximateDerivative(const Tree*, float, int, Parameters,
+                                     const Context*);
+template double ApproximateDerivative(const Tree*, double, int, Parameters,
+                                      const Context*);
 
 }  // namespace Poincare::Internal::Approximation::Private

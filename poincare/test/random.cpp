@@ -14,8 +14,8 @@ void compare_approximates(const Tree* e1, const Tree* e2, bool equal,
   /* The two approximations are done with two distinct instances of the
    * approximation context, so that the random() of the two expressions are
    * evaluated differently */
-  T approx1 = Approximation::To<T>(e1, params, Approximation::Context(Radian));
-  T approx2 = Approximation::To<T>(e2, params, Approximation::Context(Radian));
+  T approx1 = Approximation::To<T>(e1, params);
+  T approx2 = Approximation::To<T>(e2, params);
   bool equalResult = OMG::Float::RoughlyEqual<T>(
       approx1, approx2, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG
@@ -114,8 +114,7 @@ QUIZ_CASE(pcj_random_seeds) {
 template <typename T>
 bool approximate_is_between_bounds(const Tree* e, T lowerBound, T upperBound) {
   bool result = true;
-  float approx = Approximation::To<float>(e, Approximation::Parameters{},
-                                          Approximation::Context(Radian));
+  float approx = Approximation::To<float>(e, Approximation::Parameters{});
   if (std::is_same<T, int>::value) {
     result = OMG::Float::RoughlyEqual(approx, std::round(approx),
                                       OMG::Float::EpsilonLax<float>());

@@ -40,47 +40,50 @@ struct AlternativeIntegrand {
 
 template <typename T>
 static T evaluateIntegrand(const Tree* integrand, T x,
-                           Substitution<T> substitution,
+                           Substitution<T> substitution, Parameters params,
                            const Approximation::Context* ctx);
 
 template <typename T>
 static T evaluateIntegrandNearBound(const Tree* integrand, T x, T xc,
                                     AlternativeIntegrand alternativeIntegrand,
+                                    Parameters params,
                                     const Approximation::Context* ctx);
 
 template <typename T>
 static DetailedResult<T> tanhSinhQuadrature(
     const Tree* integrand, int level, AlternativeIntegrand alternativeIntegrand,
-    const Approximation::Context* ctx);
+    Parameters params, const Approximation::Context* ctx);
 template <typename T>
 static DetailedResult<T> kronrodGaussQuadrature(
     const Tree* integrand, T a, T b, Substitution<T> substitution,
-    const Approximation::Context* ctx);
+    Parameters params, const Approximation::Context* ctx);
 template <typename T>
 static DetailedResult<T> adaptiveQuadrature(const Tree* integrand, T a, T b,
                                             Substitution<T> substitution,
+                                            Parameters params,
                                             const Approximation::Context* ctx);
 template <typename T>
 static DetailedResult<T> iterateAdaptiveQuadrature(
     const Tree* integrand, DetailedResult<T> quadKG, T a, T b,
     T absoluteErrorThreshold, T relativeErrorThreshold,
-    Substitution<T> substitution, const Approximation::Context* ctx,
-    int iterationDepth, int& iterationCount);
+    Substitution<T> substitution, Parameters params,
+    const Approximation::Context* ctx, int iterationDepth, int& iterationCount);
 
 template <typename T>
-T ApproximateIntegral(const Tree* integral, const Context* ctx) {
+T ApproximateIntegral(const Tree* integral, Parameters params,
+                      const Context* ctx) {
   /* TODO: Reduction is mapped on list, but not approximation.
    * Find a smart way of doing it. */
   const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
   const Tree* integrand = upperBound->nextTree();
-  T a = PrivateToFloat<T>(lowerBound, ctx);
-  T b = PrivateToFloat<T>(upperBound, ctx);
+  T a = PrivateToFloat<T>(lowerBound, params, ctx);
+  T b = PrivateToFloat<T>(upperBound, params, ctx);
   if (std::isnan(a) || std::isnan(b)) {
     return NAN;
   }
-  bool fIsNanInA = std::isnan(ToLocalContext(integrand, ctx, a));
-  bool fIsNanInB = std::isnan(ToLocalContext(integrand, ctx, b));
+  bool fIsNanInA = std::isnan(ToLocalContext(integrand, params, ctx, a));
+  bool fIsNanInB = std::isnan(ToLocalContext(integrand, params, ctx, b));
   /* The integrand has a singularity on a bound of the interval, use tanh-sinh
    * quadrature */
   if (fIsNanInA || fIsNanInB) {
@@ -102,7 +105,7 @@ T ApproximateIntegral(const Tree* integral, const Context* ctx) {
      * examples) It could be increased but precision is likely lost somewhere
      * else in hard examples. */
     DetailedResult<T> detailedResult =
-        tanhSinhQuadrature<T>(integrand, 4, alternativeIntegrand, ctx);
+        tanhSinhQuadrature<T>(integrand, 4, alternativeIntegrand, params, ctx);
     // Arbitrary value to have the best choice of quadrature on the examples
     constexpr T insufficientPrecision = 0.001;
     if (!std::isnan(detailedResult.integral) &&
@@ -152,7 +155,7 @@ T ApproximateIntegral(const Tree* integral, const Context* ctx) {
   }
 
   DetailedResult<T> detailedResult =
-      adaptiveQuadrature<T>(integrand, start, end, substitution, ctx);
+      adaptiveQuadrature<T>(integrand, start, end, substitution, params, ctx);
   return DetailedResultIsValid(detailedResult) ? scale * detailedResult.integral
                                                : NAN;
 }
@@ -177,19 +180,19 @@ bool DetailedResultIsValid(DetailedResult<T> result) {
 
 template <typename T>
 T evaluateIntegrand(const Tree* integrand, T x, Substitution<T> substitution,
-                    const Approximation::Context* ctx) {
+                    Parameters params, const Approximation::Context* ctx) {
   switch (substitution.type) {
     case Substitution<T>::Type::None:
-      return Approximation::ToLocalContext(integrand, ctx, x);
+      return Approximation::ToLocalContext(integrand, params, ctx, x);
     case Substitution<T>::Type::LeftOpen: {
       T z = 1.0 / (x + 1.0);
       T arg = substitution.originB - (2.0 * z - 1.0);
-      return Approximation::ToLocalContext(integrand, ctx, arg) * z * z;
+      return Approximation::ToLocalContext(integrand, params, ctx, arg) * z * z;
     }
     case Substitution<T>::Type::RightOpen: {
       T z = 1.0 / (x + 1);
       T arg = 2.0 * z + substitution.originA - 1.0;
-      return Approximation::ToLocalContext(integrand, ctx, arg) * z * z;
+      return Approximation::ToLocalContext(integrand, params, ctx, arg) * z * z;
     }
     default: {
       assert(substitution.type == Substitution<T>::Type::RealLine);
@@ -197,7 +200,7 @@ T evaluateIntegrand(const Tree* integrand, T x, Substitution<T> substitution,
       T inv = 1.0 / (1.0 - x2);
       T w = (1.0 + x2) * inv * inv;
       T arg = x * inv;
-      return Approximation::ToLocalContext(integrand, ctx, arg) * w;
+      return Approximation::ToLocalContext(integrand, params, ctx, arg) * w;
     }
   }
 }
@@ -205,25 +208,26 @@ T evaluateIntegrand(const Tree* integrand, T x, Substitution<T> substitution,
 template <typename T>
 T evaluateIntegrandNearBound(const Tree* integrand, T x, T xc,
                              AlternativeIntegrand alternativeIntegrand,
+                             Parameters params,
                              const Approximation::Context* ctx) {
   T scale = (alternativeIntegrand.b - alternativeIntegrand.a) / 2.0;
   T arg = xc * scale;
   if (x < 0) {
     if (alternativeIntegrand.integrandNearA) {
       return Approximation::ToLocalContext(alternativeIntegrand.integrandNearA,
-                                           ctx, arg) *
+                                           params, ctx, arg) *
              scale;
     }
     arg = arg + alternativeIntegrand.a;
   } else {
     if (alternativeIntegrand.integrandNearB) {
       return Approximation::ToLocalContext(alternativeIntegrand.integrandNearB,
-                                           ctx, -arg) *
+                                           params, ctx, -arg) *
              scale;
     }
     arg = alternativeIntegrand.b - arg;
   }
-  return Approximation::ToLocalContext(integrand, ctx, arg) * scale;
+  return Approximation::ToLocalContext(integrand, params, ctx, arg) * scale;
 }
 
 /* Tanh-Sinh quadrature
@@ -231,11 +235,13 @@ T evaluateIntegrandNearBound(const Tree* integrand, T x, T xc,
 template <typename T>
 DetailedResult<T> tanhSinhQuadrature(const Tree* integrand, int level,
                                      AlternativeIntegrand alternativeIntegrand,
+                                     Parameters params,
                                      const Approximation::Context* ctx) {
   T h = 2.0;
   // j=0
-  T result = M_PI_2 * evaluateIntegrandNearBound(integrand, 0.0, 1.0,
-                                                 alternativeIntegrand, ctx);
+  T result =
+      M_PI_2 * evaluateIntegrandNearBound(integrand, 0.0, 1.0,
+                                          alternativeIntegrand, params, ctx);
   int j = 1;
   T sn2 = 0, sn1 = 0;
   T maxWjFj = 0;
@@ -253,8 +259,9 @@ DetailedResult<T> tanhSinhQuadrature(const Tree* integrand, int level,
       T abscissa = std::tanh(sinh);
       T distanceToBound = 1.0 / (std::exp(sinh) * std::cosh(sinh));
       if (leftOk) {
-        T leftValue = evaluateIntegrandNearBound(
-            integrand, -abscissa, distanceToBound, alternativeIntegrand, ctx);
+        T leftValue =
+            evaluateIntegrandNearBound(integrand, -abscissa, distanceToBound,
+                                       alternativeIntegrand, params, ctx);
         if (std::isnan(leftValue)) {
           leftOk = false;
         } else {
@@ -269,8 +276,9 @@ DetailedResult<T> tanhSinhQuadrature(const Tree* integrand, int level,
           leftOk = false;
       }
       if (rightOk) {
-        T rightValue = evaluateIntegrandNearBound(
-            integrand, abscissa, distanceToBound, alternativeIntegrand, ctx);
+        T rightValue =
+            evaluateIntegrandNearBound(integrand, abscissa, distanceToBound,
+                                       alternativeIntegrand, params, ctx);
         if (std::isnan(rightValue)) {
           rightOk = false;
         } else {
@@ -310,6 +318,7 @@ DetailedResult<T> tanhSinhQuadrature(const Tree* integrand, int level,
 template <typename T>
 DetailedResult<T> kronrodGaussQuadrature(const Tree* integrand, T a, T b,
                                          Substitution<T> substitution,
+                                         Parameters params,
                                          const Approximation::Context* ctx) {
   constexpr T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   /* We here use Kronrod-Legendre quadrature with n = 21
@@ -351,7 +360,7 @@ DetailedResult<T> kronrodGaussQuadrature(const Tree* integrand, T a, T b,
   errorResult.absoluteError = 0;
 
   T gaussIntegral = 0;
-  T fCenter = evaluateIntegrand(integrand, center, substitution, ctx);
+  T fCenter = evaluateIntegrand(integrand, center, substitution, params, ctx);
   if (std::isnan(fCenter)) {
     return errorResult;
   }
@@ -359,11 +368,13 @@ DetailedResult<T> kronrodGaussQuadrature(const Tree* integrand, T a, T b,
   T absKronrodIntegral = std::fabs(kronrodIntegral);
   for (int j = 0; j < 10; j++) {
     T xDelta = halfLength * x[j];
-    T fval1 = evaluateIntegrand(integrand, center - xDelta, substitution, ctx);
+    T fval1 = evaluateIntegrand(integrand, center - xDelta, substitution,
+                                params, ctx);
     if (std::isnan(fval1)) {
       return errorResult;
     }
-    T fval2 = evaluateIntegrand(integrand, center + xDelta, substitution, ctx);
+    T fval2 = evaluateIntegrand(integrand, center + xDelta, substitution,
+                                params, ctx);
     if (std::isnan(fval2)) {
       return errorResult;
     }
@@ -411,9 +422,10 @@ DetailedResult<T> kronrodGaussQuadrature(const Tree* integrand, T a, T b,
 template <typename T>
 DetailedResult<T> adaptiveQuadrature(const Tree* integrand, T a, T b,
                                      Substitution<T> substitution,
+                                     Parameters params,
                                      const Approximation::Context* ctx) {
   DetailedResult<T> quadKG =
-      kronrodGaussQuadrature(integrand, a, b, substitution, ctx);
+      kronrodGaussQuadrature(integrand, a, b, substitution, params, ctx);
 
   /* Absolute and relative thresholds to consider that the quadrature
    * approximation have converged. This thresholds should be low enough to
@@ -429,15 +441,16 @@ DetailedResult<T> adaptiveQuadrature(const Tree* integrand, T a, T b,
   int numberOfCalls = 1;
   return iterateAdaptiveQuadrature(
       integrand, quadKG, a, b, absoluteErrorThreshold, relativeErrorThreshold,
-      substitution, ctx, 1, numberOfCalls);
+      substitution, params, ctx, 1, numberOfCalls);
 }
 
 template <typename T>
 DetailedResult<T> iterateAdaptiveQuadrature(
     const Tree* integrand, DetailedResult<T> quadKG, T a, T b,
     T absoluteErrorThreshold, T relativeErrorThreshold,
-    Substitution<T> substitution, const Approximation::Context* ctx,
-    int iterationDepth, int& iterationCount) {
+    Substitution<T> substitution, Parameters params,
+    const Approximation::Context* ctx, int iterationDepth,
+    int& iterationCount) {
   // Maximum number of interval splits for the iterative quadrature
   constexpr static int k_maxIterationDepth = 20;
   /* Maximum number of calls to iterateAdaptiveQuadrature, to avoid going very
@@ -464,9 +477,9 @@ DetailedResult<T> iterateAdaptiveQuadrature(
 
   T m = (a + b) / 2;
   DetailedResult<T> left =
-      kronrodGaussQuadrature(integrand, a, m, substitution, ctx);
+      kronrodGaussQuadrature(integrand, a, m, substitution, params, ctx);
   DetailedResult<T> right =
-      kronrodGaussQuadrature(integrand, m, b, substitution, ctx);
+      kronrodGaussQuadrature(integrand, m, b, substitution, params, ctx);
   iterationCount += 1;
 
   /* Start by the side with the biggest error to reach maximumError faster if
@@ -485,8 +498,8 @@ DetailedResult<T> iterateAdaptiveQuadrature(
      * initial error thresholds are divided by two. */
     *current = iterateAdaptiveQuadrature(
         integrand, *current, lowerBound, upperBound, absoluteErrorThreshold / 2,
-        relativeErrorThreshold / 2, substitution, ctx, iterationDepth + 1,
-        iterationCount);
+        relativeErrorThreshold / 2, substitution, params, ctx,
+        iterationDepth + 1, iterationCount);
     if (!DetailedResultIsValid(*current)) {
       return {NAN, NAN};
     }
@@ -497,7 +510,9 @@ DetailedResult<T> iterateAdaptiveQuadrature(
   return result;
 }
 
-template float ApproximateIntegral(const Tree* integral, const Context* ctx);
-template double ApproximateIntegral(const Tree* integral, const Context* ctx);
+template float ApproximateIntegral(const Tree* integral, Parameters params,
+                                   const Context* ctx);
+template double ApproximateIntegral(const Tree* integral, Parameters params,
+                                    const Context* ctx);
 
 }  // namespace Poincare::Internal::Approximation::Private

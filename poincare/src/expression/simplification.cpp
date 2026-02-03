@@ -279,11 +279,12 @@ bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
     case Strategy::ApproximateToFloat:
       changed = Approximation::Approximate(
           e, Approximation::FloatPrecision::Double,
-          Approximation::Parameters{.onlyReplaceNumerical = true,
-                                    .optimize = true},
-          Approximation::Context(projectionContext.m_angleUnit,
-                                 projectionContext.m_complexFormat,
-                                 projectionContext.m_context));
+          Approximation::Parameters{
+              .onlyReplaceNumerical = true,
+              .optimize = true,
+              .angleUnit = projectionContext.m_angleUnit,
+              .complexFormat = projectionContext.m_complexFormat,
+              .symbolContext = projectionContext.m_context});
       if (changed && insideReduction) {
         // NAries could be sorted again, some children may be merged.
         SystematicReduction::DeepReduce(e);

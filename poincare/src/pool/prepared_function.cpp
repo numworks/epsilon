@@ -14,10 +14,9 @@ PreparedFunction PreparedFunction::cloneChildAtIndex(int i) const {
 template <typename T>
 T PreparedFunctionScalar::approximateToRealScalarWithValue(
     T x, int listElement) const {
-  return Approximation::To<T>(
-      tree(), x, Approximation::Parameters{.optimize = true},
-      Approximation::Context(AngleUnit::None, ComplexFormat::None,
-                             EmptySymbolContext{}, listElement));
+  return Approximation::To<T>(tree(), x,
+                              Approximation::Parameters{.optimize = true},
+                              Approximation::Context(listElement));
 }
 
 bool PreparedFunction::involvesDiscontinuousFunction() const {

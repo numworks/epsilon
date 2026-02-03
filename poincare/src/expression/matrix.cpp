@@ -110,7 +110,8 @@ Tree* Matrix::Transpose(const Tree* matrix) {
 }
 
 Tree* Matrix::Addition(const Tree* matrix1, const Tree* matrix2,
-                       bool approximate, const Approximation::Context* ctx) {
+                       bool approximate, Approximation::Parameters params,
+                       const Approximation::Context* ctx) {
   // should be an assert after dimensional analysis
   assert(NumberOfRows(matrix1) == NumberOfRows(matrix2) &&
          NumberOfColumns(matrix1) == NumberOfColumns(matrix2));
@@ -123,7 +124,7 @@ Tree* Matrix::Addition(const Tree* matrix1, const Tree* matrix2,
     childM1->cloneTree();
     childM2->cloneTree();
     if (approximate) {
-      Approximation::Private::ToComplexTreeInplace(child, ctx);
+      Approximation::Private::ToComplexTreeInplace(child, params, ctx);
     } else {
       SystematicReduction::ShallowReduce(child);
     }
@@ -135,6 +136,7 @@ Tree* Matrix::Addition(const Tree* matrix1, const Tree* matrix2,
 
 Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* matrix,
                                    bool approximate,
+                                   Approximation::Parameters params,
                                    const Approximation::Context* ctx) {
   Tree* result = matrix->cloneNode();
   for (const Tree* child : matrix->children()) {
@@ -142,7 +144,7 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* matrix,
     scalar->cloneTree();
     child->cloneTree();
     if (approximate) {
-      Approximation::Private::ToComplexTreeInplace(mult, ctx);
+      Approximation::Private::ToComplexTreeInplace(mult, params, ctx);
     } else {
       SystematicReduction::ShallowReduce(mult);
     }
@@ -151,7 +153,7 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* matrix,
 }
 
 Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
-                             bool approximate,
+                             bool approximate, Approximation::Parameters params,
                              const Approximation::Context* ctx) {
   assert(NumberOfColumns(matrix1) == NumberOfRows(matrix2));
   uint8_t rows = NumberOfRows(matrix1);
@@ -188,13 +190,13 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
         rowsM2[k]->cloneTree();
         rowsM2[k] = rowsM2[k]->nextTree();
         if (approximate) {
-          Approximation::Private::ToComplexTreeInplace(mult, ctx);
+          Approximation::Private::ToComplexTreeInplace(mult, params, ctx);
         } else {
           SystematicReduction::ShallowReduce(mult);
         }
       }
       if (approximate) {
-        Approximation::Private::ToComplexTreeInplace(add, ctx);
+        Approximation::Private::ToComplexTreeInplace(add, params, ctx);
       } else {
         SystematicReduction::ShallowReduce(add);
       }
@@ -210,20 +212,22 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
 }
 
 // Approximate matrix child for pivot selection, abs is enough for this use case
-double ApproximateForPivot(const Tree* child,
+double ApproximateForPivot(const Tree* child, Approximation::Parameters params,
                            const Approximation::Context* ctx) {
-  return std::abs(Approximation::Private::PrivateToComplex<double>(child, ctx));
+  return std::abs(
+      Approximation::Private::PrivateToComplex<double>(child, params, ctx));
 }
 
 bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
-                         bool approximate, const Approximation::Context* ctx,
+                         bool approximate, Approximation::Parameters params,
+                         const Approximation::Context* ctx,
                          bool forceCanonization) {
   if (!ctx) {
     /* TODO: At the moment, we need to create an approximation context.
      * Approximation should be reworked so that creating such a context is not
      * needed.  */
     Approximation::Context approximationContext{};
-    return RowCanonize(matrix, reducedForm, determinant, approximate,
+    return RowCanonize(matrix, reducedForm, determinant, approximate, params,
                        &approximationContext, forceCanonization);
   }
   // If determinant is given, it must be nullptr.
@@ -242,7 +246,8 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
       // Escape if a child cannot be approximated and forceCanonization is false
       return false;
     }
-    if (canApproximate && !std::isfinite(ApproximateForPivot(child, ctx))) {
+    if (canApproximate &&
+        !std::isfinite(ApproximateForPivot(child, params, ctx))) {
       // Escape if a child that can be approximated has no finite approximation
       return false;
     }
@@ -273,7 +278,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
       /* Find the best pivot in column col.
        * Using float to find the biggest pivot is sufficient. */
       Tree* pivotChild = Child(matrix, iPivot_temp, col);
-      float pivot = ApproximateForPivot(pivotChild, ctx);
+      float pivot = ApproximateForPivot(pivotChild, params, ctx);
       assert(forceCanonization || !std::isnan(pivot));
       if (std::isnan(pivot)) {
         /* Although children have been checked at the beginning, a potential
@@ -309,7 +314,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
     Tree* candidate = Child(matrix, iPivot, col);
     if (Number::IsNull(candidate) ||
-        (approximate && ApproximateForPivot(candidate, ctx) == 0.0)) {
+        (approximate && ApproximateForPivot(candidate, params, ctx) == 0.0)) {
       // No non-null coefficient in this column, skip
       col++;
       if (determinant) {
@@ -340,7 +345,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
         if (approximate) {
           Tree* newValue = PatternMatching::Create(
               KMult(KA, KPow(KB, -1_e)), {.KA = valueToUpdate, .KB = divisor});
-          Approximation::Private::ToComplexTreeInplace(newValue, ctx);
+          Approximation::Private::ToComplexTreeInplace(newValue, params, ctx);
           valueToUpdate->moveTreeOverTree(newValue);
         } else {
           valueToUpdate->moveTreeOverTree(PatternMatching::CreateReduce(
@@ -369,7 +374,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
             Tree* newValue = PatternMatching::Create(
                 KAdd(KA, KMult(-1_e, KB, KC)),
                 {.KA = valueToUpdate, .KB = valueToSubtract, .KC = factor});
-            Approximation::Private::ToComplexTreeInplace(newValue, ctx);
+            Approximation::Private::ToComplexTreeInplace(newValue, params, ctx);
             valueToUpdate->moveTreeOverTree(newValue);
           } else {
             valueToUpdate->moveTreeOverTree(PatternMatching::CreateReduce(
@@ -389,7 +394,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
   }
   if (determinant) {
     if (approximate) {
-      Approximation::Private::ToComplexTreeInplace(det, ctx);
+      Approximation::Private::ToComplexTreeInplace(det, params, ctx);
     } else {
       SystematicReduction::ShallowReduce(det);
     }
@@ -400,7 +405,8 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
 }
 
 int Matrix::CanonizeAndRank(Tree* matrix, bool forceCanonization) {
-  if (RowCanonize(matrix, true, nullptr, false, nullptr, forceCanonization)) {
+  if (RowCanonize(matrix, true, nullptr, false, Approximation::Parameters{},
+                  nullptr, forceCanonization)) {
     return RankOfCanonized(matrix);
   }
   return k_failedToCanonizeRank;
@@ -426,6 +432,7 @@ int Matrix::RankOfCanonized(const Tree* matrix) {
 }
 
 Tree* Matrix::Inverse(const Tree* matrix, bool approximate,
+                      Approximation::Parameters params,
                       const Approximation::Context* ctx) {
   assert(NumberOfRows(matrix) == NumberOfColumns(matrix));
   uint8_t dim = NumberOfRows(matrix);
@@ -445,7 +452,8 @@ Tree* Matrix::Inverse(const Tree* matrix, bool approximate,
   // Floats from A might need to be bubbled up in I
   SystematicReduction::ShallowReduce(matrixAI);
   // Compute the inverse
-  bool canonized = RowCanonize(matrixAI, true, nullptr, approximate, ctx);
+  bool canonized =
+      RowCanonize(matrixAI, true, nullptr, approximate, params, ctx);
   if (!canonized && !approximate) {
     matrixAI->moveTreeOverTree(Matrix::Undef({dim, dim}));
     return matrixAI;
@@ -476,6 +484,7 @@ Tree* Matrix::Inverse(const Tree* matrix, bool approximate,
 }
 
 Tree* Matrix::Power(const Tree* matrix, int exponent, bool approximate,
+                    Approximation::Parameters params,
                     const Approximation::Context* ctx) {
   assert(NumberOfRows(matrix) == NumberOfColumns(matrix));
   if (exponent < 0 && exponent != INT_MIN) {
@@ -483,7 +492,7 @@ Tree* Matrix::Power(const Tree* matrix, int exponent, bool approximate,
     assert(-exponent > 0);
     Tree* result = Power(matrix, -exponent);
     // TODO is it worth to compute inverse first ?
-    result->moveTreeOverTree(Inverse(result, approximate, ctx));
+    result->moveTreeOverTree(Inverse(result, approximate, params, ctx));
     return result;
   }
   assert(exponent >= 0 || exponent % 2 == 0);
@@ -500,9 +509,11 @@ Tree* Matrix::Power(const Tree* matrix, int exponent, bool approximate,
   }
   // Quick exponentiation
   Tree* result = Power(matrix, exponent / 2);
-  result->moveTreeOverTree(Multiplication(result, result, approximate, ctx));
+  result->moveTreeOverTree(
+      Multiplication(result, result, approximate, params, ctx));
   if (exponent % 2 == 1) {
-    result->moveTreeOverTree(Multiplication(matrix, result, approximate, ctx));
+    result->moveTreeOverTree(
+        Multiplication(matrix, result, approximate, params, ctx));
   }
   return result;
 }

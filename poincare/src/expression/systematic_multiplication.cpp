@@ -123,9 +123,9 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     // TODO: Maybe this should go in advanced reduction.
     /* TODO: This isMatrix is not enough as the child tree could be of dimension
      * matrix without being a matrix. Like Pow([[x]],20000000000) */
-    merge = (child->isMatrix()
-                 ? Matrix::Multiplication
-                 : Matrix::ScalarMultiplication)(child, next, false, nullptr);
+    merge = (child->isMatrix() ? Matrix::Multiplication
+                               : Matrix::ScalarMultiplication)(
+        child, next, false, Approximation::Parameters{}, nullptr);
   } else {
     PowerLike::BaseAndExponent childParameters =
         PowerLike::GetBaseAndExponent(child, true);

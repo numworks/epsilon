@@ -128,6 +128,7 @@ static uint32_t RandIntNoRepInRangeOfIndex(uint32_t range, uint32_t seed,
 }
 
 double PrivateApproximateRandIntNoRep(const Tree* randIntNoRep,
+                                      Approximation::Parameters params,
                                       const Approximation::Context* approxCtx,
                                       uint8_t seed) {
   assert(randIntNoRep->isRandIntNoRep());
@@ -146,15 +147,15 @@ double PrivateApproximateRandIntNoRep(const Tree* randIntNoRep,
     static_assert(std::is_same<double, Random::Context::VariableType>::value);
   }
   double min = Approximation::Private::PrivateToFloat<double>(
-      randIntNoRep->child(0), approxCtx);
+      randIntNoRep->child(0), params, approxCtx);
   double max = Approximation::Private::PrivateToFloat<double>(
-      randIntNoRep->child(1), approxCtx);
+      randIntNoRep->child(1), params, approxCtx);
   assert(min == std::round(min) && max == std::round(max));
 
   uint32_t range = static_cast<uint32_t>(max - min + 1);
 #if ASSERTIONS
   double length = Approximation::Private::PrivateToFloat<double>(
-      randIntNoRep->child(2), approxCtx);
+      randIntNoRep->child(2), params, approxCtx);
   assert(0 <= approxCtx->m_listElement && approxCtx->m_listElement < length &&
          length <= range);
 #endif
@@ -165,6 +166,7 @@ double PrivateApproximateRandIntNoRep(const Tree* randIntNoRep,
 
 template <typename T>
 T Approximation::Private::ApproximateRandom(const Tree* randomTree,
+                                            Parameters params,
                                             const Context* approxCtx) {
   uint8_t seed = Random::GetSeed(randomTree);
   bool validSeed = seed > 0 && seed <= Random::Context::k_maxNumberOfVariables;
@@ -175,30 +177,32 @@ T Approximation::Private::ApproximateRandom(const Tree* randomTree,
     if (!validSeed) {
       return NAN;
     }
-    return PrivateApproximateRandIntNoRep(randomTree, approxCtx, seed);
+    return PrivateApproximateRandIntNoRep(randomTree, params, approxCtx, seed);
   }
   if (!validSeed) {
-    return ApproximateRandomHelper<T>(randomTree, approxCtx);
+    return ApproximateRandomHelper<T>(randomTree, params, approxCtx);
   }
   Random::Context::VariableType* cachedValue =
       &approxCtx->m_randomContext.m_list[seed - 1];
   if (std::isnan(*cachedValue)) {
     // Context is needed with RandIntNoRep
-    *cachedValue = ApproximateRandomHelper<T>(randomTree, approxCtx);
+    *cachedValue = ApproximateRandomHelper<T>(randomTree, params, approxCtx);
   }
   return *cachedValue;
 }
 
 template <typename T>
 T ApproximateRandomHelper(const Tree* randomTree,
+                          Approximation::Parameters params,
                           const Approximation::Context* ctx) {
   using Approximation::Private::PrivateToFloat;
   if (randomTree->isRandom()) {
     return Poincare::random<T>();
   }
   assert(randomTree->isRandInt());
-  return Random::RandomInt<T>(PrivateToFloat<T>(randomTree->child(0), ctx),
-                              PrivateToFloat<T>(randomTree->child(1), ctx));
+  return Random::RandomInt<T>(
+      PrivateToFloat<T>(randomTree->child(0), params, ctx),
+      PrivateToFloat<T>(randomTree->child(1), params, ctx));
 }
 
 /* We could adapt Poincare::Integer::RandomInt<T>() here instead, but in
@@ -225,12 +229,15 @@ T Random::RandomInt(T a, T b) {
 }
 
 template float Approximation::Private::ApproximateRandom<float>(const Tree*,
+                                                                Parameters,
                                                                 const Context*);
 template double Approximation::Private::ApproximateRandom<double>(
-    const Tree*, const Context*);
+    const Tree*, Parameters, const Context*);
 template float ApproximateRandomHelper<float>(const Tree*,
+                                              Approximation::Parameters,
                                               const Approximation::Context*);
 template double ApproximateRandomHelper<double>(const Tree*,
+                                                Approximation::Parameters,
                                                 const Approximation::Context*);
 template float Random::RandomInt<float>(float, float);
 template double Random::RandomInt<double>(double, double);

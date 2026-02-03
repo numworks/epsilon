@@ -88,21 +88,21 @@ struct Parameters {
    * asserted instead. Particularly relevant when the approximation is called
    * multiple times (e.g. Solver or Grapher) */
   bool optimize = false;
+
+  // The following parameters should only be passed in case of a UserExpression
+  AngleUnit angleUnit = AngleUnit::None;
+  ComplexFormat complexFormat = ComplexFormat::None;
+  // SymbolContext is used to store the values of user symbols and functions
+  const Poincare::SymbolContext& symbolContext = k_emptySymbolContext;
 };
 
 class Context {
  public:
-  Context(AngleUnit angleUnit = AngleUnit::None,
-          ComplexFormat complexFormat = ComplexFormat::None,
-          const Poincare::SymbolContext& symbolContext = k_emptySymbolContext,
-          int16_t listElement = -1)
+  Context(int16_t listElement = -1)
       : m_randomContext(Random::Context(false)),
         m_localContext(nullptr),
-        m_symbolContext(symbolContext),
         m_listElement(listElement),
-        m_pointElement(-1),
-        m_angleUnit(angleUnit),
-        m_complexFormat(complexFormat) {}
+        m_pointElement(-1) {}
   Private::VariableType variable(uint8_t index) const {
     assert(m_localContext);
     return m_localContext->variable(index);
@@ -117,18 +117,13 @@ class Context {
   void updateRandomContext(Random::Context randomCtx) const {
     m_randomContext = randomCtx;
   }
-  // TODO_PCJ : Maybe better separate const and non const ctx ?
   mutable Random::Context m_randomContext;
   // LocalContext is used to store the values of local variables
   Private::LocalContext* m_localContext;
-  // SymbolContext is used to store the values of user symbols and functions
-  const Poincare::SymbolContext& m_symbolContext;
   // Tells if we are approximating to get the nth-element of a list
   int16_t m_listElement;
   // Tells if we are approximating to get the nth-element of a point
   int16_t m_pointElement;
-  AngleUnit m_angleUnit;
-  ComplexFormat m_complexFormat;
 };
 
 class BooleanOrUndefined {
@@ -178,7 +173,7 @@ bool Approximate(Tree* e, FloatPrecision floatPrecision, Parameters params,
 /* Approximate expression at KVarX/K = x. tree must be of scalar dimension and
  * real. TODO_PCJ: make private */
 template <typename T>
-T ToLocalContext(const Tree* e, const Context* ctx, T x);
+T ToLocalContext(const Tree* e, Parameters params, const Context* ctx, T x);
 
 // Optimize a projected function for efficient approximations
 void PrepareFunctionForApproximation(Tree* e, const char* variable,
@@ -211,14 +206,9 @@ bool IsNonReal(std::complex<T> x) {
 }
 
 namespace Private {
-// Update the approximation's context. Return a clone of e if necessary.
-/* Note that the Context is const in this method although the random context
- * will be updated. This is taking advantage of the mutable m_randomContext.
- * This allows to call PrepareTree in methods where the Context is
- * const, without the need to create a copy of the whole Context just to update
- * the random context. */
-Tree* PrepareTree(const Tree* e, FloatPrecision floatPrecision,
-                  Parameters params, const Context& context);
+/* If requested, project user variables or prepare the expression for
+ * approximation */
+Tree* PrepareTree(const Tree* e, Parameters params);
 
 /* Specific processing for the ReturnType. Must be overloaded for each specific
  * ReturnType */
@@ -249,39 +239,43 @@ T UndefinedUnhandledDimension();
 
 // Tree can be of any dimension
 Tree* PrivateToTree(const Tree* e, FloatPrecision floatPrecision, Dimension dim,
-                    const Context* ctx);
+                    Parameters params, const Context* ctx);
 
 // Tree must be of scalar dimension or equivalent. Escape if tree is too deep.
 template <typename T>
-std::complex<T> PrivateToComplex(const Tree* e, const Context* ctx);
+std::complex<T> PrivateToComplex(const Tree* e, Parameters params,
+                                 const Context* ctx);
 
 // Tree must be of scalar dimension or equivalent
 template <typename T>
-std::complex<T> PrivateToComplexRecursive(const Tree* e, const Context* ctx);
+std::complex<T> PrivateToComplexRecursive(const Tree* e, Parameters params,
+                                          const Context* ctx);
 
 // Tree must be of scalar dimension or equivalent, and real.
 template <typename T>
-T PrivateToFloat(const Tree* e, const Context* ctx);
+T PrivateToFloat(const Tree* e, Parameters params, const Context* ctx);
 
 // Tree must be of boolean dimension.
 BooleanOrUndefined PrivateToBoolean(const Tree* e,
                                     FloatPrecision floatPrecision,
-                                    const Context* ctx);
+                                    Parameters params, const Context* ctx);
 
 // Tree must be of point dimension.
 template <typename T>
-Coordinate2D<T> PrivateToCoordinates(const Tree* e, const Context& context);
+Coordinate2D<T> PrivateToCoordinates(const Tree* e, Parameters params,
+                                     const Context& context);
 
 // Tree must be of point dimension.
 Tree* PrivateToPoint(const Tree* e, FloatPrecision floatPrecision,
-                     const Context* ctx);
+                     Parameters params, const Context* ctx);
 
 // Tree must be of matrix dimension.
-Tree* ToMatrix(const Tree* e, FloatPrecision floatPrecision,
+Tree* ToMatrix(const Tree* e, FloatPrecision floatPrecision, Parameters params,
                const Context* ctx);
 
 // Tree must be of list dimension.
-Tree* ToList(const Tree* e, FloatPrecision floatPrecision, const Context* ctx);
+Tree* ToList(const Tree* e, FloatPrecision floatPrecision, Parameters params,
+             const Context* ctx);
 
 template <typename T>
 std::complex<T> NonReal() {
@@ -295,7 +289,8 @@ enum class DefinedStatus { Defined, NonReal, Undefined };
  * one or more dependencies are NonReal but none is Undefined, Undefined
  * otherwise. */
 template <typename T>
-DefinedStatus AreDependenciesDefined(const Tree* dep, const Context* ctx);
+DefinedStatus AreDependenciesDefined(const Tree* dep, Parameters params,
+                                     const Context* ctx);
 
 /* Convert a DefinedStatus to an std::complex<T> value: NonReal<T>{} for NonReal
  * and std::complex<T>(NAN) for Undef. ToUndefinedComplexValue is not callable
@@ -309,10 +304,12 @@ bool ShallowPrepareForApproximation(Tree* e, void* ctx);
 
 // Approximate every scalar subtree that can be approximated.
 void ApproximateAndReplaceEveryScalar(Tree* e, FloatPrecision floatPrecision,
-                                      const Context& context = Context());
+                                      Parameters params,
+                                      const Context& context);
 
 void ApproximateAndReplaceEveryScalarRecursive(Tree* e,
                                                FloatPrecision floatPrecision,
+                                               Parameters params,
                                                const Context* ctx);
 
 bool SkipApproximation(TypeBlock type, FloatPrecision floatPrecision);
@@ -325,14 +322,16 @@ bool SkipApproximation(TypeBlock type, FloatPrecision floatPrecision,
 bool CanApproximate(const Tree* e, int firstNonApproximableVarId);
 
 template <typename T>
-std::complex<T> ToComplexSwitch(const Tree* e, const Context* ctx);
+std::complex<T> ToComplexSwitch(const Tree* e, Parameters params,
+                                const Context* ctx);
 
 template <typename T>
-Tree* ToComplexTree(const Tree* e, const Context* ctx);
+Tree* ToComplexTree(const Tree* e, Parameters params, const Context* ctx);
 
 // Replace a Tree with the Tree of its complex approximation
-inline void ToComplexTreeInplace(Tree* e, const Context* ctx) {
-  e->moveTreeOverTree(ToComplexTree<double>(e, ctx));
+inline void ToComplexTreeInplace(Tree* e, Parameters params,
+                                 const Context* ctx) {
+  e->moveTreeOverTree(ToComplexTree<double>(e, params, ctx));
 }
 
 template <typename T>
@@ -341,21 +340,24 @@ std::complex<T> TrigonometricToComplex(TypeBlock type, std::complex<T> value,
 template <typename T>
 std::complex<T> HyperbolicToComplex(TypeBlock type, std::complex<T> value);
 template <typename T>
-T ApproximateIntegral(const Tree* integral, const Context* ctx);
+T ApproximateIntegral(const Tree* integral, Parameters params,
+                      const Context* ctx);
 
 template <typename T>
 T ApproximateDerivative(const Tree* function, T at, int order,
-                        const Context* ctx);
+                        Parameters params, const Context* ctx);
 
 template <typename T>
-T ApproximateRandom(const Tree* random, const Context* ctx);
+T ApproximateRandom(const Tree* random, Parameters params, const Context* ctx);
 
 template <typename T>
-std::complex<T> ApproximatePower(const Tree* power, const Context* ctx,
+std::complex<T> ApproximatePower(const Tree* power, Parameters params,
+                                 const Context* ctx,
                                  ComplexFormat complexFormat);
 
 template <typename T>
-std::complex<T> ApproximateRoot(const Tree* root, const Context* ctx);
+std::complex<T> ApproximateRoot(const Tree* root, Parameters params,
+                                const Context* ctx);
 
 template <typename T>
 std::complex<T> ComplexLogarithm(std::complex<T> c, bool isLog10);
@@ -364,10 +366,11 @@ std::complex<T> ComplexLogarithm(std::complex<T> c, bool isLog10);
  * to the matching branch. Return nullptr if a condition was undefined. */
 const Tree* SelectPiecewiseBranch(const Tree* piecewise,
                                   FloatPrecision floatPrecision,
-                                  const Context* ctx);
+                                  Parameters params, const Context* ctx);
 
 template <typename T>
-std::complex<T> ApproximateTrace(const Tree* matrix, const Context* ctx);
+std::complex<T> ApproximateTrace(const Tree* matrix, Parameters params,
+                                 const Context* ctx);
 
 template <typename T>
 bool IsIntegerRepresentationAccurate(T x);

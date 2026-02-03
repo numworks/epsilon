@@ -845,13 +845,14 @@ SolverResult ExactSolve(const Tree* equationList,
   /* Approximate */
 
   if (result.solutionMetadata.solutionType != SolutionType::Formal) {
-    Approximation::Context approxCtx(projectionContext.m_angleUnit,
-                                     projectionContext.m_complexFormat,
-                                     projectionContext.m_context);
     result.approximateSolutionList = Approximation::To<Tree*>(
         result.exactSolutionList, Approximation::FloatPrecision::Double,
-        Approximation::Parameters{.prepare = true, .optimize = true},
-        approxCtx);
+        Approximation::Parameters{
+            .prepare = true,
+            .optimize = true,
+            .angleUnit = projectionContext.m_angleUnit,
+            .complexFormat = projectionContext.m_complexFormat,
+            .symbolContext = projectionContext.m_context});
   }
 
   /* Beautify result */

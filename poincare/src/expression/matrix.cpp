@@ -253,21 +253,22 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
 
   int m = NumberOfRows(matrix);
   int n = NumberOfColumns(matrix);
-  int h = 0;  // row pivot
-  int k = 0;  // column pivot
+  int row = 0;  // row pivot
+  int col = 0;  // column pivot
 
-  while (h < m && k < n) {
+  while (row < m && col < n) {
     /* In non-reduced form, the pivot selection method will affect the output.
      * Here we prioritize the biggest pivot (in value) to get an output that
-     * does not depends on the order of the rows of the matrix.
+     * does not depend on the order of the rows of the matrix.
      * We could also take lowest non null pivots, or just first non null as we
      * already do with reduced forms. Output would be different, but correct. */
-    int iPivot_temp = h;
-    int iPivot = h;
+    int iPivot_temp = row;
+    int iPivot = row;
     float bestPivot = 0.0;
     while (iPivot_temp < m) {
-      // Using float to find the biggest pivot is sufficient.
-      Tree* pivotChild = Child(matrix, iPivot_temp, k);
+      /* Find the best pivot in column col.
+       * Using float to find the biggest pivot is sufficient. */
+      Tree* pivotChild = Child(matrix, iPivot_temp, col);
       float pivot = ApproximateForPivot(pivotChild, ctx);
       assert(!std::isnan(pivot));
       // Handle very low pivots
@@ -291,79 +292,81 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
      * output a mathematically wrong result (and divide expressions by a null
      * expression) if expression is actually null. For examples,
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
-    Tree* candidate = Child(matrix, iPivot, k);
+    Tree* candidate = Child(matrix, iPivot, col);
     if (Number::IsNull(candidate) ||
         (approximate && ApproximateForPivot(candidate, ctx) == 0.0)) {
       // No non-null coefficient in this column, skip
-      k++;
+      col++;
       if (determinant) {
         // Update determinant: det *= 0
         NAry::AddChild(det, (0_e)->cloneTree());
       }
     } else {
-      // Swap row h and iPivot
-      if (iPivot != h) {
-        for (int col = h; col < n; col++) {
-          Child(matrix, iPivot, col)->swapWithTree(Child(matrix, h, col));
+      // Swap rows row and iPivot
+      if (iPivot != row) {
+        for (int j = row; j < n; j++) {
+          Child(matrix, iPivot, j)->swapWithTree(Child(matrix, row, j));
         }
         if (determinant) {
           // Update determinant: det *= -1
           NAry::AddChild(det, (-1_e)->cloneTree());
         }
       }
-      // Set to 1 M[h][k] by linear combination
-      Tree* divisor = Child(matrix, h, k);
+      /* Set to 1 M[row][col] by linear combination (divide values in row by
+       * the pivot) */
+      Tree* divisor = Child(matrix, row, col);
       if (determinant) {
         // Update determinant: det *= divisor
         NAry::AddChild(det, divisor->cloneTree());
       }
-      Tree* opHJ = divisor;
-      for (int j = k + 1; j < n; j++) {
-        opHJ = opHJ->nextTree();
+      Tree* valueToUpdate = divisor;
+      for (int j = col + 1; j < n; j++) {
+        valueToUpdate = valueToUpdate->nextTree();
         if (approximate) {
-          Tree* newOpHJ = PatternMatching::Create(KMult(KA, KPow(KB, -1_e)),
-                                                  {.KA = opHJ, .KB = divisor});
-          Approximation::Private::ToComplexTreeInplace(newOpHJ, ctx);
-          opHJ->moveTreeOverTree(newOpHJ);
+          Tree* newValue = PatternMatching::Create(
+              KMult(KA, KPow(KB, -1_e)), {.KA = valueToUpdate, .KB = divisor});
+          Approximation::Private::ToComplexTreeInplace(newValue, ctx);
+          valueToUpdate->moveTreeOverTree(newValue);
         } else {
-          opHJ->moveTreeOverTree(PatternMatching::CreateReduce(
-              KMult(KA, KPow(KB, -1_e)), {.KA = opHJ, .KB = divisor}));
-          Dependency::DeepRemoveUselessDependencies(opHJ);
+          valueToUpdate->moveTreeOverTree(PatternMatching::CreateReduce(
+              KMult(KA, KPow(KB, -1_e)), {.KA = valueToUpdate, .KB = divisor}));
+          Dependency::DeepRemoveUselessDependencies(valueToUpdate);
         }
       }
       divisor->cloneTreeOverTree(1_e);
 
-      int l = reducedForm ? 0 : h + 1;
-      /* Set to 0 all M[i][j] i != h by linear combination. If a
-       * non-reduced form is computed (ref), only rows below the pivot are
-       * reduced (i > h) */
-      for (int i = l; i < m; i++) {
-        if (i == h) {
+      int start = reducedForm ? 0 : row + 1;
+      /* Set to 0 all M[i][col] i != row by linear combination (subtract row
+       * multiplied by M[i][col]).
+       * If a non-reduced form is computed (ref), only rows below the pivot are
+       * reduced (i > row) */
+      for (int i = start; i < m; i++) {
+        if (i == row) {
           continue;
         }
-        Tree* factor = Child(matrix, i, k);
-        Tree* opIJ = factor;
-        TreeRef opHJ = Child(matrix, h, k);  // opHJ may be after opIJ
-        for (int j = k + 1; j < n; j++) {
-          opIJ = opIJ->nextTree();
-          opHJ = opHJ->nextTree();
+        Tree* factor = Child(matrix, i, col);
+        Tree* valueToUpdate = factor;
+        TreeRef valueToSubtract = Child(matrix, row, col);
+        for (int j = col + 1; j < n; j++) {
+          valueToUpdate = valueToUpdate->nextTree();
+          valueToSubtract = valueToSubtract->nextTree();
           if (approximate) {
-            Tree* newOpIJ =
-                PatternMatching::Create(KAdd(KA, KMult(-1_e, KB, KC)),
-                                        {.KA = opIJ, .KB = opHJ, .KC = factor});
-            Approximation::Private::ToComplexTreeInplace(newOpIJ, ctx);
-            opIJ->moveTreeOverTree(newOpIJ);
-          } else {
-            opIJ->moveTreeOverTree(PatternMatching::CreateReduce(
+            Tree* newValue = PatternMatching::Create(
                 KAdd(KA, KMult(-1_e, KB, KC)),
-                {.KA = opIJ, .KB = opHJ, .KC = factor}));
-            Dependency::DeepRemoveUselessDependencies(opIJ);
+                {.KA = valueToUpdate, .KB = valueToSubtract, .KC = factor});
+            Approximation::Private::ToComplexTreeInplace(newValue, ctx);
+            valueToUpdate->moveTreeOverTree(newValue);
+          } else {
+            valueToUpdate->moveTreeOverTree(PatternMatching::CreateReduce(
+                KAdd(KA, KMult(-1_e, KB, KC)),
+                {.KA = valueToUpdate, .KB = valueToSubtract, .KC = factor}));
+            Dependency::DeepRemoveUselessDependencies(valueToUpdate);
           }
         }
         factor->cloneTreeOverTree(0_e);
       }
-      h++;
-      k++;
+      row++;
+      col++;
     }
   }
   if (!approximate) {

@@ -38,12 +38,15 @@ int ExpressionModelListController::numberOfRows() const {
   for (int i = 0; i < modelsCount; i++) {
     nRows += numberOfRowsForRecord(store->recordAtIndex(i));
   }
-  return nRows + (modelsCount == store->maxNumberOfModels() ? 0 : 1);
+  return nRows + hasAddEmptyRow();
+}
+
+bool ExpressionModelListController::hasAddEmptyRow() const {
+  return modelStore()->numberOfModels() != modelStore()->maxNumberOfModels();
 }
 
 bool ExpressionModelListController::isAddEmptyRow(int row) const {
-  return row == numberOfRows() - 1 &&
-         modelStore()->numberOfModels() != modelStore()->maxNumberOfModels();
+  return row == numberOfRows() - 1 && hasAddEmptyRow();
 }
 
 int ExpressionModelListController::typeAtRow(int row) const {

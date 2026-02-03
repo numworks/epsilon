@@ -48,6 +48,7 @@ class ExpressionModelListController
 
   virtual Escher::EditableExpressionModelCell*
   editableExpressionModelCell() = 0;
+  bool hasAddEmptyRow() const;
   bool isAddEmptyRow(int row) const;
 
   // ListViewDataSource

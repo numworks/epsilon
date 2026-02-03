@@ -199,11 +199,8 @@ SequenceStore* ListController::modelStore() const {
 
 void ListController::showLastSequence() {
   selectableListView()->resetSizeAndOffsetMemoization();
-  SequenceStore* store = const_cast<ListController*>(this)->modelStore();
-  bool hasAddSequenceButton =
-      store->numberOfModels() == store->maxNumberOfModels();
-  int lastRow = numberOfRows() - (hasAddSequenceButton ? 0 : 1) - 1;
-  selectableListView()->scrollToCell(lastRow);
+  int lastSequenceRow = numberOfRows() - hasAddEmptyRow() - 1;
+  selectableListView()->scrollToCell(lastSequenceRow);
 }
 
 }  // namespace Sequence

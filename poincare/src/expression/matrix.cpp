@@ -231,7 +231,11 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
   // The matrix children have to be reduced to be able to spot 0
   assert(approximate || !SystematicReduction::DeepReduce(matrix));
 
-  // Check that all values are valid
+  /* Check that all values are valid.
+   * Note: if forceCanonization is true, children which return
+   * canApproximate=false may be approximated nonetheless and return NaN. This
+   * is used in the solver to canonize matrices containing parameters (which
+   * cannot be approximated). */
   for (const Tree* child : matrix->children()) {
     bool canApproximate = Approximation::CanApproximate(child);
     if (!forceCanonization && !canApproximate) {
@@ -272,7 +276,11 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
       float pivot = ApproximateForPivot(pivotChild, ctx);
       assert(forceCanonization || !std::isnan(pivot));
       if (std::isnan(pivot)) {
-        // Cannot canonize
+        /* Although children have been checked at the beginning, a potential
+         * pivot can still approximate to NaN if:
+         * - forceCanonization is true and we approximate children we should not
+         * - a linear combination in previous steps produced an invalid value
+         * We cannot canonize if a potential pivot is NaN, abort. */
         if (determinant) {
           det->removeTree();
         }

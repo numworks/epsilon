@@ -152,10 +152,6 @@ bool ExpressionModelListController::handleEventOnExpression(
   return false;
 }
 
-void ExpressionModelListController::addNewModelAction() {
-  editExpression(Ion::Events::OK);
-}
-
 bool ExpressionModelListController::addEmptyModel() {
   // Return false if empty model couldn't be added.
   Ion::Storage::Record::ErrorStatus error = modelStore()->addEmptyModel();

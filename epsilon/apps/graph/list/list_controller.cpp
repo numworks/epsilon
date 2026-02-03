@@ -277,6 +277,11 @@ HighlightCell* ListController::functionCells(int row) {
   return &m_expressionCells[row];
 }
 
+void ListController::addNewModelAction() {
+  // In Grapher, go straight to the expression edition without template menu.
+  editExpression(Ion::Events::OK);
+}
+
 void ListController::fillCellForRow(HighlightCell* cell, int row) {
   int type = typeAtRow(row);
   if (type == k_editableCellType && isAddingNewModel()) {

@@ -279,7 +279,7 @@ FloatType Private::ToFloat(const Tree* e, Parameters params,
                                  std::isnan(context.variable(0).imag()))) {
     return FloatType{NAN};
   }
-  return PrivateTo<FloatType>(e, &context);
+  return PrivateToFloat<FloatType>(e, &context);
 }
 
 template <>
@@ -338,9 +338,9 @@ Coordinate2D<T> Private::PrivateToCoordinates(const Tree* e,
   T xScalar, yScalar;
   Context pointEvaluationContext = context;
   pointEvaluationContext.m_pointElement = 0;
-  xScalar = PrivateTo<T>(e, &pointEvaluationContext);
+  xScalar = PrivateToFloat<T>(e, &pointEvaluationContext);
   pointEvaluationContext.m_pointElement = 1;
-  yScalar = PrivateTo<T>(e, &pointEvaluationContext);
+  yScalar = PrivateToFloat<T>(e, &pointEvaluationContext);
   return Coordinate2D<T>(xScalar, yScalar);
 }
 
@@ -632,13 +632,13 @@ std::complex<T> BasicToComplex(const Tree* e, const Context* ctx) {
     case Type::GCD:
     case Type::LCM: {
       const Tree* child = e->child(0);
-      T result = PositiveIntegerApproximation(PrivateTo<T>(child, ctx));
+      T result = PositiveIntegerApproximation(PrivateToFloat<T>(child, ctx));
       if (std::isnan(result)) {
         return NAN;
       }
       for (int n = e->numberOfChildren() - 1; n > 0; n--) {
         child = child->nextTree();
-        T current = PositiveIntegerApproximation(PrivateTo<T>(child, ctx));
+        T current = PositiveIntegerApproximation(PrivateToFloat<T>(child, ctx));
         if (std::isnan(current)) {
           return NAN;
         }
@@ -806,7 +806,7 @@ std::complex<T> UserSymbolToComplex(const Tree* e, const Context* ctx) {
       return result;
     }
     case Type::UserSequence: {
-      T rank = PrivateTo<T>(e->child(0), ctx);
+      T rank = PrivateToFloat<T>(e->child(0), ctx);
       if (std::isnan(rank) || std::floor(rank) != rank) {
         return NAN;
       }
@@ -883,7 +883,7 @@ std::complex<T> AnalysisToComplex(const Tree* e, const Context* ctx) {
     }
     case Type::Diff: {
       constexpr static int k_maxOrderForApproximation = 4;
-      T orderReal = PrivateTo<T>(e->child(2), ctx);
+      T orderReal = PrivateToFloat<T>(e->child(2), ctx);
       if (orderReal != std::floor(orderReal)) {
         return NAN;
       }
@@ -993,7 +993,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
     case Type::ListElement: {
       const Tree* values = e->child(0);
       const Tree* index = e->child(1);
-      T indexValue = PrivateTo<T>(index, ctx);
+      T indexValue = PrivateToFloat<T>(index, ctx);
       // Dimension check should only allow finite index
       assert(std::isfinite(indexValue));
       assert(indexValue == std::floor(indexValue));
@@ -1490,8 +1490,8 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
 
 template <typename T>
 BooleanOrUndefined InequalityToBoolean(const Tree* e, const Context* ctx) {
-  T a = PrivateTo<T>(e->child(0), ctx);
-  T b = PrivateTo<T>(e->child(1), ctx);
+  T a = PrivateToFloat<T>(e->child(0), ctx);
+  T b = PrivateToFloat<T>(e->child(1), ctx);
   if (std::isnan(a) || std::isnan(b)) {
     return BooleanOrUndefined::Undef();
   }
@@ -1693,7 +1693,7 @@ template <typename T>
 Tree* EvaluateMatrixPower(const Tree* e, const Context* ctx) {
   const Tree* base = e->child(0);
   const Tree* index = base->nextTree();
-  T value = PrivateTo<T>(index, ctx);
+  T value = PrivateToFloat<T>(index, ctx);
   if (std::isnan(value) || value != std::round(value)) {
     return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
   }
@@ -1958,7 +1958,7 @@ Tree* Private::ToMatrix(const Tree* e, FloatPrecision floatPrecision,
 }
 
 template <typename T>
-T Private::PrivateTo(const Tree* e, const Context* ctx) {
+T Private::PrivateToFloat(const Tree* e, const Context* ctx) {
 #if ASSERTIONS
   assert(ctx);
   Dimension dim = Dimension::Get(e, ctx->m_symbolContext);
@@ -1979,7 +1979,7 @@ T ToLocalContext(const Tree* e, const Context* ctx, T x) {
   Context ctxCopy = ctx ? Context(*ctx) : Context();
   LocalContext localCtx(x, ctxCopy.m_localContext);
   ctxCopy.m_localContext = &localCtx;
-  return PrivateTo<T>(e, &ctxCopy);
+  return PrivateToFloat<T>(e, &ctxCopy);
 }
 
 const Tree* Private::SelectPiecewiseBranch(const Tree* piecewise,
@@ -2215,8 +2215,8 @@ template std::complex<float> Private::PrivateToComplex(const Tree*,
 template std::complex<double> Private::PrivateToComplex(const Tree*,
                                                         const Context*);
 
-template float Private::PrivateTo(const Tree*, const Context*);
-template double Private::PrivateTo(const Tree*, const Context*);
+template float Private::PrivateToFloat(const Tree*, const Context*);
+template double Private::PrivateToFloat(const Tree*, const Context*);
 
 template float ToLocalContext(const Tree*, const Context*, float);
 template double ToLocalContext(const Tree*, const Context*, double);

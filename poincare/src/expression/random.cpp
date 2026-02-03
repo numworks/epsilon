@@ -145,15 +145,15 @@ double PrivateApproximateRandIntNoRep(const Tree* randIntNoRep,
      * double not in a float */
     static_assert(std::is_same<double, Random::Context::VariableType>::value);
   }
-  double min = Approximation::Private::PrivateTo<double>(randIntNoRep->child(0),
-                                                         approxCtx);
-  double max = Approximation::Private::PrivateTo<double>(randIntNoRep->child(1),
-                                                         approxCtx);
+  double min = Approximation::Private::PrivateToFloat<double>(
+      randIntNoRep->child(0), approxCtx);
+  double max = Approximation::Private::PrivateToFloat<double>(
+      randIntNoRep->child(1), approxCtx);
   assert(min == std::round(min) && max == std::round(max));
 
   uint32_t range = static_cast<uint32_t>(max - min + 1);
 #if ASSERTIONS
-  double length = Approximation::Private::PrivateTo<double>(
+  double length = Approximation::Private::PrivateToFloat<double>(
       randIntNoRep->child(2), approxCtx);
   assert(0 <= approxCtx->m_listElement && approxCtx->m_listElement < length &&
          length <= range);
@@ -192,13 +192,13 @@ T Approximation::Private::ApproximateRandom(const Tree* randomTree,
 template <typename T>
 T ApproximateRandomHelper(const Tree* randomTree,
                           const Approximation::Context* ctx) {
-  using Approximation::Private::PrivateTo;
+  using Approximation::Private::PrivateToFloat;
   if (randomTree->isRandom()) {
     return Poincare::random<T>();
   }
   assert(randomTree->isRandInt());
-  return Random::RandomInt<T>(PrivateTo<T>(randomTree->child(0), ctx),
-                              PrivateTo<T>(randomTree->child(1), ctx));
+  return Random::RandomInt<T>(PrivateToFloat<T>(randomTree->child(0), ctx),
+                              PrivateToFloat<T>(randomTree->child(1), ctx));
 }
 
 /* We could adapt Poincare::Integer::RandomInt<T>() here instead, but in

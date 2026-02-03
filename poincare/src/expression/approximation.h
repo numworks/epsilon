@@ -261,7 +261,7 @@ std::complex<T> PrivateToComplexRecursive(const Tree* e, const Context* ctx);
 
 // Tree must be of scalar dimension or equivalent, and real.
 template <typename T>
-T PrivateTo(const Tree* e, const Context* ctx);
+T PrivateToFloat(const Tree* e, const Context* ctx);
 
 // Tree must be of boolean dimension.
 BooleanOrUndefined PrivateToBoolean(const Tree* e,

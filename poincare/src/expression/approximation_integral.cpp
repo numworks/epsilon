@@ -74,8 +74,8 @@ T ApproximateIntegral(const Tree* integral, const Context* ctx) {
   const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
   const Tree* integrand = upperBound->nextTree();
-  T a = PrivateTo<T>(lowerBound, ctx);
-  T b = PrivateTo<T>(upperBound, ctx);
+  T a = PrivateToFloat<T>(lowerBound, ctx);
+  T b = PrivateToFloat<T>(upperBound, ctx);
   if (std::isnan(a) || std::isnan(b)) {
     return NAN;
   }

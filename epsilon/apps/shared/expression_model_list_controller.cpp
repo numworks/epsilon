@@ -152,17 +152,6 @@ bool ExpressionModelListController::handleEventOnExpression(
   return false;
 }
 
-bool ExpressionModelListController::addEmptyModel() {
-  // Return false if empty model couldn't be added.
-  Ion::Storage::Record::ErrorStatus error = modelStore()->addEmptyModel();
-  if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
-    return false;
-  }
-  assert(error == Ion::Storage::Record::ErrorStatus::None);
-  m_isAddingNewModel = false;
-  return true;
-}
-
 void ExpressionModelListController::editExpression(Ion::Events::Event event) {
   m_editedCellIndex = selectedRow();
   Layout layoutForSelectedRecord = Layout();
@@ -187,15 +176,22 @@ bool ExpressionModelListController::editSelectedRecordWithLayout(
   bool wasAddingNewModel = isAddingNewModel();
   if (wasAddingNewModel) {
     // TODO: Add model and setContent at the same time
-    if (!addEmptyModel()) {
+    Ion::Storage::Record::ErrorStatus error = modelStore()->addEmptyModel();
+    if (error != Ion::Storage::Record::ErrorStatus::None) {
+      assert(error ==
+             Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
+      // Return false if empty model couldn't be added.
       return false;
     }
+    m_isAddingNewModel = false;
   }
   assert(!isAddingNewModel());
   if (!setSelectedRecordContent(layout)) {
     if (wasAddingNewModel) {
       // Delete the empty record created
       modelStore()->removeModel(selectedRecord());
+      // Restore m_isAddingNewModel.
+      m_isAddingNewModel = true;
     }
     return false;
   }

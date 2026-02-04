@@ -98,8 +98,6 @@ class ExpressionModelListController
   Ion::Storage::Record selectedRecord(int* relativeRow) const;
   Ion::Storage::Record selectedRecord() const;
 
-  bool addEmptyModel();
-
   virtual Escher::LayoutField* layoutField() = 0;
   virtual Escher::SelectableListView* selectableListView() = 0;
   virtual ExpressionModelStore* modelStore() const = 0;

@@ -194,7 +194,10 @@ bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
     GlobalStore::DeleteParametricComponentsOfRecord(selectedRecord());
   }
   bool result = FunctionListController::editSelectedRecordWithLayout(layout);
-  GlobalStore::StoreParametricComponentsOfRecord(selectedRecord());
+  if (result) {
+    assert(!isAddingNewModel());
+    GlobalStore::StoreParametricComponentsOfRecord(selectedRecord());
+  }
   return result;
 }
 

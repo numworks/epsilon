@@ -189,13 +189,11 @@ void ListController::editExpression(Ion::Events::Event event) {
   m_editableCell.setHighlighted(true);
 }
 
-bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
-  if (!isAddingNewModel()) {
-    GlobalStore::DeleteParametricComponentsOfRecord(selectedRecord());
-  }
-  bool result = FunctionListController::editSelectedRecordWithLayout(layout);
+bool ListController::setSelectedRecordContent(Poincare::Layout layout) {
+  assert(!isAddingNewModel());
+  GlobalStore::DeleteParametricComponentsOfRecord(selectedRecord());
+  bool result = FunctionListController::setSelectedRecordContent(layout);
   if (result) {
-    assert(!isAddingNewModel());
     GlobalStore::StoreParametricComponentsOfRecord(selectedRecord());
   }
   return result;

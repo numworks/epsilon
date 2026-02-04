@@ -24,7 +24,7 @@ class ExpressionModelListController
   ExpressionModelListController(Escher::Responder* parentResponder,
                                 I18n::Message text);
   virtual void editExpression(Ion::Events::Event event);
-  virtual bool editSelectedRecordWithLayout(Poincare::Layout layout);
+  bool editSelectedRecordWithLayout(Poincare::Layout layout);
   virtual Poincare::Layout getLayoutForSelectedRecord() const;
   bool handleEventOnExpression(Ion::Events::Event event,
                                bool inTemplateMenu = false);
@@ -54,6 +54,7 @@ class ExpressionModelListController
   // If the edited cell is a new model
   bool isAddingNewModel() const { return m_isAddingNewModel; }
   bool isNewModelRow(int row) const;
+  virtual bool setSelectedRecordContent(Poincare::Layout layout);
 
   // ListViewDataSource
   int numberOfRows() const override;

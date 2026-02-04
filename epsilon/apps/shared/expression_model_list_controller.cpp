@@ -192,20 +192,24 @@ bool ExpressionModelListController::editSelectedRecordWithLayout(
     }
   }
   assert(!isAddingNewModel());
-  Ion::Storage::Record record = selectedRecord();
-  OMG::ExpiringPointer<ExpressionModelHandle> model =
-      modelStore()->modelForRecord(record);
-  if (model->setContent(layout, App::app()->localContext()) !=
-      Ion::Storage::Record::ErrorStatus::None) {
+  if (!setSelectedRecordContent(layout)) {
     if (wasAddingNewModel) {
       // Delete the empty record created
-      modelStore()->removeModel(record);
+      modelStore()->removeModel(selectedRecord());
     }
     return false;
   }
 
   didChangeModelsList();
   return true;
+}
+
+bool ExpressionModelListController::setSelectedRecordContent(Layout layout) {
+  assert(!isAddingNewModel());
+  OMG::ExpiringPointer<ExpressionModelHandle> model =
+      modelStore()->modelForRecord(selectedRecord());
+  return model->setContent(layout, App::app()->localContext()) ==
+         Ion::Storage::Record::ErrorStatus::None;
 }
 
 Layout ExpressionModelListController::getLayoutForSelectedRecord() const {

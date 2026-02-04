@@ -160,27 +160,11 @@ void ListController::editExpression(Ion::Events::Event event) {
   App::app()->localContext().resetCache();
 }
 
-bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
-  bool wasAddingNewModel = isAddingNewModel();
-  if (wasAddingNewModel) {
-    // TODO: Add model and setContent at the same time
-    if (!addEmptyModel()) {
-      return false;
-    }
-  }
-  assert(!isAddingNewModel());
-  Ion::Storage::Record record = selectedRecord();
-  Shared::Sequence* sequence = modelStore()->modelForRecord(record);
-  if (sequence->setLayoutsForAggregated(layout, App::app()->localContext()) !=
-      Ion::Storage::Record::ErrorStatus::None) {
-    if (wasAddingNewModel) {
-      // Delete the empty record created
-      modelStore()->removeModel(record);
-    }
-    return false;
-  }
-  didChangeModelsList();
-  return true;
+bool ListController::setSelectedRecordContent(Poincare::Layout layout) {
+  Shared::Sequence* sequence = modelStore()->modelForRecord(selectedRecord());
+  return sequence->setLayoutsForAggregated(layout,
+                                           App::app()->localContext()) ==
+         Ion::Storage::Record::ErrorStatus::None;
 }
 
 Layout ListController::getLayoutForSelectedRecord() const {

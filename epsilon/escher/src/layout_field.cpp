@@ -231,8 +231,8 @@ void LayoutField::reload(KDSize previousSize) {
 using LayoutInsertionMethod = void (Poincare::LayoutCursor::*)(
     const Poincare::SymbolContext& symbolContext);
 
-bool LayoutField::insertText(const char* text, bool indentation,
-                             bool forceCursorRightOfText) {
+bool LayoutField::processAndInsertText(const char* text, bool indentation,
+                                       bool forceCursorRightOfText) {
   /* The text here can be:
    * - the result of a key pressed, such as "," or "cos(•)"
    * - the text added after a toolbox selection
@@ -328,7 +328,7 @@ bool LayoutField::insertText(const char* text, bool indentation,
    * the cursor won't go inside the parenthesis but rather right of it, so
    * the parenthesis should be kept pemanent on the right.
    *
-   * This is done here and not before calling "insertText" for
+   * This is done here and not before calling "processAndInsertText" for
    * multiple reasons:
    *   - In layout_events.cpp, we do not want to change the text of the Cos
    *     event since it should still output "cos()" in 1D fields.
@@ -378,7 +378,7 @@ const char* LayoutField::text() {
 
 void LayoutField::setText(const char* text) {
   clearLayout();
-  insertText(text, false, true);
+  processAndInsertText(text, false, true);
 }
 
 bool LayoutField::inputViewHeightDidChange() {
@@ -424,7 +424,8 @@ KDCoordinate LayoutField::inputViewHeight() const {
 bool LayoutField::handleEventWithText(const char* text, bool indentation,
                                       bool forceCursorRightOfText) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  bool didHandle = insertText(text, indentation, forceCursorRightOfText);
+  bool didHandle =
+      processAndInsertText(text, indentation, forceCursorRightOfText);
   return didHandleEvent(didHandle, didHandle, true, previousSize);
 }
 
@@ -483,7 +484,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   char buffer[bufferSize] = {0};
   if (getTextFromEvent(event, buffer, bufferSize) > 0) {
     prepareToEdit();
-    bool didHandleEvent = insertText(buffer);
+    bool didHandleEvent = processAndInsertText(buffer);
     *layoutDidChange = didHandleEvent;
     return didHandleEvent;
   }
@@ -653,7 +654,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
         return;
       }
       assert(length <= bufferSize);
-      insertText(buffer, false, forceCursorRightOfLayout);
+      processAndInsertText(buffer, false, forceCursorRightOfLayout);
     }
   } else {
     cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,

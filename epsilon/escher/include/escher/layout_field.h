@@ -77,8 +77,8 @@ class LayoutField : public EditableField {
 
  protected:
   bool linearMode() const { return SharedPreferences->linearMode(); }
-  bool insertText(const char* text, bool indentation = false,
-                  bool forceCursorRightOfText = false);
+  bool processAndInsertText(const char* text, bool indentation = false,
+                            bool forceCursorRightOfText = false);
   void reload(KDSize previousSize);
   void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
 

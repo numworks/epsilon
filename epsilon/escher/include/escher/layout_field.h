@@ -66,7 +66,6 @@ class LayoutField : public EditableField {
    * buffer. This is the case in the application 'Calculation' and we do not
    * use text() there... TODO: change text() for fillTextInBuffer?*/
   const char* text();
-  void setText(const char* text);
   bool inputViewHeightDidChange();
   void reload();
   void restoreContent(const char* buffer, size_t size, int* cursorOffset,

@@ -53,7 +53,8 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Minus && isEditing() &&
       layout().tree()->treeIsIdenticalTo("-"_l)) {
     // Turn single - to Ans -
-    setText(SymbolHelper::AnsMainAlias());
+    clearLayout();
+    processAndInsertText(SymbolHelper::AnsMainAlias());
     // The Minus symbol will be addded by Escher::LayoutField::handleEvent
   }
   if (event == Ion::Events::Division && isEditing()) {

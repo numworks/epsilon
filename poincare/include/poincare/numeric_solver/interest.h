@@ -9,6 +9,8 @@ enum class Interest : uint8_t {
   Root,
   Minimum,
   Maximum,
+  /* TODO: There is a confusion between plain Discontinuity and
+   * Unreached/Reached */
   Discontinuity,
   ReachedDiscontinuity,    // Discontinuity where f(x) is defined
   UnreachedDiscontinuity,  // Discontinuity where f(x) is undefined

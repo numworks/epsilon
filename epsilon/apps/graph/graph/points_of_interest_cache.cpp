@@ -147,7 +147,7 @@ bool PointsOfInterestCache::hasDisplayableInterestAtCoordinates(
     // Ignore interest point if it is not displayed.
     return false;
   }
-  return !pointOfInterestAtCoordinates(x, y, interest).isUninitialized();
+  return pointOfInterestAtCoordinates(x, y, interest).isInitialized();
 }
 
 bool PointsOfInterestCache::hasDisplayableUnreachedInterestAtCoordinates(
@@ -159,7 +159,7 @@ bool PointsOfInterestCache::hasDisplayableUnreachedInterestAtCoordinates(
       continue;
     }
     PointOfInterest poi = pointOfInterestAtCoordinates(x, y, interest);
-    if (poi.isUninitialized() ||
+    if (!poi.isInitialized() ||
         (interest == Interest::Intersection && !poi.isUnreached)) {
       continue;
     }
@@ -389,7 +389,7 @@ PointOfInterest findIntersections(void* searchContext) {
         }
         PointOfInterest poi = findIntersectionsAux(ctx, firstFunc, secondFunc,
                                                    fAlongY == gAlongY);
-        if (poi.isUninitialized()) {
+        if (!poi.isInitialized()) {
           continue;
         }
         poi.isUnreached = fIsStrict || gIsStrict;
@@ -411,7 +411,7 @@ PointOfInterest findPoints(void* searchContext) {
 
   for (; ctx->currentProvider < std::size(providers); ctx->currentProvider++) {
     PointOfInterest p = providers[ctx->currentProvider](ctx);
-    if (!p.isUninitialized()) {
+    if (p.isInitialized()) {
       return p;
     }
     ctx->counter = 0;

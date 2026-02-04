@@ -105,7 +105,7 @@ Expression PointsOfInterestList::BuildStash(Provider provider,
         ExceptionTry {
           stash = Internal::List::PushEmpty();
           PointOfInterest point;
-          while (!(point = provider(providerContext)).isUninitialized()) {
+          while ((point = provider(providerContext)).isInitialized()) {
             Tree* pointTree =
                 Internal::TreeStack::SharedTreeStack->pushPointOfInterest(
                     point);

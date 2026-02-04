@@ -31,7 +31,7 @@ struct PointOfInterest {
   double x() const { return inverted ? ordinate : abscissa; }
   double y() const { return inverted ? abscissa : ordinate; }
   Coordinate2D<double> xy() const { return {x(), y()}; }
-  bool isUninitialized() const { return std::isnan(abscissa); }
+  bool isInitialized() const { return !std::isnan(abscissa); }
 };
 
 }  // namespace Poincare

@@ -62,7 +62,7 @@ void IntersectionGraphController::reloadBannerView() {
 Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(
     double start, double max, double y, bool stretch) {
   PointOfInterest p = computeAtLeastOnePointOfInterest(start, max, y, stretch);
-  if (!p.isUninitialized()) {
+  if (p.isInitialized()) {
     m_intersectedRecord = Ion::Storage::Record(p.data);
     App::app()->graphController()->setCursorIsRing(p.isUnreached);
   }

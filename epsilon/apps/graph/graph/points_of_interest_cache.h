@@ -56,7 +56,7 @@ class PointsOfInterestCache {
   bool hasInterestAtCoordinates(
       double x, double y,
       Poincare::Interest interest = Poincare::Interest::None) const {
-    return !pointOfInterestAtCoordinates(x, y, interest).isUninitialized();
+    return pointOfInterestAtCoordinates(x, y, interest).isInitialized();
   }
   bool hasDisplayableInterestAtCoordinates(
       double x, double y,

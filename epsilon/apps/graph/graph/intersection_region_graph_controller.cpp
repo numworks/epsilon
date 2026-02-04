@@ -31,7 +31,7 @@ void IntersectionRegionGraphController::updateBestPointOfInterestForRecord(
     PointOfInterest p = computeAtLeastOnePointOfInterest(
         App::app()->graphController()->pointsOfInterestForRecord(record), start,
         max, y, stretch);
-    if (p.isUninitialized()) {
+    if (!p.isInitialized()) {
       // No more points of interest for this record
       return;
     }

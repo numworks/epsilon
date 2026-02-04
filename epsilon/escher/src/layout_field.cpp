@@ -386,11 +386,6 @@ const char* LayoutField::text() {
   return m_draftBuffer;
 }
 
-void LayoutField::setText(const char* text) {
-  clearLayout();
-  processAndInsertText(text, true);
-}
-
 bool LayoutField::inputViewHeightDidChange() {
   KDCoordinate newHeight = inputViewHeight();
   bool didChange = m_inputViewMemoizedHeight != newHeight;

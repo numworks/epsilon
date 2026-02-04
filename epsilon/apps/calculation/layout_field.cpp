@@ -48,7 +48,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
       (event == Ion::Events::Multiplication || event == Ion::Events::Plus ||
        event == Ion::Events::Power || event == Ion::Events::Square ||
        event == Ion::Events::Sto)) {
-    insertText(SymbolHelper::AnsMainAlias());
+    processAndInsertText(SymbolHelper::AnsMainAlias());
   }
   if (event == Ion::Events::Minus && isEditing() &&
       layout().tree()->treeIsIdenticalTo("-"_l)) {
@@ -98,7 +98,7 @@ bool LayoutField::handleDivision() {
         assert(m_currentStep == DivisionCycleStep::Start ||
                m_currentStep == DivisionCycleStep::MixedFraction);
         m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
-        insertText(SymbolHelper::AnsMainAlias());
+        processAndInsertText(SymbolHelper::AnsMainAlias());
     }
   } else if (mixedFractionsEnabled) {
     assert(m_divisionCycleWithAns == OMG::Troolean::False);

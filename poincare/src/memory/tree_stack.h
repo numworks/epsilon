@@ -4,6 +4,7 @@
 #include <omg/global_box.h>
 #include <omg/unreachable.h>
 #include <poincare/math_options.h>
+#include <poincare/numeric_solver/point_of_interest.h>
 #include <string.h>
 
 #include "block_stack.h"
@@ -177,9 +178,7 @@ class AbstractTreeStack : public BlockStack {
   Tree* pushRackLayout(int nbChildren);
   Tree* pushRackMemoizedLayout(int nbChildren);
 
-  Tree* pushPointOfInterest(double abscissa, double ordinate, uint32_t data,
-                            uint8_t interest, bool inverted,
-                            uint8_t subCurveIndex);
+  Tree* pushPointOfInterest(PointOfInterest poi);
 
   Tree* pushSequenceLayout(uint8_t nbRows, uint8_t nbCols,
                            uint8_t firstRank = 1);

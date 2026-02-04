@@ -108,9 +108,7 @@ Expression PointsOfInterestList::BuildStash(Provider provider,
           while (!(point = provider(providerContext)).isUninitialized()) {
             Tree* pointTree =
                 Internal::TreeStack::SharedTreeStack->pushPointOfInterest(
-                    point.abscissa, point.ordinate, point.data,
-                    static_cast<uint8_t>(point.interest), point.inverted,
-                    point.subCurveIndex);
+                    point);
             NAry::AddChild(stash, pointTree);
           }
         }

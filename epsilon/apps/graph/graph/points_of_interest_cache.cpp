@@ -249,12 +249,12 @@ PointOfInterest findYIntercept(void* searchContext) {
           // evaluateXYAtParameter has swapped x and y. Revert it.
           xy = Coordinate2D<double>(xy.y(), xy.x());
         }
-        return {xy.x(),
-                xy.y(),
-                0,
-                Interest::YIntercept,
-                f->isAlongY(),
-                static_cast<uint8_t>(subCurve)};
+        return {.abscissa = xy.x(),
+                .ordinate = xy.y(),
+                .data = 0,
+                .interest = Interest::YIntercept,
+                .inverted = f->isAlongY(),
+                .subCurveIndex = static_cast<uint8_t>(subCurve)};
       }
     }
   }
@@ -329,12 +329,12 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
        * expressionApproximated already returned x as abscissa and y as
        * ordinate. */
       return {
-          solution.x,
-          solution.y,
-          static_cast<uint32_t>(ctx->otherRecord),
-          Interest::Intersection,
-          ctx->model()->isAlongY(),
-          ctx->subCounter1,
+          .abscissa = solution.x,
+          .ordinate = solution.y,
+          .data = static_cast<uint32_t>(ctx->otherRecord),
+          .interest = Interest::Intersection,
+          .inverted = ctx->model()->isAlongY(),
+          .subCurveIndex = ctx->subCounter1,
       };
     }
   }

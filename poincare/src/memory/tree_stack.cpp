@@ -188,16 +188,14 @@ Tree* AbstractTreeStack::pushRackMemoizedLayout(int nbChildren) {
   return result;
 }
 
-Tree* AbstractTreeStack::pushPointOfInterest(double abscissa, double ordinate,
-                                             uint32_t data, uint8_t interest,
-                                             bool inverted,
-                                             uint8_t subCurveIndex) {
+Tree* AbstractTreeStack::pushPointOfInterest(PointOfInterest poi) {
   Tree* result = pushBlock(Type::PointOfInterest);
-  PointOfInterest p = {abscissa, ordinate,
-                       data,     static_cast<Interest>(interest),
-                       inverted, subCurveIndex};
   // Copy content of data as if it was blocks
-  insertBlocks(lastBlock(), reinterpret_cast<Block*>(&p),
+  static_assert(
+      Internal::TypeBlock::NumberOfMetaBlocks(Internal::Type::PointOfInterest) -
+          1 ==
+      sizeof(PointOfInterest) / sizeof(Block));
+  insertBlocks(lastBlock(), reinterpret_cast<Block*>(&poi),
                sizeof(CustomTypeStructs::PointOfInterestNode));
   return result;
 }

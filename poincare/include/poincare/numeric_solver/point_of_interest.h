@@ -21,11 +21,11 @@ enum class Interest : uint8_t {
 
 struct PointOfInterest {
   double abscissa = NAN;
-  double ordinate;
-  uint32_t data;
-  Interest interest;
-  bool inverted;
-  uint8_t subCurveIndex;
+  double ordinate = NAN;
+  uint32_t data = 0;
+  Interest interest = Interest::None;
+  bool inverted = false;
+  uint8_t subCurveIndex = 0;
 
   double x() const { return inverted ? ordinate : abscissa; }
   double y() const { return inverted ? abscissa : ordinate; }

@@ -251,7 +251,6 @@ PointOfInterest findYIntercept(void* searchContext) {
         }
         return {.abscissa = xy.x(),
                 .ordinate = xy.y(),
-                .data = 0,
                 .interest = Interest::YIntercept,
                 .inverted = f->isAlongY(),
                 .subCurveIndex = static_cast<uint8_t>(subCurve)};

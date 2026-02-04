@@ -93,6 +93,7 @@ class LayoutField : public EditableField {
                           bool* shouldUpdateCursor);
   size_t getTextFromEvent(Ion::Events::Event event, char* buffer,
                           size_t bufferSize) override;
+  bool processSpecialEvents(const char* text);
   bool handleMoveEvent(Ion::Events::Event event, bool* layoutDidChange);
   bool didHandleEvent(bool didHandleEvent, bool layoutDidChange,
                       bool shouldUpdateCursor, KDSize previousSize);

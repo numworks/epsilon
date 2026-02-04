@@ -168,9 +168,7 @@ void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible,
             ->displayablePointOfInterestAtCoordinates(m_cursor->x(),
                                                       m_cursor->y());
     cursorShouldBeRing =
-        topPointOfInterest.isInitialized() &&
-        (topPointOfInterest.isUnreached ||
-         topPointOfInterest.interest == Interest::UnreachedDiscontinuity);
+        topPointOfInterest.isInitialized() && topPointOfInterest.isUnreached;
   }
   setCursorIsRing(cursorShouldBeRing);
   FunctionGraphController::selectCurveAtIndex(curveIndex, willBeVisible,

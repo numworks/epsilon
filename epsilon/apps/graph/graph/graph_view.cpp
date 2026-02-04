@@ -696,7 +696,6 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect,
                                      bool shouldComputePoints) {
   OMG::ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(selectedRec);
-  bool isStrictInequality = f->properties().isStrictInequality();
 
   if (!f->properties().isCartesian() ||
       functionWasInterrupted(
@@ -764,8 +763,7 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect,
       continue;
     }
 
-    bool isRing =
-        p.isUnreached || p.interest == Interest::UnreachedDiscontinuity;
+    bool isRing = p.isUnreached;
 
     KDRect dotRelativeRect = dotRect(k_dotSize, dotCoordinates, isRing);
     /* If the dot intersects the dirty rect, force the redraw.

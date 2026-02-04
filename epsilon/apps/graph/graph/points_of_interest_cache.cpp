@@ -287,7 +287,9 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
             .ordinate = solution.y,
             .interest = solution.interest,
             .inverted = f->isAlongY(),
-            .isUnreached = f->properties().isStrictInequality(),
+            .isUnreached =
+                f->properties().isStrictInequality() ||
+                solution.interest == Interest::UnreachedDiscontinuity,
         };
       }
     }

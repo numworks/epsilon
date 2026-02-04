@@ -17,8 +17,8 @@ struct PointOfInterest {
   uint32_t data = 0;
   Interest interest = Interest::None;
   bool inverted = false;
-  // Used for unreached intersections
-  // TODO: Also implement for unreached discontinuities
+  /* Used for unreached points of interest (inequalities, unreached
+   * discontinuities, intersections with strict inequalities) */
   bool isUnreached = false;
   uint8_t subCurveIndex = 0;
 

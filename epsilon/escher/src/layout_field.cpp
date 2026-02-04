@@ -288,7 +288,7 @@ void LayoutField::insertText(const char* text, bool forceCursorRightOfText,
   reload(previousLayoutSize);
 }
 
-bool LayoutField::processAndInsertText(const char* text,
+bool LayoutField::processAndInsertText(const char* text, bool useRawText,
                                        bool forceCursorRightOfText) {
   /* The text here can be:
    * - the result of a key pressed, such as "," or "cos(•)"
@@ -309,7 +309,8 @@ bool LayoutField::processAndInsertText(const char* text,
       !forceCursorRightOfText && text[0] == UCodePointEmpty;
 
   // Single keys are not parsed to avoid changing " to _"
-  if (linearMode() || (UTF8Helper::StringGlyphLength(text) <= 1)) {
+  if (useRawText || linearMode() ||
+      (UTF8Helper::StringGlyphLength(text) <= 1)) {
     // Use raw text instead of parsing + layouting
     insertText(text, forceCursorRightOfText, forceCursorLeftOfText);
     return true;
@@ -444,7 +445,7 @@ KDCoordinate LayoutField::inputViewHeight() const {
 bool LayoutField::handleEventWithText(const char* text, bool indentation,
                                       bool forceCursorRightOfText) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  bool didHandle = processAndInsertText(text, forceCursorRightOfText);
+  bool didHandle = processAndInsertText(text, false, forceCursorRightOfText);
   return didHandleEvent(didHandle, didHandle, true, previousSize);
 }
 
@@ -503,7 +504,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   char buffer[bufferSize] = {0};
   if (getTextFromEvent(event, buffer, bufferSize) > 0) {
     prepareToEdit();
-    bool didHandleEvent = processAndInsertText(buffer);
+    bool didHandleEvent = processAndInsertText(buffer, false);
     *layoutDidChange = didHandleEvent;
     return didHandleEvent;
   }
@@ -673,7 +674,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
         return;
       }
       assert(length <= bufferSize);
-      processAndInsertText(buffer, forceCursorRightOfLayout);
+      processAndInsertText(buffer, true, forceCursorRightOfLayout);
     }
   } else {
     cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,

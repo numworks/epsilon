@@ -48,13 +48,13 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
       (event == Ion::Events::Multiplication || event == Ion::Events::Plus ||
        event == Ion::Events::Power || event == Ion::Events::Square ||
        event == Ion::Events::Sto)) {
-    processAndInsertText(SymbolHelper::AnsMainAlias());
+    processAndInsertText(SymbolHelper::AnsMainAlias(), true);
   }
   if (event == Ion::Events::Minus && isEditing() &&
       layout().tree()->treeIsIdenticalTo("-"_l)) {
     // Turn single - to Ans -
     clearLayout();
-    processAndInsertText(SymbolHelper::AnsMainAlias());
+    processAndInsertText(SymbolHelper::AnsMainAlias(), true);
     // The Minus symbol will be addded by Escher::LayoutField::handleEvent
   }
   if (event == Ion::Events::Division && isEditing()) {
@@ -99,7 +99,7 @@ bool LayoutField::handleDivision() {
         assert(m_currentStep == DivisionCycleStep::Start ||
                m_currentStep == DivisionCycleStep::MixedFraction);
         m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
-        processAndInsertText(SymbolHelper::AnsMainAlias());
+        processAndInsertText(SymbolHelper::AnsMainAlias(), true);
     }
   } else if (mixedFractionsEnabled) {
     assert(m_divisionCycleWithAns == OMG::Troolean::False);

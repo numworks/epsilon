@@ -21,7 +21,7 @@ class GraphControllerHelper {
                                      int* subCurveIndex = nullptr);
   bool snapToInterestAndUpdateCursor(Shared::CurveViewCursor* cursor,
                                      double start, double end,
-                                     int subCurveIndex, bool forceRing = false);
+                                     int subCurveIndex);
   // Returns the derivative displayed in banner
   Poincare::PointOrRealScalar<double>
   reloadDerivativeInBannerViewForCursorOnFunction(

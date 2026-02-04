@@ -139,33 +139,13 @@ PointOfInterest PointsOfInterestCache::pointOfInterestAtCoordinates(
   return PointOfInterest{};
 }
 
-bool PointsOfInterestCache::hasDisplayableInterestAtCoordinates(
-    double x, double y, Poincare::Interest interest,
-    bool allInterestsAreDisplayed) const {
-  if (!canDisplayPoints(allInterestsAreDisplayed ? Poincare::Interest::None
-                                                 : interest)) {
+PointOfInterest PointsOfInterestCache::displayablePointOfInterestAtCoordinates(
+    double x, double y, Poincare::Interest interest) const {
+  if (!canDisplayPoints(interest)) {
     // Ignore interest point if it is not displayed.
-    return false;
+    return Poincare::PointOfInterest{};
   }
-  return pointOfInterestAtCoordinates(x, y, interest).isInitialized();
-}
-
-bool PointsOfInterestCache::hasDisplayableUnreachedInterestAtCoordinates(
-    double x, double y) const {
-  using Interest = Poincare::Interest;
-  for (Interest interest :
-       {Interest::UnreachedDiscontinuity, Interest::Intersection}) {
-    if (!canDisplayPoints(interest)) {
-      continue;
-    }
-    PointOfInterest poi = pointOfInterestAtCoordinates(x, y, interest);
-    if (!poi.isInitialized() ||
-        (interest == Interest::Intersection && !poi.isUnreached)) {
-      continue;
-    }
-    return true;
-  }
-  return false;
+  return pointOfInterestAtCoordinates(x, y, interest);
 }
 
 float PointsOfInterestCache::step() const {
@@ -256,6 +236,7 @@ PointOfInterest findYIntercept(void* searchContext) {
                 .ordinate = xy.y(),
                 .interest = Interest::YIntercept,
                 .inverted = f->isAlongY(),
+                .isUnreached = f->properties().isStrictInequality(),
                 .subCurveIndex = static_cast<uint8_t>(subCurve)};
       }
     }
@@ -302,7 +283,11 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
          * expressionApproximated already returned x as abscissa and y as
          * ordinate. */
         return {
-            solution.x, solution.y, 0, solution.interest, f->isAlongY(), 0,
+            .abscissa = solution.x,
+            .ordinate = solution.y,
+            .interest = solution.interest,
+            .inverted = f->isAlongY(),
+            .isUnreached = f->properties().isStrictInequality(),
         };
       }
     }

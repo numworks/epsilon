@@ -38,7 +38,6 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
   const SymbolContext& symbolContext = App::app()->localContext();
   // Reload the expiring pointer
   function = App::app()->functionStore().modelForRecord(record);
-  bool isStrictInequality = function->properties().isStrictInequality();
   double dir = (direction.isRight() ? 1.0 : -1.0);
 
   bool specialConicCursorMove = false;
@@ -96,9 +95,9 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     double tStep = dir * std::max(step * slopeMultiplicator *
                                       static_cast<double>(scrollSpeed),
                                   minimalAbsoluteStep * 2);
-    if (snapToInterestAndUpdateCursor(
-            cursor, tCursor, tCursor + tStep * k_snapFactor,
-            subCurveIndex ? *subCurveIndex : 0, isStrictInequality)) {
+    if (snapToInterestAndUpdateCursor(cursor, tCursor,
+                                      tCursor + tStep * k_snapFactor,
+                                      subCurveIndex ? *subCurveIndex : 0)) {
       // Cursor should have been updated by snapToInterest
       assert(tCursor != cursor->t());
       return true;
@@ -264,8 +263,7 @@ double GraphControllerHelper::reloadSlopeInBannerViewForCursorOnFunction(
 }
 
 bool GraphControllerHelper::snapToInterestAndUpdateCursor(
-    CurveViewCursor* cursor, double start, double end, int subCurveIndex,
-    bool forceRing) {
+    CurveViewCursor* cursor, double start, double end, int subCurveIndex) {
   PointOfInterest nextPointOfInterest =
       App::app()
           ->graphController()
@@ -278,10 +276,9 @@ bool GraphControllerHelper::snapToInterestAndUpdateCursor(
   }
   cursor->moveTo(nextPointOfInterest.abscissa, nextPointOfInterestXY.x(),
                  nextPointOfInterestXY.y());
-  setCursorIsRing(forceRing ||
+  setCursorIsRing(nextPointOfInterest.isUnreached ||
                   nextPointOfInterest.interest ==
-                      Interest::UnreachedDiscontinuity ||
-                  nextPointOfInterest.isUnreached);
+                      Interest::UnreachedDiscontinuity);
 
   return true;
 }

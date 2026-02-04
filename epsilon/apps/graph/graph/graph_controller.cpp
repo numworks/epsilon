@@ -159,14 +159,19 @@ void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible,
   Ion::Storage::Record record = recordAtCurveIndex(curveIndex);
   ContinuousFunctionProperties properties =
       functionOrSequenceContext().modelForRecord(record)->properties();
-  bool cursorShouldBeRing =
-      properties.isScatterPlot() ||
-      pointsOfInterestForRecord(record)
-          ->hasDisplayableUnreachedInterestAtCoordinates(m_cursor->x(),
-                                                         m_cursor->y()) ||
-      (properties.isStrictInequality() &&
-       pointsOfInterestForRecord(record)->hasDisplayableInterestAtCoordinates(
-           m_cursor->x(), m_cursor->y()));
+
+  bool cursorShouldBeRing = properties.isScatterPlot();
+  if (!cursorShouldBeRing) {
+    // Just take the top point of interest into account.
+    PointOfInterest topPointOfInterest =
+        pointsOfInterestForRecord(record)
+            ->displayablePointOfInterestAtCoordinates(m_cursor->x(),
+                                                      m_cursor->y());
+    cursorShouldBeRing =
+        topPointOfInterest.isInitialized() &&
+        (topPointOfInterest.isUnreached ||
+         topPointOfInterest.interest == Interest::UnreachedDiscontinuity);
+  }
   setCursorIsRing(cursorShouldBeRing);
   FunctionGraphController::selectCurveAtIndex(curveIndex, willBeVisible,
                                               subCurveIndex);

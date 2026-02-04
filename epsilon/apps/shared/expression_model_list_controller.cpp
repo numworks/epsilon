@@ -184,7 +184,8 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
 
 bool ExpressionModelListController::editSelectedRecordWithLayout(
     Layout layout) {
-  if (isAddingNewModel()) {
+  bool wasAddingNewModel = isAddingNewModel();
+  if (wasAddingNewModel) {
     // TODO: Add model and setContent at the same time
     if (!addEmptyModel()) {
       return false;
@@ -194,10 +195,17 @@ bool ExpressionModelListController::editSelectedRecordWithLayout(
   Ion::Storage::Record record = selectedRecord();
   OMG::ExpiringPointer<ExpressionModelHandle> model =
       modelStore()->modelForRecord(record);
-  bool result = (model->setContent(layout, App::app()->localContext()) ==
-                 Ion::Storage::Record::ErrorStatus::None);
+  if (model->setContent(layout, App::app()->localContext()) !=
+      Ion::Storage::Record::ErrorStatus::None) {
+    if (wasAddingNewModel) {
+      // Delete the empty record created
+      modelStore()->removeModel(record);
+    }
+    return false;
+  }
+
   didChangeModelsList();
-  return result;
+  return true;
 }
 
 Layout ExpressionModelListController::getLayoutForSelectedRecord() const {

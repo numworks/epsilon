@@ -324,20 +324,27 @@ bool LayoutField::processAndInsertText(const char* text,
     return true;
   }
   // The text is parsable, we create its layout an insert it.
-  Layout resultLayout = resultExpression.createLayout(
-      SharedPreferences->displayMode(),
-      Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
-      App::app() ? static_cast<const SymbolContext&>(App::app()->localContext())
-                 : k_emptySymbolContext);
+  return processAndInsertLayout(
+      resultExpression.createLayout(
+          SharedPreferences->displayMode(),
+          Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
+          App::app()
+              ? static_cast<const SymbolContext&>(App::app()->localContext())
+              : k_emptySymbolContext),
+      /* Do not enter inside parentheses of expressions that take no argument
+         like random() */
+      forceCursorRightOfText || (resultExpression.numberOfChildren() == 0),
+      forceCursorLeftOfText);
+}
+
+bool LayoutField::processAndInsertLayout(Poincare::Layout layout,
+                                         bool forceCursorRightOfText,
+                                         bool forceCursorLeftOfText) {
   if (m_contentView.layoutView()->numberOfLayouts() +
-          resultLayout.numberOfDescendants(true) >=
+          layout.numberOfDescendants(true) >=
       k_maxNumberOfLayouts) {
     return false;
   }
-  // Do not enter parentheses of expression that take no argument like random()
-  forceCursorRightOfText =
-      forceCursorRightOfText || resultExpression.numberOfChildren() == 0;
-
   /* If the inserted layout is of the form "function()", we want to make
    * the right parenthesis temporary to insert "function(".
    * This is to make the "(" key consistent with the functions keys like cos
@@ -348,7 +355,7 @@ bool LayoutField::processAndInsertText(const char* text,
    * the cursor won't go inside the parenthesis but rather right of it, so
    * the parenthesis should be kept pemanent on the right.
    *
-   * This is done here and not before calling "processAndInsertText" for
+   * This is done here and not before calling "processAndInsertLayout" for
    * multiple reasons:
    *   - In layout_events.cpp, we do not want to change the text of the Cos
    *     event since it should still output "cos()" in 1D fields.
@@ -364,11 +371,9 @@ bool LayoutField::processAndInsertText(const char* text,
    * */
   if (!forceCursorRightOfText) {
     Poincare::LayoutHelpers::MakeRightMostParenthesisTemporary(
-        static_cast<Layout&>(resultLayout).tree());
+        static_cast<Layout&>(layout).tree());
   }
-
-  insertLayoutAtCursor(resultLayout, forceCursorRightOfText,
-                       forceCursorLeftOfText);
+  insertLayoutAtCursor(layout, forceCursorRightOfText, forceCursorLeftOfText);
   return true;
 }
 

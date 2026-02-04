@@ -2,10 +2,8 @@
 
 #include <omg/float.h>
 #include <poincare/coordinate_2D.h>
-#include <poincare/numeric_solver/solver.h>
+#include <poincare/numeric_solver/interest.h>
 #include <poincare/src/expression/continuity.h>
-
-#include "poincare/numeric_solver/point_of_interest.h"
 
 namespace Poincare::Internal {
 

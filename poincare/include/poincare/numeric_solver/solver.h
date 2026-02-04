@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "point_of_interest.h"
+#include "interest.h"
 
 /* TODO_PCJ: Change signatures to preparedFunctions instead of Trees. */
 namespace Poincare {

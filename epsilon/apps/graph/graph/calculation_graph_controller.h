@@ -4,7 +4,7 @@
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/simple_interactive_curve_view_controller.h>
 #include <omg/ring_buffer.h>
-#include <poincare/numeric_solver/point_of_interest_list.h>
+#include <poincare/point_of_interest/point_of_interest_list.h>
 
 #include "banner_view.h"
 #include "graph_view.h"

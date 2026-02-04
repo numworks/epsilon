@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ion/storage/record.h>
-#include <poincare/numeric_solver/point_of_interest_list.h>
+#include <poincare/point_of_interest/point_of_interest_list.h>
 
 namespace Graph {
 

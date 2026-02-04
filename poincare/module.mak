@@ -154,7 +154,6 @@ $(addprefix numeric_solver/, \
   beta_function.cpp \
   erf_inv.cpp \
   matrix_array.cpp \
-  point_of_interest_list.cpp:-nopool \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \
   roots.cpp \
@@ -162,6 +161,9 @@ $(addprefix numeric_solver/, \
   solver.cpp \
   solver_algorithms.cpp \
   zoom.cpp \
+) \
+$(addprefix point_of_interest/, \
+  point_of_interest_list.cpp:-nopool \
 ) \
 $(addprefix statistics/, \
   $(addprefix distributions/, \

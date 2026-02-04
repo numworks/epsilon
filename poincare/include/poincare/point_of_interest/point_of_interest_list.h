@@ -4,6 +4,11 @@
 
 #include "point_of_interest.h"
 
+/* This class as well as PointOfInterest should probably be moved to
+ * Epsilon folder. They are currently in Poincare only because we want to store
+ * them in the stack. We should replace the PointOfInterestList class with a
+ * templated List class that would encompass this as well as FloatList */
+
 namespace Poincare {
 
 class PointsOfInterestList {

@@ -1,21 +1,15 @@
 #pragma once
 
 #include <poincare/coordinate_2D.h>
+#include <poincare/numeric_solver/interest.h>
 #include <stdint.h>
 
-namespace Poincare {
+/* This struct as well as PointOfInterestList should probably be moved to
+ * Epsilon folder. They are currently in Poincare only because we want to store
+ * them in the stack. We should replace the PointOfInterest type with a
+ * FixedSizeData type or similar. */
 
-enum class Interest : uint8_t {
-  None,
-  Root,
-  Minimum,
-  Maximum,
-  Discontinuity,
-  ReachedDiscontinuity,    // Discontinuity where f(x) is defined
-  UnreachedDiscontinuity,  // Discontinuity where f(x) is undefined
-  Intersection,
-  YIntercept,
-};
+namespace Poincare {
 
 struct PointOfInterest {
   double abscissa = NAN;

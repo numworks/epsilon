@@ -304,17 +304,22 @@ bool LayoutField::processAndInsertText(const char* text,
     return true;
   }
 
-  // Single keys are not parsed to avoid changing " to _"
-  UserExpression resultExpression =
-      UTF8Helper::StringGlyphLength(text) > 1
-          ? UserExpression::Parse(text, EmptySymbolContext{},
-                                  {.preserveInput = true})
-          : UserExpression();
   // If first inserted character was empty, cursor must be left of layout
   bool forceCursorLeftOfText =
       !forceCursorRightOfText && text[0] == UCodePointEmpty;
-  if (linearMode() || resultExpression.isUninitialized()) {
-    // The text is not parsable (for instance, ",") and is added char by char.
+
+  // Single keys are not parsed to avoid changing " to _"
+  if (linearMode() || (UTF8Helper::StringGlyphLength(text) <= 1)) {
+    // Use raw text instead of parsing + layouting
+    insertText(text, forceCursorRightOfText, forceCursorLeftOfText);
+    return true;
+  }
+
+  UserExpression resultExpression = UserExpression::Parse(
+      text, EmptySymbolContext{}, {.preserveInput = true});
+
+  if (resultExpression.isUninitialized()) {
+    // Parsing failed, use raw text
     insertText(text, forceCursorRightOfText, forceCursorLeftOfText);
     return true;
   }

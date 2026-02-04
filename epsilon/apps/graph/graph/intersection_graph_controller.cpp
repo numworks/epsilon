@@ -64,10 +64,7 @@ Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(
   PointOfInterest p = computeAtLeastOnePointOfInterest(start, max, y, stretch);
   if (!p.isUninitialized()) {
     m_intersectedRecord = Ion::Storage::Record(p.data);
-  }
-  if (!p.isUninitialized()) {
-    App::app()->graphController()->setCursorIsRing(
-        p.interest == Interest::UnreachedIntersection);
+    App::app()->graphController()->setCursorIsRing(p.isUnreached);
   }
   return p.xy();
 }

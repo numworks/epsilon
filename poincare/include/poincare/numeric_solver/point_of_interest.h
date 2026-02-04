@@ -14,8 +14,6 @@ enum class Interest : uint8_t {
   ReachedDiscontinuity,    // Discontinuity where f(x) is defined
   UnreachedDiscontinuity,  // Discontinuity where f(x) is undefined
   Intersection,
-  // Intersection involving at least one strict inequation
-  UnreachedIntersection,
   YIntercept,
 };
 
@@ -25,6 +23,9 @@ struct PointOfInterest {
   uint32_t data = 0;
   Interest interest = Interest::None;
   bool inverted = false;
+  // Used for unreached intersections
+  // TODO: Also implement for unreached discontinuities
+  bool isUnreached = false;
   uint8_t subCurveIndex = 0;
 
   double x() const { return inverted ? ordinate : abscissa; }

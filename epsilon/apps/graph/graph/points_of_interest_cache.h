@@ -45,9 +45,19 @@ class PointsOfInterestCache {
       double xStart, double xEnd, double yStart, bool stretch,
       Poincare::Interest interest = Poincare::Interest::None,
       int subCurveIndex = -1, bool alongX = false);
-  bool hasInterestAtCoordinates(
+
+  /* Returns the point with the given interest at the given coordinates, or an
+   * uninitialized point if there is no such point. If interest is None, any
+   * point of interest at the given coordinates is returned. */
+  Poincare::PointOfInterest pointOfInterestAtCoordinates(
       double x, double y,
       Poincare::Interest interest = Poincare::Interest::None) const;
+
+  bool hasInterestAtCoordinates(
+      double x, double y,
+      Poincare::Interest interest = Poincare::Interest::None) const {
+    return !pointOfInterestAtCoordinates(x, y, interest).isUninitialized();
+  }
   bool hasDisplayableInterestAtCoordinates(
       double x, double y,
       Poincare::Interest interest = Poincare::Interest::None,

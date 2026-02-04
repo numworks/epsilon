@@ -420,5 +420,6 @@ NODE(PointOfInterest, BASE, 0, {
   uint32_t data;
   uint8_t interest;
   bool inverted;
+  bool isUnreached;
   uint8_t subCurveIndex;
 })

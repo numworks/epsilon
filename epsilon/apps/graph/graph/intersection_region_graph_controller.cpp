@@ -51,7 +51,7 @@ void IntersectionRegionGraphController::updateBestPointOfInterestForRecord(
           // Update best point of interest
           bestPoint.coordinate = p.xy();
           bestPoint.isUnreachedIntersection =
-              (p.interest == Interest::UnreachedIntersection);
+              (p.interest == Interest::Intersection && p.isUnreached);
           bestPoint.record = record;
           bestPoint.intersectedRecord = intersectedRecord;
           // Interest points are ordered, no need to explore further

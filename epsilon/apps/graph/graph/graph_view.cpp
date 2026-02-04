@@ -766,7 +766,7 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect,
 
     bool isRing = isStrictInequality ||
                   p.interest == Interest::UnreachedDiscontinuity ||
-                  p.interest == Interest::UnreachedIntersection;
+                  p.isUnreached;
 
     KDRect dotRelativeRect = dotRect(k_dotSize, dotCoordinates, isRing);
     /* If the dot intersects the dirty rect, force the redraw.

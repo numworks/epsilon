@@ -54,9 +54,7 @@ bool PointsOfInterestCache::computeUntilNthPoint(int n) {
 
 bool PointsOfInterestCache::PointFitInterest(PointOfInterest poi,
                                              Interest interest) {
-  return interest == Interest::None || poi.interest == interest ||
-         (interest == Interest::Intersection &&
-          poi.interest == Interest::UnreachedIntersection);
+  return interest == Interest::None || poi.interest == interest;
 }
 
 int PointsOfInterestCache::numberOfPoints(Interest interest) const {
@@ -129,16 +127,16 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
   return PointOfInterest{};
 }
 
-bool PointsOfInterestCache::hasInterestAtCoordinates(double x, double y,
-                                                     Interest interest) const {
+PointOfInterest PointsOfInterestCache::pointOfInterestAtCoordinates(
+    double x, double y, Interest interest) const {
   int n = numberOfPoints();
   for (int i = 0; i < n; i++) {
     PointOfInterest p = pointAtIndex(i);
     if (p.x() == x && p.y() == y && PointFitInterest(p, interest)) {
-      return true;
+      return p;
     }
   }
-  return false;
+  return PointOfInterest{};
 }
 
 bool PointsOfInterestCache::hasDisplayableInterestAtCoordinates(
@@ -149,18 +147,23 @@ bool PointsOfInterestCache::hasDisplayableInterestAtCoordinates(
     // Ignore interest point if it is not displayed.
     return false;
   }
-  return hasInterestAtCoordinates(x, y, interest);
+  return !pointOfInterestAtCoordinates(x, y, interest).isUninitialized();
 }
 
 bool PointsOfInterestCache::hasDisplayableUnreachedInterestAtCoordinates(
     double x, double y) const {
   using Interest = Poincare::Interest;
   for (Interest interest :
-       {Interest::UnreachedDiscontinuity, Interest::UnreachedIntersection}) {
-    if (canDisplayPoints(interest) &&
-        hasInterestAtCoordinates(x, y, interest)) {
-      return true;
+       {Interest::UnreachedDiscontinuity, Interest::Intersection}) {
+    if (!canDisplayPoints(interest)) {
+      continue;
     }
+    PointOfInterest poi = pointOfInterestAtCoordinates(x, y, interest);
+    if (poi.isUninitialized() ||
+        (interest == Interest::Intersection && !poi.isUnreached)) {
+      continue;
+    }
+    return true;
   }
   return false;
 }
@@ -389,9 +392,7 @@ PointOfInterest findIntersections(void* searchContext) {
         if (poi.isUninitialized()) {
           continue;
         }
-        if (fIsStrict || gIsStrict) {
-          poi.interest = Interest::UnreachedIntersection;
-        }
+        poi.isUnreached = fIsStrict || gIsStrict;
         return poi;
       }
       ctx->subCounter2 = 0;

@@ -79,8 +79,15 @@ class ExpressionModelListController
   // "Add element" row can be hidden if we reached the max number of models
   bool hasAddElementRow() const;
   bool isAddElementRow(int row) const;
+  bool isEditing() const {
+    assert(m_editedCellIndex >= 0 || !m_isAddingNewModel);
+    return m_editedCellIndex >= 0;
+  }
   // If the edited cell is a new model
-  bool isAddingNewModel() const { return m_isAddingNewModel; }
+  bool isAddingNewModel() const {
+    assert(!m_isAddingNewModel || m_editedCellIndex >= 0);
+    return m_isAddingNewModel;
+  }
   bool isNewModelRow(int row) const;
   // Relative row is the index of the row starting from the model row
   int modelIndexForRow(int row, int* relativeRow) const;
@@ -98,7 +105,6 @@ class ExpressionModelListController
   virtual ExpressionModelStore* modelStore() const = 0;
 
   Escher::EvenOddMessageTextCell m_addNewModelCell;
-  int16_t m_editedCellIndex;
 
  private:
   constexpr static KDCoordinate k_defaultRowHeight =
@@ -128,6 +134,7 @@ class ExpressionModelListController
 
   void finishEdition();
 
+  int16_t m_editedCellIndex;
   bool m_isAddingNewModel;
 };
 

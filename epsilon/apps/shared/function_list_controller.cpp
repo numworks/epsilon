@@ -88,7 +88,7 @@ void FunctionListController::handleResponderChainEvent(
         selectRow(numberOfRows() - 1);
       }
       footer()->setSelectedButton(-1);
-      if (m_editedCellIndex != -1) {
+      if (isEditing()) {
         // Resume edition if it was interrupted by a store
         App::app()->setFirstResponder(layoutField());
       } else {

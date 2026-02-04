@@ -117,7 +117,7 @@ bool ExpressionModelListController::handleEventOnExpression(
     editExpression(event);
     return true;
   }
-  if (!inTemplateMenu && m_editedCellIndex > -1 && event == Ion::Events::Back) {
+  if (!inTemplateMenu && isEditing() && event == Ion::Events::Back) {
     finishEdition();
     return true;
   }

@@ -231,7 +231,7 @@ void LayoutField::reload(KDSize previousSize) {
 using LayoutInsertionMethod = void (Poincare::LayoutCursor::*)(
     const Poincare::SymbolContext& symbolContext);
 
-bool LayoutField::processAndInsertText(const char* text, bool indentation,
+bool LayoutField::processAndInsertText(const char* text,
                                        bool forceCursorRightOfText) {
   /* The text here can be:
    * - the result of a key pressed, such as "," or "cos(•)"
@@ -378,7 +378,7 @@ const char* LayoutField::text() {
 
 void LayoutField::setText(const char* text) {
   clearLayout();
-  processAndInsertText(text, false, true);
+  processAndInsertText(text, true);
 }
 
 bool LayoutField::inputViewHeightDidChange() {
@@ -424,8 +424,7 @@ KDCoordinate LayoutField::inputViewHeight() const {
 bool LayoutField::handleEventWithText(const char* text, bool indentation,
                                       bool forceCursorRightOfText) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  bool didHandle =
-      processAndInsertText(text, indentation, forceCursorRightOfText);
+  bool didHandle = processAndInsertText(text, forceCursorRightOfText);
   return didHandleEvent(didHandle, didHandle, true, previousSize);
 }
 
@@ -654,7 +653,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
         return;
       }
       assert(length <= bufferSize);
-      processAndInsertText(buffer, false, forceCursorRightOfLayout);
+      processAndInsertText(buffer, forceCursorRightOfLayout);
     }
   } else {
     cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,

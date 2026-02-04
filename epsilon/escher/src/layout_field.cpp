@@ -280,6 +280,14 @@ bool LayoutField::processSpecialEvents(const char* text) {
   return false;
 }
 
+void LayoutField::insertText(const char* text, bool forceCursorRightOfText,
+                             bool forceCursorLeftOfText) {
+  KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
+  cursor()->insertText(text, context(), forceCursorRightOfText,
+                       forceCursorLeftOfText, linearMode());
+  reload(previousLayoutSize);
+}
+
 bool LayoutField::processAndInsertText(const char* text,
                                        bool forceCursorRightOfText) {
   /* The text here can be:
@@ -307,10 +315,7 @@ bool LayoutField::processAndInsertText(const char* text,
       !forceCursorRightOfText && text[0] == UCodePointEmpty;
   if (linearMode() || resultExpression.isUninitialized()) {
     // The text is not parsable (for instance, ",") and is added char by char.
-    KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
-    cursor()->insertText(text, context(), forceCursorRightOfText,
-                         forceCursorLeftOfText, linearMode());
-    reload(previousLayoutSize);
+    insertText(text, forceCursorRightOfText, forceCursorLeftOfText);
     return true;
   }
   // The text is parsable, we create its layout an insert it.

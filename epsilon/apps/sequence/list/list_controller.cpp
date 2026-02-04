@@ -93,8 +93,10 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
 /* MathLayoutFieldDelegate */
 
 void ListController::layoutFieldDidAbortEditing(LayoutField* layoutField) {
+  // Parent's layoutFieldDidAbortEditing will set m_isAddingNewModel to false
+  bool wasAddingNewModel = isAddingNewModel();
   ExpressionModelListController::layoutFieldDidAbortEditing(layoutField);
-  if (isAddingNewModel()) {
+  if (wasAddingNewModel) {
     return;
   }
 

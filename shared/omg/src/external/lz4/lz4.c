@@ -1157,6 +1157,7 @@ int LZ4_compress_destSize(const char* src, char* dst, int* srcSizePtr, int targe
 *  Streaming functions
 ********************************/
 
+#if (LZ4_HEAPMODE)
 LZ4_stream_t* LZ4_createStream(void)
 {
     LZ4_stream_t* lz4s = (LZ4_stream_t*)ALLOC(sizeof(LZ4_stream_t));
@@ -1166,6 +1167,7 @@ LZ4_stream_t* LZ4_createStream(void)
     LZ4_resetStream(lz4s);
     return lz4s;
 }
+#endif
 
 void LZ4_resetStream (LZ4_stream_t* LZ4_stream)
 {
@@ -1177,6 +1179,7 @@ void LZ4_resetStream_fast(LZ4_stream_t* ctx) {
     LZ4_prepareTable(&(ctx->internal_donotuse), 0, byU32);
 }
 
+#if (LZ4_HEAPMODE)
 int LZ4_freeStream (LZ4_stream_t* LZ4_stream)
 {
     if (!LZ4_stream) return 0;   /* support free on NULL */
@@ -1184,6 +1187,7 @@ int LZ4_freeStream (LZ4_stream_t* LZ4_stream)
     FREEMEM(LZ4_stream);
     return (0);
 }
+#endif
 
 
 #define HASH_UNIT sizeof(reg_t)
@@ -1742,6 +1746,7 @@ int LZ4_decompress_fast_doubleDict(const char* source, char* dest, int originalS
 
 /*===== streaming decompression functions =====*/
 
+#if (LZ4_HEAPMODE)
 LZ4_streamDecode_t* LZ4_createStreamDecode(void)
 {
     LZ4_streamDecode_t* lz4s = (LZ4_streamDecode_t*) ALLOC_AND_ZERO(sizeof(LZ4_streamDecode_t));
@@ -1754,6 +1759,7 @@ int LZ4_freeStreamDecode (LZ4_streamDecode_t* LZ4_stream)
     FREEMEM(LZ4_stream);
     return 0;
 }
+#endif
 
 /*! LZ4_setStreamDecode() :
  *  Use this function to instruct where to find the dictionary.
@@ -1954,11 +1960,13 @@ int LZ4_resetStreamState(void* state, char* inputBuffer)
     return 0;
 }
 
+#if (LZ4_HEAPMODE)
 void* LZ4_create (char* inputBuffer)
 {
     (void)inputBuffer;
     return LZ4_createStream();
 }
+#endif
 
 char* LZ4_slideInputBuffer (void* state)
 {

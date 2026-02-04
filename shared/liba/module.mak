@@ -18,7 +18,6 @@ _sources_liba_extended := $(addprefix src/, \
   fpclassify.c \
   fpclassifyf.c \
   ieee754.c \
-  malloc.c \
   nearbyint.c \
   nearbyintf.c \
 )

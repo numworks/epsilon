@@ -21,23 +21,22 @@ class ExpressionModelListController
       public Escher::StandardMemoizedListViewDataSource,
       public MathLayoutFieldDelegate {
  public:
-  ExpressionModelListController(Escher::Responder* parentResponder,
-                                I18n::Message text);
-  virtual void editExpression(Ion::Events::Event event);
-  bool editSelectedRecordWithLayout(Poincare::Layout layout);
-  virtual Poincare::Layout getLayoutForSelectedRecord() const;
-  bool handleEventOnExpression(Ion::Events::Event event,
-                               bool inTemplateMenu = false);
-  bool handleEventOnExpressionInTemplateMenu(Ion::Events::Event event) {
-    return handleEventOnExpression(event, true);
-  }
   constexpr static KDCoordinate k_defaultVerticalMargin =
       Escher::Metric::CellMargins.left();
   /* We want all ListControllers to use the same margin */
   constexpr static KDCoordinate k_newModelMargin =
       k_defaultVerticalMargin + Escher::Metric::VerticalColorIndicatorThickness;
-  constexpr static KDCoordinate k_defaultRowHeight =
-      Escher::Metric::StoreRowHeight;
+
+  ExpressionModelListController(Escher::Responder* parentResponder,
+                                I18n::Message text);
+
+  bool handleEventOnExpressionInTemplateMenu(Ion::Events::Event event) {
+    return handleEventOnExpression(event, true);
+  }
+  virtual void editExpression(Ion::Events::Event event);
+
+  bool editSelectedRecordWithLayout(Poincare::Layout layout);
+  virtual Poincare::Layout getLayoutForSelectedRecord() const;
 
  protected:
   constexpr static int k_expressionCellType = 0;
@@ -46,15 +45,11 @@ class ExpressionModelListController
   constexpr static KDFont::Size k_font = KDFont::Size::Large;
   constexpr static KDCoordinate k_expressionMargin = 5;
 
-  virtual Escher::EditableExpressionModelCell*
-  editableExpressionModelCell() = 0;
-  // "Add element" row can be hidden if we reached the max number of models
-  bool hasAddElementRow() const;
-  bool isAddElementRow(int row) const;
-  // If the edited cell is a new model
-  bool isAddingNewModel() const { return m_isAddingNewModel; }
-  bool isNewModelRow(int row) const;
-  virtual bool setSelectedRecordContent(Poincare::Layout layout);
+  // LayoutDelegate
+  bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
+                                   Ion::Events::Event event) override;
+  void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
+  void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
 
   // ListViewDataSource
   int numberOfRows() const override;
@@ -62,48 +57,59 @@ class ExpressionModelListController
     return type == k_expressionCellType ? maxNumberOfDisplayableRows() : 1;
   }
   int typeAtRow(int row) const override;
+  KDCoordinate nonMemoizedRowHeight(int row) override;
+
+  virtual Escher::EditableExpressionModelCell*
+  editableExpressionModelCell() = 0;
+  virtual void addNewModelAction() = 0;
+
+  virtual bool setSelectedRecordContent(Poincare::Layout layout);
   // Row height
   virtual KDCoordinate expressionRowHeight(int row);
   virtual KDCoordinate editableRowHeight();
-  KDCoordinate nonMemoizedRowHeight(int row) override;
-
-  // Responder
-  virtual void addNewModelAction() = 0;
   /* TODO: This should only update cells that changed instead of reloading the
    * whole memoization, which is time-consuming. */
   virtual void didChangeModelsList() {
     selectableListView()->resetSizeAndOffsetMemoization();
   }
   virtual bool removeModelRow(Ion::Storage::Record record);
+
+  bool handleEventOnExpression(Ion::Events::Event event,
+                               bool inTemplateMenu = false);
+  // "Add element" row can be hidden if we reached the max number of models
+  bool hasAddElementRow() const;
+  bool isAddElementRow(int row) const;
+  // If the edited cell is a new model
+  bool isAddingNewModel() const { return m_isAddingNewModel; }
+  bool isNewModelRow(int row) const;
   // Relative row is the index of the row starting from the model row
   int modelIndexForRow(int row, int* relativeRow) const;
   int modelIndexForRow(int row) const;
+  // Record getters
   Ion::Storage::Record recordAtRow(int row, int* relativeRow) const;
   Ion::Storage::Record recordAtRow(int row) const;
   Ion::Storage::Record selectedRecord(int* relativeRow) const;
   Ion::Storage::Record selectedRecord() const;
 
-  // ViewController
-  virtual Escher::SelectableListView* selectableListView() = 0;
-  virtual ExpressionModelStore* modelStore() const = 0;
-  Escher::EvenOddMessageTextCell m_addNewModelCell;
-
-  // LayoutDelegate
-  bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
-                                   Ion::Events::Event event) override;
-  void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
-  void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   bool addEmptyModel();
 
-  // EditableCell
   virtual Escher::LayoutField* layoutField() = 0;
+  virtual Escher::SelectableListView* selectableListView() = 0;
+  virtual ExpressionModelStore* modelStore() const = 0;
+
+  Escher::EvenOddMessageTextCell m_addNewModelCell;
   int16_t m_editedCellIndex;
 
  private:
-  // Always disable storing cells since they are equations.
+  constexpr static KDCoordinate k_defaultRowHeight =
+      Escher::Metric::StoreRowHeight;
+
+  // ListViewDataSource
+  // Always disable storing cells since they are equations.`
   bool canStoreCellAtRow(int row) override { return false; }
+
   virtual int maxNumberOfDisplayableRows() const = 0;
-  void finishEdition();
+
   virtual bool shouldCompleteEquation(Poincare::UserExpression expression,
                                       CodePoint symbol) {
     return false;
@@ -119,6 +125,9 @@ class ExpressionModelListController
   virtual int numberOfRowsForRecord(Ion::Storage::Record record) const {
     return 1;
   }
+
+  void finishEdition();
+
   bool m_isAddingNewModel;
 };
 

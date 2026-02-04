@@ -11,7 +11,6 @@ _sources_liba_minimal := $(addprefix src/, \
 )
 
 _sources_liba_extended := $(addprefix src/, \
-  external/sqlite/mem5.c \
   abs.c \
   bzero.c \
   ctype.c \
@@ -149,7 +148,6 @@ $(call create_module,liba,1, \
   $(foreach f,armv6m armv7m aeabirt openbsd test,$(addsuffix :+$f,$(_sources_liba_$f))) \
 )
 
-$(call all_objects_for,$(PATH_liba)/src/external/sqlite/mem5.c): CFLAGS += -w
 $(call all_objects_for,$(PATH_liba)/src/external/openbsd/%.c): PRIORITY_SFLAGS := -I$(PATH_liba)/src/external/openbsd/include
 $(call all_objects_for,$(PATH_liba)/src/external/openbsd/%.c): CFLAGS += -w
 # A few OpenBSD libm files define constants using the "volatile" keyword. Like

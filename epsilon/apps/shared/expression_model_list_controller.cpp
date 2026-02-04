@@ -316,7 +316,8 @@ void ExpressionModelListController::layoutFieldDidAbortEditing(
 Ion::Storage::Record ExpressionModelListController::recordAtRow(
     int row, int* relativeRow) const {
   // There are no existing records for the model that is being added
-  assert(!isAddingNewModel() || row != m_editedCellIndex);
+  assert(!isAddingNewModel() || row != m_editedCellIndex ||
+         !isAddElementRow(row));
   return modelStore()->recordAtIndex(modelIndexForRow(row, relativeRow));
 }
 

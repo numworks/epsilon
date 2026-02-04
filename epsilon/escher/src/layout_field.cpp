@@ -231,28 +231,7 @@ void LayoutField::reload(KDSize previousSize) {
 using LayoutInsertionMethod = void (Poincare::LayoutCursor::*)(
     const Poincare::SymbolContext& symbolContext);
 
-bool LayoutField::processAndInsertText(const char* text,
-                                       bool forceCursorRightOfText) {
-  /* The text here can be:
-   * - the result of a key pressed, such as "," or "cos(•)"
-   * - the text added after a toolbox selection
-   * - the result of a copy-paste. */
-
-  if (text[0] == 0) {
-    // The text is empty
-    return true;
-  }
-
-  int currentNumberOfLayouts = m_contentView.layoutView()->numberOfLayouts();
-  if (currentNumberOfLayouts >= k_maxNumberOfLayouts - 6) {
-    /* We add -6 because in some cases (Ion::Events::Division,
-     * Ion::Events::Exp...) we let the layout cursor handle the layout insertion
-     * and these events may add at most 6 layouts (e.g *10^). */
-    return false;
-  }
-
-  Poincare::LayoutCursor* cursor = this->cursor();
-  // Handle special cases
+bool LayoutField::processSpecialEvents(const char* text) {
   constexpr Ion::Events::Event specialEvents[] = {
       Ion::Events::Division, Ion::Events::Exp,    Ion::Events::Power,
       Ion::Events::Sqrt,     Ion::Events::Square, Ion::Events::EE};
@@ -266,27 +245,57 @@ bool LayoutField::processAndInsertText(const char* text,
   constexpr int numberOfSpecialEvents = std::size(specialEvents);
   static_assert(numberOfSpecialEvents == std::size(handleSpecialEvents),
                 "Wrong number of layout insertion methods");
-  if (!linearMode()) {
-    char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
-    for (int i = 0; i < numberOfSpecialEvents; i++) {
-      Ion::Events::copyText(static_cast<uint8_t>(specialEvents[i]), buffer,
-                            Ion::Events::EventData::k_maxDataSize);
-      if (strcmp(text, buffer) == 0) {
-        (cursor->*handleSpecialEvents[i])(context());
-        return true;
-      }
-    }
-    if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
-      cursor->addEmptyMatrixLayout(context());
-      return true;
-    } else if (strcmp(text, k_logWithBase10) == 0) {
-      cursor->addEmptyLogarithmWithBase10Layout(context());
-      return true;
-    } else if (strcmp(text, k_emptyMixedFraction) == 0) {
-      cursor->addMixedFractionLayout(context());
+
+  if (m_contentView.layoutView()->numberOfLayouts() >=
+      k_maxNumberOfLayouts - 6) {
+    /* We add -6 because in some cases (Ion::Events::Division,
+     * Ion::Events::Exp...) we let the layout cursor handle the layout insertion
+     * and these events may add at most 6 layouts (e.g *10^). */
+    return false;
+  }
+
+  if (linearMode()) {
+    return false;
+  }
+  char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
+  Poincare::LayoutCursor* cursor = this->cursor();
+  for (int i = 0; i < numberOfSpecialEvents; i++) {
+    Ion::Events::copyText(static_cast<uint8_t>(specialEvents[i]), buffer,
+                          Ion::Events::EventData::k_maxDataSize);
+    if (strcmp(text, buffer) == 0) {
+      (cursor->*handleSpecialEvents[i])(context());
       return true;
     }
   }
+  if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
+    cursor->addEmptyMatrixLayout(context());
+    return true;
+  } else if (strcmp(text, k_logWithBase10) == 0) {
+    cursor->addEmptyLogarithmWithBase10Layout(context());
+    return true;
+  } else if (strcmp(text, k_emptyMixedFraction) == 0) {
+    cursor->addMixedFractionLayout(context());
+    return true;
+  }
+  return false;
+}
+
+bool LayoutField::processAndInsertText(const char* text,
+                                       bool forceCursorRightOfText) {
+  /* The text here can be:
+   * - the result of a key pressed, such as "," or "cos(•)"
+   * - the text added after a toolbox selection
+   * - the result of a copy-paste. */
+
+  if (text[0] == 0) {
+    // The text is empty
+    return true;
+  }
+
+  if (processSpecialEvents(text)) {
+    return true;
+  }
+
   // Single keys are not parsed to avoid changing " to _"
   UserExpression resultExpression =
       UTF8Helper::StringGlyphLength(text) > 1
@@ -299,8 +308,8 @@ bool LayoutField::processAndInsertText(const char* text,
   if (linearMode() || resultExpression.isUninitialized()) {
     // The text is not parsable (for instance, ",") and is added char by char.
     KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
-    cursor->insertText(text, context(), forceCursorRightOfText,
-                       forceCursorLeftOfText, linearMode());
+    cursor()->insertText(text, context(), forceCursorRightOfText,
+                         forceCursorLeftOfText, linearMode());
     reload(previousLayoutSize);
     return true;
   }
@@ -310,7 +319,8 @@ bool LayoutField::processAndInsertText(const char* text,
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
       App::app() ? static_cast<const SymbolContext&>(App::app()->localContext())
                  : k_emptySymbolContext);
-  if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >=
+  if (m_contentView.layoutView()->numberOfLayouts() +
+          resultLayout.numberOfDescendants(true) >=
       k_maxNumberOfLayouts) {
     return false;
   }

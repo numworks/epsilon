@@ -8,7 +8,9 @@
 #define _LIBCPP_CONSTEXPR_AFTER_CXX11
 #define _LIBCPP_CONSTEXPR_AFTER_CXX14
 #define _LIBCPP_CONSTEXPR constexpr
+#ifndef __has_feature
 #define __has_feature(__x) 0
+#endif
 #define _LIBCPP_NO_CFI
 #define _NOEXCEPT noexcept
 #define _NOEXCEPT_(x) noexcept(x)

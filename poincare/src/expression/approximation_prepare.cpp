@@ -103,7 +103,8 @@ bool PrepareExpressionForApproximation(Tree* e) {
     /* ShallowPrepareForApproximation is not expected to add further
      * dependencies to prevent any expression size exponential growth. */
     assert(!Dependency::DeepBubbleUpDependencies(e));
-    assert(!Dependency::DeepRemoveUselessDependencies(e));
+    /* DeepRemoveUselessDependencies can't be used after
+     * ShallowPrepareForApproximation */
   }
   return changed;
 }

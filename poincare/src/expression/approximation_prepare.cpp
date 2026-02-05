@@ -34,8 +34,9 @@ bool ShallowPrepareForApproximation(Tree* e, void* ctx) {
       PatternMatching::MatchReplace(e, KPowReal(KA, -1_e), KDiv(1_e, KA)) ||
       PatternMatching::MatchReplace(e, KPow(KA, -1_e), KDiv(1_e, KA)) ||
       // A^0.5 -> sqrt(A)
-      PatternMatching::MatchReplace(e, KPowReal(KA, 1_e / 2_e),
-                                    KDep(KSqrt(KA), KDepList(KRealPos(KA)))) ||
+      /* PowReal(A,0.5) -> dep(sqrt(A), RealPos(A)) has been disabled because it
+       * made the expression size grow exponentially in cases of nested square
+       * roots. */
       PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
       //  ln(A)/ln(10) -> log(A)
       PatternMatching::MatchReplace(
@@ -88,14 +89,21 @@ static bool ShallowExpandIntegrals(Tree* e, void* ctx) {
 }
 
 bool PrepareExpressionForApproximation(Tree* e) {
+  assert(!Dependency::DeepBubbleUpDependencies(e));
+  assert(!Dependency::DeepRemoveUselessDependencies(e));
   bool changed = Tree::ApplyShallowTopDown(e, &ShallowExpandIntegrals);
-  changed =
-      Tree::ApplyShallowTopDown(e, &ShallowPrepareForApproximation) || changed;
   if (changed) {
-    /* ShallowPrepareForApproximation can introduce dependencies. Bubble them
-     * up, and remove useless ones. */
-    Dependency::DeepBubbleUpDependencies(e);
+    /* ShallowExpandIntegrals can introduce dependencies. There should be no
+     * need to bubble them up, but some could be removed. */
+    assert(!Dependency::DeepBubbleUpDependencies(e));
     Dependency::DeepRemoveUselessDependencies(e);
+  }
+  if (Tree::ApplyShallowTopDown(e, &ShallowPrepareForApproximation)) {
+    changed = true;
+    /* ShallowPrepareForApproximation is not expected to add further
+     * dependencies to prevent any expression size exponential growth. */
+    assert(!Dependency::DeepBubbleUpDependencies(e));
+    assert(!Dependency::DeepRemoveUselessDependencies(e));
   }
   return changed;
 }

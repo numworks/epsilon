@@ -336,10 +336,7 @@ QUIZ_CASE(pcj_prepare_expression) {
                                 KIntegral("t"_e, 0_e, KRandomSeeded<1>, KVarX));
   assert_expression_prepares_to(
       KPowReal(KPowReal(KPowReal("t"_e, 1_e / 2_e), 1_e / 2_e), 1_e / 2_e),
-      KDep(KSqrt(KSqrt(KSqrt("t"_e))),
-           KDepList(KDep(KRealPos(KSqrt(KSqrt("t"_e))),
-                         KDepList(KDep(KRealPos(KSqrt("t"_e)),
-                                       KDepList(KRealPos("t"_e))))))));
+      KPowReal(KPowReal(KPowReal("t"_e, 1_e / 2_e), 1_e / 2_e), 1_e / 2_e));
 }
 
 QUIZ_CASE(pcj_approximation_capped) {

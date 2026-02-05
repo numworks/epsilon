@@ -280,25 +280,17 @@ bool LayoutField::processSpecialEvents(const char* text) {
   return false;
 }
 
-void LayoutField::insertText(const char* text, bool forceCursorRightOfText,
-                             bool forceCursorLeftOfText) {
-  KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
-  cursor()->insertText(text, context(), forceCursorRightOfText,
-                       forceCursorLeftOfText, linearMode());
-  reload(previousLayoutSize);
-}
-
-bool LayoutField::processAndInsertText(const char* text,
-                                       bool forceCursorRightOfText) {
+bool LayoutField::insertText(const char* text, bool forceCursorRightOfText) {
   if (text[0] == 0) {
     // The text is empty
     return true;
   }
-  // If first inserted character was empty, cursor must be left of layout
-  bool forceCursorLeftOfText =
-      !forceCursorRightOfText && text[0] == UCodePointEmpty;
-
-  insertText(text, forceCursorRightOfText, forceCursorLeftOfText);
+  KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
+  cursor()->insertText(
+      text, context(), forceCursorRightOfText,
+      // If first character is empty, cursor must be left of inserted text
+      !forceCursorRightOfText && text[0] == UCodePointEmpty, linearMode());
+  reload(previousLayoutSize);
   return true;
 }
 
@@ -308,18 +300,13 @@ bool LayoutField::processTextEvent(const char* text,
    * - the result of a key pressed, such as "," or "cos(•)"
    * - the text added after a toolbox selection
    * - the result of a copy-paste. */
-
   if (processSpecialEvents(text)) {
     return true;
   }
 
-  // If first inserted character was empty, cursor must be left of layout
-  bool forceCursorLeftOfText =
-      !forceCursorRightOfText && text[0] == UCodePointEmpty;
-
   if (UTF8Helper::StringGlyphLength(text) <= 1) {
     // Single keys are not parsed to avoid changing " to _"
-    insertText(text, forceCursorRightOfText, forceCursorLeftOfText);
+    insertText(text, forceCursorRightOfText);
     return true;
   }
 
@@ -328,7 +315,7 @@ bool LayoutField::processTextEvent(const char* text,
 
   if (resultExpression.isUninitialized()) {
     // Parsing failed, use raw text
-    insertText(text, forceCursorRightOfText, forceCursorLeftOfText);
+    insertText(text, forceCursorRightOfText);
     return true;
   }
   // The text is parsable, we create its layout an insert it.
@@ -342,7 +329,8 @@ bool LayoutField::processTextEvent(const char* text,
       /* Do not enter inside parentheses of expressions that take no argument
          like random() */
       forceCursorRightOfText || (resultExpression.numberOfChildren() == 0),
-      forceCursorLeftOfText);
+      // If first inserted character was empty, cursor must be left of layout
+      !forceCursorRightOfText && text[0] == UCodePointEmpty);
 }
 
 bool LayoutField::processAndInsertLayout(Poincare::Layout layout,
@@ -454,7 +442,7 @@ bool LayoutField::handleEventWithText(const char* text, bool forceUseRawText,
                                       bool forceCursorRightOfText) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
   bool didHandle = forceUseRawText
-                       ? processAndInsertText(text, forceCursorRightOfText)
+                       ? insertText(text, forceCursorRightOfText)
                        : processTextEvent(text, forceCursorRightOfText);
   return didHandleEvent(didHandle, didHandle, true, previousSize);
 }
@@ -684,7 +672,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
         return;
       }
       assert(length <= bufferSize);
-      processAndInsertText(buffer, forceCursorRightOfLayout);
+      insertText(buffer, forceCursorRightOfLayout);
     }
   } else {
     cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,

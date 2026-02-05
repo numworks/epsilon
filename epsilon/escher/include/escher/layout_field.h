@@ -77,8 +77,7 @@ class LayoutField : public EditableField {
 
  protected:
   bool linearMode() const { return SharedPreferences->linearMode(); }
-  bool processAndInsertText(const char* text,
-                            bool forceCursorRightOfText = false);
+  bool insertText(const char* text, bool forceCursorRightOfText = false);
   bool processTextEvent(const char* text, bool forceCursorRightOfText = false);
   void reload(KDSize previousSize);
   void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
@@ -95,8 +94,6 @@ class LayoutField : public EditableField {
   size_t getTextFromEvent(Ion::Events::Event event, char* buffer,
                           size_t bufferSize) override;
   bool processSpecialEvents(const char* text);
-  void insertText(const char* text, bool forceCursorRightOfText,
-                  bool forceCursorLeftOfText);
   bool processAndInsertLayout(Poincare::Layout layout,
                               bool forceCursorRightOfText,
                               bool forceCursorLeftOfText);

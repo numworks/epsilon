@@ -1,5 +1,6 @@
 #include <poincare/function_properties/integral.h>
 #include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/simplification.h>
@@ -34,6 +35,7 @@ Tree* BuildIntegralTree(const SystemExpression& expression,
       PatternMatching::Context(
           ContextTrees{.KA = lowerBound, .KB = upperBound, .KC = function},
           ContextScopes{.KC = 1}));
+  Dependency::DeepRemoveUselessDependencies(result);
   function->removeTree();
   return result;
 }

@@ -52,6 +52,10 @@ This is useful to optimize an expression for successive approximations (for Grap
 
 In practice this means `ApproximateAndReplaceEveryScalar` is applied on the tree.
 
+#### optimize
+
+Skip some validation steps for a shorter computing time. These steps will be asserted instead. This is the case for the expression dimension check which is quite costly.
+
 ### Context
 
 Context passes all the necessary information for the approximation :

@@ -244,8 +244,9 @@ int Dimension::ListLength(const Tree* e,
     case Type::List:
       return e->numberOfChildren();
     case Type::ListSequence: {
-      float n = Approximation::To<float>(e->child(Parametric::k_valueIndex),
-                                         Approximation::Parameters{});
+      float n =
+          Approximation::To<float>(e->child(Parametric::k_valueIndex),
+                                   Approximation::Parameters{.optimize = true});
       assert(std::floor(n) == n);
       assert(n >= 0 && n <= NAry::k_maxNumberOfChildren);
       return n;
@@ -445,8 +446,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
       if (!(IsIntegerExpression(exponent, true))) {
         return false;
       }
-      float index =
-          Approximation::To<float>(exponent, Approximation::Parameters{});
+      float index = Approximation::To<float>(
+          exponent, Approximation::Parameters{.optimize = true});
       assert(!std::isfinite(index) || std::round(index) == index);
       if (!std::isfinite(index) ||
           !Units::SIVector::IsValidCoefficient(index)) {
@@ -483,7 +484,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
         return false;
       }
       float approx =
-          Approximation::To<float>(e->child(0), Approximation::Parameters{});
+          Approximation::To<float>(e->child(0), Approximation::Parameters{.optimize = true});
       return std::isfinite(approx) && approx > 0;
 #endif
       const Tree* size = e->child(0);
@@ -555,8 +556,9 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
           return false;
         }
       }
-      float n = Approximation::To<float>(e->child(Parametric::k_valueIndex),
-                                         Approximation::Parameters{});
+      float n =
+          Approximation::To<float>(e->child(Parametric::k_valueIndex),
+                                   Approximation::Parameters{.optimize = true});
       assert(!std::isfinite(n) || std::floor(n) == n);
       return std::isfinite(n) && n >= 0 && n <= NAry::k_maxNumberOfChildren;
     }
@@ -583,14 +585,14 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
         return false;
       }
       // NOTE Using double approx here to ensure the bounds are respected
-      double a =
-          Approximation::To<double>(e->child(0), Approximation::Parameters{});
+      double a = Approximation::To<double>(
+          e->child(0), Approximation::Parameters{.optimize = true});
       assert(!std::isfinite(a) || std::floor(a) == a);
       if (!std::isfinite(a) || INT32_MIN > a || a > INT32_MAX) {
         return false;
       }
-      double b =
-          Approximation::To<double>(e->child(1), Approximation::Parameters{});
+      double b = Approximation::To<double>(
+          e->child(1), Approximation::Parameters{.optimize = true});
       assert(!std::isfinite(b) || std::floor(b) == b);
       if (!std::isfinite(b) || INT32_MIN > b || b > INT32_MAX) {
         return false;
@@ -692,7 +694,7 @@ Dimension Dimension::Get(const Tree* e,
       Dimension dim = Get(e->child(0), symbolContext);
       if (dim.isUnit()) {
         float index = Approximation::To<float>(
-            e->child(1), Approximation::Parameters{},
+            e->child(1), Approximation::Parameters{.optimize = true},
             Approximation::Context(AngleUnit::None, ComplexFormat::None,
                                    symbolContext));
         assert(!std::isnan(index) && std::round(index) == index &&
@@ -735,7 +737,7 @@ Dimension Dimension::Get(const Tree* e,
     case Type::Identity: {
 #if 0
       uint8_t n =
-          Approximation::To<float>(e->child(0), Approximation::Parameters{});
+          Approximation::To<float>(e->child(0), Approximation::Parameters{.optimize = true});
 #endif
       const Tree* child = e->child(0);
       assert(child->isOne() || child->isTwo() || child->isIntegerPosShort());

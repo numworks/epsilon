@@ -83,6 +83,11 @@ struct Parameters {
    * or solver). This parameter is only relevant when the return type is an
    * expression (i.e. a Tree*). It also implies prepare parameter is true. */
   bool onlyReplaceNumerical = false;
+  /* Optimize out some validation steps (for now only the expression dimension
+   * check is optimized out) for a shorter computing time. These checks are
+   * asserted instead. Particularly relevant when the approximation is called
+   * multiple times (e.g. Solver or Grapher) */
+  bool optimize = false;
 };
 
 class Context {

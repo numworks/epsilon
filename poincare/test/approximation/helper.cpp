@@ -153,7 +153,8 @@ void simplified_approximates_to(const char* input, const char* output,
         simplify(tree, projectionContext, false);
         tree->moveTreeOverTree(Approximation::To<Tree*>(
             tree, Approximation::Precision<T>::value,
-            Approximation::Parameters{.projectLocalVariables = true},
+            Approximation::Parameters{.projectLocalVariables = true,
+                                      .optimize = true},
             Approximation::Context(projectionContext.m_angleUnit,
                                    projectionContext.m_complexFormat,
                                    projectionContext.m_context)));
@@ -172,7 +173,7 @@ void projected_approximates_to(const char* input, const char* output,
         Simplification::ToSystem(tree, projectionContext);
         tree->moveTreeOverTree(Approximation::To<Tree*>(
             tree, Approximation::Precision<T>::value,
-            Approximation::Parameters{.prepare = true},
+            Approximation::Parameters{.prepare = true, .optimize = true},
             Approximation::Context(projectionContext.m_angleUnit,
                                    projectionContext.m_complexFormat,
                                    projectionContext.m_context)));

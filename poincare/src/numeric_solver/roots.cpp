@@ -171,7 +171,7 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
   assert(discriminantProperties.isReal());
   TreeRef approximatedRoots =
       Approximation::To<Tree*>(roots, Approximation::FloatPrecision::Double,
-                               Approximation::Parameters{});
+                               Approximation::Parameters{.optimize = true});
   assert(approximatedRoots->isList());
   if (discriminantProperties.realSign().isPositive()) {
     // If the discriminant is positive or zero, all roots are real.
@@ -191,12 +191,12 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
       return approximatedRoots;
     }
     // The real root is the root with the smallest imaginary part
-    std::complex<float> r1Value =
-        Approximation::To<std::complex<float>>(r1, {});
-    std::complex<float> r2Value =
-        Approximation::To<std::complex<float>>(r2, {});
-    std::complex<float> r3Value =
-        Approximation::To<std::complex<float>>(r3, {});
+    std::complex<float> r1Value = Approximation::To<std::complex<float>>(
+        r1, Approximation::Parameters{.optimize = true});
+    std::complex<float> r2Value = Approximation::To<std::complex<float>>(
+        r2, Approximation::Parameters{.optimize = true});
+    std::complex<float> r3Value = Approximation::To<std::complex<float>>(
+        r3, Approximation::Parameters{.optimize = true});
     bool compareR1R2 = std::abs(r1Value.imag()) < std::abs(r2Value.imag());
     bool compareR2R3 = std::abs(r2Value.imag()) < std::abs(r3Value.imag());
     bool compareR1R3 = std::abs(r1Value.imag()) < std::abs(r3Value.imag());
@@ -446,7 +446,7 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
   if (approximateCardanoNumber) {
     cardano->moveTreeOverTree(
         Approximation::To<Tree*>(cardano, Approximation::FloatPrecision::Double,
-                                 Approximation::Parameters{}));
+                                 Approximation::Parameters{.optimize = true}));
   }
 
   /* If the discriminant is not zero, then the Cardano number cannot be zero. */
@@ -471,9 +471,9 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
          PropertiesOfTreeOrApproximation(c).isReal() &&
          PropertiesOfTreeOrApproximation(d).isReal())
             ? Roots::ApproximateRootsOfRealCubic(rootList, delta)
-            : Approximation::To<Tree*>(rootList,
-                                       Approximation::FloatPrecision::Double,
-                                       Approximation::Parameters{}));
+            : Approximation::To<Tree*>(
+                  rootList, Approximation::FloatPrecision::Double,
+                  Approximation::Parameters{.optimize = true}));
   }
   NAry::SortList(rootList, Order::OrderType::ComplexLine);
   return rootList;

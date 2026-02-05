@@ -54,9 +54,8 @@ T ApproximateIntegralBetweenBounds(const SystemExpression& expression,
                                    const SystemExpression& upperBound) {
   Tree* integral =
       BuildIntegralTree(expression, variableName, lowerBound, upperBound);
-  T result = Approximation::To<T>(integral, Approximation::Parameters{
-                                                .prepare = true,
-                                            });
+  T result = Approximation::To<T>(
+      integral, Approximation::Parameters{.prepare = true, .optimize = true});
   integral->removeTree();
   return result;
 }

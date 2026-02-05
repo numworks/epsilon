@@ -15,7 +15,7 @@ template <typename T>
 T PreparedFunctionScalar::approximateToRealScalarWithValue(
     T x, int listElement) const {
   return Approximation::To<T>(
-      tree(), x, Approximation::Parameters{},
+      tree(), x, Approximation::Parameters{.optimize = true},
       Approximation::Context(AngleUnit::None, ComplexFormat::None,
                              EmptySymbolContext{}, listElement));
 }
@@ -33,13 +33,13 @@ template <typename T>
 PointOrRealScalar<T> PreparedFunction::approximateToPointOrRealScalarWithValue(
     T x) const {
   return Internal::Approximation::To<PointOrRealScalar<T>>(
-      tree(), x, Approximation::Parameters{});
+      tree(), x, Approximation::Parameters{.optimize = true});
 }
 
 template <typename T>
 Coordinate2D<T> PreparedFunction::approximateToPoint() const {
   return Approximation::To<Coordinate2D<T>>(
-      tree(), Approximation::Parameters{.prepare = false});
+      tree(), Approximation::Parameters{.prepare = false, .optimize = true});
 }
 
 /* TODO: Find a better way to avoid duplication of Builder, clone, and

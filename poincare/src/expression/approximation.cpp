@@ -103,8 +103,9 @@ ReturnType To(const Tree* e, Parameters params, const Context& context) {
 template <typename ReturnType>
 ReturnType To(const Tree* e, FloatPrecision floatPrecision, Parameters params,
               const Context& context) {
-  // TODO: we would prefer to have an assertion here
-  if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
+  if (params.optimize) {
+    assert(Dimension::DeepCheck(e, context.m_symbolContext));
+  } else if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
     return UndefinedUnhandledDimension<ReturnType>();
   }
   Tree* prepared = PrepareTree(e, floatPrecision, params, context);

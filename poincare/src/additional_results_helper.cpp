@@ -89,7 +89,9 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
       Tree* sine = PatternMatching::Create(KSin(KA), {.KA = exactAngle});
       bool removePeriod =
           Approximation::To<double>(
-              sine, Approximation::Parameters{.projectLocalVariables = true},
+              sine,
+              Approximation::Parameters{.projectLocalVariables = true,
+                                        .optimize = true},
               Approximation::Context(ctx.m_angleUnit, ctx.m_complexFormat,
                                      ctx.m_context)) < 0;
       sine->removeTree();
@@ -101,7 +103,8 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
     assert(approximateAngleTree);
     approximateAngleTree->moveTreeOverTree(Approximation::To<Tree*>(
         approximateAngleTree, Approximation::FloatPrecision::Double,
-        Approximation::Parameters{.projectLocalVariables = true},
+        Approximation::Parameters{.projectLocalVariables = true,
+                                  .optimize = true},
         Approximation::Context(ctx.m_angleUnit, ctx.m_complexFormat,
                                ctx.m_context)));
     Beautification::DeepBeautify(approximateAngleTree, ctx);
@@ -122,7 +125,8 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
          simplifiedAngle->treeIsIdenticalTo(exactAngle.tree()));
   double approximatedAngle = Approximation::To<double>(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
-      Approximation::Parameters{.projectLocalVariables = true},
+      Approximation::Parameters{.projectLocalVariables = true,
+                                .optimize = true},
       Approximation::Context(ctx.m_angleUnit, ctx.m_complexFormat,
                              ctx.m_context));
   if (approximateAngleTree) {
@@ -218,7 +222,9 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   // The angle must be real and finite.
   if (reductionFailure ||
       !std::isfinite(Approximation::To<float>(
-          exactAngle, Approximation::Parameters{.projectLocalVariables = true},
+          exactAngle,
+          Approximation::Parameters{.projectLocalVariables = true,
+                                    .optimize = true},
           Approximation::Context(angleUnit, complexFormat, symbolContext)))) {
     exactAngle->removeTree();
     return UserExpression();
@@ -284,8 +290,8 @@ const Tree* getNumericalValueTree(const Tree* e, bool* error) {
   }
   // e is not considered as a numerical value so that e^2 -> e^x
   if ((e->isNumber() && !e->isEulerE()) || e->isDecimal()) {
-    if (!std::isfinite(
-            Approximation::To<float>(e, Approximation::Parameters{}))) {
+    if (!std::isfinite(Approximation::To<float>(
+            e, Approximation::Parameters{.optimize = true}))) {
       *error = true;
       return nullptr;
     }
@@ -330,8 +336,8 @@ UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
   Tree* numericalValue =
       const_cast<Tree*>(getNumericalValueTree(clone, &dummy));
   assert(numericalValue);
-  *value =
-      Approximation::To<float>(numericalValue, Approximation::Parameters{});
+  *value = Approximation::To<float>(
+      numericalValue, Approximation::Parameters{.optimize = true});
   numericalValue->moveTreeOverTree(SharedTreeStack->pushUserVariable(symbol));
   return UserExpression::Builder(clone);
 }
@@ -450,8 +456,10 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
     const SystemExpression rational, const ProjectionContext& ctx) {
   Tree* result = BestConvergentOfContinuedFraction(
       rational, k_maxDenominatorDigitsForRationalApproximation);
-  double rationalApprox = Approximation::To<double>(rational.tree(), {});
-  double resultApprox = Approximation::To<double>(result, {});
+  double rationalApprox = Approximation::To<double>(
+      rational.tree(), Approximation::Parameters{.optimize = true});
+  double resultApprox = Approximation::To<double>(
+      result, Approximation::Parameters{.optimize = true});
   if (!result->treeIsIdenticalTo(rational.tree()) &&
       std::fabs(rationalApprox - resultApprox) <
           k_rationalApproximationPrecision) {

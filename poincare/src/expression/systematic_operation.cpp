@@ -877,7 +877,8 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
     if (e->hasChildSatisfying([](const Tree* e) { return e->isFloat(); }) &&
         Approximation::Approximate(
             e, Approximation::FloatPrecision::Double,
-            Approximation::Parameters{.onlyReplaceNumerical = true})) {
+            Approximation::Parameters{.onlyReplaceNumerical = true,
+                                      .optimize = true})) {
       changed = true;
       if (e->type() != type) {
 #if ASSERTIONS

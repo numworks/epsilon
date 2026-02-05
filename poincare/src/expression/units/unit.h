@@ -99,8 +99,8 @@ class Representative {
 
   Aliases rootSymbols() const { return m_rootSymbols; }
   double ratio() const {
-    return Approximation::To<double>(ratioExpression(),
-                                     Approximation::Parameters{});
+    return Approximation::To<double>(
+        ratioExpression(), Approximation::Parameters{.optimize = true});
   }
   bool isInputPrefixable() const {
     return m_inputPrefixable != Prefixable::None;

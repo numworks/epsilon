@@ -88,9 +88,9 @@ SystemExpression SystemExpression::cloneChildAtIndex(int i) const {
 
 template <typename T>
 SystemExpression SystemExpression::approximateSystemToTree() const {
-  return SystemExpression::Builder(
-      Approximation::To<Tree*>(tree(), Approximation::Precision<T>::value,
-                               Approximation::Parameters{.prepare = true}));
+  return SystemExpression::Builder(Approximation::To<Tree*>(
+      tree(), Approximation::Precision<T>::value,
+      Approximation::Parameters{.prepare = true, .optimize = true}));
 }
 
 void SystemExpression::cloneAndBeautifyAndApproximate(
@@ -204,14 +204,14 @@ T SystemExpression::approximateSystemToRealScalar() const {
   if (!Internal::Dimension::IsNonListScalar(tree())) {
     return NAN;
   }
-  return Approximation::To<T>(tree(),
-                              Approximation::Parameters{.prepare = true});
+  return Approximation::To<T>(
+      tree(), Approximation::Parameters{.prepare = true, .optimize = true});
 }
 
 template <typename T>
 Coordinate2D<T> SystemExpression::approximateToPoint() const {
   return Approximation::To<Coordinate2D<T>>(
-      tree(), Approximation::Parameters{.prepare = true});
+      tree(), Approximation::Parameters{.prepare = true, .optimize = true});
 }
 
 template <typename T>
@@ -219,9 +219,9 @@ SystemExpression SystemExpression::approximateListAndSort() const {
   assert(dimension().isList());
   Tree* clone = SharedTreeStack->pushListSort();
   tree()->cloneTree();
-  clone->moveTreeOverTree(
-      Approximation::To<Tree*>(clone, Approximation::Precision<T>::value,
-                               Approximation::Parameters{.prepare = true}));
+  clone->moveTreeOverTree(Approximation::To<Tree*>(
+      clone, Approximation::Precision<T>::value,
+      Approximation::Parameters{.prepare = true, .optimize = true}));
   return SystemExpression::Builder(clone);
 }
 

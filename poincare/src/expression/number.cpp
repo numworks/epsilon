@@ -35,7 +35,8 @@ bool Number::IsNull(const Tree* e) {
   if (!e->isFloat()) {
     return e->isZero();
   }
-  return Approximation::To<double>(e, Approximation::Parameters{}) == 0.0;
+  return Approximation::To<double>(
+             e, Approximation::Parameters{.optimize = true}) == 0.0;
 }
 
 bool Number::IsOne(const Tree* e) {
@@ -45,13 +46,17 @@ bool Number::IsOne(const Tree* e) {
 Tree* Number::Addition(const Tree* e1, const Tree* e2) {
   if (e1->isDoubleFloat() || e2->isDoubleFloat()) {
     return SharedTreeStack->pushDoubleFloat(
-        Approximation::To<double>(e1, Approximation::Parameters{}) +
-        Approximation::To<double>(e2, Approximation::Parameters{}));
+        Approximation::To<double>(e1,
+                                  Approximation::Parameters{.optimize = true}) +
+        Approximation::To<double>(e2,
+                                  Approximation::Parameters{.optimize = true}));
   }
   if (e1->isSingleFloat() || e2->isSingleFloat()) {
     return SharedTreeStack->pushSingleFloat(
-        Approximation::To<float>(e1, Approximation::Parameters{}) +
-        Approximation::To<float>(e2, Approximation::Parameters{}));
+        Approximation::To<float>(e1,
+                                 Approximation::Parameters{.optimize = true}) +
+        Approximation::To<float>(e2,
+                                 Approximation::Parameters{.optimize = true}));
   }
   assert(!e1->isMathematicalConstant() && !e2->isMathematicalConstant());
   Tree* result = Rational::Addition(e1, e2);
@@ -61,13 +66,17 @@ Tree* Number::Multiplication(const Tree* e1, const Tree* e2) {
   if (e1->isDoubleFloat() || e2->isDoubleFloat()) {
     // TODO: approximate the Tree to be consistent with enhanced float *
     return SharedTreeStack->pushDoubleFloat(
-        Approximation::To<double>(e1, Approximation::Parameters{}) *
-        Approximation::To<double>(e2, Approximation::Parameters{}));
+        Approximation::To<double>(e1,
+                                  Approximation::Parameters{.optimize = true}) *
+        Approximation::To<double>(e2,
+                                  Approximation::Parameters{.optimize = true}));
   }
   if (e1->isSingleFloat() || e2->isSingleFloat()) {
     return SharedTreeStack->pushSingleFloat(
-        Approximation::To<float>(e1, Approximation::Parameters{}) *
-        Approximation::To<float>(e2, Approximation::Parameters{}));
+        Approximation::To<float>(e1,
+                                 Approximation::Parameters{.optimize = true}) *
+        Approximation::To<float>(e2,
+                                 Approximation::Parameters{.optimize = true}));
   }
   assert(!e1->isMathematicalConstant() && !e2->isMathematicalConstant());
   Tree* result = Rational::Multiplication(e1, e2);

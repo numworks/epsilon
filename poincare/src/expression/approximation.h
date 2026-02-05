@@ -38,7 +38,7 @@ enum class FloatPrecision { Single, Double };
  * Note that the reverse operation is not possible. If FloatPrecision is passed
  * as a function parameter, its value is not known at compile-time. So we are
  * forced to conditionally call a "float" or "double" version of a template
- * function dependending on the FloatPrecision value. */
+ * function depending on the FloatPrecision value. */
 template <typename FloatType>
 struct Precision {};
 template <>

@@ -156,13 +156,13 @@ class Zoom {
                                      Coordinate2D<T> c, const void* aux);
   static Coordinate2D<T> HonePoint(typename Solver<T>::FunctionEvaluation f,
                                    const void* aux, T a, T b, Interest,
-                                   T precision, OMG::Troolean discontinuous);
+                                   T precision);
   static Coordinate2D<T> HoneRoot(typename Solver<T>::FunctionEvaluation f,
                                   const void* aux, T a, T b, Interest,
-                                  T precision, OMG::Troolean discontinuous);
+                                  T precision);
   static Coordinate2D<T> HoneIntersection(
       typename Solver<T>::FunctionEvaluation f, const void* aux, T a, T b,
-      Interest, T precision, OMG::Troolean discontinuous);
+      Interest, T precision);
 
   Range2D<T> sanitize2DHelper(Range2D<T> range) const;
   Range2D<T> sanitizedRange() const {

@@ -51,7 +51,7 @@ class Solver {
   typedef Interest (*BracketTest)(Coordinate2D<T>, Coordinate2D<T>,
                                   Coordinate2D<T>, const void*);
   typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void*, T, T,
-                                        Interest, T, OMG::Troolean);
+                                        Interest, T);
   typedef bool (*DiscontinuityEvaluation)(Coordinate2D<T>, Coordinate2D<T>,
                                           const void*);
 
@@ -123,18 +123,15 @@ class Solver {
 
   static Coordinate2D<T> SafeBrentMinimum(FunctionEvaluation f, const void* aux,
                                           T xMin, T xMax, Interest interest,
-                                          T xPrecision,
-                                          OMG::Troolean discontinuous);
+                                          T xPrecision);
   static Coordinate2D<T> SafeBrentMaximum(FunctionEvaluation f, const void* aux,
                                           T xMin, T xMax, Interest interest,
-                                          T xPrecision,
-                                          OMG::Troolean discontinuous);
+                                          T xPrecision);
   static Coordinate2D<T> CompositeBrentForRoot(FunctionEvaluation f,
                                                const void* aux, T xMin, T xMax,
-                                               Interest interest, T xPrecision,
-                                               OMG::Troolean discontinuous);
+                                               Interest interest, T xPrecision);
   static Coordinate2D<T> DummyHone(FunctionEvaluation, const void*, T, T,
-                                   Interest, T, OMG::Troolean) {
+                                   Interest, T) {
     assert(false);
     return Coordinate2D<T>();
   }

@@ -303,7 +303,7 @@ void Zoom<T>::fitConditions(const Internal::Tree* piecewise,
   };
   typename Solver<T>::HoneResult hone =
       [](typename Solver<T>::FunctionEvaluation, const void* aux, T a, T b,
-         Interest, T, OMG::Troolean) {
+         Interest, T) {
         const ConditionsParameters* params =
             static_cast<const ConditionsParameters*>(aux);
         params->zoom->fitPoint(params->fullFunction(a, params->model),
@@ -484,7 +484,7 @@ static void honeHelper(typename Solver<T>::FunctionEvaluation f,
 template <typename T>
 Coordinate2D<T> Zoom<T>::HonePoint(typename Solver<T>::FunctionEvaluation f,
                                    const void* aux, T a, T b, Interest interest,
-                                   T precision, OMG::Troolean discontinuous) {
+                                   T precision) {
   Coordinate2D<T> pa, pu, pv, pb;
   honeHelper(f, aux, a, b, interest, pointIsInterestingHelper, &pa, &pu, &pv,
              &pb);
@@ -492,22 +492,21 @@ Coordinate2D<T> Zoom<T>::HonePoint(typename Solver<T>::FunctionEvaluation f,
   constexpr T k_tolerance = static_cast<T>(1.) / Solver<T>::k_relativePrecision;
   /* Most functions will taper off near a local extremum. If the slope
    * diverges, it is more likely we have found an even vertical asymptote. */
-  bool isDiscontinuous =
-      discontinuous == OMG::Troolean::True ||
-      ((interest == Interest::Minimum || interest == Interest::Maximum) &&
-       (std::max((pu.y() - pa.y()) / (pu.x() - pa.x()),
-                 (pv.y() - pb.y()) / (pv.x() - pb.x())) > k_tolerance));
+  bool isAsymptote =
+      (interest == Interest::Minimum || interest == Interest::Maximum) &&
+      (std::max((pu.y() - pa.y()) / (pu.x() - pa.x()),
+                (pv.y() - pb.y()) / (pv.x() - pb.x())) > k_tolerance);
   /* If the function is discontinuous around the solution (e.g. 1/x^2), we
    * discard the y value to avoid zooming in on diverging points. */
   return Coordinate2D<T>(pb.x(), interest == Interest::Root ? static_cast<T>(0.)
-                                 : isDiscontinuous          ? NAN
+                                 : isAsymptote              ? NAN
                                                             : pb.y());
 }
 
 template <typename T>
 Coordinate2D<T> Zoom<T>::HoneRoot(typename Solver<T>::FunctionEvaluation f,
                                   const void* aux, T a, T b, Interest interest,
-                                  T precision, OMG::Troolean discontinuous) {
+                                  T precision) {
   Coordinate2D<T> pa, pu, pv, pb;
   honeHelper(f, aux, a, b, interest, SolverTests<T>::EvenOrOddRootInBracket,
              &pa, &pu, &pv, &pb);
@@ -539,9 +538,8 @@ Coordinate2D<T> Zoom<T>::HoneRoot(typename Solver<T>::FunctionEvaluation f,
 template <typename T>
 Coordinate2D<T> Zoom<T>::HoneIntersection(
     typename Solver<T>::FunctionEvaluation f, const void* aux, T a, T b,
-    Interest interest, T precision, OMG::Troolean discontinuous) {
-  Coordinate2D<T> result =
-      HoneRoot(f, aux, a, b, interest, precision, discontinuous);
+    Interest interest, T precision) {
+  Coordinate2D<T> result = HoneRoot(f, aux, a, b, interest, precision);
   if (std::isnan(result.x())) {
     return result;
   }

@@ -293,11 +293,9 @@ void Solver<T>::stretch() {
 template <typename T>
 Coordinate2D<T> Solver<T>::SafeBrentMinimum(FunctionEvaluation f,
                                             const void* aux, T xMin, T xMax,
-                                            Interest interest, T xPrecision,
-                                            OMG::Troolean discontinuous) {
+                                            Interest interest, T xPrecision) {
   if (xMax < xMin) {
-    return SafeBrentMinimum(f, aux, xMax, xMin, interest, xPrecision,
-                            discontinuous);
+    return SafeBrentMinimum(f, aux, xMax, xMin, interest, xPrecision);
   }
   assert(xMin < xMax);
 
@@ -314,8 +312,7 @@ Coordinate2D<T> Solver<T>::SafeBrentMinimum(FunctionEvaluation f,
 template <typename T>
 Coordinate2D<T> Solver<T>::SafeBrentMaximum(FunctionEvaluation f,
                                             const void* aux, T xMin, T xMax,
-                                            Interest interest, T xPrecision,
-                                            OMG::Troolean discontinuous) {
+                                            Interest interest, T xPrecision) {
   const void* pack[] = {&f, aux};
   FunctionEvaluation minusF = [](T x, const void* aux) {
     const void* const* param = reinterpret_cast<const void* const*>(aux);
@@ -323,8 +320,8 @@ Coordinate2D<T> Solver<T>::SafeBrentMaximum(FunctionEvaluation f,
         reinterpret_cast<const FunctionEvaluation*>(param[0]);
     return -(*f)(x, param[1]);
   };
-  Coordinate2D<T> res = SafeBrentMinimum(minusF, pack, xMin, xMax, interest,
-                                         xPrecision, discontinuous);
+  Coordinate2D<T> res =
+      SafeBrentMinimum(minusF, pack, xMin, xMax, interest, xPrecision);
   return Coordinate2D<T>(res.x(), -res.y());
 }
 
@@ -332,30 +329,18 @@ template <typename T>
 Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
                                                  const void* aux, T xMin,
                                                  T xMax, Interest interest,
-                                                 T xPrecision,
-                                                 OMG::Troolean discontinuous) {
+                                                 T xPrecision) {
   if (interest == Interest::Root) {
     Coordinate2D<T> xy =
         SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, xPrecision);
-    /* If the function is discontinuous and the discontinuity is on both sides
-     * of the abscissa axis, a fake root could have been found. Filter it out
-     * using null tolerance. This can happens for example with the functions:
-     *   > f(x) = floor(x) - 0.5 for x == 1
-     *   > f(x) = x / abs(x) for x == 0 */
-    if (discontinuous == OMG::Troolean::True &&
-        std::fabs(xy.y()) > NullTolerance(xy.x())) {
-      return Coordinate2D<T>();
-    }
     return xy;
   }
   Coordinate2D<T> res;
   if (interest == Interest::Minimum) {
-    res = SafeBrentMinimum(f, aux, xMin, xMax, interest, xPrecision,
-                           discontinuous);
+    res = SafeBrentMinimum(f, aux, xMin, xMax, interest, xPrecision);
   } else {
     assert(interest == Interest::Maximum);
-    res = SafeBrentMaximum(f, aux, xMin, xMax, interest, xPrecision,
-                           discontinuous);
+    res = SafeBrentMaximum(f, aux, xMin, xMax, interest, xPrecision);
   }
   return std::isfinite(res.x()) && std::fabs(res.y()) < NullTolerance(res.x())
              ? res
@@ -714,8 +699,18 @@ void Solver<T>::honeAndRoundSolution(
   T xPrecision = discontinuous == OMG::Troolean::True
                      ? precisionForDiscontinuousFunctions
                      : NullTolerance(start.x());
-  Coordinate2D<T> xy =
-      hone(f, aux, start.x(), end.x(), interest, xPrecision, discontinuous);
+  Coordinate2D<T> xy = hone(f, aux, start.x(), end.x(), interest, xPrecision);
+
+  /* If the function is discontinuous and the discontinuity is on both sides
+   * of the abscissa axis, a fake root could have been found. Filter it out
+   * using null tolerance. This can happens for example with the functions:
+   *   > f(x) = floor(x) - 0.5 for x == 1
+   *   > f(x) = x / abs(x) for x == 0 */
+  if (discontinuous == OMG::Troolean::True && interest == Interest::Root &&
+      std::fabs(xy.y()) > NullTolerance(xy.x())) {
+    return;
+  }
+
   if (!std::isfinite(xy.x()) || !validSolution(xy.x())) {
     return;
   }

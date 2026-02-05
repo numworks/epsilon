@@ -92,8 +92,10 @@ bool PrepareExpressionForApproximation(Tree* e) {
   changed =
       Tree::ApplyShallowTopDown(e, &ShallowPrepareForApproximation) || changed;
   if (changed) {
-    // ShallowPrepareForApproximation can introduce dependencies
+    /* ShallowPrepareForApproximation can introduce dependencies. Bubble them
+     * up, and remove useless ones. */
     Dependency::DeepBubbleUpDependencies(e);
+    Dependency::DeepRemoveUselessDependencies(e);
   }
   return changed;
 }

@@ -87,8 +87,8 @@ install_macos_binary_deps() {
 }
 
 install_linux_binary_deps() {
-  sudo apt-get update -y && sudo apt-get upgrade -y
-  sudo apt-get install -y \
+  sudo apt-get update -y
+  sudo apt-get install --no-upgrade -y \
     build-essential \
     ccache \
     clang-format-15 \

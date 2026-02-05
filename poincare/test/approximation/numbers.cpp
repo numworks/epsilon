@@ -218,10 +218,13 @@ QUIZ_CASE(pcj_approximation_infinity) {
   // nonreal vs undef
   approximates_to<float>("nonreal", "nonreal");
   approximates_to<float>("√(-1)", "nonreal");
+  // TODO: Should be nonreal
+  approximates_to<float>("√(-1)*1", "undef");
   approximates_to<float>("√(-1)+1/0", "undef");
 #if TODO_PCJ  // This test returns 0 with emscripten and fails on device
   approximates_to<float>("1/(√(-1)^2+1)", "nonreal");
 #endif
+  approximates_to<float>("√(-1)*(1/0)", "undef");
   approximates_to<float>("{√(-1),1/0}", "{nonreal,undef}");
   approximates_to<float>("(√(-1),2)", "(nonreal,2)");
   approximates_to<float>("(1/0,2)", "(undef,2)");

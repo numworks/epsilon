@@ -323,8 +323,18 @@ static std::complex<T> FloatMultiplication(std::complex<T> c,
     if (c.real() == zero && d.imag() == zero) {
       return {zero, c.imag() * d.real()};
     }
-    // Other cases are left to the standard library, and might return NaN.
   }
+  // Special cases to properly contaminate multiplications with NonReal
+  if (IsNonReal(d) || IsNonReal(c)) {
+    std::complex<T> other = IsNonReal(d) ? c : d;
+    if (IsNonReal(other) ||
+        (std::isfinite(other.real()) && std::isfinite(other.imag()))) {
+      // NonReal * NonReal = NonReal
+      // Finite complex * NonReal = NonReal
+      return NonReal<T>();
+    }
+  }
+  // Other cases are left to the standard library, and might return NaN.
   return c * d;
 }
 

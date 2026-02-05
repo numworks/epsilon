@@ -112,7 +112,7 @@ bool ListController::completeEquation(LayoutField* equationField,
                           k_bufferSize - nameLength);
     assert(nameLength < k_bufferSize);
   }
-  bool handled = equationField->handleEventWithText(buffer, false, true);
+  bool handled = equationField->handleEventWithText(buffer, false, false, true);
   equationField->putCursorOnOneSide(OMG::Direction::Right());
   return handled;
 }

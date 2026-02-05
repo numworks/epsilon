@@ -17,7 +17,8 @@ class TextArea : public TextInput {
 
   TextArea(Responder* parentResponder, View* contentView);
   bool handleEvent(Ion::Events::Event event) override;
-  bool handleEventWithText(const char* text, bool indentation = false,
+  bool handleEventWithText(const char* text, bool forceUseRawText = false,
+                           bool indentation = false,
                            bool forceCursorRightOfText = false) override;
   void setText(char* textBuffer, size_t textBufferSize,
                bool resetCursor = true);

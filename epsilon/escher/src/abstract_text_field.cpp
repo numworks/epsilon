@@ -597,6 +597,7 @@ bool AbstractTextField::insertText(const char* eventText, bool indentation,
 }
 
 bool AbstractTextField::handleEventWithText(const char* eventText,
+                                            bool forceUseRawText,
                                             bool indentation,
                                             bool forceCursorRightOfText) {
   /* TODO: this method should not exist, we should only have
@@ -619,7 +620,7 @@ bool AbstractTextField::handleEventWithLayout(Poincare::Layout layout,
     return false;
   }
   assert(length <= bufferSize);
-  return handleEventWithText(buffer, false, forceCursorRightOfText);
+  return handleEventWithText(buffer, false, false, forceCursorRightOfText);
 }
 
 void AbstractTextField::removeWholeText() {

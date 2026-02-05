@@ -493,7 +493,7 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
 
 bool PythonTextArea::handleSpecialEvent(Ion::Events::Event event) {
   if (event == Ion::Events::EXE) {
-    handleEventWithText(k_newLine, true, false);
+    handleEventWithText(k_newLine, false, true, false);
     return true;
   }
 
@@ -533,7 +533,8 @@ bool PythonTextArea::handleSpecialEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool PythonTextArea::handleEventWithText(const char* text, bool indentation,
+bool PythonTextArea::handleEventWithText(const char* text, bool forceUseRawText,
+                                         bool indentation,
                                          bool forceCursorRightOfText) {
   if (*text == 0) {
     return false;
@@ -541,8 +542,8 @@ bool PythonTextArea::handleEventWithText(const char* text, bool indentation,
   if (m_contentView.isAutocompleting()) {
     removeAutocompletion();
   }
-  bool result =
-      TextArea::handleEventWithText(text, indentation, forceCursorRightOfText);
+  bool result = TextArea::handleEventWithText(
+      text, forceUseRawText, indentation, forceCursorRightOfText);
   addAutocompletion();
   return result;
 }

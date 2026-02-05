@@ -44,7 +44,7 @@ bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
   if (cycleSize > 1 && currentIndex > 0) {
     removePreviousXNT();
   }
-  return handleEventWithText(buffer, false, true);
+  return handleEventWithText(buffer, true, false, true);
 }
 
 size_t EditableField::getTextFromEvent(Ion::Events::Event event, char* buffer,

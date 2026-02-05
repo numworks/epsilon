@@ -31,7 +31,7 @@ class Solver {
     constexpr operator Coordinate2D<T>() const { return Coordinate2D<T>(x, y); }
   };
 
-  // We can have at most 3 solutions at the same abscissa
+  // We need at most 3 solutions at the same abscissa for discontinuities
   constexpr static int k_maxSolutionsAtSameAbscissa = 3;
   // We need a queue because we can have several solutions at the same abscissa
   class SolutionQueue

@@ -33,7 +33,8 @@ static inline void InsertSpacesAtLocation(int spacesCount, char* buffer,
   }
 }
 
-bool TextArea::handleEventWithText(const char* text, bool indentation,
+bool TextArea::handleEventWithText(const char* text, bool forceUseRawText,
+                                   bool indentation,
                                    bool forceCursorRightOfText) {
   if (*text == 0) {
     return false;
@@ -229,7 +230,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::SharedClipboard()->storedText(),
-                               false, true);
+                               false, false, true);
   }
 
   // The following events need a scrollToCursor and return true

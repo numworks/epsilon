@@ -28,7 +28,8 @@ class PythonTextArea : public Escher::TextArea {
   void unloadSyntaxHighlighter() { m_contentView.unloadSyntaxHighlighter(); }
   bool handleEvent(Ion::Events::Event event) override;
   bool handleSpecialEvent(Ion::Events::Event event);
-  bool handleEventWithText(const char* text, bool indentation = false,
+  bool handleEventWithText(const char* text, bool forceUseRawText = false,
+                           bool indentation = false,
                            bool forceCursorRightOfText = false) override;
   /* autocompletionType returns:
    * - EndOfIdentifier if there is currently autocompletion, or if the cursor is

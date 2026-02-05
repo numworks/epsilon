@@ -16,7 +16,9 @@ class EditableField : public TextCursorView::WithBlinkingCursor<
   EditableField(Responder* parentResponder, View* view)
       : TextCursorView::WithBlinkingCursor<ScrollableView>(parentResponder,
                                                            view, this) {}
-  virtual bool handleEventWithText(const char* text, bool indentation = false,
+  virtual bool handleEventWithText(const char* text,
+                                   bool forceUseRawText = false,
+                                   bool indentation = false,
                                    bool forceCursorRightOfText = false) {
     return false;
   }

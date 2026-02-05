@@ -46,7 +46,8 @@ class LayoutField : public EditableField {
   using ScrollView::layoutSubviews;
 
   /* Responder */
-  bool handleEventWithText(const char* text, bool indentation = false,
+  bool handleEventWithText(const char* text, bool forceUseRawText = false,
+                           bool indentation = false,
                            bool forceCursorRightOfText = false) override;
   bool handleEventWithLayout(Poincare::Layout layout,
                              bool forceCursorRightOfText = false) override;

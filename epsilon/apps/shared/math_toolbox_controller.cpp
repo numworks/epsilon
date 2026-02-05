@@ -197,7 +197,7 @@ bool MathToolboxController::selectLeaf(int selectedRow) {
     text = textToInsert;
   }
   App::app()->modalViewController()->dismissModal();
-  sender()->handleEventWithText(text);
+  sender()->handleEventWithText(text, messageTree->useRaw());
   return true;
 }
 

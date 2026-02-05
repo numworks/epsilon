@@ -449,10 +449,13 @@ KDCoordinate LayoutField::inputViewHeight() const {
                   ScrollView::minimalSizeForOptimalDisplay().height());
 }
 
-bool LayoutField::handleEventWithText(const char* text, bool indentation,
+bool LayoutField::handleEventWithText(const char* text, bool forceUseRawText,
+                                      bool indentation,
                                       bool forceCursorRightOfText) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  bool didHandle = processTextEvent(text, forceCursorRightOfText);
+  bool didHandle = forceUseRawText
+                       ? processAndInsertText(text, forceCursorRightOfText)
+                       : processTextEvent(text, forceCursorRightOfText);
   return didHandleEvent(didHandle, didHandle, true, previousSize);
 }
 

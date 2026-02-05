@@ -35,6 +35,7 @@ void Dependency::AddDependency(Tree* e, const Tree* dependency) {
 }
 
 void Dependency::AddDependencies(Tree* e, const Tree* dependencies) {
+  assert(!e->isInTreeStackBefore(dependencies));
   assert(dependencies->isNAry());
   for (const Tree* child : dependencies->children()) {
     Dependency::AddDependency(e, child);

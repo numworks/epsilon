@@ -1,28 +1,35 @@
 #include <omg/assertions.h>
 #include <poincare/numeric_solver/solver.h>
-#include <poincare/src/expression/approximation.h>
-#include <poincare/src/expression/continuity.h>
-#include <poincare/src/expression/dependency.h>
-#include <poincare/src/expression/float_helper.h>
-#include <poincare/src/expression/k_tree.h>
-#include <poincare/src/expression/properties.h>
-#include <poincare/src/expression/variables.h>
-#include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/numeric_solver/solver_tests.h>
 
-#include "solver_algorithms.h"
+#include "hone_functions.h"
 
 using namespace Poincare::Internal;
 
-namespace Poincare {
+namespace Poincare::NumericSolver {
 
 template <typename T>
-Solver<T>::Solver(T xStart, T xEnd, const SymbolContext& symbolContext)
-    : m_context(symbolContext),
-      m_growthSpeed(sizeof(T) == sizeof(double) ? GrowthSpeed::Precise
-                                                : GrowthSpeed::Fast) {
+Solver<T>::Solver(T xStart, T xEnd, FunctionEvaluation f, const void* aux,
+                  BracketTest bracketTest, HoneResult honeFunction,
+                  DiscontinuityEvaluation discontinuityTest)
+    : m_growthSpeed(sizeof(T) == sizeof(double) ? GrowthSpeed::Precise
+                                                : GrowthSpeed::Fast),
+      m_evaluator(f),
+      m_bracketTest(bracketTest),
+      m_honeFunction(honeFunction),
+      m_discontinuityTest(discontinuityTest),
+      m_auxiliary(aux) {
   T searchStep = DefaultSearchStepForAmplitude(xEnd - xStart);
   reset(xStart, xEnd, searchStep);
+};
+
+Solver<double> BuildRootSolver(
+    double xStart, double xEnd, Solver<double>::FunctionEvaluation f,
+    const void* aux,
+    Solver<double>::DiscontinuityEvaluation discontinuityTest) {
+  return Solver(xStart, xEnd, f, aux,
+                SolverTests<double>::EvenOrOddRootInBracket,
+                HoneFunctions::CompositeBrentForRoot, discontinuityTest);
 }
 
 template <typename T>
@@ -34,26 +41,22 @@ void Solver<T>::reset(T xStart, T xEnd, T searchStep) {
 }
 
 template <typename T>
-Interest Solver<T>::TestBetween(Coordinate2D<T> a, Coordinate2D<T> b,
-                                BracketTest test, FunctionEvaluation f,
-                                const void* aux) {
+Interest Solver<T>::testBetween(Coordinate2D<T> a, Coordinate2D<T> b) {
   T x = (a.x() + b.x()) / 2.;
-  Coordinate2D<T> middle(x, f(x, aux));
-  return test(a, middle, b, aux);
+  Coordinate2D<T> middle(x, evaluateAt(x));
+  return m_bracketTest(a, middle, b, m_auxiliary);
 }
 
 template <typename T>
-typename Solver<T>::Solution Solver<T>::next(
-    FunctionEvaluation f, const void* aux, BracketTest test, HoneResult hone,
-    DiscontinuityEvaluation discontinuityTest) {
+Solution<T> Solver<T>::next() {
   // Check if there is a solution in the queue
   if (m_solutionQueue.size() > 0) {
     return registerSolution(m_solutionQueue.popFirst(), true);
   }
 
-  Coordinate2D<T> p1, p2(m_xStart, f(m_xStart, aux)),
+  Coordinate2D<T> p1, p2(m_xStart, evaluateAt(m_xStart)),
       p3(nextX(p2.x(), m_xEnd, static_cast<T>(1.)), k_NAN);
-  p3.setY(f(p3.x(), aux));
+  p3.setY(evaluateAt(p3.x()));
 
   constexpr bool isDouble = sizeof(T) == sizeof(double);
 
@@ -65,30 +68,30 @@ typename Solver<T>::Solution Solver<T>::next(
     T slope =
         isDouble ? (p2.y() - p1.y()) / (p2.x() - p1.x()) : static_cast<T>(1.);
     p3.setX(nextX(p2.x(), m_xEnd, slope));
-    p3.setY(f(p3.x(), aux));
+    p3.setY(evaluateAt(p3.x()));
 
     Coordinate2D<T> start = p1;
     Coordinate2D<T> middle = p2;
     Coordinate2D<T> end = p3;
-    Interest interest = test(start, middle, end, aux);
+    Interest interest = m_bracketTest(start, middle, end, m_auxiliary);
     /* If the solver is in float, we want it to be fast so the fine search
-     * of interest around undefined intervals is skipped. */
-    if (interest == Interest::None && isDouble && discontinuityTest &&
-        discontinuityTest(start, end, aux)) {
+     * of interest around undefined intervals is skipped.
+     * TODO: This is weird and should be specified another way */
+    if (interest == Interest::None && isDouble &&
+        isDiscontinuousBetween(start, end)) {
       /* If no interest was found and there is an undefined subinterval in the
        * interval, search for the largest interval without undef and then
        * recompute the interest in this interval. */
       Coordinate2D<T> a = start, b = middle, c = end;
-      if (FindMinimalIntervalContainingDiscontinuity(
-              f, aux, &a, &b, &c, MinimalStep(middle.x(), slope),
-              discontinuityTest)) {
+      if (findMinimalIntervalContainingDiscontinuity(
+              &a, &b, &c, MinimalStep(middle.x(), slope))) {
         // Try left of discontinuity
-        interest = TestBetween(start, a, test, f, aux);
+        interest = testBetween(start, a);
         if (interest != Interest::None) {
           end = a;
         } else {
           // Try right of discontinuity
-          interest = TestBetween(c, end, test, f, aux);
+          interest = testBetween(c, end);
           if (interest != Interest::None) {
             start = c;
           }
@@ -97,200 +100,14 @@ typename Solver<T>::Solution Solver<T>::next(
     }
 
     if (interest != Interest::None) {
-      honeAndRoundSolution(f, aux, start, end, interest, hone,
-                           discontinuityTest);
+      honeAndRoundSolution(start, end, interest);
       if (m_solutionQueue.size() > 0) {
         return registerSolution(m_solutionQueue.popFirst());
       }
     }
   }
 
-  return Solution{};
-}
-
-template <typename T>
-typename Solver<T>::Solution Solver<T>::next(const Tree* e, BracketTest test,
-                                             HoneResult hone) {
-  if (e->hasDescendantSatisfying(
-          [](const Tree* e) { return e->isRandomized(); })) {
-    return Solution{};
-  }
-  FunctionEvaluation f = [](T x, const void* aux) {
-    const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
-    return Approximation::To<T>(
-        e, x,
-        Approximation::Parameters{
-            .policy = {.optimize = true},
-            .expressionParameters = Approximation::Prepared{}});
-  };
-
-  return next(f, e, test, hone, &SolverTests<T>::IsDiscontinuousInBracket);
-}
-
-template <typename T>
-typename Solver<T>::DetailedRoot Solver<T>::nextDetailedRoot(const Tree* e) {
-  DetailedRoot nanRoot = {.solution = Solution{}, .nullDescendant = nullptr};
-  if (e->hasDescendantSatisfying(
-          [](const Tree* e) { return e->isRandomized(); })) {
-    return nanRoot;
-  }
-
-  switch (e->type()) {
-    case Type::Mult:
-      /* x*y = 0 => x = 0 or y = 0 */
-      return registerDetailedRoot(nextRootInMultiplication(e));
-
-    case Type::Add:
-    case Type::Sub:
-      return registerDetailedRoot(nextRootInAddition(e));
-
-    case Type::Pow:
-    case Type::PowReal:
-    case Type::Root:
-    case Type::Div:
-      /* f(x,y) = 0 => x = 0 */
-      return registerDetailedRoot(nextRootSearchingInChild(e, 0));
-
-    case Type::Abs:
-    case Type::ATan:
-    case Type::SinH:
-    case Type::Opposite:
-    case Type::Sqrt:
-      /* f(x) = 0 <=> x = 0 */
-      return nextDetailedRoot(e->child(0));
-
-    case Type::Dep:
-      return registerDetailedRoot(nextRootInDependency(e));
-
-    default:
-      if (!GetComplexProperties(e).canBeNull()) {
-        return nanRoot;
-      }
-
-      Solution res = next(e, SolverTests<T>::EvenOrOddRootInBracket,
-                          CompositeBrentForRoot);
-      if (res.interest != Interest::None) {
-        res.interest = Interest::Root;
-      }
-      return {.solution = res, .nullDescendant = e};
-  }
-}
-
-template <typename T>
-typename Solver<T>::Solution Solver<T>::nextRoot(FunctionEvaluation f,
-                                                 const void* aux) {
-  return next(f, aux, SolverTests<T>::EvenOrOddRootInBracket,
-              CompositeBrentForRoot);
-}
-
-template <typename T>
-typename Solver<T>::Solution Solver<T>::nextMinimum(const Tree* e) {
-  /* TODO We could add a layer of formal resolution:
-   * - use the derivative (could be an optional argument to avoid recomputing
-   *   it every time)
-   * - since d(f°g) = dg×df°g, if f is known to be monotonous (i.e. df≠0), look
-   *   for the extrema of g. */
-  return next(e, SolverTests<T>::MinimumInBracket, SafeBrentMinimum);
-}
-
-template <typename T>
-typename Solver<T>::Solution Solver<T>::nextMaximum(const Internal::Tree* e) {
-  return next(e, SolverTests<T>::MaximumInBracket, SafeBrentMaximum);
-}
-
-template <typename T>
-typename Solver<T>::Solution Solver<T>::nextDiscontinuity(
-    const Internal::Tree* e) {
-  return next(e, SolverTests<T>::DiscontinuityInBracket, DummyHone);
-}
-
-template <typename T>
-Internal::Tree* Solver<T>::FunctionDifferenceForIntersection(
-    const Internal::Tree* f, const Internal::Tree* g, bool areAlongSameAxis) {
-  /* TODO: simplify if we decide that functions should be simplified. Either
-   * pass SimplificationParameters(complexFormat, angleUnit,
-   * ReductionTarget::System, UnitFormat::Metric, m_context) or
-   * ensure expression is projected. */
-  if (areAlongSameAxis) {
-    return PatternMatching::Create(KAdd(KA, KMult(-1_e, KB)),
-                                   {.KA = f, .KB = g});
-  }
-  // Build the g(f(a))-a expression
-  Tree* difference = SharedTreeStack->pushAdd(2);
-  // Creating g(f(a))
-  Tree* gOfFOfa = g->cloneTree();
-  Variables::Replace(gOfFOfa, 0, f, false, false);
-  // Cloning -a
-  PatternMatching::Create(KMult(-1_e, KVarX));
-  /* If f is a dependency expression, add the dependencies of f to the result.
-   * This is because if g is a constant function, f will not appear in
-   * a->g(f(a)) and the dependencies of f could get lost. */
-  if (f->isDep()) {
-    Dependency::AddDependencies(difference, Dependency::Dependencies(f));
-  }
-  return difference;
-}
-
-template <typename T>
-typename Solver<T>::Solution Solver<T>::nextIntersection(
-    const Tree* e1, const Tree* e2, bool areAlongSameAxis,
-    const Tree* difference) {
-  Solution root = nextRoot(difference);
-  if (root.interest != Interest::Root) {
-    assert(root.interest == Interest::None);
-    return Solution{};
-  }
-  T x = root.x;
-  T y = Approximation::To<T>(
-      e1, x,
-      Approximation::Parameters{
-          .policy = {.optimize = true},
-          .expressionParameters = Approximation::Prepared{}});
-  // The secondImage is a "y" if areAlongSameAxis=true, or an "x" otherwise
-  T secondImage = Approximation::To<T>(
-      e2, areAlongSameAxis ? x : y,
-      Approximation::Parameters{
-          .policy = {.optimize = true},
-          .expressionParameters = Approximation::Prepared{}});
-  if (!std::isfinite(y) || !std::isfinite(secondImage)) {
-    /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
-     * or undef expressions in specific points like x^2/x, the root of the
-     * difference yields an infinite or a nan value when e1 or e2 is
-     * evaluated. It means the intersection was incorrectly computed, and the
-     * search continues. */
-    return nextIntersection(e1, e2, areAlongSameAxis, difference);
-  }
-  T comparedTo = areAlongSameAxis ? y : x;
-  /* These thresholds are quite large because we cannot expect exact
-   * approximation. They could be lowered again if we find too many false
-   * intersections. */
-  constexpr T k_relativeThreshold = 1e-4;
-  constexpr T k_absoluteThreshold = 1e-4;
-  if (!OMG::Float::RelativelyEqual(secondImage, comparedTo,
-                                   k_relativeThreshold) &&
-      !OMG::Float::RoughlyEqual(secondImage - comparedTo, 0.,
-                                k_absoluteThreshold)) {
-    // Intersection is not accurate enough, continue searching
-    return nextIntersection(e1, e2, areAlongSameAxis, difference);
-  }
-
-  /* In the areAlongSameAxis case, take the middle of the two approximated "y"
-   * values */
-  return areAlongSameAxis
-             ? Solution{.x = x,
-                        .y = (y + secondImage) / 2.,
-                        .interest = Interest::Intersection}
-             : Solution{.x = x, .y = y, .interest = Interest::Intersection};
-}
-
-template <typename T>
-typename Solver<T>::Solution Solver<T>::nextIntersection(
-    const Tree* e1, const Tree* e2, bool areAlongSameAxis) {
-  Tree* difference =
-      FunctionDifferenceForIntersection(e1, e2, areAlongSameAxis);
-  Solution result = nextIntersection(e1, e2, areAlongSameAxis, difference);
-  difference->removeTree();
-  return result;
+  return Solution<T>{};
 }
 
 template <typename T>
@@ -298,119 +115,6 @@ void Solver<T>::stretch() {
   T stepSign = m_xStart < m_xEnd ? static_cast<T>(1.) : static_cast<T>(-1.);
   m_xStart -= m_searchStep * stepSign;
   m_xEnd += m_searchStep * stepSign;
-}
-
-template <typename T>
-Coordinate2D<T> Solver<T>::SafeBrentMinimum(FunctionEvaluation f,
-                                            const void* aux, T xMin, T xMax,
-                                            Interest interest, T xPrecision) {
-  if (xMax < xMin) {
-    return SafeBrentMinimum(f, aux, xMax, xMin, interest, xPrecision);
-  }
-  assert(xMin < xMax);
-
-  if (FunctionSeemsConstantOnTheInterval(f, aux, xMin, xMax)) {
-    /* Some fake minimums can be detected due to approximations errors like in
-     * f(x) = x/abs(x) in complex mode. */
-    return Coordinate2D<T>();
-  }
-
-  return SolverAlgorithms::BrentMinimum(f, aux, xMin, xMax, interest,
-                                        xPrecision);
-}
-
-template <typename T>
-Coordinate2D<T> Solver<T>::SafeBrentMaximum(FunctionEvaluation f,
-                                            const void* aux, T xMin, T xMax,
-                                            Interest interest, T xPrecision) {
-  const void* pack[] = {&f, aux};
-  FunctionEvaluation minusF = [](T x, const void* aux) {
-    const void* const* param = reinterpret_cast<const void* const*>(aux);
-    const FunctionEvaluation* f =
-        reinterpret_cast<const FunctionEvaluation*>(param[0]);
-    return -(*f)(x, param[1]);
-  };
-  Coordinate2D<T> res =
-      SafeBrentMinimum(minusF, pack, xMin, xMax, interest, xPrecision);
-  return Coordinate2D<T>(res.x(), -res.y());
-}
-
-template <typename T>
-Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
-                                                 const void* aux, T xMin,
-                                                 T xMax, Interest interest,
-                                                 T xPrecision) {
-  if (interest == Interest::Root) {
-    Coordinate2D<T> xy =
-        SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, xPrecision);
-    return xy;
-  }
-  Coordinate2D<T> res;
-  if (interest == Interest::Minimum) {
-    res = SafeBrentMinimum(f, aux, xMin, xMax, interest, xPrecision);
-  } else {
-    assert(interest == Interest::Maximum);
-    res = SafeBrentMaximum(f, aux, xMin, xMax, interest, xPrecision);
-  }
-  return std::isfinite(res.x()) && std::fabs(res.y()) < NullTolerance(res.x())
-             ? res
-             : Coordinate2D<T>();
-}
-
-template <typename T>
-bool Solver<T>::FunctionSeemsConstantOnTheInterval(
-    Solver<T>::FunctionEvaluation f, const void* aux, T xMin, T xMax) {
-  assert(xMin < xMax);
-  constexpr int k_numberOfSteps = 20;
-  T values[k_numberOfSteps];
-  int valuesCount[k_numberOfSteps];
-  int currentNumberOfValues = 0;
-  /* This loop computes 20 values of f on the interval and then checks the
-   * repartition of these values. If the function takes a few number of
-   * different values, it might mean that f is a constant function but
-   * approximation errors led to thinking there was a minimum in the interval.
-   * To measure this "repartition" of values, the entropy of the data is
-   * then calculated. */
-  for (int i = 0; i < k_numberOfSteps; i++) {
-    T currentValue =
-        f(xMin + (static_cast<T>(i) / k_numberOfSteps) * (xMax - xMin), aux);
-    bool addValueToArray = true;
-    for (int k = 0; k < currentNumberOfValues; k++) {
-      if (values[k] == currentValue) {
-        addValueToArray = false;
-        valuesCount[k]++;
-        break;
-      }
-    }
-    if (addValueToArray) {
-      values[currentNumberOfValues] = currentValue;
-      valuesCount[currentNumberOfValues] = 1;
-      currentNumberOfValues++;
-    }
-  }
-
-  /* Entropy = -sum(log(pk)*pk) where pk is the probability of taking the
-   * k-th value. */
-  T entropy = 0.;
-  for (int k = 0; k < currentNumberOfValues; k++) {
-    T probabilityOfValue =
-        static_cast<T>(valuesCount[k]) / (k_numberOfSteps + 1);
-    entropy += -std::log(probabilityOfValue) * probabilityOfValue;
-  }
-
-  // maxEntropy = ln(k_numberOfSteps), unfortunately std::log is not constexpr
-  constexpr T k_maxEntropy = static_cast<T>(2.995733);
-  // Check that k_maxEntropy ~ ln(k_numberOfSteps)
-  assert(std::log(static_cast<T>(k_numberOfSteps)) <= k_maxEntropy &&
-         std::log(static_cast<T>(k_numberOfSteps)) >
-             k_maxEntropy - static_cast<T>(1E-6));
-  assert(entropy >= 0 && entropy <= k_maxEntropy);
-  /* If the entropy of the data is lower than 0.5 * maxEntropy, it is assumed
-   * that the function is constant on [xMin, xMax].
-   * The value of 0.5 has been chosen because of good experimental results but
-   * could be tweaked. */
-  constexpr T k_entropyThreshold = static_cast<T>(0.5);
-  return entropy < k_maxEntropy * k_entropyThreshold;
 }
 
 template <typename T>
@@ -531,178 +235,20 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
 }
 
 template <typename T>
-typename Solver<T>::DetailedRootX Solver<T>::nextRootSearchingInChild(
-    const Tree* e, int childIndex) const {
-  Solver<T> solver = *this;
-  const Tree* child = e->child(childIndex);
-  DetailedRoot root;
-  while (std::isfinite((root = solver.nextDetailedRoot(child))
-                           .solution.x)) {  // assignment in condition
-    /* Check the result in case another term is undefined,
-     * e.g. (x+1)*ln(x) for x =- 1.
-     *
-     * Sometimes, xRoot is not precise enough and e can approximate to undef
-     * even if it's not. e.g. f(x)=sqrt(cos(x)), when searching roots of cos(x),
-     * sometimes we find cos(xRoot) = -0.0..01, so sqrt(cos(xRoot)) = undef.
-     * To avoid this problem, clone e and replace cos(xRoot) by 0. */
-    Tree* ebis = e->cloneTree();
-    ebis->child(childIndex)
-        ->cloneTreeOverTree(Internal::ZeroFloatTree<T>::value);
-    T value = Approximation::To<T>(
-        ebis, root.solution.x,
-        Approximation::Parameters{
-            .policy = {.optimize = true},
-            .expressionParameters = Approximation::Prepared{}});
-    ebis->removeTree();
-    /* This comparison relies on the fact that it is false for a NAN
-     * approximation. */
-    if (std::fabs(value) < NullTolerance(root.solution.x)) {
-      return {.x = root.solution.x, .nullDescendant = root.nullDescendant};
-    }
-  }
-  return k_nanRootX;
-}
-
-template <typename T>
-typename Solver<T>::DetailedRootX Solver<T>::nextRootSearchingInChildren(
-    const Tree* e, ExpressionTestAuxiliary test, void* aux) const {
-  DetailedRootX root = k_nanRootX;
-  int n = e->numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    if (test(e->child(i), m_context, aux)) {
-      DetailedRootX rootChild = nextRootSearchingInChild(e, i);
-      if (std::isfinite(rootChild.x) &&
-          (!std::isfinite(root.x) ||
-           std::fabs(m_xStart - rootChild.x) < std::fabs(m_xStart - root.x))) {
-        root = rootChild;
-      }
-    }
-  }
-  return root;
-}
-
-template <typename T>
-typename Solver<T>::DetailedRootX Solver<T>::nextRootInMultiplication(
-    const Tree* e) const {
-  assert(e->isMult());
-  return nextRootSearchingInChildren(
-      e, [](const Tree*, const SymbolContext&, void*) { return true; },
-      nullptr);
-}
-
-template <typename T>
-typename Solver<T>::DetailedRootX Solver<T>::nextRootInAddition(
-    const Tree* e) const {
-  /* Special case for expressions of the form "f(x)^a+g(x)", with:
-   * - f(x) and g(x) sharing a root x0
-   * - f(x) being defined only on one side of x0
-   * - 0 < a
-   * Since the expression does not change sign around x0, the usual numerical
-   * schemes won't work. We instead look for the zeroes of f, and check whether
-   * they are zeroes of the whole expression. */
-  ExpressionTestAuxiliary test = [](const Tree* e,
-                                    const SymbolContext& symbolContext,
-                                    void* aux) {
-    /* TODO_PCJ: Either ensure expression is projected, or pass
-     * approximation context(ComplexFormat, AngleUnit) and replace defined
-     * symbols. */
-    return e->hasDescendantSatisfying([](const Tree* e) {
-      T exponent = k_NAN;
-      if (e->type() == Type::Sqrt) {
-        exponent = static_cast<T>(0.5);
-      } else if (e->type() == Type::Pow || e->type() == Type::PowReal) {
-        exponent = Approximation::To<T>(
-            e->child(1),
-            Approximation::Parameters{.policy = {.optimize = true}});
-      } else if (e->type() == Type::Root) {
-        exponent = static_cast<T>(1.) /
-                   Approximation::To<T>(
-                       e->child(1),
-                       Approximation::Parameters{.policy = {.optimize = true}});
-      }
-      if (std::isnan(exponent)) {
-        return false;
-      }
-      return k_zero < exponent;
-    });
-  };
-  DetailedRootX childrenRoot =
-      nextRootSearchingInChildren(e, test, const_cast<Solver<T>*>(this));
-  Solver<T> solver = *this;
-  DetailedRootX root = {
-      .x = solver
-               .next(e, SolverTests<T>::EvenOrOddRootInBracket,
-                     CompositeBrentForRoot)
-               .x,
-      .nullDescendant = e};
-  if (!std::isfinite(root.x) ||
-      std::fabs(childrenRoot.x - m_xStart) < std::fabs(root.x - m_xStart)) {
-    root = childrenRoot;
-  }
-  return root;
-}
-
-template <typename T>
-typename Solver<T>::DetailedRootX Solver<T>::nextRootInDependency(
-    const Tree* e) const {
-  assert(e->isDep());
-  Solver<T> solver = *this;
-  const Tree* main = Dependency::Main(e);
-  const Tree* depsList = Dependency::Dependencies(e);
-
-  DetailedRoot root;
-  // Find root in main and then check that the dependencies are not undefined
-  while (std::isfinite((root = solver.nextDetailedRoot(main)).solution.x)) {
-    /* Replace nullDescendant by 0 in deps list. This ensures that approximation
-     * errors do not invalidate the dependencies check.
-     *
-     * For example, when solving `sqrt(0.5x^2-1)=0`, the expression has a
-     * dependency on `RealPos(0.5x^2-1)`. One of the found root found is
-     * slightly below `sqrt(2)`, which makes the dependency undefined. By
-     * replacing `0.5x^2-1` by `0`, we ensure that this dependency check doesn't
-     * fail.
-     */
-    Tree* depsListClone = depsList->cloneTree();
-    depsListClone->deepReplaceWith(root.nullDescendant, 0_e);
-    bool definedDeps = true;
-    for (const Tree* childDep : depsListClone->children()) {
-      T value = Approximation::To<T>(
-          childDep, root.solution.x,
-          Approximation::Parameters{.policy = {.optimize = true}});
-      if (std::isnan(value)) {
-        definedDeps = false;
-        break;
-      }
-    }
-    depsListClone->removeTree();
-    if (definedDeps) {
-      break;
-    }
-  }
-
-  return {.x = root.solution.x, .nullDescendant = root.nullDescendant};
-}
-
-template <typename T>
 T Solver<T>::MagicRound(T x) {
   constexpr T k_roundingOrder = 2. * k_minimalPracticalStep;  // Magic number
   return k_roundingOrder * std::round(x / k_roundingOrder);
 }
 
 template <typename T>
-void Solver<T>::honeAndRoundSolution(
-    FunctionEvaluation f, const void* aux, Coordinate2D<T> start,
-    Coordinate2D<T> end, Interest interest, HoneResult hone,
-    DiscontinuityEvaluation discontinuityTest) {
+void Solver<T>::honeAndRoundSolution(Coordinate2D<T> start, Coordinate2D<T> end,
+                                     Interest interest) {
   assert(m_solutionQueue.size() == 0);
-  if (interest == Interest::ReachedDiscontinuity) {
-    return honeAndRoundDiscontinuitySolution(f, aux, start, end);
-  }
-  OMG::Troolean discontinuous = OMG::Troolean::Unknown;
-  if (discontinuityTest) {
-    discontinuous = discontinuityTest(start, end, aux) ? OMG::Troolean::True
-                                                       : OMG::Troolean::False;
-  }
+  // Handled in DiscontinuitySolver
+  assert(interest != Interest::ReachedDiscontinuity);
+
+  bool isDiscontinuous = isDiscontinuousBetween(start, end);
+
   /* WARNING: This is a hack for discontinuous functions. BrentForRoot
    * needs to be very precise to find a root that is on the discontinuity bound.
    *
@@ -711,17 +257,17 @@ void Solver<T>::honeAndRoundSolution(
    */
   constexpr T precisionForDiscontinuousFunctions =
       k_relativePrecision * k_minimalAbsoluteStep;
-  T xPrecision = discontinuous == OMG::Troolean::True
-                     ? precisionForDiscontinuousFunctions
-                     : NullTolerance(start.x());
-  Coordinate2D<T> xy = hone(f, aux, start.x(), end.x(), interest, xPrecision);
+  T xPrecision = isDiscontinuous ? precisionForDiscontinuousFunctions
+                                 : NullTolerance(start.x());
+  Coordinate2D<T> xy = m_honeFunction(m_evaluator, m_auxiliary, start.x(),
+                                      end.x(), interest, xPrecision);
 
   /* If the function is discontinuous and the discontinuity is on both sides
    * of the abscissa axis, a fake root could have been found. Filter it out
    * using null tolerance. This can happens for example with the functions:
    *   > f(x) = floor(x) - 0.5 for x == 1
    *   > f(x) = x / abs(x) for x == 0 */
-  if (discontinuous == OMG::Troolean::True && interest == Interest::Root &&
+  if (isDiscontinuous && interest == Interest::Root &&
       std::fabs(xy.y()) > NullTolerance(xy.x())) {
     return;
   }
@@ -735,13 +281,13 @@ void Solver<T>::honeAndRoundSolution(
    * on several abscissas, and Brent can pick up any of them. This deviation
    * is particularly visible if the theoretical solution is an integer. */
   T roundX = MagicRound(x);
-  T fRoundX = f(roundX, aux);
+  T fRoundX = evaluateAt(roundX);
   if (std::isnan(fRoundX) && interest != Interest::Discontinuity) {
     // We might have a discontinuity, the solution might not be valid
     return;
   }
   // f(x) is different from the honed solution when searching intersections
-  T fx = f(x, aux);
+  T fx = evaluateAt(x);
   if (std::isfinite(roundX) && validSolution(roundX)) {
     /* Filter out solutions that are close to a discontinuity. This can
      * happen with functions such as  y = (-x when x < 0, x-1 otherwise)
@@ -750,9 +296,8 @@ void Solver<T>::honeAndRoundSolution(
      * integers or of a magnitude closer to roundX than x. So if the
      * condition of roundX is different from x, this means that the solution
      * found is probably on an open interval. */
-    if (discontinuityTest &&
-        discontinuityTest(Coordinate2D<T>(x, fx),
-                          Coordinate2D<T>(roundX, fRoundX), aux)) {
+    if (isDiscontinuousBetween(Coordinate2D<T>(x, fx),
+                               Coordinate2D<T>(roundX, fRoundX))) {
       return;
     }
     if (fRoundX == fx ||
@@ -773,91 +318,9 @@ void Solver<T>::honeAndRoundSolution(
 }
 
 template <typename T>
-void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
-                                                  const void* aux,
-                                                  Coordinate2D<T> start,
-                                                  Coordinate2D<T> end) {
-  assert(m_solutionQueue.size() == 0);
-  T precision = NullTolerance(start.x());
-
-  // Find the smallest interval containing the discontinuity
-  Coordinate2D<T> left = start;
-  Coordinate2D<T> middle;
-  Coordinate2D<T> right = end;
-  if (!FindMinimalIntervalContainingDiscontinuity(
-          f, aux, &left, &middle, &right, precision,
-          SolverTests<T>::IsDiscontinuousInBracket)) {
-    return;
-  }
-
-  // Round middle to find the discontinuity abscissa
-  middle.setX(MagicRound(middle.x()));
-  assert(std::isfinite(middle.x()));
-  if (!validSolution(middle.x())) {
-    return;
-  }
-
-  // Update left and right to make sure there are different from middle
-  left.setX(middle.x() - precision / 2.);
-  right.setX(middle.x() + precision / 2.);
-  assert(middle.x() != left.x() && middle.x() != right.x());
-
-  // Update ordinates
-  middle.setY(f(middle.x(), aux));
-  // We round because we want the "limit"
-  left.setY(MagicRound(f(left.x(), aux)));
-  right.setY(MagicRound(f(right.x(), aux)));
-
-  bool leftIsDiscontinuous =
-      SolverTests<T>::IsDiscontinuousInBracket(left, middle, aux);
-  bool rightIsDiscontinuous =
-      SolverTests<T>::IsDiscontinuousInBracket(middle, right, aux);
-  if (!leftIsDiscontinuous && !rightIsDiscontinuous) {
-    // No discontinuity
-    return;
-  }
-  if (!leftIsDiscontinuous) {
-    // No left discontinuity
-    left = Coordinate2D<T>();
-  }
-  if (!rightIsDiscontinuous) {
-    // No right discontinuity
-    right = Coordinate2D<T>();
-  }
-  if (std::abs(right.y() - left.y()) < NullTolerance(middle.x())) {
-    // Left and right are the same
-    assert(leftIsDiscontinuous && rightIsDiscontinuous);
-    // Keep only 1 point of interest
-    left.setY(MagicRound((left.y() + right.y()) / 2.));
-    right = Coordinate2D<T>();
-  }
-
-  // There should be at least one finite value
-  assert(std::isfinite(left.y()) || std::isfinite(middle.y()) ||
-         std::isfinite(right.y()));
-
-  // Push solutions
-  if (std::isfinite(left.y())) {
-    left.setX(middle.x());
-    m_solutionQueue.push(
-        CoordToSolution(left, Interest::UnreachedDiscontinuity));
-  }
-  if (std::isfinite(middle.y())) {
-    m_solutionQueue.push(
-        CoordToSolution(middle, Interest::ReachedDiscontinuity));
-  }
-  if (std::isfinite(right.y())) {
-    right.setX(middle.x());
-    m_solutionQueue.push(
-        CoordToSolution(right, Interest::UnreachedDiscontinuity));
-  }
-}
-
-template <typename T>
-typename Solver<T>::Solution Solver<T>::registerSolution(Solution solution,
-                                                         bool wasQueued) {
+Solution<T> Solver<T>::registerSolution(Solution<T> solution, bool wasQueued) {
   if (std::isnan(solution.x)) {
-    return Solution{};
+    return Solution<T>{};
   }
   assert((wasQueued && solution.x == m_xStart) ||
          (!wasQueued && validSolution(solution.x)));
@@ -870,21 +333,20 @@ typename Solver<T>::Solution Solver<T>::registerSolution(Solution solution,
 }
 
 template <typename T>
-bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
-    FunctionEvaluation f, const void* aux, Coordinate2D<T>* start,
-    Coordinate2D<T>* middle, Coordinate2D<T>* end, T minimalSizeOfInterval,
-    DiscontinuityEvaluation discontinuityTest) {
-  COSTLY_ASSERT(discontinuityTest(*start, *end, aux));
+bool Solver<T>::findMinimalIntervalContainingDiscontinuity(
+    Coordinate2D<T>* start, Coordinate2D<T>* middle, Coordinate2D<T>* end,
+    T minimalSizeOfInterval) const {
+  COSTLY_ASSERT(isDiscontinuousBetween(*start, *end));
 
   // Initialize middle if needed
   if (std::isnan(middle->x())) {
     middle->setX((start->x() + end->x()) / 2.0);
-    middle->setY(f(middle->x(), aux));
+    middle->setY(evaluateAt(middle->x()));
   }
 
   while (std::fabs(end->x() - start->x()) >= minimalSizeOfInterval) {
-    bool firstAreaIsDiscontinuous = discontinuityTest(*start, *middle, aux);
-    bool secondAreaIsDiscontinuous = discontinuityTest(*middle, *end, aux);
+    bool firstAreaIsDiscontinuous = isDiscontinuousBetween(*start, *middle);
+    bool secondAreaIsDiscontinuous = isDiscontinuousBetween(*middle, *end);
     if (firstAreaIsDiscontinuous == secondAreaIsDiscontinuous) {
       /* Either too many discontinuities and/or step is too big
        * Or couldn't find any discontinuities */
@@ -905,25 +367,16 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
       *start = *middle;
     }
     middle->setX((start->x() + end->x()) / 2.0);
-    middle->setY(f(middle->x(), aux));
-    COSTLY_ASSERT(discontinuityTest(*start, *end, aux));
+    middle->setY(evaluateAt(middle->x()));
+    COSTLY_ASSERT(isDiscontinuousBetween(*start, *end));
   }
   COSTLY_ASSERT(std::fabs(end->x() - start->x()) > 0 &&
                 std::fabs(end->x() - start->x()) <= minimalSizeOfInterval &&
-                discontinuityTest(*start, *end, aux));
+                isDiscontinuousBetween(*start, *end));
   return true;
 }
 
-// Explicit template instantiations
-
 template class Solver<double>;
+template class Solver<float>;
 
-// Solver float cannot use all the features of Solver double
-template Solver<float>::Solver(float, float, const SymbolContext&);
-template void Solver<float>::reset(float, float, float);
-template Solver<float>::Solution Solver<float>::next(
-    FunctionEvaluation, const void*, BracketTest, HoneResult,
-    DiscontinuityEvaluation discontinuityTest);
-template float Solver<float>::DefaultSearchStepForAmplitude(float);
-
-}  // namespace Poincare
+}  // namespace Poincare::NumericSolver

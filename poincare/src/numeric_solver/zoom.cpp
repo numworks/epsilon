@@ -9,6 +9,7 @@
 namespace Poincare {
 
 using namespace Poincare::Internal;
+using namespace Poincare::NumericSolver;
 
 // HorizontalAsymptoteHelper
 
@@ -808,15 +809,14 @@ bool Zoom<T>::fitWithSolverHelper(
    *         a fixed number of points of interest. */
   assert(interrupted);
   *interrupted = false;
-  Solver<T> solver(start, end);
+  Solver<T> solver(start, end, evaluator, aux, test, hone, nullptr);
   Range2D<T> savedRange;
   bool savedRangeIsInit = false;
   int nRoots = 0;
   int nOthers = 0;
-  typename Solver<T>::Solution p;
+  Solution<T> p;
   bool didFit = false;
-  while (std::isfinite((p = solver.next(evaluator, aux, test, hone))
-                           .x)) {  // assignment in condition
+  while (std::isfinite((p = solver.next()).x)) {  // assignment in condition
     if (sizeof(T) < sizeof(double) && fDouble != nullptr &&
         p.interest == Interest::Discontinuity && std::isnan(p.y) &&
         std::isfinite(fDouble(p.x, aux))) {
@@ -825,7 +825,7 @@ bool Zoom<T>::fitWithSolverHelper(
        * evaluating y=(e^x-1)/(e^x+1) for x~90 (which leads to ∞/∞). */
       return didFit;
     }
-    privateFitPoint(Solver<T>::SolutionToCoord(p), vertical);
+    privateFitPoint(NumericSolver::SolutionToCoord<T>(p), vertical);
     didFit = true;
     if (p.interest == Interest::Root) {
       nRoots++;

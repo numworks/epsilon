@@ -3,6 +3,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/numeric_solver/expression_solver.h>
 
 #include <algorithm>
 #include <array>
@@ -11,6 +12,7 @@
 #include "shared/global_store.h"
 
 using namespace Poincare;
+using namespace Poincare::NumericSolver;
 using namespace Shared;
 
 namespace Graph {
@@ -190,12 +192,14 @@ bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
 namespace {
 
 struct PointSearchContext {
+  // TODO: Why are these float when ExpressionSolver is double
   const float start, end;
+  const float searchStep;
   const SymbolContext& context;
   ContinuousFunctionStore* const store;
-  const float searchStep;
-  Solver<double> solver;
   Ion::Storage::Record record;
+
+  ExpressionSolver* interestSolvers[4];
 
   size_t currentProvider = 0;
   int counter = 0;
@@ -203,42 +207,42 @@ struct PointSearchContext {
     uint8_t subCounter1 = 0;
     uint8_t subCounter2 = 0;
   };
+  /* TODO: Intersections handling is a bit messy because we need to recreate a
+   * new solver for each pair of functions intersected. */
+  float currentStartForIntersections;
   Ion::Storage::Record otherRecord;
 
   bool lastSegment;
 
-  void reinitSolver() {
-    solver.reset(start, end, searchStep);
-    solver.stretch();
-  }
-
   OMG::ExpiringPointer<ContinuousFunction> model() const {
     return store->modelForRecord(record);
+  }
+
+  void resetCurrentStartForIntersections() {
+    currentStartForIntersections = start;
   }
 };
 
 /* TODO: When alongY, this interest point is later converted to a Root. This
  * could be done earlier to limit risks of miss-interpretation.*/
-PointOfInterest findYIntercept(void* searchContext) {
-  PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
-  if (ctx->start < 0.f && 0.f < ctx->end) {
-    OMG::ExpiringPointer<ContinuousFunction> f = ctx->model();
-    int n = f->numberOfSubCurves();
-    while (ctx->counter < n) {
-      uint8_t subCurve = ctx->counter++;
-      Coordinate2D<double> xy = f->evaluateXYAtParameter(0., subCurve);
-      if (std::isfinite(xy.x()) && std::isfinite(xy.y())) {
-        if (f->isAlongY()) {
-          // evaluateXYAtParameter has swapped x and y. Revert it.
-          xy = Coordinate2D<double>(xy.y(), xy.x());
-        }
-        return {.abscissa = xy.x(),
-                .ordinate = xy.y(),
-                .interest = Interest::YIntercept,
-                .inverted = f->isAlongY(),
-                .isUnreached = f->properties().isStrictInequality(),
-                .subCurveIndex = static_cast<uint8_t>(subCurve)};
+PointOfInterest findYIntercept(PointSearchContext* ctx) {
+  if (ctx->start >= 0.f || 0.f >= ctx->end) return PointOfInterest{};
+  OMG::ExpiringPointer<ContinuousFunction> f = ctx->model();
+  int n = f->numberOfSubCurves();
+  while (ctx->counter < n) {
+    uint8_t subCurve = ctx->counter++;
+    Coordinate2D<double> xy = f->evaluateXYAtParameter(0., subCurve);
+    if (std::isfinite(xy.x()) && std::isfinite(xy.y())) {
+      if (f->isAlongY()) {
+        // evaluateXYAtParameter has swapped x and y. Revert it.
+        xy = Coordinate2D<double>(xy.y(), xy.x());
       }
+      return {.abscissa = xy.x(),
+              .ordinate = xy.y(),
+              .interest = Interest::YIntercept,
+              .inverted = f->isAlongY(),
+              .isUnreached = f->properties().isStrictInequality(),
+              .subCurveIndex = static_cast<uint8_t>(subCurve)};
     }
   }
   return PointOfInterest{};
@@ -246,34 +250,24 @@ PointOfInterest findYIntercept(void* searchContext) {
 
 /* TODO: When alongY, this interest point is later converted to a YIntercept.
  * This could be done earlier to limit risks of miss-interpretation.*/
-PointOfInterest findRootOrExtremum(void* searchContext) {
-  PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
-
+PointOfInterest findRootOrExtremum(PointSearchContext* ctx) {
   OMG::ExpiringPointer<ContinuousFunction> f = ctx->model();
   if (f->numberOfSubCurves() != 1) {
     // Only y-intercept
     return PointOfInterest{};
   }
 
-  using NextSolution =
-      Solver<double>::Solution (Solver<double>::*)(const Internal::Tree*);
-  NextSolution methodsNext[] = {
-      &Solver<double>::nextRoot, &Solver<double>::nextMinimum,
-      &Solver<double>::nextMaximum, &Solver<double>::nextDiscontinuity};
-  while (ctx->counter < static_cast<int>(std::size(methodsNext))) {
-    NextSolution next = methodsNext[ctx->counter];
-    if (next != static_cast<NextSolution>(&Solver<double>::nextRoot) &&
-        f->isAlongY()) {
+  for (; ctx->counter < static_cast<int>(std::size(ctx->interestSolvers));
+       ctx->counter++) {
+    ExpressionSolver* currentSolver = ctx->interestSolvers[ctx->counter];
+    if (ctx->counter != 0 && f->isAlongY()) {
+      // TODO: This is dirty
+      // 0 = RootSolver
       // Do not compute min and max since they would appear left/rightmost
-      ++ctx->counter;
       continue;
     }
-    ctx->solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Fast);
-    Solver<double>::Solution solution;
-    while (std::isfinite(
-        (solution = (ctx->solver.*next)(
-             f->expressionApproximated()) /* assignment in expression */)
-            .x)) {
+    Solution<double> solution;
+    while (std::isfinite((solution = currentSolver->next()).x)) {
       /* Loop over finite solutions to exhaust solutions out of the interval
        * without returning NAN. */
       if (solution.x >= ctx->start &&
@@ -293,8 +287,6 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
         };
       }
     }
-    ++ctx->counter;
-    ctx->reinitSolver();
   }
   return PointOfInterest{};
 }
@@ -303,18 +295,22 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
                                      const PreparedFunction& f,
                                      const PreparedFunction& g,
                                      bool alongSameAxis) {
-  Solver<double>::Solution solution;
-  Internal::Tree* diff =
-      ctx->solver.FunctionDifferenceForIntersection(f, g, alongSameAxis);
-  while (std::isfinite(
-      (solution = ctx->solver.nextIntersection(f, g, alongSameAxis, diff)).x)) {
+  Solution<double> solution;
+
+  IntersectionSolver solver(ctx->currentStartForIntersections, ctx->end, f, g,
+                            alongSameAxis, ctx->context);
+  solver.setSearchStep(ctx->searchStep);
+  solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Precise);
+  solver.stretch();
+
+  while (std::isfinite((solution = solver.next()).x)) {
     /* Loop over finite solutions to exhaust solutions out of the interval
      * without returning NAN. */
     if (solution.x >= ctx->start &&
         (solution.x < ctx->end ||
          (solution.x == ctx->end && ctx->lastSegment))) {
       assert(solution.interest == Interest::Intersection);
-      diff->removeTree();
+      ctx->currentStartForIntersections = solution.x;
       /* If alongY(), no need to swap x and y here, since
        * expressionApproximated already returned x as abscissa and y as
        * ordinate. */
@@ -328,13 +324,11 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
       };
     }
   }
-  diff->removeTree();
-  ctx->reinitSolver();
+  ctx->resetCurrentStartForIntersections();
   return PointOfInterest{};
 }
 
-PointOfInterest findIntersections(void* searchContext) {
-  PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
+PointOfInterest findIntersections(PointSearchContext* ctx) {
   /* Do not compute intersections if store is full because re-creating a
    * ContinuousFunction object each time a new function is intersected
    * is very slow. */
@@ -362,7 +356,6 @@ PointOfInterest findIntersections(void* searchContext) {
       continue;
     }
     const PreparedFunction& gExpr = g->expressionApproximated();
-    ctx->solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Precise);
     int gNumberOfSubCurves = gExpr.isList() ? gExpr.numberOfChildren() : 1;
     assert(!gExpr.isList() || gNumberOfSubCurves > 1);
     for (; ctx->subCounter1 < fNumberOfSubCurves; ++ctx->subCounter1) {
@@ -392,7 +385,7 @@ PointOfInterest findIntersections(void* searchContext) {
 PointOfInterest findPoints(void* searchContext) {
   PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
 
-  constexpr PointsOfInterestList::Provider providers[] = {
+  constexpr PointOfInterest (*providers[])(PointSearchContext*) = {
       findYIntercept, findRootOrExtremum, findIntersections};
 
   for (; ctx->currentProvider < std::size(providers); ctx->currentProvider++) {
@@ -424,18 +417,35 @@ Expression PointsOfInterestCache::computeBetween(float start, float end) {
 
   ContinuousFunctionStore* store = &App::app()->functionStore();
 
+  OMG::ExpiringPointer<ContinuousFunction> f = store->modelForRecord(m_record);
+  PreparedFunction prepared = f->expressionApproximated();
+  const SymbolContext& context = App::app()->localContext();
+
+  RootSolver solver(start, end, prepared, context);
+  MinimumSolver minSolver(start, end, prepared, context);
+  MaximumSolver maxSolver(start, end, prepared, context);
+  DiscontinuitySolver discontinuitySolver(start, end, prepared, context);
+
   PointSearchContext searchContext{
       .start = start,
       .end = end,
+      .searchStep = Solver<float>::DefaultSearchStepForAmplitude(end - start),
       .context = App::app()->localContext(),
       .store = store,
-      .searchStep = static_cast<float>(
-          Solver<double>::DefaultSearchStepForAmplitude(m_start - m_end)),
-      .solver = Solver<double>(start, end, App::app()->localContext()),
       .record = m_record,
+      .interestSolvers = {&solver, &minSolver, &maxSolver,
+                          &discontinuitySolver},
       .lastSegment = (m_computedEnd == end),
   };
-  searchContext.reinitSolver();
+
+  for (size_t i = 0; i < std::size(searchContext.interestSolvers); i++) {
+    searchContext.interestSolvers[i]->setGrowthSpeed(
+        Solver<double>::GrowthSpeed::Fast);
+    searchContext.interestSolvers[i]->setSearchStep(searchContext.searchStep);
+    searchContext.interestSolvers[i]->stretch();
+  }
+
+  searchContext.resetCurrentStartForIntersections();
 
   return PointsOfInterestList::BuildStash(findPoints, &searchContext);
 }

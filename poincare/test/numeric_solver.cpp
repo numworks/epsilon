@@ -1,7 +1,9 @@
 #include <omg/float.h>
+#include <poincare/numeric_solver/expression_solver.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/numeric_solver/erf_inv.h>
@@ -11,43 +13,17 @@
 #include "helper.h"
 
 using Poincare::AngleUnit;
-using Poincare::SymbolContext;
 using namespace Poincare::Internal;
+using namespace Poincare::NumericSolver;
 
 typedef Poincare::Interest Interest;
-typedef Poincare::Solver<double>::Solution Solution;
 
-void assert_next_solution_is(const char* expression,
-                             const SymbolContext& symbolContext,
-                             Poincare::Solver<double>* solver,
+void assert_next_solution_is(Solver<double>* solver,
                              Poincare::Coordinate2D<double> expected,
-                             Interest interest, const char* otherExpression,
-                             Poincare::AngleUnit angleUnit) {
+                             const char* expression) {
   assert(std::isnan(expected.x()) == std::isnan(expected.y()));
 
-  Poincare::UserParameters userParameters = {
-      .complexFormat = Real, .angleUnit = angleUnit, .context = symbolContext};
-
-  Tree* e = parseAndPrepareForApproximation(expression, userParameters);
-
-  Solution observed;
-  switch (interest) {
-    case Interest::Root:
-      observed = solver->nextRoot(e);
-      break;
-    case Interest::Minimum:
-      observed = solver->nextMinimum(e);
-      break;
-    case Interest::Maximum:
-      observed = solver->nextMaximum(e);
-      break;
-    default:
-      assert(interest == Interest::Intersection);
-      assert(otherExpression);
-      Tree* e2 =
-          parseAndPrepareForApproximation(otherExpression, userParameters);
-      observed = solver->nextIntersection(e, e2);
-  }
+  Solution<double> observed = solver->next();
 
   constexpr double relativePrecision =
       2. * OMG::Float::SquareRoot<double>(2. * OMG::Float::Epsilon<double>());
@@ -67,14 +43,50 @@ void assert_solutions_are(
     const char* expression, double start, double end,
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
     Interest interest, AngleUnit angleUnit, const char* otherExpression) {
-  Poincare::Solver<double> solver(start, end);
-  for (Poincare::Coordinate2D<double> c : expected) {
-    assert_next_solution_is(expression, Poincare::EmptySymbolContext{}, &solver,
-                            c, interest, otherExpression, angleUnit);
+  Poincare::SimplificationParameters simplificationParameters = {
+      .complexFormat = Real,
+      .angleUnit = angleUnit,
+      .strategy = Poincare::Strategy::ApproximateToFloat,
+      .context = Poincare::EmptySymbolContext{}};
+
+  // TODO: It feels weird to have to initialize 4 different solvers
+
+  Tree* e =
+      parseAndPrepareForApproximation(expression, simplificationParameters);
+
+  RootSolver rootSolver(start, end, e, Poincare::EmptySymbolContext{});
+  MinimumSolver minimumSolver(start, end, e, Poincare::EmptySymbolContext{});
+  MaximumSolver maximumSolver(start, end, e, Poincare::EmptySymbolContext{});
+
+  Tree* e2 = (0_e)->cloneTree();
+  if (otherExpression) {
+    e2->cloneTreeOverTree(parseAndPrepareForApproximation(
+        otherExpression, simplificationParameters));
   }
-  assert_next_solution_is(expression, Poincare::EmptySymbolContext{}, &solver,
-                          Poincare::Coordinate2D<double>(NAN, NAN), interest,
-                          otherExpression, angleUnit);
+  IntersectionSolver intersectionSolver(start, end, e, e2,
+                                        Poincare::EmptySymbolContext{});
+
+  Solver<double>* solverPointer;
+  switch (interest) {
+    case Interest::Root:
+      solverPointer = &rootSolver;
+      break;
+    case Interest::Minimum:
+      solverPointer = &minimumSolver;
+      break;
+    case Interest::Maximum:
+      solverPointer = &maximumSolver;
+      break;
+    default:
+      assert(interest == Interest::Intersection && otherExpression);
+      solverPointer = &intersectionSolver;
+  }
+
+  for (Poincare::Coordinate2D<double> c : expected) {
+    assert_next_solution_is(solverPointer, c, expression);
+  }
+  assert_next_solution_is(solverPointer,
+                          Poincare::Coordinate2D<double>(NAN, NAN), expression);
 }
 
 void assert_roots_are(

@@ -17,28 +17,27 @@ class SolverAlgorithms {
    * These two functions must be of the Solver<double>::HoneResult type.
    * Users who want to find roots and extrema with good precision should
    * use the Solver<double> API. */
-  static Coordinate2D<double> BrentRoot(Solver<double>::FunctionEvaluation f,
-                                        const void* aux, double xMin,
-                                        double xMax, Interest interest,
-                                        double xPrecision);
-  static Coordinate2D<double> BrentMinimum(Solver<double>::FunctionEvaluation f,
-                                           const void* aux, double xMin,
-                                           double xMax, Interest interest,
-                                           double xPrecision);
+  static Coordinate2D<double> BrentRoot(
+      NumericSolver::Solver<double>::FunctionEvaluation f, const void* aux,
+      double xMin, double xMax, Interest interest, double xPrecision);
+  static Coordinate2D<double> BrentMinimum(
+      NumericSolver::Solver<double>::FunctionEvaluation f, const void* aux,
+      double xMin, double xMax, Interest interest, double xPrecision);
 
   /* Numeric functions for statistics and probability. */
   static Coordinate2D<double> IncreasingFunctionRoot(
       double ax, double bx, double xPrecision,
-      Solver<double>::FunctionEvaluation f, const void* aux,
+      NumericSolver::Solver<double>::FunctionEvaluation f, const void* aux,
       double* resultEvaluation = nullptr);
 
   template <typename T>
   static T CumulativeDistributiveInverseForNDefinedFunction(
-      T* probability, typename Solver<T>::FunctionEvaluation f,
+      T* probability, typename NumericSolver::Solver<T>::FunctionEvaluation f,
       const void* aux);
   template <typename T>
   static T CumulativeDistributiveFunctionForNDefinedFunction(
-      T x, typename Solver<T>::FunctionEvaluation f, const void* aux);
+      T x, typename NumericSolver::Solver<T>::FunctionEvaluation f,
+      const void* aux);
 
  private:
   constexpr static int k_numberOfIterationsBrent = 100;

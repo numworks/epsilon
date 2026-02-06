@@ -1,5 +1,6 @@
 #include <omg/float.h>
 #include <omg/numeric_comparison.h>
+#include <poincare/numeric_solver/expression_solver.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/float_helper.h>
@@ -15,6 +16,7 @@
 
 namespace Poincare {
 using namespace Internal;
+using namespace NumericSolver;
 
 Layout Regression::equationLayout(
     const double* modelCoefficients, const char* ySymbol, int significantDigits,
@@ -54,9 +56,9 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
                                           .angleUnit = angleUnit()}});
   Approximation::PrepareFunctionForApproximation(diff, "x", true);
   // TODO: use y+evaluate() instead of yTree+e in nextIntersection
-  Poincare::Solver solver = Poincare::Solver(xMin, xMax, symbolContext);
+  RootSolver solver = RootSolver(xMin, xMax, diff, symbolContext);
   solver.stretch();
-  double result = solver.nextRoot(diff).x;
+  double result = solver.next().x;
   diff->removeTree();
   return result;
 }

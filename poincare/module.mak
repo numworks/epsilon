@@ -154,6 +154,8 @@ $(addprefix pool/, \
 $(addprefix numeric_solver/, \
   beta_function.cpp \
   erf_inv.cpp \
+  expression_solver.cpp \
+  hone_functions.cpp \
   matrix_array.cpp \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \

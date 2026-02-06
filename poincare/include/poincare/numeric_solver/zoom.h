@@ -2,6 +2,7 @@
 
 #include <ion/display.h>
 #include <poincare/range.h>
+#include <poincare/symbol_context.h>
 #include <poincare/tree.h>
 
 #include "solver.h"
@@ -154,15 +155,15 @@ class Zoom {
 
   static Interest PointIsInteresting(Coordinate2D<T> a, Coordinate2D<T> b,
                                      Coordinate2D<T> c, const void* aux);
-  static Coordinate2D<T> HonePoint(typename Solver<T>::FunctionEvaluation f,
-                                   const void* aux, T a, T b, Interest,
-                                   T precision);
-  static Coordinate2D<T> HoneRoot(typename Solver<T>::FunctionEvaluation f,
-                                  const void* aux, T a, T b, Interest,
-                                  T precision);
+  static Coordinate2D<T> HonePoint(
+      typename NumericSolver::Solver<T>::FunctionEvaluation f, const void* aux,
+      T a, T b, Interest, T precision);
+  static Coordinate2D<T> HoneRoot(
+      typename NumericSolver::Solver<T>::FunctionEvaluation f, const void* aux,
+      T a, T b, Interest, T precision);
   static Coordinate2D<T> HoneIntersection(
-      typename Solver<T>::FunctionEvaluation f, const void* aux, T a, T b,
-      Interest, T precision);
+      typename NumericSolver::Solver<T>::FunctionEvaluation f, const void* aux,
+      T a, T b, Interest, T precision);
 
   Range2D<T> sanitize2DHelper(Range2D<T> range) const;
   Range2D<T> sanitizedRange() const {
@@ -191,16 +192,18 @@ class Zoom {
 
   bool fitWithSolver(
       Range1D<T> bounds, bool* leftInterrupted, bool* rightInterrupted,
-      typename Solver<T>::FunctionEvaluation evaluator, const void* aux,
-      typename Solver<T>::BracketTest test, typename Solver<T>::HoneResult hone,
-      bool vertical, Solver<double>::FunctionEvaluation fDouble = nullptr,
-      typename Solver<T>::BracketTest testForCenterOfInterval = nullptr);
-  bool fitWithSolverHelper(T start, T end, bool* interrupted,
-                           typename Solver<T>::FunctionEvaluation evaluator,
-                           const void* aux,
-                           typename Solver<T>::BracketTest test,
-                           typename Solver<T>::HoneResult hone, bool vertical,
-                           Solver<double>::FunctionEvaluation fDouble);
+      typename NumericSolver::Solver<T>::FunctionEvaluation evaluator,
+      const void* aux, typename NumericSolver::Solver<T>::BracketTest test,
+      typename NumericSolver::Solver<T>::HoneResult hone, bool vertical,
+      NumericSolver::Solver<double>::FunctionEvaluation fDouble = nullptr,
+      typename NumericSolver::Solver<T>::BracketTest testForCenterOfInterval =
+          nullptr);
+  bool fitWithSolverHelper(
+      T start, T end, bool* interrupted,
+      typename NumericSolver::Solver<T>::FunctionEvaluation evaluator,
+      const void* aux, typename NumericSolver::Solver<T>::BracketTest test,
+      typename NumericSolver::Solver<T>::HoneResult hone, bool vertical,
+      NumericSolver::Solver<double>::FunctionEvaluation fDouble);
   void privateFitPoint(Coordinate2D<T> xy, bool flipped = false);
 
   /* m_interestingRange is edited by fitPointsOfInterest and fitIntersections,

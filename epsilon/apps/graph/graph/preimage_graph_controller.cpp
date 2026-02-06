@@ -1,6 +1,7 @@
 #include "preimage_graph_controller.h"
 
 #include <omg/utf8_helper.h>
+#include <poincare/numeric_solver/expression_solver.h>
 #include <poincare/system_expression.h>
 
 #include "shared/global_store.h"
@@ -21,15 +22,18 @@ PreimageGraphController::PreimageGraphController(
 
 Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
     double start, double max, double, bool stretch) {
-  Solver<double> solver =
-      Poincare::Solver(start, max, Shared::GlobalContextAccessor::Context());
+  PreparedFunction f =
+      functionStore()->modelForRecord(m_record)->expressionApproximated();
+  SystemExpression imageExpr = SystemExpression::Builder<double>(m_image);
+
+  NumericSolver::IntersectionSolver solver = NumericSolver::IntersectionSolver(
+      start, max, imageExpr.tree(), f.tree(), true,
+      Shared::GlobalContextAccessor::Context());
   if (stretch) {
     solver.stretch();
   }
-  PreparedFunction f =
-      functionStore()->modelForRecord(m_record)->expressionApproximated();
-  return Solver<double>::SolutionToCoord(solver.nextIntersection(
-      SystemExpression::Builder<double>(m_image).tree(), f.tree()));
+
+  return NumericSolver::SolutionToCoord(solver.next());
 }
 
 }  // namespace Graph

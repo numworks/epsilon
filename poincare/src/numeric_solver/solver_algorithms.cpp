@@ -2,6 +2,8 @@
 
 #include <assert.h>
 
+using namespace Poincare::NumericSolver;
+
 namespace Poincare::Internal {
 
 Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(

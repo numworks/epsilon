@@ -15,14 +15,6 @@ class ExpressionSolver : public Solver<double> {
                    Solver<double>::BracketTest test,
                    Solver<double>::HoneResult hone);
 
-  // Specialized builders for common use cases
-  static ExpressionSolver BuildMinimumSolver(double xStart, double xEnd,
-                                             const Internal::Tree* e,
-                                             const SymbolContext& context);
-  static ExpressionSolver BuildMaximumSolver(double xStart, double xEnd,
-                                             const Internal::Tree* e,
-                                             const SymbolContext& context);
-
  protected:
   const Internal::Tree* getTree() const {
     return reinterpret_cast<const Internal::Tree*>(m_auxiliary);
@@ -31,7 +23,20 @@ class ExpressionSolver : public Solver<double> {
   const SymbolContext& m_context;
 };
 
-// Specific implementation for better root finding
+// Specific implementations for each interest
+
+class MinimumSolver : public ExpressionSolver {
+ public:
+  MinimumSolver(double xStart, double xEnd, const Internal::Tree* e,
+                const SymbolContext& context);
+};
+
+class MaximumSolver : public ExpressionSolver {
+ public:
+  MaximumSolver(double xStart, double xEnd, const Internal::Tree* e,
+                const SymbolContext& context);
+};
+
 class RootSolver : public ExpressionSolver {
  public:
   RootSolver(double xStart, double xEnd, const Internal::Tree* e,
@@ -67,7 +72,8 @@ class RootSolver : public ExpressionSolver {
   }
 
   static Solution<double> SolutionFromDetailedRoot(DetailedRoot root) {
-    return Solution<double>(root.x, 0., Interest::Root);
+    return std::isfinite(root.x) ? Solution<double>{root.x, 0., Interest::Root}
+                                 : Solution<double>{};
   }
 };
 
@@ -76,6 +82,9 @@ class IntersectionSolver : public RootSolver {
   IntersectionSolver(double xStart, double xEnd, const Internal::Tree* f,
                      const Internal::Tree* g, bool areAlongSameAxis,
                      const SymbolContext& context);
+  IntersectionSolver(double xStart, double xEnd, const Internal::Tree* f,
+                     const Internal::Tree* g, const SymbolContext& context)
+      : IntersectionSolver(xStart, xEnd, f, g, true, context) {}
 
   Solution<double> next() override;
 
@@ -87,7 +96,7 @@ class IntersectionSolver : public RootSolver {
 
 class DiscontinuitySolver : public ExpressionSolver {
  public:
-  DiscontinuitySolver(double xStart, double xEnd, Internal::Tree* e,
+  DiscontinuitySolver(double xStart, double xEnd, const Internal::Tree* e,
                       const SymbolContext& context);
 
  private:

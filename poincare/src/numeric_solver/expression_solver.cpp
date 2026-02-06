@@ -1,11 +1,11 @@
-#include <poincare/numeric_solver_jr/expression_solver.h>
+#include <poincare/numeric_solver/expression_solver.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/properties.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/numeric_solver/hone_functions.h>
 #include <poincare/src/numeric_solver/solver_tests.h>
-#include <poincare/src/numeric_solver_jr/hone_functions.h>
 
 using namespace Poincare::Internal;
 
@@ -29,28 +29,29 @@ ExpressionSolver::ExpressionSolver(double xStart, double xEnd, const Tree* e,
     return;
   }
 
-  /* TODO_PCJ: Either ensure expression is projected, or pass approximation
-   * context(ComplexFormat, AngleUnit) and replace defined symbols. */
   this->m_evaluator = [](double x, const void* aux) {
     const Tree* e = reinterpret_cast<const Tree*>(aux);
     return Approximation::To<double>(
-        e, x, Approximation::Parameters{.optimize = true});
+        e, x,
+        Approximation::Parameters{
+            .policy = {.optimize = true},
+            .expressionParameters = Approximation::Prepared{}});
   };
 }
 
-ExpressionSolver ExpressionSolver::BuildMinimumSolver(
-    double xStart, double xEnd, const Tree* e, const SymbolContext& context) {
-  return ExpressionSolver(xStart, xEnd, e, context,
-                          SolverTests<double>::MinimumInBracket,
-                          HoneFunctions::SafeBrentMinimum);
-}
+// ------- Minimum/MaximumSolver implementation -------
 
-ExpressionSolver ExpressionSolver::BuildMaximumSolver(
-    double xStart, double xEnd, const Tree* e, const SymbolContext& context) {
-  return ExpressionSolver(xStart, xEnd, e, context,
-                          SolverTests<double>::MaximumInBracket,
-                          HoneFunctions::SafeBrentMaximum);
-}
+MinimumSolver::MinimumSolver(double xStart, double xEnd, const Tree* e,
+                             const SymbolContext& context)
+    : ExpressionSolver(xStart, xEnd, e, context,
+                       SolverTests<double>::MinimumInBracket,
+                       HoneFunctions::SafeBrentMinimum) {}
+
+MaximumSolver::MaximumSolver(double xStart, double xEnd, const Tree* e,
+                             const SymbolContext& context)
+    : ExpressionSolver(xStart, xEnd, e, context,
+                       SolverTests<double>::MaximumInBracket,
+                       HoneFunctions::SafeBrentMaximum) {}
 
 // ------- RootSolver implementation -------
 
@@ -138,7 +139,9 @@ RootSolver::DetailedRoot RootSolver::nextRootSearchingInChild(
      * approximation. */
     double value = Approximation::To<double>(
         ebis, root.x,
-        Approximation::Parameters{.optimize = true});  // m_unknown
+        Approximation::Parameters{
+            .policy = {.optimize = true},
+            .expressionParameters = Approximation::Prepared{}});
     ebis->removeTree();
     if (std::fabs(value) < NullTolerance(root.x)) {
       return {.x = root.x, .nullDescendant = root.nullDescendant};
@@ -190,11 +193,13 @@ RootSolver::DetailedRoot RootSolver::nextRootInAddition() const {
         exponent = 0.5;
       } else if (e->type() == Type::Pow || e->type() == Type::PowReal) {
         exponent = Approximation::To<double>(
-            e->child(1), Approximation::Parameters{.optimize = true});
+            e->child(1),
+            Approximation::Parameters{.policy = {.optimize = true}});
       } else if (e->type() == Type::Root) {
         exponent =
             1. / Approximation::To<double>(
-                     e->child(1), Approximation::Parameters{.optimize = true});
+                     e->child(1),
+                     Approximation::Parameters{.policy = {.optimize = true}});
       }
       if (std::isnan(exponent)) {
         return false;
@@ -239,7 +244,8 @@ RootSolver::DetailedRoot RootSolver::nextRootInDependency() const {
     bool definedDeps = true;
     for (const Tree* childDep : depsListClone->children()) {
       double value = Approximation::To<double>(
-          childDep, root.x, Approximation::Parameters{.optimize = true});
+          childDep, root.x,
+          Approximation::Parameters{.policy = {.optimize = true}});
       if (std::isnan(value)) {
         definedDeps = false;
         break;
@@ -289,6 +295,8 @@ IntersectionSolver::IntersectionSolver(double xStart, double xEnd,
     : RootSolver(xStart, xEnd,
                  FunctionDifferenceForIntersection(f, g, areAlongSameAxis),
                  context),
+      m_f(f),
+      m_g(g),
       m_alongSameAxis(areAlongSameAxis) {}
 
 Solution<double> IntersectionSolver::next() {
@@ -300,11 +308,16 @@ Solution<double> IntersectionSolver::next() {
 
   double x = root.x;
   double y = Approximation::To<double>(
-      m_f, x, Approximation::Parameters{.optimize = true});
+      m_f, x,
+      Approximation::Parameters{
+          .policy = {.optimize = true},
+          .expressionParameters = Approximation::Prepared{}});
   // The secondImage is a "y" if areAlongSameAxis=true, or an "x" otherwise
-  double secondImage =
-      Approximation::To<double>(m_g, m_alongSameAxis ? x : y,
-                                Approximation::Parameters{.optimize = true});
+  double secondImage = Approximation::To<double>(
+      m_g, m_alongSameAxis ? x : y,
+      Approximation::Parameters{
+          .policy = {.optimize = true},
+          .expressionParameters = Approximation::Prepared{}});
   if (!std::isfinite(y) || !std::isfinite(secondImage)) {
     /* Sometimes, with expressions m_f and m_g that take extreme values like x^x
      * or undef expressions in specific points like x^2/x, the root of the
@@ -330,13 +343,17 @@ Solution<double> IntersectionSolver::next() {
   /* In the areAlongSameAxis case, take the middle of the two approximated "y"
    * values */
   return m_alongSameAxis
-             ? Solution(x, (y + secondImage) / 2., Interest::Intersection)
-             : Solution(x, y, Interest::Intersection);
+             ? Solution<double>{.x = x,
+                                .y = (y + secondImage) / 2.,
+                                .interest = Interest::Intersection}
+             : Solution<double>{
+                   .x = x, .y = y, .interest = Interest::Intersection};
 }
 
 // ------- DiscontinuitySolver implementation -------
 
-DiscontinuitySolver::DiscontinuitySolver(double xStart, double xEnd, Tree* e,
+DiscontinuitySolver::DiscontinuitySolver(double xStart, double xEnd,
+                                         const Tree* e,
                                          const SymbolContext& context)
     : ExpressionSolver(xStart, xEnd, e, context,
                        SolverTests<double>::DiscontinuityInBracket,

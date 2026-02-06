@@ -2,6 +2,7 @@
 
 #include <poincare/equation_solver/equation_solver.h>
 #include <poincare/helpers/polynomial.h>
+#include <poincare/numeric_solver/expression_solver.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/numeric_solver/zoom.h>
 #include <poincare/preferences.h>
@@ -26,6 +27,8 @@
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/numeric_solver/roots.h>
 #include <poincare/symbol_context.h>
+
+using namespace Poincare::NumericSolver;
 
 namespace Poincare::EquationSolver {
 
@@ -997,13 +1000,14 @@ SolverResult ApproximateSolve(
   // Step 3. Compute the solutions
   assert(range.isValid());
   solutionMetadata.solvingRange = range;
-  Solver<double> solver = Poincare::Solver<double>(range.min(), range.max());
+  RootSolver solver = RootSolver(range.min(), range.max(), preparedEquation,
+                                 EmptySymbolContext{});
   solver.stretch();
 
   TreeRef resultList = List::PushEmpty();
 
   for (size_t i = 0; i <= maxNumberOfSolutions; i++) {
-    double root = solver.nextRoot(preparedEquation).x;
+    double root = solver.next().x;
     if (root < range.min()) {
       i--;
       continue;

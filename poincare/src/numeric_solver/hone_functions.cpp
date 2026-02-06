@@ -83,14 +83,14 @@ Coordinate2D<double> HoneFunctions::SafeBrentMaximum(
     const void* aux, double xMin, double xMax, Interest interest,
     double xPrecision) {
   const void* pack[] = {&f, aux};
-  typename Solver<double>::FunctionEvaluation minusF = [](double x,
-                                                          const void* aux) {
-    const void* const* param = reinterpret_cast<const void* const*>(aux);
-    const typename Solver<double>::FunctionEvaluation* f =
-        reinterpret_cast<const typename Solver<double>::FunctionEvaluation*>(
-            param[0]);
-    return -(*f)(x, param[1]);
-  };
+  typename NumericSolver::Solver<double>::FunctionEvaluation minusF =
+      [](double x, const void* aux) {
+        const void* const* param = reinterpret_cast<const void* const*>(aux);
+        const typename NumericSolver::Solver<double>::FunctionEvaluation* f =
+            reinterpret_cast<const typename NumericSolver::Solver<
+                double>::FunctionEvaluation*>(param[0]);
+        return -(*f)(x, param[1]);
+      };
   Coordinate2D<double> res =
       SafeBrentMinimum(minusF, pack, xMin, xMax, interest, xPrecision);
   return Coordinate2D<double>(res.x(), -res.y());
@@ -113,7 +113,8 @@ Coordinate2D<double> HoneFunctions::CompositeBrentForRoot(
     res = SafeBrentMaximum(f, aux, xMin, xMax, interest, xPrecision);
   }
   return std::isfinite(res.x()) &&
-                 std::fabs(res.y()) < Solver<double>::NullTolerance(res.x())
+                 std::fabs(res.y()) <
+                     NumericSolver::Solver<double>::NullTolerance(res.x())
              ? res
              : Coordinate2D<double>();
 }

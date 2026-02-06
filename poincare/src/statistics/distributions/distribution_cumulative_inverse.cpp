@@ -8,6 +8,7 @@
 
 namespace Poincare::Distribution {
 using namespace Internal;
+using namespace NumericSolver;
 
 template <typename T>
 void findBoundsForBinarySearch(

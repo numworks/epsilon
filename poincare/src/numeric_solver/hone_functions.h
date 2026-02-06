@@ -1,6 +1,6 @@
 #pragma once
 
-#include <poincare/numeric_solver_jr/solver.h>
+#include <poincare/numeric_solver/solver.h>
 
 namespace Poincare::Internal {
 

@@ -52,7 +52,7 @@ jobs:
   android:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' && fromJSON(github.event.inputs.android))) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.android))) }}
     steps:
       - uses: actions/checkout@v4
       - name: Build container and define DOCKER_RUN
@@ -68,7 +68,7 @@ jobs:
   device:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' && fromJSON(github.event.inputs.device))) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.device))) }}
     strategy:
       matrix:
         model: [n0110, n0115, n0120]
@@ -103,7 +103,7 @@ jobs:
   windows:
     timeout-minutes: 15
     runs-on: windows-latest
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' && fromJSON(github.event.inputs.windows))) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.windows))) }}
     defaults:
       run:
         shell: msys2 {0}
@@ -163,7 +163,7 @@ jobs:
   web-tests:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' && fromJSON(github.event.inputs.web))) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.web))) }}
     env:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
@@ -213,7 +213,7 @@ jobs:
   macos:
     timeout-minutes: 15
     runs-on: macOS-latest
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' && fromJSON(github.event.inputs.macos))) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.macos))) }}
     env:
       MAKEFLAGS: '-j2'
     steps:
@@ -229,7 +229,7 @@ jobs:
   ios:
     timeout-minutes: 15
     runs-on: macOS-latest
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'worflow_dispatch' && fromJSON(github.event.inputs.ios))) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.ios))) }}
     env:
       MAKEFLAGS: '-j2'
     steps:

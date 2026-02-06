@@ -4,27 +4,29 @@
 
 namespace Poincare::Internal {
 
-template <typename T>
 class HoneFunctions {
  public:
   // Hone methods
-  static Coordinate2D<T> SafeBrentMinimum(
-      typename NumericSolver::Solver<T>::FunctionEvaluation f, const void* aux,
-      T xMin, T xMax, Interest interest, T xPrecision);
+  static Coordinate2D<double> SafeBrentMinimum(
+      typename NumericSolver::Solver<double>::FunctionEvaluation f,
+      const void* aux, double xMin, double xMax, Interest interest,
+      double xPrecision);
 
-  static Coordinate2D<T> SafeBrentMaximum(
-      typename NumericSolver::Solver<T>::FunctionEvaluation f, const void* aux,
-      T xMin, T xMax, Interest interest, T xPrecision);
+  static Coordinate2D<double> SafeBrentMaximum(
+      typename NumericSolver::Solver<double>::FunctionEvaluation f,
+      const void* aux, double xMin, double xMax, Interest interest,
+      double xPrecision);
 
-  static Coordinate2D<T> CompositeBrentForRoot(
-      typename NumericSolver::Solver<T>::FunctionEvaluation f, const void* aux,
-      T xMin, T xMax, Interest interest, T xPrecision);
+  static Coordinate2D<double> CompositeBrentForRoot(
+      typename NumericSolver::Solver<double>::FunctionEvaluation f,
+      const void* aux, double xMin, double xMax, Interest interest,
+      double xPrecision);
 
-  static Coordinate2D<T> DummyHone(
-      typename NumericSolver::Solver<T>::FunctionEvaluation, const void*, T, T,
-      Interest, T) {
+  static Coordinate2D<double> DummyHone(
+      typename NumericSolver::Solver<double>::FunctionEvaluation, const void*,
+      double, double, Interest, double) {
     assert(false);
-    return Coordinate2D<T>();
+    return Coordinate2D<double>();
   }
 };
 

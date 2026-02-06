@@ -8,18 +8,18 @@
 /* TODO_PCJ: Change signatures to preparedFunctions instead of Trees. */
 namespace Poincare::NumericSolver {
 
-template <typename T>
-class ExpressionSolver : public Solver<T> {
+class ExpressionSolver : public Solver<double> {
  public:
-  ExpressionSolver(T xStart, T xEnd, const Internal::Tree* e,
-                   const SymbolContext& context, Solver<T>::BracketTest test,
-                   Solver<T>::HoneResult hone);
+  ExpressionSolver(double xStart, double xEnd, const Internal::Tree* e,
+                   const SymbolContext& context,
+                   Solver<double>::BracketTest test,
+                   Solver<double>::HoneResult hone);
 
   // Specialized builders for common use cases
-  static ExpressionSolver BuildMinimumSolver(T xStart, T xEnd,
+  static ExpressionSolver BuildMinimumSolver(double xStart, double xEnd,
                                              const Internal::Tree* e,
                                              const SymbolContext& context);
-  static ExpressionSolver BuildMaximumSolver(T xStart, T xEnd,
+  static ExpressionSolver BuildMaximumSolver(double xStart, double xEnd,
                                              const Internal::Tree* e,
                                              const SymbolContext& context);
 

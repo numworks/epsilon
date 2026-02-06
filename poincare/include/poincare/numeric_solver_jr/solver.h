@@ -26,11 +26,6 @@ class Solver {
          BracketTest bracketTest, HoneResult honeFunction,
          DiscontinuityEvaluation discontinuityTest);
 
-  // Specialized builders for common use cases
-  static Solver BuildRootSolver(
-      T xStart, T xEnd, FunctionEvaluation f, const void* aux,
-      DiscontinuityEvaluation discontinuityTest = nullptr);
-
   enum class GrowthSpeed : bool { Fast, Precise };
 
   constexpr static T k_relativePrecision = OMG::Float::Epsilon<T>();
@@ -115,5 +110,12 @@ class Solver {
   DiscontinuityEvaluation m_discontinuityTest;
   const void* m_auxiliary;
 };
+
+// Specialized builders for common use cases
+
+Solver<double> BuildRootSolver(
+    double xStart, double xEnd, Solver<double>::FunctionEvaluation f,
+    const void* aux,
+    Solver<double>::DiscontinuityEvaluation discontinuityTest = nullptr);
 
 }  // namespace Poincare::NumericSolver

@@ -22,12 +22,13 @@ Solver<T>::Solver(T xStart, T xEnd, FunctionEvaluation f, const void* aux,
   reset(xStart, xEnd, searchStep);
 };
 
-template <typename T>
-Solver<T> Solver<T>::BuildRootSolver(
-    T xStart, T xEnd, FunctionEvaluation f, const void* aux,
-    DiscontinuityEvaluation discontinuityTest) {
-  return Solver(xStart, xEnd, f, aux, SolverTests<T>::EvenOrOddRootInBracket,
-                HoneFunctions<T>::CompositeBrentForRoot, discontinuityTest);
+Solver<double> BuildRootSolver(
+    double xStart, double xEnd, Solver<double>::FunctionEvaluation f,
+    const void* aux,
+    Solver<double>::DiscontinuityEvaluation discontinuityTest) {
+  return Solver(xStart, xEnd, f, aux,
+                SolverTests<double>::EvenOrOddRootInBracket,
+                HoneFunctions::CompositeBrentForRoot, discontinuityTest);
 }
 
 template <typename T>

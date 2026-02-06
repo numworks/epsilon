@@ -1,9 +1,6 @@
 name: Epsilon
 
 on:
-  # Running CI on every push would be better, but ci performances are limited for now.
-  # push:
-  #   branches: [ master, 'version-*' ]
   push:
     branches: master
     paths-ignore:

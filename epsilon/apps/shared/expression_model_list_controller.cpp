@@ -51,13 +51,9 @@ bool ExpressionModelListController::isAddElementRow(int row) const {
 }
 
 bool ExpressionModelListController::isNewModelRow(int row) const {
-  if (!isAddingNewModel()) {
-    return false;
-  }
-  int thisNumberOfRows = numberOfRows();
-  bool thishasAddElementRow = hasAddElementRow();
-  return (row == thisNumberOfRows - 2 && thishasAddElementRow) ||
-         (row == thisNumberOfRows - 1 && !thishasAddElementRow);
+  assert(!isAddingNewModel() ||
+         (m_editedCellIndex == numberOfRows() - 1 - hasAddElementRow()));
+  return isAddingNewModel() && row == m_editedCellIndex;
 }
 
 int ExpressionModelListController::typeAtRow(int row) const {
@@ -323,8 +319,8 @@ void ExpressionModelListController::layoutFieldDidAbortEditing(
 
 Ion::Storage::Record ExpressionModelListController::recordAtRow(
     int row, int* relativeRow) const {
-  assert(!isAddingNewModel() || row != m_editedCellIndex ||
-         !isAddElementRow(row));
+  assert(!isNewModelRow(row));
+  assert(!isAddElementRow(row));
   return modelStore()->recordAtIndex(modelIndexForRow(row, relativeRow));
 }
 

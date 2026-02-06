@@ -252,11 +252,10 @@ void ListController::addNewModelAction() {
                                          Metric::PopUpMarginsNoBottom);
 }
 
-bool ListController::removeModelRow(Ion::Storage::Record record) {
+void ListController::removeModelRow(Ion::Storage::Record record) {
   ExpressionModelListController::removeModelRow(record);
   reloadButtonMessage();
   reloadBrace();
-  return true;
 }
 
 void ListController::reloadBrace() {

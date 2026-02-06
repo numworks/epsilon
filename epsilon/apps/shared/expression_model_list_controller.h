@@ -72,7 +72,7 @@ class ExpressionModelListController
   virtual void didChangeModelsList() {
     selectableListView()->resetSizeAndOffsetMemoization();
   }
-  virtual bool removeModelRow(Ion::Storage::Record record);
+  virtual void removeModelRow(Ion::Storage::Record record);
 
   bool handleEventOnExpression(Ion::Events::Event event,
                                bool inTemplateMenu = false);

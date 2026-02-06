@@ -120,12 +120,11 @@ bool ExpressionModelListController::handleEventOnExpression(
   if (event == Ion::Events::Backspace && !isAddElementRow(selectedRow())) {
     assert(!layoutField()->isEditing());
     Ion::Storage::Record record = selectedRecord();
-    if (removeModelRow(record)) {
-      int newSelectedRow =
-          selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
-      selectRow(newSelectedRow);
-      selectableListView()->reloadData();
-    }
+    removeModelRow(record);
+    int newSelectedRow =
+        selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
+    selectRow(newSelectedRow);
+    selectableListView()->reloadData();
     return true;
   }
   char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
@@ -209,11 +208,10 @@ Layout ExpressionModelListController::getLayoutForSelectedRecord() const {
   return modelStore()->modelForRecord(record)->layout();
 }
 
-bool ExpressionModelListController::removeModelRow(
+void ExpressionModelListController::removeModelRow(
     Ion::Storage::Record record) {
   modelStore()->removeModel(record);
   didChangeModelsList();
-  return true;
 }
 
 int ExpressionModelListController::modelIndexForRow(int row,

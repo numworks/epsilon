@@ -240,7 +240,7 @@ Shared::ListParameterController* ListController::parameterController() {
   return m_functionParameterController;
 }
 
-bool ListController::removeModelRow(Ion::Storage::Record record) {
+void ListController::removeModelRow(Ion::Storage::Record record) {
   // Remove parametric components too
   int relativeRow;
   Ion::Storage::Record r = selectedRecord(&relativeRow);
@@ -249,17 +249,16 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
   OMG::ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(r);
   int derivationOrder =
       derivationOrderFromRelativeRow(f.pointer(), relativeRow);
-  if (derivationOrder > 0) {
-    if (derivationOrder == 1) {
-      f->setDisplayPlotFirstDerivative(false);
-    } else {
-      assert(derivationOrder == 2);
-      f->setDisplayPlotSecondDerivative(false);
-    }
-    didChangeModelsList();
-    return true;
+  if (derivationOrder <= 0) {
+    return FunctionListController::removeModelRow(record);
   }
-  return FunctionListController::removeModelRow(record);
+  if (derivationOrder == 1) {
+    f->setDisplayPlotFirstDerivative(false);
+  } else {
+    assert(derivationOrder == 2);
+    f->setDisplayPlotSecondDerivative(false);
+  }
+  didChangeModelsList();
 }
 
 int ListController::maxNumberOfDisplayableRows() const {

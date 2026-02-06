@@ -102,7 +102,8 @@ void ListController::layoutFieldDidAbortEditing(LayoutField* layoutField) {
 
   // Remove sequence if main expression is empty (after insertion from template)
   Shared::Sequence* sequence = modelStore()->modelForRecord(selectedRecord());
-  if (sequence->layout().isEmpty() && removeModelRow(selectedRecord())) {
+  if (sequence->layout().isEmpty()) {
+    removeModelRow(selectedRecord());
     int newSelectedRow =
         selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
     selectRow(newSelectedRow);
@@ -205,11 +206,10 @@ void ListController::addNewModelAction() {
                                          Metric::PopUpMarginsNoBottom);
 }
 
-bool ListController::removeModelRow(Ion::Storage::Record record) {
+void ListController::removeModelRow(Ion::Storage::Record record) {
   Shared::FunctionListController::removeModelRow(record);
   // Invalidate the sequences context cache
   App::app()->localContext().resetCache();
-  return true;
 }
 
 SequenceStore* ListController::modelStore() const {

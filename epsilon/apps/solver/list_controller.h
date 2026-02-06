@@ -62,7 +62,7 @@ class ListController : public Shared::ExpressionModelListController,
   }
   void reloadButtonMessage();
   void addNewModelAction() override;
-  bool removeModelRow(Ion::Storage::Record record) override;
+  void removeModelRow(Ion::Storage::Record record) override;
   void reloadBrace();
   EquationStore* modelStore() const override;
   Escher::StackViewController* stackController() const;

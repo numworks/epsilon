@@ -62,7 +62,7 @@ class ListController : public Shared::FunctionListController {
   void addNewModelAction() override;
   bool setSelectedRecordContent(Poincare::Layout layout) override;
   Poincare::Layout getLayoutForSelectedRecord() const override;
-  bool removeModelRow(Ion::Storage::Record record) override;
+  void removeModelRow(Ion::Storage::Record record) override;
   Shared::SequenceStore* modelStore() const override;
   Escher::LayoutField* layoutField() override {
     return m_editableCell.expressionCell()->layoutField();

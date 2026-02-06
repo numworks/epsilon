@@ -19,7 +19,6 @@ jobs:
   poincarejs:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    if: ${{ (github.event_name == 'pull_request' || fromJSON(github.event.inputs.poincarejs)) }}
     env:
       MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"
     steps:
@@ -39,9 +38,3 @@ jobs:
         run: $DOCKER_RUN "make -j8 -C poincare/poincarejs PLATFORM=foxglove ASSERTIONS=0 VERBOSE=0 poincare.js.run"
       - name: Try building the whole zipped file
         run: $DOCKER_RUN "make -C poincare/poincarejs VERBOSE=0 poincarejs.zip"
-      - uses: ./.github/actions/upload-artifact
-        with:
-          name: poincarejs.zip
-          # TODO move poincarejs output path inside poincare
-          path: poincare/poincarejs/output/release/foxglove/poincarejs.zip
-          token: ${{ secrets.ARTEMIS_TOKEN }}

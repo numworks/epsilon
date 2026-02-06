@@ -27,7 +27,7 @@ class ExpressionModel {
                           CodePoint symbol = 0) const;
 
   // Setters
-  Ion::Storage::Record::ErrorStatus setContent(
+  virtual Ion::Storage::Record::ErrorStatus setContent(
       Ion::Storage::Record* record, const Poincare::Layout& l,
       const Poincare::SymbolContext& symbolContext, CodePoint symbol = 0);
   Ion::Storage::Record::ErrorStatus setExpressionContent(
@@ -42,10 +42,10 @@ class ExpressionModel {
 
  protected:
   // Setters helper
-  virtual Poincare::UserExpression buildExpressionFromLayout(
+  static Poincare::UserExpression BuildExpressionFromLayout(
       Poincare::Layout l, CodePoint symbol = 0,
       const Poincare::SymbolContext& symbolContext =
-          Poincare::EmptySymbolContext{}) const;
+          Poincare::EmptySymbolContext{});
   static Poincare::UserExpression ReplaceSymbolWithUnknown(
       Poincare::UserExpression e, CodePoint symbol,
       bool onlySecondTerm = false);

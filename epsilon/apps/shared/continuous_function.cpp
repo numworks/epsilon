@@ -1031,9 +1031,15 @@ CodePoint ContinuousFunction::Model::CodePointForSymbol(
   return k_parametricSymbol;
 }
 
-Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
-    Poincare::Layout l, CodePoint symbol,
-    const SymbolContext& symbolContext) const {
+Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::setContent(
+    Ion::Storage::Record* record, const Layout& l,
+    const SymbolContext& symbolContext, CodePoint symbol) {
+  UserExpression e = BuildFunctionFromLayout(l, symbol, symbolContext);
+  return setExpressionContent(record, e);
+}
+
+Poincare::UserExpression ContinuousFunction::Model::BuildFunctionFromLayout(
+    Poincare::Layout l, CodePoint symbol, const SymbolContext& symbolContext) {
   /* The symbol parameter is discarded in this implementation. Either there is a
    * valid named left expression and the symbol will be extracted, either the
    * symbol should be the default symbol used in unnamed expressions. */
@@ -1067,7 +1073,7 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
     }
     // Fallback on normal parsing (replace symbol with unknown)
     expressionToStore =
-        ExpressionModel::buildExpressionFromLayout(l, symbol, symbolContext);
+        ExpressionModel::BuildExpressionFromLayout(l, symbol, symbolContext);
   }
 
   return expressionToStore;

@@ -165,7 +165,7 @@ Layout ExpressionModel::layout(const Storage::Record* record,
 Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(
     Ion::Storage::Record* record, const Layout& l,
     const SymbolContext& symbolContext, CodePoint symbol) {
-  UserExpression e = buildExpressionFromLayout(l, symbol, symbolContext);
+  UserExpression e = BuildExpressionFromLayout(l, symbol, symbolContext);
   return setExpressionContent(record, e);
 }
 
@@ -232,9 +232,9 @@ void ExpressionModel::tidyDownstreamPoolFrom(
   }
 }
 
-Poincare::UserExpression ExpressionModel::buildExpressionFromLayout(
+Poincare::UserExpression ExpressionModel::BuildExpressionFromLayout(
     Poincare::Layout l, CodePoint symbol,
-    const Poincare::SymbolContext& symbolContext) const {
+    const Poincare::SymbolContext& symbolContext) {
   if (l.isUninitialized() || l.isEmpty()) {
     return UserExpression();
   }

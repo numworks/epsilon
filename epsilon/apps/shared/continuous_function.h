@@ -401,11 +401,11 @@ class ContinuousFunction : public Function {
     // Rename the record if needed. Record pointer might get corrupted.
     Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(
         Ion::Storage::Record* record, bool isNewRecordCreation) const;
-    // Build the expression from layout, handling f(x)=... cartesian equations
-    Poincare::UserExpression buildExpressionFromLayout(
-        Poincare::Layout l, CodePoint symbol = 0,
-        const Poincare::SymbolContext& symbolContext =
-            Poincare::EmptySymbolContext{}) const override;
+    // Set the record content using BuildFunctionFromLayout
+    Ion::Storage::Record::ErrorStatus setContent(
+        Ion::Storage::Record* record, const Poincare::Layout& l,
+        const Poincare::SymbolContext& symbolContext,
+        CodePoint symbol = 0) override;
     // Tidy the model
     void tidyDownstreamPoolFrom(
         const Poincare::PoolObject* treePoolCursor) const override;
@@ -420,6 +420,11 @@ class ContinuousFunction : public Function {
 
    private:
     static CodePoint CodePointForSymbol(const Poincare::UserExpression& symbol);
+    // Build the expression from layout, handling f(x)=... cartesian equations
+    static Poincare::UserExpression BuildFunctionFromLayout(
+        Poincare::Layout l, CodePoint symbol = 0,
+        const Poincare::SymbolContext& symbolContext =
+            Poincare::EmptySymbolContext{});
 
     // Rename record to a hidden record name
     static Ion::Storage::Record::ErrorStatus RenameRecordToHidden(

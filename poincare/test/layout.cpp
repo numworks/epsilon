@@ -101,6 +101,7 @@ QUIZ_CASE(pcj_expression_to_layout) {
                                KParenthesesL("π+1"_l) ^ "log"_l ^
                                    KSubscriptL("3"_l) ^ KParenthesesL("7"_l));
 
+  // Tests the layout of the NL logarithm
   Poincare::MutablePreferences::s_instance->m_logarithmBasePosition =
       Poincare::Preferences::LogarithmBasePosition::TopLeft;
   assert(Poincare::SharedPreferences->logarithmBasePosition() ==

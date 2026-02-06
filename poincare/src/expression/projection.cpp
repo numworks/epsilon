@@ -295,11 +295,18 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
                    KDepList(KPiecewise(0_e, KInferiorEqual(KAbs(KA), 1_e),
                                        KNonReal))));
 #else
-      // TODO fixme
+      /* We cannot use the RealPos restriction in epsilon as well since we want
+       * to return nonreal and not undef. */
       // acos(A) -> atrig(A, 0) if -1 <= A <= 1
-      PatternMatching::MatchReplace(e, KACos(KA), KATrig(KA, 0_e)) ||
+      PatternMatching::MatchReplace(
+          e, KACos(KA),
+          KDep(KATrig(KA, 0_e),
+               KDepList(KRealPos(KAdd(KMult(-1_e, KAbs(KA)), 1_e))))) ||
           // asin(A) -> atrig(A, 1) if -1 <= A <= 1
-          PatternMatching::MatchReplace(e, KASin(KA), KATrig(KA, 1_e));
+          PatternMatching::MatchReplace(
+              e, KASin(KA),
+              KDep(KATrig(KA, 1_e),
+                   KDepList(KRealPos(KAdd(KMult(-1_e, KAbs(KA)), 1_e)))));
 #endif
     } else {
       // acos(A) -> atrig(A, 0)

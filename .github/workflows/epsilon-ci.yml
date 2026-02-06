@@ -8,14 +8,12 @@ on:
     branches: master
     paths-ignore:
       - '**/*.md'
-      - 'poincare/doc/**'
       - 'epsilon/tests/**'
       - '**/scandium/**'
       - 'epsilon/external_apps/**'
   pull_request:
     paths-ignore:
       - '**/*.md'
-      - 'poincare/doc/**'
       - 'epsilon/tests/**'
       - '**/scandium/**'
       - 'epsilon/external_apps/**'

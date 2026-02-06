@@ -469,9 +469,13 @@ std::complex<T> BasicToComplex(const Tree* e, const Context* ctx) {
     case Type::Sub:
       return PrivateToComplexRecursive<T>(e->child(0), ctx) -
              PrivateToComplexRecursive<T>(e->child(1), ctx);
+    case Type::PowReal:
     case Type::Pow: {
-      return ApproximatePower<T>(
-          e, ctx, ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
+      ComplexFormat complexFormat =
+          e->isPowReal()
+              ? ComplexFormat::Real
+              : (ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
+      return ApproximatePower<T>(e, ctx, complexFormat);
     }
     case Type::GCD:
     case Type::LCM: {
@@ -1095,9 +1099,6 @@ std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
   switch (e->type()) {
     case Type::Decimal:
       return children[0] * std::pow(static_cast<T>(10.0), -children[1]);
-    case Type::PowReal: {
-      return ApproximatePower<T>(e, ctx, ComplexFormat::Real);
-    }
     case Type::Sign:
     case Type::SignUser: {
       return std::fabs(children[0]) <= OMG::Float::Epsilon<T>() ? 0
@@ -1239,6 +1240,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     case Type::Div:
     case Type::Sub:
     case Type::Pow:
+    case Type::PowReal:
     case Type::GCD:
     case Type::LCM:
     case Type::Sqrt:

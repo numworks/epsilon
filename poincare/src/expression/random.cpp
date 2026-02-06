@@ -127,10 +127,8 @@ static uint32_t RandIntNoRepInRangeOfIndex(uint32_t range, uint32_t seed,
   OMG_UNREACHABLE;
 }
 
-double PrivateApproximateRandIntNoRep(const Tree* randIntNoRep,
-                                      Approximation::Parameters params,
-                                      const Approximation::Context* approxCtx,
-                                      uint8_t seed) {
+double Approximation::Approximator::privateApproximateRandIntNoRep(
+    const Tree* randIntNoRep, uint8_t seed) {
   assert(randIntNoRep->isRandIntNoRep());
   uint8_t lcgSeedIndex = seed;
   if (lcgSeedIndex <= 0 ||
@@ -139,70 +137,55 @@ double PrivateApproximateRandIntNoRep(const Tree* randIntNoRep,
     return NAN;
   }
   Random::Context::VariableType* lcgSeed =
-      &approxCtx->m_randomContext.m_list[lcgSeedIndex - 1];
+      &m_context.m_randomContext.m_list[lcgSeedIndex - 1];
   if (std::isnan(*lcgSeed)) {
     *lcgSeed = Ion::random();
     /* NOTE Storing a uint32_t without loss of precision is only possible in a
      * double not in a float */
     static_assert(std::is_same<double, Random::Context::VariableType>::value);
   }
-  double min = Approximation::Private::PrivateToFloat<double>(
-      randIntNoRep->child(0), params, approxCtx);
-  double max = Approximation::Private::PrivateToFloat<double>(
-      randIntNoRep->child(1), params, approxCtx);
+  double min = privateToFloat<double>(randIntNoRep->child(0));
+  double max = privateToFloat<double>(randIntNoRep->child(1));
   assert(min == std::round(min) && max == std::round(max));
 
   uint32_t range = static_cast<uint32_t>(max - min + 1);
 #if ASSERTIONS
-  double length = Approximation::Private::PrivateToFloat<double>(
-      randIntNoRep->child(2), params, approxCtx);
-  assert(0 <= approxCtx->m_listElement && approxCtx->m_listElement < length &&
+  double length = privateToFloat<double>(randIntNoRep->child(2));
+  assert(0 <= m_context.m_listElement && m_context.m_listElement < length &&
          length <= range);
 #endif
   return min + RandIntNoRepInRangeOfIndex(range,
                                           static_cast<uint32_t>(*lcgSeed),
-                                          approxCtx->m_listElement);
+                                          m_context.m_listElement);
 }
 
 template <typename T>
-T Approximation::Private::ApproximateRandom(const Tree* randomTree,
-                                            Parameters params,
-                                            const Context* approxCtx) {
+T Approximation::Approximator::approximateRandom(const Tree* randomTree) {
   uint8_t seed = Random::GetSeed(randomTree);
   bool validSeed = seed > 0 && seed <= Random::Context::k_maxNumberOfVariables;
-  if (validSeed && !approxCtx) {
-    return NAN;
-  }
+
   if (randomTree->isRandIntNoRep()) {
-    if (!validSeed) {
-      return NAN;
-    }
-    return PrivateApproximateRandIntNoRep(randomTree, params, approxCtx, seed);
+    return validSeed ? privateApproximateRandIntNoRep(randomTree, seed) : NAN;
   }
   if (!validSeed) {
-    return ApproximateRandomHelper<T>(randomTree, params, approxCtx);
+    return approximateRandomHelper<T>(randomTree);
   }
   Random::Context::VariableType* cachedValue =
-      &approxCtx->m_randomContext.m_list[seed - 1];
+      &m_context.m_randomContext.m_list[seed - 1];
   if (std::isnan(*cachedValue)) {
-    // Context is needed with RandIntNoRep
-    *cachedValue = ApproximateRandomHelper<T>(randomTree, params, approxCtx);
+    *cachedValue = approximateRandomHelper<T>(randomTree);
   }
   return *cachedValue;
 }
 
 template <typename T>
-T ApproximateRandomHelper(const Tree* randomTree,
-                          Approximation::Parameters params,
-                          const Approximation::Context* ctx) {
-  using Approximation::Private::PrivateToFloat;
+T Approximation::Approximator::approximateRandomHelper(const Tree* randomTree) {
   if (randomTree->isRandom()) {
     return Poincare::random<T>();
   }
   assert(randomTree->isRandInt());
-  return Random::RandomInt<T>(
-      PrivateToFloat<T>(randomTree->child(0), params, ctx),
-      PrivateToFloat<T>(randomTree->child(1), params, ctx));
+  return Random::RandomInt<T>(privateToFloat<T>(randomTree->child(0)),
+                              privateToFloat<T>(randomTree->child(1)));
 }
 
 /* We could adapt Poincare::Integer::RandomInt<T>() here instead, but in
@@ -228,17 +211,14 @@ T Random::RandomInt(T a, T b) {
   return std::floor(rand * range + a);
 }
 
-template float Approximation::Private::ApproximateRandom<float>(const Tree*,
-                                                                Parameters,
-                                                                const Context*);
-template double Approximation::Private::ApproximateRandom<double>(
-    const Tree*, Parameters, const Context*);
-template float ApproximateRandomHelper<float>(const Tree*,
-                                              Approximation::Parameters,
-                                              const Approximation::Context*);
-template double ApproximateRandomHelper<double>(const Tree*,
-                                                Approximation::Parameters,
-                                                const Approximation::Context*);
+template float Approximation::Approximator::approximateRandom<float>(
+    const Tree*);
+template double Approximation::Approximator::approximateRandom<double>(
+    const Tree*);
+template float Approximation::Approximator::approximateRandomHelper<float>(
+    const Tree*);
+template double Approximation::Approximator::approximateRandomHelper<double>(
+    const Tree*);
 template float Random::RandomInt<float>(float, float);
 template double Random::RandomInt<double>(double, double);
 }  // namespace Poincare::Internal

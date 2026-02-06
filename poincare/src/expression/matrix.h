@@ -49,15 +49,15 @@ struct Matrix {
   static Tree* Addition(
       const Tree* matrix1, const Tree* matrix2, bool approximate = false,
       Approximation::Parameters params = Approximation::Parameters{},
-      const Approximation::Context* ctx = nullptr);
+      const Approximation::Context& context = Approximation::Context{});
   static Tree* ScalarMultiplication(
       const Tree* scalar, const Tree* matrix, bool approximate = false,
       Approximation::Parameters params = Approximation::Parameters{},
-      const Approximation::Context* ctx = nullptr);
+      const Approximation::Context& context = Approximation::Context{});
   static Tree* Multiplication(
       const Tree* matrix1, const Tree* matrix2, bool approximate = false,
       Approximation::Parameters params = Approximation::Parameters{},
-      const Approximation::Context* ctx = nullptr);
+      const Approximation::Context& context = Approximation::Context{});
   static Tree* Transpose(const Tree* matrix);
   /* Return true if the matrix has been successfully canonized, false otherwise.
    * In the latter case, leave determinant uninitialized. A canonized matrix is
@@ -69,7 +69,7 @@ struct Matrix {
       Tree* matrix, bool reducedForm = true, Tree** determinant = nullptr,
       bool approximate = false,
       Approximation::Parameters params = Approximation::Parameters{},
-      const Approximation::Context* ctx = nullptr,
+      const Approximation::Context& context = Approximation::Context{},
       bool forceCanonization = false);
   constexpr static int k_failedToCanonizeRank = -1;
   /* Return k_failedToCanonizeRank if the matrix could not be canonized
@@ -79,11 +79,11 @@ struct Matrix {
   static Tree* Inverse(
       const Tree* matrix, bool approximate = false,
       Approximation::Parameters params = Approximation::Parameters{},
-      const Approximation::Context* ctx = nullptr);
+      const Approximation::Context& context = Approximation::Context{});
   static Tree* Power(
       const Tree* matrix, int exponent, bool approximate = false,
       Approximation::Parameters params = Approximation::Parameters{},
-      const Approximation::Context* ctx = nullptr);
+      const Approximation::Context& context = Approximation::Context{});
   static bool SystematicReduceMatrixOperation(Tree* e);
 
   // REFACTOR: the maximum size of a matrix could be reduced.

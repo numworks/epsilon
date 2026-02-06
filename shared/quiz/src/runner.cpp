@@ -14,6 +14,8 @@ namespace Quiz {
 OMG::GlobalBox<Runner> Runner::s_instance;
 
 void Runner::innerRun() {
+  assert(0 <= m_chunkId && m_chunkId < m_numberOfChunks);
+
   constexpr int k_bufferSize = 64;
   char buffer[k_bufferSize];
   TestsMetadata metadata = computeTestsMetadata();

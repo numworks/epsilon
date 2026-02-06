@@ -304,7 +304,7 @@ bool LayoutField::processTextEvent(const char* text,
     return true;
   }
 
-  if (UTF8Helper::StringGlyphLength(text) <= 1) {
+  if ((UTF8Helper::StringGlyphLength(text) <= 1) || linearMode()) {
     // Single keys are not parsed to avoid changing " to _"
     insertText(text, forceCursorRightOfText);
     return true;

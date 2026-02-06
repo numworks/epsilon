@@ -93,18 +93,20 @@ bool PrepareExpressionForApproximation(Tree* e) {
   assert(!Dependency::DeepRemoveUselessDependencies(e));
   bool changed = Tree::ApplyShallowTopDown(e, &ShallowExpandIntegrals);
   if (changed) {
-    /* ShallowExpandIntegrals can introduce dependencies. There should be no
-     * need to bubble them up, but some could be removed. */
+    /* ShallowExpandIntegrals can introduce dependencies. Some could be removed,
+     * but no situation with a need for a bubble up has been found yet.
+     * Call it if it becomes a need. */
     assert(!Dependency::DeepBubbleUpDependencies(e));
     Dependency::DeepRemoveUselessDependencies(e);
   }
   if (Tree::ApplyShallowTopDown(e, &ShallowPrepareForApproximation)) {
     changed = true;
     /* ShallowPrepareForApproximation is not expected to add further
-     * dependencies to prevent any expression size exponential growth. */
+     * dependencies to prevent exponential growth in expression size. */
     assert(!Dependency::DeepBubbleUpDependencies(e));
-    /* DeepRemoveUselessDependencies can't be used after
-     * ShallowPrepareForApproximation */
+    /* After ShallowPrepareForApproximation, some nodes have been un-projected,
+     * and ContainsSameDependency, called in DeepRemoveUselessDependencies,
+     * doesn't handle it. It is therefore skipped. */
   }
   return changed;
 }

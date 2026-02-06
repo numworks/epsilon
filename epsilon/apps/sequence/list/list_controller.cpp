@@ -100,7 +100,7 @@ void ListController::layoutFieldDidAbortEditing(LayoutField* layoutField) {
     return;
   }
 
-  // Remove sequence if main expression is empty
+  // Remove sequence if main expression is empty (after insertion from template)
   Shared::Sequence* sequence = modelStore()->modelForRecord(selectedRecord());
   if (sequence->layout().isEmpty() && removeModelRow(selectedRecord())) {
     int newSelectedRow =
@@ -119,7 +119,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
     SequenceHelper::RecursiveNotation notation;
     if (isAddingNewModel()) {
       sequenceName = SequenceStore::FirstAvailableName();
-      // New model are always explicit.
+      // New model is always explicit.
       recurrenceDepth = 0;
       notation = SequenceHelper::RecursiveNotation::Default;
     } else {

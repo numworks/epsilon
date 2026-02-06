@@ -1089,6 +1089,9 @@ std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
   assert(e->numberOfChildren() <= 2);
   OMG::StaticVector<T, 2> children;
   for (IndexedChild<const Tree*> childNode : e->indexedChildren()) {
+    /* Warning: All children are computed in advance here. Calling another
+     * approximation on [e] or its children may exponentially decrease
+     * performances in some instances. */
     std::complex<T> app = PrivateToComplexRecursive<T>(childNode, ctx);
     if (app.imag() != 0 || std::isnan(app.real())) {
       return NAN;

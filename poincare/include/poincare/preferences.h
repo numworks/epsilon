@@ -126,7 +126,10 @@ class Preferences {
     assert(preferences != nullptr);
     s_preferences = preferences;
   }
-  Interface* operator->() const { return s_preferences; }
+  Interface* operator->() const {
+    assert(s_preferences != nullptr);
+    return s_preferences;
+  }
 
   static const Preferences PreferencesInstance;
 

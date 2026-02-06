@@ -26,6 +26,10 @@ QUIZ_CASE(pcj_latex_parser_latex_to_layout) {
       KRackL(KFracL(KRackL(KSqrtL("4"_l)),
                     KRackL(KParenthesesL(
                         "3"_l ^ KSuperscriptL(KRackL(KConjL("5"_l))))))));
+  // List sequence
+  assert_latex_layouts_to("\\left\\{k\\right\\}_{k\\le 5}",
+                          KRackL(KListSequenceL("k"_l, "5"_l, "k"_l)));
+
   // Integral
   assert_latex_layouts_to(
       "\\int_{0}^{1}t^{3}\\ dt",

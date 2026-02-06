@@ -41,6 +41,13 @@ using LatexToken = const LatexTokenChild*;
 
 constexpr static LatexTokenChild parenthesisToken[] = {{"\\left(", 0},
                                                        {"\\right)", k_noChild}};
+
+constexpr static LatexTokenChild listSequenceToken[] = {
+    {"\\left\\{", ListSequence::k_functionIndex},
+    {"\\right\\}_{", ListSequence::k_variableIndex},
+    {"\\le", ListSequence::k_upperBoundIndex},
+    {"}", k_noChild}};
+
 constexpr static LatexTokenChild curlyBracesToken[] = {
     {"\\left\\{", 0}, {"\\right\\}", k_noChild}};
 
@@ -255,6 +262,12 @@ bool IsDerivativeLayout(const Tree* l, bool withoutOrder, bool withoutVariable);
 constexpr static LatexLayoutRule k_rules[] = {
     // Parenthesis
     ONE_CHILD_RULE(parenthesisToken, isParenthesesLayout, KParenthesesL),
+    // List Sequence
+    {listSequenceToken, std::size(listSequenceToken),
+     [](const Tree* l) -> bool { return l->isListSequenceLayout(); },
+     []() -> Tree* {
+       return KListSequenceL(KRackL(), KRackL(), KRackL())->cloneTree();
+     }},
     // Curly braces
     ONE_CHILD_RULE(curlyBracesToken, isCurlyBracesLayout, KCurlyBracesL),
     // Absolute value

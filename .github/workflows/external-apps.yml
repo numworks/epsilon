@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  c−cpp-apps:
+  c-cpp-apps:
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
     steps:
       - name: Install toolchain

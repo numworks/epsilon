@@ -7,6 +7,9 @@ poincare.js%:
 poincarejs%:
 	@ $(MAKE) -C poincarejs $@
 
+poincare_test%:
+	@ $(MAKE) -C test $@
+
 clean:
 	@ $(MAKE) -C cli $@
 	@ $(MAKE) -C poincarejs $@

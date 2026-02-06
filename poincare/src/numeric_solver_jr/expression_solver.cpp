@@ -48,4 +48,13 @@ ExpressionSolver ExpressionSolver::BuildMaximumSolver(
                           HoneFunctions::SafeBrentMaximum);
 }
 
+ExpressionSolver ExpressionSolver::BuildDiscontinuitySolver(
+    double xStart, double xEnd, Internal::Tree* e,
+    const SymbolContext& context) {
+  return ExpressionSolver(xStart, xEnd, e, context,
+                          SolverTests<double>::DiscontinuityInBracket,
+                          // Hone is handled differently
+                          HoneFunctions::DummyHone);
+}
+
 }  // namespace Poincare::NumericSolver

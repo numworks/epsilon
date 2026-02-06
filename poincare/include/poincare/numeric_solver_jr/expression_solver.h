@@ -22,6 +22,9 @@ class ExpressionSolver : public Solver<double> {
   static ExpressionSolver BuildMaximumSolver(double xStart, double xEnd,
                                              const Internal::Tree* e,
                                              const SymbolContext& context);
+  static ExpressionSolver BuildDiscontinuitySolver(
+      double xStart, double xEnd, Internal::Tree* e,
+      const SymbolContext& context);
 
  private:
   const SymbolContext& m_context;

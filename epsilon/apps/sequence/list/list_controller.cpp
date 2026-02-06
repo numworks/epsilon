@@ -91,22 +91,20 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
 /* MathLayoutFieldDelegate */
 
 void ListController::layoutFieldDidAbortEditing(LayoutField* layoutField) {
-  // Parent's layoutFieldDidAbortEditing will set m_isAddingNewModel to false
-  bool wasAddingNewModel = isAddingNewModel();
-  ExpressionModelListController::layoutFieldDidAbortEditing(layoutField);
-  if (wasAddingNewModel) {
-    return;
+  if (!isAddingNewModel()) {
+    /* Remove sequence if main expression is empty (after insertion from
+     * template) */
+    Shared::Sequence* sequence = modelStore()->modelForRecord(selectedRecord());
+    if (sequence->layout().isEmpty()) {
+      removeModelRow(selectedRecord());
+      int newSelectedRow =
+          selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
+      selectRow(newSelectedRow);
+    }
   }
 
-  // Remove sequence if main expression is empty (after insertion from template)
-  Shared::Sequence* sequence = modelStore()->modelForRecord(selectedRecord());
-  if (sequence->layout().isEmpty()) {
-    removeModelRow(selectedRecord());
-    int newSelectedRow =
-        selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
-    selectRow(newSelectedRow);
-    selectableListView()->reloadData();
-  }
+  // Parent's layoutFieldDidAbortEditing will set m_isAddingNewModel to false
+  ExpressionModelListController::layoutFieldDidAbortEditing(layoutField);
 }
 
 bool ListController::layoutFieldDidReceiveEvent(LayoutField* layoutField,

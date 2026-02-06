@@ -26,6 +26,11 @@ class Solver {
          BracketTest bracketTest, HoneResult honeFunction,
          DiscontinuityEvaluation discontinuityTest);
 
+  // Specialized builders for common use cases
+  static Solver BuildRootSolver(
+      T xStart, T xEnd, FunctionEvaluation f, const void* aux,
+      DiscontinuityEvaluation discontinuityTest = nullptr);
+
   enum class GrowthSpeed : bool { Fast, Precise };
 
   constexpr static T k_relativePrecision = OMG::Float::Epsilon<T>();
@@ -68,8 +73,6 @@ class Solver {
   }
 
   static T MagicRound(T x);
-
-  bool seemsConstantOnTheInterval(T xMin, T xMax) const;
 
   static T MinimalStep(T x, T slope = static_cast<T>(1.));
   bool validSolution(T x) const;

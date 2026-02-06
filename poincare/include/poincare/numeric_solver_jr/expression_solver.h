@@ -15,6 +15,14 @@ class ExpressionSolver : public Solver<T> {
                    const SymbolContext& context, Solver<T>::BracketTest test,
                    Solver<T>::HoneResult hone);
 
+  // Specialized builders for common use cases
+  static ExpressionSolver BuildMinimumSolver(T xStart, T xEnd,
+                                             const Internal::Tree* e,
+                                             const SymbolContext& context);
+  static ExpressionSolver BuildMaximumSolver(T xStart, T xEnd,
+                                             const Internal::Tree* e,
+                                             const SymbolContext& context);
+
  private:
   const SymbolContext& m_context;
 };

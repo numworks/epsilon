@@ -1,6 +1,8 @@
 #include <poincare/numeric_solver_jr/solver.h>
 #include <poincare/src/numeric_solver/solver_tests.h>
 
+#include "hone_functions.h"
+
 using namespace Poincare::Internal;
 
 namespace Poincare::NumericSolver {
@@ -19,6 +21,14 @@ Solver<T>::Solver(T xStart, T xEnd, FunctionEvaluation f, const void* aux,
   T searchStep = DefaultSearchStepForAmplitude(xEnd - xStart);
   reset(xStart, xEnd, searchStep);
 };
+
+template <typename T>
+Solver<T> Solver<T>::BuildRootSolver(
+    T xStart, T xEnd, FunctionEvaluation f, const void* aux,
+    DiscontinuityEvaluation discontinuityTest) {
+  return Solver(xStart, xEnd, f, aux, SolverTests<T>::EvenOrOddRootInBracket,
+                HoneFunctions<T>::CompositeBrentForRoot, discontinuityTest);
+}
 
 template <typename T>
 void Solver<T>::reset(T xStart, T xEnd, T searchStep) {
@@ -103,61 +113,6 @@ void Solver<T>::stretch() {
   T stepSign = m_xStart < m_xEnd ? static_cast<T>(1.) : static_cast<T>(-1.);
   m_xStart -= m_searchStep * stepSign;
   m_xEnd += m_searchStep * stepSign;
-}
-
-template <typename T>
-bool Solver<T>::seemsConstantOnTheInterval(T xMin, T xMax) const {
-  assert(xMin < xMax);
-  constexpr int k_numberOfSteps = 20;
-  T values[k_numberOfSteps];
-  int valuesCount[k_numberOfSteps];
-  int currentNumberOfValues = 0;
-  /* This loop computes 20 values of f on the interval and then checks the
-   * repartition of these values. If the function takes a few number of
-   * different values, it might mean that f is a constant function but
-   * approximation errors led to thinking there was a minimum in the interval.
-   * To measure this "repartition" of values, the entropy of the data is
-   * then calculated. */
-  for (int i = 0; i < k_numberOfSteps; i++) {
-    T currentValue = evaluateAt(xMin + (static_cast<T>(i) / k_numberOfSteps) *
-                                           (xMax - xMin));
-    bool addValueToArray = true;
-    for (int k = 0; k < currentNumberOfValues; k++) {
-      if (values[k] == currentValue) {
-        addValueToArray = false;
-        valuesCount[k]++;
-        break;
-      }
-    }
-    if (addValueToArray) {
-      values[currentNumberOfValues] = currentValue;
-      valuesCount[currentNumberOfValues] = 1;
-      currentNumberOfValues++;
-    }
-  }
-
-  /* Entropy = -sum(log(pk)*pk) where pk is the probability of taking the
-   * k-th value. */
-  T entropy = 0.;
-  for (int k = 0; k < currentNumberOfValues; k++) {
-    T probabilityOfValue =
-        static_cast<T>(valuesCount[k]) / (k_numberOfSteps + 1);
-    entropy += -std::log(probabilityOfValue) * probabilityOfValue;
-  }
-
-  // maxEntropy = ln(k_numberOfSteps), unfortunately std::log is not constexpr
-  constexpr T k_maxEntropy = static_cast<T>(2.995733);
-  // Check that k_maxEntropy ~ ln(k_numberOfSteps)
-  assert(std::log(static_cast<T>(k_numberOfSteps)) <= k_maxEntropy &&
-         std::log(static_cast<T>(k_numberOfSteps)) >
-             k_maxEntropy - static_cast<T>(1E-6));
-  assert(entropy >= 0 && entropy <= k_maxEntropy);
-  /* If the entropy of the data is lower than 0.5 * maxEntropy, it is assumed
-   * that the function is constant on [xMin, xMax].
-   * The value of 0.5 has been chosen because of good experimental results but
-   * could be tweaked. */
-  constexpr T k_entropyThreshold = static_cast<T>(0.5);
-  return entropy < k_maxEntropy * k_entropyThreshold;
 }
 
 template <typename T>

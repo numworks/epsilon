@@ -74,4 +74,18 @@ class RootSolver : public ExpressionSolver {
   }
 };
 
+class IntersectionSolver : public RootSolver {
+ public:
+  IntersectionSolver(double xStart, double xEnd, const Internal::Tree* f,
+                     const Internal::Tree* g, bool areAlongSameAxis,
+                     const SymbolContext& context);
+
+  Solution<double> next() override;
+
+ private:
+  const Internal::Tree* m_f;
+  const Internal::Tree* m_g;
+  bool m_alongSameAxis;
+};
+
 }  // namespace Poincare::NumericSolver

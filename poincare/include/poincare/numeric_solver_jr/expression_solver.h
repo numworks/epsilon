@@ -22,9 +22,6 @@ class ExpressionSolver : public Solver<double> {
   static ExpressionSolver BuildMaximumSolver(double xStart, double xEnd,
                                              const Internal::Tree* e,
                                              const SymbolContext& context);
-  static ExpressionSolver BuildDiscontinuitySolver(
-      double xStart, double xEnd, Internal::Tree* e,
-      const SymbolContext& context);
 
  protected:
   const Internal::Tree* getTree() const {
@@ -86,6 +83,17 @@ class IntersectionSolver : public RootSolver {
   const Internal::Tree* m_f;
   const Internal::Tree* m_g;
   bool m_alongSameAxis;
+};
+
+class DiscontinuitySolver : public ExpressionSolver {
+ public:
+  DiscontinuitySolver(double xStart, double xEnd, Internal::Tree* e,
+                      const SymbolContext& context);
+
+ private:
+  void honeAndRoundSolution(Coordinate2D<double> start,
+                            Coordinate2D<double> end,
+                            Interest interest) override;
 };
 
 }  // namespace Poincare::NumericSolver

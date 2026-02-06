@@ -52,14 +52,6 @@ ExpressionSolver ExpressionSolver::BuildMaximumSolver(
                           HoneFunctions::SafeBrentMaximum);
 }
 
-ExpressionSolver ExpressionSolver::BuildDiscontinuitySolver(
-    double xStart, double xEnd, Tree* e, const SymbolContext& context) {
-  return ExpressionSolver(xStart, xEnd, e, context,
-                          SolverTests<double>::DiscontinuityInBracket,
-                          // Hone is handled differently
-                          HoneFunctions::DummyHone);
-}
-
 // ------- RootSolver implementation -------
 
 RootSolver::RootSolver(double xStart, double xEnd, const Tree* e,
@@ -341,4 +333,91 @@ Solution<double> IntersectionSolver::next() {
              ? Solution(x, (y + secondImage) / 2., Interest::Intersection)
              : Solution(x, y, Interest::Intersection);
 }
+
+// ------- DiscontinuitySolver implementation -------
+
+DiscontinuitySolver::DiscontinuitySolver(double xStart, double xEnd, Tree* e,
+                                         const SymbolContext& context)
+    : ExpressionSolver(xStart, xEnd, e, context,
+                       SolverTests<double>::DiscontinuityInBracket,
+                       // Hone is handled differently
+                       HoneFunctions::DummyHone) {}
+
+void DiscontinuitySolver::honeAndRoundSolution(Coordinate2D<double> start,
+                                               Coordinate2D<double> end,
+                                               Interest interest) {
+  assert(interest == Interest::ReachedDiscontinuity);
+
+  assert(m_solutionQueue.size() == 0);
+  double precision = NullTolerance(start.x());
+
+  // Find the smallest interval containing the discontinuity
+  Coordinate2D<double> left = start;
+  Coordinate2D<double> middle;
+  Coordinate2D<double> right = end;
+  if (!findMinimalIntervalContainingDiscontinuity(&left, &middle, &right,
+                                                  precision)) {
+    return;
+  }
+
+  // Round middle to find the discontinuity abscissa
+  middle.setX(MagicRound(middle.x()));
+  assert(std::isfinite(middle.x()));
+  if (!validSolution(middle.x())) {
+    return;
+  }
+
+  // Update left and right to make sure there are different from middle
+  left.setX(middle.x() - precision / 2.);
+  right.setX(middle.x() + precision / 2.);
+  assert(middle.x() != left.x() && middle.x() != right.x());
+
+  // Update ordinates
+  middle.setY(evaluateAt(middle.x()));
+  // We round because we want the "limit"
+  left.setY(MagicRound(evaluateAt(left.x())));
+  right.setY(MagicRound(evaluateAt(right.x())));
+  bool leftIsDiscontinuous = isDiscontinuousBetween(left, middle);
+  bool rightIsDiscontinuous = isDiscontinuousBetween(middle, right);
+  if (!leftIsDiscontinuous && !rightIsDiscontinuous) {
+    // No discontinuity
+    return;
+  }
+  if (!leftIsDiscontinuous) {
+    // No left discontinuity
+    left = Coordinate2D<double>();
+  }
+  if (!rightIsDiscontinuous) {
+    // No right discontinuity
+    right = Coordinate2D<double>();
+  }
+  if (std::abs(right.y() - left.y()) < NullTolerance(middle.x())) {
+    // Left and right are the same
+    assert(leftIsDiscontinuous && rightIsDiscontinuous);
+    // Keep only 1 point of interest
+    left.setY(MagicRound((left.y() + right.y()) / 2.));
+    right = Coordinate2D<double>();
+  }
+
+  // There should be at least one finite value
+  assert(std::isfinite(left.y()) || std::isfinite(middle.y()) ||
+         std::isfinite(right.y()));
+
+  // Push solutions
+  if (std::isfinite(left.y())) {
+    left.setX(middle.x());
+    m_solutionQueue.push(
+        CoordToSolution(left, Interest::UnreachedDiscontinuity));
+  }
+  if (std::isfinite(middle.y())) {
+    m_solutionQueue.push(
+        CoordToSolution(middle, Interest::ReachedDiscontinuity));
+  }
+  if (std::isfinite(right.y())) {
+    right.setX(middle.x());
+    m_solutionQueue.push(
+        CoordToSolution(right, Interest::UnreachedDiscontinuity));
+  }
+}
+
 }  // namespace Poincare::NumericSolver

@@ -73,10 +73,9 @@ class Solver {
   bool validSolution(T x) const;
   T nextX(T x, T direction, T slope) const;
 
-  void honeAndRoundSolution(Coordinate2D<T> start, Coordinate2D<T> end,
-                            Interest interest);
-  void honeAndRoundDiscontinuitySolution(Coordinate2D<T> start,
-                                         Coordinate2D<T> end);
+  virtual void honeAndRoundSolution(Coordinate2D<T> start, Coordinate2D<T> end,
+                                    Interest interest);
+
   bool findMinimalIntervalContainingDiscontinuity(
       Coordinate2D<T>* start, Coordinate2D<T>* middle, Coordinate2D<T>* end,
       T minimalSizeOfInterval) const;

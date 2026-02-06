@@ -243,9 +243,8 @@ template <typename T>
 void Solver<T>::honeAndRoundSolution(Coordinate2D<T> start, Coordinate2D<T> end,
                                      Interest interest) {
   assert(m_solutionQueue.size() == 0);
-  if (interest == Interest::ReachedDiscontinuity) {
-    return honeAndRoundDiscontinuitySolution(start, end);
-  }
+  // Handled in DiscontinuitySolver
+  assert(interest != Interest::ReachedDiscontinuity);
 
   bool isDiscontinuous = isDiscontinuousBetween(start, end);
 
@@ -314,85 +313,6 @@ void Solver<T>::honeAndRoundSolution(Coordinate2D<T> start, Coordinate2D<T> end,
   assert(std::isfinite(xy.x()));
   if (std::isfinite(xy.y()) || interest == Interest::Discontinuity) {
     m_solutionQueue.push(CoordToSolution<T>(xy, interest));
-  }
-}
-
-template <typename T>
-void Solver<T>::honeAndRoundDiscontinuitySolution(Coordinate2D<T> start,
-                                                  Coordinate2D<T> end) {
-  // TODO: This behaviour is too specific and convoluted
-  assert(m_discontinuityTest == SolverTests<T>::IsDiscontinuousInBracket &&
-         m_bracketTest == SolverTests<T>::DiscontinuityInBracket);
-
-  assert(m_solutionQueue.size() == 0);
-  T precision = NullTolerance(start.x());
-
-  // Find the smallest interval containing the discontinuity
-  Coordinate2D<T> left = start;
-  Coordinate2D<T> middle;
-  Coordinate2D<T> right = end;
-  if (!findMinimalIntervalContainingDiscontinuity(&left, &middle, &right,
-                                                  precision)) {
-    return;
-  }
-
-  // Round middle to find the discontinuity abscissa
-  middle.setX(MagicRound(middle.x()));
-  assert(std::isfinite(middle.x()));
-  if (!validSolution(middle.x())) {
-    return;
-  }
-
-  // Update left and right to make sure there are different from middle
-  left.setX(middle.x() - precision / 2.);
-  right.setX(middle.x() + precision / 2.);
-  assert(middle.x() != left.x() && middle.x() != right.x());
-
-  // Update ordinates
-  middle.setY(evaluateAt(middle.x()));
-  // We round because we want the "limit"
-  left.setY(MagicRound(evaluateAt(left.x())));
-  right.setY(MagicRound(evaluateAt(right.x())));
-  bool leftIsDiscontinuous = isDiscontinuousBetween(left, middle);
-  bool rightIsDiscontinuous = isDiscontinuousBetween(middle, right);
-  if (!leftIsDiscontinuous && !rightIsDiscontinuous) {
-    // No discontinuity
-    return;
-  }
-  if (!leftIsDiscontinuous) {
-    // No left discontinuity
-    left = Coordinate2D<T>();
-  }
-  if (!rightIsDiscontinuous) {
-    // No right discontinuity
-    right = Coordinate2D<T>();
-  }
-  if (std::abs(right.y() - left.y()) < NullTolerance(middle.x())) {
-    // Left and right are the same
-    assert(leftIsDiscontinuous && rightIsDiscontinuous);
-    // Keep only 1 point of interest
-    left.setY(MagicRound((left.y() + right.y()) / 2.));
-    right = Coordinate2D<T>();
-  }
-
-  // There should be at least one finite value
-  assert(std::isfinite(left.y()) || std::isfinite(middle.y()) ||
-         std::isfinite(right.y()));
-
-  // Push solutions
-  if (std::isfinite(left.y())) {
-    left.setX(middle.x());
-    m_solutionQueue.push(
-        CoordToSolution<T>(left, Interest::UnreachedDiscontinuity));
-  }
-  if (std::isfinite(middle.y())) {
-    m_solutionQueue.push(
-        CoordToSolution<T>(middle, Interest::ReachedDiscontinuity));
-  }
-  if (std::isfinite(right.y())) {
-    right.setX(middle.x());
-    m_solutionQueue.push(
-        CoordToSolution<T>(right, Interest::UnreachedDiscontinuity));
   }
 }
 

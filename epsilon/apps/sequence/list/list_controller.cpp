@@ -66,26 +66,24 @@ HighlightCell* ListController::reusableCell(int index, int type) {
 
 void ListController::fillCellForRow(HighlightCell* cell, int row) {
   int type = typeAtRow(row);
-  if (type == k_editableCellType && isAddingNewModel()) {
+  if (type == k_expressionCellType || type == k_editableCellType) {
     AbstractSequenceCell* sequenceCell =
         static_cast<AbstractSequenceCell*>(cell);
-    sequenceCell->setColor(Palette::GrayDark);
-    sequenceCell->setParameterSelected(m_parameterColumnSelected);
-  } else if (type != k_addNewModelCellType) {
-    assert(type == k_expressionCellType || type == k_editableCellType);
-    int sequenceDefinition;
-    Ion::Storage::Record record = recordAtRow(row, &sequenceDefinition);
-    Shared::Sequence* sequence = modelStore()->modelForRecord(record);
-    AbstractSequenceCell* sequenceCell =
-        static_cast<AbstractSequenceCell*>(cell);
-    // Set color
-    KDColor nameColor =
-        sequence->isActive() ? sequence->color() : Palette::GrayDark;
-    sequenceCell->setColor(nameColor);
-    if (type == k_expressionCellType) {
-      fillExpressionCellForRow(sequenceCell->mainCell(), row);
+    KDColor nameColor = Palette::GrayDark;
+    if (type == k_expressionCellType || !isAddingNewModel()) {
+      Shared::Sequence* sequence =
+          modelStore()->modelForRecord(recordAtRow(row));
+      if (sequence->isActive()) {
+        nameColor = sequence->color();
+      }
+      if (type == k_expressionCellType) {
+        fillExpressionCellForRow(sequenceCell->mainCell(), row);
+      }
     }
+    sequenceCell->setColor(nameColor);
     sequenceCell->setParameterSelected(m_parameterColumnSelected);
+  } else {
+    assert(type == k_addNewModelCellType);
   }
   FunctionListController::fillCellForRow(cell, row);
 }

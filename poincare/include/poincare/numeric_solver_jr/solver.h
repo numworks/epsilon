@@ -41,7 +41,7 @@ class Solver {
 
   void reset(T xStart, T xEnd, T searchStep);
 
-  Solution<T> next();
+  virtual Solution<T> next();
 
   /* Stretch the interval to include the previous bounds. This allows finding
    * solutions in [xStart,xEnd], as otherwise all resolution is done on an open

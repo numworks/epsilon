@@ -39,29 +39,29 @@ int ExpressionModelListController::numberOfRows() const {
   for (int i = 0; i < modelsCount; i++) {
     nRows += numberOfRowsForRecord(store->recordAtIndex(i));
   }
-  return nRows + hasAddElementRow() + isAddingNewModel();
+  return nRows + hasAddModelRow() + isAddingNewModel();
 }
 
-bool ExpressionModelListController::hasAddElementRow() const {
+bool ExpressionModelListController::hasAddModelRow() const {
   return modelStore()->numberOfModels() != modelStore()->maxNumberOfModels();
 }
 
-bool ExpressionModelListController::isAddElementRow(int row) const {
-  return row == numberOfRows() - 1 && hasAddElementRow();
+bool ExpressionModelListController::isAddModelRow(int row) const {
+  return row == numberOfRows() - 1 && hasAddModelRow();
 }
 
 bool ExpressionModelListController::isNewModelRow(int row) const {
   assert(!isAddingNewModel() ||
-         (m_editedCellIndex == numberOfRows() - 1 - hasAddElementRow()));
+         (m_editedCellIndex == numberOfRows() - 1 - hasAddModelRow()));
   return isAddingNewModel() && row == m_editedCellIndex;
 }
 
 int ExpressionModelListController::typeAtRow(int row) const {
   if (row == m_editedCellIndex) {
-    assert(!isAddElementRow(row));
+    assert(!isAddModelRow(row));
     return k_editableCellType;
   }
-  if (isAddElementRow(row)) {
+  if (isAddModelRow(row)) {
     return k_addNewModelCellType;
   }
   return k_expressionCellType;
@@ -106,7 +106,7 @@ bool ExpressionModelListController::handleEventOnExpression(
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(!layoutField()->isEditing());
     assert(!isAddingNewModel());
-    if (isAddElementRow(selectedRow())) {
+    if (isAddModelRow(selectedRow())) {
       addNewModelAction();
       return true;
     }
@@ -117,7 +117,7 @@ bool ExpressionModelListController::handleEventOnExpression(
     finishEdition();
     return true;
   }
-  if (event == Ion::Events::Backspace && !isAddElementRow(selectedRow())) {
+  if (event == Ion::Events::Backspace && !isAddModelRow(selectedRow())) {
     assert(!layoutField()->isEditing());
     Ion::Storage::Record record = selectedRecord();
     removeModelRow(record);
@@ -150,7 +150,7 @@ bool ExpressionModelListController::handleEventOnExpression(
 void ExpressionModelListController::editExpression(Ion::Events::Event event) {
   m_editedCellIndex = selectedRow();
   Layout layoutForSelectedRecord = Layout();
-  if (isAddElementRow(m_editedCellIndex)) {
+  if (isAddModelRow(m_editedCellIndex)) {
     m_isAddingNewModel = true;
   } else {
     layoutForSelectedRecord = getLayoutForSelectedRecord();
@@ -220,7 +220,7 @@ int ExpressionModelListController::modelIndexForRow(int row,
   if (row <= 0) {
     return row;
   }
-  if (isNewModelRow(row) || isAddElementRow(row)) {
+  if (isNewModelRow(row) || isAddModelRow(row)) {
     return modelIndexForRow(row - 1) + 1;
   }
   int i = 0;
@@ -318,7 +318,7 @@ void ExpressionModelListController::layoutFieldDidAbortEditing(
 Ion::Storage::Record ExpressionModelListController::recordAtRow(
     int row, int* relativeRow) const {
   assert(!isNewModelRow(row));
-  assert(!isAddElementRow(row));
+  assert(!isAddModelRow(row));
   return modelStore()->recordAtIndex(modelIndexForRow(row, relativeRow));
 }
 

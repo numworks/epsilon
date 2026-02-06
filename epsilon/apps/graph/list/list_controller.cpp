@@ -213,7 +213,7 @@ KDCoordinate ListController::editableRowHeight() {
 
 bool ListController::handleEvent(Ion::Events::Event event) {
   if (selectedRow() >= 0 && selectedRow() <= numberOfRows() &&
-      !isAddElementRow(selectedRow()) && m_parameterColumnSelected &&
+      !isAddModelRow(selectedRow()) && m_parameterColumnSelected &&
       (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     // Open function parameter menu
     int relativeRow;

@@ -77,8 +77,8 @@ class ExpressionModelListController
   bool handleEventOnExpression(Ion::Events::Event event,
                                bool inTemplateMenu = false);
   // "Add element" row can be hidden if we reached the max number of models
-  bool hasAddElementRow() const;
-  bool isAddElementRow(int row) const;
+  bool hasAddModelRow() const;
+  bool isAddModelRow(int row) const;
   bool isEditing() const {
     assert(m_editedCellIndex >= 0 || !m_isAddingNewModel);
     return m_editedCellIndex >= 0;

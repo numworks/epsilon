@@ -104,7 +104,7 @@ void FunctionListController::handleResponderChainEvent(
 
 bool FunctionListController::handleEvent(Ion::Events::Event event) {
   if (selectedRow() >= 0 && selectedRow() <= numberOfRows() &&
-      !isAddElementRow(selectedRow())) {
+      !isAddModelRow(selectedRow())) {
     if (m_parameterColumnSelected) {
       if ((event == Ion::Events::Left && parameterColumnPosition().isRight()) ||
           (event == Ion::Events::Right && parameterColumnPosition().isLeft())) {

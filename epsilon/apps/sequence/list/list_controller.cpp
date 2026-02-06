@@ -216,7 +216,7 @@ SequenceStore* ListController::modelStore() const {
 
 void ListController::showLastSequence() {
   selectableListView()->resetSizeAndOffsetMemoization();
-  int lastSequenceRow = numberOfRows() - hasAddElementRow() - 1;
+  int lastSequenceRow = numberOfRows() - hasAddModelRow() - 1;
   selectableListView()->scrollToCell(lastSequenceRow);
 }
 

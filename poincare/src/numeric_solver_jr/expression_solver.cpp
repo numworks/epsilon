@@ -7,8 +7,7 @@ using namespace Poincare::Internal;
 
 namespace Poincare::NumericSolver {
 
-ExpressionSolver::ExpressionSolver(double xStart, double xEnd,
-                                   const Internal::Tree* e,
+ExpressionSolver::ExpressionSolver(double xStart, double xEnd, const Tree* e,
                                    const SymbolContext& context,
                                    Solver<double>::BracketTest test,
                                    Solver<double>::HoneResult hone)
@@ -26,31 +25,28 @@ ExpressionSolver::ExpressionSolver(double xStart, double xEnd,
   /* TODO_PCJ: Either ensure expression is projected, or pass approximation
    * context(ComplexFormat, AngleUnit) and replace defined symbols. */
   this->m_evaluator = [](double x, const void* aux) {
-    const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
+    const Tree* e = reinterpret_cast<const Tree*>(aux);
     return Approximation::To<double>(
         e, x, Approximation::Parameters{.optimize = true});
   };
 }
 
 ExpressionSolver ExpressionSolver::BuildMinimumSolver(
-    double xStart, double xEnd, const Internal::Tree* e,
-    const SymbolContext& context) {
+    double xStart, double xEnd, const Tree* e, const SymbolContext& context) {
   return ExpressionSolver(xStart, xEnd, e, context,
                           SolverTests<double>::MinimumInBracket,
                           HoneFunctions::SafeBrentMinimum);
 }
 
 ExpressionSolver ExpressionSolver::BuildMaximumSolver(
-    double xStart, double xEnd, const Internal::Tree* e,
-    const SymbolContext& context) {
+    double xStart, double xEnd, const Tree* e, const SymbolContext& context) {
   return ExpressionSolver(xStart, xEnd, e, context,
                           SolverTests<double>::MaximumInBracket,
                           HoneFunctions::SafeBrentMaximum);
 }
 
 ExpressionSolver ExpressionSolver::BuildDiscontinuitySolver(
-    double xStart, double xEnd, Internal::Tree* e,
-    const SymbolContext& context) {
+    double xStart, double xEnd, Tree* e, const SymbolContext& context) {
   return ExpressionSolver(xStart, xEnd, e, context,
                           SolverTests<double>::DiscontinuityInBracket,
                           // Hone is handled differently

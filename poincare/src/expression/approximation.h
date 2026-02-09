@@ -105,7 +105,8 @@ struct Parameters {
   bool optimize = false;
 
   // The following parameters should only be passed in case of a UserExpression
-  AngleUnit angleUnit = AngleUnit::None;
+  // mutable because of AngleUnitContext
+  mutable AngleUnit angleUnit = AngleUnit::None;
   ComplexFormat complexFormat = ComplexFormat::None;
   // SymbolContext is used to store the values of user symbols and functions
   const Poincare::SymbolContext& symbolContext = k_emptySymbolContext;
@@ -486,8 +487,10 @@ class Approximator {
   template <typename T>
   T toLocalContext(const Tree* e, T x);
 
+  /* m_floatPrecision is not const because of approximateAndReplaceEveryScalar,
+   * but this could be reworked */
   FloatPrecision m_floatPrecision;
-  Parameters m_parameters;
+  const Parameters m_parameters;
   Context m_context;
 };
 

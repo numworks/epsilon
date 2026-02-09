@@ -124,6 +124,7 @@ void PrepareFunctionForApproximation(Tree* e, const char* variable,
   Projection::DeepReplaceUserNamed(
       e, EmptySymbolContext{},
       SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+  Dependency::DeepRemoveUselessDependencies(e);
   e->moveTreeOverTree(ToTree<double>(
       e,
       Parameters{

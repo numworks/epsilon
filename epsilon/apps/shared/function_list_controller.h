@@ -50,7 +50,6 @@ class FunctionListController : public ExpressionModelListController,
 
  private:
   virtual ListParameterController* parameterController() = 0;
-  virtual Escher::HighlightCell* functionCells(int index) = 0;
   virtual OMG::HorizontalDirection parameterColumnPosition() const = 0;
 
   Escher::SelectableListView m_selectableListView;

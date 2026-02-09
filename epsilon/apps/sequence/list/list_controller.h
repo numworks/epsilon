@@ -56,7 +56,6 @@ class ListController : public Shared::FunctionListController {
     return &m_parameterController;
   }
   int maxNumberOfDisplayableRows() const override { return k_maxNumberOfRows; }
-  Escher::HighlightCell* functionCells(int index) override;
   void fillExpressionCellForRow(Escher::HighlightCell* cell, int row);
   void didChangeModelsList() override;
   void addNewModelAction() override;

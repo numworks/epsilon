@@ -170,11 +170,6 @@ Layout ListController::getLayoutForSelectedRecord() const {
   return sequence->aggregatedLayout();
 }
 
-HighlightCell* ListController::functionCells(int index) {
-  assert(index >= 0 && index < k_maxNumberOfRows);
-  return m_sequenceCells[index].expressionCell();
-}
-
 void ListController::fillExpressionCellForRow(HighlightCell* cell, int row) {
   assert(typeAtRow(row) == k_expressionCellType);
   Escher::EvenOddExpressionCell* myCell =

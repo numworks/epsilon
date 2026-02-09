@@ -43,7 +43,8 @@ HighlightCell* ListController::reusableCell(int index, int type) {
     return &m_addNewModelCell;
   }
   assert(type == k_expressionCellType);
-  return functionCells(index);
+  assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
+  return &m_expressionCells[index];
 }
 
 /* ViewController */
@@ -270,11 +271,6 @@ Poincare::Layout ListController::extraCellLayoutAtRow(int row) {
   constexpr CodePoint codepoints[k_numberOfToolboxExtraCells] = {
       UCodePointInferiorEqual, UCodePointSuperiorEqual};
   return Layout::CodePoint(codepoints[row]);
-}
-
-HighlightCell* ListController::functionCells(int row) {
-  assert(row >= 0 && row < k_maxNumberOfDisplayableRows);
-  return &m_expressionCells[row];
 }
 
 void ListController::addNewModelAction() {

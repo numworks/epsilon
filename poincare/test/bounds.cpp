@@ -8,6 +8,10 @@
 using namespace Poincare;
 using namespace Poincare::Internal;
 
+/* TODO: Add tests for helpers (Add, Mult, etc.)
+ * This will probably call for a refactor of the API to manipulate bounds
+ * directly instead of trees. */
+
 void assert_bounds_properties_are(const Tree* t,
                                   Properties expectedProperties) {
   Properties obtained = Bounds::Properties(t);

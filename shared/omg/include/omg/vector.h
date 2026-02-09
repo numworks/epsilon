@@ -57,7 +57,8 @@ class AbstractStaticVector {
   constexpr const_iterator begin() const { return m_data; }
   constexpr iterator end() { return m_data + m_size; }
   constexpr const_iterator end() const { return m_data + m_size; }
-
+  /* TODO: push does not assert that the vector is not full, it should be a
+   * StaticVector method */
   constexpr void push(const T& value) { (*this)[m_size++] = value; }
   constexpr T& pop() {
     assert(m_size > 0);

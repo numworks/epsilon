@@ -744,8 +744,11 @@ std::complex<T> Approximator::userSymbolToComplex(const Tree* e) {
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
         return NAN;
       }
-      Tree* definitionClone = definition->cloneTree();
       // Only approximate child once and use LocalEvaluator
+      if (m_context.m_localEvaluator.isFull()) {
+        return UndefinedUnhandledDimension<std::complex<T>>();
+      }
+      Tree* definitionClone = definition->cloneTree();
       Variables::ReplaceUserVariable(definitionClone, KUnknownSymbol, 0,
                                      ComplexProperties::Unknown());
       m_context.m_localEvaluator.pushVariable(x);
@@ -799,6 +802,9 @@ std::complex<T> Approximator::analysisToComplex(const Tree* e) {
       // Cloning here to avoid modifying function argument `e`
       static_assert(Parametric::k_sumArgumentIndex ==
                     Parametric::k_prodArgumentIndex);
+      if (m_context.m_localEvaluator.isFull()) {
+        return UndefinedUnhandledDimension<std::complex<T>>();
+      }
       Tree* child = e->child(Parametric::k_sumArgumentIndex)->cloneTree();
       /* We ApproximateAndReplaceEveryScalar here to avoid approximating complex
        * constants on every round of the sum/product computation */
@@ -918,6 +924,9 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
     }
     case Type::ListSequence: {
       assert(m_context.m_listElement != -1);
+      if (m_context.m_localEvaluator.isFull()) {
+        return UndefinedUnhandledDimension<std::complex<T>>();
+      }
       // epsilon sequences starts at one
       m_context.m_localEvaluator.pushVariable(m_context.m_listElement + 1);
       // Reset random context
@@ -1527,6 +1536,9 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
   }
   if (e->isListSequence()) {
     assert(m_context.m_listElement != -1);
+    if (m_context.m_localEvaluator.isFull()) {
+      return UndefinedUnhandledDimension<BooleanOrUndefined>();
+    }
     // epsilon sequences starts at one
     m_context.m_localEvaluator.pushVariable(m_context.m_listElement + 1);
     // Reset random context
@@ -1565,8 +1577,11 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
     if (std::isnan(x.real()) || std::isnan(x.imag())) {
       return BooleanOrUndefined::Undef();
     }
+    // Only approximate child once and use LocalEvaluator
+    if (m_context.m_localEvaluator.isFull()) {
+      return UndefinedUnhandledDimension<BooleanOrUndefined>();
+    }
     Tree* definitionClone = definition->cloneTree();
-    // Only approximate child once and use local context.
     Variables::ReplaceUserVariable(definitionClone, KUnknownSymbol, 0,
                                    ComplexProperties::Unknown());
     m_context.m_localEvaluator.pushVariable(x);
@@ -1828,13 +1843,16 @@ Tree* Approximator::toMatrix(const Tree* e) {
       }
       /* LocalEvaluator only handles complex scalar, but non scalar children of
        * UserFunction are forbidden in dimension check anyway. */
-      // Local context uses a complex double abscissa
+      // LocalEvaluator uses a complex double abscissa
       VariableType x = privateToComplex<double>(e->child(0));
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
         return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
       }
-      Tree* definitionClone = definition->cloneTree();
       // Only approximate child once and use LocalEvaluator
+      if (m_context.m_localEvaluator.isFull()) {
+        return UndefinedUnhandledDimension<Tree*>();
+      }
+      Tree* definitionClone = definition->cloneTree();
       Variables::ReplaceUserVariable(definitionClone, KUnknownSymbol, 0,
                                      ComplexProperties::Unknown());
       m_context.m_localEvaluator.pushVariable(x);
@@ -1856,6 +1874,9 @@ Tree* Approximator::toMatrix(const Tree* e) {
       // Cloning here to avoid modifying function argument `e`
       static_assert(Parametric::k_sumArgumentIndex ==
                     Parametric::k_prodArgumentIndex);
+      if (m_context.m_localEvaluator.isFull()) {
+        return UndefinedUnhandledDimension<Tree*>();
+      }
       Tree* child = e->child(Parametric::k_sumArgumentIndex)->cloneTree();
       /* We approximateAndReplaceEveryScalar here to avoid approximating complex
        * constants on every round of the sum/product computation */
@@ -1910,6 +1931,9 @@ T Approximator::privateToFloat(const Tree* e) {
 
 template <typename T>
 T Approximator::toLocalContext(const Tree* e, T x) {
+  if (m_context.m_localEvaluator.isFull()) {
+    return UndefinedUnhandledDimension<T>();
+  }
   m_context.m_localEvaluator.pushVariable(x);
   T result = privateToFloat<T>(e);
   m_context.m_localEvaluator.leaveCurrentScope();

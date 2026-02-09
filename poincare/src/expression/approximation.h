@@ -61,7 +61,12 @@ class LocalEvaluator {
   // This parameter could be a project-dependent configuration
   static constexpr size_t k_maxNestedVariables = 8;
 
-  void pushVariable(VariableType value) { m_values.push(value); }
+  bool isFull() const { return m_values.isFull(); }
+
+  void pushVariable(VariableType value) {
+    assert(!isFull());
+    m_values.push(value);
+  }
 
   void setLocalValue(VariableType value) { m_values.last() = value; }
 

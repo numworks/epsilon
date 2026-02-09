@@ -156,6 +156,7 @@ $(addprefix numeric_solver/, \
   erf_inv.cpp \
   expression_solver.cpp \
   hone_functions.cpp \
+  intersection_solver.cpp:-nopool \
   matrix_array.cpp \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \

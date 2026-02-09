@@ -1,5 +1,6 @@
 #include <omg/float.h>
 #include <poincare/numeric_solver/expression_solver.h>
+#include <poincare/numeric_solver/intersection_solver.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
@@ -65,7 +66,9 @@ void assert_solutions_are(
     e2->cloneTreeOverTree(parseAndPrepareForApproximation(
         otherExpression, simplificationParameters));
   }
-  IntersectionSolver intersectionSolver(start, end, e, e2,
+  Poincare::PreparedFunction f = Poincare::PreparedFunction::Builder(e);
+  Poincare::PreparedFunction g = Poincare::PreparedFunction::Builder(e2);
+  IntersectionSolver intersectionSolver(start, end, f, g,
                                         Poincare::EmptySymbolContext{});
 
   Solver<double>* solverPointer;

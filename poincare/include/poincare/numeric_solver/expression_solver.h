@@ -10,6 +10,8 @@ namespace Poincare::NumericSolver {
 
 class ExpressionSolver : public Solver<double> {
  public:
+  /* WARNING: pointer to e must stay valid during the whole lifetime of the
+   * solver. */
   ExpressionSolver(double xStart, double xEnd, const Internal::Tree* e,
                    const SymbolContext& context,
                    Solver<double>::BracketTest test,
@@ -19,6 +21,8 @@ class ExpressionSolver : public Solver<double> {
   const Internal::Tree* getTree() const {
     return reinterpret_cast<const Internal::Tree*>(m_auxiliary);
   }
+
+  void setTree(const Internal::Tree* e);
 
   const SymbolContext& m_context;
 };
@@ -70,31 +74,6 @@ class RootSolver : public ExpressionSolver {
     return std::isfinite(root.x) ? Solution<double>{root.x, 0., Interest::Root}
                                  : Solution<double>{};
   }
-};
-
-class IntersectionSolver : public RootSolver {
- public:
-  IntersectionSolver(double xStart, double xEnd, const Internal::Tree* f,
-                     const Internal::Tree* g, bool areAlongSameAxis,
-                     const SymbolContext& context);
-  IntersectionSolver(double xStart, double xEnd, const Internal::Tree* f,
-                     const Internal::Tree* g, const SymbolContext& context)
-      : IntersectionSolver(xStart, xEnd, f, g, true, context) {}
-
-  ~IntersectionSolver();  // Remove memoized diff
-  IntersectionSolver(const IntersectionSolver&);
-  IntersectionSolver& operator=(const IntersectionSolver&);
-
-  Solution<double> next() override;
-
- private:
-  IntersectionSolver(double xStart, double xEnd, const Internal::Tree* f,
-                     const Internal::Tree* g, Internal::Tree* diff,
-                     bool areAlongSameAxis, const SymbolContext& context);
-
-  const Internal::Tree* m_f;
-  const Internal::Tree* m_g;
-  bool m_alongSameAxis;
 };
 
 class DiscontinuitySolver : public ExpressionSolver {

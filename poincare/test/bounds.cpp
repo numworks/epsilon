@@ -31,8 +31,8 @@ void assert_reduced_bounds_properties_are(const char* treeToParse,
                                expectedProperties);
 }
 
-QUIZ_CASE(pcj_bounds_Properties) {
-  /* This test sometimes uses a KTrees to ensure reduction does not trivialize
+QUIZ_CASE(pcj_bounds_properties) {
+  /* This test sometimes uses KTrees to ensure reduction does not trivialize
    * the input tree */
   assert_bounds_properties_are(0_e, Properties::Zero());
   assert_bounds_properties_are(1_e, Properties::FiniteStrictlyPositive());
@@ -53,6 +53,10 @@ QUIZ_CASE(pcj_bounds_Properties) {
   assert_bounds_properties_are(KTrig(π_e, 0_e), Properties::Finite());
   assert_bounds_properties_are(KAbs(KTrig(π_e, 0_e)),
                                Properties::FinitePositive());
+
+  // Mult
+  assert_bounds_properties_are(KMult(KTrig(1000_e, 0_e), KTrig(1000_e, 1_e)),
+                               Properties::Finite());
 
   // Unknown
   assert_bounds_properties_are(i_e, Properties::Unknown());

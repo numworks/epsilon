@@ -106,10 +106,10 @@ QUIZ_CASE(pcj_approximation_floor_ceil_integer) {
   Variables::ReplaceUserVariable(t1, "x"_e, 0, ComplexProperties::RealFinite());
   Variables::ReplaceUserVariable(t2, "x"_e, 0, ComplexProperties::RealFinite());
   Approximation::Context context;
-  context.m_localEvaluator.pushVariable(0.0);
+  context.localEvaluator.pushVariable(0.0);
   constexpr double upperBound = 1000.0;
   for (double d = 0.0; d < upperBound; d += 1.0) {
-    context.m_localEvaluator.setLocalValue(d);
+    context.localEvaluator.setLocalValue(d);
     double result1 =
         Approximation::To<double>(t1, Approximation::Parameters{}, context);
     double result2 =

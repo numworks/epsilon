@@ -16,8 +16,7 @@ T PreparedFunctionScalar::approximateToRealScalarWithValue(
     T x, int listElement) const {
   return Approximation::To<T>(
       tree(), x, Approximation::Parameters{.optimize = true},
-      Approximation::Context{.m_listElement =
-                                 static_cast<int16_t>(listElement)});
+      Approximation::Context{.listElement = static_cast<int16_t>(listElement)});
 }
 
 bool PreparedFunction::involvesDiscontinuousFunction() const {

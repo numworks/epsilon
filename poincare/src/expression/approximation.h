@@ -116,13 +116,13 @@ struct Context {
   constexpr static int16_t k_unspecifiedListElement = -1;
   constexpr static int16_t k_unspecifiedPointElement = -1;
 
-  Random::Context m_randomContext{false};
+  Random::Context randomContext{false};
   // LocalEvaluator is used to store the values of local variables
-  Private::LocalEvaluator m_localEvaluator{};
+  Private::LocalEvaluator localEvaluator{};
   // Tells if we are approximating to get the nth-element of a list
-  int16_t m_listElement = k_unspecifiedListElement;
+  int16_t listElement = k_unspecifiedListElement;
   // Tells if we are approximating to get the nth-element of a point
-  int16_t m_pointElement = k_unspecifiedPointElement;
+  int16_t pointElement = k_unspecifiedPointElement;
 };
 
 class BooleanOrUndefined {

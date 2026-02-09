@@ -137,7 +137,7 @@ double Approximation::Approximator::privateApproximateRandIntNoRep(
     return NAN;
   }
   Random::Context::VariableType* lcgSeed =
-      &m_context.m_randomContext.m_list[lcgSeedIndex - 1];
+      &m_context.randomContext.m_list[lcgSeedIndex - 1];
   if (std::isnan(*lcgSeed)) {
     *lcgSeed = Ion::random();
     /* NOTE Storing a uint32_t without loss of precision is only possible in a
@@ -151,12 +151,12 @@ double Approximation::Approximator::privateApproximateRandIntNoRep(
   uint32_t range = static_cast<uint32_t>(max - min + 1);
 #if ASSERTIONS
   double length = privateToFloat<double>(randIntNoRep->child(2));
-  assert(0 <= m_context.m_listElement && m_context.m_listElement < length &&
+  assert(0 <= m_context.listElement && m_context.listElement < length &&
          length <= range);
 #endif
   return min + RandIntNoRepInRangeOfIndex(range,
                                           static_cast<uint32_t>(*lcgSeed),
-                                          m_context.m_listElement);
+                                          m_context.listElement);
 }
 
 template <typename T>
@@ -171,7 +171,7 @@ T Approximation::Approximator::approximateRandom(const Tree* randomTree) {
     return approximateRandomHelper<T>(randomTree);
   }
   Random::Context::VariableType* cachedValue =
-      &m_context.m_randomContext.m_list[seed - 1];
+      &m_context.randomContext.m_list[seed - 1];
   if (std::isnan(*cachedValue)) {
     *cachedValue = approximateRandomHelper<T>(randomTree);
   }

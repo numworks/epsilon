@@ -3,10 +3,10 @@ name: Poincare
 on:
   pull_request:
     paths-ignore:
-      - '**/*.md'
-      - 'poincare/doc/**'
-      - '**/epsilon/**'
-      - '**/scandium/**'
+      - "**/*.md"
+      - "poincare/doc/**"
+      - "**/epsilon/**"
+      - "**/scandium/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -38,3 +38,39 @@ jobs:
         run: $DOCKER_RUN "make -j8 -C poincare/poincarejs PLATFORM=foxglove ASSERTIONS=0 VERBOSE=0 poincare.js.run"
       - name: Try building the whole zipped file
         run: $DOCKER_RUN "make -C poincare/poincarejs VERBOSE=0 poincarejs.zip"
+
+  poincare_test:
+    name: Poincare (matrix host tests)
+    timeout-minutes: 15
+    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    strategy:
+      matrix:
+        platform: [linux, web]
+    env:
+      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
+    steps:
+      - name: Fetch PR branch
+        uses: actions/checkout@v4
+
+      - name: Read Emscripten version
+        if: matrix.platform == 'web'
+        run: echo "EMSDK_VERSION=$(cat .emsdk-version)" >> $GITHUB_ENV
+
+      - name: Build container and define DOCKER_RUN
+        uses: ./.github/actions/docker-builder
+        with:
+          platform: ${{ matrix.platform }}
+          emsdk-version: ${{ env.EMSDK_VERSION || '' }}
+
+      - name: Build poincare_test for platform
+        env:
+          TEST_EXTENSION: ${{ (matrix.platform == 'web' && 'js') || 'bin' }}
+        run: |
+          $DOCKER_RUN "make -C poincare/test PLATFORM=${{ matrix.platform }} DEBUG=0 VERBOSE=0 ASSERTIONS=1 poincare_test.$TEST_EXTENSION"
+
+      - name: Run unit tests
+        env:
+          TEST_EXTENSION: ${{ (matrix.platform == 'web' && 'js') || 'bin' }}
+          TEST_RUNNER: ${{ matrix.platform == 'web' && 'node' || '' }}
+        run: |
+          $DOCKER_RUN "$TEST_RUNNER poincare/test/output/debug/optimized/${{ matrix.platform }}/poincare_test.$TEST_EXTENSION --headless"

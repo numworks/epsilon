@@ -82,6 +82,7 @@ Bounds Bounds::Compute(const Tree* e) {
 }
 
 Bounds Bounds::Add(const Tree* e) {
+  assert(e->isAdd());
   assert(e->numberOfChildren() > 0);
   Bounds bounds = Bounds(0., 0., 0);
   for (const Tree* child : e->children()) {
@@ -101,6 +102,7 @@ Bounds Bounds::Add(const Tree* e) {
 }
 
 Bounds Bounds::Mult(const Tree* e) {
+  assert(e->isMult());
   assert(e->numberOfChildren() > 0);
   Bounds bounds = Bounds(1., 1., 0);
   for (const Tree* child : e->children()) {
@@ -108,23 +110,44 @@ Bounds Bounds::Mult(const Tree* e) {
     if (!childBounds.exists()) {
       return Invalid();
     }
-    bounds.m_lower *= childBounds.m_lower;
-    bounds.m_upper *= childBounds.m_upper;
-    // Cannot spread after each operation because we ignore the final sign yet
+    if ((bounds.isStrictlyPositive() && childBounds.isStrictlyPositive()) ||
+        (bounds.isStrictlyNegative() && childBounds.isStrictlyNegative())) {
+      // Bounds are of the same sign, just multiply them together
+      bounds.m_lower *= childBounds.m_lower;
+      bounds.m_upper *= childBounds.m_upper;
+      if (childBounds.isStrictlyNegative()) {
+        assert(bounds.isStrictlyPositive());
+        // With negative bounds, the result is positive and bounds are flipped
+        bounds.flip();
+      }
+    } else {
+      // Try all combinations of bounds
+      double candidates[4] = {bounds.m_lower * childBounds.m_lower,
+                              bounds.m_lower * childBounds.m_upper,
+                              bounds.m_upper * childBounds.m_lower,
+                              bounds.m_upper * childBounds.m_upper};
+      bounds.m_lower = candidates[0];
+      bounds.m_upper = candidates[0];
+      for (int i = 1; i < 4; i++) {
+        if (candidates[i] < bounds.m_lower) {
+          bounds.m_lower = candidates[i];
+        }
+        if (candidates[i] > bounds.m_upper) {
+          bounds.m_upper = candidates[i];
+        }
+      }
+    }
+    if (!bounds.exists()) {
+      return Invalid();
+    }
+    bounds.spread();
   }
-  if (!bounds.exists()) {
-    return Invalid();
-  }
-  /* A negative multiplication can cause the bounds to be flipped */
-  if (bounds.m_upper < bounds.m_lower) {
-    bounds.flip();
-  }
-  bounds.spread(e->numberOfChildren() - 1);
   assert(bounds.lower() <= bounds.upper());
   return bounds;
 }
 
 Bounds Bounds::Pow(const Tree* e) {
+  assert(e->isPow() || e->isPowReal());
   Bounds base = Bounds::Compute(e->child(0));
   Bounds exp = Bounds::Compute(e->child(1));
   if (base.exists() && exp.exists() && exp.hasKnownStrictSign()) {
@@ -164,6 +187,7 @@ Bounds Bounds::Pow(const Tree* e) {
 }
 
 Bounds Bounds::Trig(const Tree* e) {
+  assert(e->isTrig());
   Bounds b = Bounds::Compute(e->child(0));
   if (!b.exists()) {
     return Invalid();

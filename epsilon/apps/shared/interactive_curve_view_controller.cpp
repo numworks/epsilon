@@ -287,7 +287,7 @@ InteractiveCurveViewController::closestCurveIndex(
       double newF = alongY ? newX : newY;
       // New point is expected to be either at same abscissa or at same ordinate
       assert(OMG::Float::RoughlyEqual<double>(t, alongY ? newY : newX,
-                                              DBL_EPSILON));
+                                              DBL_EPSILON, true));
       if (!suitableYValue(newY) || !suitableXValue(newX)) {
         continue;
       }

@@ -149,12 +149,12 @@ Tree* Approximator::specificTo(const Tree* e) {
   if (listLength != Dimension::k_nonListListLength) {
     assert(!dim.isMatrix());
     Tree* result = SharedTreeStack->pushList(listLength);
-    Context currentContext = m_context;
+    assert(m_context.m_listElement == Context::k_unspecifiedListElement);
     for (int i = 0; i < listLength; i++) {
       m_context.m_listElement = i;
       privateToTree(e, dim);
     }
-    m_context = currentContext;
+    m_context.m_listElement = Context::k_unspecifiedListElement;
     return result;
   }
   return privateToTree(e, dim);
@@ -253,7 +253,7 @@ FloatType Approximator::toFloat(const Tree* e) {
   Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
   assert(dim.isScalar() || dim.isUnit());
 #endif
-  assert(m_context.m_listElement != -1 ||
+  assert(m_context.m_listElement != Context::k_unspecifiedListElement ||
          !Dimension::IsList(e, m_parameters.symbolContext));
   assert(!m_parameters.onlyReplaceNumerical);
   return privateToFloat<FloatType>(e);
@@ -300,12 +300,12 @@ Coordinate2D<T> Approximator::privateToCoordinates(const Tree* e) {
   assert(Dimension::DeepCheck(e, m_parameters.symbolContext) &&
          Dimension::Get(e, m_parameters.symbolContext).isPoint());
   T xScalar, yScalar;
-  Context currentContext = m_context;
+  assert(m_context.m_pointElement == Context::k_unspecifiedPointElement);
   m_context.m_pointElement = 0;
   xScalar = privateToFloat<T>(e);
   m_context.m_pointElement = 1;
   yScalar = privateToFloat<T>(e);
-  m_context = currentContext;
+  m_context.m_pointElement = Context::k_unspecifiedPointElement;
   return Coordinate2D<T>(xScalar, yScalar);
 }
 
@@ -906,7 +906,7 @@ std::complex<T> Approximator::matrixToComplex(const Tree* e) {
       return result;
     }
     case Type::Point:
-      assert(m_context.m_pointElement != -1);
+      assert(m_context.m_pointElement != Context::k_unspecifiedPointElement);
       return privateToComplexRecursive<T>(e->child(m_context.m_pointElement));
     default:
       OMG_UNREACHABLE;
@@ -917,13 +917,13 @@ template <typename T>
 std::complex<T> Approximator::listToComplex(const Tree* e) {
   switch (e->type()) {
     case Type::List: {
-      assert(m_context.m_listElement != -1);
+      assert(m_context.m_listElement != Context::k_unspecifiedListElement);
       std::complex<T> result =
           privateToComplexRecursive<T>(e->child(m_context.m_listElement));
       return result;
     }
     case Type::ListSequence: {
-      assert(m_context.m_listElement != -1);
+      assert(m_context.m_listElement != Context::k_unspecifiedListElement);
       if (m_context.m_localEvaluator.isFull()) {
         return UndefinedUnhandledDimension<std::complex<T>>();
       }
@@ -953,26 +953,24 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
         return NAN;
       }
       assert(indexValue >= 1 && indexValue <= INT16_MAX);
-      Context currentContext = m_context;
+      int16_t currentListElement = m_context.m_listElement;
       m_context.m_listElement = static_cast<int16_t>(indexValue) - 1;
       std::complex<T> result = privateToComplexRecursive<T>(values);
-      currentContext.updateRandomContext(m_context.m_randomContext);
-      m_context = currentContext;
+      m_context.m_listElement = currentListElement;
       return result;
     }
     case Type::ListSlice: {
-      assert(m_context.m_listElement != -1);
+      assert(m_context.m_listElement != Context::k_unspecifiedListElement);
       const Tree* values = e->child(0);
       const Tree* startIndex = e->child(1);
       assert(Integer::Is<uint8_t>(startIndex));
       assert(Integer::Is<uint8_t>(e->child(2)));
       int start = std::max(Integer::Handler(startIndex).to<uint8_t>() - 1, 0);
       assert(start >= 0);
-      Context currentContext = m_context;
+      int16_t currentListElement = m_context.m_listElement;
       m_context.m_listElement += start;
       std::complex<T> result = privateToComplexRecursive<T>(values);
-      currentContext.updateRandomContext(m_context.m_randomContext);
-      m_context = currentContext;
+      m_context.m_listElement = currentListElement;
       return result;
     }
     case Type::ListSum:
@@ -980,14 +978,13 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
       const Tree* values = e->child(0);
       int length = Dimension::ListLength(values, m_parameters.symbolContext);
       std::complex<T> result = e->isListSum() ? 0 : 1;
-      Context currentContext = m_context;
+      int16_t currentListElement = m_context.m_listElement;
       for (int i = 0; i < length; i++) {
         m_context.m_listElement = i;
         std::complex<T> v = privateToComplexRecursive<T>(values);
         result = e->isListSum() ? result + v : result * v;
       }
-      currentContext.updateRandomContext(m_context.m_randomContext);
-      m_context = currentContext;
+      m_context.m_listElement = currentListElement;
       return result;
     }
     case Type::Min:
@@ -996,11 +993,12 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
       int length = Dimension::ListLength(values, m_parameters.symbolContext);
       assert(length > 0);
       T result = 0.0;
-      Context currentContext = m_context;
+      int16_t currentListElement = m_context.m_listElement;
       for (int i = 0; i < length; i++) {
         m_context.m_listElement = i;
         std::complex<T> v = privateToComplexRecursive<T>(values);
         if (v.imag() != 0 || std::isnan(v.real())) {
+          m_context.m_listElement = currentListElement;
           return NAN;
         }
         if (i == 0 ||
@@ -1008,8 +1006,7 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
           result = v.real();
         }
       }
-      currentContext.updateRandomContext(m_context.m_randomContext);
-      m_context = currentContext;
+      m_context.m_listElement = currentListElement;
       return result;
     }
     case Type::Mean:
@@ -1022,12 +1019,13 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
       std::complex<T> sum = 0;
       std::complex<T> sumOfSquares = 0;
       T coefficientsSum = 0;
-      Context currentContext = m_context;
+      int16_t currentListElement = m_context.m_listElement;
       for (int i = 0; i < length; i++) {
         m_context.m_listElement = i;
         std::complex<T> v = privateToComplexRecursive<T>(values);
         std::complex<T> c = privateToComplexRecursive<T>(coefficients);
         if (c.imag() != 0 || c.real() < 0) {
+          m_context.m_listElement = currentListElement;
           return NAN;
         }
         sum += c.real() * v;
@@ -1035,8 +1033,7 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
         sumOfSquares += c.real() * v * v;
         coefficientsSum += c.real();
       }
-      currentContext.updateRandomContext(m_context.m_randomContext);
-      m_context = currentContext;
+      m_context.m_listElement = currentListElement;
       if (coefficientsSum == 0) {
         return NAN;
       }
@@ -1519,7 +1516,7 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
     return privateToBoolean(branch);
   }
   if (e->isList()) {
-    assert(m_context.m_listElement != -1);
+    assert(m_context.m_listElement != Context::k_unspecifiedListElement);
     return privateToBoolean(e->child(m_context.m_listElement));
   }
   if (e->isParentheses()) {
@@ -1535,7 +1532,7 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
     return result;
   }
   if (e->isListSequence()) {
-    assert(m_context.m_listElement != -1);
+    assert(m_context.m_listElement != Context::k_unspecifiedListElement);
     if (m_context.m_localEvaluator.isFull()) {
       return UndefinedUnhandledDimension<BooleanOrUndefined>();
     }
@@ -1622,28 +1619,26 @@ Tree* Approximator::toList(const Tree* e) {
   Dimension dimension = Dimension::Get(e, m_parameters.symbolContext);
   int length = Dimension::ListLength(e, m_parameters.symbolContext);
   assert(length != Dimension::k_nonListListLength);
-  Context currentContext = m_context;
+  int16_t currentListElement = m_context.m_listElement;
   Tree* list = SharedTreeStack->pushList(length);
   for (int i = 0; i < length; i++) {
     m_context.m_listElement = i;
     privateToTree(e, dimension);
   }
-  currentContext.updateRandomContext(m_context.m_randomContext);
-  m_context = currentContext;
+  m_context.m_listElement = currentListElement;
   return list;
 }
 
 Tree* Approximator::privateToPoint(const Tree* e) {
-  Context currentContext = m_context;
   Tree* point = SharedTreeStack->pushPoint();
+  int16_t currentPointElement = m_context.m_pointElement;
   m_context.m_pointElement = 0;
   m_floatPrecision == FloatPrecision::Single ? toComplexTree<float>(e)
                                              : toComplexTree<double>(e);
   m_context.m_pointElement = 1;
   m_floatPrecision == FloatPrecision::Single ? toComplexTree<float>(e)
                                              : toComplexTree<double>(e);
-  currentContext.updateRandomContext(m_context.m_randomContext);
-  m_context = currentContext;
+  m_context.m_pointElement = currentPointElement;
   return point;
 }
 
@@ -1919,10 +1914,11 @@ T Approximator::privateToFloat(const Tree* e) {
   Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
   // m_listElement is needed to approximate lists to scalars
-  assert(m_context.m_listElement != -1 ||
+  assert(m_context.m_listElement != Context::k_unspecifiedListElement ||
          !Dimension::IsList(e, m_parameters.symbolContext));
   // m_pointElement is needed to approximate points to scalars
-  assert(m_context.m_pointElement != -1 || !dim.isPoint());
+  assert(m_context.m_pointElement != Context::k_unspecifiedPointElement ||
+         !dim.isPoint());
 #endif
   std::complex<T> value = privateToComplex<T>(e);
   // Remove signaling nan

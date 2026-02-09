@@ -112,25 +112,17 @@ struct Parameters {
   const Poincare::SymbolContext& symbolContext = k_emptySymbolContext;
 };
 
-class Context {
- public:
-  Context(int16_t listElement = -1)
-      : m_randomContext(Random::Context(false)),
-        m_listElement(listElement),
-        m_pointElement(-1) {}
-  /* Should always be called after calling an approximation function with a
-   * temporary context.
-   * TODO: separate random context from the rest. */
-  void updateRandomContext(Random::Context randomCtx) const {
-    m_randomContext = randomCtx;
-  }
-  mutable Random::Context m_randomContext;
+struct Context {
+  constexpr static int16_t k_unspecifiedListElement = -1;
+  constexpr static int16_t k_unspecifiedPointElement = -1;
+
+  Random::Context m_randomContext{false};
   // LocalEvaluator is used to store the values of local variables
-  Private::LocalEvaluator m_localEvaluator;
+  Private::LocalEvaluator m_localEvaluator{};
   // Tells if we are approximating to get the nth-element of a list
-  int16_t m_listElement;
+  int16_t m_listElement = k_unspecifiedListElement;
   // Tells if we are approximating to get the nth-element of a point
-  int16_t m_pointElement;
+  int16_t m_pointElement = k_unspecifiedPointElement;
 };
 
 class BooleanOrUndefined {

@@ -123,7 +123,8 @@ void PrepareFunctionForApproximation(Tree* e, const char* variable,
    * Leftover symbols can be replaced by undefined. */
   Projection::DeepReplaceUserSymbol(
       e, EmptySymbolContext{},
-      SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+      SymbolicComputation::ReplaceAllSymbolsWithUndefined) &&
+      Dependency::DeepRemoveUselessDependencies(e);
   e->moveTreeOverTree(
       To<Tree*>(e, Approximation::FloatPrecision::Double,
                 Parameters{.prepare = true, .onlyReplaceNumerical = true}));

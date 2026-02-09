@@ -45,9 +45,11 @@ _poincare_test_modules += sdl
 endif
 
 ## liba/libaxx
-ifeq ($(PLATFORM_TYPE),device)
 $(call import_module,liba,../../shared/liba)
 $(call import_module,libaxx,../../shared/libaxx)
+ifeq ($(PLATFORM_TYPE),simulator)
+_poincare_test_modules += liba_bridge
+else
 _poincare_test_modules += liba.armv7m.aeabirt.openbsd libaxx
 endif
 

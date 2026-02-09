@@ -45,7 +45,7 @@ jobs:
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
     strategy:
       matrix:
-        platform: [linux, web]
+        platform: [linux, web, n0120]
     env:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
@@ -64,7 +64,7 @@ jobs:
 
       - name: Build poincare_test for platform
         env:
-          TEST_EXTENSION: ${{ (matrix.platform == 'web' && 'js') || 'bin' }}
+          TEST_EXTENSION: ${{ (matrix.platform == 'n0120' && 'A.dfu') || ((matrix.platform == 'web' && 'js') || 'bin') }}
         run: |
           $DOCKER_RUN "make -C poincare/test PLATFORM=${{ matrix.platform }} DEBUG=0 VERBOSE=0 ASSERTIONS=1 poincare_test.$TEST_EXTENSION"
 

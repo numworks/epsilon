@@ -5,7 +5,7 @@ $(call create_goal,bootloader, \
   kandinsky.minimal \
   liba.minimal \
   libaxx \
-  libsodium \
+  libsodium.sign \
   omg.minimal.decompress \
 ,bootloader, \
 )

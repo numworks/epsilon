@@ -156,7 +156,7 @@ jobs:
           git fetch --depth 1 origin master
           HASH=$(git rev-parse origin/master | head -c 10)
           if curl -s -f -I ${{ vars.ARTEMIS_URL }}/commit/$HASH/epsilon.html -o /dev/null; then
-            echo "<meta http-equiv=\"refresh\" content=\"0; url=/commit/$HASH/epsilon.html\">" \
+            echo "<meta http-equiv=\"refresh\" content=\"1; url=/commit/$HASH/epsilon.html\"><style>body {background: #C2C2C2}</style>" \
               | curl -u ${{ secrets.ARTEMIS_TOKEN }} -T - ${{ vars.ARTEMIS_URL }}/branch/master/epsilon.html
           fi
 

@@ -96,6 +96,15 @@ Coordinate2D<double> HoneFunctions::SafeBrentMaximum(
   return Coordinate2D<double>(res.x(), -res.y());
 }
 
+Coordinate2D<double> HoneFunctions::SafeBrentExtremum(
+    typename NumericSolver::Solver<double>::FunctionEvaluation f,
+    const void* aux, double xMin, double xMax, Interest interest,
+    double xPrecision) {
+  return interest == Interest::Minimum
+             ? SafeBrentMinimum(f, aux, xMin, xMax, interest, xPrecision)
+             : SafeBrentMaximum(f, aux, xMin, xMax, interest, xPrecision);
+}
+
 Coordinate2D<double> HoneFunctions::CompositeBrentForRoot(
     typename NumericSolver::Solver<double>::FunctionEvaluation f,
     const void* aux, double xMin, double xMax, Interest interest,

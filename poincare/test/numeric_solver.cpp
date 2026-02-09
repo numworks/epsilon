@@ -20,10 +20,13 @@ typedef Poincare::Interest Interest;
 
 void assert_next_solution_is(Solver<double>* solver,
                              Poincare::Coordinate2D<double> expected,
-                             const char* expression) {
+                             const char* expression, Interest interest) {
   assert(std::isnan(expected.x()) == std::isnan(expected.y()));
 
-  Solution<double> observed = solver->next();
+  Solution<double> observed;
+  while ((observed = solver->next()).interest != Interest::None &&
+         observed.interest != interest) {
+  }
 
   constexpr double relativePrecision =
       2. * OMG::Float::SquareRoot<double>(2. * OMG::Float::Epsilon<double>());
@@ -55,8 +58,7 @@ void assert_solutions_are(
       parseAndPrepareForApproximation(expression, simplificationParameters);
 
   RootSolver rootSolver(start, end, e, Poincare::EmptySymbolContext{});
-  MinimumSolver minimumSolver(start, end, e, Poincare::EmptySymbolContext{});
-  MaximumSolver maximumSolver(start, end, e, Poincare::EmptySymbolContext{});
+  ExtremumSolver extremumSolver(start, end, e, Poincare::EmptySymbolContext{});
 
   Tree* e2 = (0_e)->cloneTree();
   if (otherExpression) {
@@ -72,10 +74,8 @@ void assert_solutions_are(
       solverPointer = &rootSolver;
       break;
     case Interest::Minimum:
-      solverPointer = &minimumSolver;
-      break;
     case Interest::Maximum:
-      solverPointer = &maximumSolver;
+      solverPointer = &extremumSolver;
       break;
     default:
       assert(interest == Interest::Intersection && otherExpression);
@@ -83,10 +83,11 @@ void assert_solutions_are(
   }
 
   for (Poincare::Coordinate2D<double> c : expected) {
-    assert_next_solution_is(solverPointer, c, expression);
+    assert_next_solution_is(solverPointer, c, expression, interest);
   }
   assert_next_solution_is(solverPointer,
-                          Poincare::Coordinate2D<double>(NAN, NAN), expression);
+                          Poincare::Coordinate2D<double>(NAN, NAN), expression,
+                          interest);
 }
 
 void assert_roots_are(

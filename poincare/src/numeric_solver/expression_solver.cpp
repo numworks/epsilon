@@ -41,17 +41,11 @@ ExpressionSolver::ExpressionSolver(double xStart, double xEnd, const Tree* e,
 
 // ------- Minimum/MaximumSolver implementation -------
 
-MinimumSolver::MinimumSolver(double xStart, double xEnd, const Tree* e,
-                             const SymbolContext& context)
+ExtremumSolver::ExtremumSolver(double xStart, double xEnd, const Tree* e,
+                               const SymbolContext& context)
     : ExpressionSolver(xStart, xEnd, e, context,
-                       SolverTests<double>::MinimumInBracket,
-                       HoneFunctions::SafeBrentMinimum) {}
-
-MaximumSolver::MaximumSolver(double xStart, double xEnd, const Tree* e,
-                             const SymbolContext& context)
-    : ExpressionSolver(xStart, xEnd, e, context,
-                       SolverTests<double>::MaximumInBracket,
-                       HoneFunctions::SafeBrentMaximum) {}
+                       SolverTests<double>::ExtremumInBracket,
+                       HoneFunctions::SafeBrentExtremum) {}
 
 // ------- RootSolver implementation -------
 

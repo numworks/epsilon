@@ -199,7 +199,7 @@ struct PointSearchContext {
   ContinuousFunctionStore* const store;
   Ion::Storage::Record record;
 
-  ExpressionSolver* interestSolvers[4];
+  ExpressionSolver* interestSolvers[3];
 
   size_t currentProvider = 0;
   int counter = 0;
@@ -422,8 +422,7 @@ Expression PointsOfInterestCache::computeBetween(float start, float end) {
   const SymbolContext& context = App::app()->localContext();
 
   RootSolver solver(start, end, prepared, context);
-  MinimumSolver minSolver(start, end, prepared, context);
-  MaximumSolver maxSolver(start, end, prepared, context);
+  ExtremumSolver extremumSolver(start, end, prepared, context);
   DiscontinuitySolver discontinuitySolver(start, end, prepared, context);
 
   PointSearchContext searchContext{
@@ -433,8 +432,7 @@ Expression PointsOfInterestCache::computeBetween(float start, float end) {
       .context = App::app()->localContext(),
       .store = store,
       .record = m_record,
-      .interestSolvers = {&solver, &minSolver, &maxSolver,
-                          &discontinuitySolver},
+      .interestSolvers = {&solver, &extremumSolver, &discontinuitySolver},
       .lastSegment = (m_computedEnd == end),
   };
 

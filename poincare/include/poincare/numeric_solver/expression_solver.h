@@ -25,16 +25,11 @@ class ExpressionSolver : public Solver<double> {
 
 // Specific implementations for each interest
 
-class MinimumSolver : public ExpressionSolver {
+// Search for Minimums and Maximums
+class ExtremumSolver : public ExpressionSolver {
  public:
-  MinimumSolver(double xStart, double xEnd, const Internal::Tree* e,
-                const SymbolContext& context);
-};
-
-class MaximumSolver : public ExpressionSolver {
- public:
-  MaximumSolver(double xStart, double xEnd, const Internal::Tree* e,
-                const SymbolContext& context);
+  ExtremumSolver(double xStart, double xEnd, const Internal::Tree* e,
+                 const SymbolContext& context);
 };
 
 class RootSolver : public ExpressionSolver {

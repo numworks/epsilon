@@ -17,6 +17,11 @@ class HoneFunctions {
       const void* aux, double xMin, double xMax, Interest interest,
       double xPrecision);
 
+  static Coordinate2D<double> SafeBrentExtremum(
+      typename NumericSolver::Solver<double>::FunctionEvaluation f,
+      const void* aux, double xMin, double xMax, Interest interest,
+      double xPrecision);
+
   static Coordinate2D<double> CompositeBrentForRoot(
       typename NumericSolver::Solver<double>::FunctionEvaluation f,
       const void* aux, double xMin, double xMax, Interest interest,

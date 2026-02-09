@@ -26,6 +26,15 @@ class SolverTests {
     return BoolToInterest(HasMaximum(a, b, c), Interest::Maximum);
   }
 
+  static Interest ExtremumInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
+                                    Coordinate2D<T> c, const void* aux) {
+    Interest interest = Interest::None;
+    if ((interest = MinimumInBracket(a, b, c, aux)) != Interest::None) {
+      return interest;
+    }
+    return MaximumInBracket(a, b, c, aux);
+  }
+
   static Interest EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
                                          Coordinate2D<T> c, const void* aux) {
     Interest interest = Interest::None;
@@ -34,10 +43,7 @@ class SolverTests {
     }
     /* FIXME Check the sign of a,b and c. A minimum can only be a root if b is
      * positive. */
-    if ((interest = MinimumInBracket(a, b, c, aux)) != Interest::None) {
-      return interest;
-    }
-    return MaximumInBracket(a, b, c, aux);
+    return ExtremumInBracket(a, b, c, aux);
   }
 
   static bool IsDiscontinuousInBracket(Coordinate2D<T> a, Coordinate2D<T> c,

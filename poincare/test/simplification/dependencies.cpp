@@ -139,16 +139,6 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to("f(sum(1/n,n,1,5))", "1", projCtx);
   symbolStore.reset();
 
-  // Sequence
-  // TODO: add sequence type to the symbol store
-  symbolStore.setExpressionForUserSymbol(KUndef, KSeq<"u">("n"_e));
-  PoincareTest::store("3→f(x)", symbolStore);
-  // Sequence are kept in dependency
-  simplifies_to("f(u(n))", "dep(3,{u(n)})", projCtx);
-  // Except if the sequence can already be approximated.
-  simplifies_to("f(u(2))", "undef", projCtx);
-  symbolStore.reset();
-
   // Power
   simplifies_to("1/(1/x)", "dep(x,{nonNull(x)})", k_cartesianCtx);
   simplifies_to("x/√(x)", "dep(√(x),{-ln(x)/2})", k_cartesianCtx);

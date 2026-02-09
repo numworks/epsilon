@@ -21,6 +21,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/sequence/,$(addsuffix :-test, \
   values/values_controller.cpp \
   sequence_icon.png \
 ) \
+  test/poincare.cpp:+test \
   test/sequence.cpp:+test \
 )
 

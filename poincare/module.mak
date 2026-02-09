@@ -276,7 +276,6 @@ _sources_poincare_test_cases := $(addprefix test/, \
     booleans.cpp \
     complex.cpp \
     dependencies.cpp \
-    helper.cpp \
     lists.cpp \
     matrix.cpp \
     numbers.cpp \
@@ -297,6 +296,7 @@ _sources_poincare_test_util := $(addprefix test/, \
     symbol_store.cpp \
   ) \
   approximation/helper.cpp \
+  simplification/helper.cpp \
 )
 
 $(call create_module,poincare,1, \

@@ -825,7 +825,7 @@ bool Zoom<T>::fitWithSolverHelper(
        * evaluating y=(e^x-1)/(e^x+1) for x~90 (which leads to ∞/∞). */
       return didFit;
     }
-    privateFitPoint(p, vertical);
+    privateFitPoint(Solver<T>::SolutionToCoord(p), vertical);
     didFit = true;
     if (p.interest == Interest::Root) {
       nRoots++;

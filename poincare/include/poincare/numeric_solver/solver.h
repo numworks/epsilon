@@ -19,17 +19,18 @@ template <typename T>
 class Solver {
  public:
   struct Solution {
-    T x;
-    T y;
-    Interest interest;
-
-    constexpr Solution(T xValue, T yValue, Interest interestValue)
-        : x(xValue), y(yValue), interest(interestValue) {}
-    constexpr Solution(Coordinate2D<T> p, Interest interestValue)
-        : x(p.x()), y(p.y()), interest(interestValue) {}
-    constexpr Solution() : x(k_NAN), y(k_NAN), interest(Interest::None) {}
-    constexpr operator Coordinate2D<T>() const { return Coordinate2D<T>(x, y); }
+    T x = k_NAN;
+    T y = k_NAN;
+    Interest interest = Interest::None;
   };
+
+  constexpr static Solution CoordToSolution(
+      Coordinate2D<T> coordinates, Interest interest = Interest::None) {
+    return Solution{coordinates.x(), coordinates.y(), interest};
+  }
+  constexpr static Coordinate2D<T> SolutionToCoord(Solution solution) {
+    return Coordinate2D<T>(solution.x, solution.y);
+  }
 
   // We need at most 3 solutions at the same abscissa for discontinuities
   constexpr static int k_maxSolutionsAtSameAbscissa = 3;
@@ -185,8 +186,8 @@ class Solver {
 
   Solution registerSolution(Solution solution, bool wasQueued = false);
   DetailedRoot registerDetailedRoot(DetailedRootX rootAbscissa) {
-    return {.solution = registerSolution(
-                Solution(rootAbscissa.x, k_zero, Interest::Root)),
+    return {.solution = registerSolution(Solution{
+                .x = rootAbscissa.x, .y = k_zero, .interest = Interest::Root}),
             .nullDescendant = rootAbscissa.nullDescendant};
   }
 

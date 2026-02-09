@@ -103,7 +103,7 @@ typename Solver<T>::Solution Solver<T>::next(
     }
   }
 
-  return Solution();
+  return Solution{};
 }
 
 template <typename T>
@@ -111,7 +111,7 @@ typename Solver<T>::Solution Solver<T>::next(const Tree* e, BracketTest test,
                                              HoneResult hone) {
   if (e->hasDescendantSatisfying(
           [](const Tree* e) { return e->isRandomized(); })) {
-    return Solution();
+    return Solution{};
   }
   /* TODO_PCJ: Either ensure expression is projected, or pass approximation
    * context(ComplexFormat, AngleUnit) and replace defined symbols. */
@@ -126,7 +126,7 @@ typename Solver<T>::Solution Solver<T>::next(const Tree* e, BracketTest test,
 
 template <typename T>
 typename Solver<T>::DetailedRoot Solver<T>::nextDetailedRoot(const Tree* e) {
-  DetailedRoot nanRoot = {.solution = Solution(), .nullDescendant = nullptr};
+  DetailedRoot nanRoot = {.solution = Solution{}, .nullDescendant = nullptr};
   if (e->hasDescendantSatisfying(
           [](const Tree* e) { return e->isRandomized(); })) {
     return nanRoot;
@@ -269,8 +269,10 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
   /* In the areAlongSameAxis case, take the middle of the two approximated "y"
    * values */
   return areAlongSameAxis
-             ? Solution(x, (y + secondImage) / 2., Interest::Intersection)
-             : Solution(x, y, Interest::Intersection);
+             ? Solution{.x = x,
+                        .y = (y + secondImage) / 2.,
+                        .interest = Interest::Intersection}
+             : Solution{.x = x, .y = y, .interest = Interest::Intersection};
 }
 
 template <typename T>
@@ -753,7 +755,7 @@ void Solver<T>::honeAndRoundSolution(
   }
   assert(std::isfinite(xy.x()));
   if (std::isfinite(xy.y()) || interest == Interest::Discontinuity) {
-    m_solutionQueue.push(Solution(xy, interest));
+    m_solutionQueue.push(CoordToSolution(xy, interest));
   }
 }
 
@@ -824,14 +826,17 @@ void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
   // Push solutions
   if (std::isfinite(left.y())) {
     left.setX(middle.x());
-    m_solutionQueue.push(Solution(left, Interest::UnreachedDiscontinuity));
+    m_solutionQueue.push(
+        CoordToSolution(left, Interest::UnreachedDiscontinuity));
   }
   if (std::isfinite(middle.y())) {
-    m_solutionQueue.push(Solution(middle, Interest::ReachedDiscontinuity));
+    m_solutionQueue.push(
+        CoordToSolution(middle, Interest::ReachedDiscontinuity));
   }
   if (std::isfinite(right.y())) {
     right.setX(middle.x());
-    m_solutionQueue.push(Solution(right, Interest::UnreachedDiscontinuity));
+    m_solutionQueue.push(
+        CoordToSolution(right, Interest::UnreachedDiscontinuity));
   }
 }
 
@@ -839,7 +844,7 @@ template <typename T>
 typename Solver<T>::Solution Solver<T>::registerSolution(Solution solution,
                                                          bool wasQueued) {
   if (std::isnan(solution.x)) {
-    return Solution();
+    return Solution{};
   }
   assert((wasQueued && solution.x == m_xStart) ||
          (!wasQueued && validSolution(solution.x)));

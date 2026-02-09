@@ -325,11 +325,15 @@ QUIZ_CASE(solver_approximate) {
   /* This tests triggers the escape case [std::fabs(end->x() - middle->x()) ==
    * 0] in Solver::FindMinimalIntervalContainingDiscontinuity.
    * TODO: This test finds roots that are wrong because of how the solver
-   * (badly) handles precisions for large x values. */
+   * (badly) handles precisions for large x values.
+   * TODO: This test was deactivated for now because:
+   * - It tested wrong results
+   * - It relied weird discontinuity tests that need to be reworked anyway
   assert_solves_numerically_to(
       "√(cos(x))=0.1", -224802933571584, -90000000000000,
       {-2.23822e+14, -2.18499e+14, -2.12789e+14, -2.01024e+14, -1.95777e+14,
        -1.83716e+14, -1.81387e+14, -1.70970e+14, -1.66871e+14, -1.64543e+14});
+  */
 
   assert_solves_numerically_to("(4-x)/(((6+2x)/(x-1))-8)=-(x-1)/4", 0, 4,
                                {3.0});

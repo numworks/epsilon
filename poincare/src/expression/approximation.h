@@ -1,6 +1,7 @@
 #pragma once
 
 #include <omg/signaling_nan.h>
+#include <omg/vector.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -52,23 +53,32 @@ struct Precision<double> {
 
 namespace Private {
 using VariableType = std::complex<double>;
-/* LocalContext is used to store the values of local variable of index 0.
- * Parent contexts hold the values of the ones with higher indexes. */
-class LocalContext {
+
+/* LocalEvaluator stores the values of local variables. The variable that was
+ * pushed last has index 0, then the second last has index 1, and so on.  */
+class LocalEvaluator {
  public:
-  LocalContext(VariableType abscissa,
-               const LocalContext* parentContext = nullptr)
-      : m_localVariable(abscissa), m_parentContext(parentContext) {}
+  // This parameter could be a project-dependent configuration
+  static constexpr size_t k_maxNestedVariables = 8;
+
+  void pushVariable(VariableType value) { m_values.push(value); }
+
+  void setLocalValue(VariableType value) { m_values.last() = value; }
+
   VariableType variable(uint8_t index) const {
-    return index == 0
-               ? m_localVariable
-               : (m_parentContext ? m_parentContext->variable(index - 1) : NAN);
+    if (m_values.size() <= index) {
+      return NAN;
+    }
+    return m_values[m_values.size() - 1 - index];
   }
-  void setLocalValue(VariableType value) { m_localVariable = value; }
-  VariableType m_localVariable;
-  const LocalContext* m_parentContext;
+
+  void leaveCurrentScope() { m_values.pop(); }
+
+ private:
+  OMG::StaticVector<VariableType, k_maxNestedVariables> m_values = {};
 };
 }  // namespace Private
+
 struct Parameters {
   /* Must be true if expression has not been projected and may have parametric
    * functions. */
@@ -100,17 +110,8 @@ class Context {
  public:
   Context(int16_t listElement = -1)
       : m_randomContext(Random::Context(false)),
-        m_localContext(nullptr),
         m_listElement(listElement),
         m_pointElement(-1) {}
-  Private::VariableType variable(uint8_t index) const {
-    assert(m_localContext);
-    return m_localContext->variable(index);
-  }
-  void setLocalValue(Private::VariableType value) {
-    assert(m_localContext);
-    m_localContext->setLocalValue(value);
-  }
   /* Should always be called after calling an approximation function with a
    * temporary context.
    * TODO: separate random context from the rest. */
@@ -118,8 +119,8 @@ class Context {
     m_randomContext = randomCtx;
   }
   mutable Random::Context m_randomContext;
-  // LocalContext is used to store the values of local variables
-  Private::LocalContext* m_localContext;
+  // LocalEvaluator is used to store the values of local variables
+  Private::LocalEvaluator m_localEvaluator;
   // Tells if we are approximating to get the nth-element of a list
   int16_t m_listElement;
   // Tells if we are approximating to get the nth-element of a point

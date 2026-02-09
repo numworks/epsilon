@@ -87,10 +87,9 @@ ReturnType To(const Tree* e, FloatType abscissa, Parameters params,
       std::is_same_v<ReturnType, Tree*> ||
       std::is_same_v<ReturnType, BooleanOrUndefined> ||
       std::is_same_v<FloatType, typename FloatTypeAccessor<ReturnType>::type>);
-  // TODO: rework the LocalContext creation workflow
+  // TODO: move Context out of To, and create it with the Approximator
   Context contextCopy = context;
-  LocalContext localContext(abscissa, contextCopy.m_localContext);
-  contextCopy.m_localContext = &localContext;
+  contextCopy.m_localEvaluator.pushVariable(abscissa);
   return To<ReturnType>(e, Precision<FloatType>::value, params, contextCopy);
 }
 
@@ -257,10 +256,6 @@ FloatType Approximator::toFloat(const Tree* e) {
   assert(m_context.m_listElement != -1 ||
          !Dimension::IsList(e, m_parameters.symbolContext));
   assert(!m_parameters.onlyReplaceNumerical);
-  if (m_context.m_localContext && (std::isnan(m_context.variable(0).real()) ||
-                                   std::isnan(m_context.variable(0).imag()))) {
-    return FloatType{NAN};
-  }
   return privateToFloat<FloatType>(e);
 }
 
@@ -304,10 +299,6 @@ template <typename T>
 Coordinate2D<T> Approximator::privateToCoordinates(const Tree* e) {
   assert(Dimension::DeepCheck(e, m_parameters.symbolContext) &&
          Dimension::Get(e, m_parameters.symbolContext).isPoint());
-  if (m_context.m_localContext && (std::isnan(m_context.variable(0).real()) ||
-                                   std::isnan(m_context.variable(0).imag()))) {
-    return Coordinate2D<T>(NAN, NAN);
-  }
   T xScalar, yScalar;
   Context currentContext = m_context;
   m_context.m_pointElement = 0;
@@ -731,11 +722,9 @@ std::complex<T> Approximator::userSymbolToComplex(const Tree* e) {
   switch (e->type()) {
     case Type::Var: {
       // Local variable
-      if (!m_context.m_localContext) {
-        return NAN;
-      }
-      // TODO: Use template with LocalContext
-      std::complex<double> z = m_context.variable(Variables::Id(e));
+      // TODO: Use template with LocalEvaluator
+      std::complex<double> z =
+          m_context.m_localEvaluator.variable(Variables::Id(e));
       return std::complex<T>(z.real(), z.imag());
     }
     case Type::UserFunction:
@@ -749,21 +738,19 @@ std::complex<T> Approximator::userSymbolToComplex(const Tree* e) {
       if (e->isUserVariable()) {
         return privateToComplex<T>(definition);
       }
-      /* LocalContext only handles complex scalar, but non scalar children of
+      /* LocalEvaluator only handles complex scalar, but non scalar children of
        * UserFunction are forbidden in dimension check anyway. */
       std::complex<T> x = privateToComplexRecursive<T>(e->child(0));
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
         return NAN;
       }
       Tree* definitionClone = definition->cloneTree();
-      // Only approximate child once and use local context.
+      // Only approximate child once and use LocalEvaluator
       Variables::ReplaceUserVariable(definitionClone, KUnknownSymbol, 0,
                                      ComplexProperties::Unknown());
-      Context currentContext = m_context;
-      LocalContext localCtx = LocalContext(x, m_context.m_localContext);
-      m_context.m_localContext = &localCtx;
+      m_context.m_localEvaluator.pushVariable(x);
       std::complex<T> result = privateToComplex<T>(definitionClone);
-      m_context = currentContext;
+      m_context.m_localEvaluator.leaveCurrentScope();
       definitionClone->removeTree();
       return result;
     }
@@ -816,12 +803,10 @@ std::complex<T> Approximator::analysisToComplex(const Tree* e) {
       /* We ApproximateAndReplaceEveryScalar here to avoid approximating complex
        * constants on every round of the sum/product computation */
       approximateAndReplaceEveryScalar(child);
-      Context currentContext = m_context;
-      LocalContext localCtx = LocalContext(NAN, m_context.m_localContext);
-      m_context.m_localContext = &localCtx;
+      m_context.m_localEvaluator.pushVariable(NAN);
       std::complex<T> result = e->isSum() ? 0 : 1;
       for (int k = bounds.low; k <= bounds.up; k++) {
-        m_context.setLocalValue(k);
+        m_context.m_localEvaluator.setLocalValue(k);
         // Reset random context
         m_context.m_randomContext = Random::Context(true);
         std::complex<T> value = privateToComplexRecursive<T>(child);
@@ -834,7 +819,7 @@ std::complex<T> Approximator::analysisToComplex(const Tree* e) {
           break;
         }
       }
-      m_context = currentContext;
+      m_context.m_localEvaluator.leaveCurrentScope();
       child->removeTree();
       return result;
     }
@@ -933,16 +918,13 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
     }
     case Type::ListSequence: {
       assert(m_context.m_listElement != -1);
-      Context currentContext = m_context;
       // epsilon sequences starts at one
-      LocalContext localCtx =
-          LocalContext(m_context.m_listElement + 1, m_context.m_localContext);
-      m_context.m_localContext = &localCtx;
+      m_context.m_localEvaluator.pushVariable(m_context.m_listElement + 1);
       // Reset random context
       m_context.m_randomContext = Random::Context();
       std::complex<T> result =
           privateToComplexRecursive<T>(e->child(Parametric::FunctionIndex(e)));
-      m_context = currentContext;
+      m_context.m_localEvaluator.leaveCurrentScope();
       return result;
     }
     case Type::Dim: {
@@ -1546,15 +1528,12 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
   if (e->isListSequence()) {
     assert(m_context.m_listElement != -1);
     // epsilon sequences starts at one
-    Context currentContext = m_context;
-    LocalContext localCtx =
-        LocalContext(m_context.m_listElement + 1, m_context.m_localContext);
-    m_context.m_localContext = &localCtx;
+    m_context.m_localEvaluator.pushVariable(m_context.m_listElement + 1);
     // Reset random context
     m_context.m_randomContext = Random::Context();
     BooleanOrUndefined result =
         privateToBoolean(e->child(Parametric::FunctionIndex(e)));
-    m_context = currentContext;
+    m_context.m_localEvaluator.leaveCurrentScope();
     return result;
   }
   if (e->isUndefBoolean()) {
@@ -1578,7 +1557,7 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
     if (e->isUserVariable()) {
       return privateToBoolean(definition);
     }
-    /* LocalContext only handles complex scalar, but non scalar children of
+    /* LocalEvaluator only handles complex scalar, but non scalar children of
      * UserFunction are forbidden in dimension check anyway. */
 
     // Local context uses double precision
@@ -1590,11 +1569,9 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
     // Only approximate child once and use local context.
     Variables::ReplaceUserVariable(definitionClone, KUnknownSymbol, 0,
                                    ComplexProperties::Unknown());
-    Context currentContext = m_context;
-    LocalContext localCtx = LocalContext(x, m_context.m_localContext);
-    m_context.m_localContext = &localCtx;
+    m_context.m_localEvaluator.pushVariable(x);
     BooleanOrUndefined result = privateToBoolean(definitionClone);
-    m_context = currentContext;
+    m_context.m_localEvaluator.leaveCurrentScope();
     definitionClone->removeTree();
     return result;
   }
@@ -1849,22 +1826,20 @@ Tree* Approximator::toMatrix(const Tree* e) {
       if (e->isUserVariable()) {
         return toMatrix(definition);
       }
-      /* LocalContext only handles complex scalar, but non scalar children of
+      /* LocalEvaluator only handles complex scalar, but non scalar children of
        * UserFunction are forbidden in dimension check anyway. */
-      // Local context uses a double abscissa
-      std::complex<double> x = privateToComplex<double>(e->child(0));
+      // Local context uses a complex double abscissa
+      VariableType x = privateToComplex<double>(e->child(0));
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
         return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
       }
       Tree* definitionClone = definition->cloneTree();
-      // Only approximate child once and use local context.
+      // Only approximate child once and use LocalEvaluator
       Variables::ReplaceUserVariable(definitionClone, KUnknownSymbol, 0,
                                      ComplexProperties::Unknown());
-      Context currentContext = m_context;
-      LocalContext localCtx = LocalContext(x, m_context.m_localContext);
-      m_context.m_localContext = &localCtx;
+      m_context.m_localEvaluator.pushVariable(x);
       TreeRef result = toMatrix(definitionClone);
-      m_context = currentContext;
+      m_context.m_localEvaluator.leaveCurrentScope();
       definitionClone->removeTree();
       return result;
     }
@@ -1882,19 +1857,17 @@ Tree* Approximator::toMatrix(const Tree* e) {
       static_assert(Parametric::k_sumArgumentIndex ==
                     Parametric::k_prodArgumentIndex);
       Tree* child = e->child(Parametric::k_sumArgumentIndex)->cloneTree();
-      Context currentContext = m_context;
       /* We approximateAndReplaceEveryScalar here to avoid approximating complex
        * constants on every round of the sum/product computation */
       approximateAndReplaceEveryScalar(child);
-      LocalContext localCtx = LocalContext(NAN, m_context.m_localContext);
-      m_context.m_localContext = &localCtx;
+      m_context.m_localEvaluator.pushVariable(NAN);
       Dimension dim = Dimension::Get(child, m_parameters.symbolContext);
       assert(dim.isMatrix());
       assert(e->isSum() || dim.isSquareMatrix());
       TreeRef result =
           e->isSum() ? Matrix::Zero(dim.matrix) : Matrix::Identity(dim.matrix);
       for (int k = bounds.low; k <= bounds.up; k++) {
-        m_context.setLocalValue(k);
+        m_context.m_localEvaluator.setLocalValue(k);
         // Reset random context
         m_context.m_randomContext = Random::Context(true);
         TreeRef value = toMatrix(child);
@@ -1907,7 +1880,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
         // Unlike AnalysisToComplex, skip early undef escape case for simplicity
         value->removeTree();
       }
-      m_context = currentContext;
+      m_context.m_localEvaluator.leaveCurrentScope();
       child->removeTree();
       return result;
     }
@@ -1937,11 +1910,9 @@ T Approximator::privateToFloat(const Tree* e) {
 
 template <typename T>
 T Approximator::toLocalContext(const Tree* e, T x) {
-  Context currentContext = m_context;
-  LocalContext localCtx(x, m_context.m_localContext);
-  m_context.m_localContext = &localCtx;
+  m_context.m_localEvaluator.pushVariable(x);
   T result = privateToFloat<T>(e);
-  m_context = currentContext;
+  m_context.m_localEvaluator.leaveCurrentScope();
   return result;
 }
 
@@ -1979,11 +1950,10 @@ int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   assert(piecewise->isPiecewise());
   /* TODO: Without randomContext, randomized nodes in piecewise's condition will
    * approximate to NAN. */
-  LocalContext localCtx(x);
-  Context ctx;
-  ctx.m_localContext = &localCtx;
+  Context context;
+  context.m_localEvaluator.pushVariable(x);
   const Tree* branch =
-      Approximator{Precision<T>::value, Approximation::Parameters{}, ctx}
+      Approximator{Precision<T>::value, Approximation::Parameters{}, context}
           .selectPiecewiseBranch(piecewise);
   return !branch            ? k_unknownActiveBranch
          : branch == KUndef ? k_noActiveBranch

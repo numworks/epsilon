@@ -20,7 +20,7 @@ namespace Graph {
 
 // PointsOfInterestCache
 
-void PointsOfInterestCache::setBounds(float start, float end) {
+void PointsOfInterestCache::setBounds(double start, double end) {
   assert(start <= end);
 
   uint32_t checksum = Ion::Storage::FileSystem::sharedFileSystem->checksum();
@@ -151,12 +151,12 @@ PointOfInterest PointsOfInterestCache::displayablePointOfInterestAtCoordinates(
   return pointOfInterestAtCoordinates(x, y, interest);
 }
 
-float PointsOfInterestCache::step() const {
+double PointsOfInterestCache::step() const {
   /* If the bounds are large enough, there might be less than k_numberOfSteps
-   * floats between them. */
-  float result = (m_end - m_start) / k_numberOfSteps;
-  float minimalStep = std::max(std::fabs(m_end), std::fabs(m_start)) *
-                      OMG::Float::Epsilon<float>();
+   * doubles between them. */
+  double result = (m_end - m_start) / k_numberOfSteps;
+  double minimalStep = std::max(std::fabs(m_end), std::fabs(m_start)) *
+                       OMG::Float::Epsilon<double>();
   return std::max(result, minimalStep);
 }
 
@@ -193,9 +193,8 @@ bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
 namespace {
 
 struct PointSearchContext {
-  // TODO: Why are these float when ExpressionSolver is double
-  const float start, end;
-  const float searchStep;
+  const double start, end;
+  const double searchStep;
   const SymbolContext& context;
   ContinuousFunctionStore* const store;
   Ion::Storage::Record record;
@@ -212,7 +211,7 @@ struct PointSearchContext {
   };
   /* TODO: Intersections handling is a bit messy because we need to recreate a
    * new solver for each pair of functions intersected. */
-  float currentStartForIntersections;
+  double currentStartForIntersections;
   Ion::Storage::Record otherRecord;
 
   bool lastSegment;
@@ -403,7 +402,7 @@ PointOfInterest findPoints(void* searchContext) {
 
 }  // namespace
 
-Expression PointsOfInterestCache::computeBetween(float start, float end) {
+Expression PointsOfInterestCache::computeBetween(double start, double end) {
   assert(!m_record.isNull());
   assert(m_checksum == Ion::Storage::FileSystem::sharedFileSystem->checksum());
   assert(!m_list.isUninitialized());
@@ -430,7 +429,7 @@ Expression PointsOfInterestCache::computeBetween(float start, float end) {
   PointSearchContext searchContext{
       .start = start,
       .end = end,
-      .searchStep = Solver<float>::DefaultSearchStepForAmplitude(end - start),
+      .searchStep = Solver<double>::DefaultSearchStepForAmplitude(end - start),
       .context = App::app()->localContext(),
       .store = store,
       .record = m_record,

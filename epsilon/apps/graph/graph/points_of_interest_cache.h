@@ -19,7 +19,7 @@ class PointsOfInterestCache {
 
   Ion::Storage::Record record() const { return m_record; }
 
-  void setBounds(float start, float end);
+  void setBounds(double start, double end);
   bool isFullyComputed() const {
     return m_interestingPointsOverflowPool ||
            (m_start == m_computedStart && m_end == m_computedEnd);
@@ -79,21 +79,21 @@ class PointsOfInterestCache {
 
  private:
   constexpr static int k_maxNumberOfDisplayablePoints = 64;
-  constexpr static float k_numberOfSteps = 25.0;
+  constexpr static double k_numberOfSteps = 25.0;
 
-  float step() const;
+  double step() const;
 
   void stripOutOfBounds();
-  Poincare::Expression computeBetween(float start, float end);
+  Poincare::Expression computeBetween(double start, double end);
   void tidyDownstreamPoolFrom(const Poincare::PoolObject* treePoolCursor) const;
 
   Ion::Storage::Record
       m_record;  // This is not const because of the copy constructor
   uint32_t m_checksum;
-  float m_start;
-  float m_end;
-  float m_computedStart;
-  float m_computedEnd;
+  double m_start;
+  double m_end;
+  double m_computedStart;
+  double m_computedEnd;
   Poincare::PointsOfInterestList m_list;
   bool m_interestingPointsOverflowPool;
 };

@@ -86,9 +86,17 @@ class IntersectionSolver : public RootSolver {
                      const Internal::Tree* g, const SymbolContext& context)
       : IntersectionSolver(xStart, xEnd, f, g, true, context) {}
 
+  ~IntersectionSolver();  // Remove memoized diff
+  IntersectionSolver(const IntersectionSolver&);
+  IntersectionSolver& operator=(const IntersectionSolver&);
+
   Solution<double> next() override;
 
  private:
+  IntersectionSolver(double xStart, double xEnd, const Internal::Tree* f,
+                     const Internal::Tree* g, Internal::Tree* diff,
+                     bool areAlongSameAxis, const SymbolContext& context);
+
   const Internal::Tree* m_f;
   const Internal::Tree* m_g;
   bool m_alongSameAxis;

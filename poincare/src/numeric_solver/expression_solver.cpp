@@ -290,14 +290,37 @@ static Tree* FunctionDifferenceForIntersection(const Tree* f, const Tree* g,
 
 IntersectionSolver::IntersectionSolver(double xStart, double xEnd,
                                        const Tree* f, const Tree* g,
+                                       Internal::Tree* diff,
                                        bool areAlongSameAxis,
                                        const SymbolContext& context)
-    : RootSolver(xStart, xEnd,
-                 FunctionDifferenceForIntersection(f, g, areAlongSameAxis),
-                 context),
+    : RootSolver(xStart, xEnd, diff, context),
       m_f(f),
       m_g(g),
       m_alongSameAxis(areAlongSameAxis) {}
+
+IntersectionSolver::IntersectionSolver(double xStart, double xEnd,
+                                       const Tree* f, const Tree* g,
+                                       bool areAlongSameAxis,
+                                       const SymbolContext& context)
+    : IntersectionSolver(
+          xStart, xEnd, f, g,
+          FunctionDifferenceForIntersection(f, g, areAlongSameAxis),
+          areAlongSameAxis, context) {}
+
+IntersectionSolver::~IntersectionSolver() {
+  const_cast<Internal::Tree*>(getTree())->removeTree();
+}
+
+IntersectionSolver::IntersectionSolver(const IntersectionSolver& other)
+    : IntersectionSolver(other.m_xStart, other.m_xEnd, other.m_f, other.m_g,
+                         other.getTree()->cloneTree(), other.m_alongSameAxis,
+                         other.m_context) {}
+
+IntersectionSolver& IntersectionSolver::operator=(
+    const IntersectionSolver& other) {
+  const_cast<Internal::Tree*>(getTree())->cloneTreeOverTree(other.getTree());
+  return *this;
+}
 
 Solution<double> IntersectionSolver::next() {
   Solution<double> root = RootSolver::next();

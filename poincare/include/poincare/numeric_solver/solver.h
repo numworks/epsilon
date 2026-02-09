@@ -39,6 +39,8 @@ class Solver {
   }
   static T DefaultSearchStepForAmplitude(T intervalAmplitude);
 
+  virtual ~Solver() = default;
+
   void reset(T xStart, T xEnd, T searchStep);
 
   virtual Solution<T> next();

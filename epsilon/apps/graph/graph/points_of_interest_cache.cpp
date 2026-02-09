@@ -199,7 +199,9 @@ struct PointSearchContext {
   ContinuousFunctionStore* const store;
   Ion::Storage::Record record;
 
-  ExpressionSolver* interestSolvers[3];
+  RootSolver rootSolver;
+  ExtremumSolver extremumSolver;
+  DiscontinuitySolver discontinuitySolver;
 
   size_t currentProvider = 0;
   int counter = 0;
@@ -257,12 +259,11 @@ PointOfInterest findRootOrExtremum(PointSearchContext* ctx) {
     return PointOfInterest{};
   }
 
-  for (; ctx->counter < static_cast<int>(std::size(ctx->interestSolvers));
-       ctx->counter++) {
-    ExpressionSolver* currentSolver = ctx->interestSolvers[ctx->counter];
-    if (ctx->counter != 0 && f->isAlongY()) {
-      // TODO: This is dirty
-      // 0 = RootSolver
+  ExpressionSolver* solvers[] = {&ctx->rootSolver, &ctx->extremumSolver,
+                                 &ctx->discontinuitySolver};
+  for (; ctx->counter < static_cast<int>(std::size(solvers)); ctx->counter++) {
+    ExpressionSolver* currentSolver = solvers[ctx->counter];
+    if (currentSolver != &ctx->rootSolver && f->isAlongY()) {
       // Do not compute min and max since they would appear left/rightmost
       continue;
     }
@@ -421,7 +422,7 @@ Expression PointsOfInterestCache::computeBetween(float start, float end) {
   PreparedFunction prepared = f->expressionApproximated();
   const SymbolContext& context = App::app()->localContext();
 
-  RootSolver solver(start, end, prepared, context);
+  RootSolver rootSolver(start, end, prepared, context);
   ExtremumSolver extremumSolver(start, end, prepared, context);
   DiscontinuitySolver discontinuitySolver(start, end, prepared, context);
 
@@ -432,15 +433,20 @@ Expression PointsOfInterestCache::computeBetween(float start, float end) {
       .context = App::app()->localContext(),
       .store = store,
       .record = m_record,
-      .interestSolvers = {&solver, &extremumSolver, &discontinuitySolver},
+      .rootSolver = rootSolver,
+      .extremumSolver = extremumSolver,
+      .discontinuitySolver = discontinuitySolver,
       .lastSegment = (m_computedEnd == end),
   };
 
-  for (size_t i = 0; i < std::size(searchContext.interestSolvers); i++) {
-    searchContext.interestSolvers[i]->setGrowthSpeed(
-        Solver<double>::GrowthSpeed::Fast);
-    searchContext.interestSolvers[i]->setSearchStep(searchContext.searchStep);
-    searchContext.interestSolvers[i]->stretch();
+  ExpressionSolver* solvers[] = {&searchContext.rootSolver,
+                                 &searchContext.extremumSolver,
+                                 &searchContext.discontinuitySolver};
+
+  for (size_t i = 0; i < std::size(solvers); i++) {
+    solvers[i]->setGrowthSpeed(Solver<double>::GrowthSpeed::Fast);
+    solvers[i]->setSearchStep(searchContext.searchStep);
+    solvers[i]->stretch();
   }
 
   searchContext.resetCurrentStartForIntersections();

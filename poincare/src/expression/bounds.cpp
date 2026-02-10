@@ -141,7 +141,10 @@ Bounds Bounds::Mult(const Tree* e) {
       return Invalid();
     }
     assert(bounds.lower() <= bounds.upper());
-    bounds.spread();
+    if (child != e->child(0)) {
+      // First child is multiplied by 1, do not spread for it
+      bounds.spread();
+    }
   }
   return bounds;
 }

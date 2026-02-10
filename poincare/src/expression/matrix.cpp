@@ -218,10 +218,11 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
 double ApproximateForPivot(const Tree* child,
                            Approximation::Approximator* approximator) {
   if (!approximator) {
-    return std::abs(Approximation::Approximator(
-                        Approximation::FloatPrecision::Double,
-                        Approximation::Parameters{}, Approximation::Context{})
-                        .specificTo<std::complex<double>>(child));
+    return std::abs(
+        Approximation::Approximator(Approximation::FloatPrecision::Double,
+                                    Approximation::Parameters{},
+                                    Approximation::Private::Context{})
+            .specificTo<std::complex<double>>(child));
   }
   switch (approximator->floatPrecision()) {
     case Approximation::FloatPrecision::Single:

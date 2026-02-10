@@ -105,15 +105,12 @@ QUIZ_CASE(pcj_approximation_floor_ceil_integer) {
   Tree* t2 = parse(expr2);
   Variables::ReplaceUserVariable(t1, "x"_e, 0, ComplexProperties::RealFinite());
   Variables::ReplaceUserVariable(t2, "x"_e, 0, ComplexProperties::RealFinite());
-  Approximation::Context context;
-  context.localEvaluator.pushVariable(0.0);
   constexpr double upperBound = 1000.0;
   for (double d = 0.0; d < upperBound; d += 1.0) {
-    context.localEvaluator.setLocalValue(d);
     double result1 =
-        Approximation::To<double>(t1, Approximation::Parameters{}, context);
+        Approximation::To<double>(t1, d, Approximation::Parameters{});
     double result2 =
-        Approximation::To<double>(t2, Approximation::Parameters{}, context);
+        Approximation::To<double>(t2, d, Approximation::Parameters{});
     quiz_assert_print_if_failure(
         roughly_equal(result1, d, OMG::Float::EpsilonLax<double>(), true),
         expr1);

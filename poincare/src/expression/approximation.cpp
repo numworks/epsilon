@@ -80,51 +80,97 @@ struct FloatTypeAccessor<double> {
   using type = double;
 };
 
-template <typename ReturnType, typename FloatType>
-ReturnType To(const Tree* e, FloatType abscissa, const Parameters& parameters,
-              const Context& context) {
-  static_assert(
-      std::is_same_v<ReturnType, Tree*> ||
-      std::is_same_v<ReturnType, BooleanOrUndefined> ||
-      std::is_same_v<FloatType, typename FloatTypeAccessor<ReturnType>::type>);
-  // TODO: move Context out of To, and create it with the Approximator
-  Context contextCopy = context;
-  contextCopy.localEvaluator.pushVariable(abscissa);
-  return To<ReturnType>(e, Precision<FloatType>::value, parameters,
-                        contextCopy);
-}
-
 template <typename ReturnType>
-ReturnType To(const Tree* e, const Parameters& parameters,
-              const Context& context) {
+ReturnType To(const Tree* e, const Parameters& parameters) {
   using float_type = typename FloatTypeAccessor<ReturnType>::type;
-  return To<ReturnType>(e, Precision<float_type>::value, parameters, context);
+  return Process<ReturnType>(e, Precision<float_type>::value, parameters);
 }
 
 template <typename ReturnType>
 ReturnType To(const Tree* e, FloatPrecision floatPrecision,
-              const Parameters& parameters, const Context& context) {
+              const Parameters& parameters) {
+  return Private::Process<ReturnType>(e, floatPrecision, parameters);
+}
+
+template <typename ReturnType, typename FloatType>
+ReturnType To(const Tree* e, FloatType abscissa, const Parameters& parameters) {
+  static_assert(
+      std::is_same_v<ReturnType, Tree*> ||
+      std::is_same_v<ReturnType, BooleanOrUndefined> ||
+      std::is_same_v<FloatType, typename FloatTypeAccessor<ReturnType>::type>);
+  return Private::Process<ReturnType>(e, Precision<FloatType>::value,
+                                      parameters, abscissa);
+}
+
+template <typename ReturnType, typename FloatType>
+ReturnType To(const Tree* e, FloatType abscissa, int16_t listElementIndex,
+              const Parameters& parameters) {
+  static_assert(
+      std::is_same_v<ReturnType, Tree*> ||
+      std::is_same_v<ReturnType, BooleanOrUndefined> ||
+      std::is_same_v<FloatType, typename FloatTypeAccessor<ReturnType>::type>);
+  return Private::Process<ReturnType>(e, Precision<FloatType>::value,
+                                      parameters, abscissa, listElementIndex);
+}
+
+bool Approximate(Tree* e, FloatPrecision floatPrecision,
+                 const Parameters& parameters) {
+  Tree* approximated = Process<Tree*>(e, floatPrecision, parameters);
+  bool hasChanged = !approximated->treeIsIdenticalTo(e);
+  e->moveTreeOverTree(approximated);
+  return hasChanged;
+}
+
+template <typename ReturnType, typename... ExtraArguments>
+ReturnType Private::Process(const Tree* e, FloatPrecision floatPrecision,
+                            const Parameters& parameters,
+                            ExtraArguments... extraArguments) {
   if (parameters.optimize) {
     assert(Dimension::DeepCheck(e, parameters.symbolContext));
   } else if (!Dimension::DeepCheck(e, parameters.symbolContext)) {
     return UndefinedUnhandledDimension<ReturnType>();
   }
   Tree* prepared = PrepareTree(e, parameters);
-  ReturnType result =
-      Approximator{floatPrecision, parameters, context}.specificTo<ReturnType>(
-          prepared ? prepared : e);
+  ReturnType result = ApproximateWithExtraData<ReturnType>(
+      prepared ? prepared : e, floatPrecision, parameters, extraArguments...);
   if (!prepared) {
     return result;
   }
   return PostProcessPreparedAndResult(prepared, result);
 }
 
-bool Approximate(Tree* e, FloatPrecision floatPrecision,
-                 const Parameters& parameters, const Context& context) {
-  Tree* approximated = To<Tree*>(e, floatPrecision, parameters, context);
-  bool hasChanged = !approximated->treeIsIdenticalTo(e);
-  e->moveTreeOverTree(approximated);
-  return hasChanged;
+template <typename ReturnType>
+ReturnType Private::ApproximateWithExtraData(const Tree* e,
+                                             FloatPrecision floatPrecision,
+                                             const Parameters& parameters) {
+  return Approximator{floatPrecision, parameters, Context{}}
+      .specificTo<ReturnType>(e);
+}
+
+template <typename ReturnType, typename FloatType>
+ReturnType Private::ApproximateWithExtraData(const Tree* e,
+                                             FloatPrecision floatPrecision,
+                                             const Parameters& parameters,
+                                             FloatType abscissa) {
+  Context approximationContext;
+  approximationContext.localEvaluator.pushVariable(abscissa);
+  return Approximator(floatPrecision, parameters,
+                      std::move(approximationContext))
+      .specificTo<ReturnType>(e);
+}
+
+template <typename ReturnType, typename FloatType>
+ReturnType Private::ApproximateWithExtraData(const Tree* e,
+                                             FloatPrecision floatPrecision,
+                                             const Parameters& parameters,
+                                             FloatType abscissa,
+                                             int16_t listElementIndex) {
+  Context approximationContext;
+  approximationContext.localEvaluator.pushVariable(abscissa);
+  approximationContext.listElement = listElementIndex;
+  return Approximator(floatPrecision, parameters,
+                      std::move(approximationContext))
+      .specificTo<ReturnType>(e);
 }
 
 template <>
@@ -133,10 +179,10 @@ Tree* Private::UndefinedUnhandledDimension() {
 }
 
 Approximator::Approximator(FloatPrecision floatPrecision,
-                           const Parameters& parameters, const Context& context)
+                           const Parameters& parameters, Context&& context)
     : m_floatPrecision(floatPrecision),
       m_parameters(parameters),
-      m_context(context) {}
+      m_context(std::move(context)) {}
 
 template <>
 Tree* Approximator::specificTo(const Tree* e) {
@@ -1975,7 +2021,8 @@ int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   Context context;
   context.localEvaluator.pushVariable(x);
   const Tree* branch =
-      Approximator{Precision<T>::value, Approximation::Parameters{}, context}
+      Approximator(Precision<T>::value, Approximation::Parameters{},
+                   std::move(context))
           .selectPiecewiseBranch(piecewise);
   return !branch            ? k_unknownActiveBranch
          : branch == KUndef ? k_noActiveBranch
@@ -2140,24 +2187,20 @@ Tree* ExtractRealPart(const Tree* e) {
   return SharedTreeStack->pushDoubleFloat(value.real());
 }
 
-template float To(const Tree*, const Parameters&, const Context&);
-template double To(const Tree*, const Parameters&, const Context&);
-template float To(const Tree*, float, const Parameters&, const Context&);
-template double To(const Tree*, double, const Parameters&, const Context&);
-template Tree* To(const Tree*, FloatPrecision, const Parameters&,
-                  const Context&);
-template std::complex<float> To(const Tree*, const Parameters&, const Context&);
-template std::complex<double> To(const Tree*, const Parameters&,
-                                 const Context&);
-template Coordinate2D<float> To(const Tree*, const Parameters&, const Context&);
-template Coordinate2D<double> To(const Tree*, const Parameters&,
-                                 const Context&);
-template PointOrRealScalar<float> To(const Tree*, float, const Parameters&,
-                                     const Context&);
-template PointOrRealScalar<double> To(const Tree*, double, const Parameters&,
-                                      const Context&);
-template BooleanOrUndefined To(const Tree*, FloatPrecision, const Parameters&,
-                               const Context&);
+template float To(const Tree*, const Parameters&);
+template double To(const Tree*, const Parameters&);
+template float To(const Tree*, float, const Parameters&);
+template double To(const Tree*, double, const Parameters&);
+template float To(const Tree*, float, int16_t, const Parameters&);
+template double To(const Tree*, double, int16_t, const Parameters&);
+template Tree* To(const Tree*, FloatPrecision, const Parameters&);
+template std::complex<float> To(const Tree*, const Parameters&);
+template std::complex<double> To(const Tree*, const Parameters&);
+template Coordinate2D<float> To(const Tree*, const Parameters&);
+template Coordinate2D<double> To(const Tree*, const Parameters&);
+template PointOrRealScalar<float> To(const Tree*, float, const Parameters&);
+template PointOrRealScalar<double> To(const Tree*, double, const Parameters&);
+template BooleanOrUndefined To(const Tree*, FloatPrecision, const Parameters&);
 
 template float FloatBinomial(float, float);
 template double FloatBinomial(double, double);

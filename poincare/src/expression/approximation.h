@@ -112,19 +112,6 @@ struct Parameters {
   const Poincare::SymbolContext& symbolContext = k_emptySymbolContext;
 };
 
-struct Context {
-  constexpr static int16_t k_unspecifiedListElement = -1;
-  constexpr static int16_t k_unspecifiedPointElement = -1;
-
-  Random::Context randomContext{false};
-  // LocalEvaluator is used to store the values of local variables
-  Private::LocalEvaluator localEvaluator{};
-  // Tells if we are approximating to get the nth-element of a list
-  int16_t listElement = k_unspecifiedListElement;
-  // Tells if we are approximating to get the nth-element of a point
-  int16_t pointElement = k_unspecifiedPointElement;
-};
-
 class BooleanOrUndefined {
  public:
   // Boolean of given value
@@ -148,25 +135,74 @@ class BooleanOrUndefined {
 
 /* Approximation methods (with Parameters) */
 
-// Common approximation pipeline for all return types
+// Main entrypoint
 template <typename ReturnType>
 ReturnType To(const Tree* e, FloatPrecision floatPrecision,
-              const Parameters& parameters, const Context& context = Context());
+              const Parameters& parameters);
 
-// In this version, the float precision is deduced from the ReturnType
+// If float precision can be deduced from the ReturnType
 template <typename ReturnType>
-ReturnType To(const Tree* e, const Parameters& parameters,
-              const Context& context = Context());
+ReturnType To(const Tree* e, const Parameters& parameters);
 
+/* With an "abscissa" value for Variable<0>. Float precision is equal to
+ * FloatType */
 template <typename ReturnType, typename FloatType>
-ReturnType To(const Tree* e, FloatType abscissa, const Parameters& parameters,
-              const Context& context = Context());
+ReturnType To(const Tree* e, FloatType abscissa, const Parameters& parameters);
+
+/* With an abscissa and a list element index */
+template <typename ReturnType, typename FloatType>
+ReturnType To(const Tree* e, FloatType abscissa, int16_t listElementIndex,
+              const Parameters& parameters);
 
 /* In-place approximation of a Tree*, returns true/false depending on whether
  * the expression has been modified. */
 bool Approximate(Tree* e, FloatPrecision floatPrecision,
-                 const Parameters& parameters,
-                 const Context& context = Context());
+                 const Parameters& parameters);
+
+namespace Private {
+
+struct Context {
+  constexpr static int16_t k_unspecifiedListElement = -1;
+  constexpr static int16_t k_unspecifiedPointElement = -1;
+
+  Random::Context randomContext{false};
+  // LocalEvaluator is used to store the values of local variables
+  Private::LocalEvaluator localEvaluator{};
+  // Tells if we are approximating to get the nth-element of a list
+  int16_t listElement = k_unspecifiedListElement;
+  // Tells if we are approximating to get the nth-element of a point
+  int16_t pointElement = k_unspecifiedPointElement;
+};
+
+/* Common approximation pipeline for all return types and extra arguments
+ * (abscissa, list element etc.) */
+template <typename ReturnType, typename... ExtraArguments>
+ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
+                   const Parameters& parameters,
+                   ExtraArguments... extraArguments);
+
+// Default method: Without extra data
+template <typename ReturnType>
+ReturnType ApproximateWithExtraData(const Tree* e,
+                                    FloatPrecision floatPrecision,
+                                    const Parameters& parameters);
+
+// With an "abscissa" value for Variable<0>
+template <typename ReturnType, typename FloatType>
+ReturnType ApproximateWithExtraData(const Tree* e,
+                                    FloatPrecision floatPrecision,
+                                    const Parameters& parameters,
+                                    FloatType abscissa);
+
+// With a Variable<0> value and a list element index
+template <typename ReturnType, typename FloatType>
+ReturnType ApproximateWithExtraData(const Tree* e,
+                                    FloatPrecision floatPrecision,
+                                    const Parameters& parameters,
+                                    FloatType abscissa,
+                                    int16_t listElementIndex);
+
+}  // namespace Private
 
 /* Helpers */
 
@@ -291,7 +327,7 @@ struct Substitution {
 class Approximator {
  public:
   Approximator(FloatPrecision floatPrecision, const Parameters& parameters,
-               const Context& context);
+               Private::Context&& context);
 
   /* Specific processing for the ReturnType. Must be overloaded for each
    * specific ReturnType */
@@ -484,7 +520,7 @@ class Approximator {
    * but this could be reworked */
   FloatPrecision m_floatPrecision;
   const Parameters m_parameters;
-  Context m_context;
+  Private::Context m_context;
 };
 
 }  // namespace Approximation

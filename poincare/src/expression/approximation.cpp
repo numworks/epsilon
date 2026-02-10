@@ -131,6 +131,17 @@ ReturnType Private::Process(const Tree* e, FloatPrecision floatPrecision,
     return UndefinedUnhandledDimension<ReturnType>();
   }
   Tree* prepared = PrepareTree(e, parameters);
+
+  if (parameters.onlyReplaceNumerical &&
+      floatPrecision == FloatPrecision::Double &&
+      e->hasDescendantSatisfying(
+          [](const Tree* e) { return e->isSingleFloat(); })) {
+    // Prevent float to double conversion
+    floatPrecision = FloatPrecision::Single;
+  }
+#if POINCARE_NO_FLOAT_APPROXIMATION
+  assert(floatPrecision == FloatPrecision::Double);
+#endif
   ReturnType result =
       Approximator{floatPrecision, parameters, Context(contextArguments...)}
           .specificTo<ReturnType>(prepared ? prepared : e);
@@ -534,6 +545,10 @@ std::complex<T> Private::ToUndefinedComplexValue(DefinedStatus status) {
 
 template <typename T>
 std::complex<T> Approximator::privateToComplex(const Tree* e) {
+#if POINCARE_NO_FLOAT_APPROXIMATION
+  assert(Precision<T>::value == FloatPrecision::Double);
+#endif
+
 #ifdef POINCARE_MAX_TREE_SIZE_FOR_APPROXIMATION
   if (e->maxDepth() > POINCARE_MAX_TREE_SIZE_FOR_APPROXIMATION) {
     // Prevent recursive approximation algorithms from overflowing the stack
@@ -541,6 +556,10 @@ std::complex<T> Approximator::privateToComplex(const Tree* e) {
   }
 #endif
 #if POINCARE_NO_FLOAT_APPROXIMATION
+  /* TODO: this could be a static_assert and the static_cast can be removed once
+   * all template instanciation with float (for example toComplex<float>) are
+   * removed from projects which use POINCARE_NO_FLOAT_APPROXIMATION */
+  assert(Precision<T>::value == FloatPrecision::Double);
   return static_cast<std::complex<T>>(privateToComplexRecursive<double>(e));
 #else
   return privateToComplexRecursive<T>(e);
@@ -550,7 +569,10 @@ std::complex<T> Approximator::privateToComplex(const Tree* e) {
 template <typename T>
 std::complex<T> Approximator::privateToComplexRecursive(const Tree* e) {
 #if POINCARE_NO_FLOAT_APPROXIMATION
-  static_assert(sizeof(T) == sizeof(double));
+  /* TODO: this could be a static_assert once all template instanciation with
+   * float (for example toComplex<float>) are removed from projects which use
+   * POINCARE_NO_FLOAT_APPROXIMATION */
+  assert(Precision<T>::value == FloatPrecision::Double);
 #endif
   std::complex<T> value = toComplexSwitch<T>(e);
   if (m_parameters.complexFormat == ComplexFormat::Real && value.imag() != 0 &&
@@ -1494,10 +1516,7 @@ BooleanOrUndefined Approximator::comparisonToBoolean(const Tree* e) {
 
 BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
 #if POINCARE_NO_FLOAT_APPROXIMATION
-  if (m_floatPrecision == FloatPrecision::Single) {
-    m_floatPrecision = FloatPrecision::Double;
-    return privateToBoolean(e);
-  }
+  assert(m_floatPrecision == FloatPrecision::Double);
 #endif
   if (e->isTrue()) {
     return true;
@@ -2072,13 +2091,6 @@ bool Private::SkipApproximation(TypeBlock type, FloatPrecision floatPrecision,
 }
 
 void Approximator::approximateAndReplaceEveryScalar(Tree* e) {
-  // Prevent float to double conversion
-  if (m_floatPrecision == FloatPrecision::Double &&
-      e->hasDescendantSatisfying(
-          [](const Tree* e) { return e->isSingleFloat(); })) {
-    m_floatPrecision = FloatPrecision::Single;
-    return approximateAndReplaceEveryScalar(e);
-  }
   if (SkipApproximation(e->type(), m_floatPrecision)) {
     return;
   }

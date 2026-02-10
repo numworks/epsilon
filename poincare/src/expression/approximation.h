@@ -506,9 +506,7 @@ class Approximator {
   template <typename T>
   T toLocalContext(const Tree* e, T x);
 
-  /* m_floatPrecision is not const because of approximateAndReplaceEveryScalar,
-   * but this could be reworked */
-  FloatPrecision m_floatPrecision;
+  const FloatPrecision m_floatPrecision;
   const Parameters m_parameters;
   Private::Context m_context;
 };

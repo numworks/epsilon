@@ -140,9 +140,9 @@ Bounds Bounds::Mult(const Tree* e) {
     if (!bounds.exists()) {
       return Invalid();
     }
+    assert(bounds.lower() <= bounds.upper());
     bounds.spread();
   }
-  assert(bounds.lower() <= bounds.upper());
   return bounds;
 }
 

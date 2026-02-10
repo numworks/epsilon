@@ -150,21 +150,22 @@ class BooleanOrUndefined {
 
 // Common approximation pipeline for all return types
 template <typename ReturnType>
-ReturnType To(const Tree* e, FloatPrecision floatPrecision, Parameters params,
-              const Context& context = Context());
+ReturnType To(const Tree* e, FloatPrecision floatPrecision,
+              const Parameters& parameters, const Context& context = Context());
 
 // In this version, the float precision is deduced from the ReturnType
 template <typename ReturnType>
-ReturnType To(const Tree* e, Parameters params,
+ReturnType To(const Tree* e, const Parameters& parameters,
               const Context& context = Context());
 
 template <typename ReturnType, typename FloatType>
-ReturnType To(const Tree* e, FloatType abscissa, Parameters params,
+ReturnType To(const Tree* e, FloatType abscissa, const Parameters& parameters,
               const Context& context = Context());
 
 /* In-place approximation of a Tree*, returns true/false depending on whether
  * the expression has been modified. */
-bool Approximate(Tree* e, FloatPrecision floatPrecision, Parameters params,
+bool Approximate(Tree* e, FloatPrecision floatPrecision,
+                 const Parameters& parameters,
                  const Context& context = Context());
 
 /* Helpers */
@@ -202,7 +203,7 @@ bool IsNonReal(std::complex<T> x) {
 namespace Private {
 /* If requested, project user variables or prepare the expression for
  * approximation */
-Tree* PrepareTree(const Tree* e, Parameters params);
+Tree* PrepareTree(const Tree* e, const Parameters& parameters);
 
 /* Undefined value representing an unhandled dimension for the T type (Tree,
  * float / double, boolean etc.)
@@ -289,7 +290,7 @@ struct Substitution {
 
 class Approximator {
  public:
-  Approximator(FloatPrecision floatPrecision, Parameters parameters,
+  Approximator(FloatPrecision floatPrecision, const Parameters& parameters,
                const Context& context);
 
   /* Specific processing for the ReturnType. Must be overloaded for each

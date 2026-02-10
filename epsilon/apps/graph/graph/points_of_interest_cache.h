@@ -81,7 +81,8 @@ class PointsOfInterestCache {
   constexpr static int k_maxNumberOfDisplayablePoints = 64;
   constexpr static double k_numberOfSteps = 25.0;
 
-  double step() const;
+  double cacheStep() const;
+  double solverStep() const;
 
   void stripOutOfBounds();
   Poincare::Expression computeBetween(double start, double end);

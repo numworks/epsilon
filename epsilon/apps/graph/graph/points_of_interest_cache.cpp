@@ -151,13 +151,17 @@ PointOfInterest PointsOfInterestCache::displayablePointOfInterestAtCoordinates(
   return pointOfInterestAtCoordinates(x, y, interest);
 }
 
-double PointsOfInterestCache::step() const {
+double PointsOfInterestCache::cacheStep() const {
   /* If the bounds are large enough, there might be less than k_numberOfSteps
    * doubles between them. */
   double result = (m_end - m_start) / k_numberOfSteps;
   double minimalStep = std::max(std::fabs(m_end), std::fabs(m_start)) *
                        OMG::Float::Epsilon<double>();
   return std::max(result, minimalStep);
+}
+
+double PointsOfInterestCache::solverStep() const {
+  return Solver<double>::DefaultSearchStepForAmplitude(m_end - m_start);
 }
 
 void PointsOfInterestCache::stripOutOfBounds() {
@@ -170,14 +174,28 @@ bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
   {
     CircuitBreakerCheckpoint cbcp(Ion::CircuitBreaker::CheckpointType::AnyKey);
     if (!allowUserInterruptions || CircuitBreakerRun(cbcp)) {
+      double nextStart = m_computedEnd;
+      double nextEnd = m_computedStart;
+      double step = cacheStep();
       if (m_computedEnd < m_end) {
-        newPoints = computeBetween(
-            m_computedEnd, std::clamp(m_computedEnd + step(), m_start, m_end));
+        nextEnd = std::clamp(m_computedEnd + step, m_start, m_end);
+        if (nextEnd + solverStep() >= m_end) {
+          /* If there is less than one solver step remaining, just compute until
+           * the end. This avoids having a very small cache step at the end
+           * because of accumulated numerical errors, which could cause issues
+           * in the solver. */
+          nextEnd = m_end;
+        }
       } else if (m_computedStart > m_start) {
-        newPoints =
-            computeBetween(std::clamp(m_computedStart - step(), m_start, m_end),
-                           m_computedStart);
+        nextStart = std::clamp(m_computedStart - step, m_start, m_end);
+        if (nextStart - solverStep() <= m_start) {
+          // See comment above
+          nextStart = m_start;
+        }
+      } else {
+        assert(false);
       }
+      newPoints = computeBetween(nextStart, nextEnd);
     } else {
       tidyDownstreamPoolFrom(cbcp.endOfPoolBeforeCheckpoint());
       return false;
@@ -430,7 +448,7 @@ Expression PointsOfInterestCache::computeBetween(double start, double end) {
   PointSearchContext searchContext{
       .start = start,
       .end = end,
-      .searchStep = Solver<double>::DefaultSearchStepForAmplitude(end - start),
+      .searchStep = solverStep(),
       .context = App::app()->localContext(),
       .store = store,
       .record = m_record,

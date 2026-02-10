@@ -53,21 +53,17 @@ void assert_solutions_are(
       .strategy = Poincare::Strategy::ApproximateToFloat,
       .context = Poincare::EmptySymbolContext{}};
 
-  // TODO: It feels weird to have to initialize 4 different solvers
-
   Tree* e =
       parseAndPrepareForApproximation(expression, simplificationParameters);
-
-  RootSolver rootSolver(start, end, e, Poincare::EmptySymbolContext{});
-  ExtremumSolver extremumSolver(start, end, e, Poincare::EmptySymbolContext{});
-
-  Tree* e2 = (0_e)->cloneTree();
-  if (otherExpression) {
-    e2->cloneTreeOverTree(parseAndPrepareForApproximation(
-        otherExpression, simplificationParameters));
-  }
   Poincare::PreparedFunction f = Poincare::PreparedFunction::Builder(e);
+
+  Tree* e2 = otherExpression ? parseAndPrepareForApproximation(
+                                   otherExpression, simplificationParameters)
+                             : (0_e)->cloneTree();  // Dummy
   Poincare::PreparedFunction g = Poincare::PreparedFunction::Builder(e2);
+
+  RootSolver rootSolver(start, end, f, Poincare::EmptySymbolContext{});
+  ExtremumSolver extremumSolver(start, end, f, Poincare::EmptySymbolContext{});
   IntersectionSolver intersectionSolver(start, end, f, g,
                                         Poincare::EmptySymbolContext{});
 

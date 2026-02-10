@@ -209,8 +209,13 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
           }
           if (ctx.getNumberOfTrees(KA) == 1 &&
               ctx.getTree(KA)->isNegativeRational()) {
+            assert(GetTypeMetric(Type::RationalPosBig) ==
+                   GetTypeMetric(Type::RationalPosShort));
+            assert(GetTypeMetric(Type::RationalNegBig) ==
+                   GetTypeMetric(Type::RationalNegShort));
             // Negative factors A and -1 will cancel out
-            result -= GetTypeMetric(Type::MinusOne) +
+            result += GetTypeMetric(Type::RationalPosShort) -
+                      GetTypeMetric(Type::RationalNegShort) -
                       GetTypeMetric(Type::ComplexI) * 2;
           } else {
             result += GetTypeMetric(Type::MinusOne) -

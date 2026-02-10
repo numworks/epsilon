@@ -72,6 +72,11 @@ void PoolHandle::setTo(const PoolHandle& tr) {
   Release(currentId);
 }
 
+void PoolHandle::transferFrom(PoolHandle& tr) {
+  setTo(tr);
+  tr.releaseSelf();
+}
+
 void PoolHandle::Release(uint16_t identifier) {
   if (!HasObject(identifier)) {
     return;

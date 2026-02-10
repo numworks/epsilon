@@ -24,11 +24,11 @@ class PoolHandle {
    * equivalent to Logarithm l = Logarithm(clone())). */
   PoolHandle(const PoolHandle& tr)
       : m_identifier(PoolObject::NoObjectIdentifier) {
-    setIdentifierAndRetain(tr.identifier());
+    setTo(tr);
   }
 
-  PoolHandle(PoolHandle&& tr) : m_identifier(tr.m_identifier) {
-    tr.m_identifier = PoolObject::NoObjectIdentifier;
+  PoolHandle(PoolHandle&& tr) : m_identifier(PoolObject::NoObjectIdentifier) {
+    transferFrom(tr);
   }
 
   ~PoolHandle() { releaseSelf(); }
@@ -40,9 +40,7 @@ class PoolHandle {
   }
 
   PoolHandle& operator=(PoolHandle&& tr) {
-    releaseSelf();
-    m_identifier = tr.m_identifier;
-    tr.m_identifier = PoolObject::NoObjectIdentifier;
+    transferFrom(tr);
     return *this;
   }
 
@@ -95,7 +93,11 @@ class PoolHandle {
   static PoolHandle Build(PoolObject* object);
 
   void setIdentifierAndRetain(uint16_t newId);
+  // Copies identifier and retains
   void setTo(const PoolHandle& tr);
+  /* Transfers ownership of the identifier, releasing the previous one and
+   * retaining the new one. */
+  void transferFrom(PoolHandle& tr);
 
   static bool HasObject(uint16_t identifier) {
     return PoolObject::IsValidIdentifier(identifier);

@@ -47,8 +47,9 @@ class Solver {
 
   /* Stretch the interval to include the previous bounds. This allows finding
    * solutions in [xStart,xEnd], as otherwise all resolution is done on an open
-   * interval. */
-  void stretch();
+   * interval. If onlyEnd is true, only stretch the end of the interval
+   * (i.e. ]xStart, xEnd]) */
+  void stretch(bool onlyEnd = false);
   void setSearchStep(T step) {
     m_searchStep = std::max(step, k_minimalPracticalStep);
   }

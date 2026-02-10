@@ -111,9 +111,11 @@ Solution<T> Solver<T>::next() {
 }
 
 template <typename T>
-void Solver<T>::stretch() {
+void Solver<T>::stretch(bool onlyEnd) {
   T stepSign = m_xStart < m_xEnd ? static_cast<T>(1.) : static_cast<T>(-1.);
-  m_xStart -= m_searchStep * stepSign;
+  if (!onlyEnd) {
+    m_xStart -= m_searchStep * stepSign;
+  }
   m_xEnd += m_searchStep * stepSign;
 }
 

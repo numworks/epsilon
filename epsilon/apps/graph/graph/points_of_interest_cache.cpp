@@ -302,7 +302,8 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
                             alongSameAxis, ctx->context);
   solver.setSearchStep(ctx->searchStep);
   solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Precise);
-  solver.stretch();
+  // Only stretch the end, or would stay stuck at the first solution.
+  solver.stretch(true);
 
   while (std::isfinite((solution = solver.next()).x)) {
     /* Loop over finite solutions to exhaust solutions out of the interval

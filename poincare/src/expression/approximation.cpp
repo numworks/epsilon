@@ -889,7 +889,7 @@ std::complex<T> Approximator::matrixToComplex(const Tree* e) {
       Tree* m = toMatrix(e->child(0));
       Tree* value = nullptr;
       if (e->isDet()) {
-        if (!Matrix::RowCanonize(m, true, &value, true)) {
+        if (!Matrix::RowCanonize(m, true, &value, true, this)) {
           value = KUndefUnhandled->cloneTree();
         }
       } else {
@@ -1664,7 +1664,7 @@ Tree* Approximator::evaluateMatrixPower(const Tree* e) {
     return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
   }
   Tree* result = toMatrix(base);
-  result->moveTreeOverTree(Matrix::Power(result, value, true));
+  result->moveTreeOverTree(Matrix::Power(result, value, true, this));
   return result;
 }
 
@@ -1691,7 +1691,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
       while (n--) {
         child = child->nextTree();
         Tree* approximatedChild = toMatrix(child);
-        Matrix::Addition(result, approximatedChild, true);
+        Matrix::Addition(result, approximatedChild, true, this);
         approximatedChild->removeTree();
         result->removeTree();
       }
@@ -1700,15 +1700,16 @@ Tree* Approximator::toMatrix(const Tree* e) {
     case Type::Sub: {
       Tree* a = toMatrix(e->child(0));
       Tree* b = toMatrix(e->child(1));
-      b->moveTreeOverTree(Matrix::ScalarMultiplication(-1_e, b, true));
-      Matrix::Addition(a, b, true);
+      b->moveTreeOverTree(Matrix::ScalarMultiplication(-1_e, b, true, this));
+      Matrix::Addition(a, b, true, this);
       a->removeTree();
       a->removeTree();
       return a;
     }
     case Type::Opposite: {
       Tree* a = toMatrix(e->child(0));
-      return a->moveTreeOverTree(Matrix::ScalarMultiplication(-1_e, a, true));
+      return a->moveTreeOverTree(
+          Matrix::ScalarMultiplication(-1_e, a, true, this));
     }
     case Type::Mult: {
       bool resultIsMatrix = false;
@@ -1730,11 +1731,11 @@ Tree* Approximator::toMatrix(const Tree* e) {
          * all cases depending on the dimensions of the current result and the
          * next child. */
         if (resultIsMatrix && childIsMatrix) {
-          Matrix::Multiplication(result, approx, true);
+          Matrix::Multiplication(result, approx, true, this);
         } else if (resultIsMatrix) {
-          Matrix::ScalarMultiplication(approx, result, true);
+          Matrix::ScalarMultiplication(approx, result, true, this);
         } else if (childIsMatrix) {
-          Matrix::ScalarMultiplication(result, approx, true);
+          Matrix::ScalarMultiplication(result, approx, true, this);
         } else {
           Tree* mult = SharedTreeStack->pushMult(2);
           result->cloneTree();
@@ -1755,7 +1756,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
       m_floatPrecision == FloatPrecision::Single ? toComplexTree<float>(s)
                                                  : toComplexTree<double>(s);
       s->removeTree();
-      s->moveTreeOverTree(Matrix::ScalarMultiplication(s, a, true));
+      s->moveTreeOverTree(Matrix::ScalarMultiplication(s, a, true, this));
       a->removeTree();
       return a;
     }
@@ -1768,8 +1769,9 @@ Tree* Approximator::toMatrix(const Tree* e) {
     case Type::Inverse:
     case Type::Transpose: {
       Tree* result = toMatrix(e->child(0));
-      result->moveTreeOverTree(e->isInverse() ? Matrix::Inverse(result, true)
-                                              : Matrix::Transpose(result));
+      result->moveTreeOverTree(e->isInverse()
+                                   ? Matrix::Inverse(result, true, this)
+                                   : Matrix::Transpose(result));
       return result;
     }
     case Type::Identity:
@@ -1777,8 +1779,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
     case Type::Ref:
     case Type::Rref: {
       Tree* result = toMatrix(e->child(0));
-      if (!Matrix::RowCanonize(result, e->isRref(), nullptr, true, m_parameters,
-                               m_context)) {
+      if (!Matrix::RowCanonize(result, e->isRref(), nullptr, true, this)) {
         result->moveTreeOverTree(
             Matrix::Undef(Matrix::GetMatrixDimension(result)));
       }
@@ -1898,9 +1899,10 @@ Tree* Approximator::toMatrix(const Tree* e) {
         m_context.m_randomContext = Random::Context(true);
         TreeRef value = toMatrix(child);
         if (e->isSum()) {
-          result->moveTreeOverTree(Matrix::Addition(result, value, true));
+          result->moveTreeOverTree(Matrix::Addition(result, value, true, this));
         } else {
-          result->moveTreeOverTree(Matrix::Multiplication(result, value, true));
+          result->moveTreeOverTree(
+              Matrix::Multiplication(result, value, true, this));
         }
         // Unlike AnalysisToComplex, skip early undef escape case for simplicity
         value->removeTree();

@@ -303,6 +303,13 @@ class Approximator {
   // TODO: move this method out of the Approximator class
   const Tree* selectPiecewiseBranch(const Tree* piecewise);
 
+  // Replace a Tree with the Tree of its complex approximation
+  inline void toComplexTreeInplace(Tree* e) {
+    e->moveTreeOverTree(toComplexTree<double>(e));
+  }
+
+  FloatPrecision floatPrecision() const { return m_floatPrecision; }
+
  private:
   template <typename FloatType>
   std::complex<FloatType> toComplex(const Tree* e);
@@ -451,11 +458,6 @@ class Approximator {
 
   template <typename T>
   Tree* toComplexTree(const Tree* e);
-
-  // Replace a Tree with the Tree of its complex approximation
-  inline void toComplexTreeInplace(Tree* e) {
-    e->moveTreeOverTree(toComplexTree<double>(e));
-  }
 
   // Tree must be of boolean dimension.
   BooleanOrUndefined privateToBoolean(const Tree* e);

@@ -18,7 +18,7 @@ PoolHandle PoolHandle::clone() const {
 
 /* Hierarchy operations */
 PoolObject* PoolHandle::object() const {
-  assert(hasObject(m_identifier));
+  assert(HasObject(m_identifier));
   return Pool::sharedPool->object(m_identifier);
 }
 
@@ -69,11 +69,11 @@ void PoolHandle::setTo(const PoolHandle& tr) {
   }
   int currentId = identifier();
   setIdentifierAndRetain(tr.identifier());
-  release(currentId);
+  Release(currentId);
 }
 
-void PoolHandle::release(uint16_t identifier) {
-  if (!hasObject(identifier)) {
+void PoolHandle::Release(uint16_t identifier) {
+  if (!HasObject(identifier)) {
     return;
   }
   PoolObject* object = Pool::sharedPool->object(identifier);

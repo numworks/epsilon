@@ -31,7 +31,7 @@ class PoolHandle {
     tr.m_identifier = PoolObject::NoObjectIdentifier;
   }
 
-  ~PoolHandle() { release(m_identifier); }
+  ~PoolHandle() { releaseSelf(); }
 
   /* Operators */
   PoolHandle& operator=(const PoolHandle& tr) {
@@ -40,7 +40,7 @@ class PoolHandle {
   }
 
   PoolHandle& operator=(PoolHandle&& tr) {
-    release(m_identifier);
+    releaseSelf();
     m_identifier = tr.m_identifier;
     tr.m_identifier = PoolObject::NoObjectIdentifier;
     return *this;
@@ -60,7 +60,7 @@ class PoolHandle {
   uint16_t identifier() const { return m_identifier; }
   PoolObject* object() const;
   bool wasErasedByException() const {
-    return hasObject(m_identifier) && object() == nullptr;
+    return HasObject(m_identifier) && object() == nullptr;
   }
   int objectRetainCount() const { return object()->retainCount(); }
   size_t size() const;
@@ -87,7 +87,7 @@ class PoolHandle {
   // Un-inlining this constructor actually increases the firmware size
   PoolHandle(uint16_t objectIdentifier = PoolObject::NoObjectIdentifier)
       : m_identifier(objectIdentifier) {
-    if (hasObject(objectIdentifier)) {
+    if (HasObject(objectIdentifier)) {
       object()->retain();
     }
   }
@@ -97,7 +97,7 @@ class PoolHandle {
   void setIdentifierAndRetain(uint16_t newId);
   void setTo(const PoolHandle& tr);
 
-  static bool hasObject(uint16_t identifier) {
+  static bool HasObject(uint16_t identifier) {
     return PoolObject::IsValidIdentifier(identifier);
   }
 
@@ -107,7 +107,11 @@ class PoolHandle {
   template <class U>
   static PoolHandle Builder();
 
-  void release(uint16_t identifier);
+  static void Release(uint16_t identifier);
+  void releaseSelf() {
+    Release(m_identifier);
+    m_identifier = PoolObject::NoObjectIdentifier;
+  }
 };
 
 }  // namespace Poincare

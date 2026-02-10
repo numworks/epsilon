@@ -59,7 +59,7 @@ jobs:
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
         with:
-          platform: ${{ matrix.platform }}
+          platform: ${{ (matrix.platform == 'n0120' && 'device') || matrix.platform }}
           emsdk-version: ${{ env.EMSDK_VERSION || '' }}
 
       - name: Build poincare_test for platform
@@ -69,6 +69,7 @@ jobs:
           $DOCKER_RUN "make -C poincare/test PLATFORM=${{ matrix.platform }} DEBUG=0 VERBOSE=0 ASSERTIONS=1 poincare_test.$TEST_EXTENSION"
 
       - name: Run unit tests
+        if: matrix.platform != 'n0120'
         env:
           TEST_EXTENSION: ${{ (matrix.platform == 'web' && 'js') || 'bin' }}
           TEST_RUNNER: ${{ matrix.platform == 'web' && 'node' || '' }}

@@ -65,7 +65,7 @@ bool Logarithm::ReduceLn(Tree* e) {
   }
 #if 0
   // Seems like a good idea, but doesn't quite work for √(√(-8))
-  // This bypass an advanced reduction step
+  // This bypasses an advanced reduction step
   bool changed = false;
   if (child->isStrictlyNegativeRational()) {
     // ln(-p) -> ln(p) + iπ

@@ -566,6 +566,10 @@ QUIZ_CASE(pcj_simplification_trigonometry_hyperbolic) {
   simplifies_to("artanh(tanh(3))", "3", k_cartesianCtx);
   simplifies_to("artanh(tanh(0.5))", "1/2", k_cartesianCtx);
   simplifies_to("artanh(tanh(-3))", "-3", k_cartesianCtx);
+
+  // With ln
+  simplifies_to("ln(sinh(1))", "ln(sinh(1))");
+  simplifies_to("ln(-sinh(i)*i)", "ln(sin(1))");
 }
 
 QUIZ_CASE(pcj_simplification_trigonometry_advanced) {

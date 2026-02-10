@@ -198,12 +198,24 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
                 &ctx) ||
             PatternMatching::Match(
                 e, KMult(KA_s, KATanRad(KMult(KB_s, i_e)), KC_s, i_e), &ctx)) {
-          if (ctx.getNumberOfTrees(KB) == 1) {
+          /* Beautification will be of the form:
+           * A * Trig(B*i) * C * i -> -1 * A * HyperbolicTrig(B) * C
+           * We thus remove the cost of both i and add the cost of -1 unless A
+           * is negative. */
+          if (ctx.getNumberOfTrees(KB) <= 1) {
             assert(result <= GetAddMultMetric(e));
+            // There will be no multiplication with B after beautification
             result = 0.f;
           }
-          result +=
-              GetTypeMetric(Type::MinusOne) - GetTypeMetric(Type::ComplexI) * 2;
+          if (ctx.getNumberOfTrees(KA) == 1 &&
+              ctx.getTree(KA)->isNegativeRational()) {
+            // Negative factors A and -1 will cancel out
+            result -= GetTypeMetric(Type::MinusOne) +
+                      GetTypeMetric(Type::ComplexI) * 2;
+          } else {
+            result += GetTypeMetric(Type::MinusOne) -
+                      GetTypeMetric(Type::ComplexI) * 2;
+          }
         }
         // Reset context
         ctx = PatternMatching::Context();

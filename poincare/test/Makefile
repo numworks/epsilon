@@ -15,11 +15,7 @@ SFLAGS += \
 
 ifeq ($(PLATFORM_TYPE),device)
 SFLAGS += -DPLATFORM_DEVICE
-# Epsilon specific device configuration. TODO: Adapt if variant is scandium
-include ../../epsilon/build/config.device.mak
-# include ../../scandium/build/goals.device.mak
 endif
-
 
 # Modules import
 ## OMG

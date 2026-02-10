@@ -112,6 +112,7 @@ Tree* Matrix::Transpose(const Tree* matrix) {
 Tree* Matrix::Addition(const Tree* matrix1, const Tree* matrix2,
                        bool approximate,
                        Approximation::Approximator* approximator) {
+  assert(!(approximate && (approximator == nullptr)));
   // should be an assert after dimensional analysis
   assert(NumberOfRows(matrix1) == NumberOfRows(matrix2) &&
          NumberOfColumns(matrix1) == NumberOfColumns(matrix2));
@@ -138,6 +139,7 @@ Tree* Matrix::Addition(const Tree* matrix1, const Tree* matrix2,
 Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* matrix,
                                    bool approximate,
                                    Approximation::Approximator* approximator) {
+  assert(!(approximate && (approximator == nullptr)));
   Tree* result = matrix->cloneNode();
   for (const Tree* child : matrix->children()) {
     Tree* mult = SharedTreeStack->pushMult(2);
@@ -156,6 +158,7 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* matrix,
 Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
                              bool approximate,
                              Approximation::Approximator* approximator) {
+  assert(!(approximate && (approximator == nullptr)));
   assert(NumberOfColumns(matrix1) == NumberOfRows(matrix2));
   uint8_t rows = NumberOfRows(matrix1);
   uint8_t internal = NumberOfColumns(matrix1);
@@ -238,6 +241,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
                          bool approximate,
                          Approximation::Approximator* approximator,
                          bool forceCanonization) {
+  assert(!(approximate && (approximator == nullptr)));
   // If determinant is given, it must be nullptr.
   assert(!determinant || !*determinant);
   // The matrix children have to be reduced to be able to spot 0
@@ -444,6 +448,7 @@ int Matrix::RankOfCanonized(const Tree* matrix) {
 
 Tree* Matrix::Inverse(const Tree* matrix, bool approximate,
                       Approximation::Approximator* approximator) {
+  assert(!(approximate && (approximator == nullptr)));
   assert(NumberOfRows(matrix) == NumberOfColumns(matrix));
   uint8_t dim = NumberOfRows(matrix);
   /* Create the matrix (A|I) with A is the input matrix and I the dim
@@ -495,6 +500,7 @@ Tree* Matrix::Inverse(const Tree* matrix, bool approximate,
 
 Tree* Matrix::Power(const Tree* matrix, int exponent, bool approximate,
                     Approximation::Approximator* approximator) {
+  assert(!(approximate && (approximator == nullptr)));
   assert(NumberOfRows(matrix) == NumberOfColumns(matrix));
   if (exponent < 0 && exponent != INT_MIN) {
     // -INT_MIN is not possible

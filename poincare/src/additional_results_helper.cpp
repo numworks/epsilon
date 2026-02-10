@@ -598,12 +598,23 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   bool isSquared = Internal::Matrix::NumberOfRows(matrix) ==
                    Internal::Matrix::NumberOfColumns(matrix);
 
+  /* TODO: avoid the need to create an Approximator instance here. RowCanonize
+   * should be independent from Approximator. Approximator should be able to
+   * call RowCanonize in a private method (when it's used in the "To"
+   * approximation pipeline) */
+  Approximation::Approximator defaultMatrixApproximator =
+      Approximation::Approximator(Approximation::FloatPrecision::Double,
+                                  Approximation::Parameters{},
+                                  Approximation::Private::Context{});
+  Approximation::Approximator* approximator =
+      isApproximate ? &defaultMatrixApproximator : nullptr;
+
   // 1. Matrix determinant if square matrix
   if (isSquared) {
     Tree* determinant = nullptr;
     Tree* matrixClone = matrix->cloneTree();
     if (!Internal::Matrix::RowCanonize(matrixClone, true, &determinant,
-                                       isApproximate)) {
+                                       isApproximate, approximator)) {
       determinant = (KUndefUnhandled)->cloneTree();
     }
     // TODO: Use ComplexProperties or approximation to handle more complex cases
@@ -618,7 +629,8 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     /* 2. Matrix inverse if invertible matrix
      * A squared matrix is invertible if and only if determinant is non null */
     if (!determinantIsUndefinedOrNull) {
-      Tree* inverse = Internal::Matrix::Inverse(matrix, isApproximate);
+      Tree* inverse =
+          Internal::Matrix::Inverse(matrix, isApproximate, approximator);
       inverseL = CreateBeautifiedLayout(inverse, ctx, dim, displayMode,
                                         numberOfSignificantDigits);
     }
@@ -627,7 +639,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   // 3. Matrix row echelon form
   Tree* reducedRowEchelonForm = matrix->cloneTree();
   if (Internal::Matrix::RowCanonize(reducedRowEchelonForm, false, nullptr,
-                                    isApproximate)) {
+                                    isApproximate, approximator)) {
     // Clone layouted tree to preserve reducedRowEchelonForm for next step.
     rowEchelonFormL =
         CreateBeautifiedLayout(reducedRowEchelonForm->cloneTree(), ctx, dim,
@@ -636,7 +648,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     /* 4. Matrix reduced row echelon form
      *    Computed from row echelon form to save computation time. */
     if (!Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr,
-                                       isApproximate)) {
+                                       isApproximate, approximator)) {
       OMG_UNREACHABLE;
     }
     reducedRowEchelonFormL =

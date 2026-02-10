@@ -67,28 +67,27 @@ void PoolHandle::setTo(const PoolHandle& tr) {
   if (identifier() == tr.identifier()) {
     return;
   }
-  int currentId = identifier();
+  release();
   setIdentifierAndRetain(tr.identifier());
-  Release(currentId);
 }
 
 void PoolHandle::transferFrom(PoolHandle& tr) {
   setTo(tr);
-  tr.releaseSelf();
+  tr.release();
 }
 
-void PoolHandle::Release(uint16_t identifier) {
-  if (!HasObject(identifier)) {
+void PoolHandle::release() {
+  if (!HasObject(m_identifier)) {
     return;
   }
-  PoolObject* object = Pool::sharedPool->object(identifier);
-  if (object == nullptr) {
-    /* The identifier is valid, but not the object: there must have been an
-     * exception that deleted the pool. */
-    return;
+  PoolObject* object = Pool::sharedPool->object(m_identifier);
+  assert(!object || object->identifier() == m_identifier);
+  m_identifier = PoolObject::NoObjectIdentifier;
+  /* The object could be nullptr even if the identifier is valid: there could
+   * have been an exception that deleted the pool. */
+  if (object) {
+    object->release();
   }
-  assert(object->identifier() == identifier);
-  object->release();
 }
 
 }  // namespace Poincare

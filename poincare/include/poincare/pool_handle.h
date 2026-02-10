@@ -31,7 +31,7 @@ class PoolHandle {
     transferFrom(tr);
   }
 
-  ~PoolHandle() { releaseSelf(); }
+  ~PoolHandle() { release(); }
 
   /* Operators */
   PoolHandle& operator=(const PoolHandle& tr) {
@@ -109,11 +109,7 @@ class PoolHandle {
   template <class U>
   static PoolHandle Builder();
 
-  static void Release(uint16_t identifier);
-  void releaseSelf() {
-    Release(m_identifier);
-    m_identifier = PoolObject::NoObjectIdentifier;
-  }
+  void release();
 };
 
 }  // namespace Poincare

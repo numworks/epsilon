@@ -152,10 +152,8 @@ ReturnType Private::ApproximateWithExtraData(const Tree* e,
                                              FloatPrecision floatPrecision,
                                              const Parameters& parameters,
                                              FloatType abscissa) {
-  Context approximationContext;
-  approximationContext.localEvaluator.pushVariable(abscissa);
   return Approximator(floatPrecision, parameters,
-                      std::move(approximationContext))
+                      Context{.localEvaluator = LocalEvaluator(abscissa)})
       .specificTo<ReturnType>(e);
 }
 
@@ -165,11 +163,9 @@ ReturnType Private::ApproximateWithExtraData(const Tree* e,
                                              const Parameters& parameters,
                                              FloatType abscissa,
                                              int16_t listElementIndex) {
-  Context approximationContext;
-  approximationContext.localEvaluator.pushVariable(abscissa);
-  approximationContext.listElement = listElementIndex;
   return Approximator(floatPrecision, parameters,
-                      std::move(approximationContext))
+                      Context{.localEvaluator = LocalEvaluator(abscissa),
+                              .listElement = listElementIndex})
       .specificTo<ReturnType>(e);
 }
 

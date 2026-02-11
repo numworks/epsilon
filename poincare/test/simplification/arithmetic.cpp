@@ -44,7 +44,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("factor(i)", "undef", k_cartesianCtx);
   // Behavior of factor(-1) in a dependency
   simplifies_to("asin(factor(i*i)b)",
-                "dep(arcsin(b×(-1)),{piecewise(0,abs(b×-1)≤1,nonreal)})");
+                "dep(arcsin(b×(-1)),{realPos(1-abs(b×-1))})");
 
   // Euclidean division
   simplifies_to("quo(23,5)", "4");
@@ -71,7 +71,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("√(floor(acos(3)))", "undef");
   simplifies_to("√(floor(x))", "√(floor(x))");
   simplifies_to("√(floor(acos(x)))",
-                "dep(√(floor(arccos(x))),{piecewise(0,abs(x)≤1,nonreal)})");
+                "dep(√(floor(arccos(x))),{realPos(1-abs(x))})");
   simplifies_to("frac(8/3)", "2/3");
   simplifies_to("frac(-1.3)", "7/10");
   simplifies_to("floor(x)+frac(x)", "dep(x,{floor(x)})");

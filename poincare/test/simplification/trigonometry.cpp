@@ -186,7 +186,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   // Beautification and dependencies
   simplifies_to("re(2*acos(cos(x)))",
                 "dep(2×re(arccos(cos(x))),{0×im(arccos(cos(x))),0×im(π×arccos("
-                "cos(x))),piecewise(0,abs(cos((180×π×x)/(180×π)))≤1,nonreal)})",
+                "cos(x))),realPos(1-abs(cos((180×π×x)/(180×π))))})",
                 {.m_complexFormat = ComplexFormat::Real,
                  .m_angleUnit = AngleUnit::Degree});
   simplifies_to("tan(20)^2*tan(2)", "tan(2)*tan(20)^2");

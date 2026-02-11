@@ -230,21 +230,17 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(tan(x),x,x)",
                 "dep((π×(tan(x)^2+1))/180,{tan((180×π×x)/(180×π))})",
                 k_degreeCtx);
-  simplifies_to(
-      "diff(acos(x),x,x)",
-      "dep(-1/√(-x^2+1),{piecewise(0,abs(x)≤1,nonreal),real(arccos(x))})");
   simplifies_to("diff(acos(x),x,x)",
-                "dep(-180/"
-                "(π×√(-x^2+1)),{piecewise(0,abs(x)≤1,nonreal),real(("
-                "180×π×arccos(x))/(180×π))})",
+                "dep(-1/√(-x^2+1),{real(arccos(x)),realPos(1-abs(x))})");
+  simplifies_to("diff(acos(x),x,x)",
+                "dep(-180/(π×√(-x^2+1)),{real((180×π×arccos(x))/"
+                "(180×π)),realPos(1-abs(x))})",
                 k_degreeCtx);
-  simplifies_to(
-      "diff(asin(x),x,x)",
-      "dep(1/√(-x^2+1),{piecewise(0,abs(x)≤1,nonreal),real(arcsin(x))})");
   simplifies_to("diff(asin(x),x,x)",
-                "dep(180/"
-                "(π×√(-x^2+1)),{piecewise(0,abs(x)≤1,nonreal),real(("
-                "180×π×arcsin(x))/(180×π))})",
+                "dep(1/√(-x^2+1),{real(arcsin(x)),realPos(1-abs(x))})");
+  simplifies_to("diff(asin(x),x,x)",
+                "dep(180/(π×√(-x^2+1)),{real((180×π×arcsin(x))/"
+                "(180×π)),realPos(1-abs(x))})",
                 k_degreeCtx);
   simplifies_to("diff(atan(x),x,x)", "1/(x^2+1)");
   simplifies_to("diff(atan(x),x,x)", "180/(π×x^2+π)", k_degreeCtx);
@@ -258,12 +254,12 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(sec(x),x,x)", "sin(x)/cos(x)^2");
   simplifies_to("diff(csc(x),x,x)", "-cos(x)/sin(x)^2");
   simplifies_to("diff(cot(x),x,x)", "dep(-1-cot(x)^2,{tan(-x+π/2)})");
-  simplifies_to("diff(arcsec(x),x,x)",
-                "dep(1/(x^2×√(1-1/x^2)),{piecewise(0,abs(1/"
-                "x)≤1,nonreal),real(arccos(1/x))})");
-  simplifies_to("diff(arccsc(x),x,x)",
-                "dep(-1/(x^2×√(1-1/x^2)),{piecewise(0,abs(1/"
-                "x)≤1,nonreal),real(arcsin(1/x))})");
+  simplifies_to(
+      "diff(arcsec(x),x,x)",
+      "dep(1/(x^2×√(1-1/x^2)),{real(arccos(1/x)),realPos(1-abs(1/x))})");
+  simplifies_to(
+      "diff(arccsc(x),x,x)",
+      "dep(-1/(x^2×√(1-1/x^2)),{real(arcsin(1/x)),realPos(1-abs(1/x))})");
   simplifies_to("diff(arccot(x),x,x)", "-1/(x^2+1)");
   simplifies_to("diff(sin(x)^2,x,x)", "sin(2×x)");
   simplifies_to("diff(sinh(sin(y)),x,x)", "0");

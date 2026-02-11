@@ -280,23 +280,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     /* Project inverse trigonometric functions here to avoid infinite projection
      * to radian loop. */
     if (args->m_complexFormat == ComplexFormat::Real && !e->isATan()) {
-#if POINCARE_PIECEWISE
       // Only real functions asin and acos have a domain of definition
-      // acos(A) -> atrig(A, 0) if -1 <= A <= 1
-      PatternMatching::MatchReplace(
-          e, KACos(KA),
-          KDep(KATrig(KA, 0_e),
-               KDepList(KPiecewise(0_e, KInferiorEqual(KAbs(KA), 1_e),
-                                   KNonReal)))) ||
-          // asin(A) -> atrig(A, 1) if -1 <= A <= 1
-          PatternMatching::MatchReplace(
-              e, KASin(KA),
-              KDep(KATrig(KA, 1_e),
-                   KDepList(KPiecewise(0_e, KInferiorEqual(KAbs(KA), 1_e),
-                                       KNonReal))));
-#else
-      /* We cannot use the RealPos restriction in epsilon as well since we want
-       * to return nonreal and not undef. */
       // acos(A) -> atrig(A, 0) if -1 <= A <= 1
       PatternMatching::MatchReplace(
           e, KACos(KA),
@@ -307,7 +291,6 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
               e, KASin(KA),
               KDep(KATrig(KA, 1_e),
                    KDepList(KRealPos(KAdd(KMult(-1_e, KAbs(KA)), 1_e)))));
-#endif
     } else {
       // acos(A) -> atrig(A, 0)
       PatternMatching::MatchReplace(e, KACos(KA), KATrig(KA, 0_e)) ||

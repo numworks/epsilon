@@ -26,6 +26,14 @@ void Runner::innerRun() {
     if (m_testFilter && !testMatchesFilter(Cases::s_names[i], m_testFilter)) {
       continue;
     }
+#if ASAN
+    /* When ASAN=1, "python_numpy" reaches an assert due to an error in python
+     * "RuntimeError: maximum recursion depth exceeded" */
+    // TODO: pass this test even when ASAN=1
+    if (strcmp(testName, "python_numpy") == 0) {
+      continue;
+    }
+#endif
     caseIndex++;
     if (clearConsole()) {
       // Avoid cluttering the display if it can't be cleared
@@ -96,14 +104,6 @@ bool Runner::testMatchesFilter(const char* testName, const char* filter) const {
   OMG_UNREACHABLE;
 #else
   assert(filter != nullptr);
-#if ASAN
-  /* When ASAN=1, "python_numpy" reaches an assert due to an error in python
-   * "RuntimeError: maximum recursion depth exceeded" */
-  // TODO: pass this test even when ASAN=1
-  if (strcmp(testName, "python_numpy") == 0) {
-    return false;
-  }
-#endif
   return strstr(testName, filter) == testName;
 #endif
 }

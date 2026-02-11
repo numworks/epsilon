@@ -30,7 +30,7 @@ void Runner::innerRun() {
     /* When ASAN=1, "python_numpy" reaches an assert due to an error in python
      * "RuntimeError: maximum recursion depth exceeded" */
     // TODO: pass this test even when ASAN=1
-    if (strcmp(testName, "python_numpy") == 0) {
+    if (strcmp(Cases::s_names[i], "python_numpy") == 0) {
       continue;
     }
 #endif

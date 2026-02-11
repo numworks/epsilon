@@ -21,7 +21,7 @@ def css_percentage_declaration(prop, ratio):
     return css_declaration(prop, "%.2f%%" % (100 * ratio))
 
 
-def css_rect_declarations(rect, ref):
+def css_rect_declarations(rect, ref = [0,0,100,100]):
     css = ""
     css += css_percentage_declaration("left", rect[0] / ref[2])
     css += css_percentage_declaration("top", rect[1] / ref[3])
@@ -97,11 +97,8 @@ def css(layout):
     css = shared_css
     css += css_rule(
         ".calculator",
-        css_declaration("position", "relative"),
-    )
-    css += css_rule(
-        ".calculator-aspect-ratio",
-        css_percentage_declaration("padding-bottom", background[3] / background[2]),
+        css_declaration("position", "absolute"),
+        css_rect_declarations(layout["calculatorPosition"]),
     )
     css += css_rule(
         ".calculator canvas, .calculator .loader",

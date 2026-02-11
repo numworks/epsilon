@@ -164,9 +164,17 @@ bool Approximate(Tree* e, FloatPrecision floatPrecision,
 
 namespace Private {
 
-struct Context {
+class Context {
+ public:
   constexpr static int16_t k_unspecifiedListElement = -1;
   constexpr static int16_t k_unspecifiedPointElement = -1;
+
+  Context() = default;
+  explicit Context(VariableType abscissa)
+      : localEvaluator{LocalEvaluator(abscissa)} {}
+  Context(VariableType abscissa, int16_t listElementIndex)
+      : localEvaluator{LocalEvaluator(abscissa)},
+        listElement{listElementIndex} {}
 
   Random::Context randomContext{false};
   // LocalEvaluator is used to store the values of local variables
@@ -177,33 +185,12 @@ struct Context {
   int16_t pointElement = k_unspecifiedPointElement;
 };
 
-/* Common approximation pipeline for all return types and extra arguments
+/* Common approximation pipeline for all return types and context arguments
  * (abscissa, list element etc.) */
-template <typename ReturnType, typename... ExtraArguments>
+template <typename ReturnType, typename... ContextArguments>
 ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
                    const Parameters& parameters,
-                   ExtraArguments... extraArguments);
-
-// Default method: Without extra data
-template <typename ReturnType>
-ReturnType ApproximateWithExtraData(const Tree* e,
-                                    FloatPrecision floatPrecision,
-                                    const Parameters& parameters);
-
-// With an "abscissa" value for Variable<0>
-template <typename ReturnType, typename FloatType>
-ReturnType ApproximateWithExtraData(const Tree* e,
-                                    FloatPrecision floatPrecision,
-                                    const Parameters& parameters,
-                                    FloatType abscissa);
-
-// With a Variable<0> value and a list element index
-template <typename ReturnType, typename FloatType>
-ReturnType ApproximateWithExtraData(const Tree* e,
-                                    FloatPrecision floatPrecision,
-                                    const Parameters& parameters,
-                                    FloatType abscissa,
-                                    int16_t listElementIndex);
+                   ContextArguments... contextArguments);
 
 }  // namespace Private
 

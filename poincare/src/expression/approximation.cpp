@@ -121,52 +121,23 @@ bool Approximate(Tree* e, FloatPrecision floatPrecision,
   return hasChanged;
 }
 
-template <typename ReturnType, typename... ExtraArguments>
+template <typename ReturnType, typename... ContextArguments>
 ReturnType Private::Process(const Tree* e, FloatPrecision floatPrecision,
                             const Parameters& parameters,
-                            ExtraArguments... extraArguments) {
+                            ContextArguments... contextArguments) {
   if (parameters.optimize) {
     assert(Dimension::DeepCheck(e, parameters.symbolContext));
   } else if (!Dimension::DeepCheck(e, parameters.symbolContext)) {
     return UndefinedUnhandledDimension<ReturnType>();
   }
   Tree* prepared = PrepareTree(e, parameters);
-  ReturnType result = ApproximateWithExtraData<ReturnType>(
-      prepared ? prepared : e, floatPrecision, parameters, extraArguments...);
+  ReturnType result =
+      Approximator{floatPrecision, parameters, Context(contextArguments...)}
+          .specificTo<ReturnType>(prepared ? prepared : e);
   if (!prepared) {
     return result;
   }
   return PostProcessPreparedAndResult(prepared, result);
-}
-
-template <typename ReturnType>
-ReturnType Private::ApproximateWithExtraData(const Tree* e,
-                                             FloatPrecision floatPrecision,
-                                             const Parameters& parameters) {
-  return Approximator{floatPrecision, parameters, Context{}}
-      .specificTo<ReturnType>(e);
-}
-
-template <typename ReturnType, typename FloatType>
-ReturnType Private::ApproximateWithExtraData(const Tree* e,
-                                             FloatPrecision floatPrecision,
-                                             const Parameters& parameters,
-                                             FloatType abscissa) {
-  return Approximator(floatPrecision, parameters,
-                      Context{.localEvaluator = LocalEvaluator(abscissa)})
-      .specificTo<ReturnType>(e);
-}
-
-template <typename ReturnType, typename FloatType>
-ReturnType Private::ApproximateWithExtraData(const Tree* e,
-                                             FloatPrecision floatPrecision,
-                                             const Parameters& parameters,
-                                             FloatType abscissa,
-                                             int16_t listElementIndex) {
-  return Approximator(floatPrecision, parameters,
-                      Context{.localEvaluator = LocalEvaluator(abscissa),
-                              .listElement = listElementIndex})
-      .specificTo<ReturnType>(e);
 }
 
 template <>

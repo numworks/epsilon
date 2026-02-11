@@ -114,10 +114,6 @@ class UserExpression : public Expression {
   // Returns KFailedSimplification if the reduction failed
   SystemExpression cloneAndReduce(
       const ProjectionContext& projectionContext) const;
-  template <typename T>
-  SystemExpression approximateUserToTree(
-      AngleUnit angleUnit, ComplexFormat complexFormat,
-      const SymbolContext& symbolContext) const;
   // Approximate real scalar (returns NAN for non real scalars)
   template <typename T>
   T approximateToRealScalar(

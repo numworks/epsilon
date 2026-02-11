@@ -117,16 +117,6 @@ UserExpression UserExpression::cloneChildAtIndex(int i) const {
   return Builder(tree()->child(i));
 }
 
-template <typename T>
-SystemExpression UserExpression::approximateUserToTree(
-    AngleUnit angleUnit, ComplexFormat complexFormat,
-    const SymbolContext& symbolContext) const {
-  return SystemExpression::Builder(Approximation::To<Tree*>(
-      tree(), Approximation::Precision<T>::value,
-      Approximation::Parameters{.projectLocalVariables = true},
-      Approximation::Context(angleUnit, complexFormat, symbolContext)));
-}
-
 bool UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* simplifiedExpression,
     UserExpression* approximatedExpression,
@@ -663,10 +653,6 @@ template bool UserExpression::hasDefinedComplexApproximation<float>(
     AngleUnit, ComplexFormat, const SymbolContext&, float*, float*) const;
 template bool UserExpression::hasDefinedComplexApproximation<double>(
     AngleUnit, ComplexFormat, const SymbolContext&, double*, double*) const;
-template SystemExpression UserExpression::approximateUserToTree<float>(
-    AngleUnit, ComplexFormat, const SymbolContext&) const;
-template SystemExpression UserExpression::approximateUserToTree<double>(
-    AngleUnit, ComplexFormat, const SymbolContext&) const;
 template float UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
     float>(const char*, const SymbolContext&, ComplexFormat, AngleUnit,
            SymbolicComputation);

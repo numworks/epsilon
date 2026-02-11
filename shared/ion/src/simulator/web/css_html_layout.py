@@ -60,33 +60,21 @@ canvas.calculator-mirror {
 }
 
 .calculator.loading .loader {
-  display: block;
-  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.calculator .loader span {
-  display: inline-block;
-  width: 80px;
-  height: 80px;
-  top: 50%;
-  margin-top: -40px;
-  left: 50%;
-  margin-left: -40px;
+.calculator svg {
+  width: 33%;
 }
 
 @keyframes calculator-loader-rotation {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -290; }
 }
 
-.calculator .loader span:after {
-  content: " ";
-  display: block;
-  width: 64px;
-  height: 64px;
-  margin: 8px;
-  border-radius: 50%;
-  border: 6px solid;
+.calculator svg circle {
   animation: calculator-loader-rotation 1.2s linear infinite;
 }
 
@@ -111,14 +99,16 @@ def css(layout):
             css_rect_declarations(rect, background),
         )
     css += css_rule(
-        ".calculator .loader span:after",
-        css_declaration(
-            "border-color",
-            f"{layout['loader_color']} transparent {layout['loader_color']} transparent",
-        ),
+        ".calculator .loader svg circle",
+        css_declaration("stroke", f"{layout['loader_color']}"),
     )
     return css
 
+spinner_svg ="""
+<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="46" fill="none" stroke-width="6" stroke-dasharray="72.5"></circle>
+</svg>
+"""
 
 def html(layout):
     screen = layout["screen"]
@@ -130,7 +120,7 @@ def html(layout):
     html += '    <img src="background.jpg" alt="NumWorks Calculator">\n'
     html += "  </picture>\n"
     html += '  <div class="calculator loading">\n'
-    html += '    <div class="loader"><span></span></div>\n'
+    html += '    <div class="loader">%s</div>\n' % spinner_svg
     html += '    <canvas tabindex="1"></canvas>\n'
     for key in range(len(layout["keys"])):
         html += '    <span data-key="%s"></span>\n' % key

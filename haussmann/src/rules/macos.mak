@@ -1,6 +1,9 @@
+# Additional args to be passed to te executable like "-h" or "--language nl"
+_args := $(ARGS)
+
 # Run an executable file
 $(OUTPUT_DIRECTORY)/%.bin.run: $(OUTPUT_DIRECTORY)/%.bin
-	$^
+	$^ $(_args)
 
 $(call document_extension,bin.run,Execute <...>.bin)
 
@@ -19,7 +22,7 @@ include $(PATH_haussmann)/src/rules/shared.apple.mak
 
 # Run the simulator
 %.app.run: $(_simulator_app)
-	open $^
+	open $^ --args $(_args)
 
 $(call document_extension,app.run,Start the simulator)
 
@@ -32,7 +35,7 @@ $(call document_extension,app.debug,Debug the simulator)
 # Reload the simulator
 %.app.reload: $(_simulator_app)
 	pgrep $(APP_NAME) && pkill -USR1 $(APP_NAME) || echo "No $(APP_NAME) executable running"
-	cmd="open $^ --args --load-state-file /tmp/numworks.reload.nws";\
+	cmd="open $^ --args --load-state-file /tmp/numworks.reload.nws $(_args)";\
 	eval $$cmd || $$cmd
 
 $(call document_extension,app.reload,Refresh a running simulator)

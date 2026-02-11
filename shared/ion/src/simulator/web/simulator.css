@@ -12,7 +12,7 @@ body {
   height: 100vh;
 }
 
-.col-fullscreen canvas, .calculator-container {
+.col-fullscreen canvas {
   margin-top: 2vh;
 }
 

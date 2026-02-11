@@ -29,10 +29,72 @@ def css_rect_declarations(rect, ref):
     css += css_percentage_declaration("height", rect[3] / ref[3])
     return css
 
+shared_css = """
+.calculator span {
+  position: absolute;
+  display: block;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.calculator span:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.calculator span:active {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+canvas.calculator-mirror {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: pixelated;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+
+.calculator.loading canvas {
+  display: none;
+}
+
+.calculator .loader {
+  display: none;
+}
+
+.calculator.loading .loader {
+  display: block;
+  position: absolute;
+}
+
+.calculator .loader span {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  top: 50%;
+  margin-top: -40px;
+  left: 50%;
+  margin-left: -40px;
+}
+
+@keyframes calculator-loader-rotation {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.calculator .loader span:after {
+  content: " ";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid;
+  animation: calculator-loader-rotation 1.2s linear infinite;
+}
+
+"""
 
 def css(layout):
     background = layout["background"]
-    css = ""
+    css = shared_css
     css += css_rule(
         ".calculator",
         css_declaration("position", "relative"),
@@ -46,64 +108,17 @@ def css(layout):
         css_declaration("position", "absolute"),
         css_rect_declarations(layout["screen"], background),
     )
-    css += css_rule(
-        ".calculator span",
-        css_declaration("position", "absolute"),
-        css_declaration("display", "block"),
-        css_declaration("border-radius", "999px"),
-        css_declaration("cursor", "pointer"),
-    )
-    css += css_rule(
-        ".calculator span:hover",
-        css_declaration("background-color", "rgba(0, 0, 0, 0.1)"),
-    )
-    css += css_rule(
-        ".calculator span:active",
-        css_declaration("background-color", "rgba(0, 0, 0, 0.2)"),
-    )
     for key, rect in enumerate(layout["keys"].values()):
         css += css_rule(
             '.calculator span[data-key="%s"]' % key,
             css_rect_declarations(rect, background),
         )
     css += css_rule(
-        "canvas.calculator-mirror",
-        css_declaration("image-rendering", "-moz-crisp-edges"),
-        css_declaration("image-rendering", "pixelated"),
-        css_declaration("-ms-interpolation-mode", "nearest-neighbor"),
-    )
-    css += css_rule(".calculator.loading canvas", css_declaration("display", "none"))
-    css += css_rule(".calculator .loader", css_declaration("display", "none"))
-    css += css_rule(
-        ".calculator.loading .loader",
-        css_declaration("display", "block"),
-        css_declaration("position", "absolute"),
-    )
-    css += css_rule(
-        ".calculator .loader span",
-        css_declaration("display", "inline-block"),
-        css_declaration("width", "80px"),
-        css_declaration("height", "80px"),
-        css_declaration("top", "50%"),
-        css_declaration("margin-top", "-40px"),
-        css_declaration("left", "50%"),
-        css_declaration("margin-left", "-40px"),
-    )
-    css += "@keyframes calculator-loader-rotation { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }\n"
-    css += css_rule(
         ".calculator .loader span:after",
-        css_declaration("content", '" "'),
-        css_declaration("display", "block"),
-        css_declaration("width", "64px"),
-        css_declaration("height", "64px"),
-        css_declaration("margin", "8px"),
-        css_declaration("border-radius", "50%"),
-        css_declaration("border", f"6px solid {layout['loader_color']}"),
         css_declaration(
             "border-color",
             f"{layout['loader_color']} transparent {layout['loader_color']} transparent",
         ),
-        css_declaration("animation", "calculator-loader-rotation 1.2s linear infinite"),
     )
     return css
 

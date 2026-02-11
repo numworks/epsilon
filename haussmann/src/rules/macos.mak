@@ -7,11 +7,19 @@ $(OUTPUT_DIRECTORY)/%.bin.run: $(OUTPUT_DIRECTORY)/%.bin
 
 $(call document_extension,bin.run,Execute <...>.bin)
 
-# Run in the debugger
+# Open in the debugger
 $(OUTPUT_DIRECTORY)/%.bin.debug: $(OUTPUT_DIRECTORY)/%.bin
 	lldb -- $^
 
-$(call document_extension,bin.debug,Execute <...>.bin in a debugger)
+$(call document_extension,bin.debug,Load <...>.bin in a debugger)
+
+# Run an executable file in the debugger
+# Note: Using "-o r" prevents program interruption with ^C.
+#       See https://github.com/llvm/llvm-project/issues/53673
+$(OUTPUT_DIRECTORY)/%.bin.debug.run: $(OUTPUT_DIRECTORY)/%.bin
+	lldb -o r -- $^ $(_args)
+
+$(call document_extension,bin.debug.run, Load and execute <...>.bin in a debugger)
 
 _simulator_app := $(OUTPUT_DIRECTORY)/%.app
 _simulator_app_binary = $(_simulator_app)/Contents/MacOS/$(APP_NAME)
@@ -31,6 +39,14 @@ $(call document_extension,app.run,Start the simulator)
 	lldb -- $^
 
 $(call document_extension,app.debug,Debug the simulator)
+
+# Run an the simulator in the debugger
+# Note: Using "-o r" prevents program interruption with ^C.
+#       See https://github.com/llvm/llvm-project/issues/53673
+%.app.debug.run: $(_simulator_app)
+	lldb -o r -- $^ $(_args)
+
+$(call document_extension,app.debug.run, Debug and execute the simulator)
 
 # Reload the simulator
 %.app.reload: $(_simulator_app)

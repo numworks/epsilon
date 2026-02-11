@@ -1,0 +1,10 @@
+/* This file contains css that apply to elements of the page that are usually
+ * present alongside the scandium or epsilon generated html but are not part of it.
+ * This css is exported for the website simulators pages
+ * Notably the fullscreen canvas mirror */
+
+canvas.calculator-mirror {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: pixelated;
+  -ms-interpolation-mode: nearest-neighbor;
+}

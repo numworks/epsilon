@@ -1,3 +1,5 @@
+/* This file contains css for the layout of the standalone simulator html file */
+
 body {
   background: #C2C2C2;
   margin: 0;
@@ -37,18 +39,10 @@ body.fullscreen .col-calculator {
   float: left;
 }
 
-.calculator-container {
-  margin: 0 auto;
-  position: relative;
-  display: inline-block;
-  text-align: left;
-}
-
 .calculator-container img {
-  /* Rely on the img content to set the dimensions */
+  /* The image set the size of the calculator */
   max-height: 92.0vh;
   max-width: 100%;
-  display: block;
 }
 
 .actions {

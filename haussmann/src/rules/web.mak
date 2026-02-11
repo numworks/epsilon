@@ -4,6 +4,8 @@ $(call create_zip,%htmlpack.zip, $(call generated_sources_for, \
   app/src/calculator.html \
   app/src/calculator.css \
   app/src/calculator.js \
+  app/src/calculator_shared.css \
+  app/src/external_shared.css \
   app/assets/background.jpg \
   app/assets/background-no-shadow.webp \
   app/src/background-with-shadow.webp \

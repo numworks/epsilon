@@ -73,6 +73,14 @@ $(call generated_sources_for, app/src/background-with-shadow.webp): $(PATH_ion)/
 	$(call rule_label,COPY)
 	cp $^ $@
 
+$(call generated_sources_for, app/src/calculator_shared.css): $(PATH_ion)/src/simulator/web/style/calculator_shared.css | $$(@D)/.
+	$(call rule_label,COPY)
+	cp $^ $@
+
+$(call generated_sources_for, app/src/external_shared.css): $(PATH_ion)/src/simulator/web/style/external_shared.css | $$(@D)/.
+	$(call rule_label,COPY)
+	cp $^ $@
+
 $(call generated_sources_for, app/src/calculator.html): $(addprefix $(PATH_ion)/src/simulator/,shared/$(ION_variant)/layout.json web/css_html_layout.py) | $$(@D)/.
 	$(call rule_label,LAYOUT)
 	$(PYTHON) $(filter %.py,$^) --html $@ --css $(basename $@).css $(filter %.json,$^)

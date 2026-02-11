@@ -7,7 +7,9 @@
     <title>NumWorks graphing calculator</title>
     <style>
 #include "calculator.css"
-#include "simulator.css"
+#include "style/calculator_shared.css"
+#include "style/simulator_layout.css"
+#include "style/external_shared.css"
     </style>
   </head>
   <body>

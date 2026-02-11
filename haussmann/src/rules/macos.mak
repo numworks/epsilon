@@ -1,4 +1,4 @@
-# Additional args to be passed to te executable like "-h" or "--language nl"
+# Additional args to be passed to the executable like "-h" or "--language nl"
 _args := $(ARGS)
 
 # Run an executable file
@@ -40,7 +40,7 @@ $(call document_extension,app.run,Start the simulator)
 
 $(call document_extension,app.debug,Debug the simulator)
 
-# Run an the simulator in the debugger
+# Run the simulator in the debugger
 # Note: Using "-o r" prevents program interruption with ^C.
 #       See https://github.com/llvm/llvm-project/issues/53673
 %.app.debug.run: $(_simulator_app)

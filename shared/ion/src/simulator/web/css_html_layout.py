@@ -21,7 +21,7 @@ def css_percentage_declaration(prop, ratio):
     return css_declaration(prop, "%.2f%%" % (100 * ratio))
 
 
-def css_rect_declarations(rect, ref = [0,0,100,100]):
+def css_rect_declarations(rect, ref=[0, 0, 100, 100]):
     css = ""
     css += css_percentage_declaration("left", rect[0] / ref[2])
     css += css_percentage_declaration("top", rect[1] / ref[3])
@@ -29,60 +29,11 @@ def css_rect_declarations(rect, ref = [0,0,100,100]):
     css += css_percentage_declaration("height", rect[3] / ref[3])
     return css
 
-shared_css = """
-.calculator span {
-  position: absolute;
-  display: block;
-  border-radius: 999px;
-  cursor: pointer;
-}
 
-.calculator span:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.calculator span:active {
-  background-color: rgba(0, 0, 0, 0.2);
-}
-
-canvas.calculator-mirror {
-  image-rendering: -moz-crisp-edges;
-  image-rendering: pixelated;
-  -ms-interpolation-mode: nearest-neighbor;
-}
-
-.calculator.loading canvas {
-  display: none;
-}
-
-.calculator .loader {
-  display: none;
-}
-
-.calculator.loading .loader {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.calculator svg {
-  width: 33%;
-}
-
-@keyframes calculator-loader-rotation {
-  from { stroke-dashoffset: 0; }
-  to { stroke-dashoffset: -290; }
-}
-
-.calculator svg circle {
-  animation: calculator-loader-rotation 1.2s linear infinite;
-}
-
-"""
-
+# Generate the custom css for the epsilon and scandium simulator
 def css(layout):
     background = layout["background"]
-    css = shared_css
+    css = ""
     css += css_rule(
         ".calculator",
         css_declaration("position", "absolute"),
@@ -104,12 +55,15 @@ def css(layout):
     )
     return css
 
-spinner_svg ="""
+
+spinner_svg = """
 <svg viewBox="0 0 100 100">
   <circle cx="50" cy="50" r="46" fill="none" stroke-width="6" stroke-dasharray="72.5"></circle>
 </svg>
 """
 
+
+# Generate the custom html for the epsilon and scandium simulator
 def html(layout):
     screen = layout["screen"]
     background = layout["background"]

@@ -22,8 +22,10 @@ void Runner::innerRun() {
 
   int t0 = Ion::Timing::millis();
   int caseIndex = 0;
+  int totalCases = metadata.totalCases;
   for (int i = metadata.startIndex; i < metadata.endIndex; i++) {
     if (m_testFilter && !testMatchesFilter(Cases::s_names[i], m_testFilter)) {
+      totalCases--;
       continue;
     }
 #if ASAN
@@ -31,6 +33,7 @@ void Runner::innerRun() {
      * "RuntimeError: maximum recursion depth exceeded" */
     // TODO: pass this test even when ASAN=1
     if (strcmp(Cases::s_names[i], "python_numpy") == 0) {
+      totalCases--;
       continue;
     }
 #endif
@@ -38,7 +41,7 @@ void Runner::innerRun() {
     if (clearConsole()) {
       // Avoid cluttering the display if it can't be cleared
       Poincare::Print::CustomPrintf(buffer, k_bufferSize, "TEST: %i/%i",
-                                    caseIndex, metadata.totalCases);
+                                    caseIndex, totalCases);
       quiz_print(buffer);
     }
     quiz_print(Cases::s_names[i]);
@@ -53,7 +56,7 @@ void Runner::innerRun() {
 
   // Display test results
   Poincare::Print::CustomPrintf(buffer, k_bufferSize, "ALL %i TESTS FINISHED",
-                                metadata.totalCases);
+                                totalCases);
   quiz_print(buffer);
   // Display test duration
   int time = Ion::Timing::millis() - t0;

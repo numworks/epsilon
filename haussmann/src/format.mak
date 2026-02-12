@@ -15,10 +15,13 @@ format: JSFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFA
 format:
 # Use xargs to elegantly handle the case CXXFILES=""
 	echo "=== Formatting .c, .cpp and .h files ==="
+	$(CXXFORMAT) --version
 	cd $(ROOT); echo $(CXXFILES) | xargs -r $(CXXFORMAT) $(CXXFORMATARGS)
 	echo "=== Formatting .py files ==="
+	$(PYFORMAT) --version
 	cd $(ROOT); echo $(PYFILES) | xargs -r $(PYFORMAT) $(PYFORMATARGS)
 	echo "=== Formatting .js files ==="
+	$(JSFORMAT) --version
 	cd $(ROOT); echo $(JSFILES) | xargs -r $(JSFORMAT) $(JSFORMATARGS)
 
 .PHONY: reformat

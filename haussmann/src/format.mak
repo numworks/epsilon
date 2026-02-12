@@ -11,7 +11,7 @@ ROOT := .
 format: BASE ?= HEAD
 format: CXXFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard) | grep --extended-regexp "(\.c$$|\.cpp$$|\.h$$|libaxx/include)")
 format: PYFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard) | grep --extended-regexp "(\.py$$)")
-format: JSFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard) | grep --extended-regexp "(\.js$$|\.cjs$$|\.mjs$$|\.ts$$)")
+format: JSFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard) | grep --extended-regexp "(\.js$$|\.cjs$$|\.mjs$$|\.ts$$|\.html)")
 format:
 # Use xargs to elegantly handle the case CXXFILES=""
 	echo "=== Formatting .c, .cpp and .h files ==="

@@ -2,7 +2,7 @@
 
 PATH_haussmann := ../haussmann
 APP_NAME := Epsilon
-APP_VERSION := 25.1.0
+APP_VERSION := 25.2.0
 OUTPUT_ROOT := output
 DEBUG ?= 0
 PLATFORM ?= host

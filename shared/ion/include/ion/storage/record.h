@@ -18,6 +18,7 @@ constexpr static char parametricComponentExtension[] = "pc";
 constexpr static char regressionMemoizedFormulaExtension[] = "rgm";
 constexpr static char statisticsMemoizedFormulaExtension[] = "stm";
 constexpr static char systemExtension[] = "sys";
+constexpr static char scriptExtension[] = "py";
 
 /*  * A record's fullName is baseName.extension.
  * A Record is identified by the CRC32 on its fullName because:

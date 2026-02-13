@@ -5,6 +5,7 @@
 #include <escher/responder.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
+#include <ion/storage/record.h>
 
 #include "script_store.h"
 

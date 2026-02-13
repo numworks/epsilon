@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ion.h>
+#include <ion/storage/record.h>
 #include <python/port/port.h>
 
 #include "script.h"
@@ -13,8 +14,7 @@ namespace Code {
 
 class ScriptStore : public MicroPython::ScriptProvider {
  public:
-  constexpr static char k_scriptExtension[] = "py";
-  constexpr static size_t k_scriptExtensionLength = 2;
+  constexpr static size_t k_scriptExtensionLength = 2;  // "py"
 
   // Storage information
   static bool ScriptNameIsFree(const char* baseName);
@@ -24,20 +24,20 @@ class ScriptStore : public MicroPython::ScriptProvider {
   static Script ScriptAtIndex(int index) {
     return Script(
         Ion::Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
-            k_scriptExtension, index));
+            Ion::Storage::scriptExtension, index));
   }
   static Script ScriptNamed(const char* fullName) {
     return Script(
         Ion::Storage::FileSystem::sharedFileSystem->recordNamed(fullName));
   }
   static Script ScriptBaseNamed(const char* baseName) {
-    return Script(
-        Ion::Storage::FileSystem::sharedFileSystem
-            ->recordBaseNamedWithExtension(baseName, k_scriptExtension));
+    return Script(Ion::Storage::FileSystem::sharedFileSystem
+                      ->recordBaseNamedWithExtension(
+                          baseName, Ion::Storage::scriptExtension));
   }
   static int NumberOfScripts() {
     return Ion::Storage::FileSystem::sharedFileSystem
-        ->numberOfRecordsWithExtension(k_scriptExtension);
+        ->numberOfRecordsWithExtension(Ion::Storage::scriptExtension);
   }
   static Ion::Storage::Record::ErrorStatus AddNewScript() {
     return AddScriptFromTemplate(ScriptTemplate::Empty());

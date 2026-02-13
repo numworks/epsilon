@@ -2,8 +2,6 @@
 
 namespace Code {
 
-constexpr char ScriptStore::k_scriptExtension[];
-
 bool ScriptStore::ScriptNameIsFree(const char* baseName) {
   return ScriptBaseNamed(baseName).isNull();
 }

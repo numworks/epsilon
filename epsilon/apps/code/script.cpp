@@ -1,6 +1,6 @@
 #include "script.h"
 
-#include "script_store.h"
+#include <ion/storage/record.h>
 
 namespace Code {
 
@@ -13,7 +13,7 @@ bool Script::DefaultName(char buffer[], size_t bufferSize) {
   return Ion::Storage::FileSystem::sharedFileSystem
              ->firstAvailableNameFromPrefix(
                  buffer, k_defaultScriptNameLength, bufferSize,
-                 ScriptStore::k_scriptExtension,
+                 Ion::Storage::scriptExtension,
                  k_maxNumberOfDefaultScriptNames) > k_defaultScriptNameLength;
 }
 
@@ -36,7 +36,7 @@ bool Script::NameCompliant(const char* name) {
   }
   while (c != UCodePointNull) {
     if (c == '.' &&
-        strcmp(decoder.stringPosition(), ScriptStore::k_scriptExtension) == 0) {
+        strcmp(decoder.stringPosition(), Ion::Storage::scriptExtension) == 0) {
       return true;
     }
     if (!(c.isLatinSmallLetter() || c == '_' || c.isDecimalDigit())) {

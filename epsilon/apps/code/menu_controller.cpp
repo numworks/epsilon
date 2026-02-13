@@ -6,9 +6,11 @@
 #include <assert.h>
 #include <escher/metric.h>
 #include <ion/events.h>
+#include <ion/storage/record.h>
 #include <omg/utf8_helper.h>
 
 #include "app.h"
+#include "script_store.h"
 
 using namespace Escher;
 
@@ -266,7 +268,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField* textField,
   char numberedDefaultName[bufferSize];
   char* text = textField->draftText();
 
-  if (strlen(text) > 1 + strlen(ScriptStore::k_scriptExtension)) {
+  if (strlen(text) > 1 + strlen(Ion::Storage::scriptExtension)) {
     newName = text;
   } else {
     // The user entered an empty name. Use a numbered default script name.
@@ -278,7 +280,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField* textField,
                                    bufferSize - defaultNameLength, '.');
     assert(defaultNameLength < bufferSize);
     strlcpy(numberedDefaultName + defaultNameLength,
-            ScriptStore::k_scriptExtension, bufferSize - defaultNameLength);
+            Ion::Storage::scriptExtension, bufferSize - defaultNameLength);
     /* If there are already scripts named script1.py, script2.py,... until
      * Script::k_maxNumberOfDefaultScriptNames, we want to write the last tried
      * default name and let the user modify it. */
@@ -322,7 +324,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField* textField,
 }
 
 void MenuController::textFieldDidHandleEvent(AbstractTextField* textField) {
-  int scriptExtensionLength = 1 + strlen(ScriptStore::k_scriptExtension);
+  int scriptExtensionLength = 1 + strlen(Ion::Storage::scriptExtension);
   if (textField->isEditing()) {
     const char* maxPointerLocation =
         textField->draftTextEnd() - scriptExtensionLength;
@@ -370,7 +372,7 @@ void MenuController::privateTextFieldDidAbortEditing(
   Script script =
       ScriptStore::ScriptAtIndex(m_selectableTableView.selectedRow());
   const char* scriptName = script.fullName();
-  if (strlen(scriptName) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
+  if (strlen(scriptName) <= 1 + strlen(Ion::Storage::scriptExtension)) {
     // The previous text was an empty name. Use a numbered default script name.
     char numberedDefaultName[Script::k_defaultScriptNameMaxSize];
     bool foundDefaultName = Script::DefaultName(
@@ -381,7 +383,7 @@ void MenuController::privateTextFieldDidAbortEditing(
       return;
     }
     Script::ErrorStatus error = Ion::Storage::Record::SetBaseNameWithExtension(
-        &script, numberedDefaultName, ScriptStore::k_scriptExtension);
+        &script, numberedDefaultName, Ion::Storage::scriptExtension);
     scriptName = script.fullName();
     /* Because we use the numbered default name, the name should not be
      * already taken. Plus, the script could be added only if the storage has

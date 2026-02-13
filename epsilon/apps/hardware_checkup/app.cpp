@@ -9,11 +9,6 @@ using namespace Escher;
 namespace HardwareCheckup {
 
 App* App::Snapshot::unpack(Container* container) {
-  // Spinner may break LCD data test
-  Ion::Events::setSpinner(false);
-  // Disable Home button, so that the Home key can be tested
-  Ion::CircuitBreaker::unsetCheckpoint(
-      Ion::CircuitBreaker::CheckpointType::Home);
   return new (container->currentAppBuffer()) App(this);
 }
 
@@ -29,38 +24,34 @@ App::App(Snapshot* snapshot)
 
 App::WizardViewController::WizardViewController(Responder* parentResponder)
     : BankViewController(parentResponder),
-      m_batteryTestController(this),
-      m_lcdTimingTestController(this),
-      m_colorsLCDTestController(this),
-      m_deadPixelsTestController(this),
-      m_keyboardController(this),
-      m_lcdDataTestController(this),
-      m_ledTestController(this),
-      m_serialNumberController(this),
-      m_vBlankTestController(this) {}
-
-int App::WizardViewController::numberOfChildren() { return 9; }
+      m_storageViewerController(this),
+      m_persistingBytesViewerController(this)
+// m_col3Controller(this),
+// m_externalAppsController(this),
+// m_standByController(this),
+// m_screenController(this),
+// m_pressedKeyController(this),
+// m_otpController(this)
+{}
 
 ViewController* App::WizardViewController::childAtIndex(int i) {
   ViewController* children[] = {
-      &m_vBlankTestController,     &m_lcdTimingTestController,
-      &m_colorsLCDTestController,  &m_lcdDataTestController,
-      &m_deadPixelsTestController, &m_ledTestController,
-      &m_keyboardController,       &m_batteryTestController,
-      &m_serialNumberController};
+      &m_storageViewerController, &m_persistingBytesViewerController,
+      // &m_col3Controller,          &m_externalAppsController,
+      // &m_standByController,       &m_screenController,
+      // &m_pressedKeyController,    &m_otpController
+  };
   return children[i];
 }
 
 bool App::WizardViewController::handleEvent(Ion::Events::Event event) {
-  // Do not handle OnOff event to let the apps container redraw the screen
-  if (event == Ion::Events::OnOff) {
-    return false;
+  if (event == Ion::Events::Right || event == Ion::Events::Left) {
+    setActiveIndex((activeIndex() + numberOfChildren() +
+                    (event == Ion::Events::Right ? 1 : -1)) %
+                   numberOfChildren());
+    return true;
   }
-  if (activeIndex() >= numberOfChildren()) {
-    return false;
-  }
-  setActiveIndex(activeIndex() + 1);
-  return true;
+  return false;
 }
 
 }  // namespace HardwareCheckup

@@ -1,16 +1,15 @@
 #pragma once
 
-#include <assert.h>
 #include <escher/buffer_text_view.h>
 #include <escher/solid_color_view.h>
 #include <escher/view_controller.h>
 
 namespace HardwareCheckup {
 
-class VBlankTestController : public Escher::ViewController {
+class StorageViewerController : public Escher::ViewController {
  public:
   using Escher::ViewController::ViewController;
-  Escher::View* view() override { return &m_view; }
+  Escher::View* view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 
@@ -18,22 +17,16 @@ class VBlankTestController : public Escher::ViewController {
   class ContentView : public Escher::SolidColorView {
    public:
     ContentView();
-    Escher::AbstractBufferTextView* vBlankStateTextView() {
-      return &m_vBlankStateView;
-    }
+    Escher::AbstractBufferTextView* textView() { return &m_textView; }
     void setColor(KDColor color) override;
 
    private:
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 1; }
-    Escher::View* subviewAtIndex(int index) override {
-      assert(index == 0);
-      return &m_vBlankStateView;
-    }
-    Escher::OneLineBufferTextView<> m_vBlankStateView;
+    Escher::View* subviewAtIndex(int index) override;
+    constexpr static int k_margin = 4;
+    Escher::OneLineBufferTextView<> m_textView;
   };
-  constexpr static const char* k_vBlankOKText = "VBLANK: OK";
-  constexpr static const char* k_vBlankFailTest = "VBLANK: FAIL";
   ContentView m_view;
 };
 

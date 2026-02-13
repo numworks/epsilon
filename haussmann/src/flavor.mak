@@ -1,7 +1,7 @@
 # Define a syntax to select specific elements of a list, using the function:
 #   flavor_filter, <list with tastes>, <flavors>
 #
-# - "flavors" are filters used to chose which elements are selected
+# - "flavors" are filters used to choose which elements are selected
 # - "tastes" are qualifiers affixed to elements of a list to specify how each
 #   one interacts with flavors.
 #
@@ -53,5 +53,3 @@ endef
 define _filter_negative_tastes
 $(if $(filter $2,$3),,$1)
 endef
-
-

@@ -52,14 +52,14 @@ constexpr uint32_t TrampolineOrigin = BootloaderOrigin + BootloaderLength;
  * - USERLAND:  || HEADER | INIT VECTOR | CODE ||
  *
  * Kernel and Userland are prefixed by:
- * - a header listing various information that have to be retrieved from DFU
- * - a initialisation vector starting with the entry point and the stack initialization
+ * - a header listing varied information that has to be retrieved from DFU
+ * - an initialization vector starting with the entry point and the stack initialization
  *
- * The kernel initialisation vector table has specific requirements regarding:
+ * The kernel initialization vector table has specific requirements regarding:
  * - its memory space: it must be in the range 0x00000080 to 0x3FFFFF80
  * - its alignment: you must align the offset to the number of exception entries in the vector table. The minimum alignment is 128 words.
  * [https://www.st.com/content/ccc/resource/technical/document/programming_manual/6c/3a/cb/e7/e4/ea/44/9b/DM00046982.pdf/files/DM00046982.pdf/jcr:content/translations/en.DM00046982.pdf]
- * Therefore, its is also relocated in sRAM at booting.
+ * Therefore, it is also relocated in sRAM at booting.
  */
 
 constexpr uint32_t ExternalFlashOrigin = 0x90000000;
@@ -104,8 +104,8 @@ constexpr uint32_t ExternalAppsSectorUnit = 0x10000;
  *
  * The few restrictions to layout the RAM memory are the following:
  * - the beginning of Kernel data/bss section should be aligned: the isr table
- * is within this section and the VTOR registers can only be configure with
- * some alignments constraints.
+ * is within this section and the VTOR registers can only be configured with
+ * some alignment constraints.
  * - the kernel RAM should be aligned to be able to add MPU protection over
  * this region: MPU region must be aligned to the size of the region.
  * - Overflowing the userland stack should not impact the kernel (the MPU region

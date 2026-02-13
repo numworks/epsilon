@@ -113,7 +113,7 @@ int main(int argc, char* argv[]) {
    * possible for the stack limit is 0x1C000+1 which allocate a stack of size
    * 0x20000 (the stack is allocated by increments of 0x4000)
    *
-   * Warning: this is pobably dependent of the users architecture.
+   * Warning: this is probably dependent on the user's architecture.
    * If there is an issue with this parameter going forward, one could try
    * increasing this limit further, maybe dyld takes up more stack space.
    *

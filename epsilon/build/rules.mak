@@ -29,10 +29,9 @@ $(if $(shell if ! command -v $1; then echo error; fi),\
 	$(error "Missing command: $(1), did you forget to source?"),)
 endef
 
-.PHONY: all_release
-all_release:
-	$(call file_check,$(IOS_MOBILE_PROVISION))
-	$(call command_check,$(EMCC))
+
+.PHONY: all_release_device
+all_release_device:
 	@ rm -rf output/all_official
 	@ mkdir -p output/all_official
 	@ echo "BUILD_FIRMWARE    DEVICE N0110"
@@ -53,6 +52,39 @@ all_release:
 	@ cp output/release/n0120/epsilon.onboarding.dfu output/all_official/unsigned_epsilon.n0120.onboarding.dfu
 	@ $(MAKE) TARGET=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding.allow3rdparty.dfu
 	@ cp output/release/n0120/epsilon.onboarding.allow3rdparty.dfu output/all_official/unsigned_epsilon.n0120.onboarding.allow3rdparty.dfu
+
+$(call document_other_target,all_release_device,Build all device targets for all platforms for a version release.)
+
+.PHONY: all_beta_device
+all_beta_device:
+	@ rm -rf output/all_official_beta
+	@ mkdir -p output/all_official_beta
+	@ echo "BUILD_BETA_FIRMWARE    DEVICE N0110"
+	@ $(MAKE) TARGET=n0110 clean
+	@ $(MAKE) TARGET=n0110 epsilon.onboarding.beta.dfu
+	@ cp output/release/n0110/epsilon.onboarding.beta.dfu output/all_official_beta/unsigned_epsilon.n0110.onboarding.beta.dfu
+	@ $(MAKE) TARGET=n0110 epsilon.onboarding.beta.allow3rdparty.dfu
+	@ cp output/release/n0110/epsilon.onboarding.beta.allow3rdparty.dfu output/all_official_beta/unsigned_epsilon.n0110.onboarding.beta.allow3rdparty.dfu
+	@ echo "BUILD_BETA_FIRMWARE    DEVICE N0115"
+	@ $(MAKE) TARGET=n0115 clean
+	@ $(MAKE) TARGET=n0115 epsilon.onboarding.beta.dfu
+	@ cp output/release/n0115/epsilon.onboarding.beta.dfu output/all_official_beta/unsigned_epsilon.n0115.onboarding.beta.dfu
+	@ $(MAKE) TARGET=n0115 epsilon.onboarding.beta.allow3rdparty.dfu
+	@ cp output/release/n0115/epsilon.onboarding.beta.allow3rdparty.dfu output/all_official_beta/unsigned_epsilon.n0115.onboarding.beta.allow3rdparty.dfu
+	@ echo "BUILD_BETA_FIRMWARE    DEVICE N0120"
+	@ $(MAKE) TARGET=n0120 clean
+	@ $(MAKE) TARGET=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding.beta.dfu
+	@ cp output/release/n0120/epsilon.onboarding.beta.dfu output/all_official_beta/unsigned_epsilon.n0120.onboarding.beta.dfu
+	@ $(MAKE) TARGET=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding.beta.allow3rdparty.dfu
+	@ cp output/release/n0120/epsilon.onboarding.beta.allow3rdparty.dfu output/all_official_beta/unsigned_epsilon.n0120.onboarding.beta.allow3rdparty.dfu
+
+$(call document_other_target,all_beta_device,Build all device targets for all platforms for a version beta release.)
+
+.PHONY: all_release
+all_release:
+	$(call file_check,$(IOS_MOBILE_PROVISION))
+	$(call command_check,$(EMCC))
+	@ $(MAKE) all_release_device
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB HTML"
 	@ $(MAKE) TARGET=web clean
 	@ $(MAKE) TARGET=web epsilon.html
@@ -75,26 +107,7 @@ $(call document_other_target,all_release,Build all targets for all platforms for
 .PHONY: all_beta
 all_beta:
 	$(call command_check,$(EMCC))
-	@ rm -rf output/all_official_beta
-	@ mkdir -p output/all_official_beta
-	@ echo "BUILD_BETA_FIRMWARE    DEVICE N0110"
-	@ $(MAKE) TARGET=n0110 clean
-	@ $(MAKE) TARGET=n0110 epsilon.onboarding.beta.dfu
-	@ cp output/release/n0110/epsilon.onboarding.beta.dfu output/all_official_beta/unsigned_epsilon.n0110.onboarding.beta.dfu
-	@ $(MAKE) TARGET=n0110 epsilon.onboarding.beta.allow3rdparty.dfu
-	@ cp output/release/n0110/epsilon.onboarding.beta.allow3rdparty.dfu output/all_official_beta/unsigned_epsilon.n0110.onboarding.beta.allow3rdparty.dfu
-	@ echo "BUILD_BETA_FIRMWARE    DEVICE N0115"
-	@ $(MAKE) TARGET=n0115 clean
-	@ $(MAKE) TARGET=n0115 epsilon.onboarding.beta.dfu
-	@ cp output/release/n0115/epsilon.onboarding.beta.dfu output/all_official_beta/unsigned_epsilon.n0115.onboarding.beta.dfu
-	@ $(MAKE) TARGET=n0115 epsilon.onboarding.beta.allow3rdparty.dfu
-	@ cp output/release/n0115/epsilon.onboarding.beta.allow3rdparty.dfu output/all_official_beta/unsigned_epsilon.n0115.onboarding.beta.allow3rdparty.dfu
-	@ echo "BUILD_BETA_FIRMWARE    DEVICE N0120"
-	@ $(MAKE) TARGET=n0120 clean
-	@ $(MAKE) TARGET=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding.beta.dfu
-	@ cp output/release/n0120/epsilon.onboarding.beta.dfu output/all_official_beta/unsigned_epsilon.n0120.onboarding.beta.dfu
-	@ $(MAKE) TARGET=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding.beta.allow3rdparty.dfu
-	@ cp output/release/n0120/epsilon.onboarding.beta.allow3rdparty.dfu output/all_official_beta/unsigned_epsilon.n0120.onboarding.beta.allow3rdparty.dfu
+	@ $(MAKE) all_beta_device
 	@ echo "BUILD_BETA_FIRMWARE    SIMULATOR WEB HTML"
 	@ $(MAKE) TARGET=web clean
 	@ $(MAKE) TARGET=web epsilon.html

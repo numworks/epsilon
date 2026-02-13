@@ -553,7 +553,7 @@ std::complex<T> Approximator::privateToComplex(const Tree* e) {
 #endif
 #if POINCARE_NO_FLOAT_APPROXIMATION
   /* TODO: this could be a static_assert and the static_cast can be removed once
-   * all template instanciation with float (for example toComplex<float>) are
+   * all template instantiation with float (for example toComplex<float>) are
    * removed from projects which use POINCARE_NO_FLOAT_APPROXIMATION */
   assert(Precision<T>::value == FloatPrecision::Double);
   return static_cast<std::complex<T>>(privateToComplexRecursive<double>(e));
@@ -565,7 +565,7 @@ std::complex<T> Approximator::privateToComplex(const Tree* e) {
 template <typename T>
 std::complex<T> Approximator::privateToComplexRecursive(const Tree* e) {
 #if POINCARE_NO_FLOAT_APPROXIMATION
-  /* TODO: this could be a static_assert once all template instanciation with
+  /* TODO: this could be a static_assert once all template instantiation with
    * float (for example toComplex<float>) are removed from projects which use
    * POINCARE_NO_FLOAT_APPROXIMATION */
   assert(Precision<T>::value == FloatPrecision::Double);

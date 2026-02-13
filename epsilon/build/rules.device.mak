@@ -145,6 +145,12 @@ endif
 
 eraser%: EMBED_EXTRA_DATA := 1
 
+.PHONY: custom_userland.dfu
+custom_userland.dfu:
+	$(MAKE) userland.A.dfu userland.B.dfu
+
+$(call document_other_target,custom_userland.dfu,Build firmware as a custom userland for any slot. APP_VERSION will have to match the official version of the device's official software.)
+
 ifeq ($(PLATFORM),n0120)
 flasher%flash: DFULEAVE := 0x24030000
 eraser%flash: DFULEAVE := 0x24000000

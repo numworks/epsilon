@@ -12,19 +12,19 @@ custom_userland.flash:
 $(call document_other_target,custom_userland.flash,Write firmware as a custom userland to a connected device in its inactive slot. APP_VERSION must match the official version of the device's official software.)
 
 
-IOS_MOBILE_PROVISION ?= build/artifacts/NumWorks_Graphing_Calculator_Distribution.mobileprovision
-EMCC ?= emcc
+_IOS_MOBILE_PROVISION ?= build/artifacts/NumWorks_Graphing_Calculator_Distribution.mobileprovision
+_EMCC ?= emcc
 
 # Errors out if the file does not exist
-# file_check, <file>
-define file_check
+# _file_check, <file>
+define _file_check
 $(if $(shell if test ! -f $(1) 2>&1 >/dev/null; then echo error; fi),\
 	$(error "Missing file: $(1)"),)
 endef
 
 # Errors out if the command does not exist
-# command_check, <command>
-define command_check
+# _command_check, <command>
+define _command_check
 $(if $(shell if ! command -v $1; then echo error; fi),\
 	$(error "Missing command: $(1), did you forget to source?"),)
 endef
@@ -82,8 +82,8 @@ $(call document_other_target,all_beta_device,Build all device targets for all pl
 
 .PHONY: all_release
 all_release:
-	$(call file_check,$(IOS_MOBILE_PROVISION))
-	$(call command_check,$(EMCC))
+	$(call _file_check,$(_IOS_MOBILE_PROVISION))
+	$(call _command_check,$(_EMCC))
 	@ $(MAKE) all_release_device
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB HTML"
 	@ $(MAKE) TARGET=web clean
@@ -99,14 +99,14 @@ all_release:
 	@ cp output/release/android/app/outputs/native-debug-symbols/release/native-debug-symbols.zip output/all_official/native-debug-symbols.zip
 	@ echo "BUILD_FIRMWARE    SIMULATOR IOS"
 	@ $(MAKE) TARGET=ios clean
-	@ $(MAKE) TARGET=ios IOS_PROVISIONNING_PROFILE=$(IOS_MOBILE_PROVISION) epsilon.ipa
+	@ $(MAKE) TARGET=ios IOS_PROVISIONNING_PROFILE=$(_IOS_MOBILE_PROVISION) epsilon.ipa
 	@ cp output/release/ios/epsilon.ipa output/all_official/epsilon.ipa
 
 $(call document_other_target,all_release,Build all targets for all platforms for a version release.)
 
 .PHONY: all_beta
 all_beta:
-	$(call command_check,$(EMCC))
+	$(call _command_check,$(_EMCC))
 	@ $(MAKE) all_beta_device
 	@ echo "BUILD_BETA_FIRMWARE    SIMULATOR WEB HTML"
 	@ $(MAKE) TARGET=web clean

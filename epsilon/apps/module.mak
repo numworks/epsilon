@@ -63,7 +63,7 @@ $(call i18n_with_universal,shared)
 $(call i18n_with_universal,toolbox)
 $(call i18n_without_universal,variables)
 
-include $(patsubst %,$(PATH_apps)/%/Makefile,shared home on_boarding hardware_test usb $(EPSILON_APPS))
+include $(patsubst %,$(PATH_apps)/%/Makefile,shared home on_boarding hardware_test hardware_checkup usb $(EPSILON_APPS))
 
 $(call assert_defined,PYTHON_QSTRDEFS)
 $(call assert_defined,KANDINSKY_fonts_dependencies)

@@ -37,6 +37,7 @@ class AboutController : public GenericSubController {
   Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>>
       m_cells[k_totalNumberOfCell];
   Shared::MessagePopUpController m_hardwareTestPopUpController;
+  Shared::MessagePopUpController m_hardwareCheckupPopUpController;
 };
 
 }  // namespace Settings

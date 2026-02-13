@@ -24,6 +24,17 @@ AboutController::AboutController(Responder* parentResponder)
                 return true;
               },
               this),
+          I18n::Message::HardwareTestLaunch),
+      m_hardwareCheckupPopUpController(
+          Escher::Invocation(
+              [](void* context, void* sender) {
+                AppsContainer* appsContainer =
+                    AppsContainer::sharedAppsContainer();
+                appsContainer->switchToBuiltinApp(
+                    appsContainer->hardwareCheckupAppSnapshot());
+                return true;
+              },
+              this),
           I18n::Message::HardwareTestLaunch) {}
 
 static bool isHardwareTestRow(int row) {
@@ -41,6 +52,17 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       !ExamModeManager::ExamMode().isActive()) {
     // Prevent hardware test in exam mode so that the LED can't be accessed.
     m_hardwareTestPopUpController.presentModally();
+    return true;
+  }
+  /* We hide here the activation hardware test app: in the menu "about", by
+   * clicking on '7' on the last row. */
+  if ((event == Ion::Events::Seven || event == Ion::Events::LowerM ||
+       event == Ion::Events::UpperM) &&
+      m_messageTreeModel->label() == I18n::Message::About &&
+      isHardwareTestRow(selectedRow()) &&
+      !ExamModeManager::ExamMode().isActive()) {
+    // Prevent hardware test in exam mode so that the LED can't be accessed.
+    m_hardwareCheckupPopUpController.presentModally();
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {

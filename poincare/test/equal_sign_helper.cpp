@@ -1,7 +1,7 @@
 #include <poincare/src/expression/equal_sign.h>
 #include <poincare/src/expression/k_tree.h>
 
-#include "../helper.h"
+#include "helper.h"
 
 using namespace Poincare::Internal;
 

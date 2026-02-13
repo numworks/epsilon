@@ -221,6 +221,7 @@ _sources_poincare_test_cases := $(addprefix test/, \
   conics.cpp \
   dimension.cpp \
   distribution.cpp \
+  equal_sign_helper.cpp \
   equation_solver.cpp \
   exam_mode.cpp \
   expression_properties.cpp \
@@ -294,7 +295,6 @@ _sources_poincare_test_util := $(addprefix test/, \
   float_helper.cpp \
   helper.cpp \
   $(addprefix helpers/, \
-    expression_equal_sign.cpp \
     symbol_store.cpp \
   ) \
   approximation/helper.cpp \

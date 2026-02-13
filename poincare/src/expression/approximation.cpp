@@ -545,10 +545,6 @@ std::complex<T> Private::ToUndefinedComplexValue(DefinedStatus status) {
 
 template <typename T>
 std::complex<T> Approximator::privateToComplex(const Tree* e) {
-#if POINCARE_NO_FLOAT_APPROXIMATION
-  assert(Precision<T>::value == FloatPrecision::Double);
-#endif
-
 #ifdef POINCARE_MAX_TREE_SIZE_FOR_APPROXIMATION
   if (e->maxDepth() > POINCARE_MAX_TREE_SIZE_FOR_APPROXIMATION) {
     // Prevent recursive approximation algorithms from overflowing the stack

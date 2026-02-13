@@ -48,4 +48,5 @@ $(call import_module,apps,apps)
 
 # Declare goals
 
+include build/rules.mak
 include build/rules.$(PLATFORM_TYPE).mak

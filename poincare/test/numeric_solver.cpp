@@ -6,8 +6,8 @@
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/numeric_solver/erf_inv.h>
 #include <poincare/symbol_context.h>
+#include <poincare/test/helpers/float.h>
 
-#include "float_helper.h"
 #include "helper.h"
 
 using Poincare::AngleUnit;

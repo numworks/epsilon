@@ -1,10 +1,9 @@
 #include <poincare/statistics/inference.h>
 #include <poincare/statistics/statistics_dataset.h>
+#include <poincare/test/helpers/float.h>
 #include <quiz.h>
 
 #include <cmath>
-
-#include "float_helper.h"
 
 QUIZ_CASE(pcj_statistics_dataset) {
   using Dataset = Poincare::VectorDatasetColumn<double, 10>;

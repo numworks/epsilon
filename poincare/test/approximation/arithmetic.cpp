@@ -1,5 +1,5 @@
 #include <omg/float.h>
-#include <poincare/test/float_helper.h>
+#include <poincare/test/helpers/float.h>
 
 #include "helper.h"
 

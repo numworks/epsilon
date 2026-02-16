@@ -1,7 +1,7 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/global_store.h>
-#include <poincare/test/float_helper.h>
 #include <poincare/test/helper.h>
+#include <poincare/test/helpers/float.h>
 #include <quiz.h>
 
 #include <cmath>

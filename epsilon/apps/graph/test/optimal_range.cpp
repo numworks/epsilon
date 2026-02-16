@@ -5,7 +5,7 @@
 #include <poincare/include/poincare/range.h>
 #include <poincare/print.h>
 #include <poincare/symbol_context.h>
-#include <poincare/test/float_helper.h>
+#include <poincare/test/helpers/float.h>
 #include <quiz.h>
 
 #include <cmath>

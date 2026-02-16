@@ -292,9 +292,9 @@ _sources_poincare_test_cases := $(addprefix test/, \
 )
 
 _sources_poincare_test_util := $(addprefix test/, \
-  float_helper.cpp \
   helper.cpp \
   $(addprefix helpers/, \
+    float.cpp \
     symbol_store.cpp \
   ) \
   approximation/helper.cpp \

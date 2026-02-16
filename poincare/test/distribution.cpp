@@ -1,11 +1,9 @@
 #include <poincare/src/statistics/distributions/distribution.h>
 #include <poincare/statistics/distribution.h>
+#include <poincare/test/helpers/float.h>
+#include <quiz.h>
 
-#include <algorithm>
 #include <cmath>
-
-#include "float_helper.h"
-#include "helper.h"
 
 using namespace Poincare::Internal;
 

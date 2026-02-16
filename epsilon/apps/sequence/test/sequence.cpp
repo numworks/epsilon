@@ -8,7 +8,7 @@
 #include <poincare/print.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/test/approximation/helper.h>
-#include <poincare/test/float_helper.h>
+#include <poincare/test/helpers/float.h>
 #include <poincare/test/helpers/symbol_store.h>
 #include <quiz.h>
 #include <string.h>

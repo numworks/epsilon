@@ -6,8 +6,8 @@
 #include <poincare/context_with_parent.h>
 #include <poincare/helpers/store.h>
 #include <poincare/print.h>
-#include <poincare/test/float_helper.h>
 #include <poincare/test/helper.h>
+#include <poincare/test/helpers/float.h>
 #include <quiz.h>
 #include <string.h>
 

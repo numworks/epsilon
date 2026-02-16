@@ -151,12 +151,12 @@ parser.add_argument(
 )
 parser.add_argument("-v", "--verbose", action="store_true", help="Show verbose output")
 parser.add_argument(
-    "--altsetting-offset",
-    metavar="N",
+    "-a",
+    metavar="ALTERNATE",
     type=int,
     default=0,
     help="Offset for alternate setting numbering",
 )
 
 args = parser.parse_args()
-elf2dfu(args.i, args.u, args.o, args.verbose, args.altsetting_offset)
+elf2dfu(args.i, args.u, args.o, args.verbose, args.a)

@@ -116,7 +116,7 @@ Bounds Bounds::Mult(const Tree* e) {
       bounds.m_lower *= childBounds.m_lower;
       bounds.m_upper *= childBounds.m_upper;
       if (childBounds.isStrictlyNegative()) {
-        assert(bounds.isStrictlyPositive());
+        assert(!bounds.exists() || bounds.isStrictlyPositive());
         // With negative bounds, the result is positive and bounds are flipped
         bounds.flip();
       }

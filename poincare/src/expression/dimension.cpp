@@ -672,11 +672,23 @@ Dimension Dimension::Get(const Tree* e,
           [[maybe_unused]] bool success = unitVector.addAllCoefficients(
               dim.unit.vector, secondDivisionChild ? -1 : 1);
           assert(success);
-          representative = dim.unit.representative;
+          if (dim.unit.vector.angle != 0 || dim.unit.vector.temperature != 0) {
+            // Only angle and temperature representatives matter.
+            /* TODO: refactor to avoid setting representative on a mult/div
+             * expression.
+             * For now we use it to convey information on the angle or
+             * temperature representatives present in the expression, but it is
+             * problematic because we only return the representative of the last
+             * child. This can be confusing because it is not straightforward to
+             * know what to expect for the representative of a multiplication,
+             * and it could cause a conflict in case we need information on both
+             * angle and temperature.
+             * See commented out test in pcj_simplification_unit */
+            representative = dim.unit.representative;
+          }
         }
         secondDivisionChild = (e->isDiv());
       }
-      // Only unique and celsius, fahrenheit or radians representatives matter.
       return rows > 0
                  ? Matrix(rows, cols)
                  : (unitVector.isEmpty() ? Scalar()

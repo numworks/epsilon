@@ -2,12 +2,11 @@
 # Translate ELF file into DfuSe file
 
 import sys
-import struct
-import zlib  # for CRC-32 calculation
 import subprocess
 import re
 import argparse
 import os
+from dfu_helper import generate_dfu_file
 
 # arm-none-eabi-objdump -h -w file.elf
 # arm-none-eabi-objcopy -O binary -j .data file.elf file.bin
@@ -42,44 +41,6 @@ def loadable_sections(elf_file, address_prefix="", name_suffix=""):
                 }
             )
     return sections
-
-
-def generate_dfu_file(targets, usb_vid_pid, dfu_file, altsetting_offset):
-    data = b""
-    for t, target in enumerate(targets):
-        target_data = b""
-        alt_setting = altsetting_offset
-        for image in target:
-            if (image["address"] >= 0x20000000 and image["address"] < 0x20040000) or (
-                image["address"] >= 0x24000000 and image["address"] < 0x24040000
-            ):
-                # sRAM alt setting is one greater than flash alt setting
-                alt_setting = altsetting_offset + 1
-            # Pad the image to 8 bytes, this seems to be needed
-            pad = (8 - len(image["data"]) % 8) % 8
-            image["data"] = image["data"] + bytes(bytearray(8)[0:pad])
-            target_data += (
-                struct.pack("<2I", image["address"], len(image["data"])) + image["data"]
-            )
-        target_data = (
-            struct.pack(
-                "<6sBI255s2I",
-                b"Target",
-                alt_setting,
-                1,
-                b"ST...",
-                len(target_data),
-                len(target),
-            )
-            + target_data
-        )
-        data += target_data
-    data = struct.pack("<5sBIB", b"DfuSe", 1, len(data) + 11, len(targets)) + data
-    v, d = map(lambda x: int(x, 0) & 0xFFFF, usb_vid_pid.split(":"))
-    data += struct.pack("<4H3sB", 0, d, v, 0x011A, b"UFD", 16)
-    crc = 0xFFFFFFFF & -zlib.crc32(data) - 1
-    data += struct.pack("<I", crc)
-    open(dfu_file, "wb+").write(data)
 
 
 def bin_file_for_path(elf_file, name_extension=""):
@@ -132,6 +93,12 @@ def add_sections_to_targets(targets, sections, elf_file, verbose):
     command += [elf_file, bin_file]
     subprocess.call(command)
     data = open(bin_file, "rb").read()
+
+    # Pad the image to 8 bytes, this is required for a really old
+    # epsilon version where the flash driver was not writing the last
+    # unaligned bytes
+    pad = (8 - len(data) % 8) % 8
+    data = data + bytes(bytearray(8)[0:pad])
 
     # Append to targets
     targets.append({"address": address, "data": data})

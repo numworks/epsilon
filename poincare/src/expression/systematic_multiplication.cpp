@@ -125,7 +125,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
      * matrix without being a matrix. Like Pow([[x]],20000000000) */
     merge = (child->isMatrix()
                  ? Matrix::Multiplication
-                 : Matrix::ScalarMultiplication)(child, next, false, nullptr);
+                 : Matrix::ScalarMultiplication)(child, next, nullptr);
   } else {
     PowerLike::BaseAndExponent childParameters =
         PowerLike::GetBaseAndExponent(child, true);

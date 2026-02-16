@@ -614,7 +614,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     Tree* determinant = nullptr;
     Tree* matrixClone = matrix->cloneTree();
     if (!Internal::Matrix::RowCanonize(matrixClone, true, &determinant,
-                                       isApproximate, approximator)) {
+                                       approximator)) {
       determinant = (KUndefUnhandled)->cloneTree();
     }
     // TODO: Use ComplexProperties or approximation to handle more complex cases
@@ -629,8 +629,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     /* 2. Matrix inverse if invertible matrix
      * A squared matrix is invertible if and only if determinant is non null */
     if (!determinantIsUndefinedOrNull) {
-      Tree* inverse =
-          Internal::Matrix::Inverse(matrix, isApproximate, approximator);
+      Tree* inverse = Internal::Matrix::Inverse(matrix, approximator);
       inverseL = CreateBeautifiedLayout(inverse, ctx, dim, displayMode,
                                         numberOfSignificantDigits);
     }
@@ -639,7 +638,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   // 3. Matrix row echelon form
   Tree* reducedRowEchelonForm = matrix->cloneTree();
   if (Internal::Matrix::RowCanonize(reducedRowEchelonForm, false, nullptr,
-                                    isApproximate, approximator)) {
+                                    approximator)) {
     // Clone layouted tree to preserve reducedRowEchelonForm for next step.
     rowEchelonFormL =
         CreateBeautifiedLayout(reducedRowEchelonForm->cloneTree(), ctx, dim,
@@ -648,7 +647,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     /* 4. Matrix reduced row echelon form
      *    Computed from row echelon form to save computation time. */
     if (!Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr,
-                                       isApproximate, approximator)) {
+                                       approximator)) {
       OMG_UNREACHABLE;
     }
     reducedRowEchelonFormL =

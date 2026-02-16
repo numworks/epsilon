@@ -12,7 +12,7 @@ $(call document_extension,hex,Extract Intel .hex from ELF file)
 
 DFU_ALTSETTING_OFFSET := 0
 $(OUTPUT_DIRECTORY)/%.dfu: $(OUTPUT_DIRECTORY)/%.elf
-	$(call rule_label,DFU)
+	$(call rule_label,ELF2DFU)
 	$(PYTHON) tools/device/elf2dfu.py -i $< -o $@ -u $(USBVIDPID) -a $(DFU_ALTSETTING_OFFSET)
 
 $(call document_extension,dfu)

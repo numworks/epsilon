@@ -180,7 +180,7 @@ $1%flash: $(OUTPUT_DIRECTORY)/$1%flash
 	@ :
 
 $(OUTPUT_DIRECTORY)/$1%dfu: $(addprefix $(OUTPUT_DIRECTORY)/,$2) | $$$$(@D)/.
-	$$(call rule_label,DFU)
+	$$(call rule_label,ELF2DFU)
 	$(PYTHON) tools/device/elf2dfu.py -i $$^ -o $$@ -u $$(USBVIDPID)
 )
 endef

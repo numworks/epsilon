@@ -545,7 +545,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
     case Type::ListElement:
     case Type::ListSequence: {
       if (hasUnitChild ||
-          !IsIntegerExpression(e->child(Parametric::k_valueIndex))) {
+          !IsIntegerExpression(e->child(Parametric::k_valueIndex),
+                               e->isListElement())) {
         return false;
       }
       if (e->isListSequence()) {

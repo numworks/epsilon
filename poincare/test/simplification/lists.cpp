@@ -141,6 +141,9 @@ QUIZ_CASE(pcj_simplification_list) {
     simplifies_to("l1(5)", "undef", projCtx);
     simplifies_to("l1(-2)", "undef", projCtx);
     simplifies_to("l1(1.23)", "undef", projCtx);
+    simplifies_to("l1(1+2)", "9", projCtx);
+    simplifies_to("l1(2^2-3)", "1", projCtx);
+    simplifies_to("l1(floor(π))", "undef", projCtx);
     simplifies_to("l2(1)", "undef", projCtx);
     // Slice of a list
     simplifies_to("l1(1,2)", "{1,4}", projCtx);

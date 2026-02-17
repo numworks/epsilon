@@ -988,10 +988,10 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
         return NAN;
       }
       assert(indexValue >= 1 && indexValue <= INT16_MAX);
-      int16_t currentListElement = m_context.listElement;
+      assert(m_context.listElement == Context::k_unspecifiedListElement);
       m_context.listElement = static_cast<int16_t>(indexValue) - 1;
       std::complex<T> result = privateToComplexRecursive<T>(values);
-      m_context.listElement = currentListElement;
+      m_context.listElement = Context::k_unspecifiedListElement;
       return result;
     }
     case Type::ListSlice: {
@@ -1013,13 +1013,13 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
       const Tree* values = e->child(0);
       int length = Dimension::ListLength(values, m_parameters.symbolContext);
       std::complex<T> result = e->isListSum() ? 0 : 1;
-      int16_t currentListElement = m_context.listElement;
+      assert(m_context.listElement == Context::k_unspecifiedListElement);
       for (int i = 0; i < length; i++) {
         m_context.listElement = i;
         std::complex<T> v = privateToComplexRecursive<T>(values);
         result = e->isListSum() ? result + v : result * v;
       }
-      m_context.listElement = currentListElement;
+      m_context.listElement = Context::k_unspecifiedListElement;
       return result;
     }
     case Type::Min:
@@ -1028,12 +1028,12 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
       int length = Dimension::ListLength(values, m_parameters.symbolContext);
       assert(length > 0);
       T result = 0.0;
-      int16_t currentListElement = m_context.listElement;
+      assert(m_context.listElement == Context::k_unspecifiedListElement);
       for (int i = 0; i < length; i++) {
         m_context.listElement = i;
         std::complex<T> v = privateToComplexRecursive<T>(values);
         if (v.imag() != 0 || std::isnan(v.real())) {
-          m_context.listElement = currentListElement;
+          m_context.listElement = Context::k_unspecifiedListElement;
           return NAN;
         }
         if (i == 0 ||
@@ -1041,7 +1041,7 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
           result = v.real();
         }
       }
-      m_context.listElement = currentListElement;
+      m_context.listElement = Context::k_unspecifiedListElement;
       return result;
     }
     case Type::Mean:
@@ -1054,13 +1054,13 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
       std::complex<T> sum = 0;
       std::complex<T> sumOfSquares = 0;
       T coefficientsSum = 0;
-      int16_t currentListElement = m_context.listElement;
+      assert(m_context.listElement == Context::k_unspecifiedListElement);
       for (int i = 0; i < length; i++) {
         m_context.listElement = i;
         std::complex<T> v = privateToComplexRecursive<T>(values);
         std::complex<T> c = privateToComplexRecursive<T>(coefficients);
         if (c.imag() != 0 || c.real() < 0) {
-          m_context.listElement = currentListElement;
+          m_context.listElement = Context::k_unspecifiedListElement;
           return NAN;
         }
         sum += c.real() * v;
@@ -1068,7 +1068,7 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
         sumOfSquares += c.real() * v * v;
         coefficientsSum += c.real();
       }
-      m_context.listElement = currentListElement;
+      m_context.listElement = Context::k_unspecifiedListElement;
       if (coefficientsSum == 0) {
         return NAN;
       }
@@ -1092,11 +1092,16 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
     case Type::ListSort: {
       /* TODO we are computing all elements and sorting the list for all
        * elements, this is awful */
-      /* Point element (if any) must be temporarily unspecified  so that
+      assert(m_context.listElement != Context::k_unspecifiedListElement);
+      // Temporarily restore whole list in Context for calling ToList
+      int16_t currentListElement = m_context.listElement;
+      m_context.listElement = Context::k_unspecifiedListElement;
+      /* Point element (if any) must be temporarily unspecified too so that
        * sorting applies to the entire point */
       int16_t currentPointElement = m_context.pointElement;
       m_context.pointElement = Context::k_unspecifiedPointElement;
       Tree* list = toList(e->child(0));
+      m_context.listElement = currentListElement;
       m_context.pointElement = currentPointElement;
       // TODO: Remove this clone
       Tree* sortedList = nullptr;
@@ -1562,8 +1567,12 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
   if (e->isListSort()) {
     /* TODO we are computing all elements and sorting the list for all
      * elements, this is awful */
+    // Temporarily restore whole list in Context for calling toList
+    int16_t currentListElement = m_context.listElement;
+    m_context.listElement = Context::k_unspecifiedListElement;
     assert(m_context.pointElement == Context::k_unspecifiedListElement);
     Tree* list = toList(e->child(0));
+    m_context.listElement = currentListElement;
     NAry::SortList(list);
     BooleanOrUndefined result = privateToBoolean(list);
     list->removeTree();
@@ -1654,29 +1663,29 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
 }
 
 Tree* Approximator::toList(const Tree* e) {
+  assert(m_context.listElement == Context::k_unspecifiedListElement);
   Dimension dimension = Dimension::Get(e, m_parameters.symbolContext);
   int length = Dimension::ListLength(e, m_parameters.symbolContext);
   assert(length != Dimension::k_nonListListLength);
-  int16_t currentListElement = m_context.listElement;
   Tree* list = SharedTreeStack->pushList(length);
   for (int i = 0; i < length; i++) {
     m_context.listElement = i;
     privateToTree(e, dimension);
   }
-  m_context.listElement = currentListElement;
+  m_context.listElement = Context::k_unspecifiedListElement;
   return list;
 }
 
 Tree* Approximator::privateToPoint(const Tree* e) {
+  assert(m_context.pointElement == Context::k_unspecifiedPointElement);
   Tree* point = SharedTreeStack->pushPoint();
-  int16_t currentPointElement = m_context.pointElement;
   m_context.pointElement = 0;
   m_floatPrecision == FloatPrecision::Single ? toComplexTree<float>(e)
                                              : toComplexTree<double>(e);
   m_context.pointElement = 1;
   m_floatPrecision == FloatPrecision::Single ? toComplexTree<float>(e)
                                              : toComplexTree<double>(e);
-  m_context.pointElement = currentPointElement;
+  m_context.pointElement = Context::k_unspecifiedPointElement;
   return point;
 }
 

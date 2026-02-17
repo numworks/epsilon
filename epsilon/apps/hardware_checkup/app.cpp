@@ -29,9 +29,9 @@ App::WizardViewController::WizardViewController(Responder* parentResponder)
       m_clearanceViewerController(this) {}
 
 ViewController* App::WizardViewController::childAtIndex(int i) {
-  ViewController* children[] = {&m_standbyController,
-                                &m_storageViewerController,
-                                &m_clearanceViewerController};
+  ViewController* children[] = {&m_storageViewerController,
+                                &m_clearanceViewerController,
+                                &m_standbyController};
   return children[i];
 }
 

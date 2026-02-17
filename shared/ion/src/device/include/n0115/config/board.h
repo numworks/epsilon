@@ -41,7 +41,7 @@ constexpr uint32_t TrampolineOrigin = BootloaderOrigin + BootloaderLength;
 
 /* External flash
  *
- * ||                                                    EXTERNAL fLASH (8mIb)                                                         ||
+ * ||                                                    EXTERNAL FLASH (8MiB)                                                         ||
  * ||         64K          |      64K or 0     |              61~62 * 64K               |       64K        ||         64 * 64K         ||
  * ||                           SIGNED PAYLOAD A                        | EXTERNAL APPS | PERSISTING BYTES || ... Identical B Slot ... ||
  * || SP HEADER | KERNEL A |     EXTRA DATA    | USERLAND A | SIGNATURE |       "       |        "         ||                          ||

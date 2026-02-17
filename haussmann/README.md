@@ -8,7 +8,7 @@ _Maintainer: GabrielNumworks_
 
 Run `make help` (or simply `make`) for a list of the main targets.
 There are two types of targets:
-- exectuable targets: combine one of the named goals with an extension, along with optional flavors, e.g. `make kernel.A.allow3rdparty.elf`
+- executable targets: combine one of the named goals with an extension, along with optional flavors, e.g. `make kernel.A.allow3rdparty.elf`
 - miscellaneous targets: do not necessarily resolve to an executable file, e.g. `make format`, `make epsilon.dfu`
 
 Build is controlled by variables that can be supplied on the command line:
@@ -16,7 +16,7 @@ Build is controlled by variables that can be supplied on the command line:
 - `ASSERTIONS`: optional, defaults to `DEBUG`. 0 or 1 otherwise.
 - `PLATFORM`: one of the supported platforms (e.g. `n0110`, `macos`...). The special values `simulator` and `host` will cause PLATFORM to become the name of the host environment.
 - `ARCHS`: optional, platform-specific. A list of architectures to build for.
-- `VERBOSE`: 0 makes the build completely silent, 1 shows building target, 2 prints the commands as they are exectuted. (defaults to 1)
+- `VERBOSE`: 0 makes the build completely silent, 1 shows building target, 2 prints the commands as they are executed. (defaults to 1)
 
 By default, files will be built in a customizable output directory, with sub-directories depending on build parameters.
 - First sub-directory depends on the `DEBUG` and `ASSERTIONS` variables:
@@ -80,7 +80,7 @@ A module is a collection of files and flags, grouped into several variables:
 - `LDFLAGS_<module>`: flags used for linking executables using this module.
 - `LDDEPS_<module>`: linked executables using this module will depend on those non-sources files (e.g. linker scripts).
 
-Modules are typically created in their own subdirectory, using a file named `module.mak`. The function `import_module` takes the path of the module and include the `module.mak` file if found.
+Modules are typically created in their own subdirectory, using a file named `module.mak`. The function `import_module` takes the path of the module and includes the `module.mak` file if found.
 
 ```
 $(call import_module,database,src/database)
@@ -156,7 +156,7 @@ The project can either:
 
 > [!TIP]
 > Compilation will fail as soon as a conflict is encountered.
-> To list all conflicts as once for a specific goal, use `make goal.modules`.
+> To list all conflicts at once for a specific goal, use `make goal.modules`.
 > This will display a list of all modules required by `goal` (with the version provided), their respective dependencies (as specified in their `lock.mak`, with the version required), and will highlight any discrepancy.
 
 ## Documentation

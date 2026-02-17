@@ -9,7 +9,9 @@
 #include "battery_timer.h"
 #include "empty_battery_window.h"
 #include "exam_pop_up_controller.h"
+#ifdef HARDWARE_CHECKUP
 #include "hardware_checkup/app.h"
+#endif
 #include "hardware_test/app.h"
 #include "home/app.h"
 #include "on_boarding/app.h"
@@ -28,7 +30,9 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   Ion::ExternalApps::App externalAppAtIndex(int index);
   Escher::App::Snapshot* initialAppSnapshot();
   Escher::App::Snapshot* hardwareTestAppSnapshot();
+#ifdef HARDWARE_CHECKUP
   Escher::App::Snapshot* hardwareCheckupAppSnapshot();
+#endif
   Escher::App::Snapshot* onBoardingAppSnapshot();
   Escher::App::Snapshot* usbConnectedAppSnapshot();
   Home::App::Snapshot* homeAppSnapshot() { return &m_homeSnapshot; }
@@ -89,7 +93,9 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   Home::App::Snapshot m_homeSnapshot;
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;
+#ifdef HARDWARE_CHECKUP
   HardwareCheckup::App::Snapshot m_hardwareCheckupSnapshot;
+#endif
   USB::App::Snapshot m_usbConnectedSnapshot;
 #if EPSILON_GETOPT
   // Used to launch a given app on a simulator

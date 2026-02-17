@@ -14,17 +14,7 @@ namespace Settings {
 
 AboutController::AboutController(Responder* parentResponder)
     : GenericSubController(parentResponder),
-      m_hardwareTestPopUpController(
-          Escher::Invocation(
-              [](void* context, void* sender) {
-                AppsContainer* appsContainer =
-                    AppsContainer::sharedAppsContainer();
-                appsContainer->switchToBuiltinApp(
-                    appsContainer->hardwareTestAppSnapshot());
-                return true;
-              },
-              this),
-          I18n::Message::HardwareTestLaunch),
+#ifdef HARDWARE_CHECKUP
       m_hardwareCheckupPopUpController(
           Escher::Invocation(
               [](void* context, void* sender) {
@@ -35,16 +25,31 @@ AboutController::AboutController(Responder* parentResponder)
                 return true;
               },
               this),
-          I18n::Message::HardwareCheckupLaunch) {}
+          I18n::Message::HardwareCheckupLaunch),
+#endif
+      m_hardwareTestPopUpController(
+          Escher::Invocation(
+              [](void* context, void* sender) {
+                AppsContainer* appsContainer =
+                    AppsContainer::sharedAppsContainer();
+                appsContainer->switchToBuiltinApp(
+                    appsContainer->hardwareTestAppSnapshot());
+                return true;
+              },
+              this),
+          I18n::Message::HardwareTestLaunch) {
+}
 
 static bool IsHardwareTestRow(int row) {
   return row == AboutController::Row(AboutController::CellType::FCCID) ||
          row == AboutController::Row(AboutController::CellType::SerialNumber);
 }
 
+#ifdef HARDWARE_CHECKUP
 static bool IsHardwareCheckupRow(int row) {
   return row == AboutController::Row(AboutController::CellType::Version);
 }
+#endif
 
 bool AboutController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
@@ -58,6 +63,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
     m_hardwareTestPopUpController.presentModally();
     return true;
   }
+#ifdef HARDWARE_CHECKUP
   /* We hide here the activation hardware checkup app: in the menu "about", by
    * clicking on '7' on the hardware checkup row. */
   if ((event == Ion::Events::Seven || event == Ion::Events::LowerM ||
@@ -69,6 +75,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
     m_hardwareCheckupPopUpController.presentModally();
     return true;
   }
+#endif
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (selectedRow() == Row(CellType::Version)) {
       /* When pressing OK on the version cell, the display cycles between

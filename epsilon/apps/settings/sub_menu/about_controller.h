@@ -36,8 +36,10 @@ class AboutController : public GenericSubController {
   const char* deviceName() const;
   Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>>
       m_cells[k_totalNumberOfCell];
-  Shared::MessagePopUpController m_hardwareTestPopUpController;
+#ifdef HARDWARE_CHECKUP
   Shared::MessagePopUpController m_hardwareCheckupPopUpController;
+#endif
+  Shared::MessagePopUpController m_hardwareTestPopUpController;
 };
 
 }  // namespace Settings

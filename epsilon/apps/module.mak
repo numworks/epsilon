@@ -34,6 +34,18 @@ $(call depends_on_image,$(PATH_apps)/title_bar_view.cpp,$(PATH_apps)/exam_icon.p
 # Include the specific apps
 # FIXME Use flavors instead of EPSILON_APPS?
 EPSILON_APPS ?= calculation graph code statistics distributions inference solver sequence regression elements finance settings
+_SPECIAL_APPS = home on_boarding usb hardware_test
+
+ifeq ($(DEBUG),1)
+HARDWARE_CHECKUP ?= 1
+else ifeq ($(DEVELOPMENT),1)
+HARDWARE_CHECKUP ?= 1
+endif
+
+ifeq ($(HARDWARE_CHECKUP),1)
+_SPECIAL_APPS += hardware_checkup
+PRIVATE_SFLAGS_apps += -DHARDWARE_CHECKUP=1
+endif
 
 _apps_classes := $(foreach a,$(EPSILON_APPS),$(call capitalize,$a)::App)
 _apps_snapshots_declaration := $(foreach a,$(_apps_classes),$a::Snapshot m_snapshot$(subst :,,$a)Snapshot;)
@@ -63,7 +75,7 @@ $(call i18n_with_universal,shared)
 $(call i18n_with_universal,toolbox)
 $(call i18n_without_universal,variables)
 
-include $(patsubst %,$(PATH_apps)/%/Makefile,shared home on_boarding hardware_test hardware_checkup usb $(EPSILON_APPS))
+include $(patsubst %,$(PATH_apps)/%/Makefile,shared $(EPSILON_APPS) $(_SPECIAL_APPS))
 
 $(call assert_defined,PYTHON_QSTRDEFS)
 $(call assert_defined,KANDINSKY_fonts_dependencies)

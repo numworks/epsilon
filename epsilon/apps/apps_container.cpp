@@ -67,9 +67,11 @@ App::Snapshot* AppsContainer::hardwareTestAppSnapshot() {
   return &m_hardwareTestSnapshot;
 }
 
+#ifdef HARDWARE_CHECKUP
 App::Snapshot* AppsContainer::hardwareCheckupAppSnapshot() {
   return &m_hardwareCheckupSnapshot;
 }
+#endif
 
 App::Snapshot* AppsContainer::onBoardingAppSnapshot() {
   return &m_onBoardingSnapshot;
@@ -129,7 +131,6 @@ void AppsContainer::didSuspend() {
   if (promptController() != nullptr &&
       activeApp()->snapshot() != onBoardingAppSnapshot() &&
       activeApp()->snapshot() != hardwareTestAppSnapshot() &&
-      activeApp()->snapshot() != hardwareCheckupAppSnapshot() &&
       globalPreferences->showPopUp()) {
     activeApp()->displayModalViewController(promptController(), 0.f, 0.f);
   }
@@ -228,7 +229,6 @@ void AppsContainer::switchToBuiltinApp(App::Snapshot* snapshot) {
     resetShiftAlphaStatus();
   }
   if (snapshot == hardwareTestAppSnapshot() ||
-      snapshot == hardwareCheckupAppSnapshot() ||
       snapshot == onBoardingAppSnapshot()) {
     m_window.hideTitleBarView(true);
   } else {

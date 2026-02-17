@@ -400,7 +400,9 @@ Tree* Approximator::privateToTree(const Tree* e, Dimension dim) {
     approximateAndReplaceEveryScalarRecursive(result);
     return result;
   }
-  if (dim.isScalar()) {
+  if (dim.isScalar() ||
+      (dim.isPoint() &&
+       (m_context.pointElement != Context::k_unspecifiedPointElement))) {
     return m_floatPrecision == FloatPrecision::Single
                ? toComplexTree<float>(e)
                : toComplexTree<double>(e);
@@ -1090,7 +1092,12 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
     case Type::ListSort: {
       /* TODO we are computing all elements and sorting the list for all
        * elements, this is awful */
+      /* Point element (if any) must be temporarily unspecified  so that
+       * sorting applies to the entire point */
+      int16_t currentPointElement = m_context.pointElement;
+      m_context.pointElement = Context::k_unspecifiedPointElement;
       Tree* list = toList(e->child(0));
+      m_context.pointElement = currentPointElement;
       // TODO: Remove this clone
       Tree* sortedList = nullptr;
       ExceptionTry {
@@ -1555,6 +1562,7 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
   if (e->isListSort()) {
     /* TODO we are computing all elements and sorting the list for all
      * elements, this is awful */
+    assert(m_context.pointElement == Context::k_unspecifiedListElement);
     Tree* list = toList(e->child(0));
     NAry::SortList(list);
     BooleanOrUndefined result = privateToBoolean(list);

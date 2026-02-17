@@ -27,8 +27,9 @@ from cmsis_svd.model import SVDRegisterCluster, SVDRegisterClusterArray
 from cmsis_svd.model import SVDField
 from cmsis_svd.model import SVDEnumeratedValue
 from cmsis_svd.model import SVDCpu
-import pkg_resources
 import re
+
+# pkg_resources is needed only when packaged SVDs (not xml ones) are used
 
 
 class ElementABC(object):
@@ -174,6 +175,8 @@ class SVDParser(object):
 
     @classmethod
     def for_packaged_svd(cls, vendor, filename, remove_reserved=False):
+        import pkg_resources
+
         resource = "data/{vendor}/{filename}".format(vendor=vendor, filename=filename)
 
         filename = pkg_resources.resource_filename("cmsis_svd", resource)
@@ -181,6 +184,8 @@ class SVDParser(object):
 
     @classmethod
     def for_mcu(cls, mcu):
+        import pkg_resources
+
         mcu = mcu.lower()
         vendors = pkg_resources.resource_listdir("cmsis_svd", "data")
         for vendor in vendors:

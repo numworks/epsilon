@@ -25,12 +25,10 @@ App::App(Snapshot* snapshot)
 App::WizardViewController::WizardViewController(Responder* parentResponder)
     : BankViewController(parentResponder),
       m_storageViewerController(this),
-      m_persistingBytesViewerController(this),
       m_clearanceViewerController(this) {}
 
 ViewController* App::WizardViewController::childAtIndex(int i) {
   ViewController* children[] = {&m_storageViewerController,
-                                &m_persistingBytesViewerController,
                                 &m_clearanceViewerController};
   return children[i];
 }

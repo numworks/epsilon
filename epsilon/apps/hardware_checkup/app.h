@@ -4,7 +4,6 @@
 #include <escher/bank_view_controller.h>
 
 #include "clearance_viewer_controller.h"
-#include "persisting_bytes_viewer_controller.h"
 #include "storage_viewer_controller.h"
 
 namespace HardwareCheckup {
@@ -26,9 +25,8 @@ class App : public Escher::App {
     bool handleEvent(Ion::Events::Event event) override;
 
    private:
-    static constexpr int k_numberOfControllers = 3;
+    static constexpr int k_numberOfControllers = 2;
     StorageViewerController m_storageViewerController;
-    PersistingBytesViewerController m_persistingBytesViewerController;
     ClearanceViewerController m_clearanceViewerController;
   };
 

@@ -35,33 +35,37 @@ AboutController::AboutController(Responder* parentResponder)
                 return true;
               },
               this),
-          I18n::Message::HardwareTestLaunch) {}
+          I18n::Message::HardwareCheckupLaunch) {}
 
-static bool isHardwareTestRow(int row) {
+static bool IsHardwareTestRow(int row) {
   return row == AboutController::Row(AboutController::CellType::FCCID) ||
          row == AboutController::Row(AboutController::CellType::SerialNumber);
 }
 
+static bool IsHardwareCheckupRow(int row) {
+  return row == AboutController::Row(AboutController::CellType::Version);
+}
+
 bool AboutController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
-   * clicking on '6' on the last row. */
+   * clicking on '6' on the hardware test row. */
   if ((event == Ion::Events::Six || event == Ion::Events::LowerT ||
        event == Ion::Events::UpperT) &&
       m_messageTreeModel->label() == I18n::Message::About &&
-      isHardwareTestRow(selectedRow()) &&
+      IsHardwareTestRow(selectedRow()) &&
       !ExamModeManager::ExamMode().isActive()) {
     // Prevent hardware test in exam mode so that the LED can't be accessed.
     m_hardwareTestPopUpController.presentModally();
     return true;
   }
-  /* We hide here the activation hardware test app: in the menu "about", by
-   * clicking on '7' on the last row. */
+  /* We hide here the activation hardware checkup app: in the menu "about", by
+   * clicking on '7' on the hardware checkup row. */
   if ((event == Ion::Events::Seven || event == Ion::Events::LowerM ||
        event == Ion::Events::UpperM) &&
       m_messageTreeModel->label() == I18n::Message::About &&
-      isHardwareTestRow(selectedRow()) &&
+      IsHardwareCheckupRow(selectedRow()) &&
       !ExamModeManager::ExamMode().isActive()) {
-    // Prevent hardware test in exam mode so that the LED can't be accessed.
+    // Prevent hardware checkup in exam mode.
     m_hardwareCheckupPopUpController.presentModally();
     return true;
   }

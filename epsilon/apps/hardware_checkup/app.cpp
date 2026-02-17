@@ -25,22 +25,13 @@ App::App(Snapshot* snapshot)
 App::WizardViewController::WizardViewController(Responder* parentResponder)
     : BankViewController(parentResponder),
       m_storageViewerController(this),
-      m_persistingBytesViewerController(this)
-// m_col3Controller(this),
-// m_externalAppsController(this),
-// m_standByController(this),
-// m_screenController(this),
-// m_pressedKeyController(this),
-// m_otpController(this)
-{}
+      m_persistingBytesViewerController(this),
+      m_clearanceViewerController(this) {}
 
 ViewController* App::WizardViewController::childAtIndex(int i) {
-  ViewController* children[] = {
-      &m_storageViewerController, &m_persistingBytesViewerController,
-      // &m_col3Controller,          &m_externalAppsController,
-      // &m_standByController,       &m_screenController,
-      // &m_pressedKeyController,    &m_otpController
-  };
+  ViewController* children[] = {&m_storageViewerController,
+                                &m_persistingBytesViewerController,
+                                &m_clearanceViewerController};
   return children[i];
 }
 

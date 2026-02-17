@@ -3,6 +3,7 @@
 #include <escher/app.h>
 #include <escher/bank_view_controller.h>
 
+#include "clearance_viewer_controller.h"
 #include "persisting_bytes_viewer_controller.h"
 #include "storage_viewer_controller.h"
 
@@ -25,15 +26,10 @@ class App : public Escher::App {
     bool handleEvent(Ion::Events::Event event) override;
 
    private:
-    static constexpr int k_numberOfControllers = 2;
+    static constexpr int k_numberOfControllers = 3;
     StorageViewerController m_storageViewerController;
     PersistingBytesViewerController m_persistingBytesViewerController;
-    // Col3Controller m_col3Controller;
-    // ExternalAppsController m_externalAppsController;
-    // StandByController m_standByController;
-    // ScreenController m_screenController;
-    // PressedKeyController m_pressedKeyController;
-    // OTPController m_otpController;
+    ClearanceViewerController m_clearanceViewerController;
   };
 
   App(Snapshot* snapshot);

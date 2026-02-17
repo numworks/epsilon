@@ -2,11 +2,6 @@
 
 #include <ion/authentication.h>
 
-extern "C" {
-#include <assert.h>
-}
-#include <poincare/print.h>
-
 namespace HardwareCheckup {
 
 void ClearanceViewerController::ContentView::setColor(KDColor color) {
@@ -42,12 +37,6 @@ void ClearanceViewerController::ContentView::layoutSubviews(bool force) {
   setChildFrame(&m_textView,
                 KDRect(0, 0, Ion::Display::Width, Ion::Display::Height / 2),
                 force);
-}
-
-Escher::View* ClearanceViewerController::ContentView::subviewAtIndex(
-    int index) {
-  assert(index == 0);
-  return &m_textView;
 }
 
 }  // namespace HardwareCheckup

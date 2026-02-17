@@ -1,20 +1,18 @@
 #include "storage_viewer_controller.h"
 
-#include <poincare/preferences.h>
-
-extern "C" {
-#include <assert.h>
-}
 #include <ion/storage/file_system.h>
+#include <poincare/preferences.h>
 #include <poincare/print.h>
 
 namespace HardwareCheckup {
 
 bool StorageViewerController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Plus) {
+    // Use script Extension since it's easy to manage on the script app.
     const char* extension = Ion::Storage::scriptExtension;
     int newID = 0;
     char baseName[7];
+    // Find the first available name with the format "dumX.py" with X a number.
     do {
       newID += 1;
       if (newID > 999) {
@@ -24,6 +22,7 @@ bool StorageViewerController::handleEvent(Ion::Events::Event event) {
       Poincare::Print::CustomPrintf(baseName, 7, "dum%i", newID);
     } while (Ion::Storage::FileSystem::sharedFileSystem->hasRecord(
         Ion::Storage::Record(baseName, extension)));
+    // Fill half of the remaining storage with dummy data.
     size_t dataSize =
         Ion::Storage::FileSystem::sharedFileSystem->availableSize() / 2;
     if (dataSize > 0 &&
@@ -42,9 +41,25 @@ void StorageViewerController::ContentView::setColor(KDColor color) {
   m_textView.setBackgroundColor(color);
 }
 
+// Build storage information text and display it.
 void StorageViewerController::viewWillAppear() {
-  // Build storage information text
   char buffer[ContentView::k_bufferSize];
+
+  size_t availableSize =
+      Ion::Storage::FileSystem::sharedFileSystem->availableSize();
+  size_t totalSize = Ion::Storage::FileSystem::k_totalSize;
+
+  float ratio = static_cast<float>(totalSize - availableSize) / totalSize;
+  // Set a color between green and red depending on the storage usage.
+  m_view.setColor(KDColor::Blend(KDColorRed, KDColorGreen,
+                                 static_cast<uint8_t>(255 * ratio)));
+
+  // Start with available size
+  int len = Poincare::Print::CustomPrintf(
+      buffer, ContentView::k_bufferSize, "Storage: %i / %i (%*.*ef%%)\n",
+      totalSize - availableSize, totalSize, 100.0f * ratio,
+      Poincare::Preferences::PrintFloatMode::Decimal, 3);
+
   const char* extensions[] = {
       Ion::Storage::systemExtension,
       Ion::Storage::scriptExtension,
@@ -61,25 +76,9 @@ void StorageViewerController::viewWillAppear() {
   };
   constexpr int numberOfExtensions = sizeof(extensions) / sizeof(extensions[0]);
 
-  size_t availableSize =
-      Ion::Storage::FileSystem::sharedFileSystem->availableSize();
-  size_t totalSize = Ion::Storage::FileSystem::k_totalSize;
-
-  float ratio = static_cast<float>(totalSize - availableSize) / totalSize;
-  m_view.setColor(KDColor::Blend(KDColorRed, KDColorGreen,
-                                 static_cast<uint8_t>(255 * ratio)));
-
-  // Start with available size
-  int len = Poincare::Print::CustomPrintf(
-      buffer, ContentView::k_bufferSize, "Storage: %i / %i (%*.*ef%%)\n",
-      totalSize - availableSize, totalSize, 100.0f * ratio,
-      Poincare::Preferences::PrintFloatMode::Decimal, 3);
-
   // Add record counts for each extension
   int extensionsPerLine = 0;
-  for (int i = 0; i < numberOfExtensions &&
-                  strlen(buffer) < ContentView::k_bufferSize - 20;
-       ++i) {
+  for (int i = 0; i < numberOfExtensions; ++i) {
     int count = Ion::Storage::FileSystem::sharedFileSystem
                     ->numberOfRecordsWithExtension(extensions[i]);
     if (count > 0) {
@@ -87,6 +86,7 @@ void StorageViewerController::viewWillAppear() {
                                            ContentView::k_bufferSize - len,
                                            "  %s: %i", extensions[i], count);
       extensionsPerLine++;
+      // Line return every 3 extensions
       if (extensionsPerLine >= 3) {
         len += Poincare::Print::CustomPrintf(
             buffer + len, ContentView::k_bufferSize - len, "\n");
@@ -104,11 +104,6 @@ void StorageViewerController::ContentView::layoutSubviews(bool force) {
   setChildFrame(&m_textView,
                 KDRect(0, 0, Ion::Display::Width, Ion::Display::Height / 2),
                 force);
-}
-
-Escher::View* StorageViewerController::ContentView::subviewAtIndex(int index) {
-  assert(index == 0);
-  return &m_textView;
 }
 
 }  // namespace HardwareCheckup

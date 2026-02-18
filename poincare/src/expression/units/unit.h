@@ -1,5 +1,6 @@
 #pragma once
 
+#include <poincare/simplification_parameters.h>
 #include <poincare/src/memory/tree.h>
 
 #include "../approximation.h"
@@ -238,8 +239,7 @@ class Unit {
 
   // Project expression and unit according to unitDisplay strategy
   static bool ProjectToBestUnits(Tree* e, Dimension dimension,
-                                 UnitDisplay unitDisplay, AngleUnit angleUnit,
-                                 Preferences::UnitFormat unitFormat);
+                                 const UnitParameters& unitParameters);
 
  private:
   // From Kelvin value, return value in given temperature representative

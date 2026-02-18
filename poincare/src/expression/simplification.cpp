@@ -253,10 +253,8 @@ bool HandleUnits(Tree* e,
   bool changed = false;
 #if POINCARE_UNIT
   if (!e->isUndefined() &&
-      Units::Unit::ProjectToBestUnits(e, dimension,
-                                      simplificationParameters.unitDisplay,
-                                      simplificationParameters.angleUnit,
-                                      simplificationParameters.unitFormat)) {
+      Units::Unit::ProjectToBestUnits(
+          e, dimension, ToUnitParameters(simplificationParameters))) {
     if (e->isUndefined()) {
       return true;
     }

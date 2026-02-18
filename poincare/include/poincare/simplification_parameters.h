@@ -52,4 +52,17 @@ inline ProjectionParameters ToProjectionParameters(
 #endif
 }
 
+struct UnitParameters {
+  Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
+  UnitDisplay unitDisplay = UnitDisplay::MainOutput;
+  AngleUnit angleUnit = AngleUnit::None;
+};
+
+inline UnitParameters ToUnitParameters(
+    const SimplificationParameters& simplificationParameters) {
+  return UnitParameters{.unitFormat = simplificationParameters.unitFormat,
+                        .unitDisplay = simplificationParameters.unitDisplay,
+                        .angleUnit = simplificationParameters.angleUnit};
+}
+
 }  // namespace Poincare

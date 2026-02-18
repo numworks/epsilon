@@ -293,7 +293,6 @@ void assert_reduced_expression_has_polynomial_coefficient(
     const SymbolContext& symbolContext = Poincare::EmptySymbolContext{},
     ComplexFormat complexFormat = ComplexFormat::Cartesian,
     AngleUnit angleUnit = AngleUnit::Radian,
-    Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric,
     SymbolicComputation symbolicComputation =
         SymbolicComputation::ReplaceDefinedSymbols) {
   UserExpression e = UserExpression::Builder(parse(input, symbolContext));
@@ -335,16 +334,13 @@ QUIZ_CASE(pcj_properties_get_polynomial_coefficients) {
                                                        symbolStore);
   assert_reduced_expression_has_polynomial_coefficient(
       "x+2", "x", KList(2_e, 1_e), symbolStore, ComplexFormat::Real,
-      AngleUnit::Radian, Preferences::UnitFormat::Metric,
-      SymbolicComputation::KeepAllSymbols);
+      AngleUnit::Radian, SymbolicComputation::KeepAllSymbols);
   assert_reduced_expression_has_polynomial_coefficient(
       "x+2", "x", KList(2_e, 1_e), symbolStore, ComplexFormat::Real,
-      AngleUnit::Radian, Preferences::UnitFormat::Metric,
-      SymbolicComputation::ReplaceDefinedFunctions);
+      AngleUnit::Radian, SymbolicComputation::ReplaceDefinedFunctions);
   assert_reduced_expression_has_polynomial_coefficient(
       "f(x)", "x", KList(1_e, π_e, 1_e), symbolStore, ComplexFormat::Cartesian,
-      AngleUnit::Radian, Preferences::UnitFormat::Metric,
-      SymbolicComputation::ReplaceDefinedFunctions);
+      AngleUnit::Radian, SymbolicComputation::ReplaceDefinedFunctions);
 }
 
 void assert_list_length_in_children_is(const char* definition,

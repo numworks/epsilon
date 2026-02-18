@@ -41,33 +41,33 @@ const Prefix* Prefix::FromId(uint8_t id) {
 const Representative* const* Representative::DefaultRepresentatives() {
   static const Representative* defaultRepresentatives[k_numberOfDimensions] = {
 #if POINCARE_UNIT
-    Time::representatives,
-    Distance::representatives,
-    Angle::representatives,
-    Mass::representatives,
-    Current::representatives,
-    Temperature::representatives,
-    AmountOfSubstance::representatives,
-    LuminousIntensity::representatives,
-    Frequency::representatives,
-    Force::representatives,
-    Pressure::representatives,
-    Energy::representatives,
-    Power::representatives,
-    ElectricCharge::representatives,
-    ElectricPotential::representatives,
-    ElectricCapacitance::representatives,
-    ElectricResistance::representatives,
-    ElectricConductance::representatives,
-    MagneticFlux::representatives,
-    MagneticField::representatives,
-    Inductance::representatives,
-    CatalyticActivity::representatives,
-    Surface::representatives,
-    Volume::representatives,
-    Speed::representatives,
+      Time::representatives,
+      Distance::representatives,
+      Angle::representatives,
+      Mass::representatives,
+      Current::representatives,
+      Temperature::representatives,
+      AmountOfSubstance::representatives,
+      LuminousIntensity::representatives,
+      Frequency::representatives,
+      Force::representatives,
+      Pressure::representatives,
+      Energy::representatives,
+      Power::representatives,
+      ElectricCharge::representatives,
+      ElectricPotential::representatives,
+      ElectricCapacitance::representatives,
+      ElectricResistance::representatives,
+      ElectricConductance::representatives,
+      MagneticFlux::representatives,
+      MagneticField::representatives,
+      Inductance::representatives,
+      CatalyticActivity::representatives,
+      Surface::representatives,
+      Volume::representatives,
+      Speed::representatives,
 #endif
-    // Update AllRepresentatives in units/k_units.h if you change this
+      // Update AllRepresentatives in units/k_units.h if you change this
   };
   return defaultRepresentatives;
 }
@@ -731,9 +731,9 @@ bool HasPhysicalConstant(const Tree* e) {
 
 // From a projected tree, gather units and use best representatives/prefixes.
 bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
-                              UnitDisplay unitDisplay, AngleUnit angleUnit,
-                              Preferences::UnitFormat unitFormat) {
-  if (unitDisplay == UnitDisplay::None && !e->isUnitConversion()) {
+                              const UnitParameters& unitParameters) {
+  if (unitParameters.unitDisplay == UnitDisplay::None &&
+      !e->isUnitConversion()) {
     // TODO_PCJ : Remove units that cancel themselves
     return false;
   }
@@ -741,9 +741,10 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     // There may remain units that cancel themselves, remove them.
     return Tree::ApplyShallowTopDown(e, ShallowRemoveUnit);
   }
+  UnitDisplay unitDisplay = unitParameters.unitDisplay;
   if (HasPhysicalConstant(e) &&
       !e->hasDescendantSatisfying([](const Tree* e) { return e->isUnit(); }) &&
-      unitDisplay != UnitDisplay::MainOutput) {
+      unitParameters.unitDisplay != UnitDisplay::MainOutput) {
     // Display only SI and derived units for inputs with physical constants only
     unitDisplay = UnitDisplay::BasicSI;
   }
@@ -785,7 +786,8 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       foundResult = false;
       break;
     case UnitDisplay::MainOutput:
-      ApplyMainOutputDisplay(e, extractedUnits, dimension, angleUnit);
+      ApplyMainOutputDisplay(e, extractedUnits, dimension,
+                             unitParameters.angleUnit);
       break;
     case UnitDisplay::AutomaticMetric:
     case UnitDisplay::AutomaticImperial:
@@ -797,12 +799,12 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       foundResult = ApplyAutomaticInputDisplay(e, extractedUnits);
       break;
     case UnitDisplay::Equivalent:
-      foundResult =
-          ApplyEquivalentDisplay(e, extractedUnits, dimension, unitFormat);
+      foundResult = ApplyEquivalentDisplay(e, extractedUnits, dimension,
+                                           unitParameters.unitFormat);
       break;
     case UnitDisplay::Decomposition:
-      foundResult =
-          ApplyDecompositionDisplay(e, extractedUnits, dimension, unitFormat);
+      foundResult = ApplyDecompositionDisplay(e, extractedUnits, dimension,
+                                              unitParameters.unitFormat);
       break;
     case UnitDisplay::BasicSI:
       extractedUnits->moveTreeOverTree(GetBaseUnits(dimension.unit.vector));

@@ -33,8 +33,8 @@ class Arithmetic {
   static bool ReduceRound(Tree* e);
   static bool ReduceFactor(Tree* e);
 
-  static bool BeautifyFactor(
-      Tree* e, const SimplificationParameters& simplificationParameters);
+  static bool BeautifyFactor(Tree* e,
+                             const ProjectionParameters& projectionParameters);
 
   // Turn binomial and permute into factorials
   static bool ReducePermute(Tree* e);

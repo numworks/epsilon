@@ -23,4 +23,33 @@ struct SimplificationParameters {
   bool advanceReduce = true;
 };
 
+struct ProjectionParameters {
+#if POINCARE_COMPLEX
+  ComplexFormat complexFormat = ComplexFormat::None;
+#else
+  constexpr static ComplexFormat complexFormat = ComplexFormat::Real;
+#endif
+  AngleUnit angleUnit = AngleUnit::None;
+  SymbolicComputation symbolic = SymbolicComputation::KeepAllSymbols;
+  const Poincare::SymbolContext& context = k_emptySymbolContext;
+  Strategy strategy = Strategy::Default;
+};
+
+inline ProjectionParameters ToProjectionParameters(
+    const SimplificationParameters& simplificationParameters) {
+#if POINCARE_COMPLEX
+  return ProjectionParameters{
+      .complexFormat = simplificationParameters.complexFormat,
+      .angleUnit = simplificationParameters.angleUnit,
+      .symbolic = simplificationParameters.symbolic,
+      .context = simplificationParameters.context,
+      .strategy = simplificationParameters.strategy};
+#else
+  return ProjectionParameters{.angleUnit = simplificationParameters.angleUnit,
+                              .symbolic = simplificationParameters.symbolic,
+                              .context = simplificationParameters.context,
+                              .strategy = simplificationParameters.strategy};
+#endif
+}
+
 }  // namespace Poincare

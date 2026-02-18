@@ -13,11 +13,11 @@ using Poincare::Strategy;
 QUIZ_CASE(pcj_projection) {
   TreeRef ref(KCos(KSin(KPow(
       KPow(KPow(e_e, KLogBase(KLogBase(KLog(π_e), 2_e), e_e)), π_e), 3_e))));
-  Poincare::SimplificationParameters parameters;
-  parameters.complexFormat = ComplexFormat::Cartesian;
-  parameters.strategy = Strategy::Default;
-  parameters.angleUnit = AngleUnit::Radian;
-  Simplification::ToSystem(ref, parameters);
+  Poincare::ProjectionParameters projectionParameters{
+      .complexFormat = ComplexFormat::Cartesian,
+      .angleUnit = AngleUnit::Radian,
+      .strategy = Strategy::Default};
+  Simplification::ToSystem(ref, projectionParameters);
   assert_trees_are_equal(
       ref,
       KTrig(KTrig(KPow(KPow(KExp(KLn(KMult(
@@ -31,35 +31,35 @@ QUIZ_CASE(pcj_projection) {
   ref->cloneTreeOverTree(KAdd(KCos(KSub(2065_e, 2065_e)), KPow("x"_e, 2_e)));
   ref->cloneTreeOverTree(KAdd(KCos(KSub(2065_e, 2065_e)), KPow(2_e, "x"_e),
                               KPow(KLn(e_e), KDiv(1_e, 10_e))));
-  parameters.complexFormat = ComplexFormat::Cartesian;
-  parameters.strategy = Strategy::ApproximateToFloat;
-  parameters.angleUnit = AngleUnit::Radian;
-  Simplification::ToSystem(ref, parameters);
+  projectionParameters.complexFormat = ComplexFormat::Cartesian;
+  projectionParameters.strategy = Strategy::ApproximateToFloat;
+  projectionParameters.angleUnit = AngleUnit::Radian;
+  Simplification::ToSystem(ref, projectionParameters);
   assert_trees_are_equal(ref, KAdd(KPow(2_de, "x"_e), 2_de));
 
-  parameters.complexFormat = ComplexFormat::Cartesian;
-  parameters.strategy = Strategy::Default;
-  parameters.angleUnit = AngleUnit::Degree;
+  projectionParameters.complexFormat = ComplexFormat::Cartesian;
+  projectionParameters.strategy = Strategy::Default;
+  projectionParameters.angleUnit = AngleUnit::Degree;
   ref->cloneTreeOverTree(KCos(100_e));
-  Simplification::ToSystem(ref, parameters);
+  Simplification::ToSystem(ref, projectionParameters);
   assert_trees_are_equal(ref, KTrig(KMult(100_e, 1_e / 180_e, π_e), 0_e));
 
-  parameters.complexFormat = ComplexFormat::Cartesian;
-  parameters.strategy = Strategy::Default;
-  parameters.angleUnit = AngleUnit::Radian;
+  projectionParameters.complexFormat = ComplexFormat::Cartesian;
+  projectionParameters.strategy = Strategy::Default;
+  projectionParameters.angleUnit = AngleUnit::Radian;
   ref->cloneTreeOverTree(KSqrt(π_e));
-  Simplification::ToSystem(ref, parameters);
+  Simplification::ToSystem(ref, projectionParameters);
   assert_trees_are_equal(ref, KPow(π_e, 1_e / 2_e));
 
-  parameters.complexFormat = ComplexFormat::Real;
-  parameters.strategy = Strategy::Default;
-  parameters.angleUnit = AngleUnit::Radian;
+  projectionParameters.complexFormat = ComplexFormat::Real;
+  projectionParameters.strategy = Strategy::Default;
+  projectionParameters.angleUnit = AngleUnit::Radian;
   ref->cloneTreeOverTree(KSqrt(π_e));
-  Simplification::ToSystem(ref, parameters);
+  Simplification::ToSystem(ref, projectionParameters);
   assert_trees_are_equal(ref, KPowReal(π_e, 1_e / 2_e));
 
   ref->cloneTreeOverTree(KACos(KASin(1_e / 2_e)));
-  Simplification::ToSystem(ref, parameters);
+  Simplification::ToSystem(ref, projectionParameters);
   assert_trees_are_equal(ref, KATrig(KATrig(1_e / 2_e, 1_e), 0_e));
 
   ref->removeTree();

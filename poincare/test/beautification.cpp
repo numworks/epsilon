@@ -66,7 +66,8 @@ void beautifies_to(const char* input, const char* output) {
       input, output,
       [](Tree* e,
          const Poincare::SimplificationParameters& simplificationParameters) {
-        Projection::DeepSystemProject(e, simplificationParameters);
+        Projection::DeepSystemProject(
+            e, Poincare::ToProjectionParameters(simplificationParameters));
         Beautification::DeepBeautify(e, simplificationParameters);
       },
       {

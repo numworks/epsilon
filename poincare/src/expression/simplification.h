@@ -16,15 +16,15 @@ Dimension ProjectAndReduce(
 bool BeautifyReduced(Tree* e,
                      const SimplificationParameters& simplificationParameters,
                      const Dimension& dimension);
-bool PrepareForProjection(
-    Tree* e, const SimplificationParameters& simplificationParameters);
+bool PrepareForProjection(Tree* e,
+                          const ProjectionParameters& projectionParameters);
 
 struct ToSystemOutput {
   bool changed;
   Dimension dimension;
 };
-ToSystemOutput ToSystem(
-    Tree* e, const SimplificationParameters& simplificationParameters);
+ToSystemOutput ToSystem(Tree* e,
+                        const ProjectionParameters& projectionParameters);
 #if ASSERTIONS
 bool IsSystem(const Tree* e);
 #endif

@@ -39,11 +39,11 @@ template <typename T>
 void project_and_compare_approximates(const char* input1, const char* input2,
                                       bool equal) {
   Tree* e1 = parse(input1);
-  Simplification::ToSystem(e1, Poincare::SimplificationParameters{
+  Simplification::ToSystem(e1, Poincare::ProjectionParameters{
                                    .angleUnit = Poincare::AngleUnit::Radian,
                                });
   Tree* e2 = parse(input2);
-  Simplification::ToSystem(e2, Poincare::SimplificationParameters{
+  Simplification::ToSystem(e2, Poincare::ProjectionParameters{
                                    .angleUnit = Poincare::AngleUnit::Radian,
                                });
 

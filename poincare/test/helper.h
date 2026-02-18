@@ -253,12 +253,12 @@ void assert_parse_to_integer_overflow(
 
 inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
     const char* function,
-    const Poincare::SimplificationParameters& simplificationParameters) {
+    const Poincare::ProjectionParameters& projectionParameters) {
   constexpr const char* k_symbol = "x";
   Poincare::Internal::Tree* e = parse(function);
-  Poincare::Internal::Simplification::ToSystem(e, simplificationParameters);
+  Poincare::Internal::Simplification::ToSystem(e, projectionParameters);
   Poincare::Internal::Approximation::PrepareFunctionForApproximation(
-      e, k_symbol, simplificationParameters.complexFormat == Real);
+      e, k_symbol, projectionParameters.complexFormat == Real);
   return e;
 }
 

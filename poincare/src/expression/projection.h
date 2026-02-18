@@ -27,7 +27,7 @@ class Projection {
   // All user variables are replaced with Undefined
   static bool DeepReplaceUserSymbolWithUndefined(Tree* e);
   static bool DeepSystemProject(
-      Tree* e, const SimplificationParameters& simplificationParameters,
+      Tree* e, const ProjectionParameters& projectionParameters,
       const Dimension& dimension = Dimension());
 
   /* Some projections are performed during advanced reduction instead so the

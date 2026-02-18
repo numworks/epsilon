@@ -179,7 +179,8 @@ void projected_approximates_to(
   process_tree_and_compare(
       input, output,
       [](Tree* tree, const SimplificationParameters& simplificationParameters) {
-        Simplification::ToSystem(tree, simplificationParameters);
+        Simplification::ToSystem(
+            tree, ToProjectionParameters(simplificationParameters));
         tree->moveTreeOverTree(Approximation::To<Tree*>(
             tree, Approximation::Precision<T>::value,
             Approximation::Parameters{

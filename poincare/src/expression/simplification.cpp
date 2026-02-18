@@ -23,16 +23,16 @@ static Tree* ApplySimplify(
 static bool HandleUnits(
     Tree* e, const SimplificationParameters& simplificationParameters,
     const Dimension& dimension);
-static bool ApplyStrategy(
-    Tree* e, const SimplificationParameters& simplificationParameters,
-    bool insideReduction);
+static bool ApplyStrategy(Tree* e,
+                          const ProjectionParameters& projectionParameters,
+                          bool insideReduction);
 static bool ApplyProjectionStrategy(
-    Tree* e, const SimplificationParameters& simplificationParameters) {
-  return ApplyStrategy(e, simplificationParameters, false);
+    Tree* e, const ProjectionParameters& projectionParameters) {
+  return ApplyStrategy(e, projectionParameters, false);
 }
 static bool ApplyReductionStrategy(
-    Tree* e, const SimplificationParameters& simplificationParameters) {
-  return ApplyStrategy(e, simplificationParameters, true);
+    Tree* e, const ProjectionParameters& projectionParameters) {
+  return ApplyStrategy(e, projectionParameters, true);
 }
 
 /* Some patterns are not reduced by the systematic and the advanced reductions,
@@ -124,11 +124,13 @@ Tree* ApplySimplify(const Tree* input,
 Dimension ProjectAndReduce(
     Tree* e, const SimplificationParameters& simplificationParameters) {
   assert(!e->isStore());
-  Dimension dim = ToSystem(e, simplificationParameters).dimension;
+  ProjectionParameters projectionParameters =
+      ToProjectionParameters(simplificationParameters);
+  Dimension dim = ToSystem(e, projectionParameters).dimension;
   ReduceSystem(e, simplificationParameters.advanceReduce,
                simplificationParameters.reductionTarget);
   // Non-approximated numbers or node may have appeared during reduction.
-  ApplyReductionStrategy(e, simplificationParameters);
+  ApplyReductionStrategy(e, projectionParameters);
   return dim;
 }
 
@@ -152,18 +154,18 @@ bool BeautifyReduced(Tree* e,
   return changed;
 }
 
-bool PrepareForProjection(
-    Tree* e, const SimplificationParameters& simplificationParameters) {
+bool PrepareForProjection(Tree* e,
+                          const ProjectionParameters& projectionParameters) {
   // Seed random nodes before anything is merged/duplicated
   int previousMaxRandomSeed = Random::GetMaxSeed(e);
   int maxRandomSeed = Random::SeedRandomNodes(e, previousMaxRandomSeed);
   bool changed = maxRandomSeed > previousMaxRandomSeed;
   // Replace UserFunctions before projecting local variables
-  const SymbolicComputation symbolic = simplificationParameters.symbolic;
+  const SymbolicComputation symbolic = projectionParameters.symbolic;
   if (symbolic != SymbolicComputation::KeepAllSymbols &&
       symbolic != SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     if (Projection::DeepReplaceUserSymbol(
-            e, simplificationParameters.context,
+            e, projectionParameters.context,
             SymbolicComputation::ReplaceDefinedFunctions)) {
       // Seed random nodes that may have appeared after replacing
       maxRandomSeed = Random::SeedRandomNodes(e, maxRandomSeed);
@@ -173,12 +175,12 @@ bool PrepareForProjection(
   changed = Variables::ProjectLocalVariablesToId(e) || changed;
   // Replace user named symbols after having projected local variables
   if (symbolic != SymbolicComputation::ReplaceDefinedFunctions) {
-    changed = Projection::DeepReplaceUserSymbol(
-                  e, simplificationParameters.context, symbolic) ||
+    changed = Projection::DeepReplaceUserSymbol(e, projectionParameters.context,
+                                                symbolic) ||
               changed;
   } else {
-    assert(!Projection::DeepReplaceUserSymbol(
-        e, simplificationParameters.context, symbolic));
+    assert(!Projection::DeepReplaceUserSymbol(e, projectionParameters.context,
+                                              symbolic));
   }
   // No additional random nodes should have appeared
   assert(Random::SeedRandomNodes(e, maxRandomSeed) == maxRandomSeed);
@@ -190,17 +192,17 @@ bool PrepareForProjection(
   return changed;
 }
 
-ToSystemOutput ToSystem(
-    Tree* e, const SimplificationParameters& simplificationParameters) {
+ToSystemOutput ToSystem(Tree* e,
+                        const ProjectionParameters& projectionParameters) {
   /* 1 - Prepare for projection */
-  bool changed = PrepareForProjection(e, simplificationParameters);
+  bool changed = PrepareForProjection(e, projectionParameters);
   /* 2 - Compute expression's dimension */
   Dimension dim = Dimension::Get(e);
   /* 3 - Apply projection strategy */
-  changed = ApplyProjectionStrategy(e, simplificationParameters) || changed;
+  changed = ApplyProjectionStrategy(e, projectionParameters) || changed;
   /* 4 - Project */
-  changed = Projection::DeepSystemProject(e, simplificationParameters, dim) ||
-            changed;
+  changed =
+      Projection::DeepSystemProject(e, projectionParameters, dim) || changed;
   return {changed, dim};
 }
 
@@ -209,7 +211,8 @@ bool IsSystem(const Tree* e) {
   Tree* c = e->cloneTree();
 #if POINCARE_COMPLEX
   // Use ComplexFormat::Cartesian to avoid having PowReal interfering
-  SimplificationParameters ctx = {.complexFormat = ComplexFormat::Cartesian};
+  ProjectionParameters projectionParameters = {.complexFormat =
+                                                   ComplexFormat::Cartesian};
 #else
   /* Pow is used both in UserExpressions to represent all the types of powers
    * and in system for some specific powers (simple integral powers for
@@ -218,14 +221,14 @@ bool IsSystem(const Tree* e) {
    * while they are produced by the reduction.
    * TODO: introduce a PowUser node similar to LnUser to clarify the situation ?
    */
-  SimplificationParameters ctx = {};
+  ProjectionParameters projectionParameters = {};
   for (Tree* d : c->selfAndDescendants()) {
     if (d->isPow()) {
       d->cloneNodeOverNode(KPowReal);
     }
   }
 #endif
-  bool changed = ToSystem(c, ctx).changed;
+  bool changed = ToSystem(c, projectionParameters).changed;
   c->removeTree();
   return !changed;
 }
@@ -259,7 +262,8 @@ bool HandleUnits(Tree* e,
     }
     // Re-apply strategy to make sure introduced integers are floats.
     if (simplificationParameters.strategy == Strategy::ApproximateToFloat) {
-      ApplyReductionStrategy(e, simplificationParameters);
+      ApplyReductionStrategy(e,
+                             ToProjectionParameters(simplificationParameters));
     }
     ReduceSystem(e, false, simplificationParameters.reductionTarget);
     changed = true;
@@ -280,12 +284,11 @@ bool HandleUnits(Tree* e,
   return changed;
 }
 
-bool ApplyStrategy(Tree* e,
-                   const SimplificationParameters& simplificationParameters,
+bool ApplyStrategy(Tree* e, const ProjectionParameters& projectionParameters,
                    bool insideReduction) {
   bool changed = false;
 
-  switch (simplificationParameters.strategy) {
+  switch (projectionParameters.strategy) {
     case Strategy::Default:
       break;
     case Strategy::ApproximateToFloat:
@@ -294,9 +297,9 @@ bool ApplyStrategy(Tree* e,
           Approximation::Parameters{
               .onlyReplaceNumerical = true,
               .optimize = true,
-              .angleUnit = simplificationParameters.angleUnit,
-              .complexFormat = simplificationParameters.complexFormat,
-              .symbolContext = simplificationParameters.context});
+              .angleUnit = projectionParameters.angleUnit,
+              .complexFormat = projectionParameters.complexFormat,
+              .symbolContext = projectionParameters.context});
       if (changed && insideReduction) {
         // NAries could be sorted again, some children may be merged.
         SystematicReduction::DeepReduce(e);

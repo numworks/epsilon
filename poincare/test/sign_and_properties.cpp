@@ -509,11 +509,10 @@ void assert_properties(const char* input, ComplexProperties expectedProperties,
                        ComplexFormat complexFormat = ComplexFormat::Cartesian,
                        Strategy strategy = Strategy::Default) {
   Tree* expression = parse(input);
-  Simplification::ToSystem(
-      expression, SimplificationParameters{.complexFormat = complexFormat,
-                                           .angleUnit = AngleUnit::Radian,
-                                           .strategy = strategy,
-                                           .advanceReduce = false});
+  Simplification::ToSystem(expression,
+                           ProjectionParameters{.complexFormat = complexFormat,
+                                                .angleUnit = AngleUnit::Radian,
+                                                .strategy = strategy});
   bool result = GetComplexProperties(expression) == expectedProperties;
 #if POINCARE_TREE_LOG
   if (!result) {
@@ -655,7 +654,7 @@ QUIZ_CASE(pcj_properties) {
 void assert_projected_is_null(const char* input, OMG::Troolean isNull) {
   Tree* e = parse(input);
   Simplification::ToSystem(
-      e, SimplificationParameters{.angleUnit = AngleUnit::Radian});
+      e, ProjectionParameters{.angleUnit = AngleUnit::Radian});
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(
       OMG::TrooleanAnd(properties.imagSign().trooleanIsNull(),
@@ -704,7 +703,7 @@ QUIZ_CASE(pcj_sign_is_zero) {
 void assert_projected_is_positive(const char* input, OMG::Troolean isPositive) {
   Tree* e = parse(input);
   Simplification::ToSystem(
-      e, SimplificationParameters{.angleUnit = AngleUnit::Radian});
+      e, ProjectionParameters{.angleUnit = AngleUnit::Radian});
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(
       OMG::TrooleanAnd(properties.imagSign().trooleanIsNull(),
@@ -868,7 +867,7 @@ QUIZ_CASE(pcj_sign_set) {
 void assert_projected_is_real_or_not(const char* input, bool isReal = true) {
   Tree* e = parse(input);
   Simplification::ToSystem(
-      e, SimplificationParameters{
+      e, ProjectionParameters{
              .complexFormat = Projection::PreferredComplexFormat(
                  e, ComplexFormat::Real,
                  SymbolicComputation::ReplaceAllSymbolsWithUndefined,

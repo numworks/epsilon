@@ -380,14 +380,13 @@ bool ApplyBeautificationSteps(
       Tree::ApplyShallowTopDown(e, ShallowBeautifyNegativeFloats) || changed;
   changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifyPowerOfTangent) || changed;
-  /* Copy simplificationParameters to pass it as a void * in ApplyShallowTopDown
-   * TODO : prevent this copy */
-  SimplificationParameters simplificationParametersCopy =
-      simplificationParameters;
-  changed = Tree::ApplyShallowTopDown(
-                e, ShallowBeautifySpecialDisplays,
-                static_cast<void*>(&simplificationParametersCopy)) ||
-            changed;
+  // TODO : pass ProjectionParameters by const& in ApplyShallowTopDown
+  ProjectionParameters projectionParameters =
+      ToProjectionParameters(simplificationParameters);
+  changed =
+      Tree::ApplyShallowTopDown(e, ShallowBeautifySpecialDisplays,
+                                static_cast<void*>(&projectionParameters)) ||
+      changed;
   changed = Tree::ApplyShallowTopDown(e, ShallowBeautifyBigInteger) || changed;
   // New multiplications may have been introduced and should be flattened
   changed = Tree::ApplyShallowTopDown(e, ShallowFlattenMult) || changed;
@@ -887,7 +886,7 @@ Tree* PushBeautifiedComplex(std::complex<T> value,
 
 bool ShallowBeautifySpecialDisplays(Tree* e, void* context) {
   return Arithmetic::BeautifyFactor(
-             e, *static_cast<SimplificationParameters*>(context)) ||
+             e, *static_cast<ProjectionParameters*>(context)) ||
          ShallowBeautifyPercent(e);
 }
 

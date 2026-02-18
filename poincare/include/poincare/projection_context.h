@@ -18,7 +18,7 @@ struct ProjectionContext {
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
   SymbolicComputation symbolic = SymbolicComputation::KeepAllSymbols;
   const Poincare::SymbolContext& context = k_emptySymbolContext;
-  UnitDisplay m_unitDisplay = UnitDisplay::MainOutput;
+  UnitDisplay unitDisplay = UnitDisplay::MainOutput;
   // Optional simplification step
   bool m_advanceReduce = true;
 };

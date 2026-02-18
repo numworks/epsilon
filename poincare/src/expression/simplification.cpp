@@ -241,7 +241,7 @@ bool HandleUnits(Tree* e, const ProjectionContext& projectionContext,
 #if POINCARE_UNIT
   if (!e->isUndefined() &&
       Units::Unit::ProjectToBestUnits(
-          e, dimension, projectionContext.m_unitDisplay,
+          e, dimension, projectionContext.unitDisplay,
           projectionContext.angleUnit, projectionContext.unitFormat)) {
     if (e->isUndefined()) {
       return true;

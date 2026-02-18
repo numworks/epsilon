@@ -29,7 +29,7 @@ void assert_next_solution_is(const char* expression,
       .complexFormat = Real,
       .angleUnit = angleUnit,
       .strategy = Poincare::Strategy::ApproximateToFloat,
-      .m_context = symbolContext};
+      .context = symbolContext};
 
   Tree* e = parseAndPrepareForApproximation(expression, projCtx);
 

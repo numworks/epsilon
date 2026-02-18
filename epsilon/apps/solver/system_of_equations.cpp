@@ -48,7 +48,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
               GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
           .angleUnit =
               GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-          .m_context = symbolContext,
+          .context = symbolContext,
       });
   UserExpression exactSolutionList = result.exactSolutionList;
   UserExpression approximateSolutionList = result.approximateSolutionList;
@@ -110,7 +110,7 @@ void SystemOfEquations::approximateSolve(const SymbolContext& symbolContext) {
            GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
        .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
        .reductionTarget = ReductionTarget::SystemForApproximation,
-       .m_context = symbolContext},
+       .context = symbolContext},
       m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
                                 : m_approximateSolvingRange,
       k_maxNumberOfApproximateSolutions);
@@ -204,7 +204,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
             GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
         // Any remaining symbol at this point should be an unknown parameter.
         .symbolic = SymbolicComputation::KeepAllSymbols,
-        .m_context = symbolContext,
+        .context = symbolContext,
         .m_advanceReduce = false};
     bool failure = false;
     approximate = exact.cloneAndSimplify(projCtx, &failure);

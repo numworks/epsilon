@@ -79,7 +79,7 @@ QUIZ_CASE(pcj_simplification_dependencies) {
       .complexFormat = ComplexFormat::Real,
       .angleUnit = AngleUnit::Radian,
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = symbolStore};
+      .context = symbolStore};
 
   // No dependencies
   PoincareTest::store("1→a", symbolStore);

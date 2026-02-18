@@ -50,7 +50,7 @@ void IntegerListController::computeAdditionalResults(
           .angleUnit = angleUnit(),
           .reductionTarget = Poincare::ReductionTarget::User,
           .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-          .m_context = App::app()->localContext(),
+          .context = App::app()->localContext(),
       },
       &reductionFailure);
   if (!reductionFailure && !factor.isUndefined() &&

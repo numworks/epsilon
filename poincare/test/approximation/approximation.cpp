@@ -265,11 +265,11 @@ QUIZ_CASE(pcj_approximation_context) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext cartesianCtx = {
       .complexFormat = ComplexFormat::Cartesian,
-      .m_context = symbolStore,
+      .context = symbolStore,
   };
   ProjectionContext realCtx = {
       .complexFormat = ComplexFormat::Real,
-      .m_context = symbolStore,
+      .context = symbolStore,
   };
 
   PoincareTest::store("2x+5→f(x)", symbolStore);

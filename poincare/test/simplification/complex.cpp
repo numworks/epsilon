@@ -163,7 +163,7 @@ QUIZ_CASE(pcj_simplification_complex_format) {
     Poincare::ProjectionContext projCtx = {
         .complexFormat = ComplexFormat::Real,
         .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-        .m_context = symbolStore};
+        .context = symbolStore};
     store("2+i→a", symbolStore);
     simplifies_to("a", "nonreal", projCtx);
     symbolStore.reset();
@@ -259,7 +259,7 @@ QUIZ_CASE(pcj_simplification_complex_format) {
     Poincare::ProjectionContext projCtx = {
         .complexFormat = ComplexFormat::Cartesian,
         .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-        .m_context = symbolStore};
+        .context = symbolStore};
     store("2+i→a", symbolStore);
     simplifies_to("a", "2+i", projCtx);
     symbolStore.reset();
@@ -314,7 +314,7 @@ QUIZ_CASE(pcj_simplification_complex_format) {
         .complexFormat = ComplexFormat::Polar,
         .angleUnit = AngleUnit::Radian,
         .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-        .m_context = symbolStore};
+        .context = symbolStore};
     // a = 2 + i
     store("2+i→a", symbolStore);
     simplifies_to("a", "√(5)×e^(arctan(1/2)×i)", projCtx);

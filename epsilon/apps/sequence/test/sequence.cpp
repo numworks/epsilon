@@ -870,7 +870,7 @@ QUIZ_CASE(sequence_evaluation) {
 QUIZ_CASE(sequence_store) {
   SequenceStore* sequenceStore = &GlobalContextAccessor::SequenceStore();
   GlobalStore& globalStore = GlobalContextAccessor::Store();
-  ProjectionContext projCtx = {.m_context = globalStore};
+  ProjectionContext projCtx = {.context = globalStore};
 
   PoincareTest::store("3→f(x)", GlobalContextAccessor::Store());
   simplified_approximates_to<double>("f(u(0))", "undef", projCtx);

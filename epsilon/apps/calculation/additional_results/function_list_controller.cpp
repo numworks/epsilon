@@ -36,7 +36,7 @@ void FunctionListController::computeAdditionalResults(
               .angleUnit = angleUnit(),
               .reductionTarget = ReductionTarget::User,
               .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-              .m_context = App::app()->localContext()})
+              .context = App::app()->localContext()})
           .getPreparedFunction(k_symbolName, true);
 
   assert(!simplifiedExpression.isUninitialized() &&

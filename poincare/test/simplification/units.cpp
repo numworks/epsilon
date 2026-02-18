@@ -394,7 +394,7 @@ QUIZ_CASE(pcj_simplification_unit_conversion) {
   PoincareTest::store("2_kg→a", symbolStore);
   ProjectionContext replaceSymbolCtx = {
       .symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = symbolStore};
+      .context = symbolStore};
   simplifies_to("a→g", "2000×_g", replaceSymbolCtx);
 }
 

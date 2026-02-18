@@ -21,7 +21,7 @@ static ProjectionContext DefaultProjectionContextForAnalysis() {
       .angleUnit = AngleUnit::Radian,
       .unitFormat = Preferences::UnitFormat::Metric,
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = k_emptySymbolContext};
+      .context = k_emptySymbolContext};
   return projCtx;
 }
 

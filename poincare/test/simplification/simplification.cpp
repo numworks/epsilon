@@ -543,7 +543,7 @@ QUIZ_CASE(pcj_simplification_function) {
   PoincareTest::store("x→f(x)", symbolStore);
   ProjectionContext projCtx = {
       .symbolic = SymbolicComputation::KeepAllSymbols,
-      .m_context = symbolStore,
+      .context = symbolStore,
   };
   simplifies_to("f(x)", "f(x)", projCtx);
   simplifies_to("f(2+2)", "f(4)");
@@ -554,7 +554,7 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = symbolStore};
+      .context = symbolStore};
 
   PoincareTest::store("4→y", symbolStore);
   simplifies_to("x+y", "x+4", projCtx);
@@ -576,7 +576,7 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
 
   ProjectionContext projCtx2 = {
       .symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = symbolStore};
+      .context = symbolStore};
   simplifies_to("y+2", "6", projCtx2);
   simplifies_to("y+x", "undef", projCtx2);
   simplifies_to("diff(y*y, y, y)", "8", projCtx2);
@@ -684,7 +684,7 @@ QUIZ_CASE(pcj_simplification_user_function) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = symbolStore};
+      .context = symbolStore};
   // User defined function
   // f: x → x*3
   store("x*3→f(x)", symbolStore);
@@ -699,7 +699,7 @@ QUIZ_CASE(pcj_simplification_context) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = symbolStore};
+      .context = symbolStore};
 
   // Fill variable
   PoincareTest::store("1+2→Adadas", symbolStore);
@@ -812,7 +812,7 @@ QUIZ_CASE(pcj_simplification_store_correctly_parsed) {
       .complexFormat = ComplexFormat::Cartesian,
       .angleUnit = AngleUnit::Radian,
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = symbolStore};
+      .context = symbolStore};
   simplifies_to("abc", "a×b×c", projCtx, false);
   simplifies_to("\"abc\"", "\"abc\"", projCtx, false);
   store("2→a", symbolStore);

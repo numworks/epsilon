@@ -767,7 +767,7 @@ void assert_reduced_is_positive(
       ProjectionContext{.complexFormat = complexFormat,
                         .angleUnit = angleUnit,
                         .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-                        .m_context = symbolContext,
+                        .context = symbolContext,
                         .m_advanceReduce = false});
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(

@@ -71,7 +71,7 @@ static PreprocessingResult PreprocessEquationList(
   EquationMetadata equationMetadata;
 
   // Step 1. Retrieve user symbols and infer the list of unknowns
-  const SymbolContext& symbolContext = projectionContext->m_context;
+  const SymbolContext& symbolContext = projectionContext->context;
   Tree* userVariables =
       Variables::GetUserVariables(equationList, symbolContext);
   assert(userVariables->isList());
@@ -160,7 +160,7 @@ static PreprocessingResult PreprocessEquationList(
 #if POINCARE_COMPLEX
   projectionContext->complexFormat = Projection::PreferredComplexFormat(
       equationList, projectionContext->complexFormat,
-      projectionContext->symbolic, projectionContext->m_context);
+      projectionContext->symbolic, projectionContext->context);
 #endif
 
   equationMetadata.complexFormat = projectionContext->complexFormat;
@@ -799,7 +799,7 @@ SolverResult ExactSolve(const Tree* equationList,
 
   // Step 2.1. Try with linear system solving
   SolverResult result = SolveLinearSystem(reducedEquationList, equationMetadata,
-                                          projectionContext.m_context);
+                                          projectionContext.context);
 
 #if POINCARE_POLYNOMIAL_SOLVER
   // Step 2.2. Try with polynomial solving
@@ -852,7 +852,7 @@ SolverResult ExactSolve(const Tree* equationList,
             .optimize = true,
             .angleUnit = projectionContext.angleUnit,
             .complexFormat = projectionContext.complexFormat,
-            .symbolContext = projectionContext.m_context});
+            .symbolContext = projectionContext.context});
   }
 
   /* Beautify result */

@@ -750,7 +750,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
                           .angleUnit = angleUnit,
                           .reductionTarget = ReductionTarget::SystemForAnalysis,
                           .symbolic = SymbolicComputation::KeepAllSymbols,
-                          .m_context = GlobalContextAccessor::Context()});
+                          .context = GlobalContextAccessor::Context()});
     assert(!result.isUninitialized());
   } else {
     result = SystemExpression::Undefined();

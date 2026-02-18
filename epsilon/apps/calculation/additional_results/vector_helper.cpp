@@ -34,7 +34,7 @@ UserExpression BuildVectorNorm(
           .angleUnit = calculationPreferences.angleUnit,
           .reductionTarget = Poincare::ReductionTarget::User,
           .symbolic = VectorListController::k_symbolicComputation,
-          .m_context = symbolContext,
+          .context = symbolContext,
       },
       &reductionFailure);
 

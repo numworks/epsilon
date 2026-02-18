@@ -72,7 +72,7 @@ inline Poincare::ProjectionContext ProjectionContextForPreferences(
           Poincare::SymbolicComputation::ReplaceDefinedSymbols),
       .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .unitFormat = GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-      .m_context = GlobalContextAccessor::Context()};
+      .context = GlobalContextAccessor::Context()};
 }
 
 // Approximate a real scalar expression. Contexts are not handled.

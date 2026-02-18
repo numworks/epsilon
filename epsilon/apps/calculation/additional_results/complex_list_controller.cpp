@@ -26,7 +26,7 @@ void ComplexListController::computeAdditionalResults(
   ProjectionContext ctx = {.complexFormat = ComplexFormat::Cartesian,
                            .angleUnit = angleUnit(),
                            .symbolic = SymbolicComputation::ReplaceAllSymbols,
-                           .m_context = App::app()->localContext()};
+                           .context = App::app()->localContext()};
 
   // Fill Calculation Store
   constexpr KTree k_symbol = "z"_e;

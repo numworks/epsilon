@@ -53,13 +53,13 @@ void approximates_to(const Tree* n, const Tree* expected) {
 template <typename T>
 void approximates_to(const char* input, T f,
                      const ProjectionContext& projectionContext) {
-  Tree* expression = parse(input, projectionContext.m_context);
+  Tree* expression = parse(input, projectionContext.context);
   T approx = Approximation::To<T>(
       expression, Approximation::Parameters{
                       .projectLocalVariables = true,
                       .angleUnit = projectionContext.angleUnit,
                       .complexFormat = projectionContext.complexFormat,
-                      .symbolContext = projectionContext.m_context});
+                      .symbolContext = projectionContext.context});
   bool result =
       OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG
@@ -89,7 +89,7 @@ void approximates_to(const char* input, const char* output,
                 .projectLocalVariables = true,
                 .angleUnit = projectionContext.angleUnit,
                 .complexFormat = projectionContext.complexFormat,
-                .symbolContext = projectionContext.m_context}));
+                .symbolContext = projectionContext.context}));
         Beautification::DeepBeautify(tree, projectionContext);
       },
       projectionContext, nbOfSignificantDigits);
@@ -122,7 +122,7 @@ void approximates_to_boolean(const Tree* n,
 void approximates_to_boolean(const char* input,
                              Approximation::BooleanOrUndefined expected,
                              const ProjectionContext& projectionContext) {
-  Tree* expression = parse(input, projectionContext.m_context);
+  Tree* expression = parse(input, projectionContext.context);
   Approximation::BooleanOrUndefined approx =
       Approximation::To<Approximation::BooleanOrUndefined>(
           expression, Approximation::FloatPrecision::Single,
@@ -130,7 +130,7 @@ void approximates_to_boolean(const char* input,
               .projectLocalVariables = true,
               .angleUnit = projectionContext.angleUnit,
               .complexFormat = projectionContext.complexFormat,
-              .symbolContext = projectionContext.m_context});
+              .symbolContext = projectionContext.context});
   quiz_assert(approx.isUndefined() == expected.isUndefined());
   if (!approx.isUndefined()) {
     quiz_assert(approx.value() == expected.value());
@@ -164,7 +164,7 @@ void simplified_approximates_to(const char* input, const char* output,
                 .optimize = true,
                 .angleUnit = projectionContext.angleUnit,
                 .complexFormat = projectionContext.complexFormat,
-                .symbolContext = projectionContext.m_context}));
+                .symbolContext = projectionContext.context}));
         Beautification::DeepBeautify(tree, projectionContext);
       },
       projectionContext, nbOfSignificantDigits);
@@ -185,7 +185,7 @@ void projected_approximates_to(const char* input, const char* output,
                 .optimize = true,
                 .angleUnit = projectionContext.angleUnit,
                 .complexFormat = projectionContext.complexFormat,
-                .symbolContext = projectionContext.m_context}));
+                .symbolContext = projectionContext.context}));
         Beautification::DeepBeautify(tree, projectionContext);
       },
       projectionContext, nbOfSignificantDigits);
@@ -206,7 +206,7 @@ void approximates_to_keeping_symbols(const char* expression,
                 .onlyReplaceNumerical = true,
                 .angleUnit = projectionContext.angleUnit,
                 .complexFormat = projectionContext.complexFormat,
-                .symbolContext = projectionContext.m_context});
+                .symbolContext = projectionContext.context});
         Variables::BeautifyToName(tree);
       },
       projectionContext, numberOfSignificantDigits);

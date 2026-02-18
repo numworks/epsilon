@@ -173,7 +173,7 @@ QUIZ_CASE(pcj_properties_has_matrix) {
 void assert_projected_is_infinity(const char* input,
                                   const ProjectionContext& projCtx,
                                   bool isInfinity = true) {
-  Tree* e = parse(input, projCtx.m_context);
+  Tree* e = parse(input, projCtx.context);
   Simplification::ToSystem(e, projCtx);
   quiz_assert_print_if_failure(e->hasDescendantSatisfying([](const Tree* e) {
     return Internal::Infinity::IsPlusOrMinusInfinity(e);
@@ -185,7 +185,7 @@ QUIZ_CASE(pcj_properties_is_infinity) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
       .symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = symbolStore,
+      .context = symbolStore,
   };
   assert_projected_is_infinity("3.4+inf", projCtx);
   assert_projected_is_infinity("2.3+1", projCtx, false);
@@ -202,7 +202,7 @@ QUIZ_CASE(pcj_properties_is_infinity) {
 void assert_expression_has_variables(const char* input,
                                      const Tree* expectedVariables,
                                      const ProjectionContext& projCtx) {
-  Tree* e = parse(input, projCtx.m_context);
+  Tree* e = parse(input, projCtx.context);
   Simplification::ToSystem(e, projCtx);
   const Tree* variables = Variables::GetUserVariables(e);
   assert_trees_are_equal(variables, expectedVariables);
@@ -216,7 +216,7 @@ QUIZ_CASE(pcj_properties_get_variables) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
       .symbolic = SymbolicComputation::ReplaceDefinedFunctions,
-      .m_context = symbolStore,
+      .context = symbolStore,
   };
 
   assert_expression_has_variables("x+y", KList("x"_e, "y"_e), projCtx);
@@ -290,7 +290,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
   ProjectionContext projContext{.complexFormat = complexFormat,
                                 .angleUnit = angleUnit,
                                 .symbolic = symbolicComputation,
-                                .m_context = symbolContext};
+                                .context = symbolContext};
   UserExpression e = UserExpression::Builder(parse(input, symbolContext));
   SystemExpression s = e.cloneAndReduce(projContext);
   quiz_assert(!s.isFailedSimplification());

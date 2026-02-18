@@ -130,7 +130,7 @@ QUIZ_CASE(pcj_simplification_list) {
     PoincareTest::SymbolStore symbolStore;
     Poincare::ProjectionContext projCtx = {
         .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
-        .m_context = symbolStore,
+        .context = symbolStore,
     };
     store("{1,4,9}→l1", symbolStore);
     store("{}→l2", symbolStore);
@@ -258,7 +258,7 @@ QUIZ_CASE(pcj_simplification_list) {
         "L{2}", "{6}",
         {
             .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
-            .m_context = symbolStore,
+            .context = symbolStore,
         });  // L*{2}
   }
 }

@@ -13,7 +13,7 @@ QUIZ_CASE(poincare_sequence) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = symbolStore};
+      .context = symbolStore};
 
   // Sequence
   // TODO: add sequence type to the symbol store

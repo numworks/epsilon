@@ -39,7 +39,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   // Find the angle
   UserExpression exactAngle =
       directTrigonometry
-          ? ExtractExactAngleFromDirectTrigo(input, exactOutput, ctx.m_context,
+          ? ExtractExactAngleFromDirectTrigo(input, exactOutput, ctx.context,
                                              calculationPreferences)
           : exactOutput;
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
@@ -76,7 +76,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
           UserExpression::Builder(static_cast<const Tree*>(simplifiedAngle)),
           UserExpression::Builder(
               static_cast<const Tree*>(approximateAngleTree)),
-          ctx.m_context)) {
+          ctx.context)) {
     if (directTrigonometry) {
       assert(!approximateAngleTree);
       /* Do not approximate the FracPart, which could lead to truncation error
@@ -93,7 +93,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
                                         .optimize = true,
                                         .angleUnit = ctx.angleUnit,
                                         .complexFormat = ctx.complexFormat,
-                                        .symbolContext = ctx.m_context}) < 0;
+                                        .symbolContext = ctx.context}) < 0;
       sine->removeTree();
       if (removePeriod) {
         approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
@@ -107,7 +107,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
                                   .optimize = true,
                                   .angleUnit = ctx.angleUnit,
                                   .complexFormat = ctx.complexFormat,
-                                  .symbolContext = ctx.m_context}));
+                                  .symbolContext = ctx.context}));
     Beautification::DeepBeautify(approximateAngleTree, ctx);
     exactAngle =
         UserExpression::Builder(static_cast<const Tree*>(approximateAngleTree));
@@ -130,7 +130,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
                                 .optimize = true,
                                 .angleUnit = ctx.angleUnit,
                                 .complexFormat = ctx.complexFormat,
-                                .symbolContext = ctx.m_context});
+                                .symbolContext = ctx.context});
   if (approximateAngleTree) {
     approximateAngleTree->removeTree();
   }
@@ -200,7 +200,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
       .complexFormat = complexFormat,
       .angleUnit = angleUnit,
       .symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = symbolContext,
+      .context = symbolContext,
   };
 
   /* TODO: Second Simplify could be avoided by calling
@@ -557,7 +557,7 @@ static Poincare::Layout CreateBeautifiedLayout(
   Poincare::Layout layout =
       Poincare::Layout::Builder(Layouter::LayoutExpression(
           reducedExpression,
-          {.symbolContext = ctx.m_context,
+          {.symbolContext = ctx.context,
            .numberOfSignificantDigits = numberOfSignificantDigits,
            .floatMode = displayMode}));
   reducedExpression->removeTree();
@@ -573,7 +573,7 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
                            .angleUnit = calculationPreferences.angleUnit,
                            .strategy = Strategy::ApproximateToFloat,
                            .symbolic = SymbolicComputation::ReplaceAllSymbols,
-                           .m_context = symbolContext,
+                           .context = symbolContext,
                            .m_advanceReduce = false};
   Tree* e = approximateOutput.tree()->cloneTree();
   Internal::Dimension dim = Simplification::ProjectAndReduce(e, ctx);
@@ -621,7 +621,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     bool determinantIsUndefinedOrNull =
         determinant->isUndefined() || determinant->isZero();
     Internal::Dimension dimension =
-        Internal::Dimension::Get(determinant, ctx.m_context);
+        Internal::Dimension::Get(determinant, ctx.context);
     determinantL = CreateBeautifiedLayout(
         determinant, ctx, dimension, displayMode, numberOfSignificantDigits);
     matrixClone->removeTree();
@@ -665,7 +665,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   if (isSquared) {
     Tree* trace = Internal::Matrix::Trace(matrix);
     traceL = CreateBeautifiedLayout(
-        trace, ctx, Internal::Dimension::Get(trace, ctx.m_context), displayMode,
+        trace, ctx, Internal::Dimension::Get(trace, ctx.context), displayMode,
         numberOfSignificantDigits);
   }
 

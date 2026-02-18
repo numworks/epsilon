@@ -156,7 +156,7 @@ bool PrepareForProjection(Tree* e, const ProjectionContext& projectionContext) {
   if (symbolic != SymbolicComputation::KeepAllSymbols &&
       symbolic != SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     if (Projection::DeepReplaceUserSymbol(
-            e, projectionContext.m_context,
+            e, projectionContext.context,
             SymbolicComputation::ReplaceDefinedFunctions)) {
       // Seed random nodes that may have appeared after replacing
       maxRandomSeed = Random::SeedRandomNodes(e, maxRandomSeed);
@@ -166,11 +166,11 @@ bool PrepareForProjection(Tree* e, const ProjectionContext& projectionContext) {
   changed = Variables::ProjectLocalVariablesToId(e) || changed;
   // Replace user named symbols after having projected local variables
   if (symbolic != SymbolicComputation::ReplaceDefinedFunctions) {
-    changed = Projection::DeepReplaceUserSymbol(e, projectionContext.m_context,
+    changed = Projection::DeepReplaceUserSymbol(e, projectionContext.context,
                                                 symbolic) ||
               changed;
   } else {
-    assert(!Projection::DeepReplaceUserSymbol(e, projectionContext.m_context,
+    assert(!Projection::DeepReplaceUserSymbol(e, projectionContext.context,
                                               symbolic));
   }
   // No additional random nodes should have appeared
@@ -284,7 +284,7 @@ bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
               .optimize = true,
               .angleUnit = projectionContext.angleUnit,
               .complexFormat = projectionContext.complexFormat,
-              .symbolContext = projectionContext.m_context});
+              .symbolContext = projectionContext.context});
       if (changed && insideReduction) {
         // NAries could be sorted again, some children may be merged.
         SystematicReduction::DeepReduce(e);

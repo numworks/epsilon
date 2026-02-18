@@ -19,7 +19,7 @@ bool s_isInteractive = false;
 
 ProjectionContext context() {
   ProjectionContext ctx;
-  ctx.m_context = &s_historyContext;
+  ctx.context = &s_historyContext;
   ctx.symbolic = SymbolicComputation::ReplaceDefinedSymbols;
   return ctx;
 }

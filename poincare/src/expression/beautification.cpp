@@ -252,7 +252,7 @@ bool DeepBeautify(Tree* e, const ProjectionContext& projectionContext,
   assert(projectionContext.reductionTarget == ReductionTarget::User);
   bool changed = ApplyComplexFormat(
       e,
-      dimension.isNone() ? Dimension::Get(e, projectionContext.m_context)
+      dimension.isNone() ? Dimension::Get(e, projectionContext.context)
                          : dimension,
       projectionContext);
 

@@ -154,7 +154,7 @@ UserExpression UserExpression::cloneAndApproximate(
           .onlyReplaceNumerical = CAS::Enabled(),
           .angleUnit = context.angleUnit,
           .complexFormat = context.complexFormat,
-          .symbolContext = context.m_context});
+          .symbolContext = context.context});
   /* There are several issues that currently prevent us from beautifying an
    * approximated CAS expression:
    * - the beautified exact expression and the beautified approximate expression
@@ -250,7 +250,7 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
   ProjectionContext ctx = ProjectionContext{.complexFormat = complexFormat,
                                             .angleUnit = angleUnit,
                                             .symbolic = symbolicComputation,
-                                            .m_context = symbolContext};
+                                            .context = symbolContext};
   bool reductionFailure;
   exp = exp.cloneAndSimplify(ctx, &reductionFailure);
   assert(!exp.isUninitialized());

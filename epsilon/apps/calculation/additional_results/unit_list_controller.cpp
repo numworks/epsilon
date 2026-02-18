@@ -80,7 +80,7 @@ void UnitListController::computeAdditionalResults(
       .angleUnit = angleUnit(),
       .unitFormat = unitFormat,
       .symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = symbolContext,
+      .context = symbolContext,
   };
 
   // Initialize expressions and layouts

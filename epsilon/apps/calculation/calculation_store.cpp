@@ -170,7 +170,7 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
                            GlobalPreferences::SharedGlobalPreferences()
                                ->unitFormat(),
                        .symbolic = symbolicComputation,
-                       .m_context = GlobalContextAccessor::Context()})},
+                       .context = GlobalContextAccessor::Context()})},
           .hasReductionFailure = false};
     }
     symbolicComputation = storeElements.symbolicComputation;
@@ -182,7 +182,7 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
       .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .unitFormat = GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .symbolic = symbolicComputation,
-      .m_context = GlobalContextAccessor::Context()};
+      .context = GlobalContextAccessor::Context()};
 
   OutputExpressions outputs;
   bool reductionFailure = expressionToReduce.cloneAndSimplifyAndApproximate(

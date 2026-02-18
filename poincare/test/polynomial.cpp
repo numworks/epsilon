@@ -95,7 +95,7 @@ QUIZ_CASE(pcj_polynomial_operations) {
 void assert_polynomial_degree_is(
     const Poincare::ProjectionContext& projectionContext, const char* input,
     int expectedDegree, const char* symbolName = "x") {
-  Tree* expression = parse(input, projectionContext.m_context);
+  Tree* expression = parse(input, projectionContext.context);
   Simplification::ProjectAndReduce(expression, projectionContext);
   int degree = Degree::Get(expression, symbolName);
   quiz_assert(degree == expectedDegree);
@@ -108,7 +108,7 @@ QUIZ_CASE(pcj_polynomial_degree) {
       .complexFormat = Cartesian,
       .angleUnit = Radian,
       .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = symbolStore,
+      .context = symbolStore,
       .m_advanceReduce = false};
 
   assert_polynomial_degree_is(projCtx, "x+1", 1);

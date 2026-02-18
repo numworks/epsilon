@@ -58,7 +58,7 @@ void approximates_to(const char* input, T f,
       expression, Approximation::Parameters{
                       .projectLocalVariables = true,
                       .angleUnit = projectionContext.m_angleUnit,
-                      .complexFormat = projectionContext.m_complexFormat,
+                      .complexFormat = projectionContext.complexFormat,
                       .symbolContext = projectionContext.m_context});
   bool result =
       OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
@@ -88,7 +88,7 @@ void approximates_to(const char* input, const char* output,
             Approximation::Parameters{
                 .projectLocalVariables = true,
                 .angleUnit = projectionContext.m_angleUnit,
-                .complexFormat = projectionContext.m_complexFormat,
+                .complexFormat = projectionContext.complexFormat,
                 .symbolContext = projectionContext.m_context}));
         Beautification::DeepBeautify(tree, projectionContext);
       },
@@ -129,7 +129,7 @@ void approximates_to_boolean(const char* input,
           Approximation::Parameters{
               .projectLocalVariables = true,
               .angleUnit = projectionContext.m_angleUnit,
-              .complexFormat = projectionContext.m_complexFormat,
+              .complexFormat = projectionContext.complexFormat,
               .symbolContext = projectionContext.m_context});
   quiz_assert(approx.isUndefined() == expected.isUndefined());
   if (!approx.isUndefined()) {
@@ -143,7 +143,7 @@ void assert_float_approximates_to(UserExpression f, const char* result) {
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
   f.cloneAndApproximate<T>(
-       Poincare::ProjectionContext{.m_complexFormat = ComplexFormat::Cartesian,
+       Poincare::ProjectionContext{.complexFormat = ComplexFormat::Cartesian,
                                    .m_angleUnit = AngleUnit::Radian})
       .serialize(buffer, false, DecimalMode, numberOfDigits);
   quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
@@ -163,7 +163,7 @@ void simplified_approximates_to(const char* input, const char* output,
                 .projectLocalVariables = true,
                 .optimize = true,
                 .angleUnit = projectionContext.m_angleUnit,
-                .complexFormat = projectionContext.m_complexFormat,
+                .complexFormat = projectionContext.complexFormat,
                 .symbolContext = projectionContext.m_context}));
         Beautification::DeepBeautify(tree, projectionContext);
       },
@@ -184,7 +184,7 @@ void projected_approximates_to(const char* input, const char* output,
                 .prepare = true,
                 .optimize = true,
                 .angleUnit = projectionContext.m_angleUnit,
-                .complexFormat = projectionContext.m_complexFormat,
+                .complexFormat = projectionContext.complexFormat,
                 .symbolContext = projectionContext.m_context}));
         Beautification::DeepBeautify(tree, projectionContext);
       },
@@ -205,7 +205,7 @@ void approximates_to_keeping_symbols(const char* expression,
             Approximation::Parameters{
                 .onlyReplaceNumerical = true,
                 .angleUnit = projectionContext.m_angleUnit,
-                .complexFormat = projectionContext.m_complexFormat,
+                .complexFormat = projectionContext.complexFormat,
                 .symbolContext = projectionContext.m_context});
         Variables::BeautifyToName(tree);
       },

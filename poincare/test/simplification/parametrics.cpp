@@ -329,7 +329,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
     store("x/2→f(x)", symbolStore);
 
     ProjectionContext ctx = {
-        .m_complexFormat = Real,
+        .complexFormat = Real,
         .m_angleUnit = Radian,
         .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = symbolStore};
@@ -392,7 +392,7 @@ QUIZ_CASE(pcj_simplification_derivative_for_approximation) {
       .m_angleUnit = Radian,
       .m_reductionTarget = Poincare::ReductionTarget::SystemForApproximation};
   ProjectionContext cartesianCtxForApprox = {
-      .m_complexFormat = Cartesian,
+      .complexFormat = Cartesian,
       .m_angleUnit = Radian,
       .m_reductionTarget = Poincare::ReductionTarget::SystemForApproximation};
   projects_and_reduces_to("diff(ln(x),x,1)", "1", ctxForApprox);

@@ -163,7 +163,7 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
               {.exact = inputExpression.clone(),
                .approximate = inputExpression.cloneAndApproximate<double>(
                    ProjectionContext{
-                       .m_complexFormat = complexFormat,
+                       .complexFormat = complexFormat,
                        .m_angleUnit =
                            GlobalPreferences::SharedGlobalPreferences()
                                ->angleUnit(),
@@ -179,7 +179,7 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
   }
 
   ProjectionContext projContext = {
-      .m_complexFormat = complexFormat,
+      .complexFormat = complexFormat,
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .m_unitFormat =
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),

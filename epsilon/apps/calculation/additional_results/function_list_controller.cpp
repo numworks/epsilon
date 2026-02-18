@@ -32,7 +32,7 @@ void FunctionListController::computeAdditionalResults(
   PreparedFunction simplifiedExpression =
       inputClone
           .cloneAndReduce(ProjectionContext{
-              .m_complexFormat = complexFormat(),
+              .complexFormat = complexFormat(),
               .m_angleUnit = angleUnit(),
               .m_reductionTarget = ReductionTarget::User,
               .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,

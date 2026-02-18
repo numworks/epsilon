@@ -8,9 +8,9 @@ namespace Poincare {
 
 struct ProjectionContext {
 #if POINCARE_COMPLEX
-  ComplexFormat m_complexFormat = ComplexFormat::None;
+  ComplexFormat complexFormat = ComplexFormat::None;
 #else
-  constexpr static ComplexFormat m_complexFormat = ComplexFormat::Real;
+  constexpr static ComplexFormat complexFormat = ComplexFormat::Real;
 #endif
   AngleUnit m_angleUnit = AngleUnit::None;
   Strategy m_strategy = Strategy::Default;

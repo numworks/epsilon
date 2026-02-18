@@ -110,7 +110,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("tan({acos(-x), asin(-x), atan(-x)})",
                 "{-√(-x^2+1)/x,-x/√(-x^2+1),-x}", k_cartesianCtx);
   simplifies_to("cos({acos(x), asin(x), atan(x)})", "{x,√(-x^2+1),1/√(x^2+1)}",
-                {.m_complexFormat = ComplexFormat::Cartesian,
+                {.complexFormat = ComplexFormat::Cartesian,
                  .m_angleUnit = AngleUnit::Degree});
   simplifies_to("cos(acos(3/7))", "3/7");
   simplifies_to("cos(acos(9/7))", "nonreal");
@@ -131,7 +131,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 k_cartesianCtx);
   simplifies_to("acos({cos(x), sin(x), tan(x)})",
                 "{arccos(cos(x)),arccos(sin(x)),arccos(tan(x))}",
-                {.m_complexFormat = ComplexFormat::Cartesian,
+                {.complexFormat = ComplexFormat::Cartesian,
                  .m_angleUnit = AngleUnit::Degree});
   simplifies_to("acos(cos({3π/7, -11π/15,34π/15, 40π/13}))",
                 "{(3×π)/7,(11×π)/15,(4×π)/15,(12×π)/13}");
@@ -173,7 +173,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
 #endif
   // TODO: Improve output with better advanced reduction.
   simplifies_to("(y*π+z/180)*asin(x)", "(π×y+z/180)×arcsin(x)",
-                {.m_complexFormat = ComplexFormat::Cartesian,
+                {.complexFormat = ComplexFormat::Cartesian,
                  .m_angleUnit = AngleUnit::Degree});
   simplifies_to("arg(cos(π/6)+i*sin(π/6))", "π/6");
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", k_cartesianCtx);
@@ -184,11 +184,11 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                  .m_strategy = Strategy::ApproximateToFloat});
 
   // Beautification and dependencies
-  simplifies_to("re(2*acos(cos(x)))",
-                "dep(2×re(arccos(cos(x))),{0×im(arccos(cos(x))),0×im(π×arccos("
-                "cos(x))),realPos(1-abs(cos((180×π×x)/(180×π))))})",
-                {.m_complexFormat = ComplexFormat::Real,
-                 .m_angleUnit = AngleUnit::Degree});
+  simplifies_to(
+      "re(2*acos(cos(x)))",
+      "dep(2×re(arccos(cos(x))),{0×im(arccos(cos(x))),0×im(π×arccos("
+      "cos(x))),realPos(1-abs(cos((180×π×x)/(180×π))))})",
+      {.complexFormat = ComplexFormat::Real, .m_angleUnit = AngleUnit::Degree});
   simplifies_to("tan(20)^2*tan(2)", "tan(2)*tan(20)^2");
 
   // atan(1/x)
@@ -422,7 +422,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   // If target != User, sin/cos is not reduced to tan(x)
   projects_and_reduces_to(
       "atan(sin(2/3)/cos(2/3))", "2/3",
-      {.m_complexFormat = Poincare::ComplexFormat::Real,
+      {.complexFormat = Poincare::ComplexFormat::Real,
        .m_angleUnit = Poincare::AngleUnit::Radian,
        .m_reductionTarget = Poincare::ReductionTarget::SystemForAnalysis});
   simplifies_to("tan(atan(5/2))", "5/2");

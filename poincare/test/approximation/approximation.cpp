@@ -264,11 +264,11 @@ QUIZ_CASE(pcj_approximation_keeping_symbols) {
 QUIZ_CASE(pcj_approximation_context) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext cartesianCtx = {
-      .m_complexFormat = ComplexFormat::Cartesian,
+      .complexFormat = ComplexFormat::Cartesian,
       .m_context = symbolStore,
   };
   ProjectionContext realCtx = {
-      .m_complexFormat = ComplexFormat::Real,
+      .complexFormat = ComplexFormat::Real,
       .m_context = symbolStore,
   };
 

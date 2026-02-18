@@ -68,7 +68,7 @@ void beautifies_to(const char* input, const char* output) {
                              Beautification::DeepBeautify(e, ctx);
                            },
                            {
-                               .m_complexFormat = Cartesian,
+                               .complexFormat = Cartesian,
                                .m_advanceReduce = false,
                            });
 }

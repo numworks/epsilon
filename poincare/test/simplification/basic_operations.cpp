@@ -117,7 +117,7 @@ QUIZ_CASE(pcj_simplification_multiplication) {
   simplifies_to("x^0", "dep(1,{x^0})");
 
   ProjectionContext projCtx = {
-      .m_complexFormat = ComplexFormat::Cartesian,
+      .complexFormat = ComplexFormat::Cartesian,
       .m_reductionTarget = ReductionTarget::SystemForAnalysis};
   projects_and_reduces_to("π^5/π^3", "π^2", projCtx);
   projects_and_reduces_to("π^5*π^3", "π^8", projCtx);

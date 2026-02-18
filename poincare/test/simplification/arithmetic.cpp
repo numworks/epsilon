@@ -34,7 +34,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("factor(-4/17)", "-2^2/17");
   simplifies_to("factor(2π)", "undef");
   simplifies_to("factor(42*3)", "2×3^2×7",
-                {.m_complexFormat = ComplexFormat::Polar});
+                {.complexFormat = ComplexFormat::Polar});
   simplifies_to("105×10^14", "1.05×10^16");
   simplifies_to("factor(105×10^14)", "2^14×3×5^15×7");
   simplifies_to("factor(-10008/6895)", "-(2^3×3^2×139)/(5×7×197)");

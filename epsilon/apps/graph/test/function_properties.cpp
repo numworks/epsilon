@@ -17,7 +17,7 @@ namespace Graph {
 
 static ProjectionContext DefaultProjectionContextForAnalysis() {
   ProjectionContext projCtx{
-      .m_complexFormat = ComplexFormat::Cartesian,
+      .complexFormat = ComplexFormat::Cartesian,
       .m_angleUnit = AngleUnit::Radian,
       .m_unitFormat = Preferences::UnitFormat::Metric,
       .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,

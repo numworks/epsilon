@@ -183,7 +183,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   }
 
   SystemExpression reduced = formula.cloneAndReduce(ProjectionContext{
-      .m_complexFormat =
+      .complexFormat =
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .m_reductionTarget = ReductionTarget::SystemForApproximation,

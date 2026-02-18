@@ -60,7 +60,7 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
           exactExpression, UserExpression::Builder(approximation),
           numberOfSignificantDigits,
           ProjectionContext{
-              .m_complexFormat = approximationParameters.complexFormat,
+              .complexFormat = approximationParameters.complexFormat,
               .m_angleUnit = approximationParameters.angleUnit,
           })) {
     constexpr size_t k_bufferExactLength = 15;

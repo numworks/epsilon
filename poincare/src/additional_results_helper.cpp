@@ -92,7 +92,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
                                         .projectLocalVariables = true,
                                         .optimize = true,
                                         .angleUnit = ctx.m_angleUnit,
-                                        .complexFormat = ctx.m_complexFormat,
+                                        .complexFormat = ctx.complexFormat,
                                         .symbolContext = ctx.m_context}) < 0;
       sine->removeTree();
       if (removePeriod) {
@@ -106,7 +106,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
         Approximation::Parameters{.projectLocalVariables = true,
                                   .optimize = true,
                                   .angleUnit = ctx.m_angleUnit,
-                                  .complexFormat = ctx.m_complexFormat,
+                                  .complexFormat = ctx.complexFormat,
                                   .symbolContext = ctx.m_context}));
     Beautification::DeepBeautify(approximateAngleTree, ctx);
     exactAngle =
@@ -129,7 +129,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
       Approximation::Parameters{.projectLocalVariables = true,
                                 .optimize = true,
                                 .angleUnit = ctx.m_angleUnit,
-                                .complexFormat = ctx.m_complexFormat,
+                                .complexFormat = ctx.complexFormat,
                                 .symbolContext = ctx.m_context});
   if (approximateAngleTree) {
     approximateAngleTree->removeTree();
@@ -197,7 +197,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   ComplexFormat complexFormat = calculationPreferences.complexFormat;
   AngleUnit angleUnit = calculationPreferences.angleUnit;
   ProjectionContext projCtx = {
-      .m_complexFormat = complexFormat,
+      .complexFormat = complexFormat,
       .m_angleUnit = angleUnit,
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = symbolContext,
@@ -276,7 +276,7 @@ bool AdditionalResultsHelper::HasInverseTrigo(
      * additional result on complex inverse trigo */
     Tree* output = approximateOutput.tree()->cloneTree();
     Internal::Simplification::ToSystem(
-        output, ProjectionContext{.m_complexFormat = ComplexFormat::Cartesian});
+        output, ProjectionContext{.complexFormat = ComplexFormat::Cartesian});
     result = GetComplexProperties(output).isReal();
     output->removeTree();
   }
@@ -569,7 +569,7 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
-  ProjectionContext ctx = {.m_complexFormat = ComplexFormat::Cartesian,
+  ProjectionContext ctx = {.complexFormat = ComplexFormat::Cartesian,
                            .m_angleUnit = calculationPreferences.angleUnit,
                            .m_strategy = Strategy::ApproximateToFloat,
                            .m_symbolic = SymbolicComputation::ReplaceAllSymbols,

@@ -29,13 +29,13 @@ void VectorListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  ProjectionContext ctx = {.m_complexFormat = complexFormat(),
+  ProjectionContext ctx = {.complexFormat = complexFormat(),
                            .m_angleUnit = angleUnit(),
                            .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .m_context = symbolContext};
-  assert(exactOutput.preferredComplexFormat(ctx.m_complexFormat, ctx.m_context,
+  assert(exactOutput.preferredComplexFormat(ctx.complexFormat, ctx.m_context,
                                             ctx.m_symbolic) ==
-         ctx.m_complexFormat);
+         ctx.complexFormat);
 
   setShowIllustration(false);
   size_t index = 0;
@@ -63,7 +63,7 @@ void VectorListController::computeAdditionalResults(
                                            k_symbolicComputation));
   normalized = normalized.cloneAndSimplify(
       ProjectionContext{
-          .m_complexFormat = complexFormat(),
+          .complexFormat = complexFormat(),
           .m_angleUnit = angleUnit(),
           .m_reductionTarget = Poincare::ReductionTarget::User,
           .m_symbolic = k_symbolicComputation,

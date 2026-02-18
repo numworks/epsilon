@@ -49,7 +49,7 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
   static_cast<const Tree*>(e)->cloneTree();
   SharedTreeStack->pushFloat(-y);
   Internal::Simplification::ToSystem(
-      diff, ProjectionContext{.m_complexFormat = ComplexFormat::Real,
+      diff, ProjectionContext{.complexFormat = ComplexFormat::Real,
                               .m_angleUnit = angleUnit()});
   Approximation::PrepareFunctionForApproximation(diff, "x", true);
   // TODO: use y+evaluate() instead of yTree+e in nextIntersection

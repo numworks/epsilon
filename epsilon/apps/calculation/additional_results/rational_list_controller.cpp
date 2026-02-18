@@ -24,7 +24,7 @@ void RationalListController::computeAdditionalResults(
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
   UserExpression e = exactOutput;
   assert(!e.isUninitialized());
-  ProjectionContext ctx = {.m_complexFormat = complexFormat(),
+  ProjectionContext ctx = {.complexFormat = complexFormat(),
                            .m_angleUnit = angleUnit(),
                            .m_advanceReduce = false};
   SystemExpression eReduced = e.cloneAndReduce(ctx);

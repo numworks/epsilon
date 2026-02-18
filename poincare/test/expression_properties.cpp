@@ -287,7 +287,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
     Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric,
     SymbolicComputation symbolicComputation =
         SymbolicComputation::ReplaceDefinedSymbols) {
-  ProjectionContext projContext{.m_complexFormat = complexFormat,
+  ProjectionContext projContext{.complexFormat = complexFormat,
                                 .m_angleUnit = angleUnit,
                                 .m_symbolic = symbolicComputation,
                                 .m_context = symbolContext};

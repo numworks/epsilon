@@ -390,7 +390,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     e.cloneAndBeautifyAndApproximate(
         &result, &approximation,
         Poincare::ProjectionContext{
-            .m_complexFormat =
+            .complexFormat =
                 GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
             .m_angleUnit =
                 GlobalPreferences::SharedGlobalPreferences()->angleUnit(),

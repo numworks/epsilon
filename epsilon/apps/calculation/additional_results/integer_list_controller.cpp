@@ -46,7 +46,7 @@ void IntegerListController::computeAdditionalResults(
   bool reductionFailure = false;
   factor = factor.cloneAndSimplify(
       ProjectionContext{
-          .m_complexFormat = complexFormat(),
+          .complexFormat = complexFormat(),
           .m_angleUnit = angleUnit(),
           .m_reductionTarget = Poincare::ReductionTarget::User,
           .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,

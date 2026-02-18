@@ -36,29 +36,29 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
     Poincare::Preferences::PrintFloatMode::Engineering;
 
 // Default context is realCtx
-constexpr Poincare::ProjectionContext k_realCtx = {.m_complexFormat = Real,
+constexpr Poincare::ProjectionContext k_realCtx = {.complexFormat = Real,
                                                    .m_angleUnit = Radian};
 
 constexpr Poincare::ProjectionContext k_cartesianCtx = {
-    .m_complexFormat = Cartesian, .m_angleUnit = Radian};
-constexpr Poincare::ProjectionContext k_polarCtx = {.m_complexFormat = Polar,
+    .complexFormat = Cartesian, .m_angleUnit = Radian};
+constexpr Poincare::ProjectionContext k_polarCtx = {.complexFormat = Polar,
                                                     .m_angleUnit = Radian};
 
-constexpr Poincare::ProjectionContext k_degreeCtx = {.m_complexFormat = Real,
+constexpr Poincare::ProjectionContext k_degreeCtx = {.complexFormat = Real,
                                                      .m_angleUnit = Degree};
-constexpr Poincare::ProjectionContext k_gradianCtx = {.m_complexFormat = Real,
+constexpr Poincare::ProjectionContext k_gradianCtx = {.complexFormat = Real,
                                                       .m_angleUnit = Gradian};
 
 constexpr Poincare::ProjectionContext k_degreeCartesianCtx = {
-    .m_complexFormat = Cartesian, .m_angleUnit = Degree};
+    .complexFormat = Cartesian, .m_angleUnit = Degree};
 constexpr Poincare::ProjectionContext k_gradianCartesianCtx = {
-    .m_complexFormat = Cartesian, .m_angleUnit = Gradian};
+    .complexFormat = Cartesian, .m_angleUnit = Gradian};
 constexpr Poincare::ProjectionContext k_degreePolarCtx = {
-    .m_complexFormat = Polar, .m_angleUnit = Degree};
+    .complexFormat = Polar, .m_angleUnit = Degree};
 constexpr Poincare::ProjectionContext k_gradianPolarCtx = {
-    .m_complexFormat = Polar, .m_angleUnit = Gradian};
+    .complexFormat = Polar, .m_angleUnit = Gradian};
 constexpr Poincare::ProjectionContext k_keepAllSymbolsCtx = {
-    .m_complexFormat = Real,
+    .complexFormat = Real,
     .m_angleUnit = Radian,
     .m_symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
 };
@@ -256,7 +256,7 @@ inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
   Poincare::Internal::Tree* e = parse(function);
   Poincare::Internal::Simplification::ToSystem(e, ctx);
   Poincare::Internal::Approximation::PrepareFunctionForApproximation(
-      e, k_symbol, ctx.m_complexFormat == Real);
+      e, k_symbol, ctx.complexFormat == Real);
   return e;
 }
 

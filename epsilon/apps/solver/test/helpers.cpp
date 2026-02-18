@@ -152,7 +152,7 @@ static void compareSolutions(SystemOfEquations* system,
      * creating an expression from a layout. */
 
     ProjectionContext projCtx{
-        .m_complexFormat = ComplexFormat::Cartesian,
+        .complexFormat = ComplexFormat::Cartesian,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = tempContext,
         .m_advanceReduce = false};
@@ -175,7 +175,7 @@ static void compareSolutions(SystemOfEquations* system,
     /* TODO: no need to recreate a projectionContext when const and non const
      * members of ProjectionContext are split (parameters vs metadata) */
     ProjectionContext projCtx2 = {
-        .m_complexFormat = ComplexFormat::Cartesian,
+        .complexFormat = ComplexFormat::Cartesian,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = tempContext,
         .m_advanceReduce = false};

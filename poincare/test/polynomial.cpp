@@ -105,7 +105,7 @@ void assert_polynomial_degree_is(
 QUIZ_CASE(pcj_polynomial_degree) {
   PoincareTest::SymbolStore symbolStore;
   Poincare::ProjectionContext projCtx = {
-      .m_complexFormat = Cartesian,
+      .complexFormat = Cartesian,
       .m_angleUnit = Radian,
       .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = symbolStore,
@@ -147,7 +147,7 @@ QUIZ_CASE(pcj_polynomial_degree) {
   assert_polynomial_degree_is(projCtx, "f(x)", 1);
   symbolStore.reset();
 
-  projCtx.m_complexFormat = Real;
+  projCtx.complexFormat = Real;
   assert_polynomial_degree_is(projCtx, "√(-1)×x", 0);
   assert_polynomial_degree_is(projCtx, "√(x)", -1);
 }

@@ -158,12 +158,12 @@ static PreprocessingResult PreprocessEquationList(
   /* Step 2. Update complex format from equationList
    * NOTE: This must be done after deciding the symbolic computation mode */
 #if POINCARE_COMPLEX
-  projectionContext->m_complexFormat = Projection::PreferredComplexFormat(
-      equationList, projectionContext->m_complexFormat,
+  projectionContext->complexFormat = Projection::PreferredComplexFormat(
+      equationList, projectionContext->complexFormat,
       projectionContext->m_symbolic, projectionContext->m_context);
 #endif
 
-  equationMetadata.complexFormat = projectionContext->m_complexFormat;
+  equationMetadata.complexFormat = projectionContext->complexFormat;
 
   // Step 3. Clone and simplify the equations
 
@@ -781,7 +781,7 @@ SolverResult ExactSolve(const Tree* equationList,
   Tree* reducedEquationList = preprocessingResult.reducedEquationList;
   EquationMetadata equationMetadata = preprocessingResult.equationMetadata;
 #if POINCARE_COMPLEX
-  projectionContext.m_complexFormat =
+  projectionContext.complexFormat =
       preprocessingResult.equationMetadata.complexFormat;
 #endif
 
@@ -814,7 +814,7 @@ SolverResult ExactSolve(const Tree* equationList,
        * projected with a "Real" Complex format */
       Tree* solutionList = result.exactSolutionList;
       assert(solutionList->isList());
-      if (projectionContext.m_complexFormat == ComplexFormat::Real) {
+      if (projectionContext.complexFormat == ComplexFormat::Real) {
         for (int i = solutionList->numberOfChildren() - 1; i >= 0; i--) {
           if (!PropertiesOfTreeOrApproximation(solutionList->child(i))
                    .isReal()) {
@@ -851,7 +851,7 @@ SolverResult ExactSolve(const Tree* equationList,
             .prepare = true,
             .optimize = true,
             .angleUnit = projectionContext.m_angleUnit,
-            .complexFormat = projectionContext.m_complexFormat,
+            .complexFormat = projectionContext.complexFormat,
             .symbolContext = projectionContext.m_context});
   }
 
@@ -866,7 +866,7 @@ SolverResult ExactSolve(const Tree* equationList,
   if (result.approximateSolutionList) {
     // Advanced reduction is only needed to beautify in polar format
     projectionContext.m_advanceReduce =
-        projectionContext.m_complexFormat == ComplexFormat::Polar;
+        projectionContext.complexFormat == ComplexFormat::Polar;
     Simplification::BeautifyReduced(result.approximateSolutionList,
                                     projectionContext,
                                     preprocessingResult.dimension);

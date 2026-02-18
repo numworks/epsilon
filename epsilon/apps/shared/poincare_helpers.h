@@ -66,7 +66,7 @@ inline size_t ConvertFloatToTextWithDisplayMode(
 inline Poincare::ProjectionContext ProjectionContextForPreferences(
     const Poincare::UserExpression e) {
   return Poincare::ProjectionContext{
-      .m_complexFormat = e.preferredComplexFormat(
+      .complexFormat = e.preferredComplexFormat(
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
           GlobalContextAccessor::Context(),
           Poincare::SymbolicComputation::ReplaceDefinedSymbols),

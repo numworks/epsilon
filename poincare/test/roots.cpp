@@ -51,7 +51,7 @@ struct FastSolve {
 
 template <typename SolverPolicy = solver_policies::ExactSolve>
 void assert_roots_are(const char* coefficients, const char* expectedRoots) {
-  Poincare::ProjectionContext projCtx = {.m_complexFormat = Cartesian};
+  Poincare::ProjectionContext projCtx = {.complexFormat = Cartesian};
   process_tree_and_compare(
       coefficients, expectedRoots,
       [](Tree* tree, Poincare::ProjectionContext projCtx) {

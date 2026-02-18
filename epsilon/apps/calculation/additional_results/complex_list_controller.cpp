@@ -23,7 +23,7 @@ void ComplexListController::computeAdditionalResults(
   assert(AdditionalResultsType::HasComplex(
       approximateOutput, m_calculationPreferences, App::app()->localContext()));
   assert(complexFormat() != ComplexFormat::Real);
-  ProjectionContext ctx = {.m_complexFormat = ComplexFormat::Cartesian,
+  ProjectionContext ctx = {.complexFormat = ComplexFormat::Cartesian,
                            .m_angleUnit = angleUnit(),
                            .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .m_context = App::app()->localContext()};
@@ -31,9 +31,9 @@ void ComplexListController::computeAdditionalResults(
   // Fill Calculation Store
   constexpr KTree k_symbol = "z"_e;
   size_t index = 0;
-  ctx.m_complexFormat = complexFormToDisplay();
+  ctx.complexFormat = complexFormToDisplay();
   setLineAtIndex(index++, UserExpression::Builder(k_symbol), exactOutput, &ctx);
-  ctx.m_complexFormat = ComplexFormat::Cartesian;
+  ctx.complexFormat = ComplexFormat::Cartesian;
   setLineAtIndex(index++, UserExpression::Builder(KAbs(k_symbol)),
                  UserExpression::Create(KAbs(KA), {.KA = exactOutput}), &ctx);
   setLineAtIndex(index++, UserExpression::Builder(KArg(k_symbol)),
@@ -48,7 +48,7 @@ void ComplexListController::computeAdditionalResults(
   double imagPart;
   bool hasComplexApprox =
       approximateOutput.hasDefinedComplexApproximation<double>(
-          ctx.m_angleUnit, ctx.m_complexFormat, App::app()->localContext(),
+          ctx.m_angleUnit, ctx.complexFormat, App::app()->localContext(),
           &realPart, &imagPart);
 
   assert(hasComplexApprox);

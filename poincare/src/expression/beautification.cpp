@@ -257,9 +257,9 @@ bool DeepBeautify(Tree* e, const ProjectionContext& projectionContext,
       projectionContext);
 
   PatternMatching::Context ctx;
-  if ((projectionContext.m_complexFormat == ComplexFormat::Polar &&
+  if ((projectionContext.complexFormat == ComplexFormat::Polar &&
        PatternMatching::Match(e, KMult(KA, KExp(KMult(KB, i_e))), &ctx)) ||
-      (projectionContext.m_complexFormat == ComplexFormat::Cartesian &&
+      (projectionContext.complexFormat == ComplexFormat::Cartesian &&
        PatternMatching::Match(e, KAdd(KA, KMult(KB, i_e)), &ctx))) {
     changed =
         ApplyBeautificationSteps(e->child(0), projectionContext) || changed;
@@ -564,7 +564,7 @@ bool ShallowBeautify(Tree* e, void* context) {
 
 bool ApplyComplexFormat(Tree* e, Dimension dim,
                         const ProjectionContext& projectionContext) {
-  ComplexFormat format = projectionContext.m_complexFormat;
+  ComplexFormat format = projectionContext.complexFormat;
   if (format == ComplexFormat::None) {
     // None complex format is tolerated in beautification
     return false;
@@ -588,7 +588,7 @@ bool ApplyComplexFormat(Tree* e, Dimension dim,
 
 bool ApplyComplexFormatCartesianOrPolar(
     Tree* e, Dimension dim, const ProjectionContext& projectionContext) {
-  ComplexFormat format = projectionContext.m_complexFormat;
+  ComplexFormat format = projectionContext.complexFormat;
   assert(format == ComplexFormat::Cartesian || format == ComplexFormat::Polar);
   // Apply element-wise on explicit lists, matrices & points.
   if (e->isMatrix() || e->isPoint() || (dim.isScalar() && e->isList())) {

@@ -76,7 +76,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
           .cloneAndReplaceSymbolWithUnknown(sequenceSymbol);
 
   Poincare::ProjectionContext projCtx = {
-      .m_complexFormat =
+      .complexFormat =
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,

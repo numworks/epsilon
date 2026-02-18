@@ -32,7 +32,7 @@ bool check_solutions(
         result.equationMetadata.overrideDefinedVariables
             ? Poincare::SymbolicComputation::KeepAllSymbols
             : Poincare::SymbolicComputation::ReplaceDefinedSymbols;
-    projectionContext.m_complexFormat = result.equationMetadata.complexFormat;
+    projectionContext.complexFormat = result.equationMetadata.complexFormat;
     const Tree* solution = solutions->nextNode();
     for (const char* output : outputs) {
       Tree* expectedSolution = parse(output, Poincare::EmptySymbolContext{},
@@ -55,7 +55,7 @@ bool check_solutions(
 QUIZ_CASE(pcj_equation_solver) {
   PoincareTest::SymbolStore symbolStore;
   Poincare::ProjectionContext projCtx = {
-      .m_complexFormat = Poincare::ComplexFormat::Real,
+      .complexFormat = Poincare::ComplexFormat::Real,
       .m_angleUnit = Poincare::AngleUnit::Radian,
       .m_context = symbolStore};
 
@@ -110,7 +110,7 @@ QUIZ_CASE(pcj_equation_solver) {
                   EquationSolver::Error::RequireApproximateSolution);
 
   // Complex format detection
-  projCtx.m_complexFormat = Real;
+  projCtx.complexFormat = Real;
   PoincareTest::store("i→a", symbolStore);
   check_solutions({"x-a", "x-a+y-root(-1,3)"}, {"i", "1/2+√(3)/2×i"}, projCtx);
   check_solutions({"x-a", "x-a+y-root(-1,3)", "a-1"}, {"1", "1", "-1"},
@@ -128,7 +128,7 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"x^2*(x-1)/x"}, {"1", "1"}, projCtx);
   check_solutions({"x/x-1+x"}, {}, projCtx);
 
-  projCtx.m_complexFormat = Cartesian;
+  projCtx.complexFormat = Cartesian;
   check_solutions({"x^2+1"}, {"-i", "i", "-4"}, projCtx,
                   EquationSolver::Error::NoError);
 }

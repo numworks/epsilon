@@ -50,7 +50,7 @@ bool ExpressionParameterController::textFieldDidFinishEditing(
       isInitialized
           ? ExpressionOrFloat::Builder(
                 parsedExpression.cloneAndTrySimplify({
-                    .m_complexFormat =
+                    .complexFormat =
                         GlobalPreferences::SharedGlobalPreferences()
                             ->complexFormat(),
                     .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()

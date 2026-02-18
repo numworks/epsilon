@@ -168,7 +168,7 @@ ComplexFormat Projection::PreferredComplexFormat(
 
 struct ShallowSystemProjectArgs {
   AngleUnit m_angleUnit;
-  ComplexFormat m_complexFormat;
+  ComplexFormat complexFormat;
   bool m_hasNonKelvinTemperatureUnit;
 };
 
@@ -178,7 +178,7 @@ bool Projection::DeepSystemProject(Tree* e,
   bool changed = false;
   ShallowSystemProjectArgs args{
       .m_angleUnit = projectionContext.m_angleUnit,
-      .m_complexFormat = projectionContext.m_complexFormat,
+      .complexFormat = projectionContext.complexFormat,
       .m_hasNonKelvinTemperatureUnit = dimension.hasNonKelvinTemperatureUnit(),
   };
   if (e->isEuclideanDivision()) {
@@ -279,7 +279,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   } else if (e->isOfType({Type::ASin, Type::ACos, Type::ATan})) {
     /* Project inverse trigonometric functions here to avoid infinite projection
      * to radian loop. */
-    if (args->m_complexFormat == ComplexFormat::Real && !e->isATan()) {
+    if (args->complexFormat == ComplexFormat::Real && !e->isATan()) {
       // Only real functions asin and acos have a domain of definition
       // acos(A) -> atrig(A, 0) if -1 <= A <= 1
       PatternMatching::MatchReplace(
@@ -308,7 +308,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   }
 
   // Under Real complex format, use node alternative to properly handle nonreal.
-  bool realMode = args->m_complexFormat == ComplexFormat::Real;
+  bool realMode = args->complexFormat == ComplexFormat::Real;
   if (e->isPow()) {
     if (PatternMatching::MatchReplace(e, KPow(e_e, KA), KExp(KA))) {
       changed = true;

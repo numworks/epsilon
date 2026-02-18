@@ -510,7 +510,7 @@ void assert_properties(const char* input, ComplexProperties expectedProperties,
                        Strategy strategy = Strategy::Default) {
   Tree* expression = parse(input);
   Simplification::ToSystem(expression,
-                           ProjectionContext{.m_complexFormat = complexFormat,
+                           ProjectionContext{.complexFormat = complexFormat,
                                              .m_angleUnit = AngleUnit::Radian,
                                              .m_strategy = strategy,
                                              .m_advanceReduce = false});
@@ -764,7 +764,7 @@ void assert_reduced_is_positive(
   Tree* e = parse(input, symbolContext);
   Simplification::ProjectAndReduce(
       e, ProjectionContext{
-             .m_complexFormat = complexFormat,
+             .complexFormat = complexFormat,
              .m_angleUnit = angleUnit,
              .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
              .m_context = symbolContext,
@@ -868,7 +868,7 @@ QUIZ_CASE(pcj_sign_set) {
 void assert_projected_is_real_or_not(const char* input, bool isReal = true) {
   Tree* e = parse(input);
   ProjectionContext context{
-      .m_complexFormat = Projection::PreferredComplexFormat(
+      .complexFormat = Projection::PreferredComplexFormat(
           e, ComplexFormat::Real,
           SymbolicComputation::ReplaceAllSymbolsWithUndefined,
           k_emptySymbolContext),

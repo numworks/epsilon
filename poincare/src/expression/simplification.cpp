@@ -200,7 +200,7 @@ bool IsSystem(const Tree* e) {
   Tree* c = e->cloneTree();
 #if POINCARE_COMPLEX
   // Use ComplexFormat::Cartesian to avoid having PowReal interfering
-  ProjectionContext ctx = {.m_complexFormat = ComplexFormat::Cartesian};
+  ProjectionContext ctx = {.complexFormat = ComplexFormat::Cartesian};
 #else
   /* Pow is used both in UserExpressions to represent all the types of powers
    * and in system for some specific powers (simple integral powers for
@@ -283,7 +283,7 @@ bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
               .onlyReplaceNumerical = true,
               .optimize = true,
               .angleUnit = projectionContext.m_angleUnit,
-              .complexFormat = projectionContext.m_complexFormat,
+              .complexFormat = projectionContext.complexFormat,
               .symbolContext = projectionContext.m_context});
       if (changed && insideReduction) {
         // NAries could be sorted again, some children may be merged.

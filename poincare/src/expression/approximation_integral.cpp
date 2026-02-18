@@ -27,10 +27,6 @@ bool DetailedResultIsValid(DetailedResult<T> result) {
                            relativeErrorThresholdForValidity);
 }
 
-}  // namespace Poincare::Internal::Approximation::Private
-
-namespace Poincare::Internal::Approximation {
-
 template <typename T>
 T Approximator::approximateIntegral(const Tree* integral) {
   /* TODO: Reduction is mapped on list, but not approximation.
@@ -440,4 +436,4 @@ Private::DetailedResult<T> Approximator::iterateAdaptiveQuadrature(
 template float Approximator::approximateIntegral(const Tree* integral);
 template double Approximator::approximateIntegral(const Tree* integral);
 
-}  // namespace Poincare::Internal::Approximation
+}  // namespace Poincare::Internal::Approximation::Private

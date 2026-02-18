@@ -598,15 +598,15 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   bool isSquared = Internal::Matrix::NumberOfRows(matrix) ==
                    Internal::Matrix::NumberOfColumns(matrix);
 
-  /* TODO: avoid the need to create an Approximator instance here. RowCanonize
-   * should be independent from Approximator. Approximator should be able to
-   * call RowCanonize in a private method (when it's used in the "To"
+  /* TODO: avoid the need to create a Private::Approximator instance here.
+   * RowCanonize should be independent from Approximator. Approximator should be
+   * able to call RowCanonize in a private method (when it's used in the "To"
    * approximation pipeline) */
-  Approximation::Approximator defaultMatrixApproximator =
-      Approximation::Approximator(Approximation::FloatPrecision::Double,
-                                  Approximation::Parameters{},
-                                  Approximation::Private::Context{});
-  Approximation::Approximator* approximator =
+  Approximation::Private::Approximator defaultMatrixApproximator =
+      Approximation::Private::Approximator(
+          Approximation::FloatPrecision::Double, Approximation::Parameters{},
+          Approximation::Private::Context{});
+  Approximation::Private::Approximator* approximator =
       isApproximate ? &defaultMatrixApproximator : nullptr;
 
   // 1. Matrix determinant if square matrix

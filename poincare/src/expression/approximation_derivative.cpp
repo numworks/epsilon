@@ -3,7 +3,7 @@
 
 #include "approximation.h"
 
-namespace Poincare::Internal::Approximation {
+namespace Poincare::Internal::Approximation::Private {
 
 // TODO: Change coefficients?
 constexpr static double k_maxErrorRateOnApproximation = 0.001;
@@ -133,4 +133,4 @@ T Approximator::approximateDerivative(const Tree* child, T at, int order) {
 template float Approximator::approximateDerivative(const Tree*, float, int);
 template double Approximator::approximateDerivative(const Tree*, double, int);
 
-}  // namespace Poincare::Internal::Approximation
+}  // namespace Poincare::Internal::Approximation::Private

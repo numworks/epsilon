@@ -216,7 +216,7 @@ class Context {
 
   Random::Context randomContext{false};
   // LocalEvaluator is used to store the values of local variables
-  Private::LocalEvaluator localEvaluator{};
+  LocalEvaluator localEvaluator{};
   // Tells if we are approximating to get the nth-element of a list
   int16_t listElement = k_unspecifiedListElement;
   // Tells if we are approximating to get the nth-element of a point
@@ -313,8 +313,6 @@ struct Substitution {
   T originA;
   T originB;
 };
-
-}  // namespace Private
 
 class Approximator {
  public:
@@ -512,6 +510,8 @@ class Approximator {
   const Parameters m_parameters;
   Private::Context m_context;
 };
+
+}  // namespace Private
 
 }  // namespace Approximation
 

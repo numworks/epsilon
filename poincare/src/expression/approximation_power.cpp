@@ -124,10 +124,6 @@ std::complex<T> ComputeNotPrincipalRealRootOfRationalPow(
   return NAN;
 }
 
-}  // namespace Poincare::Internal::Approximation::Private
-
-namespace Poincare::Internal::Approximation {
-
 template <typename T>
 std::complex<T> Approximator::approximatePower(const Tree* power,
                                                ComplexFormat complexFormat) {
@@ -207,4 +203,4 @@ template std::complex<float> Private::ComputeNotPrincipalRealRootOfRationalPow(
 template std::complex<double> Private::ComputeNotPrincipalRealRootOfRationalPow(
     const std::complex<double>, double, double);
 
-}  // namespace Poincare::Internal::Approximation
+}  // namespace Poincare::Internal::Approximation::Private

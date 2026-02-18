@@ -1,7 +1,7 @@
 #include "approximation.h"
 #include "matrix.h"
 
-namespace Poincare::Internal::Approximation {
+namespace Poincare::Internal::Approximation::Private {
 
 template <typename T>
 std::complex<T> Approximator::approximateTrace(const Tree* e) {
@@ -32,4 +32,4 @@ template std::complex<float> Approximator::approximateTrace<float>(
 template std::complex<double> Approximator::approximateTrace<double>(
     const Tree* matrix);
 
-}  // namespace Poincare::Internal::Approximation
+}  // namespace Poincare::Internal::Approximation::Private

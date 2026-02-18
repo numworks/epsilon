@@ -50,18 +50,20 @@ struct Matrix {
   /* The matrix operation methods (Addition, Multiplication etc.) can be called
    * either during an exact reduction or during an approximation. If called
    * during an exact reduction, the approximator pointer must be nullptr. If
-   * called during an approximation, an Approximator pointer must be passed. */
+   * called during an approximation, a Private::Approximator pointer must be
+   * passed. */
   /* TODO: rework these Matrix static methods so that they also can be
    * Approximator methods, instead of injecting an Approximator pointer */
 
-  static Tree* Addition(const Tree* matrix1, const Tree* matrix2,
-                        Approximation::Approximator* approximator = nullptr);
+  static Tree* Addition(
+      const Tree* matrix1, const Tree* matrix2,
+      Approximation::Private::Approximator* approximator = nullptr);
   static Tree* ScalarMultiplication(
       const Tree* scalar, const Tree* matrix,
-      Approximation::Approximator* approximator = nullptr);
+      Approximation::Private::Approximator* approximator = nullptr);
   static Tree* Multiplication(
       const Tree* matrix1, const Tree* matrix2,
-      Approximation::Approximator* approximator = nullptr);
+      Approximation::Private::Approximator* approximator = nullptr);
   static Tree* Transpose(const Tree* matrix);
   /* Return true if the matrix has been successfully canonized, false otherwise.
    * In the latter case, leave determinant uninitialized. A canonized matrix is
@@ -69,19 +71,21 @@ struct Matrix {
    * true, everything will be approximated. A reduced expression is otherwise
    * expected. If [forceCanonization] is false, canonization will be escaped if
    * any term cannot be approximated. */
-  static bool RowCanonize(Tree* matrix, bool reducedForm = true,
-                          Tree** determinant = nullptr,
-                          Approximation::Approximator* approximator = nullptr,
-                          bool forceCanonization = false);
+  static bool RowCanonize(
+      Tree* matrix, bool reducedForm = true, Tree** determinant = nullptr,
+      Approximation::Private::Approximator* approximator = nullptr,
+      bool forceCanonization = false);
   constexpr static int k_failedToCanonizeRank = -1;
   /* Return k_failedToCanonizeRank if the matrix could not be canonized
    * (might contain undefined or invalid values) */
   static int CanonizeAndRank(Tree* matrix, bool forceCanonization = false);
   static int RankOfCanonized(const Tree* matrix);
-  static Tree* Inverse(const Tree* matrix,
-                       Approximation::Approximator* approximator = nullptr);
-  static Tree* Power(const Tree* matrix, int exponent,
-                     Approximation::Approximator* approximator = nullptr);
+  static Tree* Inverse(
+      const Tree* matrix,
+      Approximation::Private::Approximator* approximator = nullptr);
+  static Tree* Power(
+      const Tree* matrix, int exponent,
+      Approximation::Private::Approximator* approximator = nullptr);
   static bool SystematicReduceMatrixOperation(Tree* e);
 
   // REFACTOR: the maximum size of a matrix could be reduced.

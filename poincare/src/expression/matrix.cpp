@@ -110,7 +110,7 @@ Tree* Matrix::Transpose(const Tree* matrix) {
 }
 
 Tree* Matrix::Addition(const Tree* matrix1, const Tree* matrix2,
-                       Approximation::Approximator* approximator) {
+                       Approximation::Private::Approximator* approximator) {
   // should be an assert after dimensional analysis
   assert(NumberOfRows(matrix1) == NumberOfRows(matrix2) &&
          NumberOfColumns(matrix1) == NumberOfColumns(matrix2));
@@ -133,8 +133,9 @@ Tree* Matrix::Addition(const Tree* matrix1, const Tree* matrix2,
   return result;
 }
 
-Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* matrix,
-                                   Approximation::Approximator* approximator) {
+Tree* Matrix::ScalarMultiplication(
+    const Tree* scalar, const Tree* matrix,
+    Approximation::Private::Approximator* approximator) {
   Tree* result = matrix->cloneNode();
   for (const Tree* child : matrix->children()) {
     Tree* mult = SharedTreeStack->pushMult(2);
@@ -149,8 +150,9 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* matrix,
   return result;
 }
 
-Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
-                             Approximation::Approximator* approximator) {
+Tree* Matrix::Multiplication(
+    const Tree* matrix1, const Tree* matrix2,
+    Approximation::Private::Approximator* approximator) {
   assert(NumberOfColumns(matrix1) == NumberOfRows(matrix2));
   uint8_t rows = NumberOfRows(matrix1);
   uint8_t internal = NumberOfColumns(matrix1);
@@ -209,13 +211,13 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
 
 // Approximate matrix child for pivot selection, abs is enough for this use case
 double ApproximateForPivot(const Tree* child,
-                           Approximation::Approximator* approximator) {
+                           Approximation::Private::Approximator* approximator) {
   if (!approximator) {
-    return std::abs(
-        Approximation::Approximator(Approximation::FloatPrecision::Double,
-                                    Approximation::Parameters{},
-                                    Approximation::Private::Context{})
-            .specificTo<std::complex<double>>(child));
+    return std::abs(Approximation::Private::Approximator(
+                        Approximation::FloatPrecision::Double,
+                        Approximation::Parameters{},
+                        Approximation::Private::Context{})
+                        .specificTo<std::complex<double>>(child));
   }
   switch (approximator->floatPrecision()) {
     case Approximation::FloatPrecision::Single:
@@ -228,7 +230,7 @@ double ApproximateForPivot(const Tree* child,
 }
 
 bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
-                         Approximation::Approximator* approximator,
+                         Approximation::Private::Approximator* approximator,
                          bool forceCanonization) {
   // If determinant is given, it must be nullptr.
   assert(!determinant || !*determinant);
@@ -432,7 +434,7 @@ int Matrix::RankOfCanonized(const Tree* matrix) {
 }
 
 Tree* Matrix::Inverse(const Tree* matrix,
-                      Approximation::Approximator* approximator) {
+                      Approximation::Private::Approximator* approximator) {
   assert(NumberOfRows(matrix) == NumberOfColumns(matrix));
   uint8_t dim = NumberOfRows(matrix);
   /* Create the matrix (A|I) with A is the input matrix and I the dim
@@ -482,7 +484,7 @@ Tree* Matrix::Inverse(const Tree* matrix,
 }
 
 Tree* Matrix::Power(const Tree* matrix, int exponent,
-                    Approximation::Approximator* approximator) {
+                    Approximation::Private::Approximator* approximator) {
   assert(NumberOfRows(matrix) == NumberOfColumns(matrix));
   if (exponent < 0 && exponent != INT_MIN) {
     // -INT_MIN is not possible

@@ -127,8 +127,10 @@ static uint32_t RandIntNoRepInRangeOfIndex(uint32_t range, uint32_t seed,
   OMG_UNREACHABLE;
 }
 
-double Approximation::Approximator::privateApproximateRandIntNoRep(
-    const Tree* randIntNoRep, uint8_t seed) {
+namespace Approximation::Private {
+
+double Approximator::privateApproximateRandIntNoRep(const Tree* randIntNoRep,
+                                                    uint8_t seed) {
   assert(randIntNoRep->isRandIntNoRep());
   uint8_t lcgSeedIndex = seed;
   if (lcgSeedIndex <= 0 ||
@@ -160,7 +162,7 @@ double Approximation::Approximator::privateApproximateRandIntNoRep(
 }
 
 template <typename T>
-T Approximation::Approximator::approximateRandom(const Tree* randomTree) {
+T Approximator::approximateRandom(const Tree* randomTree) {
   uint8_t seed = Random::GetSeed(randomTree);
   bool validSeed = seed > 0 && seed <= Random::Context::k_maxNumberOfVariables;
 
@@ -179,7 +181,7 @@ T Approximation::Approximator::approximateRandom(const Tree* randomTree) {
 }
 
 template <typename T>
-T Approximation::Approximator::approximateRandomHelper(const Tree* randomTree) {
+T Approximator::approximateRandomHelper(const Tree* randomTree) {
   if (randomTree->isRandom()) {
     return Poincare::random<T>();
   }
@@ -187,6 +189,8 @@ T Approximation::Approximator::approximateRandomHelper(const Tree* randomTree) {
   return Random::RandomInt<T>(privateToFloat<T>(randomTree->child(0)),
                               privateToFloat<T>(randomTree->child(1)));
 }
+
+}  // namespace Approximation::Private
 
 /* We could adapt Poincare::Integer::RandomInt<T>() here instead, but in
  * practice this method is called on approximation only. Children may have
@@ -211,14 +215,14 @@ T Random::RandomInt(T a, T b) {
   return std::floor(rand * range + a);
 }
 
-template float Approximation::Approximator::approximateRandom<float>(
+template float Approximation::Private::Approximator::approximateRandom<float>(
     const Tree*);
-template double Approximation::Approximator::approximateRandom<double>(
+template double Approximation::Private::Approximator::approximateRandom<double>(
     const Tree*);
-template float Approximation::Approximator::approximateRandomHelper<float>(
-    const Tree*);
-template double Approximation::Approximator::approximateRandomHelper<double>(
-    const Tree*);
+template float Approximation::Private::Approximator::approximateRandomHelper<
+    float>(const Tree*);
+template double Approximation::Private::Approximator::approximateRandomHelper<
+    double>(const Tree*);
 template float Random::RandomInt<float>(float, float);
 template double Random::RandomInt<double>(double, double);
 }  // namespace Poincare::Internal

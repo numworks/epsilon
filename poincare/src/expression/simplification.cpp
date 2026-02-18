@@ -152,7 +152,7 @@ bool PrepareForProjection(Tree* e, const ProjectionContext& projectionContext) {
   int maxRandomSeed = Random::SeedRandomNodes(e, previousMaxRandomSeed);
   bool changed = maxRandomSeed > previousMaxRandomSeed;
   // Replace UserFunctions before projecting local variables
-  const SymbolicComputation symbolic = projectionContext.m_symbolic;
+  const SymbolicComputation symbolic = projectionContext.symbolic;
   if (symbolic != SymbolicComputation::KeepAllSymbols &&
       symbolic != SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     if (Projection::DeepReplaceUserSymbol(

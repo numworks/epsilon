@@ -79,7 +79,7 @@ void UnitListController::computeAdditionalResults(
       .complexFormat = complexFormat(),
       .angleUnit = angleUnit(),
       .unitFormat = unitFormat,
-      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+      .symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = symbolContext,
   };
 

@@ -169,7 +169,7 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
                        .unitFormat =
                            GlobalPreferences::SharedGlobalPreferences()
                                ->unitFormat(),
-                       .m_symbolic = symbolicComputation,
+                       .symbolic = symbolicComputation,
                        .m_context = GlobalContextAccessor::Context()})},
           .hasReductionFailure = false};
     }
@@ -181,7 +181,7 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
       .complexFormat = complexFormat,
       .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .unitFormat = GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-      .m_symbolic = symbolicComputation,
+      .symbolic = symbolicComputation,
       .m_context = GlobalContextAccessor::Context()};
 
   OutputExpressions outputs;

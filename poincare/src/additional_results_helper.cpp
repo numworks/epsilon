@@ -199,7 +199,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   ProjectionContext projCtx = {
       .complexFormat = complexFormat,
       .angleUnit = angleUnit,
-      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+      .symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = symbolContext,
   };
 
@@ -572,7 +572,7 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
   ProjectionContext ctx = {.complexFormat = ComplexFormat::Cartesian,
                            .angleUnit = calculationPreferences.angleUnit,
                            .strategy = Strategy::ApproximateToFloat,
-                           .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+                           .symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .m_context = symbolContext,
                            .m_advanceReduce = false};
   Tree* e = approximateOutput.tree()->cloneTree();

@@ -393,7 +393,7 @@ QUIZ_CASE(pcj_simplification_unit_conversion) {
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("2_kg→a", symbolStore);
   ProjectionContext replaceSymbolCtx = {
-      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+      .symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = symbolStore};
   simplifies_to("a→g", "2000×_g", replaceSymbolCtx);
 }
@@ -563,7 +563,7 @@ QUIZ_CASE(pcj_simplification_unit_imperial) {
 
 QUIZ_CASE(pcj_simplification_unit_undef) {
   ProjectionContext replaceSymbolCtx = {
-      .m_symbolic = SymbolicComputation::ReplaceAllSymbols};
+      .symbolic = SymbolicComputation::ReplaceAllSymbols};
 
   // Non homogeneous
   simplifies_to("1_m+1_s", "undef");

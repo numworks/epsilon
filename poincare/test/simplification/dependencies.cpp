@@ -78,7 +78,7 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   ProjectionContext projCtx = {
       .complexFormat = ComplexFormat::Real,
       .angleUnit = AngleUnit::Radian,
-      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+      .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = symbolStore};
 
   // No dependencies

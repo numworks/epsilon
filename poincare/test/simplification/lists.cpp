@@ -23,7 +23,7 @@ QUIZ_CASE(pcj_simplification_list_bubble_up) {
 
 QUIZ_CASE(pcj_simplification_list) {
   Poincare::ProjectionContext replaceSymbolCtx = {
-      .m_symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols};
+      .symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols};
   simplifies_to("{1,2}+3", "{4,5}");
   simplifies_to("{1,2}*{3,4}", "{3,8}");
   simplifies_to("{0,1}=0", "{True,False}");
@@ -129,7 +129,7 @@ QUIZ_CASE(pcj_simplification_list) {
     // Access to an element
     PoincareTest::SymbolStore symbolStore;
     Poincare::ProjectionContext projCtx = {
-        .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
+        .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = symbolStore,
     };
     store("{1,4,9}→l1", symbolStore);
@@ -257,7 +257,7 @@ QUIZ_CASE(pcj_simplification_list) {
     simplifies_to(
         "L{2}", "{6}",
         {
-            .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
+            .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
             .m_context = symbolStore,
         });  // L*{2}
   }

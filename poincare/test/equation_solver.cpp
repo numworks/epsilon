@@ -28,7 +28,7 @@ bool check_solutions(
   if (solutions) {
     quiz_assert(solutions->numberOfChildren() ==
                 static_cast<int>(outputs.size()));
-    projectionContext.m_symbolic =
+    projectionContext.symbolic =
         result.equationMetadata.overrideDefinedVariables
             ? Poincare::SymbolicComputation::KeepAllSymbols
             : Poincare::SymbolicComputation::ReplaceDefinedSymbols;

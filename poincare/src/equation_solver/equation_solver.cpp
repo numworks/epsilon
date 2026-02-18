@@ -150,7 +150,7 @@ static PreprocessingResult PreprocessEquationList(
   assert(equationMetadata.unknownVariables.size() == expectedNumberOfUnknowns);
   userVariables->removeTree();
 
-  projectionContext->m_symbolic =
+  projectionContext->symbolic =
       equationMetadata.overrideDefinedVariables
           ? SymbolicComputation::ReplaceDefinedFunctions
           : SymbolicComputation::ReplaceDefinedSymbols;
@@ -160,7 +160,7 @@ static PreprocessingResult PreprocessEquationList(
 #if POINCARE_COMPLEX
   projectionContext->complexFormat = Projection::PreferredComplexFormat(
       equationList, projectionContext->complexFormat,
-      projectionContext->m_symbolic, projectionContext->m_context);
+      projectionContext->symbolic, projectionContext->m_context);
 #endif
 
   equationMetadata.complexFormat = projectionContext->complexFormat;

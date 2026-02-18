@@ -31,11 +31,10 @@ void VectorListController::computeAdditionalResults(
 
   ProjectionContext ctx = {.complexFormat = complexFormat(),
                            .angleUnit = angleUnit(),
-                           .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+                           .symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .m_context = symbolContext};
   assert(exactOutput.preferredComplexFormat(ctx.complexFormat, ctx.m_context,
-                                            ctx.m_symbolic) ==
-         ctx.complexFormat);
+                                            ctx.symbolic) == ctx.complexFormat);
 
   setShowIllustration(false);
   size_t index = 0;
@@ -66,7 +65,7 @@ void VectorListController::computeAdditionalResults(
           .complexFormat = complexFormat(),
           .angleUnit = angleUnit(),
           .reductionTarget = Poincare::ReductionTarget::User,
-          .m_symbolic = k_symbolicComputation,
+          .symbolic = k_symbolicComputation,
           .m_context = symbolContext,
       },
       &reductionFailure);

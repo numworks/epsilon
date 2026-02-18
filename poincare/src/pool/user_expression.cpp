@@ -249,7 +249,7 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
   }
   ProjectionContext ctx = ProjectionContext{.complexFormat = complexFormat,
                                             .angleUnit = angleUnit,
-                                            .m_symbolic = symbolicComputation,
+                                            .symbolic = symbolicComputation,
                                             .m_context = symbolContext};
   bool reductionFailure;
   exp = exp.cloneAndSimplify(ctx, &reductionFailure);

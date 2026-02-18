@@ -113,7 +113,7 @@ SystemExpression ExpressionModel::expressionReduced(
           .angleUnit =
               GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
           .reductionTarget = ReductionTarget::SystemForApproximation,
-          .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+          .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
           .m_context = GlobalContextAccessor::Context()});
     }
   }

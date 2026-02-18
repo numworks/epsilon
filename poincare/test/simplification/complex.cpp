@@ -8,12 +8,12 @@ QUIZ_CASE(pcj_simplification_complex) {
   ProjectionContext ctx = {
       .complexFormat = ComplexFormat::Cartesian,
       .angleUnit = AngleUnit::Radian,
-      .m_symbolic = SymbolicComputation::KeepAllSymbols,
+      .symbolic = SymbolicComputation::KeepAllSymbols,
   };
   ProjectionContext PolarCtx = {
       .complexFormat = ComplexFormat::Polar,
       .angleUnit = AngleUnit::Radian,
-      .m_symbolic = SymbolicComputation::KeepAllSymbols,
+      .symbolic = SymbolicComputation::KeepAllSymbols,
   };
   simplifies_to("2×i×i", "-2", ctx);
   simplifies_to("1+i×(1+i×(1+i))", "0", ctx);
@@ -162,7 +162,7 @@ QUIZ_CASE(pcj_simplification_complex_format) {
     PoincareTest::SymbolStore symbolStore;
     Poincare::ProjectionContext projCtx = {
         .complexFormat = ComplexFormat::Real,
-        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+        .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = symbolStore};
     store("2+i→a", symbolStore);
     simplifies_to("a", "nonreal", projCtx);
@@ -258,7 +258,7 @@ QUIZ_CASE(pcj_simplification_complex_format) {
     PoincareTest::SymbolStore symbolStore;
     Poincare::ProjectionContext projCtx = {
         .complexFormat = ComplexFormat::Cartesian,
-        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+        .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = symbolStore};
     store("2+i→a", symbolStore);
     simplifies_to("a", "2+i", projCtx);
@@ -313,7 +313,7 @@ QUIZ_CASE(pcj_simplification_complex_format) {
     Poincare::ProjectionContext projCtx = {
         .complexFormat = ComplexFormat::Polar,
         .angleUnit = AngleUnit::Radian,
-        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+        .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = symbolStore};
     // a = 2 + i
     store("2+i→a", symbolStore);

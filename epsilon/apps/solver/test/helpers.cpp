@@ -153,7 +153,7 @@ static void compareSolutions(SystemOfEquations* system,
 
     ProjectionContext projCtx{
         .complexFormat = ComplexFormat::Cartesian,
-        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+        .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = tempContext,
         .m_advanceReduce = false};
     SystemExpression expectedExpression =
@@ -176,7 +176,7 @@ static void compareSolutions(SystemOfEquations* system,
      * members of ProjectionContext are split (parameters vs metadata) */
     ProjectionContext projCtx2 = {
         .complexFormat = ComplexFormat::Cartesian,
-        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+        .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = tempContext,
         .m_advanceReduce = false};
     SystemExpression obtainedExpression =

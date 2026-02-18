@@ -25,7 +25,7 @@ void ComplexListController::computeAdditionalResults(
   assert(complexFormat() != ComplexFormat::Real);
   ProjectionContext ctx = {.complexFormat = ComplexFormat::Cartesian,
                            .angleUnit = angleUnit(),
-                           .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+                           .symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .m_context = App::app()->localContext()};
 
   // Fill Calculation Store

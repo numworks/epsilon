@@ -60,7 +60,7 @@ constexpr Poincare::ProjectionContext k_gradianPolarCtx = {
 constexpr Poincare::ProjectionContext k_keepAllSymbolsCtx = {
     .complexFormat = Real,
     .angleUnit = Radian,
-    .m_symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
+    .symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
 };
 
 typedef void (*ProcessTree)(Poincare::Internal::Tree*,

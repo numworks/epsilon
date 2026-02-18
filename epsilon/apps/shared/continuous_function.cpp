@@ -582,7 +582,7 @@ SystemExpression getSystemExpressionForApproximation(
           .complexFormat = complexFormat,
           .angleUnit = angleUnit,
           .reductionTarget = ReductionTarget::SystemForApproximation,
-          .m_symbolic = SymbolicComputation::KeepAllSymbols});
+          .symbolic = SymbolicComputation::KeepAllSymbols});
   assert(!resultForApproximation.isUninitialized() &&
          !resultForApproximation.isFailedSimplification());
   if (resultForApproximation.numberOfDescendants(true) <
@@ -749,7 +749,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
         ProjectionContext{.complexFormat = complexFormat,
                           .angleUnit = angleUnit,
                           .reductionTarget = ReductionTarget::SystemForAnalysis,
-                          .m_symbolic = SymbolicComputation::KeepAllSymbols,
+                          .symbolic = SymbolicComputation::KeepAllSymbols,
                           .m_context = GlobalContextAccessor::Context()});
     assert(!result.isUninitialized());
   } else {

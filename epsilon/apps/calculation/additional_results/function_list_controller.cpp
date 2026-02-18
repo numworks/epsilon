@@ -35,7 +35,7 @@ void FunctionListController::computeAdditionalResults(
               .complexFormat = complexFormat(),
               .angleUnit = angleUnit(),
               .reductionTarget = ReductionTarget::User,
-              .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+              .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
               .m_context = App::app()->localContext()})
           .getPreparedFunction(k_symbolName, true);
 

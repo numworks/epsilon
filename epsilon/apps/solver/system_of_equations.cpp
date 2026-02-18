@@ -203,7 +203,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
         .unitFormat =
             GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
         // Any remaining symbol at this point should be an unknown parameter.
-        .m_symbolic = SymbolicComputation::KeepAllSymbols,
+        .symbolic = SymbolicComputation::KeepAllSymbols,
         .m_context = symbolContext,
         .m_advanceReduce = false};
     bool failure = false;

@@ -184,7 +184,7 @@ void assert_projected_is_infinity(const char* input,
 QUIZ_CASE(pcj_properties_is_infinity) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
-      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+      .symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = symbolStore,
   };
   assert_projected_is_infinity("3.4+inf", projCtx);
@@ -215,7 +215,7 @@ QUIZ_CASE(pcj_properties_get_variables) {
    * - m, g, h, l, s, t, A which are units and can be parsed without '_' now. */
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
-      .m_symbolic = SymbolicComputation::ReplaceDefinedFunctions,
+      .symbolic = SymbolicComputation::ReplaceDefinedFunctions,
       .m_context = symbolStore,
   };
 
@@ -289,7 +289,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
         SymbolicComputation::ReplaceDefinedSymbols) {
   ProjectionContext projContext{.complexFormat = complexFormat,
                                 .angleUnit = angleUnit,
-                                .m_symbolic = symbolicComputation,
+                                .symbolic = symbolicComputation,
                                 .m_context = symbolContext};
   UserExpression e = UserExpression::Builder(parse(input, symbolContext));
   SystemExpression s = e.cloneAndReduce(projContext);

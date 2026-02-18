@@ -763,12 +763,12 @@ void assert_reduced_is_positive(
     AngleUnit angleUnit = AngleUnit::Radian) {
   Tree* e = parse(input, symbolContext);
   Simplification::ProjectAndReduce(
-      e, ProjectionContext{
-             .complexFormat = complexFormat,
-             .angleUnit = angleUnit,
-             .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-             .m_context = symbolContext,
-             .m_advanceReduce = false});
+      e,
+      ProjectionContext{.complexFormat = complexFormat,
+                        .angleUnit = angleUnit,
+                        .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+                        .m_context = symbolContext,
+                        .m_advanceReduce = false});
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(
       OMG::TrooleanAnd(properties.imagSign().trooleanIsNull(),

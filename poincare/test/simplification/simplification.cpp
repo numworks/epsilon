@@ -511,7 +511,7 @@ QUIZ_CASE(pcj_simplification_piecewise) {
   simplifies_to("piecewise(3,1>0,undef)", "3");
   simplifies_to("piecewise(-x/x,x>0,0)", "piecewise(dep(-1,{x^0}),x>0,0)");
   simplifies_to("piecewise(3,4>0,2,2<a)", "undef",
-                {.m_symbolic = SymbolicComputation::ReplaceAllSymbols});
+                {.symbolic = SymbolicComputation::ReplaceAllSymbols});
   simplifies_to("diff(piecewise(1,x>1,2,x>=2,3,x<3,4,x<=4,7),x,x)",
                 "piecewise(0,x>1,undef,x>=1,0,x>2,undef,x>=2,0,x<3,undef,x<=3,"
                 "0,x<4,undef,x<=4,0)");
@@ -542,7 +542,7 @@ QUIZ_CASE(pcj_simplification_function) {
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("x→f(x)", symbolStore);
   ProjectionContext projCtx = {
-      .m_symbolic = SymbolicComputation::KeepAllSymbols,
+      .symbolic = SymbolicComputation::KeepAllSymbols,
       .m_context = symbolStore,
   };
   simplifies_to("f(x)", "f(x)", projCtx);
@@ -553,7 +553,7 @@ QUIZ_CASE(pcj_simplification_function) {
 QUIZ_CASE(pcj_simplification_variable_replace) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
-      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+      .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = symbolStore};
 
   PoincareTest::store("4→y", symbolStore);
@@ -575,7 +575,7 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   // TODO_PCJ: implement list access and list slice on lists of points
 
   ProjectionContext projCtx2 = {
-      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+      .symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = symbolStore};
   simplifies_to("y+2", "6", projCtx2);
   simplifies_to("y+x", "undef", projCtx2);
@@ -683,7 +683,7 @@ QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
 QUIZ_CASE(pcj_simplification_user_function) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
-      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+      .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = symbolStore};
   // User defined function
   // f: x → x*3
@@ -698,7 +698,7 @@ QUIZ_CASE(pcj_simplification_user_function) {
 QUIZ_CASE(pcj_simplification_context) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
-      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+      .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = symbolStore};
 
   // Fill variable
@@ -811,7 +811,7 @@ QUIZ_CASE(pcj_simplification_store_correctly_parsed) {
   ProjectionContext projCtx = {
       .complexFormat = ComplexFormat::Cartesian,
       .angleUnit = AngleUnit::Radian,
-      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+      .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = symbolStore};
   simplifies_to("abc", "a×b×c", projCtx, false);
   simplifies_to("\"abc\"", "\"abc\"", projCtx, false);

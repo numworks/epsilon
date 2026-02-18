@@ -200,7 +200,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("x→f(x)", symbolStore);
   Poincare::ProjectionContext ctx = {
-      .m_symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
+      .symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
       .m_context = symbolStore,
   };
   simplifies_to("f(x)-inf", "f(x)-∞", ctx);

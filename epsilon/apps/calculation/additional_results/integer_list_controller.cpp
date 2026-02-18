@@ -49,7 +49,7 @@ void IntegerListController::computeAdditionalResults(
           .complexFormat = complexFormat(),
           .angleUnit = angleUnit(),
           .reductionTarget = Poincare::ReductionTarget::User,
-          .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+          .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
           .m_context = App::app()->localContext(),
       },
       &reductionFailure);

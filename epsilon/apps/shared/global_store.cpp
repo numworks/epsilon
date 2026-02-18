@@ -188,7 +188,7 @@ Ion::Storage::Record::ErrorStatus GlobalStore::setExpressionForUserVariable(
       CAS::NeverDisplayReductionOfInput(expression, *this);
   ProjectionContext projectionContext =
       PoincareHelpers::ProjectionContextForPreferences(expression);
-  projectionContext.m_symbolic = SymbolicComputation::ReplaceAllSymbols;
+  projectionContext.symbolic = SymbolicComputation::ReplaceAllSymbols;
   UserExpression approximation;
   UserExpression simplifiedExpression;
   bool reductionFailure = expression.cloneAndSimplifyAndApproximate(

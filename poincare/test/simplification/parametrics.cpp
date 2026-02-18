@@ -122,7 +122,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("x→f(x)", symbolStore);
   ProjectionContext ctx = {
-      .m_symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
+      .symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
       .m_context = symbolStore,
   };
 
@@ -192,7 +192,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   PoincareTest::store("f'(x)→g(x)", symbolStore);
   PoincareTest::store("diff(f(x),x,x)→h(x)", symbolStore);
   ProjectionContext ctx2 = {
-      .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedFunctions,
+      .symbolic = Poincare::SymbolicComputation::ReplaceDefinedFunctions,
       .m_context = symbolStore,
   };
   simplifies_to("f'(4)", "8", ctx2);
@@ -201,12 +201,10 @@ QUIZ_CASE(pcj_simplification_parametric) {
 
   /* Test with no symbolic computation to check that n inside a sum expression
    * is not replaced by Undefined */
-  simplifies_to(
-      "sum(n,n,1,5)", "15",
-      {.m_symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols});
-  simplifies_to(
-      "sum(1/n,n,1,2)", "3/2",
-      {.m_symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols});
+  simplifies_to("sum(n,n,1,5)", "15",
+                {.symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols});
+  simplifies_to("sum(1/n,n,1,2)", "3/2",
+                {.symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols});
 }
 
 QUIZ_CASE(pcj_simplification_derivative) {
@@ -331,7 +329,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
     ProjectionContext ctx = {
         .complexFormat = Real,
         .angleUnit = Radian,
-        .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
+        .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = symbolStore};
 
     simplifies_to("diff(a×x^2+b×x+c,x,x)", "4×x-1", ctx);
@@ -430,7 +428,7 @@ QUIZ_CASE(pcj_simplification_derivative_for_approximation) {
     ProjectionContext ctxWithSymbol = {
         .angleUnit = Radian,
         .reductionTarget = Poincare::ReductionTarget::SystemForApproximation,
-        .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
+        .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = symbolStore};
 
     store("0→a", symbolStore);

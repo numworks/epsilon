@@ -28,7 +28,7 @@ void TrigonometryListController::computeAdditionalResults(
 
   ProjectionContext ctx = {.complexFormat = complexFormat(),
                            .angleUnit = angleUnit(),
-                           .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+                           .symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .m_context = App::app()->localContext()};
 
   AdditionalResultsHelper::TrigonometryResults trigonometryResults =

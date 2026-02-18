@@ -37,7 +37,7 @@ endef
 
 # objects_for_sources, <arch directory>, <sources list>
 define objects_for_sources
-$(addprefix $(OUTPUT_DIRECTORY)/$1,$(addsuffix .o,$(basename $(subst ../,,$2))))
+$(addprefix $(OUTPUT_DIRECTORY)/$1,$(addsuffix .o,$(filter-out :%, $(subst :, :,$(subst ../,,$2)))))
 endef
 
 # document_extension, <name>, <documentation>
@@ -112,19 +112,19 @@ generated_headers:
 # simple_rule, <label>, <source extension>, <command>
 define rule_for_object
 $(eval \
-$(OUTPUT_DIRECTORY)/%.o: $$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
+$(OUTPUT_DIRECTORY)/%.$(strip $2).o: $$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
 	$$(call rule_label,$1)
 	$3
 
-$(OUTPUT_DIRECTORY)/%.o: ../$$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
+$(OUTPUT_DIRECTORY)/%.$(strip $2).o: ../$$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
 	$$(call rule_label,$1)
 	$3
 
-$(OUTPUT_DIRECTORY)/%.o: ../../$$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
+$(OUTPUT_DIRECTORY)/%.$(strip $2).o: ../../$$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
 	$$(call rule_label,$1)
 	$3
 
-$(OUTPUT_DIRECTORY)/%.o: $(OUTPUT_DIRECTORY)/$$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
+$(OUTPUT_DIRECTORY)/%.$(strip $2).o: $(OUTPUT_DIRECTORY)/$$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
 	$$(call rule_label,$1)
 	$3
 )

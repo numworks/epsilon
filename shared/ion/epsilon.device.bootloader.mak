@@ -45,7 +45,7 @@ $(addprefix device/core/device/shared-core/drivers/, \
   timing.cpp \
   usb.cpp \
   usb_gpio_$(PLATFORM).cpp \
-  logo_image.png \
+  logo_image.cpp \
 ) \
 $(addprefix device/core/device/bootloader/boot/, \
   isr.c \
@@ -66,9 +66,9 @@ $(addprefix device/core/device/bootloader/drivers/, \
   power_suspend.cpp \
   trampoline.cpp \
   usb.cpp \
-  screen_rescue_image.png \
-  text_rescue_image.png \
-  wire_rescue_image.png \
+  screen_rescue_image.cpp \
+  text_rescue_image.cpp \
+  wire_rescue_image.cpp \
 ) \
 device/core/device/bootloader/main.cpp
 

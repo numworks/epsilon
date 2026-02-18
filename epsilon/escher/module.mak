@@ -104,7 +104,7 @@ $(call create_module,escher,1,$(addprefix src/, \
   warning_controller.cpp \
   window.cpp \
 ) \
-  image/caret.png \
+  image/caret.cpp \
   test/layout_field.cpp:+test \
 )
 

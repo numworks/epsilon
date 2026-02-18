@@ -77,6 +77,8 @@ $(call i18n_without_universal,variables)
 
 include $(patsubst %,$(PATH_apps)/%/Makefile,shared $(EPSILON_APPS) $(_SPECIAL_APPS))
 
+SOURCES_apps := $(subst .png,.cpp,$(SOURCES_apps))
+
 $(call assert_defined,PYTHON_QSTRDEFS)
 $(call assert_defined,KANDINSKY_fonts_dependencies)
 $(call all_objects_for,$(SOURCES_apps)): $(PYTHON_QSTRDEFS) $(OUTPUT_DIRECTORY)/$(PATH_apps)/i18n.h $(KANDINSKY_fonts_dependencies)

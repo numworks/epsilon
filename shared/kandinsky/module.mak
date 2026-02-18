@@ -17,7 +17,7 @@ _sources_kandinsky_minimal := $(addprefix src/, \
   font.cpp \
   point.cpp \
   rect.cpp \
-) $(addprefix fonts/$(KANDINSKY_font_variant)/,$(_sources_kandinsky_fonts))
+) $(patsubst %.ttf,%.cpp,$(addprefix fonts/$(KANDINSKY_font_variant)/,$(_sources_kandinsky_fonts)))
 
 _kandinsky_glyph_index := fonts/codepoint_to_glyph_index.cpp
 

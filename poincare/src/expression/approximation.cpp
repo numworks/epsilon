@@ -33,31 +33,10 @@
 
 namespace Poincare::Internal::Approximation {
 
-using namespace Private;
-
 static_assert(!POINCARE_NO_FLOAT_APPROXIMATION ||
                   !(POINCARE_MATRIX || POINCARE_LIST || POINCARE_POINT),
               "the double-only approximation is only available with scalars "
               "and booleans");
-
-template <typename ReturnType>
-ReturnType PostProcessPreparedAndResult(Tree* prepared, ReturnType result) {
-  assert(prepared);
-  prepared->removeTree();
-  return result;
-}
-
-Tree* PostProcessPreparedAndResult(Tree* prepared, Tree* result) {
-  /* If "result" is a Tree*, "prepared" (which is the tree just before "result")
-   * is removed first (if it is not empty) from the TreeStack, then the
-   * "prepared" pointer points to "result" data and can be returned. This is
-   * done to avoid using a TreeRef for "prepared".
-   * For other return types, this problem doesn't happen */
-  assert(prepared);
-  assert(prepared->nextTree() == result);
-  prepared->removeTree();
-  return prepared;
-}
 
 template <typename T>
 struct FloatTypeAccessor {
@@ -83,7 +62,8 @@ struct FloatTypeAccessor<double> {
 template <typename ReturnType>
 ReturnType To(const Tree* e, const Parameters& parameters) {
   using float_type = typename FloatTypeAccessor<ReturnType>::type;
-  return Process<ReturnType>(e, Precision<float_type>::value, parameters);
+  return Private::Process<ReturnType>(e, Precision<float_type>::value,
+                                      parameters);
 }
 
 template <typename ReturnType>
@@ -115,307 +95,17 @@ ReturnType To(const Tree* e, FloatType abscissa, int16_t listElementIndex,
 
 bool Approximate(Tree* e, FloatPrecision floatPrecision,
                  const Parameters& parameters) {
-  Tree* approximated = Process<Tree*>(e, floatPrecision, parameters);
+  Tree* approximated = Private::Process<Tree*>(e, floatPrecision, parameters);
   bool hasChanged = !approximated->treeIsIdenticalTo(e);
   e->moveTreeOverTree(approximated);
   return hasChanged;
 }
 
-template <typename ReturnType, typename... ContextArguments>
-ReturnType Private::Process(const Tree* e, FloatPrecision floatPrecision,
-                            const Parameters& parameters,
-                            ContextArguments... contextArguments) {
-  if (parameters.optimize) {
-    assert(Dimension::DeepCheck(e, parameters.symbolContext));
-  } else if (!Dimension::DeepCheck(e, parameters.symbolContext)) {
-    return UndefinedUnhandledDimension<ReturnType>();
-  }
-  Tree* prepared = PrepareTree(e, parameters);
-
-  if (parameters.onlyReplaceNumerical &&
-      floatPrecision == FloatPrecision::Double &&
-      e->hasDescendantSatisfying(
-          [](const Tree* e) { return e->isSingleFloat(); })) {
-    // Prevent float to double conversion
-    floatPrecision = FloatPrecision::Single;
-  }
-#if POINCARE_NO_FLOAT_APPROXIMATION
-  assert(floatPrecision == FloatPrecision::Double);
-#endif
-  ReturnType result =
-      Approximator{floatPrecision, parameters, Context(contextArguments...)}
-          .specificTo<ReturnType>(prepared ? prepared : e);
-  if (!prepared) {
-    return result;
-  }
-  return PostProcessPreparedAndResult(prepared, result);
-}
-
-template <>
-Tree* Private::UndefinedUnhandledDimension() {
-  return KUndefUnhandledDimension->cloneTree();
-}
-
-Private::Approximator::Approximator(FloatPrecision floatPrecision,
-                                    const Parameters& parameters,
-                                    Context&& context)
-    : m_floatPrecision(floatPrecision),
-      m_parameters(parameters),
-      m_context(std::move(context)) {}
-
-template <>
-Tree* Private::Approximator::specificTo(const Tree* e) {
-  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
-  if (m_parameters.onlyReplaceNumerical) {
-    Tree* result = e->cloneTree();
-    approximateAndReplaceEveryScalar(result);
-    return result;
-  }
-  Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
-  int listLength = Dimension::ListLength(e, m_parameters.symbolContext);
-  if (listLength != Dimension::k_nonListListLength) {
-    assert(!dim.isMatrix());
-    Tree* result = SharedTreeStack->pushList(listLength);
-    assert(m_context.listElement == Context::k_unspecifiedListElement);
-    for (int i = 0; i < listLength; i++) {
-      m_context.listElement = i;
-      privateToTree(e, dim);
-    }
-    m_context.listElement = Context::k_unspecifiedListElement;
-    return result;
-  }
-  return privateToTree(e, dim);
-}
-
-template <>
-std::complex<float> Private::UndefinedUnhandledDimension() {
-  return std::complex<float>{NAN};
-}
-
-template <>
-std::complex<double> Private::UndefinedUnhandledDimension() {
-  return std::complex<double>{NAN};
-}
-
-template <>
-std::complex<float> Private::Approximator::specificTo(const Tree* e) {
-  return toComplex<float>(e);
-};
-
-template <>
-std::complex<double> Private::Approximator::specificTo(const Tree* e) {
-  return toComplex<double>(e);
-};
-
-template <typename FloatType>
-std::complex<FloatType> Private::Approximator::toComplex(const Tree* e) {
-  assert(Precision<FloatType>::value == m_floatPrecision);
-  assert(!m_parameters.onlyReplaceNumerical);
-  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
-  assert(Dimension::IsNonListScalar(e, m_parameters.symbolContext));
-  return privateToComplex<FloatType>(e);
-}
-
-template <>
-PointOrRealScalar<float> Private::UndefinedUnhandledDimension() {
-  return PointOrRealScalar<float>(NAN, NAN);
-}
-
-template <>
-PointOrRealScalar<double> Private::UndefinedUnhandledDimension() {
-  return PointOrRealScalar<double>(NAN, NAN);
-}
-
-template <typename FloatType>
-PointOrRealScalar<FloatType> Private::Approximator::toPointOrRealScalar(
-    const Tree* e) {
-  assert(m_floatPrecision == Precision<FloatType>::value);
-  assert(!m_parameters.onlyReplaceNumerical);
-  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
-  Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
-  assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
-  return dim.isPoint() ? PointOrRealScalar<FloatType>(
-                             specificTo<Coordinate2D<FloatType>>(e))
-                       : PointOrRealScalar<FloatType>(specificTo<FloatType>(e));
-}
-
-template <>
-PointOrRealScalar<float> Private::Approximator::specificTo(const Tree* e) {
-  assert(m_floatPrecision == FloatPrecision::Single);
-  return toPointOrRealScalar<float>(e);
-}
-
-template <>
-PointOrRealScalar<double> Private::Approximator::specificTo(const Tree* e) {
-  assert(m_floatPrecision == FloatPrecision::Double);
-  return toPointOrRealScalar<double>(e);
-}
-
-template <>
-BooleanOrUndefined Private::UndefinedUnhandledDimension() {
-  return BooleanOrUndefined::Undef();
-}
-
-template <>
-BooleanOrUndefined Private::Approximator::specificTo(const Tree* e) {
-  assert(!m_parameters.onlyReplaceNumerical);
-  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
-  return privateToBoolean(e);
-};
-
-template <>
-float Private::UndefinedUnhandledDimension() {
-  return NAN;
-}
-
-template <>
-double Private::UndefinedUnhandledDimension() {
-  return NAN;
-}
-
-template <typename FloatType>
-FloatType Private::Approximator::toFloat(const Tree* e) {
-  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
-  // Units are tolerated in scalar approximation (replaced with SI ratios).
-#if ASSERTIONS
-  Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
-  assert(dim.isScalar() || dim.isUnit());
-#endif
-  assert(m_context.listElement != Context::k_unspecifiedListElement ||
-         !Dimension::IsList(e, m_parameters.symbolContext));
-  assert(!m_parameters.onlyReplaceNumerical);
-  return privateToFloat<FloatType>(e);
-}
-
-template <>
-float Private::Approximator::specificTo(const Tree* e) {
-  assert(m_floatPrecision == FloatPrecision::Single);
-  return toFloat<float>(e);
-};
-
-template <>
-double Private::Approximator::specificTo(const Tree* e) {
-  assert(m_floatPrecision == FloatPrecision::Double);
-  return toFloat<double>(e);
-};
-
-template <>
-Coordinate2D<float> Private::UndefinedUnhandledDimension() {
-  return Coordinate2D<float>{NAN, NAN};
-}
-
-template <>
-Coordinate2D<double> Private::UndefinedUnhandledDimension() {
-  return Coordinate2D<double>{NAN, NAN};
-}
-
-template <>
-Coordinate2D<float> Private::Approximator::specificTo(const Tree* e) {
-  assert(!m_parameters.onlyReplaceNumerical);
-  assert(m_floatPrecision == FloatPrecision::Single);
-  return privateToCoordinates<float>(e);
-}
-
-template <>
-Coordinate2D<double> Private::Approximator::specificTo(const Tree* e) {
-  assert(!m_parameters.onlyReplaceNumerical);
-  assert(m_floatPrecision == FloatPrecision::Double);
-  return privateToCoordinates<double>(e);
-}
-
-template <typename T>
-Coordinate2D<T> Private::Approximator::privateToCoordinates(const Tree* e) {
-  assert(Dimension::DeepCheck(e, m_parameters.symbolContext) &&
-         Dimension::Get(e, m_parameters.symbolContext).isPoint());
-  T xScalar, yScalar;
-  assert(m_context.pointElement == Context::k_unspecifiedPointElement);
-  m_context.pointElement = 0;
-  xScalar = privateToFloat<T>(e);
-  m_context.pointElement = 1;
-  yScalar = privateToFloat<T>(e);
-  m_context.pointElement = Context::k_unspecifiedPointElement;
-  return Coordinate2D<T>(xScalar, yScalar);
-}
-
-template <typename T>
-Tree* Private::Approximator::toComplexTree(const Tree* e) {
-  std::complex<T> value = privateToComplex<T>(e);
-  T re = value.real(), im = value.imag();
-  if (std::isnan(re) || std::isnan(im)) {
-    return IsNonReal(value) ? KNonReal->cloneTree() : KUndef->cloneTree();
-  }
-  if (im == 0.0) {
-    return SharedTreeStack->pushFloat(re);
-  }
-  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
-  // Real part
-  if (re != 0.0) {
-    SharedTreeStack->pushAdd(2);
-    SharedTreeStack->pushFloat(re);
-  }
-  // Complex part.
-  // Push im even if it is 1.0 to ensure the expression is not used as exact.
-  SharedTreeStack->pushMult(2);
-  SharedTreeStack->pushFloat(im);
-  SharedTreeStack->pushComplexI();
-  return result;
-}
-
-Tree* Private::PrepareTree(const Tree* e, const Parameters& parameters) {
-  // Only clone if necessary
-  Tree* clone = nullptr;
-  if (parameters.projectLocalVariables) {
-    clone = e->cloneTree();
-    Variables::ProjectLocalVariablesToId(clone);
-  }
-  if (parameters.prepare) {
-    assert(Simplification::IsSystem(e));
-    if (!clone) {
-      clone = e->cloneTree();
-    }
-    PrepareExpressionForApproximation(clone);
-  }
-  return clone;
-}
-
-Tree* Private::Approximator::privateToTree(const Tree* e, Dimension dim) {
-  /* TODO_PCJ: not all approximation methods come here, but this should always
-   * be handled when approximating. */
-  if (Projection::HasForbiddenDescendants(e)) {
-    return KForbidden->cloneTree();
-  }
-
-  if (dim.isBoolean()) {
-#if POINCARE_BOOLEAN
-    BooleanOrUndefined boolean = privateToBoolean(e);
-    if (boolean.isUndefined()) {
-      return KUndefBoolean->cloneTree();
-    }
-    return (boolean.value() ? KTrue : KFalse)->cloneTree();
-#else
-    OMG_UNREACHABLE;
-#endif
-  }
-  if (dim.isUnit()) {
-    // Preserve units and only replace scalar values.
-    Tree* result = e->cloneTree();
-    approximateAndReplaceEveryScalarRecursive(result);
-    return result;
-  }
-  if (dim.isScalar() ||
-      (dim.isPoint() &&
-       (m_context.pointElement != Context::k_unspecifiedPointElement))) {
-    return m_floatPrecision == FloatPrecision::Single
-               ? toComplexTree<float>(e)
-               : toComplexTree<double>(e);
-  }
-  assert(dim.isPoint() || dim.isMatrix());
-  Tree* result = dim.isPoint() ? privateToPoint(e) : toMatrix(e);
-  Undefined::ShallowBubbleUpUndef(result);
-  return result;
-}
-
 /* Helpers */
+
+bool CanApproximate(const Tree* e, bool approxLocalVar) {
+  return Private::CanApproximate(e, 0);
+}
 
 template <typename T>
 T FloatBinomial(T n, T k) {
@@ -470,7 +160,7 @@ static std::complex<T> FloatMultiplication(std::complex<T> c,
         (std::isfinite(other.real()) && std::isfinite(other.imag()))) {
       // NonReal * NonReal = NonReal
       // Finite complex * NonReal = NonReal
-      return NonReal<T>();
+      return Private::NonReal<T>();
     }
   }
   // Other cases are left to the standard library, and might return NaN.
@@ -496,46 +186,155 @@ static std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
   return c / d;
 }
 
+/* TODO: users of this function just want to test equality of branch and do not
+ * need the index */
 template <typename T>
-DefinedStatus Private::Approximator::areDependenciesDefined(const Tree* dep) {
-  // Dependency children may have different dimensions.
-  DefinedStatus status = DefinedStatus::Defined;
-  for (const Tree* child : Dependency::Dependencies(dep)->children()) {
-    if (Dimension::IsList(child, m_parameters.symbolContext)) {
-      /* Ignore lists in dependencies. This is a temporary solution until we
-       * decide how to deal with them properly.
-       * TODO decide if they should:
-       * - not be here (might be possible once we bubble up lists and randoms
-       *   correctly and if we forbid lists in functions)
-       * - return NAN if any element of the list is undefined
-       * - always return NAN
-       * - never return NAN (current solution) */
-      continue;
-    }
-    Dimension dim = Dimension::Get(child, m_parameters.symbolContext);
-    if (dim.isScalar()) {
-      // Optimize most cases
-      std::complex<T> c = privateToComplex<T>(child);
-      // Only update to nonreal if there is no undef to respect priority
-      if (IsNonReal(c) && status == DefinedStatus::Defined) {
-        status = DefinedStatus::NonReal;
-      } else if (std::isnan(c.real()) || std::isnan(c.imag())) {
-        status = DefinedStatus::Undefined;
-      }
-    } else {
-      Tree* a = privateToTree(
-          child, Dimension::Get(child, m_parameters.symbolContext));
-      if (a->isUndefined()) {
-        status = DefinedStatus::Undefined;
-      }
-      a->removeTree();
-    }
+int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
+  assert(piecewise->isPiecewise());
+  /* TODO: Without randomContext, randomized nodes in piecewise's condition will
+   * approximate to NAN. */
+  Private::Context context;
+  context.localEvaluator.pushVariable(x);
+  const Tree* branch =
+      Private::Approximator(Precision<T>::value, Approximation::Parameters{},
+                            std::move(context))
+          .selectPiecewiseBranch(piecewise);
+  return !branch            ? k_unknownActiveBranch
+         : branch == KUndef ? k_noActiveBranch
+                            : piecewise->indexOfChild(branch);
+}
+
+Tree* ExtractRealPart(const Tree* e) {
+  if (GetComplexProperties(e).isReal()) {
+    return e->cloneTree();
   }
-  return status;
+  std::complex<double> value =
+      Approximation::To<std::complex<double>>(e, Parameters{});
+  return SharedTreeStack->pushDoubleFloat(value.real());
+}
+
+}  // namespace Poincare::Internal::Approximation
+
+namespace Poincare::Internal::Approximation::Private {
+
+template <typename ReturnType>
+ReturnType PostProcessPreparedAndResult(Tree* prepared, ReturnType result) {
+  assert(prepared);
+  prepared->removeTree();
+  return result;
+}
+
+Tree* PostProcessPreparedAndResult(Tree* prepared, Tree* result) {
+  /* If "result" is a Tree*, "prepared" (which is the tree just before "result")
+   * is removed first (if it is not empty) from the TreeStack, then the
+   * "prepared" pointer points to "result" data and can be returned. This is
+   * done to avoid using a TreeRef for "prepared".
+   * For other return types, this problem doesn't happen */
+  assert(prepared);
+  assert(prepared->nextTree() == result);
+  prepared->removeTree();
+  return prepared;
+}
+
+template <typename ReturnType, typename... ContextArguments>
+ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
+                   const Parameters& parameters,
+                   ContextArguments... contextArguments) {
+  if (parameters.optimize) {
+    assert(Dimension::DeepCheck(e, parameters.symbolContext));
+  } else if (!Dimension::DeepCheck(e, parameters.symbolContext)) {
+    return UndefinedUnhandledDimension<ReturnType>();
+  }
+  Tree* prepared = PrepareTree(e, parameters);
+
+  if (parameters.onlyReplaceNumerical &&
+      floatPrecision == FloatPrecision::Double &&
+      e->hasDescendantSatisfying(
+          [](const Tree* e) { return e->isSingleFloat(); })) {
+    // Prevent float to double conversion
+    floatPrecision = FloatPrecision::Single;
+  }
+#if POINCARE_NO_FLOAT_APPROXIMATION
+  assert(floatPrecision == FloatPrecision::Double);
+#endif
+  ReturnType result =
+      Approximator{floatPrecision, parameters, Context(contextArguments...)}
+          .specificTo<ReturnType>(prepared ? prepared : e);
+  if (!prepared) {
+    return result;
+  }
+  return PostProcessPreparedAndResult(prepared, result);
+}
+
+Tree* PrepareTree(const Tree* e, const Parameters& parameters) {
+  // Only clone if necessary
+  Tree* clone = nullptr;
+  if (parameters.projectLocalVariables) {
+    clone = e->cloneTree();
+    Variables::ProjectLocalVariablesToId(clone);
+  }
+  if (parameters.prepare) {
+    assert(Simplification::IsSystem(e));
+    if (!clone) {
+      clone = e->cloneTree();
+    }
+    PrepareExpressionForApproximation(clone);
+  }
+  return clone;
+}
+
+template <>
+Tree* UndefinedUnhandledDimension() {
+  return KUndefUnhandledDimension->cloneTree();
+}
+
+template <>
+std::complex<float> UndefinedUnhandledDimension() {
+  return std::complex<float>{NAN};
+}
+
+template <>
+std::complex<double> UndefinedUnhandledDimension() {
+  return std::complex<double>{NAN};
+}
+
+template <>
+PointOrRealScalar<float> UndefinedUnhandledDimension() {
+  return PointOrRealScalar<float>(NAN, NAN);
+}
+
+template <>
+PointOrRealScalar<double> UndefinedUnhandledDimension() {
+  return PointOrRealScalar<double>(NAN, NAN);
+}
+
+template <>
+BooleanOrUndefined UndefinedUnhandledDimension() {
+  return BooleanOrUndefined::Undef();
+}
+
+template <>
+float UndefinedUnhandledDimension() {
+  return NAN;
+}
+
+template <>
+double UndefinedUnhandledDimension() {
+  return NAN;
+}
+
+template <>
+Coordinate2D<float> UndefinedUnhandledDimension() {
+  return Coordinate2D<float>{NAN, NAN};
+}
+
+template <>
+Coordinate2D<double> UndefinedUnhandledDimension() {
+  return Coordinate2D<double>{NAN, NAN};
 }
 
 template <typename T>
-std::complex<T> Private::ToUndefinedComplexValue(DefinedStatus status) {
+std::complex<T> ToUndefinedComplexValue(DefinedStatus status) {
   switch (status) {
     case DefinedStatus::NonReal:
       return NonReal<T>();
@@ -547,8 +346,181 @@ std::complex<T> Private::ToUndefinedComplexValue(DefinedStatus status) {
   }
 }
 
+Private::Approximator::Approximator(FloatPrecision floatPrecision,
+                                    const Parameters& parameters,
+                                    Context&& context)
+    : m_floatPrecision(floatPrecision),
+      m_parameters(parameters),
+      m_context(std::move(context)) {}
+
+template <>
+Tree* Approximator::specificTo(const Tree* e) {
+  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
+  if (m_parameters.onlyReplaceNumerical) {
+    Tree* result = e->cloneTree();
+    approximateAndReplaceEveryScalar(result);
+    return result;
+  }
+  Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
+  int listLength = Dimension::ListLength(e, m_parameters.symbolContext);
+  if (listLength != Dimension::k_nonListListLength) {
+    assert(!dim.isMatrix());
+    Tree* result = SharedTreeStack->pushList(listLength);
+    assert(m_context.listElement == Context::k_unspecifiedListElement);
+    for (int i = 0; i < listLength; i++) {
+      m_context.listElement = i;
+      privateToTree(e, dim);
+    }
+    m_context.listElement = Context::k_unspecifiedListElement;
+    return result;
+  }
+  return privateToTree(e, dim);
+}
+
+template <>
+std::complex<float> Approximator::specificTo(const Tree* e) {
+  return toComplex<float>(e);
+};
+
+template <>
+std::complex<double> Approximator::specificTo(const Tree* e) {
+  return toComplex<double>(e);
+};
+
+template <>
+PointOrRealScalar<float> Approximator::specificTo(const Tree* e) {
+  assert(m_floatPrecision == FloatPrecision::Single);
+  return toPointOrRealScalar<float>(e);
+}
+
+template <>
+PointOrRealScalar<double> Approximator::specificTo(const Tree* e) {
+  assert(m_floatPrecision == FloatPrecision::Double);
+  return toPointOrRealScalar<double>(e);
+}
+
+template <>
+BooleanOrUndefined Approximator::specificTo(const Tree* e) {
+  assert(!m_parameters.onlyReplaceNumerical);
+  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
+  return privateToBoolean(e);
+};
+
+template <>
+float Approximator::specificTo(const Tree* e) {
+  assert(m_floatPrecision == FloatPrecision::Single);
+  return toFloat<float>(e);
+};
+
+template <>
+double Approximator::specificTo(const Tree* e) {
+  assert(m_floatPrecision == FloatPrecision::Double);
+  return toFloat<double>(e);
+};
+
+template <>
+Coordinate2D<float> Approximator::specificTo(const Tree* e) {
+  assert(!m_parameters.onlyReplaceNumerical);
+  assert(m_floatPrecision == FloatPrecision::Single);
+  return privateToCoordinates<float>(e);
+}
+
+template <>
+Coordinate2D<double> Approximator::specificTo(const Tree* e) {
+  assert(!m_parameters.onlyReplaceNumerical);
+  assert(m_floatPrecision == FloatPrecision::Double);
+  return privateToCoordinates<double>(e);
+}
+
+template <typename FloatType>
+std::complex<FloatType> Approximator::toComplex(const Tree* e) {
+  assert(Precision<FloatType>::value == m_floatPrecision);
+  assert(!m_parameters.onlyReplaceNumerical);
+  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
+  assert(Dimension::IsNonListScalar(e, m_parameters.symbolContext));
+  return privateToComplex<FloatType>(e);
+}
+
+template <typename FloatType>
+PointOrRealScalar<FloatType> Approximator::toPointOrRealScalar(const Tree* e) {
+  assert(m_floatPrecision == Precision<FloatType>::value);
+  assert(!m_parameters.onlyReplaceNumerical);
+  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
+  Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
+  assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
+  return dim.isPoint() ? PointOrRealScalar<FloatType>(
+                             specificTo<Coordinate2D<FloatType>>(e))
+                       : PointOrRealScalar<FloatType>(specificTo<FloatType>(e));
+}
+
+template <typename FloatType>
+FloatType Approximator::toFloat(const Tree* e) {
+  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
+  // Units are tolerated in scalar approximation (replaced with SI ratios).
+#if ASSERTIONS
+  Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
+  assert(dim.isScalar() || dim.isUnit());
+#endif
+  assert(m_context.listElement != Context::k_unspecifiedListElement ||
+         !Dimension::IsList(e, m_parameters.symbolContext));
+  assert(!m_parameters.onlyReplaceNumerical);
+  return privateToFloat<FloatType>(e);
+}
+
 template <typename T>
-std::complex<T> Private::Approximator::privateToComplex(const Tree* e) {
+Coordinate2D<T> Approximator::privateToCoordinates(const Tree* e) {
+  assert(Dimension::DeepCheck(e, m_parameters.symbolContext) &&
+         Dimension::Get(e, m_parameters.symbolContext).isPoint());
+  T xScalar, yScalar;
+  assert(m_context.pointElement == Context::k_unspecifiedPointElement);
+  m_context.pointElement = 0;
+  xScalar = privateToFloat<T>(e);
+  m_context.pointElement = 1;
+  yScalar = privateToFloat<T>(e);
+  m_context.pointElement = Context::k_unspecifiedPointElement;
+  return Coordinate2D<T>(xScalar, yScalar);
+}
+
+Tree* Approximator::toList(const Tree* e) {
+  assert(m_context.listElement == Context::k_unspecifiedListElement);
+  Dimension dimension = Dimension::Get(e, m_parameters.symbolContext);
+  int length = Dimension::ListLength(e, m_parameters.symbolContext);
+  assert(length != Dimension::k_nonListListLength);
+  Tree* list = SharedTreeStack->pushList(length);
+  for (int i = 0; i < length; i++) {
+    m_context.listElement = i;
+    privateToTree(e, dimension);
+  }
+  m_context.listElement = Context::k_unspecifiedListElement;
+  return list;
+}
+
+Tree* Approximator::privateToPoint(const Tree* e) {
+  assert(m_context.pointElement == Context::k_unspecifiedPointElement);
+  Tree* point = SharedTreeStack->pushPoint();
+  m_context.pointElement = 0;
+  m_floatPrecision == FloatPrecision::Single ? toComplexTree<float>(e)
+                                             : toComplexTree<double>(e);
+  m_context.pointElement = 1;
+  m_floatPrecision == FloatPrecision::Single ? toComplexTree<float>(e)
+                                             : toComplexTree<double>(e);
+  m_context.pointElement = Context::k_unspecifiedPointElement;
+  return point;
+}
+
+template <typename T>
+T Approximator::toLocalContext(const Tree* e, T x) {
+  if (m_context.localEvaluator.isFull()) {
+    return UndefinedUnhandledDimension<T>();
+  }
+  m_context.localEvaluator.pushVariable(x);
+  T result = privateToFloat<T>(e);
+  m_context.localEvaluator.leaveCurrentScope();
+  return result;
+}
+
+template <typename T>
+std::complex<T> Approximator::privateToComplex(const Tree* e) {
 #ifdef POINCARE_MAX_TREE_SIZE_FOR_APPROXIMATION
   if (e->maxDepth() > POINCARE_MAX_TREE_SIZE_FOR_APPROXIMATION) {
     // Prevent recursive approximation algorithms from overflowing the stack
@@ -567,8 +539,196 @@ std::complex<T> Private::Approximator::privateToComplex(const Tree* e) {
 }
 
 template <typename T>
-std::complex<T> Private::Approximator::privateToComplexRecursive(
-    const Tree* e) {
+T Approximator::privateToFloat(const Tree* e) {
+#if ASSERTIONS
+  Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
+  assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
+  // listElement is needed to approximate lists to scalars
+  assert(m_context.listElement != Context::k_unspecifiedListElement ||
+         !Dimension::IsList(e, m_parameters.symbolContext));
+  // pointElement is needed to approximate points to scalars
+  assert(m_context.pointElement != Context::k_unspecifiedPointElement ||
+         !dim.isPoint());
+#endif
+  std::complex<T> value = privateToComplex<T>(e);
+  // Remove signaling nan
+  return value.imag() == 0 && !IsNonReal(value) ? value.real() : NAN;
+}
+
+Tree* Approximator::privateToTree(const Tree* e, Dimension dim) {
+  /* TODO_PCJ: not all approximation methods come here, but this should always
+   * be handled when approximating. */
+  if (Projection::HasForbiddenDescendants(e)) {
+    return KForbidden->cloneTree();
+  }
+
+  if (dim.isBoolean()) {
+#if POINCARE_BOOLEAN
+    BooleanOrUndefined boolean = privateToBoolean(e);
+    if (boolean.isUndefined()) {
+      return KUndefBoolean->cloneTree();
+    }
+    return (boolean.value() ? KTrue : KFalse)->cloneTree();
+#else
+    OMG_UNREACHABLE;
+#endif
+  }
+  if (dim.isUnit()) {
+    // Preserve units and only replace scalar values.
+    Tree* result = e->cloneTree();
+    approximateAndReplaceEveryScalarRecursive(result);
+    return result;
+  }
+  if (dim.isScalar() ||
+      (dim.isPoint() &&
+       (m_context.pointElement != Context::k_unspecifiedPointElement))) {
+    return m_floatPrecision == FloatPrecision::Single
+               ? toComplexTree<float>(e)
+               : toComplexTree<double>(e);
+  }
+  assert(dim.isPoint() || dim.isMatrix());
+  Tree* result = dim.isPoint() ? privateToPoint(e) : toMatrix(e);
+  Undefined::ShallowBubbleUpUndef(result);
+  return result;
+}
+
+template <typename T>
+Tree* Approximator::toComplexTree(const Tree* e) {
+  std::complex<T> value = privateToComplex<T>(e);
+  T re = value.real(), im = value.imag();
+  if (std::isnan(re) || std::isnan(im)) {
+    return IsNonReal(value) ? KNonReal->cloneTree() : KUndef->cloneTree();
+  }
+  if (im == 0.0) {
+    return SharedTreeStack->pushFloat(re);
+  }
+  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
+  // Real part
+  if (re != 0.0) {
+    SharedTreeStack->pushAdd(2);
+    SharedTreeStack->pushFloat(re);
+  }
+  // Complex part.
+  // Push im even if it is 1.0 to ensure the expression is not used as exact.
+  SharedTreeStack->pushMult(2);
+  SharedTreeStack->pushFloat(im);
+  SharedTreeStack->pushComplexI();
+  return result;
+}
+
+template <typename T>
+static bool MergeChildrenOfMultOrAdd(Tree* e) {
+  assert(e->isMult() || e->isAdd());
+  T merge = (e->isMult() ? 1.0 : 0.0);
+  int lastFloatIndex = -1;
+  int n = e->numberOfChildren();
+  int i = 0;
+  Tree* child = e->nextNode();
+  while (i < n) {
+    if (child->isFloat()) {
+      T childValue = child->isSingleFloat() ? FloatHelper::FloatTo(child)
+                                            : FloatHelper::DoubleTo(child);
+      merge = (e->isMult() ? merge * childValue : merge + childValue);
+      lastFloatIndex = i;
+      child->removeTree();
+      n--;
+      NAry::SetNumberOfChildren(e, n);
+    } else if (child->type() == e->type()) {
+      // Merge Mult/Add that may have appeared
+      n += child->numberOfChildren() - 1;
+      child->removeNode();
+      NAry::SetNumberOfChildren(e, n);
+    } else {
+      child = child->nextTree();
+      i++;
+    }
+  }
+  if (lastFloatIndex != -1) {
+    /* To preserve order, push the merged children at an index where there was a
+     * float */
+    NAry::AddChildAtIndex(e, SharedTreeStack->pushFloat(merge), lastFloatIndex);
+    NAry::SquashIfPossible(e);
+    return true;
+  }
+  return false;
+}
+
+bool SkipApproximation(TypeBlock type, FloatPrecision floatPrecision) {
+  if (type.isComplexI() || type.isSingleFloat()) {
+    return true;
+  }
+  if (type.isDoubleFloat()) {
+    /* If the precision is Single, double floats in the expressions are degraded
+     * to single floats to avoid having mixed levels of precision. */
+    return (floatPrecision == FloatPrecision::Double);
+  }
+  return false;
+}
+
+bool SkipApproximation(TypeBlock type, FloatPrecision floatPrecision,
+                       TypeBlock parentType, int indexInParent,
+                       bool previousChildWasApproximated) {
+  if (SkipApproximation(type, floatPrecision)) {
+    return true;
+  }
+  switch (parentType) {
+    case Type::ATrig:
+    case Type::Trig:
+      // Do not approximate second term in case tree isn't replaced.
+      return indexInParent == 1;
+    case Type::Pow:
+    case Type::PowReal:
+      // Only approximate power's index if the entire tree can be approximated.
+      return indexInParent == 1 && !previousChildWasApproximated;
+    case Type::ListSlice:
+    case Type::ListElement:
+      assert(indexInParent < 1 || previousChildWasApproximated);
+      return indexInParent >= 1 && !previousChildWasApproximated;
+    case Type::ListSequence:
+      return indexInParent == Parametric::k_valueIndex;
+    case Type::RandIntNoRep:
+      /* Never approximate last child of RandIntNoRep since it won't be
+       * approximated, and an integer child is expected in dimension check. */
+      return indexInParent == 2;
+    case Type::Identity:
+      return true;
+    default:
+      return false;
+  }
+}
+
+void Approximator::approximateAndReplaceEveryScalar(Tree* e) {
+  if (SkipApproximation(e->type(), m_floatPrecision)) {
+    return;
+  }
+  approximateAndReplaceEveryScalarRecursive(e);
+}
+
+void Approximator::approximateAndReplaceEveryScalarRecursive(Tree* e) {
+  if (Approximation::CanApproximate(e) &&
+      Dimension::IsNonListScalar(e, m_parameters.symbolContext)) {
+    e->moveTreeOverTree(privateToTree(e, Dimension(DimensionType::Scalar)));
+    return;
+  }
+  bool previousChildWasApproximated = false;
+  for (IndexedChild<Tree*> child : e->indexedChildren()) {
+    if (!SkipApproximation(child->type(), m_floatPrecision, e->type(),
+                           child.index, previousChildWasApproximated)) {
+      approximateAndReplaceEveryScalarRecursive(child);
+    }
+    previousChildWasApproximated = child->isFloat();
+  }
+  Undefined::ShallowBubbleUpUndef(e);
+  // Merge addition and multiplication's children while preserving order
+  if (e->isAdd() || e->isMult()) {
+    m_floatPrecision == FloatPrecision::Single
+        ? MergeChildrenOfMultOrAdd<float>(e)
+        : MergeChildrenOfMultOrAdd<double>(e);
+  }
+}
+
+template <typename T>
+std::complex<T> Approximator::privateToComplexRecursive(const Tree* e) {
 #if POINCARE_NO_FLOAT_APPROXIMATION
   /* TODO: this could be a static_assert once all template instantiation with
    * float (for example toComplex<float>) are removed from projects which use
@@ -590,7 +750,7 @@ std::complex<T> Private::Approximator::privateToComplexRecursive(
 }
 
 template <typename T>
-std::complex<T> Private::Approximator::basicToComplex(const Tree* e) {
+std::complex<T> Approximator::basicToComplex(const Tree* e) {
   switch (e->type()) {
     case Type::Parentheses:
       return privateToComplexRecursive<T>(e->child(0));
@@ -668,14 +828,13 @@ std::complex<T> Private::Approximator::basicToComplex(const Tree* e) {
       return std::exp(privateToComplexRecursive<T>(e->child(0)));
     case Type::Log:
     case Type::Ln: {
-      return Private::ComplexLogarithm<T>(privateToComplex<T>(e->child(0)),
-                                          e->isLog());
+      return ComplexLogarithm<T>(privateToComplex<T>(e->child(0)), e->isLog());
     }
     case Type::LogBase: {
       std::complex<T> a = privateToComplexRecursive<T>(e->child(0));
       std::complex<T> b = privateToComplexRecursive<T>(e->child(1));
-      return FloatDivision(Private::ComplexLogarithm<T>(a, false),
-                           Private::ComplexLogarithm<T>(b, false));
+      return FloatDivision(ComplexLogarithm<T>(a, false),
+                           ComplexLogarithm<T>(b, false));
     }
     case Type::Abs:
       return std::abs(privateToComplexRecursive<T>(e->child(0)));
@@ -708,7 +867,7 @@ std::complex<T> Private::Approximator::basicToComplex(const Tree* e) {
 }
 
 template <typename T>
-std::complex<T> Private::Approximator::allTrigToComplex(const Tree* e) {
+std::complex<T> Approximator::allTrigToComplex(const Tree* e) {
   switch (e->type()) {
     case Type::Cos:
     case Type::Sin:
@@ -756,7 +915,7 @@ std::complex<T> Private::Approximator::allTrigToComplex(const Tree* e) {
 }
 
 template <typename T>
-std::complex<T> Private::Approximator::userSymbolToComplex(const Tree* e) {
+std::complex<T> Approximator::userSymbolToComplex(const Tree* e) {
   switch (e->type()) {
     case Type::Var: {
       // Local variable
@@ -811,8 +970,8 @@ std::complex<T> Private::Approximator::userSymbolToComplex(const Tree* e) {
 
 // Extract the lower and upper bounds of a Parametric Sum or Product
 template <typename T>
-Private::Approximator::ParametricBoundOutput
-Private::Approximator::getParametricBoundOutput(const Tree* e) {
+Approximator::ParametricBoundOutput Approximator::getParametricBoundOutput(
+    const Tree* e) {
   const Tree* lowerBoundChild = e->child(Parametric::k_lowerBoundIndex);
   std::complex<T> low = privateToComplex<T>(lowerBoundChild);
   if (low.imag() != 0 || (int)low.real() != low.real()) {
@@ -829,7 +988,7 @@ Private::Approximator::getParametricBoundOutput(const Tree* e) {
 }
 
 template <typename T>
-std::complex<T> Private::Approximator::analysisToComplex(const Tree* e) {
+std::complex<T> Approximator::analysisToComplex(const Tree* e) {
   switch (e->type()) {
     case Type::Sum:
     case Type::Product: {
@@ -911,7 +1070,7 @@ std::complex<T> Private::Approximator::analysisToComplex(const Tree* e) {
 }
 
 template <typename T>
-std::complex<T> Private::Approximator::matrixToComplex(const Tree* e) {
+std::complex<T> Approximator::matrixToComplex(const Tree* e) {
   switch (e->type()) {
     case Type::Norm:
     case Type::Det: {
@@ -952,7 +1111,7 @@ std::complex<T> Private::Approximator::matrixToComplex(const Tree* e) {
 }
 
 template <typename T>
-std::complex<T> Private::Approximator::listToComplex(const Tree* e) {
+std::complex<T> Approximator::listToComplex(const Tree* e) {
   switch (e->type()) {
     case Type::List: {
       assert(m_context.listElement != Context::k_unspecifiedListElement);
@@ -1149,220 +1308,7 @@ std::complex<T> Private::Approximator::listToComplex(const Tree* e) {
 }
 
 template <typename T>
-std::complex<T> Private::Approximator::miscToComplex(const Tree* e) {
-  switch (e->type()) {
-    case Type::AngleUnitContext: {
-      AngleUnit currentAngleUnit = m_parameters.angleUnit;
-      m_parameters.angleUnit = static_cast<AngleUnit>(e->nodeValue(0));
-      std::complex<T> result = privateToComplexRecursive<T>(e->child(0));
-      m_parameters.angleUnit = currentAngleUnit;
-      return result;
-    }
-    case Type::Piecewise: {
-      const Tree* branch = selectPiecewiseBranch(e);
-      return branch ? privateToComplexRecursive<T>(branch) : NAN;
-    }
-    case Type::Distribution: {
-      const Tree* child = e->child(0);
-      DistributionMethod::Abscissae<T> abscissae;
-      DistributionMethod::Type method = DistributionMethod::GetType(e);
-      for (int i = 0; i < DistributionMethod::NumberOfParameters(method); i++) {
-        std::complex<T> c = privateToComplexRecursive<T>(child);
-        if (c.imag() != 0) {
-          return NAN;
-        }
-        abscissae[i] = c.real();
-        child = child->nextTree();
-      }
-      Distribution::ParametersArray<T> parameters;
-      Distribution::Type distribType = Distribution::GetType(e);
-      for (int i = 0; i < Distribution::NumberOfParameters(distribType); i++) {
-        std::complex<T> c = privateToComplexRecursive<T>(child);
-        if (c.imag() != 0) {
-          return NAN;
-        }
-        parameters[i] = c.real();
-        child = child->nextTree();
-      }
-      return DistributionMethod::EvaluateAtAbscissa<T>(method, abscissae,
-                                                       distribType, parameters);
-    }
-    case Type::Dep: {
-      DefinedStatus status = areDependenciesDefined<T>(e);
-      return (status == DefinedStatus::Defined)
-                 ? privateToComplexRecursive<T>(Dependency::Main(e))
-                 : ToUndefinedComplexValue<T>(status);
-    }
-    case Type::NonNull: {
-      std::complex<T> x = privateToComplexRecursive<T>(e->child(0));
-      return x == std::complex<T>(0.0) ? NAN : x;
-    }
-    case Type::Real: {
-      std::complex<T> x = privateToComplexRecursive<T>(e->child(0));
-      return x.imag() != 0.0 ? NAN : x;
-    }
-    case Type::RealPos: {
-      std::complex<T> x = privateToComplexRecursive<T>(e->child(0));
-      return x.real() < 0.0 || x.imag() != 0.0 ? NonReal<T>() : x;
-    }
-    case Type::RealInteger: {
-      std::complex<T> x = privateToComplexRecursive<T>(e->child(0));
-      return x.imag() != 0.0 ? NAN : std::floor(x.real()) == x ? x : NAN;
-    }
-    /* Handle units as their scalar value in basic SI so prefix and
-     * representative homogeneity isn't necessary. Dimension is expected to be
-     * handled at this point. */
-    case Type::Unit: {
-      T approxSI = Units::Unit::GetValue(e);
-      /* For angle units, convert to angle value in the context. Do not convert
-       * if angle unit is None. */
-      return (Units::IsPureAngleUnit(e) &&
-              m_parameters.angleUnit != AngleUnit::None)
-                 ? Trigonometry::ConvertRadianToAngleUnit<T>(
-                       approxSI, m_parameters.angleUnit)
-                 : approxSI;
-    }
-    case Type::PhysicalConstant:
-      return PhysicalConstant::GetProperties(e).m_value;
-    case Type::LnUser: {
-      std::complex<T> childApproximation = privateToComplex<T>(e->child(0));
-      if (m_parameters.complexFormat == ComplexFormat::Real &&
-          (childApproximation.real() < 0 || childApproximation.imag() != 0)) {
-        return NonReal<T>();
-      }
-      if (childApproximation == std::complex<T>(0.0)) {
-        return NAN;
-      }
-      return std::log(childApproximation);
-    }
-    case Type::Store:
-      return privateToComplexRecursive<T>(e->child(0));
-    default:
-      OMG_UNREACHABLE;
-  }
-}
-
-template <typename T>
-std::complex<T> Private::Approximator::toComplexSwitchOnlyReal(const Tree* e) {
-  assert(e->numberOfChildren() <= 2);
-  OMG::StaticVector<T, 2> children;
-  for (IndexedChild<const Tree*> childNode : e->indexedChildren()) {
-    /* Warning: All children are computed in advance here. Calling another
-     * approximation on [e] or its children may exponentially decrease
-     * performance in some instances. */
-    std::complex<T> app = privateToComplexRecursive<T>(childNode);
-    if (app.imag() != 0 || std::isnan(app.real())) {
-      return NAN;
-    }
-    assert(!std::isnan(app.imag()));
-    children.push(app.real());
-  }
-  switch (e->type()) {
-    case Type::Decimal:
-      return children[0] * std::pow(static_cast<T>(10.0), -children[1]);
-    case Type::Sign:
-    case Type::SignUser: {
-      return std::fabs(children[0]) <= OMG::Float::Epsilon<T>() ? 0
-             : children[0] < 0                                  ? -1
-                                                                : 1;
-    }
-    case Type::Floor:
-    case Type::Ceil: {
-      /* Assume low deviation from natural numbers are errors */
-      T delta =
-          std::fabs((std::round(children[0]) - children[0]) / children[0]);
-      if (delta <= OMG::Float::Epsilon<T>()) {
-        return std::round(children[0]);
-      }
-      return e->isFloor() ? std::floor(children[0]) : std::ceil(children[0]);
-    }
-    case Type::Frac: {
-      return children[0] - std::floor(children[0]);
-    }
-    case Type::Round: {
-      assert(!std::isnan(children[1]));
-      if (children[1] != std::round(children[1])) {
-        return NAN;
-      }
-      T err = std::pow(10, std::round(children[1]));
-      return std::round(children[0] * err) / err;
-    }
-    case Type::EuclideanDivision:
-    case Type::EuclideanDivisionResult:
-    case Type::Quo:
-    case Type::Rem: {
-      T a = children[0];
-      T b = children[1];
-      assert(!std::isnan(a) && !std::isnan(b));
-      if (a != (int)a || b != (int)b) {
-        return NAN;
-      }
-      // TODO: is this really better than std::remainder ?
-      T quotient = b >= 0 ? std::floor(a / b) : -std::floor(a / (-b));
-      return e->isRem() ? std::round(a - b * quotient) : quotient;
-    }
-
-    case Type::Fact: {
-      T n = children[0];
-      if (n != std::round(n) || n < 0) {
-        return NAN;
-      }
-      T result = 1;
-      for (int i = 1; i <= (int)n; i++) {
-        result *= static_cast<T>(i);
-        if (std::isinf(result)) {
-          return result;
-        }
-      }
-      return std::round(result);
-    }
-    case Type::Binomial: {
-      T n = children[0];
-      T k = children[1];
-      return FloatBinomial<T>(n, k);
-    }
-    case Type::Permute: {
-      T n = children[0];
-      T k = children[1];
-      if (n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {
-        return NAN;
-      }
-      if (k > n) {
-        return 0.0;
-      }
-      T result = 1;
-      for (int i = (int)n - (int)k + 1; i <= (int)n; i++) {
-        result *= i;
-        if (std::isinf(result) || std::isnan(result)) {
-          return result;
-        }
-      }
-      return std::round(result);
-    }
-    case Type::MixedFraction: {
-      T integerPart = children[0];
-      T fractionPart = children[1];
-      if (fractionPart < 0.0 || integerPart != std::fabs(integerPart)) {
-        // TODO how can this happen ?
-        return NAN;
-      }
-      return children[0] + children[1];
-    }
-    case Type::Factor:
-      // Useful for the beautification only
-      return children[0];
-    case Type::PercentSimple:
-      return children[0] / 100.0;
-    case Type::PercentAddition:
-      return children[0] * (1.0 + children[1] / 100.0);
-    default:
-      assert(false);
-      return NAN;
-  }
-}
-
-template <typename T>
-std::complex<T> Private::Approximator::toComplexSwitch(const Tree* e) {
+std::complex<T> Approximator::toComplexSwitch(const Tree* e) {
   /* TODO: the second part of this function and several ifs in different cases
    * act differently / more precisely on reals. We should have a dedicated,
    * faster, simpler and more precise real approximation to be used in every
@@ -1495,7 +1441,258 @@ std::complex<T> Private::Approximator::toComplexSwitch(const Tree* e) {
 }
 
 template <typename T>
-BooleanOrUndefined Private::Approximator::inequalityToBoolean(const Tree* e) {
+DefinedStatus Approximator::areDependenciesDefined(const Tree* dep) {
+  // Dependency children may have different dimensions.
+  DefinedStatus status = DefinedStatus::Defined;
+  for (const Tree* child : Dependency::Dependencies(dep)->children()) {
+    if (Dimension::IsList(child, m_parameters.symbolContext)) {
+      /* Ignore lists in dependencies. This is a temporary solution until we
+       * decide how to deal with them properly.
+       * TODO decide if they should:
+       * - not be here (might be possible once we bubble up lists and randoms
+       *   correctly and if we forbid lists in functions)
+       * - return NAN if any element of the list is undefined
+       * - always return NAN
+       * - never return NAN (current solution) */
+      continue;
+    }
+    Dimension dim = Dimension::Get(child, m_parameters.symbolContext);
+    if (dim.isScalar()) {
+      // Optimize most cases
+      std::complex<T> c = privateToComplex<T>(child);
+      // Only update to nonreal if there is no undef to respect priority
+      if (IsNonReal(c) && status == DefinedStatus::Defined) {
+        status = DefinedStatus::NonReal;
+      } else if (std::isnan(c.real()) || std::isnan(c.imag())) {
+        status = DefinedStatus::Undefined;
+      }
+    } else {
+      Tree* a = privateToTree(
+          child, Dimension::Get(child, m_parameters.symbolContext));
+      if (a->isUndefined()) {
+        status = DefinedStatus::Undefined;
+      }
+      a->removeTree();
+    }
+  }
+  return status;
+}
+
+template <typename T>
+std::complex<T> Approximator::miscToComplex(const Tree* e) {
+  switch (e->type()) {
+    case Type::AngleUnitContext: {
+      AngleUnit currentAngleUnit = m_parameters.angleUnit;
+      m_parameters.angleUnit = static_cast<AngleUnit>(e->nodeValue(0));
+      std::complex<T> result = privateToComplexRecursive<T>(e->child(0));
+      m_parameters.angleUnit = currentAngleUnit;
+      return result;
+    }
+    case Type::Piecewise: {
+      const Tree* branch = selectPiecewiseBranch(e);
+      return branch ? privateToComplexRecursive<T>(branch) : NAN;
+    }
+    case Type::Distribution: {
+      const Tree* child = e->child(0);
+      DistributionMethod::Abscissae<T> abscissae;
+      DistributionMethod::Type method = DistributionMethod::GetType(e);
+      for (int i = 0; i < DistributionMethod::NumberOfParameters(method); i++) {
+        std::complex<T> c = privateToComplexRecursive<T>(child);
+        if (c.imag() != 0) {
+          return NAN;
+        }
+        abscissae[i] = c.real();
+        child = child->nextTree();
+      }
+      Distribution::ParametersArray<T> parameters;
+      Distribution::Type distribType = Distribution::GetType(e);
+      for (int i = 0; i < Distribution::NumberOfParameters(distribType); i++) {
+        std::complex<T> c = privateToComplexRecursive<T>(child);
+        if (c.imag() != 0) {
+          return NAN;
+        }
+        parameters[i] = c.real();
+        child = child->nextTree();
+      }
+      return DistributionMethod::EvaluateAtAbscissa<T>(method, abscissae,
+                                                       distribType, parameters);
+    }
+    case Type::Dep: {
+      DefinedStatus status = areDependenciesDefined<T>(e);
+      return (status == DefinedStatus::Defined)
+                 ? privateToComplexRecursive<T>(Dependency::Main(e))
+                 : ToUndefinedComplexValue<T>(status);
+    }
+    case Type::NonNull: {
+      std::complex<T> x = privateToComplexRecursive<T>(e->child(0));
+      return x == std::complex<T>(0.0) ? NAN : x;
+    }
+    case Type::Real: {
+      std::complex<T> x = privateToComplexRecursive<T>(e->child(0));
+      return x.imag() != 0.0 ? NAN : x;
+    }
+    case Type::RealPos: {
+      std::complex<T> x = privateToComplexRecursive<T>(e->child(0));
+      return x.real() < 0.0 || x.imag() != 0.0 ? NonReal<T>() : x;
+    }
+    case Type::RealInteger: {
+      std::complex<T> x = privateToComplexRecursive<T>(e->child(0));
+      return x.imag() != 0.0 ? NAN : std::floor(x.real()) == x ? x : NAN;
+    }
+    /* Handle units as their scalar value in basic SI so prefix and
+     * representative homogeneity isn't necessary. Dimension is expected to be
+     * handled at this point. */
+    case Type::Unit: {
+      T approxSI = Units::Unit::GetValue(e);
+      /* For angle units, convert to angle value in the context. Do not convert
+       * if angle unit is None. */
+      return (Units::IsPureAngleUnit(e) &&
+              m_parameters.angleUnit != AngleUnit::None)
+                 ? Trigonometry::ConvertRadianToAngleUnit<T>(
+                       approxSI, m_parameters.angleUnit)
+                 : approxSI;
+    }
+    case Type::PhysicalConstant:
+      return PhysicalConstant::GetProperties(e).m_value;
+    case Type::LnUser: {
+      std::complex<T> childApproximation = privateToComplex<T>(e->child(0));
+      if (m_parameters.complexFormat == ComplexFormat::Real &&
+          (childApproximation.real() < 0 || childApproximation.imag() != 0)) {
+        return NonReal<T>();
+      }
+      if (childApproximation == std::complex<T>(0.0)) {
+        return NAN;
+      }
+      return std::log(childApproximation);
+    }
+    case Type::Store:
+      return privateToComplexRecursive<T>(e->child(0));
+    default:
+      OMG_UNREACHABLE;
+  }
+}
+
+template <typename T>
+std::complex<T> Approximator::toComplexSwitchOnlyReal(const Tree* e) {
+  assert(e->numberOfChildren() <= 2);
+  OMG::StaticVector<T, 2> children;
+  for (IndexedChild<const Tree*> childNode : e->indexedChildren()) {
+    /* Warning: All children are computed in advance here. Calling another
+     * approximation on [e] or its children may exponentially decrease
+     * performance in some instances. */
+    std::complex<T> app = privateToComplexRecursive<T>(childNode);
+    if (app.imag() != 0 || std::isnan(app.real())) {
+      return NAN;
+    }
+    assert(!std::isnan(app.imag()));
+    children.push(app.real());
+  }
+  switch (e->type()) {
+    case Type::Decimal:
+      return children[0] * std::pow(static_cast<T>(10.0), -children[1]);
+    case Type::Sign:
+    case Type::SignUser: {
+      return std::fabs(children[0]) <= OMG::Float::Epsilon<T>() ? 0
+             : children[0] < 0                                  ? -1
+                                                                : 1;
+    }
+    case Type::Floor:
+    case Type::Ceil: {
+      /* Assume low deviation from natural numbers are errors */
+      T delta =
+          std::fabs((std::round(children[0]) - children[0]) / children[0]);
+      if (delta <= OMG::Float::Epsilon<T>()) {
+        return std::round(children[0]);
+      }
+      return e->isFloor() ? std::floor(children[0]) : std::ceil(children[0]);
+    }
+    case Type::Frac: {
+      return children[0] - std::floor(children[0]);
+    }
+    case Type::Round: {
+      assert(!std::isnan(children[1]));
+      if (children[1] != std::round(children[1])) {
+        return NAN;
+      }
+      T err = std::pow(10, std::round(children[1]));
+      return std::round(children[0] * err) / err;
+    }
+    case Type::EuclideanDivision:
+    case Type::EuclideanDivisionResult:
+    case Type::Quo:
+    case Type::Rem: {
+      T a = children[0];
+      T b = children[1];
+      assert(!std::isnan(a) && !std::isnan(b));
+      if (a != (int)a || b != (int)b) {
+        return NAN;
+      }
+      // TODO: is this really better than std::remainder ?
+      T quotient = b >= 0 ? std::floor(a / b) : -std::floor(a / (-b));
+      return e->isRem() ? std::round(a - b * quotient) : quotient;
+    }
+
+    case Type::Fact: {
+      T n = children[0];
+      if (n != std::round(n) || n < 0) {
+        return NAN;
+      }
+      T result = 1;
+      for (int i = 1; i <= (int)n; i++) {
+        result *= static_cast<T>(i);
+        if (std::isinf(result)) {
+          return result;
+        }
+      }
+      return std::round(result);
+    }
+    case Type::Binomial: {
+      T n = children[0];
+      T k = children[1];
+      return FloatBinomial<T>(n, k);
+    }
+    case Type::Permute: {
+      T n = children[0];
+      T k = children[1];
+      if (n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {
+        return NAN;
+      }
+      if (k > n) {
+        return 0.0;
+      }
+      T result = 1;
+      for (int i = (int)n - (int)k + 1; i <= (int)n; i++) {
+        result *= i;
+        if (std::isinf(result) || std::isnan(result)) {
+          return result;
+        }
+      }
+      return std::round(result);
+    }
+    case Type::MixedFraction: {
+      T integerPart = children[0];
+      T fractionPart = children[1];
+      if (fractionPart < 0.0 || integerPart != std::fabs(integerPart)) {
+        // TODO how can this happen ?
+        return NAN;
+      }
+      return children[0] + children[1];
+    }
+    case Type::Factor:
+      // Useful for the beautification only
+      return children[0];
+    case Type::PercentSimple:
+      return children[0] / 100.0;
+    case Type::PercentAddition:
+      return children[0] * (1.0 + children[1] / 100.0);
+    default:
+      assert(false);
+      return NAN;
+  }
+}
+
+template <typename T>
+BooleanOrUndefined Approximator::inequalityToBoolean(const Tree* e) {
   T a = privateToFloat<T>(e->child(0));
   T b = privateToFloat<T>(e->child(1));
   if (std::isnan(a) || std::isnan(b)) {
@@ -1515,7 +1712,7 @@ BooleanOrUndefined Private::Approximator::inequalityToBoolean(const Tree* e) {
 }
 
 template <typename T>
-BooleanOrUndefined Private::Approximator::comparisonToBoolean(const Tree* e) {
+BooleanOrUndefined Approximator::comparisonToBoolean(const Tree* e) {
   std::complex<T> a = privateToComplex<T>(e->child(0));
   std::complex<T> b = privateToComplex<T>(e->child(1));
   if (std::isnan(a.real()) || std::isnan(a.imag()) || std::isnan(b.real()) ||
@@ -1525,7 +1722,7 @@ BooleanOrUndefined Private::Approximator::comparisonToBoolean(const Tree* e) {
   return e->isEqual() == (a == b);
 }
 
-BooleanOrUndefined Private::Approximator::privateToBoolean(const Tree* e) {
+BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
 #if POINCARE_NO_FLOAT_APPROXIMATION
   assert(m_floatPrecision == FloatPrecision::Double);
 #endif
@@ -1665,35 +1862,8 @@ BooleanOrUndefined Private::Approximator::privateToBoolean(const Tree* e) {
   }
 }
 
-Tree* Private::Approximator::toList(const Tree* e) {
-  assert(m_context.listElement == Context::k_unspecifiedListElement);
-  Dimension dimension = Dimension::Get(e, m_parameters.symbolContext);
-  int length = Dimension::ListLength(e, m_parameters.symbolContext);
-  assert(length != Dimension::k_nonListListLength);
-  Tree* list = SharedTreeStack->pushList(length);
-  for (int i = 0; i < length; i++) {
-    m_context.listElement = i;
-    privateToTree(e, dimension);
-  }
-  m_context.listElement = Context::k_unspecifiedListElement;
-  return list;
-}
-
-Tree* Private::Approximator::privateToPoint(const Tree* e) {
-  assert(m_context.pointElement == Context::k_unspecifiedPointElement);
-  Tree* point = SharedTreeStack->pushPoint();
-  m_context.pointElement = 0;
-  m_floatPrecision == FloatPrecision::Single ? toComplexTree<float>(e)
-                                             : toComplexTree<double>(e);
-  m_context.pointElement = 1;
-  m_floatPrecision == FloatPrecision::Single ? toComplexTree<float>(e)
-                                             : toComplexTree<double>(e);
-  m_context.pointElement = Context::k_unspecifiedPointElement;
-  return point;
-}
-
 template <typename T>
-Tree* Private::Approximator::evaluateMatrixPower(const Tree* e) {
+Tree* Approximator::evaluateMatrixPower(const Tree* e) {
   const Tree* base = e->child(0);
   const Tree* index = base->nextTree();
   T value = privateToFloat<T>(index);
@@ -1705,7 +1875,7 @@ Tree* Private::Approximator::evaluateMatrixPower(const Tree* e) {
   return result;
 }
 
-Tree* Private::Approximator::toMatrix(const Tree* e) {
+Tree* Approximator::toMatrix(const Tree* e) {
   /* TODO: Normal matrix nodes and operations with approximated children are
    * used to carry matrix approximation. A dedicated node that knows its
    * children have a fixed size would be more efficient. */
@@ -1776,7 +1946,7 @@ Tree* Private::Approximator::toMatrix(const Tree* e) {
           Tree* mult = SharedTreeStack->pushMult(2);
           result->cloneTree();
           approx->cloneTree();
-          Private::Approximator::toComplexTreeInplace(mult);
+          Approximator::toComplexTreeInplace(mult);
         }
         resultIsMatrix |= childIsMatrix;
         approx->removeTree();
@@ -1955,36 +2125,7 @@ Tree* Private::Approximator::toMatrix(const Tree* e) {
   return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
 }
 
-template <typename T>
-T Private::Approximator::privateToFloat(const Tree* e) {
-#if ASSERTIONS
-  Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
-  assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
-  // listElement is needed to approximate lists to scalars
-  assert(m_context.listElement != Context::k_unspecifiedListElement ||
-         !Dimension::IsList(e, m_parameters.symbolContext));
-  // pointElement is needed to approximate points to scalars
-  assert(m_context.pointElement != Context::k_unspecifiedPointElement ||
-         !dim.isPoint());
-#endif
-  std::complex<T> value = privateToComplex<T>(e);
-  // Remove signaling nan
-  return value.imag() == 0 && !IsNonReal(value) ? value.real() : NAN;
-}
-
-template <typename T>
-T Private::Approximator::toLocalContext(const Tree* e, T x) {
-  if (m_context.localEvaluator.isFull()) {
-    return UndefinedUnhandledDimension<T>();
-  }
-  m_context.localEvaluator.pushVariable(x);
-  T result = privateToFloat<T>(e);
-  m_context.localEvaluator.leaveCurrentScope();
-  return result;
-}
-
-const Tree* Private::Approximator::selectPiecewiseBranch(
-    const Tree* piecewise) {
+const Tree* Approximator::selectPiecewiseBranch(const Tree* piecewise) {
   assert(piecewise->isPiecewise());
   int n = piecewise->numberOfChildren();
   int i = 0;
@@ -2011,29 +2152,7 @@ const Tree* Private::Approximator::selectPiecewiseBranch(
   return KUndef;
 }
 
-/* TODO: users of this function just want to test equality of branch and do not
- * need the index */
-template <typename T>
-int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
-  assert(piecewise->isPiecewise());
-  /* TODO: Without randomContext, randomized nodes in piecewise's condition will
-   * approximate to NAN. */
-  Context context;
-  context.localEvaluator.pushVariable(x);
-  const Tree* branch =
-      Approximator(Precision<T>::value, Approximation::Parameters{},
-                   std::move(context))
-          .selectPiecewiseBranch(piecewise);
-  return !branch            ? k_unknownActiveBranch
-         : branch == KUndef ? k_noActiveBranch
-                            : piecewise->indexOfChild(branch);
-}
-
-bool CanApproximate(const Tree* e, bool approxLocalVar) {
-  return Private::CanApproximate(e, 0);
-}
-
-bool Private::CanApproximate(const Tree* e, int firstNonApproximableVarId) {
+bool CanApproximate(const Tree* e, int firstNonApproximableVarId) {
   if (e->isRandomized() || e->isUserVariable() || e->isUserFunction() ||
       (e->isVar() && Variables::Id(e) >= firstNonApproximableVarId) ||
       e->isDepList()) {
@@ -2060,125 +2179,9 @@ bool Private::CanApproximate(const Tree* e, int firstNonApproximableVarId) {
   return true;
 }
 
-bool Private::SkipApproximation(TypeBlock type, FloatPrecision floatPrecision) {
-  if (type.isComplexI() || type.isSingleFloat()) {
-    return true;
-  }
-  if (type.isDoubleFloat()) {
-    /* If the precision is Single, double floats in the expressions are degraded
-     * to single floats to avoid having mixed levels of precision. */
-    return (floatPrecision == FloatPrecision::Double);
-  }
-  return false;
-}
+}  // namespace Poincare::Internal::Approximation::Private
 
-bool Private::SkipApproximation(TypeBlock type, FloatPrecision floatPrecision,
-                                TypeBlock parentType, int indexInParent,
-                                bool previousChildWasApproximated) {
-  if (SkipApproximation(type, floatPrecision)) {
-    return true;
-  }
-  switch (parentType) {
-    case Type::ATrig:
-    case Type::Trig:
-      // Do not approximate second term in case tree isn't replaced.
-      return indexInParent == 1;
-    case Type::Pow:
-    case Type::PowReal:
-      // Only approximate power's index if the entire tree can be approximated.
-      return indexInParent == 1 && !previousChildWasApproximated;
-    case Type::ListSlice:
-    case Type::ListElement:
-      assert(indexInParent < 1 || previousChildWasApproximated);
-      return indexInParent >= 1 && !previousChildWasApproximated;
-    case Type::ListSequence:
-      return indexInParent == Parametric::k_valueIndex;
-    case Type::RandIntNoRep:
-      /* Never approximate last child of RandIntNoRep since it won't be
-       * approximated, and an integer child is expected in dimension check. */
-      return indexInParent == 2;
-    case Type::Identity:
-      return true;
-    default:
-      return false;
-  }
-}
-
-void Private::Approximator::approximateAndReplaceEveryScalar(Tree* e) {
-  if (SkipApproximation(e->type(), m_floatPrecision)) {
-    return;
-  }
-  approximateAndReplaceEveryScalarRecursive(e);
-}
-
-template <typename T>
-static bool MergeChildrenOfMultOrAdd(Tree* e) {
-  assert(e->isMult() || e->isAdd());
-  T merge = (e->isMult() ? 1.0 : 0.0);
-  int lastFloatIndex = -1;
-  int n = e->numberOfChildren();
-  int i = 0;
-  Tree* child = e->nextNode();
-  while (i < n) {
-    if (child->isFloat()) {
-      T childValue = child->isSingleFloat() ? FloatHelper::FloatTo(child)
-                                            : FloatHelper::DoubleTo(child);
-      merge = (e->isMult() ? merge * childValue : merge + childValue);
-      lastFloatIndex = i;
-      child->removeTree();
-      n--;
-      NAry::SetNumberOfChildren(e, n);
-    } else if (child->type() == e->type()) {
-      // Merge Mult/Add that may have appeared
-      n += child->numberOfChildren() - 1;
-      child->removeNode();
-      NAry::SetNumberOfChildren(e, n);
-    } else {
-      child = child->nextTree();
-      i++;
-    }
-  }
-  if (lastFloatIndex != -1) {
-    /* To preserve order, push the merged children at an index where there was a
-     * float */
-    NAry::AddChildAtIndex(e, SharedTreeStack->pushFloat(merge), lastFloatIndex);
-    NAry::SquashIfPossible(e);
-    return true;
-  }
-  return false;
-}
-
-void Private::Approximator::approximateAndReplaceEveryScalarRecursive(Tree* e) {
-  if (Approximation::CanApproximate(e) &&
-      Dimension::IsNonListScalar(e, m_parameters.symbolContext)) {
-    e->moveTreeOverTree(privateToTree(e, Dimension(DimensionType::Scalar)));
-    return;
-  }
-  bool previousChildWasApproximated = false;
-  for (IndexedChild<Tree*> child : e->indexedChildren()) {
-    if (!SkipApproximation(child->type(), m_floatPrecision, e->type(),
-                           child.index, previousChildWasApproximated)) {
-      approximateAndReplaceEveryScalarRecursive(child);
-    }
-    previousChildWasApproximated = child->isFloat();
-  }
-  Undefined::ShallowBubbleUpUndef(e);
-  // Merge addition and multiplication's children while preserving order
-  if (e->isAdd() || e->isMult()) {
-    m_floatPrecision == FloatPrecision::Single
-        ? MergeChildrenOfMultOrAdd<float>(e)
-        : MergeChildrenOfMultOrAdd<double>(e);
-  }
-}
-
-Tree* ExtractRealPart(const Tree* e) {
-  if (GetComplexProperties(e).isReal()) {
-    return e->cloneTree();
-  }
-  std::complex<double> value =
-      Approximation::To<std::complex<double>>(e, Parameters{});
-  return SharedTreeStack->pushDoubleFloat(value.real());
-}
+namespace Poincare::Internal::Approximation {
 
 template float To(const Tree*, const Parameters&);
 template double To(const Tree*, const Parameters&);

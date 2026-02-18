@@ -810,7 +810,7 @@ QUIZ_CASE(pcj_simplification_store_correctly_parsed) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
       .complexFormat = ComplexFormat::Cartesian,
-      .m_angleUnit = AngleUnit::Radian,
+      .angleUnit = AngleUnit::Radian,
       .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = symbolStore};
   simplifies_to("abc", "a×b×c", projCtx, false);

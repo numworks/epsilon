@@ -392,7 +392,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         Poincare::ProjectionContext{
             .complexFormat =
                 GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-            .m_angleUnit =
+            .angleUnit =
                 GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
             .m_unitFormat =
                 GlobalPreferences::SharedGlobalPreferences()->unitFormat()});

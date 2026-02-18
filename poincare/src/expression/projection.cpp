@@ -167,7 +167,7 @@ ComplexFormat Projection::PreferredComplexFormat(
 }
 
 struct ShallowSystemProjectArgs {
-  AngleUnit m_angleUnit;
+  AngleUnit angleUnit;
   ComplexFormat complexFormat;
   bool m_hasNonKelvinTemperatureUnit;
 };
@@ -177,7 +177,7 @@ bool Projection::DeepSystemProject(Tree* e,
                                    const Dimension& dimension) {
   bool changed = false;
   ShallowSystemProjectArgs args{
-      .m_angleUnit = projectionContext.m_angleUnit,
+      .angleUnit = projectionContext.angleUnit,
       .complexFormat = projectionContext.complexFormat,
       .m_hasNonKelvinTemperatureUnit = dimension.hasNonKelvinTemperatureUnit(),
   };
@@ -262,7 +262,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   }
 
   // Project angles depending on context
-  AngleUnit angleUnit = args->m_angleUnit;
+  AngleUnit angleUnit = args->angleUnit;
   if (e->isOfType({Type::Sin, Type::Cos, Type::Tan, Type::Cot})) {
     /* In degree, cos(23°) and cos(23) -> trig(23×π/180, 0)
      * but        cos(23rad)           -> trig(23      , 0) */

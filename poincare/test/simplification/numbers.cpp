@@ -43,7 +43,7 @@ QUIZ_CASE(pcj_simplification_decimal) {
 QUIZ_CASE(pcj_simplification_float) {
   Poincare::ProjectionContext ctx = {
       .complexFormat = Poincare::ComplexFormat::Real,
-      .m_angleUnit = Poincare::AngleUnit::Radian,
+      .angleUnit = Poincare::AngleUnit::Radian,
       .m_strategy = Strategy::ApproximateToFloat,
   };
   simplifies_to("2", "2", ctx);

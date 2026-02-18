@@ -35,7 +35,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
     Poincare::Preferences::CalculationPreferences calculationPreferences,
     const ProjectionContext& ctx,
     ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation) {
-  const Tree* period = Angle::Period(ctx.m_angleUnit);
+  const Tree* period = Angle::Period(ctx.angleUnit);
   // Find the angle
   UserExpression exactAngle =
       directTrigonometry
@@ -91,7 +91,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
                               sine, Approximation::Parameters{
                                         .projectLocalVariables = true,
                                         .optimize = true,
-                                        .angleUnit = ctx.m_angleUnit,
+                                        .angleUnit = ctx.angleUnit,
                                         .complexFormat = ctx.complexFormat,
                                         .symbolContext = ctx.m_context}) < 0;
       sine->removeTree();
@@ -105,7 +105,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
         approximateAngleTree, Approximation::FloatPrecision::Double,
         Approximation::Parameters{.projectLocalVariables = true,
                                   .optimize = true,
-                                  .angleUnit = ctx.m_angleUnit,
+                                  .angleUnit = ctx.angleUnit,
                                   .complexFormat = ctx.complexFormat,
                                   .symbolContext = ctx.m_context}));
     Beautification::DeepBeautify(approximateAngleTree, ctx);
@@ -128,7 +128,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
       Approximation::Parameters{.projectLocalVariables = true,
                                 .optimize = true,
-                                .angleUnit = ctx.m_angleUnit,
+                                .angleUnit = ctx.angleUnit,
                                 .complexFormat = ctx.complexFormat,
                                 .symbolContext = ctx.m_context});
   if (approximateAngleTree) {
@@ -136,7 +136,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   }
   simplifiedAngle->removeTree();
   approximatedAngle = Poincare::Trigonometry::ConvertAngleToRadian(
-      approximatedAngle, ctx.m_angleUnit);
+      approximatedAngle, ctx.angleUnit);
   assert(0.0 <= approximatedAngle && approximatedAngle <= 2.0 * M_PI);
   return {.exactAngle = exactAngle,
           .approximatedAngle = approximatedAngle,
@@ -198,7 +198,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   AngleUnit angleUnit = calculationPreferences.angleUnit;
   ProjectionContext projCtx = {
       .complexFormat = complexFormat,
-      .m_angleUnit = angleUnit,
+      .angleUnit = angleUnit,
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = symbolContext,
   };
@@ -570,7 +570,7 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
   ProjectionContext ctx = {.complexFormat = ComplexFormat::Cartesian,
-                           .m_angleUnit = calculationPreferences.angleUnit,
+                           .angleUnit = calculationPreferences.angleUnit,
                            .m_strategy = Strategy::ApproximateToFloat,
                            .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .m_context = symbolContext,

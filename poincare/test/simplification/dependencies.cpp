@@ -77,7 +77,7 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionContext projCtx = {
       .complexFormat = ComplexFormat::Real,
-      .m_angleUnit = AngleUnit::Radian,
+      .angleUnit = AngleUnit::Radian,
       .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = symbolStore};
 

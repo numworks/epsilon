@@ -56,7 +56,7 @@ QUIZ_CASE(pcj_equation_solver) {
   PoincareTest::SymbolStore symbolStore;
   Poincare::ProjectionContext projCtx = {
       .complexFormat = Poincare::ComplexFormat::Real,
-      .m_angleUnit = Poincare::AngleUnit::Radian,
+      .angleUnit = Poincare::AngleUnit::Radian,
       .m_context = symbolStore};
 
   check_solutions({"x-3+y", "y-x+1"}, {"2", "1"}, projCtx);
@@ -137,7 +137,7 @@ void check_range(const char* input, double min, double max) {
   Tree* equationList = TreeStack::SharedTreeStack->pushList(1);
   parse(input);
   Poincare::ProjectionContext ctx{
-      .m_angleUnit = Poincare::AngleUnit::Radian,
+      .angleUnit = Poincare::AngleUnit::Radian,
   };
   EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
       equationList, ctx, Poincare::Range1D<double>(), 10);

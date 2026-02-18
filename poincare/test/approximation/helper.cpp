@@ -57,7 +57,7 @@ void approximates_to(const char* input, T f,
   T approx = Approximation::To<T>(
       expression, Approximation::Parameters{
                       .projectLocalVariables = true,
-                      .angleUnit = projectionContext.m_angleUnit,
+                      .angleUnit = projectionContext.angleUnit,
                       .complexFormat = projectionContext.complexFormat,
                       .symbolContext = projectionContext.m_context});
   bool result =
@@ -87,7 +87,7 @@ void approximates_to(const char* input, const char* output,
             tree, Approximation::Precision<T>::value,
             Approximation::Parameters{
                 .projectLocalVariables = true,
-                .angleUnit = projectionContext.m_angleUnit,
+                .angleUnit = projectionContext.angleUnit,
                 .complexFormat = projectionContext.complexFormat,
                 .symbolContext = projectionContext.m_context}));
         Beautification::DeepBeautify(tree, projectionContext);
@@ -128,7 +128,7 @@ void approximates_to_boolean(const char* input,
           expression, Approximation::FloatPrecision::Single,
           Approximation::Parameters{
               .projectLocalVariables = true,
-              .angleUnit = projectionContext.m_angleUnit,
+              .angleUnit = projectionContext.angleUnit,
               .complexFormat = projectionContext.complexFormat,
               .symbolContext = projectionContext.m_context});
   quiz_assert(approx.isUndefined() == expected.isUndefined());
@@ -144,7 +144,7 @@ void assert_float_approximates_to(UserExpression f, const char* result) {
   char buffer[500];
   f.cloneAndApproximate<T>(
        Poincare::ProjectionContext{.complexFormat = ComplexFormat::Cartesian,
-                                   .m_angleUnit = AngleUnit::Radian})
+                                   .angleUnit = AngleUnit::Radian})
       .serialize(buffer, false, DecimalMode, numberOfDigits);
   quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
 }
@@ -162,7 +162,7 @@ void simplified_approximates_to(const char* input, const char* output,
             Approximation::Parameters{
                 .projectLocalVariables = true,
                 .optimize = true,
-                .angleUnit = projectionContext.m_angleUnit,
+                .angleUnit = projectionContext.angleUnit,
                 .complexFormat = projectionContext.complexFormat,
                 .symbolContext = projectionContext.m_context}));
         Beautification::DeepBeautify(tree, projectionContext);
@@ -183,7 +183,7 @@ void projected_approximates_to(const char* input, const char* output,
             Approximation::Parameters{
                 .prepare = true,
                 .optimize = true,
-                .angleUnit = projectionContext.m_angleUnit,
+                .angleUnit = projectionContext.angleUnit,
                 .complexFormat = projectionContext.complexFormat,
                 .symbolContext = projectionContext.m_context}));
         Beautification::DeepBeautify(tree, projectionContext);
@@ -204,7 +204,7 @@ void approximates_to_keeping_symbols(const char* expression,
             tree, Approximation::Precision<T>::value,
             Approximation::Parameters{
                 .onlyReplaceNumerical = true,
-                .angleUnit = projectionContext.m_angleUnit,
+                .angleUnit = projectionContext.angleUnit,
                 .complexFormat = projectionContext.complexFormat,
                 .symbolContext = projectionContext.m_context});
         Variables::BeautifyToName(tree);

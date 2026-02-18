@@ -106,7 +106,7 @@ QUIZ_CASE(pcj_polynomial_degree) {
   PoincareTest::SymbolStore symbolStore;
   Poincare::ProjectionContext projCtx = {
       .complexFormat = Cartesian,
-      .m_angleUnit = Radian,
+      .angleUnit = Radian,
       .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = symbolStore,
       .m_advanceReduce = false};

@@ -12,7 +12,7 @@ struct ProjectionContext {
 #else
   constexpr static ComplexFormat complexFormat = ComplexFormat::Real;
 #endif
-  AngleUnit m_angleUnit = AngleUnit::None;
+  AngleUnit angleUnit = AngleUnit::None;
   Strategy m_strategy = Strategy::Default;
   ReductionTarget m_reductionTarget = ReductionTarget::User;
   Preferences::UnitFormat m_unitFormat = Preferences::UnitFormat::Metric;

@@ -205,7 +205,7 @@ template <typename T>
 Internal::Tree* Solver<T>::FunctionDifferenceForIntersection(
     const Internal::Tree* f, const Internal::Tree* g, bool areAlongSameAxis) {
   /* TODO: simplify if we decide that functions should be simplified. Either
-   * pass ProjectionContext(complexFormat, m_angleUnit,
+   * pass ProjectionContext(complexFormat, angleUnit,
    * ReductionTarget::SystemForAnalysis, UnitFormat::Metric, m_context) or
    * ensure expression is projected. */
   if (areAlongSameAxis) {

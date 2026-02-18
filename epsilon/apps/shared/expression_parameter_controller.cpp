@@ -53,8 +53,8 @@ bool ExpressionParameterController::textFieldDidFinishEditing(
                     .complexFormat =
                         GlobalPreferences::SharedGlobalPreferences()
                             ->complexFormat(),
-                    .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()
-                                       ->angleUnit(),
+                    .angleUnit = GlobalPreferences::SharedGlobalPreferences()
+                                     ->angleUnit(),
                 }),
                 PoincareHelpers::ApproximateToRealScalar)
           : ExpressionOrFloat{};

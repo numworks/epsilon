@@ -70,7 +70,7 @@ inline Poincare::ProjectionContext ProjectionContextForPreferences(
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
           GlobalContextAccessor::Context(),
           Poincare::SymbolicComputation::ReplaceDefinedSymbols),
-      .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+      .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .m_unitFormat =
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_context = GlobalContextAccessor::Context()};

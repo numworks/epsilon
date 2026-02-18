@@ -110,7 +110,7 @@ SystemExpression ExpressionModel::expressionReduced(
        * 'Simplify'. Thus, we use a temporary expression. */
       m_expression = userExpression.cloneAndReduce(ProjectionContext{
           .complexFormat = complexFormat(record),
-          .m_angleUnit =
+          .angleUnit =
               GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
           .m_reductionTarget = ReductionTarget::SystemForApproximation,
           .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,

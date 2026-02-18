@@ -31,7 +31,7 @@ UserExpression BuildVectorNorm(
   norm = norm.cloneAndSimplify(
       ProjectionContext{
           .complexFormat = calculationPreferences.complexFormat,
-          .m_angleUnit = calculationPreferences.angleUnit,
+          .angleUnit = calculationPreferences.angleUnit,
           .m_reductionTarget = Poincare::ReductionTarget::User,
           .m_symbolic = VectorListController::k_symbolicComputation,
           .m_context = symbolContext,

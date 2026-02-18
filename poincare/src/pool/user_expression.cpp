@@ -152,7 +152,7 @@ UserExpression UserExpression::cloneAndApproximate(
           /* When CAS is activated, onlyReplaceNumerical is used to approximate
            * expressions with symbols such as π*x → 3.14*x. */
           .onlyReplaceNumerical = CAS::Enabled(),
-          .angleUnit = context.m_angleUnit,
+          .angleUnit = context.angleUnit,
           .complexFormat = context.complexFormat,
           .symbolContext = context.m_context});
   /* There are several issues that currently prevent us from beautifying an
@@ -248,13 +248,13 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
     return NAN;
   }
   ProjectionContext ctx = ProjectionContext{.complexFormat = complexFormat,
-                                            .m_angleUnit = angleUnit,
+                                            .angleUnit = angleUnit,
                                             .m_symbolic = symbolicComputation,
                                             .m_context = symbolContext};
   bool reductionFailure;
   exp = exp.cloneAndSimplify(ctx, &reductionFailure);
   assert(!exp.isUninitialized());
-  return exp.approximateToRealScalar<T>(ctx.m_angleUnit, ctx.complexFormat,
+  return exp.approximateToRealScalar<T>(ctx.angleUnit, ctx.complexFormat,
                                         symbolContext);
 }
 

@@ -60,15 +60,15 @@ class Poincare::Internal::ExactFormulaTest {
     process_tree_and_compare(
         "π/2-arcsin(1/10)", "π/2-arcsin(1/10)",
         [](Tree* tree, ProjectionContext ctx) { simplify(tree, ctx); },
-        {.m_angleUnit = AngleUnit::Radian});
+        {.angleUnit = AngleUnit::Radian});
     process_tree_and_compare(
         "π/2-arccos(1/10)", "π/2-arccos(1/10)",
         [](Tree* tree, ProjectionContext ctx) { simplify(tree, ctx); },
-        {.m_angleUnit = AngleUnit::Radian});
+        {.angleUnit = AngleUnit::Radian});
     process_tree_and_compare(
         "π/2-arctan(1/10)", "π/2-arctan(1/10)",
         [](Tree* tree, ProjectionContext ctx) { simplify(tree, ctx); },
-        {.m_angleUnit = AngleUnit::Radian});
+        {.angleUnit = AngleUnit::Radian});
   }
 };
 

@@ -30,7 +30,7 @@ void VectorListController::computeAdditionalResults(
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   ProjectionContext ctx = {.complexFormat = complexFormat(),
-                           .m_angleUnit = angleUnit(),
+                           .angleUnit = angleUnit(),
                            .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .m_context = symbolContext};
   assert(exactOutput.preferredComplexFormat(ctx.complexFormat, ctx.m_context,
@@ -64,7 +64,7 @@ void VectorListController::computeAdditionalResults(
   normalized = normalized.cloneAndSimplify(
       ProjectionContext{
           .complexFormat = complexFormat(),
-          .m_angleUnit = angleUnit(),
+          .angleUnit = angleUnit(),
           .m_reductionTarget = Poincare::ReductionTarget::User,
           .m_symbolic = k_symbolicComputation,
           .m_context = symbolContext,
@@ -92,8 +92,7 @@ void VectorListController::computeAdditionalResults(
   // HasVector should be false if any vector's child is complex.
   if (yApprox < 0.0) {
     angle = UserExpression::Create(
-        KSub(KA, KB),
-        {.KA = Trigonometry::Period(ctx.m_angleUnit), .KB = angle});
+        KSub(KA, KB), {.KA = Trigonometry::Period(ctx.angleUnit), .KB = angle});
   }
   float angleApproximation = angle.approximateToRealScalar<float>(
       angleUnit(), complexFormat(), symbolContext);

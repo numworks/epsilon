@@ -288,7 +288,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
     SymbolicComputation symbolicComputation =
         SymbolicComputation::ReplaceDefinedSymbols) {
   ProjectionContext projContext{.complexFormat = complexFormat,
-                                .m_angleUnit = angleUnit,
+                                .angleUnit = angleUnit,
                                 .m_symbolic = symbolicComputation,
                                 .m_context = symbolContext};
   UserExpression e = UserExpression::Builder(parse(input, symbolContext));
@@ -400,7 +400,7 @@ void assert_is_continuous_on_interval(const char* input, float x1, float x2,
                                       bool isContinuous) {
   UserExpression e1 = UserExpression::Builder(parse(input));
   SystemExpression e2 = e1.cloneAndReduce(ProjectionContext{
-      .m_angleUnit = AngleUnit::Radian,
+      .angleUnit = AngleUnit::Radian,
   });
   quiz_assert(!e2.isFailedSimplification());
   PreparedFunction e3 = e2.getPreparedFunction("x", true);
@@ -439,7 +439,7 @@ void assert_reduced_deep_is_symbolic(const char* input,
                                      bool isSymbolic = true) {
   SystemExpression reducedExpression = UserExpression::Builder(parse(input))
                                            .cloneAndReduce(ProjectionContext{
-                                               .m_angleUnit = AngleUnit::Radian,
+                                               .angleUnit = AngleUnit::Radian,
                                            });
   quiz_assert(!reducedExpression.isFailedSimplification());
   quiz_assert_print_if_failure(

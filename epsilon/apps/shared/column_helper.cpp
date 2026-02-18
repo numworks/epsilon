@@ -185,7 +185,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   SystemExpression reduced = formula.cloneAndReduce(ProjectionContext{
       .complexFormat =
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-      .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+      .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .m_reductionTarget = ReductionTarget::SystemForApproximation,
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = storeAppContext});

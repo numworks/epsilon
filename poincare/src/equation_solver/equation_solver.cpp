@@ -850,7 +850,7 @@ SolverResult ExactSolve(const Tree* equationList,
         Approximation::Parameters{
             .prepare = true,
             .optimize = true,
-            .angleUnit = projectionContext.m_angleUnit,
+            .angleUnit = projectionContext.angleUnit,
             .complexFormat = projectionContext.complexFormat,
             .symbolContext = projectionContext.m_context});
   }

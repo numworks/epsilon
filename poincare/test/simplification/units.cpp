@@ -267,9 +267,9 @@ QUIZ_CASE(pcj_simplification_unit) {
   // 0
   simplifies_to("0×0×2×(_rad + _°)×_°", "0×_rad^2");
   simplifies_to("ln(2/2)_rad", "0×_rad");
-  simplifies_to("ln(2/2)_°", "0×_°", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("ln(2/2)_°", "0×_°", {.angleUnit = AngleUnit::Degree});
   simplifies_to("5×_°-5×_°", "0×_°",
-                {.m_angleUnit = AngleUnit::Radian,
+                {.angleUnit = AngleUnit::Radian,
                  .m_unitDisplay = UnitDisplay::AutomaticMetric});
   simplifies_to("0×0×2×(_km + _m)×_km×_s", "0×_m^2×_s");
   simplifies_to("0×_°C", "0×_°C", {.m_unitDisplay = UnitDisplay::None});
@@ -285,8 +285,8 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("_rad", "1×_rad");
   simplifies_to("360×_°", "2×π×_rad");
   simplifies_to("π×π×_rad", "π^2×_rad");
-  simplifies_to("π×π×_rad", "180×π×_°", {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("1×π×_°", "π×_°", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("π×π×_rad", "180×π×_°", {.angleUnit = AngleUnit::Degree});
+  simplifies_to("1×π×_°", "π×_°", {.angleUnit = AngleUnit::Degree});
   simplifies_to("π×π×_rad×_m", "9.8696044010894×_m×_rad");
   simplifies_to("π×π×_rad×_rad", "π^2×_rad^2");
   simplifies_to("0.2_rad", "1/5×_rad");
@@ -357,7 +357,7 @@ QUIZ_CASE(pcj_simplification_unit_basicSI) {
 
 QUIZ_CASE(pcj_simplification_unit_conversion) {
   // Angle
-  simplifies_to("180×_°→_rad", "π×_rad", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("180×_°→_rad", "π×_rad", {.angleUnit = AngleUnit::Degree});
   simplifies_to("0_°→_rad", "0×_rad");
   simplifies_to("180_°→_rad", "π×_rad");
   simplifies_to("π_rad→_'", "10800×_'");

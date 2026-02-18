@@ -24,7 +24,7 @@ void ComplexListController::computeAdditionalResults(
       approximateOutput, m_calculationPreferences, App::app()->localContext()));
   assert(complexFormat() != ComplexFormat::Real);
   ProjectionContext ctx = {.complexFormat = ComplexFormat::Cartesian,
-                           .m_angleUnit = angleUnit(),
+                           .angleUnit = angleUnit(),
                            .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .m_context = App::app()->localContext()};
 
@@ -48,7 +48,7 @@ void ComplexListController::computeAdditionalResults(
   double imagPart;
   bool hasComplexApprox =
       approximateOutput.hasDefinedComplexApproximation<double>(
-          ctx.m_angleUnit, ctx.complexFormat, App::app()->localContext(),
+          ctx.angleUnit, ctx.complexFormat, App::app()->localContext(),
           &realPart, &imagPart);
 
   assert(hasComplexApprox);

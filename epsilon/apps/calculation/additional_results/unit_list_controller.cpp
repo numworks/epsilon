@@ -77,7 +77,7 @@ void UnitListController::computeAdditionalResults(
   const SymbolContext& symbolContext = App::app()->localContext();
   ProjectionContext ctx = {
       .complexFormat = complexFormat(),
-      .m_angleUnit = angleUnit(),
+      .angleUnit = angleUnit(),
       .m_unitFormat = unitFormat,
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = symbolContext,

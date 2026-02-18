@@ -22,7 +22,7 @@ void MatrixListController::computeAdditionalResults(
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   ProjectionContext ctx = {.complexFormat = complexFormat(),
-                           .m_angleUnit = angleUnit(),
+                           .angleUnit = angleUnit(),
                            .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .m_context = App::app()->localContext(),
                            .m_advanceReduce = false};

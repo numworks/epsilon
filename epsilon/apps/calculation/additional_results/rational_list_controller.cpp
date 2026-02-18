@@ -25,7 +25,7 @@ void RationalListController::computeAdditionalResults(
   UserExpression e = exactOutput;
   assert(!e.isUninitialized());
   ProjectionContext ctx = {.complexFormat = complexFormat(),
-                           .m_angleUnit = angleUnit(),
+                           .angleUnit = angleUnit(),
                            .m_advanceReduce = false};
   SystemExpression eReduced = e.cloneAndReduce(ctx);
   assert(!eReduced.isFailedSimplification() && eReduced.tree()->isRational());

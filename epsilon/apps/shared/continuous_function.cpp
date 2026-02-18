@@ -580,7 +580,7 @@ SystemExpression getSystemExpressionForApproximation(
   SystemExpression resultForApproximation =
       equation.cloneAndReduce(ProjectionContext{
           .complexFormat = complexFormat,
-          .m_angleUnit = angleUnit,
+          .angleUnit = angleUnit,
           .m_reductionTarget = ReductionTarget::SystemForApproximation,
           .m_symbolic = SymbolicComputation::KeepAllSymbols});
   assert(!resultForApproximation.isUninitialized() &&
@@ -747,7 +747,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   if (!equation.isUndefined()) {
     result = equation.cloneAndReduce(ProjectionContext{
         .complexFormat = complexFormat,
-        .m_angleUnit = angleUnit,
+        .angleUnit = angleUnit,
         .m_reductionTarget = ReductionTarget::SystemForAnalysis,
         .m_symbolic = SymbolicComputation::KeepAllSymbols,
         .m_context = GlobalContextAccessor::Context()});

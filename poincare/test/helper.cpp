@@ -160,7 +160,7 @@ Tree* parse_and_reduce(const char* input, bool beautify) {
   assert(e);
   Poincare::ProjectionContext ctx = {
       .complexFormat = Poincare::ComplexFormat::Real,
-      .m_angleUnit = Poincare::AngleUnit::Radian,
+      .angleUnit = Poincare::AngleUnit::Radian,
   };
   simplify(e, ctx, beautify);
   return e;

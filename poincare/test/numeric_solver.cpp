@@ -27,7 +27,7 @@ void assert_next_solution_is(const char* expression,
 
   Poincare::ProjectionContext projCtx = {
       .complexFormat = Real,
-      .m_angleUnit = angleUnit,
+      .angleUnit = angleUnit,
       .m_strategy = Poincare::Strategy::ApproximateToFloat,
       .m_context = symbolContext};
 

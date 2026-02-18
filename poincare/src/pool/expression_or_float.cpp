@@ -61,7 +61,7 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
           numberOfSignificantDigits,
           ProjectionContext{
               .complexFormat = approximationParameters.complexFormat,
-              .m_angleUnit = approximationParameters.angleUnit,
+              .angleUnit = approximationParameters.angleUnit,
           })) {
     constexpr size_t k_bufferExactLength = 15;
     char exactSerialization[k_bufferExactLength];

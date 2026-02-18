@@ -46,7 +46,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
       {
           .complexFormat =
               GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-          .m_angleUnit =
+          .angleUnit =
               GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
           .m_context = symbolContext,
       });
@@ -108,7 +108,7 @@ void SystemOfEquations::approximateSolve(const SymbolContext& symbolContext) {
       eqList,
       {.complexFormat =
            GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+       .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
        .m_reductionTarget = ReductionTarget::SystemForApproximation,
        .m_context = symbolContext},
       m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
@@ -198,8 +198,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     // Re-reduce exact solution but approximate during reduction.
     ProjectionContext projCtx = {
         .complexFormat = m_equationMetadata.complexFormat,
-        .m_angleUnit =
-            GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+        .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
         .m_strategy = Strategy::ApproximateToFloat,
         .m_unitFormat =
             GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
@@ -260,7 +259,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
             GlobalPreferences::SharedGlobalPreferences()
                 ->numberOfSignificantDigits(),
             {.complexFormat = m_equationMetadata.complexFormat,
-             .m_angleUnit =
+             .angleUnit =
                  GlobalPreferences::SharedGlobalPreferences()->angleUnit()})) {
       exactAndApproximateAreEqual = true;
     }

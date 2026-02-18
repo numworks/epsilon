@@ -102,7 +102,7 @@ bool DeepBeautifyAngleFunctions(Tree* e,
   /* ShallowBeautifyAngleFunctions temporarily introduces AngleUnitContext
    * nodes to allow simplification and approximation of beautified angle
    * functions. */
-  AngleUnit angleUnit = projectionContext.m_angleUnit;
+  AngleUnit angleUnit = projectionContext.angleUnit;
   bool changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifyAngleFunctions, &angleUnit);
   if (changed) {

@@ -180,7 +180,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   // Strategy
   simplifies_to("sin(90)", "1",
                 {.angleUnit = AngleUnit::Degree,
-                 .m_strategy = Strategy::ApproximateToFloat});
+                 .strategy = Strategy::ApproximateToFloat});
 
   // Beautification and dependencies
   simplifies_to(

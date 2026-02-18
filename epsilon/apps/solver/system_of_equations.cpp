@@ -199,7 +199,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     ProjectionContext projCtx = {
         .complexFormat = m_equationMetadata.complexFormat,
         .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-        .m_strategy = Strategy::ApproximateToFloat,
+        .strategy = Strategy::ApproximateToFloat,
         .m_unitFormat =
             GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
         // Any remaining symbol at this point should be an unknown parameter.

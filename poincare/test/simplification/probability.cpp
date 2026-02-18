@@ -72,7 +72,7 @@ QUIZ_CASE(pcj_simplification_random) {
 
   simplifies_to("randint(1,10)", "randint(1,10)");
 
-  // TODO: Handle them with {.m_strategy = Strategy::ApproximateToFloat}
+  // TODO: Handle them with {.strategy = Strategy::ApproximateToFloat}
   simplifies_to("randintnorep(1,10,5)", "randintnorep(1,10,5)");
   simplifies_to("randintnorep(1,1000,255)", "randintnorep(1,1000,255)");
   simplifies_to("randintnorep(1,1000,256)", "undef");

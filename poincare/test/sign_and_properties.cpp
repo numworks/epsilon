@@ -512,7 +512,7 @@ void assert_properties(const char* input, ComplexProperties expectedProperties,
   Simplification::ToSystem(expression,
                            ProjectionContext{.complexFormat = complexFormat,
                                              .angleUnit = AngleUnit::Radian,
-                                             .m_strategy = strategy,
+                                             .strategy = strategy,
                                              .m_advanceReduce = false});
   bool result = GetComplexProperties(expression) == expectedProperties;
 #if POINCARE_TREE_LOG

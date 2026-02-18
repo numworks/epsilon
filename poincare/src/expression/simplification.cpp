@@ -247,7 +247,7 @@ bool HandleUnits(Tree* e, const ProjectionContext& projectionContext,
       return true;
     }
     // Re-apply strategy to make sure introduced integers are floats.
-    if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
+    if (projectionContext.strategy == Strategy::ApproximateToFloat) {
       ApplyReductionStrategy(e, projectionContext);
     }
     ReduceSystem(e, false, projectionContext.m_reductionTarget);
@@ -273,7 +273,7 @@ bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
                    bool insideReduction) {
   bool changed = false;
 
-  switch (projectionContext.m_strategy) {
+  switch (projectionContext.strategy) {
     case Strategy::Default:
       break;
     case Strategy::ApproximateToFloat:

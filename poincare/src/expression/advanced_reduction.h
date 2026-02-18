@@ -145,7 +145,7 @@ class AdvancedReduction {
         : m_root(root),
           m_bestMetric(bestMetric),
           m_bestHash(bestHash),
-          m_reductionTarget(reductionTarget) {}
+          reductionTarget(reductionTarget) {}
 
     const Tree* m_root;
     Path m_path;
@@ -153,7 +153,7 @@ class AdvancedReduction {
     float m_bestMetric;
     uint32_t m_bestHash;
     CrcCollection m_crcCollection;
-    const ReductionTarget m_reductionTarget;
+    const ReductionTarget reductionTarget;
     bool shouldEarlyExit() const {
       return this->m_bestMetric == Metric::k_perfectMetric;
     }

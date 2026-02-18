@@ -411,7 +411,7 @@ void AdvancedReduction::Path::log() const {
 #endif
 
 void AdvancedReduction::UpdateBestMetric(Context* ctx) {
-  float metric = Metric::GetMetric(ctx->m_root, ctx->m_reductionTarget);
+  float metric = Metric::GetMetric(ctx->m_root, ctx->reductionTarget);
   if (metric == Metric::k_perfectMetric) {
     ctx->m_bestMetric = Metric::k_perfectMetric;
     ctx->m_bestPath = ctx->m_path;
@@ -553,9 +553,9 @@ bool inline AdvancedReduction::ReduceDirection(Tree* e, Tree* root,
     if (ctx->m_bestHash == hash &&
         ctx->m_bestPath.length() > ctx->m_path.length()) {
       // If this is the best reduction, with a shorter path, use it
-      ASSERT_IF_LEVEL(
-          2, ctx->m_bestMetric ==
-                 Metric::GetMetric(ctx->m_root, ctx->m_reductionTarget));
+      ASSERT_IF_LEVEL(2,
+                      ctx->m_bestMetric ==
+                          Metric::GetMetric(ctx->m_root, ctx->reductionTarget));
       ASSERT_IF_LEVEL(1, ctx->canAppendDirection());
       ctx->m_path.append(dir);
       ctx->m_bestPath = ctx->m_path;

@@ -32,7 +32,7 @@ UserExpression BuildVectorNorm(
       ProjectionContext{
           .complexFormat = calculationPreferences.complexFormat,
           .angleUnit = calculationPreferences.angleUnit,
-          .m_reductionTarget = Poincare::ReductionTarget::User,
+          .reductionTarget = Poincare::ReductionTarget::User,
           .m_symbolic = VectorListController::k_symbolicComputation,
           .m_context = symbolContext,
       },

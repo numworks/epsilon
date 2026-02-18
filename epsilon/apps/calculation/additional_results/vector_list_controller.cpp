@@ -65,7 +65,7 @@ void VectorListController::computeAdditionalResults(
       ProjectionContext{
           .complexFormat = complexFormat(),
           .angleUnit = angleUnit(),
-          .m_reductionTarget = Poincare::ReductionTarget::User,
+          .reductionTarget = Poincare::ReductionTarget::User,
           .m_symbolic = k_symbolicComputation,
           .m_context = symbolContext,
       },

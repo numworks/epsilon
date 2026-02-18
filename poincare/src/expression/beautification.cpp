@@ -249,7 +249,7 @@ bool DeepBeautifyUnits(Tree* e) {
 
 bool DeepBeautify(Tree* e, const ProjectionContext& projectionContext,
                   const Dimension& dimension) {
-  assert(projectionContext.m_reductionTarget == ReductionTarget::User);
+  assert(projectionContext.reductionTarget == ReductionTarget::User);
   bool changed = ApplyComplexFormat(
       e,
       dimension.isNone() ? Dimension::Get(e, projectionContext.m_context)
@@ -617,8 +617,8 @@ bool ApplyComplexFormatCartesianOrPolar(
    *  - It has a better metric than the original expression
    *  - It simplified all the introduced re/im/arg/abs nodes */
   if (result && !Dependency::MainTreeIsIdenticalToMain(result, e) &&
-      (Metric::GetTrueMetric(e, projectionContext.m_reductionTarget) >=
-           Metric::GetTrueMetric(result, projectionContext.m_reductionTarget) ||
+      (Metric::GetTrueMetric(e, projectionContext.reductionTarget) >=
+           Metric::GetTrueMetric(result, projectionContext.reductionTarget) ||
        !Dependency::SafeMain(result)->hasDescendantSatisfying(
            [](const Tree* e) {
              return e->isRe() || e->isIm() || e->isArg() || e->isAbs();

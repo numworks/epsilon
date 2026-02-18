@@ -106,9 +106,9 @@ void process_tree_and_compare(const Tree* expression, const Tree* expected,
 #ifndef PLATFORM_DEVICE
     if (!ok) {
       float expectedMetric =
-          Metric::GetMetric(expected, projectionContext.m_reductionTarget);
-      float expressionMetric = Metric::GetMetric(
-          expressionClone, projectionContext.m_reductionTarget);
+          Metric::GetMetric(expected, projectionContext.reductionTarget);
+      float expressionMetric =
+          Metric::GetMetric(expressionClone, projectionContext.reductionTarget);
       const char* metricText =
           expectedMetric > expressionMetric
               ? "better"

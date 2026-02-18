@@ -123,7 +123,7 @@ Dimension ProjectAndReduce(Tree* e,
   assert(!e->isStore());
   Dimension dim = ToSystem(e, projectionContext).dimension;
   ReduceSystem(e, projectionContext.m_advanceReduce,
-               projectionContext.m_reductionTarget);
+               projectionContext.reductionTarget);
   // Non-approximated numbers or node may have appeared during reduction.
   ApplyReductionStrategy(e, projectionContext);
   return dim;
@@ -250,7 +250,7 @@ bool HandleUnits(Tree* e, const ProjectionContext& projectionContext,
     if (projectionContext.strategy == Strategy::ApproximateToFloat) {
       ApplyReductionStrategy(e, projectionContext);
     }
-    ReduceSystem(e, false, projectionContext.m_reductionTarget);
+    ReduceSystem(e, false, projectionContext.reductionTarget);
     changed = true;
   }
   if (dimension.isUnit() && !dimension.isAngleUnit()) {

@@ -423,7 +423,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
       "atan(sin(2/3)/cos(2/3))", "2/3",
       {.complexFormat = Poincare::ComplexFormat::Real,
        .angleUnit = Poincare::AngleUnit::Radian,
-       .m_reductionTarget = Poincare::ReductionTarget::SystemForAnalysis});
+       .reductionTarget = Poincare::ReductionTarget::SystemForAnalysis});
   simplifies_to("tan(atan(5/2))", "5/2");
   simplifies_to("atan(tan(5/2))", "5/2-π");
   simplifies_to("atan(tan(-π/7))", "-π/7");
@@ -636,20 +636,20 @@ QUIZ_CASE(pcj_simplification_trigonometry_advanced) {
   projects_and_reduces_to(
       "arccot(3)", "π/2-arctan(3)",
       {.angleUnit = Poincare::AngleUnit::Radian,
-       .m_reductionTarget = Poincare::ReductionTarget::SystemForAnalysis});
+       .reductionTarget = Poincare::ReductionTarget::SystemForAnalysis});
   projects_and_reduces_to(
       "arccot(3)", "π/2-arctan(3)",
       {.angleUnit = Poincare::AngleUnit::Radian,
-       .m_reductionTarget = Poincare::ReductionTarget::SystemForApproximation});
+       .reductionTarget = Poincare::ReductionTarget::SystemForApproximation});
   simplifies_to("arccot(x)", "π/2-arctan(x)");
   projects_and_reduces_to(
       "arccot(x)", "π/2-arctan(x)",
       {.angleUnit = Poincare::AngleUnit::Radian,
-       .m_reductionTarget = Poincare::ReductionTarget::SystemForAnalysis});
+       .reductionTarget = Poincare::ReductionTarget::SystemForAnalysis});
   projects_and_reduces_to(
       "arccot(x)", "π/2-arctan(x)",
       {.angleUnit = Poincare::AngleUnit::Radian,
-       .m_reductionTarget = Poincare::ReductionTarget::SystemForApproximation});
+       .reductionTarget = Poincare::ReductionTarget::SystemForApproximation});
 
   // cot(acot)
   simplifies_to("cot(arccot(3))", "3");

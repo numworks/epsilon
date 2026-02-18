@@ -112,7 +112,7 @@ SystemExpression ExpressionModel::expressionReduced(
           .complexFormat = complexFormat(record),
           .angleUnit =
               GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-          .m_reductionTarget = ReductionTarget::SystemForApproximation,
+          .reductionTarget = ReductionTarget::SystemForApproximation,
           .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
           .m_context = GlobalContextAccessor::Context()});
     }

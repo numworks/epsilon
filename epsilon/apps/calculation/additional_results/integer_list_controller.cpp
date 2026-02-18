@@ -48,7 +48,7 @@ void IntegerListController::computeAdditionalResults(
       ProjectionContext{
           .complexFormat = complexFormat(),
           .angleUnit = angleUnit(),
-          .m_reductionTarget = Poincare::ReductionTarget::User,
+          .reductionTarget = Poincare::ReductionTarget::User,
           .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
           .m_context = App::app()->localContext(),
       },

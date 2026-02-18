@@ -71,10 +71,10 @@ void projects_and_reduces_to(const char* input, const char* output,
         simplify(tree, projectionContext, false);
         // Beautify anyway to compare input and outputs
         ReductionTarget previousReductionTarget =
-            projectionContext.m_reductionTarget;
-        projectionContext.m_reductionTarget = ReductionTarget::User;
+            projectionContext.reductionTarget;
+        projectionContext.reductionTarget = ReductionTarget::User;
         Beautification::DeepBeautify(tree, projectionContext);
-        projectionContext.m_reductionTarget = previousReductionTarget;
+        projectionContext.reductionTarget = previousReductionTarget;
       },
       projectionContext);
 }

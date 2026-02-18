@@ -63,19 +63,20 @@ constexpr Poincare::ProjectionContext k_keepAllSymbolsCtx = {
     .symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
 };
 
-typedef void (*ProcessTree)(Poincare::Internal::Tree*,
-                            Poincare::ProjectionContext projectionContext);
+typedef void (*ProcessTree)(
+    Poincare::Internal::Tree*,
+    const Poincare::ProjectionContext& projectionContext);
 
 void process_tree_and_compare(
     const Poincare::Internal::Tree* expression,
     const Poincare::Internal::Tree* expected, ProcessTree process,
-    Poincare::ProjectionContext projectionContext,
+    const Poincare::ProjectionContext& projectionContext,
     int nbOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits,
     const char* input = nullptr, const char* output = nullptr);
 void process_tree_and_compare(
     const char* input, const char* output, ProcessTree process,
-    Poincare::ProjectionContext projectionContext,
+    const Poincare::ProjectionContext& projectionContext,
     int nbOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits,
     bool preserveInput = true);

@@ -49,27 +49,27 @@ void TrigonometryListController::computeAdditionalResults(
           KUnitConversion(KA, KB),
           {.KA = exactAngleWithUnit,
            .KB = UserExpression::Builder(AngleUnit::Radian)}),
-      &ctx);
+      ctx);
   m_approximatedLayouts[index] = GetExactLayoutFromExpression(
       UserExpression::Create(
           KUnitConversion(KA, KB),
           {.KA = exactAngleWithUnit,
            .KB = UserExpression::Builder(AngleUnit::Degree)}),
-      &ctx);
+      ctx);
 
   constexpr KTree k_symbol = "θ"_e;
   setLineAtIndex(
       ++index, UserExpression::Builder(KCos(k_symbol)),
       UserExpression::Create(KCos(KA), {.KA = trigonometryResults.exactAngle}),
-      &ctx);
+      ctx);
   setLineAtIndex(
       ++index, UserExpression::Builder(KSin(k_symbol)),
       UserExpression::Create(KSin(KA), {.KA = trigonometryResults.exactAngle}),
-      &ctx);
+      ctx);
   setLineAtIndex(
       ++index, UserExpression::Builder(KTan(k_symbol)),
       UserExpression::Create(KTan(KA), {.KA = trigonometryResults.exactAngle}),
-      &ctx);
+      ctx);
 
   /* Set illustration */
   m_model.setAngle(trigonometryResults.approximatedAngle);

@@ -44,7 +44,7 @@ void VectorListController::computeAdditionalResults(
   UserExpression norm = VectorHelper::BuildVectorNorm(exactClone, symbolContext,
                                                       m_calculationPreferences);
   assert(!norm.isUninitialized() && !norm.isUndefined());
-  setLineAtIndex(index++, UserExpression(), norm, &ctx);
+  setLineAtIndex(index++, UserExpression(), norm, ctx);
 
   // 2. Normalized vector
   double approximatedNorm =
@@ -73,7 +73,7 @@ void VectorListController::computeAdditionalResults(
     // The reduction might have failed
     return;
   }
-  setLineAtIndex(index++, UserExpression(), normalized, &ctx);
+  setLineAtIndex(index++, UserExpression(), normalized, ctx);
 
   // 3. Angle with x-axis
   assert(approximateOutput.isVector());
@@ -101,7 +101,7 @@ void VectorListController::computeAdditionalResults(
   setLineAtIndex(index++,
                  Poincare::SymbolHelper::BuildUserVariable(
                      UCodePointGreekSmallLetterTheta),
-                 angle, &ctx);
+                 angle, ctx);
 
   // 4. Illustration
   float xApproximation =

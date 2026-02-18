@@ -82,7 +82,7 @@ void approximates_to(const char* input, const char* output,
   // TODO: use same test and log as approximates_to?
   process_tree_and_compare(
       input, output,
-      [](Tree* tree, ProjectionContext projectionContext) {
+      [](Tree* tree, const ProjectionContext& projectionContext) {
         tree->moveTreeOverTree(Approximation::To<Tree*>(
             tree, Approximation::Precision<T>::value,
             Approximation::Parameters{
@@ -155,7 +155,7 @@ void simplified_approximates_to(const char* input, const char* output,
                                 int nbOfSignificantDigits) {
   process_tree_and_compare(
       input, output,
-      [](Tree* tree, ProjectionContext projectionContext) {
+      [](Tree* tree, const ProjectionContext& projectionContext) {
         simplify(tree, projectionContext, false);
         tree->moveTreeOverTree(Approximation::To<Tree*>(
             tree, Approximation::Precision<T>::value,
@@ -176,7 +176,7 @@ void projected_approximates_to(const char* input, const char* output,
                                int nbOfSignificantDigits) {
   process_tree_and_compare(
       input, output,
-      [](Tree* tree, ProjectionContext projectionContext) {
+      [](Tree* tree, const ProjectionContext& projectionContext) {
         Simplification::ToSystem(tree, projectionContext);
         tree->moveTreeOverTree(Approximation::To<Tree*>(
             tree, Approximation::Precision<T>::value,
@@ -198,7 +198,7 @@ void approximates_to_keeping_symbols(const char* expression,
                                      int numberOfSignificantDigits) {
   process_tree_and_compare(
       expression, simplifiedExpression,
-      [](Tree* tree, ProjectionContext projectionContext) {
+      [](Tree* tree, const ProjectionContext& projectionContext) {
         Variables::ProjectLocalVariablesToId(tree);
         Approximation::Approximate(
             tree, Approximation::Precision<T>::value,

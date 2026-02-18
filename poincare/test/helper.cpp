@@ -52,10 +52,10 @@ void simplify(Tree* e, const Poincare::ProjectionContext& ctx, bool beautify) {
   }
 }
 
-void process_tree_and_compare(const char* input, const char* output,
-                              ProcessTree process,
-                              Poincare::ProjectionContext projectionContext,
-                              int nbOfSignificantDigits, bool preserveInput) {
+void process_tree_and_compare(
+    const char* input, const char* output, ProcessTree process,
+    const Poincare::ProjectionContext& projectionContext,
+    int nbOfSignificantDigits, bool preserveInput) {
   Tree* expression =
       parse(input, projectionContext.context, {.preserveInput = preserveInput});
   Tree* expected = parse(output, projectionContext.context,
@@ -66,11 +66,10 @@ void process_tree_and_compare(const char* input, const char* output,
   expression->removeTree();
 }
 
-void process_tree_and_compare(const Tree* expression, const Tree* expected,
-                              ProcessTree process,
-                              Poincare::ProjectionContext projectionContext,
-                              int nbOfSignificantDigits, const char* input,
-                              const char* output) {
+void process_tree_and_compare(
+    const Tree* expression, const Tree* expected, ProcessTree process,
+    const Poincare::ProjectionContext& projectionContext,
+    int nbOfSignificantDigits, const char* input, const char* output) {
   /* If expected output has been given as a serialized tree, we can't expect a
    * perfect tree match through parsing and serialization. */
   /* TODO: use (output != nullptr) instead, but it would require uniform float

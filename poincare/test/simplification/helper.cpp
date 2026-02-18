@@ -41,10 +41,11 @@ void reduces_to_tree(const Tree* input, const Tree* output) {
 }
 
 void simplifies_to(const char* input, const char* output,
-                   ProjectionContext projectionContext, bool preserveInput) {
+                   const ProjectionContext& projectionContext,
+                   bool preserveInput) {
   process_tree_and_compare(
       input, output,
-      [](Tree* tree, ProjectionContext projectionContext) {
+      [](Tree* tree, const ProjectionContext& projectionContext) {
         simplify(tree, projectionContext, true);
       },
       projectionContext,
@@ -53,10 +54,10 @@ void simplifies_to(const char* input, const char* output,
 }
 
 void simplifies_to(const Tree* input, const Tree* output,
-                   ProjectionContext projectionContext) {
+                   const ProjectionContext& projectionContext) {
   process_tree_and_compare(
       input, output,
-      [](Tree* tree, ProjectionContext projectionContext) {
+      [](Tree* tree, const ProjectionContext& projectionContext) {
         simplify(tree, projectionContext, true);
       },
       projectionContext,
@@ -64,26 +65,28 @@ void simplifies_to(const Tree* input, const Tree* output,
 }
 
 void projects_and_reduces_to(const char* input, const char* output,
-                             ProjectionContext projectionContext) {
+                             const ProjectionContext& projectionContext) {
   process_tree_and_compare(
       input, output,
-      [](Tree* tree, ProjectionContext projectionContext) {
+      [](Tree* tree, const ProjectionContext& projectionContext) {
         simplify(tree, projectionContext, false);
-        // Beautify anyway to compare input and outputs
-        ReductionTarget previousReductionTarget =
-            projectionContext.reductionTarget;
-        projectionContext.reductionTarget = ReductionTarget::User;
-        Beautification::DeepBeautify(tree, projectionContext);
-        projectionContext.reductionTarget = previousReductionTarget;
+        if (projectionContext.reductionTarget != ReductionTarget::User) {
+          // Beautify anyway to compare input and outputs
+          ProjectionContext contextForBeautification = projectionContext;
+          contextForBeautification.reductionTarget = ReductionTarget::User;
+          Beautification::DeepBeautify(tree, contextForBeautification);
+        } else {
+          Beautification::DeepBeautify(tree, projectionContext);
+        }
       },
       projectionContext);
 }
 
 void simplifies_to_no_beautif(const char* input, const char* output,
-                              ProjectionContext projectionContext) {
+                              const ProjectionContext& projectionContext) {
   process_tree_and_compare(
       input, output,
-      [](Tree* tree, ProjectionContext projectionContext) {
+      [](Tree* tree, const ProjectionContext& projectionContext) {
         simplify(tree, projectionContext, false);
       },
       projectionContext);

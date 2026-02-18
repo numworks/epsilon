@@ -32,16 +32,16 @@ void ComplexListController::computeAdditionalResults(
   constexpr KTree k_symbol = "z"_e;
   size_t index = 0;
   ctx.complexFormat = complexFormToDisplay();
-  setLineAtIndex(index++, UserExpression::Builder(k_symbol), exactOutput, &ctx);
+  setLineAtIndex(index++, UserExpression::Builder(k_symbol), exactOutput, ctx);
   ctx.complexFormat = ComplexFormat::Cartesian;
   setLineAtIndex(index++, UserExpression::Builder(KAbs(k_symbol)),
-                 UserExpression::Create(KAbs(KA), {.KA = exactOutput}), &ctx);
+                 UserExpression::Create(KAbs(KA), {.KA = exactOutput}), ctx);
   setLineAtIndex(index++, UserExpression::Builder(KArg(k_symbol)),
-                 UserExpression::Create(KArg(KA), {.KA = exactOutput}), &ctx);
+                 UserExpression::Create(KArg(KA), {.KA = exactOutput}), ctx);
   setLineAtIndex(index++, UserExpression::Builder(KRe(k_symbol)),
-                 UserExpression::Create(KRe(KA), {.KA = exactOutput}), &ctx);
+                 UserExpression::Create(KRe(KA), {.KA = exactOutput}), ctx);
   setLineAtIndex(index++, UserExpression::Builder(KIm(k_symbol)),
-                 UserExpression::Create(KIm(KA), {.KA = exactOutput}), &ctx);
+                 UserExpression::Create(KIm(KA), {.KA = exactOutput}), ctx);
 
   // Set Complex illustration
   double realPart;

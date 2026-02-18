@@ -19,17 +19,17 @@ struct SolverResult {
 
 // Return list of exact solutions.
 SolverResult ExactSolve(const Tree* equationList,
-                        ProjectionContext projectionContext,
+                        const ProjectionContext& projectionContext,
                         bool overrideDefinedVariables = false);
 
 /* Will try to exact solve with overrideDefinedVariables = false
  * but will fallback on overrideDefinedVariables = true if it fails */
 SolverResult ExactSolveAdaptive(const Tree* equationList,
-                                ProjectionContext projectionContext);
+                                const ProjectionContext& projectionContext);
 
 /* If the range is (NaN, NaN), it will be automatically computed. */
 SolverResult ApproximateSolve(const Tree* equationList,
-                              ProjectionContext projectionContext,
+                              const ProjectionContext& projectionContext,
                               Range1D<double> range,
                               size_t maxNumberOfSolutions);
 

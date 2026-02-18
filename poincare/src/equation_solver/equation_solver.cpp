@@ -64,14 +64,14 @@ constexpr static char k_parameterPrefix = 't';
 /* This is used by both ExactSolve and ApproximateSolve.
  * It computes the EquationMetadata, and reduces the equation list. */
 static PreprocessingResult PreprocessEquationList(
-    const Tree* equationList, ProjectionContext* projectionContext,
+    const Tree* equationList, const ProjectionContext& projectionContext,
     UnknownSelectionStrategy selectionStrategy) {
   assert(equationList->isList());
 
   EquationMetadata equationMetadata;
 
   // Step 1. Retrieve user symbols and infer the list of unknowns
-  const SymbolContext& symbolContext = projectionContext->context;
+  const SymbolContext& symbolContext = projectionContext.context;
   Tree* userVariables =
       Variables::GetUserVariables(equationList, symbolContext);
   assert(userVariables->isList());
@@ -150,7 +150,9 @@ static PreprocessingResult PreprocessEquationList(
   assert(equationMetadata.unknownVariables.size() == expectedNumberOfUnknowns);
   userVariables->removeTree();
 
-  projectionContext->symbolic =
+  ProjectionContext updatedProjectionContext = projectionContext;
+
+  updatedProjectionContext.symbolic =
       equationMetadata.overrideDefinedVariables
           ? SymbolicComputation::ReplaceDefinedFunctions
           : SymbolicComputation::ReplaceDefinedSymbols;
@@ -158,12 +160,12 @@ static PreprocessingResult PreprocessEquationList(
   /* Step 2. Update complex format from equationList
    * NOTE: This must be done after deciding the symbolic computation mode */
 #if POINCARE_COMPLEX
-  projectionContext->complexFormat = Projection::PreferredComplexFormat(
-      equationList, projectionContext->complexFormat,
-      projectionContext->symbolic, projectionContext->context);
+  updatedProjectionContext.complexFormat = Projection::PreferredComplexFormat(
+      equationList, updatedProjectionContext.complexFormat,
+      updatedProjectionContext.symbolic, updatedProjectionContext.context);
 #endif
 
-  equationMetadata.complexFormat = projectionContext->complexFormat;
+  equationMetadata.complexFormat = updatedProjectionContext.complexFormat;
 
   // Step 3. Clone and simplify the equations
 
@@ -199,8 +201,8 @@ static PreprocessingResult PreprocessEquationList(
 
   // Step 3.4. Project (replace local symbols) and reduce
 
-  Dimension dimension =
-      Simplification::ProjectAndReduce(reducedEquationList, *projectionContext);
+  Dimension dimension = Simplification::ProjectAndReduce(
+      reducedEquationList, updatedProjectionContext);
   if (dimension.isUnit()) {
     error = Error::EquationUndefined;
   } else if (!reducedEquationList->isList()) {
@@ -718,7 +720,7 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
 #endif
 
 SolverResult ExactSolveAdaptive(const Tree* equationList,
-                                ProjectionContext projectionContext) {
+                                const ProjectionContext& projectionContext) {
   // Try solving while using user variables
   SolverResult firstResult = ExactSolve(equationList, projectionContext, false);
 
@@ -769,19 +771,21 @@ SolverResult ExactSolveAdaptive(const Tree* equationList,
 }
 
 SolverResult ExactSolve(const Tree* equationList,
-                        ProjectionContext projectionContext,
+                        const ProjectionContext& projectionContext,
                         bool overrideDefinedVariables) {
   // Step 1. Analyze the equations
   PreprocessingResult preprocessingResult = PreprocessEquationList(
-      equationList, &projectionContext,
+      equationList, projectionContext,
       overrideDefinedVariables
           ? UnknownSelectionStrategy::AllSymbols
           : UnknownSelectionStrategy::OnlyUndefinedSymbols);
 
   Tree* reducedEquationList = preprocessingResult.reducedEquationList;
   EquationMetadata equationMetadata = preprocessingResult.equationMetadata;
+
+  ProjectionContext updatedProjectionContext = projectionContext;
 #if POINCARE_COMPLEX
-  projectionContext.complexFormat =
+  updatedProjectionContext.complexFormat =
       preprocessingResult.equationMetadata.complexFormat;
 #endif
 
@@ -799,7 +803,7 @@ SolverResult ExactSolve(const Tree* equationList,
 
   // Step 2.1. Try with linear system solving
   SolverResult result = SolveLinearSystem(reducedEquationList, equationMetadata,
-                                          projectionContext.context);
+                                          updatedProjectionContext.context);
 
 #if POINCARE_POLYNOMIAL_SOLVER
   // Step 2.2. Try with polynomial solving
@@ -814,7 +818,7 @@ SolverResult ExactSolve(const Tree* equationList,
        * projected with a "Real" Complex format */
       Tree* solutionList = result.exactSolutionList;
       assert(solutionList->isList());
-      if (projectionContext.complexFormat == ComplexFormat::Real) {
+      if (updatedProjectionContext.complexFormat == ComplexFormat::Real) {
         for (int i = solutionList->numberOfChildren() - 1; i >= 0; i--) {
           if (!PropertiesOfTreeOrApproximation(solutionList->child(i))
                    .isReal()) {
@@ -850,25 +854,26 @@ SolverResult ExactSolve(const Tree* equationList,
         Approximation::Parameters{
             .prepare = true,
             .optimize = true,
-            .angleUnit = projectionContext.angleUnit,
-            .complexFormat = projectionContext.complexFormat,
-            .symbolContext = projectionContext.context});
+            .angleUnit = updatedProjectionContext.angleUnit,
+            .complexFormat = updatedProjectionContext.complexFormat,
+            .symbolContext = updatedProjectionContext.context});
   }
 
   /* Beautify result */
 
   // Beautify exact solutions
   assert(result.exactSolutionList);
-  Simplification::BeautifyReduced(result.exactSolutionList, projectionContext,
+  Simplification::BeautifyReduced(result.exactSolutionList,
+                                  updatedProjectionContext,
                                   preprocessingResult.dimension);
 
   // Beautify approximate solutions
   if (result.approximateSolutionList) {
     // Advanced reduction is only needed to beautify in polar format
-    projectionContext.advanceReduce =
-        projectionContext.complexFormat == ComplexFormat::Polar;
+    updatedProjectionContext.advanceReduce =
+        updatedProjectionContext.complexFormat == ComplexFormat::Polar;
     Simplification::BeautifyReduced(result.approximateSolutionList,
-                                    projectionContext,
+                                    updatedProjectionContext,
                                     preprocessingResult.dimension);
   }
 
@@ -884,7 +889,7 @@ static Coordinate2D<T> evaluator(T t, const void* model) {
 }
 
 SolverResult ApproximateSolve(const Tree* equationList,
-                              ProjectionContext projectionContext,
+                              const ProjectionContext& projectionContext,
                               Range1D<double> range,
                               size_t maxNumberOfSolutions) {
   assert(equationList->isList());
@@ -895,7 +900,7 @@ SolverResult ApproximateSolve(const Tree* equationList,
 
   // Step 1. Analyze the equations
   PreprocessingResult preprocessingResult = PreprocessEquationList(
-      equationList, &projectionContext, UnknownSelectionStrategy::MaxOneSymbol);
+      equationList, projectionContext, UnknownSelectionStrategy::MaxOneSymbol);
 
   Tree* reducedEquationList = preprocessingResult.reducedEquationList;
   EquationMetadata equationMetadata = preprocessingResult.equationMetadata;

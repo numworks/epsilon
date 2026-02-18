@@ -156,23 +156,24 @@ Poincare::Layout ExpressionsListController::layoutAtIndex(HighlightCell* cell,
 }
 
 Layout ExpressionsListController::GetExactLayoutFromExpression(
-    const UserExpression e, const ProjectionContext* ctx, Layout* approximate,
-    bool* isStrictlyEqual) {
+    const UserExpression e, const ProjectionContext& projectionContext,
+    Layout* approximate, bool* isStrictlyEqual) {
   assert(!e.isUninitialized());
   UserExpression approximateExpression, exactExpression;
-  ProjectionContext tempCtx = *ctx;
-  tempCtx.symbolic = SymbolicComputation::ReplaceAllSymbols;
+  ProjectionContext tempProjectionContext = projectionContext;
+  tempProjectionContext.symbolic = SymbolicComputation::ReplaceAllSymbols;
   e.cloneAndSimplifyAndApproximate(&exactExpression, &approximateExpression,
-                                   tempCtx);
+                                   tempProjectionContext);
   assert(!exactExpression.isUninitialized() &&
          !approximateExpression.isUninitialized());
   Layout approximateLayout =
-      Shared::PoincareHelpers::CreateLayout(approximateExpression, ctx->context)
+      Shared::PoincareHelpers::CreateLayout(approximateExpression,
+                                            projectionContext.context)
           .cloneAndTurnEToTenPowerLayout(false);
   Layout exactLayout = exactExpression.isUninitialized()
                            ? approximateLayout
                            : Shared::PoincareHelpers::CreateLayout(
-                                 exactExpression, ctx->context);
+                                 exactExpression, projectionContext.context);
   if (approximate) {
     // TODO_PCJ: Factorize with CAS::ShouldOnlyDisplayApproximation
     if (approximateExpression.isUndefined()) {
@@ -191,7 +192,7 @@ Layout ExpressionsListController::GetExactLayoutFromExpression(
             exactExpression, approximateExpression,
             GlobalPreferences::SharedGlobalPreferences()
                 ->numberOfSignificantDigits(),
-            *ctx);
+            projectionContext);
       }
     }
   }

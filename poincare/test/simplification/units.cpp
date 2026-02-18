@@ -386,7 +386,7 @@ QUIZ_CASE(pcj_simplification_unit_conversion) {
   simplifies_to("4×_min→_s^3/_s^2", "240×_s");
   simplifies_to("4×_N×3_N×2_N→_N^3", "24×_N^3");
   simplifies_to("-5_cm→_m", "-0.05×_m");
-  simplifies_to("-5_cm→_m", "-0.05×_m", {.m_unitFormat = UnitFormat::Imperial});
+  simplifies_to("-5_cm→_m", "-0.05×_m", {.unitFormat = UnitFormat::Imperial});
   simplifies_to("10_m/_s→_km", "undef");
   simplifies_to("_hplanck→_eV×_s", "4.1356676969239ᴇ-15×_s×_eV");
 
@@ -419,40 +419,40 @@ QUIZ_CASE(pcj_simplification_unit_decomposition) {
   simplifies_to("35_gon", "31×_°+30×_'",
                 {.m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("1241_yd", "1241×_yd",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("1241_in", "34×_yd+1×_ft+5×_in",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("102038_in-1_ft", "1×_mi+1074×_yd+2×_in",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("1234567×_in", "19×_mi+853×_yd+1×_ft+7×_in",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Decomposition});
   // TODO_PCJ: Should be 1×_yd+7.700787×_in
   simplifies_to("1.11×_m", "undef",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("105454.5_oz", "3×_shtn+590×_lb+14.5×_oz",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("1×_lgtn", "1×_shtn+240×_lb",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Decomposition});
   // TODO_PCJ: Should be 2×_lb+3.273962×_oz
   simplifies_to("1×_kg", "undef",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("232.8_qt", "58×_gal+1×_pt+1.2×_cup",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("12345×_tbsp", "48×_gal+1×_pt+1.5625×_cup",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Decomposition});
   // TODO_PCJ: Should be 264×_gal+1×_pt+0.7528377×_cup
   simplifies_to("1×_m^3", "undef",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Decomposition});
 }
 
@@ -484,80 +484,80 @@ QUIZ_CASE(pcj_simplification_unit_equivalent) {
   simplifies_to("50_mi/_h", "80.4672×_km×_h^(-1)",
                 {.m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("0.3_acre", "13068×_ft^2",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("30000_m^2", "7.413161444015×_acre",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("3000_m^2", "undef",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("3_ft^3", "22.441558441558×_gal",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("2_gal", "462×_in^3",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("35_°C", "95×_°F",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("-11.1×_°C", "12.02×_°F",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("300_K", "80.33×_°F",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("100×_K", "-279.67×_°F",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("30_km/_h", "18.64113576712×_mi×_h^(-1)",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
   // TODO_PCJ: Should be 2.236936×_mi×_h^(-1)
   simplifies_to("1×_m/_s", "undef",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
 }
 
 QUIZ_CASE(pcj_simplification_unit_imperial) {
   simplifies_to("1609.344_m", "1.609344×_km",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::AutomaticMetric});
   simplifies_to("2×π×_cK", "6.2831853071796×_cK",
-                {.m_unitFormat = UnitFormat::Imperial});
+                {.unitFormat = UnitFormat::Imperial});
   simplifies_to("_lgtn", "1.0160469088×_t",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::AutomaticMetric});
   simplifies_to("_lgtn", "1.12×_shtn",
                 {
-                    .m_unitFormat = UnitFormat::Imperial,
+                    .unitFormat = UnitFormat::Imperial,
                     .m_unitDisplay = UnitDisplay::AutomaticImperial,
                 });
   simplifies_to("_in", "2.54×_cm",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::AutomaticMetric});
   simplifies_to("_in", "1×_in",
                 {
-                    .m_unitFormat = UnitFormat::Imperial,
+                    .unitFormat = UnitFormat::Imperial,
                     .m_unitDisplay = UnitDisplay::AutomaticImperial,
                 });
   simplifies_to("_ft", "1×_ft",
                 {
-                    .m_unitFormat = UnitFormat::Imperial,
+                    .unitFormat = UnitFormat::Imperial,
                     .m_unitDisplay = UnitDisplay::AutomaticImperial,
                 });
   simplifies_to("_yd", "1×_yd",
                 {
-                    .m_unitFormat = UnitFormat::Imperial,
+                    .unitFormat = UnitFormat::Imperial,
                     .m_unitDisplay = UnitDisplay::AutomaticImperial,
                 });
   simplifies_to("1_qt", "1×_qt",
                 {
-                    .m_unitFormat = UnitFormat::Imperial,
+                    .unitFormat = UnitFormat::Imperial,
                     .m_unitDisplay = UnitDisplay::AutomaticImperial,
                 });
   simplifies_to("1_qt", "9.46352946×_dL",
-                {.m_unitFormat = UnitFormat::Imperial,
+                {.unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::AutomaticMetric});
 }
 
@@ -714,7 +714,7 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
                 "1.5527410012845×_lb^(1/2)×_yd^(1/"
                 "2)×_s^(-1)",
                 {
-                    .m_unitFormat = UnitFormat::Imperial,
+                    .unitFormat = UnitFormat::Imperial,
                 });
   simplifies_to("_C^0.3", "1×_A^(3/10)×_s^(3/10)");
   simplifies_to("_kat_kg^-2.8", "1×_mol×_kg^(-14/5)×_s^(-1)");

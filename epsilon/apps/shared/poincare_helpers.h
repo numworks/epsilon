@@ -71,8 +71,7 @@ inline Poincare::ProjectionContext ProjectionContextForPreferences(
           GlobalContextAccessor::Context(),
           Poincare::SymbolicComputation::ReplaceDefinedSymbols),
       .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-      .m_unitFormat =
-          GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+      .unitFormat = GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_context = GlobalContextAccessor::Context()};
 }
 

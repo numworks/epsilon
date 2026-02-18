@@ -19,7 +19,7 @@ static ProjectionContext DefaultProjectionContextForAnalysis() {
   ProjectionContext projCtx{
       .complexFormat = ComplexFormat::Cartesian,
       .angleUnit = AngleUnit::Radian,
-      .m_unitFormat = Preferences::UnitFormat::Metric,
+      .unitFormat = Preferences::UnitFormat::Metric,
       .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = k_emptySymbolContext};
   return projCtx;

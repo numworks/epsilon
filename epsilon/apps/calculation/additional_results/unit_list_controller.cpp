@@ -78,7 +78,7 @@ void UnitListController::computeAdditionalResults(
   ProjectionContext ctx = {
       .complexFormat = complexFormat(),
       .angleUnit = angleUnit(),
-      .m_unitFormat = unitFormat,
+      .unitFormat = unitFormat,
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = symbolContext,
   };

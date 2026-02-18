@@ -200,7 +200,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
         .complexFormat = m_equationMetadata.complexFormat,
         .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
         .strategy = Strategy::ApproximateToFloat,
-        .m_unitFormat =
+        .unitFormat =
             GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
         // Any remaining symbol at this point should be an unknown parameter.
         .m_symbolic = SymbolicComputation::KeepAllSymbols,

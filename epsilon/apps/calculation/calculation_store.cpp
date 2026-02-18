@@ -166,7 +166,7 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
                        .complexFormat = complexFormat,
                        .angleUnit = GlobalPreferences::SharedGlobalPreferences()
                                         ->angleUnit(),
-                       .m_unitFormat =
+                       .unitFormat =
                            GlobalPreferences::SharedGlobalPreferences()
                                ->unitFormat(),
                        .m_symbolic = symbolicComputation,
@@ -180,8 +180,7 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
   ProjectionContext projContext = {
       .complexFormat = complexFormat,
       .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-      .m_unitFormat =
-          GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+      .unitFormat = GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_symbolic = symbolicComputation,
       .m_context = GlobalContextAccessor::Context()};
 

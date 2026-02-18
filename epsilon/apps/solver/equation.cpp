@@ -52,7 +52,7 @@ SystemExpression Equation::Model::standardForm(
         Subtraction::Builder(simplifiedInput.cloneChildAtIndex(0),
                              simplifiedInput.cloneChildAtIndex(1));
     SimplificationParameters simplificationParameters =
-        PoincareHelpers::ProjectionContextForParameters(
+        PoincareHelpers::SimplificationParametersForPreferences(
             expressionInputWithoutFunctions, contextToUse,
             {.target = reductionTarget});
     returnedExpression =

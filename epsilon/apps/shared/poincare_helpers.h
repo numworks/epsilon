@@ -63,8 +63,8 @@ inline size_t ConvertFloatToTextWithDisplayMode(
 
 // ===== Simplification and Approximation =====
 
-inline Poincare::SimplificationParameters ProjectionContextForPreferences(
-    const Poincare::UserExpression e) {
+inline Poincare::SimplificationParameters
+SimplificationParametersForPreferences(const Poincare::UserExpression e) {
   return Poincare::SimplificationParameters{
       .complexFormat = e.preferredComplexFormat(
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),

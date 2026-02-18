@@ -15,7 +15,7 @@ using namespace Shared;
 
 namespace Graph {
 
-static SimplificationParameters DefaultProjectionContextForAnalysis() {
+static SimplificationParameters DefaultSimplificationParametersForAnalysis() {
   return SimplificationParameters{
       .complexFormat = ComplexFormat::Cartesian,
       .angleUnit = AngleUnit::Radian,
@@ -29,7 +29,7 @@ void assert_cartesian_function_type_is(
   const char* symbol = "x";
   UserExpression e = UserExpression::Builder(parse(expression));
   SystemExpression reducedExpression =
-      e.cloneAndReduce(DefaultProjectionContextForAnalysis());
+      e.cloneAndReduce(DefaultSimplificationParametersForAnalysis());
   quiz_assert(!reducedExpression.isUninitialized() &&
               !reducedExpression.isFailedSimplification());
   FunctionType::CartesianType type =
@@ -65,7 +65,7 @@ void assert_polar_line_type_is(const char* expression,
   const char* symbol = "θ";
   UserExpression e = UserExpression::Builder(parse(expression));
   SystemExpression reducedExpression =
-      e.cloneAndReduce(DefaultProjectionContextForAnalysis());
+      e.cloneAndReduce(DefaultSimplificationParametersForAnalysis());
   quiz_assert(!reducedExpression.isUninitialized() &&
               !reducedExpression.isFailedSimplification());
   FunctionType::LineType type =

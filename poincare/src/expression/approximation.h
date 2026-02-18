@@ -124,10 +124,6 @@ int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x);
 
 template <typename T>
 T FloatBinomial(T n, T k);
-template <typename T>
-T FloatGCD(T a, T b);
-template <typename T>
-T FloatLCM(T a, T b);
 
 Tree* ExtractRealPart(const Tree* e);
 

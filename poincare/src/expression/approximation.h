@@ -25,6 +25,34 @@ struct Dimension;
 
 namespace Approximation {
 
+struct Parameters {
+  /* Must be true if expression has not been projected and may have parametric
+   * functions. */
+  bool projectLocalVariables = false;
+  /* Last two parameters may only be used on projected expressions. */
+  // Tree will be prepared for a more accurate approximation
+  bool prepare = false;
+  /* Only numerical values are approximated, the rest is preserved (including
+   * randoms, variables, units, function symbols, depLists). For example "pi*x +
+   * 1/3" will be transformed into "3.14*x + 0.33". This is useful to optimize
+   * an expression for successive approximations (for example in function graph
+   * or solver). This parameter is only relevant when the return type is an
+   * expression (i.e. a Tree*). It also implies prepare parameter is true. */
+  bool onlyReplaceNumerical = false;
+  /* Optimize out some validation steps (for now only the expression dimension
+   * check is optimized out) for a shorter computing time. These checks are
+   * asserted instead. Particularly relevant when the approximation is called
+   * multiple times (e.g. Solver or Grapher) */
+  bool optimize = false;
+
+  // The following parameters should only be passed in case of a UserExpression
+  // mutable because of AngleUnitContext
+  mutable AngleUnit angleUnit = AngleUnit::None;
+  ComplexFormat complexFormat = ComplexFormat::None;
+  // SymbolContext is used to store the values of user symbols and functions
+  const Poincare::SymbolContext& symbolContext = k_emptySymbolContext;
+};
+
 // Precision of floating-point calculations
 enum class FloatPrecision { Single, Double };
 /* For a given function, if its body depends on the float type (for example if a
@@ -51,7 +79,95 @@ struct Precision<double> {
   constexpr static FloatPrecision value = FloatPrecision::Double;
 };
 
+/* Approximation public methods */
+
+// Main entrypoint
+template <typename ReturnType>
+ReturnType To(const Tree* e, FloatPrecision floatPrecision,
+              const Parameters& parameters);
+
+// If float precision can be deduced from the ReturnType
+template <typename ReturnType>
+ReturnType To(const Tree* e, const Parameters& parameters);
+
+/* With an "abscissa" value for Variable<0>. Float precision is equal to
+ * FloatType */
+template <typename ReturnType, typename FloatType>
+ReturnType To(const Tree* e, FloatType abscissa, const Parameters& parameters);
+
+/* With an abscissa and a list element index */
+template <typename ReturnType, typename FloatType>
+ReturnType To(const Tree* e, FloatType abscissa, int16_t listElementIndex,
+              const Parameters& parameters);
+
+/* In-place approximation of a Tree*, returns true/false depending on whether
+ * the expression has been modified. */
+bool Approximate(Tree* e, FloatPrecision floatPrecision,
+                 const Parameters& parameters);
+
+/* Other public methods */
+
+// Optimize a projected function for efficient approximations
+void PrepareFunctionForApproximation(Tree* e, const char* variable,
+                                     bool variableIsReal);
+
+// Return false if e cannot be approximated to a defined value.
+bool CanApproximate(const Tree* e, bool approxLocalVar = false);
+
+constexpr int k_noActiveBranch = -1;
+constexpr int k_unknownActiveBranch = -2;
+/* Returns k_noActiveBranch if every condition is false, it assumes there is no
+ * other free variable than VarX, return k_unknownActiveBranch if a condition
+ * was undefined. */
+template <typename T>
+int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x);
+
+template <typename T>
+T FloatBinomial(T n, T k);
+template <typename T>
+T FloatGCD(T a, T b);
+template <typename T>
+T FloatLCM(T a, T b);
+
+Tree* ExtractRealPart(const Tree* e);
+
+template <typename T>
+bool IsNonReal(std::complex<T> x) {
+  assert(!OMG::IsSignalingNan(x.real()) || x.imag() == static_cast<T>(0));
+  return OMG::IsSignalingNan(x.real());
+}
+
+// Boolean return type for Approximation
+class BooleanOrUndefined {
+ public:
+  // Boolean of given value
+  constexpr BooleanOrUndefined(bool value) : m_value{value} {}
+  // Undefined boolean
+  constexpr static BooleanOrUndefined Undef() { return BooleanOrUndefined(); }
+
+  bool isUndefined() const { return m_isUndefined; }
+  bool value() const {
+    assert(!m_isUndefined);
+    return m_value;
+  }
+
+ private:
+  constexpr BooleanOrUndefined() : m_isUndefined{true} {}
+  bool m_isUndefined = false;
+  /* In case of an undefined, the stored value is false (but it should not be
+   * fetched) */
+  bool m_value = false;
+};
+
 namespace Private {
+
+/* Common approximation pipeline for all return types and context arguments
+ * (abscissa, list element etc.) */
+template <typename ReturnType, typename... ContextArguments>
+ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
+                   const Parameters& parameters,
+                   ContextArguments... contextArguments);
+
 using VariableType = std::complex<double>;
 
 /* LocalEvaluator stores the values of local variables. The variable that was
@@ -85,84 +201,6 @@ class LocalEvaluator {
  private:
   OMG::StaticVector<VariableType, k_maxNestedVariables> m_values = {};
 };
-}  // namespace Private
-
-struct Parameters {
-  /* Must be true if expression has not been projected and may have parametric
-   * functions. */
-  bool projectLocalVariables = false;
-  /* Last two parameters may only be used on projected expressions. */
-  // Tree will be prepared for a more accurate approximation
-  bool prepare = false;
-  /* Only numerical values are approximated, the rest is preserved (including
-   * randoms, variables, units, function symbols, depLists). For example "pi*x +
-   * 1/3" will be transformed into "3.14*x + 0.33". This is useful to optimize
-   * an expression for successive approximations (for example in function graph
-   * or solver). This parameter is only relevant when the return type is an
-   * expression (i.e. a Tree*). It also implies prepare parameter is true. */
-  bool onlyReplaceNumerical = false;
-  /* Optimize out some validation steps (for now only the expression dimension
-   * check is optimized out) for a shorter computing time. These checks are
-   * asserted instead. Particularly relevant when the approximation is called
-   * multiple times (e.g. Solver or Grapher) */
-  bool optimize = false;
-
-  // The following parameters should only be passed in case of a UserExpression
-  // mutable because of AngleUnitContext
-  mutable AngleUnit angleUnit = AngleUnit::None;
-  ComplexFormat complexFormat = ComplexFormat::None;
-  // SymbolContext is used to store the values of user symbols and functions
-  const Poincare::SymbolContext& symbolContext = k_emptySymbolContext;
-};
-
-class BooleanOrUndefined {
- public:
-  // Boolean of given value
-  constexpr BooleanOrUndefined(bool value) : m_value{value} {}
-  // Undefined boolean
-  constexpr static BooleanOrUndefined Undef() { return BooleanOrUndefined(); }
-
-  bool isUndefined() const { return m_isUndefined; }
-  bool value() const {
-    assert(!m_isUndefined);
-    return m_value;
-  }
-
- private:
-  constexpr BooleanOrUndefined() : m_isUndefined{true} {}
-  bool m_isUndefined = false;
-  /* In case of an undefined, the stored value is false (but it should not be
-   * fetched) */
-  bool m_value = false;
-};
-
-/* Approximation methods (with Parameters) */
-
-// Main entrypoint
-template <typename ReturnType>
-ReturnType To(const Tree* e, FloatPrecision floatPrecision,
-              const Parameters& parameters);
-
-// If float precision can be deduced from the ReturnType
-template <typename ReturnType>
-ReturnType To(const Tree* e, const Parameters& parameters);
-
-/* With an "abscissa" value for Variable<0>. Float precision is equal to
- * FloatType */
-template <typename ReturnType, typename FloatType>
-ReturnType To(const Tree* e, FloatType abscissa, const Parameters& parameters);
-
-/* With an abscissa and a list element index */
-template <typename ReturnType, typename FloatType>
-ReturnType To(const Tree* e, FloatType abscissa, int16_t listElementIndex,
-              const Parameters& parameters);
-
-/* In-place approximation of a Tree*, returns true/false depending on whether
- * the expression has been modified. */
-bool Approximate(Tree* e, FloatPrecision floatPrecision,
-                 const Parameters& parameters);
-
-namespace Private {
 
 class Context {
  public:
@@ -185,48 +223,12 @@ class Context {
   int16_t pointElement = k_unspecifiedPointElement;
 };
 
-/* Common approximation pipeline for all return types and context arguments
- * (abscissa, list element etc.) */
-template <typename ReturnType, typename... ContextArguments>
-ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
-                   const Parameters& parameters,
-                   ContextArguments... contextArguments);
-
 }  // namespace Private
 
-/* Helpers */
-
-// Optimize a projected function for efficient approximations
-void PrepareFunctionForApproximation(Tree* e, const char* variable,
-                                     bool variableIsReal);
-
-// Return false if e cannot be approximated to a defined value.
-bool CanApproximate(const Tree* e, bool approxLocalVar = false);
-
-constexpr int k_noActiveBranch = -1;
-constexpr int k_unknownActiveBranch = -2;
-/* Returns k_noActiveBranch if every condition is false, it assumes there is no
- * other free variable than VarX, return k_unknownActiveBranch if a condition
- * was undefined. */
-template <typename T>
-int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x);
-
-template <typename T>
-T FloatBinomial(T n, T k);
-template <typename T>
-T FloatGCD(T a, T b);
-template <typename T>
-T FloatLCM(T a, T b);
-
-Tree* ExtractRealPart(const Tree* e);
-
-template <typename T>
-bool IsNonReal(std::complex<T> x) {
-  assert(!OMG::IsSignalingNan(x.real()) || x.imag() == static_cast<T>(0));
-  return OMG::IsSignalingNan(x.real());
-}
-
 namespace Private {
+
+/* Helper methods */
+
 /* If requested, project user variables or prepare the expression for
  * approximation */
 Tree* PrepareTree(const Tree* e, const Parameters& parameters);

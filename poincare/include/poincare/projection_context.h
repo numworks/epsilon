@@ -20,7 +20,7 @@ struct ProjectionContext {
   const Poincare::SymbolContext& context = k_emptySymbolContext;
   UnitDisplay unitDisplay = UnitDisplay::MainOutput;
   // Optional simplification step
-  bool m_advanceReduce = true;
+  bool advanceReduce = true;
 };
 
 }  // namespace Poincare

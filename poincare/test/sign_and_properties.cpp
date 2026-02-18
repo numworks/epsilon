@@ -513,7 +513,7 @@ void assert_properties(const char* input, ComplexProperties expectedProperties,
                            ProjectionContext{.complexFormat = complexFormat,
                                              .angleUnit = AngleUnit::Radian,
                                              .strategy = strategy,
-                                             .m_advanceReduce = false});
+                                             .advanceReduce = false});
   bool result = GetComplexProperties(expression) == expectedProperties;
 #if POINCARE_TREE_LOG
   if (!result) {
@@ -768,7 +768,7 @@ void assert_reduced_is_positive(
                         .angleUnit = angleUnit,
                         .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
                         .context = symbolContext,
-                        .m_advanceReduce = false});
+                        .advanceReduce = false});
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(
       OMG::TrooleanAnd(properties.imagSign().trooleanIsNull(),

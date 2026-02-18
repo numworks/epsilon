@@ -25,7 +25,7 @@ void MatrixListController::computeAdditionalResults(
                            .angleUnit = angleUnit(),
                            .symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .context = App::app()->localContext(),
-                           .m_advanceReduce = false};
+                           .advanceReduce = false};
 
   // Compute all layouts at once to reuse intermediate results
   Layout determinant, inverse, rowEchelonForm, reducedRowEchelonForm, trace;

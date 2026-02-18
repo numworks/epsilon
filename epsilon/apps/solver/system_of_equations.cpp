@@ -205,7 +205,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
         // Any remaining symbol at this point should be an unknown parameter.
         .symbolic = SymbolicComputation::KeepAllSymbols,
         .context = symbolContext,
-        .m_advanceReduce = false};
+        .advanceReduce = false};
     bool failure = false;
     approximate = exact.cloneAndSimplify(projCtx, &failure);
   }

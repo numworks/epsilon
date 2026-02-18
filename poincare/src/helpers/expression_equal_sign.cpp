@@ -10,7 +10,7 @@ bool IsCalculationOutputStrictEquality(const UserExpression exact,
                                        int numberOfSignificantDigits,
                                        const ProjectionContext& ctx) {
   ProjectionContext ctxCopy = ctx;
-  ctxCopy.m_advanceReduce = false;
+  ctxCopy.advanceReduce = false;
   // Exact is projected and reduced to turn divisions into rationals
   assert(!exact.isUninitialized());
   Internal::Tree* exactProjected = exact.tree()->cloneTree();

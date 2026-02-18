@@ -122,7 +122,7 @@ Dimension ProjectAndReduce(Tree* e,
                            const ProjectionContext& projectionContext) {
   assert(!e->isStore());
   Dimension dim = ToSystem(e, projectionContext).dimension;
-  ReduceSystem(e, projectionContext.m_advanceReduce,
+  ReduceSystem(e, projectionContext.advanceReduce,
                projectionContext.reductionTarget);
   // Non-approximated numbers or node may have appeared during reduction.
   ApplyReductionStrategy(e, projectionContext);

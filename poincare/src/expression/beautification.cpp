@@ -107,7 +107,7 @@ bool DeepBeautifyAngleFunctions(Tree* e,
       Tree::ApplyShallowTopDown(e, ShallowBeautifyAngleFunctions, &angleUnit);
   if (changed) {
     SystematicReduction::DeepReduce(e);
-    if (projectionContext.m_advanceReduce && angleUnit != AngleUnit::Radian) {
+    if (projectionContext.advanceReduce && angleUnit != AngleUnit::Radian) {
       /* Some ShallowBeautifyAngleFunctions steps add potential multiplication
        * expansions that advanced reduction can apply if worth it. It is
        * therefore re-applied. At this point, only the complex format and
@@ -655,7 +655,7 @@ Tree* GetPolarFormat(const Tree* e,
     result->removeNode();
     return nullptr;
   }
-  if (projectionContext.m_advanceReduce) {
+  if (projectionContext.advanceReduce) {
     hasReduced = AdvancedReduction::Reduce(abs) || hasReduced;
   }
   if (!hasReduced) {
@@ -675,7 +675,7 @@ Tree* GetPolarFormat(const Tree* e,
   e->cloneTree();
   // Both abs and arg must have been reduced
   hasReduced = SystematicReduction::ShallowReduce(arg);
-  if (projectionContext.m_advanceReduce) {
+  if (projectionContext.advanceReduce) {
     hasReduced = AdvancedReduction::Reduce(arg) || hasReduced;
   }
   if (hasSingleFloats) {
@@ -761,7 +761,7 @@ Tree* GetCartesianFormat(const Tree* e,
     result->removeNode();
     return nullptr;
   }
-  if (projectionContext.m_advanceReduce) {
+  if (projectionContext.advanceReduce) {
     hasReduced = AdvancedReduction::Reduce(re) || hasReduced;
   }
   if (!hasReduced) {
@@ -774,7 +774,7 @@ Tree* GetCartesianFormat(const Tree* e,
   e->cloneTree();
   // Both im and re must have been reduced
   hasReduced = SystematicReduction::ShallowReduce(im);
-  if (projectionContext.m_advanceReduce) {
+  if (projectionContext.advanceReduce) {
     hasReduced = AdvancedReduction::Reduce(im) || hasReduced;
   }
   SharedTreeStack->pushComplexI();

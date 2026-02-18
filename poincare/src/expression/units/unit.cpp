@@ -372,7 +372,7 @@ Tree* Representative::pushReducedRatioExpression() const {
   /* Representatives's ratio expressions are quite simple and not dependant on
    * any context. */
   Simplification::ProjectAndReduce(result,
-                                   ProjectionContext{.m_advanceReduce = false});
+                                   ProjectionContext{.advanceReduce = false});
   return result;
 }
 

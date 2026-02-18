@@ -865,7 +865,7 @@ SolverResult ExactSolve(const Tree* equationList,
   // Beautify approximate solutions
   if (result.approximateSolutionList) {
     // Advanced reduction is only needed to beautify in polar format
-    projectionContext.m_advanceReduce =
+    projectionContext.advanceReduce =
         projectionContext.complexFormat == ComplexFormat::Polar;
     Simplification::BeautifyReduced(result.approximateSolutionList,
                                     projectionContext,

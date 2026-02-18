@@ -574,7 +574,7 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
                            .strategy = Strategy::ApproximateToFloat,
                            .symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .context = symbolContext,
-                           .m_advanceReduce = false};
+                           .advanceReduce = false};
   Tree* e = approximateOutput.tree()->cloneTree();
   Internal::Dimension dim = Simplification::ProjectAndReduce(e, ctx);
   assert(!dim.isUnit());

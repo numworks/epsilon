@@ -155,7 +155,7 @@ static void compareSolutions(SystemOfEquations* system,
         .complexFormat = ComplexFormat::Cartesian,
         .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .context = tempContext,
-        .m_advanceReduce = false};
+        .advanceReduce = false};
     SystemExpression expectedExpression =
         UserExpression::Parse(expectedValue, tempContext)
             .cloneAndReduce(projCtx);
@@ -178,7 +178,7 @@ static void compareSolutions(SystemOfEquations* system,
         .complexFormat = ComplexFormat::Cartesian,
         .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .context = tempContext,
-        .m_advanceReduce = false};
+        .advanceReduce = false};
     SystemExpression obtainedExpression =
         parsedExpression.cloneAndReduce(projCtx2);
     quiz_assert(!obtainedExpression.isUninitialized() &&

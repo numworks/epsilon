@@ -109,7 +109,7 @@ QUIZ_CASE(pcj_polynomial_degree) {
       .angleUnit = Radian,
       .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
       .context = symbolStore,
-      .m_advanceReduce = false};
+      .advanceReduce = false};
 
   assert_polynomial_degree_is(projCtx, "x+1", 1);
   assert_polynomial_degree_is(projCtx, "cos(2)+1", 0);

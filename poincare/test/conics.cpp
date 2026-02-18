@@ -19,7 +19,7 @@ CartesianConic buildCartesianConic(const char* expression) {
   Simplification::ProjectAndReduce(
       e, ProjectionContext{.complexFormat = ComplexFormat::Cartesian,
                            .angleUnit = AngleUnit::Radian,
-                           .m_advanceReduce = false});
+                           .advanceReduce = false});
   return CartesianConic(SystemExpression::Builder(e));
 }
 
@@ -28,7 +28,7 @@ PolarConic buildPolarConic(const char* expression) {
   Simplification::ProjectAndReduce(
       e, ProjectionContext{.complexFormat = ComplexFormat::Cartesian,
                            .angleUnit = AngleUnit::Radian,
-                           .m_advanceReduce = false});
+                           .advanceReduce = false});
   return PolarConic(SystemExpression::Builder(e));
 }
 
@@ -40,7 +40,7 @@ ParametricConic buildParametricConic(const char* expression) {
   Simplification::ProjectAndReduce(
       e, ProjectionContext{.complexFormat = ComplexFormat::Cartesian,
                            .angleUnit = AngleUnit::Radian,
-                           .m_advanceReduce = false});
+                           .advanceReduce = false});
   return ParametricConic(SystemExpression::Builder(e));
 }
 

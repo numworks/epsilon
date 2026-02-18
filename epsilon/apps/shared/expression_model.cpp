@@ -108,7 +108,7 @@ SystemExpression ExpressionModel::expressionReduced(
       /* 'Simplify' routine might need to call expressionReduced on the very
        * same function. So we need to keep a valid m_expression while executing
        * 'Simplify'. Thus, we use a temporary expression. */
-      m_expression = userExpression.cloneAndReduce(ProjectionContext{
+      m_expression = userExpression.cloneAndReduce(SimplificationParameters{
           .complexFormat = complexFormat(record),
           .angleUnit =
               GlobalPreferences::SharedGlobalPreferences()->angleUnit(),

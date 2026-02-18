@@ -51,11 +51,14 @@ struct FastSolve {
 
 template <typename SolverPolicy = solver_policies::ExactSolve>
 void assert_roots_are(const char* coefficients, const char* expectedRoots) {
-  Poincare::ProjectionContext projCtx = {.complexFormat = Cartesian};
+  Poincare::SimplificationParameters simplificationParameters = {
+      .complexFormat = Cartesian};
   process_tree_and_compare(
       coefficients, expectedRoots,
-      [](Tree* tree, const Poincare::ProjectionContext& projCtx) {
-        Dimension dimension = Simplification::ProjectAndReduce(tree, projCtx);
+      [](Tree* tree,
+         const Poincare::SimplificationParameters& simplificationParameters) {
+        Dimension dimension =
+            Simplification::ProjectAndReduce(tree, simplificationParameters);
         switch (tree->numberOfChildren()) {
           case 2:
             tree->moveTreeOverTree(
@@ -77,9 +80,10 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
             // Not handled
             quiz_assert(false);
         }
-        Simplification::BeautifyReduced(tree, projCtx, dimension);
+        Simplification::BeautifyReduced(tree, simplificationParameters,
+                                        dimension);
       },
-      projCtx);
+      simplificationParameters);
 }
 
 QUIZ_CASE(pcj_roots) {

@@ -93,10 +93,10 @@ QUIZ_CASE(pcj_polynomial_operations) {
 }
 
 void assert_polynomial_degree_is(
-    const Poincare::ProjectionContext& projectionContext, const char* input,
-    int expectedDegree, const char* symbolName = "x") {
-  Tree* expression = parse(input, projectionContext.context);
-  Simplification::ProjectAndReduce(expression, projectionContext);
+    const Poincare::SimplificationParameters& simplificationParameters,
+    const char* input, int expectedDegree, const char* symbolName = "x") {
+  Tree* expression = parse(input, simplificationParameters.context);
+  Simplification::ProjectAndReduce(expression, simplificationParameters);
   int degree = Degree::Get(expression, symbolName);
   quiz_assert(degree == expectedDegree);
   expression->removeTree();
@@ -104,50 +104,52 @@ void assert_polynomial_degree_is(
 
 QUIZ_CASE(pcj_polynomial_degree) {
   PoincareTest::SymbolStore symbolStore;
-  Poincare::ProjectionContext projCtx = {
+  Poincare::SimplificationParameters parameters = {
       .complexFormat = Cartesian,
       .angleUnit = Radian,
       .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
       .context = symbolStore,
       .advanceReduce = false};
 
-  assert_polynomial_degree_is(projCtx, "x+1", 1);
-  assert_polynomial_degree_is(projCtx, "cos(2)+1", 0);
-  assert_polynomial_degree_is(projCtx, "diff(3×x+x,x,2)", 0);
-  assert_polynomial_degree_is(projCtx, "diff(3×x+x,x,x)", 0);
-  assert_polynomial_degree_is(projCtx, "diff(3×x+x,x,x)", 0, "a");
-  assert_polynomial_degree_is(projCtx, "(3×x+2)/3", 1);
-  assert_polynomial_degree_is(projCtx, "(3×x+2)/x", -1);
-  assert_polynomial_degree_is(projCtx, "int(2×x,x, 0, 1)", 0);
-  assert_polynomial_degree_is(projCtx, "int(2×abs(x),x, 0, 1)", -1);
-  assert_polynomial_degree_is(projCtx, "int(2×x,x, 0, 1)", 0, "a");
-  assert_polynomial_degree_is(projCtx, "[[1,2][3,4]]", -1);
-  assert_polynomial_degree_is(projCtx, "(x^2+2)×(x+1)", 3);
-  assert_polynomial_degree_is(projCtx, "-(x+1)", 1);
-  assert_polynomial_degree_is(projCtx, "(x^2+2)^(3)", 6);
-  assert_polynomial_degree_is(projCtx, "2-x-x^3", 3);
-  assert_polynomial_degree_is(projCtx, "π×x", 1);
-  assert_polynomial_degree_is(projCtx, "x+π^(-3)", 1);
-  assert_polynomial_degree_is(projCtx, "x^256", 256);
+  assert_polynomial_degree_is(parameters, "x+1", 1);
+  assert_polynomial_degree_is(parameters, "cos(2)+1", 0);
+  assert_polynomial_degree_is(parameters, "diff(3×x+x,x,2)", 0);
+  assert_polynomial_degree_is(parameters, "diff(3×x+x,x,x)", 0);
+  assert_polynomial_degree_is(parameters, "diff(3×x+x,x,x)", 0, "a");
+  assert_polynomial_degree_is(parameters, "(3×x+2)/3", 1);
+  assert_polynomial_degree_is(parameters, "(3×x+2)/x", -1);
+  assert_polynomial_degree_is(parameters, "int(2×x,x, 0, 1)", 0);
+  assert_polynomial_degree_is(parameters, "int(2×abs(x),x, 0, 1)", -1);
+  assert_polynomial_degree_is(parameters, "int(2×x,x, 0, 1)", 0, "a");
+  assert_polynomial_degree_is(parameters, "[[1,2][3,4]]", -1);
+  assert_polynomial_degree_is(parameters, "(x^2+2)×(x+1)", 3);
+  assert_polynomial_degree_is(parameters, "-(x+1)", 1);
+  assert_polynomial_degree_is(parameters, "(x^2+2)^(3)", 6);
+  assert_polynomial_degree_is(parameters, "2-x-x^3", 3);
+  assert_polynomial_degree_is(parameters, "π×x", 1);
+  assert_polynomial_degree_is(parameters, "x+π^(-3)", 1);
+  assert_polynomial_degree_is(parameters, "x^256", 256);
   // polynomial degree is clamped to a maximum value
-  assert_polynomial_degree_is(projCtx, "x^257", Degree::k_maxPolynomialDegree);
+  assert_polynomial_degree_is(parameters, "x^257",
+                              Degree::k_maxPolynomialDegree);
 
   // f: y→y^2+πy+1
   PoincareTest::store("1+π×y+y^2→f(y)", symbolStore);
-  assert_polynomial_degree_is(projCtx, "f(x)", 2);
+  assert_polynomial_degree_is(parameters, "f(x)", 2);
   // With y=1
   PoincareTest::store("1→y", symbolStore);
   symbolStore.reset();
   // a : undef and f : y→ay+πy+1
   PoincareTest::store("undef→a", symbolStore);
   PoincareTest::store("1+π×y+y×a→f(y)", symbolStore);
-  assert_polynomial_degree_is(projCtx, "f(x)", 0);  // a is undefined
+  assert_polynomial_degree_is(parameters, "f(x)",
+                              0);  // a is undefined
   // With a = 1
   PoincareTest::store("1→a", symbolStore);
-  assert_polynomial_degree_is(projCtx, "f(x)", 1);
+  assert_polynomial_degree_is(parameters, "f(x)", 1);
   symbolStore.reset();
 
-  projCtx.complexFormat = Real;
-  assert_polynomial_degree_is(projCtx, "√(-1)×x", 0);
-  assert_polynomial_degree_is(projCtx, "√(x)", -1);
+  parameters.complexFormat = Real;
+  assert_polynomial_degree_is(parameters, "√(-1)×x", 0);
+  assert_polynomial_degree_is(parameters, "√(x)", -1);
 }

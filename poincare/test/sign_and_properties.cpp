@@ -509,11 +509,11 @@ void assert_properties(const char* input, ComplexProperties expectedProperties,
                        ComplexFormat complexFormat = ComplexFormat::Cartesian,
                        Strategy strategy = Strategy::Default) {
   Tree* expression = parse(input);
-  Simplification::ToSystem(expression,
-                           ProjectionContext{.complexFormat = complexFormat,
-                                             .angleUnit = AngleUnit::Radian,
-                                             .strategy = strategy,
-                                             .advanceReduce = false});
+  Simplification::ToSystem(
+      expression, SimplificationParameters{.complexFormat = complexFormat,
+                                           .angleUnit = AngleUnit::Radian,
+                                           .strategy = strategy,
+                                           .advanceReduce = false});
   bool result = GetComplexProperties(expression) == expectedProperties;
 #if POINCARE_TREE_LOG
   if (!result) {
@@ -654,8 +654,8 @@ QUIZ_CASE(pcj_properties) {
 
 void assert_projected_is_null(const char* input, OMG::Troolean isNull) {
   Tree* e = parse(input);
-  Simplification::ToSystem(e,
-                           ProjectionContext{.angleUnit = AngleUnit::Radian});
+  Simplification::ToSystem(
+      e, SimplificationParameters{.angleUnit = AngleUnit::Radian});
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(
       OMG::TrooleanAnd(properties.imagSign().trooleanIsNull(),
@@ -703,8 +703,8 @@ QUIZ_CASE(pcj_sign_is_zero) {
 
 void assert_projected_is_positive(const char* input, OMG::Troolean isPositive) {
   Tree* e = parse(input);
-  Simplification::ToSystem(e,
-                           ProjectionContext{.angleUnit = AngleUnit::Radian});
+  Simplification::ToSystem(
+      e, SimplificationParameters{.angleUnit = AngleUnit::Radian});
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(
       OMG::TrooleanAnd(properties.imagSign().trooleanIsNull(),
@@ -763,12 +763,12 @@ void assert_reduced_is_positive(
     AngleUnit angleUnit = AngleUnit::Radian) {
   Tree* e = parse(input, symbolContext);
   Simplification::ProjectAndReduce(
-      e,
-      ProjectionContext{.complexFormat = complexFormat,
-                        .angleUnit = angleUnit,
-                        .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-                        .context = symbolContext,
-                        .advanceReduce = false});
+      e, SimplificationParameters{
+             .complexFormat = complexFormat,
+             .angleUnit = angleUnit,
+             .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+             .context = symbolContext,
+             .advanceReduce = false});
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(
       OMG::TrooleanAnd(properties.imagSign().trooleanIsNull(),
@@ -817,7 +817,7 @@ QUIZ_CASE(pcj_sign_reduced_is_positive) {
 void assert_sign_sets_to(const char* input,
                          NonStrictSign isPositive = NonStrictSign::Positive) {
   Tree* e = parse(input);
-  Simplification::ProjectAndReduce(e, ProjectionContext{});
+  Simplification::ProjectAndReduce(e, SimplificationParameters{});
   ComplexProperties eSign = GetComplexProperties(e);
   bool eIsPositive = OMG::TrooleanToBool(
       OMG::TrooleanAnd(eSign.imagSign().trooleanIsNull(),
@@ -867,13 +867,13 @@ QUIZ_CASE(pcj_sign_set) {
  * See PreferredComplexFormat. */
 void assert_projected_is_real_or_not(const char* input, bool isReal = true) {
   Tree* e = parse(input);
-  ProjectionContext context{
-      .complexFormat = Projection::PreferredComplexFormat(
-          e, ComplexFormat::Real,
-          SymbolicComputation::ReplaceAllSymbolsWithUndefined,
-          k_emptySymbolContext),
-      .angleUnit = AngleUnit::Radian};
-  Simplification::ToSystem(e, context);
+  Simplification::ToSystem(
+      e, SimplificationParameters{
+             .complexFormat = Projection::PreferredComplexFormat(
+                 e, ComplexFormat::Real,
+                 SymbolicComputation::ReplaceAllSymbolsWithUndefined,
+                 k_emptySymbolContext),
+             .angleUnit = AngleUnit::Radian});
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(properties.isReal() == isReal, input);
   e->removeTree();

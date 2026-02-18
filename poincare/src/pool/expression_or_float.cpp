@@ -59,7 +59,7 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
   if (!IsCalculationOutputStrictEquality(
           exactExpression, UserExpression::Builder(approximation),
           numberOfSignificantDigits,
-          ProjectionContext{
+          SimplificationParameters{
               .complexFormat = approximationParameters.complexFormat,
               .angleUnit = approximationParameters.angleUnit,
           })) {

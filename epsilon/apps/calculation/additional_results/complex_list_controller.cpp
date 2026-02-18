@@ -23,32 +23,39 @@ void ComplexListController::computeAdditionalResults(
   assert(AdditionalResultsType::HasComplex(
       approximateOutput, m_calculationPreferences, App::app()->localContext()));
   assert(complexFormat() != ComplexFormat::Real);
-  ProjectionContext ctx = {.complexFormat = ComplexFormat::Cartesian,
-                           .angleUnit = angleUnit(),
-                           .symbolic = SymbolicComputation::ReplaceAllSymbols,
-                           .context = App::app()->localContext()};
+  SimplificationParameters simplificationParameters = {
+      .complexFormat = ComplexFormat::Cartesian,
+      .angleUnit = angleUnit(),
+      .symbolic = SymbolicComputation::ReplaceAllSymbols,
+      .context = App::app()->localContext()};
 
   // Fill Calculation Store
   constexpr KTree k_symbol = "z"_e;
   size_t index = 0;
-  ctx.complexFormat = complexFormToDisplay();
-  setLineAtIndex(index++, UserExpression::Builder(k_symbol), exactOutput, ctx);
-  ctx.complexFormat = ComplexFormat::Cartesian;
+  simplificationParameters.complexFormat = complexFormToDisplay();
+  setLineAtIndex(index++, UserExpression::Builder(k_symbol), exactOutput,
+                 simplificationParameters);
+  simplificationParameters.complexFormat = ComplexFormat::Cartesian;
   setLineAtIndex(index++, UserExpression::Builder(KAbs(k_symbol)),
-                 UserExpression::Create(KAbs(KA), {.KA = exactOutput}), ctx);
+                 UserExpression::Create(KAbs(KA), {.KA = exactOutput}),
+                 simplificationParameters);
   setLineAtIndex(index++, UserExpression::Builder(KArg(k_symbol)),
-                 UserExpression::Create(KArg(KA), {.KA = exactOutput}), ctx);
+                 UserExpression::Create(KArg(KA), {.KA = exactOutput}),
+                 simplificationParameters);
   setLineAtIndex(index++, UserExpression::Builder(KRe(k_symbol)),
-                 UserExpression::Create(KRe(KA), {.KA = exactOutput}), ctx);
+                 UserExpression::Create(KRe(KA), {.KA = exactOutput}),
+                 simplificationParameters);
   setLineAtIndex(index++, UserExpression::Builder(KIm(k_symbol)),
-                 UserExpression::Create(KIm(KA), {.KA = exactOutput}), ctx);
+                 UserExpression::Create(KIm(KA), {.KA = exactOutput}),
+                 simplificationParameters);
 
   // Set Complex illustration
   double realPart;
   double imagPart;
   bool hasComplexApprox =
       approximateOutput.hasDefinedComplexApproximation<double>(
-          ctx.angleUnit, ctx.complexFormat, App::app()->localContext(),
+          simplificationParameters.angleUnit,
+          simplificationParameters.complexFormat, App::app()->localContext(),
           &realPart, &imagPart);
 
   assert(hasComplexApprox);

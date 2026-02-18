@@ -2,7 +2,7 @@
 
 #include <poincare/math_options.h>
 #include <poincare/preferences.h>
-#include <poincare/projection_context.h>
+#include <poincare/simplification_parameters.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/symbol_context.h>
 
@@ -26,8 +26,9 @@ class Projection {
       SymbolicComputation symbolic);
   // All user variables are replaced with Undefined
   static bool DeepReplaceUserSymbolWithUndefined(Tree* e);
-  static bool DeepSystemProject(Tree* e, const ProjectionContext& ctx,
-                                const Dimension& dimension = Dimension());
+  static bool DeepSystemProject(
+      Tree* e, const SimplificationParameters& simplificationParameters,
+      const Dimension& dimension = Dimension());
 
   /* Some projections are performed during advanced reduction instead so the
    * metric can cancel it if unecessary. */

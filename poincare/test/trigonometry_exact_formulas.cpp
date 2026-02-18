@@ -59,15 +59,24 @@ class Poincare::Internal::ExactFormulaTest {
      * formulas for angles in ]π/4, π/2] must be removed. */
     process_tree_and_compare(
         "π/2-arcsin(1/10)", "π/2-arcsin(1/10)",
-        [](Tree* tree, const ProjectionContext& ctx) { simplify(tree, ctx); },
+        [](Tree* tree,
+           const SimplificationParameters& simplificationParameters) {
+          simplify(tree, simplificationParameters);
+        },
         {.angleUnit = AngleUnit::Radian});
     process_tree_and_compare(
         "π/2-arccos(1/10)", "π/2-arccos(1/10)",
-        [](Tree* tree, const ProjectionContext& ctx) { simplify(tree, ctx); },
+        [](Tree* tree,
+           const SimplificationParameters& simplificationParameters) {
+          simplify(tree, simplificationParameters);
+        },
         {.angleUnit = AngleUnit::Radian});
     process_tree_and_compare(
         "π/2-arctan(1/10)", "π/2-arctan(1/10)",
-        [](Tree* tree, const ProjectionContext& ctx) { simplify(tree, ctx); },
+        [](Tree* tree,
+           const SimplificationParameters& simplificationParameters) {
+          simplify(tree, simplificationParameters);
+        },
         {.angleUnit = AngleUnit::Radian});
   }
 };

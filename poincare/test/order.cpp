@@ -89,11 +89,12 @@ void assert_sorts_to(const char* input, const char* output,
                      Order::OrderType order) {
   static Order::OrderType s_order;
   s_order = order;
-  process_tree_and_compare(input, output,
-                           [](Tree* e, const Poincare::ProjectionContext& ctx) {
-                             NAry::Sort(e, s_order);
-                           },
-                           {});
+  process_tree_and_compare(
+      input, output,
+      [](Tree* e, const Poincare::SimplificationParameters&) {
+        NAry::Sort(e, s_order);
+      },
+      Poincare::SimplificationParameters{});
 }
 
 QUIZ_CASE(pcj_sort) {

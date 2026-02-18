@@ -11,14 +11,13 @@ QUIZ_CASE(pcj_simplification_decimal) {
   Tree* tree = SharedTreeStack->pushDecimal();
   (124_e)->cloneTree();
   (-2_e)->cloneTree();
-  Poincare::ProjectionContext ctx = k_realCtx;
-  simplify(tree, ctx);
+  simplify(tree, k_realParams);
   assert_trees_are_equal(tree, 12400_e);
   tree->removeTree();
   tree = SharedTreeStack->pushDecimal();
   (124_e)->cloneTree();
   (2_e)->cloneTree();
-  simplify(tree, ctx);
+  simplify(tree, k_realParams);
   assert_trees_are_equal(tree, KDiv(31_e, 25_e));
   tree->removeTree();
   // Decimal with integers larger than ints
@@ -41,18 +40,19 @@ QUIZ_CASE(pcj_simplification_decimal) {
 }
 
 QUIZ_CASE(pcj_simplification_float) {
-  Poincare::ProjectionContext ctx = {
+  Poincare::SimplificationParameters parametersForApproximation = {
       .complexFormat = Poincare::ComplexFormat::Real,
       .angleUnit = Poincare::AngleUnit::Radian,
       .strategy = Strategy::ApproximateToFloat,
   };
-  simplifies_to("2", "2", ctx);
-  simplifies_to("2.3", "2.3", ctx);
-  simplifies_to("1+π", "4.1415926535898", ctx);
-  simplifies_to("1+π+x", "x+4.1415926535898", ctx);
-  simplifies_to("cos(x-x)", "1", ctx);
-  simplifies_to("random()-random()", "random()-random()", ctx);
-  simplifies_to("y^3*x^-2", "y^3/x^2", ctx);
+  simplifies_to("2", "2", parametersForApproximation);
+  simplifies_to("2.3", "2.3", parametersForApproximation);
+  simplifies_to("1+π", "4.1415926535898", parametersForApproximation);
+  simplifies_to("1+π+x", "x+4.1415926535898", parametersForApproximation);
+  simplifies_to("cos(x-x)", "1", parametersForApproximation);
+  simplifies_to("random()-random()", "random()-random()",
+                parametersForApproximation);
+  simplifies_to("y^3*x^-2", "y^3/x^2", parametersForApproximation);
 
   // This was raising asserts because of float approximation on flatten.
   Tree* u = (KMult(KPow(180_e, -1_e), π_e, KMult(180_de, "x"_e)))->cloneTree();
@@ -92,7 +92,7 @@ QUIZ_CASE(pcj_simplification_large_numbers) {
   simplifies_to("123450000000000000000000000000", "1.2345×10^29");
   simplifies_to("123450000000000000000000000000/(5×7)", "(2.469×10^28)/7");
   simplifies_to("π/(12345×10^5)^2", "π/(1.52399025×10^18)");
-  simplifies_to("10^14+i", "10^14+i", k_cartesianCtx);
+  simplifies_to("10^14+i", "10^14+i", k_cartesianParams);
   simplifies_to("e^(3×10^15)", "e^(3×10^15)");
 
   /* Edge cases */
@@ -193,17 +193,17 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("1/inf", "0");
   simplifies_to("0/inf", "0");
   simplifies_to("inf×i×i×i×i", "∞");
-  simplifies_to("inf×2i", "∞×i", k_cartesianCtx);
-  simplifies_to("-i×inf", "-∞×i", k_cartesianCtx);
-  simplifies_to("inf×cos(3)×i", "∞×sign(cos(3)×i)", k_cartesianCtx);
+  simplifies_to("inf×2i", "∞×i", k_cartesianParams);
+  simplifies_to("-i×inf", "-∞×i", k_cartesianParams);
+  simplifies_to("inf×cos(3)×i", "∞×sign(cos(3)×i)", k_cartesianParams);
 
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("x→f(x)", symbolStore);
-  Poincare::ProjectionContext ctx = {
+  Poincare::SimplificationParameters parametersWithStore = {
       .symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
       .context = symbolStore,
   };
-  simplifies_to("f(x)-inf", "f(x)-∞", ctx);
+  simplifies_to("f(x)-inf", "f(x)-∞", parametersWithStore);
 
   // x^inf
   simplifies_to("(-2)^inf", "undef");
@@ -221,10 +221,10 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("2^inf", "∞");
   simplifies_to("2^(-inf)", "0");
   simplifies_to("x^inf", "e^(∞×sign(ln(x)))");
-  simplifies_to("i^inf", "undef", k_cartesianCtx);
-  simplifies_to("i^(-inf)", "undef", k_cartesianCtx);
-  simplifies_to("(3+4i)^inf", "undef", k_cartesianCtx);
-  simplifies_to("(3+4i)^(-inf)", "undef", k_cartesianCtx);
+  simplifies_to("i^inf", "undef", k_cartesianParams);
+  simplifies_to("i^(-inf)", "undef", k_cartesianParams);
+  simplifies_to("(3+4i)^inf", "undef", k_cartesianParams);
+  simplifies_to("(3+4i)^(-inf)", "undef", k_cartesianParams);
 
   // inf^x
   simplifies_to("inf^i", "undef");
@@ -261,30 +261,31 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("log(-inf,x)",
                 "dep(nonreal,{nonNull(x),realPos(x),ln(-∞)/ln(x)})");
   simplifies_to("log(-inf,x)", "dep((∞+π×i)/ln(x),{nonNull(x)})",
-                k_cartesianCtx);
+                k_cartesianParams);
   simplifies_to("log(inf,3)", "∞");
   /* Should be nonreal, TODO return NonReal when evaluating PowReal(x) with x
    * non real */
   simplifies_to("log(inf,-3)", "undef");
-  simplifies_to("log(inf,-3)", "∞×sign(1/ln(-3))", k_cartesianCtx);
+  simplifies_to("log(inf,-3)", "∞×sign(1/ln(-3))", k_cartesianParams);
   simplifies_to("log(0,inf)", "undef");
-  simplifies_to("log(0,-inf)", "undef", k_cartesianCtx);
+  simplifies_to("log(0,-inf)", "undef", k_cartesianParams);
   simplifies_to("log(1,inf)", "0");
-  simplifies_to("log(1,-inf)", "0", k_cartesianCtx);
+  simplifies_to("log(1,-inf)", "0", k_cartesianParams);
   simplifies_to("log(x,inf)", "dep(0,{0×ln(x),nonNull(x),realPos(x)})");
-  simplifies_to("log(x,-inf)", "dep(log(x,-∞),{nonNull(x)})", k_cartesianCtx);
+  simplifies_to("log(x,-inf)", "dep(log(x,-∞),{nonNull(x)})",
+                k_cartesianParams);
   simplifies_to("log(inf,inf)", "undef");
-  simplifies_to("log(-inf,inf)", "undef", k_cartesianCtx);
+  simplifies_to("log(-inf,inf)", "undef", k_cartesianParams);
   // TODO: simplify to undef
-  simplifies_to("log(inf,-inf)", "∞×sign(1/(∞+π×i))", k_cartesianCtx);
-  simplifies_to("log(-inf,-inf)", "undef", k_cartesianCtx);
+  simplifies_to("log(inf,-inf)", "∞×sign(1/(∞+π×i))", k_cartesianParams);
+  simplifies_to("log(-inf,-inf)", "undef", k_cartesianParams);
   simplifies_to("ln(inf)", "∞");
   simplifies_to("ln(-inf)", "nonreal");
   simplifies_to("ln(inf)*0", "undef");
   // TODO: simplify sign or simplify directly to -∞
   simplifies_to("log(inf,0.3)", "∞×sign(1/(-ln(2)+ln(3)-ln(5)))");
   simplifies_to("log(inf,x)", "dep(∞×sign(1/ln(x)),{nonNull(x)})",
-                k_cartesianCtx);
+                k_cartesianParams);
 
   // Functions
   simplifies_to("exp(inf)", "∞");

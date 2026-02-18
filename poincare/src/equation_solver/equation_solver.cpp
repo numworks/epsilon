@@ -64,14 +64,15 @@ constexpr static char k_parameterPrefix = 't';
 /* This is used by both ExactSolve and ApproximateSolve.
  * It computes the EquationMetadata, and reduces the equation list. */
 static PreprocessingResult PreprocessEquationList(
-    const Tree* equationList, const ProjectionContext& projectionContext,
+    const Tree* equationList,
+    const SimplificationParameters& simplificationParameters,
     UnknownSelectionStrategy selectionStrategy) {
   assert(equationList->isList());
 
   EquationMetadata equationMetadata;
 
   // Step 1. Retrieve user symbols and infer the list of unknowns
-  const SymbolContext& symbolContext = projectionContext.context;
+  const SymbolContext& symbolContext = simplificationParameters.context;
   Tree* userVariables =
       Variables::GetUserVariables(equationList, symbolContext);
   assert(userVariables->isList());
@@ -150,9 +151,10 @@ static PreprocessingResult PreprocessEquationList(
   assert(equationMetadata.unknownVariables.size() == expectedNumberOfUnknowns);
   userVariables->removeTree();
 
-  ProjectionContext updatedProjectionContext = projectionContext;
+  SimplificationParameters updatedSimplificationParameters =
+      simplificationParameters;
 
-  updatedProjectionContext.symbolic =
+  updatedSimplificationParameters.symbolic =
       equationMetadata.overrideDefinedVariables
           ? SymbolicComputation::ReplaceDefinedFunctions
           : SymbolicComputation::ReplaceDefinedSymbols;
@@ -160,12 +162,15 @@ static PreprocessingResult PreprocessEquationList(
   /* Step 2. Update complex format from equationList
    * NOTE: This must be done after deciding the symbolic computation mode */
 #if POINCARE_COMPLEX
-  updatedProjectionContext.complexFormat = Projection::PreferredComplexFormat(
-      equationList, updatedProjectionContext.complexFormat,
-      updatedProjectionContext.symbolic, updatedProjectionContext.context);
+  updatedSimplificationParameters.complexFormat =
+      Projection::PreferredComplexFormat(
+          equationList, updatedSimplificationParameters.complexFormat,
+          updatedSimplificationParameters.symbolic,
+          updatedSimplificationParameters.context);
 #endif
 
-  equationMetadata.complexFormat = updatedProjectionContext.complexFormat;
+  equationMetadata.complexFormat =
+      updatedSimplificationParameters.complexFormat;
 
   // Step 3. Clone and simplify the equations
 
@@ -202,7 +207,7 @@ static PreprocessingResult PreprocessEquationList(
   // Step 3.4. Project (replace local symbols) and reduce
 
   Dimension dimension = Simplification::ProjectAndReduce(
-      reducedEquationList, updatedProjectionContext);
+      reducedEquationList, updatedSimplificationParameters);
   if (dimension.isUnit()) {
     error = Error::EquationUndefined;
   } else if (!reducedEquationList->isList()) {
@@ -719,10 +724,12 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
 }
 #endif
 
-SolverResult ExactSolveAdaptive(const Tree* equationList,
-                                const ProjectionContext& projectionContext) {
+SolverResult ExactSolveAdaptive(
+    const Tree* equationList,
+    const SimplificationParameters& simplificationParameters) {
   // Try solving while using user variables
-  SolverResult firstResult = ExactSolve(equationList, projectionContext, false);
+  SolverResult firstResult =
+      ExactSolve(equationList, simplificationParameters, false);
 
   Error firstError = firstResult.error;
   size_t nDefinedVariables =
@@ -733,7 +740,8 @@ SolverResult ExactSolveAdaptive(const Tree* equationList,
    * AND -    There is no error but no solution was found
    *       OR The equation is undefined or non real or unhandled
    *
-   * For every other errors, overriding the variables shouldn't change anything.
+   * For every other errors, overriding the variables shouldn't change
+   * anything.
    */
   bool retryWithOverridenVariables =
       nDefinedVariables > 0 &&
@@ -748,7 +756,8 @@ SolverResult ExactSolveAdaptive(const Tree* equationList,
   }
 
   // Try solving while overriding user variables
-  SolverResult secondResult = ExactSolve(equationList, projectionContext, true);
+  SolverResult secondResult =
+      ExactSolve(equationList, simplificationParameters, true);
   Error secondError = secondResult.error;
 
   if (firstError == Error::NoError && secondError != Error::NoError &&
@@ -770,12 +779,13 @@ SolverResult ExactSolveAdaptive(const Tree* equationList,
   return secondResult;
 }
 
-SolverResult ExactSolve(const Tree* equationList,
-                        const ProjectionContext& projectionContext,
-                        bool overrideDefinedVariables) {
+SolverResult ExactSolve(
+    const Tree* equationList,
+    const SimplificationParameters& simplificationParameters,
+    bool overrideDefinedVariables) {
   // Step 1. Analyze the equations
   PreprocessingResult preprocessingResult = PreprocessEquationList(
-      equationList, projectionContext,
+      equationList, simplificationParameters,
       overrideDefinedVariables
           ? UnknownSelectionStrategy::AllSymbols
           : UnknownSelectionStrategy::OnlyUndefinedSymbols);
@@ -783,9 +793,10 @@ SolverResult ExactSolve(const Tree* equationList,
   Tree* reducedEquationList = preprocessingResult.reducedEquationList;
   EquationMetadata equationMetadata = preprocessingResult.equationMetadata;
 
-  ProjectionContext updatedProjectionContext = projectionContext;
+  SimplificationParameters updatedSimplificationParameters =
+      simplificationParameters;
 #if POINCARE_COMPLEX
-  updatedProjectionContext.complexFormat =
+  updatedSimplificationParameters.complexFormat =
       preprocessingResult.equationMetadata.complexFormat;
 #endif
 
@@ -802,8 +813,9 @@ SolverResult ExactSolve(const Tree* equationList,
   // Step 2. Solve the equations
 
   // Step 2.1. Try with linear system solving
-  SolverResult result = SolveLinearSystem(reducedEquationList, equationMetadata,
-                                          updatedProjectionContext.context);
+  SolverResult result =
+      SolveLinearSystem(reducedEquationList, equationMetadata,
+                        updatedSimplificationParameters.context);
 
 #if POINCARE_POLYNOMIAL_SOLVER
   // Step 2.2. Try with polynomial solving
@@ -818,7 +830,8 @@ SolverResult ExactSolve(const Tree* equationList,
        * projected with a "Real" Complex format */
       Tree* solutionList = result.exactSolutionList;
       assert(solutionList->isList());
-      if (updatedProjectionContext.complexFormat == ComplexFormat::Real) {
+      if (updatedSimplificationParameters.complexFormat ==
+          ComplexFormat::Real) {
         for (int i = solutionList->numberOfChildren() - 1; i >= 0; i--) {
           if (!PropertiesOfTreeOrApproximation(solutionList->child(i))
                    .isReal()) {
@@ -854,9 +867,9 @@ SolverResult ExactSolve(const Tree* equationList,
         Approximation::Parameters{
             .prepare = true,
             .optimize = true,
-            .angleUnit = updatedProjectionContext.angleUnit,
-            .complexFormat = updatedProjectionContext.complexFormat,
-            .symbolContext = updatedProjectionContext.context});
+            .angleUnit = updatedSimplificationParameters.angleUnit,
+            .complexFormat = updatedSimplificationParameters.complexFormat,
+            .symbolContext = updatedSimplificationParameters.context});
   }
 
   /* Beautify result */
@@ -864,16 +877,16 @@ SolverResult ExactSolve(const Tree* equationList,
   // Beautify exact solutions
   assert(result.exactSolutionList);
   Simplification::BeautifyReduced(result.exactSolutionList,
-                                  updatedProjectionContext,
+                                  updatedSimplificationParameters,
                                   preprocessingResult.dimension);
 
   // Beautify approximate solutions
   if (result.approximateSolutionList) {
     // Advanced reduction is only needed to beautify in polar format
-    updatedProjectionContext.advanceReduce =
-        updatedProjectionContext.complexFormat == ComplexFormat::Polar;
+    updatedSimplificationParameters.advanceReduce =
+        updatedSimplificationParameters.complexFormat == ComplexFormat::Polar;
     Simplification::BeautifyReduced(result.approximateSolutionList,
-                                    updatedProjectionContext,
+                                    updatedSimplificationParameters,
                                     preprocessingResult.dimension);
   }
 
@@ -888,10 +901,10 @@ static Coordinate2D<T> evaluator(T t, const void* model) {
       Approximation::To<T>(e, t, Approximation::Parameters{.optimize = true}));
 }
 
-SolverResult ApproximateSolve(const Tree* equationList,
-                              const ProjectionContext& projectionContext,
-                              Range1D<double> range,
-                              size_t maxNumberOfSolutions) {
+SolverResult ApproximateSolve(
+    const Tree* equationList,
+    const SimplificationParameters& simplificationParameters,
+    Range1D<double> range, size_t maxNumberOfSolutions) {
   assert(equationList->isList());
 
   if (equationList->numberOfChildren() > 1) {
@@ -899,8 +912,9 @@ SolverResult ApproximateSolve(const Tree* equationList,
   }
 
   // Step 1. Analyze the equations
-  PreprocessingResult preprocessingResult = PreprocessEquationList(
-      equationList, projectionContext, UnknownSelectionStrategy::MaxOneSymbol);
+  PreprocessingResult preprocessingResult =
+      PreprocessEquationList(equationList, simplificationParameters,
+                             UnknownSelectionStrategy::MaxOneSymbol);
 
   Tree* reducedEquationList = preprocessingResult.reducedEquationList;
   EquationMetadata equationMetadata = preprocessingResult.equationMetadata;
@@ -929,9 +943,9 @@ SolverResult ApproximateSolve(const Tree* equationList,
 
   // Step 2. Compute the solving range if not provided
   if (range.isNan()) {
-    /* Interval search is done in float to gain some time, since precision does
-     * not matter as much as for the actual solve. The computed interval is
-     * stretched and converted to double because the actual solver works on
+    /* Interval search is done in float to gain some time, since precision
+     * does not matter as much as for the actual solve. The computed interval
+     * is stretched and converted to double because the actual solver works on
      * double. */
     constexpr float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
     // TODO: factor with InteractiveCurveViewRange::NormalYXRatio();

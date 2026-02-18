@@ -29,30 +29,34 @@ static SolverResult ConvertInternalResult(
   return solverResult;
 }
 
-SolverResult ExactSolveAdaptive(const UserExpression& equationList,
-                                const ProjectionContext& projectionContext) {
+SolverResult ExactSolveAdaptive(
+    const UserExpression& equationList,
+    const SimplificationParameters& simplificationParameters) {
   Internal::EquationSolver::SolverResult result =
       Internal::EquationSolver::ExactSolveAdaptive(equationList.tree(),
-                                                   projectionContext);
+                                                   simplificationParameters);
   return ConvertInternalResult(result);
 }
 
-SolverResult ExactSolve(const UserExpression& equationList,
-                        const ProjectionContext& projectionContext,
-                        bool overrideDefinedVariables) {
+SolverResult ExactSolve(
+    const UserExpression& equationList,
+    const SimplificationParameters& simplificationParameters,
+    bool overrideDefinedVariables) {
   Internal::EquationSolver::SolverResult result =
-      Internal::EquationSolver::ExactSolve(
-          equationList.tree(), projectionContext, overrideDefinedVariables);
+      Internal::EquationSolver::ExactSolve(equationList.tree(),
+                                           simplificationParameters,
+                                           overrideDefinedVariables);
   return ConvertInternalResult(result);
 }
 
-SolverResult ApproximateSolve(const UserExpression& equationList,
-                              const ProjectionContext& projectionContext,
-                              Range1D<double> range,
-                              size_t maxNumberOfSolutions) {
+SolverResult ApproximateSolve(
+    const UserExpression& equationList,
+    const SimplificationParameters& simplificationParameters,
+    Range1D<double> range, size_t maxNumberOfSolutions) {
   Internal::EquationSolver::SolverResult result =
-      Internal::EquationSolver::ApproximateSolve(
-          equationList.tree(), projectionContext, range, maxNumberOfSolutions);
+      Internal::EquationSolver::ApproximateSolve(equationList.tree(),
+                                                 simplificationParameters,
+                                                 range, maxNumberOfSolutions);
   return ConvertInternalResult(result);
 }
 

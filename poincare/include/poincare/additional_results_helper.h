@@ -1,7 +1,7 @@
 #pragma once
 
 #include <poincare/layout.h>
-#include <poincare/projection_context.h>
+#include <poincare/simplification_parameters.h>
 #include <poincare/user_expression.h>
 
 namespace Poincare {
@@ -25,7 +25,7 @@ class AdditionalResultsHelper final {
       const UserExpression input, const UserExpression exactOutput,
       const UserExpression approximateOutput, bool directTrigonometry,
       Preferences::CalculationPreferences calculationPreferences,
-      const ProjectionContext& ctx,
+      const SimplificationParameters& simplificationParameters,
       ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation);
 
   static UserExpression ExtractExactAngleFromDirectTrigo(
@@ -54,13 +54,15 @@ class AdditionalResultsHelper final {
   constexpr static uint64_t k_maxPositiveInteger = 10000000000000000;
 
   /* Rational additional results */
-  static Layout CreateRationalApproximation(const SystemExpression rational,
-                                            const ProjectionContext& ctx);
-  static UserExpression CreateEuclideanDivision(SystemExpression rational,
-                                                const ProjectionContext& ctx);
-  static UserExpression CreateMixedFraction(SystemExpression rational,
-                                            bool mixedFractionsEnabled,
-                                            const ProjectionContext& ctx);
+  static Layout CreateRationalApproximation(
+      const SystemExpression rational,
+      const SimplificationParameters& simplificationParameters);
+  static UserExpression CreateEuclideanDivision(
+      SystemExpression rational,
+      const SimplificationParameters& simplificationParameters);
+  static UserExpression CreateMixedFraction(
+      SystemExpression rational, bool mixedFractionsEnabled,
+      const SimplificationParameters& simplificationParameters);
 
   /* Scientific notation additional results */
   static Layout ScientificLayout(
@@ -71,7 +73,8 @@ class AdditionalResultsHelper final {
   /* Matrix additional results */
   static void ComputeMatrixProperties(
       const UserExpression& exactOutput,
-      const UserExpression& approximateOutput, ProjectionContext ctx,
+      const UserExpression& approximateOutput,
+      const SimplificationParameters& simplificationParameters,
       Preferences::PrintFloatMode displayMode,
       uint8_t numberOfSignificantDigits, Layout& determinant, Layout& inverse,
       Layout& rowEchelonForm, Layout& reducedRowEchelonForm, Layout& trace);

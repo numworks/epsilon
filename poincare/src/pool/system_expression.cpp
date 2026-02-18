@@ -96,18 +96,19 @@ SystemExpression SystemExpression::approximateSystemToTree() const {
 void SystemExpression::cloneAndBeautifyAndApproximate(
     UserExpression* beautifiedExpression,
     UserExpression* approximatedExpression,
-    const ProjectionContext& context) const {
+    const SimplificationParameters& simplificationParameters) const {
   assert(beautifiedExpression && beautifiedExpression->isUninitialized());
-  *beautifiedExpression = cloneAndBeautify(context);
+  *beautifiedExpression = cloneAndBeautify(simplificationParameters);
   assert(approximatedExpression && approximatedExpression->isUninitialized());
-  *approximatedExpression =
-      beautifiedExpression->cloneAndApproximate<double>(context);
+  *approximatedExpression = beautifiedExpression->cloneAndApproximate<double>(
+      simplificationParameters);
 }
 
 UserExpression SystemExpression::cloneAndBeautify(
-    const ProjectionContext& context) const {
+    const SimplificationParameters& simplificationParameters) const {
   Tree* e = tree()->cloneTree();
-  Simplification::BeautifyReduced(e, context, Internal::Dimension::Get(e));
+  Simplification::BeautifyReduced(e, simplificationParameters,
+                                  Internal::Dimension::Get(e));
   return UserExpression::Builder(e);
 }
 

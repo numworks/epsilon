@@ -196,18 +196,21 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
 
   if (forbidExactSolution && approximate.isUninitialized()) {
     // Re-reduce exact solution but approximate during reduction.
-    ProjectionContext projCtx = {
-        .complexFormat = m_equationMetadata.complexFormat,
-        .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-        .strategy = Strategy::ApproximateToFloat,
-        .unitFormat =
-            GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-        // Any remaining symbol at this point should be an unknown parameter.
-        .symbolic = SymbolicComputation::KeepAllSymbols,
-        .context = symbolContext,
-        .advanceReduce = false};
     bool failure = false;
-    approximate = exact.cloneAndSimplify(projCtx, &failure);
+    approximate = exact.cloneAndSimplify(
+        SimplificationParameters{
+            .complexFormat = m_equationMetadata.complexFormat,
+            .angleUnit =
+                GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+            .strategy = Strategy::ApproximateToFloat,
+            .unitFormat =
+                GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+            // Any remaining symbol at this point should be an unknown
+            // parameter.
+            .symbolic = SymbolicComputation::KeepAllSymbols,
+            .context = symbolContext,
+            .advanceReduce = false},
+        &failure);
   }
 
   if (!approximate.isUninitialized()) {

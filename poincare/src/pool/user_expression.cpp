@@ -3,7 +3,7 @@
 #include <poincare/helpers/layout.h>
 #include <poincare/helpers/symbol_pool.h>
 #include <poincare/layout.h>
-#include <poincare/projection_context.h>
+#include <poincare/simplification_parameters.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/integer.h>
@@ -120,16 +120,17 @@ UserExpression UserExpression::cloneChildAtIndex(int i) const {
 bool UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* simplifiedExpression,
     UserExpression* approximatedExpression,
-    const ProjectionContext& context) const {
+    const SimplificationParameters& simplificationParameters) const {
   // Step 1: simplify
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   bool reductionFailure = false;
-  *simplifiedExpression = cloneAndSimplify(context, &reductionFailure);
+  *simplifiedExpression =
+      cloneAndSimplify(simplificationParameters, &reductionFailure);
   assert(!simplifiedExpression->isUninitialized());
   // Step 2: approximate
   assert(approximatedExpression && approximatedExpression->isUninitialized());
-  *approximatedExpression =
-      simplifiedExpression->cloneAndApproximate<double>(context);
+  *approximatedExpression = simplifiedExpression->cloneAndApproximate<double>(
+      simplificationParameters);
   /* Second approximation attempt.
    * Condition: simplified expression is well defined, but approximation failed
    * (it returned undef). This can happen if the simplified expression is a
@@ -137,14 +138,15 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
    * Second strategy: approximate from the input expression. */
   if (approximatedExpression->isUndefined() &&
       !simplifiedExpression->isUndefinedOrNonReal()) {
-    *approximatedExpression = this->cloneAndApproximate<double>(context);
+    *approximatedExpression =
+        this->cloneAndApproximate<double>(simplificationParameters);
   }
   return reductionFailure;
 }
 
 template <typename T>
 UserExpression UserExpression::cloneAndApproximate(
-    const ProjectionContext& context) const {
+    const SimplificationParameters& simplificationParameters) const {
   Tree* a = Approximation::To<Tree*>(
       tree(), Approximation::Precision<T>::value,
       Approximation::Parameters{
@@ -152,9 +154,9 @@ UserExpression UserExpression::cloneAndApproximate(
           /* When CAS is activated, onlyReplaceNumerical is used to approximate
            * expressions with symbols such as π*x → 3.14*x. */
           .onlyReplaceNumerical = CAS::Enabled(),
-          .angleUnit = context.angleUnit,
-          .complexFormat = context.complexFormat,
-          .symbolContext = context.context});
+          .angleUnit = simplificationParameters.angleUnit,
+          .complexFormat = simplificationParameters.complexFormat,
+          .symbolContext = simplificationParameters.context});
   /* There are several issues that currently prevent us from beautifying an
    * approximated CAS expression:
    * - the beautified exact expression and the beautified approximate expression
@@ -164,36 +166,40 @@ UserExpression UserExpression::cloneAndApproximate(
    * raise, for example "(x+1)*(pi+i)"
    * TODO: solve these issues */
   if (!CAS::Enabled()) {
-    Beautification::DeepBeautify(a, context, Internal::Dimension::Get(a));
+    Beautification::DeepBeautify(a, simplificationParameters,
+                                 Internal::Dimension::Get(a));
   }
   return UserExpression::Builder(a);
 }
 
 UserExpression UserExpression::cloneAndSimplify(
-    const ProjectionContext& context, bool* reductionFailure) const {
+    const SimplificationParameters& simplificationParameters,
+    bool* reductionFailure) const {
   assert(reductionFailure);
-  return privateCloneAndSimplify(context, reductionFailure);
+  return privateCloneAndSimplify(simplificationParameters, reductionFailure);
 }
 
 UserExpression UserExpression::cloneAndTrySimplify(
-    const ProjectionContext& context) const {
-  return privateCloneAndSimplify(context, nullptr);
+    const SimplificationParameters& simplificationParameters) const {
+  return privateCloneAndSimplify(simplificationParameters, nullptr);
 }
 
 SystemExpression UserExpression::cloneAndReduce(
-    const ProjectionContext& projectionContext) const {
+    const SimplificationParameters& simplificationParameters) const {
   Tree* e = tree()->cloneTree();
-  if (!Simplification::Simplify(e, projectionContext, false)) {
+  if (!Simplification::Simplify(e, simplificationParameters, false)) {
     e->cloneTreeOverTree(KFailedSimplification);
   }
   return SystemExpression::Builder(e);
 }
 
 UserExpression UserExpression::privateCloneAndSimplify(
-    const ProjectionContext& context, bool* reductionFailure) const {
+    const SimplificationParameters& simplificationParameters,
+    bool* reductionFailure) const {
   assert(!isUninitialized());
   Tree* e = tree()->cloneTree();
-  bool reductionSuccess = Simplification::Simplify(e, context, true);
+  bool reductionSuccess =
+      Simplification::Simplify(e, simplificationParameters, true);
   if (reductionFailure) {
     *reductionFailure = !reductionSuccess;
   }
@@ -247,14 +253,16 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
   if (exp.isUninitialized()) {
     return NAN;
   }
-  ProjectionContext ctx = ProjectionContext{.complexFormat = complexFormat,
-                                            .angleUnit = angleUnit,
-                                            .symbolic = symbolicComputation,
-                                            .context = symbolContext};
+  SimplificationParameters simplificationParameters =
+      SimplificationParameters{.complexFormat = complexFormat,
+                               .angleUnit = angleUnit,
+                               .symbolic = symbolicComputation,
+                               .context = symbolContext};
   bool reductionFailure;
-  exp = exp.cloneAndSimplify(ctx, &reductionFailure);
+  exp = exp.cloneAndSimplify(simplificationParameters, &reductionFailure);
   assert(!exp.isUninitialized());
-  return exp.approximateToRealScalar<T>(ctx.angleUnit, ctx.complexFormat,
+  return exp.approximateToRealScalar<T>(simplificationParameters.angleUnit,
+                                        simplificationParameters.complexFormat,
                                         symbolContext);
 }
 
@@ -638,9 +646,9 @@ template UserExpression UserExpression::Builder<float>(
 template UserExpression UserExpression::Builder<double>(
     PointOrRealScalar<double>);
 template UserExpression UserExpression::cloneAndApproximate<float>(
-    const ProjectionContext&) const;
+    const SimplificationParameters&) const;
 template UserExpression UserExpression::cloneAndApproximate<double>(
-    const ProjectionContext&) const;
+    const SimplificationParameters&) const;
 template float UserExpression::privateApproximateToRealScalar<float>(
     AngleUnit, ComplexFormat, const SymbolContext&) const;
 template double UserExpression::privateApproximateToRealScalar<double>(

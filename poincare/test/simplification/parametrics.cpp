@@ -5,7 +5,7 @@
 #include "helper.h"
 
 using namespace Poincare::Internal;
-using Poincare::ProjectionContext;
+using Poincare::SimplificationParameters;
 
 QUIZ_CASE(pcj_simplification_parametric) {
   // Leave and enter with a nested parametric
@@ -121,62 +121,62 @@ QUIZ_CASE(pcj_simplification_parametric) {
 
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("x→f(x)", symbolStore);
-  ProjectionContext ctx = {
+  SimplificationParameters parameters = {
       .symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
       .context = symbolStore,
   };
 
   // contract sum
   simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a,b)",
-                "dep(0,{realInteger(a),realInteger(b)})", ctx);
+                "dep(0,{realInteger(a),realInteger(b)})", parameters);
   simplifies_to("sum(f(k),k,a,b+n)-sum(f(u),u,a,b)",
-                "sum(f(k),k,a,b+n)-sum(f(u),u,a,b)", ctx);
+                "sum(f(k),k,a,b+n)-sum(f(u),u,a,b)", parameters);
   simplifies_to("sum(f(k),k,a,b+10)-sum(f(u),u,a,b)",
-                "dep(sum(f(k),k,b+1,b+10),{realInteger(a)})", ctx);
+                "dep(sum(f(k),k,b+1,b+10),{realInteger(a)})", parameters);
   simplifies_to("sum(f(k),k,a,100)-sum(f(u),u,a,5)",
-                "dep(sum(f(k),k,6,100),{realInteger(a)})", ctx);
+                "dep(sum(f(k),k,6,100),{realInteger(a)})", parameters);
   simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a,b+n)",
-                "sum(f(k),k,a,b)-sum(f(u),u,a,b+n)", ctx);
+                "sum(f(k),k,a,b)-sum(f(u),u,a,b+n)", parameters);
   simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a,b+10)",
-                "dep(-sum(f(u),u,b+1,b+10),{realInteger(a)})", ctx);
+                "dep(-sum(f(u),u,b+1,b+10),{realInteger(a)})", parameters);
   simplifies_to("sum(f(k),k,a,5)-sum(f(u),u,a,100)",
-                "dep(-sum(f(u),u,6,100),{realInteger(a)})", ctx);
+                "dep(-sum(f(u),u,6,100),{realInteger(a)})", parameters);
   simplifies_to("sum(f(k),k,a+10,b)-sum(f(u),u,a,b)",
-                "dep(-sum(f(u),u,a,a+9),{realInteger(b)})", ctx);
+                "dep(-sum(f(u),u,a,a+9),{realInteger(b)})", parameters);
   simplifies_to("sum(f(k),k,100,b)-sum(f(u),u,5,b)",
-                "dep(-sum(f(u),u,5,99),{realInteger(b)})", ctx);
+                "dep(-sum(f(u),u,5,99),{realInteger(b)})", parameters);
   simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a+n,b)",
-                "sum(f(k),k,a,b)-sum(f(u),u,a+n,b)", ctx);
+                "sum(f(k),k,a,b)-sum(f(u),u,a+n,b)", parameters);
   simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a+10,b)",
-                "dep(sum(f(k),k,a,a+9),{realInteger(b)})", ctx);
+                "dep(sum(f(k),k,a,a+9),{realInteger(b)})", parameters);
   simplifies_to("sum(f(k),k,5,b)-sum(f(u),u,100,b)",
-                "dep(sum(f(k),k,5,99),{realInteger(b)})", ctx);
+                "dep(sum(f(k),k,5,99),{realInteger(b)})", parameters);
 
   // contract product
   simplifies_to("product(f(k),k,a,b) / product(f(u),u,a,b)",
-                "dep(1,{realInteger(a),realInteger(b)})", ctx);
+                "dep(1,{realInteger(a),realInteger(b)})", parameters);
   simplifies_to("product(f(k),k,a,b+n) / product(f(u),u,a,b)",
-                "product(f(k),k,a,b+n)/product(f(u),u,a,b)", ctx);
+                "product(f(k),k,a,b+n)/product(f(u),u,a,b)", parameters);
   simplifies_to("product(f(k),k,a,b+10) / product(f(u),u,a,b)",
-                "dep(product(f(k),k,b+1,b+10),{realInteger(a)})", ctx);
+                "dep(product(f(k),k,b+1,b+10),{realInteger(a)})", parameters);
   simplifies_to("product(f(k),k,a,100) / product(f(u),u,a,5)",
-                "dep(product(f(k),k,6,100),{realInteger(a)})", ctx);
+                "dep(product(f(k),k,6,100),{realInteger(a)})", parameters);
   simplifies_to("product(f(k),k,a,b) / product(f(u),u,a,b+n)",
-                "product(f(k),k,a,b)/product(f(u),u,a,b+n)", ctx);
+                "product(f(k),k,a,b)/product(f(u),u,a,b+n)", parameters);
   simplifies_to("product(f(k),k,a,b) / product(f(u),u,a,b+10)",
-                "dep(1/product(f(u),u,b+1,b+10),{realInteger(a)})", ctx);
+                "dep(1/product(f(u),u,b+1,b+10),{realInteger(a)})", parameters);
   simplifies_to("product(f(k),k,a,5) / product(f(u),u,a,100)",
-                "dep(1/product(f(u),u,6,100),{realInteger(a)})", ctx);
+                "dep(1/product(f(u),u,6,100),{realInteger(a)})", parameters);
   simplifies_to("product(f(k),k,a+10,b) / product(f(u),u,a,b)",
-                "dep(1/product(f(u),u,a,a+9),{realInteger(b)})", ctx);
+                "dep(1/product(f(u),u,a,a+9),{realInteger(b)})", parameters);
   simplifies_to("product(f(k),k,100,b) / product(f(u),u,5,b)",
-                "dep(1/product(f(u),u,5,99),{realInteger(b)})", ctx);
+                "dep(1/product(f(u),u,5,99),{realInteger(b)})", parameters);
   simplifies_to("product(f(k),k,a,b)/product(f(u),u,a+n,b)",
-                "product(f(k),k,a,b)/product(f(u),u,a+n,b)", ctx);
+                "product(f(k),k,a,b)/product(f(u),u,a+n,b)", parameters);
   simplifies_to("product(f(k),k,a,b)/product(f(u),u,a+10,b)",
-                "dep(product(f(k),k,a,a+9),{realInteger(b)})", ctx);
+                "dep(product(f(k),k,a,a+9),{realInteger(b)})", parameters);
   simplifies_to("product(f(k),k,5,b)/product(f(u),u,100,b)",
-                "dep(product(f(k),k,5,99),{realInteger(b)})", ctx);
+                "dep(product(f(k),k,5,99),{realInteger(b)})", parameters);
 
   // undef
   simplifies_to("sum(k,k,1/2,10)", "undef");
@@ -191,13 +191,13 @@ QUIZ_CASE(pcj_simplification_parametric) {
   PoincareTest::store("x^2→f(x)", symbolStore);
   PoincareTest::store("f'(x)→g(x)", symbolStore);
   PoincareTest::store("diff(f(x),x,x)→h(x)", symbolStore);
-  ProjectionContext ctx2 = {
+  SimplificationParameters parametersWithFunctions = {
       .symbolic = Poincare::SymbolicComputation::ReplaceDefinedFunctions,
       .context = symbolStore,
   };
-  simplifies_to("f'(4)", "8", ctx2);
-  simplifies_to("g(4)", "8", ctx2);
-  simplifies_to("h(4)", "8", ctx2);
+  simplifies_to("f'(4)", "8", parametersWithFunctions);
+  simplifies_to("g(4)", "8", parametersWithFunctions);
+  simplifies_to("h(4)", "8", parametersWithFunctions);
 
   /* Test with no symbolic computation to check that n inside a sum expression
    * is not replaced by Undefined */
@@ -221,27 +221,27 @@ QUIZ_CASE(pcj_simplification_derivative) {
 
   // Trigonometry
   simplifies_to("diff(sin(x),x,x)", "cos(x)");
-  simplifies_to("diff(sin(x),x,x)", "(π×cos(x))/180", k_degreeCtx);
+  simplifies_to("diff(sin(x),x,x)", "(π×cos(x))/180", k_degreeParams);
   simplifies_to("diff(cos(x),x,x)", "-sin(x)");
-  simplifies_to("diff(cos(x),x,x)", "-(π×sin(x))/200", k_gradianCtx);
+  simplifies_to("diff(cos(x),x,x)", "-(π×sin(x))/200", k_gradianParams);
   simplifies_to("diff(tan(x),x,x)", "dep(tan(x)^2+1,{tan(x)})");
   simplifies_to("diff(tan(x),x,x)",
                 "dep((π×(tan(x)^2+1))/180,{tan((180×π×x)/(180×π))})",
-                k_degreeCtx);
+                k_degreeParams);
   simplifies_to("diff(acos(x),x,x)",
                 "dep(-1/√(-x^2+1),{real(arccos(x)),realPos(1-abs(x))})");
   simplifies_to("diff(acos(x),x,x)",
                 "dep(-180/(π×√(-x^2+1)),{real((180×π×arccos(x))/"
                 "(180×π)),realPos(1-abs(x))})",
-                k_degreeCtx);
+                k_degreeParams);
   simplifies_to("diff(asin(x),x,x)",
                 "dep(1/√(-x^2+1),{real(arcsin(x)),realPos(1-abs(x))})");
   simplifies_to("diff(asin(x),x,x)",
                 "dep(180/(π×√(-x^2+1)),{real((180×π×arcsin(x))/"
                 "(180×π)),realPos(1-abs(x))})",
-                k_degreeCtx);
+                k_degreeParams);
   simplifies_to("diff(atan(x),x,x)", "1/(x^2+1)");
-  simplifies_to("diff(atan(x),x,x)", "180/(π×x^2+π)", k_degreeCtx);
+  simplifies_to("diff(atan(x),x,x)", "180/(π×x^2+π)", k_degreeParams);
   simplifies_to("diff(sinh(x),x,x)", "cosh(x)");
   simplifies_to("diff(cosh(x),x,x)", "sinh(x)");
   simplifies_to("diff(tanh(x),x,x)", "dep(-(tanh(x)^2)+1,{-tanh(x)×i×i})");
@@ -278,12 +278,12 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("diff((x-1)(x-2)(x-3),x,x)", "3×x^2-12×x+11");
   simplifies_to("diff(√(x),x,x)", "dep(1/(2×√(x)),{real(√(x))})",
-                k_cartesianCtx);
+                k_cartesianParams);
   simplifies_to("diff(1/x,x,x)", "-1/x^2");
   simplifies_to("diff(diff(x^3,x,x),x,x)", "6×x");
   simplifies_to("diff(e^x,x,x)", "e^(x)");
   simplifies_to("diff(2^x,x,x)", "ln(2)×2^x");
-  simplifies_to("diff(ln(x),x,x)", "dep(1/x,{real(ln(x))})", k_cartesianCtx);
+  simplifies_to("diff(ln(x),x,x)", "dep(1/x,{real(ln(x))})", k_cartesianParams);
   // TODO: fix beautification ln(2)+ln(5) -> ln(10)
   simplifies_to("diff(log(x),x,x)",
                 "dep(1/(x×(ln(2)+ln(5))),{real(log(x)),realPos(x)})");
@@ -326,7 +326,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
     store("3→c", symbolStore);
     store("x/2→f(x)", symbolStore);
 
-    ProjectionContext ctx = {
+    SimplificationParameters ctx = {
         .complexFormat = Real,
         .angleUnit = Radian,
         .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
@@ -386,53 +386,71 @@ QUIZ_CASE(pcj_simplification_derivative_higher_order) {
 }
 
 QUIZ_CASE(pcj_simplification_derivative_for_approximation) {
-  ProjectionContext ctxForApprox = {
+  SimplificationParameters parametersForApproximation = {
       .angleUnit = Radian,
       .reductionTarget = Poincare::ReductionTarget::SystemForApproximation};
-  ProjectionContext cartesianCtxForApprox = {
+  SimplificationParameters parametersForApproximationCartesian = {
       .complexFormat = Cartesian,
       .angleUnit = Radian,
       .reductionTarget = Poincare::ReductionTarget::SystemForApproximation};
-  projects_and_reduces_to("diff(ln(x),x,1)", "1", ctxForApprox);
-  projects_and_reduces_to("diff(ln(x),x,2.2)", "5/11", ctxForApprox);
-  projects_and_reduces_to("diff(ln(x),x,0)", "undef", ctxForApprox);
-  projects_and_reduces_to("diff(ln(x),x,-3.1)", "undef", ctxForApprox);
-  projects_and_reduces_to("diff(log(x),x,-10)", "undef", ctxForApprox);
+  projects_and_reduces_to("diff(ln(x),x,1)", "1", parametersForApproximation);
+  projects_and_reduces_to("diff(ln(x),x,2.2)", "5/11",
+                          parametersForApproximation);
+  projects_and_reduces_to("diff(ln(x),x,0)", "undef",
+                          parametersForApproximation);
+  projects_and_reduces_to("diff(ln(x),x,-3.1)", "undef",
+                          parametersForApproximation);
+  projects_and_reduces_to("diff(log(x),x,-10)", "undef",
+                          parametersForApproximation);
 
-  projects_and_reduces_to("diff(abs(x),x,123)", "1", ctxForApprox);
-  projects_and_reduces_to("diff(abs(x),x,-2.34)", "-1", ctxForApprox);
-  projects_and_reduces_to("diff(abs(x),x,0)", "undef", ctxForApprox);
+  projects_and_reduces_to("diff(abs(x),x,123)", "1",
+                          parametersForApproximation);
+  projects_and_reduces_to("diff(abs(x),x,-2.34)", "-1",
+                          parametersForApproximation);
+  projects_and_reduces_to("diff(abs(x),x,0)", "undef",
+                          parametersForApproximation);
 
-  projects_and_reduces_to("diff(sign(x),x,123)", "0", ctxForApprox);
-  projects_and_reduces_to("diff(sign(x),x,-2.34)", "0", ctxForApprox);
-  projects_and_reduces_to("diff(sign(x),x,0)", "undef", ctxForApprox);
+  projects_and_reduces_to("diff(sign(x),x,123)", "0",
+                          parametersForApproximation);
+  projects_and_reduces_to("diff(sign(x),x,-2.34)", "0",
+                          parametersForApproximation);
+  projects_and_reduces_to("diff(sign(x),x,0)", "undef",
+                          parametersForApproximation);
 
-  projects_and_reduces_to("diff(√(x),x,-1)", "undef", cartesianCtxForApprox);
+  projects_and_reduces_to("diff(√(x),x,-1)", "undef",
+                          parametersForApproximationCartesian);
 
-  projects_and_reduces_to("diff(asin(x),x,1)", "undef", ctxForApprox);
-  projects_and_reduces_to("diff(asin(x),x,-1)", "undef", ctxForApprox);
-  projects_and_reduces_to("diff(acos(x),x,1)", "undef", ctxForApprox);
-  projects_and_reduces_to("diff(acos(x),x,-1)", "undef", ctxForApprox);
-  projects_and_reduces_to("diff(arccot(x),x,0)", "-1", ctxForApprox);
+  projects_and_reduces_to("diff(asin(x),x,1)", "undef",
+                          parametersForApproximation);
+  projects_and_reduces_to("diff(asin(x),x,-1)", "undef",
+                          parametersForApproximation);
+  projects_and_reduces_to("diff(acos(x),x,1)", "undef",
+                          parametersForApproximation);
+  projects_and_reduces_to("diff(acos(x),x,-1)", "undef",
+                          parametersForApproximation);
+  projects_and_reduces_to("diff(arccot(x),x,0)", "-1",
+                          parametersForApproximation);
 
-  projects_and_reduces_to("diff(1/x,x,-2)", "-1/4", ctxForApprox);
-  projects_and_reduces_to("diff(x^3+5*x^2,x,0)", "0", ctxForApprox);
+  projects_and_reduces_to("diff(1/x,x,-2)", "-1/4", parametersForApproximation);
+  projects_and_reduces_to("diff(x^3+5*x^2,x,0)", "0",
+                          parametersForApproximation);
   projects_and_reduces_to("diff(5^(sin(x)),x,3)", "cos(3)×ln(5)×5^sin(3)",
-                          ctxForApprox);
+                          parametersForApproximation);
 
-  projects_and_reduces_to("diff((-1)^(4-2*2),x,3)", "0", ctxForApprox);
+  projects_and_reduces_to("diff((-1)^(4-2*2),x,3)", "0",
+                          parametersForApproximation);
 
   // With context
   {
     PoincareTest::SymbolStore symbolStore;
-    ProjectionContext ctxWithSymbol = {
+    SimplificationParameters parametersWithSymbol = {
         .angleUnit = Radian,
         .reductionTarget = Poincare::ReductionTarget::SystemForApproximation,
         .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
         .context = symbolStore};
 
     store("0→a", symbolStore);
-    projects_and_reduces_to("diff((-1)^(a*x),x,3)", "0", ctxWithSymbol);
+    projects_and_reduces_to("diff((-1)^(a*x),x,3)", "0", parametersWithSymbol);
   }
 }
 

@@ -11,25 +11,26 @@ template <typename T>
 void approximates_to(const Poincare::Internal::Tree* n,
                      const Poincare::Internal::Tree* expected);
 template <typename T>
-void approximates_to(
-    const char* input, T f,
-    const Poincare::ProjectionContext& projectionContext = k_realCtx);
+void approximates_to(const char* input, T f,
+                     const Poincare::SimplificationParameters&
+                         simplificationParameters = k_realParams);
 template <typename T>
 void approximates_to(
     const char* input, const char* output,
-    const Poincare::ProjectionContext& projectionContext = k_realCtx,
+    const Poincare::SimplificationParameters& simplificationParameters =
+        k_realParams,
     int nbOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits);
 void approximates_to_float_and_double(
     const char* expression, const char* result,
-    Poincare::ProjectionContext projCtx = k_realCtx);
+    Poincare::SimplificationParameters simplificationParameters = k_realParams);
 void approximates_to_boolean(
     const Poincare::Internal::Tree* n,
     Poincare::Internal::Approximation::BooleanOrUndefined expected);
 void approximates_to_boolean(
     const char* input,
     Poincare::Internal::Approximation::BooleanOrUndefined expected,
-    const Poincare::ProjectionContext& projectionContext);
+    const Poincare::SimplificationParameters& simplificationParameters);
 
 template <typename T>
 void assert_float_approximates_to(Poincare::UserExpression f,
@@ -38,18 +39,21 @@ void assert_float_approximates_to(Poincare::UserExpression f,
 template <typename T>
 void simplified_approximates_to(
     const char* input, const char* output,
-    const Poincare::ProjectionContext& projectionContext = k_realCtx,
+    const Poincare::SimplificationParameters& simplificationParameters =
+        k_realParams,
     int nbOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits);
 template <typename T>
 void projected_approximates_to(
     const char* input, const char* output,
-    const Poincare::ProjectionContext& projectionContext = k_realCtx,
+    const Poincare::SimplificationParameters& simplificationParameters =
+        k_realParams,
     int nbOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits);
 template <typename T>
 void approximates_to_keeping_symbols(
     const char* expression, const char* simplifiedExpression,
-    const Poincare::ProjectionContext& projectionContext = k_realCtx,
+    const Poincare::SimplificationParameters& simplificationParameters =
+        k_realParams,
     int numberOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits);

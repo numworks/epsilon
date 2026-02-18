@@ -22,20 +22,22 @@ struct SolverResult {
 /* Will try to exact solve with overrideDefinedVariables = false
  * but will fallback on overrideDefinedVariables = true if it fails.
  * See Poincare::Internal::EquationSolver::ExactSolveAdaptive */
-SolverResult ExactSolveAdaptive(const UserExpression& equationList,
-                                const ProjectionContext& projectionContext);
+SolverResult ExactSolveAdaptive(
+    const UserExpression& equationList,
+    const SimplificationParameters& simplificationParameters);
 
 // See Poincare::Internal::EquationSolver::ExactSolve
-SolverResult ExactSolve(const UserExpression& equationList,
-                        const ProjectionContext& projectionContext,
-                        bool overrideDefinedVariables = false);
+SolverResult ExactSolve(
+    const UserExpression& equationList,
+    const SimplificationParameters& simplificationParameters,
+    bool overrideDefinedVariables = false);
 
 /* If the range is (NaN, NaN), it will be automatically computed.
  * See Poincare::Internal::EquationSolver::ApproximateSolve */
-SolverResult ApproximateSolve(const UserExpression& equationList,
-                              const ProjectionContext& projectionContext,
-                              Range1D<double> range,
-                              size_t maxNumberOfSolutions);
+SolverResult ApproximateSolve(
+    const UserExpression& equationList,
+    const SimplificationParameters& simplificationParameters,
+    Range1D<double> range, size_t maxNumberOfSolutions);
 
 }  // namespace EquationSolver
 }  // namespace Poincare

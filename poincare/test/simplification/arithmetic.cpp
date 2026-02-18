@@ -41,7 +41,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("factor(1008/6895)", "(2^4×3^2)/(5×197)");
   simplifies_to("factor(10007)", "10007");
   simplifies_to("factor(10007^2)", "undef");
-  simplifies_to("factor(i)", "undef", k_cartesianCtx);
+  simplifies_to("factor(i)", "undef", k_cartesianParams);
   // Behavior of factor(-1) in a dependency
   simplifies_to("asin(factor(i*i)b)",
                 "dep(arcsin(b×(-1)),{realPos(1-abs(b×-1))})");
@@ -65,7 +65,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("ceil(8/3)", "3");
   simplifies_to("ceil(x)", "ceil(x)");
   simplifies_to("ceil(-x)", "-floor(x)");
-  simplifies_to("ceil(1+i)", "undef", k_cartesianCtx);
+  simplifies_to("ceil(1+i)", "undef", k_cartesianParams);
   simplifies_to("√(floor(i))", "undef");
   simplifies_to("√(floor(floor(i)))", "undef");
   simplifies_to("√(floor(acos(3)))", "undef");

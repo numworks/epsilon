@@ -39,11 +39,11 @@ template <typename T>
 void project_and_compare_approximates(const char* input1, const char* input2,
                                       bool equal) {
   Tree* e1 = parse(input1);
-  Simplification::ToSystem(e1, Poincare::ProjectionContext{
+  Simplification::ToSystem(e1, Poincare::SimplificationParameters{
                                    .angleUnit = Poincare::AngleUnit::Radian,
                                });
   Tree* e2 = parse(input2);
-  Simplification::ToSystem(e2, Poincare::ProjectionContext{
+  Simplification::ToSystem(e2, Poincare::SimplificationParameters{
                                    .angleUnit = Poincare::AngleUnit::Radian,
                                });
 
@@ -197,7 +197,7 @@ void assert_no_duplicates_in_list(const char* expression) {
   // Sort list
   e->cloneNodeAtNode(KListSort);
   simplify(e,
-           Poincare::ProjectionContext{
+           Poincare::SimplificationParameters{
                .angleUnit = Poincare::AngleUnit::Radian,
            },
            false);

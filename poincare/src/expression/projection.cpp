@@ -172,13 +172,13 @@ struct ShallowSystemProjectArgs {
   bool m_hasNonKelvinTemperatureUnit;
 };
 
-bool Projection::DeepSystemProject(Tree* e,
-                                   const ProjectionContext& projectionContext,
-                                   const Dimension& dimension) {
+bool Projection::DeepSystemProject(
+    Tree* e, const SimplificationParameters& simplificationParameters,
+    const Dimension& dimension) {
   bool changed = false;
   ShallowSystemProjectArgs args{
-      .angleUnit = projectionContext.angleUnit,
-      .complexFormat = projectionContext.complexFormat,
+      .angleUnit = simplificationParameters.angleUnit,
+      .complexFormat = simplificationParameters.complexFormat,
       .m_hasNonKelvinTemperatureUnit = dimension.hasNonKelvinTemperatureUnit(),
   };
   if (e->isEuclideanDivision()) {

@@ -151,14 +151,13 @@ static void compareSolutions(SystemOfEquations* system,
      * a const char * we need to add parentheses that are not necessary when
      * creating an expression from a layout. */
 
-    ProjectionContext projCtx{
-        .complexFormat = ComplexFormat::Cartesian,
-        .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-        .context = tempContext,
-        .advanceReduce = false};
     SystemExpression expectedExpression =
         UserExpression::Parse(expectedValue, tempContext)
-            .cloneAndReduce(projCtx);
+            .cloneAndReduce(SimplificationParameters{
+                .complexFormat = ComplexFormat::Cartesian,
+                .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+                .context = tempContext,
+                .advanceReduce = false});
     quiz_assert(!expectedExpression.isUninitialized() &&
                 !expectedExpression.isFailedSimplification());
 
@@ -172,15 +171,12 @@ static void compareSolutions(SystemOfEquations* system,
     UserExpression parsedExpression =
         UserExpression::Parse(obtainedLayoutBuffer, tempContext);
     quiz_assert(!parsedExpression.isUninitialized());
-    /* TODO: no need to recreate a projectionContext when const and non const
-     * members of ProjectionContext are split (parameters vs metadata) */
-    ProjectionContext projCtx2 = {
-        .complexFormat = ComplexFormat::Cartesian,
-        .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-        .context = tempContext,
-        .advanceReduce = false};
     SystemExpression obtainedExpression =
-        parsedExpression.cloneAndReduce(projCtx2);
+        parsedExpression.cloneAndReduce(SimplificationParameters{
+            .complexFormat = ComplexFormat::Cartesian,
+            .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+            .context = tempContext,
+            .advanceReduce = false});
     quiz_assert(!obtainedExpression.isUninitialized() &&
                 !obtainedExpression.isFailedSimplification());
 

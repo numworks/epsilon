@@ -206,11 +206,11 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("log(_s×x/(_s×y))",
                 "dep(log(x/y),{nonNull(x),nonNull(1/"
                 "(1×10^0×y)),realPos((1×10^0×x)/(1×10^0×y))})",
-                k_keepAllSymbolsCtx);
+                k_keepAllSymbolsParams);
   simplifies_to("cos(1_s/1_s)", "cos(1)");
   simplifies_to("sin(90_°)", "1");
-  simplifies_to("cos(π_rad/4)", "√(2)/2", k_degreeCtx);
-  simplifies_to("cot((π/4)_rad)", "1", k_gradianCtx);
+  simplifies_to("cos(π_rad/4)", "√(2)/2", k_degreeParams);
+  simplifies_to("cot((π/4)_rad)", "1", k_gradianParams);
   simplifies_to("1_m+π_m+√(2)_m-cos(15)_m", "6.3154941288217×_m");
   simplifies_to("abs(-3.3_m)", "3.3×_m");
   simplifies_to("abs(_s)", "1×_s");
@@ -392,10 +392,10 @@ QUIZ_CASE(pcj_simplification_unit_conversion) {
 
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("2_kg→a", symbolStore);
-  ProjectionContext replaceSymbolCtx = {
-      .symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .context = symbolStore};
-  simplifies_to("a→g", "2000×_g", replaceSymbolCtx);
+  simplifies_to("a→g", "2000×_g",
+                SimplificationParameters{
+                    .symbolic = SymbolicComputation::ReplaceAllSymbols,
+                    .context = symbolStore});
 }
 
 QUIZ_CASE(pcj_simplification_unit_decomposition) {
@@ -558,9 +558,6 @@ QUIZ_CASE(pcj_simplification_unit_imperial) {
 }
 
 QUIZ_CASE(pcj_simplification_unit_undef) {
-  ProjectionContext replaceSymbolCtx = {
-      .symbolic = SymbolicComputation::ReplaceAllSymbols};
-
   // Non homogeneous
   simplifies_to("1_m+1_s", "undef");
   simplifies_to("1_m+x", "undef");
@@ -568,7 +565,7 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
   simplifies_to("1+_s", "undef");
   simplifies_to("0+_A", "undef");
   simplifies_to("i _A", "undef");
-  simplifies_to("ln(cos(3)i) _s", "undef", k_cartesianCtx);
+  simplifies_to("ln(cos(3)i) _s", "undef", k_cartesianParams);
   simplifies_to("_A+i", "undef");
   simplifies_to("_m+_s", "undef");
   simplifies_to("_m^2+_m", "undef");
@@ -733,5 +730,7 @@ QUIZ_CASE(pcj_simplification_unit_undef) {
   simplifies_to("sign(3_m) + 2", "undef");
   simplifies_to("tan(2_m)", "undef");
   simplifies_to("tan(2_rad^2)", "undef");
-  simplifies_to("(_A×x)^2×_s", "undef", replaceSymbolCtx);
+  simplifies_to("(_A×x)^2×_s", "undef",
+                SimplificationParameters{
+                    .symbolic = SymbolicComputation::ReplaceAllSymbols});
 }

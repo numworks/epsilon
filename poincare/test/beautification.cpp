@@ -6,7 +6,7 @@
 using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_beautification) {
-  Poincare::ProjectionContext ctx;
+  Poincare::SimplificationParameters ctx;
 
   Tree* e1 = KMult(3_e, KPow("x"_e, -2_e))->cloneTree();
   Beautification::DeepBeautify(e1, ctx);
@@ -62,15 +62,17 @@ QUIZ_CASE(pcj_beautification) {
 }
 
 void beautifies_to(const char* input, const char* output) {
-  process_tree_and_compare(input, output,
-                           [](Tree* e, const Poincare::ProjectionContext& ctx) {
-                             Projection::DeepSystemProject(e, ctx);
-                             Beautification::DeepBeautify(e, ctx);
-                           },
-                           {
-                               .complexFormat = Cartesian,
-                               .advanceReduce = false,
-                           });
+  process_tree_and_compare(
+      input, output,
+      [](Tree* e,
+         const Poincare::SimplificationParameters& simplificationParameters) {
+        Projection::DeepSystemProject(e, simplificationParameters);
+        Beautification::DeepBeautify(e, simplificationParameters);
+      },
+      {
+          .complexFormat = Cartesian,
+          .advanceReduce = false,
+      });
 }
 
 QUIZ_CASE(pcj_beautification_complex) {

@@ -17,18 +17,18 @@ using CoordinateType = Conic::CoordinateType;
 CartesianConic buildCartesianConic(const char* expression) {
   Tree* e = parse(expression);
   Simplification::ProjectAndReduce(
-      e, ProjectionContext{.complexFormat = ComplexFormat::Cartesian,
-                           .angleUnit = AngleUnit::Radian,
-                           .advanceReduce = false});
+      e, SimplificationParameters{.complexFormat = ComplexFormat::Cartesian,
+                                  .angleUnit = AngleUnit::Radian,
+                                  .advanceReduce = false});
   return CartesianConic(SystemExpression::Builder(e));
 }
 
 PolarConic buildPolarConic(const char* expression) {
   Tree* e = parse(expression);
   Simplification::ProjectAndReduce(
-      e, ProjectionContext{.complexFormat = ComplexFormat::Cartesian,
-                           .angleUnit = AngleUnit::Radian,
-                           .advanceReduce = false});
+      e, SimplificationParameters{.complexFormat = ComplexFormat::Cartesian,
+                                  .angleUnit = AngleUnit::Radian,
+                                  .advanceReduce = false});
   return PolarConic(SystemExpression::Builder(e));
 }
 
@@ -38,9 +38,9 @@ ParametricConic buildParametricConic(const char* expression) {
       "t", UserExpression::Builder<float>(0.f), &k_emptySymbolContext);
   Tree* e = parse(expression, tContext);
   Simplification::ProjectAndReduce(
-      e, ProjectionContext{.complexFormat = ComplexFormat::Cartesian,
-                           .angleUnit = AngleUnit::Radian,
-                           .advanceReduce = false});
+      e, SimplificationParameters{.complexFormat = ComplexFormat::Cartesian,
+                                  .angleUnit = AngleUnit::Radian,
+                                  .advanceReduce = false});
   return ParametricConic(SystemExpression::Builder(e));
 }
 

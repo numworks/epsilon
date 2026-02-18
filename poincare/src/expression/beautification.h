@@ -11,8 +11,9 @@ namespace Poincare::Internal {
 
 namespace Beautification {
 float DegreeForSortingAddition(const Tree* e, bool symbolsOnly);
-bool AddUnits(Tree* e, ProjectionContext projectionContext);
-bool DeepBeautify(Tree* e, const ProjectionContext& projectionContext,
+bool AddUnits(Tree* e, SimplificationParameters simplificationParameters);
+bool DeepBeautify(Tree* e,
+                  const SimplificationParameters& simplificationParameters,
                   const Dimension& dimension = Dimension());
 
 /* Create a Tree to represent a complex value according to the format, for

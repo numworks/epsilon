@@ -51,12 +51,12 @@ SystemExpression Equation::Model::standardForm(
     returnedExpression =
         Subtraction::Builder(simplifiedInput.cloneChildAtIndex(0),
                              simplifiedInput.cloneChildAtIndex(1));
-    ProjectionContext projCtx =
+    SimplificationParameters simplificationParameters =
         PoincareHelpers::ProjectionContextForParameters(
             expressionInputWithoutFunctions, contextToUse,
             {.target = reductionTarget});
     returnedExpression =
-        returnedExpression.cloneAndReduce(projCtx, &reductionFailure);
+        returnedExpression.cloneAndReduce(simplificationParameters, &reductionFailure);
     assert(!reductionFailure && !returnedExpression.isUninitialized());
   } else {
     assert(simplifiedInput.isBoolean() || simplifiedInput.isList());

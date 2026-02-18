@@ -389,7 +389,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     UserExpression approximation;
     e.cloneAndBeautifyAndApproximate(
         &result, &approximation,
-        Poincare::ProjectionContext{
+        Poincare::SimplificationParameters{
             .complexFormat =
                 GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
             .angleUnit =

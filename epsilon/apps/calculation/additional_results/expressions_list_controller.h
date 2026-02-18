@@ -69,7 +69,7 @@ class ExpressionsListController
   }
   static Poincare::Layout GetExactLayoutFromExpression(
       const Poincare::UserExpression e,
-      const Poincare::ProjectionContext& projectionContext,
+      const Poincare::SimplificationParameters& simplificationParameters,
       Poincare::Layout* approximatedLayout = nullptr,
       bool* isStrictlyEqual = nullptr);
 

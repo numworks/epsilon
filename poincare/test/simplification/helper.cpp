@@ -41,53 +41,56 @@ void reduces_to_tree(const Tree* input, const Tree* output) {
 }
 
 void simplifies_to(const char* input, const char* output,
-                   const ProjectionContext& projectionContext,
+                   const SimplificationParameters& simplificationParameters,
                    bool preserveInput) {
   process_tree_and_compare(
       input, output,
-      [](Tree* tree, const ProjectionContext& projectionContext) {
-        simplify(tree, projectionContext, true);
+      [](Tree* tree, const SimplificationParameters& simplificationParameters) {
+        simplify(tree, simplificationParameters, true);
       },
-      projectionContext,
+      simplificationParameters,
       Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits,
       preserveInput);
 }
 
 void simplifies_to(const Tree* input, const Tree* output,
-                   const ProjectionContext& projectionContext) {
+                   const SimplificationParameters& simplificationParameters) {
   process_tree_and_compare(
       input, output,
-      [](Tree* tree, const ProjectionContext& projectionContext) {
-        simplify(tree, projectionContext, true);
+      [](Tree* tree, const SimplificationParameters& simplificationParameters) {
+        simplify(tree, simplificationParameters, true);
       },
-      projectionContext,
+      simplificationParameters,
       Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits);
 }
 
-void projects_and_reduces_to(const char* input, const char* output,
-                             const ProjectionContext& projectionContext) {
+void projects_and_reduces_to(
+    const char* input, const char* output,
+    const SimplificationParameters& simplificationParameters) {
   process_tree_and_compare(
       input, output,
-      [](Tree* tree, const ProjectionContext& projectionContext) {
-        simplify(tree, projectionContext, false);
-        if (projectionContext.reductionTarget != ReductionTarget::User) {
+      [](Tree* tree, const SimplificationParameters& simplificationParameters) {
+        simplify(tree, simplificationParameters, false);
+        if (simplificationParameters.reductionTarget != ReductionTarget::User) {
           // Beautify anyway to compare input and outputs
-          ProjectionContext contextForBeautification = projectionContext;
+          SimplificationParameters contextForBeautification =
+              simplificationParameters;
           contextForBeautification.reductionTarget = ReductionTarget::User;
           Beautification::DeepBeautify(tree, contextForBeautification);
         } else {
-          Beautification::DeepBeautify(tree, projectionContext);
+          Beautification::DeepBeautify(tree, simplificationParameters);
         }
       },
-      projectionContext);
+      simplificationParameters);
 }
 
-void simplifies_to_no_beautif(const char* input, const char* output,
-                              const ProjectionContext& projectionContext) {
+void simplifies_to_no_beautif(
+    const char* input, const char* output,
+    const SimplificationParameters& simplificationParameters) {
   process_tree_and_compare(
       input, output,
-      [](Tree* tree, const ProjectionContext& projectionContext) {
-        simplify(tree, projectionContext, false);
+      [](Tree* tree, const SimplificationParameters& simplificationParameters) {
+        simplify(tree, simplificationParameters, false);
       },
-      projectionContext);
+      simplificationParameters);
 }

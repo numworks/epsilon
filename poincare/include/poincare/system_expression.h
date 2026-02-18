@@ -6,7 +6,7 @@
 #include <poincare/point_or_scalar.h>
 #include <poincare/pool_handle.h>
 #include <poincare/preferences.h>
-#include <poincare/projection_context.h>
+#include <poincare/simplification_parameters.h>
 
 namespace Poincare::Internal {
 class Tree;
@@ -75,10 +75,12 @@ class SystemExpression : public Expression {
   /* Other helpers */
 
   // Expressions in parameters are outputs.
-  void cloneAndBeautifyAndApproximate(UserExpression* beautifiedExpression,
-                                      UserExpression* approximatedExpression,
-                                      const ProjectionContext& context) const;
-  UserExpression cloneAndBeautify(const ProjectionContext& context) const;
+  void cloneAndBeautifyAndApproximate(
+      UserExpression* beautifiedExpression,
+      UserExpression* approximatedExpression,
+      const SimplificationParameters& simplificationParameters) const;
+  UserExpression cloneAndBeautify(
+      const SimplificationParameters& simplificationParameters) const;
   /* Replace some UserVariable into Var0 for
    * approximateToPointOrRealScalarWithValue. Returns undef if the expression's
    * dimension is not point or scalar. If scalarsOnly = true, returns undef if

@@ -35,48 +35,48 @@ constexpr Poincare::Preferences::PrintFloatMode ScientificMode =
 constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
     Poincare::Preferences::PrintFloatMode::Engineering;
 
-// Default context is realCtx
-constexpr Poincare::ProjectionContext k_realCtx = {.complexFormat = Real,
-                                                   .angleUnit = Radian};
+// Default simplification parameters are k_realParams
+constexpr Poincare::SimplificationParameters k_realParams = {
+    .complexFormat = Real, .angleUnit = Radian};
 
-constexpr Poincare::ProjectionContext k_cartesianCtx = {
+constexpr Poincare::SimplificationParameters k_cartesianParams = {
     .complexFormat = Cartesian, .angleUnit = Radian};
-constexpr Poincare::ProjectionContext k_polarCtx = {.complexFormat = Polar,
-                                                    .angleUnit = Radian};
+constexpr Poincare::SimplificationParameters k_polarParams = {
+    .complexFormat = Polar, .angleUnit = Radian};
 
-constexpr Poincare::ProjectionContext k_degreeCtx = {.complexFormat = Real,
-                                                     .angleUnit = Degree};
-constexpr Poincare::ProjectionContext k_gradianCtx = {.complexFormat = Real,
-                                                      .angleUnit = Gradian};
+constexpr Poincare::SimplificationParameters k_degreeParams = {
+    .complexFormat = Real, .angleUnit = Degree};
+constexpr Poincare::SimplificationParameters k_gradianParams = {
+    .complexFormat = Real, .angleUnit = Gradian};
 
-constexpr Poincare::ProjectionContext k_degreeCartesianCtx = {
+constexpr Poincare::SimplificationParameters k_degreeCartesianParams = {
     .complexFormat = Cartesian, .angleUnit = Degree};
-constexpr Poincare::ProjectionContext k_gradianCartesianCtx = {
+constexpr Poincare::SimplificationParameters k_gradianCartesianParams = {
     .complexFormat = Cartesian, .angleUnit = Gradian};
-constexpr Poincare::ProjectionContext k_degreePolarCtx = {
+constexpr Poincare::SimplificationParameters k_degreePolarParam = {
     .complexFormat = Polar, .angleUnit = Degree};
-constexpr Poincare::ProjectionContext k_gradianPolarCtx = {
+constexpr Poincare::SimplificationParameters k_gradianPolarParams = {
     .complexFormat = Polar, .angleUnit = Gradian};
-constexpr Poincare::ProjectionContext k_keepAllSymbolsCtx = {
+constexpr Poincare::SimplificationParameters k_keepAllSymbolsParams = {
     .complexFormat = Real,
     .angleUnit = Radian,
     .symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
 };
 
-typedef void (*ProcessTree)(
+using ProcessTree = void (*)(
     Poincare::Internal::Tree*,
-    const Poincare::ProjectionContext& projectionContext);
+    const Poincare::SimplificationParameters& simplificationParameters);
 
 void process_tree_and_compare(
     const Poincare::Internal::Tree* expression,
     const Poincare::Internal::Tree* expected, ProcessTree process,
-    const Poincare::ProjectionContext& projectionContext,
+    const Poincare::SimplificationParameters& simplificationParameters,
     int nbOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits,
     const char* input = nullptr, const char* output = nullptr);
 void process_tree_and_compare(
     const char* input, const char* output, ProcessTree process,
-    const Poincare::ProjectionContext& projectionContext,
+    const Poincare::SimplificationParameters& simplificationParameters,
     int nbOfSignificantDigits =
         Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits,
     bool preserveInput = true);
@@ -252,12 +252,13 @@ void assert_parse_to_integer_overflow(
                            Poincare::EmptySymbolContext{});
 
 inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
-    const char* function, Poincare::ProjectionContext ctx) {
+    const char* function,
+    const Poincare::SimplificationParameters& simplificationParameters) {
   constexpr const char* k_symbol = "x";
   Poincare::Internal::Tree* e = parse(function);
-  Poincare::Internal::Simplification::ToSystem(e, ctx);
+  Poincare::Internal::Simplification::ToSystem(e, simplificationParameters);
   Poincare::Internal::Approximation::PrepareFunctionForApproximation(
-      e, k_symbol, ctx.complexFormat == Real);
+      e, k_symbol, simplificationParameters.complexFormat == Real);
   return e;
 }
 
@@ -288,4 +289,5 @@ void serialize_expression(const Poincare::Internal::Tree* expression,
 
 // Simplification
 void simplify(Poincare::Internal::Tree* e,
-              const Poincare::ProjectionContext& ctx, bool beautify = true);
+              const Poincare::SimplificationParameters& ctx,
+              bool beautify = true);

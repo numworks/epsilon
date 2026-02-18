@@ -26,15 +26,18 @@
 
 namespace Poincare::Internal::Beautification {
 
-bool ApplyComplexFormat(Tree* e, Dimension dim,
-                        const ProjectionContext& projectionContext);
+bool ApplyComplexFormat(
+    Tree* e, Dimension dim,
+    const SimplificationParameters& simplificationParameters);
 bool ApplyComplexFormatCartesianOrPolar(
-    Tree* e, Dimension dim, const ProjectionContext& projectionContext);
-Tree* GetPolarFormat(const Tree* e, const ProjectionContext& projectionContext);
-Tree* GetCartesianFormat(const Tree* e,
-                         const ProjectionContext& projectionContext);
-bool DeepBeautifyAngleFunctions(Tree* e,
-                                const ProjectionContext& projectionContext);
+    Tree* e, Dimension dim,
+    const SimplificationParameters& simplificationParameters);
+Tree* GetPolarFormat(const Tree* e,
+                     const SimplificationParameters& simplificationParameters);
+Tree* GetCartesianFormat(
+    const Tree* e, const SimplificationParameters& simplificationParameters);
+bool DeepBeautifyAngleFunctions(
+    Tree* e, const SimplificationParameters& simplificationParameters);
 bool ShallowBeautifyAngleFunctions(Tree* e, void* context);
 bool ShallowBeautifyPercent(Tree* e);
 bool ShallowBeautifyBigInteger(Tree* e, void* context);
@@ -43,8 +46,8 @@ bool ShallowBeautifyNegativeFloats(Tree* e, void* context);
 bool ShallowBeautifyPowerOfTangent(Tree* e, void* context);
 bool ShallowBeautify(Tree* e, void* context);
 bool ShallowBeautifySpecialDisplays(Tree* e, void* context);
-bool ApplyBeautificationSteps(Tree* e,
-                              const ProjectionContext& projectionContext);
+bool ApplyBeautificationSteps(
+    Tree* e, const SimplificationParameters& simplificationParameters);
 
 float DegreeForSortingAddition(const Tree* e, bool symbolsOnly) {
   switch (e->type()) {
@@ -97,17 +100,18 @@ float DegreeForSortingAddition(const Tree* e, bool symbolsOnly) {
 
 /* Find and beautify trigonometric system nodes while converting the angles.
  * Simplifications are needed, this has to be done before beautification. */
-bool DeepBeautifyAngleFunctions(Tree* e,
-                                const ProjectionContext& projectionContext) {
+bool DeepBeautifyAngleFunctions(
+    Tree* e, const SimplificationParameters& simplificationParameters) {
   /* ShallowBeautifyAngleFunctions temporarily introduces AngleUnitContext
    * nodes to allow simplification and approximation of beautified angle
    * functions. */
-  AngleUnit angleUnit = projectionContext.angleUnit;
+  AngleUnit angleUnit = simplificationParameters.angleUnit;
   bool changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifyAngleFunctions, &angleUnit);
   if (changed) {
     SystematicReduction::DeepReduce(e);
-    if (projectionContext.advanceReduce && angleUnit != AngleUnit::Radian) {
+    if (simplificationParameters.advanceReduce &&
+        angleUnit != AngleUnit::Radian) {
       /* Some ShallowBeautifyAngleFunctions steps add potential multiplication
        * expansions that advanced reduction can apply if worth it. It is
        * therefore re-applied. At this point, only the complex format and
@@ -247,26 +251,27 @@ bool DeepBeautifyUnits(Tree* e) {
   return false;
 }
 
-bool DeepBeautify(Tree* e, const ProjectionContext& projectionContext,
+bool DeepBeautify(Tree* e,
+                  const SimplificationParameters& simplificationParameters,
                   const Dimension& dimension) {
-  assert(projectionContext.reductionTarget == ReductionTarget::User);
+  assert(simplificationParameters.reductionTarget == ReductionTarget::User);
   bool changed = ApplyComplexFormat(
       e,
-      dimension.isNone() ? Dimension::Get(e, projectionContext.context)
+      dimension.isNone() ? Dimension::Get(e, simplificationParameters.context)
                          : dimension,
-      projectionContext);
+      simplificationParameters);
 
   PatternMatching::Context ctx;
-  if ((projectionContext.complexFormat == ComplexFormat::Polar &&
+  if ((simplificationParameters.complexFormat == ComplexFormat::Polar &&
        PatternMatching::Match(e, KMult(KA, KExp(KMult(KB, i_e))), &ctx)) ||
-      (projectionContext.complexFormat == ComplexFormat::Cartesian &&
+      (simplificationParameters.complexFormat == ComplexFormat::Cartesian &&
        PatternMatching::Match(e, KAdd(KA, KMult(KB, i_e)), &ctx))) {
-    changed =
-        ApplyBeautificationSteps(e->child(0), projectionContext) || changed;
-    changed =
-        ApplyBeautificationSteps(e->child(1), projectionContext) || changed;
+    changed = ApplyBeautificationSteps(e->child(0), simplificationParameters) ||
+              changed;
+    changed = ApplyBeautificationSteps(e->child(1), simplificationParameters) ||
+              changed;
   } else {
-    changed = ApplyBeautificationSteps(e, projectionContext) || changed;
+    changed = ApplyBeautificationSteps(e, simplificationParameters) || changed;
   }
   if (Projection::HasForbiddenDescendants(e)) {
     /* TODO: This is a defensive solution to prevent forbidden nodes from
@@ -361,9 +366,9 @@ bool ShallowFlattenMult(Tree* e, void* context) {
   return e->isMult() && NAry::Flatten(e);
 }
 
-bool ApplyBeautificationSteps(Tree* e,
-                              const ProjectionContext& projectionContext) {
-  bool changed = DeepBeautifyAngleFunctions(e, projectionContext);
+bool ApplyBeautificationSteps(
+    Tree* e, const SimplificationParameters& simplificationParameters) {
+  bool changed = DeepBeautifyAngleFunctions(e, simplificationParameters);
   changed = Tree::ApplyShallowTopDown(e, ShallowBeautify) || changed;
   changed = DeepBeautifyUnits(e) || changed;
   /* Divisions are created after the main beautification since they work top
@@ -375,13 +380,14 @@ bool ApplyBeautificationSteps(Tree* e,
       Tree::ApplyShallowTopDown(e, ShallowBeautifyNegativeFloats) || changed;
   changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifyPowerOfTangent) || changed;
-  /* Copy projectionContext to pass it as a void * in ApplyShallowTopDown
+  /* Copy simplificationParameters to pass it as a void * in ApplyShallowTopDown
    * TODO : prevent this copy */
-  ProjectionContext projectionContextCopy = projectionContext;
-  changed =
-      Tree::ApplyShallowTopDown(e, ShallowBeautifySpecialDisplays,
-                                static_cast<void*>(&projectionContextCopy)) ||
-      changed;
+  SimplificationParameters simplificationParametersCopy =
+      simplificationParameters;
+  changed = Tree::ApplyShallowTopDown(
+                e, ShallowBeautifySpecialDisplays,
+                static_cast<void*>(&simplificationParametersCopy)) ||
+            changed;
   changed = Tree::ApplyShallowTopDown(e, ShallowBeautifyBigInteger) || changed;
   // New multiplications may have been introduced and should be flattened
   changed = Tree::ApplyShallowTopDown(e, ShallowFlattenMult) || changed;
@@ -562,9 +568,10 @@ bool ShallowBeautify(Tree* e, void* context) {
       changed;
 }
 
-bool ApplyComplexFormat(Tree* e, Dimension dim,
-                        const ProjectionContext& projectionContext) {
-  ComplexFormat format = projectionContext.complexFormat;
+bool ApplyComplexFormat(
+    Tree* e, Dimension dim,
+    const SimplificationParameters& simplificationParameters) {
+  ComplexFormat format = simplificationParameters.complexFormat;
   if (format == ComplexFormat::None) {
     // None complex format is tolerated in beautification
     return false;
@@ -583,12 +590,13 @@ bool ApplyComplexFormat(Tree* e, Dimension dim,
     // Nothing to apply for Real complex format.
     return false;
   }
-  return ApplyComplexFormatCartesianOrPolar(e, dim, projectionContext);
+  return ApplyComplexFormatCartesianOrPolar(e, dim, simplificationParameters);
 }
 
 bool ApplyComplexFormatCartesianOrPolar(
-    Tree* e, Dimension dim, const ProjectionContext& projectionContext) {
-  ComplexFormat format = projectionContext.complexFormat;
+    Tree* e, Dimension dim,
+    const SimplificationParameters& simplificationParameters) {
+  ComplexFormat format = simplificationParameters.complexFormat;
   assert(format == ComplexFormat::Cartesian || format == ComplexFormat::Polar);
   // Apply element-wise on explicit lists, matrices & points.
   if (e->isMatrix() || e->isPoint() || (dim.isScalar() && e->isList())) {
@@ -596,7 +604,7 @@ bool ApplyComplexFormatCartesianOrPolar(
     for (Tree* child : e->children()) {
       assert(Dimension::Get(child).isScalar());
       changed |= ApplyComplexFormatCartesianOrPolar(child, Dimension::Scalar(),
-                                                    projectionContext);
+                                                    simplificationParameters);
       if (e->isDep()) {
         // Skip DepList
         break;
@@ -612,13 +620,14 @@ bool ApplyComplexFormatCartesianOrPolar(
   assert(!e->isDepList());
   Tree* result =
       (format == ComplexFormat::Polar ? GetPolarFormat : GetCartesianFormat)(
-          e, projectionContext);
+          e, simplificationParameters);
   /* If complex format is different, apply it if :
    *  - It has a better metric than the original expression
    *  - It simplified all the introduced re/im/arg/abs nodes */
   if (result && !Dependency::MainTreeIsIdenticalToMain(result, e) &&
-      (Metric::GetTrueMetric(e, projectionContext.reductionTarget) >=
-           Metric::GetTrueMetric(result, projectionContext.reductionTarget) ||
+      (Metric::GetTrueMetric(e, simplificationParameters.reductionTarget) >=
+           Metric::GetTrueMetric(result,
+                                 simplificationParameters.reductionTarget) ||
        !Dependency::SafeMain(result)->hasDescendantSatisfying(
            [](const Tree* e) {
              return e->isRe() || e->isIm() || e->isArg() || e->isAbs();
@@ -633,7 +642,7 @@ bool ApplyComplexFormatCartesianOrPolar(
 }
 
 Tree* GetPolarFormat(const Tree* e,
-                     const ProjectionContext& projectionContext) {
+                     const SimplificationParameters& simplificationParameters) {
   /* If the expression comes from an approximation, its polar form must stay an
    * approximation. Arg system reductions tends to remove approximated nodes, so
    * we need to re-approximate them. */
@@ -655,7 +664,7 @@ Tree* GetPolarFormat(const Tree* e,
     result->removeNode();
     return nullptr;
   }
-  if (projectionContext.advanceReduce) {
+  if (simplificationParameters.advanceReduce) {
     hasReduced = AdvancedReduction::Reduce(abs) || hasReduced;
   }
   if (!hasReduced) {
@@ -675,7 +684,7 @@ Tree* GetPolarFormat(const Tree* e,
   e->cloneTree();
   // Both abs and arg must have been reduced
   hasReduced = SystematicReduction::ShallowReduce(arg);
-  if (projectionContext.advanceReduce) {
+  if (simplificationParameters.advanceReduce) {
     hasReduced = AdvancedReduction::Reduce(arg) || hasReduced;
   }
   if (hasSingleFloats) {
@@ -747,8 +756,8 @@ Tree* GetPolarFormat(const Tree* e,
   return result;
 }
 
-Tree* GetCartesianFormat(const Tree* e,
-                         const ProjectionContext& projectionContext) {
+Tree* GetCartesianFormat(
+    const Tree* e, const SimplificationParameters& simplificationParameters) {
   /* Try to turn a scalar x into re(x)+i×im(x)
    * If re or im stays unreduced, leave x as it was. */
   Tree* result = SharedTreeStack->pushAdd(2);
@@ -761,7 +770,7 @@ Tree* GetCartesianFormat(const Tree* e,
     result->removeNode();
     return nullptr;
   }
-  if (projectionContext.advanceReduce) {
+  if (simplificationParameters.advanceReduce) {
     hasReduced = AdvancedReduction::Reduce(re) || hasReduced;
   }
   if (!hasReduced) {
@@ -774,7 +783,7 @@ Tree* GetCartesianFormat(const Tree* e,
   e->cloneTree();
   // Both im and re must have been reduced
   hasReduced = SystematicReduction::ShallowReduce(im);
-  if (projectionContext.advanceReduce) {
+  if (simplificationParameters.advanceReduce) {
     hasReduced = AdvancedReduction::Reduce(im) || hasReduced;
   }
   SharedTreeStack->pushComplexI();
@@ -878,7 +887,7 @@ Tree* PushBeautifiedComplex(std::complex<T> value,
 
 bool ShallowBeautifySpecialDisplays(Tree* e, void* context) {
   return Arithmetic::BeautifyFactor(
-             e, *static_cast<ProjectionContext*>(context)) ||
+             e, *static_cast<SimplificationParameters*>(context)) ||
          ShallowBeautifyPercent(e);
 }
 

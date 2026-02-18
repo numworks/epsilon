@@ -162,7 +162,7 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
           .outputs =
               {.exact = inputExpression.clone(),
                .approximate = inputExpression.cloneAndApproximate<double>(
-                   ProjectionContext{
+                   SimplificationParameters{
                        .complexFormat = complexFormat,
                        .angleUnit = GlobalPreferences::SharedGlobalPreferences()
                                         ->angleUnit(),
@@ -177,16 +177,17 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
     expressionToReduce = storeElements.expressionToReduce;
   }
 
-  ProjectionContext projContext = {
-      .complexFormat = complexFormat,
-      .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-      .unitFormat = GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-      .symbolic = symbolicComputation,
-      .context = GlobalContextAccessor::Context()};
-
   OutputExpressions outputs;
   bool reductionFailure = expressionToReduce.cloneAndSimplifyAndApproximate(
-      &outputs.exact, &outputs.approximate, projContext);
+      &outputs.exact, &outputs.approximate,
+      SimplificationParameters{
+          .complexFormat = complexFormat,
+          .angleUnit =
+              GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+          .unitFormat =
+              GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+          .symbolic = symbolicComputation,
+          .context = GlobalContextAccessor::Context()});
   if (isStore) {
     /*  Restore store structure in the exact output. The store operation itself
      * is performed by the processStore function. */

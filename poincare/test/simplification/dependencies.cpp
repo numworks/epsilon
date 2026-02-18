@@ -14,7 +14,7 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to("cos(re(f(x)))+inf", "dep(∞,{f(x)})");
   simplifies_to("diff(1+x, x, f(y))", "dep(1,{real(1+f(y)),real(f(y))})");
   simplifies_to("diff(1, x, f(y))", "dep(0,{dep(1,{f(y)}),real(f(y))})");
-  simplifies_to("im(re(f(x)))", "dep(0,{f(x)})", k_cartesianCtx);
+  simplifies_to("im(re(f(x)))", "dep(0,{f(x)})", k_cartesianParams);
   simplifies_to("sign(abs(f(x))+1)", "dep(1,{f(x)})");
   simplifies_to("arg(1+1/abs(x))", "dep(0,{nonNull(abs(x))})");
   simplifies_to("arg(-i/abs(y))", "dep(-π/2,{nonNull(1/abs(y)),-1/abs(y)×i})");
@@ -54,28 +54,27 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   Dependency::ShallowBubbleUpDependencies(e2);
   assert_trees_are_equal(e2, r2);
 
-  ProjectionContext context;
   Tree* e3 = KAdd(2_e, KPow("a"_e, 0_e))->cloneTree();
   const Tree* r3 = KDep(3_e, KDepList(KPow("a"_e, 0_e)));
-  simplify(e3, context);
+  simplify(e3, SimplificationParameters{});
   assert_trees_are_equal(e3, r3);
 
   Tree* e4 = KDiff("x"_e, "y"_e, 1_e,
                    KDep("x"_e, KDepList(KFun<"f">("x"_e), KFun<"f">("z"_e))))
                  ->cloneTree();
   const Tree* r4 = KDep(1_e, KDepList(KFun<"f">("y"_e), KFun<"f">("z"_e)));
-  simplify(e4, context);
+  simplify(e4, SimplificationParameters{});
   assert_trees_are_equal(e4, r4);
 
   Tree* e5 =
       KDep(1_e, KDepList(KAdd(KInf, "x"_e, KMult(-1_e, KInf))))->cloneTree();
-  simplify(e5, context);
+  simplify(e5, SimplificationParameters{});
   assert_trees_are_equal(e5, KUndef);
 
   SharedTreeStack->flush();
 
   PoincareTest::SymbolStore symbolStore;
-  ProjectionContext projCtx = {
+  SimplificationParameters parameters = {
       .complexFormat = ComplexFormat::Real,
       .angleUnit = AngleUnit::Radian,
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
@@ -83,73 +82,74 @@ QUIZ_CASE(pcj_simplification_dependencies) {
 
   // No dependencies
   PoincareTest::store("1→a", symbolStore);
-  simplifies_to("1+2", "3", projCtx);
-  simplifies_to("a", "1", projCtx);
-  simplifies_to("a+1", "2", projCtx);
+  simplifies_to("1+2", "3", parameters);
+  simplifies_to("a", "1", parameters);
+  simplifies_to("a+1", "2", parameters);
   symbolStore.reset();
   // Function
   PoincareTest::store("x+1→f(x)", symbolStore);
   PoincareTest::store("3→g(x)", symbolStore);
   PoincareTest::store("1+2→a", symbolStore);
   // A variable argument is used as dependency only if needed
-  simplifies_to("f(x)", "x+1", projCtx);
-  simplifies_to("f(x+y)", "x+y+1", projCtx);
-  simplifies_to("g(x)", "3", projCtx);
-  simplifies_to("g(x+a+3+4)", "3", projCtx);
+  simplifies_to("f(x)", "x+1", parameters);
+  simplifies_to("f(x+y)", "x+y+1", parameters);
+  simplifies_to("g(x)", "3", parameters);
+  simplifies_to("g(x+a+3+4)", "3", parameters);
   // A constant argument does not create dependencies
-  simplifies_to("f(2)", "3", projCtx);
-  simplifies_to("g(-1.23)", "3", projCtx);
+  simplifies_to("f(2)", "3", parameters);
+  simplifies_to("g(-1.23)", "3", parameters);
   // Dependencies makes sure f(undef) = undef for all f
-  simplifies_to("f(1/0)", "undef", projCtx);
-  simplifies_to("g(1/0)", "undef", projCtx);
+  simplifies_to("f(1/0)", "undef", parameters);
+  simplifies_to("g(1/0)", "undef", parameters);
   symbolStore.reset();
 
   // Derivative
   PoincareTest::store("x^2→f(x)", symbolStore);
-  simplifies_to("diff(cos(x),x,0)", "0", projCtx);
-  simplifies_to("diff(2x,x,y)", "2", projCtx);
-  simplifies_to("diff(f(x),x,a)", "2×a", projCtx);
+  simplifies_to("diff(cos(x),x,0)", "0", parameters);
+  simplifies_to("diff(2x,x,y)", "2", parameters);
+  simplifies_to("diff(f(x),x,a)", "2×a", parameters);
   symbolStore.reset();
 
   PoincareTest::store("3→f(x)", symbolStore);
-  simplifies_to("diff(cos(x)+f(y),x,0)", "0", projCtx);
-  simplifies_to("diff(cos(x)+f(y),x,x)", "-sin(x)", projCtx);
+  simplifies_to("diff(cos(x)+f(y),x,0)", "0", parameters);
+  simplifies_to("diff(cos(x)+f(y),x,x)", "-sin(x)", parameters);
   PoincareTest::store("1/0→y", symbolStore);
-  simplifies_to("diff(cos(x)+f(y),x,0)", "undef", projCtx);
+  simplifies_to("diff(cos(x)+f(y),x,0)", "undef", parameters);
   symbolStore.reset();
 
   // Parametric
   /* Dependencies are not bubbled up out of an integral, but they are still
    * present inside the integral. */
   PoincareTest::store("1→f(x)", symbolStore);
-  simplifies_to("int(f(x)+f(a),x,0,1)", "2", projCtx);
+  simplifies_to("int(f(x)+f(a),x,0,1)", "2", parameters);
   PoincareTest::store("1/0→a", symbolStore);
-  simplifies_to("int(f(x)+f(a),x,0,1)", "undef", projCtx);
+  simplifies_to("int(f(x)+f(a),x,0,1)", "undef", parameters);
   symbolStore.reset();
   /* If the derivation is not handled properly, the symbol x could be reduced
    * to undef. */
   PoincareTest::store("x→f(x)", symbolStore);
-  simplifies_to("int(diff(f(x),x,x),x,0,1)", "1", projCtx);
+  simplifies_to("int(diff(f(x),x,x),x,0,1)", "1", parameters);
   symbolStore.reset();
   /* When trimming dependencies, we must be able to recognize unreduced
    * expression that are nevertheless undefined. */
   PoincareTest::store("1→f(x)", symbolStore);
-  simplifies_to("f(a)", "1", projCtx);
+  simplifies_to("f(a)", "1", parameters);
   // Check that deepIsSymbolic works fine and remove parametered dependencies
-  simplifies_to("f(sum(1/n,n,1,5))", "1", projCtx);
+  simplifies_to("f(sum(1/n,n,1,5))", "1", parameters);
   symbolStore.reset();
 
   // Power
-  simplifies_to("1/(1/x)", "dep(x,{nonNull(x)})", k_cartesianCtx);
-  simplifies_to("x/√(x)", "dep(√(x),{-ln(x)/2})", k_cartesianCtx);
-  simplifies_to("(1+x)/(1+x)", "dep(1,{(x+1)^0})", k_cartesianCtx);
-  simplifies_to("x^0", "dep(1,{x^0})", k_cartesianCtx);
+  simplifies_to("1/(1/x)", "dep(x,{nonNull(x)})", k_cartesianParams);
+  simplifies_to("x/√(x)", "dep(√(x),{-ln(x)/2})", k_cartesianParams);
+  simplifies_to("(1+x)/(1+x)", "dep(1,{(x+1)^0})", k_cartesianParams);
+  simplifies_to("x^0", "dep(1,{x^0})", k_cartesianParams);
 
   // Multiplication
-  simplifies_to("ln(x)-ln(x)", "dep(0,{0×ln(x),nonNull(x)})", k_cartesianCtx);
-  simplifies_to("0*random()", "0", k_cartesianCtx);
-  simplifies_to("0*randint(1,0)", "dep(0,{randint(1,0)})", k_cartesianCtx);
+  simplifies_to("ln(x)-ln(x)", "dep(0,{0×ln(x),nonNull(x)})",
+                k_cartesianParams);
+  simplifies_to("0*random()", "0", k_cartesianParams);
+  simplifies_to("0*randint(1,0)", "dep(0,{randint(1,0)})", k_cartesianParams);
   // Dependency is properly reduced even when containing symbols
-  simplifies_to("0x^arcsin(π)", "dep(0,{0×x^arcsin(π)})", k_cartesianCtx);
+  simplifies_to("0x^arcsin(π)", "dep(0,{0×x^arcsin(π)})", k_cartesianParams);
   simplifies_to("0x^arcsin(π)", "dep(nonreal,{0×x^arcsin(π)})");
 }

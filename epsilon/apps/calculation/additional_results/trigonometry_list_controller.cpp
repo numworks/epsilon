@@ -26,15 +26,17 @@ void TrigonometryListController::computeAdditionalResults(
               input, exactOutput, approximateOutput, m_calculationPreferences,
               App::app()->localContext())));
 
-  ProjectionContext ctx = {.complexFormat = complexFormat(),
-                           .angleUnit = angleUnit(),
-                           .symbolic = SymbolicComputation::ReplaceAllSymbols,
-                           .context = App::app()->localContext()};
+  SimplificationParameters simplificationParameters = {
+      .complexFormat = complexFormat(),
+      .angleUnit = angleUnit(),
+      .symbolic = SymbolicComputation::ReplaceAllSymbols,
+      .context = App::app()->localContext()};
 
   AdditionalResultsHelper::TrigonometryResults trigonometryResults =
       AdditionalResultsHelper::TrigonometryAngleHelper(
           input, exactOutput, approximateOutput, m_directTrigonometry,
-          m_calculationPreferences, ctx, CAS::ShouldOnlyDisplayApproximation);
+          m_calculationPreferences, simplificationParameters,
+          CAS::ShouldOnlyDisplayApproximation);
   m_isStrictlyEqual[0] = trigonometryResults.angleIsExact;
 
   UserExpression exactAngleWithUnit = UserExpression::Create(
@@ -49,27 +51,27 @@ void TrigonometryListController::computeAdditionalResults(
           KUnitConversion(KA, KB),
           {.KA = exactAngleWithUnit,
            .KB = UserExpression::Builder(AngleUnit::Radian)}),
-      ctx);
+      simplificationParameters);
   m_approximatedLayouts[index] = GetExactLayoutFromExpression(
       UserExpression::Create(
           KUnitConversion(KA, KB),
           {.KA = exactAngleWithUnit,
            .KB = UserExpression::Builder(AngleUnit::Degree)}),
-      ctx);
+      simplificationParameters);
 
   constexpr KTree k_symbol = "θ"_e;
   setLineAtIndex(
       ++index, UserExpression::Builder(KCos(k_symbol)),
       UserExpression::Create(KCos(KA), {.KA = trigonometryResults.exactAngle}),
-      ctx);
+      simplificationParameters);
   setLineAtIndex(
       ++index, UserExpression::Builder(KSin(k_symbol)),
       UserExpression::Create(KSin(KA), {.KA = trigonometryResults.exactAngle}),
-      ctx);
+      simplificationParameters);
   setLineAtIndex(
       ++index, UserExpression::Builder(KTan(k_symbol)),
       UserExpression::Create(KTan(KA), {.KA = trigonometryResults.exactAngle}),
-      ctx);
+      simplificationParameters);
 
   /* Set illustration */
   m_model.setAngle(trigonometryResults.approximatedAngle);

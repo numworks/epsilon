@@ -22,7 +22,7 @@ QUIZ_CASE(pcj_simplification_list_bubble_up) {
 }
 
 QUIZ_CASE(pcj_simplification_list) {
-  Poincare::ProjectionContext replaceSymbolCtx = {
+  Poincare::SimplificationParameters parametersReplaceAll = {
       .symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols};
   simplifies_to("{1,2}+3", "{4,5}");
   simplifies_to("{1,2}*{3,4}", "{3,8}");
@@ -73,11 +73,12 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("min({π,e})", "e");
   simplifies_to("med({π,3,e})", "3");
   // Ensure that [GetElement] returning [nullptr] doesn't crash
-  simplifies_to("mean(sort({x,0}))", "undef", replaceSymbolCtx);
-  simplifies_to("mean(sort({x,0}))", "mean(sort({x,0}))", k_keepAllSymbolsCtx);
-  simplifies_to("max(sort({x,0}))", "max(sort({x,0}))", k_keepAllSymbolsCtx);
+  simplifies_to("mean(sort({x,0}))", "undef", parametersReplaceAll);
+  simplifies_to("mean(sort({x,0}))", "mean(sort({x,0}))",
+                k_keepAllSymbolsParams);
+  simplifies_to("max(sort({x,0}))", "max(sort({x,0}))", k_keepAllSymbolsParams);
   simplifies_to("samplestddev({1,2},sort({x,0}))",
-                "samplestddev({1,2},sort({x,0}))", k_keepAllSymbolsCtx);
+                "samplestddev({1,2},sort({x,0}))", k_keepAllSymbolsParams);
 
   simplifies_to("{3,4}(0)", "undef");
   simplifies_to("{3,4}(4)", "undef");
@@ -94,8 +95,8 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("{{0}}", "undef");
   simplifies_to("{0,{}}", "undef");
   simplifies_to("{0,{1}}", "undef");
-  simplifies_to("{0}=x", "{undef}", replaceSymbolCtx);
-  simplifies_to("{0,x}=1", "{False,undef}", replaceSymbolCtx);
+  simplifies_to("{0}=x", "{undef}", parametersReplaceAll);
+  simplifies_to("{0,x}=1", "{False,undef}", parametersReplaceAll);
   simplifies_to("{0,1,2,3,4,5,6,7,8,{9}}", "undef");
   simplifies_to("sequence(k*_Gs, k, 2)", "undef");
   simplifies_to("sequence(random()[[11]],k,10)", "undef");
@@ -128,32 +129,32 @@ QUIZ_CASE(pcj_simplification_list) {
   {
     // Access to an element
     PoincareTest::SymbolStore symbolStore;
-    Poincare::ProjectionContext projCtx = {
+    Poincare::SimplificationParameters parametersReplaceDefined = {
         .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
         .context = symbolStore,
     };
     store("{1,4,9}→l1", symbolStore);
     store("{}→l2", symbolStore);
-    simplifies_to("l1(1)", "1", projCtx);
-    simplifies_to("l1(2)", "4", projCtx);
-    simplifies_to("l1(3)", "9", projCtx);
-    simplifies_to("l1(0)", "undef", projCtx);
-    simplifies_to("l1(5)", "undef", projCtx);
-    simplifies_to("l1(-2)", "undef", projCtx);
-    simplifies_to("l1(1.23)", "undef", projCtx);
-    simplifies_to("l1(1+2)", "9", projCtx);
-    simplifies_to("l1(2^2-3)", "1", projCtx);
-    simplifies_to("l1(floor(π))", "undef", projCtx);
-    simplifies_to("l2(1)", "undef", projCtx);
+    simplifies_to("l1(1)", "1", parametersReplaceDefined);
+    simplifies_to("l1(2)", "4", parametersReplaceDefined);
+    simplifies_to("l1(3)", "9", parametersReplaceDefined);
+    simplifies_to("l1(0)", "undef", parametersReplaceDefined);
+    simplifies_to("l1(5)", "undef", parametersReplaceDefined);
+    simplifies_to("l1(-2)", "undef", parametersReplaceDefined);
+    simplifies_to("l1(1.23)", "undef", parametersReplaceDefined);
+    simplifies_to("l1(1+2)", "9", parametersReplaceDefined);
+    simplifies_to("l1(2^2-3)", "1", parametersReplaceDefined);
+    simplifies_to("l1(floor(π))", "undef", parametersReplaceDefined);
+    simplifies_to("l2(1)", "undef", parametersReplaceDefined);
     // Slice of a list
-    simplifies_to("l1(1,2)", "{1,4}", projCtx);
-    simplifies_to("l1(2,3)", "{4,9}", projCtx);
-    simplifies_to("l1(1,3)", "{1,4,9}", projCtx);
-    simplifies_to("l1(2,2)", "{4}", projCtx);
-    simplifies_to("l1(0,2)", "{1,4}", projCtx);
-    simplifies_to("l1(1,5)", "{1,4,9}", projCtx);
-    simplifies_to("l1(3,2)", "{}", projCtx);
-    simplifies_to("l2(1,2)", "{}", projCtx);
+    simplifies_to("l1(1,2)", "{1,4}", parametersReplaceDefined);
+    simplifies_to("l1(2,3)", "{4,9}", parametersReplaceDefined);
+    simplifies_to("l1(1,3)", "{1,4,9}", parametersReplaceDefined);
+    simplifies_to("l1(2,2)", "{4}", parametersReplaceDefined);
+    simplifies_to("l1(0,2)", "{1,4}", parametersReplaceDefined);
+    simplifies_to("l1(1,5)", "{1,4,9}", parametersReplaceDefined);
+    simplifies_to("l1(3,2)", "{}", parametersReplaceDefined);
+    simplifies_to("l2(1,2)", "{}", parametersReplaceDefined);
   }
   // Functions on lists
   // List length

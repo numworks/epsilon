@@ -9,7 +9,7 @@
 #include <poincare/pool_handle.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
-#include <poincare/projection_context.h>
+#include <poincare/simplification_parameters.h>
 #include <poincare/symbol_context.h>
 
 #include <span>
@@ -95,16 +95,20 @@ class UserExpression : public Expression {
 
   /* Expressions in parameters are outputs. The return boolean indicates the
    * reduction status (success or failure) */
-  bool cloneAndSimplifyAndApproximate(UserExpression* simplifiedExpression,
-                                      UserExpression* approximatedExpression,
-                                      const ProjectionContext& context) const;
-  UserExpression cloneAndSimplify(const ProjectionContext& context,
-                                  bool* reductionFailure) const;
+  bool cloneAndSimplifyAndApproximate(
+      UserExpression* simplifiedExpression,
+      UserExpression* approximatedExpression,
+      const SimplificationParameters& simplificationParameters) const;
+  UserExpression cloneAndSimplify(
+      const SimplificationParameters& simplificationParameters,
+      bool* reductionFailure) const;
   /* This version does not warn if simplification fails. In case of failure the
    * initial expression is returned. */
-  UserExpression cloneAndTrySimplify(const ProjectionContext& context) const;
+  UserExpression cloneAndTrySimplify(
+      const SimplificationParameters& simplificationParameters) const;
   template <typename T>
-  UserExpression cloneAndApproximate(const ProjectionContext& context) const;
+  UserExpression cloneAndApproximate(
+      const SimplificationParameters& simplificationParameters) const;
 
   // If of the form y-f(x), return f(x). Return uninitialized otherwise.
   UserExpression equivalentCartesianEquation() const;
@@ -113,7 +117,7 @@ class UserExpression : public Expression {
 
   // Returns KFailedSimplification if the reduction failed
   SystemExpression cloneAndReduce(
-      const ProjectionContext& projectionContext) const;
+      const SimplificationParameters& simplificationParameters) const;
   // Approximate real scalar (returns NAN for non real scalars)
   template <typename T>
   T approximateToRealScalar(
@@ -232,7 +236,8 @@ class UserExpression : public Expression {
                           IgnoredSymbols* ignoredSymbols) const;
 
   UserExpression privateCloneAndSimplify(
-      const ProjectionContext& context, bool* reductionFailure = nullptr) const;
+      const SimplificationParameters& simplificationParameters,
+      bool* reductionFailure = nullptr) const;
 
   template <typename T>
   T privateApproximateToRealScalar(

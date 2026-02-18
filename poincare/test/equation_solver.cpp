@@ -13,33 +13,34 @@ using namespace Poincare::Internal;
 bool check_solutions(
     std::initializer_list<const char*> inputs,
     std::initializer_list<const char*> outputs,
-    Poincare::ProjectionContext projectionContext,
+    Poincare::SimplificationParameters simplificationParameters,
     EquationSolver::Error expectedError = EquationSolver::Error::NoError) {
   Tree* equationList = Poincare::Internal::List::PushEmpty();
   for (const char* equation : inputs) {
     NAry::AddChild(equationList, parse(equation, Poincare::EmptySymbolContext{},
                                        {.preserveInput = true}));
   }
-  EquationSolver::SolverResult result =
-      EquationSolver::ExactSolveAdaptive(equationList, projectionContext);
+  EquationSolver::SolverResult result = EquationSolver::ExactSolveAdaptive(
+      equationList, simplificationParameters);
   EquationSolver::Error error = result.error;
   Tree* solutions = result.exactSolutionList;
   quiz_assert(error == expectedError);
   if (solutions) {
     quiz_assert(solutions->numberOfChildren() ==
                 static_cast<int>(outputs.size()));
-    projectionContext.symbolic =
+    simplificationParameters.symbolic =
         result.equationMetadata.overrideDefinedVariables
             ? Poincare::SymbolicComputation::KeepAllSymbols
             : Poincare::SymbolicComputation::ReplaceDefinedSymbols;
-    projectionContext.complexFormat = result.equationMetadata.complexFormat;
+    simplificationParameters.complexFormat =
+        result.equationMetadata.complexFormat;
     const Tree* solution = solutions->nextNode();
     for (const char* output : outputs) {
       Tree* expectedSolution = parse(output, Poincare::EmptySymbolContext{},
                                      {
                                          .preserveInput = true,
                                      });
-      simplify(expectedSolution, projectionContext);
+      simplify(expectedSolution, simplificationParameters);
       quiz_assert(solution->treeIsIdenticalTo(expectedSolution));
       solution = solution->nextTree();
       expectedSolution->removeTree();
@@ -54,49 +55,49 @@ bool check_solutions(
 
 QUIZ_CASE(pcj_equation_solver) {
   PoincareTest::SymbolStore symbolStore;
-  Poincare::ProjectionContext projCtx = {
+  Poincare::SimplificationParameters parameters = {
       .complexFormat = Poincare::ComplexFormat::Real,
       .angleUnit = Poincare::AngleUnit::Radian,
       .context = symbolStore};
 
-  check_solutions({"x-3+y", "y-x+1"}, {"2", "1"}, projCtx);
-  check_solutions({"x+x"}, {"0"}, projCtx);
-  check_solutions({"x-π"}, {"π"}, projCtx);
-  check_solutions({"x+x+1"}, {"-1/2"}, projCtx);
-  check_solutions({"x+y", "y+x", "y-x+2"}, {"1", "-1"}, projCtx);
+  check_solutions({"x-3+y", "y-x+1"}, {"2", "1"}, parameters);
+  check_solutions({"x+x"}, {"0"}, parameters);
+  check_solutions({"x-π"}, {"π"}, parameters);
+  check_solutions({"x+x+1"}, {"-1/2"}, parameters);
+  check_solutions({"x+y", "y+x", "y-x+2"}, {"1", "-1"}, parameters);
 
-  check_solutions({"x+y"}, {"-t", "t"}, projCtx);
-  check_solutions({"x+y-2", "y+2z+3"}, {"2*t+5", "-2*t-3", "t"}, projCtx);
+  check_solutions({"x+y"}, {"-t", "t"}, parameters);
+  check_solutions({"x+y-2", "y+2z+3"}, {"2*t+5", "-2*t-3", "t"}, parameters);
 
-  check_solutions({"t+u"}, {"-t1", "t1"}, projCtx);
+  check_solutions({"t+u"}, {"-t1", "t1"}, parameters);
 
-  check_solutions({"a+b", "c+d"}, {"-t2", "t2", "-t1", "t1"}, projCtx);
-  check_solutions({"x+y", "2x+2y"}, {"-t", "t"}, projCtx);
+  check_solutions({"a+b", "c+d"}, {"-t2", "t2", "-t1", "t1"}, parameters);
+  check_solutions({"x+y", "2x+2y"}, {"-t", "t"}, parameters);
 
-  check_solutions({"1"}, {}, projCtx);
-  check_solutions({"0^P"}, {}, projCtx,
+  check_solutions({"1"}, {}, parameters);
+  check_solutions({"0^P"}, {}, parameters,
                   EquationSolver::Error::EquationUnhandled);
-  check_solutions({"0", "(-sin(3))^(1/2)"}, {}, projCtx,
+  check_solutions({"0", "(-sin(3))^(1/2)"}, {}, parameters,
                   EquationSolver::Error::EquationUndefined);
   check_solutions({"a-b", "b-c", "c-d", "d-f", "f-g", "g-a", "a+b+c+d+f+g+1"},
-                  {"-1/6", "-1/6", "-1/6", "-1/6", "-1/6", "-1/6"}, projCtx);
+                  {"-1/6", "-1/6", "-1/6", "-1/6", "-1/6", "-1/6"}, parameters);
   // User variables
   PoincareTest::store("2→a", symbolStore);
-  check_solutions({"a*x-2"}, {"1"}, projCtx);
-  check_solutions({"a+x-2", "x"}, {"0"}, projCtx);
-  check_solutions({"a+x-3", "x"}, {"3", "0"}, projCtx);
+  check_solutions({"a*x-2"}, {"1"}, parameters);
+  check_solutions({"a+x-2", "x"}, {"0"}, parameters);
+  check_solutions({"a+x-3", "x"}, {"3", "0"}, parameters);
   symbolStore.reset();
   // Errors
-  check_solutions({"x^2", "y"}, {}, projCtx,
+  check_solutions({"x^2", "y"}, {}, parameters,
                   EquationSolver::Error::NonLinearSystem);
-  check_solutions({"y*(1+x)", "y-1"}, {}, projCtx,
+  check_solutions({"y*(1+x)", "y-1"}, {}, parameters,
                   EquationSolver::Error::NonLinearSystem);
-  check_solutions({"x*y+y", "y-1"}, {}, projCtx,
+  check_solutions({"x*y+y", "y-1"}, {}, parameters,
                   EquationSolver::Error::NonLinearSystem);
-  check_solutions({"identity(3)"}, {}, projCtx,
+  check_solutions({"identity(3)"}, {}, parameters,
                   EquationSolver::Error::EquationUndefined);
 
-  check_solutions({"sin(x)"}, {}, projCtx,
+  check_solutions({"sin(x)"}, {}, parameters,
                   EquationSolver::Error::RequireApproximateSolution);
 
   // Check that failures of the quadratic and cubic solver are handled
@@ -104,43 +105,46 @@ QUIZ_CASE(pcj_equation_solver) {
    * fail and x=0 should be returned as the solution. This is due to dependency
    * simplification that does not distinguish between true infinity and very
    * large numbers. */
-  check_solutions({"cos(3000×i)*x^2"}, {}, projCtx,
+  check_solutions({"cos(3000×i)*x^2"}, {}, parameters,
                   EquationSolver::Error::RequireApproximateSolution);
-  check_solutions({"cos(3000×i)*x^3"}, {}, projCtx,
+  check_solutions({"cos(3000×i)*x^3"}, {}, parameters,
                   EquationSolver::Error::RequireApproximateSolution);
 
   // Complex format detection
-  projCtx.complexFormat = Real;
+  parameters.complexFormat = Real;
   PoincareTest::store("i→a", symbolStore);
-  check_solutions({"x-a", "x-a+y-root(-1,3)"}, {"i", "1/2+√(3)/2×i"}, projCtx);
+  check_solutions({"x-a", "x-a+y-root(-1,3)"}, {"i", "1/2+√(3)/2×i"},
+                  parameters);
   check_solutions({"x-a", "x-a+y-root(-1,3)", "a-1"}, {"1", "1", "-1"},
-                  projCtx);
+                  parameters);
   symbolStore.reset();
-  check_solutions({"x^2+1"}, {"-4"}, projCtx, EquationSolver::Error::NoError);
+  check_solutions({"x^2+1"}, {"-4"}, parameters,
+                  EquationSolver::Error::NoError);
 
   PoincareTest::store("x+1→f(x)", symbolStore);
-  check_solutions({"f(a)+x", "f(x)"}, {"0", "-1"}, projCtx);
+  check_solutions({"f(a)+x", "f(x)"}, {"0", "-1"}, parameters);
   symbolStore.reset();
 
   // Dependency
-  check_solutions({"x-1", "x+y^2/y-1"}, {}, projCtx);
-  check_solutions({"abs(1-x)/abs(1-x)-x", "y-3", "z+y"}, {}, projCtx);
-  check_solutions({"x^2*(x-1)/x"}, {"1", "1"}, projCtx);
-  check_solutions({"x/x-1+x"}, {}, projCtx);
+  check_solutions({"x-1", "x+y^2/y-1"}, {}, parameters);
+  check_solutions({"abs(1-x)/abs(1-x)-x", "y-3", "z+y"}, {}, parameters);
+  check_solutions({"x^2*(x-1)/x"}, {"1", "1"}, parameters);
+  check_solutions({"x/x-1+x"}, {}, parameters);
 
-  projCtx.complexFormat = Cartesian;
-  check_solutions({"x^2+1"}, {"-i", "i", "-4"}, projCtx,
+  parameters.complexFormat = Cartesian;
+  check_solutions({"x^2+1"}, {"-i", "i", "-4"}, parameters,
                   EquationSolver::Error::NoError);
 }
 
 void check_range(const char* input, double min, double max) {
   Tree* equationList = TreeStack::SharedTreeStack->pushList(1);
   parse(input);
-  Poincare::ProjectionContext ctx{
-      .angleUnit = Poincare::AngleUnit::Radian,
-  };
   EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
-      equationList, ctx, Poincare::Range1D<double>(), 10);
+      equationList,
+      Poincare::SimplificationParameters{
+          .angleUnit = Poincare::AngleUnit::Radian,
+      },
+      Poincare::Range1D<double>(), 10);
   quiz_assert(result.solutionMetadata.solvingRange.min() == min);
   quiz_assert(result.solutionMetadata.solvingRange.max() == max);
 }

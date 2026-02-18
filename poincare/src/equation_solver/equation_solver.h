@@ -18,19 +18,21 @@ struct SolverResult {
 };
 
 // Return list of exact solutions.
-SolverResult ExactSolve(const Tree* equationList,
-                        const ProjectionContext& projectionContext,
-                        bool overrideDefinedVariables = false);
+SolverResult ExactSolve(
+    const Tree* equationList,
+    const SimplificationParameters& simplificationParameters,
+    bool overrideDefinedVariables = false);
 
 /* Will try to exact solve with overrideDefinedVariables = false
  * but will fallback on overrideDefinedVariables = true if it fails */
-SolverResult ExactSolveAdaptive(const Tree* equationList,
-                                const ProjectionContext& projectionContext);
+SolverResult ExactSolveAdaptive(
+    const Tree* equationList,
+    const SimplificationParameters& simplificationParameters);
 
 /* If the range is (NaN, NaN), it will be automatically computed. */
-SolverResult ApproximateSolve(const Tree* equationList,
-                              const ProjectionContext& projectionContext,
-                              Range1D<double> range,
-                              size_t maxNumberOfSolutions);
+SolverResult ApproximateSolve(
+    const Tree* equationList,
+    const SimplificationParameters& simplificationParameters,
+    Range1D<double> range, size_t maxNumberOfSolutions);
 
 }  // namespace Poincare::Internal::EquationSolver

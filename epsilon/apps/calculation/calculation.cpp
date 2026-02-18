@@ -306,13 +306,12 @@ Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
     // Parsing the layout into an expression is supposed to work here
     assert(!exactDisplayOutput.isUninitialized() &&
            !approximateDisplayOutput.isUninitialized());
-    ProjectionContext ctx{.complexFormat = complexFormat,
-                          .angleUnit = angleUnit};
     return Poincare::IsCalculationOutputStrictEquality(
                exactDisplayOutput, approximateDisplayOutput,
                GlobalPreferences::SharedGlobalPreferences()
                    ->numberOfSignificantDigits(),
-               ctx)
+               SimplificationParameters{.complexFormat = complexFormat,
+                                        .angleUnit = angleUnit})
                ? EqualSign::Equal
                : EqualSign::Approximation;
   } else {

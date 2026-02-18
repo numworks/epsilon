@@ -182,7 +182,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
     return FillColumnStatus::DataNotSuitable;
   }
 
-  SystemExpression reduced = formula.cloneAndReduce(ProjectionContext{
+  SystemExpression reduced = formula.cloneAndReduce(SimplificationParameters{
       .complexFormat =
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
       .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),

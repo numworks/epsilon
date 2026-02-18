@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-struct ProjectionContext {
+struct SimplificationParameters {
 #if POINCARE_COMPLEX
   ComplexFormat complexFormat = ComplexFormat::None;
 #else

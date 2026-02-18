@@ -33,13 +33,14 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput, bool directTrigonometry,
     Poincare::Preferences::CalculationPreferences calculationPreferences,
-    const ProjectionContext& ctx,
+    const SimplificationParameters& simplificationParameters,
     ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation) {
-  const Tree* period = Angle::Period(ctx.angleUnit);
+  const Tree* period = Angle::Period(simplificationParameters.angleUnit);
   // Find the angle
   UserExpression exactAngle =
       directTrigonometry
-          ? ExtractExactAngleFromDirectTrigo(input, exactOutput, ctx.context,
+          ? ExtractExactAngleFromDirectTrigo(input, exactOutput,
+                                             simplificationParameters.context,
                                              calculationPreferences)
           : exactOutput;
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
@@ -48,12 +49,13 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
    * Use the reduction of frac part to compute modulo. */
   Tree* simplifiedAngle = PatternMatching::Create(
       KMult(KFrac(KDiv(KA, KB)), KB), {.KA = exactAngle, .KB = period});
-  Poincare::Internal::Dimension dim =
-      Simplification::ProjectAndReduce(simplifiedAngle, ctx);
+  Poincare::Internal::Dimension dim = Simplification::ProjectAndReduce(
+      simplifiedAngle, simplificationParameters);
   bool isRationalOrMultipleOfPi =
       simplifiedAngle->isRational() ||
       Internal::Trigonometry::GetPiFactor(simplifiedAngle) != nullptr;
-  Simplification::BeautifyReduced(simplifiedAngle, ctx, dim);
+  Simplification::BeautifyReduced(simplifiedAngle, simplificationParameters,
+                                  dim);
 
   Tree* approximateAngleTree = nullptr;
   if (!directTrigonometry) {
@@ -76,7 +78,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
           UserExpression::Builder(static_cast<const Tree*>(simplifiedAngle)),
           UserExpression::Builder(
               static_cast<const Tree*>(approximateAngleTree)),
-          ctx.context)) {
+          simplificationParameters.context)) {
     if (directTrigonometry) {
       assert(!approximateAngleTree);
       /* Do not approximate the FracPart, which could lead to truncation error
@@ -87,13 +89,14 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
       /* acos has its values in [0,π[, use the sign of the sine to find the
        * right semicircle. */
       Tree* sine = PatternMatching::Create(KSin(KA), {.KA = exactAngle});
-      bool removePeriod = Approximation::To<double>(
-                              sine, Approximation::Parameters{
-                                        .projectLocalVariables = true,
-                                        .optimize = true,
-                                        .angleUnit = ctx.angleUnit,
-                                        .complexFormat = ctx.complexFormat,
-                                        .symbolContext = ctx.context}) < 0;
+      bool removePeriod =
+          Approximation::To<double>(
+              sine, Approximation::Parameters{
+                        .projectLocalVariables = true,
+                        .optimize = true,
+                        .angleUnit = simplificationParameters.angleUnit,
+                        .complexFormat = simplificationParameters.complexFormat,
+                        .symbolContext = simplificationParameters.context}) < 0;
       sine->removeTree();
       if (removePeriod) {
         approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
@@ -103,12 +106,14 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
     assert(approximateAngleTree);
     approximateAngleTree->moveTreeOverTree(Approximation::To<Tree*>(
         approximateAngleTree, Approximation::FloatPrecision::Double,
-        Approximation::Parameters{.projectLocalVariables = true,
-                                  .optimize = true,
-                                  .angleUnit = ctx.angleUnit,
-                                  .complexFormat = ctx.complexFormat,
-                                  .symbolContext = ctx.context}));
-    Beautification::DeepBeautify(approximateAngleTree, ctx);
+        Approximation::Parameters{
+            .projectLocalVariables = true,
+            .optimize = true,
+            .angleUnit = simplificationParameters.angleUnit,
+            .complexFormat = simplificationParameters.complexFormat,
+            .symbolContext = simplificationParameters.context}));
+    Beautification::DeepBeautify(approximateAngleTree,
+                                 simplificationParameters);
     exactAngle =
         UserExpression::Builder(static_cast<const Tree*>(approximateAngleTree));
     angleIsExact = false;
@@ -126,17 +131,18 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
          simplifiedAngle->treeIsIdenticalTo(exactAngle.tree()));
   double approximatedAngle = Approximation::To<double>(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
-      Approximation::Parameters{.projectLocalVariables = true,
-                                .optimize = true,
-                                .angleUnit = ctx.angleUnit,
-                                .complexFormat = ctx.complexFormat,
-                                .symbolContext = ctx.context});
+      Approximation::Parameters{
+          .projectLocalVariables = true,
+          .optimize = true,
+          .angleUnit = simplificationParameters.angleUnit,
+          .complexFormat = simplificationParameters.complexFormat,
+          .symbolContext = simplificationParameters.context});
   if (approximateAngleTree) {
     approximateAngleTree->removeTree();
   }
   simplifiedAngle->removeTree();
   approximatedAngle = Poincare::Trigonometry::ConvertAngleToRadian(
-      approximatedAngle, ctx.angleUnit);
+      approximatedAngle, simplificationParameters.angleUnit);
   assert(0.0 <= approximatedAngle && approximatedAngle <= 2.0 * M_PI);
   return {.exactAngle = exactAngle,
           .approximatedAngle = approximatedAngle,
@@ -196,7 +202,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
          exactAngleDimension.isSimpleAngleUnit());
   ComplexFormat complexFormat = calculationPreferences.complexFormat;
   AngleUnit angleUnit = calculationPreferences.angleUnit;
-  ProjectionContext projCtx = {
+  SimplificationParameters simplificationParameters = {
       .complexFormat = complexFormat,
       .angleUnit = angleUnit,
       .symbolic = SymbolicComputation::ReplaceAllSymbols,
@@ -205,7 +211,8 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
 
   /* TODO: Second Simplify could be avoided by calling
    * intermediate steps, and handle units right after projection. */
-  reductionFailure = !Simplification::Simplify(exactAngle, projCtx);
+  reductionFailure =
+      !Simplification::Simplify(exactAngle, simplificationParameters);
   if (!reductionFailure && exactAngleDimension.isUnit()) {
     assert(exactAngleDimension.isSimpleAngleUnit());
     assert(directTrigoFunction->isDirectTrigonometryFunction() ||
@@ -218,7 +225,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
     exactAngle->cloneNodeAtNode(KMult.node<2>);
     Angle::RadTo(angleUnit)->cloneTree();
     // Simplify again
-    Simplification::Simplify(exactAngle, projCtx);
+    Simplification::Simplify(exactAngle, simplificationParameters);
   }
 
   // The angle must be real and finite.
@@ -276,7 +283,8 @@ bool AdditionalResultsHelper::HasInverseTrigo(
      * additional result on complex inverse trigo */
     Tree* output = approximateOutput.tree()->cloneTree();
     Internal::Simplification::ToSystem(
-        output, ProjectionContext{.complexFormat = ComplexFormat::Cartesian});
+        output,
+        SimplificationParameters{.complexFormat = ComplexFormat::Cartesian});
     result = GetComplexProperties(output).isReal();
     output->removeTree();
   }
@@ -457,7 +465,8 @@ static Tree* BestConvergentOfContinuedFraction(const SystemExpression rational,
 /* Create a rational approximation (within ε) with limited digits in the
  * denominator. Return an uninitialized expression if not possible. */
 Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
-    const SystemExpression rational, const ProjectionContext& ctx) {
+    const SystemExpression rational,
+    const SimplificationParameters& simplificationParameters) {
   Tree* result = BestConvergentOfContinuedFraction(
       rational, k_maxDenominatorDigitsForRationalApproximation);
   double rationalApprox = Approximation::To<double>(
@@ -468,7 +477,7 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
       std::fabs(rationalApprox - resultApprox) <
           k_rationalApproximationPrecision) {
     // Result is not the same as the input and approximation is precise enough
-    Beautification::DeepBeautify(result, ctx);
+    Beautification::DeepBeautify(result, simplificationParameters);
     // Create the layout ~p/q
     TreeRef rack = Layouter::LayoutExpression(result);
     result->removeTree();
@@ -481,7 +490,8 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
 
 // Take a rational a/b and create the euclidean division a=b*q+r
 UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
-    SystemExpression rational, const ProjectionContext& ctx) {
+    SystemExpression rational,
+    const SimplificationParameters& simplificationParameters) {
   assert(rational.isRational());
   IntegerHandler num = Rational::Numerator(rational);
   IntegerHandler den = Rational::Denominator(rational);
@@ -491,7 +501,7 @@ UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
   Tree* quotient = division.quotient->cloneTree();
   /* We beautify the quotient that may be negative and leave the rest unchanged
    * because we want to control the beautification order manually. */
-  Beautification::DeepBeautify(quotient, ctx);
+  Beautification::DeepBeautify(quotient, simplificationParameters);
   assert(denTree->isPositiveInteger() &&
          division.remainder->isPositiveInteger());
   UserExpression result = UserExpression::Builder(PatternMatching::Create(
@@ -511,7 +521,7 @@ UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
 
 UserExpression AdditionalResultsHelper::CreateMixedFraction(
     SystemExpression rational, bool mixedFractionsEnabled,
-    const ProjectionContext& ctx) {
+    const SimplificationParameters& simplificationParameters) {
   assert(rational.isRational());
   IntegerHandler num = Rational::Numerator(rational);
   IntegerHandler den = Rational::Denominator(rational);
@@ -525,8 +535,8 @@ UserExpression AdditionalResultsHelper::CreateMixedFraction(
       Rational::Push(Integer::Handler(division.remainder), den);
   division.remainder->removeTree();
   // Beautify components separately
-  Beautification::DeepBeautify(integerPart, ctx);
-  Beautification::DeepBeautify(fractionPart, ctx);
+  Beautification::DeepBeautify(integerPart, simplificationParameters);
+  Beautification::DeepBeautify(fractionPart, simplificationParameters);
   // If mixed fractions are enabled
   if (mixedFractionsEnabled) {
     integerPart->cloneNodeAtNode(KMixedFraction);
@@ -549,15 +559,17 @@ UserExpression AdditionalResultsHelper::CreateMixedFraction(
 
 // Eat reduced expression's tree and return a beautified layout
 static Poincare::Layout CreateBeautifiedLayout(
-    Tree* reducedExpression, const ProjectionContext& ctx,
+    Tree* reducedExpression,
+    const SimplificationParameters& simplificationParameters,
     const Internal::Dimension& dimension,
     Preferences::PrintFloatMode displayMode,
     uint8_t numberOfSignificantDigits) {
-  Simplification::BeautifyReduced(reducedExpression, ctx, dimension);
+  Simplification::BeautifyReduced(reducedExpression, simplificationParameters,
+                                  dimension);
   Poincare::Layout layout =
       Poincare::Layout::Builder(Layouter::LayoutExpression(
           reducedExpression,
-          {.symbolContext = ctx.context,
+          {.symbolContext = simplificationParameters.context,
            .numberOfSignificantDigits = numberOfSignificantDigits,
            .floatMode = displayMode}));
   reducedExpression->removeTree();
@@ -569,32 +581,36 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
-  ProjectionContext ctx = {.complexFormat = ComplexFormat::Cartesian,
-                           .angleUnit = calculationPreferences.angleUnit,
-                           .strategy = Strategy::ApproximateToFloat,
-                           .symbolic = SymbolicComputation::ReplaceAllSymbols,
-                           .context = symbolContext,
-                           .advanceReduce = false};
+  SimplificationParameters simplificationParameters = {
+      .complexFormat = ComplexFormat::Cartesian,
+      .angleUnit = calculationPreferences.angleUnit,
+      .strategy = Strategy::ApproximateToFloat,
+      .symbolic = SymbolicComputation::ReplaceAllSymbols,
+      .context = symbolContext,
+      .advanceReduce = false};
   Tree* e = approximateOutput.tree()->cloneTree();
-  Internal::Dimension dim = Simplification::ProjectAndReduce(e, ctx);
+  Internal::Dimension dim =
+      Simplification::ProjectAndReduce(e, simplificationParameters);
   assert(!dim.isUnit());
   return CreateBeautifiedLayout(
-      e, ctx, dim, Preferences::PrintFloatMode::Scientific,
+      e, simplificationParameters, dim, Preferences::PrintFloatMode::Scientific,
       calculationPreferences.numberOfSignificantDigits);
 }
 
 void AdditionalResultsHelper::ComputeMatrixProperties(
     const UserExpression& exactOutput, const UserExpression& approximateOutput,
-    ProjectionContext ctx, Preferences::PrintFloatMode displayMode,
-    uint8_t numberOfSignificantDigits, Poincare::Layout& determinantL,
-    Poincare::Layout& inverseL, Poincare::Layout& rowEchelonFormL,
-    Poincare::Layout& reducedRowEchelonFormL, Poincare::Layout& traceL) {
+    const SimplificationParameters& simplificationParameters,
+    Preferences::PrintFloatMode displayMode, uint8_t numberOfSignificantDigits,
+    Poincare::Layout& determinantL, Poincare::Layout& inverseL,
+    Poincare::Layout& rowEchelonFormL, Poincare::Layout& reducedRowEchelonFormL,
+    Poincare::Layout& traceL) {
   assert(approximateOutput.tree()->isMatrix());
   bool isApproximate = !exactOutput.tree()->isMatrix();
   Tree* matrix =
       (isApproximate ? approximateOutput : exactOutput).tree()->cloneTree();
   // The expression must be reduced to call matrix methods.
-  Internal::Dimension dim = Simplification::ProjectAndReduce(matrix, ctx);
+  Internal::Dimension dim =
+      Simplification::ProjectAndReduce(matrix, simplificationParameters);
   bool isSquared = Internal::Matrix::NumberOfRows(matrix) ==
                    Internal::Matrix::NumberOfColumns(matrix);
 
@@ -621,17 +637,18 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     bool determinantIsUndefinedOrNull =
         determinant->isUndefined() || determinant->isZero();
     Internal::Dimension dimension =
-        Internal::Dimension::Get(determinant, ctx.context);
-    determinantL = CreateBeautifiedLayout(
-        determinant, ctx, dimension, displayMode, numberOfSignificantDigits);
+        Internal::Dimension::Get(determinant, simplificationParameters.context);
+    determinantL =
+        CreateBeautifiedLayout(determinant, simplificationParameters, dimension,
+                               displayMode, numberOfSignificantDigits);
     matrixClone->removeTree();
 
     /* 2. Matrix inverse if invertible matrix
      * A squared matrix is invertible if and only if determinant is non null */
     if (!determinantIsUndefinedOrNull) {
       Tree* inverse = Internal::Matrix::Inverse(matrix, approximator);
-      inverseL = CreateBeautifiedLayout(inverse, ctx, dim, displayMode,
-                                        numberOfSignificantDigits);
+      inverseL = CreateBeautifiedLayout(inverse, simplificationParameters, dim,
+                                        displayMode, numberOfSignificantDigits);
     }
   }
 
@@ -640,9 +657,9 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   if (Internal::Matrix::RowCanonize(reducedRowEchelonForm, false, nullptr,
                                     approximator)) {
     // Clone layouted tree to preserve reducedRowEchelonForm for next step.
-    rowEchelonFormL =
-        CreateBeautifiedLayout(reducedRowEchelonForm->cloneTree(), ctx, dim,
-                               displayMode, numberOfSignificantDigits);
+    rowEchelonFormL = CreateBeautifiedLayout(
+        reducedRowEchelonForm->cloneTree(), simplificationParameters, dim,
+        displayMode, numberOfSignificantDigits);
 
     /* 4. Matrix reduced row echelon form
      *    Computed from row echelon form to save computation time. */
@@ -651,13 +668,13 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
       OMG_UNREACHABLE;
     }
     reducedRowEchelonFormL =
-        CreateBeautifiedLayout(reducedRowEchelonForm, ctx, dim, displayMode,
-                               numberOfSignificantDigits);
+        CreateBeautifiedLayout(reducedRowEchelonForm, simplificationParameters,
+                               dim, displayMode, numberOfSignificantDigits);
   } else {
     reducedRowEchelonForm->cloneTreeOverTree(KUndefUnhandled);
     rowEchelonFormL =
-        CreateBeautifiedLayout(reducedRowEchelonForm, ctx, dim, displayMode,
-                               numberOfSignificantDigits);
+        CreateBeautifiedLayout(reducedRowEchelonForm, simplificationParameters,
+                               dim, displayMode, numberOfSignificantDigits);
     reducedRowEchelonFormL = rowEchelonFormL.clone();
   }
 
@@ -665,8 +682,9 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   if (isSquared) {
     Tree* trace = Internal::Matrix::Trace(matrix);
     traceL = CreateBeautifiedLayout(
-        trace, ctx, Internal::Dimension::Get(trace, ctx.context), displayMode,
-        numberOfSignificantDigits);
+        trace, simplificationParameters,
+        Internal::Dimension::Get(trace, simplificationParameters.context),
+        displayMode, numberOfSignificantDigits);
   }
 
   matrix->removeTree();

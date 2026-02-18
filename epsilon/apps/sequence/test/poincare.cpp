@@ -11,7 +11,7 @@ using namespace Poincare::Internal;
 
 QUIZ_CASE(poincare_sequence) {
   PoincareTest::SymbolStore symbolStore;
-  ProjectionContext projCtx = {
+  SimplificationParameters simplificationParameters = {
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .context = symbolStore};
 
@@ -20,8 +20,8 @@ QUIZ_CASE(poincare_sequence) {
   symbolStore.setExpressionForUserSymbol(KUndef, KSeq<"u">("n"_e));
   PoincareTest::store("3→f(x)", symbolStore);
   // Sequence are kept in dependency
-  simplifies_to("f(u(n))", "dep(3,{u(n)})", projCtx);
+  simplifies_to("f(u(n))", "dep(3,{u(n)})", simplificationParameters);
   // Except if the sequence can already be approximated.
-  simplifies_to("f(u(2))", "undef", projCtx);
+  simplifies_to("f(u(2))", "undef", simplificationParameters);
   symbolStore.reset();
 }

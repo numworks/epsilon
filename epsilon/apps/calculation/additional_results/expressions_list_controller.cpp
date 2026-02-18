@@ -156,24 +156,26 @@ Poincare::Layout ExpressionsListController::layoutAtIndex(HighlightCell* cell,
 }
 
 Layout ExpressionsListController::GetExactLayoutFromExpression(
-    const UserExpression e, const ProjectionContext& projectionContext,
+    const UserExpression e,
+    const SimplificationParameters& simplificationParameters,
     Layout* approximate, bool* isStrictlyEqual) {
   assert(!e.isUninitialized());
   UserExpression approximateExpression, exactExpression;
-  ProjectionContext tempProjectionContext = projectionContext;
-  tempProjectionContext.symbolic = SymbolicComputation::ReplaceAllSymbols;
+  SimplificationParameters tempParameters = simplificationParameters;
+  tempParameters.symbolic = SymbolicComputation::ReplaceAllSymbols;
   e.cloneAndSimplifyAndApproximate(&exactExpression, &approximateExpression,
-                                   tempProjectionContext);
+                                   tempParameters);
   assert(!exactExpression.isUninitialized() &&
          !approximateExpression.isUninitialized());
   Layout approximateLayout =
       Shared::PoincareHelpers::CreateLayout(approximateExpression,
-                                            projectionContext.context)
+                                            simplificationParameters.context)
           .cloneAndTurnEToTenPowerLayout(false);
-  Layout exactLayout = exactExpression.isUninitialized()
-                           ? approximateLayout
-                           : Shared::PoincareHelpers::CreateLayout(
-                                 exactExpression, projectionContext.context);
+  Layout exactLayout =
+      exactExpression.isUninitialized()
+          ? approximateLayout
+          : Shared::PoincareHelpers::CreateLayout(
+                exactExpression, simplificationParameters.context);
   if (approximate) {
     // TODO_PCJ: Factorize with CAS::ShouldOnlyDisplayApproximation
     if (approximateExpression.isUndefined()) {
@@ -192,7 +194,7 @@ Layout ExpressionsListController::GetExactLayoutFromExpression(
             exactExpression, approximateExpression,
             GlobalPreferences::SharedGlobalPreferences()
                 ->numberOfSignificantDigits(),
-            projectionContext);
+            simplificationParameters);
       }
     }
   }

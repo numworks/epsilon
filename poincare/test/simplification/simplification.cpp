@@ -13,8 +13,8 @@
 using namespace Poincare::Internal;
 using Poincare::AngleUnit;
 using Poincare::ComplexFormat;
-using Poincare::ProjectionContext;
 using Poincare::ReductionTarget;
+using Poincare::SimplificationParameters;
 using Poincare::Strategy;
 using Poincare::SymbolicComputation;
 using Poincare::UnitDisplay;
@@ -187,7 +187,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("(e^(x))^2", "e^(2×x)");
   simplifies_to("e^(ln(x))", "dep(x,{nonNull(x),realPos(x)})");
   simplifies_to("e^(ln(1+x^2))", "x^2+1");
-  simplifies_to("e^(ln(x+x))", "dep(2×x,{nonNull(x+x)})", k_cartesianCtx);
+  simplifies_to("e^(ln(x+x))", "dep(2×x,{nonNull(x+x)})", k_cartesianParams);
   simplifies_to("x+1+(-1)(x+1)", "0");
   simplifies_to("√(4)", "2");
   simplifies_to("0.1875", "3/16");
@@ -223,8 +223,8 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(3i)", "3");
   simplifies_to("abs(-3i)", "3");
   simplifies_to("abs(abs(abs((-3)×x)))", "3×abs(x)");
-  simplifies_to("abs(1+i)", "√(2)", k_cartesianCtx);
-  simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", k_cartesianCtx);
+  simplifies_to("abs(1+i)", "√(2)", k_cartesianParams);
+  simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", k_cartesianParams);
   simplifies_to("abs(x^2)", "x^2");
   simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "0");
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
@@ -232,21 +232,21 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(x)/x", "dep(sign(x),{x^0})");
   simplifies_to("x/abs(x)", "dep(sign(x),{x^0})");
   simplifies_to("x^(1+abs(x)/x)", "dep(x^(1+sign(x)),{x^0})");
-  simplifies_to("abs((-3)^ln(5))", "3^ln(5)", k_cartesianCtx);
-  simplifies_to("abs(acos(2)^4)", "abs(acos(2))^4", k_cartesianCtx);
+  simplifies_to("abs((-3)^ln(5))", "3^ln(5)", k_cartesianParams);
+  simplifies_to("abs(acos(2)^4)", "abs(acos(2))^4", k_cartesianParams);
   simplifies_to("abs(e^(π/2×i)+e^(π/6×i))", "√(3)");
   simplifies_to("abs(π)", "π");
   simplifies_to("abs(-π)", "π");
-  simplifies_to("abs(1+i)", "√(2)", k_cartesianCtx);
+  simplifies_to("abs(1+i)", "√(2)", k_cartesianParams);
   simplifies_to("abs(0)", "0");
   simplifies_to("abs(x*y)-abs(x)×abs(y)", "0");
   simplifies_to("abs(x^7)", "abs(x)^7");
 #if TODO_PCJ  // Reduce abs(x^a) with a non integer
   simplifies_to("abs(x^π)", "abs(x)^π");
 #endif
-  simplifies_to("abs(i)", "1", k_cartesianCtx);
-  simplifies_to("abs(√(√(√(√(√(√(i)))))))", "1", k_cartesianCtx);
-  simplifies_to("abs(√(√(√(√(√(√(πi)))))))", "root(π,64)", k_cartesianCtx);
+  simplifies_to("abs(i)", "1", k_cartesianParams);
+  simplifies_to("abs(√(√(√(√(√(√(i)))))))", "1", k_cartesianParams);
+  simplifies_to("abs(√(√(√(√(√(√(πi)))))))", "root(π,64)", k_cartesianParams);
   simplifies_to("abs(dim({4, 5}))", "2");
 
   simplifies_to("tan(3)ln(2)+π", "π+tan(3)×ln(2)");
@@ -265,12 +265,12 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("P^2^2×P+4×P^3", "P^5+4×P^3");
   simplifies_to("0.5+4×P×Q-2.3+2×P×Q-2×Q×P^R-cos(4)+2×P^R×Q+P×Q×R×X",
                 "dep(P×Q×(R×X+6)-9/5-cos(4),{0×P^R})");
-  simplifies_to("P×cos(9)×i×i×ln(2)", "-P×cos(9)×ln(2)", k_cartesianCtx);
+  simplifies_to("P×cos(9)×i×i×ln(2)", "-P×cos(9)×ln(2)", k_cartesianParams);
 }
 
 QUIZ_CASE(pcj_simplification_sign) {
   simplifies_to("sign(-23)", "-1");
-  simplifies_to("sign(-i)", "undef", k_cartesianCtx);
+  simplifies_to("sign(-i)", "undef", k_cartesianParams);
   simplifies_to("sign(0)", "0");
   simplifies_to("sign(inf)", "1");
   simplifies_to("sign(-inf)", "-1");
@@ -279,7 +279,7 @@ QUIZ_CASE(pcj_simplification_sign) {
   simplifies_to("sign(log(18))", "1");
   simplifies_to("sign(-√(2))", "-1");
   simplifies_to("sign(x)", "sign(x)");
-  simplifies_to("sign(2+i)", "undef", k_cartesianCtx);
+  simplifies_to("sign(2+i)", "undef", k_cartesianParams);
   simplifies_to("sign(-2)", "-1");
   simplifies_to("sign(abs(x)+1)", "1");
 }
@@ -431,7 +431,7 @@ QUIZ_CASE(pcj_simplification_advanced) {
       "cos(b)×cos(a)-1/2×cos(b)×cos(a)-1/2×sin(b)×sin(a)+1/2×cos(b)×cos(a)+1/"
       "4×cos(b+a)-1/4×cos(b-a)-cos(a+b)",
       "(cos(a)×cos(b))/4-cos(-a+b)/4+(sin(a)×sin(b))/4");
-  simplifies_to("1/(i-1)^2", "1/2×i", k_cartesianCtx);
+  simplifies_to("1/(i-1)^2", "1/2×i", k_cartesianParams);
   simplifies_to("(x+y)^3-x^3-y^3-3*y^2*x-3*y*x^2", "0");
   // TODO_PCJ: we used to reduce to (π+1)/(π+2)
   simplifies_to("1/(1+1/(1+π))", "1/(1+1/(1+π))");
@@ -541,40 +541,40 @@ QUIZ_CASE(pcj_simplification_distributions) {
 QUIZ_CASE(pcj_simplification_function) {
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("x→f(x)", symbolStore);
-  ProjectionContext projCtx = {
+  SimplificationParameters simplificationParameters = {
       .symbolic = SymbolicComputation::KeepAllSymbols,
       .context = symbolStore,
   };
-  simplifies_to("f(x)", "f(x)", projCtx);
+  simplifies_to("f(x)", "f(x)", simplificationParameters);
   simplifies_to("f(2+2)", "f(4)");
   simplifies_to("f(y)+f(x)-f(x)", "dep(f(y),{0×f(x)})");
 }
 
 QUIZ_CASE(pcj_simplification_variable_replace) {
   PoincareTest::SymbolStore symbolStore;
-  ProjectionContext projCtx = {
+  SimplificationParameters simplificationParameters = {
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .context = symbolStore};
 
   PoincareTest::store("4→y", symbolStore);
-  simplifies_to("x+y", "x+4", projCtx);
+  simplifies_to("x+y", "x+4", simplificationParameters);
 
   PoincareTest::store("x^2→f(x)", symbolStore);
-  simplifies_to("f(z+f(y))", "z^2+32×z+256", projCtx);
+  simplifies_to("f(z+f(y))", "z^2+32×z+256", simplificationParameters);
 
   PoincareTest::store("{5,4,3,2,1}→l", symbolStore);
-  simplifies_to("sum(l)", "15", projCtx);
-  simplifies_to("l(2)", "4", projCtx);
-  simplifies_to("l(3^2-4)", "1", projCtx);
-  simplifies_to("l(log(3))", "undef", projCtx);
-  simplifies_to("l(-2) ", "undef", projCtx);
-  simplifies_to("l(0)", "undef", projCtx);
-  simplifies_to("l(256)", "undef", projCtx);
-  simplifies_to("l(1,3)", "{5,4,3}", projCtx);
+  simplifies_to("sum(l)", "15", simplificationParameters);
+  simplifies_to("l(2)", "4", simplificationParameters);
+  simplifies_to("l(3^2-4)", "1", simplificationParameters);
+  simplifies_to("l(log(3))", "undef", simplificationParameters);
+  simplifies_to("l(-2) ", "undef", simplificationParameters);
+  simplifies_to("l(0)", "undef", simplificationParameters);
+  simplifies_to("l(256)", "undef", simplificationParameters);
+  simplifies_to("l(1,3)", "{5,4,3}", simplificationParameters);
   // TODO: Properly parse list slices on variables
   // TODO_PCJ: implement list access and list slice on lists of points
 
-  ProjectionContext projCtx2 = {
+  SimplificationParameters projCtx2 = {
       .symbolic = SymbolicComputation::ReplaceAllSymbols,
       .context = symbolStore};
   simplifies_to("y+2", "6", projCtx2);
@@ -605,7 +605,7 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   simplifies_to("(4/11)^(8/9)", "(2×root(1408,9))/11");
   simplifies_to("(5/2)^(-4/3)", "(2×root(50,3))/25");
   // (1+i)/(1-i) => i
-  simplifies_to("(1+i)/(1-i)", "i", k_cartesianCtx);
+  simplifies_to("(1+i)/(1-i)", "i", k_cartesianParams);
   // Big rational
   simplifies_to("0.884^128",
                 "12084008767286860548509735467047410159658206261001805757652392"
@@ -658,182 +658,185 @@ QUIZ_CASE(pcj_simplification_undef) {
 }
 
 QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
-  ProjectionContext ctxForApproximation = {
+  SimplificationParameters parametersForApproximation = {
       .complexFormat = ComplexFormat::Real,
       .reductionTarget = ReductionTarget::SystemForApproximation};
-  ProjectionContext ctxForAnalysis = {
+  SimplificationParameters parametersForAnalysis = {
       .complexFormat = ComplexFormat::Real,
       .reductionTarget = ReductionTarget::SystemForAnalysis};
-  projects_and_reduces_to("(2+x)^2", "(x+2)^2", ctxForApproximation);
-  projects_and_reduces_to("(2+x)^2", "x^2+4×x+4", ctxForAnalysis);
-  projects_and_reduces_to("(1+x)^3", "(x+1)^3", ctxForApproximation);
-  projects_and_reduces_to("1+3×x+3×x^2+x^3-(1+x)^3", "0", ctxForApproximation);
-  projects_and_reduces_to("(1+x)^3", "x^3+3×x^2+3×x+1", ctxForAnalysis);
+  projects_and_reduces_to("(2+x)^2", "(x+2)^2", parametersForApproximation);
+  projects_and_reduces_to("(2+x)^2", "x^2+4×x+4", parametersForAnalysis);
+  projects_and_reduces_to("(1+x)^3", "(x+1)^3", parametersForApproximation);
+  projects_and_reduces_to("1+3×x+3×x^2+x^3-(1+x)^3", "0",
+                          parametersForApproximation);
+  projects_and_reduces_to("(1+x)^3", "x^3+3×x^2+3×x+1", parametersForAnalysis);
   projects_and_reduces_to("ln(49000*x)",
                           "dep(ln(49000×x),{nonNull(x),realPos(49000×x)})",
-                          ctxForApproximation);
+                          parametersForApproximation);
   projects_and_reduces_to("ln(49000*x)",
                           "dep(ln(49000×x),{nonNull(x),realPos(49000×x)})",
-                          ctxForAnalysis);
+                          parametersForAnalysis);
   // TODO: x^2*(1-x^2) might be better for approximation.
-  projects_and_reduces_to("x^2-x^4", "-x^4+x^2", ctxForApproximation);
-  projects_and_reduces_to("x^2-x^4", "-x^4+x^2", ctxForAnalysis);
+  projects_and_reduces_to("x^2-x^4", "-x^4+x^2", parametersForApproximation);
+  projects_and_reduces_to("x^2-x^4", "-x^4+x^2", parametersForAnalysis);
 }
 
 QUIZ_CASE(pcj_simplification_user_function) {
   PoincareTest::SymbolStore symbolStore;
-  ProjectionContext projCtx = {
+  SimplificationParameters parameters = {
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .context = symbolStore};
   // User defined function
   // f: x → x*3
   store("x*3→f(x)", symbolStore);
-  simplifies_to("f(1+1)", "6", projCtx);
-  simplifies_to("f({2,3})", "{6,9}", projCtx);
+  simplifies_to("f(1+1)", "6", parameters);
+  simplifies_to("f({2,3})", "{6,9}", parameters);
   // f: x → 3
   store("3→f(x)", symbolStore);
-  simplifies_to("f(1/0)", "undef", projCtx);
+  simplifies_to("f(1/0)", "undef", parameters);
 }
 
 QUIZ_CASE(pcj_simplification_context) {
   PoincareTest::SymbolStore symbolStore;
-  ProjectionContext projCtx = {
+  SimplificationParameters parameters = {
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .context = symbolStore};
 
   // Fill variable
   PoincareTest::store("1+2→Adadas", symbolStore);
-  simplifies_to("Adadas", "3", projCtx);
+  simplifies_to("Adadas", "3", parameters);
 
   // Fill f1
   PoincareTest::store("1+x→f1(x)", symbolStore);
-  simplifies_to("f1(4)", "5", projCtx);
-  simplifies_to("f1(Adadas)", "4", projCtx);
+  simplifies_to("f1(4)", "5", parameters);
+  simplifies_to("f1(Adadas)", "4", parameters);
 
   // Fill f2
   PoincareTest::store("x-1→f2(x)", symbolStore);
-  simplifies_to("f2(4)", "3", projCtx);
-  simplifies_to("f2(Adadas)", "2", projCtx);
+  simplifies_to("f2(4)", "3", parameters);
+  simplifies_to("f2(Adadas)", "2", parameters);
 
   // Define fBoth with f1 and f2
   PoincareTest::store("f1(x)+f2(x)→fBoth(x)", symbolStore);
-  simplifies_to("fBoth(4)", "8", projCtx);
-  simplifies_to("fBoth(Adadas)", "6", projCtx);
+  simplifies_to("fBoth(4)", "8", parameters);
+  simplifies_to("fBoth(Adadas)", "6", parameters);
 
   // Change f2
   PoincareTest::store("x→f2(x)", symbolStore);
-  simplifies_to("f2(4)", "4", projCtx);
-  simplifies_to("f2(Adadas)", "3", projCtx);
+  simplifies_to("f2(4)", "4", parameters);
+  simplifies_to("f2(Adadas)", "3", parameters);
 
   // Make sure fBoth has changed
-  simplifies_to("fBoth(4)", "9", projCtx);
-  simplifies_to("fBoth(Adadas)", "7", projCtx);
+  simplifies_to("fBoth(4)", "9", parameters);
+  simplifies_to("fBoth(Adadas)", "7", parameters);
   symbolStore.reset();
 
   // Circular variables
   PoincareTest::store("a→b", symbolStore);
   PoincareTest::store("b→a", symbolStore);
-  simplifies_to("a", "undef", projCtx);
-  simplifies_to("b", "undef", projCtx);
+  simplifies_to("a", "undef", parameters);
+  simplifies_to("b", "undef", parameters);
   symbolStore.reset();
 
   PoincareTest::store("a→b", symbolStore);
   PoincareTest::store("b→c", symbolStore);
   PoincareTest::store("c→a", symbolStore);
-  simplifies_to("a", "undef", projCtx);
-  simplifies_to("b", "undef", projCtx);
-  simplifies_to("c", "undef", projCtx);
+  simplifies_to("a", "undef", parameters);
+  simplifies_to("b", "undef", parameters);
+  simplifies_to("c", "undef", parameters);
   symbolStore.reset();
 
   // Circular functions
   // f: x → f(x)
   PoincareTest::store("(f(x))→f(x)", symbolStore);
-  simplifies_to("f(1)", "undef", projCtx);
+  simplifies_to("f(1)", "undef", parameters);
   symbolStore.reset();
 
   PoincareTest::store("1→f(x)", symbolStore);
   PoincareTest::store("f(x)→g(x)", symbolStore);
   PoincareTest::store("g(x)→f(x)", symbolStore);
-  simplifies_to("f(1)", "undef", projCtx);
-  simplifies_to("g(1)", "undef", projCtx);
+  simplifies_to("f(1)", "undef", parameters);
+  simplifies_to("g(1)", "undef", parameters);
   symbolStore.reset();
 
   PoincareTest::store("1→f(x)", symbolStore);
   PoincareTest::store("f(x)→g(x)", symbolStore);
   PoincareTest::store("g(x)→h(x)", symbolStore);
   PoincareTest::store("h(x)→f(x)", symbolStore);
-  simplifies_to("f(1)", "undef", projCtx);
-  simplifies_to("g(1)", "undef", projCtx);
-  simplifies_to("h(1)", "undef", projCtx);
+  simplifies_to("f(1)", "undef", parameters);
+  simplifies_to("g(1)", "undef", parameters);
+  simplifies_to("h(1)", "undef", parameters);
   symbolStore.reset();
 
   // Circular variables and functions
   PoincareTest::store("a→b", symbolStore);
   PoincareTest::store("b→a", symbolStore);
   PoincareTest::store("a→f(x)", symbolStore);
-  simplifies_to("f(1)", "undef", projCtx);
-  simplifies_to("a", "undef", projCtx);
-  simplifies_to("b", "undef", projCtx);
+  simplifies_to("f(1)", "undef", parameters);
+  simplifies_to("a", "undef", parameters);
+  simplifies_to("b", "undef", parameters);
 
   // Composed functions
   // f: x→x^2
   PoincareTest::store("x^2→f(x)", symbolStore);
   // g: x→f(x-2)
   PoincareTest::store("f(x-2)→g(x)", symbolStore);
-  simplifies_to("f(2)", "4", projCtx);
-  simplifies_to("g(3)", "1", projCtx);
-  simplifies_to("g(5)", "9", projCtx);
+  simplifies_to("f(2)", "4", parameters);
+  simplifies_to("g(3)", "1", parameters);
+  simplifies_to("g(5)", "9", parameters);
 
   // g: x→f(x-2)+f(x+1)
   PoincareTest::store("f(x-2)+f(x+1)→g(x)", symbolStore);
   // Add a sum to bypass simplification
-  simplifies_to("g(3)+sum(1, n, 2, 4)", "20", projCtx);
-  simplifies_to("g(5)", "45", projCtx);
+  simplifies_to("g(3)+sum(1, n, 2, 4)", "20", parameters);
+  simplifies_to("g(5)", "45", parameters);
 
   // g: x→x+1
   PoincareTest::store("x+1→g(x)", symbolStore);
-  simplifies_to("f(g(4))", "25", projCtx);
+  simplifies_to("f(g(4))", "25", parameters);
   // Add a sum to bypass simplification
-  simplifies_to("f(g(4))+sum(1, n, 2, 4)", "28", projCtx);
+  simplifies_to("f(g(4))+sum(1, n, 2, 4)", "28", parameters);
 
   // Evaluate at undef
   PoincareTest::store("0→f(x)", symbolStore);
   PoincareTest::store("f(1/0)→a", symbolStore);
-  simplifies_to("a", "undef", projCtx);
+  simplifies_to("a", "undef", parameters);
   PoincareTest::store("f(1/0)→g(x)", symbolStore);
-  simplifies_to("g(1)", "undef", projCtx);
+  simplifies_to("g(1)", "undef", parameters);
   PoincareTest::store("f(undef)→b", symbolStore);
-  simplifies_to("b", "undef", projCtx);
+  simplifies_to("b", "undef", parameters);
 }
 
 QUIZ_CASE(pcj_simplification_store_correctly_parsed) {
   PoincareTest::SymbolStore symbolStore;
-  ProjectionContext projCtx = {
+  SimplificationParameters parameters = {
       .complexFormat = ComplexFormat::Cartesian,
       .angleUnit = AngleUnit::Radian,
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .context = symbolStore};
-  simplifies_to("abc", "a×b×c", projCtx, false);
-  simplifies_to("\"abc\"", "\"abc\"", projCtx, false);
+  simplifies_to("abc", "a×b×c", parameters, false);
+  simplifies_to("\"abc\"", "\"abc\"", parameters, false);
   store("2→a", symbolStore);
   store("5→bc", symbolStore);
-  simplifies_to("abc", "10", projCtx, false);  // a*, falsebc
-  simplifies_to("aa", "4", projCtx, false);
+  simplifies_to("abc", "10", parameters, false);  // a*, falsebc
+  simplifies_to("aa", "4", parameters, false);
   store("10→aa", symbolStore);
-  simplifies_to("aa", "10", projCtx, false);
-  simplifies_to("aaa", "20", projCtx, false);     // Parsed to a*aa
-  simplifies_to("aaaaa", "200", projCtx, false);  // Parsed to a*aa*aa
-  simplifies_to("acos(b)", "arccos(b)", projCtx, false);
-  simplifies_to("aacos(b)", "2×arccos(b)", projCtx, false);
+  simplifies_to("aa", "10", parameters, false);
+  simplifies_to("aaa", "20", parameters,
+                false);  // Parsed to a*aa
+  simplifies_to("aaaaa", "200", parameters,
+                false);  // Parsed to a*aa*aa
+  simplifies_to("acos(b)", "arccos(b)", parameters, false);
+  simplifies_to("aacos(b)", "2×arccos(b)", parameters, false);
   store("t→bar(t)", symbolStore);
   store("8→foo", symbolStore);
-  simplifies_to("foobar(x)", "8×x", projCtx, false);
+  simplifies_to("foobar(x)", "8×x", parameters, false);
   store("t^2→foobar(t)", symbolStore);
-  simplifies_to("foobar(x)", "x^2", projCtx, false);
+  simplifies_to("foobar(x)", "x^2", parameters, false);
 
-  simplifies_to("t", "1×_t", projCtx, false);
+  simplifies_to("t", "1×_t", parameters, false);
   store("2→t", symbolStore);
-  simplifies_to("t", "2", projCtx, false);
+  simplifies_to("t", "2", parameters, false);
 }
 
 QUIZ_CASE(pcj_simplification_capped) {
@@ -846,26 +849,26 @@ QUIZ_CASE(pcj_simplification_capped) {
   (1_e)->cloneTree();
 
   Tree* simplifiedAlmostBigTree = almostBigTree->cloneTree();
-  quiz_assert(
-      Simplification::Simplify(simplifiedAlmostBigTree, ProjectionContext()));
+  quiz_assert(Simplification::Simplify(simplifiedAlmostBigTree,
+                                       SimplificationParameters()));
   quiz_assert(simplifiedAlmostBigTree->treeIsIdenticalTo(1_e));
   simplifiedAlmostBigTree->removeTree();
 
-  quiz_assert(!Simplification::Simplify(bigTree, ProjectionContext()));
+  quiz_assert(!Simplification::Simplify(bigTree, SimplificationParameters()));
 #endif
 }
 
 QUIZ_CASE(pcj_tree_simplification) {
-  simplifies_to(KACos(23_fe), KMult(3.8281684_fe, i_e), k_cartesianCtx);
+  simplifies_to(KACos(23_fe), KMult(3.8281684_fe, i_e), k_cartesianParams);
   simplifies_to(KACos(KMult(3.5_fe, i_e)),
                 KAdd(1.570796251297_fe, KMult(-1.9657205_fe, i_e)),
-                k_cartesianCtx);
+                k_cartesianParams);
   simplifies_to(KACos(KAdd(23_fe, KMult(3.5_fe, i_e))),
                 KAdd(0.15115293_fe, KMult(-3.8396465778351_fe, i_e)),
-                k_cartesianCtx);
+                k_cartesianParams);
   simplifies_to(KACos(KAdd(1_fe, i_e)),
                 KAdd(0.90455687046051_fe, KMult(-1.0612751245499_fe, i_e)),
-                k_cartesianCtx);
+                k_cartesianParams);
   simplifies_to(KRef(KMatrix<1, 2>(0_fe, i_e)), KMatrix<1, 2>(0_fe, 1_fe),
-                k_cartesianCtx);
+                k_cartesianParams);
 }

@@ -5,23 +5,25 @@
 
 namespace Poincare {
 
-bool IsCalculationOutputStrictEquality(const UserExpression exact,
-                                       const UserExpression approximate,
-                                       int numberOfSignificantDigits,
-                                       const ProjectionContext& ctx) {
-  ProjectionContext ctxCopy = ctx;
-  ctxCopy.advanceReduce = false;
+bool IsCalculationOutputStrictEquality(
+    const UserExpression exact, const UserExpression approximate,
+    int numberOfSignificantDigits,
+    const SimplificationParameters& simplificationParameters) {
+  SimplificationParameters parametersSimpleReduce = simplificationParameters;
+  parametersSimpleReduce.advanceReduce = false;
   // Exact is projected and reduced to turn divisions into rationals
   assert(!exact.isUninitialized());
   Internal::Tree* exactProjected = exact.tree()->cloneTree();
-  if (!Internal::Simplification::Simplify(exactProjected, ctxCopy, false)) {
+  if (!Internal::Simplification::Simplify(exactProjected,
+                                          parametersSimpleReduce, false)) {
     exactProjected->removeTree();
     return false;
   }
   // Approximate is projected to turn Pow(e, …) into Exp(…)
   assert(!approximate.isUninitialized());
   Internal::Tree* approximateProjected = approximate.tree()->cloneTree();
-  Internal::Simplification::ProjectAndReduce(approximateProjected, ctxCopy);
+  Internal::Simplification::ProjectAndReduce(approximateProjected,
+                                             parametersSimpleReduce);
   bool result = Internal::IsCalculationOutputStrictEquality(
       exactProjected, approximateProjected, numberOfSignificantDigits);
   approximateProjected->removeTree();

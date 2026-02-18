@@ -15,14 +15,13 @@ using namespace Shared;
 
 namespace Graph {
 
-static ProjectionContext DefaultProjectionContextForAnalysis() {
-  ProjectionContext projCtx{
+static SimplificationParameters DefaultProjectionContextForAnalysis() {
+  return SimplificationParameters{
       .complexFormat = ComplexFormat::Cartesian,
       .angleUnit = AngleUnit::Radian,
       .unitFormat = Preferences::UnitFormat::Metric,
       .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .context = k_emptySymbolContext};
-  return projCtx;
 }
 
 void assert_cartesian_function_type_is(

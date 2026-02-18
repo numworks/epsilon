@@ -17,11 +17,12 @@ using namespace Poincare;
 HistoryContext s_historyContext;
 bool s_isInteractive = false;
 
-ProjectionContext context() {
-  ProjectionContext ctx;
-  ctx.context = &s_historyContext;
-  ctx.symbolic = SymbolicComputation::ReplaceDefinedSymbols;
-  return ctx;
+SimplificationParameters simplificationParameters() {
+  SimplificationParameters result;
+  result.context = &s_historyContext;
+  simplificationParameters.symbolic =
+      SymbolicComputation::ReplaceDefinedSymbols;
+  return result;
 }
 
 UserExpression getExpression(const std::vector<std::string>& args) {
@@ -72,9 +73,8 @@ void approximateCommand(const std::vector<std::string>& args) {
 
 void simplifyCommand(const std::vector<std::string>& args) {
   bool reductionFailure = false;
-  ProjectionContext ctx = context();
-  UserExpression e =
-      getExpression(args).cloneAndSimplify(ctx, &reductionFailure);
+  UserExpression e = getExpression(args).cloneAndSimplify(
+      simplificationParameters(), &reductionFailure);
   printExpression(e);
 }
 

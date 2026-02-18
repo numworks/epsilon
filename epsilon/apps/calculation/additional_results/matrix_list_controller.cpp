@@ -21,18 +21,18 @@ void MatrixListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  ProjectionContext ctx = {.complexFormat = complexFormat(),
-                           .angleUnit = angleUnit(),
-                           .symbolic = SymbolicComputation::ReplaceAllSymbols,
-                           .context = App::app()->localContext(),
-                           .advanceReduce = false};
-
   // Compute all layouts at once to reuse intermediate results
   Layout determinant, inverse, rowEchelonForm, reducedRowEchelonForm, trace;
   AdditionalResultsHelper::ComputeMatrixProperties(
-      exactOutput, approximateOutput, ctx, displayMode(),
-      numberOfSignificantDigits(), determinant, inverse, rowEchelonForm,
-      reducedRowEchelonForm, trace);
+      exactOutput, approximateOutput,
+      SimplificationParameters{
+          .complexFormat = complexFormat(),
+          .angleUnit = angleUnit(),
+          .symbolic = SymbolicComputation::ReplaceAllSymbols,
+          .context = App::app()->localContext(),
+          .advanceReduce = false},
+      displayMode(), numberOfSignificantDigits(), determinant, inverse,
+      rowEchelonForm, reducedRowEchelonForm, trace);
 
   size_t index = 0;
   // Determinant is only computed on squared matrices

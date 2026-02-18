@@ -29,12 +29,16 @@ void VectorListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  ProjectionContext ctx = {.complexFormat = complexFormat(),
-                           .angleUnit = angleUnit(),
-                           .symbolic = SymbolicComputation::ReplaceAllSymbols,
-                           .context = symbolContext};
-  assert(exactOutput.preferredComplexFormat(ctx.complexFormat, ctx.context,
-                                            ctx.symbolic) == ctx.complexFormat);
+  SimplificationParameters simplificationParameters = {
+      .complexFormat = complexFormat(),
+      .angleUnit = angleUnit(),
+      .symbolic = SymbolicComputation::ReplaceAllSymbols,
+      .context = symbolContext};
+  assert(
+      exactOutput.preferredComplexFormat(simplificationParameters.complexFormat,
+                                         simplificationParameters.context,
+                                         simplificationParameters.symbolic) ==
+      simplificationParameters.complexFormat);
 
   setShowIllustration(false);
   size_t index = 0;
@@ -44,7 +48,7 @@ void VectorListController::computeAdditionalResults(
   UserExpression norm = VectorHelper::BuildVectorNorm(exactClone, symbolContext,
                                                       m_calculationPreferences);
   assert(!norm.isUninitialized() && !norm.isUndefined());
-  setLineAtIndex(index++, UserExpression(), norm, ctx);
+  setLineAtIndex(index++, UserExpression(), norm, simplificationParameters);
 
   // 2. Normalized vector
   double approximatedNorm =
@@ -61,7 +65,7 @@ void VectorListController::computeAdditionalResults(
          normalized.preferredComplexFormat(complexFormat(), symbolContext,
                                            k_symbolicComputation));
   normalized = normalized.cloneAndSimplify(
-      ProjectionContext{
+      SimplificationParameters{
           .complexFormat = complexFormat(),
           .angleUnit = angleUnit(),
           .reductionTarget = Poincare::ReductionTarget::User,
@@ -73,7 +77,8 @@ void VectorListController::computeAdditionalResults(
     // The reduction might have failed
     return;
   }
-  setLineAtIndex(index++, UserExpression(), normalized, ctx);
+  setLineAtIndex(index++, UserExpression(), normalized,
+                 simplificationParameters);
 
   // 3. Angle with x-axis
   assert(approximateOutput.isVector());
@@ -91,7 +96,9 @@ void VectorListController::computeAdditionalResults(
   // HasVector should be false if any vector's child is complex.
   if (yApprox < 0.0) {
     angle = UserExpression::Create(
-        KSub(KA, KB), {.KA = Trigonometry::Period(ctx.angleUnit), .KB = angle});
+        KSub(KA, KB),
+        {.KA = Trigonometry::Period(simplificationParameters.angleUnit),
+         .KB = angle});
   }
   float angleApproximation = angle.approximateToRealScalar<float>(
       angleUnit(), complexFormat(), symbolContext);
@@ -101,7 +108,7 @@ void VectorListController::computeAdditionalResults(
   setLineAtIndex(index++,
                  Poincare::SymbolHelper::BuildUserVariable(
                      UCodePointGreekSmallLetterTheta),
-                 angle, ctx);
+                 angle, simplificationParameters);
 
   // 4. Illustration
   float xApproximation =

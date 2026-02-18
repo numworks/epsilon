@@ -45,8 +45,10 @@ void remove_system_codepoints(char* buffer) {
   *dest = 0;
 }
 
-void simplify(Tree* e, const Poincare::ProjectionContext& ctx, bool beautify) {
-  if (!Simplification::Simplify(e, ctx, beautify)) {
+void simplify(
+    Tree* e, const Poincare::SimplificationParameters& simplificationParameters,
+    bool beautify) {
+  if (!Simplification::Simplify(e, simplificationParameters, beautify)) {
     // Return undef to spot tests overflowing the TreeStack
     e->cloneTreeOverTree(KFailedSimplification);
   }
@@ -54,21 +56,22 @@ void simplify(Tree* e, const Poincare::ProjectionContext& ctx, bool beautify) {
 
 void process_tree_and_compare(
     const char* input, const char* output, ProcessTree process,
-    const Poincare::ProjectionContext& projectionContext,
+    const Poincare::SimplificationParameters& simplificationParameters,
     int nbOfSignificantDigits, bool preserveInput) {
-  Tree* expression =
-      parse(input, projectionContext.context, {.preserveInput = preserveInput});
-  Tree* expected = parse(output, projectionContext.context,
+  Tree* expression = parse(input, simplificationParameters.context,
+                           {.preserveInput = preserveInput});
+  Tree* expected = parse(output, simplificationParameters.context,
                          {.preserveInput = preserveInput});
-  process_tree_and_compare(expression, expected, process, projectionContext,
-                           nbOfSignificantDigits, input, output);
+  process_tree_and_compare(expression, expected, process,
+                           simplificationParameters, nbOfSignificantDigits,
+                           input, output);
   expected->removeTree();
   expression->removeTree();
 }
 
 void process_tree_and_compare(
     const Tree* expression, const Tree* expected, ProcessTree process,
-    const Poincare::ProjectionContext& projectionContext,
+    const Poincare::SimplificationParameters& simplificationParameters,
     int nbOfSignificantDigits, const char* input, const char* output) {
   /* If expected output has been given as a serialized tree, we can't expect a
    * perfect tree match through parsing and serialization. */
@@ -82,7 +85,7 @@ void process_tree_and_compare(
     return;
   }
   Tree* expressionClone = expression->cloneTree();
-  process(expressionClone, projectionContext);
+  process(expressionClone, simplificationParameters);
   if (!expressionClone) {
     // process failed
     quiz_assert(false);
@@ -105,9 +108,9 @@ void process_tree_and_compare(
 #ifndef PLATFORM_DEVICE
     if (!ok) {
       float expectedMetric =
-          Metric::GetMetric(expected, projectionContext.reductionTarget);
-      float expressionMetric =
-          Metric::GetMetric(expressionClone, projectionContext.reductionTarget);
+          Metric::GetMetric(expected, simplificationParameters.reductionTarget);
+      float expressionMetric = Metric::GetMetric(
+          expressionClone, simplificationParameters.reductionTarget);
       const char* metricText =
           expectedMetric > expressionMetric
               ? "better"
@@ -157,11 +160,12 @@ Tree* parse(const char* input, const Poincare::SymbolContext& symbolContext,
 Tree* parse_and_reduce(const char* input, bool beautify) {
   Tree* e = parse(input);
   assert(e);
-  Poincare::ProjectionContext ctx = {
-      .complexFormat = Poincare::ComplexFormat::Real,
-      .angleUnit = Poincare::AngleUnit::Radian,
-  };
-  simplify(e, ctx, beautify);
+  simplify(e,
+           Poincare::SimplificationParameters{
+               .complexFormat = Poincare::ComplexFormat::Real,
+               .angleUnit = Poincare::AngleUnit::Radian,
+           },
+           beautify);
   return e;
 }
 

@@ -219,10 +219,6 @@ class Context {
   int16_t pointElement = k_unspecifiedPointElement;
 };
 
-}  // namespace Private
-
-namespace Private {
-
 /* Helper methods */
 
 /* If requested, project user variables or prepare the expression for

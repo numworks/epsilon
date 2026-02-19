@@ -59,31 +59,15 @@ void StorageViewerController::viewWillAppear() {
       totalSize - availableSize, totalSize, 100.0f * ratio,
       Poincare::Preferences::PrintFloatMode::Decimal, 3);
 
-  const char* extensions[] = {
-      Ion::Storage::systemExtension,
-      Ion::Storage::scriptExtension,
-      Ion::Storage::equationExtension,
-      Ion::Storage::expressionExtension,
-      Ion::Storage::functionExtension,
-      Ion::Storage::listExtension,
-      Ion::Storage::sequenceExtension,
-      Ion::Storage::matrixExtension,
-      Ion::Storage::regressionExtension,
-      Ion::Storage::parametricComponentExtension,
-      Ion::Storage::regressionMemoizedFormulaExtension,
-      Ion::Storage::statisticsMemoizedFormulaExtension,
-  };
-  constexpr int numberOfExtensions = sizeof(extensions) / sizeof(extensions[0]);
-
   // Add record counts for each extension
   int displayedExtensions = 0;
-  for (int i = 0; i < numberOfExtensions; ++i) {
+  for (int i = 0; i < k_numberOfAvailableExtensions; ++i) {
     int count = Ion::Storage::FileSystem::sharedFileSystem
-                    ->numberOfRecordsWithExtension(extensions[i]);
+                    ->numberOfRecordsWithExtension(k_availableExtensions[i]);
     if (count > 0) {
-      len += Poincare::Print::CustomPrintf(buffer + len,
-                                           ContentView::k_bufferSize - len,
-                                           "  %s: %i", extensions[i], count);
+      len += Poincare::Print::CustomPrintf(
+          buffer + len, ContentView::k_bufferSize - len, "  %s: %i",
+          k_availableExtensions[i], count);
       displayedExtensions++;
       // Line return every 3 extensions
       if (displayedExtensions % 3 == 0) {

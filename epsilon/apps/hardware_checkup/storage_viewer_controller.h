@@ -3,6 +3,7 @@
 #include <escher/buffer_text_view.h>
 #include <escher/solid_color_view.h>
 #include <escher/view_controller.h>
+#include <ion/storage/file_system.h>
 
 namespace HardwareCheckup {
 
@@ -30,6 +31,23 @@ class StorageViewerController : public Escher::ViewController {
     }
     Escher::BufferTextView<k_bufferSize> m_textView;
   };
+  constexpr static const char* k_availableExtensions[] = {
+      Ion::Storage::equationExtension,
+      Ion::Storage::expressionExtension,
+      Ion::Storage::functionExtension,
+      Ion::Storage::listExtension,
+      Ion::Storage::sequenceExtension,
+      Ion::Storage::matrixExtension,
+      Ion::Storage::regressionExtension,
+      Ion::Storage::parametricComponentExtension,
+      Ion::Storage::regressionMemoizedFormulaExtension,
+      Ion::Storage::statisticsMemoizedFormulaExtension,
+      Ion::Storage::systemExtension,
+      Ion::Storage::scriptExtension,
+  };
+  constexpr static int k_numberOfAvailableExtensions =
+      sizeof(k_availableExtensions) / sizeof(k_availableExtensions[0]);
+
   ContentView m_view;
 };
 

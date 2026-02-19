@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   lint:
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    runs-on: ${{ fromJSON(vars.RUNNER_LABELS) }}
     steps:
       - name: Fetch target branch and PR branch
         uses: actions/checkout@v4

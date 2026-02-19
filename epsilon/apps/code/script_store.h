@@ -14,7 +14,8 @@ namespace Code {
 
 class ScriptStore : public MicroPython::ScriptProvider {
  public:
-  constexpr static size_t k_scriptExtensionLength = 2;  // "py"
+  // Length of Ion::Storage::scriptExtension
+  constexpr static size_t k_scriptExtensionLength = 2;
 
   // Storage information
   static bool ScriptNameIsFree(const char* baseName);

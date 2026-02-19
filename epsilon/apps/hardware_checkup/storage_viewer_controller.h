@@ -50,6 +50,8 @@ class StorageViewerController : public Escher::ViewController {
   };
   constexpr static int k_numberOfAvailableExtensions =
       sizeof(k_availableExtensions) / sizeof(k_availableExtensions[0]);
+  // Use script Extension since it's easy to manage on the script app.
+  constexpr static const char* k_dummyExtension = Ion::Storage::scriptExtension;
 
   ContentView m_view;
 };

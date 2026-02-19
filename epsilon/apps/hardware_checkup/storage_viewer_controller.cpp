@@ -8,8 +8,6 @@ namespace HardwareCheckup {
 
 bool StorageViewerController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Plus) {
-    // Use script Extension since it's easy to manage on the script app.
-    const char* extension = Ion::Storage::scriptExtension;
     int newID = 0;
     // Longest base name is dum99
     constexpr int baseNameSize = 6;
@@ -22,12 +20,12 @@ bool StorageViewerController::handleEvent(Ion::Events::Event event) {
         return false;
       }
       Poincare::Print::CustomPrintf(baseName, baseNameSize, "dum%i", newID);
-    } while (fs->hasRecord(Ion::Storage::Record(baseName, extension)));
+    } while (fs->hasRecord(Ion::Storage::Record(baseName, k_dummyExtension)));
     // Fill half of the remaining storage with dummy data.
     size_t dataSize = fs->availableSize() / 2;
-    if (dataSize > 0 &&
-        fs->createRecordWithExtension(baseName, extension, this, dataSize) ==
-            Ion::Storage::Record::ErrorStatus::None) {
+    if (dataSize > 0 && fs->createRecordWithExtension(
+                            baseName, k_dummyExtension, this, dataSize) ==
+                            Ion::Storage::Record::ErrorStatus::None) {
       viewWillAppear();
       return true;
     }
@@ -85,7 +83,11 @@ void StorageViewerController::viewWillAppear() {
   }
 
   // Display available commands
-  m_view.textView()->appendText("\n\nPress + to add dummy py records");
+  m_view.textView()->appendText("\n\n");
+  Poincare::Print::CustomPrintf(lineBuffer, ContentView::k_lineBufferSize,
+                                "Press + to add dummy %s records.\n",
+                                k_dummyExtension);
+  m_view.textView()->appendText(lineBuffer);
 }
 
 void StorageViewerController::ContentView::layoutSubviews(bool force) {

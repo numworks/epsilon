@@ -11,23 +11,22 @@ bool StorageViewerController::handleEvent(Ion::Events::Event event) {
     // Use script Extension since it's easy to manage on the script app.
     const char* extension = Ion::Storage::scriptExtension;
     int newID = 0;
-    char baseName[7];
+    // Longest base name is dum99
+    constexpr int baseNameSize = 6;
+    char baseName[baseNameSize];
+    Ion::Storage::FileSystem* fs = Ion::Storage::FileSystem::sharedFileSystem;
     // Find the first available name with the format "dumX.py" with X a number.
     do {
       newID += 1;
-      if (newID > 999) {
-        assert(false);
+      if (newID > 99) {
         return false;
       }
-      Poincare::Print::CustomPrintf(baseName, 7, "dum%i", newID);
-    } while (Ion::Storage::FileSystem::sharedFileSystem->hasRecord(
-        Ion::Storage::Record(baseName, extension)));
+      Poincare::Print::CustomPrintf(baseName, baseNameSize, "dum%i", newID);
+    } while (fs->hasRecord(Ion::Storage::Record(baseName, extension)));
     // Fill half of the remaining storage with dummy data.
-    size_t dataSize =
-        Ion::Storage::FileSystem::sharedFileSystem->availableSize() / 2;
+    size_t dataSize = fs->availableSize() / 2;
     if (dataSize > 0 &&
-        Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-            baseName, extension, this, dataSize) ==
+        fs->createRecordWithExtension(baseName, extension, this, dataSize) ==
             Ion::Storage::Record::ErrorStatus::None) {
       viewWillAppear();
       return true;
@@ -77,7 +76,7 @@ void StorageViewerController::viewWillAppear() {
   constexpr int numberOfExtensions = sizeof(extensions) / sizeof(extensions[0]);
 
   // Add record counts for each extension
-  int extensionsPerLine = 0;
+  int displayedExtensions = 0;
   for (int i = 0; i < numberOfExtensions; ++i) {
     int count = Ion::Storage::FileSystem::sharedFileSystem
                     ->numberOfRecordsWithExtension(extensions[i]);
@@ -85,12 +84,11 @@ void StorageViewerController::viewWillAppear() {
       len += Poincare::Print::CustomPrintf(buffer + len,
                                            ContentView::k_bufferSize - len,
                                            "  %s: %i", extensions[i], count);
-      extensionsPerLine++;
+      displayedExtensions++;
       // Line return every 3 extensions
-      if (extensionsPerLine >= 3) {
+      if (displayedExtensions % 3 == 0) {
         len += Poincare::Print::CustomPrintf(
             buffer + len, ContentView::k_bufferSize - len, "\n");
-        extensionsPerLine = 0;
       }
     }
   }

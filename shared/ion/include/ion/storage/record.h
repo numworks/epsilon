@@ -25,8 +25,8 @@ constexpr static char scriptExtension[] = "py";
  * - A record is identified by its fullName, which is unique
  * - We cannot keep the address pointing to the fullName because if another
  *   record is modified, it might alter our record's fullName address.
- *   Keeping a buffer with the fullNames will waste memory as we cannot
- *   forsee the size of the fullNames. */
+ * - Keeping a buffer with the fullNames will waste memory as we cannot
+ *   foresee the size of the fullNames. */
 class Record {
  public:
   constexpr static char k_dotChar = '.';

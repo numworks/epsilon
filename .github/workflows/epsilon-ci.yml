@@ -181,7 +181,7 @@ jobs:
         timeout-minutes: 5
   linux:
     timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS_LARGE) }}
     if: ${{ (github.event_name == 'pull_request' || fromJSON(github.event.inputs.linux)) }}
     env:
       MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"

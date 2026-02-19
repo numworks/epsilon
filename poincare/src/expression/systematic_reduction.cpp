@@ -54,8 +54,7 @@ bool SystematicReduction::DeepReduce(Tree* e) {
 }
 
 bool SystematicReduction::ShallowReduce(Tree* e) {
-#if ASSERTIONS
-  // This assert is quite costly, should be an assert level 2 ?
+#if ASSERTIONS && DEBUG
   assert(Dimension::DeepCheck(e));
   Dimension dimBefore = Dimension::Get(e);
   int lenBefore = Dimension::ListLength(e);
@@ -63,7 +62,7 @@ bool SystematicReduction::ShallowReduce(Tree* e) {
   bool changed = SystematicReduction::BubbleUpFromChildren(e);
   assert(!(changed && Switch(e)));
   changed = changed || Switch(e);
-#if ASSERTIONS
+#if ASSERTIONS && DEBUG
   if (changed) {
     assert(Dimension::DeepCheck(e));
     if (!e->isUndefined()) {

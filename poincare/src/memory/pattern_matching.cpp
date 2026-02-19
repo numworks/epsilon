@@ -1,5 +1,6 @@
 #include "pattern_matching.h"
 
+#include <omg/assertions.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/systematic_reduction.h>
@@ -454,14 +455,17 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
       // Since withinNAry is true, insertedNAry will be sanitized afterward
       for (int i = 0; i < treesToInsert - 1; i++) {
         [[maybe_unused]] Tree* inserted = nodeToInsert->cloneTree();
-        assert(!(reduce && SystematicReduction::DeepReduce(inserted)));
+        DEBUG_ASSERT(!(reduce && SystematicReduction::DeepReduce(inserted)));
         nodeToInsert = nodeToInsert->nextTree();
       }
     }
     [[maybe_unused]] Tree* inserted = nodeToInsert->cloneTree();
-    assert(!(reduce && SystematicReduction::DeepReduce(inserted)));
+    DEBUG_ASSERT(!(reduce && SystematicReduction::DeepReduce(inserted)));
     node = node->nextNode();
   }
+  NON_DEBUG_ASSERT(!(reduce &&
+                     (!insertedNAry || insertedNAry->numberOfChildren() > 0) &&
+                     SystematicReduction::DeepReduce(top)));
   return top;
 }
 

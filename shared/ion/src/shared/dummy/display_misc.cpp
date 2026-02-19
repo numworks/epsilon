@@ -1,3 +1,4 @@
+#include <ion/contrast.h>
 #include <ion/display.h>
 
 namespace Ion {
@@ -16,4 +17,14 @@ void reconfigure(ScreenParameters p) {}
 void refreshDisplay() {}
 
 }  // namespace Display
+}  // namespace Ion
+
+namespace Ion {
+namespace Contrast {
+
+void setScreenContrast(uint8_t vop, uint8_t lightGray, uint8_t darkGray) {}
+
+void persistScreenCalibrationPreset(int presetIndex) {}
+
+}  // namespace Contrast
 }  // namespace Ion

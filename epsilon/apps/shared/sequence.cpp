@@ -4,6 +4,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <escher/app.h>
 #include <float.h>
+#include <omg/assertions.h>
 #include <omg/print.h>
 #include <omg/utf8_helper.h>
 #include <poincare/helpers/symbol_pool.h>
@@ -32,8 +33,9 @@ void Sequence::setType(Type t) {
   /* Reset all contents */
   char name[SymbolHelper::k_maxNameSize];
   nameWithoutExtension(name, SymbolHelper::k_maxNameSize);
-  Ion::Storage::Record::ErrorStatus error = setExpressionContent(
-      SequenceHelper::InitialExpression(name, type(), recursiveNotation()));
+  ASSERT_AND_RETURN(setExpressionContent(SequenceHelper::InitialExpression(
+                        name, type(), recursiveNotation())) ==
+                    ErrorStatus::None);
   switch (t) {
     case Type::Explicit:
       setFirstInitialConditionContent(Layout());
@@ -50,8 +52,6 @@ void Sequence::setType(Type t) {
       break;
     }
   }
-  assert(error == Ion::Storage::Record::ErrorStatus::None);
-  (void)error;  // Silence compilation warning
 }
 
 void Sequence::setInitialRank(int rank) {
@@ -61,10 +61,10 @@ void Sequence::setInitialRank(int rank) {
 }
 
 void Sequence::updateMainExpressionForNotation() {
-  [[maybe_unused]] ErrorStatus error =
+  ASSERT_AND_RETURN(
       setExpressionContent(SequenceHelper::UpdateMainExpressionForNotation(
-          expressionClone(), type(), recursiveNotation()));
-  assert(error == ErrorStatus::None);
+          expressionClone(), type(), recursiveNotation())) ==
+      ErrorStatus::None);
 }
 
 void Sequence::setRecursiveNotation(RecursiveNotation notation) {

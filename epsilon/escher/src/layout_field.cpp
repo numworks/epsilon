@@ -5,6 +5,7 @@
 #include <escher/text_field.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
+#include <omg/assertions.h>
 #include <omg/utf8_helper.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/helpers/symbol.h>
@@ -391,9 +392,9 @@ KDSize LayoutField::minimalSizeForOptimalDisplay() const {
 }
 
 const char* LayoutField::text() {
-  [[maybe_unused]] size_t length =
-      layout().serialize(std::span<char>(m_draftBuffer, m_draftBufferSize));
-  assert(length <= m_draftBufferSize);
+  ASSERT_AND_RETURN(
+      layout().serialize(std::span<char>(m_draftBuffer, m_draftBufferSize)) <=
+      m_draftBufferSize);
   return m_draftBuffer;
 }
 

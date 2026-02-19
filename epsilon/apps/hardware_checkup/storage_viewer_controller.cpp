@@ -35,6 +35,11 @@ bool StorageViewerController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+StorageViewerController::ContentView::ContentView()
+    : SolidColorView(KDColorWhite),
+      m_textView({.style = {.font = KDFont::Size::Small},
+                  .verticalAlignment = KDGlyph::k_alignTop}) {}
+
 void StorageViewerController::ContentView::setColor(KDColor color) {
   SolidColorView::setColor(color);
   m_textView.setBackgroundColor(color);
@@ -54,8 +59,10 @@ void StorageViewerController::viewWillAppear() {
                                  static_cast<uint8_t>(255 * ratio)));
 
   // Start with available size
-  int len = Poincare::Print::CustomPrintf(
-      buffer, ContentView::k_bufferSize, "Storage: %i / %i (%*.*ef%%)\n",
+  int len = 0;
+  len += Poincare::Print::CustomPrintf(
+      buffer + len, ContentView::k_bufferSize - len,
+      "Storage: %i / %i (%*.*ef%%)\n\nRecords count by extension :\n",
       totalSize - availableSize, totalSize, 100.0f * ratio,
       Poincare::Preferences::PrintFloatMode::Decimal, 3);
 
@@ -70,7 +77,7 @@ void StorageViewerController::viewWillAppear() {
           k_availableExtensions[i], count);
       displayedExtensions++;
       // Line return every 3 extensions
-      if (displayedExtensions % 3 == 0) {
+      if (displayedExtensions % 4 == 0) {
         len += Poincare::Print::CustomPrintf(
             buffer + len, ContentView::k_bufferSize - len, "\n");
       }
@@ -79,12 +86,12 @@ void StorageViewerController::viewWillAppear() {
   len += Poincare::Print::CustomPrintf(buffer + len,
                                        ContentView::k_bufferSize - len,
                                        "\n\nPress + to add dummy py records");
+  assert(len < static_cast<int>(ContentView::k_bufferSize));
   m_view.textView()->setText(buffer);
 }
 
 void StorageViewerController::ContentView::layoutSubviews(bool force) {
-  setChildFrame(&m_textView,
-                KDRect(0, 0, Ion::Display::Width, Ion::Display::Height / 2),
+  setChildFrame(&m_textView, KDRect(0, 0, bounds().width(), bounds().height()),
                 force);
 }
 

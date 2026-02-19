@@ -284,8 +284,8 @@ bool AdditionalResultsHelper::HasInverseTrigo(
      * additional result on complex inverse trigo */
     Tree* output = approximateOutput.tree()->cloneTree();
     Internal::Simplification::ToSystem(
-        output,
-        ProjectionParameters{.complexFormat = ComplexFormat::Cartesian});
+        output, ProjectionParameters{
+                    .user = {.complexFormat = ComplexFormat::Cartesian}});
     result = GetComplexProperties(output).isReal();
     output->removeTree();
   }

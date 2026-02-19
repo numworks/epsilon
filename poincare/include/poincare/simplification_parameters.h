@@ -22,15 +22,8 @@ struct ProjectionPolicy {
 };
 
 struct ProjectionParameters {
-#if POINCARE_COMPLEX
-  ComplexFormat complexFormat = ComplexFormat::None;
-#else
-  constexpr static ComplexFormat complexFormat = ComplexFormat::Real;
-#endif
-  AngleUnit angleUnit = AngleUnit::None;
-  SymbolicComputation symbolic = SymbolicComputation::KeepAllSymbols;
-  const Poincare::SymbolContext& context = k_emptySymbolContext;
-  Strategy strategy = Strategy::Default;
+  UserParameters user = {};
+  ProjectionPolicy policy = {};
 };
 
 struct ReductionParameters {
@@ -71,20 +64,9 @@ struct UnitParameters {
 
 inline ProjectionParameters ToProjectionParameters(
     const SimplificationParameters& simplificationParameters) {
-#if POINCARE_COMPLEX
   return ProjectionParameters{
-      .complexFormat = simplificationParameters.user.complexFormat,
-      .angleUnit = simplificationParameters.user.angleUnit,
-      .symbolic = simplificationParameters.projectionPolicy.symbolic,
-      .context = simplificationParameters.user.context,
-      .strategy = simplificationParameters.projectionPolicy.strategy};
-#else
-  return ProjectionParameters{
-      .angleUnit = simplificationParameters.user.angleUnit,
-      .symbolic = simplificationParameters.projectionPolicy.symbolic,
-      .context = simplificationParameters.user.context,
-      .strategy = simplificationParameters.projectionPolicy.strategy};
-#endif
+      .user = simplificationParameters.user,
+      .policy = simplificationParameters.projectionPolicy};
 }
 
 // Strategy will be default and symbolic will be KeepAllSymbols
@@ -92,16 +74,17 @@ inline ProjectionParameters ToProjectionParameters(
     const BeautificationParameters& beautificationParameters) {
 #if POINCARE_COMPLEX
   return ProjectionParameters{
-      .complexFormat = beautificationParameters.complexFormat,
-      .angleUnit = beautificationParameters.angleUnit,
-      .symbolic = SymbolicComputation::KeepAllSymbols,
-      .context = beautificationParameters.context,
-      .strategy = Strategy::Default};
+      .user = {.complexFormat = beautificationParameters.complexFormat,
+               .angleUnit = beautificationParameters.angleUnit,
+               .context = beautificationParameters.context},
+      .policy = {.symbolic = SymbolicComputation::KeepAllSymbols,
+                 .strategy = Strategy::Default}};
 #else
-  return ProjectionParameters{.angleUnit = beautificationParameters.angleUnit,
-                              .symbolic = SymbolicComputation::KeepAllSymbols,
-                              .context = beautificationParameters.context,
-                              .strategy = Strategy::Default};
+  return ProjectionParameters{
+      .user = {.angleUnit = beautificationParameters.angleUnit,
+               .context = beautificationParameters.context},
+      .policy = {.symbolic = SymbolicComputation::KeepAllSymbols,
+                 .strategy = Strategy::Default}};
 #endif
 }
 

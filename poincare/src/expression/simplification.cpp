@@ -161,11 +161,11 @@ bool PrepareForProjection(Tree* e,
   int maxRandomSeed = Random::SeedRandomNodes(e, previousMaxRandomSeed);
   bool changed = maxRandomSeed > previousMaxRandomSeed;
   // Replace UserFunctions before projecting local variables
-  const SymbolicComputation symbolic = projectionParameters.symbolic;
+  const SymbolicComputation symbolic = projectionParameters.policy.symbolic;
   if (symbolic != SymbolicComputation::KeepAllSymbols &&
       symbolic != SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     if (Projection::DeepReplaceUserSymbol(
-            e, projectionParameters.context,
+            e, projectionParameters.user.context,
             SymbolicComputation::ReplaceDefinedFunctions)) {
       // Seed random nodes that may have appeared after replacing
       maxRandomSeed = Random::SeedRandomNodes(e, maxRandomSeed);
@@ -175,12 +175,12 @@ bool PrepareForProjection(Tree* e,
   changed = Variables::ProjectLocalVariablesToId(e) || changed;
   // Replace user named symbols after having projected local variables
   if (symbolic != SymbolicComputation::ReplaceDefinedFunctions) {
-    changed = Projection::DeepReplaceUserSymbol(e, projectionParameters.context,
-                                                symbolic) ||
+    changed = Projection::DeepReplaceUserSymbol(
+                  e, projectionParameters.user.context, symbolic) ||
               changed;
   } else {
-    assert(!Projection::DeepReplaceUserSymbol(e, projectionParameters.context,
-                                              symbolic));
+    assert(!Projection::DeepReplaceUserSymbol(
+        e, projectionParameters.user.context, symbolic));
   }
   // No additional random nodes should have appeared
   assert(Random::SeedRandomNodes(e, maxRandomSeed) == maxRandomSeed);
@@ -211,8 +211,8 @@ bool IsSystem(const Tree* e) {
   Tree* c = e->cloneTree();
 #if POINCARE_COMPLEX
   // Use ComplexFormat::Cartesian to avoid having PowReal interfering
-  ProjectionParameters projectionParameters = {.complexFormat =
-                                                   ComplexFormat::Cartesian};
+  ProjectionParameters projectionParameters = {
+      .user = {.complexFormat = ComplexFormat::Cartesian}};
 #else
   /* Pow is used both in UserExpressions to represent all the types of powers
    * and in system for some specific powers (simple integral powers for
@@ -290,7 +290,7 @@ bool ApplyStrategy(Tree* e, const ProjectionParameters& projectionParameters,
                    bool insideReduction) {
   bool changed = false;
 
-  switch (projectionParameters.strategy) {
+  switch (projectionParameters.policy.strategy) {
     case Strategy::Default:
       break;
     case Strategy::ApproximateToFloat:
@@ -299,9 +299,9 @@ bool ApplyStrategy(Tree* e, const ProjectionParameters& projectionParameters,
           Approximation::Parameters{
               .onlyReplaceNumerical = true,
               .optimize = true,
-              .angleUnit = projectionParameters.angleUnit,
-              .complexFormat = projectionParameters.complexFormat,
-              .symbolContext = projectionParameters.context});
+              .angleUnit = projectionParameters.user.angleUnit,
+              .complexFormat = projectionParameters.user.complexFormat,
+              .symbolContext = projectionParameters.user.context});
       if (changed && insideReduction) {
         // NAries could be sorted again, some children may be merged.
         SystematicReduction::DeepReduce(e);

@@ -77,7 +77,7 @@ void assert_points_of_interest_range_is(const char* expression,
                                         Range2D<T> expectedRange) {
   Tree* e = parseAndPrepareForApproximation(
       expression,
-      ProjectionParameters{.angleUnit = Poincare::AngleUnit::Radian});
+      ProjectionParameters{.user = {.angleUnit = Poincare::AngleUnit::Radian}});
   ZoomTest<T> zoom;
   zoom.zoom()->fitPointsOfInterest(expressionEvaluator<T>, e,
                                    Range1D<T>(-k_maxFloat, k_maxFloat), false,

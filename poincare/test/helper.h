@@ -257,7 +257,7 @@ inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
   Poincare::Internal::Tree* e = parse(function);
   Poincare::Internal::Simplification::ToSystem(e, projectionParameters);
   Poincare::Internal::Approximation::PrepareFunctionForApproximation(
-      e, k_symbol, projectionParameters.complexFormat == Real);
+      e, k_symbol, projectionParameters.user.complexFormat == Real);
   return e;
 }
 

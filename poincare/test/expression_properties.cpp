@@ -173,7 +173,7 @@ QUIZ_CASE(pcj_properties_has_matrix) {
 void assert_projected_is_infinity(
     const char* input, const ProjectionParameters& projectionParameters,
     bool isInfinity = true) {
-  Tree* e = parse(input, projectionParameters.context);
+  Tree* e = parse(input, projectionParameters.user.context);
   Simplification::ToSystem(e, projectionParameters);
   quiz_assert_print_if_failure(e->hasDescendantSatisfying([](const Tree* e) {
     return Internal::Infinity::IsPlusOrMinusInfinity(e);
@@ -184,9 +184,8 @@ void assert_projected_is_infinity(
 QUIZ_CASE(pcj_properties_is_infinity) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionParameters projectionParameters = {
-      .symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .context = symbolStore,
-  };
+      .user = {.context = symbolStore},
+      .policy = {.symbolic = SymbolicComputation::ReplaceAllSymbols}};
   assert_projected_is_infinity("3.4+inf", projectionParameters);
   assert_projected_is_infinity("2.3+1", projectionParameters, false);
   assert_projected_is_infinity("a", projectionParameters, false);
@@ -202,7 +201,7 @@ QUIZ_CASE(pcj_properties_is_infinity) {
 void assert_expression_has_variables(
     const char* input, const Tree* expectedVariables,
     const ProjectionParameters& projectionParameters) {
-  Tree* e = parse(input, projectionParameters.context);
+  Tree* e = parse(input, projectionParameters.user.context);
   Simplification::ToSystem(e, projectionParameters);
   const Tree* variables = Variables::GetUserVariables(e);
   assert_trees_are_equal(variables, expectedVariables);
@@ -215,8 +214,8 @@ QUIZ_CASE(pcj_properties_get_variables) {
    * - m, g, h, l, s, t, A which are units and can be parsed without '_' now. */
   PoincareTest::SymbolStore symbolStore;
   ProjectionParameters projectionParameters = {
-      .symbolic = SymbolicComputation::ReplaceDefinedFunctions,
-      .context = symbolStore,
+      .user = {.context = symbolStore},
+      .policy = {.symbolic = SymbolicComputation::ReplaceDefinedFunctions},
   };
 
   assert_expression_has_variables("x+y", KList("x"_e, "y"_e),

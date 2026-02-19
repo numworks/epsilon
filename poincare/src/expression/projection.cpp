@@ -177,8 +177,8 @@ bool Projection::DeepSystemProject(
     const Dimension& dimension) {
   bool changed = false;
   ShallowSystemProjectArgs args{
-      .angleUnit = projectionParameters.angleUnit,
-      .complexFormat = projectionParameters.complexFormat,
+      .angleUnit = projectionParameters.user.angleUnit,
+      .complexFormat = projectionParameters.user.complexFormat,
       .m_hasNonKelvinTemperatureUnit = dimension.hasNonKelvinTemperatureUnit(),
   };
   if (e->isEuclideanDivision()) {

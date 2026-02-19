@@ -26,10 +26,10 @@ void assert_next_solution_is(const char* expression,
   assert(std::isnan(expected.x()) == std::isnan(expected.y()));
 
   Poincare::ProjectionParameters projectionParameters = {
-      .complexFormat = Real,
-      .angleUnit = angleUnit,
-      .context = symbolContext,
-      .strategy = Poincare::Strategy::ApproximateToFloat};
+      .user = {.complexFormat = Real,
+               .angleUnit = angleUnit,
+               .context = symbolContext},
+      .policy = {.strategy = Poincare::Strategy::ApproximateToFloat}};
 
   Tree* e = parseAndPrepareForApproximation(expression, projectionParameters);
 

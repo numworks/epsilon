@@ -90,7 +90,8 @@ void approximates_to(const char* input, const char* output,
                 .angleUnit = simplificationParameters.angleUnit,
                 .complexFormat = simplificationParameters.complexFormat,
                 .symbolContext = simplificationParameters.context}));
-        Beautification::DeepBeautify(tree, simplificationParameters);
+        Beautification::DeepBeautify(
+            tree, ToBeautificationParameters(simplificationParameters));
       },
       simplificationParameters, nbOfSignificantDigits);
 }
@@ -166,7 +167,8 @@ void simplified_approximates_to(
                 .angleUnit = simplificationParameters.angleUnit,
                 .complexFormat = simplificationParameters.complexFormat,
                 .symbolContext = simplificationParameters.context}));
-        Beautification::DeepBeautify(tree, simplificationParameters);
+        Beautification::DeepBeautify(
+            tree, ToBeautificationParameters(simplificationParameters));
       },
       simplificationParameters, nbOfSignificantDigits);
 }
@@ -189,7 +191,8 @@ void projected_approximates_to(
                 .angleUnit = simplificationParameters.angleUnit,
                 .complexFormat = simplificationParameters.complexFormat,
                 .symbolContext = simplificationParameters.context}));
-        Beautification::DeepBeautify(tree, simplificationParameters);
+        Beautification::DeepBeautify(
+            tree, ToBeautificationParameters(simplificationParameters));
       },
       simplificationParameters, nbOfSignificantDigits);
 }

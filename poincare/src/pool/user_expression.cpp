@@ -166,8 +166,9 @@ UserExpression UserExpression::cloneAndApproximate(
    * raise, for example "(x+1)*(pi+i)"
    * TODO: solve these issues */
   if (!CAS::Enabled()) {
-    Beautification::DeepBeautify(a, simplificationParameters,
-                                 Internal::Dimension::Get(a));
+    Beautification::DeepBeautify(
+        a, ToBeautificationParameters(simplificationParameters),
+        Internal::Dimension::Get(a));
   }
   return UserExpression::Builder(a);
 }

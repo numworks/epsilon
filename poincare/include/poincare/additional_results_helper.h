@@ -56,13 +56,13 @@ class AdditionalResultsHelper final {
   /* Rational additional results */
   static Layout CreateRationalApproximation(
       const SystemExpression rational,
-      const SimplificationParameters& simplificationParameters);
+      const BeautificationParameters& beautificationParameters);
   static UserExpression CreateEuclideanDivision(
       SystemExpression rational,
-      const SimplificationParameters& simplificationParameters);
+      const BeautificationParameters& beautificationParameters);
   static UserExpression CreateMixedFraction(
       SystemExpression rational, bool mixedFractionsEnabled,
-      const SimplificationParameters& simplificationParameters);
+      const BeautificationParameters& beautificationParameters);
 
   /* Scientific notation additional results */
   static Layout ScientificLayout(

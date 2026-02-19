@@ -73,12 +73,14 @@ void projects_and_reduces_to(
         simplify(tree, simplificationParameters, false);
         if (simplificationParameters.reductionTarget != ReductionTarget::User) {
           // Beautify anyway to compare input and outputs
-          SimplificationParameters contextForBeautification =
+          SimplificationParameters parametersForBeautification =
               simplificationParameters;
-          contextForBeautification.reductionTarget = ReductionTarget::User;
-          Beautification::DeepBeautify(tree, contextForBeautification);
+          parametersForBeautification.reductionTarget = ReductionTarget::User;
+          Beautification::DeepBeautify(
+              tree, ToBeautificationParameters(parametersForBeautification));
         } else {
-          Beautification::DeepBeautify(tree, simplificationParameters);
+          Beautification::DeepBeautify(
+              tree, ToBeautificationParameters(simplificationParameters));
         }
       },
       simplificationParameters);

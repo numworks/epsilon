@@ -24,24 +24,26 @@ void RationalListController::computeAdditionalResults(
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
   UserExpression e = exactOutput;
   assert(!e.isUninitialized());
-  SimplificationParameters simplificationParameters = {
-      .complexFormat = complexFormat(),
-      .angleUnit = angleUnit(),
-      .advanceReduce = false};
-  SystemExpression eReduced = e.cloneAndReduce(simplificationParameters);
+
+  SystemExpression eReduced = e.cloneAndReduce(
+      SimplificationParameters{.complexFormat = complexFormat(),
+                               .angleUnit = angleUnit(),
+                               .advanceReduce = false});
   assert(!eReduced.isFailedSimplification() && eReduced.tree()->isRational());
 
+  BeautificationParameters beautificationParameters = BeautificationParameters{
+      .complexFormat = complexFormat(), .angleUnit = angleUnit()};
   Layout approximateFraction =
       AdditionalResultsHelper::CreateRationalApproximation(
-          eReduced, simplificationParameters);
+          eReduced, beautificationParameters);
   UserExpression mixedFraction = AdditionalResultsHelper::CreateMixedFraction(
       eReduced,
       GlobalPreferences::SharedGlobalPreferences()->mixedFractions() ==
           Preferences::MixedFractions::Enabled,
-      simplificationParameters);
+      beautificationParameters);
   UserExpression euclideanDiv =
       AdditionalResultsHelper::CreateEuclideanDivision(
-          eReduced, simplificationParameters);
+          eReduced, beautificationParameters);
 
   int index = 0;
   if (!approximateFraction.isUninitialized()) {

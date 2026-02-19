@@ -149,7 +149,8 @@ bool BeautifyReduced(Tree* e,
           (e->numberOfChildren() == 0 || e->child(0)->isUndefined())));
   bool changed = HandleUnits(e, simplificationParameters, dimension);
   changed =
-      Beautification::DeepBeautify(e, simplificationParameters, dimension) ||
+      Beautification::DeepBeautify(
+          e, ToBeautificationParameters(simplificationParameters), dimension) ||
       changed;
   return changed;
 }

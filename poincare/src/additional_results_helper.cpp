@@ -112,8 +112,9 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
             .angleUnit = simplificationParameters.angleUnit,
             .complexFormat = simplificationParameters.complexFormat,
             .symbolContext = simplificationParameters.context}));
-    Beautification::DeepBeautify(approximateAngleTree,
-                                 simplificationParameters);
+    Beautification::DeepBeautify(
+        approximateAngleTree,
+        ToBeautificationParameters(simplificationParameters));
     exactAngle =
         UserExpression::Builder(static_cast<const Tree*>(approximateAngleTree));
     angleIsExact = false;
@@ -466,7 +467,7 @@ static Tree* BestConvergentOfContinuedFraction(const SystemExpression rational,
  * denominator. Return an uninitialized expression if not possible. */
 Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
     const SystemExpression rational,
-    const SimplificationParameters& simplificationParameters) {
+    const BeautificationParameters& beautificationParameters) {
   Tree* result = BestConvergentOfContinuedFraction(
       rational, k_maxDenominatorDigitsForRationalApproximation);
   double rationalApprox = Approximation::To<double>(
@@ -477,7 +478,7 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
       std::fabs(rationalApprox - resultApprox) <
           k_rationalApproximationPrecision) {
     // Result is not the same as the input and approximation is precise enough
-    Beautification::DeepBeautify(result, simplificationParameters);
+    Beautification::DeepBeautify(result, beautificationParameters);
     // Create the layout ~p/q
     TreeRef rack = Layouter::LayoutExpression(result);
     result->removeTree();
@@ -491,7 +492,7 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
 // Take a rational a/b and create the euclidean division a=b*q+r
 UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
     SystemExpression rational,
-    const SimplificationParameters& simplificationParameters) {
+    const BeautificationParameters& beautificationParameters) {
   assert(rational.isRational());
   IntegerHandler num = Rational::Numerator(rational);
   IntegerHandler den = Rational::Denominator(rational);
@@ -501,7 +502,7 @@ UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
   Tree* quotient = division.quotient->cloneTree();
   /* We beautify the quotient that may be negative and leave the rest unchanged
    * because we want to control the beautification order manually. */
-  Beautification::DeepBeautify(quotient, simplificationParameters);
+  Beautification::DeepBeautify(quotient, beautificationParameters);
   assert(denTree->isPositiveInteger() &&
          division.remainder->isPositiveInteger());
   UserExpression result = UserExpression::Builder(PatternMatching::Create(
@@ -521,7 +522,7 @@ UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
 
 UserExpression AdditionalResultsHelper::CreateMixedFraction(
     SystemExpression rational, bool mixedFractionsEnabled,
-    const SimplificationParameters& simplificationParameters) {
+    const BeautificationParameters& beautificationParameters) {
   assert(rational.isRational());
   IntegerHandler num = Rational::Numerator(rational);
   IntegerHandler den = Rational::Denominator(rational);
@@ -535,8 +536,8 @@ UserExpression AdditionalResultsHelper::CreateMixedFraction(
       Rational::Push(Integer::Handler(division.remainder), den);
   division.remainder->removeTree();
   // Beautify components separately
-  Beautification::DeepBeautify(integerPart, simplificationParameters);
-  Beautification::DeepBeautify(fractionPart, simplificationParameters);
+  Beautification::DeepBeautify(integerPart, beautificationParameters);
+  Beautification::DeepBeautify(fractionPart, beautificationParameters);
   // If mixed fractions are enabled
   if (mixedFractionsEnabled) {
     integerPart->cloneNodeAtNode(KMixedFraction);

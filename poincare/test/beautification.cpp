@@ -6,48 +6,46 @@
 using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_beautification) {
-  Poincare::SimplificationParameters ctx;
-
   Tree* e1 = KMult(3_e, KPow("x"_e, -2_e))->cloneTree();
-  Beautification::DeepBeautify(e1, ctx);
+  Beautification::DeepBeautify(e1, Poincare::BeautificationParameters{});
   assert_trees_are_equal(e1, KDiv(3_e, KPow("x"_e, 2_e)));
 
   Tree* e2 = KMult(3_e, KPow("x"_e, 2_e))->cloneTree();
-  Beautification::DeepBeautify(e2, ctx);
+  Beautification::DeepBeautify(e2, Poincare::BeautificationParameters{});
   assert_trees_are_equal(e2, KMult(3_e, KPow("x"_e, 2_e)));
 
   TreeRef ref1(KAdd(KCos(3_e), KSin("x"_e),
                     KMult(-1_e, 2_e, KExp(KMult(KLn(5_e), "y"_e))),
                     KMult(KLn(2_e), KPow(KLn(4_e), -1_e))));
-  Beautification::DeepBeautify(ref1, ctx);
+  Beautification::DeepBeautify(ref1, Poincare::BeautificationParameters{});
   assert_trees_are_equal(
       ref1, KAdd(KCos(3_e), KSin("x"_e),
                  KOpposite(KMult(2_e, KPow(5_e, "y"_e))), KLogBase(2_e, 4_e)));
 
   TreeRef ref3(KExp(KMult(1_e / 2_e, KLn("y"_e))));
-  Beautification::DeepBeautify(ref3, ctx);
+  Beautification::DeepBeautify(ref3, Poincare::BeautificationParameters{});
   assert_trees_are_equal(ref3, KSqrt("y"_e));
 
   TreeRef ref4(KExp(KMult(2.5_fe, KLn("y"_e))));
-  Beautification::DeepBeautify(ref4, ctx);
+  Beautification::DeepBeautify(ref4, Poincare::BeautificationParameters{});
   assert_trees_are_equal(ref4, KPow("y"_e, 2.5_fe));
 
   TreeRef ref5(
       KAdd(KMult(-1_e, "w"_e), "x"_e, KMult(-1_e, "y"_e), KMult(-1_e, "z"_e)));
-  Beautification::DeepBeautify(ref5, ctx);
+  Beautification::DeepBeautify(ref5, Poincare::BeautificationParameters{});
   assert_trees_are_equal(
       ref5, KAdd(KOpposite("w"_e), "x"_e, KOpposite("y"_e), KOpposite("z"_e)));
 
   TreeRef ref6((-3_e / 2_e)->cloneTree());
-  Beautification::DeepBeautify(ref6, ctx);
+  Beautification::DeepBeautify(ref6, Poincare::BeautificationParameters{});
   assert_trees_are_equal(ref6, KOpposite(KDiv(3_e, 2_e)));
 
   TreeRef ref7((-3_e)->cloneTree());
-  Beautification::DeepBeautify(ref7, ctx);
+  Beautification::DeepBeautify(ref7, Poincare::BeautificationParameters{});
   assert_trees_are_equal(ref7, KOpposite(3_e));
 
   TreeRef ref8(KMult(KLn("a"_e), KPow(KLn(10_e), -1_e))->cloneTree());
-  Beautification::DeepBeautify(ref8, ctx);
+  Beautification::DeepBeautify(ref8, Poincare::BeautificationParameters{});
   assert_trees_are_equal(ref8, KLog("a"_e));
 
   TreeRef ref9(
@@ -56,7 +54,7 @@ QUIZ_CASE(pcj_beautification) {
           KPow(KAdd(3_e, KMult(300_e, KLn(3_e), KPow(KLn(10_e), -1_e))), -1_e),
           KPow(KLn(10_e), -1_e))
           ->cloneTree());
-  Beautification::DeepBeautify(ref9, ctx);
+  Beautification::DeepBeautify(ref9, Poincare::BeautificationParameters{});
   assert_trees_are_equal(ref9,
                          KDiv(KLog(3_e), KAdd(3_e, KMult(300_e, KLog(3_e)))));
 }
@@ -68,7 +66,8 @@ void beautifies_to(const char* input, const char* output) {
          const Poincare::SimplificationParameters& simplificationParameters) {
         Projection::DeepSystemProject(
             e, Poincare::ToProjectionParameters(simplificationParameters));
-        Beautification::DeepBeautify(e, simplificationParameters);
+        Beautification::DeepBeautify(
+            e, Poincare::ToBeautificationParameters(simplificationParameters));
       },
       {
           .complexFormat = Cartesian,

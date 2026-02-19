@@ -52,6 +52,54 @@ inline ProjectionParameters ToProjectionParameters(
 #endif
 }
 
+struct BeautificationParameters {
+#if POINCARE_COMPLEX
+  ComplexFormat complexFormat = ComplexFormat::None;
+#else
+  constexpr static ComplexFormat complexFormat = ComplexFormat::Real;
+#endif
+  AngleUnit angleUnit = AngleUnit::None;
+  const Poincare::SymbolContext& context = k_emptySymbolContext;
+  ReductionTarget reductionTarget = ReductionTarget::User;
+  bool advanceReduce = true;
+};
+
+inline BeautificationParameters ToBeautificationParameters(
+    const SimplificationParameters& simplificationParameters) {
+#if POINCARE_COMPLEX
+  return BeautificationParameters{
+      .complexFormat = simplificationParameters.complexFormat,
+      .angleUnit = simplificationParameters.angleUnit,
+      .context = simplificationParameters.context,
+      .reductionTarget = simplificationParameters.reductionTarget,
+      .advanceReduce = simplificationParameters.advanceReduce};
+#else
+  return BeautificationParameters{
+      .angleUnit = simplificationParameters.angleUnit,
+      .context = simplificationParameters.context,
+      .reductionTarget = simplificationParameters.reductionTarget,
+      .advanceReduce = simplificationParameters.advanceReduce};
+#endif
+}
+
+// Strategy will be default and symbolic will be KeepAllSymbols
+inline ProjectionParameters ToProjectionParameters(
+    const BeautificationParameters& beautificationParameters) {
+#if POINCARE_COMPLEX
+  return ProjectionParameters{
+      .complexFormat = beautificationParameters.complexFormat,
+      .angleUnit = beautificationParameters.angleUnit,
+      .symbolic = SymbolicComputation::KeepAllSymbols,
+      .context = beautificationParameters.context,
+      .strategy = Strategy::Default};
+#else
+  return ProjectionParameters{.angleUnit = beautificationParameters.angleUnit,
+                              .symbolic = SymbolicComputation::KeepAllSymbols,
+                              .context = beautificationParameters.context,
+                              .strategy = Strategy::Default};
+#endif
+}
+
 struct UnitParameters {
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
   UnitDisplay unitDisplay = UnitDisplay::MainOutput;

@@ -105,7 +105,7 @@ bool DeepBeautifyAngleFunctions(
   /* ShallowBeautifyAngleFunctions temporarily introduces AngleUnitContext
    * nodes to allow simplification and approximation of beautified angle
    * functions. */
-  AngleUnit angleUnit = beautificationParameters.angleUnit;
+  AngleUnit angleUnit = beautificationParameters.user.angleUnit;
   bool changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifyAngleFunctions, &angleUnit);
   if (changed) {
@@ -257,14 +257,16 @@ bool DeepBeautify(Tree* e,
   assert(beautificationParameters.reduction.target == ReductionTarget::User);
   bool changed = ApplyComplexFormat(
       e,
-      dimension.isNone() ? Dimension::Get(e, beautificationParameters.context)
-                         : dimension,
+      dimension.isNone()
+          ? Dimension::Get(e, beautificationParameters.user.context)
+          : dimension,
       beautificationParameters);
 
   PatternMatching::Context ctx;
-  if ((beautificationParameters.complexFormat == ComplexFormat::Polar &&
+  if ((beautificationParameters.user.complexFormat == ComplexFormat::Polar &&
        PatternMatching::Match(e, KMult(KA, KExp(KMult(KB, i_e))), &ctx)) ||
-      (beautificationParameters.complexFormat == ComplexFormat::Cartesian &&
+      (beautificationParameters.user.complexFormat ==
+           ComplexFormat::Cartesian &&
        PatternMatching::Match(e, KAdd(KA, KMult(KB, i_e)), &ctx))) {
     changed = ApplyBeautificationSteps(e->child(0), beautificationParameters) ||
               changed;
@@ -570,7 +572,7 @@ bool ShallowBeautify(Tree* e, void* context) {
 bool ApplyComplexFormat(
     Tree* e, Dimension dim,
     const BeautificationParameters& beautificationParameters) {
-  ComplexFormat complexFormat = beautificationParameters.complexFormat;
+  ComplexFormat complexFormat = beautificationParameters.user.complexFormat;
   if (complexFormat == ComplexFormat::None) {
     // None complex format is tolerated in beautification
     return false;
@@ -595,7 +597,7 @@ bool ApplyComplexFormat(
 bool ApplyComplexFormatCartesianOrPolar(
     Tree* e, Dimension dim,
     const BeautificationParameters& beautificationParameters) {
-  ComplexFormat complexFormat = beautificationParameters.complexFormat;
+  ComplexFormat complexFormat = beautificationParameters.user.complexFormat;
   assert(complexFormat == ComplexFormat::Cartesian ||
          complexFormat == ComplexFormat::Polar);
   // Apply element-wise on explicit lists, matrices & points.

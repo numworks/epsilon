@@ -44,13 +44,7 @@ struct SimplificationParameters {
 };
 
 struct BeautificationParameters {
-#if POINCARE_COMPLEX
-  ComplexFormat complexFormat = ComplexFormat::None;
-#else
-  constexpr static ComplexFormat complexFormat = ComplexFormat::Real;
-#endif
-  AngleUnit angleUnit = AngleUnit::None;
-  const Poincare::SymbolContext& context = k_emptySymbolContext;
+  UserParameters user = {};
   ReductionParameters reduction = {};
 };
 
@@ -69,39 +63,19 @@ inline ProjectionParameters ToProjectionParameters(
       .policy = simplificationParameters.projectionPolicy};
 }
 
-// Strategy will be default and symbolic will be KeepAllSymbols
 inline ProjectionParameters ToProjectionParameters(
     const BeautificationParameters& beautificationParameters) {
-#if POINCARE_COMPLEX
   return ProjectionParameters{
-      .user = {.complexFormat = beautificationParameters.complexFormat,
-               .angleUnit = beautificationParameters.angleUnit,
-               .context = beautificationParameters.context},
+      .user = beautificationParameters.user,
       .policy = {.symbolic = SymbolicComputation::KeepAllSymbols,
                  .strategy = Strategy::Default}};
-#else
-  return ProjectionParameters{
-      .user = {.angleUnit = beautificationParameters.angleUnit,
-               .context = beautificationParameters.context},
-      .policy = {.symbolic = SymbolicComputation::KeepAllSymbols,
-                 .strategy = Strategy::Default}};
-#endif
 }
 
 inline BeautificationParameters ToBeautificationParameters(
     const SimplificationParameters& simplificationParameters) {
-#if POINCARE_COMPLEX
   return BeautificationParameters{
-      .complexFormat = simplificationParameters.user.complexFormat,
-      .angleUnit = simplificationParameters.user.angleUnit,
-      .context = simplificationParameters.user.context,
+      .user = simplificationParameters.user,
       .reduction = simplificationParameters.reduction};
-#else
-  return BeautificationParameters{
-      .angleUnit = simplificationParameters.user.angleUnit,
-      .context = simplificationParameters.user.context,
-      .reduction = simplificationParameters.reduction};
-#endif
 }
 
 inline UnitParameters ToUnitParameters(

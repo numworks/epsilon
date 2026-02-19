@@ -31,7 +31,7 @@ void RationalListController::computeAdditionalResults(
   assert(!eReduced.isFailedSimplification() && eReduced.tree()->isRational());
 
   BeautificationParameters beautificationParameters = BeautificationParameters{
-      .complexFormat = complexFormat(), .angleUnit = angleUnit()};
+      .user = {.complexFormat = complexFormat(), .angleUnit = angleUnit()}};
   Layout approximateFraction =
       AdditionalResultsHelper::CreateRationalApproximation(
           eReduced, beautificationParameters);

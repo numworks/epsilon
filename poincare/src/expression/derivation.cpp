@@ -1,5 +1,6 @@
 #include "derivation.h"
 
+#include <omg/assertions.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
@@ -18,7 +19,7 @@ namespace Poincare::Internal {
 
 bool Derivation::Reduce(Tree* e) {
   // Tree's children are expected to have been reduced beforehand.
-  assert(e->isDiff());
+  DANGER_ASSERT(e->isDiff());
   static_assert(Parametric::k_variableIndex == 0 &&
                 Parametric::k_variableIndex + 1 == Parametric::k_valueIndex &&
                 Parametric::k_valueIndex + 1 == Parametric::k_orderIndex &&

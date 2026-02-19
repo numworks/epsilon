@@ -66,8 +66,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
 #ifdef HARDWARE_CHECKUP
   /* We hide here the activation hardware checkup app: in the menu "about", by
    * clicking on '7' on the hardware checkup row. */
-  if ((event == Ion::Events::Seven || event == Ion::Events::LowerM ||
-       event == Ion::Events::UpperM) &&
+  if (event == Ion::Events::Seven &&
       m_messageTreeModel->label() == I18n::Message::About &&
       IsHardwareCheckupRow(selectedRow()) &&
       !ExamModeManager::ExamMode().isActive()) {

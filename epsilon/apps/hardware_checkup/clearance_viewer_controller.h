@@ -23,7 +23,10 @@ class ClearanceViewerController : public Escher::ViewController {
    private:
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 1; }
-    Escher::View* subviewAtIndex(int index) override { return &m_textView; }
+    Escher::View* subviewAtIndex(int index) override {
+      assert(index == 0);
+      return &m_textView;
+    }
     Escher::BufferTextView<k_bufferSize> m_textView;
   };
   ContentView m_view;

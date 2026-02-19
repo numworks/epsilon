@@ -37,7 +37,10 @@ class SubtitleCell : public Escher::Bordered, public Escher::HighlightCell {
   constexpr static KDColor k_textColor = Escher::Palette::BlueishGray;
 
   int numberOfSubviews() const override { return 1; }
-  Escher::View* subviewAtIndex(int index) override { return &m_textView; }
+  Escher::View* subviewAtIndex(int index) override {
+    assert(index == 0);
+    return &m_textView;
+  }
 
   Escher::OneLineBufferTextView<> m_textView;
 };

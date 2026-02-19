@@ -61,7 +61,10 @@ class BannerView : public Escher::View {
 
    private:
     int numberOfSubviews() const override { return 1; }
-    Escher::View* subviewAtIndex(int index) override { return &m_ellipsisView; }
+    Escher::View* subviewAtIndex(int index) override {
+      assert(index == 0);
+      return &m_ellipsisView;
+    }
     void layoutSubviews(bool force = false) override {
       setChildFrame(&m_ellipsisView, bounds(), force);
     }

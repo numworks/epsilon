@@ -317,7 +317,6 @@ bool Variables::HasVariables(const Tree* e) {
 
 bool Variables::HasVariable(const Tree* e, const Tree* variable) {
   // TODO: variable must have the same scope as e
-  assert(variable->isVar());
   return Private::HasVariableOrMaybeRandom(e, Id(variable), false);
 }
 

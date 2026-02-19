@@ -76,7 +76,7 @@ class DetailsParameterController
   // Set the detail values for a line
   void setLineDetailsValues(double slope, double intercept);
   // Set the detail values for a conic
-  void setConicDetailsValues(Poincare::Conic* conic);
+  void setConicDetailsValues(const Poincare::CartesianConic& conic);
 
   Escher::StackViewController* stackController() const;
   DetailCell m_cells[k_numberOfDataPoints];

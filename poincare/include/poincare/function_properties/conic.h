@@ -27,45 +27,6 @@ class Conic {
   Conic() : m_shape(Shape::Unknown) {}
   Type conicType() const { return {coordinateType(), m_shape}; }
 
-  /* TODO: Make these methods virtual pure and implement them for PolarConics
-   * and ParametricConics when DetailsParameterController will need to display
-   * details for all types of conic. */
-
-  // Conic Eccentricity
-  virtual double getEccentricity() const {
-    assert(false);
-    return 0.0;
-  }
-  // Conic Center
-  virtual void getCenter(double* cx, double* cy) const { assert(false); }
-  // Ellipse or Hyperbola's semi major axis
-  virtual double getSemiMajorAxis() const {
-    assert(false);
-    return 0.0;
-  }
-  // Ellipse or Hyperbola's linear eccentricity
-  virtual double getLinearEccentricity() const {
-    assert(false);
-    return 0.0;
-  }
-  // Ellipse or Hyperbola's semi minor axis
-  virtual double getSemiMinorAxis() const {
-    assert(false);
-    return 0.0;
-  }
-  // Parabola's parameter
-  virtual double getParameter() const {
-    assert(false);
-    return 0.0;
-  }
-  // Coordinates of Parabola's summit (relative to parameters' center)
-  virtual void getSummit(double* sx, double* sy) const { assert(false); }
-  // Circle's radius
-  virtual double getRadius() const {
-    assert(false);
-    return 0.0;
-  }
-
  protected:
   virtual CoordinateType coordinateType() const = 0;
   Shape m_shape;
@@ -76,21 +37,30 @@ class CartesianConic : public Conic {
   // Extract A,B,C,D,E,F parameters
   CartesianConic(const SystemExpression& analyzedExpression,
                  const char* x = "x", const char* y = "y");
-  double getEccentricity() const override;
-  void getCenter(double* cx, double* cy) const override;
-  double getSemiMajorAxis() const override;
-  double getLinearEccentricity() const override;
-  double getSemiMinorAxis() const override;
-  double getParameter() const override;
-  void getSummit(double* sx, double* sy) const override;
-  double getRadius() const override;
+
+  // Conic Eccentricity
+  double getEccentricity() const;
+  // Conic Center
+  void getCenter(double* cx, double* cy) const;
+  // Ellipse or Hyperbola's semi major axis
+  double getSemiMajorAxis() const;
+  // Ellipse or Hyperbola's linear eccentricity
+  double getLinearEccentricity() const;
+  // Ellipse or Hyperbola's semi minor axis
+  double getSemiMinorAxis() const;
+  // Parabola's parameter
+  double getParameter() const;
+  // Coordinates of Parabola's summit (relative to parameters' center)
+  void getSummit(double* sx, double* sy) const;
+  // Circle's radius
+  double getRadius() const;
 
  private:
   CoordinateType coordinateType() const override {
     return CoordinateType::Cartesian;
   }
 
-  // Thereshold under which a parameter is considered null
+  // Threshold under which a parameter is considered null
   constexpr static double k_tolerance = 10.0 * DBL_EPSILON;
   // Return target if |target-value| is negligible compared to |amplitude|
   double roundIfNegligible(double value, double target, double amplitude) const;

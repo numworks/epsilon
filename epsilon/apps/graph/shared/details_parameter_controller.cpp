@@ -92,8 +92,7 @@ void DetailsParameterController::setRecord(Ion::Storage::Record record) {
     } else if (f->properties().isConic() && f->properties().isCartesian()) {
       /* For now this is only implemented for cartesian conics but could also
        * be for polar and parametric conics. */
-      CartesianConic c = f->cartesianConicParameters();
-      setConicDetailsValues(&c);
+      setConicDetailsValues(f->cartesianConicParameters());
     }
   }
 }
@@ -259,41 +258,42 @@ void DetailsParameterController::setLineDetailsValues(double slope,
   m_detailValues[2] = intercept;
 }
 
-void DetailsParameterController::setConicDetailsValues(Poincare::Conic* conic) {
+void DetailsParameterController::setConicDetailsValues(
+    const Poincare::CartesianConic& conic) {
   Conic::Shape type = function()->properties().conicShape();
-  assert(type == conic->conicType().shape);
+  assert(type == conic.conicType().shape);
   double cx, cy;
   if (type == Conic::Shape::Parabola) {
-    conic->getSummit(&cx, &cy);
+    conic.getSummit(&cx, &cy);
   } else {
-    conic->getCenter(&cx, &cy);
+    conic.getCenter(&cx, &cy);
   }
   if (type == Conic::Shape::Circle) {
-    m_detailValues[0] = conic->getRadius();
+    m_detailValues[0] = conic.getRadius();
     m_detailValues[1] = cx;
     m_detailValues[2] = cy;
     return;
   }
   if (type == Conic::Shape::Ellipse) {
-    m_detailValues[0] = conic->getSemiMajorAxis();
-    m_detailValues[1] = conic->getSemiMinorAxis();
-    m_detailValues[2] = conic->getLinearEccentricity();
-    m_detailValues[3] = conic->getEccentricity();
+    m_detailValues[0] = conic.getSemiMajorAxis();
+    m_detailValues[1] = conic.getSemiMinorAxis();
+    m_detailValues[2] = conic.getLinearEccentricity();
+    m_detailValues[3] = conic.getEccentricity();
     m_detailValues[4] = cx;
     m_detailValues[5] = cy;
     return;
   }
   if (type == Conic::Shape::Parabola) {
-    m_detailValues[0] = conic->getParameter();
+    m_detailValues[0] = conic.getParameter();
     m_detailValues[1] = cx;
     m_detailValues[2] = cy;
     return;
   }
   assert(type == Conic::Shape::Hyperbola);
-  m_detailValues[0] = conic->getSemiMajorAxis();
-  m_detailValues[1] = conic->getSemiMinorAxis();
-  m_detailValues[2] = conic->getLinearEccentricity();
-  m_detailValues[3] = conic->getEccentricity();
+  m_detailValues[0] = conic.getSemiMajorAxis();
+  m_detailValues[1] = conic.getSemiMinorAxis();
+  m_detailValues[2] = conic.getLinearEccentricity();
+  m_detailValues[3] = conic.getEccentricity();
   m_detailValues[4] = cx;
   m_detailValues[5] = cy;
   return;

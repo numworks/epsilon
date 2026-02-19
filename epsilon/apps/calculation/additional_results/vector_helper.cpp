@@ -32,7 +32,7 @@ UserExpression BuildVectorNorm(
       SimplificationParameters{
           .complexFormat = calculationPreferences.complexFormat,
           .angleUnit = calculationPreferences.angleUnit,
-          .reductionTarget = Poincare::ReductionTarget::User,
+          .reduction = {.target = ReductionTarget::User},
           .symbolic = VectorListController::k_symbolicComputation,
           .context = symbolContext,
       },

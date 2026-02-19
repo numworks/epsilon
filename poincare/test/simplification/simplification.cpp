@@ -660,10 +660,10 @@ QUIZ_CASE(pcj_simplification_undef) {
 QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
   SimplificationParameters parametersForApproximation = {
       .complexFormat = ComplexFormat::Real,
-      .reductionTarget = ReductionTarget::SystemForApproximation};
+      .reduction = {.target = ReductionTarget::SystemForApproximation}};
   SimplificationParameters parametersForAnalysis = {
       .complexFormat = ComplexFormat::Real,
-      .reductionTarget = ReductionTarget::SystemForAnalysis};
+      .reduction = {.target = ReductionTarget::SystemForAnalysis}};
   projects_and_reduces_to("(2+x)^2", "(x+2)^2", parametersForApproximation);
   projects_and_reduces_to("(2+x)^2", "x^2+4×x+4", parametersForAnalysis);
   projects_and_reduces_to("(1+x)^3", "(x+1)^3", parametersForApproximation);

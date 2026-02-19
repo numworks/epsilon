@@ -11,9 +11,9 @@ class Equation : public Shared::ExpressionModelHandle {
       : ExpressionModelHandle(record) {}
   Poincare::SystemExpression standardForm(
       Poincare::SymbolContext* context, bool replaceFunctionsButNotSymbols,
-      Poincare::ReductionTarget reductionTarget) const {
+      Poincare::ReductionTarget target) const {
     return m_model.standardForm(this, context, replaceFunctionsButNotSymbols,
-                                reductionTarget);
+                                target);
   }
   CodePoint symbol() const override { return 0; }
 
@@ -23,7 +23,7 @@ class Equation : public Shared::ExpressionModelHandle {
     Poincare::SystemExpression standardForm(
         const Ion::Storage::Record* record, Poincare::SymbolContext* context,
         bool replaceFunctionsButNotSymbols,
-        Poincare::ReductionTarget reductionTarget) const;
+        Poincare::ReductionTarget target) const;
 
    private:
     void* expressionAddress(const Ion::Storage::Record* record) const override;

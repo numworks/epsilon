@@ -765,9 +765,9 @@ void assert_reduced_is_positive(
       e, SimplificationParameters{
              .complexFormat = complexFormat,
              .angleUnit = angleUnit,
+             .reduction = {.advanced = false},
              .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-             .context = symbolContext,
-             .advanceReduce = false});
+             .context = symbolContext});
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(
       OMG::TrooleanAnd(properties.imagSign().trooleanIsNull(),

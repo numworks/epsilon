@@ -110,7 +110,8 @@ QUIZ_CASE(pcj_simplification_random) {
   //  Randint is not simplified if ReductionTarget = SystemForApproximation
   simplifies_to_no_beautif(
       "randint(1,3)", "randint(1,3)",
-      {.reductionTarget = ReductionTarget::SystemForApproximation});
+      SimplificationParameters{
+          .reduction{.target = ReductionTarget::SystemForApproximation}});
 }
 
 QUIZ_CASE(pcj_simplification_combinatorics) {

@@ -160,10 +160,9 @@ static float GetBeautifiedPowerMetric(const PatternMatching::Context& ctx) {
 
 }  // namespace
 
-float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
-  const bool willBeBeautified = reductionTarget == ReductionTarget::User;
-  const bool shouldExpand =
-      reductionTarget != ReductionTarget::SystemForApproximation;
+float Metric::GetTrueMetric(const Tree* e, ReductionTarget target) {
+  const bool willBeBeautified = target == ReductionTarget::User;
+  const bool shouldExpand = target != ReductionTarget::SystemForApproximation;
   float result = GetTypeMetric(e->type());
   if (Rational::IsNonIntegerRational(e) &&
       (Rational::Numerator(e).isOne() || Rational::Numerator(e).isMinusOne())) {
@@ -242,8 +241,8 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
               assert(result == GetAddMultMetric(e));
               result = 0.f;
             }
-            result -= GetTrueMetric(lastInvLn, reductionTarget);
-            result += GetTrueMetric(ctx.getTree(KB), reductionTarget);
+            result -= GetTrueMetric(lastInvLn, target);
+            result += GetTrueMetric(ctx.getTree(KB), target);
             break;
           }
         }
@@ -277,7 +276,7 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
     case Type::Exp: {
       if (willBeBeautified &&
           PatternMatching::Match(e, KExp(KMult(KA_s, KLn(KB))), &ctx)) {
-        assert(reductionTarget == ReductionTarget::User);
+        assert(target == ReductionTarget::User);
         return GetBeautifiedPowerMetric(ctx);
       }
       break;
@@ -292,7 +291,7 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
     }
     case Type::Dep:
       /* Cost of dependency is ignored */
-      return GetTrueMetric(Dependency::Main(e), reductionTarget);
+      return GetTrueMetric(Dependency::Main(e), target);
     case Type::Trig:
     case Type::ATrig: {
       if (willBeBeautified &&
@@ -305,8 +304,7 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       }
       childrenCoeff = 2;
       // Ignore second child
-      return result +
-             GetTrueMetric(e->child(0), reductionTarget) * childrenCoeff;
+      return result + GetTrueMetric(e->child(0), target) * childrenCoeff;
     }
     case Type::Ln: {
       childrenCoeff = ChildrenCoeffLn(GetComplexProperties(e->child(0)));
@@ -335,16 +333,16 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       break;
   }
   for (const Tree* child : e->children()) {
-    result += GetTrueMetric(child, reductionTarget) * childrenCoeff;
+    result += GetTrueMetric(child, target) * childrenCoeff;
   }
   return std::min(result, k_maxMetric);
 }
 
-float Metric::GetMetric(const Tree* e, ReductionTarget reductionTarget) {
+float Metric::GetMetric(const Tree* e, ReductionTarget target) {
   if (CannotBeReducedFurther(e)) {
     return k_perfectMetric;
   }
-  float metric = GetTrueMetric(e, reductionTarget);
+  float metric = GetTrueMetric(e, target);
   assert(metric > k_perfectMetric);
   /* Adding a small factor based on size, from 0 to 1/8.
    * The goal is to prefer smaller tree when they have the same metric.

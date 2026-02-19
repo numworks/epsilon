@@ -127,8 +127,7 @@ Dimension ProjectAndReduce(
   ProjectionParameters projectionParameters =
       ToProjectionParameters(simplificationParameters);
   Dimension dim = ToSystem(e, projectionParameters).dimension;
-  ReduceSystem(e, simplificationParameters.advanceReduce,
-               simplificationParameters.reductionTarget);
+  ReduceSystem(e, simplificationParameters.reduction);
   // Non-approximated numbers or node may have appeared during reduction.
   ApplyReductionStrategy(e, projectionParameters);
   return dim;
@@ -235,13 +234,14 @@ bool IsSystem(const Tree* e) {
 }
 #endif
 
-bool ReduceSystem(Tree* e, bool advanced, ReductionTarget reductionTarget) {
+bool ReduceSystem(Tree* e, const ReductionParameters& reductionParameters) {
   bool changed = SystematicReduction::DeepReduce(e);
   COSTLY_ASSERT(!SystematicReduction::DeepReduce(e));
-  if (advanced) {
-    changed = AdvancedReduction::Reduce(e, reductionTarget) || changed;
+  if (reductionParameters.advanced) {
+    changed =
+        AdvancedReduction::Reduce(e, reductionParameters.target) || changed;
   }
-  if (reductionTarget == ReductionTarget::SystemForAnalysis) {
+  if (reductionParameters.target == ReductionTarget::SystemForAnalysis) {
     changed = AdvancedReduction::DeepExpandAlgebraic(e) || changed;
   }
   changed = ProcessSpecialUndefinedPatterns(e) || changed;
@@ -264,7 +264,9 @@ bool HandleUnits(Tree* e,
       ApplyReductionStrategy(e,
                              ToProjectionParameters(simplificationParameters));
     }
-    ReduceSystem(e, false, simplificationParameters.reductionTarget);
+    ReduceSystem(e, ReductionParameters{
+                        .target = simplificationParameters.reduction.target,
+                        .advanced = false});
     changed = true;
   }
   if (dimension.isUnit() && !dimension.isAngleUnit()) {

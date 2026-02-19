@@ -10,7 +10,7 @@ bool IsCalculationOutputStrictEquality(
     int numberOfSignificantDigits,
     const SimplificationParameters& simplificationParameters) {
   SimplificationParameters parametersSimpleReduce = simplificationParameters;
-  parametersSimpleReduce.advanceReduce = false;
+  parametersSimpleReduce.reduction.advanced = false;
   // Exact is projected and reduced to turn divisions into rationals
   assert(!exact.isUninitialized());
   Internal::Tree* exactProjected = exact.tree()->cloneTree();

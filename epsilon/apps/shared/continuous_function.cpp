@@ -581,7 +581,7 @@ SystemExpression getSystemExpressionForApproximation(
       equation.cloneAndReduce(SimplificationParameters{
           .complexFormat = complexFormat,
           .angleUnit = angleUnit,
-          .reductionTarget = ReductionTarget::SystemForApproximation,
+          .reduction = {.target = ReductionTarget::SystemForApproximation},
           .symbolic = SymbolicComputation::KeepAllSymbols});
   assert(!resultForApproximation.isUninitialized() &&
          !resultForApproximation.isFailedSimplification());
@@ -748,7 +748,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
     result = equation.cloneAndReduce(SimplificationParameters{
         .complexFormat = complexFormat,
         .angleUnit = angleUnit,
-        .reductionTarget = ReductionTarget::SystemForAnalysis,
+        .reduction = {.target = ReductionTarget::SystemForAnalysis},
         .symbolic = SymbolicComputation::KeepAllSymbols,
         .context = GlobalContextAccessor::Context()});
     assert(!result.isUninitialized());

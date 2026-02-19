@@ -14,19 +14,19 @@ class Metric {
  public:
 #if USE_TREE_SIZE_METRIC
   // Metric of given tree. The smaller is the better.
-  static int GetMetric(const Tree* e, ReductionTarget reductionTarget) {
+  static int GetMetric(const Tree* e, ReductionTarget target) {
     return (e->isDep() ? e->child(0) : e)->treeSize();
   }
 
 #else
   /* Return a metric evaluating [e] complexity: the smaller the metric, the
    * simpler the tree. */
-  static float GetTrueMetric(const Tree* e, ReductionTarget reductionTarget);
+  static float GetTrueMetric(const Tree* e, ReductionTarget target);
   /* Usually return [GetTrueMetric] result.
    * If a metric of [k_perfectMetric] is returned, it means that any equivalent
    * tree to [e] will have a worst metric, this is decided by
    * [CannotBeReducedFurther] */
-  static float GetMetric(const Tree* e, ReductionTarget reductionTarget);
+  static float GetMetric(const Tree* e, ReductionTarget target);
   /* Return [true] when any equivalent tree to [e] can be considered to have a
    * worst metric than [e]. */
   static bool CannotBeReducedFurther(const Tree* e);

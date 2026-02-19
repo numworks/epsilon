@@ -71,11 +71,12 @@ void projects_and_reduces_to(
       input, output,
       [](Tree* tree, const SimplificationParameters& simplificationParameters) {
         simplify(tree, simplificationParameters, false);
-        if (simplificationParameters.reductionTarget != ReductionTarget::User) {
+        if (simplificationParameters.reduction.target !=
+            ReductionTarget::User) {
           // Beautify anyway to compare input and outputs
           SimplificationParameters parametersForBeautification =
               simplificationParameters;
-          parametersForBeautification.reductionTarget = ReductionTarget::User;
+          parametersForBeautification.reduction.target = ReductionTarget::User;
           Beautification::DeepBeautify(
               tree, ToBeautificationParameters(parametersForBeautification));
         } else {

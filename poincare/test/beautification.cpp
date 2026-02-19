@@ -71,7 +71,7 @@ void beautifies_to(const char* input, const char* output) {
       },
       {
           .complexFormat = Cartesian,
-          .advanceReduce = false,
+          .reduction = {.advanced = false},
       });
 }
 

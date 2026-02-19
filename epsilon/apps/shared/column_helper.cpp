@@ -185,7 +185,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
       .complexFormat =
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
       .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-      .reductionTarget = ReductionTarget::SystemForApproximation,
+      .reduction = {.target = ReductionTarget::SystemForApproximation},
       .symbolic = SymbolicComputation::ReplaceAllSymbols,
       .context = storeAppContext});
 

@@ -28,9 +28,9 @@ void MatrixListController::computeAdditionalResults(
       SimplificationParameters{
           .complexFormat = complexFormat(),
           .angleUnit = angleUnit(),
+          .reduction = {.advanced = false},
           .symbolic = SymbolicComputation::ReplaceAllSymbols,
-          .context = App::app()->localContext(),
-          .advanceReduce = false},
+          .context = App::app()->localContext()},
       displayMode(), numberOfSignificantDigits(), determinant, inverse,
       rowEchelonForm, reducedRowEchelonForm, trace);
 

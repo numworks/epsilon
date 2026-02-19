@@ -529,8 +529,10 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
         /* Reduce the solution. RowCanonize only applies systematic reduction,
          * so we need to apply advanced reduction.
          * TODO: Should rowCanonize advance reduce ? */
-        assert(!Simplification::ReduceSystem(child, false));
-        Simplification::ReduceSystem(child, true);
+        assert(!Simplification::ReduceSystem(
+            child, ReductionParameters{.advanced = false}));
+        Simplification::ReduceSystem(child,
+                                     ReductionParameters{.advanced = true});
         // Continue to preserve TreeStack integrity
         child = child->nextTree();
       } else {
@@ -709,7 +711,8 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
       }
     }
     // solution has already been reduced.
-    assert(!Simplification::ReduceSystem(solution, false));
+    assert(!Simplification::ReduceSystem(
+        solution, ReductionParameters{.advanced = false}));
     solution = solution->nextTree();
   }
   removeMarker(end);
@@ -883,7 +886,7 @@ SolverResult ExactSolve(
   // Beautify approximate solutions
   if (result.approximateSolutionList) {
     // Advanced reduction is only needed to beautify in polar format
-    updatedSimplificationParameters.advanceReduce =
+    updatedSimplificationParameters.reduction.advanced =
         updatedSimplificationParameters.complexFormat == ComplexFormat::Polar;
     Simplification::BeautifyReduced(result.approximateSolutionList,
                                     updatedSimplificationParameters,

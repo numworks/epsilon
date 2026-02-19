@@ -6,6 +6,11 @@
 
 namespace Poincare {
 
+struct ReductionParameters {
+  ReductionTarget target = ReductionTarget::User;
+  bool advanced = true;
+};
+
 struct SimplificationParameters {
 #if POINCARE_COMPLEX
   ComplexFormat complexFormat = ComplexFormat::None;
@@ -14,13 +19,11 @@ struct SimplificationParameters {
 #endif
   AngleUnit angleUnit = AngleUnit::None;
   Strategy strategy = Strategy::Default;
-  ReductionTarget reductionTarget = ReductionTarget::User;
+  ReductionParameters reduction = {};
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
   SymbolicComputation symbolic = SymbolicComputation::KeepAllSymbols;
   const Poincare::SymbolContext& context = k_emptySymbolContext;
   UnitDisplay unitDisplay = UnitDisplay::MainOutput;
-  // Optional simplification step
-  bool advanceReduce = true;
 };
 
 struct ProjectionParameters {
@@ -60,8 +63,7 @@ struct BeautificationParameters {
 #endif
   AngleUnit angleUnit = AngleUnit::None;
   const Poincare::SymbolContext& context = k_emptySymbolContext;
-  ReductionTarget reductionTarget = ReductionTarget::User;
-  bool advanceReduce = true;
+  ReductionParameters reduction = {};
 };
 
 inline BeautificationParameters ToBeautificationParameters(
@@ -71,14 +73,12 @@ inline BeautificationParameters ToBeautificationParameters(
       .complexFormat = simplificationParameters.complexFormat,
       .angleUnit = simplificationParameters.angleUnit,
       .context = simplificationParameters.context,
-      .reductionTarget = simplificationParameters.reductionTarget,
-      .advanceReduce = simplificationParameters.advanceReduce};
+      .reduction = simplificationParameters.reduction};
 #else
   return BeautificationParameters{
       .angleUnit = simplificationParameters.angleUnit,
       .context = simplificationParameters.context,
-      .reductionTarget = simplificationParameters.reductionTarget,
-      .advanceReduce = simplificationParameters.advanceReduce};
+      .reduction = simplificationParameters.reduction};
 #endif
 }
 

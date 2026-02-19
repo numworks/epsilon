@@ -107,9 +107,9 @@ QUIZ_CASE(pcj_polynomial_degree) {
   Poincare::SimplificationParameters parameters = {
       .complexFormat = Cartesian,
       .angleUnit = Radian,
+      .reduction = {.advanced = false},
       .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
-      .context = symbolStore,
-      .advanceReduce = false};
+      .context = symbolStore};
 
   assert_polynomial_degree_is(parameters, "x+1", 1);
   assert_polynomial_degree_is(parameters, "cos(2)+1", 0);

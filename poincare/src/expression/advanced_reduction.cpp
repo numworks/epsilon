@@ -73,7 +73,7 @@ void LogExpression(const Tree* e, bool displayDependencies = false) {
 #endif
 
 AdvancedReduction::Path AdvancedReduction::FindBestReduction(
-    const Tree* e, ReductionTarget reductionTarget) {
+    const Tree* e, ReductionTarget target) {
   /* The advanced reduction is capped in depth by Path::k_size and in breadth by
    * CrcCollection::k_size. If this limit is reached, no further possibilities
    * will be explored.
@@ -83,8 +83,8 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(
   /* TODO: We could do without cloning [e] here, but [applyNextNode] is
    * optimized to be applied on trees at the end of the TreeStack only. */
   Tree* editedExpression = e->cloneTree();
-  Context ctx(editedExpression, Metric::GetMetric(e, reductionTarget),
-              CrcCollection::AdvancedHash(e), reductionTarget);
+  Context ctx(editedExpression, Metric::GetMetric(e, target),
+              CrcCollection::AdvancedHash(e), target);
   // Add initial root
   ctx.m_crcCollection.add(CrcCollection::AdvancedHash(e), 0);
 #if VERBOSE_REDUCTION >= 1
@@ -103,7 +103,7 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(
   return std::move(ctx.m_bestPath);
 }
 
-bool AdvancedReduction::Reduce(Tree* e, ReductionTarget reductionTarget) {
+bool AdvancedReduction::Reduce(Tree* e, ReductionTarget target) {
 #if POINCARE_NO_ADVANCED_REDUCTION
   uint32_t h = e->hash();
   PrivateDeepExpand(e, ShallowExpandPseudoReduce);
@@ -128,20 +128,20 @@ bool AdvancedReduction::Reduce(Tree* e, ReductionTarget reductionTarget) {
 
   bool changed = false;
   if (!(e->isList())) {
-    changed = ReduceIndependentElement(e, reductionTarget);
+    changed = ReduceIndependentElement(e, target);
   } else {
     for (Tree* child : e->children()) {
-      changed = ReduceIndependentElement(child, reductionTarget) || changed;
+      changed = ReduceIndependentElement(child, target) || changed;
     }
   }
   ASSERT_IF_LEVEL(2, !changed || !SystematicReduction::DeepReduce(e));
   return changed;
 }
 
-bool AdvancedReduction::ReduceIndependentElement(
-    Tree* e, ReductionTarget reductionTarget) {
+bool AdvancedReduction::ReduceIndependentElement(Tree* e,
+                                                 ReductionTarget target) {
   Path best_path{};
-  ExceptionTry { best_path = FindBestReduction(e, reductionTarget); }
+  ExceptionTry { best_path = FindBestReduction(e, target); }
   ExceptionCatch(type) {
     if (!(type == ExceptionType::TreeStackOverflow ||
           type == ExceptionType::IntegerOverflow)) {
@@ -411,7 +411,7 @@ void AdvancedReduction::Path::log() const {
 #endif
 
 void AdvancedReduction::UpdateBestMetric(Context* ctx) {
-  float metric = Metric::GetMetric(ctx->m_root, ctx->reductionTarget);
+  float metric = Metric::GetMetric(ctx->m_root, ctx->target);
   if (metric == Metric::k_perfectMetric) {
     ctx->m_bestMetric = Metric::k_perfectMetric;
     ctx->m_bestPath = ctx->m_path;
@@ -553,9 +553,8 @@ bool inline AdvancedReduction::ReduceDirection(Tree* e, Tree* root,
     if (ctx->m_bestHash == hash &&
         ctx->m_bestPath.length() > ctx->m_path.length()) {
       // If this is the best reduction, with a shorter path, use it
-      ASSERT_IF_LEVEL(2,
-                      ctx->m_bestMetric ==
-                          Metric::GetMetric(ctx->m_root, ctx->reductionTarget));
+      ASSERT_IF_LEVEL(
+          2, ctx->m_bestMetric == Metric::GetMetric(ctx->m_root, ctx->target));
       ASSERT_IF_LEVEL(1, ctx->canAppendDirection());
       ctx->m_path.append(dir);
       ctx->m_bestPath = ctx->m_path;

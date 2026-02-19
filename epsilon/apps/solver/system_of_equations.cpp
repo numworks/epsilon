@@ -109,7 +109,7 @@ void SystemOfEquations::approximateSolve(const SymbolContext& symbolContext) {
       {.complexFormat =
            GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
        .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-       .reductionTarget = ReductionTarget::SystemForApproximation,
+       .reduction = {.target = ReductionTarget::SystemForApproximation},
        .context = symbolContext},
       m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
                                 : m_approximateSolvingRange,
@@ -203,13 +203,13 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
             .angleUnit =
                 GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
             .strategy = Strategy::ApproximateToFloat,
+            .reduction = {.advanced = false},
             .unitFormat =
                 GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
             // Any remaining symbol at this point should be an unknown
             // parameter.
             .symbolic = SymbolicComputation::KeepAllSymbols,
-            .context = symbolContext,
-            .advanceReduce = false},
+            .context = symbolContext},
         &failure);
   }
 

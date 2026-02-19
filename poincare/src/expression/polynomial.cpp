@@ -470,7 +470,7 @@ Tree* PolynomialParser::GetReducedCoefficients(const Tree* e,
     return nullptr;
   }
   for (Tree* child : coefList->children()) {
-    Simplification::ReduceSystem(child, false);
+    Simplification::ReduceSystem(child, ReductionParameters{.advanced = false});
     if (!keepDependencies && child->isDep()) {
       child->moveTreeOverTree(child->child(0));
     }

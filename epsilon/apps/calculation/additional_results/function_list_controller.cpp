@@ -34,7 +34,7 @@ void FunctionListController::computeAdditionalResults(
           .cloneAndReduce(SimplificationParameters{
               .complexFormat = complexFormat(),
               .angleUnit = angleUnit(),
-              .reductionTarget = ReductionTarget::User,
+              .reduction = {.target = ReductionTarget::User},
               .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
               .context = App::app()->localContext()})
           .getPreparedFunction(k_symbolName, true);

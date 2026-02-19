@@ -586,9 +586,10 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
       .complexFormat = ComplexFormat::Cartesian,
       .angleUnit = calculationPreferences.angleUnit,
       .strategy = Strategy::ApproximateToFloat,
+      .reduction = {.advanced = false},
       .symbolic = SymbolicComputation::ReplaceAllSymbols,
       .context = symbolContext,
-      .advanceReduce = false};
+  };
   Tree* e = approximateOutput.tree()->cloneTree();
   Internal::Dimension dim =
       Simplification::ProjectAndReduce(e, simplificationParameters);

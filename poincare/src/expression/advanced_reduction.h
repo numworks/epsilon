@@ -20,8 +20,7 @@ namespace Poincare::Internal {
 
 class AdvancedReduction {
  public:
-  static bool Reduce(Tree* e,
-                     ReductionTarget reductionTarget = ReductionTarget::User);
+  static bool Reduce(Tree* e, ReductionTarget target = ReductionTarget::User);
   // Bottom-up deep contract
   static bool DeepContract(Tree* e);
   // Top-Bottom deep expand
@@ -141,11 +140,11 @@ class AdvancedReduction {
 
   struct Context {
     Context(const Tree* root, float bestMetric, uint32_t bestHash,
-            ReductionTarget reductionTarget)
+            ReductionTarget target)
         : m_root(root),
           m_bestMetric(bestMetric),
           m_bestHash(bestHash),
-          reductionTarget(reductionTarget) {}
+          target(target) {}
 
     const Tree* m_root;
     Path m_path;
@@ -153,7 +152,7 @@ class AdvancedReduction {
     float m_bestMetric;
     uint32_t m_bestHash;
     CrcCollection m_crcCollection;
-    const ReductionTarget reductionTarget;
+    const ReductionTarget target;
     bool shouldEarlyExit() const {
       return this->m_bestMetric == Metric::k_perfectMetric;
     }
@@ -163,10 +162,9 @@ class AdvancedReduction {
   };
 
   [[nodiscard]] static Path FindBestReduction(const Tree* e,
-                                              ReductionTarget reductionTarget);
+                                              ReductionTarget target);
 
-  static bool ReduceIndependentElement(Tree* e,
-                                       ReductionTarget reductionTarget);
+  static bool ReduceIndependentElement(Tree* e, ReductionTarget target);
 
   /* Internal entrypoint for AdvancedReduction. Handles NextNode operations.
    * After each NextNode, calls [ReduceContractThenExpand].

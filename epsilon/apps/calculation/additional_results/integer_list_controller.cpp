@@ -48,7 +48,7 @@ void IntegerListController::computeAdditionalResults(
       SimplificationParameters{
           .complexFormat = complexFormat(),
           .angleUnit = angleUnit(),
-          .reductionTarget = Poincare::ReductionTarget::User,
+          .reduction = {.target = ReductionTarget::User},
           .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
           .context = App::app()->localContext(),
       },

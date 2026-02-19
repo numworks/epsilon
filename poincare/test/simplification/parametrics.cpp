@@ -386,11 +386,13 @@ QUIZ_CASE(pcj_simplification_derivative_higher_order) {
 QUIZ_CASE(pcj_simplification_derivative_for_approximation) {
   SimplificationParameters parametersForApproximation = {
       .angleUnit = Radian,
-      .reductionTarget = Poincare::ReductionTarget::SystemForApproximation};
+      .reduction = {.target =
+                        Poincare::ReductionTarget::SystemForApproximation}};
   SimplificationParameters parametersForApproximationCartesian = {
       .complexFormat = Cartesian,
       .angleUnit = Radian,
-      .reductionTarget = Poincare::ReductionTarget::SystemForApproximation};
+      .reduction = {.target =
+                        Poincare::ReductionTarget::SystemForApproximation}};
   projects_and_reduces_to("diff(ln(x),x,1)", "1", parametersForApproximation);
   projects_and_reduces_to("diff(ln(x),x,2.2)", "5/11",
                           parametersForApproximation);
@@ -443,7 +445,8 @@ QUIZ_CASE(pcj_simplification_derivative_for_approximation) {
     PoincareTest::SymbolStore symbolStore;
     SimplificationParameters parametersWithSymbol = {
         .angleUnit = Radian,
-        .reductionTarget = Poincare::ReductionTarget::SystemForApproximation,
+        .reduction = {.target =
+                          Poincare::ReductionTarget::SystemForApproximation},
         .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
         .context = symbolStore};
 

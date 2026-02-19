@@ -94,7 +94,7 @@ FunctionType::LineType FunctionType::ParametricLineType(
   RemoveConstantTermsInAddition(variableY, symbol);
   (-1_e)->cloneTree();
   // Use advanced reduction to simplify complicated functions such as cos
-  Simplification::ReduceSystem(quotient, true);
+  Simplification::ReduceSystem(quotient, ReductionParameters{.advanced = true});
   bool diag = Degree::Get(quotient, symbol) == 0;
   quotient->removeTree();
   if (diag) {

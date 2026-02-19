@@ -68,7 +68,7 @@ void VectorListController::computeAdditionalResults(
       SimplificationParameters{
           .complexFormat = complexFormat(),
           .angleUnit = angleUnit(),
-          .reductionTarget = Poincare::ReductionTarget::User,
+          .reduction = {.target = ReductionTarget::User},
           .symbolic = k_symbolicComputation,
           .context = symbolContext,
       },

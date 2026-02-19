@@ -13,7 +13,7 @@ namespace Solver {
 #if 0
 SystemExpression Equation::Model::standardForm(
     const Storage::Record* record, Context* context,
-    bool replaceFunctionsButNotSymbols, ReductionTarget reductionTarget) const {
+    bool replaceFunctionsButNotSymbols, ReductionTarget target) const {
   SystemExpression returnedExpression = SystemExpression();
   // In any case, undefined symbols must be preserved.
   SymbolicComputation symbolicComputation =
@@ -34,7 +34,7 @@ SystemExpression Equation::Model::standardForm(
   UserExpression simplifiedInput = expressionInputWithoutFunctions;
   bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(&simplifiedInput, contextToUse,
-                                    {.target = reductionTarget},
+                                    {.reduction = {.target = target},},
                                     &reductionFailure);
   assert(!reductionFailure);
 
@@ -54,7 +54,7 @@ SystemExpression Equation::Model::standardForm(
     SimplificationParameters simplificationParameters =
         PoincareHelpers::SimplificationParametersForPreferences(
             expressionInputWithoutFunctions, contextToUse,
-            {.target = reductionTarget});
+            {.reduction = {.target = target},});
     returnedExpression =
         returnedExpression.cloneAndReduce(simplificationParameters, &reductionFailure);
     assert(!reductionFailure && !returnedExpression.isUninitialized());

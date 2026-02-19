@@ -133,7 +133,8 @@ SystemExpression ReplaceSymbolAndReduce(
     if (reduce) {
       /* Note: Advanced reduction could be allowed for slower but better
        * reduction. */
-      Simplification::ReduceSystem(result, false);
+      Simplification::ReduceSystem(result,
+                                   ReductionParameters{.advanced = false});
     }
     return SystemExpression::Builder(static_cast<Tree*>(result));
   }
@@ -181,8 +182,10 @@ SystemExpression SystemExpression::getReducedDerivative(
   if (!Internal::Dimension::DeepCheck(result)) {
     result->cloneTreeOverTree(KUndefUnhandledDimension);
   } else {
-    Simplification::ReduceSystem(result, false,
-                                 ReductionTarget::SystemForApproximation);
+    Simplification::ReduceSystem(
+        result,
+        ReductionParameters{.target = ReductionTarget::SystemForApproximation,
+                            .advanced = false});
   }
   return SystemExpression::Builder(result);
 }

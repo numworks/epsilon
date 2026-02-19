@@ -34,6 +34,8 @@ class StorageViewerController : public Escher::ViewController {
     }
     Escher::BufferTextView<k_bufferSize> m_textView;
   };
+  // Special extension only used here.
+  constexpr static const char* k_dummyExtension = "dum";
   constexpr static const char* k_availableExtensions[] = {
       Ion::Storage::equationExtension,
       Ion::Storage::expressionExtension,
@@ -47,11 +49,12 @@ class StorageViewerController : public Escher::ViewController {
       Ion::Storage::statisticsMemoizedFormulaExtension,
       Ion::Storage::systemExtension,
       Ion::Storage::scriptExtension,
+      k_dummyExtension,
   };
   constexpr static int k_numberOfAvailableExtensions =
       sizeof(k_availableExtensions) / sizeof(k_availableExtensions[0]);
-  // Use script Extension since it's easy to manage on the script app.
-  constexpr static const char* k_dummyExtension = Ion::Storage::scriptExtension;
+
+  bool createDummyRecord() const;
 
   ContentView m_view;
 };

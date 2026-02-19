@@ -217,13 +217,15 @@ double ApproximateForPivot(const Tree* child,
                         Approximation::FloatPrecision::Double,
                         Approximation::Parameters{},
                         Approximation::Private::Context{})
-                        .specificTo<std::complex<double>>(child));
+                        .specificApproximateTo<std::complex<double>>(child));
   }
   switch (approximator->floatPrecision()) {
     case Approximation::FloatPrecision::Single:
-      return std::abs(approximator->specificTo<std::complex<float>>(child));
+      return std::abs(
+          approximator->specificApproximateTo<std::complex<float>>(child));
     case Approximation::FloatPrecision::Double:
-      return std::abs(approximator->specificTo<std::complex<double>>(child));
+      return std::abs(
+          approximator->specificApproximateTo<std::complex<double>>(child));
     default:
       OMG_UNREACHABLE
   }

@@ -259,7 +259,7 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
 #endif
   ReturnType result =
       Approximator{floatPrecision, parameters, Context(contextArguments...)}
-          .specificTo<ReturnType>(prepared ? prepared : e);
+          .specificApproximateTo<ReturnType>(prepared ? prepared : e);
   if (!prepared) {
     return result;
   }
@@ -354,7 +354,7 @@ Private::Approximator::Approximator(FloatPrecision floatPrecision,
       m_context(std::move(context)) {}
 
 template <>
-Tree* Approximator::specificTo(const Tree* e) {
+Tree* Approximator::specificApproximateTo(const Tree* e) {
   assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
   if (m_parameters.onlyReplaceNumerical) {
     Tree* result = e->cloneTree();
@@ -378,55 +378,55 @@ Tree* Approximator::specificTo(const Tree* e) {
 }
 
 template <>
-std::complex<float> Approximator::specificTo(const Tree* e) {
+std::complex<float> Approximator::specificApproximateTo(const Tree* e) {
   return toComplex<float>(e);
 };
 
 template <>
-std::complex<double> Approximator::specificTo(const Tree* e) {
+std::complex<double> Approximator::specificApproximateTo(const Tree* e) {
   return toComplex<double>(e);
 };
 
 template <>
-PointOrRealScalar<float> Approximator::specificTo(const Tree* e) {
+PointOrRealScalar<float> Approximator::specificApproximateTo(const Tree* e) {
   assert(m_floatPrecision == FloatPrecision::Single);
   return toPointOrRealScalar<float>(e);
 }
 
 template <>
-PointOrRealScalar<double> Approximator::specificTo(const Tree* e) {
+PointOrRealScalar<double> Approximator::specificApproximateTo(const Tree* e) {
   assert(m_floatPrecision == FloatPrecision::Double);
   return toPointOrRealScalar<double>(e);
 }
 
 template <>
-BooleanOrUndefined Approximator::specificTo(const Tree* e) {
+BooleanOrUndefined Approximator::specificApproximateTo(const Tree* e) {
   assert(!m_parameters.onlyReplaceNumerical);
   assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
   return privateToBoolean(e);
 };
 
 template <>
-float Approximator::specificTo(const Tree* e) {
+float Approximator::specificApproximateTo(const Tree* e) {
   assert(m_floatPrecision == FloatPrecision::Single);
   return toFloat<float>(e);
 };
 
 template <>
-double Approximator::specificTo(const Tree* e) {
+double Approximator::specificApproximateTo(const Tree* e) {
   assert(m_floatPrecision == FloatPrecision::Double);
   return toFloat<double>(e);
 };
 
 template <>
-Coordinate2D<float> Approximator::specificTo(const Tree* e) {
+Coordinate2D<float> Approximator::specificApproximateTo(const Tree* e) {
   assert(!m_parameters.onlyReplaceNumerical);
   assert(m_floatPrecision == FloatPrecision::Single);
   return privateToCoordinates<float>(e);
 }
 
 template <>
-Coordinate2D<double> Approximator::specificTo(const Tree* e) {
+Coordinate2D<double> Approximator::specificApproximateTo(const Tree* e) {
   assert(!m_parameters.onlyReplaceNumerical);
   assert(m_floatPrecision == FloatPrecision::Double);
   return privateToCoordinates<double>(e);
@@ -449,8 +449,9 @@ PointOrRealScalar<FloatType> Approximator::toPointOrRealScalar(const Tree* e) {
   Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
   return dim.isPoint() ? PointOrRealScalar<FloatType>(
-                             specificTo<Coordinate2D<FloatType>>(e))
-                       : PointOrRealScalar<FloatType>(specificTo<FloatType>(e));
+                             specificApproximateTo<Coordinate2D<FloatType>>(e))
+                       : PointOrRealScalar<FloatType>(
+                             specificApproximateTo<FloatType>(e));
 }
 
 template <typename FloatType>

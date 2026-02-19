@@ -314,7 +314,7 @@ class Approximator {
   /* Specific processing for the ReturnType. Must be overloaded for each
    * specific ReturnType */
   template <typename ReturnType>
-  ReturnType specificTo(const Tree* e);
+  ReturnType specificApproximateTo(const Tree* e);
 
   /* Approximate the conditions of a piecewise and return the tree corresponding
    * to the matching branch. Return nullptr if a condition was undefined. */

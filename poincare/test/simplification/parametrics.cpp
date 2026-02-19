@@ -122,8 +122,9 @@ QUIZ_CASE(pcj_simplification_parametric) {
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("x→f(x)", symbolStore);
   SimplificationParameters parameters = {
-      .symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
-      .context = symbolStore,
+      .user = {.context = symbolStore},
+      .projectionPolicy = {.symbolic =
+                               Poincare::SymbolicComputation::KeepAllSymbols},
   };
 
   // contract sum
@@ -192,8 +193,9 @@ QUIZ_CASE(pcj_simplification_parametric) {
   PoincareTest::store("f'(x)→g(x)", symbolStore);
   PoincareTest::store("diff(f(x),x,x)→h(x)", symbolStore);
   SimplificationParameters parametersWithFunctions = {
-      .symbolic = Poincare::SymbolicComputation::ReplaceDefinedFunctions,
-      .context = symbolStore,
+      .user = {.context = symbolStore},
+      .projectionPolicy =
+          {.symbolic = Poincare::SymbolicComputation::ReplaceDefinedFunctions},
   };
   simplifies_to("f'(4)", "8", parametersWithFunctions);
   simplifies_to("g(4)", "8", parametersWithFunctions);
@@ -201,10 +203,16 @@ QUIZ_CASE(pcj_simplification_parametric) {
 
   /* Test with no symbolic computation to check that n inside a sum expression
    * is not replaced by Undefined */
-  simplifies_to("sum(n,n,1,5)", "15",
-                {.symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols});
-  simplifies_to("sum(1/n,n,1,2)", "3/2",
-                {.symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols});
+  simplifies_to(
+      "sum(n,n,1,5)", "15",
+      SimplificationParameters{
+          .projectionPolicy = {
+              .symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols}});
+  simplifies_to(
+      "sum(1/n,n,1,2)", "3/2",
+      SimplificationParameters{
+          .projectionPolicy = {
+              .symbolic = Poincare::SymbolicComputation::ReplaceAllSymbols}});
 }
 
 QUIZ_CASE(pcj_simplification_derivative) {
@@ -326,24 +334,25 @@ QUIZ_CASE(pcj_simplification_derivative) {
     store("3→c", symbolStore);
     store("x/2→f(x)", symbolStore);
 
-    SimplificationParameters ctx = {
-        .complexFormat = Real,
-        .angleUnit = Radian,
-        .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
-        .context = symbolStore};
+    SimplificationParameters parameters = {
+        .user = {.complexFormat = Real,
+                 .angleUnit = Radian,
+                 .context = symbolStore},
+        .projectionPolicy = {
+            .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols}};
 
-    simplifies_to("diff(a×x^2+b×x+c,x,x)", "4×x-1", ctx);
-    simplifies_to("diff(f(x),x,x)", "1/2", ctx);
-    simplifies_to("diff(a^2,a,x)", "2×x", ctx);
-    simplifies_to("diff(a^2,a,a)", "4", ctx);
-    simplifies_to("diff(b^2,b,2)", "4", ctx);
+    simplifies_to("diff(a×x^2+b×x+c,x,x)", "4×x-1", parameters);
+    simplifies_to("diff(f(x),x,x)", "1/2", parameters);
+    simplifies_to("diff(a^2,a,x)", "2×x", parameters);
+    simplifies_to("diff(a^2,a,a)", "4", parameters);
+    simplifies_to("diff(b^2,b,2)", "4", parameters);
 
     symbolStore.reset();
 
     // On points
-    simplifies_to("diff((sin(t),cos(t)),t,t)", "(cos(t),-sin(t))", ctx);
+    simplifies_to("diff((sin(t),cos(t)),t,t)", "(cos(t),-sin(t))", parameters);
     store("(3t,-2t^2)→f(t)", symbolStore);
-    simplifies_to("diff(f(t),t,t)", "(3,-4×t)", ctx);
+    simplifies_to("diff(f(t),t,t)", "(3,-4×t)", parameters);
   }
 
   // On points
@@ -385,12 +394,11 @@ QUIZ_CASE(pcj_simplification_derivative_higher_order) {
 
 QUIZ_CASE(pcj_simplification_derivative_for_approximation) {
   SimplificationParameters parametersForApproximation = {
-      .angleUnit = Radian,
+      .user = {.angleUnit = Radian},
       .reduction = {.target =
                         Poincare::ReductionTarget::SystemForApproximation}};
   SimplificationParameters parametersForApproximationCartesian = {
-      .complexFormat = Cartesian,
-      .angleUnit = Radian,
+      .user = {.complexFormat = Cartesian, .angleUnit = Radian},
       .reduction = {.target =
                         Poincare::ReductionTarget::SystemForApproximation}};
   projects_and_reduces_to("diff(ln(x),x,1)", "1", parametersForApproximation);
@@ -444,12 +452,11 @@ QUIZ_CASE(pcj_simplification_derivative_for_approximation) {
   {
     PoincareTest::SymbolStore symbolStore;
     SimplificationParameters parametersWithSymbol = {
-        .angleUnit = Radian,
+        .user = {.angleUnit = Radian, .context = symbolStore},
+        .projectionPolicy =
+            {.symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols},
         .reduction = {.target =
-                          Poincare::ReductionTarget::SystemForApproximation},
-        .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
-        .context = symbolStore};
-
+                          Poincare::ReductionTarget::SystemForApproximation}};
     store("0→a", symbolStore);
     projects_and_reduces_to("diff((-1)^(a*x),x,3)", "0", parametersWithSymbol);
   }

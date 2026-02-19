@@ -163,14 +163,16 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
               {.exact = inputExpression.clone(),
                .approximate = inputExpression.cloneAndApproximate<double>(
                    SimplificationParameters{
-                       .complexFormat = complexFormat,
-                       .angleUnit = GlobalPreferences::SharedGlobalPreferences()
+                       .user = {.complexFormat = complexFormat,
+                                .angleUnit =
+                                    GlobalPreferences::SharedGlobalPreferences()
                                         ->angleUnit(),
-                       .unitFormat =
-                           GlobalPreferences::SharedGlobalPreferences()
-                               ->unitFormat(),
-                       .symbolic = symbolicComputation,
-                       .context = GlobalContextAccessor::Context()})},
+                                .context = GlobalContextAccessor::Context()},
+                       .projectionPolicy = {.symbolic = symbolicComputation},
+                       .unitMode =
+                           {.unitFormat =
+                                GlobalPreferences::SharedGlobalPreferences()
+                                    ->unitFormat()}})},
           .hasReductionFailure = false};
     }
     symbolicComputation = storeElements.symbolicComputation;
@@ -181,13 +183,14 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
   bool reductionFailure = expressionToReduce.cloneAndSimplifyAndApproximate(
       &outputs.exact, &outputs.approximate,
       SimplificationParameters{
-          .complexFormat = complexFormat,
-          .angleUnit =
-              GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-          .unitFormat =
-              GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-          .symbolic = symbolicComputation,
-          .context = GlobalContextAccessor::Context()});
+          .user = {.complexFormat = complexFormat,
+                   .angleUnit = GlobalPreferences::SharedGlobalPreferences()
+                                    ->angleUnit(),
+                   .context = GlobalContextAccessor::Context()},
+          .projectionPolicy = {.symbolic = symbolicComputation},
+          .unitMode = {
+              .unitFormat =
+                  GlobalPreferences::SharedGlobalPreferences()->unitFormat()}});
   if (isStore) {
     /*  Restore store structure in the exact output. The store operation itself
      * is performed by the processStore function. */

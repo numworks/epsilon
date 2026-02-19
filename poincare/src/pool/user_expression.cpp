@@ -154,9 +154,9 @@ UserExpression UserExpression::cloneAndApproximate(
           /* When CAS is activated, onlyReplaceNumerical is used to approximate
            * expressions with symbols such as π*x → 3.14*x. */
           .onlyReplaceNumerical = CAS::Enabled(),
-          .angleUnit = simplificationParameters.angleUnit,
-          .complexFormat = simplificationParameters.complexFormat,
-          .symbolContext = simplificationParameters.context});
+          .angleUnit = simplificationParameters.user.angleUnit,
+          .complexFormat = simplificationParameters.user.complexFormat,
+          .symbolContext = simplificationParameters.user.context});
   /* There are several issues that currently prevent us from beautifying an
    * approximated CAS expression:
    * - the beautified exact expression and the beautified approximate expression
@@ -254,17 +254,17 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
   if (exp.isUninitialized()) {
     return NAN;
   }
-  SimplificationParameters simplificationParameters =
-      SimplificationParameters{.complexFormat = complexFormat,
-                               .angleUnit = angleUnit,
-                               .symbolic = symbolicComputation,
-                               .context = symbolContext};
+  SimplificationParameters simplificationParameters = SimplificationParameters{
+      .user = {.complexFormat = complexFormat,
+               .angleUnit = angleUnit,
+               .context = symbolContext},
+      .projectionPolicy = {.symbolic = symbolicComputation}};
   bool reductionFailure;
   exp = exp.cloneAndSimplify(simplificationParameters, &reductionFailure);
   assert(!exp.isUninitialized());
-  return exp.approximateToRealScalar<T>(simplificationParameters.angleUnit,
-                                        simplificationParameters.complexFormat,
-                                        symbolContext);
+  return exp.approximateToRealScalar<T>(
+      simplificationParameters.user.angleUnit,
+      simplificationParameters.user.complexFormat, symbolContext);
 }
 
 constexpr char ordinateName[] = {CodePoints::k_ordinateSymbol, 0};

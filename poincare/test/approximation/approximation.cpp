@@ -266,12 +266,13 @@ QUIZ_CASE(pcj_approximation_keeping_symbols) {
 QUIZ_CASE(pcj_approximation_context) {
   PoincareTest::SymbolStore symbolStore;
   SimplificationParameters cartesianCtx = {
-      .complexFormat = ComplexFormat::Cartesian,
-      .context = symbolStore,
+      .user = {.complexFormat = ComplexFormat::Cartesian,
+               .context = symbolStore}
+
   };
   SimplificationParameters realCtx = {
-      .complexFormat = ComplexFormat::Real,
-      .context = symbolStore,
+      .user = {.complexFormat = ComplexFormat::Real, .context = symbolStore}
+
   };
 
   PoincareTest::store("2x+5→f(x)", symbolStore);

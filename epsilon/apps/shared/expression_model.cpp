@@ -109,12 +109,13 @@ SystemExpression ExpressionModel::expressionReduced(
        * same function. So we need to keep a valid m_expression while executing
        * 'Simplify'. Thus, we use a temporary expression. */
       m_expression = userExpression.cloneAndReduce(SimplificationParameters{
-          .complexFormat = complexFormat(record),
-          .angleUnit =
-              GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-          .reduction = {.target = ReductionTarget::SystemForApproximation},
-          .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-          .context = GlobalContextAccessor::Context()});
+          .user = {.complexFormat = complexFormat(record),
+                   .angleUnit = GlobalPreferences::SharedGlobalPreferences()
+                                    ->angleUnit(),
+                   .context = GlobalContextAccessor::Context()},
+          .projectionPolicy = {.symbolic =
+                                   SymbolicComputation::ReplaceDefinedSymbols},
+          .reduction = {.target = ReductionTarget::SystemForApproximation}});
     }
   }
   return m_expression;

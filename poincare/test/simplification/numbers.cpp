@@ -41,10 +41,9 @@ QUIZ_CASE(pcj_simplification_decimal) {
 
 QUIZ_CASE(pcj_simplification_float) {
   Poincare::SimplificationParameters parametersForApproximation = {
-      .complexFormat = Poincare::ComplexFormat::Real,
-      .angleUnit = Poincare::AngleUnit::Radian,
-      .strategy = Strategy::ApproximateToFloat,
-  };
+      .user = {.complexFormat = Poincare::ComplexFormat::Real,
+               .angleUnit = Poincare::AngleUnit::Radian},
+      .projectionPolicy = {.strategy = Strategy::ApproximateToFloat}};
   simplifies_to("2", "2", parametersForApproximation);
   simplifies_to("2.3", "2.3", parametersForApproximation);
   simplifies_to("1+π", "4.1415926535898", parametersForApproximation);
@@ -200,8 +199,10 @@ QUIZ_CASE(pcj_simplification_infinity) {
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("x→f(x)", symbolStore);
   Poincare::SimplificationParameters parametersWithStore = {
-      .symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
-      .context = symbolStore,
+      .user = {.context = symbolStore},
+      .projectionPolicy = {.symbolic =
+                               Poincare::SymbolicComputation::KeepAllSymbols}
+
   };
   simplifies_to("f(x)-inf", "f(x)-∞", parametersWithStore);
 

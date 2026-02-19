@@ -32,11 +32,13 @@ void FunctionListController::computeAdditionalResults(
   PreparedFunction simplifiedExpression =
       inputClone
           .cloneAndReduce(SimplificationParameters{
-              .complexFormat = complexFormat(),
-              .angleUnit = angleUnit(),
+              .user = {.complexFormat = complexFormat(),
+                       .angleUnit = angleUnit(),
+                       .context = App::app()->localContext()},
+              .projectionPolicy =
+                  {.symbolic = SymbolicComputation::ReplaceDefinedSymbols},
               .reduction = {.target = ReductionTarget::User},
-              .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-              .context = App::app()->localContext()})
+          })
           .getPreparedFunction(k_symbolName, true);
 
   assert(!simplifiedExpression.isUninitialized() &&

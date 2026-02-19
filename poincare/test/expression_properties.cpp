@@ -296,11 +296,11 @@ void assert_reduced_expression_has_polynomial_coefficient(
     SymbolicComputation symbolicComputation =
         SymbolicComputation::ReplaceDefinedSymbols) {
   UserExpression e = UserExpression::Builder(parse(input, symbolContext));
-  SystemExpression s =
-      e.cloneAndReduce(SimplificationParameters{.complexFormat = complexFormat,
-                                                .angleUnit = angleUnit,
-                                                .symbolic = symbolicComputation,
-                                                .context = symbolContext});
+  SystemExpression s = e.cloneAndReduce(SimplificationParameters{
+      .user = {.complexFormat = complexFormat,
+               .angleUnit = angleUnit,
+               .context = symbolContext},
+      .projectionPolicy = {.symbolic = symbolicComputation}});
   quiz_assert(!s.isFailedSimplification());
   Tree* coefficients = PolynomialParser::GetReducedCoefficients(s, symbolName);
   assert_trees_are_equal(coefficients, expectedCoefficients);
@@ -404,9 +404,8 @@ QUIZ_CASE(pcj_properties_list_of_points) {
 void assert_is_continuous_on_interval(const char* input, float x1, float x2,
                                       bool isContinuous) {
   UserExpression e1 = UserExpression::Builder(parse(input));
-  SystemExpression e2 = e1.cloneAndReduce(SimplificationParameters{
-      .angleUnit = AngleUnit::Radian,
-  });
+  SystemExpression e2 = e1.cloneAndReduce(
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Radian}});
   quiz_assert(!e2.isFailedSimplification());
   PreparedFunction e3 = e2.getPreparedFunction("x", true);
   quiz_assert_print_if_failure(
@@ -445,8 +444,7 @@ void assert_reduced_deep_is_symbolic(const char* input,
   SystemExpression reducedExpression =
       UserExpression::Builder(parse(input))
           .cloneAndReduce(SimplificationParameters{
-              .angleUnit = AngleUnit::Radian,
-          });
+              .user = {.angleUnit = AngleUnit::Radian}});
   quiz_assert(!reducedExpression.isFailedSimplification());
   quiz_assert_print_if_failure(
       Variables::HasUserVariables(reducedExpression.tree()) == isSymbolic,

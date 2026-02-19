@@ -28,11 +28,11 @@ bool check_solutions(
   if (solutions) {
     quiz_assert(solutions->numberOfChildren() ==
                 static_cast<int>(outputs.size()));
-    simplificationParameters.symbolic =
+    simplificationParameters.projectionPolicy.symbolic =
         result.equationMetadata.overrideDefinedVariables
             ? Poincare::SymbolicComputation::KeepAllSymbols
             : Poincare::SymbolicComputation::ReplaceDefinedSymbols;
-    simplificationParameters.complexFormat =
+    simplificationParameters.user.complexFormat =
         result.equationMetadata.complexFormat;
     const Tree* solution = solutions->nextNode();
     for (const char* output : outputs) {
@@ -56,9 +56,9 @@ bool check_solutions(
 QUIZ_CASE(pcj_equation_solver) {
   PoincareTest::SymbolStore symbolStore;
   Poincare::SimplificationParameters parameters = {
-      .complexFormat = Poincare::ComplexFormat::Real,
-      .angleUnit = Poincare::AngleUnit::Radian,
-      .context = symbolStore};
+      .user = {.complexFormat = Poincare::ComplexFormat::Real,
+               .angleUnit = Poincare::AngleUnit::Radian,
+               .context = symbolStore}};
 
   check_solutions({"x-3+y", "y-x+1"}, {"2", "1"}, parameters);
   check_solutions({"x+x"}, {"0"}, parameters);
@@ -111,7 +111,7 @@ QUIZ_CASE(pcj_equation_solver) {
                   EquationSolver::Error::RequireApproximateSolution);
 
   // Complex format detection
-  parameters.complexFormat = Real;
+  parameters.user.complexFormat = Real;
   PoincareTest::store("i→a", symbolStore);
   check_solutions({"x-a", "x-a+y-root(-1,3)"}, {"i", "1/2+√(3)/2×i"},
                   parameters);
@@ -131,7 +131,7 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"x^2*(x-1)/x"}, {"1", "1"}, parameters);
   check_solutions({"x/x-1+x"}, {}, parameters);
 
-  parameters.complexFormat = Cartesian;
+  parameters.user.complexFormat = Cartesian;
   check_solutions({"x^2+1"}, {"-i", "i", "-4"}, parameters,
                   EquationSolver::Error::NoError);
 }
@@ -142,8 +142,7 @@ void check_range(const char* input, double min, double max) {
   EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
       equationList,
       Poincare::SimplificationParameters{
-          .angleUnit = Poincare::AngleUnit::Radian,
-      },
+          .user = {.angleUnit = Poincare::AngleUnit::Radian}},
       Poincare::Range1D<double>(), 10);
   quiz_assert(result.solutionMetadata.solvingRange.min() == min);
   quiz_assert(result.solutionMetadata.solvingRange.max() == max);

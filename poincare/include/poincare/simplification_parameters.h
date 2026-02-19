@@ -6,24 +6,19 @@
 
 namespace Poincare {
 
-struct ReductionParameters {
-  ReductionTarget target = ReductionTarget::User;
-  bool advanced = true;
-};
-
-struct SimplificationParameters {
+struct UserParameters {
 #if POINCARE_COMPLEX
   ComplexFormat complexFormat = ComplexFormat::None;
 #else
   constexpr static ComplexFormat complexFormat = ComplexFormat::Real;
 #endif
   AngleUnit angleUnit = AngleUnit::None;
-  Strategy strategy = Strategy::Default;
-  ReductionParameters reduction = {};
-  Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
-  SymbolicComputation symbolic = SymbolicComputation::KeepAllSymbols;
   const Poincare::SymbolContext& context = k_emptySymbolContext;
-  UnitDisplay unitDisplay = UnitDisplay::MainOutput;
+};
+
+struct ProjectionPolicy {
+  SymbolicComputation symbolic = SymbolicComputation::KeepAllSymbols;
+  Strategy strategy = Strategy::Default;
 };
 
 struct ProjectionParameters {
@@ -38,22 +33,22 @@ struct ProjectionParameters {
   Strategy strategy = Strategy::Default;
 };
 
-inline ProjectionParameters ToProjectionParameters(
-    const SimplificationParameters& simplificationParameters) {
-#if POINCARE_COMPLEX
-  return ProjectionParameters{
-      .complexFormat = simplificationParameters.complexFormat,
-      .angleUnit = simplificationParameters.angleUnit,
-      .symbolic = simplificationParameters.symbolic,
-      .context = simplificationParameters.context,
-      .strategy = simplificationParameters.strategy};
-#else
-  return ProjectionParameters{.angleUnit = simplificationParameters.angleUnit,
-                              .symbolic = simplificationParameters.symbolic,
-                              .context = simplificationParameters.context,
-                              .strategy = simplificationParameters.strategy};
-#endif
-}
+struct ReductionParameters {
+  ReductionTarget target = ReductionTarget::User;
+  bool advanced = true;
+};
+
+struct UnitModeParameters {
+  Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
+  UnitDisplay unitDisplay = UnitDisplay::MainOutput;
+};
+
+struct SimplificationParameters {
+  UserParameters user = {};
+  ProjectionPolicy projectionPolicy = {};
+  ReductionParameters reduction = {};
+  UnitModeParameters unitMode = {};
+};
 
 struct BeautificationParameters {
 #if POINCARE_COMPLEX
@@ -66,19 +61,29 @@ struct BeautificationParameters {
   ReductionParameters reduction = {};
 };
 
-inline BeautificationParameters ToBeautificationParameters(
+struct UnitParameters {
+  Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
+  UnitDisplay unitDisplay = UnitDisplay::MainOutput;
+  AngleUnit angleUnit = AngleUnit::None;
+};
+
+/* Conversions */
+
+inline ProjectionParameters ToProjectionParameters(
     const SimplificationParameters& simplificationParameters) {
 #if POINCARE_COMPLEX
-  return BeautificationParameters{
-      .complexFormat = simplificationParameters.complexFormat,
-      .angleUnit = simplificationParameters.angleUnit,
-      .context = simplificationParameters.context,
-      .reduction = simplificationParameters.reduction};
+  return ProjectionParameters{
+      .complexFormat = simplificationParameters.user.complexFormat,
+      .angleUnit = simplificationParameters.user.angleUnit,
+      .symbolic = simplificationParameters.projectionPolicy.symbolic,
+      .context = simplificationParameters.user.context,
+      .strategy = simplificationParameters.projectionPolicy.strategy};
 #else
-  return BeautificationParameters{
-      .angleUnit = simplificationParameters.angleUnit,
-      .context = simplificationParameters.context,
-      .reduction = simplificationParameters.reduction};
+  return ProjectionParameters{
+      .angleUnit = simplificationParameters.user.angleUnit,
+      .symbolic = simplificationParameters.projectionPolicy.symbolic,
+      .context = simplificationParameters.user.context,
+      .strategy = simplificationParameters.projectionPolicy.strategy};
 #endif
 }
 
@@ -100,17 +105,28 @@ inline ProjectionParameters ToProjectionParameters(
 #endif
 }
 
-struct UnitParameters {
-  Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
-  UnitDisplay unitDisplay = UnitDisplay::MainOutput;
-  AngleUnit angleUnit = AngleUnit::None;
-};
+inline BeautificationParameters ToBeautificationParameters(
+    const SimplificationParameters& simplificationParameters) {
+#if POINCARE_COMPLEX
+  return BeautificationParameters{
+      .complexFormat = simplificationParameters.user.complexFormat,
+      .angleUnit = simplificationParameters.user.angleUnit,
+      .context = simplificationParameters.user.context,
+      .reduction = simplificationParameters.reduction};
+#else
+  return BeautificationParameters{
+      .angleUnit = simplificationParameters.user.angleUnit,
+      .context = simplificationParameters.user.context,
+      .reduction = simplificationParameters.reduction};
+#endif
+}
 
 inline UnitParameters ToUnitParameters(
     const SimplificationParameters& simplificationParameters) {
-  return UnitParameters{.unitFormat = simplificationParameters.unitFormat,
-                        .unitDisplay = simplificationParameters.unitDisplay,
-                        .angleUnit = simplificationParameters.angleUnit};
+  return UnitParameters{
+      .unitFormat = simplificationParameters.unitMode.unitFormat,
+      .unitDisplay = simplificationParameters.unitMode.unitDisplay,
+      .angleUnit = simplificationParameters.user.angleUnit};
 }
 
 }  // namespace Poincare

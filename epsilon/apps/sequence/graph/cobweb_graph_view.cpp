@@ -77,12 +77,14 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
 
   Poincare::SystemExpression reducedFunction =
       function.cloneAndReduce(Poincare::SimplificationParameters{
-          .complexFormat =
-              GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-          .angleUnit =
-              GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-          .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
-          .context = App::app()->localContext()});
+          .user = {.complexFormat = GlobalPreferences::SharedGlobalPreferences()
+                                        ->complexFormat(),
+                   .angleUnit = GlobalPreferences::SharedGlobalPreferences()
+                                    ->angleUnit(),
+                   .context = App::app()->localContext()},
+          .projectionPolicy = {
+              .symbolic =
+                  Poincare::SymbolicComputation::ReplaceDefinedSymbols}});
   Poincare::PreparedFunction preparedFunction =
       reducedFunction.getPreparedFunction(Shared::Function::k_unknownName);
   Curve2DEvaluation<float> evaluateFunction = [](float t, const void* model,

@@ -162,20 +162,21 @@ Layout ExpressionsListController::GetExactLayoutFromExpression(
   assert(!e.isUninitialized());
   UserExpression approximateExpression, exactExpression;
   SimplificationParameters tempParameters = simplificationParameters;
-  tempParameters.symbolic = SymbolicComputation::ReplaceAllSymbols;
+  tempParameters.projectionPolicy.symbolic =
+      SymbolicComputation::ReplaceAllSymbols;
   e.cloneAndSimplifyAndApproximate(&exactExpression, &approximateExpression,
                                    tempParameters);
   assert(!exactExpression.isUninitialized() &&
          !approximateExpression.isUninitialized());
   Layout approximateLayout =
-      Shared::PoincareHelpers::CreateLayout(approximateExpression,
-                                            simplificationParameters.context)
+      Shared::PoincareHelpers::CreateLayout(
+          approximateExpression, simplificationParameters.user.context)
           .cloneAndTurnEToTenPowerLayout(false);
   Layout exactLayout =
       exactExpression.isUninitialized()
           ? approximateLayout
           : Shared::PoincareHelpers::CreateLayout(
-                exactExpression, simplificationParameters.context);
+                exactExpression, simplificationParameters.user.context);
   if (approximate) {
     // TODO_PCJ: Factorize with CAS::ShouldOnlyDisplayApproximation
     if (approximateExpression.isUndefined()) {

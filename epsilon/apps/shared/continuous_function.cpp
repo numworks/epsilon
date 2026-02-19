@@ -579,10 +579,10 @@ SystemExpression getSystemExpressionForApproximation(
   }
   SystemExpression resultForApproximation =
       equation.cloneAndReduce(SimplificationParameters{
-          .complexFormat = complexFormat,
-          .angleUnit = angleUnit,
+          .user = {.complexFormat = complexFormat, .angleUnit = angleUnit},
+          .projectionPolicy = {.symbolic = SymbolicComputation::KeepAllSymbols},
           .reduction = {.target = ReductionTarget::SystemForApproximation},
-          .symbolic = SymbolicComputation::KeepAllSymbols});
+      });
   assert(!resultForApproximation.isUninitialized() &&
          !resultForApproximation.isFailedSimplification());
   if (resultForApproximation.numberOfDescendants(true) <
@@ -746,11 +746,11 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   if (!equation.isUndefined()) {
     result = equation.cloneAndReduce(SimplificationParameters{
-        .complexFormat = complexFormat,
-        .angleUnit = angleUnit,
-        .reduction = {.target = ReductionTarget::SystemForAnalysis},
-        .symbolic = SymbolicComputation::KeepAllSymbols,
-        .context = GlobalContextAccessor::Context()});
+        .user = {.complexFormat = complexFormat,
+                 .angleUnit = angleUnit,
+                 .context = GlobalContextAccessor::Context()},
+        .projectionPolicy = {.symbolic = SymbolicComputation::KeepAllSymbols},
+        .reduction = {.target = ReductionTarget::SystemForAnalysis}});
     assert(!result.isUninitialized());
   } else {
     result = SystemExpression::Undefined();

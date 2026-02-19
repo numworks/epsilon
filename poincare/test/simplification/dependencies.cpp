@@ -75,10 +75,11 @@ QUIZ_CASE(pcj_simplification_dependencies) {
 
   PoincareTest::SymbolStore symbolStore;
   SimplificationParameters parameters = {
-      .complexFormat = ComplexFormat::Real,
-      .angleUnit = AngleUnit::Radian,
-      .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .context = symbolStore};
+      .user = {.complexFormat = ComplexFormat::Real,
+               .angleUnit = AngleUnit::Radian,
+               .context = symbolStore},
+      .projectionPolicy = {.symbolic =
+                               SymbolicComputation::ReplaceDefinedSymbols}};
 
   // No dependencies
   PoincareTest::store("1→a", symbolStore);

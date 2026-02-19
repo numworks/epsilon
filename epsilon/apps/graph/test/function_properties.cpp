@@ -17,11 +17,12 @@ namespace Graph {
 
 static SimplificationParameters DefaultSimplificationParametersForAnalysis() {
   return SimplificationParameters{
-      .complexFormat = ComplexFormat::Cartesian,
-      .angleUnit = AngleUnit::Radian,
-      .unitFormat = Preferences::UnitFormat::Metric,
-      .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .context = k_emptySymbolContext};
+      .user = {.complexFormat = ComplexFormat::Cartesian,
+               .angleUnit = AngleUnit::Radian,
+               .context = k_emptySymbolContext},
+      .projectionPolicy = {.symbolic =
+                               SymbolicComputation::ReplaceDefinedSymbols},
+      .unitMode = {.unitFormat = Preferences::UnitFormat::Metric}};
 }
 
 void assert_cartesian_function_type_is(

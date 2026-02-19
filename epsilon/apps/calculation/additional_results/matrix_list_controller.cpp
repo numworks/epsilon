@@ -26,11 +26,13 @@ void MatrixListController::computeAdditionalResults(
   AdditionalResultsHelper::ComputeMatrixProperties(
       exactOutput, approximateOutput,
       SimplificationParameters{
-          .complexFormat = complexFormat(),
-          .angleUnit = angleUnit(),
+          .user = {.complexFormat = complexFormat(),
+                   .angleUnit = angleUnit(),
+                   .context = App::app()->localContext()},
+          .projectionPolicy = {.symbolic =
+                                   SymbolicComputation::ReplaceAllSymbols},
           .reduction = {.advanced = false},
-          .symbolic = SymbolicComputation::ReplaceAllSymbols,
-          .context = App::app()->localContext()},
+      },
       displayMode(), numberOfSignificantDigits(), determinant, inverse,
       rowEchelonForm, reducedRowEchelonForm, trace);
 

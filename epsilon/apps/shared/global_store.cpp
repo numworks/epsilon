@@ -188,7 +188,8 @@ Ion::Storage::Record::ErrorStatus GlobalStore::setExpressionForUserVariable(
       CAS::NeverDisplayReductionOfInput(expression, *this);
   SimplificationParameters simplificationParameters =
       PoincareHelpers::SimplificationParametersForPreferences(expression);
-  simplificationParameters.symbolic = SymbolicComputation::ReplaceAllSymbols;
+  simplificationParameters.projectionPolicy.symbolic =
+      SymbolicComputation::ReplaceAllSymbols;
   UserExpression approximation;
   UserExpression simplifiedExpression;
   bool reductionFailure = expression.cloneAndSimplifyAndApproximate(

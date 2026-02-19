@@ -37,31 +37,30 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
 
 // Default simplification parameters are k_realParams
 constexpr Poincare::SimplificationParameters k_realParams = {
-    .complexFormat = Real, .angleUnit = Radian};
+    .user = {.complexFormat = Real, .angleUnit = Radian}};
 
 constexpr Poincare::SimplificationParameters k_cartesianParams = {
-    .complexFormat = Cartesian, .angleUnit = Radian};
+    .user = {.complexFormat = Cartesian, .angleUnit = Radian}};
 constexpr Poincare::SimplificationParameters k_polarParams = {
-    .complexFormat = Polar, .angleUnit = Radian};
+    .user = {.complexFormat = Polar, .angleUnit = Radian}};
 
 constexpr Poincare::SimplificationParameters k_degreeParams = {
-    .complexFormat = Real, .angleUnit = Degree};
+    .user = {.complexFormat = Real, .angleUnit = Degree}};
 constexpr Poincare::SimplificationParameters k_gradianParams = {
-    .complexFormat = Real, .angleUnit = Gradian};
+    .user = {.complexFormat = Real, .angleUnit = Gradian}};
 
 constexpr Poincare::SimplificationParameters k_degreeCartesianParams = {
-    .complexFormat = Cartesian, .angleUnit = Degree};
+    .user = {.complexFormat = Cartesian, .angleUnit = Degree}};
 constexpr Poincare::SimplificationParameters k_gradianCartesianParams = {
-    .complexFormat = Cartesian, .angleUnit = Gradian};
+    .user = {.complexFormat = Cartesian, .angleUnit = Gradian}};
 constexpr Poincare::SimplificationParameters k_degreePolarParam = {
-    .complexFormat = Polar, .angleUnit = Degree};
+    .user = {.complexFormat = Polar, .angleUnit = Degree}};
 constexpr Poincare::SimplificationParameters k_gradianPolarParams = {
-    .complexFormat = Polar, .angleUnit = Gradian};
+    .user = {.complexFormat = Polar, .angleUnit = Gradian}};
 constexpr Poincare::SimplificationParameters k_keepAllSymbolsParams = {
-    .complexFormat = Real,
-    .angleUnit = Radian,
-    .symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
-};
+    .user = {.complexFormat = Real, .angleUnit = Radian},
+    .projectionPolicy = {.symbolic =
+                             Poincare::SymbolicComputation::KeepAllSymbols}};
 
 using ProcessTree = void (*)(
     Poincare::Internal::Tree*,

@@ -46,11 +46,12 @@ void IntegerListController::computeAdditionalResults(
   bool reductionFailure = false;
   factor = factor.cloneAndSimplify(
       SimplificationParameters{
-          .complexFormat = complexFormat(),
-          .angleUnit = angleUnit(),
+          .user = {.complexFormat = complexFormat(),
+                   .angleUnit = angleUnit(),
+                   .context = App::app()->localContext()},
+          .projectionPolicy = {.symbolic =
+                                   SymbolicComputation::ReplaceDefinedSymbols},
           .reduction = {.target = ReductionTarget::User},
-          .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-          .context = App::app()->localContext(),
       },
       &reductionFailure);
   if (!reductionFailure && !factor.isUndefined() &&

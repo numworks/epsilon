@@ -154,10 +154,11 @@ static void compareSolutions(SystemOfEquations* system,
     SystemExpression expectedExpression =
         UserExpression::Parse(expectedValue, tempContext)
             .cloneAndReduce(SimplificationParameters{
-                .complexFormat = ComplexFormat::Cartesian,
-                .reduction = {.advanced = false},
-                .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-                .context = tempContext});
+                .user = {.complexFormat = ComplexFormat::Cartesian,
+                         .context = tempContext},
+                .projectionPolicy =
+                    {.symbolic = SymbolicComputation::ReplaceDefinedSymbols},
+                .reduction = {.advanced = false}});
     quiz_assert(!expectedExpression.isUninitialized() &&
                 !expectedExpression.isFailedSimplification());
 
@@ -173,10 +174,11 @@ static void compareSolutions(SystemOfEquations* system,
     quiz_assert(!parsedExpression.isUninitialized());
     SystemExpression obtainedExpression =
         parsedExpression.cloneAndReduce(SimplificationParameters{
-            .complexFormat = ComplexFormat::Cartesian,
-            .reduction = {.advanced = false},
-            .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-            .context = tempContext});
+            .user = {.complexFormat = ComplexFormat::Cartesian,
+                     .context = tempContext},
+            .projectionPolicy =
+                {.symbolic = SymbolicComputation::ReplaceDefinedSymbols},
+            .reduction = {.advanced = false}});
     quiz_assert(!obtainedExpression.isUninitialized() &&
                 !obtainedExpression.isFailedSimplification());
 

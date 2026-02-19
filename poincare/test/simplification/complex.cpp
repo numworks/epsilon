@@ -6,15 +6,13 @@ using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_simplification_complex) {
   SimplificationParameters parameters = {
-      .complexFormat = ComplexFormat::Cartesian,
-      .angleUnit = AngleUnit::Radian,
-      .symbolic = SymbolicComputation::KeepAllSymbols,
-  };
+      .user = {.complexFormat = ComplexFormat::Cartesian,
+               .angleUnit = AngleUnit::Radian},
+      .projectionPolicy = {.symbolic = SymbolicComputation::KeepAllSymbols}};
   SimplificationParameters polarParameters = {
-      .complexFormat = ComplexFormat::Polar,
-      .angleUnit = AngleUnit::Radian,
-      .symbolic = SymbolicComputation::KeepAllSymbols,
-  };
+      .user = {.complexFormat = ComplexFormat::Polar,
+               .angleUnit = AngleUnit::Radian},
+      .projectionPolicy = {.symbolic = SymbolicComputation::KeepAllSymbols}};
   simplifies_to("2×i×i", "-2", parameters);
   simplifies_to("1+i×(1+i×(1+i))", "0", parameters);
   simplifies_to("(1+i)×(3+2i)", "1+5×i", parameters);
@@ -165,9 +163,9 @@ QUIZ_CASE(pcj_simplification_complex_format) {
     // a = 2+i
     PoincareTest::SymbolStore symbolStore;
     Poincare::SimplificationParameters simplificationParameters = {
-        .complexFormat = ComplexFormat::Real,
-        .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-        .context = symbolStore};
+        .user = {.complexFormat = ComplexFormat::Real, .context = symbolStore},
+        .projectionPolicy = {.symbolic =
+                                 SymbolicComputation::ReplaceDefinedSymbols}};
     store("2+i→a", symbolStore);
     simplifies_to("a", "nonreal", simplificationParameters);
     symbolStore.reset();
@@ -262,9 +260,10 @@ QUIZ_CASE(pcj_simplification_complex_format) {
     // a = 2+i
     PoincareTest::SymbolStore symbolStore;
     Poincare::SimplificationParameters simplificationParameters = {
-        .complexFormat = ComplexFormat::Cartesian,
-        .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-        .context = symbolStore};
+        .user = {.complexFormat = ComplexFormat::Cartesian,
+                 .context = symbolStore},
+        .projectionPolicy = {.symbolic =
+                                 SymbolicComputation::ReplaceDefinedSymbols}};
     store("2+i→a", symbolStore);
     simplifies_to("a", "2+i", simplificationParameters);
     symbolStore.reset();
@@ -317,10 +316,11 @@ QUIZ_CASE(pcj_simplification_complex_format) {
   {
     PoincareTest::SymbolStore symbolStore;
     Poincare::SimplificationParameters parameters = {
-        .complexFormat = ComplexFormat::Polar,
-        .angleUnit = AngleUnit::Radian,
-        .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-        .context = symbolStore};
+        .user = {.complexFormat = ComplexFormat::Polar,
+                 .angleUnit = AngleUnit::Radian,
+                 .context = symbolStore},
+        .projectionPolicy = {.symbolic =
+                                 SymbolicComputation::ReplaceDefinedSymbols}};
     // a = 2 + i
     store("2+i→a", symbolStore);
     simplifies_to("a", "√(5)×e^(arctan(1/2)×i)", parameters);

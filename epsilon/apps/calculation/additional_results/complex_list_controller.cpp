@@ -24,18 +24,18 @@ void ComplexListController::computeAdditionalResults(
       approximateOutput, m_calculationPreferences, App::app()->localContext()));
   assert(complexFormat() != ComplexFormat::Real);
   SimplificationParameters simplificationParameters = {
-      .complexFormat = ComplexFormat::Cartesian,
-      .angleUnit = angleUnit(),
-      .symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .context = App::app()->localContext()};
+      .user = {.complexFormat = ComplexFormat::Cartesian,
+               .angleUnit = angleUnit(),
+               .context = App::app()->localContext()},
+      .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols}};
 
   // Fill Calculation Store
   constexpr KTree k_symbol = "z"_e;
   size_t index = 0;
-  simplificationParameters.complexFormat = complexFormToDisplay();
+  simplificationParameters.user.complexFormat = complexFormToDisplay();
   setLineAtIndex(index++, UserExpression::Builder(k_symbol), exactOutput,
                  simplificationParameters);
-  simplificationParameters.complexFormat = ComplexFormat::Cartesian;
+  simplificationParameters.user.complexFormat = ComplexFormat::Cartesian;
   setLineAtIndex(index++, UserExpression::Builder(KAbs(k_symbol)),
                  UserExpression::Create(KAbs(KA), {.KA = exactOutput}),
                  simplificationParameters);
@@ -54,9 +54,9 @@ void ComplexListController::computeAdditionalResults(
   double imagPart;
   bool hasComplexApprox =
       approximateOutput.hasDefinedComplexApproximation<double>(
-          simplificationParameters.angleUnit,
-          simplificationParameters.complexFormat, App::app()->localContext(),
-          &realPart, &imagPart);
+          simplificationParameters.user.angleUnit,
+          simplificationParameters.user.complexFormat,
+          App::app()->localContext(), &realPart, &imagPart);
 
   assert(hasComplexApprox);
   (void)hasComplexApprox;  // Silence the compiler;

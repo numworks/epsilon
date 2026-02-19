@@ -95,7 +95,7 @@ QUIZ_CASE(pcj_polynomial_operations) {
 void assert_polynomial_degree_is(
     const Poincare::SimplificationParameters& simplificationParameters,
     const char* input, int expectedDegree, const char* symbolName = "x") {
-  Tree* expression = parse(input, simplificationParameters.context);
+  Tree* expression = parse(input, simplificationParameters.user.context);
   Simplification::ProjectAndReduce(expression, simplificationParameters);
   int degree = Degree::Get(expression, symbolName);
   quiz_assert(degree == expectedDegree);
@@ -105,11 +105,12 @@ void assert_polynomial_degree_is(
 QUIZ_CASE(pcj_polynomial_degree) {
   PoincareTest::SymbolStore symbolStore;
   Poincare::SimplificationParameters parameters = {
-      .complexFormat = Cartesian,
-      .angleUnit = Radian,
-      .reduction = {.advanced = false},
-      .symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
-      .context = symbolStore};
+      .user = {.complexFormat = Cartesian,
+               .angleUnit = Radian,
+               .context = symbolStore},
+      .projectionPolicy =
+          {.symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols},
+      .reduction = {.advanced = false}};
 
   assert_polynomial_degree_is(parameters, "x+1", 1);
   assert_polynomial_degree_is(parameters, "cos(2)+1", 0);
@@ -149,7 +150,7 @@ QUIZ_CASE(pcj_polynomial_degree) {
   assert_polynomial_degree_is(parameters, "f(x)", 1);
   symbolStore.reset();
 
-  parameters.complexFormat = Real;
+  parameters.user.complexFormat = Real;
   assert_polynomial_degree_is(parameters, "√(-1)×x", 0);
   assert_polynomial_degree_is(parameters, "√(x)", -1);
 }

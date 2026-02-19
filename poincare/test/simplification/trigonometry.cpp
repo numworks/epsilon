@@ -32,8 +32,12 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 "{√(2)/2,-√(2)/2,-√(2)/2,√(2)/2}");
   simplifies_to("sin({π/4,3π/4,-11π/4,7π/4})",
                 "{√(2)/2,√(2)/2,-√(2)/2,-√(2)/2}");
-  simplifies_to("cos(π)", "cos(π)", {.angleUnit = AngleUnit::Degree});
-  simplifies_to("cos(45)", "√(2)/2", {.angleUnit = AngleUnit::Degree});
+  simplifies_to(
+      "cos(π)", "cos(π)",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
+  simplifies_to(
+      "cos(45)", "√(2)/2",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
 
   // Inverse trigonometry exact formulas
   simplifies_to("acos({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
@@ -48,9 +52,10 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("asin(1/√(2))", "π/4");
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{-π/2,-π/3,-π/4,-π/6,0,π/6,π/4,π/3,π/2}");
-  simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
-                "{-90,-60,-45,-30,0,30,45,60,90}",
-                {.angleUnit = AngleUnit::Degree});
+  simplifies_to(
+      "asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
+      "{-90,-60,-45,-30,0,30,45,60,90}",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
 
   simplifies_to("asin(-(√(6)+√(2))/4)", "-5π/12");
   simplifies_to("asin(-(√(6)-√(2))/4)", "-π/12");
@@ -110,8 +115,9 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("tan({acos(-x), asin(-x), atan(-x)})",
                 "{-√(-x^2+1)/x,-x/√(-x^2+1),-x}", k_cartesianParams);
   simplifies_to("cos({acos(x), asin(x), atan(x)})", "{x,√(-x^2+1),1/√(x^2+1)}",
-                {.complexFormat = ComplexFormat::Cartesian,
-                 .angleUnit = AngleUnit::Degree});
+                SimplificationParameters{
+                    .user = {.complexFormat = ComplexFormat::Cartesian,
+                             .angleUnit = AngleUnit::Degree}});
   simplifies_to("cos(acos(3/7))", "3/7");
   simplifies_to("cos(acos(9/7))", "nonreal");
   simplifies_to("cos(acos(9/7))", "9/7", k_cartesianParams);
@@ -131,16 +137,18 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 k_cartesianParams);
   simplifies_to("acos({cos(x), sin(x), tan(x)})",
                 "{arccos(cos(x)),arccos(sin(x)),arccos(tan(x))}",
-                {.complexFormat = ComplexFormat::Cartesian,
-                 .angleUnit = AngleUnit::Degree});
+                SimplificationParameters{
+                    .user = {.complexFormat = ComplexFormat::Cartesian,
+                             .angleUnit = AngleUnit::Degree}});
   simplifies_to("acos(cos({3π/7, -11π/15,34π/15, 40π/13}))",
                 "{(3×π)/7,(11×π)/15,(4×π)/15,(12×π)/13}");
   simplifies_to("asin(sin({3π/7, -11π/15,34π/15, 40π/13}))",
                 "{(3×π)/7,-(4×π)/15,(4×π)/15,-π/13}");
   simplifies_to("atan(tan({3π/7, -11π/15,34π/15, 40π/13}))",
                 "{(3×π)/7,(4×π)/15,(4×π)/15,π/13}");
-  simplifies_to("acos({cos(683), sin(683)})", "{117,183}",
-                {.angleUnit = AngleUnit::Gradian});
+  simplifies_to(
+      "acos({cos(683), sin(683)})", "{117,183}",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Gradian}});
   simplifies_to("acos(sin({π*23/7, -23*π/7}))/π", "{11/14,3/14}");
   simplifies_to("asin(cos({π*23/7, -23*π/7}))/π", "{-3/14,-3/14}");
   simplifies_to("atan({tan(-3π/13), -sin(3π/13)/cos(3π/13)})",
@@ -152,42 +160,53 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("atan(asin(cos(4)))", "-atan(-4+3π/2)");
   // TODO: fix
   // simplifies_to("atan(tan(π/10))", "π/10");
-  simplifies_to("atan(tan(9))", "9", {.angleUnit = AngleUnit::Degree});
-  simplifies_to("acos(cos(9))", "9", {.angleUnit = AngleUnit::Degree});
-  simplifies_to("asin(sin(9))", "9", {.angleUnit = AngleUnit::Degree});
-  simplifies_to("acos(atan(tan(cos(9))))", "9",
-                {.angleUnit = AngleUnit::Degree});
-  simplifies_to("asin(acos(atan(tan(cos(sin(9))))))", "9",
-                {.angleUnit = AngleUnit::Degree});
-  simplifies_to("asin(2/√(3)×sin(60))", "90", {.angleUnit = AngleUnit::Degree});
+  simplifies_to(
+      "atan(tan(9))", "9",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
+  simplifies_to(
+      "acos(cos(9))", "9",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
+  simplifies_to(
+      "asin(sin(9))", "9",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
+  simplifies_to(
+      "acos(atan(tan(cos(9))))", "9",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
+  simplifies_to(
+      "asin(acos(atan(tan(cos(sin(9))))))", "9",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
+  simplifies_to(
+      "asin(2/√(3)×sin(60))", "90",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
 
   // Angle format with hyperbolic trigonometry
-  simplifies_to("cos(2)+cosh(2)+cos(2)", "2×cos(2)+cosh(2)",
-                {.angleUnit = AngleUnit::Degree});
+  simplifies_to(
+      "cos(2)+cosh(2)+cos(2)", "2×cos(2)+cosh(2)",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
 
 #if 0
   // TODO: asin(x) = π/2 - acos(x) advanced reduction safe from infinite loops.
   simplifies_to("asin(x)-π/2", "-arccos(x)");
-  simplifies_to("90-acos(x)", "arcsin(x)", {.angleUnit = AngleUnit::Degree});
+  simplifies_to("90-acos(x)", "arcsin(x)",SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
 #endif
   // TODO: Improve output with better advanced reduction.
   simplifies_to("(y*π+z/180)*asin(x)", "(π×y+z/180)×arcsin(x)",
-                {.complexFormat = ComplexFormat::Cartesian,
-                 .angleUnit = AngleUnit::Degree});
+                k_degreeCartesianParams);
   simplifies_to("arg(cos(π/6)+i*sin(π/6))", "π/6");
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", k_cartesianParams);
   simplifies_to("sin(17)^2+cos(6)^2", "cos(6)^2+sin(17)^2", k_cartesianParams);
   // Strategy
-  simplifies_to("sin(90)", "1",
-                {.angleUnit = AngleUnit::Degree,
-                 .strategy = Strategy::ApproximateToFloat});
+  simplifies_to(
+      "sin(90)", "1",
+      SimplificationParameters{
+          .user = {.angleUnit = AngleUnit::Degree},
+          .projectionPolicy = {.strategy = Strategy::ApproximateToFloat}});
 
   // Beautification and dependencies
-  simplifies_to(
-      "re(2*acos(cos(x)))",
-      "dep(2×re(arccos(cos(x))),{0×im(arccos(cos(x))),0×im(π×arccos("
-      "cos(x))),realPos(1-abs(cos((180×π×x)/(180×π))))})",
-      {.complexFormat = ComplexFormat::Real, .angleUnit = AngleUnit::Degree});
+  simplifies_to("re(2*acos(cos(x)))",
+                "dep(2×re(arccos(cos(x))),{0×im(arccos(cos(x))),0×im(π×arccos("
+                "cos(x))),realPos(1-abs(cos((180×π×x)/(180×π))))})",
+                k_degreeParams);
   simplifies_to("tan(20)^2*tan(2)", "tan(2)*tan(20)^2");
 
   // atan(1/x)
@@ -421,9 +440,10 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   // If target != User, sin/cos is not reduced to tan(x)
   projects_and_reduces_to(
       "atan(sin(2/3)/cos(2/3))", "2/3",
-      {.complexFormat = Poincare::ComplexFormat::Real,
-       .angleUnit = Poincare::AngleUnit::Radian,
-       .reduction = {.target = ReductionTarget::SystemForAnalysis}});
+      SimplificationParameters{
+          .user = {.complexFormat = Poincare::ComplexFormat::Real,
+                   .angleUnit = Poincare::AngleUnit::Radian},
+          .reduction = {.target = ReductionTarget::SystemForAnalysis}});
   simplifies_to("tan(atan(5/2))", "5/2");
   simplifies_to("atan(tan(5/2))", "5/2-π");
   simplifies_to("atan(tan(-π/7))", "-π/7");
@@ -584,7 +604,9 @@ QUIZ_CASE(pcj_simplification_trigonometry_advanced) {
   simplifies_to("cot(π/2)", "0");
   simplifies_to("cot(π°)", "cot(π^2/180)");
   simplifies_to("cot(2)", "cot(2)");
-  simplifies_to("cot(90)", "0", {.angleUnit = AngleUnit::Degree});
+  simplifies_to(
+      "cot(90)", "0",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
   simplifies_to("csc(0)", "undef");
   simplifies_to("sec(0)", "1");
   simplifies_to("arccsc(2/√(3))", "π/3");
@@ -594,11 +616,15 @@ QUIZ_CASE(pcj_simplification_trigonometry_advanced) {
   simplifies_to("cot(π/2)", "0");
   simplifies_to("arccsc(1)", "π/2");
   simplifies_to("arcsec(1)", "0");
-  simplifies_to("arccot(0)", "90", {.angleUnit = AngleUnit::Degree});
+  simplifies_to(
+      "arccot(0)", "90",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
   simplifies_to("arccot(0)", "π/2");
   simplifies_to("arccot(1)", "π/4");
   simplifies_to("arccot(-1)", "3π/4");
-  simplifies_to("arccot(-1)", "135", {.angleUnit = AngleUnit::Degree});
+  simplifies_to(
+      "arccot(-1)", "135",
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
 
   // arcsec(sec)
   simplifies_to("arcsec(sec(3))", "3");
@@ -633,23 +659,16 @@ QUIZ_CASE(pcj_simplification_trigonometry_advanced) {
   simplifies_to("arccot(cot(-3))", "-3+π");
   simplifies_to("arccot(cot(π/6))", "π/6");
   simplifies_to("arccot(3)", "π/2-arctan(3)");
-  projects_and_reduces_to(
-      "arccot(3)", "π/2-arctan(3)",
-      {.angleUnit = Poincare::AngleUnit::Radian,
-       .reduction = {.target = ReductionTarget::SystemForAnalysis}});
-  projects_and_reduces_to(
-      "arccot(3)", "π/2-arctan(3)",
-      {.angleUnit = Poincare::AngleUnit::Radian,
-       .reduction = {.target = ReductionTarget::SystemForAnalysis}});
+
+  SimplificationParameters parametersForAnalysis = SimplificationParameters{
+      .user = {.angleUnit = Poincare::AngleUnit::Radian},
+      .reduction = {.target = ReductionTarget::SystemForAnalysis}};
+
+  projects_and_reduces_to("arccot(3)", "π/2-arctan(3)", parametersForAnalysis);
+  projects_and_reduces_to("arccot(3)", "π/2-arctan(3)", parametersForAnalysis);
   simplifies_to("arccot(x)", "π/2-arctan(x)");
-  projects_and_reduces_to(
-      "arccot(x)", "π/2-arctan(x)",
-      {.angleUnit = Poincare::AngleUnit::Radian,
-       .reduction = {.target = ReductionTarget::SystemForAnalysis}});
-  projects_and_reduces_to(
-      "arccot(x)", "π/2-arctan(x)",
-      {.angleUnit = Poincare::AngleUnit::Radian,
-       .reduction = {.target = ReductionTarget::SystemForAnalysis}});
+  projects_and_reduces_to("arccot(x)", "π/2-arctan(x)", parametersForAnalysis);
+  projects_and_reduces_to("arccot(x)", "π/2-arctan(x)", parametersForAnalysis);
 
   // cot(acot)
   simplifies_to("cot(arccot(3))", "3");

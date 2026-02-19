@@ -58,9 +58,9 @@ void process_tree_and_compare(
     const char* input, const char* output, ProcessTree process,
     const Poincare::SimplificationParameters& simplificationParameters,
     int nbOfSignificantDigits, bool preserveInput) {
-  Tree* expression = parse(input, simplificationParameters.context,
+  Tree* expression = parse(input, simplificationParameters.user.context,
                            {.preserveInput = preserveInput});
-  Tree* expected = parse(output, simplificationParameters.context,
+  Tree* expected = parse(output, simplificationParameters.user.context,
                          {.preserveInput = preserveInput});
   process_tree_and_compare(expression, expected, process,
                            simplificationParameters, nbOfSignificantDigits,
@@ -162,9 +162,8 @@ Tree* parse_and_reduce(const char* input, bool beautify) {
   assert(e);
   simplify(e,
            Poincare::SimplificationParameters{
-               .complexFormat = Poincare::ComplexFormat::Real,
-               .angleUnit = Poincare::AngleUnit::Radian,
-           },
+               .user = {.complexFormat = Poincare::ComplexFormat::Real,
+                        .angleUnit = Poincare::AngleUnit::Radian}},
            beautify);
   return e;
 }

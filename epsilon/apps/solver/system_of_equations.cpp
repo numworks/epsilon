@@ -43,13 +43,12 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   UserExpression eqList = equationList(m_store);
   EquationSolver::SolverResult result = EquationSolver::ExactSolveAdaptive(
       eqList,
-      {
-          .complexFormat =
-              GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-          .angleUnit =
-              GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-          .context = symbolContext,
-      });
+      {.user = {
+           .complexFormat =
+               GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+           .angleUnit =
+               GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+           .context = symbolContext}});
   UserExpression exactSolutionList = result.exactSolutionList;
   UserExpression approximateSolutionList = result.approximateSolutionList;
   m_solutionMetadata = result.solutionMetadata;
@@ -106,11 +105,12 @@ void SystemOfEquations::approximateSolve(const SymbolContext& symbolContext) {
 
   EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
       eqList,
-      {.complexFormat =
-           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-       .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-       .reduction = {.target = ReductionTarget::SystemForApproximation},
-       .context = symbolContext},
+      {.user = {.complexFormat = GlobalPreferences::SharedGlobalPreferences()
+                                     ->complexFormat(),
+                .angleUnit =
+                    GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+                .context = symbolContext},
+       .reduction = {.target = ReductionTarget::SystemForApproximation}},
       m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
                                 : m_approximateSolvingRange,
       k_maxNumberOfApproximateSolutions);
@@ -199,17 +199,19 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     bool failure = false;
     approximate = exact.cloneAndSimplify(
         SimplificationParameters{
-            .complexFormat = m_equationMetadata.complexFormat,
-            .angleUnit =
-                GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-            .strategy = Strategy::ApproximateToFloat,
+            .user = {.complexFormat = m_equationMetadata.complexFormat,
+                     .angleUnit = GlobalPreferences::SharedGlobalPreferences()
+                                      ->angleUnit(),
+                     .context = symbolContext},
+            .projectionPolicy =
+                {/* Any remaining symbol at this point should be an
+                    unknown parameter. */
+                 .symbolic = SymbolicComputation::KeepAllSymbols,
+                 .strategy = Strategy::ApproximateToFloat},
             .reduction = {.advanced = false},
-            .unitFormat =
-                GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-            // Any remaining symbol at this point should be an unknown
-            // parameter.
-            .symbolic = SymbolicComputation::KeepAllSymbols,
-            .context = symbolContext},
+            .unitMode = {.unitFormat =
+                             GlobalPreferences::SharedGlobalPreferences()
+                                 ->unitFormat()}},
         &failure);
   }
 
@@ -261,9 +263,9 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
             exact, approximate,
             GlobalPreferences::SharedGlobalPreferences()
                 ->numberOfSignificantDigits(),
-            {.complexFormat = m_equationMetadata.complexFormat,
-             .angleUnit =
-                 GlobalPreferences::SharedGlobalPreferences()->angleUnit()})) {
+            {.user = {.complexFormat = m_equationMetadata.complexFormat,
+                      .angleUnit = GlobalPreferences::SharedGlobalPreferences()
+                                       ->angleUnit()}})) {
       exactAndApproximateAreEqual = true;
     }
   }

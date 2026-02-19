@@ -182,12 +182,13 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   }
 
   SystemExpression reduced = formula.cloneAndReduce(SimplificationParameters{
-      .complexFormat =
-          GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-      .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-      .reduction = {.target = ReductionTarget::SystemForApproximation},
-      .symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .context = storeAppContext});
+      .user = {.complexFormat = GlobalPreferences::SharedGlobalPreferences()
+                                    ->complexFormat(),
+               .angleUnit =
+                   GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+               .context = storeAppContext},
+      .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols},
+      .reduction = {.target = ReductionTarget::SystemForApproximation}});
 
   if (reduced.isFailedSimplification() || reduced.isUndefined()) {
     return FillColumnStatus::DataNotSuitable;

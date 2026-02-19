@@ -20,7 +20,7 @@ bool s_isInteractive = false;
 SimplificationParameters simplificationParameters() {
   SimplificationParameters result;
   result.context = &s_historyContext;
-  simplificationParameters.symbolic =
+  simplificationParameters.projectionPolicy.symbolic =
       SymbolicComputation::ReplaceDefinedSymbols;
   return result;
 }

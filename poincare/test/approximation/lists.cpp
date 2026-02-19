@@ -17,18 +17,20 @@ QUIZ_CASE(pcj_approximation_list) {
 
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("{1,2,3,4,5}→L", symbolStore);
-  approximates_to<float>("L(1)", "1", {.context = symbolStore});
-  approximates_to<float>("L(0)", "undef", {.context = symbolStore});
-  approximates_to<float>("L(7)", "undef", {.context = symbolStore});
-  approximates_to<double>("L(1)", "1", {.context = symbolStore});
-  approximates_to<double>("L(0)", "undef", {.context = symbolStore});
-  approximates_to<double>("L(7)", "undef", {.context = symbolStore});
-  approximates_to<float>("L(1,3)", "{1,2,3}", {.context = symbolStore});
-  approximates_to<float>("L(1,9)", "{1,2,3,4,5}", {.context = symbolStore});
-  approximates_to<float>("L(-5,3)", "undef", {.context = symbolStore});
-  approximates_to<float>("L(3,1)", "{}", {.context = symbolStore});
-  approximates_to<float>("L(8,9)", "{}", {.context = symbolStore});
-  approximates_to<float>("L(1^2)", "1", {.context = symbolStore});
+  Poincare::SimplificationParameters parameters =
+      Poincare::SimplificationParameters{.user = {.context = symbolStore}};
+  approximates_to<float>("L(1)", "1", parameters);
+  approximates_to<float>("L(0)", "undef", parameters);
+  approximates_to<float>("L(7)", "undef", parameters);
+  approximates_to<double>("L(1)", "1", parameters);
+  approximates_to<double>("L(0)", "undef", parameters);
+  approximates_to<double>("L(7)", "undef", parameters);
+  approximates_to<float>("L(1,3)", "{1,2,3}", parameters);
+  approximates_to<float>("L(1,9)", "{1,2,3,4,5}", parameters);
+  approximates_to<float>("L(-5,3)", "undef", parameters);
+  approximates_to<float>("L(3,1)", "{}", parameters);
+  approximates_to<float>("L(8,9)", "{}", parameters);
+  approximates_to<float>("L(1^2)", "1", parameters);
 }
 
 QUIZ_CASE(pcj_approximation_lists_functions) {

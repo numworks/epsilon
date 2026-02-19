@@ -60,9 +60,8 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
           exactExpression, UserExpression::Builder(approximation),
           numberOfSignificantDigits,
           SimplificationParameters{
-              .complexFormat = approximationParameters.complexFormat,
-              .angleUnit = approximationParameters.angleUnit,
-          })) {
+              .user = {.complexFormat = approximationParameters.complexFormat,
+                       .angleUnit = approximationParameters.angleUnit}})) {
     constexpr size_t k_bufferExactLength = 15;
     char exactSerialization[k_bufferExactLength];
     PrintFloat::TextLengths exactTextLengths =

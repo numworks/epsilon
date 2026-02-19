@@ -87,7 +87,7 @@ void IllustratedExpressionsListController::setLineAtIndex(
     int index, const UserExpression formula, const UserExpression expression,
     const SimplificationParameters& simplificationParameters) {
   m_layouts[index] = Shared::PoincareHelpers::CreateLayout(
-      formula, simplificationParameters.context);
+      formula, simplificationParameters.user.context);
   m_exactLayouts[index] = GetExactLayoutFromExpression(
       expression, simplificationParameters, &(m_approximatedLayouts[index]),
       &(m_isStrictlyEqual[index]));

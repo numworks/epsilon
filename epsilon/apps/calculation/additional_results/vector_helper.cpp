@@ -30,11 +30,12 @@ UserExpression BuildVectorNorm(
              VectorListController::k_symbolicComputation));
   norm = norm.cloneAndSimplify(
       SimplificationParameters{
-          .complexFormat = calculationPreferences.complexFormat,
-          .angleUnit = calculationPreferences.angleUnit,
+          .user = {.complexFormat = calculationPreferences.complexFormat,
+                   .angleUnit = calculationPreferences.angleUnit,
+                   .context = symbolContext},
+          .projectionPolicy = {.symbolic =
+                                   VectorListController::k_symbolicComputation},
           .reduction = {.target = ReductionTarget::User},
-          .symbolic = VectorListController::k_symbolicComputation,
-          .context = symbolContext,
       },
       &reductionFailure);
 

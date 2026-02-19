@@ -12,8 +12,9 @@ using namespace Poincare::Internal;
 QUIZ_CASE(poincare_sequence) {
   PoincareTest::SymbolStore symbolStore;
   SimplificationParameters simplificationParameters = {
-      .symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .context = symbolStore};
+      .user = {.context = symbolStore},
+      .projectionPolicy = {.symbolic =
+                               SymbolicComputation::ReplaceDefinedSymbols}};
 
   // Sequence
   // TODO: add sequence type to the symbol store

@@ -27,10 +27,10 @@ void TrigonometryListController::computeAdditionalResults(
               App::app()->localContext())));
 
   SimplificationParameters simplificationParameters = {
-      .complexFormat = complexFormat(),
-      .angleUnit = angleUnit(),
-      .symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .context = App::app()->localContext()};
+      .user = {.complexFormat = complexFormat(),
+               .angleUnit = angleUnit(),
+               .context = App::app()->localContext()},
+      .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols}};
 
   AdditionalResultsHelper::TrigonometryResults trigonometryResults =
       AdditionalResultsHelper::TrigonometryAngleHelper(

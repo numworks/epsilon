@@ -35,13 +35,13 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
     Poincare::Preferences::CalculationPreferences calculationPreferences,
     const SimplificationParameters& simplificationParameters,
     ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation) {
-  const Tree* period = Angle::Period(simplificationParameters.angleUnit);
+  const Tree* period = Angle::Period(simplificationParameters.user.angleUnit);
   // Find the angle
   UserExpression exactAngle =
       directTrigonometry
-          ? ExtractExactAngleFromDirectTrigo(input, exactOutput,
-                                             simplificationParameters.context,
-                                             calculationPreferences)
+          ? ExtractExactAngleFromDirectTrigo(
+                input, exactOutput, simplificationParameters.user.context,
+                calculationPreferences)
           : exactOutput;
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
 
@@ -78,7 +78,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
           UserExpression::Builder(static_cast<const Tree*>(simplifiedAngle)),
           UserExpression::Builder(
               static_cast<const Tree*>(approximateAngleTree)),
-          simplificationParameters.context)) {
+          simplificationParameters.user.context)) {
     if (directTrigonometry) {
       assert(!approximateAngleTree);
       /* Do not approximate the FracPart, which could lead to truncation error
@@ -91,12 +91,13 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
       Tree* sine = PatternMatching::Create(KSin(KA), {.KA = exactAngle});
       bool removePeriod =
           Approximation::To<double>(
-              sine, Approximation::Parameters{
-                        .projectLocalVariables = true,
-                        .optimize = true,
-                        .angleUnit = simplificationParameters.angleUnit,
-                        .complexFormat = simplificationParameters.complexFormat,
-                        .symbolContext = simplificationParameters.context}) < 0;
+              sine,
+              Approximation::Parameters{
+                  .projectLocalVariables = true,
+                  .optimize = true,
+                  .angleUnit = simplificationParameters.user.angleUnit,
+                  .complexFormat = simplificationParameters.user.complexFormat,
+                  .symbolContext = simplificationParameters.user.context}) < 0;
       sine->removeTree();
       if (removePeriod) {
         approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
@@ -109,9 +110,9 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
         Approximation::Parameters{
             .projectLocalVariables = true,
             .optimize = true,
-            .angleUnit = simplificationParameters.angleUnit,
-            .complexFormat = simplificationParameters.complexFormat,
-            .symbolContext = simplificationParameters.context}));
+            .angleUnit = simplificationParameters.user.angleUnit,
+            .complexFormat = simplificationParameters.user.complexFormat,
+            .symbolContext = simplificationParameters.user.context}));
     Beautification::DeepBeautify(
         approximateAngleTree,
         ToBeautificationParameters(simplificationParameters));
@@ -135,15 +136,15 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
       Approximation::Parameters{
           .projectLocalVariables = true,
           .optimize = true,
-          .angleUnit = simplificationParameters.angleUnit,
-          .complexFormat = simplificationParameters.complexFormat,
-          .symbolContext = simplificationParameters.context});
+          .angleUnit = simplificationParameters.user.angleUnit,
+          .complexFormat = simplificationParameters.user.complexFormat,
+          .symbolContext = simplificationParameters.user.context});
   if (approximateAngleTree) {
     approximateAngleTree->removeTree();
   }
   simplifiedAngle->removeTree();
   approximatedAngle = Poincare::Trigonometry::ConvertAngleToRadian(
-      approximatedAngle, simplificationParameters.angleUnit);
+      approximatedAngle, simplificationParameters.user.angleUnit);
   assert(0.0 <= approximatedAngle && approximatedAngle <= 2.0 * M_PI);
   return {.exactAngle = exactAngle,
           .approximatedAngle = approximatedAngle,
@@ -204,11 +205,10 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   ComplexFormat complexFormat = calculationPreferences.complexFormat;
   AngleUnit angleUnit = calculationPreferences.angleUnit;
   SimplificationParameters simplificationParameters = {
-      .complexFormat = complexFormat,
-      .angleUnit = angleUnit,
-      .symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .context = symbolContext,
-  };
+      .user = {.complexFormat = complexFormat,
+               .angleUnit = angleUnit,
+               .context = symbolContext},
+      .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols}};
 
   /* TODO: Second Simplify could be avoided by calling
    * intermediate steps, and handle units right after projection. */
@@ -570,7 +570,7 @@ static Poincare::Layout CreateBeautifiedLayout(
   Poincare::Layout layout =
       Poincare::Layout::Builder(Layouter::LayoutExpression(
           reducedExpression,
-          {.symbolContext = simplificationParameters.context,
+          {.symbolContext = simplificationParameters.user.context,
            .numberOfSignificantDigits = numberOfSignificantDigits,
            .floatMode = displayMode}));
   reducedExpression->removeTree();
@@ -583,13 +583,12 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
   SimplificationParameters simplificationParameters = {
-      .complexFormat = ComplexFormat::Cartesian,
-      .angleUnit = calculationPreferences.angleUnit,
-      .strategy = Strategy::ApproximateToFloat,
-      .reduction = {.advanced = false},
-      .symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .context = symbolContext,
-  };
+      .user = {.complexFormat = ComplexFormat::Cartesian,
+               .angleUnit = calculationPreferences.angleUnit,
+               .context = symbolContext},
+      .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols,
+                           .strategy = Strategy::ApproximateToFloat},
+      .reduction = {.advanced = false}};
   Tree* e = approximateOutput.tree()->cloneTree();
   Internal::Dimension dim =
       Simplification::ProjectAndReduce(e, simplificationParameters);
@@ -638,8 +637,8 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     // TODO: Use ComplexProperties or approximation to handle more complex cases
     bool determinantIsUndefinedOrNull =
         determinant->isUndefined() || determinant->isZero();
-    Internal::Dimension dimension =
-        Internal::Dimension::Get(determinant, simplificationParameters.context);
+    Internal::Dimension dimension = Internal::Dimension::Get(
+        determinant, simplificationParameters.user.context);
     determinantL =
         CreateBeautifiedLayout(determinant, simplificationParameters, dimension,
                                displayMode, numberOfSignificantDigits);
@@ -685,7 +684,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     Tree* trace = Internal::Matrix::Trace(matrix);
     traceL = CreateBeautifiedLayout(
         trace, simplificationParameters,
-        Internal::Dimension::Get(trace, simplificationParameters.context),
+        Internal::Dimension::Get(trace, simplificationParameters.user.context),
         displayMode, numberOfSignificantDigits);
   }
 

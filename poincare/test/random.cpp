@@ -198,8 +198,7 @@ void assert_no_duplicates_in_list(const char* expression) {
   e->cloneNodeAtNode(KListSort);
   simplify(e,
            Poincare::SimplificationParameters{
-               .angleUnit = Poincare::AngleUnit::Radian,
-           },
+               .user = {.angleUnit = Poincare::AngleUnit::Radian}},
            false);
   e->moveTreeOverTree(Approximation::To<Tree*>(
       e, Approximation::Precision<T>::value, Approximation::Parameters{}));

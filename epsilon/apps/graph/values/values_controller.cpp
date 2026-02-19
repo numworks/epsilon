@@ -390,12 +390,14 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     e.cloneAndBeautifyAndApproximate(
         &result, &approximation,
         Poincare::SimplificationParameters{
-            .complexFormat =
-                GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-            .angleUnit =
-                GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-            .unitFormat =
-                GlobalPreferences::SharedGlobalPreferences()->unitFormat()});
+            .user =
+                {.complexFormat = GlobalPreferences::SharedGlobalPreferences()
+                                      ->complexFormat(),
+                 .angleUnit =
+                     GlobalPreferences::SharedGlobalPreferences()->angleUnit()},
+            .unitMode = {.unitFormat =
+                             GlobalPreferences::SharedGlobalPreferences()
+                                 ->unitFormat()}});
     assert(!approximation.isUninitialized());
     /* Approximate in case of simplification failure, as we cannot display a
      * non-beautified expression. */

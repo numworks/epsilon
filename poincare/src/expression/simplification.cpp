@@ -260,7 +260,8 @@ bool HandleUnits(Tree* e,
       return true;
     }
     // Re-apply strategy to make sure introduced integers are floats.
-    if (simplificationParameters.strategy == Strategy::ApproximateToFloat) {
+    if (simplificationParameters.projectionPolicy.strategy ==
+        Strategy::ApproximateToFloat) {
       ApplyReductionStrategy(e,
                              ToProjectionParameters(simplificationParameters));
     }

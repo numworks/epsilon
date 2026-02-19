@@ -870,7 +870,8 @@ QUIZ_CASE(sequence_evaluation) {
 QUIZ_CASE(sequence_store) {
   SequenceStore* sequenceStore = &GlobalContextAccessor::SequenceStore();
   GlobalStore& globalStore = GlobalContextAccessor::Store();
-  SimplificationParameters simplificationParameters = {.context = globalStore};
+  SimplificationParameters simplificationParameters = {
+      .user = {.context = globalStore}};
 
   PoincareTest::store("3→f(x)", GlobalContextAccessor::Store());
   simplified_approximates_to<double>("f(u(0))", "undef",

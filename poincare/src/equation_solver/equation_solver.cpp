@@ -72,7 +72,7 @@ static PreprocessingResult PreprocessEquationList(
   EquationMetadata equationMetadata;
 
   // Step 1. Retrieve user symbols and infer the list of unknowns
-  const SymbolContext& symbolContext = simplificationParameters.context;
+  const SymbolContext& symbolContext = simplificationParameters.user.context;
   Tree* userVariables =
       Variables::GetUserVariables(equationList, symbolContext);
   assert(userVariables->isList());
@@ -154,7 +154,7 @@ static PreprocessingResult PreprocessEquationList(
   SimplificationParameters updatedSimplificationParameters =
       simplificationParameters;
 
-  updatedSimplificationParameters.symbolic =
+  updatedSimplificationParameters.projectionPolicy.symbolic =
       equationMetadata.overrideDefinedVariables
           ? SymbolicComputation::ReplaceDefinedFunctions
           : SymbolicComputation::ReplaceDefinedSymbols;
@@ -162,15 +162,15 @@ static PreprocessingResult PreprocessEquationList(
   /* Step 2. Update complex format from equationList
    * NOTE: This must be done after deciding the symbolic computation mode */
 #if POINCARE_COMPLEX
-  updatedSimplificationParameters.complexFormat =
+  updatedSimplificationParameters.user.complexFormat =
       Projection::PreferredComplexFormat(
-          equationList, updatedSimplificationParameters.complexFormat,
-          updatedSimplificationParameters.symbolic,
-          updatedSimplificationParameters.context);
+          equationList, updatedSimplificationParameters.user.complexFormat,
+          updatedSimplificationParameters.projectionPolicy.symbolic,
+          updatedSimplificationParameters.user.context);
 #endif
 
   equationMetadata.complexFormat =
-      updatedSimplificationParameters.complexFormat;
+      updatedSimplificationParameters.user.complexFormat;
 
   // Step 3. Clone and simplify the equations
 
@@ -799,7 +799,7 @@ SolverResult ExactSolve(
   SimplificationParameters updatedSimplificationParameters =
       simplificationParameters;
 #if POINCARE_COMPLEX
-  updatedSimplificationParameters.complexFormat =
+  updatedSimplificationParameters.user.complexFormat =
       preprocessingResult.equationMetadata.complexFormat;
 #endif
 
@@ -818,7 +818,7 @@ SolverResult ExactSolve(
   // Step 2.1. Try with linear system solving
   SolverResult result =
       SolveLinearSystem(reducedEquationList, equationMetadata,
-                        updatedSimplificationParameters.context);
+                        updatedSimplificationParameters.user.context);
 
 #if POINCARE_POLYNOMIAL_SOLVER
   // Step 2.2. Try with polynomial solving
@@ -833,7 +833,7 @@ SolverResult ExactSolve(
        * projected with a "Real" Complex format */
       Tree* solutionList = result.exactSolutionList;
       assert(solutionList->isList());
-      if (updatedSimplificationParameters.complexFormat ==
+      if (updatedSimplificationParameters.user.complexFormat ==
           ComplexFormat::Real) {
         for (int i = solutionList->numberOfChildren() - 1; i >= 0; i--) {
           if (!PropertiesOfTreeOrApproximation(solutionList->child(i))
@@ -870,9 +870,9 @@ SolverResult ExactSolve(
         Approximation::Parameters{
             .prepare = true,
             .optimize = true,
-            .angleUnit = updatedSimplificationParameters.angleUnit,
-            .complexFormat = updatedSimplificationParameters.complexFormat,
-            .symbolContext = updatedSimplificationParameters.context});
+            .angleUnit = updatedSimplificationParameters.user.angleUnit,
+            .complexFormat = updatedSimplificationParameters.user.complexFormat,
+            .symbolContext = updatedSimplificationParameters.user.context});
   }
 
   /* Beautify result */
@@ -887,7 +887,8 @@ SolverResult ExactSolve(
   if (result.approximateSolutionList) {
     // Advanced reduction is only needed to beautify in polar format
     updatedSimplificationParameters.reduction.advanced =
-        updatedSimplificationParameters.complexFormat == ComplexFormat::Polar;
+        updatedSimplificationParameters.user.complexFormat ==
+        ComplexFormat::Polar;
     Simplification::BeautifyReduced(result.approximateSolutionList,
                                     updatedSimplificationParameters,
                                     preprocessingResult.dimension);

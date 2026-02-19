@@ -53,13 +53,14 @@ void approximates_to(const Tree* n, const Tree* expected) {
 template <typename T>
 void approximates_to(const char* input, T f,
                      const SimplificationParameters& simplificationParameters) {
-  Tree* expression = parse(input, simplificationParameters.context);
+  Tree* expression = parse(input, simplificationParameters.user.context);
   T approx = Approximation::To<T>(
-      expression, Approximation::Parameters{
-                      .projectLocalVariables = true,
-                      .angleUnit = simplificationParameters.angleUnit,
-                      .complexFormat = simplificationParameters.complexFormat,
-                      .symbolContext = simplificationParameters.context});
+      expression,
+      Approximation::Parameters{
+          .projectLocalVariables = true,
+          .angleUnit = simplificationParameters.user.angleUnit,
+          .complexFormat = simplificationParameters.user.complexFormat,
+          .symbolContext = simplificationParameters.user.context});
   bool result =
       OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG
@@ -87,9 +88,9 @@ void approximates_to(const char* input, const char* output,
             tree, Approximation::Precision<T>::value,
             Approximation::Parameters{
                 .projectLocalVariables = true,
-                .angleUnit = simplificationParameters.angleUnit,
-                .complexFormat = simplificationParameters.complexFormat,
-                .symbolContext = simplificationParameters.context}));
+                .angleUnit = simplificationParameters.user.angleUnit,
+                .complexFormat = simplificationParameters.user.complexFormat,
+                .symbolContext = simplificationParameters.user.context}));
         Beautification::DeepBeautify(
             tree, ToBeautificationParameters(simplificationParameters));
       },
@@ -123,15 +124,15 @@ void approximates_to_boolean(const Tree* n,
 void approximates_to_boolean(
     const char* input, Approximation::BooleanOrUndefined expected,
     const SimplificationParameters& simplificationParameters) {
-  Tree* expression = parse(input, simplificationParameters.context);
+  Tree* expression = parse(input, simplificationParameters.user.context);
   Approximation::BooleanOrUndefined approx =
       Approximation::To<Approximation::BooleanOrUndefined>(
           expression, Approximation::FloatPrecision::Single,
           Approximation::Parameters{
               .projectLocalVariables = true,
-              .angleUnit = simplificationParameters.angleUnit,
-              .complexFormat = simplificationParameters.complexFormat,
-              .symbolContext = simplificationParameters.context});
+              .angleUnit = simplificationParameters.user.angleUnit,
+              .complexFormat = simplificationParameters.user.complexFormat,
+              .symbolContext = simplificationParameters.user.context});
   quiz_assert(approx.isUndefined() == expected.isUndefined());
   if (!approx.isUndefined()) {
     quiz_assert(approx.value() == expected.value());
@@ -143,9 +144,10 @@ template <typename T>
 void assert_float_approximates_to(UserExpression f, const char* result) {
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
-  f.cloneAndApproximate<T>(Poincare::SimplificationParameters{
-                               .complexFormat = ComplexFormat::Cartesian,
-                               .angleUnit = AngleUnit::Radian})
+  f
+      .cloneAndApproximate<T>(Poincare::SimplificationParameters{
+          .user = {.complexFormat = ComplexFormat::Cartesian,
+                   .angleUnit = AngleUnit::Radian}})
       .serialize(buffer, false, DecimalMode, numberOfDigits);
   quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
 }
@@ -164,9 +166,9 @@ void simplified_approximates_to(
             Approximation::Parameters{
                 .projectLocalVariables = true,
                 .optimize = true,
-                .angleUnit = simplificationParameters.angleUnit,
-                .complexFormat = simplificationParameters.complexFormat,
-                .symbolContext = simplificationParameters.context}));
+                .angleUnit = simplificationParameters.user.angleUnit,
+                .complexFormat = simplificationParameters.user.complexFormat,
+                .symbolContext = simplificationParameters.user.context}));
         Beautification::DeepBeautify(
             tree, ToBeautificationParameters(simplificationParameters));
       },
@@ -188,9 +190,9 @@ void projected_approximates_to(
             Approximation::Parameters{
                 .prepare = true,
                 .optimize = true,
-                .angleUnit = simplificationParameters.angleUnit,
-                .complexFormat = simplificationParameters.complexFormat,
-                .symbolContext = simplificationParameters.context}));
+                .angleUnit = simplificationParameters.user.angleUnit,
+                .complexFormat = simplificationParameters.user.complexFormat,
+                .symbolContext = simplificationParameters.user.context}));
         Beautification::DeepBeautify(
             tree, ToBeautificationParameters(simplificationParameters));
       },
@@ -210,9 +212,9 @@ void approximates_to_keeping_symbols(
             tree, Approximation::Precision<T>::value,
             Approximation::Parameters{
                 .onlyReplaceNumerical = true,
-                .angleUnit = simplificationParameters.angleUnit,
-                .complexFormat = simplificationParameters.complexFormat,
-                .symbolContext = simplificationParameters.context});
+                .angleUnit = simplificationParameters.user.angleUnit,
+                .complexFormat = simplificationParameters.user.complexFormat,
+                .symbolContext = simplificationParameters.user.context});
         Variables::BeautifyToName(tree);
       },
       simplificationParameters, numberOfSignificantDigits);

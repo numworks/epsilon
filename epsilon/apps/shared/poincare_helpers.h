@@ -66,13 +66,17 @@ inline size_t ConvertFloatToTextWithDisplayMode(
 inline Poincare::SimplificationParameters
 SimplificationParametersForPreferences(const Poincare::UserExpression e) {
   return Poincare::SimplificationParameters{
-      .complexFormat = e.preferredComplexFormat(
-          GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-          GlobalContextAccessor::Context(),
-          Poincare::SymbolicComputation::ReplaceDefinedSymbols),
-      .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-      .unitFormat = GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-      .context = GlobalContextAccessor::Context()};
+      .user =
+          {.complexFormat = e.preferredComplexFormat(
+               GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+               GlobalContextAccessor::Context(),
+               Poincare::SymbolicComputation::ReplaceDefinedSymbols),
+           .angleUnit =
+               GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+           .context = GlobalContextAccessor::Context()},
+      .unitMode = {
+          .unitFormat =
+              GlobalPreferences::SharedGlobalPreferences()->unitFormat()}};
 }
 
 // Approximate a real scalar expression. Contexts are not handled.

@@ -30,15 +30,15 @@ void VectorListController::computeAdditionalResults(
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   SimplificationParameters simplificationParameters = {
-      .complexFormat = complexFormat(),
-      .angleUnit = angleUnit(),
-      .symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .context = symbolContext};
-  assert(
-      exactOutput.preferredComplexFormat(simplificationParameters.complexFormat,
-                                         simplificationParameters.context,
-                                         simplificationParameters.symbolic) ==
-      simplificationParameters.complexFormat);
+      .user = {.complexFormat = complexFormat(),
+               .angleUnit = angleUnit(),
+               .context = symbolContext},
+      .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols}};
+  assert(exactOutput.preferredComplexFormat(
+             simplificationParameters.user.complexFormat,
+             simplificationParameters.user.context,
+             simplificationParameters.projectionPolicy.symbolic) ==
+         simplificationParameters.user.complexFormat);
 
   setShowIllustration(false);
   size_t index = 0;
@@ -66,11 +66,11 @@ void VectorListController::computeAdditionalResults(
                                            k_symbolicComputation));
   normalized = normalized.cloneAndSimplify(
       SimplificationParameters{
-          .complexFormat = complexFormat(),
-          .angleUnit = angleUnit(),
+          .user = {.complexFormat = complexFormat(),
+                   .angleUnit = angleUnit(),
+                   .context = symbolContext},
+          .projectionPolicy = {.symbolic = k_symbolicComputation},
           .reduction = {.target = ReductionTarget::User},
-          .symbolic = k_symbolicComputation,
-          .context = symbolContext,
       },
       &reductionFailure);
   if (reductionFailure || !normalized.isMatrix()) {
@@ -97,7 +97,7 @@ void VectorListController::computeAdditionalResults(
   if (yApprox < 0.0) {
     angle = UserExpression::Create(
         KSub(KA, KB),
-        {.KA = Trigonometry::Period(simplificationParameters.angleUnit),
+        {.KA = Trigonometry::Period(simplificationParameters.user.angleUnit),
          .KB = angle});
   }
   float angleApproximation = angle.approximateToRealScalar<float>(

@@ -49,13 +49,13 @@ bool ExpressionParameterController::textFieldDidFinishEditing(
   ExpressionOrFloat currentExpression =
       isInitialized
           ? ExpressionOrFloat::Builder(
-                parsedExpression.cloneAndTrySimplify({
-                    .complexFormat =
-                        GlobalPreferences::SharedGlobalPreferences()
-                            ->complexFormat(),
-                    .angleUnit = GlobalPreferences::SharedGlobalPreferences()
-                                     ->angleUnit(),
-                }),
+                parsedExpression.cloneAndTrySimplify(SimplificationParameters{
+                    .user = {.complexFormat =
+                                 GlobalPreferences::SharedGlobalPreferences()
+                                     ->complexFormat(),
+                             .angleUnit =
+                                 GlobalPreferences::SharedGlobalPreferences()
+                                     ->angleUnit()}}),
                 PoincareHelpers::ApproximateToRealScalar)
           : ExpressionOrFloat{};
   if (hasUndefinedValue(text, currentExpression, innerSelectedRow()) ||

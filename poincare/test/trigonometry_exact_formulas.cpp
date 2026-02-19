@@ -63,21 +63,21 @@ class Poincare::Internal::ExactFormulaTest {
            const SimplificationParameters& simplificationParameters) {
           simplify(tree, simplificationParameters);
         },
-        {.angleUnit = AngleUnit::Radian});
+        SimplificationParameters{.user = {.angleUnit = AngleUnit::Radian}});
     process_tree_and_compare(
         "π/2-arccos(1/10)", "π/2-arccos(1/10)",
         [](Tree* tree,
            const SimplificationParameters& simplificationParameters) {
           simplify(tree, simplificationParameters);
         },
-        {.angleUnit = AngleUnit::Radian});
+        SimplificationParameters{.user = {.angleUnit = AngleUnit::Radian}});
     process_tree_and_compare(
         "π/2-arctan(1/10)", "π/2-arctan(1/10)",
         [](Tree* tree,
            const SimplificationParameters& simplificationParameters) {
           simplify(tree, simplificationParameters);
         },
-        {.angleUnit = AngleUnit::Radian});
+        SimplificationParameters{.user = {.angleUnit = AngleUnit::Radian}});
   }
 };
 

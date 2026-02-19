@@ -17,8 +17,10 @@ class StorageViewerController : public Escher::ViewController {
  private:
   class ContentView : public Escher::SolidColorView {
    public:
-    // 16 lines of 45 chars (+ line returns) can fit
-    constexpr static size_t k_bufferSize = 16 * (45 + 1);
+    constexpr static size_t k_lineBufferSize = 45 + 1 + 1;
+    constexpr static size_t k_maxNumberOfLine = 16;
+    constexpr static size_t k_bufferSize =
+        (k_lineBufferSize - 1) * k_maxNumberOfLine + 1;
     ContentView();
     Escher::AbstractBufferTextView* textView() { return &m_textView; }
     void setColor(KDColor color) override;

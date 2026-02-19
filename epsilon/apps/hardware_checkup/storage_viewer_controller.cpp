@@ -47,47 +47,45 @@ void StorageViewerController::ContentView::setColor(KDColor color) {
 
 // Build storage information text and display it.
 void StorageViewerController::viewWillAppear() {
-  char buffer[ContentView::k_bufferSize];
-
   size_t availableSize =
       Ion::Storage::FileSystem::sharedFileSystem->availableSize();
   size_t totalSize = Ion::Storage::FileSystem::k_totalSize;
-
-  float ratio = static_cast<float>(totalSize - availableSize) / totalSize;
+  size_t usedSize = totalSize - availableSize;
+  float ratio = static_cast<float>(usedSize) / totalSize;
   // Set a color between green and red depending on the storage usage.
   m_view.setColor(KDColor::Blend(KDColorRed, KDColorGreen,
                                  static_cast<uint8_t>(255 * ratio)));
 
-  // Start with available size
-  int len = 0;
-  len += Poincare::Print::CustomPrintf(
-      buffer + len, ContentView::k_bufferSize - len,
-      "Storage: %i / %i (%*.*ef%%)\n\nRecords count by extension :\n",
-      totalSize - availableSize, totalSize, 100.0f * ratio,
-      Poincare::Preferences::PrintFloatMode::Decimal, 3);
+  char lineBuffer[ContentView::k_lineBufferSize];
+  m_view.textView()->setText("");
+  // Display size usage
+  Poincare::Print::CustomPrintf(
+      lineBuffer, ContentView::k_lineBufferSize,
+      "Storage usage: %i / %i  (%*.*ef%%)\n", usedSize, totalSize,
+      100.0f * ratio, Poincare::Preferences::PrintFloatMode::Decimal, 3);
+  m_view.textView()->appendText(lineBuffer);
 
   // Add record counts for each extension
+  m_view.textView()->appendText("\nRecord count by extension:\n");
   int displayedExtensions = 0;
   for (int i = 0; i < k_numberOfAvailableExtensions; ++i) {
     int count = Ion::Storage::FileSystem::sharedFileSystem
                     ->numberOfRecordsWithExtension(k_availableExtensions[i]);
     if (count > 0) {
-      len += Poincare::Print::CustomPrintf(
-          buffer + len, ContentView::k_bufferSize - len, "  %s: %i",
-          k_availableExtensions[i], count);
+      Poincare::Print::CustomPrintf(lineBuffer, ContentView::k_lineBufferSize,
+                                    "  %s: %i", k_availableExtensions[i],
+                                    count);
+      m_view.textView()->appendText(lineBuffer);
       displayedExtensions++;
       // Line return every 3 extensions
       if (displayedExtensions % 4 == 0) {
-        len += Poincare::Print::CustomPrintf(
-            buffer + len, ContentView::k_bufferSize - len, "\n");
+        m_view.textView()->appendText("\n");
       }
     }
   }
-  len += Poincare::Print::CustomPrintf(buffer + len,
-                                       ContentView::k_bufferSize - len,
-                                       "\n\nPress + to add dummy py records");
-  assert(len < static_cast<int>(ContentView::k_bufferSize));
-  m_view.textView()->setText(buffer);
+
+  // Display available commands
+  m_view.textView()->appendText("\n\nPress + to add dummy py records");
 }
 
 void StorageViewerController::ContentView::layoutSubviews(bool force) {

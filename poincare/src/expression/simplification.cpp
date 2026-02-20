@@ -259,15 +259,7 @@ bool HandleUnits(Tree* e,
     if (e->isUndefined()) {
       return true;
     }
-    // Re-apply strategy to make sure introduced integers are floats.
-    if (simplificationParameters.projectionPolicy.strategy ==
-        Strategy::ApproximateToFloat) {
-      ApplyReductionStrategy(e,
-                             ToProjectionParameters(simplificationParameters));
-    }
-    ReduceSystem(e, ReductionParameters{
-                        .target = simplificationParameters.reduction.target,
-                        .advanced = false});
+    ReduceSystem(e, ReductionParameters{.advanced = false});
     changed = true;
   }
   if (dimension.isUnit() && !dimension.isAngleUnit()) {

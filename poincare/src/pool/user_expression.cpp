@@ -148,7 +148,7 @@ template <typename T>
 UserExpression UserExpression::cloneAndApproximate(
     const UserSettingsWithUnit& userSettings) const {
   Tree* a = Approximation::To<Tree*>(
-      tree(), Approximation::Precision<T>::value,
+      tree(), Precision<T>::value,
       Approximation::Parameters{
           .policy =
               {.projectLocalVariables = true,

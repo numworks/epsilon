@@ -214,16 +214,16 @@ double ApproximateForPivot(const Tree* child,
                            Approximation::Private::Approximator* approximator) {
   if (!approximator) {
     return std::abs(Approximation::Private::Approximator(
-                        Approximation::FloatPrecision::Double,
+                        FloatPrecision::Double,
                         Approximation::Private::InternalParameters{},
                         Approximation::Private::Context{})
                         .specificApproximateTo<std::complex<double>>(child));
   }
   switch (approximator->floatPrecision()) {
-    case Approximation::FloatPrecision::Single:
+    case FloatPrecision::Single:
       return std::abs(
           approximator->specificApproximateTo<std::complex<float>>(child));
-    case Approximation::FloatPrecision::Double:
+    case FloatPrecision::Double:
       return std::abs(
           approximator->specificApproximateTo<std::complex<double>>(child));
     default:

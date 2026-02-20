@@ -73,7 +73,7 @@ void simplify_and_compare_approximates_list(const char* input, bool equal) {
   Tree* e = parse_and_reduce(input, true);
   assert(Dimension::ListLength(e) == 2);
   Tree* eApproximated = Approximation::To<Tree*>(
-      e, Approximation::Precision<T>::value,
+      e, Poincare::Precision<T>::value,
       Approximation::Parameters{.policy = {.projectLocalVariables = true}});
   T approx1 = Approximation::To<T>(eApproximated->child(0),
                                    Approximation::Parameters{});
@@ -148,7 +148,7 @@ void assert_approximate_is_int(const char* input, int lowerBound,
   if (Dimension::IsList(e)) {
     int length = Dimension::ListLength(e);
     Tree* eApproximated = Approximation::To<Tree*>(
-        e, Approximation::FloatPrecision::Single,
+        e, Poincare::FloatPrecision::Single,
         Approximation::Parameters{.policy = {.projectLocalVariables = true}});
     assert(length > 0);
     for (int i = 0; i < length; i++) {
@@ -202,8 +202,8 @@ void assert_no_duplicates_in_list(const char* expression) {
            Poincare::SimplificationParameters{
                .user = {.angleUnit = Poincare::AngleUnit::Radian}},
            false);
-  e->moveTreeOverTree(Approximation::To<Tree*>(
-      e, Approximation::Precision<T>::value, Approximation::Parameters{}));
+  e->moveTreeOverTree(Approximation::To<Tree*>(e, Poincare::Precision<T>::value,
+                                               Approximation::Parameters{}));
   // Find duplicates
   assert(e->isList());
   int n = e->numberOfChildren();

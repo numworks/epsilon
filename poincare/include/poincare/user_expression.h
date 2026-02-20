@@ -2,6 +2,7 @@
 
 #include <poincare/coordinate_2D.h>
 #include <poincare/expression.h>
+#include <poincare/float_precision.h>
 #include <poincare/helpers/parser.h>
 #include <poincare/k_tree.h>
 #include <poincare/point_or_scalar.h>

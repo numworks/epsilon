@@ -104,7 +104,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
     }
     assert(approximateAngleTree);
     approximateAngleTree->moveTreeOverTree(Approximation::To<Tree*>(
-        approximateAngleTree, Approximation::FloatPrecision::Double,
+        approximateAngleTree, FloatPrecision::Double,
         Approximation::Parameters{
             .policy = {.projectLocalVariables = true, .optimize = true},
             .user = simplificationParameters.user}));
@@ -614,8 +614,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
    * approximation pipeline) */
   Approximation::Private::Approximator defaultMatrixApproximator =
       Approximation::Private::Approximator(
-          Approximation::FloatPrecision::Double,
-          Approximation::Private::InternalParameters{},
+          FloatPrecision::Double, Approximation::Private::InternalParameters{},
           Approximation::Private::Context{});
   Approximation::Private::Approximator* approximator =
       isApproximate ? &defaultMatrixApproximator : nullptr;

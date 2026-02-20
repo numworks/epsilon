@@ -126,7 +126,7 @@ void PrepareFunctionForApproximation(Tree* e, const char* variable,
       SymbolicComputation::ReplaceAllSymbolsWithUndefined) &&
       Dependency::DeepRemoveUselessDependencies(e);
   e->moveTreeOverTree(To<Tree*>(
-      e, Approximation::FloatPrecision::Double,
+      e, FloatPrecision::Double,
       Parameters{.policy = {.prepare = true, .onlyReplaceNumerical = true}}));
 }
 

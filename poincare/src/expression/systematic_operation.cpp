@@ -876,7 +876,7 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
      * the entire tree have been approximated. */
     if (e->hasChildSatisfying([](const Tree* e) { return e->isFloat(); }) &&
         Approximation::Approximate(
-            e, Approximation::FloatPrecision::Double,
+            e, FloatPrecision::Double,
             Approximation::Parameters{
                 .policy = {.onlyReplaceNumerical = true, .optimize = true}})) {
       changed = true;

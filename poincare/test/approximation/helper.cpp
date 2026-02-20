@@ -32,7 +32,7 @@ void approximates_to(const Tree* n, T f) {
 template <typename T>
 void approximates_to(const Tree* n, const Tree* expected) {
   Tree* approx = Approximation::To<Tree*>(
-      n, Approximation::Precision<T>::value,
+      n, Precision<T>::value,
       Approximation::Parameters{.policy = {.projectLocalVariables = true},
                                 .user = {.complexFormat = ComplexFormat::Real,
                                          .angleUnit = AngleUnit::Radian}});
@@ -84,7 +84,7 @@ void approximates_to(const char* input, const char* output,
       [](Tree* tree,
          const Poincare::SimplificationParameters& simplificationParameters) {
         tree->moveTreeOverTree(Approximation::To<Tree*>(
-            tree, Approximation::Precision<T>::value,
+            tree, Precision<T>::value,
             Approximation::Parameters{.policy = {.projectLocalVariables = true},
                                       .user = simplificationParameters.user}));
         Beautification::DeepBeautify(
@@ -108,7 +108,7 @@ void approximates_to_boolean(const Tree* n,
                              Approximation::BooleanOrUndefined expected) {
   Approximation::BooleanOrUndefined approx =
       Approximation::To<Approximation::BooleanOrUndefined>(
-          n, Approximation::FloatPrecision::Single,
+          n, FloatPrecision::Single,
           Approximation::Parameters{
               .policy = {.projectLocalVariables = true},
               .user = {.complexFormat = ComplexFormat::Real,
@@ -125,7 +125,7 @@ void approximates_to_boolean(const char* input,
   Tree* expression = parse(input, userSettings.context);
   Approximation::BooleanOrUndefined approx =
       Approximation::To<Approximation::BooleanOrUndefined>(
-          expression, Approximation::FloatPrecision::Single,
+          expression, FloatPrecision::Single,
           Approximation::Parameters{.policy = {.projectLocalVariables = true},
                                     .user = userSettings});
   quiz_assert(approx.isUndefined() == expected.isUndefined());
@@ -156,7 +156,7 @@ void simplified_approximates_to(
       [](Tree* tree, const SimplificationParameters& simplificationParameters) {
         simplify(tree, simplificationParameters, false);
         tree->moveTreeOverTree(Approximation::To<Tree*>(
-            tree, Approximation::Precision<T>::value,
+            tree, Precision<T>::value,
             Approximation::Parameters{
                 .policy = {.projectLocalVariables = true, .optimize = true},
                 .user = simplificationParameters.user}));
@@ -177,7 +177,7 @@ void projected_approximates_to(
         Simplification::ToSystem(
             tree, ToProjectionParameters(simplificationParameters));
         tree->moveTreeOverTree(Approximation::To<Tree*>(
-            tree, Approximation::Precision<T>::value,
+            tree, Precision<T>::value,
             Approximation::Parameters{
                 .policy = {.prepare = true, .optimize = true},
                 .user = simplificationParameters.user}));
@@ -197,7 +197,7 @@ void approximates_to_keeping_symbols(const char* expression,
       [](Tree* tree, const SimplificationParameters& simplificationParameters) {
         Variables::ProjectLocalVariablesToId(tree);
         Approximation::Approximate(
-            tree, Approximation::Precision<T>::value,
+            tree, Precision<T>::value,
             Approximation::Parameters{.policy = {.onlyReplaceNumerical = true},
                                       .user = simplificationParameters.user});
         Variables::BeautifyToName(tree);

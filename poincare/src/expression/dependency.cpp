@@ -178,7 +178,7 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
     }
     // TODO_PCJ: Ensure the default Radian/Cartesian context is good enough.
     approximation->moveTreeOverTree(Approximation::To<Tree*>(
-        approximation, Approximation::FloatPrecision::Double,
+        approximation, FloatPrecision::Double,
         Approximation::Parameters{
             .policy = {.onlyReplaceNumerical = true, .optimize = true}}));
     if (approximation->isUndefined()) {

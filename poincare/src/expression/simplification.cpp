@@ -263,7 +263,7 @@ bool HandleUnits(Tree* e, const UnitParameters& unitParameters,
     // Only angle units are expected not to be approximated.
     changed =
         Approximation::Approximate(
-            e, Approximation::FloatPrecision::Double,
+            e, FloatPrecision::Double,
             Approximation::Parameters{
                 .policy = {.onlyReplaceNumerical = true, .optimize = true}}) ||
         changed;
@@ -285,7 +285,7 @@ bool ApplyStrategy(Tree* e, const ProjectionParameters& projectionParameters,
       break;
     case Strategy::ApproximateToFloat:
       changed = Approximation::Approximate(
-          e, Approximation::FloatPrecision::Double,
+          e, FloatPrecision::Double,
           Approximation::Parameters{
               .policy = {.onlyReplaceNumerical = true, .optimize = true},
               .user = projectionParameters.user});

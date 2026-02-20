@@ -147,7 +147,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
 
   if (bubbleUpFloat &&
       Approximation::Approximate(
-          e, Approximation::FloatPrecision::Double,
+          e, FloatPrecision::Double,
           Approximation::Parameters{
               .policy = {.onlyReplaceNumerical = true, .optimize = true}})) {
     ShallowReduce(e);

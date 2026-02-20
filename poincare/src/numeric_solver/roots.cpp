@@ -170,7 +170,7 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
       PropertiesOfTreeOrApproximation(discriminant);
   assert(discriminantProperties.isReal());
   TreeRef approximatedRoots = Approximation::To<Tree*>(
-      roots, Approximation::FloatPrecision::Double,
+      roots, FloatPrecision::Double,
       Approximation::Parameters{.policy = {.optimize = true}});
   assert(approximatedRoots->isList());
   if (discriminantProperties.realSign().isPositive()) {
@@ -445,7 +445,7 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
   Tree* cardano = CardanoNumber(delta0, delta1);
   if (approximateCardanoNumber) {
     cardano->moveTreeOverTree(Approximation::To<Tree*>(
-        cardano, Approximation::FloatPrecision::Double,
+        cardano, FloatPrecision::Double,
         Approximation::Parameters{.policy = {.optimize = true}}));
   }
 
@@ -472,7 +472,7 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
          PropertiesOfTreeOrApproximation(d).isReal())
             ? Roots::ApproximateRootsOfRealCubic(rootList, delta)
             : Approximation::To<Tree*>(
-                  rootList, Approximation::FloatPrecision::Double,
+                  rootList, FloatPrecision::Double,
                   Approximation::Parameters{.policy = {.optimize = true}}));
   }
   NAry::SortList(rootList, Order::OrderType::ComplexLine);

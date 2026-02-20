@@ -35,6 +35,7 @@ class StorageViewerController : public Escher::ViewController {
     Escher::BufferTextView<k_bufferSize> m_textView;
   };
   // Special extension only used here.
+  constexpr static const char* k_dummyBaseName = "0";
   constexpr static const char* k_dummyExtension = "dum";
   constexpr static const char* k_availableExtensions[] = {
       Ion::Storage::equationExtension,
@@ -55,6 +56,7 @@ class StorageViewerController : public Escher::ViewController {
       sizeof(k_availableExtensions) / sizeof(k_availableExtensions[0]);
 
   bool createDummyRecord() const;
+  bool deleteDummyRecord() const;
 
   ContentView m_view;
 };

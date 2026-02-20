@@ -7,12 +7,8 @@
 namespace HardwareCheckup {
 
 bool StorageViewerController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Plus && createDummyRecord()) {
-    viewWillAppear();
-    return true;
-  } else if (event == Ion::Events::Minus) {
-    Ion::Storage::FileSystem::sharedFileSystem->destroyRecordsWithExtension(
-        k_dummyExtension);
+  if ((event == Ion::Events::Plus && createDummyRecord()) ||
+      (event == Ion::Events::Minus && deleteDummyRecord())) {
     viewWillAppear();
     return true;
   }
@@ -20,30 +16,22 @@ bool StorageViewerController::handleEvent(Ion::Events::Event event) {
 }
 
 bool StorageViewerController::createDummyRecord() const {
-  int newID = 0;
-  // Longest base name is 99
-  constexpr int baseNameSize = 3;
-  char baseName[baseNameSize];
   Ion::Storage::FileSystem* fs = Ion::Storage::FileSystem::sharedFileSystem;
-  // Find the first available name with the format "X.dum" with X a number.
-  Ion::Storage::Record r;
-  do {
-    newID += 1;
-    if (newID > 99) {
-      return false;
-    }
-    Poincare::Print::CustomPrintf(baseName, baseNameSize, "%i", newID);
-    r = Ion::Storage::Record(baseName, k_dummyExtension);
-  } while (fs->hasRecord(r));
   // Create dummy record
   if (fs->availableSize() == 0 ||
-      fs->createRecordWithExtension(baseName, k_dummyExtension, nullptr, 0) !=
+      fs->createRecordWithExtension(k_dummyBaseName, k_dummyExtension, nullptr,
+                                    0) !=
           Ion::Storage::Record::ErrorStatus::None) {
     return false;
   }
-  // Give the record all of the available space
-  fs->putAvailableSpaceAtEndOfRecord(r);
+  // Give this record all of the available space
+  fs->putAvailableSpaceAtEndOfRecord(
+      Ion::Storage::Record(k_dummyBaseName, k_dummyExtension));
   return true;
+}
+
+bool StorageViewerController::deleteDummyRecord() const {
+  return Ion::Storage::Record(k_dummyBaseName, k_dummyExtension).tryToDestroy();
 }
 
 StorageViewerController::ContentView::ContentView()

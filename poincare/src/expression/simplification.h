@@ -14,7 +14,7 @@ bool Simplify(Tree* e, const SimplificationParameters& simplificationParameters,
 Dimension ProjectAndReduce(
     Tree* e, const SimplificationParameters& simplificationParameters);
 bool BeautifyReduced(Tree* e,
-                     const SimplificationParameters& simplificationParameters,
+                     const BeautificationParameters& beautificationParameters,
                      const Dimension& dimension);
 bool PrepareForProjection(Tree* e,
                           const ProjectionParameters& projectionParameters);

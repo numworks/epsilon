@@ -796,10 +796,10 @@ SolverResult ExactSolve(
   Tree* reducedEquationList = preprocessingResult.reducedEquationList;
   EquationMetadata equationMetadata = preprocessingResult.equationMetadata;
 
-  SimplificationParameters updatedSimplificationParameters =
-      simplificationParameters;
+  BeautificationParameters beautificationParameters =
+      ToBeautificationParameters(simplificationParameters);
 #if POINCARE_COMPLEX
-  updatedSimplificationParameters.user.complexFormat =
+  beautificationParameters.user.complexFormat =
       preprocessingResult.equationMetadata.complexFormat;
 #endif
 
@@ -818,7 +818,7 @@ SolverResult ExactSolve(
   // Step 2.1. Try with linear system solving
   SolverResult result =
       SolveLinearSystem(reducedEquationList, equationMetadata,
-                        updatedSimplificationParameters.user.context);
+                        beautificationParameters.user.context);
 
 #if POINCARE_POLYNOMIAL_SOLVER
   // Step 2.2. Try with polynomial solving
@@ -833,8 +833,7 @@ SolverResult ExactSolve(
        * projected with a "Real" Complex format */
       Tree* solutionList = result.exactSolutionList;
       assert(solutionList->isList());
-      if (updatedSimplificationParameters.user.complexFormat ==
-          ComplexFormat::Real) {
+      if (beautificationParameters.user.complexFormat == ComplexFormat::Real) {
         for (int i = solutionList->numberOfChildren() - 1; i >= 0; i--) {
           if (!PropertiesOfTreeOrApproximation(solutionList->child(i))
                    .isReal()) {
@@ -867,9 +866,8 @@ SolverResult ExactSolve(
   if (result.solutionMetadata.solutionType != SolutionType::Formal) {
     result.approximateSolutionList = Approximation::To<Tree*>(
         result.exactSolutionList, Approximation::FloatPrecision::Double,
-        Approximation::Parameters{
-            .policy = {.prepare = true, .optimize = true},
-            .user = updatedSimplificationParameters.user});
+        Approximation::Parameters{.policy = {.prepare = true, .optimize = true},
+                                  .user = beautificationParameters.user});
   }
 
   /* Beautify result */
@@ -877,17 +875,16 @@ SolverResult ExactSolve(
   // Beautify exact solutions
   assert(result.exactSolutionList);
   Simplification::BeautifyReduced(result.exactSolutionList,
-                                  updatedSimplificationParameters,
+                                  beautificationParameters,
                                   preprocessingResult.dimension);
 
   // Beautify approximate solutions
   if (result.approximateSolutionList) {
     // Advanced reduction is only needed to beautify in polar format
-    updatedSimplificationParameters.reduction.advanced =
-        updatedSimplificationParameters.user.complexFormat ==
-        ComplexFormat::Polar;
+    beautificationParameters.reduction.advanced =
+        beautificationParameters.user.complexFormat == ComplexFormat::Polar;
     Simplification::BeautifyReduced(result.approximateSolutionList,
-                                    updatedSimplificationParameters,
+                                    beautificationParameters,
                                     preprocessingResult.dimension);
   }
 

@@ -78,9 +78,9 @@ class SystemExpression : public Expression {
   void cloneAndBeautifyAndApproximate(
       UserExpression* beautifiedExpression,
       UserExpression* approximatedExpression,
-      const SimplificationParameters& simplificationParameters) const;
+      const BeautificationParameters& beautificationParameters) const;
   UserExpression cloneAndBeautify(
-      const SimplificationParameters& simplificationParameters) const;
+      const BeautificationParameters& beautificationParameters) const;
   /* Replace some UserVariable into Var0 for
    * approximateToPointOrRealScalarWithValue. Returns undef if the expression's
    * dimension is not point or scalar. If scalarsOnly = true, returns undef if

@@ -20,9 +20,8 @@ static Tree* ApplySimplify(
     const Tree* input, const SimplificationParameters& simplificationParameters,
     bool beautify);
 
-static bool HandleUnits(
-    Tree* e, const SimplificationParameters& simplificationParameters,
-    const Dimension& dimension);
+static bool HandleUnits(Tree* e, const UnitParameters& unitParameters,
+                        const Dimension& dimension);
 static bool ApplyStrategy(Tree* e,
                           const ProjectionParameters& projectionParameters,
                           bool insideReduction);
@@ -116,7 +115,8 @@ Tree* ApplySimplify(const Tree* input,
   Tree* e = input->cloneTree();
   Dimension dim = ProjectAndReduce(e, simplificationParameters);
   if (beautify) {
-    BeautifyReduced(e, simplificationParameters, dim);
+    BeautifyReduced(e, ToBeautificationParameters(simplificationParameters),
+                    dim);
   }
   return e;
 }
@@ -134,7 +134,7 @@ Dimension ProjectAndReduce(
 }
 
 bool BeautifyReduced(Tree* e,
-                     const SimplificationParameters& simplificationParameters,
+                     const BeautificationParameters& beautificationParameters,
                      const Dimension& dimension) {
   assert(!e->isStore());
   // TODO: Should this be recomputed here ?
@@ -146,10 +146,10 @@ bool BeautifyReduced(Tree* e,
   assert(e->isUndefined() || dimension == Dimension::Get(e) ||
          (e->isList() &&
           (e->numberOfChildren() == 0 || e->child(0)->isUndefined())));
-  bool changed = HandleUnits(e, simplificationParameters, dimension);
+  bool changed =
+      HandleUnits(e, ToUnitParameters(beautificationParameters), dimension);
   changed =
-      Beautification::DeepBeautify(
-          e, ToBeautificationParameters(simplificationParameters), dimension) ||
+      Beautification::DeepBeautify(e, beautificationParameters, dimension) ||
       changed;
   return changed;
 }
@@ -248,14 +248,12 @@ bool ReduceSystem(Tree* e, const ReductionParameters& reductionParameters) {
   return Dependency::DeepRemoveUselessDependencies(e) || changed;
 }
 
-bool HandleUnits(Tree* e,
-                 const SimplificationParameters& simplificationParameters,
+bool HandleUnits(Tree* e, const UnitParameters& unitParameters,
                  const Dimension& dimension) {
   bool changed = false;
 #if POINCARE_UNIT
   if (!e->isUndefined() &&
-      Units::Unit::ProjectToBestUnits(
-          e, dimension, ToUnitParameters(simplificationParameters))) {
+      Units::Unit::ProjectToBestUnits(e, dimension, unitParameters)) {
     if (e->isUndefined()) {
       return true;
     }

@@ -54,8 +54,9 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   bool isRationalOrMultipleOfPi =
       simplifiedAngle->isRational() ||
       Internal::Trigonometry::GetPiFactor(simplifiedAngle) != nullptr;
-  Simplification::BeautifyReduced(simplifiedAngle, simplificationParameters,
-                                  dim);
+  Simplification::BeautifyReduced(
+      simplifiedAngle, ToBeautificationParameters(simplificationParameters),
+      dim);
 
   Tree* approximateAngleTree = nullptr;
   if (!directTrigonometry) {
@@ -552,16 +553,16 @@ UserExpression AdditionalResultsHelper::CreateMixedFraction(
 // Eat reduced expression's tree and return a beautified layout
 static Poincare::Layout CreateBeautifiedLayout(
     Tree* reducedExpression,
-    const SimplificationParameters& simplificationParameters,
+    const BeautificationParameters& beautificationParameters,
     const Internal::Dimension& dimension,
     Preferences::PrintFloatMode displayMode,
     uint8_t numberOfSignificantDigits) {
-  Simplification::BeautifyReduced(reducedExpression, simplificationParameters,
+  Simplification::BeautifyReduced(reducedExpression, beautificationParameters,
                                   dimension);
   Poincare::Layout layout =
       Poincare::Layout::Builder(Layouter::LayoutExpression(
           reducedExpression,
-          {.symbolContext = simplificationParameters.user.context,
+          {.symbolContext = beautificationParameters.user.context,
            .numberOfSignificantDigits = numberOfSignificantDigits,
            .floatMode = displayMode}));
   reducedExpression->removeTree();
@@ -585,7 +586,8 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
       Simplification::ProjectAndReduce(e, simplificationParameters);
   assert(!dim.isUnit());
   return CreateBeautifiedLayout(
-      e, simplificationParameters, dim, Preferences::PrintFloatMode::Scientific,
+      e, ToBeautificationParameters(simplificationParameters), dim,
+      Preferences::PrintFloatMode::Scientific,
       calculationPreferences.numberOfSignificantDigits);
 }
 
@@ -618,6 +620,9 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   Approximation::Private::Approximator* approximator =
       isApproximate ? &defaultMatrixApproximator : nullptr;
 
+  BeautificationParameters beautificationParameters =
+      ToBeautificationParameters(simplificationParameters);
+
   // 1. Matrix determinant if square matrix
   if (isSquared) {
     Tree* determinant = nullptr;
@@ -632,7 +637,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     Internal::Dimension dimension = Internal::Dimension::Get(
         determinant, simplificationParameters.user.context);
     determinantL =
-        CreateBeautifiedLayout(determinant, simplificationParameters, dimension,
+        CreateBeautifiedLayout(determinant, beautificationParameters, dimension,
                                displayMode, numberOfSignificantDigits);
     matrixClone->removeTree();
 
@@ -640,7 +645,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
      * A squared matrix is invertible if and only if determinant is non null */
     if (!determinantIsUndefinedOrNull) {
       Tree* inverse = Internal::Matrix::Inverse(matrix, approximator);
-      inverseL = CreateBeautifiedLayout(inverse, simplificationParameters, dim,
+      inverseL = CreateBeautifiedLayout(inverse, beautificationParameters, dim,
                                         displayMode, numberOfSignificantDigits);
     }
   }
@@ -651,7 +656,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
                                     approximator)) {
     // Clone layouted tree to preserve reducedRowEchelonForm for next step.
     rowEchelonFormL = CreateBeautifiedLayout(
-        reducedRowEchelonForm->cloneTree(), simplificationParameters, dim,
+        reducedRowEchelonForm->cloneTree(), beautificationParameters, dim,
         displayMode, numberOfSignificantDigits);
 
     /* 4. Matrix reduced row echelon form
@@ -661,12 +666,12 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
       OMG_UNREACHABLE;
     }
     reducedRowEchelonFormL =
-        CreateBeautifiedLayout(reducedRowEchelonForm, simplificationParameters,
+        CreateBeautifiedLayout(reducedRowEchelonForm, beautificationParameters,
                                dim, displayMode, numberOfSignificantDigits);
   } else {
     reducedRowEchelonForm->cloneTreeOverTree(KUndefUnhandled);
     rowEchelonFormL =
-        CreateBeautifiedLayout(reducedRowEchelonForm, simplificationParameters,
+        CreateBeautifiedLayout(reducedRowEchelonForm, beautificationParameters,
                                dim, displayMode, numberOfSignificantDigits);
     reducedRowEchelonFormL = rowEchelonFormL.clone();
   }
@@ -675,8 +680,8 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   if (isSquared) {
     Tree* trace = Internal::Matrix::Trace(matrix);
     traceL = CreateBeautifiedLayout(
-        trace, simplificationParameters,
-        Internal::Dimension::Get(trace, simplificationParameters.user.context),
+        trace, beautificationParameters,
+        Internal::Dimension::Get(trace, beautificationParameters.user.context),
         displayMode, numberOfSignificantDigits);
   }
 

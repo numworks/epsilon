@@ -36,6 +36,7 @@ struct SimplificationParameters {
 struct BeautificationParameters {
   UserParameters user = {};
   ReductionParameters reduction = {};
+  UnitModeParameters unitMode = {};
 };
 
 struct UnitParameters {
@@ -65,15 +66,17 @@ inline BeautificationParameters ToBeautificationParameters(
     const SimplificationParameters& simplificationParameters) {
   return BeautificationParameters{
       .user = simplificationParameters.user,
-      .reduction = simplificationParameters.reduction};
+      .reduction = simplificationParameters.reduction,
+      .unitMode = simplificationParameters.unitMode};
 }
 
 inline UnitParameters ToUnitParameters(
-    const SimplificationParameters& simplificationParameters) {
+    const BeautificationParameters& beautificationParameters) {
   return UnitParameters{
-      .unitFormat = simplificationParameters.unitMode.unitFormat,
-      .unitDisplay = simplificationParameters.unitMode.unitDisplay,
-      .angleUnit = simplificationParameters.user.angleUnit};
+      .unitFormat = beautificationParameters.unitMode.unitFormat,
+      .unitDisplay = beautificationParameters.unitMode.unitDisplay,
+      .angleUnit = beautificationParameters.user.angleUnit,
+  };
 }
 
 }  // namespace Poincare

@@ -80,8 +80,10 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
             // Not handled
             quiz_assert(false);
         }
-        Simplification::BeautifyReduced(tree, simplificationParameters,
-                                        dimension);
+        Simplification::BeautifyReduced(
+            tree,
+            Poincare::ToBeautificationParameters(simplificationParameters),
+            dimension);
       },
       simplificationParameters);
 }

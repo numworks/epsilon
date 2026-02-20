@@ -70,16 +70,13 @@ void StorageViewerController::viewWillAppear() {
   for (int i = 0; i < k_numberOfAvailableExtensions; ++i) {
     int count = Ion::Storage::FileSystem::sharedFileSystem
                     ->numberOfRecordsWithExtension(k_availableExtensions[i]);
-    if (count > 0) {
-      Poincare::Print::CustomPrintf(lineBuffer, ContentView::k_lineBufferSize,
-                                    "  %s: %i", k_availableExtensions[i],
-                                    count);
-      m_view.textView()->appendText(lineBuffer);
-      displayedExtensions++;
-      // Line return every 3 extensions
-      if (displayedExtensions % 4 == 0) {
-        m_view.textView()->appendText("\n");
-      }
+    Poincare::Print::CustomPrintf(lineBuffer, ContentView::k_lineBufferSize,
+                                  "  %s: %i", k_availableExtensions[i], count);
+    m_view.textView()->appendText(lineBuffer);
+    displayedExtensions++;
+    // Line return every 4 extensions
+    if (displayedExtensions % 4 == 0) {
+      m_view.textView()->appendText("\n");
     }
   }
 

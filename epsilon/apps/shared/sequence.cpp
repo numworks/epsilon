@@ -33,9 +33,9 @@ void Sequence::setType(Type t) {
   /* Reset all contents */
   char name[SymbolHelper::k_maxNameSize];
   nameWithoutExtension(name, SymbolHelper::k_maxNameSize);
-  ASSERT_AND_RETURN(setExpressionContent(SequenceHelper::InitialExpression(
-                        name, type(), recursiveNotation())) ==
-                    ErrorStatus::None);
+  EVALUATE_AND_ASSERT(setExpressionContent(SequenceHelper::InitialExpression(
+                          name, type(), recursiveNotation())) ==
+                      ErrorStatus::None);
   switch (t) {
     case Type::Explicit:
       setFirstInitialConditionContent(Layout());
@@ -61,7 +61,7 @@ void Sequence::setInitialRank(int rank) {
 }
 
 void Sequence::updateMainExpressionForNotation() {
-  ASSERT_AND_RETURN(
+  EVALUATE_AND_ASSERT(
       setExpressionContent(SequenceHelper::UpdateMainExpressionForNotation(
           expressionClone(), type(), recursiveNotation())) ==
       ErrorStatus::None);

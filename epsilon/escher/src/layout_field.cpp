@@ -392,7 +392,7 @@ KDSize LayoutField::minimalSizeForOptimalDisplay() const {
 }
 
 const char* LayoutField::text() {
-  ASSERT_AND_RETURN(
+  EVALUATE_AND_ASSERT(
       layout().serialize(std::span<char>(m_draftBuffer, m_draftBufferSize)) <=
       m_draftBufferSize);
   return m_draftBuffer;

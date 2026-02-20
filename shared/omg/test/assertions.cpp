@@ -8,41 +8,38 @@ bool evaluateCondition(bool condition, bool* conditionHasBeenEvaluated) {
   return condition;
 }
 
-#define TEST_ASSERTION(Assertion, Condition, AssertionShouldEvaluateToTrue,    \
-                       ConditionShouldBeEvaluated)                             \
-  {                                                                            \
-    bool conditionHasBeenEvaluated = false;                                    \
-    quiz_assert(                                                               \
-        Assertion(evaluateCondition(Condition, &conditionHasBeenEvaluated)) == \
-        AssertionShouldEvaluateToTrue);                                        \
-    quiz_assert(conditionHasBeenEvaluated == ConditionShouldBeEvaluated);      \
+#define TEST_ASSERTION(Assertion, Condition, ConditionShouldBeEvaluated)  \
+  {                                                                       \
+    bool conditionHasBeenEvaluated = false;                               \
+    Assertion(evaluateCondition(Condition, &conditionHasBeenEvaluated));  \
+    quiz_assert(conditionHasBeenEvaluated == ConditionShouldBeEvaluated); \
   }
 
 QUIZ_CASE(omg_assertions) {
-  TEST_ASSERTION(ASSERT, true, true, ASSERTIONS);
-  TEST_ASSERTION(DANGER_ASSERT, true, true, ASSERTIONS);
-  TEST_ASSERTION(DEBUG_ASSERT, true, true, (ASSERTIONS && DEBUG));
-  TEST_ASSERTION(NON_DEBUG_ASSERT, true, true, (ASSERTIONS && !DEBUG));
-  TEST_ASSERTION(ASSERT_AND_RETURN, true, true, true);
+  TEST_ASSERTION(assert, true, ASSERTIONS);
+  TEST_ASSERTION(DANGER_ASSERT, true, ASSERTIONS);
+  TEST_ASSERTION(DEBUG_ASSERT, true, (ASSERTIONS && DEBUG));
+  TEST_ASSERTION(NON_DEBUG_ASSERT, true, (ASSERTIONS && !DEBUG));
+  TEST_ASSERTION(EVALUATE_AND_ASSERT, true, true);
 
 #if !ASSERTIONS
-  TEST_ASSERTION(ASSERT, false, true, false);
-  TEST_ASSERTION(DANGER_ASSERT, false, true, false);
-  TEST_ASSERTION(DEBUG_ASSERT, false, true, false);
-  TEST_ASSERTION(NON_DEBUG_ASSERT, false, true, false);
-  TEST_ASSERTION(ASSERT_AND_RETURN, false, false, true);
+  TEST_ASSERTION(assert, false, false);
+  TEST_ASSERTION(DANGER_ASSERT, false, false);
+  TEST_ASSERTION(DEBUG_ASSERT, false, false);
+  TEST_ASSERTION(NON_DEBUG_ASSERT, false, false);
+  TEST_ASSERTION(EVALUATE_AND_ASSERT, false, true);
 #endif
 
 #if !DEBUG
-  TEST_ASSERTION(DEBUG_ASSERT, false, true, false);
+  TEST_ASSERTION(DEBUG_ASSERT, false, false);
 #else
-  TEST_ASSERTION(NON_DEBUG_ASSERT, false, true, false);
+  TEST_ASSERTION(NON_DEBUG_ASSERT, false, false);
 #endif
 
-  // The following assertions should raise if uncommented and executed.
+  // The following lines should raise if uncommented.
 #if ASSERTIONS
-  // ASSERT(false);
-  // ASSERT_AND_RETURN(false);
+  // assert(false);
+  // EVALUATE_AND_ASSERT(false);
   // DANGER_ASSERT(false);
 #if DEBUG
   // DEBUG_ASSERT(false);

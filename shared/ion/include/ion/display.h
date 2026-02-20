@@ -27,24 +27,6 @@ void pullRect(KDRect r, KDColor* pixels);
 bool waitForVBlank();
 void refreshDisplay();
 
-struct ScreenParameters {
-  static constexpr int nbParams = 7;
-  union {
-    struct {
-      uint8_t vop;
-      uint8_t lightGray;
-      uint8_t darkGray;
-      uint8_t frameRate;
-      uint8_t duty;
-      uint8_t bias;
-      uint8_t halve;
-    };
-    uint8_t params[nbParams];
-  };
-};
-
-void reconfigure(ScreenParameters p);
-
 class Context : public KDContext {
   friend OMG::GlobalBox<Context>;
 

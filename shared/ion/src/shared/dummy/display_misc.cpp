@@ -12,8 +12,6 @@ int displayColoredTilingSize10() { return 0; }
 
 bool waitForVBlank() { return true; }
 
-void reconfigure(ScreenParameters p) {}
-
 void refreshDisplay() {}
 
 }  // namespace Display

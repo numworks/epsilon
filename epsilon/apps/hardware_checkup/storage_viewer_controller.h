@@ -38,18 +38,21 @@ class StorageViewerController : public Escher::ViewController {
   constexpr static const char* k_dummyBaseName = "0";
   constexpr static const char* k_dummyExtension = "dummy";
   constexpr static const char* k_availableExtensions[] = {
+      Ion::Storage::parametricComponentExtension,
+      Ion::Storage::systemExtension,
+      Ion::Storage::statisticsMemoizedFormulaExtension,
+      Ion::Storage::regressionMemoizedFormulaExtension,
+
       Ion::Storage::equationExtension,
       Ion::Storage::expressionExtension,
-      Ion::Storage::functionExtension,
       Ion::Storage::listExtension,
-      Ion::Storage::sequenceExtension,
       Ion::Storage::matrixExtension,
-      Ion::Storage::regressionExtension,
-      Ion::Storage::parametricComponentExtension,
-      Ion::Storage::regressionMemoizedFormulaExtension,
-      Ion::Storage::statisticsMemoizedFormulaExtension,
-      Ion::Storage::systemExtension,
+
       Ion::Storage::scriptExtension,
+      Ion::Storage::sequenceExtension,
+      Ion::Storage::regressionExtension,
+      Ion::Storage::functionExtension,
+
       k_dummyExtension,
   };
   constexpr static int k_numberOfAvailableExtensions =

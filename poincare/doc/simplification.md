@@ -607,8 +607,6 @@ At this step, units have been preserved throughout simplification.
 
 We extract the units, and find the best representative (`s` or `min` for example) and the best prefix (`mm` or `cm` for example) and replace it in the expression.
 
-If the expression has non-angle units, change the approximation strategy to `ApproximateToFloat`.
-
 ## Final approximation
 
 With an approximation strategy, we approximate again here in case previous steps unlocked new possible approximations.

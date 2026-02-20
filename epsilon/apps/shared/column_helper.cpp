@@ -130,7 +130,6 @@ bool StoreColumnHelper::fillColumnWithFormula(
        * why the formula is created in another scope
        * (privateFillColumnWithFormula). */
       if (!store()->updateSeries(series)) {
-        App::app()->setFirstResponder(table());
         return false;
       }
       reload();

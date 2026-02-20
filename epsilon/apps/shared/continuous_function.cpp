@@ -619,7 +619,8 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
       // m_expression may be an empty, dimension-less list after this.
     } else {
       assert(m_expression.dimension().isPoint());
-      m_expression = m_expression.approximateSystemToTree<double>();
+      m_expression =
+          m_expression.approximateSystemToTree(FloatPrecision::Double);
     }
   } else if (!thisProperties.isPolar() && !thisProperties.isInversePolar() &&
              (record->fullName() == nullptr ||

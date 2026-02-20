@@ -2,6 +2,7 @@
 
 #include <poincare/coordinate_2D.h>
 #include <poincare/expression.h>
+#include <poincare/float_precision.h>
 #include <poincare/k_tree.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/pool_handle.h>
@@ -58,8 +59,8 @@ class SystemExpression : public Expression {
   }
 
   /* SystemExpression to SystemExpression helpers */
-  template <typename T>
-  SystemExpression approximateSystemToTree() const;
+  SystemExpression approximateSystemToTree(
+      FloatPrecision floatPrecision = FloatPrecision::Double) const;
   // Replace symbol and reduce.
   SystemExpression cloneAndReplaceSymbolWithExpression(
       const char* symbolName, const SystemExpression& replaceSymbolWith,

@@ -86,10 +86,10 @@ SystemExpression SystemExpression::cloneChildAtIndex(int i) const {
   return Builder(tree()->child(i));
 }
 
-template <typename T>
-SystemExpression SystemExpression::approximateSystemToTree() const {
+SystemExpression SystemExpression::approximateSystemToTree(
+    FloatPrecision floatPrecision) const {
   return SystemExpression::Builder(Approximation::To<Tree*>(
-      tree(), Precision<T>::value,
+      tree(), floatPrecision,
       Approximation::Parameters{
           .policy = {.prepare = true, .optimize = true}}));
 }
@@ -303,10 +303,6 @@ template SystemExpression SystemExpression::Builder<float>(
     PointOrRealScalar<float>);
 template SystemExpression SystemExpression::Builder<double>(
     PointOrRealScalar<double>);
-template SystemExpression SystemExpression::approximateSystemToTree<float>()
-    const;
-template SystemExpression SystemExpression::approximateSystemToTree<double>()
-    const;
 template float SystemExpression::approximateSystemToRealScalar<float>() const;
 template double SystemExpression::approximateSystemToRealScalar<double>() const;
 template Coordinate2D<float> SystemExpression::approximateToPoint<float>()

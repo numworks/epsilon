@@ -196,7 +196,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
 
   if (reduced.hasRandomList() || !reduced.isList()) {
     // Sometimes the formula is a list but the reduction failed.
-    reduced = reduced.approximateSystemToTree<double>();
+    reduced = reduced.approximateSystemToTree(FloatPrecision::Double);
   }
 
   if (reduced.isList()) {

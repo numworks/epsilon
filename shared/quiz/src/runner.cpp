@@ -25,7 +25,6 @@ void Runner::innerRun() {
   int totalCases = metadata.totalCases;
   for (int i = metadata.startIndex; i < metadata.endIndex; i++) {
     if (m_testFilter && !testMatchesFilter(Cases::s_names[i], m_testFilter)) {
-      totalCases--;
       continue;
     }
 #if ASAN

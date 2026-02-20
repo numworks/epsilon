@@ -196,7 +196,7 @@ int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   Private::Context context;
   context.localEvaluator.pushVariable(x);
   const Tree* branch =
-      Private::Approximator(Precision<T>::value, Approximation::Parameters{},
+      Private::Approximator(Precision<T>::value, Private::InternalParameters{},
                             std::move(context))
           .selectPiecewiseBranch(piecewise);
   return !branch            ? k_unknownActiveBranch
@@ -240,14 +240,14 @@ template <typename ReturnType, typename... ContextArguments>
 ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
                    const Parameters& parameters,
                    ContextArguments... contextArguments) {
-  if (parameters.optimize) {
-    COSTLY_ASSERT(Dimension::DeepCheck(e, parameters.symbolContext));
-  } else if (!Dimension::DeepCheck(e, parameters.symbolContext)) {
+  if (parameters.policy.optimize) {
+    COSTLY_ASSERT(Dimension::DeepCheck(e, parameters.user.context));
+  } else if (!Dimension::DeepCheck(e, parameters.user.context)) {
     return UndefinedUnhandledDimension<ReturnType>();
   }
-  Tree* prepared = PrepareTree(e, parameters);
+  Tree* prepared = PrepareTree(e, parameters.policy);
 
-  if (parameters.onlyReplaceNumerical &&
+  if (parameters.policy.onlyReplaceNumerical &&
       floatPrecision == FloatPrecision::Double &&
       e->hasDescendantSatisfying(
           [](const Tree* e) { return e->isSingleFloat(); })) {
@@ -258,7 +258,10 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
   assert(floatPrecision == FloatPrecision::Double);
 #endif
   ReturnType result =
-      Approximator{floatPrecision, parameters, Context(contextArguments...)}
+      Approximator{floatPrecision,
+                   InternalParameters(parameters.user,
+                                      parameters.policy.onlyReplaceNumerical),
+                   Context(contextArguments...)}
           .specificApproximateTo<ReturnType>(prepared ? prepared : e);
   if (!prepared) {
     return result;
@@ -266,14 +269,14 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
   return PostProcessPreparedAndResult(prepared, result);
 }
 
-Tree* PrepareTree(const Tree* e, const Parameters& parameters) {
+Tree* PrepareTree(const Tree* e, const ApproximationPolicy& policy) {
   // Only clone if necessary
   Tree* clone = nullptr;
-  if (parameters.projectLocalVariables) {
+  if (policy.projectLocalVariables) {
     clone = e->cloneTree();
     Variables::ProjectLocalVariablesToId(clone);
   }
-  if (parameters.prepare) {
+  if (policy.prepare) {
     assert(Simplification::IsSystem(e));
     if (!clone) {
       clone = e->cloneTree();
@@ -347,7 +350,7 @@ std::complex<T> ToUndefinedComplexValue(DefinedStatus status) {
 }
 
 Private::Approximator::Approximator(FloatPrecision floatPrecision,
-                                    const Parameters& parameters,
+                                    const InternalParameters& parameters,
                                     Context&& context)
     : m_floatPrecision(floatPrecision),
       m_parameters(parameters),

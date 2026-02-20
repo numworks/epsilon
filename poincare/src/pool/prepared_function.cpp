@@ -14,8 +14,9 @@ PreparedFunction PreparedFunction::cloneChildAtIndex(int i) const {
 template <typename T>
 T PreparedFunctionScalar::approximateToRealScalarWithValue(
     T x, int listElement) const {
-  return Approximation::To<T>(tree(), x, static_cast<int16_t>(listElement),
-                              Approximation::Parameters{.optimize = true});
+  return Approximation::To<T>(
+      tree(), x, static_cast<int16_t>(listElement),
+      Approximation::Parameters{.policy = {.optimize = true}});
 }
 
 bool PreparedFunction::involvesDiscontinuousFunction() const {
@@ -31,13 +32,14 @@ template <typename T>
 PointOrRealScalar<T> PreparedFunction::approximateToPointOrRealScalarWithValue(
     T x) const {
   return Internal::Approximation::To<PointOrRealScalar<T>>(
-      tree(), x, Approximation::Parameters{.optimize = true});
+      tree(), x, Approximation::Parameters{.policy = {.optimize = true}});
 }
 
 template <typename T>
 Coordinate2D<T> PreparedFunction::approximateToPoint() const {
   return Approximation::To<Coordinate2D<T>>(
-      tree(), Approximation::Parameters{.prepare = false, .optimize = true});
+      tree(), Approximation::Parameters{
+                  .policy = {.prepare = false, .optimize = true}});
 }
 
 /* TODO: Find a better way to avoid duplication of Builder, clone, and

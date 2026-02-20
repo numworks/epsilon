@@ -12,7 +12,8 @@ ScatterPlotIterable::ScatterPlotIterable(const SystemExpression e)
 Coordinate2D<float> ScatterPlotIterable::Iterator::operator*() const {
   assert(m_node->isPoint());
   return Internal::Approximation::To<Coordinate2D<float>>(
-      m_node, Internal::Approximation::Parameters{.optimize = true});
+      m_node,
+      Internal::Approximation::Parameters{.policy = {.optimize = true}});
 }
 
 bool ScatterPlotIterable::Iterator::operator!=(const Iterator& rhs) const {

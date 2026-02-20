@@ -2,19 +2,9 @@
 
 #include "math_options.h"
 #include "preferences.h"
-#include "symbol_context.h"
+#include "user_parameters.h"
 
 namespace Poincare {
-
-struct UserParameters {
-#if POINCARE_COMPLEX
-  ComplexFormat complexFormat = ComplexFormat::None;
-#else
-  constexpr static ComplexFormat complexFormat = ComplexFormat::Real;
-#endif
-  AngleUnit angleUnit = AngleUnit::None;
-  const Poincare::SymbolContext& context = k_emptySymbolContext;
-};
 
 struct ProjectionPolicy {
   SymbolicComputation symbolic = SymbolicComputation::KeepAllSymbols;

@@ -150,13 +150,12 @@ UserExpression UserExpression::cloneAndApproximate(
   Tree* a = Approximation::To<Tree*>(
       tree(), Approximation::Precision<T>::value,
       Approximation::Parameters{
-          .projectLocalVariables = true,
-          /* When CAS is activated, onlyReplaceNumerical is used to approximate
-           * expressions with symbols such as π*x → 3.14*x. */
-          .onlyReplaceNumerical = CAS::Enabled(),
-          .angleUnit = simplificationParameters.user.angleUnit,
-          .complexFormat = simplificationParameters.user.complexFormat,
-          .symbolContext = simplificationParameters.user.context});
+          .policy =
+              {.projectLocalVariables = true,
+               /* When CAS is activated, onlyReplaceNumerical is used to
+                * approximate expressions with symbols such as π*x → 3.14*x. */
+               .onlyReplaceNumerical = CAS::Enabled()},
+          .user = simplificationParameters.user});
   /* There are several issues that currently prevent us from beautifying an
    * approximated CAS expression:
    * - the beautified exact expression and the beautified approximate expression
@@ -213,10 +212,11 @@ T UserExpression::privateApproximateToRealScalar(
     const SymbolContext& symbolContext) const {
   static_assert(std::is_floating_point_v<T>);
   return Approximation::To<T>(
-      tree(), Approximation::Parameters{.projectLocalVariables = true,
-                                        .angleUnit = angleUnit,
-                                        .complexFormat = complexFormat,
-                                        .symbolContext = symbolContext});
+      tree(),
+      Approximation::Parameters{.policy = {.projectLocalVariables = true},
+                                .user = {.complexFormat = complexFormat,
+                                         .angleUnit = angleUnit,
+                                         .context = symbolContext}});
 }
 
 template <typename T>
@@ -298,10 +298,11 @@ bool UserExpression::hasDefinedComplexApproximation(
     return false;
   }
   std::complex<T> z = Approximation::To<std::complex<T>>(
-      tree(), Approximation::Parameters{.projectLocalVariables = true,
-                                        .angleUnit = angleUnit,
-                                        .complexFormat = complexFormat,
-                                        .symbolContext = symbolContext});
+      tree(),
+      Approximation::Parameters{.policy = {.projectLocalVariables = true},
+                                .user = {.complexFormat = complexFormat,
+                                         .angleUnit = angleUnit,
+                                         .context = symbolContext}});
   T b = z.imag();
   if (b == static_cast<T>(0.) || std::isinf(b) || std::isnan(b)) {
     return false;

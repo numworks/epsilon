@@ -244,9 +244,9 @@ int Dimension::ListLength(const Tree* e,
     case Type::List:
       return e->numberOfChildren();
     case Type::ListSequence: {
-      float n =
-          Approximation::To<float>(e->child(Parametric::k_valueIndex),
-                                   Approximation::Parameters{.optimize = true});
+      float n = Approximation::To<float>(
+          e->child(Parametric::k_valueIndex),
+          Approximation::Parameters{.policy = {.optimize = true}});
       assert(std::floor(n) == n);
       assert(n >= 0 && n <= NAry::k_maxNumberOfChildren);
       return n;
@@ -372,10 +372,9 @@ bool Dimension::DeepCheckDimensions(
  * The separation of the 2 functions allows this method to have a big stack
  * frame without risking a stack overflow on big Trees when evaluating the
  * recursive part of [DeepCheckDimensions] */
-bool __attribute__((noinline))
-Dimension::DeepCheckDimensionsAux(const Tree* e,
-                                  const Poincare::SymbolContext& symbolContext,
-                                  bool hasUnitChild, bool hasNonKelvinChild) {
+bool __attribute__((noinline)) Dimension::DeepCheckDimensionsAux(
+    const Tree* e, const Poincare::SymbolContext& symbolContext,
+    bool hasUnitChild, bool hasNonKelvinChild) {
   LazyArray<Dimension> childDim(e, symbolContext, Get);
   bool unitsAllowed = false;
   bool angleUnitsAllowed = e->isDirectTrigonometryFunction() ||
@@ -447,7 +446,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
         return false;
       }
       float index = Approximation::To<float>(
-          exponent, Approximation::Parameters{.optimize = true});
+          exponent, Approximation::Parameters{.policy = {.optimize = true}});
       assert(!std::isfinite(index) || std::round(index) == index);
       if (!std::isfinite(index) ||
           !Units::SIVector::IsValidCoefficient(index)) {
@@ -484,7 +483,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
         return false;
       }
       float approx =
-          Approximation::To<float>(e->child(0), Approximation::Parameters{.optimize = true});
+          Approximation::To<float>(e->child(0), Approximation::Parameters{.policy = {.optimize = true}});
       return std::isfinite(approx) && approx > 0;
 #endif
       const Tree* size = e->child(0);
@@ -557,9 +556,9 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
           return false;
         }
       }
-      float n =
-          Approximation::To<float>(e->child(Parametric::k_valueIndex),
-                                   Approximation::Parameters{.optimize = true});
+      float n = Approximation::To<float>(
+          e->child(Parametric::k_valueIndex),
+          Approximation::Parameters{.policy = {.optimize = true}});
       assert(!std::isfinite(n) || std::floor(n) == n);
       return std::isfinite(n) && n >= 0 && n <= NAry::k_maxNumberOfChildren;
     }
@@ -587,13 +586,13 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
       }
       // NOTE Using double approx here to ensure the bounds are respected
       double a = Approximation::To<double>(
-          e->child(0), Approximation::Parameters{.optimize = true});
+          e->child(0), Approximation::Parameters{.policy = {.optimize = true}});
       assert(!std::isfinite(a) || std::floor(a) == a);
       if (!std::isfinite(a) || INT32_MIN > a || a > INT32_MAX) {
         return false;
       }
       double b = Approximation::To<double>(
-          e->child(1), Approximation::Parameters{.optimize = true});
+          e->child(1), Approximation::Parameters{.policy = {.optimize = true}});
       assert(!std::isfinite(b) || std::floor(b) == b);
       if (!std::isfinite(b) || INT32_MIN > b || b > INT32_MAX) {
         return false;
@@ -707,8 +706,9 @@ Dimension Dimension::Get(const Tree* e,
       Dimension dim = Get(e->child(0), symbolContext);
       if (dim.isUnit()) {
         float index = Approximation::To<float>(
-            e->child(1), Approximation::Parameters{
-                             .optimize = true, .symbolContext = symbolContext});
+            e->child(1),
+            Approximation::Parameters{.policy = {.optimize = true},
+                                      .user = {.context = symbolContext}});
         assert(!std::isnan(index) && std::round(index) == index &&
                Units::SIVector::IsValidCoefficient(static_cast<int>(index)));
         Units::SIVector unitVector = Units::SIVector::Empty();
@@ -749,7 +749,7 @@ Dimension Dimension::Get(const Tree* e,
     case Type::Identity: {
 #if 0
       uint8_t n =
-          Approximation::To<float>(e->child(0), Approximation::Parameters{.optimize = true});
+          Approximation::To<float>(e->child(0), Approximation::Parameters{.policy = {.optimize = true}});
 #endif
       const Tree* child = e->child(0);
       assert(child->isOne() || child->isTwo() || child->isIntegerPosShort());

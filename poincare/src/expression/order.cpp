@@ -184,15 +184,17 @@ int Order::CompareNumbers(const Tree* e1, const Tree* e2) {
     return Rational::Compare(e1, e2);
   }
   float approximation =
-      Approximation::To<float>(e1,
-                               Approximation::Parameters{.optimize = true}) -
-      Approximation::To<float>(e2, Approximation::Parameters{.optimize = true});
+      Approximation::To<float>(
+          e1, Approximation::Parameters{.policy = {.optimize = true}}) -
+      Approximation::To<float>(
+          e2, Approximation::Parameters{.policy = {.optimize = true}});
   if (approximation == 0.0f || std::isnan(approximation)) {
     // Trees are different but float approximation is not precise enough.
-    double doubleApprox = Approximation::To<double>(
-                              e1, Approximation::Parameters{.optimize = true}) -
-                          Approximation::To<double>(
-                              e2, Approximation::Parameters{.optimize = true});
+    double doubleApprox =
+        Approximation::To<double>(
+            e1, Approximation::Parameters{.policy = {.optimize = true}}) -
+        Approximation::To<double>(
+            e2, Approximation::Parameters{.policy = {.optimize = true}});
     return doubleApprox < 0.0 ? -1 : (doubleApprox > 0.0 ? 1 : 0);
   }
   return approximation < 0.0 ? -1 : (approximation > 0.0 ? 1 : 0);
@@ -291,12 +293,12 @@ int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
     assert(Dimension::Get(e2).isPoint());
     /* TODO: make less calls to Dimension::Get */
     Coordinate2D<double> p1 = Approximation::To<Coordinate2D<double>>(
-        e1, Approximation::Parameters{.optimize = true});
+        e1, Approximation::Parameters{.policy = {.optimize = true}});
     if (std::isnan(p1.x()) || std::isnan(p1.y())) {
       TreeStackCheckpoint::Raise(ExceptionType::SortFail);
     }
     Coordinate2D<double> p2 = Approximation::To<Coordinate2D<double>>(
-        e2, Approximation::Parameters{.optimize = true});
+        e2, Approximation::Parameters{.policy = {.optimize = true}});
     if (std::isnan(p2.x()) || std::isnan(p2.y())) {
       TreeStackCheckpoint::Raise(ExceptionType::SortFail);
     }
@@ -309,12 +311,12 @@ int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
 #endif
   /* TODO: the approximations could be precomputed and called only once */
   double v1 = Approximation::To<double>(
-      e1, Approximation::Parameters{.optimize = true});
+      e1, Approximation::Parameters{.policy = {.optimize = true}});
   if (std::isnan(v1)) {
     TreeStackCheckpoint::Raise(ExceptionType::SortFail);
   }
   double v2 = Approximation::To<double>(
-      e2, Approximation::Parameters{.optimize = true});
+      e2, Approximation::Parameters{.policy = {.optimize = true}});
   if (std::isnan(v2)) {
     TreeStackCheckpoint::Raise(ExceptionType::SortFail);
   }
@@ -325,9 +327,9 @@ int Order::ComplexLineCompare(const Tree* e1, const Tree* e2) {
   assert(Dimension::Get(e1).isScalar() && Dimension::Get(e2).isScalar());
   /* TODO: the approximations could be precomputed and called only once */
   std::complex<double> v1 = Approximation::To<std::complex<double>>(
-      e1, Approximation::Parameters{.optimize = true});
+      e1, Approximation::Parameters{.policy = {.optimize = true}});
   std::complex<double> v2 = Approximation::To<std::complex<double>>(
-      e2, Approximation::Parameters{.optimize = true});
+      e2, Approximation::Parameters{.policy = {.optimize = true}});
   /* Real numbers are ordered before complex numbers */
   if ((v1.imag() == 0) && (v2.imag() != 0)) {
     return -1;

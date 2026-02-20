@@ -93,11 +93,8 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
           Approximation::To<double>(
               sine,
               Approximation::Parameters{
-                  .projectLocalVariables = true,
-                  .optimize = true,
-                  .angleUnit = simplificationParameters.user.angleUnit,
-                  .complexFormat = simplificationParameters.user.complexFormat,
-                  .symbolContext = simplificationParameters.user.context}) < 0;
+                  .policy = {.projectLocalVariables = true, .optimize = true},
+                  .user = simplificationParameters.user}) < 0;
       sine->removeTree();
       if (removePeriod) {
         approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
@@ -108,11 +105,8 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
     approximateAngleTree->moveTreeOverTree(Approximation::To<Tree*>(
         approximateAngleTree, Approximation::FloatPrecision::Double,
         Approximation::Parameters{
-            .projectLocalVariables = true,
-            .optimize = true,
-            .angleUnit = simplificationParameters.user.angleUnit,
-            .complexFormat = simplificationParameters.user.complexFormat,
-            .symbolContext = simplificationParameters.user.context}));
+            .policy = {.projectLocalVariables = true, .optimize = true},
+            .user = simplificationParameters.user}));
     Beautification::DeepBeautify(
         approximateAngleTree,
         ToBeautificationParameters(simplificationParameters));
@@ -134,11 +128,8 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   double approximatedAngle = Approximation::To<double>(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
       Approximation::Parameters{
-          .projectLocalVariables = true,
-          .optimize = true,
-          .angleUnit = simplificationParameters.user.angleUnit,
-          .complexFormat = simplificationParameters.user.complexFormat,
-          .symbolContext = simplificationParameters.user.context});
+          .policy = {.projectLocalVariables = true, .optimize = true},
+          .user = simplificationParameters.user});
   if (approximateAngleTree) {
     approximateAngleTree->removeTree();
   }
@@ -233,11 +224,11 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   if (reductionFailure ||
       !std::isfinite(Approximation::To<float>(
           exactAngle,
-          Approximation::Parameters{.projectLocalVariables = true,
-                                    .optimize = true,
-                                    .angleUnit = angleUnit,
-                                    .complexFormat = complexFormat,
-                                    .symbolContext = symbolContext}))) {
+          Approximation::Parameters{
+              .policy = {.projectLocalVariables = true, .optimize = true},
+              .user = {.complexFormat = complexFormat,
+                       .angleUnit = angleUnit,
+                       .context = symbolContext}}))) {
     exactAngle->removeTree();
     return UserExpression();
   }
@@ -304,7 +295,7 @@ const Tree* getNumericalValueTree(const Tree* e, bool* error) {
   // e is not considered as a numerical value so that e^2 -> e^x
   if ((e->isNumber() && !e->isEulerE()) || e->isDecimal()) {
     if (!std::isfinite(Approximation::To<float>(
-            e, Approximation::Parameters{.optimize = true}))) {
+            e, Approximation::Parameters{.policy = {.optimize = true}}))) {
       *error = true;
       return nullptr;
     }
@@ -350,7 +341,7 @@ UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
       const_cast<Tree*>(getNumericalValueTree(clone, &dummy));
   assert(numericalValue);
   *value = Approximation::To<float>(
-      numericalValue, Approximation::Parameters{.optimize = true});
+      numericalValue, Approximation::Parameters{.policy = {.optimize = true}});
   numericalValue->moveTreeOverTree(SharedTreeStack->pushUserVariable(symbol));
   return UserExpression::Builder(clone);
 }
@@ -471,9 +462,9 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
   Tree* result = BestConvergentOfContinuedFraction(
       rational, k_maxDenominatorDigitsForRationalApproximation);
   double rationalApprox = Approximation::To<double>(
-      rational.tree(), Approximation::Parameters{.optimize = true});
+      rational.tree(), Approximation::Parameters{.policy = {.optimize = true}});
   double resultApprox = Approximation::To<double>(
-      result, Approximation::Parameters{.optimize = true});
+      result, Approximation::Parameters{.policy = {.optimize = true}});
   if (!result->treeIsIdenticalTo(rational.tree()) &&
       std::fabs(rationalApprox - resultApprox) <
           k_rationalApproximationPrecision) {
@@ -621,7 +612,8 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
    * approximation pipeline) */
   Approximation::Private::Approximator defaultMatrixApproximator =
       Approximation::Private::Approximator(
-          Approximation::FloatPrecision::Double, Approximation::Parameters{},
+          Approximation::FloatPrecision::Double,
+          Approximation::Private::InternalParameters{},
           Approximation::Private::Context{});
   Approximation::Private::Approximator* approximator =
       isApproximate ? &defaultMatrixApproximator : nullptr;

@@ -868,11 +868,8 @@ SolverResult ExactSolve(
     result.approximateSolutionList = Approximation::To<Tree*>(
         result.exactSolutionList, Approximation::FloatPrecision::Double,
         Approximation::Parameters{
-            .prepare = true,
-            .optimize = true,
-            .angleUnit = updatedSimplificationParameters.user.angleUnit,
-            .complexFormat = updatedSimplificationParameters.user.complexFormat,
-            .symbolContext = updatedSimplificationParameters.user.context});
+            .policy = {.prepare = true, .optimize = true},
+            .user = updatedSimplificationParameters.user});
   }
 
   /* Beautify result */
@@ -901,8 +898,8 @@ template <typename T>
 static Coordinate2D<T> evaluator(T t, const void* model) {
   const Tree* e = reinterpret_cast<const Tree*>(model);
   return Coordinate2D<T>(
-      t,
-      Approximation::To<T>(e, t, Approximation::Parameters{.optimize = true}));
+      t, Approximation::To<T>(
+             e, t, Approximation::Parameters{.policy = {.optimize = true}}));
 }
 
 SolverResult ApproximateSolve(

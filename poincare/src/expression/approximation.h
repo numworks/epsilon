@@ -6,6 +6,7 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/symbol_context.h>
+#include <poincare/user_parameters.h>
 
 #include <cmath>
 #include <complex>
@@ -25,7 +26,7 @@ struct Dimension;
 
 namespace Approximation {
 
-struct Parameters {
+struct ApproximationPolicy {
   /* Must be true if expression has not been projected and may have parametric
    * functions. */
   bool projectLocalVariables = false;
@@ -44,13 +45,12 @@ struct Parameters {
    * asserted instead. Particularly relevant when the approximation is called
    * multiple times (e.g. Solver or Grapher) */
   bool optimize = false;
+};
 
-  // The following parameters should only be passed in case of a UserExpression
-  // mutable because of AngleUnitContext
-  mutable AngleUnit angleUnit = AngleUnit::None;
-  ComplexFormat complexFormat = ComplexFormat::None;
-  // SymbolContext is used to store the values of user symbols and functions
-  const Poincare::SymbolContext& symbolContext = k_emptySymbolContext;
+struct Parameters {
+  ApproximationPolicy policy;
+  // User parameters should only be passed in case of a UserExpression
+  UserParameters user;
 };
 
 // Precision of floating-point calculations
@@ -223,7 +223,7 @@ class Context {
 
 /* If requested, project user variables or prepare the expression for
  * approximation */
-Tree* PrepareTree(const Tree* e, const Parameters& parameters);
+Tree* PrepareTree(const Tree* e, const ApproximationPolicy& policy);
 
 /* Undefined value representing an unhandled dimension for the T type (Tree,
  * float / double, boolean etc.)
@@ -306,9 +306,32 @@ struct Substitution {
   T originB;
 };
 
+class InternalParameters {
+ public:
+  InternalParameters() = default;
+  explicit InternalParameters(const UserParameters& userParameters,
+                              bool onlyReplaceNumerical)
+      :
+#if POINCARE_COMPLEX
+        complexFormat{userParameters.complexFormat},
+#else
+        complexFormat{ComplexFormat::Real},
+#endif
+        angleUnit{userParameters.angleUnit},
+        symbolContext{userParameters.context},
+        onlyReplaceNumerical(onlyReplaceNumerical) {
+  }
+  const ComplexFormat complexFormat = ComplexFormat::None;
+  // Mutable because of AngleUnitContext
+  mutable AngleUnit angleUnit = AngleUnit::None;
+  const Poincare::SymbolContext& symbolContext = k_emptySymbolContext;
+  bool onlyReplaceNumerical = false;
+};
+
 class Approximator {
  public:
-  Approximator(FloatPrecision floatPrecision, const Parameters& parameters,
+  Approximator(FloatPrecision floatPrecision,
+               const InternalParameters& parameters,
                Private::Context&& context);
 
   /* Specific processing for the ReturnType. Must be overloaded for each
@@ -499,7 +522,7 @@ class Approximator {
   T toLocalContext(const Tree* e, T x);
 
   const FloatPrecision m_floatPrecision;
-  const Parameters m_parameters;
+  const InternalParameters m_parameters;
   Private::Context m_context;
 };
 

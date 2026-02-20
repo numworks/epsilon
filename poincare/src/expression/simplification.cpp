@@ -272,11 +272,12 @@ bool HandleUnits(Tree* e,
   }
   if (dimension.isUnit() && !dimension.isAngleUnit()) {
     // Only angle units are expected not to be approximated.
-    changed = Approximation::Approximate(
-                  e, Approximation::FloatPrecision::Double,
-                  Approximation::Parameters{.onlyReplaceNumerical = true,
-                                            .optimize = true}) ||
-              changed;
+    changed =
+        Approximation::Approximate(
+            e, Approximation::FloatPrecision::Double,
+            Approximation::Parameters{
+                .policy = {.onlyReplaceNumerical = true, .optimize = true}}) ||
+        changed;
     /* Check that the expression after approximating scalars does not need to be
      * reduced again. We used to reduce the expression here. If we find out this
      * assertion breaks (when fuzzing), we can put it back. */
@@ -297,11 +298,8 @@ bool ApplyStrategy(Tree* e, const ProjectionParameters& projectionParameters,
       changed = Approximation::Approximate(
           e, Approximation::FloatPrecision::Double,
           Approximation::Parameters{
-              .onlyReplaceNumerical = true,
-              .optimize = true,
-              .angleUnit = projectionParameters.user.angleUnit,
-              .complexFormat = projectionParameters.user.complexFormat,
-              .symbolContext = projectionParameters.user.context});
+              .policy = {.onlyReplaceNumerical = true, .optimize = true},
+              .user = projectionParameters.user});
       if (changed && insideReduction) {
         // NAries could be sorted again, some children may be merged.
         SystematicReduction::DeepReduce(e);

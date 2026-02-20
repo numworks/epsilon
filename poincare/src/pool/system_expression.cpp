@@ -90,7 +90,8 @@ template <typename T>
 SystemExpression SystemExpression::approximateSystemToTree() const {
   return SystemExpression::Builder(Approximation::To<Tree*>(
       tree(), Approximation::Precision<T>::value,
-      Approximation::Parameters{.prepare = true, .optimize = true}));
+      Approximation::Parameters{
+          .policy = {.prepare = true, .optimize = true}}));
 }
 
 void SystemExpression::cloneAndBeautifyAndApproximate(
@@ -209,13 +210,15 @@ T SystemExpression::approximateSystemToRealScalar() const {
     return NAN;
   }
   return Approximation::To<T>(
-      tree(), Approximation::Parameters{.prepare = true, .optimize = true});
+      tree(),
+      Approximation::Parameters{.policy = {.prepare = true, .optimize = true}});
 }
 
 template <typename T>
 Coordinate2D<T> SystemExpression::approximateToPoint() const {
   return Approximation::To<Coordinate2D<T>>(
-      tree(), Approximation::Parameters{.prepare = true, .optimize = true});
+      tree(),
+      Approximation::Parameters{.policy = {.prepare = true, .optimize = true}});
 }
 
 template <typename T>
@@ -225,7 +228,8 @@ SystemExpression SystemExpression::approximateListAndSort() const {
   tree()->cloneTree();
   clone->moveTreeOverTree(Approximation::To<Tree*>(
       clone, Approximation::Precision<T>::value,
-      Approximation::Parameters{.prepare = true, .optimize = true}));
+      Approximation::Parameters{
+          .policy = {.prepare = true, .optimize = true}}));
   return SystemExpression::Builder(clone);
 }
 

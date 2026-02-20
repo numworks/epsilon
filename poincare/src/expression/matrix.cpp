@@ -215,7 +215,7 @@ double ApproximateForPivot(const Tree* child,
   if (!approximator) {
     return std::abs(Approximation::Private::Approximator(
                         Approximation::FloatPrecision::Double,
-                        Approximation::Parameters{},
+                        Approximation::Private::InternalParameters{},
                         Approximation::Private::Context{})
                         .specificApproximateTo<std::complex<double>>(child));
   }

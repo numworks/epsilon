@@ -500,7 +500,7 @@ bool PolynomialParser::HasNonNullCoefficients(
       // Approximate for a better estimation.
       // Nan if coefficient depends on x/y.
       double approximation = Approximation::To<double>(
-          child, Approximation::Parameters{.optimize = true});
+          child, Approximation::Parameters{.policy = {.optimize = true}});
       if (!std::isnan(approximation)) {
         isPositive = OMG::BoolToTroolean(approximation > 0.0);
       }
@@ -515,7 +515,7 @@ bool PolynomialParser::HasNonNullCoefficients(
       // Unsure if null, approximation to be more precise, assuming nan is null
       std::complex<double> approximation =
           Approximation::To<std::complex<double>>(
-              child, Approximation::Parameters{.optimize = true});
+              child, Approximation::Parameters{.policy = {.optimize = true}});
       isNull = std::isnan(approximation.real()) ||
                std::isnan(approximation.imag()) ||
                (approximation.real() == 0.0 && approximation.imag() == 0.0);

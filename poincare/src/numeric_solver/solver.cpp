@@ -118,8 +118,8 @@ typename Solver<T>::Solution Solver<T>::next(const Tree* e, BracketTest test,
    * context(ComplexFormat, AngleUnit) and replace defined symbols. */
   FunctionEvaluation f = [](T x, const void* aux) {
     const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
-    return Approximation::To<T>(e, x,
-                                Approximation::Parameters{.optimize = true});
+    return Approximation::To<T>(
+        e, x, Approximation::Parameters{.policy = {.optimize = true}});
   };
 
   return next(f, e, test, hone, &SolverTests<T>::IsDiscontinuousInBracket);
@@ -239,12 +239,12 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
     return Solution{};
   }
   T x = root.x;
-  T y =
-      Approximation::To<T>(e1, x, Approximation::Parameters{.optimize = true});
+  T y = Approximation::To<T>(
+      e1, x, Approximation::Parameters{.policy = {.optimize = true}});
   // The secondImage is a "y" if areAlongSameAxis=true, or an "x" otherwise
-  T secondImage =
-      Approximation::To<T>(e2, areAlongSameAxis ? x : y,
-                           Approximation::Parameters{.optimize = true});
+  T secondImage = Approximation::To<T>(
+      e2, areAlongSameAxis ? x : y,
+      Approximation::Parameters{.policy = {.optimize = true}});
   if (!std::isfinite(y) || !std::isfinite(secondImage)) {
     /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
      * or undef expressions in specific points like x^2/x, the root of the
@@ -544,7 +544,7 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootSearchingInChild(
      * approximation. */
     T value = Approximation::To<T>(
         ebis, root.solution.x,
-        Approximation::Parameters{.optimize = true});  // m_unknown
+        Approximation::Parameters{.policy = {.optimize = true}});  // m_unknown
     ebis->removeTree();
     if (std::fabs(value) < NullTolerance(root.solution.x)) {
       return {.x = root.solution.x, .nullDescendant = root.nullDescendant};
@@ -590,30 +590,32 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootInAddition(
    * Since the expression does not change sign around x0, the usual numerical
    * schemes won't work. We instead look for the zeroes of f, and check whether
    * they are zeroes of the whole expression. */
-  ExpressionTestAuxiliary test =
-      [](const Tree* e, const SymbolContext& symbolContext, void* aux) {
-        /* TODO_PCJ: Either ensure expression is projected, or pass
-         * approximation context(ComplexFormat, AngleUnit) and replace defined
-         * symbols. */
-        return e->hasDescendantSatisfying([](const Tree* e) {
-          T exponent = k_NAN;
-          if (e->type() == Type::Sqrt) {
-            exponent = static_cast<T>(0.5);
-          } else if (e->type() == Type::Pow || e->type() == Type::PowReal) {
-            exponent = Approximation::To<T>(
-                e->child(1), Approximation::Parameters{.optimize = true});
-          } else if (e->type() == Type::Root) {
-            exponent =
-                static_cast<T>(1.) /
-                Approximation::To<T>(
-                    e->child(1), Approximation::Parameters{.optimize = true});
-          }
-          if (std::isnan(exponent)) {
-            return false;
-          }
-          return k_zero < exponent;
-        });
-      };
+  ExpressionTestAuxiliary test = [](const Tree* e,
+                                    const SymbolContext& symbolContext,
+                                    void* aux) {
+    /* TODO_PCJ: Either ensure expression is projected, or pass
+     * approximation context(ComplexFormat, AngleUnit) and replace defined
+     * symbols. */
+    return e->hasDescendantSatisfying([](const Tree* e) {
+      T exponent = k_NAN;
+      if (e->type() == Type::Sqrt) {
+        exponent = static_cast<T>(0.5);
+      } else if (e->type() == Type::Pow || e->type() == Type::PowReal) {
+        exponent = Approximation::To<T>(
+            e->child(1),
+            Approximation::Parameters{.policy = {.optimize = true}});
+      } else if (e->type() == Type::Root) {
+        exponent = static_cast<T>(1.) /
+                   Approximation::To<T>(
+                       e->child(1),
+                       Approximation::Parameters{.policy = {.optimize = true}});
+      }
+      if (std::isnan(exponent)) {
+        return false;
+      }
+      return k_zero < exponent;
+    });
+  };
   DetailedRootX childrenRoot =
       nextRootSearchingInChildren(e, test, const_cast<Solver<T>*>(this));
   Solver<T> solver = *this;
@@ -654,9 +656,9 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootInDependency(
     depsListClone->deepReplaceWith(root.nullDescendant, 0_e);
     bool definedDeps = true;
     for (const Tree* childDep : depsListClone->children()) {
-      T value =
-          Approximation::To<T>(childDep, root.solution.x,
-                               Approximation::Parameters{.optimize = true});
+      T value = Approximation::To<T>(
+          childDep, root.solution.x,
+          Approximation::Parameters{.policy = {.optimize = true}});
       if (std::isnan(value)) {
         definedDeps = false;
         break;

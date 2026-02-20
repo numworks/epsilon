@@ -85,7 +85,8 @@ float DegreeForSortingAddition(const Tree* e, bool symbolsOnly) {
       const Tree* index = e->child(1);
       if (index->isNumber()) {
         return Approximation::To<float>(
-                   index, Approximation::Parameters{.optimize = true}) *
+                   index,
+                   Approximation::Parameters{.policy = {.optimize = true}}) *
                baseDegree;
       }
       return NAN;
@@ -692,13 +693,15 @@ Tree* GetPolarFormat(const Tree* e,
   if (hasSingleFloats) {
     arg->moveTreeOverTree(To<Tree*>(
         arg, Approximation::FloatPrecision::Single,
-        Approximation::Parameters{
-            .prepare = false, .onlyReplaceNumerical = true, .optimize = true}));
+        Approximation::Parameters{.policy = {.prepare = false,
+                                             .onlyReplaceNumerical = true,
+                                             .optimize = true}}));
   } else if (hasDoubleFloats) {
     arg->moveTreeOverTree(To<Tree*>(
         arg, Approximation::FloatPrecision::Double,
-        Approximation::Parameters{
-            .prepare = false, .onlyReplaceNumerical = true, .optimize = true}));
+        Approximation::Parameters{.policy = {.prepare = false,
+                                             .onlyReplaceNumerical = true,
+                                             .optimize = true}}));
   }
 
   SharedTreeStack->pushComplexI();

@@ -74,7 +74,7 @@ void simplify_and_compare_approximates_list(const char* input, bool equal) {
   assert(Dimension::ListLength(e) == 2);
   Tree* eApproximated = Approximation::To<Tree*>(
       e, Approximation::Precision<T>::value,
-      Approximation::Parameters{.projectLocalVariables = true});
+      Approximation::Parameters{.policy = {.projectLocalVariables = true}});
   T approx1 = Approximation::To<T>(eApproximated->child(0),
                                    Approximation::Parameters{});
   T approx2 = Approximation::To<T>(eApproximated->child(1),
@@ -149,7 +149,7 @@ void assert_approximate_is_int(const char* input, int lowerBound,
     int length = Dimension::ListLength(e);
     Tree* eApproximated = Approximation::To<Tree*>(
         e, Approximation::FloatPrecision::Single,
-        Approximation::Parameters{.projectLocalVariables = true});
+        Approximation::Parameters{.policy = {.projectLocalVariables = true}});
     assert(length > 0);
     for (int i = 0; i < length; i++) {
       quiz_assert_print_if_failure(

@@ -93,12 +93,11 @@ const char* FunctionModelsParameterController::ModelWithDefaultName(
 
 bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    bool success = m_listController->editSelectedRecordWithLayout(
-        m_layouts[selectedRow()]);
-    assert(success);
-    (void)success;  // Silence warnings
-    App::app()->modalViewController()->dismissModal();
-    m_listController->editExpression(Ion::Events::OK);
+    if (m_listController->editSelectedRecordWithLayout(
+            m_layouts[selectedRow()])) {
+      App::app()->modalViewController()->dismissModal();
+      m_listController->editExpression(Ion::Events::OK);
+    }
     return true;
   } else if (event == Ion::Events::Backspace) {
     return true;

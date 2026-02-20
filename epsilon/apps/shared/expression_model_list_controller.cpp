@@ -290,20 +290,17 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
     return false;
   }
   CodePoint symbol = symbolForEquation(parsedExpression);
-  if (shouldCompleteEquation(parsedExpression, symbol)) {
-    if (!completeEquation(layoutField, symbol)) {
-      App::app()->displayWarning(I18n::Message::RequireEquation);
-      return false;
-    }
+  if (shouldCompleteEquation(parsedExpression, symbol) &&
+      !completeEquation(layoutField, symbol)) {
+    App::app()->displayWarning(I18n::Message::RequireEquation);
+    return false;
   }
   if (!MathLayoutFieldDelegate::layoutFieldDidFinishEditing(layoutField,
-                                                            event)) {
+                                                            event) ||
+      !isValidExpressionModel(parsedExpression) ||
+      !editSelectedRecordWithLayout(layoutField->layout())) {
     return false;
   }
-  if (!isValidExpressionModel(parsedExpression)) {
-    return false;
-  }
-  editSelectedRecordWithLayout(layoutField->layout());
   finishEdition();
   layoutField->clearLayout();
   return true;

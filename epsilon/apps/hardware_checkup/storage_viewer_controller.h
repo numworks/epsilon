@@ -36,7 +36,7 @@ class StorageViewerController : public Escher::ViewController {
   };
   // Special extension only used here.
   constexpr static const char* k_dummyBaseName = "0";
-  constexpr static const char* k_dummyExtension = "dum";
+  constexpr static const char* k_dummyExtension = "dummy";
   constexpr static const char* k_availableExtensions[] = {
       Ion::Storage::equationExtension,
       Ion::Storage::expressionExtension,

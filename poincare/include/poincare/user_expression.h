@@ -108,7 +108,7 @@ class UserExpression : public Expression {
       const SimplificationParameters& simplificationParameters) const;
   template <typename T>
   UserExpression cloneAndApproximate(
-      const SimplificationParameters& simplificationParameters) const;
+      const UserParameters& userParameters) const;
 
   // If of the form y-f(x), return f(x). Return uninitialized otherwise.
   UserExpression equivalentCartesianEquation() const;

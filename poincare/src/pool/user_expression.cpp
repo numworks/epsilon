@@ -130,7 +130,7 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
   // Step 2: approximate
   assert(approximatedExpression && approximatedExpression->isUninitialized());
   *approximatedExpression = simplifiedExpression->cloneAndApproximate<double>(
-      simplificationParameters);
+      simplificationParameters.user);
   /* Second approximation attempt.
    * Condition: simplified expression is well defined, but approximation failed
    * (it returned undef). This can happen if the simplified expression is a
@@ -139,14 +139,14 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
   if (approximatedExpression->isUndefined() &&
       !simplifiedExpression->isUndefinedOrNonReal()) {
     *approximatedExpression =
-        this->cloneAndApproximate<double>(simplificationParameters);
+        this->cloneAndApproximate<double>(simplificationParameters.user);
   }
   return reductionFailure;
 }
 
 template <typename T>
 UserExpression UserExpression::cloneAndApproximate(
-    const SimplificationParameters& simplificationParameters) const {
+    const UserParameters& userParameters) const {
   Tree* a = Approximation::To<Tree*>(
       tree(), Approximation::Precision<T>::value,
       Approximation::Parameters{
@@ -155,7 +155,7 @@ UserExpression UserExpression::cloneAndApproximate(
                /* When CAS is activated, onlyReplaceNumerical is used to
                 * approximate expressions with symbols such as π*x → 3.14*x. */
                .onlyReplaceNumerical = CAS::Enabled()},
-          .user = simplificationParameters.user});
+          .user = userParameters});
   /* There are several issues that currently prevent us from beautifying an
    * approximated CAS expression:
    * - the beautified exact expression and the beautified approximate expression
@@ -166,7 +166,7 @@ UserExpression UserExpression::cloneAndApproximate(
    * TODO: solve these issues */
   if (!CAS::Enabled()) {
     Beautification::DeepBeautify(
-        a, ToBeautificationParameters(simplificationParameters),
+        a, BeautificationParameters{.user = userParameters},
         Internal::Dimension::Get(a));
   }
   return UserExpression::Builder(a);
@@ -648,9 +648,9 @@ template UserExpression UserExpression::Builder<float>(
 template UserExpression UserExpression::Builder<double>(
     PointOrRealScalar<double>);
 template UserExpression UserExpression::cloneAndApproximate<float>(
-    const SimplificationParameters&) const;
+    const UserParameters&) const;
 template UserExpression UserExpression::cloneAndApproximate<double>(
-    const SimplificationParameters&) const;
+    const UserParameters&) const;
 template float UserExpression::privateApproximateToRealScalar<float>(
     AngleUnit, ComplexFormat, const SymbolContext&) const;
 template double UserExpression::privateApproximateToRealScalar<double>(

@@ -102,7 +102,7 @@ void SystemExpression::cloneAndBeautifyAndApproximate(
   *beautifiedExpression = cloneAndBeautify(simplificationParameters);
   assert(approximatedExpression && approximatedExpression->isUninitialized());
   *approximatedExpression = beautifiedExpression->cloneAndApproximate<double>(
-      simplificationParameters);
+      simplificationParameters.user);
 }
 
 UserExpression SystemExpression::cloneAndBeautify(

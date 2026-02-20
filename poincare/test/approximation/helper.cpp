@@ -137,10 +137,9 @@ template <typename T>
 void assert_float_approximates_to(UserExpression f, const char* result) {
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
-  f
-      .cloneAndApproximate<T>(Poincare::SimplificationParameters{
-          .user = {.complexFormat = ComplexFormat::Cartesian,
-                   .angleUnit = AngleUnit::Radian}})
+  f.cloneAndApproximate<T>(
+       Poincare::UserParameters{.complexFormat = ComplexFormat::Cartesian,
+                                .angleUnit = AngleUnit::Radian})
       .serialize(buffer, false, DecimalMode, numberOfDigits);
   quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
 }

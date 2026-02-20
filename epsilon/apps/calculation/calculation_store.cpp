@@ -161,18 +161,12 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
       return CalculationResult{
           .outputs =
               {.exact = inputExpression.clone(),
-               .approximate = inputExpression.cloneAndApproximate<double>(
-                   SimplificationParameters{
-                       .user = {.complexFormat = complexFormat,
-                                .angleUnit =
-                                    GlobalPreferences::SharedGlobalPreferences()
+               .approximate =
+                   inputExpression.cloneAndApproximate<double>(UserParameters{
+                       .complexFormat = complexFormat,
+                       .angleUnit = GlobalPreferences::SharedGlobalPreferences()
                                         ->angleUnit(),
-                                .context = GlobalContextAccessor::Context()},
-                       .projectionPolicy = {.symbolic = symbolicComputation},
-                       .unitMode =
-                           {.unitFormat =
-                                GlobalPreferences::SharedGlobalPreferences()
-                                    ->unitFormat()}})},
+                       .context = GlobalContextAccessor::Context()})},
           .hasReductionFailure = false};
     }
     symbolicComputation = storeElements.symbolicComputation;
@@ -246,7 +240,7 @@ static void processStore(OutputExpressions& outputs,
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
   UserExpression valueApprox = value.cloneAndApproximate<double>(
-      PoincareHelpers::SimplificationParametersForPreferences(value));
+      PoincareHelpers::SimplificationParametersForPreferences(value).user);
   if (symbol.isUserVariable() &&
       CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox,
                                           GlobalContextAccessor::Context())) {

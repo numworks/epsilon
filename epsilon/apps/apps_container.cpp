@@ -229,6 +229,9 @@ void AppsContainer::switchToBuiltinApp(App::Snapshot* snapshot) {
     resetShiftAlphaStatus();
   }
   if (snapshot == hardwareTestAppSnapshot() ||
+#ifdef HARDWARE_CHECKUP
+      snapshot == hardwareCheckupAppSnapshot() ||
+#endif
       snapshot == onBoardingAppSnapshot()) {
     m_window.hideTitleBarView(true);
   } else {

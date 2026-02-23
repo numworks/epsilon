@@ -199,9 +199,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   // Strategy
   simplifies_to(
       "sin(90)", "1",
-      SimplificationParameters{
-          .user = {.angleUnit = AngleUnit::Degree},
-          .projectionPolicy = {.strategy = Strategy::ApproximateToFloat}});
+      SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});
 
   // Beautification and dependencies
   simplifies_to("re(2*acos(cos(x)))",

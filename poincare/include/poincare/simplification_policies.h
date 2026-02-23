@@ -12,14 +12,8 @@ enum class SymbolicComputation : uint8_t {
   KeepAllSymbols = 4
 };
 
-enum class Strategy : uint8_t {
-  Default,
-  ApproximateToFloat,
-};
-
 struct ProjectionPolicy {
   SymbolicComputation symbolic = SymbolicComputation::KeepAllSymbols;
-  Strategy strategy = Strategy::Default;
 };
 
 enum class ReductionTarget : uint8_t {

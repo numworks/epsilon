@@ -15,7 +15,6 @@ using Poincare::AngleUnit;
 using Poincare::ComplexFormat;
 using Poincare::ReductionTarget;
 using Poincare::SimplificationParameters;
-using Poincare::Strategy;
 using Poincare::SymbolicComputation;
 using Poincare::UnitDisplay;
 using UnitFormat = Poincare::Preferences::UnitFormat;
@@ -374,10 +373,7 @@ QUIZ_CASE(pcj_simplification_percent) {
   simplifies_to("-25%", "-25/100");
   simplifies_to("2↗30%", "2×(1+30/100)");
   simplifies_to("-2-30%", "(-2)×(1-30/100)");
-  simplifies_to(
-      "x-30%", "x×(1-30/100)",
-      SimplificationParameters{
-          .projectionPolicy = {.strategy = Strategy::ApproximateToFloat}});
+  simplifies_to("x-30%", "x×(1-30/100)", SimplificationParameters{});
   simplifies_to("20%", "20/100");
   simplifies_to("20%%", "(20/100)/100");
   simplifies_to("80*20%", "80×20/100");

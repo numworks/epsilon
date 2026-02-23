@@ -182,33 +182,10 @@ This is done as early as possible so that all following steps can assume the dim
 
 Some issues such as NonReal, division by zero or other undefinitions can still arise later.
 
-## Approximation strategy
-
-The simplification algorithm handles two simplification strategies:
-
-- `Default`: Default strategy.
-
-```math
-ln(2)*x+\frac{1}{3}+random()*\pi
-```
-
-- `ApproximateToFloat`: Everything that can be approximated to a float is approximated (everything but variables, random, expressions having children that cannot be approximated).
-
-```math
-0.693*x+0.333+random()*3.14
-```
-
-`ApproximateToFloat` strategy is less demanding in term of tree size, but the quality of the simplification will downgrade compared to the `Default` one.
-
-Strategy is a context parameter given to the simplification. We start simplification with the given strategy, and we can downgrade the strategy during the simplification process if `TreeStack` is full for example.
-
-Most of the time, we use the `Default` strategy and let the simplification handle eventual strategy change.
-
 ## Projection
 
 It is expected to:
 
-- Approximate everything that can be if strategy is `ApproximateToFloat`.
 - Reduce the number of equivalent representations of an expression (`Div(A,B)` -> `Mult(A, Pow(B, -1))`). It replaces nodes not handled by reduction with other nodes handled by reduction.
 - Un-contextualize the expression (remove complex format and angle units considerations from reduction algorithm)
 - Do nothing if applied a second time

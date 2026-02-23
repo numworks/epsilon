@@ -506,13 +506,12 @@ QUIZ_CASE(pcj_properties_methods) {
 }
 
 void assert_properties(const char* input, ComplexProperties expectedProperties,
-                       ComplexFormat complexFormat = ComplexFormat::Cartesian,
-                       Strategy strategy = Strategy::Default) {
+                       ComplexFormat complexFormat = ComplexFormat::Cartesian) {
   Tree* expression = parse(input);
   Simplification::ToSystem(
-      expression, ProjectionParameters{.user = {.complexFormat = complexFormat,
-                                                .angleUnit = AngleUnit::Radian},
-                                       .policy = {.strategy = strategy}});
+      expression,
+      ProjectionParameters{.user = {.complexFormat = complexFormat,
+                                    .angleUnit = AngleUnit::Radian}});
   bool result = GetComplexProperties(expression) == expectedProperties;
 #if POINCARE_TREE_LOG
   if (!result) {
@@ -539,11 +538,11 @@ QUIZ_CASE(pcj_properties) {
   assert_properties("π",
                     ComplexProperties(Properties::FiniteStrictlyPositive(),
                                       Properties::Zero()),
-                    ComplexFormat::Cartesian, Strategy::ApproximateToFloat);
+                    ComplexFormat::Cartesian);
   assert_properties(
       "inf",
       ComplexProperties(Properties::StrictlyPositive(), Properties::Zero()),
-      ComplexFormat::Cartesian, Strategy::ApproximateToFloat);
+      ComplexFormat::Cartesian);
 
   assert_properties("2+π", Properties::FiniteStrictlyPositive());
   assert_properties("√(2)-2", Properties::FiniteStrictlyNegative());

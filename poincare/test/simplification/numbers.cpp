@@ -5,7 +5,6 @@
 #include "helper.h"
 
 using namespace Poincare::Internal;
-using Poincare::Strategy;
 
 QUIZ_CASE(pcj_simplification_decimal) {
   Tree* tree = SharedTreeStack->pushDecimal();

@@ -43,8 +43,7 @@ inline ProjectionParameters ToProjectionParameters(
     const BeautificationParameters& beautificationParameters) {
   return ProjectionParameters{
       .user = beautificationParameters.user,
-      .policy = {.symbolic = SymbolicComputation::KeepAllSymbols,
-                 .strategy = Strategy::Default}};
+      .policy = {.symbolic = SymbolicComputation::KeepAllSymbols}};
 }
 
 inline BeautificationParameters ToBeautificationParameters(

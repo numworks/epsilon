@@ -22,17 +22,6 @@ static Tree* ApplySimplify(
 
 static bool HandleUnits(Tree* e, const UnitParameters& unitParameters,
                         const Dimension& dimension);
-static bool ApplyStrategy(Tree* e,
-                          const ProjectionParameters& projectionParameters,
-                          bool insideReduction);
-static bool ApplyProjectionStrategy(
-    Tree* e, const ProjectionParameters& projectionParameters) {
-  return ApplyStrategy(e, projectionParameters, false);
-}
-static bool ApplyReductionStrategy(
-    Tree* e, const ProjectionParameters& projectionParameters) {
-  return ApplyStrategy(e, projectionParameters, true);
-}
 
 /* Some patterns are not reduced by the systematic and the advanced reductions,
  * but if the expression contains one of these patterns at the end of reduction,
@@ -128,8 +117,6 @@ Dimension ProjectAndReduce(
       ToProjectionParameters(simplificationParameters);
   Dimension dim = ToSystem(e, projectionParameters).dimension;
   ReduceSystem(e, simplificationParameters.reductionPolicy);
-  // Non-approximated numbers or node may have appeared during reduction.
-  ApplyReductionStrategy(e, projectionParameters);
   return dim;
 }
 
@@ -198,9 +185,7 @@ ToSystemOutput ToSystem(Tree* e,
   bool changed = PrepareForProjection(e, projectionParameters);
   /* 2 - Compute expression's dimension */
   Dimension dim = Dimension::Get(e);
-  /* 3 - Apply projection strategy */
-  changed = ApplyProjectionStrategy(e, projectionParameters) || changed;
-  /* 4 - Project */
+  /* 3 - Project */
   changed =
       Projection::DeepSystemProject(e, projectionParameters, dim) || changed;
   return {changed, dim};
@@ -273,31 +258,6 @@ bool HandleUnits(Tree* e, const UnitParameters& unitParameters,
     COSTLY_ASSERT(!SystematicReduction::DeepReduce(e));
   }
 #endif
-  return changed;
-}
-
-bool ApplyStrategy(Tree* e, const ProjectionParameters& projectionParameters,
-                   bool insideReduction) {
-  bool changed = false;
-
-  switch (projectionParameters.policy.strategy) {
-    case Strategy::Default:
-      break;
-    case Strategy::ApproximateToFloat:
-      changed = Approximation::Approximate(
-          e, FloatPrecision::Double,
-          Approximation::Parameters{
-              .policy = {.onlyReplaceNumerical = true, .optimize = true},
-              .user = projectionParameters.user});
-      if (changed && insideReduction) {
-        // NAries could be sorted again, some children may be merged.
-        SystematicReduction::DeepReduce(e);
-      }
-      break;
-    default:
-      OMG_UNREACHABLE;
-  }
-
   return changed;
 }
 

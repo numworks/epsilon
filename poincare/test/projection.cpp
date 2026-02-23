@@ -8,15 +8,13 @@
 using namespace Poincare::Internal;
 using Poincare::AngleUnit;
 using Poincare::ComplexFormat;
-using Poincare::Strategy;
 
 QUIZ_CASE(pcj_projection) {
   TreeRef ref(KCos(KSin(KPow(
       KPow(KPow(e_e, KLogBase(KLogBase(KLog(π_e), 2_e), e_e)), π_e), 3_e))));
   Poincare::ProjectionParameters projectionParameters{
       .user = {.complexFormat = ComplexFormat::Cartesian,
-               .angleUnit = AngleUnit::Radian},
-      .policy = {.strategy = Strategy::Default}};
+               .angleUnit = AngleUnit::Radian}};
   Simplification::ToSystem(ref, projectionParameters);
   assert_trees_are_equal(
       ref,
@@ -32,27 +30,25 @@ QUIZ_CASE(pcj_projection) {
   ref->cloneTreeOverTree(KAdd(KCos(KSub(2065_e, 2065_e)), KPow(2_e, "x"_e),
                               KPow(KLn(e_e), KDiv(1_e, 10_e))));
   projectionParameters.user.complexFormat = ComplexFormat::Cartesian;
-  projectionParameters.policy.strategy = Strategy::ApproximateToFloat;
   projectionParameters.user.angleUnit = AngleUnit::Radian;
   Simplification::ToSystem(ref, projectionParameters);
-  assert_trees_are_equal(ref, KAdd(KPow(2_de, "x"_e), 2_de));
+  assert_trees_are_equal(
+      ref, KAdd(KTrig(KAdd(2065_e, KMult(-1_e, 2065_e)), 0_e), KPow(2_e, "x"_e),
+                KPow(KLn(KExp(1_e)), KMult(1_e, KPow(10_e, -1_e)))));
 
   projectionParameters.user.complexFormat = ComplexFormat::Cartesian;
-  projectionParameters.policy.strategy = Strategy::Default;
   projectionParameters.user.angleUnit = AngleUnit::Degree;
   ref->cloneTreeOverTree(KCos(100_e));
   Simplification::ToSystem(ref, projectionParameters);
   assert_trees_are_equal(ref, KTrig(KMult(100_e, 1_e / 180_e, π_e), 0_e));
 
   projectionParameters.user.complexFormat = ComplexFormat::Cartesian;
-  projectionParameters.policy.strategy = Strategy::Default;
   projectionParameters.user.angleUnit = AngleUnit::Radian;
   ref->cloneTreeOverTree(KSqrt(π_e));
   Simplification::ToSystem(ref, projectionParameters);
   assert_trees_are_equal(ref, KPow(π_e, 1_e / 2_e));
 
   projectionParameters.user.complexFormat = ComplexFormat::Real;
-  projectionParameters.policy.strategy = Strategy::Default;
   projectionParameters.user.angleUnit = AngleUnit::Radian;
   ref->cloneTreeOverTree(KSqrt(π_e));
   Simplification::ToSystem(ref, projectionParameters);

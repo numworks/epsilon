@@ -74,24 +74,26 @@ QUIZ_CASE(pcj_approximation_integrals) {
 
   // singularities, project for better precision
   projected_approximates_to<double>("int(ln(x)*√(x),x,0,1)", "-0.444444444444",
-                                    k_realParams, 12);
-  projected_approximates_to<double>("int(1/√(x),x,0,1)", "2", k_realParams, 12);
-  projected_approximates_to<double>("int(1/√(1-x),x,0,1)", "2", k_realParams,
-                                    12);
+                                    k_realSimplification, 12);
+  projected_approximates_to<double>("int(1/√(x),x,0,1)", "2",
+                                    k_realSimplification, 12);
+  projected_approximates_to<double>("int(1/√(1-x),x,0,1)", "2",
+                                    k_realSimplification, 12);
   projected_approximates_to<double>("int(1/√(x)+1/√(1-x),x,0,1)", "4",
-                                    k_realParams, 12);
-  projected_approximates_to<double>("int(ln(x)^2,x,0,1)", "2", k_realParams,
-                                    12);
+                                    k_realSimplification, 12);
+  projected_approximates_to<double>("int(ln(x)^2,x,0,1)", "2",
+                                    k_realSimplification, 12);
   // #596
-  projected_approximates_to<double>("int(1/√(x-1),x,1,2)", "2", k_realParams,
-                                    12);
+  projected_approximates_to<double>("int(1/√(x-1),x,1,2)", "2",
+                                    k_realSimplification, 12);
   // #1780
   projected_approximates_to<double>("int(2/√(1-x^2),x,0,1)", "3.1415926535898");
   // #1780
   projected_approximates_to<double>("int(4x/√(1-x^4),x,0,1)",
                                     "3.1415926535898");
   // convergence is slow with 1/x^k k≈1, therefore precision is poor
-  projected_approximates_to<float>("int(1/x^0.9,x,0,1)", "10", k_realParams, 3);
+  projected_approximates_to<float>("int(1/x^0.9,x,0,1)", "10",
+                                   k_realSimplification, 3);
 
   // double integration
   approximates_to<float>("int(int(x×x,x,0,x),x,0,4)", "21.33333");

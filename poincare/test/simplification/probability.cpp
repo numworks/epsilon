@@ -93,13 +93,13 @@ QUIZ_CASE(pcj_simplification_random) {
   // Seeding test
   Tree* randIntList =
       (KAdd(KRandInt(0_e, KList(0_e, 1_e)), KRandom))->cloneTree();
-  simplify(randIntList, k_realParams, true);
+  simplify(randIntList, k_realSimplification, true);
   assert_trees_are_equal(
       randIntList, KList(KAdd(KRandomSeeded<3>, KRandIntSeeded<1>(0_e, 0_e)),
                          KAdd(KRandomSeeded<3>, KRandIntSeeded<2>(0_e, 1_e))));
 
   Tree* randIntNoRep = (KRandIntNoRep(0_e, 1000_e, 255_e))->cloneTree();
-  simplify(randIntNoRep, k_realParams, true);
+  simplify(randIntNoRep, k_realSimplification, true);
   assert_trees_are_equal(randIntNoRep,
                          KRandIntNoRepSeeded<1>(0_e, 1000_e, 255_e));
 

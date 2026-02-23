@@ -35,28 +35,46 @@ constexpr Poincare::Preferences::PrintFloatMode ScientificMode =
 constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
     Poincare::Preferences::PrintFloatMode::Engineering;
 
-// Default simplification parameters are k_realParams
-constexpr Poincare::SimplificationParameters k_realParams = {
-    .user = {.complexFormat = Real, .angleUnit = Radian}};
+// Default user parameters are k_realParams
+constexpr Poincare::UserParameters k_realParams = {.complexFormat = Real,
+                                                   .angleUnit = Radian};
+constexpr Poincare::UserParameters k_cartesianParams = {
+    .complexFormat = Cartesian, .angleUnit = Radian};
+constexpr Poincare::UserParameters k_polarParams = {.complexFormat = Polar,
+                                                    .angleUnit = Radian};
 
-constexpr Poincare::SimplificationParameters k_cartesianParams = {
-    .user = {.complexFormat = Cartesian, .angleUnit = Radian}};
-constexpr Poincare::SimplificationParameters k_polarParams = {
-    .user = {.complexFormat = Polar, .angleUnit = Radian}};
+constexpr Poincare::UserParameters k_degreeParams = {.complexFormat = Real,
+                                                     .angleUnit = Degree};
+constexpr Poincare::UserParameters k_gradianParams = {.complexFormat = Real,
+                                                      .angleUnit = Gradian};
+constexpr Poincare::UserParameters k_degreeCartesianParams = {
+    .complexFormat = Cartesian, .angleUnit = Degree};
+constexpr Poincare::UserParameters k_gradianCartesianParams = {
+    .complexFormat = Cartesian, .angleUnit = Gradian};
+constexpr Poincare::UserParameters k_degreePolarParam = {.complexFormat = Polar,
+                                                         .angleUnit = Degree};
+constexpr Poincare::UserParameters k_gradianPolarParams = {
+    .complexFormat = Polar, .angleUnit = Gradian};
 
-constexpr Poincare::SimplificationParameters k_degreeParams = {
-    .user = {.complexFormat = Real, .angleUnit = Degree}};
-constexpr Poincare::SimplificationParameters k_gradianParams = {
-    .user = {.complexFormat = Real, .angleUnit = Gradian}};
+constexpr Poincare::SimplificationParameters k_realSimplification =
+    Poincare::SimplificationParameters{.user = k_realParams};
+constexpr Poincare::SimplificationParameters k_cartesianSimplification =
+    Poincare::SimplificationParameters{.user = k_cartesianParams};
+constexpr Poincare::SimplificationParameters k_polarSimplification =
+    Poincare::SimplificationParameters{.user = k_polarParams};
+constexpr Poincare::SimplificationParameters k_degreeSimplification =
+    Poincare::SimplificationParameters{.user = k_degreeParams};
+constexpr Poincare::SimplificationParameters k_gradianSimplification =
+    Poincare::SimplificationParameters{.user = k_gradianParams};
+constexpr Poincare::SimplificationParameters k_degreeCartesianSimplification =
+    Poincare::SimplificationParameters{.user = k_degreeCartesianParams};
+constexpr Poincare::SimplificationParameters k_gradianCartesianSimplification =
+    Poincare::SimplificationParameters{.user = k_gradianCartesianParams};
+constexpr Poincare::SimplificationParameters k_degreePolarSimplification =
+    Poincare::SimplificationParameters{.user = k_degreePolarParam};
+constexpr Poincare::SimplificationParameters k_gradianPolarSimplification =
+    Poincare::SimplificationParameters{.user = k_gradianPolarParams};
 
-constexpr Poincare::SimplificationParameters k_degreeCartesianParams = {
-    .user = {.complexFormat = Cartesian, .angleUnit = Degree}};
-constexpr Poincare::SimplificationParameters k_gradianCartesianParams = {
-    .user = {.complexFormat = Cartesian, .angleUnit = Gradian}};
-constexpr Poincare::SimplificationParameters k_degreePolarParam = {
-    .user = {.complexFormat = Polar, .angleUnit = Degree}};
-constexpr Poincare::SimplificationParameters k_gradianPolarParams = {
-    .user = {.complexFormat = Polar, .angleUnit = Gradian}};
 constexpr Poincare::SimplificationParameters k_keepAllSymbolsParams = {
     .user = {.complexFormat = Real, .angleUnit = Radian},
     .projectionPolicy = {.symbolic =

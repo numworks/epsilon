@@ -85,7 +85,7 @@ QUIZ_CASE(pcj_simplification_multiplication) {
   simplifies_to("M^3×P×M^(-3)", "dep(P,{M^0})");
   simplifies_to("M^3×M^(-3)", "dep(1,{M^0})");
   simplifies_to("2^π×(1/2)^π", "1");
-  simplifies_to("-iπ^3×(-iπ^3)×(-iπ^3)", "π^9×i", k_cartesianParams);
+  simplifies_to("-iπ^3×(-iπ^3)×(-iπ^3)", "π^9×i", k_cartesianSimplification);
   simplifies_to("(x+1)×(x+2)", "(x+1)×(x+2)");
   simplifies_to("(x+1)×(x-1)", "x^2-1");
   simplifies_to("11π/(22π+11π)", "1/3");
@@ -107,7 +107,7 @@ QUIZ_CASE(pcj_simplification_multiplication) {
   simplifies_to(
       "[[1,2+i][3,4][5,6]]×[[1,2+i,3,4][5,6+i,7,8]]",
       "[[11+5×i,13+9×i,17+7×i,20+8×i][23,30+7×i,37,44][35,46+11×i,57,68]]",
-      k_cartesianParams);
+      k_cartesianSimplification);
   simplifies_to("[[1,2][3,4]]×[[1,3][5,6]]×[[2,3][4,6]]",
                 "[[82,123][178,267]]");
   simplifies_to("0*[[1,0][0,1]]^500", "[[0,0][0,0]]");
@@ -136,11 +136,11 @@ QUIZ_CASE(pcj_simplification_multiplication) {
   projects_and_reduces_to("x/√(x)", "dep(√(x),{-ln(x)/2})", parameters);
   projects_and_reduces_to("x^(1/2)×x^(1/2)", "x", parameters);
 
-  simplifies_to("x^(1/2)×x^(1/2)", "x", k_cartesianParams);
+  simplifies_to("x^(1/2)×x^(1/2)", "x", k_cartesianSimplification);
   simplifies_to("2*3^x*3^(-x)", "2");
   simplifies_to("10-1/(3^x)", "10-1/3^x");
   simplifies_to("2×cos(π/12)×e^(5πi/12)", "1/2+(1+√(3)/2)×i",
-                k_cartesianParams);
+                k_cartesianSimplification);
   // Do not factorize exponent if the multiplication result is over DBL_MAX
   simplifies_to("((1.63871ᴇ182)^(1/256))*((1.93871ᴇ157)^(1/256))",
                 "root(1.93871×10^157,256)×root(1.63871×10^182,256)");

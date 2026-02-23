@@ -69,76 +69,82 @@ QUIZ_CASE(pcj_simplification_complex) {
   // TODO: Simplify arg between ]-π,π]
   simplifies_to("arg(e^(534/7×i))", "arg(e^(534/7×i))");
   simplifies_to("arg(e^(3.1415×i))", "6283/2000");
-  simplifies_to("e^(i)*i", "e^((1+π/2)×i)", k_polarParams);
+  simplifies_to("e^(i)*i", "e^((1+π/2)×i)", k_polarSimplification);
   // TODO: Improve sign detection
   simplifies_to("abs(-1+π)", "-1+π");
   simplifies_to("abs(1-π)", "-1+π");
 
-  simplifies_to("2/(4+4*i)", "1/4-1/4×i", k_cartesianParams);
+  simplifies_to("2/(4+4*i)", "1/4-1/4×i", k_cartesianSimplification);
   simplifies_to("e^(π*i/6)+e^(-π*i/3)", "(1+√(3))/2+(1-√(3))/2×i",
-                k_cartesianParams);
-  simplifies_to("e^(π*i/6)*e^(-π*i/3)", "√(3)/2-1/2×i", k_cartesianParams);
-  simplifies_to("re(√(√(-8)))", "root(2,4)", k_cartesianParams);
-  simplifies_to("re(√(15+2×i))", "√((15+√(229))/2)", k_cartesianParams);
-  simplifies_to("5*ln(1+i)-ln(exp(5*ln(1+i)))", "2×π×i", k_cartesianParams);
-  simplifies_to("0.3*ln(1+i)-ln(exp(0.3*ln(1+i)))", "0", k_cartesianParams);
+                k_cartesianSimplification);
+  simplifies_to("e^(π*i/6)*e^(-π*i/3)", "√(3)/2-1/2×i",
+                k_cartesianSimplification);
+  simplifies_to("re(√(√(-8)))", "root(2,4)", k_cartesianSimplification);
+  simplifies_to("re(√(15+2×i))", "√((15+√(229))/2)", k_cartesianSimplification);
+  simplifies_to("5*ln(1+i)-ln(exp(5*ln(1+i)))", "2×π×i",
+                k_cartesianSimplification);
+  simplifies_to("0.3*ln(1+i)-ln(exp(0.3*ln(1+i)))", "0",
+                k_cartesianSimplification);
   simplifies_to("2×cos(π/12)×e^(5×i×π/12)", "1/2+(1+√(3)/2)×i",
-                k_cartesianParams);
-  simplifies_to("(1+i)^201", "(1+i)^201", k_cartesianParams);
+                k_cartesianSimplification);
+  simplifies_to("(1+i)^201", "(1+i)^201", k_cartesianSimplification);
 
-  simplifies_to("arg(0)", "undef", k_cartesianParams);
-  simplifies_to("arg(123)", "0", k_cartesianParams);
-  simplifies_to("arg(-1ᴇ123)", "π", k_cartesianParams);
-  simplifies_to("arg(i)", "π/2", k_cartesianParams);
-  simplifies_to("arg(-6i)", "-π/2", k_cartesianParams);
-  simplifies_to("arg(1+i)", "π/4", k_cartesianParams);
-  simplifies_to("conj(1/2)", "1/2", k_cartesianParams);
-  simplifies_to("re(1/2)", "1/2", k_cartesianParams);
-  simplifies_to("im(1+5×i)", "5", k_cartesianParams);
-  simplifies_to("re(1+5×i)", "1", k_cartesianParams);
+  simplifies_to("arg(0)", "undef", k_cartesianSimplification);
+  simplifies_to("arg(123)", "0", k_cartesianSimplification);
+  simplifies_to("arg(-1ᴇ123)", "π", k_cartesianSimplification);
+  simplifies_to("arg(i)", "π/2", k_cartesianSimplification);
+  simplifies_to("arg(-6i)", "-π/2", k_cartesianSimplification);
+  simplifies_to("arg(1+i)", "π/4", k_cartesianSimplification);
+  simplifies_to("conj(1/2)", "1/2", k_cartesianSimplification);
+  simplifies_to("re(1/2)", "1/2", k_cartesianSimplification);
+  simplifies_to("im(1+5×i)", "5", k_cartesianSimplification);
+  simplifies_to("re(1+5×i)", "1", k_cartesianSimplification);
 
-  simplifies_to("i^(3/5)", "√((5-√(5))/8)+(1+√(5))/4×i", k_cartesianParams);
-  simplifies_to("i*i*i*i", "1", k_cartesianParams);
-  simplifies_to("√(-i)", "√(2)/2-√(2)/2×i", k_cartesianParams);
-  simplifies_to("1/√(i)×(√(2)-i×√(2))", "-2×i", k_cartesianParams);
-  simplifies_to("i^i", "e^(-π/2)", k_cartesianParams);
-  simplifies_to("i/(1+i×√(x))", "i/(1+√(x)×i)", k_cartesianParams);
+  simplifies_to("i^(3/5)", "√((5-√(5))/8)+(1+√(5))/4×i",
+                k_cartesianSimplification);
+  simplifies_to("i*i*i*i", "1", k_cartesianSimplification);
+  simplifies_to("√(-i)", "√(2)/2-√(2)/2×i", k_cartesianSimplification);
+  simplifies_to("1/√(i)×(√(2)-i×√(2))", "-2×i", k_cartesianSimplification);
+  simplifies_to("i^i", "e^(-π/2)", k_cartesianSimplification);
+  simplifies_to("i/(1+i×√(x))", "i/(1+√(x)×i)", k_cartesianSimplification);
   simplifies_to("√(√(√(√(√(√(i))))))", "cos(π/128)+sin(π/128)×i",
-                k_cartesianParams);
+                k_cartesianSimplification);
   // TODO: simplify to e^(-19683×ln(5)+10084×π)
   simplifies_to("root(5^((-i)3^9),i)", "e^(arg(1/5^(19683×i)))",
-                k_cartesianParams);
+                k_cartesianSimplification);
   simplifies_to("(√(2)+√(2)×i)/2(√(2)+√(2)×i)/2(√(2)+√(2)×i)/2",
-                "√(2)/32-√(2)/32×i", k_cartesianParams);
+                "√(2)/32-√(2)/32×i", k_cartesianSimplification);
 }
 
 QUIZ_CASE(pcj_simplification_polar) {
-  simplifies_to("0", "0", k_polarParams);
-  simplifies_to("1", "1", k_polarParams);
-  simplifies_to("-1", "e^(π×i)", k_polarParams);
-  simplifies_to("2i", "2×e^(π/2×i)", k_polarParams);
-  simplifies_to("cos(i)", "cosh(1)", k_polarParams);
+  simplifies_to("0", "0", k_polarSimplification);
+  simplifies_to("1", "1", k_polarSimplification);
+  simplifies_to("-1", "e^(π×i)", k_polarSimplification);
+  simplifies_to("2i", "2×e^(π/2×i)", k_polarSimplification);
+  simplifies_to("cos(i)", "cosh(1)", k_polarSimplification);
   simplifies_to("[[42, -2/3][1+i, -iπ]]",
                 "[[42,(2×e^(π×i))/3][√(2)×e^(π/4×i),π×e^(-π/2×i)]]",
-                k_polarParams);
-  simplifies_to("-2×_m", "-2×_m", k_polarParams);
-  simplifies_to("(-2,i)", "(2×e^(π×i),e^(π/2×i))", k_polarParams);
-  simplifies_to("{-2,-i}", "{2×e^(π×i),e^(-π/2×i)}", k_polarParams);
-  simplifies_to("(y/y+3)×e^(i×(x-x+2))", "dep(4×e^(2×i),{y^0})", k_polarParams);
-  simplifies_to("3+4i", "5×e^(arctan(4/3)×i)", k_polarParams);
-  simplifies_to("e^(3.14×i)", "e^(157/50×i)", k_polarParams);
-  simplifies_to("e^(-2.1×i)", "e^(-21/10×i)", k_polarParams);
-  simplifies_to("root(-8,3)", "2×e^(π/3×i)", k_polarParams);
+                k_polarSimplification);
+  simplifies_to("-2×_m", "-2×_m", k_polarSimplification);
+  simplifies_to("(-2,i)", "(2×e^(π×i),e^(π/2×i))", k_polarSimplification);
+  simplifies_to("{-2,-i}", "{2×e^(π×i),e^(-π/2×i)}", k_polarSimplification);
+  simplifies_to("(y/y+3)×e^(i×(x-x+2))", "dep(4×e^(2×i),{y^0})",
+                k_polarSimplification);
+  simplifies_to("3+4i", "5×e^(arctan(4/3)×i)", k_polarSimplification);
+  simplifies_to("e^(3.14×i)", "e^(157/50×i)", k_polarSimplification);
+  simplifies_to("e^(-2.1×i)", "e^(-21/10×i)", k_polarSimplification);
+  simplifies_to("root(-8,3)", "2×e^(π/3×i)", k_polarSimplification);
   // TODO: "√(2)×e^(-π/12×i)"
-  simplifies_to("e^(π/6×i)+e^(-π/3×i)", "(1+i+√(3)×(1-i))/2", k_polarParams);
+  simplifies_to("e^(π/6×i)+e^(-π/3×i)", "(1+i+√(3)×(1-i))/2",
+                k_polarSimplification);
   simplifies_to("e^(π/6×i)+e^(-10π/6×i)", "(√(2)×(1+√(3))×e^(π/4×i))/2",
-                k_polarParams);
+                k_polarSimplification);
   // Not simplified into polars
-  simplifies_to("-1+π", "-1+π", k_polarParams);
-  simplifies_to("1-π", "(-1+π)×e^(π×i)", k_polarParams);
+  simplifies_to("-1+π", "-1+π", k_polarSimplification);
+  simplifies_to("1-π", "(-1+π)×e^(π×i)", k_polarSimplification);
   // TODO: Simplify arg between ]-π,π]
-  simplifies_to("e^(534/7×i)", "e^(534/7×i)", k_polarParams);
-  simplifies_to("e^(3.1415×i)", "e^(6283/2000×i)", k_polarParams);
+  simplifies_to("e^(534/7×i)", "e^(534/7×i)", k_polarSimplification);
+  simplifies_to("e^(3.1415×i)", "e^(6283/2000×i)", k_polarSimplification);
 }
 
 QUIZ_CASE(pcj_simplification_complex_format) {
@@ -176,86 +182,90 @@ QUIZ_CASE(pcj_simplification_complex_format) {
   }
 
   // Cartesian
-  simplifies_to("-2.3ᴇ3", "-2300", k_cartesianParams);
-  simplifies_to("3", "3", k_cartesianParams);
-  simplifies_to("∞", "∞", k_cartesianParams);
-  simplifies_to("1+2+i", "3+i", k_cartesianParams);
-  simplifies_to("-(5+2×i)", "-5-2×i", k_cartesianParams);
-  simplifies_to("(5+2×i)", "5+2×i", k_cartesianParams);
-  simplifies_to("i+i", "2×i", k_cartesianParams);
-  simplifies_to("-2+2×i", "-2+2×i", k_cartesianParams);
-  simplifies_to("(3+i)-(2+4×i)", "1-3×i", k_cartesianParams);
-  simplifies_to("(2+3×i)×(4-2×i)", "14+8×i", k_cartesianParams);
-  simplifies_to("(3+i)/2", "3/2+1/2×i", k_cartesianParams);
-  simplifies_to("(3+i)/(2+i)", "7/5-1/5×i", k_cartesianParams);
+  simplifies_to("-2.3ᴇ3", "-2300", k_cartesianSimplification);
+  simplifies_to("3", "3", k_cartesianSimplification);
+  simplifies_to("∞", "∞", k_cartesianSimplification);
+  simplifies_to("1+2+i", "3+i", k_cartesianSimplification);
+  simplifies_to("-(5+2×i)", "-5-2×i", k_cartesianSimplification);
+  simplifies_to("(5+2×i)", "5+2×i", k_cartesianSimplification);
+  simplifies_to("i+i", "2×i", k_cartesianSimplification);
+  simplifies_to("-2+2×i", "-2+2×i", k_cartesianSimplification);
+  simplifies_to("(3+i)-(2+4×i)", "1-3×i", k_cartesianSimplification);
+  simplifies_to("(2+3×i)×(4-2×i)", "14+8×i", k_cartesianSimplification);
+  simplifies_to("(3+i)/2", "3/2+1/2×i", k_cartesianSimplification);
+  simplifies_to("(3+i)/(2+i)", "7/5-1/5×i", k_cartesianSimplification);
   // The simplification of (3+i)^(2+i) in a Cartesian complex form generates to
   // many nodes
   // simplifies_to("(3+i)^(2+i)",
   // "10×cos((-4×atan(3)+ln(2)+ln(5)+2×π)/2)×e^((2×atan(3)-π)/2)+10×sin((-4×atan(3)+ln(2)+ln(5)+2×π)/2)×e^((2×atan(3)-π)/2)i",
-  // k_cartesianParams);
-  simplifies_to("(3+i)^(2+i)", "(3+i)^(2+i)", k_cartesianParams);
+  // k_cartesianSimplification);
+  simplifies_to("(3+i)^(2+i)", "(3+i)^(2+i)", k_cartesianSimplification);
   simplifies_to("√(1+6i)", "√((1+√(37))/2)+√((-1+√(37))/2)×i",
-                k_cartesianParams);
-  simplifies_to("(1+i)^2", "2×i", k_cartesianParams);
-  simplifies_to("2×i", "2×i", k_cartesianParams);
-  simplifies_to("i!", "undef", k_cartesianParams);
-  simplifies_to("3!", "6", k_cartesianParams);
-  simplifies_to("x!", "x!", k_cartesianParams);
-  simplifies_to("e", "e", k_cartesianParams);
-  simplifies_to("π", "π", k_cartesianParams);
-  simplifies_to("i", "i", k_cartesianParams);
+                k_cartesianSimplification);
+  simplifies_to("(1+i)^2", "2×i", k_cartesianSimplification);
+  simplifies_to("2×i", "2×i", k_cartesianSimplification);
+  simplifies_to("i!", "undef", k_cartesianSimplification);
+  simplifies_to("3!", "6", k_cartesianSimplification);
+  simplifies_to("x!", "x!", k_cartesianSimplification);
+  simplifies_to("e", "e", k_cartesianSimplification);
+  simplifies_to("π", "π", k_cartesianSimplification);
+  simplifies_to("i", "i", k_cartesianSimplification);
 
-  simplifies_to("arctan(2)", "arctan(2)", k_cartesianParams);
-  simplifies_to("arctan(-2)", "-arctan(2)", k_cartesianParams);
-  simplifies_to("abs(-3)", "3", k_cartesianParams);
-  simplifies_to("abs(-3+i)", "√(10)", k_cartesianParams);
-  simplifies_to("arctan(2)", "arctan(2)", k_cartesianParams);
-  simplifies_to("arctan(2+i)", "arctan(2+i)", k_cartesianParams);
-  simplifies_to("binomial(10, 4)", "210", k_cartesianParams);
-  simplifies_to("ceil(-1.3)", "-1", k_cartesianParams);
-  simplifies_to("arg(-2)", "π", k_cartesianParams);
-  simplifies_to("conj(-2)", "-2", k_cartesianParams);
-  simplifies_to("conj(-2+2×i+i)", "-2-3×i", k_cartesianParams);
-  simplifies_to("cos(12)", "cos(12)", k_cartesianParams);
+  simplifies_to("arctan(2)", "arctan(2)", k_cartesianSimplification);
+  simplifies_to("arctan(-2)", "-arctan(2)", k_cartesianSimplification);
+  simplifies_to("abs(-3)", "3", k_cartesianSimplification);
+  simplifies_to("abs(-3+i)", "√(10)", k_cartesianSimplification);
+  simplifies_to("arctan(2)", "arctan(2)", k_cartesianSimplification);
+  simplifies_to("arctan(2+i)", "arctan(2+i)", k_cartesianSimplification);
+  simplifies_to("binomial(10, 4)", "210", k_cartesianSimplification);
+  simplifies_to("ceil(-1.3)", "-1", k_cartesianSimplification);
+  simplifies_to("arg(-2)", "π", k_cartesianSimplification);
+  simplifies_to("conj(-2)", "-2", k_cartesianSimplification);
+  simplifies_to("conj(-2+2×i+i)", "-2-3×i", k_cartesianSimplification);
+  simplifies_to("cos(12)", "cos(12)", k_cartesianSimplification);
   simplifies_to("cos(12+i)", "cos(12)×cosh(1)-sin(12)×sinh(1)×i",
-                k_cartesianParams);
-  simplifies_to("diff(3×x, x, 3)", "3", k_cartesianParams);
-  simplifies_to("quo(34,x)", "quo(34,x)", k_cartesianParams);
-  simplifies_to("rem(5,3)", "2", k_cartesianParams);
-  simplifies_to("floor(x)", "floor(x)", k_cartesianParams);
-  simplifies_to("frac(x)", "frac(x)", k_cartesianParams);
-  simplifies_to("gcd(x,y)", "gcd(x,y)", k_cartesianParams);
-  simplifies_to("gcd(x,gcd(y,z))", "gcd(x,y,z)", k_cartesianParams);
-  simplifies_to("gcd(3, 1, 2, x, x^2)", "gcd(1,x^2,x)", k_cartesianParams);
-  simplifies_to("im(1+i)", "1", k_cartesianParams);
-  simplifies_to("int(x^2, x, 1, 2)", "7/3", k_cartesianParams);
-  simplifies_to("lcm(x,y)", "lcm(x,y)", k_cartesianParams);
-  simplifies_to("lcm(x,lcm(y,z))", "lcm(x,y,z)", k_cartesianParams);
-  simplifies_to("lcm(3, 1, 2, x, x^2)", "lcm(6,x^2,x)", k_cartesianParams);
+                k_cartesianSimplification);
+  simplifies_to("diff(3×x, x, 3)", "3", k_cartesianSimplification);
+  simplifies_to("quo(34,x)", "quo(34,x)", k_cartesianSimplification);
+  simplifies_to("rem(5,3)", "2", k_cartesianSimplification);
+  simplifies_to("floor(x)", "floor(x)", k_cartesianSimplification);
+  simplifies_to("frac(x)", "frac(x)", k_cartesianSimplification);
+  simplifies_to("gcd(x,y)", "gcd(x,y)", k_cartesianSimplification);
+  simplifies_to("gcd(x,gcd(y,z))", "gcd(x,y,z)", k_cartesianSimplification);
+  simplifies_to("gcd(3, 1, 2, x, x^2)", "gcd(1,x^2,x)",
+                k_cartesianSimplification);
+  simplifies_to("im(1+i)", "1", k_cartesianSimplification);
+  simplifies_to("int(x^2, x, 1, 2)", "7/3", k_cartesianSimplification);
+  simplifies_to("lcm(x,y)", "lcm(x,y)", k_cartesianSimplification);
+  simplifies_to("lcm(x,lcm(y,z))", "lcm(x,y,z)", k_cartesianSimplification);
+  simplifies_to("lcm(3, 1, 2, x, x^2)", "lcm(6,x^2,x)",
+                k_cartesianSimplification);
   // TODO: dim is not simplified yet
   // simplifies_to("dim(x)", "dim(x)", User, Radian,
   // MetricUnitFormat, Cartesian);
 
-  simplifies_to("root(2,i)", "cos(ln(2))-sin(ln(2))×i", k_cartesianParams);
+  simplifies_to("root(2,i)", "cos(ln(2))-sin(ln(2))×i",
+                k_cartesianSimplification);
   simplifies_to("root(2,i+1)", "√(2)×(cos((90×ln(2))/π)-sin((90×ln(2))/π)×i)",
-                k_degreeCartesianParams);
+                k_degreeCartesianSimplification);
   simplifies_to("root(2,i+1)", "cos(ln(2)/2)×√(2)-sin(ln(2)/2)×√(2)×i",
-                k_cartesianParams);
-  simplifies_to("permute(10, 4)", "5040", k_cartesianParams);
-  simplifies_to("random()", "random()", k_cartesianParams);
-  simplifies_to("re(x)", "x", k_cartesianParams);
-  simplifies_to("round(x,y)", "round(x,y)", k_cartesianParams);
-  simplifies_to("sign(x)", "sign(x)", k_cartesianParams);
-  simplifies_to("sin(23)", "sin(23)", k_cartesianParams);
+                k_cartesianSimplification);
+  simplifies_to("permute(10, 4)", "5040", k_cartesianSimplification);
+  simplifies_to("random()", "random()", k_cartesianSimplification);
+  simplifies_to("re(x)", "x", k_cartesianSimplification);
+  simplifies_to("round(x,y)", "round(x,y)", k_cartesianSimplification);
+  simplifies_to("sign(x)", "sign(x)", k_cartesianSimplification);
+  simplifies_to("sin(23)", "sin(23)", k_cartesianSimplification);
   simplifies_to("sin(23+i)", "sin(23)×cosh(1)+cos(23)×sinh(1)×i",
-                k_cartesianParams);
-  simplifies_to("√(1-i)", "√((1+√(2))/2)-√((-1+√(2))/2)×i", k_cartesianParams);
-  simplifies_to("tan(23)", "tan(23)", k_cartesianParams);
-  simplifies_to("tan(23+i)", "tan(23+i)", k_cartesianParams);
-  simplifies_to("[[1,√(-1)]]", "[[1,i]]", k_cartesianParams);
+                k_cartesianSimplification);
+  simplifies_to("√(1-i)", "√((1+√(2))/2)-√((-1+√(2))/2)×i",
+                k_cartesianSimplification);
+  simplifies_to("tan(23)", "tan(23)", k_cartesianSimplification);
+  simplifies_to("tan(23+i)", "tan(23+i)", k_cartesianSimplification);
+  simplifies_to("[[1,√(-1)]]", "[[1,i]]", k_cartesianSimplification);
 
   // User defined variable
-  simplifies_to("a", "a", k_cartesianParams);
+  simplifies_to("a", "a", k_cartesianSimplification);
   {
     // a = 2+i
     PoincareTest::SymbolStore symbolStore;
@@ -273,46 +283,50 @@ QUIZ_CASE(pcj_simplification_complex_format) {
     simplifies_to("f(3)", "4+i", simplificationParameters);
   }
   // Polar
-  simplifies_to("-2.3ᴇ3", "2300×e^(π×i)", k_polarParams);
-  simplifies_to("3", "3", k_polarParams);
-  simplifies_to("∞", "∞", k_polarParams);
-  simplifies_to("1+2+i", "√(10)×e^(arctan(1/3)×i)", k_polarParams);
-  simplifies_to("1+2+i", "√(10)×e^((π×arctan(1/3))/180×i)", k_degreePolarParam);
-  simplifies_to("-(5+2×i)", "√(29)×e^((-π+arctan(2/5))×i)", k_polarParams);
-  simplifies_to("(5+2×i)", "√(29)×e^(arctan(2/5)×i)", k_polarParams);
-  simplifies_to("i+i", "2×e^(π/2×i)", k_polarParams);
-  simplifies_to("i+i", "2×e^(π/2×i)", k_polarParams);
-  simplifies_to("-2+2×i", "2×√(2)×e^((3×π)/4×i)", k_polarParams);
-  simplifies_to("(3+i)-(2+4×i)", "√(10)×e^(-arctan(3)×i)", k_polarParams);
+  simplifies_to("-2.3ᴇ3", "2300×e^(π×i)", k_polarSimplification);
+  simplifies_to("3", "3", k_polarSimplification);
+  simplifies_to("∞", "∞", k_polarSimplification);
+  simplifies_to("1+2+i", "√(10)×e^(arctan(1/3)×i)", k_polarSimplification);
+  simplifies_to("1+2+i", "√(10)×e^((π×arctan(1/3))/180×i)",
+                k_degreePolarSimplification);
+  simplifies_to("-(5+2×i)", "√(29)×e^((-π+arctan(2/5))×i)",
+                k_polarSimplification);
+  simplifies_to("(5+2×i)", "√(29)×e^(arctan(2/5)×i)", k_polarSimplification);
+  simplifies_to("i+i", "2×e^(π/2×i)", k_polarSimplification);
+  simplifies_to("i+i", "2×e^(π/2×i)", k_polarSimplification);
+  simplifies_to("-2+2×i", "2×√(2)×e^((3×π)/4×i)", k_polarSimplification);
+  simplifies_to("(3+i)-(2+4×i)", "√(10)×e^(-arctan(3)×i)",
+                k_polarSimplification);
   simplifies_to("(2+3×i)×(4-2×i)", "(2×√(65))×e^(arctan(4/7)×i)",
-                k_polarParams);
-  simplifies_to("(3+i)/2", "√(10)/2×e^(arctan(1/3)×i)", k_polarParams);
-  simplifies_to("(3+i)/(2+i)", "√(2)×e^(-arctan(1/7)×i)", k_polarParams);
+                k_polarSimplification);
+  simplifies_to("(3+i)/2", "√(10)/2×e^(arctan(1/3)×i)", k_polarSimplification);
+  simplifies_to("(3+i)/(2+i)", "√(2)×e^(-arctan(1/7)×i)",
+                k_polarSimplification);
   // TODO: simplify arctan(tan(x)) = x±k×pi?
   // simplifies_to("(3+i)^(2+i)",
   // "10e^((2×arctan(3)-π)/2)×e^(((-4×arctan(3)+ln(2)+ln(5)+2π)/2)i)",
-  //  k_polarParams);
+  //  k_polarSimplification);
   // The simplification of (3+i)^(2+i) in a Polar complex form generates too
   // many nodes
-  simplifies_to("(3+i)^(2+i)", "(3+i)^(2+i)", k_polarParams);
-  simplifies_to("(1+i)^2", "2×e^(π/2×i)", k_polarParams);
-  simplifies_to("2×i", "2×e^(π/2×i)", k_polarParams);
-  simplifies_to("3!", "6", k_polarParams);
-  simplifies_to("x!", "x!", k_polarParams);
-  simplifies_to("e", "e", k_polarParams);
-  simplifies_to("π", "π", k_polarParams);
-  simplifies_to("i", "e^(π/2×i)", k_polarParams);
-  simplifies_to("abs(-3)", "3", k_polarParams);
-  simplifies_to("abs(-3+i)", "√(10)", k_polarParams);
-  simplifies_to("conj(2×e^(i×π/2))", "2×e^(-π/2×i)", k_polarParams);
-  simplifies_to("-2×e^(i×π/2)", "2×e^(-π/2×i)", k_polarParams);
-  simplifies_to("[[1,√(-1)]]", "[[1,e^(π/2×i)]]", k_polarParams);
-  simplifies_to("arctan(2)", "arctan(2)", k_polarParams);
-  simplifies_to("arctan(-2)", "arctan(2)×e^(π×i)", k_polarParams);
-  simplifies_to("cos(42π)", "cos(42×π)", k_degreePolarParam);
+  simplifies_to("(3+i)^(2+i)", "(3+i)^(2+i)", k_polarSimplification);
+  simplifies_to("(1+i)^2", "2×e^(π/2×i)", k_polarSimplification);
+  simplifies_to("2×i", "2×e^(π/2×i)", k_polarSimplification);
+  simplifies_to("3!", "6", k_polarSimplification);
+  simplifies_to("x!", "x!", k_polarSimplification);
+  simplifies_to("e", "e", k_polarSimplification);
+  simplifies_to("π", "π", k_polarSimplification);
+  simplifies_to("i", "e^(π/2×i)", k_polarSimplification);
+  simplifies_to("abs(-3)", "3", k_polarSimplification);
+  simplifies_to("abs(-3+i)", "√(10)", k_polarSimplification);
+  simplifies_to("conj(2×e^(i×π/2))", "2×e^(-π/2×i)", k_polarSimplification);
+  simplifies_to("-2×e^(i×π/2)", "2×e^(-π/2×i)", k_polarSimplification);
+  simplifies_to("[[1,√(-1)]]", "[[1,e^(π/2×i)]]", k_polarSimplification);
+  simplifies_to("arctan(2)", "arctan(2)", k_polarSimplification);
+  simplifies_to("arctan(-2)", "arctan(2)×e^(π×i)", k_polarSimplification);
+  simplifies_to("cos(42π)", "cos(42×π)", k_degreePolarSimplification);
 
   // User defined variable
-  simplifies_to("a", "a", k_polarParams);
+  simplifies_to("a", "a", k_polarSimplification);
   {
     PoincareTest::SymbolStore symbolStore;
     Poincare::SimplificationParameters parameters = {

@@ -229,27 +229,27 @@ QUIZ_CASE(pcj_simplification_derivative) {
 
   // Trigonometry
   simplifies_to("diff(sin(x),x,x)", "cos(x)");
-  simplifies_to("diff(sin(x),x,x)", "(π×cos(x))/180", k_degreeParams);
+  simplifies_to("diff(sin(x),x,x)", "(π×cos(x))/180", k_degreeSimplification);
   simplifies_to("diff(cos(x),x,x)", "-sin(x)");
-  simplifies_to("diff(cos(x),x,x)", "-(π×sin(x))/200", k_gradianParams);
+  simplifies_to("diff(cos(x),x,x)", "-(π×sin(x))/200", k_gradianSimplification);
   simplifies_to("diff(tan(x),x,x)", "dep(tan(x)^2+1,{tan(x)})");
   simplifies_to("diff(tan(x),x,x)",
                 "dep((π×(tan(x)^2+1))/180,{tan((180×π×x)/(180×π))})",
-                k_degreeParams);
+                k_degreeSimplification);
   simplifies_to("diff(acos(x),x,x)",
                 "dep(-1/√(-x^2+1),{real(arccos(x)),realPos(1-abs(x))})");
   simplifies_to("diff(acos(x),x,x)",
                 "dep(-180/(π×√(-x^2+1)),{real((180×π×arccos(x))/"
                 "(180×π)),realPos(1-abs(x))})",
-                k_degreeParams);
+                k_degreeSimplification);
   simplifies_to("diff(asin(x),x,x)",
                 "dep(1/√(-x^2+1),{real(arcsin(x)),realPos(1-abs(x))})");
   simplifies_to("diff(asin(x),x,x)",
                 "dep(180/(π×√(-x^2+1)),{real((180×π×arcsin(x))/"
                 "(180×π)),realPos(1-abs(x))})",
-                k_degreeParams);
+                k_degreeSimplification);
   simplifies_to("diff(atan(x),x,x)", "1/(x^2+1)");
-  simplifies_to("diff(atan(x),x,x)", "180/(π×x^2+π)", k_degreeParams);
+  simplifies_to("diff(atan(x),x,x)", "180/(π×x^2+π)", k_degreeSimplification);
   simplifies_to("diff(sinh(x),x,x)", "cosh(x)");
   simplifies_to("diff(cosh(x),x,x)", "sinh(x)");
   simplifies_to("diff(tanh(x),x,x)", "dep(-(tanh(x)^2)+1,{-tanh(x)×i×i})");
@@ -286,12 +286,13 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("diff((x-1)(x-2)(x-3),x,x)", "3×x^2-12×x+11");
   simplifies_to("diff(√(x),x,x)", "dep(1/(2×√(x)),{real(√(x))})",
-                k_cartesianParams);
+                k_cartesianSimplification);
   simplifies_to("diff(1/x,x,x)", "-1/x^2");
   simplifies_to("diff(diff(x^3,x,x),x,x)", "6×x");
   simplifies_to("diff(e^x,x,x)", "e^(x)");
   simplifies_to("diff(2^x,x,x)", "ln(2)×2^x");
-  simplifies_to("diff(ln(x),x,x)", "dep(1/x,{real(ln(x))})", k_cartesianParams);
+  simplifies_to("diff(ln(x),x,x)", "dep(1/x,{real(ln(x))})",
+                k_cartesianSimplification);
   // TODO: fix beautification ln(2)+ln(5) -> ln(10)
   simplifies_to("diff(log(x),x,x)",
                 "dep(1/(x×(ln(2)+ln(5))),{real(log(x)),realPos(x)})");

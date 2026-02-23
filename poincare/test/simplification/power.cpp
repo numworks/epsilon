@@ -20,12 +20,13 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("2^(2+π)", "4×2^π");
   simplifies_to("π×π×π", "π^3");
   simplifies_to("1.0066666666667^60", "(10066666666667/10^13)^60");
-  simplifies_to("i^(2/3)", "1/2+√(3)/2×i", k_cartesianParams);
-  simplifies_to("e^(i×π/3)", "1/2+√(3)/2×i", k_cartesianParams);
-  simplifies_to("((-e^3)×π)^(1/3)", "e×root(π,3)×e^(π/3×i)", k_polarParams);
+  simplifies_to("i^(2/3)", "1/2+√(3)/2×i", k_cartesianSimplification);
+  simplifies_to("e^(i×π/3)", "1/2+√(3)/2×i", k_cartesianSimplification);
+  simplifies_to("((-e^3)×π)^(1/3)", "e×root(π,3)×e^(π/3×i)",
+                k_polarSimplification);
   // TODO: find the sign of cos(2) to simplify
   simplifies_to("((-e^3)×cos(2))^(1/3)", "root(-cos(2)×e^(3),3)",
-                k_polarParams);
+                k_polarSimplification);
   simplifies_to("(-1)^2", "1");
   simplifies_to("(-1)^3", "-1");
   simplifies_to("(-1)^2006", "1");
@@ -45,7 +46,7 @@ QUIZ_CASE(pcj_simplification_power) {
 
   // Principal angle of root of unity
   simplifies_to("(-5)^(-1/3)", "root(25,3)/10-(√(3)×root(25,3))/10×i",
-                k_cartesianParams);
+                k_cartesianSimplification);
 
   // Zero
   simplifies_to("0^3", "0");
@@ -66,10 +67,10 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("a×a^(1+1)", "a^3");
   simplifies_to("2×a^1×(2a)^(-1)", "dep(1,{a^0})");
   simplifies_to("cos(π×a×a^(-1))^(b×b^(-2)×b)", "dep(-1,{a^0,b^0})");
-  simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", k_cartesianParams);
+  simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", k_cartesianSimplification);
   simplifies_to("2^(6+π+x)", "64×2^(x+π)");
   simplifies_to("(2+3-4)^(x)", "1");
-  simplifies_to("(12^4×x)^(0.5)", "144×√(x)", k_cartesianParams);
+  simplifies_to("(12^4×x)^(0.5)", "144×√(x)", k_cartesianSimplification);
   simplifies_to("1^x", "1");
   simplifies_to("x^1", "x");
   simplifies_to("x^(1/2)", "√(x)");
@@ -130,26 +131,26 @@ QUIZ_CASE(pcj_simplification_power_real_complex) {
 
   // Real vs complex
   simplifies_to("(x^2)^3", "x^6");
-  simplifies_to("(x^2)^3", "x^6", k_cartesianParams);
+  simplifies_to("(x^2)^3", "x^6", k_cartesianSimplification);
   simplifies_to("(x^(2/3))^3", "x^2");
-  simplifies_to("(x^(2/3))^3", "x^2", k_cartesianParams);
+  simplifies_to("(x^(2/3))^3", "x^2", k_cartesianSimplification);
   simplifies_to("(x^(3/4))^4", "(x^(3/4))^4");
-  simplifies_to("(x^(3/4))^4", "x^3", k_cartesianParams);
+  simplifies_to("(x^(3/4))^4", "x^3", k_cartesianSimplification);
   simplifies_to("√(-x)", "√(-x)");
   simplifies_to("√(x)^2", "√(x)^2");
-  simplifies_to("√(x)^2", "x", k_cartesianParams);
+  simplifies_to("√(x)^2", "x", k_cartesianSimplification);
   simplifies_to("√(-3)^2", "nonreal");
   simplifies_to("(-0.0001)^6.3", "nonreal");
 
   // Complex Power
-  simplifies_to("√(x)^2", "x", k_cartesianParams);
+  simplifies_to("√(x)^2", "x", k_cartesianSimplification);
   /* TODO: Should be 0, (exp(i*(arg(A) + arg(B) - arg(A*B))) should be
    * simplified to 1 */
   simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))", "√(-1-i)×√(1-i)+√(2)×i",
-                k_cartesianParams);
-  simplifies_to("(-1)^(1/2)", "i", k_cartesianParams);
-  simplifies_to("(-1)^(-1/2)", "-i", k_cartesianParams);
-  simplifies_to("(-1)^(1/3)", "1/2+√(3)/2×i", k_cartesianParams);
+                k_cartesianSimplification);
+  simplifies_to("(-1)^(1/2)", "i", k_cartesianSimplification);
+  simplifies_to("(-1)^(-1/2)", "-i", k_cartesianSimplification);
+  simplifies_to("(-1)^(1/3)", "1/2+√(3)/2×i", k_cartesianSimplification);
 }
 
 QUIZ_CASE(pcj_simplification_roots) {
@@ -159,20 +160,20 @@ QUIZ_CASE(pcj_simplification_roots) {
   simplifies_to("√(865)/6", "√(865)/6");
   simplifies_to("√(30)", "√(30)");
   simplifies_to("√(32)", "4×√(2)");
-  simplifies_to("√(-1)", "i", k_cartesianParams);
-  simplifies_to("√(-33)", "√(33)×i", k_cartesianParams);
-  simplifies_to("√(-1×√(-1))", "√(2)/2-√(2)/2×i", k_cartesianParams);
+  simplifies_to("√(-1)", "i", k_cartesianSimplification);
+  simplifies_to("√(-33)", "√(33)×i", k_cartesianSimplification);
+  simplifies_to("√(-1×√(-1))", "√(2)/2-√(2)/2×i", k_cartesianSimplification);
   simplifies_to("√(3^2)", "3");
-  simplifies_to("√(-9)", "3×i", k_cartesianParams);
-  simplifies_to("√(i)", "√(2)/2+√(2)/2×i", k_cartesianParams);
-  simplifies_to("√(-i)", "√(2)/2-√(2)/2×i", k_cartesianParams);
+  simplifies_to("√(-9)", "3×i", k_cartesianSimplification);
+  simplifies_to("√(i)", "√(2)/2+√(2)/2×i", k_cartesianSimplification);
+  simplifies_to("√(-i)", "√(2)/2-√(2)/2×i", k_cartesianSimplification);
   simplifies_to("√(2eπ)*√(2eπ)", "2×π×e");
   simplifies_to("(-1)×(2+(-4×√(2)))", "-2+4×√(2)");
   simplifies_to("√(2)/2", "√(2)/2");
-  simplifies_to("√(-12)/2", "√(3)×i", k_cartesianParams);
-  simplifies_to("-2+√(-12)/2", "-2+√(3)×i", k_cartesianParams);
-  simplifies_to("√(-5)*√(-3)", "-√(15)", k_cartesianParams);
-  simplifies_to("√(-5)*√(-5)", "-5", k_cartesianParams);
+  simplifies_to("√(-12)/2", "√(3)×i", k_cartesianSimplification);
+  simplifies_to("-2+√(-12)/2", "-2+√(3)×i", k_cartesianSimplification);
+  simplifies_to("√(-5)*√(-3)", "-√(15)", k_cartesianSimplification);
+  simplifies_to("√(-5)*√(-5)", "-5", k_cartesianSimplification);
   simplifies_to("√(5513219850886344455940081)", "2348024669991");
   simplifies_to("√(154355776)", "12424");
   simplifies_to("√(π)^2", "π");
@@ -185,7 +186,8 @@ QUIZ_CASE(pcj_simplification_roots) {
   simplifies_to("√(3.3×10^(-38))", "√(330)/10^20");
   simplifies_to("√(3.3×10^(-39))", "√(33)/10^20");
   simplifies_to("(√(2)^√(2))^√(2)", "2");
-  simplifies_to("√(-arcsin(-e-1))", "√(arcsin(1+e))", k_cartesianParams);
+  simplifies_to("√(-arcsin(-e-1))", "√(arcsin(1+e))",
+                k_cartesianSimplification);
   simplifies_to("(√(2)×π+√(2)×e)/√(2)", "π+e");
   simplifies_to("π+(3√(2)-2√(3))/25", "π+(3×√(2)-2×√(3))/25");
   simplifies_to("(1+√(2))/5", "(1+√(2))/5");
@@ -213,11 +215,11 @@ QUIZ_CASE(pcj_simplification_roots) {
   simplifies_to("(5×π+√(2))^(-5)", "1/(5×π+√(2))^5");
 
   // With variables
-  simplifies_to("√(x×144)", "12×√(x)", k_cartesianParams);
-  simplifies_to("√(x×144×π)", "12×√(π×x)", k_cartesianParams);
-  simplifies_to("√(x×π^2)", "π×√(x)", k_cartesianParams);
+  simplifies_to("√(x×144)", "12×√(x)", k_cartesianSimplification);
+  simplifies_to("√(x×144×π)", "12×√(π×x)", k_cartesianSimplification);
+  simplifies_to("√(x×π^2)", "π×√(x)", k_cartesianSimplification);
   // TODO: should reduce to 12×π×√(x) (works with +1 advanced reduction depth)
-  simplifies_to("√(x×144×π^2)", "12×√(π^2×x)", k_cartesianParams);
+  simplifies_to("√(x×144×π^2)", "12×√(π^2×x)", k_cartesianSimplification);
 
   // Root
   simplifies_to("root(-8,3)", "-2");
@@ -240,16 +242,20 @@ QUIZ_CASE(pcj_simplification_nested_radicals) {
   // Denesting of square roots
   simplifies_to("√(2+√(3))", "(√(2)+√(6))/2");
   simplifies_to("√(3-√(7))", "√(3-√(7))");
-  simplifies_to("√(-2+√(3))", "(-√(2)+√(6))/2×i", k_cartesianParams);
-  simplifies_to("√(-3-√(8))", "(1+√(2))×i", k_cartesianParams);
+  simplifies_to("√(-2+√(3))", "(-√(2)+√(6))/2×i", k_cartesianSimplification);
+  simplifies_to("√(-3-√(8))", "(1+√(2))×i", k_cartesianSimplification);
   simplifies_to("√(17+4×√(13))", "2+√(13)");
-  simplifies_to("√(√(1058)-√(896))", "root(2,4)×(4-√(7))", k_cartesianParams);
+  simplifies_to("√(√(1058)-√(896))", "root(2,4)×(4-√(7))",
+                k_cartesianSimplification);
   simplifies_to("√(57×√(17)+68×√(10))", "17^(3/4)×(1+(2×√(170))/17)");
-  simplifies_to("(-8)^(1/3)-1-√(3)×i", "0", k_cartesianParams);
-  simplifies_to("√(-3)-√(3)×i", "0", k_cartesianParams);
-  simplifies_to("(√(2+√(3))+√(2-√(3))×i)^2", "2×√(3)+2i", k_cartesianParams);
-  simplifies_to("√(2+√(4.5))", "root(2,4)+2^(3/4)/2", k_cartesianParams);
-  simplifies_to("√(2-√(4.5))", "(root(2,4)-2^(3/4)/2)×i", k_cartesianParams);
+  simplifies_to("(-8)^(1/3)-1-√(3)×i", "0", k_cartesianSimplification);
+  simplifies_to("√(-3)-√(3)×i", "0", k_cartesianSimplification);
+  simplifies_to("(√(2+√(3))+√(2-√(3))×i)^2", "2×√(3)+2i",
+                k_cartesianSimplification);
+  simplifies_to("√(2+√(4.5))", "root(2,4)+2^(3/4)/2",
+                k_cartesianSimplification);
+  simplifies_to("√(2-√(4.5))", "(root(2,4)-2^(3/4)/2)×i",
+                k_cartesianSimplification);
   simplifies_to("arctan(√(((((800^2)^2)^2)^2)^2√(8)))",
                 "arctan(2.81474976710656×10^46×2^(3/4))");
 }
@@ -262,7 +268,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
                 "ln(1881676377434183981909562699940347954480361860897069)");
 
   simplifies_to("ln(2+3)", "ln(5)");
-  simplifies_to("ln(i)", "π/2×i", k_cartesianParams);
+  simplifies_to("ln(i)", "π/2×i", k_cartesianSimplification);
   simplifies_to("π×ln(2)+ln(4)", "(2+π)×ln(2)");
   simplifies_to("log(10)", "1");
   simplifies_to("log(100)", "2");
@@ -284,23 +290,25 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(π)-ln(1/π)", "2×ln(π)");
   simplifies_to("cos(x)^2+sin(x)^2-ln(x)",
                 "dep(1-ln(x),{nonNull(x),realPos(x)})");
-  simplifies_to("1-ln(x)", "dep(1-ln(x),{nonNull(x)})", k_cartesianParams);
+  simplifies_to("1-ln(x)", "dep(1-ln(x),{nonNull(x)})",
+                k_cartesianSimplification);
   simplifies_to("ln(0)", "undef");
-  simplifies_to("ln(0)", "undef", k_cartesianParams);
+  simplifies_to("ln(0)", "undef", k_cartesianSimplification);
   simplifies_to("ln(0^Z)×5", "undef", k_keepAllSymbolsParams);
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "dep(0,{nonNull(cos(x)^2+sin(x)^2)})");
   simplifies_to("ln(cos(x)^2+sin(x)^2-1)", "undef");
-  simplifies_to("ln(-10)-ln(5)", "ln(2)+π×i", k_cartesianParams);
-  simplifies_to("im(ln(-120))", "π", k_cartesianParams);
-  simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", k_cartesianParams);
-  simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", k_cartesianParams);
+  simplifies_to("ln(-10)-ln(5)", "ln(2)+π×i", k_cartesianSimplification);
+  simplifies_to("im(ln(-120))", "π", k_cartesianSimplification);
+  simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", k_cartesianSimplification);
+  simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))",
+                k_cartesianSimplification);
   simplifies_to("ln(x)+ln(y)-ln(x×y)",
                 "dep(ln(x)+ln(y)-ln(x×y),{nonNull(x),nonNull(y)})",
-                k_cartesianParams);
+                k_cartesianSimplification);
   simplifies_to(
       "ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
       "dep(0,{0×ln(abs(x)),0×ln(abs(y)),nonNull(abs(x)),nonNull(abs(y))})",
-      k_cartesianParams);
+      k_cartesianSimplification);
   simplifies_to("log(14142135623731/5000000000000)",
                 "log(14142135623731/5000000000000)");
   simplifies_to(
@@ -311,7 +319,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
       "x)),nonNull(arccos(x)),nonNull(arcsin(1/"
       "x)),nonNull(arcsin(x)),nonNull(arctan(x)),nonNull(arccos(0)-arctan(x))}"
       ")",
-      k_cartesianParams);
+      k_cartesianSimplification);
 
   // Develop
   simplifies_to("log(12925)", "log(11)+log(47)+2×log(5)");
@@ -322,7 +330,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
                 "log(7,6)+3×log(11,6)+log(17,6)-log(47,6)-2×log(5,6)");
   simplifies_to("log(1742279/12925, -6)",
                 "-2×log(5,-6)+log(7,-6)+3×log(11,-6)+log(17,-6)-log(47,-6)",
-                k_cartesianParams);
+                k_cartesianSimplification);
   // TODO: should reduce to log(11,14)+log(3,14)+2×log(2,14)+5
   simplifies_to("log(70992768,14)",
                 "7×log(2,14)+log(3,14)+5×log(7,14)+log(11,14)");
@@ -342,10 +350,10 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("log(x,1)", "undef");
 
   // Use complex logarithm internally
-  simplifies_to("√(x^2)", "√(x^2)", k_cartesianParams);
-  simplifies_to("√(abs(x)^2)", "abs(x)", k_cartesianParams);
-  simplifies_to("√(0)", "0", k_cartesianParams);
-  simplifies_to("√(cos(x)^2+sin(x)^2-1)", "0", k_cartesianParams);
+  simplifies_to("√(x^2)", "√(x^2)", k_cartesianSimplification);
+  simplifies_to("√(abs(x)^2)", "abs(x)", k_cartesianSimplification);
+  simplifies_to("√(0)", "0", k_cartesianSimplification);
+  simplifies_to("√(cos(x)^2+sin(x)^2-1)", "0", k_cartesianSimplification);
 
   // Simplification with exponential
   simplifies_to("e^ln(3)", "3");
@@ -367,21 +375,21 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("e^(2ln(3))", "9");
   simplifies_to("e^ln(πe)", "π×e");
   simplifies_to("e^ln(π)", "π");
-  simplifies_to("e^(ln(x))", "dep(x,{nonNull(x)})", k_cartesianParams);
-  simplifies_to("ln(e^x)", "x", k_cartesianParams);
-  simplifies_to("ln(e^(i×π))", "π×i", k_cartesianParams);
-  simplifies_to("ln(e^(-i×π))", "π×i", k_cartesianParams);
-  simplifies_to("ln(e^(i×2×π))", "0", k_cartesianParams);
+  simplifies_to("e^(ln(x))", "dep(x,{nonNull(x)})", k_cartesianSimplification);
+  simplifies_to("ln(e^x)", "x", k_cartesianSimplification);
+  simplifies_to("ln(e^(i×π))", "π×i", k_cartesianSimplification);
+  simplifies_to("ln(e^(-i×π))", "π×i", k_cartesianSimplification);
+  simplifies_to("ln(e^(i×2×π))", "0", k_cartesianSimplification);
   simplifies_to("ln(√(2))", "ln(2)/2");
   simplifies_to("ln(e^3)", "3");
   simplifies_to("log(√(3),√(3))", "1");
   simplifies_to("log(1/√(2))", "-log(2)/2");
-  simplifies_to("ln(e^(iπ/7))", "π/7×i", k_cartesianParams);
+  simplifies_to("ln(e^(iπ/7))", "π/7×i", k_cartesianSimplification);
 
   /* TODO: should simplify as ln(10) instead of ln(2)+ln(5) and ln(14) instead
    * of ln(2)+ln(7). */
   simplifies_to("e^log(πe)", "e^(log(π)+1/(ln(2)+ln(5)))");
-  simplifies_to("log(-i)", "-π/(2×(ln(2)+ln(5)))×i", k_cartesianParams);
+  simplifies_to("log(-i)", "-π/(2×(ln(2)+ln(5)))×i", k_cartesianSimplification);
   simplifies_to("log(1/6991712,14)", "-5-ln(13)/(ln(2)+ln(7))");
 
   // Log with base
@@ -401,10 +409,10 @@ QUIZ_CASE(pcj_simplification_logarithm) {
 
   // TODO: for this to work, we must know the sign of cos(9)
   // simplifies_to("log(cos(9)^ln(6), cos(9))", "ln(2)+ln(3)",
-  // k_cartesianParams);
+  // k_cartesianSimplification);
   // TODO: for this to work, we must know the sign of cos(9)
   // simplifies_to("log(cos(9)^ln(6), 9)", "ln(6)×log(cos(9), 9)",
-  // k_cartesianParams);
+  // k_cartesianSimplification);
 
   // This case caused an uint8 overflow during prime factorization.
   simplifies_to("256×ln(2)", "256×ln(2)");

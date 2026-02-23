@@ -171,7 +171,7 @@ QUIZ_CASE(pcj_approximation_root) {
                           k_cartesianParams, 11);
   simplified_approximates_to<double>("abs(√(300000.0003^23))",
                                      "9.702740901018ᴇ62",
-                                     k_degreeCartesianParams, 13);
+                                     k_degreeCartesianSimplification, 13);
 }
 
 QUIZ_CASE(pcj_approximation_mixed_fraction) {
@@ -265,45 +265,40 @@ QUIZ_CASE(pcj_approximation_keeping_symbols) {
 
 QUIZ_CASE(pcj_approximation_context) {
   PoincareTest::SymbolStore symbolStore;
-  SimplificationParameters cartesianCtx = {
-      .user = {.complexFormat = ComplexFormat::Cartesian,
-               .context = symbolStore}
-
-  };
-  SimplificationParameters realCtx = {
-      .user = {.complexFormat = ComplexFormat::Real, .context = symbolStore}
-
-  };
+  UserParameters cartesianParameters = {
+      .complexFormat = ComplexFormat::Cartesian, .context = symbolStore};
+  UserParameters realParameters = {.complexFormat = ComplexFormat::Real,
+                                   .context = symbolStore};
 
   PoincareTest::store("2x+5→f(x)", symbolStore);
   PoincareTest::store("π+1→a", symbolStore);
   PoincareTest::store("[[4]]→b", symbolStore);
-  approximates_to<float>("a", "4.141593", cartesianCtx);
-  approximates_to<float>("f(a)", "13.28319", cartesianCtx);
-  approximates_to<float>("f(a+i)", "13.28319+2×i", cartesianCtx);
-  approximates_to<float>("z", "undef", cartesianCtx);
-  approximates_to<float>("b*[[5]]", "[[20]]", cartesianCtx);
+  approximates_to<float>("a", "4.141593", cartesianParameters);
+  approximates_to<float>("f(a)", "13.28319", cartesianParameters);
+  approximates_to<float>("f(a+i)", "13.28319+2×i", cartesianParameters);
+  approximates_to<float>("z", "undef", cartesianParameters);
+  approximates_to<float>("b*[[5]]", "[[20]]", cartesianParameters);
 
   PoincareTest::store("x>0→g(x)", symbolStore);
   PoincareTest::store("true→t", symbolStore);
-  approximates_to_boolean("g(2)", true, cartesianCtx);
+  approximates_to_boolean("g(2)", true, cartesianParameters);
   approximates_to_boolean("g(1/0)", Approximation::BooleanOrUndefined::Undef(),
-                          cartesianCtx);
-  approximates_to_boolean("t", true, cartesianCtx);
+                          cartesianParameters);
+  approximates_to_boolean("t", true, cartesianParameters);
 
   PoincareTest::store("[[x,0][0,x]]→h(x)", symbolStore);
-  approximates_to<float>("h(3)", "[[3,0][0,3]]", cartesianCtx);
-  approximates_to<float>("h(1/0)", "undef", cartesianCtx);
+  approximates_to<float>("h(3)", "[[3,0][0,3]]", cartesianParameters);
+  approximates_to<float>("h(1/0)", "undef", cartesianParameters);
 
   symbolStore.reset();
   // f : x→ x^2
   PoincareTest::store("x^2→f(x)", symbolStore);
   // Approximate f(x-2) with x = 5
   PoincareTest::store("5→x", symbolStore);
-  approximates_to<double>("f(x-2)", 9.0, cartesianCtx);
+  approximates_to<double>("f(x-2)", 9.0, cartesianParameters);
   // Approximate f(x-1)+f(x+1) with x = 3
   PoincareTest::store("3→x", symbolStore);
-  approximates_to<double>("f(x-1)+f(x+1)", 20.0, cartesianCtx);
+  approximates_to<double>("f(x-1)+f(x+1)", 20.0, cartesianParameters);
 
   symbolStore.reset();
   // f : x → √(-1)×√(-1)
@@ -311,9 +306,9 @@ QUIZ_CASE(pcj_approximation_context) {
   // Approximate f(x) with x = 1
   PoincareTest::store("1→x", symbolStore);
   // Cartesian
-  approximates_to<double>("f(x)", -1.0, cartesianCtx);
+  approximates_to<double>("f(x)", -1.0, cartesianParameters);
   // Real
-  approximates_to<double>("f(x)", (double)NAN, realCtx);
+  approximates_to<double>("f(x)", (double)NAN, realParameters);
 }
 
 // Use projected trees

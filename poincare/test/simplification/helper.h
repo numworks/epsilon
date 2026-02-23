@@ -19,15 +19,17 @@ void reduces_to_tree(const Poincare::Internal::Tree* input,
 
 void simplifies_to(const char* input, const char* output,
                    const Poincare::SimplificationParameters&
-                       simplificationParameters = k_realParams,
+                       simplificationParameters = k_realSimplification,
                    bool preserveInput = true);
 void simplifies_to(const Poincare::Internal::Tree* input,
                    const Poincare::Internal::Tree* output,
                    const Poincare::SimplificationParameters&
-                       simplificationParameters = k_realParams);
-void projects_and_reduces_to(const char* input, const char* output,
-                             const Poincare::SimplificationParameters&
-                                 simplificationParameters = k_realParams);
-void simplifies_to_no_beautif(const char* input, const char* output,
-                              const Poincare::SimplificationParameters&
-                                  simplificationParameters = k_realParams);
+                       simplificationParameters = k_realSimplification);
+void projects_and_reduces_to(
+    const char* input, const char* output,
+    const Poincare::SimplificationParameters& simplificationParameters =
+        k_realSimplification);
+void simplifies_to_no_beautif(
+    const char* input, const char* output,
+    const Poincare::SimplificationParameters& simplificationParameters =
+        k_realSimplification);

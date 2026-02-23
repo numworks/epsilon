@@ -241,9 +241,9 @@ QUIZ_CASE(pcj_approximation_power) {
   approximates_to<float>("-2×3^4+2", "-160");
   simplified_approximates_to<double>("1.0092^(20)", "1.2010050593402");
   simplified_approximates_to<double>("1.0092^(50)×ln(3/2)", "0.6409373488899",
-                                     k_realParams, 13);
-  simplified_approximates_to<double>("1.0092^(50)×ln(1.0092)",
-                                     "0.01447637354655", k_realParams, 13);
+                                     k_realSimplification, 13);
+  simplified_approximates_to<double>(
+      "1.0092^(50)×ln(1.0092)", "0.01447637354655", k_realSimplification, 13);
   approximates_to<double>("1.0092^(20)", "1.2010050593402");
   approximates_to<double>("1.0092^(50)×ln(3/2)", "0.6409373488899",
                           k_realParams, 13);
@@ -251,7 +251,7 @@ QUIZ_CASE(pcj_approximation_power) {
                           k_realParams, 13);
   simplified_approximates_to<double>("1.0092^(20)", "1.2010050593402");
   simplified_approximates_to<double>("1.0092^(50)×ln(3/2)", "0.6409373488899",
-                                     k_realParams, 13);
+                                     k_realSimplification, 13);
   approximates_to<float>("1.0092^(50)×ln(3/2)", "0.6409366");
   approximates_to<float>("1.0092^(20)", "1.201005");
 #if TODO_PCJ

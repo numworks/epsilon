@@ -22,7 +22,7 @@ _ion_simulator_iconset := $(_ion_simulator_assets_path)/AppIcon.appiconset
 
 include $(PATH_ion)/shared.apple.mak
 
-$(_ion_simulator_iconset)/Contents.json: ion/src/simulator/ios/icon_assets.json $(_ion_simulator_icons) | $$(@D)/.
+$(_ion_simulator_iconset)/Contents.json: $(PATH_ion)/src/simulator/ios/icon_assets.json $(_ion_simulator_icons) | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $< $@
 

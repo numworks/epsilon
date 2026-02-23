@@ -2,6 +2,7 @@ _simulator_app := $(OUTPUT_DIRECTORY)/%.app
 _simulator_app_binary = $(_simulator_app)/$(APP_NAME)
 _simulator_app_plist = $(_simulator_app)/Info.plist
 _simulator_app_resources_path = $(_simulator_app)
+_path_ion := ../shared/ion
 
 # App resources
 
@@ -25,8 +26,7 @@ $(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) $(_simula
 	$(Q) plutil -replace CFBundleIcons -json `plutil -extract CFBundleIcons json -o - $(OUTPUT_DIRECTORY)/app/assets/partial.plist` $@
 	$(Q) plutil -replace CFBundleIcons~ipad -json `plutil -extract CFBundleIcons~ipad json -o - $(OUTPUT_DIRECTORY)/app/assets/partial.plist` $@
 
-
-$(_simulator_app_resources_path)/launch.storyboardc: ion/src/simulator/ios/launch.storyboard | $$(@D)/.
+$(_simulator_app_resources_path)/launch.storyboardc: $(_path_ion)/src/simulator/ios/launch.storyboard | $$(@D)/.
 	$(call rule_label,IBTOOL)
 	$(Q) $(IBTOOL) --minimum-deployment-target $(APPLE_PLATFORM_MIN_VERSION) --compile $@ $^
 
@@ -48,4 +48,4 @@ $(_simulator_app_resources_path)/embedded.mobileprovision:
 	$(warning Building without a provisionning profile. Please define IOS_PROVISIONNING_PROFILE to point to the .mobileprovision file you want to use.)
 endif
 
-include  $(PATH_haussmann)/src/rules/shared.apple.mak
+include $(PATH_haussmann)/src/rules/shared.apple.mak

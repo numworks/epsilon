@@ -169,7 +169,7 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
                               .context = GlobalContextAccessor::Context()
                               // Should unitFormat be passed?
                           },
-                          FloatPrecision::Double)},
+                          CAS::Enabled())},
           .hasReductionFailure = false};
     }
     symbolicComputation = storeElements.symbolicComputation;
@@ -187,7 +187,8 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
                .context = GlobalContextAccessor::Context(),
                .unitFormat =
                    GlobalPreferences::SharedGlobalPreferences()->unitFormat()},
-          .projectionPolicy = {.symbolic = symbolicComputation}});
+          .projectionPolicy = {.symbolic = symbolicComputation}},
+      CAS::Enabled());
   if (isStore) {
     /*  Restore store structure in the exact output. The store operation itself
      * is performed by the processStore function. */
@@ -243,8 +244,7 @@ static void processStore(OutputExpressions& outputs,
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
   UserExpression valueApprox = value.cloneAndApproximate(
-      PoincareHelpers::UserSettingsForPreferences(value),
-      FloatPrecision::Double);
+      PoincareHelpers::UserSettingsForPreferences(value), CAS::Enabled());
   if (symbol.isUserVariable() &&
       CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox,
                                           GlobalContextAccessor::Context())) {

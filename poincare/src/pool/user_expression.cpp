@@ -120,7 +120,8 @@ UserExpression UserExpression::cloneChildAtIndex(int i) const {
 bool UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* simplifiedExpression,
     UserExpression* approximatedExpression,
-    const SimplificationParameters& simplificationParameters) const {
+    const SimplificationParameters& simplificationParameters,
+    bool approximationOnlyReplaceNumerical) const {
   // Step 1: simplify
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   bool reductionFailure = false;
@@ -130,7 +131,7 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
   // Step 2: approximate
   assert(approximatedExpression && approximatedExpression->isUninitialized());
   *approximatedExpression = simplifiedExpression->cloneAndApproximate(
-      simplificationParameters.user, FloatPrecision::Double);
+      simplificationParameters.user, approximationOnlyReplaceNumerical);
   /* Second approximation attempt.
    * Condition: simplified expression is well defined, but approximation failed
    * (it returned undef). This can happen if the simplified expression is a
@@ -139,22 +140,19 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
   if (approximatedExpression->isUndefined() &&
       !simplifiedExpression->isUndefinedOrNonReal()) {
     *approximatedExpression = this->cloneAndApproximate(
-        simplificationParameters.user, FloatPrecision::Double);
+        simplificationParameters.user, approximationOnlyReplaceNumerical);
   }
   return reductionFailure;
 }
 
 UserExpression UserExpression::cloneAndApproximate(
-    const UserSettingsWithUnit& userSettings,
+    const UserSettingsWithUnit& userSettings, bool onlyReplaceNumerical,
     FloatPrecision floatPrecision) const {
   Tree* a = Approximation::To<Tree*>(
       tree(), floatPrecision,
       Approximation::Parameters{
-          .policy =
-              {.projectLocalVariables = true,
-               /* When CAS is activated, onlyReplaceNumerical is used to
-                * approximate expressions with symbols such as π*x → 3.14*x. */
-               .onlyReplaceNumerical = CAS::Enabled()},
+          .policy = {.projectLocalVariables = true,
+                     .onlyReplaceNumerical = onlyReplaceNumerical},
           .user = userSettings});
   /* There are several issues that currently prevent us from beautifying an
    * approximated CAS expression:

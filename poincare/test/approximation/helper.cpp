@@ -142,7 +142,7 @@ void assert_float_approximates_to(UserExpression f, const char* result) {
   f.cloneAndApproximate(
        Poincare::UserSettingsWithUnit{.complexFormat = ComplexFormat::Cartesian,
                                       .angleUnit = AngleUnit::Radian},
-       Poincare::Precision<T>::value)
+       false, Poincare::Precision<T>::value)
       .serialize(buffer, false, DecimalMode, numberOfDigits);
   quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
 }

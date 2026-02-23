@@ -253,3 +253,20 @@ QUIZ_CASE(pcj_approximation_constant) {
   approximates_to(π_e, M_PI);
   approximates_to(e_e, M_E);
 }
+
+QUIZ_CASE(pcj_approximation_symbols) {
+  Poincare::UserSettingsWithUnit userSettings = {
+      .complexFormat = Poincare::ComplexFormat::Real,
+      .angleUnit = Poincare::AngleUnit::Radian};
+  approximates_to_keeping_symbols<double>("2", "2", userSettings);
+  approximates_to_keeping_symbols<double>("2.3", "2.3", userSettings);
+  approximates_to_keeping_symbols<double>("1+π", "4.1415926535898",
+                                          userSettings);
+  approximates_to_keeping_symbols<double>("1+π+x", "4.1415926535898+x",
+                                          userSettings);
+  approximates_to_keeping_symbols<double>("cos(x-x)", "cos(x-x)", userSettings);
+  approximates_to_keeping_symbols<double>("random()-random()",
+                                          "random()-random()", userSettings);
+  approximates_to_keeping_symbols<double>("y^3*x^-2", "y^3×x^(-2)",
+                                          userSettings);
+}

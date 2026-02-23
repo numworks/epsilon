@@ -40,19 +40,6 @@ QUIZ_CASE(pcj_simplification_decimal) {
 }
 
 QUIZ_CASE(pcj_simplification_float) {
-  Poincare::SimplificationParameters parametersForApproximation = {
-      .user = {.complexFormat = Poincare::ComplexFormat::Real,
-               .angleUnit = Poincare::AngleUnit::Radian},
-      .projectionPolicy = {.strategy = Strategy::ApproximateToFloat}};
-  simplifies_to("2", "2", parametersForApproximation);
-  simplifies_to("2.3", "2.3", parametersForApproximation);
-  simplifies_to("1+π", "4.1415926535898", parametersForApproximation);
-  simplifies_to("1+π+x", "x+4.1415926535898", parametersForApproximation);
-  simplifies_to("cos(x-x)", "1", parametersForApproximation);
-  simplifies_to("random()-random()", "random()-random()",
-                parametersForApproximation);
-  simplifies_to("y^3*x^-2", "y^3/x^2", parametersForApproximation);
-
   // This was raising asserts because of float approximation on flatten.
   Tree* u = (KMult(KPow(180_e, -1_e), π_e, KMult(180_de, "x"_e)))->cloneTree();
   SystematicReduction::ShallowReduce(u->child(0));

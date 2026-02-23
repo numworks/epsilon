@@ -7,11 +7,6 @@ namespace Poincare {
 // Object operations
 
 void PoolObject::release() {
-  if (!isAfterTopmostCheckpoint()) {
-    /* Do not decrease reference counters outside of the current checkpoint
-     * since they were not increased. */
-    return;
-  }
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
     Pool::sharedPool->discardPoolObject(this);

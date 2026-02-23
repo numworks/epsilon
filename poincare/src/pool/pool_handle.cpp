@@ -56,9 +56,7 @@ PoolHandle PoolHandle::Build(PoolObject* object) {
 
 void PoolHandle::setIdentifierAndRetain(uint16_t newId) {
   m_identifier = newId;
-  if (!isUninitialized()) {
-    object()->retain();
-  }
+  retain();
 }
 
 void PoolHandle::setTo(const PoolHandle& tr) {
@@ -76,6 +74,17 @@ void PoolHandle::transferFrom(PoolHandle& tr) {
   tr.release();
 }
 
+void PoolHandle::retain() {
+  if (!HasObject(m_identifier)) {
+    return;
+  }
+  PoolObject* object = Pool::sharedPool->object(m_identifier);
+  assert(!object || object->identifier() == m_identifier);
+  if (object && ShouldRetain(object)) {
+    object->retain();
+  }
+}
+
 void PoolHandle::release() {
   if (!HasObject(m_identifier)) {
     return;
@@ -85,7 +94,9 @@ void PoolHandle::release() {
   m_identifier = PoolObject::NoObjectIdentifier;
   /* The object could be nullptr even if the identifier is valid: there could
    * have been an exception that deleted the pool. */
-  if (object) {
+  /* TODO:  We have no guarantee that the object was retained before, because
+   * the topmost checkpoint could have changed ! */
+  if (object && ShouldRetain(object)) {
     object->release();
   }
 }

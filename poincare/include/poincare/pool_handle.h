@@ -22,14 +22,9 @@ class PoolHandle {
    * a PoolHandle should be marked explicit. This prevents the code from
    * compiling with, for instance: Logarithm l = clone() (which would be
    * equivalent to Logarithm l = Logarithm(clone())). */
-  PoolHandle(const PoolHandle& tr)
-      : m_identifier(PoolObject::NoObjectIdentifier) {
-    setTo(tr);
-  }
+  PoolHandle(const PoolHandle& tr) : PoolHandle() { setTo(tr); }
 
-  PoolHandle(PoolHandle&& tr) : m_identifier(PoolObject::NoObjectIdentifier) {
-    transferFrom(tr);
-  }
+  PoolHandle(PoolHandle&& tr) : PoolHandle() { transferFrom(tr); }
 
   ~PoolHandle() { release(); }
 
@@ -85,9 +80,7 @@ class PoolHandle {
   // Un-inlining this constructor actually increases the firmware size
   PoolHandle(uint16_t objectIdentifier = PoolObject::NoObjectIdentifier)
       : m_identifier(objectIdentifier) {
-    if (HasObject(objectIdentifier)) {
-      object()->retain();
-    }
+    retain();
   }
 
   static PoolHandle Build(PoolObject* object);
@@ -109,7 +102,27 @@ class PoolHandle {
   template <class U>
   static PoolHandle Builder();
 
+  void retain();
   void release();
+
+  /* Do not increase reference counters outside of the current checkpoint since
+   * they won't be decreased if an exception is raised.
+   *
+   * WARNING: ref counters have a bugged behaviour in this case:
+   *  OExpression a = Cosine::Builder();
+   *  OExpression b;
+   *  PoolCheckpoint() {
+   *    ...
+   *    b = a;
+   *    ...
+   *  }
+   *
+   * Here, the ref counter of the cos is not incremented while a and b point
+   * towards it.
+   * */
+  bool ShouldRetain(const PoolObject* object) const {
+    return object->isAfterTopmostCheckpoint();
+  }
 };
 
 }  // namespace Poincare

@@ -42,22 +42,8 @@ class PoolObject {
 
   // Object operations
   void setReferenceCounter(int refCount) { m_referenceCounter = refCount; }
-  /* Do not increase reference counters outside of the current checkpoint since
-   * they won't be decreased if an exception is raised.
-   *
-   * WARNING: ref counters have a bugged behaviour in this case:
-   *  OExpression a = Cosine::Builder();
-   *  OExpression b;
-   *  PoolCheckpoint() {
-   *    ...
-   *    b = a;
-   *    ...
-   *  }
-   *
-   * Here, the ref counter of the cos is not incremented while a and b point
-   * towards it.
-   * */
-  void retain() { m_referenceCounter += isAfterTopmostCheckpoint(); }
+
+  void retain() { m_referenceCounter += 1; }
   void release();
   // Changes identifier and resets refcounter to 0
   void rename(uint16_t identifier);

@@ -615,7 +615,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
      * right (i.e. in order of ascending x). */
     if (m_expression.dimension().isListOfPoints()) {
       m_expression = m_expression.removeUndefAndComplexListElements()
-                         .approximateListAndSort<double>();
+                         .approximateListAndSort(FloatPrecision::Double);
       // m_expression may be an empty, dimension-less list after this.
     } else {
       assert(m_expression.dimension().isPoint());

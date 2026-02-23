@@ -220,13 +220,13 @@ Coordinate2D<T> SystemExpression::approximateToPoint() const {
       Approximation::Parameters{.policy = {.prepare = true, .optimize = true}});
 }
 
-template <typename T>
-SystemExpression SystemExpression::approximateListAndSort() const {
+SystemExpression SystemExpression::approximateListAndSort(
+    FloatPrecision floatPrecision) const {
   assert(dimension().isList());
   Tree* clone = SharedTreeStack->pushListSort();
   tree()->cloneTree();
   clone->moveTreeOverTree(Approximation::To<Tree*>(
-      clone, Precision<T>::value,
+      clone, floatPrecision,
       Approximation::Parameters{
           .policy = {.prepare = true, .optimize = true}}));
   return SystemExpression::Builder(clone);
@@ -308,10 +308,6 @@ template double SystemExpression::approximateSystemToRealScalar<double>() const;
 template Coordinate2D<float> SystemExpression::approximateToPoint<float>()
     const;
 template Coordinate2D<double> SystemExpression::approximateToPoint<double>()
-    const;
-template SystemExpression SystemExpression::approximateListAndSort<float>()
-    const;
-template SystemExpression SystemExpression::approximateListAndSort<double>()
     const;
 
 }  // namespace Poincare

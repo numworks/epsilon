@@ -68,8 +68,7 @@ class SystemExpression : public Expression {
   SystemExpression getReducedDerivative(const char* symbolName,
                                         int derivationOrder = 1) const;
   // Return SystemExpression with sorted approximated elements.
-  template <typename T>
-  SystemExpression approximateListAndSort() const;
+  SystemExpression approximateListAndSort(FloatPrecision floatPrecision) const;
   // Return SystemExpression with undef list elements or points removed.
   SystemExpression removeUndefAndComplexListElements() const;
 

@@ -574,20 +574,23 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
-  SimplificationParameters simplificationParameters = {
-      .user = {.complexFormat = ComplexFormat::Cartesian,
-               .angleUnit = calculationPreferences.angleUnit,
-               .context = symbolContext},
-      .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols,
-                           .strategy = Strategy::ApproximateToFloat},
-      .reductionPolicy = {.advanced = false}};
+  UserSettingsWithUnit userSettings = {
+      .complexFormat = ComplexFormat::Cartesian,
+      .angleUnit = calculationPreferences.angleUnit,
+      .context = symbolContext};
   Tree* e = approximateOutput.tree()->cloneTree();
-  Internal::Dimension dim =
-      Simplification::ProjectAndReduce(e, simplificationParameters);
+  // Re-approximate with onlyReplaceNumerical to remove polar format
+  Approximation::Approximate(
+      e, FloatPrecision::Double,
+      Approximation::Parameters{.policy = {.onlyReplaceNumerical = true},
+                                .user = userSettings});
+  Internal::Dimension dim = Internal::Dimension::Get(e);
   assert(!dim.isUnit());
   return CreateBeautifiedLayout(
-      e, ToBeautificationParameters(simplificationParameters), dim,
-      Preferences::PrintFloatMode::Scientific,
+      e,
+      BeautificationParameters{.user = userSettings,
+                               .reductionPolicy = {.advanced = false}},
+      dim, Preferences::PrintFloatMode::Scientific,
       calculationPreferences.numberOfSignificantDigits);
 }
 

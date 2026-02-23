@@ -195,23 +195,14 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
                                  exact, exact, approximate, symbolContext);
 
   if (forbidExactSolution && approximate.isUninitialized()) {
-    // Re-reduce exact solution but approximate during reduction.
-    bool failure = false;
-    approximate = exact.cloneAndSimplify(
-        SimplificationParameters{
-            .user = {.complexFormat = m_equationMetadata.complexFormat,
-                     .angleUnit = GlobalPreferences::SharedGlobalPreferences()
-                                      ->angleUnit(),
-                     .context = symbolContext,
-                     .unitFormat = GlobalPreferences::SharedGlobalPreferences()
-                                       ->unitFormat()},
-            .projectionPolicy =
-                {/* Any remaining symbol at this point should be an
-                    unknown parameter. */
-                 .symbolic = SymbolicComputation::KeepAllSymbols,
-                 .strategy = Strategy::ApproximateToFloat},
-            .reductionPolicy = {.advanced = false}},
-        &failure);
+    // Approximate exact reduction preserving variables and symbols
+    approximate = exact.cloneAndApproximate(
+        UserSettingsWithUnit{
+            .complexFormat = m_equationMetadata.complexFormat,
+            .angleUnit =
+                GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+            .context = symbolContext},
+        true);
   }
 
   if (!approximate.isUninitialized()) {

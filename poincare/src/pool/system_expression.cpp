@@ -101,8 +101,8 @@ void SystemExpression::cloneAndBeautifyAndApproximate(
   assert(beautifiedExpression && beautifiedExpression->isUninitialized());
   *beautifiedExpression = cloneAndBeautify(beautificationParameters);
   assert(approximatedExpression && approximatedExpression->isUninitialized());
-  *approximatedExpression = beautifiedExpression->cloneAndApproximate<double>(
-      beautificationParameters.user);
+  *approximatedExpression = beautifiedExpression->cloneAndApproximate(
+      beautificationParameters.user, FloatPrecision::Double);
 }
 
 UserExpression SystemExpression::cloneAndBeautify(

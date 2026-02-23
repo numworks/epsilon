@@ -129,8 +129,8 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
   assert(!simplifiedExpression->isUninitialized());
   // Step 2: approximate
   assert(approximatedExpression && approximatedExpression->isUninitialized());
-  *approximatedExpression = simplifiedExpression->cloneAndApproximate<double>(
-      simplificationParameters.user);
+  *approximatedExpression = simplifiedExpression->cloneAndApproximate(
+      simplificationParameters.user, FloatPrecision::Double);
   /* Second approximation attempt.
    * Condition: simplified expression is well defined, but approximation failed
    * (it returned undef). This can happen if the simplified expression is a
@@ -138,17 +138,17 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
    * Second strategy: approximate from the input expression. */
   if (approximatedExpression->isUndefined() &&
       !simplifiedExpression->isUndefinedOrNonReal()) {
-    *approximatedExpression =
-        this->cloneAndApproximate<double>(simplificationParameters.user);
+    *approximatedExpression = this->cloneAndApproximate(
+        simplificationParameters.user, FloatPrecision::Double);
   }
   return reductionFailure;
 }
 
-template <typename T>
 UserExpression UserExpression::cloneAndApproximate(
-    const UserSettingsWithUnit& userSettings) const {
+    const UserSettingsWithUnit& userSettings,
+    FloatPrecision floatPrecision) const {
   Tree* a = Approximation::To<Tree*>(
-      tree(), Precision<T>::value,
+      tree(), floatPrecision,
       Approximation::Parameters{
           .policy =
               {.projectLocalVariables = true,
@@ -647,10 +647,6 @@ template UserExpression UserExpression::Builder<float>(
     PointOrRealScalar<float>);
 template UserExpression UserExpression::Builder<double>(
     PointOrRealScalar<double>);
-template UserExpression UserExpression::cloneAndApproximate<float>(
-    const UserSettingsWithUnit&) const;
-template UserExpression UserExpression::cloneAndApproximate<double>(
-    const UserSettingsWithUnit&) const;
 template float UserExpression::privateApproximateToRealScalar<float>(
     AngleUnit, ComplexFormat, const SymbolContext&) const;
 template double UserExpression::privateApproximateToRealScalar<double>(

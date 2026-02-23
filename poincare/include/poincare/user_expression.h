@@ -107,9 +107,9 @@ class UserExpression : public Expression {
    * initial expression is returned. */
   UserExpression cloneAndTrySimplify(
       const SimplificationParameters& simplificationParameters) const;
-  template <typename T>
   UserExpression cloneAndApproximate(
-      const UserSettingsWithUnit& userSettings) const;
+      const UserSettingsWithUnit& userSettings,
+      FloatPrecision floatPrecision = FloatPrecision::Double) const;
 
   // If of the form y-f(x), return f(x). Return uninitialized otherwise.
   UserExpression equivalentCartesianEquation() const;

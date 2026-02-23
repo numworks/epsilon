@@ -159,16 +159,17 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
     StorePreprocessResult storeElements = preprocessStore(inputExpression);
     if (!storeElements.shouldReduceBeforeStore) {
       return CalculationResult{
-          .outputs =
-              {.exact = inputExpression.clone(),
-               .approximate = inputExpression.cloneAndApproximate<double>(
-                   UserSettingsWithUnit{
-                       .complexFormat = complexFormat,
-                       .angleUnit = GlobalPreferences::SharedGlobalPreferences()
-                                        ->angleUnit(),
-                       .context = GlobalContextAccessor::Context()
-                       // Should unitFormat be passed?
-                   })},
+          .outputs = {.exact = inputExpression.clone(),
+                      .approximate = inputExpression.cloneAndApproximate(
+                          UserSettingsWithUnit{
+                              .complexFormat = complexFormat,
+                              .angleUnit =
+                                  GlobalPreferences::SharedGlobalPreferences()
+                                      ->angleUnit(),
+                              .context = GlobalContextAccessor::Context()
+                              // Should unitFormat be passed?
+                          },
+                          FloatPrecision::Double)},
           .hasReductionFailure = false};
     }
     symbolicComputation = storeElements.symbolicComputation;
@@ -241,8 +242,9 @@ static void processStore(OutputExpressions& outputs,
   // TODO: add circuit breaker?
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
-  UserExpression valueApprox = value.cloneAndApproximate<double>(
-      PoincareHelpers::UserSettingsForPreferences(value));
+  UserExpression valueApprox = value.cloneAndApproximate(
+      PoincareHelpers::UserSettingsForPreferences(value),
+      FloatPrecision::Double);
   if (symbol.isUserVariable() &&
       CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox,
                                           GlobalContextAccessor::Context())) {

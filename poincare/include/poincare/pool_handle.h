@@ -53,14 +53,14 @@ class PoolHandle {
   uint16_t identifier() const { return m_identifier; }
   PoolObject* object() const;
   bool wasErasedByException() const {
-    return HasObject(m_identifier) && object() == nullptr;
+    return !isUninitialized() && object() == nullptr;
   }
   int objectRetainCount() const { return object()->retainCount(); }
   size_t size() const;
   void* addressInPool() const { return reinterpret_cast<void*>(object()); }
 
   bool isUninitialized() const {
-    return m_identifier == PoolObject::NoObjectIdentifier;
+    return !PoolObject::IsValidIdentifier(m_identifier);
   }
   bool isDownstreamOf(const PoolObject* treePoolCursor) const {
     return !isUninitialized() &&
@@ -92,10 +92,6 @@ class PoolHandle {
    * retaining the new one. */
   void transferFrom(PoolHandle& tr);
 
-  static bool HasObject(uint16_t identifier) {
-    return PoolObject::IsValidIdentifier(identifier);
-  }
-
   uint16_t m_identifier;
 
  private:
@@ -120,8 +116,9 @@ class PoolHandle {
    * Here, the ref counter of the cos is not incremented while a and b point
    * towards it.
    * */
-  bool ShouldRetain(const PoolObject* object) const {
-    return object->isAfterTopmostCheckpoint();
+  bool canUpdateRefCounter() const {
+    const PoolObject* object = this->object();
+    return object && object->isAfterTopmostCheckpoint();
   }
 };
 

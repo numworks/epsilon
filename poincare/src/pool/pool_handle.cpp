@@ -18,8 +18,12 @@ PoolHandle PoolHandle::clone() const {
 
 /* Hierarchy operations */
 PoolObject* PoolHandle::object() const {
-  assert(HasObject(m_identifier));
-  return Pool::sharedPool->object(m_identifier);
+  assert(!isUninitialized());
+  PoolObject* object = Pool::sharedPool->object(m_identifier);
+  /* The object could be nullptr even if the identifier is valid: there could
+   * have been an exception that deleted the pool. */
+  assert(!object || object->identifier() == m_identifier);
+  return object;
 }
 
 size_t PoolHandle::size() const { return Pool::AlignedSize(object()->size()); }
@@ -36,7 +40,7 @@ void PoolHandle::log() const {
 /* Private */
 
 PoolHandle::PoolHandle(const PoolObject* object) : PoolHandle() {
-  if (object != nullptr) {
+  if (object) {
     setIdentifierAndRetain(object->identifier());
   }
 }
@@ -75,30 +79,24 @@ void PoolHandle::transferFrom(PoolHandle& tr) {
 }
 
 void PoolHandle::retain() {
-  if (!HasObject(m_identifier)) {
+  if (isUninitialized()) {
     return;
   }
-  PoolObject* object = Pool::sharedPool->object(m_identifier);
-  assert(!object || object->identifier() == m_identifier);
-  if (object && ShouldRetain(object)) {
-    object->retain();
+  if (canUpdateRefCounter()) {
+    this->object()->retain();
   }
 }
 
 void PoolHandle::release() {
-  if (!HasObject(m_identifier)) {
+  if (isUninitialized()) {
     return;
   }
-  PoolObject* object = Pool::sharedPool->object(m_identifier);
-  assert(!object || object->identifier() == m_identifier);
-  m_identifier = PoolObject::NoObjectIdentifier;
-  /* The object could be nullptr even if the identifier is valid: there could
-   * have been an exception that deleted the pool. */
   /* TODO:  We have no guarantee that the object was retained before, because
    * the topmost checkpoint could have changed ! */
-  if (object && ShouldRetain(object)) {
-    object->release();
+  if (canUpdateRefCounter()) {
+    this->object()->release();
   }
+  m_identifier = PoolObject::NoObjectIdentifier;
 }
 
 }  // namespace Poincare

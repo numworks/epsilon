@@ -212,7 +212,7 @@ def print_keys(f, background_values):
                 print_key(f, rect, shape)
                 break
         else:
-            raise f"{key} has no shape"
+            raise ValueError(f"{key} has no shape")
 
 
 def print_after_keys(f):

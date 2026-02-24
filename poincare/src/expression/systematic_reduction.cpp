@@ -55,16 +55,16 @@ bool SystematicReduction::DeepReduce(Tree* e) {
 
 bool SystematicReduction::ShallowReduce(Tree* e) {
 #if ASSERTIONS && DEBUG
-  assert(Dimension::DeepCheck(e));
+  COSTLY_ASSERT(Dimension::DeepCheck(e));
   Dimension dimBefore = Dimension::Get(e);
   int lenBefore = Dimension::ListLength(e);
 #endif
   bool changed = SystematicReduction::BubbleUpFromChildren(e);
-  assert(!(changed && Switch(e)));
+  COSTLY_ASSERT(!(changed && Switch(e)));
   changed = changed || Switch(e);
 #if ASSERTIONS && DEBUG
   if (changed) {
-    assert(Dimension::DeepCheck(e));
+    COSTLY_ASSERT(Dimension::DeepCheck(e));
     if (!e->isUndefined()) {
       // TODO decide the output of undef ListSort
       /* TODO This assert should always be valid regardless of Undefined state

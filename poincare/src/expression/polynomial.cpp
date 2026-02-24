@@ -323,7 +323,7 @@ Tree* Polynomial::Sanitize(Tree* polynomial) {
 /* PolynomialParser */
 
 Tree* PolynomialParser::Parse(Tree* e, const Tree* variable) {
-  assert(!AdvancedReduction::DeepExpandAlgebraic(e));
+  COSTLY_ASSERT(!AdvancedReduction::DeepExpandAlgebraic(e));
   Type type = e->type();
   ExceptionTry {
     TreeRef polynomial;

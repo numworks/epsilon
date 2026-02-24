@@ -289,7 +289,7 @@ bool SystematicOperation::ReduceSortedMultiplication(Tree* e) {
     if (Dependency::SafeMain(e)->isMult()) {
       Tree* mult = Dependency::SafeMain(e);
       assert(!NAry::Sort(mult, Order::OrderType::PreserveMatrices));
-      assert(!ReduceSortedMultiplication(mult));
+      COSTLY_ASSERT(!ReduceSortedMultiplication(mult));
     }
 #endif
     return true;

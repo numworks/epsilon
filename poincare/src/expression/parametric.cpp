@@ -160,7 +160,7 @@ Tree* ReduceSumOrProductAux(const Tree* e, const Tree* lowerBound,
     }
     assert(function->numberOfChildren() > 0);  // Because HasVariable
     NAry::SquashIfUnary(function);
-    assert(!SystematicReduction::ShallowReduce(function));
+    COSTLY_ASSERT(!SystematicReduction::ShallowReduce(function));
     // Shallow reduce the Sum
     SystematicReduction::ShallowReduce(sum);
     // Shallow reduce a*Sum

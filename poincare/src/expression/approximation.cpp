@@ -241,7 +241,7 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
                    const Parameters& parameters,
                    ContextArguments... contextArguments) {
   if (parameters.optimize) {
-    assert(Dimension::DeepCheck(e, parameters.symbolContext));
+    COSTLY_ASSERT(Dimension::DeepCheck(e, parameters.symbolContext));
   } else if (!Dimension::DeepCheck(e, parameters.symbolContext)) {
     return UndefinedUnhandledDimension<ReturnType>();
   }
@@ -355,7 +355,7 @@ Private::Approximator::Approximator(FloatPrecision floatPrecision,
 
 template <>
 Tree* Approximator::specificApproximateTo(const Tree* e) {
-  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
+  COSTLY_ASSERT(Dimension::DeepCheck(e, m_parameters.symbolContext));
   if (m_parameters.onlyReplaceNumerical) {
     Tree* result = e->cloneTree();
     approximateAndReplaceEveryScalar(result);
@@ -402,7 +402,7 @@ PointOrRealScalar<double> Approximator::specificApproximateTo(const Tree* e) {
 template <>
 BooleanOrUndefined Approximator::specificApproximateTo(const Tree* e) {
   assert(!m_parameters.onlyReplaceNumerical);
-  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
+  COSTLY_ASSERT(Dimension::DeepCheck(e, m_parameters.symbolContext));
   return privateToBoolean(e);
 };
 
@@ -436,7 +436,7 @@ template <typename FloatType>
 std::complex<FloatType> Approximator::toComplex(const Tree* e) {
   assert(Precision<FloatType>::value == m_floatPrecision);
   assert(!m_parameters.onlyReplaceNumerical);
-  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
+  COSTLY_ASSERT(Dimension::DeepCheck(e, m_parameters.symbolContext));
   assert(Dimension::IsNonListScalar(e, m_parameters.symbolContext));
   return privateToComplex<FloatType>(e);
 }
@@ -445,7 +445,7 @@ template <typename FloatType>
 PointOrRealScalar<FloatType> Approximator::toPointOrRealScalar(const Tree* e) {
   assert(m_floatPrecision == Precision<FloatType>::value);
   assert(!m_parameters.onlyReplaceNumerical);
-  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
+  COSTLY_ASSERT(Dimension::DeepCheck(e, m_parameters.symbolContext));
   Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
   return dim.isPoint() ? PointOrRealScalar<FloatType>(
@@ -456,22 +456,22 @@ PointOrRealScalar<FloatType> Approximator::toPointOrRealScalar(const Tree* e) {
 
 template <typename FloatType>
 FloatType Approximator::toFloat(const Tree* e) {
-  assert(Dimension::DeepCheck(e, m_parameters.symbolContext));
+  COSTLY_ASSERT(Dimension::DeepCheck(e, m_parameters.symbolContext));
   // Units are tolerated in scalar approximation (replaced with SI ratios).
 #if ASSERTIONS
   Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
   assert(dim.isScalar() || dim.isUnit());
 #endif
-  assert(m_context.listElement != Context::k_unspecifiedListElement ||
-         !Dimension::IsList(e, m_parameters.symbolContext));
+  COSTLY_ASSERT(m_context.listElement != Context::k_unspecifiedListElement ||
+                !Dimension::IsList(e, m_parameters.symbolContext));
   assert(!m_parameters.onlyReplaceNumerical);
   return privateToFloat<FloatType>(e);
 }
 
 template <typename T>
 Coordinate2D<T> Approximator::privateToCoordinates(const Tree* e) {
-  assert(Dimension::DeepCheck(e, m_parameters.symbolContext) &&
-         Dimension::Get(e, m_parameters.symbolContext).isPoint());
+  COSTLY_ASSERT(Dimension::DeepCheck(e, m_parameters.symbolContext) &&
+                Dimension::Get(e, m_parameters.symbolContext).isPoint());
   T xScalar, yScalar;
   assert(m_context.pointElement == Context::k_unspecifiedPointElement);
   m_context.pointElement = 0;
@@ -545,8 +545,8 @@ T Approximator::privateToFloat(const Tree* e) {
   Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
   // listElement is needed to approximate lists to scalars
-  assert(m_context.listElement != Context::k_unspecifiedListElement ||
-         !Dimension::IsList(e, m_parameters.symbolContext));
+  COSTLY_ASSERT(m_context.listElement != Context::k_unspecifiedListElement ||
+                !Dimension::IsList(e, m_parameters.symbolContext));
   // pointElement is needed to approximate points to scalars
   assert(m_context.pointElement != Context::k_unspecifiedPointElement ||
          !dim.isPoint());

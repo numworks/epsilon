@@ -46,7 +46,7 @@ bool dim(const char* input, Dimension d,
 bool len(const Tree* e, int n,
          const Poincare::SymbolContext& symbolContext =
              Poincare::EmptySymbolContext{}) {
-  assert(Dimension::DeepCheck(e, symbolContext));
+  COSTLY_ASSERT(Dimension::DeepCheck(e, symbolContext));
   return Dimension::ListLength(e, symbolContext) == n;
 }
 

@@ -233,7 +233,7 @@ bool IsSystem(const Tree* e) {
 
 bool ReduceSystem(Tree* e, bool advanced, ReductionTarget reductionTarget) {
   bool changed = SystematicReduction::DeepReduce(e);
-  assert(!SystematicReduction::DeepReduce(e));
+  COSTLY_ASSERT(!SystematicReduction::DeepReduce(e));
   if (advanced) {
     changed = AdvancedReduction::Reduce(e, reductionTarget) || changed;
   }
@@ -274,7 +274,7 @@ bool HandleUnits(Tree* e,
     /* Check that the expression after approximating scalars does not need to be
      * reduced again. We used to reduce the expression here. If we find out this
      * assertion breaks (when fuzzing), we can put it back. */
-    assert(!SystematicReduction::DeepReduce(e));
+    COSTLY_ASSERT(!SystematicReduction::DeepReduce(e));
   }
 #endif
   return changed;

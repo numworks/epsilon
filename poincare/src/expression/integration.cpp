@@ -49,7 +49,7 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
         // int(c * f(x), x, a, b) = c * int(f(x), x, a, b)
         Variables::LeaveScope(constant);
         NAry::SquashIfUnary(remainingIntegrand);
-        assert(!SystematicReduction::ShallowReduce(remainingIntegrand));
+        COSTLY_ASSERT(!SystematicReduction::ShallowReduce(remainingIntegrand));
         remainingIntegrand->moveTreeOverTree(
             Integrate(symbol, a, b, remainingIntegrand, true));
         NAry::SetNumberOfChildren(constant, constant->numberOfChildren() + 1);

@@ -924,7 +924,7 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
      * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
      * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
      * merging again when child merged with nextChild) */
-    assert(!SystematicReduction::ShallowReduce(e));
+    COSTLY_ASSERT(!SystematicReduction::ShallowReduce(e));
   }
   return changed;
 }

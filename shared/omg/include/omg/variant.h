@@ -32,16 +32,21 @@ class VariantInternalStorage<T, Ts...> {
   ~VariantInternalStorage() {}
 
   template <typename A>
-  A& unsafe_get() {
+  const A& unsafe_get() const {
     if constexpr (std::is_same_v<A, T>) {
       return m_data;
     } else {
       return m_others.template unsafe_get<A>();
     }
   }
+  template <typename A>
+  A& unsafe_get() {
+    return const_cast<A&>(
+        const_cast<const VariantInternalStorage*>(this)->unsafe_get<A>());
+  }
 
   template <typename A>
-  bool has(uint8_t type) {
+  bool has(uint8_t type) const {
     if constexpr (std::is_same_v<A, T>) {
       return type == 0;
     } else {
@@ -108,20 +113,28 @@ class Variant {
    * This is useful when simultaneously needing pointers to 2 distinct members
    * (such as in a parent constructor) */
   template <typename A>
-  A& unsafe_get() {
+  const A& unsafe_get() const {
     return m_variants.template unsafe_get<A>();
+  };
+  template <typename A>
+  A& unsafe_get() {
+    return const_cast<A&>(const_cast<const Variant*>(this)->unsafe_get<A>());
   };
 
   /* Returns the fetched type.
    * In ASSERTIONS, checks if the fetched type is indeed the stored type */
   template <typename A>
-  A& get() {
+  const A& get() const {
     assert(m_variants.template has<A>(m_type));
     return unsafe_get<A>();
   };
+  template <typename A>
+  A& get() {
+    return const_cast<A&>(const_cast<const Variant*>(this)->get<A>());
+  };
 
   template <typename A>
-  bool has() {
+  bool has() const {
     return m_variants.template has<A>(m_type);
   };
 
@@ -166,7 +179,7 @@ class Variant2 {
   }
 
   template <typename A>
-  A& get() {
+  const A& get() const {
     if constexpr (std::is_same_v<A, One>) {
       assert(m_type == 0);
       return m_one;
@@ -177,9 +190,13 @@ class Variant2 {
       OMG_UNREACHABLE;
     }
   }
+  template <typename A>
+  A& get() {
+    return const_cast<A&>(const_cast<const Variant2*>(this)->get<A>());
+  }
 
   template <typename A>
-  A& unsafe_get() {
+  const A& unsafe_get() const {
     if constexpr (std::is_same_v<A, One>) {
       return m_one;
     } else if constexpr (std::is_same_v<A, Two>) {
@@ -187,6 +204,10 @@ class Variant2 {
     } else {
       OMG_UNREACHABLE;
     }
+  }
+  template <typename A>
+  A& unsafe_get() {
+    return const_cast<A&>(const_cast<const Variant2*>(this)->unsafe_get<A>());
   }
 
   template <typename A, typename... Args>

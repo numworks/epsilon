@@ -196,8 +196,7 @@ int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   Private::Context context;
   context.localEvaluator.pushVariable(x);
   const Tree* branch =
-      Private::Approximator(Precision<T>::value, Private::InternalParameters{},
-                            std::move(context))
+      Private::Approximator(Precision<T>::value, {}, std::move(context))
           .selectPiecewiseBranch(piecewise);
   return !branch            ? k_unknownActiveBranch
          : branch == KUndef ? k_noActiveBranch
@@ -286,9 +285,8 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
 #if POINCARE_NO_FLOAT_APPROXIMATION
   assert(floatPrecision == FloatPrecision::Double);
 #endif
-  Approximator approximator =
-      Approximator{floatPrecision, InternalParameters(parameters.user),
-                   Context(contextArguments...)};
+  Approximator approximator = Approximator{floatPrecision, parameters.user,
+                                           Context(contextArguments...)};
   const Tree* targetTree = prepared ? prepared : e;
 
   ReturnType result =
@@ -382,7 +380,7 @@ std::complex<T> ToUndefinedComplexValue(DefinedStatus status) {
 }
 
 Private::Approximator::Approximator(FloatPrecision floatPrecision,
-                                    const InternalParameters& parameters,
+                                    const InternalUserParameters& parameters,
                                     Context&& context)
     : m_floatPrecision(floatPrecision),
       m_parameters(parameters),

@@ -283,23 +283,25 @@ struct Substitution {
   T originB;
 };
 
-class InternalParameters {
- public:
-  InternalParameters() = default;
-  explicit InternalParameters(const UserParameters& userParameters)
-      : complexFormat{userParameters.complexFormat},
-        angleUnit{userParameters.angleUnit},
-        symbolContext{userParameters.context} {}
-  const ComplexFormat complexFormat = ComplexFormat::None;
-  // Mutable because of AngleUnitContext
-  mutable AngleUnit angleUnit = AngleUnit::None;
-  const Poincare::SymbolContext& symbolContext = k_emptySymbolContext;
-};
-
 class Approximator {
+  /* Copy of the Poincare::UserParameters struct but the constness attributes
+   * are a bit different (angleUnit must be mutable when approximating) */
+  class InternalUserParameters {
+   public:
+    InternalUserParameters() = default;
+    InternalUserParameters(const UserParameters& userParameters)
+        : complexFormat{userParameters.complexFormat},
+          angleUnit{userParameters.angleUnit},
+          symbolContext{userParameters.context} {}
+    const ComplexFormat complexFormat = ComplexFormat::None;
+    // Mutable because of AngleUnitContext
+    mutable AngleUnit angleUnit = AngleUnit::None;
+    const Poincare::SymbolContext& symbolContext = k_emptySymbolContext;
+  };
+
  public:
   Approximator(FloatPrecision floatPrecision,
-               const InternalParameters& parameters,
+               const InternalUserParameters& parameters,
                Private::Context&& context);
 
   /* Specific processing for the ReturnType. Must be overloaded for each
@@ -490,7 +492,7 @@ class Approximator {
   T toLocalContext(const Tree* e, T x);
 
   const FloatPrecision m_floatPrecision;
-  const InternalParameters m_parameters;
+  const InternalUserParameters m_parameters;
   Private::Context m_context;
 };
 

@@ -286,17 +286,14 @@ struct Substitution {
 class InternalParameters {
  public:
   InternalParameters() = default;
-  explicit InternalParameters(const UserParameters& userParameters,
-                              bool onlyReplaceNumerical)
+  explicit InternalParameters(const UserParameters& userParameters)
       : complexFormat{userParameters.complexFormat},
         angleUnit{userParameters.angleUnit},
-        symbolContext{userParameters.context},
-        onlyReplaceNumerical(onlyReplaceNumerical) {}
+        symbolContext{userParameters.context} {}
   const ComplexFormat complexFormat = ComplexFormat::None;
   // Mutable because of AngleUnitContext
   mutable AngleUnit angleUnit = AngleUnit::None;
   const Poincare::SymbolContext& symbolContext = k_emptySymbolContext;
-  bool onlyReplaceNumerical = false;
 };
 
 class Approximator {
@@ -319,6 +316,9 @@ class Approximator {
   inline void toComplexTreeInplace(Tree* e) {
     e->moveTreeOverTree(toComplexTree<double>(e));
   }
+
+  // Approximate every scalar subtree that can be approximated.
+  void approximateAndReplaceEveryScalar(Tree* e);
 
   FloatPrecision floatPrecision() const { return m_floatPrecision; }
 
@@ -443,9 +443,6 @@ class Approximator {
 
   // Tree can be of any dimension
   Tree* privateToTree(const Tree* e, Dimension dim);
-
-  // Approximate every scalar subtree that can be approximated.
-  void approximateAndReplaceEveryScalar(Tree* e);
 
   void approximateAndReplaceEveryScalarRecursive(Tree* e);
 

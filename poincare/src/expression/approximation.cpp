@@ -236,13 +236,40 @@ Tree* PostProcessPreparedAndResult(Tree* prepared, Tree* result) {
   return prepared;
 }
 
-bool CheckDimension(const Tree* e, const UserSettings& userSettings,
+bool CheckDimension(const Tree* e, const UserParameters& userParameters,
                     bool optimize) {
   if (!optimize) {
-    return Dimension::DeepCheck(e, userSettings.context);
+    return Dimension::DeepCheck(e, userParameters.context);
   }
-  COSTLY_ASSERT(Dimension::DeepCheck(e, userSettings.context));
+  COSTLY_ASSERT(Dimension::DeepCheck(e, userParameters.context));
   return true;
+}
+
+FloatPrecision UpdateFloatPrecision(const Tree* e,
+                                    FloatPrecision currentFloatPrecision,
+                                    bool onlyReplaceNumerical) {
+  // Should we do it even without onlyReplaceNumerical?
+  if (onlyReplaceNumerical && currentFloatPrecision == FloatPrecision::Double &&
+      e->hasDescendantSatisfying(
+          [](const Tree* e) { return e->isSingleFloat(); })) {
+    // Prevent float to double conversion
+    return FloatPrecision::Single;
+  }
+  return currentFloatPrecision;
+}
+
+template <typename ReturnType>
+ReturnType ProcessOnlyReplaceNumerical(const Tree*, Approximator&) {
+  // The onlyReplaceNumerical policy only makes sense for a Tree* return type
+  assert(false);
+  OMG_UNREACHABLE;
+}
+
+template <>
+Tree* ProcessOnlyReplaceNumerical(const Tree* e, Approximator& approximator) {
+  Tree* result = e->cloneTree();
+  approximator.approximateAndReplaceEveryScalar(result);
+  return result;
 }
 
 template <typename ReturnType, typename... ContextArguments>
@@ -254,22 +281,20 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
   }
   Tree* prepared = PrepareTree(e, parameters.policy);
 
-  if (parameters.policy.onlyReplaceNumerical &&
-      floatPrecision == FloatPrecision::Double &&
-      e->hasDescendantSatisfying(
-          [](const Tree* e) { return e->isSingleFloat(); })) {
-    // Prevent float to double conversion
-    floatPrecision = FloatPrecision::Single;
-  }
+  floatPrecision = UpdateFloatPrecision(e, floatPrecision,
+                                        parameters.policy.onlyReplaceNumerical);
 #if POINCARE_NO_FLOAT_APPROXIMATION
   assert(floatPrecision == FloatPrecision::Double);
 #endif
+  Approximator approximator =
+      Approximator{floatPrecision, InternalParameters(parameters.user),
+                   Context(contextArguments...)};
+  const Tree* targetTree = prepared ? prepared : e;
+
   ReturnType result =
-      Approximator{floatPrecision,
-                   InternalParameters(parameters.user,
-                                      parameters.policy.onlyReplaceNumerical),
-                   Context(contextArguments...)}
-          .specificApproximateTo<ReturnType>(prepared ? prepared : e);
+      parameters.policy.onlyReplaceNumerical
+          ? ProcessOnlyReplaceNumerical<ReturnType>(targetTree, approximator)
+          : approximator.specificApproximateTo<ReturnType>(targetTree);
   if (!prepared) {
     return result;
   }
@@ -366,11 +391,6 @@ Private::Approximator::Approximator(FloatPrecision floatPrecision,
 template <>
 Tree* Approximator::specificApproximateTo(const Tree* e) {
   COSTLY_ASSERT(Dimension::DeepCheck(e, m_parameters.symbolContext));
-  if (m_parameters.onlyReplaceNumerical) {
-    Tree* result = e->cloneTree();
-    approximateAndReplaceEveryScalar(result);
-    return result;
-  }
   Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
   int listLength = Dimension::ListLength(e, m_parameters.symbolContext);
   if (listLength != Dimension::k_nonListListLength) {
@@ -411,7 +431,6 @@ PointOrRealScalar<double> Approximator::specificApproximateTo(const Tree* e) {
 
 template <>
 BooleanOrUndefined Approximator::specificApproximateTo(const Tree* e) {
-  assert(!m_parameters.onlyReplaceNumerical);
   COSTLY_ASSERT(Dimension::DeepCheck(e, m_parameters.symbolContext));
   return privateToBoolean(e);
 };
@@ -430,14 +449,12 @@ double Approximator::specificApproximateTo(const Tree* e) {
 
 template <>
 Coordinate2D<float> Approximator::specificApproximateTo(const Tree* e) {
-  assert(!m_parameters.onlyReplaceNumerical);
   assert(m_floatPrecision == FloatPrecision::Single);
   return privateToCoordinates<float>(e);
 }
 
 template <>
 Coordinate2D<double> Approximator::specificApproximateTo(const Tree* e) {
-  assert(!m_parameters.onlyReplaceNumerical);
   assert(m_floatPrecision == FloatPrecision::Double);
   return privateToCoordinates<double>(e);
 }
@@ -445,7 +462,6 @@ Coordinate2D<double> Approximator::specificApproximateTo(const Tree* e) {
 template <typename FloatType>
 std::complex<FloatType> Approximator::toComplex(const Tree* e) {
   assert(Precision<FloatType>::value == m_floatPrecision);
-  assert(!m_parameters.onlyReplaceNumerical);
   COSTLY_ASSERT(Dimension::DeepCheck(e, m_parameters.symbolContext));
   assert(Dimension::IsNonListScalar(e, m_parameters.symbolContext));
   return privateToComplex<FloatType>(e);
@@ -454,7 +470,6 @@ std::complex<FloatType> Approximator::toComplex(const Tree* e) {
 template <typename FloatType>
 PointOrRealScalar<FloatType> Approximator::toPointOrRealScalar(const Tree* e) {
   assert(m_floatPrecision == Precision<FloatType>::value);
-  assert(!m_parameters.onlyReplaceNumerical);
   COSTLY_ASSERT(Dimension::DeepCheck(e, m_parameters.symbolContext));
   Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
@@ -474,7 +489,6 @@ FloatType Approximator::toFloat(const Tree* e) {
 #endif
   COSTLY_ASSERT(m_context.listElement != Context::k_unspecifiedListElement ||
                 !Dimension::IsList(e, m_parameters.symbolContext));
-  assert(!m_parameters.onlyReplaceNumerical);
   return privateToFloat<FloatType>(e);
 }
 

@@ -17,7 +17,6 @@ bool evaluateCondition(bool condition, bool* conditionHasBeenEvaluated) {
 
 QUIZ_CASE(omg_assertions) {
   TEST_ASSERTION(assert, true, ASSERTIONS);
-  TEST_ASSERTION(DANGER_ASSERT, true, ASSERTIONS);
   TEST_ASSERTION(DEBUG_ASSERT, true, (ASSERTIONS && DEBUG));
   TEST_ASSERTION(NON_DEBUG_ASSERT, true, (ASSERTIONS && !DEBUG));
   TEST_ASSERTION(EVALUATE_AND_ASSERT, true, true);
@@ -25,7 +24,6 @@ QUIZ_CASE(omg_assertions) {
 
 #if !ASSERTIONS
   TEST_ASSERTION(assert, false, false);
-  TEST_ASSERTION(DANGER_ASSERT, false, false);
   TEST_ASSERTION(DEBUG_ASSERT, false, false);
   TEST_ASSERTION(NON_DEBUG_ASSERT, false, false);
   TEST_ASSERTION(EVALUATE_AND_ASSERT, false, true);
@@ -46,7 +44,6 @@ QUIZ_CASE(omg_assertions) {
 #if ASSERTIONS
   // assert(false);
   // EVALUATE_AND_ASSERT(false);
-  // DANGER_ASSERT(false);
 #if DEBUG
   // DEBUG_ASSERT(false);
 #else

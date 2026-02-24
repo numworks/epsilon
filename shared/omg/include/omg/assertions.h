@@ -11,9 +11,6 @@ static_assert(!ASSERTIONS);
 static_assert(ASSERTIONS);
 #endif
 
-// Indicates a severe risk if it fails in release
-#define DANGER_ASSERT(c) assert(c)
-
 // Always ignored in DEBUG=0
 #define DEBUG_ASSERT(c) assert(!DEBUG || (c))
 

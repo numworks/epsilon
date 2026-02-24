@@ -19,7 +19,7 @@ namespace Poincare::Internal {
 
 bool Derivation::Reduce(Tree* e) {
   // Tree's children are expected to have been reduced beforehand.
-  DANGER_ASSERT(e->isDiff());
+  assert(e->isDiff());
   static_assert(Parametric::k_variableIndex == 0 &&
                 Parametric::k_variableIndex + 1 == Parametric::k_valueIndex &&
                 Parametric::k_valueIndex + 1 == Parametric::k_orderIndex &&

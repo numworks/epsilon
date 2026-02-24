@@ -463,9 +463,9 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
     DEBUG_ASSERT(!(reduce && SystematicReduction::DeepReduce(inserted)));
     node = node->nextNode();
   }
-  NON_DEBUG_ASSERT(!(reduce &&
-                     (!insertedNAry || insertedNAry->numberOfChildren() > 0) &&
-                     SystematicReduction::DeepReduce(top)));
+  COSTLY_ASSERT(!(reduce &&
+                  (!insertedNAry || insertedNAry->numberOfChildren() > 0) &&
+                  SystematicReduction::DeepReduce(top)));
   return top;
 }
 

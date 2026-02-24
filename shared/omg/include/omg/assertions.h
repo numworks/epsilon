@@ -14,9 +14,6 @@ static_assert(ASSERTIONS);
 // Always ignored in DEBUG=0
 #define DEBUG_ASSERT(c) assert(!DEBUG || (c))
 
-// Always ignored in DEBUG=1
-#define NON_DEBUG_ASSERT(c) assert(DEBUG || (c))
-
 // Always evaluates the condition
 #if NDEBUG
 #define EVALUATE_AND_ASSERT(c) ((void)(c))

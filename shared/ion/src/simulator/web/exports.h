@@ -6,8 +6,8 @@ extern "C" {
 
 const char* IonSoftwareVersion();
 const char* IonPatchLevel();
-void IonSimulatorKeyboardKeyDown(int keyNumber);
-void IonSimulatorKeyboardKeyUp(int keyNumber);
+void IonSimulatorKeyboardKeyDown(int keyIndex);
+void IonSimulatorKeyboardKeyUp(int keyIndex);
 void IonSimulatorEventsPushEvent(int eventNumber);
 void IonSimulatorEventsPushEventArray(const char* eventBufferAsChar, int length,
                                       int fromIndex, int toIndex);

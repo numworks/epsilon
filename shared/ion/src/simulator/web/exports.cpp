@@ -13,13 +13,13 @@ const char* IonSoftwareVersion() { return Ion::softwareVersion(); }
 
 const char* IonPatchLevel() { return Ion::commitHash(); }
 
-void IonSimulatorKeyboardKeyDown(int keyNumber) {
-  Ion::Keyboard::Key key = static_cast<Ion::Keyboard::Key>(keyNumber);
+void IonSimulatorKeyboardKeyDown(int keyIndex) {
+  Ion::Keyboard::Key key = Ion::Keyboard::ValidKeys[keyIndex];
   Ion::Simulator::Keyboard::keyDown(key);
 }
 
-void IonSimulatorKeyboardKeyUp(int keyNumber) {
-  Ion::Keyboard::Key key = static_cast<Ion::Keyboard::Key>(keyNumber);
+void IonSimulatorKeyboardKeyUp(int keyIndex) {
+  Ion::Keyboard::Key key = Ion::Keyboard::ValidKeys[keyIndex];
   Ion::Simulator::Keyboard::keyUp(key);
 }
 

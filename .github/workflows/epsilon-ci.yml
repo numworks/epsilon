@@ -5,13 +5,11 @@ on:
     branches: master
     paths-ignore:
       - '**/*.md'
-      - 'epsilon/tests/**'
       - '**/scandium/**'
       - 'epsilon/external_apps/**'
   pull_request:
     paths-ignore:
       - '**/*.md'
-      - 'epsilon/tests/**'
       - '**/scandium/**'
       - 'epsilon/external_apps/**'
   # TODO many steps may be skipped when changes are all in

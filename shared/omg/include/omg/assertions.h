@@ -27,6 +27,13 @@ static_assert(ASSERTIONS);
 #define EVALUATE_AND_ASSERT(c) assert(c)
 #endif
 
+// Can be deactivated with OPTIMIZE_ASSERTIONS=1 compilation flag
+#if OPTIMIZE_ASSERTIONS
+#define COSTLY_ASSERT(c) ((void)0)
+#else
+#define COSTLY_ASSERT(c) assert(c)
+#endif
+
 /* Ideas to implement in the future:
  * - NON_RECURSIVE_ASSERT : Ignored if called during an assertion
  */

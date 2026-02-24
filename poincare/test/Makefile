@@ -11,6 +11,7 @@ include $(PATH_haussmann)/Makefile
 
 SFLAGS += \
   -DASSERTIONS=$(ASSERTIONS) \
+  -DOPTIMIZE_ASSERTIONS=$(ASSERTIONS) \
   -DEXTERNAL_APPS_API_LEVEL=0
 
 ifeq ($(PLATFORM_TYPE),device)

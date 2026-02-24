@@ -865,8 +865,10 @@ SolverResult ExactSolve(
   if (result.solutionMetadata.solutionType != SolutionType::Formal) {
     result.approximateSolutionList = Approximation::To<Tree*>(
         result.exactSolutionList, FloatPrecision::Double,
-        Approximation::Parameters{.policy = {.prepare = true, .optimize = true},
-                                  .user = beautificationParameters.user});
+        Approximation::Parameters{
+            .policy = {.optimize = true},
+            .expressionParameters =
+                Approximation::ProjectedPolicy{.prepare = true}});
   }
 
   /* Beautify result */

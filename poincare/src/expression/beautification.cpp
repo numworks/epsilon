@@ -695,15 +695,13 @@ Tree* GetPolarFormat(const Tree* e,
   if (hasSingleFloats) {
     arg->moveTreeOverTree(To<Tree*>(
         arg, FloatPrecision::Single,
-        Approximation::Parameters{.policy = {.prepare = false,
-                                             .onlyReplaceNumerical = true,
-                                             .optimize = true}}));
+        Approximation::Parameters{
+            .policy = {.onlyReplaceNumerical = true, .optimize = true}}));
   } else if (hasDoubleFloats) {
     arg->moveTreeOverTree(To<Tree*>(
         arg, FloatPrecision::Double,
-        Approximation::Parameters{.policy = {.prepare = false,
-                                             .onlyReplaceNumerical = true,
-                                             .optimize = true}}));
+        Approximation::Parameters{
+            .policy = {.onlyReplaceNumerical = true, .optimize = true}}));
   }
 
   SharedTreeStack->pushComplexI();

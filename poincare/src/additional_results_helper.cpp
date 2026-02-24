@@ -92,10 +92,11 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
       Tree* sine = PatternMatching::Create(KSin(KA), {.KA = exactAngle});
       bool removePeriod =
           Approximation::To<double>(
-              sine,
-              Approximation::Parameters{
-                  .policy = {.projectLocalVariables = true, .optimize = true},
-                  .user = simplificationParameters.user}) < 0;
+              sine, Approximation::Parameters{
+                        .policy = {.optimize = true},
+                        .expressionParameters =
+                            Approximation::ExpressionVariantParameters(
+                                simplificationParameters.user)}) < 0;
       sine->removeTree();
       if (removePeriod) {
         approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
@@ -106,8 +107,9 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
     approximateAngleTree->moveTreeOverTree(Approximation::To<Tree*>(
         approximateAngleTree, FloatPrecision::Double,
         Approximation::Parameters{
-            .policy = {.projectLocalVariables = true, .optimize = true},
-            .user = simplificationParameters.user}));
+            .policy = {.optimize = true},
+            .expressionParameters = Approximation::ExpressionVariantParameters(
+                simplificationParameters.user)}));
     Beautification::DeepBeautify(
         approximateAngleTree,
         ToBeautificationParameters(simplificationParameters));
@@ -129,8 +131,9 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   double approximatedAngle = Approximation::To<double>(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
       Approximation::Parameters{
-          .policy = {.projectLocalVariables = true, .optimize = true},
-          .user = simplificationParameters.user});
+          .policy = {.optimize = true},
+          .expressionParameters = Approximation::ExpressionVariantParameters(
+              simplificationParameters.user)});
   if (approximateAngleTree) {
     approximateAngleTree->removeTree();
   }
@@ -225,11 +228,11 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   if (reductionFailure ||
       !std::isfinite(Approximation::To<float>(
           exactAngle,
-          Approximation::Parameters{
-              .policy = {.projectLocalVariables = true, .optimize = true},
-              .user = {.complexFormat = complexFormat,
-                       .angleUnit = angleUnit,
-                       .context = symbolContext}}))) {
+          Approximation::Parameters{.policy = {.optimize = true},
+                                    .expressionParameters = UserParameters{
+                                        .complexFormat = complexFormat,
+                                        .angleUnit = angleUnit,
+                                        .context = symbolContext}}))) {
     exactAngle->removeTree();
     return UserExpression();
   }
@@ -582,8 +585,10 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
   // Re-approximate with onlyReplaceNumerical to remove polar format
   Approximation::Approximate(
       e, FloatPrecision::Double,
-      Approximation::Parameters{.policy = {.onlyReplaceNumerical = true},
-                                .user = userParameters});
+      Approximation::Parameters{
+          .policy = {.onlyReplaceNumerical = true},
+          .expressionParameters =
+              Approximation::ExpressionVariantParameters(userParameters)});
   Internal::Dimension dim = Internal::Dimension::Get(e);
   assert(!dim.isUnit());
   return CreateBeautifiedLayout(
@@ -616,7 +621,8 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
    * able to call RowCanonize in a private method (when it's used in the "To"
    * approximation pipeline) */
   Approximation::Private::Approximator defaultMatrixApproximator =
-      Approximation::Private::Approximator(FloatPrecision::Double, {},
+      Approximation::Private::Approximator(FloatPrecision::Double,
+                                           Approximation::ProjectedPolicy{},
                                            Approximation::Private::Context{});
   Approximation::Private::Approximator* approximator =
       isApproximate ? &defaultMatrixApproximator : nullptr;

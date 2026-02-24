@@ -10,10 +10,9 @@ using namespace Poincare::Internal;
 template <typename T>
 void approximates_to(const Tree* n, T f) {
   T approx = Approximation::To<T>(
-      n,
-      Approximation::Parameters{.policy = {.projectLocalVariables = true},
-                                .user = {.complexFormat = ComplexFormat::Real,
-                                         .angleUnit = AngleUnit::Radian}});
+      n, Approximation::Parameters{.expressionParameters = UserParameters{
+                                       .complexFormat = ComplexFormat::Real,
+                                       .angleUnit = AngleUnit::Radian}});
   bool result =
       OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG
@@ -33,9 +32,9 @@ template <typename T>
 void approximates_to(const Tree* n, const Tree* expected) {
   Tree* approx = Approximation::To<Tree*>(
       n, Precision<T>::value,
-      Approximation::Parameters{.policy = {.projectLocalVariables = true},
-                                .user = {.complexFormat = ComplexFormat::Real,
-                                         .angleUnit = AngleUnit::Radian}});
+      Approximation::Parameters{.expressionParameters = UserParameters{
+                                    .complexFormat = ComplexFormat::Real,
+                                    .angleUnit = AngleUnit::Radian}});
   bool result = approx->treeIsIdenticalTo(expected);
 #if POINCARE_TREE_LOG
   if (!result) {
@@ -57,8 +56,7 @@ void approximates_to(const char* input, T f,
   Tree* expression = parse(input, userParameters.context);
   T approx = Approximation::To<T>(
       expression,
-      Approximation::Parameters{.policy = {.projectLocalVariables = true},
-                                .user = userParameters});
+      Approximation::Parameters{.expressionParameters = userParameters});
   bool result =
       OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG
@@ -85,8 +83,10 @@ void approximates_to(const char* input, const char* output,
          const Poincare::SimplificationParameters& simplificationParameters) {
         tree->moveTreeOverTree(Approximation::To<Tree*>(
             tree, Precision<T>::value,
-            Approximation::Parameters{.policy = {.projectLocalVariables = true},
-                                      .user = simplificationParameters.user}));
+            Approximation::Parameters{
+                .expressionParameters =
+                    Approximation::ExpressionVariantParameters(
+                        simplificationParameters.user)}));
         Beautification::DeepBeautify(
             tree, ToBeautificationParameters(simplificationParameters));
       },
@@ -108,10 +108,9 @@ void approximates_to_boolean(const Tree* n,
   Approximation::BooleanOrUndefined approx =
       Approximation::To<Approximation::BooleanOrUndefined>(
           n, FloatPrecision::Single,
-          Approximation::Parameters{
-              .policy = {.projectLocalVariables = true},
-              .user = {.complexFormat = ComplexFormat::Real,
-                       .angleUnit = AngleUnit::Radian}});
+          Approximation::Parameters{.expressionParameters = UserParameters{
+                                        .complexFormat = ComplexFormat::Real,
+                                        .angleUnit = AngleUnit::Radian}});
   quiz_assert(approx.isUndefined() == expected.isUndefined());
   if (!approx.isUndefined()) {
     quiz_assert(approx.value() == expected.value());
@@ -125,8 +124,7 @@ void approximates_to_boolean(const char* input,
   Approximation::BooleanOrUndefined approx =
       Approximation::To<Approximation::BooleanOrUndefined>(
           expression, FloatPrecision::Single,
-          Approximation::Parameters{.policy = {.projectLocalVariables = true},
-                                    .user = userParameters});
+          Approximation::Parameters{.expressionParameters = userParameters});
   quiz_assert(approx.isUndefined() == expected.isUndefined());
   if (!approx.isUndefined()) {
     quiz_assert(approx.value() == expected.value());
@@ -157,8 +155,8 @@ void simplified_approximates_to(
         tree->moveTreeOverTree(Approximation::To<Tree*>(
             tree, Precision<T>::value,
             Approximation::Parameters{
-                .policy = {.projectLocalVariables = true, .optimize = true},
-                .user = simplificationParameters.user}));
+                .policy = {.optimize = true},
+                .expressionParameters = Approximation::ProjectedPolicy{}}));
         Beautification::DeepBeautify(
             tree, ToBeautificationParameters(simplificationParameters));
       },
@@ -178,8 +176,9 @@ void projected_approximates_to(
         tree->moveTreeOverTree(Approximation::To<Tree*>(
             tree, Precision<T>::value,
             Approximation::Parameters{
-                .policy = {.prepare = true, .optimize = true},
-                .user = simplificationParameters.user}));
+                .policy = {.optimize = true},
+                .expressionParameters =
+                    Approximation::ProjectedPolicy{.prepare = true}}));
         Beautification::DeepBeautify(
             tree, ToBeautificationParameters(simplificationParameters));
       },
@@ -197,8 +196,11 @@ void approximates_to_keeping_symbols(
         Variables::ProjectLocalVariablesToId(tree);
         Approximation::Approximate(
             tree, Precision<T>::value,
-            Approximation::Parameters{.policy = {.onlyReplaceNumerical = true},
-                                      .user = simplificationParameters.user});
+            Approximation::Parameters{
+                .policy = {.onlyReplaceNumerical = true},
+                .expressionParameters =
+                    Approximation::ExpressionVariantParameters(
+                        simplificationParameters.user)});
         Variables::BeautifyToName(tree);
       },
       SimplificationParameters{.user = userParameters},

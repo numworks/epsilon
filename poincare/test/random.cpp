@@ -10,7 +10,7 @@ using namespace Poincare::Internal;
 
 template <typename T>
 void compare_approximates(const Tree* e1, const Tree* e2, bool equal,
-                          Approximation::Parameters params) {
+                          const Approximation::Parameters& params) {
   /* The two approximations are done with two distinct instances of the
    * approximation context, so that the random() of the two expressions are
    * evaluated differently */
@@ -73,8 +73,7 @@ void simplify_and_compare_approximates_list(const char* input, bool equal) {
   Tree* e = parse_and_reduce(input, true);
   assert(Dimension::ListLength(e) == 2);
   Tree* eApproximated = Approximation::To<Tree*>(
-      e, Poincare::Precision<T>::value,
-      Approximation::Parameters{.policy = {.projectLocalVariables = true}});
+      e, Poincare::Precision<T>::value, Approximation::Parameters{});
   T approx1 = Approximation::To<T>(eApproximated->child(0),
                                    Approximation::Parameters{});
   T approx2 = Approximation::To<T>(eApproximated->child(1),
@@ -148,8 +147,7 @@ void assert_approximate_is_int(const char* input, int lowerBound,
   if (Dimension::IsList(e)) {
     int length = Dimension::ListLength(e);
     Tree* eApproximated = Approximation::To<Tree*>(
-        e, Poincare::FloatPrecision::Single,
-        Approximation::Parameters{.policy = {.projectLocalVariables = true}});
+        e, Poincare::FloatPrecision::Single, Approximation::Parameters{});
     assert(length > 0);
     for (int i = 0; i < length; i++) {
       quiz_assert_print_if_failure(

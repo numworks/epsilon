@@ -85,7 +85,9 @@ SystemExpression SystemExpression::approximateSystemToTree(
   return SystemExpression::Builder(Approximation::To<Tree*>(
       tree(), floatPrecision,
       Approximation::Parameters{
-          .policy = {.prepare = true, .optimize = true}}));
+          .policy = {.optimize = true},
+          .expressionParameters =
+              Approximation::ProjectedPolicy{.prepare = true}}));
 }
 
 void SystemExpression::cloneAndBeautifyAndApproximate(
@@ -203,15 +205,19 @@ T SystemExpression::approximateSystemToRealScalar() const {
     return NAN;
   }
   return Approximation::To<T>(
-      tree(),
-      Approximation::Parameters{.policy = {.prepare = true, .optimize = true}});
+      tree(), Approximation::Parameters{
+                  .policy = {.optimize = true},
+                  .expressionParameters =
+                      Approximation::ProjectedPolicy{.prepare = true}});
 }
 
 template <typename T>
 Coordinate2D<T> SystemExpression::approximateToPoint() const {
   return Approximation::To<Coordinate2D<T>>(
-      tree(),
-      Approximation::Parameters{.policy = {.prepare = true, .optimize = true}});
+      tree(), Approximation::Parameters{
+                  .policy = {.optimize = true},
+                  .expressionParameters =
+                      Approximation::ProjectedPolicy{.prepare = true}});
 }
 
 SystemExpression SystemExpression::approximateListAndSort(
@@ -222,7 +228,9 @@ SystemExpression SystemExpression::approximateListAndSort(
   clone->moveTreeOverTree(Approximation::To<Tree*>(
       clone, floatPrecision,
       Approximation::Parameters{
-          .policy = {.prepare = true, .optimize = true}}));
+          .policy = {.optimize = true},
+          .expressionParameters =
+              Approximation::ProjectedPolicy{.prepare = true}}));
   return SystemExpression::Builder(clone);
 }
 

@@ -156,9 +156,9 @@ UserExpression UserExpression::cloneAndApproximate(
   Tree* a = Approximation::To<Tree*>(
       tree(), floatPrecision,
       Approximation::Parameters{
-          .policy = {.projectLocalVariables = true,
-                     .onlyReplaceNumerical = onlyReplaceNumerical},
-          .user = userParameters});
+          .policy = {.onlyReplaceNumerical = onlyReplaceNumerical},
+          .expressionParameters =
+              Approximation::ExpressionVariantParameters(userParameters)});
   /* There are several issues that currently prevent us from beautifying an
    * approximated CAS expression:
    * - the beautified exact expression and the beautified approximate expression
@@ -215,11 +215,10 @@ T UserExpression::privateApproximateToRealScalar(
     const SymbolContext& symbolContext) const {
   static_assert(std::is_floating_point_v<T>);
   return Approximation::To<T>(
-      tree(),
-      Approximation::Parameters{.policy = {.projectLocalVariables = true},
-                                .user = {.complexFormat = complexFormat,
-                                         .angleUnit = angleUnit,
-                                         .context = symbolContext}});
+      tree(), Approximation::Parameters{.expressionParameters = UserParameters{
+                                            .complexFormat = complexFormat,
+                                            .angleUnit = angleUnit,
+                                            .context = symbolContext}});
 }
 
 template <typename T>
@@ -301,11 +300,10 @@ bool UserExpression::hasDefinedComplexApproximation(
     return false;
   }
   std::complex<T> z = Approximation::To<std::complex<T>>(
-      tree(),
-      Approximation::Parameters{.policy = {.projectLocalVariables = true},
-                                .user = {.complexFormat = complexFormat,
-                                         .angleUnit = angleUnit,
-                                         .context = symbolContext}});
+      tree(), Approximation::Parameters{.expressionParameters = UserParameters{
+                                            .complexFormat = complexFormat,
+                                            .angleUnit = angleUnit,
+                                            .context = symbolContext}});
   T b = z.imag();
   if (b == static_cast<T>(0.) || std::isinf(b) || std::isnan(b)) {
     return false;

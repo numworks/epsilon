@@ -1,6 +1,7 @@
 #pragma once
 
 #include <omg/signaling_nan.h>
+#include <omg/variant.h>
 #include <omg/vector.h>
 #include <poincare/float_precision.h>
 #include <poincare/point_or_scalar.h>
@@ -28,12 +29,6 @@ struct Dimension;
 namespace Approximation {
 
 struct ApproximationPolicy {
-  /* Must be true if expression has not been projected and may have parametric
-   * functions. */
-  bool projectLocalVariables = false;
-  /* Last two parameters may only be used on projected expressions. */
-  // Tree will be prepared for a more accurate approximation
-  bool prepare = false;
   /* Only numerical values are approximated, the rest is preserved (including
    * randoms, variables, units, function symbols, depLists). For example "pi*x +
    * 1/3" will be transformed into "3.14*x + 0.33". This is useful to optimize
@@ -48,12 +43,48 @@ struct ApproximationPolicy {
   bool optimize = false;
 };
 
+struct ProjectedPolicy {
+  // Prepare is only possible on projected expressions (i.e. SystemExpressions)
+  bool prepare = false;
+};
+
+class ExpressionVariantParameters {
+ public:
+  enum class Type : bool { User, Projected };
+
+  ExpressionVariantParameters(ProjectedPolicy projectedPolicy) {
+    m_data.init<ProjectedPolicy>(projectedPolicy);
+  }
+
+  ExpressionVariantParameters(const UserParameters& userParameters) {
+    m_data.init<UserParameters>(userParameters);
+  }
+
+  Type type() const {
+    if (m_data.has<UserParameters>()) {
+      return Type::User;
+    } else if (m_data.has<ProjectedPolicy>()) {
+      return Type::Projected;
+    }
+    OMG_UNREACHABLE
+  }
+
+  template <typename T>
+  T& get() {
+    return m_data.get<T>();
+  }
+  template <typename T>
+  const T& get() const {
+    return m_data.get<T>();
+  }
+
+ private:
+  OMG::Variant<UserParameters, ProjectedPolicy> m_data;
+};
+
 struct Parameters {
-  ApproximationPolicy policy;
-  /* User parameters should only be passed in case of a UserExpression.
-   * UnitFormat isn't needed for approximation but it's more convenient to reuse
-   * the same struct. */
-  UserParameters user;
+  ApproximationPolicy policy = {};
+  ExpressionVariantParameters expressionParameters = ProjectedPolicy{};
 };
 
 /* Approximation public methods */
@@ -200,7 +231,8 @@ class Context {
 
 /* If requested, project user variables or prepare the expression for
  * approximation */
-Tree* PrepareTree(const Tree* e, const ApproximationPolicy& policy);
+Tree* PrepareTree(const Tree* e,
+                  const ExpressionVariantParameters& expressionParameters);
 
 /* Undefined value representing an unhandled dimension for the T type (Tree,
  * float / double, boolean etc.)
@@ -289,10 +321,12 @@ class Approximator {
   class InternalUserParameters {
    public:
     InternalUserParameters() = default;
-    InternalUserParameters(const UserParameters& userParameters)
-        : complexFormat{userParameters.complexFormat},
-          angleUnit{userParameters.angleUnit},
-          symbolContext{userParameters.context} {}
+    // Implicit conversion from external UserParameters
+    InternalUserParameters(const UserParameters& userParameters);
+
+    static InternalUserParameters Make(
+        const ExpressionVariantParameters& expressionParameters);
+
     const ComplexFormat complexFormat = ComplexFormat::None;
     // Mutable because of AngleUnitContext
     mutable AngleUnit angleUnit = AngleUnit::None;
@@ -301,7 +335,7 @@ class Approximator {
 
  public:
   Approximator(FloatPrecision floatPrecision,
-               const InternalUserParameters& parameters,
+               const ExpressionVariantParameters& expressionParameters,
                Private::Context&& context);
 
   /* Specific processing for the ReturnType. Must be overloaded for each

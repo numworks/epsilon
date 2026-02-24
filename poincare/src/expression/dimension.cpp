@@ -707,9 +707,10 @@ Dimension Dimension::Get(const Tree* e,
       Dimension dim = Get(e->child(0), symbolContext);
       if (dim.isUnit()) {
         float index = Approximation::To<float>(
-            e->child(1),
-            Approximation::Parameters{.policy = {.optimize = true},
-                                      .user = {.context = symbolContext}});
+            e->child(1), Approximation::Parameters{
+                             .policy = {.optimize = true},
+                             .expressionParameters =
+                                 UserParameters{.context = symbolContext}});
         assert(!std::isnan(index) && std::round(index) == index &&
                Units::SIVector::IsValidCoefficient(static_cast<int>(index)));
         Units::SIVector unitVector = Units::SIVector::Empty();

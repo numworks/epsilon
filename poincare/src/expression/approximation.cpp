@@ -196,7 +196,8 @@ int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   Private::Context context;
   context.localEvaluator.pushVariable(x);
   const Tree* branch =
-      Private::Approximator(Precision<T>::value, {}, std::move(context))
+      Private::Approximator(Precision<T>::value, ProjectedPolicy{},
+                            std::move(context))
           .selectPiecewiseBranch(piecewise);
   return !branch            ? k_unknownActiveBranch
          : branch == KUndef ? k_noActiveBranch
@@ -235,12 +236,17 @@ Tree* PostProcessPreparedAndResult(Tree* prepared, Tree* result) {
   return prepared;
 }
 
-bool CheckDimension(const Tree* e, const UserParameters& userParameters,
+bool CheckDimension(const Tree* e,
+                    const ExpressionVariantParameters& expressionParameters,
                     bool optimize) {
+  const SymbolContext& symbolContext =
+      expressionParameters.type() == ExpressionVariantParameters::Type::User
+          ? expressionParameters.get<UserParameters>().context
+          : k_emptySymbolContext;
   if (!optimize) {
-    return Dimension::DeepCheck(e, userParameters.context);
+    return Dimension::DeepCheck(e, symbolContext);
   }
-  COSTLY_ASSERT(Dimension::DeepCheck(e, userParameters.context));
+  COSTLY_ASSERT(Dimension::DeepCheck(e, symbolContext));
   return true;
 }
 
@@ -275,18 +281,20 @@ template <typename ReturnType, typename... ContextArguments>
 ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
                    const Parameters& parameters,
                    ContextArguments... contextArguments) {
-  if (!CheckDimension(e, parameters.user, parameters.policy.optimize)) {
+  if (!CheckDimension(e, parameters.expressionParameters,
+                      parameters.policy.optimize)) {
     return UndefinedUnhandledDimension<ReturnType>();
   }
-  Tree* prepared = PrepareTree(e, parameters.policy);
+  Tree* prepared = PrepareTree(e, parameters.expressionParameters);
 
   floatPrecision = UpdateFloatPrecision(e, floatPrecision,
                                         parameters.policy.onlyReplaceNumerical);
 #if POINCARE_NO_FLOAT_APPROXIMATION
   assert(floatPrecision == FloatPrecision::Double);
 #endif
-  Approximator approximator = Approximator{floatPrecision, parameters.user,
-                                           Context(contextArguments...)};
+  Approximator approximator =
+      Approximator{floatPrecision, parameters.expressionParameters,
+                   Context(contextArguments...)};
   const Tree* targetTree = prepared ? prepared : e;
 
   ReturnType result =
@@ -299,19 +307,29 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
   return PostProcessPreparedAndResult(prepared, result);
 }
 
-Tree* PrepareTree(const Tree* e, const ApproximationPolicy& policy) {
+Tree* PrepareTree(const Tree* e,
+                  const ExpressionVariantParameters& expressionParameters) {
   // Only clone if necessary
   Tree* clone = nullptr;
-  if (policy.projectLocalVariables) {
-    clone = e->cloneTree();
-    Variables::ProjectLocalVariablesToId(clone);
-  }
-  if (policy.prepare) {
-    assert(Simplification::IsSystem(e));
-    if (!clone) {
+  switch (expressionParameters.type()) {
+    case ExpressionVariantParameters::Type::User: {
+      // Expression must be projected
       clone = e->cloneTree();
+      Variables::ProjectLocalVariablesToId(clone);
+      break;
     }
-    PrepareExpressionForApproximation(clone);
+    case ExpressionVariantParameters::Type::Projected: {
+      if (expressionParameters.get<ProjectedPolicy>().prepare) {
+        assert(Simplification::IsSystem(e));
+        if (!clone) {
+          clone = e->cloneTree();
+        }
+        PrepareExpressionForApproximation(clone);
+      }
+      break;
+    }
+    default:
+      OMG_UNREACHABLE
   }
   return clone;
 }
@@ -379,11 +397,33 @@ std::complex<T> ToUndefinedComplexValue(DefinedStatus status) {
   }
 }
 
-Private::Approximator::Approximator(FloatPrecision floatPrecision,
-                                    const InternalUserParameters& parameters,
-                                    Context&& context)
+Private::Approximator::InternalUserParameters::InternalUserParameters(
+    const UserParameters& userParameters)
+    : complexFormat{userParameters.complexFormat},
+      angleUnit{userParameters.angleUnit},
+      symbolContext{userParameters.context} {}
+
+Private::Approximator::InternalUserParameters
+Private::Approximator::InternalUserParameters::Make(
+    const ExpressionVariantParameters& expressionParameters) {
+  switch (expressionParameters.type()) {
+    case ExpressionVariantParameters::Type::User: {
+      return InternalUserParameters(expressionParameters.get<UserParameters>());
+    }
+    case ExpressionVariantParameters::Type::Projected: {
+      // ComplexFormat and AngleUnit will be None, symbol context will be Empty
+      return InternalUserParameters{};
+    }
+    default:
+      OMG_UNREACHABLE
+  }
+}
+
+Private::Approximator::Approximator(
+    FloatPrecision floatPrecision,
+    const ExpressionVariantParameters& expressionParameters, Context&& context)
     : m_floatPrecision(floatPrecision),
-      m_parameters(parameters),
+      m_parameters{InternalUserParameters::Make(expressionParameters)},
       m_context(std::move(context)) {}
 
 template <>

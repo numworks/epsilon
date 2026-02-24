@@ -236,13 +236,20 @@ Tree* PostProcessPreparedAndResult(Tree* prepared, Tree* result) {
   return prepared;
 }
 
+bool CheckDimension(const Tree* e, const UserSettings& userSettings,
+                    bool optimize) {
+  if (!optimize) {
+    return Dimension::DeepCheck(e, userSettings.context);
+  }
+  COSTLY_ASSERT(Dimension::DeepCheck(e, userSettings.context));
+  return true;
+}
+
 template <typename ReturnType, typename... ContextArguments>
 ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
                    const Parameters& parameters,
                    ContextArguments... contextArguments) {
-  if (parameters.policy.optimize) {
-    COSTLY_ASSERT(Dimension::DeepCheck(e, parameters.user.context));
-  } else if (!Dimension::DeepCheck(e, parameters.user.context)) {
+  if (!CheckDimension(e, parameters.user, parameters.policy.optimize)) {
     return UndefinedUnhandledDimension<ReturnType>();
   }
   Tree* prepared = PrepareTree(e, parameters.policy);

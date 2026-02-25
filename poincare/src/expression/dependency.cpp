@@ -269,11 +269,13 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
 // These expression are only undef if their child is undef.
 bool IsDefinedIfChildIsDefined(const Tree* e) {
   // Un-projected trees are not expected here.
-  assert(!e->isOfType({Type::Conj, Type::Decimal, Type::Cos, Type::Sin}));
+  assert(!e->isOfType(
+      {Type::Conj, Type::Decimal, Type::Cos, Type::Sin, Type::Frac}));
   return e->isOfType({Type::Trig, Type::Abs, Type::Exp, Type::Re, Type::Im,
                       Type::ATrig, Type::ATanRad, Type::Ln}) ||
          (e->isPow() && e->child(1)->isStrictlyPositiveRational()) ||
-         (e->isSign() && GetComplexProperties(e->child(0)).isReal());
+         (e->isOfType({Type::Sign, Type::Floor, Type::Ceil}) &&
+          GetComplexProperties(e->child(0)).isReal());
 }
 
 // Check presence of undefined patterns e.g. inf-inf or inf*0

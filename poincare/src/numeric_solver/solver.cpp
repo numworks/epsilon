@@ -1,3 +1,4 @@
+#include <omg/assertions.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/continuity.h>
@@ -861,7 +862,7 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
     FunctionEvaluation f, const void* aux, Coordinate2D<T>* start,
     Coordinate2D<T>* middle, Coordinate2D<T>* end, T minimalSizeOfInterval,
     DiscontinuityEvaluation discontinuityTest) {
-  assert(discontinuityTest(*start, *end, aux));
+  COSTLY_ASSERT(discontinuityTest(*start, *end, aux));
 
   // Initialize middle if needed
   if (std::isnan(middle->x())) {
@@ -893,11 +894,11 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
     }
     middle->setX((start->x() + end->x()) / 2.0);
     middle->setY(f(middle->x(), aux));
-    assert(discontinuityTest(*start, *end, aux));
+    COSTLY_ASSERT(discontinuityTest(*start, *end, aux));
   }
-  assert(std::fabs(end->x() - start->x()) > 0 &&
-         std::fabs(end->x() - start->x()) <= minimalSizeOfInterval &&
-         discontinuityTest(*start, *end, aux));
+  COSTLY_ASSERT(std::fabs(end->x() - start->x()) > 0 &&
+                std::fabs(end->x() - start->x()) <= minimalSizeOfInterval &&
+                discontinuityTest(*start, *end, aux));
   return true;
 }
 

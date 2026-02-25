@@ -10,10 +10,16 @@
 namespace Poincare::Internal {
 
 bool Undefined::CanBeUndefined(const Tree* e) {
-  // Their elements can be undefined and it is never bubbled up.
-  return e->isUndefined() || !(e->isPoint() || e->isList() || e->isMatrix() ||
-                               e->isUserVariable() || e->isDepList() ||
-                               e->isVar() || e->numberOfChildren() == 0);
+  if (e->isPoint() || e->isList() || e->isMatrix() || e->isDepList()) {
+    // All their children can be undefined and it is never bubbled up.
+    return false;
+  }
+  if (e->numberOfChildren() == 0) {
+    // Undefined trees are the only childless trees that can be undefined.
+    return e->isUndefined();
+  }
+  // By default, any other tree can be undefined. For ex: ln(0) or abs(undef).
+  return true;
 }
 
 bool IsPiecewiseNonConditionIndex(int childIndex, const Tree* parent) {

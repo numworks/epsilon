@@ -38,18 +38,16 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
+  MAKEFLAGS: -j2
 
 jobs:
   device:
-    timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
     if: ${{ (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.device)) }}
     strategy:
       matrix:
         model: [n0110, n0115, n0120]
-    env:
-      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
       - uses: actions/checkout@v6
 
@@ -63,14 +61,12 @@ jobs:
         # TODO: It is also probably useless to build so many variants
         run: $DOCKER_RUN "make -C epsilon PLATFORM=${{ matrix.model }} userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf"
   windows:
-    timeout-minutes: 15
+    timeout-minutes: 60
     runs-on: windows-latest
     if: ${{ (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.windows)) }}
     defaults:
       run:
         shell: msys2 {0}
-    env:
-      MAKEFLAGS: '-j2'
     steps:
       - uses: msys2/setup-msys2@v2
         with:
@@ -86,11 +82,9 @@ jobs:
       - run: ./epsilon/output/debug/optimized/windows/epsilon_test.exe --headless --limit-stack-usage
       - run: make -j8 userland.A.elf
   web:
-    timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
     if: ${{ (github.event_name == 'push' || fromJSON(github.event.inputs.web)) }}
-    env:
-      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -127,11 +121,9 @@ jobs:
           fi
 
   web-tests:
-    timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.web))) }}
-    env:
-      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -144,13 +136,13 @@ jobs:
           emsdk-version: ${{ env.EMSDK_VERSION }}
       - run: $DOCKER_RUN "make -C epsilon PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon_test.js"
       - run: $DOCKER_RUN "node epsilon/output/debug/optimized/web/epsilon_test.js --headless --limit-stack-usage"
-        timeout-minutes: 5
+        timeout-minutes: 20
   linux:
-    timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS_LARGE) }}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
     if: ${{ (github.event_name == 'pull_request' || fromJSON(github.event.inputs.linux)) }}
     env:
-      MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"
+      MAKEFLAGS: "-j2 STRICT_WARNINGS=1"
     steps:
       - uses: actions/checkout@v6
 
@@ -171,11 +163,9 @@ jobs:
         if: steps.run-tests.outcome == 'failure'
         run: $DOCKER_RUN "rm -f core; epsilon/output/debug/optimized/linux/epsilon_test.bin --headless --limit-stack-usage || (eu-stack --core core; exit 1)"
   macos:
-    timeout-minutes: 15
+    timeout-minutes: 60
     runs-on: macOS-latest
     if: ${{ (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.macos)) }}
-    env:
-      MAKEFLAGS: '-j2'
     steps:
       - uses: actions/checkout@v6
       - run: tools/setup.sh --ci --only-simulator

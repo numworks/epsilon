@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   lint:
-    runs-on: ${{ fromJSON(vars.RUNNER_LABELS) }}
+    runs-on: ubuntu-latest
     steps:
       - name: Fetch target branch and PR branch
         uses: actions/checkout@v6

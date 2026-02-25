@@ -12,7 +12,7 @@ class Undefined {
  public:
   static bool ShallowBubbleUpUndef(Tree* e);
   static bool CanBeUndefined(const Tree* e);
-  static bool CanHaveUndefinedChild(const Tree* e, int childIndex);
+  static bool MustBubbleUpUndefinedChild(const Tree* e, int childIndex);
   /* For types which can have both defined and undefined children, i.e. lists
    * matrices and points. */
   static bool HasUndefinedDescendant(const Tree* e) {

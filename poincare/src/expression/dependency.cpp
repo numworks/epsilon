@@ -70,7 +70,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
   TreeRef finalSet = KDepList()->cloneTree();
   int i = 0;
   for (Tree* child : e->children()) {
-    if (child->isDep() && !Undefined::CanHaveUndefinedChild(e, i)) {
+    if (child->isDep() && Undefined::MustBubbleUpUndefinedChild(e, i)) {
       Tree* childSet = Dependencies(child);
       /* TODO_PCJ: bubble up across list operators in the same fashion as on
        * parametrics

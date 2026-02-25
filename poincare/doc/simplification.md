@@ -454,7 +454,7 @@ At each shallow step in systematic reduction, some expressions needs to be bubbl
 
 Most trees are set to undefined if one of their children is undefined.
 
-There are some exceptions like points or lists (`(undef, x)`,`{1, undef, 3}`). See `Undefined::CanHaveUndefinedChild` for more examples.
+There are some exceptions like points or lists (`(undef, x)`,`{1, undef, 3}`). See `Undefined::MustBubbleUpUndefinedChild` for more examples.
 
 If multiple `undef` can be bubbled up, we select the most "important" one. For instance, `DivisionByZero` has precedence over `NonReal`.
 

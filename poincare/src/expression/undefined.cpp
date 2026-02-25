@@ -16,9 +16,17 @@ bool Undefined::CanBeUndefined(const Tree* e) {
                                e->isVar() || e->numberOfChildren() == 0);
 }
 
-bool Undefined::CanHaveUndefinedChild(const Tree* e, int childIndex) {
-  return !CanBeUndefined(e) || (e->isPiecewise() && childIndex % 2 == 0) ||
-         (e->isListSequence() && Parametric::IsFunctionIndex(childIndex, e));
+bool IsPiecewiseNonConditionIndex(int childIndex, const Tree* parent) {
+  return parent->isPiecewise() && childIndex % 2 == 0;
+}
+
+bool IsListSequenceFunctionIndex(int childIndex, const Tree* parent) {
+  return parent->isListSequence() &&
+         Parametric::IsFunctionIndex(childIndex, parent);
+}
+bool Undefined::MustBubbleUpUndefinedChild(const Tree* e, int childIndex) {
+  return CanBeUndefined(e) && !IsPiecewiseNonConditionIndex(childIndex, e) &&
+         !IsListSequenceFunctionIndex(childIndex, e);
 }
 
 Tree* Undefined::CreateTreeWithDimensionedType(const Tree* e, Type type) {
@@ -69,7 +77,7 @@ bool Undefined::ShallowBubbleUpUndef(Tree* e) {
   Type worstType = Type::Zero;
   for (const Tree* child : e->children()) {
     // Piecewise can have undefined branches, but not conditions
-    if (child->isUndefined() && !CanHaveUndefinedChild(e, i)) {
+    if (child->isUndefined() && MustBubbleUpUndefinedChild(e, i)) {
       Type childType = child->type();
       worstType = childType > worstType ? childType : worstType;
     }

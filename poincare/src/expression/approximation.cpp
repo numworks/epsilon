@@ -458,7 +458,7 @@ template <typename FloatType>
 FloatType Approximator::toFloat(const Tree* e) {
   COSTLY_ASSERT(Dimension::DeepCheck(e, m_parameters.symbolContext));
   // Units are tolerated in scalar approximation (replaced with SI ratios).
-#if ASSERTIONS
+#if ASSERTIONS && !OPTIMIZE_ASSERTIONS
   Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
   assert(dim.isScalar() || dim.isUnit());
 #endif
@@ -541,12 +541,12 @@ std::complex<T> Approximator::privateToComplex(const Tree* e) {
 
 template <typename T>
 T Approximator::privateToFloat(const Tree* e) {
-#if ASSERTIONS
+#if ASSERTIONS && !OPTIMIZE_ASSERTIONS
   Dimension dim = Dimension::Get(e, m_parameters.symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
   // listElement is needed to approximate lists to scalars
-  COSTLY_ASSERT(m_context.listElement != Context::k_unspecifiedListElement ||
-                !Dimension::IsList(e, m_parameters.symbolContext));
+  assert(m_context.listElement != Context::k_unspecifiedListElement ||
+         !Dimension::IsList(e, m_parameters.symbolContext));
   // pointElement is needed to approximate points to scalars
   assert(m_context.pointElement != Context::k_unspecifiedPointElement ||
          !dim.isPoint());

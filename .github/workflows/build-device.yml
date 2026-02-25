@@ -7,12 +7,12 @@ on:
         default: false
 
 env:
-  MAKEFLAGS: ${{ vars.MAKEFLAGS }}
+  MAKEFLAGS: -j2
   BETA: ${{ fromJSON(github.event.inputs.beta) && '.beta' || ''  }}
 
 jobs:
   build:
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    runs-on: ubuntu-latest
     steps:
       - name: Download toolchain
         uses: numworks/setup-arm-toolchain@latest

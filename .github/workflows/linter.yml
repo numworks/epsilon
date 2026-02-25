@@ -18,7 +18,7 @@ concurrency:
 jobs:
   build:
     name: Lint Code Base
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    runs-on: ubuntu-latest
     steps:
       - name: Fetch target branch and PR branch
         uses: actions/checkout@v4

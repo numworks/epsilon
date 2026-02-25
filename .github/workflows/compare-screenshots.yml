@@ -9,7 +9,7 @@ on:
       - 'epsilon/external_apps/**'
 
 env:
-  MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"
+  MAKEFLAGS: "-j2 STRICT_WARNINGS=1"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,22 +17,22 @@ concurrency:
 
 jobs:
   compare_crc:
-    timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS_LARGE) }}
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout PR's merged head
         uses: actions/checkout@v4
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
       - name: Compare crc of screenshots (No CAS)
-        timeout-minutes: 15
+        timeout-minutes: 60
         run: |
           $DOCKER_RUN "make \
                        TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 VERBOSE=0 \
                        ARGS='--dataset tests/screenshots_dataset --no-screenshots' \
                        epsilon.compare"
       - name: Compare crc of screenshots (CAS)
-        timeout-minutes: 15
+        timeout-minutes: 60
         run: |
           $DOCKER_RUN "make \
                        TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 VERBOSE=0 \

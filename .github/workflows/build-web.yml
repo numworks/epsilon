@@ -7,13 +7,13 @@ on:
         default: false
 
 env:
-  MAKEFLAGS: ${{ vars.MAKEFLAGS }}
+  MAKEFLAGS: -j2
   DEBUG: ${{ fromJSON(github.event.inputs.debug) && '1' || '0' }}
   OUTPUT_DIR: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/web
 
 jobs:
   build:
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS_LARGE) }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4

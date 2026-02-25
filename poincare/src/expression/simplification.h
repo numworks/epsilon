@@ -28,7 +28,7 @@ ToSystemOutput ToSystem(Tree* e,
 #if ASSERTIONS
 bool IsSystem(const Tree* e);
 #endif
-bool ReduceSystem(Tree* e, const ReductionParameters& reductionParameters);
+bool ReduceSystem(Tree* e, const ReductionPolicy& reductionPolicy);
 }  // namespace Simplification
 
 }  // namespace Poincare::Internal

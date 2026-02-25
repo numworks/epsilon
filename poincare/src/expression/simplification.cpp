@@ -234,14 +234,13 @@ bool IsSystem(const Tree* e) {
 }
 #endif
 
-bool ReduceSystem(Tree* e, const ReductionParameters& reductionParameters) {
+bool ReduceSystem(Tree* e, const ReductionPolicy& reductionPolicy) {
   bool changed = SystematicReduction::DeepReduce(e);
   COSTLY_ASSERT(!SystematicReduction::DeepReduce(e));
-  if (reductionParameters.advanced) {
-    changed =
-        AdvancedReduction::Reduce(e, reductionParameters.target) || changed;
+  if (reductionPolicy.advanced) {
+    changed = AdvancedReduction::Reduce(e, reductionPolicy.target) || changed;
   }
-  if (reductionParameters.target == ReductionTarget::SystemForAnalysis) {
+  if (reductionPolicy.target == ReductionTarget::SystemForAnalysis) {
     changed = AdvancedReduction::DeepExpandAlgebraic(e) || changed;
   }
   changed = ProcessSpecialUndefinedPatterns(e) || changed;
@@ -257,7 +256,7 @@ bool HandleUnits(Tree* e, const UnitParameters& unitParameters,
     if (e->isUndefined()) {
       return true;
     }
-    ReduceSystem(e, ReductionParameters{.advanced = false});
+    ReduceSystem(e, ReductionPolicy{.advanced = false});
     changed = true;
   }
   if (dimension.isUnit() && !dimension.isAngleUnit()) {

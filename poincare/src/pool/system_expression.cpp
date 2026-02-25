@@ -134,8 +134,7 @@ SystemExpression ReplaceSymbolAndReduce(
     if (reduce) {
       /* Note: Advanced reduction could be allowed for slower but better
        * reduction. */
-      Simplification::ReduceSystem(result,
-                                   ReductionParameters{.advanced = false});
+      Simplification::ReduceSystem(result, ReductionPolicy{.advanced = false});
     }
     return SystemExpression::Builder(static_cast<Tree*>(result));
   }
@@ -185,8 +184,8 @@ SystemExpression SystemExpression::getReducedDerivative(
   } else {
     Simplification::ReduceSystem(
         result,
-        ReductionParameters{.target = ReductionTarget::SystemForApproximation,
-                            .advanced = false});
+        ReductionPolicy{.target = ReductionTarget::SystemForApproximation,
+                        .advanced = false});
   }
   return SystemExpression::Builder(result);
 }

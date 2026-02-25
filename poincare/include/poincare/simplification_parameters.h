@@ -16,7 +16,7 @@ struct ProjectionParameters {
   ProjectionPolicy policy = {};
 };
 
-struct ReductionParameters {
+struct ReductionPolicy {
   ReductionTarget target = ReductionTarget::User;
   bool advanced = true;
 };
@@ -29,13 +29,13 @@ struct UnitModeParameters {
 struct SimplificationParameters {
   UserParameters user = {};
   ProjectionPolicy projectionPolicy = {};
-  ReductionParameters reduction = {};
+  ReductionPolicy reduction = {};
   UnitModeParameters unitMode = {};
 };
 
 struct BeautificationParameters {
   UserParameters user = {};
-  ReductionParameters reduction = {};
+  ReductionPolicy reduction = {};
   UnitModeParameters unitMode = {};
 };
 

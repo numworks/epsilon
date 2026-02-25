@@ -4,20 +4,22 @@
 
 namespace Poincare {
 
-enum class AngleUnit : uint8_t {
-  Radian = 0,
-  Degree,
-  Gradian,
-  None,
-  NUnits = None
+enum class SymbolicComputation : uint8_t {
+  ReplaceAllSymbols = 0,  // If a symbol is not defined, it is replaced by undef
+  ReplaceDefinedSymbols = 1,
+  ReplaceDefinedFunctions = 2,
+  ReplaceAllSymbolsWithUndefined = 3,  // Used in UnitConvert::shallowReduce
+  KeepAllSymbols = 4
 };
 
-enum class ComplexFormat : uint8_t {
-  Real = 0,
-  Cartesian,
-  Polar,
-  None,
-  NFormats = None
+enum class Strategy : uint8_t {
+  Default,
+  ApproximateToFloat,
+};
+
+struct ProjectionPolicy {
+  SymbolicComputation symbolic = SymbolicComputation::KeepAllSymbols;
+  Strategy strategy = Strategy::Default;
 };
 
 enum class ReductionTarget : uint8_t {
@@ -30,17 +32,9 @@ enum class ReductionTarget : uint8_t {
   User
 };
 
-enum class SymbolicComputation : uint8_t {
-  ReplaceAllSymbols = 0,  // If a symbol is not defined, it is replaced by undef
-  ReplaceDefinedSymbols = 1,
-  ReplaceDefinedFunctions = 2,
-  ReplaceAllSymbolsWithUndefined = 3,  // Used in UnitConvert::shallowReduce
-  KeepAllSymbols = 4
-};
-
-enum class Strategy : uint8_t {
-  Default,
-  ApproximateToFloat,
+struct ReductionPolicy {
+  ReductionTarget target = ReductionTarget::User;
+  bool advanced = true;
 };
 
 enum class UnitDisplay : uint8_t {

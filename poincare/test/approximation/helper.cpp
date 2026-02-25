@@ -53,12 +53,12 @@ void approximates_to(const Tree* n, const Tree* expected) {
 
 template <typename T>
 void approximates_to(const char* input, T f,
-                     const Poincare::UserParameters& userParameters) {
-  Tree* expression = parse(input, userParameters.context);
+                     const Poincare::UserSettings& userSettings) {
+  Tree* expression = parse(input, userSettings.context);
   T approx = Approximation::To<T>(
       expression,
       Approximation::Parameters{.policy = {.projectLocalVariables = true},
-                                .user = userParameters});
+                                .user = userSettings});
   bool result =
       OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG
@@ -76,7 +76,7 @@ void approximates_to(const char* input, T f,
 
 template <typename T>
 void approximates_to(const char* input, const char* output,
-                     const Poincare::UserParameters& userParameters,
+                     const Poincare::UserSettings& userSettings,
                      int nbOfSignificantDigits) {
   // TODO: use same test and log as approximates_to?
   process_tree_and_compare(
@@ -90,17 +90,17 @@ void approximates_to(const char* input, const char* output,
         Beautification::DeepBeautify(
             tree, ToBeautificationParameters(simplificationParameters));
       },
-      SimplificationParameters{.user = userParameters}, nbOfSignificantDigits);
+      SimplificationParameters{.user = userSettings}, nbOfSignificantDigits);
 }
 
 void approximates_to_float_and_double(
     const char* expression, const char* result,
-    const Poincare::UserParameters& userParameters) {
+    const Poincare::UserSettings& userSettings) {
   /* Reduce significant numbers to 3 to handle platforms discrepancies when
    * computing floats. This allows to expect the same results from both double
    * and float approximations. */
-  approximates_to<float>(expression, result, userParameters, 3);
-  approximates_to<double>(expression, result, userParameters, 3);
+  approximates_to<float>(expression, result, userSettings, 3);
+  approximates_to<double>(expression, result, userSettings, 3);
 }
 
 void approximates_to_boolean(const Tree* n,
@@ -120,13 +120,13 @@ void approximates_to_boolean(const Tree* n,
 
 void approximates_to_boolean(const char* input,
                              Approximation::BooleanOrUndefined expected,
-                             const Poincare::UserParameters& userParameters) {
-  Tree* expression = parse(input, userParameters.context);
+                             const Poincare::UserSettings& userSettings) {
+  Tree* expression = parse(input, userSettings.context);
   Approximation::BooleanOrUndefined approx =
       Approximation::To<Approximation::BooleanOrUndefined>(
           expression, Approximation::FloatPrecision::Single,
           Approximation::Parameters{.policy = {.projectLocalVariables = true},
-                                    .user = userParameters});
+                                    .user = userSettings});
   quiz_assert(approx.isUndefined() == expected.isUndefined());
   if (!approx.isUndefined()) {
     quiz_assert(approx.value() == expected.value());
@@ -139,8 +139,8 @@ void assert_float_approximates_to(UserExpression f, const char* result) {
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
   f.cloneAndApproximate<T>(
-       Poincare::UserParameters{.complexFormat = ComplexFormat::Cartesian,
-                                .angleUnit = AngleUnit::Radian})
+       Poincare::UserSettings{.complexFormat = ComplexFormat::Cartesian,
+                              .angleUnit = AngleUnit::Radian})
       .serialize(buffer, false, DecimalMode, numberOfDigits);
   quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
 }
@@ -187,10 +187,10 @@ void projected_approximates_to(
 }
 
 template <typename T>
-void approximates_to_keeping_symbols(
-    const char* expression, const char* simplifiedExpression,
-    const Poincare::UserParameters& userParameters,
-    int numberOfSignificantDigits) {
+void approximates_to_keeping_symbols(const char* expression,
+                                     const char* simplifiedExpression,
+                                     const Poincare::UserSettings& userSettings,
+                                     int numberOfSignificantDigits) {
   process_tree_and_compare(
       expression, simplifiedExpression,
       [](Tree* tree, const SimplificationParameters& simplificationParameters) {
@@ -201,7 +201,7 @@ void approximates_to_keeping_symbols(
                                       .user = simplificationParameters.user});
         Variables::BeautifyToName(tree);
       },
-      SimplificationParameters{.user = userParameters},
+      SimplificationParameters{.user = userSettings},
       numberOfSignificantDigits);
 }
 
@@ -212,17 +212,16 @@ template void approximates_to<float>(const Tree* n, const Tree* expected);
 template void approximates_to<double>(const Tree* n, const Tree* expected);
 
 template void approximates_to<float>(
-    const char* input, float f, const Poincare::UserParameters& userParameters);
+    const char* input, float f, const Poincare::UserSettings& userSettings);
 template void approximates_to<double>(
-    const char* input, double f,
-    const Poincare::UserParameters& userParameters);
+    const char* input, double f, const Poincare::UserSettings& userSettings);
 
-template void approximates_to<float>(
-    const char* input, const char* output,
-    const Poincare::UserParameters& userParameters, int nbOfSignificantDigits);
+template void approximates_to<float>(const char* input, const char* output,
+                                     const Poincare::UserSettings& userSettings,
+                                     int nbOfSignificantDigits);
 template void approximates_to<double>(
     const char* input, const char* output,
-    const Poincare::UserParameters& userParameters, int nbOfSignificantDigits);
+    const Poincare::UserSettings& userSettings, int nbOfSignificantDigits);
 
 template void assert_float_approximates_to<float>(UserExpression f,
                                                   const char* result);
@@ -249,9 +248,7 @@ template void projected_approximates_to<double>(
 
 template void approximates_to_keeping_symbols<float>(
     const char* expression, const char* simplifiedExpression,
-    const Poincare::UserParameters& userParameters,
-    int numberOfSignificantDigits);
+    const Poincare::UserSettings& userSettings, int numberOfSignificantDigits);
 template void approximates_to_keeping_symbols<double>(
     const char* expression, const char* simplifiedExpression,
-    const Poincare::UserParameters& userParameters,
-    int numberOfSignificantDigits);
+    const Poincare::UserSettings& userSettings, int numberOfSignificantDigits);

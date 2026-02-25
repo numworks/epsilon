@@ -11,7 +11,6 @@
 #include <shared/global_store.h>
 #include <string.h>
 
-#include "poincare/math_options.h"
 #include "poincare/symbol_context.h"
 
 using AdditionalResultsType = Calculation::AdditionalResultsType;

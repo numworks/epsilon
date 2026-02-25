@@ -5,10 +5,10 @@
 #include <omg/code_guard.h>
 #include <omg/global_box.h>
 #include <poincare/exam_mode.h>
-#include <poincare/math_options.h>
 #include <stdint.h>
 
-#include "symbol_context.h"
+#include "angle_unit.h"
+#include "complex_format.h"
 
 namespace Poincare {
 
@@ -58,10 +58,9 @@ class Preferences {
     PrintFloatMode displayMode : k_numberOfBitsForPrintFloatMode;
     ComplexFormat complexFormat : k_numberOfBitsForComplexFormat;
     /* Explicitly declare padding bits to avoid uninitalized values. */
-    uint8_t padding
-        : OMG::BitHelper::numberOfBitsIn<uint8_t>() -
-          k_numberOfBitsForAngleUnit - k_numberOfBitsForPrintFloatMode -
-          k_numberOfBitsForComplexFormat;
+    uint8_t padding : OMG::BitHelper::numberOfBitsIn<uint8_t>() -
+        k_numberOfBitsForAngleUnit - k_numberOfBitsForPrintFloatMode
+        - k_numberOfBitsForComplexFormat;
     bool operator==(const CalculationPreferences&) const = default;
   };
 

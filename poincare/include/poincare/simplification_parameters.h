@@ -1,24 +1,14 @@
 #pragma once
 
-#include "math_options.h"
 #include "preferences.h"
-#include "user_parameters.h"
+#include "simplification_policies.h"
+#include "user_settings.h"
 
 namespace Poincare {
 
-struct ProjectionPolicy {
-  SymbolicComputation symbolic = SymbolicComputation::KeepAllSymbols;
-  Strategy strategy = Strategy::Default;
-};
-
 struct ProjectionParameters {
-  UserParameters user = {};
+  UserSettings user = {};
   ProjectionPolicy policy = {};
-};
-
-struct ReductionPolicy {
-  ReductionTarget target = ReductionTarget::User;
-  bool advanced = true;
 };
 
 struct UnitModeParameters {
@@ -27,14 +17,14 @@ struct UnitModeParameters {
 };
 
 struct SimplificationParameters {
-  UserParameters user = {};
+  UserSettings user = {};
   ProjectionPolicy projectionPolicy = {};
   ReductionPolicy reduction = {};
   UnitModeParameters unitMode = {};
 };
 
 struct BeautificationParameters {
-  UserParameters user = {};
+  UserSettings user = {};
   ReductionPolicy reduction = {};
   UnitModeParameters unitMode = {};
 };

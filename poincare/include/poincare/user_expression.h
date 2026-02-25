@@ -4,12 +4,12 @@
 #include <poincare/expression.h>
 #include <poincare/helpers/parser.h>
 #include <poincare/k_tree.h>
-#include <poincare/math_options.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/pool_handle.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/simplification_parameters.h>
+#include <poincare/simplification_policies.h>
 #include <poincare/symbol_context.h>
 
 #include <span>
@@ -107,8 +107,7 @@ class UserExpression : public Expression {
   UserExpression cloneAndTrySimplify(
       const SimplificationParameters& simplificationParameters) const;
   template <typename T>
-  UserExpression cloneAndApproximate(
-      const UserParameters& userParameters) const;
+  UserExpression cloneAndApproximate(const UserSettings& userSettings) const;
 
   // If of the form y-f(x), return f(x). Return uninitialized otherwise.
   UserExpression equivalentCartesianEquation() const;

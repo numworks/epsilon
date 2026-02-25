@@ -1,11 +1,14 @@
 #pragma once
 
-#include "math_options.h"
+#include "angle_unit.h"
+#include "complex_format.h"
+#include "preferences.h"
 #include "symbol_context.h"
 
 namespace Poincare {
 
-struct UserParameters {
+// User settings needed by reduction and approximation algorithms
+struct UserSettings {
 #if POINCARE_COMPLEX
   ComplexFormat complexFormat = ComplexFormat::None;
 #else
@@ -14,4 +17,5 @@ struct UserParameters {
   AngleUnit angleUnit = AngleUnit::None;
   const Poincare::SymbolContext& context = k_emptySymbolContext;
 };
+
 }  // namespace Poincare

@@ -17,7 +17,7 @@ QUIZ_CASE(pcj_approximation_list) {
 
   PoincareTest::SymbolStore symbolStore;
   PoincareTest::store("{1,2,3,4,5}→L", symbolStore);
-  Poincare::UserParameters parameters = {.context = symbolStore};
+  Poincare::UserSettings parameters = {.context = symbolStore};
   approximates_to<float>("L(1)", "1", parameters);
   approximates_to<float>("L(0)", "undef", parameters);
   approximates_to<float>("L(7)", "undef", parameters);

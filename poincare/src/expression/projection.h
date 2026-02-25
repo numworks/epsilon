@@ -1,6 +1,6 @@
 #pragma once
 
-#include <poincare/math_options.h>
+#include <poincare/complex_format.h>
 #include <poincare/preferences.h>
 #include <poincare/simplification_parameters.h>
 #include <poincare/src/memory/tree_ref.h>

@@ -1,4 +1,4 @@
-#include <poincare/math_options.h>
+#include <poincare/angle_unit.h>
 
 #include "../helper.h"
 #include "helper.h"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <omg/unreachable.h>
-#include <poincare/math_options.h>
+#include <poincare/angle_unit.h>
 #include <poincare/src/memory/tree.h>
 
 #include "k_tree.h"

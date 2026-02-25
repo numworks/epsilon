@@ -3,7 +3,7 @@
 #include <omg/code_point.h>
 #include <omg/global_box.h>
 #include <omg/unreachable.h>
-#include <poincare/math_options.h>
+#include <poincare/angle_unit.h>
 #include <poincare/point_of_interest/point_of_interest.h>
 #include <string.h>
 

@@ -162,7 +162,7 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
           .outputs =
               {.exact = inputExpression.clone(),
                .approximate =
-                   inputExpression.cloneAndApproximate<double>(UserParameters{
+                   inputExpression.cloneAndApproximate<double>(UserSettings{
                        .complexFormat = complexFormat,
                        .angleUnit = GlobalPreferences::SharedGlobalPreferences()
                                         ->angleUnit(),

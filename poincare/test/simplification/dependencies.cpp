@@ -155,21 +155,27 @@ QUIZ_CASE(pcj_simplification_dependencies) {
 }
 
 QUIZ_CASE(pcj_remove_useless_dependencies) {
-  Tree* e = KDep(KAdd(KFloor(KVar<1>), KDiff("y"_e, 3_e, 1_e, KFloor(KVar<0>))),
-                 KDepList(
-                     /* Cannot be removed: Can be undef if var is complex, and
-                      * not present in main expression (even if scoped var in
-                      * diff seems to be the same) */
-                     KFloor(KVar<0>),
-                     // Can be removed: Always defined
-                     1_e,
-                     // Can be removed: Already contained in main expression
-                     KFloor(KVar<1>),
-                     // Can be removed: Always defined because real var
-                     KFloor(KContinuousVar<2>)))
-                ->cloneTree();
+  Tree* e =
+      KDep(KAdd(KFloor(KVar<1>),
+                KDiff("y"_e, 3_e, 1_e, KAdd(KFloor(KVar<0>), KCeil(KVar<1>)))),
+           KDepList(
+               /* Cannot be removed: Can be undef if var is complex, and
+                * not present in main expression (even if scoped var in
+                * diff seems to be the same) */
+               KFloor(KVar<0>),
+               // Can be removed: Always defined
+               1_e,
+               // Can be removed: Already contained in main expression
+               KFloor(KVar<1>),
+               /* Can be removed: Already contained in main expression
+                * (hidden in the diff scope) */
+               KCeil(KVar<0>),
+               // Can be removed: Always defined because real var
+               KFloor(KContinuousVar<2>)))
+          ->cloneTree();
   const Tree* r =
-      KDep(KAdd(KFloor(KVar<1>), KDiff("y"_e, 3_e, 1_e, KFloor(KVar<0>))),
+      KDep(KAdd(KFloor(KVar<1>),
+                KDiff("y"_e, 3_e, 1_e, KAdd(KFloor(KVar<0>), KCeil(KVar<1>)))),
            KDepList(KFloor(KVar<0>)));
   Dependency::DeepRemoveUselessDependencies(e);
   assert_trees_are_equal(e, r);

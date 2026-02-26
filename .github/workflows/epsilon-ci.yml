@@ -11,6 +11,7 @@ on:
     paths-ignore:
       - '**/*.md'
       - '**/scandium/**'
+      - 'poincare/doc/**'
       - 'epsilon/external_apps/**'
   # TODO many steps may be skipped when changes are all in
   # shared/ion/src/device/**, split ci into simu/device ?

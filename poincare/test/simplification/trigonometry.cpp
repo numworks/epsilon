@@ -196,7 +196,6 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", k_cartesianSimplification);
   simplifies_to("sin(17)^2+cos(6)^2", "cos(6)^2+sin(17)^2",
                 k_cartesianSimplification);
-  // Strategy
   simplifies_to(
       "sin(90)", "1",
       SimplificationParameters{.user = {.angleUnit = AngleUnit::Degree}});

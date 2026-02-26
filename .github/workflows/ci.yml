@@ -95,9 +95,13 @@ jobs:
       - name: Restore core directory
         if: ${{ steps.core.outcome == 'success' }}
         run: mv shared/ion/src/device/core-disable shared/ion/src/device/core
-      - name: Build epsilon, flasher, bench, eraser and tests.
+      - name: Build epsilon, flasher, bench and tests.
         if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "make -C epsilon PLATFORM=${{ matrix.model }} epsilon.dfu flasher.dfu bench.ram.dfu eraser.dfu epsilon_test.dfu"
+        run: $DOCKER_RUN "make -C epsilon PLATFORM=${{ matrix.model }} epsilon.dfu flasher.dfu bench.ram.dfu epsilon_test.dfu"
+      - name: Build eraser.
+        if: ${{ steps.core.outcome != 'success' }}
+        # Eraser build needs a clean output directory
+        run: $DOCKER_RUN "rm -rf epsilon/output/release/${{ matrix.model }}; make -C epsilon PLATFORM=${{ matrix.model }} eraser.dfu"
   windows:
     timeout-minutes: 15
     runs-on: windows-latest

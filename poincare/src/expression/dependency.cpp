@@ -240,6 +240,7 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
   if (searched->treeIsIdenticalTo(container)) {
     return true;
   }
+
   if ((
           // powReal(x,y) contains pow(x,y)
           (searched->isPow() && container->isPowReal() &&
@@ -257,10 +258,15 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
       searched->child(0)->treeIsIdenticalTo(container->child(0))) {
     return true;
   }
+
   for (IndexedChild<const Tree*> child : container->indexedChildren()) {
     Tree* searchedWithScope = nullptr;
-    bool shouldEnterScope = container->isParametric() &&
-                            Parametric::IsFunctionIndex(child.index, container);
+    bool shouldEnterScope =
+        container->isParametric() &&
+        Parametric::IsFunctionIndex(child.index, container) &&
+        searched->hasDescendantSatisfying(
+            [](const Tree* e) { return e->isVar(); });
+
     if (shouldEnterScope) {
       searchedWithScope = searched->cloneTree();
       Variables::EnterScope(searchedWithScope);

@@ -224,6 +224,10 @@ bool Expression::isTrigonometryFunction() const {
 
 bool Expression::isParametric() const { return tree()->isParametric(); }
 
+bool Expression::isUndefinedBecauseOfFailedSimplification() const {
+  return tree()->isUndefFailedSimplification();
+}
+
 bool Expression::allChildrenAreUndefined() const {
   return !tree()->hasChildSatisfying(
       [](const Tree* e) { return !e->isUndefined(); });

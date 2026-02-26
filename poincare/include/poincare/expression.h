@@ -115,6 +115,7 @@ class Expression : public PoolHandle {
   bool isVector() const;
   bool isTrigonometryFunction() const;
   bool isParametric() const;
+  bool isUndefinedBecauseOfFailedSimplification() const;
 
   /* Other properties */
 

@@ -29,7 +29,7 @@ struct UserSettingsWithUnit {
   const Poincare::SymbolContext& context = k_emptySymbolContext;
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
 
-  // Implicit conversion from UserSettings, unit format will be default
+  // Implicit conversion to UserSettings
   operator UserSettings() const {
     return UserSettings {
 #if POINCARE_COMPLEX
@@ -40,7 +40,7 @@ struct UserSettingsWithUnit {
   }
 };
 
-/* Conversion from to UserSettingsWithUnit to UserSettings, UnitFormat will be
+/* Conversion from UserSettings to UserSettingsWithUnit, UnitFormat will be
  * default */
 inline UserSettingsWithUnit ToUserSettingsWithUnit(
     const UserSettings& userSettings) {

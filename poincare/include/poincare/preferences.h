@@ -58,9 +58,10 @@ class Preferences {
     PrintFloatMode displayMode : k_numberOfBitsForPrintFloatMode;
     ComplexFormat complexFormat : k_numberOfBitsForComplexFormat;
     /* Explicitly declare padding bits to avoid uninitalized values. */
-    uint8_t padding : OMG::BitHelper::numberOfBitsIn<uint8_t>() -
-        k_numberOfBitsForAngleUnit - k_numberOfBitsForPrintFloatMode
-        - k_numberOfBitsForComplexFormat;
+    uint8_t padding
+        : OMG::BitHelper::numberOfBitsIn<uint8_t>() -
+          k_numberOfBitsForAngleUnit - k_numberOfBitsForPrintFloatMode -
+          k_numberOfBitsForComplexFormat;
     bool operator==(const CalculationPreferences&) const = default;
   };
 

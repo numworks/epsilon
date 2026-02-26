@@ -31,12 +31,12 @@ struct UserSettingsWithUnit {
 
   // Implicit conversion from UserSettings, unit format will be default
   operator UserSettings() const {
-    return UserSettings{
+    return UserSettings {
 #if POINCARE_COMPLEX
-        .complexFormat = complexFormat,
+      .complexFormat = complexFormat,
 #endif
-        .angleUnit = angleUnit,
-        .context = context};
+      .angleUnit = angleUnit, .context = context
+    };
   }
 };
 
@@ -44,12 +44,12 @@ struct UserSettingsWithUnit {
  * default */
 inline UserSettingsWithUnit ToUserSettingsWithUnit(
     const UserSettings& userSettings) {
-  return UserSettingsWithUnit{
+  return UserSettingsWithUnit {
 #if POINCARE_COMPLEX
-      .complexFormat = userSettings.complexFormat,
+    .complexFormat = userSettings.complexFormat,
 #endif
-      .angleUnit = userSettings.angleUnit,
-      .context = userSettings.context};
+    .angleUnit = userSettings.angleUnit, .context = userSettings.context
+  };
 }
 
 }  // namespace Poincare

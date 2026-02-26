@@ -372,9 +372,10 @@ bool Dimension::DeepCheckDimensions(
  * The separation of the 2 functions allows this method to have a big stack
  * frame without risking a stack overflow on big Trees when evaluating the
  * recursive part of [DeepCheckDimensions] */
-bool __attribute__((noinline)) Dimension::DeepCheckDimensionsAux(
-    const Tree* e, const Poincare::SymbolContext& symbolContext,
-    bool hasUnitChild, bool hasNonKelvinChild) {
+bool __attribute__((noinline))
+Dimension::DeepCheckDimensionsAux(const Tree* e,
+                                  const Poincare::SymbolContext& symbolContext,
+                                  bool hasUnitChild, bool hasNonKelvinChild) {
   LazyArray<Dimension> childDim(e, symbolContext, Get);
   bool unitsAllowed = false;
   bool angleUnitsAllowed = e->isDirectTrigonometryFunction() ||

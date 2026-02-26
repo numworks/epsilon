@@ -145,8 +145,8 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("_kg×_m^(-1)×_s^(-1)",
                 "1×_s×_Pa");                        // Dynamic viscosity
   simplifies_to("_m^2×_s^(-2)", "1×_m^2×_s^(-2)");  // Gray/Sievert _J×_kg^(-1)
-  simplifies_to("_m^2×_kg×_s^(-1)", "1×_s×_J");     // Angular momentum _N×_m×_s
-  simplifies_to("_m^(-1)×_kg×_s^(-2)", "1×_Pa");    // Energy density _J×_m^-3
+  simplifies_to("_m^2×_kg×_s^(-1)", "1×_s×_J");   // Angular momentum _N×_m×_s
+  simplifies_to("_m^(-1)×_kg×_s^(-2)", "1×_Pa");  // Energy density _J×_m^-3
   simplifies_to("_m×_kg×_s^(-3)", "1×_N×_s^(-1)");  // Spectral power _W×_m^-1
   simplifies_to("_m×_kg^(-1)×_s^2", "1×_Pa^(-1)");  // Compressibility
   simplifies_to(

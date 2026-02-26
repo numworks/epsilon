@@ -32,8 +32,9 @@ void assert_cartesian_function_type_is(
     const char* expression, FunctionType::CartesianType expectedType) {
   const char* symbol = "x";
   UserExpression e = UserExpression::Builder(parse(expression));
-  SystemExpression reducedExpression =
-      e.cloneAndReduce(DefaultSimplificationParametersForAnalysis());
+  AnalysisExpression reducedExpression =
+      e.cloneAndReduce(DefaultSimplificationParametersForAnalysis())
+          .getSystemExpressionForAnalysis();
   quiz_assert(!reducedExpression.isUninitialized() &&
               !reducedExpression.isFailedSimplification());
   FunctionType::CartesianType type =
@@ -68,8 +69,9 @@ void assert_polar_line_type_is(const char* expression,
                                FunctionType::LineType expectedType) {
   const char* symbol = "θ";
   UserExpression e = UserExpression::Builder(parse(expression));
-  SystemExpression reducedExpression =
-      e.cloneAndReduce(DefaultSimplificationParametersForAnalysis());
+  AnalysisExpression reducedExpression =
+      e.cloneAndReduce(DefaultSimplificationParametersForAnalysis())
+          .getSystemExpressionForAnalysis();
   quiz_assert(!reducedExpression.isUninitialized() &&
               !reducedExpression.isFailedSimplification());
   FunctionType::LineType type =

@@ -33,7 +33,7 @@ double smallestPositive(double x, double y) {
   return (x > 0.0) ? x : y;
 }
 
-CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
+CartesianConic::CartesianConic(const AnalysisExpression& analyzedExpression,
                                const char* x, const char* y)
     : Conic(),
       m_a(0.0),
@@ -439,7 +439,7 @@ double CartesianConic::getRadius() const {
   return std::sqrt(1 / m_a);
 }
 
-PolarConic::PolarConic(const SystemExpression& analyzedExpression,
+PolarConic::PolarConic(const AnalysisExpression& analyzedExpression,
                        const char* symbol) {
   const Tree* e = analyzedExpression.isDep()
                       ? Dependency::Main(analyzedExpression.tree())
@@ -511,7 +511,7 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
   }
 }
 
-ParametricConic::ParametricConic(const SystemExpression& analyzedExpression,
+ParametricConic::ParametricConic(const AnalysisExpression& analyzedExpression,
                                  const char* symbol) {
   assert(analyzedExpression.isPoint());
 

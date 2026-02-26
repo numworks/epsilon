@@ -249,7 +249,7 @@ class ContinuousFunction : public Function {
   /* Expressions */
 
   // Return the expression representing the equation for computations
-  Poincare::SystemExpression expressionReducedForAnalysis() const {
+  Poincare::AnalysisExpression expressionReducedForAnalysis() const {
     return m_model.expressionReducedForAnalysis(this);
   }
   // Return the reduced expression of the derivative
@@ -374,7 +374,7 @@ class ContinuousFunction : public Function {
     const Poincare::PreparedFunction& expressionApproximated(
         const Ion::Storage::Record* record, int derivationOrder = 0) const;
     // Return the expression reduced, and computes plotType
-    const Poincare::SystemExpression& expressionReducedForAnalysis(
+    const Poincare::AnalysisExpression& expressionReducedForAnalysis(
         const Ion::Storage::Record* record) const;
     // Return the expression of the named function (right side of the equal)
     Poincare::UserExpression expressionClone(
@@ -443,7 +443,7 @@ class ContinuousFunction : public Function {
      * interest.
      * m_expressionForAnalysis is used for analysis.
      */
-    mutable Poincare::SystemExpression m_expressionForAnalysis;
+    mutable Poincare::AnalysisExpression m_expressionForAnalysis;
     mutable Poincare::PreparedFunction m_expressionApproximated;
     mutable Poincare::SystemExpression m_expressionFirstDerivate;
     mutable Poincare::PreparedFunction m_expressionFirstDerivateApproximated;

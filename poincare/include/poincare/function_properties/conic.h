@@ -1,7 +1,7 @@
 #pragma once
 
 #include <float.h>
-#include <poincare/system_expression.h>
+#include <poincare/analysis_expression.h>
 
 namespace Poincare {
 
@@ -35,7 +35,7 @@ class Conic {
 class CartesianConic : public Conic {
  public:
   // Extract A,B,C,D,E,F parameters
-  CartesianConic(const SystemExpression& analyzedExpression,
+  CartesianConic(const AnalysisExpression& analyzedExpression,
                  const char* x = "x", const char* y = "y");
 
   // Conic Eccentricity
@@ -100,7 +100,7 @@ class CartesianConic : public Conic {
 
 class PolarConic : public Conic {
  public:
-  PolarConic(const SystemExpression& analyzedExpression,
+  PolarConic(const AnalysisExpression& analyzedExpression,
              const char* symbol = "θ");
 
  private:
@@ -111,7 +111,7 @@ class PolarConic : public Conic {
 
 class ParametricConic : public Conic {
  public:
-  ParametricConic(const SystemExpression& analyzedExpression,
+  ParametricConic(const AnalysisExpression& analyzedExpression,
                   const char* symbol = "t");
 
  private:

@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <omg/bit_helper.h>
 #include <omg/troolean.h>
+#include <poincare/analysis_expression.h>
 #include <poincare/code_points.h>
 #include <poincare/comparison_operator.h>
 #include <poincare/function_properties/conic.h>
@@ -122,7 +123,7 @@ class ContinuousFunctionProperties {
 
   // Update
   void reset();
-  void update(const Poincare::SystemExpression& reducedEquation,
+  void update(const Poincare::AnalysisExpression& reducedEquation,
               const Poincare::UserExpression& inputEquation,
               const Poincare::SymbolContext& symbolContext,
               Poincare::ComplexFormat complexFormat,
@@ -243,14 +244,14 @@ class ContinuousFunctionProperties {
  private:
   // Update
   I18n::Message captionForCartesianFunction(
-      const Poincare::SystemExpression& analyzedExpression);
+      const Poincare::AnalysisExpression& analyzedExpression);
   void setCartesianEquationProperties(
-      const Poincare::SystemExpression& analyzedExpression, int xDeg, int yDeg,
-      OMG::Troolean highestCoefficientIsPositive);
+      const Poincare::AnalysisExpression& analyzedExpression, int xDeg,
+      int yDeg, OMG::Troolean highestCoefficientIsPositive);
   I18n::Message captionForPolarFunction(
-      const Poincare::SystemExpression& analyzedExpression);
+      const Poincare::AnalysisExpression& analyzedExpression);
   I18n::Message captionForParametricFunction(
-      const Poincare::SystemExpression& analyzedExpression);
+      const Poincare::AnalysisExpression& analyzedExpression);
 
   // If equation should be allowed when implicit plots are forbidden.
   static bool IsExplicitEquation(const Poincare::UserExpression& equation,

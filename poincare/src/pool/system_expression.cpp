@@ -1,6 +1,8 @@
+#include <poincare/analysis_expression.h>
 #include <poincare/function_properties/integral.h>
 #include <poincare/helpers/decimal.h>
 #include <poincare/prepared_function.h>
+#include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/integer.h>
@@ -219,6 +221,12 @@ Coordinate2D<T> SystemExpression::approximateToPoint() const {
                   .policy = {.optimize = true},
                   .expressionParameters =
                       Approximation::SystemExpressionPolicy{.prepare = true}});
+}
+
+AnalysisExpression SystemExpression::getSystemExpressionForAnalysis() const {
+  Tree* clone = tree()->cloneTree();
+  Internal::AdvancedReduction::DeepExpandAlgebraic(clone);
+  return AnalysisExpression::Builder(clone);
 }
 
 SystemExpression SystemExpression::approximateListAndSort(

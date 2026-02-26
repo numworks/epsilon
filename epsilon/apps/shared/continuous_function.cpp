@@ -4,6 +4,7 @@
 #include <apps/global_preferences.h>
 #include <escher/palette.h>
 #include <omg/utf8_helper.h>
+#include <poincare/analysis_expression.h>
 #include <poincare/code_points.h>
 #include <poincare/function_properties/integral.h>
 #include <poincare/helpers/polynomial.h>
@@ -600,7 +601,9 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
     return m_expression;
   }
   // Retrieve the expression equation's expression.
-  m_expression = expressionReducedForAnalysis(record);
+  // TODO: Find a workaround
+  m_expression =
+      SystemExpression::Builder(expressionReducedForAnalysis(record).tree());
   ContinuousFunctionProperties thisProperties = properties(record);
   if (!thisProperties.isEnabled()) {
     m_expression = SystemExpression::Undefined();
@@ -730,7 +733,7 @@ ContinuousFunction::Model::expressionApproximated(
   return *approximated;
 }
 
-const Poincare::SystemExpression&
+const Poincare::AnalysisExpression&
 ContinuousFunction::Model::expressionReducedForAnalysis(
     const Ion::Storage::Record* record) const {
   if (!m_expressionForAnalysis.isUninitialized()) {
@@ -744,20 +747,25 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   UserExpression equation =
       expressionEquation(record, &computedEquationType, &computedFunctionSymbol,
                          &isCartesianEquation);
-  SystemExpression result;
+  AnalysisExpression result;
   ComplexFormat complexFormat = this->complexFormat(record);
   AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   if (!equation.isUndefined()) {
-    result = equation.cloneAndReduce(SimplificationParameters{
-        .user = {.complexFormat = complexFormat,
-                 .angleUnit = angleUnit,
-                 .context = GlobalContextAccessor::Context()},
-        .projectionPolicy = {.symbolic = SymbolicComputation::KeepAllSymbols},
-        .reductionPolicy = {.target = ReductionTarget::SystemForAnalysis}});
+    result =
+        equation
+            .cloneAndReduce(SimplificationParameters{
+                .user = {.complexFormat = complexFormat,
+                         .angleUnit = angleUnit,
+                         .context = GlobalContextAccessor::Context()},
+                .projectionPolicy = {.symbolic =
+                                         SymbolicComputation::KeepAllSymbols},
+                .reductionPolicy = {.target = ReductionTarget::User}})
+            .getSystemExpressionForAnalysis();
     assert(!result.isUninitialized());
   } else {
-    result = SystemExpression::Undefined();
+    // TODO: Improve it
+    result = SystemExpression::Undefined().getSystemExpressionForAnalysis();
   }
   /* TODO_PCJ: equation and result used to be a same Expression at this step.
    * Ensure this pool usage regression of still having equation in the pool is

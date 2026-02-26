@@ -1,5 +1,6 @@
 #pragma once
 
+#include <poincare/analysis_expression.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/expression.h>
 #include <poincare/float_precision.h>
@@ -94,13 +95,17 @@ class SystemExpression : public Expression {
   template <typename T>
   Coordinate2D<T> approximateToPoint() const;
 
+  AnalysisExpression getSystemExpressionForAnalysis() const;
+
   /* Properties getters */
 
   Sign sign() const;
+  // TODO: Delete it and only use AnalysisExpression version
   int polynomialDegree(const char* symbolName) const;
   /* Fills the table coefficients with the expressions of the first 3 polynomial
    * coefficients and returns the  polynomial degree. It is supposed to be
    * called on a reduced expression. coefficients has up to 3 entries.  */
+  // TODO: Delete it and only use AnalysisExpression version
   int getPolynomialReducedCoefficients(const char* symbolName,
                                        SystemExpression coefficients[],
                                        bool keepDependencies = false) const;

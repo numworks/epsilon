@@ -2,6 +2,7 @@
 
 #include <apps/exam_mode_manager.h>
 #include <omg/unreachable.h>
+#include <poincare/analysis_expression.h>
 #include <poincare/cas.h>
 #include <poincare/code_points.h>
 #include <poincare/function_properties/function_type.h>
@@ -135,7 +136,7 @@ void ContinuousFunctionProperties::setErrorStatusAndUpdateCaption(
 }
 
 void ContinuousFunctionProperties::update(
-    const Poincare::SystemExpression& reducedEquation,
+    const Poincare::AnalysisExpression& reducedEquation,
     const Poincare::UserExpression& inputEquation,
     const SymbolContext& symbolContext, ComplexFormat complexFormat,
     Comparison::Operator precomputedOperatorType,
@@ -162,6 +163,7 @@ void ContinuousFunctionProperties::update(
 
   assert(!reducedEquation.isUninitialized());
   if (reducedEquation.isUndefined()) {
+    // TODO: Set an helper
     if (reducedEquation.tree()->isUndefFailedSimplification()) {
       setErrorStatusAndUpdateCaption(Status::Unhandled);
     } else {
@@ -171,7 +173,7 @@ void ContinuousFunctionProperties::update(
   }
 
   // Do not handle dependencies for now.
-  const SystemExpression analyzedExpression =
+  const AnalysisExpression analyzedExpression =
       (reducedEquation.isDep()) ? reducedEquation.cloneChildAtIndex(0)
                                 : reducedEquation;
   if (reducedEquation.isDep() && analyzedExpression.isDep()) {
@@ -307,7 +309,7 @@ void ContinuousFunctionProperties::update(
 }
 
 I18n::Message ContinuousFunctionProperties::captionForCartesianFunction(
-    const SystemExpression& analyzedExpression) {
+    const AnalysisExpression& analyzedExpression) {
   assert(!analyzedExpression.isDep());
   assert(isEnabled() && isCartesian());
   FunctionType::CartesianType type = FunctionType::CartesianFunctionType(
@@ -339,7 +341,7 @@ I18n::Message ContinuousFunctionProperties::captionForCartesianFunction(
 }
 
 void ContinuousFunctionProperties::setCartesianEquationProperties(
-    const Poincare::SystemExpression& analyzedExpression, int xDeg, int yDeg,
+    const Poincare::AnalysisExpression& analyzedExpression, int xDeg, int yDeg,
     OMG::Troolean highestCoefficientIsPositive) {
   assert(!analyzedExpression.isDep());
   assert(isEnabled() && isCartesian());
@@ -424,7 +426,7 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
 }
 
 I18n::Message ContinuousFunctionProperties::captionForPolarFunction(
-    const SystemExpression& analyzedExpression) {
+    const AnalysisExpression& analyzedExpression) {
   assert(!analyzedExpression.isDep());
   assert(isEnabled() && isPolar());
 
@@ -462,7 +464,7 @@ I18n::Message ContinuousFunctionProperties::captionForPolarFunction(
 }
 
 I18n::Message ContinuousFunctionProperties::captionForParametricFunction(
-    const Poincare::SystemExpression& analyzedExpression) {
+    const Poincare::AnalysisExpression& analyzedExpression) {
   assert(analyzedExpression.isPoint());
   assert(isEnabled() && isParametric());
 

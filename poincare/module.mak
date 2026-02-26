@@ -147,6 +147,7 @@ $(addprefix pool/, \
     pool_object.cpp \
     prepared_function.cpp \
     system_expression.cpp \
+    analysis_expression.cpp \
     user_expression.cpp \
   ) \
 ) \

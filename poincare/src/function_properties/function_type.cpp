@@ -1,3 +1,4 @@
+#include <poincare/analysis_expression.h>
 #include <poincare/function_properties/function_type.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/dependency.h>
@@ -16,7 +17,7 @@ namespace Poincare {
 using namespace Internal;
 
 FunctionType::LineType FunctionType::PolarLineType(
-    const SystemExpression& analyzedExpression, const char* symbol) {
+    const AnalysisExpression& analyzedExpression, const char* symbol) {
   assert(analyzedExpression.dimension().isScalar());
 
   /* Detect polar lines
@@ -57,7 +58,7 @@ FunctionType::LineType FunctionType::PolarLineType(
 }
 
 FunctionType::LineType FunctionType::ParametricLineType(
-    const SystemExpression& analyzedExpression, const char* symbol) {
+    const AnalysisExpression& analyzedExpression, const char* symbol) {
   assert(analyzedExpression.isPoint());
 
   const Tree* xOfT = analyzedExpression.tree()->child(0);
@@ -152,7 +153,7 @@ bool isLinearCombinationOfFunction(const Tree* e, const char* symbol,
 }
 
 FunctionType::CartesianType FunctionType::CartesianFunctionType(
-    const SystemExpression& analyzedExpression, const char* symbol) {
+    const AnalysisExpression& analyzedExpression, const char* symbol) {
   assert(analyzedExpression.dimension().isScalar());
 
   const Tree* e = analyzedExpression.isDep()

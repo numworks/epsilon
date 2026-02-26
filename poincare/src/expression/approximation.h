@@ -311,16 +311,10 @@ class InternalParameters {
   InternalParameters() = default;
   explicit InternalParameters(const UserSettings& userSettings,
                               bool onlyReplaceNumerical)
-      :
-#if POINCARE_COMPLEX
-        complexFormat{userSettings.complexFormat},
-#else
-        complexFormat{ComplexFormat::Real},
-#endif
+      : complexFormat{userSettings.complexFormat},
         angleUnit{userSettings.angleUnit},
         symbolContext{userSettings.context},
-        onlyReplaceNumerical(onlyReplaceNumerical) {
-  }
+        onlyReplaceNumerical(onlyReplaceNumerical) {}
   const ComplexFormat complexFormat = ComplexFormat::None;
   // Mutable because of AngleUnitContext
   mutable AngleUnit angleUnit = AngleUnit::None;

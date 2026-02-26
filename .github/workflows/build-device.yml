@@ -18,19 +18,17 @@ jobs:
         uses: numworks/setup-arm-toolchain@latest
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Check for core
-        run: '[[ -e shared/ion/src/device/core ]]'
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
         with:
           platform: device
       # Not using matrix strategy to avoid multiplying setups and uploads.
       - name: Build n0110
-        run: $DOCKER_RUN "make PLATFORM=n0110 epsilon.onboarding$BETA.dfu epsilon.onboarding$BETA.allow3rdparty.dfu"
+        run: $DOCKER_RUN "make PLATFORM=n0110 epsilon_userland.A.onboarding$BETA.dfu epsilon_userland.A.onboarding$BETA.allow3rdparty.dfu"
       - name: Build n0115
-        run: $DOCKER_RUN "make PLATFORM=n0115 epsilon.onboarding$BETA.dfu epsilon.onboarding$BETA.allow3rdparty.dfu"
+        run: $DOCKER_RUN "make PLATFORM=n0115 epsilon_userland.A.onboarding$BETA.dfu epsilon_userland.A.onboarding$BETA.allow3rdparty.dfu"
       - name: Build n0120
-        run: $DOCKER_RUN "make PLATFORM=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding$BETA.dfu epsilon.onboarding$BETA.allow3rdparty.dfu"
+        run: $DOCKER_RUN "make PLATFORM=n0120 epsilon_userland.A.onboarding$BETA.dfu epsilon_userland.A.onboarding$BETA.allow3rdparty.dfu"
       - name: Upload
         uses: actions/upload-artifact@v4
         with:

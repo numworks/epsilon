@@ -49,34 +49,15 @@ jobs:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
       - uses: actions/checkout@v4
-
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
         with:
           platform: device
-
-      - name: Check for core
-        id: core
-        run: '[[ -e shared/ion/src/device/core ]]'
-        continue-on-error: true
-      - name: Disable core directory
-        if: ${{ steps.core.outcome == 'success' }}
-        run: mv shared/ion/src/device/core shared/ion/src/device/core-disable
       - name: Build userlands
         # Since both slots have the exact same amount of Flash reserved, it is pointless to build both the A and B elfs for every variant.
-        # As an exception, because we'll build epsilon.dfu that on both userland.A.elf and userland.B.elf, we still build those here
+        # As an exception, because we'll build epsilon.dfu with both userland.A.elf and userland.B.elf, we still build those here
         # TODO: It is also probably useless to build so many variants
         run: $DOCKER_RUN "make -C epsilon PLATFORM=${{ matrix.model }} userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf"
-      - name: Restore core directory
-        if: ${{ steps.core.outcome == 'success' }}
-        run: mv shared/ion/src/device/core-disable shared/ion/src/device/core
-      - name: Build epsilon, flasher, bench and tests.
-        if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "make -C epsilon PLATFORM=${{ matrix.model }} epsilon.dfu flasher.dfu bench.ram.dfu epsilon_test.dfu"
-      - name: Build eraser.
-        if: ${{ steps.core.outcome != 'success' }}
-        # Eraser build needs a clean output directory
-        run: $DOCKER_RUN "rm -rf epsilon/output/release/${{ matrix.model }}; make -C epsilon PLATFORM=${{ matrix.model }} eraser.dfu"
   windows:
     timeout-minutes: 15
     runs-on: windows-latest

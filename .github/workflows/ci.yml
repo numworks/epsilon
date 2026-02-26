@@ -118,8 +118,8 @@ jobs:
       - uses: actions/checkout@v4
       - run: tools/setup.sh
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon.exe
-      - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 test.exe
-      - run: ./epsilon/output/debug/optimized/windows/test.exe --headless --limit-stack-usage
+      - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon_test.exe
+      - run: ./epsilon/output/debug/optimized/windows/epsilon_test.exe --headless --limit-stack-usage
       - run: make -j8 userland.A.elf
       - uses: actions/upload-artifact@v4
         with:
@@ -164,7 +164,7 @@ jobs:
           platform: linux
 
       # TODO_PCJ: Add ASAN=1 and TIDY=1
-      - name: Build epsilon.bin and test.bin
+      - name: Build epsilon.bin and epsilon_test.bin
         run: $DOCKER_RUN "make -C epsilon TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 VERBOSE=0 epsilon.bin epsilon_test.bin"
       - name: Run unit tests (in parallel)
         run: |

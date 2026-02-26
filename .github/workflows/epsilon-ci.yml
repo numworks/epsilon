@@ -144,10 +144,3 @@ jobs:
         with:
           name: epsilon-macos.zip
           path: epsilon/output/debug/optimized/macos/epsilon.app
-  coverage:
-    name: Code Coverage
-    needs: linux
-    uses: ./.github/workflows/code_coverage.yml
-    with:
-      project-path: epsilon
-      coverage-scope: ''

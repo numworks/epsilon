@@ -1,5 +1,6 @@
 #include "dependency.h"
 
+#include <poincare/sign.h>
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
@@ -10,7 +11,6 @@
 #include "dimension.h"
 #include "k_tree.h"
 #include "parametric.h"
-#include "poincare/sign.h"
 #include "properties.h"
 #include "rational.h"
 #include "set.h"
@@ -237,7 +237,6 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
   // Un-projected trees are not expected here.
   assert(!searched->isOfType({Type::Log, Type::LogBase, Type::LnUser}) &&
          !container->isOfType({Type::Log, Type::LogBase, Type::LnUser}));
-  // TODO: handle scopes, x will not be seen in sum(k+x,k,1,n)
   if (searched->treeIsIdenticalTo(container)) {
     return true;
   }
@@ -258,8 +257,20 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
       searched->child(0)->treeIsIdenticalTo(container->child(0))) {
     return true;
   }
-  for (const Tree* child : container->children()) {
-    if (ContainsSameDependency(searched, child)) {
+  for (IndexedChild<const Tree*> child : container->indexedChildren()) {
+    Tree* searchedWithScope = nullptr;
+    bool shouldEnterScope = container->isParametric() &&
+                            Parametric::IsFunctionIndex(child.index, container);
+    if (shouldEnterScope) {
+      searchedWithScope = searched->cloneTree();
+      Variables::EnterScope(searchedWithScope);
+    }
+    bool sameDep = ContainsSameDependency(
+        shouldEnterScope ? searchedWithScope : searched, child);
+    if (shouldEnterScope) {
+      searchedWithScope->removeTree();
+    }
+    if (sameDep) {
       return true;
     }
   }

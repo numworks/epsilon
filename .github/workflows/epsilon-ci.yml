@@ -8,8 +8,6 @@ on:
     paths-ignore:
       - '**/*.md'
       - 'poincare/doc/**'
-      - 'epsilon/tests/**'
-      - '**/scandium/**'
       - 'epsilon/external_apps/**'
 
   workflow_dispatch:

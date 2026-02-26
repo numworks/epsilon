@@ -14,6 +14,12 @@ on:
 
   workflow_dispatch:
     inputs:
+      linux:
+        type: boolean
+        default: false
+      poincarejs:
+        type: boolean
+        default: false
       device:
         type: boolean
         default: false
@@ -146,6 +152,7 @@ jobs:
   linux:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    if: ${{ (github.event_name == 'pull_request' || fromJSON(github.event.inputs.linux)) }}
     env:
       MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"
     steps:
@@ -207,6 +214,7 @@ jobs:
   poincarejs:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
+    if: ${{ (github.event_name == 'pull_request' || fromJSON(github.event.inputs.poincarejs)) }}
     env:
       MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"
     steps:

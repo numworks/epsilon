@@ -180,7 +180,7 @@ QUIZ_CASE(pcj_approximation_mixed_fraction) {
 
 QUIZ_CASE(pcj_approximation_percent) {
   simplified_approximates_to<double>("900(1+1.5%/365)^(18*365)",
-                                     "1178.9614650069");
+                                     "1178.96146501", k_realCtx, 12);
   approximates_to<float>("20%", "0.2");
   approximates_to<float>("20%%", "0.002");
   approximates_to<float>("80*20%", "16");

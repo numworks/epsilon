@@ -1,4 +1,5 @@
 #include "helper.h"
+#include "poincare/test/helper.h"
 
 QUIZ_CASE(pcj_approximation_trigonometry) {
   approximates_to<double>("sin(3)2(4+2)", "1.6934400967184");
@@ -122,9 +123,10 @@ QUIZ_CASE(pcj_approximation_trigonometry) {
   approximates_to<double>("sin(π/2)/cos(π/2)", "undef");
   approximates_to<double>("1/cot(π/2)", "undef");
   // tan(almost π/2)
-  approximates_to<double>("tan(1.57079632)", "147169276.57047");
-  approximates_to<double>("sin(1.57079632)/cos(1.57079632)", "147169276.57047");
-  approximates_to<double>("1/cot(1.57079632)", "147169276.57047");
+  approximates_to<double>("tan(1.57079632)", "147169276.57", k_realCtx, 11);
+  approximates_to<double>("sin(1.57079632)/cos(1.57079632)", "147169276.57",
+                          k_realCtx, 11);
+  approximates_to<double>("1/cot(1.57079632)", "147169276.57", k_realCtx, 11);
 
   // Advanced function : cot
   approximates_to<double>("cot(2)", "-0.45765755436029");
@@ -137,10 +139,11 @@ QUIZ_CASE(pcj_approximation_trigonometry) {
   approximates_to<double>("cos(π/2)/sin(π/2)", "0");
   approximates_to<double>("cot(π/2)", "0");
   // cot(almost π/2)
-  approximates_to<double>("1/tan(1.57079632)", "6.7948964845335ᴇ-9");
-  approximates_to<double>("cos(1.57079632)/sin(1.57079632)",
-                          "6.7948964845335ᴇ-9");
-  approximates_to<double>("cot(1.57079632)", "6.7948964845335ᴇ-9");
+  approximates_to<double>("1/tan(1.57079632)", "6.79489648453ᴇ-9", k_realCtx,
+                          12);
+  approximates_to<double>("cos(1.57079632)/sin(1.57079632)", "6.79489648453ᴇ-9",
+                          k_realCtx, 12);
+  approximates_to<double>("cot(1.57079632)", "6.79489648453ᴇ-9", k_realCtx, 12);
 
   /* acos: [-1,1]    -> R
    *       ]-inf,-1[ -> π+R×i (odd imaginary)

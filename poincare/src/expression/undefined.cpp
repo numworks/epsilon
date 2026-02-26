@@ -26,7 +26,7 @@ bool Undefined::CanBeUndefined(const Tree* e) {
   return true;
 }
 
-bool IsPiecewiseNonConditionIndex(int childIndex, const Tree* parent) {
+bool IsPiecewiseBranchIndex(int childIndex, const Tree* parent) {
   return parent->isPiecewise() && childIndex % 2 == 0;
 }
 
@@ -35,7 +35,7 @@ bool IsListSequenceFunctionIndex(int childIndex, const Tree* parent) {
          Parametric::IsFunctionIndex(childIndex, parent);
 }
 bool Undefined::MustBubbleUpUndefinedChild(const Tree* e, int childIndex) {
-  return CanBeUndefined(e) && !IsPiecewiseNonConditionIndex(childIndex, e) &&
+  return CanBeUndefined(e) && !IsPiecewiseBranchIndex(childIndex, e) &&
          !IsListSequenceFunctionIndex(childIndex, e);
 }
 

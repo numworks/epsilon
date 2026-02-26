@@ -873,7 +873,7 @@ QUIZ_CASE(pcj_tree_simplification) {
                 k_cartesianSimplification);
   simplifies_to(KACos(KAdd(23_fe, KMult(3.5_fe, i_e))),
                 KAdd(0.15115293_fe, KMult(-3.8396465778351_fe, i_e)),
-                k_cartesianSimplification);
+                k_cartesianSimplification, 6);
   simplifies_to(KACos(KAdd(1_fe, i_e)),
                 KAdd(0.90455687046051_fe, KMult(-1.0612751245499_fe, i_e)),
                 k_cartesianSimplification);

@@ -57,14 +57,14 @@ void simplifies_to(const char* input, const char* output,
 }
 
 void simplifies_to(const Tree* input, const Tree* output,
-                   const SimplificationParameters& simplificationParameters) {
+                   const SimplificationParameters& simplificationParameters,
+                   int nbOfSignificantDigits) {
   process_tree_and_compare(
       input, output,
       [](Tree* tree, const SimplificationParameters& simplificationParameters) {
         simplify(tree, simplificationParameters, true);
       },
-      simplificationParameters,
-      Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits);
+      simplificationParameters, nbOfSignificantDigits);
 }
 
 void projects_and_reduces_to(

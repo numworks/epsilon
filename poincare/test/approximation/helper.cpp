@@ -90,7 +90,8 @@ void approximates_to(const char* input, const char* output,
         Beautification::DeepBeautify(
             tree, ToBeautificationParameters(simplificationParameters));
       },
-      SimplificationParameters{.user = userSettings}, nbOfSignificantDigits);
+      SimplificationParameters{.user = ToUserSettingsWithUnit(userSettings)},
+      nbOfSignificantDigits);
 }
 
 void approximates_to_float_and_double(
@@ -139,8 +140,8 @@ void assert_float_approximates_to(UserExpression f, const char* result) {
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
   f.cloneAndApproximate<T>(
-       Poincare::UserSettings{.complexFormat = ComplexFormat::Cartesian,
-                              .angleUnit = AngleUnit::Radian})
+       Poincare::UserSettingsWithUnit{.complexFormat = ComplexFormat::Cartesian,
+                                      .angleUnit = AngleUnit::Radian})
       .serialize(buffer, false, DecimalMode, numberOfDigits);
   quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
 }
@@ -201,7 +202,7 @@ void approximates_to_keeping_symbols(const char* expression,
                                       .user = simplificationParameters.user});
         Variables::BeautifyToName(tree);
       },
-      SimplificationParameters{.user = userSettings},
+      SimplificationParameters{.user = ToUserSettingsWithUnit(userSettings)},
       numberOfSignificantDigits);
 }
 

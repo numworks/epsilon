@@ -202,16 +202,15 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
             .user = {.complexFormat = m_equationMetadata.complexFormat,
                      .angleUnit = GlobalPreferences::SharedGlobalPreferences()
                                       ->angleUnit(),
-                     .context = symbolContext},
+                     .context = symbolContext,
+                     .unitFormat = GlobalPreferences::SharedGlobalPreferences()
+                                       ->unitFormat()},
             .projectionPolicy =
                 {/* Any remaining symbol at this point should be an
                     unknown parameter. */
                  .symbolic = SymbolicComputation::KeepAllSymbols,
                  .strategy = Strategy::ApproximateToFloat},
-            .reduction = {.advanced = false},
-            .unitMode = {.unitFormat =
-                             GlobalPreferences::SharedGlobalPreferences()
-                                 ->unitFormat()}},
+            .reduction = {.advanced = false}},
         &failure);
   }
 

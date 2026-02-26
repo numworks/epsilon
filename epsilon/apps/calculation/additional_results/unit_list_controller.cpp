@@ -78,9 +78,9 @@ void UnitListController::computeAdditionalResults(
   SimplificationParameters simplificationParameters = {
       .user = {.complexFormat = complexFormat(),
                .angleUnit = angleUnit(),
-               .context = symbolContext},
+               .context = symbolContext,
+               .unitFormat = unitFormat},
       .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols},
-      .unitMode = {.unitFormat = unitFormat},
   };
 
   // Initialize expressions and layouts
@@ -93,7 +93,7 @@ void UnitListController::computeAdditionalResults(
   // Build an expression for each relevant unit display mode
   bool reductionFailure = false;
   int numberOfExpressions = 0;
-  simplificationParameters.unitMode.unitDisplay =
+  simplificationParameters.unitPolicy =
       (unitFormat == Preferences::UnitFormat::Metric)
           ? UnitDisplay::AutomaticMetric
           : UnitDisplay::AutomaticImperial;
@@ -104,21 +104,21 @@ void UnitListController::computeAdditionalResults(
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 #if 0  // TODO: correctly implement AutomaticInput and reenable it
-  simplificationParameters.unitMode.unitDisplay = UnitDisplay::AutomaticInput;
+  simplificationParameters.unitPolicy = UnitDisplay::AutomaticInput;
   expressions[numberOfExpressions++] = input.cloneAndSimplify(simplificationParameters, &reductionFailure);
   if (reductionFailure) {
     expressions[--numberOfExpressions] = Expression();
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 #endif
-  simplificationParameters.unitMode.unitDisplay = UnitDisplay::Decomposition;
+  simplificationParameters.unitPolicy = UnitDisplay::Decomposition;
   expressions[numberOfExpressions++] =
       input.cloneAndSimplify(simplificationParameters, &reductionFailure);
   if (reductionFailure) {
     expressions[--numberOfExpressions] = UserExpression();
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
-  simplificationParameters.unitMode.unitDisplay = UnitDisplay::Equivalent;
+  simplificationParameters.unitPolicy = UnitDisplay::Equivalent;
   expressions[numberOfExpressions++] =
       input.cloneAndSimplify(simplificationParameters, &reductionFailure);
   if (reductionFailure) {
@@ -127,8 +127,7 @@ void UnitListController::computeAdditionalResults(
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 
   if (unitFormat != Preferences::UnitFormat::Metric) {
-    simplificationParameters.unitMode.unitDisplay =
-        UnitDisplay::AutomaticMetric;
+    simplificationParameters.unitPolicy = UnitDisplay::AutomaticMetric;
     expressions[numberOfExpressions++] =
         input.cloneAndSimplify(simplificationParameters, &reductionFailure);
     if (reductionFailure) {
@@ -136,7 +135,7 @@ void UnitListController::computeAdditionalResults(
     }
     assert(!expressions[numberOfExpressions - 1].isUninitialized());
   }
-  simplificationParameters.unitMode.unitDisplay = UnitDisplay::BasicSI;
+  simplificationParameters.unitPolicy = UnitDisplay::BasicSI;
   UserExpression approximatedSIExpression;
   input.cloneAndSimplifyAndApproximate(expressions + numberOfExpressions++,
                                        &approximatedSIExpression,

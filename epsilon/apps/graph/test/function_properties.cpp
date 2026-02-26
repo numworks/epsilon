@@ -19,10 +19,10 @@ static SimplificationParameters DefaultSimplificationParametersForAnalysis() {
   return SimplificationParameters{
       .user = {.complexFormat = ComplexFormat::Cartesian,
                .angleUnit = AngleUnit::Radian,
-               .context = k_emptySymbolContext},
+               .context = k_emptySymbolContext,
+               .unitFormat = Preferences::UnitFormat::Metric},
       .projectionPolicy = {.symbolic =
-                               SymbolicComputation::ReplaceDefinedSymbols},
-      .unitMode = {.unitFormat = Preferences::UnitFormat::Metric}};
+                               SymbolicComputation::ReplaceDefinedSymbols}};
 }
 
 void assert_cartesian_function_type_is(

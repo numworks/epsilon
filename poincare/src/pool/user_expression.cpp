@@ -146,7 +146,7 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
 
 template <typename T>
 UserExpression UserExpression::cloneAndApproximate(
-    const UserSettings& userSettings) const {
+    const UserSettingsWithUnit& userSettings) const {
   Tree* a = Approximation::To<Tree*>(
       tree(), Approximation::Precision<T>::value,
       Approximation::Parameters{
@@ -648,9 +648,9 @@ template UserExpression UserExpression::Builder<float>(
 template UserExpression UserExpression::Builder<double>(
     PointOrRealScalar<double>);
 template UserExpression UserExpression::cloneAndApproximate<float>(
-    const UserSettings&) const;
+    const UserSettingsWithUnit&) const;
 template UserExpression UserExpression::cloneAndApproximate<double>(
-    const UserSettings&) const;
+    const UserSettingsWithUnit&) const;
 template float UserExpression::privateApproximateToRealScalar<float>(
     AngleUnit, ComplexFormat, const SymbolContext&) const;
 template double UserExpression::privateApproximateToRealScalar<double>(

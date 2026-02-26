@@ -11,22 +11,17 @@ struct ProjectionParameters {
   ProjectionPolicy policy = {};
 };
 
-struct UnitModeParameters {
-  Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
-  UnitDisplay unitDisplay = UnitDisplay::MainOutput;
-};
-
 struct SimplificationParameters {
-  UserSettings user = {};
+  UserSettingsWithUnit user = {};
   ProjectionPolicy projectionPolicy = {};
   ReductionPolicy reduction = {};
-  UnitModeParameters unitMode = {};
+  UnitDisplay unitPolicy = {};
 };
 
 struct BeautificationParameters {
-  UserSettings user = {};
+  UserSettingsWithUnit user = {};
   ReductionPolicy reduction = {};
-  UnitModeParameters unitMode = {};
+  UnitDisplay unitPolicy = {};
 };
 
 struct UnitParameters {
@@ -57,14 +52,14 @@ inline BeautificationParameters ToBeautificationParameters(
   return BeautificationParameters{
       .user = simplificationParameters.user,
       .reduction = simplificationParameters.reduction,
-      .unitMode = simplificationParameters.unitMode};
+      .unitPolicy = simplificationParameters.unitPolicy};
 }
 
 inline UnitParameters ToUnitParameters(
     const BeautificationParameters& beautificationParameters) {
   return UnitParameters{
-      .unitFormat = beautificationParameters.unitMode.unitFormat,
-      .unitDisplay = beautificationParameters.unitMode.unitDisplay,
+      .unitFormat = beautificationParameters.user.unitFormat,
+      .unitDisplay = beautificationParameters.unitPolicy,
       .angleUnit = beautificationParameters.user.angleUnit,
   };
 }

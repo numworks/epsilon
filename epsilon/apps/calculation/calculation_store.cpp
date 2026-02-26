@@ -161,12 +161,14 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
       return CalculationResult{
           .outputs =
               {.exact = inputExpression.clone(),
-               .approximate =
-                   inputExpression.cloneAndApproximate<double>(UserSettings{
+               .approximate = inputExpression.cloneAndApproximate<double>(
+                   UserSettingsWithUnit{
                        .complexFormat = complexFormat,
                        .angleUnit = GlobalPreferences::SharedGlobalPreferences()
                                         ->angleUnit(),
-                       .context = GlobalContextAccessor::Context()})},
+                       .context = GlobalContextAccessor::Context()
+                       // Should unitFormat be passed?
+                   })},
           .hasReductionFailure = false};
     }
     symbolicComputation = storeElements.symbolicComputation;
@@ -177,14 +179,14 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
   bool reductionFailure = expressionToReduce.cloneAndSimplifyAndApproximate(
       &outputs.exact, &outputs.approximate,
       SimplificationParameters{
-          .user = {.complexFormat = complexFormat,
-                   .angleUnit = GlobalPreferences::SharedGlobalPreferences()
-                                    ->angleUnit(),
-                   .context = GlobalContextAccessor::Context()},
-          .projectionPolicy = {.symbolic = symbolicComputation},
-          .unitMode = {
-              .unitFormat =
-                  GlobalPreferences::SharedGlobalPreferences()->unitFormat()}});
+          .user =
+              {.complexFormat = complexFormat,
+               .angleUnit =
+                   GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+               .context = GlobalContextAccessor::Context(),
+               .unitFormat =
+                   GlobalPreferences::SharedGlobalPreferences()->unitFormat()},
+          .projectionPolicy = {.symbolic = symbolicComputation}});
   if (isStore) {
     /*  Restore store structure in the exact output. The store operation itself
      * is performed by the processStore function. */
@@ -240,7 +242,7 @@ static void processStore(OutputExpressions& outputs,
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
   UserExpression valueApprox = value.cloneAndApproximate<double>(
-      PoincareHelpers::SimplificationParametersForPreferences(value).user);
+      PoincareHelpers::UserSettingsForPreferences(value));
   if (symbol.isUserVariable() &&
       CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox,
                                           GlobalContextAccessor::Context())) {

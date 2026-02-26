@@ -186,14 +186,14 @@ Ion::Storage::Record::ErrorStatus GlobalStore::setExpressionForUserVariable(
     Ion::Storage::Record previousRecord) {
   bool storeApproximation =
       CAS::NeverDisplayReductionOfInput(expression, *this);
-  SimplificationParameters simplificationParameters =
-      PoincareHelpers::SimplificationParametersForPreferences(expression);
-  simplificationParameters.projectionPolicy.symbolic =
-      SymbolicComputation::ReplaceAllSymbols;
   UserExpression approximation;
   UserExpression simplifiedExpression;
   bool reductionFailure = expression.cloneAndSimplifyAndApproximate(
-      &simplifiedExpression, &approximation, simplificationParameters);
+      &simplifiedExpression, &approximation,
+      SimplificationParameters{
+          .user = PoincareHelpers::UserSettingsForPreferences(expression),
+          .projectionPolicy = {.symbolic =
+                                   SymbolicComputation::ReplaceAllSymbols}});
   // Do not store exact derivative, etc.
   if (reductionFailure || storeApproximation ||
       CAS::ShouldOnlyDisplayApproximation(

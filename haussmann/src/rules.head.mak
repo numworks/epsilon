@@ -40,13 +40,22 @@ endif
 $(call document_extension,$(EXECUTABLE_EXTENSION))
 
 # Rules for modules as static libraries
-# Because of some quirks with how make selects rules, AR may be called event if
+# Because of some quirks with how make selects rules, AR may be called even if
 # some .o cannot be built. It will end up throwing an error that stops make but
 # the .a might still be created. As such, we need to remove it manually and
 # propagate the error.
+ifeq ($(OS),Windows_NT)
+# Work around for command-line length limit (see comment above)
+$(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
+	$(call rule_label,AR)
+	$(file >$@.objs,$^)
+	$(AR) $(ARFLAGS) $@ @$@.objs || (rm -f $@ $@.objs; false)
+	rm -f $@.objs
+else
 $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
 	$(call rule_label,AR)
 	$(AR) $(ARFLAGS) $@ $^ || (rm -f $@; false)
+endif
 
 # Rules for object files
 $(call rule_for_object, \

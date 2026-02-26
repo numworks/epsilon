@@ -16,6 +16,10 @@ bool Undefined::CanBeUndefined(const Tree* e) {
   }
   if (e->numberOfChildren() == 0) {
     // Undefined trees are the only childless trees that can be undefined.
+    /* Note: Variables and UserVariables are considered to always be defined to
+     * allow better reductions. For now, Variables and UserVariables that
+     * haven't been replaced by their definition are always evaluated on defined
+     * values. */
     return e->isUndefined();
   }
   // By default, any other tree can be undefined. For ex: ln(0) or abs(undef).

@@ -110,7 +110,7 @@ QUIZ_CASE(pcj_polynomial_degree) {
                .context = symbolStore},
       .projectionPolicy =
           {.symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols},
-      .reduction = {.advanced = false}};
+      .reductionPolicy = {.advanced = false}};
 
   assert_polynomial_degree_is(parameters, "x+1", 1);
   assert_polynomial_degree_is(parameters, "cos(2)+1", 0);

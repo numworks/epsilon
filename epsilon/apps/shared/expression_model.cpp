@@ -115,7 +115,8 @@ SystemExpression ExpressionModel::expressionReduced(
                    .context = GlobalContextAccessor::Context()},
           .projectionPolicy = {.symbolic =
                                    SymbolicComputation::ReplaceDefinedSymbols},
-          .reduction = {.target = ReductionTarget::SystemForApproximation}});
+          .reductionPolicy = {.target =
+                                  ReductionTarget::SystemForApproximation}});
     }
   }
   return m_expression;

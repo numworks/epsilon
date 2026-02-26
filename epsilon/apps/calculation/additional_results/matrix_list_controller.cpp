@@ -31,7 +31,7 @@ void MatrixListController::computeAdditionalResults(
                    .context = App::app()->localContext()},
           .projectionPolicy = {.symbolic =
                                    SymbolicComputation::ReplaceAllSymbols},
-          .reduction = {.advanced = false},
+          .reductionPolicy = {.advanced = false},
       },
       displayMode(), numberOfSignificantDigits(), determinant, inverse,
       rowEchelonForm, reducedRowEchelonForm, trace);

@@ -127,7 +127,7 @@ Dimension ProjectAndReduce(
   ProjectionParameters projectionParameters =
       ToProjectionParameters(simplificationParameters);
   Dimension dim = ToSystem(e, projectionParameters).dimension;
-  ReduceSystem(e, simplificationParameters.reduction);
+  ReduceSystem(e, simplificationParameters.reductionPolicy);
   // Non-approximated numbers or node may have appeared during reduction.
   ApplyReductionStrategy(e, projectionParameters);
   return dim;

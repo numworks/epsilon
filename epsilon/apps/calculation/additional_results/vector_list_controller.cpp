@@ -70,7 +70,7 @@ void VectorListController::computeAdditionalResults(
                    .angleUnit = angleUnit(),
                    .context = symbolContext},
           .projectionPolicy = {.symbolic = k_symbolicComputation},
-          .reduction = {.target = ReductionTarget::User},
+          .reductionPolicy = {.target = ReductionTarget::User},
       },
       &reductionFailure);
   if (reductionFailure || !normalized.isMatrix()) {

@@ -580,7 +580,7 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
                .context = symbolContext},
       .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .strategy = Strategy::ApproximateToFloat},
-      .reduction = {.advanced = false}};
+      .reductionPolicy = {.advanced = false}};
   Tree* e = approximateOutput.tree()->cloneTree();
   Internal::Dimension dim =
       Simplification::ProjectAndReduce(e, simplificationParameters);

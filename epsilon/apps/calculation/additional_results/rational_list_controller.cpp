@@ -27,7 +27,7 @@ void RationalListController::computeAdditionalResults(
 
   SystemExpression eReduced = e.cloneAndReduce(SimplificationParameters{
       .user = {.complexFormat = complexFormat(), .angleUnit = angleUnit()},
-      .reduction = {.advanced = false}});
+      .reductionPolicy = {.advanced = false}});
   assert(!eReduced.isFailedSimplification() && eReduced.tree()->isRational());
 
   BeautificationParameters beautificationParameters = BeautificationParameters{

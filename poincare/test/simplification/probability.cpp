@@ -111,7 +111,8 @@ QUIZ_CASE(pcj_simplification_random) {
   simplifies_to_no_beautif(
       "randint(1,3)", "randint(1,3)",
       SimplificationParameters{
-          .reduction = {.target = ReductionTarget::SystemForApproximation}});
+          .reductionPolicy = {.target =
+                                  ReductionTarget::SystemForApproximation}});
 }
 
 QUIZ_CASE(pcj_simplification_combinatorics) {

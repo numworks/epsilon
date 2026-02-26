@@ -188,7 +188,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
                    GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
                .context = storeAppContext},
       .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols},
-      .reduction = {.target = ReductionTarget::SystemForApproximation}});
+      .reductionPolicy = {.target = ReductionTarget::SystemForApproximation}});
 
   if (reduced.isFailedSimplification() || reduced.isUndefined()) {
     return FillColumnStatus::DataNotSuitable;

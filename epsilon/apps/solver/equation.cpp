@@ -34,7 +34,7 @@ SystemExpression Equation::Model::standardForm(
   UserExpression simplifiedInput = expressionInputWithoutFunctions;
   bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(&simplifiedInput, contextToUse,
-                                    {.reduction = {.target = target},},
+                                    {.reductionPolicy = {.target = target},},
                                     &reductionFailure);
   assert(!reductionFailure);
 
@@ -54,7 +54,7 @@ SystemExpression Equation::Model::standardForm(
     SimplificationParameters simplificationParameters =
         PoincareHelpers::SimplificationParametersForPreferences(
             expressionInputWithoutFunctions, contextToUse,
-            {.reduction = {.target = target},});
+            {.reductionPolicy = {.target = target},});
     returnedExpression =
         returnedExpression.cloneAndReduce(simplificationParameters, &reductionFailure);
     assert(!reductionFailure && !returnedExpression.isUninitialized());

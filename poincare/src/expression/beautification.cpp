@@ -111,7 +111,7 @@ bool DeepBeautifyAngleFunctions(
       Tree::ApplyShallowTopDown(e, ShallowBeautifyAngleFunctions, &angleUnit);
   if (changed) {
     SystematicReduction::DeepReduce(e);
-    if (beautificationParameters.reduction.advanced &&
+    if (beautificationParameters.reductionPolicy.advanced &&
         angleUnit != AngleUnit::Radian) {
       /* Some ShallowBeautifyAngleFunctions steps add potential multiplication
        * expansions that advanced reduction can apply if worth it. It is
@@ -255,7 +255,8 @@ bool DeepBeautifyUnits(Tree* e) {
 bool DeepBeautify(Tree* e,
                   const BeautificationParameters& beautificationParameters,
                   const Dimension& dimension) {
-  assert(beautificationParameters.reduction.target == ReductionTarget::User);
+  assert(beautificationParameters.reductionPolicy.target ==
+         ReductionTarget::User);
   bool changed = ApplyComplexFormat(
       e,
       dimension.isNone()
@@ -628,9 +629,10 @@ bool ApplyComplexFormatCartesianOrPolar(
    *  - It has a better metric than the original expression
    *  - It simplified all the introduced re/im/arg/abs nodes */
   if (result && !Dependency::MainTreeIsIdenticalToMain(result, e) &&
-      (Metric::GetTrueMetric(e, beautificationParameters.reduction.target) >=
-           Metric::GetTrueMetric(result,
-                                 beautificationParameters.reduction.target) ||
+      (Metric::GetTrueMetric(e,
+                             beautificationParameters.reductionPolicy.target) >=
+           Metric::GetTrueMetric(
+               result, beautificationParameters.reductionPolicy.target) ||
        !Dependency::SafeMain(result)->hasDescendantSatisfying(
            [](const Tree* e) {
              return e->isRe() || e->isIm() || e->isArg() || e->isAbs();
@@ -667,7 +669,7 @@ Tree* GetPolarFormat(const Tree* e,
     result->removeNode();
     return nullptr;
   }
-  if (beautificationParameters.reduction.advanced) {
+  if (beautificationParameters.reductionPolicy.advanced) {
     hasReduced = AdvancedReduction::Reduce(abs) || hasReduced;
   }
   if (!hasReduced) {
@@ -687,7 +689,7 @@ Tree* GetPolarFormat(const Tree* e,
   e->cloneTree();
   // Both abs and arg must have been reduced
   hasReduced = SystematicReduction::ShallowReduce(arg);
-  if (beautificationParameters.reduction.advanced) {
+  if (beautificationParameters.reductionPolicy.advanced) {
     hasReduced = AdvancedReduction::Reduce(arg) || hasReduced;
   }
   if (hasSingleFloats) {
@@ -775,7 +777,7 @@ Tree* GetCartesianFormat(
     result->removeNode();
     return nullptr;
   }
-  if (beautificationParameters.reduction.advanced) {
+  if (beautificationParameters.reductionPolicy.advanced) {
     hasReduced = AdvancedReduction::Reduce(re) || hasReduced;
   }
   if (!hasReduced) {
@@ -788,7 +790,7 @@ Tree* GetCartesianFormat(
   e->cloneTree();
   // Both im and re must have been reduced
   hasReduced = SystematicReduction::ShallowReduce(im);
-  if (beautificationParameters.reduction.advanced) {
+  if (beautificationParameters.reductionPolicy.advanced) {
     hasReduced = AdvancedReduction::Reduce(im) || hasReduced;
   }
   SharedTreeStack->pushComplexI();

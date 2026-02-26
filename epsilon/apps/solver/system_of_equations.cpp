@@ -110,7 +110,7 @@ void SystemOfEquations::approximateSolve(const SymbolContext& symbolContext) {
                 .angleUnit =
                     GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
                 .context = symbolContext},
-       .reduction = {.target = ReductionTarget::SystemForApproximation}},
+       .reductionPolicy = {.target = ReductionTarget::SystemForApproximation}},
       m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
                                 : m_approximateSolvingRange,
       k_maxNumberOfApproximateSolutions);
@@ -210,7 +210,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
                     unknown parameter. */
                  .symbolic = SymbolicComputation::KeepAllSymbols,
                  .strategy = Strategy::ApproximateToFloat},
-            .reduction = {.advanced = false}},
+            .reductionPolicy = {.advanced = false}},
         &failure);
   }
 

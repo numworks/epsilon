@@ -447,7 +447,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
       SimplificationParameters{
           .user = {.complexFormat = Poincare::ComplexFormat::Real,
                    .angleUnit = Poincare::AngleUnit::Radian},
-          .reduction = {.target = ReductionTarget::SystemForAnalysis}});
+          .reductionPolicy = {.target = ReductionTarget::SystemForAnalysis}});
   simplifies_to("tan(atan(5/2))", "5/2");
   simplifies_to("atan(tan(5/2))", "5/2-π");
   simplifies_to("atan(tan(-π/7))", "-π/7");
@@ -673,7 +673,7 @@ QUIZ_CASE(pcj_simplification_trigonometry_advanced) {
 
   SimplificationParameters parametersForAnalysis = SimplificationParameters{
       .user = {.angleUnit = Poincare::AngleUnit::Radian},
-      .reduction = {.target = ReductionTarget::SystemForAnalysis}};
+      .reductionPolicy = {.target = ReductionTarget::SystemForAnalysis}};
 
   projects_and_reduces_to("arccot(3)", "π/2-arctan(3)", parametersForAnalysis);
   projects_and_reduces_to("arccot(3)", "π/2-arctan(3)", parametersForAnalysis);

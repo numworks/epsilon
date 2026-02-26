@@ -14,13 +14,13 @@ struct ProjectionParameters {
 struct SimplificationParameters {
   UserSettingsWithUnit user = {};
   ProjectionPolicy projectionPolicy = {};
-  ReductionPolicy reduction = {};
+  ReductionPolicy reductionPolicy = {};
   UnitDisplay unitPolicy = {};
 };
 
 struct BeautificationParameters {
   UserSettingsWithUnit user = {};
-  ReductionPolicy reduction = {};
+  ReductionPolicy reductionPolicy = {};
   UnitDisplay unitPolicy = {};
 };
 
@@ -51,7 +51,7 @@ inline BeautificationParameters ToBeautificationParameters(
     const SimplificationParameters& simplificationParameters) {
   return BeautificationParameters{
       .user = simplificationParameters.user,
-      .reduction = simplificationParameters.reduction,
+      .reductionPolicy = simplificationParameters.reductionPolicy,
       .unitPolicy = simplificationParameters.unitPolicy};
 }
 

@@ -880,7 +880,7 @@ SolverResult ExactSolve(
   // Beautify approximate solutions
   if (result.approximateSolutionList) {
     // Advanced reduction is only needed to beautify in polar format
-    beautificationParameters.reduction.advanced =
+    beautificationParameters.reductionPolicy.advanced =
         beautificationParameters.user.complexFormat == ComplexFormat::Polar;
     Simplification::BeautifyReduced(result.approximateSolutionList,
                                     beautificationParameters,

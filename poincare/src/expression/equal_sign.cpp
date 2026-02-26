@@ -43,7 +43,8 @@ bool IsCalculationOutputStrictEquality(const Tree* exact,
     Tree* parsed = Parser::Parse(layout);
     assert(isExpectedExpression(parsed));
     Simplification::ProjectAndReduce(
-        parsed, SimplificationParameters{.reduction = {.advanced = false}});
+        parsed,
+        SimplificationParameters{.reductionPolicy = {.advanced = false}});
     bool result = exact->treeIsIdenticalTo(parsed);
     parsed->removeTree();
     layout->removeTree();

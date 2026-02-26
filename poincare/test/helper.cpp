@@ -108,9 +108,9 @@ void process_tree_and_compare(
 #ifndef PLATFORM_DEVICE
     if (!ok) {
       float expectedMetric = Metric::GetMetric(
-          expected, simplificationParameters.reduction.target);
+          expected, simplificationParameters.reductionPolicy.target);
       float expressionMetric = Metric::GetMetric(
-          expressionClone, simplificationParameters.reduction.target);
+          expressionClone, simplificationParameters.reductionPolicy.target);
       const char* metricText =
           expectedMetric > expressionMetric
               ? "better"

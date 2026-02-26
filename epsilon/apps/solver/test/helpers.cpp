@@ -158,7 +158,7 @@ static void compareSolutions(SystemOfEquations* system,
                          .context = tempContext},
                 .projectionPolicy =
                     {.symbolic = SymbolicComputation::ReplaceDefinedSymbols},
-                .reduction = {.advanced = false}});
+                .reductionPolicy = {.advanced = false}});
     quiz_assert(!expectedExpression.isUninitialized() &&
                 !expectedExpression.isFailedSimplification());
 
@@ -178,7 +178,7 @@ static void compareSolutions(SystemOfEquations* system,
                      .context = tempContext},
             .projectionPolicy =
                 {.symbolic = SymbolicComputation::ReplaceDefinedSymbols},
-            .reduction = {.advanced = false}});
+            .reductionPolicy = {.advanced = false}});
     quiz_assert(!obtainedExpression.isUninitialized() &&
                 !obtainedExpression.isFailedSimplification());
 

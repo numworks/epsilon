@@ -769,7 +769,7 @@ void assert_reduced_is_positive(
                    .context = symbolContext},
           .projectionPolicy = {.symbolic =
                                    SymbolicComputation::ReplaceDefinedSymbols},
-          .reduction = {.advanced = false}});
+          .reductionPolicy = {.advanced = false}});
   ComplexProperties properties = GetComplexProperties(e);
   quiz_assert_print_if_failure(
       OMG::TrooleanAnd(properties.imagSign().trooleanIsNull(),

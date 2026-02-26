@@ -35,7 +35,7 @@ UserExpression BuildVectorNorm(
                    .context = symbolContext},
           .projectionPolicy = {.symbolic =
                                    VectorListController::k_symbolicComputation},
-          .reduction = {.target = ReductionTarget::User},
+          .reductionPolicy = {.target = ReductionTarget::User},
       },
       &reductionFailure);
 

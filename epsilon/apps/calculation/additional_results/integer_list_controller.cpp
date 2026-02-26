@@ -51,7 +51,7 @@ void IntegerListController::computeAdditionalResults(
                    .context = App::app()->localContext()},
           .projectionPolicy = {.symbolic =
                                    SymbolicComputation::ReplaceDefinedSymbols},
-          .reduction = {.target = ReductionTarget::User},
+          .reductionPolicy = {.target = ReductionTarget::User},
       },
       &reductionFailure);
   if (!reductionFailure && !factor.isUndefined() &&

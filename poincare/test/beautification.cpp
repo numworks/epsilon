@@ -69,7 +69,8 @@ void beautifies_to(const char* input, const char* output) {
         Beautification::DeepBeautify(
             e, Poincare::ToBeautificationParameters(simplificationParameters));
       },
-      {.user = {.complexFormat = Cartesian}, .reduction = {.advanced = false}});
+      {.user = {.complexFormat = Cartesian},
+       .reductionPolicy = {.advanced = false}});
 }
 
 QUIZ_CASE(pcj_beautification_complex) {

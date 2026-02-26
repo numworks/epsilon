@@ -118,7 +118,7 @@ QUIZ_CASE(pcj_simplification_multiplication) {
 
   SimplificationParameters parameters = {
       .user = {.complexFormat = ComplexFormat::Cartesian},
-      .reduction{.target = ReductionTarget::SystemForAnalysis}};
+      .reductionPolicy{.target = ReductionTarget::SystemForAnalysis}};
   projects_and_reduces_to("π^5/π^3", "π^2", parameters);
   projects_and_reduces_to("π^5*π^3", "π^8", parameters);
   projects_and_reduces_to("π^3/π^5", "1/π^2", parameters);

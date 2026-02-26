@@ -23,16 +23,10 @@ on:
       device:
         type: boolean
         default: false
-      android:
-        type: boolean
-        default: false
       windows:
         type: boolean
         default: false
       macos:
-        type: boolean
-        default: false
-      ios:
         type: boolean
         default: false
       web:
@@ -47,17 +41,6 @@ env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
 
 jobs:
-  android:
-    timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.android))) }}
-    steps:
-      - uses: actions/checkout@v6
-      - name: Build container and define DOCKER_RUN
-        uses: ./.github/actions/docker-builder
-        with:
-          platform: android
-      - run: $DOCKER_RUN "make -C epsilon CCACHE=0 PLATFORM=android ASSERTIONS=1 epsilon_aligned.apk"
   device:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
@@ -217,19 +200,6 @@ jobs:
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 epsilon_test.bin
       - run: epsilon/output/debug/optimized/macos/x86_64/epsilon_test.bin --headless --limit-stack-usage
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon.app
-  ios:
-    timeout-minutes: 15
-    runs-on: macOS-latest
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.ios))) }}
-    env:
-      MAKEFLAGS: '-j2'
-    steps:
-      - uses: actions/checkout@v6
-      - run: tools/setup.sh --ci --only-simulator
-      - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 epsilon.ipa
-      - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 test.ipa
-      - run: make -C epsilon PLATFORM=simulator TARGET=ios APPLE_PLATFORM=ios-simulator
-
   screenshots:
     if: ${{ github.event_name == 'pull_request' }}
     uses: ./.github/workflows/compare-screenshots.yml

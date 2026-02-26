@@ -74,7 +74,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
                 "dep(√(floor(arccos(x))),{realPos(1-abs(x))})");
   simplifies_to("frac(8/3)", "2/3");
   simplifies_to("frac(-1.3)", "7/10");
-  simplifies_to("floor(x)+frac(x)", "dep(x,{floor(x)})");
+  simplifies_to("floor(x)+frac(x)", "x");
   simplifies_to("floor(8/3)", "2");
   simplifies_to("floor(-1.3)", "-2");
   simplifies_to("floor(2π)", "6");

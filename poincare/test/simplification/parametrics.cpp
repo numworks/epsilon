@@ -302,7 +302,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(abs(x),x,i)", "undef");
   simplifies_to("diff(ln(x),x,i)", "undef");
   simplifies_to("diff(x,x,ln(-3))", "undef");
-  simplifies_to("diff(floor(z), x, y)", "dep(0,{floor(z)})");
+  simplifies_to("diff(floor(a+i*b), x, y)", "dep(0,{floor(a+b×i)})");
 
   // Piecewise
   simplifies_to("diff(piecewise(x,x≥1,-x,x≠0),x,x)",
@@ -369,14 +369,12 @@ QUIZ_CASE(pcj_simplification_derivative_higher_order) {
   simplifies_to("diff(k*x*sum(y*x*k,k,1,2),x,k,2)", "6×k×y");
 
   simplifies_to("diff(floor(x), x, y, 1)", "diff(floor(x),x,y)");
-  // There should be no dependencies, see Dependency::ContainsSameDependency
-  simplifies_to("diff(floor(x)+x, x, y, 2)",
-                "dep(diff(floor(x),x,y,2),{floor(y)})");
+  simplifies_to("diff(floor(x)+x, x, y, 2)", "diff(floor(x),x,y,2)");
   simplifies_to("diff(diff(diff(diff(floor(a),a,b,2),b,c),c,d,3),d,x)",
                 "dep(diff(floor(a),a,x,7),{diff(floor(a),a,x,2),diff(floor(a),"
                 "a,x,3),diff(floor(a),a,x,6)})");
   simplifies_to("diff(diff(floor(a)+b*a,a,x),b,x)",
-                "dep(1,{floor(x),diff(floor(a),a,x)})");
+                "dep(1,{diff(floor(a),a,x)})");
 
   // On points
   simplifies_to("diff((sin(t),cos(t)),t,t,2)", "(-sin(t),-cos(t))");

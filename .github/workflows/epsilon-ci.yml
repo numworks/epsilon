@@ -181,12 +181,3 @@ jobs:
       has-cas-dataset: true
       post-comment: true
     secrets: inherit
-
-  coverage:
-    if: ${{ github.event_name == 'pull_request' }}
-    needs: linux
-    uses: ./.github/workflows/code-coverage.yml
-    with:
-      project-path: epsilon
-      coverage-scope: ''
-    secrets: inherit

@@ -747,26 +747,20 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   UserExpression equation =
       expressionEquation(record, &computedEquationType, &computedFunctionSymbol,
                          &isCartesianEquation);
-  AnalysisExpression result;
   ComplexFormat complexFormat = this->complexFormat(record);
   AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
-  if (!equation.isUndefined()) {
-    result =
-        equation
-            .cloneAndReduce(SimplificationParameters{
-                .user = {.complexFormat = complexFormat,
-                         .angleUnit = angleUnit,
-                         .context = GlobalContextAccessor::Context()},
-                .projectionPolicy = {.symbolic =
-                                         SymbolicComputation::KeepAllSymbols},
-                .reductionPolicy = {.target = ReductionTarget::User}})
-            .getSystemExpressionForAnalysis();
-    assert(!result.isUninitialized());
-  } else {
-    // TODO: Improve it
-    result = SystemExpression::Undefined().getSystemExpressionForAnalysis();
-  }
+  AnalysisExpression result =
+      equation
+          .cloneAndReduce(SimplificationParameters{
+              .user = {.complexFormat = complexFormat,
+                       .angleUnit = angleUnit,
+                       .context = GlobalContextAccessor::Context()},
+              .projectionPolicy = {.symbolic =
+                                       SymbolicComputation::KeepAllSymbols},
+              .reductionPolicy = {.target = ReductionTarget::User}})
+          .getSystemExpressionForAnalysis();
+  assert(!result.isUninitialized());
   /* TODO_PCJ: equation and result used to be a same Expression at this step.
    * Ensure this pool usage regression of still having equation in the pool is
    * acceptable. */

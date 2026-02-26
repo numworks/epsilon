@@ -171,7 +171,9 @@ constexpr auto KRandom = KRandomSeeded<0>;
 constexpr auto KRandInt = KRandIntSeeded<0>;
 constexpr auto KRandIntNoRep = KRandIntNoRepSeeded<0>;
 
-template <uint8_t Id, uint8_t realSign, uint8_t imagSign>
+template <uint8_t Id,
+          uint8_t realSign = ComplexProperties::Unknown().getRealValue(),
+          uint8_t imagSign = ComplexProperties::Unknown().getImagValue()>
 constexpr auto KVar = KTree<Type::Var, Id, realSign, imagSign>();
 
 // Discrete local variable

@@ -17,22 +17,13 @@ on:
       linux:
         type: boolean
         default: false
-      poincarejs:
-        type: boolean
-        default: false
       device:
-        type: boolean
-        default: false
-      android:
         type: boolean
         default: false
       windows:
         type: boolean
         default: false
       macos:
-        type: boolean
-        default: false
-      ios:
         type: boolean
         default: false
       web:
@@ -47,22 +38,6 @@ env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
 
 jobs:
-  android:
-    timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.android)) }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build container and define DOCKER_RUN
-        uses: ./.github/actions/docker-builder
-        with:
-          platform: android
-      - run: $DOCKER_RUN "make -C epsilon CCACHE=0 PLATFORM=android ASSERTIONS=1 epsilon_aligned.apk"
-        # TODO test.apk
-      - uses: actions/upload-artifact@master
-        with:
-          name: epsilon-android.apk
-          path: epsilon/output/debug/optimized/android/epsilon_aligned.apk
   device:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
@@ -199,52 +174,6 @@ jobs:
         with:
           name: epsilon-macos.zip
           path: epsilon/output/debug/optimized/macos/epsilon.app
-  ios:
-    timeout-minutes: 15
-    runs-on: macOS-latest
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.ios)) }}
-    env:
-      MAKEFLAGS: '-j2'
-    steps:
-      - uses: actions/checkout@v4
-      - run: tools/setup.sh --only-simulator
-      - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 epsilon.ipa
-      - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 test.ipa
-      - run: make -C epsilon PLATFORM=simulator TARGET=ios APPLE_PLATFORM=ios-simulator
-      - uses: actions/upload-artifact@v4
-        with:
-          name: epsilon-ios.ipa
-          path: epsilon/output/debug/optimized/ios/epsilon.ipa
-  poincarejs:
-    timeout-minutes: 15
-    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    if: ${{ (github.event_name == 'pull_request' || fromJSON(github.event.inputs.poincarejs)) }}
-    env:
-      MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Read Emscripten version
-        run: echo "EMSDK_VERSION=$(cat .emsdk-version)" >> $GITHUB_ENV
-      - name: Build container and define DOCKER_RUN
-        uses: ./.github/actions/docker-builder
-        with:
-          platform: web
-          emsdk-version: ${{ env.EMSDK_VERSION }}
-      - name: Run tests with ASSERTIONS=1
-        run: $DOCKER_RUN "make -j8 -C poincare/poincarejs PLATFORM=foxglove ASSERTIONS=1 VERBOSE=0 poincare.js.run"
-      # Ensures that minification did not break the code
-      - name: Run tests with ASSERTIONS=0
-        run: $DOCKER_RUN "make -j8 -C poincare/poincarejs PLATFORM=foxglove ASSERTIONS=0 VERBOSE=0 poincare.js.run"
-      - name: Try building the whole zipped file
-        run: $DOCKER_RUN "make -C poincare/poincarejs VERBOSE=0 poincarejs.zip"
-      # Disabled due to artifact storage quotas
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: poincarejs.zip
-      #     # TODO move poincarejs output path inside poincare
-      #     path: poincare/poincarejs/output/release/foxglove/poincarejs.zip
-      #     retention-days: 3
   coverage:
     name: Code Coverage
     needs: linux

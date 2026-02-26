@@ -89,7 +89,6 @@ jobs:
           name: metrics-output
           path: metrics-output/
           retention-days: 3
-      # Step copied temporarily from comment-metrics.yml
       - name: Add comment
         uses: actions/github-script@v6
         with:

@@ -1,6 +1,6 @@
 <img src="docs/epsilon.svg?sanitize=true" alt="NumWorks Epsilon logo" height="70" >
 
-[![Build Status](https://github.com/numworks/epsilon/actions/workflows/ci.yml/badge.svg)](https://github.com/numworks/epsilon/actions/workflows/ci.yml)
+[![Build Status](https://github.com/numworks/epsilon/actions/workflows/epsilon-ci.yml/badge.svg)](https://github.com/numworks/epsilon/actions/workflows/epsilon-ci.yml)
 
 Epsilon is a high-performance graphing calculator operating system. It includes eleven apps that cover the high school mathematics curriculum.
 

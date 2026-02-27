@@ -127,7 +127,7 @@ Expression Expression::ExpressionFromAddress(const void* address, size_t size) {
   }
   // Build the OExpression in the Tree Pool
   return Expression(static_cast<ExpressionObject*>(
-      Pool::sharedPool->copyTreeFromAddress(address, size)));
+      Pool::sharedPool->copyObjectFromAddress(address, size)));
 }
 
 const Tree* Expression::TreeFromAddress(const void* address) {

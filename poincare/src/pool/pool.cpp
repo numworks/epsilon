@@ -27,7 +27,7 @@ void Pool::move(PoolObject* destination, PoolObject* source) {
   moveObjects(destination, source, AlignedSize(source->size()));
 }
 
-PoolObject* Pool::copyTreeFromAddress(const void* address, size_t size) {
+PoolObject* Pool::copyObjectFromAddress(const void* address, size_t size) {
   void* ptr = alloc(size);
   memcpy(ptr, address, size);
   PoolObject* copy = reinterpret_cast<PoolObject*>(ptr);

@@ -70,7 +70,7 @@ class Pool final {
   // Pool memory
   void* alloc(size_t size);
   void move(PoolObject* destination, PoolObject* source);
-  PoolObject* copyTreeFromAddress(const void* address, size_t size);
+  PoolObject* copyObjectFromAddress(const void* address, size_t size);
 
 #if POINCARE_TREE_LOG
   void flatLog(std::ostream& stream);

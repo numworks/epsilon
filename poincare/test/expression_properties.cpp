@@ -185,7 +185,7 @@ QUIZ_CASE(pcj_properties_is_infinity) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionParameters projectionParameters = {
       .user = {.context = symbolStore},
-      .policy = {.symbolic = SymbolicComputation::ReplaceAllSymbols}};
+      .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols}};
   assert_projected_is_infinity("3.4+inf", projectionParameters);
   assert_projected_is_infinity("2.3+1", projectionParameters, false);
   assert_projected_is_infinity("a", projectionParameters, false);
@@ -215,7 +215,8 @@ QUIZ_CASE(pcj_properties_get_variables) {
   PoincareTest::SymbolStore symbolStore;
   ProjectionParameters projectionParameters = {
       .user = {.context = symbolStore},
-      .policy = {.symbolic = SymbolicComputation::ReplaceDefinedFunctions},
+      .projectionPolicy = {.symbolic =
+                               SymbolicComputation::ReplaceDefinedFunctions},
   };
 
   assert_expression_has_variables("x+y", KList("x"_e, "y"_e),

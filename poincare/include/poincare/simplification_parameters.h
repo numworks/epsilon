@@ -10,7 +10,7 @@ struct ProjectionParameters {
   /* UnitFormat isn't needed for projection but it's more convenient to reuse
    * the same struct. */
   UserParameters user = {};
-  ProjectionPolicy policy = {};
+  ProjectionPolicy projectionPolicy = {};
 };
 
 struct SimplificationParameters {
@@ -38,14 +38,14 @@ inline ProjectionParameters ToProjectionParameters(
     const SimplificationParameters& simplificationParameters) {
   return ProjectionParameters{
       .user = simplificationParameters.user,
-      .policy = simplificationParameters.projectionPolicy};
+      .projectionPolicy = simplificationParameters.projectionPolicy};
 }
 
 inline ProjectionParameters ToProjectionParameters(
     const BeautificationParameters& beautificationParameters) {
   return ProjectionParameters{
       .user = beautificationParameters.user,
-      .policy = {.symbolic = SymbolicComputation::KeepAllSymbols}};
+      .projectionPolicy = {.symbolic = SymbolicComputation::KeepAllSymbols}};
 }
 
 inline BeautificationParameters ToBeautificationParameters(

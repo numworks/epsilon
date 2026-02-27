@@ -23,8 +23,6 @@ class PreparedFunction;
 class SystemExpression : public Expression {
  public:
   /* Static builders */
-  static SystemExpression ExpressionFromAddress(const void* address,
-                                                size_t size);
   static SystemExpression Builder(const Internal::Tree* tree);
   // Eat the tree
   static SystemExpression Builder(Internal::Tree* tree);

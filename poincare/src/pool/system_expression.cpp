@@ -19,12 +19,6 @@ namespace Poincare {
 
 using namespace Internal;
 
-SystemExpression SystemExpression::ExpressionFromAddress(const void* address,
-                                                         size_t size) {
-  Expression e = Expression::ExpressionFromAddress(address, size);
-  return static_cast<SystemExpression&>(e);
-}
-
 SystemExpression SystemExpression::CreateReduce(const Tree* structure,
                                                 ContextTrees ctx) {
   Tree* tree = PatternMatching::CreateReduce(structure, ctx);

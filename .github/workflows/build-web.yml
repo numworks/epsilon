@@ -9,6 +9,7 @@ on:
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS }}
   DEBUG: ${{ fromJSON(github.event.inputs.debug) && '1' || '0' }}
+  OUTPUT_DIR: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/web
 
 jobs:
   build:
@@ -25,15 +26,20 @@ jobs:
           emsdk-version: ${{ env.EMSDK_VERSION }}
       - name: Build
         run: $DOCKER_RUN "make DEBUG=$DEBUG PLATFORM=web epsilon.html epsilon.htmlpack.zip"
-      - name: Upload epsilon.html
+      - name: Zip epsilon.html
+        # Zip manually to prevent actions/upload-artifact from corrupting the file
+        run: zip -j ${{ env.OUTPUT_DIR }}/epsilon.zip ${{ env.OUTPUT_DIR }}/epsilon.html
+      - name: Upload epsilon.zip
         uses: actions/upload-artifact@v4
         with:
-          name: epsilon.html
-          path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/web/epsilon.html
+          name: epsilon.zip
+          path: ${{ env.OUTPUT_DIR }}/epsilon.zip
+          compression-level: 0
           retention-days: 3
       - name: Upload htmlpack.zip
         uses: actions/upload-artifact@v4
         with:
           name: htmlpack.zip
-          path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/web/epsilon.htmlpack.zip
+          path: ${{ env.OUTPUT_DIR }}/epsilon.htmlpack.zip
+          compression-level: 0
           retention-days: 3

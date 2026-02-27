@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Check that all files changed in this commit are correctly formatted
+
+make format BASE=HEAD "CXXFORMATARGS=--dry-run --Werror" "PYFORMATARGS=--check" "JSFORMATARGS=--check"

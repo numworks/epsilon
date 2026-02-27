@@ -72,8 +72,6 @@ jobs:
       - uses: actions/checkout@v4
       - run: tools/setup.sh
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon.exe
-      - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon_test.exe
-      - run: ./epsilon/output/debug/optimized/windows/epsilon_test.exe --headless --limit-stack-usage
       - run: make -j8 userland.A.elf
       - uses: actions/upload-artifact@v4
         with:

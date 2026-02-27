@@ -17,10 +17,13 @@ namespace Graph {
 
 static SimplificationParameters DefaultSimplificationParametersForAnalysis() {
   return SimplificationParameters{
-      .user = {.complexFormat = ComplexFormat::Cartesian,
-               .angleUnit = AngleUnit::Radian,
-               .context = k_emptySymbolContext,
-               .unitFormat = Preferences::UnitFormat::Metric},
+      .user =
+          {
+              .complexFormat = ComplexFormat::Cartesian,
+              .angleUnit = AngleUnit::Radian,
+              .unitFormat = Preferences::UnitFormat::Metric,
+              .context = k_emptySymbolContext,
+          },
       .projectionPolicy = {.symbolic =
                                SymbolicComputation::ReplaceDefinedSymbols}};
 }

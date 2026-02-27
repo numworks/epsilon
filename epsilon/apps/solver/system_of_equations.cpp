@@ -197,11 +197,11 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   if (forbidExactSolution && approximate.isUninitialized()) {
     // Approximate exact reduction preserving variables and symbols
     approximate = exact.cloneAndApproximate(
-        UserSettingsWithUnit{
-            .complexFormat = m_equationMetadata.complexFormat,
-            .angleUnit =
-                GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-            .context = symbolContext},
+        {.complexFormat = m_equationMetadata.complexFormat,
+         .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+         .unitFormat =
+             GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+         .context = symbolContext},
         true);
   }
 

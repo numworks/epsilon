@@ -25,7 +25,7 @@ void assert_next_solution_is(const char* expression,
                              Poincare::AngleUnit angleUnit) {
   assert(std::isnan(expected.x()) == std::isnan(expected.y()));
 
-  Poincare::UserSettingsWithUnit userSettings = Poincare::UserSettingsWithUnit{
+  Poincare::UserSettings userSettings = {
       .complexFormat = Real, .angleUnit = angleUnit, .context = symbolContext};
 
   Tree* e = parseAndPrepareForApproximation(expression, userSettings);

@@ -76,10 +76,13 @@ void UnitListController::computeAdditionalResults(
       GlobalPreferences::SharedGlobalPreferences()->unitFormat();
   const SymbolContext& symbolContext = App::app()->localContext();
   SimplificationParameters simplificationParameters = {
-      .user = {.complexFormat = complexFormat(),
-               .angleUnit = angleUnit(),
-               .context = symbolContext,
-               .unitFormat = unitFormat},
+      .user =
+          {
+              .complexFormat = complexFormat(),
+              .angleUnit = angleUnit(),
+              .unitFormat = unitFormat,
+              .context = symbolContext,
+          },
       .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols},
   };
 

@@ -255,7 +255,7 @@ QUIZ_CASE(pcj_approximation_constant) {
 }
 
 QUIZ_CASE(pcj_approximation_symbols) {
-  Poincare::UserSettingsWithUnit userSettings = {
+  Poincare::UserSettings userSettings = {
       .complexFormat = Poincare::ComplexFormat::Real,
       .angleUnit = Poincare::AngleUnit::Radian};
   approximates_to_keeping_symbols<double>("2", "2", userSettings);

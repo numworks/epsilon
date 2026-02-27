@@ -36,25 +36,25 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
     Poincare::Preferences::PrintFloatMode::Engineering;
 
 // Default user parameters are k_realParams
-constexpr Poincare::UserSettingsWithUnit k_realParams = {.complexFormat = Real,
-                                                         .angleUnit = Radian};
-constexpr Poincare::UserSettingsWithUnit k_cartesianParams = {
+constexpr Poincare::UserSettings k_realParams = {.complexFormat = Real,
+                                                 .angleUnit = Radian};
+constexpr Poincare::UserSettings k_cartesianParams = {
     .complexFormat = Cartesian, .angleUnit = Radian};
-constexpr Poincare::UserSettingsWithUnit k_polarParams = {
-    .complexFormat = Polar, .angleUnit = Radian};
+constexpr Poincare::UserSettings k_polarParams = {.complexFormat = Polar,
+                                                  .angleUnit = Radian};
 
-constexpr Poincare::UserSettingsWithUnit k_degreeParams = {
-    .complexFormat = Real, .angleUnit = Degree};
-constexpr Poincare::UserSettingsWithUnit k_gradianParams = {
-    .complexFormat = Real, .angleUnit = Gradian};
-constexpr Poincare::UserSettingsWithUnit k_degreeCartesianParams = {
+constexpr Poincare::UserSettings k_degreeParams = {.complexFormat = Real,
+                                                   .angleUnit = Degree};
+constexpr Poincare::UserSettings k_gradianParams = {.complexFormat = Real,
+                                                    .angleUnit = Gradian};
+constexpr Poincare::UserSettings k_degreeCartesianParams = {
     .complexFormat = Cartesian, .angleUnit = Degree};
-constexpr Poincare::UserSettingsWithUnit k_gradianCartesianParams = {
+constexpr Poincare::UserSettings k_gradianCartesianParams = {
     .complexFormat = Cartesian, .angleUnit = Gradian};
-constexpr Poincare::UserSettingsWithUnit k_degreePolarParam = {
-    .complexFormat = Polar, .angleUnit = Degree};
-constexpr Poincare::UserSettingsWithUnit k_gradianPolarParams = {
-    .complexFormat = Polar, .angleUnit = Gradian};
+constexpr Poincare::UserSettings k_degreePolarParam = {.complexFormat = Polar,
+                                                       .angleUnit = Degree};
+constexpr Poincare::UserSettings k_gradianPolarParams = {.complexFormat = Polar,
+                                                         .angleUnit = Gradian};
 
 constexpr Poincare::SimplificationParameters k_realSimplification =
     Poincare::SimplificationParameters{.user = k_realParams};
@@ -269,7 +269,7 @@ void assert_parse_to_integer_overflow(
                            Poincare::EmptySymbolContext{});
 
 inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
-    const char* function, const Poincare::UserSettingsWithUnit& userSettings) {
+    const char* function, const Poincare::UserSettings& userSettings) {
   constexpr const char* k_symbol = "x";
   Poincare::Internal::Tree* e = parse(function);
   Poincare::Internal::Simplification::ToSystem(

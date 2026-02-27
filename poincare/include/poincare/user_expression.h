@@ -109,8 +109,7 @@ class UserExpression : public Expression {
   UserExpression cloneAndTrySimplify(
       const SimplificationParameters& simplificationParameters) const;
   UserExpression cloneAndApproximate(
-      const UserSettingsWithUnit& userSettings,
-      bool onlyReplaceNumerical = false,
+      const UserSettings& userSettings, bool onlyReplaceNumerical = false,
       FloatPrecision floatPrecision = FloatPrecision::Double) const;
 
   // If of the form y-f(x), return f(x). Return uninitialized otherwise.

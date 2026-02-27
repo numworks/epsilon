@@ -574,10 +574,9 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
-  UserSettingsWithUnit userSettings = {
-      .complexFormat = ComplexFormat::Cartesian,
-      .angleUnit = calculationPreferences.angleUnit,
-      .context = symbolContext};
+  UserSettings userSettings = {.complexFormat = ComplexFormat::Cartesian,
+                               .angleUnit = calculationPreferences.angleUnit,
+                               .context = symbolContext};
   Tree* e = approximateOutput.tree()->cloneTree();
   // Re-approximate with onlyReplaceNumerical to remove polar format
   Approximation::Approximate(

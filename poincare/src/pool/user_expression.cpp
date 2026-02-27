@@ -151,7 +151,7 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
 }
 
 UserExpression UserExpression::cloneAndApproximate(
-    const UserSettingsWithUnit& userSettings, bool onlyReplaceNumerical,
+    const UserSettings& userSettings, bool onlyReplaceNumerical,
     FloatPrecision floatPrecision) const {
   Tree* a = Approximation::To<Tree*>(
       tree(), floatPrecision,

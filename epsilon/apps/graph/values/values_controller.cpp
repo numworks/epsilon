@@ -395,9 +395,10 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
                                      ->complexFormat(),
                 .angleUnit =
                     GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+                .unitFormat =
+                    GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
                 .context = symbolContext,
-                .unitFormat = GlobalPreferences::SharedGlobalPreferences()
-                                  ->unitFormat()}});
+            }});
     assert(!approximation.isUninitialized());
     /* Approximate in case of simplification failure, as we cannot display a
      * non-beautified expression. */

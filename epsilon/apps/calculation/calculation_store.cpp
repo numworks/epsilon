@@ -159,17 +159,16 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
     StorePreprocessResult storeElements = preprocessStore(inputExpression);
     if (!storeElements.shouldReduceBeforeStore) {
       return CalculationResult{
-          .outputs = {.exact = inputExpression.clone(),
-                      .approximate = inputExpression.cloneAndApproximate(
-                          UserSettingsWithUnit{
-                              .complexFormat = complexFormat,
-                              .angleUnit =
-                                  GlobalPreferences::SharedGlobalPreferences()
-                                      ->angleUnit(),
-                              .context = GlobalContextAccessor::Context()
-                              // Should unitFormat be passed?
-                          },
-                          CAS::Enabled())},
+          .outputs =
+              {.exact = inputExpression.clone(),
+               .approximate = inputExpression.cloneAndApproximate(
+                   {.complexFormat = complexFormat,
+                    .angleUnit = GlobalPreferences::SharedGlobalPreferences()
+                                     ->angleUnit(),
+                    .unitFormat = GlobalPreferences::SharedGlobalPreferences()
+                                      ->unitFormat(),
+                    .context = GlobalContextAccessor::Context()},
+                   CAS::Enabled())},
           .hasReductionFailure = false};
     }
     symbolicComputation = storeElements.symbolicComputation;
@@ -181,12 +180,14 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
       &outputs.exact, &outputs.approximate,
       SimplificationParameters{
           .user =
-              {.complexFormat = complexFormat,
-               .angleUnit =
-                   GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-               .context = GlobalContextAccessor::Context(),
-               .unitFormat =
-                   GlobalPreferences::SharedGlobalPreferences()->unitFormat()},
+              {
+                  .complexFormat = complexFormat,
+                  .angleUnit =
+                      GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+                  .unitFormat = GlobalPreferences::SharedGlobalPreferences()
+                                    ->unitFormat(),
+                  .context = GlobalContextAccessor::Context(),
+              },
           .projectionPolicy = {.symbolic = symbolicComputation}},
       CAS::Enabled());
   if (isStore) {

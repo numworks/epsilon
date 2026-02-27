@@ -7,19 +7,21 @@
 namespace Poincare {
 
 struct ProjectionParameters {
+  /* UnitFormat isn't needed for projection but it's more convenient to reuse
+   * the same struct. */
   UserSettings user = {};
   ProjectionPolicy policy = {};
 };
 
 struct SimplificationParameters {
-  UserSettingsWithUnit user = {};
+  UserSettings user = {};
   ProjectionPolicy projectionPolicy = {};
   ReductionPolicy reductionPolicy = {};
   UnitDisplay unitPolicy = {};
 };
 
 struct BeautificationParameters {
-  UserSettingsWithUnit user = {};
+  UserSettings user = {};
   ReductionPolicy reductionPolicy = {};
   UnitDisplay unitPolicy = {};
 };

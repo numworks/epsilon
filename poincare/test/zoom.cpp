@@ -76,8 +76,7 @@ template <typename T>
 void assert_points_of_interest_range_is(const char* expression,
                                         Range2D<T> expectedRange) {
   Tree* e = parseAndPrepareForApproximation(
-      expression,
-      UserSettingsWithUnit{.angleUnit = Poincare::AngleUnit::Radian});
+      expression, UserSettings{.angleUnit = Poincare::AngleUnit::Radian});
   ZoomTest<T> zoom;
   zoom.zoom()->fitPointsOfInterest(expressionEvaluator<T>, e,
                                    Range1D<T>(-k_maxFloat, k_maxFloat), false,
@@ -147,10 +146,8 @@ QUIZ_CASE(pcj_zoom_fit_points_of_interest) {
 void assert_intersections_range_is(const char* expression1,
                                    const char* expression2,
                                    Range2D<float> expectedRange) {
-  TreeRef e1 =
-      parseAndPrepareForApproximation(expression1, UserSettingsWithUnit{});
-  TreeRef e2 =
-      parseAndPrepareForApproximation(expression2, UserSettingsWithUnit{});
+  TreeRef e1 = parseAndPrepareForApproximation(expression1, {});
+  TreeRef e2 = parseAndPrepareForApproximation(expression2, {});
   ZoomTest<float> zoom;
   zoom.zoom()->fitIntersections(expressionEvaluator, e1, expressionEvaluator,
                                 e2, Range1D<float>(-k_maxFloat, k_maxFloat));

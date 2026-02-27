@@ -63,16 +63,17 @@ inline size_t ConvertFloatToTextWithDisplayMode(
 
 // ===== Simplification and Approximation =====
 
-inline Poincare::UserSettingsWithUnit UserSettingsForPreferences(
+inline Poincare::UserSettings UserSettingsForPreferences(
     const Poincare::UserExpression e) {
-  return Poincare::UserSettingsWithUnit{
+  return Poincare::UserSettings{
       .complexFormat = e.preferredComplexFormat(
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
           GlobalContextAccessor::Context(),
           Poincare::SymbolicComputation::ReplaceDefinedSymbols),
       .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+      .unitFormat = GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .context = GlobalContextAccessor::Context(),
-      .unitFormat = GlobalPreferences::SharedGlobalPreferences()->unitFormat()};
+  };
 }
 
 // Approximate a real scalar expression. Contexts are not handled.

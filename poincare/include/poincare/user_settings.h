@@ -15,41 +15,9 @@ struct UserSettings {
   constexpr static ComplexFormat complexFormat = ComplexFormat::Real;
 #endif
   AngleUnit angleUnit = AngleUnit::None;
-  const Poincare::SymbolContext& context = k_emptySymbolContext;
-};
-
-// Extended user settings (including unit setting)
-struct UserSettingsWithUnit {
-#if POINCARE_COMPLEX
-  ComplexFormat complexFormat = ComplexFormat::None;
-#else
-  constexpr static ComplexFormat complexFormat = ComplexFormat::Real;
-#endif
-  AngleUnit angleUnit = AngleUnit::None;
-  const Poincare::SymbolContext& context = k_emptySymbolContext;
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
 
-  // Implicit conversion to UserSettings
-  operator UserSettings() const {
-    return UserSettings {
-#if POINCARE_COMPLEX
-      .complexFormat = complexFormat,
-#endif
-      .angleUnit = angleUnit, .context = context
-    };
-  }
+  const Poincare::SymbolContext& context = k_emptySymbolContext;
 };
-
-/* Conversion from UserSettings to UserSettingsWithUnit, UnitFormat will be
- * default */
-inline UserSettingsWithUnit ToUserSettingsWithUnit(
-    const UserSettings& userSettings) {
-  return UserSettingsWithUnit {
-#if POINCARE_COMPLEX
-    .complexFormat = userSettings.complexFormat,
-#endif
-    .angleUnit = userSettings.angleUnit, .context = userSettings.context
-  };
-}
 
 }  // namespace Poincare

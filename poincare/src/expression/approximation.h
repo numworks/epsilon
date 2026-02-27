@@ -7,7 +7,7 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/symbol_context.h>
-#include <poincare/user_settings.h>
+#include <poincare/user_parameters.h>
 
 #include <cmath>
 #include <complex>
@@ -50,10 +50,10 @@ struct ApproximationPolicy {
 
 struct Parameters {
   ApproximationPolicy policy;
-  /* User settings should only be passed in case of a UserExpression
+  /* User parameters should only be passed in case of a UserExpression.
    * UnitFormat isn't needed for approximation but it's more convenient to reuse
    * the same structr. */
-  UserSettings user;
+  UserParameters user;
 };
 
 /* Approximation public methods */
@@ -286,11 +286,11 @@ struct Substitution {
 class InternalParameters {
  public:
   InternalParameters() = default;
-  explicit InternalParameters(const UserSettings& userSettings,
+  explicit InternalParameters(const UserParameters& userParameters,
                               bool onlyReplaceNumerical)
-      : complexFormat{userSettings.complexFormat},
-        angleUnit{userSettings.angleUnit},
-        symbolContext{userSettings.context},
+      : complexFormat{userParameters.complexFormat},
+        angleUnit{userParameters.angleUnit},
+        symbolContext{userParameters.context},
         onlyReplaceNumerical(onlyReplaceNumerical) {}
   const ComplexFormat complexFormat = ComplexFormat::None;
   // Mutable because of AngleUnitContext

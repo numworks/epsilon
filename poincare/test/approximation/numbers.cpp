@@ -255,18 +255,19 @@ QUIZ_CASE(pcj_approximation_constant) {
 }
 
 QUIZ_CASE(pcj_approximation_symbols) {
-  Poincare::UserSettings userSettings = {
+  Poincare::UserParameters userParameters = {
       .complexFormat = Poincare::ComplexFormat::Real,
       .angleUnit = Poincare::AngleUnit::Radian};
-  approximates_to_keeping_symbols<double>("2", "2", userSettings);
-  approximates_to_keeping_symbols<double>("2.3", "2.3", userSettings);
+  approximates_to_keeping_symbols<double>("2", "2", userParameters);
+  approximates_to_keeping_symbols<double>("2.3", "2.3", userParameters);
   approximates_to_keeping_symbols<double>("1+π", "4.1415926535898",
-                                          userSettings);
+                                          userParameters);
   approximates_to_keeping_symbols<double>("1+π+x", "4.1415926535898+x",
-                                          userSettings);
-  approximates_to_keeping_symbols<double>("cos(x-x)", "cos(x-x)", userSettings);
+                                          userParameters);
+  approximates_to_keeping_symbols<double>("cos(x-x)", "cos(x-x)",
+                                          userParameters);
   approximates_to_keeping_symbols<double>("random()-random()",
-                                          "random()-random()", userSettings);
+                                          "random()-random()", userParameters);
   approximates_to_keeping_symbols<double>("y^3*x^-2", "y^3×x^(-2)",
-                                          userSettings);
+                                          userParameters);
 }

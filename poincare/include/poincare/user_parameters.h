@@ -7,8 +7,8 @@
 
 namespace Poincare {
 
-// User settings needed by reduction and approximation algorithms
-struct UserSettings {
+// User parameters needed by reduction and approximation algorithms
+struct UserParameters {
 #if POINCARE_COMPLEX
   ComplexFormat complexFormat = ComplexFormat::None;
 #else

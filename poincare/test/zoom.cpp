@@ -76,7 +76,7 @@ template <typename T>
 void assert_points_of_interest_range_is(const char* expression,
                                         Range2D<T> expectedRange) {
   Tree* e = parseAndPrepareForApproximation(
-      expression, UserSettings{.angleUnit = Poincare::AngleUnit::Radian});
+      expression, UserParameters{.angleUnit = Poincare::AngleUnit::Radian});
   ZoomTest<T> zoom;
   zoom.zoom()->fitPointsOfInterest(expressionEvaluator<T>, e,
                                    Range1D<T>(-k_maxFloat, k_maxFloat), false,

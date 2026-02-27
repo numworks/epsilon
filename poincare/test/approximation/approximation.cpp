@@ -265,10 +265,10 @@ QUIZ_CASE(pcj_approximation_keeping_symbols) {
 
 QUIZ_CASE(pcj_approximation_context) {
   PoincareTest::SymbolStore symbolStore;
-  UserSettings cartesianParameters = {.complexFormat = ComplexFormat::Cartesian,
-                                      .context = symbolStore};
-  UserSettings realParameters = {.complexFormat = ComplexFormat::Real,
-                                 .context = symbolStore};
+  UserParameters cartesianParameters = {
+      .complexFormat = ComplexFormat::Cartesian, .context = symbolStore};
+  UserParameters realParameters = {.complexFormat = ComplexFormat::Real,
+                                   .context = symbolStore};
 
   PoincareTest::store("2x+5→f(x)", symbolStore);
   PoincareTest::store("π+1→a", symbolStore);

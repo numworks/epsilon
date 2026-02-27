@@ -191,7 +191,7 @@ Ion::Storage::Record::ErrorStatus GlobalStore::setExpressionForUserVariable(
   bool reductionFailure = expression.cloneAndSimplifyAndApproximate(
       &simplifiedExpression, &approximation,
       SimplificationParameters{
-          .user = PoincareHelpers::UserSettingsForPreferences(expression),
+          .user = PoincareHelpers::UserParametersForPreferences(expression),
           .projectionPolicy = {.symbolic =
                                    SymbolicComputation::ReplaceAllSymbols}});
   // Do not store exact derivative, etc.

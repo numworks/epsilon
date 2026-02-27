@@ -25,10 +25,10 @@ void assert_next_solution_is(const char* expression,
                              Poincare::AngleUnit angleUnit) {
   assert(std::isnan(expected.x()) == std::isnan(expected.y()));
 
-  Poincare::UserSettings userSettings = {
+  Poincare::UserParameters userParameters = {
       .complexFormat = Real, .angleUnit = angleUnit, .context = symbolContext};
 
-  Tree* e = parseAndPrepareForApproximation(expression, userSettings);
+  Tree* e = parseAndPrepareForApproximation(expression, userParameters);
 
   Solution observed;
   switch (interest) {
@@ -44,7 +44,8 @@ void assert_next_solution_is(const char* expression,
     default:
       assert(interest == Interest::Intersection);
       assert(otherExpression);
-      Tree* e2 = parseAndPrepareForApproximation(otherExpression, userSettings);
+      Tree* e2 =
+          parseAndPrepareForApproximation(otherExpression, userParameters);
       observed = solver->nextIntersection(e, e2);
   }
 

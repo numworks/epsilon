@@ -2,26 +2,26 @@
 
 #include "preferences.h"
 #include "simplification_policies.h"
-#include "user_settings.h"
+#include "user_parameters.h"
 
 namespace Poincare {
 
 struct ProjectionParameters {
   /* UnitFormat isn't needed for projection but it's more convenient to reuse
    * the same struct. */
-  UserSettings user = {};
+  UserParameters user = {};
   ProjectionPolicy policy = {};
 };
 
 struct SimplificationParameters {
-  UserSettings user = {};
+  UserParameters user = {};
   ProjectionPolicy projectionPolicy = {};
   ReductionPolicy reductionPolicy = {};
   UnitDisplay unitPolicy = {};
 };
 
 struct BeautificationParameters {
-  UserSettings user = {};
+  UserParameters user = {};
   ReductionPolicy reductionPolicy = {};
   UnitDisplay unitPolicy = {};
 };

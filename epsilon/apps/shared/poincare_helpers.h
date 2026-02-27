@@ -63,9 +63,9 @@ inline size_t ConvertFloatToTextWithDisplayMode(
 
 // ===== Simplification and Approximation =====
 
-inline Poincare::UserSettings UserSettingsForPreferences(
+inline Poincare::UserParameters UserParametersForPreferences(
     const Poincare::UserExpression e) {
-  return Poincare::UserSettings{
+  return Poincare::UserParameters{
       .complexFormat = e.preferredComplexFormat(
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
           GlobalContextAccessor::Context(),
@@ -133,7 +133,7 @@ inline double ToFloat(double value) { return value; }
  * expression to a float is an approximation. The Poincare approximation API
  * requires an angle unit and a complex format in order to approximate the
  * expression. In the Epsilon apps context, the approximation should use the
- * user settings for angle unit and complex format. */
+ * user parameters for angle unit and complex format. */
 
 template <typename FloatType = float>
 FloatType ToFloat(Poincare::ExpressionOrFloat value) {

@@ -13,6 +13,8 @@
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
 
+#include "shared/poincare_helpers.h"
+
 using namespace Poincare;
 using namespace Shared;
 
@@ -245,7 +247,7 @@ static void processStore(OutputExpressions& outputs,
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
   UserExpression valueApprox = value.cloneAndApproximate(
-      PoincareHelpers::UserSettingsForPreferences(value), CAS::Enabled());
+      PoincareHelpers::UserParametersForPreferences(value), CAS::Enabled());
   if (symbol.isUserVariable() &&
       CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox,
                                           GlobalContextAccessor::Context())) {

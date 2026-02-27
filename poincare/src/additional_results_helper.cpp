@@ -574,20 +574,21 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
-  UserSettings userSettings = {.complexFormat = ComplexFormat::Cartesian,
-                               .angleUnit = calculationPreferences.angleUnit,
-                               .context = symbolContext};
+  UserParameters userParameters = {
+      .complexFormat = ComplexFormat::Cartesian,
+      .angleUnit = calculationPreferences.angleUnit,
+      .context = symbolContext};
   Tree* e = approximateOutput.tree()->cloneTree();
   // Re-approximate with onlyReplaceNumerical to remove polar format
   Approximation::Approximate(
       e, FloatPrecision::Double,
       Approximation::Parameters{.policy = {.onlyReplaceNumerical = true},
-                                .user = userSettings});
+                                .user = userParameters});
   Internal::Dimension dim = Internal::Dimension::Get(e);
   assert(!dim.isUnit());
   return CreateBeautifiedLayout(
       e,
-      BeautificationParameters{.user = userSettings,
+      BeautificationParameters{.user = userParameters,
                                .reductionPolicy = {.advanced = false}},
       dim, Preferences::PrintFloatMode::Scientific,
       calculationPreferences.numberOfSignificantDigits);

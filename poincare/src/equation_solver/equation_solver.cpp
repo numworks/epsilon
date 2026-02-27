@@ -247,7 +247,7 @@ static Tree* GetLinearCoefficients(const Tree* equation,
   /* TODO If [eq] still has dependency, they will not be handled by Parse */
   for (uint8_t i = 0; i < numberOfVariables; i++) {
     // TODO: PolynomialParser::Parse may need to handle more block types.
-    // TODO: Use user settings for a RealUnkown sign ?
+    // TODO: Use user parameters for a RealUnkown sign ?
     Tree* polynomial = PolynomialParser::Parse(
         eq, Variables::Variable(i, ComplexProperties::Finite()));
     if (!polynomial) {

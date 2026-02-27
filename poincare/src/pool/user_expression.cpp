@@ -151,14 +151,14 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
 }
 
 UserExpression UserExpression::cloneAndApproximate(
-    const UserSettings& userSettings, bool onlyReplaceNumerical,
+    const UserParameters& userParameters, bool onlyReplaceNumerical,
     FloatPrecision floatPrecision) const {
   Tree* a = Approximation::To<Tree*>(
       tree(), floatPrecision,
       Approximation::Parameters{
           .policy = {.projectLocalVariables = true,
                      .onlyReplaceNumerical = onlyReplaceNumerical},
-          .user = userSettings});
+          .user = userParameters});
   /* There are several issues that currently prevent us from beautifying an
    * approximated CAS expression:
    * - the beautified exact expression and the beautified approximate expression
@@ -168,9 +168,9 @@ UserExpression UserExpression::cloneAndApproximate(
    * raise, for example "(x+1)*(pi+i)"
    * TODO: solve these issues */
   if (!CAS::Enabled()) {
-    Beautification::DeepBeautify(a,
-                                 BeautificationParameters{.user = userSettings},
-                                 Internal::Dimension::Get(a));
+    Beautification::DeepBeautify(
+        a, BeautificationParameters{.user = userParameters},
+        Internal::Dimension::Get(a));
   }
   return UserExpression::Builder(a);
 }

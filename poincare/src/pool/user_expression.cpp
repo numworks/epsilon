@@ -26,8 +26,12 @@ using namespace Internal;
 
 UserExpression UserExpression::ExpressionFromAddress(const void* address,
                                                      size_t size) {
-  Expression e = Expression::ExpressionFromAddress(address, size);
-  return static_cast<UserExpression&>(e);
+  if (address == nullptr || size == 0) {
+    return UserExpression();
+  }
+  // Build the Expression in the Pool
+  return UserExpression(static_cast<ExpressionObject*>(
+      Pool::sharedPool->copyObjectFromAddress(address, size)));
 }
 
 UserExpression UserExpression::Parse(const Tree* layout,

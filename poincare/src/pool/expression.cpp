@@ -121,15 +121,6 @@ bool Expression::isIdenticalTo(const Expression e) const {
   return tree()->treeIsIdenticalTo(e.tree());
 }
 
-Expression Expression::ExpressionFromAddress(const void* address, size_t size) {
-  if (address == nullptr || size == 0) {
-    return Expression();
-  }
-  // Build the Expression in the Pool
-  return Expression(static_cast<ExpressionObject*>(
-      Pool::sharedPool->copyObjectFromAddress(address, size)));
-}
-
 const Tree* Expression::TreeFromAddress(const void* address) {
   if (address == nullptr) {
     return nullptr;

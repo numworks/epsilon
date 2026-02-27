@@ -142,7 +142,6 @@ class Expression : public PoolHandle {
 #endif
 
  protected:
-  static Expression ExpressionFromAddress(const void* address, size_t size);
   static PoolHandle BuildPoolHandleFromTree(const Internal::Tree* tree);
 
  private:

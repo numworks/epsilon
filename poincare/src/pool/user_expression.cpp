@@ -30,8 +30,9 @@ UserExpression UserExpression::ExpressionFromAddress(const void* address,
     return UserExpression();
   }
   // Build the Expression in the Pool
-  return UserExpression(static_cast<ExpressionObject*>(
+  Expression e = Expression(static_cast<ExpressionObject*>(
       Pool::sharedPool->copyObjectFromAddress(address, size)));
+  return static_cast<UserExpression&>(e);
 }
 
 UserExpression UserExpression::Parse(const Tree* layout,

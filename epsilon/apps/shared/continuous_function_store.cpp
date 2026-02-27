@@ -14,6 +14,9 @@ void ContinuousFunctionStore::removeAll() {
   for (int i = 0; i < k_maxNumberOfMemoizedModels; i++) {
     m_functions[i] = ContinuousFunction();
   }
+  /* m_storageCheckSum must be updated too, otherwise, if removed functions are
+   * added again, m_memoizedNumberOfActiveFunctions will not be updated. */
+  m_storageCheckSum = Ion::Storage::FileSystem::sharedFileSystem->checksum();
 }
 
 bool ContinuousFunctionStore::displaysOnlyCartesianFunctions(
@@ -32,6 +35,9 @@ int ContinuousFunctionStore::numberOfActiveFunctions() const {
     m_storageCheckSum = checksum;
     m_memoizedNumberOfActiveFunctions =
         FunctionStore::numberOfActiveFunctions();
+  } else {
+    assert(m_memoizedNumberOfActiveFunctions ==
+           FunctionStore::numberOfActiveFunctions());
   }
   return m_memoizedNumberOfActiveFunctions;
 }

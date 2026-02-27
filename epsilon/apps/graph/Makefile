@@ -37,6 +37,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/graph/,$(addsuffix :-test, \
   test/helper.cpp:+test \
   test/function_names.cpp:+test \
   test/function_properties.cpp:+test \
+  test/store.cpp:+test \
   test/optimal_range.cpp:+test \
 )
 

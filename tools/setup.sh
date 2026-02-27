@@ -177,12 +177,22 @@ install_latest_lcov(){
 
 init_git_pre_push_hook() {
   # Create a git hook to prevent push on master branch without confirmation
-  # See build/git/pre-push for details
+  # See tools/git/pre-push for details
   echo "Creating pre-push hook to prevent unwanted push on master."
   cp tools/git/pre-push .git/hooks/pre-push
   chmod +x .git/hooks/pre-push
   git init
 }
+
+init_git_pre_commit_hook() {
+  # Create a git hook to check formatting before committing
+  # See tools/git/pre-commit for details
+  echo "Creating pre-commit hook to check format before committing."
+  cp tools/git/pre-commit .git/hooks/pre-commit
+  chmod +x .git/hooks/pre-commit
+  git init
+}
+
 
 init_git_commit_msg_hook() {
   # Create a git hook to enforce a commit message format
@@ -204,5 +214,6 @@ install_python_deps
 
 if [[ $CI == "0" ]]; then
   init_git_pre_push_hook
+  init_git_pre_commit_hook
   init_git_commit_msg_hook
 fi

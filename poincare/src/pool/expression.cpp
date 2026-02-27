@@ -125,7 +125,7 @@ Expression Expression::ExpressionFromAddress(const void* address, size_t size) {
   if (address == nullptr || size == 0) {
     return Expression();
   }
-  // Build the OExpression in the Tree Pool
+  // Build the Expression in the Pool
   return Expression(static_cast<ExpressionObject*>(
       Pool::sharedPool->copyObjectFromAddress(address, size)));
 }

@@ -52,7 +52,7 @@ struct Parameters {
   ApproximationPolicy policy;
   /* User parameters should only be passed in case of a UserExpression.
    * UnitFormat isn't needed for approximation but it's more convenient to reuse
-   * the same structr. */
+   * the same struct. */
   UserParameters user;
 };
 

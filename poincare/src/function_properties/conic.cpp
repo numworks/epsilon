@@ -456,22 +456,23 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
     return;
   }
 
-  /* Detect the pattern r = a·cosOrSin(θ+c)
+  /* Detect the pattern r = a·cosOrSin(±θ+c)
    * TODO: Detect r=cos(θ)+2sin(θ) */
   double a, b, c;
-  if (DetectLinearPatternOfTrig(e, symbol, &a, &b, &c, false) && b == 1.0) {
+  if (DetectLinearPatternOfTrig(e, symbol, &a, &b, &c, false) &&
+      (b == 1.0 || b == -1.0)) {
     m_shape = Shape::Circle;
     return;
   }
 
-  // Detect the pattern (d·e)/(1±e·cos(θ+c)) where e is the eccentricity
+  // Detect the pattern (d·e)/(1±e·cos(±θ+c)) where e is the eccentricity
   int numeratorDegree;
   Tree* denominator = Division::PushDenominatorAndComputeDegreeOfNumerator(
       e, symbol, &numeratorDegree);
   assert(denominator);
   bool ok = numeratorDegree == 0 && denominator->isAdd() &&
             DetectLinearPatternOfTrig(denominator, symbol, &a, &b, &c, true) &&
-            b == 1.0;
+            (b == 1.0 || b == -1.0);
   if (!ok) {
     m_shape = Shape::Undefined;
     denominator->removeTree();
@@ -496,7 +497,7 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
       denominator, Approximation::Parameters{.policy = {.optimize = true}});
   denominator->removeTree();
 
-  // Turn a·cos(θ+c)+k into (a/k)·cos(θ+c)+1
+  // Turn a·cos(±θ+c)+k into (a/k)·cos(±θ+c)+1
   double absValueCoefficient = std::fabs(a / k);
   if (absValueCoefficient < 1.0) {
     m_shape = Shape::Ellipse;

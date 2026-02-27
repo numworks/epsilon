@@ -576,15 +576,15 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Polar,
             .m_conicShape = Poincare::Conic::Shape::Circle});
 
-    // TODO: Should be detected as a PolarCircleType
     assert_same_function_properties("r=1.2cos(-θ+3.1)", "r(θ)=1.2cos(-θ+3.1)");
     assert_check_function_properties(
         "r=1.2cos(-θ+3.1)",
         FunctionProperties{
-            .m_caption = I18n::Message::PolarEquationType,
+            .m_caption = I18n::Message::PolarCircleType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
             .m_curveParameterType =
-                ContinuousFunctionProperties::CurveParameterType::Polar});
+                ContinuousFunctionProperties::CurveParameterType::Polar,
+            .m_conicShape = Poincare::Conic::Shape::Circle});
 
     assert_same_function_properties("r=2/(1+0.2cos(θ-3.1))",
                                     "r(θ)=2/(1+0.2cos(θ-3.1))");
@@ -597,16 +597,16 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Polar,
             .m_conicShape = Poincare::Conic::Shape::Ellipse});
 
-    // TODO: Should be PolarEllipseType
     assert_same_function_properties("r=2/(1+0.2cos(-θ+3.1))",
                                     "r(θ)=2/(1+0.2cos(-θ+3.1))");
     assert_check_function_properties(
         "r=2/(1+0.2cos(-θ+3.1))",
         FunctionProperties{
-            .m_caption = I18n::Message::PolarEquationType,
+            .m_caption = I18n::Message::PolarEllipseType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
             .m_curveParameterType =
-                ContinuousFunctionProperties::CurveParameterType::Polar});
+                ContinuousFunctionProperties::CurveParameterType::Polar,
+            .m_conicShape = Poincare::Conic::Shape::Ellipse});
 
     assert_same_function_properties("r=π/(5-4cos(θ+1))",
                                     "r(θ)=π/(5-4cos(θ+1))");

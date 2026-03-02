@@ -25,7 +25,7 @@ QUIZ_CASE(graph_continuous_function_store) {
    * and refCounter are uselessly stored in the file system.
    * Uncomment it if it ever changes. */
 #if 0
-  assert(checksum == Ion::Storage::FileSystem::sharedFileSystem->checksum());
+  quiz_assert(checksum == Ion::Storage::FileSystem::sharedFileSystem->checksum());
 #endif
   quiz_assert(functionStore.numberOfActiveFunctions() == 1);
 }

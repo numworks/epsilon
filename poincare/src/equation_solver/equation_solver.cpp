@@ -897,7 +897,10 @@ static Coordinate2D<T> evaluator(T t, const void* model) {
   const Tree* e = reinterpret_cast<const Tree*>(model);
   return Coordinate2D<T>(
       t, Approximation::To<T>(
-             e, t, Approximation::Parameters{.policy = {.optimize = true}}));
+             e, t,
+             Approximation::Parameters{
+                 .policy = {.optimize = true},
+                 .expressionParameters = Approximation::Prepared{}}));
 }
 
 SolverResult ApproximateSolve(

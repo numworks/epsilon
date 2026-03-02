@@ -114,12 +114,13 @@ typename Solver<T>::Solution Solver<T>::next(const Tree* e, BracketTest test,
           [](const Tree* e) { return e->isRandomized(); })) {
     return Solution{};
   }
-  /* TODO_PCJ: Either ensure expression is projected, or pass approximation
-   * context(ComplexFormat, AngleUnit) and replace defined symbols. */
   FunctionEvaluation f = [](T x, const void* aux) {
     const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
     return Approximation::To<T>(
-        e, x, Approximation::Parameters{.policy = {.optimize = true}});
+        e, x,
+        Approximation::Parameters{
+            .policy = {.optimize = true},
+            .expressionParameters = Approximation::Prepared{}});
   };
 
   return next(f, e, test, hone, &SolverTests<T>::IsDiscontinuousInBracket);
@@ -240,11 +241,16 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
   }
   T x = root.x;
   T y = Approximation::To<T>(
-      e1, x, Approximation::Parameters{.policy = {.optimize = true}});
+      e1, x,
+      Approximation::Parameters{
+          .policy = {.optimize = true},
+          .expressionParameters = Approximation::Prepared{}});
   // The secondImage is a "y" if areAlongSameAxis=true, or an "x" otherwise
   T secondImage = Approximation::To<T>(
       e2, areAlongSameAxis ? x : y,
-      Approximation::Parameters{.policy = {.optimize = true}});
+      Approximation::Parameters{
+          .policy = {.optimize = true},
+          .expressionParameters = Approximation::Prepared{}});
   if (!std::isfinite(y) || !std::isfinite(secondImage)) {
     /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
      * or undef expressions in specific points like x^2/x, the root of the

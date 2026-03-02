@@ -19,7 +19,9 @@ bool Continuity::IsDiscontinuousOnInterval(const Tree* e, T minBound,
     return true;
   }
   bool isDiscontinuous = false;
-  Approximation::Parameters params{.policy = {.optimize = true}};
+  Approximation::Parameters params{
+      .policy = {.optimize = true},
+      .expressionParameters = Approximation::Prepared{}};
   if (e->isOfType({Type::Ceil, Type::Floor, Type::Round})) {
     // is discontinuous if it changes value
     isDiscontinuous = Approximation::To<T>(e, minBound, params) !=

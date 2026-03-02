@@ -319,8 +319,8 @@ Tree* PrepareTree(const Tree* e,
       break;
     }
     case ExpressionVariantParameters::Type::Projected: {
+      assert(Simplification::IsSystem(e));
       if (expressionParameters.get<ProjectedPolicy>().prepare) {
-        assert(Simplification::IsSystem(e));
         if (!clone) {
           clone = e->cloneTree();
         }
@@ -331,6 +331,10 @@ Tree* PrepareTree(const Tree* e,
     case ExpressionVariantParameters::Type::Prepared: {
       // Nothing to do, expression is already prepared for approximation
       // TODO: assert that the Tree is a PreparedFunction
+      break;
+    }
+    case ExpressionVariantParameters::Type::Unspecified: {
+      // Nothing can be done
       break;
     }
     default:
@@ -416,7 +420,8 @@ Private::Approximator::InternalUserParameters::Make(
       return InternalUserParameters(expressionParameters.get<UserParameters>());
     }
     case ExpressionVariantParameters::Type::Projected:
-    case ExpressionVariantParameters::Type::Prepared: {
+    case ExpressionVariantParameters::Type::Prepared:
+    case ExpressionVariantParameters::Type::Unspecified: {
       // ComplexFormat and AngleUnit will be None, symbol context will be Empty
       return InternalUserParameters{};
     }

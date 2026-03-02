@@ -38,9 +38,14 @@ struct ProjectedPolicy {
  * PreparedFunction types) */
 struct Prepared {};
 
+/*  To indicate that an expression does not relate to any Expression type (User,
+ * System or PreparedFunction). In that case, no UserSettings can be passed and
+ * the expression cannot be prepared. */
+struct Unspecified {};
+
 class ExpressionVariantParameters {
  public:
-  enum class Type : uint8_t { User, Projected, Prepared };
+  enum class Type : uint8_t { User, Projected, Prepared, Unspecified };
 
   ExpressionVariantParameters(ProjectedPolicy projectedPolicy) {
     m_data.init<ProjectedPolicy>(projectedPolicy);
@@ -51,6 +56,7 @@ class ExpressionVariantParameters {
   }
 
   ExpressionVariantParameters(Prepared) { m_data.init<Prepared>(); }
+  ExpressionVariantParameters(Unspecified) { m_data.init<Unspecified>(); }
 
   Type type() const {
     if (m_data.has<UserParameters>()) {
@@ -59,6 +65,8 @@ class ExpressionVariantParameters {
       return Type::Projected;
     } else if (m_data.has<Prepared>()) {
       return Type::Prepared;
+    } else if (m_data.has<Unspecified>()) {
+      return Type::Unspecified;
     }
     OMG_UNREACHABLE
   }
@@ -73,12 +81,12 @@ class ExpressionVariantParameters {
   }
 
  private:
-  OMG::Variant<UserParameters, ProjectedPolicy, Prepared> m_data;
+  OMG::Variant<UserParameters, ProjectedPolicy, Prepared, Unspecified> m_data;
 };
 
 struct Parameters {
   ApproximationPolicy policy = {};
-  ExpressionVariantParameters expressionParameters = ProjectedPolicy{};
+  ExpressionVariantParameters expressionParameters = Unspecified{};
 };
 
 /* Approximation public methods */

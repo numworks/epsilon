@@ -544,7 +544,10 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootSearchingInChild(
      * approximation. */
     T value = Approximation::To<T>(
         ebis, root.solution.x,
-        Approximation::Parameters{.policy = {.optimize = true}});  // m_unknown
+        Approximation::Parameters{
+            .policy = {.optimize = true},
+            // ebis is no more a PreparedFunction
+            .expressionParameters = Approximation::Unspecified{}});
     ebis->removeTree();
     if (std::fabs(value) < NullTolerance(root.solution.x)) {
       return {.x = root.solution.x, .nullDescendant = root.nullDescendant};

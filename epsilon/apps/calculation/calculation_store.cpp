@@ -198,7 +198,8 @@ static CalculationResult compute(
                   .context = GlobalContextAccessor::Context(),
               },
           .projectionPolicy = {.symbolic = symbolicComputation}},
-      ApproximationPolicy{.onlyReplaceNumerical = CAS::Enabled()});
+      ApproximationPolicy{.onlyReplaceNumerical = CAS::Enabled(),
+                          .optimize = true});
   if (isStore) {
     /*  Restore store structure in the exact output. The store operation itself
      * is performed by the processStore function. */

@@ -165,7 +165,8 @@ Layout ExpressionsListController::GetExactLayoutFromExpression(
   tempParameters.projectionPolicy.symbolic =
       SymbolicComputation::ReplaceAllSymbols;
   e.cloneAndSimplifyAndApproximate(&exactExpression, &approximateExpression,
-                                   tempParameters);
+                                   tempParameters,
+                                   ApproximationPolicy{.optimize = true});
   assert(!exactExpression.isUninitialized() &&
          !approximateExpression.isUninitialized());
   Layout approximateLayout =

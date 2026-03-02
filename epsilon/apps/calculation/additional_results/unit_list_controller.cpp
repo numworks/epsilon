@@ -140,9 +140,9 @@ void UnitListController::computeAdditionalResults(
   }
   simplificationParameters.unitPolicy = UnitDisplay::BasicSI;
   UserExpression approximatedSIExpression;
-  input.cloneAndSimplifyAndApproximate(expressions + numberOfExpressions++,
-                                       &approximatedSIExpression,
-                                       simplificationParameters);
+  input.cloneAndSimplifyAndApproximate(
+      expressions + numberOfExpressions++, &approximatedSIExpression,
+      simplificationParameters, ApproximationPolicy{.optimize = true});
   if (reductionFailure) {
     expressions[--numberOfExpressions] = UserExpression();
   }
@@ -202,7 +202,8 @@ void UnitListController::computeAdditionalResults(
   m_SIValue = approximatedSIExpression.approximateUnitToRealScalar<double>(
       UserParameters{.complexFormat = complexFormat(),
                      .angleUnit = angleUnit(),
-                     .context = EmptySymbolContext{}});
+                     .context = EmptySymbolContext{}},
+      ApproximationPolicy{.optimize = true});
   // Set upper and lower reference values
   m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(
       m_SIValue, approximatedSIExpression, symbolContext, m_referenceValues,

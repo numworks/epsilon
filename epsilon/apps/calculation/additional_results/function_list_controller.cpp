@@ -53,7 +53,8 @@ void FunctionListController::computeAdditionalResults(
   float ordinate = approximateOutput.approximateToRealScalar<float>(
       UserParameters{.complexFormat = complexFormat(),
                      .angleUnit = angleUnit(),
-                     .context = App::app()->localContext()});
+                     .context = App::app()->localContext()},
+      ApproximationPolicy{.optimize = true});
   m_model.setParameters(simplifiedExpression, abscissa, ordinate);
 
   m_layouts[0] =

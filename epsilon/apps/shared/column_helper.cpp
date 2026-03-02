@@ -244,9 +244,11 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   for (int j = 0; j < numberOfPairs; j++) {
     store()->set(evaluation, *series, *column, j, true, true);
     if (evaluateForEachPairs) {
-      evaluation = formula.approximateToRealScalar<double>(UserParameters{
-          .angleUnit =
-              GlobalPreferences::SharedGlobalPreferences()->angleUnit()});
+      evaluation = formula.approximateToRealScalar<double>(
+          UserParameters{
+              .angleUnit =
+                  GlobalPreferences::SharedGlobalPreferences()->angleUnit()},
+          ApproximationPolicy{.optimize = true});
     }
   }
   return FillColumnStatus::Success;

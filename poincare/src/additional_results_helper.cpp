@@ -299,7 +299,10 @@ const Tree* getNumericalValueTree(const Tree* e, bool* error) {
   // e is not considered as a numerical value so that e^2 -> e^x
   if ((e->isNumber() && !e->isEulerE()) || e->isDecimal()) {
     if (!std::isfinite(Approximation::To<float>(
-            e, Approximation::Parameters{.policy = {.optimize = true}}))) {
+            e, Approximation::Parameters{
+                   .policy = {.optimize = true},
+                   // e in additional results is a UserExpression
+                   .expressionParameters = UserParameters{}}))) {
       *error = true;
       return nullptr;
     }

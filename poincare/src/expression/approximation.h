@@ -20,12 +20,14 @@ namespace Poincare::Internal {
 
 struct Dimension;
 
-/* Approximation is implemented on all block types.
- * We could have asserted that we project before approximating (and thus
- * implemented the approximation only on internal types) but this increases the
- * number of operations (for instance, 2 / 3 VS 2 * 3 ^ -1) and decreases the
- * precision.
- * If not projected, additional context is expected (AngleUnit, ...) */
+/* This is the internal Approximation API, to be used when working inside
+ * Poincare::Internal only.
+ * Approximation can be called on all expression types (see See
+ * ExpressionVariantParameters::Type). However depending on the expression type,
+ * the available parameters and processing are slightly different. For example,
+ * if the expression is User, UserSettings (angle unit, complex format, symbol
+ * context) need to be passed. See the PrepareTree method which contains the
+ * code that depends on the expression type. */
 
 namespace Approximation {
 

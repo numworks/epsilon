@@ -34,9 +34,13 @@ struct ProjectedPolicy {
   bool prepare = false;
 };
 
+/* To indicate that an expression is already prepared for approximation (for
+ * PreparedFunction types) */
+struct Prepared {};
+
 class ExpressionVariantParameters {
  public:
-  enum class Type : bool { User, Projected };
+  enum class Type : uint8_t { User, Projected, Prepared };
 
   ExpressionVariantParameters(ProjectedPolicy projectedPolicy) {
     m_data.init<ProjectedPolicy>(projectedPolicy);
@@ -46,11 +50,15 @@ class ExpressionVariantParameters {
     m_data.init<UserParameters>(userParameters);
   }
 
+  ExpressionVariantParameters(Prepared) { m_data.init<Prepared>(); }
+
   Type type() const {
     if (m_data.has<UserParameters>()) {
       return Type::User;
     } else if (m_data.has<ProjectedPolicy>()) {
       return Type::Projected;
+    } else if (m_data.has<Prepared>()) {
+      return Type::Prepared;
     }
     OMG_UNREACHABLE
   }
@@ -65,7 +73,7 @@ class ExpressionVariantParameters {
   }
 
  private:
-  OMG::Variant<UserParameters, ProjectedPolicy> m_data;
+  OMG::Variant<UserParameters, ProjectedPolicy, Prepared> m_data;
 };
 
 struct Parameters {

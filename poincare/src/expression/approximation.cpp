@@ -328,6 +328,11 @@ Tree* PrepareTree(const Tree* e,
       }
       break;
     }
+    case ExpressionVariantParameters::Type::Prepared: {
+      // Nothing to do, expression is already prepared for approximation
+      // TODO: assert that the Tree is a PreparedFunction
+      break;
+    }
     default:
       OMG_UNREACHABLE
   }
@@ -410,7 +415,8 @@ Private::Approximator::InternalUserParameters::Make(
     case ExpressionVariantParameters::Type::User: {
       return InternalUserParameters(expressionParameters.get<UserParameters>());
     }
-    case ExpressionVariantParameters::Type::Projected: {
+    case ExpressionVariantParameters::Type::Projected:
+    case ExpressionVariantParameters::Type::Prepared: {
       // ComplexFormat and AngleUnit will be None, symbol context will be Empty
       return InternalUserParameters{};
     }

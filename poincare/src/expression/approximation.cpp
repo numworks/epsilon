@@ -313,6 +313,7 @@ Tree* PrepareTree(const Tree* e,
   Tree* clone = nullptr;
   switch (expressionParameters.type()) {
     case ExpressionVariantParameters::Type::User: {
+      assert(Simplification::IsUser(e));
       // Expression must be projected
       clone = e->cloneTree();
       Variables::ProjectLocalVariablesToId(clone);

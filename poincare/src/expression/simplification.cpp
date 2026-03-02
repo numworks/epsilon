@@ -192,34 +192,6 @@ ToSystemOutput ToSystem(Tree* e,
   return {changed, dim};
 }
 
-#if ASSERTIONS
-bool IsSystem(const Tree* e) {
-  Tree* c = e->cloneTree();
-#if POINCARE_COMPLEX
-  // Use ComplexFormat::Cartesian to avoid having PowReal interfering
-  ProjectionParameters projectionParameters = {
-      .user = {.complexFormat = ComplexFormat::Cartesian}};
-#else
-  /* Pow is used both in UserExpressions to represent all the types of powers
-   * and in system for some specific powers (simple integral powers for
-   * instance). This is an issue in ComplexFormat::Real since ToSystem replaces
-   * all Pow nodes with PowReal nodes, ie Pow nodes are not allowed by IsSystem
-   * while they are produced by the reduction.
-   * TODO: introduce a PowUser node similar to LnUser to clarify the situation ?
-   */
-  ProjectionParameters projectionParameters = {};
-  for (Tree* d : c->selfAndDescendants()) {
-    if (d->isPow()) {
-      d->cloneNodeOverNode(KPowReal);
-    }
-  }
-#endif
-  bool changed = ToSystem(c, projectionParameters).changed;
-  c->removeTree();
-  return !changed;
-}
-#endif
-
 bool ReduceSystem(Tree* e, const ReductionPolicy& reductionPolicy) {
   bool changed = SystematicReduction::DeepReduce(e);
   COSTLY_ASSERT(!SystematicReduction::DeepReduce(e));
@@ -262,6 +234,42 @@ bool HandleUnits(Tree* e, const UnitParameters& unitParameters,
   return changed;
 }
 
+#if ASSERTIONS
+// A Tree is not a UserExpression if it contains some System nodes
+bool IsUser(const Tree* e) {
+  return !(e->hasDescendantSatisfying(
+      [](const Tree* e) { return e->isTrig() || e->isLn(); }));
+}
+
+/* A Tree is a SystemExpression if it has already been projected (re-projecting
+ * it returns the same Tree) */
+bool IsSystem(const Tree* e) {
+  Tree* c = e->cloneTree();
+#if POINCARE_COMPLEX
+  // Use ComplexFormat::Cartesian to avoid having PowReal interfering
+  ProjectionParameters projectionParameters = {
+      .user = {.complexFormat = ComplexFormat::Cartesian}};
+#else
+  /* Pow is used both in UserExpressions to represent all the types of powers
+   * and in system for some specific powers (simple integral powers for
+   * instance). This is an issue in ComplexFormat::Real since ToSystem replaces
+   * all Pow nodes with PowReal nodes, ie Pow nodes are not allowed by IsSystem
+   * while they are produced by the reduction.
+   * TODO: introduce a PowUser node similar to LnUser to clarify the situation ?
+   */
+  ProjectionParameters projectionParameters = {};
+  for (Tree* d : c->selfAndDescendants()) {
+    if (d->isPow()) {
+      d->cloneNodeOverNode(KPowReal);
+    }
+  }
+#endif
+  bool changed = ToSystem(c, projectionParameters).changed;
+  c->removeTree();
+  return !changed;
+}
+
+// A PreparedFunction contains either floats and / or variables, or is undef
 bool IsPreparedFunction(const Internal::Tree* e) {
   return e->isUndef()
 #if POINCARE_POINT
@@ -272,5 +280,7 @@ bool IsPreparedFunction(const Internal::Tree* e) {
            return e->isFloat() || e->isVar();
          }));
 }
+
+#endif
 
 }  // namespace Poincare::Internal::Simplification

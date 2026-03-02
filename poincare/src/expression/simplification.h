@@ -26,14 +26,14 @@ struct ToSystemOutput {
 ToSystemOutput ToSystem(Tree* e,
                         const ProjectionParameters& projectionParameters);
 #if ASSERTIONS
-bool IsSystem(const Tree* e);
 #endif
 bool ReduceSystem(Tree* e, const ReductionPolicy& reductionPolicy);
 
-// A PreparedFunction contains either floats and / or variables, or is undef
-/* This method could be somewhere else but it needs to be in a file used in the
- * "nopool" case */
+#if ASSERTIONS
+bool IsUser(const Tree* e);
+bool IsSystem(const Tree* e);
 bool IsPreparedFunction(const Internal::Tree* e);
+#endif
 
 }  // namespace Simplification
 

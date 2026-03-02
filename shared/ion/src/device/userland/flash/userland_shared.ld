@@ -54,6 +54,7 @@ SECTIONS {
     *(.slot_info*)
     *(.data)
     *(.data.*)
+    . = ALIGN(8);
     _data_section_end_ram = .;
     _userland_flash_end = LOADADDR(.data) + SIZEOF(.data);
   } >SRAM AT> FLASH_USERLAND
@@ -66,7 +67,7 @@ SECTIONS {
     BYTE(0xFF)
   } >FLASH_USERLAND
 
-  .external_apps : {
+  .external_apps (NOLOAD) : {
     . = ALIGN(64K);
     _external_apps_flash_start = .;
     . = (ORIGIN(FLASH_USERLAND) + LENGTH(FLASH_USERLAND));
@@ -88,13 +89,14 @@ SECTIONS {
     _exam_bytes_sector_end = _persisting_bytes_buffer_end;
   } >PERSISTING_BYTES
 
-  .bss : {
+  .bss (NOLOAD) : {
     /* The bss section contains data for all uninitialized variables
      * So like the .data section, it will go in RAM, but unlike the data section
      * we don't care at all about an initial value.
      *
      * Before execution, crt0 will erase that section of memory though, so we'll
      * need pointers to the beginning and end of this section. */
+    . = _data_section_end_ram;
     . = ALIGN(4);
     _bss_section_start_ram = .;
     *(.bss)
@@ -120,7 +122,7 @@ SECTIONS {
     ASSERT (_bss_section_end_ram == _bss_section_assert_end_ram, ".bss.$poincare_pool section should be the last symbol of bss to be included in the external apps RAM range.");
   } >SRAM
 
-  .heap : {
+  .heap (NOLOAD) : {
     _heap_start = .;
     /* Note: We don't increment "." here, we set it. */
     . = (ORIGIN(SRAM) + LENGTH(SRAM) - UserlandStackLength);
@@ -128,7 +130,7 @@ SECTIONS {
     _heap_end = .;
   } >SRAM
 
-  .process_stack : {
+  .process_stack (NOLOAD) : {
     . = ALIGN(8);
     _process_stack_end = .;
     . += (UserlandStackLength - 8);

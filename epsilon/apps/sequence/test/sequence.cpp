@@ -870,27 +870,24 @@ QUIZ_CASE(sequence_evaluation) {
 QUIZ_CASE(sequence_store) {
   SequenceStore* sequenceStore = &GlobalContextAccessor::SequenceStore();
   GlobalStore& globalStore = GlobalContextAccessor::Store();
-  SimplificationParameters simplificationParameters = {
-      .user = {.context = globalStore}};
+  UserSettings userSettings = UserSettings{.context = globalStore};
 
   PoincareTest::store("3→f(x)", GlobalContextAccessor::Store());
-  simplified_approximates_to<double>("f(u(0))", "undef",
-                                     simplificationParameters);
+  approximates_to<double>("f(u(0))", "undef", userSettings);
 
   AddSequence(Sequence::Type::Explicit, "1", nullptr, nullptr);
-  simplified_approximates_to<double>("f(u(2))", "3", simplificationParameters);
+  approximates_to<double>("f(u(2))", "3", userSettings);
   globalStore.resetAll();
   AddSequence(Sequence::Type::Explicit, "1/0", nullptr, nullptr);
-  simplified_approximates_to<double>("f(u(2))", "undef",
-                                     simplificationParameters);
+  approximates_to<double>("f(u(2))", "undef", userSettings);
 
   sequenceStore->removeAll();
   PoincareTest::store("3→a", globalStore);
   AddSequence(Sequence::Type::Explicit, "a+1", nullptr, nullptr);
-  simplified_approximates_to<double>("u(34)", "4", simplificationParameters);
+  approximates_to<double>("u(34)", "4", userSettings);
   PoincareTest::store("-3→a", globalStore);
   globalStore.storageDidChangeForRecord(Ion::Storage::Record("a.exp"));
-  simplified_approximates_to<double>("u(34)", "-2", simplificationParameters);
+  approximates_to<double>("u(34)", "-2", userSettings);
   globalStore.resetAll();
   sequenceStore->tidyDownstreamPoolFrom();
 }

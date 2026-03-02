@@ -93,12 +93,13 @@ SystemExpression SystemExpression::approximateSystemToTree(
 void SystemExpression::cloneAndBeautifyAndApproximate(
     UserExpression* beautifiedExpression,
     UserExpression* approximatedExpression,
-    const BeautificationParameters& beautificationParameters) const {
+    const BeautificationParameters& beautificationParameters,
+    const ApproximationPolicy& approximationPolicy) const {
   assert(beautifiedExpression && beautifiedExpression->isUninitialized());
   *beautifiedExpression = cloneAndBeautify(beautificationParameters);
   assert(approximatedExpression && approximatedExpression->isUninitialized());
-  *approximatedExpression =
-      beautifiedExpression->cloneAndApproximate(beautificationParameters.user);
+  *approximatedExpression = beautifiedExpression->cloneAndApproximate(
+      beautificationParameters.user, approximationPolicy);
 }
 
 UserExpression SystemExpression::cloneAndBeautify(

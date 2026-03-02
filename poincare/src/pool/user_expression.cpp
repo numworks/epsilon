@@ -126,7 +126,7 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* simplifiedExpression,
     UserExpression* approximatedExpression,
     const SimplificationParameters& simplificationParameters,
-    bool approximationOnlyReplaceNumerical) const {
+    const ApproximationPolicy& approximationPolicy) const {
   // Step 1: simplify
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   bool reductionFailure = false;
@@ -136,7 +136,7 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
   // Step 2: approximate
   assert(approximatedExpression && approximatedExpression->isUninitialized());
   *approximatedExpression = simplifiedExpression->cloneAndApproximate(
-      simplificationParameters.user, approximationOnlyReplaceNumerical);
+      simplificationParameters.user, approximationPolicy);
   /* Second approximation attempt.
    * Condition: simplified expression is well defined, but approximation failed
    * (it returned undef). This can happen if the simplified expression is a
@@ -145,18 +145,19 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
   if (approximatedExpression->isUndefined() &&
       !simplifiedExpression->isUndefinedOrNonReal()) {
     *approximatedExpression = this->cloneAndApproximate(
-        simplificationParameters.user, approximationOnlyReplaceNumerical);
+        simplificationParameters.user, approximationPolicy);
   }
   return reductionFailure;
 }
 
 UserExpression UserExpression::cloneAndApproximate(
-    const UserParameters& userParameters, bool onlyReplaceNumerical,
+    const UserParameters& userParameters,
+    const ApproximationPolicy& approximationPolicy,
     FloatPrecision floatPrecision) const {
   Tree* a = Approximation::To<Tree*>(
       tree(), floatPrecision,
       Approximation::Parameters{
-          .policy = {.onlyReplaceNumerical = onlyReplaceNumerical},
+          .policy = approximationPolicy,
           .expressionParameters =
               Approximation::ExpressionVariantParameters(userParameters)});
   /* There are several issues that currently prevent us from beautifying an

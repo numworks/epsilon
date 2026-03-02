@@ -15,6 +15,8 @@
 
 #include <span>
 
+#include "approximation_policy.h"
+
 namespace Poincare::Internal {
 class Tree;
 struct ContextTrees;
@@ -100,7 +102,8 @@ class UserExpression : public Expression {
       UserExpression* simplifiedExpression,
       UserExpression* approximatedExpression,
       const SimplificationParameters& simplificationParameters,
-      bool approximationOnlyReplaceNumerical = false) const;
+      const ApproximationPolicy& approximationPolicy =
+          ApproximationPolicy{}) const;
   UserExpression cloneAndSimplify(
       const SimplificationParameters& simplificationParameters,
       bool* reductionFailure) const;
@@ -109,7 +112,8 @@ class UserExpression : public Expression {
   UserExpression cloneAndTrySimplify(
       const SimplificationParameters& simplificationParameters) const;
   UserExpression cloneAndApproximate(
-      const UserParameters& userParameters, bool onlyReplaceNumerical = false,
+      const UserParameters& userParameters,
+      const ApproximationPolicy& approximationPolicy = ApproximationPolicy{},
       FloatPrecision floatPrecision = FloatPrecision::Double) const;
 
   // If of the form y-f(x), return f(x). Return uninitialized otherwise.

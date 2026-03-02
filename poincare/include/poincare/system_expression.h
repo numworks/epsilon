@@ -9,6 +9,8 @@
 #include <poincare/preferences.h>
 #include <poincare/simplification_parameters.h>
 
+#include "approximation_policy.h"
+
 namespace Poincare::Internal {
 class Tree;
 struct ContextTrees;
@@ -76,7 +78,9 @@ class SystemExpression : public Expression {
   void cloneAndBeautifyAndApproximate(
       UserExpression* beautifiedExpression,
       UserExpression* approximatedExpression,
-      const BeautificationParameters& beautificationParameters) const;
+      const BeautificationParameters& beautificationParameters,
+      const ApproximationPolicy& approximationPolicy =
+          ApproximationPolicy{}) const;
   UserExpression cloneAndBeautify(
       const BeautificationParameters& beautificationParameters) const;
   /* Replace some UserVariable into Var0 for

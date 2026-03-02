@@ -200,12 +200,14 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   if (shouldUseExactForApproximate) {
     // Approximate exact reduction preserving variables and symbols
     exactApproximateClone = exact.cloneAndApproximate(
-        {.complexFormat = m_equationMetadata.complexFormat,
-         .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-         .unitFormat =
-             GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-         .context = symbolContext},
-        true);
+        UserParameters{
+            .complexFormat = m_equationMetadata.complexFormat,
+            .angleUnit =
+                GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+            .unitFormat =
+                GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+            .context = symbolContext},
+        ApproximationPolicy{.onlyReplaceNumerical = true});
   }
 
   const UserExpression& approximateToUse =

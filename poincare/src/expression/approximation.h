@@ -3,6 +3,7 @@
 #include <omg/signaling_nan.h>
 #include <omg/variant.h>
 #include <omg/vector.h>
+#include <poincare/approximation_policy.h>
 #include <poincare/float_precision.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/src/memory/tree.h>
@@ -27,21 +28,6 @@ struct Dimension;
  * If not projected, additional context is expected (AngleUnit, ...) */
 
 namespace Approximation {
-
-struct ApproximationPolicy {
-  /* Only numerical values are approximated, the rest is preserved (including
-   * randoms, variables, units, function symbols, depLists). For example "pi*x +
-   * 1/3" will be transformed into "3.14*x + 0.33". This is useful to optimize
-   * an expression for successive approximations (for example in function graph
-   * or solver). This parameter is only relevant when the return type is an
-   * expression (i.e. a Tree*). It also implies prepare parameter is true. */
-  bool onlyReplaceNumerical = false;
-  /* Optimize out some validation steps (for now only the expression dimension
-   * check is optimized out) for a shorter computing time. These checks are
-   * asserted instead. Particularly relevant when the approximation is called
-   * multiple times (e.g. Solver or Grapher) */
-  bool optimize = false;
-};
 
 struct ProjectedPolicy {
   // Prepare is only possible on projected expressions (i.e. SystemExpressions)

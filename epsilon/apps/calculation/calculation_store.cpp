@@ -162,16 +162,18 @@ static CalculationResult compute(
     StorePreprocessResult storeElements = preprocessStore(inputExpression);
     if (!storeElements.shouldReduceBeforeStore) {
       return CalculationResult{
-          .outputs =
-              {.exact = inputExpression.clone(),
-               .approximate = inputExpression.cloneAndApproximate(
-                   {.complexFormat = complexFormat,
-                    .angleUnit = GlobalPreferences::SharedGlobalPreferences()
-                                     ->angleUnit(),
-                    .unitFormat = GlobalPreferences::SharedGlobalPreferences()
-                                      ->unitFormat(),
-                    .context = GlobalContextAccessor::Context()},
-                   CAS::Enabled())},
+          .outputs = {.exact = inputExpression.clone(),
+                      .approximate = inputExpression.cloneAndApproximate(
+                          UserParameters{
+                              .complexFormat = complexFormat,
+                              .angleUnit =
+                                  GlobalPreferences::SharedGlobalPreferences()
+                                      ->angleUnit(),
+                              .context = GlobalContextAccessor::Context()
+                              // Should unitFormat be passed?
+                          },
+                          ApproximationPolicy{.onlyReplaceNumerical =
+                                                  CAS::Enabled()})},
           .hasReductionFailure = false};
     }
     symbolicComputation = storeElements.symbolicComputation;
@@ -196,7 +198,7 @@ static CalculationResult compute(
                   .context = GlobalContextAccessor::Context(),
               },
           .projectionPolicy = {.symbolic = symbolicComputation}},
-      CAS::Enabled());
+      ApproximationPolicy{.onlyReplaceNumerical = CAS::Enabled()});
   if (isStore) {
     /*  Restore store structure in the exact output. The store operation itself
      * is performed by the processStore function. */
@@ -252,7 +254,8 @@ static void processStore(OutputExpressions& outputs,
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
   UserExpression valueApprox = value.cloneAndApproximate(
-      PoincareHelpers::UserParametersForPreferences(value), CAS::Enabled());
+      PoincareHelpers::UserParametersForPreferences(value),
+      ApproximationPolicy{.onlyReplaceNumerical = CAS::Enabled()});
   if (symbol.isUserVariable() &&
       CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox,
                                           GlobalContextAccessor::Context())) {

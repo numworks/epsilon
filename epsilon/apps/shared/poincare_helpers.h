@@ -80,9 +80,9 @@ inline Poincare::UserParameters UserParametersForPreferences(
 template <class FloatType = float>
 inline FloatType ApproximateToRealScalar(const Poincare::UserExpression& e) {
   static_assert(std::is_floating_point_v<FloatType>);
-  return e.approximateToRealScalar<FloatType>(
-      GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-      GlobalPreferences::SharedGlobalPreferences()->complexFormat());
+  return e.approximateToRealScalar<FloatType>(Poincare::UserParameters{
+      GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+      GlobalPreferences::SharedGlobalPreferences()->angleUnit()});
 }
 
 // ===== Misc =====
@@ -106,10 +106,16 @@ inline T ValueOfFloatAsDisplayed(T t, int precision,
   (void)numberOfChar;
   // Extract displayed value
   return Poincare::UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
-      T>(buffer, symbolContext,
-         GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-         GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-         Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+      T>(
+      buffer,
+      Poincare::SimplificationParameters{
+          .user = {.complexFormat = GlobalPreferences::SharedGlobalPreferences()
+                                        ->complexFormat(),
+                   .angleUnit = GlobalPreferences::SharedGlobalPreferences()
+                                    ->angleUnit(),
+                   .context = symbolContext},
+          .projectionPolicy = {
+              Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined}});
 }
 
 // Conversions to float

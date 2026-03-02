@@ -212,62 +212,56 @@ UserExpression UserExpression::privateCloneAndSimplify(
 
 template <typename T>
 T UserExpression::privateApproximateToRealScalar(
-    AngleUnit angleUnit, ComplexFormat complexFormat,
-    const SymbolContext& symbolContext) const {
+    const UserParameters& userParameters,
+    const ApproximationPolicy& approximationPolicy) const {
   static_assert(std::is_floating_point_v<T>);
   return Approximation::To<T>(
-      tree(), Approximation::Parameters{.expressionParameters = UserParameters{
-                                            .complexFormat = complexFormat,
-                                            .angleUnit = angleUnit,
-                                            .context = symbolContext}});
+      tree(),
+      Approximation::Parameters{.policy = approximationPolicy,
+                                .expressionParameters = userParameters});
 }
 
 template <typename T>
 T UserExpression::approximateToRealScalar(
-    AngleUnit angleUnit, ComplexFormat complexFormat,
-    const SymbolContext& symbolContext) const {
+    const UserParameters& userParameters,
+    const ApproximationPolicy& approximationPolicy) const {
   static_assert(std::is_floating_point_v<T>);
-  if (!Internal::Dimension::IsNonListScalar(tree(), symbolContext)) {
+  if (!Internal::Dimension::IsNonListScalar(tree(), userParameters.context)) {
     return NAN;
   }
-  return privateApproximateToRealScalar<T>(angleUnit, complexFormat,
-                                           symbolContext);
+  return privateApproximateToRealScalar<T>(userParameters, approximationPolicy);
 }
 
 template <typename T>
 T UserExpression::approximateUnitToRealScalar(
-    AngleUnit angleUnit, ComplexFormat complexFormat,
-    const SymbolContext& symbolContext) const {
+    const UserParameters& userParameters,
+    const ApproximationPolicy& approximationPolicy) const {
   static_assert(std::is_floating_point_v<T>);
-  Poincare::Dimension dimension = Poincare::Dimension(*this, symbolContext);
+  Poincare::Dimension dimension =
+      Poincare::Dimension(*this, userParameters.context);
   if (!dimension.isUnit() ||
-      Internal::Dimension::IsList(tree(), symbolContext)) {
+      Internal::Dimension::IsList(tree(), userParameters.context)) {
     return NAN;
   }
-  return privateApproximateToRealScalar<T>(angleUnit, complexFormat,
-                                           symbolContext);
+  return privateApproximateToRealScalar<T>(userParameters, approximationPolicy);
 }
 
 template <typename T>
 T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
-    const char* text, const SymbolContext& symbolContext,
-    ComplexFormat complexFormat, AngleUnit angleUnit,
-    SymbolicComputation symbolicComputation) {
-  UserExpression exp = UserExpression::Parse(text, symbolContext);
+    const char* text,
+    const SimplificationParameters& simplificationParameters) {
+  UserExpression exp =
+      UserExpression::Parse(text, simplificationParameters.user.context);
   if (exp.isUninitialized()) {
     return NAN;
   }
-  SimplificationParameters simplificationParameters = SimplificationParameters{
-      .user = {.complexFormat = complexFormat,
-               .angleUnit = angleUnit,
-               .context = symbolContext},
-      .projectionPolicy = {.symbolic = symbolicComputation}};
   bool reductionFailure;
   exp = exp.cloneAndSimplify(simplificationParameters, &reductionFailure);
   assert(!exp.isUninitialized());
-  return exp.approximateToRealScalar<T>(
-      simplificationParameters.user.angleUnit,
-      simplificationParameters.user.complexFormat, symbolContext);
+  /* ApproximationPolicy is always optimized because dimension has been checked
+   * during simplification */
+  return exp.approximateToRealScalar<T>(simplificationParameters.user,
+                                        ApproximationPolicy{.optimize = true});
 }
 
 constexpr char ordinateName[] = {CodePoints::k_ordinateSymbol, 0};
@@ -650,26 +644,24 @@ template UserExpression UserExpression::Builder<float>(
 template UserExpression UserExpression::Builder<double>(
     PointOrRealScalar<double>);
 template float UserExpression::privateApproximateToRealScalar<float>(
-    AngleUnit, ComplexFormat, const SymbolContext&) const;
+    const UserParameters&, const ApproximationPolicy&) const;
 template double UserExpression::privateApproximateToRealScalar<double>(
-    AngleUnit, ComplexFormat, const SymbolContext&) const;
+    const UserParameters&, const ApproximationPolicy&) const;
 template float UserExpression::approximateToRealScalar<float>(
-    AngleUnit, ComplexFormat, const SymbolContext&) const;
+    const UserParameters&, const ApproximationPolicy&) const;
 template double UserExpression::approximateToRealScalar<double>(
-    AngleUnit, ComplexFormat, const SymbolContext&) const;
+    const UserParameters&, const ApproximationPolicy&) const;
 template float UserExpression::approximateUnitToRealScalar<float>(
-    AngleUnit, ComplexFormat, const SymbolContext&) const;
+    const UserParameters&, const ApproximationPolicy&) const;
 template double UserExpression::approximateUnitToRealScalar<double>(
-    AngleUnit, ComplexFormat, const SymbolContext&) const;
+    const UserParameters&, const ApproximationPolicy&) const;
 template bool UserExpression::hasDefinedComplexApproximation<float>(
     AngleUnit, ComplexFormat, const SymbolContext&, float*, float*) const;
 template bool UserExpression::hasDefinedComplexApproximation<double>(
     AngleUnit, ComplexFormat, const SymbolContext&, double*, double*) const;
 template float UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
-    float>(const char*, const SymbolContext&, ComplexFormat, AngleUnit,
-           SymbolicComputation);
+    float>(const char*, const SimplificationParameters&);
 template double UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
-    double>(const char*, const SymbolContext&, ComplexFormat, AngleUnit,
-            SymbolicComputation);
+    double>(const char*, const SimplificationParameters&);
 
 }  // namespace Poincare

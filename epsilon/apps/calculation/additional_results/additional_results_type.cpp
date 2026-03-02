@@ -164,8 +164,8 @@ bool AdditionalResultsType::HasUnit(
 #if 1  // TODO_PCJ
   /* Assume units that cancel themselves have been removed by simplification.
    * Returns NaN if dimension isn't unit */
-  double value = exactOutput.approximateUnitToRealScalar<double>(
-      calculationPreferences.angleUnit, calculationPreferences.complexFormat);
+  double value = exactOutput.approximateUnitToRealScalar<double>(UserParameters{
+      calculationPreferences.complexFormat, calculationPreferences.angleUnit});
   /* TODO_PCJ: For now we assume there will always be AdditionalOutputs to
    * display if approximation is finite. We should simplify the exact output
    * with each relevant UnitDisplay and return false if all of them produce the

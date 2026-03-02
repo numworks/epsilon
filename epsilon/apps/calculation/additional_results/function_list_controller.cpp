@@ -51,7 +51,9 @@ void FunctionListController::computeAdditionalResults(
    */
   // TODO_CONTEXT: prepare for approximation ?
   float ordinate = approximateOutput.approximateToRealScalar<float>(
-      angleUnit(), complexFormat(), App::app()->localContext());
+      UserParameters{.complexFormat = complexFormat(),
+                     .angleUnit = angleUnit(),
+                     .context = App::app()->localContext()});
   m_model.setParameters(simplifiedExpression, abscissa, ordinate);
 
   m_layouts[0] =

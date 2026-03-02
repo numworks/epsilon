@@ -111,8 +111,8 @@ class ExpressionOrFloat {
     assert(!expression.isUninitialized() &&
            Poincare::Dimension(expression).isScalar());
     return expression.approximateToRealScalar<T>(
-        approximationParameters.angleUnit,
-        approximationParameters.complexFormat);
+        UserParameters{approximationParameters.complexFormat,
+                       approximationParameters.angleUnit});
   }
 
   static bool ExpressionFitsBuffer(const UserExpression& expression);

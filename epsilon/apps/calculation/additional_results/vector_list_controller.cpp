@@ -101,7 +101,9 @@ void VectorListController::computeAdditionalResults(
          .KB = angle});
   }
   float angleApproximation = angle.approximateToRealScalar<float>(
-      angleUnit(), complexFormat(), symbolContext);
+      UserParameters{.complexFormat = complexFormat(),
+                     .angleUnit = angleUnit(),
+                     .context = symbolContext});
   if (!std::isfinite(angleApproximation)) {
     return;
   }
@@ -113,10 +115,14 @@ void VectorListController::computeAdditionalResults(
   // 4. Illustration
   float xApproximation =
       approximateOutput.cloneChildAtIndex(0).approximateToRealScalar<float>(
-          angleUnit(), complexFormat(), symbolContext);
+          UserParameters{.complexFormat = complexFormat(),
+                         .angleUnit = angleUnit(),
+                         .context = symbolContext});
   float yApproximation =
       approximateOutput.cloneChildAtIndex(1).approximateToRealScalar<float>(
-          angleUnit(), complexFormat(), symbolContext);
+          UserParameters{.complexFormat = complexFormat(),
+                         .angleUnit = angleUnit(),
+                         .context = symbolContext});
   if (!std::isfinite(xApproximation) || !std::isfinite(yApproximation) ||
       (OMG::LaxToZero(xApproximation) == 0.f &&
        OMG::LaxToZero(yApproximation) == 0.f)) {

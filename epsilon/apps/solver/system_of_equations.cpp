@@ -146,8 +146,9 @@ void SystemOfEquations::approximateSolve(const SymbolContext& symbolContext) {
   for (size_t i = 0; i < m_numberOfSolutions; i++) {
     double solution =
         result.approximateSolutionList.cloneChildAtIndex(i)
-            .approximateToRealScalar<double>(
-                GlobalPreferences::SharedGlobalPreferences()->angleUnit());
+            .approximateToRealScalar<double>(UserParameters{
+                .angleUnit =
+                    GlobalPreferences::SharedGlobalPreferences()->angleUnit()});
     m_solutions[i] =
         Solution(Poincare::Layout(), Poincare::Layout(), solution, false);
   }

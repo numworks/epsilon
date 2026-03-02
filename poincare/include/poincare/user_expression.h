@@ -126,24 +126,22 @@ class UserExpression : public Expression {
       const SimplificationParameters& simplificationParameters) const;
   // Approximate real scalar (returns NAN for non real scalars)
   template <typename T>
-  T approximateToRealScalar(
-      AngleUnit angleUnit, ComplexFormat complexFormat = ComplexFormat::None,
-      const SymbolContext& symbolContext = EmptySymbolContext{}) const;
+  T approximateToRealScalar(const UserParameters& userParameters,
+                            const ApproximationPolicy& approximationPolicy =
+                                ApproximationPolicy{}) const;
   // Approximate scalar part of unit expression (returns NAN for non units)
   /* TODO_PCJ: This method is almost never used, and we might prefer to split it
    * into "removeUnit" and "approximateToRealScalar" methods */
   template <typename T>
-  T approximateUnitToRealScalar(
-      AngleUnit angleUnit, ComplexFormat complexFormat = ComplexFormat::None,
-      const SymbolContext& symbolContext = EmptySymbolContext{}) const;
+  T approximateUnitToRealScalar(const UserParameters& userParameters,
+                                const ApproximationPolicy& approximationPolicy =
+                                    ApproximationPolicy{}) const;
 
   // Return NAN for all non real scalar expressions
   template <typename T>
   static T ParseAndSimplifyAndApproximateToRealScalar(
-      const char* text, const SymbolContext& symbolContext,
-      ComplexFormat complexFormat, AngleUnit angleUnit,
-      SymbolicComputation symbolicComputation =
-          SymbolicComputation::ReplaceAllSymbols);
+      const char* text,
+      const SimplificationParameters& simplificationParameters);
 
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits,
@@ -247,8 +245,9 @@ class UserExpression : public Expression {
 
   template <typename T>
   T privateApproximateToRealScalar(
-      AngleUnit angleUnit, ComplexFormat complexFormat = ComplexFormat::None,
-      const SymbolContext& symbolContext = EmptySymbolContext{}) const;
+      const UserParameters& userParameters,
+      const ApproximationPolicy& approximationPolicy =
+          ApproximationPolicy{}) const;
 };
 
 }  // namespace Poincare

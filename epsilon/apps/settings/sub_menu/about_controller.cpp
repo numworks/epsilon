@@ -40,11 +40,6 @@ AboutController::AboutController(Responder* parentResponder)
           I18n::Message::HardwareTestLaunch) {
 }
 
-static bool IsHardwareTestRow(int row) {
-  return row == AboutController::Row(AboutController::CellType::FCCID) ||
-         row == AboutController::Row(AboutController::CellType::SerialNumber);
-}
-
 #ifdef HARDWARE_CHECKUP
 static bool IsHardwareCheckupRow(int row) {
   return row == AboutController::Row(AboutController::CellType::Version);
@@ -53,11 +48,10 @@ static bool IsHardwareCheckupRow(int row) {
 
 bool AboutController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
-   * clicking on '6' on the hardware test row. */
+   * pressing '6' on any cell */
   if ((event == Ion::Events::Six || event == Ion::Events::LowerT ||
        event == Ion::Events::UpperT) &&
       m_messageTreeModel->label() == I18n::Message::About &&
-      IsHardwareTestRow(selectedRow()) &&
       !ExamModeManager::ExamMode().isActive()) {
     // Prevent hardware test in exam mode so that the LED can't be accessed.
     m_hardwareTestPopUpController.presentModally();

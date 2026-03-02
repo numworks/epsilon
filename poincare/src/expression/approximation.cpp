@@ -330,7 +330,7 @@ Tree* PrepareTree(const Tree* e,
     }
     case ExpressionVariantParameters::Type::Prepared: {
       // Nothing to do, expression is already prepared for approximation
-      // TODO: assert that the Tree is a PreparedFunction
+      assert(Simplification::IsPreparedFunction(e));
       break;
     }
     case ExpressionVariantParameters::Type::Unspecified: {

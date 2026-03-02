@@ -262,4 +262,15 @@ bool HandleUnits(Tree* e, const UnitParameters& unitParameters,
   return changed;
 }
 
+bool IsPreparedFunction(const Internal::Tree* e) {
+  return e->isUndef()
+#if POINCARE_POINT
+         || e->treeIsIdenticalTo(KPoint(KUndef, KUndef))
+#endif
+         || e->isComplexI() ||
+         (e->hasDescendantSatisfying([](const Internal::Tree* e) {
+           return e->isFloat() || e->isVar();
+         }));
+}
+
 }  // namespace Poincare::Internal::Simplification

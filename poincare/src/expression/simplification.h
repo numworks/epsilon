@@ -29,6 +29,12 @@ ToSystemOutput ToSystem(Tree* e,
 bool IsSystem(const Tree* e);
 #endif
 bool ReduceSystem(Tree* e, const ReductionPolicy& reductionPolicy);
+
+// A PreparedFunction contains either floats and / or variables, or is undef
+/* This method could be somewhere else but it needs to be in a file used in the
+ * "nopool" case */
+bool IsPreparedFunction(const Internal::Tree* e);
+
 }  // namespace Simplification
 
 }  // namespace Poincare::Internal

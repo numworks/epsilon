@@ -1,6 +1,7 @@
 #include "storage_viewer_controller.h"
 
 #include <ion/storage/file_system.h>
+#include <kandinsky/basic_color.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
@@ -35,7 +36,7 @@ bool StorageViewerController::deleteDummyRecord() const {
 }
 
 StorageViewerController::ContentView::ContentView()
-    : SolidColorView(KDColorWhite),
+    : SolidColorView(BasicColor::White),
       m_textView({.style = {.font = KDFont::Size::Small},
                   .verticalAlignment = KDGlyph::k_alignTop}) {}
 
@@ -52,7 +53,7 @@ void StorageViewerController::viewWillAppear() {
   size_t usedSize = totalSize - availableSize;
   float ratio = static_cast<float>(usedSize) / totalSize;
   // Set a color between green and red depending on the storage usage.
-  m_view.setColor(KDColor::Blend(KDColorRed, KDColorGreen,
+  m_view.setColor(KDColor::Blend(BasicColor::Red, BasicColor::Green,
                                  static_cast<uint8_t>(255 * ratio)));
 
   char lineBuffer[ContentView::k_lineBufferSize];

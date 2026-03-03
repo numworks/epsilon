@@ -2,6 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <ion/post_and_hardware_tests.h>
+#include <kandinsky/basic_color.h>
 
 using namespace Poincare;
 
@@ -25,13 +26,13 @@ bool ColorsLCDTestController::handleEvent(Ion::Events::Event event) {
 void ColorsLCDTestController::viewWillAppear() {
   bool testOK = Ion::POSTAndHardwareTests::ColorsLCDPixelFailures() <=
                 k_numberOfAcceptablesGlyphErrors;
-  m_view.setColor(testOK ? KDColorGreen : KDColorRed);
+  m_view.setColor(testOK ? BasicColor::Green : BasicColor::Red);
   m_view.colorsLCDStateTextView()->setText(testOK ? k_colorsLCDOKText
                                                   : k_colorsLCDFailTest);
 }
 
 ColorsLCDTestController::ContentView::ContentView()
-    : SolidColorView(KDColorWhite),
+    : SolidColorView(BasicColor::White),
       m_colorsLCDStateView({.horizontalAlignment = KDGlyph::k_alignCenter}) {}
 
 void ColorsLCDTestController::ContentView::setColor(KDColor color) {

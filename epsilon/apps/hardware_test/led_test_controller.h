@@ -3,6 +3,7 @@
 #include <escher/buffer_text_view.h>
 #include <escher/solid_color_view.h>
 #include <escher/view_controller.h>
+#include <kandinsky/basic_color.h>
 
 #include "arrow_view.h"
 
@@ -37,7 +38,8 @@ class LEDTestController : public Escher::ViewController {
   constexpr static KDCoordinate k_indicatorMargin = 8;
   constexpr static int k_numberOfColors = 5;
   constexpr static KDColor k_LEDColors[k_numberOfColors] = {
-      KDColorWhite, KDColorRed, KDColorBlue, KDColorGreen, KDColorBlack};
+      BasicColor::White, BasicColor::Red, BasicColor::Blue, BasicColor::Green,
+      BasicColor::Black};
   static KDColor LEDColorAtIndex(int i);
   ContentView m_view;
   int m_LEDColorIndex;

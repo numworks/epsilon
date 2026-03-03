@@ -2,6 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <ion/post_and_hardware_tests.h>
+#include <kandinsky/basic_color.h>
 
 using namespace Poincare;
 
@@ -23,13 +24,13 @@ bool VBlankTestController::handleEvent(Ion::Events::Event event) {
 
 void VBlankTestController::viewWillAppear() {
   bool testOK = Ion::POSTAndHardwareTests::VBlankOK();
-  m_view.setColor(testOK ? KDColorGreen : KDColorRed);
+  m_view.setColor(testOK ? BasicColor::Green : BasicColor::Red);
   m_view.vBlankStateTextView()->setText(testOK ? k_vBlankOKText
                                                : k_vBlankFailTest);
 }
 
 VBlankTestController::ContentView::ContentView()
-    : SolidColorView(KDColorWhite),
+    : SolidColorView(BasicColor::White),
       m_vBlankStateView({.horizontalAlignment = KDGlyph::k_alignCenter}) {}
 
 void VBlankTestController::ContentView::setColor(KDColor color) {

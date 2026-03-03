@@ -1,6 +1,7 @@
 #include "battery_test_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
+#include <kandinsky/basic_color.h>
 
 #include "app.h"
 extern "C" {
@@ -37,7 +38,7 @@ bool BatteryTestController::handleEvent(Ion::Events::Event event) {
 void BatteryTestController::viewWillAppear() {
   bool batteryOK = Ion::POSTAndHardwareTests::BatteryOK();
   const char* text = batteryOK ? k_batteryOKText : k_batteryNeedChargingText;
-  KDColor color = batteryOK ? KDColorGreen : KDColorRed;
+  KDColor color = batteryOK ? BasicColor::Green : BasicColor::Red;
   m_view.setColor(color);
   m_view.batteryStateTextView()->setText(text);
   updateBatteryState(Ion::Battery::voltage(), Ion::Battery::isCharging());
@@ -66,7 +67,7 @@ void BatteryTestController::updateBatteryState(float batteryLevel,
 }
 
 BatteryTestController::ContentView::ContentView()
-    : SolidColorView(KDColorWhite),
+    : SolidColorView(BasicColor::White),
       m_batteryStateView({.horizontalAlignment = KDGlyph::k_alignCenter}),
       m_batteryLevelView({.style = {.font = KDFont::Size::Small},
                           .horizontalAlignment = KDGlyph::k_alignCenter}),

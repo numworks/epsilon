@@ -1,4 +1,5 @@
 #include <ion/display.h>
+#include <kandinsky/basic_color.h>
 
 namespace Ion::Display {
 
@@ -37,7 +38,7 @@ void Context::Clear(KDPoint newCursorPosition) {
   Context* ctx = SharedContext;
   ctx->setOrigin(KDPointZero);
   ctx->setClippingRect(Ion::Display::Rect);
-  ctx->pushRectUniform(Ion::Display::Rect, KDColorWhite);
+  ctx->pushRectUniform(Ion::Display::Rect, BasicColor::White);
   s_cursor = newCursorPosition;
 }
 

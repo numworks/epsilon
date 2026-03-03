@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/view.h>
+#include <kandinsky/basic_color.h>
 
 namespace HardwareTest {
 
@@ -15,7 +16,7 @@ class Code128BView : public Escher::View {
   constexpr static KDCoordinate k_outlineThickness = 1;
   constexpr static KDCoordinate k_charPatternWidth = 11;
   constexpr static KDCoordinate k_stringOffset = 3;
-  constexpr static KDColor k_borderColor = KDColorRed;
+  constexpr static KDColor k_borderColor = BasicColor::Red;
   void updateModuleWidth();
   int checksum() const;
   void drawQuietZoneAt(KDContext* ctx, KDCoordinate* x) const;

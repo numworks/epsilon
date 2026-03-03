@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <escher/palette.h>
-#include <kandinsky/color.h>
+#include <kandinsky/basic_color.h>
 #include <quiz.h>
 
 #include <array>
@@ -36,13 +36,18 @@ QUIZ_CASE(kandinsky_color_blend) {
    *           = 0x7F*(0x000100) + 0x80*(0x000001)
    *           = 0x007F80 */
 
-  assert_colors_blend_to(KDColorWhite, KDColorBlack, 0x00, KDColorBlack);
-  assert_colors_blend_to(KDColorWhite, KDColorBlack, 0xFF, KDColorWhite);
-  assert_colors_blend_to(KDColorWhite, KDColorBlack, 0x7F, midGray);
+  assert_colors_blend_to(BasicColor::White, BasicColor::Black, 0x00,
+                         BasicColor::Black);
+  assert_colors_blend_to(BasicColor::White, BasicColor::Black, 0xFF,
+                         BasicColor::White);
+  assert_colors_blend_to(BasicColor::White, BasicColor::Black, 0x7F, midGray);
 
-  assert_colors_blend_to(KDColorGreen, KDColorBlue, 0x00, KDColorBlue);
-  assert_colors_blend_to(KDColorGreen, KDColorBlue, 0xFF, KDColorGreen);
-  assert_colors_blend_to(KDColorGreen, KDColorBlue, 0x7F, midTurquoise);
+  assert_colors_blend_to(BasicColor::Green, BasicColor::Blue, 0x00,
+                         BasicColor::Blue);
+  assert_colors_blend_to(BasicColor::Green, BasicColor::Blue, 0xFF,
+                         BasicColor::Green);
+  assert_colors_blend_to(BasicColor::Green, BasicColor::Blue, 0x7F,
+                         midTurquoise);
 
   // Assert that blending two identical colors does not produce strange colors.
   for (uint16_t col = 0; col < 0xFFFF; col++) {
@@ -50,8 +55,8 @@ QUIZ_CASE(kandinsky_color_blend) {
     assert_colors_blend_to(color, color, col >> 8, color);
     // Asserts that blending is symmetrical
     for (uint16_t alpha = 0; alpha <= 255; ++alpha) {
-      quiz_assert(KDColor::Blend(KDColorWhite, color, alpha) ==
-                  KDColor::Blend(color, KDColorWhite, 255 - alpha));
+      quiz_assert(KDColor::Blend(BasicColor::White, color, alpha) ==
+                  KDColor::Blend(color, BasicColor::White, 255 - alpha));
     }
   }
 }

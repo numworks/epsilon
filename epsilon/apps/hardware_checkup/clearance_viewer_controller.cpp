@@ -1,6 +1,7 @@
 #include "clearance_viewer_controller.h"
 
 #include <ion/authentication.h>
+#include <kandinsky/basic_color.h>
 
 namespace HardwareCheckup {
 
@@ -14,15 +15,15 @@ void ClearanceViewerController::viewWillAppear() {
   const char* clearanceLevelText;
   switch (Ion::Authentication::clearanceLevel()) {
     case Ion::Authentication::ClearanceLevel::NumWorks:
-      color = KDColorGreen;
+      color = BasicColor::Green;
       clearanceLevelText = "Clearance Level:\n\nNumWorks";
       break;
     case Ion::Authentication::ClearanceLevel::NumWorksAndThirdPartyApps:
-      color = KDColorYellow;
+      color = BasicColor::Yellow;
       clearanceLevelText = "Clearance Level:\n\nNumWorks and Third-Party Apps";
       break;
     case Ion::Authentication::ClearanceLevel::ThirdParty:
-      color = KDColorRed;
+      color = BasicColor::Red;
       clearanceLevelText = "Clearance Level:\n\nThird-Party";
       break;
     default:

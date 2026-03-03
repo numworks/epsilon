@@ -1,6 +1,7 @@
 #include "keyboard_view.h"
 
 #include <apps/constant.h>
+#include <kandinsky/basic_color.h>
 
 namespace HardwareTest {
 
@@ -10,7 +11,7 @@ void KeyboardView::setTestedKeyIndex(int i) {
 }
 
 void KeyboardView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), BasicColor::White);
   for (int i = 0; i < Ion::Keyboard::NumberOfValidKeys; i++) {
     drawKey(i, ctx, rect);
   }
@@ -72,14 +73,15 @@ void KeyboardView::drawKey(int keyIndex, KDContext* ctx, KDRect rect) const {
 KDColor KeyboardView::keyColor(Ion::Keyboard::Key key) const {
   Ion::Keyboard::Key testedKey = m_keyboardModel.testedKey();
   if (testedKey == key) {
-    return KDColorBlue;
+    return BasicColor::Blue;
   }
   int keyIndex = m_keyboardModel.indexInTestedKeys(key);
   if (keyIndex < 0) {
     return Escher::Palette::GrayBright;
   }
-  return keyIndex < m_keyboardModel.indexInTestedKeys(testedKey) ? KDColorGreen
-                                                                 : KDColorBlack;
+  return keyIndex < m_keyboardModel.indexInTestedKeys(testedKey)
+             ? BasicColor::Green
+             : BasicColor::Black;
 }
 
 }  // namespace HardwareTest

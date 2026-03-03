@@ -3,6 +3,7 @@
 #include <ion/exam_mode.h>
 #include <ion/external_apps.h>
 #include <ion/reset.h>
+#include <kandinsky/basic_color.h>
 
 #include "led.h"
 
@@ -15,14 +16,14 @@ static void updateLed(Configuration config) {
     constexpr uint16_t blinkPeriod = 1000;  // in ms
     constexpr float blinkDutyCycle = 0.1f;
     KDColor color = config.color();
-    if (color != KDColorBlack) {
+    if (color != BasicColor::Black) {
       LED::setColor(color);
       LED::setBlinking(blinkPeriod, blinkDutyCycle);
       LED::setLock(true);
     }
   } else {
     LED::setLock(false);
-    LED::setColor(KDColorBlack);
+    LED::setColor(BasicColor::Black);
   }
 }
 
@@ -123,8 +124,8 @@ bool Configuration::isActive() const {
 
 KDColor Configuration::color() const {
   assert(!isUninitialized());
-  constexpr KDColor k_standardLEDColor = KDColorRed;
-  constexpr KDColor k_portugueseLEDColor = KDColorGreen;
+  constexpr KDColor k_standardLEDColor = BasicColor::Red;
+  constexpr KDColor k_portugueseLEDColor = BasicColor::Green;
   /* The Dutch exam mode LED is supposed to be orange but, due to a disparity in
    * plastic quality, this color needs to be toned down closer to a yellow so
    * that it cannot be confused with the red color. In addition, light guide
@@ -142,7 +143,7 @@ KDColor Configuration::color() const {
     case Ruleset::Portuguese:
       return k_portugueseLEDColor;
     default:
-      return KDColorBlack;
+      return BasicColor::Black;
   }
 }
 

@@ -3,6 +3,7 @@
 #include <ion/backlight.h>
 #include <ion/display.h>
 #include <ion/post_and_hardware_tests.h>
+#include <kandinsky/basic_color.h>
 #include <omg/print.h>
 
 using namespace Poincare;
@@ -34,7 +35,7 @@ void LCDDataTestController::viewWillAppear() {
 }
 
 LCDDataTestController::ContentView::ContentView()
-    : SolidColorView(KDColorWhite),
+    : SolidColorView(BasicColor::White),
       m_lcdDataStateView({.horizontalAlignment = KDGlyph::k_alignCenter}),
       m_lcdNumberPixelFailuresView({
           .style = {.font = KDFont::Size::Small},
@@ -43,7 +44,7 @@ LCDDataTestController::ContentView::ContentView()
 
 void LCDDataTestController::ContentView::setStatus(bool success,
                                                    int numberOfErrors) {
-  KDColor backgroundColor = (success ? KDColorGreen : KDColorRed);
+  KDColor backgroundColor = (success ? BasicColor::Green : BasicColor::Red);
   m_lcdDataStateView.setBackgroundColor(backgroundColor);
   m_lcdNumberPixelFailuresView.setBackgroundColor(backgroundColor);
   m_lcdDataStateView.setText(success ? k_lcdDataPassTest : k_lcdDataFailTest);

@@ -1,5 +1,6 @@
 #include "code_128b_view.h"
 
+#include <kandinsky/basic_color.h>
 #include <string.h>
 
 namespace HardwareTest {
@@ -46,7 +47,7 @@ void Code128BView::updateModuleWidth() {
 
 void Code128BView::drawQuietZoneAt(KDContext* ctx, KDCoordinate* x) const {
   ctx->fillRect(KDRect(*x, 0, 10 * m_moduleWidth, bounds().height()),
-                KDColorWhite);
+                BasicColor::White);
   *x = *x + 10 * m_moduleWidth;
 }
 
@@ -56,7 +57,7 @@ void Code128BView::drawPatternAt(KDContext* ctx, uint16_t pattern,
   for (int i = 0; i < width; i++) {
     if (pattern & (1 << (width - i - 1))) {
       ctx->fillRect(KDRect(*x, 0, m_moduleWidth, bounds().height()),
-                    KDColorBlack);
+                    BasicColor::Black);
     }
     *x = *x + m_moduleWidth;
   }
@@ -83,11 +84,11 @@ int Code128BView::checksum() const {
 void Code128BView::drawRect(KDContext* ctx, KDRect rect) const {
   if (m_moduleWidth == 0) {
     // Not enough space for given string
-    ctx->fillRect(rect, KDColorRed);
+    ctx->fillRect(rect, BasicColor::Red);
     return;
   }
 
-  ctx->fillRect(rect, KDColorWhite);
+  ctx->fillRect(rect, BasicColor::White);
 
   KDCoordinate x = 0;
   drawQuietZoneAt(ctx, &x);
@@ -115,7 +116,7 @@ void Code128BView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, 0, k_outlineThickness, bounds().height()),
                 k_borderColor);
 
-  KDColor enhanceColor = KDColorBlack;
+  KDColor enhanceColor = BasicColor::Black;
   ctx->fillRect(
       KDRect(k_outlineThickness, k_outlineThickness,
              bounds().width() - 2 * k_outlineThickness, 2 * k_outlineThickness),

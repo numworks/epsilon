@@ -1,6 +1,7 @@
 #pragma once
 
 #include <apps/i18n.h>
+#include <kandinsky/basic_color.h>
 #include <poincare/layout.h>
 #include <stddef.h>
 
@@ -24,7 +25,8 @@ class DataField {
   }
   class ColorPair {
    public:
-    constexpr ColorPair(KDColor fg = KDColorBlack, KDColor bg = KDColorWhite)
+    constexpr ColorPair(KDColor fg = BasicColor::Black,
+                        KDColor bg = BasicColor::White)
         : m_fg(fg), m_bg(bg) {}
     ColorPair(uint8_t alpha, KDColor fgMin, KDColor fgMax, KDColor bgMin,
               KDColor bgMax)

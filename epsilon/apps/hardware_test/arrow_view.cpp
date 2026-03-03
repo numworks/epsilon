@@ -1,5 +1,7 @@
 #include "arrow_view.h"
 
+#include <kandinsky/basic_color.h>
+
 namespace HardwareTest {
 
 const uint8_t arrowUpMask[10][9] = {
@@ -29,11 +31,11 @@ const uint8_t arrowDownMask[10][9] = {
 };
 
 ArrowView::ArrowView()
-    : m_direction(OMG::Direction::Up()), m_color(KDColorBlack) {}
+    : m_direction(OMG::Direction::Up()), m_color(BasicColor::Black) {}
 
 void ArrowView::drawRect(KDContext* ctx, KDRect rect) const {
   KDColor arrowWorkingBuffer[10 * 9];
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), BasicColor::White);
   KDCoordinate startLine = m_direction.isUp() ? k_arrowHeight : 0;
   KDCoordinate startArrow =
       m_direction.isUp() ? 0 : bounds().height() - k_arrowHeight;

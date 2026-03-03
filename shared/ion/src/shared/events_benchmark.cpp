@@ -2,6 +2,7 @@
 #include <ion/display.h>
 #include <ion/events.h>
 #include <ion/timing.h>
+#include <kandinsky/basic_color.h>
 #include <omg/print.h>
 
 #include <array>
@@ -87,7 +88,7 @@ Event getEvent(int* timeout) {
     ctx->setClippingRect(
         KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
     ctx->fillRect(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height),
-                  KDColorWhite);
+                  BasicColor::White);
     KDFont::Size font = KDFont::Size::Large;
     int line_height = KDFont::GlyphHeight(font);
     for (int i = 0; i < numberOfScenari; i++) {

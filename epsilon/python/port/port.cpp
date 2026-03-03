@@ -32,6 +32,7 @@ extern "C" {
 }
 
 #include <escher/palette.h>
+#include <kandinsky/basic_color.h>
 
 static MicroPython::ScriptProvider* sScriptProvider = nullptr;
 static MicroPython::ExecutionEnvironment* sCurrentExecutionEnvironment =
@@ -218,15 +219,16 @@ KDColor MicroPython::Color::Parse(mp_obj_t input, Mode mode) {
   if (mp_obj_is_str(input)) {
     size_t l;
     const char* color = mp_obj_str_get_data(input, &l);
+    // TODO: do not mix Palette and BasicColor
     constexpr NamedColor pairs[] = {
-        NamedColor("blue", KDColorBlue),
-        NamedColor("b", KDColorBlue),
-        NamedColor("red", KDColorRed),
-        NamedColor("r", KDColorRed),
+        NamedColor("blue", BasicColor::Blue),
+        NamedColor("b", BasicColor::Blue),
+        NamedColor("red", BasicColor::Red),
+        NamedColor("r", BasicColor::Red),
         NamedColor("green", Escher::Palette::Green),
         NamedColor("g", Escher::Palette::Green),
-        NamedColor("yellow", KDColorYellow),
-        NamedColor("y", KDColorYellow),
+        NamedColor("yellow", BasicColor::Yellow),
+        NamedColor("y", BasicColor::Yellow),
         NamedColor("brown", Escher::Palette::Brown),
         NamedColor("black", Escher::Palette::Black),
         NamedColor("k", Escher::Palette::Black),

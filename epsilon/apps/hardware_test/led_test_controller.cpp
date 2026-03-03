@@ -3,6 +3,8 @@ extern "C" {
 #include <assert.h>
 }
 
+#include <kandinsky/basic_color.h>
+
 using namespace Escher;
 
 namespace HardwareTest {
@@ -45,9 +47,9 @@ KDColor LEDTestController::LEDColorAtIndex(int i) {
 }
 
 LEDTestController::ContentView::ContentView()
-    : SolidColorView(KDColorWhite),
-      m_ledColorIndicatorView(KDColorBlack),
-      m_ledColorOutlineView(KDColorBlack),
+    : SolidColorView(BasicColor::White),
+      m_ledColorIndicatorView(BasicColor::Black),
+      m_ledColorOutlineView(BasicColor::Black),
       m_ledView({.horizontalAlignment = KDGlyph::k_alignCenter}) {
   m_ledView.setText("LED");
 }

@@ -1,7 +1,8 @@
 #pragma once
 
-#include <kandinsky/color.h>
 #include <kandinsky/font.h>
+
+#include "basic_color.h"
 
 class KDGlyph {
  public:
@@ -12,8 +13,8 @@ class KDGlyph {
   constexpr static float k_alignBottom = 1.;
 
   struct Style {
-    KDColor glyphColor = KDColorBlack;
-    KDColor backgroundColor = KDColorWhite;
+    KDColor glyphColor = BasicColor::Black;
+    KDColor backgroundColor = BasicColor::White;
     KDFont::Size font = KDFont::Size::Large;
   };
 

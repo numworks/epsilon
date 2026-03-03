@@ -3,6 +3,7 @@
 #include <escher/buffer_text_view.h>
 #include <escher/solid_color_view.h>
 #include <escher/view_controller.h>
+#include <kandinsky/basic_color.h>
 
 namespace HardwareCheckup {
 
@@ -16,7 +17,7 @@ class ClearanceViewerController : public Escher::ViewController {
   class ContentView : public Escher::SolidColorView {
    public:
     constexpr static size_t k_bufferSize = 512;
-    ContentView() : SolidColorView(KDColorWhite) {}
+    ContentView() : SolidColorView(BasicColor::White) {}
     Escher::AbstractBufferTextView* textView() { return &m_textView; }
     void setColor(KDColor color) override;
 

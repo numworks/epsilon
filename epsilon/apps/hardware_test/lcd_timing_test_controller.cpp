@@ -3,6 +3,7 @@
 #include <ion/backlight.h>
 #include <ion/display.h>
 #include <ion/post_and_hardware_tests.h>
+#include <kandinsky/basic_color.h>
 #include <omg/print.h>
 
 using namespace Poincare;
@@ -28,14 +29,14 @@ bool LCDTimingTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void LCDTimingTestController::viewWillAppear() {
-  Ion::Display::pushRectUniform(Ion::Display::Rect, KDColorWhite);
+  Ion::Display::pushRectUniform(Ion::Display::Rect, BasicColor::White);
   Ion::Backlight::setBrightness(0);
   runTest();
   Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
 }
 
 LCDTimingTestController::ContentView::ContentView()
-    : SolidColorView(KDColorWhite),
+    : SolidColorView(BasicColor::White),
       m_lcdTimingStateView({.horizontalAlignment = KDGlyph::k_alignCenter}),
       m_lcdNumberGlyphFailuresView(
           {.style = {.font = KDFont::Size::Small},
@@ -43,7 +44,7 @@ LCDTimingTestController::ContentView::ContentView()
 
 void LCDTimingTestController::ContentView::setStatus(bool success,
                                                      int numberOfErrors) {
-  KDColor backgroundColor = (success ? KDColorGreen : KDColorRed);
+  KDColor backgroundColor = (success ? BasicColor::Green : BasicColor::Red);
   m_lcdTimingStateView.setBackgroundColor(backgroundColor);
   m_lcdNumberGlyphFailuresView.setBackgroundColor(backgroundColor);
   m_lcdTimingStateView.setText(success ? k_lcdTimingPassTest

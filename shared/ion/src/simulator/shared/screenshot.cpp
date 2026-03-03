@@ -3,6 +3,7 @@
 #include <ion.h>
 #include <ion/display.h>
 #include <ion/keyboard/layout_events.h>
+#include <kandinsky/basic_color.h>
 #include <kandinsky/font.h>
 #include <omg/print.h>
 #include <omg/utf8_decoder.h>
@@ -22,8 +23,8 @@ constexpr static int k_glyphHeight = KDFont::GlyphHeight(k_fontSize);
 constexpr static int k_margin = 6;
 #if DEBUG && ION_LOG_EVENTS_NAME
 constexpr static int k_glyphWidth = KDFont::GlyphMaxWidth(k_fontSize);  // TODO
-constexpr static KDColor k_backgroundColor = KDColorBlack;
-constexpr static KDColor k_glyphColor = KDColorWhite;
+constexpr static KDColor k_backgroundColor = BasicColor::Black;
+constexpr static KDColor k_glyphColor = BasicColor::White;
 #endif
 
 Screenshot::Screenshot(const char* path) { init(path); }

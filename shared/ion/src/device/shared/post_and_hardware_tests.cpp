@@ -2,7 +2,7 @@
 #include <ion/display.h>
 #include <ion/post_and_hardware_tests.h>
 #include <ion/timing.h>
-#include <kandinsky/color.h>
+#include <kandinsky/basic_color.h>
 
 namespace Ion {
 namespace POSTAndHardwareTests {
@@ -36,8 +36,8 @@ int LCDDataGlyphFailures() {
                 "Stamps must tessellate the display");
 
   KDColor stamps[numberOfStamps][stampSize * stampSize];
-  constexpr KDColor colorForStamp[numberOfStamps] = {KDColorRed, KDColorBlue,
-                                                     KDColorGreen};
+  constexpr KDColor colorForStamp[numberOfStamps] = {
+      BasicColor::Red, BasicColor::Blue, BasicColor::Green};
   for (int i = 0; i < numberOfStamps; i++) {
     KDColor c = colorForStamp[i];
     KDColor* stamp = stamps[i];
@@ -119,8 +119,9 @@ int LCDTimingGlyphFailures() {
 
 int ColorsLCDPixelFailures() {
   int numberOfInvalidPixels = 0;
-  constexpr KDColor k_colors[] = {KDColorBlack, KDColorRed, KDColorBlue,
-                                  KDColorGreen, KDColorWhite};
+  constexpr KDColor k_colors[] = {BasicColor::Black, BasicColor::Red,
+                                  BasicColor::Blue, BasicColor::Green,
+                                  BasicColor::White};
   constexpr int stampHeight = 10;
   constexpr int stampWidth = 10;
   static_assert(Ion::Display::Width % stampWidth == 0,
@@ -151,7 +152,7 @@ int ColorsLCDPixelFailures() {
     for (int i = 0; i < Ion::Display::Width / stampWidthPull; i++) {
       for (int j = 0; j < Ion::Display::Height / stampHeightPull; j++) {
         for (int k = 0; k < stampWidthPull * stampHeightPull; k++) {
-          stamp[k] = KDColorBlack;
+          stamp[k] = BasicColor::Black;
         }
         Ion::Display::pullRect(KDRect(i * stampWidthPull, j * stampHeightPull,
                                       stampWidthPull, stampHeightPull),
@@ -232,7 +233,7 @@ bool pushOrPullAs(bool push) {
         KDColor workingBuffer[k_smallAHeight][k_smallAWidth];
         for (int i = 0; i < k_smallAHeight; i++) {
           for (int j = 0; j < k_smallAWidth; j++) {
-            workingBuffer[i][j] = KDColorRed;
+            workingBuffer[i][j] = BasicColor::Red;
           }
         }
         /* Caution: Unlike fillRectWithPixels, pullRect accesses outside (0, 0,

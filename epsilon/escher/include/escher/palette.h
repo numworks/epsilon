@@ -50,6 +50,13 @@ class Palette {
   constexpr static KDColor Mint = KDColor::RGB24(0x00c6b1);
   constexpr static KDColor MintLight = KDColor::RGB24(0xb1fef7);
 
+  constexpr static KDColor PYTHON_KhakiGray = KDColor::RGB24(0x999988);
+  constexpr static KDColor PYTHON_DarkCyan = KDColor::RGB24(0x009999);
+  constexpr static KDColor PYTHON_RaspberryRed = KDColor::RGB24(0xd73a49);
+  constexpr static KDColor PYTHON_DarkBlue = KDColor::RGB24(0x032f62);
+  // The Python gray is between GrayMiddle and GrayDarkMiddle
+  constexpr static KDColor PYTHON_GrayMiddle = KDColor::RGB24(0xC6C6C6);
+
   constexpr static KDColor DataColor[] = {Red,     Blue,      Green, YellowDark,
                                           Magenta, Turquoise, Pink,  Orange,
                                           Violet,  Mint};

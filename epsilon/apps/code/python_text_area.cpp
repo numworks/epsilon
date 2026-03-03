@@ -26,13 +26,12 @@ using namespace Escher;
 
 namespace Code {
 
-constexpr KDColor CommentColor = KDColor::RGB24(0x999988);
-constexpr KDColor NumberColor = KDColor::RGB24(0x009999);
-constexpr KDColor KeywordColor = KDColor::RGB24(0xFF000C);
-// constexpr KDColor BuiltinColor = KDColor::RGB24(0x0086B3);
-constexpr KDColor OperatorColor = KDColor::RGB24(0xd73a49);
-constexpr KDColor StringColor = KDColor::RGB24(0x032f62);
-constexpr KDColor AutocompleteColor = KDColor::RGB24(0xC6C6C6);
+constexpr KDColor CommentColor = Palette::PYTHON_KhakiGray;
+constexpr KDColor NumberColor = Palette::PYTHON_DarkCyan;
+constexpr KDColor KeywordColor = Palette::Red;
+constexpr KDColor OperatorColor = Palette::PYTHON_RaspberryRed;
+constexpr KDColor StringColor = Palette::PYTHON_DarkBlue;
+constexpr KDColor AutocompleteColor = Palette::PYTHON_GrayMiddle;
 constexpr KDColor BackgroundColor = KDColorWhite;
 constexpr KDColor HighlightColor = Palette::Select;
 constexpr KDColor DefaultColor = KDColorBlack;

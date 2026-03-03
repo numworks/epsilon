@@ -3,7 +3,6 @@
 #include <omg/unreachable.h>
 #include <stdint.h>
 
-#include "basic_color.h"
 #include "color.h"
 
 enum class KDGrayscale : uint8_t {
@@ -17,7 +16,7 @@ enum class KDGrayscale : uint8_t {
 constexpr KDColor KDGrayscaleToKDColor(KDGrayscale color) {
   switch (color) {
     case KDGrayscale::Darkest:
-      return BasicColor::Black;
+      return KDBlack;
     case KDGrayscale::Dark:
       return KDColor::RGB24(0x404441);
     case KDGrayscale::Bright:

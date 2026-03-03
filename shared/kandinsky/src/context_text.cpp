@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <kandinsky/basic_color.h>
+#include <kandinsky/color.h>
 #include <kandinsky/context.h>
 #include <kandinsky/font.h>
 #include <omg/utf8_decoder.h>
@@ -68,8 +68,7 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
                               int maxByteLength) {
   KDPoint position = p;
   KDCoordinate glyphHeight = KDFont::GlyphHeight(style.font);
-  static KDFont::RenderPalette palette =
-      KDFont::Palette(BasicColor::Black, BasicColor::Black);
+  static KDFont::RenderPalette palette = KDFont::Palette(KDBlack, KDBlack);
   if (palette.from() != style.backgroundColor ||
       palette.to() != style.glyphColor) {
     palette = KDFont::Palette(style.glyphColor, style.backgroundColor);

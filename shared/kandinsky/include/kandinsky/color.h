@@ -72,3 +72,6 @@ class KDColor {
 
   KDColorStruct m_struct;
 };
+
+constexpr KDColor KDBlack = KDColor::RGB24(0x000000);
+constexpr KDColor KDWhite = KDColor::RGB24(0xFFFFFF);

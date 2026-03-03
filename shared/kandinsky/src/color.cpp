@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <kandinsky/basic_color.h>
+#include <kandinsky/color.h>
 
 #include <algorithm>
 #include <cmath>
@@ -131,5 +131,5 @@ KDColor KDColor::ConvertHSVToRGB(KDColor::HSVColor color) {
     return KDColor::RGB888(intV, intAlpha, intBeta);
   }
   assert(false);
-  return BasicColor::Black;
+  return KDBlack;
 }

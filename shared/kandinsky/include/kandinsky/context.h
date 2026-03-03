@@ -3,8 +3,6 @@
 #include <kandinsky/glyph.h>
 #include <kandinsky/rect.h>
 
-#include "basic_color.h"
-
 class KDContext {
  public:
   KDPoint origin() const { return m_origin; }
@@ -76,7 +74,7 @@ class KDContext {
  private:
   void privateDrawAntialiasedLine(float x1, float y1, float x2, float y2,
                                   KDColor lineColor, bool autoBackground,
-                                  KDColor background = BasicColor::White);
+                                  KDColor background = KDWhite);
   KDPoint alignAndDrawSingleLineString(const char* text, KDPoint p,
                                        KDSize frame, float horizontalAlignment,
                                        KDGlyph::Style style, int maxLength);

@@ -2,7 +2,7 @@
 
 #include <kandinsky/font.h>
 
-#include "basic_color.h"
+#include "color.h"
 
 class KDGlyph {
  public:
@@ -13,8 +13,8 @@ class KDGlyph {
   constexpr static float k_alignBottom = 1.;
 
   struct Style {
-    KDColor glyphColor = BasicColor::Black;
-    KDColor backgroundColor = BasicColor::White;
+    KDColor glyphColor = KDBlack;
+    KDColor backgroundColor = KDWhite;
     KDFont::Size font = KDFont::Size::Large;
   };
 

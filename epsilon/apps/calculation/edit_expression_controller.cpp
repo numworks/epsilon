@@ -190,7 +190,7 @@ void EditExpressionController::layoutFieldDidChangeSize(
 }
 
 bool EditExpressionController::isAcceptableExpression(
-    const Poincare::UserExpression expression,
+    const Poincare::UserExpression& expression,
     const SymbolContext& symbolContext) {
   if (expression.isUninitialized()) {
     return false;

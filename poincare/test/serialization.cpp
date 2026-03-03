@@ -131,7 +131,7 @@ QUIZ_CASE(pcj_serialization_expression_or_float) {
       Preferences::PrintFloatMode::Decimal,
       Preferences::ShortNumberOfSignificantDigits);
 
-  auto approximationFunction = [](UserExpression expression) {
+  auto approximationFunction = [](const UserExpression& expression) {
     return expression.approximateToRealScalar<float>(AngleUnit::Radian,
                                                      ComplexFormat::Real);
   };

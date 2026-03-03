@@ -76,7 +76,7 @@ class CalculationStore
   Poincare::UserExpression parseInput(Poincare::Layout inputLayout);
 
   CalculationElements computeAndProcess(
-      Poincare::UserExpression inputExpression);
+      const Poincare::UserExpression& inputExpression);
 
   /* Push an empty calculation at a certain location. Assumes there is enough
    * space to push an empty calculation. Returns a pointer to the new
@@ -86,7 +86,7 @@ class CalculationStore
   /* Push helper method that takes the current location and updates it to the
    * end of the pushed content. Assumes there is enough space to push the
    * expression tree. Returns the size of the pushed content. */
-  size_t pushExpressionTree(char** location, Poincare::UserExpression e);
+  size_t pushExpressionTree(char** location, const Poincare::UserExpression& e);
 
   /* Push a Calculation with its expressions (input, exact and approximate
    * output), and updates the calculation buffer to hold this new calculation

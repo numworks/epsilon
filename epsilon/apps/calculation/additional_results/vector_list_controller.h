@@ -12,9 +12,9 @@ class VectorListController : public IllustratedExpressionsListController {
       : IllustratedExpressionsListController(editExpressionController),
         m_graphCell(&m_model) {}
   void computeAdditionalResults(
-      const Poincare::UserExpression input,
-      const Poincare::UserExpression exactOutput,
-      const Poincare::UserExpression approximateOutput) override;
+      const Poincare::UserExpression& input,
+      const Poincare::UserExpression& exactOutput,
+      const Poincare::UserExpression& approximateOutput) override;
 
   constexpr static Poincare::SymbolicComputation k_symbolicComputation =
       Poincare::SymbolicComputation::ReplaceAllSymbols;

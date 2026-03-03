@@ -32,7 +32,7 @@ void approximates_to_boolean(
     const Poincare::UserParameters& userParameters);
 
 template <typename T>
-void assert_float_approximates_to(Poincare::UserExpression f,
+void assert_float_approximates_to(const Poincare::UserExpression& f,
                                   const char* result);
 
 template <typename T>

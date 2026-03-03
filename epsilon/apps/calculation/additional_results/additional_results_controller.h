@@ -26,17 +26,17 @@ class AdditionalResultsController {
         m_scientificNotationListController(editExpressionController) {}
 
   void openAdditionalResults(AdditionalResultsType type,
-                             const Poincare::UserExpression input,
-                             const Poincare::UserExpression exactOutput,
-                             const Poincare::UserExpression approximateOutput,
+                             const Poincare::UserExpression& input,
+                             const Poincare::UserExpression& exactOutput,
+                             const Poincare::UserExpression& approximateOutput,
                              const Poincare::Preferences::CalculationPreferences
                                  calculationPreferences);
 
  private:
   void computeResults(ExpressionsListController** expressionsListController,
-                      const Poincare::UserExpression input,
-                      const Poincare::UserExpression exactOutput,
-                      const Poincare::UserExpression approximateOutput,
+                      const Poincare::UserExpression& input,
+                      const Poincare::UserExpression& exactOutput,
+                      const Poincare::UserExpression& approximateOutput,
                       const Poincare::Preferences::CalculationPreferences
                           calculationPreferences);
 

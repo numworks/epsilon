@@ -122,8 +122,8 @@ class ContinuousFunctionProperties {
 
   // Update
   void reset();
-  void update(const Poincare::SystemExpression reducedEquation,
-              const Poincare::UserExpression inputEquation,
+  void update(const Poincare::SystemExpression& reducedEquation,
+              const Poincare::UserExpression& inputEquation,
               const Poincare::SymbolContext& symbolContext,
               Poincare::ComplexFormat complexFormat,
               Poincare::Comparison::Operator precomputedOperatorType,
@@ -253,7 +253,7 @@ class ContinuousFunctionProperties {
       const Poincare::SystemExpression& analyzedExpression);
 
   // If equation should be allowed when implicit plots are forbidden.
-  static bool IsExplicitEquation(const Poincare::UserExpression equation,
+  static bool IsExplicitEquation(const Poincare::UserExpression& equation,
                                  CodePoint symbol);
 
   // Setters

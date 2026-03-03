@@ -46,8 +46,8 @@ class SystemExpression : public Expression {
   static SystemExpression CreateReduce(const Internal::Tree* structure,
                                        Internal::ContextTrees ctx);
   static SystemExpression CreateIntegralOfAbsOfDifference(
-      SystemExpression lowerBound, SystemExpression upperBound,
-      SystemExpression integrandA, SystemExpression integrandB);
+      SystemExpression lowerBound, const SystemExpression& upperBound,
+      SystemExpression integrandA, const SystemExpression& integrandB);
 
   /* General helpers */
   SystemExpression cloneChildAtIndex(int i) const;

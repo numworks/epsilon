@@ -43,9 +43,9 @@ class ExpressionsListController
   int numberOfRows() const override;
 
   virtual void computeAdditionalResults(
-      const Poincare::UserExpression input,
-      const Poincare::UserExpression exactOutput,
-      const Poincare::UserExpression approximateOutput) = 0;
+      const Poincare::UserExpression& input,
+      const Poincare::UserExpression& exactOutput,
+      const Poincare::UserExpression& approximateOutput) = 0;
   virtual Poincare::Layout layoutAtIndex(Escher::HighlightCell* cell,
                                          int index);
 
@@ -68,7 +68,7 @@ class ExpressionsListController
     return m_calculationPreferences.numberOfSignificantDigits;
   }
   static Poincare::Layout GetExactLayoutFromExpression(
-      const Poincare::UserExpression e,
+      const Poincare::UserExpression& e,
       const Poincare::SimplificationParameters& simplificationParameters,
       Poincare::Layout* approximatedLayout = nullptr,
       bool* isStrictlyEqual = nullptr);

@@ -82,8 +82,8 @@ void ListController::fillWithDefaultFunctionEquation(char* buffer,
   UTF8Helper::WriteCodePoint(buffer + length, bufferSize - length, '=');
 }
 
-bool ListController::shouldCompleteEquation(Poincare::UserExpression expression,
-                                            CodePoint symbol) {
+bool ListController::shouldCompleteEquation(
+    const Poincare::UserExpression& expression, CodePoint symbol) {
   Dimension dimension = expression.dimension();
   /* We do not want to complete equation if expression is already an
    * (in)equation, a point or a list of points. */
@@ -355,7 +355,7 @@ int ListController::derivationOrderFromRelativeRow(ContinuousFunction* f,
       relativeRow, ContinuousFunction::DerivativeDisplayType::Plot);
 }
 
-bool ListController::isValidExpressionModel(UserExpression expression) {
+bool ListController::isValidExpressionModel(const UserExpression& expression) {
   OMG::ExpiringPointer<ContinuousFunction> f =
       isAddingNewModel() ? nullptr
                          : modelStore()->modelForRecord(selectedRecord());

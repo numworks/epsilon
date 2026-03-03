@@ -102,7 +102,7 @@ UserExpression UserExpression::Builder(Coordinate2D<T> point) {
 UserExpression UserExpression::BuildListOfExpressions(
     std::span<UserExpression> expressions) {
   Internal::Tree* list = Internal::SharedTreeStack->pushList(0);
-  for (UserExpression expr : expressions) {
+  for (const UserExpression& expr : expressions) {
     expr.tree()->cloneTree();
   }
   Internal::NAry::SetNumberOfChildren(list, expressions.size());
@@ -522,7 +522,7 @@ bool UserExpression::recursivelyMatches(UserExpressionTrinaryTest test,
 bool UserExpression::recursivelyMatches(
     ExpressionTest test, const SymbolContext& symbolContext,
     SymbolicComputation replaceSymbols) const {
-  UserExpressionTrinaryTest ternary = [](const UserExpression e,
+  UserExpressionTrinaryTest ternary = [](const UserExpression& e,
                                          const SymbolContext& symbolContext,
                                          void* auxiliary) {
     ExpressionTest* trueTest = static_cast<ExpressionTest*>(auxiliary);
@@ -535,7 +535,7 @@ bool UserExpression::recursivelyMatches(
 bool UserExpression::recursivelyMatches(
     SimpleExpressionTest test, const SymbolContext& symbolContext,
     SymbolicComputation replaceSymbols) const {
-  UserExpressionTrinaryTest ternary = [](const UserExpression e,
+  UserExpressionTrinaryTest ternary = [](const UserExpression& e,
                                          const SymbolContext& symbolContext,
                                          void* auxiliary) {
     SimpleExpressionTest* trueTest =
@@ -548,7 +548,7 @@ bool UserExpression::recursivelyMatches(
 bool UserExpression::recursivelyMatches(
     NonStaticSimpleExpressionTest test, const SymbolContext& symbolContext,
     SymbolicComputation replaceSymbols) const {
-  UserExpressionTrinaryTest ternary = [](const UserExpression e,
+  UserExpressionTrinaryTest ternary = [](const UserExpression& e,
                                          const SymbolContext& symbolContext,
                                          void* auxiliary) {
     NonStaticSimpleExpressionTest* trueTest =
@@ -566,7 +566,7 @@ bool UserExpression::recursivelyMatches(ExpressionTestAuxiliary test,
     ExpressionTestAuxiliary* test;
     void* auxiliary;
   };
-  UserExpressionTrinaryTest ternary = [](const UserExpression e,
+  UserExpressionTrinaryTest ternary = [](const UserExpression& e,
                                          const SymbolContext& symbolContext,
                                          void* pack) {
     ExpressionTestAuxiliary* trueTest =
@@ -591,7 +591,7 @@ bool UserExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
   };
   Pack pack{ignoreAngleUnits, hasAngleUnits};
   return recursivelyMatches(
-      [](const UserExpression e, const SymbolContext& symbolContext,
+      [](const UserExpression& e, const SymbolContext& symbolContext,
          void* arg) {
         Pack* pack = static_cast<Pack*>(arg);
         bool isAngleUnit = e.isPureAngleUnit();

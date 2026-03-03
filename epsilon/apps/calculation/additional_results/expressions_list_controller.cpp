@@ -156,7 +156,7 @@ Poincare::Layout ExpressionsListController::layoutAtIndex(HighlightCell* cell,
 }
 
 Layout ExpressionsListController::GetExactLayoutFromExpression(
-    const UserExpression e,
+    const UserExpression& e,
     const SimplificationParameters& simplificationParameters,
     Layout* approximate, bool* isStrictlyEqual) {
   assert(!e.isUninitialized());

@@ -164,7 +164,7 @@ void SystemOfEquations::tidy(PoolObject* treePoolCursor) {
 }
 
 SystemOfEquations::Error SystemOfEquations::registerExactSolution(
-    UserExpression exact, UserExpression approximate,
+    const UserExpression& exact, const UserExpression& approximate,
     const SymbolContext& symbolContext) {
   assert(m_solutionMetadata.solutionType != SolutionType::Approximate);
   assert(!exact.isUninitialized());
@@ -194,9 +194,12 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
       forbidExactSolution || CAS::ShouldOnlyDisplayApproximation(
                                  exact, exact, approximate, symbolContext);
 
-  if (forbidExactSolution && approximate.isUninitialized()) {
+  UserExpression exactApproximateClone;
+  bool shouldUseExactForApproximate =
+      forbidExactSolution && approximate.isUninitialized();
+  if (shouldUseExactForApproximate) {
     // Approximate exact reduction preserving variables and symbols
-    approximate = exact.cloneAndApproximate(
+    exactApproximateClone = exact.cloneAndApproximate(
         {.complexFormat = m_equationMetadata.complexFormat,
          .angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
          .unitFormat =
@@ -205,11 +208,14 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
         true);
   }
 
-  if (!approximate.isUninitialized()) {
-    if (approximate.isNonReal()) {
+  const UserExpression& approximateToUse =
+      shouldUseExactForApproximate ? exactApproximateClone : approximate;
+
+  if (!approximateToUse.isUninitialized()) {
+    if (approximateToUse.isNonReal()) {
       return Error::EquationNonReal;
     }
-    if (approximate.isUndefined()) {
+    if (approximateToUse.isUndefined()) {
       return Error::EquationUndefined;
     }
   }
@@ -219,9 +225,9 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     assert(!exact.isUninitialized());
     exactLayout = PoincareHelpers::CreateLayout(exact, symbolContext);
   }
-  if (!approximate.isUninitialized()) {
+  if (!approximateToUse.isUninitialized()) {
     approximateLayout =
-        PoincareHelpers::CreateLayout(approximate, symbolContext);
+        PoincareHelpers::CreateLayout(approximateToUse, symbolContext);
   }
 
   assert(!approximateLayout.isUninitialized() ||
@@ -250,7 +256,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     }
     if (!exactLayout.isUninitialized() &&
         Poincare::IsCalculationOutputStrictEquality(
-            exact, approximate,
+            exact, approximateToUse,
             GlobalPreferences::SharedGlobalPreferences()
                 ->numberOfSignificantDigits(),
             {.user = {.complexFormat = m_equationMetadata.complexFormat,

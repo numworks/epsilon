@@ -16,8 +16,8 @@ using namespace Shared;
 namespace Calculation {
 
 void RationalListController::computeAdditionalResults(
-    const UserExpression input, const UserExpression exactOutput,
-    const UserExpression approximateOutput) {
+    const UserExpression& input, const UserExpression& exactOutput,
+    const UserExpression& approximateOutput) {
   assert(exactOutput.isBeautifiedRational());
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,

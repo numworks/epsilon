@@ -20,8 +20,8 @@ using namespace Shared;
 namespace Calculation {
 
 void VectorListController::computeAdditionalResults(
-    const UserExpression input, const UserExpression exactOutput,
-    const UserExpression approximateOutput) {
+    const UserExpression& input, const UserExpression& exactOutput,
+    const UserExpression& approximateOutput) {
   const SymbolContext& symbolContext = App::app()->localContext();
   assert(AdditionalResultsType::HasVector(
       exactOutput, approximateOutput, m_calculationPreferences, symbolContext));

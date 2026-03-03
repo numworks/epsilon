@@ -113,7 +113,7 @@ struct StorePreprocessResult {
 };
 
 static StorePreprocessResult preprocessStore(
-    Poincare::UserExpression storeExpression) {
+    const Poincare::UserExpression& storeExpression) {
   assert(storeExpression.isStore());
   bool isStoringFunction = false;
   UserExpression expressionToStore = StoreHelper::Value(storeExpression);
@@ -140,8 +140,9 @@ struct CalculationResult {
   bool hasReductionFailure = false;
 };
 
-static CalculationResult compute(Poincare::UserExpression inputExpression,
-                                 Poincare::ComplexFormat userComplexFormat) {
+static CalculationResult compute(
+    const Poincare::UserExpression& inputExpression,
+    Poincare::ComplexFormat userComplexFormat) {
   assert(!inputExpression.isUninitialized());
 
   /* When CAS is not activated, all symbols should be replaced (unknown symbols
@@ -149,7 +150,6 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
   SymbolicComputation symbolicComputation =
       CAS::Enabled() ? SymbolicComputation::ReplaceDefinedSymbols
                      : SymbolicComputation::ReplaceAllSymbols;
-  UserExpression expressionToReduce = inputExpression;
 
   Poincare::ComplexFormat complexFormat =
       inputExpression.preferredComplexFormat(userComplexFormat,
@@ -157,6 +157,7 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
                                              symbolicComputation);
 
   bool isStore = inputExpression.isStore();
+  UserExpression storeExpression;
   if (isStore) {
     StorePreprocessResult storeElements = preprocessStore(inputExpression);
     if (!storeElements.shouldReduceBeforeStore) {
@@ -174,8 +175,12 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
           .hasReductionFailure = false};
     }
     symbolicComputation = storeElements.symbolicComputation;
-    expressionToReduce = storeElements.expressionToReduce;
+    storeExpression = storeElements.expressionToReduce;
   }
+
+  // Avoid copy
+  const UserExpression& expressionToReduce =
+      isStore ? storeExpression : inputExpression;
 
   OutputExpressions outputs;
   bool reductionFailure = expressionToReduce.cloneAndSimplifyAndApproximate(
@@ -204,7 +209,7 @@ static CalculationResult compute(Poincare::UserExpression inputExpression,
 }
 
 static CalculationResult computeInterruptible(
-    Poincare::UserExpression inputExpression,
+    const Poincare::UserExpression& inputExpression,
     Poincare::ComplexFormat userComplexFormat) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
    * simplification, we could still try to display the approximate result? When
@@ -234,7 +239,7 @@ static CalculationResult computeInterruptible(
 /*  TODO: this method should be simplified so we can re-use more of what has
  * been done in preprocessStore and compute */
 static void processStore(OutputExpressions& outputs,
-                         Poincare::UserExpression input) {
+                         const Poincare::UserExpression& input) {
   /* The global variable store performs the store and ensures that no symbol is
    * kept in the definition of a variable.
    * Once this is done, the output is replaced with the stored expression. To do
@@ -272,7 +277,7 @@ assert(!value.recursivelyMatches(
 }
 
 static void postProcessOutputs(OutputExpressions& outputs,
-                               Poincare::UserExpression inputExpression,
+                               const Poincare::UserExpression& inputExpression,
                                bool unitsForbidden) {
   /* TODO: the two following operations should be performed in a
    * CircuitBreakerCheckpoint to handle the "Back" interruption properly,
@@ -322,7 +327,7 @@ Poincare::UserExpression CalculationStore::parseInput(
 }
 
 CalculationStore::CalculationElements CalculationStore::computeAndProcess(
-    Poincare::UserExpression inputExpression) {
+    const Poincare::UserExpression& inputExpression) {
   CalculationResult calculationResult = computeInterruptible(
       inputExpression,
       GlobalPreferences::SharedGlobalPreferences()->complexFormat());
@@ -395,7 +400,8 @@ Calculation* CalculationStore::pushEmptyCalculation(char** location) {
   return newCalculation;
 }
 
-size_t CalculationStore::pushExpressionTree(char** location, UserExpression e) {
+size_t CalculationStore::pushExpressionTree(char** location,
+                                            const UserExpression& e) {
   size_t length = e.tree()->treeSize();
   assert(spaceForNewElements(*location) >= length);
   memcpy(*location, e.tree(), length);

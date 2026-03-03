@@ -149,8 +149,9 @@ class Calculation {
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;
 
   static DisplayOutput ComputeDisplayOutput(
-      Poincare::UserExpression input, Poincare::UserExpression exactOutput,
-      Poincare::UserExpression approximateOutput);
+      const Poincare::UserExpression& input,
+      const Poincare::UserExpression& exactOutput,
+      const Poincare::UserExpression& approximateOutput);
 
   static EqualSign ComputeEqualSignFromOutputs(
       const OutputLayouts& outputLayouts, Poincare::ComplexFormat complexFormat,

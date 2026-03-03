@@ -492,7 +492,7 @@ static_assert(std::size(k_referenceTables) == k_numberOfReferenceTables,
               "Wrong number of reference tables or missing reference table");
 
 int FindUpperAndLowerReferenceValues(
-    double inputValue, UserExpression approximatedSIExpression,
+    double inputValue, const UserExpression& approximatedSIExpression,
     const SymbolContext& symbolContext,
     const ReferenceValue** returnReferenceValues,
     int* returnReferenceTableIndex) {
@@ -560,7 +560,7 @@ int FindUpperAndLowerReferenceValues(
 }
 
 #if 0
-bool ShouldDisplayUnitComparison(double inputValue, Poincare::Expression unit) {
+bool ShouldDisplayUnitComparison(double inputValue, Poincare::Expression& unit) {
   return FindUpperAndLowerReferenceValues(inputValue, unit, nullptr, nullptr) >
          0;
 }

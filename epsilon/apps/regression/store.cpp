@@ -330,17 +330,18 @@ Ion::Storage::Record Store::functionRecord(int series) const {
 }
 
 void Store::storeRegressionFunction(int series,
-                                    UserExpression expression) const {
+                                    const UserExpression& expression) const {
   if (expression.isUninitialized()) {
     return deleteRegressionFunction(series);
   }
   char name[k_functionNameSize];
   BuildUserFunctionName(series, name, k_functionNameSize);
-  expression = expression.cloneAndReplaceSymbolWithUnknown(
-      SymbolHelper::BuildUserVariable(CodePoints::k_cartesianSymbol));
+  UserExpression expressionToStore =
+      expression.cloneAndReplaceSymbolWithUnknown(
+          SymbolHelper::BuildUserVariable(CodePoints::k_cartesianSymbol));
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      name, Ion::Storage::regressionExtension, expression.addressInPool(),
-      expression.size(), true);
+      name, Ion::Storage::regressionExtension,
+      expressionToStore.addressInPool(), expressionToStore.size(), true);
 }
 
 void Store::deleteRegressionFunction(int series) const {

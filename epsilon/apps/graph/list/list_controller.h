@@ -66,7 +66,7 @@ class ListController : public Shared::FunctionListController,
   }
   void fillWithDefaultFunctionEquation(char* buffer, size_t bufferSize,
                                        CodePoint Symbol) const;
-  bool shouldCompleteEquation(Poincare::UserExpression expression,
+  bool shouldCompleteEquation(const Poincare::UserExpression& expression,
                               CodePoint symbol) override;
   bool completeEquation(Escher::LayoutField* equationField,
                         CodePoint symbol) override;
@@ -77,7 +77,8 @@ class ListController : public Shared::FunctionListController,
   Escher::LayoutField* layoutField() override {
     return m_editableCell.expressionCell()->layoutField();
   }
-  bool isValidExpressionModel(Poincare::UserExpression expression) override;
+  bool isValidExpressionModel(
+      const Poincare::UserExpression& expression) override;
   OMG::HorizontalDirection parameterColumnPosition() const override {
     return OMG::Direction::Right();
   }

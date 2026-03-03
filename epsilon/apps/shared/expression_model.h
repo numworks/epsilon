@@ -15,7 +15,7 @@ class ExpressionModel {
   // Getters
   void text(const Ion::Storage::Record* record, char* buffer, size_t bufferSize,
             CodePoint symbol = 0) const;
-  virtual Poincare::SystemExpression expressionReduced(
+  virtual const Poincare::SystemExpression& expressionReduced(
       const Ion::Storage::Record* record) const;
   virtual Poincare::UserExpression expressionClone(
       const Ion::Storage::Record* record) const;
@@ -47,7 +47,7 @@ class ExpressionModel {
       const Poincare::SymbolContext& symbolContext =
           Poincare::EmptySymbolContext{});
   static Poincare::UserExpression ReplaceSymbolWithUnknown(
-      Poincare::UserExpression e, CodePoint symbol,
+      const Poincare::UserExpression& e, CodePoint symbol,
       bool onlySecondTerm = false);
 
   bool isCircularlyDefined(const Ion::Storage::Record* record) const;

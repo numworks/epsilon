@@ -212,7 +212,7 @@ double Sequence::approximateAtContextRank(int rank,
   }
   if (rank >= firstNonInitialRank()) {
     // TODO: Prepared function of expressionReduced could be memoized.
-    SystemExpression e = expressionReduced();
+    const SystemExpression& e = expressionReduced();
     /* A non scalar main expression should have been caught in
      * Sequence::approximateAtRank with sequenceIsNotComputable in cache. */
     assert(Poincare::Dimension(e).isScalar());

@@ -13,7 +13,7 @@ class Expression;
 
 class Dimension {
  public:
-  Dimension(const Expression e,
+  Dimension(const Expression& e,
             const SymbolContext& symbolContext = EmptySymbolContext{});
 
   bool isScalar();
@@ -74,7 +74,7 @@ class Expression : public PoolHandle {
   int numberOfDescendants(bool includeSelf) const;
   int numberOfChildren() const;
   // Comparing trees. Expressions could be of a different derived class.
-  bool isIdenticalTo(const Expression e) const;
+  bool isIdenticalTo(const Expression& e) const;
 
   /* Boolean properties */
   // TODO: Specialize these properties if relevant to a derived class.

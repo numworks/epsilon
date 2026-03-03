@@ -30,8 +30,8 @@ using namespace Internal;
 
 AdditionalResultsHelper::TrigonometryResults
 AdditionalResultsHelper::TrigonometryAngleHelper(
-    const UserExpression input, const UserExpression exactOutput,
-    const UserExpression approximateOutput, bool directTrigonometry,
+    const UserExpression& input, const UserExpression& exactOutput,
+    const UserExpression& approximateOutput, bool directTrigonometry,
     Poincare::Preferences::CalculationPreferences calculationPreferences,
     const SimplificationParameters& simplificationParameters,
     ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation) {
@@ -144,7 +144,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
 }
 
 UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
-    const UserExpression input, const UserExpression exactOutput,
+    const UserExpression& input, const UserExpression& exactOutput,
     const SymbolContext& symbolContext,
     const Preferences::CalculationPreferences calculationPreferences) {
   const Tree* inputTree = input.tree();
@@ -236,10 +236,10 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   return UserExpression::Builder(exactAngle);
 }
 
-static bool deepIsOfType(UserExpression e,
+static bool deepIsOfType(const UserExpression& e,
                          std::initializer_list<Internal::AnyType> types) {
   return e.recursivelyMatches(
-      [](const UserExpression e, const SymbolContext& symbolContext,
+      [](const UserExpression& e, const SymbolContext& symbolContext,
          void* auxiliary) {
         return e.tree()->isOfType(
                    *static_cast<std::initializer_list<Internal::AnyType>*>(
@@ -251,7 +251,7 @@ static bool deepIsOfType(UserExpression e,
 }
 
 bool AdditionalResultsHelper::expressionIsInterestingFunction(
-    const UserExpression e) {
+    const UserExpression& e) {
   assert(!e.isUninitialized());
 
   if (e.tree()->isOfType({Type::Opposite, Type::Parentheses})) {
@@ -265,8 +265,8 @@ bool AdditionalResultsHelper::expressionIsInterestingFunction(
 }
 
 bool AdditionalResultsHelper::HasInverseTrigo(
-    const UserExpression input, const UserExpression exactOutput,
-    const UserExpression approximateOutput) {
+    const UserExpression& input, const UserExpression& exactOutput,
+    const UserExpression& approximateOutput) {
   bool result = input.tree()->isInverseTrigonometryFunction() ||
                 input.tree()->isInverseAdvancedTrigonometryFunction() ||
                 exactOutput.tree()->isInverseAdvancedTrigonometryFunction() ||
@@ -329,13 +329,13 @@ const Tree* getNumericalValueTree(const Tree* e, bool* error) {
 }
 
 bool AdditionalResultsHelper::HasSingleNumericalValue(
-    const UserExpression input) {
+    const UserExpression& input) {
   bool dummy = false;
   return getNumericalValueTree(input.tree(), &dummy) != nullptr;
 }
 
 UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
-    const UserExpression input, const char* symbol, float* value) {
+    const UserExpression& input, const char* symbol, float* value) {
   Tree* clone = input.tree()->cloneTree();
   bool dummy = false;
   Tree* numericalValue =
@@ -348,7 +348,7 @@ UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
 }
 
 UserExpression AdditionalResultsHelper::EquivalentInteger(
-    const Poincare::UserExpression exactOutput) {
+    const Poincare::UserExpression& exactOutput) {
   assert(HasPositiveInteger(exactOutput));
   if (exactOutput.tree()->isInteger()) {
     return exactOutput;
@@ -359,7 +359,7 @@ UserExpression AdditionalResultsHelper::EquivalentInteger(
 }
 
 bool AdditionalResultsHelper::HasPositiveInteger(
-    const Poincare::UserExpression exactOutput) {
+    const Poincare::UserExpression& exactOutput) {
   if (exactOutput.tree()->isFloat()) {
     // Downcast to float to handle both double and float trees.
     float value = FloatHelper::To(exactOutput.tree());
@@ -458,7 +458,7 @@ static Tree* BestConvergentOfContinuedFraction(const SystemExpression rational,
 /* Create a rational approximation (within ε) with limited digits in the
  * denominator. Return an uninitialized expression if not possible. */
 Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
-    const SystemExpression rational,
+    const SystemExpression& rational,
     const BeautificationParameters& beautificationParameters) {
   Tree* result = BestConvergentOfContinuedFraction(
       rational, k_maxDenominatorDigitsForRationalApproximation);
@@ -483,7 +483,7 @@ Poincare::Layout AdditionalResultsHelper::CreateRationalApproximation(
 
 // Take a rational a/b and create the euclidean division a=b*q+r
 UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
-    SystemExpression rational,
+    const SystemExpression& rational,
     const BeautificationParameters& beautificationParameters) {
   assert(rational.isRational());
   IntegerHandler num = Rational::Numerator(rational);
@@ -513,7 +513,7 @@ UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
 }
 
 UserExpression AdditionalResultsHelper::CreateMixedFraction(
-    SystemExpression rational, bool mixedFractionsEnabled,
+    const SystemExpression& rational, bool mixedFractionsEnabled,
     const BeautificationParameters& beautificationParameters) {
   assert(rational.isRational());
   IntegerHandler num = Rational::Numerator(rational);
@@ -570,7 +570,7 @@ static Poincare::Layout CreateBeautifiedLayout(
 }
 
 Poincare::Layout AdditionalResultsHelper::ScientificLayout(
-    const UserExpression approximateOutput, const SymbolContext& symbolContext,
+    const UserExpression& approximateOutput, const SymbolContext& symbolContext,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);

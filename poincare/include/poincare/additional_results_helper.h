@@ -22,51 +22,51 @@ class AdditionalResultsHelper final {
     bool angleIsExact;
   };
   static TrigonometryResults TrigonometryAngleHelper(
-      const UserExpression input, const UserExpression exactOutput,
-      const UserExpression approximateOutput, bool directTrigonometry,
+      const UserExpression& input, const UserExpression& exactOutput,
+      const UserExpression& approximateOutput, bool directTrigonometry,
       Preferences::CalculationPreferences calculationPreferences,
       const SimplificationParameters& simplificationParameters,
       ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation);
 
   static UserExpression ExtractExactAngleFromDirectTrigo(
-      const UserExpression input, const UserExpression exactOutput,
+      const UserExpression& input, const UserExpression& exactOutput,
       const SymbolContext& symbolContext,
       const Preferences::CalculationPreferences calculationPreferences);
 
-  static bool expressionIsInterestingFunction(const UserExpression e);
+  static bool expressionIsInterestingFunction(const UserExpression& e);
 
-  static bool HasInverseTrigo(const UserExpression input,
-                              const UserExpression exactOutput,
-                              const UserExpression approximateOutput);
+  static bool HasInverseTrigo(const UserExpression& input,
+                              const UserExpression& exactOutput,
+                              const UserExpression& approximateOutput);
 
   /* Function additional results */
-  static bool HasSingleNumericalValue(const UserExpression input);
+  static bool HasSingleNumericalValue(const UserExpression& input);
   static UserExpression CloneReplacingNumericalValuesWithSymbol(
-      const UserExpression input, const char* symbol, float* value);
+      const UserExpression& input, const char* symbol, float* value);
 
   /* Integer additional results */
   /* Return the integer UserExpression from exactOutput representing an
    * integer (Float, Double or Integer) */
-  static UserExpression EquivalentInteger(const UserExpression exactOutput);
+  static UserExpression EquivalentInteger(const UserExpression& exactOutput);
   /* Return true if exactOutput represents a positive integer (Float, Double or
    * Integer) */
-  static bool HasPositiveInteger(const UserExpression exactOutput);
+  static bool HasPositiveInteger(const UserExpression& exactOutput);
   constexpr static uint64_t k_maxPositiveInteger = 10000000000000000;
 
   /* Rational additional results */
   static Layout CreateRationalApproximation(
-      const SystemExpression rational,
+      const SystemExpression& rational,
       const BeautificationParameters& beautificationParameters);
   static UserExpression CreateEuclideanDivision(
-      SystemExpression rational,
+      const SystemExpression& rational,
       const BeautificationParameters& beautificationParameters);
   static UserExpression CreateMixedFraction(
-      SystemExpression rational, bool mixedFractionsEnabled,
+      const SystemExpression& rational, bool mixedFractionsEnabled,
       const BeautificationParameters& beautificationParameters);
 
   /* Scientific notation additional results */
   static Layout ScientificLayout(
-      const UserExpression approximateOutput,
+      const UserExpression& approximateOutput,
       const SymbolContext& symbolContext,
       const Preferences::CalculationPreferences calculationPreferences);
 

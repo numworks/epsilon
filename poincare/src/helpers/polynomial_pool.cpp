@@ -3,7 +3,7 @@
 
 namespace Poincare::PolynomialHelpers {
 
-bool HasNonNullCoefficients(SystemExpression e, const char* symbol,
+bool HasNonNullCoefficients(const SystemExpression& e, const char* symbol,
                             OMG::Troolean* highestDegreeCoefficientIsPositive) {
   return Poincare::Internal::PolynomialParser::HasNonNullCoefficients(
       e, symbol, highestDegreeCoefficientIsPositive);

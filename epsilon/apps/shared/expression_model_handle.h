@@ -15,7 +15,7 @@ class ExpressionModelHandle : public Ion::Storage::Record {
   void text(char* buffer, size_t bufferSize) const {
     return model()->text(this, buffer, bufferSize, symbol());
   }
-  virtual Poincare::SystemExpression expressionReduced() const {
+  virtual const Poincare::SystemExpression& expressionReduced() const {
     return model()->expressionReduced(this);
   }
   Poincare::UserExpression expressionClone() const {

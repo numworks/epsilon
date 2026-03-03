@@ -4,7 +4,7 @@
 
 using namespace Poincare;
 
-ScatterPlotIterable::ScatterPlotIterable(const SystemExpression e)
+ScatterPlotIterable::ScatterPlotIterable(const SystemExpression& e)
     : m_expression(e) {
   assert(e.dimension().isPointOrListOfPoints() || e.dimension().isEmptyList());
 }

@@ -255,10 +255,10 @@ void ExpressionModelListController::finishEdition() {
   selectableListView()->reloadData();
 }
 
-static CodePoint symbolForEquation(UserExpression expression) {
+static CodePoint symbolForEquation(const UserExpression& expression) {
   CodePoint symbol = CodePoints::k_cartesianSymbol;
   expression.recursivelyMatches(
-      [](const UserExpression e, const SymbolContext& symbolContext,
+      [](const UserExpression& e, const SymbolContext& symbolContext,
          void* auxiliary) {
         CodePoint* symbol = static_cast<CodePoint*>(auxiliary);
         assert(symbol);

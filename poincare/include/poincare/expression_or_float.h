@@ -17,14 +17,15 @@ class ExpressionOrFloat {
   ExpressionOrFloat() = default;
   explicit ExpressionOrFloat(float value) : m_value(value) {}
 
-  using ApproximationFunction = float (*)(UserExpression);
+  using ApproximationFunction = float (*)(const UserExpression&);
 
   /*  Create an ExpressionOrFloat from an Expression. The input Expression may
    * be uninitialized or too big to hold on the internal storage of
    * ExpressionOrFloat. The only requirement is that the input expression, if
    * initialized, should represent a scalar value. */
   static ExpressionOrFloat Builder(
-      UserExpression expression, ApproximationFunction approximationFunction) {
+      const UserExpression& expression,
+      ApproximationFunction approximationFunction) {
     if (expression.isUninitialized()) {
       return ExpressionOrFloat();
     }
@@ -95,7 +96,7 @@ class ExpressionOrFloat {
 
   /* The constructor from an expression is private. The Builder method should be
    * used when creating an ExpressionOrFloat from an expression. */
-  explicit ExpressionOrFloat(UserExpression expression) {
+  explicit ExpressionOrFloat(const UserExpression& expression) {
     assert(!expression.isUninitialized());
     assert(Poincare::Dimension(expression).isScalar());
     assert(ExpressionFitsBuffer(expression));
@@ -105,7 +106,7 @@ class ExpressionOrFloat {
   /* The approximation parameters are fixed to Radian and Real in the context of
    * ExpressionOrFloat. */
   template <typename T>
-  static T Approximate(UserExpression expression,
+  static T Approximate(const UserExpression& expression,
                        ApproximationParameters approximationParameters) {
     assert(!expression.isUninitialized() &&
            Poincare::Dimension(expression).isScalar());
@@ -114,7 +115,7 @@ class ExpressionOrFloat {
         approximationParameters.complexFormat);
   }
 
-  static bool ExpressionFitsBuffer(UserExpression expression);
+  static bool ExpressionFitsBuffer(const UserExpression& expression);
 
   /* The Pool (where Expressions are stored) is not preserved when the current
    * App is closed. So for the expression to be preserved when closing and

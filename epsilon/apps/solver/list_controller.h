@@ -35,7 +35,7 @@ class ListController : public Shared::ExpressionModelListController,
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
   void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   bool isAcceptableExpression(
-      const Poincare::UserExpression expression,
+      const Poincare::UserExpression& expression,
       const Poincare::SymbolContext& symbolContext) override;
   /* ExpressionModelListController */
   void editExpression(Ion::Events::Event event) override;
@@ -66,7 +66,7 @@ class ListController : public Shared::ExpressionModelListController,
   void reloadBrace();
   EquationStore* modelStore() const override;
   Escher::StackViewController* stackController() const;
-  bool shouldCompleteEquation(Poincare::UserExpression expression,
+  bool shouldCompleteEquation(const Poincare::UserExpression& expression,
                               CodePoint symbol) override {
     return !expression.isComparison();
   }

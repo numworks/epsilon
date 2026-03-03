@@ -11,7 +11,7 @@ class Tree;
 
 class ScatterPlotIterable {
  public:
-  ScatterPlotIterable(const SystemExpression e);
+  ScatterPlotIterable(const SystemExpression& e);
   class Iterator {
    public:
     Iterator(const Internal::Tree* node) : m_node(node) {}

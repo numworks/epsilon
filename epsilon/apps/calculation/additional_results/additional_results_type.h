@@ -32,51 +32,51 @@ struct AdditionalResultsType {
   }
 
   static AdditionalResultsType AdditionalResultsForExpressions(
-      const Poincare::UserExpression input,
-      const Poincare::UserExpression exactOutput,
-      const Poincare::UserExpression approximateOutput,
+      const Poincare::UserExpression& input,
+      const Poincare::UserExpression& exactOutput,
+      const Poincare::UserExpression& approximateOutput,
       const Poincare::Preferences::CalculationPreferences
           calculationPreferences,
       const Poincare::SymbolContext& symbolContext);
 
   static bool ForbidAdditionalResults(
-      const Poincare::UserExpression input,
-      const Poincare::UserExpression exactOutput,
-      const Poincare::UserExpression approximateOutput);
+      const Poincare::UserExpression& input,
+      const Poincare::UserExpression& exactOutput,
+      const Poincare::UserExpression& approximateOutput);
 
-  static bool HasComplex(const Poincare::UserExpression approximateOutput,
+  static bool HasComplex(const Poincare::UserExpression& approximateOutput,
                          const Poincare::Preferences::CalculationPreferences
                              calculationPreferences,
                          const Poincare::SymbolContext& symbolContext);
-  static bool HasDirectTrigo(const Poincare::UserExpression input,
-                             const Poincare::UserExpression exactOutput,
+  static bool HasDirectTrigo(const Poincare::UserExpression& input,
+                             const Poincare::UserExpression& exactOutput,
                              const Poincare::Preferences::CalculationPreferences
                                  calculationPreferences,
                              const Poincare::SymbolContext& symbolContext);
   static bool HasInverseTrigo(
-      const Poincare::UserExpression input,
-      const Poincare::UserExpression exactOutput,
-      const Poincare::UserExpression approximateOutput,
+      const Poincare::UserExpression& input,
+      const Poincare::UserExpression& exactOutput,
+      const Poincare::UserExpression& approximateOutput,
       const Poincare::Preferences::CalculationPreferences
           calculationPreferences,
       const Poincare::SymbolContext& symbolContext);
-  static bool HasUnit(const Poincare::UserExpression exactOutput,
+  static bool HasUnit(const Poincare::UserExpression& exactOutput,
                       const Poincare::Preferences::CalculationPreferences
                           calculationPreferences);
-  static bool HasVector(const Poincare::UserExpression exactOutput,
-                        const Poincare::UserExpression approximateOutput,
+  static bool HasVector(const Poincare::UserExpression& exactOutput,
+                        const Poincare::UserExpression& approximateOutput,
                         const Poincare::Preferences::CalculationPreferences
                             calculationPreferences,
                         const Poincare::SymbolContext& symbolContext);
-  static bool HasMatrix(const Poincare::UserExpression approximateOutput);
-  static bool HasFunction(const Poincare::UserExpression input,
-                          const Poincare::UserExpression approximateOutput);
+  static bool HasMatrix(const Poincare::UserExpression& approximateOutput);
+  static bool HasFunction(const Poincare::UserExpression& input,
+                          const Poincare::UserExpression& approximateOutput);
   static bool HasScientificNotation(
-      const Poincare::UserExpression approximateOutput,
+      const Poincare::UserExpression& approximateOutput,
       const Poincare::Preferences::CalculationPreferences
           calculationPreferences,
       const Poincare::SymbolContext& symbolContext);
-  static bool HasPositiveInteger(const Poincare::UserExpression);
+  static bool HasPositiveInteger(const Poincare::UserExpression&);
 };
 
 constexpr AdditionalResultsType NoAdditionalResult{.empty = true};

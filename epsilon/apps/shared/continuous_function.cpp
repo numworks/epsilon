@@ -173,14 +173,14 @@ bool ContinuousFunction::isNamed() const {
 
 bool ContinuousFunction::isDiscontinuousOnFloatInterval(float minBound,
                                                         float maxBound) const {
-  PreparedFunction equation = expressionApproximated();
-  return equation.isDiscontinuousOnInterval<float>(minBound, maxBound);
+  return expressionApproximated().isDiscontinuousOnInterval<float>(minBound,
+                                                                   maxBound);
 }
 
 void ContinuousFunction::getLineParameters(double* slope,
                                            double* intercept) const {
   assert(properties().isLineEquation());
-  SystemExpression equation = expressionReduced();
+  const SystemExpression& equation = expressionReduced();
   // Compute metrics for details view of Line
   SystemExpression coefficients[PolynomialHelpers::NumberOfCoefficients(
       PolynomialHelpers::k_lineDegree)];
@@ -361,8 +361,8 @@ PointOrRealScalar<T> ContinuousFunction::approximateDerivative(
     return PointOrRealScalar<T>(NAN);
   }
   // Derivative is simplified once and for all
-  PreparedFunction derivate = expressionApproximated(derivationOrder);
-  return derivate.approximateToPointOrRealScalarWithValue(t);
+  return expressionApproximated(derivationOrder)
+      .approximateToPointOrRealScalarWithValue(t);
 }
 
 double ContinuousFunction::approximateSlope(double t) const {
@@ -473,7 +473,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
   int derivationOrder = derivationOrderFromSubCurveIndex(subCurveIndex);
-  PreparedFunction e = expressionApproximated(derivationOrder);
+  const PreparedFunction& e = expressionApproximated(derivationOrder);
 
   if (properties().isScatterPlot()) {
     assert(e.dimension().isPointOrListOfPoints() ||
@@ -572,7 +572,7 @@ void ContinuousFunction::RecordDataBuffer::setColor(KDColor color,
  * is not ideal because an expression with less nodes does not always mean a
  * simpler expression, but it's a good compromise for now. */
 SystemExpression getSystemExpressionForApproximation(
-    UserExpression equation, SystemExpression analysisExpression,
+    const UserExpression& equation, const SystemExpression& analysisExpression,
     ComplexFormat complexFormat, AngleUnit angleUnit) {
   if (equation.isUninitialized()) {
     return SystemExpression();
@@ -593,7 +593,7 @@ SystemExpression getSystemExpressionForApproximation(
   return SystemExpression();
 }
 
-SystemExpression ContinuousFunction::Model::expressionReduced(
+const SystemExpression& ContinuousFunction::Model::expressionReduced(
     const Ion::Storage::Record* record) const {
   // m_expression might already be memmoized.
   if (!m_expression.isUninitialized()) {
@@ -699,7 +699,8 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
   return m_expression;
 }
 
-Poincare::PreparedFunction ContinuousFunction::Model::expressionApproximated(
+const Poincare::PreparedFunction&
+ContinuousFunction::Model::expressionApproximated(
     const Ion::Storage::Record* record, int derivationOrder) const {
   assert(0 <= derivationOrder && derivationOrder <= 2);
   PreparedFunction* approximated;
@@ -716,9 +717,10 @@ Poincare::PreparedFunction ContinuousFunction::Model::expressionApproximated(
       break;
   }
   if (approximated->isUninitialized()) {
-    SystemExpression e = derivationOrder == 0 ? expressionReduced(record)
-                                              : expressionDerivateReduced(
-                                                    record, derivationOrder);
+    const SystemExpression& e =
+        derivationOrder == 0
+            ? expressionReduced(record)
+            : expressionDerivateReduced(record, derivationOrder);
     // TODO: factorise the next line with other methods?
     *approximated =
         e.getPreparedFunction(properties(record).isAlongY()
@@ -728,7 +730,7 @@ Poincare::PreparedFunction ContinuousFunction::Model::expressionApproximated(
   return *approximated;
 }
 
-Poincare::SystemExpression
+const Poincare::SystemExpression&
 ContinuousFunction::Model::expressionReducedForAnalysis(
     const Ion::Storage::Record* record) const {
   if (!m_expressionForAnalysis.isUninitialized()) {
@@ -800,7 +802,7 @@ UserExpression ContinuousFunction::Model::originalEquation(
   return unknownSymbolEquation.cloneAndReplaceUnknownWithSymbol(symbol);
 }
 
-bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
+bool ContinuousFunction::IsFunctionAssignment(const UserExpression& e) {
   if (!e.isEquality()) {
     return false;
   }
@@ -1114,7 +1116,7 @@ int ContinuousFunction::Model::numberOfSubCurves(
     const Ion::Storage::Record* record) const {
   ContinuousFunctionProperties prop = properties(record);
   if (prop.isCartesian()) {
-    SystemExpression e = expressionReduced(record);
+    const SystemExpression& e = expressionReduced(record);
     if (e.isList()) {
       assert(prop.isOfDegreeTwo());
       return e.numberOfChildren();

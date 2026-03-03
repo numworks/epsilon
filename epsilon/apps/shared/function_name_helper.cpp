@@ -94,7 +94,7 @@ int DefaultName(char* buffer, size_t bufferSize, CodePoint symbol) {
           &symbol);
 }
 
-bool ParametricComponentsNameError(UserExpression expression,
+bool ParametricComponentsNameError(const UserExpression& expression,
                                    ContinuousFunction* f) {
   /* Check that parametric components name are free if we are defining a
    * parametric function. */

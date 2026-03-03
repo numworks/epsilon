@@ -78,7 +78,7 @@ ComplexFormat ExpressionModel::complexFormat(
   return userComplexFormat;
 }
 
-SystemExpression ExpressionModel::expressionReduced(
+const SystemExpression& ExpressionModel::expressionReduced(
     const Storage::Record* record) const {
   /* TODO
    * By calling isCircularlyDefined and then Simplify, the expression tree is
@@ -246,12 +246,12 @@ Poincare::UserExpression ExpressionModel::BuildExpressionFromLayout(
 }
 
 Poincare::UserExpression ExpressionModel::ReplaceSymbolWithUnknown(
-    Poincare::UserExpression e, CodePoint symbol, bool onlySecondTerm) {
-  if (!e.isUninitialized() && symbol != 0) {
-    e = e.cloneAndReplaceSymbolWithUnknown(
-        SymbolHelper::BuildUserVariable(symbol), onlySecondTerm);
+    const Poincare::UserExpression& e, CodePoint symbol, bool onlySecondTerm) {
+  if (e.isUninitialized() || symbol == 0) {
+    return e;
   }
-  return e;
+  return e.cloneAndReplaceSymbolWithUnknown(
+      SymbolHelper::BuildUserVariable(symbol), onlySecondTerm);
 }
 
 }  // namespace Shared

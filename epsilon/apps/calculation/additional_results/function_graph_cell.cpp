@@ -64,7 +64,7 @@ bool FunctionAxis<N>::labelWillBeDisplayed(size_t labelIndex,
 
 void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
                                    KDContext* ctx, KDRect rect) const {
-  PreparedFunctionScalar function = m_model->function();
+  const PreparedFunctionScalar& function = m_model->function();
   assert(!function.hasSequences());
 
   Curve2DEvaluation<float> evaluateFunction = [](float t, const void* model,

@@ -376,16 +376,16 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   } else {
     // Compute exact result
     assert(derivationOrder == 0);
-    SystemExpression e = function->expressionReduced();
     SystemExpression abscissaExpression =
         SystemExpression::DecimalBuilderFromDouble(abscissa);
     bool simplificationFailure = false;
     /* Defined symbols should have been replaced at this point. Remaining ones
      * are undefined and will be replaced as such. */
-    e = e.cloneAndReplaceSymbolWithExpression(
-        Shared::Function::k_unknownName, abscissaExpression,
-        &simplificationFailure,
-        SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+    SystemExpression e =
+        function->expressionReduced().cloneAndReplaceSymbolWithExpression(
+            Shared::Function::k_unknownName, abscissaExpression,
+            &simplificationFailure,
+            SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     UserExpression approximation;
     e.cloneAndBeautifyAndApproximate(
         &result, &approximation,

@@ -26,8 +26,8 @@ SystemExpression SystemExpression::CreateReduce(const Tree* structure,
 }
 
 SystemExpression SystemExpression::CreateIntegralOfAbsOfDifference(
-    SystemExpression lowerBound, SystemExpression upperBound,
-    SystemExpression integrandA, SystemExpression integrandB) {
+    SystemExpression lowerBound, const SystemExpression& upperBound,
+    SystemExpression integrandA, const SystemExpression& integrandB) {
   Tree* integrand = PatternMatching::CreateReduce(
       KAbs(KAdd(KA, KMult(-1_e, KB))), {.KA = integrandA, .KB = integrandB});
   // KUnknownSymbol is the variable used in the grapher app

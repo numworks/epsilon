@@ -10,9 +10,11 @@ namespace Calculation {
 
 class FunctionModel : public Shared::MemoizedCurveViewRange {
  public:
-  void setParameters(Poincare::PreparedFunctionScalar function, float abscissa,
-                     float ordinate);
-  Poincare::PreparedFunctionScalar function() const { return m_function; }
+  void setParameters(const Poincare::PreparedFunctionScalar& function,
+                     float abscissa, float ordinate);
+  const Poincare::PreparedFunctionScalar& function() const {
+    return m_function;
+  }
   float abscissa() const { return m_abscissa; }
   float ordinate() const { return m_ordinate; }
   /* Since additional results are opened in a UserCircuitBreakerCheckpoint, we

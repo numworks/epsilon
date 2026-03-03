@@ -160,7 +160,7 @@ void Calculation::setHeights(KDCoordinate height, KDCoordinate expandedHeight) {
   m_expandedHeight = expandedHeight;
 }
 
-static bool ShouldOnlyDisplayExactOutput(UserExpression input) {
+static bool ShouldOnlyDisplayExactOutput(const UserExpression& input) {
   /* If the input is a "store in a function", do not display the approximate
    * result. This prevents x->f(x) from displaying x = undef. */
   assert(!input.isUninitialized());
@@ -254,8 +254,8 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
 }
 
 Calculation::DisplayOutput Calculation::ComputeDisplayOutput(
-    UserExpression input, UserExpression exactOutput,
-    UserExpression approximateOutput) {
+    const UserExpression& input, const UserExpression& exactOutput,
+    const UserExpression& approximateOutput) {
   using enum Calculation::Calculation::DisplayOutput;
   if (input.isUninitialized() || exactOutput.isUninitialized() ||
       ShouldOnlyDisplayExactOutput(input) ||

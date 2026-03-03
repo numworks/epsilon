@@ -10,9 +10,9 @@ class IntegerListController : public ChainableExpressionsListController {
       : ChainableExpressionsListController(editExpressionController, true) {}
 
   void computeAdditionalResults(
-      const Poincare::UserExpression input,
-      const Poincare::UserExpression exactOutput,
-      const Poincare::UserExpression approximateOutput) override;
+      const Poincare::UserExpression& input,
+      const Poincare::UserExpression& exactOutput,
+      const Poincare::UserExpression& approximateOutput) override;
 
  private:
   constexpr static int k_indexOfFactorExpression = 3;

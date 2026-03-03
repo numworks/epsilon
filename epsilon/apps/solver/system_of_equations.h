@@ -105,8 +105,8 @@ class SystemOfEquations {
   constexpr static Poincare::Range1D<double> k_fallbackRange =
       Poincare::Range1D<double>(-10.0, 10.0);
 
-  Error registerExactSolution(Poincare::UserExpression exact,
-                              Poincare::UserExpression approximate,
+  Error registerExactSolution(const Poincare::UserExpression& exact,
+                              const Poincare::UserExpression& approximate,
                               const Poincare::SymbolContext& symbolContext);
 
   Solution m_solutions[k_maxNumberOfSolutions];

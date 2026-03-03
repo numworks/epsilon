@@ -69,8 +69,8 @@ int UnitListController::numberOfRows() const {
 }
 
 void UnitListController::computeAdditionalResults(
-    const UserExpression input, const UserExpression exactOutput,
-    const UserExpression approximateOutput) {
+    const UserExpression& input, const UserExpression& exactOutput,
+    const UserExpression& approximateOutput) {
   assert(AdditionalResultsType::HasUnit(exactOutput, m_calculationPreferences));
   Preferences::UnitFormat unitFormat =
       GlobalPreferences::SharedGlobalPreferences()->unitFormat();

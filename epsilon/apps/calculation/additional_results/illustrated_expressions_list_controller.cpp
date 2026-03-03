@@ -84,7 +84,7 @@ Layout IllustratedExpressionsListController::layoutAtIndex(HighlightCell* cell,
 
 // Create layout for formula, simplified expression and approximated expression.
 void IllustratedExpressionsListController::setLineAtIndex(
-    int index, const UserExpression formula, const UserExpression expression,
+    int index, const UserExpression& formula, const UserExpression& expression,
     const SimplificationParameters& simplificationParameters) {
   m_layouts[index] = Shared::PoincareHelpers::CreateLayout(
       formula, simplificationParameters.user.context);

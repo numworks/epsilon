@@ -16,7 +16,7 @@ static DimensionType toDT(uint8_t type) {
   return static_cast<DimensionType>(type);
 }
 
-Poincare::Dimension::Dimension(const Expression e,
+Poincare::Dimension::Dimension(const Expression& e,
                                const SymbolContext& symbolContext)
     : m_matrixDimensionRows(0),
       m_matrixDimensionCols(0),
@@ -117,7 +117,7 @@ const Tree* ExpressionObject::tree() const {
 
 /* Expression */
 
-bool Expression::isIdenticalTo(const Expression e) const {
+bool Expression::isIdenticalTo(const Expression& e) const {
   return tree()->treeIsIdenticalTo(e.tree());
 }
 

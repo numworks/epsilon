@@ -29,7 +29,7 @@ class LayoutField : public Escher::LayoutField {
       return false;
     }
     return userExpression.recursivelyMatches(
-        [](const Poincare::UserExpression e) {
+        [](const Poincare::UserExpression& e) {
           return e.isTrigonometryFunction();
         });
   }

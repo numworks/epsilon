@@ -139,7 +139,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
 }
 
 bool ListController::isAcceptableExpression(
-    const UserExpression expression, const SymbolContext& symbolContext) {
+    const UserExpression& expression, const SymbolContext& symbolContext) {
   // Only accept scalar values
   return MathLayoutFieldDelegate::isAcceptableExpression(expression,
                                                          symbolContext) &&

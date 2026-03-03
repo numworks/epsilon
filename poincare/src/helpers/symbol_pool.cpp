@@ -10,12 +10,12 @@ namespace Poincare {
 
 using namespace Internal;
 
-bool SymbolHelper::IsTheta(UserExpression e) {
+bool SymbolHelper::IsTheta(const UserExpression& e) {
   return e.isUserVariable() &&
          BuiltinsAliases::k_thetaAliases.contains(GetName(e));
 }
 
-bool SymbolHelper::IsUserVariable(Expression e, CodePoint c) {
+bool SymbolHelper::IsUserVariable(const Expression& e, CodePoint c) {
   if (!e.isUserVariable()) {
     return false;
   }
@@ -27,7 +27,7 @@ bool SymbolHelper::IsUserVariable(Expression e, CodePoint c) {
   return Internal::Symbol::IsNamed(e, buffer);
 }
 
-const char* SymbolHelper::GetName(Expression e) {
+const char* SymbolHelper::GetName(const Expression& e) {
   return Internal::Symbol::GetName(e.tree());
 }
 
@@ -53,7 +53,7 @@ UserExpression SymbolHelper::BuildUserVariable(CodePoint name) {
 }
 
 UserExpression SymbolHelper::BuildUserFunction(const char* name,
-                                               UserExpression child) {
+                                               const UserExpression& child) {
   if (BuiltinsAliases::k_thetaAliases.contains(name)) {
     name = BuiltinsAliases::k_thetaAliases.mainAlias();
   }
@@ -65,7 +65,7 @@ UserExpression SymbolHelper::BuildUserFunction(const char* name,
 }
 
 UserExpression SymbolHelper::BuildUserSequence(const char* name,
-                                               UserExpression child) {
+                                               const UserExpression& child) {
   // If needed, handle theta like functions and symbols
   assert(!BuiltinsAliases::k_thetaAliases.contains(name));
   Internal::Tree* e =

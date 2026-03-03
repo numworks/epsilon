@@ -9,7 +9,7 @@ using namespace Poincare;
 
 namespace Calculation {
 
-void FunctionModel::setParameters(PreparedFunctionScalar function,
+void FunctionModel::setParameters(const PreparedFunctionScalar& function,
                                   float abscissa, float ordinate) {
   // We do not want to display additional results for sequences.
   assert(!function.hasSequences());

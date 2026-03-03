@@ -23,13 +23,13 @@ struct ReferenceValue {
 };
 
 int FindUpperAndLowerReferenceValues(
-    double inputValue, Poincare::UserExpression approximatedSIExpression,
+    double inputValue, const Poincare::UserExpression& approximatedSIExpression,
     const Poincare::SymbolContext& symbolContext,
     const ReferenceValue** returnReferenceValues,
     int* returnReferenceTableIndex);
 #if 0
 bool ShouldDisplayUnitComparison(double inputValue,
-                                 Poincare::UserExpression unit);
+                                 Poincare::UserExpression& unit);
 #endif
 void FillRatioBuffer(double ratio, char* textBuffer, int bufferSize);
 Poincare::UserExpression BuildComparisonExpression(

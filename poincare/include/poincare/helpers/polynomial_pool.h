@@ -5,7 +5,7 @@
 namespace Poincare::PolynomialHelpers {
 
 bool HasNonNullCoefficients(
-    SystemExpression e, const char* symbol,
+    const SystemExpression& e, const char* symbol,
     OMG::Troolean* highestDegreeCoefficientIsPositive = nullptr);
 
 }

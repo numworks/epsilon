@@ -41,7 +41,7 @@ class EditExpressionController : public Escher::ViewController,
                                    Ion::Events::Event event) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
   bool isAcceptableExpression(
-      const Poincare::UserExpression expression,
+      const Poincare::UserExpression& expression,
       const Poincare::SymbolContext& symbolContext) override;
   bool shouldInsertTextForStoEvent(
       Escher::LayoutField* layoutField) const override {

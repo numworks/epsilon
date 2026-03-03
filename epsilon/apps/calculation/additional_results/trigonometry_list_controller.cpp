@@ -15,8 +15,8 @@ using namespace Shared;
 namespace Calculation {
 
 void TrigonometryListController::computeAdditionalResults(
-    const UserExpression input, const UserExpression exactOutput,
-    const UserExpression approximateOutput) {
+    const UserExpression& input, const UserExpression& exactOutput,
+    const UserExpression& approximateOutput) {
   assert((m_directTrigonometry &&
           AdditionalResultsType::HasDirectTrigo(input, exactOutput,
                                                 m_calculationPreferences,

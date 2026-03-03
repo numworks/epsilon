@@ -107,7 +107,7 @@ bool ExpressionOrFloat::operator==(const ExpressionOrFloat& other) const {
   return tree->treeIsIdenticalTo(otherTree);
 }
 
-bool ExpressionOrFloat::ExpressionFitsBuffer(UserExpression expression) {
+bool ExpressionOrFloat::ExpressionFitsBuffer(const UserExpression& expression) {
   /* We ignore the cost of the [Opposite] node when storing the tree in the
    * buffer:
    * Either the expression is negative and smaller than [k_maxTreeSize].

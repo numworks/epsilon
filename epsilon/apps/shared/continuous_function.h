@@ -34,7 +34,7 @@ class ContinuousFunction : public Function {
   // Create a record with baseName
   static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus* error,
                                      const char* baseName, KDColor color);
-  static bool IsFunctionAssignment(const Poincare::UserExpression e);
+  static bool IsFunctionAssignment(const Poincare::UserExpression& e);
 
   // Builder
   ContinuousFunction(Ion::Storage::Record record = Record());
@@ -118,7 +118,7 @@ class ContinuousFunction : public Function {
   }
   // Update plotType as well as tMin and tMax values.
   void updateModel(bool wasCartesian);
-  Poincare::PreparedFunction expressionApproximated(
+  const Poincare::PreparedFunction& expressionApproximated(
       int derivationOrder = 0) const {
     return m_model.expressionApproximated(this, derivationOrder);
   }
@@ -367,14 +367,14 @@ class ContinuousFunction : public Function {
   class Model : public ExpressionModel {
    public:
     // Return the expression to plot.
-    Poincare::SystemExpression expressionReduced(
+    const Poincare::SystemExpression& expressionReduced(
         const Ion::Storage::Record* record) const override;
     /* Return the expression reduced with approximated non symbols for faster
      * plot */
-    Poincare::PreparedFunction expressionApproximated(
+    const Poincare::PreparedFunction& expressionApproximated(
         const Ion::Storage::Record* record, int derivationOrder = 0) const;
     // Return the expression reduced, and computes plotType
-    Poincare::SystemExpression expressionReducedForAnalysis(
+    const Poincare::SystemExpression& expressionReducedForAnalysis(
         const Ion::Storage::Record* record) const;
     // Return the expression of the named function (right side of the equal)
     Poincare::UserExpression expressionClone(

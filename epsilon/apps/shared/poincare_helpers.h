@@ -25,7 +25,7 @@ namespace PoincareHelpers {
 // ===== Layout =====
 
 inline Poincare::Layout CreateLayout(
-    const Poincare::UserExpression e,
+    const Poincare::UserExpression& e,
     const Poincare::SymbolContext& symbolContext,
     Poincare::Preferences::PrintFloatMode displayMode =
         GlobalPreferences::SharedGlobalPreferences()->displayMode(),
@@ -64,7 +64,7 @@ inline size_t ConvertFloatToTextWithDisplayMode(
 // ===== Simplification and Approximation =====
 
 inline Poincare::UserParameters UserParametersForPreferences(
-    const Poincare::UserExpression e) {
+    const Poincare::UserExpression& e) {
   return Poincare::UserParameters{
       .complexFormat = e.preferredComplexFormat(
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
@@ -78,7 +78,7 @@ inline Poincare::UserParameters UserParametersForPreferences(
 
 // Approximate a real scalar expression. Contexts are not handled.
 template <class FloatType = float>
-inline FloatType ApproximateToRealScalar(Poincare::UserExpression e) {
+inline FloatType ApproximateToRealScalar(const Poincare::UserExpression& e) {
   static_assert(std::is_floating_point_v<FloatType>);
   return e.approximateToRealScalar<FloatType>(
       GlobalPreferences::SharedGlobalPreferences()->angleUnit(),

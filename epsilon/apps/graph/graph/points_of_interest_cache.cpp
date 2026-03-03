@@ -300,7 +300,8 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
 }
 
 PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
-                                     PreparedFunction f, PreparedFunction g,
+                                     const PreparedFunction& f,
+                                     const PreparedFunction& g,
                                      bool alongSameAxis) {
   Solver<double>::Solution solution;
   Internal::Tree* diff =
@@ -343,7 +344,7 @@ PointOfInterest findIntersections(void* searchContext) {
     return PointOfInterest{};
   }
   int n = ctx->store->numberOfModels();
-  PreparedFunction fExpr = f->expressionApproximated();
+  const PreparedFunction& fExpr = f->expressionApproximated();
   bool fAlongY = f->isAlongY();
   bool fIsStrict = f->properties().isStrictInequality();
   int fNumberOfSubCurves = fExpr.isList() ? fExpr.numberOfChildren() : 1;
@@ -360,20 +361,18 @@ PointOfInterest findIntersections(void* searchContext) {
     if (!g->shouldDisplayIntersections()) {
       continue;
     }
-    PreparedFunction gExpr = g->expressionApproximated();
+    const PreparedFunction& gExpr = g->expressionApproximated();
     ctx->solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Precise);
     int gNumberOfSubCurves = gExpr.isList() ? gExpr.numberOfChildren() : 1;
     assert(!gExpr.isList() || gNumberOfSubCurves > 1);
     for (; ctx->subCounter1 < fNumberOfSubCurves; ++ctx->subCounter1) {
-      PreparedFunction firstFunc = fExpr;
-      if (fNumberOfSubCurves > 1) {
-        firstFunc = fExpr.cloneChildAtIndex(ctx->subCounter1);
-      }
+      PreparedFunction firstFunc =
+          fNumberOfSubCurves > 1 ? fExpr.cloneChildAtIndex(ctx->subCounter1)
+                                 : fExpr;
       for (; ctx->subCounter2 < gNumberOfSubCurves; ++ctx->subCounter2) {
-        PreparedFunction secondFunc = gExpr;
-        if (gNumberOfSubCurves > 1) {
-          secondFunc = gExpr.cloneChildAtIndex(ctx->subCounter2);
-        }
+        PreparedFunction secondFunc =
+            gNumberOfSubCurves > 1 ? gExpr.cloneChildAtIndex(ctx->subCounter2)
+                                   : gExpr;
         PointOfInterest poi = findIntersectionsAux(ctx, firstFunc, secondFunc,
                                                    fAlongY == gAlongY);
         if (!poi.isInitialized()) {

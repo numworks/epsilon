@@ -16,8 +16,8 @@ using namespace Shared;
 namespace Calculation {
 
 AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
-    const UserExpression input, const UserExpression exactOutput,
-    const UserExpression approximateOutput,
+    const UserExpression& input, const UserExpression& exactOutput,
+    const UserExpression& approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences,
     const Poincare::SymbolContext& symbolContext) {
   if (ForbidAdditionalResults(input, exactOutput, approximateOutput)) {
@@ -89,8 +89,8 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
 }
 
 bool AdditionalResultsType::ForbidAdditionalResults(
-    const UserExpression input, const UserExpression exactOutput,
-    const UserExpression approximateOutput) {
+    const UserExpression& input, const UserExpression& exactOutput,
+    const UserExpression& approximateOutput) {
   /* Special case for Store:
    * Store nodes have to be at the root of the expression, which prevents
    * from creating new expressions with store node as a child. We don't
@@ -100,7 +100,7 @@ bool AdditionalResultsType::ForbidAdditionalResults(
       input.isUninitialized() || exactOutput.isUninitialized() ||
       approximateOutput.isUninitialized() || input.isStore() ||
       exactOutput.isList() || approximateOutput.isList() ||
-      approximateOutput.recursivelyMatches([](const UserExpression e) {
+      approximateOutput.recursivelyMatches([](const UserExpression& e) {
         return e.isUndefinedOrNonReal() || e.isPlusOrMinusInfinity();
       })) {
     return true;
@@ -110,7 +110,7 @@ bool AdditionalResultsType::ForbidAdditionalResults(
 }
 
 bool AdditionalResultsType::HasComplex(
-    const UserExpression approximateOutput,
+    const UserExpression& approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences,
     const SymbolContext& symbolContext) {
   /* We have 2 edge cases:
@@ -134,7 +134,7 @@ bool AdditionalResultsType::HasComplex(
 }
 
 bool AdditionalResultsType::HasDirectTrigo(
-    const UserExpression input, const UserExpression exactOutput,
+    const UserExpression& input, const UserExpression& exactOutput,
     const Preferences::CalculationPreferences calculationPreferences,
     const SymbolContext& symbolContext) {
   assert(!exactOutput.hasUnit(true));
@@ -145,8 +145,8 @@ bool AdditionalResultsType::HasDirectTrigo(
 }
 
 bool AdditionalResultsType::HasInverseTrigo(
-    const UserExpression input, const UserExpression exactOutput,
-    const UserExpression approximateOutput,
+    const UserExpression& input, const UserExpression& exactOutput,
+    const UserExpression& approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences,
     const Poincare::SymbolContext& symbolContext) {
   // If the result is complex, it is treated as a complex result instead.
@@ -157,7 +157,7 @@ bool AdditionalResultsType::HasInverseTrigo(
 }
 
 bool AdditionalResultsType::HasUnit(
-    const UserExpression exactOutput,
+    const UserExpression& exactOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
   // HasUnit is only called when exactOutput has Units
   assert(exactOutput.hasUnit());
@@ -208,7 +208,7 @@ bool AdditionalResultsType::HasUnit(
 }
 
 bool AdditionalResultsType::HasVector(
-    const UserExpression exactOutput, const UserExpression approximateOutput,
+    const UserExpression& exactOutput, const UserExpression& approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences,
     const SymbolContext& symbolContext) {
   Expression norm = VectorHelper::BuildVectorNorm(
@@ -227,7 +227,7 @@ bool AdditionalResultsType::HasVector(
   return true;
 }
 
-bool AdditionalResultsType::HasMatrix(const UserExpression approximateOutput) {
+bool AdditionalResultsType::HasMatrix(const UserExpression& approximateOutput) {
   assert(!approximateOutput.isUninitialized());
   assert(!approximateOutput.hasUnit(true));
   return approximateOutput.isMatrix() &&
@@ -235,7 +235,7 @@ bool AdditionalResultsType::HasMatrix(const UserExpression approximateOutput) {
 }
 
 bool AdditionalResultsType::HasFunction(
-    const UserExpression input, const UserExpression approximateOutput) {
+    const UserExpression& input, const UserExpression& approximateOutput) {
   // We want a single numerical value and to avoid showing the identity function
   assert(!input.isUninitialized());
   assert(!input.hasUnit());
@@ -248,7 +248,7 @@ bool AdditionalResultsType::HasFunction(
 }
 
 bool AdditionalResultsType::HasScientificNotation(
-    const UserExpression approximateOutput,
+    const UserExpression& approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences,
     const SymbolContext& symbolContext) {
   assert(!approximateOutput.isUninitialized());
@@ -270,7 +270,7 @@ bool AdditionalResultsType::HasScientificNotation(
 }
 
 bool AdditionalResultsType::HasPositiveInteger(
-    const Poincare::UserExpression exactOutput) {
+    const Poincare::UserExpression& exactOutput) {
   assert(!exactOutput.hasUnit());
   return Poincare::AdditionalResultsHelper::HasPositiveInteger(exactOutput);
 }

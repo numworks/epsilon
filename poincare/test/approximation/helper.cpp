@@ -135,7 +135,7 @@ void approximates_to_boolean(const char* input,
 }
 
 template <typename T>
-void assert_float_approximates_to(UserExpression f, const char* result) {
+void assert_float_approximates_to(const UserExpression& f, const char* result) {
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
   f.cloneAndApproximate({.complexFormat = ComplexFormat::Cartesian,
@@ -224,9 +224,9 @@ template void approximates_to<double>(
     const char* input, const char* output,
     const Poincare::UserParameters& userParameters, int nbOfSignificantDigits);
 
-template void assert_float_approximates_to<float>(UserExpression f,
+template void assert_float_approximates_to<float>(const UserExpression& f,
                                                   const char* result);
-template void assert_float_approximates_to<double>(UserExpression f,
+template void assert_float_approximates_to<double>(const UserExpression& f,
                                                    const char* result);
 
 template void simplified_approximates_to<float>(

@@ -27,13 +27,15 @@ void SetFirstRank(Layout l, uint8_t firstRank);
 
 // Expression
 bool MainExpressionContainsForbiddenTerms(
-    UserExpression e, const SymbolContext& symbolContext, const char* name,
-    Type type, int initialRank, RecursiveNotation notation, bool recursion,
-    bool systemSymbol, bool otherSequences);
-bool IsOfValidDimension(UserExpression e, const SymbolContext& symbolContext);
+    const UserExpression& e, const SymbolContext& symbolContext,
+    const char* name, Type type, int initialRank, RecursiveNotation notation,
+    bool recursion, bool systemSymbol, bool otherSequences);
+bool IsOfValidDimension(const UserExpression& e,
+                        const SymbolContext& symbolContext);
 UserExpression InitialExpression(const char* name, Type type,
                                  RecursiveNotation notation);
-UserExpression UpdateMainExpressionForNotation(UserExpression e, Type type,
+UserExpression UpdateMainExpressionForNotation(const UserExpression& e,
+                                               Type type,
                                                RecursiveNotation notation);
 
 }  // namespace SequenceHelper

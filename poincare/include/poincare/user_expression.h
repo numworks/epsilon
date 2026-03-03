@@ -184,7 +184,7 @@ class UserExpression : public Expression {
   /* recursivelyMatches */
 
   typedef OMG::Troolean (*UserExpressionTrinaryTest)(
-      const UserExpression e, const SymbolContext& symbolContext,
+      const UserExpression& e, const SymbolContext& symbolContext,
       void* auxiliary);
   bool recursivelyMatches(
       UserExpressionTrinaryTest test,
@@ -193,7 +193,7 @@ class UserExpression : public Expression {
           SymbolicComputation::ReplaceDefinedSymbols,
       void* auxiliary = nullptr) const;
 
-  typedef bool (*ExpressionTest)(const UserExpression e,
+  typedef bool (*ExpressionTest)(const UserExpression& e,
                                  const SymbolContext& symbolContext);
   bool recursivelyMatches(
       ExpressionTest test,
@@ -201,7 +201,7 @@ class UserExpression : public Expression {
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceDefinedSymbols) const;
 
-  typedef bool (*SimpleExpressionTest)(const UserExpression e);
+  typedef bool (*SimpleExpressionTest)(const UserExpression& e);
   bool recursivelyMatches(
       SimpleExpressionTest test,
       const SymbolContext& symbolContext = EmptySymbolContext{},
@@ -215,7 +215,7 @@ class UserExpression : public Expression {
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceDefinedSymbols) const;
 
-  typedef bool (*ExpressionTestAuxiliary)(const UserExpression e,
+  typedef bool (*ExpressionTestAuxiliary)(const UserExpression& e,
                                           const SymbolContext& symbolContext,
                                           void* auxiliary);
   bool recursivelyMatches(

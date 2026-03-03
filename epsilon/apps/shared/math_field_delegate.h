@@ -15,7 +15,7 @@ class AbstractMathFieldDelegate {
 
  protected:
   virtual bool isAcceptableExpression(
-      const Poincare::UserExpression expression,
+      const Poincare::UserExpression& expression,
       const Poincare::SymbolContext& symbolContext);
   bool isAcceptableText(const char* text,
                         const Poincare::SymbolContext& symbolContext);

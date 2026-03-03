@@ -37,16 +37,16 @@ void SequenceHelper::SetFirstRank(Layout l, uint8_t firstRank) {
 }
 
 bool SequenceHelper::MainExpressionContainsForbiddenTerms(
-    UserExpression e, const SymbolContext& symbolContext, const char* name,
-    Type type, int initialRank, RecursiveNotation notation, bool recursion,
-    bool systemSymbol, bool otherSequences) {
+    const UserExpression& e, const SymbolContext& symbolContext,
+    const char* name, Type type, int initialRank, RecursiveNotation notation,
+    bool recursion, bool systemSymbol, bool otherSequences) {
   return Internal::Sequence::MainExpressionContainsForbiddenTerms(
       e.tree(), symbolContext, name, GetType(type), initialRank,
       notation == RecursiveNotation::Shifted, recursion, systemSymbol,
       otherSequences);
 }
 
-bool SequenceHelper::IsOfValidDimension(UserExpression e,
+bool SequenceHelper::IsOfValidDimension(const UserExpression& e,
                                         const SymbolContext& symbolContext) {
   return Internal::Sequence::IsOfValidDimension(e.tree(), symbolContext);
 }
@@ -58,7 +58,7 @@ UserExpression SequenceHelper::InitialExpression(const char* name, Type type,
 }
 
 UserExpression SequenceHelper::UpdateMainExpressionForNotation(
-    UserExpression e, Type type, RecursiveNotation notation) {
+    const UserExpression& e, Type type, RecursiveNotation notation) {
   Internal::Tree* expr = e.tree()->cloneTree();
   Internal::Sequence::UpdateMainExpressionForNotation(
       expr, GetType(type), notation == RecursiveNotation::Shifted);

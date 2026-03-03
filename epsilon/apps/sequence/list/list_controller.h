@@ -34,7 +34,7 @@ class ListController : public Shared::FunctionListController {
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;
   bool isAcceptableExpression(
-      const Poincare::UserExpression expression,
+      const Poincare::UserExpression& expression,
       const Poincare::SymbolContext& symbolContext) override;
   CodePoint defaultXNT() override { return Shared::Sequence::k_sequenceSymbol; }
 

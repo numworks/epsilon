@@ -10,9 +10,9 @@ class RationalListController : public ChainableExpressionsListController {
       : ChainableExpressionsListController(editExpressionController, true) {}
 
   void computeAdditionalResults(
-      const Poincare::UserExpression input,
-      const Poincare::UserExpression exactOutput,
-      const Poincare::UserExpression approximateOutput) override;
+      const Poincare::UserExpression& input,
+      const Poincare::UserExpression& exactOutput,
+      const Poincare::UserExpression& approximateOutput) override;
 
  private:
   I18n::Message messageAtIndex(int index) override { return m_message[index]; }

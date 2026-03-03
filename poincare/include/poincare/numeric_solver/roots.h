@@ -4,9 +4,9 @@
 
 namespace Poincare::Roots {
 
-SystemExpression Linear(SystemExpression a, SystemExpression b);
+SystemExpression Linear(const SystemExpression& a, const SystemExpression& b);
 
-SystemExpression Quadratic(SystemExpression a, SystemExpression b,
-                           SystemExpression c);
+SystemExpression Quadratic(const SystemExpression& a, const SystemExpression& b,
+                           const SystemExpression& c);
 
 }  // namespace Poincare::Roots

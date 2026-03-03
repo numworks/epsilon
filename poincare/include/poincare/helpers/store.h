@@ -7,13 +7,13 @@ namespace Poincare {
 
 namespace StoreHelper {
 
-UserExpression Value(UserExpression e);
-UserExpression Symbol(UserExpression e);
+UserExpression Value(const UserExpression& e);
+UserExpression Symbol(const UserExpression& e);
 
 /* Replaces the value to store in the "e" store expression by valueToStore.
  * Returns the newly formed store expression. */
-UserExpression SetExpressionToStore(UserExpression e,
-                                    UserExpression valueToStore);
+UserExpression SetExpressionToStore(const UserExpression& e,
+                                    const UserExpression& valueToStore);
 
 }  // namespace StoreHelper
 

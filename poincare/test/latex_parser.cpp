@@ -157,6 +157,11 @@ QUIZ_CASE(pcj_latex_parser_layout_to_latex) {
   assert_layout_convert_to_latex(layoutWithThousands, "12\\ 345", true);
   assert_layout_convert_to_latex(layoutWithThousands, "12345", false);
 
+  // Serialized layouts
+  assert_layout_convert_to_latex(KRackL(KFloorL("a"_l)),
+                                 "floor\\left(a\\right)");
+
+  // Codepoints
   assert_layout_convert_to_latex(
       " "_l ^ KCodePointL<UCodePointInferiorEqual>() ^
           KCodePointL<UCodePointSuperiorEqual>() ^

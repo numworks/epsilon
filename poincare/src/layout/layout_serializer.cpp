@@ -60,8 +60,8 @@ Rack* rackForSerialization(const Rack* rack) {
   return static_cast<Rack*>(newRack);
 }
 
-char* LayoutSerializer::SerializeRack(const Rack* rack, char* buffer,
-                                      const char* end) {
+char* LayoutSerializer::DefaultSerializeRack(const Rack* rack, char* buffer,
+                                             const char* end) {
   if (rack->numberOfChildren() == 0 ||
       rack->child(0)->treeIsIdenticalTo(KCodePointL<','>())) {
     /* Text fields serializes layouts to insert them and we need an empty
@@ -96,21 +96,22 @@ bool mayNeedParentheses(const Rack* rack) {
 
 char* LayoutSerializer::SerializeWithParentheses(
     const Rack* rack, char* buffer, const char* end,
-    LayoutSerializer::RackSerializer serializer, bool forceParentheses) {
+    LayoutSerializer::RackSerializer serializer,
+    ParenthesesDelimiters parenthesesDelimiters, bool forceParentheses) {
   bool addParentheses = forceParentheses || mayNeedParentheses(rack);
   if (addParentheses) {
-    buffer = append("(", buffer, end);
+    buffer = append(parenthesesDelimiters.left, buffer, end);
   }
   buffer = serializer(rack, buffer, end);
   if (addParentheses) {
-    buffer = append(")", buffer, end);
+    buffer = append(parenthesesDelimiters.right, buffer, end);
   }
   return buffer;
 }
 
-char* LayoutSerializer::SerializeLayout(const Layout* layout, char* buffer,
-                                        const char* end, bool isSingleRackChild,
-                                        RackSerializer serializer) {
+char* LayoutSerializer::SerializeLayout(
+    const Layout* layout, char* buffer, const char* end, bool isSingleRackChild,
+    RackSerializer serializer, ParenthesesDelimiters parenthesesDelimiters) {
   switch (layout->layoutType()) {
     case LayoutType::CombinedCodePoints:
     case LayoutType::AsciiCodePoint:
@@ -128,9 +129,9 @@ char* LayoutSerializer::SerializeLayout(const Layout* layout, char* buffer,
       break;
     }
     case LayoutType::Parentheses: {
-      buffer = append("(", buffer, end);
+      buffer = append(parenthesesDelimiters.left, buffer, end);
       buffer = serializer(layout->child(0), buffer, end);
-      buffer = append(")", buffer, end);
+      buffer = append(parenthesesDelimiters.right, buffer, end);
       break;
     }
     case LayoutType::CurlyBraces: {
@@ -141,28 +142,29 @@ char* LayoutSerializer::SerializeLayout(const Layout* layout, char* buffer,
     }
     case LayoutType::Fraction: {
       if (!isSingleRackChild) {
-        buffer = append("(", buffer, end);
+        buffer = append(parenthesesDelimiters.left, buffer, end);
       }
-      buffer =
-          SerializeWithParentheses(layout->child(0), buffer, end, serializer);
+      buffer = SerializeWithParentheses(layout->child(0), buffer, end,
+                                        serializer, parenthesesDelimiters);
       buffer = append("/", buffer, end);
-      buffer =
-          SerializeWithParentheses(layout->child(1), buffer, end, serializer);
+      buffer = SerializeWithParentheses(layout->child(1), buffer, end,
+                                        serializer, parenthesesDelimiters);
       if (!isSingleRackChild) {
-        buffer = append(")", buffer, end);
+        buffer = append(parenthesesDelimiters.right, buffer, end);
       }
       break;
     }
     case LayoutType::VerticalOffset: {
       if (VerticalOffset::IsSuffixSuperscript(layout)) {
         buffer = append("^", buffer, end);
-        buffer =
-            SerializeWithParentheses(layout->child(0), buffer, end, serializer);
+        buffer = SerializeWithParentheses(layout->child(0), buffer, end,
+                                          serializer, parenthesesDelimiters);
       } else {
         /* TODO_PCJ: something else is needed here to translate the subscript.
          * For now, force parentheses around subscript expression */
-        buffer = SerializeWithParentheses(layout->child(0), buffer, end,
-                                          serializer, true);
+        buffer =
+            SerializeWithParentheses(layout->child(0), buffer, end, serializer,
+                                     parenthesesDelimiters, true);
       }
       break;
     }
@@ -187,7 +189,8 @@ char* LayoutSerializer::SerializeLayout(const Layout* layout, char* buffer,
       break;
     }
     case LayoutType::Diff: {
-      buffer = append("diff(", buffer, end);
+      buffer = append("diff", buffer, end);
+      buffer = append(parenthesesDelimiters.left, buffer, end);
       buffer =
           serializer(layout->child(Derivative::k_derivandIndex), buffer, end);
       buffer = append(",", buffer, end);
@@ -201,15 +204,15 @@ char* LayoutSerializer::SerializeLayout(const Layout* layout, char* buffer,
         buffer =
             serializer(layout->child(Derivative::k_orderIndex), buffer, end);
       }
-      buffer = append(")", buffer, end);
+      buffer = append(parenthesesDelimiters.right, buffer, end);
       break;
     }
     case LayoutType::Point2D: {
-      buffer = append("(", buffer, end);
+      buffer = append(parenthesesDelimiters.left, buffer, end);
       buffer = serializer(layout->child(0), buffer, end);
       buffer = append(",", buffer, end);
       buffer = serializer(layout->child(1), buffer, end);
-      buffer = append(")", buffer, end);
+      buffer = append(parenthesesDelimiters.right, buffer, end);
       break;
     }
     default: {
@@ -226,7 +229,7 @@ char* LayoutSerializer::SerializeLayout(const Layout* layout, char* buffer,
         assert(builtin);
         buffer = append(builtin->aliases()->mainAlias(), buffer, end);
       }
-      buffer = append("(", buffer, end);
+      buffer = append(parenthesesDelimiters.left, buffer, end);
       bool firstChild = true;
       for (IndexedChild<const Tree*> child : layout->indexedChildren()) {
         if (layout->isParametricLayout() &&
@@ -254,7 +257,7 @@ char* LayoutSerializer::SerializeLayout(const Layout* layout, char* buffer,
         buffer = serializer(Rack::From(child), buffer, end);
         firstChild = false;
       }
-      buffer = append(")", buffer, end);
+      buffer = append(parenthesesDelimiters.right, buffer, end);
     }
   }
   *buffer = '\0';
@@ -265,8 +268,8 @@ size_t LayoutSerializer::Serialize(const Tree* l, std::span<char> buffer) {
   ExceptionTry {
     const char* lastCharacter =
         l->isRackLayout()
-            ? SerializeRack(Rack::From(l), buffer.data(),
-                            buffer.data() + buffer.size())
+            ? DefaultSerializeRack(Rack::From(l), buffer.data(),
+                                   buffer.data() + buffer.size())
             : SerializeLayout(Layout::From(l), buffer.data(),
                               buffer.data() + buffer.size(), true);
     assert(*lastCharacter == '\0');

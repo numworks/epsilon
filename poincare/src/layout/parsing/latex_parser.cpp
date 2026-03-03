@@ -669,10 +669,13 @@ char* LatexParser::LayoutToLatexWithExceptions(const Rack* rack, char* buffer,
       continue;
     }
 
+    constexpr LayoutSerializer::ParenthesesDelimiters latexParentheses = {
+        .left = "\\left(", .right = "\\right)"};
+
     // Use common serialization
     buffer = LayoutSerializer::SerializeLayout(Layout::From(child), buffer, end,
                                                rack->numberOfChildren() == 1,
-                                               serializer);
+                                               serializer, latexParentheses);
     *buffer = 0;
   }
 

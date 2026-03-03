@@ -31,8 +31,9 @@ class ScrollableThreeLayoutsView
   void setHighlightWholeCell(bool highlightWholeCell) {
     m_contentCell.setHighlightWholeCell(highlightWholeCell);
   }
-  void setLayouts(Poincare::Layout formulaLayout, Poincare::Layout exactLayout,
-                  Poincare::Layout approximateLayout) override;
+  void setLayouts(const Poincare::Layout& formulaLayout,
+                  const Poincare::Layout& exactLayout,
+                  const Poincare::Layout& approximateLayout) override;
 
  protected:
   void handleResponderChainEvent(

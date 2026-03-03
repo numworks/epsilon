@@ -105,7 +105,7 @@ Layout Sequence::aggregatedLayout() {
 }
 
 Ion::Storage::Record::ErrorStatus Sequence::setLayoutsForAggregated(
-    Layout l, const SymbolContext& symbolContext) {
+    const Layout& l, const SymbolContext& symbolContext) {
   if (SequenceHelper::IsSequenceInsideRack(l)) {
     Ion::Storage::Record::ErrorStatus error =
         setContent(SequenceHelper::ExtractExpressionAtRow(l, 0), symbolContext);

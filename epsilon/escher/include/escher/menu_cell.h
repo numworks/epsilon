@@ -114,7 +114,7 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   const char* text() const override {
     return constWidget(CellWidget::Type::Accessory)->text();
   }
-  Poincare::Layout layout() const override {
+  const Poincare::Layout& layout() const override {
     return constWidget(CellWidget::Type::Accessory)->layout();
   }
 

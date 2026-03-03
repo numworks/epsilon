@@ -422,7 +422,7 @@ class ContinuousFunction : public Function {
     static CodePoint CodePointForSymbol(const Poincare::UserExpression& symbol);
     // Build the expression from layout, handling f(x)=... cartesian equations
     static Poincare::UserExpression BuildFunctionFromLayout(
-        Poincare::Layout l, CodePoint symbol = 0,
+        const Poincare::Layout& l, CodePoint symbol = 0,
         const Poincare::SymbolContext& symbolContext =
             Poincare::EmptySymbolContext{});
 

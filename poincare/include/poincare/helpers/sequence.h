@@ -21,9 +21,9 @@ enum class Type : uint8_t {
 constexpr static const char* k_sequenceNames[] = {"u", "v", "w"};
 
 // Layout
-bool IsSequenceInsideRack(Layout l);
-Layout ExtractExpressionAtRow(Layout l, int row = 0);
-void SetFirstRank(Layout l, uint8_t firstRank);
+bool IsSequenceInsideRack(const Layout& l);
+Layout ExtractExpressionAtRow(const Layout& l, int row = 0);
+void SetFirstRank(const Layout& l, uint8_t firstRank);
 
 // Expression
 bool MainExpressionContainsForbiddenTerms(

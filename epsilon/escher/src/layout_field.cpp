@@ -153,7 +153,7 @@ void LayoutField::scrollToCursor() {
   scrollToBaselinedRect(cursorRect, cursorBaseline);
 }
 
-void LayoutField::setLayout(Poincare::Layout newLayout) {
+void LayoutField::setLayout(const Poincare::Layout& newLayout) {
   m_contentView.clearLayout();
   insertLayoutAtCursor(newLayout, true);
 }
@@ -461,7 +461,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
                         previousSize);
 }
 
-bool LayoutField::handleEventWithLayout(Layout layout,
+bool LayoutField::handleEventWithLayout(const Layout& layout,
                                         bool forceCursorRightOfText) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
   insertLayoutAtCursor(layout, forceCursorRightOfText);
@@ -644,31 +644,31 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect);
 }
 
-void LayoutField::insertLayoutAtCursor(Layout layout,
+void LayoutField::insertLayoutAtCursor(const Layout& layout,
                                        bool forceCursorRightOfLayout,
                                        bool forceCursorLeftOfLayout) {
   if (layout.isUninitialized()) {
     return;
   }
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  layout = layout.makeEditable();
+  Layout editableLayout = layout.makeEditable();
   if (linearMode()) {
     /* TODO_PCJ: Check if layout is already a 1D layout. If so, insert it
      * directly. */
     // Parse with preserveInput to avoid modifying the layout unwantedly.
-    UserExpression e = UserExpression::Parse(layout, EmptySymbolContext{},
-                                             {.preserveInput = true});
+    UserExpression e = UserExpression::Parse(
+        editableLayout, EmptySymbolContext{}, {.preserveInput = true});
     if (!e.isUninitialized()) {
-      layout = e.createLayout(
+      editableLayout = e.createLayout(
           SharedPreferences->displayMode(),
           Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
           Poincare::EmptySymbolContext{}, OMG::Base::Decimal, true);
-      cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
-                             forceCursorLeftOfLayout);
+      cursor()->insertLayout(editableLayout.tree(), context(),
+                             forceCursorRightOfLayout, forceCursorLeftOfLayout);
     } else {
       constexpr size_t bufferSize = AbstractTextField::MaxBufferSize();
       char buffer[bufferSize];
-      size_t length = layout.serialize(buffer);
+      size_t length = editableLayout.serialize(buffer);
       if (length == LayoutHelpers::k_bufferOverflow) {
         return;
       }
@@ -676,8 +676,8 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
       insertText(buffer, forceCursorRightOfLayout);
     }
   } else {
-    cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
-                           forceCursorLeftOfLayout);
+    cursor()->insertLayout(editableLayout.tree(), context(),
+                           forceCursorRightOfLayout, forceCursorLeftOfLayout);
   }
   // Reload
   reload(previousSize);

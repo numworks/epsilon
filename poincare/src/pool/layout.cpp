@@ -14,6 +14,11 @@
 
 namespace Poincare {
 
+const Poincare::Layout& Layout::EmptyLayout() {
+  static const Layout emptyLayout;
+  return emptyLayout;
+}
+
 LayoutObject::LayoutObject(const Internal::Tree* tree, size_t treeSize) {
   memcpy(m_blocks, tree->block(), treeSize);
 }
@@ -51,7 +56,7 @@ size_t LayoutObject::serialize(std::span<char> buffer,
   return length;
 }
 
-bool LayoutObject::isIdenticalTo(Layout l, bool makeEditable) const {
+bool LayoutObject::isIdenticalTo(const Layout& l, bool makeEditable) const {
   if (l.isUninitialized()) {
     return false;
   }
@@ -133,7 +138,7 @@ Layout Layout::Parse(const char* string) {
   return Layout::Builder(Internal::RackFromText(string));
 }
 
-Layout Layout::Concatenate(Layout layout1, Layout layout2) {
+Layout Layout::Concatenate(const Layout& layout1, const Layout& layout2) {
   assert(!layout1.isUninitialized() && !layout2.isUninitialized());
   assert(layout1.tree()->isRackLayout() && layout2.tree()->isRackLayout());
   Internal::Tree* result = layout1.tree()->cloneTree();
@@ -142,7 +147,7 @@ Layout Layout::Concatenate(Layout layout1, Layout layout2) {
 }
 
 void Layout::draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
-                  const Internal::LayoutCursor* cursor) {
+                  const Internal::LayoutCursor* cursor) const {
   object()->draw(ctx, p, style, cursor);
 }
 
@@ -225,7 +230,7 @@ Layout Layout::cloneAndTurnEToTenPowerLayout(bool linear) const {
   return Layout::Builder(layout);
 }
 
-bool Layout::isSameScientificNotationAs(Layout approximation,
+bool Layout::isSameScientificNotationAs(const Layout& approximation,
                                         bool linear) const {
   assert(linear || !tree()->hasChildSatisfying([](const Internal::Tree* c) {
     return Internal::CodePointLayout::IsCodePoint(c, '^');

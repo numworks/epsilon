@@ -20,18 +20,18 @@ static Internal::Type GetType(SequenceHelper::Type sequenceType) {
   }
 }
 
-bool SequenceHelper::IsSequenceInsideRack(Layout l) {
+bool SequenceHelper::IsSequenceInsideRack(const Layout& l) {
   return l.tree()->isRackLayout() && l.tree()->child(0)->isSequenceLayout();
 }
 
-Layout SequenceHelper::ExtractExpressionAtRow(Layout l, int row) {
+Layout SequenceHelper::ExtractExpressionAtRow(const Layout& l, int row) {
   assert(IsSequenceInsideRack(l));
   const Internal::Grid* grid = Internal::Grid::From(l.tree()->child(0));
   assert(row < grid->numberOfRows());
   return grid->childAt(row, 1);
 }
 
-void SequenceHelper::SetFirstRank(Layout l, uint8_t firstRank) {
+void SequenceHelper::SetFirstRank(const Layout& l, uint8_t firstRank) {
   assert(IsSequenceInsideRack(l));
   Internal::SequenceLayout::SetFirstRank(l.tree()->child(0), firstRank);
 }

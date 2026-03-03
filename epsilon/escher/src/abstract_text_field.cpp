@@ -611,7 +611,7 @@ bool AbstractTextField::handleEventWithText(const char* eventText,
   return false;
 }
 
-bool AbstractTextField::handleEventWithLayout(Poincare::Layout layout,
+bool AbstractTextField::handleEventWithLayout(const Poincare::Layout& layout,
                                               bool forceCursorRightOfText) {
   constexpr size_t bufferSize = MaxBufferSize();
   char buffer[bufferSize];

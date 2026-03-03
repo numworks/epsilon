@@ -52,7 +52,7 @@ class EditExpressionController : public Escher::ViewController,
     return true;
   }
 
-  void insertLayout(Poincare::Layout layout);
+  void insertLayout(const Poincare::Layout& layout);
   void restoreInput();
 
  protected:

@@ -62,7 +62,7 @@ KDCoordinate LayoutMemoization::baseline(KDFont::Size font,
   return m_baseline;
 }
 
-void LayoutMemoization::invalidAllSizesPositionsAndBaselines() {
+void LayoutMemoization::invalidAllSizesPositionsAndBaselines() const {
   m_flags.m_sized = false;
   m_flags.m_baselined = false;
 }

@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Escher {
 
-bool LayoutView::setLayout(Layout layoutR) {
+bool LayoutView::setLayout(const Layout& layoutR) {
   /* Check m_layout.wasErasedByException(), otherwise accessing m_layout would
    * result in an ACCESS ERROR. */
   bool shouldRedraw =

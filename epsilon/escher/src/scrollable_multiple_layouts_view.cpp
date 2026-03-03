@@ -100,7 +100,8 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::
   reloadTextColor();
 }
 
-Layout AbstractScrollableMultipleLayoutsView::ContentCell::layoutAtPosition(
+const Layout&
+AbstractScrollableMultipleLayoutsView::ContentCell::layoutAtPosition(
     SubviewPosition position) const {
   if (position == SubviewPosition::Center) {
     return m_centeredLayoutView.layout();
@@ -314,7 +315,8 @@ AbstractScrollableMultipleLayoutsView::AbstractScrollableMultipleLayoutsView(
     : ScrollableView(parentResponder, contentCell, this) {}
 
 void AbstractScrollableMultipleLayoutsView::setLayouts(
-    Layout formulaLayout, Layout exactLayout, Layout approximateLayout) {
+    const Layout& formulaLayout, const Layout& exactLayout,
+    const Layout& approximateLayout) {
   bool updateRightLayout =
       contentCell()->rightLayoutView()->setLayout(approximateLayout);
   bool updateCenterLayout =

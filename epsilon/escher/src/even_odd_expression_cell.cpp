@@ -7,7 +7,7 @@ namespace Escher {
 EvenOddExpressionCell::EvenOddExpressionCell(KDGlyph::Format format)
     : EvenOddCell(), m_layoutView(format), m_margins() {}
 
-void EvenOddExpressionCell::setLayout(Layout layoutR) {
+void EvenOddExpressionCell::setLayout(const Layout& layoutR) {
   m_layoutView.setLayout(layoutR);
 }
 

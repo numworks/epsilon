@@ -13,9 +13,9 @@ void ScrollableThreeLayoutsView::ContentCell::reloadTextColor() {
   approximateSign()->setTextColor(color);
 }
 
-void ScrollableThreeLayoutsView::setLayouts(Layout formulaLayout,
-                                            Layout exactLayout,
-                                            Layout approximateLayout) {
+void ScrollableThreeLayoutsView::setLayouts(const Layout& formulaLayout,
+                                            const Layout& exactLayout,
+                                            const Layout& approximateLayout) {
   AbstractScrollableMultipleLayoutsView::setLayouts(formulaLayout, exactLayout,
                                                     approximateLayout);
   setShowEqualSignAfterFormula(!exactLayout.isUninitialized() ||

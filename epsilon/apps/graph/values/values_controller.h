@@ -86,7 +86,7 @@ class ValuesController : public Shared::ValuesController,
   constexpr static KDCoordinate k_maxColumnWidth = 2 * k_cellWidth;
   constexpr static KDCoordinate k_maxRowHeight = 5 * k_cellHeight;
   static KDSize ApproximatedParametricCellSize();
-  static KDSize CellSizeWithLayout(Poincare::Layout l);
+  static KDSize CellSizeWithLayout(const Poincare::Layout& l);
 
   // TableViewDataSource
   /* Note: computing the total height and width of the table

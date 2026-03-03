@@ -167,7 +167,7 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
 }
 
 bool ExpressionModelListController::editSelectedRecordWithLayout(
-    Layout layout) {
+    const Layout& layout) {
   bool wasAddingNewModel = isAddingNewModel();
   if (wasAddingNewModel) {
     // TODO: Add model and setContent at the same time
@@ -195,7 +195,8 @@ bool ExpressionModelListController::editSelectedRecordWithLayout(
   return true;
 }
 
-bool ExpressionModelListController::setSelectedRecordContent(Layout layout) {
+bool ExpressionModelListController::setSelectedRecordContent(
+    const Layout& layout) {
   assert(!isAddingNewModel());
   OMG::ExpiringPointer<ExpressionModelHandle> model =
       modelStore()->modelForRecord(selectedRecord());

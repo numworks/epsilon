@@ -15,13 +15,13 @@ class ScrollableLayoutView : public ScrollableView<ScrollView::ArrowDecorator>,
                        KDCoordinate topBottomMargin,
                        KDGlyph::Format format = {});
   ScrollableLayoutView(KDGlyph::Format format = {});
-  Poincare::Layout layout() const override;
+  const Poincare::Layout& layout() const override;
   KDFont::Size font() const { return m_layoutView.font(); }
   void setFont(KDFont::Size font) {
     m_layoutView.setFont(font);
     decorator()->setFont(font);
   }
-  void setLayout(Poincare::Layout layout);
+  void setLayout(const Poincare::Layout& layout);
   void setTextColor(KDColor color) { m_layoutView.setTextColor(color); }
   void setBackgroundColor(KDColor backgroundColor) override;
   void setExpressionBackgroundColor(KDColor backgroundColor);

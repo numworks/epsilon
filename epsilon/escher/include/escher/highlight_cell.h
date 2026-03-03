@@ -23,7 +23,9 @@ class HighlightCell : public View {
   virtual void reloadCell() { markWholeFrameAsDirty(); }
   virtual Responder* responder() { return nullptr; }
   virtual const char* text() const { return nullptr; }
-  virtual Poincare::Layout layout() const { return Poincare::Layout(); }
+  virtual const Poincare::Layout& layout() const {
+    return Poincare::Layout::EmptyLayout();
+  }
   virtual void initSize(KDCoordinate width) {}
 
   enum class State : uint8_t {

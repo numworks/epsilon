@@ -1043,7 +1043,8 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::setContent(
 }
 
 Poincare::UserExpression ContinuousFunction::Model::BuildFunctionFromLayout(
-    Poincare::Layout l, CodePoint symbol, const SymbolContext& symbolContext) {
+    const Poincare::Layout& l, CodePoint symbol,
+    const SymbolContext& symbolContext) {
   /* The symbol parameter is discarded in this implementation. Either there is a
    * valid named left expression and the symbol will be extracted, either the
    * symbol should be the default symbol used in unnamed expressions. */

@@ -22,7 +22,7 @@ class LayoutMemoization {
         }) {}
 
   // TODO remember if cursor was in layout and hide this method
-  void invalidAllSizesPositionsAndBaselines();
+  void invalidAllSizesPositionsAndBaselines() const;
   KDSize layoutSize(KDFont::Size font,
                     const LayoutCursor* cursor = nullptr) const;
   KDCoordinate baseline(KDFont::Size font,

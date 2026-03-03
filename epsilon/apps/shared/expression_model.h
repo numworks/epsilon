@@ -43,7 +43,7 @@ class ExpressionModel {
  protected:
   // Setters helper
   static Poincare::UserExpression BuildExpressionFromLayout(
-      Poincare::Layout l, CodePoint symbol = 0,
+      const Poincare::Layout& l, CodePoint symbol = 0,
       const Poincare::SymbolContext& symbolContext =
           Poincare::EmptySymbolContext{});
   static Poincare::UserExpression ReplaceSymbolWithUnknown(

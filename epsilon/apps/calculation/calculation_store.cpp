@@ -302,7 +302,7 @@ static void postProcessOutputs(OutputExpressions& outputs,
 }
 
 Poincare::UserExpression CalculationStore::parseInput(
-    Poincare::Layout inputLayout) {
+    const Poincare::Layout& inputLayout) {
   m_inUsePreferences = getCurrentPreferences();
 
   CircuitBreakerCheckpoint checkpoint(
@@ -341,7 +341,7 @@ CalculationStore::CalculationElements CalculationStore::computeAndProcess(
 }
 
 OMG::ExpiringPointer<Calculation> CalculationStore::push(
-    Poincare::Layout inputLayout) {
+    const Poincare::Layout& inputLayout) {
   Poincare::UserExpression inputExpression = parseInput(inputLayout);
   if (inputExpression.isUninitialized()) {
     /* If parsing was interrupted (which is unlikely to happen), do not update

@@ -80,7 +80,7 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
 }
 
 bool MathLayoutFieldDelegate::isAcceptableLayout(
-    Layout layout, const Poincare::SymbolContext& symbolContext) {
+    const Layout& layout, const Poincare::SymbolContext& symbolContext) {
   if (layout.isEmpty()) {
     // Accept empty layouts
     return true;

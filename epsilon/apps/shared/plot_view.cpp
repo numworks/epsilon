@@ -191,8 +191,8 @@ void AbstractPlotView::drawLabel(KDContext* ctx, KDRect rect, const char* label,
   drawLabel(ctx, rect, label, thisLabelRect, color);
 }
 
-void AbstractPlotView::drawLayout(KDContext* ctx, KDRect rect, Layout layout,
-                                  Coordinate2D<float> xy,
+void AbstractPlotView::drawLayout(KDContext* ctx, KDRect rect,
+                                  const Layout& layout, Coordinate2D<float> xy,
                                   RelativePosition xPosition,
                                   RelativePosition yPosition, KDColor color,
                                   bool ignoreMargin) const {

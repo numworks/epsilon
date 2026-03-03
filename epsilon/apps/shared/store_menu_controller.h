@@ -19,7 +19,7 @@ class StoreMenuController : public Escher::ModalViewController,
                             public MathLayoutFieldDelegate {
  public:
   StoreMenuController();
-  void setLayout(Poincare::Layout layout);
+  void setLayout(const Poincare::Layout& layout);
 
   void open();
   void close();
@@ -64,7 +64,7 @@ class StoreMenuController : public Escher::ModalViewController,
     Escher::SelectableListView m_selectableListView;
   };
 
-  bool store(Poincare::Layout layout);
+  bool store(const Poincare::Layout& layout);
   void openAbortWarning();
 
   char m_savedDraftTextBuffer[Escher::AbstractTextField::MaxBufferSize()];

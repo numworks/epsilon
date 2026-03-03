@@ -9,7 +9,7 @@ namespace Escher {
 class EvenOddExpressionCell : public EvenOddCell {
  public:
   EvenOddExpressionCell(KDGlyph::Format format = {});
-  void setLayout(Poincare::Layout layout);
+  void setLayout(const Poincare::Layout& layout);
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   void setFont(KDFont::Size font) { m_layoutView.setFont(font); }
@@ -20,7 +20,9 @@ class EvenOddExpressionCell : public EvenOddCell {
   KDHorizontalMargins margins() const { return m_margins; }
   void setMargins(KDHorizontalMargins margins);
   KDPoint drawingOrigin() const { return m_layoutView.drawingOrigin(); }
-  Poincare::Layout layout() const override { return m_layoutView.layout(); }
+  const Poincare::Layout& layout() const override {
+    return m_layoutView.layout();
+  }
   KDFont::Size font() const { return m_layoutView.font(); }
   void drawRect(KDContext* ctx, KDRect rect) const override;
 

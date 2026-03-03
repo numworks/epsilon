@@ -40,7 +40,7 @@ void Clipboard::storeText(const char* text, int length) {
   m_bufferState = TreeOutdated;
 }
 
-void Clipboard::storeLayout(Poincare::Layout layout) {
+void Clipboard::storeLayout(const Poincare::Layout& layout) {
   assert(!layout.isForbiddenForCopy());
   int size = layout.tree()->treeSize();
   if (size < k_bufferSize) {

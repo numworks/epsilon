@@ -24,17 +24,17 @@ class LayoutField : public EditableField {
   void scrollToCursor();
 
   bool isEmpty() const { return layout().isEmpty(); }
-  Poincare::Layout layout() const {
+  const Poincare::Layout& layout() const {
     return m_contentView.layoutView()->layout();
   }
   bool layoutHasNode() const {
     return m_contentView.layoutView()->layoutHasNode();
   }
   void putCursorOnOneSide(OMG::HorizontalDirection side);
-  void setLayout(Poincare::Layout newLayout);
+  void setLayout(const Poincare::Layout& newLayout);
   size_t dumpContent(char* buffer, size_t bufferSize, int* cursorOffset,
                      int* position);
-  void insertLayoutAtCursor(Poincare::Layout layout,
+  void insertLayoutAtCursor(const Poincare::Layout& layout,
                             bool forceCursorRightOfLayout = false,
                             bool forceCursorLeftOfLayout = false);
 
@@ -49,7 +49,7 @@ class LayoutField : public EditableField {
   bool handleEventWithText(const char* text, bool forceUseRawText = false,
                            bool indentation = false,
                            bool forceCursorRightOfText = false) override;
-  bool handleEventWithLayout(Poincare::Layout layout,
+  bool handleEventWithLayout(const Poincare::Layout& layout,
                              bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool handleStoreEvent() override;

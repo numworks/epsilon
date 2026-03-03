@@ -87,7 +87,7 @@ class App : public Responder {
   virtual void willOpenPage(ViewController* controller) {}
   virtual void didExitPage(ViewController* controller) {}
   virtual bool canStoreLayout() const { return false; }
-  virtual void storeLayout(Poincare::Layout layout = {}) {}
+  virtual void storeLayout(const Poincare::Layout& layout = {}) {}
   virtual int numberOfTimers() { return 0; }
   virtual Timer* timerAtIndex(int i) {
     assert(false);

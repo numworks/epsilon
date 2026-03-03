@@ -15,7 +15,7 @@ class ToolboxMessageTree : public MessageTree {
   using MessageTree::MessageTree;
   const MessageTree* childAtIndex(int index) const override { return nullptr; }
   virtual const ToolboxMessage* childrenList() const { return nullptr; }
-  virtual Poincare::Layout layout() const { return {}; }
+  virtual Poincare::Layout layout() const { return Poincare::Layout(); }
   virtual constexpr I18n::Message text() const { return I18n::Message(0); }
   virtual I18n::Message insertedText() const { return I18n::Message(0); }
   // Do not parse the key text nor postprocess the inserted text

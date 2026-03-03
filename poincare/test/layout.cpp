@@ -403,7 +403,7 @@ QUIZ_CASE(pcj_layout_serialization) {
       "piecewise(3,2>3,2,2<3,1)");
 }
 
-void assert_layout_is_not_parsed(Poincare::Layout layout) {
+void assert_layout_is_not_parsed(const Poincare::Layout& layout) {
   using namespace Poincare;
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
@@ -431,7 +431,7 @@ QUIZ_CASE(pcj_layout_to_expression_unparsable) {
   }
 }
 
-void assert_parsed_layout_is(Poincare::Layout layout,
+void assert_parsed_layout_is(const Poincare::Layout& layout,
                              const Poincare::Internal::Tree* rj) {
   using namespace Poincare;
   constexpr int bufferSize = 500;

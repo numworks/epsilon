@@ -25,7 +25,7 @@ class PoolLayoutCursor final : public LayoutCursor,
     return m_rootLayout.isUninitialized() || LayoutCursor::isUninitialized();
   }
 
-  Poincare::Layout rootLayout() { return m_rootLayout; }
+  const Poincare::Layout& rootLayout() { return m_rootLayout; }
 
   /* Layout insertion */
   void insertText(const char* text,

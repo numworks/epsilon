@@ -18,7 +18,7 @@ class TestPlotPolicy : Shared::PlotPolicy::WithCurves {
                                 Poincare::Comparison::Operator op) const;
   void drawLabelAndGraduation(const Shared::AbstractPlotView* plotView,
                               KDContext* ctx, KDRect rect, float x,
-                              Poincare::Layout layout) const;
+                              const Poincare::Layout& layout) const;
   void drawTestCurve(const Shared::AbstractPlotView* plotView, KDContext* ctx,
                      KDRect rect, float z, Poincare::Comparison::Operator op,
                      double factor = 1.0) const;

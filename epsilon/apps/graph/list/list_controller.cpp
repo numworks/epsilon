@@ -190,7 +190,7 @@ void ListController::editExpression(Ion::Events::Event event) {
   m_editableCell.setHighlighted(true);
 }
 
-bool ListController::setSelectedRecordContent(Poincare::Layout layout) {
+bool ListController::setSelectedRecordContent(const Poincare::Layout& layout) {
   assert(!isAddingNewModel());
   GlobalStore::DeleteParametricComponentsOfRecord(selectedRecord());
   bool result = FunctionListController::setSelectedRecordContent(layout);

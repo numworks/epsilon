@@ -21,7 +21,9 @@ class AbstractCategoricalCell : public Escher::HighlightCell {
   void setHighlighted(bool highlight) override;
   Escher::Responder* responder() override { return innerCell()->responder(); }
   const char* text() const override { return innerCell()->text(); }
-  Poincare::Layout layout() const override { return innerCell()->layout(); }
+  const Poincare::Layout& layout() const override {
+    return innerCell()->layout();
+  }
   void initSize(KDCoordinate width) override {
     return innerCell()->initSize(width - Escher::Metric::CommonMargins.width());
   }

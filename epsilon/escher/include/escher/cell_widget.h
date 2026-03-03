@@ -14,7 +14,9 @@ class CellWidget {
   virtual const View* view() const = 0;
   virtual Responder* responder() { return nullptr; }
   virtual const char* text() const { return nullptr; }
-  virtual Poincare::Layout layout() const { return Poincare::Layout(); }
+  virtual const Poincare::Layout& layout() const {
+    return Poincare::Layout::EmptyLayout();
+  }
   virtual void defaultInitialization(Type type) {}
   virtual void setHighlighted(bool highlighted) {}
   /* This could be replaced by a type like Expressions or Layouts if needed.

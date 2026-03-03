@@ -78,7 +78,7 @@ void StoreMenuController::handleResponderChainEvent(
   }
 }
 
-void StoreMenuController::setLayout(Poincare::Layout layout) {
+void StoreMenuController::setLayout(const Poincare::Layout& layout) {
   m_preventReload = true;
   m_cell.layoutField()->clearAndSetEditing(true);
   m_cell.layoutField()->handleEventWithLayout(layout, true);
@@ -129,7 +129,7 @@ void StoreMenuController::openAbortWarning() {
   App::app()->modalViewController()->reloadModal();
 }
 
-bool StoreMenuController::store(Layout layout) {
+bool StoreMenuController::store(const Layout& layout) {
   AppWithStoreMenu* app = static_cast<AppWithStoreMenu*>(App::app());
   UserExpression input =
       UserExpression::Parse(layout, GlobalContextAccessor::Context());

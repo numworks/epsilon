@@ -35,7 +35,7 @@ class ExpressionModelListController
   }
   virtual void editExpression(Ion::Events::Event event);
 
-  bool editSelectedRecordWithLayout(Poincare::Layout layout);
+  bool editSelectedRecordWithLayout(const Poincare::Layout& layout);
   virtual Poincare::Layout getLayoutForSelectedRecord() const;
 
  protected:
@@ -63,7 +63,7 @@ class ExpressionModelListController
   editableExpressionModelCell() = 0;
   virtual void addNewModelAction() = 0;
 
-  virtual bool setSelectedRecordContent(Poincare::Layout layout);
+  virtual bool setSelectedRecordContent(const Poincare::Layout& layout);
   // Row height
   virtual KDCoordinate expressionRowHeight(int row);
   virtual KDCoordinate editableRowHeight();

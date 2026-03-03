@@ -235,7 +235,7 @@ void ExpressionModel::tidyDownstreamPoolFrom(
 }
 
 Poincare::UserExpression ExpressionModel::BuildExpressionFromLayout(
-    Poincare::Layout l, CodePoint symbol,
+    const Poincare::Layout& l, CodePoint symbol,
     const Poincare::SymbolContext& symbolContext) {
   if (l.isUninitialized() || l.isEmpty()) {
     return UserExpression();

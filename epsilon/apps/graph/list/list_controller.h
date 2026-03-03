@@ -37,7 +37,7 @@ class ListController : public Shared::FunctionListController,
   bool handleEvent(Ion::Events::Event event) override;
   // ExpressionModelListController
   void editExpression(Ion::Events::Event event) override;
-  bool setSelectedRecordContent(Poincare::Layout layout) override;
+  bool setSelectedRecordContent(const Poincare::Layout& layout) override;
   KDCoordinate expressionRowHeight(int row) override;
   KDCoordinate editableRowHeight() override;
   Shared::ListParameterController* parameterController() override;

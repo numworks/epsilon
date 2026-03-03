@@ -9,8 +9,8 @@ class ScrollableTwoLayoutsCell : public EvenOddCell, public Responder {
   ScrollableTwoLayoutsCell(Responder* parentResponder = nullptr,
                            float horizontalAlignment = KDGlyph::k_alignLeft,
                            KDFont::Size font = KDFont::Size::Large);
-  void setLayouts(Poincare::Layout exactLayout,
-                  Poincare::Layout approximateLayout) {
+  void setLayouts(const Poincare::Layout& exactLayout,
+                  const Poincare::Layout& approximateLayout) {
     m_view.setLayouts(Poincare::Layout(), exactLayout, approximateLayout);
   }
   void resetLayouts() { return m_view.resetLayouts(); }
@@ -22,7 +22,7 @@ class ScrollableTwoLayoutsCell : public EvenOddCell, public Responder {
   }
   void setEven(bool even) override;
   Responder* responder() override { return this; }
-  Poincare::Layout layout() const override { return m_view.layout(); }
+  const Poincare::Layout& layout() const override { return m_view.layout(); }
   KDSize minimalSizeForOptimalDisplay() const override {
     return m_view.minimalSizeForOptimalDisplay();
   }

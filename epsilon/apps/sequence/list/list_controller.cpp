@@ -157,7 +157,7 @@ void ListController::editExpression(Ion::Events::Event event) {
   App::app()->localContext().resetCache();
 }
 
-bool ListController::setSelectedRecordContent(Poincare::Layout layout) {
+bool ListController::setSelectedRecordContent(const Poincare::Layout& layout) {
   Shared::Sequence* sequence = modelStore()->modelForRecord(selectedRecord());
   return sequence->setLayoutsForAggregated(layout,
                                            App::app()->localContext()) ==

@@ -44,7 +44,7 @@ class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,
     updateXNTIndex(event);
   }
 
-  bool isAcceptableLayout(Poincare::Layout layout,
+  bool isAcceptableLayout(const Poincare::Layout& layout,
                           const Poincare::SymbolContext& symbolContext);
 };
 

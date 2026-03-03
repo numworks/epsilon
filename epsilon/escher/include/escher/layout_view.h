@@ -13,13 +13,13 @@ namespace Escher {
 
 class LayoutView : public GlyphsView {
  public:
-  using TitleType = Poincare::Layout;
+  using TitleType = const Poincare::Layout&;
 
   LayoutView(KDGlyph::Format format = {})
       : GlyphsView(format), m_horizontalMargin(0) {}
 
-  Poincare::Layout layout() const override { return m_layout; }
-  bool setLayout(Poincare::Layout layout);
+  const Poincare::Layout& layout() const override { return m_layout; }
+  bool setLayout(const Poincare::Layout& layout);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
   void setHorizontalMargin(KDCoordinate horizontalMargin) {
@@ -68,7 +68,9 @@ class LayoutViewWithCursor : public LayoutView {
   }
 
  private:
-  Poincare::Layout layout() const override { return m_cursor->rootLayout(); }
+  const Poincare::Layout& layout() const override {
+    return m_cursor->rootLayout();
+  }
   const Poincare::Internal::LayoutCursor* cursor() const override {
     return m_editing ? m_cursor : nullptr;
   }

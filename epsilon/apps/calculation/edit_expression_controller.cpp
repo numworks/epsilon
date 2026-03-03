@@ -60,7 +60,7 @@ EditExpressionController::EditExpressionController(
                         m_historyController->view()),
                     this) {}
 
-void EditExpressionController::insertLayout(Layout layout) {
+void EditExpressionController::insertLayout(const Layout& layout) {
   App::app()->setFirstResponder(this);
   m_contentView.layoutField()->updateCursorBeforeInsertion();
   m_contentView.layoutField()->insertLayoutAtCursor(layout, true);

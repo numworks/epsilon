@@ -9,7 +9,7 @@ class Clipboard {
  public:
   static Clipboard* SharedClipboard();
   void storeText(const char* text, int length = -1);
-  void storeLayout(Poincare::Layout layout);
+  void storeLayout(const Poincare::Layout& layout);
   const char* storedText();
   Poincare::Layout storedLayout();
   void reset();

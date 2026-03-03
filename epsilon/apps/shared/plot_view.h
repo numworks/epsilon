@@ -112,7 +112,7 @@ class AbstractPlotView : public Escher::View {
                  bool ignoreMargin = false) const;
   void drawLabel(KDContext* ctx, KDRect rect, const char* label,
                  KDRect labelRect, KDColor color) const;
-  void drawLayout(KDContext* ctx, KDRect rect, Poincare::Layout layout,
+  void drawLayout(KDContext* ctx, KDRect rect, const Poincare::Layout& layout,
                   Poincare::Coordinate2D<float> xy, RelativePosition xPosition,
                   RelativePosition yPosition, KDColor color,
                   bool ignoreMargin = false) const;

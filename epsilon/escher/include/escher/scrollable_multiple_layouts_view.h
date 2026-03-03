@@ -19,9 +19,9 @@ class AbstractScrollableMultipleLayoutsView
   AbstractScrollableMultipleLayoutsView(Responder* parentResponder,
                                         View* contentCell);
   EvenOddCell* evenOddCell() { return contentCell(); }
-  virtual void setLayouts(Poincare::Layout formulaLayout,
-                          Poincare::Layout exactLayout,
-                          Poincare::Layout approximateLayout);
+  virtual void setLayouts(const Poincare::Layout& formulaLayout,
+                          const Poincare::Layout& exactLayout,
+                          const Poincare::Layout& approximateLayout);
   void resetLayouts() {
     setSelectedSubviewPosition(SubviewPosition::Left);
     setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
@@ -42,8 +42,10 @@ class AbstractScrollableMultipleLayoutsView
   }
   void reloadScroll();
   bool handleEvent(Ion::Events::Event event) override;
-  Poincare::Layout layout() const override { return contentCell()->layout(); }
-  Poincare::Layout layoutAtPosition(SubviewPosition position) const {
+  const Poincare::Layout& layout() const override {
+    return contentCell()->layout();
+  }
+  const Poincare::Layout& layoutAtPosition(SubviewPosition position) const {
     return contentCell()->layoutAtPosition(position);
   }
   KDCoordinate baseline() const { return contentCell()->baseline(); }
@@ -99,10 +101,10 @@ class AbstractScrollableMultipleLayoutsView
     void setExactAndApproximateAreStriclyEqual(bool isEqual);
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
-    Poincare::Layout layout() const override {
+    const Poincare::Layout& layout() const override {
       return layoutAtPosition(m_selectedSubviewPosition);
     }
-    Poincare::Layout layoutAtPosition(SubviewPosition position) const;
+    const Poincare::Layout& layoutAtPosition(SubviewPosition position) const;
     KDCoordinate baseline(KDCoordinate* leftBaseline = nullptr,
                           KDCoordinate* centerBaseline = nullptr,
                           KDCoordinate* rightBaseline = nullptr) const;

@@ -285,7 +285,7 @@ static Layout areaMessageLayout() {
 
 void SumGraphController::LegendView::setSumLayout(Step step, double start,
                                                   double end, double result,
-                                                  Layout functionLayout,
+                                                  const Layout& functionLayout,
                                                   CodePoint sumSymbol) {
   assert(!std::isnan(start) || step == Step::FirstParameter);
   assert(!std::isnan(end) || step != Step::Result);

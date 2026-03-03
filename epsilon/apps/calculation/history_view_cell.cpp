@@ -87,8 +87,7 @@ void HistoryViewCell::reloadSubviewHighlight() {
     }
   }
 }
-
-Layout HistoryViewCell::layout() const {
+const Layout& HistoryViewCell::layout() const {
   assert(m_dataSource);
   HistoryViewCellDataSource::SubviewType type =
       m_dataSource->selectedSubviewType();
@@ -99,7 +98,7 @@ Layout HistoryViewCell::layout() const {
       return m_scrollableOutputView.layout();
     default:
       assert(type == HistoryViewCellDataSource::SubviewType::Ellipsis);
-      return Layout();
+      return Poincare::Layout::EmptyLayout();
   }
 }
 

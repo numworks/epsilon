@@ -51,7 +51,7 @@ void InputCategoricalCell<MessageTextView>::setMessages(
 
 template <>
 void InputCategoricalCell<LayoutView>::setMessages(
-    Poincare::Layout labelLayout, I18n::Message subLabelMessage) {
+    const Poincare::Layout& labelLayout, I18n::Message subLabelMessage) {
   m_innerCell.label()->setLayout(labelLayout);
   m_innerCell.subLabel()->setMessage(subLabelMessage);
 }

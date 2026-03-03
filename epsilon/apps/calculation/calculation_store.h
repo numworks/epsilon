@@ -42,7 +42,7 @@ class CalculationStore
 
   void replaceAnsInExpression(Poincare::UserExpression& expression) const;
 
-  OMG::ExpiringPointer<Calculation> push(Poincare::Layout input);
+  OMG::ExpiringPointer<Calculation> push(const Poincare::Layout& input);
   void deleteCalculationAtIndex(int index);
   bool preferencesHaveChanged();
 
@@ -73,7 +73,7 @@ class CalculationStore
     }
   };
 
-  Poincare::UserExpression parseInput(Poincare::Layout inputLayout);
+  Poincare::UserExpression parseInput(const Poincare::Layout& inputLayout);
 
   CalculationElements computeAndProcess(
       const Poincare::UserExpression& inputExpression);

@@ -11,7 +11,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-bool StoreApp::memoizeFormula(Poincare::Layout formula, int index) {
+bool StoreApp::memoizeFormula(const Poincare::Layout& formula, int index) {
   // Name memoized formulas from A to Z.
   static_assert('Z' - 'A' >= k_numberOfMemoizedFormulas);
   assert(index >= 0 && index < k_numberOfMemoizedFormulas);

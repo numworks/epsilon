@@ -45,7 +45,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   }
   bool displaysSingleLine() const { return m_calculationSingleLine; }
   Responder* responder() override { return this; }
-  Poincare::Layout layout() const override;
+  const Poincare::Layout& layout() const override;
   KDColor backgroundColor() const override {
     return m_even ? Escher::Palette::White : Escher::Palette::WallScreen;
   }

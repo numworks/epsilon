@@ -49,7 +49,7 @@ class LayoutObject final : public PoolObject,
   KDCoordinate computeBaseline(
       KDFont::Size font, const Internal::LayoutCursor* cursor) const override;
 
-  bool isIdenticalTo(Layout l, bool makeEditable) const;
+  bool isIdenticalTo(const Layout& l, bool makeEditable) const;
 
   void draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
             const Internal::LayoutCursor* cursor) const;
@@ -61,6 +61,8 @@ class LayoutObject final : public PoolObject,
 
 class Layout final : public PoolHandle {
  public:
+  static const Poincare::Layout& EmptyLayout();
+
   Layout() = default;
 
   // Implicit conversion from a const Tree*
@@ -83,7 +85,7 @@ class Layout final : public PoolHandle {
     return static_cast<LayoutObject*>(PoolHandle::object());
   }
 
-  bool isIdenticalTo(Layout l, bool makeEditable = false) const {
+  bool isIdenticalTo(const Layout& l, bool makeEditable = false) const {
     return isUninitialized() ? l.isUninitialized()
                              : (*this)->isIdenticalTo(l, makeEditable);
   }
@@ -100,7 +102,7 @@ class Layout final : public PoolHandle {
   static Layout Builder(const Internal::Tree* tree);
   // Eat the tree
   static Layout Builder(Internal::Tree* tree);
-  static Layout Concatenate(Layout layout1, Layout layout2);
+  static Layout Concatenate(const Layout& layout1, const Layout& layout2);
 
   Internal::Tree* tree() const {
     return const_cast<Layout*>(this)->object()->tree();
@@ -122,7 +124,7 @@ class Layout final : public PoolHandle {
   // KRackL(KAbsL("x"_l)) -> KRackL(KAbsL(""_l))
   Layout cloneWithoutChildrenRacks();
 
-  Layout makeEditable() { return cloneWithoutMargins(); }
+  Layout makeEditable() const { return cloneWithoutMargins(); }
 
   bool isEmpty() const;
   // Return the number of digits of the longest integer displayed.
@@ -130,7 +132,7 @@ class Layout final : public PoolHandle {
 
   // Render
   void draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
-            const Internal::LayoutCursor* cursor = nullptr);
+            const Internal::LayoutCursor* cursor = nullptr) const;
 
   LayoutObject* object() {
     return static_cast<LayoutObject*>(PoolHandle::object());
@@ -149,7 +151,8 @@ class Layout final : public PoolHandle {
    * This is used to compare exact and approximate outputs in Epsilon's
    * Calculation app. If they represent the same digits, approximation is
    * hidden. */
-  bool isSameScientificNotationAs(Layout approximation, bool linear) const;
+  bool isSameScientificNotationAs(const Layout& approximation,
+                                  bool linear) const;
 
   bool isForbiddenForCopy() const;
 };

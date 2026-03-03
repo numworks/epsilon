@@ -40,7 +40,8 @@ void TestPlotPolicy::drawZLabelAndZGraduation(const AbstractPlotView* plotView,
 
 void TestPlotPolicy::drawLabelAndGraduation(const AbstractPlotView* plotView,
                                             KDContext* ctx, KDRect rect,
-                                            float x, Layout layout) const {
+                                            float x,
+                                            const Layout& layout) const {
   plotView->drawTick(ctx, rect, OMG::Axis::Horizontal, x);
   plotView->drawLayout(ctx, rect, layout, Coordinate2D<float>(x, 0.f),
                        AbstractPlotView::RelativePosition::There,

@@ -52,7 +52,7 @@ class Sequence : public Function {
   // Aggregated layout
   Poincare::Layout aggregatedLayout();
   Ion::Storage::Record::ErrorStatus setLayoutsForAggregated(
-      Poincare::Layout l, const Poincare::SymbolContext& symbolContext);
+      const Poincare::Layout& l, const Poincare::SymbolContext& symbolContext);
 
   // Definition
   static Poincare::Layout DefinitionName(CodePoint name, Type type,
@@ -77,8 +77,8 @@ class Sequence : public Function {
     return m_firstInitialCondition.layout(this);
   }
   Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(
-      Poincare::Layout l, const Poincare::SymbolContext& symbolContext =
-                              Poincare::EmptySymbolContext{}) {
+      const Poincare::Layout& l, const Poincare::SymbolContext& symbolContext =
+                                     Poincare::EmptySymbolContext{}) {
     return m_firstInitialCondition.setContent(this, l, symbolContext);
   }
   // Second initial condition
@@ -98,8 +98,8 @@ class Sequence : public Function {
     return m_secondInitialCondition.layout(this);
   }
   Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(
-      Poincare::Layout l, const Poincare::SymbolContext& symbolContext =
-                              Poincare::EmptySymbolContext{}) {
+      const Poincare::Layout& l, const Poincare::SymbolContext& symbolContext =
+                                     Poincare::EmptySymbolContext{}) {
     return m_secondInitialCondition.setContent(this, l, symbolContext);
   }
   void tidyDownstreamPoolFrom(

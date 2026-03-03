@@ -21,11 +21,11 @@ ScrollableLayoutView::ScrollableLayoutView(Responder* parentResponder,
 ScrollableLayoutView::ScrollableLayoutView(KDGlyph::Format format)
     : ScrollableLayoutView(nullptr, 0, 0, format) {}
 
-Poincare::Layout ScrollableLayoutView::layout() const {
+const Poincare::Layout& ScrollableLayoutView::layout() const {
   return m_layoutView.layout();
 }
 
-void ScrollableLayoutView::setLayout(Poincare::Layout layout) {
+void ScrollableLayoutView::setLayout(const Poincare::Layout& layout) {
   m_layoutView.setLayout(layout);
 }
 

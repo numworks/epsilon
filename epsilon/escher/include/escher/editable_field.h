@@ -22,7 +22,7 @@ class EditableField : public TextCursorView::WithBlinkingCursor<
                                    bool forceCursorRightOfText = false) {
     return false;
   }
-  virtual bool handleEventWithLayout(Poincare::Layout layout,
+  virtual bool handleEventWithLayout(const Poincare::Layout& layout,
                                      bool forceCursorRightOfText = false) {
     return false;
   }

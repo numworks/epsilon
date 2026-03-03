@@ -76,7 +76,8 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
     void setLegendMessage(I18n::Message message, Step step);
     void setEditableZone(double d);
     void setSumLayout(Step step, double start, double end, double result,
-                      Poincare::Layout functionLayout, CodePoint sumSymbol);
+                      const Poincare::Layout& functionLayout,
+                      CodePoint sumSymbol);
 
    private:
     constexpr static size_t k_editableZoneBufferSize =

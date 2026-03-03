@@ -17,7 +17,7 @@ class StoreApp : public MathApp {
     return static_cast<StoreApp*>(Escher::App::app());
   }
 
-  bool memoizeFormula(Poincare::Layout formula, int index);
+  bool memoizeFormula(const Poincare::Layout& formula, int index);
   Poincare::Layout memoizedFormula(int index) const;
 
   constexpr static int k_numberOfMemoizedFormulas =

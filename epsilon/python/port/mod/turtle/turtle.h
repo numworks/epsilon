@@ -94,7 +94,7 @@ class Turtle {
       Escher::Metric::DisplayHeightWithoutTitleBar / 2;
   constexpr static uint8_t k_defaultSpeed = 8;
   constexpr static uint8_t k_maxSpeed = 10;
-  constexpr static KDColor k_defaultColor = KDColorBlack;
+  constexpr static KDColor k_defaultColor = Escher::Palette::Black;
   constexpr static uint8_t k_defaultPenSize = 1;
   constexpr static KDFont::Size k_font = KDFont::Size::Large;
   constexpr static mp_float_t k_maxPosition = KDCOORDINATE_MAX * 0.75f;

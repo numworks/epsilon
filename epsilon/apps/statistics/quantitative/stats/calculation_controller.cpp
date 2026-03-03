@@ -75,7 +75,8 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
                           index);
       AbstractEvenOddBufferTextCell* bufferCell =
           static_cast<AbstractEvenOddBufferTextCell*>(cell);
-      bufferCell->setTextColor(column == 1 ? Palette::GrayDark : KDColorBlack);
+      bufferCell->setTextColor(column == 1 ? Palette::GrayDark
+                                           : Palette::Black);
       bufferCell->setText(buffer);
       return;
     }
@@ -100,7 +101,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
       EvenOddMessageTextCell* calcTitleCell =
           static_cast<EvenOddMessageTextCell*>(cell);
       calcTitleCell->setTextColor(column == 1 ? Palette::GrayDark
-                                              : KDColorBlack);
+                                              : Palette::Black);
       calcTitleCell->setMessage(message);
       return;
     }

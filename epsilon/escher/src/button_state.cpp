@@ -44,7 +44,7 @@ void ButtonState::layoutSubviews(bool force) {
 
 void ButtonState::drawRect(KDContext* ctx, KDRect rect) const {
   KDColor backColor =
-      isHighlighted() ? highlightedBackgroundColor() : KDColorWhite;
+      isHighlighted() ? highlightedBackgroundColor() : Palette::White;
   ctx->fillRect(bounds(), backColor);
 }
 

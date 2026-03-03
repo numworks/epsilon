@@ -8,7 +8,7 @@ namespace Escher {
 
 void AbstractEditableTextCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight ? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = highlight ? Palette::Select : Palette::White;
   textField()->setBackgroundColor(backgroundColor);
 }
 

@@ -177,7 +177,7 @@ void ListController::fillExpressionCellForRow(HighlightCell* cell, int row) {
   Ion::Storage::Record record = recordAtRow(row);
   Shared::Sequence* sequence = modelStore()->modelForRecord(record);
   // Set the color
-  KDColor textColor = sequence->isActive() ? KDColorBlack : Palette::GrayDark;
+  KDColor textColor = sequence->isActive() ? Palette::Black : Palette::GrayDark;
   myCell->setTextColor(textColor);
   // Set the layout
   return myCell->setLayout(sequence->aggregatedLayout());

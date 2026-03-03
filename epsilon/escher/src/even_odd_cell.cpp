@@ -32,7 +32,7 @@ KDColor EvenOddCell::backgroundColor() const {
   } else if (isHighlighted()) {
     return Palette::Select;
   }
-  return m_even ? KDColorWhite : Palette::WallScreen;
+  return m_even ? Palette::White : Palette::WallScreen;
 }
 
 void EvenOddCell::drawRect(KDContext* ctx, KDRect rect) const {

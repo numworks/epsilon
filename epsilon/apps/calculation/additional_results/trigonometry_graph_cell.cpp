@@ -67,20 +67,20 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
 void UnitCircle::drawAxesAndGrid(const AbstractPlotView* plotView,
                                  KDContext* ctx, KDRect rect) const {
   PlotPolicy::WithPolarGrid::DrawGrid(plotView, ctx, rect);
-  plotView->drawCircle(ctx, rect, {0.f, 0.f}, 1.f, KDColorBlack);
+  plotView->drawCircle(ctx, rect, {0.f, 0.f}, 1.f, Palette::Black);
   // Labels should be as close to the axes as possible so we place them manually
   KDRect labelRect = plotView->labelRect(
       "-1", {-1, 0}, AbstractPlotView::RelativePosition::Before,
       AbstractPlotView::RelativePosition::There);
   plotView->drawLabel(ctx, rect, "-1",
                       labelRect.translatedBy(k_minusOneFineTunePosition),
-                      KDColorBlack);
+                      Palette::Black);
   labelRect = plotView->labelRect("1", {1, 0},
                                   AbstractPlotView::RelativePosition::After,
                                   AbstractPlotView::RelativePosition::There);
   plotView->drawLabel(ctx, rect, "1",
                       labelRect.translatedBy(k_oneFineTunePosition),
-                      KDColorBlack);
+                      Palette::Black);
   m_xAxis.drawAxis(plotView, ctx, rect, OMG::Axis::Horizontal);
   m_yAxis.drawAxis(plotView, ctx, rect, OMG::Axis::Vertical);
 }

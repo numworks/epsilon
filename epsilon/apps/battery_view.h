@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/metric.h>
+#include <escher/palette.h>
 #include <escher/view.h>
 #include <ion.h>
 
@@ -23,7 +24,7 @@ class BatteryView : public Escher::View {
 
  private:
   void drawInsideBatteryLevel(KDContext* ctx, KDCoordinate width,
-                              KDColor color = KDColorWhite) const;
+                              KDColor color = Escher::Palette::White) const;
   constexpr static KDCoordinate k_batteryHeight = 8;
   constexpr static KDCoordinate k_batteryWidth = 15;
   constexpr static KDCoordinate k_elementWidth = 1;

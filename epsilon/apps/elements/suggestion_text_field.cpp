@@ -18,7 +18,7 @@ void SuggestionTextField::ContentView::drawRect(KDContext* ctx,
     ctx->drawString(suggestionSuffix(),
                     glyphFrameAtPosition(draftText(), draftTextEnd()).origin(),
                     {.glyphColor = Palette::GrayDark,
-                     .backgroundColor = KDColorWhite,
+                     .backgroundColor = Palette::White,
                      .font = m_format.style.font});
   }
 }
@@ -43,7 +43,7 @@ void SuggestionTextField::ContentView::setSuggestion(const char* suggestion) {
 SuggestionTextField::SuggestionTextField(Responder* parentResponder,
                                          TextFieldDelegate* delegate)
     : AbstractTextField(parentResponder, &m_contentView, delegate) {
-  setBackgroundColor(KDColorWhite);
+  setBackgroundColor(Palette::White);
 }
 
 bool SuggestionTextField::handleEvent(Ion::Events::Event event) {

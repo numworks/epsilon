@@ -36,9 +36,9 @@ void TabViewCell::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   // choose the background color
-  KDColor text = m_active ? Palette::PurpleBright : KDColorWhite;
+  KDColor text = m_active ? Palette::PurpleBright : Palette::White;
   KDColor inactiveBackground = m_controller->tabBackgroundColor();
-  KDColor background = m_active ? KDColorWhite : inactiveBackground;
+  KDColor background = m_active ? Palette::White : inactiveBackground;
   KDColor selection = m_active ? Palette::Select : Palette::SelectDark;
   background = m_selected ? selection : background;
   // Color the background according to the state of the tab cell

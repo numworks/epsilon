@@ -6,7 +6,7 @@
 namespace Elements {
 
 ElementsView::ElementsView()
-    : m_singleElementView(KDColorWhite),
+    : m_singleElementView(Escher::Palette::White),
       m_nameView(I18n::Message::Default,
                  {.style = {.font = KDFont::Size::Small},
                   .horizontalAlignment = KDGlyph::k_alignCenter}),

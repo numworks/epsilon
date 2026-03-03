@@ -247,7 +247,7 @@ void GraphView::drawInequalitiesIntersection(KDContext* ctx,
       if (!inRegion) {
         continue;
       }
-      ctx->setPixel(KDPoint(xCoord, yCoord), KDColorBlack);
+      ctx->setPixel(KDPoint(xCoord, yCoord), Palette::Black);
     }
   }
 }

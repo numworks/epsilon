@@ -1,5 +1,6 @@
 #pragma once
 
+#include <escher/palette.h>
 #include <poincare/print_float.h>
 
 #include "plot_view.h"
@@ -103,7 +104,7 @@ class PlainAxis {
   void setOtherAxis(bool other) {}
 
  protected:
-  constexpr static KDColor k_color = KDColorBlack;
+  constexpr static KDColor k_color = Escher::Palette::Black;
 };
 
 class SimpleAxis : public PlainAxis {

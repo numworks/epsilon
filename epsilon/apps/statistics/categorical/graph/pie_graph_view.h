@@ -28,7 +28,7 @@ class PieGraphViewDataSource {
   int setGroup(int group);
 
  protected:
-  constexpr static KDColor k_outsideColor = KDColorWhite;
+  constexpr static KDColor k_outsideColor = Escher::Palette::White;
   float m_cumulatedAngles[Store::k_maxNumberOfCategory];
   uint8_t m_toGlobalCategories[Store::k_maxNumberOfCategory];
   /* Note: Now that colors do not change depending on selection, having

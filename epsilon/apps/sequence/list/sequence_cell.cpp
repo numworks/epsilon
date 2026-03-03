@@ -43,7 +43,7 @@ void AbstractSequenceCell::layoutSubviews(bool force) {
 }
 
 void SequenceCell::updateSubviewsBackgroundAfterChangingState() {
-  KDColor defaultColor = m_even ? KDColorWhite : Palette::WallScreen;
+  KDColor defaultColor = m_even ? Palette::White : Palette::WallScreen;
   // If not highlighted, selectedColor is defaultColor
   KDColor selectedColor = backgroundColor();
   m_expressionBackground = m_parameterSelected ? defaultColor : selectedColor;

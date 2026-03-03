@@ -1,5 +1,6 @@
 #include "battery_timer.h"
 
+#include <escher/palette.h>
 #include <ion/usb.h>
 
 #include "apps_container.h"
@@ -9,7 +10,8 @@ constexpr static I18n::Message k_chargingPromptMessages[] = {
     I18n::Message::BatteryChargingMessage,
     I18n::Message::BatteryChargingMessage2};
 constexpr static KDColor k_chargingPromptColors[] = {
-    KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack};
+    Escher::Palette::Black, Escher::Palette::Black, Escher::Palette::Black,
+    Escher::Palette::Black};
 constexpr static uint8_t k_chargingPromptNumberOfMessages = 4;
 
 static bool HandleEvent(Ion::Events::Event event) {

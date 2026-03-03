@@ -4,6 +4,9 @@
 
 #include <algorithm>
 
+#include <escher/palette.h>
+
+
 using namespace Shared;
 using namespace Poincare;
 
@@ -95,7 +98,7 @@ void PyplotPolicy::traceLabel(const AbstractPlotView* plotView, KDContext* ctx,
   plotView->drawLabel(ctx, r, label.string(),
                       Coordinate2D<float>(label.x(), label.y()),
                       AbstractPlotView::RelativePosition::After,
-                      AbstractPlotView::RelativePosition::After, KDColorBlack);
+                      AbstractPlotView::RelativePosition::After, Escher::Palette::Black);
 }
 
 // PyplotView

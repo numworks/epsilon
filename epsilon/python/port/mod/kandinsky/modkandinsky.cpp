@@ -5,6 +5,9 @@ extern "C" {
 }
 #include <ion/display.h>
 
+#include <escher/palette.h>
+
+
 #include "port.h"
 
 static mp_obj_t TupleForKDColor(KDColor c) {
@@ -62,9 +65,9 @@ mp_obj_t modkandinsky_draw_string(size_t n_args, const mp_obj_t *args) {
   const char *text = mp_obj_str_get_str(args[0]);
   KDPoint point(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]));
   KDColor textColor =
-      (n_args >= 4) ? MicroPython::Color::Parse(args[3]) : KDColorBlack;
+      (n_args >= 4) ? MicroPython::Color::Parse(args[3]) : Escher::Palette::Black;
   KDColor backgroundColor =
-      (n_args >= 5) ? MicroPython::Color::Parse(args[4]) : KDColorWhite;
+      (n_args >= 5) ? MicroPython::Color::Parse(args[4]) : Escher::Palette::White;
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()
       ->displaySandbox();
   Ion::Display::Context::SharedContext->drawString(

@@ -118,7 +118,7 @@ LayoutField::LayoutField(Responder* parentResponder,
       m_inputViewMemoizedHeight(0),
       m_draftBuffer(s_draftBuffer),
       m_draftBufferSize(AbstractTextField::MaxBufferSize()) {
-  setBackgroundColor(KDColorWhite);
+  setBackgroundColor(Palette::White);
 }
 
 void LayoutField::setDelegate(LayoutFieldDelegate* delegate) {

@@ -44,7 +44,8 @@ void TestPlotPolicy::drawLabelAndGraduation(const AbstractPlotView* plotView,
   plotView->drawTick(ctx, rect, OMG::Axis::Horizontal, x);
   plotView->drawLayout(ctx, rect, layout, Coordinate2D<float>(x, 0.f),
                        AbstractPlotView::RelativePosition::There,
-                       AbstractPlotView::RelativePosition::After, KDColorBlack);
+                       AbstractPlotView::RelativePosition::After,
+                       Palette::Black);
 }
 
 static Coordinate2D<float> evaluate(float x, const void* model, const void*) {

@@ -2,6 +2,7 @@
 
 #include <escher/buffer_text_view.h>
 #include <escher/button_row_controller.h>
+#include <escher/palette.h>
 #include <escher/tab_view_controller.h>
 
 #include "../../shared/graph_button_row_delegate.h"
@@ -54,7 +55,8 @@ class PieGraphController : public Escher::ViewController,
     void drawRect(KDContext* ctx, KDRect rect) const override {
       /* The pie graph takes some time to render. Draw a white background to
        * avoid weird screen after Off/On. */
-      ctx->fillRect(relativeChildFrame(&m_pieGraphView), KDColorWhite);
+      ctx->fillRect(relativeChildFrame(&m_pieGraphView),
+                    Escher::Palette::White);
     }
     int numberOfSubviews() const override { return 3; }
     void layoutSubviews(bool force) override;

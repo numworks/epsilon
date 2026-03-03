@@ -5,6 +5,7 @@
 #include <escher/i18n.h>
 #include <escher/invocation.h>
 #include <escher/message_text_view.h>
+#include <escher/palette.h>
 #include <escher/view_controller.h>
 
 namespace Escher {
@@ -34,7 +35,7 @@ class PopUpController : public ViewController {
                 I18n::Message okMessage, I18n::Message cancelMessage,
                 TextView* detailTextView);
     void drawRect(KDContext* ctx, KDRect rect) const override {
-      ctx->fillRect(bounds(), KDColorBlack);
+      ctx->fillRect(bounds(), Palette::Black);
     }
     void setSelectedButton(int selectedButton);
     int selectedButton();

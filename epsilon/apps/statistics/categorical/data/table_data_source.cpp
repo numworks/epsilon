@@ -57,7 +57,7 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     store()->getCategoryName(dataRow(row), txt, sizeof(txt));
     myCell->setText(txt);
     myCell->setTextColor(store()->isCategoryActive(dataRow(row))
-                             ? KDColorBlack
+                             ? Escher::Palette::Black
                              : Escher::Palette::GrayDark);
   } else if (type == k_typeOfInnerCells) {
     float p = store()->getValue(dataColumn(column), dataRow(row));

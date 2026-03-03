@@ -92,7 +92,7 @@ void StoreController::fillCellForLocation(HighlightCell* cell, int column,
         GlobalPreferences::SharedGlobalPreferences()->displayMode());
     myCell->setText(buffer);
     KDColor textColor = m_store->seriesIsActive(m_store->seriesAtColumn(column))
-                            ? KDColorBlack
+                            ? Palette::Black
                             : Palette::GrayDark;
     myCell->setTextColor(textColor);
   }

@@ -74,7 +74,7 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
       Metric::CellVerticalElementMargin;
 
   static KDColor BackgroundColor(bool highlighted) {
-    return highlighted ? Palette::Select : KDColorWhite;
+    return highlighted ? Palette::Select : Palette::White;
   }
 
   AbstractMenuCell();

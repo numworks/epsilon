@@ -31,7 +31,7 @@ bool ButtonCell::handleEvent(Ion::Events::Event event) {
 void ButtonCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
   KDColor backgroundColor =
-      highlight ? highlightedBackgroundColor() : KDColorWhite;
+      highlight ? highlightedBackgroundColor() : Palette::White;
   m_messageTextView.setBackgroundColor(backgroundColor);
   markWholeFrameAsDirty();
 }

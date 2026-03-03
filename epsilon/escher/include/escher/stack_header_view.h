@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/bordered.h>
+#include <escher/palette.h>
 #include <escher/view.h>
 
 namespace Escher {
@@ -10,9 +11,9 @@ class ViewController;
 class StackHeaderView : public View, public Bordered {
  public:
   StackHeaderView(const ViewController* controller = nullptr,
-                  KDColor textColor = KDColorBlack,
-                  KDColor backgroundColor = KDColorBlack,
-                  KDColor separatorColor = KDColorBlack);
+                  KDColor textColor = Palette::Black,
+                  KDColor backgroundColor = Palette::Black,
+                  KDColor separatorColor = Palette::Black);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  protected:

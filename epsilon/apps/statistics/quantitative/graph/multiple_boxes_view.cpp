@@ -1,6 +1,7 @@
 #include "multiple_boxes_view.h"
 
 #include <assert.h>
+#include <escher/palette.h>
 
 using namespace Shared;
 using namespace Escher;
@@ -96,7 +97,7 @@ void MultipleBoxesView::drawRect(KDContext* ctx, KDRect rect) const {
    * others, the background is filled here. */
   ctx->fillRect(KDRect(0, 0, bounds().width(),
                        bounds().height() - bannerHeight - k_axisViewHeight),
-                KDColorWhite);
+                Escher::Palette::White);
   MultipleDataView::drawRect(ctx, rect);
 }
 

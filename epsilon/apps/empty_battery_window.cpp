@@ -1,6 +1,7 @@
 #include "empty_battery_window.h"
 
 #include <apps/i18n.h>
+#include <escher/palette.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
@@ -9,7 +10,7 @@ extern "C" {
 EmptyBatteryWindow::EmptyBatteryWindow() : Window() {}
 
 void EmptyBatteryWindow::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), Escher::Palette::White);
   const char* warningMessage = I18n::translate(I18n::Message::LowBattery);
   ctx->alignAndDrawString(warningMessage, KDPointZero,
                           KDSize(Ion::Display::Width, Ion::Display::Height),

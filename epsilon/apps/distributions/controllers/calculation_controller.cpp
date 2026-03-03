@@ -75,7 +75,7 @@ CalculationController::CalculationController(
   m_selectableTableView.setMargins(k_tableMargins);
   m_selectableTableView.setVerticalCellOverlap(0);
   m_selectableTableView.hideScrollBars();
-  m_selectableTableView.setBackgroundColor(KDColorWhite);
+  m_selectableTableView.setBackgroundColor(Palette::White);
 
   for (int i = 0; i < k_numberOfCalculationCells; i++) {
     m_calculationCells[i].editableTextCell()->setParentResponder(

@@ -96,7 +96,7 @@ void ResultsBetweenWithinTableCell::fillRowTitleForLocation(
   headerCellType* myCell = static_cast<headerCellType*>(cell);
   myCell->setText(HeaderAtRow(innerRow));
   myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-  myCell->setTextColor(KDColorBlack);
+  myCell->setTextColor(Palette::Black);
 }
 
 void ResultsBetweenWithinTableCell::fillRowSymbolForLocation(

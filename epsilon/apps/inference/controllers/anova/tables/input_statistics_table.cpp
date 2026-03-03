@@ -71,7 +71,7 @@ void InputStatisticsTable::fillColumnTitleForLocation(
   OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(innerColumn);
   myCell->setText(groupTitle.data());
   myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-  myCell->setTextColor(KDColorBlack);
+  myCell->setTextColor(Palette::Black);
   if (innerColumn == innerNumberOfColumns() - 1 &&
       innerColumn < k_numberOfInnerColumns - 1) {
     /* The last header has its title grayed out, except if the column is the
@@ -85,7 +85,7 @@ void InputStatisticsTable::fillRowTitleForLocation(Escher::HighlightCell* cell,
   headerCellType* myCell = static_cast<headerCellType*>(cell);
   myCell->setText(HeaderAtRow(innerRow));
   myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-  myCell->setTextColor(KDColorBlack);
+  myCell->setTextColor(Palette::Black);
 }
 
 void InputStatisticsTable::fillRowSymbolForLocation(Escher::HighlightCell* cell,

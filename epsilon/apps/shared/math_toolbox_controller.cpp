@@ -110,7 +110,7 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
   }
   const ToolboxMessageTree* messageTree = messageTreeModelAtIndex(row);
   KDColor textColor =
-      isMessageTreeDisabled(messageTree) ? Palette::GrayDark : KDColorBlack;
+      isMessageTreeDisabled(messageTree) ? Palette::GrayDark : Palette::Black;
   if (typeAtRow(row) == k_leafCellType) {
     assert(static_cast<void*>(m_nodeCells) > static_cast<void*>(cell) ||
            static_cast<void*>(cell) >=

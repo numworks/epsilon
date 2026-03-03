@@ -1,6 +1,7 @@
 #include "plot_view.h"
 
 #include <escher/layout_view.h>
+#include <escher/palette.h>
 #include <float.h>
 
 #include <algorithm>
@@ -238,7 +239,7 @@ void AbstractPlotView::drawRing(KDContext* ctx, KDRect rect, Dots::Size size,
                                 Poincare::Coordinate2D<float> xy, KDColor color,
                                 bool transparent) const {
   if (!transparent) {
-    drawDotOrRing(ctx, rect, size, xy, KDColorWhite, false);
+    drawDotOrRing(ctx, rect, size, xy, Escher::Palette::White, false);
   }
   drawDotOrRing(ctx, rect, size, xy, color, true);
 }
@@ -337,7 +338,8 @@ void AbstractPlotView::drawArc(KDContext* ctx, KDRect rect,
     KDPoint from = KDPoint(previousX, previousY);
     KDPoint to = KDPoint(x, y);
     if (rect.contains(from) || rect.contains(to)) {
-      ctx->drawAntialiasedLine(previousX, previousY, x, y, color, KDColorWhite);
+      ctx->drawAntialiasedLine(previousX, previousY, x, y, color,
+                               Escher::Palette::White);
     }
     // straightJoinDots(ctx, rect, x, y, previousX, previousY, color, thick);
   } while (!isLastSegment);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <escher/palette.h>
 #include <poincare/coordinate_2D.h>
 
 #include <initializer_list>
@@ -52,8 +53,8 @@ class WithCurves {
    * # 2 # 3        . . . X
    * 1 # 0 #        X . . .
    * # 3 # 2        . X . .
-   * FIXME For now, KDColorWhite is used as a shorthand for transparency, since
-   * it is the background color in PlotView.
+   * FIXME For now, Palette::White is used as a shorthand for transparency,
+   * since it is the background color in PlotView.
    */
   class Pattern {
    public:
@@ -158,7 +159,7 @@ class WithHistogram {
                      HighlightTest highlightTest, double start,
                      double barsWidth, bool displayBorder, bool fillBars,
                      KDColor color, KDColor highlightColor,
-                     KDColor borderColor = KDColorWhite);
+                     KDColor borderColor = Escher::Palette::White);
     void draw(const AbstractPlotView* plotView, KDContext* ctx,
               KDRect rect) const;
 

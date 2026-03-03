@@ -7,7 +7,8 @@ const I18n::Message AppsContainer::k_promptMessages[] = {
     I18n::Message::BetaVersionMessage5, I18n::Message::BetaVersionMessage6};
 
 const KDColor AppsContainer::k_promptColors[] = {
-    KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack,
-    KDColorWhite, KDColorBlack, KDColorBlack, Escher::Palette::YellowDark};
+    Escher::Palette::Black, Escher::Palette::Black,     Escher::Palette::Black,
+    Escher::Palette::Black, Escher::Palette::White,     Escher::Palette::Black,
+    Escher::Palette::Black, Escher::Palette::YellowDark};
 
 const int AppsContainer::k_promptNumberOfMessages = 8;

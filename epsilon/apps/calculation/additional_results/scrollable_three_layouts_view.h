@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/menu_cell.h>
+#include <escher/palette.h>
 #include <escher/scrollable_multiple_layouts_view.h>
 #include <poincare/layout.h>
 
@@ -16,7 +17,7 @@ class ScrollableThreeLayoutsView
       : Escher::AbstractScrollableMultipleLayoutsView(parentResponder,
                                                       &m_contentCell) {
     resetMargins();  // margins are already added by MenuCell
-    setBackgroundColor(KDColorWhite);
+    setBackgroundColor(Escher::Palette::White);
   }
   void subviewFrames(KDRect* leftFrame, KDRect* centerFrame,
                      KDRect* approximateSignFrame, KDRect* rightFrame) {
@@ -54,7 +55,8 @@ class ScrollableThreeLayoutsView
     using Escher::AbstractScrollableMultipleLayoutsView::ContentCell::
         ContentCell;
     KDColor backgroundColor() const override {
-      return m_highlightWholeCell ? defaultBackgroundColor() : KDColorWhite;
+      return m_highlightWholeCell ? defaultBackgroundColor()
+                                  : Escher::Palette::White;
     }
     void setEven(bool even) override { return; }
     Escher::LayoutView* leftLayoutView() const override {

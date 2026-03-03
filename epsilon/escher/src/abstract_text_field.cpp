@@ -51,7 +51,7 @@ void AbstractTextField::ContentView::drawRect(KDContext* ctx,
                                               KDRect rect) const {
   KDColor backgroundColor = m_format.style.backgroundColor;
   if (m_isEditing) {
-    backgroundColor = KDColorWhite;
+    backgroundColor = Palette::White;
   }
   ctx->fillRect(bounds(), backgroundColor);
   KDGlyph::Style glyphStyle{.glyphColor = m_format.style.glyphColor,

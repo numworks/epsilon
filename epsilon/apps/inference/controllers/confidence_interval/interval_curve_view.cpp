@@ -124,8 +124,8 @@ void IntervalPlotPolicy::drawPlot(const AbstractPlotView* plotView,
         buffer, k_ThresholdBufferSize, "%*.*ef%%", threshold * 100.0f,
         Preferences::PrintFloatMode::Decimal,
         PlotPolicy::AbstractLabeledAxis::k_numberSignificantDigits);
-    KDColor textColor =
-        isMainInterval ? KDColorBlack : Escher::Palette::GrayDarkMiddle;
+    KDColor textColor = isMainInterval ? Escher::Palette::Black
+                                       : Escher::Palette::GrayDarkMiddle;
     plotView->drawLabel(
         ctx, rect, buffer, Coordinate2D<float>(estimate, verticalPosition),
         AbstractPlotView::RelativePosition::There,

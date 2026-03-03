@@ -37,7 +37,7 @@ KDSize CalculationCell::minimalSizeForOptimalDisplay() const {
 }
 
 void CalculationCell::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), Palette::White);
   if (m_isEditable) {
     KDSize textSize = m_text.minimalSizeForOptimalDisplay();
     ctx->strokeRect(KDRect(2 * k_margin + textSize.width(), 0,

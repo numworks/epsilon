@@ -1,5 +1,6 @@
 #pragma once
 
+#include <escher/palette.h>
 #include <escher/scroll_view.h>
 
 #include "../data/store.h"
@@ -14,7 +15,7 @@ class BarGraphView : public Escher::ScrollView,
  public:
   BarGraphView(Store* store)
       : ScrollView(&m_contentView, this), m_contentView(store) {
-    setBackgroundColor(KDColorWhite);
+    setBackgroundColor(Escher::Palette::White);
     m_decorator.setVisibility(true);
   }
 

@@ -32,18 +32,18 @@ void StackView::setupHeadersBorderOverlaping(
 
 void StackView::pushStack(const ViewController* vc) {
   KDColor textColor = Palette::GrayDarkMiddle;
-  KDColor backgroundColor = KDColorWhite;
+  KDColor backgroundColor = Palette::White;
   KDColor separatorColor = Palette::GrayBright;
   int numberOfStacks = m_stackHeaderViews->size();
   if (m_style == Style::GrayGradation) {
-    textColor = KDColorWhite;
+    textColor = Palette::White;
     constexpr KDColor k_grayGradationColors[] = {
         Palette::PurpleBright, Palette::GrayDark, Palette::GrayDarkMiddle};
     backgroundColor = k_grayGradationColors[numberOfStacks];
     separatorColor = k_grayGradationColors[numberOfStacks];
   } else if (m_style == Style::PurpleWhite) {
     if (numberOfStacks == 0) {
-      textColor = KDColorWhite;
+      textColor = Palette::White;
       backgroundColor = Palette::PopUpTitleBackground;
       separatorColor = Palette::PurpleDark;
     }

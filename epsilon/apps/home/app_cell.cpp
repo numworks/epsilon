@@ -17,7 +17,7 @@ void AppCell::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(
       KDRect(0, bounds().height() - nameSize.height() - 2 * k_nameHeightMargin,
              bounds().width(), nameSize.height() + 2 * k_nameHeightMargin),
-      KDColorWhite);
+      Palette::White);
 }
 
 int AppCell::numberOfSubviews() const { return isVisible() ? 2 : 0; }
@@ -66,8 +66,8 @@ void AppCell::setVisible(bool visible) {
 
 void AppCell::reloadCell() {
   TextView* t = const_cast<TextView*>(textView());
-  t->setTextColor(isHighlighted() ? KDColorWhite : KDColorBlack);
-  t->setBackgroundColor(isHighlighted() ? Palette::YellowDark : KDColorWhite);
+  t->setTextColor(isHighlighted() ? Palette::White : Palette::Black);
+  t->setBackgroundColor(isHighlighted() ? Palette::YellowDark : Palette::White);
 }
 
 const Escher::TextView* AppCell::textView() const {

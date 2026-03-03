@@ -11,7 +11,7 @@ using namespace Escher;
 namespace Code {
 
 SandboxController::SandboxController(Responder* parentResponder)
-    : ViewController(parentResponder), m_solidColorView(KDColorWhite) {}
+    : ViewController(parentResponder), m_solidColorView(Palette::White) {}
 
 StackViewController* SandboxController::stackViewController() {
   return static_cast<StackViewController*>(parentResponder());

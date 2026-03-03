@@ -32,9 +32,9 @@ constexpr KDColor KeywordColor = Palette::PYTHON_Red;
 constexpr KDColor OperatorColor = Palette::PYTHON_RaspberryRed;
 constexpr KDColor StringColor = Palette::PYTHON_DarkBlue;
 constexpr KDColor AutocompleteColor = Palette::PYTHON_GrayMiddle;
-constexpr KDColor BackgroundColor = KDColorWhite;
+constexpr KDColor BackgroundColor = Palette::White;
 constexpr KDColor HighlightColor = Palette::Select;
-constexpr KDColor DefaultColor = KDColorBlack;
+constexpr KDColor DefaultColor = Palette::Black;
 
 static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind == MP_TOKEN_STRING) {

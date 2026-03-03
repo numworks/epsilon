@@ -12,8 +12,9 @@ constexpr I18n::Message sUSBConnectedMessages[] = {
     I18n::Message::ConnectedMessage4, I18n::Message::ConnectedMessage5};
 
 constexpr KDColor sUSBConnectedColors[] = {
-    KDColorBlack, KDColorBlack, KDColorBlack, Escher::Palette::YellowDark,
-    KDColorWhite, KDColorBlack, KDColorBlack, KDColorBlack};
+    Escher::Palette::Black,      Escher::Palette::Black, Escher::Palette::Black,
+    Escher::Palette::YellowDark, Escher::Palette::White, Escher::Palette::Black,
+    Escher::Palette::Black,      Escher::Palette::Black};
 
 USBConnectedController::USBConnectedController()
     : ViewController(nullptr),

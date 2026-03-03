@@ -35,7 +35,7 @@ class HighlightCell : public View {
 
  protected:
   KDColor defaultBackgroundColor() const {
-    return isHighlighted() ? Palette::Select : KDColorWhite;
+    return isHighlighted() ? Palette::Select : Palette::White;
   }
 
  private:

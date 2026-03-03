@@ -141,7 +141,7 @@ void ButtonRowController::ContentView::drawRect(KDContext* ctx,
   }
   KDCoordinate rowHeight = buttonRowHeight();
   if (m_style == Style::PlainWhite) {
-    drawRowFrame(ctx, rowHeight, KDColorWhite, Palette::GrayWhite);
+    drawRowFrame(ctx, rowHeight, Palette::White, Palette::GrayWhite);
     return;
   }
   assert(m_style == Style::EmbossedGray);

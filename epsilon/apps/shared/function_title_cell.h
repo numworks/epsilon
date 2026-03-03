@@ -2,13 +2,16 @@
 
 #include <escher/even_odd_cell.h>
 #include <escher/metric.h>
+#include <escher/palette.h>
 
 namespace Shared {
 
 class FunctionTitleCell : public Escher::EvenOddCell {
  public:
   FunctionTitleCell()
-      : EvenOddCell(), m_baseline(-1), m_functionColor(KDColorBlack) {}
+      : EvenOddCell(),
+        m_baseline(-1),
+        m_functionColor(Escher::Palette::Black) {}
   virtual void setColor(KDColor color);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 

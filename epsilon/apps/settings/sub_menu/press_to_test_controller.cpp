@@ -46,7 +46,8 @@ PressToTestController::PressToTestController(Responder* parentResponder)
     m_switchCells[i].accessory()->setDisplayImage(false);
     m_switchCells[i].accessory()->imageView()->setImage(
         ImageStore::PressToTestSuccess);
-    m_switchCells[i].accessory()->imageView()->setBackgroundColor(KDColorWhite);
+    m_switchCells[i].accessory()->imageView()->setBackgroundColor(
+        Palette::White);
   }
   resetController();
 }
@@ -175,7 +176,7 @@ void PressToTestController::fillCellForRow(HighlightCell* cell, int row) {
   myCell->label()->setTextColor(ExamModeManager::ExamMode().isActive() &&
                                         featureIsDisabled
                                     ? Palette::GrayDark
-                                    : KDColorBlack);
+                                    : Palette::Black);
   myCell->subLabel()->setMessage(SubLabelAtIndex(row));
   // Switch is toggled if the feature must stay activated.
   myCell->accessory()->switchView()->setState(!featureIsDisabled);

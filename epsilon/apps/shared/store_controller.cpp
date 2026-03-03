@@ -107,7 +107,7 @@ void StoreController::fillCellForLocation(HighlightCell* cell, int column,
     KDColor textColor =
         (m_store->seriesIsActive(m_store->seriesAtColumn(column)) ||
          m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(column)) == 0)
-            ? KDColorBlack
+            ? Palette::Black
             : Palette::GrayDark;
     myCell->editableTextCell()->textField()->setTextColor(textColor);
   }

@@ -54,7 +54,7 @@ class ConsoleLineCell : public Escher::HighlightCell, public Escher::Responder {
     ConsoleLineView m_consoleLineView;
   };
   static KDColor textColor(ConsoleLine* line) {
-    return line->isFromCurrentSession() ? KDColorBlack
+    return line->isFromCurrentSession() ? Escher::Palette::Black
                                         : Escher::Palette::GrayDark;
   }
   Escher::MessageTextView m_promptView;

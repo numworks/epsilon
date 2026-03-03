@@ -1,5 +1,7 @@
 #include "bar_graph_view.h"
 
+#include <escher/palette.h>
+
 namespace Statistics::Categorical {
 
 void BarGraphView::updateSelectedBar(int category, int group) {
@@ -33,12 +35,12 @@ void BarGraphView::scrollToSelectedBar() {
 
 void BarGraphView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
   // Draw background
-  ctx->fillRect(rect, KDColorWhite);
+  ctx->fillRect(rect, Escher::Palette::White);
   // Draw axis
   ctx->drawLine(KDPoint(0, bounds().height() - k_legendHeight - k_axisHeight),
                 KDPoint(bounds().width(),
                         bounds().height() - k_legendHeight - k_axisHeight),
-                KDColorBlack);
+                Escher::Palette::Black);
   // Draw categories
   float maxBarValue = m_store->getMaxActiveTableValue();
   for (int category = 0; category < m_store->currentDimension().row;

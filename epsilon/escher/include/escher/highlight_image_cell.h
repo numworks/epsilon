@@ -18,7 +18,7 @@ class HighlightImageCell : public HighlightCell {
   void setImage(const Image* image) { m_contentView.setImage(image); }
 
  private:
-  constexpr static KDColor k_unselectedBackgroundColor = KDColorWhite;
+  constexpr static KDColor k_unselectedBackgroundColor = Palette::White;
   void layoutSubviews(bool force) override;
   TransparentImageView m_contentView;
 };

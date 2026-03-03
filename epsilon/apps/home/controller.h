@@ -74,7 +74,7 @@ class Controller : public Escher::ViewController,
                 Escher::SelectableTableViewDataSource* selectionDataSource);
     Escher::SelectableTableView* selectableTableView();
     void drawRect(KDContext* ctx, KDRect rect) const override {
-      ctx->fillRect(bounds(), KDColorWhite);
+      ctx->fillRect(bounds(), Escher::Palette::White);
     }
     void reload() { markWholeFrameAsDirty(); }
     void reloadBottomRow(SimpleTableViewDataSource* dataSource,

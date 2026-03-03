@@ -9,6 +9,9 @@ namespace Escher {
 
 class Palette {
  public:
+  constexpr static KDColor White = KDColor::RGB24(0xffffff);
+  constexpr static KDColor Black = KDColor::RGB24(0x000000);
+
   constexpr static KDColor YellowDark = KDColor::RGB24(0xffb734);
   constexpr static KDColor YellowLightBattery = KDColor::RGB24(0xffcc7b);
   constexpr static KDColor YellowLight = KDColor::RGB24(0xffebc7);

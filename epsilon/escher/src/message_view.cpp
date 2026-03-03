@@ -17,7 +17,7 @@ MessageView::MessageView(const I18n::Message* messages, const KDColor* colors,
 }
 
 void MessageView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), Palette::White);
 }
 
 View* MessageView::subviewAtIndex(int index) {

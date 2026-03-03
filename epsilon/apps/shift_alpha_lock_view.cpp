@@ -10,7 +10,7 @@ ShiftAlphaLockView::ShiftAlphaLockView()
     : View(),
       m_shiftAlphaView(
           I18n::Message::Default,
-          {.style = {.glyphColor = KDColorWhite,
+          {.style = {.glyphColor = Palette::White,
                      .backgroundColor = TitleBarView::k_backgroundColor,
                      .font = KDFont::Size::Small},
            .horizontalAlignment = KDGlyph::k_alignRight}),

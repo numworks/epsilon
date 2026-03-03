@@ -47,8 +47,8 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   constexpr size_t bufferSize = k_textMaxLength + 1;
   char name[bufferSize] = {};
   size_t nameLength = sequence->name(name, bufferSize);
-  KDColor fadedColor =
-      KDColor::Blend(sequence->color(), KDColorWhite, k_curveFadeRatio);
+  KDColor fadedColor = KDColor::Blend(sequence->color(), Escher::Palette::White,
+                                      k_curveFadeRatio);
   const SequenceContext& context =
       reinterpret_cast<const SequenceContext&>(App::app()->localContext());
 

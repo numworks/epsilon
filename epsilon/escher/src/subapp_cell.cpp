@@ -7,14 +7,14 @@
 namespace Escher {
 
 SubappCell::SubappCell() {
-  m_icon.setBackgroundColor(KDColorWhite);
+  m_icon.setBackgroundColor(Palette::White);
   m_title.setFont(KDFont::Size::Large);
   m_subTitle.setFont(KDFont::Size::Small);
   m_subTitle.setTextColor(Palette::GrayDark);
 }
 
 void SubappCell::drawRect(KDContext* ctx, KDRect rect) const {
-  KDColor backColor = isHighlighted() ? Palette::Select : KDColorWhite;
+  KDColor backColor = isHighlighted() ? Palette::Select : Palette::White;
   drawInnerRect(ctx, bounds(), backColor);
   drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
 }

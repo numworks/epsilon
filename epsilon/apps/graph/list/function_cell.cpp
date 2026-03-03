@@ -32,9 +32,9 @@ AbstractFunctionCell::AbstractFunctionCell()
                         {.style = {.glyphColor = Palette::GrayDark,
                                    .font = KDFont::Size::Small},
                          .verticalAlignment = KDGlyph::k_alignTop}),
-      m_functionColor(KDColorBlack),
-      m_expressionBackground(KDColorWhite),
-      m_ellipsisBackground(KDColorWhite),
+      m_functionColor(Palette::Black),
+      m_expressionBackground(Palette::White),
+      m_ellipsisBackground(Palette::White),
       m_hideMessage(false) {}
 
 void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
@@ -120,7 +120,7 @@ KDCoordinate AbstractFunctionCell::messageTextHeight() const {
 }
 
 void FunctionCell::updateSubviewsBackgroundAfterChangingState() {
-  KDColor defaultColor = m_even ? KDColorWhite : Palette::WallScreen;
+  KDColor defaultColor = m_even ? Palette::White : Palette::WallScreen;
   // If not highlighted, selectedColor is defaultColor
   KDColor selectedColor = backgroundColor();
   m_ellipsisBackground = m_parameterSelected ? selectedColor : defaultColor;

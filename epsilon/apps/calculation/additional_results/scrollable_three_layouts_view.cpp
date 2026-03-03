@@ -8,7 +8,7 @@ namespace Calculation {
 void ScrollableThreeLayoutsView::ContentCell::reloadTextColor() {
   KDColor color = displayCenter() && !rightIsStrictlyEqual()
                       ? Palette::GrayVeryDark
-                      : KDColorBlack;
+                      : Palette::Black;
   rightLayoutView()->setTextColor(color);
   approximateSign()->setTextColor(color);
 }

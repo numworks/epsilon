@@ -1,5 +1,6 @@
 #pragma once
 
+#include <escher/palette.h>
 #include <omg/enums.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/layout.h>
@@ -24,7 +25,7 @@ class AbstractPlotView : public Escher::View {
     After,
   };
 
-  constexpr static KDColor k_backgroundColor = KDColorWhite;
+  constexpr static KDColor k_backgroundColor = Escher::Palette::White;
   constexpr static KDCoordinate k_labelMargin = 4;
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
   constexpr static KDCoordinate k_defaultDashThickness = 1;
@@ -133,7 +134,7 @@ class AbstractPlotView : public Escher::View {
     drawArc(ctx, rect, center, radius, 0.f, 2 * M_PI, color);
   }
   void drawTick(KDContext* ctx, KDRect rect, OMG::Axis perpendicular,
-                float position, KDColor color = KDColorBlack) const;
+                float position, KDColor color = Escher::Palette::Black) const;
   void drawArrowhead(KDContext* ctx, KDRect rect,
                      Poincare::Coordinate2D<float> xy,
                      Poincare::Coordinate2D<float> dxy, float pixelArrowWidth,

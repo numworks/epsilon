@@ -18,7 +18,7 @@ EquationListView::EquationListView(ListController* listController)
   m_listView.setVerticalCellOverlap(0);
   listController->setScrollViewDataSourceDelegate(this);
   m_scrollBraceView.setMargins(k_margins);
-  m_scrollBraceView.setBackgroundColor(KDColorWhite);
+  m_scrollBraceView.setBackgroundColor(Palette::White);
 }
 
 void EquationListView::setBraceStyle(BraceStyle style) {
@@ -112,29 +112,29 @@ const uint8_t bottomBrace[braceExtremumHeight][braceExtremumWidth] = {
 };
 
 void EquationListView::BraceView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
+  ctx->fillRect(bounds(), Palette::White);
   KDCoordinate height = bounds().height();
   KDCoordinate margin = 3;
   KDColor braceWorkingBuffer[60];
   ctx->blendRectWithMask(
-      KDRect(margin, 0, braceExtremumWidth, braceExtremumHeight), KDColorBlack,
-      (const uint8_t*)topBrace, (KDColor*)(braceWorkingBuffer));
+      KDRect(margin, 0, braceExtremumWidth, braceExtremumHeight),
+      Palette::Black, (const uint8_t*)topBrace, (KDColor*)(braceWorkingBuffer));
   ctx->blendRectWithMask(KDRect(0, height / 2 - braceCenterHeight / 2,
                                 braceCenterWidth, braceCenterHeight),
-                         KDColorBlack, (const uint8_t*)middleBrace,
+                         Palette::Black, (const uint8_t*)middleBrace,
                          (KDColor*)(braceWorkingBuffer));
   ctx->blendRectWithMask(KDRect(margin, height - braceExtremumHeight,
                                 braceExtremumWidth, braceExtremumHeight),
-                         KDColorBlack, (const uint8_t*)bottomBrace,
+                         Palette::Black, (const uint8_t*)bottomBrace,
                          (KDColor*)(braceWorkingBuffer));
   ctx->fillRect(
       KDRect(margin, braceExtremumHeight, 1,
              height / 2 - braceCenterHeight / 2 - braceExtremumHeight),
-      KDColorBlack);
+      Palette::Black);
   ctx->fillRect(
       KDRect(margin, height / 2 + braceCenterHeight / 2, 1,
              height / 2 - braceExtremumHeight / 2 - braceExtremumHeight),
-      KDColorBlack);
+      Palette::Black);
 }
 
 KDSize EquationListView::BraceView::minimalSizeForOptimalDisplay() const {

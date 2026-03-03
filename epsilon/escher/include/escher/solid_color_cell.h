@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/highlight_cell.h>
+#include <escher/palette.h>
 #include <kandinsky/color.h>
 
 namespace Escher {
@@ -9,7 +10,7 @@ namespace Escher {
 
 class SolidColorCell : public HighlightCell {
  public:
-  SolidColorCell(KDColor color = KDColorWhite)
+  SolidColorCell(KDColor color = Palette::White)
       : HighlightCell(), m_color(color) {}
   void drawRect(KDContext* ctx, KDRect rect) const override {
     ctx->fillRect(rect, m_color);

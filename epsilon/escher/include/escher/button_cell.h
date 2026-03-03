@@ -17,7 +17,7 @@ class ButtonCell : public HighlightCell, public Responder {
   ButtonCell(Responder* parentResponder, I18n::Message textBody,
              Escher::Invocation invocation, Style style = Style::None,
              KDFont::Size fontSize = KDFont::Size::Large,
-             KDColor textColor = KDColorBlack);
+             KDColor textColor = Palette::Black);
 
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
@@ -64,7 +64,7 @@ class SimpleButtonCell : public ButtonCell {
   SimpleButtonCell(Responder* parentResponder, I18n::Message textBody,
                    Invocation invocation,
                    KDFont::Size font = KDFont::Size::Small,
-                   KDColor textColor = KDColorBlack)
+                   KDColor textColor = Palette::Black)
       : ButtonCell(parentResponder, textBody, invocation, Style::None, font,
                    textColor) {}
 };

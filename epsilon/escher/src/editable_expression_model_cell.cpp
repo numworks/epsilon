@@ -24,7 +24,7 @@ void EditableExpressionModelCell::setMargins(KDHorizontalMargins margins) {
 
 void EditableExpressionModelCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Color the margins
-  KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = isHighlighted() ? Palette::Select : Palette::White;
   ctx->fillRect(KDRect(0, 0, m_margins.left(), bounds().height()),
                 backgroundColor);
   ctx->fillRect(KDRect(bounds().width() - m_margins.right(), 0,

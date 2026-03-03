@@ -47,7 +47,8 @@ class PieBannerView : public Escher::View {
 
  private:
   void drawRect(KDContext* ctx, KDRect rect) const override {
-    ctx->fillRect(bounds(), m_isSelected ? k_backgroundColor : KDColorWhite);
+    ctx->fillRect(bounds(),
+                  m_isSelected ? k_backgroundColor : Escher::Palette::White);
   }
 
   int numberOfSubviews() const override {

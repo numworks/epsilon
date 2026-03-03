@@ -1,4 +1,5 @@
 #include <escher/key_view.h>
+#include <escher/palette.h>
 
 namespace Escher {
 
@@ -77,7 +78,7 @@ void KeyView::drawRect(KDContext* ctx, KDRect rect) const {
   KDRect frame((width - k_keySize) / 2, (height - k_keySize) / 2, k_keySize,
                k_keySize);
   KDColor keyWorkingBuffer[KeyView::k_keySize * KeyView::k_keySize];
-  ctx->blendRectWithMask(frame, KDColorBlack, mask(), keyWorkingBuffer);
+  ctx->blendRectWithMask(frame, Palette::Black, mask(), keyWorkingBuffer);
 }
 
 KDSize KeyView::minimalSizeForOptimalDisplay() const {

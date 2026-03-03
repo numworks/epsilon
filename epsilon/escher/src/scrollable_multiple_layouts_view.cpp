@@ -29,7 +29,7 @@ AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
 
 KDColor AbstractScrollableMultipleLayoutsView::ContentCell::backgroundColor()
     const {
-  KDColor background = m_even ? KDColorWhite : Palette::WallScreen;
+  KDColor background = m_even ? Palette::White : Palette::WallScreen;
   return background;
 }
 
@@ -65,7 +65,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::reloadTextColor() {
   m_rightLayoutView.setTextColor(displayCenter() ? Palette::GrayVeryDark
-                                                 : KDColorBlack);
+                                                 : Palette::Black);
 }
 
 KDSize AbstractScrollableMultipleLayoutsView::ContentCell::

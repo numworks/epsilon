@@ -28,7 +28,7 @@ namespace Code {
 
 constexpr KDColor CommentColor = Palette::PYTHON_KhakiGray;
 constexpr KDColor NumberColor = Palette::PYTHON_DarkCyan;
-constexpr KDColor KeywordColor = Palette::Red;
+constexpr KDColor KeywordColor = Palette::PYTHON_Red;
 constexpr KDColor OperatorColor = Palette::PYTHON_RaspberryRed;
 constexpr KDColor StringColor = Palette::PYTHON_DarkBlue;
 constexpr KDColor AutocompleteColor = Palette::PYTHON_GrayMiddle;

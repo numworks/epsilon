@@ -50,6 +50,8 @@ class Palette {
   constexpr static KDColor Mint = KDColor::RGB24(0x00c6b1);
   constexpr static KDColor MintLight = KDColor::RGB24(0xb1fef7);
 
+  // Python red is the same as Red
+  constexpr static KDColor PYTHON_Red = KDColor::RGB24(0xff000c);
   constexpr static KDColor PYTHON_KhakiGray = KDColor::RGB24(0x999988);
   constexpr static KDColor PYTHON_DarkCyan = KDColor::RGB24(0x009999);
   constexpr static KDColor PYTHON_RaspberryRed = KDColor::RGB24(0xd73a49);

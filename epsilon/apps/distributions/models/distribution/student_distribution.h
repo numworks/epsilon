@@ -18,6 +18,8 @@ class StudentDistribution : public OneParameterDistribution {
   bool authorizedParameterAtIndex(double x, int index) const override;
 
  private:
+  // Some values evaluate to NaN starting from 1e6, use safe 1e5 limit.
+  constexpr static double k_maxParameter = 1e5;
   I18n::Message messageForParameterAtIndex(int index) const override {
     return I18n::Message::DegreesOfFreedomDefinition;
   }

@@ -91,6 +91,31 @@ void projects_and_reduces_to(
       simplificationParameters);
 }
 
+void projects_and_reduces_for_analysis_to(
+    const char* input, const char* output,
+    const SimplificationParameters& simplificationParameters) {
+  process_tree_and_compare(
+      input, output,
+      [](Tree* tree, const SimplificationParameters& simplificationParameters) {
+        simplify(tree, simplificationParameters, false);
+        AdvancedReduction::DeepExpandAlgebraic(tree);
+        if (simplificationParameters.reductionPolicy.target !=
+            ReductionTarget::User) {
+          // Beautify anyway to compare input and outputs
+          SimplificationParameters parametersForBeautification =
+              simplificationParameters;
+          parametersForBeautification.reductionPolicy.target =
+              ReductionTarget::User;
+          Beautification::DeepBeautify(
+              tree, ToBeautificationParameters(parametersForBeautification));
+        } else {
+          Beautification::DeepBeautify(
+              tree, ToBeautificationParameters(simplificationParameters));
+        }
+      },
+      simplificationParameters);
+}
+
 void simplifies_to_no_beautif(
     const char* input, const char* output,
     const SimplificationParameters& simplificationParameters) {

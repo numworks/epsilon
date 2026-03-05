@@ -439,12 +439,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("atan(tan(2/3))", "2/3");
   simplifies_to("tan(atan(2/3))", "2/3");
   // If target != User, sin/cos is not reduced to tan(x)
-  projects_and_reduces_to(
-      "atan(sin(2/3)/cos(2/3))", "2/3",
-      SimplificationParameters{
-          .user = {.complexFormat = Poincare::ComplexFormat::Real,
-                   .angleUnit = Poincare::AngleUnit::Radian},
-          .reductionPolicy = {.target = ReductionTarget::SystemForAnalysis}});
+  projects_and_reduces_for_analysis_to("atan(sin(2/3)/cos(2/3))", "2/3");
   simplifies_to("tan(atan(5/2))", "5/2");
   simplifies_to("atan(tan(5/2))", "5/2-π");
   simplifies_to("atan(tan(-π/7))", "-π/7");
@@ -668,15 +663,11 @@ QUIZ_CASE(pcj_simplification_trigonometry_advanced) {
   simplifies_to("arccot(cot(π/6))", "π/6");
   simplifies_to("arccot(3)", "π/2-arctan(3)");
 
-  SimplificationParameters parametersForAnalysis = SimplificationParameters{
-      .user = {.angleUnit = Poincare::AngleUnit::Radian},
-      .reductionPolicy = {.target = ReductionTarget::SystemForAnalysis}};
-
-  projects_and_reduces_to("arccot(3)", "π/2-arctan(3)", parametersForAnalysis);
-  projects_and_reduces_to("arccot(3)", "π/2-arctan(3)", parametersForAnalysis);
+  projects_and_reduces_for_analysis_to("arccot(3)", "π/2-arctan(3)");
+  projects_and_reduces_for_analysis_to("arccot(3)", "π/2-arctan(3)");
   simplifies_to("arccot(x)", "π/2-arctan(x)");
-  projects_and_reduces_to("arccot(x)", "π/2-arctan(x)", parametersForAnalysis);
-  projects_and_reduces_to("arccot(x)", "π/2-arctan(x)", parametersForAnalysis);
+  projects_and_reduces_for_analysis_to("arccot(x)", "π/2-arctan(x)");
+  projects_and_reduces_for_analysis_to("arccot(x)", "π/2-arctan(x)");
 
   // cot(acot)
   simplifies_to("cot(arccot(3))", "3");

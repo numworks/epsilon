@@ -209,7 +209,7 @@ Internal::Tree* Solver<T>::FunctionDifferenceForIntersection(
     const Internal::Tree* f, const Internal::Tree* g, bool areAlongSameAxis) {
   /* TODO: simplify if we decide that functions should be simplified. Either
    * pass SimplificationParameters(complexFormat, angleUnit,
-   * ReductionTarget::SystemForAnalysis, UnitFormat::Metric, m_context) or
+   * ReductionTarget::SystemForApproximation, UnitFormat::Metric, m_context) or
    * ensure expression is projected. */
   if (areAlongSameAxis) {
     return PatternMatching::Create(KAdd(KA, KMult(-1_e, KB)),

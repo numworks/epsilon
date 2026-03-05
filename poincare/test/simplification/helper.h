@@ -32,6 +32,11 @@ void projects_and_reduces_to(
     const char* input, const char* output,
     const Poincare::SimplificationParameters& simplificationParameters =
         k_realSimplification);
+void projects_and_reduces_for_analysis_to(
+    const char* input, const char* output,
+    const Poincare::SimplificationParameters& simplificationParameters =
+        k_realSimplification);
+
 void simplifies_to_no_beautif(
     const char* input, const char* output,
     const Poincare::SimplificationParameters& simplificationParameters =

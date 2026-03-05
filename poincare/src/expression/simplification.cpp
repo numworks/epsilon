@@ -199,9 +199,6 @@ bool ReduceSystem(Tree* e, const ReductionPolicy& reductionPolicy) {
   if (reductionPolicy.advanced) {
     changed = AdvancedReduction::Reduce(e, reductionPolicy.target) || changed;
   }
-  if (reductionPolicy.target == ReductionTarget::SystemForAnalysis) {
-    changed = AdvancedReduction::DeepExpandAlgebraic(e) || changed;
-  }
   changed = ProcessSpecialUndefinedPatterns(e) || changed;
   return Dependency::DeepRemoveUselessDependencies(e) || changed;
 }

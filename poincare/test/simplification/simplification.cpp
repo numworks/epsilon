@@ -662,27 +662,24 @@ QUIZ_CASE(pcj_simplification_undef) {
 }
 
 QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
-  SimplificationParameters parametersForApproximation = {
+  SimplificationParameters parameters = {
       .user = {.complexFormat = ComplexFormat::Real},
       .reductionPolicy = {.target = ReductionTarget::SystemForApproximation}};
-  SimplificationParameters parametersForAnalysis = {
-      .user = {.complexFormat = ComplexFormat::Real},
-      .reductionPolicy = {.target = ReductionTarget::SystemForAnalysis}};
-  projects_and_reduces_to("(2+x)^2", "(x+2)^2", parametersForApproximation);
-  projects_and_reduces_to("(2+x)^2", "x^2+4×x+4", parametersForAnalysis);
-  projects_and_reduces_to("(1+x)^3", "(x+1)^3", parametersForApproximation);
-  projects_and_reduces_to("1+3×x+3×x^2+x^3-(1+x)^3", "0",
-                          parametersForApproximation);
-  projects_and_reduces_to("(1+x)^3", "x^3+3×x^2+3×x+1", parametersForAnalysis);
+  projects_and_reduces_to("(2+x)^2", "(x+2)^2", parameters);
+  projects_and_reduces_for_analysis_to("(2+x)^2", "x^2+4×x+4", parameters);
+  projects_and_reduces_to("(1+x)^3", "(x+1)^3", parameters);
+  projects_and_reduces_to("1+3×x+3×x^2+x^3-(1+x)^3", "0", parameters);
+  projects_and_reduces_for_analysis_to("(1+x)^3", "x^3+3×x^2+3×x+1",
+                                       parameters);
   projects_and_reduces_to("ln(49000*x)",
                           "dep(ln(49000×x),{nonNull(x),realPos(49000×x)})",
-                          parametersForApproximation);
-  projects_and_reduces_to("ln(49000*x)",
-                          "dep(ln(49000×x),{nonNull(x),realPos(49000×x)})",
-                          parametersForAnalysis);
+                          parameters);
+  projects_and_reduces_for_analysis_to(
+      "ln(49000*x)", "dep(ln(49000×x),{nonNull(x),realPos(49000×x)})",
+      parameters);
   // TODO: x^2*(1-x^2) might be better for approximation.
-  projects_and_reduces_to("x^2-x^4", "-x^4+x^2", parametersForApproximation);
-  projects_and_reduces_to("x^2-x^4", "-x^4+x^2", parametersForAnalysis);
+  projects_and_reduces_to("x^2-x^4", "-x^4+x^2", parameters);
+  projects_and_reduces_for_analysis_to("x^2-x^4", "-x^4+x^2", parameters);
 }
 
 QUIZ_CASE(pcj_simplification_user_function) {

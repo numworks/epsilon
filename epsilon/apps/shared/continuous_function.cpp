@@ -600,10 +600,6 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
   if (!m_expression.isUninitialized()) {
     return m_expression;
   }
-  // Retrieve the expression equation's expression.
-  // TODO: Find a workaround
-  m_expression =
-      SystemExpression::Builder(expressionReducedForAnalysis(record).tree());
   ContinuousFunctionProperties thisProperties = properties(record);
   if (!thisProperties.isEnabled()) {
     m_expression = SystemExpression::Undefined();
@@ -612,6 +608,10 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
   ComplexFormat complexFormat = this->complexFormat(record);
   AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
+  // Retrieve the expression equation's expression.
+  // TODO: Find a workaround
+  m_expression =
+      SystemExpression::Builder(expressionReducedForAnalysis(record).tree());
   if (thisProperties.isScatterPlot()) {
     /* Scatter plots do not depend on any variable, so they can be approximated
      * in advance. In addition, they are sorted to be traveled from left to

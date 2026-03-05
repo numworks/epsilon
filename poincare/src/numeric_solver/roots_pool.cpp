@@ -1,15 +1,18 @@
+#include <poincare/analysis_expression.h>
 #include <poincare/system_expression.h>
 
 #include "roots.h"
 
 namespace Poincare::Roots {
 
-SystemExpression Linear(const SystemExpression& a, const SystemExpression& b) {
+SystemExpression Linear(const AnalysisExpression& a,
+                        const AnalysisExpression& b) {
   return SystemExpression::Builder(Internal::Roots::Linear(a, b));
 }
 
-SystemExpression Quadratic(const SystemExpression& a, const SystemExpression& b,
-                           const SystemExpression& c) {
+SystemExpression Quadratic(const AnalysisExpression& a,
+                           const AnalysisExpression& b,
+                           const AnalysisExpression& c) {
   Internal::Tree* list = Internal::Roots::Quadratic(a, b, c);
   if (list->numberOfChildren() == 1) {
     // Flat conic

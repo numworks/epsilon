@@ -664,23 +664,23 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
         }
       }
     }
-    // Retrieve the expression equation's expression.
-    // TODO: Find a workaround
-    m_expression =
-        SystemExpression::Builder(expressionReducedForAnalysis(record).tree());
     /* Solve the equation in y (or x if not willBeAlongX)
      * Symbols are replaced to simplify roots. */
     constexpr size_t k_maxHandledDegree = 2;
-    SystemExpression coefficients[PolynomialHelpers::NumberOfCoefficients(
+    AnalysisExpression coefficients[PolynomialHelpers::NumberOfCoefficients(
         k_maxHandledDegree)];
-    int degree = m_expression.getPolynomialReducedCoefficients(
-        willBeAlongX ? ContinuousFunctionProperties::k_ordinateName
-                     : k_unknownName,
-        coefficients, true);
+    int degree =
+        expressionReducedForAnalysis(record).getPolynomialReducedCoefficients(
+            willBeAlongX ? ContinuousFunctionProperties::k_ordinateName
+                         : k_unknownName,
+            coefficients, true);
 
     if (degree == -1) {
       /* The reduction failed, so the expression is not reduced and
        * getPolynomialReducedCoefficients returned -1. */
+      // TODO: Find a workaround
+      m_expression = SystemExpression::Builder(
+          expressionReducedForAnalysis(record).tree());
       return m_expression;
     }
     assert(!willBeAlongX || degree == yDegree);

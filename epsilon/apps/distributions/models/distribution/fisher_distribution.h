@@ -16,8 +16,8 @@ class FisherDistribution final : public TwoParametersDistribution {
   bool authorizedParameterAtIndex(double x, int index) const override;
 
  private:
-  // The display works badly for d1 = d2 > 144.
-  constexpr static double k_maxParameter = 144.0;
+  // The CDF returns undef when d1 = d2 > 10000.
+  constexpr static double k_maxParameter = 10000;
   constexpr static float k_defaultMax = 3.0f;
   I18n::Message messageForParameterAtIndex(int index) const override {
     switch (index) {

@@ -266,28 +266,6 @@ SystemExpression SystemExpression::removeUndefAndComplexListElements() const {
   return SystemExpression::Builder(clone);
 }
 
-int SystemExpression::polynomialDegree(const char* symbolName) const {
-  return Degree::Get(tree(), symbolName);
-}
-
-int SystemExpression::getPolynomialReducedCoefficients(
-    const char* symbolName, SystemExpression coefficients[],
-    bool keepDependencies) const {
-  Tree* coefList = PolynomialParser::GetReducedCoefficients(tree(), symbolName,
-                                                            keepDependencies);
-  if (!coefList) {
-    return -1;
-  }
-  int degree = coefList->numberOfChildren() - 1;
-  assert(degree >= 0);
-  Tree* child = coefList->nextNode();
-  for (int i = 0; i <= degree; i++) {
-    coefficients[i] = Builder(child);
-  }
-  coefList->removeNode();
-  return degree;
-}
-
 Sign SystemExpression::sign() const { return GetSign(tree()); }
 
 /* TODO: Find a better way to avoid duplication of Builder, clone, and

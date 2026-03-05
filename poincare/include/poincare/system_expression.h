@@ -100,15 +100,6 @@ class SystemExpression : public Expression {
   /* Properties getters */
 
   Sign sign() const;
-  // TODO: Delete it and only use AnalysisExpression version
-  int polynomialDegree(const char* symbolName) const;
-  /* Fills the table coefficients with the expressions of the first 3 polynomial
-   * coefficients and returns the  polynomial degree. It is supposed to be
-   * called on a reduced expression. coefficients has up to 3 entries.  */
-  // TODO: Delete it and only use AnalysisExpression version
-  int getPolynomialReducedCoefficients(const char* symbolName,
-                                       SystemExpression coefficients[],
-                                       bool keepDependencies = false) const;
 };
 
 }  // namespace Poincare

@@ -608,11 +608,11 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
   ComplexFormat complexFormat = this->complexFormat(record);
   AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
-  // Retrieve the expression equation's expression.
-  // TODO: Find a workaround
-  m_expression =
-      SystemExpression::Builder(expressionReducedForAnalysis(record).tree());
   if (thisProperties.isScatterPlot()) {
+    // Retrieve the expression equation's expression.
+    // TODO: Find a workaround
+    m_expression =
+        SystemExpression::Builder(expressionReducedForAnalysis(record).tree());
     /* Scatter plots do not depend on any variable, so they can be approximated
      * in advance. In addition, they are sorted to be traveled from left to
      * right (i.e. in order of ascending x). */
@@ -632,11 +632,12 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
      * cartesian equations are processed. */
     /* Function isn't named, m_expression currently is an expression in y or x
      * such as y = x. We extract the solution by solving in y or x. */
-    int yDegree = m_expression.polynomialDegree(
+    int yDegree = expressionReducedForAnalysis(record).polynomialDegree(
         ContinuousFunctionProperties::k_ordinateName);
     bool willBeAlongX = true;
     if (yDegree < 1 || yDegree > 2) {
-      int xDegree = m_expression.polynomialDegree(k_unknownName);
+      int xDegree =
+          expressionReducedForAnalysis(record).polynomialDegree(k_unknownName);
       if (xDegree < 1 || xDegree > 2) {
         // Such degrees of equation in y and x are not handled.
         m_expression = SystemExpression::Undefined();
@@ -645,6 +646,10 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
       // Equation can be plotted along y. For example : x=cos(y) or x^2=1
       willBeAlongX = false;
     }
+    // Retrieve the expression equation's expression.
+    // TODO: Find a workaround
+    m_expression =
+        SystemExpression::Builder(expressionReducedForAnalysis(record).tree());
     if (yDegree == 1) {
       /* Escape simple y=f(x) equations, using SystemForApproximation reduction
        * target to match f(x)= behavior.
@@ -692,6 +697,10 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
       return m_expression;
     }
   } else {
+    // Retrieve the expression equation's expression.
+    // TODO: Find a workaround
+    m_expression =
+        SystemExpression::Builder(expressionReducedForAnalysis(record).tree());
     SystemExpression resultForApproximation =
         getSystemExpressionForApproximation(
             expressionEquation(record), m_expression, complexFormat, angleUnit);

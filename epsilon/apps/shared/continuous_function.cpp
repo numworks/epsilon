@@ -610,10 +610,15 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
   AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   if (thisProperties.isScatterPlot()) {
-    // Retrieve the expression equation's expression.
-    // TODO: Find a workaround
+    // Clone and reduce equation
     m_expression =
-        SystemExpression::Builder(expressionReducedForAnalysis(record).tree());
+        expressionEquation(record).cloneAndReduce(SimplificationParameters{
+            .user = {.complexFormat = complexFormat, .angleUnit = angleUnit},
+            .projectionPolicy = {.symbolic =
+                                     SymbolicComputation::KeepAllSymbols},
+            .reductionPolicy = {.target =
+                                    ReductionTarget::SystemForApproximation},
+        });
     /* Scatter plots do not depend on any variable, so they can be approximated
      * in advance. In addition, they are sorted to be traveled from left to
      * right (i.e. in order of ascending x). */

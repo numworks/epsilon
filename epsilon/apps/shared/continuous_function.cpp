@@ -561,64 +561,30 @@ void ContinuousFunction::RecordDataBuffer::setColor(KDColor color,
 
 /* ContinuousFunction::Model */
 
-// TODO_PCJ: with advanced reduction we should only have to reduce once
-/* m_expression is resulting of a simplification with ExpandAlgebraic
- * expansion strategy. But no expansion strategy could give a simpler
- * result. For example (x+9)^6 is fully developed with ExpandAlgebraic,
- * which results in approximation inaccuracy. On the other hand, the
- * expression (x+1)^2-x^2-2x-1 should be developed so that we understand
- * that it's equal to zero, and is better handled with ExpandAlgebraic. To
- * solve this problem, we try to simplify both ways and compare the number
- * of nodes of each expression. We take the one that has the less node. This
- * is not ideal because an expression with less nodes does not always mean a
- * simpler expression, but it's a good compromise for now. */
-SystemExpression getSystemExpressionForApproximation(
-    const UserExpression& equation,
-    const AnalysisExpression& analysisExpression, ComplexFormat complexFormat,
-    AngleUnit angleUnit) {
-  if (equation.isUninitialized()) {
-    return SystemExpression();
-  }
-  SystemExpression resultForApproximation =
-      equation.cloneAndReduce(SimplificationParameters{
-          .user = {.complexFormat = complexFormat, .angleUnit = angleUnit},
-          .projectionPolicy = {.symbolic = SymbolicComputation::KeepAllSymbols},
-          .reductionPolicy = {.target =
-                                  ReductionTarget::SystemForApproximation},
-      });
-  assert(!resultForApproximation.isUninitialized() &&
-         !resultForApproximation.isFailedSimplification());
-  if (resultForApproximation.numberOfDescendants(true) <
-      analysisExpression.numberOfDescendants(true)) {
-    return resultForApproximation;
-  }
-  return SystemExpression();
-}
-
 const SystemExpression& ContinuousFunction::Model::expressionReduced(
     const Ion::Storage::Record* record) const {
   // m_expression might already be memmoized.
   if (!m_expression.isUninitialized()) {
     return m_expression;
   }
+  if (expressionEquation(record).isUninitialized()) {
+    return SystemExpression();
+  }
   ContinuousFunctionProperties thisProperties = properties(record);
   if (!thisProperties.isEnabled()) {
     m_expression = SystemExpression::Undefined();
     return m_expression;
   }
-  ComplexFormat complexFormat = this->complexFormat(record);
-  AngleUnit angleUnit =
-      GlobalPreferences::SharedGlobalPreferences()->angleUnit();
+  SimplificationParameters simplificationParameters = {
+      .user = {.complexFormat = complexFormat(record),
+               .angleUnit =
+                   GlobalPreferences::SharedGlobalPreferences()->angleUnit()},
+      .projectionPolicy = {.symbolic = SymbolicComputation::KeepAllSymbols},
+      .reductionPolicy = {.target = ReductionTarget::SystemForApproximation}};
   if (thisProperties.isScatterPlot()) {
     // Clone and reduce equation
     m_expression =
-        expressionEquation(record).cloneAndReduce(SimplificationParameters{
-            .user = {.complexFormat = complexFormat, .angleUnit = angleUnit},
-            .projectionPolicy = {.symbolic =
-                                     SymbolicComputation::KeepAllSymbols},
-            .reductionPolicy = {.target =
-                                    ReductionTarget::SystemForApproximation},
-        });
+        expressionEquation(record).cloneAndReduce(simplificationParameters);
     /* Scatter plots do not depend on any variable, so they can be approximated
      * in advance. In addition, they are sorted to be traveled from left to
      * right (i.e. in order of ascending x). */
@@ -659,14 +625,11 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
       UserExpression cartesianEquation =
           expressionEquation(record).equivalentCartesianEquation();
       if (!cartesianEquation.isUninitialized()) {
-        SystemExpression resultForApproximation =
-            getSystemExpressionForApproximation(
-                cartesianEquation, expressionReducedForAnalysis(record),
-                complexFormat, angleUnit);
-        if (!resultForApproximation.isUninitialized()) {
-          m_expression = resultForApproximation;
-          return m_expression;
-        }
+        m_expression =
+            cartesianEquation.cloneAndReduce(simplificationParameters);
+        assert(!m_expression.isUninitialized() &&
+               !m_expression.isFailedSimplification());
+        return m_expression;
       }
     }
     /* Solve the equation in y (or x if not willBeAlongX)
@@ -694,20 +657,12 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
        * equation within the graph view bounds, to plot as many vertical or
        * horizontal lines as needed. */
       m_expression = SystemExpression::Undefined();
-      return m_expression;
     }
   } else {
-    SystemExpression resultForApproximation =
-        getSystemExpressionForApproximation(
-            expressionEquation(record), expressionReducedForAnalysis(record),
-            complexFormat, angleUnit);
-    if (!resultForApproximation.isUninitialized()) {
-      m_expression = resultForApproximation;
-    } else {
-      // TODO: Find a workaround
-      m_expression = SystemExpression::Builder(
-          expressionReducedForAnalysis(record).tree());
-    }
+    m_expression =
+        expressionEquation(record).cloneAndReduce(simplificationParameters);
+    assert(!m_expression.isUninitialized() &&
+           !m_expression.isFailedSimplification());
   }
   return m_expression;
 }

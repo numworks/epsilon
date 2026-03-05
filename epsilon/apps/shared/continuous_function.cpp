@@ -675,14 +675,7 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
                          : k_unknownName,
             coefficients, true);
 
-    if (degree == -1) {
-      /* The reduction failed, so the expression is not reduced and
-       * getPolynomialReducedCoefficients returned -1. */
-      // TODO: Find a workaround
-      m_expression = SystemExpression::Builder(
-          expressionReducedForAnalysis(record).tree());
-      return m_expression;
-    }
+    assert(degree != -1);
     assert(!willBeAlongX || degree == yDegree);
     if (degree == 1) {
       m_expression = Poincare::Roots::Linear(coefficients[1], coefficients[0]);

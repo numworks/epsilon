@@ -724,7 +724,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
               .projectionPolicy = {.symbolic =
                                        SymbolicComputation::KeepAllSymbols},
               .reductionPolicy = {.target = ReductionTarget::User}})
-          .getSystemExpressionForAnalysis();
+          .getAnalysisExpression();
   assert(!result.isUninitialized());
   /* TODO_PCJ: equation and result used to be a same Expression at this step.
    * Ensure this pool usage regression of still having equation in the pool is

@@ -95,7 +95,7 @@ class SystemExpression : public Expression {
   template <typename T>
   Coordinate2D<T> approximateToPoint() const;
 
-  AnalysisExpression getSystemExpressionForAnalysis() const;
+  AnalysisExpression getAnalysisExpression() const;
 
   /* Properties getters */
 

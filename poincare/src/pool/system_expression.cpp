@@ -223,7 +223,7 @@ Coordinate2D<T> SystemExpression::approximateToPoint() const {
                       Approximation::SystemExpressionPolicy{.prepare = true}});
 }
 
-AnalysisExpression SystemExpression::getSystemExpressionForAnalysis() const {
+AnalysisExpression SystemExpression::getAnalysisExpression() const {
   Tree* clone = tree()->cloneTree();
   Internal::AdvancedReduction::DeepExpandAlgebraic(clone);
   return AnalysisExpression::Builder(clone);

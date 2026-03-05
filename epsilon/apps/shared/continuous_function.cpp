@@ -573,8 +573,9 @@ void ContinuousFunction::RecordDataBuffer::setColor(KDColor color,
  * is not ideal because an expression with less nodes does not always mean a
  * simpler expression, but it's a good compromise for now. */
 SystemExpression getSystemExpressionForApproximation(
-    const UserExpression& equation, const SystemExpression& analysisExpression,
-    ComplexFormat complexFormat, AngleUnit angleUnit) {
+    const UserExpression& equation,
+    const AnalysisExpression& analysisExpression, ComplexFormat complexFormat,
+    AngleUnit angleUnit) {
   if (equation.isUninitialized()) {
     return SystemExpression();
   }
@@ -646,10 +647,6 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
       // Equation can be plotted along y. For example : x=cos(y) or x^2=1
       willBeAlongX = false;
     }
-    // Retrieve the expression equation's expression.
-    // TODO: Find a workaround
-    m_expression =
-        SystemExpression::Builder(expressionReducedForAnalysis(record).tree());
     if (yDegree == 1) {
       /* Escape simple y=f(x) equations, using SystemForApproximation reduction
        * target to match f(x)= behavior.
@@ -658,14 +655,19 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
           expressionEquation(record).equivalentCartesianEquation();
       if (!cartesianEquation.isUninitialized()) {
         SystemExpression resultForApproximation =
-            getSystemExpressionForApproximation(cartesianEquation, m_expression,
-                                                complexFormat, angleUnit);
+            getSystemExpressionForApproximation(
+                cartesianEquation, expressionReducedForAnalysis(record),
+                complexFormat, angleUnit);
         if (!resultForApproximation.isUninitialized()) {
           m_expression = resultForApproximation;
           return m_expression;
         }
       }
     }
+    // Retrieve the expression equation's expression.
+    // TODO: Find a workaround
+    m_expression =
+        SystemExpression::Builder(expressionReducedForAnalysis(record).tree());
     /* Solve the equation in y (or x if not willBeAlongX)
      * Symbols are replaced to simplify roots. */
     constexpr size_t k_maxHandledDegree = 2;
@@ -697,15 +699,16 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
       return m_expression;
     }
   } else {
-    // Retrieve the expression equation's expression.
-    // TODO: Find a workaround
-    m_expression =
-        SystemExpression::Builder(expressionReducedForAnalysis(record).tree());
     SystemExpression resultForApproximation =
         getSystemExpressionForApproximation(
-            expressionEquation(record), m_expression, complexFormat, angleUnit);
+            expressionEquation(record), expressionReducedForAnalysis(record),
+            complexFormat, angleUnit);
     if (!resultForApproximation.isUninitialized()) {
       m_expression = resultForApproximation;
+    } else {
+      // TODO: Find a workaround
+      m_expression = SystemExpression::Builder(
+          expressionReducedForAnalysis(record).tree());
     }
   }
   return m_expression;

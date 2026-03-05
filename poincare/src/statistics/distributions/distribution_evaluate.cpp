@@ -3,7 +3,6 @@
 #include <omg/troolean.h>
 #include <omg/unreachable.h>
 #include <poincare/src/expression/approximation.h>
-#include <poincare/src/numeric_solver/beta_function.h>
 #include <poincare/statistics/distribution.h>
 
 #include "distribution.h"
@@ -74,12 +73,13 @@ T evalFisher(T x, const ParametersArray<T>& params) {
     return d1 < 2. ? INFINITY : (d1 > 2. ? 0. : 1.);
   }
   const T f = d1 * x / (d1 * x + d2);
-  const T numerator =
-      std::pow(f, d1 / static_cast<T>(2.0)) *
-      std::pow(static_cast<T>(1.0) - f, d2 / static_cast<T>(2.0));
-  const T denominator =
-      x * BetaFunction(d1 / static_cast<T>(2.0), d2 / static_cast<T>(2.0));
-  return numerator / denominator;
+  const T numeratorLog =
+      (d1 / static_cast<T>(2.0)) * std::log(f) +
+      (d2 / static_cast<T>(2.0)) * std::log(static_cast<T>(1.0) - f);
+  const T denominatorLog = std::log(x) + std::lgamma(d1 / static_cast<T>(2.0)) +
+                           std::lgamma(d2 / static_cast<T>(2.0)) -
+                           std::lgamma((d1 + d2) / static_cast<T>(2.0));
+  return std::exp(numeratorLog - denominatorLog);
 }
 
 template <typename T>

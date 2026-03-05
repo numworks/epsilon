@@ -60,7 +60,7 @@ SECTIONS {
   } >SRAM AT> FLASH_USERLAND
 
   .signature : {
-    FILL(0xFF);
+    FILL(0xFFFFFFFF);
     /* We write the last byte of the signature with a default value to make
      * sure the userland size takes into account the signature. */
     . += SignatureLength - 1;
@@ -76,7 +76,7 @@ SECTIONS {
 
   .persisting_bytes_buffer ORIGIN(PERSISTING_BYTES) : {
     _persisting_bytes_buffer_start = .;
-    FILL(0xFF);
+    FILL(0xFFFFFFFF);
     /* FILL instruction requires at least one element in the section
      * Write 0xFF to keep the sector empty. */
     BYTE(0xFF)

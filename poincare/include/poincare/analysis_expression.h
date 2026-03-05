@@ -37,6 +37,10 @@ class AnalysisExpression : public Expression {
   int getPolynomialReducedCoefficients(const char* symbolName,
                                        AnalysisExpression coefficients[],
                                        bool keepDependencies = false) const;
+  /* Approximate to a real scalar. AnalysisExpression aren't optimal for
+   * approximation, they can induce big approximation errors. */
+  template <typename T>
+  T approximateSystemToRealScalar() const;
 };
 
 }  // namespace Poincare

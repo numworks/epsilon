@@ -1,4 +1,5 @@
 #include <poincare/analysis_expression.h>
+#include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/polynomial.h>
 
@@ -47,5 +48,19 @@ int AnalysisExpression::getPolynomialReducedCoefficients(
   coefList->removeNode();
   return degree;
 }
+
+template <typename T>
+T AnalysisExpression::approximateSystemToRealScalar() const {
+  if (!Internal::Dimension::IsNonListScalar(tree())) {
+    return NAN;
+  }
+  return Approximation::To<T>(
+      tree(),
+      Approximation::Parameters{.policy = {.prepare = true, .optimize = true}});
+}
+
+template float AnalysisExpression::approximateSystemToRealScalar<float>() const;
+template double AnalysisExpression::approximateSystemToRealScalar<double>()
+    const;
 
 }  // namespace Poincare

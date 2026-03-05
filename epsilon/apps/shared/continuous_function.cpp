@@ -181,9 +181,9 @@ bool ContinuousFunction::isDiscontinuousOnFloatInterval(float minBound,
 void ContinuousFunction::getLineParameters(double* slope,
                                            double* intercept) const {
   assert(properties().isLineEquation());
-  const SystemExpression& equation = expressionReduced();
+  const AnalysisExpression& equation = expressionReducedForAnalysis();
   // Compute metrics for details view of Line
-  SystemExpression coefficients[PolynomialHelpers::NumberOfCoefficients(
+  AnalysisExpression coefficients[PolynomialHelpers::NumberOfCoefficients(
       PolynomialHelpers::k_lineDegree)];
   // Separate the two line coefficients for approximation.
   int d =

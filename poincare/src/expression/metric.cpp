@@ -161,7 +161,9 @@ static float GetBeautifiedPowerMetric(const PatternMatching::Context& ctx) {
 }  // namespace
 
 float Metric::GetTrueMetric(const Tree* e, ReductionTarget target) {
+  // Adjust the cost of nodes that will be changed at beautification
   const bool willBeBeautified = target == ReductionTarget::User;
+  // System reduction target favors contracted forms
   const bool shouldExpand = target != ReductionTarget::System;
   float result = GetTypeMetric(e->type());
   if (Rational::IsNonIntegerRational(e) &&

@@ -723,7 +723,8 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
                        .context = GlobalContextAccessor::Context()},
               .projectionPolicy = {.symbolic =
                                        SymbolicComputation::KeepAllSymbols},
-              .reductionPolicy = {.target = ReductionTarget::User}})
+              .reductionPolicy = {.target =
+                                      ReductionTarget::SystemForApproximation}})
           .getAnalysisExpression();
   assert(!result.isUninitialized());
   /* TODO_PCJ: equation and result used to be a same Expression at this step.

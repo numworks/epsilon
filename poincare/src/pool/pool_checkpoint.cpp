@@ -39,7 +39,7 @@ void PoolCheckpoint::rollback() const {
     Internal::SharedTreeStack.init();
   }
   if (Pool::sharedPool.isInitialized()) {
-    Pool::sharedPool->freePoolFromObject(m_endOfPool);
+    Pool::sharedPool->freeDownstreamObject(m_endOfPool);
   } else {
     Pool::sharedPool.init();
   }

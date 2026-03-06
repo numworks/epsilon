@@ -101,7 +101,7 @@ class Pool final {
     return OMG::Memory::AlignedSize(size, ByteAlignment);
   }
 
-  // PoolObject
+  // Pool memory
   void discardPoolObject(PoolObject* object);
 
   // Identifiers
@@ -111,10 +111,18 @@ class Pool final {
   void registerObject(PoolObject* object);
   // Frees the object identifier
   void unregisterObject(PoolObject* object);
-  // Registers all objects downstream of the given object, including itself
-  void registerDownstreamObject(PoolObject* object);
   // Reset m_objectOffset for all identifiers
   void unregisterAllObjects();
+  // Registers all objects downstream of the given object, including itself
+  void registerDownstreamObject(PoolObject* object);
+  /* Unregisters all objects downstream of the given object, including itself,
+   * and moves the pool cursor to the given adress */
+  void freeDownstreamObject(PoolObject* firstObjectToDiscard);
+
+  char* buffer() { return reinterpret_cast<char*>(m_alignedBuffer); }
+  const char* constBuffer() const {
+    return reinterpret_cast<const char*>(m_alignedBuffer);
+  }
 
   // Return next object
   static PoolObject* NextObject(PoolObject* object) {
@@ -160,15 +168,6 @@ class Pool final {
   };
   Objects allObjects() { return Objects(first()); }
 
-  // Pool memory
-  void dealloc(PoolObject* ptr, size_t size);
-
-  void freePoolFromObject(PoolObject* firstObjectToDiscard);
-
-  char* buffer() { return reinterpret_cast<char*>(m_alignedBuffer); }
-  const char* constBuffer() const {
-    return reinterpret_cast<const char*>(m_alignedBuffer);
-  }
   AlignedObjectBuffer m_alignedBuffer[BufferSize / ByteAlignment];
   char* m_cursor;
   // Index is object identifier, value is offset of the object in the pool

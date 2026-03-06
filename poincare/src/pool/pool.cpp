@@ -86,8 +86,12 @@ void* Pool::alloc(size_t size) {
   return result;
 }
 
-void Pool::dealloc(PoolObject* object, size_t size) {
+void Pool::discardPoolObject(PoolObject* object) {
   assert(object->isAfterTopmostCheckpoint());
+  unregisterObject(object);
+  size_t size = object->size();
+  object->~PoolObject();
+
 #if ASSERTIONS
   assert(!s_treePoolLocked);
 #endif
@@ -102,13 +106,6 @@ void Pool::dealloc(PoolObject* object, size_t size) {
 
   // Step 2: Update m_objectOffset for all objects downstream
   registerDownstreamObject(object);
-}
-
-void Pool::discardPoolObject(PoolObject* object) {
-  unregisterObject(object);
-  size_t size = object->size();
-  object->~PoolObject();
-  dealloc(object, size);
 }
 
 void Pool::registerObject(PoolObject* object) {
@@ -141,8 +138,7 @@ void Pool::unregisterAllObjects() {
   }
 }
 
-// Discard all objects after firstObjectToDiscard
-void Pool::freePoolFromObject(PoolObject* firstObjectToDiscard) {
+void Pool::freeDownstreamObject(PoolObject* firstObjectToDiscard) {
   assert(firstObjectToDiscard != nullptr);
   assert(firstObjectToDiscard >= first());
   assert(firstObjectToDiscard <= last());

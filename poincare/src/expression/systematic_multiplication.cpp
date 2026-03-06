@@ -9,6 +9,7 @@
 #include "number.h"
 #include "power_like.h"
 #include "systematic_operation.h"
+#include "undefined.h"
 
 namespace Poincare::Internal {
 
@@ -37,9 +38,10 @@ static Tree* PowerMerge(int* numberOfDependencies, const Tree* child,
   return merge;
 }
 
-static bool ApproximationIsFinite(const Tree* e) {
+static bool IsFinite(const Tree* e) {
   if (!Approximation::CanApproximate(e)) {
-    return false;
+    return !Undefined::CanBeUndefined(e) &&
+           !GetComplexProperties(e).canBeInfinite();
   }
   std::complex<double> approx = Approximation::To<std::complex<double>>(
       e, Approximation::Parameters{.policy = {.optimize = true}});
@@ -90,7 +92,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
       merge = KUndef->cloneTree();
     } else {
       if (Dimension::IsNonListScalar(next)) {
-        if (ApproximationIsFinite(next)) {
+        if (IsFinite(next)) {
           // 0 * x -> 0
           next->removeTree();
         } else {

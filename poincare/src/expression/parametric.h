@@ -28,7 +28,7 @@ uint8_t FunctionIndex(TypeBlock type);
 ComplexProperties VariableProperties(const Tree* e);
 
 constexpr static ComplexProperties k_discreteVariableProperties =
-    ComplexProperties::RealInteger();
+    ComplexProperties::RealFiniteInteger();
 /* TODO: Should instead depend on the bounds for integral and symbol value for
  * derivation */
 constexpr static ComplexProperties k_continuousVariableProperties =

@@ -245,6 +245,9 @@ class ComplexProperties {
   constexpr static ComplexProperties RealInteger() {
     return ComplexProperties(Properties::Integer(), Properties::Zero());
   }
+  constexpr static ComplexProperties RealFiniteInteger() {
+    return ComplexProperties(Properties::FiniteInteger(), Properties::Zero());
+  }
   constexpr static ComplexProperties Real() {
     return ComplexProperties(Properties(Sign::Unknown()), Properties::Zero());
   }

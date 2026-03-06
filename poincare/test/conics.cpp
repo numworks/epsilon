@@ -2,6 +2,7 @@
 #include <poincare/function_properties/conic.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/symbol_context.h>
+#include <poincare/system_expression.h>
 #include <poincare/user_expression.h>
 #include <poincare/variable_context.h>
 
@@ -21,7 +22,7 @@ CartesianConic buildCartesianConic(const char* expression) {
              .user = {.complexFormat = ComplexFormat::Cartesian,
                       .angleUnit = AngleUnit::Radian},
              .reductionPolicy = {.advanced = false}});
-  return CartesianConic(SystemExpression::Builder(e));
+  return CartesianConic(SystemExpression::Builder(e).getAnalysisExpression());
 }
 
 PolarConic buildPolarConic(const char* expression) {
@@ -31,7 +32,7 @@ PolarConic buildPolarConic(const char* expression) {
              .user = {.complexFormat = ComplexFormat::Cartesian,
                       .angleUnit = AngleUnit::Radian},
              .reductionPolicy = {.advanced = false}});
-  return PolarConic(SystemExpression::Builder(e));
+  return PolarConic(SystemExpression::Builder(e).getAnalysisExpression());
 }
 
 ParametricConic buildParametricConic(const char* expression) {
@@ -44,7 +45,7 @@ ParametricConic buildParametricConic(const char* expression) {
              .user = {.complexFormat = ComplexFormat::Cartesian,
                       .angleUnit = AngleUnit::Radian},
              .reductionPolicy = {.advanced = false}});
-  return ParametricConic(SystemExpression::Builder(e));
+  return ParametricConic(SystemExpression::Builder(e).getAnalysisExpression());
 }
 
 void quiz_assert_shape(const char* expression, CoordinateType type,

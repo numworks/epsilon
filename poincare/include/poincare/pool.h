@@ -117,11 +117,6 @@ class Pool final {
   // Reset m_objectOffset for all identifiers
   void unregisterAllObjects();
 
-  void renameObject(PoolObject* object,
-                    bool unregisterPreviousIdentifier = true) {
-    assert(object->isAfterTopmostCheckpoint());
-    object->rename(nextFreeIdentifier(), unregisterPreviousIdentifier);
-  }
   // Return next object
   static PoolObject* NextObject(PoolObject* object) {
     /* Simple version would be "return this + 1;", with pointer arithmetics

@@ -18,9 +18,20 @@ OMG::TrackedGlobalBox<Pool> Pool::sharedPool;
 void Pool::freeIdentifier(uint16_t identifier) {
   if (PoolObject::IsValidIdentifier(identifier) &&
       identifier < MaxNumberOfObjects) {
-    m_objectForIdentifierOffset[identifier] = UINT16_MAX;
-    m_identifiers.push(identifier);
+    m_objectOffset[identifier] = UINT16_MAX;
   }
+}
+
+// Find the first identifier available in the object offset table
+uint16_t Pool::generateIdentifier() {
+  for (uint16_t i = 0; i < MaxNumberOfObjects; i++) {
+    if (m_objectOffset[i] == UINT16_MAX) {
+      return i;
+    }
+  }
+  /* No identifier is available. This should not happen since the number of
+   * objects in the pool should be limited by the number of identifiers. */
+  OMG_UNREACHABLE;
 }
 
 void Pool::move(PoolObject* destination, PoolObject* source) {
@@ -52,7 +63,7 @@ void Pool::moveObjects(PoolObject* destination, PoolObject* source,
   size_t len = moveSize / 4;
 
   if (OMG::Memory::Rotate(dst, src, len)) {
-    updateObjectForIdentifierFromObject(dst < src ? destination : source);
+    updateObjectOffsetsFromObject(dst < src ? destination : source);
   }
 }
 
@@ -120,8 +131,8 @@ void Pool::dealloc(PoolObject* object, size_t size) {
   memmove(ptr, ptr + size, m_cursor - (ptr + size));
   m_cursor -= size;
 
-  // Step 2: Update m_objectForIdentifierOffset for all objects downstream
-  updateObjectForIdentifierFromObject(object);
+  // Step 2: Update m_objectOffset for all objects downstream
+  updateObjectOffsetsFromObject(object);
 }
 
 void Pool::discardPoolObject(PoolObject* object) {
@@ -139,54 +150,18 @@ void Pool::registerObject(PoolObject* object) {
       (((char*)object) - (char*)m_alignedBuffer) / ByteAlignment;
   // Check that the offset can be stored in a uint16_t
   assert(objectOffset < k_maxObjectOffset);
-  m_objectForIdentifierOffset[objectID] = objectOffset;
+  m_objectOffset[objectID] = objectOffset;
 }
 
-void Pool::updateObjectForIdentifierFromObject(PoolObject* object) {
+void Pool::updateObjectOffsetsFromObject(PoolObject* object) {
   for (PoolObject* n : Objects(object)) {
     registerObject(n);
   }
 }
 
-// Reset IdentifierStack, make all identifiers available
-void Pool::IdentifierStack::reset() {
+void Pool::resetObjectOffsets() {
   for (uint16_t i = 0; i < MaxNumberOfObjects; i++) {
-    m_availableIdentifiers[i] = i;
-  }
-  m_currentIndex = MaxNumberOfObjects;
-}
-
-void Pool::IdentifierStack::push(uint16_t i) {
-  assert(PoolObject::IsValidIdentifier(m_currentIndex) &&
-         m_currentIndex < MaxNumberOfObjects);
-  m_availableIdentifiers[m_currentIndex++] = i;
-}
-
-uint16_t Pool::IdentifierStack::pop() {
-  assert(m_currentIndex > 0 && m_currentIndex <= MaxNumberOfObjects);
-  return m_availableIdentifiers[--m_currentIndex];
-}
-
-// Remove an available identifier.
-void Pool::IdentifierStack::remove(uint16_t j) {
-  assert(PoolObject::IsValidIdentifier(j));
-  /* TODO: Implement an optimized binary search using the sorted state.
-   * Alternatively, it may be worth using another data type such as a sorted
-   * list instead of a stack. */
-  for (uint16_t i = 0; i < m_currentIndex; i++) {
-    if (m_availableIdentifiers[i] == j) {
-      m_availableIdentifiers[i] = m_availableIdentifiers[--m_currentIndex];
-      return;
-    }
-  }
-  OMG_UNREACHABLE;
-}
-
-// Reset m_objectForIdentifierOffset for all available identifiers
-void Pool::IdentifierStack::resetObjectForIdentifierOffsets(
-    uint16_t* objectForIdentifierOffset) const {
-  for (uint16_t i = 0; i < m_currentIndex; i++) {
-    objectForIdentifierOffset[m_availableIdentifiers[i]] = UINT16_MAX;
+    m_objectOffset[i] = UINT16_MAX;
   }
 }
 
@@ -197,14 +172,13 @@ void Pool::freePoolFromObject(PoolObject* firstObjectToDiscard) {
   assert(firstObjectToDiscard <= last());
 
   // Free all identifiers
-  m_identifiers.reset();
+  resetObjectOffsets();
   PoolObject* currentObject = first();
   while (currentObject < firstObjectToDiscard) {
-    m_identifiers.remove(currentObject->identifier());
+    registerObject(currentObject);
     currentObject = NextObject(currentObject);
   }
   assert(currentObject == firstObjectToDiscard);
-  m_identifiers.resetObjectForIdentifierOffsets(m_objectForIdentifierOffset);
   m_cursor = reinterpret_cast<char*>(currentObject);
   // TODO: Assert that no tree continues into the discarded pool zone
 }

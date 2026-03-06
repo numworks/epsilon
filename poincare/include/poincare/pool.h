@@ -25,6 +25,10 @@ typedef uint32_t AlignedObjectBuffer;
 #endif
 constexpr static int ByteAlignment = sizeof(AlignedObjectBuffer);
 
+static_assert(sizeof(PoolObject) % ByteAlignment == 0 &&
+                  sizeof(PoolObject) >= ByteAlignment,
+              "PoolObject size should be a multiple of ByteAlignment");
+
 class PoolHandle;
 
 class Pool final {
@@ -51,7 +55,7 @@ class Pool final {
 #endif
   }
 
-  Pool() : m_cursor(buffer()) {}
+  Pool() : m_cursor(buffer()) { resetObjectOffsets(); }
 
   PoolObject* cursor() const { return reinterpret_cast<PoolObject*>(m_cursor); }
   size_t size() const { return m_cursor - constBuffer(); }
@@ -60,9 +64,9 @@ class Pool final {
   PoolObject* object(uint16_t identifier) const {
     assert(PoolObject::IsValidIdentifier(identifier) &&
            identifier < MaxNumberOfObjects);
-    if (m_objectForIdentifierOffset[identifier] != UINT16_MAX) {
+    if (m_objectOffset[identifier] != UINT16_MAX) {
       return const_cast<PoolObject*>(reinterpret_cast<const PoolObject*>(
-          m_alignedBuffer + m_objectForIdentifierOffset[identifier]));
+          m_alignedBuffer + m_objectOffset[identifier]));
     }
     return nullptr;
   }
@@ -104,7 +108,7 @@ class Pool final {
   void unregisterObject(PoolObject* object) {
     freeIdentifier(object->identifier());
   }
-  void updateObjectForIdentifierFromObject(PoolObject* object);
+  void updateObjectOffsetsFromObject(PoolObject* object);
   void renameObject(PoolObject* object,
                     bool unregisterPreviousIdentifier = true) {
     assert(object->isAfterTopmostCheckpoint());
@@ -160,26 +164,10 @@ class Pool final {
                    size_t moveLength);
 
   // Identifiers
-  uint16_t generateIdentifier() { return m_identifiers.pop(); }
+  uint16_t generateIdentifier();
   void freeIdentifier(uint16_t identifier);
-
-  class IdentifierStack final {
-   public:
-    IdentifierStack() { reset(); }
-    void reset();
-    void push(uint16_t i);
-    uint16_t pop();
-    void remove(uint16_t j);
-    void resetObjectForIdentifierOffsets(
-        uint16_t* objectForIdentifierOffset) const;
-
-   private:
-    uint16_t m_currentIndex;
-    uint16_t m_availableIdentifiers[MaxNumberOfObjects];
-    static_assert(MaxNumberOfObjects < INT16_MAX &&
-                      sizeof(m_availableIdentifiers[0]) == sizeof(uint16_t),
-                  "Tree object identifiers do not have the right data size.");
-  };
+  // Reset m_objectOffset for all identifiers
+  void resetObjectOffsets();
 
   void freePoolFromObject(PoolObject* firstObjectToDiscard);
 
@@ -189,11 +177,11 @@ class Pool final {
   }
   AlignedObjectBuffer m_alignedBuffer[BufferSize / ByteAlignment];
   char* m_cursor;
-  IdentifierStack m_identifiers;
-  uint16_t m_objectForIdentifierOffset[MaxNumberOfObjects];
+  // Index is object identifier, value is offset of the object in the pool
+  uint16_t m_objectOffset[MaxNumberOfObjects];
   static_assert(k_maxObjectOffset < UINT16_MAX &&
-                    sizeof(m_objectForIdentifierOffset[0]) == sizeof(uint16_t),
-                "The tree pool object offsets in m_objectForIdentifierOffset "
+                    sizeof(m_objectOffset[0]) == sizeof(uint16_t),
+                "The tree pool object offsets in m_objectOffset "
                 "cannot be written with the chosen data size (uint16_t)");
 };
 

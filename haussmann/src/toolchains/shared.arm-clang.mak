@@ -10,8 +10,9 @@ COMPILER_FAMILY := clang
 
 DFU ?= dfu-util
 
-CFLAGS += -target $(TARGET) $(MCUFLAGS) -fshort-enums
-CXXFLAGS += -target $(TARGET) $(MCUFLAGS) -fshort-enums -Wno-invalid-constexpr -Wno-inline-new-delete
+SFLAGS += -target $(TARGET) $(MCUFLAGS)
+CFLAGS += -fshort-enums
+CXXFLAGS += -fshort-enums -Wno-invalid-constexpr -Wno-inline-new-delete
 
 ifndef LIBCLANG_ROOT
 $(error You must set a LIBCLANG_ROOT that provides libclang_rt.builtins.a for armv7m architectures. Download ST commandline tools and pass stm32cubeclt_1.20.0/st-arm-clang/ for instance.)
@@ -19,8 +20,6 @@ endif
 
 LDFLAGS += \
   -fuse-ld=lld \
-   -target $(TARGET) \
-  $(MCUFLAGS) \
   -Wl,--undefined-glob,__aeabi_memcpy* \
   -Wl,--undefined-glob,__aeabi_memclr* \
   $(LIBCLANG_ROOT)/lib/clang-runtimes/arm-none-eabi/$(LIBCLANG_ARCH)/lib/libclang_rt.builtins.a

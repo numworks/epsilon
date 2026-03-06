@@ -32,7 +32,7 @@ PoolObject* Pool::copyObjectFromAddress(const void* address, size_t size) {
   memcpy(ptr, address, size);
   PoolObject* copy = reinterpret_cast<PoolObject*>(ptr);
   assert(copy->isAfterTopmostCheckpoint());
-  copy->rename(nextFreeIdentifier(), false);
+  renamePoolObject(copy);
   return copy;
 }
 

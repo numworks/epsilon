@@ -18,16 +18,10 @@ void PoolObject::release() {
   }
 }
 
-void PoolObject::rename(uint16_t identifier,
-                        bool unregisterPreviousIdentifier) {
-  if (unregisterPreviousIdentifier) {
-    /* The previous identifier should not always be unregistered. For instance,
-     * if the object is a clone and still has the original object's identifier,
-     * unregistering it would lose the access to the original object. */
-    Pool::sharedPool->unregisterObject(this);
-  }
+void PoolObject::rename(uint16_t identifier) {
   m_identifier = identifier;
   m_referenceCounter = 0;
+  assert(!Pool::sharedPool->isRegistered(identifier));
   Pool::sharedPool->registerObject(this);
 }
 

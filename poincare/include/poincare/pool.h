@@ -106,6 +106,13 @@ class Pool final {
 
   // Identifiers
   uint16_t nextFreeIdentifier();
+  void renamePoolObject(PoolObject* object) {
+    object->rename(nextFreeIdentifier());
+  }
+  bool isRegistered(uint16_t identifier) const {
+    return PoolObject::IsValidIdentifier(identifier) &&
+           m_objectOffset[identifier] != UINT16_MAX;
+  }
 
   // Registers the object identifier
   void registerObject(PoolObject* object);

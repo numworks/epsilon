@@ -59,7 +59,8 @@ class PoolObject {
    * */
   void retain() { m_referenceCounter += isAfterTopmostCheckpoint(); }
   void release();
-  void rename(uint16_t identifier, bool unregisterPreviousIdentifier);
+  // Changes identifier and resets refcounter to 0
+  void rename(uint16_t identifier);
 
   // PoolCheckpoint
   bool isAfterTopmostCheckpoint() const {

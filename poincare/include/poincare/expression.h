@@ -71,7 +71,6 @@ class Expression : public PoolHandle {
 
   /* General properties */
 
-  int numberOfDescendants(bool includeSelf) const;
   int numberOfChildren() const;
   // Comparing trees. Expressions could be of a different derived class.
   bool isIdenticalTo(const Expression& e) const;

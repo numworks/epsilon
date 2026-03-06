@@ -128,11 +128,6 @@ const Tree* Expression::TreeFromAddress(const void* address) {
   return reinterpret_cast<const ExpressionObject*>(address)->tree();
 }
 
-int Expression::numberOfDescendants(bool includeSelf) const {
-  assert(tree());
-  return tree()->numberOfDescendants(includeSelf);
-}
-
 Poincare::Dimension Expression::dimension(
     const SymbolContext& symbolContext) const {
   return Poincare::Dimension(*this, symbolContext);

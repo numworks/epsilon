@@ -106,12 +106,11 @@ QUIZ_CASE(pcj_simplification_random) {
 
   // TODO_PCJ: used to simplify to 1
   simplifies_to("randint(1,1)", "randint(1,1)");
-  //  Randint is not simplified if ReductionTarget = SystemForApproximation
+  //  Randint is not simplified if ReductionTarget = System
   simplifies_to_no_beautif(
       "randint(1,3)", "randint(1,3)",
       SimplificationParameters{
-          .reductionPolicy = {.target =
-                                  ReductionTarget::SystemForApproximation}});
+          .reductionPolicy = {.target = ReductionTarget::System}});
 }
 
 QUIZ_CASE(pcj_simplification_combinatorics) {

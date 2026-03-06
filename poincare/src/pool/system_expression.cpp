@@ -183,8 +183,7 @@ SystemExpression SystemExpression::getReducedDerivative(
   } else {
     Simplification::ReduceSystem(
         result,
-        ReductionPolicy{.target = ReductionTarget::SystemForApproximation,
-                        .advanced = false});
+        ReductionPolicy{.target = ReductionTarget::System, .advanced = false});
   }
   return SystemExpression::Builder(result);
 }

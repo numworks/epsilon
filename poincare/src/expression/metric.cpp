@@ -162,7 +162,7 @@ static float GetBeautifiedPowerMetric(const PatternMatching::Context& ctx) {
 
 float Metric::GetTrueMetric(const Tree* e, ReductionTarget target) {
   const bool willBeBeautified = target == ReductionTarget::User;
-  const bool shouldExpand = target != ReductionTarget::SystemForApproximation;
+  const bool shouldExpand = target != ReductionTarget::System;
   float result = GetTypeMetric(e->type());
   if (Rational::IsNonIntegerRational(e) &&
       (Rational::Numerator(e).isOne() || Rational::Numerator(e).isMinusOne())) {

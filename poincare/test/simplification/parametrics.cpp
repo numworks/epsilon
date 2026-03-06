@@ -396,12 +396,10 @@ QUIZ_CASE(pcj_simplification_derivative_higher_order) {
 QUIZ_CASE(pcj_simplification_derivative_for_approximation) {
   SimplificationParameters parametersForApproximation = {
       .user = {.angleUnit = Radian},
-      .reductionPolicy = {
-          .target = Poincare::ReductionTarget::SystemForApproximation}};
+      .reductionPolicy = {.target = Poincare::ReductionTarget::System}};
   SimplificationParameters parametersForApproximationCartesian = {
       .user = {.complexFormat = Cartesian, .angleUnit = Radian},
-      .reductionPolicy = {
-          .target = Poincare::ReductionTarget::SystemForApproximation}};
+      .reductionPolicy = {.target = Poincare::ReductionTarget::System}};
   projects_and_reduces_to("diff(ln(x),x,1)", "1", parametersForApproximation);
   projects_and_reduces_to("diff(ln(x),x,2.2)", "5/11",
                           parametersForApproximation);
@@ -456,8 +454,7 @@ QUIZ_CASE(pcj_simplification_derivative_for_approximation) {
         .user = {.angleUnit = Radian, .context = symbolStore},
         .projectionPolicy =
             {.symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols},
-        .reductionPolicy = {
-            .target = Poincare::ReductionTarget::SystemForApproximation}};
+        .reductionPolicy = {.target = Poincare::ReductionTarget::System}};
     store("0→a", symbolStore);
     projects_and_reduces_to("diff((-1)^(a*x),x,3)", "0", parametersWithSymbol);
   }

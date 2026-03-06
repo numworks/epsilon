@@ -110,7 +110,7 @@ void SystemOfEquations::approximateSolve(const SymbolContext& symbolContext) {
                 .angleUnit =
                     GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
                 .context = symbolContext},
-       .reductionPolicy = {.target = ReductionTarget::SystemForApproximation}},
+       .reductionPolicy = {.target = ReductionTarget::System}},
       m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
                                 : m_approximateSolvingRange,
       k_maxNumberOfApproximateSolutions);

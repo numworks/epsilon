@@ -580,7 +580,7 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
                .angleUnit =
                    GlobalPreferences::SharedGlobalPreferences()->angleUnit()},
       .projectionPolicy = {.symbolic = SymbolicComputation::KeepAllSymbols},
-      .reductionPolicy = {.target = ReductionTarget::SystemForApproximation}};
+      .reductionPolicy = {.target = ReductionTarget::System}};
   if (thisProperties.isScatterPlot()) {
     // Clone and reduce equation
     m_expression =
@@ -619,7 +619,7 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
       willBeAlongX = false;
     }
     if (yDegree == 1) {
-      /* Escape simple y=f(x) equations, using SystemForApproximation reduction
+      /* Escape simple y=f(x) equations, using System reduction
        * target to match f(x)= behavior.
        * TODO : implement a more general solution for any implicit curves. */
       UserExpression cartesianEquation =
@@ -723,8 +723,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
                        .context = GlobalContextAccessor::Context()},
               .projectionPolicy = {.symbolic =
                                        SymbolicComputation::KeepAllSymbols},
-              .reductionPolicy = {.target =
-                                      ReductionTarget::SystemForApproximation}})
+              .reductionPolicy = {.target = ReductionTarget::System}})
           .getAnalysisExpression();
   assert(!result.isUninitialized());
   /* TODO_PCJ: equation and result used to be a same Expression at this step.

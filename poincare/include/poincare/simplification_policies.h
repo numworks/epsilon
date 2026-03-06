@@ -16,11 +16,12 @@ struct ProjectionPolicy {
   SymbolicComputation symbolic = SymbolicComputation::KeepAllSymbols;
 };
 
-enum class ReductionTarget : uint8_t {
-  /* Optimized for approximation : (1+x)^3 will not be developed. */
-  SystemForApproximation = 0,
+enum class ReductionTarget : bool {
   /* Optimized for user display. */
-  User
+  User,
+  /* Optimized for system operation. Minimize unnecessary development of
+   * expression for smaller trees and better precision. */
+  System
 };
 
 struct ReductionPolicy {

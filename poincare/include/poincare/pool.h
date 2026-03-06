@@ -73,7 +73,6 @@ class Pool final {
 
   // Pool memory
   void* alloc(size_t size);
-  void move(PoolObject* destination, PoolObject* source);
   PoolObject* copyObjectFromAddress(const void* address, size_t size);
 
 #if POINCARE_TREE_LOG
@@ -163,8 +162,6 @@ class Pool final {
 
   // Pool memory
   void dealloc(PoolObject* ptr, size_t size);
-  void moveObjects(PoolObject* destination, PoolObject* source,
-                   size_t moveLength);
 
   void freePoolFromObject(PoolObject* firstObjectToDiscard);
 

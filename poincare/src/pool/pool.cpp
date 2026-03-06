@@ -27,10 +27,6 @@ uint16_t Pool::nextFreeIdentifier() {
   OMG_UNREACHABLE;
 }
 
-void Pool::move(PoolObject* destination, PoolObject* source) {
-  moveObjects(destination, source, AlignedSize(source->size()));
-}
-
 PoolObject* Pool::copyObjectFromAddress(const void* address, size_t size) {
   void* ptr = alloc(size);
   memcpy(ptr, address, size);
@@ -38,27 +34,6 @@ PoolObject* Pool::copyObjectFromAddress(const void* address, size_t size) {
   assert(copy->isAfterTopmostCheckpoint());
   copy->rename(nextFreeIdentifier(), false);
   return copy;
-}
-
-void Pool::moveObjects(PoolObject* destination, PoolObject* source,
-                       size_t moveSize) {
-  assert(destination->isAfterTopmostCheckpoint());
-  assert(source->isAfterTopmostCheckpoint());
-  assert(moveSize % 4 == 0);
-  assert((((uintptr_t)source) % 4) == 0);
-  assert((((uintptr_t)destination) % 4) == 0);
-
-#if ASSERTIONS
-  assert(!s_treePoolLocked);
-#endif
-
-  uint32_t* src = reinterpret_cast<uint32_t*>(source);
-  uint32_t* dst = reinterpret_cast<uint32_t*>(destination);
-  size_t len = moveSize / 4;
-
-  if (OMG::Memory::Rotate(dst, src, len)) {
-    registerDownstreamObject(dst < src ? destination : source);
-  }
 }
 
 #if POINCARE_TREE_LOG

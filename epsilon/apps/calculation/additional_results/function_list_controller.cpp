@@ -37,7 +37,7 @@ void FunctionListController::computeAdditionalResults(
                        .context = App::app()->localContext()},
               .projectionPolicy =
                   {.symbolic = SymbolicComputation::ReplaceDefinedSymbols},
-              .reductionPolicy = {.target = ReductionTarget::User},
+              .reductionPolicy = {.target = ReductionTarget::System},
           })
           .getPreparedFunction(k_symbolName, true);
 

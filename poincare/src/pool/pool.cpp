@@ -15,15 +15,8 @@ bool Pool::s_treePoolLocked = false;
 
 OMG::TrackedGlobalBox<Pool> Pool::sharedPool;
 
-void Pool::freeIdentifier(uint16_t identifier) {
-  if (PoolObject::IsValidIdentifier(identifier) &&
-      identifier < MaxNumberOfObjects) {
-    m_objectOffset[identifier] = UINT16_MAX;
-  }
-}
-
 // Find the first identifier available in the object offset table
-uint16_t Pool::generateIdentifier() {
+uint16_t Pool::nextFreeIdentifier() {
   for (uint16_t i = 0; i < MaxNumberOfObjects; i++) {
     if (m_objectOffset[i] == UINT16_MAX) {
       return i;
@@ -63,7 +56,7 @@ void Pool::moveObjects(PoolObject* destination, PoolObject* source,
   size_t len = moveSize / 4;
 
   if (OMG::Memory::Rotate(dst, src, len)) {
-    updateObjectOffsetsFromObject(dst < src ? destination : source);
+    registerDownstreamObject(dst < src ? destination : source);
   }
 }
 
@@ -132,15 +125,14 @@ void Pool::dealloc(PoolObject* object, size_t size) {
   m_cursor -= size;
 
   // Step 2: Update m_objectOffset for all objects downstream
-  updateObjectOffsetsFromObject(object);
+  registerDownstreamObject(object);
 }
 
 void Pool::discardPoolObject(PoolObject* object) {
-  uint16_t objectIdentifier = object->identifier();
+  unregisterObject(object);
   size_t size = object->size();
   object->~PoolObject();
   dealloc(object, size);
-  freeIdentifier(objectIdentifier);
 }
 
 void Pool::registerObject(PoolObject* object) {
@@ -153,13 +145,21 @@ void Pool::registerObject(PoolObject* object) {
   m_objectOffset[objectID] = objectOffset;
 }
 
-void Pool::updateObjectOffsetsFromObject(PoolObject* object) {
+void Pool::unregisterObject(PoolObject* object) {
+  uint16_t identifier = object->identifier();
+  if (PoolObject::IsValidIdentifier(identifier) &&
+      identifier < MaxNumberOfObjects) {
+    m_objectOffset[identifier] = UINT16_MAX;
+  }
+}
+
+void Pool::registerDownstreamObject(PoolObject* object) {
   for (PoolObject* n : Objects(object)) {
     registerObject(n);
   }
 }
 
-void Pool::resetObjectOffsets() {
+void Pool::unregisterAllObjects() {
   for (uint16_t i = 0; i < MaxNumberOfObjects; i++) {
     m_objectOffset[i] = UINT16_MAX;
   }
@@ -172,14 +172,11 @@ void Pool::freePoolFromObject(PoolObject* firstObjectToDiscard) {
   assert(firstObjectToDiscard <= last());
 
   // Free all identifiers
-  resetObjectOffsets();
-  PoolObject* currentObject = first();
-  while (currentObject < firstObjectToDiscard) {
-    registerObject(currentObject);
-    currentObject = NextObject(currentObject);
-  }
-  assert(currentObject == firstObjectToDiscard);
-  m_cursor = reinterpret_cast<char*>(currentObject);
+  unregisterAllObjects();
+
+  // Register up until firstObjectToDiscard
+  m_cursor = reinterpret_cast<char*>(firstObjectToDiscard);
+  registerDownstreamObject(first());
   // TODO: Assert that no tree continues into the discarded pool zone
 }
 

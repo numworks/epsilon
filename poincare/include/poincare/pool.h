@@ -55,7 +55,7 @@ class Pool final {
 #endif
   }
 
-  Pool() : m_cursor(buffer()) { resetObjectOffsets(); }
+  Pool() : m_cursor(buffer()) { unregisterAllObjects(); }
 
   PoolObject* cursor() const { return reinterpret_cast<PoolObject*>(m_cursor); }
   size_t size() const { return m_cursor - constBuffer(); }
@@ -104,15 +104,23 @@ class Pool final {
 
   // PoolObject
   void discardPoolObject(PoolObject* object);
+
+  // Identifiers
+  uint16_t nextFreeIdentifier();
+
+  // Registers the object identifier
   void registerObject(PoolObject* object);
-  void unregisterObject(PoolObject* object) {
-    freeIdentifier(object->identifier());
-  }
-  void updateObjectOffsetsFromObject(PoolObject* object);
+  // Frees the object identifier
+  void unregisterObject(PoolObject* object);
+  // Registers all objects downstream of the given object, including itself
+  void registerDownstreamObject(PoolObject* object);
+  // Reset m_objectOffset for all identifiers
+  void unregisterAllObjects();
+
   void renameObject(PoolObject* object,
                     bool unregisterPreviousIdentifier = true) {
     assert(object->isAfterTopmostCheckpoint());
-    object->rename(generateIdentifier(), unregisterPreviousIdentifier);
+    object->rename(nextFreeIdentifier(), unregisterPreviousIdentifier);
   }
   // Return next object
   static PoolObject* NextObject(PoolObject* object) {
@@ -162,12 +170,6 @@ class Pool final {
   void dealloc(PoolObject* ptr, size_t size);
   void moveObjects(PoolObject* destination, PoolObject* source,
                    size_t moveLength);
-
-  // Identifiers
-  uint16_t generateIdentifier();
-  void freeIdentifier(uint16_t identifier);
-  // Reset m_objectOffset for all identifiers
-  void resetObjectOffsets();
 
   void freePoolFromObject(PoolObject* firstObjectToDiscard);
 

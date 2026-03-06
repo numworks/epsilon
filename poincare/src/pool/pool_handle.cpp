@@ -50,7 +50,7 @@ PoolHandle PoolHandle::Builder() {
 
 PoolHandle PoolHandle::Build(PoolObject* object) {
   assert(object != nullptr);
-  uint16_t objectIdentifier = Pool::sharedPool->generateIdentifier();
+  uint16_t objectIdentifier = Pool::sharedPool->nextFreeIdentifier();
   object->rename(objectIdentifier, false);
   return PoolHandle(object);
 }

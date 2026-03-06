@@ -78,7 +78,7 @@ def html(layout):
     html += '    <canvas tabindex="1"></canvas>\n'
     for key in range(len(layout["keys"])):
         html += '    <span data-key="%s"></span>\n' % key
-    html += "  </div>"
+    html += "  </div>\n"
     html += "</div>"
     return html
 

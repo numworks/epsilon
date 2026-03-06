@@ -669,8 +669,8 @@ QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
   projects_and_reduces_for_analysis_to("(2+x)^2", "x^2+4×x+4", parameters);
   projects_and_reduces_to("(1+x)^3", "(x+1)^3", parameters);
   projects_and_reduces_to("1+3×x+3×x^2+x^3-(1+x)^3", "0", parameters);
-  projects_and_reduces_for_analysis_to("(1+x)^3", "x^3+3×x^2+3×x+1",
-                                       parameters);
+  projects_and_reduces_for_analysis_to(
+      "(1+x)^3", "dep(x^3+3×x^2+3×x+1,{sum(0×k,k,1,2)})", parameters);
   projects_and_reduces_to("ln(49000*x)",
                           "dep(ln(49000×x),{nonNull(x),realPos(49000×x)})",
                           parameters);

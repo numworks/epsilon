@@ -267,7 +267,7 @@ _sources_poincare_test_cases := $(addprefix test/, \
     units.cpp \
   ) \
   $(addprefix helpers/, \
-    quiz.cpp \
+    quiz.cpp:+test \
   ) \
   $(addprefix pool/, \
     helpers.cpp \

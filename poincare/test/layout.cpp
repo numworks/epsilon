@@ -101,6 +101,7 @@ QUIZ_CASE(pcj_expression_to_layout) {
                                KParenthesesL("π+1"_l) ^ "log"_l ^
                                    KSubscriptL("3"_l) ^ KParenthesesL("7"_l));
 
+#if POINCARE_TEST
   // Tests the layout of the NL logarithm
   Poincare::MutablePreferences::s_instance->m_logarithmBasePosition =
       Poincare::Preferences::LogarithmBasePosition::TopLeft;
@@ -110,6 +111,7 @@ QUIZ_CASE(pcj_expression_to_layout) {
                                KParenthesesL("π+1"_l) ^ "·"_l ^
                                    KPrefixSuperscriptL("3"_l) ^ "log"_l ^
                                    KParenthesesL("7"_l));
+#endif
 }
 
 void assert_expression_layouts_and_serializes_to(const Tree* expression,

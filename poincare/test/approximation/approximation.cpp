@@ -174,6 +174,7 @@ QUIZ_CASE(pcj_approximation_root) {
                                      k_degreeCartesianSimplification, 13);
 }
 
+#if POINCARE_TEST
 QUIZ_CASE(pcj_approximation_mixed_fraction) {
   Poincare::MutablePreferences::s_instance->m_mixedFractions =
       Poincare::Preferences::MixedFractions::Enabled;
@@ -181,6 +182,7 @@ QUIZ_CASE(pcj_approximation_mixed_fraction) {
   approximates_to<double>("1 1/2", 1.5);
   approximates_to<double>("-1 1/2", -1.5);
 }
+#endif
 
 QUIZ_CASE(pcj_approximation_percent) {
   simplified_approximates_to<double>("900(1+1.5%/365)^(18*365)",

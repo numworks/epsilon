@@ -624,10 +624,12 @@ QUIZ_CASE(pcj_parse_mixed_fraction) {
 
   assert_text_not_parsable("1 1/2");
 
+#if POINCARE_TEST
   Poincare::MutablePreferences::s_instance->m_mixedFractions =
       Poincare::Preferences::MixedFractions::Enabled;
   assert(Poincare::SharedPreferences->mixedFractionsAreEnabled());
   assert_parsed_expression_is("1 2/3", KMixedFraction(1_e, KDiv(2_e, 3_e)));
+#endif
   assert_parsed_expression_is(
       "1((2)/(3))",
       KMult(1_e, KParentheses(KDiv(KParentheses(2_e), KParentheses(3_e)))));

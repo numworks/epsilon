@@ -9,10 +9,15 @@ STRICT_WARNINGS ?= 0
 
 include $(PATH_haussmann)/Makefile
 
+# TODO: The POINCARE_TEST flag is used to comment out a few tests that
+# are using the mutable preferences and cannot run easily in
+# epsilon_test where the preferences are a GlobalPreference object.
+
 SFLAGS += \
   -DASSERTIONS=$(ASSERTIONS) \
   -DOPTIMIZE_ASSERTIONS=$(ASSERTIONS) \
-  -DEXTERNAL_APPS_API_LEVEL=0
+  -DEXTERNAL_APPS_API_LEVEL=0 \
+  -DPOINCARE_TEST=1
 
 ifeq ($(PLATFORM_TYPE),device)
 SFLAGS += -DPLATFORM_DEVICE
@@ -57,7 +62,7 @@ endif
 ## Poincare
 POINCARE_variant := epsilon
 $(call import_module,poincare,../../poincare)
-_poincare_test_modules += poincare.testcases.testutil
+_poincare_test_modules += poincare.testcases.testutil.test
 
 ## Quiz
 $(call import_module,quiz,../../shared/quiz)

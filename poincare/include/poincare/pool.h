@@ -179,6 +179,8 @@ class Pool final {
   char* m_cursor;
   // Index is object identifier, value is offset of the object in the pool
   uint16_t m_objectOffset[MaxNumberOfObjects];
+  // Memoize the last attributed identifier to speed up future searches
+  mutable uint16_t m_lastIdentifier = MaxNumberOfObjects;
   static_assert(k_maxObjectOffset < UINT16_MAX &&
                     sizeof(m_objectOffset[0]) == sizeof(uint16_t),
                 "The tree pool object offsets in m_objectOffset "

@@ -17,13 +17,22 @@ OMG::TrackedGlobalBox<Pool> Pool::sharedPool;
 
 // Find the first identifier available in the object offset table
 uint16_t Pool::nextFreeIdentifier() {
+  uint16_t start = m_lastIdentifier + 1;
+  if (start >= MaxNumberOfObjects) {
+    start = 0;
+  }
+
   for (uint16_t i = 0; i < MaxNumberOfObjects; i++) {
-    if (m_objectOffset[i] == UINT16_MAX) {
-      return i;
+    uint16_t identifier = (start + i) % MaxNumberOfObjects;
+    if (m_objectOffset[identifier] == UINT16_MAX) {
+      // Memoize the last identifier to speed up future searches
+      m_lastIdentifier = identifier;
+      return identifier;
     }
   }
+
   /* No identifier is available. This should not happen since the number of
-   * objects in the pool should be limited by the number of identifiers. */
+   * identifiers is bounded by MaxNumberOfObjects. */
   OMG_UNREACHABLE;
 }
 

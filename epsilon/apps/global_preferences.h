@@ -37,7 +37,7 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
   I18n::Language language() const { return s_data->m_language; }
   void setLanguage(I18n::Language language) { s_data->m_language = language; }
   I18n::Country country() const { return s_data->m_country; }
-  void setCountry(I18n::Country country, bool updateSnapshots = true) {
+  void setCountry(I18n::Country country) {
     s_data->m_country = country;
     AppsContainerHelper::notifyCountryChangeToSnapshots();
   }

@@ -81,7 +81,7 @@ _ion_simulator_background_resize_epsilon := 1130x2220
 _ion_simulator_perfect_width_epsilon := 454
 _ion_simulator_perfect_height_epsilon := 892
 
-_ion_simulator_background_crop_scandium := 569x990+182+128
+_ion_simulator_background_crop_scandium := 1515x2621+38+8
 _ion_simulator_background_resize_scandium := 1160x2018
 
 # perfect width = display_width*resized_background_width/screen_width_in_layout

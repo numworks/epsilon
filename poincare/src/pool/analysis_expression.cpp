@@ -34,6 +34,9 @@ int AnalysisExpression::polynomialDegree(const char* symbolName) const {
 int AnalysisExpression::getPolynomialReducedCoefficients(
     const char* symbolName, AnalysisExpression coefficients[],
     bool keepDependencies) const {
+#if ASSERTIONS
+  int initialNumberOfTrees = SharedTreeStack->numberOfTrees();
+#endif
   Tree* coefList = PolynomialParser::GetReducedCoefficients(tree(), symbolName,
                                                             keepDependencies);
   if (!coefList) {
@@ -46,6 +49,7 @@ int AnalysisExpression::getPolynomialReducedCoefficients(
     coefficients[i] = Builder(child);
   }
   coefList->removeNode();
+  assert(initialNumberOfTrees == SharedTreeStack->numberOfTrees());
   return degree;
 }
 

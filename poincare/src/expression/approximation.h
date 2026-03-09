@@ -25,7 +25,7 @@ struct Dimension;
  * Approximation can be called on all expression types (see See
  * ExpressionVariantParameters::Type). However depending on the expression type,
  * the available parameters and processing are slightly different. For example,
- * if the expression is User, UserSettings (angle unit, complex format, symbol
+ * if the expression is User, UserParameters (angle unit, complex format, symbol
  * context) need to be passed. See the PrepareTree method which contains the
  * code that depends on the expression type. */
 
@@ -41,8 +41,8 @@ struct ProjectedPolicy {
 struct Prepared {};
 
 /*  To indicate that an expression does not relate to any Expression type (User,
- * System or PreparedFunction). In that case, no UserSettings can be passed and
- * the expression cannot be prepared. */
+ * System or PreparedFunction). In that case, no UserParameters can be passed
+ * and the expression cannot be prepared. */
 struct Unspecified {};
 
 class ExpressionVariantParameters {

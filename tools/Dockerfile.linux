@@ -13,7 +13,9 @@ COPY tools/setup.sh tools/setup.sh
 
 RUN tools/setup.sh --ci --only-simulator
 
-RUN apt-get install clang-17 libc++-17-dev libc++abi-17-dev elfutils && ln -s /usr/bin/clang-17 /usr/local/bin/clang && ln -s /usr/bin/clang++-17 /usr/local/bin/clang++
+RUN apt-get install clang-17 libc++-17-dev libc++abi-17-dev elfutils && \
+    ln -s /usr/bin/clang-17 /usr/local/bin/clang && \
+    ln -s /usr/bin/clang++-17 /usr/local/bin/clang++
 
 ENV PYTHON=/runner/.venv/bin/python
 

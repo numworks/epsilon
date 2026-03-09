@@ -22,7 +22,7 @@ LDFLAGS += \
   -fuse-ld=lld \
   -Wl,--undefined-glob,__aeabi_memcpy* \
   -Wl,--undefined-glob,__aeabi_memclr* \
-  $(LIBCLANG_ROOT)/lib/clang-runtimes/arm-none-eabi/$(LIBCLANG_ARCH)/lib/libclang_rt.builtins.a
+  $(LIBCLANG_ROOT)/arm-none-eabi/$(LIBCLANG_ARCH)/lib/libclang_rt.builtins.a
 
 SFLAGS += \
   -fno-builtin \

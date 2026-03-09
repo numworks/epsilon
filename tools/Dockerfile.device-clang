@@ -1,0 +1,27 @@
+# Dockerfile used by the CI
+
+FROM debian:bookworm-slim
+
+WORKDIR /runner
+
+RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/assume-yes && \
+    apt-get update && \
+    apt-get upgrade && \
+    apt-get install --no-install-recommends sudo curl
+
+COPY tools/setup.sh tools/setup.sh
+
+RUN tools/setup.sh --ci --only-simulator
+
+RUN apt-get install clang-19 libc++-19-dev libc++abi-19-dev elfutils && \
+    ln -s /usr/bin/clang-19 /usr/local/bin/clang && \
+    ln -s /usr/bin/clang++-19 /usr/local/bin/clang++
+
+RUN curl -fsSL https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-19.1.5/LLVM-ET-Arm-llvmlibc-overlay-19.1.5.zip -o armlibc.zip && \
+    unzip armlibc.zip "*libclang_rt.builtins.a" -d armlibc
+
+ENV LIBCLANG_ROOT=/runner/armlibc/lib/clang-runtimes/llvmlibc/
+
+ENV PYTHON=/runner/.venv/bin/python
+
+WORKDIR /monorepo

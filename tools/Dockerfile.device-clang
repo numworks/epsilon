@@ -13,9 +13,10 @@ COPY tools/setup.sh tools/setup.sh
 
 RUN tools/setup.sh --ci --only-simulator
 
-RUN apt-get install clang-19 libc++-19-dev libc++abi-19-dev lld-19 elfutils && \
+RUN apt-get install clang-19 libc++-19-dev libc++abi-19-dev lld-19 llvm-19 elfutils && \
     ln -s /usr/bin/clang-19 /usr/local/bin/clang && \
-    ln -s /usr/bin/clang++-19 /usr/local/bin/clang++
+    ln -s /usr/bin/clang++-19 /usr/local/bin/clang++ && \
+    ln -s /usr/bin/llvm-objcopy-19 /usr/local/bin/llvm-objcopy
 
 RUN curl -fsSL https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-19.1.5/LLVM-ET-Arm-llvmlibc-overlay-19.1.5.zip -o armlibc.zip && \
     unzip armlibc.zip "*libclang_rt.builtins.a" -d armlibc

@@ -2,7 +2,7 @@ CC := clang
 CXX := clang++
 LD := clang
 GDB := arm-none-eabi-gdb
-OBJCOPY := arm-none-eabi-objcopy
+OBJCOPY := llvm-objcopy
 
 EXECUTABLE_EXTENSION := elf
 

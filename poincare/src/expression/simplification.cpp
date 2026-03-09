@@ -11,6 +11,7 @@
 #include "random.h"
 #include "sign.h"
 #include "systematic_reduction.h"
+#include "undefined.h"
 #include "units/unit.h"
 #include "variables.h"
 
@@ -271,11 +272,7 @@ bool IsSystem(const Tree* e) {
 
 // A PreparedFunction contains either floats and / or variables, or is undef
 bool IsPreparedFunction(const Internal::Tree* e) {
-  return e->isUndef()
-#if POINCARE_POINT
-         || e->treeIsIdenticalTo(KPoint(KUndef, KUndef))
-#endif
-         || e->isComplexI() ||
+  return Undefined::IsDimensionedUndefined(e) || e->isComplexI() ||
          (e->hasDescendantSatisfying([](const Internal::Tree* e) {
            return e->isFloat() || e->isVar();
          }));

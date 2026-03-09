@@ -53,8 +53,7 @@ $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
 	rm -f $@.objs
 else
 $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
-	$(call rule_label,AR)
-	$(AR) $(ARFLAGS) $@ $^ || (rm -f $@; false)
+	:
 endif
 
 # Rules for object files

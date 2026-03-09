@@ -182,24 +182,26 @@ void ContinuousFunction::getLineParameters(double* slope,
                                            double* intercept) const {
   assert(properties().isLineEquation());
   const AnalysisExpression& equation = expressionReducedForAnalysis();
-  // Compute metrics for details view of Line
-  AnalysisExpression coefficients[PolynomialHelpers::NumberOfCoefficients(
-      PolynomialHelpers::k_lineDegree)];
-  // Separate the two line coefficients for approximation.
-  int d =
-      equation.getPolynomialReducedCoefficients(k_unknownName, coefficients);
-  assert(d <= PolynomialHelpers::k_lineDegree);
+  /* Compute metrics for details view of Line, separate the two line
+   * coefficients for approximation. */
+  const AnalysisExpression& coefficients =
+      equation.getPolynomialReducedCoefficients(k_unknownName);
   /* Degree might vary depending on symbols definition and complex format.
    * Approximate and return the two line coefficients */
-  if (d < 0) {
+  if (coefficients.isUninitialized()) {
     *slope = NAN;
     *intercept = NAN;
   } else {
-    *intercept = coefficients[0].approximateSystemToRealScalar<double>();
-    if (d == 0) {
+    int degree = coefficients.numberOfChildren() - 1;
+    assert(degree >= 0);
+    *intercept = coefficients.cloneChildAtIndex(0)
+                     .approximateSystemToRealScalar<double>();
+    if (degree == 0) {
       *slope = 0.0;
     } else {
-      *slope = coefficients[1].approximateSystemToRealScalar<double>();
+      assert(degree == PolynomialHelpers::k_lineDegree);
+      *slope = coefficients.cloneChildAtIndex(1)
+                   .approximateSystemToRealScalar<double>();
     }
   }
 }
@@ -635,23 +637,24 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
     /* Solve the equation in y (or x if not willBeAlongX)
      * Symbols are replaced to simplify roots. */
     constexpr size_t k_maxHandledDegree = 2;
-    AnalysisExpression coefficients[PolynomialHelpers::NumberOfCoefficients(
-        k_maxHandledDegree)];
-    int degree =
+    AnalysisExpression coefficients =
         expressionReducedForAnalysis(record).getPolynomialReducedCoefficients(
             willBeAlongX ? ContinuousFunctionProperties::k_ordinateName
                          : k_unknownName,
-            coefficients, true);
-
-    assert(degree != -1);
+            true);
+    assert(!coefficients.isUninitialized());
+    int degree = coefficients.numberOfChildren() - 1;
+    assert(degree >= 0 && degree <= k_maxHandledDegree);
     assert(!willBeAlongX || degree == yDegree);
     if (degree == 1) {
-      m_expression = Poincare::Roots::Linear(coefficients[1], coefficients[0]);
+      m_expression = Poincare::Roots::Linear(coefficients.cloneChildAtIndex(1),
+                                             coefficients.cloneChildAtIndex(0));
     } else if (degree == 2) {
       // Equation is of degree 2, each root is a subcurve to plot.
       assert(m_properties.isOfDegreeTwo());
       m_expression = Poincare::Roots::Quadratic(
-          coefficients[2], coefficients[1], coefficients[0]);
+          coefficients.cloneChildAtIndex(2), coefficients.cloneChildAtIndex(1),
+          coefficients.cloneChildAtIndex(0));
     } else {
       /* TODO: We could handle simple equations of any degree by solving the
        * equation within the graph view bounds, to plot as many vertical or

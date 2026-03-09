@@ -31,26 +31,10 @@ int AnalysisExpression::polynomialDegree(const char* symbolName) const {
   return Degree::Get(tree(), symbolName);
 }
 
-int AnalysisExpression::getPolynomialReducedCoefficients(
-    const char* symbolName, AnalysisExpression coefficients[],
-    bool keepDependencies) const {
-#if ASSERTIONS
-  int initialNumberOfTrees = SharedTreeStack->numberOfTrees();
-#endif
-  Tree* coefList = PolynomialParser::GetReducedCoefficients(tree(), symbolName,
-                                                            keepDependencies);
-  if (!coefList) {
-    return -1;
-  }
-  int degree = coefList->numberOfChildren() - 1;
-  assert(degree >= 0);
-  Tree* child = coefList->nextNode();
-  for (int i = 0; i <= degree; i++) {
-    coefficients[i] = Builder(child);
-  }
-  coefList->removeNode();
-  assert(initialNumberOfTrees == SharedTreeStack->numberOfTrees());
-  return degree;
+AnalysisExpression AnalysisExpression::getPolynomialReducedCoefficients(
+    const char* symbolName, bool keepDependencies) const {
+  return Builder(PolynomialParser::GetReducedCoefficients(tree(), symbolName,
+                                                          keepDependencies));
 }
 
 template <typename T>

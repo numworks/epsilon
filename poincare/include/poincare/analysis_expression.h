@@ -31,12 +31,10 @@ class AnalysisExpression : public Expression {
 
   /* Other helpers */
   int polynomialDegree(const char* symbolName) const;
-  /* Fills the table coefficients with the expressions of the first 3 polynomial
-   * coefficients and returns the  polynomial degree. It is supposed to be
-   * called on a reduced expression. coefficients has up to 3 entries.  */
-  int getPolynomialReducedCoefficients(const char* symbolName,
-                                       AnalysisExpression coefficients[],
-                                       bool keepDependencies = false) const;
+  /* Return a list of the polynomial coefficients. Polynomial degree is list
+   * length minus one. */
+  AnalysisExpression getPolynomialReducedCoefficients(
+      const char* symbolName, bool keepDependencies = false) const;
   /* Approximate to a real scalar. AnalysisExpression aren't optimal for
    * approximation, they can induce big approximation errors. */
   template <typename T>

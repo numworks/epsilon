@@ -169,9 +169,7 @@ static CalculationResult compute(
                               .angleUnit =
                                   GlobalPreferences::SharedGlobalPreferences()
                                       ->angleUnit(),
-                              .context = GlobalContextAccessor::Context()
-                              // Should unitFormat be passed?
-                          },
+                              .context = GlobalContextAccessor::Context()},
                           ApproximationPolicy{.onlyReplaceNumerical =
                                                   CAS::Enabled()})},
           .hasReductionFailure = false};

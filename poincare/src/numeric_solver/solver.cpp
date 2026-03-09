@@ -3,6 +3,7 @@
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/dependency.h>
+#include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/properties.h>
 #include <poincare/src/expression/variables.h>
@@ -545,13 +546,13 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootSearchingInChild(
      * sometimes we find cos(xRoot) = -0.0..01, so sqrt(cos(xRoot)) = undef.
      * To avoid this problem, clone e and replace cos(xRoot) by 0. */
     Tree* ebis = e->cloneTree();
-    ebis->child(childIndex)->cloneTreeOverTree(0_e);
+    ebis->child(childIndex)
+        ->cloneTreeOverTree(Internal::ZeroFloatTree<T>::value);
     T value = Approximation::To<T>(
         ebis, root.solution.x,
         Approximation::Parameters{
             .policy = {.optimize = true},
-            // ebis is no more a PreparedFunction
-            .expressionParameters = Approximation::Unspecified{}});
+            .expressionParameters = Approximation::Prepared{}});
     ebis->removeTree();
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */

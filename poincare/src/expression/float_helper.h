@@ -1,6 +1,8 @@
 #pragma once
 
 #include <omg/bit_helper.h>
+#include <omg/unreachable.h>
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_stack.h>
@@ -33,6 +35,19 @@ class FloatHelper {
 
   // e must be a Float tree with a strictly negative value
   static void ToOppositeFloat(Tree* e);
+};
+
+template <typename FloatType>
+struct ZeroFloatTree {};
+
+template <>
+struct ZeroFloatTree<float> {
+  constexpr static KTree value = 0_fe;
+};
+
+template <>
+struct ZeroFloatTree<double> {
+  constexpr static KTree value = 0_de;
 };
 
 }  // namespace Poincare::Internal

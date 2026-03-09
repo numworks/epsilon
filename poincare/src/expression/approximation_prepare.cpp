@@ -115,7 +115,7 @@ bool PrepareExpressionForApproximation(Tree* e) {
 
 void PrepareFunctionForApproximation(Tree* e, const char* variable,
                                      bool variableIsReal) {
-  assert(Simplification::IsSystem(e));
+  assert(Simplification::CanBeSystem(e));
   Variables::ReplaceUserVariable(e, variable, 0,
                                  variableIsReal ? ComplexProperties::Real()
                                                 : ComplexProperties::Unknown());

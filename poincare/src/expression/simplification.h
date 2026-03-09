@@ -28,9 +28,9 @@ ToSystemOutput ToSystem(Tree* e,
 bool ReduceSystem(Tree* e, const ReductionPolicy& reductionPolicy);
 
 #if ASSERTIONS
-bool IsUser(const Tree* e);
-bool IsSystem(const Tree* e);
-bool IsPreparedFunction(const Internal::Tree* e);
+bool CanBeUser(const Tree* e);
+bool CanBeSystem(const Tree* e);
+bool CanBePreparedFunction(const Internal::Tree* e);
 #endif
 
 }  // namespace Simplification

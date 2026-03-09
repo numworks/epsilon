@@ -237,14 +237,14 @@ bool HandleUnits(Tree* e, const UnitParameters& unitParameters,
 
 #if ASSERTIONS
 // A Tree is not a UserExpression if it contains some System nodes
-bool IsUser(const Tree* e) {
+bool CanBeUser(const Tree* e) {
   return !(e->hasDescendantSatisfying(
       [](const Tree* e) { return e->isTrig() || e->isLn(); }));
 }
 
 /* A Tree is a SystemExpression if it has already been projected (re-projecting
  * it returns the same Tree) */
-bool IsSystem(const Tree* e) {
+bool CanBeSystem(const Tree* e) {
   Tree* c = e->cloneTree();
 #if POINCARE_COMPLEX
   // Use ComplexFormat::Cartesian to avoid having PowReal interfering
@@ -254,8 +254,8 @@ bool IsSystem(const Tree* e) {
   /* Pow is used both in UserExpressions to represent all the types of powers
    * and in system for some specific powers (simple integral powers for
    * instance). This is an issue in ComplexFormat::Real since ToSystem replaces
-   * all Pow nodes with PowReal nodes, ie Pow nodes are not allowed by IsSystem
-   * while they are produced by the reduction.
+   * all Pow nodes with PowReal nodes, ie Pow nodes are not allowed by
+   * CanBeSystem while they are produced by the reduction.
    * TODO: introduce a PowUser node similar to LnUser to clarify the situation ?
    */
   ProjectionParameters projectionParameters = {};
@@ -271,7 +271,7 @@ bool IsSystem(const Tree* e) {
 }
 
 // A PreparedFunction contains either floats and / or variables, or is undef
-bool IsPreparedFunction(const Internal::Tree* e) {
+bool CanBePreparedFunction(const Internal::Tree* e) {
   return Undefined::IsDimensionedUndefined(e) || e->isComplexI() ||
          (e->hasDescendantSatisfying([](const Internal::Tree* e) {
            return e->isFloat() || e->isVar();

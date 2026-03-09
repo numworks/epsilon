@@ -299,13 +299,13 @@ Tree* PrepareTree(const Tree* e,
   Tree* clone = nullptr;
   switch (expressionParameters.expressionType()) {
     case ExpressionType::User: {
-      assert(Simplification::IsUser(e));
+      assert(Simplification::CanBeUser(e));
       clone = e->cloneTree();
       Variables::ProjectLocalVariablesToId(clone);
       break;
     }
     case ExpressionType::System: {
-      assert(Simplification::IsSystem(e));
+      assert(Simplification::CanBeSystem(e));
       if (expressionParameters.get<SystemExpressionPolicy>().prepare) {
         if (!clone) {
           clone = e->cloneTree();
@@ -316,7 +316,7 @@ Tree* PrepareTree(const Tree* e,
     }
     case ExpressionType::PreparedFunction: {
       // Nothing to do, expression is already prepared for approximation
-      assert(Simplification::IsPreparedFunction(e));
+      assert(Simplification::CanBePreparedFunction(e));
       break;
     }
     case ExpressionType::Unspecified: {

@@ -30,7 +30,7 @@ bool IsCalculationOutputStrictEquality(const Tree* exact,
                                        int significantDigits) {
   assert(exact && approximate);
   // If projection failed, exact can be not system
-  assert(Simplification::IsSystem(approximate));
+  assert(Simplification::CanBeSystem(approximate));
 
   /* Turn floats and doubles into decimal so that they can be compared to
    * rationals. */

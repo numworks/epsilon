@@ -140,9 +140,9 @@ void UnitListController::computeAdditionalResults(
   }
   simplificationParameters.unitPolicy = UnitDisplay::BasicSI;
   UserExpression approximatedSIExpression;
-  input.cloneAndSimplifyAndApproximate(
-      expressions + numberOfExpressions++, &approximatedSIExpression,
-      simplificationParameters, ApproximationPolicy{.optimize = true});
+  input.cloneAndSimplifyAndApproximate(expressions + numberOfExpressions++,
+                                       &approximatedSIExpression,
+                                       simplificationParameters);
   if (reductionFailure) {
     expressions[--numberOfExpressions] = UserExpression();
   }

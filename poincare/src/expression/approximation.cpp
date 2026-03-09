@@ -1619,8 +1619,8 @@ std::complex<T> Approximator::miscToComplex(const Tree* e) {
      * handled at this point. */
     case Type::Unit: {
       T approxSI = Units::Unit::GetValue(e);
-      /* For angle units, convert to angle value in the context. Do not convert
-       * if angle unit is None. */
+      /* For angle units, convert to the angle value passed in the user
+       * parameters. Do not convert if angle unit is None. */
       return (Units::IsPureAngleUnit(e) &&
               m_parameters.angleUnit != AngleUnit::None)
                  ? Trigonometry::ConvertRadianToAngleUnit<T>(

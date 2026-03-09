@@ -115,6 +115,8 @@ class PoolHandle {
    *
    * Here, the ref counter of the cos is not incremented while a and b point
    * towards it.
+   *
+   * There are examples of failing cases in tests/pool_handle.cpp
    * */
   bool canUpdateRefCounter() const {
     const PoolObject* object = this->object();

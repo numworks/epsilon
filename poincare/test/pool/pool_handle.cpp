@@ -120,3 +120,121 @@ QUIZ_CASE(pcj_pool_expression_can_be_copied_even_if_uninitialized) {
   f = e;
   assert_pool_size(initialPoolSize);
 }
+
+QUIZ_CASE(pcj_pool_handle_failure_with_retained_object_after_checkpoint) {
+  int initialPoolSize = pool_size();
+  bool exceptionIsHandled = false;
+  {
+    Expression e;
+    Poincare::ExceptionCheckpoint ecp;
+    if (ExceptionRun(ecp)) {
+      // e retains
+      e = UserExpression::Builder(1);
+      assert_pool_size(initialPoolSize + 1);
+      assert(e.objectRetainCount() == 1);
+      ExceptionCheckpoint::Raise();
+    } else {
+      exceptionIsHandled = true;
+    }
+    // The pool was properly rolled back
+    quiz_assert(exceptionIsHandled);
+    assert_pool_size(initialPoolSize);
+    assert(e.wasErasedByException());
+  }
+  // e destructor properly handled the absence of its object
+  assert_pool_size(initialPoolSize);
+}
+
+QUIZ_CASE(pcj_pool_handle_failure_with_retained_object_before_checkpoint_1) {
+  int initialPoolSize = pool_size();
+  bool exceptionIsHandled = false;
+  {
+    UserExpression e1 = UserExpression::Builder(1);
+    assert_pool_size(initialPoolSize + 1);
+    assert(e1.objectRetainCount() == 1);
+
+    Poincare::ExceptionCheckpoint ecp;
+    if (ExceptionRun(ecp)) {
+      // TODO: e2 doesn't retain
+      UserExpression e2 = UserExpression(e1);
+      assert_pool_size(initialPoolSize + 1);
+      assert(e1.objectRetainCount() == 1);
+      ExceptionCheckpoint::Raise();
+    } else {
+      exceptionIsHandled = true;
+    }
+    quiz_assert(exceptionIsHandled);
+    assert_pool_size(initialPoolSize + 1);
+    assert(e1.objectRetainCount() == 1);
+  }
+  assert_pool_size(initialPoolSize);
+}
+
+// ---- TODO: All the following tests are failing ----
+
+/**
+QUIZ_CASE(pcj_pool_handle_failure_with_retained_object_before_checkpoint_2) {
+  int initialPoolSize = pool_size();
+  bool exceptionIsHandled = false;
+  {
+    Expression e1;
+    UserExpression e2 = UserExpression::Builder(1);
+    assert_pool_size(initialPoolSize + 1);
+    {
+      Poincare::ExceptionCheckpoint ecp;
+      if (ExceptionRun(ecp)) {
+        // TODO: e1 doesn't retain e2 because it's before the checkpoint
+        e1 = e2;
+        assert_pool_size(initialPoolSize + 1);
+        assert(e1.objectRetainCount() == 1);
+      } else {
+        exceptionIsHandled = true;
+      }
+      quiz_assert(!exceptionIsHandled);
+      assert_pool_size(initialPoolSize + 1);
+      // e1 still points to e2
+      assert(e1.objectRetainCount() == 1);
+      assert(e2.objectRetainCount() == 1);
+    }
+    e2 = UserExpression::Builder(2);
+    // ERROR: e2 releases and e1 is invalid
+    assert(e1.objectRetainCount() == 1);
+    assert_pool_size(initialPoolSize + 2);
+  }
+  assert_pool_size(initialPoolSize);
+}
+
+QUIZ_CASE(pcj_pool_handle_failure_with_released_object_before_checkpoint) {
+  int initialPoolSize = pool_size();
+  bool exceptionIsHandled = false;
+  {
+    UserExpression e1 = UserExpression::Builder(1);
+    assert_pool_size(initialPoolSize + 1);
+    assert(e1.objectRetainCount() == 1);
+
+    Poincare::ExceptionCheckpoint ecp;
+    if (ExceptionRun(ecp)) {
+      // TODO: e2 doesn't retain e1 because it's before the checkpoint
+      UserExpression e2 = UserExpression(e1);
+      assert_pool_size(initialPoolSize + 1);
+      assert(e1.objectRetainCount() == 1);
+
+      // TODO: e1 isn't released!, because it's before the checkpoint
+      // (but e2 is thus still valid)
+      e1 = UserExpression::Builder(3);
+      assert_pool_size(initialPoolSize + 2);
+      assert(e1.objectRetainCount() == 1);
+      assert(e2.objectRetainCount() == 1);
+      ExceptionCheckpoint::Raise();
+    } else {
+      exceptionIsHandled = true;
+    }
+    quiz_assert(exceptionIsHandled);
+    assert(e1.wasErasedByException());
+
+    assert_pool_size(initialPoolSize + 1);
+  }
+  // ERROR: old value of e1 is not released
+  assert_pool_size(initialPoolSize);
+}
+**/

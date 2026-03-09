@@ -25,8 +25,6 @@ struct ToSystemOutput {
 };
 ToSystemOutput ToSystem(Tree* e,
                         const ProjectionParameters& projectionParameters);
-#if ASSERTIONS
-#endif
 bool ReduceSystem(Tree* e, const ReductionPolicy& reductionPolicy);
 
 #if ASSERTIONS

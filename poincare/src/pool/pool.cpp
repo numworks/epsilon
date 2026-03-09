@@ -16,7 +16,7 @@ bool Pool::s_treePoolLocked = false;
 OMG::TrackedGlobalBox<Pool> Pool::sharedPool;
 
 // Find the first identifier available in the object offset table
-uint16_t Pool::nextFreeIdentifier() {
+uint16_t Pool::nextFreeIdentifier() const {
   uint16_t start = m_lastIdentifier + 1;
   if (start >= MaxNumberOfObjects) {
     start = 0;

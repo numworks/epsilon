@@ -105,8 +105,8 @@ class Pool final {
   void discardPoolObject(PoolObject* object);
 
   // Identifiers
-  uint16_t nextFreeIdentifier();
-  void renamePoolObject(PoolObject* object) {
+  uint16_t nextFreeIdentifier() const;
+  void renamePoolObject(PoolObject* object) const {
     object->rename(nextFreeIdentifier());
   }
   bool isRegistered(uint16_t identifier) const {
@@ -173,7 +173,7 @@ class Pool final {
    private:
     PoolObject* m_object;
   };
-  Objects allObjects() { return Objects(first()); }
+  Objects allObjects() const { return Objects(first()); }
 
   AlignedObjectBuffer m_alignedBuffer[BufferSize / ByteAlignment];
   char* m_cursor;

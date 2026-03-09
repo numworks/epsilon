@@ -263,20 +263,6 @@ FloatPrecision UpdateFloatPrecision(const Tree* e,
   return currentFloatPrecision;
 }
 
-template <typename ReturnType>
-ReturnType ProcessOnlyReplaceNumerical(const Tree*, Approximator&) {
-  // The onlyReplaceNumerical policy only makes sense for a Tree* return type
-  assert(false);
-  OMG_UNREACHABLE;
-}
-
-template <>
-Tree* ProcessOnlyReplaceNumerical(const Tree* e, Approximator& approximator) {
-  Tree* result = e->cloneTree();
-  approximator.approximateAndReplaceEveryScalar(result);
-  return result;
-}
-
 template <typename ReturnType, typename... ContextArguments>
 ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
                    const Parameters& parameters,
@@ -299,7 +285,7 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
 
   ReturnType result =
       parameters.policy.onlyReplaceNumerical
-          ? ProcessOnlyReplaceNumerical<ReturnType>(targetTree, approximator)
+          ? approximator.approximateScalars<ReturnType>(targetTree)
           : approximator.specificApproximateTo<ReturnType>(targetTree);
   if (!prepared) {
     return result;
@@ -650,7 +636,7 @@ Tree* Approximator::privateToTree(const Tree* e, Dimension dim) {
   if (dim.isUnit()) {
     // Preserve units and only replace scalar values.
     Tree* result = e->cloneTree();
-    approximateAndReplaceEveryScalarRecursive(result);
+    approximateAndReplaceEveryScalar(result);
     return result;
   }
   if (dim.isScalar() ||
@@ -771,14 +757,24 @@ bool SkipApproximation(TypeBlock type, FloatPrecision floatPrecision,
   }
 }
 
+template <typename ReturnType>
+ReturnType Approximator::approximateScalars(const Tree*) {
+  // This method only makes sense for a Tree* return type
+  assert(false);
+  OMG_UNREACHABLE;
+}
+
+template <>
+Tree* Approximator::approximateScalars(const Tree* e) {
+  Tree* eClone = e->cloneTree();
+  approximateAndReplaceEveryScalar(eClone);
+  return eClone;
+}
+
 void Approximator::approximateAndReplaceEveryScalar(Tree* e) {
   if (SkipApproximation(e->type(), m_floatPrecision)) {
     return;
   }
-  approximateAndReplaceEveryScalarRecursive(e);
-}
-
-void Approximator::approximateAndReplaceEveryScalarRecursive(Tree* e) {
   if (Approximation::CanApproximate(e) &&
       Dimension::IsNonListScalar(e, m_parameters.symbolContext)) {
     e->moveTreeOverTree(privateToTree(e, Dimension(DimensionType::Scalar)));
@@ -788,7 +784,7 @@ void Approximator::approximateAndReplaceEveryScalarRecursive(Tree* e) {
   for (IndexedChild<Tree*> child : e->indexedChildren()) {
     if (!SkipApproximation(child->type(), m_floatPrecision, e->type(),
                            child.index, previousChildWasApproximated)) {
-      approximateAndReplaceEveryScalarRecursive(child);
+      approximateAndReplaceEveryScalar(child);
     }
     previousChildWasApproximated = child->isFloat();
   }
@@ -1077,7 +1073,7 @@ std::complex<T> Approximator::analysisToComplex(const Tree* e) {
         return UndefinedUnhandledDimension<std::complex<T>>();
       }
       Tree* child = e->child(Parametric::k_sumArgumentIndex)->cloneTree();
-      /* We ApproximateAndReplaceEveryScalar here to avoid approximating complex
+      /* We approximate scalars here to avoid approximating complex
        * constants on every round of the sum/product computation */
       approximateAndReplaceEveryScalar(child);
       m_context.localEvaluator.pushVariable(NAN);
@@ -2165,8 +2161,8 @@ Tree* Approximator::toMatrix(const Tree* e) {
         return UndefinedUnhandledDimension<Tree*>();
       }
       Tree* child = e->child(Parametric::k_sumArgumentIndex)->cloneTree();
-      /* We approximateAndReplaceEveryScalar here to avoid approximating complex
-       * constants on every round of the sum/product computation */
+      /* We approximate scalars here to avoid approximating complex constants on
+       * every round of the sum/product computation */
       approximateAndReplaceEveryScalar(child);
       m_context.localEvaluator.pushVariable(NAN);
       Dimension dim = Dimension::Get(child, m_parameters.symbolContext);

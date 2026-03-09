@@ -347,6 +347,13 @@ class Approximator {
   template <typename ReturnType>
   ReturnType specificApproximateTo(const Tree* e);
 
+  /* Only makes sense for a Tree* ReturnType. The method raises an assertion for
+   * other types.
+   * Returns a clone of the input tree where every scalar subtree that can be
+   * approximated has been approximated. */
+  template <typename ReturnType>
+  ReturnType approximateScalars(const Tree* e);
+
   /* Approximate the conditions of a piecewise and return the tree corresponding
    * to the matching branch. Return nullptr if a condition was undefined. */
   // TODO: move this method out of the Approximator class
@@ -356,9 +363,6 @@ class Approximator {
   inline void toComplexTreeInplace(Tree* e) {
     e->moveTreeOverTree(toComplexTree<double>(e));
   }
-
-  // Approximate every scalar subtree that can be approximated.
-  void approximateAndReplaceEveryScalar(Tree* e);
 
   FloatPrecision floatPrecision() const { return m_floatPrecision; }
 
@@ -484,7 +488,7 @@ class Approximator {
   // Tree can be of any dimension
   Tree* privateToTree(const Tree* e, Dimension dim);
 
-  void approximateAndReplaceEveryScalarRecursive(Tree* e);
+  void approximateAndReplaceEveryScalar(Tree* e);
 
   // Tree must be of point dimension.
   Tree* privateToPoint(const Tree* e);

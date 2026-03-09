@@ -13,7 +13,7 @@ COPY tools/setup.sh tools/setup.sh
 
 RUN tools/setup.sh --ci --only-simulator
 
-RUN apt-get install clang-19 libc++-19-dev libc++abi-19-dev elfutils && \
+RUN apt-get install clang-19 libc++-19-dev libc++abi-19-dev lld-19 elfutils && \
     ln -s /usr/bin/clang-19 /usr/local/bin/clang && \
     ln -s /usr/bin/clang++-19 /usr/local/bin/clang++
 

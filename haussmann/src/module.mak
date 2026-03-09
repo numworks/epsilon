@@ -58,11 +58,13 @@ $(eval \
 $(call _assert_valid_module_name,$1)
 PATH_$1 := $2
 -include $2/module.mak
-
-# Declare existing objects so that make print the object name if its
-# source is missing instead of finding no rule to build the main goal
-$$(call all_objects_for,$$(SOURCES_$1)):
 )
+$(foreach x,$(SOURCES_$1), \
+$(eval \
+$(call all_objects_for,$x): $(filter-out :%, $(subst :, :,$x))
+) \
+)
+
 endef
 
 # Private API

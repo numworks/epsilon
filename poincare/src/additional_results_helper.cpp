@@ -624,9 +624,9 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
    * able to call RowCanonize in a private method (when it's used in the "To"
    * approximation pipeline) */
   Approximation::Private::Approximator defaultMatrixApproximator =
-      Approximation::Private::Approximator(FloatPrecision::Double,
-                                           Approximation::ProjectedPolicy{},
-                                           Approximation::Private::Context{});
+      Approximation::Private::Approximator(
+          FloatPrecision::Double, Approximation::SystemExpressionPolicy{},
+          Approximation::Private::Context{});
   Approximation::Private::Approximator* approximator =
       isApproximate ? &defaultMatrixApproximator : nullptr;
 

@@ -157,7 +157,8 @@ void simplified_approximates_to(
             tree, Precision<T>::value,
             Approximation::Parameters{
                 .policy = {.optimize = true},
-                .expressionParameters = Approximation::ProjectedPolicy{}}));
+                .expressionParameters =
+                    Approximation::SystemExpressionPolicy{}}));
         Beautification::DeepBeautify(
             tree, ToBeautificationParameters(simplificationParameters));
       },
@@ -179,7 +180,7 @@ void projected_approximates_to(
             Approximation::Parameters{
                 .policy = {.optimize = true},
                 .expressionParameters =
-                    Approximation::ProjectedPolicy{.prepare = true}}));
+                    Approximation::SystemExpressionPolicy{.prepare = true}}));
         Beautification::DeepBeautify(
             tree, ToBeautificationParameters(simplificationParameters));
       },

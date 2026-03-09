@@ -57,10 +57,11 @@ T ApproximateIntegralBetweenBounds(const SystemExpression& expression,
   Tree* integral =
       BuildIntegralTree(expression, variableName, lowerBound, upperBound);
   T result = Approximation::To<T>(
-      integral, Approximation::Parameters{
-                    .policy = {.optimize = true},
-                    .expressionParameters =
-                        Approximation::ProjectedPolicy{.prepare = true}});
+      integral,
+      Approximation::Parameters{
+          .policy = {.optimize = true},
+          .expressionParameters =
+              Approximation::SystemExpressionPolicy{.prepare = true}});
   integral->removeTree();
   return result;
 }

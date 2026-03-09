@@ -74,11 +74,11 @@ Another overload of `Approximation::To` allows to pass an abscissa (as a `float`
 
 ### Parameters
 
-Approximation parameters are split into `ApproximationPolicy` (see the `ApproximationPolicy` section above) and `ExpressionVariantParameters`, which are parameters that depend on the expression type. `ExpressionVariantParameters` provide 4 alternatives:
+Approximation parameters are split into `ApproximationPolicy` (see the `ApproximationPolicy` section above) and `ExpressionVariantParameters`, which are parameters that depend on the expression type:
 
 - `User`: if the expression is a `UserExpression`, `UserParameters` (complex format, angle unit, symbol context) need to be passed. Local variables of parametric nodes are automatically projected to `Var` nodes before approximating.
-- `Projected`: if the expression is a `SystemExpression`, it can optionally be "prepared". This is done by passing a `ProjectedPolicy{.prepare=true}` to the `expressionParameters`. This will trigger additional processing of the expression for a more accurate approximation. For example, `x * y^(-1) * ln(x) * ln(10)^(-1)` will be replaced with `x * log(x) / y`. This also greatly improves integral approximations.
+- `System`: if the expression is a `SystemExpression`, it can optionally be "prepared". This is done by passing a `SystemExpressionPolicy{.prepare=true}` to the `expressionParameters`. This will trigger additional processing of the expression for a more accurate approximation. For example, `x * y^(-1) * ln(x) * ln(10)^(-1)` will be replaced with `x * log(x) / y`. This also greatly improves integral approximations.
 - `Prepared`: if the expression is a `PreparedFunction`, it is already projected and prepared. No additional processing will be done before approximating, this allows for a faster approximation.
-- `Unspecified` (default): sometimes a `Tree` is in an hybrid state and is neither a `User`, `Projected` or `Prepared` expression. In this case, `Unspecified` needs to be passed to `expressionParameters`. The expression will not be projected nor prepared before its approximation.
+- `Unspecified` (default): sometimes a `Tree` is in an hybrid state and is neither a `User`, `System` or `Prepared` expression. In this case, `Unspecified` needs to be passed to `expressionParameters`. The expression will not be projected nor prepared before its approximation.
 
 For debugging purposes, we recommend that you specify the expression type if it is known instead of relying on the default `Unspecified` parameter.

@@ -125,10 +125,11 @@ void PrepareFunctionForApproximation(Tree* e, const char* variable,
       e, EmptySymbolContext{},
       SymbolicComputation::ReplaceAllSymbolsWithUndefined) &&
       Dependency::DeepRemoveUselessDependencies(e);
-  e->moveTreeOverTree(To<Tree*>(
-      e, FloatPrecision::Double,
-      Parameters{.policy = {.onlyReplaceNumerical = true},
-                 .expressionParameters = ProjectedPolicy{.prepare = true}}));
+  e->moveTreeOverTree(
+      To<Tree*>(e, FloatPrecision::Double,
+                Parameters{.policy = {.onlyReplaceNumerical = true},
+                           .expressionParameters =
+                               SystemExpressionPolicy{.prepare = true}}));
 }
 
 }  // namespace Poincare::Internal::Approximation

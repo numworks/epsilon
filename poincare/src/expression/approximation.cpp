@@ -196,7 +196,7 @@ int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   Private::Context context;
   context.localEvaluator.pushVariable(x);
   const Tree* branch =
-      Private::Approximator(Precision<T>::value, ProjectedPolicy{},
+      Private::Approximator(Precision<T>::value, SystemExpressionPolicy{},
                             std::move(context))
           .selectPiecewiseBranch(piecewise);
   return !branch            ? k_unknownActiveBranch
@@ -240,7 +240,7 @@ bool CheckDimension(const Tree* e,
                     const ExpressionVariantParameters& expressionParameters,
                     bool optimize) {
   const SymbolContext& symbolContext =
-      expressionParameters.type() == ExpressionVariantParameters::Type::User
+      expressionParameters.expressionType() == ExpressionType::User
           ? expressionParameters.get<UserParameters>().context
           : k_emptySymbolContext;
   if (!optimize) {
@@ -297,16 +297,16 @@ Tree* PrepareTree(const Tree* e,
                   const ExpressionVariantParameters& expressionParameters) {
   // Only clone if necessary
   Tree* clone = nullptr;
-  switch (expressionParameters.type()) {
-    case ExpressionVariantParameters::Type::User: {
+  switch (expressionParameters.expressionType()) {
+    case ExpressionType::User: {
       assert(Simplification::IsUser(e));
       clone = e->cloneTree();
       Variables::ProjectLocalVariablesToId(clone);
       break;
     }
-    case ExpressionVariantParameters::Type::Projected: {
+    case ExpressionType::System: {
       assert(Simplification::IsSystem(e));
-      if (expressionParameters.get<ProjectedPolicy>().prepare) {
+      if (expressionParameters.get<SystemExpressionPolicy>().prepare) {
         if (!clone) {
           clone = e->cloneTree();
         }
@@ -314,12 +314,12 @@ Tree* PrepareTree(const Tree* e,
       }
       break;
     }
-    case ExpressionVariantParameters::Type::Prepared: {
+    case ExpressionType::PreparedFunction: {
       // Nothing to do, expression is already prepared for approximation
       assert(Simplification::IsPreparedFunction(e));
       break;
     }
-    case ExpressionVariantParameters::Type::Unspecified: {
+    case ExpressionType::Unspecified: {
       // Nothing can be done
       break;
     }
@@ -401,13 +401,13 @@ Private::Approximator::InternalUserParameters::InternalUserParameters(
 Private::Approximator::InternalUserParameters
 Private::Approximator::InternalUserParameters::Make(
     const ExpressionVariantParameters& expressionParameters) {
-  switch (expressionParameters.type()) {
-    case ExpressionVariantParameters::Type::User: {
+  switch (expressionParameters.expressionType()) {
+    case ExpressionType::User: {
       return InternalUserParameters(expressionParameters.get<UserParameters>());
     }
-    case ExpressionVariantParameters::Type::Projected:
-    case ExpressionVariantParameters::Type::Prepared:
-    case ExpressionVariantParameters::Type::Unspecified: {
+    case ExpressionType::System:
+    case ExpressionType::PreparedFunction:
+    case ExpressionType::Unspecified: {
       // ComplexFormat and AngleUnit will be None, symbol context will be Empty
       return InternalUserParameters{};
     }

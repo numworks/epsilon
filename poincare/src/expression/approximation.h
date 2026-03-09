@@ -31,8 +31,18 @@ struct Dimension;
 
 namespace Approximation {
 
-struct ProjectedPolicy {
-  // Prepare is only possible on projected expressions (i.e. SystemExpressions)
+// Expression type information of a Tree
+enum class ExpressionType : uint8_t {
+  User,
+  System,
+  PreparedFunction,
+  Unspecified
+};
+
+/* The approximation of a System expression has an optional processing step
+ * called preparation, that enhances the approximation precision.
+ * User expressions cannot be prepared because they are not projected. */
+struct SystemExpressionPolicy {
   bool prepare = false;
 };
 
@@ -47,28 +57,26 @@ struct Unspecified {};
 
 class ExpressionVariantParameters {
  public:
-  enum class Type : uint8_t { User, Projected, Prepared, Unspecified };
-
-  ExpressionVariantParameters(ProjectedPolicy projectedPolicy) {
-    m_data.init<ProjectedPolicy>(projectedPolicy);
-  }
-
   ExpressionVariantParameters(const UserParameters& userParameters) {
     m_data.init<UserParameters>(userParameters);
+  }
+
+  ExpressionVariantParameters(SystemExpressionPolicy systemExpressionPolicy) {
+    m_data.init<SystemExpressionPolicy>(systemExpressionPolicy);
   }
 
   ExpressionVariantParameters(Prepared) { m_data.init<Prepared>(); }
   ExpressionVariantParameters(Unspecified) { m_data.init<Unspecified>(); }
 
-  Type type() const {
+  ExpressionType expressionType() const {
     if (m_data.has<UserParameters>()) {
-      return Type::User;
-    } else if (m_data.has<ProjectedPolicy>()) {
-      return Type::Projected;
+      return ExpressionType::User;
+    } else if (m_data.has<SystemExpressionPolicy>()) {
+      return ExpressionType::System;
     } else if (m_data.has<Prepared>()) {
-      return Type::Prepared;
+      return ExpressionType::PreparedFunction;
     } else if (m_data.has<Unspecified>()) {
-      return Type::Unspecified;
+      return ExpressionType::Unspecified;
     }
     OMG_UNREACHABLE
   }
@@ -83,7 +91,8 @@ class ExpressionVariantParameters {
   }
 
  private:
-  OMG::Variant<UserParameters, ProjectedPolicy, Prepared, Unspecified> m_data;
+  OMG::Variant<UserParameters, SystemExpressionPolicy, Prepared, Unspecified>
+      m_data;
 };
 
 struct Parameters {

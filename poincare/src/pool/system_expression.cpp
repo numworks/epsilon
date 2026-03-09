@@ -87,7 +87,7 @@ SystemExpression SystemExpression::approximateSystemToTree(
       Approximation::Parameters{
           .policy = {.optimize = true},
           .expressionParameters =
-              Approximation::ProjectedPolicy{.prepare = true}}));
+              Approximation::SystemExpressionPolicy{.prepare = true}}));
 }
 
 void SystemExpression::cloneAndBeautifyAndApproximate(
@@ -209,7 +209,7 @@ T SystemExpression::approximateSystemToRealScalar() const {
       tree(), Approximation::Parameters{
                   .policy = {.optimize = true},
                   .expressionParameters =
-                      Approximation::ProjectedPolicy{.prepare = true}});
+                      Approximation::SystemExpressionPolicy{.prepare = true}});
 }
 
 template <typename T>
@@ -218,7 +218,7 @@ Coordinate2D<T> SystemExpression::approximateToPoint() const {
       tree(), Approximation::Parameters{
                   .policy = {.optimize = true},
                   .expressionParameters =
-                      Approximation::ProjectedPolicy{.prepare = true}});
+                      Approximation::SystemExpressionPolicy{.prepare = true}});
 }
 
 SystemExpression SystemExpression::approximateListAndSort(
@@ -231,7 +231,7 @@ SystemExpression SystemExpression::approximateListAndSort(
       Approximation::Parameters{
           .policy = {.optimize = true},
           .expressionParameters =
-              Approximation::ProjectedPolicy{.prepare = true}}));
+              Approximation::SystemExpressionPolicy{.prepare = true}}));
   return SystemExpression::Builder(clone);
 }
 

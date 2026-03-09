@@ -868,7 +868,7 @@ SolverResult ExactSolve(
         Approximation::Parameters{
             .policy = {.optimize = true},
             .expressionParameters =
-                Approximation::ProjectedPolicy{.prepare = true}});
+                Approximation::SystemExpressionPolicy{.prepare = true}});
   }
 
   /* Beautify result */

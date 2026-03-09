@@ -546,8 +546,6 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootSearchingInChild(
      * To avoid this problem, clone e and replace cos(xRoot) by 0. */
     Tree* ebis = e->cloneTree();
     ebis->child(childIndex)->cloneTreeOverTree(0_e);
-    /* This comparison relies on the fact that it is false for a NAN
-     * approximation. */
     T value = Approximation::To<T>(
         ebis, root.solution.x,
         Approximation::Parameters{
@@ -555,6 +553,8 @@ typename Solver<T>::DetailedRootX Solver<T>::nextRootSearchingInChild(
             // ebis is no more a PreparedFunction
             .expressionParameters = Approximation::Unspecified{}});
     ebis->removeTree();
+    /* This comparison relies on the fact that it is false for a NAN
+     * approximation. */
     if (std::fabs(value) < NullTolerance(root.solution.x)) {
       return {.x = root.solution.x, .nullDescendant = root.nullDescendant};
     }

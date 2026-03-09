@@ -314,7 +314,6 @@ Tree* PrepareTree(const Tree* e,
   switch (expressionParameters.type()) {
     case ExpressionVariantParameters::Type::User: {
       assert(Simplification::IsUser(e));
-      // Expression must be projected
       clone = e->cloneTree();
       Variables::ProjectLocalVariablesToId(clone);
       break;

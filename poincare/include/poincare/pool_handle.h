@@ -6,8 +6,8 @@
 
 namespace Poincare {
 
-/* A PoolHandle references a PoolObject stored somewhere in the OExpression
- * Pool, and identified by its identifier. Any method that can possibly move the
+/* A PoolHandle references a PoolObject stored somewhere in the Pool
+ * and identified by its identifier. Any method that can possibly move the
  * object ("break the this") therefore needs to be implemented in the Handle
  * rather than the Object.
  */
@@ -105,8 +105,8 @@ class PoolHandle {
    * they won't be decreased if an exception is raised.
    *
    * WARNING: ref counters have a bugged behaviour in this case:
-   *  OExpression a = Cosine::Builder();
-   *  OExpression b;
+   *  Expression a = Cosine::Builder();
+   *  Expression b;
    *  PoolCheckpoint() {
    *    ...
    *    b = a;

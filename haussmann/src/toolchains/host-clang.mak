@@ -1,6 +1,5 @@
 CC := clang
 CXX := clang++
-AR := ar
 LD := clang++
 GDB := lldb
 

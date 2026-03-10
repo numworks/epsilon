@@ -5,7 +5,6 @@ EMCC_REQUIRED_VERSION := $(shell cat $(PATH_haussmann)/../.emsdk-version)
 
 CC := emcc
 CXX := emcc
-AR := emar
 LD := emcc
 
 EXECUTABLE_EXTENSION := js

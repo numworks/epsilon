@@ -65,7 +65,6 @@ CCACHE ?= 0
 ifeq ($(CCACHE),1)
 CC := ccache $(CC)
 CXX := ccache $(CXX)
-AR := ccache $(AR)
 endif
 
 

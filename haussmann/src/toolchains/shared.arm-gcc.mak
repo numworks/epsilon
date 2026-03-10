@@ -1,6 +1,5 @@
 CC := arm-none-eabi-gcc
 CXX := arm-none-eabi-g++
-AR := arm-none-eabi-gcc-ar
 LD := arm-none-eabi-g++
 GDB := arm-none-eabi-gdb
 

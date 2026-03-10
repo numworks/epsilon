@@ -13,6 +13,13 @@ define assert_defined
 $(if $($1),,$(error Error: Undefined variable $1))
 endef
 
+# require_make_version, <minimum_version>
+define require_make_version
+$(if $(filter $1,$(firstword $(sort $(MAKE_VERSION) $1))),,$(error Error: GNU Make >= $1 required (found $(MAKE_VERSION))))
+endef
+
+$(call require_make_version,4.3)
+
 $(call assert_defined,PATH_haussmann)
 
 # Default target when calling make without a goal.

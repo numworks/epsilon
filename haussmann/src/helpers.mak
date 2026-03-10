@@ -37,7 +37,7 @@ endef
 
 # objects_for_sources, <arch directory>, <sources list>
 define objects_for_sources
-$(addprefix $(OUTPUT_DIRECTORY)/$1,$(addsuffix .o,$(filter-out :%, $(subst :, :,$(subst ../,,$2)))))
+$(addprefix $(OUTPUT_DIRECTORY)/$1,$(subst $(OUTPUT_DIRECTORY)/,,$(addsuffix .o,$(filter-out :%, $(subst :, :,$(subst ../,,$2))))))
 endef
 
 # document_extension, <name>, <documentation>

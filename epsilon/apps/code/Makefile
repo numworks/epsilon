@@ -12,7 +12,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/code/,$(addsuffix :-test, \
   sandbox_controller.cpp \
   script_name_cell.cpp \
   script_parameter_controller.cpp \
-  code_icon.png \
 ) \
   clipboard.cpp \
   python_toolbox_controller.cpp \
@@ -25,6 +24,10 @@ SOURCES_apps += $(addprefix $(PATH_apps)/code/,$(addsuffix :-test, \
   test/python_variable_box.cpp:+test \
   test/templates.cpp:+test \
 )
+
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/code/, \
+  code_icon.png:-test \
+))
 
 $(call depends_on_image,$(PATH_apps)/code/app.cpp,$(PATH_apps)/code/code_icon.png)
 

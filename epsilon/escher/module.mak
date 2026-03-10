@@ -104,9 +104,12 @@ $(call create_module,escher,1,$(addprefix src/, \
   warning_controller.cpp \
   window.cpp \
 ) \
-  image/caret.cpp \
   test/layout_field.cpp:+test \
 )
+
+SOURCES_escher += $(call generated_sources_for,$(addprefix $(PATH_escher)/, \
+  image/caret.cpp \
+))
 
 ESCHER_VIEW_LOGGING ?= 0
 

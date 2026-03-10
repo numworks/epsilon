@@ -6,21 +6,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/distributions/,$(addsuffix :-test, \
   controllers/distribution_controller.cpp \
   controllers/distribution_curve_view.cpp \
   controllers/parameters_controller.cpp \
-  distributions_icon.png \
-  images/binomial_icon.png \
-  images/chi_squared_icon.png \
-  images/exponential_icon.png \
-  images/fisher_icon.png \
-  images/geometric_icon.png \
-  images/hypergeometric_icon.png \
-  images/normal_icon.png \
-  images/poisson_icon.png \
-  images/student_icon.png \
-  images/uniform_icon.png \
-  images/calculation1_icon.png \
-  images/calculation2_icon.png \
-  images/calculation3_icon.png \
-  images/calculation4_icon.png \
 ) \
   models/calculation/calculation.cpp \
   models/calculation/discrete_calculation.cpp \
@@ -40,6 +25,24 @@ SOURCES_apps += $(addprefix $(PATH_apps)/distributions/,$(addsuffix :-test, \
   test/distributions_results.cpp:+test \
   test/distributions_parameters.cpp:+test \
 )
+
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/distributions/,$(addsuffix :-test, \
+  distributions_icon.png \
+  images/binomial_icon.png \
+  images/chi_squared_icon.png \
+  images/exponential_icon.png \
+  images/fisher_icon.png \
+  images/geometric_icon.png \
+  images/hypergeometric_icon.png \
+  images/normal_icon.png \
+  images/poisson_icon.png \
+  images/student_icon.png \
+  images/uniform_icon.png \
+  images/calculation1_icon.png \
+  images/calculation2_icon.png \
+  images/calculation3_icon.png \
+  images/calculation4_icon.png \
+)))
 
 $(call depends_on_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/distributions/distributions_icon.png)
 

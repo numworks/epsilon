@@ -17,7 +17,7 @@ _sources_kandinsky_minimal := $(addprefix src/, \
   font.cpp \
   point.cpp \
   rect.cpp \
-) $(patsubst %.ttf,%.cpp,$(addprefix fonts/$(KANDINSKY_font_variant)/,$(_sources_kandinsky_fonts)))
+)
 
 _kandinsky_glyph_index := fonts/codepoint_to_glyph_index.cpp
 
@@ -28,7 +28,7 @@ _sources_kandinsky_extended := $(addprefix src/, \
   context_text.cpp \
   context_circle.cpp \
   framebuffer.cpp \
-) $(_kandinsky_glyph_index)
+)
 
 _sources_kandinsky_test := $(addprefix test/, \
   color.cpp \
@@ -41,6 +41,10 @@ $(call create_module,kandinsky,1, \
   $(addsuffix :-minimal,$(_sources_kandinsky_extended)) \
   $(addsuffix :+test,$(_sources_kandinsky_test)) \
 )
+
+SOURCES_kandinsky += \
+  $(patsubst %.ttf,$(_kandinsky_generated_fonts_dir)/$(KANDINSKY_font_variant)/%.cpp,$(_sources_kandinsky_fonts)) \
+  $(_kandinsky_generated_fonts_dir)/codepoint_to_glyph_index.cpp
 
 $(call all_objects_for,$(SOURCES_kandinsky)): $(KANDINSKY_fonts_dependencies)
 # FIXME Tests in OMG should not require kandinsky

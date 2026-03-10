@@ -45,9 +45,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/results_controller.cpp \
   controllers/test_controller.cpp \
   controllers/type_controller.cpp \
-  inference_icon.png \
-  images/confidence_interval.png \
-  images/significance_test.png \
 ) \
   models/anova_test.cpp \
   models/chi2_test.cpp \
@@ -63,6 +60,12 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   models/two_means_statistic.cpp \
   test/inference_models.cpp:+test \
 )
+
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
+  inference_icon.png \
+  images/confidence_interval.png \
+  images/significance_test.png \
+)))
 
 $(call depends_on_image,$(PATH_apps)/inference/app.cpp,$(PATH_apps)/inference/inference_icon.png)
 

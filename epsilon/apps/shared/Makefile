@@ -58,8 +58,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   values_controller.cpp \
   values_parameter_controller.cpp \
   vertical_cursor_view.cpp \
-  images/polar_grid_icon.png \
-  images/cartesian_grid_icon.png \
 ) \
   continuous_function.cpp \
   continuous_function_cache.cpp \
@@ -95,6 +93,11 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   test/function_alignement.cpp:+test \
   test/interval.cpp:+test \
 )
+
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/shared/, \
+  images/polar_grid_icon.png:-test \
+  images/cartesian_grid_icon.png:-test \
+))
 
 $(call depends_on_transparent_image, \
 $(PATH_apps)/shared/grid_type_controller.cpp, \

@@ -14,9 +14,12 @@ SOURCES_apps += $(addprefix $(PATH_apps)/settings/,$(addsuffix :-test, \
   sub_menu/screen_timeout_controller.cpp \
   sub_menu/selectable_view_with_messages.cpp \
   sub_menu/test_mode_controller.cpp \
-  sub_menu/press_to_test_success.png \
-  settings_icon.png \
 ))
+
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/settings/,$(addsuffix :-test, \
+  settings_icon.png \
+  sub_menu/press_to_test_success.png \
+)))
 
 $(call depends_on_image,$(PATH_apps)/settings/app.cpp,$(PATH_apps)/settings/settings_icon.png)
 $(call depends_on_transparent_image,$(PATH_apps)/settings/sub_menu/press_to_test_controller.cpp,$(PATH_apps)/settings/sub_menu/press_to_test_success.png)

@@ -2,6 +2,9 @@ SOURCES_apps += $(addprefix $(PATH_apps)/home/,$(addsuffix :-test, \
   app.cpp \
   app_cell.cpp \
   controller.cpp \
+))
+
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/home/, \
   apps_layout.cpp \
 ))
 

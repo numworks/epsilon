@@ -30,7 +30,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/graph/,$(addsuffix :-test, \
   shared/function_parameter_controller.cpp \
   values/interval_parameter_selector_controller.cpp \
   values/values_controller.cpp \
-  graph_icon.png \
 ) \
   graph/optimal_range.cpp \
   test/caching.cpp:+test \
@@ -40,6 +39,10 @@ SOURCES_apps += $(addprefix $(PATH_apps)/graph/,$(addsuffix :-test, \
   test/store.cpp:+test \
   test/optimal_range.cpp:+test \
 )
+
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/graph/, \
+  graph_icon.png:-test \
+))
 
 $(call depends_on_image,apps/graph/app.cpp,apps/graph/graph_icon.png)
 

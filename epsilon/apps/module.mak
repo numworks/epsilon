@@ -24,8 +24,9 @@ $(call create_module,apps,1, \
   title_bar_view.cpp:-test \
   apps_container_helper_tests.cpp:+test \
   init_tests.cpp:+test \
-  exam_icon.png:-test \
 )
+
+SOURCES_apps += $(call generated_sources_for, $(PATH_apps)/exam_icon.png:-test)
 
 PRIVATE_SFLAGS_apps += -I$(PATH_apps)
 

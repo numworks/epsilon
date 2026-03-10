@@ -14,12 +14,15 @@ SOURCES_apps += $(addprefix $(PATH_apps)/regression/,$(addsuffix :-test, \
   graph/residual_plot_range.cpp \
   data/store_controller.cpp \
   data/store_parameter_controller.cpp \
-  regression_icon.png \
 ) \
   model.cpp \
   store.cpp \
   test/model.cpp:+test \
 )
+
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/regression/, \
+  regression_icon.png:-test \
+))
 
 $(call depends_on_image,$(PATH_apps)/regression/app.cpp,$(PATH_apps)/regression/regression_icon.png)
 

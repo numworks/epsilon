@@ -11,7 +11,10 @@ SOURCES_apps += $(addprefix $(PATH_apps)/elements/,$(addsuffix :-test, \
   single_element_view.cpp \
   suggestion_text_field.cpp \
   table_layout.cpp \
-  elements_icon.png \
+))
+
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/elements/, \
+  elements_icon.png:-test \
 ))
 
 $(call depends_on_image,$(PATH_apps)/elements/app.cpp,$(PATH_apps)/elements/elements_icon.png)

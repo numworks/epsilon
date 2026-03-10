@@ -1,5 +1,4 @@
 SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/, \
-  linux/assets.s \
   linux/platform_files.cpp \
   linux/platform_images.cpp \
   linux/platform_language.cpp \
@@ -12,6 +11,10 @@ SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/, \
   shared/haptics.cpp \
   shared/journal.cpp \
 )
+
+SOURCES_ion += $(call generated_sources_for,$(addprefix $(PATH_ion)/src/simulator/, \
+  linux/assets.s \
+))
 
 # We could define ARCHS for linux as well instead
 ifeq ($(shell uname -m),x86_64)

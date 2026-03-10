@@ -59,6 +59,9 @@ SOURCES_ion += $(addprefix $(PATH_ion)/src/, \
   $(_sources_ion_usb) \
 )
 
+SOURCES_ion += \
+  $(foreach c,$(_ion_firmware_components),$(addsuffix :+$c,$(_generated_sources_ion_$c)))
+
 # TODO Of those flags, phase out those that can be edited on the command line,
 # namely DEVELOPMENT, IN_FACTORY and EMBED_EXTRA_DATA
 SFLAGS_ion += \

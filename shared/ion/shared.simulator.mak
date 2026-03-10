@@ -142,4 +142,4 @@ _sources_ion_simulator_layout := $(PATH_ion)/src/simulator/shared/layout.cpp
 $(call generated_sources_for,$(_sources_ion_simulator_layout)): $(PATH_ion)/src/simulator/shared/$(ION_variant)/layout.json $(PATH_ion)/src/simulator/shared/layout.py | $$(@D)/.
 	$(call rule_label,LAYOUT)
 	$(PYTHON) $(filter %.py,$^) -i $(filter %.json,$^) -o $@
-SOURCES_ion += $(_sources_ion_simulator_layout)
+SOURCES_ion += $(call generated_sources_for,$(_sources_ion_simulator_layout))

@@ -35,10 +35,13 @@ $(addsuffix :-test, \
   history_controller.cpp \
   history_view_cell.cpp \
   layout_field.cpp \
-  calculation_icon.png \
 ) \
   test/calculation_store.cpp:+test \
 )
+
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/calculation/, \
+  calculation_icon.png:-test \
+))
 
 $(eval $(call depends_on_image,$(PATH_apps)/calculation/app.cpp,$(PATH_apps)/calculation/calculation_icon.png))
 

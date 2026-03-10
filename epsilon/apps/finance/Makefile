@@ -4,11 +4,14 @@ SOURCES_apps += $(addprefix $(PATH_apps)/finance/,$(addsuffix :-test, \
   menu_controller.cpp \
   parameters_controller.cpp \
   result_controller.cpp \
-  finance_icon.png \
 ) \
   data.cpp \
   test/finance.cpp:+test \
 )
+
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/finance/, \
+  finance_icon.png:-test \
+))
 
 $(call depends_on_image,$(PATH_apps)/finance/app.cpp,$(PATH_apps)/finance/finance_icon.png)
 

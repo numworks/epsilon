@@ -19,11 +19,14 @@ SOURCES_apps += $(addprefix $(PATH_apps)/sequence/,$(addsuffix :-test, \
   values/sequence_column_parameter_controller.cpp \
   values/sum_column_parameter_controller.cpp \
   values/values_controller.cpp \
-  sequence_icon.png \
 ) \
   test/poincare.cpp:+test \
   test/sequence.cpp:+test \
 )
+
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/sequence/, \
+  sequence_icon.png:-test \
+))
 
 $(call depends_on_image,$(PATH_apps)/sequence/app.cpp,$(PATH_apps)/sequence/sequence_icon.png)
 

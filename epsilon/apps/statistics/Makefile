@@ -1,14 +1,5 @@
 SOURCES_apps += $(addprefix $(PATH_apps)/statistics/,$(addsuffix :-test, \
   app.cpp \
-  $(addprefix assets/, \
-    stat_icon.png \
-    bar_icon.png \
-    pie_icon.png \
-    box_icon.png \
-    histogram_icon.png \
-    cumulative_icon.png \
-    statistics_normal_icon.png \
-  ) \
   shared/statistics_type_controller.cpp \
   shared/statistics_type_view_model.cpp \
   $(addprefix categorical/, \
@@ -64,6 +55,17 @@ SOURCES_apps += $(addprefix $(PATH_apps)/statistics/,$(addsuffix :-test, \
 quantitative/store.cpp \
 quantitative/test/store.cpp:+test \
 )
+
+SOURCES_apps += $(call generated_sources_for, \
+  $(addprefix $(PATH_apps)/statistics/assets/,$(addsuffix :-test, \
+  stat_icon.png \
+  bar_icon.png \
+  pie_icon.png \
+  box_icon.png \
+  histogram_icon.png \
+  cumulative_icon.png \
+  statistics_normal_icon.png \
+)))
 
 $(call depends_on_image,apps/statistics/app.cpp,apps/statistics/assets/stat_icon.png)
 

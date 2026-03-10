@@ -5,7 +5,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/solver/,$(addsuffix :-test, \
   interval_controller.cpp \
   list_controller.cpp \
   solutions_controller.cpp \
-  solver_icon.png \
 ) \
   equation.cpp \
   equation_store.cpp \
@@ -14,6 +13,10 @@ SOURCES_apps += $(addprefix $(PATH_apps)/solver/,$(addsuffix :-test, \
   test/helpers.cpp:+test \
   test/solving_range.cpp:+test \
 )
+
+SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/solver/, \
+  solver_icon.png:-test \
+))
 
 $(call depends_on_image,$(PATH_apps)/solver/app.cpp,$(PATH_apps)/solver/solver_icon.png)
 

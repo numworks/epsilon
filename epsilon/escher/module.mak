@@ -153,8 +153,8 @@ endef
 define depends_on_transparent_image
 $(eval \
 $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2)): INLINER_ARGS += --transparent
-$(call depends_on_image,$1,$2)
 )
+$(call depends_on_image,$1,$2)
 endef
 
 $(call depends_on_transparent_image,$(PATH_escher)/src/dropdown_view.cpp,$(PATH_escher)/image/caret.png)

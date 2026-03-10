@@ -244,8 +244,8 @@ class Context {
 
 /* If requested, project user variables or prepare the expression for
  * approximation */
-Tree* PrepareTree(const Tree* e,
-                  const ExpressionVariantParameters& expressionParameters);
+Tree* PreProcessTree(const Tree* e,
+                     const ExpressionVariantParameters& expressionParameters);
 
 /* Undefined value representing an unhandled dimension for the T type (Tree,
  * float / double, boolean etc.)

@@ -217,23 +217,24 @@ Tree* ExtractRealPart(const Tree* e) {
 
 namespace Poincare::Internal::Approximation::Private {
 
+// Utility method to cleanup the tree stack at the end of the Process method
 template <typename ReturnType>
-ReturnType PostProcessPreparedAndResult(Tree* prepared, ReturnType result) {
-  assert(prepared);
-  prepared->removeTree();
+ReturnType CleanUpTreeStack(Tree* processed, ReturnType result) {
+  assert(processed);
+  processed->removeTree();
   return result;
 }
 
-Tree* PostProcessPreparedAndResult(Tree* prepared, Tree* result) {
-  /* If "result" is a Tree*, "prepared" (which is the tree just before "result")
-   * is removed first (if it is not empty) from the TreeStack, then the
-   * "prepared" pointer points to "result" data and can be returned. This is
-   * done to avoid using a TreeRef for "prepared".
-   * For other return types, this problem doesn't happen */
-  assert(prepared);
-  assert(prepared->nextTree() == result);
-  prepared->removeTree();
-  return prepared;
+Tree* CleanUpTreeStack(Tree* processed, Tree* result) {
+  /* If "result" is a Tree*, "processed" (which is the tree just before
+   * "result") is removed first (if it is not empty) from the TreeStack, then
+   * the "processed" pointer points to "result" data and can be returned.
+   * This is done to avoid using a TreeRef for "processed". For other return
+   * types, this problem doesn't happen */
+  assert(processed);
+  assert(processed->nextTree() == result);
+  processed->removeTree();
+  return processed;
 }
 
 bool CheckDimension(const Tree* e,
@@ -271,7 +272,7 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
                       parameters.policy.optimize)) {
     return UndefinedUnhandledDimension<ReturnType>();
   }
-  Tree* prepared = PrepareTree(e, parameters.expressionParameters);
+  Tree* processed = PreProcessTree(e, parameters.expressionParameters);
 
   floatPrecision = UpdateFloatPrecision(e, floatPrecision,
                                         parameters.policy.onlyReplaceNumerical);
@@ -281,20 +282,20 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
   Approximator approximator =
       Approximator{floatPrecision, parameters.expressionParameters,
                    Context(contextArguments...)};
-  const Tree* targetTree = prepared ? prepared : e;
+  const Tree* targetTree = processed ? processed : e;
 
   ReturnType result =
       parameters.policy.onlyReplaceNumerical
           ? approximator.approximateScalars<ReturnType>(targetTree)
           : approximator.specificApproximateTo<ReturnType>(targetTree);
-  if (!prepared) {
+  if (!processed) {
     return result;
   }
-  return PostProcessPreparedAndResult(prepared, result);
+  return CleanUpTreeStack(processed, result);
 }
 
-Tree* PrepareTree(const Tree* e,
-                  const ExpressionVariantParameters& expressionParameters) {
+Tree* PreProcessTree(const Tree* e,
+                     const ExpressionVariantParameters& expressionParameters) {
   // Only clone if necessary
   Tree* clone = nullptr;
   switch (expressionParameters.expressionType()) {

@@ -272,7 +272,7 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
                       parameters.policy.optimize)) {
     return UndefinedUnhandledDimension<ReturnType>();
   }
-  Tree* processed = PreProcessTree(e, parameters.expressionParameters);
+  Tree* processed = PreprocessTree(e, parameters.expressionParameters);
 
   floatPrecision = UpdateFloatPrecision(e, floatPrecision,
                                         parameters.policy.onlyReplaceNumerical);
@@ -294,7 +294,7 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
   return CleanUpTreeStack(processed, result);
 }
 
-Tree* PreProcessTree(const Tree* e,
+Tree* PreprocessTree(const Tree* e,
                      const ExpressionVariantParameters& expressionParameters) {
   // Only clone if necessary
   Tree* clone = nullptr;

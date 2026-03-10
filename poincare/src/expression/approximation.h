@@ -497,7 +497,7 @@ class Approximator {
   // Tree can be of any dimension
   Tree* privateToTree(const Tree* e, Dimension dim);
 
-  void approximateAndReplaceEveryScalar(Tree* e);
+  void approximateAndReplaceEveryScalar(Tree* e, bool isRoot = true);
 
   // Tree must be of point dimension.
   Tree* privateToPoint(const Tree* e);

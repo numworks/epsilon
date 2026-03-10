@@ -771,8 +771,10 @@ Tree* Approximator::approximateScalars(const Tree* e) {
   return eClone;
 }
 
-void Approximator::approximateAndReplaceEveryScalar(Tree* e) {
-  if (SkipApproximation(e->type(), m_floatPrecision)) {
+void Approximator::approximateAndReplaceEveryScalar(Tree* e, bool isRoot) {
+  /* If e is not the root, SkipApproximation has already been checked before
+   * entering the function */
+  if (isRoot && SkipApproximation(e->type(), m_floatPrecision)) {
     return;
   }
   if (Approximation::CanApproximate(e) &&
@@ -784,7 +786,7 @@ void Approximator::approximateAndReplaceEveryScalar(Tree* e) {
   for (IndexedChild<Tree*> child : e->indexedChildren()) {
     if (!SkipApproximation(child->type(), m_floatPrecision, e->type(),
                            child.index, previousChildWasApproximated)) {
-      approximateAndReplaceEveryScalar(child);
+      approximateAndReplaceEveryScalar(child, false);
     }
     previousChildWasApproximated = child->isFloat();
   }

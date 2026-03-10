@@ -5,7 +5,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/home/,$(addsuffix :-test, \
 ))
 
 SOURCES_apps += $(call generated_sources_for,$(addprefix $(PATH_apps)/home/, \
-  apps_layout.cpp \
+  apps_layout.cpp:-test \
 ))
 
 $(call i18n_without_universal,home/i18n/base)

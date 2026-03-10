@@ -71,12 +71,12 @@ device/core/device/bootloader/main.cpp
 _generated_sources_ion_bootloader += $(call generated_sources_for, \
   $(addprefix $(PATH_ion)/src/device/core/device/shared-core/drivers/, \
     logo_image.cpp \
-	) \
+  ) \
   $(addprefix $(PATH_ion)/src/device/core/device/bootloader/drivers/, \
     screen_rescue_image.cpp \
-	  text_rescue_image.cpp \
+    text_rescue_image.cpp \
     wire_rescue_image.cpp \
-	) \
+  ) \
 )
 
 ifeq ($(PLATFORM),n0120)

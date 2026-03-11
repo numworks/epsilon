@@ -250,6 +250,14 @@ class Regression {
       const Regression::Coefficients& modelCoefficients1,
       const Regression::Coefficients& modelCoefficients2) const;
 
+  /* By default the model score is the residual square sum. Some regressions may
+   * also take the model coefficients into account */
+  virtual double modelScore(
+      double residualsSquareSum,
+      const Regression::Coefficients& modelCoefficients) const {
+    return residualsSquareSum;
+  }
+
   // Levenberg-Marquardt
   constexpr static double k_maxIterations = 300;
   constexpr static double k_maxMatrixInversionFixIterations = 10;

@@ -472,19 +472,22 @@ bool Regression::isRegressionStrictlyBetter(
     double residualsSquareSum1, double residualsSquareSum2,
     const Regression::Coefficients& modelCoefficients1,
     const Regression::Coefficients& modelCoefficients2) const {
-  double maxCoefficient = 0.0;
-  for (int i = 0; i < numberOfCoefficients(); i++) {
-    double absCoefficient1 = std::fabs(modelCoefficients1[i]);
-    double absCoefficient2 = std::fabs(modelCoefficients2[i]);
-    if (absCoefficient1 > maxCoefficient) {
-      maxCoefficient = absCoefficient1;
-    }
-    if (absCoefficient2 > maxCoefficient) {
-      maxCoefficient = absCoefficient2;
-    }
-  }
-  double precision = OMG::Float::Epsilon<double>() * maxCoefficient;
-  return residualsSquareSum1 + precision < residualsSquareSum2;
+  assert(numberOfCoefficients() > 0);
+
+  auto absoluteValueComparator = [](double v1, double v2) {
+    return std::fabs(v1) < std::fabs(v2);
+  };
+  double maxAllCoefficients = std::max(
+      *std::max_element(modelCoefficients1.begin(),
+                        modelCoefficients1.begin() + numberOfCoefficients(),
+                        absoluteValueComparator),
+      *std::max_element(modelCoefficients1.begin(),
+                        modelCoefficients1.begin() + numberOfCoefficients(),
+                        absoluteValueComparator));
+
+  double precision = OMG::Float::Epsilon<double>() * maxAllCoefficients;
+  return modelScore(residualsSquareSum1, modelCoefficients1) + precision <
+         modelScore(residualsSquareSum2, modelCoefficients2);
 }
 
 }  // namespace Poincare

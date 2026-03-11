@@ -66,6 +66,7 @@ $(addprefix shared/, \
   dummy/external_apps.cpp:-allow3rdparty \
   collect_registers.cpp \
   console_line.cpp \
+  display.cpp \
   display_context.cpp \
   exam_mode.cpp \
   stack_position.cpp \

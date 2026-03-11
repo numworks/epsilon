@@ -1,6 +1,7 @@
 SOURCES_ion += $(addprefix $(PATH_ion)/src/, \
 $(addprefix shared/, \
   console_line.cpp \
+  display.cpp \
   display_context.cpp \
   events.cpp \
   events_modifier.cpp \

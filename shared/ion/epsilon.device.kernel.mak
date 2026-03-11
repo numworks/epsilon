@@ -1,6 +1,7 @@
 _sources_ion_kernel := \
 $(addprefix shared/, \
   console_line.cpp:+kernelassert \
+  display.cpp \
   display_context.cpp:+kernelassert \
   events.cpp \
   events_modifier.cpp \

@@ -23,6 +23,9 @@ namespace Display {
 void pushRect(KDRect r, const KDColor* pixels);
 void pushRectUniform(KDRect r, KDColor c);
 void pullRect(KDRect r, KDColor* pixels);
+void pushRectNoFocus(KDRect r, const KDColor* pixels);
+void pushRectUniformNoFocus(KDRect r, KDColor c);
+void pullRectNoFocus(KDRect r, KDColor* pixels);
 
 bool waitForVBlank();
 void refreshDisplay();

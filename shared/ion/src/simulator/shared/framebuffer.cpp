@@ -39,21 +39,21 @@ class IntializedFrameBuffer : public KDFrameBuffer {
 static IntializedFrameBuffer sFrameBuffer =
     IntializedFrameBuffer(sPixels, KDSize(WidthWithBorder, HeightWithBorder));
 
-void pushRect(KDRect r, const KDColor* pixels) {
+void pushRectNoFocus(KDRect r, const KDColor* pixels) {
   if (sFrameBufferActive) {
     Simulator::Window::setNeedsRefresh();
     sFrameBuffer.pushRect(r.translatedBy(k_frameOrigin), pixels);
   }
 }
 
-void pushRectUniform(KDRect r, KDColor c) {
+void pushRectUniformNoFocus(KDRect r, KDColor c) {
   if (sFrameBufferActive) {
     Simulator::Window::setNeedsRefresh();
     sFrameBuffer.pushRectUniform(r.translatedBy(k_frameOrigin), c);
   }
 }
 
-void pullRect(KDRect r, KDColor* pixels) {
+void pullRectNoFocus(KDRect r, KDColor* pixels) {
   if (sFrameBufferActive) {
     sFrameBuffer.pullRect(r.translatedBy(k_frameOrigin), pixels);
   }

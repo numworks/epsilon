@@ -66,8 +66,8 @@ int LCDDataGlyphFailures() {
     for (int j = 0; j < numberOfVerticalTiles; j++) {
       for (int i = 0; i < numberOfHorizontalTiles; i++) {
         KDRect tile(i * stampSize, j * stampSize, stampSize, stampSize);
-        Ion::Display::pushRect(tile,
-                               (i + j) % 2 == 0 ? firstStamp : secondStamp);
+        Ion::Display::pushRectNoFocus(
+            tile, (i + j) % 2 == 0 ? firstStamp : secondStamp);
       }
     }
     // Check the pattern
@@ -76,7 +76,7 @@ int LCDDataGlyphFailures() {
         KDRect tile((i + 1) * stampSize - stampWidthPull,
                     (j + 1) * stampSize - stampHeightPull, stampWidthPull,
                     stampHeightPull);
-        Ion::Display::pullRect(tile, resultStamp);
+        Ion::Display::pullRectNoFocus(tile, resultStamp);
         KDColor c = colorForStamp[(i + j) % 2 == 0 ? firstColorIndex
                                                    : secondColorIndex];
         for (int k = 0; k < stampWidthPull * stampHeightPull; k++) {
@@ -98,7 +98,7 @@ int LCDTimingGlyphFailures() {
     KDColor stamp[k_stampSize * k_stampSize];
     for (int i = 0; i < rootNumberTiles; i++) {
       for (int j = 0; j < rootNumberTiles; j++) {
-        Ion::Display::pullRect(
+        Ion::Display::pullRectNoFocus(
             KDRect(i * k_stampSize, j * k_stampSize, k_stampSize, k_stampSize),
             stamp);
         int shift = (i + j) % 16;
@@ -139,7 +139,7 @@ int ColorsLCDPixelFailures() {
 
       for (int i = 0; i < Ion::Display::Width / stampWidth; i++) {
         for (int j = 0; j < Ion::Display::Height / stampHeight; j++) {
-          Ion::Display::pushRect(
+          Ion::Display::pushRectNoFocus(
               KDRect(i * stampWidth, j * stampHeight, stampWidth, stampHeight),
               stamp);
         }
@@ -154,9 +154,10 @@ int ColorsLCDPixelFailures() {
         for (int k = 0; k < stampWidthPull * stampHeightPull; k++) {
           stamp[k] = BasicColor::Black;
         }
-        Ion::Display::pullRect(KDRect(i * stampWidthPull, j * stampHeightPull,
-                                      stampWidthPull, stampHeightPull),
-                               stamp);
+        Ion::Display::pullRectNoFocus(
+            KDRect(i * stampWidthPull, j * stampHeightPull, stampWidthPull,
+                   stampHeightPull),
+            stamp);
         for (int k = 0; k < stampWidthPull * stampHeightPull; k++) {
           if (stamp[k] != c) {
             numberOfInvalidPixels++;
@@ -225,7 +226,7 @@ bool pushOrPullAs(bool push) {
       KDPoint position(currentWidth, currentHeight);
       if (push) {
         // Push the character on the screen
-        Ion::Display::pushRect(
+        Ion::Display::pushRectNoFocus(
             KDRect(position, size),
             reinterpret_cast<const KDColor*>(k_smallABuffer));
       } else {
@@ -238,8 +239,8 @@ bool pushOrPullAs(bool push) {
         }
         /* Caution: Unlike fillRectWithPixels, pullRect accesses outside (0, 0,
          * Ion::Display::Width, Ion::Display::Height) might give weird data. */
-        Ion::Display::pullRect(KDRect(position, size),
-                               reinterpret_cast<KDColor*>(workingBuffer));
+        Ion::Display::pullRectNoFocus(
+            KDRect(position, size), reinterpret_cast<KDColor*>(workingBuffer));
         for (int i = 0; i < k_smallAHeight; i++) {
           for (int j = 0; j < k_smallAWidth; j++) {
             if (k_smallABuffer[i][j] != workingBuffer[i][j]) {

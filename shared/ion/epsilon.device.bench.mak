@@ -80,6 +80,7 @@ $(addprefix device/shared/drivers/, \
 device/shared/post_and_hardware_tests.cpp \
 $(addprefix shared/, \
   console_line.cpp \
+  display.cpp \
   display_context.cpp \
   exam_mode.cpp \
 )

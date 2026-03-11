@@ -9,15 +9,15 @@
 namespace Ion {
 namespace Display {
 
-void SVC_ATTRIBUTES pushRect(KDRect r, const KDColor* pixels) {
+void SVC_ATTRIBUTES pushRectNoFocus(KDRect r, const KDColor* pixels) {
   SVC_RETURNING_VOID(SVC_DISPLAY_PUSH_RECT)
 }
 
-void SVC_ATTRIBUTES pushRectUniform(KDRect r, KDColor c) {
+void SVC_ATTRIBUTES pushRectUniformNoFocus(KDRect r, KDColor c) {
   SVC_RETURNING_VOID(SVC_DISPLAY_PUSH_RECT_UNIFORM)
 }
 
-void SVC_ATTRIBUTES pullRect(KDRect r, KDColor* pixels) {
+void SVC_ATTRIBUTES pullRectNoFocus(KDRect r, KDColor* pixels) {
   SVC_RETURNING_VOID(SVC_DISPLAY_PULL_RECT)
 }
 

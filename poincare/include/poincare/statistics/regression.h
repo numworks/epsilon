@@ -242,20 +242,23 @@ class Regression {
                                 int index) const;
   double privateResidualsSquareSum(const Series* series,
                                    const Coefficients& modelCoefficients) const;
+
+  double meanSquaredError(const Series* series,
+                          const Coefficients& modelCoefficients) const;
   double privateResidualStandardDeviation(
       const Series* series, const Coefficients& modelCoefficients) const;
 
   virtual bool isRegressionStrictlyBetter(
-      double residualsSquareSum1, double residualsSquareSum2,
+      double meanSquaredError1, double meanSquaredError2,
       const Regression::Coefficients& modelCoefficients1,
       const Regression::Coefficients& modelCoefficients2) const;
 
-  /* By default the model score is the residual square sum. Some regressions may
+  /* By default the model score is the mean squared error. Some regressions may
    * also take the model coefficients into account */
   virtual double modelScore(
-      double residualsSquareSum,
+      double meanSquaredError,
       const Regression::Coefficients& modelCoefficients) const {
-    return residualsSquareSum;
+    return meanSquaredError;
   }
 
   // Levenberg-Marquardt

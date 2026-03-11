@@ -80,7 +80,7 @@ void Regression::fit(const Series* series, double* modelCoefficients) const {
 }
 
 Regression::Coefficients Regression::privateFit(const Series* series) const {
-  double lowestResidualsSquareSum = OMG::Float::Max<double>();
+  double lowestMeanSquaredError = OMG::Float::Max<double>();
   Coefficients bestModelCoefficients;
   /* The coefficients are initialized to zero, so that in the worst case (it
    * could theoretically happen if all residual standard deviations are infinite
@@ -97,12 +97,11 @@ Regression::Coefficients Regression::privateFit(const Series* series) const {
         k_initialCoefficientValue, false, attemptNumber, &preparedSeries);
     fitLevenbergMarquardt(&preparedSeries, modelCoefficients);
     uniformizeCoefficientsFromFit(modelCoefficients);
-    double newResidualsSquareSum =
-        privateResidualsSquareSum(&preparedSeries, modelCoefficients);
-    if (isRegressionStrictlyBetter(newResidualsSquareSum,
-                                   lowestResidualsSquareSum, modelCoefficients,
-                                   bestModelCoefficients)) {
-      lowestResidualsSquareSum = newResidualsSquareSum;
+    double newMeanSquaredError =
+        meanSquaredError(&preparedSeries, modelCoefficients);
+    if (isRegressionStrictlyBetter(newMeanSquaredError, lowestMeanSquaredError,
+                                   modelCoefficients, bestModelCoefficients)) {
+      lowestMeanSquaredError = newMeanSquaredError;
       bestModelCoefficients = modelCoefficients;
     }
     attemptNumber++;
@@ -124,12 +123,12 @@ Regression::Coefficients Regression::privateFit(const Series* series) const {
         std::round(bestModelCoefficients[i] * k_roundingPrecision) /
         k_roundingPrecision;
   }
-  double roundedResidualsSquareSum =
-      privateResidualsSquareSum(series, roundedCoefficients);
+  double roundedMeanSquaredError =
+      meanSquaredError(series, roundedCoefficients);
   /* Use a reversed condition so that the rounded model is kept in case of
    * similar performances */
-  if (!isRegressionStrictlyBetter(lowestResidualsSquareSum,
-                                  roundedResidualsSquareSum,
+  if (!isRegressionStrictlyBetter(lowestMeanSquaredError,
+                                  roundedMeanSquaredError,
                                   bestModelCoefficients, roundedCoefficients)) {
     bestModelCoefficients = roundedCoefficients;
   }
@@ -457,6 +456,12 @@ double Regression::privateResidualsSquareSum(
   return sum;
 }
 
+double Regression::meanSquaredError(
+    const Series* series, const Coefficients& modelCoefficients) const {
+  return privateResidualsSquareSum(series, modelCoefficients) /
+         series->numberOfPairs();
+}
+
 double Regression::privateResidualStandardDeviation(
     const Series* series, const Coefficients& modelCoefficients) const {
   int nCoeff = numberOfCoefficients();
@@ -469,7 +474,7 @@ double Regression::privateResidualStandardDeviation(
 }
 
 bool Regression::isRegressionStrictlyBetter(
-    double residualsSquareSum1, double residualsSquareSum2,
+    double meanSquaredError1, double meanSquaredError2,
     const Regression::Coefficients& modelCoefficients1,
     const Regression::Coefficients& modelCoefficients2) const {
   assert(numberOfCoefficients() > 0);
@@ -486,8 +491,8 @@ bool Regression::isRegressionStrictlyBetter(
                         absoluteValueComparator));
 
   double precision = OMG::Float::Epsilon<double>() * maxAllCoefficients;
-  return modelScore(residualsSquareSum1, modelCoefficients1) + precision <
-         modelScore(residualsSquareSum2, modelCoefficients2);
+  return modelScore(meanSquaredError1, modelCoefficients1) + precision <
+         modelScore(meanSquaredError2, modelCoefficients2);
 }
 
 }  // namespace Poincare

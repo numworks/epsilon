@@ -14,6 +14,14 @@ class TrigonometricRegression : public Regression {
 
   Type type() const override { return Type::Trigonometric; }
 
+  // Metrics computed from the data points
+  struct DataMetrics {
+    double amplitude = NAN;
+    double frequency = NAN;
+    double phase = NAN;
+    double yDelta = NAN;
+  };
+
   constexpr static int k_numberOfCoefficients = 4;
 
  private:
@@ -32,6 +40,9 @@ class TrigonometricRegression : public Regression {
    * cases, so we choose √2 as the multiplication factor. */
   constexpr static double k_frequencyMultiplicationFactor = M_SQRT2;
 
+  static DataMetrics ComputeDataMetrics(const Series* series,
+                                        AngleUnit angleUnit);
+
   AngleUnit angleUnit() const override { return m_angleUnit; }
 
   double privateEvaluate(const Coefficients& modelCoefficients,
@@ -41,6 +52,11 @@ class TrigonometricRegression : public Regression {
       const double* modelCoefficients) const override;
   double partialDerivate(const Coefficients& modelCoefficients,
                          int derivateCoefficientIndex, double x) const override;
+
+  void computeDataMetrics(const Series* series) const override {
+    m_dataMetrics = ComputeDataMetrics(series, m_angleUnit);
+  }
+
   Coefficients specializedInitCoefficientsForFit(
       double defaultValue, size_t attemptNumber,
       const Series* series) const override;
@@ -54,7 +70,9 @@ class TrigonometricRegression : public Regression {
 
   double toRadiansCoeff() const;
 
-  AngleUnit m_angleUnit;
+  AngleUnit m_angleUnit = AngleUnit::None;
+  // Mutable because for some reason the regression fit methods are const
+  mutable DataMetrics m_dataMetrics = {};
 };
 
 }  // namespace Poincare::Internal

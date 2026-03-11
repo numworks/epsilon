@@ -276,6 +276,10 @@ class Regression {
                                       bool forceDefaultValue,
                                       size_t attemptNumber,
                                       const Series* s = nullptr) const;
+
+  /* Virtual method to compute metrics on the series to be re-used during the
+   * regression algorithm */
+  virtual void computeDataMetrics(const Series* series) const {}
   virtual Coefficients specializedInitCoefficientsForFit(
       double defaultValue, size_t /* attemptNumber */,
       const Series* s = nullptr) const;

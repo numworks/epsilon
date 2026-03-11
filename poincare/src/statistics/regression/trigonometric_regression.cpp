@@ -155,9 +155,9 @@ static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
   *yMaxExtremum = yMax;
 }
 
-Regression::Coefficients
-TrigonometricRegression::specializedInitCoefficientsForFit(
-    double defaultValue, size_t attemptNumber, const Series* series) const {
+TrigonometricRegression::DataMetrics
+TrigonometricRegression::ComputeDataMetrics(const Series* series,
+                                            AngleUnit angleUnit) {
   /* With trigonometric model, a good fit heavily depends on good starting
    * parameters. We try to find two successive extrema, and from them deduce the
    * amplitude, frequency, y-delta and phase.
@@ -168,12 +168,10 @@ TrigonometricRegression::specializedInitCoefficientsForFit(
    * very off and suboptimal. */
   double xMin, xMax, yMin, yMax;
   findExtrema(&xMin, &xMax, &yMin, &yMax, series);
-  // Init the "amplitude" coefficient a
-  double a = (yMax - yMin) / 2.0;
-  // Init the "frequency" coefficient b
-  double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(m_angleUnit);
+  double amplitude = (yMax - yMin) / 2.0;
+  double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(angleUnit);
   double period = 2.0 * std::fabs(xMax - xMin);
-  double b =
+  double frequency =
       (period > 0)
           ?
           /* b/(2*piInAngleUnit) is the frequency of the sine.
@@ -182,30 +180,35 @@ TrigonometricRegression::specializedInitCoefficientsForFit(
            * overfitting regression with an excessive frequency. */
           (2.0 * piInAngleUnit) / period
           :
-          /* Without period, fall back on default value, taking into account the
-           * angleUnit to ensure consistent result across different angle units.
-           */
-          defaultValue * piInAngleUnit;
-
-  // Init the "Phase" coefficient c
+          /* Without enough data points to compute a period, fall back on a
+             default value of pi. */
+          piInAngleUnit;
   /* Choose c so that sin(b * xMax + c) is maximal. It must depend on the angle
    * unit */
-  double c = piInAngleUnit / 2 - b * xMax;
-  // Init the "y-delta" coefficient d
-  double d = (yMax + yMin) / 2.0;
+  double phase = piInAngleUnit / 2 - frequency * xMax;
+  double yDelta = (yMax + yMin) / 2.0;
+  return DataMetrics{.amplitude = amplitude,
+                     .frequency = frequency,
+                     .phase = phase,
+                     .yDelta = yDelta};
+}
 
+Regression::Coefficients
+TrigonometricRegression::specializedInitCoefficientsForFit(
+    double defaultValue, size_t attemptNumber, const Series* series) const {
   /* For each initialization of coefficients (indicated by attemptNumber), we
-   * modify the initial guess for the frequency parameter (b) which was computed
-   * earlier. Out of the total number of attempts
-   * (m_initialParametersIterations), half of the modified b values are higher
-   * than the initial b value, and half of the modified b values are lower than
-   * the initial b value. The multiplication coefficient increases or decreases
-   * geometrically with a certain geometrical factor.  */
-  b = b *
+   * modify the frequency parameter that was computed from the data. Out of the
+   * total number of attempts (m_initialParametersIterations), half of the
+   * modified b values are higher than the initial b value, and half of the
+   * modified b values are lower than the initial b value. The multiplication
+   * coefficient increases or decreases geometrically with a certain geometrical
+   * factor.  */
+  double initialFrequency =
+      m_dataMetrics.frequency *
       std::pow(k_frequencyMultiplicationFactor,
                (int)attemptNumber + 1 - (int)m_initialParametersIterations / 2);
-
-  return {a, b, c, d};
+  return {m_dataMetrics.amplitude, initialFrequency, m_dataMetrics.phase,
+          m_dataMetrics.yDelta};
 }
 
 void TrigonometricRegression::uniformizeCoefficientsFromFit(

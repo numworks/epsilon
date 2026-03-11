@@ -90,6 +90,7 @@ Regression::Coefficients Regression::privateFit(const Series* series) const {
    * This improves the fit by having smaller coefficients */
   OffsetSeriesByMean preparedSeries(series, FitsXOffset(type()));
 
+  computeDataMetrics(&preparedSeries);
   size_t attemptNumber = 0;
   while (attemptNumber < m_initialParametersIterations) {
     Coefficients modelCoefficients = initCoefficientsForFit(

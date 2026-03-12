@@ -1,6 +1,7 @@
 #include "trigonometric_regression.h"
 
 #include <assert.h>
+#include <omg/float.h>
 #include <poincare/k_tree.h>
 #include <poincare/preferences.h>
 #include <poincare/statistics/dataset_adapter.h>
@@ -244,27 +245,26 @@ void TrigonometricRegression::uniformizeCoefficientsFromFit(
   }
 }
 
-bool TrigonometricRegression::isRegressionStrictlyBetter(
-    double meanSquaredError1, double meanSquaredError2,
-    const Regression::Coefficients& modelCoefficients1,
-    const Regression::Coefficients& modelCoefficients2) const {
-  /* If model 1 has a significantly lower residual standard deviation than
-   * model 2, it is the best of the two models. */
-  constexpr double significantlyLowerFactor = 0.9;
-  if (meanSquaredError1 < significantlyLowerFactor * meanSquaredError2) {
-    return true;
-  }
-  constexpr double sameRangeFactor = 1.1;
-  /* If model 1 has its residual standard deviation in the same range as the
-   * one of model 2, but has a lower frequency parameter (the "b" parameter),
-   * we prefer it to model 2. This is because we want to avoid trigonometric
-   * regressions which fits the data, but with a frequency that is for
-   * instance twice the "base" frequency that would also fit the data. */
-  if ((meanSquaredError1 < sameRangeFactor * meanSquaredError2) &&
-      modelCoefficients1[1] < modelCoefficients2[1]) {
-    return true;
-  }
-  return false;
+double TrigonometricRegression::modelScore(
+    double meanSquaredError,
+    const Regression::Coefficients& modelCoefficients) const {
+  /* The model score is a weighted combination of the mean squared error and of
+   * the frequency, that should be the lowest possible for a trigonometric
+   * regression. This is to avoid overfitting the data with a high frequency.
+   * The residual square sum is scaled by the amplitude of the data and the
+   * model frequency is scaled by the "frequency" computed from the data.
+   * The weight before the frequency term is chosen arbitrarily. Because the
+   * frequency estimation from the data is not so reliable, we choose a low
+   * coefficient in front of the frequency term. */
+  constexpr static double lambda_f = 0.1;
+
+  assert(meanSquaredError >= 0.);
+  assert(m_dataMetrics.amplitude > OMG::Float::Epsilon<double>());
+  assert(modelCoefficients[1] >= 0.);
+  assert(m_dataMetrics.frequency > OMG::Float::Epsilon<double>());
+
+  return (std::sqrt(meanSquaredError) / m_dataMetrics.amplitude) +
+         lambda_f * (modelCoefficients[1] / m_dataMetrics.frequency);
 }
 
 }  // namespace Poincare::Internal

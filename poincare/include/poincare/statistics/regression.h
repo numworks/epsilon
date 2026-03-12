@@ -248,7 +248,7 @@ class Regression {
   double privateResidualStandardDeviation(
       const Series* series, const Coefficients& modelCoefficients) const;
 
-  virtual bool isRegressionStrictlyBetter(
+  bool isRegressionStrictlyBetter(
       double meanSquaredError1, double meanSquaredError2,
       const Regression::Coefficients& modelCoefficients1,
       const Regression::Coefficients& modelCoefficients2) const;

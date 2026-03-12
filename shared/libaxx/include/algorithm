@@ -89,6 +89,21 @@ Iterator find_if(Iterator first, Iterator last, UnaryPredicate predicate) {
   return last;
 }
 
+template <class Iterator, class Comparator>
+constexpr Iterator max_element(Iterator first, Iterator end,
+                               Comparator comparator) {
+  if (first == end) {
+    return end;
+  }
+  Iterator result = first;
+  while (++first != end) {
+    if (comparator(*result, *first)) {
+      result = first;
+    }
+  }
+  return result;
+}
+
 template <class Iterator>
 constexpr Iterator max_element(Iterator first, Iterator end) {
   if (first == end) {
@@ -97,6 +112,21 @@ constexpr Iterator max_element(Iterator first, Iterator end) {
   Iterator result = first;
   while (++first != end) {
     if (*result < *first) {
+      result = first;
+    }
+  }
+  return result;
+}
+
+template <class Iterator, class Comparator>
+constexpr Iterator min_element(Iterator first, Iterator end,
+                               Comparator comparator) {
+  if (first == end) {
+    return end;
+  }
+  Iterator result = first;
+  while (++first != end) {
+    if (comparator(*first, *result)) {
       result = first;
     }
   }

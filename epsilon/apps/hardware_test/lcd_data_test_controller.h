@@ -24,7 +24,7 @@ class LCDDataTestController : public FocusedViewController {
 
    private:
     constexpr static const char* k_lcdDataPassTest = "LCD DATA: OK";
-    constexpr static const char* k_lcdDataFailTest = "LCD DATA: FAIL";
+    constexpr static const char* k_lcdDataFailTest = "LCD DATA: KO";
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 2; }
     Escher::View* subviewAtIndex(int index) override {

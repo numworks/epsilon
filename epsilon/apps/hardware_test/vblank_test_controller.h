@@ -34,7 +34,7 @@ class VBlankTestController : public FocusedViewController {
     Escher::OneLineBufferTextView<> m_vBlankStateView;
   };
   constexpr static const char* k_vBlankOKText = "VBLANK: OK";
-  constexpr static const char* k_vBlankFailTest = "VBLANK: FAIL";
+  constexpr static const char* k_vBlankFailTest = "VBLANK: KO";
   ContentView m_view;
 };
 

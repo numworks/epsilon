@@ -35,7 +35,7 @@ class ColorsLCDTestController : public FocusedViewController {
   };
   constexpr static int k_numberOfAcceptablesGlyphErrors = 1;
   constexpr static const char* k_colorsLCDOKText = "COLORS LCD: OK";
-  constexpr static const char* k_colorsLCDFailTest = "COLORS LCD: FAIL";
+  constexpr static const char* k_colorsLCDFailTest = "COLORS LCD: KO";
   ContentView m_view;
 };
 

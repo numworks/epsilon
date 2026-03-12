@@ -25,7 +25,7 @@ class LCDTimingTestController : public FocusedViewController {
 
    private:
     constexpr static const char* k_lcdTimingPassTest = "LCD TIMING: OK";
-    constexpr static const char* k_lcdTimingFailTest = "LCD TIMING: FAIL";
+    constexpr static const char* k_lcdTimingFailTest = "LCD TIMING: KO";
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 2; }
     Escher::View* subviewAtIndex(int index) override {

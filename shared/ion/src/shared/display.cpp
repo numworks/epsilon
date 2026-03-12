@@ -21,19 +21,19 @@ void resetFocus() {
 /* Focus helpers */
 
 // The focused rect is the rect displayed on the screen
-KDRect FocusedRect() {
+static KDRect FocusedRect() {
   return KDRect(s_origin, KDSize(Width / s_ratio, Height / s_ratio));
 }
 
 // From a software KDPoint to the one displayed on the screen
-KDPoint ToFocusedPoint(KDPoint p) {
+static KDPoint ToFocusedPoint(KDPoint p) {
   assert(FocusedRect().contains(p));
   return KDPoint((p.x() - s_origin.x()) * s_ratio,
                  (p.y() - s_origin.y()) * s_ratio);
 }
 
 // From a software KDRect to the one displayed on the screen
-KDRect ToFocusedRect(KDRect r) {
+static KDRect ToFocusedRect(KDRect r) {
   if (r == KDRectZero) {
     return r;
   }
@@ -43,7 +43,7 @@ KDRect ToFocusedRect(KDRect r) {
 }
 
 // View is focused if the ratio is superior to 1
-bool IsFocused() {
+static bool IsFocused() {
   // s_origin should always fit the screen.
   assert(s_ratio > 0);
   assert(Rect.containsRect(FocusedRect()));

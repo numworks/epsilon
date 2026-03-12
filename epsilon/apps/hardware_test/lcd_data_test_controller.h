@@ -3,14 +3,15 @@
 #include <assert.h>
 #include <escher/buffer_text_view.h>
 #include <escher/solid_color_view.h>
-#include <escher/view_controller.h>
+
+#include "zoomed_view_controller.h"
 
 namespace HardwareTest {
 
-class LCDDataTestController : public Escher::ViewController {
+class LCDDataTestController : public FocusedViewController {
  public:
   LCDDataTestController(Escher::Responder* parentResponder)
-      : Escher::ViewController(parentResponder), m_testSuccessful(false) {}
+      : FocusedViewController(parentResponder), m_testSuccessful(false) {}
   Escher::View* view() override { return &m_view; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;

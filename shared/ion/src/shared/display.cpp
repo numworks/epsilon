@@ -13,6 +13,11 @@ void setFocusOrigin(KDPoint origin) { s_origin = origin; }
 
 void setFocusRatio(uint8_t r) { s_ratio = r; }
 
+void resetFocus() {
+  setFocusOrigin(KDPointZero);
+  setFocusRatio(1);
+}
+
 /* Focus helpers */
 
 // The focused rect is the rect displayed on the screen

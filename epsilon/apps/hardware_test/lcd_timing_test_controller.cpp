@@ -23,6 +23,7 @@ bool LCDTimingTestController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::OK && m_testSuccessful) {
     // Handled in WizardViewController
+    viewWillDisappear();
     return false;
   }
   return true;
@@ -32,6 +33,7 @@ void LCDTimingTestController::viewWillAppear() {
   Ion::Display::pushRectUniform(Ion::Display::Rect, BasicColor::White);
   Ion::Backlight::setBrightness(0);
   runTest();
+  FocusedViewController::viewWillAppear();
   Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
 }
 

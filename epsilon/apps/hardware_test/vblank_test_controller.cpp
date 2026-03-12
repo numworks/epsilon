@@ -16,6 +16,7 @@ bool VBlankTestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     if (strcmp(m_view.vBlankStateTextView()->text(), k_vBlankOKText) == 0) {
       // Handled in WizardViewController
+      viewWillDisappear();
       return false;
     }
   }
@@ -24,6 +25,7 @@ bool VBlankTestController::handleEvent(Ion::Events::Event event) {
 
 void VBlankTestController::viewWillAppear() {
   bool testOK = Ion::POSTAndHardwareTests::VBlankOK();
+  FocusedViewController::viewWillAppear();
   m_view.setColor(testOK ? BasicColor::Green : BasicColor::Red);
   m_view.vBlankStateTextView()->setText(testOK ? k_vBlankOKText
                                                : k_vBlankFailTest);

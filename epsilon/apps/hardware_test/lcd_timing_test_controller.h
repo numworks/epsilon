@@ -3,15 +3,16 @@
 #include <assert.h>
 #include <escher/buffer_text_view.h>
 #include <escher/solid_color_view.h>
-#include <escher/view_controller.h>
+
+#include "zoomed_view_controller.h"
 
 namespace HardwareTest {
 
 // TODO Factorize with LCDData
-class LCDTimingTestController : public Escher::ViewController {
+class LCDTimingTestController : public FocusedViewController {
  public:
   LCDTimingTestController(Escher::Responder* parentResponder)
-      : Escher::ViewController(parentResponder), m_testSuccessful(false) {}
+      : FocusedViewController(parentResponder), m_testSuccessful(false) {}
   Escher::View* view() override { return &m_view; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;

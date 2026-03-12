@@ -23,6 +23,7 @@ namespace Display {
 // Focus setters
 void setFocusOrigin(KDPoint origin);
 void setFocusRatio(uint8_t ratio);
+void resetFocus();
 // Handle display focus
 void pushRect(KDRect r, const KDColor* pixels);
 void pushRectUniform(KDRect r, KDColor c);

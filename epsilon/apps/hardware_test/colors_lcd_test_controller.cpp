@@ -17,6 +17,7 @@ bool ColorsLCDTestController::handleEvent(Ion::Events::Event event) {
     if (strcmp(m_view.colorsLCDStateTextView()->text(), k_colorsLCDOKText) ==
         0) {
       // Handled in WizardViewController
+      viewWillDisappear();
       return false;
     }
   }
@@ -26,6 +27,7 @@ bool ColorsLCDTestController::handleEvent(Ion::Events::Event event) {
 void ColorsLCDTestController::viewWillAppear() {
   bool testOK = Ion::POSTAndHardwareTests::ColorsLCDPixelFailures() <=
                 k_numberOfAcceptablesGlyphErrors;
+  FocusedViewController::viewWillAppear();
   m_view.setColor(testOK ? BasicColor::Green : BasicColor::Red);
   m_view.colorsLCDStateTextView()->setText(testOK ? k_colorsLCDOKText
                                                   : k_colorsLCDFailTest);

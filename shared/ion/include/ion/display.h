@@ -20,9 +20,14 @@
 namespace Ion {
 namespace Display {
 
+// Focus setters
+void setFocusOrigin(KDPoint origin);
+void setFocusRatio(uint8_t ratio);
+// Handle display focus
 void pushRect(KDRect r, const KDColor* pixels);
 void pushRectUniform(KDRect r, KDColor c);
 void pullRect(KDRect r, KDColor* pixels);
+// Ignoring display focus
 void pushRectNoFocus(KDRect r, const KDColor* pixels);
 void pushRectUniformNoFocus(KDRect r, KDColor c);
 void pullRectNoFocus(KDRect r, KDColor* pixels);

@@ -34,6 +34,8 @@ class array {
 
   constexpr const_iterator cbegin() const { return m_array; }
   constexpr const_iterator cend() const { return m_array + N; }
+  constexpr const_iterator begin() const { return m_array; }
+  constexpr const_iterator end() const { return m_array + N; }
   constexpr iterator begin() { return m_array; }
   constexpr iterator end() { return m_array + N; }
 

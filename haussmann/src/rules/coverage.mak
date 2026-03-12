@@ -9,7 +9,6 @@ _coverage_excludes := \
   .*/test/.* \
   (.*/)?python/src/.* \
   (.*/)?apps/hardware_checkup/.* \
-  (.*/)?apps/hardware_test/.* \
   (.*/)?apps/on_boarding/.* \
   (.*/)?apps/usb/.* \
   .*/quiz/src/.* \

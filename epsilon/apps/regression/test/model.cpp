@@ -55,8 +55,7 @@ void assert_regression_is(const double* xi, const double* yi,
                           const int numberOfPoints, Model::Type modelType,
                           const Coefficients& trueCoefficients, double trueR,
                           double trueR2, double trueResidualStdDev,
-                          bool acceptNAN = false,
-                          bool exactCoefficients = false) {
+                          bool acceptNAN = false) {
   int series = 0;
   Model::Type regressionTypes[] = {Model::Type::None, Model::Type::None,
                                    Model::Type::None, Model::Type::None,
@@ -84,9 +83,8 @@ void assert_regression_is(const double* xi, const double* yi,
   /* TODO: we could use the std::equal or std::for_each algorithms here, to
    * factorize the "for" loop */
   for (int i = 0; i < numberOfCoefs; i++) {
-    bool cond = roughly_equal(coefficients[i], trueCoefficients[i],
-                              exactCoefficients ? 0.0 : precision, acceptNAN,
-                              exactCoefficients ? 0.0 : nullExpectedPrecision);
+    bool cond = roughly_equal(coefficients[i], trueCoefficients[i], precision,
+                              acceptNAN, nullExpectedPrecision);
 #if POINCARE_TREE_LOG
     if (!cond) {
       std::cout << "Coefficient of regression different:" << std::endl;
@@ -264,7 +262,7 @@ QUIZ_CASE(regression_quadratic_2) {
   constexpr double r2 = 1.0;
   constexpr double sr = 0.;
   assert_regression_is(x, y, std::size(x), Model::Type::Quadratic, coefficients,
-                       NAN, r2, sr, false, true);
+                       NAN, r2, sr, false);
 }
 
 QUIZ_CASE(regression_cubic) {
@@ -299,7 +297,7 @@ QUIZ_CASE(regression_cubic_3) {
   constexpr Coefficients coefficients = {0.0, 0.0, 1.0, 0.0};
   constexpr double r2 = 1.0;
   assert_regression_is(x, y, std::size(x), Model::Type::Cubic, coefficients,
-                       NAN, r2, NAN, false, true);
+                       NAN, r2, NAN, false);
 }
 
 QUIZ_CASE(regression_quartic) {

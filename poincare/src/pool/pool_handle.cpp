@@ -83,7 +83,7 @@ void PoolHandle::retain() {
     return;
   }
   if (canUpdateRefCounter()) {
-    this->object()->retain();
+    object()->retain();
   }
 }
 
@@ -91,10 +91,10 @@ void PoolHandle::release() {
   if (isUninitialized()) {
     return;
   }
-  /* TODO:  We have no guarantee that the object was retained before, because
+  /* TODO: We have no guarantee that the object was retained before, because
    * the topmost checkpoint could have changed ! */
   if (canUpdateRefCounter()) {
-    this->object()->release();
+    object()->release();
   }
   m_identifier = PoolObject::NoObjectIdentifier;
 }

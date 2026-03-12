@@ -2,13 +2,14 @@
 
 #include <escher/buffer_text_view.h>
 #include <escher/solid_color_view.h>
-#include <escher/view_controller.h>
+
+#include "focused_view_controller.h"
 
 namespace HardwareTest {
 
-class BatteryTestController : public Escher::ViewController {
+class BatteryTestController : public FocusedViewController {
  public:
-  using Escher::ViewController::ViewController;
+  using FocusedViewController::FocusedViewController;
   Escher::View* view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
@@ -32,9 +33,10 @@ class BatteryTestController : public Escher::ViewController {
     Escher::OneLineBufferTextView<> m_batteryLevelView;
     Escher::OneLineBufferTextView<> m_batteryChargingView;
   };
-  constexpr static const char* k_batteryOKText = "BATTERY: OK";
+  // Both texts should take two lines.
+  constexpr static const char* k_batteryOKText = "BATTERY: OK\n";
   constexpr static const char* k_batteryNeedChargingText =
-      "BATTERY: NEED RECHARGE";
+      "BATTERY: KO\nNEED RECHARGE";
   void updateBatteryState(float batteryLevel, bool batteryCharging);
   ContentView m_view;
 };

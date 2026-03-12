@@ -28,6 +28,7 @@ bool BatteryTestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     if (strcmp(m_view.batteryStateTextView()->text(), k_batteryOKText) == 0) {
       // Handled in WizardViewController
+      viewWillDisappear();
       return false;
     }
   }
@@ -37,6 +38,7 @@ bool BatteryTestController::handleEvent(Ion::Events::Event event) {
 
 void BatteryTestController::viewWillAppear() {
   bool batteryOK = Ion::POSTAndHardwareTests::BatteryOK();
+  FocusedViewController::viewWillAppear();
   const char* text = batteryOK ? k_batteryOKText : k_batteryNeedChargingText;
   KDColor color = batteryOK ? BasicColor::Green : BasicColor::Red;
   m_view.setColor(color);
@@ -97,17 +99,24 @@ void BatteryTestController::ContentView::setColor(KDColor color) {
 }
 
 void BatteryTestController::ContentView::layoutSubviews(bool force) {
-  setChildFrame(&m_batteryStateView,
-                KDRect(0, 0, Ion::Display::Width, Ion::Display::Height / 2),
-                force);
-  KDSize textSize = KDFont::GlyphSize(KDFont::Size::Small);
+  KDCoordinate largeTextHeight =
+      KDFont::GlyphSize(KDFont::Size::Large).height();
+  KDCoordinate smallTextHeight =
+      KDFont::GlyphSize(KDFont::Size::Small).height();
+  // Display battery state in the middle of the screen
+  KDCoordinate textPosition = Ion::Display::Height / 2 - largeTextHeight / 2;
+  setChildFrame(
+      &m_batteryStateView,
+      KDRect(0, textPosition, Ion::Display::Width, largeTextHeight * 2), force);
+  textPosition += largeTextHeight * 2;
+  // Display battery level
   setChildFrame(&m_batteryLevelView,
-                KDRect(0, Ion::Display::Height - 2 * textSize.height(),
-                       Ion::Display::Width, textSize.height()),
+                KDRect(0, textPosition, Ion::Display::Width, smallTextHeight),
                 force);
+  textPosition += smallTextHeight;
+  // Display battery charging view
   setChildFrame(&m_batteryChargingView,
-                KDRect(0, Ion::Display::Height - textSize.height(),
-                       Ion::Display::Width, textSize.height()),
+                KDRect(0, textPosition, Ion::Display::Width, smallTextHeight),
                 force);
 }
 

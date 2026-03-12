@@ -59,8 +59,10 @@ void LCDTimingTestController::ContentView::setStatus(bool success,
 
 void LCDTimingTestController::ContentView::layoutSubviews(bool force) {
   setChildFrame(&m_lcdTimingStateView, Ion::Display::Rect, force);
-  setChildFrame(&m_lcdNumberGlyphFailuresView,
-                KDRect(10, 10, Ion::Display::Width, 20), force);
+  // Display number of glyph failures right above the text.
+  setChildFrame(
+      &m_lcdNumberGlyphFailuresView,
+      KDRect(0, Ion::Display::Height / 2 - 60, Ion::Display::Width, 20), force);
 }
 
 }  // namespace HardwareTest

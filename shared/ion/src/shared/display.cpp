@@ -1,22 +1,11 @@
+#include <assert.h>
 #include <ion/display.h>
-#include <omg/global_box.h>
 
 namespace Ion {
 namespace Display {
 
 KDPoint s_origin = KDPointZero;
 uint8_t s_ratio = 1;
-
-/* Focus setters */
-
-void setFocusOrigin(KDPoint origin) { s_origin = origin; }
-
-void setFocusRatio(uint8_t r) { s_ratio = r; }
-
-void resetFocus() {
-  setFocusOrigin(KDPointZero);
-  setFocusRatio(1);
-}
 
 /* Focus helpers */
 
@@ -43,12 +32,18 @@ static KDRect ToFocusedRect(KDRect r) {
 }
 
 // View is focused if the ratio is superior to 1
-static bool IsFocused() {
-  // s_origin should always fit the screen.
-  assert(s_ratio > 0);
+static bool IsFocused() { return s_ratio > 1; }
+
+/* Focus setters */
+
+void setFocus(uint8_t r, KDPoint origin) {
+  assert(r > 0);
+  s_ratio = r;
+  s_origin = origin;
   assert(Rect.containsRect(FocusedRect()));
-  return s_ratio > 1;
 }
+
+void resetFocus() { setFocus(1, KDPointZero); }
 
 /* Display methods */
 

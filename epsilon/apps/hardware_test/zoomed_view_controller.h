@@ -12,9 +12,8 @@ class FocusedViewController : public Escher::ViewController {
  public:
   using Escher::ViewController::ViewController;
   void viewWillAppear() override {
-    Ion::Display::setFocusRatio(2);
-    Ion::Display::setFocusOrigin(
-        KDPoint(Ion::Display::Width / 4, Ion::Display::Height / 4));
+    Ion::Display::setFocus(
+        2, KDPoint(Ion::Display::Width / 4, Ion::Display::Height / 4));
   }
   void viewWillDisappear() { Ion::Display::resetFocus(); }
 };

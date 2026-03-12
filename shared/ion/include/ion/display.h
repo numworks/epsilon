@@ -21,8 +21,7 @@ namespace Ion {
 namespace Display {
 
 // Focus setters
-void setFocusOrigin(KDPoint origin);
-void setFocusRatio(uint8_t ratio);
+void setFocus(uint8_t ratio, KDPoint origin);
 void resetFocus();
 // Handle display focus
 void pushRect(KDRect r, const KDColor* pixels);

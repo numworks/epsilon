@@ -4,7 +4,7 @@
 #include <escher/buffer_text_view.h>
 #include <escher/solid_color_view.h>
 
-#include "zoomed_view_controller.h"
+#include "focused_view_controller.h"
 
 namespace HardwareTest {
 

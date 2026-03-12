@@ -1,44 +1,21 @@
 #pragma once
 
-#include <assert.h>
-#include <escher/buffer_text_view.h>
-#include <escher/solid_color_view.h>
-
 #include "focused_view_controller.h"
 
 namespace HardwareTest {
 
-// TODO Factorize with LCDData
 class LCDTimingTestController : public FocusedViewController {
  public:
-  LCDTimingTestController(Escher::Responder* parentResponder)
-      : FocusedViewController(parentResponder), m_testSuccessful(false) {}
-  Escher::View* view() override { return &m_view; }
-  bool handleEvent(Ion::Events::Event event) override;
+  using FocusedViewController::FocusedViewController;
   void viewWillAppear() override;
 
  private:
-  class ContentView : public Escher::SolidColorView {
-   public:
-    ContentView();
-    void setStatus(bool success, int numberOfErrors);
-
-   private:
-    constexpr static const char* k_lcdTimingPassTest = "LCD TIMING: OK";
-    constexpr static const char* k_lcdTimingFailTest = "LCD TIMING: KO";
-    void layoutSubviews(bool force = false) override;
-    int numberOfSubviews() const override { return 2; }
-    Escher::View* subviewAtIndex(int index) override {
-      assert(index >= 0 && index < 2);
-      return index == 0 ? &m_lcdTimingStateView : &m_lcdNumberGlyphFailuresView;
-    }
-    Escher::OneLineBufferTextView<> m_lcdTimingStateView;
-    Escher::OneLineBufferTextView<> m_lcdNumberGlyphFailuresView;
-  };
   constexpr static int k_errorLimit = 0;
-  void runTest();
-  bool m_testSuccessful;
-  ContentView m_view;
+
+  bool runTest() override;
+  const char* testName() const override { return "LCD TIMING:"; }
+
+  int m_pixelFailures = 0;
 };
 
 }  // namespace HardwareTest

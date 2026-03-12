@@ -10,59 +10,19 @@ using namespace Poincare;
 
 namespace HardwareTest {
 
-void LCDTimingTestController::runTest() {
-  int pixelFailures = Ion::POSTAndHardwareTests::LCDTimingGlyphFailures();
-  m_testSuccessful = pixelFailures <= k_errorLimit;
-  m_view.setStatus(m_testSuccessful, pixelFailures);
-}
-
-bool LCDTimingTestController::handleEvent(Ion::Events::Event event) {
-  // Do not handle OnOff event to let the apps container redraw the screen
-  if (event == Ion::Events::OnOff) {
-    return false;
-  }
-  if (event == Ion::Events::OK && m_testSuccessful) {
-    // Handled in WizardViewController
-    viewWillDisappear();
-    return false;
-  }
-  return true;
+bool LCDTimingTestController::runTest() {
+  Ion::Display::pushRectUniform(Ion::Display::Rect, BasicColor::White);
+  Ion::Backlight::setBrightness(0);
+  m_pixelFailures = Ion::POSTAndHardwareTests::LCDTimingGlyphFailures();
+  return m_pixelFailures <= k_errorLimit;
 }
 
 void LCDTimingTestController::viewWillAppear() {
-  Ion::Display::pushRectUniform(Ion::Display::Rect, BasicColor::White);
-  Ion::Backlight::setBrightness(0);
-  runTest();
   FocusedViewController::viewWillAppear();
-  Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
-}
-
-LCDTimingTestController::ContentView::ContentView()
-    : SolidColorView(BasicColor::White),
-      m_lcdTimingStateView({.horizontalAlignment = KDGlyph::k_alignCenter}),
-      m_lcdNumberGlyphFailuresView(
-          {.style = {.font = KDFont::Size::Small},
-           .horizontalAlignment = KDGlyph::k_alignCenter}) {}
-
-void LCDTimingTestController::ContentView::setStatus(bool success,
-                                                     int numberOfErrors) {
-  KDColor backgroundColor = (success ? BasicColor::Green : BasicColor::Red);
-  m_lcdTimingStateView.setBackgroundColor(backgroundColor);
-  m_lcdNumberGlyphFailuresView.setBackgroundColor(backgroundColor);
-  m_lcdTimingStateView.setText(success ? k_lcdTimingPassTest
-                                       : k_lcdTimingFailTest);
   constexpr int bufferSize = 20;
   char buffer[bufferSize] = {0};
-  OMG::Print::IntLeft(numberOfErrors, buffer, bufferSize);
-  m_lcdNumberGlyphFailuresView.setText(buffer);
-}
-
-void LCDTimingTestController::ContentView::layoutSubviews(bool force) {
-  setChildFrame(&m_lcdTimingStateView, Ion::Display::Rect, force);
-  // Display number of glyph failures right above the text.
-  setChildFrame(
-      &m_lcdNumberGlyphFailuresView,
-      KDRect(0, Ion::Display::Height / 2 - 60, Ion::Display::Width, 20), force);
+  OMG::Print::IntLeft(m_pixelFailures, buffer, bufferSize);
+  m_view.setPrefix(buffer);
 }
 
 }  // namespace HardwareTest

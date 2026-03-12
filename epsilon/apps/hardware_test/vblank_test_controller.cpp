@@ -1,47 +1,11 @@
 #include "vblank_test_controller.h"
 
-#include <apps/apps_container.h>
 #include <ion/post_and_hardware_tests.h>
-#include <kandinsky/basic_color.h>
-
-using namespace Poincare;
 
 namespace HardwareTest {
 
-bool VBlankTestController::handleEvent(Ion::Events::Event event) {
-  // Do not handle OnOff event to let the apps container redraw the screen
-  if (event == Ion::Events::OnOff) {
-    return false;
-  }
-  if (event == Ion::Events::OK) {
-    if (strcmp(m_view.vBlankStateTextView()->text(), k_vBlankOKText) == 0) {
-      // Handled in WizardViewController
-      viewWillDisappear();
-      return false;
-    }
-  }
-  return true;
-}
-
-void VBlankTestController::viewWillAppear() {
-  bool testOK = Ion::POSTAndHardwareTests::VBlankOK();
-  FocusedViewController::viewWillAppear();
-  m_view.setColor(testOK ? BasicColor::Green : BasicColor::Red);
-  m_view.vBlankStateTextView()->setText(testOK ? k_vBlankOKText
-                                               : k_vBlankFailTest);
-}
-
-VBlankTestController::ContentView::ContentView()
-    : SolidColorView(BasicColor::White),
-      m_vBlankStateView({.horizontalAlignment = KDGlyph::k_alignCenter}) {}
-
-void VBlankTestController::ContentView::setColor(KDColor color) {
-  SolidColorView::setColor(color);
-  m_vBlankStateView.setBackgroundColor(color);
-}
-
-void VBlankTestController::ContentView::layoutSubviews(bool force) {
-  setChildFrame(&m_vBlankStateView, Ion::Display::Rect, force);
+bool VBlankTestController::runTest() {
+  return Ion::POSTAndHardwareTests::VBlankOK();
 }
 
 }  // namespace HardwareTest

@@ -1,43 +1,21 @@
 #pragma once
 
-#include <assert.h>
-#include <escher/buffer_text_view.h>
-#include <escher/solid_color_view.h>
-
 #include "focused_view_controller.h"
 
 namespace HardwareTest {
 
 class LCDDataTestController : public FocusedViewController {
  public:
-  LCDDataTestController(Escher::Responder* parentResponder)
-      : FocusedViewController(parentResponder), m_testSuccessful(false) {}
-  Escher::View* view() override { return &m_view; }
-  bool handleEvent(Ion::Events::Event event) override;
+  using FocusedViewController::FocusedViewController;
   void viewWillAppear() override;
 
  private:
-  class ContentView : public Escher::SolidColorView {
-   public:
-    ContentView();
-    void setStatus(bool success, int numberOfErrors);
-
-   private:
-    constexpr static const char* k_lcdDataPassTest = "LCD DATA: OK";
-    constexpr static const char* k_lcdDataFailTest = "LCD DATA: KO";
-    void layoutSubviews(bool force = false) override;
-    int numberOfSubviews() const override { return 2; }
-    Escher::View* subviewAtIndex(int index) override {
-      assert(index >= 0 && index < 2);
-      return index == 0 ? &m_lcdDataStateView : &m_lcdNumberPixelFailuresView;
-    }
-    Escher::OneLineBufferTextView<> m_lcdDataStateView;
-    Escher::OneLineBufferTextView<> m_lcdNumberPixelFailuresView;
-  };
   constexpr static int k_errorLimit = 0;
-  void runTest();
-  bool m_testSuccessful;
-  ContentView m_view;
+
+  bool runTest() override;
+  const char* testName() const override { return "LCD DATA:"; }
+
+  int m_pixelFailures = 0;
 };
 
 }  // namespace HardwareTest

@@ -36,4 +36,7 @@ $(call create_goal,epsilon_test, \
 COVERAGE_main_goal := epsilon
 include $(PATH_haussmann)/src/rules/coverage.mak
 
+.PHONY: test
+test: epsilon_test.bin epsilon.bin .WAIT epsilon.compare .WAIT epsilon_test.bin.run_parallel
+$(call document_other_target,test,Run the screenshot and unit tests)
 

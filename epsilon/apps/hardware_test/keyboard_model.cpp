@@ -2,12 +2,9 @@
 
 namespace HardwareTest {
 
-constexpr Ion::Keyboard::Key
-    KeyboardModel::TestedKeys[KeyboardModel::NumberOfTestedKeys];
-
 int KeyboardModel::indexInTestedKeys(Ion::Keyboard::Key key) const {
-  for (int i = 0; i < NumberOfTestedKeys; i++) {
-    if (TestedKeys[i] == key) {
+  for (int i = 0; i < m_numberOfTestedKeys; i++) {
+    if (m_testedKeys[i] == key) {
       return i;
     }
   }

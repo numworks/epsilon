@@ -8,17 +8,35 @@ namespace HardwareTest {
 
 class KeyboardModel {
  public:
-  KeyboardModel() : m_testedKeyIndex(0) {}
-  Ion::Keyboard::Key testedKey() const { return TestedKeys[m_testedKeyIndex]; }
+  KeyboardModel() : m_testedKeyIndex(0) {
+    m_testedKeys =
+#if HWTEST_ALL_KEYS
+        AllKeys
+#else
+        SubsetOfKeys
+#endif
+        ;
+    m_numberOfTestedKeys =
+#if HWTEST_ALL_KEYS
+        std::size(AllKeys)
+#else
+        std::size(SubsetOfKeys)
+#endif
+        ;
+  }
+  int numberOfTestedKeys() const { return m_numberOfTestedKeys; }
+  int indexInTestedKeys(Ion::Keyboard::Key key) const;
   int testedKeyIndex() const { return m_testedKeyIndex; }
+  Ion::Keyboard::Key testedKey() const {
+    return m_testedKeys[m_testedKeyIndex];
+  }
+
   void setTestedKeyIndex(int i) {
-    assert(i >= 0 && i <= NumberOfTestedKeys);
+    assert(i >= 0 && i <= m_numberOfTestedKeys);
     m_testedKeyIndex = i;
   }
-  int indexInTestedKeys(Ion::Keyboard::Key key) const;
 
-  constexpr static Ion::Keyboard::Key TestedKeys[] = {
-#if HWTEST_ALL_KEYS
+  constexpr static Ion::Keyboard::Key AllKeys[] = {
       Ion::Keyboard::Key::Left,
       Ion::Keyboard::Key::Up,
       Ion::Keyboard::Key::Down,
@@ -64,7 +82,9 @@ class KeyboardModel {
       Ion::Keyboard::Key::EE,
       Ion::Keyboard::Key::Ans,
       Ion::Keyboard::Key::EXE,
-#else
+  };
+
+  constexpr static Ion::Keyboard::Key SubsetOfKeys[] = {
       Ion::Keyboard::Key::Left,      Ion::Keyboard::Key::Up,
       Ion::Keyboard::Key::Down,      Ion::Keyboard::Key::Right,
       Ion::Keyboard::Key::OK,        Ion::Keyboard::Key::Back,
@@ -75,11 +95,11 @@ class KeyboardModel {
       Ion::Keyboard::Key::Square,    Ion::Keyboard::Key::RightParenthesis,
       Ion::Keyboard::Key::Division,  Ion::Keyboard::Key::Minus,
       Ion::Keyboard::Key::EXE,
-#endif
   };
-  constexpr static int NumberOfTestedKeys = std::size(TestedKeys);
 
  private:
+  const Ion::Keyboard::Key* m_testedKeys;
+  int m_numberOfTestedKeys;
   int m_testedKeyIndex;
 };
 }  // namespace HardwareTest

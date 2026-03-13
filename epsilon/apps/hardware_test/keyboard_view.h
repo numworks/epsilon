@@ -9,7 +9,14 @@ namespace HardwareTest {
 class KeyboardView : public Escher::View {
  public:
   using Escher::View::View;
+  int numberOfTestedKeys() const {
+    return m_keyboardModel.numberOfTestedKeys();
+  }
   int testedKeyIndex() const { return m_keyboardModel.testedKeyIndex(); }
+  const Ion::Keyboard::Key testedKey() const {
+    return m_keyboardModel.testedKey();
+  }
+
   void setTestedKeyIndex(int i);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 

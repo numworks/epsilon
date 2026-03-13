@@ -15,11 +15,12 @@ bool KeyboardTestController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   Ion::Keyboard::State state = Ion::Keyboard::scan();
-  Ion::Keyboard::State onlyKeyDown = Ion::Keyboard::State(
-      KeyboardModel::TestedKeys[m_keyboardView.testedKeyIndex()]);
+  Ion::Keyboard::State onlyKeyDown =
+      Ion::Keyboard::State(m_keyboardView.testedKey());
   if (state == onlyKeyDown) {
     m_keyboardView.setTestedKeyIndex(m_keyboardView.testedKeyIndex() + 1);
-    if (m_keyboardView.testedKeyIndex() == KeyboardModel::NumberOfTestedKeys) {
+    if (m_keyboardView.testedKeyIndex() ==
+        m_keyboardView.numberOfTestedKeys()) {
       // Returning false will go to the next step in the WizardViewController
       return false;
     }

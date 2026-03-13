@@ -39,12 +39,12 @@ AnalysisExpression AnalysisExpression::getPolynomialReducedCoefficients(
 
 template <typename T>
 T AnalysisExpression::approximateSystemToRealScalar() const {
-  if (!Internal::Dimension::IsNonListScalar(tree())) {
-    return NAN;
-  }
+  assert(Internal::Dimension::IsNonListScalar(tree()));
   return Approximation::To<T>(
-      tree(),
-      Approximation::Parameters{.policy = {.prepare = true, .optimize = true}});
+      tree(), Approximation::Parameters{
+                  .policy = {.optimize = true},
+                  .expressionParameters =
+                      Approximation::SystemExpressionPolicy{.prepare = true}});
 }
 
 template float AnalysisExpression::approximateSystemToRealScalar<float>() const;

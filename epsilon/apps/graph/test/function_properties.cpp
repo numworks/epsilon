@@ -34,7 +34,7 @@ void assert_cartesian_function_type_is(
   UserExpression e = UserExpression::Builder(parse(expression));
   AnalysisExpression reducedExpression =
       e.cloneAndReduce(DefaultSimplificationParametersForAnalysis())
-          .getAnalysisExpression();
+          .cloneAndExpand();
   quiz_assert(!reducedExpression.isUninitialized() &&
               !reducedExpression.isFailedSimplification());
   FunctionType::CartesianType type =
@@ -71,7 +71,7 @@ void assert_polar_line_type_is(const char* expression,
   UserExpression e = UserExpression::Builder(parse(expression));
   AnalysisExpression reducedExpression =
       e.cloneAndReduce(DefaultSimplificationParametersForAnalysis())
-          .getAnalysisExpression();
+          .cloneAndExpand();
   quiz_assert(!reducedExpression.isUninitialized() &&
               !reducedExpression.isFailedSimplification());
   FunctionType::LineType type =

@@ -47,15 +47,27 @@ static bool IsHardwareCheckupRow(int row) {
 #endif
 
 bool AboutController::handleEvent(Ion::Events::Event event) {
-  /* We hide here the activation hardware test app: in the menu "about", by
-   * pressing '6' on any cell */
-  if ((event == Ion::Events::Six || event == Ion::Events::LowerT ||
-       event == Ion::Events::UpperT) &&
-      m_messageTreeModel->label() == I18n::Message::About &&
+  if (m_messageTreeModel->label() == I18n::Message::About &&
       !ExamModeManager::ExamMode().isActive()) {
-    // Prevent hardware test in exam mode so that the LED can't be accessed.
-    m_hardwareTestPopUpController.presentModally();
-    return true;
+    /* We hide here the activation for the hardware tests.
+     * In the menu "About", on any cell,
+     * - press '6' for default tests
+     * - press '1' for variant (tests all keys on keyboard)
+     * Also prevent hardware test in exam mode so that the LED can't be
+     * accessed. */
+    bool isDefaultKey = event == Ion::Events::Six ||
+                        event == Ion::Events::LowerT ||
+                        event == Ion::Events::UpperT;
+    bool isVariantKey = event == Ion::Events::One ||
+                        event == Ion::Events::LowerW ||
+                        event == Ion::Events::UpperW;
+    if (isDefaultKey || isVariantKey) {
+      AppsContainer::sharedAppsContainer()->setHardwareTestVariant(
+          isDefaultKey ? HardwareTest::Variant::Default
+                       : HardwareTest::Variant::TestAllKeys);
+      m_hardwareTestPopUpController.presentModally();
+      return true;
+    }
   }
 #ifdef HARDWARE_CHECKUP
   /* We hide here the activation hardware checkup app: in the menu "about", by

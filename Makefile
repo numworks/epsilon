@@ -21,5 +21,8 @@ clean:
 	@ $(MAKE) -C scandium $@
 	@ $(MAKE) -C poincare $@
 
+help:
+	@ echo 'Run "make -C epsilon help" or "make -C scandium help"'
+
 %: subdir_combined_make_call
 	@:

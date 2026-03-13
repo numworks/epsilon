@@ -570,7 +570,7 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
     return m_expression;
   }
   if (expressionEquation(record).isUninitialized()) {
-    return SystemExpression();
+    return m_expression;
   }
   ContinuousFunctionProperties thisProperties = properties(record);
   if (!thisProperties.isEnabled()) {

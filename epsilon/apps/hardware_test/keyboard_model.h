@@ -9,20 +9,9 @@ namespace HardwareTest {
 class KeyboardModel {
  public:
   KeyboardModel(bool testAllKeys) : m_testedKeyIndex(0) {
-    m_testedKeys =
-#if HWTEST_ALL_KEYS
-        AllKeys
-#else
-        testAllKeys ? AllKeys : SubsetOfKeys
-#endif
-        ;
+    m_testedKeys = testAllKeys ? AllKeys : SubsetOfKeys;
     m_numberOfTestedKeys =
-#if HWTEST_ALL_KEYS
-        std::size(AllKeys)
-#else
-        testAllKeys ? std::size(AllKeys) : std::size(SubsetOfKeys)
-#endif
-        ;
+        testAllKeys ? std::size(AllKeys) : std::size(SubsetOfKeys);
   }
   int numberOfTestedKeys() const { return m_numberOfTestedKeys; }
   int indexInTestedKeys(Ion::Keyboard::Key key) const;

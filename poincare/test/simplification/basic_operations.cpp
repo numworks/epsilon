@@ -116,36 +116,22 @@ QUIZ_CASE(pcj_simplification_multiplication) {
   simplifies_to("x^3/x^5", "1/x^2");
   simplifies_to("x^0", "dep(1,{x^0})");
 
-  projects_and_reduces_for_analysis_to("π^5/π^3", "π^2",
-                                       k_cartesianSimplification);
-  projects_and_reduces_for_analysis_to("π^5*π^3", "π^8",
-                                       k_cartesianSimplification);
-  projects_and_reduces_for_analysis_to("π^3/π^5", "1/π^2",
-                                       k_cartesianSimplification);
-  projects_and_reduces_for_analysis_to("π^0", "1", k_cartesianSimplification);
-  projects_and_reduces_for_analysis_to("π^π/π^(π-1)", "π",
-                                       k_cartesianSimplification);
-  projects_and_reduces_for_analysis_to("x^5/x^3", "dep(x^2,{nonNull(x)})",
-                                       k_cartesianSimplification);
-  projects_and_reduces_for_analysis_to("x^5×x^3", "x^8",
-                                       k_cartesianSimplification);
-  projects_and_reduces_for_analysis_to("x^3/x^5", "1/x^2",
-                                       k_cartesianSimplification);
-  projects_and_reduces_for_analysis_to("x^0", "dep(1,{x^0})",
-                                       k_cartesianSimplification);
-  projects_and_reduces_for_analysis_to("x^π/x^(π-1)", "dep(x,{0×ln(x)})",
-                                       k_cartesianSimplification);
+  simplifies_to("π^5/π^3", "π^2", k_cartesianSimplification);
+  simplifies_to("π^5*π^3", "π^8", k_cartesianSimplification);
+  simplifies_to("π^3/π^5", "1/π^2", k_cartesianSimplification);
+  simplifies_to("π^0", "1", k_cartesianSimplification);
+  simplifies_to("π^π/π^(π-1)", "π", k_cartesianSimplification);
+  simplifies_to("x^5/x^3", "dep(x^2,{nonNull(x)})", k_cartesianSimplification);
+  simplifies_to("x^5×x^3", "x^8", k_cartesianSimplification);
+  simplifies_to("x^3/x^5", "1/x^2", k_cartesianSimplification);
+  simplifies_to("x^0", "dep(1,{x^0})", k_cartesianSimplification);
+  simplifies_to("x^π/x^(π-1)", "dep(x,{0×ln(x)})", k_cartesianSimplification);
   // TODO_PCJ: The dependency should be resolved
-  projects_and_reduces_for_analysis_to("x^π/x^(π+1)", "dep(1/x,{0×ln(x)})",
-                                       k_cartesianSimplification);
-  projects_and_reduces_for_analysis_to("2^x×2^(-x)", "1",
-                                       k_cartesianSimplification);
-  projects_and_reduces_for_analysis_to("y^x×y^(-x)", "dep(1,{0×ln(y)})",
-                                       k_cartesianSimplification);
-  projects_and_reduces_for_analysis_to("x/√(x)", "dep(√(x),{-ln(x)/2})",
-                                       k_cartesianSimplification);
-  projects_and_reduces_for_analysis_to("x^(1/2)×x^(1/2)", "x",
-                                       k_cartesianSimplification);
+  simplifies_to("x^π/x^(π+1)", "dep(1/x,{0×ln(x)})", k_cartesianSimplification);
+  simplifies_to("2^x×2^(-x)", "1", k_cartesianSimplification);
+  simplifies_to("y^x×y^(-x)", "dep(1,{0×ln(y)})", k_cartesianSimplification);
+  simplifies_to("x/√(x)", "dep(√(x),{-ln(x)/2})", k_cartesianSimplification);
+  simplifies_to("x^(1/2)×x^(1/2)", "x", k_cartesianSimplification);
 
   simplifies_to("x^(1/2)×x^(1/2)", "x", k_cartesianSimplification);
   simplifies_to("2*3^x*3^(-x)", "2");

@@ -32,7 +32,7 @@ class App : public Escher::App {
  private:
   class WizardViewController : public Escher::BankViewController {
    public:
-    WizardViewController(Escher::Responder* parentResponder);
+    WizardViewController(Escher::Responder* parentResponder, Variant variant);
     int numberOfChildren() override;
     Escher::ViewController* childAtIndex(int i) override;
     bool handleEvent(Ion::Events::Event event) override;
@@ -49,7 +49,7 @@ class App : public Escher::App {
     VBlankTestController m_vBlankTestController;
   };
 
-  App(Snapshot* snapshot);
+  App(Snapshot* snapshot, Variant variant);
   WizardViewController m_wizardViewController;
 };
 

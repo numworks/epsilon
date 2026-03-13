@@ -14,7 +14,7 @@ App* App::Snapshot::unpack(Container* container) {
   // Disable Home button, so that the Home key can be tested
   Ion::CircuitBreaker::unsetCheckpoint(
       Ion::CircuitBreaker::CheckpointType::Home);
-  return new (container->currentAppBuffer()) App(this);
+  return new (container->currentAppBuffer()) App(this, m_variant);
 }
 
 constexpr static App::Descriptor sDescriptor;
@@ -23,11 +23,12 @@ const App::Descriptor* App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-App::App(Snapshot* snapshot)
+App::App(Snapshot* snapshot, Variant variant)
     : ::App(snapshot, &m_wizardViewController),
-      m_wizardViewController(&m_modalViewController) {}
+      m_wizardViewController(&m_modalViewController, variant) {}
 
-App::WizardViewController::WizardViewController(Responder* parentResponder)
+App::WizardViewController::WizardViewController(Responder* parentResponder,
+                                                Variant variant)
     : BankViewController(parentResponder),
       m_batteryTestController(this),
       m_lcdTimingTestController(this),

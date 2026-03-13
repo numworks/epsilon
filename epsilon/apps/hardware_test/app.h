@@ -23,6 +23,7 @@ class App : public Escher::App {
    public:
     App* unpack(Escher::Container* container) override;
     const Descriptor* descriptor() const override;
+    Variant variant() const { return m_variant; }
     void setVariant(Variant variant) { m_variant = variant; }
 
    private:
@@ -49,7 +50,7 @@ class App : public Escher::App {
     VBlankTestController m_vBlankTestController;
   };
 
-  App(Snapshot* snapshot, Variant variant);
+  App(Snapshot* snapshot);
   WizardViewController m_wizardViewController;
 };
 

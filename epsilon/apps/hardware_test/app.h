@@ -36,7 +36,7 @@ class App : public Escher::App {
     LCDTimingTestController m_lcdTimingTestController;
     ColorsLCDTestController m_colorsLCDTestController;
     DeadPixelsTestController m_deadPixelsTestController;
-    KeyboardTestController m_keyboardController;
+    KeyboardTestController m_keyboardTestController;
     LCDDataTestController m_lcdDataTestController;
     LEDTestController m_ledTestController;
     SerialNumberController m_serialNumberController;

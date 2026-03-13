@@ -33,7 +33,7 @@ App::WizardViewController::WizardViewController(Responder* parentResponder)
       m_lcdTimingTestController(this),
       m_colorsLCDTestController(this),
       m_deadPixelsTestController(this),
-      m_keyboardController(this),
+      m_keyboardTestController(this),
       m_lcdDataTestController(this),
       m_ledTestController(this),
       m_serialNumberController(this),
@@ -46,7 +46,7 @@ ViewController* App::WizardViewController::childAtIndex(int i) {
       &m_vBlankTestController,     &m_lcdTimingTestController,
       &m_colorsLCDTestController,  &m_lcdDataTestController,
       &m_deadPixelsTestController, &m_ledTestController,
-      &m_keyboardController,       &m_batteryTestController,
+      &m_keyboardTestController,   &m_batteryTestController,
       &m_serialNumberController};
   return children[i];
 }

@@ -136,7 +136,7 @@ void ContinuousFunctionProperties::setErrorStatusAndUpdateCaption(
 }
 
 void ContinuousFunctionProperties::update(
-    const Poincare::AnalysisExpression& reducedEquation,
+    const Poincare::AnalysisExpression& analyzedEquation,
     const Poincare::UserExpression& inputEquation,
     const SymbolContext& symbolContext, ComplexFormat complexFormat,
     Comparison::Operator precomputedOperatorType,
@@ -161,10 +161,10 @@ void ContinuousFunctionProperties::update(
 
   setHideDetails(genericCaptionOnly);
 
-  assert(!reducedEquation.isUninitialized());
-  if (reducedEquation.isUndefined()) {
+  assert(!analyzedEquation.isUninitialized());
+  if (analyzedEquation.isUndefined()) {
     setErrorStatusAndUpdateCaption(
-        reducedEquation.isUndefinedBecauseOfFailedSimplification()
+        analyzedEquation.isUndefinedBecauseOfFailedSimplification()
             ? Status::Unhandled
             : Status::Undefined);
     return;
@@ -172,9 +172,9 @@ void ContinuousFunctionProperties::update(
 
   // Do not handle dependencies for now.
   const AnalysisExpression analyzedExpression =
-      (reducedEquation.isDep()) ? reducedEquation.cloneChildAtIndex(0)
-                                : reducedEquation;
-  if (reducedEquation.isDep() && analyzedExpression.isDep()) {
+      (analyzedEquation.isDep()) ? analyzedEquation.cloneChildAtIndex(0)
+                                 : analyzedEquation;
+  if (analyzedEquation.isDep() && analyzedExpression.isDep()) {
     // If there is still a dependency, it means that the reduction failed.
     setErrorStatusAndUpdateCaption(Status::Unhandled);
     return;

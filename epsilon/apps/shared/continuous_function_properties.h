@@ -123,7 +123,7 @@ class ContinuousFunctionProperties {
 
   // Update
   void reset();
-  void update(const Poincare::AnalysisExpression& reducedEquation,
+  void update(const Poincare::AnalysisExpression& analyzedEquation,
               const Poincare::UserExpression& inputEquation,
               const Poincare::SymbolContext& symbolContext,
               Poincare::ComplexFormat complexFormat,

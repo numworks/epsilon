@@ -8,19 +8,19 @@ namespace HardwareTest {
 
 class KeyboardModel {
  public:
-  KeyboardModel() : m_testedKeyIndex(0) {
+  KeyboardModel(bool testAllKeys) : m_testedKeyIndex(0) {
     m_testedKeys =
 #if HWTEST_ALL_KEYS
         AllKeys
 #else
-        SubsetOfKeys
+        testAllKeys ? AllKeys : SubsetOfKeys
 #endif
         ;
     m_numberOfTestedKeys =
 #if HWTEST_ALL_KEYS
         std::size(AllKeys)
 #else
-        std::size(SubsetOfKeys)
+        testAllKeys ? std::size(AllKeys) : std::size(SubsetOfKeys)
 #endif
         ;
   }

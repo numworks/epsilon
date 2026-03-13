@@ -9,6 +9,7 @@ namespace HardwareTest {
 class KeyboardView : public Escher::View {
  public:
   using Escher::View::View;
+  KeyboardView(bool testAllKeys) : m_keyboardModel(testAllKeys) {}
   int numberOfTestedKeys() const {
     return m_keyboardModel.numberOfTestedKeys();
   }

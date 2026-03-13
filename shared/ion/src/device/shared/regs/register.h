@@ -37,7 +37,7 @@ class Register {
                : ((((T)1) << (high - low + 1)) - 1) << low;
   }
   constexpr static T bit_range_value(T value, uint8_t high, uint8_t low) {
-    // Same comment as for getBitRange: we should assert low < 8*sizeof(T))
+    // Same comment as for getBitRange: we should assert low < 8*sizeof(T)
     return (value << low) & bit_range_mask(high, low);
   }
   constexpr static T bit_range_set_value(uint8_t high, uint8_t low,

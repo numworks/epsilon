@@ -1,8 +1,7 @@
-_head_commit := $(shell $(GIT) rev-parse --quiet HEAD^{commit})
-BUILD_COMMIT ?= HEAD
-_build_commit := $(shell $(GIT) rev-parse --verify --quiet $(BUILD_COMMIT)^{commit} || echo error)
+ifdef BUILD_COMMIT
 
-ifneq ($(_build_commit),$(_head_commit))
+_head_commit := $(shell $(GIT) rev-parse --quiet HEAD^{commit})
+_build_commit := $(shell $(GIT) rev-parse --verify --quiet $(BUILD_COMMIT)^{commit} || echo error)
 
 ifeq ($(_build_commit),error)
 $(error Error: Invalid base branch $(BUILD_COMMIT). Please use a valid branch name or commit hash.)

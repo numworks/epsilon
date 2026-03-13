@@ -200,7 +200,7 @@ jobs:
         run: $DOCKER_RUN "make -C epsilon TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 VERBOSE=0 epsilon.bin epsilon_test.bin"
       - name: Run unit tests (in parallel)
         run: |
-          $DOCKER_RUN "parallel --halt now,fail=1 --keep-order epsilon/output/debug/optimized/linux/epsilon_test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)"
+          $DOCKER_RUN "make -C epsilon TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 VERBOSE=0 epsilon_test.bin.run_parallel"
         id: run-tests
         continue-on-error: true
       - name: Run unit tests sequentially (if parallel run failed)

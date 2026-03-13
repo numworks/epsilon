@@ -20,7 +20,7 @@ enum class ReductionTarget : bool {
   /* Optimized for user display. */
   User,
   /* Optimized for system operation. Minimize unnecessary development of
-   * expression for smaller trees and better precision. */
+   * expression for smaller trees and better precision when approximating. */
   System
 };
 

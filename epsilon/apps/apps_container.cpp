@@ -393,6 +393,10 @@ void AppsContainer::shutdownDueToLowBattery() {
   }
 }
 
+void AppsContainer::setHardwareTestVariant(HardwareTest::Variant variant) {
+  m_hardwareTestSnapshot.setVariant(variant);
+}
+
 void AppsContainer::setShiftAlphaStatus(
     Ion::Events::ShiftAlphaStatus newStatus) {
   Ion::Events::setShiftAlphaStatus(newStatus);

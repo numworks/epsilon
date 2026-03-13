@@ -15,12 +15,18 @@
 
 namespace HardwareTest {
 
+enum Variant { Default = 0, TestAllKeys = 1 };
+
 class App : public Escher::App {
  public:
   class Snapshot : public Escher::App::Snapshot {
    public:
     App* unpack(Escher::Container* container) override;
     const Descriptor* descriptor() const override;
+    void setVariant(Variant variant) { m_variant = variant; }
+
+   private:
+    Variant m_variant = Variant::Default;
   };
 
  private:

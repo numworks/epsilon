@@ -49,6 +49,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   void displayExamModePopUp(Poincare::ExamMode mode);
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
+  void setHardwareTestVariant(HardwareTest::Variant variant);
   Shared::PromptController* promptController();
   void redrawWindow();
   void setDFUBetweenEvents(bool active) { m_dfuBetweenEvents = active; }

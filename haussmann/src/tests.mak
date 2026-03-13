@@ -12,3 +12,9 @@ else
 endif
 
 $(call document_extension,compare,Run the screenshot tests. Edit ARGS to pass arguments (e.g. ARGS="--help"))
+
+
+%_test.$(EXECUTABLE_EXTENSION).run_parallel: $(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)%_test.$(EXECUTABLE_EXTENSION)
+	set -e -o pipefail; N=$$((parallel --will-cite --halt now,fail=1 --keep-order $^ --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: $$(seq 0 31) || exit 1) | tee /dev/tty | wc -l); echo "ALL $$N TESTS FINISHED"
+
+$(call document_extension,run_parallel,Run the unit tests concurrently using `parallel`.)

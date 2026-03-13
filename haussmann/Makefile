@@ -48,4 +48,4 @@ clean:
 
 include $(PATH_haussmann)/src/docs.mak
 include $(PATH_haussmann)/src/format.mak
-include $(PATH_haussmann)/src/screenshots.mak
+include $(PATH_haussmann)/src/tests.mak

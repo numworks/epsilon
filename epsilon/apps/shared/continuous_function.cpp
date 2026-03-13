@@ -636,7 +636,6 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
     }
     /* Solve the equation in y (or x if not willBeAlongX)
      * Symbols are replaced to simplify roots. */
-    constexpr size_t k_maxHandledDegree = 2;
     AnalysisExpression coefficients =
         expressionReducedForAnalysis(record).getPolynomialReducedCoefficients(
             willBeAlongX ? ContinuousFunctionProperties::k_ordinateName
@@ -644,7 +643,7 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
             true);
     assert(!coefficients.isUninitialized());
     int degree = coefficients.numberOfChildren() - 1;
-    assert(degree >= 0 && degree <= k_maxHandledDegree);
+    assert(degree >= 0 && degree <= 2);
     assert(!willBeAlongX || degree == yDegree);
     if (degree == 1) {
       m_expression = Poincare::Roots::Linear(coefficients.cloneChildAtIndex(1),

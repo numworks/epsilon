@@ -23,9 +23,6 @@ static KDPoint ToFocusedPoint(KDPoint p) {
 
 // From a software KDRect to the one displayed on the screen
 static KDRect ToFocusedRect(KDRect r) {
-  if (r == KDRectZero) {
-    return r;
-  }
   assert(FocusedRect().containsRect(r));
   return KDRect(ToFocusedPoint(r.origin()), r.width() * s_ratio,
                 r.height() * s_ratio);
@@ -70,6 +67,11 @@ void pushRectUniform(KDRect r, KDColor c) {
     return pushRectUniformNoFocus(r, c);
   }
   r = r.intersectedWith(FocusedRect());
+  if (r.isEmpty()) {
+    /* ToFocusedRect expects r.origin() to be in FocusedRect(), but
+     * r.intersectedWith(FocusedRect()) may return KDRectZero. */
+    return;
+  }
   pushRectUniformNoFocus(ToFocusedRect(r), c);
 }
 

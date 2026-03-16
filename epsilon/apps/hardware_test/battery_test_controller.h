@@ -11,9 +11,6 @@ class BatteryTestController : public FocusedViewController {
   void viewWillAppear() override;
 
  private:
-  constexpr static const char* k_needRecharge = "NEED RECHARGE";
-  constexpr static int k_maxNumberOfCharacters = 20;
-
   bool runTest() override;
   const char* testName() const override { return "BATTERY:"; }
 

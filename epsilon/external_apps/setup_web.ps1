@@ -1,8 +1,8 @@
 winget install --accept-package-agreements python
 winget install ezwinports.make
 
-$emsdkVersion = if (Test-Path ../.emsdk-version) {
-    Get-Content ../.emsdk-version | Out-String | ForEach-Object { $_.Trim() }
+$emsdkVersion = if (Test-Path ../../.emsdk-version) {
+    Get-Content ../../.emsdk-version | Out-String | ForEach-Object { $_.Trim() }
 } else {
     "latest"
 }

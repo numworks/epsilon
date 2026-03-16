@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Try to read version from ../.emsdk-version
-if [ -f ../.emsdk-version ]; then
-  EMSDK_VERSION=$(cat ../.emsdk-version)
+# Try to read version from ../../.emsdk-version
+if [ -f ../../.emsdk-version ]; then
+  EMSDK_VERSION=$(cat ../../.emsdk-version)
 else
   # Fallback to default version if file does not exist
   EMSDK_VERSION="latest"

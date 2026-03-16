@@ -56,7 +56,7 @@ $(call rule_for_object, \
 )
 
 $(call rule_for_object, \
-  AS, s, \
+  AS, S, \
   $$(CC) $$(PRIORITY_SFLAGS) $$(SFLAGS) -c $$< -o $$@ \
 )
 

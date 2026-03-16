@@ -13,13 +13,13 @@ SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/, \
 )
 
 SOURCES_ion += $(call generated_sources_for,$(addprefix $(PATH_ion)/src/simulator/, \
-  linux/assets.s \
+  linux/assets.S \
 ))
 
 # We could define ARCHS for linux as well instead
 ifeq ($(shell uname -m),x86_64)
 SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/, \
-  shared/collect_registers_x86_64.s \
+  shared/collect_registers_x86_64.S \
   shared/collect_registers.cpp \
 )
 else
@@ -49,7 +49,7 @@ $(addprefix $(PATH_ion)/src/simulator/assets/, \
   $(_ion_simulator_background) \
   $(_ion_simulator_backgrounds_generated)
 
-$(addprefix $(call generated_sources_for,$(PATH_ion)/src/simulator/linux/),assets.s platform_images.h): $(_ion_simulator_assets) | $$(@D)/.
+$(addprefix $(call generated_sources_for,$(PATH_ion)/src/simulator/linux/),assets.S platform_images.h): $(_ion_simulator_assets) | $$(@D)/.
 	$(call rule_label,INCBIN)
 	$(PYTHON) $(PATH_ion)/src/simulator/linux/incbin.py $^ -o $@
 

@@ -86,7 +86,7 @@ def print_header(files, path):
     f.close()
 
 
-if args.o.endswith(".s"):
+if args.o.endswith(".S"):
     print_assembly(args.assets, args.o)
 if args.o.endswith(".h"):
     print_header([os.path.basename(a) for a in args.assets], args.o)

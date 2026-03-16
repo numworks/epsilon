@@ -24,12 +24,12 @@ _sources_liba_extended := $(addprefix src/, \
 )
 
 _sources_liba_armv6m := $(addprefix src/armv6m/, \
-  setjmp.s \
-  longjmp.s \
+  setjmp.S \
+  longjmp.S \
 )
 _sources_liba_armv7m := $(addprefix src/armv7m/, \
-  setjmp.s \
-  longjmp.s \
+  setjmp.S \
+  longjmp.S \
 )
 
 _sources_liba_aeabirt := $(addprefix src/aeabi-rt/, \

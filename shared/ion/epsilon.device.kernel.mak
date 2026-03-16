@@ -77,7 +77,7 @@ $(addprefix device/core/device/kernel/drivers/, \
   board_third_party_strict.cpp:-allow3rdparty \
   circuit_breaker.cpp \
   compilation_flags.cpp \
-  cortex_control.s \
+  cortex_control.S \
   crc32.cpp \
   display.cpp \
   events.cpp \
@@ -96,7 +96,7 @@ $(addprefix device/core/device/kernel/drivers/, \
   reset_$(_ion_mcu_suffix).cpp \
   serial_number.cpp \
   svcall_handler.cpp \
-  svcall_handler_as.s \
+  svcall_handler_as.S \
   timing.cpp \
   usb.cpp \
   wakeup.cpp \

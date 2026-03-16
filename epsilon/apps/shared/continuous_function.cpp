@@ -570,6 +570,7 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
     return m_expression;
   }
   if (expressionEquation(record).isUninitialized()) {
+    assert(m_expression.isUninitialized());
     return m_expression;
   }
   ContinuousFunctionProperties thisProperties = properties(record);

@@ -36,7 +36,7 @@ _sources_sdl_cpufeature := app/android/cpu-features.c
 $(OUTPUT_DIRECTORY)/$(_sources_sdl_cpufeature): | $$(@D)/.
 	$(call rule_label,COPY)
 	cp $(NDK_PATH)/sources/android/cpufeatures/cpu-features.c $@
-SOURCES_sdl += $(_sources_sdl_cpufeature)
+SOURCES_sdl += $(OUTPUT_DIRECTORY)/$(_sources_sdl_cpufeature)
 
 PRIVATE_SFLAGS_sdl += \
   -DGL_GLEXT_PROTOTYPES \

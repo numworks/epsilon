@@ -10,12 +10,3 @@ void* __attribute__((noinline)) memclr(void* b, size_t len) {
   }
   return b;
 }
-
-void* __aeabi_memclr(void* b, size_t len) { return memclr(b, len); }
-
-void* __aeabi_memclr8(void* b, size_t len) { return memclr(b, len); }
-
-void* __aeabi_memclr4(void* b, size_t len) {
-  // TODO false ?
-  return memclr(b, len);
-}

@@ -20,6 +20,7 @@ namespace Poincare {
 class Preferences {
  public:
   constexpr static int DefaultNumberOfPrintedSignificantDigits = 10;
+  constexpr static int MaxNumberOfSignificantDigits = 14;
   constexpr static int VeryLargeNumberOfSignificantDigits = 7;
   constexpr static int LargeNumberOfSignificantDigits = 6;
   constexpr static int MediumNumberOfSignificantDigits = 5;

@@ -13,7 +13,8 @@ class PrintFloat {
  public:
   constexpr static int k_undefinedNumberOfSignificantDigits = -1;
   constexpr static size_t k_floatNumberOfSignificantDigits = 7;
-  constexpr static size_t k_maxNumberOfSignificantDigits = 14;
+  constexpr static size_t k_maxNumberOfSignificantDigits =
+      Preferences::MaxNumberOfSignificantDigits;
   // ᴇ is 3 bytes long
   constexpr static size_t k_specialECodePointByteLength = 3;
   /* We here define the glyph length and the buffer size to write the longest

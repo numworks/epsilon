@@ -1,6 +1,7 @@
 #include "graph_options_controller.h"
 
 #include <apps/exam_mode_manager.h>
+#include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/clipboard.h>
@@ -75,9 +76,10 @@ void GraphOptionsController::viewWillAppear() {
   // Change regression cell
   m_changeRegressionCell.subLabel()->setMessage(model->name());
 
-  const int significantDigits = Preferences::VeryLargeNumberOfSignificantDigits;
-  Preferences::PrintFloatMode displayMode =
-      Preferences::PrintFloatMode::Decimal;
+  const int significantDigits =
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+  const Preferences::PrintFloatMode displayMode =
+      GlobalPreferences::SharedGlobalPreferences()->displayMode();
 
   // Regression equation cell
   double* coefficients = m_store->coefficientsForSeries(series);
@@ -105,7 +107,7 @@ void GraphOptionsController::viewWillAppear() {
       continue;
     }
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-        Preferences::VeryLargeNumberOfSignificantDigits);
+        Preferences::MaxNumberOfSignificantDigits);
     char buffer[bufferSize];
     double value = isRCell ? m_store->correlationCoefficient(series)
                            : m_store->determinationCoefficientForSeries(series);

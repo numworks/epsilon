@@ -89,7 +89,7 @@ define object_for
 endef
 
 
-CFLAGS = $(shell $(NWLINK) eadk-cflags-$(PLATFORM_CATEGORY))
+CFLAGS = $(shell $(NWLINK) eadk-cflags-$(PLATFORM_CATEGORY)) -MMD -MP
 ifeq ($(PLATFORM),web)
   # TODO: Update nwlink's eadk-ldflags-web : eadk_keyboard_scan_do_scan is actually _eadk_keyboard_scan_do_scan
   LDFLAGS = -sSIDE_MODULE=2 -sEXPORTED_FUNCTIONS=_main -sASYNCIFY=1 -sASYNCIFY_IMPORTS=eadk_event_get,_eadk_keyboard_scan_do_scan,eadk_timing_msleep,eadk_display_wait_for_vblank
@@ -206,13 +206,16 @@ debug: $(BUILD_DIR)/$(APP_NAME).nwb $(SIMULATOR) $(EXTERNAL_DATA)
   endif
 endif
 
+DEPS:=$(subst .o,.d,$(call object_for, $(SOURCES)))
+-include $(DEPS)
+
 $(addprefix $(BUILD_DIR)/,%.o): %.cpp | $(BUILD_DIR)
-	@echo "CC      $^"
-	$(Q) $(CXX) $(CXXFLAGS) -c $^ -o $@
+	@echo "CC      $<"
+	$(Q) $(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(addprefix $(BUILD_DIR)/,%.o): %.c | $(BUILD_DIR)
-	@echo "CC      $^"
-	$(Q) $(CC) $(CFLAGS) -c $^ -o $@
+	@echo "CC      $<"
+	$(Q) $(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/icon.o: $(APP_ICON)
 	@echo "ICON    $<"

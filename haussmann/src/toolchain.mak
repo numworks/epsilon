@@ -58,6 +58,11 @@ ARFLAGS := rcs
 
 LDFLAGS :=
 
+# Flags - Export symbols
+# This is required to export symbols in resulting binaries. This is required to
+# let NWB files call functions that are defined in the simulator.
+LD_EXPORT_SYMBOLS_FLAG = -rdynamic
+
 include $(PATH_haussmann)/src/toolchains/$(TOOLCHAIN).mak
 
 # Set CCACHE=1 in your make command if you want to use ccache to fasten builds

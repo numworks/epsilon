@@ -249,7 +249,7 @@ class ContinuousFunction : public Function {
   /* Expressions */
 
   // Return the expression representing the equation for computations
-  Poincare::AnalysisExpression expressionReducedForAnalysis() const {
+  const Poincare::AnalysisExpression& expressionReducedForAnalysis() const {
     return m_model.expressionReducedForAnalysis(this);
   }
   // Return the reduced expression of the derivative

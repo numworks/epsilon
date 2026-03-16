@@ -184,7 +184,7 @@ void ContinuousFunction::getLineParameters(double* slope,
   const AnalysisExpression& equation = expressionReducedForAnalysis();
   /* Compute metrics for details view of Line, separate the two line
    * coefficients for approximation. */
-  const AnalysisExpression& coefficients =
+  AnalysisExpression coefficients =
       equation.getPolynomialReducedCoefficients(k_unknownName);
   /* Degree might vary depending on symbols definition and complex format.
    * Approximate and return the two line coefficients */

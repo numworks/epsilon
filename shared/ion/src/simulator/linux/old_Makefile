@@ -1,4 +1,0 @@
-# TODO port?
-ifeq ($(VALGRIND),1)
-SFLAGS += $(shell pkg-config valgrind --cflags)
-endif

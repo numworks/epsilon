@@ -1,3 +1,0 @@
-SFLAGS += -Iliba/include/bridge
-
-liba_src += liba/src/bridge.c

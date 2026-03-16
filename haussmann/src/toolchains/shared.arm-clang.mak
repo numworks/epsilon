@@ -35,4 +35,5 @@ SFLAGS += \
 
 ifeq ($(DEBUG),0)
 LDFLAGS += -Wl,--gc-sections
+SFLAGS := $(filter-out -Os,$(SFLAGS)) -Oz -flto=full
 endif

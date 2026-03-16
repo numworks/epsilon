@@ -141,10 +141,14 @@ inline constexpr float hypot(float x, float y) {
 inline constexpr float ldexp(float x, int exp) {
   return __builtin_ldexpf(x, exp);
 }
+#if __has_builtin(__builtin_lgammaf)
 inline constexpr float lgamma(float x) { return __builtin_lgammaf(x); }
+#endif
+#if __has_builtin(__builtin_lgammaf_r)
 inline constexpr float lgamma_r(float x, int* signgamp) {
   return __builtin_lgammaf_r(x, signgamp);
 }
+#endif
 inline constexpr float log(float x) { return __builtin_logf(x); }
 inline constexpr float log1p(float x) { return __builtin_log1pf(x); }
 inline constexpr float log10(float x) { return __builtin_log10f(x); }
@@ -216,10 +220,14 @@ inline constexpr double hypot(double x, double y) {
 inline constexpr double ldexp(double x, int exp) {
   return __builtin_scalbn(x, exp);
 }
+#if __has_builtin(__builtin_lgamma)
 inline constexpr double lgamma(double x) { return __builtin_lgamma(x); }
+#endif
+#if __has_builtin(__builtin_lgamma_r)
 inline constexpr double lgamma_r(double x, int* signgamp) {
   return __builtin_lgamma_r(x, signgamp);
 }
+#endif
 inline constexpr double log(double x) { return __builtin_log(x); }
 inline constexpr double log1p(double x) { return __builtin_log1p(x); }
 inline constexpr double log10(double x) { return __builtin_log10(x); }
@@ -236,9 +244,11 @@ inline constexpr double nextafter(double from, double to) {
 inline constexpr double pow(double x, double y) { return __builtin_pow(x, y); }
 inline constexpr double rint(double x) { return __builtin_rint(x); }
 inline constexpr double round(double x) { return __builtin_round(x); }
+#if __has_builtin(__builtin_scalb)
 inline constexpr double scalb(double x, double exp) {
   return __builtin_scalb(x, exp);
 }
+#endif
 inline constexpr double scalbn(double x, int exp) {
   return __builtin_scalbn(x, exp);
 }

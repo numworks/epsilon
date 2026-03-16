@@ -36,7 +36,12 @@ typedef double double_t;
 #define FP_SUBNORMAL 0x08
 #define FP_ZERO 0x10
 
+#if __has_builtin(__builtin_finite)
 #define finite(x) __builtin_finite(x)
+#else
+// Finite is a deprecated linux-only equivalent of std isfinite
+#define finite(x) isfinite(x)
+#endif
 #define fpclassify(x) \
   __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x)
 #define isfinite(x) __builtin_isfinite(x)
@@ -152,8 +157,12 @@ extern int signgam;
 #define fmodf(x, y) __builtin_fmodf(x, y)
 #define frexpf(x, exp) __builtin_frexpf(x, exp)
 #define ldexpf(x, exp) __builtin_ldexpf(x, exp)
+#if __has_builtin(__builtin_lgammaf)
 #define lgammaf(x) __builtin_lgammaf(x)
+#endif
+#if __has_builtin(__builtin_lgammaf_r)
 #define lgammaf_r(x, signgamp) __builtin_lgammaf_r(x, signgamp)
+#endif
 #define log1pf(x) __builtin_log1pf(x)
 #define log10f(x) __builtin_log10f(x)
 #define logf(x) __builtin_logf(x)
@@ -191,8 +200,12 @@ extern int signgam;
 #define fmod(x, y) __builtin_fmod(x, y)
 #define frexp(x, exp) __builtin_frexp(x, exp)
 #define ldexp(x, exp) __builtin_scalbn(x, exp)
+#if __has_builtin(__builtin_lgamma)
 #define lgamma(x) __builtin_lgamma(x)
+#endif
+#if __has_builtin(__builtin_lgamma_r)
 #define lgamma_r(x, signgamp) __builtin_lgamma_r(x, signgamp)
+#endif
 #define log(x) __builtin_log(x)
 #define log1p(x) __builtin_log1p(x)
 #define log10(x) __builtin_log10(x)
@@ -205,7 +218,9 @@ extern int signgam;
 #define pow(x, y) __builtin_pow(x, y)
 #define rint(x) __builtin_rint(x)
 #define round(x) __builtin_round(x)
+#if __has_builtin(__builtin_scalb)
 #define scalb(x, exp) __builtin_scalb(x, exp)
+#endif
 #define scalbn(x, exp) __builtin_scalbn(x, exp)
 #define sin(x) __builtin_sin(x)
 #define sinh(x) __builtin_sinh(x)

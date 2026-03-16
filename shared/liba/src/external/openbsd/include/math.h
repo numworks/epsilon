@@ -26,13 +26,16 @@
 #undef fabsf
 #undef floorf
 #undef fmodf
+#undef frexpf
 #undef ldexpf
 #undef lgammaf
 #undef lgammaf_r
 #undef log1pf
 #undef log10f
 #undef logf
+#undef modff
 #undef nearbyintf
+#undef nextafterf
 #undef powf
 #undef roundf
 #undef scalbnf
@@ -61,6 +64,7 @@
 #undef fabs
 #undef floor
 #undef fmod
+#undef frexp
 #undef lgamma
 #undef lgamma_r
 #undef log
@@ -68,6 +72,9 @@
 #undef log10
 #undef log2
 #undef logb
+#undef modf
+#undef nearbyint
+#undef nextafter
 #undef pow
 #undef rint
 #undef round

@@ -45,22 +45,18 @@ bool involvesCircularity(const Tree* e,
                          const Poincare::SymbolContext& symbolContext,
                          int maxDepth, const char** visitedSymbols,
                          int numberOfVisitedSymbols) {
+  const char* name = nullptr;
+
+  bool isSymbol = e->isUserFunction() || e->isUserVariable();
+
   // Check for circularity only when a symbol/function is encountered
-  if (!e->isUserFunction() && !e->isUserVariable()) {
-    for (const Tree* child : e->children()) {
-      if (involvesCircularity(child, symbolContext, maxDepth, visitedSymbols,
-                              numberOfVisitedSymbols)) {
+  if (isSymbol) {
+    name = Symbol::GetName(e);
+    // Check if this symbol has already been visited.
+    for (int i = 0; i < numberOfVisitedSymbols; i++) {
+      if (strcmp(name, visitedSymbols[i]) == 0) {
         return true;
       }
-    }
-    return false;
-  }
-  const char* name = Symbol::GetName(e);
-
-  // Check if this symbol has already been visited.
-  for (int i = 0; i < numberOfVisitedSymbols; i++) {
-    if (strcmp(name, visitedSymbols[i]) == 0) {
-      return true;
     }
   }
 
@@ -70,6 +66,10 @@ bool involvesCircularity(const Tree* e,
                             numberOfVisitedSymbols)) {
       return true;
     }
+  }
+
+  if (!isSymbol) {
+    return false;
   }
 
   // Check for circularity in the expression of the symbol and decrease depth
@@ -82,21 +82,10 @@ bool involvesCircularity(const Tree* e,
   visitedSymbols[numberOfVisitedSymbols] = name;
   numberOfVisitedSymbols++;
 
-  Tree* symbol = Tree::FromBlocks(SharedTreeStack->lastBlock());
-  if (e->isUserFunction()) {
-    // This is like cloning, but without the symbol.
-    e->cloneNode();
-    KUnknownSymbol->cloneTree();
-  } else {
-    e->cloneTree();
-  }
-
-  const Tree* definition = symbolContext.expressionForSymbol(symbol);
-  bool isCircular =
-      definition && involvesCircularity(definition, symbolContext, maxDepth,
-                                        visitedSymbols, numberOfVisitedSymbols);
-  symbol->removeTree();
-  return isCircular;
+  const Tree* definition = symbolContext.expressionForSymbol(e);
+  return definition &&
+         involvesCircularity(definition, symbolContext, maxDepth,
+                             visitedSymbols, numberOfVisitedSymbols);
 }
 
 bool Symbol::InvolvesCircularity(const Tree* e,

@@ -172,9 +172,6 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
 
   assert(type == k_doubleBufferCalculationCellType ||
          type == k_calculationCellType);
-  constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-      AbstractEvenOddBufferTextCell::k_defaultPrecision);
-  char buffer[bufferSize];
 
   // Double calculation cells
   if (c <= Calculation::SampleStandardDeviationS) {
@@ -208,6 +205,10 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
                                    series, 1, Store::CalculationOptions())));
     EvenOddDoubleBufferTextCell* myCell =
         static_cast<EvenOddDoubleBufferTextCell*>(cell);
+
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
+        AbstractEvenOddBufferTextCell::k_defaultPrecision);
+    char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(
         *calculation1, buffer, bufferSize,
         AbstractEvenOddBufferTextCell::k_defaultPrecision);
@@ -294,9 +295,13 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
       return DashBufferCell(bufferCell);
     }
   }
+  constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
+      Poincare::Preferences::MaxNumberOfSignificantDigits);
+  char buffer[bufferSize];
   PoincareHelpers::ConvertFloatToText<double>(
       result, buffer, bufferSize,
-      AbstractEvenOddBufferTextCell::k_defaultPrecision);
+      GlobalPreferences::SharedGlobalPreferences()
+          ->numberOfSignificantDigits());
   bufferCell->setText(buffer);
 }
 

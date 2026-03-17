@@ -1,5 +1,6 @@
 _sources_ion_bootloader := \
 shared/dummy/assert.cpp \
+shared/dummy/epsilon/random.cpp:+qemu \
 $(addprefix device/shared/, \
   boot/rt0.cpp \
   boot/rt0_no_init_array.cpp \
@@ -38,7 +39,7 @@ $(addprefix device/core/device/shared-core/drivers/, \
   option_bytes.cpp \
   option_bytes_$(_ion_mcu_suffix).cpp \
   power_standby_$(_ion_mcu_suffix).cpp \
-  random.cpp \
+  random.cpp:-qemu \
   random_$(_ion_mcu_suffix).cpp \
   reset.cpp \
   swd.cpp \

@@ -1,6 +1,7 @@
 _sources_ion_bootloader := \
 shared/dummy/assert.cpp \
 shared/dummy/epsilon/random.cpp:+qemu \
+shared/dummy/epsilon/keyboard.cpp:+qemu \
 $(addprefix device/shared/, \
   boot/rt0.cpp \
   boot/rt0_no_init_array.cpp \
@@ -60,7 +61,7 @@ $(addprefix device/core/device/bootloader/drivers/, \
   cache.cpp \
   display_image.cpp \
   internal_flash_otp_write_$(_ion_mcu_suffix).cpp \
-  keyboard.cpp \
+  keyboard.cpp:-qemu \
   led.cpp \
   power_on_self_test.cpp \
   power_suspend.cpp \

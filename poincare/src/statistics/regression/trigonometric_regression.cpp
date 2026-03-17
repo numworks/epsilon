@@ -184,8 +184,8 @@ TrigonometricRegression::ComputeDataMetrics(const Series* series,
           /* Without enough data points to compute a period, fall back on a
              default value of pi. */
           piInAngleUnit;
-  /* Choose c so that sin(b * xMax + c) is maximal. It must depend on the angle
-   * unit */
+  /* Choose [phase] so that sin([frequency] * xMax + [phase]) is maximal. It
+   * must depend on the angle unit */
   double phase = piInAngleUnit / 2 - frequency * xMax;
   double yDelta = (yMax + yMin) / 2.0;
   return DataMetrics{.amplitude = amplitude,

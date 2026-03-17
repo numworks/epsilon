@@ -38,3 +38,21 @@ $(OUTPUT_DIRECTORY)/%_aligned.apk: $(OUTPUT_DIRECTORY)/%.apk
 
 
 $(call document_other_target,<project>_aligned.apk,Zipaligned APK)
+
+%_signed.apk: $(OUTPUT_DIRECTORY)/%_signed.apk
+	:
+
+$(OUTPUT_DIRECTORY)/%_signed.apk: $(OUTPUT_DIRECTORY)/%_aligned.apk
+	$(call rule_label,APKSIGN)
+	$(BUILD_TOOLS_PATH)/apksigner sign --ks $(KEYSTORE) --out $@ $<
+
+$(call document_other_target,<project>_signed.apk,Signed APK ready to be installed)
+
+$(OUTPUT_DIRECTORY)/%_signed.apk_flash: $(OUTPUT_DIRECTORY)/%_signed.apk
+	$(call rule_label,ADBFLASH)
+	adb install $<
+
+%_signed.apk_flash: $(OUTPUT_DIRECTORY)/%_signed.apk_flash
+	:
+
+$(call document_other_target,<project>_signed.apk_flash,Flash a signed APK with ADB)

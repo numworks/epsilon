@@ -10,7 +10,7 @@ namespace HardwareTest {
 void FocusedViewController::viewWillAppear() {
   m_success = runTest();
   Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
-  Ion::Display::setFocus(k_focusRatio, KDPoint(0, 0));
+  Ion::Display::setFocus(k_zoomFactor, KDPoint(0, 0));
   KDColor backgroundColor = (m_success ? BasicColor::Green : BasicColor::Red);
   m_view.setTexts(testName(), m_success ? "OK" : "KO");
   m_view.setBackgroundColor(backgroundColor);

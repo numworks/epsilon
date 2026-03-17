@@ -10,7 +10,7 @@ namespace HardwareTest {
 // This view will zoom on the screen for better text detection.
 class FocusedViewController : public Escher::ViewController {
  private:
-  constexpr static int k_focusRatio = 2;
+  constexpr static int k_zoomFactor = 2;
 
  public:
   FocusedViewController(Escher::Responder* parentResponder)
@@ -32,9 +32,9 @@ class FocusedViewController : public Escher::ViewController {
 
    private:
     constexpr static KDCoordinate k_margin = 5;
-    constexpr static KDCoordinate k_width = Ion::Display::Width / k_focusRatio;
+    constexpr static KDCoordinate k_width = Ion::Display::Width / k_zoomFactor;
     constexpr static KDCoordinate k_height =
-        Ion::Display::Height / k_focusRatio;
+        Ion::Display::Height / k_zoomFactor;
 
     KDCoordinate layoutGlyphView(Escher::GlyphsView* view, KDCoordinate y,
                                  bool force);

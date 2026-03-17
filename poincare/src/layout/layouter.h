@@ -33,6 +33,8 @@ struct LayouterParameters {
       PrintFloat::k_undefinedNumberOfSignificantDigits;
   Preferences::PrintFloatMode floatMode = Preferences::PrintFloatMode::Decimal;
   bool keepFloatMode = false;
+  PrintFloat::DecimalModeThreshold decimalModeThreshold =
+      PrintFloat::DecimalModeThreshold::Default;
   OMG::Base base = OMG::Base::Decimal;
 #if POINCARE_NO_E_EXPONENT
   constexpr static bool useTenPowerInsteadOfE = true;

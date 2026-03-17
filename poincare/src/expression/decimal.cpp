@@ -28,6 +28,7 @@ using UTF8Helper::WriteCodePoint;
 
 int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
                        Preferences::PrintFloatMode mode, bool keepMode,
+                       PrintFloat::DecimalModeThreshold threshold,
                        int numberOfSignificantDigits) {
   assert(decimal->isDecimal() ||
          (decimal->isOpposite() && decimal->child(0)->isDecimal()));
@@ -158,7 +159,8 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
    *   small (i.e. 0.00012345 -> 1.2345E-4) */
   bool forceScientificMode =
       displayExp >= numberOfSignificantDigits ||
-      std::pow(10., displayExp) < PrintFloat::DecimalModeMinimalValue<double>();
+      std::pow(10., displayExp) <
+          PrintFloat::DecimalModeMinimalValue<double>(threshold);
   bool useScientificOrEngineering =
       mode == Preferences::PrintFloatMode::Engineering ||
       mode == Preferences::PrintFloatMode::Scientific ||

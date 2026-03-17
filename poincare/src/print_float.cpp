@@ -134,7 +134,8 @@ void PrintFloat::PrintLongWithDecimalMarker(char* buffer, size_t bufferLength,
 template <class T>
 PrintFloat::TextLengths PrintFloat::ConvertFloatToText(
     T f, char* buffer, size_t bufferSize, size_t glyphLength,
-    size_t numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
+    size_t numberOfSignificantDigits, Preferences::PrintFloatMode mode,
+    PrintFloat::DecimalModeThreshold threshold) {
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
 
@@ -144,7 +145,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToText(
   assert(glyphLength <= k_maxFloatGlyphLength);
 
   bool forceScientific = mode == Preferences::PrintFloatMode::Decimal &&
-                         std::fabs(f) < DecimalModeMinimalValue<T>();
+                         std::fabs(f) < DecimalModeMinimalValue<T>(threshold);
   TextLengths requiredLengths;
   if (!forceScientific) {
     requiredLengths = ConvertFloatToTextPrivate(
@@ -457,10 +458,10 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
 
 template PrintFloat::TextLengths PrintFloat::ConvertFloatToText<float>(
     float, char*, size_t, size_t, size_t,
-    Preferences::Preferences::PrintFloatMode);
+    Preferences::Preferences::PrintFloatMode, PrintFloat::DecimalModeThreshold);
 template PrintFloat::TextLengths PrintFloat::ConvertFloatToText<double>(
     double, char*, size_t, size_t, size_t,
-    Preferences::Preferences::PrintFloatMode);
+    Preferences::Preferences::PrintFloatMode, PrintFloat::DecimalModeThreshold);
 template size_t PrintFloat::SignificantDecimalDigits<float>();
 template size_t PrintFloat::SignificantDecimalDigits<double>();
 

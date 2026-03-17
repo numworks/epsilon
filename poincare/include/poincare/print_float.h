@@ -70,18 +70,24 @@ class PrintFloat {
    * small, the text representing the float is empty.
    * ConvertFloatToText returns the number of characters that have been written
    * in buffer (excluding the last \0 character). */
+  enum class DecimalModeThreshold { Default, Small };
+
   template <class T>
-  static TextLengths ConvertFloatToText(T d, char* buffer, size_t bufferSize,
-                                        size_t availableGlyphLength,
-                                        size_t numberOfSignificantDigits,
-                                        Preferences::PrintFloatMode mode);
+  static TextLengths ConvertFloatToText(
+      T d, char* buffer, size_t bufferSize, size_t availableGlyphLength,
+      size_t numberOfSignificantDigits, Preferences::PrintFloatMode mode,
+      DecimalModeThreshold threshold = DecimalModeThreshold::Default);
   template <class T>
   constexpr static size_t SignificantDecimalDigits() {
     return sizeof(T) == sizeof(double) ? k_maxNumberOfSignificantDigits
                                        : k_floatNumberOfSignificantDigits;
   }
   template <class T>
-  constexpr static T DecimalModeMinimalValue() {
+  constexpr static T DecimalModeMinimalValue(
+      DecimalModeThreshold threshold = DecimalModeThreshold::Default) {
+    if (threshold == DecimalModeThreshold::Small) {
+      return sizeof(T) == sizeof(double) ? 1e-5 : 1e-5f;
+    }
     return sizeof(T) == sizeof(double) ? 1e-3 : 1e-3f;
   }
 

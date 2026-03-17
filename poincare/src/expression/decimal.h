@@ -15,6 +15,8 @@ class Decimal final {
   static int Serialize(
       const Tree* decimal, char* buffer, int bufferSize,
       Poincare::Preferences::PrintFloatMode mode, bool keepMode = false,
+      PrintFloat::DecimalModeThreshold threshold =
+          PrintFloat::DecimalModeThreshold::Default,
       int numberOfSignificantDigits =
           PrintFloat::k_maxNumberOfSignificantDigitsInDecimals);
 

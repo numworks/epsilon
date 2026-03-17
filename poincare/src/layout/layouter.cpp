@@ -503,7 +503,8 @@ void Layouter::serializeDecimalOrFloat(const Tree* expression, char* buffer,
     /* Just as it doesn't apply to integers, numberOfSignificantDigits is
      * ignored with Decimals. */
     Decimal::Serialize(expression, buffer, bufferSize, m_parameters.floatMode,
-                       m_parameters.keepFloatMode);
+                       m_parameters.keepFloatMode,
+                       m_parameters.decimalModeThreshold);
     return;
   }
   int numberOfSignificantDigits =
@@ -516,7 +517,7 @@ void Layouter::serializeDecimalOrFloat(const Tree* expression, char* buffer,
   Poincare::PrintFloat::ConvertFloatToText(
       FloatHelper::To(expression), buffer, bufferSize,
       Poincare::PrintFloat::k_maxFloatGlyphLength, numberOfSignificantDigits,
-      m_parameters.floatMode);
+      m_parameters.floatMode, m_parameters.decimalModeThreshold);
 }
 
 // Remove expression while converting it to a layout in parentRack

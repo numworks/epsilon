@@ -17,12 +17,7 @@ endef
 
 $(foreach ARCH,$(ARCHS),$(eval $(call rule_for_arch_jni_lib,$(ARCH))))
 
-_apk_deps = $(foreach ARCH,$(ARCHS),$(call path_for_arch_jni_lib,$(ARCH)))
-_apk_deps += $(subst ../shared/ion/src/simulator/android/src/res,$(OUTPUT_DIRECTORY)/app/res,$(wildcard ../shared/ion/src/simulator/android/src/res/*/*))
-_apk_deps += $(addprefix $(OUTPUT_DIRECTORY)/app/res/,mipmap/ic_launcher.png mipmap-v26/ic_launcher_foreground.png)
-
-
-$(OUTPUT_DIRECTORY)/%.apk: $$(_ion_simulator_assets) $(_apk_deps)
+$(OUTPUT_DIRECTORY)/%.apk: $$(_ion_simulator_assets) $(foreach ARCH,$(ARCHS),$(call path_for_arch_jni_lib,$(ARCH))) $$(_ion_apk_deps)
 	$(call rule_label,GRADLE)
 	../shared/ion/src/simulator/android/gradlew -p ../shared/ion/src/simulator/android -PappVersion=$(APP_VERSION) -PoutputDirectory=$$(realpath $(OUTPUT_DIRECTORY)) -PgoalName=$(basename $(@F)) -PndkBundleVersion=$(NDK_BUNDLE_VERSION) assembleRelease
 	cp $(OUTPUT_DIRECTORY)/app/outputs/apk/release/android-release*.apk $@

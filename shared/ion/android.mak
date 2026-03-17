@@ -49,6 +49,9 @@ $(OUTPUT_DIRECTORY)/app/res/mipmap-v26/ic_launcher_foreground.png: $(PATH_ion)/s
 	$(call rule_label,CONVERT)
 	$(Q) convert -background none MSVG:$< -resize 512x512 -gravity center -background none -extent 1024x1024 $@
 
-$(OUTPUT_DIRECTORY)/app/res/%.xml: $(PATH_ion)/src/simulator/android/src/res/%.xml | $$(@D)/.
+$(OUTPUT_DIRECTORY)/app/res/%.xml: $(PATH_ion)/src/simulator/android/src/res/$(ION_variant)/%.xml | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $< $@
+
+_ion_apk_deps += $(subst ../shared/ion/src/simulator/android/src/res/$(ION_variant),$(OUTPUT_DIRECTORY)/app/res,$(wildcard ../shared/ion/src/simulator/android/src/res/$(ION_variant)/*/*))
+_ion_apk_deps += $(addprefix $(OUTPUT_DIRECTORY)/app/res/,mipmap/ic_launcher.png mipmap-v26/ic_launcher_foreground.png)

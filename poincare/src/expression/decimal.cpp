@@ -52,18 +52,18 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
   WorkingBuffer workingBuffer;
   uint8_t* const localStart = workingBuffer.localStart();
 
-  // Compute the exponent
-  int exponent = Integer::Handler(decimal->child(1)).to<int>();
-
-  // Round the integer if m_mantissa > 10^numberOfSignificantDigits-1
+  /* Step 1: Round mantissa to numberOfSignificantDigits.
+   * Decimal(mantissa, storedExp) = mantissa × 10^(-storedExp). */
+  const int storedExp = Integer::Handler(decimal->child(1)).to<int>();
   IntegerHandler m = Integer::Handler(unsignedMantissa);
-  int numberOfDigitsInMantissa =
-      m.numberOfBase10DigitsWithoutSign(&workingBuffer);
-  exponent = numberOfDigitsInMantissa - 1 - exponent;
-  if (numberOfDigitsInMantissa > numberOfSignificantDigits) {
-    int exp = numberOfDigitsInMantissa - numberOfSignificantDigits;
+  int nbOfMantissaDigits = m.numberOfBase10DigitsWithoutSign(&workingBuffer);
+  int displayExp =
+      nbOfMantissaDigits - 1 - storedExp;  // Display exponent: most significant
+                                           // digit represents 10^displayExp
+  if (nbOfMantissaDigits > numberOfSignificantDigits) {
+    int excess = nbOfMantissaDigits - numberOfSignificantDigits;
     IntegerHandler value = 1;
-    for (int i = 0; i < exp; i++) {
+    for (int i = 0; i < excess; i++) {
       value = IntegerHandler::Mult(10, value, &workingBuffer);
       workingBuffer.garbageCollect({&m, &value}, localStart);
     }
@@ -74,30 +74,33 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
         IntegerHandler::Udiv(value, 2, &workingBuffer).quotient;
     if (IntegerHandler::Compare(d.remainder, boundary) >= 0) {
       m = IntegerHandler::Sum(m, IntegerHandler(1), false, &workingBuffer);
-      // if 9999 was rounded to 10000, we need to update exponent and mantissa
+      /* If 9999 was rounded to 10000, increment displayExp and drop the extra
+       * digit */
       if (m.numberOfBase10DigitsWithoutSign(&workingBuffer) >
           numberOfSignificantDigits) {
-        exponent++;
+        displayExp++;
         m = IntegerHandler::Udiv(m, IntegerHandler(10), &workingBuffer)
                 .quotient;
       }
     }
   }
-  int exponentForEngineeringNotation = 0;
-  int minimalNumberOfMantissaDigits = -1;
+
+  // Step 2: Engineering zero-padding.
+  int exponentForEngineering = 0;
+  int minNbOfMantissaDigits = -1;
   bool removeZeroes = true;
   if (mode == Preferences::PrintFloatMode::Engineering) {
-    exponentForEngineeringNotation =
-        PrintFloat::EngineeringExponentFromBase10Exponent(exponent);
-    minimalNumberOfMantissaDigits =
-        PrintFloat::EngineeringMinimalNumberOfDigits(
-            exponent, exponentForEngineeringNotation);
-    int numberOfZeroesToAddForEngineering =
-        PrintFloat::EngineeringNumberOfZeroesToAdd(
-            minimalNumberOfMantissaDigits,
-            m.numberOfBase10DigitsWithoutSign(&workingBuffer));
-    if (numberOfZeroesToAddForEngineering > 0) {
-      for (int i = 0; i < numberOfZeroesToAddForEngineering; i++) {
+    exponentForEngineering =
+        PrintFloat::EngineeringExponentFromBase10Exponent(displayExp);
+    minNbOfMantissaDigits =
+        static_cast<int>(PrintFloat::EngineeringMinimalNumberOfDigits(
+            displayExp, exponentForEngineering));
+    int zeroesToAdd =
+        static_cast<int>(PrintFloat::EngineeringNumberOfZeroesToAdd(
+            static_cast<size_t>(minNbOfMantissaDigits),
+            m.numberOfBase10DigitsWithoutSign(&workingBuffer)));
+    if (zeroesToAdd > 0) {
+      for (int i = 0; i < zeroesToAdd; i++) {
         m = IntegerHandler::Mult(m, IntegerHandler(10), &workingBuffer);
         workingBuffer.garbageCollect({&m}, localStart);
       }
@@ -105,18 +108,18 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
     }
   }
 
-  /* Remove the final zeroes, that already existed or were created due to
-   * rounding. For example 1.999 with 3 significant digits: the mantissa 1999 is
-   * rounded to 2000. To avoid printing 2.000, we removeZeroAtTheEnd here. */
+  // Step 3: Extract digit string.
+  /* Remove trailing zeroes created by rounding (e.g. 1999 rounded to 2000
+   * should print as 2, not 2.000). */
   if (removeZeroes) {
-    m.removeZeroAtTheEnd(minimalNumberOfMantissaDigits, &workingBuffer);
+    m.removeZeroAtTheEnd(minNbOfMantissaDigits, &workingBuffer);
   }
 
   // Print the sign
-  int currentChar = 0;
+  int currentPosition = 0;
   if (negative) {
-    currentChar += WriteCodePoint(buffer, bufferSize, '-');
-    if (currentChar >= bufferSize - 1) {
+    currentPosition += WriteCodePoint(buffer, bufferSize, '-');
+    if (currentPosition >= bufferSize - 1) {
       return bufferSize - 1;
     }
   }
@@ -125,160 +128,137 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
   assert(
       numberOfSignificantDigits <=
       static_cast<int>(PrintFloat::k_maxNumberOfSignificantDigitsInDecimals));
-  char tempBuffer[PrintFloat::k_maxNumberOfSignificantDigitsInDecimals + 1];
-  int mantissaLength = m.serialize(
-      tempBuffer, PrintFloat::k_maxNumberOfSignificantDigitsInDecimals + 1,
-      &workingBuffer);
-
-  // Assert that m is not +/-inf
-  assert(strcmp(tempBuffer, "inf") != 0);
-  assert(strcmp(tempBuffer, "-inf") != 0);
+  char digits[PrintFloat::k_maxNumberOfSignificantDigitsInDecimals + 1];
+  int digitsLength =
+      static_cast<int>(m.serialize(digits, sizeof(digits), &workingBuffer));
+  assert(strcmp(digits, "inf") != 0);
+  assert(strcmp(digits, "-inf") != 0);
 
   // Stop here if m is undef
-  if (strcmp(tempBuffer, "undef") == 0) {
-    currentChar +=
-        strlcpy(buffer + currentChar, tempBuffer, bufferSize - currentChar);
-    return std::min(currentChar, bufferSize - 1);
+  if (strcmp(digits, "undef") == 0) {
+    currentPosition +=
+        strlcpy(buffer + currentPosition, digits, bufferSize - currentPosition);
+    return std::min(currentPosition, bufferSize - 1);
   }
-  // Mantissa has already been cropped to fit.
-  assert(m.numberOfBase10DigitsWithoutSign(&workingBuffer) == mantissaLength);
-  int numberOfBase10DigitsWithoutSign = mantissaLength;
+  assert(m.numberOfBase10DigitsWithoutSign(&workingBuffer) == digitsLength);
 
-  /* We force scientific mode if the number of digits before the dot is superior
-   * to the number of significant digits (ie with 4 significant digits,
-   * 12345 -> 1.235E4 or 12340 -> 1.234E4). */
+  // Step 4: use scientific, engineering or decimal notation
+  /* We force scientific mode if:
+   * - the number of digits before the dot (i.e. the exponent) is too big
+   *   compared to the number of significant digits (i.e. with 4 significant
+   *   digits, 12345 -> 1.235E4 or 12340 -> 1.234E4)
+   * - the number would be represented with too many zeros because it is too
+   *   small (i.e. 0.00012345 -> 1.2345E-4) */
   bool forceScientificMode =
-      mode != Preferences::PrintFloatMode::Engineering &&
-      (mode == Preferences::PrintFloatMode::Scientific ||
-       exponent >= numberOfSignificantDigits ||
-       std::pow(10., exponent) < PrintFloat::DecimalModeMinimalValue<double>());
-  int numberOfRequiredDigits = (mode == Preferences::PrintFloatMode::Decimal &&
-                                !forceScientificMode && exponent >= 0)
-                                   ? std::max(mantissaLength, exponent)
-                                   : mantissaLength;
+      displayExp >= numberOfSignificantDigits ||
+      std::pow(10., displayExp) < PrintFloat::DecimalModeMinimalValue<double>();
+  bool useScientificOrEngineering =
+      mode == Preferences::PrintFloatMode::Engineering ||
+      mode == Preferences::PrintFloatMode::Scientific || forceScientificMode;
 
-  /* Case 1: Engineering and Scientific mode. Three cases:
-   * - the user chooses the scientific mode
-   * - the exponent is too big compared to the number of significant digits, so
-   *   we force the scientific mode to avoid inventing digits
-   * - the number would be too long if we print it as a natural decimal */
-  if (mode == Preferences::PrintFloatMode::Engineering ||
-      numberOfRequiredDigits >
-          static_cast<int>(
-              PrintFloat::k_maxNumberOfSignificantDigitsInDecimals) ||
-      forceScientificMode) {
-    if (mantissaLength > 1 &&
-        (mode != Preferences::PrintFloatMode::Engineering ||
-         numberOfBase10DigitsWithoutSign > minimalNumberOfMantissaDigits)) {
-      /* Forward one or more chars: _
-       * Write the mantissa _23456
-       * Copy the most significant digits on the forwarded chars: 223456
-       * Write the dot : 2.3456
-       *
-       * We should use the UTF8Helper to manipulate chars, but it is clearer to
-       * manipulate chars directly, so we just put assumptions on the char size
-       * of the code points we manipuate. */
-      assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
-      currentChar++;
-      if (currentChar >= bufferSize - 1) {
-        return bufferSize - 1;
+  // Step 4.1: scientific or engineering
+  if (useScientificOrEngineering) {
+    /* We should use the UTF8Helper to manipulate chars, but it is clearer to
+     * manipulate chars directly, so we just put assumptions on the char size of
+     * the code points we manipulate. */
+    assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
+    int nbDigitsBeforeDot = (mode == Preferences::PrintFloatMode::Engineering)
+                                ? minNbOfMantissaDigits
+                                : 1;
+    if (digitsLength > nbDigitsBeforeDot) {
+      for (int i = 0; i < nbDigitsBeforeDot; i++) {
+        if (currentPosition >= bufferSize - 1) return bufferSize - 1;
+        buffer[currentPosition++] = digits[i];
       }
-      int numberOfCharsToShift =
-          (mode == Preferences::PrintFloatMode::Engineering
-               ? minimalNumberOfMantissaDigits
-               : 1);
-      int decimalMarkerPosition = currentChar + numberOfCharsToShift - 1;
-      currentChar +=
-          strlcpy(buffer + currentChar, tempBuffer, bufferSize - currentChar);
-      if (currentChar >= bufferSize - 1) {
-        return bufferSize - 1;
+      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
+      buffer[currentPosition++] = '.';
+      for (int i = nbDigitsBeforeDot; i < digitsLength; i++) {
+        if (currentPosition >= bufferSize - 1) return bufferSize - 1;
+        buffer[currentPosition++] = digits[i];
       }
-      assert(UTF8Decoder::CharSizeOfCodePoint(buffer[decimalMarkerPosition]) ==
-             1);
-      for (int i = 0; i < numberOfCharsToShift; i++) {
-        buffer[i + decimalMarkerPosition - numberOfCharsToShift] =
-            tempBuffer[i];
-      }
-      if (decimalMarkerPosition >= bufferSize - 1) {
-        return bufferSize - 1;
-      }
-      buffer[decimalMarkerPosition] = '.';
     } else {
-      currentChar +=
-          strlcpy(buffer + currentChar, tempBuffer, bufferSize - currentChar);
+      for (int i = 0; i < digitsLength; i++) {
+        if (currentPosition >= bufferSize - 1) return bufferSize - 1;
+        buffer[currentPosition++] = digits[i];
+      }
     }
-    if (currentChar >= bufferSize - 1) {
+    if (currentPosition >= bufferSize - 1) {
       return bufferSize - 1;
     }
-    if ((mode == Preferences::PrintFloatMode::Engineering &&
-         exponentForEngineeringNotation == 0) ||
-        exponent == 0) {
-      return currentChar;
+    int displayedExp = (mode == Preferences::PrintFloatMode::Engineering)
+                           ? exponentForEngineering
+                           : displayExp;
+    if (displayedExp == 0) {
+      buffer[currentPosition] = 0;
+      return currentPosition;
     }
-    currentChar +=
-        WriteCodePoint(buffer + currentChar, bufferSize - currentChar,
+    currentPosition +=
+        WriteCodePoint(buffer + currentPosition, bufferSize - currentPosition,
                        UCodePointLatinLetterSmallCapitalE);
-    if (currentChar >= bufferSize - 1) {
+    if (currentPosition >= bufferSize - 1) {
       return bufferSize - 1;
     }
     if (mode == Preferences::PrintFloatMode::Engineering) {
-      currentChar += IntegerHandler(exponentForEngineeringNotation)
-                         .serialize(buffer + currentChar,
-                                    bufferSize - currentChar, &workingBuffer);
+      currentPosition += static_cast<int>(
+          IntegerHandler(exponentForEngineering)
+              .serialize(buffer + currentPosition, bufferSize - currentPosition,
+                         &workingBuffer));
     } else {
-      currentChar += IntegerHandler(exponent).serialize(
-          buffer + currentChar, bufferSize - currentChar, &workingBuffer);
+      currentPosition += static_cast<int>(
+          IntegerHandler(displayExp)
+              .serialize(buffer + currentPosition, bufferSize - currentPosition,
+                         &workingBuffer));
     }
-    return currentChar;
+    return currentPosition;
   }
-  // Case 3: Decimal mode
+
+  // Step 4.2: decimal
   assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
   assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
-  int deltaCharMantissa = exponent < 0 ? -exponent + 1 : 0;
-  strlcpy(buffer + currentChar + deltaCharMantissa, tempBuffer,
-          std::max(0, bufferSize - deltaCharMantissa - currentChar));
-  if (exponent < 0) {
-    for (int i = 0; i <= -exponent; i++) {
-      buffer[currentChar++] = i == 1 ? '.' : '0';
-      if (currentChar >= bufferSize - 1) {
-        return bufferSize - 1;
-      }
+  if (displayExp < 0) {
+    /* Case 1: "0.000...0<digits>"
+     * displayExp is the exponent of the leading digit, so we need
+     * (-displayExp-1) zeros between the decimal point and the first digit. */
+    if (currentPosition >= bufferSize - 1) return bufferSize - 1;
+    buffer[currentPosition++] = '0';
+    if (currentPosition >= bufferSize - 1) return bufferSize - 1;
+    buffer[currentPosition++] = '.';
+    for (int i = 0; i < -displayExp - 1; i++) {
+      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
+      buffer[currentPosition++] = '0';
+    }
+    for (int i = 0; i < digitsLength; i++) {
+      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
+      buffer[currentPosition++] = digits[i];
+    }
+  } else if (displayExp < digitsLength - 1) {
+    /* Case 2: "DDD.DDD"
+     * decimal point sits after the (displayExp+1)-th digit. */
+    for (int i = 0; i <= displayExp; i++) {
+      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
+      buffer[currentPosition++] = digits[i];
+    }
+    if (currentPosition >= bufferSize - 1) return bufferSize - 1;
+    buffer[currentPosition++] = '.';
+    for (int i = displayExp + 1; i < digitsLength; i++) {
+      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
+      buffer[currentPosition++] = digits[i];
+    }
+  } else {
+    /* Case 3: "DDD000"
+     * integer with (displayExp - digitsLength + 1) trailing zeros. */
+    for (int i = 0; i < digitsLength; i++) {
+      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
+      buffer[currentPosition++] = digits[i];
+    }
+    for (int i = digitsLength - 1; i < displayExp; i++) {
+      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
+      buffer[currentPosition++] = '0';
     }
   }
-  currentChar += mantissaLength;
-  if (currentChar >= bufferSize - 1) {
-    return bufferSize - 1;
-  }  // Check if strlcpy returned prematuraly
-  if (exponent >= 0 && exponent < mantissaLength - 1) {
-    if (currentChar + 1 >= bufferSize - 1) {
-      return bufferSize - 1;
-    }
-    int decimalMarkerPosition = negative ? exponent + 1 : exponent;
-    for (int i = currentChar - 1; i > decimalMarkerPosition; i--) {
-      buffer[i + 1] = buffer[i];
-    }
-    if (currentChar >= bufferSize - 1) {
-      return bufferSize - 1;
-    }
-    assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
-    buffer[decimalMarkerPosition + 1] = '.';
-    currentChar++;
-  }
-  if (currentChar + 1 >= bufferSize - 1) {
-    return bufferSize - 1;
-  }
-  if (exponent >= 0 && exponent > mantissaLength - 1) {
-    int endMarkerPosition = negative ? exponent + 1 : exponent;
-    for (int i = currentChar - 1; i < endMarkerPosition; i++) {
-      currentChar +=
-          WriteCodePoint(buffer + currentChar, bufferSize - currentChar, '0');
-      if (currentChar + 1 >= bufferSize - 1) {
-        return bufferSize - 1;
-      }
-    }
-  }
-  buffer[currentChar] = 0;
-  return currentChar;
+
+  buffer[currentPosition] = 0;
+  return currentPosition;
 }
 
 }  // namespace Poincare::Internal

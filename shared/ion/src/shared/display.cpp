@@ -65,6 +65,10 @@ static bool IsZoomed() { return s_zoomFactor > 1; }
  * within the full software-space screen rect. */
 void setFocus(uint8_t zoomFactor, KDPoint origin) {
   assert(zoomFactor > 0);
+  // zoomFactor is capped by Width and Height
+  assert(zoomFactor <= Width && zoomFactor <= Height);
+  // zoomFactor is preferred to divide both Width and Height
+  assert(Width % zoomFactor == 0 && Height % zoomFactor == 0);
   s_zoomFactor = zoomFactor;
   s_focusOrigin = origin;
   assert(Rect.containsRect(FocusViewport()));

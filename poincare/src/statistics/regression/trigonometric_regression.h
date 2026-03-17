@@ -70,7 +70,7 @@ class TrigonometricRegression : public Regression {
   double toRadiansCoeff() const;
 
   AngleUnit m_angleUnit = AngleUnit::None;
-  // Mutable because for some reason the regression fit methods are const
+  // Mutable because m_dataMetrics is a memoized data
   mutable DataMetrics m_dataMetrics = {};
 };
 

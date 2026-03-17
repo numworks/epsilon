@@ -502,7 +502,8 @@ void Layouter::serializeDecimalOrFloat(const Tree* expression, char* buffer,
   if (expression->isDecimal()) {
     /* Just as it doesn't apply to integers, numberOfSignificantDigits is
      * ignored with Decimals. */
-    Decimal::Serialize(expression, buffer, bufferSize, m_parameters.floatMode);
+    Decimal::Serialize(expression, buffer, bufferSize, m_parameters.floatMode,
+                       m_parameters.keepFloatMode);
     return;
   }
   int numberOfSignificantDigits =

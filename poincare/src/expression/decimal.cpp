@@ -27,7 +27,7 @@ using Poincare::PrintFloat;
 using UTF8Helper::WriteCodePoint;
 
 int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
-                       Preferences::PrintFloatMode mode,
+                       Preferences::PrintFloatMode mode, bool keepMode,
                        int numberOfSignificantDigits) {
   assert(decimal->isDecimal() ||
          (decimal->isOpposite() && decimal->child(0)->isDecimal()));
@@ -161,7 +161,8 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
       std::pow(10., displayExp) < PrintFloat::DecimalModeMinimalValue<double>();
   bool useScientificOrEngineering =
       mode == Preferences::PrintFloatMode::Engineering ||
-      mode == Preferences::PrintFloatMode::Scientific || forceScientificMode;
+      mode == Preferences::PrintFloatMode::Scientific ||
+      (!keepMode && forceScientificMode);
 
   // Step 4.1: scientific or engineering
   if (useScientificOrEngineering) {

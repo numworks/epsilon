@@ -14,7 +14,7 @@ class Decimal final {
   // Decimal(21012, -2) -> 2101200.
   static int Serialize(
       const Tree* decimal, char* buffer, int bufferSize,
-      Poincare::Preferences::PrintFloatMode mode,
+      Poincare::Preferences::PrintFloatMode mode, bool keepMode = false,
       int numberOfSignificantDigits =
           PrintFloat::k_maxNumberOfSignificantDigitsInDecimals);
 

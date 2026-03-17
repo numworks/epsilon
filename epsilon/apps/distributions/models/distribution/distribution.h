@@ -16,7 +16,7 @@ class Distribution : public Shared::StatisticalDistribution {
   Distribution(Poincare::Distribution::Type type)
       : m_calculationBuffer(),
         m_distribution(type),
-        m_indexOfUninitializedParameter(-1) {
+        m_indexOfUninitializedParameter(k_allParametersAreInitialized) {
     m_calculationBuffer.init(this);
   }
 

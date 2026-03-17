@@ -8,6 +8,11 @@ else
 TERMS_OF_USE := 0
 endif
 
+ifeq ($(PLATFORM),ios)
+APP_BUNDLE_ID := com.numworks.calculator
+APP_FULL_NAME := NumWorks Graphing Calculator
+endif
+
 ifeq ($(PLATFORM),foxglove)
 EPSILON_GETOPT := 0
 else

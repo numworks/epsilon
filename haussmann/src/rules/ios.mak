@@ -9,6 +9,8 @@ _path_ion := ../shared/ion
 $(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) $(_simulator_app_resources_path)/Assets.car | $$(@D)/.
 	$(call rule_label,PLUTIL)
 	$(Q) cp $< $@
+	$(Q) plutil -insert "CFBundleIdentifier" -string "$(APP_BUNDLE_ID)" $@
+	$(Q) plutil -insert "CFBundleName" -string "$(APP_FULL_NAME)" $@
 	$(Q) plutil -insert "BuildMachineOSBuild" -string "$(IOS_BUILD_MACHINE_OS_BUILD)" $@
 	$(Q) plutil -insert "MinimumOSVersion" -string "$(APPLE_PLATFORM_MIN_VERSION)" $@
 	$(Q) plutil -insert "DTCompiler" -string "$(IOS_COMPILER)" $@

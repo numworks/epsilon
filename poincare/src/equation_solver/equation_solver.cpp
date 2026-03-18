@@ -590,7 +590,7 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
           .solutionMetadata = solutionMetadata};
 }
 
-#if POINCARE_POLYNOMIAL_SOLVER
+#if POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE > 1
 /* Checks if the equationList is a deg 2 or 3 polynomial, and if so, computes
  * the solutions. The equationMetada passed as arguments are contained in the
  * returned SolverResult. */
@@ -647,23 +647,29 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
     }
   }
 
-  assert(degree == 2 || degree == 3);
-  TreeRef discriminant =
-      (degree == 2)
-          ? Roots::QuadraticDiscriminant(coefficients[2], coefficients[1],
-                                         coefficients[0])
-          : Roots::CubicDiscriminant(coefficients[3], coefficients[2],
-                                     coefficients[1], coefficients[0]);
+  assert(degree >= 2 && degree <= POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE);
+  TreeRef discriminant;
+  if (degree == 2) {
+    discriminant = Roots::QuadraticDiscriminant(
+        coefficients[2], coefficients[1], coefficients[0]);
+  } else if constexpr (3 <= POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE) {
+    assert(degree == 3);
+    discriminant = Roots::CubicDiscriminant(coefficients[3], coefficients[2],
+                                            coefficients[1], coefficients[0]);
+  }
   /* Exact solutions are computed, except for some of the cubic polynomials that
    * require Cardano's method, in which case approximate solutions are computed.
    * TODO: the "fastCardanoMethod" parameter needs to be exposed at upper
    * levels. */
-  TreeRef solutionList =
-      (degree == 2)
-          ? Roots::Quadratic(coefficients[2], coefficients[1], coefficients[0],
-                             discriminant)
-          : Roots::Cubic(coefficients[3], coefficients[2], coefficients[1],
-                         coefficients[0], discriminant, true);
+  TreeRef solutionList;
+  if (degree == 2) {
+    solutionList = Roots::Quadratic(coefficients[2], coefficients[1],
+                                    coefficients[0], discriminant);
+  } else if constexpr (3 <= POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE) {
+    solutionList =
+        Roots::Cubic(coefficients[3], coefficients[2], coefficients[1],
+                     coefficients[0], discriminant, true);
+  }
   /* TODO: When all coefficients are real, the number of real solutions needs to
    * be checked in an assert (looking at the discrimant sign). The verification
    * function would be similar to Roots::ApproximateRootsOfRealCubic, but
@@ -819,7 +825,7 @@ SolverResult ExactSolve(
       SolveLinearSystem(reducedEquationList, equationMetadata,
                         beautificationParameters.user.context);
 
-#if POINCARE_POLYNOMIAL_SOLVER
+#if POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE > 1
   // Step 2.2. Try with polynomial solving
   if (result.error == Error::NonLinearSystem &&
       equationMetadata.unknownVariables.size() <= 1 &&
@@ -828,6 +834,9 @@ SolverResult ExactSolve(
     result = SolvePolynomial(reducedEquationList, equationMetadata);
 
     if (result.error == Error::NoError) {
+      assert(result.solutionMetadata.degree <=
+             POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE);
+
       /* Remove non real solutions of a polynomial if the equation was
        * projected with a "Real" Complex format */
       Tree* solutionList = result.exactSolutionList;

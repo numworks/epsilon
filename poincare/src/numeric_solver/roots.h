@@ -3,6 +3,8 @@
 #include <poincare/k_tree.h>
 #include <poincare/src/memory/tree.h>
 
+#include "omg/unreachable.h"
+
 namespace Poincare::Internal {
 
 class Roots {
@@ -17,11 +19,19 @@ class Roots {
    * Use advanced reduction and reduce dependencies. */
   static Tree* Quadratic(const Tree* a, const Tree* b, const Tree* c,
                          const Tree* discriminant = nullptr) {
+#if POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE >= 2
     return ApplyAdditionalReduction(PrivateQuadratic(a, b, c, discriminant));
+#else
+    OMG_UNREACHABLE
+#endif
   }
   static Tree* QuadraticDiscriminant(const Tree* a, const Tree* b,
                                      const Tree* c) {
+#if POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE >= 2
     return ApplyAdditionalReduction(PrivateQuadraticDiscriminant(a, b, c));
+#else
+    OMG_UNREACHABLE
+#endif
   }
 
   /* Return a list of at most three roots, in decreasing order.
@@ -33,12 +43,20 @@ class Roots {
   static Tree* Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
                      const Tree* discriminant = nullptr,
                      bool fastCardanoMethod = false) {
+#if POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE >= 3
     return ApplyAdditionalReduction(
         PrivateCubic(a, b, c, d, discriminant, fastCardanoMethod));
+#else
+    OMG_UNREACHABLE
+#endif
   }
   static Tree* CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
                                  const Tree* d) {
+#if POINCARE_POLYNOMIAL_SOLVER_MAX_DEGREE >= 3
     return ApplyAdditionalReduction(PrivateCubicDiscriminant(a, b, c, d));
+#else
+    OMG_UNREACHABLE
+#endif
   }
 
  private:

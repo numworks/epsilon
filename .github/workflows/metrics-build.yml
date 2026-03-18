@@ -15,6 +15,8 @@ on:
         type: string
       elfs-summary-if-core:
         type: string
+      elf-bloaty:
+        type: string
       app-sizes:
         type: boolean
 
@@ -91,7 +93,7 @@ jobs:
         id: run_bloaty
         run: |
           echo "details<<EOF" >> $GITHUB_OUTPUT
-          $DOCKER_RUN "bloaty -d symbols head/userland.onboarding.beta.allow3rdparty.A.elf -- base/userland.onboarding.beta.allow3rdparty.A.elf"  >> $GITHUB_OUTPUT
+          $DOCKER_RUN "bloaty -d symbols head/${{ inputs.elf-bloaty }} -- base/${{ inputs.elf-bloaty }}"  >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Add comment
@@ -102,14 +104,16 @@ jobs:
           pr-number: ${{ github.event.pull_request.number }}
           body: |
             ### ${{ inputs.project-path == 'scandium' && 'Scandium' || 'Epsilon' }} Binary size analysis
-            <pre>
-            ${{ steps.run_bloaty.outputs.details }}
-            </pre>
-
             ${{ steps.binary_size.outputs.summary }}
 
             <details>
             <summary>Full details</summary>
+
+            ### Detailed difference
+            <pre>
+            ${{ steps.run_bloaty.outputs.details }}
+            </pre>
+
             ${{ inputs.app-sizes && '\n### Apps\n\n' || '' }}${{ inputs.app-sizes && steps.apps_sizes.outputs.details || '' }}
 
 

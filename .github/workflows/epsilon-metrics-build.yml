@@ -27,4 +27,5 @@ jobs:
       elfs: userland.onboarding.beta.allow3rdparty.A.elf
       elfs-summary-if-core: kernel/kernel.onboarding.beta.allow3rdparty.A.elf
       elfs-summary: userland.onboarding.beta.allow3rdparty.A.elf
+      elf-bloaty: userland.onboarding.beta.allow3rdparty.A.elf
       app-sizes: true

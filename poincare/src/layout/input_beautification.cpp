@@ -12,6 +12,10 @@ namespace Poincare::Internal {
 InputBeautification::BeautificationMethod
 InputBeautification::BeautificationMethodWhenInsertingLayout(
     const Tree* insertedLayout) {
+#if !POINCARE_INPUT_BEAUTIFICATION
+  return BeautificationMethod{.beautifyIdentifiersBeforeInserting = false,
+                              .beautifyAfterInserting = false};
+#endif
   const Tree* leftMostLayout = insertedLayout->numberOfChildren() > 0
                                    ? insertedLayout->child(0)
                                    : insertedLayout;
@@ -62,6 +66,9 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
 
 bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
     LayoutCursor* layoutCursor, const Poincare::SymbolContext& symbolContext) {
+#if !POINCARE_INPUT_BEAUTIFICATION
+  return false;
+#endif
   Tree* cursorRack = layoutCursor->cursorRack();
   int position = layoutCursor->position();
   if (position == 0) {
@@ -83,6 +90,9 @@ bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
 
 bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
     LayoutCursor* layoutCursor, const Poincare::SymbolContext& symbolContext) {
+#if !POINCARE_INPUT_BEAUTIFICATION
+  return false;
+#endif
   Tree* cursorRack = layoutCursor->cursorRack();
   Tree* rootRack = layoutCursor->rootRack();
   int position = layoutCursor->position();

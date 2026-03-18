@@ -186,6 +186,12 @@ constexpr static LatexTokenChild southEastArrowToken[] = {
 constexpr static LatexTokenChild infinityToken[] = {{"\\infty", k_noChild}};
 constexpr static LatexTokenChild divisionToken[] = {{"\\div", k_noChild}};
 
+// Greek letters
+/* TODO: We could support more greek letters if needed. We just support the ones
+ * that are automatically beautified by MathQuill in FoxGlove */
+constexpr static LatexTokenChild piToken[] = {{"\\pi", k_noChild}};
+constexpr static LatexTokenChild thetaToken[] = {{"\\theta", k_noChild}};
+
 // Tokens that do nothing
 constexpr static LatexTokenChild textToken[] = {{"\\text{", 0},
                                                 {"}", k_noChild}};
@@ -377,6 +383,10 @@ constexpr static LatexLayoutRule k_rules[] = {
      // This codepoint doesn't exist in Poincare
      [](const Tree* t) -> bool { return false; },
      []() -> Tree* { return KCodePointL<'/'>()->cloneTree(); }},
+    // Pi
+    CODEPOINT_RULE(piToken, UCodePointGreekSmallLetterPi),
+    // Theta
+    CODEPOINT_RULE(thetaToken, UCodePointGreekSmallLetterTheta),
     // Tokens that do nothing
     DO_NOTHING_RULE(textToken),
     DO_NOTHING_RULE(operatorToken),

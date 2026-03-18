@@ -85,7 +85,8 @@ QUIZ_CASE(pcj_latex_parser_latex_to_layout) {
 
   // Symbols
   assert_latex_layouts_to(
-      "\\ \\le\\ge\\cdot\\times\\degree˚º\\to\\div\\infty\\ne",
+      "\\ "
+      "\\le\\ge\\cdot\\times\\degree˚º\\to\\div\\infty\\ne\\theta\\pi",
       " "_l ^ KCodePointL<UCodePointInferiorEqual>() ^
           KCodePointL<UCodePointSuperiorEqual>() ^
           KCodePointL<UCodePointMiddleDot>() ^
@@ -95,7 +96,9 @@ QUIZ_CASE(pcj_latex_parser_latex_to_layout) {
           KCodePointL<UCodePointDegreeSign>() ^
           KCodePointL<UCodePointRightwardsArrow>() ^ KCodePointL<'/'>() ^
           KCodePointL<UCodePointInfinity>() ^
-          KCombinedCodePointL<'=', UCodePointCombiningLongSolidusOverlay>());
+          KCombinedCodePointL<'=', UCodePointCombiningLongSolidusOverlay>() ^
+          KCodePointL<UCodePointGreekSmallLetterTheta>() ^
+          KCodePointL<UCodePointGreekSmallLetterPi>());
 }
 
 void assert_layout_convert_to_latex(const Tree* l, const char* latex,
@@ -162,6 +165,8 @@ QUIZ_CASE(pcj_latex_parser_layout_to_latex) {
           KCodePointL<UCodePointDegreeSign>() ^
           KCodePointL<UCodePointRightwardsArrow>() ^
           KCodePointL<UCodePointInfinity>() ^
-          KCombinedCodePointL<'=', UCodePointCombiningLongSolidusOverlay>(),
-      "\\  \\le \\ge \\cdot \\times \\degree \\to \\infty \\ne");
+          KCombinedCodePointL<'=', UCodePointCombiningLongSolidusOverlay>() ^
+          KCodePointL<UCodePointGreekSmallLetterTheta>() ^
+          KCodePointL<UCodePointGreekSmallLetterPi>(),
+      "\\  \\le \\ge \\cdot \\times \\degree \\to \\infty \\ne \\theta \\pi");
 }

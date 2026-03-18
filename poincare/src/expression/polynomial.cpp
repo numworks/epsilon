@@ -361,13 +361,18 @@ Tree* PolynomialParser::Parse(Tree* e, const Tree* variable) {
   return nullptr;
 }
 
+static bool IsSameSymbolOrVariable(const Tree* e1, const Tree* e2) {
+  return e1->treeIsIdenticalTo(e2) || Variables::IsSameVariable(e1, e2);
+}
+
 std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
     Tree* e, const Tree* variable) {
-  if (e->treeIsIdenticalTo(variable)) {
+  if (IsSameSymbolOrVariable(e, variable)) {
     return std::make_pair(e->cloneTreeOverTree(1_e), static_cast<uint8_t>(1));
   }
-  PatternMatching::Context ctx = PatternMatching::Context({.KA = variable});
-  if (PatternMatching::Match(e, KPow(KA, KB), &ctx)) {
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KPow(KA, KB), &ctx) &&
+      IsSameSymbolOrVariable(variable, ctx.getTree(KA))) {
     const Tree* exponent = ctx.getTree(KB);
     if (Integer::Is<uint8_t>(exponent)) {
       uint8_t exp = Integer::Handler(exponent).to<uint8_t>();

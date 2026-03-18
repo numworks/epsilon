@@ -198,6 +198,9 @@ QUIZ_CASE(pcj_parse_layout) {
   // Custom identifier maximum length
   quiz_assert(is_parsable("a123456"_l));
   quiz_assert(!is_parsable("a1234567"_l));
+
+  quiz_assert(!is_parsable("!"_l));
+  quiz_assert(!is_parsable("%"_l));
 }
 
 // TODO: add test for pool memory exhaustion
@@ -386,6 +389,7 @@ QUIZ_CASE(pcj_parse_matrices) {
   assert_text_not_parsable("[[1,]]");
   assert_text_not_parsable(",");
   assert_text_not_parsable("[,]");
+  assert_text_not_parsable("[[1][2");
 }
 
 QUIZ_CASE(pcj_parse_lists) {
@@ -712,6 +716,7 @@ QUIZ_CASE(pcj_parse_derivative_apostrophe) {
       "f''", KMult("f"_e, apostropheUnit, apostropheUnit), symbolStore);
   assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)),
                               symbolStore);
+  assert_text_not_parsable("f^(3(2)", symbolStore);
   symbolStore.reset();
   // Expression defined
   PoincareTest::store("undef→f", symbolStore);

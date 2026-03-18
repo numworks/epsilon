@@ -75,8 +75,9 @@ UserExpression CalculationStore::ansExpression() const {
      * Return approxOutput instead.
      * If exact is Undefined, Ans is also approxOutput */
     ansExpr = approxOutput;
-  } else if (input.recursivelyMatches(&Expression::isApproximate,
-                                      GlobalContextAccessor::Context()) &&
+  } else if (input.recursivelyMatches(
+                 &Expression::isApproximate,
+                 {.context = GlobalContextAccessor::Context()}) &&
              mostRecentCalculation->equalSign() ==
                  Calculation::EqualSign::Equal) {
     /* Case 2.

@@ -242,15 +242,11 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
 static bool deepIsOfType(const UserExpression& e,
                          std::initializer_list<Internal::AnyType> types) {
   return e.recursivelyMatches(
-      [](const UserExpression& e, const SymbolContext& symbolContext,
-         void* auxiliary) {
+      [](const UserExpression& e, void* auxiliary) {
         return e.tree()->isOfType(
-                   *static_cast<std::initializer_list<Internal::AnyType>*>(
-                       auxiliary))
-                   ? OMG::Troolean::True
-                   : OMG::Troolean::Unknown;
+            *static_cast<std::initializer_list<Internal::AnyType>*>(auxiliary));
       },
-      EmptySymbolContext{}, SymbolicComputation::ReplaceDefinedSymbols, &types);
+      {.auxiliary = &types});
 }
 
 bool AdditionalResultsHelper::expressionIsInterestingFunction(

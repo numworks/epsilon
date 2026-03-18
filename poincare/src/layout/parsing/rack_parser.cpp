@@ -966,9 +966,6 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
     // Special case for the log function (e.g. "log₂(8)")
     TreeRef base = LayoutParser::Parse(m_currentToken.firstLayout()->child(0),
                                        m_parsingContext);
-    if (!base) {
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-    }
     TreeRef parameter = parseFunctionParameters();
     assert(parameter);
     if (parameter->numberOfChildren() != 1) {
@@ -1520,9 +1517,6 @@ bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
   } else if (popTokenIfType(Token::Type::Superscript)) {
     const Tree* layout = m_currentToken.firstLayout();
     result = LayoutParser::Parse(layout->child(0), m_parsingContext);
-    if (!result) {
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-    }
   } else {
     return false;
   }

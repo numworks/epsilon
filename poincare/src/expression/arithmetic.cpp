@@ -420,6 +420,11 @@ constexpr static uint16_t k_biggestPrimeFactor = 10000;
 static_assert(k_biggestPrimeFactor * k_biggestPrimeFactor < UINT32_MAX,
               "factors are stored as uint32_t");
 
+#if POINCARE_ARITHMETIC_NO_PRIME_FACTOR_LIST
+// We need to go up to 3 to be able to count 2 by 2 after the last one.
+constexpr static size_t k_numberOfPrimeFactors = 2;
+constexpr static uint8_t k_primeFactors[k_numberOfPrimeFactors] = {2, 3};
+#else
 constexpr static size_t k_numberOfPrimeFactors = 1000;
 constexpr static uint16_t k_primeFactors[k_numberOfPrimeFactors] = {
     2,    3,    5,    7,    11,   13,   17,   19,   23,   29,   31,   37,
@@ -506,6 +511,7 @@ constexpr static uint16_t k_primeFactors[k_numberOfPrimeFactors] = {
     7673, 7681, 7687, 7691, 7699, 7703, 7717, 7723, 7727, 7741, 7753, 7757,
     7759, 7789, 7793, 7817, 7823, 7829, 7841, 7853, 7867, 7873, 7877, 7879,
     7883, 7901, 7907, 7919};
+#endif
 
 Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
   assert(m.sign() == NonStrictSign::Positive);

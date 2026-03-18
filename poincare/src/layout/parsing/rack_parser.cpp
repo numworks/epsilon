@@ -262,6 +262,7 @@ Tree* RackParser::parseUntil(Token::Type stoppingType, TreeRef leftHandSide) {
     (this->*(tokenParsers[static_cast<int>(m_currentToken.type())]))(
         leftHandSide, stoppingType);
   } while (nextTokenHasPrecedenceOver(stoppingType));
+  assert(!leftHandSide.isUninitialized());
   return leftHandSide;
 }
 
@@ -685,10 +686,7 @@ void RackParser::parseUnitConversion(TreeRef& leftHandSide,
    * */
 
   assert(m_parsingContext.metadata.isUnitConversion);
-  if (leftHandSide.isUninitialized()) {
-    // Left-hand side missing or not in a unit conversion
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
+  assert(!leftHandSide.isUninitialized());
 
   bool leftIsSymbolWithUnits = false;
   if (leftHandSide->isUserVariable() && m_parsingContext.context) {
@@ -855,6 +853,7 @@ void RackParser::parseReservedFunction(TreeRef& leftHandSide,
 }
 
 static void PromoteBuiltin(TreeRef& parameterList, const Builtin* builtin) {
+  assert(!parameterList.isUninitialized());
   TypeBlock type = builtin->type();
   if (!type.isNAry() && parameterList->numberOfChildren() <
                             TypeBlock::NumberOfChildren(type.type())) {
@@ -1040,10 +1039,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   }
 
   PromoteBuiltin(leftHandSide, builtin);
-  if (leftHandSide.isUninitialized()) {
-    // Incorrect parameter type or too few args
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
+  assert(!leftHandSide.isUninitialized());
 
   if (powerFunction) {
     leftHandSide->cloneNodeAtNode(KPow);
@@ -1132,7 +1128,7 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
      * sequence call. */
     popToken();
     leftHandSide = SharedTreeStack->pushUserSequence(name);
-    Tree* index = nullptr;
+    [[maybe_unused]] Tree* index = nullptr;
     if (hasLeftParenthesis) {
       index = parseUntil(Token::Type::RightParenthesis);
       if (!popTokenIfType(Token::Type::RightParenthesis)) {
@@ -1142,10 +1138,11 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
     } else if (hasSubscript || hasLayoutParentheses) {
       index = LayoutParser::Parse(m_currentToken.firstLayout()->child(0),
                                   m_parsingContext);
-    }
-    if (!index) {
+    } else {
+      // Cannot find the index of the sequence
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
+    assert(index);
     return;
   }
 #endif
@@ -1437,9 +1434,7 @@ void RackParser::parseListParameters(TreeRef& leftHandSide) {
 }
 
 void RackParser::parseLayout(TreeRef& leftHandSide, Token::Type stoppingType) {
-  // if (!leftHandSide.isUninitialized()) {
-  // TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  // }
+  assert(leftHandSide.isUninitialized());
   assert(m_currentToken.length() == 1);
   /* Parse standalone layouts */
   leftHandSide =

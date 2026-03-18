@@ -31,7 +31,7 @@ _sources_liba_armv7m := $(addprefix src/armv7m/, \
   longjmp.s \
 )
 
-_sources_liba_aeabirt := src/aeabi-rt/atexit.c
+_sources_liba_aeabirt := src/aeabi-rt/atexit.c src/aeabi-rt/dsub.c:+armv6m
 
 _sources_liba_openbsd := $(addprefix src/external/openbsd/, \
   b_exp__D.c \

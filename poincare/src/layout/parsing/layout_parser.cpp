@@ -55,7 +55,7 @@ Type ExpressionType(LayoutType type) {
   }
 }
 
-Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
+Tree* PrivateParse(const Tree* l, ParsingContext parsingContext) {
   if (l->isRackLayout()) {
     // TODO: should be inlined in the caller
     return RackParser(l, parsingContext).parseRack();
@@ -68,19 +68,12 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
     case LayoutType::CombinedCodePoints:
       assert(false);
     case LayoutType::Prison: {
-      Tree* parsed = Parse(l->child(0), parsingContext);
-      if (!parsed) {
-        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-      }
-      return parsed;
+      return LayoutParser::Parse(l->child(0), parsingContext);
     }
     case LayoutType::Parentheses:
     case LayoutType::CurlyBraces: {
       parsingContext.metadata.isCommaSeparatedList = true;
       Tree* list = RackParser(l->child(0), parsingContext).parseRack();
-      if (!list) {
-        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-      }
       if (l->layoutType() == LayoutType::Parentheses) {
         int numberOfChildren = list->numberOfChildren();
 #if POINCARE_POINT
@@ -112,9 +105,8 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
         if (grid->childIsPlaceholder(i)) {
           continue;
         }
-        if (!Parse(grid->child(i), parsingContext.cloneWithoutMetadata())) {
-          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-        }
+        LayoutParser::Parse(grid->child(i),
+                            parsingContext.cloneWithoutMetadata());
         actualNumberOfChildren++;
       }
       if (expr->isPiecewise()) {
@@ -133,8 +125,9 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
 
       // Sequence name
       const Tree* currentChild = grid->child(0);
-      Tree* expr = Parse(currentChild, parsingContext.cloneWithoutMetadata());
-      if (!expr || !expr->isUserSequence()) {
+      Tree* expr = LayoutParser::Parse(currentChild,
+                                       parsingContext.cloneWithoutMetadata());
+      if (!expr->isUserSequence()) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
 
@@ -143,8 +136,9 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
       // Only allow empty sequence if preserveInput is true
       if (Rack::IsEmpty(currentChild) && parsingContext.params.preserveInput) {
         SharedTreeStack->pushBlock(Type::EmptySequenceExpression);
-      } else if (!Parse(currentChild, parsingContext.cloneWithoutMetadata())) {
-        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      } else {
+        LayoutParser::Parse(currentChild,
+                            parsingContext.cloneWithoutMetadata());
       }
 
       // First rank
@@ -160,9 +154,8 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
          * When we enter this loop, currentChild is at mainExpr. Skip next child
          * to get to the next expression. */
         currentChild = currentChild->nextTree()->nextTree();
-        if (!Parse(currentChild, parsingContext.cloneWithoutMetadata())) {
-          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-        }
+        LayoutParser::Parse(currentChild,
+                            parsingContext.cloneWithoutMetadata());
         expr->cloneNodeOverNode(row == 1 ? KSequenceSingleRecurrence
                                          : KSequenceDoubleRecurrence);
       }
@@ -196,11 +189,8 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
         ParserHelper::ParsingParameters childParams = parsingContext.params;
         childParams.preserveInput = preserveInput;
 
-        TreeRef parsedChild = Parse(
+        TreeRef parsedChild = LayoutParser::Parse(
             l->child(i), {.context = childContext, .params = childParams});
-        if (!parsedChild) {
-          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-        }
 
         if (isParametric && i == Parametric::k_variableIndex) {
           /* Store the variable child in the parameter context */
@@ -218,6 +208,13 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
       return ref;
     }
   }
+}
+
+Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
+  // This factorizes the assertion that PrivateParse never returns nullptr.
+  Tree* result = PrivateParse(l, parsingContext);
+  assert(result);
+  return result;
 }
 
 }  // namespace Poincare::Internal::Parser

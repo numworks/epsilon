@@ -206,6 +206,11 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
     EvenOddDoubleBufferTextCell* myCell =
         static_cast<EvenOddDoubleBufferTextCell*>(cell);
 
+    /* For double calculation cells (which have two values, one per column),
+     * there is not enough space to display the number of significant digits
+     * from the preferences (which can go up to 14). The float precision is
+     * fixed to a value that guarantees that the displayed number will fit in
+     * the cell. */
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
         AbstractEvenOddBufferTextCell::k_defaultPrecision);
     char buffer[bufferSize];
@@ -295,6 +300,9 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
       return DashBufferCell(bufferCell);
     }
   }
+  /* For single calculation cells (one value displayed per line, overlapping the
+   * two columns), there is enough space to display floats with the maximum
+   * number of significant digits in the preferences (14 digits). */
   constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
       Poincare::Preferences::MaxNumberOfSignificantDigits);
   char buffer[bufferSize];

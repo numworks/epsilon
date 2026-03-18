@@ -95,6 +95,29 @@ QUIZ_CASE(pcj_approximation_integrals) {
   projected_approximates_to<float>("int(1/x^0.9,x,0,1)", "10",
                                    k_realSimplification, 3);
 
+  // Singularities inside bounds
+  approximates_to<double>("int(ln(abs(cos(x^2))),x,2.159,4.23)",
+                          "-1.5403160645501");
+  approximates_to<double>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "6.1840402459412");
+  /* The same integral calculations work fine on the simplified expression
+   * (which introduces a dependency) */
+  simplified_approximates_to<double>("int(ln(abs(cos(x^2))),x,2.159,4.23)",
+                                     "-1.5403160645501");
+  simplified_approximates_to<double>("int(ln(abs(x^2+3×x+2)),x,-3,4)",
+                                     "6.1840402459412");
+  /* The same integral calculations fail when using single float precision. This
+   * is because with a lower precision, it's "easier" for the integral
+   * approximation to fall on an undef close to the singularities. If the
+   * integrand evaluates one time to undef, the whole integral calculation
+   * returns undef.*/
+  /* TODO: use a more robust method to compute integrals with singularies inside
+   * bounds */
+  approximates_to<float>("int(ln(abs(cos(x^2))),x,2.159,4.23)", "undef");
+  approximates_to<float>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "undef");
+  simplified_approximates_to<float>("int(ln(abs(cos(x^2))),x,2.159,4.23)",
+                                    "undef");
+  simplified_approximates_to<float>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "undef");
+
   // double integration
   approximates_to<float>("int(int(x×x,x,0,x),x,0,4)", "21.33333");
   approximates_to<double>("int(int(x×x,x,0,x),x,0,4)", "21.333333333333");

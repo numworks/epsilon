@@ -765,7 +765,7 @@ void RackParser::parseBinaryOperator(const TreeRef& leftHandSide,
 void RackParser::parseLeftParenthesis(TreeRef& leftHandSide,
                                       Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
-    // FIXME
+    // leftHandSide should be empty
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   Token::Type endToken = Token::Type::RightParenthesis;
@@ -1310,7 +1310,7 @@ Tree* RackParser::parseFunctionParameters() {
 void RackParser::parseMatrix(TreeRef& leftHandSide, Token::Type stoppingType) {
 #if POINCARE_MATRIX
   if (!leftHandSide.isUninitialized()) {
-    // FIXME
+    // leftHandSide should be empty
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   uint8_t numberOfRows = 0;
@@ -1427,6 +1427,7 @@ void RackParser::parseListParameters(TreeRef& leftHandSide) {
     } else
 #endif
     {
+      // Lists take either 1 or 2 parameters.
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
     parameter->removeNode();
@@ -1470,12 +1471,14 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
   assert(!base.isUninitialized());
   popToken();
   if (m_currentToken.type() != Token::Type::ReservedFunction) {
+    // Only ReservedFunction log supports prefixSuperscript
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   TreeRef log;
   parseReservedFunction(log, Token::Type::ImplicitTimes);
   assert(!log.isUninitialized());
   if (!log->isLog()) {
+    // Only log supports prefixSuperscript
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   // Turn log into logBase
@@ -1507,6 +1510,7 @@ bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
     }
     result = parseUntil(Token::Type::RightParenthesis);
     if (!popTokenIfType(Token::Type::RightParenthesis)) {
+      // Right parenthesis for exponent missing
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
   } else if (popTokenIfType(Token::Type::Superscript)) {

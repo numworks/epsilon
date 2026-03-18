@@ -1,5 +1,6 @@
 #include "rack_parser.h"
 
+#include <omg/assertions.h>
 #include <omg/code_point.h>
 #include <omg/unicode_helper.h>
 #include <omg/utf8_decoder.h>
@@ -764,10 +765,8 @@ void RackParser::parseBinaryOperator(const TreeRef& leftHandSide,
 
 void RackParser::parseLeftParenthesis(TreeRef& leftHandSide,
                                       Token::Type stoppingType) {
-  if (!leftHandSide.isUninitialized()) {
-    // leftHandSide should be empty
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
+  // leftHandSide should be empty.Raise ParseFail if this assertion fails.
+  assert(leftHandSide.isUninitialized());
   Token::Type endToken = Token::Type::RightParenthesis;
 
   TreeRef list = parseCommaSeparatedList();
@@ -831,10 +830,9 @@ void RackParser::parseUnit(TreeRef& leftHandSide, Token::Type stoppingType) {
   const Units::Representative* unitRepresentative = nullptr;
   const Units::Prefix* unitPrefix = nullptr;
   LayoutSpanDecoder decoder(m_currentToken.toSpan());
-  if (!Units::Unit::CanParse(&decoder, &unitRepresentative, &unitPrefix)) {
-    // Unit does not exist
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
+  // Unit should exist. Raise ParseFail if this assertion fails.
+  EVALUATE_AND_ASSERT(
+      Units::Unit::CanParse(&decoder, &unitRepresentative, &unitPrefix));
   leftHandSide = Units::Unit::Push(unitRepresentative, unitPrefix);
   isThereImplicitOperator();
 #else
@@ -1309,10 +1307,8 @@ Tree* RackParser::parseFunctionParameters() {
 
 void RackParser::parseMatrix(TreeRef& leftHandSide, Token::Type stoppingType) {
 #if POINCARE_MATRIX
-  if (!leftHandSide.isUninitialized()) {
-    // leftHandSide should be empty
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
+  // leftHandSide should be empty. Raise ParseFail if this assertion fails.
+  assert(leftHandSide.isUninitialized());
   uint8_t numberOfRows = 0;
   uint8_t numberOfColumns = 0;
   Tree* matrix = SharedTreeStack->pushMatrix(numberOfRows, numberOfColumns);

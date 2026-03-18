@@ -78,12 +78,20 @@ jobs:
           echo "details<<EOF" >> $GITHUB_OUTPUT
           $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "base/$e "; done) @Head  $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "head/$e "; done) --sections .text .rodata .bss .data" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+
       - name: App sizes
         if: ${{ inputs.app-sizes }}
         id: apps_sizes
         run: |
           echo "details<<EOF" >> $GITHUB_OUTPUT
           $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Run bloaty
+        id: run_bloaty
+        run: |
+          echo "details<<EOF" >> $GITHUB_OUTPUT
+          $DOCKER_RUN "bloaty -d symbols head/userland.onboarding.beta.allow3rdparty.A.elf -- base/userland.onboarding.beta.allow3rdparty.A.elf"  >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Add comment
@@ -94,6 +102,9 @@ jobs:
           pr-number: ${{ github.event.pull_request.number }}
           body: |
             ### ${{ inputs.project-path == 'scandium' && 'Scandium' || 'Epsilon' }} Binary size analysis
+            <pre>
+            ${{ steps.run_bloaty.outputs.details }}
+            </pre>
 
             ${{ steps.binary_size.outputs.summary }}
 

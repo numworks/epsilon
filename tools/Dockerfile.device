@@ -13,6 +13,15 @@ COPY tools/setup.sh tools/setup.sh
 
 RUN tools/setup.sh --ci
 
+RUN apt-get update && \
+    apt-get install --no-install-recommends cmake ninja-build wget && \
+    wget https://github.com/google/bloaty/releases/download/v1.1/bloaty-1.1.tar.bz2 -O /tmp/bloaty.tar.bz2 && \
+    tar -xf /tmp/bloaty.tar.bz2 -C /tmp --no-same-owner && \
+    cmake -B /tmp/bloaty-1.1/build -G Ninja -S /tmp/bloaty-1.1 -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build /tmp/bloaty-1.1/build && \
+    cmake --install /tmp/bloaty-1.1/build && \
+    rm -rf /tmp/bloaty-1.1 /tmp/bloaty.tar.bz2
+
 ENV PYTHON=/runner/.venv/bin/python
 
 WORKDIR /monorepo

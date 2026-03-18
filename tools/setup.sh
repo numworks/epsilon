@@ -111,7 +111,7 @@ install_linux_binary_deps() {
   if [[ $CI == "1" ]]; then
     # format.mak requires prettier
     # poincarejs workflow requires zip
-    sudo apt-get install -y bloaty parallel npm zip
+    sudo apt-get install -y parallel npm zip
     sudo npm install -g prettier nwlink
     sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-15 100
     install_latest_lcov

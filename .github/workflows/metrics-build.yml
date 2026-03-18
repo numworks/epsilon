@@ -93,7 +93,7 @@ jobs:
         id: run_bloaty
         run: |
           echo "details<<EOF" >> $GITHUB_OUTPUT
-          $DOCKER_RUN "bloaty -d symbols head/${{ inputs.elf-bloaty }} -- base/${{ inputs.elf-bloaty }}"  >> $GITHUB_OUTPUT
+          $DOCKER_RUN "bloaty --domain=vm -d symbols head/${{ inputs.elf-bloaty }} -- base/${{ inputs.elf-bloaty }}"  >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Add comment

@@ -162,5 +162,10 @@ $(call create_module,liba_bridge,1,bridge.c)
 SFLAGS_liba_bridge := -I$(PATH_liba_bridge)
 
 ifeq ($LIBA_real_complexes,1)
-SFLAGS_liba += -I../shared/libaxx/include/real_complex_wrapper
+# In libcpp innocuous headers such as array can pull an incompatible
+# forward declaration of std::complex. We define its header guard to
+# prevent it from interfering.
+SFLAGS_liba += \
+  -D_LIBCPP___FWD_COMPLEX_H \
+  -I../shared/libaxx/include/real_complex_wrapper
 endif

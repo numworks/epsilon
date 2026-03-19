@@ -2280,6 +2280,11 @@ template double Private::Approximator::privateToFloat(const Tree*);
 template float Private::Approximator::toLocalContext(const Tree*, float);
 template double Private::Approximator::toLocalContext(const Tree*, double);
 
+template std::complex<float> Private::Approximator::privateToComplexRecursive(
+    const Tree* e);
+template std::complex<double> Private::Approximator::privateToComplexRecursive(
+    const Tree* e);
+
 template int IndexOfActivePiecewiseBranchAt(const Tree*, float);
 template int IndexOfActivePiecewiseBranchAt(const Tree*, double);
 

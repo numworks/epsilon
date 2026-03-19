@@ -337,6 +337,16 @@ class Approximator {
     // Implicit conversion from external UserParameters
     InternalUserParameters(const UserParameters& userParameters);
 
+    // Implicit conversion to external UserParameters
+    operator UserParameters() const {
+      return UserParameters {
+#if POINCARE_COMPLEX
+        .complexFormat = complexFormat,
+#endif
+        .angleUnit = angleUnit, .context = symbolContext
+      };
+    }
+
     static InternalUserParameters Make(
         const ExpressionVariantParameters& expressionParameters);
 

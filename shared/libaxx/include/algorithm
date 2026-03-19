@@ -91,43 +91,40 @@ Iterator find_if(Iterator first, Iterator last, UnaryPredicate predicate) {
 }
 
 template <class Iterator, class Comparator>
-constexpr Iterator max_element(Iterator first, Iterator end,
-                               Comparator comparator) {
+constexpr Iterator extremum_element(Iterator first, Iterator end,
+                                    Comparator comparator, bool isMin) {
   if (first == end) {
     return end;
   }
   Iterator result = first;
   while (++first != end) {
-    if (comparator(*result, *first)) {
+    if (isMin ? comparator(*result, *first) : comparator(*first, *result)) {
       result = first;
     }
   }
   return result;
 }
 
+template <class Iterator, class Comparator>
+constexpr Iterator max_element(Iterator first, Iterator end,
+                               Comparator comparator) {
+  return extremum_element(first, end, comparator, false);
+}
+
 template <class Iterator>
 constexpr Iterator max_element(Iterator first, Iterator end) {
-  return max_element(first, end, std::less{});
+  return extremum_element(first, end, std::less{}, false);
 }
 
 template <class Iterator, class Comparator>
 constexpr Iterator min_element(Iterator first, Iterator end,
                                Comparator comparator) {
-  if (first == end) {
-    return end;
-  }
-  Iterator result = first;
-  while (++first != end) {
-    if (comparator(*first, *result)) {
-      result = first;
-    }
-  }
-  return result;
+  return extremum_element(first, end, comparator, true);
 }
 
 template <class Iterator>
 constexpr Iterator min_element(Iterator first, Iterator end) {
-  return min_element(first, end, std::less{});
+  return extremum_element(first, end, std::less{}, true);
 }
 
 template <class T>

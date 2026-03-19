@@ -443,15 +443,18 @@ bool PrivateDeepSearch(const Tree* tree,
     return false;
   }
 
-  // - Step 2: Clone the tree on the pool to test it as a UserExpression
-  UserExpression expr = UserExpression::Builder(tree);
-  OMG::Troolean testResult = test(expr, parameters.auxiliary);
+  /* - Step 2: Clone the tree on the pool to test it as a UserExpression
+   * WARNING: Do not keep the UserExpression alive after this point, as it could
+   * clog the pool with clones when this function is called recursively on the
+   * children. */
+  OMG::Troolean testResult =
+      test(UserExpression::Builder(tree), parameters.auxiliary);
   if (testResult == OMG::Troolean::True) {
     return true;
   } else if (testResult == OMG::Troolean::False) {
     return false;
   }
-  assert(testResult == OMG::Troolean::Unknown && !expr.isUninitialized());
+  assert(testResult == OMG::Troolean::Unknown);
 
   // - Step 3: Handle dependencies and store
   if (tree->isDep() || tree->isStore()) {
@@ -476,10 +479,11 @@ bool PrivateDeepSearch(const Tree* tree,
            tree->isUserFunction());
 
     // Undefined symbols must be preserved.
-    UserExpression eReplaced = expr.cloneAndReplaceSymbols(
-        parameters.context, SymbolicComputation::ReplaceDefinedSymbols);
-    expr = UserExpression();  // Release before recursive call to save memory
-
+    Tree* clone = tree->cloneTree();
+    Projection::DeepReplaceUserSymbol(
+        clone, parameters.context, SymbolicComputation::ReplaceDefinedSymbols);
+    // Keep the tree on the pool for future calls
+    UserExpression eReplaced = UserExpression::Builder(clone);
     return !eReplaced.isUninitialized() &&
            PrivateDeepSearch(eReplaced.tree(), test,
                              {.context = parameters.context,
@@ -495,13 +499,10 @@ bool PrivateDeepSearch(const Tree* tree,
    * UserExpressionTrinaryTest can use Expression API.
    *
    * This is partially mitigated by the fact that the UserExpression are
-   * released before going through children, so that not all the clones are
+   * not kept when going through children, so that not all the clones are
    * alive at the same time. So the memory usage shouldn't be a problem, but
    * timewise it is still a lot of useless clones.
    */
-
-  expr = UserExpression();  // Release before recursive call to save memory
-
   bool isParametered = tree->isParametric();
   for (IndexedChild<const Tree*> child : tree->indexedChildren()) {
     if (isParametered && child.index == Parametric::k_variableIndex) {

@@ -35,4 +35,28 @@ SolverResult ApproximateSolve(
     const SimplificationParameters& simplificationParameters,
     Range1D<double> range, size_t maxNumberOfSolutions);
 
+struct SingularitySolverResult {
+  TreeRef exactSolutionList;
+  Error error = Error::NoError;
+};
+
+/* Try to find exact singularity points of a scalar single-variable function.
+ * Given a function f(x), singularities are values of x at which f(x) is not
+ * properly defined, because its "value" would be +∞ or -∞. This method aims at
+ * exact singularities, so it only works on a very restricted subset of
+ * functions.
+ * Examples of functions that have detectable exact singularities:
+ * f(x)=1/(x^2+3x+2) in x=-1 and x=-2
+ * f(x)=ln(abs(x^2)) in x=0
+ * Parameter format: the "function" tree should be a non-list scalar function.
+ * It can be either a UserExpression or a SystemExpression. It should have a
+ * single variable.
+ * WARNING: The variable must already be projected to Var0!
+ * The main use case is to detect integrand singularities inside the integration
+ * bounds, to split the integral at the singularity points (because we have
+ * techniques to integrate functions with singularities at the integration
+ * bounds). */
+SingularitySolverResult ExactSolveFindSingularities(
+    const Tree* function, const UserParameters& userParameters);
+
 }  // namespace Poincare::Internal::EquationSolver

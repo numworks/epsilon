@@ -1034,4 +1034,87 @@ SolverResult ApproximateSolve(
           .solutionMetadata = solutionMetadata};
 }
 
+SingularitySolverResult ExactSolveFindSingularities(
+    const Tree* function, const UserParameters& userParameters) {
+  // Step 1: Check format and reduce
+  assert(Dimension::IsNonListScalar(function));
+  Tree* reducedFunction = function->cloneTree();
+  Simplification::ProjectAndReduce(
+      reducedFunction,
+      SimplificationParameters{
+          .user = userParameters,
+          .reductionPolicy = {.target = ReductionTarget::System,
+                              .advanced = false}});
+
+  // Step 1. Identify a known form of function with singularities
+  PatternMatching::Context matchesContext;
+  // If f is in a dependency, match only with the main expression
+  const Tree* mainFunction = Dependency::SafeMain(reducedFunction);
+  if (!(PatternMatching::Match(mainFunction, KLn(KAbs(KA)), &matchesContext) ||
+        PatternMatching::Match(mainFunction, KLn(KA), &matchesContext) ||
+        PatternMatching::Match(mainFunction, KPow(KA, -1_e),
+                               &matchesContext))) {
+    reducedFunction->removeTree();
+    // Not possible to perform exact singularity detection
+    return SingularitySolverResult{
+        .exactSolutionList = KUndefUnhandled->cloneTree(),
+        .error = Error::EquationUnhandled};
+  }
+  const Tree* functionWithRoots = matchesContext.getTree(KA);
+
+  // Step 2. Find real roots of the "inside" function
+
+  // Only look for real roots
+  EquationMetadata equationMetadata =
+      EquationMetadata{.complexFormat = ComplexFormat::Real};
+  // The linear and polynomial solvers require a list as input
+  Tree* solverInput = SharedTreeStack->pushList(1);
+  functionWithRoots->cloneTree();
+  // Push one unknown variable to fit the linear / polynomial solver format
+  equationMetadata.unknownVariables.push("x");
+
+  // Step 2.1. Try with linear system solving
+  SolverResult result =
+      SolveLinearSystem(solverInput, equationMetadata, k_emptySymbolContext);
+
+  // Step 2.2. Try with polynomial solving
+  if (result.error == Error::NonLinearSystem) {
+    result = SolvePolynomial(solverInput, equationMetadata);
+    if (result.error == Error::NoError) {
+      // Remove discriminant from solution list (last element)
+      assert(result.exactSolutionList->isList());
+      NAry::RemoveChildAtIndex(
+          result.exactSolutionList,
+          result.exactSolutionList->numberOfChildren() - 1);
+      // Remove non real solutions
+      for (int i = result.exactSolutionList->numberOfChildren() - 1; i >= 0;
+           i--) {
+        if (!PropertiesOfTreeOrApproximation(result.exactSolutionList->child(i))
+                 .isReal()) {
+          NAry::RemoveChildAtIndex(result.exactSolutionList, i);
+        }
+      }
+    }
+  }
+
+  solverInput->removeTree();
+  reducedFunction->removeTree();
+
+  // Step 3. Post-process the result
+  if (result.error != Error::NoError) {
+    assert(!result.exactSolutionList);
+    result.exactSolutionList = KUndefUnhandled->cloneTree();
+  } else {
+    // If result list is empty, return undef
+    assert(result.exactSolutionList->isList());
+    if (result.exactSolutionList->numberOfChildren() == 0) {
+      result.exactSolutionList->removeTree();
+      return SingularitySolverResult{.exactSolutionList = KUndef->cloneTree(),
+                                     .error = result.error};
+    }
+  }
+  return SingularitySolverResult{.exactSolutionList = result.exactSolutionList,
+                                 .error = result.error};
+}
+
 }  // namespace Poincare::Internal::EquationSolver

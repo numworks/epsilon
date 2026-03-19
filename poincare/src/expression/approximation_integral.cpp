@@ -1,4 +1,5 @@
 #include <omg/float.h>
+#include <poincare/src/equation_solver/equation_solver.h>
 
 #include <algorithm>
 
@@ -39,6 +40,16 @@ T Approximator::approximateIntegral(const Tree* integral) {
   if (std::isnan(a) || std::isnan(b)) {
     return NAN;
   }
+
+  // Handle singularities inside the bounds
+  EquationSolver::SingularitySolverResult singularities =
+      EquationSolver::ExactSolveFindSingularities(integrand, m_parameters);
+  if (!singularities.exactSolutionList->isUndefined()) {
+    // TODO:
+    // - check if the singularities are inside the bounds
+    // - if some of them are, split the integral
+  }
+  singularities.exactSolutionList->removeTree();
 
   // Handle singularities at the bounds
   bool notFiniteInA = !std::isfinite(toLocalContext(integrand, a));

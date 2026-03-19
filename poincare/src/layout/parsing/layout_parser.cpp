@@ -127,9 +127,8 @@ Tree* PrivateParse(const Tree* l, ParsingContext parsingContext) {
       const Tree* currentChild = grid->child(0);
       Tree* expr = LayoutParser::Parse(currentChild,
                                        parsingContext.cloneWithoutMetadata());
-      if (!expr->isUserSequence()) {
-        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-      }
+      // Note: Raise ParseFail instead of asserting if this assertion ever fails
+      assert(expr->isUserSequence());
 
       // Sequence expression
       currentChild = currentChild->nextTree();

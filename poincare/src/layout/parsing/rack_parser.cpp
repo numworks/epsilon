@@ -375,11 +375,9 @@ uint32_t NumberOfTrailingZerosDigits(LayoutSpanDecoder decoder) {
 }
 
 void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
-  if (!leftHandSide.isUninitialized()) {
-    // A number cannot follow directly another valid expression
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
-
+  // A number cannot follow directly another valid expression
+  // Note: Raise ParseFail instead of asserting if this assertion ever fails.
+  assert(leftHandSide.isUninitialized());
   /* TODO: RackLayoutDecoder could be implemented without mainLayout, start,
            m_root and parentOfDescendant() call wouldn't be needed. */
   int start = 0;

@@ -1,6 +1,7 @@
 #ifndef LIBAXX_ALGORITHM
 #define LIBAXX_ALGORITHM
 
+#include <functional>
 #include <initializer_list>
 #include <utility>
 
@@ -106,16 +107,7 @@ constexpr Iterator max_element(Iterator first, Iterator end,
 
 template <class Iterator>
 constexpr Iterator max_element(Iterator first, Iterator end) {
-  if (first == end) {
-    return end;
-  }
-  Iterator result = first;
-  while (++first != end) {
-    if (*result < *first) {
-      result = first;
-    }
-  }
-  return result;
+  return max_element(first, end, std::less{});
 }
 
 template <class Iterator, class Comparator>
@@ -135,16 +127,7 @@ constexpr Iterator min_element(Iterator first, Iterator end,
 
 template <class Iterator>
 constexpr Iterator min_element(Iterator first, Iterator end) {
-  if (first == end) {
-    return end;
-  }
-  Iterator result = first;
-  while (++first != end) {
-    if (*first < *result) {
-      result = first;
-    }
-  }
-  return result;
+  return min_element(first, end, std::less{});
 }
 
 template <class T>

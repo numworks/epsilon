@@ -1,0 +1,66 @@
+#ifndef LIBAXX_FUNCTIONAL
+#define LIBAXX_FUNCTIONAL
+
+namespace std {
+
+/* These structs are useful to pass comparators to standard library algorithms
+ * such as std::sort, std::min_element / std::max_element. The usage is to pass
+ * a struct instance, for example std::sort(array.begin(), array.end(),
+ * std::less<>{}).
+ * Each comparator has two versions. In the first version, the type has to be
+ * explicitly specified (for example std::greater<int>), In the second version,
+ * the type is deduced (std::greater<>, "void" being the default value of T).
+ * This can seem a bit verbose but it's the standard library specification, so
+ * it's better to comply to it to ensure cross-platform compatibility. */
+
+template <typename T = void>
+struct less {
+  constexpr bool operator()(T x1, T x2) const { return x1 < x2; }
+};
+template <>
+struct less<void> {
+  template <typename T>
+  constexpr bool operator()(T x1, T x2) const {
+    return x1 < x2;
+  }
+};
+
+template <typename T = void>
+struct less_equal {
+  constexpr bool operator()(T x1, T x2) const { return x1 <= x2; }
+};
+template <>
+struct less_equal<void> {
+  template <typename T>
+  constexpr bool operator()(T x1, T x2) const {
+    return x1 <= x2;
+  }
+};
+
+template <typename T = void>
+struct greater {
+  constexpr bool operator()(T x1, T x2) const { return x1 > x2; }
+};
+template <>
+struct greater<void> {
+  template <typename T>
+  constexpr bool operator()(T x1, T x2) const {
+    return x1 > x2;
+  }
+};
+
+template <typename T = void>
+struct greater_equal {
+  constexpr bool operator()(T x1, T x2) const { return x1 >= x2; }
+};
+template <>
+struct greater_equal<void> {
+  template <typename T>
+  constexpr bool operator()(T x1, T x2) const {
+    return x1 >= x2;
+  }
+};
+
+}  // namespace std
+
+#endif

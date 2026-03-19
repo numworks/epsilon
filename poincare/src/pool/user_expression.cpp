@@ -502,25 +502,20 @@ bool PrivateDeepSearch(const Tree* tree,
 
   expr = UserExpression();  // Release before recursive call to save memory
 
-  const int childrenCount = tree->numberOfChildren();
-
   bool isParametered = tree->isParametric();
-  // Run loop backwards to find lists and matrices quicker in NAry expressions
-  for (int i = childrenCount - 1; i >= 0; i--) {
-    if (isParametered && i == Parametric::k_variableIndex) {
+  for (IndexedChild<const Tree*> child : tree->indexedChildren()) {
+    if (isParametered && child.index == Parametric::k_variableIndex) {
       continue;
     }
-    const Tree* childToAnalyze = tree->child(i);
     bool matches;
-    if (isParametered && i == Parametric::FunctionIndex(tree)) {
+    if (isParametered && child.index == Parametric::FunctionIndex(tree)) {
       const Tree* symbolTree = tree->child(Parametric::k_variableIndex);
       IgnoredSymbols updatedIgnoredSymbols = {.head = symbolTree,
                                               .tail = ignoredSymbols};
-      matches = PrivateDeepSearch(childToAnalyze, test, parameters,
-                                  &updatedIgnoredSymbols);
-    } else {
       matches =
-          PrivateDeepSearch(childToAnalyze, test, parameters, ignoredSymbols);
+          PrivateDeepSearch(child, test, parameters, &updatedIgnoredSymbols);
+    } else {
+      matches = PrivateDeepSearch(child, test, parameters, ignoredSymbols);
     }
     if (matches) {
       return true;

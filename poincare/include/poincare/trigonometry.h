@@ -1,7 +1,8 @@
 #pragma once
 
-#include <complex.h>
 #include <poincare/preferences.h>
+
+#include <complex>
 
 namespace Poincare {
 

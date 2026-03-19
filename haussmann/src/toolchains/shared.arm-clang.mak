@@ -22,6 +22,8 @@ LDFLAGS += \
   -fuse-ld=lld \
   -Wl,--undefined-glob,__aeabi_memcpy* \
   -Wl,--undefined-glob,__aeabi_memclr* \
+  -Wl,--undefined-glob,__aeabi_fsub \
+  -Wl,--undefined-glob,__aeabi_dsub \
   $(LIBCLANG_ROOT)/arm-none-eabi/$(LIBCLANG_ARCH)/lib/libclang_rt.builtins.a
 
 SFLAGS += \

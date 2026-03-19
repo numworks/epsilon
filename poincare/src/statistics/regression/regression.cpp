@@ -100,7 +100,8 @@ Regression::Coefficients Regression::privateFit(const Series* series) const {
     double newMeanSquaredError =
         meanSquaredError(&preparedSeries, modelCoefficients);
     if (isRegressionStrictlyBetter(newMeanSquaredError, lowestMeanSquaredError,
-                                   modelCoefficients, bestModelCoefficients)) {
+                                   modelCoefficients, bestModelCoefficients,
+                                   false)) {
       lowestMeanSquaredError = newMeanSquaredError;
       bestModelCoefficients = modelCoefficients;
     }
@@ -127,9 +128,9 @@ Regression::Coefficients Regression::privateFit(const Series* series) const {
       meanSquaredError(series, roundedCoefficients);
   /* Use a reversed condition so that the rounded model is kept in case of
    * similar performances */
-  if (!isRegressionStrictlyBetter(lowestMeanSquaredError,
-                                  roundedMeanSquaredError,
-                                  bestModelCoefficients, roundedCoefficients)) {
+  if (!isRegressionStrictlyBetter(
+          lowestMeanSquaredError, roundedMeanSquaredError,
+          bestModelCoefficients, roundedCoefficients, true)) {
     bestModelCoefficients = roundedCoefficients;
   }
 
@@ -477,22 +478,32 @@ bool absoluteValueComparison(double v1, double v2) {
   return std::fabs(v1) < std::fabs(v2);
 }
 
+double precisionForRoundedModels(
+    const Regression::Coefficients& modelCoefficients1,
+    const Regression::Coefficients& modelCoefficients2,
+    int numberOfCoefficients) {
+  assert(numberOfCoefficients > 0);
+  double maxAllCoefficients = std::max(
+      *std::max_element(modelCoefficients1.begin(),
+                        modelCoefficients1.begin() + numberOfCoefficients,
+                        absoluteValueComparison),
+      *std::max_element(modelCoefficients2.begin(),
+                        modelCoefficients2.begin() + numberOfCoefficients,
+                        absoluteValueComparison));
+  return OMG::Float::Epsilon<double>() * maxAllCoefficients;
+}
+
 bool Regression::isRegressionStrictlyBetter(
     double meanSquaredError1, double meanSquaredError2,
     const Regression::Coefficients& modelCoefficients1,
-    const Regression::Coefficients& modelCoefficients2) const {
-  assert(numberOfCoefficients() > 0);
-
-  double maxAllCoefficients = std::max(
-      *std::max_element(modelCoefficients1.begin(),
-                        modelCoefficients1.begin() + numberOfCoefficients(),
-                        absoluteValueComparison),
-      *std::max_element(modelCoefficients1.begin(),
-                        modelCoefficients1.begin() + numberOfCoefficients(),
-                        absoluteValueComparison));
-
-  double precision = OMG::Float::Epsilon<double>() * maxAllCoefficients;
-  return modelScore(meanSquaredError1, modelCoefficients1) + precision <
+    const Regression::Coefficients& modelCoefficients2,
+    bool areModelsCoefficientsRounded) const {
+  return modelScore(meanSquaredError1, modelCoefficients1) +
+             (areModelsCoefficientsRounded
+                  ? precisionForRoundedModels(modelCoefficients1,
+                                              modelCoefficients2,
+                                              numberOfCoefficients())
+                  : 0.0) <
          modelScore(meanSquaredError2, modelCoefficients2);
 }
 

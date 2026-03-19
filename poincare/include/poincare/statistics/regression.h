@@ -251,7 +251,8 @@ class Regression {
   bool isRegressionStrictlyBetter(
       double meanSquaredError1, double meanSquaredError2,
       const Regression::Coefficients& modelCoefficients1,
-      const Regression::Coefficients& modelCoefficients2) const;
+      const Regression::Coefficients& modelCoefficients2,
+      bool areModelsCoefficientsRounded) const;
 
   /* By default the model score is the mean squared error. Some regressions may
    * also take the model coefficients into account */

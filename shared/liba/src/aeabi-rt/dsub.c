@@ -4,6 +4,8 @@
  * some precious binary size. We simply call fadd from fsub after
  * changing the sign bit. */
 
+float __aeabi_fadd(float a, float b);
+
 __attribute__((noinline, externally_visible)) float __aeabi_fsub(float a,
                                                                  float b) {
   union {
@@ -12,8 +14,10 @@ __attribute__((noinline, externally_visible)) float __aeabi_fsub(float a,
   } f;
   f.f = b;
   f.u ^= (1ul << 31);  // flip sign bit
-  return a + f.f;      // i.e. call __aeabi_fadd
+  return __aeabi_fadd(a, f.f);
 }
+
+double __aeabi_dadd(double a, double b);
 
 __attribute__((noinline, externally_visible)) double __aeabi_dsub(double a,
                                                                   double b) {
@@ -23,5 +27,5 @@ __attribute__((noinline, externally_visible)) double __aeabi_dsub(double a,
   } f;
   f.f = b;
   f.u ^= (1ull << 63);  // flip sign bit
-  return a + f.f;       // i.e. call __aeabi_dadd
+  return __aeabi_dadd(a, f.f);
 }

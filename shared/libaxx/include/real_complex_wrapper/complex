@@ -1,0 +1,325 @@
+#ifndef LIBAXX_COMPLEX
+#define LIBAXX_COMPLEX
+
+#include <cmath>
+
+namespace std {
+
+template <typename T>
+struct complex {
+  using value_type = T;
+
+  complex(const T& re = T(), const T& im = T()) : m_real(re) {}
+
+  template <typename X>
+  complex(const complex<X>& other) : m_real(other.m_real) {}
+
+  T real() const { return m_real; }
+  T imag() const { return 0; }
+
+  void real(T re) { m_real = re; }
+  void imag(T) {}
+
+  complex<T>& operator=(const T& re) {
+    m_real = re;
+    return *this;
+  }
+
+  complex<T>& operator+=(const T& re) {
+    m_real += re;
+    return *this;
+  }
+
+  complex<T>& operator-=(const T& re) {
+    m_real -= re;
+    return *this;
+  }
+
+  complex<T>& operator*=(const T& re) {
+    m_real *= re;
+    return *this;
+  }
+
+  complex<T>& operator/=(const T& re) {
+    m_real /= re;
+    return *this;
+  }
+
+  template <typename X>
+  complex<T>& operator=(const complex<X>& other) {
+    m_real = other.m_real;
+    return *this;
+  }
+
+  template <typename X>
+  complex<T>& operator+=(const complex<X>& other) {
+    m_real += other.m_real;
+    return *this;
+  }
+
+  template <typename X>
+  complex<T>& operator-=(const complex<X>& other) {
+    m_real -= other.m_real;
+    return *this;
+  }
+
+  template <typename X>
+  complex<T>& operator*=(const complex<X>& other) {
+    m_real *= other.m_real;
+    return *this;
+  }
+
+  template <typename X>
+  complex<T>& operator/=(const complex<X>& other) {
+    m_real /= other.m_real;
+    return *this;
+  }
+
+  T m_real;
+};
+
+// Unary operators
+template <typename T>
+complex<T> operator+(const complex<T>& c) {
+  return c;
+}
+
+template <typename T>
+complex<T> operator-(const complex<T>& c) {
+  return complex<T>(-c.real());
+}
+
+// Binary operators: complex op complex
+template <typename T>
+complex<T> operator+(const complex<T>& lhs, const complex<T>& rhs) {
+  return complex<T>(lhs.real() + rhs.real());
+}
+
+template <typename T>
+complex<T> operator-(const complex<T>& lhs, const complex<T>& rhs) {
+  return complex<T>(lhs.real() - rhs.real());
+}
+
+template <typename T>
+complex<T> operator*(const complex<T>& lhs, const complex<T>& rhs) {
+  return complex<T>(lhs.real() * rhs.real());
+}
+
+template <typename T>
+complex<T> operator/(const complex<T>& lhs, const complex<T>& rhs) {
+  return complex<T>(lhs.real() / rhs.real());
+}
+
+// Binary operators: complex op scalar
+template <typename T>
+complex<T> operator+(const complex<T>& lhs, const T& rhs) {
+  return complex<T>(lhs.real() + rhs);
+}
+
+template <typename T>
+complex<T> operator-(const complex<T>& lhs, const T& rhs) {
+  return complex<T>(lhs.real() - rhs);
+}
+
+template <typename T>
+complex<T> operator*(const complex<T>& lhs, const T& rhs) {
+  return complex<T>(lhs.real() * rhs);
+}
+
+template <typename T>
+complex<T> operator/(const complex<T>& lhs, const T& rhs) {
+  return complex<T>(lhs.real() / rhs);
+}
+
+// Binary operators: scalar op complex
+template <typename T>
+complex<T> operator+(const T& lhs, const complex<T>& rhs) {
+  return complex<T>(lhs + rhs.real());
+}
+
+template <typename T>
+complex<T> operator-(const T& lhs, const complex<T>& rhs) {
+  return complex<T>(lhs - rhs.real());
+}
+
+template <typename T>
+complex<T> operator*(const T& lhs, const complex<T>& rhs) {
+  return complex<T>(lhs * rhs.real());
+}
+
+template <typename T>
+complex<T> operator/(const T& lhs, const complex<T>& rhs) {
+  return complex<T>(lhs / rhs.real());
+}
+
+// Equality operators
+template <typename T>
+bool operator==(const complex<T>& lhs, const complex<T>& rhs) {
+  return lhs.real() == rhs.real();
+}
+
+template <typename T>
+bool operator==(const complex<T>& lhs, const T& rhs) {
+  return lhs.real() == rhs;
+}
+
+template <typename T>
+bool operator==(const T& lhs, const complex<T>& rhs) {
+  return lhs == rhs.real();
+}
+
+template <typename T>
+bool operator!=(const complex<T>& lhs, const complex<T>& rhs) {
+  return lhs.real() != rhs.real();
+}
+
+template <typename T>
+bool operator!=(const complex<T>& lhs, const T& rhs) {
+  return lhs.real() != rhs;
+}
+
+template <typename T>
+bool operator!=(const T& lhs, const complex<T>& rhs) {
+  return lhs != rhs.real();
+}
+
+// Math functions mapping to real arithmetic
+template <typename T>
+T abs(const complex<T>& c) {
+  return c.real() < T() ? -c.real() : c.real();
+}
+
+template <typename T>
+T norm(const complex<T>& c) {
+  return c.real() * c.real();
+}
+
+// arg is 0 for positive reals, pi for negative reals
+template <typename T>
+T arg(const complex<T>& c) {
+  return atan2(static_cast<T>(0), c.real());
+}
+
+template <typename T>
+complex<T> conj(const complex<T>& c) {
+  return c;
+}
+
+template <typename T>
+complex<T> proj(const complex<T>& c) {
+  return c;
+}
+
+template <typename T>
+complex<T> polar(const T& rho, const T& theta = T()) {
+  return complex<T>(rho);
+}
+
+template <typename T>
+T real(const complex<T>& c) {
+  return c.real();
+}
+
+template <typename T>
+T imag(const complex<T>& c) {
+  return c.imag();
+}
+
+// Transcendental functions — imag is always 0 so these reduce to scalar math
+template <typename T>
+complex<T> exp(const complex<T>& c) {
+  return complex<T>(exp(c.real()));
+}
+
+template <typename T>
+complex<T> log(const complex<T>& c) {
+  return complex<T>(log(c.real()));
+}
+
+template <typename T>
+complex<T> log10(const complex<T>& c) {
+  return complex<T>(log10(c.real()));
+}
+
+template <typename T>
+complex<T> sqrt(const complex<T>& c) {
+  return complex<T>(sqrt(c.real()));
+}
+
+template <typename T>
+complex<T> pow(const complex<T>& base, const T& exp) {
+  return complex<T>(pow(base.real(), exp));
+}
+
+template <typename T>
+complex<T> pow(const complex<T>& base, const complex<T>& exp) {
+  return complex<T>(pow(base.real(), exp.real()));
+}
+
+template <typename T>
+complex<T> pow(const T& base, const complex<T>& exp) {
+  return complex<T>(pow(base, exp.real()));
+}
+
+template <typename T>
+complex<T> sin(const complex<T>& c) {
+  return complex<T>(sin(c.real()));
+}
+
+template <typename T>
+complex<T> cos(const complex<T>& c) {
+  return complex<T>(cos(c.real()));
+}
+
+template <typename T>
+complex<T> tan(const complex<T>& c) {
+  return complex<T>(tan(c.real()));
+}
+
+template <typename T>
+complex<T> asin(const complex<T>& c) {
+  return complex<T>(asin(c.real()));
+}
+
+template <typename T>
+complex<T> acos(const complex<T>& c) {
+  return complex<T>(acos(c.real()));
+}
+
+template <typename T>
+complex<T> atan(const complex<T>& c) {
+  return complex<T>(atan(c.real()));
+}
+
+template <typename T>
+complex<T> sinh(const complex<T>& c) {
+  return complex<T>(sinh(c.real()));
+}
+
+template <typename T>
+complex<T> cosh(const complex<T>& c) {
+  return complex<T>(cosh(c.real()));
+}
+
+template <typename T>
+complex<T> tanh(const complex<T>& c) {
+  return complex<T>(tanh(c.real()));
+}
+
+template <typename T>
+complex<T> asinh(const complex<T>& c) {
+  return complex<T>(asinh(c.real()));
+}
+
+template <typename T>
+complex<T> acosh(const complex<T>& c) {
+  return complex<T>(acosh(c.real()));
+}
+
+template <typename T>
+complex<T> atanh(const complex<T>& c) {
+  return complex<T>(atanh(c.real()));
+}
+
+}  // namespace std
+#endif

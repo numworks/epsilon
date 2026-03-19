@@ -16,6 +16,7 @@ RUN tools/setup.sh --ci
 RUN apt-get update && \
     apt-get install --no-install-recommends cmake ninja-build wget && \
     wget https://github.com/google/bloaty/releases/download/v1.1/bloaty-1.1.tar.bz2 -O /tmp/bloaty.tar.bz2 && \
+    (echo "a308d8369d5812aba45982e55e7c3db2ea4780b7496a5455792fb3dcba9abd6f  /tmp/bloaty.tar.bz2" | sha256sum -c -) && \
     tar -xf /tmp/bloaty.tar.bz2 -C /tmp --no-same-owner && \
     cmake -B /tmp/bloaty-1.1/build -G Ninja -S /tmp/bloaty-1.1 -DCMAKE_BUILD_TYPE=Release && \
     cmake --build /tmp/bloaty-1.1/build && \

@@ -765,7 +765,8 @@ void RackParser::parseBinaryOperator(const TreeRef& leftHandSide,
 
 void RackParser::parseLeftParenthesis(TreeRef& leftHandSide,
                                       Token::Type stoppingType) {
-  // leftHandSide should be empty.Raise ParseFail if this assertion fails.
+  // leftHandSide should be empty.
+  // Note: Raise ParseFail instead of asserting if this assertion ever fails.
   assert(leftHandSide.isUninitialized());
   Token::Type endToken = Token::Type::RightParenthesis;
 
@@ -830,7 +831,8 @@ void RackParser::parseUnit(TreeRef& leftHandSide, Token::Type stoppingType) {
   const Units::Representative* unitRepresentative = nullptr;
   const Units::Prefix* unitPrefix = nullptr;
   LayoutSpanDecoder decoder(m_currentToken.toSpan());
-  // Unit should exist. Raise ParseFail if this assertion fails.
+  // Unit should exist.
+  // Note: Raise ParseFail instead of asserting if this assertion ever fails.
   EVALUATE_AND_ASSERT(
       Units::Unit::CanParse(&decoder, &unitRepresentative, &unitPrefix));
   leftHandSide = Units::Unit::Push(unitRepresentative, unitPrefix);
@@ -1154,9 +1156,7 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
   setState(previousState);
   if (!privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
                                                   stoppingType, false)) {
-    /* TODO: If this assert fails, raise ExceptionType::ParseFail if the layout
-     * was not parsable, remove the assertion if a silent failure is to be
-     * tolerated. */
+    // Note: Raise ParseFail instead of asserting if this assertion ever fails.
     assert(false);
   }
 }
@@ -1307,7 +1307,8 @@ Tree* RackParser::parseFunctionParameters() {
 
 void RackParser::parseMatrix(TreeRef& leftHandSide, Token::Type stoppingType) {
 #if POINCARE_MATRIX
-  // leftHandSide should be empty. Raise ParseFail if this assertion fails.
+  // leftHandSide should be empty.
+  // Note: Raise ParseFail instead of asserting if this assertion ever fails.
   assert(leftHandSide.isUninitialized());
   uint8_t numberOfRows = 0;
   uint8_t numberOfColumns = 0;

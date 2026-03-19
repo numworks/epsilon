@@ -12,7 +12,7 @@ void FocusedViewController::viewWillAppear() {
   Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
   Ion::Display::setFocus(k_zoomFactor, KDPoint(0, 0));
   KDColor backgroundColor = (m_success ? BasicColor::Green : BasicColor::Red);
-  m_view.setTexts(testName(), m_success ? "OK" : "KO");
+  m_view.setTexts(testName(), m_success ? "OK" : "NG");
   m_view.setBackgroundColor(backgroundColor);
 }
 

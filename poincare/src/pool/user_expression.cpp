@@ -414,89 +414,113 @@ UserExpression UserExpression::cloneAndReplaceSymbols(
   return UserExpression::Builder(clone);
 }
 
-bool UserExpression::IsIgnoredSymbol(
-    const UserExpression* e, UserExpression::IgnoredSymbols* ignoredSymbols) {
-  if (!e->tree()->isUserVariable()) {
+struct IgnoredSymbols {
+  const Internal::Tree* head;  // UserExpression tree
+  void* tail;
+};
+
+bool IsIgnoredSymbol(const Tree* tree, IgnoredSymbols* ignoredSymbols) {
+  if (!tree->isUserVariable()) {
     return false;
   }
   while (ignoredSymbols) {
     assert(ignoredSymbols->head);
-    if (ignoredSymbols->head->isIdenticalTo(*e)) {
+    if (ignoredSymbols->head->treeIsIdenticalTo(tree)) {
       return true;
     }
-    ignoredSymbols =
-        reinterpret_cast<UserExpression::IgnoredSymbols*>(ignoredSymbols->tail);
+    ignoredSymbols = reinterpret_cast<IgnoredSymbols*>(ignoredSymbols->tail);
   }
   return false;
 }
 
-bool UserExpression::privateDeepSearch(UserExpressionTrinaryTest test,
-                                       const DeepSearchParameters& parameters,
-                                       IgnoredSymbols* ignoredSymbols) const {
-  if (IsIgnoredSymbol(this, ignoredSymbols)) {
+// Call with a UserExpression tree
+bool PrivateDeepSearch(const Tree* tree,
+                       UserExpression::UserExpressionTrinaryTest test,
+                       const DeepSearchParameters& parameters,
+                       IgnoredSymbols* ignoredSymbols) {
+  // - Step 1: Escape if should be ignored
+  if (IsIgnoredSymbol(tree, ignoredSymbols)) {
     return false;
   }
-  OMG::Troolean testResult = test(*this, parameters.auxiliary);
+
+  // - Step 2: Clone the tree on the pool to test it as a UserExpression
+  UserExpression expr = UserExpression::Builder(tree);
+  OMG::Troolean testResult = test(expr, parameters.auxiliary);
   if (testResult == OMG::Troolean::True) {
     return true;
   } else if (testResult == OMG::Troolean::False) {
     return false;
   }
-  assert(testResult == OMG::Troolean::Unknown && !isUninitialized());
+  assert(testResult == OMG::Troolean::Unknown && !expr.isUninitialized());
 
-  // Handle dependencies, store, symbols and functions
-  if (tree()->isDep() || tree()->isStore()) {
-    return cloneChildAtIndex(0).privateDeepSearch(test, parameters,
-                                                  ignoredSymbols);
+  // - Step 3: Handle dependencies and store
+  if (tree->isDep() || tree->isStore()) {
+    return PrivateDeepSearch(tree->child(0), test, parameters, ignoredSymbols);
   }
 
+  // - Step 4: Handle symbols
   SymbolicComputation replaceSymbols = parameters.symbolic;
-  if (tree()->isUserVariable() || tree()->isUserFunction()) {
+  if (tree->isUserVariable() || tree->isUserFunction()) {
     assert(replaceSymbols == SymbolicComputation::ReplaceDefinedSymbols ||
            replaceSymbols == SymbolicComputation::ReplaceDefinedFunctions
            // We need only those cases for now
            || replaceSymbols == SymbolicComputation::KeepAllSymbols);
+
     if (replaceSymbols == SymbolicComputation::KeepAllSymbols ||
         (replaceSymbols == SymbolicComputation::ReplaceDefinedFunctions &&
-         tree()->isUserVariable())) {
+         tree->isUserVariable())) {
       return false;
     }
+
     assert(replaceSymbols == SymbolicComputation::ReplaceDefinedSymbols ||
-           tree()->isUserFunction());
+           tree->isUserFunction());
+
     // Undefined symbols must be preserved.
-    UserExpression e = cloneAndReplaceSymbols(
+    UserExpression eReplaced = expr.cloneAndReplaceSymbols(
         parameters.context, SymbolicComputation::ReplaceDefinedSymbols);
-    return !e.isUninitialized() &&
-           e.privateDeepSearch(test,
-                               {.context = parameters.context,
-                                .symbolic = SymbolicComputation::KeepAllSymbols,
-                                .auxiliary = parameters.auxiliary},
-                               ignoredSymbols);
+    expr = UserExpression();  // Release before recursive call to save memory
+
+    return !eReplaced.isUninitialized() &&
+           PrivateDeepSearch(eReplaced.tree(), test,
+                             {.context = parameters.context,
+                              .symbolic = SymbolicComputation::KeepAllSymbols,
+                              .auxiliary = parameters.auxiliary},
+                             ignoredSymbols);
   }
 
-  /* TODO_PCJ: This is highly ineffective : each child of the tree is cloned on
-   * the pool to be recursivelyMatched. We do so so that
-   * UserExpressionTrinaryTest can use Expression API. */
-  const int childrenCount = numberOfChildren();
+  /* - Step 5: Test children
+   *
+   * TODO_PCJ: This is highly ineffective : each child of the tree is
+   * cloned on the pool to be deepSearched. We do so so that
+   * UserExpressionTrinaryTest can use Expression API.
+   *
+   * This is partially mitigated by the fact that the UserExpression are
+   * released before going through children, so that not all the clones are
+   * alive at the same time. So the memory usage shouldn't be a problem, but
+   * timewise it is still a lot of useless clones.
+   */
 
-  bool isParametered = tree()->isParametric();
+  expr = UserExpression();  // Release before recursive call to save memory
+
+  const int childrenCount = tree->numberOfChildren();
+
+  bool isParametered = tree->isParametric();
   // Run loop backwards to find lists and matrices quicker in NAry expressions
   for (int i = childrenCount - 1; i >= 0; i--) {
     if (isParametered && i == Parametric::k_variableIndex) {
       continue;
     }
-    UserExpression childToAnalyze = cloneChildAtIndex(i);
+    const Tree* childToAnalyze = tree->child(i);
     bool matches;
-    if (isParametered && i == Parametric::FunctionIndex(tree())) {
-      UserExpression symbolExpr =
-          cloneChildAtIndex(Parametric::k_variableIndex);
-      IgnoredSymbols updatedIgnoredSymbols = {.head = &symbolExpr,
+    if (isParametered && i == Parametric::FunctionIndex(tree)) {
+      const Tree* symbolTree = tree->child(Parametric::k_variableIndex);
+      IgnoredSymbols updatedIgnoredSymbols = {.head = symbolTree,
                                               .tail = ignoredSymbols};
-      matches = childToAnalyze.privateDeepSearch(test, parameters,
-                                                 &updatedIgnoredSymbols);
+      matches = PrivateDeepSearch(childToAnalyze, test, parameters,
+                                  &updatedIgnoredSymbols);
     } else {
       matches =
-          childToAnalyze.privateDeepSearch(test, parameters, ignoredSymbols);
+          PrivateDeepSearch(childToAnalyze, test, parameters, ignoredSymbols);
     }
     if (matches) {
       return true;
@@ -507,7 +531,7 @@ bool UserExpression::privateDeepSearch(UserExpressionTrinaryTest test,
 
 bool UserExpression::deepSearch(UserExpressionTrinaryTest test,
                                 const DeepSearchParameters& parameters) const {
-  return privateDeepSearch(test, parameters, nullptr);
+  return PrivateDeepSearch(tree(), test, parameters, nullptr);
 }
 
 bool UserExpression::deepSearch(UserExpressionBinaryTest test,

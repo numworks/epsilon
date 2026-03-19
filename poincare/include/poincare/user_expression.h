@@ -198,7 +198,14 @@ class UserExpression : public Expression {
                bool replaceSymbols = false,
                const SymbolContext& symbolContext = EmptySymbolContext{}) const;
 
-  // Test types for deepSearch.
+  //  --- Deep search ---
+  /* TODO: Currently deep search must clone the expression as a UserExpression
+   * to call the test on it, which is not efficient and useless since all the
+   * calls to deepSearch are testing properties that can be tested directly on
+   * the tree. If at some point trees are strongly typed, we should make these
+   * tests take a Tree as parameter. */
+
+  // Test types
   typedef OMG::Troolean (*UserExpressionTrinaryTest)(const UserExpression& e,
                                                      void* auxiliary);
   typedef bool (*UserExpressionBinaryTest)(const UserExpression& e,
@@ -232,17 +239,6 @@ class UserExpression : public Expression {
                   const SimpleDeepSearchParameters& params = {}) const;
 
  private:
-  struct IgnoredSymbols {
-    UserExpression* head;
-    void* tail;
-  };
-
-  static bool IsIgnoredSymbol(const UserExpression* e,
-                              UserExpression::IgnoredSymbols* ignoredSymbols);
-  bool privateDeepSearch(UserExpressionTrinaryTest test,
-                         const DeepSearchParameters& parameters,
-                         IgnoredSymbols* ignoredSymbols) const;
-
   UserExpression privateCloneAndSimplify(
       const SimplificationParameters& simplificationParameters,
       bool* reductionFailure = nullptr) const;

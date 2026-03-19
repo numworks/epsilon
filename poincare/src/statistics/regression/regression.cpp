@@ -473,22 +473,23 @@ double Regression::privateResidualStandardDeviation(
   return std::sqrt(sum / (n - nCoeff));
 }
 
+bool absoluteValueComparison(double v1, double v2) {
+  return std::fabs(v1) < std::fabs(v2);
+}
+
 bool Regression::isRegressionStrictlyBetter(
     double meanSquaredError1, double meanSquaredError2,
     const Regression::Coefficients& modelCoefficients1,
     const Regression::Coefficients& modelCoefficients2) const {
   assert(numberOfCoefficients() > 0);
 
-  auto absoluteValueComparator = [](double v1, double v2) {
-    return std::fabs(v1) < std::fabs(v2);
-  };
   double maxAllCoefficients = std::max(
       *std::max_element(modelCoefficients1.begin(),
                         modelCoefficients1.begin() + numberOfCoefficients(),
-                        absoluteValueComparator),
+                        absoluteValueComparison),
       *std::max_element(modelCoefficients1.begin(),
                         modelCoefficients1.begin() + numberOfCoefficients(),
-                        absoluteValueComparator));
+                        absoluteValueComparison));
 
   double precision = OMG::Float::Epsilon<double>() * maxAllCoefficients;
   return modelScore(meanSquaredError1, modelCoefficients1) + precision <

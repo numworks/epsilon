@@ -29,9 +29,7 @@ class LayoutField : public Escher::LayoutField {
       return false;
     }
     return userExpression.deepSearch(
-        [](const Poincare::UserExpression& e) {
-          return e.isTrigonometryFunction();
-        });
+        &Poincare::UserExpression::isTrigonometryFunction);
   }
 
  protected:

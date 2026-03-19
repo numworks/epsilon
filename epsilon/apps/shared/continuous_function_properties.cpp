@@ -516,9 +516,7 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
                const CodePoint* symbol =
                    static_cast<const CodePoint*>(auxiliary);
                return (!e.isUninitialized() &&
-                       SymbolHelper::IsUserVariable(e, *symbol))
-                          ? OMG::Troolean::True
-                          : OMG::Troolean::Unknown;
+                       SymbolHelper::IsUserVariable(e, *symbol));
              },
              {.symbolic = SymbolicComputation::KeepAllSymbols,
               .auxiliary = static_cast<void*>(&symbol)});

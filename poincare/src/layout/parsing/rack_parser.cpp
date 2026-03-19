@@ -124,7 +124,7 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
         (rightHandSide->isUserFunction() &&
          rightHandSide->child(0)->isUserVariable()))) {
     // RightHandSide must be symbol or function.
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("3 - Right side must be symbol or function");
   }
   setState(previousState);
   assert(!m_parsingContext.metadata.isUnitConversion);
@@ -276,7 +276,7 @@ void RackParser::popToken() {
     if (m_currentToken.is(Token::Type::EndOfStream)) {
       /* Avoid reading out of buffer (calling popToken would read the character
        * after EndOfStream) */
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      RaiseParseFail("4 - Something was expected ");
     } else {
       m_nextToken = m_tokenizer.popToken();
       if (m_nextToken.type() == Token::Type::AssignmentEqual) {
@@ -355,7 +355,7 @@ Token::Type RackParser::implicitOperatorType() {
 
 void RackParser::parseUnexpected(TreeRef& leftHandSide,
                                  Token::Type stoppingType) {
-  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  RaiseParseFail("5 - Incomplete expression");
 }
 
 uint32_t NumberOfTrailingZerosDigits(LayoutSpanDecoder decoder) {
@@ -412,7 +412,7 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
       Tree* expTree = Integer::Push(exponentDigits, OMG::Base::Decimal);
       IntegerHandler expHandler = Integer::Handler(expTree);
       if (!expHandler.is<int>()) {
-        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+        RaiseParseFail("8 - Exponent is too big ");
       }
       expValue = expHandler.to<int>();
       expTree->removeTree();
@@ -464,7 +464,7 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
           (m_nextToken.is(Token::Type::CustomIdentifier) ||
            m_nextToken.is(Token::Type::SpecialIdentifier) ||
            m_nextToken.is(Token::Type::ReservedFunction)))) {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("9 - Forbidden implicit multiplication");
   }
   isThereImplicitOperator();
 }
@@ -520,7 +520,7 @@ void RackParser::privateParseEastArrow(TreeRef& leftHandSide, bool north,
   TreeRef rightHandSide;
   parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus);
   if (!mergeIntoPercentAdditionIfNeeded(leftHandSide, rightHandSide, north)) {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("10 - Can't parse percent operator");
   }
 }
 
@@ -612,7 +612,7 @@ void RackParser::parseComparisonOperator(TreeRef& leftHandSide,
                                          Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     // Comparison operator must have a left operand
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("11 - Missing left expression 1");
   }
   TreeRef rightHandSide;
   Type operatorType;
@@ -650,7 +650,7 @@ void RackParser::parseComparisonOperator(TreeRef& leftHandSide,
     rightHandSide->moveNodeAtNode(comparison);
     leftHandSide->cloneNodeAtNode(KLogicalAnd);
 #else
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("12 - Boolean are not implemented 1");
 #endif
   } else {
     Tree* comparison = SharedTreeStack->pushBlock(operatorType);
@@ -701,7 +701,7 @@ void RackParser::parseUnitConversion(TreeRef& leftHandSide,
        !Units::IsPureAngleUnit(rightHandSide))) {
     // UnitConvert expect a unit on the right and an expression with units on
     // the left
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("13 - Internal (trying to parse unit conversion)");
   }
   turnIntoBinaryNode(KUnitConversion, leftHandSide, rightHandSide);
 }
@@ -711,14 +711,14 @@ void RackParser::parseLogicalOperatorNot(TreeRef& leftHandSide,
 #if POINCARE_BOOLEAN
   if (!leftHandSide.isUninitialized()) {
     // Left-hand side should be empty
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("14 - No booleans before not");
   }
   // Parse until Not so that not A and B = (not A) and B
   TreeRef rightHandSide = parseUntil(std::max(stoppingType, Token::Type::Not));
   rightHandSide->cloneNodeAtNode(KLogicalNot);
   leftHandSide = rightHandSide;
 #else
-  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  RaiseParseFail("15 - Boolean are not implemented 2");
 #endif
 }
 
@@ -727,7 +727,7 @@ void RackParser::parseBinaryLogicalOperator(Type operatorType,
                                             Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     // Left-hand side missing.
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("16 - Missing left expression 2");
   }
   /* And and Nand have same precedence
    * Or, Nor and Xor have same precedence */
@@ -755,7 +755,7 @@ void RackParser::parseBinaryOperator(const TreeRef& leftHandSide,
                                      Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     // Left-hand side missing.
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("17 - Missing left expression 3");
   }
   rightHandSide = parseUntil(stoppingType);
   assert(!rightHandSide.isUninitialized());
@@ -780,13 +780,13 @@ void RackParser::parseLeftParenthesis(TreeRef& leftHandSide,
     list->cloneNodeOverNode(KParentheses);
     leftHandSide = list;
   } else {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("18 - Only 2D points are handled");
     return;
   }
 
   if (!popTokenIfType(endToken)) {
     // Right parenthesis missing.
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("19 - Missing right parenthesis 1");
   }
   isThereImplicitOperator();
 }
@@ -794,7 +794,7 @@ void RackParser::parseLeftParenthesis(TreeRef& leftHandSide,
 void RackParser::parseBang(TreeRef& leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     // Left-hand side missing
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("20 - Missing ! parameter on the left");
   } else {
     leftHandSide->cloneNodeAtNode(KFact);
   }
@@ -804,7 +804,7 @@ void RackParser::parseBang(TreeRef& leftHandSide, Token::Type stoppingType) {
 void RackParser::parsePercent(TreeRef& leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     // Left-hand side missing
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("21 - Missing % parameter on the left");
   }
   leftHandSide->cloneNodeAtNode(KPercentSimple);
   isThereImplicitOperator();
@@ -819,7 +819,7 @@ void RackParser::parseConstant(TreeRef& leftHandSide,
   leftHandSide = SharedTreeStack->pushPhysicalConstant(uint8_t(index));
   isThereImplicitOperator();
 #else
-  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  RaiseParseFail("22 - Units are not implemented (physical constant)");
 #endif
 }
 
@@ -836,7 +836,7 @@ void RackParser::parseUnit(TreeRef& leftHandSide, Token::Type stoppingType) {
   leftHandSide = Units::Unit::Push(unitRepresentative, unitPrefix);
   isThereImplicitOperator();
 #else
-  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  RaiseParseFail("23 - Units are not implemented (unit)");
 #endif
 }
 
@@ -873,7 +873,8 @@ static void PromoteBuiltin(TreeRef& parameterList, const Builtin* builtin) {
       builtin->pushNode(parameterList->numberOfChildren()));
   if (TypeBlock(type).isParametric()) {
     if (!parameterList->child(1)->isUserVariable()) {
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      RackParser::RaiseParseFail(
+          "24 - Parametric must depend on a variable - linear");
     }
     // Move sub-expression at the end
     parameterList->nextTree()->moveTreeBeforeNode(parameterList->child(0));
@@ -967,7 +968,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
     assert(parameter);
     if (parameter->numberOfChildren() != 1) {
       // Unexpected number of many parameters.
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      RaiseParseFail("25 - LogBase must have only 1 parameter");
     } else {
       parameter->moveTreeOverTree(parameter->child(0));
       base->swapWithTree(parameter);
@@ -986,13 +987,13 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
       builtin = ParsingHelper::GetInverseFunction(builtin);
       if (!builtin) {
         // This function has no inverse
-        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+        RaiseParseFail("26 - This function has no inverse");
       }
     } else {
       // Detect cos^n(x) with n!=-1 --> (cos(x))^n
       if (!ParsingHelper::IsPowerableFunction(builtin)) {
         // This function can't be powered
-        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+        RaiseParseFail("27 - This function can't be powered");
       }
       powerFunction = true;
     }
@@ -1033,7 +1034,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
 
   if (!builtin->checkNumberOfParameters(numberOfParameters)) {
     // Too few or too many parameters provided.
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("28 - Too few or too many parameters provided.");
   }
 
   PromoteBuiltin(leftHandSide, builtin);
@@ -1063,7 +1064,7 @@ void RackParser::parseCustomIdentifier(TreeRef& leftHandSide,
   size_t length = m_currentToken.length();
   if (length >= Symbol::k_maxNameSize) {
     // Identifier name too long.
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("29 - Variable name is too long 1");
   }
   constexpr int bufferSize = sizeof(CodePoint) * Symbol::k_maxNameSize;
   char buffer[bufferSize];
@@ -1084,7 +1085,7 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
                                               Token::Type stoppingType) {
   if (!Symbol::NameLengthIsValid(name, length)) {
     // Identifier name too long.
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("30 - Variable name is too long 2");
   }
 
   /* Check the context: if the identifier does not already exist as a function,
@@ -1131,14 +1132,14 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
       index = parseUntil(Token::Type::RightParenthesis);
       if (!popTokenIfType(Token::Type::RightParenthesis)) {
         // Right delimiter missing
-        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+        RaiseParseFail("31 - Missing right parenthesis 2");
       }
     } else if (hasSubscript || hasLayoutParentheses) {
       index = LayoutParser::Parse(m_currentToken.firstLayout()->child(0),
                                   m_parsingContext);
     } else {
       // Cannot find the index of the sequence
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      RaiseParseFail("32 - Cannot find the index of the sequence");
     }
     assert(index);
     return;
@@ -1204,14 +1205,14 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
   }
 
   if (parameter->numberOfChildren() != 1) {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("33 - Function only have 1 parameters");
   }
 
   parameter->moveTreeOverTree(parameter->child(0));
   if (parameter->type() == Type::UserVariable &&
       strncmp(Symbol::GetName(parameter), name, length) == 0) {
     // Function and variable must have distinct names.
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("34 - Function and variable must have distinct names");
   }
 
   TreeRef result;
@@ -1290,7 +1291,7 @@ Tree* RackParser::tryParseFunctionParameters(bool isBuiltinFunction) {
   if (!parenthesisIsLayout && !popTokenIfType(Token::Type::RightParenthesis)) {
     // Right parenthesis missing
     commaSeparatedList->removeTree();
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("35 - Missing right parenthesis 3");
   }
   return commaSeparatedList;
 }
@@ -1298,7 +1299,7 @@ Tree* RackParser::tryParseFunctionParameters(bool isBuiltinFunction) {
 Tree* RackParser::parseFunctionParameters() {
   Tree* commaSeparatedList = tryParseFunctionParameters(true);
   if (!commaSeparatedList) {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("36 - Missing parenthesis");
   }
   return commaSeparatedList;
 }
@@ -1315,7 +1316,7 @@ void RackParser::parseMatrix(TreeRef& leftHandSide, Token::Type stoppingType) {
     TreeRef row = parseVector();
     if (numberOfRows > 0 && numberOfColumns != row->numberOfChildren()) {
       // Incorrect matrix.
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      RaiseParseFail("37 - Invalid matrix dimension");
     }
     numberOfColumns = row->numberOfChildren();
     Matrix::SetNumberOfColumns(matrix, numberOfColumns);
@@ -1324,31 +1325,31 @@ void RackParser::parseMatrix(TreeRef& leftHandSide, Token::Type stoppingType) {
   }
   if (numberOfRows == 0 || numberOfColumns == 0) {
     // Empty matrix
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("38 - Empty matrix");
     matrix->removeTree();
   } else {
     leftHandSide = matrix;
   }
   isThereImplicitOperator();
 #else
-  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  RaiseParseFail("39 - Matrix not implemented");
 #endif
 }
 
 Tree* RackParser::parseVector() {
   if (!popTokenIfType(Token::Type::LeftBracket)) {
     // Left bracket missing.
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("40 - Left bracket missing");
   }
   TreeRef commaSeparatedList = parseCommaSeparatedList();
   assert(commaSeparatedList);
   if (commaSeparatedList->numberOfChildren() == 0) {
     // Empty vectors are not handled
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("41 - Empty vectors are not handled");
   }
   if (!popTokenIfType(Token::Type::RightBracket)) {
     // Right bracket missing.
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("42 - Right bracket missing");
   }
   return commaSeparatedList;
 }
@@ -1398,7 +1399,7 @@ void RackParser::parseList(TreeRef& leftHandSide, Token::Type stoppingType) {
     assert(!leftHandSide.isUninitialized());
     if (!popTokenIfType(Token::Type::RightBrace)) {
       // Right brace missing.
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      RaiseParseFail("43 - Missing }");
     }
   } else {
     leftHandSide = List::PushEmpty();
@@ -1406,7 +1407,7 @@ void RackParser::parseList(TreeRef& leftHandSide, Token::Type stoppingType) {
   parseListParameters(leftHandSide);
   isThereImplicitOperator();
 #else
-  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  RaiseParseFail("44 - List not implemented");
 #endif
 }
 
@@ -1423,7 +1424,8 @@ void RackParser::parseListParameters(TreeRef& leftHandSide) {
 #endif
     {
       // Lists take either 1 or 2 parameters.
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      RaiseParseFail(
+          "45 - Invalid numer of parameters, should be either 1 or 2");
     }
     parameter->removeNode();
   }
@@ -1441,7 +1443,7 @@ void RackParser::parseLayout(TreeRef& leftHandSide, Token::Type stoppingType) {
 void RackParser::parseSuperscript(TreeRef& leftHandSide,
                                   Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("46 - Syntax error // An exponent cannot exist on its own.");
   }
   const Tree* layout = m_currentToken.firstLayout();
   TreeRef rightHandSide =
@@ -1459,7 +1461,7 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
                                         Token::Type stoppingType) {
   // Only used for NL-logarithm
   if (!leftHandSide.isUninitialized()) {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("47 - NL Log base should be left of log");
   }
   const Tree* layout = m_currentToken.firstLayout();
   TreeRef base = LayoutParser::Parse(layout->child(0), m_parsingContext);
@@ -1467,14 +1469,14 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
   popToken();
   if (m_currentToken.type() != Token::Type::ReservedFunction) {
     // Only ReservedFunction log supports prefixSuperscript
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("48 - Only log should use the prefix log base 1");
   }
   TreeRef log;
   parseReservedFunction(log, Token::Type::ImplicitTimes);
   assert(!log.isUninitialized());
   if (!log->isLog()) {
     // Only log supports prefixSuperscript
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    RaiseParseFail("49 - Only log should use the prefix log base 2");
   }
   // Turn log into logBase
   leftHandSide = PatternMatching::Create(KLogBase(KA, KB),
@@ -1506,7 +1508,7 @@ bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
     result = parseUntil(Token::Type::RightParenthesis);
     if (!popTokenIfType(Token::Type::RightParenthesis)) {
       // Right parenthesis for exponent missing
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      RaiseParseFail("50 - Missing parenthesis in function exponent");
     }
   } else if (popTokenIfType(Token::Type::Superscript)) {
     const Tree* layout = m_currentToken.firstLayout();

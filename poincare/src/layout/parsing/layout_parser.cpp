@@ -84,7 +84,7 @@ Tree* PrivateParse(const Tree* l, ParsingContext parsingContext) {
             if (numberOfChildren == 1) {
           list->cloneNodeOverNode(KParentheses);
         } else {
-          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+          RackParser::RaiseParseFail("1 - Invalid use of parenthesis");
         }
       }
       return list;
@@ -194,7 +194,8 @@ Tree* PrivateParse(const Tree* l, ParsingContext parsingContext) {
         if (isParametric && i == Parametric::k_variableIndex) {
           /* Store the variable child in the parameter context */
           if (!parsedChild->isUserVariable()) {
-            TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+            RackParser::RaiseParseFail(
+                "2 - Parametric must depend on a variable - natural");
           }
           parameterContext = TreeVariableContext(
               Symbol::GetName(parsedChild), nullptr, parsingContext.context);

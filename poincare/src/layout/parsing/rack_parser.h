@@ -42,6 +42,10 @@ class RackParser {
    * a valid expression otherwise (not nullptr). */
   Tree* parseRack();
   Tree* parseTopLevelRack();
+  static void RaiseParseFail(const char* error) {
+    // For now, the error code has no rule is only used for debugging.
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  }
 
  private:
   Tree* parseUntil(Token::Type stoppingType, TreeRef leftHandSide = TreeRef());

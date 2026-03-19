@@ -1040,7 +1040,7 @@ Poincare::UserExpression ContinuousFunction::Model::BuildFunctionFromLayout(
     expressionToStore = ExpressionModel::ReplaceSymbolWithUnknown(
         expressionToStore, symbol, true);
   } else {
-    if (expressionToStore.recursivelyMatches(SymbolHelper::IsTheta)) {
+    if (expressionToStore.deepSearch(SymbolHelper::IsTheta)) {
       symbol = SymbolHelper::IsUserVariable(
                    expressionToStore.cloneChildAtIndex(0), k_polarSymbol)
                    ? k_radiusSymbol

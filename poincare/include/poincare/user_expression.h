@@ -27,14 +27,14 @@ namespace Poincare {
 class Layout;
 class SystemExpression;
 
-/* Used by recursivelyMatches. These struct must be defined
- * outside of UserExpression for their default constructors to properly work. */
-struct MatchParameters {
+/* Used by deepSearch. These struct must be defined outside of UserExpression
+ * for their default constructors to properly work. */
+struct DeepSearchParameters {
   const SymbolContext& context = k_emptySymbolContext;
   SymbolicComputation symbolic = SymbolicComputation::ReplaceDefinedSymbols;
   void* auxiliary = nullptr;
 };
-struct SimpleMatchParameters {
+struct SimpleDeepSearchParameters {
   const SymbolContext& context = k_emptySymbolContext;
   SymbolicComputation symbolic = SymbolicComputation::ReplaceDefinedSymbols;
 };
@@ -198,7 +198,7 @@ class UserExpression : public Expression {
                bool replaceSymbols = false,
                const SymbolContext& symbolContext = EmptySymbolContext{}) const;
 
-  // Test types for recursivelyMatches.
+  // Test types for deepSearch.
   typedef OMG::Troolean (*UserExpressionTrinaryTest)(const UserExpression& e,
                                                      void* auxiliary);
   typedef bool (*UserExpressionBinaryTest)(const UserExpression& e,
@@ -207,29 +207,29 @@ class UserExpression : public Expression {
   typedef bool (UserExpression::*NonStaticSimpleTest)() const;
 
   /**
-   * Recursively tests the expression and its children with the provided test.
+   * Deep tests the expression and its children with the provided test.
    * - If the test returns `Troolean::True` or `Troolean::False`, the search
    * stops and the result is returned as a boolean.
    * - If it returns `Troolean::Unknown`, the search continues.
    * - Returns `false` at the end  if no test returned `True` or `False`.
    */
-  bool recursivelyMatches(UserExpressionTrinaryTest test,
-                          const MatchParameters& params = {}) const;
+  bool deepSearch(UserExpressionTrinaryTest test,
+                  const DeepSearchParameters& params = {}) const;
 
   /**
-   * Recursively tests the expression and its children with the provided test.
+   * Deep tests the expression and its children with the provided test.
    * - If the test returns `true`, the search stops and returns `true`.
    * - If it returns `false`, the search continues.
    * - Returns `false` at the end if no test returned `true`.
    */
-  bool recursivelyMatches(UserExpressionBinaryTest test,
-                          const MatchParameters& params = {}) const;
+  bool deepSearch(UserExpressionBinaryTest test,
+                  const DeepSearchParameters& params = {}) const;
   // See comment above other implementations for details
-  bool recursivelyMatches(UserExpressionSimpleTest test,
-                          const SimpleMatchParameters& params = {}) const;
+  bool deepSearch(UserExpressionSimpleTest test,
+                  const SimpleDeepSearchParameters& params = {}) const;
   // See comment above other implementations for details
-  bool recursivelyMatches(NonStaticSimpleTest test,
-                          const SimpleMatchParameters& params = {}) const;
+  bool deepSearch(NonStaticSimpleTest test,
+                  const SimpleDeepSearchParameters& params = {}) const;
 
  private:
   struct IgnoredSymbols {
@@ -239,9 +239,9 @@ class UserExpression : public Expression {
 
   static bool IsIgnoredSymbol(const UserExpression* e,
                               UserExpression::IgnoredSymbols* ignoredSymbols);
-  bool privateRecursivelyMatches(UserExpressionTrinaryTest test,
-                                 const MatchParameters& parameters,
-                                 IgnoredSymbols* ignoredSymbols) const;
+  bool privateDeepSearch(UserExpressionTrinaryTest test,
+                         const DeepSearchParameters& parameters,
+                         IgnoredSymbols* ignoredSymbols) const;
 
   UserExpression privateCloneAndSimplify(
       const SimplificationParameters& simplificationParameters,

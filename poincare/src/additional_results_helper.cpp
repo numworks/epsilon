@@ -241,7 +241,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
 
 static bool deepIsOfType(const UserExpression& e,
                          std::initializer_list<Internal::AnyType> types) {
-  return e.recursivelyMatches(
+  return e.deepSearch(
       [](const UserExpression& e, void* auxiliary) {
         return e.tree()->isOfType(
             *static_cast<std::initializer_list<Internal::AnyType>*>(auxiliary));

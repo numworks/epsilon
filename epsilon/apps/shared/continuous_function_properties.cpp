@@ -511,7 +511,7 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
    * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */
   return equation.isComparison() &&
          SymbolHelper::IsUserVariable(equation.cloneChildAtIndex(0), symbol) &&
-         !equation.cloneChildAtIndex(1).recursivelyMatches(
+         !equation.cloneChildAtIndex(1).deepSearch(
              [](const UserExpression& e, void* auxiliary) {
                const CodePoint* symbol =
                    static_cast<const CodePoint*>(auxiliary);

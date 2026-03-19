@@ -28,7 +28,7 @@ class LayoutField : public Escher::LayoutField {
       // Failed to parse the expression being edited, return false by default
       return false;
     }
-    return userExpression.recursivelyMatches(
+    return userExpression.deepSearch(
         [](const Poincare::UserExpression& e) {
           return e.isTrigonometryFunction();
         });

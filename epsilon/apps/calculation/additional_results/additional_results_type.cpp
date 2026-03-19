@@ -100,7 +100,7 @@ bool AdditionalResultsType::ForbidAdditionalResults(
       input.isUninitialized() || exactOutput.isUninitialized() ||
       approximateOutput.isUninitialized() || input.isStore() ||
       exactOutput.isList() || approximateOutput.isList() ||
-      approximateOutput.recursivelyMatches([](const UserExpression& e) {
+      approximateOutput.deepSearch([](const UserExpression& e) {
         return e.isUndefinedOrNonReal() || e.isPlusOrMinusInfinity();
       })) {
     return true;
@@ -233,7 +233,7 @@ bool AdditionalResultsType::HasMatrix(const UserExpression& approximateOutput) {
   assert(!approximateOutput.isUninitialized());
   assert(!approximateOutput.hasUnit(true));
   return approximateOutput.isMatrix() &&
-         !approximateOutput.recursivelyMatches(&Expression::isUndefined);
+         !approximateOutput.deepSearch(&Expression::isUndefined);
 }
 
 bool AdditionalResultsType::HasFunction(

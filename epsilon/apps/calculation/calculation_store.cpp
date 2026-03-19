@@ -75,9 +75,8 @@ UserExpression CalculationStore::ansExpression() const {
      * Return approxOutput instead.
      * If exact is Undefined, Ans is also approxOutput */
     ansExpr = approxOutput;
-  } else if (input.recursivelyMatches(
-                 &Expression::isApproximate,
-                 {.context = GlobalContextAccessor::Context()}) &&
+  } else if (input.deepSearch(&Expression::isApproximate,
+                              {.context = GlobalContextAccessor::Context()}) &&
              mostRecentCalculation->equalSign() ==
                  Calculation::EqualSign::Equal) {
     /* Case 2.
@@ -264,7 +263,7 @@ static void processStore(OutputExpressions& outputs,
 #if 0
 /* TODO_PCJ: restore assert
 * Handle case of functions (3*x->f(x)): there should be no symbol except x */
-assert(!value.recursivelyMatches(
+assert(!value.deepSearch(
 [](const Expression e) { return e.isUserVariable(); }));
 #endif
   if (GlobalContextAccessor::Store().setExpressionForUserSymbol(value,

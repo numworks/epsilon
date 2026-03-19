@@ -268,13 +268,12 @@ Calculation::DisplayOutput Calculation::ComputeDisplayOutput(
                                           GlobalContextAccessor::Context())) {
     return ApproximateOnly;
   }
-  SimpleMatchParameters matchParameters{.context =
-                                            GlobalContextAccessor::Context()};
+  SimpleDeepSearchParameters matchParameters{
+      .context = GlobalContextAccessor::Context()};
   if (input.isIdenticalTo(exactOutput) ||
-      input.recursivelyMatches(&Expression::isApproximate, matchParameters) ||
-      exactOutput.recursivelyMatches(&Expression::isApproximate,
-                                     matchParameters) ||
-      input.recursivelyMatches(&Expression::isPercent, matchParameters)) {
+      input.deepSearch(&Expression::isApproximate, matchParameters) ||
+      exactOutput.deepSearch(&Expression::isApproximate, matchParameters) ||
+      input.deepSearch(&Expression::isPercent, matchParameters)) {
     return ExactAndApproximateToggle;
   }
   return ExactAndApproximate;

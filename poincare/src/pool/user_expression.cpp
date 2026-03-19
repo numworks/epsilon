@@ -430,9 +430,9 @@ bool UserExpression::IsIgnoredSymbol(
   return false;
 }
 
-bool UserExpression::privateRecursivelyMatches(
-    UserExpressionTrinaryTest test, const MatchParameters& parameters,
-    IgnoredSymbols* ignoredSymbols) const {
+bool UserExpression::privateDeepSearch(UserExpressionTrinaryTest test,
+                                       const DeepSearchParameters& parameters,
+                                       IgnoredSymbols* ignoredSymbols) const {
   if (IsIgnoredSymbol(this, ignoredSymbols)) {
     return false;
   }
@@ -446,8 +446,8 @@ bool UserExpression::privateRecursivelyMatches(
 
   // Handle dependencies, store, symbols and functions
   if (tree()->isDep() || tree()->isStore()) {
-    return cloneChildAtIndex(0).privateRecursivelyMatches(test, parameters,
-                                                          ignoredSymbols);
+    return cloneChildAtIndex(0).privateDeepSearch(test, parameters,
+                                                  ignoredSymbols);
   }
 
   SymbolicComputation replaceSymbols = parameters.symbolic;
@@ -467,12 +467,11 @@ bool UserExpression::privateRecursivelyMatches(
     UserExpression e = cloneAndReplaceSymbols(
         parameters.context, SymbolicComputation::ReplaceDefinedSymbols);
     return !e.isUninitialized() &&
-           e.privateRecursivelyMatches(
-               test,
-               {.context = parameters.context,
-                .symbolic = SymbolicComputation::KeepAllSymbols,
-                .auxiliary = parameters.auxiliary},
-               ignoredSymbols);
+           e.privateDeepSearch(test,
+                               {.context = parameters.context,
+                                .symbolic = SymbolicComputation::KeepAllSymbols,
+                                .auxiliary = parameters.auxiliary},
+                               ignoredSymbols);
   }
 
   /* TODO_PCJ: This is highly ineffective : each child of the tree is cloned on
@@ -493,11 +492,11 @@ bool UserExpression::privateRecursivelyMatches(
           cloneChildAtIndex(Parametric::k_variableIndex);
       IgnoredSymbols updatedIgnoredSymbols = {.head = &symbolExpr,
                                               .tail = ignoredSymbols};
-      matches = childToAnalyze.privateRecursivelyMatches(
-          test, parameters, &updatedIgnoredSymbols);
+      matches = childToAnalyze.privateDeepSearch(test, parameters,
+                                                 &updatedIgnoredSymbols);
     } else {
-      matches = childToAnalyze.privateRecursivelyMatches(test, parameters,
-                                                         ignoredSymbols);
+      matches =
+          childToAnalyze.privateDeepSearch(test, parameters, ignoredSymbols);
     }
     if (matches) {
       return true;
@@ -506,13 +505,13 @@ bool UserExpression::privateRecursivelyMatches(
   return false;
 }
 
-bool UserExpression::recursivelyMatches(
-    UserExpressionTrinaryTest test, const MatchParameters& parameters) const {
-  return privateRecursivelyMatches(test, parameters, nullptr);
+bool UserExpression::deepSearch(UserExpressionTrinaryTest test,
+                                const DeepSearchParameters& parameters) const {
+  return privateDeepSearch(test, parameters, nullptr);
 }
 
-bool UserExpression::recursivelyMatches(
-    UserExpressionBinaryTest test, const MatchParameters& parameters) const {
+bool UserExpression::deepSearch(UserExpressionBinaryTest test,
+                                const DeepSearchParameters& parameters) const {
   struct Pack {
     UserExpressionBinaryTest* test;
     void* auxiliary;
@@ -525,33 +524,34 @@ bool UserExpression::recursivelyMatches(
                : OMG::Troolean::Unknown;
   };
   Pack pack{&test, parameters.auxiliary};
-  return recursivelyMatches(ternary, {.context = parameters.context,
-                                      .symbolic = parameters.symbolic,
-                                      .auxiliary = &pack});
+  return deepSearch(ternary, {.context = parameters.context,
+                              .symbolic = parameters.symbolic,
+                              .auxiliary = &pack});
 }
 
-bool UserExpression::recursivelyMatches(
+bool UserExpression::deepSearch(
     UserExpressionSimpleTest test,
-    const SimpleMatchParameters& parameters) const {
+    const SimpleDeepSearchParameters& parameters) const {
   UserExpressionTrinaryTest ternary = [](const UserExpression& e, void* pack) {
     UserExpressionSimpleTest* trueTest =
         static_cast<UserExpressionSimpleTest*>(pack);
     return (*trueTest)(e) ? OMG::Troolean::True : OMG::Troolean::Unknown;
   };
-  return recursivelyMatches(ternary, {.context = parameters.context,
-                                      .symbolic = parameters.symbolic,
-                                      .auxiliary = &test});
+  return deepSearch(ternary, {.context = parameters.context,
+                              .symbolic = parameters.symbolic,
+                              .auxiliary = &test});
 }
 
-bool UserExpression::recursivelyMatches(
-    NonStaticSimpleTest test, const SimpleMatchParameters& parameters) const {
+bool UserExpression::deepSearch(
+    NonStaticSimpleTest test,
+    const SimpleDeepSearchParameters& parameters) const {
   UserExpressionTrinaryTest ternary = [](const UserExpression& e, void* pack) {
     NonStaticSimpleTest* trueTest = static_cast<NonStaticSimpleTest*>(pack);
     return (e.**trueTest)() ? OMG::Troolean::True : OMG::Troolean::Unknown;
   };
-  return recursivelyMatches(ternary, {.context = parameters.context,
-                                      .symbolic = parameters.symbolic,
-                                      .auxiliary = &test});
+  return deepSearch(ternary, {.context = parameters.context,
+                              .symbolic = parameters.symbolic,
+                              .auxiliary = &test});
 }
 
 bool UserExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
@@ -565,7 +565,7 @@ bool UserExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
     bool* hasAngleUnits;
   };
   Pack pack{ignoreAngleUnits, hasAngleUnits};
-  return recursivelyMatches(
+  return deepSearch(
       [](const UserExpression& e, void* arg) {
         Pack* pack = static_cast<Pack*>(arg);
         bool isAngleUnit = e.isPureAngleUnit();

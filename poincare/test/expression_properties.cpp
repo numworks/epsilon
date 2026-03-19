@@ -119,8 +119,7 @@ template <typename T>
 void assert_expression_has_property_or_not(const char* input, T test,
                                            bool hasProperty) {
   UserExpression e = UserExpression::Builder(parse(input));
-  quiz_assert_print_if_failure(e.recursivelyMatches(test) == hasProperty,
-                               input);
+  quiz_assert_print_if_failure(e.deepSearch(test) == hasProperty, input);
 }
 
 template <typename T>

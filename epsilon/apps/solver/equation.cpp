@@ -40,7 +40,7 @@ SystemExpression Equation::Model::standardForm(
 
   if (simplifiedInput.isNonReal()) {
     returnedExpression = NonReal::Builder();
-  } else if (simplifiedInput.recursivelyMatches(
+  } else if (simplifiedInput.deepSearch(
                  [](const Expression& e, Context* context) {
                    return (e.isUndefined() || e.isPlusOrMinusInfinity());
                  },

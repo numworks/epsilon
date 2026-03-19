@@ -186,16 +186,12 @@ std::complex<T> Approximator::approximateRoot(const Tree* root) {
                                          m_parameters.complexFormat);
 }
 
-#if !POINCARE_NO_FLOAT_APPROXIMATION
 template std::complex<float> Approximator::approximatePower(const Tree*,
                                                             ComplexFormat);
-#endif
 template std::complex<double> Approximator::approximatePower(const Tree*,
                                                              ComplexFormat);
 
-#if !POINCARE_NO_FLOAT_APPROXIMATION
 template std::complex<float> Approximator::approximateRoot(const Tree*);
-#endif
 template std::complex<double> Approximator::approximateRoot(const Tree*);
 
 template std::complex<float> Private::ComputeNotPrincipalRealRootOfRationalPow(

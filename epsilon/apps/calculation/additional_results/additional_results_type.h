@@ -77,6 +77,9 @@ struct AdditionalResultsType {
           calculationPreferences,
       const Poincare::SymbolContext& symbolContext);
   static bool HasPositiveInteger(const Poincare::UserExpression&);
+  // True if the expression reduces to a non-integer rational.
+  static bool HasRational(const Poincare::UserExpression& exactOutput,
+                          const Poincare::UserParameters& userParameters);
 };
 
 constexpr AdditionalResultsType NoAdditionalResult{.empty = true};

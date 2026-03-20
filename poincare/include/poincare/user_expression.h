@@ -191,8 +191,6 @@ class UserExpression : public Expression {
       Preferences::CalculationPreferences calculationPreferences,
       const SymbolContext& symbolContext) const;
   bool isParsedNumber() const;
-  // Return true if expression reduces to a non-integer rational.
-  bool isBeautifiedRational(const UserParameters& userParameters) const;
   bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
                bool replaceSymbols = false,
                const SymbolContext& symbolContext = EmptySymbolContext{}) const;

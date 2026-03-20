@@ -4,6 +4,7 @@
 #include <poincare/additional_results_helper.h>
 #include <poincare/preferences.h>
 #include <poincare/symbol_context.h>
+#include <poincare/user_expression.h>
 
 #include <cmath>
 
@@ -78,10 +79,10 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   }
   if (HasPositiveInteger(exactOutput)) {
     type.integer = true;
-  } else if (exactOutput.isBeautifiedRational(
-                 {.complexFormat = calculationPreferences.complexFormat,
-                  .angleUnit = calculationPreferences.angleUnit,
-                  .context = symbolContext})) {
+  } else if (HasRational(exactOutput,
+                         {.complexFormat = calculationPreferences.complexFormat,
+                          .angleUnit = calculationPreferences.angleUnit,
+                          .context = symbolContext})) {
     type.rational = true;
   }
   if (type.isUninitialized()) {
@@ -243,6 +244,18 @@ bool AdditionalResultsType::HasPositiveInteger(
     const Poincare::UserExpression& exactOutput) {
   assert(!exactOutput.hasUnit());
   return Poincare::AdditionalResultsHelper::HasPositiveInteger(exactOutput);
+}
+
+bool AdditionalResultsType::HasRational(
+    const Poincare::UserExpression& exactOutput,
+    const Poincare::UserParameters& userParameters) {
+  /* Rationals can be beautified into many different forms: div, opposite,
+   * div(int,int*10^int) etc. Rather than checking all these forms, reduce
+   * the expression and check if it is rational and non-integer. */
+  SystemExpression eReduced =
+      exactOutput.cloneAndReduce(SimplificationParameters{
+          .user = userParameters, .reductionPolicy = {.advanced = false}});
+  return !eReduced.isInteger() && eReduced.isRational();
 }
 
 }  // namespace Calculation

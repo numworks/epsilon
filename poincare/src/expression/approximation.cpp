@@ -311,7 +311,7 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
 #if POINCARE_NO_FLOAT_APPROXIMATION
   /* With this flag, all computations are done using the double
    * templates and result is casted back to ReturnType at the end. */
-  using ComputationType = FloatToDouble<ReturnType>::type;
+  using ComputationType = typename FloatToDouble<ReturnType>::type;
 #else
   using ComputationType = ReturnType;
 #endif

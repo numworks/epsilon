@@ -130,7 +130,9 @@ T Approximator::approximateDerivative(const Tree* child, T at, int order) {
   return std::round(result / roundedError) * roundedError;
 }
 
+#if !POINCARE_NO_FLOAT_APPROXIMATION
 template float Approximator::approximateDerivative(const Tree*, float, int);
+#endif
 template double Approximator::approximateDerivative(const Tree*, double, int);
 
 }  // namespace Poincare::Internal::Approximation::Private

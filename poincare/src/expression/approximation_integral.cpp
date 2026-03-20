@@ -433,7 +433,9 @@ Private::DetailedResult<T> Approximator::iterateAdaptiveQuadrature(
   return result;
 }
 
+#if !POINCARE_NO_FLOAT_APPROXIMATION
 template float Approximator::approximateIntegral(const Tree* integral);
+#endif
 template double Approximator::approximateIntegral(const Tree* integral);
 
 }  // namespace Poincare::Internal::Approximation::Private

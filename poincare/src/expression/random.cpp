@@ -215,14 +215,18 @@ T Random::RandomInt(T a, T b) {
   return std::floor(rand * range + a);
 }
 
+#if !POINCARE_NO_FLOAT_APPROXIMATION
 template float Approximation::Private::Approximator::approximateRandom<float>(
-    const Tree*);
-template double Approximation::Private::Approximator::approximateRandom<double>(
     const Tree*);
 template float Approximation::Private::Approximator::approximateRandomHelper<
     float>(const Tree*);
+template float Random::RandomInt<float>(float, float);
+#endif
+
+template double Approximation::Private::Approximator::approximateRandom<double>(
+    const Tree*);
 template double Approximation::Private::Approximator::approximateRandomHelper<
     double>(const Tree*);
-template float Random::RandomInt<float>(float, float);
 template double Random::RandomInt<double>(double, double);
+
 }  // namespace Poincare::Internal

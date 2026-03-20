@@ -2306,18 +2306,18 @@ template BooleanOrUndefined To(const Tree*, FloatPrecision, const Parameters&);
 template float FloatBinomial(float, float);
 template double FloatBinomial(double, double);
 
+#if !POINCARE_NO_FLOAT_APPROXIMATION
 template float Private::Approximator::privateToFloat(const Tree*);
-template double Private::Approximator::privateToFloat(const Tree*);
-
 template float Private::Approximator::toLocalContext(const Tree*, float);
-template double Private::Approximator::toLocalContext(const Tree*, double);
-
 template std::complex<float> Private::Approximator::privateToComplexRecursive(
     const Tree* e);
+#endif
+template int IndexOfActivePiecewiseBranchAt(const Tree*, float);
+
+template double Private::Approximator::privateToFloat(const Tree*);
+template double Private::Approximator::toLocalContext(const Tree*, double);
 template std::complex<double> Private::Approximator::privateToComplexRecursive(
     const Tree* e);
-
-template int IndexOfActivePiecewiseBranchAt(const Tree*, float);
 template int IndexOfActivePiecewiseBranchAt(const Tree*, double);
 
 }  // namespace Poincare::Internal::Approximation

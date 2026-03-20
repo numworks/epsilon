@@ -248,14 +248,23 @@ class Regression {
   double privateResidualStandardDeviation(
       const Series* series, const Coefficients& modelCoefficients) const;
 
+  /* Returns a scaling factor that represent the coefficient magnitude. By
+   * default this factor is the maximum of all coefficients, but the method can
+   * be overriden to be more suitable for a specific regression type. For
+   * example, trigonometric regression ignores coefficients inside the
+   * trigonometric function, to be robust to angle unit change. */
+  virtual double coefficientMagnitude(
+      const Regression::Coefficients& modelCoefficients1,
+      const Regression::Coefficients& modelCoefficients2) const;
+
   bool isRegressionStrictlyBetter(
       double meanSquaredError1, double meanSquaredError2,
       const Regression::Coefficients& modelCoefficients1,
       const Regression::Coefficients& modelCoefficients2,
       bool areModelsCoefficientsRounded) const;
 
-  /* By default the model score is the mean squared error. Some regressions may
-   * also take the model coefficients into account */
+  /* By default the model score is the mean squared error. Some regressions
+   * may also take the model coefficients into account */
   virtual double modelScore(
       double meanSquaredError,
       const Regression::Coefficients& modelCoefficients) const {

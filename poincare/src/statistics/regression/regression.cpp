@@ -475,19 +475,17 @@ double Regression::privateResidualStandardDeviation(
   return std::sqrt(sum / (n - nCoeff));
 }
 
-double precisionForRoundedModels(
+double Regression::coefficientMagnitude(
     const Regression::Coefficients& modelCoefficients1,
-    const Regression::Coefficients& modelCoefficients2,
-    int numberOfCoefficients) {
-  assert(numberOfCoefficients > 0);
-  double maxAllCoefficients = std::max(
+    const Regression::Coefficients& modelCoefficients2) const {
+  assert(numberOfCoefficients() > 0);
+  return std::max(
       *std::max_element(modelCoefficients1.begin(),
-                        modelCoefficients1.begin() + numberOfCoefficients,
+                        modelCoefficients1.begin() + numberOfCoefficients(),
                         OMG::AbsoluteValueComparison<double>),
       *std::max_element(modelCoefficients2.begin(),
-                        modelCoefficients2.begin() + numberOfCoefficients,
+                        modelCoefficients2.begin() + numberOfCoefficients(),
                         OMG::AbsoluteValueComparison<double>));
-  return OMG::Float::Epsilon<double>() * maxAllCoefficients;
 }
 
 bool Regression::isRegressionStrictlyBetter(
@@ -497,9 +495,9 @@ bool Regression::isRegressionStrictlyBetter(
     bool areModelsCoefficientsRounded) const {
   return modelScore(meanSquaredError1, modelCoefficients1) +
              (areModelsCoefficientsRounded
-                  ? precisionForRoundedModels(modelCoefficients1,
-                                              modelCoefficients2,
-                                              numberOfCoefficients())
+                  ? coefficientMagnitude(modelCoefficients1,
+                                         modelCoefficients2) *
+                        OMG::Float::Epsilon<double>()
                   : 0.0) <
          modelScore(meanSquaredError2, modelCoefficients2);
 }

@@ -245,6 +245,16 @@ void TrigonometricRegression::uniformizeCoefficientsFromFit(
   }
 }
 
+double TrigonometricRegression::coefficientMagnitude(
+    const Regression::Coefficients& modelCoefficients1,
+    const Regression::Coefficients& modelCoefficients2) const {
+  /* Only coefficients A and D are taken into account. B and C are ignored so
+   * that an angle unit change does not impact the best model choice */
+  assert(numberOfCoefficients() == 4);
+  return std::max({modelCoefficients1[0], modelCoefficients1[3],
+                   modelCoefficients2[0], modelCoefficients2[3]});
+}
+
 double TrigonometricRegression::modelScore(
     double meanSquaredError,
     const Regression::Coefficients& modelCoefficients) const {

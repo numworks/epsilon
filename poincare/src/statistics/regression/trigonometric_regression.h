@@ -63,6 +63,10 @@ class TrigonometricRegression : public Regression {
   void uniformizeCoefficientsFromFit(
       Coefficients& modelCoefficients) const override;
 
+  double coefficientMagnitude(
+      const Regression::Coefficients& modelCoefficients1,
+      const Regression::Coefficients& modelCoefficients2) const override;
+
   double modelScore(
       double meanSquaredError,
       const Regression::Coefficients& modelCoefficients) const override;

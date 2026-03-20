@@ -610,15 +610,14 @@ bool UserExpression::isParsedNumber() const {
   return tree->isInteger() || tree->isDecimal();
 }
 
-bool UserExpression::isBeautifiedRational() const {
-  /* Rationals are beautified as div(numerator, denominator) or
-   * opposite(div(numerator, denominator)). */
-  const Internal::Tree* tree = this->tree();
-  if (tree->isOpposite()) {
-    tree = tree->child(0);
-  }
-  return tree->isDiv() && tree->child(0)->isInteger() &&
-         tree->child(1)->isInteger();
+bool UserExpression::isBeautifiedRational(
+    const UserParameters& userParameters) const {
+  /* Rationals can be beautified into many different forms: div, opposite,
+   * div(int,int*10^int) etc. Rather than checking all these forms, reduce
+   * the expression and check if it is rational and non-integer. */
+  SystemExpression reduced = cloneAndReduce(SimplificationParameters{
+      .user = userParameters, .reductionPolicy = {.advanced = false}});
+  return !reduced.isInteger() && reduced.isRational();
 }
 
 /* TODO: Find a better way to avoid duplication of Builder, clone, and

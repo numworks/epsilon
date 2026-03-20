@@ -18,7 +18,8 @@ namespace Calculation {
 void RationalListController::computeAdditionalResults(
     const UserExpression& input, const UserExpression& exactOutput,
     const UserExpression& approximateOutput) {
-  assert(exactOutput.isBeautifiedRational());
+  assert(exactOutput.isBeautifiedRational(
+      {.complexFormat = complexFormat(), .angleUnit = angleUnit()}));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");

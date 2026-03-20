@@ -78,7 +78,10 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   }
   if (HasPositiveInteger(exactOutput)) {
     type.integer = true;
-  } else if (exactOutput.isBeautifiedRational()) {
+  } else if (exactOutput.isBeautifiedRational(
+                 {.complexFormat = calculationPreferences.complexFormat,
+                  .angleUnit = calculationPreferences.angleUnit,
+                  .context = symbolContext})) {
     type.rational = true;
   }
   if (type.isUninitialized()) {

@@ -168,6 +168,10 @@ $(OUTPUT_DIRECTORY)/eraser.flash: $(OUTPUT_DIRECTORY)/eraser.dfu
 
 # TODO
 
+# Rule to get all binaries for a test build (intended for QEMU)
+
+epsilon_test%bin: $(OUTPUT_DIRECTORY)/bootloader/bootloader%bin $(OUTPUT_DIRECTORY)/kernel/kernel.A%bin $(OUTPUT_DIRECTORY)/kernel/kernel.B%bin $(OUTPUT_DIRECTORY)/userland_test.A%bin $(OUTPUT_DIRECTORY)/userland_test.B%bin
+		$(call rule_label,TESTBIN)
 
 # Rules for the composite DFUs made of several ELFs (e.g. epsilon.onboarding.dfu ...)
 

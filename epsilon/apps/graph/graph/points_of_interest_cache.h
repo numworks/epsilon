@@ -79,7 +79,7 @@ class PointsOfInterestCache {
 
  private:
   constexpr static int k_maxNumberOfDisplayablePoints = 64;
-  constexpr static double k_numberOfSteps = 25.0;
+  constexpr static int k_numberOfSteps = 25;
 
   double cacheStep() const;
   double solverStep() const;

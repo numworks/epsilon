@@ -1,5 +1,6 @@
 #pragma once
 
+#include <omg/unreachable.h>
 #include <poincare/numeric_solver/solver.h>
 
 namespace Poincare::Internal {
@@ -30,8 +31,7 @@ class HoneFunctions {
   static Coordinate2D<double> DummyHone(
       typename NumericSolver::Solver<double>::FunctionEvaluation, const void*,
       double, double, Interest, double) {
-    assert(false);
-    return Coordinate2D<double>();
+    OMG_UNREACHABLE;
   }
 };
 

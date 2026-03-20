@@ -988,7 +988,11 @@ QUIZ_CASE(calculation_additional_results) {
 
   // Scientific notation
   assertCalculationAdditionalResultTypeHas("2*10^35", {}, &store);
-  assertCalculationAdditionalResultTypeHas("(2*10^35)/7", {}, &store);
+  assertCalculationAdditionalResultTypeHas("(2*10^35)/7", {.rational = true},
+                                           &store);
+  assertCalculationAdditionalResultTypeHas(
+      "33333333333333/(10^14)", {.rational = true, .scientificNotation = true},
+      &store);
 
   GlobalPreferences::SharedGlobalPreferences()->setDisplayMode(
       Preferences::PrintFloatMode::Scientific);

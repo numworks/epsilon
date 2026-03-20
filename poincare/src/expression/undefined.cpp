@@ -52,10 +52,10 @@ Tree* Undefined::CreateTreeWithDimensionedType(const Tree* e, Type type) {
   Dimension dim = Dimension::Get(e);
   if (dim.isBoolean()) {
     assert(TypeBlock::IsUndefined(type));
-    SharedTreeStack->pushBlock(Type::UndefBoolean);
+    KUndefBoolean->cloneTree();
   } else if (dim.isUnit()) {
     assert(TypeBlock::IsUndefined(type));
-    SharedTreeStack->pushBlock(Type::UndefUnit);
+    KUndefUnit->cloneTree();
   } else {
     if (type == Type::UndefBoolean || type == Type::UndefUnit) {
       type = Type::Undef;

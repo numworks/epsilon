@@ -43,7 +43,8 @@ class RackParser {
   Tree* parseRack();
   Tree* parseTopLevelRack();
   static void RaiseParseFail(const char* error) {
-    // For now, the error code has no rule is only used for debugging.
+    /* For now, the error code has no rule is only used for debugging.
+     * It isn't displayed on the calculator screen. */
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
 

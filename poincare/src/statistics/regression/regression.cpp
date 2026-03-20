@@ -1,4 +1,5 @@
 #include <omg/float.h>
+#include <omg/numeric_comparison.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/float_helper.h>
@@ -474,10 +475,6 @@ double Regression::privateResidualStandardDeviation(
   return std::sqrt(sum / (n - nCoeff));
 }
 
-bool absoluteValueComparison(double v1, double v2) {
-  return std::fabs(v1) < std::fabs(v2);
-}
-
 double precisionForRoundedModels(
     const Regression::Coefficients& modelCoefficients1,
     const Regression::Coefficients& modelCoefficients2,
@@ -486,10 +483,10 @@ double precisionForRoundedModels(
   double maxAllCoefficients = std::max(
       *std::max_element(modelCoefficients1.begin(),
                         modelCoefficients1.begin() + numberOfCoefficients,
-                        absoluteValueComparison),
+                        OMG::AbsoluteValueComparison<double>),
       *std::max_element(modelCoefficients2.begin(),
                         modelCoefficients2.begin() + numberOfCoefficients,
-                        absoluteValueComparison));
+                        OMG::AbsoluteValueComparison<double>));
   return OMG::Float::Epsilon<double>() * maxAllCoefficients;
 }
 

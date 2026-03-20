@@ -161,7 +161,6 @@ bool AdditionalResultsType::HasUnit(
     const Preferences::CalculationPreferences calculationPreferences) {
   // HasUnit is only called when exactOutput has Units
   assert(exactOutput.hasUnit());
-#if 1  // TODO_PCJ
   /* Assume units that cancel themselves have been removed by simplification.
    * Returns NaN if dimension isn't unit */
   double value = exactOutput.approximateUnitToRealScalar<double>(
@@ -173,40 +172,6 @@ bool AdditionalResultsType::HasUnit(
    * with each relevant UnitDisplay and return false if all of them produce the
    * same as exactOutput. */
   return std::isfinite(value);
-#else
-  assert(exactOutput.dimension().isUnit());
-  Context* globalContext =
-      AppsContainerHelper::sharedAppsContainerGlobalContext();
-  Preferences::ComplexFormat complexFormat =
-      calculationPreferences.complexFormat;
-  AngleUnit angleUnit = calculationPreferences.angleUnit;
-  UserExpression unit;
-  UserExpression clone = exactOutput.clone();
-  PoincareHelpers::CloneAndReduceAndRemoveUnit(
-      &clone, &unit, globalContext,
-      {.complexFormat = complexFormat,
-       .angleUnit = angleUnit,
-       .symbolicComputation = SymbolicComputation::ReplaceAllSymbols,
-       .unitConversion = UnitConversion::None});
-  double value =
-      clone.approximateToRealScalar<double>(angleUnit, complexFormat);
-  if (!unit.isUninitialized() &&
-      (Unit::ShouldDisplayAdditionalOutputs(
-           value, unit,
-           GlobalPreferences::SharedGlobalPreferences()->unitFormat()) ||
-       UnitComparison::ShouldDisplayUnitComparison(value, unit))) {
-    /* Sometimes with angle units, the reduction with UnitConversion::None
-     * will be defined but not the reduction with UnitConversion::Default,
-     * which will make the unit list controller crash.  */
-    unit = UserExpression();
-    clone = exactOutput.clone();
-    PoincareHelpers::CloneAndReduceAndRemoveUnit(
-        &clone, &unit, globalContext,
-        {.complexFormat = complexFormat, .angleUnit = angleUnit});
-    return !unit.isUninitialized();
-  }
-  return false;
-#endif
 }
 
 bool AdditionalResultsType::HasVector(

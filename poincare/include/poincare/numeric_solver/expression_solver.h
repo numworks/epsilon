@@ -56,8 +56,8 @@ class RootSolver : public ExpressionSolver {
   DetailedRoot nextDetailedRoot();
   // Find the next root of the child which is also a root of the parent.
   DetailedRoot nextRootSearchingInChild(int childIndex) const;
-  typedef bool (*ExpressionTestAuxiliary)(const Internal::Tree*,
-                                          const SymbolContext& symbolContext);
+  using ExpressionTestAuxiliary = bool (*)(const Internal::Tree*,
+                                           const SymbolContext& symbolContext);
   /* Find the next root among the children satisfying the test, which is also a
    * root of the parent. */
   DetailedRoot nextRootSearchingInChildren(ExpressionTestAuxiliary test) const;

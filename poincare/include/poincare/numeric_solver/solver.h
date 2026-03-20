@@ -14,13 +14,13 @@ namespace Poincare::NumericSolver {
 template <typename T>
 class Solver {
  public:
-  typedef T (*FunctionEvaluation)(T, const void*);
-  typedef Interest (*BracketTest)(Coordinate2D<T>, Coordinate2D<T>,
-                                  Coordinate2D<T>, const void*);
-  typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void*, T, T,
-                                        Interest, T);
-  typedef bool (*DiscontinuityEvaluation)(Coordinate2D<T>, Coordinate2D<T>,
-                                          const void*);
+  using FunctionEvaluation = T (*)(T, const void*);
+  using BracketTest = Interest (*)(Coordinate2D<T>, Coordinate2D<T>,
+                                   Coordinate2D<T>, const void*);
+  using HoneResult = Coordinate2D<T> (*)(FunctionEvaluation, const void*, T, T,
+                                         Interest, T);
+  using DiscontinuityEvaluation = bool (*)(Coordinate2D<T>, Coordinate2D<T>,
+                                           const void*);
 
   Solver(T xStart, T xEnd, FunctionEvaluation f, const void* aux,
          BracketTest bracketTest, HoneResult honeFunction,

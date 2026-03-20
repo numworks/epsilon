@@ -328,7 +328,7 @@ QUIZ_CASE(solver_approximate) {
    * (badly) handles precisions for large x values.
    * TODO: This test was deactivated for now because:
    * - It tested wrong results
-   * - It relied weird discontinuity tests that need to be reworked anyway
+   * - It relied on weird discontinuity tests that need to be reworked anyway
   assert_solves_numerically_to(
       "√(cos(x))=0.1", -224802933571584, -90000000000000,
       {-2.23822e+14, -2.18499e+14, -2.12789e+14, -2.01024e+14, -1.95777e+14,

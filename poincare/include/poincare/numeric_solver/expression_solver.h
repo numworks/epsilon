@@ -29,7 +29,7 @@ class ExpressionSolver : public Solver<double> {
 
 // Specific implementations for each interest
 
-// Search for Minimums and Maximums
+// Search for Minima and Maxima
 class ExtremumSolver : public ExpressionSolver {
  public:
   ExtremumSolver(double xStart, double xEnd, const Internal::Tree* e,

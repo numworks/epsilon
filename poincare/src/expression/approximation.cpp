@@ -1978,7 +1978,7 @@ Tree* Approximator::evaluateMatrixPower(const Tree* e) {
   const Tree* index = base->nextTree();
   T value = privateToFloat<T>(index);
   if (std::isnan(value) || value != std::round(value)) {
-    return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
+    return Undefined::CreateTreeOfTargetDimension(KUndef, e);
   }
   Tree* result = toMatrix(base);
   result->moveTreeOverTree(Matrix::Power(result, value, this));
@@ -2133,7 +2133,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
       if (!branch || branch->isUndefSystem()) {
         /* SelectPiecewiseBranch may return KUndefSystem to signal no active
          * branches */
-        return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
+        return Undefined::CreateTreeOfTargetDimension(KUndef, e);
       }
       return toMatrix(branch);
     }
@@ -2146,9 +2146,9 @@ Tree* Approximator::toMatrix(const Tree* e) {
         case DefinedStatus::Defined:
           return toMatrix(Dependency::Main(e));
         case DefinedStatus::NonReal:
-          return Undefined::CreateTreeWithDimensionedType(e, Type::NonReal);
+          return Undefined::CreateTreeOfTargetDimension(KNonReal, e);
         case DefinedStatus::Undefined:
-          return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
+          return Undefined::CreateTreeOfTargetDimension(KUndef, e);
         default:
           OMG_UNREACHABLE
       }
@@ -2170,7 +2170,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
       // LocalEvaluator uses a complex double abscissa
       VariableType x = privateToComplex<double>(e->child(0));
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
-        return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
+        return Undefined::CreateTreeOfTargetDimension(KUndef, e);
       }
       // Only approximate child once and use LocalEvaluator
       if (m_context.localEvaluator.isFull()) {
@@ -2192,7 +2192,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
                                          ? getParametricBoundOutput<float>(e)
                                          : getParametricBoundOutput<double>(e);
       if (!bounds.isDefined) {
-        return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
+        return Undefined::CreateTreeOfTargetDimension(KUndef, e);
       }
       // TODO: Factorize with same code in AnalysisToComplex without slowing it
       // Cloning here to avoid modifying function argument `e`
@@ -2233,7 +2233,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
     default:
       OMG_UNREACHABLE;
   }
-  return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
+  return Undefined::CreateTreeOfTargetDimension(KUndef, e);
 }
 
 const Tree* Approximator::selectPiecewiseBranch(const Tree* piecewise) {

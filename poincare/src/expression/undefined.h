@@ -19,16 +19,17 @@ class Undefined {
     return e->hasDescendantSatisfying(
         [](const Tree* e) { return e->isUndefined(); });
   }
-  /* Create a tree of type [type] with identical dimension to [e].
+  /* Create a tree [e] with identical dimension to [target].
    * Example:
-   * [e] is list and type is nonreal => {nonreal,...} with correct length.
-   * [e] is matrix type is undef => [[undef,...]...] with correct size.
-   * [e] is boolean => booleanUndef. */
-  static Tree* CreateTreeWithDimensionedType(const Tree* e, Type type);
-  static void ReplaceTreeWithDimensionedType(Tree* e, Type type) {
-    e->moveTreeOverTree(CreateTreeWithDimensionedType(e, type));
+   * [target] is list and [e] is nonreal => {nonreal,...} with correct length.
+   * [target] is matrix and [e] is undef => [[undef,...]...] with correct size.
+   * [target] is boolean and [e] is undef => booleanUndef. */
+  static Tree* CreateTreeOfTargetDimension(const Tree* e, const Tree* target);
+  // Replace [e] with [replace] while preserving the dimension of [e].
+  static void ReplaceTreePreservingDimension(Tree* e, const Tree* replace) {
+    e->moveTreeOverTree(CreateTreeOfTargetDimension(replace, e));
   }
-  /* Check if an undefined tree created by [ReplaceTreeWithDimensionedType] */
+  // Check if an undefined tree created with [CreateTreeOfTargetDimension]
   static bool IsDimensionedUndefined(const Tree* t);
   template <typename T>
   static bool IsUndefined(std::complex<T> c) {

@@ -349,8 +349,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
            * expression. It might work when used with other lists because a
            * scalar can be interpret as a constant list in most contexts but
            * expect issues. */
-          Undefined::ReplaceTreeWithDimensionedType(e,
-                                                    Type::UndefOutOfDefinition);
+          Undefined::ReplaceTreePreservingDimension(e, KOutOfDefinition);
           return true;
         }
         TreeStackCheckpoint::Raise(exc);

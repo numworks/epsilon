@@ -39,40 +39,40 @@ bool Undefined::MustBubbleUpUndefinedChild(const Tree* e, int childIndex) {
          !IsListSequenceFunctionIndex(childIndex, e);
 }
 
-Tree* Undefined::CreateTreeWithDimensionedType(const Tree* e, Type type) {
-  assert(TypeBlock::IsZero(type) || TypeBlock::IsUndefined(type));
-  assert(!e->isDepList());
+Tree* Undefined::CreateTreeOfTargetDimension(const Tree* e,
+                                             const Tree* target) {
+  assert(!target->isDepList());
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
-  int length = Dimension::ListLength(e);
+  int length = Dimension::ListLength(target);
   if (length >= 0) {
     SharedTreeStack->pushListSequence();
     "k"_e->cloneTree();
     Integer::Push(length);
   }
-  Dimension dim = Dimension::Get(e);
+  Dimension dim = Dimension::Get(target);
   if (dim.isBoolean()) {
-    assert(TypeBlock::IsUndefined(type));
+    assert(e->isUndefined());
     KUndefBoolean->cloneTree();
   } else if (dim.isUnit()) {
-    assert(TypeBlock::IsUndefined(type));
+    assert(e->isUndefined());
     KUndefUnit->cloneTree();
   } else {
-    if (type == Type::UndefBoolean || type == Type::UndefUnit) {
-      type = Type::Undef;
+    if (e->isUndefBoolean() || e->isUndefUnit()) {
+      e = KUndef;
     }
     if (dim.isMatrix()) {
       int nRows = dim.matrix.rows;
       int nCols = dim.matrix.cols;
       SharedTreeStack->pushMatrix(nRows, nCols);
       for (int i = 0; i < nRows * nCols; i++) {
-        SharedTreeStack->pushBlock(type);
+        e->cloneTree();
       }
     } else if (dim.isPoint()) {
       SharedTreeStack->pushPoint();
-      SharedTreeStack->pushBlock(type);
-      SharedTreeStack->pushBlock(type);
+      e->cloneTree();
+      e->cloneTree();
     } else {
-      SharedTreeStack->pushBlock(type);
+      e->cloneTree();
     }
   }
   if (length >= 0) {
@@ -84,19 +84,23 @@ Tree* Undefined::CreateTreeWithDimensionedType(const Tree* e, Type type) {
 
 bool Undefined::ShallowBubbleUpUndef(Tree* e) {
   uint8_t i = 0;
+  const Tree* worstChild = nullptr;
   Type worstType = Type::Zero;
   for (const Tree* child : e->children()) {
     // Piecewise can have undefined branches, but not conditions
     if (child->isUndefined() && MustBubbleUpUndefinedChild(e, i)) {
       Type childType = child->type();
-      worstType = childType > worstType ? childType : worstType;
+      if (childType > worstType) {
+        worstType = childType;
+        worstChild = child;
+      }
     }
     i++;
   }
   if (worstType == Type::Zero) {
     return false;
   }
-  ReplaceTreeWithDimensionedType(e, worstType);
+  ReplaceTreePreservingDimension(e, worstChild);
   return true;
 }
 

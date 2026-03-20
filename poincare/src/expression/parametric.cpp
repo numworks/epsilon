@@ -196,7 +196,7 @@ bool ReduceSumOrProduct(Tree* e) {
   ComplexProperties propertiesUpperBound = GetComplexProperties(upperBound);
   if (propertiesLowerBound.isNonReal() || propertiesUpperBound.isNonReal()) {
     // NOTE: catches bounds like: i, k+i
-    Undefined::ReplaceTreeWithDimensionedType(e, Type::UndefOutOfDefinition);
+    Undefined::ReplaceTreePreservingDimension(e, KOutOfDefinition);
     return true;
   }
   ComplexProperties propertiesDifference =
@@ -208,7 +208,7 @@ bool ReduceSumOrProduct(Tree* e) {
         HasUserVariable(lowerBound) || HasUserVariable(upperBound);
     if (!boundsHaveSymbol || propertiesDifference.isNonReal()) {
       // NOTE: catches bounds like: π
-      Undefined::ReplaceTreeWithDimensionedType(e, Type::UndefOutOfDefinition);
+      Undefined::ReplaceTreePreservingDimension(e, KOutOfDefinition);
       return true;
     }
     if (!propertiesDifference.isReal()) {

@@ -153,7 +153,7 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
       totalNumberOfDependencies--;
       continue;
     }
-    Tree* approximation = depI->cloneTree();
+    TreeRef approximation = depI->cloneTree();
     /* TODO it would be good to assert the tree is projected here. Unfortunatly
      * this is not always the case as the reduction can be called in the earlier
      * part of beautification */
@@ -190,9 +190,8 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
         totalNumberOfDependencies--;
         continue;
       } else {
-        Type undefType = approximation->type();
+        Undefined::ReplaceTreePreservingDimension(dep, approximation);
         approximation->removeTree();
-        Undefined::ReplaceTreeWithDimensionedType(dep, undefType);
         return true;
       }
     }
@@ -217,7 +216,7 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
     // To avoid infinite loops
     if (!main->isNonReal()) {
       NAry::AddChild(set, main->cloneTree());
-      Undefined::ReplaceTreeWithDimensionedType(main, Type::NonReal);
+      Undefined::ReplaceTreePreservingDimension(main, KNonReal);
       ShallowRemoveUselessDependencies(dep);
       return true;
     }

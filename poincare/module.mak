@@ -250,6 +250,7 @@ _sources_poincare_test_cases := $(addprefix test/, \
   rational.cpp \
   regularized_function.cpp \
   roots.cpp \
+  singularity_solver.cpp \
   serialization.cpp \
   set.cpp \
   sign_and_properties.cpp \

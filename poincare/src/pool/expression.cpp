@@ -192,6 +192,8 @@ bool Expression::isComparison() const { return tree()->isComparison(); }
 
 bool Expression::isEquality() const { return tree()->isEqual(); }
 
+bool Expression::isInteger() const { return tree()->isInteger(); }
+
 bool Expression::isRational() const { return tree()->isRational(); }
 
 bool Expression::isPureAngleUnit() const {

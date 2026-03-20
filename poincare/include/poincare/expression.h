@@ -104,6 +104,7 @@ class Expression : public PoolHandle {
   bool isPoint() const;
   // Return true if Decimal, Integer or Opposite of those.
   bool isPureAngleUnit() const;
+  bool isInteger() const;
   bool isRational() const;
   bool isStore() const;
   bool isUndefined() const;

@@ -6,7 +6,6 @@
 #include <poincare/src/expression/projection.h>
 
 #include "../app.h"
-#include "complex_list_controller.h"
 
 using namespace Poincare;
 using namespace Shared;

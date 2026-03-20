@@ -2,8 +2,6 @@
 
 #include <apps/shared/math_app.h>
 
-#include <new>
-
 #include "calculation_store.h"
 #include "edit_expression_controller.h"
 #include "history_controller.h"

@@ -43,7 +43,7 @@ $(addprefix $(PATH_ion)/src/simulator/assets/, \
 
 $(OUTPUT_DIRECTORY)/app/res/mipmap/ic_launcher.png: $(PATH_ion)/src/simulator/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)
-	$(Q) convert -background "#FFB734" MSVG:$< $@
+	$(Q) convert -background "#$(_ion_icon_background)" MSVG:$< $@
 
 $(OUTPUT_DIRECTORY)/app/res/mipmap-v26/ic_launcher_foreground.png: $(PATH_ion)/src/simulator/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)

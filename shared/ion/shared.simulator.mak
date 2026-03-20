@@ -105,6 +105,12 @@ $(_ion_simulator_backgrounds_generated): $(_ion_simulator_background) | $$(@D)/.
 
 # Simulator backgrounds - end
 
+ifeq ($(ION_variant),epsilon)
+_ion_icon_background = FFB734
+else
+_ion_icon_background = 728372
+endif
+
 include $(PATH_ion)/$(PLATFORM).mak
 
 # Simulator files - begin

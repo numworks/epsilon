@@ -479,6 +479,8 @@ bool ShallowBeautifyPowerOfTangent(Tree* e, void* context) {
 // Reverse most system projections to display better expressions
 bool ShallowBeautify(Tree* e, void* context) {
   bool changed = false;
+  // UndefSystem nodes shouldn't be beautified or displayed.
+  assert(!e->isUndefSystem());
   if (e->isAdd() || e->isMult()) {
     changed = NAry::Flatten(e);
   }

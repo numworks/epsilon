@@ -220,9 +220,11 @@ int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
       Private::Approximator(Precision<T>::value, SystemExpressionPolicy{},
                             std::move(context))
           .selectPiecewiseBranch(piecewise);
-  return !branch            ? k_unknownActiveBranch
-         : branch == KUndef ? k_noActiveBranch
-                            : piecewise->indexOfChild(branch);
+  /* SelectPiecewiseBranch may return KUndefSystem to signal no active
+   * branches */
+  return !branch                  ? k_unknownActiveBranch
+         : branch == KUndefSystem ? k_noActiveBranch
+                                  : piecewise->indexOfChild(branch);
 }
 
 Tree* ExtractRealPart(const Tree* e) {
@@ -1593,7 +1595,11 @@ std::complex<T> Approximator::miscToComplex(const Tree* e) {
     }
     case Type::Piecewise: {
       const Tree* branch = selectPiecewiseBranch(e);
-      return branch ? privateToComplexRecursive<T>(branch) : NAN;
+      /* SelectPiecewiseBranch may return KUndefSystem to signal no active
+       * branches */
+      return !branch || branch->isUndefSystem()
+                 ? NAN
+                 : privateToComplexRecursive<T>(branch);
     }
     case Type::Distribution: {
       const Tree* child = e->child(0);
@@ -1854,8 +1860,9 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
   }
   if (e->isPiecewise()) {
     const Tree* branch = selectPiecewiseBranch(e);
-    if (!branch || branch->isUndefined()) {
-      // SelectPiecewiseBranch may return KUndef to signal no active branches
+    if (!branch || branch->isUndefSystem()) {
+      /* SelectPiecewiseBranch may return KUndefSystem to signal no active
+       * branches */
       return BooleanOrUndefined::Undef();
     }
     return privateToBoolean(branch);
@@ -2123,8 +2130,9 @@ Tree* Approximator::toMatrix(const Tree* e) {
     }
     case Type::Piecewise: {
       const Tree* branch = selectPiecewiseBranch(e);
-      if (!branch || branch->isUndefined()) {
-        // SelectPiecewiseBranch may return KUndef to signal no active branches
+      if (!branch || branch->isUndefSystem()) {
+        /* SelectPiecewiseBranch may return KUndefSystem to signal no active
+         * branches */
         return Undefined::CreateTreeWithDimensionedType(e, Type::Undef);
       }
       return toMatrix(branch);
@@ -2252,7 +2260,7 @@ const Tree* Approximator::selectPiecewiseBranch(const Tree* piecewise) {
   }
   // No clause matched
   // TODO: return a dimensioned Undef
-  return KUndef;
+  return KUndefSystem;
 }
 
 bool CanApproximate(const Tree* e, int firstNonApproximableVarId) {

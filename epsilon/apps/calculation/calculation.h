@@ -160,17 +160,17 @@ class Calculation {
   void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
 
   const Poincare::Internal::Tree* inputTree() const {
-    return m_inputTreeSize == 0 ? KUndef
+    return m_inputTreeSize == 0 ? KUndefSystem
                                 : Poincare::Internal::Tree::FromBlocks(m_trees);
   }
   const Poincare::Internal::Tree* exactOutputTree() const {
-    return m_exactOutputTreeSize == 0 ? KUndef
+    return m_exactOutputTreeSize == 0 ? KUndefSystem
                                       : Poincare::Internal::Tree::FromBlocks(
                                             m_trees + m_inputTreeSize);
   }
   const Poincare::Internal::Tree* approximatedOutputTree() const {
     return m_approximatedOutputTreeSize == 0
-               ? KUndef
+               ? KUndefSystem
                : Poincare::Internal::Tree::FromBlocks(
                      m_trees + m_inputTreeSize + m_exactOutputTreeSize);
   }

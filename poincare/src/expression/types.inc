@@ -383,6 +383,7 @@ NODE(UndefBadType, BASE)             // non-integers in gcd,lcm,...
 NODE(UndefOutOfDefinition, BASE)     // arg(0)
 NODE(UndefNotDefined, BASE)  // Global variable that has not been defined
 NODE(UndefForbidden, BASE)   // Forbidden by preferences, exam-modes, ...
+NODE(UndefSystem, BASE)      // Used by system, shouldn't be displayed
 NODE(Undef, BASE)            // Default
 
 RANGE(Undefined, NonReal, Undef)

@@ -187,6 +187,8 @@ const Builtin* Builtin::GetSpecialIdentifier(
       && type != Type::NonReal
 #endif
   ) {
+    // UndefSystem should not be laid out or displayed
+    assert(type != Type::UndefSystem);
     // If the type is undefined, we return the Undef special identifier.
     // This is useful for the parser to handle undefined expressions.
     return GetSpecialIdentifier(Type::Undef, translate);

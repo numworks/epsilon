@@ -59,6 +59,29 @@ struct FloatTypeAccessor<double> {
   using type = double;
 };
 
+/* Helper to replace a type built on float by a type built on double. */
+template <typename T>
+struct FloatToDouble {
+  using type = T;
+};
+
+#if POINCARE_NO_FLOAT_APPROXIMATION
+template <>
+struct FloatToDouble<float> {
+  using type = double;
+};
+
+template <>
+struct FloatToDouble<std::complex<float>> {
+  using type = std::complex<double>;
+};
+
+template <>
+struct FloatToDouble<Coordinate2D<float>> {
+  using type = Coordinate2D<double>;
+};
+#endif
+
 template <typename ReturnType>
 ReturnType To(const Tree* e, const Parameters& parameters) {
   using float_type = typename FloatTypeAccessor<ReturnType>::type;
@@ -274,20 +297,29 @@ ReturnType Process(const Tree* e, FloatPrecision floatPrecision,
   }
   Tree* processed = PreprocessTree(e, parameters.expressionParameters);
 
+#if POINCARE_NO_FLOAT_APPROXIMATION
+  floatPrecision = FloatPrecision::Double;
+#else
   floatPrecision = UpdateFloatPrecision(e, floatPrecision,
                                         parameters.policy.onlyReplaceNumerical);
-#if POINCARE_NO_FLOAT_APPROXIMATION
-  assert(floatPrecision == FloatPrecision::Double);
 #endif
   Approximator approximator =
       Approximator{floatPrecision, parameters.expressionParameters,
                    Context(contextArguments...)};
   const Tree* targetTree = processed ? processed : e;
 
-  ReturnType result =
+#if POINCARE_NO_FLOAT_APPROXIMATION
+  /* With this flag, all computations are done using the double
+   * templates and result is casted back to ReturnType at the end. */
+  using ComputationType = FloatToDouble<ReturnType>::type;
+#else
+  using ComputationType = ReturnType;
+#endif
+
+  ComputationType result =
       parameters.policy.onlyReplaceNumerical
-          ? approximator.approximateScalars<ReturnType>(targetTree)
-          : approximator.specificApproximateTo<ReturnType>(targetTree);
+          ? approximator.approximateScalars<ComputationType>(targetTree)
+          : approximator.specificApproximateTo<ComputationType>(targetTree);
   if (!processed) {
     return result;
   }

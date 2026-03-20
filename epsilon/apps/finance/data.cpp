@@ -176,7 +176,7 @@ double computeRPct(double N, double PV, double Pmt, double FV, double PY,
     double a = computeA(i, S, b, N);
     return PV + a * Pmt + b * FV;
   };
-  Solver<double> solver = BuildRootSolver(-100., 100., evaluation, parameters);
+  Solver<double> solver = BuildBasicRootSolver(-100., 100., evaluation, parameters);
   return solver.next().x;
 }
 

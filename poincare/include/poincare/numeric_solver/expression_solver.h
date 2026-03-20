@@ -22,7 +22,7 @@ class ExpressionSolver : public Solver<double> {
     return reinterpret_cast<const Internal::Tree*>(m_auxiliary);
   }
 
-  void setTree(const Internal::Tree* e);
+  void setEvaluator(const Internal::Tree* e);
 
   const SymbolContext& m_context;
 };

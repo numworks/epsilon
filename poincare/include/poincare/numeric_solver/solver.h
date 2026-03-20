@@ -117,7 +117,7 @@ class Solver {
 
 // Specialized builders for common use cases
 
-Solver<double> BuildRootSolver(
+Solver<double> BuildBasicRootSolver(
     double xStart, double xEnd, Solver<double>::FunctionEvaluation f,
     const void* aux,
     Solver<double>::DiscontinuityEvaluation discontinuityTest = nullptr);

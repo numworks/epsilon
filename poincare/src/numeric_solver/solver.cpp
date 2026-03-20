@@ -23,7 +23,7 @@ Solver<T>::Solver(T xStart, T xEnd, FunctionEvaluation f, const void* aux,
   reset(xStart, xEnd, searchStep);
 };
 
-Solver<double> BuildRootSolver(
+Solver<double> BuildBasicRootSolver(
     double xStart, double xEnd, Solver<double>::FunctionEvaluation f,
     const void* aux,
     Solver<double>::DiscontinuityEvaluation discontinuityTest) {

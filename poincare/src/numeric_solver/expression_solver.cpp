@@ -17,10 +17,10 @@ ExpressionSolver::ExpressionSolver(double xStart, double xEnd, const Tree* e,
     : Solver<double>(xStart, xEnd, nullptr, e, test, hone,
                      SolverTests<double>::IsDiscontinuousInBracket),
       m_context(context) {
-  setTree(e);
+  setEvaluator(e);
 }
 
-void ExpressionSolver::setTree(const Internal::Tree* e) {
+void ExpressionSolver::setEvaluator(const Internal::Tree* e) {
   m_auxiliary = e;
   if (!e || e->hasDescendantSatisfying(
                 [](const Tree* e) { return e->isRandomized(); })) {

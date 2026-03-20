@@ -50,7 +50,7 @@ IntersectionSolver::IntersectionSolver(double xStart, double xEnd,
   Tree* diff =
       FunctionDifferenceForIntersection(f.tree(), g.tree(), areAlongSameAxis);
   m_diff = PreparedFunction::Builder(diff);
-  setTree(m_diff.tree());
+  setEvaluator(m_diff.tree());
 }
 
 Solution<double> IntersectionSolver::next() {

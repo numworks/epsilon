@@ -113,7 +113,7 @@ const Tree* ExactFormula::GetTrigOf(const Tree* angle, Type type) {
       const Tree* result = type == Type::Sin   ? ef.m_sin
                            : type == Type::Cos ? ef.m_cos
                                                : ef.m_tan;
-      assert(!result->isUndef());
+      assert(!result->isUndefined());
       return result;
     }
   }
@@ -127,7 +127,7 @@ const Tree* ExactFormula::GetAngleOf(const Tree* trig, Type type) {
     const Tree* treeToMatch = type == Type::Sin   ? ef.m_sin
                               : type == Type::Cos ? ef.m_cos
                                                   : ef.m_tan;
-    if (!treeToMatch->isUndef() && trig->treeIsIdenticalTo(treeToMatch)) {
+    if (!treeToMatch->isUndefined() && trig->treeIsIdenticalTo(treeToMatch)) {
       return ef.m_angle;
     }
   }

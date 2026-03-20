@@ -550,7 +550,7 @@ bool ShallowBeautify(Tree* e, void* context) {
 
   /* A matrix full of undef is a simple undef */
   if (e->isMatrix() &&
-      !e->hasChildSatisfying([](const Tree* e) { return !e->isUndef(); })) {
+      !e->hasChildSatisfying([](const Tree* e) { return !e->isUndefined(); })) {
     e->cloneTreeOverTree(KUndef);
     return true;
   }
@@ -729,7 +729,7 @@ Tree* GetPolarFormat(const Tree* e,
     Dependency::DeepRemoveUselessDependencies(result);
   }
   Tree* polarForm = result->isDep() ? Dependency::Main(result) : result;
-  if (polarForm->isUndef()) {
+  if (polarForm->isUndefined()) {
     polarForm->removeTree();
     return nullptr;
   }

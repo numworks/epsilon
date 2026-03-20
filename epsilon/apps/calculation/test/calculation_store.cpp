@@ -293,8 +293,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Hidden, "[[1,2,3]]", nullptr, &store);
   assertCalculationIs("[[1,x,3]]", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Hidden, "[[1,undef,3]]", nullptr, &store);
-  assertCalculationIs("[[1/0,2/0]]", DisplayOutput::ApproximateOnly,
-                      EqualSign::Hidden, nullptr, "undef", &store);
+  assertCalculationIs("[[1/0,2/0]]", DisplayOutput::ExactOnly,
+                      EqualSign::Hidden, "undef", nullptr, &store);
   assertCalculationIs("{1/0,2/0}", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Hidden, "{undef,undef}", nullptr, &store);
   assertCalculationIs("28^7", DisplayOutput::ApproximateIsIdenticalToExact,

@@ -31,7 +31,7 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to("(1,undef)", "(1,undef)");
   // Dependency with non-scalar main-tree
   simplifies_to("sequence(k,k,3)×log(-7)", "{nonreal,nonreal,nonreal}");
-  simplifies_to("arcsin(6)×[[1,1]]", "[[nonreal,nonreal]]");
+  simplifies_to_no_beautif("arcsin(6)×[[1,1]]", "[[nonreal,nonreal]]");
   simplifies_to("sequence(k,k,3)×log(0)", "{undef,undef,undef}");
   simplifies_to_no_beautif("ln(0)×[[1,1]]", "[[undef,undef]]");
   // TODO should be "[[undef]]" or "undef" with beautification

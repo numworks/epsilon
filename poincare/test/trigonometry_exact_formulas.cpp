@@ -26,7 +26,7 @@ class Poincare::Internal::ExactFormulaTest {
       a->cloneTreeOverTree(ef.m_tan);
       quiz_assert(!SystematicReduction::DeepReduce(a));
       a->removeTree();
-      assert(!ef.m_cos->isUndef() && !ef.m_sin->isUndef());
+      assert(!ef.m_cos->isUndefined() && !ef.m_sin->isUndefined());
 
       // Check with approximation that exact formulas are correct.
       float angle =
@@ -46,7 +46,7 @@ class Poincare::Internal::ExactFormulaTest {
           OMG::Float::RoughlyEqual<float>(std::sin(angle), sin, epsilon));
       quiz_assert(
           OMG::Float::RoughlyEqual<float>(std::asin(sin), angle, epsilon));
-      if (!ef.m_tan->isUndef()) {
+      if (!ef.m_tan->isUndefined()) {
         float tan =
             Approximation::To<float>(ef.m_tan, Approximation::Parameters{});
         quiz_assert(

@@ -112,6 +112,10 @@ class Solver {
   BracketTest m_bracketTest;
   HoneResult m_honeFunction;
   DiscontinuityEvaluation m_discontinuityTest;
+  /* Opaque context pointer passed to the evaluator, bracketTest, and
+   * discontinuityTest callbacks. Its actual type depends on the subclass:
+   * - BuildBasicRootSolver: const double* (array of coefficients)
+   * - ExpressionSolver: const Tree* (expression tree for approximation) */
   const void* m_auxiliary;
 };
 

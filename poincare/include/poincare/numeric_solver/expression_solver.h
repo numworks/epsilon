@@ -11,7 +11,13 @@ namespace Poincare::NumericSolver {
 class ExpressionSolver : public Solver<double> {
  public:
   /* WARNING: pointer to e must stay valid during the whole lifetime of the
-   * solver. */
+   * solver.
+   * - e is a prepared expression (symbols substituted), ready for numerical
+   *   evaluation via Approximation::To. It may be nullptr if the evaluator is
+   *   set later via setEvaluator (used by IntersectionSolver).
+   * - IsDiscontinuousInBracket is always used as the discontinuity test
+   *   because all expression-based solvers need discontinuity detection around
+   *   undefined sub-intervals (e.g. log, sqrt, 1/x). */
   ExpressionSolver(double xStart, double xEnd, const Internal::Tree* e,
                    const SymbolContext& context,
                    Solver<double>::BracketTest test,

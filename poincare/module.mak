@@ -334,10 +334,6 @@ ifneq ($(POINCARE_TREE_LOG),0)
 SFLAGS_poincare += -DPOINCARE_TREE_LOG=1
 endif
 
-ifeq ($(PLATFORM),n0200)
-SFLAGS_poincare += -DPOINCARE_INPUT_BEAUTIFICATION=0
-endif
-
 CXXFLAGS += -include $(PATH_poincare)/config.$(POINCARE_variant).h
 
 # Deactivate clang and gcc warnings for out of range cases in switches.

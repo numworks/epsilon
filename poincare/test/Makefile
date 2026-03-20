@@ -39,7 +39,7 @@ ION_external_apps := 0
 EMBED_EXTRA_DATA := 0
 $(call import_module,ion,../../shared/ion)
 ifeq ($(PLATFORM_TYPE),simulator)
-_poincare_test_modules += ion
+_poincare_test_modules += ion.test
 else
 _poincare_test_modules += ion.userland.consoledisplay.test
 endif

@@ -65,7 +65,6 @@ struct FloatToDouble {
   using type = T;
 };
 
-#if POINCARE_NO_FLOAT_APPROXIMATION
 template <>
 struct FloatToDouble<float> {
   using type = double;
@@ -80,7 +79,6 @@ template <>
 struct FloatToDouble<Coordinate2D<float>> {
   using type = Coordinate2D<double>;
 };
-#endif
 
 template <typename ReturnType>
 ReturnType To(const Tree* e, const Parameters& parameters) {

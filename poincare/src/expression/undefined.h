@@ -34,7 +34,7 @@ inline SpecialType GetSpecialType(const Tree* e) {
   return static_cast<SpecialType>(e->nodeValue(0));
 }
 
-inline bool IsUndefined(const Tree* e, SpecialType type) {
+inline bool IsUndefSpecial(const Tree* e, SpecialType type) {
   return e->isUndefSpecial() && GetSpecialType(e) == type;
 }
 

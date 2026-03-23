@@ -522,8 +522,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
       /* Not using Dimension operator == because different representatives are
        * allowed. */
       return childDim[0].isUnit() && childDim[1].isUnit() &&
-             (Undefined::IsUndefined(e->child(0),
-                                     Undefined::SpecialType::Unit) ||
+             (Undefined::IsUndefSpecial(e->child(0),
+                                        Undefined::SpecialType::Unit) ||
               childDim[0].unit.vector == childDim[1].unit.vector);
     case Type::DepList:
       /* For now units and booleans are allowed in depLists. For a later
@@ -796,9 +796,9 @@ Dimension Dimension::Get(const Tree* e,
       return Scalar();
     }
     case Type::UndefSpecial: {
-      if (Undefined::IsUndefined(e, Undefined::SpecialType::Boolean)) {
+      if (Undefined::IsUndefSpecial(e, Undefined::SpecialType::Boolean)) {
         return Boolean();
-      } else if (Undefined::IsUndefined(e, Undefined::SpecialType::Unit)) {
+      } else if (Undefined::IsUndefSpecial(e, Undefined::SpecialType::Unit)) {
         return Dimension::Unit(Units::SIVector::Undef(), nullptr);
       }
       return Scalar();

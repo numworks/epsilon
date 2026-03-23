@@ -96,8 +96,8 @@ Tree* Undefined::CreateTreeOfTargetDimension(const Tree* e,
     assert(e->isUndefined());
     KUndefUnit->cloneTree();
   } else {
-    if (IsUndefined(e, Undefined::SpecialType::Boolean) ||
-        IsUndefined(e, Undefined::SpecialType::Unit)) {
+    if (IsUndefSpecial(e, Undefined::SpecialType::Boolean) ||
+        IsUndefSpecial(e, Undefined::SpecialType::Unit)) {
       e = KUndef;
     }
     if (dim.isMatrix()) {

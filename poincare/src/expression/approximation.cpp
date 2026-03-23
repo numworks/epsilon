@@ -1902,7 +1902,7 @@ BooleanOrUndefined Approximator::privateToBoolean(const Tree* e) {
     m_context.localEvaluator.leaveCurrentScope();
     return result;
   }
-  if (Undefined::IsUndefined(e, Undefined::SpecialType::Boolean)) {
+  if (Undefined::IsUndefSpecial(e, Undefined::SpecialType::Boolean)) {
     return BooleanOrUndefined::Undef();
   }
   if (e->isDep()) {

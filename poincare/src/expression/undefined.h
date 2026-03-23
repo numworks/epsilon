@@ -25,6 +25,9 @@ class Undefined {
     NotDefined,
     Forbidden,
   };
+  /* Return undefined description.
+   * This is currently only used for debugging, not for user display. */
+  static const char* Description(const Tree* e);
   static bool IsUndefined(const Tree* e, SpecialType type) {
     return e->isUndefSpecial() && GetSpecialType(e) == type;
   }

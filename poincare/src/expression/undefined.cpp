@@ -9,6 +9,45 @@
 
 namespace Poincare::Internal {
 
+const char* Undefined::Description(const Tree* e) {
+  assert(e && e->isUndefined());
+  switch (e->type()) {
+    case Type::UndefSystem:
+      return "Internal undefined used by system, shouldn't be displayed";
+    case Type::Undef:
+      return "General Undefined";
+    case Type::NonReal:
+      return "nonreal";
+  }
+  assert(e->isUndefSpecial());
+  switch (Undefined::GetSpecialType(e)) {
+    case SpecialType::FailedSimplification:
+      return "Raised TreeStackOverFlow or IntegerOverFlow";
+    case SpecialType::ZeroPowerZero:
+      return "0^0";
+    case SpecialType::ZeroDivision:
+      return "1/0, tan(nπ/2)";
+    case SpecialType::Boolean:
+      return "Undefined with Boolean dimension";
+    case SpecialType::Unit:
+      return "Undefined with Unit dimension";
+    case SpecialType::Unhandled:
+      return "inf - inf, 0 * inf, unimplemented";
+    case SpecialType::UnhandledDimension:
+      return "[[1,2]] + [[1],[2]]";
+    case SpecialType::BadType:
+      return "Non-integers in gcd,lcm,...";
+    case SpecialType::OutOfDefinition:
+      return "arg(0)";
+    case SpecialType::NotDefined:
+      return "Global variable that has not been defined";
+    case SpecialType::Forbidden:
+      return "Forbidden by preferences, exam-modes, ...";
+    default:
+      OMG_UNREACHABLE;
+  }
+}
+
 bool Undefined::CanBeUndefined(const Tree* e) {
   if (e->isPoint() || e->isList() || e->isMatrix() || e->isDepList()) {
     // All their children can be undefined and it is never bubbled up.

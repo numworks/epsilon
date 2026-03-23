@@ -355,6 +355,7 @@ bool Dimension::DeepCheckDimensions(
         case Type::Dim:
         case Type::Dep:
         case Type::List:
+        case Type::DepList:
         case Type::ListSort:
           break;
         default:

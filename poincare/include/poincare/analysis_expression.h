@@ -38,7 +38,7 @@ class AnalysisExpression : public Expression {
   /* Approximate to a real scalar. AnalysisExpression aren't optimal for
    * approximation, they can induce big approximation errors. */
   template <typename T>
-  T approximateSystemToRealScalar() const;
+  T approximateAnalysisToRealScalar() const;
 };
 
 }  // namespace Poincare

@@ -195,13 +195,13 @@ void ContinuousFunction::getLineParameters(double* slope,
     int degree = coefficients.numberOfChildren() - 1;
     assert(degree >= 0);
     *intercept = coefficients.cloneChildAtIndex(0)
-                     .approximateSystemToRealScalar<double>();
+                     .approximateAnalysisToRealScalar<double>();
     if (degree == 0) {
       *slope = 0.0;
     } else {
       assert(degree == PolynomialHelpers::k_lineDegree);
       *slope = coefficients.cloneChildAtIndex(1)
-                   .approximateSystemToRealScalar<double>();
+                   .approximateAnalysisToRealScalar<double>();
     }
   }
 }

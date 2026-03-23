@@ -38,7 +38,7 @@ AnalysisExpression AnalysisExpression::getPolynomialReducedCoefficients(
 }
 
 template <typename T>
-T AnalysisExpression::approximateSystemToRealScalar() const {
+T AnalysisExpression::approximateAnalysisToRealScalar() const {
   if (!Internal::Dimension::IsNonListScalar(tree())) {
     return static_cast<T>(NAN);
   }
@@ -49,8 +49,9 @@ T AnalysisExpression::approximateSystemToRealScalar() const {
                       Approximation::SystemExpressionPolicy{.prepare = true}});
 }
 
-template float AnalysisExpression::approximateSystemToRealScalar<float>() const;
-template double AnalysisExpression::approximateSystemToRealScalar<double>()
+template float AnalysisExpression::approximateAnalysisToRealScalar<float>()
+    const;
+template double AnalysisExpression::approximateAnalysisToRealScalar<double>()
     const;
 
 }  // namespace Poincare

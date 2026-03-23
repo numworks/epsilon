@@ -520,8 +520,9 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
     return false;
   }
   if (e->isRef() || e->isRref()) {
-    if (Undefined::HasUndefinedDescendant(child)) {
-      e->moveTreeOverTree(Generate(GetMatrixDimension(child), KUndef));
+    const Tree* undefinedChild = Undefined::GetUndefinedChild(e->child(0));
+    if (undefinedChild) {
+      e->moveTreeOverTree(Generate(GetMatrixDimension(child), undefinedChild));
       return true;
     }
     if (RowCanonize(child, e->isRref())) {
@@ -541,9 +542,10 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
       result = (e->isCross() ? Vector::Cross : Vector::Dot)(child, child2);
       break;
     }
-    case Type::Det:
-      if (Undefined::HasUndefinedDescendant(child)) {
-        e->cloneTreeOverTree(KUndef);
+    case Type::Det: {
+      const Tree* undefinedChild = Undefined::GetUndefinedChild(e->child(0));
+      if (undefinedChild) {
+        e->cloneTreeOverTree(undefinedChild);
         return true;
       }
       // Note: We used to have explicit formulas for dimensions 1, 2 and 3
@@ -551,6 +553,7 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
         break;
       }
       return false;
+    }
     case Type::Identity:
       result = Identity(child);
       break;

@@ -276,9 +276,14 @@ bool List::ShallowApplyListOperators(Tree* e) {
       return true;
     }
     case Type::Median: {
-      if (Undefined::HasUndefinedDescendant(e) ||
-          !(e->child(1)->isOne() || IsValidCoefficientsList(e->child(1)))) {
+      if (!(e->child(1)->isOne() || IsValidCoefficientsList(e->child(1)))) {
         e->cloneTreeOverTree(KUndef);
+        return true;
+      }
+      // Bubble up undefined from list of values
+      const Tree* undefinedChild = Undefined::GetUndefinedChild(e->child(0));
+      if (undefinedChild) {
+        e->cloneTreeOverTree(undefinedChild);
         return true;
       }
       if (Variables::HasVariables(e) || Variables::HasUserVariables(e)) {

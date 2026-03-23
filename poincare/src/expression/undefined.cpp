@@ -78,6 +78,16 @@ bool Undefined::MustBubbleUpUndefinedChild(const Tree* e, int childIndex) {
          !IsListSequenceFunctionIndex(childIndex, e);
 }
 
+const Tree* Undefined::GetUndefinedChild(const Tree* e) {
+  // TODO: Select the "worst" undefined child instead of the first one.
+  for (const Tree* child : e->children()) {
+    if (child->isUndefined()) {
+      return child;
+    }
+  }
+  return nullptr;
+}
+
 Tree* Undefined::CreateTreeOfTargetDimension(const Tree* e,
                                              const Tree* target) {
   assert(!target->isDepList());

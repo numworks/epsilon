@@ -44,12 +44,8 @@ bool CanBeUndefined(const Tree* e);
 
 bool MustBubbleUpUndefinedChild(const Tree* e, int childIndex);
 
-/* For types which can have both defined and undefined children, i.e. lists
- * matrices and points. */
-inline bool HasUndefinedDescendant(const Tree* e) {
-  return e->hasDescendantSatisfying(
-      [](const Tree* e) { return e->isUndefined(); });
-}
+/* Return the first undefined child, nullptr if there are none. */
+const Tree* GetUndefinedChild(const Tree* e);
 
 /* Create a tree [e] with identical dimension to [target].
  * Example:

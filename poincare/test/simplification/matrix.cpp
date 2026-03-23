@@ -92,6 +92,8 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("det([[0,2,-1][5,6,7][12,11,10]])", "85");
   simplifies_to("det([[1,2][3,4]])", "-2");
   simplifies_to("det([[b]])", "det([[b]])");
+  // TODO: Should be det([[piecewise(2,x>2,undef)]])
+  simplifies_to("det([[piecewise(2,x>2, undef)]])", "undef");
   simplifies_to("det([[1,2][3,undef]])", "undef");
 
   // Dimension

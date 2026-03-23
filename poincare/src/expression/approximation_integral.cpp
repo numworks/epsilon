@@ -1,6 +1,7 @@
 #include <omg/float.h>
 #include <poincare/src/equation_solver/equation_solver.h>
 #include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include <algorithm>
 
@@ -83,9 +84,32 @@ Tree* Approximator::splitAtSingularities(const Tree* integral, T a, T b) {
   if (!singularities.exactSolutionList->isUndefined()) {
     assert(singularities.exactSolutionList->isList() &&
            singularities.exactSolutionList->numberOfChildren() >= 1);
-    // TODO:
-    // - if some of them are, split the integral
-    NAry::AddChild(result, integral->cloneTree());
+    int i = 0;
+    NAry::AddChild(result, PatternMatching::Create(
+                               KIntegral(KA, KB, KC, KD),
+                               {.KA = integral->child(0),
+                                .KB = lowerBound,
+                                .KC = singularities.exactSolutionList->child(i),
+                                .KD = integrand},
+                               ContextScopes{.KD = 1}));
+    while (i < singularities.exactSolutionList->numberOfChildren() - 1) {
+      NAry::AddChild(result,
+                     PatternMatching::Create(
+                         KIntegral(KA, KB, KC, KD),
+                         {.KA = integral->child(0),
+                          .KB = singularities.exactSolutionList->child(i),
+                          .KC = singularities.exactSolutionList->child(i + 1),
+                          .KD = integrand},
+                         ContextScopes{.KD = 1}));
+      i++;
+    }
+    NAry::AddChild(result, PatternMatching::Create(
+                               KIntegral(KA, KB, KC, KD),
+                               {.KA = integral->child(0),
+                                .KB = singularities.exactSolutionList->child(i),
+                                .KC = upperBound,
+                                .KD = integrand},
+                               ContextScopes{.KD = 1}));
   } else {
     NAry::AddChild(result, integral->cloneTree());
   }

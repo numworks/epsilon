@@ -98,25 +98,30 @@ QUIZ_CASE(pcj_approximation_integrals) {
   // Singularities inside bounds
   approximates_to<double>("int(ln(abs(cos(x^2))),x,2.159,4.23)",
                           "-1.5403160645501");
-  approximates_to<double>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "6.1840402459412");
+  approximates_to<double>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "6.1840407386588");
   /* The same integral calculations work fine on the simplified expression
    * (which introduces a dependency) */
   simplified_approximates_to<double>("int(ln(abs(cos(x^2))),x,2.159,4.23)",
                                      "-1.5403160645501");
   simplified_approximates_to<double>("int(ln(abs(x^2+3×x+2)),x,-3,4)",
-                                     "6.1840402459412");
+                                     "6.1840407386588");
   /* The same integral calculations fail when using single float precision. This
    * is because with a lower precision, it's "easier" for the integral
    * approximation to fall on an undef close to the singularities. If the
    * integrand evaluates one time to undef, the whole integral calculation
    * returns undef.*/
-  /* TODO: use a more robust method to compute integrals with singularies inside
-   * bounds */
   approximates_to<float>("int(ln(abs(cos(x^2))),x,2.159,4.23)", "undef");
-  approximates_to<float>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "undef");
   simplified_approximates_to<float>("int(ln(abs(cos(x^2))),x,2.159,4.23)",
                                     "undef");
-  simplified_approximates_to<float>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "undef");
+  /* For some particular functions, we are able to detect singularity points and
+   * split the integral at these points, and the calculation works fine when the
+   * singularities are on the integral bounds. */
+  /* NOTE: we need to specify number of significant digits because the last
+   * digit depends on the platform */
+  approximates_to<float>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "6.18405",
+                         k_realParams, 6);
+  simplified_approximates_to<float>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "6.18405",
+                                    k_realSimplification, 6);
 
   // double integration
   approximates_to<float>("int(int(x×x,x,0,x),x,0,4)", "21.33333");

@@ -276,37 +276,40 @@ bool List::ShallowApplyListOperators(Tree* e) {
       return true;
     }
     case Type::Median: {
-      if (!(e->child(1)->isOne() || IsValidCoefficientsList(e->child(1)))) {
+      Tree* valuesList = e->child(0);
+      Tree* weights = e->child(1);
+      if (!(weights->isOne() || IsValidCoefficientsList(weights))) {
         e->cloneTreeOverTree(KUndef);
         return true;
       }
       // Bubble up undefined from list of values
-      const Tree* undefinedChild = Undefined::GetUndefinedChild(e->child(0));
+      const Tree* undefinedChild = Undefined::GetUndefinedChild(valuesList);
       if (undefinedChild) {
         e->cloneTreeOverTree(undefinedChild);
         return true;
       }
-      if (Variables::HasVariables(e) || Variables::HasUserVariables(e)) {
+      assert(!(Variables::HasVariables(weights) ||
+               Variables::HasUserVariables(weights)));
+      if (Variables::HasVariables(valuesList) ||
+          Variables::HasUserVariables(valuesList)) {
         // leave med({x,0}) unchanged
         // TODO: we could return undef with med({x,i})
         return false;
       }
       // precision used for comparisons
       using T = double;
-      bool hasWeightList = Dimension::IsList(e->child(1));
-      Tree* valuesList = e->child(0);
+      bool hasWeightList = Dimension::IsList(weights);
       BubbleUp(valuesList, SystematicReduction::ShallowReduce);
       if (!valuesList->isList()) {
         return false;
       }
-      Tree* weightsList = e->child(1);
       if (hasWeightList) {
         // weights are approximated in place
-        BubbleUp(weightsList, SystematicReduction::ShallowReduce);
-        weightsList->moveTreeOverTree(Approximation::To<Tree*>(
-            weightsList, Precision<T>::value,
+        BubbleUp(weights, SystematicReduction::ShallowReduce);
+        weights->moveTreeOverTree(Approximation::To<Tree*>(
+            weights, Precision<T>::value,
             Approximation::Parameters{.policy = {.optimize = true}}));
-        assert(weightsList->isList());
+        assert(weights->isList());
       }
       /* values are not approximated in place since we need to keep the exact
        * values to return the exact median */
@@ -321,8 +324,8 @@ bool List::ShallowApplyListOperators(Tree* e) {
         lowerMedianIndex =
             StatisticsDataset<T>(&values).medianIndex(&upperMedianIndex);
       } else {
-        TreeDatasetColumn<T> weights(weightsList);
-        lowerMedianIndex = StatisticsDataset<T>(&values, &weights)
+        TreeDatasetColumn<T> weightsList(weights);
+        lowerMedianIndex = StatisticsDataset<T>(&values, &weightsList)
                                .medianIndex(&upperMedianIndex);
       }
       approximatedList->removeTree();

@@ -22,7 +22,7 @@ bool DetailedResultIsValid(DetailedResult<T> result) {
   constexpr T absoluteErrorThresholdForValidity = 0.1;
   constexpr T relativeErrorThresholdForValidity = 1e-4;
 
-  return !std::isnan(result.integral) &&
+  return std::isfinite(result.integral) &&
          IsErrorNegligible(result, absoluteErrorThresholdForValidity,
                            relativeErrorThresholdForValidity);
 }
@@ -35,16 +35,17 @@ T Approximator::approximateIntegral(const Tree* integral) {
 
   T a = privateToFloat<T>(lowerBound);
   T b = privateToFloat<T>(upperBound);
+  // a and b are allowed to be infinite but not NaN
   if (std::isnan(a) || std::isnan(b)) {
     return NAN;
   }
 
   // Handle singularities at the bounds
-  bool fIsNanInA = std::isnan(toLocalContext(integrand, a));
-  bool fIsNanInB = std::isnan(toLocalContext(integrand, b));
-  if (fIsNanInA || fIsNanInB) {
+  bool notFiniteInA = !std::isfinite(toLocalContext(integrand, a));
+  bool notFiniteInB = !std::isfinite(toLocalContext(integrand, b));
+  if (notFiniteInA || notFiniteInB) {
     T value = approximateIntegralSingularityAtBoundsMethod<T>(
-        integral, a, b, fIsNanInA, fIsNanInB);
+        integral, a, b, notFiniteInA, notFiniteInB);
     if (!std::isnan(value)) {
       return value;
     }
@@ -58,7 +59,7 @@ T Approximator::approximateIntegral(const Tree* integral) {
 
 template <typename T>
 T Approximator::approximateIntegralSingularityAtBoundsMethod(
-    const Tree* integral, T a, T b, bool fIsNanInA, bool fIsNanInB) {
+    const Tree* integral, T a, T b, bool notFiniteInA, bool notFiniteInB) {
   /* When we have a singularity at a bound, we want to evaluate the integrand
    * really close to the bound since the area there is non-negligible.  If the
    * bound is non-null, say 1/sqrt(1-x) near 1, the closest point from 1 where
@@ -66,10 +67,10 @@ T Approximator::approximateIntegralSingularityAtBoundsMethod(
    * simplify the expression near one 1/sqrt(1-(1-dx)) = 1/sqrt(dx) we can
    * evaluate the integrand really close to 1 (about 1-1e-300). */
   Private::AlternativeIntegrand alternativeIntegrand = {.a = a, .b = b};
-  if (fIsNanInA && a != 0 && integral->isIntegralWithAlternatives()) {
+  if (notFiniteInA && a != 0 && integral->isIntegralWithAlternatives()) {
     alternativeIntegrand.integrandNearA = integral->child(4);
   }
-  if (fIsNanInB && b != 0 && integral->isIntegralWithAlternatives()) {
+  if (notFiniteInB && b != 0 && integral->isIntegralWithAlternatives()) {
     alternativeIntegrand.integrandNearB = integral->child(5);
   }
   /* We are using 4 levels of refinement which means ≈ 64 integrand
@@ -216,7 +217,7 @@ Private::DetailedResult<T> Approximator::tanhSinhQuadrature(
       if (leftOk) {
         T leftValue = evaluateIntegrandNearBound(
             integrand, -abscissa, distanceToBound, alternativeIntegrand);
-        if (std::isnan(leftValue)) {
+        if (!std::isfinite(leftValue)) {
           leftOk = false;
         } else {
           maxWjFj = std::max(maxWjFj, std::abs(weight * leftValue));
@@ -232,7 +233,7 @@ Private::DetailedResult<T> Approximator::tanhSinhQuadrature(
       if (rightOk) {
         T rightValue = evaluateIntegrandNearBound(
             integrand, abscissa, distanceToBound, alternativeIntegrand);
-        if (std::isnan(rightValue)) {
+        if (!std::isfinite(rightValue)) {
           rightOk = false;
         } else {
           maxWjFj = std::max(maxWjFj, std::abs(weight * rightValue));
@@ -312,7 +313,7 @@ Private::DetailedResult<T> Approximator::kronrodGaussQuadrature(
 
   T gaussIntegral = 0;
   T fCenter = evaluateIntegrand(integrand, center, substitution);
-  if (std::isnan(fCenter)) {
+  if (!std::isfinite(fCenter)) {
     return errorResult;
   }
   T kronrodIntegral = wKronrod[10] * fCenter;
@@ -320,11 +321,11 @@ Private::DetailedResult<T> Approximator::kronrodGaussQuadrature(
   for (int j = 0; j < 10; j++) {
     T xDelta = halfLength * x[j];
     T fval1 = evaluateIntegrand(integrand, center - xDelta, substitution);
-    if (std::isnan(fval1)) {
+    if (!std::isfinite(fval1)) {
       return errorResult;
     }
     T fval2 = evaluateIntegrand(integrand, center + xDelta, substitution);
-    if (std::isnan(fval2)) {
+    if (!std::isfinite(fval2)) {
       return errorResult;
     }
     fv1[j] = fval1;

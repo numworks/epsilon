@@ -447,8 +447,8 @@ class Approximator {
   // Use a tanh-sinh quadrature
   template <typename T>
   T approximateIntegralSingularityAtBoundsMethod(const Tree* integral, T a, T b,
-                                                 bool fIsNanInA,
-                                                 bool fIsNanInB);
+                                                 bool notFiniteInA,
+                                                 bool notFiniteInB);
 
   // Use an adaptive Kronrod-Gauss quadrature
   template <typename T>

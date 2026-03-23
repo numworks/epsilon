@@ -19,21 +19,16 @@
 
 namespace Poincare::Internal {
 
-Tree* Matrix::Zero(MatrixDimension d) {
+// Generate a matrix of given dimension with all coefficient clones of e
+Tree* Generate(MatrixDimension d, const Tree* e) {
   Tree* result = SharedTreeStack->pushMatrix(d.rows, d.cols);
   for (int i = 0; i < d.rows * d.cols; i++) {
-    (0_e)->cloneTree();
+    e->cloneTree();
   }
   return result;
 }
 
-Tree* Matrix::Undef(MatrixDimension d) {
-  Tree* result = SharedTreeStack->pushMatrix(d.rows, d.cols);
-  for (int i = 0; i < d.rows * d.cols; i++) {
-    (KUndef)->cloneTree();
-  }
-  return result;
-}
+Tree* Matrix::Zero(MatrixDimension d) { return Generate(d, 0_e); }
 
 Tree* Matrix::Identity(const Tree* n) {
   if (!n->isInteger() || Integer::Handler(n).numberOfDigits() > 1 ||
@@ -526,7 +521,7 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
   }
   if (e->isRef() || e->isRref()) {
     if (Undefined::HasUndefinedDescendant(child)) {
-      e->moveTreeOverTree(Undef(GetMatrixDimension(child)));
+      e->moveTreeOverTree(Generate(GetMatrixDimension(child), KUndef));
       return true;
     }
     if (RowCanonize(child, e->isRref())) {

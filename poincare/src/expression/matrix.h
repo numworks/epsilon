@@ -42,7 +42,6 @@ struct Matrix {
     return matrix->child(row * NumberOfColumns(matrix) + col);
   }
   static Tree* Zero(MatrixDimension d);
-  static Tree* Undef(MatrixDimension d);
   static Tree* Identity(MatrixDimension d);
   static Tree* Identity(const Tree* n);
   static Tree* Trace(const Tree* matrix);

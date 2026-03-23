@@ -1,4 +1,4 @@
-#  Approximation API
+# Approximation API
 
 ## Public approximation API
 
@@ -10,16 +10,23 @@ The public approximation API is exposed by the typed Expressions (`UserExpressio
 Several methods are available, depending on the Expression type, the approximation return type and other operations performed alongside approximation.
 Non-exhaustive list:
 `UserExpression`:
+
 - `approximateToRealScalar`: returns a float
 - `cloneAndApproximate`: returns a (`UserExpression`) clone of the expression on which approximation has been applied
 - `cloneAndSimplifyAndApproximate`: create two (`UserExpression`) clones of the expression, one with the simplified expression and one with the approximated expression
 
 `SystemExpression`:
+
 - `approximateSystemToRealScalar`: returns a float
 - `approximateSystemToTree`: returns a (`SystemExpression`) clone of the expression on which approximation has been applied
 - `cloneAndBeautifyAndApproximate`: create two (`UserExpression`) clones of the expression, one with the beautified expression and one with the approximated expression
 
+`AnalysisExpression`:
+
+- `approximateAnalysisToRealScalar`: returns a float
+
 `PreparedFunction`:
+
 - `approximateToRealScalarWithValue`: returns a float
 - `approximateToPoint`: returns a `Coordinate2D`
 - `approximateToPointOrRealScalarWithValue`: returns a `PointOrRealScalar`
@@ -37,6 +44,7 @@ This parameter can only be used if the approximation method returns an Expressio
 The numerical parts of the expression are approximated, but randoms, variables, functions, etc. are left unchanged.
 
 For example:
+
 - `pi*x + 1/3` -> `3.14*x + 0.33`.
 - `(1+2+i)*(x+ln(12+3))` -> `(3.0+1.0*i)*(x+2.708)`
 
@@ -44,7 +52,7 @@ This is useful to optimize an expression for successive approximations (for Grap
 
 In practice this means `ApproximateAndReplaceEveryScalar` is applied on the tree.
 
-####  `optimize`
+#### `optimize`
 
 Skip some validation steps for a shorter computing time. These steps will be asserted instead. This is the case for the expression dimension check which is quite costly. This means that if you call `cloneAndApproximate` with `optimize=true`, you need to be sure that the expression you are approximating has a valid dimension.
 
@@ -58,6 +66,7 @@ When working inside `Poincare::Internal`, it is frequent that an approximation n
 This method takes a `const Tree *` input and some `Parameters`.
 The return type is a customization point of the template method.
 Available return types are:
+
 - `Tree*`
 - `float` / `double`
 - `std::complex<float>` / `std::complex<double>`

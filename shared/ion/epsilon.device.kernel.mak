@@ -111,7 +111,8 @@ _sources_ion_kernel += $(addprefix device/core/device/shared-core/drivers/, \
 endif
 
 ifneq ($(EMBED_EXTRA_DATA),0)
-_sources_ion_kernel += trampoline.o bootloader.o
+
+_additional_objects := $(call generated_sources_for, kernel/$(PATH_ion)/src/trampoline.o kernel/$(PATH_ion)/src/bootloader.o)
 
 $(call generated_sources_for, kernel/$(PATH_ion)/src/trampoline.o): $(call generated_sources_for, kernel/$(PATH_ion)/src/bootloader.o)
 	@ :
@@ -126,10 +127,12 @@ $(call generated_sources_for, kernel/$(PATH_ion)/src/bootloader.o): $(call gener
 endif
 
 _ldflags_ion_kernel := \
+  $(_additional_objects) \
   -Wl,-T,$(PATH_ion)/src/device/core/device/kernel/flash/kernel_A.ld:+A \
   -Wl,-T,$(PATH_ion)/src/device/core/device/kernel/flash/kernel_B.ld:+B \
   -L$(PATH_ion)/src/device/core/device/kernel/flash
 
 _lddeps_ion_kernel := \
+  $(_additional_objects) \
   $(PATH_ion)/src/device/core/device/kernel/flash/kernel_A.ld:+A \
   $(PATH_ion)/src/device/core/device/kernel/flash/kernel_B.ld:+B

@@ -1,5 +1,6 @@
 #include <omg/float.h>
 #include <poincare/src/equation_solver/equation_solver.h>
+#include <poincare/src/memory/n_ary.h>
 
 #include <algorithm>
 
@@ -32,8 +33,6 @@ template <typename T>
 T Approximator::approximateIntegral(const Tree* integral) {
   const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
-  const Tree* integrand = upperBound->nextTree();
-
   T a = privateToFloat<T>(lowerBound);
   T b = privateToFloat<T>(upperBound);
   // a and b are allowed to be infinite but not NaN
@@ -41,15 +40,49 @@ T Approximator::approximateIntegral(const Tree* integral) {
     return NAN;
   }
 
-  // Handle singularities inside the bounds
+  /* Detect singularities inside the bounds (not all singularities can be
+   * detected). Split the integral at these singularity points */
+  Tree* splitIntegral = splitAtSingularities(integral);
+  assert(splitIntegral->isList() && splitIntegral->numberOfChildren() >= 1);
+
+  T result = 0.0;
+  for (const Tree* childIntegral : splitIntegral->children()) {
+    result += approximateIntegralInternal<T>(childIntegral);
+  }
+  splitIntegral->removeTree();
+  return result;
+}
+
+Tree* Approximator::splitAtSingularities(const Tree* integral) {
+  const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
+  const Tree* upperBound = lowerBound->nextTree();
+  const Tree* integrand = upperBound->nextTree();
+
+  TreeRef result = SharedTreeStack->pushList(0);
+
   EquationSolver::SingularitySolverResult singularities =
       EquationSolver::ExactSolveFindSingularities(integrand, m_parameters);
   if (!singularities.exactSolutionList->isUndefined()) {
+    assert(singularities.exactSolutionList->isList() &&
+           singularities.exactSolutionList->numberOfChildren() >= 1);
     // TODO:
     // - check if the singularities are inside the bounds
     // - if some of them are, split the integral
+    NAry::AddChild(result, integral->cloneTree());
+  } else {
+    NAry::AddChild(result, integral->cloneTree());
   }
   singularities.exactSolutionList->removeTree();
+  return result;
+}
+
+template <typename T>
+T Approximator::approximateIntegralInternal(const Tree* integral) {
+  const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
+  const Tree* upperBound = lowerBound->nextTree();
+  const Tree* integrand = upperBound->nextTree();
+  T a = privateToFloat<T>(lowerBound);
+  T b = privateToFloat<T>(upperBound);
 
   // Handle singularities at the bounds
   bool notFiniteInA = !std::isfinite(toLocalContext(integrand, a));

@@ -163,10 +163,9 @@ void ContinuousFunctionProperties::update(
 
   assert(!analyzedEquation.isUninitialized());
   if (analyzedEquation.isUndefined()) {
-    setErrorStatusAndUpdateCaption(
-        analyzedEquation.isUndefinedBecauseOfFailedSimplification()
-            ? Status::Unhandled
-            : Status::Undefined);
+    setErrorStatusAndUpdateCaption(analyzedEquation.isFailedSimplification()
+                                       ? Status::Unhandled
+                                       : Status::Undefined);
     return;
   }
 

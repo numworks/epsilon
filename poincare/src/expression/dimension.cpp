@@ -16,6 +16,7 @@
 #include "physical_constant.h"
 #include "rational.h"
 #include "symbol.h"
+#include "undefined.h"
 #include "units/representatives.h"
 #include "variables.h"
 
@@ -521,7 +522,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e,
       /* Not using Dimension operator == because different representatives are
        * allowed. */
       return childDim[0].isUnit() && childDim[1].isUnit() &&
-             (e->child(0)->isUndefUnit() ||
+             (Undefined::IsUndefined(e->child(0),
+                                     Undefined::SpecialType::Unit) ||
               childDim[0].unit.vector == childDim[1].unit.vector);
     case Type::DepList:
       /* For now units and booleans are allowed in depLists. For a later
@@ -793,11 +795,13 @@ Dimension Dimension::Get(const Tree* e,
       /* Without definition, consider the function to be scalar. */
       return Scalar();
     }
-    case Type::UndefBoolean: {
-      return Boolean();
-    }
-    case Type::UndefUnit: {
-      return Dimension::Unit(Units::SIVector::Undef(), nullptr);
+    case Type::UndefSpecial: {
+      if (Undefined::IsUndefined(e, Undefined::SpecialType::Boolean)) {
+        return Boolean();
+      } else if (Undefined::IsUndefined(e, Undefined::SpecialType::Unit)) {
+        return Dimension::Unit(Units::SIVector::Undef(), nullptr);
+      }
+      return Scalar();
     }
     default:
       if (e->isLogicalOperatorOrBoolean() || e->isComparison()) {

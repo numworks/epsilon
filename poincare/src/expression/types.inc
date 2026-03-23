@@ -366,27 +366,17 @@ NODE(Parentheses, BASE, 1)
 
 // 10 - Undefined expressions
 /* When an expression has multiple undefined children, we bubble up the
- * "biggest" one by default (NonReal < Undef).
- * These could be a single Type with a nodeValue, but it would require a
+ * "biggest" one by default (NonReal < Undef, looking at id for UndefSpecial).
+ * These could be all be single Type with a nodeValue, but it would require a
  * builtin/parser rework since undef/nonreal text would require node value
  * information, or a builtin subclass. */
 NODE(NonReal, BASE)  // sqrt(-1) in Real ComplexMode
-NODE(UndefFailedSimplification,
-     BASE)                      // raised TreeStackOverFlow or IntegerOverFlow
-NODE(UndefZeroPowerZero, BASE)  // 0^0
-NODE(UndefZeroDivision, BASE)   // 1/0, tan(nπ/2)
-NODE(UndefBoolean, BASE)        // undefined with Boolean dimension
-NODE(UndefUnit, BASE)           // undefined with Unit dimension
-NODE(UndefUnhandled, BASE)      // inf - inf, 0 * inf, unimplemented
-NODE(UndefUnhandledDimension, BASE)  // [[1,2]] + [[1],[2]]
-NODE(UndefBadType, BASE)             // non-integers in gcd,lcm,...
-NODE(UndefOutOfDefinition, BASE)     // arg(0)
-NODE(UndefNotDefined, BASE)  // Global variable that has not been defined
-NODE(UndefForbidden, BASE)   // Forbidden by preferences, exam-modes, ...
-NODE(UndefSystem, BASE)      // Used by system, shouldn't be displayed
+// Undefined with additional informations
+NODE(UndefSpecial, BASE, 0, {uint8_t id;})
 NODE(Undef, BASE)            // Default
+NODE(UndefSystem, BASE)      // Used by system, shouldn't be displayed
 
-RANGE(Undefined, NonReal, Undef)
+RANGE(Undefined, NonReal, UndefSystem)
 
 // 11 - Operations on expressions
 

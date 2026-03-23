@@ -3,6 +3,7 @@
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/infinity.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/undefined.h>
 #include <poincare/src/expression/vector.h>
 
 namespace Poincare {
@@ -141,7 +142,8 @@ bool Expression::isUndefined() const {
 }
 bool Expression::isUndefinedOrNonReal() const { return tree()->isUndefined(); }
 bool Expression::isFailedSimplification() const {
-  return tree()->isUndefFailedSimplification();
+  return Undefined::IsUndefined(tree(),
+                                Undefined::SpecialType::FailedSimplification);
 }
 
 bool Expression::isMatrix() const { return tree()->isMatrix(); }
@@ -222,7 +224,8 @@ bool Expression::isTrigonometryFunction() const {
 bool Expression::isParametric() const { return tree()->isParametric(); }
 
 bool Expression::isUndefinedBecauseOfFailedSimplification() const {
-  return tree()->isUndefFailedSimplification();
+  return Undefined::IsUndefined(tree(),
+                                Undefined::SpecialType::FailedSimplification);
 }
 
 bool Expression::allChildrenAreUndefined() const {

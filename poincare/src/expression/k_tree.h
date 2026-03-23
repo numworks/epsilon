@@ -6,6 +6,7 @@
 #include <bit>
 
 #include "parametric.h"
+#include "undefined.h"
 
 namespace Poincare::Internal {
 namespace KTrees {
@@ -15,18 +16,6 @@ namespace KTrees {
 constexpr auto KNonReal = KTree<Type::NonReal>();
 constexpr auto KUndef = KTree<Type::Undef>();
 constexpr auto KUndefSystem = KTree<Type::UndefSystem>();
-constexpr auto KUndefBoolean = KTree<Type::UndefBoolean>();
-constexpr auto KUndefUnit = KTree<Type::UndefUnit>();
-constexpr auto KUndefZeroPowerZero = KTree<Type::UndefZeroPowerZero>();
-constexpr auto KUndefZeroDivision = KTree<Type::UndefZeroDivision>();
-constexpr auto KUndefUnhandled = KTree<Type::UndefUnhandled>();
-constexpr auto KUndefUnhandledDimension =
-    KTree<Type::UndefUnhandledDimension>();
-constexpr auto KBadType = KTree<Type::UndefBadType>();
-constexpr auto KOutOfDefinition = KTree<Type::UndefOutOfDefinition>();
-constexpr auto KNotDefined = KTree<Type::UndefNotDefined>();
-constexpr auto KForbidden = KTree<Type::UndefForbidden>();
-constexpr auto KFailedSimplification = KTree<Type::UndefFailedSimplification>();
 constexpr auto KInf = KTree<Type::Inf>();
 
 constexpr auto π_e = KTree<Type::Pi>();
@@ -158,6 +147,29 @@ constexpr auto KDepList = KNAry<Type::DepList>();
 #if POINCARE_PIECEWISE
 constexpr auto KPiecewise = KNAry<Type::Piecewise>();
 #endif
+
+// Special undefined nodes
+template <Undefined::SpecialType Type>
+constexpr auto KUndefSpecial =
+    KTree<Type::UndefSpecial, static_cast<uint8_t>(Type)>();
+
+constexpr auto KUndefBoolean = KUndefSpecial<Undefined::SpecialType::Boolean>;
+constexpr auto KUndefUnit = KUndefSpecial<Undefined::SpecialType::Unit>;
+constexpr auto KUndefZeroPowerZero =
+    KUndefSpecial<Undefined::SpecialType::ZeroPowerZero>;
+constexpr auto KUndefZeroDivision =
+    KUndefSpecial<Undefined::SpecialType::ZeroDivision>;
+constexpr auto KUndefUnhandled =
+    KUndefSpecial<Undefined::SpecialType::Unhandled>;
+constexpr auto KUndefUnhandledDimension =
+    KUndefSpecial<Undefined::SpecialType::UnhandledDimension>;
+constexpr auto KBadType = KUndefSpecial<Undefined::SpecialType::BadType>;
+constexpr auto KOutOfDefinition =
+    KUndefSpecial<Undefined::SpecialType::OutOfDefinition>;
+constexpr auto KNotDefined = KUndefSpecial<Undefined::SpecialType::NotDefined>;
+constexpr auto KForbidden = KUndefSpecial<Undefined::SpecialType::Forbidden>;
+constexpr auto KFailedSimplification =
+    KUndefSpecial<Undefined::SpecialType::FailedSimplification>;
 
 // with other seed
 template <uint8_t seed>

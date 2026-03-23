@@ -57,7 +57,8 @@ Tree* Undefined::CreateTreeOfTargetDimension(const Tree* e,
     assert(e->isUndefined());
     KUndefUnit->cloneTree();
   } else {
-    if (e->isUndefBoolean() || e->isUndefUnit()) {
+    if (IsUndefined(e, Undefined::SpecialType::Boolean) ||
+        IsUndefined(e, Undefined::SpecialType::Unit)) {
       e = KUndef;
     }
     if (dim.isMatrix()) {
@@ -90,7 +91,10 @@ bool Undefined::ShallowBubbleUpUndef(Tree* e) {
     // Piecewise can have undefined branches, but not conditions
     if (child->isUndefined() && MustBubbleUpUndefinedChild(e, i)) {
       Type childType = child->type();
-      if (childType > worstType) {
+      if (childType > worstType ||
+          (childType == worstType && child->isUndefSpecial() &&
+           Undefined::GetSpecialType(child) >
+               Undefined::GetSpecialType(worstChild))) {
         worstType = childType;
         worstChild = child;
       }

@@ -457,7 +457,7 @@ Tree* Matrix::Inverse(const Tree* matrix,
   // Compute the inverse
   bool canonized = RowCanonize(matrixAI, true, nullptr, approximator);
   if (!canonized && !approximator) {
-    matrixAI->moveTreeOverTree(Matrix::Undef({dim, dim}));
+    matrixAI->moveTreeOverTree(Generate({dim, dim}, KUndef));
     return matrixAI;
   }
 
@@ -465,7 +465,7 @@ Tree* Matrix::Inverse(const Tree* matrix,
   if (canonized) {
     for (int i = 0; i < dim; i++) {
       if (!Child(matrixAI, i, i)->isOne()) {
-        matrixAI->moveTreeOverTree(Matrix::Undef({dim, dim}));
+        matrixAI->moveTreeOverTree(Generate({dim, dim}, KUndef));
         return matrixAI;
       }
     }

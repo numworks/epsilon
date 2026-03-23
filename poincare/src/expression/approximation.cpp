@@ -2096,7 +2096,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
       Tree* result = toMatrix(e->child(0));
       if (!Matrix::RowCanonize(result, e->isRref(), nullptr, this)) {
         result->moveTreeOverTree(
-            Matrix::Undef(Matrix::GetMatrixDimension(result)));
+            Undefined::CreateTreeOfTargetDimension(KUndef, e));
       }
       return result;
     }

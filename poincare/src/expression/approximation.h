@@ -444,6 +444,16 @@ class Approximator {
   template <typename T>
   T approximateIntegral(const Tree* integral);
 
+  // Use a tanh-sinh quadrature
+  template <typename T>
+  T approximateIntegralSingularityAtBoundsMethod(const Tree* integral, T a, T b,
+                                                 bool fIsNanInA,
+                                                 bool fIsNanInB);
+
+  // Use an adaptive Kronrod-Gauss quadrature
+  template <typename T>
+  T approximateIntegralGenericMethod(const Tree* integral, T a, T b);
+
   template <typename T>
   T evaluateIntegrand(const Tree* integrand, T x,
                       Private::Substitution<T> substitution);

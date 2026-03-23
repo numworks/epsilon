@@ -29,48 +29,71 @@ bool DetailedResultIsValid(DetailedResult<T> result) {
 
 template <typename T>
 T Approximator::approximateIntegral(const Tree* integral) {
-  /* TODO: Reduction is mapped on list, but not approximation.
-   * Find a smart way of doing it. */
   const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
   const Tree* integrand = upperBound->nextTree();
+
   T a = privateToFloat<T>(lowerBound);
   T b = privateToFloat<T>(upperBound);
   if (std::isnan(a) || std::isnan(b)) {
     return NAN;
   }
+
+  // Handle singularities at the bounds
   bool fIsNanInA = std::isnan(toLocalContext(integrand, a));
   bool fIsNanInB = std::isnan(toLocalContext(integrand, b));
-  /* The integrand has a singularity on a bound of the interval, use tanh-sinh
-   * quadrature */
   if (fIsNanInA || fIsNanInB) {
-    /* When we have a singularity at a bound, we want to evaluate the integrand
-     * really close to the bound since the area there is non-negligible.  If the
-     * bound is non-null, say 1/sqrt(1-x) near 1, the closest point from 1 where
-     * the integrand can be evaluated is 1-1e-15. However by using reduction to
-     * simplify the expression near one 1/sqrt(1-(1-dx)) = 1/sqrt(dx) we can
-     * evaluate the integrand really close to 1 (about 1-1e-300). */
-    Private::AlternativeIntegrand alternativeIntegrand = {.a = a, .b = b};
-    if (fIsNanInA && a != 0 && integral->isIntegralWithAlternatives()) {
-      alternativeIntegrand.integrandNearA = integral->child(4);
-    }
-    if (fIsNanInB && b != 0 && integral->isIntegralWithAlternatives()) {
-      alternativeIntegrand.integrandNearB = integral->child(5);
-    }
-    /* We are using 4 levels of refinement which means ≈ 64 integrand
-     * evaluations = 2 (R- and R+) * 2^4 (ticks/unit) * 4 (typical decay on the
-     * examples) It could be increased but precision is likely lost somewhere
-     * else in hard examples. */
-    Private::DetailedResult<T> detailedResult =
-        tanhSinhQuadrature<T>(integrand, 4, alternativeIntegrand);
-    // Arbitrary value to have the best choice of quadrature on the examples
-    constexpr T insufficientPrecision = 0.001;
-    if (!std::isnan(detailedResult.integral) &&
-        detailedResult.absoluteError < insufficientPrecision) {
-      return detailedResult.integral;
+    T value = approximateIntegralSingularityAtBoundsMethod<T>(
+        integral, a, b, fIsNanInA, fIsNanInB);
+    if (!std::isnan(value)) {
+      return value;
     }
   }
-  /* Choose the right substitution to use in Gauss-Konrod.
+
+  /* Even for integrals with singularities at the bounds, sometimes the method
+   * for singularities at bounds (tanh-sinh quadrature) fails but the generic
+   * method (adaptive Kronrod-Gauss quadrature) succeeds */
+  return approximateIntegralGenericMethod(integral, a, b);
+}
+
+template <typename T>
+T Approximator::approximateIntegralSingularityAtBoundsMethod(
+    const Tree* integral, T a, T b, bool fIsNanInA, bool fIsNanInB) {
+  /* When we have a singularity at a bound, we want to evaluate the integrand
+   * really close to the bound since the area there is non-negligible.  If the
+   * bound is non-null, say 1/sqrt(1-x) near 1, the closest point from 1 where
+   * the integrand can be evaluated is 1-1e-15. However by using reduction to
+   * simplify the expression near one 1/sqrt(1-(1-dx)) = 1/sqrt(dx) we can
+   * evaluate the integrand really close to 1 (about 1-1e-300). */
+  Private::AlternativeIntegrand alternativeIntegrand = {.a = a, .b = b};
+  if (fIsNanInA && a != 0 && integral->isIntegralWithAlternatives()) {
+    alternativeIntegrand.integrandNearA = integral->child(4);
+  }
+  if (fIsNanInB && b != 0 && integral->isIntegralWithAlternatives()) {
+    alternativeIntegrand.integrandNearB = integral->child(5);
+  }
+  /* We are using 4 levels of refinement which means ≈ 64 integrand
+   * evaluations = 2 (R- and R+) * 2^4 (ticks/unit) * 4 (typical decay on the
+   * examples) It could be increased but precision is likely lost somewhere
+   * else in hard examples. */
+  const Tree* integrand = integral->child(Parametric::k_integrandIndex);
+  Private::DetailedResult<T> detailedResult =
+      tanhSinhQuadrature<T>(integrand, 4, alternativeIntegrand);
+  // Arbitrary value to have the best choice of quadrature on the examples
+  constexpr T insufficientPrecision = 0.001;
+  if (!std::isnan(detailedResult.integral) &&
+      detailedResult.absoluteError < insufficientPrecision) {
+    return detailedResult.integral;
+  }
+  return NAN;
+}
+
+template <typename T>
+T Approximator::approximateIntegralGenericMethod(const Tree* integral, T a,
+                                                 T b) {
+  const Tree* integrand = integral->child(Parametric::k_integrandIndex);
+
+  /* Choose the right substitution to use in Gauss-Kronrod.
    * We are using a (0,inf) -> (-1,1) like substitution when a bound is above
    * these thresholds to deal with big but finite bounds */
   constexpr T leftOpenThreshold = -1000.0;

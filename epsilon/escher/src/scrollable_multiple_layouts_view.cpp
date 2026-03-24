@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <escher/scrollable_multiple_layouts_view.h>
+#include <omg/unreachable.h>
 
 #include <algorithm>
 #include <cmath>
@@ -64,8 +65,9 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::
 }
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::reloadTextColor() {
-  m_rightLayoutView.setTextColor(displayCenter() ? Palette::GrayVeryDark
-                                                 : Palette::Black);
+  KDColor color = displayCenter() ? Palette::GrayVeryDark : Palette::Black;
+  m_approximateSign.setTextColor(color);
+  m_rightLayoutView.setTextColor(color);
 }
 
 KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
@@ -115,14 +117,7 @@ AbstractScrollableMultipleLayoutsView::ContentCell::layoutAtPosition(
 
 int AbstractScrollableMultipleLayoutsView::ContentCell::numberOfSubviews()
     const {
-  int nbOfSubviews = 1;
-  if (displayCenter()) {
-    nbOfSubviews += 2;
-  }
-  if (displayLeftLayout()) {
-    nbOfSubviews += 1;
-  }
-  return nbOfSubviews;
+  return displayLeftLayout() + displayCenter() + displayApproximateSign() + 1;
 }
 
 KDCoordinate AbstractScrollableMultipleLayoutsView::ContentCell::baseline(
@@ -185,20 +180,20 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
   }
 
   // Layout center layout
+  KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
   if (displayCenter()) {
     assert(centerFrame != nullptr && approximateSignFrame != nullptr);
-    KDSize approximateSignSize =
-        m_approximateSign.minimalSizeForOptimalDisplay();
     *centerFrame =
         KDRect(currentWidth, viewBaseline - centerBaseline, centerSize);
     currentWidth += AbstractScrollableMultipleLayoutsView::k_horizontalMargin +
                     centerSize.width();
+  }
+
+  // Layout approximate sign
+  if (displayApproximateSign()) {
     *approximateSignFrame =
-        displayApproximateSign()
-            ? KDRect(currentWidth,
-                     viewBaseline - approximateSignSize.height() / 2,
-                     approximateSignSize)
-            : KDRectZero;
+        KDRect(currentWidth, viewBaseline - approximateSignSize.height() / 2,
+               approximateSignSize);
     currentWidth += AbstractScrollableMultipleLayoutsView::k_horizontalMargin +
                     approximateSignSize.width();
   }
@@ -224,6 +219,8 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
     }
     if (displayCenter()) {
       *centerFrame = centerFrame->translatedBy(offset);
+    }
+    if (displayApproximateSign()) {
       *approximateSignFrame = approximateSignFrame->translatedBy(offset);
     }
   }
@@ -254,11 +251,14 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
   if (displayCenter() || (forceFullDisplay && displayableCenter())) {
     centerSize = m_centeredLayoutView.minimalSizeForOptimalDisplay();
     width += centerSize.width() +
-             2 * AbstractScrollableMultipleLayoutsView::k_horizontalMargin +
-             m_approximateSign.minimalSizeForOptimalDisplay().width();
+             AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
     maxAboveBaseline = std::max(maxAboveBaseline, centerBaseline);
     maxUnderBaseline = std::max<KDCoordinate>(
         maxUnderBaseline, centerSize.height() - centerBaseline);
+  }
+  if (displayApproximateSign()) {
+    width += m_approximateSign.minimalSizeForOptimalDisplay().width() +
+             AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
   }
 
   KDSize rightSize = KDSizeZero;
@@ -277,19 +277,25 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
 
 View* AbstractScrollableMultipleLayoutsView::ContentCell::subviewAtIndex(
     int index) {
-  bool leftIsVisible = displayLeftLayout();
-  if (leftIsVisible && index == 0) {
-    return leftLayoutView();
+  View* subviews[] = {
+      displayLeftLayout() ? leftLayoutView() : nullptr,
+      displayCenter() ? centeredLayoutView() : nullptr,
+      displayApproximateSign() ? approximateSign() : nullptr,
+      rightLayoutView(),
+  };
+  for (View* subview : subviews) {
+    if (subview != nullptr && index-- == 0) {
+      return subview;
+    }
   }
-  View* views[3] = {&m_rightLayoutView, &m_approximateSign,
-                    &m_centeredLayoutView};
-  return views[index - leftIsVisible];
+  OMG_UNREACHABLE;
+  return nullptr;
 }
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::layoutSubviews(
     bool force) {
   if (bounds().width() <= 0 || bounds().height() <= 0) {
-    /* TODO Make this behaviour in a non-virtual layoutSublviews, and all layout
+    /* TODO Make this behaviour in a non-virtual layoutSubviews, and all layout
      * subviews should become privateLayoutSubviews */
     return;
   }

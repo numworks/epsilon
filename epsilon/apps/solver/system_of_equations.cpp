@@ -256,6 +256,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
       assert(exactSerializationLength <=
              ::Constant::MaxSerializedExpressionSize);
       if (strcmp(exactBuffer, approximateBuffer) == 0) {
+        exactAndApproximateAreEqual = true;
         exactLayout = Layout();
       }
     }

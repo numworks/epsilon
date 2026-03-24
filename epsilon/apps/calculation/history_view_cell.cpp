@@ -311,7 +311,7 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
                                       outputLayouts.approximate);
   }
   m_scrollableOutputView.setExactAndApproximateAreStrictlyEqual(
-      calculation->equalSign() == Calculation::EqualSign::Equal);
+      calculation->equalSign() != Calculation::EqualSign::Approximation);
   // Scroll to approximate output
   m_scrollableOutputView.setSelectedSubviewPosition(
       ScrollableTwoLayoutsView::SubviewPosition::Right);

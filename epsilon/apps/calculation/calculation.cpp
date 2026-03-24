@@ -285,10 +285,12 @@ void Calculation::computeEqualSign(const OutputLayouts& outputLayouts) {
   if (m_equalSign != EqualSign::Unknown) {
     return;
   }
-  if (m_displayOutput == DisplayOutput::ExactOnly ||
-      m_displayOutput == DisplayOutput::ApproximateOnly ||
-      m_displayOutput == DisplayOutput::ApproximateIsIdenticalToExact) {
+  if (m_displayOutput == DisplayOutput::ExactOnly) {
     m_equalSign = EqualSign::Hidden;
+  } else if (m_displayOutput == DisplayOutput::ApproximateOnly) {
+    m_equalSign = EqualSign::Approximation;
+  } else if (m_displayOutput == DisplayOutput::ApproximateIsIdenticalToExact) {
+    m_equalSign = EqualSign::Equal;
   } else {
     m_equalSign = ComputeEqualSignFromOutputs(
         outputLayouts, m_calculationPreferences.complexFormat,

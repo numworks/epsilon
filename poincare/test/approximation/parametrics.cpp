@@ -99,6 +99,7 @@ QUIZ_CASE(pcj_approximation_integrals) {
   approximates_to<double>("int(ln(abs(cos(x^2))),x,2.159,4.23)",
                           "-1.5403160645501");
   approximates_to<double>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "6.1840407386588");
+  approximates_to<double>("int(ln(abs(x^2+3×x+2)),x,4,-3)", "-6.1840407386588");
   /* The same integral calculations work fine on the simplified expression
    * (which introduces a dependency) */
   simplified_approximates_to<double>("int(ln(abs(cos(x^2))),x,2.159,4.23)",

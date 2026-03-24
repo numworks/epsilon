@@ -26,6 +26,22 @@ _simulator_app_binary = $(_simulator_app)/Contents/MacOS/$(APP_NAME)
 _simulator_app_plist = $(_simulator_app)/Contents/Info.plist
 _simulator_app_resources_path = $(_simulator_app)/Contents/Resources
 
+ifdef MACOS_PROVISIONNING_PROFILE
+$(_simulator_app_resources_path)/embedded.provisionprofile: $(MACOS_PROVISIONNING_PROFILE) | $$(@D)/.
+	$(call rule_label,COPY)
+	cp $^ $@
+
+$(OUTPUT_DIRECTORY)/app/entitlements.plist: $(MACOS_PROVISIONNING_PROFILE)
+	$(call rule_label,SCMS)
+	security cms -D -i $(MACOS_PROVISIONNING_PROFILE) | plutil -extract Entitlements xml1 - -o $@
+
+_simulator_app_deps += $(OUTPUT_DIRECTORY)/app/entitlements.plist
+_simulator_app_deps += $(_simulator_app_resources_path)/embedded.provisionprofile
+else
+$(_simulator_app_resources_path)/embedded.provisionprofile:
+	$(warning Building without a provisionning profile. Please define MACOS_PROVISIONNING_PROFILE to point to the .provisionprofile file you want to use.)
+endif
+
 include $(PATH_haussmann)/src/rules/shared.apple.mak
 
 # Run the simulator

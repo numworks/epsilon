@@ -57,7 +57,7 @@ class PieGraphView : public Escher::View, public PieGraphViewDataSource {
   constexpr static KDCoordinate k_radius = 70;
   constexpr static float k_fradius = static_cast<float>(k_radius);
   constexpr static float k_border = 1.f;
-  constexpr static float k_selectedBorder = 6.f;
+  constexpr static float k_selectedBorder = 4.f;
 
   KDColor pointColor(KDCoordinate x, KDCoordinate y, KDPoint center) const;
 };

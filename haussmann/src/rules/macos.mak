@@ -44,6 +44,7 @@ $(_simulator_app_resources_path)/embedded.provisionprofile: $(MACOS_PROVISIONNIN
 $(OUTPUT_DIRECTORY)/app/entitlements.plist: $(MACOS_PROVISIONNING_PROFILE)
 	$(call rule_label,SCMS)
 	security cms -D -i $(MACOS_PROVISIONNING_PROFILE) | plutil -extract Entitlements xml1 - -o $@
+	plutil -insert "com\.apple\.security\.app-sandbox" -bool true $@
 
 _simulator_app_deps += $(OUTPUT_DIRECTORY)/app/entitlements.plist
 _simulator_app_deps += $(_simulator_app_resources_path)/embedded.provisionprofile

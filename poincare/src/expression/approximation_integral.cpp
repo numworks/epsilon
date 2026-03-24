@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include "approximation.h"
+#include "k_tree.h"
 #include "parametric.h"
 #include "simplification.h"
 #include "variables.h"
@@ -42,7 +43,7 @@ T Approximator::approximateIntegral(const Tree* integral) {
 
   /* Detect singularities inside the bounds (not all singularities can be
    * detected). Split the integral at these singularity points */
-  Tree* splitIntegral = splitAtSingularities(integral);
+  Tree* splitIntegral = splitAtSingularities(integral, a, b);
   assert(splitIntegral->isList() && splitIntegral->numberOfChildren() >= 1);
 
   T result = 0.0;
@@ -53,7 +54,8 @@ T Approximator::approximateIntegral(const Tree* integral) {
   return result;
 }
 
-Tree* Approximator::splitAtSingularities(const Tree* integral) {
+template <typename T>
+Tree* Approximator::splitAtSingularities(const Tree* integral, T a, T b) {
   const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
   const Tree* integrand = upperBound->nextTree();
@@ -62,11 +64,26 @@ Tree* Approximator::splitAtSingularities(const Tree* integral) {
 
   EquationSolver::SingularitySolverResult singularities =
       EquationSolver::ExactSolveFindSingularities(integrand, m_parameters);
+
+  int i = 0;
+  // TODO: NAry::RemoveIf
+  while (i < singularities.exactSolutionList->numberOfChildren()) {
+    T value = privateToFloat<T>(singularities.exactSolutionList->child(i));
+    if (value <= a || value >= b) {
+      NAry::RemoveChildAtIndex(singularities.exactSolutionList, i);
+    } else {
+      i++;
+    }
+  }
+
+  if (singularities.exactSolutionList->numberOfChildren() == 0) {
+    singularities.exactSolutionList->cloneTreeOverTree(KUndef);
+  }
+
   if (!singularities.exactSolutionList->isUndefined()) {
     assert(singularities.exactSolutionList->isList() &&
            singularities.exactSolutionList->numberOfChildren() >= 1);
     // TODO:
-    // - check if the singularities are inside the bounds
     // - if some of them are, split the integral
     NAry::AddChild(result, integral->cloneTree());
   } else {

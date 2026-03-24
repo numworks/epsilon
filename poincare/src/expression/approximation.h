@@ -457,7 +457,8 @@ class Approximator {
   /* Return a list of integrals, split at singularities. If no singularity is
    * detected, the list contains a single element, which is the clone of
    * "integral" */
-  Tree* splitAtSingularities(const Tree* integral);
+  template <typename T>
+  Tree* splitAtSingularities(const Tree* integral, T a, T b);
 
   // Integral approximation on an integral already split at singularities
   template <typename T>

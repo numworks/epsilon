@@ -1381,8 +1381,7 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
           /* The approximation returns {undef,…,undef} instead of undef but
            * the list should have been sorted during the reduction in most
            * cases. */
-          sortedList =
-              Undefined::CreateTreeOfTargetDimension(KUndef, e->child(0));
+          sortedList = Undefined::CreateDimensionedUndef(KUndef, e->child(0));
         } else {
           TreeStackCheckpoint::Raise(exc);
         }
@@ -1979,7 +1978,7 @@ Tree* Approximator::evaluateMatrixPower(const Tree* e) {
   const Tree* index = base->nextTree();
   T value = privateToFloat<T>(index);
   if (std::isnan(value) || value != std::round(value)) {
-    return Undefined::CreateTreeOfTargetDimension(KUndef, e);
+    return Undefined::CreateDimensionedUndef(KUndef, e);
   }
   Tree* result = toMatrix(base);
   result->moveTreeOverTree(Matrix::Power(result, value, this));
@@ -2096,8 +2095,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
     case Type::Rref: {
       Tree* result = toMatrix(e->child(0));
       if (!Matrix::RowCanonize(result, e->isRref(), nullptr, this)) {
-        result->moveTreeOverTree(
-            Undefined::CreateTreeOfTargetDimension(KUndef, e));
+        result->moveTreeOverTree(Undefined::CreateDimensionedUndef(KUndef, e));
       }
       return result;
     }
@@ -2134,7 +2132,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
       if (!branch || branch->isUndefSystem()) {
         /* SelectPiecewiseBranch may return KUndefSystem to signal no active
          * branches */
-        return Undefined::CreateTreeOfTargetDimension(KUndef, e);
+        return Undefined::CreateDimensionedUndef(KUndef, e);
       }
       return toMatrix(branch);
     }
@@ -2147,9 +2145,9 @@ Tree* Approximator::toMatrix(const Tree* e) {
         case DefinedStatus::Defined:
           return toMatrix(Dependency::Main(e));
         case DefinedStatus::NonReal:
-          return Undefined::CreateTreeOfTargetDimension(KNonReal, e);
+          return Undefined::CreateDimensionedUndef(KNonReal, e);
         case DefinedStatus::Undefined:
-          return Undefined::CreateTreeOfTargetDimension(KUndef, e);
+          return Undefined::CreateDimensionedUndef(KUndef, e);
         default:
           OMG_UNREACHABLE
       }
@@ -2171,7 +2169,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
       // LocalEvaluator uses a complex double abscissa
       VariableType x = privateToComplex<double>(e->child(0));
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
-        return Undefined::CreateTreeOfTargetDimension(KUndef, e);
+        return Undefined::CreateDimensionedUndef(KUndef, e);
       }
       // Only approximate child once and use LocalEvaluator
       if (m_context.localEvaluator.isFull()) {
@@ -2193,7 +2191,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
                                          ? getParametricBoundOutput<float>(e)
                                          : getParametricBoundOutput<double>(e);
       if (!bounds.isDefined) {
-        return Undefined::CreateTreeOfTargetDimension(KUndef, e);
+        return Undefined::CreateDimensionedUndef(KUndef, e);
       }
       // TODO: Factorize with same code in AnalysisToComplex without slowing it
       // Cloning here to avoid modifying function argument `e`
@@ -2234,7 +2232,7 @@ Tree* Approximator::toMatrix(const Tree* e) {
     default:
       OMG_UNREACHABLE;
   }
-  return Undefined::CreateTreeOfTargetDimension(KUndef, e);
+  return Undefined::CreateDimensionedUndef(KUndef, e);
 }
 
 const Tree* Approximator::selectPiecewiseBranch(const Tree* piecewise) {

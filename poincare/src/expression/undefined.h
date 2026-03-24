@@ -49,16 +49,20 @@ bool MustBubbleUpUndefinedChild(const Tree* e, int childIndex);
 /* Return the first undefined child, nullptr if there are none. */
 const Tree* GetUndefinedChild(const Tree* e);
 
-/* Create a tree [e] with identical dimension to [target].
+/* Create a tree [undefTree] with identical dimension to [targetForDimension].
  * Example:
- * [target] is list and [e] is nonreal => {nonreal,...} with correct length.
- * [target] is matrix and [e] is undef => [[undef,...]...] with correct size.
- * [target] is boolean and [e] is undef => booleanUndef. */
-Tree* CreateTreeOfTargetDimension(const Tree* e, const Tree* target);
+ * [targetForDimension] is list and [undefTree] is nonreal
+ *                     => {nonreal,...} with correct length.
+ * [targetForDimension] is matrix and [undefTree] is undef
+ *                     => [[undef,...]...] with correct size.
+ * [targetForDimension] is boolean and [undefTree] is undef
+ *                     => booleanUndef. */
+Tree* CreateDimensionedUndef(const Tree* undefTree,
+                             const Tree* targetForDimension);
 
-// Replace [e] with [replace] while preserving the dimension of [e].
-inline void ReplaceTreePreservingDimension(Tree* e, const Tree* replace) {
-  e->moveTreeOverTree(CreateTreeOfTargetDimension(replace, e));
+// Replace [e] with [undefTree] while preserving the dimension of [e].
+inline void ReplaceTreePreservingDimension(Tree* e, const Tree* undefTree) {
+  e->moveTreeOverTree(CreateDimensionedUndef(undefTree, e));
 }
 
 // Return if t is undefined, or a list/matrix/point/sequence of undefined nodes

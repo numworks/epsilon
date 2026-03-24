@@ -92,41 +92,40 @@ const Tree* Undefined::GetUndefinedChild(const Tree* e) {
   return nullptr;
 }
 
-Tree* Undefined::CreateTreeOfTargetDimension(const Tree* e,
-                                             const Tree* target) {
-  assert(!target->isDepList());
+Tree* Undefined::CreateDimensionedUndef(const Tree* undefTree,
+                                        const Tree* targetForDimension) {
+  assert(!targetForDimension->isDepList());
+  assert(undefTree->isUndefined());
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
-  int length = Dimension::ListLength(target);
+  int length = Dimension::ListLength(targetForDimension);
   if (length >= 0) {
     SharedTreeStack->pushListSequence();
     "k"_e->cloneTree();
     Integer::Push(length);
   }
-  Dimension dim = Dimension::Get(target);
+  Dimension dim = Dimension::Get(targetForDimension);
   if (dim.isBoolean()) {
-    assert(e->isUndefined());
     KUndefBoolean->cloneTree();
   } else if (dim.isUnit()) {
-    assert(e->isUndefined());
     KUndefUnit->cloneTree();
   } else {
-    if (IsUndefSpecial(e, Undefined::SpecialType::Boolean) ||
-        IsUndefSpecial(e, Undefined::SpecialType::Unit)) {
-      e = KUndef;
+    if (IsUndefSpecial(undefTree, Undefined::SpecialType::Boolean) ||
+        IsUndefSpecial(undefTree, Undefined::SpecialType::Unit)) {
+      undefTree = KUndef;
     }
     if (dim.isMatrix()) {
       int nRows = dim.matrix.rows;
       int nCols = dim.matrix.cols;
       SharedTreeStack->pushMatrix(nRows, nCols);
       for (int i = 0; i < nRows * nCols; i++) {
-        e->cloneTree();
+        undefTree->cloneTree();
       }
     } else if (dim.isPoint()) {
       SharedTreeStack->pushPoint();
-      e->cloneTree();
-      e->cloneTree();
+      undefTree->cloneTree();
+      undefTree->cloneTree();
     } else {
-      e->cloneTree();
+      undefTree->cloneTree();
     }
   }
   if (length >= 0) {

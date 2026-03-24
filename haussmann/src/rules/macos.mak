@@ -55,6 +55,19 @@ endif
 
 include $(PATH_haussmann)/src/rules/shared.apple.mak
 
+%.pkg: $(OUTPUT_DIRECTORY)/%.pkg
+	@ :
+
+MACOS_SIGNER_IDENTITY ?= Apple Distribution: NumWorks
+MACOS_INSTALLER_IDENTITY ?= 3rd Party Mac Developer Installer: NumWorks
+$(OUTPUT_DIRECTORY)/%.pkg: $(OUTPUT_DIRECTORY)/%.app
+ifdef MACOS_PROVISIONNING_PROFILE
+	$(call rule_label,SIGN)
+	codesign --force --options runtime --entitlements $(OUTPUT_DIRECTORY)/app/entitlements.plist --sign "$(MACOS_SIGNER_IDENTITY)" $(OUTPUT_DIRECTORY)/$*.app
+endif
+	$(call rule_label,PRODUCT)
+	productbuild --component $(OUTPUT_DIRECTORY)/$*.app /Applications $@ --identifier $(APP_BUNDLE_ID) --version $(APP_VERSION) --sign "$(MACOS_INSTALLER_IDENTITY)"
+
 # Run the simulator
 %.app.run: $(_simulator_app)
 	open $^ --args $(_args)

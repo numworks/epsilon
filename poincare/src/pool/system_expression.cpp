@@ -73,6 +73,7 @@ SystemExpression SystemExpression::RationalBuilder(int32_t numerator,
   return Builder(
       Rational::Push(IntegerHandler(numerator), IntegerHandler(denominator)));
 }
+
 SystemExpression SystemExpression::Undefined() {
   return SystemExpression::Builder(KUndef);
 }
@@ -194,7 +195,7 @@ PreparedFunction SystemExpression::getPreparedFunction(const char* symbolName,
   if ((scalarsOnly &&
        (!dimension.isScalar() || Internal::Dimension::IsList(tree()))) ||
       (!dimension.isScalar() && !dimension.isPoint())) {
-    return PreparedFunction::Builder(KUndef);
+    return PreparedFunction::Builder(KBadType);
   }
   Tree* result = tree()->cloneTree();
   Approximation::PrepareFunctionForApproximation(result, symbolName, true);

@@ -75,7 +75,7 @@ bool Arithmetic::ReduceFloor(Tree* e) {
 
   // Reduce to undefined if the child is a complex number
   if (GetComplexProperties(child).isNonReal()) {
-    e->cloneTreeOverTree(KUndef);
+    e->cloneTreeOverTree(KBadType);
     return true;
   }
 

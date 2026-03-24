@@ -202,7 +202,7 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
   }
   assert(Dimension::IsList(coefficients));
   if (!IsValidCoefficientsList(coefficients)) {
-    return KUndef->cloneNode();
+    return KBadType->cloneTree();
   }
   PatternMatching::Context ctx({.KA = list, .KB = coefficients});
   return PatternMatching::CreateReduce(
@@ -279,7 +279,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
       Tree* valuesList = e->child(0);
       Tree* weights = e->child(1);
       if (!(weights->isOne() || IsValidCoefficientsList(weights))) {
-        e->cloneTreeOverTree(KUndef);
+        e->cloneTreeOverTree(KBadType);
         return true;
       }
       // Bubble up undefined from list of values
@@ -330,7 +330,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
       }
       approximatedList->removeTree();
       if (lowerMedianIndex < 0) {
-        e->cloneTreeOverTree(KUndef);
+        e->cloneTreeOverTree(KBadType);
       } else if (upperMedianIndex == lowerMedianIndex) {
         e->moveTreeOverTree(valuesList->child(lowerMedianIndex));
       } else {
@@ -369,7 +369,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
       assert(Integer::Is<uint8_t>(e->child(1)));
       int i = Integer::Handler(e->child(1)).to<uint8_t>() - 1;
       if (i < 0 || i >= e->child(0)->numberOfChildren()) {
-        e->cloneTreeOverTree(KUndef);
+        e->cloneTreeOverTree(KBadType);
         return true;
       }
       Tree* element =

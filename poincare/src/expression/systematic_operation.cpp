@@ -845,7 +845,7 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
   ComplexProperties complexProperties = GetComplexProperties(child);
   if (hasUnit && complexProperties.canBeNonReal()) {
     // Do not handle abs with non real units
-    e->cloneTreeOverTree(KUndef);
+    e->cloneTreeOverTree(KUndefUnhandled);
     return true;
   }
   if (!complexProperties.isPure()) {

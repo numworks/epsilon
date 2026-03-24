@@ -89,7 +89,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
   if (child->isZero()) {
     if (next->isInf()) {
       // 0 * inf -> undef
-      merge = KUndef->cloneTree();
+      merge = KUndefUnhandled->cloneTree();
     } else {
       if (Dimension::IsNonListScalar(next)) {
         if (IsFinite(next)) {

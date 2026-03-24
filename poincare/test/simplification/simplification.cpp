@@ -644,7 +644,7 @@ QUIZ_CASE(pcj_euclidean_division) {
 
 QUIZ_CASE(pcj_simplification_undef) {
   reduces_to_tree(KUndef, KUndef);
-  reduces_to_tree(KSub(KInf, KInf), KUndef);
+  reduces_to_tree(KSub(KInf, KInf), KUndefUnhandled);
   reduces_to_tree(KSqrt(-1_e), KNonReal);
   reduces_to_tree(KDiv(1_e, 0_e), KOutOfDefinition);
   reduces_to_tree(KPow(0_e, 0_e), KOutOfDefinition);

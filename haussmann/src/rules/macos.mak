@@ -59,6 +59,8 @@ $(call document_extension,app.reload,Refresh a running simulator)
 $(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) | $$(@D)/.
 	$(call rule_label,PLUTIL)
 	cp $< $@
+	plutil -insert "CFBundleIdentifier" -string "$(APP_BUNDLE_ID)" $@
+	plutil -insert "CFBundleName" -string "$(APP_FULL_NAME)" $@
 	plutil -insert "LSMinimumSystemVersion" -string "$(APPLE_PLATFORM_MIN_VERSION)" $@
 	plutil -insert "CFBundleExecutable" -string "$(APP_NAME)" $@
 	plutil -insert "CFBundleVersion" -string "$(APP_VERSION)" $@

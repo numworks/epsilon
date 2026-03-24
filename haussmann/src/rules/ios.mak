@@ -50,4 +50,20 @@ $(_simulator_app_resources_path)/embedded.mobileprovision:
 	$(warning Building without a provisionning profile. Please define IOS_PROVISIONNING_PROFILE to point to the .mobileprovision file you want to use.)
 endif
 
+%.ipa: $(OUTPUT_DIRECTORY)/%.ipa
+	@ :
+
+IOS_SIGNER_IDENTITY ?= Apple Distribution: NumWorks
+$(OUTPUT_DIRECTORY)/%.ipa: $(OUTPUT_DIRECTORY)/%.app
+ifdef IOS_PROVISIONNING_PROFILE
+	$(call rule_label,SIGN)
+	$(Q) codesign --force --entitlements $(OUTPUT_DIRECTORY)/app/entitlements.plist --sign "$(IOS_SIGNER_IDENTITY)" $(OUTPUT_DIRECTORY)/$*.app
+endif
+	@ echo "$(shell printf "%-8s" "COPY")$(notdir $*).app into Payload"
+	$(Q) cd $(dir $@) ; mkdir Payload; cp -r $(notdir $*).app Payload
+
+	$(call rule_label,ZIP)
+	$(Q) cd $(dir $@) ; zip -qr9 $(notdir $@) Payload
+
 include $(PATH_haussmann)/src/rules/shared.apple.mak
+

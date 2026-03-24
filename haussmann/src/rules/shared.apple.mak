@@ -40,18 +40,3 @@ $(addprefix $(_simulator_app_resources_path)/,$(strip $2)): $(strip $3) | $$$$(@
 	$4
 )
 endef
-
-%.ipa: $(OUTPUT_DIRECTORY)/%.ipa
-	@ :
-
-IOS_SIGNER_IDENTITY ?= Apple Distribution: NumWorks
-$(OUTPUT_DIRECTORY)/%.ipa: $(OUTPUT_DIRECTORY)/%.app
-ifdef IOS_PROVISIONNING_PROFILE
-	$(call rule_label,SIGN)
-	$(Q) codesign --force --entitlements $(OUTPUT_DIRECTORY)/app/entitlements.plist --sign "$(IOS_SIGNER_IDENTITY)" $(OUTPUT_DIRECTORY)/$*.app
-endif
-	@ echo "$(shell printf "%-8s" "COPY")$(notdir $*).app into Payload"
-	$(Q) cd $(dir $@) ; mkdir Payload; cp -r $(notdir $*).app Payload
-
-	$(call rule_label,ZIP)
-	$(Q) cd $(dir $@) ; zip -qr9 $(notdir $@) Payload

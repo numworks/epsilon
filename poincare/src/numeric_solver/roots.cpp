@@ -109,9 +109,13 @@ Tree* Roots::PrivateCubic(const Tree* a, const Tree* b, const Tree* c,
                           bool fastCardanoMethod) {
   assert(a && b && c && d);
 
-  if (a->isUndefined() || b->isUndefined() || c->isUndefined() ||
-      d->isUndefined()) {
-    return KUndef->cloneTree();
+  const Tree* r = a->isUndefined()   ? a
+                  : b->isUndefined() ? b
+                  : c->isUndefined() ? c
+                  : d->isUndefined() ? d
+                                     : nullptr;
+  if (r) {
+    return r->cloneTree();
   }
 
   /* Cases in which some coefficients are zero. */

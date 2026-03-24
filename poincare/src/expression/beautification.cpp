@@ -553,7 +553,7 @@ bool ShallowBeautify(Tree* e, void* context) {
   /* A matrix full of undef is a simple undef */
   if (e->isMatrix() &&
       !e->hasChildSatisfying([](const Tree* e) { return !e->isUndefined(); })) {
-    e->cloneTreeOverTree(KUndef);
+    e->cloneTreeOverTree(e->child(0));
     return true;
   }
 

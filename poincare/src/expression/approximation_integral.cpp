@@ -153,10 +153,12 @@ T Approximator::approximateIntegralSingularityAtBoundsMethod(
    * evaluate the integrand really close to 1 (about 1-1e-300). */
   Private::AlternativeIntegrand alternativeIntegrand = {.a = a, .b = b};
   if (notFiniteInA && a != 0 && integral->isIntegralWithAlternatives()) {
-    alternativeIntegrand.integrandNearA = integral->child(4);
+    alternativeIntegrand.integrandNearA =
+        integral->child(Parametric::k_integrandNearLowerBoundIndex);
   }
   if (notFiniteInB && b != 0 && integral->isIntegralWithAlternatives()) {
-    alternativeIntegrand.integrandNearB = integral->child(5);
+    alternativeIntegrand.integrandNearB =
+        integral->child(Parametric::k_integrandNearUpperBoundIndex);
   }
   /* We are using 4 levels of refinement which means ≈ 64 integrand
    * evaluations = 2 (R- and R+) * 2^4 (ticks/unit) * 4 (typical decay on the

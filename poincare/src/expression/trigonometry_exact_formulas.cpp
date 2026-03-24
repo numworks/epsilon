@@ -58,7 +58,7 @@ constexpr ExactFormula ExactFormulas[] = {
      *        atan(x) = π/2 - atan(1/x) advanced reduction.
      */
     // π/2, 0, 1, undef
-    {KMult(1_e / 2_e, π_e), 0_e, 1_e, KUndef},
+    {KMult(1_e / 2_e, π_e), 0_e, 1_e, KUndefZeroDivision},
     // π/3, 1/2, √3/2, √3
     {KMult(1_e / 3_e, π_e), 1_e / 2_e,
      KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))),

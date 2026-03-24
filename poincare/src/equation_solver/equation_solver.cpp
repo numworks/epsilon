@@ -1057,7 +1057,7 @@ SingularitySolverResult ExactSolveFindSingularities(
     reducedFunction->removeTree();
     // Not possible to perform exact singularity detection
     return SingularitySolverResult{
-        .exactSolutionList = KUndefUnhandled->cloneTree(),
+        .exactSolutionList = SharedTreeStack->pushList(0),
         .error = Error::EquationUnhandled};
   }
   const Tree* functionWithRoots = matchesContext.getTree(KA);
@@ -1103,15 +1103,9 @@ SingularitySolverResult ExactSolveFindSingularities(
   // Step 3. Post-process the result
   if (result.error != Error::NoError) {
     assert(!result.exactSolutionList);
-    result.exactSolutionList = KUndefUnhandled->cloneTree();
+    result.exactSolutionList = SharedTreeStack->pushList(0);
   } else {
-    // If result list is empty, return undef
     assert(result.exactSolutionList->isList());
-    if (result.exactSolutionList->numberOfChildren() == 0) {
-      result.exactSolutionList->removeTree();
-      return SingularitySolverResult{.exactSolutionList = KUndef->cloneTree(),
-                                     .error = result.error};
-    }
   }
   return SingularitySolverResult{.exactSolutionList = result.exactSolutionList,
                                  .error = result.error};

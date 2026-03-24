@@ -41,6 +41,7 @@ struct SingularitySolverResult {
 };
 
 /* Try to find exact singularity points of a scalar single-variable function.
+ * Returns a list of singularities (empty if none was found)
  * Given a function f(x), singularities are values of x at which f(x) is not
  * properly defined, because its "value" would be +∞ or -∞. This method aims at
  * exact singularities, so it only works on a very restricted subset of

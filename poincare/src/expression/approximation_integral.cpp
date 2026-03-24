@@ -83,6 +83,7 @@ Tree* Approximator::splitAtSingularities(const Tree* integral, T a, T b) {
 
   EquationSolver::SingularitySolverResult singularities =
       EquationSolver::ExactSolveFindSingularities(integrand, m_parameters);
+  assert(singularities.exactSolutionList->isList());
 
   int i = 0;
   // TODO: NAry::RemoveIf
@@ -95,13 +96,7 @@ Tree* Approximator::splitAtSingularities(const Tree* integral, T a, T b) {
     }
   }
 
-  if (singularities.exactSolutionList->numberOfChildren() == 0) {
-    singularities.exactSolutionList->cloneTreeOverTree(KUndef);
-  }
-
-  if (!singularities.exactSolutionList->isUndefined()) {
-    assert(singularities.exactSolutionList->isList() &&
-           singularities.exactSolutionList->numberOfChildren() >= 1);
+  if (singularities.exactSolutionList->numberOfChildren() > 0) {
     int i = 0;
     NAry::AddChild(result, PatternMatching::Create(
                                KIntegral(KA, KB, KC, KD),

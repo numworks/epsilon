@@ -22,13 +22,13 @@ bool check_singularities(
   EquationSolver::SingularitySolverResult result =
       EquationSolver::ExactSolveFindSingularities(e,
                                                   Poincare::UserParameters{});
-  if (expectedSingularities.size() == 0) {
-    quiz_assert(result.exactSolutionList->isUndefined());
-  } else {
-    quiz_assert(result.error == Poincare::EquationSolver::Error::NoError);
-    assert(result.exactSolutionList->isList());
-    assert(result.exactSolutionList->numberOfChildren() ==
-           static_cast<int>(expectedSingularities.size()));
+  assert(result.exactSolutionList->isList());
+  bool hasCorrectNumberOfSingularities =
+      result.exactSolutionList->numberOfChildren() ==
+      static_cast<int>(expectedSingularities.size());
+  quiz_assert_print_if_failure(hasCorrectNumberOfSingularities,
+                               "incorrect number of singularities");
+  if (hasCorrectNumberOfSingularities) {
     auto expectedIterator = expectedSingularities.begin();
     const Tree* computedTree = result.exactSolutionList->nextNode();
     while (expectedIterator < expectedSingularities.end()) {

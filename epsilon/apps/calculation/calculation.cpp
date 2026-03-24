@@ -36,7 +36,6 @@ Calculation* Calculation::next() const {
 
 UserExpression Calculation::input() {
   UserExpression e = UserExpression::Builder(inputTree());
-  assert(!e.isUninitialized());
   return e;
 }
 
@@ -46,7 +45,6 @@ UserExpression Calculation::exactOutput() {
    * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
    * 'cos(pi/4) = 0.999906' (which is true in degree). */
   UserExpression e = UserExpression::Builder(exactOutputTree());
-  assert(!e.isUninitialized());
   return e;
 }
 
@@ -83,7 +81,6 @@ UserExpression Calculation::approximateOutput() {
    */
   // clang-format on
   UserExpression e = UserExpression::Builder(approximatedOutputTree());
-  assert(!e.isUninitialized());
   return e;
 }
 

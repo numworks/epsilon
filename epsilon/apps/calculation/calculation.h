@@ -160,22 +160,23 @@ class Calculation {
   void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
 
   const Poincare::Internal::Tree* inputTree() const {
-    return m_inputTreeSize == 0 ? KUndefSystem
+    return m_inputTreeSize == 0 ? nullptr
                                 : Poincare::Internal::Tree::FromBlocks(m_trees);
   }
   const Poincare::Internal::Tree* exactOutputTree() const {
-    return m_exactOutputTreeSize == 0 ? KUndefSystem
+    return m_exactOutputTreeSize == 0 ? nullptr
                                       : Poincare::Internal::Tree::FromBlocks(
                                             m_trees + m_inputTreeSize);
   }
   const Poincare::Internal::Tree* approximatedOutputTree() const {
     return m_approximatedOutputTreeSize == 0
-               ? KUndefSystem
+               ? nullptr
                : Poincare::Internal::Tree::FromBlocks(
                      m_trees + m_inputTreeSize + m_exactOutputTreeSize);
   }
 
   bool exactAndApproximatedAreEqual() const {
+    assert(m_exactOutputTreeSize > 0 && m_approximatedOutputTreeSize > 0);
     return m_exactOutputTreeSize == m_approximatedOutputTreeSize &&
            memcmp(exactOutputTree(), approximatedOutputTree(),
                   m_exactOutputTreeSize) == 0;

@@ -402,7 +402,7 @@ bool ReduceDependencies(Tree* dependencies) {
           GetComplexProperties(dependency->child(0));
       if (propertiesX.isNonReal()) {
         // {real(x)} = {undef} if x is non real
-        dependency->cloneTreeOverTree(KUndef);
+        dependency->cloneTreeOverTree(KOutOfDefinition);
         removeMarker(end);
         return true;
       }
@@ -444,7 +444,7 @@ bool ReduceDependencies(Tree* dependencies) {
       ComplexProperties properties = GetComplexProperties(dependency->child(0));
       if (properties.isNull()) {
         // dep(..., {nonNull(x)}) = dep(..., {undef}) if x is null
-        dependency->cloneTreeOverTree(KUndef);
+        dependency->cloneTreeOverTree(KOutOfDefinition);
         removeMarker(end);
         return true;
       }
@@ -491,7 +491,7 @@ bool ReduceDependencies(Tree* dependencies) {
       ComplexProperties properties = GetComplexProperties(dependency->child(0));
       if (properties.isNonReal()) {
         /* dep(..., {realInteger(x)},) = dep(..., {undef}) if x is not real */
-        dependency->cloneTreeOverTree(KUndef);
+        dependency->cloneTreeOverTree(KOutOfDefinition);
         changed = true;
         continue;
       }

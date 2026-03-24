@@ -291,7 +291,8 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
     case Type::Sign: {
       // Di(sign(x)) = 0 if x != 0 and undef if x = 0
       return PatternMatching::CreateReduce(
-          KPiecewise(KUndef, KEqual(KA, 0_e), 0_e), {.KA = derivand->child(0)});
+          KPiecewise(KOutOfDefinition, KEqual(KA, 0_e), 0_e),
+          {.KA = derivand->child(0)});
     }
 #endif
     default:

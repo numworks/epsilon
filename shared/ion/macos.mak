@@ -30,6 +30,13 @@ $(call rule_for_simulator_resource,COPY,$(notdir $a),$a,\
   cp $$^ $$@ \
 )))
 
+# MacOS App Store applications need a retina 512x512@2x icon with a 1024x1024 size
+$(OUTPUT_DIRECTORY)/app/assets/app.iconset/icon_512x512@2x.png: $(OUTPUT_DIRECTORY)/app/assets/app.iconset/icon_1024x1024.png
+	$(call rule_label,COPY)
+	cp $^ $@
+
+_ion_simulator_icons += $(OUTPUT_DIRECTORY)/app/assets/app.iconset/icon_512x512@2x.png
+
 $(call rule_for_simulator_resource, \
   ICNUTIL,app.icns,$(_ion_simulator_icons), \
   iconutil --convert icns --output $$@ $$(dir $$<) \

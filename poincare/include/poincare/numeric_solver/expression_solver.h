@@ -78,7 +78,7 @@ class RootSolver : public ExpressionSolver {
 
   static Solution<double> SolutionFromDetailedRoot(DetailedRoot root) {
     return std::isfinite(root.x) ? Solution<double>{root.x, 0., Interest::Root}
-                                 : Solution<double>{};
+                                 : k_noSolution<double>;
   }
 };
 

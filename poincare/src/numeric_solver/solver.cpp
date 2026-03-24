@@ -107,7 +107,7 @@ Solution<T> Solver<T>::next() {
     }
   }
 
-  return Solution<T>{};
+  return k_noSolution<T>;
 }
 
 template <typename T>
@@ -322,7 +322,7 @@ void Solver<T>::honeAndRoundSolution(Coordinate2D<T> start, Coordinate2D<T> end,
 template <typename T>
 Solution<T> Solver<T>::registerSolution(Solution<T> solution, bool wasQueued) {
   if (std::isnan(solution.x)) {
-    return Solution<T>{};
+    return k_noSolution<T>;
   }
   assert((wasQueued && solution.x == m_xStart) ||
          (!wasQueued && validSolution(solution.x)));

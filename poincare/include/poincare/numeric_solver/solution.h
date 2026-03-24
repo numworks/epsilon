@@ -13,6 +13,9 @@ struct Solution {
 };
 
 template <typename T>
+constexpr Solution<T> k_noSolution = {};
+
+template <typename T>
 constexpr inline Solution<T> CoordToSolution(
     Coordinate2D<T> coordinates, Interest interest = Interest::None) {
   return Solution<T>{coordinates.x(), coordinates.y(), interest};

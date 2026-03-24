@@ -21,9 +21,10 @@ ExpressionSolver::ExpressionSolver(double xStart, double xEnd, const Tree* e,
 }
 
 void ExpressionSolver::setEvaluator(const Internal::Tree* e) {
+  assert(e);
   m_auxiliary = e;
-  if (!e || e->hasDescendantSatisfying(
-                [](const Tree* e) { return e->isRandomized(); })) {
+  if (e->hasDescendantSatisfying(
+          [](const Tree* e) { return e->isRandomized(); })) {
     m_evaluator = [](double, const void*) { return static_cast<double>(NAN); };
     return;
   }

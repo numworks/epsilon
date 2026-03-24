@@ -1,7 +1,7 @@
 TOOLCHAIN ?= apple
 
 APPLE_PLATFORM := macos
-APPLE_PLATFORM_MIN_VERSION := 10.10
+APPLE_PLATFORM_MIN_VERSION := 12.0
 
 # Disable since sharing binaries on macos is difficult anyway
 # ifeq ($(DEBUG),0)

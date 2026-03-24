@@ -79,54 +79,54 @@ Tree* Approximator::splitAtSingularities(const Tree* integral, T a, T b) {
   const Tree* upperBound = lowerBound->nextTree();
   const Tree* integrand = upperBound->nextTree();
 
-  TreeRef result = SharedTreeStack->pushList(0);
-
   EquationSolver::SingularitySolverResult singularities =
       EquationSolver::ExactSolveFindSingularities(integrand, m_parameters);
-  assert(singularities.exactSolutionList->isList());
+  TreeRef splittingPoints = singularities.exactSolutionList;
+  assert(splittingPoints->isList());
 
-  int i = 0;
-  // TODO: NAry::RemoveIf
-  while (i < singularities.exactSolutionList->numberOfChildren()) {
-    T value = privateToFloat<T>(singularities.exactSolutionList->child(i));
-    if (value <= a || value >= b) {
-      NAry::RemoveChildAtIndex(singularities.exactSolutionList, i);
-    } else {
-      i++;
-    }
-  }
+  /*  Add the initial upper bound to the list of splitting points for
+   * performance (see comment in the below for loop). */
+  NAry::AddChild(splittingPoints, upperBound->cloneTree());
+  /* lower bound and upper bound get updated in the for loop for each potential
+   * splitting point. The initial value of upper bound is the first splitting
+   * point candidate. */
+  const Tree* movingLowerBound = lowerBound;
+  const Tree* movingUpperBound = splittingPoints->nextNode();
+  const Tree* lastPoint = splittingPoints->lastChild();
 
-  if (singularities.exactSolutionList->numberOfChildren() > 0) {
-    int i = 0;
-    NAry::AddChild(result, PatternMatching::Create(
-                               KIntegral(KA, KB, KC, KD),
-                               {.KA = integral->child(0),
-                                .KB = lowerBound,
-                                .KC = singularities.exactSolutionList->child(i),
-                                .KD = integrand},
-                               ContextScopes{.KD = 1}));
-    while (i < singularities.exactSolutionList->numberOfChildren() - 1) {
-      NAry::AddChild(result,
-                     PatternMatching::Create(
-                         KIntegral(KA, KB, KC, KD),
-                         {.KA = integral->child(0),
-                          .KB = singularities.exactSolutionList->child(i),
-                          .KC = singularities.exactSolutionList->child(i + 1),
-                          .KD = integrand},
-                         ContextScopes{.KD = 1}));
-      i++;
+  TreeRef result = SharedTreeStack->pushList(0);
+
+  for (const Tree* point : splittingPoints->children()) {
+    T value = privateToFloat<T>(point);
+    /* Do not split if value is outside or equal to bounds, with an exception
+     * for the last splitting point which is the initial upper bound and should
+     * always be included */
+    if ((point != lastPoint) && (value <= a || value >= b)) {
+      continue;
     }
-    NAry::AddChild(result, PatternMatching::Create(
-                               KIntegral(KA, KB, KC, KD),
-                               {.KA = integral->child(0),
-                                .KB = singularities.exactSolutionList->child(i),
-                                .KC = upperBound,
-                                .KD = integrand},
-                               ContextScopes{.KD = 1}));
-  } else {
-    NAry::AddChild(result, integral->cloneTree());
+    movingUpperBound = point;
+    NAry::AddChild(result,
+                   integral->isIntegralWithAlternatives()
+                       ? PatternMatching::Create(
+                             KIntegralWithAlternatives(KA, KB, KC, KD, KE, KF),
+                             {.KA = integral->nextNode(),
+                              .KB = movingLowerBound,
+                              .KC = movingUpperBound,
+                              .KD = integrand,
+                              .KE = integral->child(
+                                  Parametric::k_integrandNearLowerBoundIndex),
+                              .KF = integral->child(
+                                  Parametric::k_integrandNearUpperBoundIndex)},
+                             ContextScopes{.KD = 1, .KE = 1, .KF = 1})
+                       : PatternMatching::Create(KIntegral(KA, KB, KC, KD),
+                                                 {.KA = integral->nextNode(),
+                                                  .KB = movingLowerBound,
+                                                  .KC = movingUpperBound,
+                                                  .KD = integrand},
+                                                 ContextScopes{.KD = 1}));
+    movingLowerBound = point;
   }
-  singularities.exactSolutionList->removeTree();
+  splittingPoints->removeTree();
   return result;
 }
 

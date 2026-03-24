@@ -26,9 +26,9 @@ bool check_singularities(
     quiz_assert(result.exactSolutionList->isUndefined());
   } else {
     quiz_assert(result.error == Poincare::EquationSolver::Error::NoError);
-    quiz_assert(result.exactSolutionList->isList());
-    quiz_assert(result.exactSolutionList->numberOfChildren() ==
-                static_cast<int>(expectedSingularities.size()));
+    assert(result.exactSolutionList->isList());
+    assert(result.exactSolutionList->numberOfChildren() ==
+           static_cast<int>(expectedSingularities.size()));
     auto expectedIterator = expectedSingularities.begin();
     const Tree* computedTree = result.exactSolutionList->nextNode();
     while (expectedIterator < expectedSingularities.end()) {

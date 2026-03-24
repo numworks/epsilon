@@ -30,7 +30,6 @@ class BoxPlotPolicy {
 
  protected:
   constexpr static KDColor k_selectedColor = Escher::Palette::YellowDark;
-  constexpr static KDColor k_unfocusedColor = Escher::Palette::GrayMiddle;
 
   constexpr static std::array<KDCoordinate, Store::k_numberOfSeries>
       k_boxesHeights = {40, 40, 27, 18, 15, 11};

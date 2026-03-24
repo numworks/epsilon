@@ -40,46 +40,11 @@ UserExpression Calculation::input() {
 }
 
 UserExpression Calculation::exactOutput() {
-  /* Because the angle unit might have changed, we do not simplify again. We
-   * thereby avoid turning cos(Pi/4) into sqrt(2)/2 and displaying
-   * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
-   * 'cos(pi/4) = 0.999906' (which is true in degree). */
   UserExpression e = UserExpression::Builder(exactOutputTree());
   return e;
 }
 
 UserExpression Calculation::approximateOutput() {
-  // clang-format off
-  /* Warning:
-   * Since quite old versions of Epsilon, the Expression 'exp' was used to be
-   * approximated again to ensure its content was in the expected form - a
-   * linear combination of Decimal.
-   * However, since the approximate output may contain units and that a
-   * Poincare::Unit approximates to undef, thus it must not be approximated
-   * anymore.
-   * We have to keep two serializations of the approximation outputs:
-   * - one with the maximal significant digits, to be used by 'Ans' or when
-   *   handling 'OK' event on the approximation output.
-   * - one with the displayed number of significant digits that we parse to
-   *   create the displayed layout. If we used the other serialization to
-   *   create the layout, the result of the parsing could be an Integer which
-   *   does not take the number of significant digits into account when creating
-   *   its layout. This would lead to wrong number of significant digits in the
-   *   layout.
-   *   For instance:
-   *        Number of asked significant digits: 7
-   *        Input: "123456780", Approximate output: "1.234567E8"
-   *
-   *  |--------------------------------------------------------------------------------------|
-   *  | Number of significant digits | Approximate text | Parse expression    | Layout       |
-   *  |------------------------------+------------------+---------------------+--------------|
-   *  | Maximal                      | "123456780"      | Integer(123456780)  | "123456780"  |
-   *  |------------------------------+------------------+---------------------+--------------|
-   *  | User defined                 | "1.234567E8"     | Decimal(1.234567E8) | "1.234567E8" |
-   *  |--------------------------------------------------------------------------------------|
-   *
-   */
-  // clang-format on
   UserExpression e = UserExpression::Builder(approximatedOutputTree());
   return e;
 }

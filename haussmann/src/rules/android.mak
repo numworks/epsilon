@@ -51,3 +51,30 @@ $(OUTPUT_DIRECTORY)/%_signed.apk_flash: $(OUTPUT_DIRECTORY)/%_signed.apk
 	:
 
 $(call document_other_target,<project>_signed.apk_flash,Flash a signed APK with ADB)
+
+%.aab: $(OUTPUT_DIRECTORY)/%.aab
+	@ :
+
+$(OUTPUT_DIRECTORY)/%.aab: $$(_ion_simulator_assets) $(foreach ARCH,$(ARCHS),$(call path_for_arch_jni_lib,$(ARCH))) $$(_ion_apk_deps)
+	$(if $(KEYSTORE),,$(error KEYSTORE must be set to build a signed AAB))
+	$(call rule_label,GRADLE)
+	@printf 'Keystore password: '; read -rs ks_password; echo; \
+	ANDROID_SIGNING_STORE_FILE=$$(realpath $(KEYSTORE)) ANDROID_SIGNING_STORE_PASSWORD=$$ks_password ANDROID_SIGNING_KEY_ALIAS=numworks ANDROID_SIGNING_KEY_PASSWORD=$$ks_password $(PATH_ion)/src/simulator/android/gradlew -p $(PATH_ion)/src/simulator/android -PappVersion=$(APP_VERSION) -PoutputDirectory=$$(realpath $(OUTPUT_DIRECTORY)) -PgoalName=$(basename $(@F)) -PndkBundleVersion=$(NDK_BUNDLE_VERSION) bundleRelease
+	cp $(OUTPUT_DIRECTORY)/app/outputs/bundle/release/android-release.aab $@
+
+$(call document_extension,aab)
+
+$(OUTPUT_DIRECTORY)/%.apks: $(OUTPUT_DIRECTORY)/%.aab
+	$(if $(KEYSTORE),,$(error KEYSTORE must be set to build an APK set))
+	$(call rule_label,BUNDLETOOL)
+	bundletool build-apks --bundle=$< --output=$@ --ks=$(KEYSTORE) --ks-key-alias=numworks --overwrite
+
+$(OUTPUT_DIRECTORY)/%.aab_flash: $(OUTPUT_DIRECTORY)/%.apks
+	$(call rule_label,AABFLASH)
+	bundletool install-apks --apks=$<
+
+%.aab_flash: $(OUTPUT_DIRECTORY)/%.aab_flash
+	:
+
+$(call document_other_target,<project>.aab_flash,Install an AAB on a connected device via bundletool)
+

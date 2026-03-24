@@ -14,8 +14,8 @@ class ScrollableTwoLayoutsCell : public EvenOddCell, public Responder {
     m_view.setLayouts(Poincare::Layout(), exactLayout, approximateLayout);
   }
   void resetLayouts() { return m_view.resetLayouts(); }
-  void setExactAndApproximateAreStriclyEqual(bool isEqual) {
-    return m_view.setExactAndApproximateAreStriclyEqual(isEqual);
+  void setExactAndApproximateAreStrictlyEqual(bool isEqual) {
+    return m_view.setExactAndApproximateAreStrictlyEqual(isEqual);
   }
   void setHighlighted(bool highlight) override {
     m_view.evenOddCell()->setHighlighted(highlight);

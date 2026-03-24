@@ -26,8 +26,8 @@ class AbstractScrollableMultipleLayoutsView
     setSelectedSubviewPosition(SubviewPosition::Left);
     setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
   }
-  void setExactAndApproximateAreStriclyEqual(bool isEqual) {
-    contentCell()->setExactAndApproximateAreStriclyEqual(isEqual);
+  void setExactAndApproximateAreStrictlyEqual(bool isEqual) {
+    contentCell()->setExactAndApproximateAreStrictlyEqual(isEqual);
   }
   SubviewPosition selectedSubviewPosition() {
     return contentCell()->selectedSubviewPosition();
@@ -98,7 +98,7 @@ class AbstractScrollableMultipleLayoutsView
     void setDisplayableCenter(bool displayable) {
       m_displayableCenter = displayable;
     }
-    void setExactAndApproximateAreStriclyEqual(bool isEqual);
+    void setExactAndApproximateAreStrictlyEqual(bool isEqual);
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     const Poincare::Layout& layout() const override {

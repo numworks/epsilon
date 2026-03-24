@@ -94,7 +94,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::setDisplayCenter(
 }
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::
-    setExactAndApproximateAreStriclyEqual(bool isEqual) {
+    setExactAndApproximateAreStrictlyEqual(bool isEqual) {
   m_rightIsStrictlyEqual = isEqual;
   approximateSign()->setText(isEqual ? k_equal : k_almostEqual);
   reloadTextColor();

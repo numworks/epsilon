@@ -437,7 +437,7 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
         valueCell->setLayouts(solution->exactLayout(),
                               solution->approximateLayout());
       }
-      valueCell->setExactAndApproximateAreStriclyEqual(
+      valueCell->setExactAndApproximateAreStrictlyEqual(
           solution->exactAndApproximateAreEqual());
     } else {
       /* It's a defined variable row, get values of the solutions or

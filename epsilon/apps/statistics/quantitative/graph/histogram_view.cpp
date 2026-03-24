@@ -32,22 +32,13 @@ void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
   double context[] = {m_store->maxHeightOfBar(m_series),
                       static_cast<double>(m_series), m_highlightedBarStart,
                       m_highlightedBarEnd};
+  HighlightTest highlights = plotView->hasFocus() ? &barIsHighlighted : nullptr;
 
-  KDColor color, borderColor;
-  HighlightTest highlights = nullptr;
-  if (plotView->hasFocus()) {
-    color = DoublePairStore::colorLightOfSeriesAtIndex(m_series);
-    borderColor = DoublePairStore::colorOfSeriesAtIndex(m_series);
-    highlights = &barIsHighlighted;
-  } else {
-    color = k_notSelectedHistogramColor;
-    borderColor = k_notSelectedHistogramBorderColor;
-  }
-
-  HistogramDrawing histogram(histogramLevels, m_store, context, highlights,
-                             m_store->firstDrawnBarAbscissa(),
-                             m_store->barWidth(), true, true, color,
-                             k_selectedBarColor, borderColor);
+  HistogramDrawing histogram(
+      histogramLevels, m_store, context, highlights,
+      m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, true,
+      DoublePairStore::colorLightOfSeriesAtIndex(m_series), k_selectedBarColor,
+      DoublePairStore::colorOfSeriesAtIndex(m_series));
   histogram.draw(plotView, ctx, rect);
 }
 

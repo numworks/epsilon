@@ -42,7 +42,7 @@ void FunctionListController::computeAdditionalResults(
           .getPreparedFunction(k_symbolName, true);
 
   assert(!simplifiedExpression.isUninitialized() &&
-         !simplifiedExpression.isFailedSimplification());
+         !simplifiedExpression.isUndefinedFailedSimplification());
 
   /* Use the approximate expression to compute the ordinate to ensure that
    * it's coherent with the output of the calculation.

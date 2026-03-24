@@ -160,7 +160,7 @@ static void compareSolutions(SystemOfEquations* system,
                     {.symbolic = SymbolicComputation::ReplaceDefinedSymbols},
                 .reductionPolicy = {.advanced = false}});
     quiz_assert(!expectedExpression.isUninitialized() &&
-                !expectedExpression.isFailedSimplification());
+                !expectedExpression.isUndefinedFailedSimplification());
 
     Layout obtainedLayout = system->solution(i)->exactLayout();
     if (obtainedLayout.isUninitialized()) {
@@ -180,7 +180,7 @@ static void compareSolutions(SystemOfEquations* system,
                 {.symbolic = SymbolicComputation::ReplaceDefinedSymbols},
             .reductionPolicy = {.advanced = false}});
     quiz_assert(!obtainedExpression.isUninitialized() &&
-                !obtainedExpression.isFailedSimplification());
+                !obtainedExpression.isUndefinedFailedSimplification());
 
 #if 0
     quiz_assert(

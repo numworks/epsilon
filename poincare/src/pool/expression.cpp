@@ -141,7 +141,7 @@ bool Expression::isUndefined() const {
   return tree()->isUndefined() && !tree()->isNonReal();
 }
 bool Expression::isUndefinedOrNonReal() const { return tree()->isUndefined(); }
-bool Expression::isFailedSimplification() const {
+bool Expression::isUndefinedFailedSimplification() const {
   return Undefined::IsUndefSpecial(
       tree(), Undefined::SpecialType::FailedSimplification);
 }

@@ -631,7 +631,7 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
         m_expression =
             cartesianEquation.cloneAndReduce(simplificationParameters);
         assert(!m_expression.isUninitialized() &&
-               !m_expression.isFailedSimplification());
+               !m_expression.isUndefinedFailedSimplification());
         return m_expression;
       }
     }
@@ -665,7 +665,7 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
     m_expression =
         expressionEquation(record).cloneAndReduce(simplificationParameters);
     assert(!m_expression.isUninitialized() &&
-           !m_expression.isFailedSimplification());
+           !m_expression.isUndefinedFailedSimplification());
   }
   return m_expression;
 }

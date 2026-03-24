@@ -190,7 +190,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
       .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols},
       .reductionPolicy = {.target = ReductionTarget::System}});
 
-  if (reduced.isFailedSimplification() || reduced.isUndefined()) {
+  if (reduced.isUndefinedFailedSimplification() || reduced.isUndefined()) {
     return FillColumnStatus::DataNotSuitable;
   }
 

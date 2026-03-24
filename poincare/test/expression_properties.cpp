@@ -22,7 +22,7 @@ void assert_is_number(const char* input, bool isNumber = true) {
 void assert_reduced_is_number(const char* input, bool isNumber = true) {
   UserExpression e1 = UserExpression::Builder(parse(input));
   SystemExpression e2 = e1.cloneAndReduce(SimplificationParameters{});
-  quiz_assert(!e2.isFailedSimplification());
+  quiz_assert(!e2.isUndefinedFailedSimplification());
   quiz_assert_print_if_failure(e2.isConstantNumber() == isNumber, input);
 }
 
@@ -63,7 +63,7 @@ QUIZ_CASE(pcj_properties_is_number) {
 void assert_reduced_is_rational(const char* input, bool isRational = true) {
   UserExpression e1 = UserExpression::Builder(parse(input));
   SystemExpression e2 = e1.cloneAndReduce(SimplificationParameters{});
-  quiz_assert(!e2.isFailedSimplification());
+  quiz_assert(!e2.isUndefinedFailedSimplification());
   quiz_assert_print_if_failure(e2.isRational() == isRational, input);
 }
 
@@ -300,7 +300,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
                .angleUnit = angleUnit,
                .context = symbolContext},
       .projectionPolicy = {.symbolic = symbolicComputation}});
-  quiz_assert(!s.isFailedSimplification());
+  quiz_assert(!s.isUndefinedFailedSimplification());
   Tree* coefficients = PolynomialParser::GetReducedCoefficients(s, symbolName);
   assert_trees_are_equal(coefficients, expectedCoefficients);
 }
@@ -405,7 +405,7 @@ void assert_is_continuous_on_interval(const char* input, float x1, float x2,
   UserExpression e1 = UserExpression::Builder(parse(input));
   SystemExpression e2 = e1.cloneAndReduce(
       SimplificationParameters{.user = {.angleUnit = AngleUnit::Radian}});
-  quiz_assert(!e2.isFailedSimplification());
+  quiz_assert(!e2.isUndefinedFailedSimplification());
   PreparedFunction e3 = e2.getPreparedFunction("x", true);
   quiz_assert_print_if_failure(
       !isContinuous ==
@@ -444,7 +444,7 @@ void assert_reduced_deep_is_symbolic(const char* input,
       UserExpression::Builder(parse(input))
           .cloneAndReduce(SimplificationParameters{
               .user = {.angleUnit = AngleUnit::Radian}});
-  quiz_assert(!reducedExpression.isFailedSimplification());
+  quiz_assert(!reducedExpression.isUndefinedFailedSimplification());
   quiz_assert_print_if_failure(
       Variables::HasUserVariables(reducedExpression.tree()) == isSymbolic,
       input);

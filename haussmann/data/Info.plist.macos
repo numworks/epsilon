@@ -53,5 +53,7 @@
     <string>Copyright © 2019 NumWorks. All rights reserved.</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.education</string>
   </dict>
 </plist>

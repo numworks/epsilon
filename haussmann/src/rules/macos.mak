@@ -26,6 +26,16 @@ _simulator_app_binary = $(_simulator_app)/Contents/MacOS/$(APP_NAME)
 _simulator_app_plist = $(_simulator_app)/Contents/Info.plist
 _simulator_app_resources_path = $(_simulator_app)/Contents/Resources
 
+$(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) | $$(@D)/.
+	$(call rule_label,PLUTIL)
+	cp $< $@
+	plutil -insert "CFBundleIdentifier" -string "$(APP_BUNDLE_ID)" $@
+	plutil -insert "CFBundleName" -string "$(APP_FULL_NAME)" $@
+	plutil -insert "LSMinimumSystemVersion" -string "$(APPLE_PLATFORM_MIN_VERSION)" $@
+	plutil -insert "CFBundleExecutable" -string "$(APP_NAME)" $@
+	plutil -insert "CFBundleVersion" -string "$(APP_VERSION)" $@
+	plutil -insert "CFBundleShortVersionString" -string "$(APP_VERSION)" $@
+
 ifdef MACOS_PROVISIONNING_PROFILE
 $(_simulator_app_resources_path)/embedded.provisionprofile: $(MACOS_PROVISIONNING_PROFILE) | $$(@D)/.
 	$(call rule_label,COPY)
@@ -71,13 +81,3 @@ $(call document_extension,app.debug.run, Debug and execute the simulator)
 	eval $$cmd || $$cmd
 
 $(call document_extension,app.reload,Refresh a running simulator)
-
-$(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) | $$(@D)/.
-	$(call rule_label,PLUTIL)
-	cp $< $@
-	plutil -insert "CFBundleIdentifier" -string "$(APP_BUNDLE_ID)" $@
-	plutil -insert "CFBundleName" -string "$(APP_FULL_NAME)" $@
-	plutil -insert "LSMinimumSystemVersion" -string "$(APPLE_PLATFORM_MIN_VERSION)" $@
-	plutil -insert "CFBundleExecutable" -string "$(APP_NAME)" $@
-	plutil -insert "CFBundleVersion" -string "$(APP_VERSION)" $@
-	plutil -insert "CFBundleShortVersionString" -string "$(APP_VERSION)" $@

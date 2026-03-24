@@ -879,6 +879,12 @@ static void PromoteBuiltin(TreeRef& parameterList, const Builtin* builtin) {
     // Move sub-expression at the end
     parameterList->nextTree()->moveTreeBeforeNode(parameterList->child(0));
   }
+#if ASSERTIONS
+  if (TypeBlock(type).isDep()) {
+    parameterList->child(1)->moveNodeOverNode(SharedTreeStack->pushDepList(
+        parameterList->child(1)->numberOfChildren()));
+  }
+#endif
 }
 
 struct ParameterData {

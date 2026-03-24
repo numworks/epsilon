@@ -162,8 +162,13 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(dim("{(1,3), (2,4)}(1,0)", Scalar));
   QUIZ_ASSERT(dim("dim({(1,3), (2,4)})", Scalar));
   QUIZ_ASSERT(dim("sort(diff({(x,2x),(1,2)}, x, y))", Point));
+#if ASSERTIONS
+  /* DepList parsing is only available when ASSERTIONS=1. Otherwise, the {} is
+   * parsed as a list, and the test would fail because lists must contain
+   * homogeneous elements (which is not a requirement for DepLists) */
+  QUIZ_ASSERT(dim("dep((1,2), {(1,3),3})", Point));
+#endif
 
-  QUIZ_ASSERT(hasInvalidDimOrLen("dep((1,2), {(1,3),3})"));
   QUIZ_ASSERT(hasInvalidDimOrLen("(1,2)+(1,3)"));
   QUIZ_ASSERT(hasInvalidDimOrLen("cos((1,2))"));
   QUIZ_ASSERT(hasInvalidDimOrLen("{(1,3), (2,4)}((2,4))"));

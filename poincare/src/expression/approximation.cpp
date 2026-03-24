@@ -1381,7 +1381,8 @@ std::complex<T> Approximator::listToComplex(const Tree* e) {
           /* The approximation returns {undef,…,undef} instead of undef but
            * the list should have been sorted during the reduction in most
            * cases. */
-          sortedList = KUndef->cloneTree();
+          sortedList =
+              Undefined::CreateTreeOfTargetDimension(KUndef, e->child(0));
         } else {
           TreeStackCheckpoint::Raise(exc);
         }

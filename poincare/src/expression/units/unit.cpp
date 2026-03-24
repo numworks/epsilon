@@ -760,7 +760,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
   if (GetComplexProperties(e).isNonReal()) {
     // Forbid complex numbers with units
     extractedUnits->removeTree();
-    e->cloneTreeOverTree(KUndef);
+    e->cloneTreeOverTree(KUndefUnit);
     return true;
   }
   assert(extractedUnits && e->nextTree() == extractedUnits);
@@ -806,7 +806,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       OMG_UNREACHABLE;
   }
   if (!foundResult) {
-    e->cloneTreeOverTree(KUndef);
+    e->cloneTreeOverTree(KUndefUnit);
   }
   return true;
 }
@@ -891,7 +891,7 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
     if (std::isnan(value)) {
       // Return undef to avoid displaying undef * unit
       inputUnits->removeTree();
-      e->cloneTreeOverTree(KUndef);
+      e->cloneTreeOverTree(KUndefUnit);
       return;
     }
     e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));

@@ -25,9 +25,11 @@ enum class SpecialType : uint8_t {
   Forbidden,
 };
 
+#if POINCARE_TREE_LOG
 /* Return undefined description.
  * This is currently only used for debugging, not for user display. */
 const char* Description(const Tree* e);
+#endif
 
 inline SpecialType GetSpecialType(const Tree* e) {
   assert(e->isUndefSpecial());
@@ -59,7 +61,7 @@ inline void ReplaceTreePreservingDimension(Tree* e, const Tree* replace) {
   e->moveTreeOverTree(CreateTreeOfTargetDimension(replace, e));
 }
 
-// Check if an undefined tree created with [CreateTreeOfTargetDimension]
+// Return if t is undefined, or a list/matrix/point/sequence of undefined nodes
 bool IsDimensionedUndefined(const Tree* t);
 
 template <typename T>

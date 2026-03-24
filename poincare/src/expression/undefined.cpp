@@ -9,6 +9,8 @@
 
 namespace Poincare::Internal {
 
+#if POINCARE_TREE_LOG
+
 const char* Undefined::Description(const Tree* e) {
   assert(e && e->isUndefined());
   switch (e->type()) {
@@ -22,7 +24,7 @@ const char* Undefined::Description(const Tree* e) {
   assert(e->isUndefSpecial());
   switch (Undefined::GetSpecialType(e)) {
     case SpecialType::FailedSimplification:
-      return "Raised TreeStackOverFlow or IntegerOverFlow";
+      return "Raised TreeStackOverflow or IntegerOverflow";
     case SpecialType::ZeroPowerZero:
       return "0^0";
     case SpecialType::ZeroDivision:
@@ -47,6 +49,8 @@ const char* Undefined::Description(const Tree* e) {
       OMG_UNREACHABLE;
   }
 }
+
+#endif
 
 bool Undefined::CanBeUndefined(const Tree* e) {
   if (e->isPoint() || e->isList() || e->isMatrix() || e->isDepList()) {
@@ -132,25 +136,24 @@ Tree* Undefined::CreateTreeOfTargetDimension(const Tree* e,
   return result;
 }
 
+// Return true if [e] is a strictly more important undefined node than [ref]
+bool IsMoreImportant(const Tree* e, const Tree* ref) {
+  assert(e->isUndefined() && ref->isUndefined());
+  return e->type() > ref->type() ||
+         (e->isUndefSpecial() && ref->isUndefSpecial() &&
+          Undefined::GetSpecialType(e) > Undefined::GetSpecialType(ref));
+}
+
 bool Undefined::ShallowBubbleUpUndef(Tree* e) {
-  uint8_t i = 0;
   const Tree* worstChild = nullptr;
-  Type worstType = Type::Zero;
-  for (const Tree* child : e->children()) {
+  for (IndexedChild<const Tree*> child : e->indexedChildren()) {
     // Piecewise can have undefined branches, but not conditions
-    if (child->isUndefined() && MustBubbleUpUndefinedChild(e, i)) {
-      Type childType = child->type();
-      if (childType > worstType ||
-          (childType == worstType && child->isUndefSpecial() &&
-           Undefined::GetSpecialType(child) >
-               Undefined::GetSpecialType(worstChild))) {
-        worstType = childType;
-        worstChild = child;
-      }
+    if (child->isUndefined() && MustBubbleUpUndefinedChild(e, child.index) &&
+        (!worstChild || IsMoreImportant(child, worstChild))) {
+      worstChild = child;
     }
-    i++;
   }
-  if (worstType == Type::Zero) {
+  if (!worstChild) {
     return false;
   }
   ReplaceTreePreservingDimension(e, worstChild);

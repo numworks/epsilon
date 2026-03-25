@@ -158,7 +158,7 @@ void simplified_approximates_to(
             Approximation::Parameters{
                 .policy = {.optimize = true},
                 .expressionParameters =
-                    Approximation::SystemExpressionPolicy{}}));
+                    Approximation::SystemExpressionPolicy{.prepare = true}}));
         Beautification::DeepBeautify(
             tree, ToBeautificationParameters(simplificationParameters));
       },

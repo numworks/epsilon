@@ -1,3 +1,5 @@
+#include <poincare/src/equation_solver/equation_solver.h>
+#include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/symbol_context.h>
 
@@ -66,6 +68,72 @@ static Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
   return value;
 }
 
+static bool SplitAtSingularities(Tree* e, void* ctx) {
+  if (!e->isIntegral()) {
+    return false;
+  }
+  const Tree* lowerBound = e->child(Parametric::k_lowerBoundIndex);
+  const Tree* upperBound = lowerBound->nextTree();
+  const Tree* integrand = upperBound->nextTree();
+
+  double a = Approximation::To<double>(lowerBound, {});
+  double b = Approximation::To<double>(upperBound, {});
+
+  // TODO: handle a > b case
+
+  EquationSolver::SingularitySolverResult singularities =
+      EquationSolver::ExactSolveFindSingularities(integrand, UserParameters{});
+  TreeRef splittingPoints = singularities.exactSolutionList;
+  assert(splittingPoints->isList());
+
+  if (splittingPoints->numberOfChildren() == 0) {
+    splittingPoints->removeTree();
+    // Do not change the integral
+    return false;
+  }
+
+  /*  Add the initial upper bound to the list of splitting points for
+   * performance (see comment in the below for loop). */
+  NAry::AddChild(splittingPoints, upperBound->cloneTree());
+  /* lower bound and upper bound get updated in the for loop for each potential
+   * splitting point. The initial value of upper bound is the first splitting
+   * point candidate. */
+  const Tree* movingLowerBound = lowerBound;
+  const Tree* movingUpperBound = splittingPoints->nextNode();
+  const Tree* lastPoint = splittingPoints->lastChild();
+
+  TreeRef result = SharedTreeStack->pushAdd(0);
+
+  for (const Tree* point : splittingPoints->children()) {
+    double value = Approximation::To<double>(point, {});
+    /* Do not split if value is outside or equal to bounds, with an exception
+     * for the last splitting point which is the initial upper bound and should
+     * always be included */
+    if ((point != lastPoint) && (value <= a || value >= b)) {
+      continue;
+    }
+    movingUpperBound = point;
+    NAry::AddChild(result, PatternMatching::Create(KIntegral(KA, KB, KC, KD),
+                                                   {.KA = e->nextNode(),
+                                                    .KB = movingLowerBound,
+                                                    .KC = movingUpperBound,
+                                                    .KD = integrand},
+                                                   ContextScopes{.KD = 1}));
+    movingLowerBound = point;
+  }
+  splittingPoints->removeTree();
+
+  // If there is only one term, it is the same as the original tree
+  if (result->numberOfChildren() == 1) {
+    assert(result->nextNode()->treeIsIdenticalTo(e));
+    result->removeTree();
+    return false;
+  }
+
+  e->moveTreeOverTree(result);
+  return true;
+}
+
 static bool ShallowExpandIntegrals(Tree* e, void* ctx) {
   if (!e->isIntegral()) {
     return false;
@@ -91,7 +159,9 @@ static bool ShallowExpandIntegrals(Tree* e, void* ctx) {
 bool PrepareExpressionForApproximation(Tree* e) {
   assert(!Dependency::DeepBubbleUpDependencies(e));
   assert(!Dependency::DeepRemoveUselessDependencies(e));
-  bool changed = Tree::ApplyShallowTopDown(e, &ShallowExpandIntegrals);
+
+  bool changed = Tree::ApplyShallowTopDown(e, &SplitAtSingularities);
+  changed = Tree::ApplyShallowTopDown(e, &ShallowExpandIntegrals) || changed;
   if (changed) {
     /* ShallowExpandIntegrals can introduce dependencies. Some could be removed,
      * but no situation with a need for a bubble up has been found yet.

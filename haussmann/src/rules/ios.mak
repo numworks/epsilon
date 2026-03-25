@@ -34,20 +34,20 @@ $(_simulator_app_resources_path)/launch.storyboardc: $(_path_ion)/src/simulator/
 
 _simulator_app_deps += $(_simulator_app_resources_path)/launch.storyboardc
 
-ifdef IOS_PROVISIONNING_PROFILE
-$(_simulator_app_resources_path)/embedded.mobileprovision: $(IOS_PROVISIONNING_PROFILE) | $$(@D)/.
+ifdef IOS_PROVISIONING_PROFILE
+$(_simulator_app_resources_path)/embedded.mobileprovision: $(IOS_PROVISIONING_PROFILE) | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $^ $@
 
-$(OUTPUT_DIRECTORY)/app/entitlements.plist: $(IOS_PROVISIONNING_PROFILE)
+$(OUTPUT_DIRECTORY)/app/entitlements.plist: $(IOS_PROVISIONING_PROFILE)
 	$(call rule_label,SCMS)
-	$(Q) security cms -D -i $(IOS_PROVISIONNING_PROFILE) | plutil -extract Entitlements xml1 - -o $@
+	$(Q) security cms -D -i $(IOS_PROVISIONING_PROFILE) | plutil -extract Entitlements xml1 - -o $@
 
 _simulator_app_deps += $(OUTPUT_DIRECTORY)/app/entitlements.plist
 _simulator_app_deps += $(_simulator_app_resources_path)/embedded.mobileprovision
 else
 $(_simulator_app_resources_path)/embedded.mobileprovision:
-	$(warning Building without a provisionning profile. Please define IOS_PROVISIONNING_PROFILE to point to the .mobileprovision file you want to use.)
+	$(warning Building without a provisioning profile. Please define IOS_PROVISIONING_PROFILE to point to the .mobileprovision file you want to use.)
 endif
 
 %.ipa: $(OUTPUT_DIRECTORY)/%.ipa
@@ -55,7 +55,7 @@ endif
 
 IOS_SIGNER_IDENTITY ?= Apple Distribution: NumWorks
 $(OUTPUT_DIRECTORY)/%.ipa: $(OUTPUT_DIRECTORY)/%.app
-ifdef IOS_PROVISIONNING_PROFILE
+ifdef IOS_PROVISIONING_PROFILE
 	$(call rule_label,SIGN)
 	$(Q) codesign --force --entitlements $(OUTPUT_DIRECTORY)/app/entitlements.plist --sign "$(IOS_SIGNER_IDENTITY)" $(OUTPUT_DIRECTORY)/$*.app
 endif

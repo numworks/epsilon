@@ -99,7 +99,7 @@ all_release:
 	@ cp output/release/android/app/outputs/native-debug-symbols/release/native-debug-symbols.zip output/all_official/native-debug-symbols.zip
 	@ echo "BUILD_FIRMWARE    SIMULATOR IOS"
 	@ $(MAKE) TARGET=ios clean
-	@ $(MAKE) TARGET=ios IOS_PROVISIONNING_PROFILE=$(_IOS_MOBILE_PROVISION) epsilon.ipa
+	@ $(MAKE) TARGET=ios IOS_PROVISIONING_PROFILE=$(_IOS_MOBILE_PROVISION) epsilon.ipa
 	@ cp output/release/ios/epsilon.ipa output/all_official/epsilon.ipa
 
 $(call document_other_target,all_release,Build all targets for all platforms for a version release.)

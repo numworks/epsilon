@@ -40,21 +40,21 @@ $(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) | $$(@D)/
 	plutil -insert "CFBundleVersion" -string "$(APP_VERSION)" $@
 	plutil -insert "CFBundleShortVersionString" -string "$(APP_VERSION)" $@
 
-ifdef MACOS_PROVISIONNING_PROFILE
-$(_simulator_app_resources_path)/embedded.provisionprofile: $(MACOS_PROVISIONNING_PROFILE) | $$(@D)/.
+ifdef MACOS_PROVISIONING_PROFILE
+$(_simulator_app_resources_path)/embedded.provisionprofile: $(MACOS_PROVISIONING_PROFILE) | $$(@D)/.
 	$(call rule_label,COPY)
 	cp $^ $@
 
-$(OUTPUT_DIRECTORY)/app/entitlements.plist: $(MACOS_PROVISIONNING_PROFILE)
+$(OUTPUT_DIRECTORY)/app/entitlements.plist: $(MACOS_PROVISIONING_PROFILE)
 	$(call rule_label,SCMS)
-	security cms -D -i $(MACOS_PROVISIONNING_PROFILE) | plutil -extract Entitlements xml1 - -o $@
+	security cms -D -i $(MACOS_PROVISIONING_PROFILE) | plutil -extract Entitlements xml1 - -o $@
 	plutil -insert "com\.apple\.security\.app-sandbox" -bool true $@
 
 _simulator_app_deps += $(OUTPUT_DIRECTORY)/app/entitlements.plist
 _simulator_app_deps += $(_simulator_app_resources_path)/embedded.provisionprofile
 else
 $(_simulator_app_resources_path)/embedded.provisionprofile:
-	$(warning Building without a provisionning profile. Please define MACOS_PROVISIONNING_PROFILE to point to the .provisionprofile file you want to use.)
+	$(warning Building without a provisioning profile. Please define MACOS_PROVISIONING_PROFILE to point to the .provisionprofile file you want to use.)
 endif
 
 include $(PATH_haussmann)/src/rules/shared.apple.mak
@@ -65,7 +65,7 @@ include $(PATH_haussmann)/src/rules/shared.apple.mak
 MACOS_SIGNER_IDENTITY ?= Apple Distribution: NumWorks
 MACOS_INSTALLER_IDENTITY ?= 3rd Party Mac Developer Installer: NumWorks
 $(OUTPUT_DIRECTORY)/%.pkg: $(OUTPUT_DIRECTORY)/%.app
-ifdef MACOS_PROVISIONNING_PROFILE
+ifdef MACOS_PROVISIONING_PROFILE
 	$(call rule_label,SIGN)
 	codesign --force --options runtime --entitlements $(OUTPUT_DIRECTORY)/app/entitlements.plist --sign "$(MACOS_SIGNER_IDENTITY)" $(OUTPUT_DIRECTORY)/$*.app
 endif

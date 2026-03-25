@@ -1062,7 +1062,7 @@ SingularitySolverResult ExactSolveFindSingularities(
   }
   const Tree* functionWithRoots = matchesContext.getTree(KA);
 
-  // Step 2. Find real roots of the "inside" function
+  // Step 2. Find real roots in KA
 
   // Only look for real roots
   EquationMetadata equationMetadata =

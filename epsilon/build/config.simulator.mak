@@ -11,11 +11,7 @@ endif
 APP_BUNDLE_ID := com.numworks.calculator
 APP_FULL_NAME := NumWorks Graphing Calculator
 
-ifeq ($(PLATFORM),foxglove)
-EPSILON_GETOPT := 0
-else
 EPSILON_GETOPT := 1
-endif
 
 ifeq ($(PLATFORM),linux)
 # If MICROPY_NLR_SETJMP is 0, the MicroPython NLR done by

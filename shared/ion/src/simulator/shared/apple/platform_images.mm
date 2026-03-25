@@ -1,6 +1,7 @@
 #include "../platform.h"
 #include <SDL.h>
 #include <TargetConditionals.h>
+#include <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #if TARGET_OS_OSX
 #include <AppKit/AppKit.h>
 #else
@@ -136,7 +137,7 @@ void saveImage(const KDColor * pixels, int width, int height, const char * path)
 
   CFURLRef url = static_cast<CFURLRef>([NSURL fileURLWithPath:[NSString stringWithUTF8String:path]]);
 
-  CGImageDestinationRef destination = CGImageDestinationCreateWithURL(url, kUTTypePNG, 1, NULL);
+  CGImageDestinationRef destination = CGImageDestinationCreateWithURL(url, (__bridge CFStringRef) UTTypePNG.identifier, 1, NULL);
   CGImageDestinationAddImage(destination, image, nil);
   CGImageDestinationFinalize(destination);
 

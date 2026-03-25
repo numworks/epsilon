@@ -53,3 +53,4 @@ LDFLAGS_sdl += \
   -framework CoreVideo \
   -framework ForceFeedback \
   -framework IOKit \
+  -framework UniformTypeIdentifiers

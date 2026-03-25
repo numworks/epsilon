@@ -53,3 +53,4 @@ LDFLAGS_sdl += \
   -framework UIKit \
   -framework ImageIO \
   -framework MobileCoreServices \
+  -framework UniformTypeIdentifiers

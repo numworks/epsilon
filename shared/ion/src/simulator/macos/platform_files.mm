@@ -1,16 +1,17 @@
 #include "../shared/platform.h"
 #include <AppKit/AppKit.h>
+#include <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 namespace Ion {
 namespace Simulator {
 namespace Platform {
 
 static const char * getPath(NSSavePanel * panel, const char * extension) {
-  [panel setAllowedFileTypes:[NSArray arrayWithObject:[NSString stringWithUTF8String:extension]]];
+  [panel setAllowedContentTypes:[NSArray arrayWithObject:[UTType typeWithFilenameExtension:[NSString stringWithUTF8String:extension]]]];
   static NSString * path = nil;
   [path release]; path = nil; // Discard previous path if any
   NSWindow * mainWindow = [[NSApplication sharedApplication] keyWindow];
-  if ([panel runModal] == NSFileHandlingPanelOKButton) {
+  if ([panel runModal] == NSModalResponseOK) {
     path = [[[panel URL] path] retain];
   }
   [mainWindow makeKeyAndOrderFront:nil];

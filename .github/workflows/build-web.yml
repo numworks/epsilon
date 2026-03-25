@@ -30,14 +30,14 @@ jobs:
         # Zip manually to prevent actions/upload-artifact from corrupting the file
         run: zip -j ${{ env.OUTPUT_DIR }}/epsilon.zip ${{ env.OUTPUT_DIR }}/epsilon.html
       - name: Upload epsilon.zip
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: epsilon.zip
           path: ${{ env.OUTPUT_DIR }}/epsilon.zip
           compression-level: 0
           retention-days: 3
       - name: Upload htmlpack.zip
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: htmlpack.zip
           path: ${{ env.OUTPUT_DIR }}/epsilon.htmlpack.zip

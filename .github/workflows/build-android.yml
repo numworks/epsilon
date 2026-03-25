@@ -21,13 +21,13 @@ jobs:
           platform: android
       - run: $DOCKER_RUN "make -C epsilon DEBUG=${{ fromJSON(github.event.inputs.debug) && '1' || '0' }} CCACHE=0 PLATFORM=android epsilon_aligned.apk"
       - name: Upload apk
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: unsigned-epsilon-android.apk
           path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/android/epsilon_aligned.apk
           retention-days: 3
       - name: Upload debug symbols
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: android-debug-symbols.zip
           path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/android/app/outputs/native-debug-symbols/release/native-debug-symbols.zip

@@ -32,7 +32,7 @@ jobs:
       - name: Build n0120
         run: $DOCKER_RUN "make PLATFORM=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding$BETA.dfu epsilon.onboarding$BETA.allow3rdparty.dfu"
       - name: Upload
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: unsigned-device-builds
           path: epsilon/output/release/*/epsilon*dfu

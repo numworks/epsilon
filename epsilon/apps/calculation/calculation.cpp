@@ -114,6 +114,12 @@ void Calculation::computeDisplayOutput() {
   if (m_reductionFailure && CanDisplayApproximate(m_displayOutput)) {
     forceDisplayOutput(DisplayOutput::ApproximateOnly);
   }
+  if (!CanDisplayExact(m_displayOutput) &&
+      approximateOutput().isUndefinedOrNonReal()) {
+    /* While we have access to the approximate expression, prevent displaying
+     * "≈undef". */
+    m_equalSign = EqualSign::Hidden;
+  }
   assert(m_displayOutput != DisplayOutput::Unknown);
 }
 

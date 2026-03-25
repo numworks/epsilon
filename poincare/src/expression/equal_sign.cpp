@@ -32,6 +32,11 @@ bool IsCalculationOutputStrictEquality(const Tree* exact,
   // If projection failed, exact can be not system
   assert(Simplification::CanBeSystem(approximate));
 
+  if (exact->isUndefined() || approximate->isUndefined()) {
+    // We never want to display "≈ undef" nor "undef ≈"
+    return true;
+  }
+
   /* Turn floats and doubles into decimal so that they can be compared to
    * rationals. */
   if (exact->isRational() && approximate->isFloat()) {

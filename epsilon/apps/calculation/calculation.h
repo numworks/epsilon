@@ -44,16 +44,20 @@ class Calculation {
     Unknown,
     ExactOnly,
     ApproximateOnly,
-    /* ApproximateIsIdenticalToExact has the same display behavior as
-     * ExactOnly. Exact output may be used by Ans or additional results */
+    /* ApproximateIsIdenticalToExact has the same display behavior as ExactOnly,
+     * except Exact output may be used by Ans or additional results */
     ApproximateIsIdenticalToExact,
     ExactAndApproximate,
-    ExactAndApproximateToggle
+    ExactAndApproximateToggle,
+    /* ExactHidden has the same display behavior as ApproximateOnly, except
+     * Exact output may be used to compute the EqualSign */
+    ExactHidden
   };
 
   static bool CanDisplayExact(DisplayOutput d) {
     assert(d != DisplayOutput::Unknown);
-    return d != DisplayOutput::ApproximateOnly;
+    return d != DisplayOutput::ApproximateOnly &&
+           d != DisplayOutput::ExactHidden;
   }
 
   static bool CanDisplayApproximate(DisplayOutput d) {

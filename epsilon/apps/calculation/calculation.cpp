@@ -138,6 +138,15 @@ Calculation::OutputLayouts Calculation::layoutCalculation(
   OutputLayouts outputLayouts =
       createOutputLayouts(canChangeDisplayOutput, maxVisibleWidth, font);
   computeEqualSign(outputLayouts);
+
+  if (m_displayOutput == DisplayOutput::ExactHidden) {
+    /* With ExactHidden, exact output layout was needed to compute equal sign.
+     * Remove it afterward. */
+    outputLayouts.exact = Layout();
+  }
+  assert(CanDisplayExact(m_displayOutput) ||
+         outputLayouts.exact.isUninitialized());
+
   return outputLayouts;
 }
 
@@ -148,10 +157,14 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
 
   // Create the exact output layout
   Layout exactOutput = Layout();
-  if (CanDisplayExact(m_displayOutput)) {
+  // DisplayOutput::ExactHidden temporarily bypasses CanDisplayExact condition
+  if (CanDisplayExact(m_displayOutput) ||
+      m_displayOutput == DisplayOutput::ExactHidden) {
     bool couldNotCreateExactLayout = false;
     exactOutput = createExactOutputLayout(&couldNotCreateExactLayout);
-    if (couldNotCreateExactLayout) {
+    if (m_displayOutput == DisplayOutput::ExactHidden) {
+      // exactOutput will only be used internally, no need to handle failure.
+    } else if (couldNotCreateExactLayout) {
       if (canChangeDisplayOutput &&
           m_displayOutput != DisplayOutput::ExactOnly) {
         forceDisplayOutput(DisplayOutput::ApproximateOnly);
@@ -163,11 +176,11 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
     } else if (canChangeDisplayOutput &&
                CanDisplayApproximate(m_displayOutput)) {
       KDCoordinate exactOutputWidth = exactOutput->layoutSize(font).width();
-      assert((m_displayOutput == DisplayOutput::ExactAndApproximate ||
-              m_displayOutput == DisplayOutput::ExactAndApproximateToggle));
+      assert(m_displayOutput == DisplayOutput::ExactAndApproximate ||
+             m_displayOutput == DisplayOutput::ExactAndApproximateToggle);
       if (exactOutputWidth > k_maxExactLayoutWidth ||
           exactOutput.longestIntegerSize() > k_maxNumberDigitsInExactLayout) {
-        forceDisplayOutput(DisplayOutput::ApproximateOnly);
+        forceDisplayOutput(DisplayOutput::ExactHidden);
       } else if (m_displayOutput == DisplayOutput::ExactAndApproximate &&
                  exactOutputWidth > maxVisibleWidth) {
         forceDisplayOutput(DisplayOutput::ExactAndApproximateToggle);
@@ -227,7 +240,7 @@ Calculation::DisplayOutput Calculation::ComputeDisplayOutput(
       // Other conditions are factorized in CAS
       CAS::ShouldOnlyDisplayApproximation(input, exactOutput, approximateOutput,
                                           GlobalContextAccessor::Context())) {
-    return ApproximateOnly;
+    return ExactHidden;
   }
   SimpleDeepSearchParameters matchParameters{
       .context = GlobalContextAccessor::Context()};
@@ -290,6 +303,10 @@ void Calculation::computeEqualSign(const OutputLayouts& outputLayouts) {
     m_equalSign = EqualSign::Approximation;
   } else if (m_displayOutput == DisplayOutput::ApproximateIsIdenticalToExact) {
     m_equalSign = EqualSign::Equal;
+  } else if (outputLayouts.exact.isUninitialized()) {
+    /* Exact layout may have failed to be computed in createOutputLayouts. */
+    assert(m_displayOutput == DisplayOutput::ExactHidden);
+    m_equalSign = EqualSign::Approximation;
   } else {
     m_equalSign = ComputeEqualSignFromOutputs(
         outputLayouts, m_calculationPreferences.complexFormat,

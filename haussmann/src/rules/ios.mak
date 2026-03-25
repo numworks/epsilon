@@ -60,7 +60,7 @@ ifdef IOS_PROVISIONING_PROFILE
 	$(Q) codesign --force --entitlements $(OUTPUT_DIRECTORY)/app/entitlements.plist --sign "$(IOS_SIGNER_IDENTITY)" $(OUTPUT_DIRECTORY)/$*.app
 endif
 	@ echo "$(shell printf "%-8s" "COPY")$(notdir $*).app into Payload"
-	$(Q) cd $(dir $@) ; mkdir Payload; cp -r $(notdir $*).app Payload
+	$(Q) cd $(dir $@) ; rm -rf Payload && mkdir Payload && cp -r $(notdir $*).app Payload
 
 	$(call rule_label,ZIP)
 	$(Q) cd $(dir $@) ; zip -qr9 $(notdir $@) Payload

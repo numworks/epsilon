@@ -24,6 +24,10 @@ class IntersectionSolver : public RootSolver {
   Solution<double> next() override;
 
  private:
+  IntersectionSolver(double, double, const PreparedFunction&,
+                     const PreparedFunction&, PreparedFunction&&, bool,
+                     const SymbolContext&);
+
   PreparedFunction m_f;
   PreparedFunction m_g;
   PreparedFunction m_diff;

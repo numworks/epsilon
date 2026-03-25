@@ -128,7 +128,7 @@ RootSolver::DetailedRoot RootSolver::nextRootSearchingInChild(
      * sometimes we find cos(xRoot) = -0.0..01, so sqrt(cos(xRoot)) = undef.
      * To avoid this problem, clone e and replace cos(xRoot) by 0. */
     Tree* ebis = e->cloneTree();
-    ebis->child(childIndex)->cloneTreeOverTree(0_e);
+    ebis->child(childIndex)->cloneTreeOverTree(0_de);
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
     double value = Approximation::To<double>(

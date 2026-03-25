@@ -43,15 +43,23 @@ IntersectionSolver::IntersectionSolver(double xStart, double xEnd,
                                        const PreparedFunction& g,
                                        bool areAlongSameAxis,
                                        const SymbolContext& context)
-    : RootSolver(xStart, xEnd, nullptr, context),
+    : IntersectionSolver(
+          xStart, xEnd, f, g,
+          PreparedFunction::Builder(FunctionDifferenceForIntersection(
+              f.tree(), g.tree(), areAlongSameAxis)),
+          areAlongSameAxis, context) {}
+
+IntersectionSolver::IntersectionSolver(double xStart, double xEnd,
+                                       const PreparedFunction& f,
+                                       const PreparedFunction& g,
+                                       PreparedFunction&& diff,
+                                       bool areAlongSameAxis,
+                                       const SymbolContext& context)
+    : RootSolver(xStart, xEnd, diff.tree(), context),
       m_f(f),
       m_g(g),
-      m_alongSameAxis(areAlongSameAxis) {
-  Tree* diff =
-      FunctionDifferenceForIntersection(f.tree(), g.tree(), areAlongSameAxis);
-  m_diff = PreparedFunction::Builder(diff);
-  setEvaluator(m_diff.tree());
-}
+      m_diff(diff),
+      m_alongSameAxis(areAlongSameAxis) {}
 
 Solution<double> IntersectionSolver::next() {
   Solution<double> root = RootSolver::next();

@@ -47,18 +47,16 @@ void assert_solutions_are(
     const char* expression, double start, double end,
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
     Interest interest, AngleUnit angleUnit, const char* otherExpression) {
-  Poincare::SimplificationParameters simplificationParameters = {
+  Poincare::UserParameters userParameters = {
       .complexFormat = Real,
       .angleUnit = angleUnit,
-      .strategy = Poincare::Strategy::ApproximateToFloat,
       .context = Poincare::EmptySymbolContext{}};
 
-  Tree* e =
-      parseAndPrepareForApproximation(expression, simplificationParameters);
+  Tree* e = parseAndPrepareForApproximation(expression, userParameters);
   Poincare::PreparedFunction f = Poincare::PreparedFunction::Builder(e);
 
-  Tree* e2 = otherExpression ? parseAndPrepareForApproximation(
-                                   otherExpression, simplificationParameters)
+  Tree* e2 = otherExpression ? parseAndPrepareForApproximation(otherExpression,
+                                                               userParameters)
                              : (0_e)->cloneTree();  // Dummy
   Poincare::PreparedFunction g = Poincare::PreparedFunction::Builder(e2);
 

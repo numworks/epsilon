@@ -377,19 +377,18 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView* plotView,
 WithHistogram::HistogramDrawing::HistogramDrawing(
     Curve1D curve, const void* model, const void* context,
     HighlightTest highlightTest, double start, double barsWidth,
-    bool displayBorder, bool fillBars, KDColor color, KDColor highlightColor,
-    KDColor borderColor)
+    bool highlightWithBorder, bool fillBars, KDColor color,
+    KDColor highlightColor)
     : m_curve(curve),
       m_model(model),
       m_context(context),
       m_highlightTest(highlightTest),
       m_start(start),
       m_barsWidth(barsWidth),
-      m_displayBorder(displayBorder),
+      m_highlightWithBorder(highlightWithBorder),
       m_fillBars(fillBars),
       m_color(color),
-      m_highlightColor(highlightColor),
-      m_borderColor(borderColor) {}
+      m_highlightColor(highlightColor) {}
 
 void WithHistogram::HistogramDrawing::draw(const AbstractPlotView* plotView,
                                            KDContext* ctx, KDRect rect) const {
@@ -417,7 +416,6 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView* plotView,
   double rectMaxBarEnd = m_start + (rectMaxBarIndex + 1) * barsWidth;
   KDCoordinate plotViewHeight =
       plotView->floatToKDCoordinatePixel(OMG::Axis::Vertical, 0.f);
-  KDCoordinate borderWidth = m_displayBorder ? k_borderWidth : 0;
 
   double xPrevious = NAN;
   for (double x = rectMinBarStart; x < rectMaxBarEnd; x += barsWidth) {
@@ -435,8 +433,21 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView* plotView,
     assert(y > 0.); /* TODO This method is not ready to display histogram with
                         negative values. */
 
-    /* Step 2: Compute pixels
-     *   Step 2.1: Bar width */
+    // Step 2: Compute variables depending on highlight
+    KDColor color = m_color;
+    KDCoordinate borderWidth = 0;
+    bool isHighlighted =
+        m_highlightTest && m_highlightTest(xCenter, m_model, m_context);
+    if (m_highlightWithBorder) {
+      // Highlighted bars are drawn with a wider border
+      borderWidth = isHighlighted ? k_highlightBorderWidth : k_borderWidth;
+    } else if (isHighlighted) {
+      // Highlighted bars are drawn with a different color
+      color = m_highlightColor;
+    }
+
+    // Step 3: Compute pixels
+    //  Step 3.1: Bar width
     KDCoordinate left =
         plotView->floatToKDCoordinatePixel(OMG::Axis::Horizontal, x);
     KDCoordinate leftOfNextBar = plotView->floatToKDCoordinatePixel(
@@ -449,40 +460,43 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView* plotView,
      * (e.g. histograms in the Statistics app). Otherwise, we only draw a thin
      * bar on leftmost pixels (e.g. histograms for discrete distributions). */
     if (m_fillBars) {
-      barWidth = leftOfNextBar - left;
+      // Bar width extends to the next bar because adjacent bars share a border
+      barWidth = leftOfNextBar - left + 1;
     } else {
       assert(borderWidth == 0);
       barWidth = k_hollowBarWidth;
     }
 
-    //   Step 2.2: Bar height
+    //   Step 3.2: Bar height
     KDCoordinate top =
         plotView->floatToKDCoordinatePixel(OMG::Axis::Vertical, y);
     assert(top >= 0);
     KDCoordinate barHeight = plotViewHeight - top;
     assert(barHeight >= 0);
-    KDCoordinate minBarHeight = 1 + borderWidth;
+    KDCoordinate minBarHeight = 1 + (m_highlightWithBorder ? k_borderWidth : 0);
     barHeight = std::max(barHeight, minBarHeight);
     top = plotViewHeight - barHeight;
+    borderWidth = std::min(borderWidth, barHeight);
+    borderWidth = std::min(borderWidth, barWidth);
 
-    //   Step 3: Draw
-    KDColor color =
-        m_highlightTest && m_highlightTest(xCenter, m_model, m_context)
-            ? m_highlightColor
-            : m_color;
+    //   Step 4: Draw
     // Interior
     KDRect barRect(left + borderWidth, top + borderWidth,
-                   barWidth - borderWidth, barHeight - borderWidth);
+                   barWidth - 2 * borderWidth, barHeight - borderWidth);
     ctx->fillRect(barRect, color);
-    if (borderWidth > 0 && barRect.width() > 0 && barRect.height() > 0) {
+    if (borderWidth > 0) {
+      assert(m_highlightWithBorder);
       // Left border
-      ctx->fillRect(KDRect(left, top, borderWidth, barHeight), m_borderColor);
+      ctx->fillRect(KDRect(left, top, borderWidth, barHeight),
+                    m_highlightColor);
       // Top border
-      ctx->fillRect(KDRect(left + borderWidth, top, barWidth, borderWidth),
-                    m_borderColor);
+      ctx->fillRect(KDRect(left + borderWidth, top, barWidth - 2 * borderWidth,
+                           borderWidth),
+                    m_highlightColor);
       // Right border
-      ctx->fillRect(KDRect(leftOfNextBar, top, borderWidth, barHeight),
-                    m_borderColor);
+      ctx->fillRect(
+          KDRect(left + barWidth - borderWidth, top, borderWidth, barHeight),
+          m_highlightColor);
     }
   }
 }

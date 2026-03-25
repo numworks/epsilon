@@ -150,6 +150,7 @@ class WithCurves {
 class WithHistogram {
  protected:
   constexpr static KDCoordinate k_borderWidth = 1;
+  constexpr static KDCoordinate k_highlightBorderWidth = 4;
   typedef double (*Curve1D)(double, const void*, const void*);
   typedef bool (*HighlightTest)(double, const void*, const void*);
 
@@ -157,9 +158,8 @@ class WithHistogram {
    public:
     HistogramDrawing(Curve1D curve, const void* model, const void* context,
                      HighlightTest highlightTest, double start,
-                     double barsWidth, bool displayBorder, bool fillBars,
-                     KDColor color, KDColor highlightColor,
-                     KDColor borderColor = Escher::Palette::White);
+                     double barsWidth, bool highlightWithBorder, bool fillBars,
+                     KDColor color, KDColor highlightColor);
     void draw(const AbstractPlotView* plotView, KDContext* ctx,
               KDRect rect) const;
 
@@ -172,11 +172,10 @@ class WithHistogram {
     HighlightTest m_highlightTest;
     double m_start;
     double m_barsWidth;
-    bool m_displayBorder;
+    bool m_highlightWithBorder;
     bool m_fillBars;
     KDColor m_color;
     KDColor m_highlightColor;
-    KDColor m_borderColor;
   };
 };
 

@@ -37,7 +37,7 @@ void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
   HistogramDrawing histogram(
       histogramLevels, m_store, context, highlights,
       m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, true,
-      DoublePairStore::colorLightOfSeriesAtIndex(m_series), k_selectedBarColor,
+      DoublePairStore::colorLightOfSeriesAtIndex(m_series),
       DoublePairStore::colorOfSeriesAtIndex(m_series));
   histogram.draw(plotView, ctx, rect);
 }

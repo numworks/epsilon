@@ -55,7 +55,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::
               : defaultColor;
   m_rightLayoutView.setBackgroundColor(color);
   m_approximateSign.setBackgroundColor(defaultColor);
-  if (leftLayoutView()) {
+  if (displayLeftLayout()) {
     color = highlight && m_selectedSubviewPosition == SubviewPosition::Left
                 ? Palette::Select
                 : defaultColor;
@@ -109,7 +109,7 @@ AbstractScrollableMultipleLayoutsView::ContentCell::layoutAtPosition(
     return m_rightLayoutView.layout();
   }
   assert(position == SubviewPosition::Left);
-  assert(leftLayoutView());
+  assert(displayLeftLayout());
   return leftLayoutView()->layout();
 }
 
@@ -119,7 +119,7 @@ int AbstractScrollableMultipleLayoutsView::ContentCell::numberOfSubviews()
   if (displayCenter()) {
     nbOfSubviews += 2;
   }
-  if (leftLayoutView()) {
+  if (displayLeftLayout()) {
     nbOfSubviews += 1;
   }
   return nbOfSubviews;
@@ -130,7 +130,7 @@ KDCoordinate AbstractScrollableMultipleLayoutsView::ContentCell::baseline(
     KDCoordinate* rightBaseline) const {
   // Left view
   KDCoordinate leftViewBaseline =
-      (leftLayoutView() && !leftLayoutView()->layout().isUninitialized())
+      (displayLeftLayout() && !leftLayoutView()->layout().isUninitialized())
           ? leftLayoutView()->layout()->baseline(leftLayoutView()->font())
           : 0;
   if (leftBaseline != nullptr) {
@@ -160,7 +160,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
     KDRect* leftFrame, KDRect* centerFrame, KDRect* approximateSignFrame,
     KDRect* rightFrame) {
   // Subviews sizes
-  KDSize leftSize = leftLayoutView()
+  KDSize leftSize = displayLeftLayout()
                         ? leftLayoutView()->minimalSizeForOptimalDisplay()
                         : KDSizeZero;
   KDSize centerSize = displayCenter()
@@ -177,7 +177,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
 
   // Layout left view
   KDCoordinate currentWidth = 0;
-  if (leftLayoutView() && !leftLayoutView()->layout().isUninitialized()) {
+  if (displayLeftLayout() && !leftLayoutView()->layout().isUninitialized()) {
     assert(leftFrame != nullptr);
     *leftFrame = KDRect(currentWidth, viewBaseline - leftBaseline, leftSize);
     currentWidth += leftSize.width() +
@@ -219,7 +219,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
             : 0;
     KDPoint offset = KDPoint(horizontalOffset, 0);
     *rightFrame = rightFrame->translatedBy(offset);
-    if (leftLayoutView()) {
+    if (displayLeftLayout()) {
       *leftFrame = leftFrame->translatedBy(offset);
     }
     if (displayCenter()) {
@@ -241,7 +241,7 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
   baseline(&leftBaseline, &centerBaseline, &rightBaseline);
 
   KDSize leftSize = KDSizeZero;
-  if (leftLayoutView() && !leftLayoutView()->layout().isUninitialized()) {
+  if (displayLeftLayout() && !leftLayoutView()->layout().isUninitialized()) {
     leftSize = leftLayoutView()->minimalSizeForOptimalDisplay();
     width += leftSize.width() +
              AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
@@ -277,7 +277,7 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
 
 View* AbstractScrollableMultipleLayoutsView::ContentCell::subviewAtIndex(
     int index) {
-  bool leftIsVisible = leftLayoutView() != nullptr;
+  bool leftIsVisible = displayLeftLayout();
   if (leftIsVisible && index == 0) {
     return leftLayoutView();
   }
@@ -298,7 +298,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::layoutSubviews(
   KDRect approximateSignFrame = KDRectZero;
   KDRect rightFrame = KDRectZero;
   subviewFrames(&leftFrame, &centerFrame, &approximateSignFrame, &rightFrame);
-  if (leftLayoutView() != nullptr) {
+  if (displayLeftLayout()) {
     setChildFrame(leftLayoutView(), leftFrame, force);
   }
   if (centeredLayoutView() != nullptr) {
@@ -322,7 +322,7 @@ void AbstractScrollableMultipleLayoutsView::setLayouts(
   bool updateCenterLayout =
       contentCell()->centeredLayoutView()->setLayout(exactLayout);
   bool updateLeftLayout = false;
-  if (contentCell()->leftLayoutView()) {
+  if (contentCell()->displayLeftLayout()) {
     updateLeftLayout =
         contentCell()->leftLayoutView()->setLayout(formulaLayout);
   }
@@ -365,7 +365,7 @@ bool AbstractScrollableMultipleLayoutsView::handleEvent(
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     bool leftIsVisible = false;
     KDCoordinate leftWidth = 0;
-    if (contentCell()->leftLayoutView()) {
+    if (contentCell()->displayLeftLayout()) {
       leftWidth = contentCell()
                       ->leftLayoutView()
                       ->minimalSizeForOptimalDisplay()

@@ -82,6 +82,7 @@ class AbstractScrollableMultipleLayoutsView
       return m_selectedSubviewPosition;
     }
     void setSelectedSubviewPosition(SubviewPosition subviewPosition);
+    bool displayLeftLayout() const { return leftLayoutView() != nullptr; }
     bool displayApproximateSign() const {
       return displayCenter() && !m_rightLayoutView.layout().isUninitialized();
     }

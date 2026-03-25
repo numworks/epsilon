@@ -238,6 +238,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   assert(!approximateLayout.isUninitialized() ||
          !exactLayout.isUninitialized());
 
+  // If approximation is missing, consider it equal to exact
   bool exactAndApproximateAreEqual = false;
   if (!approximateLayout.isUninitialized() && !exactLayout.isUninitialized()) {
     char exactBuffer[::Constant::MaxSerializedExpressionSize];
@@ -270,6 +271,9 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
                                        ->angleUnit()}})) {
       exactAndApproximateAreEqual = true;
     }
+  } else if (approximate.isUninitialized() && !shouldUseExactForApproximate) {
+    // Prevent ≈ display in front of an exact solution
+    exactAndApproximateAreEqual = true;
   }
   assert(m_numberOfSolutions < k_maxNumberOfSolutions - 1);
   m_solutions[m_numberOfSolutions++] = Solution(

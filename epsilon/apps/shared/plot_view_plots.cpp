@@ -427,13 +427,12 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView* plotView,
     xPrevious = x;
 
     // Step 1: Compute values
-    double xCenter = m_fillBars ? x + 0.5f * barsWidth : x;
-    // WARNING/TODO: Dangerous cast from double to float
+    double xCenter = m_fillBars ? x + 0.5 * barsWidth : x;
     double y = m_curve(xCenter, m_model, m_context);
-    if (!std::isfinite(y) || y == 0.f) {
+    if (!std::isfinite(y) || y == 0.) {
       continue;
     }
-    assert(y > 0.f); /* TODO This method is not ready to display histogram with
+    assert(y > 0.); /* TODO This method is not ready to display histogram with
                         negative values. */
 
     /* Step 2: Compute pixels

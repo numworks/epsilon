@@ -20,3 +20,11 @@ ifeq ($(_ion_simulator_icons_use_mask),1)
 else
 	convert -background "#$(_ion_icon_background)" -resize $* MSVG:$< $@
 endif
+
+# Localization resources
+_ion_simulator_lproj_dirs := $(wildcard $(PATH_ion)/src/simulator/shared/apple/resources/$(ION_variant)/*.lproj)
+
+$(eval $(foreach d,$(_ion_simulator_lproj_dirs),\
+$(call rule_for_simulator_resource,COPY,$(notdir $d),$d,\
+  cp -r $$^ $$@ \
+)))

@@ -26,11 +26,15 @@ _simulator_app_binary = $(_simulator_app)/Contents/MacOS/$(APP_NAME)
 _simulator_app_plist = $(_simulator_app)/Contents/Info.plist
 _simulator_app_resources_path = $(_simulator_app)/Contents/Resources
 
+# We are using the APP_NAME and not the APP_FULL_NAME for the bundle name
+# because it has to match the actual app directory name for the Finder to use
+# the localized names. Case does not matter here.
 $(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) | $$(@D)/.
 	$(call rule_label,PLUTIL)
 	cp $< $@
 	plutil -insert "CFBundleIdentifier" -string "$(APP_BUNDLE_ID)" $@
-	plutil -insert "CFBundleName" -string "$(APP_FULL_NAME)" $@
+	plutil -insert "CFBundleName" -string "$(APP_NAME)" $@
+	plutil -insert "CFBundleDisplayName" -string "$(APP_NAME)" $@
 	plutil -insert "LSMinimumSystemVersion" -string "$(APPLE_PLATFORM_MIN_VERSION)" $@
 	plutil -insert "CFBundleExecutable" -string "$(APP_NAME)" $@
 	plutil -insert "CFBundleVersion" -string "$(APP_VERSION)" $@

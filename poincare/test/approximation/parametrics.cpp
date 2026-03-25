@@ -98,8 +98,8 @@ QUIZ_CASE(pcj_approximation_integrals) {
   // Singularities inside bounds
   approximates_to<double>("int(ln(abs(cos(x^2))),x,2.159,4.23)",
                           "-1.5403160645501");
-  approximates_to<double>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "6.1840407386588");
-  approximates_to<double>("int(ln(abs(x^2+3×x+2)),x,4,-3)", "-6.1840407386588");
+  approximates_to<double>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "6.1840402459412");
+  approximates_to<double>("int(ln(abs(x^2+3×x+2)),x,4,-3)", "-6.1840402459412");
   /* The same integral calculations work fine on the simplified expression
    * (which introduces a dependency) */
   simplified_approximates_to<double>("int(ln(abs(cos(x^2))),x,2.159,4.23)",
@@ -116,11 +116,12 @@ QUIZ_CASE(pcj_approximation_integrals) {
                                     "undef");
   /* For some particular functions, we are able to detect singularity points and
    * split the integral at these points, and the calculation works fine when the
-   * singularities are on the integral bounds. */
+   * singularities are on the integral bounds. This only works on simplified
+   * expression, because the integral splitting is done during the
+   * PrepareForApproximation step */
+  approximates_to<float>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "undef");
   /* NOTE: we need to specify number of significant digits because the last
    * digit depends on the platform */
-  approximates_to<float>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "6.18405",
-                         k_realParams, 6);
   simplified_approximates_to<float>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "6.18405",
                                     k_realSimplification, 6);
 

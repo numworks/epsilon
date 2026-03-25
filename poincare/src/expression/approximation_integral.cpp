@@ -1,12 +1,8 @@
 #include <omg/float.h>
-#include <poincare/src/equation_solver/equation_solver.h>
-#include <poincare/src/memory/n_ary.h>
-#include <poincare/src/memory/pattern_matching.h>
 
 #include <algorithm>
 
 #include "approximation.h"
-#include "k_tree.h"
 #include "parametric.h"
 #include "simplification.h"
 #include "variables.h"
@@ -35,110 +31,14 @@ template <typename T>
 T Approximator::approximateIntegral(const Tree* integral) {
   const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
+  const Tree* integrand = upperBound->nextTree();
+
   T a = privateToFloat<T>(lowerBound);
   T b = privateToFloat<T>(upperBound);
   // a and b are allowed to be infinite but not NaN
   if (std::isnan(a) || std::isnan(b)) {
     return NAN;
   }
-
-  Tree* orderedIntegral = integral->cloneTree();
-  bool reversed = false;
-  if (a > b) {
-    reversed = true;
-    // Swap bounds
-    orderedIntegral->child(Parametric::k_upperBoundIndex)
-        ->swapWithTree(orderedIntegral->child(Parametric::k_lowerBoundIndex));
-    if (integral->isIntegralWithAlternatives()) {
-      orderedIntegral->child(Parametric::k_integrandNearLowerBoundIndex)
-          ->swapWithTree(orderedIntegral->child(
-              Parametric::k_integrandNearUpperBoundIndex));
-    }
-    std::swap(a, b);
-  }
-
-  /* Detect singularities inside the bounds (not all singularities can be
-   * detected). Split the integral at these singularity points */
-  Tree* splitIntegral = splitAtSingularities(orderedIntegral, a, b);
-  assert(splitIntegral->isList() && splitIntegral->numberOfChildren() >= 1);
-
-  T result = 0.0;
-  for (const Tree* childIntegral : splitIntegral->children()) {
-    result += approximateIntegralInternal<T>(childIntegral);
-  }
-  splitIntegral->removeTree();
-  orderedIntegral->removeTree();
-  return reversed ? static_cast<T>(-1.0) * result : result;
-}
-
-template <typename T>
-Tree* Approximator::splitAtSingularities(const Tree* integral, T a, T b) {
-  assert(a <= b);
-
-  const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
-  const Tree* upperBound = lowerBound->nextTree();
-  const Tree* integrand = upperBound->nextTree();
-
-  EquationSolver::SingularitySolverResult singularities =
-      EquationSolver::ExactSolveFindSingularities(integrand, m_parameters);
-  TreeRef splittingPoints = singularities.exactSolutionList;
-  assert(splittingPoints->isList());
-
-  /*  Add the initial upper bound to the list of splitting points for
-   * performance (see comment in the below for loop). */
-  NAry::AddChild(splittingPoints, upperBound->cloneTree());
-  /* lower bound and upper bound get updated in the for loop for each potential
-   * splitting point. The initial value of upper bound is the first splitting
-   * point candidate. */
-  const Tree* movingLowerBound = lowerBound;
-  const Tree* movingUpperBound = splittingPoints->nextNode();
-  const Tree* lastPoint = splittingPoints->lastChild();
-
-  TreeRef result = SharedTreeStack->pushList(0);
-
-  for (const Tree* point : splittingPoints->children()) {
-    T value = privateToFloat<T>(point);
-    /* Do not split if value is outside or equal to bounds, with an exception
-     * for the last splitting point which is the initial upper bound and should
-     * always be included */
-    if ((point != lastPoint) && (value <= a || value >= b)) {
-      continue;
-    }
-    movingUpperBound = point;
-    NAry::AddChild(result,
-                   integral->isIntegralWithAlternatives()
-                       ? PatternMatching::Create(
-                             KIntegralWithAlternatives(KA, KB, KC, KD, KE, KF),
-                             {.KA = integral->nextNode(),
-                              .KB = movingLowerBound,
-                              .KC = movingUpperBound,
-                              .KD = integrand,
-                              .KE = integral->child(
-                                  Parametric::k_integrandNearLowerBoundIndex),
-                              .KF = integral->child(
-                                  Parametric::k_integrandNearUpperBoundIndex)},
-                             ContextScopes{.KD = 1, .KE = 1, .KF = 1})
-                       : PatternMatching::Create(KIntegral(KA, KB, KC, KD),
-                                                 {.KA = integral->nextNode(),
-                                                  .KB = movingLowerBound,
-                                                  .KC = movingUpperBound,
-                                                  .KD = integrand},
-                                                 ContextScopes{.KD = 1}));
-    movingLowerBound = point;
-  }
-  splittingPoints->removeTree();
-  return result;
-}
-
-template <typename T>
-T Approximator::approximateIntegralInternal(const Tree* integral) {
-  const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
-  const Tree* upperBound = lowerBound->nextTree();
-  const Tree* integrand = upperBound->nextTree();
-  T a = privateToFloat<T>(lowerBound);
-  T b = privateToFloat<T>(upperBound);
-
-  assert(a <= b);
 
   // Handle singularities at the bounds
   bool notFiniteInA = !std::isfinite(toLocalContext(integrand, a));
@@ -160,7 +60,6 @@ T Approximator::approximateIntegralInternal(const Tree* integral) {
 template <typename T>
 T Approximator::approximateIntegralSingularityAtBoundsMethod(
     const Tree* integral, T a, T b, bool notFiniteInA, bool notFiniteInB) {
-  assert(a <= b);
   /* When we have a singularity at a bound, we want to evaluate the integrand
    * really close to the bound since the area there is non-negligible.  If the
    * bound is non-null, say 1/sqrt(1-x) near 1, the closest point from 1 where
@@ -195,7 +94,6 @@ T Approximator::approximateIntegralSingularityAtBoundsMethod(
 template <typename T>
 T Approximator::approximateIntegralGenericMethod(const Tree* integral, T a,
                                                  T b) {
-  assert(a <= b);
   const Tree* integrand = integral->child(Parametric::k_integrandIndex);
 
   /* Choose the right substitution to use in Gauss-Kronrod.
@@ -204,6 +102,10 @@ T Approximator::approximateIntegralGenericMethod(const Tree* integral, T a,
   constexpr T leftOpenThreshold = -1000.0;
   constexpr T rightOpenThreshold = 1000.0;
   T start, end, scale = 1.0;
+  if (a > b) {
+    scale = -1.0;
+    std::swap(a, b);
+  }
   Private::Substitution<T> substitution;
   substitution.originA = a;
   substitution.originB = b;

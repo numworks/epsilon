@@ -454,16 +454,6 @@ class Approximator {
   template <typename T>
   T approximateIntegral(const Tree* integral);
 
-  /* Return a list of integrals, split at singularities. If no singularity is
-   * detected, the list contains a single element, which is the clone of
-   * "integral" */
-  template <typename T>
-  Tree* splitAtSingularities(const Tree* integral, T a, T b);
-
-  // Integral approximation on an integral already split at singularities
-  template <typename T>
-  T approximateIntegralInternal(const Tree* integral);
-
   // Use a tanh-sinh quadrature
   template <typename T>
   T approximateIntegralSingularityAtBoundsMethod(const Tree* integral, T a, T b,

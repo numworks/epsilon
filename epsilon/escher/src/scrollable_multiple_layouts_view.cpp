@@ -347,7 +347,8 @@ void AbstractScrollableMultipleLayoutsView::setLayouts(
 }
 
 void AbstractScrollableMultipleLayoutsView::reloadScroll() {
-  if (selectedSubviewPosition() == SubviewPosition::Right) {
+  if (selectedSubviewPosition() == SubviewPosition::Right &&
+      (contentCell()->displayLeftLayout() || contentCell()->displayCenter())) {
     /* Scroll to the right extremity, then back to the beginning of the right
      * layout. This ensures that the beginning of the layout is in
      * frame, and that as much of it as possible is visible. */
@@ -361,6 +362,7 @@ void AbstractScrollableMultipleLayoutsView::reloadScroll() {
     resetScroll();
   }
 }
+
 void AbstractScrollableMultipleLayoutsView::setDisplayCenter(bool display) {
   contentCell()->setDisplayCenter(display);
   layoutSubviews();

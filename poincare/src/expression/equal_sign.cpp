@@ -56,12 +56,6 @@ bool IsCalculationOutputStrictEquality(const Tree* exact,
     return result;
   }
 
-  if (exact->type() != approximate->type()) {
-    // Ignore different types of undefined, except for NonReal
-    return (approximate->isUndefined() && exact->isUndefined()) &&
-           (approximate->isNonReal() == exact->isNonReal());
-  }
-
   /* Check deeply for equality, because the expression can be a list, a matrix
    * or a complex composed of rationals.
    * Ex: 1 + i/2 == 1 + 0.5i */

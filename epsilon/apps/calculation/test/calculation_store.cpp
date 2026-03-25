@@ -190,6 +190,62 @@ QUIZ_CASE(calculation_ans) {
   store.deleteAll();
 }
 
+const char* DisplayOutputToString(DisplayOutput displayOutput) {
+  switch (displayOutput) {
+    case DisplayOutput::Unknown:
+      return "Unknown";
+    case DisplayOutput::ExactOnly:
+      return "ExactOnly";
+    case DisplayOutput::ApproximateOnly:
+      return "ApproximateOnly";
+    case DisplayOutput::ApproximateIsIdenticalToExact:
+      return "ApproximateIsIdenticalToExact";
+    case DisplayOutput::ExactAndApproximate:
+      return "ExactAndApproximate";
+    case DisplayOutput::ExactAndApproximateToggle:
+      return "ExactAndApproximateToggle";
+    case DisplayOutput::ExactHidden:
+      return "ExactHidden";
+    default:
+      OMG_UNREACHABLE;
+  }
+}
+
+void assertDisplayOutput(DisplayOutput observed, DisplayOutput expected,
+                         const char* information) {
+  if (observed == expected) {
+    return;
+  }
+  quiz_assert_print_if_failure(observed == expected, information,
+                               DisplayOutputToString(expected),
+                               DisplayOutputToString(observed));
+}
+
+const char* EqualSignToString(EqualSign equalSign) {
+  switch (equalSign) {
+    case EqualSign::Unknown:
+      return "Unknown";
+    case EqualSign::Hidden:
+      return "Hidden";
+    case EqualSign::Equal:
+      return "Equal";
+    case EqualSign::Approximation:
+      return "Approximation";
+    default:
+      OMG_UNREACHABLE;
+  }
+}
+
+void assertEqualSign(EqualSign observed, EqualSign expected,
+                     const char* information) {
+  if (observed == expected) {
+    return;
+  }
+  quiz_assert_print_if_failure(observed == expected, information,
+                               EqualSignToString(expected),
+                               EqualSignToString(observed));
+}
+
 void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
                          EqualSign expectedSign,
                          const char* expectedExactOutput,
@@ -201,12 +257,8 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
   OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
 
-  quiz_assert_print_if_failure(
-      lastCalculation->displayOutput() == expectedDisplay, input,
-      "correct displayOutput", "incorrect displayOutput");
-  quiz_assert_print_if_failure(lastCalculation->equalSign() == expectedSign,
-                               input, "correct equalSign",
-                               "incorrect equalSign");
+  assertDisplayOutput(lastCalculation->displayOutput(), expectedDisplay, input);
+  assertEqualSign(lastCalculation->equalSign(), expectedSign, input);
 
   if (expectedStoredInput) {
     assert_expression_serializes_to(lastCalculation->input(),

@@ -182,8 +182,7 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
     approximateOutput =
         createApproximateOutputLayout(&couldNotCreateApproximateLayout);
     if (couldNotCreateApproximateLayout) {
-      if (canChangeDisplayOutput &&
-          m_displayOutput != DisplayOutput::ApproximateOnly) {
+      if (canChangeDisplayOutput && CanDisplayExact(m_displayOutput)) {
         /* Set display the output to ApproximateOnly, make room in the pool by
          * erasing the exact layout, retry to create the approximate layout. */
         forceDisplayOutput(DisplayOutput::ApproximateOnly);
@@ -305,9 +304,8 @@ void Calculation::fillExpressionsForAdditionalResults(
   *input = this->input();
   *approximateOutput = this->approximateOutput();
   assert(m_displayOutput != DisplayOutput::Unknown);
-  *exactOutput = m_displayOutput == DisplayOutput::ApproximateOnly
-                     ? *approximateOutput
-                     : this->exactOutput();
+  *exactOutput = CanDisplayExact(m_displayOutput) ? this->exactOutput()
+                                                  : *approximateOutput;
 }
 
 AdditionalResultsType Calculation::additionalResultsType() {

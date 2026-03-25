@@ -28,7 +28,7 @@ jobs:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }} PLATFORM=${{ inputs.platform }} DEBUG=0 VERBOSE=0
     steps:
       - name: Fetch target branch and PR branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 200
       - name: Find most recent ancestor of PR and target branch

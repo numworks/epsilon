@@ -14,7 +14,7 @@ jobs:
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
         with:

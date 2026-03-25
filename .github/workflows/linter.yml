@@ -20,7 +20,7 @@ jobs:
     runs-on: ${{ fromJSON(vars.RUNNER_LABELS) }}
     steps:
       - name: Fetch target branch and PR branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 200
       - name: Find most recent ancestor of PR and target branch
@@ -28,7 +28,7 @@ jobs:
         run: echo "commit_sha=$(git merge-base ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})" >> $GITHUB_OUTPUT
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder

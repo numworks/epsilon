@@ -17,7 +17,7 @@ jobs:
       - name: Download toolchain
         uses: numworks/setup-arm-toolchain@latest
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Check for core
         run: '[[ -e shared/ion/src/device/core ]]'
       - name: Build container and define DOCKER_RUN

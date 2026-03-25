@@ -52,7 +52,7 @@ jobs:
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || (github.event_name == 'workflow_dispatch' && fromJSON(github.event.inputs.android))) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
         with:
@@ -73,7 +73,7 @@ jobs:
     env:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
@@ -119,7 +119,7 @@ jobs:
           install: >-
             git
             mingw-w64-x86_64-arm-none-eabi-gcc
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: tools/setup.sh
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon.exe
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon_test.exe
@@ -137,7 +137,7 @@ jobs:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Read Emscripten version
         run: echo "EMSDK_VERSION=$(cat .emsdk-version)" >> $GITHUB_ENV
       - name: Build container and define DOCKER_RUN
@@ -170,7 +170,7 @@ jobs:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Read Emscripten version
         run: echo "EMSDK_VERSION=$(cat .emsdk-version)" >> $GITHUB_ENV
       - name: Build container and define DOCKER_RUN
@@ -188,7 +188,7 @@ jobs:
     env:
       MAKEFLAGS: "${{ vars.MAKEFLAGS_CACHED }} STRICT_WARNINGS=1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
@@ -219,7 +219,7 @@ jobs:
     env:
       MAKEFLAGS: '-j2'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: tools/setup.sh --only-simulator
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 epsilon_test.bin
       - run: epsilon/output/debug/optimized/macos/x86_64/epsilon_test.bin --headless --limit-stack-usage
@@ -235,7 +235,7 @@ jobs:
     env:
       MAKEFLAGS: '-j2'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: tools/setup.sh --only-simulator
       - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 epsilon.ipa
       - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 test.ipa

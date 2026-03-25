@@ -57,7 +57,7 @@ bool neverDisplayExactOutput(const Tree* exactOutput,
   /* 1. If the output contains a comparison, we only display the
    * approximate output. (this can occur for pi > 3 for example, since
    * it's handled by approximation and not by reduction)
-   * 2. If the output has remaining depencies, the exact output is not
+   * 2. If the output has remaining dependencies, the exact output is not
    * displayed to avoid outputs like 5 ≈ undef and also because it could
    * be a reduction that failed and was interrupted which can lead to
    * dependencies not being properly bubbled-up

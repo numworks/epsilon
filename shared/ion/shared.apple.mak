@@ -22,9 +22,10 @@ else
 endif
 
 # Localization resources
-_ion_simulator_lproj_dirs := $(wildcard $(PATH_ion)/src/simulator/shared/apple/resources/$(ION_variant)/*.lproj)
+_ion_simulator_lproj_dirs := $(wildcard $(PATH_ion)/src/simulator/shared/apple/resources/$(ION_variant)/*.lproj/*)
 
 $(eval $(foreach d,$(_ion_simulator_lproj_dirs),\
-$(call rule_for_simulator_resource,COPY,$(notdir $d),$d,\
+$(call rule_for_simulator_resource,COPY, \
+  $(subst $(PATH_ion)/src/simulator/shared/apple/resources/$(ION_variant)/,,$d),$d,\
   cp -r $$^ $$@ \
 )))

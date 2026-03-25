@@ -124,6 +124,8 @@ QUIZ_CASE(pcj_approximation_integrals) {
    * digit depends on the platform */
   simplified_approximates_to<float>("int(ln(abs(x^2+3×x+2)),x,-3,4)", "6.18405",
                                     k_realSimplification, 6);
+  simplified_approximates_to<float>("int(ln(abs(x^2+3×x+2)),x,4,-3)",
+                                    "-6.18405", k_realSimplification, 6);
 
   // double integration
   approximates_to<float>("int(int(x×x,x,0,x),x,0,4)", "21.33333");

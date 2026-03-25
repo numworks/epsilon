@@ -79,8 +79,6 @@ static bool SplitAtSingularities(Tree* e, void* ctx) {
   double a = Approximation::To<double>(lowerBound, {});
   double b = Approximation::To<double>(upperBound, {});
 
-  // TODO: handle a > b case
-
   EquationSolver::SingularitySolverResult singularities =
       EquationSolver::ExactSolveFindSingularities(integrand, UserParameters{});
   TreeRef splittingPoints = singularities.exactSolutionList;
@@ -90,6 +88,13 @@ static bool SplitAtSingularities(Tree* e, void* ctx) {
     splittingPoints->removeTree();
     // Do not change the integral
     return false;
+  }
+
+  bool reversed = false;
+  if (a > b) {
+    reversed = true;
+    std::swap(a, b);
+    std::swap(lowerBound, upperBound);
   }
 
   /*  Add the initial upper bound to the list of splitting points for
@@ -113,12 +118,14 @@ static bool SplitAtSingularities(Tree* e, void* ctx) {
       continue;
     }
     movingUpperBound = point;
-    NAry::AddChild(result, PatternMatching::Create(KIntegral(KA, KB, KC, KD),
-                                                   {.KA = e->nextNode(),
-                                                    .KB = movingLowerBound,
-                                                    .KC = movingUpperBound,
-                                                    .KD = integrand},
-                                                   ContextScopes{.KD = 1}));
+    NAry::AddChild(result, PatternMatching::Create(
+                               reversed ? KMult(-1_e, KIntegral(KA, KB, KC, KD))
+                                        : KIntegral(KA, KB, KC, KD),
+                               {.KA = e->nextNode(),
+                                .KB = movingLowerBound,
+                                .KC = movingUpperBound,
+                                .KD = integrand},
+                               ContextScopes{.KD = 1}));
     movingLowerBound = point;
   }
   splittingPoints->removeTree();

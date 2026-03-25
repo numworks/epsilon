@@ -53,14 +53,15 @@ constexpr static uint8_t k_prodArgumentIndex = 3;
 constexpr static uint8_t k_derivandIndex = 3;
 // Integral and IntegralWithAlternatives
 constexpr static uint8_t k_integrandIndex = 3;
+constexpr static uint8_t k_integrandNearLowerBoundIndex = 4;
+constexpr static uint8_t k_integrandNearUpperBoundIndex = 5;
 // ListSequence
 constexpr static uint8_t k_listSequenceArgumentIndex = 2;
 
 // Sum, Product, Integral, and IntegralWithAlternatives
 constexpr static uint8_t k_lowerBoundIndex = 1;
 constexpr static uint8_t k_upperBoundIndex = 2;
-constexpr static uint8_t k_integrandNearLowerBoundIndex = 4;
-constexpr static uint8_t k_integrandNearUpperBoundIndex = 5;
+
 // Diff and ListSequence
 constexpr static uint8_t k_valueIndex = 1;
 

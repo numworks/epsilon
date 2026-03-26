@@ -12,9 +12,9 @@ class ExpressionSolver : public Solver<double> {
  public:
   /* WARNING: pointer to e must stay valid during the whole lifetime of the
    * solver.
-   * - e is a prepared expression (symbols substituted), ready for numerical
-   *   evaluation via Approximation::To. It may be nullptr if the evaluator is
-   *   set later via setEvaluator (used by IntersectionSolver).
+   * - e is a prepared function (symbols substituted, constants approximated to
+   *   float...), ready for numerical evaluation via Approximation::To. It may
+   *   not be null.
    * - IsDiscontinuousInBracket is always used as the discontinuity test
    *   because all expression-based solvers need discontinuity detection around
    *   undefined sub-intervals (e.g. log, sqrt, 1/x). */

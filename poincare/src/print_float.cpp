@@ -139,7 +139,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToText(
   assert(bufferSize > 0);
 
   /* Assert that the glyphLength is capped.
-   * Example: 1+1.234E-30+... in decimal mode, because we do not want the fill
+   * Example: 1+1.234E-30+... in decimal mode, because we do not want to fill
    * the buffer with the decimal version of 1.234E-30. */
   assert(glyphLength <= k_maxFloatGlyphLength);
 
@@ -166,7 +166,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToText(
       requiredLengths.GlyphLength > glyphLength) {
     buffer[0] = 0;
     /* We still return the required sizes even if we could not write the float
-     * in the buffer in order to indicate that we overflew the buffer. */
+     * in the buffer in order to indicate that we overflowed the buffer. */
   }
   return requiredLengths;
 }

@@ -65,7 +65,7 @@ inline void ReplaceTreePreservingDimension(Tree* e, const Tree* undefTree) {
   e->moveTreeOverTree(CreateDimensionedUndef(undefTree, e));
 }
 
-// Return if t is undefined, or a list/matrix/point/sequence of undefined nodes
+// Return true if t is a scalar/list/matrix/point/sequence of undefined tree
 bool IsDimensionedUndefined(const Tree* t);
 
 template <typename T>

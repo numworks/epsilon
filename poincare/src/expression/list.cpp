@@ -172,19 +172,30 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
 #endif
 }
 
-static bool IsValidCoefficientsList(const Tree* coefficients) {
+static OMG::Troolean IsValidCoefficientsList(const Tree* coefficients) {
   /* Coefficients must be real and positive.
    * At least one of them must be non null. */
-  bool hasNonNull = false;
+  assert(Dimension::IsList(coefficients));
+  OMG::Troolean HasOnlyPositiveRealCoeff = OMG::Troolean::True;
+  OMG::Troolean HasNonNullCoeff = OMG::Troolean::False;
   for (const Tree* child : coefficients->children()) {
     ComplexProperties properties = GetComplexProperties(child);
+    if (properties.isNonReal() || properties.realSign().isStrictlyNegative() ||
+        child->isUndefined()) {
+      return OMG::Troolean::False;
+    }
     if (properties.canBeNonReal() ||
         properties.realSign().canBeStrictlyNegative()) {
-      return false;
+      HasOnlyPositiveRealCoeff = OMG::Troolean::Unknown;
     }
-    hasNonNull = hasNonNull || !properties.canBeNull();
+    if (!properties.canBeNull()) {
+      HasNonNullCoeff = OMG::Troolean::True;
+    } else if (!properties.isNull() &&
+               HasNonNullCoeff == OMG::Troolean::False) {
+      HasNonNullCoeff = OMG::Troolean::Unknown;
+    }
   }
-  return hasNonNull;
+  return TrooleanAnd(HasOnlyPositiveRealCoeff, HasNonNullCoeff);
 }
 
 Tree* List::Mean(const Tree* list, const Tree* coefficients) {
@@ -200,9 +211,11 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
     SystematicReduction::ShallowReduce(result);
     return result;
   }
-  assert(Dimension::IsList(coefficients));
-  if (!IsValidCoefficientsList(coefficients)) {
+  OMG::Troolean validCoefficients = IsValidCoefficientsList(coefficients);
+  if (validCoefficients == OMG::Troolean::False) {
     return KBadType->cloneTree();
+  } else if (validCoefficients == OMG::Troolean::Unknown) {
+    return nullptr;
   }
   PatternMatching::Context ctx({.KA = list, .KB = coefficients});
   return PatternMatching::CreateReduce(
@@ -278,31 +291,35 @@ bool List::ShallowApplyListOperators(Tree* e) {
     case Type::Median: {
       Tree* valuesList = e->child(0);
       Tree* weights = e->child(1);
-      if (!(weights->isOne() || IsValidCoefficientsList(weights))) {
+      OMG::Troolean validCoefficients = weights->isOne()
+                                            ? OMG::Troolean::True
+                                            : IsValidCoefficientsList(weights);
+      if (validCoefficients == OMG::Troolean::False) {
         e->cloneTreeOverTree(KBadType);
         return true;
       }
-      // Bubble up undefined from list of values
-      const Tree* undefinedChild = Undefined::GetUndefinedChild(valuesList);
-      if (undefinedChild) {
-        e->cloneTreeOverTree(undefinedChild);
-        return true;
-      }
-      assert(!(Variables::HasVariables(weights) ||
-               Variables::HasUserVariables(weights)));
-      if (Variables::HasVariables(valuesList) ||
-          Variables::HasUserVariables(valuesList)) {
-        // leave med({x,0}) unchanged
-        // TODO: we could return undef with med({x,i})
-        return false;
-      }
-      // precision used for comparisons
-      using T = double;
+      /* Check for undefined children before escaping for unknown
+       * validCoefficients */
       bool hasWeightList = Dimension::IsList(weights);
       BubbleUp(valuesList, SystematicReduction::ShallowReduce);
       if (!valuesList->isList()) {
         return false;
       }
+      /* Bubble up undefined from list of values. Undefined coefficients have
+       * been handled by IsValidCoefficientsList. */
+      const Tree* undefinedChild = Undefined::GetUndefinedChild(valuesList);
+      if (undefinedChild) {
+        e->cloneTreeOverTree(undefinedChild);
+        return true;
+      }
+      /* We need to approximate values and weights to compare them and find the
+       * median(s). */
+      if (validCoefficients == OMG::Troolean::Unknown ||
+          !Approximation::CanApproximate(e)) {
+        return false;
+      }
+      // precision used for comparisons
+      using T = double;
       if (hasWeightList) {
         // weights are approximated in place
         BubbleUp(weights, SystematicReduction::ShallowReduce);

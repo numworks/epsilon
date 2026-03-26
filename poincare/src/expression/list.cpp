@@ -180,20 +180,22 @@ static OMG::Troolean IsValidCoefficientsList(const Tree* coefficients) {
   OMG::Troolean HasNonNullCoeff = OMG::Troolean::False;
   for (const Tree* child : coefficients->children()) {
     ComplexProperties properties = GetComplexProperties(child);
-    if (properties.isNonReal() || properties.realSign().isStrictlyNegative() ||
-        child->isUndefined()) {
-      return OMG::Troolean::False;
-    }
-    if (properties.canBeNonReal() ||
-        properties.realSign().canBeStrictlyNegative()) {
-      HasOnlyPositiveRealCoeff = OMG::Troolean::Unknown;
-    }
-    if (!properties.canBeNull()) {
-      HasNonNullCoeff = OMG::Troolean::True;
-    } else if (!properties.isNull() &&
-               HasNonNullCoeff == OMG::Troolean::False) {
-      HasNonNullCoeff = OMG::Troolean::Unknown;
-    }
+
+    OMG::Troolean isPositiveReal =
+        properties.isNonReal() || properties.realSign().isStrictlyNegative() ||
+                child->isUndefined()
+            ? OMG::Troolean::False
+        : properties.canBeNonReal() ||
+                properties.realSign().canBeStrictlyNegative()
+            ? OMG::Troolean::Unknown
+            : OMG::Troolean::True;
+    HasOnlyPositiveRealCoeff =
+        TrooleanAnd(HasOnlyPositiveRealCoeff, isPositiveReal);
+
+    OMG::Troolean isNonNull = properties.isNull()      ? OMG::Troolean::False
+                              : properties.canBeNull() ? OMG::Troolean::Unknown
+                                                       : OMG::Troolean::True;
+    HasNonNullCoeff = TrooleanOr(HasNonNullCoeff, isNonNull);
   }
   return TrooleanAnd(HasOnlyPositiveRealCoeff, HasNonNullCoeff);
 }

@@ -175,6 +175,10 @@ NoMatchingGlyph:
 bool KDFont::CanBeWrittenWithGlyphs(const char* text) {
   UTF8Decoder decoder(text);
   CodePoint cp = decoder.nextCodePoint();
+  if (cp.isCombining()) {
+    // External texts should not start with a combining codepoint
+    return false;
+  }
   while (cp != UCodePointNull) {
     if ((
 #if KANDINSKY_FONT_LARGE_FONT

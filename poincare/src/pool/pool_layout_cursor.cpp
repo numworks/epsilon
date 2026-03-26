@@ -5,9 +5,10 @@
 
 namespace Poincare::Internal {
 
-void PoolLayoutCursor::beautifyLeft(
+bool PoolLayoutCursor::beautifyLeft(
     const Poincare::SymbolContext& symbolContext) {
-  execute(&PoolLayoutCursor::BeautifyLeftAction, symbolContext, nullptr);
+  BeautifyContext ctx{0, false};
+  execute(&PoolLayoutCursor::BeautifyLeftAction, symbolContext, &ctx);
   if (position() > cursorRack()->numberOfChildren() + 1) {
     /* Beautification does not preserve the cursor so its position may be
      * invalid. The other calls to beaufication happen just after we move the
@@ -15,8 +16,10 @@ void PoolLayoutCursor::beautifyLeft(
      * here. */
     setPosition(cursorRack()->numberOfChildren() + 1);
   }
-  // TODO invalidate only if shouldRedrawLayout
-  invalidateSizesAndPositions();
+  if (ctx.m_shouldRedrawLayout) {
+    invalidateSizesAndPositions();
+  }
+  return ctx.m_shouldRedrawLayout;
   // TODO factorize with beautifyRightOfRack
 }
 
@@ -24,7 +27,7 @@ bool PoolLayoutCursor::beautifyRightOfRack(
     Rack* rack, const Poincare::SymbolContext& symbolContext) {
   BeautifyContext ctx{static_cast<int>(rack - cursorRack()), false};
   execute(&PoolLayoutCursor::BeautifyRightOfRackAction, symbolContext, &ctx);
-  return ctx.m_shouldRedraw;
+  return ctx.m_shouldRedrawLayout;
 }
 
 void PoolLayoutCursor::applyTreeStackCursor(TreeStackCursor cursor) {
@@ -99,10 +102,12 @@ void PoolLayoutCursor::InsertTextAction(
 void PoolLayoutCursor::BeautifyLeftAction(
     TreeStackCursor* cursor, const Poincare::SymbolContext& symbolContext,
     const void* data) {
+  const BeautifyContext* context = static_cast<const BeautifyContext*>(data);
   // TODO_PCJ: We used to handle beautification while selecting here.
   if (!cursor->isSelecting()) {
-    InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(cursor,
-                                                              symbolContext);
+    context->m_shouldRedrawLayout =
+        InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
+            cursor, symbolContext);
   }
 }
 
@@ -111,7 +116,8 @@ void PoolLayoutCursor::BeautifyRightOfRackAction(
     const void* data) {
   const BeautifyContext* ctx = static_cast<const BeautifyContext*>(data);
   Rack* targetRack = cursor->cursorRack() + ctx->m_rackOffset;
-  ctx->m_shouldRedraw = cursor->beautifyRightOfRack(targetRack, symbolContext);
+  ctx->m_shouldRedrawLayout =
+      cursor->beautifyRightOfRack(targetRack, symbolContext);
 }
 
 void PoolLayoutCursor::MoveAction(TreeStackCursor* cursor,

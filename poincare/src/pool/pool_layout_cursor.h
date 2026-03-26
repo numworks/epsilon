@@ -81,7 +81,7 @@ class PoolLayoutCursor final : public LayoutCursor,
     m_rootLayout->invalidAllSizesPositionsAndBaselines();
   }
 
-  void beautifyLeft(const Poincare::SymbolContext& symbolContext);
+  bool beautifyLeft(const Poincare::SymbolContext& symbolContext);
 
  private:
   const Rack* protectedRootRack() const override {
@@ -124,7 +124,7 @@ class PoolLayoutCursor final : public LayoutCursor,
   };
   struct BeautifyContext {
     int m_rackOffset;
-    mutable bool m_shouldRedraw;
+    mutable bool m_shouldRedrawLayout;
   };
   struct MoveContext {
     OMG::Direction m_direction;

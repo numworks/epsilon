@@ -226,6 +226,10 @@ QUIZ_CASE(graph_optimal_range) {
   quiz_assert_optimal_range_is({"y=10x"}, Range2D<float>(-10, 10, -15, 15));
   quiz_assert_optimal_range_is({"y=0.01x"},
                                Range2D<float>(-10, 10, -0.1457738, 0.1457738));
+
+  quiz_assert_optimal_range_is(
+      {"y=arcsin(arcsin(x))"},
+      Range2D<float>(-2.311304, 2.311304, -1.22788, 1.22788));
 }
 
 }  // namespace Graph

@@ -141,6 +141,9 @@ QUIZ_CASE(pcj_zoom_fit_points_of_interest) {
 
   assert_points_of_interest_range_is("x*ln(x)",
                                      Range2D<double>(0, 1, -0.368, 0));
+
+  assert_points_of_interest_range_is(
+      "arcsin(arcsin(x))", Range2D<double>(-0.841629, 0.841629, 0, 0));
 }
 
 void assert_intersections_range_is(const char* expression1,

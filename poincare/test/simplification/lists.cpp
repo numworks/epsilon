@@ -202,6 +202,11 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("mean({5,8,7,4,12},{2})", "undef");
   simplifies_to("mean({5,8,7,4,12},{0,0,0,0,0})", "undef");
   simplifies_to("mean({5,8,7,4,12},{-2,4,4,4,4})", "undef");
+  simplifies_to("mean({5,8},{cos(5),4})", "undef");
+  simplifies_to("mean({5,8,x})", "(x+13)/3");
+  simplifies_to("mean({5,8},{1,x})", "undef");
+  // TODO: This raise an assertion
+  // simplifies_to("mean({5,8},{1,x^2})", "undef");
   // Minimum of a list
   simplifies_to("min({})", "undef");
   simplifies_to("min({1,2,3})", "1");
@@ -248,6 +253,9 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("med({1,6,3},{1,1,-1})", "undef");
   simplifies_to("med({1,x,2,3})", "med({1,x,2,3})");
   simplifies_to("med({1,6,3},{1,1,x})", "undef");
+  // TODO: This raise an assertion
+  // simplifies_to("med({1,6,3},{1,1,x^2})", "undef");
+  simplifies_to("med({1,6,3},{1,1,cos(5)})", "undef");
   // List sequences
   simplifies_to("sequence(1,k,1)", "{1}");
   simplifies_to("sequence(k,k,10)", "{1,2,3,4,5,6,7,8,9,10}");

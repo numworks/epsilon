@@ -82,14 +82,23 @@ bool Undefined::MustBubbleUpUndefinedChild(const Tree* e, int childIndex) {
          !IsListSequenceFunctionIndex(childIndex, e);
 }
 
+// Return true if [e] is a strictly more important undefined node than [ref]
+bool IsMoreImportant(const Tree* e, const Tree* ref) {
+  assert(e->isUndefined() && ref->isUndefined());
+  return e->type() > ref->type() ||
+         (e->isUndefSpecial() && ref->isUndefSpecial() &&
+          Undefined::GetSpecialType(e) > Undefined::GetSpecialType(ref));
+}
+
 const Tree* Undefined::GetUndefinedChild(const Tree* e) {
-  // TODO: Select the "worst" undefined child instead of the first one.
+  const Tree* worstChild = nullptr;
   for (const Tree* child : e->children()) {
-    if (child->isUndefined()) {
-      return child;
+    if (child->isUndefined() &&
+        (!worstChild || IsMoreImportant(child, worstChild))) {
+      worstChild = child;
     }
   }
-  return nullptr;
+  return worstChild;
 }
 
 Tree* Undefined::CreateDimensionedUndef(const Tree* undefTree,
@@ -133,14 +142,6 @@ Tree* Undefined::CreateDimensionedUndef(const Tree* undefTree,
     List::BubbleUp(result);
   }
   return result;
-}
-
-// Return true if [e] is a strictly more important undefined node than [ref]
-bool IsMoreImportant(const Tree* e, const Tree* ref) {
-  assert(e->isUndefined() && ref->isUndefined());
-  return e->type() > ref->type() ||
-         (e->isUndefSpecial() && ref->isUndefSpecial() &&
-          Undefined::GetSpecialType(e) > Undefined::GetSpecialType(ref));
 }
 
 bool Undefined::ShallowBubbleUpUndef(Tree* e) {

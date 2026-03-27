@@ -7,8 +7,6 @@
 #include <escher/responder.h>
 #include <float.h>
 
-#include <initializer_list>
-
 #include "model.h"
 
 namespace Regression {
@@ -18,10 +16,8 @@ class Store : public Shared::LinearRegressionStore {
   constexpr static const char* const* k_columnNames =
       DoublePairStore::k_regressionColumNames;
   static const char* SeriesTitle(int series);
-  constexpr static const char* k_functionName = "R";
-  // TODO: k_functionNames will contain other names
-  constexpr static std::initializer_list<const char* const> k_functionNames = {
-      k_functionName};
+  // TODO: add "RES" for the future residual variable
+  constexpr static const char* k_functionNames[] = {"R"};
 
   Store(Shared::DoublePairStorePreferences* preferences,
         Model::Type* regressionTypes);

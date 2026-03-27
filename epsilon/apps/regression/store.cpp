@@ -313,8 +313,12 @@ Model* Store::regressionModel(Model::Type type) const {
 }
 
 int Store::BuildUserFunctionName(int series, char* buffer, int bufferSize) {
+  // TODO: build residual function too
+  /*  TODO: k_functionNameSize will not be the same for R1, R2... and RES1,
+   * RES2... */
+  const char* functionName = k_functionNames[0];
   assert(bufferSize >= k_functionNameSize);
-  size_t length = strlcpy(buffer, k_functionName, bufferSize);
+  size_t length = strlcpy(buffer, functionName, bufferSize);
   length +=
       OMG::Print::IntLeft(1 + series, buffer + length, bufferSize - length);
   assert(length == k_functionNameSize - 1);

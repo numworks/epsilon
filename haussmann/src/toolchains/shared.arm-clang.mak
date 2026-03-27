@@ -15,7 +15,7 @@ CFLAGS += -fshort-enums
 CXXFLAGS += -fshort-enums -Wno-invalid-constexpr -Wno-inline-new-delete
 
 ifndef LIBCLANG_ROOT
-$(error You must set a LIBCLANG_ROOT that provides libclang_rt.builtins.a for armv7m architectures. Download ST commandline tools and pass stm32cubeclt_1.20.0/st-arm-clang/ for instance.)
+$(error You must set a LIBCLANG_ROOT that provides libclang_rt.builtins.a for armv7m architectures. Download ST commandline tools and pass stm32cubeclt_1.20.0/st-arm-clang/lib/clang-runtimes/ for instance.)
 endif
 
 LDFLAGS += \

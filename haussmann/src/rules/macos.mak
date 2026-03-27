@@ -25,6 +25,7 @@ _simulator_app := $(OUTPUT_DIRECTORY)/%.app
 _simulator_app_binary = $(_simulator_app)/Contents/MacOS/$(APP_NAME)
 _simulator_app_plist = $(_simulator_app)/Contents/Info.plist
 _simulator_app_resources_path = $(_simulator_app)/Contents/Resources
+_simulator_profile = $(_simulator_app)/Contents/embedded.provisionprofile
 
 # We are using the APP_NAME and not the APP_FULL_NAME for the bundle name
 # because it has to match the actual app directory name for the Finder to use
@@ -41,7 +42,7 @@ $(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) | $$(@D)/
 	plutil -insert "CFBundleShortVersionString" -string "$(APP_VERSION)" $@
 
 ifdef MACOS_PROVISIONING_PROFILE
-$(_simulator_app_resources_path)/embedded.provisionprofile: $(MACOS_PROVISIONING_PROFILE) | $$(@D)/.
+$(_simulator_profile): $(MACOS_PROVISIONING_PROFILE) | $$(@D)/.
 	$(call rule_label,COPY)
 	cp $^ $@
 
@@ -51,9 +52,9 @@ $(OUTPUT_DIRECTORY)/app/entitlements.plist: $(MACOS_PROVISIONING_PROFILE)
 	plutil -insert "com\.apple\.security\.app-sandbox" -bool true $@
 
 _simulator_app_deps += $(OUTPUT_DIRECTORY)/app/entitlements.plist
-_simulator_app_deps += $(_simulator_app_resources_path)/embedded.provisionprofile
+_simulator_app_deps += $(_simulator_profile)
 else
-$(_simulator_app_resources_path)/embedded.provisionprofile:
+$(_simulator_profile):
 	$(warning Building without a provisioning profile. Please define MACOS_PROVISIONING_PROFILE to point to the .provisionprofile file you want to use.)
 endif
 

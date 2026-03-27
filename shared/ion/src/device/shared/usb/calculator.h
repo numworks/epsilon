@@ -31,8 +31,6 @@ namespace USB {
 class Calculator : public Device {
  public:
   static void PollAndReset(Ion::USB::DFUParameters)
-      // Needed to pinpoint this symbol in the linker script
-      __attribute__((section(".dfu_entry_point")))
       // Make sure this symbol is not discarded at link time
       __attribute__((used));
   Calculator(const char* serialNumber)

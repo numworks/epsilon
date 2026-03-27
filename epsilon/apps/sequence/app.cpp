@@ -29,9 +29,8 @@ App::Snapshot::Snapshot()
       m_intervalModifiedByUser(false) {
   // Register u, v and w as reserved names to the sharedStorage.
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
-      ->registerArrayOfReservedNames(
-          SequenceHelper::k_sequenceNames, Ion::Storage::sequenceExtension, 0,
-          std::size(SequenceHelper::k_sequenceNames));
+      ->registerArrayOfReservedNames(SequenceHelper::k_sequenceNames,
+                                     Ion::Storage::sequenceExtension, 0);
 }
 
 App* App::Snapshot::unpack(Container* container) {

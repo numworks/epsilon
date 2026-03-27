@@ -687,12 +687,12 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   const char* statisticsReservedNames[] = {"N", "V"};
   const char* sequencesReservedNames[] = {"u", "v", "w"};
 
+  recordNameVerifier->registerArrayOfReservedNames(regressionReservedNames,
+                                                   Storage::listExtension, 3);
+  recordNameVerifier->registerArrayOfReservedNames(statisticsReservedNames,
+                                                   Storage::listExtension, 3);
   recordNameVerifier->registerArrayOfReservedNames(
-      regressionReservedNames, Storage::listExtension, 3, 2);
-  recordNameVerifier->registerArrayOfReservedNames(
-      statisticsReservedNames, Storage::listExtension, 3, 2);
-  recordNameVerifier->registerArrayOfReservedNames(
-      sequencesReservedNames, Storage::sequenceExtension, 0, 3);
+      sequencesReservedNames, Storage::sequenceExtension, 0);
 
   // Regression/stats reserved names
   createTestRecordWithErrorStatus("X1", Storage::functionExtension);

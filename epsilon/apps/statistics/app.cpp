@@ -32,10 +32,9 @@ App::Snapshot::Snapshot()
   static_assert(std::size(DoublePairStore::k_statisticsColumNames) == 2,
                 "Number of reserved lists in statistics changed.");
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
-      ->registerArrayOfReservedNames(
-          DoublePairStore::k_statisticsColumNames, Ion::Storage::listExtension,
-          Shared::DoublePairStore::k_numberOfSeries,
-          std::size(DoublePairStore::k_statisticsColumNames));
+      ->registerArrayOfReservedNames(DoublePairStore::k_statisticsColumNames,
+                                     Ion::Storage::listExtension,
+                                     Shared::DoublePairStore::k_numberOfSeries);
 }
 
 App* App::Snapshot::unpack(Container* container) {

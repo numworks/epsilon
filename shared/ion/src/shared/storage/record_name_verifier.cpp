@@ -14,11 +14,10 @@ void RecordNameVerifier::registerRestrictiveExtensionWithPrecedence(
 }
 
 void RecordNameVerifier::registerArrayOfReservedNames(
-    const char* const* namePrefixes, const char* extension,
-    int prefixRepetitions, int numberOfElements) {
+    std::span<const char* const> namePrefixes, const char* extension,
+    int prefixRepetitions) {
   assert(m_numberOfReservedNamesArrays < k_maxNumberOfReservedNamesArrays);
-  ReservedNamesArray newArray = {namePrefixes, extension, prefixRepetitions,
-                                 numberOfElements};
+  ReservedNamesArray newArray = {namePrefixes, extension, prefixRepetitions};
   m_reservedNamesArrays[m_numberOfReservedNamesArrays] = newArray;
   m_numberOfReservedNamesArrays++;
 }
@@ -70,14 +69,14 @@ bool RecordNameVerifier::isNameReservedForExtension(
     if (strcmp(extension, reservedNamesArray.extension) != 0) {
       continue;
     }
-    for (int j = 0; j < reservedNamesArray.numberOfElements; j++) {
+    for (const char* reservedNamePrefix : reservedNamesArray.namePrefixes) {
       // Check if the record has the same base name.
       bool hasSuffixDigit = reservedNamesArray.prefixRepetitions > 0;
       int namePrefixLength = hasSuffixDigit ? nameLength - 1 : nameLength;
-      if (strlen(reservedNamesArray.namePrefixes[j]) ==
+      if (strlen(reservedNamePrefix) ==
               static_cast<size_t>(
                   namePrefixLength)  // Prefixes have same length
-          && strncmp(name, reservedNamesArray.namePrefixes[j],
+          && strncmp(name, reservedNamePrefix,
                      namePrefixLength) == 0  // Prefixes are equal
           && (!hasSuffixDigit ||
               (name[nameLength - 1] >= '1'  // Suffixes are equal

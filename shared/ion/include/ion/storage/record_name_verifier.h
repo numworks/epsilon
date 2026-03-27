@@ -2,6 +2,8 @@
 
 #include <assert.h>
 
+#include <span>
+
 #include "record.h"
 
 /* This is used by the storage to know if it can store a record with
@@ -68,10 +70,9 @@ class RecordNameVerifier {
   }
 
   // Register a new array of reserved names
-  void registerArrayOfReservedNames(const char* const* namePrefixes,
+  void registerArrayOfReservedNames(std::span<const char* const> namePrefixes,
                                     const char* extension,
-                                    int prefixRepetitions,
-                                    int numberOfElements);
+                                    int prefixRepetitions);
   void unregisterAllReservedNames() { m_numberOfReservedNamesArrays = 0; }
 
   enum class OverrideStatus { Forbidden = 0, Allowed, CanCoexist };
@@ -94,10 +95,9 @@ class RecordNameVerifier {
 
  private:
   struct ReservedNamesArray {
-    const char* const* namePrefixes;
+    std::span<const char* const> namePrefixes;
     const char* extension;
     int prefixRepetitions;
-    int numberOfElements;
   };
 
   // This can be changed if you need more restrictive extensions

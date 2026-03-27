@@ -68,9 +68,11 @@ $(OUTPUT_DIRECTORY)/%.pkg: $(OUTPUT_DIRECTORY)/%.app
 ifdef MACOS_PROVISIONING_PROFILE
 	$(call rule_label,SIGN)
 	codesign --force --options runtime --entitlements $(OUTPUT_DIRECTORY)/app/entitlements.plist --sign "$(MACOS_SIGNER_IDENTITY)" $(OUTPUT_DIRECTORY)/$*.app
-endif
 	$(call rule_label,PRODUCT)
 	productbuild --component $(OUTPUT_DIRECTORY)/$*.app /Applications $@ --identifier $(APP_BUNDLE_ID) --version $(APP_VERSION) --sign "$(MACOS_INSTALLER_IDENTITY)"
+else
+	$(warning Building without a provisioning profile. Please define MACOS_PROVISIONING_PROFILE to point to the .provisionprofile file you want to use.)
+endif
 
 # Run the simulator
 %.app.run: $(_simulator_app)

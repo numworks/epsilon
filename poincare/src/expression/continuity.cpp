@@ -1,6 +1,7 @@
 #include "continuity.h"
 
 #include "approximation.h"
+#include "variables.h"
 
 namespace Poincare::Internal {
 
@@ -83,11 +84,8 @@ bool Continuity::IsDiscontinuousOnInterval(const Tree* e, T minBound,
   return false;
 }
 
-template bool Continuity::IsDiscontinuousOnInterval(const Tree* e,
-                                                    float minBound,
-                                                    float maxBound);
-template bool Continuity::IsDiscontinuousOnInterval(const Tree* e,
-                                                    double minBound,
-                                                    double maxBound);
+template bool Continuity::IsDiscontinuousOnInterval(const Tree*, float, float);
+template bool Continuity::IsDiscontinuousOnInterval(const Tree*, double,
+                                                    double);
 
 }  // namespace Poincare::Internal

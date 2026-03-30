@@ -2,8 +2,6 @@
 
 #include <poincare/src/memory/tree.h>
 
-#include "variables.h"
-
 namespace Poincare::Internal {
 
 /* WARNING: Everywhere in Poincaré, the term "discontinuity" refers to

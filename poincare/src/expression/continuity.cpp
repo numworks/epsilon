@@ -20,8 +20,9 @@ template <typename T>
 bool CanChangeSignOnInterval(const Tree* e, T minBound, T maxBound,
                              const Approximation::Parameters& params) {
   // TODO: Should check across the interval
-  return (Approximation::To<T>(e, minBound, params) > 0.0) !=
-         (Approximation::To<T>(e, maxBound, params) > 0.0);
+  // use !(==) instead of != to consider NaN as a sign change
+  return !((Approximation::To<T>(e, minBound, params) > 0.0) ==
+           (Approximation::To<T>(e, maxBound, params) > 0.0));
 }
 
 template <typename T>
@@ -30,16 +31,18 @@ bool CanBeNullOnInterval(const Tree* e, T minBound, T maxBound,
   T approximationMin = Approximation::To<T>(e, minBound, params);
   T approximationMax = Approximation::To<T>(e, maxBound, params);
   // Check for null or sign change
+  // use !(==) instead of != to consider NaN as a sign change
   return (approximationMin == 0.0) || (approximationMax == 0.0) ||
-         (approximationMin > 0.0) != (approximationMax > 0.0);
+         !((approximationMin > 0.0) == (approximationMax > 0.0));
 }
 
 template <typename T>
 bool CanChangeValues(const Tree* e, T minBound, T maxBound,
                      const Approximation::Parameters& params) {
   // TODO: Should check across the interval
-  return Approximation::To<T>(e, minBound, params) !=
-         Approximation::To<T>(e, maxBound, params);
+  // use !(==) instead of != to consider NaN as a value change
+  return !(Approximation::To<T>(e, minBound, params) ==
+           Approximation::To<T>(e, maxBound, params));
 }
 
 template <typename T>

@@ -1066,23 +1066,37 @@ void RackParser::parseSpecialIdentifier(TreeRef& leftHandSide,
 void RackParser::parseCustomIdentifier(TreeRef& leftHandSide,
                                        Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  const Tree* l = m_currentToken.firstLayout();
-  size_t length = m_currentToken.length();
-  if (length >= Symbol::k_maxNameSize) {
+  const Layout* l = m_currentToken.firstLayout();
+  size_t layoutLength = m_currentToken.length();
+  if (layoutLength >= Symbol::k_maxNameSize) {
     // Identifier name too long.
     RaiseParseFail("29 - Variable name is too long 1");
   }
+
   constexpr int bufferSize = sizeof(CodePoint) * Symbol::k_maxNameSize;
   char buffer[bufferSize];
-  char* end = buffer + bufferSize;
-  char* buf = buffer;
-  while (length--) {
-    assert(l->isCodePointLayout() || l->isCombinedCodePointsLayout());
-    buf = CodePointLayout::CopyName(l, buf, end - buf);
-    l = l->nextTree();
+  LayoutSpan span(l, layoutLength);
+  const char* name = Builtin::GetCustomIdentifierMainAlias(span);
+  size_t length = 0;
+
+  if (name) {
+    length = strlen(name);
+  } else {
+    const Tree* t = l;
+    char* end = buffer + bufferSize;
+    char* buf = buffer;
+    size_t index = m_currentToken.length();
+    while (index--) {
+      assert(t->isCodePointLayout() || t->isCombinedCodePointsLayout());
+      buf = CodePointLayout::CopyName(t, buf, end - buf);
+      length +=
+          UTF8Decoder::CharSizeOfCodePoint(CodePointLayout::GetCodePoint(t));
+      t = t->nextTree();
+    }
+    name = buffer;
   }
-  privateParseCustomIdentifier(leftHandSide, buffer, m_currentToken.length(),
-                               stoppingType);
+
+  privateParseCustomIdentifier(leftHandSide, name, length, stoppingType);
   isThereImplicitOperator();
 }
 

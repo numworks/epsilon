@@ -843,6 +843,8 @@ QUIZ_CASE(pcj_parse_identifiers) {
   assert_parsed_expression_is("+inf", KInf);
   assert_parsed_expression_is("undef", KUndef);
 
+  assert_parsed_expression_is("theta", "θ"_e);
+
   // Reserved functions
   assert_parsed_expression_is("arccos(1)", KACos(1_e));
   assert_parsed_expression_is("acos(1)", KACos(1_e));

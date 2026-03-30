@@ -120,15 +120,6 @@ Tree* BuiltinAns::pushNode(int numberOfChildren) const {
   return "Ans"_e->cloneTree();
 }
 
-bool Builtin::HasCustomIdentifier(LayoutSpan name) {
-  for (Aliases aliases : s_customIdentifiers) {
-    if (aliases.contains(name)) {
-      return true;
-    }
-  }
-  return false;
-}
-
 const Builtin* Builtin::GetReservedFunction(LayoutSpan name) {
   // WithLayout comes first because we want to yield Sum before ListSum
   for (const Builtin& builtin : s_builtinsWithLayout) {
@@ -198,6 +189,15 @@ const Builtin* Builtin::GetSpecialIdentifier(
       return SearchForTranslation(s_specialIdentifiers,
                                   std::size(s_specialIdentifiers),
                                   &builtin - s_specialIdentifiers, translate);
+    }
+  }
+  return nullptr;
+}
+
+const char* Builtin::GetCustomIdentifierMainAlias(LayoutSpan name) {
+  for (Aliases aliases : s_customIdentifiers) {
+    if (aliases.contains(name)) {
+      return aliases.mainAlias();
     }
   }
   return nullptr;

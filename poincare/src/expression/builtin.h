@@ -44,7 +44,9 @@ class Builtin {
     return GetSpecialIdentifier(type, Preferences::TranslateBuiltins::No) !=
            nullptr;
   }
-  static bool HasCustomIdentifier(LayoutSpan name);
+  static bool HasCustomIdentifier(LayoutSpan name) {
+    return GetCustomIdentifierMainAlias(name) != nullptr;
+  }
   static const Builtin* GetReservedFunction(LayoutSpan name);
   static const Builtin* GetReservedFunction(
       const Tree* e, Preferences::TranslateBuiltins translateBuiltins =
@@ -55,6 +57,7 @@ class Builtin {
   static const Builtin* GetSpecialIdentifier(LayoutSpan name);
   static const Builtin* GetSpecialIdentifier(
       Type type, Preferences::TranslateBuiltins translateBuiltins);
+  static const char* GetCustomIdentifierMainAlias(LayoutSpan name);
 
  private:
   constexpr static const Builtin* SearchForTranslation(
@@ -105,6 +108,7 @@ constexpr static Aliases k_infinityAliases = "\01∞\00inf\00";
 // Constants
 constexpr static Aliases k_piAliases = "\01π\00pi\00";
 // Symbols
+// Can add more if needed (ex: sigma)
 constexpr static Aliases k_thetaAliases = "\01θ\00theta\00";
 // Units
 constexpr static Aliases k_litersAliases = "\01L\00l\00";

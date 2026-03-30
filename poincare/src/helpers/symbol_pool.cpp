@@ -35,10 +35,6 @@ UserExpression SymbolHelper::BuildUserVariable(const char* name, int length) {
   if (length < 0) {
     length = strlen(name);
   }
-  if (BuiltinsAliases::k_thetaAliases.contains(name)) {
-    name = BuiltinsAliases::k_thetaAliases.mainAlias();
-    length = strlen(name);
-  }
   return UserExpression::Builder(
       SharedTreeStack->pushUserVariable(name, static_cast<size_t>(length + 1)));
 }
@@ -54,9 +50,6 @@ UserExpression SymbolHelper::BuildUserVariable(CodePoint name) {
 
 UserExpression SymbolHelper::BuildUserFunction(const char* name,
                                                const UserExpression& child) {
-  if (BuiltinsAliases::k_thetaAliases.contains(name)) {
-    name = BuiltinsAliases::k_thetaAliases.mainAlias();
-  }
   Internal::Tree* e =
       Internal::SharedTreeStack->pushUserFunction(name, strlen(name) + 1);
   assert(!child.isUninitialized());
@@ -66,8 +59,6 @@ UserExpression SymbolHelper::BuildUserFunction(const char* name,
 
 UserExpression SymbolHelper::BuildUserSequence(const char* name,
                                                const UserExpression& child) {
-  // If needed, handle theta like functions and symbols
-  assert(!BuiltinsAliases::k_thetaAliases.contains(name));
   Internal::Tree* e =
       Internal::SharedTreeStack->pushUserSequence(name, strlen(name) + 1);
   assert(!child.isUninitialized());

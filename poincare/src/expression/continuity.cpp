@@ -11,19 +11,10 @@ bool Continuity::ShallowIsDiscontinuous(const Tree* e) {
   return e->isRandomized() ||
          ((e->isOfType({Type::Piecewise, Type::Floor, Type::Round, Type::Ceil,
                         Type::Frac, Type::Abs, Type::Sign, Type::Div,
-                        Type::NonNull, Type::RealPos}) ||
+                        Type::NonNull}) ||
            (e->isPow() && e->child(1)->isNegativeRational())) &&
           Variables::HasVariables(e));
 };
-
-template <typename T>
-bool CanChangeSignOnInterval(const Tree* e, T minBound, T maxBound,
-                             const Approximation::Parameters& params) {
-  // TODO: Should check across the interval
-  // use !(==) instead of != to consider NaN as a sign change
-  return !((Approximation::To<T>(e, minBound, params) > 0.0) ==
-           (Approximation::To<T>(e, maxBound, params) > 0.0));
-}
 
 template <typename T>
 bool CanBeNullOnInterval(const Tree* e, T minBound, T maxBound,
@@ -78,9 +69,6 @@ bool Continuity::CanBeUndefinedOnInterval(
     if (CanBeNullOnInterval(e->child(childIndex), minBound, maxBound, params)) {
       return true;
     }
-  } else if (e->isRealPos() &&
-             CanChangeSignOnInterval(e->child(0), minBound, maxBound, params)) {
-    return true;
   } else if (e->isPiecewise()) {
     // We assume there are no other active branches than at bounds
     int indexMin = Approximation::IndexOfActivePiecewiseBranchAt(e, minBound);

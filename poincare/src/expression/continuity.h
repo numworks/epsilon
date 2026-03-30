@@ -8,18 +8,21 @@ namespace Poincare::Internal {
 
 /* WARNING: Everywhere in Poincaré, the term "discontinuity" refers to
  * "jump-discontinuity" (i.e. finite discontinuities like piecewise, random,
- * round, floor, ceil, ...).
- * Infinite/asymptotic discontinuities (like 1/x) are
- * not handled when calling IsDiscontinuousOnInterval or
- * InvolvesDiscontinuousFunction (partly because they are more obvious to detect
- * by numerical algorithms).
+ * round, floor, ceil, ...) or "singular discontinuity" (i.e undefined value in
+ * a single point like (x_1)/(x-1) or piecewise). Most Infinite/asymptotic
+ * discontinuities (like ln(x)) are not handled when calling
+ * IsDiscontinuousOnInterval or InvolvesDiscontinuousFunction (partly because
+ * they are more obvious to detect by numerical algorithms).
  *
  * Jump-discontinuity (handled in this file):
  *      o-----
  *
  * -----o
  *
- * Asymptotic discontinuity (not handled in this file):
+ * Singular discontinuity (handled in this file):
+ * -----o-----
+ *
+ * Asymptotic discontinuity (not always handled in this file):
  *      |
  *      |
  *     /
@@ -28,9 +31,9 @@ namespace Poincare::Internal {
  *       |
  *       |
  *
- * WARNING: The Abs function is also considered to have a jump-discontinuity in
- * zero, as it can cause problems in expressions like "|x|/x".
- */
+ * WARNING: Asymptotic discontinuity with 1/x or x^-2 is handled here because of
+ * cases like f(x)/x where f closely ressemble x around 0, like "|x|/x" or
+ * "sin(x)/x". */
 
 class Continuity {
  public:

@@ -436,10 +436,8 @@ QUIZ_CASE(pcj_properties_is_continuous) {
   assert_is_continuous_on_interval("abs(x)", -1.0f, 1.0f, true);
   assert_is_continuous_on_interval("abs(x)/x", -1.0f, 1.0f, false);
   assert_is_continuous_on_interval("sin(abs(x))/x", -1.0f, 1.0f, false);
-  // TODO : Should not be continuous.
-  assert_is_continuous_on_interval("(x-1)^2/(x-1)", 0.0f, 2.0f, true);
-  // TODO : Should not be continuous.
-  assert_is_continuous_on_interval("(x-1)^3/(x-1)", 0.0f, 2.0f, true);
+  assert_is_continuous_on_interval("(x-1)^2/(x-1)", 0.0f, 2.0f, false);
+  assert_is_continuous_on_interval("(x-1)^3/(x-1)", 0.0f, 2.0f, false);
 }
 
 void assert_reduced_deep_is_symbolic(const char* input,

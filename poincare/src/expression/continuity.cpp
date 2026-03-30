@@ -10,7 +10,8 @@ bool Continuity::ShallowIsDiscontinuous(const Tree* e) {
   // NOTE: With piecewise, variables could only be looked for in conditions
   return e->isRandomized() ||
          ((e->isOfType({Type::Piecewise, Type::Floor, Type::Round, Type::Ceil,
-                        Type::Frac, Type::Abs, Type::Sign, Type::Div}) ||
+                        Type::Frac, Type::Abs, Type::Sign, Type::Div,
+                        Type::NonNull, Type::RealPos}) ||
            (e->isPow() && e->child(1)->isNegativeRational())) &&
           Variables::HasVariables(e));
 };
@@ -82,12 +83,15 @@ bool Continuity::CanBeUndefinedOnInterval(
     return false;
   }
   /* Undefined checks */
-  if (e->isOfType({Type::Sign, Type::Div}) ||
+  if (e->isOfType({Type::Sign, Type::Div, Type::NonNull}) ||
       (e->isPow() && e->child(1)->isNegativeRational())) {
     int childIndex = e->isDiv() ? 1 : 0;
     if (CanBeNullOnInterval(e->child(childIndex), minBound, maxBound, params)) {
       return true;
     }
+  } else if (e->isRealPos() &&
+             CanChangeSignOnInterval(e->child(0), minBound, maxBound, params)) {
+    return true;
   } else if (e->isPiecewise()) {
     // We assume there are no other active branches than at bounds
     int indexMin = Approximation::IndexOfActivePiecewiseBranchAt(e, minBound);

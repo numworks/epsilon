@@ -46,14 +46,6 @@ bool CanChangeValues(const Tree* e, T minBound, T maxBound,
 }
 
 template <typename T>
-bool CanChangeIntValues(const Tree* e, T minBound, T maxBound,
-                        const Approximation::Parameters& params) {
-  // TODO: Should check across the interval
-  return std::floor(Approximation::To<T>(e, minBound, params)) !=
-         std::floor(Approximation::To<T>(e, maxBound, params));
-}
-
-template <typename T>
 bool Continuity::IsDiscontinuousOnInterval(const Tree* e, T minBound,
                                            T maxBound) {
   Approximation::Parameters params{
@@ -71,15 +63,9 @@ bool Continuity::CanBeUndefinedOnInterval(
     if (e->isRandomized()) {
       return true;
     }
-    if (e->isRound() && CanChangeValues(e, minBound, maxBound, params)) {
-      return true;
-    }
-    if (e->isOfType({Type::Ceil, Type::Floor, Type::Frac}) &&
-        CanChangeIntValues(e->child(0), minBound, maxBound, params)) {
-      return true;
-    }
-    if (e->isSign() &&
-        CanChangeSignOnInterval(e->child(0), minBound, maxBound, params)) {
+    if (e->isOfType(
+            {Type::Ceil, Type::Floor, Type::Frac, Type::Round, Type::Sign}) &&
+        CanChangeValues(e, minBound, maxBound, params)) {
       return true;
     }
   } else if (!Undefined::CanBeUndefined(e)) {

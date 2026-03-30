@@ -212,8 +212,6 @@ static std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
 template <typename T>
 int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   assert(piecewise->isPiecewise());
-  /* TODO: Without randomContext, randomized nodes in piecewise's condition will
-   * approximate to NAN. */
   Private::Context context;
   context.localEvaluator.pushVariable(x);
   const Tree* branch =
@@ -2246,6 +2244,11 @@ const Tree* Approximator::selectPiecewiseBranch(const Tree* piecewise) {
     i++;
     if (i == n) {
       return child;
+    }
+    if (condition->hasDescendantSatisfying(
+            [](const Tree* e) { return e->isRandomized(); })) {
+      // Skip branch selection on random conditions.
+      return nullptr;
     }
     const BooleanOrUndefined conditionEvaluation = privateToBoolean(condition);
     if (conditionEvaluation.isUndefined()) {

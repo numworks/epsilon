@@ -2,6 +2,8 @@
 
 #include <poincare/src/memory/tree.h>
 
+#include "approximation.h"
+
 namespace Poincare::Internal {
 
 /* WARNING: Everywhere in Poincaré, the term "discontinuity" refers to
@@ -42,6 +44,12 @@ class Continuity {
 
  private:
   static bool ShallowIsDiscontinuous(const Tree* e);
+  /* Return true if e can be undefined on [minBound, maxBound]. If
+   * checkContinuity is true, also return if e can be discontinuous. */
+  template <typename T>
+  static bool CanBeUndefinedOnInterval(const Tree* e, T minBound, T maxBound,
+                                       const Approximation::Parameters& params,
+                                       bool checkContinuity);
 };
 
 }  // namespace Poincare::Internal

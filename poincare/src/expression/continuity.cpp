@@ -1,6 +1,7 @@
 #include "continuity.h"
 
 #include "approximation.h"
+#include "undefined.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -15,71 +16,115 @@ bool Continuity::ShallowIsDiscontinuous(const Tree* e) {
 };
 
 template <typename T>
+bool CanChangeSignOnInterval(const Tree* e, T minBound, T maxBound,
+                             const Approximation::Parameters& params) {
+  // TODO: Should check across the interval
+  return (Approximation::To<T>(e, minBound, params) > 0.0) !=
+         (Approximation::To<T>(e, maxBound, params) > 0.0);
+}
+
+template <typename T>
+bool CanBeNullOnInterval(const Tree* e, T minBound, T maxBound,
+                         const Approximation::Parameters& params) {
+  T approximationMin = Approximation::To<T>(e, minBound, params);
+  T approximationMax = Approximation::To<T>(e, maxBound, params);
+  // Check for null or sign change
+  return (approximationMin == 0.0) || (approximationMax == 0.0) ||
+         (approximationMin > 0.0) != (approximationMax > 0.0);
+}
+
+template <typename T>
+bool CanChangeValues(const Tree* e, T minBound, T maxBound,
+                     const Approximation::Parameters& params) {
+  // TODO: Should check across the interval
+  return Approximation::To<T>(e, minBound, params) !=
+         Approximation::To<T>(e, maxBound, params);
+}
+
+template <typename T>
+bool CanChangeIntValues(const Tree* e, T minBound, T maxBound,
+                        const Approximation::Parameters& params) {
+  // TODO: Should check across the interval
+  return std::floor(Approximation::To<T>(e, minBound, params)) !=
+         std::floor(Approximation::To<T>(e, maxBound, params));
+}
+
+template <typename T>
 bool Continuity::IsDiscontinuousOnInterval(const Tree* e, T minBound,
                                            T maxBound) {
-  // TODO_PCJ: symbol is ignored for now
-  if (e->isRandomized()) {
-    return true;
-  }
-  bool isDiscontinuous = false;
   Approximation::Parameters params{
       .policy = {.optimize = true},
       .expressionParameters = Approximation::Prepared{}};
-  if (e->isOfType({Type::Ceil, Type::Floor, Type::Round})) {
-    // is discontinuous if it changes value
-    isDiscontinuous = Approximation::To<T>(e, minBound, params) !=
-                      Approximation::To<T>(e, maxBound, params);
-  } else if (e->isFrac()) {
-    // is discontinuous if the child changes int value
-    isDiscontinuous =
-        std::floor(Approximation::To<T>(e->child(0), minBound, params)) !=
-        std::floor(Approximation::To<T>(e->child(0), maxBound, params));
-  } else if (e->isOfType({Type::Sign, Type::Div}) ||
-             (e->isPow() && e->child(1)->isNegativeRational())) {
-    int childIndex = e->isDiv() ? 1 : 0;
-    // is discontinuous if the child changes sign
-    isDiscontinuous =
-        (Approximation::To<T>(e->child(childIndex), minBound, params) > 0.0) !=
-        (Approximation::To<T>(e->child(childIndex), maxBound, params) > 0.0);
-  } else if (e->isPiecewise()) {
-    int index = Approximation::IndexOfActivePiecewiseBranchAt(e, minBound);
-    assert(index == Approximation::k_noActiveBranch ||
-           index == Approximation::k_unknownActiveBranch ||
-           index < e->numberOfChildren());
-    /* NOTE Consider e discontinuous if active branch either :
-     * 1. Is unknown
-     * 2. Is different at each bounds
-     * 3. Is discontinuous */
-    if (index == Approximation::k_unknownActiveBranch ||
-        index != Approximation::IndexOfActivePiecewiseBranchAt(e, maxBound) ||
-        (index != Approximation::k_noActiveBranch &&
-         IsDiscontinuousOnInterval(e->child(index), minBound, maxBound))) {
+  return CanBeUndefinedOnInterval(e, minBound, maxBound, params, true);
+}
+
+template <typename T>
+bool Continuity::CanBeUndefinedOnInterval(
+    const Tree* e, T minBound, T maxBound,
+    const Approximation::Parameters& params, bool checkContinuity) {
+  if (checkContinuity) {
+    /* Discontinuity checks */
+    if (e->isRandomized()) {
       return true;
     }
-    // Handle piecewise condition discontinuity
+    if (e->isRound() && CanChangeValues(e, minBound, maxBound, params)) {
+      return true;
+    }
+    if (e->isOfType({Type::Ceil, Type::Floor, Type::Frac}) &&
+        CanChangeIntValues(e->child(0), minBound, maxBound, params)) {
+      return true;
+    }
+    if (e->isSign() &&
+        CanChangeSignOnInterval(e->child(0), minBound, maxBound, params)) {
+      return true;
+    }
+  } else if (!Undefined::CanBeUndefined(e)) {
+    return false;
+  }
+  /* Undefined checks */
+  if (e->isOfType({Type::Sign, Type::Div}) ||
+      (e->isPow() && e->child(1)->isNegativeRational())) {
+    int childIndex = e->isDiv() ? 1 : 0;
+    if (CanBeNullOnInterval(e->child(childIndex), minBound, maxBound, params)) {
+      return true;
+    }
+  } else if (e->isPiecewise()) {
+    // We assume there are no other active branches than at bounds
+    int indexMin = Approximation::IndexOfActivePiecewiseBranchAt(e, minBound);
+    int indexMax = Approximation::IndexOfActivePiecewiseBranchAt(e, maxBound);
+    if (indexMin == Approximation::k_noActiveBranch ||
+        indexMax == Approximation::k_noActiveBranch) {
+      return true;
+    }
+    bool hasUnknownBranch = indexMin == Approximation::k_unknownActiveBranch ||
+                            indexMax == Approximation::k_unknownActiveBranch;
+    // If active branch is the same on both end, return its properties
+    if (!hasUnknownBranch && indexMin == indexMax) {
+      return CanBeUndefinedOnInterval(e->child(indexMin), minBound, maxBound,
+                                      params, checkContinuity);
+    }
+    // Consider e discontinuous if active branch can change
+    if (checkContinuity) {
+      return true;
+    }
+    // Branch can change, check all branches that could be active
     for (IndexedChild indexedChild : e->indexedChildren()) {
-      if (index != Approximation::k_noActiveBranch &&
-          indexedChild.index > index + 1) {
-        // None of the previous conditions where discontinuous
-        break;
-      }
-      if (indexedChild.index % 2 == 0) {
-        // Skip piecewise branches
+      if (!hasUnknownBranch && indexedChild.index != indexMin &&
+          indexedChild.index != indexMax) {
+        // Ignore all other conditions, and branches
         continue;
       }
-      if (IsDiscontinuousOnInterval(indexedChild, minBound, maxBound)) {
-        // Another branch could be active within the interval
+      if (CanBeUndefinedOnInterval(indexedChild, minBound, maxBound, params,
+                                   checkContinuity)) {
         return true;
       }
     }
-    // TODO: Even if continuous, active branch could change within the interval
     return false;
   }
-  if (isDiscontinuous) {
-    return true;
-  }
-  for (const Tree* child : e->children()) {
-    if (IsDiscontinuousOnInterval(child, minBound, maxBound)) {
+  for (IndexedChild indexedChild : e->indexedChildren()) {
+    // Skip discontinuity check in DepLists.
+    if (CanBeUndefinedOnInterval(indexedChild, minBound, maxBound, params,
+                                 checkContinuity && !e->isDepList())) {
       return true;
     }
   }
@@ -89,5 +134,10 @@ bool Continuity::IsDiscontinuousOnInterval(const Tree* e, T minBound,
 template bool Continuity::IsDiscontinuousOnInterval(const Tree*, float, float);
 template bool Continuity::IsDiscontinuousOnInterval(const Tree*, double,
                                                     double);
+
+template bool Continuity::CanBeUndefinedOnInterval(
+    const Tree*, float, float, const Approximation::Parameters&, bool);
+template bool Continuity::CanBeUndefinedOnInterval(
+    const Tree*, double, double, const Approximation::Parameters&, bool);
 
 }  // namespace Poincare::Internal

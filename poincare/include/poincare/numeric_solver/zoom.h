@@ -18,18 +18,14 @@ namespace Poincare {
 template <typename T>
 using Function2D = Coordinate2D<T> (*)(T, const void*);
 
-enum class ZoomRangeType {
-  /* - Takes only the interesting range into account
-   * - Doesn't normalize */
-  RawInteresting,  // Unused. Should it be removed ?
-  /* - Takes interesting + magnitude range into account
-   * - Doesn't normalize */
-  Raw,
-  /* - Takes interesting + magnitude range into account
-   * - Partially normalizes up until an acceptable ratio */
+enum class RangePolicy {
+  /* Doesn't transform the range, except for ensuring it's valid and
+   * displayable (non-nan, non-empty) */
+  Sane,
+  /* Like RangePolicy::Sane, but also tries to partially normalize up until
+   * an acceptable ratio */
   Pretty,
-  /* - Takes interesting + magnitude range into account
-   * - Forces normalization */
+  /* Like RangePolicy::Sane, but also forces normalization */
   Normalized,
 };
 
@@ -65,8 +61,10 @@ class Zoom {
   /* This method is guaranteed to return a displayable range, that is a range
    * with non-nan bounds, and non-empty axes of some minimal length, with
    * bounds smaller than maxFloat in absolute value.
-   * See ZoomRangeType for the description of each option */
-  Range2D<T> range(ZoomRangeType rangeType) const;
+   * It takes into account the interesting range and the magnitude range if it
+   * was computed.
+   * See RangePolicy for the description of each option */
+  Range2D<T> range(RangePolicy rangePolicy = RangePolicy::Sane) const;
   void setForcedRange(Range2D<T> range) { m_forcedRange = range; }
   void setMaxPointsOneSide(int maxPointOnOneSide,
                            int thresholdForFunctionsExceedingNbOfPoints) {
@@ -199,7 +197,7 @@ class Zoom {
   NormalizationData computeNormalizationData(bool xAxis,
                                              const Range2D<T>& saneRange) const;
 
-  Range2D<T> privateRange(ZoomRangeType rangeType) const;
+  Range2D<T> privateRange(RangePolicy rangePolicy) const;
   bool fitWithSolver(
       Range1D<T> bounds, bool* leftInterrupted, bool* rightInterrupted,
       typename NumericSolver::Solver<T>::FunctionEvaluation evaluator,

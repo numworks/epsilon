@@ -68,7 +68,7 @@ void CobwebController::setupRange() {
     zoom.fitPoint(Coordinate2D<float>(value, step == 0 ? 0.f : value), false,
                   k_margin, k_margin, k_margin, k_margin);
   }
-  Range2D<float> zoomRange = zoom.range(ZoomRangeType::Raw);
+  Range2D<float> zoomRange = zoom.range(RangePolicy::Sane);
   InteractiveCurveViewRange range;
   range.setXRange(zoomRange.xMin(), zoomRange.xMax());
   range.setYRange(zoomRange.yMin(), zoomRange.yMax());

@@ -122,7 +122,7 @@ Range2D<float> GraphController::optimalRange(
             sequences[i]->evaluateXYAtParameter(static_cast<float>(n)));
       }
     }
-    *result.y() = *zoom.range(ZoomRangeType::Pretty).y();
+    *result.y() = *zoom.range(RangePolicy::Pretty).y();
   }
   return Zoom<float>::Sanitize(
       result, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);

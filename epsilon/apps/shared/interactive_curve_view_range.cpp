@@ -282,7 +282,7 @@ bool InteractiveCurveViewRange::zoomOutToMakePointVisible(
   zoom.fitPoint(Coordinate2D<float>(xMax(), yMax()));
   zoom.fitPoint(Coordinate2D<float>(x, y), false, leftMarginRatio,
                 rightMarginRatio, bottomMarginRatio, topMarginRatio);
-  Range2D<float> newRange = zoom.range(ZoomRangeType::Raw);
+  Range2D<float> newRange = zoom.range(RangePolicy::Sane);
 
   bool move = newRange != memoizedRange();
   protectedSetXRange(*newRange.x(), k_maxFloat);

@@ -73,19 +73,20 @@ bool Continuity::CanBeUndefinedOnInterval(
     // We assume there are no other active branches than at bounds
     int indexMin = Approximation::IndexOfActivePiecewiseBranchAt(e, minBound);
     int indexMax = Approximation::IndexOfActivePiecewiseBranchAt(e, maxBound);
-    if (indexMin == Approximation::k_noActiveBranch ||
-        indexMax == Approximation::k_noActiveBranch) {
-      return true;
-    }
     bool hasUnknownBranch = indexMin == Approximation::k_unknownActiveBranch ||
                             indexMax == Approximation::k_unknownActiveBranch;
+    bool hasInactiveBranch = indexMin == Approximation::k_noActiveBranch ||
+                             indexMax == Approximation::k_noActiveBranch;
     // If active branch is the same on both end, return its properties
     if (!hasUnknownBranch && indexMin == indexMax) {
-      return CanBeUndefinedOnInterval(e->child(indexMin), minBound, maxBound,
+      // An inactive branch on both end isn't considered a discontinuity.
+      return !hasInactiveBranch &&
+             CanBeUndefinedOnInterval(e->child(indexMin), minBound, maxBound,
                                       params, checkContinuity);
     }
-    // Consider e discontinuous if active branch can change
-    if (checkContinuity) {
+    /* Consider e discontinuous if active branch can change. e will become
+     * undefined if one of the active branch is inactive. */
+    if (checkContinuity || hasInactiveBranch) {
       return true;
     }
     // Branch can change, check all branches that could be active

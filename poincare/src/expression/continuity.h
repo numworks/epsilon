@@ -31,6 +31,9 @@ namespace Poincare::Internal {
  *       |
  *       |
  *
+ * A function that is undefined on both ends of the interval is not considered
+ * discontinuous.
+ *
  * WARNING: Asymptotic discontinuity with 1/x or x^-2 is handled here because of
  * cases like f(x)/x where f closely ressemble x around 0, like "|x|/x" or
  * "sin(x)/x". */
@@ -47,7 +50,7 @@ class Continuity {
 
  private:
   static bool ShallowIsDiscontinuous(const Tree* e);
-  /* Return true if e can be undefined on [minBound, maxBound]. If
+  /* Return true if e can become undefined on [minBound, maxBound]. If
    * checkContinuity is true, also return if e can be discontinuous. */
   template <typename T>
   static bool CanBeUndefinedOnInterval(const Tree* e, T minBound, T maxBound,

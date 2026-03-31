@@ -47,7 +47,7 @@ void FunctionModel::recomputeViewRange() {
   zoom.fitPoint(Coordinate2D<float>(m_abscissa, m_ordinate));
   zoom.fitPoint(Coordinate2D<float>(0.0f, 0.0f));
 
-  Range2D<float> range = zoom.range(true, false);
+  Range2D<float> range = zoom.range(ZoomRangeType::Pretty);
 
   float widthPixelRatio = range.x()->length() / k_width;
   float heigthPixelRatio = range.y()->length() / k_height;

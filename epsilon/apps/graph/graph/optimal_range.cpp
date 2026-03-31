@@ -124,7 +124,8 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
         // Fit magnitude on bounds
         zoomAlongCoordinate.fitMagnitude(floatEvaluators[coordinate], &e, true);
 
-        ranges[coordinate] = *zoomAlongCoordinate.range(false, false).y();
+        ranges[coordinate] =
+            *zoomAlongCoordinate.range(ZoomRangeType::RawInteresting).y();
       }
 
       // Fit the zoom to the range of x(t) and y(t)
@@ -237,12 +238,13 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
     }
   }
 
-  Range2D<float> newRange =
-      zoom.range(true, enforceNormalizedRange || tryNormalizedRange);
+  Range2D<float> newRange = zoom.range(
+      enforceNormalizedRange || tryNormalizedRange ? ZoomRangeType::Normalized
+                                                   : ZoomRangeType::Pretty);
 
   if (!enforceNormalizedRange && tryNormalizedRange) {
     // Cancel normalization if the normalized range is too extended
-    Range2D<float> unNormalizedRange = zoom.range(true, false);
+    Range2D<float> unNormalizedRange = zoom.range(ZoomRangeType::Pretty);
     float xRangeRatio =
         newRange.x()->length() / unNormalizedRange.x()->length();
     float yRangeRatio =

@@ -18,6 +18,21 @@ namespace Poincare {
 template <typename T>
 using Function2D = Coordinate2D<T> (*)(T, const void*);
 
+enum class ZoomRangeType {
+  /* - Takes only the interesting range into account
+   * - Doesn't normalize */
+  RawInteresting,
+  /* - Takes interesting + magnitude into account
+   * - Doesn't normalize */
+  Raw,
+  /* - Takes interesting + magnitude into account
+   * - Partially normalizes up until an acceptable ratio */
+  Pretty,
+  /* - Takes interesting + magnitude into account
+   * - Forces normalization */
+  Normalized,
+};
+
 template <typename T>
 class Zoom {
   friend class ::ZoomTest<T>;
@@ -50,9 +65,8 @@ class Zoom {
   /* This method is guaranteed to return a displayable range, that is a range
    * with non-nan bounds, and non-empty axes of some minimal length, with
    * bounds smaller than maxFloat in absolute value.
-   * If beautify is false, the range will only be sanitized, without attempting
-   * to improve its ratio. */
-  Range2D<T> range(bool beautify, bool forceNormalization) const;
+   * See ZoomRangeType for the description of each option */
+  Range2D<T> range(ZoomRangeType rangeType) const;
   void setForcedRange(Range2D<T> range) { m_forcedRange = range; }
   void setMaxPointsOneSide(int maxPointOnOneSide,
                            int thresholdForFunctionsExceedingNbOfPoints) {
@@ -166,9 +180,6 @@ class Zoom {
       T a, T b, Interest, T precision);
 
   Range2D<T> sanitize2DHelper(Range2D<T> range) const;
-  Range2D<T> sanitizedRange() const {
-    return sanitize2DHelper(m_interestingRange);
-  }
 
   T normalRatio(bool xAxis) const {
     return xAxis ? 1 / m_normalRatio : m_normalRatio;
@@ -188,8 +199,7 @@ class Zoom {
   NormalizationData computeNormalizationData(bool xAxis,
                                              const Range2D<T>& saneRange) const;
 
-  Range2D<T> prettyRange(bool forceNormalization) const;
-
+  Range2D<T> privateRange(ZoomRangeType rangeType) const;
   bool fitWithSolver(
       Range1D<T> bounds, bool* leftInterrupted, bool* rightInterrupted,
       typename NumericSolver::Solver<T>::FunctionEvaluation evaluator,

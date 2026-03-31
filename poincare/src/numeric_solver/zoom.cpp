@@ -37,7 +37,7 @@ Range2D<T> Zoom<T>::Sanitize(Range2D<T> range, T normalYXRatio, T maxFloat) {
    * be evaluated to generate this zoom. */
   Zoom zoom(normalYXRatio, maxFloat);
   zoom.m_interestingRange = range;
-  return zoom.range(false, false);
+  return zoom.range(ZoomRangeType::RawInteresting);
 }
 
 #if ASSERTIONS
@@ -58,18 +58,18 @@ static bool rangeIsValidZoom(Range1D<T> range, Range1D<T> interestingRange,
 #endif
 
 template <typename T>
-Range2D<T> Zoom<T>::range(bool beautify, bool forceNormalization) const {
+Range2D<T> Zoom<T>::range(ZoomRangeType rangeType) const {
   Range2D<T> result;
-  Range2D<T> pretty =
-      beautify ? prettyRange(forceNormalization) : sanitizedRange();
-  assert(!pretty.x()->isNan() && !pretty.y()->isNan());
-  *(result.x()) =
-      Range1D<T>::ValidRangeBetween(pretty.xMin(), pretty.xMax(), m_maxFloat);
-  *(result.y()) =
-      Range1D<T>::ValidRangeBetween(pretty.yMin(), pretty.yMax(), m_maxFloat);
+  Range2D<T> computedRange = privateRange(rangeType);
+  assert(!computedRange.x()->isNan() && !computedRange.y()->isNan());
+  *(result.x()) = Range1D<T>::ValidRangeBetween(
+      computedRange.xMin(), computedRange.xMax(), m_maxFloat);
+  *(result.y()) = Range1D<T>::ValidRangeBetween(
+      computedRange.yMin(), computedRange.yMax(), m_maxFloat);
 #if ASSERTIONS
   bool xRangeIsForced = !m_forcedRange.x()->isNan();
   bool yRangeIsForced = !m_forcedRange.y()->isNan();
+  bool forceNormalization = rangeType == ZoomRangeType::Normalized;
   assert(xRangeIsForced || (yRangeIsForced && forceNormalization) ||
          rangeIsValidZoom(*result.x(), *m_interestingRange.x(), m_maxFloat));
   assert(yRangeIsForced || (xRangeIsForced && forceNormalization) ||
@@ -331,7 +331,7 @@ void Zoom<T>::fitMagnitude(Function2D<T> f, const void* model,
 
   T(Coordinate2D<T>::*ordinate)
   () const = vertical ? &Coordinate2D<T>::x : &Coordinate2D<T>::y;
-  Range2D<T> saneRange = sanitizedRange();
+  Range2D<T> saneRange = sanitize2DHelper(m_interestingRange);
   Range1D<T> xRange = *(vertical ? saneRange.y() : saneRange.x());
   T step = xRange.length() / (k_sampleSize - 1);
 
@@ -677,19 +677,31 @@ typename Zoom<T>::NormalizationData Zoom<T>::computeNormalizationData(
 }
 
 template <typename T>
-Range2D<T> Zoom<T>::prettyRange(bool forceNormalization) const {
+Range2D<T> Zoom<T>::privateRange(ZoomRangeType rangeType) const {
+  Range2D<T> saneRange = m_interestingRange;
+  if (rangeType != ZoomRangeType::RawInteresting) {
+    saneRange.extend(
+        Coordinate2D<T>(m_magnitudeRange.xMin(), m_magnitudeRange.yMin()),
+        m_maxFloat);
+    saneRange.extend(
+        Coordinate2D<T>(m_magnitudeRange.xMax(), m_magnitudeRange.yMax()),
+        m_maxFloat);
+  }
+  saneRange = sanitize2DHelper(saneRange);
+
+  if (rangeType == ZoomRangeType::Raw ||
+      rangeType == ZoomRangeType::RawInteresting) {
+    return saneRange;
+  }
+
+  assert(rangeType == ZoomRangeType::Pretty ||
+         rangeType == ZoomRangeType::Normalized);
+
+  bool forceNormalization = rangeType == ZoomRangeType::Normalized;
+
   bool xRangeIsForced = !m_forcedRange.x()->isNan();
   bool yRangeIsForced = !m_forcedRange.y()->isNan();
   assert(!forceNormalization || !xRangeIsForced || !yRangeIsForced);
-
-  Range2D<T> saneRange = m_interestingRange;
-  saneRange.extend(
-      Coordinate2D<T>(m_magnitudeRange.xMin(), m_magnitudeRange.yMin()),
-      m_maxFloat);
-  saneRange.extend(
-      Coordinate2D<T>(m_magnitudeRange.xMax(), m_magnitudeRange.yMax()),
-      m_maxFloat);
-  saneRange = sanitize2DHelper(saneRange);
 
   NormalizationData xData = computeNormalizationData(true, saneRange);
   NormalizationData yData = computeNormalizationData(false, saneRange);

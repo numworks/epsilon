@@ -18,7 +18,7 @@ bool check_singularities(
   /* Replace "x" by the projected Var0 variable, as this is a requirement of
    * ExactSolveFindSingularities */
   Variables::ReplaceUserVariable(e, "x", 0,
-                                 Poincare::ComplexProperties::Real());
+                                 Parametric::k_continuousVariableProperties);
   EquationSolver::SingularitySolverResult result =
       EquationSolver::ExactSolveFindSingularities(e,
                                                   Poincare::UserParameters{});

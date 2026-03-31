@@ -505,7 +505,7 @@ ComplexProperties GetComplexProperties(const Tree* e) {
     case Type::Binomial:
       return Binomial(GetComplexProperties(e->child(0)));
     case Type::Diff:
-      return ComplexProperties::Real();
+      return Parametric::k_continuousVariableProperties;
 #if 0
     // Activate these cases if necessary
     case Type::ATan:

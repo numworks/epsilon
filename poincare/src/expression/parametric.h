@@ -32,7 +32,7 @@ constexpr static ComplexProperties k_discreteVariableProperties =
 /* TODO: Should instead depend on the bounds for integral and symbol value for
  * derivation */
 constexpr static ComplexProperties k_continuousVariableProperties =
-    ComplexProperties::Real();
+    ComplexProperties::RealFinite();
 
 /* Note: Incidentally, because 2D layout are organised the same, these indexes
  * are the same as in poincare/src/layout/indices.h. They may conflict if both

@@ -19,7 +19,7 @@ Tree* BuildIntegralTree(const SystemExpression& expression,
                         const SystemExpression& upperBound) {
   Tree* function = expression.tree()->cloneTree();
   Variables::ReplaceUserVariable(function, variableName, 0,
-                                 ComplexProperties::Real());
+                                 Parametric::k_continuousVariableProperties);
   // Sort again, since Var and UserVariable don't sort the same way.
   NAry::DeepSort(function);
 

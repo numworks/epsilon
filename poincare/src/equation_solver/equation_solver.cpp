@@ -1081,7 +1081,9 @@ SingularitySolverResult ExactSolveFindSingularities(
   // The linear and polynomial solvers require a list as input
   Tree* solverInput = SharedTreeStack->pushList(1);
   functionWithRoots->cloneTree();
-  // Push one unknown variable to fit the linear / polynomial solver format
+  /* Push one unknown variable to fit the linear / polynomial solver format.
+   * In the singularity solver variables are already projected, so the name of
+   * the unknown variable doesn't matter */
   equationMetadata.unknownVariables.push("x");
 
   // Step 2.1. Try with linear system solving

@@ -141,9 +141,7 @@ KDCoordinate AbstractScrollableMultipleLayoutsView::ContentCell::baseline(
 
   // Right view
   KDCoordinate rightViewBaseline =
-      m_rightLayoutView.layout().isUninitialized()
-          ? 0
-          : m_rightLayoutView.layout()->baseline(font());
+      displayRightLayout() ? m_rightLayoutView.layout()->baseline(font()) : 0;
   if (rightBaseline != nullptr) {
     *rightBaseline = rightViewBaseline;
   }
@@ -262,7 +260,7 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
   }
 
   KDSize rightSize = KDSizeZero;
-  if (!m_rightLayoutView.layout().isUninitialized()) {
+  if (displayRightLayout()) {
     rightSize = m_rightLayoutView.minimalSizeForOptimalDisplay();
     width += rightSize.width();
   }

@@ -85,11 +85,14 @@ class AbstractScrollableMultipleLayoutsView
     bool displayLeftLayout() const { return leftLayoutView() != nullptr; }
     bool displayComparisonSign() const {
       return (displayCenter() || !m_comparisonSignIsEqual) &&
-             !m_rightLayoutView.layout().isUninitialized();
+             displayRightLayout();
     }
     bool displayCenter() const {
       return m_displayCenter &&
              !m_centeredLayoutView.layout().isUninitialized();
+    }
+    bool displayRightLayout() const {
+      return !m_rightLayoutView.layout().isUninitialized();
     }
     bool displayableCenter() const {
       return m_displayableCenter &&

@@ -132,9 +132,6 @@ Tree* Layouter::UnsafeLayoutExpression(const Tree* expression,
                              layouter.requireSeparators(expression);
   layouter.layoutExpression(rack, expression, k_maxPriority);
   StripUselessPlus(rack);
-  if (params.useTenPowerInsteadOfE) {
-    Poincare::LayoutHelpers::TurnEToTenPowerLayout(rack, layouter.linearMode());
-  }
   return rack;
 }
 
@@ -342,7 +339,8 @@ void Layouter::layoutInfixOperator(Tree* parentRack, const Tree* expression,
       }
     }
     layoutExpression(parentRack, targetChild, operatorPriority);
-    if (type == Type::Mult && op != UCodePointMultiplicationSign &&
+    if (m_parameters.useTenPowerInsteadOfE && type == Type::Mult &&
+        op != UCodePointMultiplicationSign &&
         (targetChild->isFloat() || targetChild->isDecimal()) &&
         parentRack->hasChildSatisfying([](const Tree* c) {
           return CodePointLayout::IsCodePoint(c, UCodePointMultiplicationSign);
@@ -801,7 +799,9 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
       if (!linearMode()) {
         AddThousandsSeparators(rack);
       }
-      LayoutHelpers::TurnEToTenPowerLayout(rack, linearMode());
+      if (m_parameters.useTenPowerInsteadOfE) {
+        LayoutHelpers::TurnEToTenPowerLayout(rack, linearMode());
+      }
       NAry::AddOrMergeChild(parentRack, rack);
       break;
     }

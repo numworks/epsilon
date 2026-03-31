@@ -197,14 +197,17 @@ static PreprocessingResult PreprocessEquationList(
       reducedEquationList, symbolContext,
       SymbolicComputation::ReplaceDefinedFunctions);
 
-  // Step 3.3. Replace unkowns
+  // Step 3.3. Replace unknowns
 
   for (size_t i = 0; i < equationMetadata.unknownVariables.size(); i++) {
     const char* variable = equationMetadata.unknownVariables[i].data();
     // TODO: Use a more precise ComplexProperties when possible for better
     // reduction.
-    Variables::ReplaceUserVariable(reducedEquationList, variable, i,
-                                   ComplexProperties::Finite());
+    Variables::ReplaceUserVariable(
+        reducedEquationList, variable, i,
+        equationMetadata.complexFormat == ComplexFormat::Real
+            ? ComplexProperties::RealFinite()
+            : ComplexProperties::Finite());
   }
 
   // Step 3.4. Project (replace local symbols) and reduce
@@ -239,7 +242,7 @@ static PreprocessingResult PreprocessEquationList(
 
 /* Return list of linear coefficients for each variables and final constant. */
 static Tree* GetLinearCoefficients(const Tree* equation,
-                                   uint8_t numberOfVariables) {
+                                   const EquationMetadata& equationMetadata) {
   TreeRef result = List::PushEmpty();
   TreeRef eq = equation->cloneTree();
   /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
@@ -247,12 +250,16 @@ static Tree* GetLinearCoefficients(const Tree* equation,
   SystematicReduction::DeepReduce(eq);
   AdvancedReduction::DeepExpandAlgebraic(eq);
   Dependency::DeepRemoveUselessDependencies(eq);
+  uint8_t numberOfVariables = equationMetadata.unknownVariables.size();
   /* TODO If [eq] still has dependency, they will not be handled by Parse */
   for (uint8_t i = 0; i < numberOfVariables; i++) {
     // TODO: PolynomialParser::Parse may need to handle more block types.
     // TODO: Use user parameters for a RealUnkown sign ?
     Tree* polynomial = PolynomialParser::Parse(
-        eq, Variables::Variable(i, ComplexProperties::Finite()));
+        eq, Variables::Variable(
+                i, equationMetadata.complexFormat == ComplexFormat::Real
+                       ? ComplexProperties::RealFinite()
+                       : ComplexProperties::Finite()));
     if (!polynomial) {
       // equation is not polynomial
       SharedTreeStack->dropBlocksFrom(result);
@@ -391,7 +398,7 @@ static SolverResult SolveLinearSystem(const Tree* reducedEquationList,
 
   // Create the matrix (A|b) for the equation Ax=b;
   for (const Tree* equation : equationListWithoutDep->children()) {
-    Tree* coefficients = GetLinearCoefficients(equation, n);
+    Tree* coefficients = GetLinearCoefficients(equation, equationMetadata);
     if (!coefficients) {
       matrix->removeTree();
       equationListWithoutDep->removeTree();
@@ -615,7 +622,11 @@ static SolverResult SolvePolynomial(const Tree* simplifiedEquationList,
   // Solve without dependencies
   Tree* equationWithoutDep = Dependency::SafeMain(equation)->cloneTree();
   Tree* polynomial = PolynomialParser::Parse(
-      equationWithoutDep, Variables::Variable(0, ComplexProperties::Finite()));
+      equationWithoutDep,
+      Variables::Variable(0,
+                          equationMetadata.complexFormat == ComplexFormat::Real
+                              ? ComplexProperties::RealFinite()
+                              : ComplexProperties::Finite()));
   if (!polynomial) {
     SharedTreeStack->dropBlocksFrom(equation);
     return {.error = Error::RequireApproximateSolution,

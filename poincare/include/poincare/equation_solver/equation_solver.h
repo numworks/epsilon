@@ -73,7 +73,8 @@ struct EquationMetadata {
   VariableArray definedVariables;
   // If true, definedVariables are included in unknownVariables.
   bool overrideDefinedVariables = false;
-  // Complex format used for projection
+  /* Complex format used for projection. For polynomial solving, it indicates
+   * whether the unknown is real or complex */
   ComplexFormat complexFormat = ComplexFormat::Cartesian;
 };
 

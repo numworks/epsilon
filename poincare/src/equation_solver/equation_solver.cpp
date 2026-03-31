@@ -971,8 +971,7 @@ SolverResult ApproximateSolve(
     bool didFitRoots =
         zoom.fitRoots(evaluator<float>, model, Range1D<float>(), false,
                       evaluator<double>, &finiteNumberOfSolutions);
-    Range1D<float> finalRange =
-        *(zoom.range(ZoomRangeType::RawInteresting).x());
+    Range1D<float> finalRange = *(zoom.range(ZoomRangeType::Raw).x());
     if (didFitRoots) {
       /* The range was computed from the solution found with a solver in float.
        * We need to strech the range in case it does not cover the solution

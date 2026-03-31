@@ -37,7 +37,7 @@ Range2D<T> Zoom<T>::Sanitize(Range2D<T> range, T normalYXRatio, T maxFloat) {
    * be evaluated to generate this zoom. */
   Zoom zoom(normalYXRatio, maxFloat);
   zoom.m_interestingRange = range;
-  return zoom.range(ZoomRangeType::RawInteresting);
+  return zoom.range(ZoomRangeType::Raw);
 }
 
 #if ASSERTIONS

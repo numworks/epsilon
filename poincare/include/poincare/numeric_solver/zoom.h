@@ -21,14 +21,14 @@ using Function2D = Coordinate2D<T> (*)(T, const void*);
 enum class ZoomRangeType {
   /* - Takes only the interesting range into account
    * - Doesn't normalize */
-  RawInteresting,
-  /* - Takes interesting + magnitude into account
+  RawInteresting,  // Unused. Should it be removed ?
+  /* - Takes interesting + magnitude range into account
    * - Doesn't normalize */
   Raw,
-  /* - Takes interesting + magnitude into account
+  /* - Takes interesting + magnitude range into account
    * - Partially normalizes up until an acceptable ratio */
   Pretty,
-  /* - Takes interesting + magnitude into account
+  /* - Takes interesting + magnitude range into account
    * - Forces normalization */
   Normalized,
 };

@@ -124,8 +124,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
         // Fit magnitude on bounds
         zoomAlongCoordinate.fitMagnitude(floatEvaluators[coordinate], &e, true);
 
-        ranges[coordinate] =
-            *zoomAlongCoordinate.range(ZoomRangeType::RawInteresting).y();
+        ranges[coordinate] = *zoomAlongCoordinate.range(ZoomRangeType::Raw).y();
       }
 
       // Fit the zoom to the range of x(t) and y(t)

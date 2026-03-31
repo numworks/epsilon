@@ -10,7 +10,7 @@ void ScrollableThreeLayoutsView::ContentCell::reloadTextColor() {
                       ? Palette::GrayVeryDark
                       : Palette::Black;
   rightLayoutView()->setTextColor(color);
-  approximateSign()->setTextColor(color);
+  comparisonSign()->setTextColor(color);
 }
 
 void ScrollableThreeLayoutsView::setLayouts(const Layout& formulaLayout,

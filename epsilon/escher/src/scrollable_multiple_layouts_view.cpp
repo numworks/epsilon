@@ -16,7 +16,7 @@ const char* k_equal = "=";
 AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
     float horizontalAlignment, KDFont::Size font)
     : m_rightLayoutView({.style = {.font = font}}),
-      m_approximateSign(
+      m_comparisonSign(
           {.style = {.glyphColor = Palette::GrayVeryDark, .font = font},
            .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_centeredLayoutView({.style = {.font = font}}),
@@ -25,7 +25,7 @@ AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
       m_displayableCenter(true),
       m_rightIsStrictlyEqual(false),
       m_horizontalAlignment(horizontalAlignment) {
-  m_approximateSign.setText(k_almostEqual);
+  m_comparisonSign.setText(k_almostEqual);
 }
 
 KDColor AbstractScrollableMultipleLayoutsView::ContentCell::backgroundColor()
@@ -55,7 +55,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::
               ? Palette::Select
               : defaultColor;
   m_rightLayoutView.setBackgroundColor(color);
-  m_approximateSign.setBackgroundColor(defaultColor);
+  m_comparisonSign.setBackgroundColor(defaultColor);
   if (displayLeftLayout()) {
     color = highlight && m_selectedSubviewPosition == SubviewPosition::Left
                 ? Palette::Select
@@ -66,7 +66,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::reloadTextColor() {
   KDColor color = displayCenter() ? Palette::GrayVeryDark : Palette::Black;
-  m_approximateSign.setTextColor(color);
+  m_comparisonSign.setTextColor(color);
   m_rightLayoutView.setTextColor(color);
 }
 
@@ -98,7 +98,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::setDisplayCenter(
 void AbstractScrollableMultipleLayoutsView::ContentCell::
     setExactAndApproximateAreStrictlyEqual(bool isEqual) {
   m_rightIsStrictlyEqual = isEqual;
-  approximateSign()->setText(isEqual ? k_equal : k_almostEqual);
+  comparisonSign()->setText(isEqual ? k_equal : k_almostEqual);
   reloadTextColor();
 }
 
@@ -180,7 +180,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
   }
 
   // Layout center layout
-  KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
+  KDSize approximateSignSize = m_comparisonSign.minimalSizeForOptimalDisplay();
   if (displayCenter()) {
     assert(centerFrame != nullptr && approximateSignFrame != nullptr);
     *centerFrame =
@@ -257,7 +257,7 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
         maxUnderBaseline, centerSize.height() - centerBaseline);
   }
   if (displayApproximateSign()) {
-    width += m_approximateSign.minimalSizeForOptimalDisplay().width() +
+    width += m_comparisonSign.minimalSizeForOptimalDisplay().width() +
              AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
   }
 
@@ -280,7 +280,7 @@ View* AbstractScrollableMultipleLayoutsView::ContentCell::subviewAtIndex(
   View* subviews[] = {
       displayLeftLayout() ? leftLayoutView() : nullptr,
       displayCenter() ? centeredLayoutView() : nullptr,
-      displayApproximateSign() ? approximateSign() : nullptr,
+      displayApproximateSign() ? comparisonSign() : nullptr,
       rightLayoutView(),
   };
   for (View* subview : subviews) {
@@ -310,7 +310,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::layoutSubviews(
   if (centeredLayoutView() != nullptr) {
     setChildFrame(centeredLayoutView(), centerFrame, force);
   }
-  setChildFrame(&m_approximateSign, approximateSignFrame, force);
+  setChildFrame(&m_comparisonSign, approximateSignFrame, force);
   if (rightLayoutView() != nullptr) {
     setChildFrame(rightLayoutView(), rightFrame, force);
   }
@@ -395,7 +395,7 @@ bool AbstractScrollableMultipleLayoutsView::handleEvent(
                                            ->minimalSizeForOptimalDisplay()
                                            .width();
       KDCoordinate signWidth = contentCell()
-                                   ->approximateSign()
+                                   ->comparisonSign()
                                    ->minimalSizeForOptimalDisplay()
                                    .width();
       centeredLayoutIsVisibleOnTheLeft = leftWidth + k_horizontalMargin +

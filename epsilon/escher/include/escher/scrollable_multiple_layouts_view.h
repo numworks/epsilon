@@ -77,7 +77,7 @@ class AbstractScrollableMultipleLayoutsView
     virtual LayoutView* leftLayoutView() const { return nullptr; }
     LayoutView* rightLayoutView() { return &m_rightLayoutView; }
     LayoutView* centeredLayoutView() { return &m_centeredLayoutView; }
-    OneLineBufferTextView<>* approximateSign() { return &m_approximateSign; }
+    OneLineBufferTextView<>* comparisonSign() { return &m_comparisonSign; }
     SubviewPosition selectedSubviewPosition() const {
       return m_selectedSubviewPosition;
     }
@@ -118,7 +118,7 @@ class AbstractScrollableMultipleLayoutsView
     KDSize privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const;
     View* subviewAtIndex(int index) override;
     LayoutView m_rightLayoutView;
-    OneLineBufferTextView<> m_approximateSign;
+    OneLineBufferTextView<> m_comparisonSign;
     LayoutView m_centeredLayoutView;
     SubviewPosition m_selectedSubviewPosition;
     bool m_displayCenter;

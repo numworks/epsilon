@@ -273,7 +273,8 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
       comparisonSignIsEqual = true;
       comparisonSignIsVisible = true;
     }
-  } else if (approximate.isUninitialized() && !shouldUseExactForApproximate) {
+  } else if (approximateLayout.isUninitialized() &&
+             !shouldUseExactForApproximate) {
     comparisonSignIsEqual = true;
     comparisonSignIsVisible = false;
   }

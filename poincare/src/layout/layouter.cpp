@@ -342,6 +342,19 @@ void Layouter::layoutInfixOperator(Tree* parentRack, const Tree* expression,
       }
     }
     layoutExpression(parentRack, targetChild, operatorPriority);
+    if (type == Type::Mult && op != UCodePointMultiplicationSign &&
+        (targetChild->isFloat() || targetChild->isDecimal()) &&
+        parentRack->hasChildSatisfying([](const Tree* c) {
+          return CodePointLayout::IsCodePoint(c, UCodePointMultiplicationSign);
+        })) {
+      /* If the expression contains a decimal/float, it might have been laid out
+       * with × (for instance, 2000000000000 turns to 2×10^12).
+       * In that case, we must also use that operator for the rest of the
+       * multiplication for homogeneity (for instance 2×10^12×i).
+       * TODO: detect that we will need a multiplication sign directly in
+       * MultiplicationSymbol. */
+      op = UCodePointMultiplicationSign;
+    }
     previousWasUnit = isUnit;
   }
 }

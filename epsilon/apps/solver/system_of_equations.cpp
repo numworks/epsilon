@@ -239,7 +239,8 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
          !exactLayout.isUninitialized());
 
   // If approximation is missing, consider it equal to exact
-  bool exactAndApproximateAreEqual = false;
+  // TODO: Add m_comparisonSignIsVisible
+  bool comparisonSignIsEqual = false;
   if (!approximateLayout.isUninitialized() && !exactLayout.isUninitialized()) {
     char exactBuffer[::Constant::MaxSerializedExpressionSize];
     char approximateBuffer[::Constant::MaxSerializedExpressionSize];
@@ -257,7 +258,8 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
       assert(exactSerializationLength <=
              ::Constant::MaxSerializedExpressionSize);
       if (strcmp(exactBuffer, approximateBuffer) == 0) {
-        exactAndApproximateAreEqual = true;
+        // TODO: Add m_comparisonSignIsVisible
+        comparisonSignIsEqual = true;
         exactLayout = Layout();
       }
     }
@@ -269,15 +271,17 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
             {.user = {.complexFormat = m_equationMetadata.complexFormat,
                       .angleUnit = GlobalPreferences::SharedGlobalPreferences()
                                        ->angleUnit()}})) {
-      exactAndApproximateAreEqual = true;
+      // TODO: Add m_comparisonSignIsVisible
+      comparisonSignIsEqual = true;
     }
   } else if (approximate.isUninitialized() && !shouldUseExactForApproximate) {
     // Prevent ≈ display in front of an exact solution
-    exactAndApproximateAreEqual = true;
+    // TODO: Add m_comparisonSignIsVisible
+    comparisonSignIsEqual = true;
   }
   assert(m_numberOfSolutions < k_maxNumberOfSolutions - 1);
-  m_solutions[m_numberOfSolutions++] = Solution(
-      exactLayout, approximateLayout, NAN, exactAndApproximateAreEqual);
+  m_solutions[m_numberOfSolutions++] =
+      Solution(exactLayout, approximateLayout, NAN, comparisonSignIsEqual);
 
   return Error::NoError;
 }

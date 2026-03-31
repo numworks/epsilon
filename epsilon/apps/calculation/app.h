@@ -17,6 +17,8 @@ class App : public Shared::MathApp {
     const Escher::Image* icon() const override;
   };
 
+  constexpr static bool k_useTenPower = true;
+
   class Snapshot : public Shared::SharedApp::Snapshot {
    public:
     Snapshot();

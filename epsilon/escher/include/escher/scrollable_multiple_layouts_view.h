@@ -83,7 +83,7 @@ class AbstractScrollableMultipleLayoutsView
     }
     void setSelectedSubviewPosition(SubviewPosition subviewPosition);
     bool displayLeftLayout() const { return leftLayoutView() != nullptr; }
-    bool displayApproximateSign() const {
+    bool displayComparisonSign() const {
       return (displayCenter() || !m_rightIsStrictlyEqual) &&
              !m_rightLayoutView.layout().isUninitialized();
     }
@@ -111,7 +111,7 @@ class AbstractScrollableMultipleLayoutsView
                           KDCoordinate* centerBaseline = nullptr,
                           KDCoordinate* rightBaseline = nullptr) const;
     void subviewFrames(KDRect* leftFrame, KDRect* centerFrame,
-                       KDRect* approximateSignFrame, KDRect* rightFrame);
+                       KDRect* comparisonSignFrame, KDRect* rightFrame);
 
    private:
     void updateSubviewsBackgroundAfterChangingState() override;

@@ -20,9 +20,9 @@ class ScrollableThreeLayoutsView
     setBackgroundColor(Escher::Palette::White);
   }
   void subviewFrames(KDRect* leftFrame, KDRect* centerFrame,
-                     KDRect* approximateSignFrame, KDRect* rightFrame) {
+                     KDRect* comparisonSignFrame, KDRect* rightFrame) {
     return m_contentCell.subviewFrames(leftFrame, centerFrame,
-                                       approximateSignFrame, rightFrame);
+                                       comparisonSignFrame, rightFrame);
   }
   void setShowEqualSignAfterFormula(bool showEqual) {
     m_contentCell.setShowEqualSignAfterFormula(showEqual);

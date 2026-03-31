@@ -117,7 +117,7 @@ AbstractScrollableMultipleLayoutsView::ContentCell::layoutAtPosition(
 
 int AbstractScrollableMultipleLayoutsView::ContentCell::numberOfSubviews()
     const {
-  return displayLeftLayout() + displayCenter() + displayApproximateSign() + 1;
+  return displayLeftLayout() + displayCenter() + displayComparisonSign() + 1;
 }
 
 KDCoordinate AbstractScrollableMultipleLayoutsView::ContentCell::baseline(
@@ -152,7 +152,7 @@ KDCoordinate AbstractScrollableMultipleLayoutsView::ContentCell::baseline(
 }
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
-    KDRect* leftFrame, KDRect* centerFrame, KDRect* approximateSignFrame,
+    KDRect* leftFrame, KDRect* centerFrame, KDRect* comparisonSignFrame,
     KDRect* rightFrame) {
   // Subviews sizes
   KDSize leftSize = displayLeftLayout()
@@ -180,22 +180,22 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
   }
 
   // Layout center layout
-  KDSize approximateSignSize = m_comparisonSign.minimalSizeForOptimalDisplay();
+  KDSize comparisonSignSize = m_comparisonSign.minimalSizeForOptimalDisplay();
   if (displayCenter()) {
-    assert(centerFrame != nullptr && approximateSignFrame != nullptr);
+    assert(centerFrame != nullptr && comparisonSignFrame != nullptr);
     *centerFrame =
         KDRect(currentWidth, viewBaseline - centerBaseline, centerSize);
     currentWidth += AbstractScrollableMultipleLayoutsView::k_horizontalMargin +
                     centerSize.width();
   }
 
-  // Layout approximate sign
-  if (displayApproximateSign()) {
-    *approximateSignFrame =
-        KDRect(currentWidth, viewBaseline - approximateSignSize.height() / 2,
-               approximateSignSize);
+  // Layout comparison sign
+  if (displayComparisonSign()) {
+    *comparisonSignFrame =
+        KDRect(currentWidth, viewBaseline - comparisonSignSize.height() / 2,
+               comparisonSignSize);
     currentWidth += AbstractScrollableMultipleLayoutsView::k_horizontalMargin +
-                    approximateSignSize.width();
+                    comparisonSignSize.width();
   }
 
   // Layout right layout
@@ -220,8 +220,8 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
     if (displayCenter()) {
       *centerFrame = centerFrame->translatedBy(offset);
     }
-    if (displayApproximateSign()) {
-      *approximateSignFrame = approximateSignFrame->translatedBy(offset);
+    if (displayComparisonSign()) {
+      *comparisonSignFrame = comparisonSignFrame->translatedBy(offset);
     }
   }
 }
@@ -256,7 +256,7 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
     maxUnderBaseline = std::max<KDCoordinate>(
         maxUnderBaseline, centerSize.height() - centerBaseline);
   }
-  if (displayApproximateSign()) {
+  if (displayComparisonSign()) {
     width += m_comparisonSign.minimalSizeForOptimalDisplay().width() +
              AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
   }
@@ -280,7 +280,7 @@ View* AbstractScrollableMultipleLayoutsView::ContentCell::subviewAtIndex(
   View* subviews[] = {
       displayLeftLayout() ? leftLayoutView() : nullptr,
       displayCenter() ? centeredLayoutView() : nullptr,
-      displayApproximateSign() ? comparisonSign() : nullptr,
+      displayComparisonSign() ? comparisonSign() : nullptr,
       rightLayoutView(),
   };
   for (View* subview : subviews) {
@@ -301,16 +301,16 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::layoutSubviews(
   }
   KDRect leftFrame = KDRectZero;
   KDRect centerFrame = KDRectZero;
-  KDRect approximateSignFrame = KDRectZero;
+  KDRect comparisonSignFrame = KDRectZero;
   KDRect rightFrame = KDRectZero;
-  subviewFrames(&leftFrame, &centerFrame, &approximateSignFrame, &rightFrame);
+  subviewFrames(&leftFrame, &centerFrame, &comparisonSignFrame, &rightFrame);
   if (displayLeftLayout()) {
     setChildFrame(leftLayoutView(), leftFrame, force);
   }
   if (centeredLayoutView() != nullptr) {
     setChildFrame(centeredLayoutView(), centerFrame, force);
   }
-  setChildFrame(&m_comparisonSign, approximateSignFrame, force);
+  setChildFrame(&m_comparisonSign, comparisonSignFrame, force);
   if (rightLayoutView() != nullptr) {
     setChildFrame(rightLayoutView(), rightFrame, force);
   }

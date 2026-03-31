@@ -152,7 +152,7 @@ void SystemOfEquations::approximateSolve(const SymbolContext& symbolContext) {
                                        ->angleUnit()},
                 ApproximationPolicy{.optimize = true});
     m_solutions[i] =
-        Solution(Poincare::Layout(), Poincare::Layout(), solution, false);
+        Solution(Poincare::Layout(), Poincare::Layout(), solution, false, true);
   }
 }
 
@@ -238,9 +238,8 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   assert(!approximateLayout.isUninitialized() ||
          !exactLayout.isUninitialized());
 
-  // If approximation is missing, consider it equal to exact
-  // TODO: Add m_comparisonSignIsVisible
   bool comparisonSignIsEqual = false;
+  bool comparisonSignIsVisible = true;
   if (!approximateLayout.isUninitialized() && !exactLayout.isUninitialized()) {
     char exactBuffer[::Constant::MaxSerializedExpressionSize];
     char approximateBuffer[::Constant::MaxSerializedExpressionSize];
@@ -258,8 +257,8 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
       assert(exactSerializationLength <=
              ::Constant::MaxSerializedExpressionSize);
       if (strcmp(exactBuffer, approximateBuffer) == 0) {
-        // TODO: Add m_comparisonSignIsVisible
         comparisonSignIsEqual = true;
+        comparisonSignIsVisible = false;
         exactLayout = Layout();
       }
     }
@@ -271,17 +270,17 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
             {.user = {.complexFormat = m_equationMetadata.complexFormat,
                       .angleUnit = GlobalPreferences::SharedGlobalPreferences()
                                        ->angleUnit()}})) {
-      // TODO: Add m_comparisonSignIsVisible
       comparisonSignIsEqual = true;
+      comparisonSignIsVisible = true;
     }
   } else if (approximate.isUninitialized() && !shouldUseExactForApproximate) {
-    // Prevent ≈ display in front of an exact solution
-    // TODO: Add m_comparisonSignIsVisible
     comparisonSignIsEqual = true;
+    comparisonSignIsVisible = false;
   }
   assert(m_numberOfSolutions < k_maxNumberOfSolutions - 1);
   m_solutions[m_numberOfSolutions++] =
-      Solution(exactLayout, approximateLayout, NAN, comparisonSignIsEqual);
+      Solution(exactLayout, approximateLayout, NAN, comparisonSignIsEqual,
+               comparisonSignIsVisible);
 
   return Error::NoError;
 }

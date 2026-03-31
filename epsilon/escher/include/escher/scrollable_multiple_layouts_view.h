@@ -84,7 +84,7 @@ class AbstractScrollableMultipleLayoutsView
     void setSelectedSubviewPosition(SubviewPosition subviewPosition);
     bool displayLeftLayout() const { return leftLayoutView() != nullptr; }
     bool displayComparisonSign() const {
-      return (displayCenter() || !m_rightIsStrictlyEqual) &&
+      return (displayCenter() || !m_comparisonSignIsEqual) &&
              !m_rightLayoutView.layout().isUninitialized();
     }
     bool displayCenter() const {
@@ -95,7 +95,7 @@ class AbstractScrollableMultipleLayoutsView
       return m_displayableCenter &&
              !m_centeredLayoutView.layout().isUninitialized();
     }
-    bool rightIsStrictlyEqual() const { return m_rightIsStrictlyEqual; }
+    bool comparisonSignIsEqual() const { return m_comparisonSignIsEqual; }
     void setDisplayCenter(bool display);
     void setDisplayableCenter(bool displayable) {
       m_displayableCenter = displayable;
@@ -123,7 +123,7 @@ class AbstractScrollableMultipleLayoutsView
     SubviewPosition m_selectedSubviewPosition;
     bool m_displayCenter;
     bool m_displayableCenter;
-    bool m_rightIsStrictlyEqual;
+    bool m_comparisonSignIsEqual;
     float m_horizontalAlignment;
   };
   virtual ContentCell* contentCell() = 0;

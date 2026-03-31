@@ -23,7 +23,7 @@ AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
       m_selectedSubviewPosition(SubviewPosition::Center),
       m_displayCenter(true),
       m_displayableCenter(true),
-      m_rightIsStrictlyEqual(false),
+      m_comparisonSignIsEqual(false),
       m_horizontalAlignment(horizontalAlignment) {
   m_comparisonSign.setText(k_almostEqual);
 }
@@ -97,7 +97,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::setDisplayCenter(
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::
     setExactAndApproximateAreStrictlyEqual(bool isEqual) {
-  m_rightIsStrictlyEqual = isEqual;
+  m_comparisonSignIsEqual = isEqual;
   comparisonSign()->setText(isEqual ? k_equal : k_almostEqual);
   reloadTextColor();
 }

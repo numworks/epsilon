@@ -114,8 +114,7 @@ void ExpressionsListController::fillCellForRow(HighlightCell* cell, int row) {
   myCell->label()->setLayouts(m_layouts[row], m_exactLayouts[row],
                               m_approximatedLayouts[row]);
   myCell->subLabel()->setMessage(messageAtIndex(row));
-  myCell->label()->setExactAndApproximateAreStrictlyEqual(
-      m_isStrictlyEqual[row]);
+  myCell->label()->setComparisonSign(m_isStrictlyEqual[row], true);
 }
 
 int ExpressionsListController::numberOfRows() const {

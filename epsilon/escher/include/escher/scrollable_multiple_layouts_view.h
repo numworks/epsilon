@@ -26,8 +26,8 @@ class AbstractScrollableMultipleLayoutsView
     setSelectedSubviewPosition(SubviewPosition::Left);
     setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
   }
-  void setExactAndApproximateAreStrictlyEqual(bool isEqual) {
-    contentCell()->setExactAndApproximateAreStrictlyEqual(isEqual);
+  void setComparisonSign(bool isEqual, bool isVisible) {
+    contentCell()->setComparisonSign(isEqual, isVisible);
   }
   SubviewPosition selectedSubviewPosition() {
     return contentCell()->selectedSubviewPosition();
@@ -88,7 +88,11 @@ class AbstractScrollableMultipleLayoutsView
              !leftLayoutView()->layout().isUninitialized();
     }
     bool displayComparisonSign() const {
-      return (displayCenter() || !m_comparisonSignIsEqual) &&
+      // NOTE: If this assertion fails, the configuration is not handled.
+      assert(m_displayComparisonSign || !displayCenter() ||
+             !displayRightLayout());
+      return m_displayComparisonSign &&
+             (displayCenter() || !m_comparisonSignIsEqual) &&
              displayRightLayout();
     }
     bool displayCenter() const {
@@ -107,7 +111,9 @@ class AbstractScrollableMultipleLayoutsView
     void setDisplayableCenter(bool displayable) {
       m_displayableCenter = displayable;
     }
-    void setExactAndApproximateAreStrictlyEqual(bool isEqual);
+    /* Even if isVisible is true, comparison sign can be hidden. See
+     * displayComparisonSign(). */
+    void setComparisonSign(bool isEqual, bool isVisible);
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     const Poincare::Layout& layout() const override {
@@ -131,6 +137,7 @@ class AbstractScrollableMultipleLayoutsView
     bool m_displayCenter;
     bool m_displayableCenter;
     bool m_comparisonSignIsEqual;
+    bool m_displayComparisonSign;
     float m_horizontalAlignment;
   };
   virtual ContentCell* contentCell() = 0;

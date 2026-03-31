@@ -18,8 +18,10 @@ class Solution {
   Poincare::Layout exactLayout() const { return m_exactLayout; }
   double approximate() const { return m_approximate; }
   Poincare::Layout approximateLayout() const { return m_approximateLayout; }
-  bool exactAndApproximateAreEqual() const {
-    return m_exactAndApproximateAreEqual;
+  bool comparisonSignIsEqual() const { return m_exactAndApproximateAreEqual; }
+  bool comparisonSignIsVisible() const {
+    // TODO: Handle this
+    return true;
   }
 
  private:

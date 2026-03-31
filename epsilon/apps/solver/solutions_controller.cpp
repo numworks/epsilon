@@ -433,13 +433,13 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
        * FIXME This is quirky and could be changed. */
       if (solution->approximateLayout().isUninitialized()) {
         valueCell->setLayouts(Layout(), solution->exactLayout());
-        assert(solution->exactAndApproximateAreEqual());
+        assert(solution->comparisonSignIsEqual());
       } else {
         valueCell->setLayouts(solution->exactLayout(),
                               solution->approximateLayout());
       }
-      valueCell->setExactAndApproximateAreStrictlyEqual(
-          solution->exactAndApproximateAreEqual());
+      valueCell->setComparisonSign(solution->comparisonSignIsEqual(),
+                                   solution->comparisonSignIsVisible());
     } else {
       /* It's a defined variable row, get values of the solutions or
        * discriminant */
@@ -453,9 +453,8 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
           PoincareHelpers::CreateLayout(value, App::app()->localContext());
       static_cast<ScrollableTwoLayoutsCell*>(cell)->setLayouts(Layout(),
                                                                layout);
-      // Prevent display of ≈
-      static_cast<ScrollableTwoLayoutsCell*>(cell)
-          ->setExactAndApproximateAreStrictlyEqual(true);
+      static_cast<ScrollableTwoLayoutsCell*>(cell)->setComparisonSign(false,
+                                                                      false);
     }
   }
   static_cast<EvenOddCell*>(cell)->setEven(row % 2 == 0);

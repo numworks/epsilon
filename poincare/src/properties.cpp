@@ -99,28 +99,13 @@ Properties Add(Properties p1, Properties p2) {
 
 #if POINCARE_TREE_LOG
 void Properties::log(std::ostream& stream, bool endOfLine) const {
-  if (sign().isNull()) {
-    stream << "Zero";
-  } else {
-    if (!m_canBeInfinite) {
-      stream << "Finite ";
-    }
-    if (!m_canBeNonInteger) {
-      stream << "Integer and ";
-    }
-    if (isUnknown()) {
-      stream << "Unknown";
-    } else {
-      if (m_canBeStrictlyPositive && m_canBeStrictlyNegative) {
-        stream << "Non Null";
-      } else {
-        if (!m_canBeNull) {
-          stream << "Strictly ";
-        }
-        stream << (m_canBeStrictlyNegative ? "Negative" : "Positive");
-      }
-    }
+  if (!m_canBeInfinite) {
+    stream << "Finite ";
   }
+  if (!m_canBeNonInteger) {
+    stream << "Integer and ";
+  }
+  sign().log(stream, false);
   if (endOfLine) {
     stream << "\n";
   }

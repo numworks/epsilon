@@ -311,10 +311,6 @@ bool Variables::IsVariableWithId(const Tree* e, int id) {
   return e->isVar() && Id(e) == id;
 }
 
-bool Variables::IsSameVariable(const Tree* e1, const Tree* e2) {
-  return e1->isVar() && e2->isVar() && Id(e1) == Id(e2);
-}
-
 bool Variables::HasVariables(const Tree* e) {
   return HasVariablesOutOfScope(e, 0);
 }

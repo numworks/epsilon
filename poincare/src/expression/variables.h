@@ -60,8 +60,6 @@ bool HasVariables(const Tree* e);
 
 // On projected expressions
 bool IsVariableWithId(const Tree* e, int id);
-// Compare only the variable id, ignore complex properties
-bool IsSameVariable(const Tree* e1, const Tree* e2);
 bool HasVariable(const Tree* e, const Tree* variable);
 bool CanEnterOrLeaveScope(const Tree* e);
 

@@ -9,10 +9,8 @@ node_modules/
 /compile_commands.json
 .clangd
 .DS_Store
-/compare_crc_output/
-epsilon/compare_crc_output/
-/screenshots_each_step/
-epsilon/screenshots_each_step/
+*compare_crc_output/
+*screenshots_each_step/
 .vscode/
 .devcontainer/
 ion/src/simulator/ios/GoogleAnalyticsServices/

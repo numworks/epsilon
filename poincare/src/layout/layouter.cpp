@@ -788,6 +788,7 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
       if (!linearMode()) {
         AddThousandsSeparators(rack);
       }
+      LayoutHelpers::TurnEToTenPowerLayout(rack, linearMode());
       NAry::AddOrMergeChild(parentRack, rack);
       break;
     }

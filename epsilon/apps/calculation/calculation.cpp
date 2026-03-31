@@ -7,9 +7,6 @@
 #include <shared/global_store.h>
 #include <string.h>
 
-#include <algorithm>
-#include <cmath>
-
 #include "global_preferences.h"
 
 using namespace Poincare;
@@ -82,15 +79,11 @@ Layout Calculation::createApproximateOutputLayout(
   if (ExceptionRun(ecp)) {
     UserExpression e = approximateOutput();
     if (!e.isUninitialized()) {
-      /* In calculation, we replace the compact 2ᴇ-10 notation with a 2D layout.
-       * TODO: apply this at layouting step. */
-      return e
-          .createLayout(
-              m_calculationPreferences.displayMode,
-              forEditing ? PrintFloat::k_maxNumberOfSignificantDigits
-                         : m_calculationPreferences.numberOfSignificantDigits,
-              GlobalContextAccessor::Context())
-          .cloneAndTurnEToTenPowerLayout(false);
+      return e.createLayout(
+          m_calculationPreferences.displayMode,
+          forEditing ? PrintFloat::k_maxNumberOfSignificantDigits
+                     : m_calculationPreferences.numberOfSignificantDigits,
+          GlobalContextAccessor::Context());
     }
   }
   *couldNotCreateApproximateLayout = true;

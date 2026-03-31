@@ -150,13 +150,11 @@ void UnitListController::computeAdditionalResults(
 
   // Memoize distinct layouts
   Layout exactOutputLayout =
-      Shared::PoincareHelpers::CreateLayout(exactOutput, symbolContext)
-          .cloneAndTurnEToTenPowerLayout(false);
+      Shared::PoincareHelpers::CreateLayout(exactOutput, symbolContext);
   for (size_t i = 0; i < k_maxNumberOfExpressionCells; i++) {
     if (!expressions[i].isUninitialized() && !expressions[i].isUndefined()) {
       Layout layout =
-          Shared::PoincareHelpers::CreateLayout(expressions[i], symbolContext)
-              .cloneAndTurnEToTenPowerLayout(false);
+          Shared::PoincareHelpers::CreateLayout(expressions[i], symbolContext);
       // Skip layouts identical to exactOutput
       if (exactOutputLayout.isIdenticalTo(layout, true)) {
         continue;
@@ -178,8 +176,7 @@ void UnitListController::computeAdditionalResults(
       if (expressions[i].isInRadians(symbolContext)) {
         // Approximated radian expression has already been computed.
         Layout approximatedLayout = Shared::PoincareHelpers::CreateLayout(
-                                        approximatedSIExpression, symbolContext)
-                                        .cloneAndTurnEToTenPowerLayout(false);
+            approximatedSIExpression, symbolContext);
         if (!approximatedLayout.isIdenticalTo(layout, true)) {
           m_exactLayouts[m_numberOfExpressionCells] = layout;
           m_approximatedLayouts[m_numberOfExpressionCells] = approximatedLayout;
@@ -257,8 +254,7 @@ Layout UnitListController::layoutAtIndex(HighlightCell* cell, int index) {
   return UnitComparison::BuildComparisonExpression(
              m_SIValue, m_referenceValues[index], m_tableIndexForComparison)
       .createLayout(Preferences::PrintFloatMode::Decimal,
-                    Poincare::Preferences::LargeNumberOfSignificantDigits)
-      .cloneAndTurnEToTenPowerLayout(false);
+                    Poincare::Preferences::LargeNumberOfSignificantDigits);
 }
 
 }  // namespace Calculation

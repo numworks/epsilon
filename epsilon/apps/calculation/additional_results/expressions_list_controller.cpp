@@ -167,10 +167,8 @@ Layout ExpressionsListController::GetExactLayoutFromExpression(
                                    tempParameters);
   assert(!exactExpression.isUninitialized() &&
          !approximateExpression.isUninitialized());
-  Layout approximateLayout =
-      Shared::PoincareHelpers::CreateLayout(
-          approximateExpression, simplificationParameters.user.context)
-          .cloneAndTurnEToTenPowerLayout(false);
+  Layout approximateLayout = Shared::PoincareHelpers::CreateLayout(
+      approximateExpression, simplificationParameters.user.context);
   Layout exactLayout =
       exactExpression.isUninitialized()
           ? approximateLayout

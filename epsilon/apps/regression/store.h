@@ -18,7 +18,7 @@ class Store : public Shared::LinearRegressionStore {
       DoublePairStore::k_regressionColumNames;
   static const char* SeriesTitle(int series);
   constexpr static std::array<const char*, 2> k_storedNames = {"R", "RES"};
-  constexpr static int k_longestStoredName =
+  constexpr static int k_nameBufferLength =
       std::string_view(*std::max_element(k_storedNames.begin(),
                                          k_storedNames.end(),
                                          OMG::StringLengthCompare))
@@ -114,8 +114,6 @@ class Store : public Shared::LinearRegressionStore {
   double computeResidualStandardDeviation(int series);
   void resetMemoization();
 
-  constexpr static int k_functionNameSize = 3;
-
   constexpr static const char* RegressionFunctionBaseName() {
     return k_storedNames[0];  // "R"
   }
@@ -124,10 +122,11 @@ class Store : public Shared::LinearRegressionStore {
   }
   static int BuildStoredName(const char* baseName, int series, char* buffer,
                              int bufferSize);
-  Ion::Storage::Record functionRecord(int series) const;
-  void storeRegressionFunction(
-      int series, const Poincare::UserExpression& expression) const;
-  void deleteRegressionFunction(int series) const;
+  Ion::Storage::Record storedRecord(const char* baseName, int series) const;
+  void storeElement(const char* baseName, int series,
+                    const Poincare::UserExpression& expression) const;
+  void deleteStoredElement(const char* baseName, int series) const;
+  void deleteStoredElements(int series) const;
 
   // This is a table of size k_numberOfSeries.
   Model::Type* m_regressionTypes;

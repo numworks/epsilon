@@ -163,7 +163,7 @@ void Store::updateSeriesValidity(int series) {
   if (!seriesIsValid(series)) {
     // Reset series regression type to None
     m_regressionTypes[series] = Model::Type::None;
-    deleteRegressionFunction(series);
+    deleteStoredElements(series);
   }
 }
 
@@ -186,8 +186,9 @@ void Store::updateCoefficients(int series) {
   m_recomputeCoefficients[series] = false;
   /* TODO_PCJ: coefficients used to be Decimals and are now Doubles. Maybe this
    * will be an issue ? */
-  storeRegressionFunction(
-      series, seriesModel->expression(m_regressionCoefficients[series]));
+  storeElement(RegressionFunctionBaseName(), series,
+               seriesModel->expression(m_regressionCoefficients[series]));
+  // TODO: store residual list
 
   if (!coefficientsAreDefined(series)) {
     m_determinationCoefficient[series] = NAN;
@@ -314,33 +315,28 @@ Model* Store::regressionModel(Model::Type type) const {
 
 int Store::BuildStoredName(const char* baseName, int series, char* buffer,
                            int bufferSize) {
-  /*  TODO: k_functionNameSize will not be the same for R1, R2... and RES1,
-   * RES2... */
-  assert(bufferSize >= k_functionNameSize);
   size_t length = strlcpy(buffer, baseName, bufferSize);
   length +=
       OMG::Print::IntLeft(1 + series, buffer + length, bufferSize - length);
-  assert(length == k_functionNameSize - 1);
   buffer[length] = 0;
   return length;
 }
 
-Ion::Storage::Record Store::functionRecord(int series) const {
-  char name[k_functionNameSize];
-  BuildStoredName(RegressionFunctionBaseName(), series, name,
-                  k_functionNameSize);
+Ion::Storage::Record Store::storedRecord(const char* baseName,
+                                         int series) const {
+  char name[k_nameBufferLength];
+  BuildStoredName(baseName, series, name, k_nameBufferLength);
   return Ion::Storage::FileSystem::sharedFileSystem
       ->recordBaseNamedWithExtension(name, Ion::Storage::regressionExtension);
 }
 
-void Store::storeRegressionFunction(int series,
-                                    const UserExpression& expression) const {
+void Store::storeElement(const char* baseName, int series,
+                         const UserExpression& expression) const {
   if (expression.isUninitialized()) {
-    return deleteRegressionFunction(series);
+    return deleteStoredElement(baseName, series);
   }
-  char name[k_functionNameSize];
-  BuildStoredName(RegressionFunctionBaseName(), series, name,
-                  k_functionNameSize);
+  char name[k_nameBufferLength];
+  BuildStoredName(baseName, series, name, k_nameBufferLength);
   UserExpression expressionToStore =
       expression.cloneAndReplaceSymbolWithUnknown(
           SymbolHelper::BuildUserVariable(CodePoints::k_cartesianSymbol));
@@ -349,8 +345,14 @@ void Store::storeRegressionFunction(int series,
       expressionToStore.addressInPool(), expressionToStore.size(), true);
 }
 
-void Store::deleteRegressionFunction(int series) const {
-  Ion::Storage::Record r = functionRecord(series);
+void Store::deleteStoredElements(int series) const {
+  for (const char* const baseName : k_storedNames) {
+    deleteStoredElement(baseName, series);
+  }
+}
+
+void Store::deleteStoredElement(const char* baseName, int series) const {
+  Ion::Storage::Record r = storedRecord(baseName, series);
   r.destroy();
 }
 

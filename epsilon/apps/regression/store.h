@@ -16,8 +16,7 @@ class Store : public Shared::LinearRegressionStore {
   constexpr static const char* const* k_columnNames =
       DoublePairStore::k_regressionColumNames;
   static const char* SeriesTitle(int series);
-  // TODO: add "RES" for the future residual variable
-  constexpr static const char* k_functionNames[] = {"R"};
+  constexpr static const char* k_storedNames[] = {"R", "RES"};
 
   Store(Shared::DoublePairStorePreferences* preferences,
         Model::Type* regressionTypes);

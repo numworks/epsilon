@@ -42,9 +42,10 @@ App::Snapshot::Snapshot()
                                      Ion::Storage::listExtension,
                                      Shared::DoublePairStore::k_numberOfSeries);
 
-  // Register R1, R2, R3 ... as reserved functions to the sharedStorage.
+  /* Register R1, R2, R3 ... and RES1, RES2, RES3... as reserved entries in the
+   * sharedStorage. */
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
-      ->registerArrayOfReservedNames(Store::k_functionNames,
+      ->registerArrayOfReservedNames(Store::k_storedNames,
                                      Ion::Storage::regressionExtension,
                                      Shared::DoublePairStore::k_numberOfSeries);
 }

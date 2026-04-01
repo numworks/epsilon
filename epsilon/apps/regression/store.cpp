@@ -316,7 +316,7 @@ int Store::BuildUserFunctionName(int series, char* buffer, int bufferSize) {
   // TODO: build residual function too
   /*  TODO: k_functionNameSize will not be the same for R1, R2... and RES1,
    * RES2... */
-  const char* functionName = k_functionNames[0];
+  const char* functionName = k_storedNames[0];
   assert(bufferSize >= k_functionNameSize);
   size_t length = strlcpy(buffer, functionName, bufferSize);
   length +=

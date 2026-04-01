@@ -182,8 +182,7 @@ Layout ExpressionsListController::GetExactLayoutFromExpression(
       *approximate = approximateLayout;
     }
     /* Make it editable to compare equivalent layouts. */
-    else if (exactLayout.isIdenticalTo(approximateLayout, true) ||
-             exactLayout.isSameScientificNotationAs(approximateLayout, false)) {
+    else if (exactLayout.isIdenticalTo(approximateLayout, true)) {
       *approximate = Layout();
     } else {
       *approximate = approximateLayout;

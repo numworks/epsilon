@@ -1,6 +1,7 @@
 #pragma once
 
 #include <assert.h>
+#include <omg/vector.h>
 
 #include <span>
 
@@ -52,8 +53,7 @@ namespace Storage {
 
 class RecordNameVerifier {
  public:
-  RecordNameVerifier()
-      : m_numberOfRestrictiveExtensions(0), m_numberOfReservedNamesArrays(0) {}
+  RecordNameVerifier() : m_numberOfRestrictiveExtensions(0) {}
   // Register a new restrictive extension
   void registerRestrictiveExtensionWithPrecedence(const char* extension,
                                                   int precedenceScore);
@@ -73,7 +73,7 @@ class RecordNameVerifier {
   void registerArrayOfReservedNames(std::span<const char* const> namePrefixes,
                                     const char* extension,
                                     int prefixRepetitions);
-  void unregisterAllReservedNames() { m_numberOfReservedNamesArrays = 0; }
+  void unregisterAllReservedNames() { m_reservedNamesArrays.clear(); }
 
   enum class OverrideStatus { Forbidden = 0, Allowed, CanCoexist };
 
@@ -113,8 +113,8 @@ class RecordNameVerifier {
   int m_restrictiveExtensionsPrecedenceScore
       [k_maxNumberOfRestrictiveExtensions];
   int m_numberOfRestrictiveExtensions;
-  ReservedNamesArray m_reservedNamesArrays[k_maxNumberOfReservedNamesArrays];
-  int m_numberOfReservedNamesArrays;
+  OMG::StaticVector<ReservedNamesArray, k_maxNumberOfReservedNamesArrays>
+      m_reservedNamesArrays;
 };
 
 }  // namespace Storage

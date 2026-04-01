@@ -16,10 +16,8 @@ void RecordNameVerifier::registerRestrictiveExtensionWithPrecedence(
 void RecordNameVerifier::registerArrayOfReservedNames(
     std::span<const char* const> namePrefixes, const char* extension,
     int prefixRepetitions) {
-  assert(m_numberOfReservedNamesArrays < k_maxNumberOfReservedNamesArrays);
-  ReservedNamesArray newArray = {namePrefixes, extension, prefixRepetitions};
-  m_reservedNamesArrays[m_numberOfReservedNamesArrays] = newArray;
-  m_numberOfReservedNamesArrays++;
+  m_reservedNamesArrays.push(
+      ReservedNamesArray{namePrefixes, extension, prefixRepetitions});
 }
 
 RecordNameVerifier::OverrideStatus
@@ -64,8 +62,7 @@ int RecordNameVerifier::precedenceScoreOfExtension(
 
 bool RecordNameVerifier::isNameReservedForExtension(
     const char* name, int nameLength, const char* extension) const {
-  for (int i = 0; i < m_numberOfReservedNamesArrays; i++) {
-    ReservedNamesArray reservedNamesArray = m_reservedNamesArrays[i];
+  for (const ReservedNamesArray& reservedNamesArray : m_reservedNamesArrays) {
     if (strcmp(extension, reservedNamesArray.extension) != 0) {
       continue;
     }

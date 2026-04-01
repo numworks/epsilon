@@ -312,13 +312,12 @@ Model* Store::regressionModel(Model::Type type) const {
   return &s_model;
 }
 
-int Store::BuildUserFunctionName(int series, char* buffer, int bufferSize) {
-  // TODO: build residual function too
+int Store::BuildStoredName(const char* baseName, int series, char* buffer,
+                           int bufferSize) {
   /*  TODO: k_functionNameSize will not be the same for R1, R2... and RES1,
    * RES2... */
-  const char* functionName = k_storedNames[0];
   assert(bufferSize >= k_functionNameSize);
-  size_t length = strlcpy(buffer, functionName, bufferSize);
+  size_t length = strlcpy(buffer, baseName, bufferSize);
   length +=
       OMG::Print::IntLeft(1 + series, buffer + length, bufferSize - length);
   assert(length == k_functionNameSize - 1);
@@ -328,7 +327,8 @@ int Store::BuildUserFunctionName(int series, char* buffer, int bufferSize) {
 
 Ion::Storage::Record Store::functionRecord(int series) const {
   char name[k_functionNameSize];
-  BuildUserFunctionName(series, name, k_functionNameSize);
+  BuildStoredName(RegressionFunctionBaseName(), series, name,
+                  k_functionNameSize);
   return Ion::Storage::FileSystem::sharedFileSystem
       ->recordBaseNamedWithExtension(name, Ion::Storage::regressionExtension);
 }
@@ -339,7 +339,8 @@ void Store::storeRegressionFunction(int series,
     return deleteRegressionFunction(series);
   }
   char name[k_functionNameSize];
-  BuildUserFunctionName(series, name, k_functionNameSize);
+  BuildStoredName(RegressionFunctionBaseName(), series, name,
+                  k_functionNameSize);
   UserExpression expressionToStore =
       expression.cloneAndReplaceSymbolWithUnknown(
           SymbolHelper::BuildUserVariable(CodePoints::k_cartesianSymbol));

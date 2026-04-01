@@ -115,7 +115,15 @@ class Store : public Shared::LinearRegressionStore {
   void resetMemoization();
 
   constexpr static int k_functionNameSize = 3;
-  static int BuildUserFunctionName(int series, char* buffer, int bufferSize);
+
+  constexpr static const char* RegressionFunctionBaseName() {
+    return k_storedNames[0];  // "R"
+  }
+  constexpr static const char* ResidualListBaseName() {
+    return k_storedNames[1];  // "RES"
+  }
+  static int BuildStoredName(const char* baseName, int series, char* buffer,
+                             int bufferSize);
   Ion::Storage::Record functionRecord(int series) const;
   void storeRegressionFunction(
       int series, const Poincare::UserExpression& expression) const;

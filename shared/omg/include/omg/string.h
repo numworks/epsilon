@@ -7,6 +7,13 @@
 
 namespace OMG {
 
+/* String length comparator on null-terminated C strings, compatible with STL
+ * algorithms */
+constexpr bool StringLengthCompare(const char* s1, const char* s2) {
+  // Cannot use strlen because it is not constexpr
+  return std::string_view(s1).length() < std::string_view(s2).length();
+}
+
 template <size_t CAPACITY>
 class String {
   template <size_t OTHER_CAPACITY>

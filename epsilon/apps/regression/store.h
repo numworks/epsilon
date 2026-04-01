@@ -6,6 +6,7 @@
 #include <apps/shared/linear_regression_store.h>
 #include <escher/responder.h>
 #include <float.h>
+#include <omg/string.h>
 
 #include "model.h"
 
@@ -16,7 +17,16 @@ class Store : public Shared::LinearRegressionStore {
   constexpr static const char* const* k_columnNames =
       DoublePairStore::k_regressionColumNames;
   static const char* SeriesTitle(int series);
-  constexpr static const char* k_storedNames[] = {"R", "RES"};
+  constexpr static std::array<const char*, 2> k_storedNames = {"R", "RES"};
+  constexpr static int k_longestStoredName =
+      std::string_view(*std::max_element(k_storedNames.begin(),
+                                         k_storedNames.end(),
+                                         OMG::StringLengthCompare))
+          .length()
+      // + 1 for the series index
+      + 1
+      // + 1 for the null-terminating character
+      + 1;
 
   Store(Shared::DoublePairStorePreferences* preferences,
         Model::Type* regressionTypes);

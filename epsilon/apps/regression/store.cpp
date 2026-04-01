@@ -313,11 +313,11 @@ Model* Store::regressionModel(Model::Type type) const {
   return &s_model;
 }
 
-int Store::BuildStoredName(const char* baseName, int series, char* buffer,
-                           int bufferSize) {
-  size_t length = strlcpy(buffer, baseName, bufferSize);
-  length +=
-      OMG::Print::IntLeft(1 + series, buffer + length, bufferSize - length);
+int Store::BuildStoredName(const char* baseName, int series,
+                           std::span<char> buffer) {
+  size_t length = strlcpy(buffer.data(), baseName, buffer.size());
+  length += OMG::Print::IntLeft(1 + series, buffer.data() + length,
+                                buffer.size() - length);
   buffer[length] = 0;
   return length;
 }
@@ -325,7 +325,7 @@ int Store::BuildStoredName(const char* baseName, int series, char* buffer,
 Ion::Storage::Record Store::storedRecord(const char* baseName,
                                          int series) const {
   char name[k_nameBufferLength];
-  BuildStoredName(baseName, series, name, k_nameBufferLength);
+  BuildStoredName(baseName, series, name);
   return Ion::Storage::FileSystem::sharedFileSystem
       ->recordBaseNamedWithExtension(name, Ion::Storage::regressionExtension);
 }
@@ -336,7 +336,7 @@ void Store::storeElement(const char* baseName, int series,
     return deleteStoredElement(baseName, series);
   }
   char name[k_nameBufferLength];
-  BuildStoredName(baseName, series, name, k_nameBufferLength);
+  BuildStoredName(baseName, series, name);
   UserExpression expressionToStore =
       expression.cloneAndReplaceSymbolWithUnknown(
           SymbolHelper::BuildUserVariable(CodePoints::k_cartesianSymbol));

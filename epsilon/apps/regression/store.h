@@ -120,8 +120,8 @@ class Store : public Shared::LinearRegressionStore {
   constexpr static const char* ResidualListBaseName() {
     return k_storedNames[1];  // "RES"
   }
-  static int BuildStoredName(const char* baseName, int series, char* buffer,
-                             int bufferSize);
+  static int BuildStoredName(const char* baseName, int series,
+                             std::span<char> buffer);
   Ion::Storage::Record storedRecord(const char* baseName, int series) const;
   void storeElement(const char* baseName, int series,
                     const Poincare::UserExpression& expression) const;

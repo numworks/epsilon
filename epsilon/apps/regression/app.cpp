@@ -42,12 +42,18 @@ App::Snapshot::Snapshot()
                                      Ion::Storage::listExtension,
                                      Shared::DoublePairStore::k_numberOfSeries);
 
-  /* Register R1, R2, R3 ... and RES1, RES2, RES3... as reserved entries in the
-   * sharedStorage. */
+  // Register R1, R2, R3... in the sharedStorage
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
-      ->registerArrayOfReservedNames(Store::k_storedNames,
-                                     Ion::Storage::regressionExtension,
-                                     Shared::DoublePairStore::k_numberOfSeries);
+      ->registerArrayOfReservedNames(
+          std::span<const char* const>({Store::k_regressionFunctionBaseName}),
+          Ion::Storage::regressionFunctionExtension,
+          Shared::DoublePairStore::k_numberOfSeries);
+  // Register RES, RES2, RES3... in the sharedStorage
+  Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
+      ->registerArrayOfReservedNames(
+          std::span<const char* const>({Store::k_residualListBaseName}),
+          Ion::Storage::regressionListExtension,
+          Shared::DoublePairStore::k_numberOfSeries);
 }
 
 App* App::Snapshot::unpack(Container* container) {

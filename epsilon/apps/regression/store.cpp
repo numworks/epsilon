@@ -188,10 +188,9 @@ void Store::updateCoefficients(int series) {
    * will be an issue ? */
   storeElement(k_regressionFunctionBaseName, series,
                seriesModel->expression(m_regressionCoefficients[series]));
-  // TODO: commented because the varbox would see the residual list as a
-  // function storeElement(k_residualListBaseName, series,
-  //              seriesModel->residualList(this, series,
-  //                                        m_regressionCoefficients[series]));
+  storeElement(k_residualListBaseName, series,
+               seriesModel->residualList(this, series,
+                                         m_regressionCoefficients[series]));
 
   if (!coefficientsAreDefined(series)) {
     m_determinationCoefficient[series] = NAN;
@@ -330,7 +329,7 @@ Ion::Storage::Record Store::storedRecord(const char* baseName,
   char name[k_nameBufferLength];
   BuildStoredName(baseName, series, name);
   return Ion::Storage::FileSystem::sharedFileSystem
-      ->recordBaseNamedWithExtension(name, Ion::Storage::regressionExtension);
+      ->recordBaseNamedWithExtension(name, ExtensionForBaseName(baseName));
 }
 
 void Store::storeElement(const char* baseName, int series,
@@ -344,8 +343,8 @@ void Store::storeElement(const char* baseName, int series,
       expression.cloneAndReplaceSymbolWithUnknown(
           SymbolHelper::BuildUserVariable(CodePoints::k_cartesianSymbol));
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      name, Ion::Storage::regressionExtension,
-      expressionToStore.addressInPool(), expressionToStore.size(), true);
+      name, ExtensionForBaseName(baseName), expressionToStore.addressInPool(),
+      expressionToStore.size(), true);
 }
 
 void Store::deleteStoredElements(int series) const {

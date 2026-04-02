@@ -104,6 +104,16 @@ static int NumberOfParametricComponents() {
       Storage::parametricComponentExtension);
 }
 
+static int NumberOfSimpleLists() {
+  return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
+      Storage::listExtension);
+}
+
+static int NumberOfRegressionLists() {
+  return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
+      Storage::regressionListExtension);
+}
+
 int MathVariableBoxController::numberOfElements(Page page) const {
   if (page == Page::RootMenu) {
     int numberOfRows = 1;  // Define a variable
@@ -117,7 +127,9 @@ int MathVariableBoxController::numberOfElements(Page page) const {
   if (page == Page::Function) {
     return NumberOfFunctions() + NumberOfParametricComponents() +
            Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
-               Storage::regressionExtension);
+               Storage::regressionFunctionExtension);
+  } else if (page == Page::List) {
+    return NumberOfSimpleLists() + NumberOfRegressionLists();
   }
   return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
       Extension(page));
@@ -169,7 +181,7 @@ void MathVariableBoxController::fillCellForRow(HighlightCell* cell, int row) {
     } else if (record.hasExtension(Storage::parametricComponentExtension)) {
       symbol = CodePoints::k_parametricSymbol;
     } else {
-      assert(record.hasExtension(Storage::regressionExtension));
+      assert(record.hasExtension(Storage::regressionFunctionExtension));
       symbol = CodePoints::k_cartesianSymbol;
     }
     symbolLength = Function::NameWithArgument(
@@ -387,13 +399,13 @@ Layout MathVariableBoxController::expressionLayoutForRecord(
 }
 
 const char* MathVariableBoxController::Extension(Page page) {
-  // Function contains two extensions (func and reg)
-  assert(page != Page::RootMenu && page != Page::Function);
+  /* Function and List pages contains two extensions (func and regf, or func and
+   * regl) */
+  assert(page != Page::RootMenu && page != Page::Function &&
+         page != Page::List);
   switch (page) {
     case Page::Expression:
       return Ion::Storage::expressionExtension;
-    case Page::List:
-      return Ion::Storage::listExtension;
     case Page::Matrix:
       return Ion::Storage::matrixExtension;
     default:
@@ -420,8 +432,19 @@ Storage::Record MathVariableBoxController::recordAtIndex(int row) {
     } else {
       record =
           Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
-              Storage::regressionExtension,
+              Storage::regressionFunctionExtension,
               row - numberOfFunctions - numberOfParametricComponents);
+    }
+  } else if (m_currentPage == Page::List) {
+    if (row < NumberOfSimpleLists()) {
+      record =
+          Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
+              Storage::listExtension, row);
+    } else {
+      assert(row < NumberOfSimpleLists() + NumberOfRegressionLists());
+      record =
+          Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
+              Storage::regressionListExtension, row - NumberOfSimpleLists());
     }
   } else {
     record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
@@ -442,7 +465,7 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
   {
     Storage::Record record = recordAtIndex(row);
     if (record.hasExtension(Ion::Storage::parametricComponentExtension) ||
-        record.hasExtension(Ion::Storage::regressionExtension)) {
+        record.hasExtension(Ion::Storage::regressionFunctionExtension)) {
       return false;
     }
     bool isParametricFunction = false;

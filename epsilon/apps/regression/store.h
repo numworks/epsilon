@@ -119,6 +119,12 @@ class Store : public Shared::LinearRegressionStore {
   double computeResidualStandardDeviation(int series);
   void resetMemoization();
 
+  constexpr static const char* ExtensionForBaseName(std::string_view baseName) {
+    return baseName.starts_with("RES")
+               ? Ion::Storage::regressionListExtension
+               : Ion::Storage::regressionFunctionExtension;
+  }
+
   static int BuildStoredName(const char* baseName, int series,
                              std::span<char> buffer);
   Ion::Storage::Record storedRecord(const char* baseName, int series) const;

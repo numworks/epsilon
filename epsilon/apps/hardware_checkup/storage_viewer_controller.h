@@ -50,7 +50,8 @@ class StorageViewerController : public Escher::ViewController {
 
       Ion::Storage::scriptExtension,
       Ion::Storage::sequenceExtension,
-      Ion::Storage::regressionExtension,
+      Ion::Storage::regressionFunctionExtension,
+      Ion::Storage::regressionListExtension,
       Ion::Storage::functionExtension,
 
       k_dummyExtension,

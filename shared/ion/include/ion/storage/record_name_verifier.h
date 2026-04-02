@@ -97,14 +97,14 @@ class RecordNameVerifier {
   };
 
   // This can be changed if you need more reserved names arrays
-  constexpr static int k_maxNumberOfReservedNamesArrays = 4;
+  constexpr static int k_maxNumberOfReservedNamesArrays = 5;
 
   int precedenceScoreOfExtension(const char* extension) const;
   bool isNameReservedForExtension(const char* name, int nameLength,
                                   const char* extension) const;
 
   // This can be changed if you need more restrictive extensions
-  constexpr static int k_maxNumberOfRestrictiveExtensions = 7;
+  constexpr static int k_maxNumberOfRestrictiveExtensions = 8;
 
   OMG::StaticVector<const char*, k_maxNumberOfRestrictiveExtensions>
       m_restrictiveExtensions;

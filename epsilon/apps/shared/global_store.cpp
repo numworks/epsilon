@@ -46,13 +46,14 @@ Layout GlobalStore::LayoutForRecord(Ion::Storage::Record record) {
   assert(!record.isNull());
   if (record.hasExtension(Ion::Storage::expressionExtension) ||
       record.hasExtension(Ion::Storage::listExtension) ||
-      record.hasExtension(Ion::Storage::matrixExtension)) {
+      record.hasExtension(Ion::Storage::matrixExtension) ||
+      record.hasExtension(Ion::Storage::regressionListExtension)) {
     return PoincareHelpers::CreateLayout(
         UserExpression::Builder(TreeFromStorage(record)),
         Escher::App::app()->localContext(), true);
   } else if (record.hasExtension(Ion::Storage::functionExtension) ||
              record.hasExtension(Ion::Storage::parametricComponentExtension) ||
-             record.hasExtension(Ion::Storage::regressionExtension)) {
+             record.hasExtension(Ion::Storage::regressionFunctionExtension)) {
     CodePoint symbol = UCodePointNull;
     if (record.hasExtension(Ion::Storage::functionExtension)) {
       symbol = GlobalStore::s_continuousFunctionStore->modelForRecord(record)
@@ -61,7 +62,7 @@ Layout GlobalStore::LayoutForRecord(Ion::Storage::Record record) {
                    Ion::Storage::parametricComponentExtension)) {
       symbol = CodePoints::k_parametricSymbol;
     } else {
-      assert(record.hasExtension(Ion::Storage::regressionExtension));
+      assert(record.hasExtension(Ion::Storage::regressionFunctionExtension));
       symbol = CodePoints::k_cartesianSymbol;
     }
     UserExpression expression = UserExpression::Builder(TreeFromStorage(record))
@@ -101,9 +102,11 @@ SymbolContext::SymbolDescription GlobalStore::symbolDescriptionForIdentifier(
   } else if (strcmp(extension, Ion::Storage::functionExtension) == 0 ||
              strcmp(extension, Ion::Storage::parametricComponentExtension) ==
                  0 ||
-             strcmp(extension, Ion::Storage::regressionExtension) == 0) {
+             strcmp(extension, Ion::Storage::regressionFunctionExtension) ==
+                 0) {
     type = SymbolType::Function;
-  } else if (strcmp(extension, Ion::Storage::listExtension) == 0) {
+  } else if (strcmp(extension, Ion::Storage::listExtension) == 0 ||
+             strcmp(extension, Ion::Storage::regressionListExtension) == 0) {
     type = SymbolType::List;
   } else {
     assert(strcmp(extension, Ion::Storage::sequenceExtension) == 0);
@@ -166,7 +169,8 @@ const Internal::Tree* GlobalStore::TreeFromStorage(
       record.hasExtension(Ion::Storage::listExtension) ||
       record.hasExtension(Ion::Storage::matrixExtension) ||
       record.hasExtension(Ion::Storage::parametricComponentExtension) ||
-      record.hasExtension(Ion::Storage::regressionExtension)) {
+      record.hasExtension(Ion::Storage::regressionFunctionExtension) ||
+      record.hasExtension(Ion::Storage::regressionListExtension)) {
     // The expression can be accessed by directly reading the record value
     return UserExpression::TreeFromAddress(record.value().buffer);
   } else if (record.hasExtension(Ion::Storage::functionExtension)) {

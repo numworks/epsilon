@@ -25,7 +25,8 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
       Ion::Storage::functionExtension,
       Ion::Storage::listExtension,
       Ion::Storage::sequenceExtension,
-      Ion::Storage::regressionExtension,
+      Ion::Storage::regressionFunctionExtension,
+      Ion::Storage::regressionListExtension,
       Ion::Storage::parametricComponentExtension};
   constexpr static int k_numberOfExtensions = std::size(k_extensions);
 

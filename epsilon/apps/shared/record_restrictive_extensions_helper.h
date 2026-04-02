@@ -14,7 +14,8 @@ struct RestrictiveExtension {
 };
 
 constexpr static RestrictiveExtension k_restrictiveExtensions[] = {
-    {Ion::Storage::regressionExtension, 1},
+    {Ion::Storage::regressionFunctionExtension, 1},
+    {Ion::Storage::regressionListExtension, 1},
     {Ion::Storage::parametricComponentExtension, 1},
     {Ion::Storage::functionExtension, 2},
     {Ion::Storage::sequenceExtension, 2},

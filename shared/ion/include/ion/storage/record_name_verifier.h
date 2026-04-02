@@ -53,20 +53,16 @@ namespace Storage {
 
 class RecordNameVerifier {
  public:
-  RecordNameVerifier() : m_numberOfRestrictiveExtensions(0) {}
+  RecordNameVerifier() {}
+
   // Register a new restrictive extension
   void registerRestrictiveExtensionWithPrecedence(const char* extension,
                                                   int precedenceScore);
-  void unregisterAllRestrictiveExtensions() {
-    m_numberOfRestrictiveExtensions = 0;
-  }
+  void unregisterAllRestrictiveExtensions() { m_restrictiveExtensions.clear(); }
 
   // Getters
-  const char* const* restrictiveExtensions() const {
-    return m_restrictiveExtensions;
-  }
-  int numberOfRestrictiveExtensions() const {
-    return m_numberOfRestrictiveExtensions;
+  std::span<const char* const> restrictiveExtensions() const {
+    return m_restrictiveExtensions.span();
   }
 
   // Register a new array of reserved names
@@ -100,8 +96,6 @@ class RecordNameVerifier {
     int prefixRepetitions;
   };
 
-  // This can be changed if you need more restrictive extensions
-  constexpr static int k_maxNumberOfRestrictiveExtensions = 7;
   // This can be changed if you need more reserved names arrays
   constexpr static int k_maxNumberOfReservedNamesArrays = 4;
 
@@ -109,10 +103,13 @@ class RecordNameVerifier {
   bool isNameReservedForExtension(const char* name, int nameLength,
                                   const char* extension) const;
 
-  const char* m_restrictiveExtensions[k_maxNumberOfRestrictiveExtensions];
-  int m_restrictiveExtensionsPrecedenceScore
-      [k_maxNumberOfRestrictiveExtensions];
-  int m_numberOfRestrictiveExtensions;
+  // This can be changed if you need more restrictive extensions
+  constexpr static int k_maxNumberOfRestrictiveExtensions = 7;
+
+  OMG::StaticVector<const char*, k_maxNumberOfRestrictiveExtensions>
+      m_restrictiveExtensions;
+  OMG::StaticVector<int, k_maxNumberOfRestrictiveExtensions>
+      m_restrictiveExtensionsPrecedenceScore;
   OMG::StaticVector<ReservedNamesArray, k_maxNumberOfReservedNamesArrays>
       m_reservedNamesArrays;
 };

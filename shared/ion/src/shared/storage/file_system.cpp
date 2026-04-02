@@ -137,7 +137,8 @@ int FileSystem::firstAvailableNameFromPrefix(char* buffer, size_t prefixLength,
       [](char* buffer, size_t bufferSize, void* auxiliary) {
         const char** extension = static_cast<const char**>(auxiliary);
         return Ion::Storage::FileSystem::sharedFileSystem
-            ->recordBaseNamedWithExtensions(buffer, extension, 1)
+            ->recordBaseNamedWithExtensions(
+                buffer, std::span<const char* const>(extension, 1))
             .isNull();
       },
       &extension, maxId);
@@ -291,18 +292,17 @@ Record FileSystem::recordNamed(Record::Name name) const {
 }
 
 Record FileSystem::recordBaseNamedWithExtensions(
-    const char* baseName, const char* const extensions[],
-    size_t numberOfExtensions) const {
+    const char* baseName, std::span<const char* const> extensions) const {
   return privateRecordBasedNamedWithExtensions(baseName, strlen(baseName),
-                                               extensions, numberOfExtensions);
+                                               extensions);
 }
 
 const char* FileSystem::extensionOfRecordBaseNamedWithExtensions(
-    const char* baseName, int baseNameLength, const char* const extensions[],
-    size_t numberOfExtensions) const {
+    const char* baseName, int baseNameLength,
+    std::span<const char* const> extensions) const {
   const char* result = nullptr;
   privateRecordBasedNamedWithExtensions(baseName, baseNameLength, extensions,
-                                        numberOfExtensions, &result);
+                                        &result);
   return result;
 }
 
@@ -384,8 +384,7 @@ bool FileSystem::handleCompetingRecord(Record::Name recordName,
   }
   Record competingRecord = privateRecordBasedNamedWithExtensions(
       recordName.baseName, recordName.baseNameLength,
-      m_recordNameVerifier.restrictiveExtensions(),
-      m_recordNameVerifier.numberOfRestrictiveExtensions());
+      m_recordNameVerifier.restrictiveExtensions());
   if (competingRecord.isNull()) {
     return true;
   }
@@ -669,21 +668,22 @@ bool FileSystem::slideBuffer(char* position, int delta) {
 }
 
 Record FileSystem::privateRecordBasedNamedWithExtensions(
-    const char* baseName, int baseNameLength, const char* const extensions[],
-    size_t numberOfExtensions, const char** extensionResult) const {
+    const char* baseName, int baseNameLength,
+    std::span<const char* const> extensions,
+    const char** extensionResult) const {
   Record::Name lastRetrievedRecordName =
       nameOfRecordStarting(m_lastRecordRetrievedPointer);
   if (m_lastRecordRetrievedPointer &&
       recordNameHasBaseNameAndOneOfTheseExtensions(
           lastRetrievedRecordName, baseName, baseNameLength, extensions,
-          numberOfExtensions, extensionResult)) {
+          extensionResult)) {
     return m_lastRecordRetrieved;
   }
   for (char* p : *this) {
     Record::Name currentName = nameOfRecordStarting(p);
-    if (recordNameHasBaseNameAndOneOfTheseExtensions(
-            currentName, baseName, baseNameLength, extensions,
-            numberOfExtensions, extensionResult)) {
+    if (recordNameHasBaseNameAndOneOfTheseExtensions(currentName, baseName,
+                                                     baseNameLength, extensions,
+                                                     extensionResult)) {
       return Record(currentName);
     }
   }
@@ -695,16 +695,16 @@ Record FileSystem::privateRecordBasedNamedWithExtensions(
 
 bool FileSystem::recordNameHasBaseNameAndOneOfTheseExtensions(
     Record::Name name, const char* baseName, int baseNameLength,
-    const char* const extensions[], size_t numberOfExtensions,
+    std::span<const char* const> extensions,
     const char** extensionResult) const {
   assert(name.baseName);
   if (!Record::NameIsEmpty(name) &&
       strncmp(baseName, name.baseName, baseNameLength) == 0 &&
       static_cast<size_t>(baseNameLength) == name.baseNameLength) {
-    for (size_t i = 0; i < numberOfExtensions; i++) {
-      if (strcmp(name.extension, extensions[i]) == 0) {
+    for (const char* extension : extensions) {
+      if (strcmp(name.extension, extension) == 0) {
         if (extensionResult) {
-          *extensionResult = extensions[i];
+          *extensionResult = extension;
         }
         return true;
       }

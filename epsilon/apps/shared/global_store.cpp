@@ -87,10 +87,10 @@ void GlobalStore::DestroyRecordsBaseNamedWithoutExtension(
 
 SymbolContext::SymbolDescription GlobalStore::symbolDescriptionForIdentifier(
     std::string_view identifier) const {
-  const char* extension = Ion::Storage::FileSystem::sharedFileSystem
-                              ->extensionOfRecordBaseNamedWithExtensions(
-                                  identifier.data(), identifier.length(),
-                                  k_extensions, k_numberOfExtensions);
+  const char* extension =
+      Ion::Storage::FileSystem::sharedFileSystem
+          ->extensionOfRecordBaseNamedWithExtensions(
+              identifier.data(), identifier.length(), k_extensions);
 
   SymbolType type = SymbolType::None;
   if (extension == nullptr) {
@@ -250,7 +250,7 @@ Ion::Storage::Record::ErrorStatus GlobalStore::setExpressionForUserFunction(
 Ion::Storage::Record GlobalStore::UserSymbolRecordWithBaseName(
     const char* name) {
   return Ion::Storage::FileSystem::sharedFileSystem
-      ->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);
+      ->recordBaseNamedWithExtensions(name, k_extensions);
 }
 
 void GlobalStore::tidyStores() {

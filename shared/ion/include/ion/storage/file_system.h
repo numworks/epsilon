@@ -118,12 +118,11 @@ class FileSystem {
     return recordNamed(
         Record::CreateRecordNameFromBaseNameAndExtension(baseName, extension));
   }
-  Record recordBaseNamedWithExtensions(const char* baseName,
-                                       const char* const extensions[],
-                                       size_t numberOfExtensions) const;
+  Record recordBaseNamedWithExtensions(
+      const char* baseName, std::span<const char* const> extensions) const;
   const char* extensionOfRecordBaseNamedWithExtensions(
-      const char* baseName, int baseNameLength, const char* const extensions[],
-      size_t numberOfExtensions) const;
+      const char* baseName, int baseNameLength,
+      std::span<const char* const> extensions) const;
 
   template <typename T>
   T* findSystemRecord() const {
@@ -224,11 +223,12 @@ class FileSystem {
   RecordIterator end() const { return RecordIterator(nullptr); }
 
   Record privateRecordBasedNamedWithExtensions(
-      const char* baseName, int baseNameLength, const char* const extensions[],
-      size_t numberOfExtensions, const char** extensionResult = nullptr) const;
+      const char* baseName, int baseNameLength,
+      std::span<const char* const> extensions,
+      const char** extensionResult = nullptr) const;
   bool recordNameHasBaseNameAndOneOfTheseExtensions(
       Record::Name name, const char* baseName, int baseNameLength,
-      const char* const extensions[], size_t numberOfExtensions,
+      std::span<const char* const> extensions,
       const char** extensionResult) const;
 
   uint32_t m_magicHeader;

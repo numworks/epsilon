@@ -6,11 +6,8 @@ namespace Storage {
 
 void RecordNameVerifier::registerRestrictiveExtensionWithPrecedence(
     const char* extension, int precedenceScore) {
-  assert(m_numberOfRestrictiveExtensions < k_maxNumberOfRestrictiveExtensions);
-  m_restrictiveExtensions[m_numberOfRestrictiveExtensions] = extension;
-  m_restrictiveExtensionsPrecedenceScore[m_numberOfRestrictiveExtensions] =
-      precedenceScore;
-  m_numberOfRestrictiveExtensions++;
+  m_restrictiveExtensions.push(extension);
+  m_restrictiveExtensionsPrecedenceScore.push(precedenceScore);
 }
 
 void RecordNameVerifier::registerArrayOfReservedNames(
@@ -52,7 +49,9 @@ RecordNameVerifier::canOverrideRecordWithNewExtension(
 
 int RecordNameVerifier::precedenceScoreOfExtension(
     const char* extension) const {
-  for (int i = 0; i < m_numberOfRestrictiveExtensions; i++) {
+  assert(m_restrictiveExtensions.size() ==
+         m_restrictiveExtensionsPrecedenceScore.size());
+  for (size_t i = 0; i < m_restrictiveExtensions.size(); i++) {
     if (strcmp(extension, m_restrictiveExtensions[i]) == 0) {
       return m_restrictiveExtensionsPrecedenceScore[i];
     }

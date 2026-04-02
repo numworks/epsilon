@@ -8,6 +8,7 @@
 
 #include <array>
 
+#include "app.h"
 #include "elements_data_base.h"
 #include "shared/global_store.h"
 
@@ -46,13 +47,14 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
 
   if (unit.isUninitialized()) {
     return value.createLayout(floatDisplayMode, significantDigits,
-                              globalContext);
+                              globalContext, OMG::Base::Decimal,
+                              App::k_useTenPower);
   }
 
   UserExpression result =
       UserExpression::Create(KMult(KA, KB), {.KA = value, .KB = unit});
-  return result.createLayout(floatDisplayMode, significantDigits,
-                             globalContext);
+  return result.createLayout(floatDisplayMode, significantDigits, globalContext,
+                             OMG::Base::Decimal, App::k_useTenPower);
 }
 
 DataField::ColorPair DoubleDataField::getColors(AtomicNumber z) const {
@@ -105,7 +107,8 @@ Poincare::Layout ZDataField::getLayout(AtomicNumber z,
       GlobalPreferences::SharedGlobalPreferences()->displayMode();
   const SymbolContext& globalContext = Shared::GlobalContextAccessor::Context();
   return UserExpression::Builder(static_cast<int>(z))
-      .createLayout(floatDisplayMode, significantDigits, globalContext);
+      .createLayout(floatDisplayMode, significantDigits, globalContext,
+                    OMG::Base::Decimal, App::k_useTenPower);
 }
 
 // ADataField
@@ -119,7 +122,8 @@ Layout ADataField::getLayout(AtomicNumber z, int significantDigits) const {
       GlobalPreferences::SharedGlobalPreferences()->displayMode();
   const SymbolContext& globalContext = Shared::GlobalContextAccessor::Context();
   return UserExpression::Builder(static_cast<int>(a))
-      .createLayout(floatDisplayMode, significantDigits, globalContext);
+      .createLayout(floatDisplayMode, significantDigits, globalContext,
+                    OMG::Base::Decimal, App::k_useTenPower);
 }
 
 bool ADataField::canBeStored(AtomicNumber z) const {
@@ -215,11 +219,13 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z,
           KA ^ KB ^ KC ^ KSuperscriptL(KD),
           {.KA = res,
            .KB = UserExpression::Builder(n).createLayout(
-               floatDisplayMode, significantDigits, globalContext),
+               floatDisplayMode, significantDigits, globalContext,
+               OMG::Base::Decimal, App::k_useTenPower),
            .KC = Layout::CodePoint(k_lSymbols[l]),
            .KD = UserExpression::Builder(conf[index])
                      .createLayout(floatDisplayMode, significantDigits,
-                                   globalContext)});
+                                   globalContext, OMG::Base::Decimal,
+                                   App::k_useTenPower)});
     }
   }
 

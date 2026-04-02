@@ -162,6 +162,7 @@ class UserExpression : public Expression {
                       int numberOfSignificantDigits,
                       const SymbolContext& symbolContext = EmptySymbolContext{},
                       OMG::Base base = OMG::Base::Decimal,
+                      bool useTenPowerInsteadOfE = false,
                       bool linearMode = false) const;
   char* toLatex(char* buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,

@@ -8,6 +8,7 @@
 
 #include <cmath>
 
+#include "../app.h"
 #include "../calculation.h"
 #include "vector_helper.h"
 
@@ -231,7 +232,8 @@ bool AdditionalResultsType::HasScientificNotation(
   }
   Poincare::Layout historyResult = approximateOutput.createLayout(
       calculationPreferences.displayMode,
-      calculationPreferences.numberOfSignificantDigits, symbolContext);
+      calculationPreferences.numberOfSignificantDigits, symbolContext,
+      OMG::Base::Decimal, App::k_useTenPower);
   return !historyResult.isIdenticalTo(
       AdditionalResultsHelper::ScientificLayout(
           approximateOutput, symbolContext, calculationPreferences),

@@ -7,6 +7,7 @@
 #include <poincare/preferences.h>
 #include <poincare/symbol_context.h>
 
+#include "app.h"
 #include "list_controller.h"
 
 using namespace Poincare;
@@ -34,9 +35,10 @@ EquationModelsParameterController::EquationModelsParameterController(
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     Poincare::UserExpression e = UserExpression::Parse(
         k_models[i + 1], EmptySymbolContext{}, {.preserveInput = true});
-    m_layouts[i] =
-        e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
-                       Preferences::ShortNumberOfSignificantDigits);
+    m_layouts[i] = e.createLayout(
+        Poincare::Preferences::PrintFloatMode::Decimal,
+        Preferences::ShortNumberOfSignificantDigits, EmptySymbolContext{},
+        OMG::Base::Decimal, App::k_useTenPower);
     m_modelCells[i].label()->setLayout(m_layouts[i]);
   }
 }

@@ -33,10 +33,10 @@ void IntegerListController::computeAdditionalResults(
   const UserExpression integer =
       AdditionalResultsHelper::EquivalentInteger(exactOutput);
   for (int index = 0; index < k_indexOfFactorExpression; ++index) {
-    m_layouts[index] =
-        integer.createLayout(Preferences::PrintFloatMode::Decimal,
-                             Preferences::LargeNumberOfSignificantDigits,
-                             EmptySymbolContext{}, baseAtIndex(index));
+    m_layouts[index] = integer.createLayout(
+        Preferences::PrintFloatMode::Decimal,
+        Preferences::LargeNumberOfSignificantDigits, EmptySymbolContext{},
+        baseAtIndex(index), App::k_useTenPower);
   }
   // Computing factorExpression
   UserExpression factor = UserExpression::Create(KFactor(KA), {.KA = integer});

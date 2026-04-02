@@ -7,6 +7,7 @@
 #include <shared/global_store.h>
 #include <string.h>
 
+#include "app.h"
 #include "global_preferences.h"
 
 using namespace Poincare;
@@ -53,7 +54,8 @@ Layout Calculation::createInputLayout() {
     if (!e.isUninitialized()) {
       return e.createLayout(Preferences::PrintFloatMode::Decimal,
                             PrintFloat::k_maxNumberOfSignificantDigits,
-                            GlobalContextAccessor::Context());
+                            GlobalContextAccessor::Context(),
+                            OMG::Base::Decimal, App::k_useTenPower);
     }
   }
   return Layout();
@@ -66,7 +68,8 @@ Layout Calculation::createExactOutputLayout(bool* couldNotCreateExactLayout) {
     if (!e.isUninitialized()) {
       return e.createLayout(Preferences::PrintFloatMode::Decimal,
                             PrintFloat::k_maxNumberOfSignificantDigits,
-                            GlobalContextAccessor::Context());
+                            GlobalContextAccessor::Context(),
+                            OMG::Base::Decimal, App::k_useTenPower);
     }
   }
   *couldNotCreateExactLayout = true;
@@ -83,7 +86,8 @@ Layout Calculation::createApproximateOutputLayout(
           m_calculationPreferences.displayMode,
           forEditing ? PrintFloat::k_maxNumberOfSignificantDigits
                      : m_calculationPreferences.numberOfSignificantDigits,
-          GlobalContextAccessor::Context());
+          GlobalContextAccessor::Context(), OMG::Base::Decimal,
+          App::k_useTenPower);
     }
   }
   *couldNotCreateApproximateLayout = true;

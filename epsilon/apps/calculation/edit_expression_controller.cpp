@@ -200,9 +200,10 @@ bool EditExpressionController::isAcceptableExpression(
   m_calculationStore->replaceAnsInExpression(exp);
 
   assert(!exp.isUninitialized());
-  Layout layout = exp.createLayout(Preferences::PrintFloatMode::Decimal,
-                                   PrintFloat::k_maxNumberOfSignificantDigits,
-                                   symbolContext);
+  Layout layout =
+      exp.createLayout(Preferences::PrintFloatMode::Decimal,
+                       PrintFloat::k_maxNumberOfSignificantDigits,
+                       symbolContext, OMG::Base::Decimal, App::k_useTenPower);
   assert(!layout.isUninitialized());
   layout = layout.cloneWithoutMargins();
   exp = UserExpression::Parse(layout, symbolContext);

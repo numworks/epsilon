@@ -61,7 +61,8 @@ void FunctionListController::computeAdditionalResults(
       Layout::Create(KA ^ KB, {.KA = Layout::String("y="),
                                .KB = Layout(inputClone.createLayout(
                                    displayMode(), numberOfSignificantDigits(),
-                                   App::app()->localContext()))});
+                                   App::app()->localContext(),
+                                   OMG::Base::Decimal, App::k_useTenPower))});
   setShowIllustration(true);
 }
 

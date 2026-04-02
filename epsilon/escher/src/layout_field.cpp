@@ -662,7 +662,7 @@ void LayoutField::insertLayoutAtCursor(const Layout& layout,
       editableLayout = e.createLayout(
           SharedPreferences->displayMode(),
           Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
-          Poincare::EmptySymbolContext{}, OMG::Base::Decimal, true);
+          Poincare::EmptySymbolContext{}, OMG::Base::Decimal, false, true);
       cursor()->insertLayout(editableLayout.tree(), context(),
                              forceCursorRightOfLayout, forceCursorLeftOfLayout);
     } else {

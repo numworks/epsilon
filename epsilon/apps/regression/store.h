@@ -17,7 +17,12 @@ class Store : public Shared::LinearRegressionStore {
   constexpr static const char* const* k_columnNames =
       DoublePairStore::k_regressionColumNames;
   static const char* SeriesTitle(int series);
-  constexpr static std::array<const char*, 2> k_storedNames = {"R", "RES"};
+
+  constexpr static char k_regressionFunctionBaseName[] = "R";
+  constexpr static char k_residualListBaseName[] = "RES";
+
+  constexpr static std::array<const char*, 2> k_storedNames = {
+      k_regressionFunctionBaseName, k_residualListBaseName};
   constexpr static int k_nameBufferLength =
       std::string_view(*std::max_element(k_storedNames.begin(),
                                          k_storedNames.end(),
@@ -114,12 +119,6 @@ class Store : public Shared::LinearRegressionStore {
   double computeResidualStandardDeviation(int series);
   void resetMemoization();
 
-  constexpr static const char* RegressionFunctionBaseName() {
-    return k_storedNames[0];  // "R"
-  }
-  constexpr static const char* ResidualListBaseName() {
-    return k_storedNames[1];  // "RES"
-  }
   static int BuildStoredName(const char* baseName, int series,
                              std::span<char> buffer);
   Ion::Storage::Record storedRecord(const char* baseName, int series) const;

@@ -186,10 +186,10 @@ void Store::updateCoefficients(int series) {
   m_recomputeCoefficients[series] = false;
   /* TODO_PCJ: coefficients used to be Decimals and are now Doubles. Maybe this
    * will be an issue ? */
-  storeElement(RegressionFunctionBaseName(), series,
+  storeElement(k_regressionFunctionBaseName, series,
                seriesModel->expression(m_regressionCoefficients[series]));
   // TODO: commented because the varbox would see the residual list as a
-  // function storeElement(ResidualListBaseName(), series,
+  // function storeElement(k_residualListBaseName, series,
   //              seriesModel->residualList(this, series,
   //                                        m_regressionCoefficients[series]));
 

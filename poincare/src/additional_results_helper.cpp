@@ -566,7 +566,9 @@ static Poincare::Layout CreateBeautifiedLayout(
           reducedExpression,
           {.symbolContext = beautificationParameters.user.context,
            .numberOfSignificantDigits = numberOfSignificantDigits,
-           .floatMode = displayMode}));
+           .floatMode = displayMode,
+           // 10^ is used everywhere in Calculation
+           .useTenPowerInsteadOfE = true}));
   reducedExpression->removeTree();
   return layout;
 }

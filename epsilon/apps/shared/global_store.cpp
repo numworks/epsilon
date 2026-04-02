@@ -49,7 +49,7 @@ Layout GlobalStore::LayoutForRecord(Ion::Storage::Record record) {
       record.hasExtension(Ion::Storage::matrixExtension)) {
     return PoincareHelpers::CreateLayout(
         UserExpression::Builder(TreeFromStorage(record)),
-        Escher::App::app()->localContext());
+        Escher::App::app()->localContext(), true);
   } else if (record.hasExtension(Ion::Storage::functionExtension) ||
              record.hasExtension(Ion::Storage::parametricComponentExtension) ||
              record.hasExtension(Ion::Storage::regressionExtension)) {
@@ -66,8 +66,8 @@ Layout GlobalStore::LayoutForRecord(Ion::Storage::Record record) {
     }
     UserExpression expression = UserExpression::Builder(TreeFromStorage(record))
                                     .cloneAndReplaceUnknownWithSymbol(symbol);
-    return PoincareHelpers::CreateLayout(expression,
-                                         Escher::App::app()->localContext());
+    return PoincareHelpers::CreateLayout(
+        expression, Escher::App::app()->localContext(), true);
   } else {
     assert(record.hasExtension(Ion::Storage::sequenceExtension));
     return Sequence(record).layout();

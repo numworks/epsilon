@@ -155,7 +155,7 @@ Layout ExpressionModel::layout(const Storage::Record* record,
       clone = clone.cloneAndReplaceUnknownWithSymbol(symbol);
     }
     m_layout = PoincareHelpers::CreateLayout(
-        clone, Escher::App::app()->localContext());
+        clone, Escher::App::app()->localContext(), true);
     if (m_layout.isUninitialized()) {
       m_layout = KRackL();
     }

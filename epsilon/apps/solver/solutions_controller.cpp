@@ -449,8 +449,8 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
           SymbolHelper::BuildUserVariable(symbolName, strlen(symbolName));
       UserExpression value = UserExpression::Builder(
           App::app()->localContext().expressionForSymbol(symbol.tree()));
-      Layout layout =
-          PoincareHelpers::CreateLayout(value, App::app()->localContext());
+      Layout layout = PoincareHelpers::CreateLayout(
+          value, App::app()->localContext(), App::k_useTenPower);
       static_cast<ScrollableTwoLayoutsCell*>(cell)->setLayouts(Layout(),
                                                                layout);
       static_cast<ScrollableTwoLayoutsCell*>(cell)->setComparisonSign(false,
@@ -503,8 +503,8 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
       SymbolHelper::BuildUserVariable(symbolName, strlen(symbolName));
   UserExpression value = UserExpression::Builder(
       App::app()->localContext().expressionForSymbol(symbol.tree()));
-  Layout layout =
-      PoincareHelpers::CreateLayout(value, App::app()->localContext());
+  Layout layout = PoincareHelpers::CreateLayout(
+      value, App::app()->localContext(), App::k_useTenPower);
   return layout->layoutSize(k_solutionsFont).height() +
          2 * Metric::CommonSmallMargin;
 }

@@ -53,11 +53,11 @@ void RationalListController::computeAdditionalResults(
     m_layouts[index++] = approximateFraction;
   }
   m_message[index] = I18n::Message::MixedFraction;
-  m_layouts[index++] =
-      PoincareHelpers::CreateLayout(mixedFraction, App::app()->localContext());
+  m_layouts[index++] = PoincareHelpers::CreateLayout(
+      mixedFraction, App::app()->localContext(), App::k_useTenPower);
   m_message[index] = I18n::Message::EuclideanDivision;
-  m_layouts[index++] =
-      PoincareHelpers::CreateLayout(euclideanDiv, App::app()->localContext());
+  m_layouts[index++] = PoincareHelpers::CreateLayout(
+      euclideanDiv, App::app()->localContext(), App::k_useTenPower);
 }
 
 Layout RationalListController::layoutAtIndex(Escher::HighlightCell* cell,

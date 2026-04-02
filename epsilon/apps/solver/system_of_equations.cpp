@@ -20,6 +20,8 @@
 #include <poincare/symbol_context.h>
 #include <poincare/user_expression.h>
 
+#include "app.h"
+
 using namespace Poincare;
 using namespace Shared;
 
@@ -228,11 +230,12 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   Layout exactLayout, approximateLayout;
   if (!forbidExactSolution) {
     assert(!exact.isUninitialized());
-    exactLayout = PoincareHelpers::CreateLayout(exact, symbolContext);
+    exactLayout =
+        PoincareHelpers::CreateLayout(exact, symbolContext, App::k_useTenPower);
   }
   if (!approximateToUse.isUninitialized()) {
-    approximateLayout =
-        PoincareHelpers::CreateLayout(approximateToUse, symbolContext);
+    approximateLayout = PoincareHelpers::CreateLayout(
+        approximateToUse, symbolContext, App::k_useTenPower);
   }
 
   assert(!approximateLayout.isUninitialized() ||

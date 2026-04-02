@@ -149,12 +149,12 @@ void UnitListController::computeAdditionalResults(
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 
   // Memoize distinct layouts
-  Layout exactOutputLayout =
-      Shared::PoincareHelpers::CreateLayout(exactOutput, symbolContext);
+  Layout exactOutputLayout = Shared::PoincareHelpers::CreateLayout(
+      exactOutput, symbolContext, App::k_useTenPower);
   for (size_t i = 0; i < k_maxNumberOfExpressionCells; i++) {
     if (!expressions[i].isUninitialized() && !expressions[i].isUndefined()) {
-      Layout layout =
-          Shared::PoincareHelpers::CreateLayout(expressions[i], symbolContext);
+      Layout layout = Shared::PoincareHelpers::CreateLayout(
+          expressions[i], symbolContext, App::k_useTenPower);
       // Skip layouts identical to exactOutput
       if (exactOutputLayout.isIdenticalTo(layout, true)) {
         continue;
@@ -176,7 +176,7 @@ void UnitListController::computeAdditionalResults(
       if (expressions[i].isInRadians(symbolContext)) {
         // Approximated radian expression has already been computed.
         Layout approximatedLayout = Shared::PoincareHelpers::CreateLayout(
-            approximatedSIExpression, symbolContext);
+            approximatedSIExpression, symbolContext, App::k_useTenPower);
         if (!approximatedLayout.isIdenticalTo(layout, true)) {
           m_exactLayouts[m_numberOfExpressionCells] = layout;
           m_approximatedLayouts[m_numberOfExpressionCells] = approximatedLayout;

@@ -27,12 +27,14 @@ namespace PoincareHelpers {
 inline Poincare::Layout CreateLayout(
     const Poincare::UserExpression& e,
     const Poincare::SymbolContext& symbolContext,
+    bool useTenPowerInsteadOfE = false,
     Poincare::Preferences::PrintFloatMode displayMode =
         GlobalPreferences::SharedGlobalPreferences()->displayMode(),
     uint8_t numberOfSignificantDigits =
         GlobalPreferences::SharedGlobalPreferences()
             ->numberOfSignificantDigits()) {
-  return e.createLayout(displayMode, numberOfSignificantDigits, symbolContext);
+  return e.createLayout(displayMode, numberOfSignificantDigits, symbolContext,
+                        OMG::Base::Decimal, useTenPowerInsteadOfE);
 }
 
 // ===== Serialization =====

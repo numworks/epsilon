@@ -57,8 +57,8 @@ void IntegerListController::computeAdditionalResults(
   if (!reductionFailure && !factor.isUndefined() &&
       !factor.tree()->treeIsIdenticalTo(1_e) &&
       !factor.tree()->treeIsIdenticalTo(0_e)) {
-    m_layouts[k_indexOfFactorExpression] =
-        PoincareHelpers::CreateLayout(factor, App::app()->localContext());
+    m_layouts[k_indexOfFactorExpression] = PoincareHelpers::CreateLayout(
+        factor, App::app()->localContext(), App::k_useTenPower);
   }
 }
 

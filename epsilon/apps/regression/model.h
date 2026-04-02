@@ -41,6 +41,8 @@ class Model {
   Poincare::UserExpression expression(double* modelCoefficients) const {
     return regression()->expression(modelCoefficients);
   };
+  Poincare::UserExpression residualList(const Store* store, int series,
+                                        double* modelCoefficients) const;
 
   /* Evaluate cannot use the expression and approximate it since it would be
    * too time consuming. */

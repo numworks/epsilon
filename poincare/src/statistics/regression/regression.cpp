@@ -41,6 +41,16 @@ UserExpression Regression::expression(const double* modelCoefficients) const {
   return privateExpression(modelCoefficients);
 }
 
+UserExpression Regression::residualList(const Series* series,
+                                        const double* modelCoefficients) const {
+  OMG::StaticVector<UserExpression, k_maxNumberOfPairs> residuals;
+  for (int i = 0; i < series->numberOfRows(); i++) {
+    residuals.push(
+        UserExpression::Builder(residualAtIndex(series, modelCoefficients, i)));
+  }
+  return UserExpression::BuildListOfExpressions(residuals.span());
+}
+
 double Regression::levelSet(const double* modelCoefficients, double xMin,
                             double xMax, double y,
                             const SymbolContext& symbolContext) const {

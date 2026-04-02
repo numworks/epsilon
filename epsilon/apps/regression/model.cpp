@@ -14,6 +14,12 @@ void Model::fit(const Store* store, int series, double* modelCoefficients) {
   return regression()->fit(&bridge, modelCoefficients);
 }
 
+Poincare::UserExpression Model::residualList(const Store* store, int series,
+                                             double* modelCoefficients) const {
+  Shared::StoreToSeries bridge(store, series);
+  return regression()->residualList(&bridge, modelCoefficients);
+};
+
 double Model::correlationCoefficient(const Store* store, int series) {
   Shared::StoreToSeries bridge(store, series);
   return regression()->correlationCoefficient(&bridge);

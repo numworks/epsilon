@@ -164,6 +164,8 @@ class Regression {
       int significantDigits,
       Poincare::Preferences::PrintFloatMode displayMode) const;
   Poincare::UserExpression expression(const double* modelCoefficients) const;
+  Poincare::UserExpression residualList(const Series* series,
+                                        const double* modelCoefficients) const;
 
   double evaluate(const double* modelCoefficients, double x) const;
 

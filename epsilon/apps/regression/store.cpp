@@ -188,7 +188,10 @@ void Store::updateCoefficients(int series) {
    * will be an issue ? */
   storeElement(RegressionFunctionBaseName(), series,
                seriesModel->expression(m_regressionCoefficients[series]));
-  // TODO: store residual list
+  // TODO: commented because the varbox would see the residual list as a
+  // function storeElement(ResidualListBaseName(), series,
+  //              seriesModel->residualList(this, series,
+  //                                        m_regressionCoefficients[series]));
 
   if (!coefficientsAreDefined(series)) {
     m_determinationCoefficient[series] = NAN;

@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <stddef.h>
 
+#include <algorithm>
+
 namespace std {
 
 class string_view {
@@ -68,6 +70,22 @@ class string_view {
     return i;
   }
 
+  constexpr bool operator==(std::string_view other) const {
+    if (length() != other.length()) {
+      return false;
+    }
+    for (size_t i = 0; i < length(); i++) {
+      if (m_data[i] != other[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  constexpr bool starts_with(string_view other) const {
+    return other == string_view(data(), std::min(length(), other.length()));
+  }
+
  private:
   // Redefinition of strlen here to avoid creating a dependency to liba
   constexpr size_t strlen(const char* s) {
@@ -79,19 +97,6 @@ class string_view {
   const_pointer m_data = nullptr;
   size_type m_length = 0;
 };
-
-// String equality operator
-constexpr bool operator==(std::string_view view1, std::string_view view2) {
-  if (view1.length() != view2.length()) {
-    return false;
-  }
-  for (size_t i = 0; i < view1.length(); i++) {
-    if (view1[i] != view2[i]) {
-      return false;
-    }
-  }
-  return true;
-}
 
 }  // namespace std
 

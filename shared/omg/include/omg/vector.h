@@ -153,6 +153,9 @@ class StaticVector : public AbstractStaticVector<T> {
   constexpr std::span<T> span() {
     return std::span<T>(this->m_data, this->size());
   }
+  constexpr std::span<const T> span() const {
+    return std::span<const T>(this->m_data, this->size());
+  }
 
  protected:
   T m_data[CAPACITY];

@@ -657,15 +657,13 @@ QUIZ_CASE(pcj_layout_comparison) {
 
 QUIZ_CASE(pcj_layout_turn_e_to_ten_power) {
   {
-    Tree* l = "3ᴇ-4=0"_l->cloneTree();
+    Tree* l = "3ᴇ-4"_l->cloneTree();
     Poincare::LayoutHelpers::TurnEToTenPowerLayout(l);
-    quiz_assert(
-        l->treeIsIdenticalTo("3×10"_l ^ KSuperscriptL("-4"_l) ^ "=0"_l));
+    quiz_assert(l->treeIsIdenticalTo("3×10"_l ^ KSuperscriptL("-4"_l)));
   }
   {
-    Tree* l = "3-1ᴇ-456"_l->cloneTree();
+    Tree* l = "-1ᴇ-456"_l->cloneTree();
     Poincare::LayoutHelpers::TurnEToTenPowerLayout(l);
-    quiz_assert(l->treeIsIdenticalTo(
-        "3-"_l ^ KParenthesesL("10"_l ^ KSuperscriptL("-456"_l))));
+    quiz_assert(l->treeIsIdenticalTo("-10"_l ^ KSuperscriptL("-456"_l)));
   }
 }

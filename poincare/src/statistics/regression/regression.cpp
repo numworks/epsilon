@@ -45,8 +45,12 @@ UserExpression Regression::residualList(const Series* series,
                                         const double* modelCoefficients) const {
   OMG::StaticVector<UserExpression, k_maxNumberOfPairs> residuals;
   for (int i = 0; i < series->numberOfRows(); i++) {
-    residuals.push(
-        UserExpression::Builder(residualAtIndex(series, modelCoefficients, i)));
+    double residual = residualAtIndex(series, modelCoefficients, i);
+    if (std::isnan(residual)) {
+      // Do not create the residual list if one of the residuals is undef
+      return UserExpression();
+    }
+    residuals.push(UserExpression::Builder(residual));
   }
   return UserExpression::BuildListOfExpressions(residuals.span());
 }

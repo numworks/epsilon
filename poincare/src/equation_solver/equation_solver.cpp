@@ -1061,9 +1061,12 @@ SingularitySolverResult ExactSolveFindSingularities(
   PatternMatching::Context matchesContext;
   // If f is in a dependency, match only with the main expression
   const Tree* mainFunction = Dependency::SafeMain(reducedFunction);
-  if (!(PatternMatching::Match(mainFunction, KLn(KAbs(KA)), &matchesContext) ||
-        PatternMatching::Match(mainFunction, KLn(KA), &matchesContext) ||
-        PatternMatching::Match(mainFunction, KPow(KA, -1_e),
+  if (!(PatternMatching::Match(mainFunction, KMult(KB_s, KLn(KAbs(KA)), KC_s),
+                               &matchesContext) ||
+        PatternMatching::Match(mainFunction, KMult(KB_s, KLn(KA), KC_s),
+                               &matchesContext) ||
+        // Idea: KPow(KA, -1_e) could be KPow(KA, KD) with KD negative
+        PatternMatching::Match(mainFunction, KMult(KB_s, KPow(KA, -1_e), KC_s),
                                &matchesContext))) {
     reducedFunction->removeTree();
     // Not possible to perform exact singularity detection

@@ -126,13 +126,8 @@ QUIZ_CASE(pcj_approximation_integrals) {
                                     k_realSimplification, 6);
   simplified_approximates_to<float>("int(ln(abs(x^2+3×x+2)),x,4,-3)",
                                     "-6.18405", k_realSimplification, 6);
-
-  /* TODO: multiplying the integrand by a constant should work. It doesn't in
-   * the following case because the expression simplifies as
-   * int(dep(2×Ln(abs(2+3×a+a^2)),{nonNull(abs(PowReal(a,2)+3×a+2))}),x,4,-3)
-   * The constant should move out of the dependency and out of the integral */
-  simplified_approximates_to<float>("int(2×ln(abs(x^2+3×x+2)),x,4,-3)", "undef",
-                                    k_realSimplification, 6);
+  simplified_approximates_to<float>("int(2×ln(abs(x^2+3×x+2)),x,4,-3)",
+                                    "-12.3681", k_realSimplification, 6);
 
   // double integration
   approximates_to<float>("int(int(x×x,x,0,x),x,0,4)", "21.33333");

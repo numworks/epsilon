@@ -29,6 +29,10 @@ ComplexProperties VariableProperties(const Tree* e);
 
 constexpr static ComplexProperties k_discreteVariableProperties =
     ComplexProperties::RealFiniteInteger();
+/* k_continuousVariableProperties is finite because the polynomial solver
+ * expects a finite variable. It could be a problem when deriving at an
+ * infinite point. In that case, we may need to have two different kinds of
+ * continuous variable properties. */
 /* TODO: Should instead depend on the bounds for integral and symbol value for
  * derivation */
 constexpr static ComplexProperties k_continuousVariableProperties =

@@ -61,7 +61,7 @@ class RootSolver
   constexpr static DetailedRoot k_nanRoot = {.x = static_cast<double>(NAN),
                                              .nullDescendant = nullptr};
 
-  const Internal::Tree* getTree() const { return m_evaluator.tree(); }
+  const Internal::Tree* getTree() const { return m_evaluator.data(); }
 
   DetailedRoot nextDetailedRoot();
   DetailedRoot nextRootSearchingInChild(int childIndex) const;

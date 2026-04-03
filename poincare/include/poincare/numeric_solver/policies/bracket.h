@@ -10,9 +10,8 @@ namespace Poincare::NumericSolver {
 
 class RootBracketer {
  public:
-  template <typename TEvaluator>
   Interest test(Coordinate2D<double> a, Coordinate2D<double> b,
-                Coordinate2D<double> c, const TEvaluator&) {
+                Coordinate2D<double> c, const void*) {
     return Internal::SolverTests<double>::EvenOrOddRootInBracket(a, b, c,
                                                                  nullptr);
   }
@@ -29,9 +28,8 @@ class RootBracketer {
 
 class ExtremumBracketer {
  public:
-  template <typename TEvaluator>
   Interest test(Coordinate2D<double> a, Coordinate2D<double> b,
-                Coordinate2D<double> c, const TEvaluator&) {
+                Coordinate2D<double> c, const void*) {
     return Internal::SolverTests<double>::ExtremumInBracket(a, b, c, nullptr);
   }
   template <typename TEvaluator>
@@ -47,9 +45,8 @@ class ExtremumBracketer {
 
 class DiscontinuityBracketer {
  public:
-  template <typename TEvaluator>
   Interest test(Coordinate2D<double> a, Coordinate2D<double> b,
-                Coordinate2D<double> c, const TEvaluator& eval) {
+                Coordinate2D<double> c, const Internal::Tree* eval) {
     return ExpressionDiscontinuityTester<double>::IsDiscontinuousBetween(a, c,
                                                                          eval)
                ? Interest::ReachedDiscontinuity
@@ -78,10 +75,9 @@ class LambdaBracketer {
   LambdaBracketer(BracketTest<TFloat> test, HoneResult<TFloat> hone)
       : m_test(test), m_hone(hone) {}
 
-  template <typename TEvaluator>
   Interest test(Coordinate2D<TFloat> a, Coordinate2D<TFloat> b,
-                Coordinate2D<TFloat> c, const TEvaluator& eval) {
-    return m_test(a, b, c, eval.aux());
+                Coordinate2D<TFloat> c, const void* aux) {
+    return m_test(a, b, c, aux);
   }
 
   template <typename TEvaluator>

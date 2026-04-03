@@ -50,10 +50,10 @@ void DiscontinuitySolver::findAndPushSolution(Coordinate2D<double> start,
 
   bool leftIsDiscontinuous =
       ExpressionDiscontinuityTester<double>::IsDiscontinuousBetween(
-          left, middle, m_evaluator);
+          left, middle, m_evaluator.data());
   bool rightIsDiscontinuous =
       ExpressionDiscontinuityTester<double>::IsDiscontinuousBetween(
-          middle, right, m_evaluator);
+          middle, right, m_evaluator.data());
   // Note: If this assertion fails, escape and return no discontinuity.
   assert(leftIsDiscontinuous || rightIsDiscontinuous);
 

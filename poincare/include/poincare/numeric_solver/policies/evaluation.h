@@ -29,7 +29,7 @@ class ExpressionEvaluator {
             .expressionParameters = Internal::Approximation::Prepared{}});
   }
 
-  const Internal::Tree* tree() const { return m_tree; }
+  const Internal::Tree* data() const { return m_tree; }
 
  private:
   const Internal::Tree* m_tree;
@@ -47,7 +47,7 @@ class LambdaEvaluator {
 
   TFloat operator()(TFloat x) const { return m_function(x, m_auxiliary); }
 
-  const void* aux() const { return m_auxiliary; }
+  const void* data() const { return m_auxiliary; }
 
  private:
   FunctionEvaluation<TFloat> m_function;

@@ -15,14 +15,13 @@ struct NullDiscontinuityTester {
 
 template <typename TFloat>
 struct ExpressionDiscontinuityTester {
-  template <typename TEvaluator>
   static bool IsDiscontinuousBetween(Coordinate2D<TFloat> a,
                                      Coordinate2D<TFloat> b,
-                                     const TEvaluator& eval) {
+                                     const Internal::Tree* tree) {
     return (std::isfinite(a.y()) && std::isnan(b.y())) ||
            (std::isfinite(b.y()) && std::isnan(a.y())) ||
-           Internal::Continuity::IsDiscontinuousOnInterval<TFloat>(
-               eval.tree(), a.x(), b.x());
+           Internal::Continuity::IsDiscontinuousOnInterval<TFloat>(tree, a.x(),
+                                                                   b.x());
   }
 };
 

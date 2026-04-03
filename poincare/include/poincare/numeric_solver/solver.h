@@ -57,10 +57,11 @@ class PolicySolver : public Solver<TFloat> {
       XY p1 = m_stepper.first(), p2 = m_stepper.second(),
          p3 = m_stepper.third();
 
-      Interest interest = m_bracketer.test(p1, p2, p3, m_evaluator);
+      Interest interest = m_bracketer.test(p1, p2, p3, m_evaluator.data());
 
       if (interest == Interest::None &&
-          DiscontinuityTester::IsDiscontinuousBetween(p1, p3, m_evaluator)) {
+          DiscontinuityTester::IsDiscontinuousBetween(p1, p3,
+                                                      m_evaluator.data())) {
         interest = refineSearchAroundDiscontinuity(p1, p2, p3);
       }
 
@@ -81,8 +82,8 @@ class PolicySolver : public Solver<TFloat> {
     assert(m_solutionQueue.size() == 0);
     assert(interest != Interest::ReachedDiscontinuity);
 
-    bool disc =
-        DiscontinuityTester::IsDiscontinuousBetween(start, end, m_evaluator);
+    bool disc = DiscontinuityTester::IsDiscontinuousBetween(start, end,
+                                                            m_evaluator.data());
     XY xy = m_bracketer.hone(start.x(), end.x(), interest,
                              NumericHelper::Precision(start.x(), disc),
                              m_evaluator);
@@ -108,7 +109,7 @@ class PolicySolver : public Solver<TFloat> {
     if (std::isfinite(roundX) &&
         m_stepper.template isAdmissibleSolution<NumericHelper>(roundX)) {
       if (DiscontinuityTester::IsDiscontinuousBetween(
-              XY(x, fx), XY(roundX, fRoundX), m_evaluator)) {
+              XY(x, fx), XY(roundX, fRoundX), m_evaluator.data())) {
         return;
       }
       if (fRoundX == fx ||
@@ -139,10 +140,10 @@ class PolicySolver : public Solver<TFloat> {
       middle = XY(mx, m_evaluator(mx));
     }
     while (std::fabs(end.x() - start.x()) >= minimalInterval) {
-      bool left = TExplicitDiscTester::IsDiscontinuousBetween(start, middle,
-                                                              m_evaluator);
-      bool right =
-          TExplicitDiscTester::IsDiscontinuousBetween(middle, end, m_evaluator);
+      bool left = TExplicitDiscTester::IsDiscontinuousBetween(
+          start, middle, m_evaluator.data());
+      bool right = TExplicitDiscTester::IsDiscontinuousBetween(
+          middle, end, m_evaluator.data());
       if (left == right) {
         return false;
       }
@@ -188,14 +189,14 @@ class PolicySolver : public Solver<TFloat> {
     if (findMinimalIntervalContainingDiscontinuity(
             q1, p2, q3, Stepper::template MinimalStep<NumericHelper>(p2.x()))) {
       TFloat pq1x = (p1.x() + q1.x()) / static_cast<TFloat>(2);
-      interest =
-          m_bracketer.test(p1, XY(pq1x, m_evaluator(pq1x)), q1, m_evaluator);
+      interest = m_bracketer.test(p1, XY(pq1x, m_evaluator(pq1x)), q1,
+                                  m_evaluator.data());
       if (interest != Interest::None) {
         p3 = q1;
       } else {
         TFloat qp3x = (q3.x() + p3.x()) / static_cast<TFloat>(2);
-        interest =
-            m_bracketer.test(q3, XY(qp3x, m_evaluator(qp3x)), p3, m_evaluator);
+        interest = m_bracketer.test(q3, XY(qp3x, m_evaluator(qp3x)), p3,
+                                    m_evaluator.data());
         if (interest != Interest::None) {
           p1 = q3;
         }

@@ -58,7 +58,10 @@ class RecordNameVerifier {
   // Register a new restrictive extension
   void registerRestrictiveExtensionWithPrecedence(const char* extension,
                                                   int precedenceScore);
-  void unregisterAllRestrictiveExtensions() { m_restrictiveExtensions.clear(); }
+  void unregisterAllRestrictiveExtensions() {
+    m_restrictiveExtensions.clear();
+    m_restrictiveExtensionsPrecedenceScore.clear();
+  }
 
   // Getters
   std::span<const char* const> restrictiveExtensions() const {

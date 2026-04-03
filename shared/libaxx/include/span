@@ -39,6 +39,10 @@ class span {
   template <class U, size_t N>
   constexpr span(const std::array<U, N>& array)
       : m_data(array.data()), m_size(N) {}
+  template <class U>
+  explicit(Extent !=
+           std::dynamic_extent) constexpr span(std::initializer_list<U> il)
+      : m_data(il.begin()), m_size(il.size()) {}
   constexpr span(const span& other) = default;
 
   constexpr span& operator=(const span& other) = default;

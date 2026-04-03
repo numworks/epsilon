@@ -296,11 +296,10 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
   /* Update m_scrollableOutputView. Must be done once m_calculationDisplayOutput
    * has been updated. We must set which subviews are displayed before
    * setLayouts to mark the right rectangle as dirty. */
+  // TODO: rename setDisplayableCenter to something like setToggleableCenter
   m_scrollableOutputView.setDisplayableCenter(
       m_calculationDisplayOutput ==
-          Calculation::DisplayOutput::ExactAndApproximate ||
-      m_calculationDisplayOutput ==
-          Calculation::DisplayOutput::ExactAndApproximateToggle);
+      Calculation::DisplayOutput::ExactAndApproximateToggle);
 
   if (outputLayouts.approximate.isUninitialized()) {
     // The scrollable view expects the right layout to be defined, use exact

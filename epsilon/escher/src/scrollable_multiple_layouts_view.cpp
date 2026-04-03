@@ -22,7 +22,7 @@ AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
       m_centeredLayoutView({.style = {.font = font}}),
       m_selectedSubviewPosition(SubviewPosition::Center),
       m_displayCenter(true),
-      m_displayableCenter(true),
+      m_displayableCenter(false),
       m_comparisonSignIsEqual(false),
       m_displayComparisonSign(true),
       m_horizontalAlignment(horizontalAlignment) {
@@ -248,7 +248,11 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
   }
 
   KDSize centerSize = KDSizeZero;
-  if (displayCenter() || (forceFullDisplay && displayableCenter())) {
+  /* Although center layout isn't visible, we sometimes need to account for its
+   * size to ensure consistent layouting when toggling display of the center
+   * layout. */
+  bool accountForCenter = forceFullDisplay && displayableCenter();
+  if (displayCenter() || accountForCenter) {
     centerSize = m_centeredLayoutView.minimalSizeForOptimalDisplay();
     width += centerSize.width() +
              AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
@@ -256,7 +260,12 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
     maxUnderBaseline = std::max<KDCoordinate>(
         maxUnderBaseline, centerSize.height() - centerBaseline);
   }
-  if (displayComparisonSign()) {
+
+  /* NOTE: A displayable center with hidden comparisonSign isn't handled. It is
+   * assumed that if [accountForCenter] is true, [displayComparisonSign()] will
+   * be true when [displayCenter()] will be true. */
+  assert(!(displayCenter() && displayableCenter() && !displayComparisonSign()));
+  if (displayComparisonSign() || accountForCenter) {
     width += m_comparisonSign.minimalSizeForOptimalDisplay().width() +
              AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
   }

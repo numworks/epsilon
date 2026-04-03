@@ -464,8 +464,10 @@ void MathVariableBoxController::resetVarBoxMemoization() {
 bool MathVariableBoxController::destroyRecordAtRow(int row) {
   {
     Storage::Record record = recordAtIndex(row);
+    // Deletion of some reserved records is blocked
     if (record.hasExtension(Ion::Storage::parametricComponentExtension) ||
-        record.hasExtension(Ion::Storage::regressionFunctionExtension)) {
+        record.hasExtension(Ion::Storage::regressionFunctionExtension) ||
+        record.hasExtension(Ion::Storage::regressionListExtension)) {
       return false;
     }
     bool isParametricFunction = false;

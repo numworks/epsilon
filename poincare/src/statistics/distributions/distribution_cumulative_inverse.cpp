@@ -12,7 +12,7 @@ using namespace NumericSolver;
 
 template <typename T>
 void findBoundsForBinarySearch(
-    typename Solver<T>::FunctionEvaluation cumulativeDistributionEvaluation,
+    FunctionEvaluation<T> cumulativeDistributionEvaluation,
     const void* auxiliary, T& xmin, T& xmax) {
   /* We'll simply test [0, 10], [10, 100], [100, 1000] ... until we find a
    * working interval, or symmetrically if the zero is on the left. This
@@ -96,8 +96,7 @@ T chi2CumulativeDistributiveInverse(T probability,
   };
   Args args{probability, k};
 
-  Solver<double>::FunctionEvaluation evaluation = [](double x,
-                                                     const void* auxiliary) {
+  FunctionEvaluation<double> evaluation = [](double x, const void* auxiliary) {
     const Args* args = static_cast<const Args*>(auxiliary);
     return CumulativeDistributiveFunctionAtAbscissa<double>(
                Type::Chi2, x, ParametersArray<double>({args->k})) -
@@ -295,8 +294,7 @@ T studentCumulativeDistributiveInverse(T probability,
     T k;
   };
   Args args{probability, k};
-  Solver<double>::FunctionEvaluation evaluation = [](double x,
-                                                     const void* auxiliary) {
+  FunctionEvaluation<double> evaluation = [](double x, const void* auxiliary) {
     const Args* args = static_cast<const Args*>(auxiliary);
     return static_cast<double>(
         CumulativeDistributiveFunctionAtAbscissa<T>(

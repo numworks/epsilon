@@ -1,129 +1,207 @@
 #pragma once
 
-#include <omg/float.h>
-#include <omg/vector.h>
-#include <poincare/numeric_solver/interest.h>
+#include <assert.h>
+#include <poincare/numeric_solver/policies/step.h>
+#include <poincare/numeric_solver/solution.h>
 
 #include <algorithm>
-#include <cmath>
-
-#include "solution.h"
 
 namespace Poincare::NumericSolver {
 
-template <typename T>
+template <typename TFloat>
 class Solver {
  public:
-  using FunctionEvaluation = T (*)(T, const void*);
-  using BracketTest = Interest (*)(Coordinate2D<T>, Coordinate2D<T>,
-                                   Coordinate2D<T>, const void*);
-  using HoneResult = Coordinate2D<T> (*)(FunctionEvaluation, const void*, T, T,
-                                         Interest, T);
-  using DiscontinuityEvaluation = bool (*)(Coordinate2D<T>, Coordinate2D<T>,
-                                           const void*);
-
-  Solver(T xStart, T xEnd, FunctionEvaluation f, const void* aux,
-         BracketTest bracketTest, HoneResult honeFunction,
-         DiscontinuityEvaluation discontinuityTest);
-
-  enum class GrowthSpeed : bool { Fast, Precise };
-
-  constexpr static T k_relativePrecision = OMG::Float::Epsilon<T>();
-  constexpr static T k_sqrtRelativePrecision = OMG::Float::SqrtEpsilon<T>();
-  constexpr static T k_minimalAbsoluteStep =
-      2. * OMG::Float::SquareRoot<T>(2. * k_relativePrecision);
-
-  static T NullTolerance(T x) {
-    return std::max(k_relativePrecision,
-                    k_sqrtRelativePrecision * std::fabs(x));
-  }
-  static T DefaultSearchStepForAmplitude(T intervalAmplitude);
-
   virtual ~Solver() = default;
-
-  void reset(T xStart, T xEnd, T searchStep);
-
-  virtual Solution<T> next();
-
-  /* Stretch the interval to include the previous bounds. This allows finding
-   * solutions in [xStart,xEnd], as otherwise all resolution is done on an open
-   * interval. If onlyEnd is true, only stretch the end of the interval
-   * (i.e. ]xStart, xEnd]) */
-  void stretch(bool onlyEnd = false);
-  void setSearchStep(T step) {
-    m_searchStep = std::max(step, k_minimalPracticalStep);
-  }
-  void setGrowthSpeed(GrowthSpeed speed) { m_growthSpeed = speed; }
-
-  T getCurrentStart() const { return m_xStart; }
-
- protected:
-  constexpr static T k_NAN = static_cast<T>(NAN);
-  constexpr static T k_zero = static_cast<T>(0);
-  /* We use k_minimalPracticalStep (10^-6) when stepping around zero instead of
-   * k_minimalAbsoluteStep (~10^-8), to avoid wasting time with too many very
-   * precise computations. */
-  constexpr static T k_minimalPracticalStep =
-      std::max(static_cast<T>(1e-6), k_minimalAbsoluteStep);
-
-  T evaluateAt(T x) const { return m_evaluator(x, m_auxiliary); }
-  // Returns false if no discontinuity test is defined
-  bool isDiscontinuousBetween(Coordinate2D<T> a, Coordinate2D<T> b) const {
-    return m_discontinuityTest ? m_discontinuityTest(a, b, m_auxiliary) : false;
-  }
-
-  static T MagicRound(T x);
-
-  static T MinimalStep(T x, T slope = static_cast<T>(1.));
-  bool validSolution(T x) const;
-  T nextX(T x, T direction, T slope) const;
-
-  virtual void honeAndRoundSolution(Coordinate2D<T> start, Coordinate2D<T> end,
-                                    Interest interest);
-
-  bool findMinimalIntervalContainingDiscontinuity(
-      Coordinate2D<T>* start, Coordinate2D<T>* middle, Coordinate2D<T>* end,
-      T minimalSizeOfInterval) const;
-
-  Solution<T> registerSolution(Solution<T> solution, bool wasQueued = false);
-
-  Interest testBetween(Coordinate2D<T> a, Coordinate2D<T> b);
-
-  // We need at most 3 solutions at the same abscissa for discontinuities
-  constexpr static int k_maxSolutionsAtSameAbscissa = 3;
-  // We need a queue because we can have several solutions at the same abscissa
-  class SolutionQueue
-      : public OMG::StaticVector<Solution<T>, k_maxSolutionsAtSameAbscissa> {
-   public:
-    Solution<T> popFirst() {
-      assert(this->size() > 0);
-      Solution<T> solution = (*this)[0];
-      this->removeAt(0);
-      return solution;
-    }
-  };
-
-  T m_xStart;
-  T m_xEnd;
-  T m_searchStep;
-  GrowthSpeed m_growthSpeed;
-  SolutionQueue m_solutionQueue;
-  FunctionEvaluation m_evaluator;
-  BracketTest m_bracketTest;
-  HoneResult m_honeFunction;
-  DiscontinuityEvaluation m_discontinuityTest;
-  /* Opaque context pointer passed to the evaluator, bracketTest, and
-   * discontinuityTest callbacks. Its actual type depends on the subclass:
-   * - BuildBasicRootSolver: const double* (array of coefficients)
-   * - ExpressionSolver: const Tree* (expression tree for approximation) */
-  const void* m_auxiliary;
+  virtual Solution<TFloat> next() = 0;
+  virtual void stretch(bool onlyEnd = false) = 0;
+  virtual void setSearchStep(TFloat step) = 0;
+  virtual void setGrowthSpeed(GrowthSpeed g) = 0;
 };
 
-// Specialized builders for common use cases
+template <typename TFloat, typename TPolicies>
+class PolicySolver : public Solver<TFloat> {
+ public:
+  using XY = Coordinate2D<TFloat>;
+  using SolutionT = Solution<TFloat>;
 
-Solver<double> BuildBasicRootSolver(
-    double xStart, double xEnd, Solver<double>::FunctionEvaluation f,
-    const void* aux,
-    Solver<double>::DiscontinuityEvaluation discontinuityTest = nullptr);
+  using Bracketer = typename TPolicies::Bracketer;
+  using DiscontinuityTester = typename TPolicies::DiscontinuityTester;
+  using Evaluator = typename TPolicies::Evaluator;
+  using NumericHelper = typename TPolicies::NumericHelper;
+  using SolutionQueue = typename TPolicies::SolutionQueue;
+  using Stepper = typename TPolicies::Stepper;
 
+  explicit PolicySolver(TFloat xStart, TFloat xEnd, Evaluator evaluator,
+                        Bracketer bracketer = {})
+      : m_bracketer(std::move(bracketer)),
+        m_evaluator(std::move(evaluator)),
+        m_solutionQueue{},
+        m_stepper(xStart, xEnd) {}
+
+  ~PolicySolver() override = default;
+
+  void stretch(bool onlyEnd = false) override { m_stepper.stretch(onlyEnd); }
+
+  void setSearchStep(TFloat step) override { m_stepper.setSearchStep(step); }
+
+  void setGrowthSpeed(GrowthSpeed g) override { m_stepper.setGrowthSpeed(g); }
+
+  SolutionT next() override {
+    if (m_solutionQueue.size() > 0) {
+      return registerSolution(m_solutionQueue.popFirst(), true);
+    }
+
+    m_stepper.init(m_evaluator);
+
+    do {
+      XY p1 = m_stepper.first(), p2 = m_stepper.second(),
+         p3 = m_stepper.third();
+
+      Interest interest = m_bracketer.test(p1, p2, p3, m_evaluator);
+
+      if (interest == Interest::None &&
+          DiscontinuityTester::IsDiscontinuousBetween(p1, p3, m_evaluator)) {
+        interest = refineSearchAroundDiscontinuity(p1, p2, p3);
+      }
+
+      if (interest != Interest::None) {
+        findAndPushSolution(p1, p3, interest);
+        if (m_solutionQueue.size() > 0) {
+          return registerSolution(m_solutionQueue.popFirst(), false);
+        }
+      }
+
+    } while (m_stepper.step(m_evaluator));
+
+    return k_noSolution<TFloat>;
+  }
+
+ protected:
+  virtual void findAndPushSolution(XY start, XY end, Interest interest) {
+    assert(m_solutionQueue.size() == 0);
+    assert(interest != Interest::ReachedDiscontinuity);
+
+    bool disc =
+        DiscontinuityTester::IsDiscontinuousBetween(start, end, m_evaluator);
+    XY xy = m_bracketer.hone(start.x(), end.x(), interest,
+                             NumericHelper::Precision(start.x(), disc),
+                             m_evaluator);
+
+    /* Fake-root filter: discard roots that sit on a discontinuity edge. */
+    if (disc && interest == Interest::Root &&
+        std::fabs(xy.y()) > NumericHelper::NullTolerance(xy.x())) {
+      return;
+    }
+
+    if (!std::isfinite(xy.x()) ||
+        !m_stepper.template isAdmissibleSolution<NumericHelper>(xy.x())) {
+      return;
+    }
+
+    TFloat x = xy.x();
+    TFloat roundX = NumericHelper::MagicRound(x);
+    TFloat fRoundX = m_evaluator(roundX);
+    if (std::isnan(fRoundX) && interest != Interest::Discontinuity) {
+      return;
+    }
+    TFloat fx = m_evaluator(x);
+    if (std::isfinite(roundX) &&
+        m_stepper.template isAdmissibleSolution<NumericHelper>(roundX)) {
+      if (DiscontinuityTester::IsDiscontinuousBetween(
+              XY(x, fx), XY(roundX, fRoundX), m_evaluator)) {
+        return;
+      }
+      if (fRoundX == fx ||
+          (interest == Interest::Root && std::fabs(fRoundX) < std::fabs(fx)) ||
+          (interest == Interest::Minimum && fRoundX < fx) ||
+          (interest == Interest::Maximum && fRoundX > fx)) {
+        xy.setX(roundX);
+        if (xy.y() == fx) {
+          xy.setY(fRoundX);
+        }
+      }
+    }
+    if (std::isfinite(xy.y()) || interest == Interest::Discontinuity) {
+      m_solutionQueue.push(CoordToSolution(xy, interest));
+    }
+  }
+
+  /* TExplicitDiscTester defaults to the policy's DiscontinuityTester.
+   * Pass a different type explicitly when the policy tester is not suitable
+   * (e.g. DiscontinuitySolver uses NullDiscontinuityTester as its policy but
+   * needs a real tester inside findAndPushSolution). */
+  template <typename TExplicitDiscTester = DiscontinuityTester>
+  bool findMinimalIntervalContainingDiscontinuity(XY& start, XY& middle,
+                                                  XY& end,
+                                                  TFloat minimalInterval) {
+    if (std::isnan(middle.x())) {
+      TFloat mx = (start.x() + end.x()) / static_cast<TFloat>(2);
+      middle = XY(mx, m_evaluator(mx));
+    }
+    while (std::fabs(end.x() - start.x()) >= minimalInterval) {
+      bool left = TExplicitDiscTester::IsDiscontinuousBetween(start, middle,
+                                                              m_evaluator);
+      bool right =
+          TExplicitDiscTester::IsDiscontinuousBetween(middle, end, m_evaluator);
+      if (left == right) {
+        return false;
+      }
+      if (left) {
+        if (end.x() == middle.x()) {
+          return false;
+        }
+        end = middle;
+      } else {
+        if (start.x() == middle.x()) {
+          return false;
+        }
+        start = middle;
+      }
+      TFloat mx = (start.x() + end.x()) / static_cast<TFloat>(2);
+      middle = XY(mx, m_evaluator(mx));
+    }
+    return true;
+  }
+
+  SolutionT registerSolution(SolutionT solution, bool wasQueued = false) {
+    if (std::isnan(solution.x)) {
+      return k_noSolution<TFloat>;
+    }
+    assert(
+        (wasQueued && solution.x == m_stepper.start()) ||
+        (!wasQueued &&
+         m_stepper.template isAdmissibleSolution<NumericHelper>(solution.x)));
+    solution.y = NumericHelper::CleanY(solution.y, solution.x);
+    m_stepper.setStart(solution.x);
+    return solution;
+  }
+
+  Bracketer m_bracketer;
+  Evaluator m_evaluator;
+  SolutionQueue m_solutionQueue;
+  Stepper m_stepper;
+
+ private:
+  Interest refineSearchAroundDiscontinuity(XY& p1, XY p2, XY& p3) {
+    Interest interest = Interest::None;
+    XY q1 = p1, q3 = p3;
+    if (findMinimalIntervalContainingDiscontinuity(
+            q1, p2, q3, Stepper::template MinimalStep<NumericHelper>(p2.x()))) {
+      TFloat pq1x = (p1.x() + q1.x()) / static_cast<TFloat>(2);
+      interest =
+          m_bracketer.test(p1, XY(pq1x, m_evaluator(pq1x)), q1, m_evaluator);
+      if (interest != Interest::None) {
+        p3 = q1;
+      } else {
+        TFloat qp3x = (q3.x() + p3.x()) / static_cast<TFloat>(2);
+        interest =
+            m_bracketer.test(q3, XY(qp3x, m_evaluator(qp3x)), p3, m_evaluator);
+        if (interest != Interest::None) {
+          p1 = q3;
+        }
+      }
+    }
+    return interest;
+  }
+};
 }  // namespace Poincare::NumericSolver

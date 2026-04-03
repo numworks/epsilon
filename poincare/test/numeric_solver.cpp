@@ -19,7 +19,8 @@ using namespace Poincare::NumericSolver;
 
 typedef Poincare::Interest Interest;
 
-void assert_next_solution_is(Solver<double>* solver,
+template <typename TSolver>
+void assert_next_solution_is(TSolver* solver,
                              Poincare::Coordinate2D<double> expected,
                              const char* expression, Interest interest) {
   assert(std::isnan(expected.x()) == std::isnan(expected.y()));
@@ -60,31 +61,32 @@ void assert_solutions_are(
                              : (0_e)->cloneTree();  // Dummy
   Poincare::PreparedFunction g = Poincare::PreparedFunction::Builder(e2);
 
-  RootSolver rootSolver(start, end, f, Poincare::EmptySymbolContext{});
-  ExtremumSolver extremumSolver(start, end, f, Poincare::EmptySymbolContext{});
+  RootSolver rootSolver(start, end, f);
+  ExtremumSolver extremumSolver(start, end, f);
   IntersectionSolver intersectionSolver(start, end, f, g,
                                         Poincare::EmptySymbolContext{});
 
-  Solver<double>* solverPointer;
+  auto runAssertions = [&](auto* solver) {
+    for (Poincare::Coordinate2D<double> c : expected) {
+      assert_next_solution_is(solver, c, expression, interest);
+    }
+    assert_next_solution_is(solver, Poincare::Coordinate2D<double>(NAN, NAN),
+                            expression, interest);
+  };
+
   switch (interest) {
     case Interest::Root:
-      solverPointer = &rootSolver;
+      runAssertions(&rootSolver);
       break;
     case Interest::Minimum:
     case Interest::Maximum:
-      solverPointer = &extremumSolver;
+      runAssertions(&extremumSolver);
       break;
     default:
       assert(interest == Interest::Intersection && otherExpression);
-      solverPointer = &intersectionSolver;
+      runAssertions(&intersectionSolver);
+      break;
   }
-
-  for (Poincare::Coordinate2D<double> c : expected) {
-    assert_next_solution_is(solverPointer, c, expression, interest);
-  }
-  assert_next_solution_is(solverPointer,
-                          Poincare::Coordinate2D<double>(NAN, NAN), expression,
-                          interest);
 }
 
 void assert_roots_are(

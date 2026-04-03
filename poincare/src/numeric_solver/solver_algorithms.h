@@ -2,7 +2,8 @@
 
 #include <omg/float.h>
 #include <poincare/coordinate_2D.h>
-#include <poincare/numeric_solver/solver.h>
+#include <poincare/numeric_solver/policies/evaluation.h>
+#include <poincare/numeric_solver/solution.h>
 
 namespace Poincare::Internal {
 
@@ -12,32 +13,26 @@ class SolverAlgorithms {
       0.381966011250105151795413165634361882279690820194237137864;  // (3-sqrt(5))/2
 
   /* Bibliography: R. P. Brent, Algorithms for finding zeros and extrema of
-   * functions without calculating derivatives
-   *
-   * These two functions must be of the Solver<double>::HoneResult type.
-   * Users who want to find roots and extrema with good precision should
-   * use the Solver<double> API. */
+   * functions without calculating derivatives */
   static Coordinate2D<double> BrentRoot(
-      NumericSolver::Solver<double>::FunctionEvaluation f, const void* aux,
-      double xMin, double xMax, Interest interest, double xPrecision);
+      NumericSolver::FunctionEvaluation<double> f, const void* aux, double xMin,
+      double xMax, Interest interest, double xPrecision);
   static Coordinate2D<double> BrentMinimum(
-      NumericSolver::Solver<double>::FunctionEvaluation f, const void* aux,
-      double xMin, double xMax, Interest interest, double xPrecision);
+      NumericSolver::FunctionEvaluation<double> f, const void* aux, double xMin,
+      double xMax, Interest interest, double xPrecision);
 
   /* Numeric functions for statistics and probability. */
   static Coordinate2D<double> IncreasingFunctionRoot(
       double ax, double bx, double xPrecision,
-      NumericSolver::Solver<double>::FunctionEvaluation f, const void* aux,
+      NumericSolver::FunctionEvaluation<double> f, const void* aux,
       double* resultEvaluation = nullptr);
 
   template <typename T>
   static T CumulativeDistributiveInverseForNDefinedFunction(
-      T* probability, typename NumericSolver::Solver<T>::FunctionEvaluation f,
-      const void* aux);
+      T* probability, NumericSolver::FunctionEvaluation<T> f, const void* aux);
   template <typename T>
   static T CumulativeDistributiveFunctionForNDefinedFunction(
-      T x, typename NumericSolver::Solver<T>::FunctionEvaluation f,
-      const void* aux);
+      T x, NumericSolver::FunctionEvaluation<T> f, const void* aux);
 
  private:
   constexpr static int k_numberOfIterationsBrent = 100;

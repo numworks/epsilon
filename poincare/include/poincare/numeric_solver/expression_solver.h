@@ -3,69 +3,69 @@
 #include <poincare/symbol_context.h>
 #include <poincare/tree.h>
 
+#include "policies/bracket.h"
+#include "policies/discontinuity.h"
+#include "policies/evaluation.h"
+#include "policies/numeric_helper.h"
+#include "policies/queue.h"
+#include "policies/step.h"
 #include "solver.h"
 
-/* TODO_PCJ: Change signatures to preparedFunctions instead of Trees. */
 namespace Poincare::NumericSolver {
 
-class ExpressionSolver : public Solver<double> {
- public:
-  /* WARNING: pointer to e must stay valid during the whole lifetime of the
-   * solver.
-   * - e is a prepared function (symbols substituted, constants approximated to
-   *   float...), ready for numerical evaluation via Approximation::To. It may
-   *   not be null.
-   * - IsDiscontinuousInBracket is always used as the discontinuity test
-   *   because all expression-based solvers need discontinuity detection around
-   *   undefined sub-intervals (e.g. log, sqrt, 1/x). */
-  ExpressionSolver(double xStart, double xEnd, const Internal::Tree* e,
-                   const SymbolContext& context,
-                   Solver<double>::BracketTest test,
-                   Solver<double>::HoneResult hone);
+template <typename TBracketer, typename TDiscontinuityTester>
+struct ExpressionSolverPolicies {
+  using Bracketer = TBracketer;
+  using DiscontinuityTester = TDiscontinuityTester;
 
- protected:
-  const Internal::Tree* getTree() const {
-    return reinterpret_cast<const Internal::Tree*>(m_auxiliary);
-  }
-
-  void setEvaluator(const Internal::Tree* e);
-
-  const SymbolContext& m_context;
+  using Evaluator = ExpressionEvaluator<double>;
+  using NumericHelper = DefaultNumericHelper<double>;
+  /* NOTE: The same abscissa can yield up to three solutions when searching for
+   * discontinuities. */
+  using SolutionQueue = StaticSolutionQueue<double, 3>;
+  using Stepper = AdaptiveLogStepper<double>;
 };
 
-// Specific implementations for each interest
+template <typename TBracketer, typename TDiscontinuityTester>
+class ExpressionSolver
+    : public PolicySolver<
+          double, ExpressionSolverPolicies<TBracketer, TDiscontinuityTester>> {
+  using Base =
+      PolicySolver<double,
+                   ExpressionSolverPolicies<TBracketer, TDiscontinuityTester>>;
 
-// Search for Minima and Maxima
-class ExtremumSolver : public ExpressionSolver {
  public:
-  ExtremumSolver(double xStart, double xEnd, const Internal::Tree* e,
-                 const SymbolContext& context);
+  ExpressionSolver(double xStart, double xEnd, const Internal::Tree* e)
+      : Base(xStart, xEnd, ExpressionEvaluator<double>(e)) {}
 };
 
-class RootSolver : public ExpressionSolver {
+using ExtremumSolver =
+    ExpressionSolver<ExtremumBracketer, ExpressionDiscontinuityTester<double>>;
+
+class RootSolver
+    : public ExpressionSolver<RootBracketer,
+                              ExpressionDiscontinuityTester<double>> {
+  using Base =
+      ExpressionSolver<RootBracketer, ExpressionDiscontinuityTester<double>>;
+
  public:
-  RootSolver(double xStart, double xEnd, const Internal::Tree* e,
-             const SymbolContext& context);
+  using Base::ExpressionSolver;
 
   Solution<double> next() override;
 
  private:
-  /* Stores the root and a pointer to the minimal sub-expression
-   * that evaluates to zero (mainly used for dependencies handling) */
   struct DetailedRoot {
     double x;
     const Internal::Tree* nullDescendant = nullptr;
   };
-  constexpr static DetailedRoot k_nanRoot = {.x = k_NAN,
+  constexpr static DetailedRoot k_nanRoot = {.x = static_cast<double>(NAN),
                                              .nullDescendant = nullptr};
 
+  const Internal::Tree* getTree() const { return m_evaluator.tree(); }
+
   DetailedRoot nextDetailedRoot();
-  // Find the next root of the child which is also a root of the parent.
   DetailedRoot nextRootSearchingInChild(int childIndex) const;
-  using ExpressionTestAuxiliary = bool (*)(const Internal::Tree*,
-                                           const SymbolContext& symbolContext);
-  /* Find the next root among the children satisfying the test, which is also a
-   * root of the parent. */
+  using ExpressionTestAuxiliary = bool (*)(const Internal::Tree*);
   DetailedRoot nextRootSearchingInChildren(ExpressionTestAuxiliary test) const;
   DetailedRoot nextRootInMultiplication() const;
   DetailedRoot nextRootInAddition() const;
@@ -82,15 +82,17 @@ class RootSolver : public ExpressionSolver {
   }
 };
 
-class DiscontinuitySolver : public ExpressionSolver {
- public:
-  DiscontinuitySolver(double xStart, double xEnd, const Internal::Tree* e,
-                      const SymbolContext& context);
+class DiscontinuitySolver
+    : public ExpressionSolver<DiscontinuityBracketer,
+                              NullDiscontinuityTester<double>> {
+  using Base =
+      ExpressionSolver<DiscontinuityBracketer, NullDiscontinuityTester<double>>;
 
- private:
-  void honeAndRoundSolution(Coordinate2D<double> start,
-                            Coordinate2D<double> end,
-                            Interest interest) override;
+ public:
+  using Base::ExpressionSolver;
+
+  void findAndPushSolution(Coordinate2D<double> start, Coordinate2D<double> end,
+                           Interest interest) override;
 };
 
 }  // namespace Poincare::NumericSolver

@@ -70,7 +70,7 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
                                           .angleUnit = angleUnit()}});
   Approximation::PrepareFunctionForApproximation(diff, "x", true);
   // TODO: use y+evaluate() instead of yTree+e in nextIntersection
-  RootSolver solver = RootSolver(xMin, xMax, diff, symbolContext);
+  RootSolver solver = RootSolver(xMin, xMax, diff);
   solver.stretch();
   double result = solver.next().x;
   diff->removeTree();

@@ -5,8 +5,8 @@
 namespace Poincare::Internal {
 
 static bool FunctionSeemsConstantOnTheInterval(
-    typename NumericSolver::Solver<double>::FunctionEvaluation f,
-    const void* aux, double xMin, double xMax) {
+    typename NumericSolver::FunctionEvaluation<double> f, const void* aux,
+    double xMin, double xMax) {
   assert(xMin < xMax);
   constexpr int k_numberOfSteps = 20;
   double values[k_numberOfSteps];
@@ -60,9 +60,8 @@ static bool FunctionSeemsConstantOnTheInterval(
 }
 
 Coordinate2D<double> HoneFunctions::SafeBrentMinimum(
-    typename NumericSolver::Solver<double>::FunctionEvaluation f,
-    const void* aux, double xMin, double xMax, Interest interest,
-    double xPrecision) {
+    typename NumericSolver::FunctionEvaluation<double> f, const void* aux,
+    double xMin, double xMax, Interest interest, double xPrecision) {
   if (xMax < xMin) {
     return SafeBrentMinimum(f, aux, xMax, xMin, interest, xPrecision);
   }
@@ -79,16 +78,15 @@ Coordinate2D<double> HoneFunctions::SafeBrentMinimum(
 }
 
 Coordinate2D<double> HoneFunctions::SafeBrentMaximum(
-    typename NumericSolver::Solver<double>::FunctionEvaluation f,
-    const void* aux, double xMin, double xMax, Interest interest,
-    double xPrecision) {
+    typename NumericSolver::FunctionEvaluation<double> f, const void* aux,
+    double xMin, double xMax, Interest interest, double xPrecision) {
   const void* pack[] = {&f, aux};
-  typename NumericSolver::Solver<double>::FunctionEvaluation minusF =
+  typename NumericSolver::FunctionEvaluation<double> minusF =
       [](double x, const void* aux) {
-        const void* const* param = reinterpret_cast<const void* const*>(aux);
-        const typename NumericSolver::Solver<double>::FunctionEvaluation* f =
-            reinterpret_cast<const typename NumericSolver::Solver<
-                double>::FunctionEvaluation*>(param[0]);
+        const void* const* param = static_cast<const void* const*>(aux);
+        const NumericSolver::FunctionEvaluation<double>* f =
+            static_cast<const NumericSolver::FunctionEvaluation<double>*>(
+                param[0]);
         return -(*f)(x, param[1]);
       };
   Coordinate2D<double> res =
@@ -97,18 +95,16 @@ Coordinate2D<double> HoneFunctions::SafeBrentMaximum(
 }
 
 Coordinate2D<double> HoneFunctions::SafeBrentExtremum(
-    typename NumericSolver::Solver<double>::FunctionEvaluation f,
-    const void* aux, double xMin, double xMax, Interest interest,
-    double xPrecision) {
+    typename NumericSolver::FunctionEvaluation<double> f, const void* aux,
+    double xMin, double xMax, Interest interest, double xPrecision) {
   return interest == Interest::Minimum
              ? SafeBrentMinimum(f, aux, xMin, xMax, interest, xPrecision)
              : SafeBrentMaximum(f, aux, xMin, xMax, interest, xPrecision);
 }
 
 Coordinate2D<double> HoneFunctions::CompositeBrentForRoot(
-    typename NumericSolver::Solver<double>::FunctionEvaluation f,
-    const void* aux, double xMin, double xMax, Interest interest,
-    double xPrecision) {
+    typename NumericSolver::FunctionEvaluation<double> f, const void* aux,
+    double xMin, double xMax, Interest interest, double xPrecision) {
   if (interest == Interest::Root) {
     Coordinate2D<double> xy =
         SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, xPrecision);
@@ -123,7 +119,8 @@ Coordinate2D<double> HoneFunctions::CompositeBrentForRoot(
   }
   return std::isfinite(res.x()) &&
                  std::fabs(res.y()) <
-                     NumericSolver::Solver<double>::NullTolerance(res.x())
+                     NumericSolver::DefaultNumericHelper<double>::NullTolerance(
+                         res.x())
              ? res
              : Coordinate2D<double>();
 }

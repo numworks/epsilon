@@ -161,7 +161,7 @@ double PointsOfInterestCache::cacheStep() const {
 }
 
 double PointsOfInterestCache::solverStep() const {
-  return Solver<double>::DefaultSearchStepForAmplitude(m_end - m_start);
+  return std::fabs(m_end - m_start) / 100.0;
 }
 
 void PointsOfInterestCache::stripOutOfBounds() {
@@ -246,7 +246,9 @@ struct PointSearchContext {
 /* TODO: When alongY, this interest point is later converted to a Root. This
  * could be done earlier to limit risks of miss-interpretation.*/
 PointOfInterest findYIntercept(PointSearchContext* ctx) {
-  if (ctx->start >= 0.f || 0.f >= ctx->end) return PointOfInterest{};
+  if (ctx->start >= 0.f || 0.f >= ctx->end) {
+    return PointOfInterest{};
+  }
   OMG::ExpiringPointer<ContinuousFunction> f = ctx->model();
   int n = f->numberOfSubCurves();
   while (ctx->counter < n) {
@@ -277,10 +279,10 @@ PointOfInterest findRootOrExtremum(PointSearchContext* ctx) {
     return PointOfInterest{};
   }
 
-  ExpressionSolver* solvers[] = {&ctx->rootSolver, &ctx->extremumSolver,
-                                 &ctx->discontinuitySolver};
+  NumericSolver::Solver<double>* solvers[] = {
+      &ctx->rootSolver, &ctx->extremumSolver, &ctx->discontinuitySolver};
   for (; ctx->counter < static_cast<int>(std::size(solvers)); ctx->counter++) {
-    ExpressionSolver* currentSolver = solvers[ctx->counter];
+    NumericSolver::Solver<double>* currentSolver = solvers[ctx->counter];
     if (currentSolver != &ctx->rootSolver && f->isAlongY()) {
       // Do not compute min and max since they would appear left/rightmost
       continue;
@@ -319,7 +321,7 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
   IntersectionSolver solver(ctx->currentStartForIntersections, ctx->end, f, g,
                             alongSameAxis, ctx->context);
   solver.setSearchStep(ctx->searchStep);
-  solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Precise);
+  solver.setGrowthSpeed(GrowthSpeed::Precise);
   // Only stretch the end, or would stay stuck at the first solution.
   solver.stretch(true);
 
@@ -439,11 +441,9 @@ Expression PointsOfInterestCache::computeBetween(double start, double end) {
 
   OMG::ExpiringPointer<ContinuousFunction> f = store->modelForRecord(m_record);
   PreparedFunction prepared = f->expressionApproximated();
-  const SymbolContext& context = App::app()->localContext();
-
-  RootSolver rootSolver(start, end, prepared, context);
-  ExtremumSolver extremumSolver(start, end, prepared, context);
-  DiscontinuitySolver discontinuitySolver(start, end, prepared, context);
+  RootSolver rootSolver(start, end, prepared);
+  ExtremumSolver extremumSolver(start, end, prepared);
+  DiscontinuitySolver discontinuitySolver(start, end, prepared);
 
   PointSearchContext searchContext{
       .start = start,
@@ -458,12 +458,12 @@ Expression PointsOfInterestCache::computeBetween(double start, double end) {
       .lastSegment = (m_computedEnd == end),
   };
 
-  ExpressionSolver* solvers[] = {&searchContext.rootSolver,
-                                 &searchContext.extremumSolver,
-                                 &searchContext.discontinuitySolver};
+  NumericSolver::Solver<double>* solvers[] = {
+      &searchContext.rootSolver, &searchContext.extremumSolver,
+      &searchContext.discontinuitySolver};
 
   for (size_t i = 0; i < std::size(solvers); i++) {
-    solvers[i]->setGrowthSpeed(Solver<double>::GrowthSpeed::Fast);
+    solvers[i]->setGrowthSpeed(GrowthSpeed::Fast);
     solvers[i]->setSearchStep(searchContext.searchStep);
     solvers[i]->stretch();
   }

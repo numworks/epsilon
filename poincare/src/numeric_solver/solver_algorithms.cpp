@@ -7,9 +7,8 @@ using namespace Poincare::NumericSolver;
 namespace Poincare::Internal {
 
 Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(
-    double ax, double bx, double xPrecision,
-    Solver<double>::FunctionEvaluation f, const void* aux,
-    double* resultEvaluation) {
+    double ax, double bx, double xPrecision, FunctionEvaluation<double> f,
+    const void* aux, double* resultEvaluation) {
   assert(ax < bx);
   double min = ax;
   double max = bx;
@@ -60,7 +59,7 @@ Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(
 
 template <typename T>
 T SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
-    T* probability, typename Solver<T>::FunctionEvaluation f, const void* aux) {
+    T* probability, FunctionEvaluation<T> f, const void* aux) {
   constexpr T precision = OMG::Float::Epsilon<T>();
   assert(*probability <= (static_cast<T>(1.f) - precision) &&
          *probability >= precision);
@@ -97,7 +96,7 @@ T SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
 
 template <typename T>
 T SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
-    T x, typename Solver<T>::FunctionEvaluation f, const void* aux) {
+    T x, FunctionEvaluation<T> f, const void* aux) {
   int end = std::floor(x);
   T result = 0.0;
   for (int k = 0; k <= end; k++) {
@@ -114,9 +113,10 @@ T SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
   return result;
 }
 
-Coordinate2D<double> SolverAlgorithms::BrentRoot(
-    Solver<double>::FunctionEvaluation f, const void* aux, double xMin,
-    double xMax, Interest interest, double xPrecision) {
+Coordinate2D<double> SolverAlgorithms::BrentRoot(FunctionEvaluation<double> f,
+                                                 const void* aux, double xMin,
+                                                 double xMax, Interest interest,
+                                                 double xPrecision) {
   if (xMax < xMin) {
     return BrentRoot(f, aux, xMax, xMin, interest, xPrecision);
   }
@@ -200,8 +200,8 @@ Coordinate2D<double> SolverAlgorithms::BrentRoot(
 }
 
 Coordinate2D<double> SolverAlgorithms::BrentMinimum(
-    Solver<double>::FunctionEvaluation f, const void* aux, double xMin,
-    double xMax, Interest interest, double xPrecision) {
+    FunctionEvaluation<double> f, const void* aux, double xMin, double xMax,
+    Interest interest, double xPrecision) {
   assert(xMin < xMax);
   double a = xMin;
   double b = xMax;
@@ -308,14 +308,14 @@ Coordinate2D<double> SolverAlgorithms::BrentMinimum(
 
 template float
 SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
-    float* probability, Solver<float>::FunctionEvaluation f, const void* aux);
+    float* probability, FunctionEvaluation<float> f, const void* aux);
 template double
 SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
-    double* probability, Solver<double>::FunctionEvaluation f, const void* aux);
+    double* probability, FunctionEvaluation<double> f, const void* aux);
 template float
 SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
-    float x, Solver<float>::FunctionEvaluation f, const void* aux);
+    float x, FunctionEvaluation<float> f, const void* aux);
 template double
 SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
-    double x, Solver<double>::FunctionEvaluation f, const void* aux);
+    double x, FunctionEvaluation<double> f, const void* aux);
 }  // namespace Poincare::Internal

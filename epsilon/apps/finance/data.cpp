@@ -1,6 +1,6 @@
 #include "data.h"
 
-#include <poincare/numeric_solver/solver.h>
+#include <poincare/numeric_solver/lambda_solver.h>
 #include <stdint.h>
 
 #include <cmath>
@@ -161,8 +161,7 @@ double computeRPct(double N, double PV, double Pmt, double FV, double PY,
   }
   const double parameters[7] = {N, PV, Pmt, FV, PY, CY, S};
   // We must solve this expression. An exact solution cannot be found.
-  Solver<double>::FunctionEvaluation evaluation = [](double x,
-                                                     const void* aux) {
+  FunctionEvaluation<double> evaluation = [](double x, const void* aux) {
     const double* pack = static_cast<const double*>(aux);
     double N = pack[0];
     double PV = pack[1];
@@ -176,8 +175,8 @@ double computeRPct(double N, double PV, double Pmt, double FV, double PY,
     double a = computeA(i, S, b, N);
     return PV + a * Pmt + b * FV;
   };
-  Solver<double> solver =
-      BuildBasicRootSolver(-100., 100., evaluation, parameters);
+  LambdaRootSolver<double> solver(
+      -100., 100., LambdaEvaluator<double>(evaluation, parameters));
   return solver.next().x;
 }
 

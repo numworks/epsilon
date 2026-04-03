@@ -55,7 +55,7 @@ IntersectionSolver::IntersectionSolver(double xStart, double xEnd,
                                        PreparedFunction&& diff,
                                        bool areAlongSameAxis,
                                        const SymbolContext& context)
-    : RootSolver(xStart, xEnd, diff.tree(), context),
+    : RootSolver(xStart, xEnd, diff.tree()),
       m_f(f),
       m_g(g),
       m_diff(diff),

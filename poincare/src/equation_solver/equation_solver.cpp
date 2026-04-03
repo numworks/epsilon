@@ -1011,8 +1011,7 @@ SolverResult ApproximateSolve(
   // Step 3. Compute the solutions
   assert(range.isValid());
   solutionMetadata.solvingRange = range;
-  RootSolver solver = RootSolver(range.min(), range.max(), preparedEquation,
-                                 EmptySymbolContext{});
+  RootSolver solver = RootSolver(range.min(), range.max(), preparedEquation);
   solver.stretch();
 
   TreeRef resultList = List::PushEmpty();

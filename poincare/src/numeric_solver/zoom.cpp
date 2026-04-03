@@ -1,3 +1,8 @@
+#include <poincare/numeric_solver/lambda_solver.h>
+#include <poincare/numeric_solver/policies/discontinuity.h>
+#include <poincare/numeric_solver/policies/numeric_helper.h>
+#include <poincare/numeric_solver/policies/queue.h>
+#include <poincare/numeric_solver/policies/step.h>
 #include <poincare/numeric_solver/zoom.h>
 #include <poincare/range.h>
 #include <poincare/src/expression/approximation.h>
@@ -10,6 +15,9 @@ namespace Poincare {
 
 using namespace Poincare::Internal;
 using namespace Poincare::NumericSolver;
+
+template <typename TFloat>
+using ZoomSolver = LambdaSolver<TFloat>;
 
 // HorizontalAsymptoteHelper
 
@@ -151,11 +159,11 @@ void Zoom<T>::fitFullFunction(Function2D<T> f, const void *model) {
 template <typename T>
 static Interest pointIsInterestingHelper(Coordinate2D<T> a, Coordinate2D<T> b,
                                          Coordinate2D<T> c, const void* aux) {
-  typename Solver<T>::BracketTest tests[] = {
+  BracketTest<T> tests[] = {
       SolverTests<T>::OddRootInBracket, SolverTests<T>::MinimumInBracket,
       SolverTests<T>::MaximumInBracket, SolverTests<T>::DiscontinuityAtEdge};
   Interest interest = Interest::None;
-  for (typename Solver<T>::BracketTest& test : tests) {
+  for (BracketTest<T>& test : tests) {
     interest = test(a, b, c, aux);
     if (interest != Interest::None) {
       break;
@@ -181,12 +189,11 @@ void Zoom<T>::fitPointsOfInterest(Function2D<T> f, const void* model,
                                .asymptotes = &asymptotes,
                                .ordinate = ordinate,
                                .ordinateDouble = ordinateDouble};
-  typename Solver<T>::FunctionEvaluation evaluator = [](T t, const void* aux) {
+  FunctionEvaluation<T> evaluator = [](T t, const void* aux) {
     const InterestParameters* p = static_cast<const InterestParameters*>(aux);
     return (p->f(t, p->model).*p->ordinate)();
   };
-  Solver<double>::FunctionEvaluation evaluatorDouble = [](double t,
-                                                          const void* aux) {
+  FunctionEvaluation<double> evaluatorDouble = [](double t, const void* aux) {
     const InterestParameters* p = static_cast<const InterestParameters*>(aux);
     return (p->fDouble(t, p->model).*p->ordinateDouble)();
   };
@@ -228,12 +235,11 @@ bool Zoom<T>::fitRoots(Function2D<T> f, const void* model, Range1D<T> bounds,
                                .asymptotes = nullptr,
                                .ordinate = ordinate,
                                .ordinateDouble = ordinateDouble};
-  typename Solver<T>::FunctionEvaluation evaluator = [](T t, const void* aux) {
+  FunctionEvaluation<T> evaluator = [](T t, const void* aux) {
     const InterestParameters* p = static_cast<const InterestParameters*>(aux);
     return (p->f(t, p->model).*p->ordinate)();
   };
-  Solver<double>::FunctionEvaluation evaluatorDouble = [](double t,
-                                                          const void* aux) {
+  FunctionEvaluation<double> evaluatorDouble = [](double t, const void* aux) {
     const InterestParameters* p = static_cast<const InterestParameters*>(aux);
     return (p->fDouble(t, p->model).*p->ordinateDouble)();
   };
@@ -258,7 +264,7 @@ void Zoom<T>::fitIntersections(Function2D<T> f1, const void* model1,
   assert(!vertical);
   IntersectionParameters params = {
       .f1 = f1, .f2 = f2, .model1 = model1, .model2 = model2};
-  typename Solver<T>::FunctionEvaluation evaluator = [](T t, const void* aux) {
+  FunctionEvaluation<T> evaluator = [](T t, const void* aux) {
     const IntersectionParameters* p =
         static_cast<const IntersectionParameters*>(aux);
     return p->f1(t, p->model1).y() - p->f2(t, p->model2).y();
@@ -291,26 +297,25 @@ void Zoom<T>::fitConditions(const Internal::Tree* piecewise,
                                        .fullFunction = fullFunction,
                                        .model = model,
                                        .vertical = vertical};
-  typename Solver<T>::FunctionEvaluation evaluator = [](T t, const void* aux) {
+  FunctionEvaluation<T> evaluator = [](T t, const void* aux) {
     const ConditionsParameters* params =
         static_cast<const ConditionsParameters*>(aux);
     return static_cast<T>(
         Internal::Approximation::IndexOfActivePiecewiseBranchAt(
             params->piecewise, t));
   };
-  typename Solver<T>::BracketTest test = [](Coordinate2D<T> a, Coordinate2D<T>,
-                                            Coordinate2D<T> c, const void*) {
+  BracketTest<T> test = [](Coordinate2D<T> a, Coordinate2D<T>,
+                           Coordinate2D<T> c, const void*) {
     return a.y() != c.y() ? Interest::Discontinuity : Interest::None;
   };
-  typename Solver<T>::HoneResult hone =
-      [](typename Solver<T>::FunctionEvaluation, const void* aux, T a, T b,
-         Interest, T) {
-        const ConditionsParameters* params =
-            static_cast<const ConditionsParameters*>(aux);
-        params->zoom->fitPoint(params->fullFunction(a, params->model),
-                               params->vertical);
-        return params->fullFunction(b, params->model);
-      };
+  HoneResult<T> hone = [](FunctionEvaluation<T>, const void* aux, T a, T b,
+                          Interest, T) {
+    const ConditionsParameters* params =
+        static_cast<const ConditionsParameters*>(aux);
+    params->zoom->fitPoint(params->fullFunction(a, params->model),
+                           params->vertical);
+    return params->fullFunction(b, params->model);
+  };
   bool dummy;
   fitWithSolver(bounds, &dummy, &dummy, evaluator, &params, test, hone,
                 vertical);
@@ -430,7 +435,8 @@ Interest Zoom<T>::PointIsInteresting(Coordinate2D<T> a, Coordinate2D<T> b,
    * on high levels of precision, this can be increased if need be.
    * FIXME Tolerance for detecting approximation errors should be computed by
    * analysing the input expression. */
-  constexpr T k_tolerance = static_cast<T>(4.) * Solver<T>::k_relativePrecision;
+  constexpr T k_tolerance =
+      static_cast<T>(4.) * ZoomSolver<T>::NumericHelper::k_relativePrecision;
   if ((res == Interest::Minimum || res == Interest::Maximum) &&
       (std::fabs((a.y() - b.y()) / b.x()) < k_tolerance ||
        std::fabs((a.y() - b.y()) / b.y()) < k_tolerance)) {
@@ -440,9 +446,8 @@ Interest Zoom<T>::PointIsInteresting(Coordinate2D<T> a, Coordinate2D<T> b,
 }
 
 template <typename T>
-static void honeHelper(typename Solver<T>::FunctionEvaluation f,
-                       const void* aux, T a, T b, Interest interest,
-                       typename Solver<T>::BracketTest test,
+static void honeHelper(FunctionEvaluation<T> f, const void* aux, T a, T b,
+                       Interest interest, BracketTest<T> test,
                        Coordinate2D<T>* pa, Coordinate2D<T>* pu,
                        Coordinate2D<T>* pv, Coordinate2D<T>* pb) {
   /* Use a simple dichotomy in [a,b] to hone in on the point of interest
@@ -483,14 +488,14 @@ static void honeHelper(typename Solver<T>::FunctionEvaluation f,
 }
 
 template <typename T>
-Coordinate2D<T> Zoom<T>::HonePoint(typename Solver<T>::FunctionEvaluation f,
-                                   const void* aux, T a, T b, Interest interest,
-                                   T precision) {
+Coordinate2D<T> Zoom<T>::HonePoint(FunctionEvaluation<T> f, const void* aux,
+                                   T a, T b, Interest interest, T precision) {
   Coordinate2D<T> pa, pu, pv, pb;
   honeHelper(f, aux, a, b, interest, pointIsInterestingHelper, &pa, &pu, &pv,
              &pb);
 
-  constexpr T k_tolerance = static_cast<T>(1.) / Solver<T>::k_relativePrecision;
+  constexpr T k_tolerance =
+      static_cast<T>(1.) / ZoomSolver<T>::NumericHelper::k_relativePrecision;
   /* Most functions will taper off near a local extremum. If the slope
    * diverges, it is more likely we have found an even vertical asymptote. */
   bool isAsymptote =
@@ -505,9 +510,8 @@ Coordinate2D<T> Zoom<T>::HonePoint(typename Solver<T>::FunctionEvaluation f,
 }
 
 template <typename T>
-Coordinate2D<T> Zoom<T>::HoneRoot(typename Solver<T>::FunctionEvaluation f,
-                                  const void* aux, T a, T b, Interest interest,
-                                  T precision) {
+Coordinate2D<T> Zoom<T>::HoneRoot(FunctionEvaluation<T> f, const void* aux, T a,
+                                  T b, Interest interest, T precision) {
   Coordinate2D<T> pa, pu, pv, pb;
   honeHelper(f, aux, a, b, interest, SolverTests<T>::EvenOrOddRootInBracket,
              &pa, &pu, &pv, &pb);
@@ -531,15 +535,16 @@ Coordinate2D<T> Zoom<T>::HoneRoot(typename Solver<T>::FunctionEvaluation f,
 #endif
   // Discard local minimums and maximums
   return interest == Interest::Root ||
-                 std::fabs(pb.y()) < Solver<T>::NullTolerance(pb.x())
+                 std::fabs(pb.y()) <
+                     ZoomSolver<T>::NumericHelper::NullTolerance(pb.x())
              ? Coordinate2D<T>(pb.x(), static_cast<T>(0.))
              : Coordinate2D<T>();
 }
 
 template <typename T>
-Coordinate2D<T> Zoom<T>::HoneIntersection(
-    typename Solver<T>::FunctionEvaluation f, const void* aux, T a, T b,
-    Interest interest, T precision) {
+Coordinate2D<T> Zoom<T>::HoneIntersection(FunctionEvaluation<T> f,
+                                          const void* aux, T a, T b,
+                                          Interest interest, T precision) {
   Coordinate2D<T> result = HoneRoot(f, aux, a, b, interest, precision);
   if (std::isnan(result.x())) {
     return result;
@@ -755,12 +760,12 @@ Range2D<T> Zoom<T>::privateRange(RangePolicy rangePolicy) const {
 }
 
 template <typename T>
-bool Zoom<T>::fitWithSolver(
-    Range1D<T> inputBounds, bool* leftInterrupted, bool* rightInterrupted,
-    typename Solver<T>::FunctionEvaluation evaluator, const void* aux,
-    typename Solver<T>::BracketTest test, typename Solver<T>::HoneResult hone,
-    bool vertical, Solver<double>::FunctionEvaluation fDouble,
-    typename Solver<T>::BracketTest testForCenterOfInterval) {
+bool Zoom<T>::fitWithSolver(Range1D<T> inputBounds, bool* leftInterrupted,
+                            bool* rightInterrupted,
+                            FunctionEvaluation<T> evaluator, const void* aux,
+                            BracketTest<T> test, HoneResult<T> hone,
+                            bool vertical, FunctionEvaluation<double> fDouble,
+                            BracketTest<T> testForCenterOfInterval) {
   assert(leftInterrupted && rightInterrupted);
 
   Range1D<T> bounds =
@@ -773,8 +778,9 @@ bool Zoom<T>::fitWithSolver(
   constexpr T k_marginAroundZero = 1e-2f;
 
   T c = bounds.center();
-  T d = std::max(k_marginAroundZero,
-                 std::fabs(c * Solver<T>::k_relativePrecision));
+  T d = std::max(
+      k_marginAroundZero,
+      std::fabs(c * ZoomSolver<T>::NumericHelper::k_relativePrecision));
   bool fitRight =
       fitWithSolverHelper(c + d, bounds.max(), rightInterrupted, evaluator, aux,
                           test, hone, vertical, fDouble);
@@ -796,11 +802,11 @@ bool Zoom<T>::fitWithSolver(
 }
 
 template <typename T>
-bool Zoom<T>::fitWithSolverHelper(
-    T start, T end, bool* interrupted,
-    typename Solver<T>::FunctionEvaluation evaluator, const void* aux,
-    typename Solver<T>::BracketTest test, typename Solver<T>::HoneResult hone,
-    bool vertical, Solver<double>::FunctionEvaluation fDouble) {
+bool Zoom<T>::fitWithSolverHelper(T start, T end, bool* interrupted,
+                                  FunctionEvaluation<T> evaluator,
+                                  const void* aux, BracketTest<T> test,
+                                  HoneResult<T> hone, bool vertical,
+                                  FunctionEvaluation<double> fDouble) {
   /* Search for points of interest in one direction, up to a certain number.
    * - k_maxPointsOnOneSide is the absolute maximum number of points we are
    *   allowed to find. It is high enough to correctly zoom on a tenth degree
@@ -818,7 +824,7 @@ bool Zoom<T>::fitWithSolverHelper(
    *         a fixed number of points of interest. */
   assert(interrupted);
   *interrupted = false;
-  Solver<T> solver(start, end, evaluator, aux, test, hone, nullptr);
+  ZoomSolver<T> solver(start, end, {evaluator, aux}, {test, hone});
   Range2D<T> savedRange;
   bool savedRangeIsInit = false;
   int nRoots = 0;
@@ -834,7 +840,7 @@ bool Zoom<T>::fitWithSolverHelper(
        * evaluating y=(e^x-1)/(e^x+1) for x~90 (which leads to ∞/∞). */
       return didFit;
     }
-    privateFitPoint(NumericSolver::SolutionToCoord<T>(p), vertical);
+    privateFitPoint(SolutionToCoord<T>(p), vertical);
     didFit = true;
     if (p.interest == Interest::Root) {
       nRoots++;

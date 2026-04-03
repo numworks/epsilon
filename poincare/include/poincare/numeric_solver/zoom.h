@@ -5,7 +5,8 @@
 #include <poincare/symbol_context.h>
 #include <poincare/tree.h>
 
-#include "solver.h"
+#include "policies/bracket.h"
+#include "policies/evaluation.h"
 
 /* The unit tests need to be able to read the working values of
  * m_interestingRange and m_magnitudeYRange, but we do not want to make public
@@ -168,14 +169,14 @@ class Zoom {
   static Interest PointIsInteresting(Coordinate2D<T> a, Coordinate2D<T> b,
                                      Coordinate2D<T> c, const void* aux);
   static Coordinate2D<T> HonePoint(
-      typename NumericSolver::Solver<T>::FunctionEvaluation f, const void* aux,
-      T a, T b, Interest, T precision);
+      typename NumericSolver::FunctionEvaluation<T> f, const void* aux, T a,
+      T b, Interest, T precision);
   static Coordinate2D<T> HoneRoot(
-      typename NumericSolver::Solver<T>::FunctionEvaluation f, const void* aux,
-      T a, T b, Interest, T precision);
+      typename NumericSolver::FunctionEvaluation<T> f, const void* aux, T a,
+      T b, Interest, T precision);
   static Coordinate2D<T> HoneIntersection(
-      typename NumericSolver::Solver<T>::FunctionEvaluation f, const void* aux,
-      T a, T b, Interest, T precision);
+      typename NumericSolver::FunctionEvaluation<T> f, const void* aux, T a,
+      T b, Interest, T precision);
 
   Range2D<T> sanitize2DHelper(Range2D<T> range) const;
 
@@ -200,18 +201,17 @@ class Zoom {
   Range2D<T> privateRange(RangePolicy rangePolicy) const;
   bool fitWithSolver(
       Range1D<T> bounds, bool* leftInterrupted, bool* rightInterrupted,
-      typename NumericSolver::Solver<T>::FunctionEvaluation evaluator,
-      const void* aux, typename NumericSolver::Solver<T>::BracketTest test,
-      typename NumericSolver::Solver<T>::HoneResult hone, bool vertical,
-      NumericSolver::Solver<double>::FunctionEvaluation fDouble = nullptr,
-      typename NumericSolver::Solver<T>::BracketTest testForCenterOfInterval =
-          nullptr);
+      typename NumericSolver::FunctionEvaluation<T> evaluator, const void* aux,
+      typename NumericSolver::BracketTest<T> test,
+      typename NumericSolver::HoneResult<T> hone, bool vertical,
+      NumericSolver::FunctionEvaluation<double> fDouble = nullptr,
+      typename NumericSolver::BracketTest<T> testForCenterOfInterval = nullptr);
   bool fitWithSolverHelper(
       T start, T end, bool* interrupted,
-      typename NumericSolver::Solver<T>::FunctionEvaluation evaluator,
-      const void* aux, typename NumericSolver::Solver<T>::BracketTest test,
-      typename NumericSolver::Solver<T>::HoneResult hone, bool vertical,
-      NumericSolver::Solver<double>::FunctionEvaluation fDouble);
+      typename NumericSolver::FunctionEvaluation<T> evaluator, const void* aux,
+      typename NumericSolver::BracketTest<T> test,
+      typename NumericSolver::HoneResult<T> hone, bool vertical,
+      NumericSolver::FunctionEvaluation<double> fDouble);
   void privateFitPoint(Coordinate2D<T> xy, bool flipped = false);
 
   /* m_interestingRange is edited by fitPointsOfInterest and fitIntersections,

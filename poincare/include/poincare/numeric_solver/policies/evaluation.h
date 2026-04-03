@@ -6,6 +6,26 @@
 namespace Poincare::NumericSolver {
 
 template <typename TFloat>
+class LambdaEvaluator {
+  /* NOTE: FunctionEvaluation is private to encourage the use of LambdaEvaluator
+   * in signatures, instead of a pair (FunctionEvaluation, const void*). */
+  using FunctionEvaluation = TFloat (*)(TFloat, const void*);
+
+ public:
+  LambdaEvaluator(FunctionEvaluation function, const void* auxiliary)
+      : m_function(function), m_auxiliary(auxiliary) {}
+
+  TFloat operator()(TFloat x) const { return m_function(x, m_auxiliary); }
+
+  bool hasFunction() const { return m_function != nullptr; }
+  const void* data() const { return m_auxiliary; }
+
+ private:
+  FunctionEvaluation m_function;
+  const void* m_auxiliary;
+};
+
+template <typename TFloat>
 class ExpressionEvaluator {
  public:
   /* NOTE: e should be a prepared function */
@@ -15,6 +35,17 @@ class ExpressionEvaluator {
                        e->hasDescendantSatisfying([](const Internal::Tree* t) {
                          return t->isRandomized();
                        })) {}
+
+  operator LambdaEvaluator<TFloat>() const {
+    return {
+        [](TFloat x, const void* aux) {
+          const ExpressionEvaluator<TFloat>& e =
+              *static_cast<const ExpressionEvaluator<TFloat>*>(aux);
+          return e(x);
+        },
+        this,
+    };
+  }
 
   TFloat operator()(TFloat x) const {
     assert(m_tree);
@@ -34,24 +65,6 @@ class ExpressionEvaluator {
  private:
   const Internal::Tree* m_tree;
   bool m_isRandomized;
-};
-
-template <typename TFloat>
-using FunctionEvaluation = TFloat (*)(TFloat, const void*);
-
-template <typename TFloat>
-class LambdaEvaluator {
- public:
-  LambdaEvaluator(FunctionEvaluation<TFloat> function, const void* auxiliary)
-      : m_function(function), m_auxiliary(auxiliary) {}
-
-  TFloat operator()(TFloat x) const { return m_function(x, m_auxiliary); }
-
-  const void* data() const { return m_auxiliary; }
-
- private:
-  FunctionEvaluation<TFloat> m_function;
-  const void* m_auxiliary;
 };
 
 }  // namespace Poincare::NumericSolver

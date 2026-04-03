@@ -2,11 +2,12 @@
 
 #include <poincare/src/numeric_solver/solver_algorithms.h>
 
+using namespace Poincare::NumericSolver;
+
 namespace Poincare::Internal {
 
-static bool FunctionSeemsConstantOnTheInterval(
-    typename NumericSolver::FunctionEvaluation<double> f, const void* aux,
-    double xMin, double xMax) {
+static bool FunctionSeemsConstantOnTheInterval(const LambdaEvaluator<double>& f,
+                                               double xMin, double xMax) {
   assert(xMin < xMax);
   constexpr int k_numberOfSteps = 20;
   double values[k_numberOfSteps];
@@ -19,8 +20,8 @@ static bool FunctionSeemsConstantOnTheInterval(
    * To measure this "repartition" of values, the entropy of the data is
    * then calculated. */
   for (int i = 0; i < k_numberOfSteps; i++) {
-    double currentValue = f(
-        xMin + (static_cast<double>(i) / k_numberOfSteps) * (xMax - xMin), aux);
+    double currentValue =
+        f(xMin + (static_cast<double>(i) / k_numberOfSteps) * (xMax - xMin));
     bool addValueToArray = true;
     for (int k = 0; k < currentNumberOfValues; k++) {
       if (values[k] == currentValue) {
@@ -60,67 +61,61 @@ static bool FunctionSeemsConstantOnTheInterval(
 }
 
 Coordinate2D<double> HoneFunctions::SafeBrentMinimum(
-    typename NumericSolver::FunctionEvaluation<double> f, const void* aux,
-    double xMin, double xMax, Interest interest, double xPrecision) {
+    const LambdaEvaluator<double>& f, double xMin, double xMax,
+    Interest interest, double xPrecision) {
   if (xMax < xMin) {
-    return SafeBrentMinimum(f, aux, xMax, xMin, interest, xPrecision);
+    return SafeBrentMinimum(f, xMax, xMin, interest, xPrecision);
   }
   assert(xMin < xMax);
 
-  if (FunctionSeemsConstantOnTheInterval(f, aux, xMin, xMax)) {
+  if (FunctionSeemsConstantOnTheInterval(f, xMin, xMax)) {
     /* Some fake minimums can be detected due to approximations errors like in
      * f(x) = x/abs(x) in complex mode. */
     return Coordinate2D<double>();
   }
 
-  return SolverAlgorithms::BrentMinimum(f, aux, xMin, xMax, interest,
-                                        xPrecision);
+  return SolverAlgorithms::BrentMinimum(f, xMin, xMax, interest, xPrecision);
 }
 
 Coordinate2D<double> HoneFunctions::SafeBrentMaximum(
-    typename NumericSolver::FunctionEvaluation<double> f, const void* aux,
-    double xMin, double xMax, Interest interest, double xPrecision) {
-  const void* pack[] = {&f, aux};
-  typename NumericSolver::FunctionEvaluation<double> minusF =
+    const LambdaEvaluator<double>& f, double xMin, double xMax,
+    Interest interest, double xPrecision) {
+  LambdaEvaluator<double> minusF(
       [](double x, const void* aux) {
-        const void* const* param = static_cast<const void* const*>(aux);
-        const NumericSolver::FunctionEvaluation<double>* f =
-            static_cast<const NumericSolver::FunctionEvaluation<double>*>(
-                param[0]);
-        return -(*f)(x, param[1]);
-      };
+        return -(*static_cast<const LambdaEvaluator<double>*>(aux))(x);
+      },
+      &f);
   Coordinate2D<double> res =
-      SafeBrentMinimum(minusF, pack, xMin, xMax, interest, xPrecision);
+      SafeBrentMinimum(minusF, xMin, xMax, interest, xPrecision);
   return Coordinate2D<double>(res.x(), -res.y());
 }
 
 Coordinate2D<double> HoneFunctions::SafeBrentExtremum(
-    typename NumericSolver::FunctionEvaluation<double> f, const void* aux,
-    double xMin, double xMax, Interest interest, double xPrecision) {
+    const LambdaEvaluator<double>& f, double xMin, double xMax,
+    Interest interest, double xPrecision) {
   return interest == Interest::Minimum
-             ? SafeBrentMinimum(f, aux, xMin, xMax, interest, xPrecision)
-             : SafeBrentMaximum(f, aux, xMin, xMax, interest, xPrecision);
+             ? SafeBrentMinimum(f, xMin, xMax, interest, xPrecision)
+             : SafeBrentMaximum(f, xMin, xMax, interest, xPrecision);
 }
 
 Coordinate2D<double> HoneFunctions::CompositeBrentForRoot(
-    typename NumericSolver::FunctionEvaluation<double> f, const void* aux,
-    double xMin, double xMax, Interest interest, double xPrecision) {
+    const LambdaEvaluator<double>& f, double xMin, double xMax,
+    Interest interest, double xPrecision) {
   if (interest == Interest::Root) {
     Coordinate2D<double> xy =
-        SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, xPrecision);
+        SolverAlgorithms::BrentRoot(f, xMin, xMax, interest, xPrecision);
     return xy;
   }
   Coordinate2D<double> res;
   if (interest == Interest::Minimum) {
-    res = SafeBrentMinimum(f, aux, xMin, xMax, interest, xPrecision);
+    res = SafeBrentMinimum(f, xMin, xMax, interest, xPrecision);
   } else {
     assert(interest == Interest::Maximum);
-    res = SafeBrentMaximum(f, aux, xMin, xMax, interest, xPrecision);
+    res = SafeBrentMaximum(f, xMin, xMax, interest, xPrecision);
   }
   return std::isfinite(res.x()) &&
                  std::fabs(res.y()) <
-                     NumericSolver::DefaultNumericHelper<double>::NullTolerance(
-                         res.x())
+                     DefaultNumericHelper<double>::NullTolerance(res.x())
              ? res
              : Coordinate2D<double>();
 }

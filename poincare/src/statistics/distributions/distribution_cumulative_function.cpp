@@ -123,12 +123,13 @@ T discreteCumulativeDistributiveFunction(Type distribType, T x,
   };
   Args args = {distribType, parameters};
   return SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction<T>(
-      x,
-      [](T k, const void* auxiliary) {
-        const Args* args = static_cast<const Args*>(auxiliary);
-        return EvaluateAtAbscissa(args->type, k, args->params);
-      },
-      &args);
+      x, {
+             [](T k, const void* auxiliary) {
+               const Args* args = static_cast<const Args*>(auxiliary);
+               return EvaluateAtAbscissa(args->type, k, args->params);
+             },
+             &args,
+         });
 }
 
 template <typename T>

@@ -168,15 +168,13 @@ class Zoom {
 
   static Interest PointIsInteresting(Coordinate2D<T> a, Coordinate2D<T> b,
                                      Coordinate2D<T> c, const void* aux);
-  static Coordinate2D<T> HonePoint(
-      typename NumericSolver::FunctionEvaluation<T> f, const void* aux, T a,
-      T b, Interest, T precision);
-  static Coordinate2D<T> HoneRoot(
-      typename NumericSolver::FunctionEvaluation<T> f, const void* aux, T a,
-      T b, Interest, T precision);
+  static Coordinate2D<T> HonePoint(const NumericSolver::LambdaEvaluator<T>& f,
+                                   T a, T b, Interest, T precision);
+  static Coordinate2D<T> HoneRoot(const NumericSolver::LambdaEvaluator<T>& f,
+                                  T a, T b, Interest, T precision);
   static Coordinate2D<T> HoneIntersection(
-      typename NumericSolver::FunctionEvaluation<T> f, const void* aux, T a,
-      T b, Interest, T precision);
+      const NumericSolver::LambdaEvaluator<T>& f, T a, T b, Interest,
+      T precision);
 
   Range2D<T> sanitize2DHelper(Range2D<T> range) const;
 
@@ -201,17 +199,16 @@ class Zoom {
   Range2D<T> privateRange(RangePolicy rangePolicy) const;
   bool fitWithSolver(
       Range1D<T> bounds, bool* leftInterrupted, bool* rightInterrupted,
-      typename NumericSolver::FunctionEvaluation<T> evaluator, const void* aux,
-      typename NumericSolver::BracketTest<T> test,
-      typename NumericSolver::HoneResult<T> hone, bool vertical,
-      NumericSolver::FunctionEvaluation<double> fDouble = nullptr,
+      const NumericSolver::LambdaEvaluator<T>& f,
+      const NumericSolver::LambdaBracketer<T>& bracketer, bool vertical,
+      const NumericSolver::LambdaEvaluator<double>& fDouble = {nullptr,
+                                                               nullptr},
       typename NumericSolver::BracketTest<T> testForCenterOfInterval = nullptr);
   bool fitWithSolverHelper(
       T start, T end, bool* interrupted,
-      typename NumericSolver::FunctionEvaluation<T> evaluator, const void* aux,
-      typename NumericSolver::BracketTest<T> test,
-      typename NumericSolver::HoneResult<T> hone, bool vertical,
-      NumericSolver::FunctionEvaluation<double> fDouble);
+      const NumericSolver::LambdaEvaluator<T>& f,
+      const NumericSolver::LambdaBracketer<T>& bracketer, bool vertical,
+      const NumericSolver::LambdaEvaluator<double>& fDouble);
   void privateFitPoint(Coordinate2D<T> xy, bool flipped = false);
 
   /* m_interestingRange is edited by fitPointsOfInterest and fitIntersections,

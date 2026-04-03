@@ -12,8 +12,7 @@ using namespace NumericSolver;
 
 template <typename T>
 void findBoundsForBinarySearch(
-    FunctionEvaluation<T> cumulativeDistributionEvaluation,
-    const void* auxiliary, T& xmin, T& xmax) {
+    LambdaEvaluator<T> cumulativeDistributionEvaluation, T& xmin, T& xmax) {
   /* We'll simply test [0, 10], [10, 100], [100, 1000] ... until we find a
    * working interval, or symmetrically if the zero is on the left. This
    * obviously assumes that cumulativeDistributionEvaluation is an increasing
@@ -21,14 +20,13 @@ void findBoundsForBinarySearch(
   constexpr static int k_maxNumberOfIterations = 308;  // std::log10(DBL_MAX)
 
   xmin = 0, xmax = 10;
-  T signOfRoot = cumulativeDistributionEvaluation(0, auxiliary) < 0 ? 1 : -1;
+  T signOfRoot = cumulativeDistributionEvaluation(0) < 0 ? 1 : -1;
   int iteration = 0;
 
   // We check if xmax if after the root, and otherwise multiply it by 10
-  while ((signOfRoot *
-              cumulativeDistributionEvaluation(signOfRoot * xmax, auxiliary) <
-          0) &&
-         (iteration < k_maxNumberOfIterations)) {
+  while (
+      (signOfRoot * cumulativeDistributionEvaluation(signOfRoot * xmax) < 0) &&
+      (iteration < k_maxNumberOfIterations)) {
     xmin = xmax;
     xmax *= 10;
     iteration++;
@@ -69,13 +67,14 @@ T binomialCumulativeDistributiveInverse(T probability,
   }
   T proba = probability;
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
-      &proba,
-      [](T x, const void* auxiliary) {
-        const ParametersArray<T> params =
-            *static_cast<const ParametersArray<T>*>(auxiliary);
-        return EvaluateAtAbscissa(Type::Binomial, x, params);
-      },
-      &parameters);
+      &proba, {
+                  [](T x, const void* auxiliary) {
+                    const ParametersArray<T> params =
+                        *static_cast<const ParametersArray<T>*>(auxiliary);
+                    return EvaluateAtAbscissa(Type::Binomial, x, params);
+                  },
+                  &parameters,
+              });
 }
 
 template <typename T>
@@ -96,7 +95,7 @@ T chi2CumulativeDistributiveInverse(T probability,
   };
   Args args{probability, k};
 
-  FunctionEvaluation<double> evaluation = [](double x, const void* auxiliary) {
+  auto evaluation = [](double x, const void* auxiliary) {
     const Args* args = static_cast<const Args*>(auxiliary);
     return CumulativeDistributiveFunctionAtAbscissa<double>(
                Type::Chi2, x, ParametersArray<double>({args->k})) -
@@ -104,10 +103,10 @@ T chi2CumulativeDistributiveInverse(T probability,
   };
 
   double xmin, xmax;
-  findBoundsForBinarySearch(evaluation, &args, xmin, xmax);
+  findBoundsForBinarySearch({evaluation, &args}, xmin, xmax);
 
   Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(
-      xmin, xmax, DBL_EPSILON, evaluation, &args);
+      xmin, xmax, DBL_EPSILON, {evaluation, &args});
   return static_cast<T>(result.x());
 }
 
@@ -144,14 +143,16 @@ T fisherCumulativeDistributiveInverse(T probability,
   Args args = {p, dbleParameters};
   Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(
       ax, bx, DBL_EPSILON,
-      [](double x, const void* auxiliary) {
-        const Args* args = static_cast<const Args*>(auxiliary);
-        // This needs to be an increasing function
-        return CumulativeDistributiveFunctionAtAbscissa(Type::Fisher, x,
-                                                        args->params) -
-               args->proba;
-      },
-      &args);
+      {
+          [](double x, const void* auxiliary) {
+            const Args* args = static_cast<const Args*>(auxiliary);
+            // This needs to be an increasing function
+            return CumulativeDistributiveFunctionAtAbscissa(Type::Fisher, x,
+                                                            args->params) -
+                   args->proba;
+          },
+          &args,
+      });
 
   /* Enter this condition if an unprecise result is found that is not at
    * abscissa ax or bx.
@@ -188,13 +189,14 @@ T geometricCumulativeDistributiveInverse(T probability,
   /* It works even if G(p) is defined on N* and not N because G(0) returns 0 and
    * not undef */
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
-      &proba,
-      [](T x, const void* auxiliary) {
-        const ParametersArray<T> params =
-            *static_cast<const ParametersArray<T>*>(auxiliary);
-        return EvaluateAtAbscissa(Type::Geometric, x, params);
-      },
-      &params);
+      &proba, {
+                  [](T x, const void* auxiliary) {
+                    const ParametersArray<T> params =
+                        *static_cast<const ParametersArray<T>*>(auxiliary);
+                    return EvaluateAtAbscissa(Type::Geometric, x, params);
+                  },
+                  &params,
+              });
 }
 
 template <typename T>
@@ -217,13 +219,14 @@ T hypergeomCumulativeDistributiveInverse(T probability,
   }
   T proba = probability;
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
-      &proba,
-      [](T x, const void* auxiliary) {
-        const ParametersArray<T> params =
-            *static_cast<const ParametersArray<T>*>(auxiliary);
-        return EvaluateAtAbscissa(Type::Hypergeometric, x, params);
-      },
-      &parameters);
+      &proba, {
+                  [](T x, const void* auxiliary) {
+                    const ParametersArray<T> params =
+                        *static_cast<const ParametersArray<T>*>(auxiliary);
+                    return EvaluateAtAbscissa(Type::Hypergeometric, x, params);
+                  },
+                  &parameters,
+              });
 }
 
 template <typename T>
@@ -269,13 +272,14 @@ T poissonCumulativeDistributiveInverse(T probability,
   }
   T proba = probability;
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
-      &proba,
-      [](T x, const void* auxiliary) {
-        const ParametersArray<T> params =
-            *static_cast<const ParametersArray<T>*>(auxiliary);
-        return EvaluateAtAbscissa(Type::Poisson, x, params);
-      },
-      &parameters);
+      &proba, {
+                  [](T x, const void* auxiliary) {
+                    const ParametersArray<T> params =
+                        *static_cast<const ParametersArray<T>*>(auxiliary);
+                    return EvaluateAtAbscissa(Type::Poisson, x, params);
+                  },
+                  &parameters,
+              });
 }
 
 template <typename T>
@@ -294,7 +298,7 @@ T studentCumulativeDistributiveInverse(T probability,
     T k;
   };
   Args args{probability, k};
-  FunctionEvaluation<double> evaluation = [](double x, const void* auxiliary) {
+  auto evaluation = [](double x, const void* auxiliary) {
     const Args* args = static_cast<const Args*>(auxiliary);
     return static_cast<double>(
         CumulativeDistributiveFunctionAtAbscissa<T>(
@@ -303,12 +307,12 @@ T studentCumulativeDistributiveInverse(T probability,
   };
 
   double xmin, xmax;
-  findBoundsForBinarySearch(evaluation, &args, xmin, xmax);
+  findBoundsForBinarySearch({evaluation, &args}, xmin, xmax);
   assert((xmin < xmax) && std::isfinite(xmin) && std::isfinite(xmax));
 
   // Compute inverse using SolverAlgorithms::IncreasingFunctionRoot
   Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(
-      xmin, xmax, DBL_EPSILON, evaluation, &args);
+      xmin, xmax, DBL_EPSILON, {evaluation, &args});
   return result.x();
 }
 

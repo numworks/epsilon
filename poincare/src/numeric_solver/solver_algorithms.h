@@ -15,24 +15,24 @@ class SolverAlgorithms {
   /* Bibliography: R. P. Brent, Algorithms for finding zeros and extrema of
    * functions without calculating derivatives */
   static Coordinate2D<double> BrentRoot(
-      NumericSolver::FunctionEvaluation<double> f, const void* aux, double xMin,
-      double xMax, Interest interest, double xPrecision);
+      const NumericSolver::LambdaEvaluator<double>& f, double xMin, double xMax,
+      Interest interest, double xPrecision);
   static Coordinate2D<double> BrentMinimum(
-      NumericSolver::FunctionEvaluation<double> f, const void* aux, double xMin,
-      double xMax, Interest interest, double xPrecision);
+      const NumericSolver::LambdaEvaluator<double>& f, double xMin, double xMax,
+      Interest interest, double xPrecision);
 
   /* Numeric functions for statistics and probability. */
   static Coordinate2D<double> IncreasingFunctionRoot(
       double ax, double bx, double xPrecision,
-      NumericSolver::FunctionEvaluation<double> f, const void* aux,
+      const NumericSolver::LambdaEvaluator<double>& f,
       double* resultEvaluation = nullptr);
 
   template <typename T>
   static T CumulativeDistributiveInverseForNDefinedFunction(
-      T* probability, NumericSolver::FunctionEvaluation<T> f, const void* aux);
+      T* probability, const NumericSolver::LambdaEvaluator<T>& f);
   template <typename T>
   static T CumulativeDistributiveFunctionForNDefinedFunction(
-      T x, NumericSolver::FunctionEvaluation<T> f, const void* aux);
+      T x, const NumericSolver::LambdaEvaluator<T>& f);
 
  private:
   constexpr static int k_numberOfIterationsBrent = 100;

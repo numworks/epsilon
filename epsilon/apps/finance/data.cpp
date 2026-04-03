@@ -159,24 +159,19 @@ double computeRPct(double N, double PV, double Pmt, double FV, double PY,
     // PV + FV*(1 + r/(100*CY))^(-N*CY/PY) = 0
     return 100.0 * CY * (std::pow(-FV / PV, PY / (N * CY)) - 1.0);
   }
-  const double parameters[7] = {N, PV, Pmt, FV, PY, CY, S};
+
+  struct Pack {
+    double N, PV, Pmt, FV, PY, CY, S;
+  } parameters{N, PV, Pmt, FV, PY, CY, S};
   // We must solve this expression. An exact solution cannot be found.
-  FunctionEvaluation<double> evaluation = [](double x, const void* aux) {
-    const double* pack = static_cast<const double*>(aux);
-    double N = pack[0];
-    double PV = pack[1];
-    double Pmt = pack[2];
-    double FV = pack[3];
-    double PY = pack[4];
-    double CY = pack[5];
-    double S = pack[6];
-    double i = computeI(x, CY, PY);
-    double b = computeB(i, N);
-    double a = computeA(i, S, b, N);
-    return PV + a * Pmt + b * FV;
+  auto evaluation = [](double x, const void* aux) {
+    const Pack& p = *static_cast<const Pack*>(aux);
+    double i = computeI(x, p.CY, p.PY);
+    double b = computeB(i, p.N);
+    double a = computeA(i, p.S, b, p.N);
+    return p.PV + a * p.Pmt + b * p.FV;
   };
-  LambdaRootSolver<double> solver(
-      -100., 100., LambdaEvaluator<double>(evaluation, parameters));
+  LambdaRootSolver<double> solver(-100., 100., {evaluation, &parameters});
   return solver.next().x;
 }
 

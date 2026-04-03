@@ -18,11 +18,8 @@ class RootBracketer {
   template <typename TEvaluator>
   Coordinate2D<double> hone(double xMin, double xMax, Interest interest,
                             double precision, const TEvaluator& evaluator) {
-    auto wrapper = [](double x, const void* aux) {
-      return (*reinterpret_cast<const TEvaluator*>(aux))(x);
-    };
-    return Internal::HoneFunctions::CompositeBrentForRoot(
-        wrapper, &evaluator, xMin, xMax, interest, precision);
+    return Internal::HoneFunctions::CompositeBrentForRoot(evaluator, xMin, xMax,
+                                                          interest, precision);
   }
 };
 
@@ -35,11 +32,8 @@ class ExtremumBracketer {
   template <typename TEvaluator>
   Coordinate2D<double> hone(double xMin, double xMax, Interest interest,
                             double precision, const TEvaluator& evaluator) {
-    auto wrapper = [](double x, const void* aux) {
-      return (*reinterpret_cast<const TEvaluator*>(aux))(x);
-    };
-    return Internal::HoneFunctions::SafeBrentExtremum(
-        wrapper, &evaluator, xMin, xMax, interest, precision);
+    return Internal::HoneFunctions::SafeBrentExtremum(evaluator, xMin, xMax,
+                                                      interest, precision);
   }
 };
 
@@ -65,9 +59,8 @@ using BracketTest = Interest (*)(Coordinate2D<TFloat>, Coordinate2D<TFloat>,
                                  Coordinate2D<TFloat>, const void*);
 
 template <typename TFloat>
-using HoneResult = Coordinate2D<TFloat> (*)(FunctionEvaluation<TFloat>,
-                                            const void*, TFloat, TFloat,
-                                            Interest, TFloat);
+using HoneResult = Coordinate2D<TFloat> (*)(const LambdaEvaluator<TFloat>&,
+                                            TFloat, TFloat, Interest, TFloat);
 
 template <typename TFloat>
 class LambdaBracketer {
@@ -76,17 +69,14 @@ class LambdaBracketer {
       : m_test(test), m_hone(hone) {}
 
   Interest test(Coordinate2D<TFloat> a, Coordinate2D<TFloat> b,
-                Coordinate2D<TFloat> c, const void* aux) {
+                Coordinate2D<TFloat> c, const void* aux) const {
     return m_test(a, b, c, aux);
   }
 
-  template <typename TEvaluator>
   Coordinate2D<TFloat> hone(TFloat xMin, TFloat xMax, Interest interest,
-                            TFloat precision, const TEvaluator& evaluator) {
-    auto wrapper = [](TFloat x, const void* aux) {
-      return (*reinterpret_cast<const TEvaluator*>(aux))(x);
-    };
-    return m_hone(wrapper, &evaluator, xMin, xMax, interest, precision);
+                            TFloat precision,
+                            const LambdaEvaluator<TFloat>& evaluator) const {
+    return m_hone(evaluator, xMin, xMax, interest, precision);
   }
 
  private:

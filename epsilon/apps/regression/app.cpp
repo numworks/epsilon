@@ -42,18 +42,20 @@ App::Snapshot::Snapshot()
                                      Ion::Storage::listExtension,
                                      Shared::DoublePairStore::k_numberOfSeries);
 
-  // Register R1, R2, R3... in the sharedStorage
+  // Register R1, R2, ... in the sharedStorage
+  static constexpr const char* const kRegressionFunctionBaseNames[] = {
+      Store::k_regressionFunctionBaseName};
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
-      ->registerArrayOfReservedNames(
-          std::span<const char* const>({Store::k_regressionFunctionBaseName}),
-          Ion::Storage::regressionFunctionExtension,
-          Shared::DoublePairStore::k_numberOfSeries);
-  // Register RES, RES2, RES3... in the sharedStorage
+      ->registerArrayOfReservedNames(kRegressionFunctionBaseNames,
+                                     Ion::Storage::regressionFunctionExtension,
+                                     Shared::DoublePairStore::k_numberOfSeries);
+  // Register RES1, RES2, ... in the sharedStorage
+  static constexpr const char* const kResidualListBaseNames[] = {
+      Store::k_residualListBaseName};
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
-      ->registerArrayOfReservedNames(
-          std::span<const char* const>({Store::k_residualListBaseName}),
-          Ion::Storage::regressionListExtension,
-          Shared::DoublePairStore::k_numberOfSeries);
+      ->registerArrayOfReservedNames(kResidualListBaseNames,
+                                     Ion::Storage::regressionListExtension,
+                                     Shared::DoublePairStore::k_numberOfSeries);
 }
 
 App* App::Snapshot::unpack(Container* container) {

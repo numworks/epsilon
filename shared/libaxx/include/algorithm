@@ -98,7 +98,7 @@ constexpr Iterator extremum_element(Iterator first, Iterator end,
   }
   Iterator result = first;
   while (++first != end) {
-    if (isMin ? comparator(*result, *first) : comparator(*first, *result)) {
+    if (isMin ? comparator(*first, *result) : comparator(*result, *first)) {
       result = first;
     }
   }

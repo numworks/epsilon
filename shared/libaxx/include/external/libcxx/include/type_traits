@@ -48,6 +48,13 @@ template <> struct __libcpp_is_floating_point<double> : public true_type {};
 
 template <class _Tp> struct is_floating_point : public __libcpp_is_floating_point<typename remove_cv<_Tp>::type> {};
 
+// is_const
+
+template <class _Tp> struct __libcpp_is_const : public false_type {};
+template <class _Tp> struct __libcpp_is_const<const _Tp> : public true_type {};
+
+template <class _Tp> struct is_const : public __libcpp_is_const<_Tp> {};
+
 // enable_if
 
 template <bool, class _Tp = void> struct enable_if {};

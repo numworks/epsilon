@@ -1,6 +1,15 @@
+_sources_libaxx_src := $(addprefix src/, \
+  cxxabi/atexit.cpp \
+  cxxabi/pure_virtual.cpp \
+)
+
+_sources_libaxx_test := $(addprefix test/, \
+  algorithm.cpp \
+)
+
 $(call create_module,libaxx,1, \
-  src/cxxabi/atexit.cpp \
-  src/cxxabi/pure_virtual.cpp \
+  $(_sources_libaxx_src) \
+  $(addsuffix :+test,$(_sources_libaxx_test)) \
 )
 
 ifeq ($(LIBAXX_real_complexes),1)

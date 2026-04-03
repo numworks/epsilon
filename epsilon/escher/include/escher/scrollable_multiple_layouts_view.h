@@ -37,8 +37,8 @@ class AbstractScrollableMultipleLayoutsView
   }
   bool displayCenter() const { return contentCell()->displayCenter(); }
   void setDisplayCenter(bool display);
-  void setDisplayableCenter(bool displayable) {
-    contentCell()->setDisplayableCenter(displayable);
+  void setToggleableCenter(bool displayable) {
+    contentCell()->setToggleableCenter(displayable);
   }
   void reloadScroll();
   bool handleEvent(Ion::Events::Event event) override;
@@ -103,13 +103,13 @@ class AbstractScrollableMultipleLayoutsView
       return !m_rightLayoutView.layout().isUninitialized();
     }
     bool displayableCenter() const {
-      return m_displayableCenter &&
+      return m_toggleableCenter &&
              !m_centeredLayoutView.layout().isUninitialized();
     }
     bool comparisonSignIsEqual() const { return m_comparisonSignIsEqual; }
     void setDisplayCenter(bool display);
-    void setDisplayableCenter(bool displayable) {
-      m_displayableCenter = displayable;
+    void setToggleableCenter(bool displayable) {
+      m_toggleableCenter = displayable;
     }
     /* Even if isVisible is true, comparison sign can be hidden. See
      * displayComparisonSign(). */
@@ -135,7 +135,7 @@ class AbstractScrollableMultipleLayoutsView
     LayoutView m_centeredLayoutView;
     SubviewPosition m_selectedSubviewPosition;
     bool m_displayCenter;
-    bool m_displayableCenter;
+    bool m_toggleableCenter;
     bool m_comparisonSignIsEqual;
     bool m_displayComparisonSign;
     float m_horizontalAlignment;

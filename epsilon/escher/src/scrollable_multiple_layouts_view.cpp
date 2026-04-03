@@ -22,7 +22,7 @@ AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
       m_centeredLayoutView({.style = {.font = font}}),
       m_selectedSubviewPosition(SubviewPosition::Center),
       m_displayCenter(true),
-      m_displayableCenter(false),
+      m_toggleableCenter(false),
       m_comparisonSignIsEqual(false),
       m_displayComparisonSign(true),
       m_horizontalAlignment(horizontalAlignment) {

@@ -567,10 +567,11 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
       break;
     case Type::Opposite: {
       PushCodePoint(parentRack, '-');
-      // Add extra parentheses for -1^2 -> -(1^2) but not for -x^2
+      // Add extra parentheses for -1^2 -> -(1^2) but not for -x^2 or -10^2
       bool addExtraParenthesis =
           expression->child(0)->isPow() &&
-          !expression->child(0)->child(0)->isUserVariable();
+          !expression->child(0)->child(0)->isUserVariable() &&
+          !expression->child(0)->child(0)->treeIsIdenticalTo(10_e);
       layoutExpression(
           parentRack, child,
           addExtraParenthesis ? k_forceParentheses : OperatorPriority(type));

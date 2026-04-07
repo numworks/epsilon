@@ -420,10 +420,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("10^45+i*10^45",
                       DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Equal, "10^45+10^45i", nullptr, &store);
-  // TODO: first parentheses should be removed in approximation too.
-  assertCalculationIs("-10^45-i*10^45", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Equal, "-(10^45)-10^45i", "-10^45-10^45i",
-                      &store);
+  assertCalculationIs("-10^45-i*10^45",
+                      DisplayOutput::ApproximateIsIdenticalToExact,
+                      EqualSign::Equal, "-10^45-10^45i", nullptr, &store);
 
   // Exact output that have dependencies are not displayed
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,

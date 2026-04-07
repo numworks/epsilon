@@ -173,7 +173,8 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     const SymbolContext& symbolContext) {
   assert(m_solutionMetadata.solutionType != SolutionType::Approximate);
   assert(!exact.isUninitialized());
-
+  Poincare::AngleUnit angleUnit =
+      GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   EquationStore* store = m_store;
 
   bool forbidExactSolution = ExamModeManager::ExamMode().forbidExactResults();
@@ -207,8 +208,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     exactApproximateClone = exact.cloneAndApproximate(
         UserParameters{
             .complexFormat = m_equationMetadata.complexFormat,
-            .angleUnit =
-                GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+            .angleUnit = angleUnit,
             .unitFormat =
                 GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
             .context = symbolContext},
@@ -241,6 +241,9 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   assert(!approximateLayout.isUninitialized() ||
          !exactLayout.isUninitialized());
 
+  uint8_t numberOfSignificantDigits =
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+
   bool comparisonSignIsEqual = false;
   bool comparisonSignIsVisible = true;
   if (!approximateLayout.isUninitialized() && !exactLayout.isUninitialized()) {
@@ -267,12 +270,9 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     }
     if (!exactLayout.isUninitialized() &&
         Poincare::IsCalculationOutputStrictEquality(
-            exact, approximateToUse,
-            GlobalPreferences::SharedGlobalPreferences()
-                ->numberOfSignificantDigits(),
+            exact, approximateToUse, numberOfSignificantDigits,
             {.user = {.complexFormat = m_equationMetadata.complexFormat,
-                      .angleUnit = GlobalPreferences::SharedGlobalPreferences()
-                                       ->angleUnit()}})) {
+                      .angleUnit = angleUnit}})) {
       comparisonSignIsEqual = true;
       comparisonSignIsVisible = true;
     }

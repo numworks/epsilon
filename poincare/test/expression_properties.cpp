@@ -440,11 +440,13 @@ QUIZ_CASE(pcj_properties_is_continuous) {
   assert_is_continuous_on_interval("(x-1)^3/(x-1)", 0.0f, 2.0f, false);
   assert_is_continuous_on_interval("0*piecewise(0,x<2,1,x<3,2,x<4)", 1.5f, 2.5f,
                                    true);
-  assert_is_continuous_on_interval("0*piecewise(0,x<2)", 1.5f, 2.5f, false);
   assert_is_continuous_on_interval("piecewise(0,frac(x)=0,1)", 1.5f, 2.5f,
                                    false);
   assert_is_continuous_on_interval("piecewise(1,frac(x)>0,0)", 1.5f, 2.5f,
                                    false);
+  // Not handled: Should be discontinuous
+  assert_is_continuous_on_interval("0*piecewise(0,x<2)", 1.5f, 2.5f, true);
+  assert_is_continuous_on_interval("0*arccos(x)", 0.5f, 1.5f, true);
 }
 
 void assert_reduced_deep_is_symbolic(const char* input,

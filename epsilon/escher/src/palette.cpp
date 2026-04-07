@@ -4,10 +4,9 @@
 namespace Escher {
 
 KDColor Palette::nextDataColor(int* colorIndex) {
-  int nbOfColors = numberOfDataColors();
-  assert(*colorIndex < nbOfColors);
+  assert(*colorIndex < k_numberOfDataColors);
   KDColor c = DataColor[*colorIndex];
-  *colorIndex = (*colorIndex + 1) % nbOfColors;
+  *colorIndex = (*colorIndex + 1) % k_numberOfDataColors;
   return c;
 }
 

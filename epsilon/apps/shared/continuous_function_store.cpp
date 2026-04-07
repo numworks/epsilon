@@ -68,7 +68,7 @@ void ContinuousFunctionStore::fillLastFreeColors(bool* colorIsFree) const {
         modelForRecord(recordAtIndex(i));
     int nDerivatives = 1 + 2 * f->canDisplayDerivative();
     for (int d = 0; d < nDerivatives; d++) {
-      int c = indexInArray(f->color(d), Palette::DataColor, paletteSize);
+      int c = indexInArray(f->color(d), Palette::DataColor.data(), paletteSize);
       if (colorIsFree[c]) {
         colorIsFree[c] = false;
         nFree--;

@@ -30,9 +30,7 @@ int PieGraphViewDataSource::setGroup(int group) {
   m_selectedCategory = UINT8_MAX;
   float cumulatedAngle = 0;
   static_assert(Store::k_maxNumberOfCategory <=
-                Escher::Palette::numberOfLightDataColors());
-  static_assert(Store::k_maxNumberOfCategory <=
-                Escher::Palette::numberOfDataColors());
+                Escher::Palette::k_numberOfDataColors);
   for (int globalCatIndex = 0; globalCatIndex < Store::k_maxNumberOfCategory;
        ++globalCatIndex) {
     float rf = m_store->getRelativeFrequency(group, globalCatIndex);

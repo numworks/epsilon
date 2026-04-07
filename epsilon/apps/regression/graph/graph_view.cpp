@@ -38,7 +38,7 @@ void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
     if (!m_store->seriesIsActive(series)) {
       continue;
     }
-    assert(series < Palette::numberOfDataColors());
+    assert(series < Palette::k_numberOfDataColors);
     KDColor color = Palette::DataColor[series];
     // - Draw regression curve
     Model* seriesModel = m_store->modelForSeries(series);

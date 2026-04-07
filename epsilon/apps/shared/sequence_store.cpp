@@ -40,7 +40,7 @@ Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
   const char* name = FirstAvailableName(&nameIndex);
   assert(name);
   // Choose the corresponding color
-  assert(nameIndex < Palette::numberOfDataColors());
+  assert(nameIndex < Palette::k_numberOfDataColors);
   KDColor color = Palette::DataColor[nameIndex];
   Sequence::RecordDataBuffer data(color);
   // m_sequences

@@ -62,17 +62,15 @@ class Palette {
   // The Python gray is between GrayMiddle and GrayDarkMiddle
   constexpr static KDColor PYTHON_GrayMiddle = KDColor::RGB24(0xC6C6C6);
 
-  constexpr static KDColor DataColor[] = {Red,     Blue,      Green, YellowDark,
-                                          Magenta, Turquoise, Pink,  Orange,
-                                          Violet,  Mint};
-  constexpr static KDColor DataColorLight[] = {
+  constexpr static int k_numberOfDataColors = 10;
+
+  constexpr static std::array<KDColor, k_numberOfDataColors> DataColor = {
+      Red,       Blue, Green,  YellowDark, Magenta,
+      Turquoise, Pink, Orange, Violet,     Mint};
+  constexpr static std::array<KDColor, k_numberOfDataColors> DataColorLight = {
       RedLight,       BlueLight, GreenLight,  YellowLight, MagentaLight,
       TurquoiseLight, PinkLight, OrangeLight, VioletLight, MintLight};
 
-  constexpr static size_t numberOfDataColors() { return std::size(DataColor); }
-  constexpr static size_t numberOfLightDataColors() {
-    return std::size(DataColorLight);
-  }
   static KDColor nextDataColor(int* colorIndex);
 };
 

@@ -35,7 +35,7 @@ void TableViewDataSource::prepareHeaderCell(Escher::HighlightCell* cell,
   myCell->setColor(store()->isGroupActive(info.groupNumber)
                        ? Escher::Palette::DataColor[info.groupNumber]
                        : Escher::Palette::GrayDark);
-  static_assert(Escher::Palette::numberOfDataColors() >=
+  static_assert(Escher::Palette::k_numberOfDataColors >=
                 Store::k_maxNumberOfGroups);
 }
 

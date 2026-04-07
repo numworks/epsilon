@@ -61,6 +61,11 @@ U get(array<U, N> array) {
 }
 */
 
+template <class T, size_t N>
+constexpr size_t size(const std::array<T, N>& array) {
+  return N;
+}
+
 }  // namespace std
 
 #endif

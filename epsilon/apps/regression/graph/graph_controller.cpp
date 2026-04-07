@@ -390,8 +390,7 @@ void GraphController::setRoundCrossCursorView() {
    * to date. */
   bool round = *m_selectedDotIndex < 0;
   m_cursorView.setIsRing(!round, &m_view);
-  assert(selectedSeriesIndex() <
-         static_cast<int>(Palette::numberOfDataColors()));
+  assert(selectedSeriesIndex() < Palette::k_numberOfDataColors);
   m_cursorView.setColor(Palette::DataColor[selectedSeriesIndex()], &m_view);
 }
 

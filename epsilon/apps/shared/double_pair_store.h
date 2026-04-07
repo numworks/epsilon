@@ -133,13 +133,12 @@ class DoublePairStore {
 
   // Colors
   static KDColor colorOfSeriesAtIndex(size_t i) {
-    static_assert(Escher::Palette::numberOfDataColors() >= k_numberOfSeries);
+    static_assert(Escher::Palette::k_numberOfDataColors >= k_numberOfSeries);
     assert(i < k_numberOfSeries);
     return Escher::Palette::DataColor[i];
   }
   static KDColor colorLightOfSeriesAtIndex(size_t i) {
-    static_assert(Escher::Palette::numberOfLightDataColors() >=
-                  k_numberOfSeries);
+    static_assert(Escher::Palette::k_numberOfDataColors >= k_numberOfSeries);
     assert(i < k_numberOfSeries);
     return Escher::Palette::DataColorLight[i];
   }

@@ -56,6 +56,11 @@ class Continuity {
   static bool CanBeUndefinedOnInterval(const Tree* e, T minBound, T maxBound,
                                        const Approximation::Parameters& params,
                                        bool checkContinuity);
+  // Same as CanBeUndefinedOnInterval, on a piecewise expression [e]
+  template <typename T>
+  static bool PiecewiseCanBeUndefinedOnInterval(
+      const Tree* e, T minBound, T maxBound,
+      const Approximation::Parameters& params, bool checkContinuity);
 };
 
 }  // namespace Poincare::Internal

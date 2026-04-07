@@ -70,38 +70,45 @@ bool Continuity::CanBeUndefinedOnInterval(
       return true;
     }
   } else if (e->isPiecewise()) {
-    // We assume there are no other active branches than at bounds
-    int indexMin = Approximation::IndexOfActivePiecewiseBranchAt(e, minBound);
-    int indexMax = Approximation::IndexOfActivePiecewiseBranchAt(e, maxBound);
-    bool hasUnknownBranch = indexMin == Approximation::k_unknownActiveBranch ||
-                            indexMax == Approximation::k_unknownActiveBranch;
-    bool hasInactiveBranch = indexMin == Approximation::k_noActiveBranch ||
-                             indexMax == Approximation::k_noActiveBranch;
-    /* Consider e discontinuous if active branch can change. e will become
-     * undefined if one of the active branch is inactive. */
-    if (indexMin != indexMax && (checkContinuity || hasInactiveBranch)) {
-      return true;
-    }
-    /* Check all branches and conditions up to the last potentially active
-     * branch */
-    int lastIndex = hasInactiveBranch || hasUnknownBranch
-                        ? e->numberOfChildren()
-                        : std::max(indexMin, indexMax) + 1;
-    for (IndexedChild indexedChild : e->indexedChildren()) {
-      if (indexedChild.index > lastIndex) {
-        break;
-      }
-      if (CanBeUndefinedOnInterval(indexedChild, minBound, maxBound, params,
-                                   checkContinuity)) {
-        return true;
-      }
-    }
-    return false;
+    return PiecewiseCanBeUndefinedOnInterval(e, minBound, maxBound, params,
+                                             checkContinuity);
   }
   for (IndexedChild indexedChild : e->indexedChildren()) {
     // Skip discontinuity check in DepLists.
     if (CanBeUndefinedOnInterval(indexedChild, minBound, maxBound, params,
                                  checkContinuity && !e->isDepList())) {
+      return true;
+    }
+  }
+  return false;
+}
+
+template <typename T>
+bool Continuity::PiecewiseCanBeUndefinedOnInterval(
+    const Tree* e, T minBound, T maxBound,
+    const Approximation::Parameters& params, bool checkContinuity) {
+  // We assume there are no other active branches than at bounds
+  int indexMin = Approximation::IndexOfActivePiecewiseBranchAt(e, minBound);
+  int indexMax = Approximation::IndexOfActivePiecewiseBranchAt(e, maxBound);
+  bool hasUnknownBranch = indexMin == Approximation::k_unknownActiveBranch ||
+                          indexMax == Approximation::k_unknownActiveBranch;
+  bool hasInactiveBranch = indexMin == Approximation::k_noActiveBranch ||
+                           indexMax == Approximation::k_noActiveBranch;
+  /* Consider e discontinuous if active branch can change. e will become
+   * undefined if one of the active branch is inactive. */
+  if (indexMin != indexMax && (checkContinuity || hasInactiveBranch)) {
+    return true;
+  }
+  // Check all branches and conditions up to the last potentially active branch
+  int lastIndex = hasInactiveBranch || hasUnknownBranch
+                      ? e->numberOfChildren()
+                      : std::max(indexMin, indexMax) + 1;
+  for (IndexedChild indexedChild : e->indexedChildren()) {
+    if (indexedChild.index > lastIndex) {
+      break;
+    }
+    if (CanBeUndefinedOnInterval(indexedChild, minBound, maxBound, params,
+                                 checkContinuity)) {
       return true;
     }
   }
@@ -115,6 +122,11 @@ template bool Continuity::IsDiscontinuousOnInterval(const Tree*, double,
 template bool Continuity::CanBeUndefinedOnInterval(
     const Tree*, float, float, const Approximation::Parameters&, bool);
 template bool Continuity::CanBeUndefinedOnInterval(
+    const Tree*, double, double, const Approximation::Parameters&, bool);
+
+template bool Continuity::PiecewiseCanBeUndefinedOnInterval(
+    const Tree*, float, float, const Approximation::Parameters&, bool);
+template bool Continuity::PiecewiseCanBeUndefinedOnInterval(
     const Tree*, double, double, const Approximation::Parameters&, bool);
 
 }  // namespace Poincare::Internal

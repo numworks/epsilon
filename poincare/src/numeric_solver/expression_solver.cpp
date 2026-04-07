@@ -1,4 +1,4 @@
-#include <poincare/numeric_solver/expression_solver.h>
+#include <poincare/numeric_solver/solver.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/k_tree.h>
@@ -26,9 +26,9 @@ void DiscontinuitySolver::findAndPushSolution(Coordinate2D<double> start,
   // Use ExpressionDiscontinuityTester explicitly: our policy is
   // NullDiscontinuityTester (to suppress the outer-loop refinement), but here
   // we need the real discontinuity check.
-  if (!findMinimalIntervalContainingDiscontinuity<
-          ExpressionDiscontinuityTester<double>>(left, middle, right,
-                                                 precision)) {
+  if (!findMinimalIntervalContainingDiscontinuity(
+          left, middle, right, precision,
+          ExpressionDiscontinuityTester<double>{})) {
     return;
   }
 
@@ -49,10 +49,10 @@ void DiscontinuitySolver::findAndPushSolution(Coordinate2D<double> start,
   right.setY(NumericHelper::MagicRound(m_evaluator(right.x())));
 
   bool leftIsDiscontinuous =
-      ExpressionDiscontinuityTester<double>::IsDiscontinuousBetween(
+      ExpressionDiscontinuityTester<double>{}.isDiscontinuousBetween(
           left, middle, m_evaluator.data());
   bool rightIsDiscontinuous =
-      ExpressionDiscontinuityTester<double>::IsDiscontinuousBetween(
+      ExpressionDiscontinuityTester<double>{}.isDiscontinuousBetween(
           middle, right, m_evaluator.data());
   // Note: If this assertion fails, escape and return no discontinuity.
   assert(leftIsDiscontinuous || rightIsDiscontinuous);
@@ -138,7 +138,7 @@ RootSolver::DetailedRoot RootSolver::nextDetailedRoot() {
         return k_nanRoot;
       }
       // Use classic numeric scan
-      Solution<double> res = Base::next();
+      Solution<double> res = ExpressionSolver::next();
       if (res.interest != Interest::None) {
         res.interest = Interest::Root;
       }
@@ -235,7 +235,7 @@ RootSolver::DetailedRoot RootSolver::nextRootInAddition() const {
 
   // Compare result with classic numeric scan
   RootSolver solver = *this;
-  DetailedRoot root = {.x = (&solver)->Base::next().x,
+  DetailedRoot root = {.x = solver.ExpressionSolver::next().x,
                        .nullDescendant = getTree()};
   if (!std::isfinite(root.x) || std::fabs(childrenRoot.x - m_stepper.start()) <
                                     std::fabs(root.x - m_stepper.start())) {

@@ -1,210 +1,131 @@
 #pragma once
-
-#include <assert.h>
-#include <poincare/numeric_solver/policies/step.h>
-#include <poincare/numeric_solver/solution.h>
-
-#include <algorithm>
+#include "policies/bracket.h"
+#include "policies/discontinuity.h"
+#include "policies/evaluation.h"
+#include "policies/numeric_helper.h"
+#include "policies/queue.h"
+#include "policies/solver.h"
+#include "policies/step.h"
 
 namespace Poincare::NumericSolver {
 
-template <typename TFloat>
-class Solver {
- public:
-  virtual ~Solver() = default;
-  virtual Solution<TFloat> next() = 0;
-  virtual void stretch(bool onlyEnd = false) = 0;
-  virtual void setSearchStep(TFloat step) = 0;
-  virtual void setGrowthSpeed(GrowthSpeed g) = 0;
+/* WARNING: Each set of policies used corresponds to one instanciation of the
+ * PolicySolver, taking space in the binary. */
+namespace Policies {
+
+struct SinglePrecisionStandardSolver {
+  using Bracketer = LambdaBracketer<float>;
+  using DiscontinuityTester = NullDiscontinuityTester<float>;
+  using Evaluator = LambdaEvaluator<float>;
+  using NumericHelper = DefaultNumericHelper<float>;
+  using SolutionQueue = StaticSolutionQueue<float, 3>;
+  using Stepper = AdaptiveLogStepper<float>;
 };
 
-template <typename TFloat, typename TPolicies>
-class PolicySolver : public Solver<TFloat> {
+struct DoublePrecisionStandardSolver {
+  using Bracketer = LambdaBracketer<double>;
+  using DiscontinuityTester = LambdaDiscontinuityTester<double>;
+  using Evaluator = LambdaEvaluator<double>;
+  using NumericHelper = DefaultNumericHelper<double>;
+  using SolutionQueue = StaticSolutionQueue<double, 3>;
+  using Stepper = AdaptiveLogStepper<double>;
+};
+
+template <typename TFloat>
+struct StandardPolicySelector;
+template <>
+struct StandardPolicySelector<float> {
+  using Policy = SinglePrecisionStandardSolver;
+};
+template <>
+struct StandardPolicySelector<double> {
+  using Policy = DoublePrecisionStandardSolver;
+};
+
+}  // namespace Policies
+
+// --- Solvers instanciation for anonymous functions ---
+
+template <typename TFloat>
+using LambdaSolver =
+    PolicySolver<TFloat,
+                 typename Policies::StandardPolicySelector<TFloat>::Policy>;
+
+class LambdaRootSolver : public LambdaSolver<double> {
  public:
-  using XY = Coordinate2D<TFloat>;
-  using SolutionT = Solution<TFloat>;
+  LambdaRootSolver(double xMin, double xMax, LambdaEvaluator<double> f)
+      : LambdaSolver<double>(xMin, xMax, f, RootBracketer{},
+                             NullDiscontinuityTester<double>{}) {}
+};
 
-  using Bracketer = typename TPolicies::Bracketer;
-  using DiscontinuityTester = typename TPolicies::DiscontinuityTester;
-  using Evaluator = typename TPolicies::Evaluator;
-  using NumericHelper = typename TPolicies::NumericHelper;
-  using SolutionQueue = typename TPolicies::SolutionQueue;
-  using Stepper = typename TPolicies::Stepper;
+// --- Solver instanciations for expression trees (prepared functions) ---
 
-  explicit PolicySolver(TFloat xStart, TFloat xEnd, Evaluator evaluator,
-                        Bracketer bracketer = {})
-      : m_bracketer(std::move(bracketer)),
-        m_evaluator(std::move(evaluator)),
-        m_solutionQueue{},
-        m_stepper(xStart, xEnd) {}
+/* NOTE: In theory, ExpressionSolver should hold an ExpressionEvaluator.
+ * However, to reduce the flash memory footprint, we reuse the
+ * LambdaSolver<double>: the ExpressionEvaluator passed to the constructor
+ * trivially coerces to a LambdaEvaluator and resolution works as expected. */
+class ExpressionSolver : public LambdaSolver<double> {
+ public:
+  ExpressionSolver(double xMin, double xMax, const Internal::Tree* e,
+                   LambdaBracketer<double> bracketer,
+                   LambdaDiscontinuityTester<double> disc =
+                       ExpressionDiscontinuityTester<double>{})
+      : LambdaSolver<double>(xMin, xMax, ExpressionEvaluator<double>{e},
+                             bracketer, disc) {}
+};
 
-  ~PolicySolver() override = default;
+class ExtremumSolver : public ExpressionSolver {
+ public:
+  ExtremumSolver(double xMin, double xMax, const Internal::Tree* e)
+      : ExpressionSolver(xMin, xMax, e, ExtremumBracketer{}) {}
+};
 
-  void stretch(bool onlyEnd = false) override { m_stepper.stretch(onlyEnd); }
+class RootSolver : public ExpressionSolver {
+ public:
+  RootSolver(double xMin, double xMax, const Internal::Tree* e)
+      : ExpressionSolver(xMin, xMax, e, RootBracketer{}) {}
 
-  void setSearchStep(TFloat step) override { m_stepper.setSearchStep(step); }
-
-  void setGrowthSpeed(GrowthSpeed g) override { m_stepper.setGrowthSpeed(g); }
-
-  SolutionT next() override {
-    if (m_solutionQueue.size() > 0) {
-      return registerSolution(m_solutionQueue.popFirst(), true);
-    }
-
-    m_stepper.init(m_evaluator);
-
-    while (m_stepper.step(m_evaluator)) {
-      XY p1 = m_stepper.point(0), p2 = m_stepper.point(1),
-         p3 = m_stepper.point(2);
-
-      assert((p1.x() < p2.x() && p2.x() < p3.x()) ||
-             (p3.x() < p2.x() && p2.x() < p1.x()));
-
-      Interest interest = m_bracketer.test(p1, p2, p3, m_evaluator.data());
-
-      if (interest == Interest::None &&
-          DiscontinuityTester::IsDiscontinuousBetween(p1, p3,
-                                                      m_evaluator.data())) {
-        interest = refineSearchAroundDiscontinuity(p1, p2, p3);
-      }
-
-      if (interest != Interest::None) {
-        findAndPushSolution(p1, p3, interest);
-        if (m_solutionQueue.size() > 0) {
-          return registerSolution(m_solutionQueue.popFirst(), false);
-        }
-      }
-    }
-
-    return k_noSolution<TFloat>;
-  }
-
- protected:
-  virtual void findAndPushSolution(XY start, XY end, Interest interest) {
-    assert(m_solutionQueue.size() == 0);
-    assert(interest != Interest::ReachedDiscontinuity);
-
-    bool disc = DiscontinuityTester::IsDiscontinuousBetween(start, end,
-                                                            m_evaluator.data());
-    XY xy = m_bracketer.hone(start.x(), end.x(), interest,
-                             NumericHelper::Precision(start.x(), disc),
-                             m_evaluator);
-
-    /* Fake-root filter: discard roots that sit on a discontinuity edge. */
-    if (disc && interest == Interest::Root &&
-        std::fabs(xy.y()) > NumericHelper::NullTolerance(xy.x())) {
-      return;
-    }
-
-    if (!std::isfinite(xy.x()) ||
-        !m_stepper.template isAdmissibleSolution<NumericHelper>(xy.x())) {
-      return;
-    }
-
-    TFloat x = xy.x();
-    TFloat roundX = NumericHelper::MagicRound(x);
-    TFloat fRoundX = m_evaluator(roundX);
-    if (std::isnan(fRoundX) && interest != Interest::Discontinuity) {
-      return;
-    }
-    TFloat fx = m_evaluator(x);
-    if (std::isfinite(roundX) &&
-        m_stepper.template isAdmissibleSolution<NumericHelper>(roundX)) {
-      if (DiscontinuityTester::IsDiscontinuousBetween(
-              XY(x, fx), XY(roundX, fRoundX), m_evaluator.data())) {
-        return;
-      }
-      if (fRoundX == fx ||
-          (interest == Interest::Root && std::fabs(fRoundX) < std::fabs(fx)) ||
-          (interest == Interest::Minimum && fRoundX < fx) ||
-          (interest == Interest::Maximum && fRoundX > fx)) {
-        xy.setX(roundX);
-        if (xy.y() == fx) {
-          xy.setY(fRoundX);
-        }
-      }
-    }
-    if (std::isfinite(xy.y()) || interest == Interest::Discontinuity) {
-      m_solutionQueue.push(CoordToSolution(xy, interest));
-    }
-  }
-
-  /* TExplicitDiscTester defaults to the policy's DiscontinuityTester.
-   * Pass a different type explicitly when the policy tester is not suitable
-   * (e.g. DiscontinuitySolver uses NullDiscontinuityTester as its policy but
-   * needs a real tester inside findAndPushSolution). */
-  template <typename TExplicitDiscTester = DiscontinuityTester>
-  bool findMinimalIntervalContainingDiscontinuity(XY& start, XY& middle,
-                                                  XY& end,
-                                                  TFloat minimalInterval) {
-    if (std::isnan(middle.x())) {
-      TFloat mx = (start.x() + end.x()) / static_cast<TFloat>(2);
-      middle = XY(mx, m_evaluator(mx));
-    }
-    while (std::fabs(end.x() - start.x()) >= minimalInterval) {
-      bool left = TExplicitDiscTester::IsDiscontinuousBetween(
-          start, middle, m_evaluator.data());
-      bool right = TExplicitDiscTester::IsDiscontinuousBetween(
-          middle, end, m_evaluator.data());
-      if (left == right) {
-        return false;
-      }
-      if (left) {
-        if (end.x() == middle.x()) {
-          return false;
-        }
-        end = middle;
-      } else {
-        if (start.x() == middle.x()) {
-          return false;
-        }
-        start = middle;
-      }
-      TFloat mx = (start.x() + end.x()) / static_cast<TFloat>(2);
-      middle = XY(mx, m_evaluator(mx));
-    }
-    return true;
-  }
-
-  SolutionT registerSolution(SolutionT solution, bool wasQueued = false) {
-    if (std::isnan(solution.x)) {
-      return k_noSolution<TFloat>;
-    }
-    assert(
-        (wasQueued && solution.x == m_stepper.start()) ||
-        (!wasQueued &&
-         m_stepper.template isAdmissibleSolution<NumericHelper>(solution.x)));
-    solution.y = NumericHelper::CleanY(solution.y, solution.x);
-    m_stepper.setStart(solution.x);
-    return solution;
-  }
-
-  Bracketer m_bracketer;
-  Evaluator m_evaluator;
-  SolutionQueue m_solutionQueue;
-  Stepper m_stepper;
+  Solution<double> next() override;
 
  private:
-  Interest refineSearchAroundDiscontinuity(XY& p1, XY p2, XY& p3) {
-    Interest interest = Interest::None;
-    XY q1 = p1, q3 = p3;
-    if (findMinimalIntervalContainingDiscontinuity(
-            q1, p2, q3, Stepper::template MinimalStep<NumericHelper>(p2.x()))) {
-      TFloat pq1x = (p1.x() + q1.x()) / static_cast<TFloat>(2);
-      interest = m_bracketer.test(p1, XY(pq1x, m_evaluator(pq1x)), q1,
-                                  m_evaluator.data());
-      if (interest != Interest::None) {
-        p3 = q1;
-      } else {
-        TFloat qp3x = (q3.x() + p3.x()) / static_cast<TFloat>(2);
-        interest = m_bracketer.test(q3, XY(qp3x, m_evaluator(qp3x)), p3,
-                                    m_evaluator.data());
-        if (interest != Interest::None) {
-          p1 = q3;
-        }
-      }
-    }
-    return interest;
+  struct DetailedRoot {
+    double x;
+    const Internal::Tree* nullDescendant = nullptr;
+  };
+  constexpr static DetailedRoot k_nanRoot = {.x = static_cast<double>(NAN),
+                                             .nullDescendant = nullptr};
+
+  const Internal::Tree* getTree() const {
+    return static_cast<const Internal::Tree*>(m_evaluator.data());
+  }
+
+  DetailedRoot nextDetailedRoot();
+  DetailedRoot nextRootSearchingInChild(int childIndex) const;
+  using ExpressionTestAuxiliary = bool (*)(const Internal::Tree*);
+  DetailedRoot nextRootSearchingInChildren(ExpressionTestAuxiliary test) const;
+  DetailedRoot nextRootInMultiplication() const;
+  DetailedRoot nextRootInAddition() const;
+  DetailedRoot nextRootInDependency() const;
+
+  DetailedRoot registerDetailedRoot(DetailedRoot root) {
+    registerSolution(SolutionFromDetailedRoot(root));
+    return root;
+  }
+
+  static Solution<double> SolutionFromDetailedRoot(DetailedRoot root) {
+    return std::isfinite(root.x) ? Solution<double>{root.x, 0., Interest::Root}
+                                 : k_noSolution<double>;
   }
 };
+
+class DiscontinuitySolver : public ExpressionSolver {
+ public:
+  DiscontinuitySolver(double xMin, double xMax, const Internal::Tree* e)
+      : ExpressionSolver(xMin, xMax, e, DiscontinuityBracketer{},
+                         NullDiscontinuityTester<double>{}) {}
+
+  void findAndPushSolution(Coordinate2D<double> start, Coordinate2D<double> end,
+                           Interest interest) override;
+};
+
 }  // namespace Poincare::NumericSolver

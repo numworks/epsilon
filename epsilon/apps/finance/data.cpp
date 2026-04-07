@@ -1,6 +1,6 @@
 #include "data.h"
 
-#include <poincare/numeric_solver/lambda_solver.h>
+#include <poincare/numeric_solver/solver.h>
 #include <stdint.h>
 
 #include <cmath>
@@ -171,7 +171,7 @@ double computeRPct(double N, double PV, double Pmt, double FV, double PY,
     double a = computeA(i, p.S, b, p.N);
     return p.PV + a * p.Pmt + b * p.FV;
   };
-  LambdaRootSolver<double> solver(-100., 100., {evaluation, &parameters});
+  LambdaRootSolver solver(-100., 100., {evaluation, &parameters});
   return solver.next().x;
 }
 

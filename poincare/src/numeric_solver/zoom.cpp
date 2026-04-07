@@ -1,8 +1,8 @@
-#include <poincare/numeric_solver/lambda_solver.h>
 #include <poincare/numeric_solver/policies/discontinuity.h>
 #include <poincare/numeric_solver/policies/numeric_helper.h>
 #include <poincare/numeric_solver/policies/queue.h>
 #include <poincare/numeric_solver/policies/step.h>
+#include <poincare/numeric_solver/solver.h>
 #include <poincare/numeric_solver/zoom.h>
 #include <poincare/range.h>
 #include <poincare/src/expression/approximation.h>
@@ -818,7 +818,7 @@ bool Zoom<T>::fitWithSolverHelper(T start, T end, bool* interrupted,
    *         a fixed number of points of interest. */
   assert(interrupted);
   *interrupted = false;
-  ZoomSolver<T> solver(start, end, f, bracketer);
+  ZoomSolver<T> solver(start, end, f, bracketer, NullDiscontinuityTester<T>{});
   Range2D<T> savedRange;
   bool savedRangeIsInit = false;
   int nRoots = 0;

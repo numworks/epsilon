@@ -2,7 +2,6 @@
 
 #include <poincare/equation_solver/equation_solver.h>
 #include <poincare/helpers/polynomial.h>
-#include <poincare/numeric_solver/expression_solver.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/numeric_solver/zoom.h>
 #include <poincare/preferences.h>

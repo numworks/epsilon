@@ -2,7 +2,6 @@
 
 #include <omg/unreachable.h>
 #include <poincare/numeric_solver/policies/evaluation.h>
-#include <poincare/numeric_solver/solver.h>
 
 namespace Poincare::Internal {
 

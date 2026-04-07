@@ -1,5 +1,4 @@
 #include <omg/float.h>
-#include <poincare/numeric_solver/expression_solver.h>
 #include <poincare/numeric_solver/intersection_solver.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/preferences.h>

@@ -1,6 +1,5 @@
 #include <omg/float.h>
 #include <omg/numeric_comparison.h>
-#include <poincare/numeric_solver/expression_solver.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/float_helper.h>

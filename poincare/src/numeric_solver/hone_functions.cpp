@@ -1,5 +1,6 @@
 #include "hone_functions.h"
 
+#include <poincare/numeric_solver/policies/numeric_helper.h>
 #include <poincare/src/numeric_solver/solver_algorithms.h>
 
 using namespace Poincare::NumericSolver;

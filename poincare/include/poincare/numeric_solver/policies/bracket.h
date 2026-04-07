@@ -40,9 +40,9 @@ class ExtremumBracketer {
 class DiscontinuityBracketer {
  public:
   Interest test(Coordinate2D<double> a, Coordinate2D<double> b,
-                Coordinate2D<double> c, const Internal::Tree* eval) {
-    return ExpressionDiscontinuityTester<double>::IsDiscontinuousBetween(a, c,
-                                                                         eval)
+                Coordinate2D<double> c, const void* aux) {
+    return ExpressionDiscontinuityTester<double>{}.isDiscontinuousBetween(a, c,
+                                                                          aux)
                ? Interest::ReachedDiscontinuity
                : Interest::None;
   }
@@ -67,6 +67,18 @@ class LambdaBracketer {
  public:
   LambdaBracketer(BracketTest<TFloat> test, HoneResult<TFloat> hone)
       : m_test(test), m_hone(hone) {}
+
+  /* NOTE: Conversion function to turn other, static bracketers into a
+   * LambdaBracketer. */
+  template <typename TBracketer>
+  LambdaBracketer(const TBracketer&)
+      : m_test([](Coordinate2D<TFloat> a, Coordinate2D<TFloat> b,
+                  Coordinate2D<TFloat> c,
+                  const void* aux) { return TBracketer{}.test(a, b, c, aux); }),
+        m_hone([](const LambdaEvaluator<TFloat>& eval, TFloat min, TFloat max,
+                  Interest interest, TFloat precision) {
+          return TBracketer{}.hone(min, max, interest, precision, eval);
+        }) {}
 
   Interest test(Coordinate2D<TFloat> a, Coordinate2D<TFloat> b,
                 Coordinate2D<TFloat> c, const void* aux) const {

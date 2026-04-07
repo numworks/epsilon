@@ -3,8 +3,8 @@
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/numeric_solver/expression_solver.h>
 #include <poincare/numeric_solver/intersection_solver.h>
+#include <poincare/numeric_solver/solver.h>
 
 #include <algorithm>
 #include <array>

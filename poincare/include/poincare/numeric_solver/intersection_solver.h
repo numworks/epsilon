@@ -3,7 +3,7 @@
 
 #include <poincare/prepared_function.h>
 
-#include "expression_solver.h"
+#include "solver.h"
 
 namespace Poincare::NumericSolver {
 

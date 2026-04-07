@@ -30,20 +30,16 @@ class ExpressionEvaluator {
  public:
   /* NOTE: e should be a prepared function */
   explicit ExpressionEvaluator(const Internal::Tree* e)
-      : m_tree(e),
-        m_isRandomized(e &&
-                       e->hasDescendantSatisfying([](const Internal::Tree* t) {
-                         return t->isRandomized();
-                       })) {}
+      : m_tree(e), m_isRandomized(IsExpressionRandomized(e)) {}
 
   operator LambdaEvaluator<TFloat>() const {
     return {
         [](TFloat x, const void* aux) {
-          const ExpressionEvaluator<TFloat>& e =
-              *static_cast<const ExpressionEvaluator<TFloat>*>(aux);
-          return e(x);
+          // FIXME: This conversion drops the isRandomized memoization.
+          const Internal::Tree* e = static_cast<const Internal::Tree*>(aux);
+          return ExpressionEvaluator<TFloat>(e)(x);
         },
-        this,
+        m_tree,
     };
   }
 
@@ -63,6 +59,11 @@ class ExpressionEvaluator {
   const Internal::Tree* data() const { return m_tree; }
 
  private:
+  static bool IsExpressionRandomized(const Internal::Tree* e) {
+    return e && e->hasDescendantSatisfying(
+                    [](const Internal::Tree* t) { return t->isRandomized(); });
+  }
+
   const Internal::Tree* m_tree;
   bool m_isRandomized;
 };

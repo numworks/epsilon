@@ -6,23 +6,29 @@
 
 namespace Poincare::Internal {
 
-/* WARNING: Everywhere in Poincaré, the term "discontinuity" refers to
- * "jump-discontinuity" (i.e. finite discontinuities like piecewise, random,
- * round, floor, ceil, ...) or "singular discontinuity" (i.e undefined value in
- * a single point like (x_1)/(x-1) or piecewise). Most Infinite/asymptotic
- * discontinuities (like ln(x)) are not handled when calling
- * IsDiscontinuousOnInterval or InvolvesDiscontinuousFunction (partly because
- * they are more obvious to detect by numerical algorithms).
+/* WARNING: Everywhere in Poincaré, we handled different types of discontinuity
+ differently.
  *
- * Jump-discontinuity (handled in this file):
+ * Jump-discontinuity:
+ *  - piecewise, random, round, floor, ceil, ...
+ *  - Handled in InvolvesDiscontinuousFunction and IsDiscontinuousOnInterval:
+ *
  *      o-----
  *
  * -----o
  *
- * Singular discontinuity (handled in this file):
+ * Singular discontinuity:
+ *  - piecewise, NonNull
+ *  - Handled in IsDiscontinuousOnInterval
+ *
  * -----o-----
  *
- * Asymptotic discontinuity (not always handled in this file):
+ * Asymptotic discontinuity:
+ *  - 1/x, x^-2, ln(x), ...
+ *  - More obvious to detect by numerical algorithms
+ *  - Often handled in IsDiscontinuousOnInterval anyway because of cases like
+ *    f(x)/x where f closely ressemble x around 0, like "|x|/x" or "sin(x)/x".
+ *
  *      |
  *      |
  *     /
@@ -31,12 +37,27 @@ namespace Poincare::Internal {
  *       |
  *       |
  *
- * A function that is undefined on both ends of the interval is not considered
- * discontinuous.
+ * IsDiscontinuousOnInterval method handles discontinuity on an interval. Bigger
+ * intervals are more likely to return false negatives because only the bounds
+ * are tested to improve performances.
  *
- * WARNING: Asymptotic discontinuity with 1/x or x^-2 is handled here because of
- * cases like f(x)/x where f closely ressemble x around 0, like "|x|/x" or
- * "sin(x)/x". */
+ * Here are three examples, within the [start, end] interval:
+ *      start  end
+ *        |     |
+ * ---------o   |   o-----
+ *        |     |             Discontinuity is detected
+ *        | o-------o
+ *        |     |
+ *        |     |
+ * ---------o o--------
+ *        |     |             Discontinuity is not detected
+ *        | o-o |
+ *        |     |
+ *        |     |
+ * -----o |     | o-----     Considered continuous for better performances
+ *
+ * False negative can lead to inaccurate plot or solver solutions.
+ * False positives can cause performances issues. */
 
 class Continuity {
  public:

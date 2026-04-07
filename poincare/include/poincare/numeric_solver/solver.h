@@ -53,9 +53,12 @@ class PolicySolver : public Solver<TFloat> {
 
     m_stepper.init(m_evaluator);
 
-    do {
-      XY p1 = m_stepper.first(), p2 = m_stepper.second(),
-         p3 = m_stepper.third();
+    while (m_stepper.step(m_evaluator)) {
+      XY p1 = m_stepper.point(0), p2 = m_stepper.point(1),
+         p3 = m_stepper.point(2);
+
+      assert((p1.x() < p2.x() && p2.x() < p3.x()) ||
+             (p3.x() < p2.x() && p2.x() < p1.x()));
 
       Interest interest = m_bracketer.test(p1, p2, p3, m_evaluator.data());
 
@@ -71,8 +74,7 @@ class PolicySolver : public Solver<TFloat> {
           return registerSolution(m_solutionQueue.popFirst(), false);
         }
       }
-
-    } while (m_stepper.step(m_evaluator));
+    }
 
     return k_noSolution<TFloat>;
   }

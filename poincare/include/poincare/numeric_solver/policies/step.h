@@ -19,67 +19,73 @@ class StepperBase {
   using XY = Coordinate2D<TFloat>;
 
   StepperBase(TFloat start, TFloat end)
-      : m_start(start, static_cast<TFloat>(NAN)),
+      : m_start(start),
         m_end(end),
         m_searchStep(std::fabs(end - start) / static_cast<TFloat>(100)) {}
 
-  TFloat start() const { return m_start.x(); }
+  TFloat start() const { return m_start; }
   TFloat end() const { return m_end; }
 
-  XY first() const { return m_start; }
-  XY second() const { return m_pointA; }
-  XY third() const { return m_pointB; }
+  XY point(int i) const { return m_points[i]; }
 
   template <typename TNumericHelper>
   bool isAdmissibleSolution(TFloat x) const {
     TFloat minStep =
-        TSpecialization::template MinimalStep<TNumericHelper>(m_start.x());
+        TSpecialization::template MinimalStep<TNumericHelper>(m_start);
     /* NAN is implicitly handled by the comparisons. */
-    return m_start.x() < m_end ? m_start.x() + minStep < x && x < m_end
-                               : m_end < x && x < m_start.x() - minStep;
+    return m_start < m_end ? m_start + minStep < x && x < m_end
+                           : m_end < x && x < m_start - minStep;
   }
 
   void setSearchStep(TFloat step) { m_searchStep = step; }
 
   void setStart(TFloat x) {
-    m_start = XY{x, NAN};
-    m_pointA = XY{};
-    m_pointB = XY{};
+    m_start = x;
+    for (XY& p : m_points) {
+      p = {};
+    }
   }
 
   void stretch(bool onlyEnd = false) {
     TFloat sign =
-        m_start.x() < m_end ? static_cast<TFloat>(1) : static_cast<TFloat>(-1);
+        m_start < m_end ? static_cast<TFloat>(1) : static_cast<TFloat>(-1);
     if (!onlyEnd) {
-      m_start.setX(m_start.x() - m_searchStep * sign);
+      m_start = m_start - m_searchStep * sign;
     }
     m_end += m_searchStep * sign;
   }
 
   template <typename TEvaluator>
   void init(const TEvaluator& f) {
-    m_pointB = XY(m_start.x(), f(m_start.x()));
-    step(f);
-    step(f);
+    m_points[2] = XY(m_start, f(m_start));
+    stepImpl(f);  // skip the check, as m_points[2].x() == m_start
   }
 
   template <typename TEvaluator>
   bool step(const TEvaluator& f) {
-    TFloat x = static_cast<TSpecialization*>(this)->nextX();
-    bool withinBounds =
-        (m_start.x() < m_end) == (m_pointB.x() < x && x < m_end);
-    m_start = m_pointA;
-    m_pointA = m_pointB;
-    m_pointB = XY(x, f(x));
-    return withinBounds;
+    if ((m_start < m_points[2].x()) != (m_points[2].x() < m_end)) {
+      return false;
+    }
+
+    stepImpl(f);
+    return true;
   }
 
  protected:
-  XY m_start;
-  XY m_pointA = {};
-  XY m_pointB = {};
+  XY m_points[3] = {{}, {}, {}};
+  TFloat m_start;
   TFloat m_end;
   TFloat m_searchStep;
+
+ private:
+  template <typename TEvaluator>
+  void stepImpl(TEvaluator f) {
+    TFloat x = static_cast<TSpecialization*>(this)->nextX();
+    assert(std::isfinite(x));
+    m_points[0] = m_points[1];
+    m_points[1] = m_points[2];
+    m_points[2] = XY(x, f(x));
+  }
 };
 
 template <typename TFloat>
@@ -89,25 +95,19 @@ class AdaptiveLogStepper
   using Base = StepperBase<TFloat, AdaptiveLogStepper<TFloat>>;
   friend Base;
 
-  using Base::Base;  // inherit constructor
+  using Base::Base;
 
   void setGrowthSpeed(GrowthSpeed g) { m_growthSpeed = g; }
 
   // Called by StepperBase::step via CRTP
   TFloat nextX() const {
-    TFloat x = this->m_pointB.x();
-    TFloat direction = this->m_end;
-    // Compute slope; fall back to 1 during init (m_pointA is NaN)
-    TFloat slope;
-    if (std::isnan(this->m_pointA.x())) {
+    TFloat dx = this->m_points[2].x() - this->m_points[1].x();
+    TFloat slope = (this->m_points[2].y() - this->m_points[1].y()) / dx;
+    if (std::isnan(slope)) {
       slope = static_cast<TFloat>(1);
-    } else {
-      TFloat dx = this->m_pointB.x() - this->m_pointA.x();
-      slope = dx != static_cast<TFloat>(0)
-                  ? (this->m_pointB.y() - this->m_pointA.y()) / dx
-                  : static_cast<TFloat>(1);
     }
-    return nextXImpl(x, direction, slope);
+
+    return nextXImpl(this->m_points[2].x(), this->m_end, slope);
   }
 
   template <typename TNumericHelper = DefaultNumericHelper<TFloat>>

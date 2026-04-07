@@ -32,8 +32,12 @@ bool IsCalculationOutputStrictEquality(const Tree* exact,
   // If projection failed, exact can be not system
   assert(Simplification::CanBeSystem(approximate));
 
-  if (exact->isUndefined() || approximate->isUndefined()) {
+  if (exact->isUndefined() || approximate->isUndefined() ||
+      exact->hasDescendantSatisfying(
+          [](const Tree* e) { return e->isUserSequence(); })) {
     // We never want to display "≈ undef" nor "undef ≈"
+    /* Also sequence are indeed approximated, we want a strict equality sign for
+     * the approximate result to prevent U_3 ≈ 12. */
     return true;
   }
 

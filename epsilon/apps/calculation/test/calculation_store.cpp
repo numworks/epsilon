@@ -954,9 +954,8 @@ QUIZ_CASE(calculation_involving_sequence) {
   assert(err == Ion::Storage::Record::ErrorStatus::None);
   (void)err;  // Silence compilation warning.
 
-  assertCalculationIs("v(2)", DisplayOutput::ExactHidden,
-                      EqualSign::Approximation, nullptr, "7.283185307",
-                      &calcStore);
+  assertCalculationIs("v(2)", DisplayOutput::ExactHidden, EqualSign::Equal,
+                      nullptr, "7.283185307", &calcStore);
 
   seqStore->removeAll();
   seqStore->tidyDownstreamPoolFrom();

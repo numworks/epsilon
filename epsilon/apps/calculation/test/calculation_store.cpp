@@ -944,6 +944,20 @@ QUIZ_CASE(calculation_involving_sequence) {
   CalculationStore calcStore(calculationBuffer, calculationBufferSize);
 
   assertMainCalculationOutputIs("√(i×u(0))×√(6)", "undef", &calcStore);
+
+  err = seqStore->addEmptyModel();
+  assert(err == Ion::Storage::Record::ErrorStatus::None);
+  record = seqStore->recordAtIndex(seqStore->numberOfModels() - 1);
+  Shared::Sequence* v = seqStore->modelForRecord(record);
+  v->setType(Shared::Sequence::Type::Explicit);
+  err = v->setContent(Layout::String("1+n*pi"), EmptySymbolContext{});
+  assert(err == Ion::Storage::Record::ErrorStatus::None);
+  (void)err;  // Silence compilation warning.
+
+  assertCalculationIs("v(2)", DisplayOutput::ExactHidden,
+                      EqualSign::Approximation, nullptr, "7.283185307",
+                      &calcStore);
+
   seqStore->removeAll();
   seqStore->tidyDownstreamPoolFrom();
   Shared::GlobalContextAccessor::SequenceCache().resetCache();

@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include <algorithm>
+#include <bit>
 
 #include "events_modifier.h"
 
@@ -128,12 +129,9 @@ Event State::privateSharedGetEvent(int* timeout) {
       if (keysSeenTransitioningFromUpToDown != 0) {
         SharedModifierState->resetLongPress();
         /* The key that triggered the event corresponds to the first non-zero
-         * bit in "match". This is a rather simple logic operation for the which
-         * many processors have an instruction (ARM thumb uses CLZ).
-         * Unfortunately there's no way to express this in standard C, so we
-         * have to resort to using a builtin function. */
+         * bit in "match". */
         m_lastKeypress = (Keyboard::Key)(
-            63 - __builtin_clzll(keysSeenTransitioningFromUpToDown));
+            63 - std::countl_zero(keysSeenTransitioningFromUpToDown));
         didPressNewKey();
         m_lastEventShift =
             SharedModifierState->shiftAlphaStatus()->shiftIsActive();

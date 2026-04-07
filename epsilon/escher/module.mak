@@ -52,7 +52,6 @@ $(call create_module,escher,1,$(addprefix src/, \
   modal_view_controller.cpp \
   modal_view_empty_controller.cpp \
   nested_menu_controller.cpp \
-  palette.cpp \
   pointer_text_view.cpp \
   pop_up_controller.cpp \
   preface_data_source.cpp \

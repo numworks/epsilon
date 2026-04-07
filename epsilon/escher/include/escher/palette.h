@@ -1,5 +1,6 @@
 #pragma once
 
+#include <assert.h>
 #include <kandinsky/color.h>
 #include <stddef.h>
 
@@ -70,8 +71,6 @@ class Palette {
   constexpr static std::array<KDColor, k_numberOfDataColors> DataColorLight = {
       RedLight,       BlueLight, GreenLight,  YellowLight, MagentaLight,
       TurquoiseLight, PinkLight, OrangeLight, VioletLight, MintLight};
-
-  static KDColor nextDataColor(int* colorIndex);
 };
 
 }  // namespace Escher

@@ -16,6 +16,13 @@ Matplotlib::PlotStore *sPlotStore = nullptr;
 Matplotlib::PlotController *sPlotController = nullptr;
 static int paletteIndex = 0;
 
+static KDColor nextDataColor(int* colorIndex) {
+  assert(*colorIndex < Escher::Palette::k_numberOfDataColors);
+  KDColor c = Escher::Palette::DataColor[*colorIndex];
+  *colorIndex = (*colorIndex + 1) % Escher::Palette::k_numberOfDataColors;
+  return c;
+}
+
 // Private helper
 
 // Method to populate items with a scalar or an array argument
@@ -75,7 +82,7 @@ bool colorFromKeywordArgument(mp_map_elem_t *elemColor, KDColor *color) {
     *color = MicroPython::Color::Parse(elemColor->value);
     return true;
   } else {
-    *color = Escher::Palette::nextDataColor(&paletteIndex);
+    *color = nextDataColor(&paletteIndex);
     return false;
   }
 }

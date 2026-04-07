@@ -77,24 +77,19 @@ bool Continuity::CanBeUndefinedOnInterval(
                             indexMax == Approximation::k_unknownActiveBranch;
     bool hasInactiveBranch = indexMin == Approximation::k_noActiveBranch ||
                              indexMax == Approximation::k_noActiveBranch;
-    // If active branch is the same on both end, return its properties
-    if (!hasUnknownBranch && indexMin == indexMax) {
-      // An inactive branch on both end isn't considered a discontinuity.
-      return !hasInactiveBranch &&
-             CanBeUndefinedOnInterval(e->child(indexMin), minBound, maxBound,
-                                      params, checkContinuity);
-    }
     /* Consider e discontinuous if active branch can change. e will become
      * undefined if one of the active branch is inactive. */
-    if (checkContinuity || hasInactiveBranch) {
+    if (indexMin != indexMax && (checkContinuity || hasInactiveBranch)) {
       return true;
     }
-    // Branch can change, check all branches that could be active
+    /* Check all branches and conditions up to the last potentially active
+     * branch */
+    int lastIndex = hasInactiveBranch || hasUnknownBranch
+                        ? e->numberOfChildren()
+                        : std::max(indexMin, indexMax) + 1;
     for (IndexedChild indexedChild : e->indexedChildren()) {
-      if (!hasUnknownBranch && indexedChild.index != indexMin &&
-          indexedChild.index != indexMax) {
-        // Ignore all other conditions, and branches
-        continue;
+      if (indexedChild.index > lastIndex) {
+        break;
       }
       if (CanBeUndefinedOnInterval(indexedChild, minBound, maxBound, params,
                                    checkContinuity)) {

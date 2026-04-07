@@ -101,10 +101,15 @@ class AdaptiveLogStepper
 
   // Called by StepperBase::step via CRTP
   TFloat nextX() const {
-    TFloat dx = this->m_points[2].x() - this->m_points[1].x();
-    TFloat slope = (this->m_points[2].y() - this->m_points[1].y()) / dx;
-    if (std::isnan(slope)) {
-      slope = static_cast<TFloat>(1);
+    TFloat slope;
+    if constexpr (sizeof(TFloat) == sizeof(float)) {
+      slope = 1.f;
+    } else {
+      TFloat dx = this->m_points[2].x() - this->m_points[1].x();
+      slope = (this->m_points[2].y() - this->m_points[1].y()) / dx;
+      if (std::isnan(slope)) {
+        slope = static_cast<TFloat>(1);
+      }
     }
 
     return nextXImpl(this->m_points[2].x(), this->m_end, slope);
@@ -127,7 +132,9 @@ class AdaptiveLogStepper
   }
 
  private:
-  GrowthSpeed m_growthSpeed = GrowthSpeed::Precise;
+  GrowthSpeed m_growthSpeed = sizeof(TFloat) == sizeof(float)
+                                  ? GrowthSpeed::Fast
+                                  : GrowthSpeed::Precise;
 
   TFloat nextXImpl(TFloat x, TFloat direction, TFloat slope) const {
     TFloat baseGrowthSpeed = (m_growthSpeed == GrowthSpeed::Fast)

@@ -533,6 +533,22 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   GlobalPreferences::SharedGlobalPreferences()->setCountry(previousCountry);
 }
 
+void assertInputIsPreserved(const char* input, CalculationStore* store) {
+  store->push(Layout::String(input));
+  OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
+      store->calculationAtIndex(0);
+  assert(!lastCalculation->input().isUninitialized());
+  assert_layout_serializes_to(lastCalculation->createInputLayout(), input);
+  store->deleteAll();
+}
+
+QUIZ_CASE(calculation_input_layout) {
+  CalculationStore store(calculationBuffer, calculationBufferSize);
+  assertInputIsPreserved("0.000001", &store);
+  assertInputIsPreserved("cos(0.0001)", &store);
+  assertInputIsPreserved("300000000000", &store);
+}
+
 QUIZ_CASE(calculation_big_expressions) {
   uint8_t previousNumberOfSignificantDigits =
       SharedGlobalPrefs().numberOfSignificantDigits();

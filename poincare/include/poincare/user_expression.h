@@ -178,7 +178,8 @@ class UserExpression : public Expression {
                       const SymbolContext& symbolContext = EmptySymbolContext{},
                       OMG::Base base = OMG::Base::Decimal,
                       bool useTenPowerInsteadOfE = false,
-                      bool linearMode = false) const;
+                      bool linearMode = false,
+                      bool keepFloatMode = false) const;
   char* toLatex(char* buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,
                 int numberOfSignificantDigits,

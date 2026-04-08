@@ -55,7 +55,8 @@ Layout Calculation::createInputLayout() {
       return e.createLayout(Preferences::PrintFloatMode::Decimal,
                             PrintFloat::k_maxNumberOfSignificantDigits,
                             GlobalContextAccessor::Context(),
-                            OMG::Base::Decimal, App::k_useTenPower);
+                            OMG::Base::Decimal, App::k_useTenPower, false,
+                            true);
     }
   }
   return Layout();

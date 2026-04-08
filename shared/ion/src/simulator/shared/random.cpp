@@ -5,7 +5,7 @@
 
 void Ion::Simulator::Random::init(bool isHeadless) {
   if (isHeadless) {
-    // Use a fix seed for screenshots and fuzzer
+    // Use a fixed seed for screenshots and fuzzer
     srand(42);
     return;
   }

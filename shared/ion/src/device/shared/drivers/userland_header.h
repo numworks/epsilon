@@ -47,7 +47,7 @@ class UserlandHeader {
   void* m_storageAddressRAM;
   size_t m_storageSizeRAM;
   /* We store the range addresses of external apps memory because storing the
-   * size is complicated due to c++11 constexpr. */
+   * size is complicated due to C++11 constexpr. */
   void* m_externalAppsFlashStart;
   void* m_externalAppsFlashEnd;
   void* m_externalAppsRAMStart;

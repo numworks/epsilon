@@ -42,7 +42,7 @@ uint16_t userlandCompilationFlags() {
                  // another way to represent it
   uint8_t externalAppsAPILevel = 0xFF & EXTERNAL_APPS_API_LEVEL;
   assert(Device::Board::securityLevel() <
-         0xFF);  // Should the SECURITY_LEVEL exceed 0xFF, , we'll find another
+         0xFF);  // Should the SECURITY_LEVEL exceed 0xFF, we'll find another
                  // way to represent it
   uint8_t securityLevel = 0xFF & Device::Board::securityLevel();
 

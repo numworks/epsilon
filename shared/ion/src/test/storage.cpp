@@ -652,7 +652,7 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   quiz_assert(getRecord(varName2, Storage::listExtension).isNull());
   quiz_assert(!getRecord(varName2, Storage::functionExtension).isNull());
 
-  // Test if record with more important extension can't be overriden
+  // Test if record with more important extension can't be overridden
   createTestRecordWithErrorStatus(varName0, Storage::expressionExtension, data0,
                                   Storage::Record::ErrorStatus::NameTaken);
   createTestRecordWithErrorStatus(varName1, Storage::matrixExtension, data0,
@@ -662,7 +662,7 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
 
   Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
-  // Test if record with same precedence extension can be overriden
+  // Test if record with same precedence extension can be overridden
   createTestRecordWithErrorStatus(varName0, Storage::expressionExtension);
   createTestRecordWithErrorStatus(varName0, Storage::listExtension);
   quiz_assert(getRecord(varName0, Storage::expressionExtension).isNull());

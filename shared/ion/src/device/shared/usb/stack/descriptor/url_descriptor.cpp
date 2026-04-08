@@ -17,7 +17,7 @@ void URLDescriptor::push(Channel* c) const {
 }
 
 uint8_t URLDescriptor::bLength() const {
-  // The script is returned in UTF-8.
+  // The string is returned in UTF-8.
   return Descriptor::bLength() + sizeof(uint8_t) + strlen(m_string);
 }
 

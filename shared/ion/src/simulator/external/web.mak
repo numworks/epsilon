@@ -51,6 +51,6 @@ SFLAGS_sdl := -I$(PATH_ion)/src/simulator/web/include $(SFLAGS_sdl)
 PRIVATE_SFLAGS_sdl += -DUSING_GENERATED_CONFIG_H
 
 # The Module needs to export createContext for SDL to work properly
-# This shouldn't be neeeded if we update the SDL
+# This shouldn't be needed if we update the SDL
 # See https://github.com/libsdl-org/SDL/pull/12970
 _sdl_web_exported_runtime_methods := createContext

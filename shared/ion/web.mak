@@ -34,7 +34,7 @@ _ion_web_exported_functions = $(subst $( ),$(,),$(strip $(patsubst %,_%, \
   $(_eadk_exported_functions) \
 )))
 
-# Using = instead of := is needed here as there is no garantee, the variable
+# Using = instead of := is needed here as there is no guarantee, the variable
 # $(_sdl_web_exported_runtime_methods) is already defined
 _ion_web_exported_runtime_methods = $(subst $( ),$(,),$(strip \
   UTF8ToString \

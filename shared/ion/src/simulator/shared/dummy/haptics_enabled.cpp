@@ -6,7 +6,7 @@ namespace Haptics {
 
 bool isEnabled() {
   /* Dummy default to false as failsafe.
-   * Avoid to get haptics feedback that are not desactivable. */
+   * Avoid getting haptics feedback that cannot be deactivated. */
   return false;
 }
 

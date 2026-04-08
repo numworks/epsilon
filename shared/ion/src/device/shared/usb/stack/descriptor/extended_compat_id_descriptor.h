@@ -8,7 +8,7 @@ namespace USB {
 
 /* We use this descriptor to tell the Windows OS that the device should be
  * treated as a WinUSB device. The Extended Compat ID Descriptor can set
- * differents compat IDs according to the interface and function of the device,
+ * different compat IDs according to the interface and function of the device,
  * but we assume there is only one. */
 
 class ExtendedCompatIDDescriptor : public Streamable {

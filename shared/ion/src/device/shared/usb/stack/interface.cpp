@@ -56,7 +56,7 @@ bool Interface::setInterface(SetupPacket* request,
                              uint16_t* transferBufferLength) {
   // We support one interface only
   setActiveInterfaceAlternative(request->wValue());
-  // There is one interface alternative only, we no need to set it again.
+  // There is one interface alternative only, we don't need to set it again.
   *transferBufferLength = 0;
   return true;
 }

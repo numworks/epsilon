@@ -23,7 +23,7 @@ bool Device::processSetupInRequest(SetupPacket* request,
       return getStatus(transferBuffer, transferBufferLength,
                        transferBufferMaxLength);
     case (int)Request::SetAddress:
-      // Make sure the request is address is valid.
+      // Make sure the request address is valid.
       assert(request->wValue() < 128);
       /* According to the reference manual, the address should be set after the
        * Status stage of the current transaction, but this is not true.
@@ -77,8 +77,8 @@ bool Device::getConfiguration(uint8_t* transferBuffer,
 bool Device::setConfiguration(SetupPacket* request) {
   // We support one configuration only
   setActiveConfiguration(request->wValue());
-  /* There is one configuration only, we no need to set it again, just reset the
-   * endpoint. */
+  /* There is one configuration only, we don't need to set it again, just reset
+   * the endpoint. */
   m_ep0.reset();
   return true;
 }

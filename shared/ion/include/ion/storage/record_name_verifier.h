@@ -39,7 +39,7 @@
  * 3 in prefixRepetitions.
  * For u, v, and w, reserved for sequence, prefixRepetitions = 0
  *
- * The reserved names are registerd by each app, when the snapshot is
+ * The reserved names are registered by each app, when the snapshot is
  * instantiated.
  * (Sequence registers u, v and w, Regression registers X1, Y1, etc.)
  * */

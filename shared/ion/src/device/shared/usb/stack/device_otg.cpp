@@ -15,7 +15,7 @@ void Device::poll() {
 
   /* SETUP or OUT transaction
    * If the Rx FIFO is not empty, there is a SETUP or OUT transaction.
-   * The interrupt is done AFTER THE HANSDHAKE of the transaction. */
+   * The interrupt is done AFTER THE HANDSHAKE of the transaction. */
   if (intsts.getRXFLVL()) {
     class OTG::GRXSTSP grxstsp(OTG.GRXSTSP()->get());
 
@@ -61,7 +61,7 @@ void Device::poll() {
   }
 
   /* IN transactions.
-   * The interrupt is done AFTER THE HANSDHAKE of the transaction. */
+   * The interrupt is done AFTER THE HANDSHAKE of the transaction. */
   if (OTG.DIEPINT(0)->getXFRC()) {  // We only check endpoint 0.
     m_ep0.processINpacket();
     // Clear the Transfer Completed Interrupt

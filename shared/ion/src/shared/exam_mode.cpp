@@ -38,7 +38,7 @@ Configuration get() {
            Authentication::ClearanceLevel::NumWorks &&
        config.isActive())) {
     /* The persisting bytes do not contain a valid exam mode (most likely
-     * because of a botched install), or an unauthentified firmware ended up in
+     * because of a botched install), or an unauthenticated firmware ended up in
      * exam mode. */
     config = Configuration(Ruleset::Off);
     set(config);

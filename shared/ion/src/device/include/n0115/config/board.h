@@ -18,8 +18,8 @@ namespace Config {
 
 // clang-format off
 
-/* The bootloader, kernel and userland starts should be aligned to the begining of a sector (to flash them easily).
- * The bootloader should occupty the whole internal flash
+/* The bootloader, kernel and userland starts should be aligned to the beginning of a sector (to flash them easily).
+ * The bootloader should occupy the whole internal flash
  * The memory layouts are the following:
  * - internal flash: 4*16k
  * - external flash: 8*4k + 32K + 127 * 64K

@@ -53,7 +53,7 @@ void Endpoint0::setup() {
    * k_maxPacketSize bytes. TX0FD being in terms of 32-bit words, we divide
    * k_maxPacketSize by 4. */
   OTG.DIEPTXF0()->setTX0FD(k_maxPacketSize / 4);
-  /* Tx FIFO RAM start address. It starts just after the Rx FIFOso the value is
+  /* Tx FIFO RAM start address. It starts just after the Rx FIFO so the value is
    * Rx FIFO start address (0) + Rx FIFO depth. the Rx FIFO depth is set in
    * usb.cpp, but because the code is linked separately, we cannot get it. */
   OTG.DIEPTXF0()->setTX0FSA(128);
@@ -161,7 +161,7 @@ void Endpoint0::flushTxFifo() {
   OTG.DIEPCTL0()->setSNAK(true);
 
   // Wait for core to respond
-  // TODO: understand why !OTG.GOTGINT()->getSEDET() is required since verion 16
+  // TODO: understand why getSEDET() is required since version 16
   while (!OTG.DIEPINT(0)->getINEPNE() && !OTG.GOTGINT()->getSEDET()) {
   }
 

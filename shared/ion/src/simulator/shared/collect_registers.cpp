@@ -2,7 +2,7 @@
 
 extern "C" {
 
-// define in assembly code
+// defined in assembly code
 // Force the name as archs (linux/macos) don't mangle C names the same way
 extern uintptr_t collect_registers(uintptr_t* regs) asm("_collect_registers");
 }

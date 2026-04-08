@@ -25,7 +25,7 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
 
   /* Handle Dead keys https://en.wikipedia.org/wiki/Dead_key
    * Dead keys are painful to handle because they don't really match our model.
-   * For example, we want to act immediatly when the user inputs a '^'. And as
+   * For example, we want to act immediately when the user inputs a '^'. And as
    * an extra annoyance, dead key support is inconsistent across SDL platforms
    * and even across browsers in Emscripten. We therefore have to resort to
    * hackish solutions.
@@ -342,8 +342,8 @@ Event getPlatformEvent() {
       SDL_GetMouseState(&p.x, &p.y);
       Simulator::Layout::highlightKeyAt(&p);
     }
-    /* On smarphones, don't forget to unhighlight the key when the finger is up.
-     * (finger up doesn't imply a mouse motion!) */
+    /* On smartphones, don't forget to unhighlight the key when the finger is
+     * up. (finger up doesn't imply a mouse motion!) */
     if (event.type == SDL_FINGERUP) {
       Simulator::Layout::unhighlightKey();
     }
@@ -354,7 +354,7 @@ Event getPlatformEvent() {
      * is being executed - SDL puts all ingoing events in a queue.
      * When events processing goes back to normal, all the queued events are
      * processed, which can result in weird behaviours (for instance, really
-     * fast navigation in the calculator, "instantanate" text input, ...).
+     * fast navigation in the calculator, "instantaneous" text input, ...).
      * These behaviours are even more visible if the script contains an infinite
      * loop.
      * To prevent that, we flush all queued events after encountering a non-null

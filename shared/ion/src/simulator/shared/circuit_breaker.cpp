@@ -27,7 +27,7 @@ void unsetLowerCheckpoints(CheckpointType type) {
     return;
   }
   CheckpointType lowerType = static_cast<CheckpointType>(lowerTypeIndex);
-  /* type just need to be incremented since unsetCheckpoint will call
+  /* type just needs to be incremented since unsetCheckpoint will call
    * unsetLowerCheckpoints again. */
   unsetCheckpoint(static_cast<CheckpointType>(lowerType));
 }

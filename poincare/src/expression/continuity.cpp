@@ -36,13 +36,6 @@ bool CanChangeValues(const Tree* e, T minBound, T maxBound,
 }
 
 template <typename T>
-bool CanChangeActivePiecewiseBranch(const Tree* e, T minBound, T maxBound) {
-  // TODO: Should check across the interval
-  return Approximation::IndexOfActivePiecewiseBranchAt(e, minBound) !=
-         Approximation::IndexOfActivePiecewiseBranchAt(e, maxBound);
-}
-
-template <typename T>
 bool Continuity::IsDiscontinuousOnInterval(const Tree* e, T minBound,
                                            T maxBound) {
   Approximation::Parameters params{
@@ -65,10 +58,6 @@ bool Continuity::CanBeUndefinedOnInterval(
         CanChangeValues(e, minBound, maxBound, params)) {
       return true;
     }
-    if (e->isPiecewise() &&
-        CanChangeActivePiecewiseBranch(e, minBound, maxBound)) {
-      return true;
-    }
   } else if (!Undefined::CanBeUndefined(e)) {
     return false;
   }
@@ -80,10 +69,56 @@ bool Continuity::CanBeUndefinedOnInterval(
       return true;
     }
   }
+  if (e->isPiecewise()) {
+    return CanPiecewiseBeUndefinedOnInterval(e, minBound, maxBound, params,
+                                             checkContinuity);
+  }
   for (IndexedChild indexedChild : e->indexedChildren()) {
     // Skip discontinuity check in DepLists.
     if (CanBeUndefinedOnInterval(indexedChild, minBound, maxBound, params,
                                  checkContinuity && !e->isDepList())) {
+      return true;
+    }
+  }
+  return false;
+}
+
+template <typename T>
+bool Continuity::CanPiecewiseBeUndefinedOnInterval(
+    const Tree* e, T minBound, T maxBound,
+    const Approximation::Parameters& params, bool checkContinuity) {
+  // Get the piecewise indexes at bounds of the interval
+  int minIndex = Approximation::IndexOfActivePiecewiseBranchAt(e, minBound);
+  int maxIndex = Approximation::IndexOfActivePiecewiseBranchAt(e, maxBound);
+
+  bool hasUnknownBranch = minIndex == Approximation::k_unknownActiveBranch ||
+                          maxIndex == Approximation::k_unknownActiveBranch;
+  if (checkContinuity && (hasUnknownBranch || minIndex != maxIndex)) {
+    // Any active branch change is a discontinuity
+    return true;
+  }
+  bool hasNoActiveBranch = minIndex == Approximation::k_noActiveBranch ||
+                           maxIndex == Approximation::k_noActiveBranch;
+  if (hasNoActiveBranch) {
+    // Ignore when piecewise is inactive at both end of the interval
+    return minIndex != maxIndex;
+  }
+  assert(!hasNoActiveBranch);
+  for (IndexedChild indexedChild : e->indexedChildren()) {
+    bool isCondition = (indexedChild.index % 2 == 1);
+    int branchIndex = isCondition ? indexedChild.index - 1 : indexedChild.index;
+    bool checkChild =
+        // Check everything if branch is Unknown
+        hasUnknownBranch ||
+        // Always check the values and conditions on the interval bounds
+        (branchIndex == minIndex || branchIndex == maxIndex) ||
+        // Always check previous conditions, since they will be evaluated
+        (isCondition && (branchIndex < minIndex || branchIndex < maxIndex));
+
+    /* Note: We could skip continuity check in conditions, but it would lead to
+     * more false negatives. */
+    if (checkChild && CanBeUndefinedOnInterval(indexedChild, minBound, maxBound,
+                                               params, checkContinuity)) {
       return true;
     }
   }
@@ -97,6 +132,11 @@ template bool Continuity::IsDiscontinuousOnInterval(const Tree*, double,
 template bool Continuity::CanBeUndefinedOnInterval(
     const Tree*, float, float, const Approximation::Parameters&, bool);
 template bool Continuity::CanBeUndefinedOnInterval(
+    const Tree*, double, double, const Approximation::Parameters&, bool);
+
+template bool Continuity::CanPiecewiseBeUndefinedOnInterval(
+    const Tree*, float, float, const Approximation::Parameters&, bool);
+template bool Continuity::CanPiecewiseBeUndefinedOnInterval(
     const Tree*, double, double, const Approximation::Parameters&, bool);
 
 }  // namespace Poincare::Internal

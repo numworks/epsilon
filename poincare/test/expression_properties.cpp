@@ -444,8 +444,12 @@ QUIZ_CASE(pcj_properties_is_continuous) {
                                    false);
   assert_is_continuous_on_interval("piecewise(1,frac(x)>0,0)", 1.5f, 2.5f,
                                    false);
+  assert_is_continuous_on_interval("piecewise(sign(x),x<-1,x)", -0.5f, 0.5f,
+                                   true);
+  assert_is_continuous_on_interval("piecewise(1,sign(x)>10,1)", -0.5f, 0.5f,
+                                   false);
+  assert_is_continuous_on_interval("0*piecewise(0,x<2)", 1.5f, 2.5f, false);
   // Not handled: Should be discontinuous
-  assert_is_continuous_on_interval("0*piecewise(0,x<2)", 1.5f, 2.5f, true);
   assert_is_continuous_on_interval("0*arccos(x)", 0.5f, 1.5f, true);
 }
 

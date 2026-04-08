@@ -70,10 +70,7 @@ void DFUInterface::wholeDataSentCallback(SetupPacket* request,
   if (request->bRequest() == (uint8_t)DFURequest::GetStatus) {
     // Do any needed action after the GetStatus request.
     if (m_state == State::dfuDNBUSY) {
-      if (m_largeBufferLength != 0) {
-        // Here, copy the data from the transfer buffer to the flash memory
-        writeOnMemory();
-      }
+      writeOnMemoryIfNeeded();
       changeAddressPointerIfNeeded();
       eraseMemoryIfNeeded();
       m_state = State::dfuDNLOADIDLE;
@@ -258,7 +255,11 @@ void DFUInterface::eraseMemoryIfNeeded() {
   return;
 }
 
-void DFUInterface::writeOnMemory() {
+void DFUInterface::writeOnMemoryIfNeeded() {
+  if (m_largeBufferLength == 0) {
+    // Nothing to write
+    return;
+  }
   bool written =
       interface(m_bInterfaceAlternateSetting)
           ->write(m_writeAddress, m_largeBufferLength, m_largeBuffer);

@@ -151,7 +151,7 @@ class DFUInterface : public Interface {
   // Access memory
   void eraseCommand(uint8_t* transferBuffer, uint16_t transferBufferLength);
   void eraseMemoryIfNeeded();
-  void writeOnMemory();
+  void writeOnMemoryIfNeeded();
   void unlockFlashMemory();
   void lockFlashMemoryAndPurgeCaches();
   // Status

@@ -38,6 +38,11 @@ bool AbstractMathFieldDelegate::isAcceptableExpression(
   return !exp.isUninitialized() && !exp.isStore();
 }
 
+void AbstractMathFieldDelegate::displayWarningForSyntaxError(int error) const {
+  // TODO: Use a different message depending on the error
+  App::app()->displayWarning(I18n::Message::SyntaxError);
+}
+
 bool AbstractMathFieldDelegate::isAcceptableTextOrWarning(
     const char* text, const SymbolContext& symbolContext) {
   if (text[0] == 0) {
@@ -51,7 +56,7 @@ bool AbstractMathFieldDelegate::isAcceptableTextOrWarning(
   UserExpression exp = UserExpression::Parse(text, symbolContext);
   if (exp.isUninitialized()) {
     // Unparsable expression
-    App::app()->displayWarning(I18n::Message::SyntaxError);
+    displayWarningForSyntaxError(0);
     return false;
   }
   /* Expression serialization.
@@ -64,14 +69,14 @@ bool AbstractMathFieldDelegate::isAcceptableTextOrWarning(
   if (length >= bufferSize - 1) {
     /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
      * escaped before printing utterly the expression. */
-    App::app()->displayWarning(I18n::Message::SyntaxError);
+    displayWarningForSyntaxError(0);
     return false;
   }
-  if (isAcceptableExpression(exp, symbolContext)) {
-    return true;
+  if (!isAcceptableExpression(exp, symbolContext)) {
+    displayWarningForSyntaxError(0);
+    return false;
   }
-  App::app()->displayWarning(I18n::Message::SyntaxError);
-  return false;
+  return true;
 }
 
 MathLayoutFieldDelegate* MathLayoutFieldDelegate::Default() {
@@ -94,11 +99,11 @@ bool MathLayoutFieldDelegate::isAcceptableLayoutOrWarning(
     return true;
   }
   UserExpression exp = UserExpression::Parse(layout, symbolContext);
-  if (isAcceptableExpression(exp, symbolContext)) {
-    return true;
+  if (!isAcceptableExpression(exp, symbolContext)) {
+    displayWarningForSyntaxError(0);
+    return false;
   }
-  App::app()->displayWarning(I18n::Message::SyntaxError);
-  return false;
+  return true;
 }
 
 bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(

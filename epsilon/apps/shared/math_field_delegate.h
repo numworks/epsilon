@@ -23,6 +23,7 @@ class AbstractMathFieldDelegate {
   bool handleEventForField(Escher::EditableField* field,
                            Ion::Events::Event event);
   void updateXNTIndex(Ion::Events::Event event);
+  void displayWarningForSyntaxError(int error) const;
 
  private:
   int m_currentXNTIndex;

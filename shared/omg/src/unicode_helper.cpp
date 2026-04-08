@@ -33,7 +33,7 @@ int CompareDecoders(ForwardUnicodeDecoder* a, ForwardUnicodeDecoder* b) {
 
 int CompareDecoderWithNullTerminatedString(UnicodeDecoder* decoder,
                                            const char* string) {
-  // TODO this UnicodeDecoder API is aweful
+  // TODO this UnicodeDecoder API is awful
   size_t position = decoder->position();
   UTF8Decoder stringDecoder(string);
   int result = CompareDecoders(decoder, &stringDecoder);

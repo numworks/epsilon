@@ -5,7 +5,7 @@
 
 #include "private/macros.h"
 
-/* We are preseving registers:
+/* We are preserving registers:
  * - sp & lr -> 2x4 bytes
  * - General purpose registers: r4-r9, r10 = sl, r11 = fp -> 8x4 bytes
  * - Floating point registers: s16-s31 -> 8x8 bytes

@@ -330,11 +330,13 @@ class USBTimeoutError(USBError):
     Backends must raise this exception when a call on a USB connection returns
     a timeout error code.
     """
+
     pass
 
 
 class NoBackendError(ValueError):
     r"Exception class when a valid backend is not found."
+
     pass
 
 
@@ -735,7 +737,7 @@ class Configuration(object):
                 "bmAttributes",
                 self.bmAttributes,
                 powered,
-                remote_wakeup
+                remote_wakeup,
                 # bit 7 is high, bit 4..0 are 0
             )
             + "   %-21s:%#7x (%d mA)"
@@ -776,7 +778,7 @@ class Device(_objfinalizer.AutoFinalizedObject):
     value for most devices) and then writes some data to the endpoint 0x01.
 
     Timeout values for the write, read and ctrl_transfer methods are specified
-    in miliseconds. If the parameter is omitted, Device.default_timeout value
+    in milliseconds. If the parameter is omitted, Device.default_timeout value
     will be used instead. This property can be set by the user at anytime.
     """
 
@@ -1002,7 +1004,7 @@ class Device(_objfinalizer.AutoFinalizedObject):
         The data parameter should be a sequence like type convertible to
         the array type (see array module).
 
-        The timeout is specified in miliseconds.
+        The timeout is specified in milliseconds.
 
         The method returns the number of bytes written.
         """
@@ -1034,7 +1036,7 @@ class Device(_objfinalizer.AutoFinalizedObject):
         tells how many bytes you want to read or supplies the buffer to
         receive the data (it *must* be an object of the type array).
 
-        The timeout is specified in miliseconds.
+        The timeout is specified in milliseconds.
 
         If the size_or_buffer parameter is the number of bytes to read, the
         method returns an array object with the data read. If the

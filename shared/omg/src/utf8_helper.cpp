@@ -254,7 +254,7 @@ void TryAndReplacePatternsInStringByPatterns(char* text, int bufferSize,
           if (replacingStringLength != 0) {
             i += replacingStringLength - 1;
             /* When working with multiple TextPairs at the same time, it can be
-             * usefull to go back by one char. That is the case for empty
+             * useful to go back by one char. That is the case for empty
              * matrixes Indeed, in the string ",,]",  ",," is replaced by
              * ",\x11,". The ",]" pattern right after would be missed if not for
              * the -1.*/

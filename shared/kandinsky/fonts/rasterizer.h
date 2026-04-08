@@ -7,7 +7,7 @@
  * packedGlyphWidth packedGlyphHeight fontName outputH outputCpp sharedFontPath
  * outputPng
  * -> Generates a .png image with the font rasterized
- * -> Generates a .c and a .h files with the content of the font */
+ * -> Generates .c and .h files with the content of the font */
 
 #pragma once
 

@@ -17,7 +17,7 @@ def parse_line(line):
 readelf_output = subprocess.check_output(
     [
         "arm-none-eabi-readelf",
-        "-W",  # Don't limit line lenght
+        "-W",  # Don't limit line length
         "-s",  # Sizes
         sys.argv[1],
     ]

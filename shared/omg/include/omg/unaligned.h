@@ -7,10 +7,10 @@ namespace OMG {
 /* Helpers to access unaligned integer types
  *
  * The only portable way to make unaligned accesses is to use memcpy and to rely
- * on the compiler to remove it when it is possible. In particular on the SM32,
+ * on the compiler to remove it when it is possible. In particular on the STM32,
  * uint16 unaligned accesses are always possible and uint32 unaligned accesses
- * are possible if they are standalone. Unfortuately the compiler is not able to
- * optimize them in the userland since memcpy is an opaque trampoline access.
+ * are possible if they are standalone. Unfortunately the compiler is not able
+ * to optimize them in the userland since memcpy is an opaque trampoline access.
  *
  * The workaround used here with an aligned attribute comes from emscripten
  * (where all accesses must be correctly aligned). It is supported by both clang

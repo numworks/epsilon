@@ -30,7 +30,7 @@ constexpr static int k_scale = (k_nbSubdivisions * k_nbSubdivisions) / 256;
  */
 template <KDCoordinate Size>
 constexpr KDMask<Size> KDMakeRing(float minRadius, float maxRadius) {
-  /* We compute the grayscale value of each pixel of the mask by subdiving it
+  /* We compute the grayscale value of each pixel of the mask by subdividing it
    * into nbSubdivisions^2 sub-pixels and testing if they belong to the ring. */
   KDMask<Size> result = {};
   float minRadius2 = minRadius * minRadius;

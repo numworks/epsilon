@@ -45,7 +45,7 @@ class Register {
   Size m_bits;
 };
 
-/* Use these macros to define the address, reset value and fiels of a register.
+/* Use these macros to define the address, reset value and fields of a register.
  * These are provided in case a register is not described in the SVD file and
  * needs to be written manually. */
 

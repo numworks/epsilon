@@ -21,7 +21,7 @@ struct RegisterCase {
 };
 
 class Env {
-  /* The definitions of the functions in Quiz::Env are project dependant, and
+  /* The definitions of the functions in Quiz::Env are project dependent, and
    * must be provided by each project using the Quiz framework. */
 
   static void Init();

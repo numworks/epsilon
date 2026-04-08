@@ -115,7 +115,7 @@ def main():
 
     print(f"Done generating headers for {device_name}.")
     print(
-        f'You can now copy the "register.h" file and the "{device_name}" directory to you hardware interface module.'
+        f'You can now copy the "register.h" file and the "{device_name}" directory to your hardware interface module.'
     )
 
 

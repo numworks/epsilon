@@ -9,7 +9,7 @@ using ConstActionByPointer = const T* (T::*)(Args...) const;
 template <typename T, typename... Args>
 using ConstActionByObject = const T (T::*)(Args...) const;
 
-/* This helper wraps a action on const objects into a action on non-const
+/* This helper wraps an action on const objects into an action on non-const
  * objects. It should be completely eliminated by the compiler after the type
  * checking. */
 template <typename T, typename... Args>

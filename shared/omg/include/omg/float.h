@@ -74,7 +74,7 @@ constexpr T Max();
 /* To prevent incorrect approximations, such as cos(1.5707963267949) = 0
  * we made the neglect threshold stricter. This way, the approximation is more
  * selective.
- * However, when ploting functions such as e^(i.pi+x), the float approximation
+ * However, when plotting functions such as e^(i.pi+x), the float approximation
  * fails by giving non-real results and therefore, the function appears "undef".
  * As a result we created two functions Epsilon that behave differently
  * according to the number's type. When it is a double we want maximal precision

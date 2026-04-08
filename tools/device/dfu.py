@@ -12,7 +12,7 @@
 """This module implements enough functionality to program the STM32F4xx over
 DFU, without requiring dfu-util.
 See app note AN3156 for a description of the DFU protocol.
-See document UM0391 for a dscription of the DFuse file.
+See document UM0391 for a description of the DFuse file.
 """
 
 from __future__ import print_function
@@ -347,7 +347,7 @@ def read_bin_file(filename):
     """Reads a bin file
     Returns an element which is a dictionary with the
     following keys:
-        size    - The size of the element ddata.
+        size    - The size of the element data.
         data    - The element data.
     If an error occurs while parsing the file, then None is returned.
     """
@@ -365,7 +365,7 @@ def read_dfu_file(filename):
     following keys:
         num     - The element index
         address - The address that the element data should be written to.
-        size    - The size of the element ddata.
+        size    - The size of the element data.
         data    - The element data.
     If an error occurs while parsing the file, then None is returned.
     """

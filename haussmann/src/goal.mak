@@ -1,6 +1,6 @@
 # Provide functions to create goals.
 #
-# Goals are the main entrypoints into the build sytem. They are defined as the
+# Goals are the main entrypoints into the build system. They are defined as the
 # list of modules used to build the executable.
 # Each module in the goal declaration can be followed by a dot-separated list of
 # flavors. Flavors added this way will always be sent to the relevant module

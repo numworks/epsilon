@@ -42,16 +42,16 @@ class Runner {
    * if set: run all tests located after any test starting with [fromFilter]
    *
    * [untilFilter]
-   * if set: run all tests but quits when any test start with [untilFilter]
+   * if set: run all tests but quits when any test starts with [untilFilter]
    *
    * Those 3 conditions can be mixed and matched to obtain the desired test
    * filter Example:
    * `--from aaa --filter bbb`
    *  => run tests starting with bbb located after aaa
    * `--from aaa --until bbb`
-   *  => run tests located inbetween aaa and bbb
+   *  => run tests located in between aaa and bbb
    * `--from aaa --until bbb --filter ccc`
-   *  => run tests starting with ccc located inbetween aaa and bbb
+   *  => run tests starting with ccc located in between aaa and bbb
    *
    * [chunk-id and number-of-chunks]
    * Split the list of tests into [number-of-chunks] chunks and run only the

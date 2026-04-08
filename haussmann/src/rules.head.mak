@@ -60,7 +60,7 @@ $(call rule_for_object, \
   $$(CC) $$(PRIORITY_SFLAGS) $$(SFLAGS) -c $$< -o $$@ \
 )
 
-# Define a helpful prerequesite for targets that should always be rebuilt
+# Define a helpful prerequisite for targets that should always be rebuilt
 .PHONY: FORCE
 FORCE: ;
 

@@ -109,7 +109,7 @@ class Variant {
   }
 
   /* Same as [get<A>] but without asserting that the fetched type is the
-   * stored typed.
+   * stored type.
    * This is useful when simultaneously needing pointers to 2 distinct members
    * (such as in a parent constructor) */
   template <typename A>

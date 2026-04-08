@@ -61,7 +61,7 @@ class String {
     return std::string_view(data(), length());
   }
 
-  // Assignement
+  // Assignment
 
   constexpr String& operator=(const String& other) = default;
 

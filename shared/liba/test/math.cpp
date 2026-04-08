@@ -1,4 +1,4 @@
-// This file tests that each math fuction links.
+// This file tests that each math function links.
 #include <math.h>
 
 int test_fpclassifyf(float x) { return fpclassify(x); }

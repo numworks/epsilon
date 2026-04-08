@@ -7,10 +7,10 @@
 #
 # The syntax for tastes is as follows:
 # - elem:+flavor1 means the element is skipped if flavor1 IS NOT provided
-# - elem:-flavor2 means the element is skipped if flavor1 IS provided
+# - elem:-flavor2 means the element is skipped if flavor2 IS provided
 #
 # Combination of tastes works as a logical AND for selection:
-# - elem:+f1:-f2:+f3 will be skipped if f2 is present of if either f1 or f3 is
+# - elem:+f1:-f2:+f3 will be skipped if f2 is present or if either f1 or f3 is
 #   absent.
 #
 # Logical OR can be achieved by adding the element several times in the list

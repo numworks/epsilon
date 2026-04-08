@@ -32,7 +32,7 @@ r"""usb.control - USB standard control requests
 
 This module exports:
 
-get_status - get recipeint status
+get_status - get recipient status
 clear_feature - clear a recipient feature
 set_feature - set a recipient feature
 get_descriptor - get a device descriptor

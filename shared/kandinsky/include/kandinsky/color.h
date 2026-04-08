@@ -53,11 +53,11 @@ class KDColor {
    * bit red color into an 8 bit one.
    * Of course we cannot create information out of thin air, so a simple way to
    * convert the value would be to just pad them with zeros. From a theoretical
-   * standpoint, this is as good as any other alogrithm.
-   * But in practices, this yields a rather visible problem : whites end up
-   * being too dark. For example, converting a 5 bit pure white (value 0b11111)
-   * to 8 bit would give 0b11111000, which is quite different from a pure white
-   * in 8 bit (0b11111111). And if padded with ones instead, we would have a
+   * standpoint, this is as good as any other algorithm.
+   * But in practice, this yields a rather visible problem: whites end up
+   * being too dark. For example, converting a 5-bit pure white (value 0b11111)
+   * to 8 bits would give 0b11111000, which is quite different from a pure white
+   * in 8 bits (0b11111111). And if padded with ones instead, we would have a
    * similar problem with blacks.
    * Enters a simple trick: fill the padding with the most significant bits from
    * the original value. For example, to expand 0b101010 from 6 to 8 bits we

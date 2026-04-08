@@ -84,7 +84,7 @@ Tree* PrivateParse(const Tree* l, ParsingContext parsingContext) {
             if (numberOfChildren == 1) {
           list->cloneNodeOverNode(KParentheses);
         } else {
-          RackParser::RaiseParseFail("1 - Invalid use of parenthesis");
+          RackParser::RaiseParseFail("6 - Invalid use of parenthesis");
         }
       }
       return list;

@@ -402,7 +402,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView* plotView,
    *  <--------------------------------->
    *                bar width
    *
-   * If we want to diplays borders:
+   * If we want to display borders:
    *  - left border is drawn at A
    *  - right border is drawn at B
    */

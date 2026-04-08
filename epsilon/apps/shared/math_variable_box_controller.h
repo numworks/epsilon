@@ -81,7 +81,7 @@ class MathVariableBoxController : public Escher::NestedMenuController {
   Escher::NestedMenuController::NodeCell m_nodeCells[k_numberOfMenuRows];
   Escher::MenuCell<Escher::MessageTextView> m_defineVariableCell;
   /* Layout memoization
-   * TODO: make a helper doing the RingMemoizationOfConsecutiveObjets to
+   * TODO: make a helper doing the RingMemoizationOfConsecutiveObjects to
    * factorize this code and ExpressionModelStore code. */
   int m_firstMemoizedLayoutIndex;
   Poincare::Layout m_layouts[k_maxNumberOfDisplayedRows];

@@ -15,7 +15,7 @@ GoToParameterController::GoToParameterController(
       m_cursor(cursor),
       m_graphRange(graphRange),
       /* m_tempParameter can be called when computing size before having
-       * displayed anything. Set it to a dummy value that will be overriden in
+       * displayed anything. Set it to a dummy value that will be overridden in
        * viewWillAppear() anyway. */
       m_tempParameter(0.0),
       m_parameterCell(&m_selectableListView, this) {}

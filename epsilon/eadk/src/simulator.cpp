@@ -14,7 +14,7 @@ static inline void preemptive_termination(Ion::Events::Event e) {
 
 Ion::Keyboard::State s_state;
 void _eadk_keyboard_scan_do_scan() {
-  /* Calling Ion::Events::getPlatformEvent gives us a change to handle simulator
+  /* Calling Ion::Events::getPlatformEvent gives us a chance to handle simulator
    * events, like "take a screenshot", or "use the mouse to press a button on
    * the virtual calculator". */
   Ion::Events::Event e = Ion::Events::getPlatformEvent();

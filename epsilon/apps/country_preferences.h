@@ -51,7 +51,7 @@ class CountryPreferences {
 
   /* Variant1 -> The models change (mx+p instead of ax+b) and display residual
    * standard deviation in table.
-   * These two behaviours can be splitted if needed. */
+   * These two behaviours can be split if needed. */
   enum class RegressionApp : bool {
     Default,
     Variant1,

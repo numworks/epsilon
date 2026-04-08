@@ -12,7 +12,7 @@
 
 /* AbstractPlotView maps a range in R² to the screen and provides methods for
  * drawing basic geometry in R².
- * To instanciate a view, one can use or derive the
+ * To instantiate a view, one can use or derive the
  * PlotView<CAxes, CPlot, CBanner, CCursor> template. */
 
 namespace Shared {

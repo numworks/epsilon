@@ -153,7 +153,7 @@ bool FrequencyController::moveSelectionHorizontally(
 
   // Simplify cursor's position
   double simplifyFactor = 0.5;
-  // Simplification should not cross over intersting values
+  // Simplification should not cross over interesting values
   assert(snapFactor >= 1 + simplifyFactor);
   if (std::fabs(x) <= std::fabs(step * simplifyFactor)) {
     x = 0.0;

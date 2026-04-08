@@ -63,7 +63,7 @@ int DefaultName(char* buffer, size_t bufferSize, CodePoint symbol) {
   constexpr int k_maxNumberOfDefaultLetterNames = 4;
   constexpr char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
       'f', 'g', 'h', 'p'};
-  /* First default names the first of theses names f, g, h, p and then f1, f2,
+  /* Default names are the first of these names f, g, h, p and then f1, f2,
    * that does not exist yet in the storage. */
   size_t length = 0;
   if (symbol == CodePoints::k_polarSymbol) {

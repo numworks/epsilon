@@ -6,7 +6,7 @@
 namespace Shared {
 
 /* SimpleInteractiveCurveViewController is a View controller with a cursor that
- * can handles zoom in/out and left and right events. */
+ * can handle zoom in/out and left and right events. */
 
 class SimpleInteractiveCurveViewController : public ZoomCurveViewController,
                                              public MathTextFieldDelegate {

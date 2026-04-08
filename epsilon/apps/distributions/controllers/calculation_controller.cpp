@@ -275,7 +275,7 @@ void CalculationController::updateCellsValues() {
   for (int i = 0; i < numberOfColumns; i++) {
     constexpr int bufferSize = Constants::k_largeBufferSize;
     char buffer[bufferSize];
-    /* FIXME: It has not been decided yet if we should use the prefered mode
+    /* FIXME: It has not been decided yet if we should use the preferred mode
      * instead of always using scientific mode */
     PoincareHelpers::ConvertFloatToTextWithDisplayMode(
         m_calculation->parameterAtIndex(i), buffer, bufferSize,

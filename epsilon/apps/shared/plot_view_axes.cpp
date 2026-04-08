@@ -218,7 +218,7 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
       x = std::copysign(yQuadrant * cos / sin, cos);
       y = yQuadrant;
       if (angle == 90 || angle == 270) {
-        // Move the label for it not to be overriden by the vertical axis.
+        // Move the label for it not to be overridden by the vertical axis.
         horizontalRelativePosition = AbstractPlotView::RelativePosition::After;
       }
     }
@@ -265,7 +265,7 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
   float tMax = plotView->rangeMax(axis) + plotView->pixelLength(axis);
   /* maxNumberOfTicks is there to ensure that we do not draw too much ticks
    * when reaching limit cases. For example, tMax = 1.0E+8 and tickStep = 0.5,
-   * when t == tMax, increasing if by tickstep will give:
+   * when t == tMax, increasing it by tickStep will give:
    *  t = tMax + tickStep, but tMax + tickStep == tMax because of float
    * precision. Which means the condition t <= tMax in the loop will never be
    * reached. */

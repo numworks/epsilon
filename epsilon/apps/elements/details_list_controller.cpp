@@ -35,7 +35,7 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
 
   ElementsViewDataSource* dataSource = App::app()->elementsViewDataSource();
   /* Add an extra ElementsDataBase::k_numberOfElements to work around the %
-   * operator not behvaing correctly with negative integers. */
+   * operator not behaving correctly with negative integers. */
   AtomicNumber newZ = (dataSource->selectedElement() + step +
                        ElementsDataBase::k_numberOfElements - 1) %
                           ElementsDataBase::k_numberOfElements +

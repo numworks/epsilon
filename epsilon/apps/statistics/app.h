@@ -104,7 +104,7 @@ class App : public Shared::StoreApp,
   App(Snapshot* snapshot);
   void didBecomeActive(Escher::Window* window) override;
 
-  // AlternateViewDelegate (choses between quantitative and categorical views)
+  // AlternateViewDelegate (chooses between quantitative and categorical views)
   int activeViewControllerIndex() const override {
     return DataTypeViewModel::IndexOfDataTypeView(
         snapshot()->dataTypeViewModel()->selectedDataType());
@@ -117,7 +117,7 @@ class App : public Shared::StoreApp,
     app()->setFirstResponder(activeViewController);
   }
 
-  // AlternateEmptyViewDelegate (for graph tab: choses between empty or graph,
+  // AlternateEmptyViewDelegate (for graph tab: chooses between empty or graph,
   // depending on dataType)
   bool isEmpty() const override {
     return snapshot()->dataTypeViewModel()->isCategorical()

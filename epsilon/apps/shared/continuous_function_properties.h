@@ -202,7 +202,7 @@ class ContinuousFunctionProperties {
            conicShape() == Poincare::Conic::Shape::Ellipse;
   }
 
-  // Wether to draw a dotted or solid line (Strict inequalities).
+  // Whether to draw a dotted or solid line (Strict inequalities).
   bool plotIsDotted() const {
     return equationType() == Poincare::Comparison::Operator::Superior ||
            equationType() == Poincare::Comparison::Operator::Inferior;

@@ -77,8 +77,8 @@ Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(
     record = recordAtIndex(++index);
   }
   /* Returned record is null if i >= numberOfModelsSatisfyingTest.
-   * We'd like to assert that i < numberOfModelsStatisfyingTest at the
-   * beginning of this function but the method numberOfModelsStatisfyingTest
+   * We'd like to assert that i < numberOfModelsSatisfyingTest at the
+   * beginning of this function but the method numberOfModelsSatisfyingTest
    * is not const. */
   assert(!record.isNull());
   return record;

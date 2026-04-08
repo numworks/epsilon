@@ -38,7 +38,7 @@ static size_t extractArgument(mp_obj_t arg, mp_obj_t **items) {
   return itemLength;
 }
 
-// Extract two scalar or array arguments and check for their strickly equal
+// Extract two scalar or array arguments and check for their strictly equal
 // dimension
 
 static size_t extractArgumentsAndCheckEqualSize(mp_obj_t x, mp_obj_t y,

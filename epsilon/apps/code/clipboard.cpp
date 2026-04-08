@@ -73,7 +73,7 @@ const UTF8Helper::TextPair* Clipboard::PythonTextPairs() {
   /* The order in which the text pairs are stored is important. Indeed when
    * leaving python, the text stored in the buffer is converted into an input
    * for other apps. Therefore if we want to convert "3**3" into "3^3", the
-   * function must look for "**" paterns before "*". Otherwise, we will get
+   * function must look for "**" patterns before "*". Otherwise, we will get
    * "3××3". */
   constexpr static UTF8Helper::TextPair
       k_pythonTextPairs[k_numberOfPythonTextPairs] = {

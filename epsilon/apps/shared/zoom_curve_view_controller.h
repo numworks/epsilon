@@ -8,7 +8,7 @@
 
 namespace Shared {
 
-/* ZoomCurveViewController is a View controller with a cursor that can handles
+/* ZoomCurveViewController is a View controller with a cursor that can handle
  * zoom in/out events. */
 
 class ZoomCurveViewController : public Escher::ViewController {

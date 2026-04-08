@@ -26,7 +26,7 @@ bool EditorController::freeSpaceFor(int size) {
   assert(m_script.content() == previousContentAddress);
   assert(Ion::Storage::FileSystem::sharedFileSystem->availableSize() == 0);
 #endif
-  // Update content size without reseting cursor
+  // Update content size without resetting cursor
   m_editorView.setText(const_cast<char*>(m_script.content()),
                        m_script.contentSize(), false);
   return true;

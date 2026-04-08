@@ -34,10 +34,10 @@ class PythonTextArea : public Escher::TextArea {
   /* autocompletionType returns:
    * - EndOfIdentifier if there is currently autocompletion, or if the cursor is
    *   at the end of an identifier,
-   * - MiddleOfIdentifier is the cursor is in the middle of an identifier,
+   * - MiddleOfIdentifier if the cursor is in the middle of an identifier,
    * - No identifier otherwise.
    * The autocompletionLocation can be provided with autocompletionLocation, or
-   * retreived with autocompletionLocationBeginning and
+   * retrieved with autocompletionLocationBeginning and
    * autocompletionLocationEnd. */
   AutocompletionType autocompletionType(
       const char* autocompletionLocation = nullptr,

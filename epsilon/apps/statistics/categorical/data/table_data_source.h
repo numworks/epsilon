@@ -78,7 +78,7 @@ class TableViewDataSource : public Escher::TableViewDataSource,
 
   constexpr static int k_maxNumberOfHeaderCells =
       (Ion::Display::Width - k_columnWidth) / k_columnWidth + 2;
-  // TODO: Avoid these two harcoded heights
+  // TODO: Avoid these two hardcoded heights
   constexpr static int k_statisticsTabHeight = 22;
   constexpr static int k_typeOfDataRowHeight = 26;
   // Account for title bar, statistics tab, type of data tab and header cell row

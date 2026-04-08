@@ -70,7 +70,7 @@ class FunctionZoomAndPanCurveViewController
     bool m_displayLegend;
   };
 
-  /* Warning : this methods do not reload the curve view. It should be done
+  /* Warning: this method does not reload the curve view. It should be done
    * manually after calling it. Returns true if the legend visibility has
    * changed. */
   bool setLegendVisible(bool legendWillAppear);

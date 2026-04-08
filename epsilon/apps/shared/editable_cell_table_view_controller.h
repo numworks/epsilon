@@ -81,7 +81,7 @@ class EditableCellTableViewController
 
   int numberOfRowsAtColumn(int column) const;
 
-  /* Poor's man diamond inheritance */
+  /* Poor man's diamond inheritance */
   virtual Escher::SelectableViewController* columnParameterController() = 0;
   virtual Shared::ColumnParameters* columnParameters() = 0;
   virtual Escher::StackViewController* stackController() const = 0;

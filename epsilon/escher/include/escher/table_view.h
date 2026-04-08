@@ -154,8 +154,8 @@ class TableView : public ScrollView {
       return (index / nb) + rowsScrollingOffset();
     }
     int typeOfSubviewAtIndex(int index) const;
-    /* This method transform a index (of subview for instance) into an index
-     * refering to the set of cells of type "type". */
+    /* This method transforms an index (of subview for instance) into an index
+     * referring to the set of cells of type "type". */
     int typeIndexFromSubviewIndex(int index, int type) const;
 
     TableView* m_tableView;

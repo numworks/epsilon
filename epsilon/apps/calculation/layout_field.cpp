@@ -55,7 +55,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
     // Turn single - to Ans -
     clearLayout();
     insertText(SymbolHelper::AnsMainAlias());
-    // The Minus symbol will be addded by Escher::LayoutField::handleEvent
+    // The Minus symbol will be added by Escher::LayoutField::handleEvent
   }
   if (event == Ion::Events::Division && isEditing()) {
     if (m_divisionCycleWithAns == OMG::Troolean::Unknown) {

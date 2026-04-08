@@ -234,7 +234,7 @@ void ContinuousFunction::updateModel(bool wasCartesian) {
 void ContinuousFunction::updateDerivativeColorAfterChangingPlotDisplay(
     bool newDisplay, int derivationOrder) const {
   /* - if we are displaying the plot: use a new color
-   * - if we are hidding the plot: use the color of the main function */
+   * - if we are hiding the plot: use the color of the main function */
   KDColor newColor = newDisplay
                          ? GlobalContextAccessor::ContinuousFunctionContext()
                                .colorForNewModel()

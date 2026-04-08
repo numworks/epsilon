@@ -6,7 +6,7 @@
 namespace Shared {
 
 /* ZoomAndPanCurveViewController is a View controller with a cursor that can
- * handles zoom in/out and directional pan events. */
+ * handle zoom in/out and directional pan events. */
 
 class ZoomAndPanCurveViewController : public ZoomCurveViewController {
  public:

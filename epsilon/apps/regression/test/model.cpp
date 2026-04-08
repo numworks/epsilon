@@ -584,7 +584,7 @@ QUIZ_CASE(regression_trigonometric_4_bis) {
     x[i] = static_cast<double>(i);
     y[i] = std::sin(static_cast<double>(i));
   }
-  /* Sort from lower to hight y. This is to check if the coefficients
+  /* Sort from lower to high y. This is to check if the coefficients
    * initialization does not rely on the order of the values */
   double* context[2] = {x, y};
   OMG::List::Sort(

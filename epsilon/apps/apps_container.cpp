@@ -182,7 +182,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     if (!Ion::USB::isPlugged()) {
       /* Sometimes, the device gets an ENUMDNE interrupts when being unplugged
        * from a non-USB communicating host (e.g. a USB charger). The interrupt
-       * must me cleared: if not the next enumeration attempts will not be
+       * must be cleared: if not the next enumeration attempts will not be
        * detected. */
       Ion::USB::clearEnumerationInterrupt();
       return false;
@@ -306,7 +306,7 @@ void AppsContainer::run() {
   Ion::Events::setSpinner(true);
   Ion::Display::setScreenshotCallback(ShowCursor);
 
-  /* Setup the home checkpoint so that the exception chekpoint will be
+  /* Setup the home checkpoint so that the exception checkpoint will be
    * reactivated on a home interrupt. This way, the main exception checkpoint
    * will keep the home checkpoint as parent. */
   bool homeInterruptOcurred;

@@ -97,7 +97,8 @@ class InteractiveCurveViewController
       double t) const = 0;
   virtual CurveSelectionController* curveSelectionController() const = 0;
 
-  // Cursor postion on a curve. A -1 [curveIndex] indicates no curve is selected
+  /* Cursor position on a curve. A -1 [curveIndex] indicates that no
+   * curve is selected. */
   struct CurveCursor {
     int curveIndex;
     int subCurveIndex;

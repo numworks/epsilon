@@ -12,7 +12,7 @@ class ContinuousFunctionStore : public FunctionStore {
   friend class ContinuousFunctionStoreTestBuilder;
 
  public:
-  // Very large limit, so that records id in name can't exceed two chars.
+  // Very large limit, so that record IDs in name can't exceed two chars.
   constexpr static int k_maxNumberOfModels = 100;
   constexpr static int k_maxNumberOfMemoizedModels = 10;
   bool memoizationOverflows() const {

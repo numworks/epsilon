@@ -53,7 +53,7 @@ void assert_variables_are(const char* script,
   varBox.autocompletionAlternativeAtIndex(strlen(nameToComplete),
                                           &textToInsertLength, &addParentheses,
                                           index, &index);
-  /* Assert the autocompletion has cycles: otherwise, there are more results
+  /* Assert the autocompletion has cycled: otherwise, there are more results
    * than expected. */
   quiz_assert(index == 0);
 }

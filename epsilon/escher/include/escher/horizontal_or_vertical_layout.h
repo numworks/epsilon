@@ -9,10 +9,10 @@ namespace Escher {
 
 /* An oriented layout handles multiple views layouted alongside a main axis.
  * Each elements takes all the space available along the secondary axis.
- * A VerticalLayout uses x as it secondary axis and y as the main one.
- * An HorizontalLayout uses y as it secondary axis and x as the main one.
+ * A VerticalLayout uses x as its secondary axis and y as the main one.
+ * An HorizontalLayout uses y as its secondary axis and x as the main one.
  * To simplify code, OrientedLayout handles coordinates as if it was a vertical
- * oriented layout. Each time an extern methods return or takes as parameter
+ * oriented layout. Each time an external method returns or takes as parameter
  * coordinates (point, size or rect), it is adapted to the orientation using the
  * adapt() virtual methods. If it is an horizontal layout, these structures will
  * be transposed. */

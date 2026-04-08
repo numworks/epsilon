@@ -4,7 +4,7 @@ extern "C" {
 
 #include <ion.h>
 
-/* We cannot use C99-style struct initizalition in C++. As a result, we cannot
+/* We cannot use C99-style struct initialization in C++. As a result, we cannot
  * use the macros that micropython recommends, and we have to hand build those
  * structs. To avoid errors, we drop in a few static_asserts. */
 

@@ -239,7 +239,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
     return FillColumnStatus::NoDataToStore;
   }
 
-  // If formula contains a random formula, evaluate it for each pairs.
+  // If formula contains a random formula, evaluate it for each pair.
   bool evaluateForEachPairs = formula.hasRandomNumber();
   for (int j = 0; j < numberOfPairs; j++) {
     store()->set(evaluation, *series, *column, j, true, true);

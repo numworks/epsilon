@@ -50,7 +50,7 @@ View* Controller::ContentView::subviewAtIndex(int index) {
 void Controller::ContentView::layoutSubviews(bool force) {
   /* Selectable table view's bottom margin is used for vertical scroll: we
    * scroll to the selected cell's farthest pixel + bottom margin. For home app,
-   * instead of having a bottom bargin, we reduce the frame of the selectable
+   * instead of having a bottom margin, we reduce the frame of the selectable
    * table view and ContentView::drawRect will take care of drawing the white
    * pixels at the bottom of the screen. */
   KDRect frame =

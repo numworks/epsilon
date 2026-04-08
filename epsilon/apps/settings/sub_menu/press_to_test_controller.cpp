@@ -107,7 +107,7 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
       !ExamModeManager::ExamMode().isActive()) {
     assert(row >= 0 && row < k_numberOfSwitchCells);
     setParamAtIndex(row, !getParamAtIndex(row));
-    /* Memoization isn't resetted here because changing a switch state does not
+    /* Memoization isn't reset here because changing a switch state does not
      * alter the cell's height. */
     m_selectableListView.reloadSelectedCell();
     return true;

@@ -36,7 +36,7 @@ class AbstractEvenOddBufferTextCell : public EvenOddCell {
 template <class BufferTextViewClass>
 class EvenOddBufferTextCell : public AbstractEvenOddBufferTextCell {
 #ifndef PLATFORM_DEVICE
-  // Poor's man constraint
+  // Poor man's constraint
   static_assert(
       std::is_base_of<AbstractBufferTextView, BufferTextViewClass>(),
       "EvenOddBufferTextCell must be templated with a BufferTextView class");

@@ -277,7 +277,7 @@ void HistogramMainController::initBarParameters() {
     barWidth = std::ceil(barWidth);
     if (GlobalPreferences::SharedGlobalPreferences()->histogramOffset() ==
         CountryPreferences::HistogramsOffset::OnIntegerValues) {
-      // Bars are offsetted right to center the bars around the labels.
+      // Bars are offset right to center the bars around the labels.
       m_histogramRange.setXRange(m_histogramRange.xMin() - barWidth / 2.0,
                                  m_histogramRange.xMax());
       m_store->setFirstDrawnBarAbscissa(m_histogramRange.xMin());

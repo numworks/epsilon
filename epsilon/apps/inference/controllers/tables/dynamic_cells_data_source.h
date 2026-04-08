@@ -23,8 +23,8 @@ class DynamicCellsDataSourceDestructor {
 
 template <typename CellType>
 class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
-  /* Cells are created in the App::buffer. If not overriden, the cells are
-   * created on the left-edge of the buffer. 'createCells' can be overriden to
+  /* Cells are created in the App::buffer. If not overridden, the cells are
+   * created on the left-edge of the buffer. 'createCells' can be overridden to
    * create different types of cells with a specific offset in the buffer using
    * 'createCellsWithOffset'. */
  public:

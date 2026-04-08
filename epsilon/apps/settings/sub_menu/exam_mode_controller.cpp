@@ -34,7 +34,7 @@ void ExamModeController::handleResponderChainEvent(ResponderChainEvent event) {
      * force to reload the entire data because they might have changed. */
     selectRow(initialSelectedRow());
     m_contentView.reload();
-    // We add a message when the mode exam is on
+    // We add a message when exam mode is on
     m_contentView.setMessage(ExamModeManager::ExamMode().isActive()
                                  ? I18n::Message::ToDeactivateExamMode
                                  : I18n::Message::Default);
@@ -113,7 +113,7 @@ int ExamModeController::initialSelectedRow() const {
 ExamMode ExamModeController::examMode() {
   ExamMode mode(examModeRulesetAtIndex(selectedRow()));
   if (ExamModeManager::ExamMode().isActive()) {
-    // If the exam mode is already on, this re-activate the same exam mode
+    // If the exam mode is already on, this re-activates the same exam mode
     mode = ExamModeManager::ExamMode();
   }
   return mode;
@@ -172,7 +172,7 @@ I18n::Message ExamModeController::examModeActivationMessage(
       // IBTest
       I18n::Message::ActivateIBExamMode,
       I18n::Message::ReactivateIBExamMode,
-      // PressToTest, unused // TODO: move it add the end of the ruleset list
+      // PressToTest, unused // TODO: move it to the end of the ruleset list
       I18n::Message::Default,
       I18n::Message::Default,
       // Portuguese

@@ -64,7 +64,7 @@ class TextArea : public TextInput {
 
     class Position {
       /* column and line correspond to the visual column and line. The glyph at
-       * the kth column is not the the glyph of kth code point, because of
+       * the kth column is not the glyph of kth code point, because of
        * combining code points that do not fave a personnal glyph. */
      public:
       Position(int column, int line) : m_column(column), m_line(line) {}

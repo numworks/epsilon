@@ -11,7 +11,7 @@ namespace Shared {
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex).
  *
- * TODO: This class almost a copy paste of FloatParameterController
+ * TODO: This class is almost a copy-paste of FloatParameterController
  * and should probably be factorized/removed. */
 
 class ExplicitFloatParameterController

@@ -47,8 +47,8 @@ class TableViewDataSource {
   void lockSizeMemoization(bool state);
 
  protected:
-  /* These should always be overriden unless sizes are regular, in which case
-   * only defaultColumnWidth and defaultRowHeight need to be overriden.
+  /* These should always be overridden unless sizes are regular, in which case
+   * only defaultColumnWidth and defaultRowHeight need to be overridden.
    *
    * These two methods return width and height without separator. */
   // TODO: should be const
@@ -63,7 +63,7 @@ class TableViewDataSource {
   KDCoordinate nonMemoizedColumnWidth(int column, bool withSeparator);
   KDCoordinate nonMemoizedRowHeight(int row, bool withSeparator);
 
-  // These should be overriden if a RegularTableSize1DManager is used.
+  // These should be overridden if a RegularTableSize1DManager is used.
   // TODO: should be const
   virtual KDCoordinate defaultColumnWidth() {
     return TableSize1DManager::k_undefinedSize;

@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-/* This macro is defined dans python/port/mod/ndarray.h and conflicts with
+/* This macro is defined in python/port/mod/ndarray.h and conflicts with
  * I18n::translate. */
 #undef translate
 

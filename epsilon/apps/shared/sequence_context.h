@@ -36,7 +36,7 @@ class SequenceContext final
   /* This function always returns Type::Sequence for u, v and w, so that they
    * are always parsed as sequences, even if they are not defined yet.
    * Their Tree* is always nullptr though, even if they are defined, because
-   * sequence don't have a Tree* and can only be approximated.
+   * sequences don't have a Tree* and can only be approximated.
    * TODO: We could add support for explicit sequences by returning their
    * expression here */
   SymbolDescription symbolDescriptionForIdentifier(

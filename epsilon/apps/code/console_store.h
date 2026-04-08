@@ -47,7 +47,7 @@ class ConsoleStore {
   void deleteLastLine();
   char m_history[k_historySize];
   /* The m_history variable sequentially stores an array of ConsoleLine objects.
-   * Each ConsoleLine is stored as follow:
+   * Each ConsoleLine is stored as follows:
    *  - First, a char that says whether the ConsoleLine is a Command or a Result
    *  - Then, the text content of the ConsoleLine
    *  - Last but not least, a null byte.

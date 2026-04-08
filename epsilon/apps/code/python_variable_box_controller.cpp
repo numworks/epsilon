@@ -773,7 +773,7 @@ void PythonVariableBoxController::
       } else if (addNodesFromImportMaybe(pns, textToAutocomplete,
                                          textToAutocompleteLength,
                                          importFromModules)) {
-        // The script is is only an import, handled in addNodesFromImportMaybe
+        // The script is only an import, handled in addNodesFromImportMaybe
       } else if (structKind == PN_file_input_2) {
         /* At this point, if the script node is not of type "file_input_2", it
          * will not have main structures of the wanted type.

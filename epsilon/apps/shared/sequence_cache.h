@@ -9,7 +9,7 @@ class Sequence;
 
 /* Store sequence values at rank to greatly reduce the number of computations.
  * Two caches are kept : a main one, and an intermediate one that is more
- * volatile and altered while computing the main one. For each sequences, these
+ * volatile and altered while computing the main one. For each sequence, these
  * caches consist of a rank and [k_storageDepth] stored values. The rank is the
  * highest rank of the stored values.
  * Other information is also memoized here :

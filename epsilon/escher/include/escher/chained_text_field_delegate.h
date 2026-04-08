@@ -4,7 +4,7 @@
 
 namespace Escher {
 
-/* A ChainedTextFieldDelegates allows to chain TextFieldDelegates so that they
+/* A ChainedTextFieldDelegate allows to chain TextFieldDelegates so that they
  * can all catch events
  */
 class ChainedTextFieldDelegate : public TextFieldDelegate {

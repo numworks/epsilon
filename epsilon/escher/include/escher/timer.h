@@ -15,7 +15,7 @@ namespace Escher {
 
 class Timer {
  public:
-  constexpr static int TickDuration = 300;  // In Miliseconds
+  constexpr static int TickDuration = 300;  // In Milliseconds
   Timer(uint32_t period);                   // Period is in ticks
   bool tick();
   void reset();

@@ -153,7 +153,7 @@ void App::deinitPython() {
     MicroPython::deinit();
     m_pythonUser = nullptr;
     /* Re-construct the pool and the tree stack, which might have been
-     * ovewritten by the heap.
+     * overwritten by the heap.
      */
     Poincare::Pool::sharedPool.init();
     Poincare::Internal::TreeStack::SharedTreeStack.init();

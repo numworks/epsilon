@@ -13,7 +13,7 @@ class ColumnParameters {
   // Max translated name of Message::ColumnOptions + max column name
   constexpr static int k_titleBufferSize =
       ClearColumnHelper::k_maxSizeOfColumnName + 23;
-  // Always initialize parent class before initiliazing child.
+  // Always initialize parent class before initializing child.
   virtual void initializeColumnParameters();
 
  protected:

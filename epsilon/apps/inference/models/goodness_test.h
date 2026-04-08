@@ -71,7 +71,7 @@ class GoodnessTest final : public Chi2Test {
  private:
   // Largest number of rows such that HomogeneityTest still takes more space.
   constexpr static int k_maxNumberOfRows = 90;
-  /* It is not usefull to be able to set a degree of freedom much bigger than
+  /* It is not useful to be able to set a degree of freedom much bigger than
    * the number of rows anyway. */
   constexpr static int k_maxDegreeOfFreedom = 10000;
 

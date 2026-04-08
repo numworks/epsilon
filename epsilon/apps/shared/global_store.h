@@ -67,8 +67,8 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
  private:
   /* REFACTOR: SequenceStore, SequenceCache and SequenceContext should be
    * grouped in a single interface. SequenceContext could be the const version
-   * of SequenceStore (like ContinuousFonctionContext and
-   * ContinuousFonctionStore). */
+   * of SequenceStore (like ContinuousFunctionContext and
+   * ContinuousFunctionStore). */
   static OMG::GlobalBox<SequenceStore> s_sequenceStore;
   static OMG::GlobalBox<SequenceCache> s_sequenceCache;
   static OMG::GlobalBox<ContinuousFunctionStore> s_continuousFunctionStore;

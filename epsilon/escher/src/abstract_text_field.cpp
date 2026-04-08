@@ -191,7 +191,7 @@ bool AbstractTextField::ContentView::removePreviousGlyph() {
   char* buffer = const_cast<char*>(draftText());
 
   if (m_format.horizontalAlignment > 0.0f) {
-    /* Reload the view. If we do it later, the text beins supposedly shorter, we
+    /* Reload the view. If we do it later, the text being supposedly shorter, we
      * will not clean the first char. */
     reloadRectFromPosition(buffer);
   }

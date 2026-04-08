@@ -11,7 +11,7 @@
 // heap
 /* This enables to allocate and free memory in a scope (thus, Python can call
  * Python) but also has the collateral effect of removing bugs regarding
- * garbage collection on the web simulator. Indeed, fewer objetcts are
+ * garbage collection on the web simulator. Indeed, fewer objects are
  * allocated on the heap and the garbage collection is less frequently called.
  * We suspect that garbage collection failed in javascript because when
  * collecting roots the transpiled C code is denied access to Javascript

@@ -43,10 +43,10 @@ class IntermediaryDataSource : public TableViewDataSource,
   KDCoordinate nonMemoizedCumulatedHeightBeforeRow(int row) override;
 
   /* WARNING: This method works only if columnInMainDataSource(i) == i.
-   * Else, it should be overriden.*/
+   * Else, it should be overridden.*/
   int nonMemoizedColumnAfterCumulatedWidth(KDCoordinate offsetX) override;
   /* WARNING: This method works only if rowInMainDataSource(j) == j.
-   * Else, it should be overriden.*/
+   * Else, it should be overridden.*/
   int nonMemoizedRowAfterCumulatedHeight(KDCoordinate offsetY) override;
 
   virtual int columnInMainDataSource(int i) const { return i; }

@@ -395,7 +395,7 @@ void ConsoleController::hideAnyDisplayedViewController() {
 }
 
 bool ConsoleController::isDisplayingViewController() {
-  /* The StackViewController model state is the best way to know wether the
+  /* The StackViewController model state is the best way to know whether the
    * console is displaying a View Controller (Sandbox or Matplotlib). Indeed,
    * keeping a boolean or a pointer raises the issue of when updating it - when
    * 'viewWillAppear' or when 'handleResponderChainEvent(didEnter)' - in both

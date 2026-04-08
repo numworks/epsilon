@@ -77,7 +77,7 @@ class ContinuousFunction : public Function {
 
   /* Properties */
 
-  // Wether or not we can display the derivative
+  // Whether or not we can display the derivative
   bool canDisplayDerivative() const {
     return properties().canDisplayDerivative();
   }

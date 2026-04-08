@@ -71,8 +71,17 @@ void DFUInterface::wholeDataSentCallback(SetupPacket* request,
     // Do any needed action after the GetStatus request.
     if (m_state == State::dfuDNBUSY) {
       writeOnMemoryIfNeeded();
+      if (m_state == State::dfuERROR) {
+        return;
+      }
       changeAddressPointerIfNeeded();
+      if (m_state == State::dfuERROR) {
+        return;
+      }
       eraseMemoryIfNeeded();
+      if (m_state == State::dfuERROR) {
+        return;
+      }
       m_state = State::dfuDNLOADIDLE;
     }
   }

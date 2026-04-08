@@ -69,13 +69,11 @@ void AppCell::reloadCell() {
   TextView* t = const_cast<TextView*>(textView());
   t->setTextColor(isHighlighted()
                       ? Palette::White
-                      : Escher::ColorPicker::Get(SharedGlobalPrefs().theme(),
-                                                 Escher::FeatureColor::Text));
+                      : SharedGlobalPrefs().color(Escher::FeatureColor::Text));
   t->setBackgroundColor(
       isHighlighted()
           ? Palette::YellowDark
-          : Escher::ColorPicker::Get(SharedGlobalPrefs().theme(),
-                                     Escher::FeatureColor::Background));
+          : SharedGlobalPrefs().color(Escher::FeatureColor::Background));
 }
 
 const Escher::TextView* AppCell::textView() const {

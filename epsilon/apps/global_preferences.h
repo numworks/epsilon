@@ -36,6 +36,10 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
   static void Init();
 
   Escher::ThemeEnum theme() const { return Escher::ThemeEnum::Light; }
+  // Access each color feature directly
+  KDColor color(Escher::FeatureColor feature) const {
+    return Escher::ColorPicker::Get(theme(), feature);
+  }
 
   I18n::Language language() const { return s_data->m_language; }
   void setLanguage(I18n::Language language) { s_data->m_language = language; }

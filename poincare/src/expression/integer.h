@@ -27,7 +27,7 @@ struct Unaligned;
 
 template <>
 struct Unaligned<half_native_uint_t> {
-  // Warning: the using = syntax does not preseve the attribute, dont use it
+  // Warning: the using = syntax does not preserve the attribute, dont use it
   typedef OMG::unaligned_uint16_t type;
 };
 template <>

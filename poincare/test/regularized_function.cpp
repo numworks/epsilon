@@ -46,7 +46,7 @@ QUIZ_CASE(pcj_regularized_gamma) {
   assert_regularized_gamma_is(100.0, INFINITY, 1.0);
 
   /* Choose parameters verifying both x >= s + 1.0 and x < s + 1.0 because the
-   * algoritm changes.
+   * algorithm changes.
    * To compute the result for assert_regularized_gamma_is(s, x, result),
    * compute the value of P(t<2*x) for the chi-squared distribution with 2*s
    * degrees of freedom. */

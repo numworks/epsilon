@@ -232,7 +232,7 @@ QUIZ_CASE(pcj_approximation_power) {
   projected_approximates_to<double>("(13619-(185477161)^(1/2))^(-1)", "undef");
 
   approximates_to<float>("1.2×e^(1)", "3.261938");
-  // WARNING: the 7th significant digit is wrong on blackbos simulator
+  // WARNING: the 7th significant digit is wrong on blackbox simulator
   approximates_to<float>("2e^(3)", "40.1711", k_realParams, 6);
   // WARNING: the 7th significant digit is wrong on simulator
   approximates_to<float>("e^2×e^(1)", "20.0855", k_realParams, 6);

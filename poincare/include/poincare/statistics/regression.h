@@ -250,7 +250,7 @@ class Regression {
 
   /* Returns a scaling factor that represent the coefficient magnitude. By
    * default this factor is the maximum of all coefficients, but the method can
-   * be overriden to be more suitable for a specific regression type. For
+   * be overridden to be more suitable for a specific regression type. For
    * example, trigonometric regression ignores coefficients inside the
    * trigonometric function, to be robust to angle unit change. */
   virtual double coefficientMagnitude(

@@ -50,7 +50,7 @@ enum class UnknownSelectionStrategy : uint8_t {
   OnlyUndefinedSymbols,
   // Includes all symbols, even ones defined by the user
   AllSymbols,
-  /* Choses whether or not to override defined variables in order to have only
+  /* Chooses whether or not to override defined variables in order to have only
    * one unknown at the end */
   MaxOneSymbol,
 };
@@ -757,7 +757,7 @@ SolverResult ExactSolveAdaptive(
   size_t nDefinedVariables =
       firstResult.equationMetadata.definedVariables.size();
 
-  /* Retry with overriden variables if:
+  /* Retry with overridden variables if:
    *     - There are variables to override (nDefinedVariables > 0)
    * AND -    There is no error but no solution was found
    *       OR The equation is undefined or non real or unhandled

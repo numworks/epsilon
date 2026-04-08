@@ -159,11 +159,11 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
      * part of beautification */
     /* NOTE We Reduce dependency before approximation to avoid floating point
      * error when approximating complex unreduced trees.
-     * This happend for example when computing `arcsin(2/√3*sin(60))` in degree.
-     * The piecewise dependency of the form:
+     * This happened for example when computing `arcsin(2/√3*sin(60))` in
+     * degree. The piecewise dependency was of the form:
      * piecewise(0, 2/√3*sin(60*1/180*π)<=1, nonreal)
-     * yields nonreal due to a floating point when approximating
-     * 2/√3*sin(60*1/180*π) */
+     * yielding nonreal due to a floating point
+     * when approximating 2/√3*sin(60*1/180*π) */
     SystematicReduction::DeepReduce(approximation);
     if (approximation->isDep()) {
       if (!approximation->treeIsIdenticalTo(dep)) {

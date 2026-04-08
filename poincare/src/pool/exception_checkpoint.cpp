@@ -22,7 +22,7 @@ void ExceptionCheckpoint::Raise() {
    *                        v              v
    *                      &temp    >    s_topmost
    *
-   * &temp is in the currect stackframe: valid address
+   * &temp is in the current stackframe: valid address
    *
    * Since the stack grows from higher addresses to lower address, if s_topmost
    * is smaller (ie s_topmost < &temp), it means it's located in the garbage:

@@ -26,14 +26,14 @@ class PrintFloat {
       2                                 // '-' and '.'
       + k_maxNumberOfSignificantDigits  // mantissa
       + 1                               // ᴇ
-      + 1                               // exponant '-'
-      + 3;                              // exponant
+      + 1                               // exponent '-'
+      + 3;                              // exponent
   constexpr static size_t k_maxFloatCharSize =
       2                                 // '-' and '.'
       + k_maxNumberOfSignificantDigits  // mantissa
       + k_specialECodePointByteLength   // ᴇ
-      + 1                               // exponant '-'
-      + 3                               // exponant
+      + 1                               // exponent '-'
+      + 3                               // exponent
       + 1;                              // null-terminated
 
   constexpr static size_t glyphLengthForFloatWithPrecision(
@@ -43,7 +43,7 @@ class PrintFloat {
            + numberOfSignificantDigits  // mantissa
            + 1                          // glyph ᴇ
            + 1                          // '-'
-           + 3;                         // exponant
+           + 3;                         // exponent
   }
   constexpr static size_t charSizeForFloatsWithPrecision(
       size_t numberOfSignificantDigits) {
@@ -51,8 +51,8 @@ class PrintFloat {
     return 2                                // '-' and '.'
            + numberOfSignificantDigits      // mantissa
            + k_specialECodePointByteLength  // ᴇ
-           + 1                              // exponant '-'
-           + 3                              // exponant
+           + 1                              // exponent '-'
+           + 3                              // exponent
            + 1;                             // null-terminated
   }
   /* Since various apps limit the number of digits in exact results, there's no

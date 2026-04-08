@@ -38,7 +38,7 @@ class Token {
     Slash,
     ImplicitTimes,
     /* The ImplicitTimes Token allows to parse text where the Times Token is
-     * omitted. Eventhough the Tokenizer will never pop ImplicitTimes Tokens,
+     * omitted. Even though the Tokenizer will never pop ImplicitTimes Tokens,
      * the ImplicitTimes Token Type is defined here with the desired precedence,
      * in order to allow the Parser to insert such Tokens where needed. */
     Percent,

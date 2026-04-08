@@ -61,7 +61,7 @@ class UserExpression : public Expression {
   static UserExpression Builder(T x);
   // Build the unit corresponding to the angleUnit preference.
   static UserExpression Builder(AngleUnit angleUnit);
-  // Build a List containing all the expression contained in [expressions]
+  // Build a List containing all the expressions contained in [expressions]
   static UserExpression BuildListOfExpressions(
       std::span<UserExpression> expressions);
   // Build an expression of Undefined tree.

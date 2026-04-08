@@ -54,7 +54,7 @@ class InputBeautification {
    *
    * BeautifyLeftOfCursorAfterInsertion will apply:
    *    - k_onInsertionRules (all combinations of chars that are beautified
-   *      immediatly when inserted).
+   *      immediately when inserted).
    *    - k_logarithmRule and k_identifiersRules (if a left parenthesis was
    *      just inserted).
    *    - BeautifyPipeKey, BeautifyFractionIntoDerivative and

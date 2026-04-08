@@ -403,7 +403,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
           ? OMG::IEEE754<T>::exponentBase10(static_cast<T>(exponent)) + 1
           : 0;
   if (exponent < 0) {
-    // If the exponent is < 0, we need a additional char for the sign
+    // If the exponent is < 0, we need an additional char for the sign
     numberOfCharExponent++;
     static_assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
   }

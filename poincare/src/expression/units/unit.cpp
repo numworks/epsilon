@@ -369,7 +369,7 @@ const Prefix* Representative::findBestPrefix(double value,
 
 Tree* Representative::pushReducedRatioExpression() const {
   Tree* result = ratioExpression()->cloneTree();
-  /* Representatives's ratio expressions are quite simple and not dependant on
+  /* Representative's ratio expressions are quite simple and not dependent on
    * any context. */
   Simplification::ProjectAndReduce(
       result, SimplificationParameters{.reductionPolicy = {.advanced = false}});

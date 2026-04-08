@@ -96,7 +96,7 @@ class Pool final {
 #if ASSERTIONS
   static bool s_treePoolLocked;
 #endif
-  // Object size, taking the pool alignement into account
+  // Object size, taking the pool alignment into account
   static size_t AlignedSize(size_t size) {
     return OMG::Memory::AlignedSize(size, ByteAlignment);
   }
@@ -123,7 +123,7 @@ class Pool final {
   // Registers all objects downstream of the given object, including itself
   void registerDownstreamObject(PoolObject* object);
   /* Unregisters all objects downstream of the given object, including itself,
-   * and moves the pool cursor to the given adress */
+   * and moves the pool cursor to the given address */
   void freeDownstreamObject(PoolObject* firstObjectToDiscard);
 
   char* buffer() { return reinterpret_cast<char*>(m_alignedBuffer); }

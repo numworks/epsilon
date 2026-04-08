@@ -569,7 +569,7 @@ static bool ReduceNestedRadicals(Tree* e) {
   assert(!(b->isOne() && d->isOne()));
   TreeRef endMarker = KTree<MarkerBlock>()->cloneTree();
   bool success = false;
-  // Compare a^2*b and c^2*d to choose w, x, y and z such that that y^2 > z
+  // Compare a^2*b and c^2*d to choose w, x, y and z such that y^2 > z
   Tree* a2b = PatternMatching::CreateReduce(KMult(KPow(KA, 2_e), KB),
                                             {.KA = a, .KB = b});
   Tree* c2d = PatternMatching::CreateReduce(KMult(KPow(KA, 2_e), KB),

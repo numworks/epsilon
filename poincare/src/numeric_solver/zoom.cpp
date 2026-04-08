@@ -452,7 +452,7 @@ static void honeHelper(typename Solver<T>::FunctionEvaluation f,
       static_cast<T>(Internal::SolverAlgorithms::k_goldenRatio);
 
   /* Define two points u and v such that a < u < v < b. Then, we can
-   * determine wether the point of interest exists on [a,v] or [u,b].
+   * determine whether the point of interest exists on [a,v] or [u,b].
    * We use the golden ratio to split the range as it has the properties of
    * keeping the ratio between iterations while only recomputing one point. */
   T u = a + k_goldenRatio * (b - a);

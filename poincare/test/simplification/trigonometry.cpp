@@ -221,7 +221,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("1×tan(2)×tan(5)", "tan(2)×tan(5)");
 #if TODO_PCJ
   /* Decide which angle we want to reduce to, see #6586
-   * In this example we currently retun tan((20×π)/21) */
+   * In this example we currently return tan((20×π)/21) */
   simplifies_to("tan(62π/21)", "-tan(π/21)");
   simplifies_to("cos(26π/21)/sin(25π/17)", "cos((5×π)/21)/sin((8×π)/17)");
   simplifies_to("cos(62π/21)×π×3/sin(62π/21)", "-(3×π)/tan(π/21)");

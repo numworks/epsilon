@@ -58,7 +58,7 @@ class Preferences {
     AngleUnit angleUnit : k_numberOfBitsForAngleUnit;
     PrintFloatMode displayMode : k_numberOfBitsForPrintFloatMode;
     ComplexFormat complexFormat : k_numberOfBitsForComplexFormat;
-    /* Explicitly declare padding bits to avoid uninitalized values. */
+    /* Explicitly declare padding bits to avoid uninitialized values. */
     uint8_t padding
         : OMG::BitHelper::numberOfBitsIn<uint8_t>() -
           k_numberOfBitsForAngleUnit - k_numberOfBitsForPrintFloatMode -

@@ -14,7 +14,7 @@ namespace Poincare::Internal {
 /* The items to include in the enum are wrapped with a macro and split in
  * different files to tidy them and be able to use them in different ways. */
 
-/* The macro NODE(name, nbChildren=0, struct additionnalBlocks={}) declares
+/* The macro NODE(name, nbChildren=0, struct additionalBlocks={}) declares
  * nodes with arity nbChildren (can be NARY) and some optional extra blocks in
  * the header to store special data. */
 

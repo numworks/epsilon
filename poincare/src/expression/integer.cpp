@@ -658,7 +658,7 @@ DivisionResult<IntegerHandler> IntegerHandler::Udiv(
    * B = b[0] + b[1]*beta + ... + b[n-1]*beta^(n-1) */
   int n = B.numberOfDigits<half_native_uint_t>();
   int m = A.numberOfDigits<half_native_uint_t>() - n;
-  // Q is a integer composed of (m+1) half_native_uint_t
+  // Q is an integer composed of (m+1) half_native_uint_t
   IntegerHandler Q = Allocate<half_native_uint_t>(m + 1, workingBuffer);
   memset(Q.digits(), 0, (m + 1) * sizeof(half_native_uint_t));
   // betaMB = B*beta^m

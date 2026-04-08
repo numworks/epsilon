@@ -1070,7 +1070,7 @@ QUIZ_CASE(pcj_parse_logic) {
   assert_text_not_parsable("True nand");
   assert_text_not_parsable("True and or False");
   assert_text_not_parsable("True not True");
-  // Operator prioritiy
+  // Operator priority
   assert_parsed_expression_is("not True and False",
                               KLogicalAnd(KLogicalNot(KTrue), KFalse));
   assert_parsed_expression_is("True and False or True",

@@ -25,19 +25,15 @@ bool isExpectedExpression(const Tree* expr) {
           isExpectedExpression(expr->child(0)));
 }
 
-bool IsCalculationOutputStrictEquality(const Tree* exact,
-                                       const Tree* approximate,
-                                       int significantDigits) {
+bool RecursiveIsCalculationOutputStrictEquality(const Tree* exact,
+                                                const Tree* approximate,
+                                                int significantDigits) {
   assert(exact && approximate);
   // If projection failed, exact can be not system
-  assert(Simplification::CanBeSystem(approximate));
+  DEBUG_ASSERT(Simplification::CanBeSystem(approximate));
 
-  if (exact->isUndefined() || approximate->isUndefined() ||
-      exact->hasDescendantSatisfying(
-          [](const Tree* e) { return e->isUserSequence(); })) {
+  if (exact->isUndefined() || approximate->isUndefined()) {
     // We never want to display "≈ undef" nor "undef ≈"
-    /* Also sequence are indeed approximated, we want a strict equality sign for
-     * the approximate result to prevent U_3 ≈ 12. */
     return true;
   }
 
@@ -69,13 +65,29 @@ bool IsCalculationOutputStrictEquality(const Tree* exact,
    * Ex: 1 + i/2 == 1 + 0.5i */
   const Tree* approxChild = approximate->nextNode();
   for (const Tree* exactChild : exact->children()) {
-    if (!IsCalculationOutputStrictEquality(exactChild, approxChild,
-                                           significantDigits)) {
+    if (!RecursiveIsCalculationOutputStrictEquality(exactChild, approxChild,
+                                                    significantDigits)) {
       return false;
     }
     approxChild = approxChild->nextTree();
   }
   return true;
+}
+
+bool IsCalculationOutputStrictEquality(const Tree* exact,
+                                       const Tree* approximate,
+                                       int significantDigits) {
+  assert(exact && approximate);
+  // If projection failed, exact can be not system
+  assert(Simplification::CanBeSystem(approximate));
+  if (exact->hasDescendantSatisfying(
+          [](const Tree* e) { return e->isUserSequence(); })) {
+    /* Sequence are always approximated, but we want a strict equality sign for
+     * the approximate result to prevent U_3 ≈ 12. */
+    return true;
+  }
+  return RecursiveIsCalculationOutputStrictEquality(exact, approximate,
+                                                    significantDigits);
 }
 
 }  // namespace Poincare::Internal

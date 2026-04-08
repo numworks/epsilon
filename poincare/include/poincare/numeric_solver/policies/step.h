@@ -89,12 +89,30 @@ class StepperBase {
 };
 
 template <typename TFloat>
+class BasicStepper : public StepperBase<TFloat, BasicStepper<TFloat>> {
+  using Base = StepperBase<TFloat, BasicStepper<TFloat>>;
+
+ public:
+  using Base::Base;
+
+  TFloat nextX() const {
+    return (this->m_start < this->m_end)
+               ? this->m_points[2] + this->m_searchStep
+               : this->m_points[2] - this->m_searchStep;
+  }
+
+  template <typename TNumericHelper = DefaultNumericHelper<TFloat>>
+  static TFloat MinimalStep(TFloat, TFloat = static_cast<TFloat>(1)) {
+    return TNumericHelper::k_minimalPracticalStep;
+  }
+};
+
+template <typename TFloat>
 class AdaptiveLogStepper
     : public StepperBase<TFloat, AdaptiveLogStepper<TFloat>> {
- public:
   using Base = StepperBase<TFloat, AdaptiveLogStepper<TFloat>>;
-  friend Base;
 
+ public:
   using Base::Base;
 
   void setGrowthSpeed(GrowthSpeed g) { m_growthSpeed = g; }

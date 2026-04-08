@@ -13,6 +13,7 @@ namespace Poincare::NumericSolver {
  * PolicySolver, taking space in the binary. */
 namespace Policies {
 
+/* NOTE: Used in Zoom */
 struct SinglePrecisionStandardSolver {
   using Bracketer = LambdaBracketer<float>;
   using DiscontinuityTester = NullDiscontinuityTester<float>;
@@ -22,6 +23,8 @@ struct SinglePrecisionStandardSolver {
   using Stepper = AdaptiveLogStepper<float>;
 };
 
+/* NOTE: Use for finance and probability computations, and as a base for
+ * ExpressionSolver. */
 struct DoublePrecisionStandardSolver {
   using Bracketer = LambdaBracketer<double>;
   using DiscontinuityTester = LambdaDiscontinuityTester<double>;
@@ -40,6 +43,17 @@ struct StandardPolicySelector<float> {
 template <>
 struct StandardPolicySelector<double> {
   using Policy = DoublePrecisionStandardSolver;
+};
+
+/* NOTE: Used in scandium's solver */
+struct DoublePrecisionBasicRootSolver {
+  using Bracketer = RootBracketer;
+  // TODO: Does it need to check discontinuities?
+  using DiscontinuityTester = NullDiscontinuityTester<double>;
+  using Evaluator = ExpressionEvaluator<double>;
+  using NumericHelper = DefaultNumericHelper<double>;
+  using SolutionQueue = StaticSolutionQueue<double, 1>;
+  using Stepper = BasicStepper<double>;
 };
 
 }  // namespace Policies

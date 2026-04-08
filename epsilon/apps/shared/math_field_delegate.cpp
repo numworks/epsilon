@@ -77,24 +77,25 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
              : handleEventForField(layoutField, event);
 }
 
-bool MathLayoutFieldDelegate::isAcceptableLayout(
-    const Layout& layout, const Poincare::SymbolContext& symbolContext) {
+bool MathLayoutFieldDelegate::isAcceptableLayoutOrWarning(
+    const Poincare::Layout& layout,
+    const Poincare::SymbolContext& symbolContext) {
   if (layout.isEmpty()) {
     // Accept empty layouts
     return true;
   }
   UserExpression exp = UserExpression::Parse(layout, symbolContext);
-  return isAcceptableExpression(exp, symbolContext);
+  if (isAcceptableExpression(exp, symbolContext)) {
+    return true;
+  }
+  App::app()->displayWarning(I18n::Message::SyntaxError);
+  return false;
 }
 
 bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(
     LayoutField* layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
-  if (!isAcceptableLayout(layoutField->layout(), *context())) {
-    App::app()->displayWarning(I18n::Message::SyntaxError);
-    return false;
-  }
-  return true;
+  return isAcceptableLayoutOrWarning(layoutField->layout(), *context());
 }
 
 MathTextFieldDelegate* MathTextFieldDelegate::Default() {

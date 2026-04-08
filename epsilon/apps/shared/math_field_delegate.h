@@ -43,9 +43,11 @@ class MathLayoutFieldDelegate : public AbstractMathFieldDelegate,
                                Ion::Events::Event event) override {
     updateXNTIndex(event);
   }
-
-  bool isAcceptableLayout(const Poincare::Layout& layout,
-                          const Poincare::SymbolContext& symbolContext);
+  /* Return true if the layout is acceptable, return false and display a warning
+   * otherwise. */
+  bool isAcceptableLayoutOrWarning(
+      const Poincare::Layout& layout,
+      const Poincare::SymbolContext& symbolContext);
 };
 
 class MathTextFieldDelegate : public AbstractMathFieldDelegate,

@@ -153,15 +153,12 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     m_lastInput = layoutField->layout().clone();
   }
   Layout layout = layoutField->isEmpty() ? m_lastInput : layoutField->layout();
-  if (layout.isUninitialized()) {
-    return false;
-  }
-  if (!isAcceptableLayout(layout, ansContext)) {
-    App::app()->displayWarning(I18n::Message::SyntaxError);
+  if (layout.isUninitialized() ||
+      !isAcceptableLayoutOrWarning(layout, ansContext)) {
     return false;
   }
   assert(!layout.isUninitialized());
-  // TODO layout is parsed twice : in isAcceptableLayout and in push
+  // TODO layout is parsed twice : in isAcceptableLayoutOrWarning and in push
   Calculation* calculation = m_calculationStore->push(layout).pointer();
   if (calculation) {
     HistoryViewCell::ComputeCalculationHeights(calculation);

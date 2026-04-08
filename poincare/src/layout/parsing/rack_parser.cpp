@@ -110,6 +110,8 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
     if (type != ExceptionType::ParseFail) {
       TreeStackCheckpoint::Raise(type);
     }
+    // Reset last parsing error
+    m_parsingContext.metadata.error = SyntaxError::None;
     // Failed to parse as unit conversion
     setState(previousState);
   }

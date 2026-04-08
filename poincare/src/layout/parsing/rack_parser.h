@@ -47,6 +47,7 @@ class RackParser {
     RaiseParseFail(error, m_parsingContext);
   }
   static void RaiseParseFail(SyntaxError error, ParsingContext& context) {
+    context.metadata.error = error;
     /* For now, the error is only used for debugging.
      * It isn't displayed on the calculator screen. */
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);

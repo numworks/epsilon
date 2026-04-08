@@ -2,6 +2,7 @@
 
 #include <poincare/helpers/parser.h>
 #include <poincare/symbol_context.h>
+#include <poincare/syntax_error.h>
 
 namespace Poincare::Internal {
 
@@ -18,6 +19,7 @@ struct ParsingMetadata {
   /* isImplicitAdditionBetweenUnits: 4h40min30s is understood as 4h+40min+30s
    * and not 4*h40*mi*n30*s */
   bool isImplicitAdditionBetweenUnits = false;
+  SyntaxError error = SyntaxError::None;
 };
 
 struct ParsingContext {

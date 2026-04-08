@@ -17,8 +17,8 @@ class AbstractMathFieldDelegate {
   virtual bool isAcceptableExpression(
       const Poincare::UserExpression& expression,
       const Poincare::SymbolContext& symbolContext);
-  bool isAcceptableText(const char* text,
-                        const Poincare::SymbolContext& symbolContext);
+  bool isAcceptableTextOrWarning(const char* text,
+                                 const Poincare::SymbolContext& symbolContext);
   virtual CodePoint defaultXNT();
   bool handleEventForField(Escher::EditableField* field,
                            Ion::Events::Event event);

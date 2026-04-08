@@ -38,8 +38,11 @@ bool AbstractMathFieldDelegate::isAcceptableExpression(
   return !exp.isUninitialized() && !exp.isStore();
 }
 
-bool AbstractMathFieldDelegate::isAcceptableText(
+bool AbstractMathFieldDelegate::isAcceptableTextOrWarning(
     const char* text, const SymbolContext& symbolContext) {
+  if (text[0] == 0) {
+    return true;
+  }
   /* Parsing
    * Do not parse for assignment to detect if there is a syntax error, since
    * some errors could be missed.
@@ -48,6 +51,7 @@ bool AbstractMathFieldDelegate::isAcceptableText(
   UserExpression exp = UserExpression::Parse(text, symbolContext);
   if (exp.isUninitialized()) {
     // Unparsable expression
+    App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
   /* Expression serialization.
@@ -60,9 +64,14 @@ bool AbstractMathFieldDelegate::isAcceptableText(
   if (length >= bufferSize - 1) {
     /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
      * escaped before printing utterly the expression. */
+    App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
-  return isAcceptableExpression(exp, symbolContext);
+  if (isAcceptableExpression(exp, symbolContext)) {
+    return true;
+  }
+  App::app()->displayWarning(I18n::Message::SyntaxError);
+  return false;
 }
 
 MathLayoutFieldDelegate* MathLayoutFieldDelegate::Default() {
@@ -113,12 +122,8 @@ bool MathTextFieldDelegate::textFieldDidReceiveEvent(
 bool MathTextFieldDelegate::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
   assert(!textField->isEditing());
-  if (textField->text()[0] != 0 &&
-      !isAcceptableText(textField->text(), App::app()->localContext())) {
-    App::app()->displayWarning(I18n::Message::SyntaxError);
-    return false;
-  }
-  return true;
+  return isAcceptableTextOrWarning(textField->text(),
+                                   App::app()->localContext());
 }
 
 template <typename T>

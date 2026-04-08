@@ -70,7 +70,8 @@ Layout Calculation::createExactOutputLayout(bool* couldNotCreateExactLayout) {
       return e.createLayout(Preferences::PrintFloatMode::Decimal,
                             PrintFloat::k_maxNumberOfSignificantDigits,
                             GlobalContextAccessor::Context(),
-                            OMG::Base::Decimal, App::k_useTenPower);
+                            OMG::Base::Decimal, App::k_useTenPower, false,
+                            false, PrintFloat::DecimalModeThreshold::Small);
     }
   }
   *couldNotCreateExactLayout = true;
@@ -88,7 +89,8 @@ Layout Calculation::createApproximateOutputLayout(
           forEditing ? PrintFloat::k_maxNumberOfSignificantDigits
                      : m_calculationPreferences.numberOfSignificantDigits,
           GlobalContextAccessor::Context(), OMG::Base::Decimal,
-          App::k_useTenPower);
+          App::k_useTenPower, false, false,
+          PrintFloat::DecimalModeThreshold::Small);
     }
   }
   *couldNotCreateApproximateLayout = true;

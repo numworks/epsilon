@@ -423,6 +423,12 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Equal, "-10^45-10^45i", nullptr, &store);
 
+  // Threshold for switch to scientific notation
+  assertCalculationIs("0.00001", DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Equal, "1/100000", "0.00001", &store);
+  assertCalculationIs("0.000001", DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Equal, "1/1000000", "10^(-6)", &store);
+
   // Exact output that have dependencies are not displayed
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "2", nullptr, &store);
@@ -434,8 +440,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("(1/6)_g", DisplayOutput::ExactHidden, EqualSign::Equal,
                       nullptr, "0.16666666666667g", &store);
   assertCalculationIs("(1/6)_L_kg", DisplayOutput::ExactHidden,
-                      EqualSign::Equal, nullptr,
-                      "1.6666666666667×10^(-4)m^3·kg", &store);
+                      EqualSign::Equal, nullptr, "0.00016666666666667m^3·kg",
+                      &store);
 
   assertCalculationIs("(π/6)_rad", DisplayOutput::ExactHidden, EqualSign::Equal,
                       nullptr, "30°", &store);

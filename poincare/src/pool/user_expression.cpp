@@ -362,7 +362,8 @@ bool UserExpression::isComplexScalar(
 Poincare::Layout UserExpression::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     const SymbolContext& symbolContext, OMG::Base base,
-    bool useTenPowerInsteadOfE, bool linearMode, bool keepFloatMode) const {
+    bool useTenPowerInsteadOfE, bool linearMode, bool keepFloatMode,
+    PrintFloat::DecimalModeThreshold decimalModeThreshold) const {
   if (isUninitialized()) {
     return Poincare::Layout();
   }
@@ -373,6 +374,7 @@ Poincare::Layout UserExpression::createLayout(
                .numberOfSignificantDigits = numberOfSignificantDigits,
                .floatMode = floatDisplayMode,
                .keepFloatMode = keepFloatMode,
+               .decimalModeThreshold = decimalModeThreshold,
                .base = base,
                .useTenPowerInsteadOfE = useTenPowerInsteadOfE}));
 }

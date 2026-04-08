@@ -231,7 +231,8 @@ void serialize_expression(const Tree* expression, std::span<char> buffer,
                           int numberOfSignificantDigits) {
   Tree* layout = Layouter::LayoutExpression(
       expression, {.layouterMode = LayouterMode::Linear,
-                   .numberOfSignificantDigits = numberOfSignificantDigits});
+                   .floatParameters = {.numberOfSignificantDigits =
+                                           numberOfSignificantDigits}});
   quiz_assert(layout);
   LayoutSerializer::Serialize(layout, buffer);
   remove_system_codepoints(buffer.data());
@@ -247,9 +248,10 @@ void assert_expression_serializes_to(const Tree* expression,
   char buffer[bufferSize];
   Tree* layout = Layouter::LayoutExpression(
       expression, {.layouterMode = LayouterMode::Linear,
-                   .numberOfSignificantDigits = numberOfSignificantDigits,
-                   .floatMode = mode,
-                   .base = base});
+                   .floatParameters = {
+                       .floatMode = mode,
+                       .numberOfSignificantDigits = numberOfSignificantDigits,
+                       .base = base}});
   LayoutSerializer::Serialize(layout, buffer);
   bool test = strcmp(serialization, buffer) == 0;
   layout->removeTree();
@@ -277,9 +279,10 @@ void assert_expression_parses_and_serializes_to(
   Tree* l = Layouter::LayoutExpression(
       e, {.symbolContext = symbolContext,
           .layouterMode = LayouterMode::Linear,
-          .numberOfSignificantDigits = numberOfSignificantDigits,
-          .floatMode = mode,
-          .base = base});
+          .floatParameters = {
+              .floatMode = mode,
+              .numberOfSignificantDigits = numberOfSignificantDigits,
+              .base = base}});
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   LayoutSerializer::Serialize(l, buffer);

@@ -261,11 +261,12 @@ void Layouter::layoutIntegerHandler(Tree* parentRack, IntegerHandler handler,
     PushCodePoint(parentRack, '-');
   }
   handler.setSign(NonStrictSign::Positive);
-  if (m_parameters.base != OMG::Base::Decimal) {
+  if (m_parameters.floatParameters.base != OMG::Base::Decimal) {
     assert(decimalOffset == 0);
     PushCodePoint(parentRack, '0');
-    PushCodePoint(parentRack,
-                  m_parameters.base == OMG::Base::Binary ? 'b' : 'x');
+    PushCodePoint(
+        parentRack,
+        m_parameters.floatParameters.base == OMG::Base::Binary ? 'b' : 'x');
   }
   Tree* rack = KRackL()->cloneTree();
   /* We can't manipulate an IntegerHandler in a workingBuffer since we're
@@ -274,8 +275,8 @@ void Layouter::layoutIntegerHandler(Tree* parentRack, IntegerHandler handler,
   TreeRef value = handler.pushOnTreeStack();
   do {
     DivisionResult result = IntegerHandler::Division(
-        Integer::Handler(value),
-        IntegerHandler(static_cast<uint8_t>(m_parameters.base)));
+        Integer::Handler(value), IntegerHandler(static_cast<uint8_t>(
+                                     m_parameters.floatParameters.base)));
     uint8_t digit = Integer::Handler(result.remainder);
     assert(result.remainder > result.quotient);
     result.remainder->removeTree();
@@ -293,7 +294,8 @@ void Layouter::layoutIntegerHandler(Tree* parentRack, IntegerHandler handler,
     }
   } while (!(value->isZero() && decimalOffset <= 0));
   value->removeTree();
-  if (m_parameters.base == OMG::Base::Decimal && !linearMode()) {
+  if (m_parameters.floatParameters.base == OMG::Base::Decimal &&
+      !linearMode()) {
     AddThousandsSeparators(rack);
   }
   NAry::AddOrMergeChild(parentRack, rack);
@@ -339,8 +341,8 @@ void Layouter::layoutInfixOperator(Tree* parentRack, const Tree* expression,
       }
     }
     layoutExpression(parentRack, targetChild, operatorPriority);
-    if (m_parameters.useTenPowerInsteadOfE && type == Type::Mult &&
-        op != UCodePointMultiplicationSign &&
+    if (m_parameters.floatParameters.useTenPowerInsteadOfE &&
+        type == Type::Mult && op != UCodePointMultiplicationSign &&
         (targetChild->isFloat() || targetChild->isDecimal()) &&
         parentRack->hasChildSatisfying([](const Tree* c) {
           return CodePointLayout::IsCodePoint(c, UCodePointMultiplicationSign);
@@ -502,22 +504,24 @@ void Layouter::serializeDecimalOrFloat(const Tree* expression, char* buffer,
   if (expression->isDecimal()) {
     /* Just as it doesn't apply to integers, numberOfSignificantDigits is
      * ignored with Decimals. */
-    Decimal::Serialize(expression, buffer, bufferSize, m_parameters.floatMode,
-                       m_parameters.keepFloatMode,
-                       m_parameters.decimalModeThreshold);
+    Decimal::Serialize(expression, buffer, bufferSize,
+                       m_parameters.floatParameters.floatMode,
+                       m_parameters.floatParameters.keepFloatMode,
+                       m_parameters.floatParameters.decimalModeThreshold);
     return;
   }
   int numberOfSignificantDigits =
-      m_parameters.numberOfSignificantDigits !=
+      m_parameters.floatParameters.numberOfSignificantDigits !=
               PrintFloat::k_undefinedNumberOfSignificantDigits
-          ? m_parameters.numberOfSignificantDigits
+          ? m_parameters.floatParameters.numberOfSignificantDigits
       : expression->isSingleFloat()
           ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
           : Poincare::PrintFloat::SignificantDecimalDigits<double>();
   Poincare::PrintFloat::ConvertFloatToText(
       FloatHelper::To(expression), buffer, bufferSize,
       Poincare::PrintFloat::k_maxFloatGlyphLength, numberOfSignificantDigits,
-      m_parameters.floatMode, m_parameters.decimalModeThreshold);
+      m_parameters.floatParameters.floatMode,
+      m_parameters.floatParameters.decimalModeThreshold);
 }
 
 // Remove expression while converting it to a layout in parentRack
@@ -802,7 +806,7 @@ void Layouter::layoutExpression(Tree* parentRack, const Tree* expression,
       if (!linearMode()) {
         AddThousandsSeparators(rack);
       }
-      if (m_parameters.useTenPowerInsteadOfE) {
+      if (m_parameters.floatParameters.useTenPowerInsteadOfE) {
         LayoutHelpers::TurnEToTenPowerLayout(rack, linearMode());
       }
       NAry::AddOrMergeChild(parentRack, rack);

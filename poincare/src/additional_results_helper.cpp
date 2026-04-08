@@ -565,10 +565,11 @@ static Poincare::Layout CreateBeautifiedLayout(
       Poincare::Layout::Builder(Layouter::LayoutExpression(
           reducedExpression,
           {.symbolContext = beautificationParameters.user.context,
-           .numberOfSignificantDigits = numberOfSignificantDigits,
-           .floatMode = displayMode,
-           // 10^ is used everywhere in Calculation
-           .useTenPowerInsteadOfE = true}));
+           .floatParameters = {
+               .floatMode = displayMode,
+               .numberOfSignificantDigits = numberOfSignificantDigits,
+               // 10^ is used everywhere in Calculation
+               .useTenPowerInsteadOfE = true}}));
   reducedExpression->removeTree();
   return layout;
 }

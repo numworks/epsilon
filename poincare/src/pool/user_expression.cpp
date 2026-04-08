@@ -371,12 +371,13 @@ Poincare::Layout UserExpression::createLayout(
       tree(), {.symbolContext = symbolContext,
                .layouterMode =
                    linearMode ? LayouterMode::Linear : LayouterMode::Natural,
-               .numberOfSignificantDigits = numberOfSignificantDigits,
-               .floatMode = floatDisplayMode,
-               .keepFloatMode = keepFloatMode,
-               .decimalModeThreshold = decimalModeThreshold,
-               .base = base,
-               .useTenPowerInsteadOfE = useTenPowerInsteadOfE}));
+               .floatParameters = {
+                   .floatMode = floatDisplayMode,
+                   .keepFloatMode = keepFloatMode,
+                   .decimalModeThreshold = decimalModeThreshold,
+                   .numberOfSignificantDigits = numberOfSignificantDigits,
+                   .base = base,
+                   .useTenPowerInsteadOfE = useTenPowerInsteadOfE}}));
 }
 
 char* UserExpression::toLatex(char* buffer, int bufferSize,
@@ -400,7 +401,8 @@ size_t UserExpression::serialize(std::span<char> buffer, bool compactMode,
   Tree* layout = Layouter::LayoutExpression(
       tree(), {.layouterMode = compactMode ? LayouterMode::LinearCompact
                                            : LayouterMode::Linear,
-               .numberOfSignificantDigits = numberOfSignificantDigits});
+               .floatParameters = {.numberOfSignificantDigits =
+                                       numberOfSignificantDigits}});
   size_t length = LayoutSerializer::Serialize(layout, buffer);
   layout->removeTree();
   assert(length <= buffer.size() || length == LayoutHelpers::k_bufferOverflow);

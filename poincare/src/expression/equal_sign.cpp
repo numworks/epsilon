@@ -40,7 +40,8 @@ bool RecursiveIsCalculationOutputStrictEquality(const Tree* exact,
     /* Using parsing is the safest way to create a Decimal that will be the same
      * as what the user will read. */
     Tree* layout = Layouter::LayoutExpression(
-        approximate, {.numberOfSignificantDigits = significantDigits});
+        approximate,
+        {.floatParameters = {.numberOfSignificantDigits = significantDigits}});
     Layouter::StripSeparators(layout);
     Tree* parsed = Parser::UnsafeParse(layout);
     assert(isExpectedExpression(parsed));

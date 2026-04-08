@@ -280,6 +280,14 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
              !shouldUseExactForApproximate) {
     comparisonSignIsEqual = true;
     comparisonSignIsVisible = false;
+  } else if (forbidExactSolution && !shouldUseExactForApproximate) {
+    assert(exactLayout.isUninitialized() && !exact.isUninitialized());
+    // Use hidden exact result for comparison symbol
+    comparisonSignIsEqual = Poincare::IsCalculationOutputStrictEquality(
+        exact, approximateToUse, numberOfSignificantDigits,
+        {.user = {.complexFormat = m_equationMetadata.complexFormat,
+                  .angleUnit = angleUnit}});
+    comparisonSignIsVisible = !comparisonSignIsEqual;
   }
   assert(m_numberOfSolutions < k_maxNumberOfSolutions - 1);
   m_solutions[m_numberOfSolutions++] =

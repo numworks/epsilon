@@ -9,6 +9,7 @@
 #include <poincare/helpers/parser.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/memory/tree_ref.h>
+#include <poincare/syntax_error.h>
 
 #include "parsing_context.h"
 #include "tokenizer.h"
@@ -42,8 +43,8 @@ class RackParser {
    * a valid expression otherwise (not nullptr). */
   Tree* parseRack();
   Tree* parseTopLevelRack();
-  static void RaiseParseFail(const char* error) {
-    /* For now, the error code has no rule is only used for debugging.
+  static void RaiseParseFail(SyntaxError error) {
+    /* For now, the error is only used for debugging.
      * It isn't displayed on the calculator screen. */
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }

@@ -60,12 +60,13 @@ bool IsCalculationOutputStrictEquality(const Tree* exact,
     return result;
   }
 
+  if (!exact->nodeIsIdenticalTo(approximate)) {
+    return false;
+  }
+  assert(exact->numberOfChildren() == approximate->numberOfChildren());
   /* Check deeply for equality, because the expression can be a list, a matrix
    * or a complex composed of rationals.
    * Ex: 1 + i/2 == 1 + 0.5i */
-  if (exact->numberOfChildren() != approximate->numberOfChildren()) {
-    return false;
-  }
   const Tree* approxChild = approximate->nextNode();
   for (const Tree* exactChild : exact->children()) {
     if (!IsCalculationOutputStrictEquality(exactChild, approxChild,
@@ -74,7 +75,7 @@ bool IsCalculationOutputStrictEquality(const Tree* exact,
     }
     approxChild = approxChild->nextTree();
   }
-
-  return exact->nodeIsIdenticalTo(approximate);
+  return true;
 }
+
 }  // namespace Poincare::Internal

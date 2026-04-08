@@ -1,6 +1,7 @@
 #include "app_cell.h"
 
 #include <assert.h>
+#include <global_preferences.h>
 
 using namespace Escher;
 
@@ -66,8 +67,15 @@ void AppCell::setVisible(bool visible) {
 
 void AppCell::reloadCell() {
   TextView* t = const_cast<TextView*>(textView());
-  t->setTextColor(isHighlighted() ? Palette::White : Palette::Black);
-  t->setBackgroundColor(isHighlighted() ? Palette::YellowDark : Palette::White);
+  t->setTextColor(isHighlighted()
+                      ? Palette::White
+                      : Escher::ColorPicker::Get(SharedGlobalPrefs().theme(),
+                                                 Escher::FeatureColor::Text));
+  t->setBackgroundColor(
+      isHighlighted()
+          ? Palette::YellowDark
+          : Escher::ColorPicker::Get(SharedGlobalPrefs().theme(),
+                                     Escher::FeatureColor::Background));
 }
 
 const Escher::TextView* AppCell::textView() const {

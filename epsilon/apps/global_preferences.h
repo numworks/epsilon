@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <escher/layout_preferences.h>
+#include <escher/palette.h>
 #include <ion.h>
 #include <kandinsky/font.h>
 #include <omg/global_box.h>
@@ -33,6 +34,8 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
 
   static GlobalPreferences* SharedGlobalPreferences();
   static void Init();
+
+  Escher::ThemeEnum theme() const { return Escher::ThemeEnum::Light; }
 
   I18n::Language language() const { return s_data->m_language; }
   void setLanguage(I18n::Language language) { s_data->m_language = language; }

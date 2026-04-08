@@ -117,6 +117,13 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
 
   // Print the sign
   int currentPosition = 0;
+  auto addChar = [&buffer, &bufferSize, &currentPosition](char c) {
+    if (currentPosition >= bufferSize - 1) {
+      return false;
+    }
+    buffer[currentPosition++] = c;
+    return true;
+  };
   if (negative) {
     currentPosition += WriteCodePoint(buffer, bufferSize, '-');
     if (currentPosition >= bufferSize - 1) {
@@ -167,19 +174,15 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
                                 : 1;
     if (digitsLength > nbDigitsBeforeDot) {
       for (int i = 0; i < nbDigitsBeforeDot; i++) {
-        if (currentPosition >= bufferSize - 1) return bufferSize - 1;
-        buffer[currentPosition++] = digits[i];
+        if (!addChar(digits[i])) return bufferSize - 1;
       }
-      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
-      buffer[currentPosition++] = '.';
+      if (!addChar('.')) return bufferSize - 1;
       for (int i = nbDigitsBeforeDot; i < digitsLength; i++) {
-        if (currentPosition >= bufferSize - 1) return bufferSize - 1;
-        buffer[currentPosition++] = digits[i];
+        if (!addChar(digits[i])) return bufferSize - 1;
       }
     } else {
       for (int i = 0; i < digitsLength; i++) {
-        if (currentPosition >= bufferSize - 1) return bufferSize - 1;
-        buffer[currentPosition++] = digits[i];
+        if (!addChar(digits[i])) return bufferSize - 1;
       }
     }
     if (currentPosition >= bufferSize - 1) {
@@ -219,41 +222,32 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
     /* Case 1: "0.000...0<digits>"
      * displayExp is the exponent of the leading digit, so we need
      * (-displayExp-1) zeros between the decimal point and the first digit. */
-    if (currentPosition >= bufferSize - 1) return bufferSize - 1;
-    buffer[currentPosition++] = '0';
-    if (currentPosition >= bufferSize - 1) return bufferSize - 1;
-    buffer[currentPosition++] = '.';
+    if (!addChar('0')) return bufferSize - 1;
+    if (!addChar('.')) return bufferSize - 1;
     for (int i = 0; i < -displayExp - 1; i++) {
-      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
-      buffer[currentPosition++] = '0';
+      if (!addChar('0')) return bufferSize - 1;
     }
     for (int i = 0; i < digitsLength; i++) {
-      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
-      buffer[currentPosition++] = digits[i];
+      if (!addChar(digits[i])) return bufferSize - 1;
     }
   } else if (displayExp < digitsLength - 1) {
     /* Case 2: "DDD.DDD"
      * decimal point sits after the (displayExp+1)-th digit. */
     for (int i = 0; i <= displayExp; i++) {
-      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
-      buffer[currentPosition++] = digits[i];
+      if (!addChar(digits[i])) return bufferSize - 1;
     }
-    if (currentPosition >= bufferSize - 1) return bufferSize - 1;
-    buffer[currentPosition++] = '.';
+    if (!addChar('.')) return bufferSize - 1;
     for (int i = displayExp + 1; i < digitsLength; i++) {
-      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
-      buffer[currentPosition++] = digits[i];
+      if (!addChar(digits[i])) return bufferSize - 1;
     }
   } else {
     /* Case 3: "DDD000"
      * integer with (displayExp - digitsLength + 1) trailing zeros. */
     for (int i = 0; i < digitsLength; i++) {
-      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
-      buffer[currentPosition++] = digits[i];
+      if (!addChar(digits[i])) return bufferSize - 1;
     }
     for (int i = digitsLength - 1; i < displayExp; i++) {
-      if (currentPosition >= bufferSize - 1) return bufferSize - 1;
-      buffer[currentPosition++] = '0';
+      if (!addChar('0')) return bufferSize - 1;
     }
   }
 

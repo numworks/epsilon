@@ -43,7 +43,10 @@ class RackParser {
    * a valid expression otherwise (not nullptr). */
   Tree* parseRack();
   Tree* parseTopLevelRack();
-  static void RaiseParseFail(SyntaxError error) {
+  void raiseParseFail(SyntaxError error) {
+    RaiseParseFail(error, m_parsingContext);
+  }
+  static void RaiseParseFail(SyntaxError error, ParsingContext& context) {
     /* For now, the error is only used for debugging.
      * It isn't displayed on the calculator screen. */
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);

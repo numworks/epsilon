@@ -61,10 +61,9 @@ bool PlotController::reloadBannerView() {
   KDCoordinate previousHeight =
       bannerView()->minimalSizeForOptimalDisplay().height();
 
-  int precision =
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+  int precision = SharedGlobalPrefs().numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      GlobalPreferences::SharedGlobalPreferences()->displayMode();
+      SharedGlobalPrefs().displayMode();
   constexpr static int k_bufferSize =
       Escher::Metric::MaxNumberOfSmallGlyphsInDisplayWidth;
   char buffer[k_bufferSize] = "";

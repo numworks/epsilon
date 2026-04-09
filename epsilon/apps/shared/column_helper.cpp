@@ -182,10 +182,8 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   }
 
   SystemExpression reduced = formula.cloneAndReduce(SimplificationParameters{
-      .user = {.complexFormat = GlobalPreferences::SharedGlobalPreferences()
-                                    ->complexFormat(),
-               .angleUnit =
-                   GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+      .user = {.complexFormat = SharedGlobalPrefs().complexFormat(),
+               .angleUnit = SharedGlobalPrefs().angleUnit(),
                .context = storeAppContext},
       .projectionPolicy = {.symbolic = SymbolicComputation::ReplaceAllSymbols},
       .reductionPolicy = {.target = ReductionTarget::System}});
@@ -245,9 +243,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
     store()->set(evaluation, *series, *column, j, true, true);
     if (evaluateForEachPairs) {
       evaluation = formula.approximateToRealScalar<double>(
-          UserParameters{
-              .angleUnit =
-                  GlobalPreferences::SharedGlobalPreferences()->angleUnit()},
+          UserParameters{.angleUnit = SharedGlobalPrefs().angleUnit()},
           ApproximationPolicy{.optimize = true});
     }
   }

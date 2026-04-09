@@ -107,26 +107,29 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
    * implementing a setter. This would make the code more modular and avoid such
    * hard-to-read if/else blocks. */
 
-  GlobalPreferences* preferences = GlobalPreferences::SharedGlobalPreferences();
   if (message == I18n::Message::AngleUnit) {
-    preferences->setAngleUnit((AngleUnit)valueIndex);
+    GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(
+        (AngleUnit)valueIndex);
   } else if (message == I18n::Message::DisplayMode) {
     Preferences::PrintFloatMode mode = (Preferences::PrintFloatMode)valueIndex;
-    preferences->setDisplayMode(mode);
+    GlobalPreferences::SharedGlobalPreferences()->setDisplayMode(mode);
     if (mode == Preferences::PrintFloatMode::Engineering) {
       /* In Engineering mode, the number of significant digits cannot be lower
        * than 3, because we need to be able to display 100 for instance. */
       // TODO: Add warning about signifiant digits change ?
-      preferences->setNumberOfSignificantDigits(
-          std::max<int>(preferences->numberOfSignificantDigits(), 3));
+      GlobalPreferences::SharedGlobalPreferences()
+          ->setNumberOfSignificantDigits(std::max<int>(
+              SharedGlobalPrefs().numberOfSignificantDigits(), 3));
     }
   } else if (message == I18n::Message::EditionMode) {
-    preferences->setEditionMode((GlobalPreferences::EditionMode)valueIndex);
+    GlobalPreferences::SharedGlobalPreferences()->setEditionMode(
+        (GlobalPreferences::EditionMode)valueIndex);
   } else if (message == I18n::Message::ComplexFormat) {
-    preferences->setComplexFormat((ComplexFormat)valueIndex);
+    GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
+        (ComplexFormat)valueIndex);
   } else if (message == I18n::Message::FontSizes) {
-    preferences->setFont(valueIndex == 0 ? KDFont::Size::Large
-                                         : KDFont::Size::Small);
+    GlobalPreferences::SharedGlobalPreferences()->setFont(
+        valueIndex == 0 ? KDFont::Size::Large : KDFont::Size::Small);
   }
 }
 
@@ -137,25 +140,20 @@ int PreferencesController::valueIndexForPreference(
    * implementing a getter. This would make the code more modular and avoid such
    * hard-to-read if/else blocks. */
 
-  const GlobalPreferences* preferences =
-      GlobalPreferences::SharedGlobalPreferences();
   if (message == I18n::Message::AngleUnit) {
-    return (int)preferences->angleUnit();
+    return (int)SharedGlobalPrefs().angleUnit();
   }
   if (message == I18n::Message::DisplayMode) {
-    return (int)preferences->displayMode();
+    return (int)SharedGlobalPrefs().displayMode();
   }
   if (message == I18n::Message::EditionMode) {
-    return (int)GlobalPreferences::SharedGlobalPreferences()->editionMode();
+    return (int)SharedGlobalPrefs().editionMode();
   }
   if (message == I18n::Message::ComplexFormat) {
-    return (int)preferences->complexFormat();
+    return (int)SharedGlobalPrefs().complexFormat();
   }
   if (message == I18n::Message::FontSizes) {
-    return GlobalPreferences::SharedGlobalPreferences()->font() ==
-                   KDFont::Size::Large
-               ? 0
-               : 1;
+    return SharedGlobalPrefs().font() == KDFont::Size::Large ? 0 : 1;
   }
   return 0;
 }

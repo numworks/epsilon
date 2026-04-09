@@ -56,9 +56,7 @@ bool AbstractMathFieldDelegate::isAcceptableText(
    * - log(x,2) */
   constexpr int bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
-  int length = exp.serialize(
-      buffer, false,
-      GlobalPreferences::SharedGlobalPreferences()->displayMode());
+  int length = exp.serialize(buffer, false, SharedGlobalPrefs().displayMode());
   if (length >= bufferSize - 1) {
     /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
      * escaped before printing utterly the expression. */
@@ -125,15 +123,12 @@ bool MathTextFieldDelegate::textFieldDidFinishEditing(
 template <typename T>
 T MathTextFieldDelegate::ParseInputFloatValue(const char* text) {
   return UserExpression::ParseAndSimplifyAndApproximateToRealScalar<T>(
-      text,
-      SimplificationParameters{
-          .user = {
-              .complexFormat =
-                  GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-              .angleUnit =
-                  GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-              .context = App::app()->localContext(),
-          }});
+      text, SimplificationParameters{
+                .user = {
+                    .complexFormat = SharedGlobalPrefs().complexFormat(),
+                    .angleUnit = SharedGlobalPrefs().angleUnit(),
+                    .context = App::app()->localContext(),
+                }});
 }
 
 template <typename T>

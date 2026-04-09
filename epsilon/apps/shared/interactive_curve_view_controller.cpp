@@ -174,7 +174,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(
    * displayed floatBody */
   floatBody = FunctionBannerDelegate::GetValueDisplayedOnBanner(
       floatBody, App::app()->localContext(),
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits(),
+      SharedGlobalPrefs().numberOfSignificantDigits(),
       curveView()->pixelWidth(), false);
   moveCursorAndCenterIfNeeded(floatBody);
   return true;

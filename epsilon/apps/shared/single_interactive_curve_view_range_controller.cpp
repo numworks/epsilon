@@ -20,8 +20,7 @@ SingleInteractiveCurveViewRangeController::
         Shared::MessagePopUpController* confirmPopUpController)
     : SingleRangeControllerExactExpressions(
           parentResponder, confirmPopUpController,
-          GlobalPreferences::SharedGlobalPreferences()
-                      ->stepAdjustmentWarning() ==
+          SharedGlobalPrefs().stepAdjustmentWarning() ==
                   CountryPreferences::StepAdjustmentWarning::Displayed
               ? &m_bottomMessageView
               : nullptr),

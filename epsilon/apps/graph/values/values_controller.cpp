@@ -175,8 +175,7 @@ void ValuesController::hideDerivative(Ion::Storage::Record record,
 KDSize ValuesController::ApproximatedParametricCellSize() {
   KDSize layoutSize = LayoutHelpers::Point2DSizeGivenChildSize(
       KDSize(PrintFloat::glyphLengthForFloatWithPrecision(
-                 GlobalPreferences::SharedGlobalPreferences()
-                     ->numberOfSignificantDigits()) *
+                 SharedGlobalPrefs().numberOfSignificantDigits()) *
                  KDFont::GlyphWidth(k_cellFont),
              KDFont::GlyphHeight(k_cellFont)));
   return layoutSize + KDSize(Metric::SmallCellMargin * 2, 0);
@@ -392,13 +391,9 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         Poincare::BeautificationParameters{
             .user =
                 {
-                    .complexFormat =
-                        GlobalPreferences::SharedGlobalPreferences()
-                            ->complexFormat(),
-                    .angleUnit = GlobalPreferences::SharedGlobalPreferences()
-                                     ->angleUnit(),
-                    .unitFormat = GlobalPreferences::SharedGlobalPreferences()
-                                      ->unitFormat(),
+                    .complexFormat = SharedGlobalPrefs().complexFormat(),
+                    .angleUnit = SharedGlobalPrefs().angleUnit(),
+                    .unitFormat = SharedGlobalPrefs().unitFormat(),
                     .context = symbolContext,
                 }},
         ApproximationPolicy{.optimize = true});
@@ -415,9 +410,8 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   }
   assert(!result.isUninitialized());
   Poincare::Preferences::PrintFloatMode floatDisplayMode =
-      GlobalPreferences::SharedGlobalPreferences()->displayMode();
-  uint8_t significantDigits =
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+      SharedGlobalPrefs().displayMode();
+  uint8_t significantDigits = SharedGlobalPrefs().numberOfSignificantDigits();
   Layout layout =
       result.createLayout(floatDisplayMode, significantDigits, symbolContext);
   if (result.isPoint() && layout->layoutSize(k_cellFont).width() >

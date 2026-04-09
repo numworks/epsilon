@@ -121,9 +121,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
       t = magnitude * std::round(t / magnitude);
       // Also round t so that f(x) matches f evaluated at displayed x
       t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-          t, symbolContext,
-          GlobalPreferences::SharedGlobalPreferences()
-              ->numberOfSignificantDigits(),
+          t, symbolContext, SharedGlobalPrefs().numberOfSignificantDigits(),
           pixelWidth, false);
     }
     // Snap to interest could have corrupted ExpiringPointer
@@ -148,9 +146,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     t += dir * step * scrollSpeed;
     // If possible, round t so that f(x) matches f evaluated at displayed x
     t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-        t, symbolContext,
-        GlobalPreferences::SharedGlobalPreferences()
-            ->numberOfSignificantDigits(),
+        t, symbolContext, SharedGlobalPrefs().numberOfSignificantDigits(),
         0.05 * step, true);
   }
   // t must have changed
@@ -205,10 +201,8 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
   size_t numberOfChar =
       function->nameWithArgument(buffer, bufferSize, derivationOrder);
   assert(function->canDisplayDerivative());
-  Preferences::PrintFloatMode mode =
-      GlobalPreferences::SharedGlobalPreferences()->displayMode();
-  int precision =
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+  Preferences::PrintFloatMode mode = SharedGlobalPrefs().displayMode();
+  int precision = SharedGlobalPrefs().numberOfSignificantDigits();
   if (function->properties().isParametric()) {
     assert(derivative.isPoint());
     Coordinate2D<double> xy = derivative.toPoint();
@@ -251,12 +245,10 @@ double GraphControllerHelper::reloadSlopeInBannerViewForCursorOnFunction(
   double slope = function->approximateSlope(cursor->t());
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
-  Print::CustomPrintf(
-      buffer, bufferSize, "%s=%*.*ed",
-      I18n::translate(I18n::Message::CartesianSlopeFormula), slope,
-      GlobalPreferences::SharedGlobalPreferences()->displayMode(),
-      GlobalPreferences::SharedGlobalPreferences()
-          ->numberOfSignificantDigits());
+  Print::CustomPrintf(buffer, bufferSize, "%s=%*.*ed",
+                      I18n::translate(I18n::Message::CartesianSlopeFormula),
+                      slope, SharedGlobalPrefs().displayMode(),
+                      SharedGlobalPrefs().numberOfSignificantDigits());
   bannerView()->slopeView()->setText(buffer);
   bannerView()->reload();
   return slope;

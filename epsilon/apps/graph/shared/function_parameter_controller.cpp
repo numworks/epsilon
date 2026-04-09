@@ -65,8 +65,7 @@ void FunctionParameterController::setRecord(Ion::Storage::Record record) {
 
 const char* intervalBracket(double value, bool opening) {
   if (std::isinf(value)) {
-    return GlobalPreferences::SharedGlobalPreferences()->openIntervalChar(
-        opening);
+    return SharedGlobalPrefs().openIntervalChar(opening);
   }
   return opening ? "[" : "]";
 }
@@ -92,7 +91,7 @@ void FunctionParameterController::viewWillAppear() {
     char buffer[bufferSize];
     writeInterval(buffer, bufferSize, min, max,
                   Preferences::VeryShortNumberOfSignificantDigits,
-                  GlobalPreferences::SharedGlobalPreferences()->displayMode());
+                  SharedGlobalPrefs().displayMode());
     // Cell's layout will adapt to fit the subLabel.
     m_functionDomainCell.subLabel()->setText(buffer);
   }

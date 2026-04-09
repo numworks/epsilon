@@ -152,7 +152,7 @@ void TitleBarView::refreshPreferences() {
   char buffer[k_preferenceTextSize];
   // Display Sci/ or Eng/ if the print float mode is not decimal
   const Preferences::PrintFloatMode printFloatMode =
-      GlobalPreferences::SharedGlobalPreferences()->displayMode();
+      SharedGlobalPrefs().displayMode();
   I18n::Message floatModeMessage =
       printFloatMode == Preferences::PrintFloatMode::Decimal
           ? I18n::Message::Default
@@ -160,8 +160,7 @@ void TitleBarView::refreshPreferences() {
                  ? I18n::Message::Sci
                  : I18n::Message::Eng);
   // Display the angle unit
-  const AngleUnit angleUnit =
-      GlobalPreferences::SharedGlobalPreferences()->angleUnit();
+  const AngleUnit angleUnit = SharedGlobalPrefs().angleUnit();
   I18n::Message angleMessage;
   switch (angleUnit) {
     case AngleUnit::Degree:

@@ -34,7 +34,7 @@ bool DoubleDataField::hasDouble(AtomicNumber z) const {
 Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   assert(hasDouble(z));
   Preferences::PrintFloatMode floatDisplayMode =
-      GlobalPreferences::SharedGlobalPreferences()->displayMode();
+      SharedGlobalPrefs().displayMode();
   double v = getDouble(z);
   if (!std::isfinite(v)) {
     return DataField::UnknownValueLayout();
@@ -104,7 +104,7 @@ Layout DoubleDataFieldWithSubscriptSymbol::fieldSymbolLayout() const {
 Poincare::Layout ZDataField::getLayout(AtomicNumber z,
                                        int significantDigits) const {
   Preferences::PrintFloatMode floatDisplayMode =
-      GlobalPreferences::SharedGlobalPreferences()->displayMode();
+      SharedGlobalPrefs().displayMode();
   const SymbolContext& globalContext = Shared::GlobalContextAccessor::Context();
   return UserExpression::Builder(static_cast<int>(z))
       .createLayout(floatDisplayMode, significantDigits, globalContext,
@@ -119,7 +119,7 @@ Layout ADataField::getLayout(AtomicNumber z, int significantDigits) const {
     return DataField::UnknownValueLayout();
   }
   Preferences::PrintFloatMode floatDisplayMode =
-      GlobalPreferences::SharedGlobalPreferences()->displayMode();
+      SharedGlobalPrefs().displayMode();
   const SymbolContext& globalContext = Shared::GlobalContextAccessor::Context();
   return UserExpression::Builder(static_cast<int>(a))
       .createLayout(floatDisplayMode, significantDigits, globalContext,
@@ -205,7 +205,7 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z,
   }
 
   Preferences::PrintFloatMode floatDisplayMode =
-      GlobalPreferences::SharedGlobalPreferences()->displayMode();
+      SharedGlobalPrefs().displayMode();
   const SymbolContext& globalContext = Shared::GlobalContextAccessor::Context();
 
   /* Subshells are displayed in order of increasing n, then increasing l. */

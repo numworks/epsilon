@@ -28,8 +28,7 @@ void ExpressionParameterController::fillCellForRow(HighlightCell* cell,
   parameterAtIndex(row).writeText(
       buffer,
       ExpressionOrFloat::ApproximationParameters{
-          GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-          GlobalPreferences::SharedGlobalPreferences()->complexFormat()},
+          SharedGlobalPrefs().angleUnit(), SharedGlobalPrefs().complexFormat()},
       precision, Preferences::PrintFloatMode::Decimal);
   textFieldOfCellAtIndex(cell, row)->setText(buffer);
 }
@@ -51,11 +50,8 @@ bool ExpressionParameterController::textFieldDidFinishEditing(
           ? ExpressionOrFloat::Builder(
                 parsedExpression.cloneAndTrySimplify(SimplificationParameters{
                     .user = {.complexFormat =
-                                 GlobalPreferences::SharedGlobalPreferences()
-                                     ->complexFormat(),
-                             .angleUnit =
-                                 GlobalPreferences::SharedGlobalPreferences()
-                                     ->angleUnit()}}),
+                                 SharedGlobalPrefs().complexFormat(),
+                             .angleUnit = SharedGlobalPrefs().angleUnit()}}),
                 PoincareHelpers::ApproximateToRealScalar)
           : ExpressionOrFloat{};
   if (hasUndefinedValue(text, currentExpression, innerSelectedRow()) ||

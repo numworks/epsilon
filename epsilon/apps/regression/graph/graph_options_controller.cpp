@@ -76,10 +76,9 @@ void GraphOptionsController::viewWillAppear() {
   // Change regression cell
   m_changeRegressionCell.subLabel()->setMessage(model->name());
 
-  const int significantDigits =
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+  const int significantDigits = SharedGlobalPrefs().numberOfSignificantDigits();
   const Preferences::PrintFloatMode displayMode =
-      GlobalPreferences::SharedGlobalPreferences()->displayMode();
+      SharedGlobalPrefs().displayMode();
 
   // Regression equation cell
   double* coefficients = m_store->coefficientsForSeries(series);
@@ -179,7 +178,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
 
 const HighlightCell* GraphOptionsController::cell(int row) const {
   assert(row >= 0 && row < k_maxNumberOfRows);
-  if (GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==
+  if (SharedGlobalPrefs().regressionAppVariant() ==
       CountryPreferences::RegressionApp::Default) {
     const HighlightCell* cells[k_maxNumberOfRows] = {&m_changeRegressionCell,
                                                      &m_regressionEquationCell,
@@ -191,7 +190,7 @@ const HighlightCell* GraphOptionsController::cell(int row) const {
                                                      &m_removeRegressionCell};
     return cells[row];
   }
-  assert(GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==
+  assert(SharedGlobalPrefs().regressionAppVariant() ==
          CountryPreferences::RegressionApp::Variant1);
   const HighlightCell* cells[k_maxNumberOfRows] = {&m_changeRegressionCell,
                                                    &m_regressionEquationCell,

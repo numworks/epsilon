@@ -17,15 +17,9 @@ ConsoleEditCell::ConsoleEditCell(Responder* parentResponder,
                                  TextFieldDelegate* delegate)
     : HighlightCell(),
       Responder(parentResponder),
-      m_promptView(
-          nullptr,
-          {.style =
-               {.font = GlobalPreferences::SharedGlobalPreferences()->font()}}),
-      m_textField(
-          this, nullptr, TextField::MaxBufferSize(), delegate,
-          {.style = {
-               .font =
-                   GlobalPreferences::SharedGlobalPreferences()->font()}}) {}
+      m_promptView(nullptr, {.style = {.font = SharedGlobalPrefs().font()}}),
+      m_textField(this, nullptr, TextField::MaxBufferSize(), delegate,
+                  {.style = {.font = SharedGlobalPrefs().font()}}) {}
 
 int ConsoleEditCell::numberOfSubviews() const { return 2; }
 

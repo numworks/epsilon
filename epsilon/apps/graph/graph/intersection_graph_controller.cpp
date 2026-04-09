@@ -50,11 +50,10 @@ void IntersectionGraphController::reloadBannerView() {
     numberOfChar = fNameLength;
   }
   assert(numberOfChar <= bufferSize);
-  Print::CustomPrintf(
-      buffer + numberOfChar, bufferSize - numberOfChar, "%s%*.*ed", legend,
-      m_cursor->y(),
-      GlobalPreferences::SharedGlobalPreferences()->displayMode(),
-      numberOfSignificantDigits());
+  Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar,
+                      "%s%*.*ed", legend, m_cursor->y(),
+                      SharedGlobalPrefs().displayMode(),
+                      numberOfSignificantDigits());
   bannerView()->ordinateView()->setText(buffer);
   bannerView()->reload();
 }

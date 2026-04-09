@@ -907,8 +907,7 @@ QUIZ_CASE(graph_function_properties) {
         k_undefinedParametric);
     // === Updated complex format ===
 
-    assert(GlobalPreferences::SharedGlobalPreferences()->complexFormat() ==
-           ComplexFormat::Cartesian);
+    assert(SharedGlobalPrefs().complexFormat() == ComplexFormat::Cartesian);
     assert_check_function_properties("y=(√(-1))^2", k_horizontalLineProperties);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
     assert_check_function_properties("f(x)=im(i*x+1)", k_linearProperties);

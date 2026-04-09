@@ -82,7 +82,7 @@ void EditExpressionController::restoreInput() {
   m_contentView.layoutField()->restoreContent(
       snap->cacheBuffer(), *snap->cacheBufferInformationAddress(),
       snap->cacheCursorOffset(), snap->cacheCursorPosition());
-  if (GlobalPreferences::SharedGlobalPreferences()->editionMode() ==
+  if (SharedGlobalPrefs().editionMode() ==
           GlobalPreferences::EditionMode::Edition1D &&
       !m_contentView.layoutField()->layout().isCodePointsString()) {
     // Restored input is incompatible with edition mode.

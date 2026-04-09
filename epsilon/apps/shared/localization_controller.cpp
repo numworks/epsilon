@@ -180,8 +180,7 @@ void LocalizationController::setMode(LocalizationController::Mode mode) {
 
 int LocalizationController::indexOfCellToSelectOnReset() const {
   assert(mode() == Mode::Language);
-  return static_cast<int>(
-      GlobalPreferences::SharedGlobalPreferences()->language());
+  return static_cast<int>(SharedGlobalPrefs().language());
 }
 
 const char* LocalizationController::title() const {

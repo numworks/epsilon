@@ -126,9 +126,8 @@ bool GraphController::buildRegressionExpression(
     Poincare::Preferences::PrintFloatMode displayMode) const {
   double* coefficients = m_store->coefficientsForSeries(selectedSeriesIndex());
   Layout l = m_store->regressionModel(modelType)->equationLayout(
-      coefficients,
-      GlobalPreferences::SharedGlobalPreferences()->yPredictedSymbol(),
-      significantDigits, displayMode);
+      coefficients, SharedGlobalPrefs().yPredictedSymbol(), significantDigits,
+      displayMode);
   size_t length = l.serialize(std::span<char>(buffer, bufferSize));
   if (length >= bufferSize - 1 || length == 0) {
     return false;
@@ -141,10 +140,9 @@ bool GraphController::buildRegressionExpression(
 
 void GraphController::reloadBannerView() {
   const int selectedSeries = selectedSeriesIndex();
-  const int significantDigits =
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+  const int significantDigits = SharedGlobalPrefs().numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      GlobalPreferences::SharedGlobalPreferences()->displayMode();
+      SharedGlobalPrefs().displayMode();
 
   // If any coefficient is NAN, display that data is not suitable
   bool coefficientsAreDefined = m_store->coefficientsAreDefined(selectedSeries);
@@ -200,9 +198,7 @@ void GraphController::reloadBannerView() {
       buffer, BannerView::BannerBufferTextView::MaxTextSize(), "%s=%*.*ed",
       (displayMean
            ? "y\xCC\x85"
-           : (displayEquation ? GlobalPreferences::SharedGlobalPreferences()
-                                    ->yPredictedSymbol()
-                              : "y")),
+           : (displayEquation ? SharedGlobalPrefs().yPredictedSymbol() : "y")),
       y, displayMode, significantDigits);
   m_bannerView.ordinateView()->setText(buffer);
 

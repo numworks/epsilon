@@ -46,12 +46,12 @@ void PieBannerView::setCategory(int category) {
     float p = m_store->getValue(m_group, m_category);
     Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
         p, floatBuffer, bufferSize, k_precision,
-        GlobalPreferences::SharedGlobalPreferences()->displayMode());
+        SharedGlobalPrefs().displayMode());
     m_freqValue.setText(floatBuffer);
     p = m_store->getRelativeFrequency(m_group, m_category);
     Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
         p, floatBuffer, bufferSize, k_precision,
-        GlobalPreferences::SharedGlobalPreferences()->displayMode());
+        SharedGlobalPrefs().displayMode());
     m_relativeValue.setText(floatBuffer);
     layoutSubviews(false);
     markWholeFrameAsDirty();

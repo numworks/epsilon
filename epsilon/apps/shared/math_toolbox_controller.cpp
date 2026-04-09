@@ -123,7 +123,7 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
     if (resultLayout.isUninitialized()) {
       const char* text = I18n::translate(messageTree->label());
 
-      if (GlobalPreferences::SharedGlobalPreferences()->editionMode() ==
+      if (SharedGlobalPrefs().editionMode() ==
               GlobalPreferences::EditionMode::Edition2D &&
           !messageTree->useRaw()) {
         // preserveInput is true so that f(x) is never parsed as f×(x)
@@ -132,7 +132,7 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
         if (!resultExpression.isUninitialized()) {
           // The text is parsable, we create its layout an insert it.
           resultLayout = resultExpression.createLayout(
-              GlobalPreferences::SharedGlobalPreferences()->displayMode(),
+              SharedGlobalPrefs().displayMode(),
               Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
               App::app()->localContext());
         }
@@ -142,7 +142,7 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
          * simpler layout */
         resultLayout = Layout::String(text, strlen(text));
       }
-    } else if (GlobalPreferences::SharedGlobalPreferences()->editionMode() ==
+    } else if (SharedGlobalPrefs().editionMode() ==
                GlobalPreferences::EditionMode::Edition1D) {
       char buffer[AbstractTextField::MaxBufferSize()];
       size_t len = resultLayout.serialize(buffer);
@@ -237,8 +237,7 @@ int MathToolboxController::maxNumberOfDisplayedRows() const {
 int MathToolboxController::controlChecksum() const {
   return static_cast<int>(ExamModeManager::ExamMode().ruleset()) *
              I18n::NumberOfCountries +
-         static_cast<int>(
-             GlobalPreferences::SharedGlobalPreferences()->country()) +
+         static_cast<int>(SharedGlobalPrefs().country()) +
          +(m_extraCellsDataSource ? m_extraCellsDataSource->numberOfExtraCells()
                                   : 0) *
              static_cast<int>(Ion::ExamMode::k_numberOfModes) *
@@ -248,22 +247,20 @@ int MathToolboxController::controlChecksum() const {
 int MathToolboxController::indexAfterFork(
     const ToolboxMessageTree* forkMessageTree) const {
   if (forkMessageTree->childrenList() == arithmeticFork) {
-    if (GlobalPreferences::SharedGlobalPreferences()
-            ->mixedFractionsAreEnabled()) {
+    if (SharedGlobalPrefs().mixedFractionsAreEnabled()) {
       return 0;
     }
     return 1;
   }
   if (forkMessageTree->childrenList() == listsStatsFork) {
-    if (GlobalPreferences::SharedGlobalPreferences()
-            ->listsStatsOrderInToolbox() ==
+    if (SharedGlobalPrefs().listsStatsOrderInToolbox() ==
         CountryPreferences::ListsStatsOrderInToolbox::Alternate) {
       return 1;
     }
     return 0;
   }
   if (forkMessageTree->childrenList() == logFork) {
-    if (GlobalPreferences::SharedGlobalPreferences()->logarithmBasePosition() ==
+    if (SharedGlobalPrefs().logarithmBasePosition() ==
         Preferences::LogarithmBasePosition::TopLeft) {
       return 1;
     }
@@ -271,14 +268,13 @@ int MathToolboxController::indexAfterFork(
   }
   if (forkMessageTree->childrenList() == binomialFork ||
       forkMessageTree->childrenList() == permuteFork) {
-    if (GlobalPreferences::SharedGlobalPreferences()->combinatoricSymbols() ==
+    if (SharedGlobalPrefs().combinatoricSymbols() ==
         Preferences::CombinatoricSymbols::LetterWithSubAndSuperscript) {
       return 1;
     }
     return 0;
   }
-  Preferences::UnitFormat unitFormat =
-      GlobalPreferences::SharedGlobalPreferences()->unitFormat();
+  Preferences::UnitFormat unitFormat = SharedGlobalPrefs().unitFormat();
   if (unitFormat == Preferences::UnitFormat::Metric) {
     return 0;
   }

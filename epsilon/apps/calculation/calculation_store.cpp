@@ -30,7 +30,7 @@ static void enhancePushedExpression(UserExpression& expression) {
    * */
   if (!ExamModeManager::ExamMode().forbidUnits()) {
     Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
-        expression, GlobalPreferences::SharedGlobalPreferences()->angleUnit());
+        expression, SharedGlobalPrefs().angleUnit());
   }
 }
 
@@ -166,9 +166,7 @@ static CalculationResult compute(
                       .approximate = inputExpression.cloneAndApproximate(
                           UserParameters{
                               .complexFormat = complexFormat,
-                              .angleUnit =
-                                  GlobalPreferences::SharedGlobalPreferences()
-                                      ->angleUnit(),
+                              .angleUnit = SharedGlobalPrefs().angleUnit(),
                               .context = GlobalContextAccessor::Context()},
                           ApproximationPolicy{.onlyReplaceNumerical =
                                                   CAS::Enabled()})},
@@ -189,10 +187,8 @@ static CalculationResult compute(
           .user =
               {
                   .complexFormat = complexFormat,
-                  .angleUnit =
-                      GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-                  .unitFormat = GlobalPreferences::SharedGlobalPreferences()
-                                    ->unitFormat(),
+                  .angleUnit = SharedGlobalPrefs().angleUnit(),
+                  .unitFormat = SharedGlobalPrefs().unitFormat(),
                   .context = GlobalContextAccessor::Context(),
               },
           .projectionPolicy = {.symbolic = symbolicComputation}},
@@ -331,8 +327,7 @@ Poincare::UserExpression CalculationStore::parseInput(
 CalculationStore::CalculationElements CalculationStore::computeAndProcess(
     const Poincare::UserExpression& inputExpression) {
   CalculationResult calculationResult = computeInterruptible(
-      inputExpression,
-      GlobalPreferences::SharedGlobalPreferences()->complexFormat());
+      inputExpression, SharedGlobalPrefs().complexFormat());
 
   postProcessOutputs(calculationResult.outputs, inputExpression,
                      ExamModeManager::ExamMode().forbidUnits());
@@ -396,8 +391,7 @@ CalculationStore::AnsContext CalculationStore::createAnsContext() {
 Calculation* CalculationStore::pushEmptyCalculation(char** location) {
   Calculation* newCalculation = reinterpret_cast<Calculation*>(*location);
   assert(spaceForNewElements(*location) >= sizeof(Calculation));
-  new (*location) Calculation(
-      GlobalPreferences::SharedGlobalPreferences()->calculationPreferences());
+  new (*location) Calculation(SharedGlobalPrefs().calculationPreferences());
   *location += sizeof(Calculation);
   return newCalculation;
 }

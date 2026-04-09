@@ -71,8 +71,7 @@ class Model {
  private:
   bool useLinearMxpbForm() const;
   const Poincare::Regression* regression() const {
-    return Poincare::Regression::Get(
-        m_type, GlobalPreferences::SharedGlobalPreferences()->angleUnit());
+    return Poincare::Regression::Get(m_type, SharedGlobalPrefs().angleUnit());
   }
   Type m_type;
 };

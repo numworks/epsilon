@@ -22,7 +22,7 @@ ScreenTimeoutController::ScreenTimeoutController(
 bool ScreenTimeoutController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (toDimmingTime(static_cast<DimmingTimeLabel>(selectedRow())) >
-        GlobalPreferences::SharedGlobalPreferences()->dimmingTime()) {
+        SharedGlobalPrefs().dimmingTime()) {
       /* If the newly selected dimming time is more than the current setting,
        * display a warning pop-up about the reduced battery lifetime. */
       m_warningPopUpController.presentModally();
@@ -43,8 +43,7 @@ void ScreenTimeoutController::setDimmingTimePreference(int rowIndex) const {
 }
 
 int ScreenTimeoutController::initialSelectedRow() const {
-  return toRowLabel(
-      GlobalPreferences::SharedGlobalPreferences()->dimmingTime());
+  return toRowLabel(SharedGlobalPrefs().dimmingTime());
 }
 
 Escher::HighlightCell* ScreenTimeoutController::reusableCell(int index,

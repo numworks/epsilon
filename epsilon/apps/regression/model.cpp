@@ -45,7 +45,7 @@ double Model::residualStandardDeviation(const Store* store, int series,
 
 bool Model::useLinearMxpbForm() const {
   return (m_type == Type::LinearAxpb || m_type == Type::Median) &&
-         GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==
+         SharedGlobalPrefs().regressionAppVariant() ==
              CountryPreferences::RegressionApp::Variant1;
 }
 

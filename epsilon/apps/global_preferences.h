@@ -285,6 +285,8 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
 #endif
 };
 
-// TODO?
-// inline constexpr GlobalPreferences& SharedGlobalPreferences =
-//     GlobalPreferences::GlobalPreferencesInstance;
+/* Shortcut to access the GlobalPreferences instance. For mutable access, you
+ * need to use GlobalPreferences::SharedGlobalPreferences()  */
+inline const GlobalPreferences& SharedGlobalPrefs() {
+  return *GlobalPreferences::SharedGlobalPreferences();
+}

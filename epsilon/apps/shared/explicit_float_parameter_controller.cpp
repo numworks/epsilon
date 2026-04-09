@@ -65,7 +65,7 @@ void ExplicitFloatParameterController::fillParameterCellAtRow(int row) {
   char buffer[bufferSize];
   PoincareHelpers::ConvertFloatToTextWithDisplayMode(
       parameterAtIndex(row), buffer, bufferSize, precision,
-      GlobalPreferences::SharedGlobalPreferences()->displayMode());
+      SharedGlobalPrefs().displayMode());
   textFieldOfCellAtRow(row)->setText(buffer);
 }
 

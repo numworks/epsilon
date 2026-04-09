@@ -301,11 +301,9 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
   if (step == Step::Result) {
     Layout leftLayout;
     Layout equalLayout = Layout::String(" = ", 3);
-    Layout resultLayout = valueLayout(
-        result,
-        GlobalPreferences::SharedGlobalPreferences()
-            ->numberOfSignificantDigits(),
-        GlobalPreferences::SharedGlobalPreferences()->displayMode());
+    Layout resultLayout =
+        valueLayout(result, SharedGlobalPrefs().numberOfSignificantDigits(),
+                    SharedGlobalPrefs().displayMode());
     if (functionLayout.isUninitialized() ||
         (sumLayout->layoutSize(k_font).width() +
              functionLayout->layoutSize(k_font).width() +

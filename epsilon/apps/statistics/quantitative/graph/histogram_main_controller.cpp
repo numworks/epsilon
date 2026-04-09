@@ -158,10 +158,9 @@ void HistogramMainController::updateBannerView() {
   KDCoordinate previousHeight =
       m_view.bannerView()->minimalSizeForOptimalDisplay().height();
 
-  int precision =
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+  int precision = SharedGlobalPrefs().numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      GlobalPreferences::SharedGlobalPreferences()->displayMode();
+      SharedGlobalPrefs().displayMode();
   constexpr static int k_bufferSize =
       sizeof("Intervalle : [-1.2345ᴇ-123;-1.2345ᴇ-123[");  // longest case
   constexpr static int k_maxNumberOfGlyphs =
@@ -182,8 +181,7 @@ void HistogramMainController::updateBannerView() {
       buffer, k_bufferSize, precision, k_maxNumberOfGlyphs,
       "%s%s[%*.*ed,%*.*ed%s", I18n::translate(I18n::Message::Interval),
       I18n::translate(I18n::Message::ColonConvention), lowerBound, displayMode,
-      upperBound, displayMode,
-      GlobalPreferences::SharedGlobalPreferences()->openIntervalChar(false));
+      upperBound, displayMode, SharedGlobalPrefs().openIntervalChar(false));
   m_view.bannerView()->intervalView()->setText(buffer);
 
   // Display frequency
@@ -275,7 +273,7 @@ void HistogramMainController::initBarParameters() {
   if (allValuesAreIntegers) {
     // With integer values, the histogram is better with an integer bar width
     barWidth = std::ceil(barWidth);
-    if (GlobalPreferences::SharedGlobalPreferences()->histogramOffset() ==
+    if (SharedGlobalPrefs().histogramOffset() ==
         CountryPreferences::HistogramsOffset::OnIntegerValues) {
       // Bars are offset right to center the bars around the labels.
       m_histogramRange.setXRange(m_histogramRange.xMin() - barWidth / 2.0,

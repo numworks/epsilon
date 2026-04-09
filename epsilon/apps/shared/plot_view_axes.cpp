@@ -349,8 +349,7 @@ int AbstractLabeledAxis::computeLabel(size_t labelIndex,
   PrintFloat::TextLengths textLengths = t.writeText(
       std::span<char>{mutableLabel(labelIndex), k_labelBufferMaxSize},
       ExpressionOrFloat::ApproximationParameters{
-          GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-          GlobalPreferences::SharedGlobalPreferences()->complexFormat()},
+          SharedGlobalPrefs().angleUnit(), SharedGlobalPrefs().complexFormat()},
       k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal,
       k_labelBufferMaxGlyphLength);
   assert(strlen(mutableLabel(labelIndex)) == textLengths.CharLength);

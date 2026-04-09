@@ -149,8 +149,7 @@ void assert_cache_stays_valid(const char* definition, float rangeXMin = -5,
 }
 
 QUIZ_CASE(graph_caching) {
-  AngleUnit previousAngleUnit =
-      GlobalPreferences::SharedGlobalPreferences()->angleUnit();
+  AngleUnit previousAngleUnit = SharedGlobalPrefs().angleUnit();
   GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(AngleUnit::Degree);
   assert_cache_stays_valid("f(x)=x");
   assert_cache_stays_valid("f(x)=x^2");

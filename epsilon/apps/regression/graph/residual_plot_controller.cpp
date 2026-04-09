@@ -29,10 +29,9 @@ void ResidualPlotController::updateCursor() {
   m_cursorView.setColor(Escher::Palette::DataColor[m_selectedSeriesIndex],
                         &m_curveView);
 
-  const int significantDigits =
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+  const int significantDigits = SharedGlobalPrefs().numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      GlobalPreferences::SharedGlobalPreferences()->displayMode();
+      SharedGlobalPrefs().displayMode();
   constexpr size_t bufferSize =
       Shared::BannerView::BannerBufferTextView::MaxTextSize();
   constexpr static int k_maxNumberOfGlyphs =

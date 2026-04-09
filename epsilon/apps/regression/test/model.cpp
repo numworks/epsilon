@@ -495,8 +495,7 @@ void assert_trigonometric_regression_is(const double* xi, const double* yi,
                                         Poincare::AngleUnit trueCoeffcientsUnit,
                                         double residualStdDeviation) {
   // Test the trigonometric regression at all angle units
-  const AngleUnit previousAngleUnit =
-      GlobalPreferences::SharedGlobalPreferences()->angleUnit();
+  const AngleUnit previousAngleUnit = SharedGlobalPrefs().angleUnit();
   // TODO: C++23: use std::to_underlying instead of static_cast
   constexpr size_t k_numberOfUnits =
       static_cast<size_t>(Poincare::AngleUnit::NUnits);

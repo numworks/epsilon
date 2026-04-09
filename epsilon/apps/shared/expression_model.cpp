@@ -69,8 +69,7 @@ ComplexFormat ExpressionModel::complexFormat(
     }
   }
   assert(m_expressionComplexFormat != MemoizedComplexFormat::NotMemoized);
-  ComplexFormat userComplexFormat =
-      GlobalPreferences::SharedGlobalPreferences()->complexFormat();
+  ComplexFormat userComplexFormat = SharedGlobalPrefs().complexFormat();
   if (m_expressionComplexFormat == MemoizedComplexFormat::Complex &&
       userComplexFormat == ComplexFormat::Real) {
     return Preferences::k_defaultComplexFormatIfNotReal;
@@ -110,8 +109,7 @@ const SystemExpression& ExpressionModel::expressionReduced(
        * 'Simplify'. Thus, we use a temporary expression. */
       m_expression = userExpression.cloneAndReduce(SimplificationParameters{
           .user = {.complexFormat = complexFormat(record),
-                   .angleUnit = GlobalPreferences::SharedGlobalPreferences()
-                                    ->angleUnit(),
+                   .angleUnit = SharedGlobalPrefs().angleUnit(),
                    .context = GlobalContextAccessor::Context()},
           .projectionPolicy = {.symbolic =
                                    SymbolicComputation::ReplaceDefinedSymbols},

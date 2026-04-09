@@ -283,8 +283,7 @@ Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
            !approximateDisplayOutput.isUninitialized());
     return Poincare::IsCalculationOutputStrictEquality(
                exactDisplayOutput, approximateDisplayOutput,
-               GlobalPreferences::SharedGlobalPreferences()
-                   ->numberOfSignificantDigits(),
+               SharedGlobalPrefs().numberOfSignificantDigits(),
                SimplificationParameters{.user = {.complexFormat = complexFormat,
                                                  .angleUnit = angleUnit}})
                ? EqualSign::Equal

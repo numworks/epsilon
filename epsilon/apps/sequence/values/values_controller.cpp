@@ -163,9 +163,8 @@ Layout ValuesController::functionTitleLayout(int column) {
        .KB = Poincare::SymbolHelper::BuildUserSequence(
            sequenceName, UserExpression::Builder("k"_e))});
   return sumExpression.createLayout(
-      GlobalPreferences::SharedGlobalPreferences()->displayMode(),
-      GlobalPreferences::SharedGlobalPreferences()
-          ->numberOfSignificantDigits());
+      SharedGlobalPrefs().displayMode(),
+      SharedGlobalPrefs().numberOfSignificantDigits());
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
@@ -179,9 +178,8 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
                                 : sequence->evaluateXYAtParameter(abscissa).y();
   *memoizedLayoutAtIndex(index) =
       UserExpression::Builder(sumValue).createLayout(
-          GlobalPreferences::SharedGlobalPreferences()->displayMode(),
-          GlobalPreferences::SharedGlobalPreferences()
-              ->numberOfSignificantDigits(),
+          SharedGlobalPrefs().displayMode(),
+          SharedGlobalPrefs().numberOfSignificantDigits(),
           App::app()->localContext());
 }
 

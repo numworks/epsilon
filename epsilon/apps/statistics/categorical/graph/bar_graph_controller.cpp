@@ -121,7 +121,7 @@ void BarGraphController::ContentView::updateBannerView() {
   int category = m_barGraphView.selectedCategory();
 
   Poincare::Preferences::PrintFloatMode displayMode =
-      GlobalPreferences::SharedGlobalPreferences()->displayMode();
+      SharedGlobalPrefs().displayMode();
   constexpr static int k_bufferSize =
       1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
   char buffer[k_bufferSize];

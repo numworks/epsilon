@@ -308,8 +308,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
   char buffer[bufferSize];
   PoincareHelpers::ConvertFloatToText<double>(
       result, buffer, bufferSize,
-      GlobalPreferences::SharedGlobalPreferences()
-          ->numberOfSignificantDigits());
+      SharedGlobalPrefs().numberOfSignificantDigits());
   bufferCell->setText(buffer);
 }
 

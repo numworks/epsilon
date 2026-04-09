@@ -23,17 +23,15 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(
     KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bounds(), Palette::White);
-  ctx->drawString(
-      m_line->text(), KDPointZero,
-      {.glyphColor = textColor(m_line),
-       .backgroundColor = defaultBackgroundColor(),
-       .font = GlobalPreferences::SharedGlobalPreferences()->font()});
+  ctx->drawString(m_line->text(), KDPointZero,
+                  {.glyphColor = textColor(m_line),
+                   .backgroundColor = defaultBackgroundColor(),
+                   .font = SharedGlobalPrefs().font()});
 }
 
 KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::
     minimalSizeForOptimalDisplay() const {
-  return m_line ? KDFont::Font(
-                      GlobalPreferences::SharedGlobalPreferences()->font())
+  return m_line ? KDFont::Font(SharedGlobalPrefs().font())
                       ->stringSize(m_line->text())
                 : KDSizeZero;
 }
@@ -41,17 +39,15 @@ KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::
 ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(
     Responder* parentResponder)
     : ScrollableView(parentResponder, &m_consoleLineView, this) {
-  decorator()->setFont(GlobalPreferences::SharedGlobalPreferences()->font());
+  decorator()->setFont(SharedGlobalPrefs().font());
   setBackgroundColor(Palette::White);
 }
 
 ConsoleLineCell::ConsoleLineCell(Responder* parentResponder)
     : HighlightCell(),
       Responder(parentResponder),
-      m_promptView(
-          I18n::Message::ConsolePrompt,
-          {.style =
-               {.font = GlobalPreferences::SharedGlobalPreferences()->font()}}),
+      m_promptView(I18n::Message::ConsolePrompt,
+                   {.style = {.font = SharedGlobalPrefs().font()}}),
       m_scrollableView(this) {}
 
 void ConsoleLineCell::setLine(ConsoleLine line) {
@@ -94,7 +90,7 @@ View* ConsoleLineCell::subviewAtIndex(int index) {
 void ConsoleLineCell::layoutSubviews(bool force) {
   if (m_line.isCommand()) {
     KDSize promptSize =
-        KDFont::Font(GlobalPreferences::SharedGlobalPreferences()->font())
+        KDFont::Font(SharedGlobalPrefs().font())
             ->stringSize(I18n::translate(I18n::Message::ConsolePrompt));
     setChildFrame(&m_promptView,
                   KDRect(KDPointZero, promptSize.width(), bounds().height()),

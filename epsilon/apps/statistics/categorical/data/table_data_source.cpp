@@ -69,7 +69,7 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     if (std::isfinite(p)) {
       Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
           p, buffer, bufferSize, k_numberOfSignificantDigits,
-          GlobalPreferences::SharedGlobalPreferences()->displayMode());
+          SharedGlobalPrefs().displayMode());
     }
     editableCell->editableTextCell()->textField()->setText(buffer);
   } else {
@@ -85,7 +85,7 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     if (std::isfinite(p)) {
       Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
           p, buffer, bufferSize, k_numberOfSignificantDigits,
-          GlobalPreferences::SharedGlobalPreferences()->displayMode());
+          SharedGlobalPrefs().displayMode());
     }
     myCell->setText(buffer);
   }

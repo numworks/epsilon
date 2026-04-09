@@ -133,8 +133,7 @@ size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
                                               int precision) const {
   ContinuousFunctionProperties thisProperties = properties();
   if (thisProperties.isParametric()) {
-    Preferences::PrintFloatMode mode =
-        GlobalPreferences::SharedGlobalPreferences()->displayMode();
+    Preferences::PrintFloatMode mode = SharedGlobalPrefs().displayMode();
     return Poincare::Print::CustomPrintf(buffer, bufferSize, "(%*.*ed;%*.*ed)",
                                          cursorX, mode, precision, cursorY,
                                          mode, precision);
@@ -410,8 +409,7 @@ float ContinuousFunction::autoTMax() const {
              : (properties().isInversePolar()
                     ? Range1D<float>::k_defaultHalfLength
                     : 2.f * Trigonometry::PiInAngleUnit(
-                                GlobalPreferences::SharedGlobalPreferences()
-                                    ->angleUnit()));
+                                SharedGlobalPrefs().angleUnit()));
 }
 
 float ContinuousFunction::autoTMin() const {
@@ -462,10 +460,8 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
   }
   assert(thisProperties.isPolar() || thisProperties.isInversePolar());
   const T r = thisProperties.isPolar() ? x1x2.y() : x1x2.x();
-  const T angle =
-      (thisProperties.isPolar() ? x1x2.x() : x1x2.y()) * M_PI /
-      Trigonometry::PiInAngleUnit(
-          GlobalPreferences::SharedGlobalPreferences()->angleUnit());
+  const T angle = (thisProperties.isPolar() ? x1x2.x() : x1x2.y()) * M_PI /
+                  Trigonometry::PiInAngleUnit(SharedGlobalPrefs().angleUnit());
   return Coordinate2D<T>(r * std::cos(angle), r * std::sin(angle));
 }
 
@@ -580,8 +576,7 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
   }
   SimplificationParameters simplificationParameters = {
       .user = {.complexFormat = complexFormat(record),
-               .angleUnit =
-                   GlobalPreferences::SharedGlobalPreferences()->angleUnit()},
+               .angleUnit = SharedGlobalPrefs().angleUnit()},
       .projectionPolicy = {.symbolic = SymbolicComputation::KeepAllSymbols},
       .reductionPolicy = {.target = ReductionTarget::System}};
   if (thisProperties.isScatterPlot()) {
@@ -716,8 +711,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
       expressionEquation(record, &computedEquationType, &computedFunctionSymbol,
                          &isCartesianEquation);
   ComplexFormat complexFormat = this->complexFormat(record);
-  AngleUnit angleUnit =
-      GlobalPreferences::SharedGlobalPreferences()->angleUnit();
+  AngleUnit angleUnit = SharedGlobalPrefs().angleUnit();
   AnalysisExpression result =
       equation
           .cloneAndReduce(SimplificationParameters{

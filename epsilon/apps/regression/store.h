@@ -100,13 +100,11 @@ class Store : public Shared::LinearRegressionStore {
   }
   static bool DisplayResidualStandardDeviation(Model::Type type) {
     return HasCoefficients(type) &&
-           GlobalPreferences::SharedGlobalPreferences()
-                   ->regressionAppVariant() ==
+           SharedGlobalPrefs().regressionAppVariant() ==
                CountryPreferences::RegressionApp::Variant1;
   }
   static bool HasCoefficientM(Model::Type type) {
-    return GlobalPreferences::SharedGlobalPreferences()
-                   ->regressionAppVariant() ==
+    return SharedGlobalPrefs().regressionAppVariant() ==
                CountryPreferences::RegressionApp::Variant1 &&
            (type == Model::Type::LinearAxpb || type == Model::Type::Median);
   }

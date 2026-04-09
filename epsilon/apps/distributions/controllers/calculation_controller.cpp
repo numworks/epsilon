@@ -239,8 +239,7 @@ void CalculationController::reload() {
         m_distribution->parameterAtIndex(
             m_distribution->uninitializedParameterIndex()),
         Poincare::Preferences::PrintFloatMode::Decimal,
-        GlobalPreferences::SharedGlobalPreferences()
-            ->numberOfSignificantDigits());
+        SharedGlobalPrefs().numberOfSignificantDigits());
     m_contentView.unknownParameterValue()->setText(buffer);
   }
   m_contentView.reload();

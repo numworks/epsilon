@@ -72,8 +72,7 @@ void UnitListController::computeAdditionalResults(
     const UserExpression& input, const UserExpression& exactOutput,
     const UserExpression& approximateOutput) {
   assert(AdditionalResultsType::HasUnit(exactOutput, m_calculationPreferences));
-  Preferences::UnitFormat unitFormat =
-      GlobalPreferences::SharedGlobalPreferences()->unitFormat();
+  Preferences::UnitFormat unitFormat = SharedGlobalPrefs().unitFormat();
   const SymbolContext& symbolContext = App::app()->localContext();
   SimplificationParameters simplificationParameters = {
       .user =

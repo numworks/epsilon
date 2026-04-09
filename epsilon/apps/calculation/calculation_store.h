@@ -104,10 +104,9 @@ class CalculationStore
 
   HeightSensitivePreferences getCurrentPreferences() {
     return {
-        GlobalPreferences::SharedGlobalPreferences()
-            ->numberOfSignificantDigits(),
-        GlobalPreferences::SharedGlobalPreferences()->combinatoricSymbols(),
-        GlobalPreferences::SharedGlobalPreferences()->logarithmBasePosition(),
+        SharedGlobalPrefs().numberOfSignificantDigits(),
+        SharedGlobalPrefs().combinatoricSymbols(),
+        SharedGlobalPrefs().logarithmBasePosition(),
     };
   }
 

@@ -88,7 +88,6 @@ MainController::MainController(Responder* parentResponder)
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
-  GlobalPreferences* preferences = GlobalPreferences::SharedGlobalPreferences();
   int index = selectedRow();
   if (event == Ion::Events::Zero) {
     int aboutIndex = s_aboutIndex - !hasExamModeCell() - !hasPressToTestCell() -
@@ -114,15 +113,16 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   }
 
   if (type == k_popUpCellType) {
-    preferences->setShowPopUp(!preferences->showPopUp());
+    GlobalPreferences::SharedGlobalPreferences()->setShowPopUp(
+        !SharedGlobalPrefs().showPopUp());
     m_selectableListView.reloadSelectedCell();
   } else if (type == k_brightnessCellType) {
     int delta = Ion::Backlight::MaxBrightness /
                 GlobalPreferences::NumberOfBrightnessStates;
     assert(GaugeView::DirectionForEvent(event) != 0);
-    preferences->setBrightnessLevel(preferences->brightnessLevel() +
-                                    GaugeView::DirectionForEvent(event) *
-                                        delta);
+    GlobalPreferences::SharedGlobalPreferences()->setBrightnessLevel(
+        SharedGlobalPrefs().brightnessLevel() +
+        GaugeView::DirectionForEvent(event) * delta);
     m_selectableListView.reloadSelectedCell();
   } else {
     assert(type == k_defaultCellType);
@@ -218,8 +218,6 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
    * value from GlobalPreferences. This would make the code more modular and
    * thus clearer. */
 
-  const GlobalPreferences* preferences =
-      GlobalPreferences::SharedGlobalPreferences();
   int modelIndex = getModelIndex(row);
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
   int type = typeAtRow(row);
@@ -227,7 +225,7 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
     assert(&m_brightnessCell == cell);
     m_brightnessCell.label()->setMessage(title);
     m_brightnessCell.accessory()->setLevel(
-        (float)preferences->brightnessLevel() /
+        (float)SharedGlobalPrefs().brightnessLevel() /
         (float)Ion::Backlight::MaxBrightness);
     return;
   }
@@ -239,7 +237,7 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
       ->setMessage(title);
   if (type == k_popUpCellType) {
     assert(cell == &m_popUpCell);
-    m_popUpCell.accessory()->setState(preferences->showPopUp());
+    m_popUpCell.accessory()->setState(SharedGlobalPrefs().showPopUp());
     return;
   }
   assert(type == k_defaultCellType);
@@ -248,13 +246,13 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
    * case that appears right after. */
   I18n::Message message = messageAtModelIndex(modelIndex);
   if (message == I18n::Message::Language) {
-    int languageIndex = (int)(preferences->language());
+    int languageIndex = (int)(SharedGlobalPrefs().language());
     static_cast<SubMenuCell*>(cell)->subLabel()->setMessage(
         I18n::LanguageNames[languageIndex]);
     return;
   }
   if (message == I18n::Message::Country) {
-    int countryIndex = (int)(preferences->country());
+    int countryIndex = (int)(SharedGlobalPrefs().country());
     static_cast<SubMenuCell*>(cell)->subLabel()->setMessage(
         I18n::CountryNames[countryIndex]);
     return;
@@ -263,23 +261,23 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
   int childIndex = -1;
   switch (message) {
     case I18n::Message::AngleUnit:
-      childIndex = (int)preferences->angleUnit();
+      childIndex = (int)SharedGlobalPrefs().angleUnit();
       break;
     case I18n::Message::DisplayMode:
-      childIndex = (int)preferences->displayMode();
+      childIndex = (int)SharedGlobalPrefs().displayMode();
       break;
     case I18n::Message::EditionMode:
-      childIndex = (int)preferences->editionMode();
+      childIndex = (int)SharedGlobalPrefs().editionMode();
       break;
     case I18n::Message::ComplexFormat:
-      childIndex = (int)preferences->complexFormat();
+      childIndex = (int)SharedGlobalPrefs().complexFormat();
       break;
     case I18n::Message::ScreenTimeout:
-      childIndex =
-          ScreenTimeoutController::toRowLabel(preferences->dimmingTime());
+      childIndex = ScreenTimeoutController::toRowLabel(
+          SharedGlobalPrefs().dimmingTime());
       break;
     case I18n::Message::FontSizes:
-      childIndex = preferences->font() == KDFont::Size::Large ? 0 : 1;
+      childIndex = SharedGlobalPrefs().font() == KDFont::Size::Large ? 0 : 1;
       break;
     default:
       childIndex = -1;
@@ -356,7 +354,7 @@ bool MainController::hasPressToTestCell() const {
 bool MainController::hasTestModeCell() const {
   // If both exam mode and press to test are available
   CountryPreferences::AvailableExamModes examMode =
-      GlobalPreferences::SharedGlobalPreferences()->availableExamModes();
+      SharedGlobalPrefs().availableExamModes();
   return !hideExamModes() &&
          (examMode == CountryPreferences::AvailableExamModes::All ||
           examMode == CountryPreferences::AvailableExamModes::AmericanAll) &&

@@ -230,8 +230,7 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
 int ConsoleController::numberOfRows() const { return editableCellRow() + 1; }
 
 KDCoordinate ConsoleController::defaultRowHeight() {
-  return KDFont::GlyphHeight(
-      GlobalPreferences::SharedGlobalPreferences()->font());
+  return KDFont::GlyphHeight(SharedGlobalPrefs().font());
 }
 
 HighlightCell* ConsoleController::reusableCell(int index, int type) {

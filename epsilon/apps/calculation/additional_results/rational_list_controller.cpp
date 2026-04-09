@@ -40,7 +40,7 @@ void RationalListController::computeAdditionalResults(
           eReduced, beautificationParameters);
   UserExpression mixedFraction = AdditionalResultsHelper::CreateMixedFraction(
       eReduced,
-      GlobalPreferences::SharedGlobalPreferences()->mixedFractions() ==
+      SharedGlobalPrefs().mixedFractions() ==
           Preferences::MixedFractions::Enabled,
       beautificationParameters);
   UserExpression euclideanDiv =

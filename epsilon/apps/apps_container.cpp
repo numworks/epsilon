@@ -125,13 +125,11 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
 
 void AppsContainer::didSuspend() {
   resetShiftAlphaStatus();
-  GlobalPreferences* globalPreferences =
-      GlobalPreferences::SharedGlobalPreferences();
   // Display the prompt if it has a message to display
   if (promptController() != nullptr &&
       activeApp()->snapshot() != onBoardingAppSnapshot() &&
       activeApp()->snapshot() != hardwareTestAppSnapshot() &&
-      globalPreferences->showPopUp()) {
+      SharedGlobalPrefs().showPopUp()) {
     activeApp()->displayModalViewController(promptController(), 0.f, 0.f);
   }
   /* Reset first enumeration flag in case the device was unplugged during its
@@ -140,7 +138,7 @@ void AppsContainer::didSuspend() {
   /* Ion::Power::suspend() completely shuts down the LCD controller. Therefore
    * the frame memory is lost. That's why we need to force a window redraw
    * upon wakeup, otherwise the screen is filled with noise. */
-  Ion::Backlight::setBrightness(globalPreferences->brightnessLevel());
+  Ion::Backlight::setBrightness(SharedGlobalPrefs().brightnessLevel());
   m_backlightDimmingTimer.reset();
   m_window.updateBatteryAnimation();
   window()->redraw(true);
@@ -167,8 +165,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   if (event.isKeyPress()) {
     m_backlightDimmingTimer.reset();
     m_suspendTimer.reset();
-    Ion::Backlight::setBrightness(
-        GlobalPreferences::SharedGlobalPreferences()->brightnessLevel());
+    Ion::Backlight::setBrightness(SharedGlobalPrefs().brightnessLevel());
   }
   if (!didProcessEvent && alphaLockWantsRedraw) {
     window()->redraw();
@@ -203,8 +200,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   if (event == Ion::Events::USBPlug) {
     if (Ion::USB::isPlugged()) {
       Ion::USB::enable();
-      Ion::Backlight::setBrightness(
-          GlobalPreferences::SharedGlobalPreferences()->brightnessLevel());
+      Ion::Backlight::setBrightness(SharedGlobalPrefs().brightnessLevel());
     } else {
       m_firstUSBEnumeration = true;
       Ion::USB::disable();
@@ -325,8 +321,7 @@ void AppsContainer::run() {
        * loaded the checkpoint and did not call AppsContainer::dispatchEvent. */
       m_backlightDimmingTimer.reset();
       m_suspendTimer.reset();
-      Ion::Backlight::setBrightness(
-          GlobalPreferences::SharedGlobalPreferences()->brightnessLevel());
+      Ion::Backlight::setBrightness(SharedGlobalPrefs().brightnessLevel());
       Ion::Events::setSpinner(true);
       Ion::Display::setScreenshotCallback(ShowCursor);
       m_dfuBetweenEvents = false;
@@ -363,8 +358,7 @@ bool AppsContainer::updateBatteryState() {
 }
 
 void AppsContainer::refreshPreferences() {
-  m_backlightDimmingTimer.setNewTimeout(
-      GlobalPreferences::SharedGlobalPreferences()->dimmingTime());
+  m_backlightDimmingTimer.setNewTimeout(SharedGlobalPrefs().dimmingTime());
   m_window.refreshPreferences();
 }
 

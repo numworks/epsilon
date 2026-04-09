@@ -172,8 +172,7 @@ SolutionsController::SolutionsController(Responder* parentResponder,
                 return true;
               },
               this)) {
-  const char* delta =
-      GlobalPreferences::SharedGlobalPreferences()->discriminantSymbol();
+  const char* delta = SharedGlobalPrefs().discriminantSymbol();
   size_t lenDelta = strlen(delta);
   m_delta2Layout = Layout::Create(
       KA ^ KB, {.KA = Layout::String(delta, lenDelta),
@@ -380,8 +379,7 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
          * solutions */
         int variableIndex = row + 1;
         CountryPreferences::SolverDoubleRootName doubleRootPref =
-            GlobalPreferences::SharedGlobalPreferences()
-                ->solverDoubleRootName();
+            SharedGlobalPrefs().solverDoubleRootName();
         /* numberOfSolutions also contains a "solution" for Δ
          * => numberOfSolutions == 2 */
         if (doubleRootPref ==

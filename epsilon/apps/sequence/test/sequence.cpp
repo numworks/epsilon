@@ -165,8 +165,7 @@ QUIZ_CASE(sequence_evaluation) {
   }
   sequences.reset();
 
-  assert(GlobalPreferences::SharedGlobalPreferences()->complexFormat() ==
-         ComplexFormat::Real);
+  assert(SharedGlobalPrefs().complexFormat() == ComplexFormat::Real);
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       ComplexFormat::Cartesian);
   // u(n) = (-1/2)^n

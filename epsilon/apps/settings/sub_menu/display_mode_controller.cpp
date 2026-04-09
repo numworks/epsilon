@@ -52,10 +52,8 @@ void DisplayModeController::fillCellForRow(HighlightCell* cell, int row) {
     GenericSubController::fillCellForRow(cell, row);
     constexpr int bufferSize = 3;
     char buffer[bufferSize];
-    int length =
-        OMG::Print::IntLeft(GlobalPreferences::SharedGlobalPreferences()
-                                ->numberOfSignificantDigits(),
-                            buffer, bufferSize);
+    int length = OMG::Print::IntLeft(
+        SharedGlobalPrefs().numberOfSignificantDigits(), buffer, bufferSize);
     buffer[length] = 0;
     m_editableCell.textField()->setText(buffer);
     return;
@@ -78,7 +76,7 @@ bool DisplayModeController::textFieldDidFinishEditing(
   if (floatBody < 1.0) {
     floatBody = 1.0;
   }
-  if (GlobalPreferences::SharedGlobalPreferences()->displayMode() ==
+  if (SharedGlobalPrefs().displayMode() ==
           Poincare::Preferences::PrintFloatMode::Engineering &&
       floatBody < 3.0) {
     floatBody = 3.0;

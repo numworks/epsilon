@@ -37,8 +37,7 @@ class FunctionBannerDelegate {
       bool cappedNumberOfSignificantDigits = false);
   virtual XYBannerView* bannerView() = 0;
   virtual int numberOfSignificantDigits(bool capped = false) const {
-    int userDigits = GlobalPreferences::SharedGlobalPreferences()
-                         ->numberOfSignificantDigits();
+    int userDigits = SharedGlobalPrefs().numberOfSignificantDigits();
     return capped && userDigits > k_cappedNumberOfSignificantDigits
                ? k_cappedNumberOfSignificantDigits
                : userDigits;

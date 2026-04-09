@@ -14,8 +14,7 @@ int LocalizationController::indexOfCellToSelectOnReset() const {
              ? Shared::LocalizationController::indexOfCellToSelectOnReset()
              : IndexOfCountry(
                    I18n::DefaultCountryForLanguage[static_cast<uint8_t>(
-                       GlobalPreferences::SharedGlobalPreferences()
-                           ->language())]);
+                       SharedGlobalPrefs().language())]);
 }
 
 bool LocalizationController::handleEvent(Ion::Events::Event event) {

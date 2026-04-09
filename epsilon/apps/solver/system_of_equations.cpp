@@ -44,13 +44,9 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
 
   UserExpression eqList = equationList(m_store);
   EquationSolver::SolverResult result = EquationSolver::ExactSolveAdaptive(
-      eqList,
-      {.user = {
-           .complexFormat =
-               GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-           .angleUnit =
-               GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-           .context = symbolContext}});
+      eqList, {.user = {.complexFormat = SharedGlobalPrefs().complexFormat(),
+                        .angleUnit = SharedGlobalPrefs().angleUnit(),
+                        .context = symbolContext}});
   UserExpression exactSolutionList = result.exactSolutionList;
   UserExpression approximateSolutionList = result.approximateSolutionList;
   m_solutionMetadata = result.solutionMetadata;
@@ -107,10 +103,8 @@ void SystemOfEquations::approximateSolve(const SymbolContext& symbolContext) {
 
   EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
       eqList,
-      {.user = {.complexFormat = GlobalPreferences::SharedGlobalPreferences()
-                                     ->complexFormat(),
-                .angleUnit =
-                    GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+      {.user = {.complexFormat = SharedGlobalPrefs().complexFormat(),
+                .angleUnit = SharedGlobalPrefs().angleUnit(),
                 .context = symbolContext},
        .reductionPolicy = {.target = ReductionTarget::System}},
       m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
@@ -149,9 +143,7 @@ void SystemOfEquations::approximateSolve(const SymbolContext& symbolContext) {
     double solution =
         result.approximateSolutionList.cloneChildAtIndex(i)
             .approximateToRealScalar<double>(
-                UserParameters{.angleUnit =
-                                   GlobalPreferences::SharedGlobalPreferences()
-                                       ->angleUnit()},
+                UserParameters{.angleUnit = SharedGlobalPrefs().angleUnit()},
                 ApproximationPolicy{.optimize = true});
     m_solutions[i] =
         Solution(Poincare::Layout(), Poincare::Layout(), solution, false, true);
@@ -206,12 +198,10 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   if (shouldUseExactForApproximate) {
     // Approximate exact reduction preserving variables and symbols
     exactApproximateClone = exact.cloneAndApproximate(
-        UserParameters{
-            .complexFormat = m_equationMetadata.complexFormat,
-            .angleUnit = angleUnit,
-            .unitFormat =
-                GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-            .context = symbolContext},
+        UserParameters{.complexFormat = m_equationMetadata.complexFormat,
+                       .angleUnit = angleUnit,
+                       .unitFormat = SharedGlobalPrefs().unitFormat(),
+                       .context = symbolContext},
         ApproximationPolicy{.onlyReplaceNumerical = true});
   }
 

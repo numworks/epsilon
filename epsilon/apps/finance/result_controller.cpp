@@ -26,8 +26,7 @@ void ResultController::viewWillAppear() {
   double value = App::GetInterestData()->computeUnknownValue();
   constexpr int bufferSize = Escher::FloatBufferTextView<>::MaxTextSize();
   char buffer[bufferSize];
-  int precision =
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+  int precision = SharedGlobalPrefs().numberOfSignificantDigits();
   Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
       value, buffer, bufferSize, precision,
       Poincare::Preferences::PrintFloatMode::Decimal);

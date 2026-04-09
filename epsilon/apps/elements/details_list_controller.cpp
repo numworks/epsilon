@@ -84,8 +84,7 @@ void DetailsListController::fillCellForRow(HighlightCell* cell, int row) {
   }
 
   typedCell->subLabel()->setMessage(sublabel);
-  int significantDigits =
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+  int significantDigits = SharedGlobalPrefs().numberOfSignificantDigits();
   typedCell->label()->setLayout(dataField->fieldSymbolLayout());
   typedCell->accessory()->setLayout(dataField->getLayout(z, significantDigits));
 }

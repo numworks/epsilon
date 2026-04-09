@@ -51,7 +51,7 @@ void App::Snapshot::reset() {
 
 void App::Snapshot::countryWasUpdated() {
   m_userPreferences.setDisplayOutliers(
-      GlobalPreferences::SharedGlobalPreferences()->outliersStatus() ==
+      SharedGlobalPrefs().outliersStatus() ==
       CountryPreferences::OutlierDefaultVisibility::Displayed);
 }
 

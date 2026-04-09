@@ -112,7 +112,7 @@ int FunctionModelsParameterController::numberOfRows() const {
 const FunctionModelsParameterController::Model*
 FunctionModelsParameterController::Models() {
   CountryPreferences::GraphTemplatesLayout layout =
-      GlobalPreferences::SharedGlobalPreferences()->graphTemplatesLayout();
+      SharedGlobalPrefs().graphTemplatesLayout();
   switch (layout) {
     case CountryPreferences::GraphTemplatesLayout::Variant1:
       return layoutVariant1;
@@ -127,7 +127,7 @@ FunctionModelsParameterController::Models() {
 
 bool FunctionModelsParameterController::EquationsPrefered() {
   CountryPreferences::GraphTemplateDefault templateDefault =
-      GlobalPreferences::SharedGlobalPreferences()->graphTemplateDefault();
+      SharedGlobalPrefs().graphTemplateDefault();
   return CountryPreferences::GraphTemplateDefault::Equation == templateDefault;
 }
 

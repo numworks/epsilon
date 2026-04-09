@@ -523,8 +523,7 @@ void GraphView::drawPolar(KDContext* ctx, KDRect rect, ContinuousFunction* f,
   float rectDown =
       pixelToFloat(OMG::Axis::Vertical, rect.bottom() + k_externRectMargin);
 
-  const AngleUnit angleUnit =
-      GlobalPreferences::SharedGlobalPreferences()->angleUnit();
+  const AngleUnit angleUnit = SharedGlobalPrefs().angleUnit();
   const float piInAngleUnit = Trigonometry::PiInAngleUnit(angleUnit);
   /* Cancel optimization if :
    * - One of rect limits is nan.

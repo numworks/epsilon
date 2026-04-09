@@ -51,8 +51,7 @@ Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
     modelForRecord(
         Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(
             name, modelExtension()))
-        ->setInitialRank(GlobalPreferences::SharedGlobalPreferences()
-                             ->sequencesInitialRank());
+        ->setInitialRank(SharedGlobalPrefs().sequencesInitialRank());
   }
   return error;
 }

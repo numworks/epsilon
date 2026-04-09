@@ -320,12 +320,11 @@ QUIZ_CASE(calculation_significant_digits) {
 QUIZ_CASE(calculation_display_exact_approximate) {
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
-  AngleUnit previousAngleUnit =
-      GlobalPreferences::SharedGlobalPreferences()->angleUnit();
+  AngleUnit previousAngleUnit = SharedGlobalPrefs().angleUnit();
   GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(AngleUnit::Degree);
 
   uint8_t previousNumberOfSignificantDigits =
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+      SharedGlobalPrefs().numberOfSignificantDigits();
   GlobalPreferences::SharedGlobalPreferences()->setNumberOfSignificantDigits(
       PrintFloat::k_maxNumberOfSignificantDigits);
 
@@ -526,8 +525,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("(π+1)*log(7,3)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "(1+π)log(7,3)", "7.335770099",
                       &store);
-  I18n::Country previousCountry =
-      GlobalPreferences::SharedGlobalPreferences()->country();
+  I18n::Country previousCountry = SharedGlobalPrefs().country();
   GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::NL);
   assertCalculationIs("(π+1)*log(7,3)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "(1+π)·log(7,3)", "7.335770099",
@@ -537,7 +535,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 
 QUIZ_CASE(calculation_big_expressions) {
   uint8_t previousNumberOfSignificantDigits =
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+      SharedGlobalPrefs().numberOfSignificantDigits();
   GlobalPreferences::SharedGlobalPreferences()->setNumberOfSignificantDigits(
       PrintFloat::k_maxNumberOfSignificantDigits);
 
@@ -844,7 +842,7 @@ QUIZ_CASE(calculation_complex_format) {
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
   uint8_t previousNumberOfSignificantDigits =
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+      SharedGlobalPrefs().numberOfSignificantDigits();
   GlobalPreferences::SharedGlobalPreferences()->setNumberOfSignificantDigits(
       PrintFloat::k_maxNumberOfSignificantDigits);
 

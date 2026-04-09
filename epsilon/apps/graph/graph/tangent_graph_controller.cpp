@@ -104,15 +104,13 @@ void TangentGraphController::reloadBannerView() {
         reloadSlopeInBannerViewForCursorOnFunction(m_cursor, m_record);
   }
 
-  Print::CustomPrintf(
-      buffer, bufferSize, "a=%*.*ed", coefficientA,
-      GlobalPreferences::SharedGlobalPreferences()->displayMode(), precision);
+  Print::CustomPrintf(buffer, bufferSize, "a=%*.*ed", coefficientA,
+                      SharedGlobalPrefs().displayMode(), precision);
   m_bannerView->aView()->setText(buffer);
 
   double coefficientB = -coefficientA * m_cursor->x() + m_cursor->y();
-  Print::CustomPrintf(
-      buffer, bufferSize, "b=%*.*ed", coefficientB,
-      GlobalPreferences::SharedGlobalPreferences()->displayMode(), precision);
+  Print::CustomPrintf(buffer, bufferSize, "b=%*.*ed", coefficientB,
+                      SharedGlobalPrefs().displayMode(), precision);
   m_bannerView->bView()->setText(buffer);
   m_bannerView->reload();
 }

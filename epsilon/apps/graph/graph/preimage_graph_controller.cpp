@@ -28,8 +28,8 @@ Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
   PreparedFunction imageExpr = PreparedFunction::Builder(
       SystemExpression::Builder<double>(m_image).tree());
 
-  NumericSolver::IntersectionSolver solver = NumericSolver::IntersectionSolver(
-      start, max, imageExpr, f, Shared::GlobalContextAccessor::Context());
+  NumericSolver::IntersectionSolver solver =
+      NumericSolver::IntersectionSolver(start, max, imageExpr, f);
   if (stretch) {
     solver.stretch();
   }

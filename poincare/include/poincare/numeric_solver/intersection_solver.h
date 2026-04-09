@@ -15,18 +15,16 @@ namespace Poincare::NumericSolver {
 class IntersectionSolver : public RootSolver {
  public:
   IntersectionSolver(double xStart, double xEnd, const PreparedFunction& f,
-                     const PreparedFunction& g, bool areAlongSameAxis,
-                     const SymbolContext& context);
+                     const PreparedFunction& g, bool areAlongSameAxis);
   IntersectionSolver(double xStart, double xEnd, const PreparedFunction& f,
-                     const PreparedFunction& g, const SymbolContext& context)
-      : IntersectionSolver(xStart, xEnd, f, g, true, context) {}
+                     const PreparedFunction& g)
+      : IntersectionSolver(xStart, xEnd, f, g, true) {}
 
   Solution<double> next() override;
 
  private:
   IntersectionSolver(double, double, const PreparedFunction&,
-                     const PreparedFunction&, PreparedFunction&&, bool,
-                     const SymbolContext&);
+                     const PreparedFunction&, PreparedFunction&&, bool);
 
   PreparedFunction m_f;
   PreparedFunction m_g;

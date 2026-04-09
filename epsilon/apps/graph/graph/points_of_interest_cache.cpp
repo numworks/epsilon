@@ -319,7 +319,7 @@ PointOfInterest findIntersectionsAux(PointSearchContext* ctx,
   Solution<double> solution;
 
   IntersectionSolver solver(ctx->currentStartForIntersections, ctx->end, f, g,
-                            alongSameAxis, ctx->context);
+                            alongSameAxis);
   solver.setSearchStep(ctx->searchStep);
   solver.setGrowthSpeed(GrowthSpeed::Precise);
   // Only stretch the end, or would stay stuck at the first solution.

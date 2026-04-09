@@ -41,20 +41,18 @@ static Tree* FunctionDifferenceForIntersection(const Tree* f, const Tree* g,
 IntersectionSolver::IntersectionSolver(double xStart, double xEnd,
                                        const PreparedFunction& f,
                                        const PreparedFunction& g,
-                                       bool areAlongSameAxis,
-                                       const SymbolContext& context)
+                                       bool areAlongSameAxis)
     : IntersectionSolver(
           xStart, xEnd, f, g,
           PreparedFunction::Builder(FunctionDifferenceForIntersection(
               f.tree(), g.tree(), areAlongSameAxis)),
-          areAlongSameAxis, context) {}
+          areAlongSameAxis) {}
 
 IntersectionSolver::IntersectionSolver(double xStart, double xEnd,
                                        const PreparedFunction& f,
                                        const PreparedFunction& g,
                                        PreparedFunction&& diff,
-                                       bool areAlongSameAxis,
-                                       const SymbolContext& context)
+                                       bool areAlongSameAxis)
     : RootSolver(xStart, xEnd, diff.tree()),
       m_f(f),
       m_g(g),

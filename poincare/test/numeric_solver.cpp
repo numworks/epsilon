@@ -62,8 +62,7 @@ void assert_solutions_are(
 
   RootSolver rootSolver(start, end, f);
   ExtremumSolver extremumSolver(start, end, f);
-  IntersectionSolver intersectionSolver(start, end, f, g,
-                                        Poincare::EmptySymbolContext{});
+  IntersectionSolver intersectionSolver(start, end, f, g);
 
   auto runAssertions = [&](auto* solver) {
     for (Poincare::Coordinate2D<double> c : expected) {

@@ -19,7 +19,12 @@ class Store : public Shared::LinearRegressionStore {
   static const char* SeriesTitle(int series);
 
   constexpr static char k_regressionFunctionBaseName[] = "R";
+  static constexpr const char* const k_RegressionFunctionBaseNames[] = {
+      Store::k_regressionFunctionBaseName};
+
   constexpr static char k_residualListBaseName[] = "RES";
+  static constexpr const char* const k_ResidualListBaseNames[] = {
+      Store::k_residualListBaseName};
 
   constexpr static std::array<const char*, 2> k_storedNames = {
       k_regressionFunctionBaseName, k_residualListBaseName};

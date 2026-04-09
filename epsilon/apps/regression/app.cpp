@@ -43,17 +43,13 @@ App::Snapshot::Snapshot()
                                      Shared::DoublePairStore::k_numberOfSeries);
 
   // Register R1, R2, ... in the sharedStorage
-  static constexpr const char* const kRegressionFunctionBaseNames[] = {
-      Store::k_regressionFunctionBaseName};
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
-      ->registerArrayOfReservedNames(kRegressionFunctionBaseNames,
+      ->registerArrayOfReservedNames(Store::k_RegressionFunctionBaseNames,
                                      Ion::Storage::regressionFunctionExtension,
                                      Shared::DoublePairStore::k_numberOfSeries);
   // Register RES1, RES2, ... in the sharedStorage
-  static constexpr const char* const kResidualListBaseNames[] = {
-      Store::k_residualListBaseName};
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
-      ->registerArrayOfReservedNames(kResidualListBaseNames,
+      ->registerArrayOfReservedNames(Store::k_ResidualListBaseNames,
                                      Ion::Storage::regressionListExtension,
                                      Shared::DoublePairStore::k_numberOfSeries);
 }

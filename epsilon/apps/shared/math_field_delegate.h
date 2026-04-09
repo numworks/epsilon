@@ -5,6 +5,7 @@
 #include <escher/layout_field.h>
 #include <escher/layout_field_delegate.h>
 #include <escher/text_field_delegate.h>
+#include <poincare/syntax_error.h>
 #include <poincare/user_expression.h>
 
 namespace Shared {
@@ -23,7 +24,8 @@ class AbstractMathFieldDelegate {
   bool handleEventForField(Escher::EditableField* field,
                            Ion::Events::Event event);
   void updateXNTIndex(Ion::Events::Event event);
-  void displayWarningForSyntaxError(int error) const;
+  void displayWarningForSyntaxError(
+      Poincare::SyntaxError error = Poincare::SyntaxError::Default) const;
 
  private:
   int m_currentXNTIndex;

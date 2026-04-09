@@ -6,6 +6,8 @@
 #include <poincare/code_points.h>
 #include <poincare/user_expression.h>
 
+#include "syntax_error_message.h"
+
 using namespace Poincare;
 using namespace Escher;
 
@@ -38,9 +40,9 @@ bool AbstractMathFieldDelegate::isAcceptableExpression(
   return !exp.isUninitialized() && !exp.isStore();
 }
 
-void AbstractMathFieldDelegate::displayWarningForSyntaxError(int error) const {
-  // TODO: Use a different message depending on the error
-  App::app()->displayWarning(I18n::Message::SyntaxError);
+void AbstractMathFieldDelegate::displayWarningForSyntaxError(
+    SyntaxError error) const {
+  App::app()->displayWarning(MessageForSyntaxError(error));
 }
 
 bool AbstractMathFieldDelegate::isAcceptableTextOrWarning(
@@ -56,7 +58,7 @@ bool AbstractMathFieldDelegate::isAcceptableTextOrWarning(
   UserExpression exp = UserExpression::Parse(text, symbolContext);
   if (exp.isUninitialized()) {
     // Unparsable expression
-    displayWarningForSyntaxError(0);
+    displayWarningForSyntaxError();
     return false;
   }
   /* Expression serialization.
@@ -69,11 +71,11 @@ bool AbstractMathFieldDelegate::isAcceptableTextOrWarning(
   if (length >= bufferSize - 1) {
     /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
      * escaped before printing utterly the expression. */
-    displayWarningForSyntaxError(0);
+    displayWarningForSyntaxError();
     return false;
   }
   if (!isAcceptableExpression(exp, symbolContext)) {
-    displayWarningForSyntaxError(0);
+    displayWarningForSyntaxError();
     return false;
   }
   return true;
@@ -100,7 +102,7 @@ bool MathLayoutFieldDelegate::isAcceptableLayoutOrWarning(
   }
   UserExpression exp = UserExpression::Parse(layout, symbolContext);
   if (!isAcceptableExpression(exp, symbolContext)) {
-    displayWarningForSyntaxError(0);
+    displayWarningForSyntaxError();
     return false;
   }
   return true;

@@ -286,7 +286,7 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
   UserExpression parsedExpression =
       UserExpression::Parse(layoutField->layout(), tempContext);
   if (parsedExpression.isUninitialized()) {
-    displayWarningForSyntaxError(0);
+    displayWarningForSyntaxError();
     return false;
   }
   CodePoint symbol = symbolForEquation(parsedExpression);

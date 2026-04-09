@@ -142,7 +142,7 @@ Tree* private_parse(const char* input,
                     ParsingParameters params = {},
                     bool assertNotParsable = false) {
   Tree* layout = RackFromText(input);
-  Tree* expression = Parser::Parse(layout, symbolContext, params);
+  Tree* expression = Parser::Parse(layout, symbolContext, params).tree;
   if (assertNotParsable || !expression) {
     quiz_assert(assertNotParsable == !expression);
     layout->removeTree();

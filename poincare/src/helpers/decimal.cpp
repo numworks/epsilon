@@ -20,7 +20,7 @@ Tree* DecimalBuilderFromDouble(double value) {
   assert(buffer[0] != 0);
   Tree* result = RackFromText(buffer);
   assert(result);
-  result->moveTreeOverTree(Parser::Parse(result, EmptySymbolContext{}));
+  result->moveTreeOverTree(Parser::Parse(result, EmptySymbolContext{}).tree);
   // result is only made of numbers and simple nodes, no need for context.
   Simplification::ProjectAndReduce(result, SimplificationParameters{});
   return result;

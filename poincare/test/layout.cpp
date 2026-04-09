@@ -437,7 +437,7 @@ void assert_parsed_layout_is(const Poincare::Layout& layout,
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   LayoutSerializer::Serialize(layout, buffer);
-  Internal::Tree* ej = Internal::Parser::Parse(layout.tree()->cloneTree());
+  Internal::Tree* ej = Internal::Parser::Parse(layout.tree()->cloneTree()).tree;
   quiz_assert_print_if_failure(ej, buffer);
   quiz_assert_print_if_failure(ej->treeIsIdenticalTo(rj), buffer);
   Internal::TreeStack::SharedTreeStack->flush();

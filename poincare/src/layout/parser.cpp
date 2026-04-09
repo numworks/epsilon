@@ -6,23 +6,25 @@
 
 namespace Poincare::Internal::Parser {
 
-Tree* Parse(const Tree* l, const SymbolContext& symbolContext,
-            ParserHelper::ParsingParameters params) {
+Output Parse(const Tree* l, const SymbolContext& symbolContext,
+             ParserHelper::ParsingParameters params) {
   SyntaxError syntaxError = SyntaxError::None;
   assert(l->isRackLayout());
   ExceptionTry {
-    return RackParser(l, {.context = &symbolContext,
-                          .params = params,
-                          .syntaxError = &syntaxError})
-        .parseTopLevelRack();
+    Tree* tree = RackParser(l, {.context = &symbolContext,
+                                .params = params,
+                                .syntaxError = &syntaxError})
+                     .parseTopLevelRack();
+    assert(syntaxError == SyntaxError::None && tree);
+    return {tree, SyntaxError::None};
   }
   ExceptionCatch(type) {
     if (type != ExceptionType::ParseFail) {
       TreeStackCheckpoint::Raise(type);
     }
   }
-  // Use syntaxError
-  return nullptr;
+  assert(syntaxError != SyntaxError::None);
+  return {nullptr, syntaxError};
 }
 
 }  // namespace Poincare::Internal::Parser

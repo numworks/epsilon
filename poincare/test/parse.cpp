@@ -63,7 +63,7 @@ void assertLayoutParsesTo(
     const Poincare::SymbolContext& symbolContext =
         Poincare::EmptySymbolContext{},
     Poincare::ParserHelper::ParsingParameters params = {}) {
-  Tree* expression = Parser::Parse(layout, symbolContext, params);
+  Tree* expression = Parser::Parse(layout, symbolContext, params).tree;
   assert_trees_are_equal(expression, expected);
 }
 
@@ -71,7 +71,8 @@ bool is_parsable(const Tree* layout, bool preserveInput = true,
                  const Poincare::SymbolContext& symbolContext =
                      Poincare::EmptySymbolContext{}) {
   TreeRef expression =
-      Parser::Parse(layout, symbolContext, {.preserveInput = preserveInput});
+      Parser::Parse(layout, symbolContext, {.preserveInput = preserveInput})
+          .tree;
   return !expression.isUninitialized();
 }
 

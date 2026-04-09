@@ -38,7 +38,8 @@ UserExpression UserExpression::ExpressionFromAddress(const void* address,
 UserExpression PrivateParse(const Tree* layout,
                             const SymbolContext& symbolContext,
                             ParserHelper::ParsingParameters params) {
-  return UserExpression::Builder(Parser::Parse(layout, symbolContext, params));
+  return UserExpression::Builder(
+      Parser::Parse(layout, symbolContext, params).tree);
 }
 
 UserExpression UserExpression::Parse(const Poincare::Layout& layout,

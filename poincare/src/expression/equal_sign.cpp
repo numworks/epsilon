@@ -42,7 +42,7 @@ bool RecursiveIsCalculationOutputStrictEquality(const Tree* exact,
     Tree* layout = Layouter::LayoutExpression(
         approximate, {.numberOfSignificantDigits = significantDigits});
     Layouter::StripSeparators(layout);
-    Tree* parsed = Parser::Parse(layout);
+    Tree* parsed = Parser::Parse(layout).tree;
     assert(isExpectedExpression(parsed));
     Simplification::ProjectAndReduce(
         parsed,

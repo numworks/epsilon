@@ -10,6 +10,8 @@ namespace Escher {
 
 enum class Theme : uint8_t { Light, Dark };
 
+constexpr static Theme k_defaultTheme = Theme::Light;
+
 class ColorPicker {
  public:
   constexpr static KDColor Get(Theme theme, ThemeComponent component) {

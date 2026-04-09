@@ -37,7 +37,9 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
   static GlobalPreferences* SharedGlobalPreferences();
   static void Init();
 
-  Escher::Theme theme() const { return Escher::Theme::Light; }
+  Escher::Theme theme() const { return s_data->m_theme; }
+  void setTheme(Escher::Theme theme) { s_data->m_theme = theme; }
+
   // Access each component color directly
   KDColor color(Escher::ThemeComponent component) const {
     return Escher::ColorPicker::Get(theme(), component);
@@ -258,7 +260,7 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
    * But the vtables of [GlobalPreferences] due to inheritance causes an
    * unwanted offset in the stored version number location */
   CODE_GUARD(
-      global_preferences_data, 2973720171,  //
+      global_preferences_data, 2677381465,  //
       struct __attribute__((packed)) GlobalPreferencesData {
         friend OMG::GlobalBox<GlobalPreferences>;
         friend Ion::Storage::FileSystem;
@@ -273,7 +275,7 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
         Poincare::Preferences::CalculationPreferences m_calculationPreferences =
             Poincare::Preferences::k_defaultCalculationPreferences;
         DimmingTimeType m_dimmingTime = k_defaultDimmingTime;
-        Escher::Theme::Type m_theme = Escher::Theme::k_defaultTheme;
+        Escher::Theme m_theme = Escher::k_defaultTheme;
         bool operator==(const GlobalPreferencesData&) const = default;
       };)
 

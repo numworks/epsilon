@@ -21,6 +21,11 @@ struct Output {
 Output Parse(const Tree* l,
              const SymbolContext& symbolContext = EmptySymbolContext{},
              ParserHelper::ParsingParameters params = {});
+/* Use this function when the layout is guaranteed to be correct, syntax error
+ * will not be handled, this cannot return nullptr. */
+Tree* UnsafeParse(const Tree* l,
+                  const SymbolContext& symbolContext = EmptySymbolContext{},
+                  ParserHelper::ParsingParameters params = {});
 
 }  // namespace Parser
 

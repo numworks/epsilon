@@ -3,6 +3,8 @@
 #include <apps/i18n.h>
 #include <escher/layout_preferences.h>
 #include <escher/palette.h>
+#include <escher/theme/color_picker.h>
+#include <escher/theme/components.h>
 #include <ion.h>
 #include <kandinsky/font.h>
 #include <omg/global_box.h>
@@ -35,10 +37,10 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
   static GlobalPreferences* SharedGlobalPreferences();
   static void Init();
 
-  Escher::ThemeEnum theme() const { return Escher::ThemeEnum::Light; }
-  // Access each color feature directly
-  KDColor color(Escher::FeatureColor feature) const {
-    return Escher::ColorPicker::Get(theme(), feature);
+  Escher::Theme::Enum theme() const { return Escher::Theme::Enum::Light; }
+  // Access each component color directly
+  KDColor color(Escher::Theme::Component component) const {
+    return Escher::Theme::ColorPicker::Get(theme(), component);
   }
 
   I18n::Language language() const { return s_data->m_language; }

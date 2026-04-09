@@ -34,7 +34,7 @@ struct ParsingContext {
     return ParsingContext{context, params, ParsingMetadata{}};
   }
   // syntaxError isn't in metadata to be preserved through cloneWithoutMetadata
-  SyntaxError* const syntaxError = nullptr;
+  volatile SyntaxError* const syntaxError = nullptr;
 };
 
 }  // namespace Poincare::Internal

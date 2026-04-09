@@ -120,6 +120,8 @@ bool StoreColumnHelper::fillColumnWithFormula(
     const Poincare::Layout& formulaLayout) {
   int column = store()->relativeColumn(referencedColumn());
   int series = store()->seriesAtColumn(referencedColumn());
+  /* TODO : Return Poincare::SyntaxError, add messages and use
+   * AbstractMathFieldDelegate::displayWarningForSyntaxError */
   FillColumnStatus status =
       privateFillColumnWithFormula(formulaLayout, &series, &column);
   if (status == FillColumnStatus::Success ||

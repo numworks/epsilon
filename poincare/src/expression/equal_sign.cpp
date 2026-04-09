@@ -29,9 +29,6 @@ bool RecursiveIsCalculationOutputStrictEquality(const Tree* exact,
                                                 const Tree* approximate,
                                                 int significantDigits) {
   assert(exact && approximate);
-  // If projection failed, exact can be not system
-  DEBUG_ASSERT(Simplification::CanBeSystem(approximate));
-
   if (exact->isUndefined() || approximate->isUndefined()) {
     // We never want to display "≈ undef" nor "undef ≈"
     return true;

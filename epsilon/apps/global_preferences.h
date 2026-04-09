@@ -258,7 +258,7 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
    * But the vtables of [GlobalPreferences] due to inheritance causes an
    * unwanted offset in the stored version number location */
   CODE_GUARD(
-      global_preferences_data, 1321767116,  //
+      global_preferences_data, 2973720171,  //
       struct __attribute__((packed)) GlobalPreferencesData {
         friend OMG::GlobalBox<GlobalPreferences>;
         friend Ion::Storage::FileSystem;
@@ -273,15 +273,16 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
         Poincare::Preferences::CalculationPreferences m_calculationPreferences =
             Poincare::Preferences::k_defaultCalculationPreferences;
         DimmingTimeType m_dimmingTime = k_defaultDimmingTime;
+        Escher::Theme::Type m_theme = Escher::Theme::k_defaultTheme;
         bool operator==(const GlobalPreferencesData&) const = default;
       };)
 
 #if PLATFORM_DEVICE
   CODE_GUARD(
-      global_preferences_size, 1681677831,  //
+      global_preferences_size, 3960416075,  //
       static_assert(sizeof(Poincare::Preferences::CalculationPreferences) == 2);
       static_assert(sizeof(CombinedPreferences) == 1); static_assert(
-          sizeof(GlobalPreferencesData) == 14,
+          sizeof(GlobalPreferencesData) == 15,
           "Class GlobalPreferencesData changed size, might affect website");  //
   )
 #endif

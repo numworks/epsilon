@@ -11,17 +11,19 @@ namespace Poincare::Internal {
 
 TreeStackCheckpoint* TreeStackCheckpoint::s_topmostTreeStackCheckpoint;
 ExceptionType TreeStackCheckpoint::s_exceptionType = ExceptionType::None;
+uint8_t TreeStackCheckpoint::s_exceptionData = 0;
 
 TreeStackCheckpoint::TreeStackCheckpoint(Block* rightmostBlock)
     : m_parent(s_topmostTreeStackCheckpoint),
       m_rightmostBlock(rightmostBlock),
       m_savedReferenceLength(SharedTreeStack->referenceTable()->length()) {
   assert(s_exceptionType == ExceptionType::None);
+  assert(s_exceptionData == 0);
 }
 
 TreeStackCheckpoint::~TreeStackCheckpoint() {
   assert((s_topmostTreeStackCheckpoint == this &&
-          s_exceptionType == ExceptionType::None) ||
+          s_exceptionType == ExceptionType::None && s_exceptionData == 0) ||
          (s_topmostTreeStackCheckpoint == m_parent &&
           s_exceptionType != ExceptionType::None));
   s_topmostTreeStackCheckpoint = m_parent;
@@ -37,13 +39,16 @@ void TreeStackCheckpoint::rollback() {
   longjmp(m_jumpBuffer, 1);
 }
 
-void TreeStackCheckpoint::Raise(ExceptionType type) {
-  assert(type != ExceptionType::None && s_exceptionType == ExceptionType::None);
+void TreeStackCheckpoint::Raise(ExceptionType type, uint8_t data) {
+  assert(type != ExceptionType::None &&
+         s_exceptionType == ExceptionType::None && s_exceptionData == 0);
   s_exceptionType = type;
+  s_exceptionData = data;
   if (!HasActiveCheckpoint()) {
 #if POINCARE_EXCEPTION_CHECKPOINT
     // If there are no active TreeStackCheckpoints, raise an ExceptionCheckpoint
     s_exceptionType = ExceptionType::None;
+    s_exceptionData = 0;
     ExceptionCheckpoint::Raise();
 #endif
     abort();
@@ -57,6 +62,7 @@ void TreeStackCheckpoint::Raise(ExceptionType type) {
 ExceptionType TreeStackCheckpoint::GetTypeAndClear() {
   ExceptionType type = s_exceptionType;
   s_exceptionType = ExceptionType::None;
+  s_exceptionData = 0;
   return type;
 }
 

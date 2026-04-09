@@ -38,9 +38,17 @@ ExceptionCheckpoint.
 
 #define ExceptionTry ExceptionTryAfterBlock(SharedTreeStack->lastBlock())
 
-#define ExceptionCatch(typeVarName)                                   \
+#define ExceptionCatchWithData(typeVarName, dataVarName)              \
   }                                                                   \
+  uint8_t dataVarName = TreeStackCheckpoint::GetData();               \
   ExceptionType typeVarName = TreeStackCheckpoint::GetTypeAndClear(); \
+  if (typeVarName != ExceptionType::None)
+
+#define ExceptionCatch(typeVarName)                                     \
+  }                                                                     \
+  /* ExceptionCatchWithData should be use to explicitly discard data */ \
+  assert(TreeStackCheckpoint::GetData() == 0);                          \
+  ExceptionType typeVarName = TreeStackCheckpoint::GetTypeAndClear();   \
   if (typeVarName != ExceptionType::None)
 
 namespace Poincare::Internal {
@@ -61,7 +69,11 @@ enum class ExceptionType : int {
 
 class TreeStackCheckpoint final {
  public:
-  static void Raise(ExceptionType type) __attribute__((__noreturn__));
+  static void Raise(ExceptionType type, uint8_t data = 0)
+      __attribute__((__noreturn__));
+  // To call before GetTypeAndClear
+  static uint8_t GetData() { return s_exceptionData; }
+  // This also clears exception data, GetData() should be called before.
   static ExceptionType GetTypeAndClear();
 
   TreeStackCheckpoint(Block* rightmostBlock);
@@ -79,6 +91,8 @@ class TreeStackCheckpoint final {
 
   static TreeStackCheckpoint* s_topmostTreeStackCheckpoint;
   static ExceptionType s_exceptionType;
+  // Used to store additional data about the exception when needed.
+  static uint8_t s_exceptionData;
 
   jmp_buf m_jumpBuffer;
   TreeStackCheckpoint* m_parent;

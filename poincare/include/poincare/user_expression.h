@@ -67,7 +67,7 @@ class UserExpression : public Expression {
   // Build an expression of Undefined tree.
   static UserExpression Undefined();
 
-  static UserExpression Parse(const Internal::Tree* layout,
+  static UserExpression Parse(const Layout& layout,
                               const SymbolContext& symbolContext,
                               ParserHelper::ParsingParameters params = {});
   static UserExpression Parse(const char* layout,

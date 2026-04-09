@@ -35,10 +35,16 @@ UserExpression UserExpression::ExpressionFromAddress(const void* address,
   return static_cast<UserExpression&>(e);
 }
 
-UserExpression UserExpression::Parse(const Tree* layout,
+UserExpression PrivateParse(const Tree* layout,
+                            const SymbolContext& symbolContext,
+                            ParserHelper::ParsingParameters params) {
+  return UserExpression::Builder(Parser::Parse(layout, symbolContext, params));
+}
+
+UserExpression UserExpression::Parse(const Poincare::Layout& layout,
                                      const SymbolContext& symbolContext,
                                      ParserHelper::ParsingParameters params) {
-  return UserExpression::Builder(Parser::Parse(layout, symbolContext, params));
+  return PrivateParse(layout.tree(), symbolContext, params);
 }
 
 UserExpression UserExpression::Parse(const char* string,
@@ -51,7 +57,7 @@ UserExpression UserExpression::Parse(const char* string,
   if (!layout) {
     return UserExpression();
   }
-  UserExpression result = Parse(layout, symbolContext, params);
+  UserExpression result = PrivateParse(layout, symbolContext, params);
   layout->removeTree();
   return result;
 }
@@ -63,7 +69,7 @@ UserExpression UserExpression::ParseLatex(
   if (!layout) {
     return UserExpression();
   }
-  UserExpression result = Parse(layout, symbolContext, params);
+  UserExpression result = PrivateParse(layout, symbolContext, params);
   layout->removeTree();
   return result;
 }

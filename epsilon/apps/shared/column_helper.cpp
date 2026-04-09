@@ -156,8 +156,8 @@ StoreColumnHelper::FillColumnStatus
 StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
                                                 int* series, int* column) {
   StoreAppContext storeAppContext(store(), &GlobalContextAccessor::Context());
-  UserExpression formula = UserExpression::Parse(
-      formulaLayout.tree(), storeAppContext, {.isAssignment = true});
+  UserExpression formula = UserExpression::Parse(formulaLayout, storeAppContext,
+                                                 {.isAssignment = true});
   if (formula.isUninitialized()) {
     return FillColumnStatus::SyntaxError;
   }

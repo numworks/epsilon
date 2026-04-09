@@ -14,19 +14,21 @@ constexpr static const char* sMagic = "NWSF";
 constexpr static size_t sMagicLength = 4;
 constexpr static size_t sVersionLength = 8;
 constexpr static const char* sWildcardVersion = "**.**.**";
-constexpr static size_t sFormatVersionLength = 1;
-constexpr static uint8_t sLatestFormatVersion = 1;
+constexpr static size_t sProjectIdLength = 1;
+#ifndef NWS_PROJECT_ID
+#error NWS_PROJECT_ID must be defined
+#endif
+constexpr static uint8_t sProjectId = NWS_PROJECT_ID;
 constexpr static size_t sLanguageLength =
     Ion::Events::Journal::k_languageSize - 1;
 constexpr static const char* sWildcardLanguage = "**";
 constexpr static size_t sHeaderLength =
-    sMagicLength + sVersionLength + sFormatVersionLength + sLanguageLength;
+    sMagicLength + sVersionLength + sProjectIdLength + sLanguageLength;
 
 /* File format:
- * Format version 0xFF (latest) :
  *   "NWSF" : Magic
  * + "XXXXXXXX" : Software version
- * + "0x01" : State file format version
+ * + 0x01 or 0x02 : Project ID (1 = epsilon, 2 = scandium)
  * + "XX" : Language code (en, fr, nl, pt, it, de, or es)
  * + EVENTS...
  */
@@ -34,8 +36,8 @@ constexpr static size_t sHeaderLength =
 static inline bool loadFileHeader(const char* header) {
   const char* magic = header;
   const char* version = magic + sMagicLength;
-  const char* formatVersion = version + sVersionLength;
-  const char* language = formatVersion + sFormatVersionLength;
+  const char* projectId = version + sVersionLength;
+  const char* language = projectId + sProjectIdLength;
 
   if (strncmp(magic, sMagic, sMagicLength) != 0) {
     return false;
@@ -44,7 +46,7 @@ static inline bool loadFileHeader(const char* header) {
       strncmp(version, sWildcardVersion, sVersionLength) != 0) {
     return false;
   }
-  if (*formatVersion != sLatestFormatVersion) {
+  if (*projectId != sProjectId) {
     return false;
   }
   if (strncmp(language, sWildcardLanguage, sLanguageLength) != 0) {
@@ -207,7 +209,7 @@ static inline bool save(FILE* f) {
     return false;
   }
 #endif
-  if (fwrite(&sLatestFormatVersion, sFormatVersionLength, 1, f) != 1) {
+  if (fwrite(&sProjectId, sProjectIdLength, 1, f) != 1) {
     return false;
   }
   Ion::Events::Journal* journal = Journal::logJournal();

@@ -22,6 +22,9 @@ _ion_keyboard_rows_scandium = 7
 _ion_exam_mode_epsilon := 1
 _ion_exam_mode_scandium := 0
 
+_ion_nws_project_id_epsilon := 1
+_ion_nws_project_id_scandium := 2
+
 SFLAGS_ion += \
   -I$(PATH_ion)/include/ion/keyboard/$(ION_variant) \
   -DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_variant)) \
@@ -35,7 +38,8 @@ SFLAGS_ion += \
 PRIVATE_SFLAGS_ion += \
   -DSOFTWARE_VERSION=\"$(APP_VERSION)\" \
   -DCOMMIT_HASH=\"$(COMMIT_HASH)\" \
-  -DION_VARIANT_$(call upper,$(ION_variant))
+  -DION_VARIANT_$(call upper,$(ION_variant)) \
+  -DNWS_PROJECT_ID=$(_ion_nws_project_id_$(ION_variant))
 
 ION_STORAGE_LOG ?= 0
 ION_LOG_EVENTS_NAME ?= 0

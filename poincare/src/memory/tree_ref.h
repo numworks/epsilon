@@ -57,6 +57,7 @@ class TreeRef {
 
   operator Tree*() const { return tree(); }
   Tree* operator->() { return tree(); }
+  const Tree* operator->() const { return tree(); }
 
   /* Comparison */
   inline bool operator==(const TreeRef& t) const {

@@ -7,6 +7,28 @@
 namespace Poincare::Internal::EquationSolver {
 using namespace Poincare::EquationSolver;
 
+struct PreprocessingResult {
+  Internal::Tree* reducedEquationList = nullptr;
+  Error error = Error::NoError;
+  EquationMetadata equationMetadata;
+  Internal::Dimension dimension = Internal::Dimension();
+};
+
+enum class UnknownSelectionStrategy : uint8_t {
+  // Only includes symbols that are not defined by the user
+  OnlyUndefinedSymbols,
+  // Includes all symbols, even ones defined by the user
+  AllSymbols,
+  /* Choses whether or not to override defined variables in order to have only
+   * one unknown at the end */
+  MaxOneSymbol,
+};
+
+PreprocessingResult PreprocessEquationList(
+    const Tree* equationList,
+    const SimplificationParameters& simplificationParameters,
+    UnknownSelectionStrategy selectionStrategy);
+
 struct SolverResult {
   TreeRef exactSolutionList;
   TreeRef approximateSolutionList;
@@ -22,6 +44,9 @@ SolverResult ExactSolve(
     const Tree* equationList,
     const SimplificationParameters& simplificationParameters,
     bool overrideDefinedVariables = false);
+
+SolverResult ExactSolvePreprocessed(PreprocessingResult,
+                                    const SimplificationParameters&);
 
 /* Will try to exact solve with overrideDefinedVariables = false
  * but will fallback on overrideDefinedVariables = true if it fails */

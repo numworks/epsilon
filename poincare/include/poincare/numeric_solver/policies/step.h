@@ -97,9 +97,11 @@ class BasicStepper : public StepperBase<TFloat, BasicStepper<TFloat>> {
 
   TFloat nextX() const {
     return (this->m_start < this->m_end)
-               ? this->m_points[2] + this->m_searchStep
-               : this->m_points[2] - this->m_searchStep;
+               ? this->m_points[2].x() + this->m_searchStep
+               : this->m_points[2].x() - this->m_searchStep;
   }
+
+  void setGrowthSpeed(GrowthSpeed) {}
 
   template <typename TNumericHelper = DefaultNumericHelper<TFloat>>
   static TFloat MinimalStep(TFloat, TFloat = static_cast<TFloat>(1)) {

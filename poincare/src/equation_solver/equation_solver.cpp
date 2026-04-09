@@ -44,28 +44,11 @@ void VariableArray::fillWithList(const Internal::Tree* list) {
 namespace Poincare::Internal::EquationSolver {
 using namespace Poincare::EquationSolver;
 
-enum class UnknownSelectionStrategy : uint8_t {
-  // Only includes symbols that are not defined by the user
-  OnlyUndefinedSymbols,
-  // Includes all symbols, even ones defined by the user
-  AllSymbols,
-  /* Chooses whether or not to override defined variables in order to have only
-   * one unknown at the end */
-  MaxOneSymbol,
-};
-
-struct PreprocessingResult {
-  Tree* reducedEquationList = nullptr;
-  Error error = Error::NoError;
-  EquationMetadata equationMetadata;
-  Dimension dimension = Dimension();
-};
-
 constexpr static char k_parameterPrefix = 't';
 
 /* This is used by both ExactSolve and ApproximateSolve.
  * It computes the EquationMetadata, and reduces the equation list. */
-static PreprocessingResult PreprocessEquationList(
+PreprocessingResult PreprocessEquationList(
     const Tree* equationList,
     const SimplificationParameters& simplificationParameters,
     UnknownSelectionStrategy selectionStrategy) {
@@ -811,6 +794,12 @@ SolverResult ExactSolve(
           ? UnknownSelectionStrategy::AllSymbols
           : UnknownSelectionStrategy::OnlyUndefinedSymbols);
 
+  return ExactSolvePreprocessed(preprocessingResult, simplificationParameters);
+}
+
+SolverResult ExactSolvePreprocessed(
+    PreprocessingResult preprocessingResult,
+    const SimplificationParameters& simplificationParameters) {
   Tree* reducedEquationList = preprocessingResult.reducedEquationList;
   EquationMetadata equationMetadata = preprocessingResult.equationMetadata;
 

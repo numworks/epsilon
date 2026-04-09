@@ -280,7 +280,7 @@ To avoid this, the *at* move/clone operation should be used instead.
 > Avoid this:
 
 ```cpp
-tree->nextTree()->moveNodeBeforeTree(otherTree);
+tree->nextTree()->moveNodeBeforeNode(otherTree);
 // The end TreeRef now points to the end of otherTree
 ```
 
@@ -288,7 +288,7 @@ tree->nextTree()->moveNodeBeforeTree(otherTree);
 > Prefer this:
 
 ```cpp
-tree->nextTree()->moveNodeAtTree(otherTree);
+tree->nextTree()->moveNodeAtNode(otherTree);
 // The end TreeRef still points to the end of tree
 ```
 

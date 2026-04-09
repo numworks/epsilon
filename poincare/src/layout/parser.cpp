@@ -8,20 +8,19 @@ namespace Poincare::Internal::Parser {
 
 Output Parse(const Tree* l, const SymbolContext& symbolContext,
              ParserHelper::ParsingParameters params) {
-  volatile SyntaxError syntaxError = SyntaxError::None;
+  SyntaxError syntaxError = SyntaxError::None;
   assert(l->isRackLayout());
   ExceptionTry {
-    Tree* tree = RackParser(l, {.context = &symbolContext,
-                                .params = params,
-                                .syntaxError = &syntaxError})
+    Tree* tree = RackParser(l, {.context = &symbolContext, .params = params})
                      .parseTopLevelRack();
     assert(syntaxError == SyntaxError::None && tree);
     return {tree, SyntaxError::None};
   }
-  ExceptionCatch(type) {
+  ExceptionCatchWithData(type, data) {
     if (type != ExceptionType::ParseFail) {
-      TreeStackCheckpoint::Raise(type);
+      TreeStackCheckpoint::Raise(type, data);
     }
+    syntaxError = static_cast<SyntaxError>(data);
   }
   assert(syntaxError != SyntaxError::None);
   return {nullptr, syntaxError};

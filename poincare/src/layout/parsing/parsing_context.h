@@ -2,7 +2,6 @@
 
 #include <poincare/helpers/parser.h>
 #include <poincare/symbol_context.h>
-#include <poincare/syntax_error.h>
 
 namespace Poincare::Internal {
 
@@ -33,8 +32,6 @@ struct ParsingContext {
   ParsingContext cloneWithoutMetadata() const {
     return ParsingContext{context, params, ParsingMetadata{}};
   }
-  // syntaxError isn't in metadata to be preserved through cloneWithoutMetadata
-  volatile SyntaxError* const syntaxError = nullptr;
 };
 
 }  // namespace Poincare::Internal

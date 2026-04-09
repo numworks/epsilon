@@ -283,10 +283,12 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
    * detect the variable.
    * Make unit underscore mandatory to avoid t being understood as ton. */
   Poincare::StrictUnitContext tempContext(&App::app()->localContext());
-  UserExpression parsedExpression =
-      UserExpression::Parse(layoutField->layout(), tempContext);
+
+  UserExpression::ParseOutput result =
+      UserExpression::TryParse(layoutField->layout(), tempContext);
+  UserExpression parsedExpression = result.expression;
   if (parsedExpression.isUninitialized()) {
-    displayWarningForSyntaxError();
+    displayWarningForSyntaxError(result.syntaxError);
     return false;
   }
   CodePoint symbol = symbolForEquation(parsedExpression);

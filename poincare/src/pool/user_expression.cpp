@@ -35,44 +35,65 @@ UserExpression UserExpression::ExpressionFromAddress(const void* address,
   return static_cast<UserExpression&>(e);
 }
 
-UserExpression PrivateParse(const Tree* layout,
-                            const SymbolContext& symbolContext,
-                            ParserHelper::ParsingParameters params) {
-  return UserExpression::Builder(
-      Parser::Parse(layout, symbolContext, params).tree);
+UserExpression::ParseOutput PrivateParse(
+    const Tree* layout, const SymbolContext& symbolContext,
+    ParserHelper::ParsingParameters params) {
+  Parser::Output parserOutput = Parser::Parse(layout, symbolContext, params);
+  UserExpression parsedExpression = UserExpression::Builder(parserOutput.tree);
+  assert((parserOutput.error != SyntaxError::None) ==
+         parsedExpression.isUninitialized());
+  return {parsedExpression, parserOutput.error};
+}
+
+UserExpression::ParseOutput UserExpression::TryParse(
+    const Poincare::Layout& layout, const SymbolContext& symbolContext,
+    ParserHelper::ParsingParameters params) {
+  return PrivateParse(layout.tree(), symbolContext, params);
+}
+
+UserExpression::ParseOutput UserExpression::TryParse(
+    const char* string, const SymbolContext& symbolContext,
+    ParserHelper::ParsingParameters params) {
+  if (string[0] == 0) {
+    return {UserExpression(), SyntaxError::Default};
+  }
+  Tree* layout = RackFromText(string);
+  if (!layout) {
+    return {UserExpression(), SyntaxError::Default};
+  }
+  ParseOutput result = PrivateParse(layout, symbolContext, params);
+  layout->removeTree();
+  return result;
+}
+
+UserExpression::ParseOutput UserExpression::TryParseLatex(
+    const char* latex, const SymbolContext& symbolContext,
+    ParserHelper::ParsingParameters params) {
+  Tree* layout = LatexParser::LatexToLayout(latex);
+  if (!layout) {
+    return {UserExpression(), SyntaxError::Default};
+  }
+  ParseOutput result = PrivateParse(layout, symbolContext, params);
+  layout->removeTree();
+  return result;
 }
 
 UserExpression UserExpression::Parse(const Poincare::Layout& layout,
                                      const SymbolContext& symbolContext,
                                      ParserHelper::ParsingParameters params) {
-  return PrivateParse(layout.tree(), symbolContext, params);
+  return TryParse(layout, symbolContext, params).expression;
 }
 
-UserExpression UserExpression::Parse(const char* string,
+UserExpression UserExpression::Parse(const char* layout,
                                      const SymbolContext& symbolContext,
                                      ParserHelper::ParsingParameters params) {
-  if (string[0] == 0) {
-    return UserExpression();
-  }
-  Tree* layout = RackFromText(string);
-  if (!layout) {
-    return UserExpression();
-  }
-  UserExpression result = PrivateParse(layout, symbolContext, params);
-  layout->removeTree();
-  return result;
+  return TryParse(layout, symbolContext, params).expression;
 }
 
 UserExpression UserExpression::ParseLatex(
     const char* latex, const SymbolContext& symbolContext,
     ParserHelper::ParsingParameters params) {
-  Tree* layout = LatexParser::LatexToLayout(latex);
-  if (!layout) {
-    return UserExpression();
-  }
-  UserExpression result = PrivateParse(layout, symbolContext, params);
-  layout->removeTree();
-  return result;
+  return TryParseLatex(latex, symbolContext, params).expression;
 }
 
 UserExpression UserExpression::Create(const Tree* structure,

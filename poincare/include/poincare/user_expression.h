@@ -12,6 +12,7 @@
 #include <poincare/simplification_parameters.h>
 #include <poincare/simplification_policies.h>
 #include <poincare/symbol_context.h>
+#include <poincare/syntax_error.h>
 
 #include <span>
 
@@ -67,12 +68,26 @@ class UserExpression : public Expression {
   // Build an expression of Undefined tree.
   static UserExpression Undefined();
 
+  // ParseOutput contains a UserExpression and a SyntaxError.
+  struct ParseOutput;
+  static ParseOutput TryParse(const Layout& layout,
+                              const SymbolContext& symbolContext,
+                              ParserHelper::ParsingParameters params = {});
+  static ParseOutput TryParse(const char* layout,
+                              const SymbolContext& symbolContext,
+                              ParserHelper::ParsingParameters params = {});
+  static ParseOutput TryParseLatex(const char* latex,
+                                   const SymbolContext& symbolContext,
+                                   ParserHelper::ParsingParameters params = {});
+  // Return an uninitialized UserExpression if parsing failed
   static UserExpression Parse(const Layout& layout,
                               const SymbolContext& symbolContext,
                               ParserHelper::ParsingParameters params = {});
+  // Return an uninitialized UserExpression if parsing failed
   static UserExpression Parse(const char* layout,
                               const SymbolContext& symbolContext,
                               ParserHelper::ParsingParameters params = {});
+  // Return an uninitialized UserExpression if parsing failed
   static UserExpression ParseLatex(const char* latex,
                                    const SymbolContext& symbolContext,
                                    ParserHelper::ParsingParameters params = {});
@@ -246,6 +261,11 @@ class UserExpression : public Expression {
       const UserParameters& userParameters,
       const ApproximationPolicy& approximationPolicy =
           ApproximationPolicy{}) const;
+};
+
+struct UserExpression::ParseOutput {
+  UserExpression expression;
+  Poincare::SyntaxError syntaxError;
 };
 
 }  // namespace Poincare

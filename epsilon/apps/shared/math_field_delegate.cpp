@@ -37,7 +37,8 @@ CodePoint AbstractMathFieldDelegate::defaultXNT() {
 
 bool AbstractMathFieldDelegate::isAcceptableExpression(
     const UserExpression& exp, const SymbolContext& symbolContext) {
-  return !exp.isUninitialized() && !exp.isStore();
+  assert(!exp.isUninitialized());
+  return !exp.isStore();
 }
 
 void AbstractMathFieldDelegate::displayWarningForSyntaxError(
@@ -55,10 +56,12 @@ bool AbstractMathFieldDelegate::isAcceptableTextOrWarning(
    * some errors could be missed.
    * Sometimes the field needs to be parsed for assignment but this is
    * done later, namely by ContinuousFunction::buildExpressionFromLayout. */
-  UserExpression exp = UserExpression::Parse(text, symbolContext);
+  UserExpression::ParseOutput result =
+      UserExpression::TryParse(text, symbolContext);
+  UserExpression exp = result.expression;
   if (exp.isUninitialized()) {
     // Unparsable expression
-    displayWarningForSyntaxError();
+    displayWarningForSyntaxError(result.syntaxError);
     return false;
   }
   /* Expression serialization.
@@ -100,7 +103,13 @@ bool MathLayoutFieldDelegate::isAcceptableLayoutOrWarning(
     // Accept empty layouts
     return true;
   }
-  UserExpression exp = UserExpression::Parse(layout, symbolContext);
+  UserExpression::ParseOutput result =
+      UserExpression::TryParse(layout, symbolContext);
+  UserExpression exp = result.expression;
+  if (exp.isUninitialized()) {
+    displayWarningForSyntaxError(result.syntaxError);
+    return false;
+  }
   if (!isAcceptableExpression(exp, symbolContext)) {
     displayWarningForSyntaxError();
     return false;

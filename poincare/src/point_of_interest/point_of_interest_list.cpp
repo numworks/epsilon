@@ -96,63 +96,51 @@ void PointsOfInterestList::filterOutOfBounds(double start, double end) {
 
 Expression PointsOfInterestList::BuildStash(Provider provider,
                                             void* providerContext) {
-  {
-    ExceptionCheckpoint ecp;
-    if (ExceptionRun(ecp)) {
-      Internal::Tree* stash = nullptr;
-      {
-        using namespace Internal;
-        ExceptionTry {
-          stash = Internal::List::PushEmpty();
-          PointOfInterest point;
-          while ((point = provider(providerContext)).isInitialized()) {
-            Tree* pointTree =
-                Internal::TreeStack::SharedTreeStack->pushPointOfInterest(
-                    point);
-            NAry::AddChild(stash, pointTree);
-          }
-        }
-        ExceptionCatch(type) {
-          if (type != ExceptionType::TreeStackOverflow) {
-            TreeStackCheckpoint::Raise(type);
-          }
-          return {};
-        }
-      }
-
-      return SystemExpression::Builder(stash);
-    } else {
-      return {};
-    }
-  }
-}
-
-bool PointsOfInterestList::merge(Expression& stash) {
-  assert(!stash.isUninitialized());
-  // Merge list and stash together in the stack.
-  Internal::Tree* stackedList = nullptr;
-  {
+  ExceptionCheckpoint ecp;
+  if (ExceptionRun(ecp)) {
     using namespace Internal;
     ExceptionTry {
-      stackedList = m_list.tree()->cloneTree();
-      Tree* stackedStash = stash.tree()->cloneTree();
-      NAry::AddOrMergeChild(stackedList, stackedStash);
+      Internal::Tree* stash = Internal::List::PushEmpty();
+      PointOfInterest point;
+      while ((point = provider(providerContext)).isInitialized()) {
+        Tree* pointTree =
+            Internal::TreeStack::SharedTreeStack->pushPointOfInterest(point);
+        NAry::AddChild(stash, pointTree);
+      }
+      return SystemExpression::Builder(stash);
     }
     ExceptionCatch(type) {
       if (type != ExceptionType::TreeStackOverflow) {
         TreeStackCheckpoint::Raise(type);
       }
-      return false;
     }
   }
-  assert(stackedList);
-  assert(stackedList->isList() &&
-         !stackedList->hasChildSatisfying(
-             [](const Internal::Tree* t) { return !t->isPointOfInterest(); }));
-  /* No need for a checkpoint, since the combined pool object is smaller
-   * than both list and stash separate. */
-  m_list = SystemExpression::Builder(stackedList);
-  return true;
+  return {};
+}
+
+bool PointsOfInterestList::merge(Expression& stash) {
+  assert(!stash.isUninitialized());
+  using namespace Internal;
+  ExceptionTry {
+    // Merge list and stash together in the stack.
+    Internal::Tree* stackedList = m_list.tree()->cloneTree();
+    Tree* stackedStash = stash.tree()->cloneTree();
+    NAry::AddOrMergeChild(stackedList, stackedStash);
+    assert(stackedList);
+    assert(stackedList->isList());
+    assert(!stackedList->hasChildSatisfying(
+        [](const Internal::Tree* t) { return !t->isPointOfInterest(); }));
+    /* No need for a checkpoint, since the combined pool object is smaller  than
+     * both list and stash separate. */
+    m_list = SystemExpression::Builder(stackedList);
+    return true;
+  }
+  ExceptionCatch(type) {
+    if (type != ExceptionType::TreeStackOverflow) {
+      TreeStackCheckpoint::Raise(type);
+    }
+  }
+  return false;
 }
 
 }  // namespace Poincare

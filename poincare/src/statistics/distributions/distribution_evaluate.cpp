@@ -152,7 +152,7 @@ template <typename T>
 T evalStudent(T x, const ParametersArray<T>& params) {
   const T k = params[Params::Student::K];
   T lnCoefficient = std::lgamma((k + 1.f) / 2.f) - std::lgamma(k / 2.f) -
-                    std::log(std::sqrt(k * M_PI));
+                    std::log(k * M_PI) / 2;
   return std::exp(lnCoefficient - (k + 1.0) / 2.0 * std::log(1.0 + x * x / k));
 }
 

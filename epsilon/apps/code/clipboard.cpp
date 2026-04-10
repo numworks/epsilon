@@ -36,7 +36,7 @@ bool Clipboard::ShouldReplaceLetterE(const char* text, size_t length,
     return true;
   }
 
-  size_t start;
+  volatile size_t start;
   size_t nextLineStart = s_replacementRuleStartingPoint;
   assert(nextLineStart <= position);
   do {
@@ -44,7 +44,7 @@ bool Clipboard::ShouldReplaceLetterE(const char* text, size_t length,
     nextLineStart = UTF8Helper::CodePointSearch(text + start, '\n') - text + 1;
   } while (nextLineStart <= position);
   while (text[start] == ' ') {
-    start++;
+    start = start + 1;
   }
 
   nlr_buf_t nlr;
@@ -54,7 +54,7 @@ bool Clipboard::ShouldReplaceLetterE(const char* text, size_t length,
     size_t lastColumn = lex->tok_column;
     mp_token_kind_t lastKind = lex->tok_kind;
     while (lex->line == 1 && start + lex->tok_column - lastColumn <= position) {
-      start += lex->tok_column - lastColumn;
+      start = start + lex->tok_column - lastColumn;
       lastColumn = lex->tok_column;
       lastKind = lex->tok_kind;
       mp_lexer_to_next(lex);

@@ -152,7 +152,6 @@ $(addprefix pool/, \
   ) \
 ) \
 $(addprefix numeric_solver/, \
-  beta_function.cpp \
   erf_inv.cpp \
   expression_solver.cpp \
   hone_functions.cpp \

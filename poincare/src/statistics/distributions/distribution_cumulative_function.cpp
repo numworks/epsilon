@@ -2,7 +2,6 @@
 #include <omg/float.h>
 #include <omg/troolean.h>
 #include <omg/unreachable.h>
-#include <poincare/src/numeric_solver/beta_function.h>
 #include <poincare/src/numeric_solver/regularized_gamma_function.h>
 #include <poincare/src/numeric_solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/numeric_solver/solver_algorithms.h>

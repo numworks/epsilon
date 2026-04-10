@@ -296,6 +296,17 @@ QUIZ_CASE(distributions_results_student) {
   assert_finite_integral_between_abscissas_is(&distribution, 5.0, 4.0, 0.0);
   assert_finite_integral_between_abscissas_is(&distribution, 4.0, 5.0,
                                               0.002333318101494775250);
+
+  // Student distribution with 1000 degrees of freedom
+  distribution.setParameterAtIndex(1000, 0);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.01), 0.398823,
+                              1e-6);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, -4.98, 3.743284737e-7);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 1.3, 0.9030497345);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 2.98, 0.9985239062);
 }
 
 QUIZ_CASE(distributions_results_geometric) {
@@ -451,4 +462,15 @@ QUIZ_CASE(distributions_results_fisher) {
   distribution.setParameterAtIndex(2.0, 0);
   distribution.setParameterAtIndex(3.0, 1);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.), 1.0);
+
+  // Fisher distribution with d1 = 1000 and d2 = 1000
+  distribution.setParameterAtIndex(1000.0, 0);
+  distribution.setParameterAtIndex(1000.0, 1);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1.0), 6.30625,
+                              1e-6);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0), 0.0);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 1.01, 0.5624914);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution,
+                                                                1.1, 0.9340081);
 }

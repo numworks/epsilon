@@ -156,9 +156,9 @@ QUIZ_CASE(distributions_parameters_student) {
   quiz_assert(
       distribution.authorizedParameterAtIndex(0.00001, Params::Student::K));
   quiz_assert(distribution.authorizedParameterAtIndex(4.2, Params::Student::K));
-  quiz_assert(distribution.authorizedParameterAtIndex(200, Params::Student::K));
+  quiz_assert(distribution.authorizedParameterAtIndex(1e5, Params::Student::K));
   quiz_assert(
-      !distribution.authorizedParameterAtIndex(300, Params::Student::K));
+      !distribution.authorizedParameterAtIndex(1e6, Params::Student::K));
 }
 
 QUIZ_CASE(distributions_parameters_geometric) {
@@ -242,14 +242,16 @@ QUIZ_CASE(distributions_parameters_fisher) {
   quiz_assert(!distribution.authorizedParameterAtIndex(0, Params::Fisher::D1));
   quiz_assert(
       distribution.authorizedParameterAtIndex(1e-300, Params::Fisher::D1));
-  quiz_assert(distribution.authorizedParameterAtIndex(100, Params::Fisher::D1));
   quiz_assert(
-      !distribution.authorizedParameterAtIndex(200, Params::Fisher::D1));
+      distribution.authorizedParameterAtIndex(10000, Params::Fisher::D1));
+  quiz_assert(
+      !distribution.authorizedParameterAtIndex(100000, Params::Fisher::D1));
   // d2 can be any value in ]DBL_MIN, 144]
   quiz_assert(!distribution.authorizedParameterAtIndex(0, Params::Fisher::D2));
   quiz_assert(
       distribution.authorizedParameterAtIndex(1e-300, Params::Fisher::D2));
-  quiz_assert(distribution.authorizedParameterAtIndex(100, Params::Fisher::D2));
   quiz_assert(
-      !distribution.authorizedParameterAtIndex(200, Params::Fisher::D2));
+      distribution.authorizedParameterAtIndex(10000, Params::Fisher::D2));
+  quiz_assert(
+      !distribution.authorizedParameterAtIndex(100000, Params::Fisher::D2));
 }

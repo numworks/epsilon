@@ -189,8 +189,7 @@ void ListController::resolveEquations() {
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
     using Error = SystemOfEquations::Error;
-    Error e = App::app()->system()->exactSolve(App::app()->localContext());
-    switch (e) {
+    switch (App::app()->system()->exactSolve(App::app()->localContext())) {
       case Error::EquationUndefined:
         App::app()->displayWarning(I18n::Message::UndefinedEquation);
         return;
@@ -224,13 +223,12 @@ void ListController::resolveEquations() {
               subCheckpoint.endOfPoolBeforeCheckpoint());
           App::app()->system()->cancelApproximateSolve();
         }
-
-        [[fallthrough]];
+        App::app()->openSolutionsController(true);
+        return;
       }
-      default: {
-        assert(e == Error::NoError || e == Error::RequireApproximateSolution);
-        App::app()->openSolutionsController(e ==
-                                            Error::RequireApproximateSolution);
+      case Error::NoError: {
+        App::app()->openSolutionsController(false);
+        return;
       }
     }
   } else {

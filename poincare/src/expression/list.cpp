@@ -252,23 +252,23 @@ bool List::ShallowApplyListOperators(Tree* e) {
     case Type::ListProduct:
     case Type::Min:
     case Type::Max: {
-      Tree* result = nullptr;
-      ExceptionTry { result = Fold(e->child(0), e->type()); }
+      ExceptionTry {
+        Tree* result = Fold(e->child(0), e->type());
+        if (result) {
+          e->moveTreeOverTree(result);
+          return true;
+        }
+      }
       ExceptionCatch(exc) {
-        if (exc == ExceptionType::SortFail) {
-          if (Variables::HasVariables(e) || Variables::HasUserVariables(e)) {
-            // leave max({x,0}) unchanged
-            // TODO: we could return undef with max({x,i})
-            return false;
-          }
+        if (exc != ExceptionType::SortFail) {
+          TreeStackCheckpoint::Raise(exc);
+        }
+        if (!Variables::HasVariables(e) && !Variables::HasUserVariables(e)) {
           e->cloneTreeOverTree(KUndef);
           return true;
         }
-        TreeStackCheckpoint::Raise(exc);
-      }
-      if (result) {
-        e->moveTreeOverTree(result);
-        return true;
+        // leave max({x,0}) unchanged
+        // TODO: we could return undef with max({x,i})
       }
       return false;
     }

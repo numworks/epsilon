@@ -707,7 +707,7 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect,
 
   bool canDisplayPoints = pointsOfInterestCache->canDisplayPoints(m_interest);
   PointOfInterest p;
-  Coordinate2D<float> lastBlackDot;
+  KDPoint lastBlackDot(KDCOORDINATE_MAX, KDCOORDINATE_MAX);
   int i = 0;
   do {
     // Compute more points of interest if necessary
@@ -752,18 +752,18 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect,
       continue;
     }
 
-    // Draw the dot
-    Coordinate2D<float> dotCoordinates =
-        static_cast<Coordinate2D<float>>(p.xy());
-    if (lastBlackDot == dotCoordinates &&
-        p.interest == Interest::ReachedDiscontinuity) {
-      /* Reached discontinuity dots are drawn in the color of the function, but
+    bool isDiscontinuity = (p.interest == Interest::ReachedDiscontinuity ||
+                            p.interest == Interest::UnreachedDiscontinuity);
+    if (isDiscontinuity && lastBlackDot == floatToKDCoordinate(p.xy())) {
+      /* Discontinuity dots are drawn in the color of the function, but
        * a dot is already drawn in black at the same coordinates. */
       continue;
     }
 
+    // Draw the dot
+    Coordinate2D<float> dotCoordinates =
+        static_cast<Coordinate2D<float>>(p.xy());
     bool isRing = p.isUnreached;
-
     KDRect dotRelativeRect = dotRect(k_dotSize, dotCoordinates, isRing);
     /* If the dot intersects the dirty rect, force the redraw.
      * Either dotRelativeRect or dirtyRect needs to be translated, as one is
@@ -785,17 +785,14 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect,
     // Refresh expiring pointer
     OMG::ExpiringPointer<ContinuousFunction> f =
         functionStore()->modelForRecord(selectedRec);
-    KDColor color = p.interest == Interest::ReachedDiscontinuity ||
-                            p.interest == Interest::UnreachedDiscontinuity
-                        ? f->color()
-                        : Escher::Palette::GrayDarkest;
+    KDColor color = isDiscontinuity ? f->color() : Escher::Palette::GrayDarkest;
     if (isRing) {
       drawRing(ctx, rect, k_dotSize, dotCoordinates, color, false);
     } else {
       drawDot(ctx, rect, k_dotSize, dotCoordinates, color);
     }
-    if (color == Escher::Palette::GrayDarkest) {
-      lastBlackDot = dotCoordinates;
+    if (!isDiscontinuity) {
+      lastBlackDot = floatToKDCoordinate(dotCoordinates);
     }
 
     if (redrawCursor) {

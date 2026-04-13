@@ -14,12 +14,12 @@ namespace Ion {
 namespace Simulator {
 namespace Actions {
 
-constexpr const char* kStateFileExtension = "nws";
+constexpr const char* kStateFileExtension = "nwt";
 
 void saveState() {
   const char* path = Platform::filePathForWriting(kStateFileExtension);
   if (path != nullptr) {
-    StateFile::save(path);
+    StateFile::saveText(path);
   }
 }
 

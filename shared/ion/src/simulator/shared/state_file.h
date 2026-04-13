@@ -12,6 +12,7 @@ void pushEventFromMemory(uint8_t c, const uint8_t** ptr,
 bool loadMemory(const char* buffer, size_t length,
                 bool headlessStateFiles = false);
 void save(const char* filename);
+void saveText(const char* filename);
 
 }  // namespace StateFile
 }  // namespace Simulator

@@ -232,7 +232,7 @@ const EventData s_dataForEvent[Event::k_specialEventsOffset] = {
     U(),
 };
 
-#if DEBUG
+#if DEBUG || ION_SIMULATOR_FILES
 
 const char* const s_nameForEvent[255] = {
 /* The names are in a dedicated file to be easy to parse from python */

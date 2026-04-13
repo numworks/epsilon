@@ -113,7 +113,7 @@ class Event {
 
   // Return the length of the copied text (and not the size)
   const char* text() const;
-#if DEBUG
+#if DEBUG || ION_SIMULATOR_FILES
   const char* name() const;
 #endif
 

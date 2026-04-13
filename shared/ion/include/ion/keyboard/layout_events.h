@@ -11,7 +11,7 @@ namespace Events {
 
 extern const EventData s_dataForEvent[Event::k_specialEventsOffset];
 
-#if DEBUG
+#if DEBUG || ION_SIMULATOR_FILES
 extern const char* const s_nameForEvent[255];
 
 inline const char* Event::name() const {

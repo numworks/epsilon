@@ -702,7 +702,7 @@ void RackParser::parseUnitConversion(TreeRef& leftHandSide,
        !Units::IsPureAngleUnit(rightHandSide))) {
     // UnitConvert expect a unit on the right and an expression with units on
     // the left
-    RaiseParseFail(SyntaxError::InternalUnitConversion);
+    RaiseParseFail(SyntaxError::UnitConversionFailure);
   }
   turnIntoBinaryNode(KUnitConversion, leftHandSide, rightHandSide);
 }
@@ -781,7 +781,7 @@ void RackParser::parseLeftParenthesis(TreeRef& leftHandSide,
     list->cloneNodeOverNode(KParentheses);
     leftHandSide = list;
   } else {
-    RaiseParseFail(SyntaxError::OnlyTwoDimensionalPointsHandled);
+    RaiseParseFail(SyntaxError::Only2DPointsHandled);
     return;
   }
 
@@ -1481,7 +1481,7 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
                                         Token::Type stoppingType) {
   // Only used for NL-logarithm
   if (!leftHandSide.isUninitialized()) {
-    RaiseParseFail(SyntaxError::LogBaseShouldBeLeftOfLog);
+    RaiseParseFail(SyntaxError::NLLogBaseShouldBeLeftOfLog);
   }
   const Tree* layout = m_currentToken.firstLayout();
   TreeRef base = LayoutParser::Parse(layout->child(0), m_parsingContext);

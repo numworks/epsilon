@@ -65,6 +65,9 @@ void assertLayoutParsesTo(
     Poincare::ParserHelper::ParsingParameters params = {}) {
   Tree* expression = Parser::Parse(layout, symbolContext, params).tree;
   assert_trees_are_equal(expression, expected);
+  if (expression) {
+    expression->removeTree();
+  }
 }
 
 bool is_parsable(const Tree* layout, bool preserveInput = true,
@@ -806,8 +809,8 @@ QUIZ_CASE(pcj_parse_sequences) {
   // If u is defined as function, u_4 is not parsable
   assert(!is_parsable("u"_l ^ KSubscriptL("4"_l), false, symbolStore));
 
-  expected->removeTree();
   expected2->removeTree();
+  expected->removeTree();
 #endif
 }
 

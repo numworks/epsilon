@@ -1,8 +1,6 @@
 #pragma once
 
-#include <assert.h>
 #include <kandinsky/color.h>
-#include <omg/unreachable.h>
 #include <stddef.h>
 
 #include <array>

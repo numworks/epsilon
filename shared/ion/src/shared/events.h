@@ -16,7 +16,8 @@ class State {
         m_keysSeenUp(-1),
         m_lastEventShift(false),
         m_lastEventAlpha(false),
-        m_idleWasSent(false) {}
+        m_idleWasSent(false),
+        m_lastRepeatReturnTime(0) {}
   Event sharedGetEvent(int* timeout);
   void resetKeyboardState();
 
@@ -30,6 +31,7 @@ class State {
   bool m_lastEventShift;
   bool m_lastEventAlpha;
   bool m_idleWasSent;
+  uint64_t m_lastRepeatReturnTime;
 };
 
 extern OMG::GlobalBox<State> SharedState;

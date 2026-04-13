@@ -140,6 +140,7 @@ Event State::privateSharedGetEvent(int* timeout) {
         Event event(m_lastKeypress, m_lastEventShift, m_lastEventAlpha, lock);
         SharedModifierState->updateModifiersFromEvent(event, state);
         m_lastEvent = event;
+        m_lastRepeatReturnTime = Ion::Timing::millis();
         return event;
       }
     }
@@ -155,7 +156,10 @@ Event State::privateSharedGetEvent(int* timeout) {
         m_lastEventAlpha ==
             (m_currentKeyboardState.keyDown(Keyboard::Key::Alpha) || lock);
     if (isRepeatableEvent) {
-      delayForRepeat = isRepeating() ? delayBetweenRepeat : delayBeforeRepeat;
+      int rawDelay = isRepeating() ? delayBetweenRepeat : delayBeforeRepeat;
+      int alreadyElapsed =
+          (int)(Ion::Timing::millis() - m_lastRepeatReturnTime);
+      delayForRepeat = std::max(0, rawDelay - alreadyElapsed);
       maximumDelay = std::min(maximumDelay, delayForRepeat);
     }
 
@@ -174,6 +178,7 @@ Event State::privateSharedGetEvent(int* timeout) {
      * always been zero. In other words, no new key has been pressed. */
     if (elapsedTime >= delayForRepeat) {
       assert(isRepeatableEvent);
+      m_lastRepeatReturnTime = Ion::Timing::millis();
       SharedModifierState->incrementLongPress();
       return m_lastEvent;
     }

@@ -117,7 +117,9 @@ SFLAGS_escher += -DESCHER_VIEW_LOGGING=1
 endif
 
 $(call assert_defined,KANDINSKY_fonts_dependencies)
-$(call all_objects_for,$(SOURCES_escher)): $(KANDINSKY_fonts_dependencies)
+
+# Escher needs the i18n.h header because the Escher sources include global_preferences.h
+$(call all_objects_for,$(SOURCES_escher)): $(OUTPUT_DIRECTORY)/apps/i18n.h $(KANDINSKY_fonts_dependencies)
 
 # Inliner
 

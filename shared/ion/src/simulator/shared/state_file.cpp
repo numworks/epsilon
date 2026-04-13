@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <string>
+
 #include "events.h"
 #include "journal.h"
 
@@ -130,6 +132,43 @@ void pushEventFromMemory(uint8_t c, const uint8_t** ptr,
   }
   Journal::replayJournal()->pushEvent(e);
 }
+static inline std::string escapeText(const char* text) {
+  // Escape: \ -> \\, newline -> \n
+  std::string result;
+  for (const char* p = text; *p; p++) {
+    if (*p == '\\') {
+      result += "\\\\";
+    } else if (*p == '\n') {
+      result += "\\n";
+    } else {
+      result += *p;
+    }
+  }
+  return result;
+}
+
+static inline void unescapeText(char* text) {
+  // Unescape: \\ -> \, \n -> newline
+  char* src = text;
+  char* dst = text;
+  while (*src) {
+    if (*src == '\\' && *(src + 1)) {
+      if (*(src + 1) == '\\') {
+        *dst++ = '\\';
+        src += 2;
+      } else if (*(src + 1) == 'n') {
+        *dst++ = '\n';
+        src += 2;
+      } else {
+        *dst++ = *src++;
+      }
+    } else {
+      *dst++ = *src++;
+    }
+  }
+  *dst = 0;
+}
+
 static bool loadTextFile(FILE* f) {
   // Consume rest of magic line (the newline after "NWST")
   int ch;
@@ -201,6 +240,7 @@ static bool loadTextFile(FILE* f) {
     if (e == Ion::Events::ExternalText && space != nullptr) {
       strlcpy(Ion::Events::sharedExternalTextBuffer(), space + 1,
               Ion::Events::sharedExternalTextBufferSize);
+      unescapeText(Ion::Events::sharedExternalTextBuffer());
     }
     Journal::replayJournal()->pushEvent(e);
   }
@@ -356,7 +396,8 @@ static inline bool saveText(FILE* f) {
     }
     fprintf(f, "%s", name);
     if (e == Ion::Events::ExternalText) {
-      fprintf(f, " %s", Ion::Events::sharedExternalTextBuffer());
+      std::string escaped = escapeText(Ion::Events::sharedExternalTextBuffer());
+      fprintf(f, " %s", escaped.c_str());
     }
     fprintf(f, "\n");
   }

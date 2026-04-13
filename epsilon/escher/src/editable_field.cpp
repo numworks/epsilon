@@ -54,7 +54,11 @@ size_t EditableField::getTextFromEvent(Ion::Events::Event event, char* buffer,
           LayoutPreferences::LogarithmKeyEvent::WithBaseTen) {
     return strlcpy(buffer, k_logWithBase10, bufferSize);
   }
-  return Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);
+  const char* eventText = event.text();
+  if (eventText == nullptr) {
+    return 0;
+  }
+  return strlcpy(buffer, eventText, bufferSize);
 }
 
 }  // namespace Escher

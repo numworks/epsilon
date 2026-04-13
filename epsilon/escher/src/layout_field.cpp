@@ -258,12 +258,11 @@ bool LayoutField::processSpecialEvents(const char* text) {
   if (linearMode()) {
     return false;
   }
-  char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
   Poincare::LayoutCursor* cursor = this->cursor();
   for (int i = 0; i < numberOfSpecialEvents; i++) {
-    Ion::Events::copyText(static_cast<uint8_t>(specialEvents[i]), buffer,
-                          Ion::Events::EventData::k_maxDataSize);
-    if (strcmp(text, buffer) == 0) {
+    Ion::Events::Event e = static_cast<Ion::Events::Event>(specialEvents[i]);
+    const char* eventText = e.text();
+    if (eventText != nullptr && strcmp(text, eventText) == 0) {
       (cursor->*handleSpecialEvents[i])(context());
       return true;
     }

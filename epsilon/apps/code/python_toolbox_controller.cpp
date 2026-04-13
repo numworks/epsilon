@@ -1073,11 +1073,9 @@ bool PythonToolboxController::handleEvent(Ion::Events::Event event) {
   if (Toolbox::handleEvent(event)) {
     return true;
   }
-  char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
-  size_t length = Ion::Events::copyText(static_cast<uint8_t>(event), buffer,
-                                        Ion::Events::EventData::k_maxDataSize);
-  if (length == 1) {
-    char c = buffer[0];
+  const char* eventText = event.text();
+  if (eventText != nullptr && strlen(eventText) == 1) {
+    char c = eventText[0];
     if (CodePoint(c).isLatinLetter()) {
       scrollToLetter(c);
       return true;

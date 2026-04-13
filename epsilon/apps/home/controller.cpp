@@ -83,17 +83,16 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     return true;
   }
   // Handle keys from 0 to 9
-  char eventText[Ion::Events::EventData::k_maxDataSize] = {0};
-  size_t length = Ion::Events::copyText(static_cast<uint8_t>(event), eventText,
-                                        Ion::Events::EventData::k_maxDataSize);
-  if (length == 1 && eventText[0] >= '0' && eventText[0] <= '9') {
+  const char* eventTextPtr = event.text();
+  if (eventTextPtr != nullptr && strlen(eventTextPtr) == 1 &&
+      eventTextPtr[0] >= '0' && eventTextPtr[0] <= '9') {
     int iconIndex;
-    if (eventText[0] == '0') {
+    if (eventTextPtr[0] == '0') {
       // Settings app is the last visible builtin app
       iconIndex = numberOfIcons() - 1 -
                   AppsContainer::sharedAppsContainer()->numberOfExternalApps();
     } else {
-      iconIndex = eventText[0] - '1';
+      iconIndex = eventTextPtr[0] - '1';
     }
     if (iconIndex >= AppsContainer::sharedAppsContainer()->numberOfApps()) {
       return false;

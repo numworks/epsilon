@@ -127,13 +127,11 @@ bool ExpressionModelListController::handleEventOnExpression(
     selectableListView()->reloadData();
     return true;
   }
-  char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
-  size_t eventTextLength =
-      Ion::Events::copyText(static_cast<uint8_t>(event), buffer,
-                            Ion::Events::EventData::k_maxDataSize);
+  const char* eventText = event.text();
+  bool hasEventText = (eventText != nullptr && strlen(eventText) > 0);
   // If layout field is editing, then it should have handled "writing events"
   if ((!layoutField()->isEditing() &&
-       (eventTextLength > 0 || event == Ion::Events::XNT ||
+       (hasEventText || event == Ion::Events::XNT ||
         event == Ion::Events::Paste)) ||
       (!inTemplateMenu &&
        (event == Ion::Events::Toolbox || event == Ion::Events::Var))) {

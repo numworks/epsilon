@@ -2,18 +2,18 @@
 
 #include <stdint.h>
 
-namespace Escher::Theme {
+namespace Escher {
 
 // List of all theme components
-#define COMPONENTS(X) \
-  X(Background)       \
-  X(Graph)            \
+#define THEME_COMPONENTS(X) \
+  X(Background)             \
+  X(Graph)                  \
   X(Text)
 
-enum class Component : uint8_t {
+enum class ThemeComponent : uint8_t {
 #define X(name) name,
-  COMPONENTS(X)
+  THEME_COMPONENTS(X)
 #undef X
 };
 
-}  // namespace Escher::Theme
+}  // namespace Escher

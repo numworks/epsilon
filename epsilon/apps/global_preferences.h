@@ -37,10 +37,10 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
   static GlobalPreferences* SharedGlobalPreferences();
   static void Init();
 
-  Escher::Theme::Enum theme() const { return Escher::Theme::Enum::Light; }
+  Escher::Theme theme() const { return Escher::Theme::Light; }
   // Access each component color directly
-  KDColor color(Escher::Theme::Component component) const {
-    return Escher::Theme::ColorPicker::Get(theme(), component);
+  KDColor color(Escher::ThemeComponent component) const {
+    return Escher::ColorPicker::Get(theme(), component);
   }
 
   I18n::Language language() const { return s_data->m_language; }

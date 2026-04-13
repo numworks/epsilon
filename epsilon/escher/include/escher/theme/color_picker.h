@@ -6,17 +6,17 @@
 #include "dark_theme.h"
 #include "light_theme.h"
 
-namespace Escher::Theme {
+namespace Escher {
 
-enum class Enum : uint8_t { Light, Dark };
+enum class Theme : uint8_t { Light, Dark };
 
 class ColorPicker {
  public:
-  constexpr static KDColor Get(Enum theme, Component component) {
+  constexpr static KDColor Get(Theme theme, ThemeComponent component) {
     switch (theme) {
-      case Enum::Light:
+      case Theme::Light:
         return k_lightTheme.get(component);
-      case Enum::Dark:
+      case Theme::Dark:
         return k_darkTheme.get(component);
       default:
         OMG_UNREACHABLE
@@ -24,4 +24,4 @@ class ColorPicker {
   }
 };
 
-}  // namespace Escher::Theme
+}  // namespace Escher

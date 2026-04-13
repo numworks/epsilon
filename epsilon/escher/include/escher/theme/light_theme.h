@@ -4,11 +4,11 @@
 
 #include "theme_container.h"
 
-namespace Escher::Theme {
+namespace Escher {
 
 constexpr static ThemeContainer k_lightTheme =
     ThemeContainer{.Background = Palette::White,
                    .Graph = Palette::YellowDark,
                    .Text = Palette::Black};
 
-}  // namespace Escher::Theme
+}  // namespace Escher

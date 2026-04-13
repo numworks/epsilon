@@ -91,8 +91,7 @@ class LayoutField : public EditableField {
                 "to max number of char in text field");
   bool privateHandleEvent(Ion::Events::Event event, bool* layoutDidChange,
                           bool* shouldUpdateCursor);
-  size_t getTextFromEvent(Ion::Events::Event event, char* buffer,
-                          size_t bufferSize) override;
+  const char* getTextFromEvent(Ion::Events::Event event) override;
   bool processSpecialEvents(const char* text);
   bool processAndInsertLayout(Poincare::Layout layout,
                               bool forceCursorRightOfText,

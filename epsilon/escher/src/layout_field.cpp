@@ -498,11 +498,10 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   }
 
   // Handle events that have text
-  constexpr size_t bufferSize = Ion::Events::EventData::k_maxDataSize;
-  char buffer[bufferSize] = {0};
-  if (getTextFromEvent(event, buffer, bufferSize) > 0) {
+  const char* eventText = getTextFromEvent(event);
+  if (eventText != nullptr) {
     prepareToEdit();
-    bool didHandleEvent = processTextEvent(buffer);
+    bool didHandleEvent = processTextEvent(eventText);
     *layoutDidChange = didHandleEvent;
     return didHandleEvent;
   }
@@ -582,20 +581,19 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   return false;
 }
 
-size_t LayoutField::getTextFromEvent(Ion::Events::Event event, char* buffer,
-                                     size_t bufferSize) {
+const char* LayoutField::getTextFromEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Sto && m_delegate &&
       m_delegate->shouldInsertTextForStoEvent(this)) {
-    return strlcpy(buffer, "→", bufferSize);
+    return "→";
   }
   if (event == Ion::Events::Ans && m_delegate &&
       m_delegate->shouldInsertTextForAnsEvent(this)) {
-    return strlcpy(buffer, SymbolHelper::AnsMainAlias(), bufferSize);
+    return SymbolHelper::AnsMainAlias();
   }
   if (event == Ion::Events::DoubleQuotes) {
-    return UTF8Helper::WriteCodePoint(buffer, bufferSize, '\'');
+    return "'";
   }
-  return EditableField::getTextFromEvent(event, buffer, bufferSize);
+  return EditableField::getTextFromEvent(event);
 }
 
 bool LayoutField::handleStoreEvent() {

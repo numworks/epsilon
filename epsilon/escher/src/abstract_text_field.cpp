@@ -490,10 +490,9 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   }
 
   // Handle special events with text
-  constexpr size_t bufferSize = Ion::Events::EventData::k_maxDataSize;
-  char buffer[bufferSize] = {0};
-  if (getTextFromEvent(event, buffer, bufferSize) > 0) {
-    bool didHandleEvent = insertText(buffer);
+  const char* eventText = getTextFromEvent(event);
+  if (eventText != nullptr) {
+    bool didHandleEvent = insertText(eventText);
     *textDidChange = didHandleEvent;
     return didHandleEvent;
   }
@@ -501,13 +500,12 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
   return false;
 }
 
-size_t AbstractTextField::getTextFromEvent(Ion::Events::Event event,
-                                           char* buffer, size_t bufferSize) {
+const char* AbstractTextField::getTextFromEvent(Ion::Events::Event event) {
   if (event == Ion::Events::DoubleQuotes && m_delegate &&
       m_delegate->shouldInsertSingleQuoteInsteadOfDoubleQuotes(this)) {
-    return UTF8Helper::WriteCodePoint(buffer, bufferSize, '\'');
+    return "'";
   }
-  return EditableField::getTextFromEvent(event, buffer, bufferSize);
+  return EditableField::getTextFromEvent(event);
 }
 
 void AbstractTextField::scrollToCursor() {

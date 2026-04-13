@@ -47,18 +47,13 @@ bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
   return handleEventWithText(buffer, true, false, true);
 }
 
-size_t EditableField::getTextFromEvent(Ion::Events::Event event, char* buffer,
-                                       size_t bufferSize) {
+const char* EditableField::getTextFromEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Log &&
       SharedPreferences->logarithmKeyEvent() ==
           LayoutPreferences::LogarithmKeyEvent::WithBaseTen) {
-    return strlcpy(buffer, k_logWithBase10, bufferSize);
+    return k_logWithBase10;
   }
-  const char* eventText = event.text();
-  if (eventText == nullptr) {
-    return 0;
-  }
-  return strlcpy(buffer, eventText, bufferSize);
+  return event.text();
 }
 
 }  // namespace Escher

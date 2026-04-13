@@ -204,9 +204,9 @@ init_git_commit_msg_hook() {
 }
 
 setup_nws_diff_converter() {
-  # Convert .nws to .txt when displaying diff
+  # Convert .nws to .nwt when displaying diff
   echo "*.nws diff=nws" >> .git/info/attributes
-  git config diff.nws.textconv "python3 tools/screenshots/nws_to_txt.py"
+  git config diff.nws.textconv "python3 tools/screenshots/nws_to_nwt.py"
 }
 
 install_binary_deps

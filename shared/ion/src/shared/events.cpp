@@ -82,7 +82,12 @@ const char* Event::defaultText() const {
 
 Event State::privateSharedGetEvent(int* timeout) {
   constexpr int delayBeforeRepeat = 200;
+#ifdef ION_VARIANT_EPSILON
   constexpr int delayBetweenRepeat = 50;
+#else
+  // Scroll slower in scandium since the screen is smaller
+  constexpr int delayBetweenRepeat = 100;
+#endif
   assert(*timeout > delayBeforeRepeat);
   assert(*timeout > delayBetweenRepeat);
 

@@ -14,7 +14,6 @@ namespace Simulator {
 namespace StateFile {
 
 constexpr static const char* sMagic = "NWSF";
-constexpr static const char* sTextMagic = "NWST";
 constexpr static size_t sMagicLength = 4;
 constexpr static size_t sVersionLength = 8;
 constexpr static const char* sWildcardVersion = "**.**.**";
@@ -71,36 +70,6 @@ static inline Ion::Events::Event reconstructEvent(uint8_t c) {
   return e;
 }
 
-static inline void pushEventFromFile(uint8_t c, FILE* f) {
-  Ion::Events::Event e = reconstructEvent(c);
-  if (e == Ion::Events::None) {
-    return;
-  } else if (e == Ion::Events::ExternalText) {
-    // Read and load external text into sharedExternalTextBuffer
-    char* buffer = Ion::Events::sharedExternalTextBuffer();
-    int i = 0;
-    char ch;
-    while (true) {
-      ch = getc(f);
-      buffer[i++] = ch;
-      if (ch == 0 || ch == EOF) {
-        break;
-      }
-      if (i >=
-          static_cast<int>(Ion::Events::sharedExternalTextBufferSize) - 1) {
-        // Buffer is full, truncate and stop reading
-        buffer[Ion::Events::sharedExternalTextBufferSize - 1] = 0;
-        break;
-      }
-    }
-    if (buffer[0] == 0 || buffer[0] == EOF) {
-      // Do not push an empty ExternalText event
-      return;
-    }
-  }
-  Journal::replayJournal()->pushEvent(e);
-}
-
 void pushEventFromMemory(uint8_t c, const uint8_t** ptr,
                          const uint8_t* bufferEnd) {
   Ion::Events::Event e = reconstructEvent(c);
@@ -132,19 +101,39 @@ void pushEventFromMemory(uint8_t c, const uint8_t** ptr,
   }
   Journal::replayJournal()->pushEvent(e);
 }
-static inline std::string escapeText(const char* text) {
-  // Escape: \ -> \\, newline -> \n
-  std::string result;
-  for (const char* p = text; *p; p++) {
-    if (*p == '\\') {
-      result += "\\\\";
-    } else if (*p == '\n') {
-      result += "\\n";
-    } else {
-      result += *p;
+
+#if ION_SIMULATOR_FILES
+
+constexpr static const char* sTextMagic = "NWST";
+
+static inline void pushEventFromFile(uint8_t c, FILE* f) {
+  Ion::Events::Event e = reconstructEvent(c);
+  if (e == Ion::Events::None) {
+    return;
+  } else if (e == Ion::Events::ExternalText) {
+    // Read and load external text into sharedExternalTextBuffer
+    char* buffer = Ion::Events::sharedExternalTextBuffer();
+    int i = 0;
+    char ch;
+    while (true) {
+      ch = getc(f);
+      buffer[i++] = ch;
+      if (ch == 0 || ch == EOF) {
+        break;
+      }
+      if (i >=
+          static_cast<int>(Ion::Events::sharedExternalTextBufferSize) - 1) {
+        // Buffer is full, truncate and stop reading
+        buffer[Ion::Events::sharedExternalTextBufferSize - 1] = 0;
+        break;
+      }
+    }
+    if (buffer[0] == 0 || buffer[0] == EOF) {
+      // Do not push an empty ExternalText event
+      return;
     }
   }
-  return result;
+  Journal::replayJournal()->pushEvent(e);
 }
 
 static inline void unescapeText(char* text) {
@@ -300,6 +289,8 @@ void load(const char* filename, bool headlessStateFile) {
   }
 }
 
+#endif  // ION_SIMULATOR_FILES
+
 void loadMemory(const char* buffer, size_t length, bool headlessStateFile) {
   const uint8_t* e;
   if (headlessStateFile) {
@@ -373,6 +364,23 @@ void save(const char* filename) {
   fclose(f);
 }
 
+#if ION_SIMULATOR_FILES
+
+static inline std::string escapeText(const char* text) {
+  // Escape: \ -> \\, newline -> \n
+  std::string result;
+  for (const char* p = text; *p; p++) {
+    if (*p == '\\') {
+      result += "\\\\";
+    } else if (*p == '\n') {
+      result += "\\n";
+    } else {
+      result += *p;
+    }
+  }
+  return result;
+}
+
 static inline bool saveText(FILE* f) {
   fprintf(f, "%s\n", sTextMagic);
 #if ASSERTIONS
@@ -412,6 +420,8 @@ void saveText(const char* filename) {
   saveText(f);
   fclose(f);
 }
+
+#endif  // ION_SIMULATOR_FILES
 
 }  // namespace StateFile
 }  // namespace Simulator

@@ -304,27 +304,35 @@ void DiscontinuitySolver::honeAndRoundSolution(Coordinate2D<double> start,
   // Note: If this assertion fails, escape and return no discontinuity.
   assert(leftIsDiscontinuous || rightIsDiscontinuous);
   if (!leftIsDiscontinuous) {
-    // No left discontinuity
-    left = Coordinate2D<double>();
+    // No left discontinuity, ignore difference between middle and left values
+    left = middle;
   }
   if (!rightIsDiscontinuous) {
-    // No right discontinuity
-    right = Coordinate2D<double>();
-  }
-  if (std::abs(right.y() - left.y()) < NullTolerance(middle.x())) {
-    // Left and right are the same
-    assert(leftIsDiscontinuous && rightIsDiscontinuous);
-    // Keep only 1 point of interest
-    left.setY(MagicRound((left.y() + right.y()) / 2.));
-    right = Coordinate2D<double>();
+    // No right discontinuity, ignore difference between middle and right values
+    right = middle;
   }
 
   // There should be at least one finite value
   assert(std::isfinite(left.y()) || std::isfinite(middle.y()) ||
          std::isfinite(right.y()));
 
+  if (std::isfinite(left.y()) && std::isfinite(right.y()) &&
+      std::abs(right.y() - left.y()) < NullTolerance(middle.x())) {
+    // Left and right are the same
+    Interest interest = Interest::UnreachedDiscontinuity;
+    if (!std::isfinite(middle.y())) {
+      // We failed to locate the discontinuity, use left.y()
+      middle.setY(left.y());
+    } else if (std::abs(middle.y() - left.y()) >= NullTolerance(middle.x())) {
+      // Middle has a different value. Discontinuity has been reached.
+      interest = Interest::ReachedDiscontinuity;
+    }
+    m_solutionQueue.push(CoordToSolution(middle, interest));
+    return;
+  }
+
   // Push solutions
-  if (std::isfinite(left.y())) {
+  if (leftIsDiscontinuous && std::isfinite(left.y())) {
     left.setX(middle.x());
     m_solutionQueue.push(
         CoordToSolution(left, Interest::UnreachedDiscontinuity));
@@ -333,7 +341,7 @@ void DiscontinuitySolver::honeAndRoundSolution(Coordinate2D<double> start,
     m_solutionQueue.push(
         CoordToSolution(middle, Interest::ReachedDiscontinuity));
   }
-  if (std::isfinite(right.y())) {
+  if (rightIsDiscontinuous && std::isfinite(right.y())) {
     right.setX(middle.x());
     m_solutionQueue.push(
         CoordToSolution(right, Interest::UnreachedDiscontinuity));

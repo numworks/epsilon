@@ -35,5 +35,7 @@ void SVC_ATTRIBUTES setSpinner(bool spiner) {
 
 void openURL(const char* url) {}
 
+const char* Event::text() const { return defaultText(); }
+
 }  // namespace Events
 }  // namespace Ion

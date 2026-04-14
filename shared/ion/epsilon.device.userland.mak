@@ -68,7 +68,9 @@ $(addprefix shared/, \
   console_line.cpp \
   display.cpp \
   display_context.cpp \
+  events.cpp \
   exam_mode.cpp \
+  layout_events/$(ION_variant)/layout_events.cpp \
   stack_position.cpp \
   storage/file_system.cpp \
   storage/record_name_verifier.cpp \
@@ -80,10 +82,6 @@ $(addprefix test/, \
   storage.cpp:+test \
 ) \
   $(_sources_ion_userland_svc)
-
-ifneq ($(ION_LOG_EVENTS_NAME),0)
-_sources_ion_userland += shared/layout_events/$(ION_variant)/layout_events.cpp
-endif
 
 $(call all_objects_for,$(addprefix $(PATH_ion)/src/,$(_sources_ion_userland_svc))): SFLAGS += -fno-lto
 

@@ -21,26 +21,12 @@ class QueueJournal : public Ion::Events::Journal {
         m_eventStorage.push(e);
         return;
       }
-      size_t len = strlen(systemBuffer);
-      /* Changed a Paste that uses the system clipboard into an ExternalText to
-       * preserve pasted content.
-       * `strlcpy` always end with a null-byte so this is the number of events
-       * based on copied length:
-       *  1 <=len<= 9 = 1 event
-       *  10<=len<=18 = 2 events
-       *  19<=len<=27 = 3 events */
-      for (size_t i = 0;
-           i < (len + Ion::Events::sharedExternalTextBufferSize - 2) /
-                   (Ion::Events::sharedExternalTextBufferSize - 1);
-           ++i) {
-        // TODO probably need to fix this for longer than 1byte ExternalTexts
-        m_eventStorage.push(Ion::Events::ExternalText);
-        ExternalTextBuffer data;
-        strlcpy(data.buffer, systemBuffer,
-                Ion::Events::sharedExternalTextBufferSize);
-        m_externalTextStorage.push(data);
-        systemBuffer += Ion::Events::sharedExternalTextBufferSize - 1;
-      }
+      // Convert Paste to ExternalText to preserve clipboard content
+      m_eventStorage.push(Ion::Events::ExternalText);
+      ExternalTextBuffer data;
+      strlcpy(data.buffer, systemBuffer,
+              Ion::Events::sharedExternalTextBufferSize);
+      m_externalTextStorage.push(data);
     } else
 #endif
         if (e == Ion::Events::ExternalText) {

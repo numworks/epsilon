@@ -298,12 +298,11 @@ void DiscontinuitySolver::honeAndRoundSolution(Coordinate2D<double> start,
   // We round because we want the "limit"
   left.setY(MagicRound(evaluateAt(left.x())));
   right.setY(MagicRound(evaluateAt(right.x())));
+
   bool leftIsDiscontinuous = isDiscontinuousBetween(left, middle);
   bool rightIsDiscontinuous = isDiscontinuousBetween(middle, right);
-  if (!leftIsDiscontinuous && !rightIsDiscontinuous) {
-    // No discontinuity
-    return;
-  }
+  // Note: If this assertion fails, escape and return no discontinuity.
+  assert(leftIsDiscontinuous || rightIsDiscontinuous);
   if (!leftIsDiscontinuous) {
     // No left discontinuity
     left = Coordinate2D<double>();

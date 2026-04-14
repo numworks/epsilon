@@ -77,7 +77,6 @@ static inline void pushEventFromFile(uint8_t c, FILE* f) {
     return;
   } else if (e == Ion::Events::ExternalText) {
     // Read and load external text into sharedExternalTextBuffer
-    constexpr size_t k_bufferSize = Ion::Events::sharedExternalTextBufferSize;
     char* buffer = Ion::Events::sharedExternalTextBuffer();
     int i = 0;
     char ch;
@@ -87,12 +86,11 @@ static inline void pushEventFromFile(uint8_t c, FILE* f) {
       if (ch == 0 || ch == EOF) {
         break;
       }
-      if (i == k_bufferSize - 1) {
-        /* If [f] contains a long ExternalTextEvent, split it in [k_bufferSize]
-         * chunks */
-        buffer[i] = 0;
-        i = 0;
-        Journal::replayJournal()->pushEvent(e);
+      if (i >=
+          static_cast<int>(Ion::Events::sharedExternalTextBufferSize) - 1) {
+        // Buffer is full, truncate and stop reading
+        buffer[Ion::Events::sharedExternalTextBufferSize - 1] = 0;
+        break;
       }
     }
     if (buffer[0] == 0 || buffer[0] == EOF) {
@@ -110,7 +108,6 @@ void pushEventFromMemory(uint8_t c, const uint8_t** ptr,
     return;
   } else if (e == Ion::Events::ExternalText) {
     // Read and load external text into sharedExternalTextBuffer
-    constexpr size_t k_bufferSize = Ion::Events::sharedExternalTextBufferSize;
     char* buffer = Ion::Events::sharedExternalTextBuffer();
     int i = 0;
     char ch;
@@ -121,12 +118,11 @@ void pushEventFromMemory(uint8_t c, const uint8_t** ptr,
       if (ch == 0 || *ptr >= bufferEnd) {
         break;
       }
-      if (i == k_bufferSize - 1) {
-        /* If [f] contains a long ExternalTextEvent, split it in [k_bufferSize]
-         * chunks */
-        buffer[i] = 0;
-        i = 0;
-        Journal::replayJournal()->pushEvent(e);
+      if (i >=
+          static_cast<int>(Ion::Events::sharedExternalTextBufferSize) - 1) {
+        // Buffer is full, truncate and stop reading
+        buffer[Ion::Events::sharedExternalTextBufferSize - 1] = 0;
+        break;
       }
     }
     if (buffer[0] == 0 || buffer[0] == EOF) {

@@ -131,6 +131,7 @@ class DoublePairStore {
   uint32_t storeChecksum() const;
   uint32_t storeChecksumForSeries(int series) const;
 
+  // TODO: use ThemeComponent
   // Colors
   KDColor colorOfSeriesAtIndex(int series) const;
   KDColor colorLightOfSeriesAtIndex(int series) const;

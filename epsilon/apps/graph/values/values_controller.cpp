@@ -268,7 +268,7 @@ void ValuesController::setTitleCellStyle(HighlightCell* cell, int column) {
   OMG::ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
   static_cast<FunctionTitleCell*>(cell)->setColor(
-      function->color(derivationOrder));
+      Escher::Palette::DataColorToComponent(function->color(derivationOrder)));
 }
 
 // Shared::ValuesController

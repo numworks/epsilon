@@ -507,7 +507,8 @@ void ValuesController::setTitleCellStyle(HighlightCell* cell, int column) {
   }
   Shared::Function* function =
       functionStore()->modelForRecord(recordAtColumn(column)).pointer();
-  static_cast<FunctionTitleCell*>(cell)->setColor(function->color());
+  static_cast<FunctionTitleCell*>(cell)->setColor(
+      Palette::DataColorToComponent(function->color()));
 }
 
 void ValuesController::reloadEditedCell(int column, int row) {

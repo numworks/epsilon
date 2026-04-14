@@ -1,8 +1,10 @@
 #include "function_title_cell.h"
 
+#include <apps/global_preferences.h>
+
 namespace Shared {
 
-void FunctionTitleCell::setColor(KDColor color) {
+void FunctionTitleCell::setColor(Escher::ThemeComponent color) {
   m_functionColor = color;
   reloadCell();
 }
@@ -10,7 +12,7 @@ void FunctionTitleCell::setColor(KDColor color) {
 void FunctionTitleCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Draw the color indicator
   ctx->fillRect(KDRect(0, 0, bounds().width(), k_colorIndicatorThickness),
-                m_functionColor);
+                SharedGlobalPrefs().color(m_functionColor));
 }
 
 KDRect FunctionTitleCell::subviewFrame() const {

@@ -15,7 +15,7 @@ class ExpressionFunctionTitleCell : public FunctionTitleCell {
   }
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
-  void setColor(KDColor color) override;
+  void setColor(Escher::ThemeComponent color) override;
   const Poincare::Layout& layout() const override {
     return m_titleTextView.layout();
   }

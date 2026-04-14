@@ -8,11 +8,8 @@ namespace Shared {
 
 class FunctionTitleCell : public Escher::EvenOddCell {
  public:
-  FunctionTitleCell()
-      : EvenOddCell(),
-        m_baseline(-1),
-        m_functionColor(Escher::Palette::Black) {}
-  virtual void setColor(KDColor color);
+  using EvenOddCell::EvenOddCell;
+  virtual void setColor(Escher::ThemeComponent color);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  protected:
@@ -23,8 +20,8 @@ class FunctionTitleCell : public Escher::EvenOddCell {
 
   virtual KDRect subviewFrame() const;
 
-  KDCoordinate m_baseline;
-  KDColor m_functionColor;
+  KDCoordinate m_baseline = -1;
+  Escher::ThemeComponent m_functionColor = Escher::ThemeComponent::DataRed;
 };
 
 }  // namespace Shared

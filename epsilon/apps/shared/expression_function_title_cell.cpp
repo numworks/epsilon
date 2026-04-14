@@ -22,10 +22,9 @@ void ExpressionFunctionTitleCell::setEven(bool even) {
   m_titleTextView.setEven(even);
 }
 
-void ExpressionFunctionTitleCell::setColor(KDColor color) {
+void ExpressionFunctionTitleCell::setColor(Escher::ThemeComponent color) {
   Shared::FunctionTitleCell::setColor(color);
-  // TODO: temporary
-  m_titleTextView.setTextColor(ThemeComponent::TextDefault);
+  m_titleTextView.setTextColor(color);
 }
 
 void ExpressionFunctionTitleCell::reloadCell() {

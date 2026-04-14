@@ -19,10 +19,9 @@ void BufferFunctionTitleCell::setEven(bool even) {
   m_bufferTextView.setEven(even);
 }
 
-void BufferFunctionTitleCell::setColor(KDColor color) {
+void BufferFunctionTitleCell::setColor(Escher::ThemeComponent color) {
   FunctionTitleCell::setColor(color);
-  // TODO: temporary until BufferFunctionTitleCell uses components
-  m_bufferTextView.setTextColor(Escher::ThemeComponent::TextDefault);
+  m_bufferTextView.setTextColor(color);
 }
 
 void BufferFunctionTitleCell::setText(const char* title) {

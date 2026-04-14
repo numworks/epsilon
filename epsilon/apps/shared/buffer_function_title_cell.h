@@ -13,7 +13,7 @@ class BufferFunctionTitleCell : public FunctionTitleCell {
                               .horizontalAlignment = KDGlyph::k_alignCenter});
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
-  void setColor(KDColor color) override;
+  void setColor(Escher::ThemeComponent color) override;
   void setText(const char* textContent);
   void setFont(KDFont::Size font) { m_bufferTextView.setFont(font); }
   void setHorizontalAlignment(const float alignment) {

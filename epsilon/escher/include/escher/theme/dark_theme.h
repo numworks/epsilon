@@ -32,6 +32,16 @@ constexpr static ThemeContainer k_darkTheme =
                    .TokenBlack = KDColor::RGB24(0xC3CAF4),
                    .TokenGrayMiddle = KDColor::RGB24(0xc3cAF4),
                    .TokenGrayBright = KDColor::RGB24(0x9296F6),
-                   .TokenGrayDark = KDColor::RGB24(0x733FFF)};
+                   .TokenGrayDark = KDColor::RGB24(0x733FFF),
+                   .DataRed = Palette::Red,
+                   .DataBlue = Palette::Blue,
+                   .DataGreen = Palette::Green,
+                   .DataYellow = Palette::YellowDark,
+                   .DataMagenta = Palette::Magenta,
+                   .DataTurquoise = Palette::Turquoise,
+                   .DataPink = Palette::Pink,
+                   .DataOrange = Palette::Orange,
+                   .DataViolet = Palette::Violet,
+                   .DataMint = Palette::Mint};
 
 }  // namespace Escher

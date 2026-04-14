@@ -112,6 +112,7 @@ class Store {
   }
   float getRelativeFrequency(int col, int row) const;
 
+  // TODO: use ThemeComponet
   // Color
   KDColor colorOfGroupAtIndex(int group) const;
   KDColor colorLightOfGroupAtIndex(int group) const;

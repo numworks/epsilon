@@ -235,6 +235,7 @@ float Store::getRelativeFrequency(int col, int row) const {
 }
 
 KDColor Store::colorOfGroupAtIndex(int group) const {
+  // TODO: use DataComponent getter
   return Escher::Palette::DataColor[colorIndexForGroup(group)];
 }
 

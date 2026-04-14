@@ -43,8 +43,7 @@ void StoreTableCell::fillCellForLocation(Escher::HighlightCell* cell,
         static_cast<Shared::BufferFunctionTitleCell*>(cell);
     assert(m_header <= headerCell &&
            headerCell < m_header + InputTable::k_maxNumberOfStoreColumns);
-    headerCell->setColor(
-        store()->colorOfSeriesAtIndex(store()->seriesAtColumn(column)));
+    headerCell->setColor(DataColorComponent(store()->seriesAtColumn(column)));
 
     char columnName[Shared::ClearColumnHelper::k_maxSizeOfColumnName];
     if (m_inference->testType() == TestType::Slope) {

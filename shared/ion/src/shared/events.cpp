@@ -192,6 +192,7 @@ Event State::privateSharedGetEvent(int* timeout) {
 
 Event State::sharedGetEvent(int* timeout) {
   Event event = privateSharedGetEvent(timeout);
+#ifdef ION_VARIANT_EPSILON
   if (event == None) {
     if (!m_idleWasSent) {
       m_idleWasSent = true;
@@ -200,6 +201,9 @@ Event State::sharedGetEvent(int* timeout) {
   } else {
     m_idleWasSent = false;
   }
+#else
+  m_idleWasSent = false;
+#endif
   return event;
 }
 

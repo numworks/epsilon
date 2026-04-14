@@ -206,7 +206,7 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
   static GlobalPreferences GlobalPreferencesInstance;
 
  private:
-  constexpr static uint8_t k_version = 2;
+  constexpr static uint8_t k_version = 3;
 
 #if __EMSCRIPTEN__
   using BrightnessType = emscripten_align1_int;

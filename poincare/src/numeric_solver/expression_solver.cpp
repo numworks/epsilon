@@ -303,49 +303,36 @@ void DiscontinuitySolver::honeAndRoundSolution(Coordinate2D<double> start,
   bool rightIsDiscontinuous = isDiscontinuousBetween(middle, right);
   // Note: If this assertion fails, escape and return no discontinuity.
   assert(leftIsDiscontinuous || rightIsDiscontinuous);
-  if (!leftIsDiscontinuous) {
-    // No left discontinuity, ignore difference between middle and left values
-    left = middle;
-  }
-  if (!rightIsDiscontinuous) {
-    // No right discontinuity, ignore difference between middle and right values
-    right = middle;
-  }
 
   // There should be at least one finite value
-  assert(std::isfinite(left.y()) || std::isfinite(middle.y()) ||
-         std::isfinite(right.y()));
+  assert((leftIsDiscontinuous && std::isfinite(left.y())) ||
+         std::isfinite(middle.y()) ||
+         (rightIsDiscontinuous && std::isfinite(right.y())));
 
-  if (std::isfinite(left.y()) && std::isfinite(right.y()) &&
-      std::abs(right.y() - left.y()) < NullTolerance(middle.x())) {
-    // Left and right are the same
-    if (!std::isfinite(middle.y())) {
-      // We failed to locate the discontinuity, use left.y()
-      middle.setY(left.y());
-    } else if (std::abs(middle.y() - left.y()) >= NullTolerance(middle.x())) {
-      // Middle has a different value. Discontinuity has been reached.
-      m_solutionQueue.push(
-          CoordToSolution(middle, Interest::ReachedDiscontinuity));
-    }
-    m_solutionQueue.push(
-        CoordToSolution(middle, Interest::UnreachedDiscontinuity));
-    return;
-  }
-
-  // Push solutions
+  // Unreached discontinuities
   if (leftIsDiscontinuous && std::isfinite(left.y())) {
     left.setX(middle.x());
     m_solutionQueue.push(
         CoordToSolution(left, Interest::UnreachedDiscontinuity));
   }
-  if (std::isfinite(middle.y())) {
-    m_solutionQueue.push(
-        CoordToSolution(middle, Interest::ReachedDiscontinuity));
-  }
   if (rightIsDiscontinuous && std::isfinite(right.y())) {
     right.setX(middle.x());
     m_solutionQueue.push(
         CoordToSolution(right, Interest::UnreachedDiscontinuity));
+  }
+
+  // Reached discontinuities
+  if (std::isfinite(middle.y())) {
+    bool leftIsReachedDiscontinuity =
+        leftIsDiscontinuous && std::isfinite(left.y()) &&
+        std::abs(middle.y() - left.y()) >= NullTolerance(middle.x());
+    bool rightIsReachedDiscontinuity =
+        rightIsDiscontinuous && std::isfinite(right.y()) &&
+        std::abs(middle.y() - right.y()) >= NullTolerance(middle.x());
+    if (leftIsReachedDiscontinuity || rightIsReachedDiscontinuity) {
+      m_solutionQueue.push(
+          CoordToSolution(middle, Interest::ReachedDiscontinuity));
+    }
   }
 }
 

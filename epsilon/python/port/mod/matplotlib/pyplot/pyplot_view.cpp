@@ -98,7 +98,7 @@ void PyplotPolicy::traceLabel(const AbstractPlotView* plotView, KDContext* ctx,
   plotView->drawLabel(ctx, r, label.string(),
                       Coordinate2D<float>(label.x(), label.y()),
                       AbstractPlotView::RelativePosition::After,
-                      AbstractPlotView::RelativePosition::After, Escher::Palette::Black);
+                      AbstractPlotView::RelativePosition::After, Escher::ThemeComponent::TextDefault);
 }
 
 // PyplotView

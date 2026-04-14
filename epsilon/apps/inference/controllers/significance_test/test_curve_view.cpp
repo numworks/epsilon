@@ -46,7 +46,7 @@ void TestPlotPolicy::drawLabelAndGraduation(const AbstractPlotView* plotView,
   plotView->drawLayout(ctx, rect, layout, Coordinate2D<float>(x, 0.f),
                        AbstractPlotView::RelativePosition::There,
                        AbstractPlotView::RelativePosition::After,
-                       Palette::Black);
+                       ThemeComponent::TextDefault);
 }
 
 static Coordinate2D<float> evaluate(float x, const void* model, const void*) {
@@ -145,7 +145,8 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
 
 void TestXAxis::drawLabel(size_t labelIndex, float t,
                           const AbstractPlotView* plotView, KDContext* ctx,
-                          KDRect rect, OMG::Axis axis, KDColor color) const {
+                          KDRect rect, OMG::Axis axis,
+                          ThemeComponent color) const {
   assert(axis == OMG::Axis::Horizontal);
   const TestCurveView* testCurveView =
       static_cast<const TestCurveView*>(plotView);

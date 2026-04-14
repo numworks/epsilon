@@ -101,7 +101,7 @@ void DashBufferCell(AbstractEvenOddBufferTextCell* bufferCell) {
 }
 
 void DisableBufferCell(AbstractEvenOddBufferTextCell* bufferCell) {
-  bufferCell->setTextColor(Palette::GrayDark);
+  bufferCell->setTextColor(ThemeComponent::TextGrayDark);
   bufferCell->setText(I18n::translate(I18n::Message::Disabled));
 }
 
@@ -137,8 +137,8 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
       type == k_calculationSymbolCellType) {
     EvenOddMessageTextCell* myCell = static_cast<EvenOddMessageTextCell*>(cell);
     myCell->setTextColor(type == k_calculationTitleCellType
-                             ? Palette::Black
-                             : Palette::GrayDark);
+                             ? ThemeComponent::TextDefault
+                             : ThemeComponent::TextGrayDark);
     I18n::Message message = type == k_calculationTitleCellType
                                 ? MessageForCalculation(c)
                                 : SymbolForCalculation(c);
@@ -147,7 +147,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
          c == Calculation::DeterminationCoeff || c == Calculation::RSquared) &&
         forbidStatsDiagnostics) {
       // R and R2 messages should be grayed out.
-      myCell->setTextColor(Palette::GrayDark);
+      myCell->setTextColor(ThemeComponent::TextGrayDark);
     }
     return;
   }
@@ -165,7 +165,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
             ? model->formula()
             : I18n::translate(I18n::Message::Dash));
     static_cast<AbstractEvenOddBufferTextCell*>(cell)->setTextColor(
-        Palette::Black);
+        ThemeComponent::TextDefault);
     return;
   }
 
@@ -227,7 +227,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
   // Single calculation cells
   AbstractEvenOddBufferTextCell* bufferCell =
       static_cast<AbstractEvenOddBufferTextCell*>(cell);
-  bufferCell->setTextColor(Palette::Black);
+  bufferCell->setTextColor(ThemeComponent::TextDefault);
   double result = NAN;
 
   if (c >= Calculation::NumberOfDots && c <= Calculation::SumOfProducts) {

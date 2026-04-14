@@ -12,6 +12,7 @@
 #include <escher/solid_color_cell.h>
 #include <escher/tab_view_controller.h>
 #include <escher/table_view_data_source.h>
+#include <escher/text_format.h>
 #include <ion.h>
 #include <poincare/helpers/symbol.h>
 
@@ -86,8 +87,8 @@ class SolutionsController : public Escher::ViewController,
                       public Escher::SelectableTableViewDelegate {
    public:
     constexpr static KDCoordinate k_bottomMessageSpace = 60;
-    constexpr static KDColor k_backgroundColor =
-        Escher::Palette::WallScreenDark;
+    constexpr static Escher::ThemeComponent k_backgroundColor =
+        Escher::ThemeComponent::WallScreenDark;
     ContentView(SolutionsController* controller);
     void drawRect(KDContext* ctx, KDRect rect) const override;
     void setWarning(bool warning);
@@ -104,7 +105,7 @@ class SolutionsController : public Escher::ViewController,
 
    private:
     constexpr static KDFont::Size k_warningMessageFont = KDFont::Size::Small;
-    constexpr static KDGlyph::Format k_warningFormat{
+    constexpr static Escher::TextFormat k_warningFormat{
         .style = {.backgroundColor = k_backgroundColor,
                   .font = k_warningMessageFont},
         .horizontalAlignment = KDGlyph::k_alignCenter};
@@ -135,7 +136,7 @@ class SolutionsController : public Escher::ViewController,
                     .font = KDFont::Size::Small},
                .verticalAlignment = k_verticalAlignment}) {}
 
-    void setBackgroundColor(KDColor color) {
+    void setBackgroundColor(Escher::ThemeComponent color) {
       m_messageView.setBackgroundColor(color);
     }
     void setHorizontalAlignment(float alignment) {

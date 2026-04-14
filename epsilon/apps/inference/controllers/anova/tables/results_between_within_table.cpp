@@ -39,9 +39,10 @@ void ResultsBetweenWithinTableCell::drawRect(KDContext* ctx,
                                              KDRect rect) const {
   CategoricalTableCell::drawRect(ctx, rect);
   // Draw over the next cell border to hide it
-  ctx->fillRect(KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
-                       bounds().width(), Metric::CellSeparatorThickness),
-                m_selectableTableView.backgroundColor());
+  ctx->fillRect(
+      KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
+             bounds().width(), Metric::CellSeparatorThickness),
+      SharedGlobalPrefs().color(m_selectableTableView.backgroundColor()));
 }
 
 // The row index refers to the "inner" table
@@ -96,7 +97,7 @@ void ResultsBetweenWithinTableCell::fillRowTitleForLocation(
   headerCellType* myCell = static_cast<headerCellType*>(cell);
   myCell->setText(HeaderAtRow(innerRow));
   myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-  myCell->setTextColor(Palette::Black);
+  myCell->setTextColor(ThemeComponent::TextDefault);
 }
 
 void ResultsBetweenWithinTableCell::fillRowSymbolForLocation(
@@ -105,7 +106,7 @@ void ResultsBetweenWithinTableCell::fillRowSymbolForLocation(
   headerCellType* myCell = static_cast<headerCellType*>(cell);
   myCell->setText(SymbolAtRow(innerRow));
   myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-  myCell->setTextColor(Palette::GrayDark);
+  myCell->setTextColor(ThemeComponent::TextGrayDark);
 }
 
 void ResultsBetweenWithinTableCell::fillInnerCellForLocation(

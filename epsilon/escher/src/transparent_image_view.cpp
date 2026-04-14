@@ -1,3 +1,4 @@
+#include <apps/global_preferences.h>
 #include <escher/transparent_image_view.h>
 #include <ion.h>
 #include <omg/memory.h>
@@ -48,6 +49,11 @@ void TransparentImageView::blendInPlace(KDColor* colorBuffer,
           colorBuffer[position], m_backgroundColor, alphaBuffer[position]);
     }
   }
+}
+
+void TransparentImageView::setHighlighted(bool highlighted) {
+  setBackgroundColor(SharedGlobalPrefs().color(
+      AbstractMenuCell::BackgroundColor(highlighted)));
 }
 
 }  // namespace Escher

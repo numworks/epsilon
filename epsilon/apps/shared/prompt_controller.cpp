@@ -8,7 +8,7 @@ using namespace Escher;
 namespace Shared {
 
 PromptController::MessageViewWithSkip::MessageViewWithSkip(
-    const I18n::Message* messages, const KDColor* colors,
+    const I18n::Message* messages, const ThemeComponent* colors,
     uint8_t numberOfMessages)
     : MessageView(messages, colors, numberOfMessages),
       m_skipView(I18n::Message::Skip,
@@ -54,7 +54,7 @@ void PromptController::MessageViewWithSkip::layoutSubviews(bool force) {
 }
 
 PromptController::PromptController(const I18n::Message* messages,
-                                   const KDColor* colors,
+                                   const ThemeComponent* colors,
                                    uint8_t numberOfMessages,
                                    EventHandler eventHandler)
     : ViewController(nullptr),

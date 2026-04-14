@@ -2,6 +2,7 @@
 
 #include <escher/palette.h>
 
+#include "global_preferences.h"
 #include "title_bar_view.h"
 
 using namespace Escher;
@@ -10,14 +11,15 @@ ShiftAlphaLockView::ShiftAlphaLockView()
     : View(),
       m_shiftAlphaView(
           I18n::Message::Default,
-          {.style = {.glyphColor = Palette::White,
+          {.style = {.glyphColor = ThemeComponent::TokenWhite,
                      .backgroundColor = TitleBarView::k_backgroundColor,
                      .font = KDFont::Size::Small},
            .horizontalAlignment = KDGlyph::k_alignRight}),
       m_status(Ion::Events::ShiftAlphaStatus()) {}
 
 void ShiftAlphaLockView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), TitleBarView::k_backgroundColor);
+  ctx->fillRect(bounds(),
+                SharedGlobalPrefs().color(TitleBarView::k_backgroundColor));
 }
 
 bool ShiftAlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {

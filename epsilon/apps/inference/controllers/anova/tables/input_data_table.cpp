@@ -48,7 +48,7 @@ void InputDataTable::fillCellForLocation(Escher::HighlightCell* cell,
     myCell->setEven(true);
     OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(column);
     myCell->setText(groupTitle.data());
-    myCell->setTextColor(Palette::Black);
+    myCell->setTextColor(ThemeComponent::TextDefault);
   } else {
     assert(type == k_typeOfInnerCells);
     fillInnerCellForLocation(cell, column, row - 1);
@@ -59,7 +59,7 @@ void InputDataTable::fillCellForLocation(Escher::HighlightCell* cell,
     /* The last header has its title grayed out, except if the column is the
      * last possible column. */
     static_cast<InferenceEvenOddBufferCell*>(cell)->setTextColor(
-        Palette::GrayDark);
+        ThemeComponent::TextGrayDark);
   }
 }
 

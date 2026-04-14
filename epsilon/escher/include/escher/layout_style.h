@@ -10,7 +10,7 @@ namespace Escher {
 // The layout colors are theme-dependent
 struct LayoutStyle {
   TextStyle textStyle = {};
-  ThemeComponent selectionColor = ThemeComponent::Select;
+  ThemeComponent selectionColor = ThemeComponent::SurfaceSelect;
   ThemeComponent requiredPlaceholderColor = ThemeComponent::TokenYellow;
   ThemeComponent optionalPlaceholderColor = ThemeComponent::TokenGrayBright;
   ThemeComponent piecewiseCommaColor = ThemeComponent::TokenGrayDark;

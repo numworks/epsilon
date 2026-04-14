@@ -26,8 +26,9 @@ class ModalViewEmptyController : public ViewController {
    private:
     constexpr static KDColor k_backgroundColor = Palette::WallScreen;
     constexpr static KDFont::Size k_font = KDFont::Size::Small;
-    constexpr static KDGlyph::Format k_format = {
-        .style = {.backgroundColor = k_backgroundColor, .font = k_font},
+    constexpr static TextFormat k_format = {
+        .style = {.backgroundColor = ThemeComponent::WallScreen,
+                  .font = k_font},
         .horizontalAlignment = KDGlyph::k_alignCenter,
         .verticalAlignment = KDGlyph::k_alignCenter};
 

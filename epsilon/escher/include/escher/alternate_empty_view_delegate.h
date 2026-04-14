@@ -11,7 +11,7 @@ class AlternateEmptyViewDelegate {
  public:
   AlternateEmptyViewDelegate()
       : m_emptyView((I18n::Message)0,
-                    {.style = {.backgroundColor = Palette::WallScreen,
+                    {.style = {.backgroundColor = ThemeComponent::WallScreen,
                                .font = KDFont::Size::Small},
                      .horizontalAlignment = KDGlyph::k_alignCenter}) {}
   virtual bool isEmpty() const = 0;

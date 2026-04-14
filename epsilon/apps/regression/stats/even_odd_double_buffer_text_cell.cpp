@@ -8,7 +8,7 @@ using namespace Escher;
 namespace Regression {
 
 EvenOddDoubleBufferTextCell::EvenOddDoubleBufferTextCell(
-    Responder* parentResponder, KDGlyph::Format format)
+    Responder* parentResponder, Escher::TextFormat format)
     : EvenOddCell(),
       Responder(parentResponder),
       m_firstTextSelected(true),
@@ -65,7 +65,7 @@ void EvenOddDoubleBufferTextCell::setSecondText(const char* textContent) {
   m_secondBufferTextView.setText(textContent);
 }
 
-void EvenOddDoubleBufferTextCell::setTextColor(KDColor textColor) {
+void EvenOddDoubleBufferTextCell::setTextColor(ThemeComponent textColor) {
   m_firstBufferTextView.setTextColor(textColor);
   m_secondBufferTextView.setTextColor(textColor);
 }

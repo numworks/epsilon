@@ -3,6 +3,8 @@
 #include <apps/exam_mode_manager.h>
 #include <escher/palette.h>
 
+#include "global_preferences.h"
+
 using namespace Escher;
 
 namespace Graph {
@@ -29,12 +31,12 @@ namespace Graph {
 AbstractFunctionCell::AbstractFunctionCell()
     : EvenOddCell(),
       m_messageTextView((I18n::Message)0,
-                        {.style = {.glyphColor = Palette::GrayDark,
+                        {.style = {.glyphColor = ThemeComponent::TokenGrayDark,
                                    .font = KDFont::Size::Small},
                          .verticalAlignment = KDGlyph::k_alignTop}),
       m_functionColor(Palette::Black),
-      m_expressionBackground(Palette::White),
-      m_ellipsisBackground(Palette::White),
+      m_expressionBackground(ThemeComponent::BackgroundWhite),
+      m_ellipsisBackground(ThemeComponent::BackgroundWhite),
       m_hideMessage(false) {}
 
 void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
@@ -47,11 +49,11 @@ void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
       KDRect(k_colorIndicatorThickness, 0,
              bounds().width() - k_colorIndicatorThickness - ellipsisWidth,
              bounds().height()),
-      m_expressionBackground);
+      SharedGlobalPrefs().color(m_expressionBackground));
   // Color the ellipsis view
   ctx->fillRect(KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
                        bounds().height()),
-                m_ellipsisBackground);
+                SharedGlobalPrefs().color(m_ellipsisBackground));
 }
 
 KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {
@@ -120,9 +122,10 @@ KDCoordinate AbstractFunctionCell::messageTextHeight() const {
 }
 
 void FunctionCell::updateSubviewsBackgroundAfterChangingState() {
-  KDColor defaultColor = m_even ? Palette::White : Palette::WallScreen;
+  ThemeComponent defaultColor =
+      m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen;
   // If not highlighted, selectedColor is defaultColor
-  KDColor selectedColor = backgroundColor();
+  ThemeComponent selectedColor = backgroundColor();
   m_ellipsisBackground = m_parameterSelected ? selectedColor : defaultColor;
   m_expressionBackground = m_parameterSelected ? defaultColor : selectedColor;
   // Expression View and Message Text View share the same background

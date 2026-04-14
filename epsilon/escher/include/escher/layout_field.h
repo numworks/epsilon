@@ -13,8 +13,7 @@ namespace Escher {
 class LayoutField : public EditableField {
  public:
   LayoutField(Responder* parentResponder,
-              LayoutFieldDelegate* delegate = nullptr,
-              KDGlyph::Format format = {});
+              LayoutFieldDelegate* delegate = nullptr, TextFormat format = {});
   void setDelegate(LayoutFieldDelegate* delegate);
   const Poincare::SymbolContext& context() const;
   bool isEditing() const { return m_contentView.isEditing(); }
@@ -39,7 +38,7 @@ class LayoutField : public EditableField {
                             bool forceCursorLeftOfLayout = false);
 
   // ScrollableView
-  void setBackgroundColor(KDColor c) override;
+  void setBackgroundColor(ThemeComponent c) override;
   /* Always keep the full margins on a layout field, as it would otherwise lead
    * to weird cropping during edition. */
   float marginPortionTolerance() const override { return 0.f; }
@@ -110,11 +109,13 @@ class LayoutField : public EditableField {
 
   class ContentView : public TextCursorView::CursorFieldView {
    public:
-    ContentView(KDGlyph::Format format);
+    ContentView(TextFormat format);
     bool isEditing() const { return m_isEditing; }
     // returns True if LayoutField should reload
     bool setEditing(bool isEditing);
-    void setBackgroundColor(KDColor c) { m_layoutView.setBackgroundColor(c); }
+    void setBackgroundColor(ThemeComponent c) {
+      m_layoutView.setBackgroundColor(c);
+    }
     void setCursor(Poincare::LayoutCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged() { layoutCursorSubview(false); }
     Poincare::LayoutCursor* cursor() { return &m_cursor; }

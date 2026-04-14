@@ -16,7 +16,8 @@ bool StandbyController::handleEvent(Ion::Events::Event event) {
 StandbyController::ContentView::ContentView()
     : SolidColorView(Escher::Palette::PinkLight),
       m_textView("Press OK to go in standby mode.\n\nAll data will be lost.") {
-  m_textView.setBackgroundColor(Escher::Palette::PinkLight);
+  // TODO: PinkLight, text view with plain color
+  m_textView.setBackgroundColor(Escher::ThemeComponent::TokenYellow);
 }
 
 void StandbyController::ContentView::layoutSubviews(bool force) {

@@ -101,7 +101,7 @@ KDRect LayoutField::ContentView::cursorRect() const {
                 m_cursor.cursorHeight(font()));
 }
 
-LayoutField::ContentView::ContentView(KDGlyph::Format format)
+LayoutField::ContentView::ContentView(TextFormat format)
     : m_cursor(), m_layoutView(&m_cursor, format), m_isEditing(false) {
   clearLayout();
 }
@@ -111,14 +111,14 @@ LayoutField::ContentView::ContentView(KDGlyph::Format format)
 static char s_draftBuffer[AbstractTextField::MaxBufferSize()];
 
 LayoutField::LayoutField(Responder* parentResponder,
-                         LayoutFieldDelegate* delegate, KDGlyph::Format format)
+                         LayoutFieldDelegate* delegate, TextFormat format)
     : EditableField(parentResponder, &m_contentView),
       m_contentView(format),
       m_delegate(delegate),
       m_inputViewMemoizedHeight(0),
       m_draftBuffer(s_draftBuffer),
       m_draftBufferSize(AbstractTextField::MaxBufferSize()) {
-  setBackgroundColor(Palette::White);
+  setBackgroundColor(ThemeComponent::BackgroundWhite);
 }
 
 void LayoutField::setDelegate(LayoutFieldDelegate* delegate) {
@@ -182,7 +182,7 @@ size_t LayoutField::dumpContent(char* buffer, size_t bufferSize,
   return size;
 }
 
-void LayoutField::setBackgroundColor(KDColor c) {
+void LayoutField::setBackgroundColor(ThemeComponent c) {
   ScrollableView::setBackgroundColor(c);
   m_contentView.setBackgroundColor(c);
 }

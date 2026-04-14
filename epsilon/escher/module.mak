@@ -30,6 +30,7 @@ $(call create_module,escher,1,$(addprefix src/, \
   explicit_list_view_data_source.cpp \
   expression_input_bar.cpp \
   layout_view.cpp \
+  layout_style.cpp \
   gauge_view.cpp \
   glyphs_view.cpp \
   heavy_table_size_manager.cpp \
@@ -89,6 +90,7 @@ $(call create_module,escher,1,$(addprefix src/, \
   table_view_data_source.cpp \
   text_cursor_view.cpp \
   text_area.cpp \
+  text_format.cpp \
   text_input.cpp \
   text_input_helpers.cpp \
   text_view.cpp \

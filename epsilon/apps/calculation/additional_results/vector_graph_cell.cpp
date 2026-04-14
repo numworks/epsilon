@@ -35,7 +35,7 @@ void VectorGraphPolicy::drawPlot(const AbstractPlotView* plotView,
       ctx, rect, "θ", labelPosition, AbstractPlotView::RelativePosition::There,
       labelTooCloseFromArrow ? AbstractPlotView::RelativePosition::Before
                              : AbstractPlotView::RelativePosition::There,
-      Palette::GrayDark);
+      ThemeComponent::TextGrayDark);
 
   // - Draw arc
   drawArcOfEllipse(plotView, ctx, rect, Coordinate2D<float>(0.f, 0.f),

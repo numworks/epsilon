@@ -8,10 +8,10 @@ namespace Escher {
 
 class EvenOddExpressionCell : public EvenOddCell {
  public:
-  EvenOddExpressionCell(KDGlyph::Format format = {});
+  EvenOddExpressionCell(TextFormat format = {});
   void setLayout(const Poincare::Layout& layout);
-  void setBackgroundColor(KDColor backgroundColor);
-  void setTextColor(KDColor textColor);
+  void setBackgroundColor(ThemeComponent backgroundColor);
+  void setTextColor(ThemeComponent textColor);
   void setFont(KDFont::Size font) { m_layoutView.setFont(font); }
   KDSize minimalSizeForOptimalDisplay() const override;
   void setAlignment(float horizontalAlignment, float verticalAlignment) {

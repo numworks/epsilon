@@ -25,8 +25,8 @@ class DistributionCurveView
   DistributionCurveView(Distribution* distribution, Calculation* calculation);
 
  private:
-  KDColor backgroundColor() const override {
-    return Escher::Palette::WallScreen;
+  Escher::ThemeComponent backgroundColor() const override {
+    return Escher::ThemeComponent::WallScreen;
   }
 };
 

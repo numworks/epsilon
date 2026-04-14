@@ -54,7 +54,7 @@ class FunctionZoomAndPanCurveViewController
       constexpr static int k_numberOfLegends = 3;
       constexpr static int k_numberOfTokens = 6;
       constexpr static KDCoordinate k_tokenWidth = 10;
-      constexpr static KDColor k_backgroundColor =
+      constexpr static Escher::ThemeComponent k_backgroundColor =
           Shared::BannerView::k_bannerFieldFormat.style.backgroundColor;
 
       void layoutSubviews(bool force = false) override;

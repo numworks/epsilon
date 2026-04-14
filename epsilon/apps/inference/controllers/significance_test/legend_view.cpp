@@ -4,28 +4,30 @@
 
 #include <algorithm>
 
+#include "global_preferences.h"
+
 using namespace Escher;
 
 namespace Inference {
 
 void LegendView::DotView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillAntialiasedCircle(KDPointZero, k_diameter / 2, Palette::YellowDark,
-                             k_backgroundColor);
+                             SharedGlobalPrefs().color(k_backgroundColor));
 }
 
 void LegendView::StripedDotView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillCircleWithStripes(KDPointZero, k_diameter / 2, Palette::PurpleBright,
-                             k_backgroundColor, 3);
+                             SharedGlobalPrefs().color(k_backgroundColor), 3);
 }
 
 LegendView::LegendView()
     : m_pValueLabel(I18n::Message::PValue,
-                    {.style = {.glyphColor = Palette::GrayVeryDark,
+                    {.style = {.glyphColor = ThemeComponent::TextGrayVeryDark,
                                .backgroundColor = k_backgroundColor,
                                .font = KDFont::Size::Small},
                      .verticalAlignment = KDGlyph::k_alignTop}),
       m_alphaLabel(I18n::Message::GreekAlpha,
-                   {.style = {.glyphColor = Palette::GrayVeryDark,
+                   {.style = {.glyphColor = ThemeComponent::TextGrayVeryDark,
                               .backgroundColor = k_backgroundColor,
                               .font = KDFont::Size::Small},
                     .verticalAlignment = KDGlyph::k_alignTop}) {}

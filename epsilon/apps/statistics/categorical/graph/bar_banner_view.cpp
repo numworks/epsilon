@@ -1,6 +1,7 @@
 #include "bar_banner_view.h"
 
 #include <apps/constant.h>
+#include <apps/global_preferences.h>
 #include <assert.h>
 
 using namespace Escher;
@@ -16,7 +17,9 @@ BarBannerView::BarBannerView()
 
 void BarBannerView::drawRect(KDContext* ctx, KDRect rect) const {
   // Draw background
-  ctx->fillRect(rect, BannerView::k_bannerFieldFormat.style.backgroundColor);
+  ctx->fillRect(rect,
+                SharedGlobalPrefs().color(
+                    BannerView::k_bannerFieldFormat.style.backgroundColor));
 }
 
 void BarBannerView::toggleSelection(bool isSelected) {

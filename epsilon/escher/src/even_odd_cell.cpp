@@ -1,3 +1,4 @@
+#include <apps/global_preferences.h>
 #include <escher/even_odd_cell.h>
 #include <escher/palette.h>
 
@@ -26,18 +27,18 @@ void EvenOddCell::setHighlighted(bool highlighted) {
   updateSubviewsBackgroundAfterChangingState();
 }
 
-KDColor EvenOddCell::backgroundColor() const {
+ThemeComponent EvenOddCell::backgroundColor() const {
   if (!isVisible()) {
     return k_hideColor;
   } else if (isHighlighted()) {
-    return Palette::Select;
+    return ThemeComponent::SurfaceSelect;
   }
-  return m_even ? Palette::White : Palette::WallScreen;
+  return m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen;
 }
 
 void EvenOddCell::drawRect(KDContext* ctx, KDRect rect) const {
-  KDColor background = backgroundColor();
-  ctx->fillRect(rect, background);
+  ThemeComponent background = backgroundColor();
+  ctx->fillRect(rect, SharedGlobalPrefs().color(background));
 }
 
 }  // namespace Escher

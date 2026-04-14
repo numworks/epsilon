@@ -4,10 +4,11 @@ namespace Escher {
 
 TableViewWithFrozenHeader::TableViewWithFrozenHeader(
     SelectableTableView* selectableTableView, I18n::Message header)
-    : m_headerView(header, {.style = {.glyphColor = Palette::GrayDark,
-                                      .backgroundColor = Palette::WallScreen,
-                                      .font = KDFont::Size::Small},
-                            .horizontalAlignment = KDGlyph::k_alignCenter}),
+    : m_headerView(header,
+                   {.style = {.glyphColor = ThemeComponent::TextGrayDark,
+                              .backgroundColor = ThemeComponent::WallScreen,
+                              .font = KDFont::Size::Small},
+                    .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_selectableTableView(selectableTableView) {
   // Remove selectable table top margin to control margin between text and table
   m_selectableTableView->margins()->setTop(0);

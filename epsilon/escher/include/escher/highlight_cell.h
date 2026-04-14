@@ -2,6 +2,7 @@
 
 #include <escher/palette.h>
 #include <escher/responder.h>
+#include <escher/theme/components.h>
 #include <escher/view.h>
 #include <poincare/layout.h>
 
@@ -36,8 +37,9 @@ class HighlightCell : public View {
   bool isHighlighted() const { return m_state == State::Highlighted; }
 
  protected:
-  KDColor defaultBackgroundColor() const {
-    return isHighlighted() ? Palette::Select : Palette::White;
+  Escher::ThemeComponent defaultBackgroundColor() const {
+    return isHighlighted() ? Escher::ThemeComponent::SurfaceSelect
+                           : Escher::ThemeComponent::BackgroundWhite;
   }
 
  private:

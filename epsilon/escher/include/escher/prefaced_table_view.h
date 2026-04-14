@@ -37,7 +37,7 @@ class PrefacedTableView : public View,
 
   SelectableTableView* selectableTableView() { return m_mainTableView; }
   virtual void setMargins(KDMargins m);
-  virtual void setBackgroundColor(KDColor color);
+  virtual void setBackgroundColor(ThemeComponent color);
   virtual void setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical);
 
   void setPrefaceDelegate(PrefacedTableViewDelegate* delegate) {

@@ -18,7 +18,7 @@ using namespace Escher;
 
 namespace Solver {
 
-constexpr KDColor SolutionsController::ContentView::k_backgroundColor;
+constexpr ThemeComponent SolutionsController::ContentView::k_backgroundColor;
 
 SolutionsController::ContentView::ContentView(SolutionsController* controller)
     : m_warningMessageView(k_warningFormat),
@@ -32,12 +32,13 @@ void SolutionsController::ContentView::drawRect(KDContext* ctx,
                                                 KDRect rect) const {
   if (hideTableView()) {
     // No selectable table, fill the entire bound for background
-    ctx->fillRect(KDRect(KDPointZero, bounds().size()), k_backgroundColor);
+    ctx->fillRect(KDRect(KDPointZero, bounds().size()),
+                  SharedGlobalPrefs().color(k_backgroundColor));
   } else if (m_displayWarningMoreSolutions) {
     // Fill the bottom margin for additional warnings
     ctx->fillRect(KDRect(bounds().x(), bounds().height() - k_bottomMessageSpace,
                          bounds().size()),
-                  k_backgroundColor);
+                  SharedGlobalPrefs().color(k_backgroundColor));
   }
 }
 
@@ -191,8 +192,8 @@ SolutionsController::SolutionsController(Responder* parentResponder,
     m_symbolCells[i].setFont(k_solutionsFont);
   }
   for (int i = 0; i < k_numberOfEmptyCells; ++i) {
-    m_emptyCell[i].setColor(
-        SolutionsController::ContentView::k_backgroundColor);
+    m_emptyCell[i].setColor(SharedGlobalPrefs().color(
+        SolutionsController::ContentView::k_backgroundColor));
   }
 }
 

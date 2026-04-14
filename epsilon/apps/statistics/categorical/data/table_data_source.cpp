@@ -57,8 +57,8 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     store()->getCategoryName(dataRow(row), txt, sizeof(txt));
     myCell->setText(txt);
     myCell->setTextColor(store()->isCategoryActive(dataRow(row))
-                             ? Escher::Palette::Black
-                             : Escher::Palette::GrayDark);
+                             ? Escher::ThemeComponent::TextDefault
+                             : Escher::ThemeComponent::TextGrayDark);
   } else if (type == k_typeOfInnerCells) {
     float p = store()->getValue(dataColumn(column), dataRow(row));
     EvenOddEditableCell* editableCell = static_cast<EvenOddEditableCell*>(cell);

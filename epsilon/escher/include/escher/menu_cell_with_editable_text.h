@@ -24,10 +24,7 @@ class EditableTextWidget : public CellWidget {
   const char* text() const override {
     return !m_textField->isEditing() ? m_textField->text() : nullptr;
   }
-  void setHighlighted(bool highlighted) override {
-    m_textField->setBackgroundColor(
-        AbstractMenuCell::BackgroundColor(highlighted));
-  }
+  void setHighlighted(bool highlighted) override;
   bool isAnEditableTextField() const override { return true; }
   bool alwaysAlignWithLabelAsAccessory() const override { return true; }
   bool preventRightAlignedSubLabel(Type type) const override {
@@ -68,8 +65,8 @@ class AbstractWithEditableText : public Responder,
   }
 
  protected:
-  constexpr static KDGlyph::Format k_defaultFormat = {
-      .horizontalAlignment = KDGlyph::k_alignRight};
+  constexpr static TextFormat k_defaultFormat = {.horizontalAlignment =
+                                                     KDGlyph::k_alignRight};
 
   TextField m_textField;
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];

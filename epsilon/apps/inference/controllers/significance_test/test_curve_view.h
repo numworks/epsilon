@@ -30,7 +30,8 @@ class TestXAxis : public Shared::PlotPolicy::HorizontalLabeledAxis {
  protected:
   void drawLabel(size_t labelIndex, float t,
                  const Shared::AbstractPlotView* plotView, KDContext* ctx,
-                 KDRect rect, OMG::Axis axis, KDColor color) const override;
+                 KDRect rect, OMG::Axis axis,
+                 Escher::ThemeComponent color) const override;
 };
 
 typedef Shared::PlotPolicy::Axes<Shared::PlotPolicy::NoGrid, TestXAxis,

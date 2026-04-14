@@ -16,14 +16,15 @@ namespace Statistics::Categorical {
 /* Side banner view of the pie graph. Displays various information about the
  * selected category */
 class PieBannerView : public Escher::View {
-  constexpr static KDColor k_backgroundColor = Escher::Palette::GrayMiddle;
-  constexpr static KDGlyph::Format k_titleFormat = {
+  constexpr static Escher::ThemeComponent k_backgroundColor =
+      Escher::ThemeComponent::TokenGrayMiddle;
+  constexpr static Escher::TextFormat k_titleFormat = {
       .style = {.backgroundColor = k_backgroundColor},
       .horizontalAlignment = KDGlyph::k_alignCenter};
-  constexpr static KDGlyph::Format k_labelFormat = {
+  constexpr static Escher::TextFormat k_labelFormat = {
       .style = {.backgroundColor = k_backgroundColor,
                 .font = KDFont::Size::Small}};
-  constexpr static KDGlyph::Format k_valueFormat = {
+  constexpr static Escher::TextFormat k_valueFormat = {
       .style = {.backgroundColor = k_backgroundColor,
                 .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignRight};
@@ -46,10 +47,7 @@ class PieBannerView : public Escher::View {
   void setGroup(int group, int category);
 
  private:
-  void drawRect(KDContext* ctx, KDRect rect) const override {
-    ctx->fillRect(bounds(),
-                  m_isSelected ? k_backgroundColor : Escher::Palette::White);
-  }
+  void drawRect(KDContext* ctx, KDRect rect) const override;
 
   int numberOfSubviews() const override {
     return m_isSelected ? k_numberOfSubviews : 0;

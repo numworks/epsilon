@@ -35,7 +35,8 @@ class AbstractBufferTextView : public TextView {
 template <size_t BufferSize>
 class BufferTextView : public AbstractBufferTextView {
  public:
-  BufferTextView(KDGlyph::Format format = {}) : AbstractBufferTextView(format) {
+  BufferTextView(const TextFormat& format = {})
+      : AbstractBufferTextView(format) {
     buffer()[0] = 0;
   }
   constexpr static size_t MaxTextSize() { return BufferSize; }

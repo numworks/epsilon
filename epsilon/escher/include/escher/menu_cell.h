@@ -3,6 +3,7 @@
 #include <escher/bordered.h>
 #include <escher/cell_widget.h>
 #include <escher/highlight_cell.h>
+#include <escher/theme/components.h>
 
 #include <algorithm>
 namespace Escher {
@@ -73,8 +74,9 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   constexpr static KDCoordinate k_innerVerticalMargin =
       Metric::CellVerticalElementMargin;
 
-  static KDColor BackgroundColor(bool highlighted) {
-    return highlighted ? Palette::Select : Palette::White;
+  static ThemeComponent BackgroundColor(bool highlighted) {
+    return highlighted ? ThemeComponent::SurfaceSelect
+                       : ThemeComponent::BackgroundWhite;
   }
 
   AbstractMenuCell();

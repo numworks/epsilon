@@ -39,9 +39,10 @@ void ResultsStatisticsTable::handleResponderChainEvent(
 void ResultsStatisticsTable::drawRect(KDContext* ctx, KDRect rect) const {
   CategoricalTableCell::drawRect(ctx, rect);
   // Draw over the next cell border to hide it
-  ctx->fillRect(KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
-                       bounds().width(), Metric::CellSeparatorThickness),
-                m_selectableTableView.backgroundColor());
+  ctx->fillRect(
+      KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
+             bounds().width(), Metric::CellSeparatorThickness),
+      SharedGlobalPrefs().color(m_selectableTableView.backgroundColor()));
 }
 
 constexpr static double GroupStatisticsResultAtRow(
@@ -102,7 +103,7 @@ void ResultsStatisticsTable::fillColumnTitleForLocation(
   OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(innerColumn);
   myCell->setText(groupTitle.data());
   myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-  myCell->setTextColor(Palette::Black);
+  myCell->setTextColor(ThemeComponent::TextDefault);
 }
 void ResultsStatisticsTable::fillRowTitleForLocation(
     Escher::HighlightCell* cell, int innerRow) {
@@ -110,7 +111,7 @@ void ResultsStatisticsTable::fillRowTitleForLocation(
   headerCellType* myCell = static_cast<headerCellType*>(cell);
   myCell->setText(HeaderAtRow(innerRow));
   myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-  myCell->setTextColor(Palette::Black);
+  myCell->setTextColor(ThemeComponent::TextDefault);
 }
 
 void ResultsStatisticsTable::fillRowSymbolForLocation(
@@ -119,7 +120,7 @@ void ResultsStatisticsTable::fillRowSymbolForLocation(
   headerCellType* myCell = static_cast<headerCellType*>(cell);
   myCell->setText(SymbolAtRow(innerRow));
   myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-  myCell->setTextColor(Palette::GrayDark);
+  myCell->setTextColor(ThemeComponent::TextGrayDark);
 }
 
 void ResultsStatisticsTable::fillInnerCellForLocation(

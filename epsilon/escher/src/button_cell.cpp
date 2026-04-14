@@ -4,7 +4,7 @@ namespace Escher {
 
 ButtonCell::ButtonCell(Responder* parentResponder, I18n::Message textBody,
                        Escher::Invocation invocation, Style style,
-                       KDFont::Size fontSize, KDColor textColor)
+                       KDFont::Size fontSize, ThemeComponent textColor)
     : HighlightCell(),
       Responder(parentResponder),
       m_messageTextView(textBody,
@@ -30,8 +30,8 @@ bool ButtonCell::handleEvent(Ion::Events::Event event) {
 
 void ButtonCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
-  KDColor backgroundColor =
-      highlight ? highlightedBackgroundColor() : Palette::White;
+  ThemeComponent backgroundColor = highlight ? highlightedBackgroundColor()
+                                             : ThemeComponent::BackgroundWhite;
   m_messageTextView.setBackgroundColor(backgroundColor);
   markWholeFrameAsDirty();
 }

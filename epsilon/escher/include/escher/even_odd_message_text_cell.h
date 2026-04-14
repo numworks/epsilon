@@ -8,14 +8,16 @@ namespace Escher {
 
 class EvenOddMessageTextCell : public EvenOddCell {
  public:
-  EvenOddMessageTextCell(KDGlyph::Format format = {
+  EvenOddMessageTextCell(TextFormat format = {
                              .style = {.font = KDFont::Size::Small},
                              .horizontalAlignment = KDGlyph::k_alignCenter});
   void setMessage(I18n::Message textContent) {
     m_messageTextView.setMessage(textContent);
   }
   void setAlignment(float horizontalAlignment, float verticalAlignment);
-  void setTextColor(KDColor color) { m_messageTextView.setTextColor(color); }
+  void setTextColor(ThemeComponent color) {
+    m_messageTextView.setTextColor(color);
+  }
   void setLeftMargin(KDCoordinate margin);
 
  protected:

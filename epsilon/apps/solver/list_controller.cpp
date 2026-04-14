@@ -32,7 +32,7 @@ ListController::ListController(Responder* parentResponder,
                           },
                           this),
                       ButtonCell::Style::EmbossedGray, KDFont::Size::Large,
-                      Palette::PurpleBright),
+                      ThemeComponent::TextPurple),
       m_modelsParameterController(this, equationStore, this),
       m_modelsStackController(nullptr, &m_modelsParameterController,
                               StackViewController::Style::PurpleWhite) {

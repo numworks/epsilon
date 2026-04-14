@@ -21,7 +21,7 @@ MenuController::MenuController(Responder* parentResponder, App* pythonDelegate,
     : ViewController(parentResponder),
       RegularHeightTableViewDataSource(),
       ButtonRowDelegate(nullptr, footer),
-      m_addNewScriptCell(KDGlyph::Format{}),
+      m_addNewScriptCell(TextFormat{}),
       m_consoleButton(
           this, I18n::Message::Console,
           Invocation::Builder<MenuController>(

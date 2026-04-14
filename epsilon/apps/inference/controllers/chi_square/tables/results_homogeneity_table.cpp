@@ -40,9 +40,10 @@ void ResultsHomogeneityTable::handleResponderChainEvent(
 void ResultsHomogeneityTable::drawRect(KDContext* ctx, KDRect rect) const {
   CategoricalTableCell::drawRect(ctx, rect);
   // Draw over the next cell border to hide it
-  ctx->fillRect(KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
-                       bounds().width(), Metric::CellSeparatorThickness),
-                m_selectableTableView.backgroundColor());
+  ctx->fillRect(
+      KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
+             bounds().width(), Metric::CellSeparatorThickness),
+      SharedGlobalPrefs().color(m_selectableTableView.backgroundColor()));
 }
 
 void ResultsHomogeneityTable::fillCellForLocation(Escher::HighlightCell* cell,

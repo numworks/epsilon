@@ -100,8 +100,8 @@ void GraphOptionsController::viewWillAppear() {
           Store::DisplayR2(type) ? "R2"_l : "r"_l ^ KSuperscriptL("2"_l));
     }
     if (ExamModeManager::ExamMode().forbidStatsDiagnostics()) {
-      rCells[i]->label()->setTextColor(Palette::GrayDark);
-      rCells[i]->accessory()->setTextColor(Palette::GrayDark);
+      rCells[i]->label()->setTextColor(ThemeComponent::TextGrayDark);
+      rCells[i]->accessory()->setTextColor(ThemeComponent::TextGrayDark);
       rCells[i]->accessory()->setText(I18n::translate(I18n::Message::Disabled));
       continue;
     }

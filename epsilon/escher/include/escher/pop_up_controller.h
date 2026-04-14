@@ -13,8 +13,8 @@ namespace Escher {
 class HighContrastButton : public SimpleButtonCell {
  public:
   using SimpleButtonCell::SimpleButtonCell;
-  KDColor highlightedBackgroundColor() const override {
-    return Palette::YellowDark;
+  ThemeComponent highlightedBackgroundColor() const override {
+    return ThemeComponent::TokenYellow;
   }
 };
 

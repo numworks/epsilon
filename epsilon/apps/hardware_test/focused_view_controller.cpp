@@ -81,11 +81,12 @@ void FocusedViewController::ContentView::setSuffix2(const char* suffix2) {
 }
 
 void FocusedViewController::ContentView::setBackgroundColor(KDColor color) {
-  m_prefixView.setBackgroundColor(color);
-  m_testNameView.setBackgroundColor(color);
-  m_testResultView.setBackgroundColor(color);
-  m_suffixView1.setBackgroundColor(color);
-  m_suffixView2.setBackgroundColor(color);
+  // TODO: buffer text view with plain color?
+  m_prefixView.setBackgroundColor(Escher::ThemeComponent::TextDefault);
+  m_testNameView.setBackgroundColor(Escher::ThemeComponent::TextDefault);
+  m_testResultView.setBackgroundColor(Escher::ThemeComponent::TextDefault);
+  m_suffixView1.setBackgroundColor(Escher::ThemeComponent::TextDefault);
+  m_suffixView2.setBackgroundColor(Escher::ThemeComponent::TextDefault);
   SolidColorView::setColor(color);
 }
 

@@ -47,7 +47,7 @@ class ScriptNameCell : public Escher::EvenOddCell, public Escher::Responder {
     ScriptNameTextField(Responder* parentResponder, char* textBuffer,
                         size_t textBufferSize,
                         Escher::TextFieldDelegate* delegate = nullptr,
-                        KDGlyph::Format format = {})
+                        Escher::TextFormat format = {})
         : TextField(parentResponder, textBuffer, textBufferSize, delegate,
                     format) {}
     bool handleEvent(Ion::Events::Event event) override;

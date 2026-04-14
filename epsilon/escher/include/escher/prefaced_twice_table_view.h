@@ -13,7 +13,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
       PrefacedTableViewDelegate* prefacedTableViewDelegate = nullptr);
 
   void setMargins(KDMargins m) override;
-  void setBackgroundColor(KDColor color) override;
+  void setBackgroundColor(ThemeComponent color) override;
   void setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical) override;
 
   TableView* columnPrefaceView() { return &m_columnPrefaceView; }

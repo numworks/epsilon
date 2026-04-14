@@ -3,6 +3,7 @@
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_cell.h>
 #include <escher/responder.h>
+#include <escher/text_format.h>
 
 namespace Regression {
 
@@ -11,7 +12,8 @@ class EvenOddDoubleBufferTextCell : public Escher::EvenOddCell,
  public:
   EvenOddDoubleBufferTextCell(
       Escher::Responder* parentResponder = nullptr,
-      KDGlyph::Format format = Escher::EvenOddCell::k_smallCellDefaultFormat);
+      Escher::TextFormat format =
+          Escher::EvenOddCell::k_smallCellDefaultFormat);
   const char* text() const override;
   const char* firstText() const;
   const char* secondText() const;
@@ -23,7 +25,7 @@ class EvenOddDoubleBufferTextCell : public Escher::EvenOddCell,
   void selectFirstText(bool selectFirstText);
   void setFirstText(const char* textContent);
   void setSecondText(const char* textContent);
-  void setTextColor(KDColor textColor);
+  void setTextColor(Escher::ThemeComponent textColor);
   int numberOfSubviews() const override;
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

@@ -8,8 +8,8 @@ namespace Escher {
 
 // The text style colors are theme-dependent
 struct TextStyle {
-  ThemeComponent glyphColor = ThemeComponent::DefaultText;
-  ThemeComponent backgroundColor = ThemeComponent::WallScreenWhite;
+  ThemeComponent glyphColor = ThemeComponent::TextDefault;
+  ThemeComponent backgroundColor = ThemeComponent::BackgroundWhite;
   KDFont::Size font = KDFont::Size::Large;
 };
 

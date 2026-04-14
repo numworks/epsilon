@@ -17,7 +17,8 @@ AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
     float horizontalAlignment, KDFont::Size font)
     : m_rightLayoutView({.style = {.font = font}}),
       m_comparisonSign(
-          {.style = {.glyphColor = Palette::GrayVeryDark, .font = font},
+          {.style = {.glyphColor = ThemeComponent::TextGrayVeryDark,
+                     .font = font},
            .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_centeredLayoutView({.style = {.font = font}}),
       m_selectedSubviewPosition(SubviewPosition::Center),
@@ -29,9 +30,10 @@ AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
   m_comparisonSign.setText(k_almostEqual);
 }
 
-KDColor AbstractScrollableMultipleLayoutsView::ContentCell::backgroundColor()
-    const {
-  KDColor background = m_even ? Palette::White : Palette::WallScreen;
+ThemeComponent
+AbstractScrollableMultipleLayoutsView::ContentCell::backgroundColor() const {
+  ThemeComponent background =
+      m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen;
   return background;
 }
 
@@ -45,28 +47,29 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::setHighlighted(
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::
     updateSubviewsBackgroundAfterChangingState() {
-  KDColor defaultColor = backgroundColor();
+  ThemeComponent defaultColor = backgroundColor();
   bool highlight = isHighlighted();
-  KDColor color =
+  ThemeComponent color =
       highlight && m_selectedSubviewPosition == SubviewPosition::Center
-          ? Palette::Select
+          ? ThemeComponent::SurfaceSelect
           : defaultColor;
   m_centeredLayoutView.setBackgroundColor(color);
   color = highlight && m_selectedSubviewPosition == SubviewPosition::Right
-              ? Palette::Select
+              ? ThemeComponent::SurfaceSelect
               : defaultColor;
   m_rightLayoutView.setBackgroundColor(color);
   m_comparisonSign.setBackgroundColor(defaultColor);
   if (displayLeftLayout()) {
     color = highlight && m_selectedSubviewPosition == SubviewPosition::Left
-                ? Palette::Select
+                ? ThemeComponent::SurfaceSelect
                 : defaultColor;
     leftLayoutView()->setBackgroundColor(color);
   }
 }
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::reloadTextColor() {
-  KDColor color = displayCenter() ? Palette::GrayVeryDark : Palette::Black;
+  ThemeComponent color = displayCenter() ? ThemeComponent::TextGrayVeryDark
+                                         : ThemeComponent::TextDefault;
   m_comparisonSign.setTextColor(color);
   m_rightLayoutView.setTextColor(color);
 }
@@ -451,6 +454,10 @@ bool AbstractScrollableMultipleLayoutsView::handleEvent(
     }
   }
   return ScrollableView::handleEvent(event);
+}
+
+void AbstractScrollableMultipleLayoutsView::setHighlighted(bool highlighted) {
+  setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
 }
 
 KDSize ScrollableTwoLayoutsView::minimalSizeForOptimalDisplayFullSize() const {

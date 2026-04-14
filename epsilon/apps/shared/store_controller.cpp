@@ -24,7 +24,7 @@ StoreController::StoreController(Responder* parentResponder,
       m_prefacedTableView(0, this, &m_selectableTableView, this, this),
       m_store(store),
       m_widthManager(this) {
-  m_prefacedTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_prefacedTableView.setBackgroundColor(ThemeComponent::WallScreenDark);
   m_prefacedTableView.setCellOverlap(0, 0);
   m_prefacedTableView.setMargins(k_margins);
   for (int i = 0; i < k_maxNumberOfDisplayableCells; i++) {
@@ -104,11 +104,11 @@ void StoreController::fillCellForLocation(HighlightCell* cell, int column,
     Escher::AbstractEvenOddEditableTextCell* myCell =
         static_cast<Escher::AbstractEvenOddEditableTextCell*>(cell);
     myCell->setVisible(true);
-    KDColor textColor =
+    ThemeComponent textColor =
         (m_store->seriesIsActive(m_store->seriesAtColumn(column)) ||
          m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(column)) == 0)
-            ? Palette::Black
-            : Palette::GrayDark;
+            ? ThemeComponent::TextDefault
+            : ThemeComponent::TextGrayDark;
     myCell->editableTextCell()->textField()->setTextColor(textColor);
   }
   fillCellForLocationWithDisplayMode(

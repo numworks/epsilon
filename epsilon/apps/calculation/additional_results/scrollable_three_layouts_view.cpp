@@ -6,9 +6,9 @@ using namespace Poincare;
 namespace Calculation {
 
 void ScrollableThreeLayoutsView::ContentCell::reloadTextColor() {
-  KDColor color = displayCenter() && !comparisonSignIsEqual()
-                      ? Palette::GrayVeryDark
-                      : Palette::Black;
+  ThemeComponent color = displayCenter() && !comparisonSignIsEqual()
+                             ? ThemeComponent::TextGrayVeryDark
+                             : ThemeComponent::TextDefault;
   rightLayoutView()->setTextColor(color);
   comparisonSign()->setTextColor(color);
 }

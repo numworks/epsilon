@@ -3,7 +3,7 @@
 
 namespace Escher {
 
-PointerTextView::PointerTextView(const char* text, KDGlyph::Format format)
+PointerTextView::PointerTextView(const char* text, const TextFormat& format)
     : TextView(format), m_text(text) {}
 
 void PointerTextView::setText(const char* text) {

@@ -29,7 +29,7 @@ ValuesController::ValuesController(Responder* parentResponder,
       m_firstMemoizedColumn(INT_MAX),
       m_firstMemoizedRow(INT_MAX),
       m_abscissaParameterController(this, this) {
-  m_prefacedTwiceTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_prefacedTwiceTableView.setBackgroundColor(ThemeComponent::WallScreenDark);
   m_prefacedTwiceTableView.setCellOverlap(0, 0);
   m_prefacedTwiceTableView.setMargins(k_margins);
 }

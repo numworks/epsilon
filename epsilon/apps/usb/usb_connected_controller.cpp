@@ -11,10 +11,13 @@ constexpr I18n::Message sUSBConnectedMessages[] = {
     I18n::Message::BlankMessage,      I18n::Message::ConnectedMessage3,
     I18n::Message::ConnectedMessage4, I18n::Message::ConnectedMessage5};
 
-constexpr KDColor sUSBConnectedColors[] = {
-    Escher::Palette::Black,      Escher::Palette::Black, Escher::Palette::Black,
-    Escher::Palette::YellowDark, Escher::Palette::White, Escher::Palette::Black,
-    Escher::Palette::Black,      Escher::Palette::Black};
+constexpr Escher::ThemeComponent sUSBConnectedColors[] = {
+    Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TextDefault,
+    Escher::ThemeComponent::TextDefault,
+    // TODO: Yellow text?
+    Escher::ThemeComponent::TokenYellow, Escher::ThemeComponent::TokenWhite,
+    Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TextDefault,
+    Escher::ThemeComponent::TextDefault};
 
 USBConnectedController::USBConnectedController()
     : ViewController(nullptr),

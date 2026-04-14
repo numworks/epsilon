@@ -1,6 +1,8 @@
 
 #include "pie_banner_view.h"
 
+#include <apps/global_preferences.h>
+
 namespace Statistics::Categorical {
 
 static void FillWithMessageAndColon(Escher::TextView* textView,
@@ -16,7 +18,9 @@ PieBannerView::PieBannerView(Store* store)
       m_colorLabel(k_labelFormat),
       m_freqLabel(k_labelFormat),
       m_relativeLabel(k_labelFormat),
-      m_colorCell(k_backgroundColor, k_backgroundColor, 1),
+      // TODO: update SolidColorCell to take a theme component
+      m_colorCell(SharedGlobalPrefs().color(k_backgroundColor),
+                  SharedGlobalPrefs().color(k_backgroundColor), 1),
       m_freqValue(k_valueFormat),
       m_relativeValue(k_valueFormat),
       m_store(store) {
@@ -65,6 +69,13 @@ void PieBannerView::setGroup(int group, int category) {
     setCategory(category);
     markWholeFrameAsDirty();
   }
+}
+
+void PieBannerView::drawRect(KDContext* ctx, KDRect rect) const {
+  ctx->fillRect(bounds(),
+                SharedGlobalPrefs().color(
+                    m_isSelected ? k_backgroundColor
+                                 : Escher::ThemeComponent::TokenWhite));
 }
 
 void PieBannerView::layoutSubviews(bool force) {

@@ -7,7 +7,8 @@ namespace HardwareCheckup {
 
 void ClearanceViewerController::ContentView::setColor(KDColor color) {
   SolidColorView::setColor(color);
-  m_textView.setBackgroundColor(color);
+  // TODO: temporary
+  m_textView.setBackgroundColor(Escher::ThemeComponent::BackgroundWhite);
 }
 
 void ClearanceViewerController::viewWillAppear() {

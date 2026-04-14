@@ -23,7 +23,7 @@ class IntervalAxis : public Shared::PlotPolicy::SimpleAxis {
   void drawLabel(size_t labelIndex, float t,
                  const Shared::AbstractPlotView* plotView, KDContext* ctx,
                  KDRect rect, OMG::Axis axis,
-                 KDColor color = k_color) const override;
+                 Escher::ThemeComponent color = k_color) const override;
 
  private:
   constexpr static size_t k_numberOfLabels = 2;
@@ -66,8 +66,8 @@ class IntervalCurveView
               bool forceRedrawAxes = false) override;
 
  private:
-  KDColor backgroundColor() const override {
-    return Escher::Palette::WallScreen;
+  Escher::ThemeComponent backgroundColor() const override {
+    return Escher::ThemeComponent::WallScreen;
   }
 };
 

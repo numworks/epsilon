@@ -1,3 +1,4 @@
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/container.h>
 #include <escher/dropdown_view.h>
@@ -19,7 +20,8 @@ void PopupItemView::setHighlighted(bool highlighted) {
   if (m_cell) {
     m_cell->setHighlighted(highlighted);
   }
-  m_caret.setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
+  m_caret.setBackgroundColor(SharedGlobalPrefs().color(
+      AbstractMenuCell::BackgroundColor(highlighted)));
   HighlightCell::setHighlighted(highlighted);
 }
 
@@ -66,13 +68,14 @@ View* PopupItemView::subviewAtIndex(int i) {
 }
 
 void PopupItemView::drawRect(KDContext* ctx, KDRect rect) const {
-  KDColor backgroundColor = defaultBackgroundColor();
-  drawInnerRect(ctx, bounds(), backgroundColor);
+  ThemeComponent backgroundColor = defaultBackgroundColor();
+  drawInnerRect(ctx, bounds(), SharedGlobalPrefs().color(backgroundColor));
   // When popping, the cell has no borders
-  KDColor borderColor = m_isPoppingUp     ? backgroundColor
-                        : isHighlighted() ? Palette::GrayDark
-                                          : Palette::Select;
-  drawBorderOfRect(ctx, bounds(), borderColor);
+  ThemeComponent borderColor = m_isPoppingUp ? backgroundColor
+                               : isHighlighted()
+                                   ? ThemeComponent::TokenGrayDark
+                                   : ThemeComponent::SurfaceSelect;
+  drawBorderOfRect(ctx, bounds(), SharedGlobalPrefs().color(borderColor));
 }
 
 Dropdown::DropdownPopupController::DropdownPopupController(

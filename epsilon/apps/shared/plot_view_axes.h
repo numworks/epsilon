@@ -72,8 +72,10 @@ class WithPolarGrid {
                        KDRect rect, Poincare::AngleUnit angleUnit);
 
  private:
-  constexpr static KDColor k_boldColor = Escher::Palette::GrayMiddle;
-  constexpr static KDColor k_lightColor = Escher::Palette::GrayBright;
+  constexpr static Escher::ThemeComponent k_boldColor =
+      Escher::ThemeComponent::TokenGrayMiddle;
+  constexpr static Escher::ThemeComponent k_lightColor =
+      Escher::ThemeComponent::TokenGrayBright;
   constexpr static float k_minimumGraduationDistanceToCenter = 60;
   constexpr static int k_numberOfGraduations = 24;
 
@@ -120,7 +122,8 @@ class PlainAxis {
   void setOtherAxis(bool other) {}
 
  protected:
-  constexpr static KDColor k_color = Escher::Palette::Black;
+  constexpr static Escher::ThemeComponent k_color =
+      Escher::ThemeComponent::TextDefault;
 };
 
 class SimpleAxis : public PlainAxis {
@@ -141,7 +144,7 @@ class SimpleAxis : public PlainAxis {
   virtual void drawLabel(size_t labelIndex, float t,
                          const AbstractPlotView* plotView, KDContext* ctx,
                          KDRect rect, OMG::Axis axis,
-                         KDColor color = k_color) const {
+                         Escher::ThemeComponent color = k_color) const {
     assert(labelIndex < numberOfLabels());
   }
 };
@@ -181,7 +184,7 @@ class AbstractLabeledAxis : public SimpleAxis {
                    OMG::Axis axis) const;
   void drawLabel(size_t labelIndex, float t, const AbstractPlotView* plotView,
                  KDContext* ctx, KDRect rect, OMG::Axis axis,
-                 KDColor color = k_color) const override;
+                 Escher::ThemeComponent color = k_color) const override;
   void computeLabelsRelativePosition(const AbstractPlotView* plotView,
                                      OMG::Axis axis) const;
 

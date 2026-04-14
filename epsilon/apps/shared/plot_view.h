@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/palette.h>
+#include <escher/theme/components.h>
 #include <omg/enums.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/layout.h>
@@ -25,7 +26,8 @@ class AbstractPlotView : public Escher::View {
     After,
   };
 
-  constexpr static KDColor k_backgroundColor = Escher::Palette::White;
+  constexpr static Escher::ThemeComponent k_backgroundColor =
+      Escher::ThemeComponent::BackgroundWhite;
   constexpr static KDCoordinate k_labelMargin = 4;
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
   constexpr static KDCoordinate k_defaultDashThickness = 1;
@@ -112,13 +114,13 @@ class AbstractPlotView : public Escher::View {
                    bool thick = false) const;
   void drawLabel(KDContext* ctx, KDRect rect, const char* label,
                  Poincare::Coordinate2D<float> xy, RelativePosition xPosition,
-                 RelativePosition yPosition, KDColor color,
+                 RelativePosition yPosition, Escher::ThemeComponent color,
                  bool ignoreMargin = false) const;
   void drawLabel(KDContext* ctx, KDRect rect, const char* label,
-                 KDRect labelRect, KDColor color) const;
+                 KDRect labelRect, Escher::ThemeComponent color) const;
   void drawLayout(KDContext* ctx, KDRect rect, const Poincare::Layout& layout,
                   Poincare::Coordinate2D<float> xy, RelativePosition xPosition,
-                  RelativePosition yPosition, KDColor color,
+                  RelativePosition yPosition, Escher::ThemeComponent color,
                   bool ignoreMargin = false) const;
   KDRect dotRect(Dots::Size size, Poincare::Coordinate2D<float> xy,
                  bool ring = false) const;
@@ -158,7 +160,9 @@ class AbstractPlotView : public Escher::View {
   bool pointsInSameStamp(Poincare::Coordinate2D<float> p1,
                          Poincare::Coordinate2D<float> p2, bool thick) const;
   bool bannerOverlapsGraph() const { return m_bannerOverlapsGraph; }
-  virtual KDColor backgroundColor() const { return k_backgroundColor; }
+  virtual Escher::ThemeComponent backgroundColor() const {
+    return k_backgroundColor;
+  }
 
  protected:
   void setBannerOverlapsGraph(bool bannerOverlapsGraph) {
@@ -180,9 +184,7 @@ class AbstractPlotView : public Escher::View {
   Escher::View* subviewAtIndex(int i) override;
   void layoutSubviews(bool force = false) override;
 
-  virtual void drawBackground(KDContext* ctx, KDRect rect) const {
-    ctx->fillRect(rect, backgroundColor());
-  }
+  virtual void drawBackground(KDContext* ctx, KDRect rect) const;
   virtual void drawAxesAndGrid(KDContext* ctx, KDRect rect) const = 0;
   virtual void reloadAxes() = 0;
   virtual void drawPlot(KDContext* ctx, KDRect rect) const = 0;

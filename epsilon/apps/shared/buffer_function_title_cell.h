@@ -9,7 +9,7 @@ namespace Shared {
 
 class BufferFunctionTitleCell : public FunctionTitleCell {
  public:
-  BufferFunctionTitleCell(KDGlyph::Format format = {
+  BufferFunctionTitleCell(const Escher::TextFormat& format = {
                               .horizontalAlignment = KDGlyph::k_alignCenter});
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;

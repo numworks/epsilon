@@ -2,6 +2,7 @@
 
 #include <escher/metric.h>
 #include <escher/palette.h>
+#include <escher/theme/components.h>
 #include <escher/view.h>
 #include <kandinsky/margins.h>
 
@@ -60,13 +61,13 @@ class ScrollViewArrow : public ScrollViewIndicator {
  public:
   ScrollViewArrow();
   bool update(bool visible);
-  void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
+  void setBackgroundColor(ThemeComponent c) { m_backgroundColor = c; }
   void setFont(KDFont::Size font) { m_font = font; }
   void drawRect(KDContext* ctx, KDRect rect) const override;
   virtual const char* arrow() const = 0;
 
  private:
-  KDColor m_backgroundColor;
+  ThemeComponent m_backgroundColor;
   KDFont::Size m_font;
   bool m_visible;
 };

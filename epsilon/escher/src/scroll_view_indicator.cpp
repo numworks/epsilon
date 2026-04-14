@@ -1,4 +1,6 @@
+#include <apps/global_preferences.h>
 #include <escher/scroll_view_indicator.h>
+
 extern "C" {
 #include <assert.h>
 }
@@ -67,10 +69,11 @@ bool ScrollViewArrow::update(bool visible) {
 }
 
 void ScrollViewArrow::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), m_backgroundColor);
+  KDColor color = SharedGlobalPrefs().color(m_backgroundColor);
+  ctx->fillRect(bounds(), color);
   ctx->alignAndDrawString(arrow(), KDPointZero, bounds().size(),
                           {.style = {.glyphColor = k_color,
-                                     .backgroundColor = m_backgroundColor,
+                                     .backgroundColor = color,
                                      .font = m_font},
                            .horizontalAlignment = KDGlyph::k_alignLeft,
                            .verticalAlignment = KDGlyph::k_alignCenter},

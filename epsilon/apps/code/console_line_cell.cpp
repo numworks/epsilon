@@ -23,10 +23,11 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(
     KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bounds(), Palette::White);
-  ctx->drawString(m_line->text(), KDPointZero,
-                  {.glyphColor = textColor(m_line),
-                   .backgroundColor = defaultBackgroundColor(),
-                   .font = SharedGlobalPrefs().font()});
+  ctx->drawString(
+      m_line->text(), KDPointZero,
+      {.glyphColor = SharedGlobalPrefs().color(textColor(m_line)),
+       .backgroundColor = SharedGlobalPrefs().color(defaultBackgroundColor()),
+       .font = SharedGlobalPrefs().font()});
 }
 
 KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::
@@ -40,7 +41,7 @@ ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(
     Responder* parentResponder)
     : ScrollableView(parentResponder, &m_consoleLineView, this) {
   decorator()->setFont(SharedGlobalPrefs().font());
-  setBackgroundColor(Palette::White);
+  setBackgroundColor(ThemeComponent::BackgroundWhite);
 }
 
 ConsoleLineCell::ConsoleLineCell(Responder* parentResponder)

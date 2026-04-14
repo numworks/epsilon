@@ -4,6 +4,7 @@
 #include <escher/buffer_text_view.h>
 #include <escher/highlight_cell.h>
 #include <escher/metric.h>
+#include <escher/theme/components.h>
 #include <ion/display.h>
 
 namespace Code {
@@ -33,8 +34,10 @@ class SubtitleCell : public Escher::Bordered, public Escher::HighlightCell {
   static_assert(k_maxNumberOfCharsInBuffer <
                     Escher::OneLineBufferTextView<>::MaxTextSize(),
                 "k_maxNumberOfCharsInBuffer is too high");
-  constexpr static KDColor k_backgroundColor = Escher::Palette::WallScreen;
-  constexpr static KDColor k_textColor = Escher::Palette::BlueishGray;
+  constexpr static Escher::ThemeComponent k_backgroundColor =
+      Escher::ThemeComponent::WallScreen;
+  constexpr static Escher::ThemeComponent k_textColor =
+      Escher::ThemeComponent::TextBluishGray;
 
   int numberOfSubviews() const override { return 1; }
   Escher::View* subviewAtIndex(int index) override {

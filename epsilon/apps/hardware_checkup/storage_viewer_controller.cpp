@@ -42,7 +42,8 @@ StorageViewerController::ContentView::ContentView()
 
 void StorageViewerController::ContentView::setColor(KDColor color) {
   SolidColorView::setColor(color);
-  m_textView.setBackgroundColor(color);
+  // TODO: temporary
+  m_textView.setBackgroundColor(Escher::ThemeComponent::BackgroundWhite);
 }
 
 // Build storage information text and display it.

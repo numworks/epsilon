@@ -17,11 +17,11 @@ class EditableExpressionModelCell : public HighlightCell {
  public:
   EditableExpressionModelCell(Responder* parentResponder = nullptr,
                               LayoutFieldDelegate* layoutDelegate = nullptr,
-                              KDGlyph::Format format = {});
+                              TextFormat format = {});
   void setLayout(const Poincare::Layout& layout) {
     m_layoutField.setLayout(layout);
   }
-  void setTextColor(KDColor textColor) {
+  void setTextColor(ThemeComponent textColor) {
     m_layoutField.layoutView()->setTextColor(textColor);
   }
   void setFont(KDFont::Size font) { m_layoutField.layoutView()->setFont(font); }

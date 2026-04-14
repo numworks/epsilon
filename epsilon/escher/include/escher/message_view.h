@@ -7,8 +7,8 @@ namespace Escher {
 
 class MessageView : public View {
  public:
-  MessageView(const I18n::Message* messages, const KDColor* colors,
-              uint8_t numberOfMessages);
+  MessageView(const I18n::Message* messages,
+              const Escher::ThemeComponent* colors, uint8_t numberOfMessages);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  protected:

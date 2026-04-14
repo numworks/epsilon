@@ -1,5 +1,6 @@
 #include "banner_view.h"
 
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
@@ -14,7 +15,7 @@ namespace Elements {
 
 void BannerView::DotView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillAntialiasedCircle(KDPointZero, k_dotDiameter / 2, m_color,
-                             k_backgroundColor);
+                             SharedGlobalPrefs().color(k_backgroundColor));
 }
 
 void BannerView::DotView::setColor(KDColor color) {
@@ -32,15 +33,16 @@ BannerView::BannerView(Escher::Responder* textFieldParent,
       m_legendView({.style = {.glyphColor = k_legendColor,
                               .backgroundColor = k_backgroundColor,
                               .font = k_legendSize}}),
-      m_button(k_backgroundColor) {
+      m_button(SharedGlobalPrefs().color(k_backgroundColor)) {
   m_textField.margins()->setLeft(Escher::Metric::CommonSmallMargin);
 }
 
 void BannerView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(KDRect(0, 0, bounds().width(), k_borderHeight), k_borderColor);
+  ctx->fillRect(KDRect(0, 0, bounds().width(), k_borderHeight),
+                SharedGlobalPrefs().color(k_borderColor));
   ctx->fillRect(KDRect(0, k_borderHeight, bounds().width() - k_buttonWidth,
                        k_bannerHeight),
-                k_backgroundColor);
+                SharedGlobalPrefs().color(k_backgroundColor));
 }
 
 void BannerView::reload() {
@@ -81,7 +83,7 @@ void BannerView::layoutSubviews(bool force) {
   KDCoordinate x = k_dotLeftMargin;
 
   AtomicNumber z = dataSource->selectedElement();
-  KDColor buttonColor;
+  Escher::ThemeComponent buttonColor;
   if (z != ElementsDataBase::k_noElement) {
     KDRect dotRect = KDRect(x, (bounds().height() - k_dotDiameter) / 2,
                             k_dotDiameter, k_dotDiameter);
@@ -98,7 +100,7 @@ void BannerView::layoutSubviews(bool force) {
                 KDRect(bounds().width() - k_buttonWidth, k_borderHeight,
                        k_buttonWidth, k_bannerHeight),
                 force);
-  m_button.setColor(buttonColor);
+  m_button.setColor(SharedGlobalPrefs().color(buttonColor));
 
   I18n::Message legendMessage = dataSource->field()->getMessage(z);
   if (legendMessage != I18n::Message::Default) {

@@ -67,7 +67,8 @@ ExpressionOrFloat IntervalAxis::tickPosition(size_t labelIndex,
 
 void IntervalAxis::drawLabel(size_t labelIndex, float t,
                              const AbstractPlotView* plotView, KDContext* ctx,
-                             KDRect rect, OMG::Axis axis, KDColor color) const {
+                             KDRect rect, OMG::Axis axis,
+                             Escher::ThemeComponent color) const {
   // Take the opposite of m_positionLeftLabel for the right label.
   AbstractPlotView::RelativePosition xRelative =
       labelIndex == 1 &&
@@ -124,8 +125,9 @@ void IntervalPlotPolicy::drawPlot(const AbstractPlotView* plotView,
         buffer, k_ThresholdBufferSize, "%*.*ef%%", threshold * 100.0f,
         Preferences::PrintFloatMode::Decimal,
         PlotPolicy::AbstractLabeledAxis::k_numberSignificantDigits);
-    KDColor textColor = isMainInterval ? Escher::Palette::Black
-                                       : Escher::Palette::GrayDarkMiddle;
+    Escher::ThemeComponent textColor =
+        isMainInterval ? Escher::ThemeComponent::TextDefault
+                       : Escher::ThemeComponent::TextGrayDarkMiddle;
     plotView->drawLabel(
         ctx, rect, buffer, Coordinate2D<float>(estimate, verticalPosition),
         AbstractPlotView::RelativePosition::There,

@@ -1,3 +1,4 @@
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/button_state.h>
 
@@ -7,7 +8,7 @@ namespace Escher {
 
 ButtonState::ButtonState(Responder* parentResponder, I18n::Message textBody,
                          Invocation invocation, ToggleableView* stateView,
-                         KDFont::Size font, KDColor textColor)
+                         KDFont::Size font, ThemeComponent textColor)
     : SimpleButtonCell(parentResponder, textBody, invocation, font, textColor),
       m_stateView(stateView) {}
 
@@ -43,9 +44,9 @@ void ButtonState::layoutSubviews(bool force) {
 }
 
 void ButtonState::drawRect(KDContext* ctx, KDRect rect) const {
-  KDColor backColor =
-      isHighlighted() ? highlightedBackgroundColor() : Palette::White;
-  ctx->fillRect(bounds(), backColor);
+  ThemeComponent backColor = isHighlighted() ? highlightedBackgroundColor()
+                                             : ThemeComponent::BackgroundWhite;
+  ctx->fillRect(bounds(), SharedGlobalPrefs().color(backColor));
 }
 
 KDSize ButtonState::minimalSizeForOptimalDisplay() const {

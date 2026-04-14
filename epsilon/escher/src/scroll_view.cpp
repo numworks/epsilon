@@ -1,3 +1,4 @@
+#include <apps/global_preferences.h>
 #include <escher/palette.h>
 #include <escher/scroll_view.h>
 
@@ -19,7 +20,7 @@ ScrollView::ScrollView(View* contentView, ScrollViewDataSource* dataSource,
       m_margins(),
       m_excessWidth(0),
       m_excessHeight(0),
-      m_backgroundColor(Palette::WallScreen) {
+      m_backgroundColor(ThemeComponent::WallScreen) {
   assert(m_dataSource != nullptr);
 }
 
@@ -204,7 +205,7 @@ void ScrollView::InnerView::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   KDRect contentFrame = relativeChildFrame(m_scrollView->m_contentView);
-  KDColor color = m_scrollView->m_backgroundColor;
+  KDColor color = SharedGlobalPrefs().color(m_scrollView->m_backgroundColor);
   // Draw top margin
   KDCoordinate contentTop = contentFrame.origin().y();
   ctx->fillRect(KDRect(0, 0, width, contentTop), color);
@@ -303,7 +304,7 @@ KDRect ScrollView::ArrowDecorator::layoutIndicators(
                 frame.height());
 }
 
-void ScrollView::ArrowDecorator::setBackgroundColor(KDColor c) {
+void ScrollView::ArrowDecorator::setBackgroundColor(ThemeComponent c) {
   m_rightArrow.setBackgroundColor(c);
   m_leftArrow.setBackgroundColor(c);
 }

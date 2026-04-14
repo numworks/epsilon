@@ -6,7 +6,7 @@ using namespace Escher;
 
 namespace Shared {
 
-BufferFunctionTitleCell::BufferFunctionTitleCell(KDGlyph::Format format)
+BufferFunctionTitleCell::BufferFunctionTitleCell(const TextFormat& format)
     : FunctionTitleCell(), m_bufferTextView(format) {}
 
 void BufferFunctionTitleCell::setHighlighted(bool highlight) {
@@ -21,7 +21,8 @@ void BufferFunctionTitleCell::setEven(bool even) {
 
 void BufferFunctionTitleCell::setColor(KDColor color) {
   FunctionTitleCell::setColor(color);
-  m_bufferTextView.setTextColor(color);
+  // TODO: temporary until BufferFunctionTitleCell uses components
+  m_bufferTextView.setTextColor(Escher::ThemeComponent::TextDefault);
 }
 
 void BufferFunctionTitleCell::setText(const char* title) {

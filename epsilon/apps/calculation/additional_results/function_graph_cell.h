@@ -23,7 +23,8 @@ class FunctionAxis : public Shared::PlotPolicy::LabeledAxis<N> {
   constexpr static int k_labelAvoidanceMargin = 2;
   constexpr static int k_labelsPrecision =
       Poincare::Preferences::VeryShortNumberOfSignificantDigits;
-  constexpr static KDColor k_specialLabelsColor = Escher::Palette::Red;
+  constexpr static Escher::ThemeComponent k_specialLabelsColor =
+      Escher::ThemeComponent::TokenRed;
 
   // AbstractLabeledAxis
   bool labelWillBeDisplayed(size_t labelIndex, KDRect labelRect) const override;

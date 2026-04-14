@@ -175,8 +175,8 @@ void PressToTestController::fillCellForRow(HighlightCell* cell, int row) {
   myCell->label()->setMessage(LabelAtIndex(row));
   myCell->label()->setTextColor(ExamModeManager::ExamMode().isActive() &&
                                         featureIsDisabled
-                                    ? Palette::GrayDark
-                                    : Palette::Black);
+                                    ? ThemeComponent::TextGrayDark
+                                    : ThemeComponent::TextDefault);
   myCell->subLabel()->setMessage(SubLabelAtIndex(row));
   // Switch is toggled if the feature must stay activated.
   myCell->accessory()->switchView()->setState(!featureIsDisabled);

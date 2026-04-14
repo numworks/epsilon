@@ -39,7 +39,7 @@ void InputHomogeneityTable::fillCellForLocation(Escher::HighlightCell* cell,
        column < k_maxNumberOfColumns)) {
     /* The last column/row is empty and has its title grayed out. */
     static_cast<InferenceEvenOddBufferCell*>(cell)->setTextColor(
-        Palette::GrayDark);
+        ThemeComponent::TextGrayDark);
   }
 }
 

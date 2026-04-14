@@ -3,8 +3,8 @@
 
 namespace Escher {
 
-MessageView::MessageView(const I18n::Message* messages, const KDColor* colors,
-                         uint8_t numberOfMessages)
+MessageView::MessageView(const I18n::Message* messages,
+                         const ThemeComponent* colors, uint8_t numberOfMessages)
     : m_messageTextViews(std::min(numberOfMessages, k_maxNumberOfMessages)) {
   for (uint8_t i = 0; i < m_messageTextViews.size(); i++) {
     m_messageTextViews[i].setFont(i == 0 ? KDFont::Size::Large

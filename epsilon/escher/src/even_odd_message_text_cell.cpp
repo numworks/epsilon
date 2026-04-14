@@ -3,7 +3,7 @@
 
 namespace Escher {
 
-EvenOddMessageTextCell::EvenOddMessageTextCell(KDGlyph::Format format)
+EvenOddMessageTextCell::EvenOddMessageTextCell(TextFormat format)
     : EvenOddCell(),
       m_messageTextView((I18n::Message)0, format),
       m_leftMargin(k_horizontalMargin) {}

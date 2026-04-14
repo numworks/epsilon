@@ -4,6 +4,8 @@
 
 #include <cmath>
 
+#include "global_preferences.h"
+
 using namespace Escher;
 
 namespace Shared {
@@ -142,7 +144,7 @@ void FunctionZoomAndPanCurveViewController::ContentView::LegendView::drawRect(
     KDContext* ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(),
                        k_legendHeight),
-                k_backgroundColor);
+                SharedGlobalPrefs().color(k_backgroundColor));
 }
 
 int FunctionZoomAndPanCurveViewController::ContentView::LegendView::

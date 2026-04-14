@@ -48,7 +48,8 @@ StoreController::StoreController(
       m_stackViewController(stackViewController),
       m_tabController(tabViewController),
       m_dataTypeController(dataTypeController) {
-  m_prefacedTableView.setBackgroundColor(Escher::Palette::WallScreenDark);
+  m_prefacedTableView.setBackgroundColor(
+      Escher::ThemeComponent::WallScreenDark);
   m_prefacedTableView.setCellOverlap(0, 0);
   m_prefacedTableView.setMargins(k_margins);
 }

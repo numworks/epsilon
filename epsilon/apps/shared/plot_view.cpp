@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "global_preferences.h"
+
 using namespace Escher;
 using namespace Poincare;
 
@@ -172,19 +174,22 @@ KDRect AbstractPlotView::labelRect(const char* label, Coordinate2D<float> xy,
 }
 
 void AbstractPlotView::drawLabel(KDContext* ctx, KDRect rect, const char* label,
-                                 const KDRect labelRect, KDColor color) const {
+                                 const KDRect labelRect,
+                                 Escher::ThemeComponent color) const {
   if (labelRect.intersects(rect)) {
-    ctx->drawString(label, labelRect.origin(),
-                    {.glyphColor = color,
-                     .backgroundColor = backgroundColor(),
-                     .font = k_font});
+    ctx->drawString(
+        label, labelRect.origin(),
+        ToKDGlyphStyle(TextStyle{.glyphColor = color,
+                                 .backgroundColor = backgroundColor(),
+                                 .font = k_font}));
   }
 }
 
 void AbstractPlotView::drawLabel(KDContext* ctx, KDRect rect, const char* label,
                                  Coordinate2D<float> xy,
                                  RelativePosition xPosition,
-                                 RelativePosition yPosition, KDColor color,
+                                 RelativePosition yPosition,
+                                 Escher::ThemeComponent color,
                                  bool ignoreMargin) const {
   KDRect thisLabelRect =
       labelRect(label, xy, xPosition, yPosition, ignoreMargin);
@@ -194,17 +199,18 @@ void AbstractPlotView::drawLabel(KDContext* ctx, KDRect rect, const char* label,
 void AbstractPlotView::drawLayout(KDContext* ctx, KDRect rect,
                                   const Layout& layout, Coordinate2D<float> xy,
                                   RelativePosition xPosition,
-                                  RelativePosition yPosition, KDColor color,
+                                  RelativePosition yPosition,
+                                  Escher::ThemeComponent color,
                                   bool ignoreMargin) const {
   KDSize layoutSize = layout->layoutSize(k_font);
   KDPoint layoutOrigin = computeOrigin(floatToPixel2D(xy), layoutSize,
                                        xPosition, yPosition, ignoreMargin);
   if (KDRect(layoutOrigin, layoutSize).intersects(rect)) {
     ctx->fillRect(KDRect(layoutOrigin, layoutSize).intersectedWith(rect),
-                  backgroundColor());
+                  SharedGlobalPrefs().color(backgroundColor()));
     layout.draw(ctx, layoutOrigin,
-                Escher::LayoutView::DefaultLayoutStyle(
-                    {color, backgroundColor(), k_font}));
+                ToPoincareLayoutStyle(Escher::DefaultLayoutStyle(
+                    {color, backgroundColor(), k_font})));
   }
 }
 
@@ -444,6 +450,10 @@ void AbstractPlotView::layoutSubviews(bool force) {
   if (ornament) {
     setChildFrame(ornament, bounds().differencedWith(bannerFrame()), force);
   }
+}
+
+void AbstractPlotView::drawBackground(KDContext* ctx, KDRect rect) const {
+  ctx->fillRect(rect, SharedGlobalPrefs().color(backgroundColor()));
 }
 
 /* The following code is dedicated to stamping the screen.

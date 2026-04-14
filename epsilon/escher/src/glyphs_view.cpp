@@ -1,7 +1,7 @@
 #include <escher/glyphs_view.h>
 
 namespace Escher {
-void GlyphsView::setGlyphFormat(KDGlyph::Format format) {
+void GlyphsView::setGlyphFormat(const TextFormat& format) {
   m_glyphFormat = format;
   markWholeFrameAsDirty();
 }
@@ -11,14 +11,14 @@ void GlyphsView::setFont(KDFont::Size font) {
   markWholeFrameAsDirty();
 }
 
-void GlyphsView::setTextColor(KDColor textColor) {
+void GlyphsView::setTextColor(ThemeComponent textColor) {
   if (textColor != m_glyphFormat.style.glyphColor) {
     m_glyphFormat.style.glyphColor = textColor;
     markWholeFrameAsDirty();
   }
 }
 
-void GlyphsView::setBackgroundColor(KDColor backgroundColor) {
+void GlyphsView::setBackgroundColor(ThemeComponent backgroundColor) {
   if (m_glyphFormat.style.backgroundColor != backgroundColor) {
     m_glyphFormat.style.backgroundColor = backgroundColor;
     markWholeFrameAsDirty();

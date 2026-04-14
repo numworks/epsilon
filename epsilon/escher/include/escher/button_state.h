@@ -10,7 +10,7 @@ class ButtonState : public SimpleButtonCell {
   ButtonState(Responder* parentResponder, I18n::Message textBody,
               Invocation invocation, ToggleableView* stateView,
               KDFont::Size font = KDFont::Size::Small,
-              KDColor textColor = Palette::Black);
+              ThemeComponent textColor = ThemeComponent::TextDefault);
   bool state() const { return m_stateView->state(); }
   void setState(bool state);
   KDSize minimalSizeForOptimalDisplay() const override;

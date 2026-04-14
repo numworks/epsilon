@@ -129,8 +129,9 @@ void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
 
   for (int i = std::max<int>(1, std::floor(radius.min / step));
        i <= std::ceil(radius.max / step); i++) {
-    plotView->drawCircle(ctx, rect, {0.f, 0.f}, i * step,
-                         i % 2 ? k_lightColor : k_boldColor);
+    plotView->drawCircle(
+        ctx, rect, {0.f, 0.f}, i * step,
+        SharedGlobalPrefs().color(i % 2 ? k_lightColor : k_boldColor));
   }
 }
 
@@ -233,9 +234,10 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
                                                           cos * radius.max),
                        plotView->floatToKDCoordinatePixel(OMG::Axis::Vertical,
                                                           sin * radius.max)};
-    ctx->drawAntialiasedLine(pixelFrom, pixelTo,
-                             (i % 2 == 0) ? k_boldColor : k_lightColor,
-                             plotView->k_backgroundColor);
+    ctx->drawAntialiasedLine(
+        pixelFrom, pixelTo,
+        SharedGlobalPrefs().color((i % 2 == 0) ? k_boldColor : k_lightColor),
+        SharedGlobalPrefs().color(plotView->k_backgroundColor));
   }
 
   // Draw labels on top of the lines.
@@ -306,7 +308,7 @@ void PlainAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
                          KDRect rect, OMG::Axis axis) const {
   assert(plotView);
   plotView->drawStraightSegment(ctx, rect, axis, 0.f, -INFINITY, INFINITY,
-                                k_color);
+                                SharedGlobalPrefs().color(k_color));
 }
 
 // SimpleAxis
@@ -346,7 +348,8 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
       break;
     }
     if (drawTicks) {
-      plotView->drawTick(ctx, rect, axis, t, k_color);
+      plotView->drawTick(ctx, rect, axis, t,
+                         SharedGlobalPrefs().color(k_color));
     }
     drawLabel(labelIndex, t, plotView, ctx, rect, axis);
   }
@@ -462,7 +465,7 @@ KDRect AbstractLabeledAxis::labelRect(size_t labelIndex, float t,
 void AbstractLabeledAxis::drawLabel(size_t labelIndex, float t,
                                     const AbstractPlotView* plotView,
                                     KDContext* ctx, KDRect rect, OMG::Axis axis,
-                                    KDColor color) const {
+                                    Escher::ThemeComponent color) const {
   assert(labelIndex < numberOfLabels());
   const char* text = label(labelIndex);
   KDRect thisLabelRect = labelRect(labelIndex, t, plotView, axis);

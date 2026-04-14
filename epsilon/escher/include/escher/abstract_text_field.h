@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/text_field_delegate.h>
+#include <escher/text_format.h>
 #include <escher/text_input.h>
 #include <string.h>
 
@@ -25,7 +26,7 @@ class AbstractTextField : public TextInput {
   bool handleEvent(Ion::Events::Event event) override;
 
   // ScrollView
-  void setBackgroundColor(KDColor backgroundColor) override;
+  void setBackgroundColor(ThemeComponent backgroundColor) override;
 
   // TextInput
   void scrollToCursor() override;
@@ -59,7 +60,7 @@ class AbstractTextField : public TextInput {
   }
   void reinitDraftTextBuffer() { contentView()->reinitDraftTextBuffer(); }
   KDFont::Size font() const { return nonEditableContentView()->font(); }
-  void setTextColor(KDColor textColor) {
+  void setTextColor(ThemeComponent textColor) {
     contentView()->setTextColor(textColor);
   }
   bool cursorAtEndOfText() const {
@@ -81,7 +82,7 @@ class AbstractTextField : public TextInput {
     constexpr static int k_maxBufferSize = 220;
 
     ContentView(char* textBuffer, size_t textBufferSize,
-                KDGlyph::Format format);
+                Escher::TextFormat format);
 
     // View
     void drawRect(KDContext* ctx, KDRect rect) const override;
@@ -100,9 +101,11 @@ class AbstractTextField : public TextInput {
     size_t deleteSelection() override;
 
     // Format
-    void setBackgroundColor(KDColor backgroundColor);
-    KDColor backgroundColor() const { return m_format.style.backgroundColor; }
-    void setTextColor(KDColor textColor);
+    void setBackgroundColor(ThemeComponent backgroundColor);
+    ThemeComponent backgroundColor() const {
+      return m_format.style.backgroundColor;
+    }
+    void setTextColor(ThemeComponent textColor);
 
     bool isEditing() const { return m_isEditing; }
     void setText(const char* text);

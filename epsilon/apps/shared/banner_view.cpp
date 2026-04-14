@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <ion.h>
 
+#include "global_preferences.h"
+
 namespace Shared {
 
 KDCoordinate BannerView::HeightGivenNumberOfLines(int linesCount) {
@@ -16,8 +18,9 @@ void BannerView::drawRect(KDContext* ctx, KDRect rect) const {
   const KDCoordinate lineHeight = KDFont::GlyphHeight(k_font) + k_lineSpacing;
   const KDCoordinate lineWidth = bounds().width();
   for (KDCoordinate y = 0; y < frameHeight; y += lineHeight) {
-    ctx->fillRect(KDRect(0, y, lineWidth, k_lineSpacing),
-                  k_bannerFieldFormat.style.backgroundColor);
+    ctx->fillRect(
+        KDRect(0, y, lineWidth, k_lineSpacing),
+        SharedGlobalPrefs().color(k_bannerFieldFormat.style.backgroundColor));
   }
 }
 

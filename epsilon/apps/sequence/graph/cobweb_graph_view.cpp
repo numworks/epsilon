@@ -155,7 +155,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   plotView->drawLabel(&measuringContext, rect, name, {x, 0.f},
                       AbstractPlotView::RelativePosition::After,
                       AbstractPlotView::RelativePosition::Before,
-                      Escher::Palette::GrayDark);
+                      Escher::ThemeComponent::TextGrayDark);
   m_textCache.save(ctx, measuringContext.writtenRect());
   // Actual drawings
   if (m_step) {
@@ -165,9 +165,10 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   plotView->drawDot(ctx, rect, Dots::Size::Medium, {x, y},
                     Escher::Palette::YellowDark);
   // Draw label above x-axis
-  plotView->drawLabel(
-      ctx, rect, name, {x, 0.f}, AbstractPlotView::RelativePosition::After,
-      AbstractPlotView::RelativePosition::Before, Escher::Palette::GrayDark);
+  plotView->drawLabel(ctx, rect, name, {x, 0.f},
+                      AbstractPlotView::RelativePosition::After,
+                      AbstractPlotView::RelativePosition::Before,
+                      Escher::ThemeComponent::TextGrayDark);
 }
 
 void CobwebAxesPolicy::drawAxesAndGrid(const AbstractPlotView* plotView,
@@ -195,7 +196,7 @@ void CobwebGraphView::drawBackground(KDContext* ctx, KDRect rect) const {
   if (shouldUpdate()) {
     return;
   }
-  ctx->fillRect(rect, backgroundColor());
+  ctx->fillRect(rect, SharedGlobalPrefs().color(backgroundColor()));
 }
 
 }  // namespace Sequence

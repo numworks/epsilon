@@ -1,5 +1,7 @@
 #include "double_pair_table_controller.h"
 
+#include <apps/global_preferences.h>
+
 using namespace Escher;
 
 namespace Shared {
@@ -11,10 +13,11 @@ DoublePairTableController::DoublePairTableController(
       m_prefacedTwiceTableView(0, 1, this, &m_selectableTableView, this, this),
       m_selectableTableView(this, this, this, &m_prefacedTwiceTableView) {
   m_prefacedTwiceTableView.setCellOverlap(0, 0);
-  m_prefacedTwiceTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_prefacedTwiceTableView.setBackgroundColor(ThemeComponent::WallScreenDark);
   m_prefacedTwiceTableView.setMargins(k_margins);
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
-    m_hideableCell[i].setColor(m_selectableTableView.backgroundColor());
+    m_hideableCell[i].setColor(
+        SharedGlobalPrefs().color(m_selectableTableView.backgroundColor()));
   }
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
     m_calculationTitleCells[i].setAlignment(KDGlyph::k_alignRight,

@@ -6,6 +6,7 @@
 #include <escher/even_odd_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/metric.h>
+#include <escher/theme/components.h>
 
 namespace Graph {
 
@@ -54,8 +55,8 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   Escher::MessageTextView m_messageTextView;
   Escher::EllipsisView m_ellipsisView;
   KDColor m_functionColor;
-  KDColor m_expressionBackground;
-  KDColor m_ellipsisBackground;
+  Escher::ThemeComponent m_expressionBackground;
+  Escher::ThemeComponent m_ellipsisBackground;
   bool m_hideMessage;
 };
 

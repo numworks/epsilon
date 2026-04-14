@@ -18,7 +18,7 @@ class AbstractEvenOddBufferTextCell : public EvenOddCell {
   void setText(const char* textContent) {
     bufferTextView()->setText(textContent);
   }
-  void setTextColor(KDColor textColor) {
+  void setTextColor(ThemeComponent textColor) {
     bufferTextView()->setTextColor(textColor);
   }
 
@@ -42,7 +42,7 @@ class EvenOddBufferTextCell : public AbstractEvenOddBufferTextCell {
       "EvenOddBufferTextCell must be templated with a BufferTextView class");
 #endif
  public:
-  EvenOddBufferTextCell(KDGlyph::Format format = k_smallCellDefaultFormat)
+  EvenOddBufferTextCell(TextFormat format = k_smallCellDefaultFormat)
       : AbstractEvenOddBufferTextCell(), m_bufferTextView(format) {}
 
  private:

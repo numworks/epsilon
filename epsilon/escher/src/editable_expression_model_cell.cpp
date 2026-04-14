@@ -5,7 +5,7 @@ namespace Escher {
 
 EditableExpressionModelCell::EditableExpressionModelCell(
     Responder* parentResponder, LayoutFieldDelegate* layoutDelegate,
-    KDGlyph::Format format)
+    TextFormat format)
     : HighlightCell(),
       m_layoutField(parentResponder, layoutDelegate, format),
       m_margins() {

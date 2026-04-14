@@ -63,11 +63,12 @@ PopUpController::ContentView::ContentView(Responder* parentResponder,
       m_cancelButton(this, cancelMessage, cancelInvocation,
                      KDFont::Size::Small),
       m_okButton(this, okMessage, okInvocation, KDFont::Size::Small),
-      m_warningTextView(warningMessage,
-                        {.style = {.glyphColor = Palette::White,
-                                   .backgroundColor = Palette::Black,
-                                   .font = KDFont::Size::Small},
-                         .horizontalAlignment = KDGlyph::k_alignCenter}),
+      m_warningTextView(
+          warningMessage,
+          {.style = {.glyphColor = ThemeComponent::TextWhite,
+                     .backgroundColor = ThemeComponent::BackgroundPopup,
+                     .font = KDFont::Size::Small},
+           .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_detailTextView(detailTextView) {}
 
 void PopUpController::ContentView::setSelectedButton(int selectedButton) {
@@ -121,8 +122,8 @@ void PopUpController::ContentView::layoutSubviews(bool force) {
   m_detailTextView->setFont(KDFont::Size::Small);
   m_detailTextView->setAlignment(KDGlyph::k_alignCenter,
                                  KDGlyph::k_alignCenter);
-  m_detailTextView->setBackgroundColor(Palette::Black);
-  m_detailTextView->setTextColor(Palette::White);
+  m_detailTextView->setBackgroundColor(ThemeComponent::BackgroundPopup);
+  m_detailTextView->setTextColor(ThemeComponent::TextWhite);
 }
 
 KDSize PopUpController::ContentView::minimalSizeForOptimalDisplay() const {

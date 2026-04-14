@@ -312,7 +312,8 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
       functionCell->expressionCell()->setLayout(layout);
       functionCell->setMessage(caption);
       functionCell->setHideMessage(hideMessage);
-      KDColor textColor = f->isActive() ? Palette::Black : Palette::GrayDark;
+      ThemeComponent textColor = f->isActive() ? ThemeComponent::TextDefault
+                                               : ThemeComponent::TextGrayDark;
       functionCell->expressionCell()->setTextColor(textColor);
       static_cast<FunctionCell*>(functionCell)
           ->setParameterSelected(m_parameterColumnSelected);

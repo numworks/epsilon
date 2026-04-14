@@ -17,7 +17,7 @@ class ScrollableThreeLayoutsView
       : Escher::AbstractScrollableMultipleLayoutsView(parentResponder,
                                                       &m_contentCell) {
     resetMargins();  // margins are already added by MenuCell
-    setBackgroundColor(Escher::Palette::White);
+    setBackgroundColor(Escher::ThemeComponent::BackgroundWhite);
   }
   void subviewFrames(KDRect* leftFrame, KDRect* centerFrame,
                      KDRect* comparisonSignFrame, KDRect* rightFrame) {
@@ -55,9 +55,9 @@ class ScrollableThreeLayoutsView
    public:
     using Escher::AbstractScrollableMultipleLayoutsView::ContentCell::
         ContentCell;
-    KDColor backgroundColor() const override {
+    Escher::ThemeComponent backgroundColor() const override {
       return m_highlightWholeCell ? defaultBackgroundColor()
-                                  : Escher::Palette::White;
+                                  : Escher::ThemeComponent::BackgroundWhite;
     }
     void setEven(bool even) override { return; }
     Escher::LayoutView* leftLayoutView() const override {

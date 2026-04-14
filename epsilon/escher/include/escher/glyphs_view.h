@@ -3,20 +3,22 @@
 #include <escher/cell_widget.h>
 #include <escher/menu_cell.h>
 #include <escher/palette.h>
+#include <escher/text_format.h>
+#include <escher/theme/components.h>
 #include <escher/view.h>
 
 namespace Escher {
 
 class GlyphsView : public View, public CellWidget {
  public:
-  GlyphsView(KDGlyph::Format format = {}) { setGlyphFormat(format); }
+  GlyphsView(const TextFormat& format = {}) { setGlyphFormat(format); }
 
   KDFont::Size font() const { return m_glyphFormat.style.font; }
 
-  void setGlyphFormat(KDGlyph::Format format);
+  void setGlyphFormat(const TextFormat& format);
   void setFont(KDFont::Size font);
-  void setTextColor(KDColor textColor);
-  void setBackgroundColor(KDColor backgroundColor);
+  void setTextColor(ThemeComponent textColor);
+  void setBackgroundColor(ThemeComponent backgroundColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
 
   // CellWidget
@@ -29,13 +31,14 @@ class GlyphsView : public View, public CellWidget {
     return type == Type::Accessory;
   }
 
-  constexpr static KDGlyph::Format k_defaultLabel = {};
-  constexpr static KDGlyph::Format k_defaultSubLabel = {
-      .style = {.glyphColor = Palette::GrayDark, .font = KDFont::Size::Small}};
-  constexpr static KDGlyph::Format k_defaultAccessory = {
-      .horizontalAlignment = KDGlyph::k_alignRight};
+  constexpr static TextFormat k_defaultLabel = {};
+  constexpr static TextFormat k_defaultSubLabel = {
+      .style = {.glyphColor = ThemeComponent::TokenGrayDark,
+                .font = KDFont::Size::Small}};
+  constexpr static TextFormat k_defaultAccessory = {.horizontalAlignment =
+                                                        KDGlyph::k_alignRight};
 
-  static KDGlyph::Format FormatForWidgetType(CellWidget::Type type) {
+  static TextFormat FormatForWidgetType(CellWidget::Type type) {
     return type == CellWidget::Type::Label
                ? k_defaultLabel
                : (type == CellWidget::Type::SubLabel ? k_defaultSubLabel
@@ -47,7 +50,7 @@ class GlyphsView : public View, public CellWidget {
   }
 
  protected:
-  KDGlyph::Format m_glyphFormat;
+  TextFormat m_glyphFormat;
 };
 
 }  // namespace Escher

@@ -3,6 +3,7 @@
 #include <escher/metric.h>
 #include <escher/scroll_view_data_source.h>
 #include <escher/scroll_view_indicator.h>
+#include <escher/theme/components.h>
 #include <escher/view.h>
 #include <kandinsky/margins.h>
 
@@ -46,7 +47,7 @@ class ScrollView : public View {
         ScrollViewDataSourceDelegate* delegate = nullptr) {
       return frame;
     }
-    virtual void setBackgroundColor(KDColor c) {}
+    virtual void setBackgroundColor(ThemeComponent c) {}
     virtual bool layoutBeforeInnerView() const { return true; }
   };
 
@@ -86,7 +87,7 @@ class ScrollView : public View {
         View* parent, KDSize content, KDPoint offset, KDRect frame,
         KDRect* dirtyRect1, KDRect* dirtyRect2, bool force,
         ScrollViewDataSourceDelegate* delegate = nullptr) override;
-    void setBackgroundColor(KDColor c) override;
+    void setBackgroundColor(ThemeComponent c) override;
     void setFont(KDFont::Size font);
 
    private:
@@ -95,11 +96,11 @@ class ScrollView : public View {
   };
 
   virtual Decorator* decorator() = 0;
-  virtual void setBackgroundColor(KDColor c) {
+  virtual void setBackgroundColor(ThemeComponent c) {
     m_backgroundColor = c;
     decorator()->setBackgroundColor(m_backgroundColor);
   }
-  KDColor backgroundColor() const { return m_backgroundColor; }
+  ThemeComponent backgroundColor() const { return m_backgroundColor; }
 
   void setContentOffset(KDPoint offset);
   KDPoint contentOffset() const { return m_dataSource->offset(); }
@@ -171,7 +172,7 @@ class ScrollView : public View {
   mutable KDCoordinate m_excessWidth;
   mutable KDCoordinate m_excessHeight;
 
-  KDColor m_backgroundColor;
+  ThemeComponent m_backgroundColor;
 };
 
 }  // namespace Escher

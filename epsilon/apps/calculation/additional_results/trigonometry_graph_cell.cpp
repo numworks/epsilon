@@ -49,7 +49,7 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
       AbstractPlotView::RelativePosition::There,
       labelOnLine ? AbstractPlotView::RelativePosition::Before
                   : AbstractPlotView::RelativePosition::There,
-      Palette::Red);
+      ThemeComponent::TokenRed);
   // Draw the arc
   drawArcOfEllipse(plotView, ctx, rect, {0.f, 0.f}, k_arcRatio, k_arcRatio,
                    0.0f, angle, Palette::Red);
@@ -58,12 +58,13 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
   plotView->drawLabel(ctx, rect, "sin(θ)", Coordinate2D<float>(0.f, s),
                       c >= 0.f ? AbstractPlotView::RelativePosition::Before
                                : AbstractPlotView::RelativePosition::After,
-                      AbstractPlotView::RelativePosition::There, Palette::Red);
+                      AbstractPlotView::RelativePosition::There,
+                      ThemeComponent::TokenRed);
   plotView->drawLabel(ctx, rect, "cos(θ)", Coordinate2D<float>(c, 0.f),
                       AbstractPlotView::RelativePosition::There,
                       s >= 0.f ? AbstractPlotView::RelativePosition::After
                                : AbstractPlotView::RelativePosition::Before,
-                      Palette::Red);
+                      ThemeComponent::TokenRed);
 }
 
 void UnitCircle::drawAxesAndGrid(const AbstractPlotView* plotView,
@@ -77,13 +78,13 @@ void UnitCircle::drawAxesAndGrid(const AbstractPlotView* plotView,
       AbstractPlotView::RelativePosition::There);
   plotView->drawLabel(ctx, rect, "-1",
                       labelRect.translatedBy(k_minusOneFineTunePosition),
-                      Palette::Black);
+                      ThemeComponent::TextDefault);
   labelRect = plotView->labelRect("1", {1, 0},
                                   AbstractPlotView::RelativePosition::After,
                                   AbstractPlotView::RelativePosition::There);
   plotView->drawLabel(ctx, rect, "1",
                       labelRect.translatedBy(k_oneFineTunePosition),
-                      Palette::Black);
+                      ThemeComponent::TextDefault);
   m_xAxis.drawAxis(plotView, ctx, rect, OMG::Axis::Horizontal);
   m_yAxis.drawAxis(plotView, ctx, rect, OMG::Axis::Vertical);
 }

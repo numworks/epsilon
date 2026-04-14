@@ -2,6 +2,7 @@
 
 #include <escher/editable_expression_model_cell.h>
 
+#include "global_preferences.h"
 #include "sequence_cell.h"
 
 namespace Sequence {
@@ -13,7 +14,7 @@ class EditableSequenceCell
                        Escher::LayoutFieldDelegate* layoutFieldDelegate);
 
   void updateSubviewsBackgroundAfterChangingState() override {
-    m_expressionBackground = backgroundColor();
+    m_expressionBackground = SharedGlobalPrefs().color(backgroundColor());
   }
 
   void layoutSubviews(bool force) override;

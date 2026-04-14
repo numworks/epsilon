@@ -79,7 +79,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   static void ShowCursor();
 
   static const I18n::Message k_promptMessages[];
-  static const KDColor k_promptColors[];
+  static const Escher::ThemeComponent k_promptColors[];
   static const int k_promptNumberOfMessages;
   bool m_firstUSBEnumeration;
   bool m_dfuBetweenEvents;

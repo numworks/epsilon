@@ -1,21 +1,23 @@
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/even_odd_expression_cell.h>
+
 using namespace Poincare;
 
 namespace Escher {
 
-EvenOddExpressionCell::EvenOddExpressionCell(KDGlyph::Format format)
+EvenOddExpressionCell::EvenOddExpressionCell(TextFormat format)
     : EvenOddCell(), m_layoutView(format), m_margins() {}
 
 void EvenOddExpressionCell::setLayout(const Layout& layoutR) {
   m_layoutView.setLayout(layoutR);
 }
 
-void EvenOddExpressionCell::setBackgroundColor(KDColor backgroundColor) {
+void EvenOddExpressionCell::setBackgroundColor(ThemeComponent backgroundColor) {
   m_layoutView.setBackgroundColor(backgroundColor);
 }
 
-void EvenOddExpressionCell::setTextColor(KDColor textColor) {
+void EvenOddExpressionCell::setTextColor(ThemeComponent textColor) {
   m_layoutView.setTextColor(textColor);
 }
 
@@ -32,10 +34,10 @@ void EvenOddExpressionCell::setMargins(KDHorizontalMargins margins) {
 void EvenOddExpressionCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Color the margins
   ctx->fillRect(KDRect(0, 0, m_margins.left(), bounds().height()),
-                backgroundColor());
+                SharedGlobalPrefs().color(backgroundColor()));
   ctx->fillRect(KDRect(bounds().width() - m_margins.right(), 0,
                        m_margins.right(), bounds().height()),
-                backgroundColor());
+                SharedGlobalPrefs().color(backgroundColor()));
 }
 
 void EvenOddExpressionCell::updateSubviewsBackgroundAfterChangingState() {

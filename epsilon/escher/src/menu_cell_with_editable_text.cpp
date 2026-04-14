@@ -2,6 +2,11 @@
 
 namespace Escher {
 
+void EditableTextWidget::setHighlighted(bool highlighted) {
+  m_textField->setBackgroundColor(
+      AbstractMenuCell::BackgroundColor(highlighted));
+}
+
 AbstractWithEditableText::AbstractWithEditableText(
     Responder* parentResponder, TextFieldDelegate* textFieldDelegate)
     : Responder(parentResponder),

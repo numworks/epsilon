@@ -6,8 +6,9 @@ namespace Regression {
 
 void ColumnTitleCell::setColor(KDColor color) {
   m_functionColor = color;
-  m_firstBufferTextView.setTextColor(color);
-  m_secondBufferTextView.setTextColor(color);
+  // TODO/ temporary
+  m_firstBufferTextView.setTextColor(ThemeComponent::TextDefault);
+  m_secondBufferTextView.setTextColor(ThemeComponent::TextDefault);
   reloadCell();
 }
 

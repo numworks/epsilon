@@ -1,3 +1,4 @@
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/abstract_text_field.h>
 #include <escher/clipboard.h>
@@ -23,7 +24,7 @@ static char s_draftTextBuffer[AbstractTextField::MaxBufferSize()];
 
 AbstractTextField::ContentView::ContentView(char* textBuffer,
                                             size_t textBufferSize,
-                                            KDGlyph::Format format)
+                                            Escher::TextFormat format)
     : TextInput::ContentView(format),
       m_textBuffer(textBuffer),
       m_textBufferSize(textBufferSize),
@@ -37,50 +38,52 @@ AbstractTextField::ContentView::ContentView(char* textBuffer,
 }
 
 void AbstractTextField::ContentView::setBackgroundColor(
-    KDColor backgroundColor) {
+    ThemeComponent backgroundColor) {
   m_format.style.backgroundColor = backgroundColor;
   markWholeFrameAsDirty();
 }
 
-void AbstractTextField::ContentView::setTextColor(KDColor textColor) {
+void AbstractTextField::ContentView::setTextColor(ThemeComponent textColor) {
   m_format.style.glyphColor = textColor;
   markWholeFrameAsDirty();
 }
 
 void AbstractTextField::ContentView::drawRect(KDContext* ctx,
                                               KDRect rect) const {
-  KDColor backgroundColor = m_format.style.backgroundColor;
+  ThemeComponent backgroundColor = m_format.style.backgroundColor;
   if (m_isEditing) {
-    backgroundColor = Palette::White;
+    backgroundColor = ThemeComponent::BackgroundWhite;
   }
-  ctx->fillRect(bounds(), backgroundColor);
-  KDGlyph::Style glyphStyle{.glyphColor = m_format.style.glyphColor,
-                            .backgroundColor = backgroundColor,
-                            .font = m_format.style.font};
+  ctx->fillRect(bounds(), SharedGlobalPrefs().color(backgroundColor));
+  TextStyle glyphStyle{.glyphColor = m_format.style.glyphColor,
+                       .backgroundColor = backgroundColor,
+                       .font = m_format.style.font};
   if (selectionIsEmpty()) {
     ctx->drawString(text(), glyphFrameAtPosition(text(), text()).origin(),
-                    glyphStyle);
+                    ToKDGlyphStyle(glyphStyle));
   } else {
     assert(m_isEditing);
     int selectionOffset = selectionLeft() - draftText();
     const char* textToDraw = text();
     // Draw the non selected text on the left of the selection
     ctx->drawString(textToDraw, glyphFrameAtPosition(text(), text()).origin(),
-                    glyphStyle, selectionOffset);
+                    ToKDGlyphStyle(glyphStyle), selectionOffset);
     int selectionLength = selectionRight() - selectionLeft();
     textToDraw += selectionOffset;
     // Draw the selected text
-    ctx->drawString(text() + selectionOffset,
-                    glyphFrameAtPosition(text(), textToDraw).origin(),
-                    {.glyphColor = m_format.style.glyphColor,
-                     .backgroundColor = Palette::Select,
-                     .font = m_format.style.font},
-                    selectionLength);
+    ctx->drawString(
+        text() + selectionOffset,
+        glyphFrameAtPosition(text(), textToDraw).origin(),
+        {.glyphColor = SharedGlobalPrefs().color(m_format.style.glyphColor),
+         .backgroundColor =
+             SharedGlobalPrefs().color(ThemeComponent::SurfaceSelect),
+         .font = m_format.style.font},
+        selectionLength);
     textToDraw += selectionLength;
     // Draw the non selected text on the right of the selection
     ctx->drawString(text() + selectionOffset + selectionLength,
                     glyphFrameAtPosition(text(), textToDraw).origin(),
-                    glyphStyle);
+                    ToKDGlyphStyle(glyphStyle));
   }
 }
 
@@ -297,7 +300,7 @@ AbstractTextField::AbstractTextField(Responder* parentResponder,
                                      TextFieldDelegate* delegate)
     : TextInput(parentResponder, contentView), m_delegate(delegate) {}
 
-void AbstractTextField::setBackgroundColor(KDColor backgroundColor) {
+void AbstractTextField::setBackgroundColor(ThemeComponent backgroundColor) {
   ScrollView::setBackgroundColor(backgroundColor);
   contentView()->setBackgroundColor(backgroundColor);
 }

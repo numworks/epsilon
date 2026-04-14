@@ -16,7 +16,8 @@ CategoricalTableCell::CategoricalTableCell(
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : Escher::Responder(parentResponder),
       m_selectableTableView(this, dataSource, this, this, scrollViewDelegate) {
-  m_selectableTableView.setBackgroundColor(Escher::Palette::WallScreenDark);
+  m_selectableTableView.setBackgroundColor(
+      Escher::ThemeComponent::WallScreenDark);
   m_selectableTableView.hideScrollBars();
 }
 

@@ -29,10 +29,10 @@ SingleInteractiveCurveViewRangeController::
       m_stepParameter(NAN),
       m_bottomMessageView(
           I18n::Message::StepAdjustment,
-          KDGlyph::Format{
-              .style = KDGlyph::Style{.backgroundColor = Palette::WallScreen,
-                                      .font = KDFont::Size::Small},
-              .horizontalAlignment = KDGlyph::k_alignCenter}) {
+          TextFormat{.style = TextStyle{.backgroundColor =
+                                            Escher::ThemeComponent::WallScreen,
+                                        .font = KDFont::Size::Small},
+                     .horizontalAlignment = KDGlyph::k_alignCenter}) {
   m_gridUnitCell.label()->setMessage(I18n::Message::Step);
 }
 

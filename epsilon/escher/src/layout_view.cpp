@@ -1,3 +1,5 @@
+#include <apps/global_preferences.h>
+#include <escher/layout_style.h>
 #include <escher/layout_view.h>
 #include <escher/palette.h>
 #include <poincare/layout.h>
@@ -46,10 +48,13 @@ KDPoint LayoutView::drawingOrigin() const {
 }
 
 void LayoutView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(rect, m_glyphFormat.style.backgroundColor);
+  ctx->fillRect(rect,
+                SharedGlobalPrefs().color(m_glyphFormat.style.backgroundColor));
   if (!layout().isUninitialized()) {
-    layout().draw(ctx, drawingOrigin(), DefaultLayoutStyle(m_glyphFormat.style),
-                  cursor());
+    layout().draw(
+        ctx, drawingOrigin(),
+        ToPoincareLayoutStyle(DefaultLayoutStyle(m_glyphFormat.style)),
+        cursor());
   }
 }
 

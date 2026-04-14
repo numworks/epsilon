@@ -1,6 +1,8 @@
 #pragma once
 
 #include <escher/glyphs_view.h>
+#include <escher/layout_style.h>
+#include <escher/text_format.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 
@@ -15,7 +17,7 @@ class LayoutView : public GlyphsView {
  public:
   using TitleType = const Poincare::Layout&;
 
-  LayoutView(KDGlyph::Format format = {})
+  LayoutView(const TextFormat& format = {})
       : GlyphsView(format), m_horizontalMargin(0) {}
 
   const Poincare::Layout& layout() const override { return m_layout; }
@@ -31,12 +33,6 @@ class LayoutView : public GlyphsView {
   bool layoutHasNode() const {
     return Poincare::PoolObject::IsValidIdentifier(m_layout.identifier()) &&
            !m_layout.wasErasedByException();
-  }
-
-  static Poincare::LayoutStyle DefaultLayoutStyle(
-      const KDGlyph::Style& glyphStyle) {
-    return {glyphStyle, Escher::Palette::Select, Escher::Palette::YellowDark,
-            Escher::Palette::GrayBright, Escher::Palette::GrayDark};
   }
 
  protected:
@@ -58,7 +54,7 @@ class LayoutView : public GlyphsView {
 class LayoutViewWithCursor : public LayoutView {
  public:
   LayoutViewWithCursor(Poincare::LayoutCursor* cursor,
-                       KDGlyph::Format format = {})
+                       const TextFormat& format = {})
       : LayoutView(format), m_cursor(cursor), m_editing(true) {
     assert(cursor);
   }

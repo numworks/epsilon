@@ -29,7 +29,7 @@ void PrefacedTwiceTableView::setMargins(KDMargins m) {
   m_columnPrefaceView.margins()->setHorizontal({0, 0});
 }
 
-void PrefacedTwiceTableView::setBackgroundColor(KDColor color) {
+void PrefacedTwiceTableView::setBackgroundColor(ThemeComponent color) {
   // Main table and row preface
   PrefacedTableView::setBackgroundColor(color);
   // Column preface

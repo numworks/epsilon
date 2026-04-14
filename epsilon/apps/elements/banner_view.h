@@ -27,10 +27,14 @@ class BannerView : public Escher::View {
   SuggestionTextField* textField() { return &m_textField; }
 
  private:
-  constexpr static KDColor k_backgroundColor = Escher::Palette::GrayWhite;
-  constexpr static KDColor k_borderColor = Escher::Palette::GrayMiddle;
-  constexpr static KDColor k_legendColor = Escher::Palette::GrayVeryDark;
-  constexpr static KDColor k_selectedButtonColor = Escher::Palette::Select;
+  constexpr static Escher::ThemeComponent k_backgroundColor =
+      Escher::ThemeComponent::BannerGrayWhite;
+  constexpr static Escher::ThemeComponent k_borderColor =
+      Escher::ThemeComponent::BannerGrayMiddle;
+  constexpr static Escher::ThemeComponent k_legendColor =
+      Escher::ThemeComponent::TextGrayVeryDark;
+  constexpr static Escher::ThemeComponent k_selectedButtonColor =
+      Escher::ThemeComponent::SurfaceSelect;
   constexpr static KDCoordinate k_dotLeftMargin = 16;
   constexpr static KDCoordinate k_dotDiameter = 8;
   constexpr static KDCoordinate k_bannerHeight = 25;
@@ -41,7 +45,7 @@ class BannerView : public Escher::View {
 
   class DotView : public Escher::View {
    public:
-    DotView() : m_color(k_backgroundColor) {}
+    DotView() : m_color() {}
 
     // Escher::View
     void drawRect(KDContext* ctx, KDRect rect) const override;
@@ -52,7 +56,7 @@ class BannerView : public Escher::View {
     void setColor(KDColor color);
 
    private:
-    KDColor m_color;
+    KDColor m_color = Escher::Palette::White;
   };
 
   class EllipsisButton : public Escher::SolidColorView {

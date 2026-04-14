@@ -21,7 +21,7 @@ void ResultGoodnessContributionsTable::drawRect(KDContext* ctx,
   ctx->fillRect(
       KDRect(0, bounds().height() - Escher::Metric::CellSeparatorThickness,
              bounds().width(), Escher::Metric::CellSeparatorThickness),
-      m_selectableTableView.backgroundColor());
+      SharedGlobalPrefs().color(m_selectableTableView.backgroundColor()));
 }
 
 void ResultGoodnessContributionsTable::fillCellForLocation(

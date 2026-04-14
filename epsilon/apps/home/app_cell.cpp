@@ -66,8 +66,11 @@ void AppCell::setVisible(bool visible) {
 
 void AppCell::reloadCell() {
   TextView* t = const_cast<TextView*>(textView());
-  t->setTextColor(isHighlighted() ? Palette::White : Palette::Black);
-  t->setBackgroundColor(isHighlighted() ? Palette::YellowDark : Palette::White);
+  // TODO: TokenWhite
+  t->setTextColor(isHighlighted() ? ThemeComponent::TextWhite
+                                  : ThemeComponent::TextDefault);
+  t->setBackgroundColor(isHighlighted() ? ThemeComponent::TokenYellow
+                                        : ThemeComponent::BackgroundWhite);
 }
 
 const Escher::TextView* AppCell::textView() const {

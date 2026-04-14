@@ -9,9 +9,9 @@ constexpr static I18n::Message k_chargingPromptMessages[] = {
     I18n::Message::BatteryChargingTitle, I18n::Message::BlankMessage,
     I18n::Message::BatteryChargingMessage,
     I18n::Message::BatteryChargingMessage2};
-constexpr static KDColor k_chargingPromptColors[] = {
-    Escher::Palette::Black, Escher::Palette::Black, Escher::Palette::Black,
-    Escher::Palette::Black};
+constexpr static Escher::ThemeComponent k_chargingPromptColors[] = {
+    Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TextDefault,
+    Escher::ThemeComponent::TextDefault, Escher::ThemeComponent::TextDefault};
 constexpr static uint8_t k_chargingPromptNumberOfMessages = 4;
 
 static bool HandleEvent(Ion::Events::Event event) {

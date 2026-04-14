@@ -4,6 +4,7 @@
 #include <escher/editable_field.h>
 #include <escher/scrollable_view.h>
 #include <escher/text_cursor_view.h>
+#include <escher/text_format.h>
 #include <omg/directions.h>
 #include <string.h>
 
@@ -32,7 +33,7 @@ class TextInput : public EditableField {
  protected:
   class ContentView : public TextCursorView::CursorFieldView {
    public:
-    ContentView(KDGlyph::Format format)
+    ContentView(Escher::TextFormat format)
         : TextCursorView::CursorFieldView(),
           m_cursorLocation(nullptr),
           m_selectionStart(nullptr),
@@ -86,7 +87,7 @@ class TextInput : public EditableField {
 
     const char* m_cursorLocation;
     const char* m_selectionStart;
-    KDGlyph::Format m_format;
+    Escher::TextFormat m_format;
   };
 
   /* If the text to be appended is too long to be added without overflowing the

@@ -242,7 +242,8 @@ SumGraphController::LegendView::LegendView(SumGraphController* controller)
 
 void SumGraphController::LegendView::drawRect(KDContext* ctx,
                                               KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::GrayMiddle);
+  ctx->fillRect(bounds(), SharedGlobalPrefs().color(
+                              k_glyphsFormat.style.backgroundColor));
 }
 
 KDSize SumGraphController::LegendView::minimalSizeForOptimalDisplay() const {

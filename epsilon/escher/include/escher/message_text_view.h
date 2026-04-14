@@ -10,7 +10,7 @@ class MessageTextView : public TextView {
   using TitleType = I18n::Message;
 
   MessageTextView(I18n::Message message = (I18n::Message)0,
-                  KDGlyph::Format format = {}, KDCoordinate lineSpacing = 0)
+                  const TextFormat& format = {}, KDCoordinate lineSpacing = 0)
       : TextView(format, lineSpacing), m_message(message) {}
 
   void setText(const char* text) override;

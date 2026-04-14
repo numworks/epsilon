@@ -71,12 +71,12 @@ void InputStatisticsTable::fillColumnTitleForLocation(
   OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(innerColumn);
   myCell->setText(groupTitle.data());
   myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-  myCell->setTextColor(Palette::Black);
+  myCell->setTextColor(ThemeComponent::TextDefault);
   if (innerColumn == innerNumberOfColumns() - 1 &&
       innerColumn < k_numberOfInnerColumns - 1) {
     /* The last header has its title grayed out, except if the column is the
      * last possible column. */
-    myCell->setTextColor(Palette::GrayDark);
+    myCell->setTextColor(ThemeComponent::TextGrayDark);
   }
 }
 void InputStatisticsTable::fillRowTitleForLocation(Escher::HighlightCell* cell,
@@ -85,7 +85,7 @@ void InputStatisticsTable::fillRowTitleForLocation(Escher::HighlightCell* cell,
   headerCellType* myCell = static_cast<headerCellType*>(cell);
   myCell->setText(HeaderAtRow(innerRow));
   myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-  myCell->setTextColor(Palette::Black);
+  myCell->setTextColor(ThemeComponent::TextDefault);
 }
 
 void InputStatisticsTable::fillRowSymbolForLocation(Escher::HighlightCell* cell,
@@ -94,7 +94,7 @@ void InputStatisticsTable::fillRowSymbolForLocation(Escher::HighlightCell* cell,
   headerCellType* myCell = static_cast<headerCellType*>(cell);
   myCell->setText(SymbolAtRow(innerRow));
   myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-  myCell->setTextColor(Palette::GrayDark);
+  myCell->setTextColor(ThemeComponent::TextGrayDark);
 }
 
 void InputStatisticsTable::fillInnerCellForLocation(Escher::HighlightCell* cell,

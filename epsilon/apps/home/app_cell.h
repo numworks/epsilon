@@ -4,6 +4,7 @@
 #include <escher/highlight_cell.h>
 #include <escher/image_view.h>
 #include <escher/pointer_text_view.h>
+#include <escher/text_format.h>
 #include <ion/external_apps.h>
 
 namespace Home {
@@ -28,7 +29,7 @@ class AppCell : public Escher::HighlightCell {
   constexpr static KDCoordinate k_iconHeight = 56;
   constexpr static KDCoordinate k_nameWidthMargin = 4;
   constexpr static KDCoordinate k_nameHeightMargin = 1;
-  constexpr static KDGlyph::Format k_glyphsFormat = {
+  constexpr static Escher::TextFormat k_glyphsFormat = {
       .style = {.font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignCenter};
   const Escher::TextView* textView() const;

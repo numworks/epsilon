@@ -2,6 +2,6 @@
 
 const I18n::Message AppsContainer::k_promptMessages[] = {};
 
-const KDColor AppsContainer::k_promptColors[] = {};
+const Escher::ThemeComponent AppsContainer::k_promptColors[] = {};
 
 const int AppsContainer::k_promptNumberOfMessages = 0;

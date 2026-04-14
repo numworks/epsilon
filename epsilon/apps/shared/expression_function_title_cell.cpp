@@ -24,7 +24,8 @@ void ExpressionFunctionTitleCell::setEven(bool even) {
 
 void ExpressionFunctionTitleCell::setColor(KDColor color) {
   Shared::FunctionTitleCell::setColor(color);
-  m_titleTextView.setTextColor(color);
+  // TODO: temporary
+  m_titleTextView.setTextColor(ThemeComponent::TextDefault);
 }
 
 void ExpressionFunctionTitleCell::reloadCell() {

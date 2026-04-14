@@ -34,7 +34,7 @@ class EvenOddEditableTextCell : public AbstractEvenOddEditableTextCell {
  public:
   EvenOddEditableTextCell(Responder* parentResponder = nullptr,
                           TextFieldDelegate* delegate = nullptr,
-                          KDGlyph::Format format = k_smallCellDefaultFormat)
+                          Escher::TextFormat format = k_smallCellDefaultFormat)
       : AbstractEvenOddEditableTextCell(parentResponder),
         m_editableCell(this, delegate, format) {}
 

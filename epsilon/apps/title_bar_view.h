@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
 #include <escher/image_view.h>
+#include <escher/text_format.h>
 
 #include "battery_view.h"
 #include "shift_alpha_lock_view.h"
@@ -22,7 +23,8 @@ class TitleBarView : public Escher::View {
   void refreshPreferences();
   void reload();
 
-  constexpr static KDColor k_backgroundColor = Escher::Palette::YellowDark;
+  constexpr static Escher::ThemeComponent k_backgroundColor =
+      Escher::ThemeComponent::TokenYellow;
 
  private:
   constexpr static size_t k_preferenceTextSize = sizeof("tech/rad");
@@ -32,8 +34,8 @@ class TitleBarView : public Escher::View {
   constexpr static KDCoordinate k_examIconMargin = 93;
   constexpr static KDCoordinate k_examTextWidth =
       KDFont::GlyphWidth(KDFont::Size::Large) * 3;
-  constexpr static KDGlyph::Format k_glyphsFormat = {
-      .style = {.glyphColor = Escher::Palette::White,
+  constexpr static Escher::TextFormat k_glyphsFormat = {
+      .style = {.glyphColor = Escher::ThemeComponent::TextWhite,
                 .backgroundColor = k_backgroundColor,
                 .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignCenter,

@@ -1,5 +1,6 @@
 #include "subtitle_cell.h"
 
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/palette.h>
 
@@ -15,8 +16,9 @@ SubtitleCell::SubtitleCell()
                             .font = KDFont::Size::Small}}) {}
 
 void SubtitleCell::drawRect(KDContext* ctx, KDRect rect) const {
-  KDColor backColor = isHighlighted() ? Palette::Select : k_backgroundColor;
-  drawInnerRect(ctx, bounds(), backColor);
+  ThemeComponent backColor =
+      isHighlighted() ? ThemeComponent::SurfaceSelect : k_backgroundColor;
+  drawInnerRect(ctx, bounds(), SharedGlobalPrefs().color(backColor));
   drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
 }
 

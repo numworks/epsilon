@@ -7,6 +7,7 @@
 #include <escher/responder.h>
 #include <escher/scroll_view_data_source.h>
 #include <escher/scrollable_view.h>
+#include <escher/theme/components.h>
 
 #include "console_line.h"
 
@@ -53,9 +54,9 @@ class ConsoleLineCell : public Escher::HighlightCell, public Escher::Responder {
    private:
     ConsoleLineView m_consoleLineView;
   };
-  static KDColor textColor(ConsoleLine* line) {
-    return line->isFromCurrentSession() ? Escher::Palette::Black
-                                        : Escher::Palette::GrayDark;
+  static Escher::ThemeComponent textColor(ConsoleLine* line) {
+    return line->isFromCurrentSession() ? Escher::ThemeComponent::TextDefault
+                                        : Escher::ThemeComponent::TextGrayDark;
   }
   Escher::MessageTextView m_promptView;
   ScrollableConsoleLineView m_scrollableView;

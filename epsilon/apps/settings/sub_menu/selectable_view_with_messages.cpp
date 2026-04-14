@@ -13,12 +13,13 @@ namespace Settings {
 SelectableViewWithMessages::SelectableViewWithMessages(
     SelectableTableView* selectableTableView)
     : m_selectableTableView(selectableTableView),
-      m_messageTextView(I18n::Message::Default,
-                        {.style = {.glyphColor = Palette::GrayDark,
-                                   .backgroundColor = Palette::WallScreen,
-                                   .font = KDFont::Size::Small},
-                         .horizontalAlignment = KDGlyph::k_alignCenter,
-                         .verticalAlignment = KDGlyph::k_alignCenter}) {}
+      m_messageTextView(
+          I18n::Message::Default,
+          {.style = {.glyphColor = ThemeComponent::TextGrayDark,
+                     .backgroundColor = ThemeComponent::WallScreen,
+                     .font = KDFont::Size::Small},
+           .horizontalAlignment = KDGlyph::k_alignCenter,
+           .verticalAlignment = KDGlyph::k_alignCenter}) {}
 
 void SelectableViewWithMessages::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bounds(), Palette::WallScreen);

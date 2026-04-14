@@ -1,3 +1,4 @@
+#include <apps/global_preferences.h>
 #include <escher/palette.h>
 #include <escher/subapp_cell.h>
 #include <kandinsky/font.h>
@@ -10,7 +11,7 @@ SubappCell::SubappCell() {
   m_icon.setBackgroundColor(Palette::White);
   m_title.setFont(KDFont::Size::Large);
   m_subTitle.setFont(KDFont::Size::Small);
-  m_subTitle.setTextColor(Palette::GrayDark);
+  m_subTitle.setTextColor(ThemeComponent::TextGrayDark);
 }
 
 void SubappCell::drawRect(KDContext* ctx, KDRect rect) const {
@@ -21,8 +22,8 @@ void SubappCell::drawRect(KDContext* ctx, KDRect rect) const {
 
 void SubappCell::setHighlighted(bool highlighted) {
   HighlightCell::setHighlighted(highlighted);
-  KDColor backgroundColor = defaultBackgroundColor();
-  m_icon.setBackgroundColor(backgroundColor);
+  ThemeComponent backgroundColor = defaultBackgroundColor();
+  m_icon.setBackgroundColor(SharedGlobalPrefs().color(backgroundColor));
   m_title.setBackgroundColor(backgroundColor);
   m_subTitle.setBackgroundColor(backgroundColor);
 }

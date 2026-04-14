@@ -11,9 +11,9 @@ namespace Shared {
 class BannerView : public Escher::View {
  public:
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
-  constexpr static KDGlyph::Format k_bannerFieldFormat = {
-      .style = {.glyphColor = Escher::Palette::Black,
-                .backgroundColor = Escher::Palette::GrayMiddle,
+  constexpr static Escher::TextFormat k_bannerFieldFormat = {
+      .style = {.glyphColor = Escher::ThemeComponent::TextDefault,
+                .backgroundColor = Escher::ThemeComponent::BannerGrayMiddle,
                 .font = k_font},
       .horizontalAlignment = KDGlyph::k_alignCenter};
   using BannerBufferTextView = Escher::OneLineBufferTextView<k_font>;

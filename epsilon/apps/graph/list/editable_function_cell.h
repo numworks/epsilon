@@ -5,6 +5,7 @@
 #include <escher/stack_view_controller.h>
 
 #include "function_cell.h"
+#include "global_preferences.h"
 
 namespace Graph {
 
@@ -46,7 +47,7 @@ class EditableFunctionCell
         : Escher::ButtonCell(parentResponder, I18n::Message::FunctionTemplates,
                              invocation, Style::EmbossedGray,
                              KDFont::Size::Small,
-                             Escher::Palette::PurpleBright) {}
+                             Escher::ThemeComponent::TextPurple) {}
     bool handleEvent(Ion::Events::Event event) override;
   };
 

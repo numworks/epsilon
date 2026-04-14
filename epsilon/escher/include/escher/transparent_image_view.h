@@ -17,9 +17,7 @@ class TransparentImageView : public ImageView, public CellWidget {
   bool preventRightAlignedSubLabel(Type type) const override {
     return type == Type::Label;
   }
-  void setHighlighted(bool highlighted) override {
-    setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
-  }
+  void setHighlighted(bool highlighted) override;
 
  private:
   void blendInPlace(KDColor* colorBuffer, uint8_t* alphaBuffer) const;

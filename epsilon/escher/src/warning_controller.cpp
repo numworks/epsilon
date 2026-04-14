@@ -8,8 +8,8 @@ namespace Escher {
 WarningController::ContentView::ContentView()
     : SolidColorView(Palette::Black),
       m_textView((I18n::Message)0,
-                 {.style = {.glyphColor = Palette::White,
-                            .backgroundColor = Palette::Black,
+                 {.style = {.glyphColor = ThemeComponent::TextWhite,
+                            .backgroundColor = ThemeComponent::BackgroundPopup,
                             .font = KDFont::Size::Small},
                   .horizontalAlignment = KDGlyph::k_alignCenter,
                   .verticalAlignment = KDGlyph::k_alignCenter},

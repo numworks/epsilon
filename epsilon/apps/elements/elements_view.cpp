@@ -108,7 +108,9 @@ void ElementsView::layoutSubviews(bool force) {
   setChildFrame(&m_singleElementView, cellRect, true);
 
   m_nameView.setMessage(ElementsDataBase::Name(z));
-  m_nameView.setTextColor(dataSource->field()->getColors(z).fg());
+  // TODO: temporary, element colors should be mapped to components
+  // color = dataSource->field()->getColors(z).fg()
+  m_nameView.setTextColor(Escher::ThemeComponent::TokenYellow);
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
   setChildFrame(&m_nameView,
                 KDRect(KDPoint(cellRect.x() + cellRect.width() +

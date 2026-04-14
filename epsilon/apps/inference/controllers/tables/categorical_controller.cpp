@@ -19,7 +19,7 @@ CategoricalController::CategoricalController(Responder* parent,
       m_next(&m_selectableListView, I18n::Message::Next, invocation) {
   m_selectableListView.margins()->setTop(0);
   m_selectableListView.margins()->setHorizontal({0, 0});
-  m_selectableListView.setBackgroundColor(Palette::WallScreenDark);
+  m_selectableListView.setBackgroundColor(ThemeComponent::WallScreenDark);
   setScrollViewDataSourceDelegate(this);
 }
 

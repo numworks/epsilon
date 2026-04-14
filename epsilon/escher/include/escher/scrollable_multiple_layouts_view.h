@@ -53,19 +53,17 @@ class AbstractScrollableMultipleLayoutsView
   // CellWidget
   const View* view() const override { return this; }
   Responder* responder() override { return this; }
-  void setBackgroundColor(KDColor color) override {
+  void setBackgroundColor(ThemeComponent color) override {
     ScrollableView<ScrollView::ArrowDecorator>::setBackgroundColor(color);
   }
-  void setHighlighted(bool highlighted) override {
-    setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
-  }
+  void setHighlighted(bool highlighted) override;
 
  protected:
   class ContentCell : public EvenOddCell {
    public:
     ContentCell(float horizontalAlignment = KDGlyph::k_alignLeft,
                 KDFont::Size font = KDFont::Size::Large);
-    KDColor backgroundColor() const override;
+    ThemeComponent backgroundColor() const override;
     void setHighlighted(bool highlight) override;
     virtual void reloadTextColor();
     KDSize minimalSizeForOptimalDisplay() const override;

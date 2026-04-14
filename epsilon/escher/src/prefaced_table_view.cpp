@@ -28,7 +28,7 @@ void PrefacedTableView::setMargins(KDMargins m) {
   m_rowPrefaceView.setMargins({m.horizontal(), KDVerticalMargins()});
 }
 
-void PrefacedTableView::setBackgroundColor(KDColor color) {
+void PrefacedTableView::setBackgroundColor(ThemeComponent color) {
   // Main table
   m_mainTableView->setBackgroundColor(color);
   // Row preface

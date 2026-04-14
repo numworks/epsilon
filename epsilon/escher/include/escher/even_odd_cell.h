@@ -2,21 +2,22 @@
 
 #include <escher/highlight_cell.h>
 #include <escher/metric.h>
+#include <escher/text_format.h>
 
 namespace Escher {
 
 class EvenOddCell : public HighlightCell {
  public:
-  constexpr static KDColor k_hideColor = Escher::Palette::WallScreenDark;
+  constexpr static ThemeComponent k_hideColor = ThemeComponent::WallScreenDark;
   EvenOddCell();
   virtual void setEven(bool even);
   void setVisible(bool visible) override;
   void setHighlighted(bool highlighted) override;
-  virtual KDColor backgroundColor() const;
+  virtual ThemeComponent backgroundColor() const;
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
   constexpr static KDCoordinate k_horizontalMargin = Metric::SmallCellMargin;
-  constexpr static KDGlyph::Format k_smallCellDefaultFormat = {
+  constexpr static TextFormat k_smallCellDefaultFormat = {
       .style = {.font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignRight};
 

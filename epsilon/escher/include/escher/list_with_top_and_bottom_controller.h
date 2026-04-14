@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/selectable_list_view_controller.h>
+#include <escher/text_format.h>
 
 namespace Escher {
 
@@ -82,9 +83,9 @@ class ListWithTopAndBottomController : public SelectableViewController,
   void selectFirstCell() { selectRow(firstCellIndex()); }
 
  protected:
-  constexpr static KDGlyph::Format k_messageFormat = {
-      .style = {.glyphColor = Escher::Palette::GrayDark,
-                .backgroundColor = Escher::Palette::WallScreen,
+  constexpr static TextFormat k_messageFormat = {
+      .style = {.glyphColor = Escher::ThemeComponent::TextGrayDark,
+                .backgroundColor = Escher::ThemeComponent::WallScreen,
                 .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignCenter};
 

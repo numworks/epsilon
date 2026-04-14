@@ -9,16 +9,16 @@ namespace Escher {
 ScrollableLayoutView::ScrollableLayoutView(Responder* parentResponder,
                                            KDCoordinate leftRightMargin,
                                            KDCoordinate topBottomMargin,
-                                           KDGlyph::Format format)
+                                           TextFormat format)
     : ScrollableView(parentResponder, &m_layoutView, this),
       m_layoutView(format) {
   decorator()->setFont(format.style.font);
   setMargins(
       {{leftRightMargin, leftRightMargin}, {topBottomMargin, topBottomMargin}});
-  setBackgroundColor(format.style.backgroundColor);
+  ScrollableView::setBackgroundColor(format.style.backgroundColor);
 }
 
-ScrollableLayoutView::ScrollableLayoutView(KDGlyph::Format format)
+ScrollableLayoutView::ScrollableLayoutView(TextFormat format)
     : ScrollableLayoutView(nullptr, 0, 0, format) {}
 
 const Poincare::Layout& ScrollableLayoutView::layout() const {
@@ -29,13 +29,13 @@ void ScrollableLayoutView::setLayout(const Poincare::Layout& layout) {
   m_layoutView.setLayout(layout);
 }
 
-void ScrollableLayoutView::setBackgroundColor(KDColor backgroundColor) {
+void ScrollableLayoutView::setBackgroundColor(ThemeComponent backgroundColor) {
   m_layoutView.setBackgroundColor(backgroundColor);
   ScrollableView::setBackgroundColor(backgroundColor);
 }
 
 void ScrollableLayoutView::setExpressionBackgroundColor(
-    KDColor backgroundColor) {
+    ThemeComponent backgroundColor) {
   m_layoutView.setBackgroundColor(backgroundColor);
 }
 

@@ -2,4 +2,19 @@
 
 # Check that all files changed in this commit are correctly formatted
 
-make format BASE=HEAD "CXXFORMATARGS=--dry-run --Werror" "GITDIFFARGS=--name-only --diff-filter=d --staged" "PYFORMATARGS=--check" "JSFORMATARGS=--check"
+GITDIFFARGS="--staged --name-only --diff-filter=ACMR"
+
+STAGED_FILES="$(git diff $GITDIFFARGS)"
+
+if ! command -v npx >/dev/null 2>&1; then
+  if printf '%s\n' "$STAGED_FILES" | grep -Eq '\.(js|jsx|ts|tsx)$'; then
+    echo "error: JavaScript/TypeScript files are staged, but 'npx' is not installed." >&2
+    echo "Please install the Node.js tooling required by the formatter before committing." >&2
+    exit 1
+  fi
+
+  echo "warning: 'npx' is not installed; skipping format check because no JS/TS files are staged." >&2
+  exit 0
+fi
+
+make format BASE=HEAD "CXXFORMATARGS=--dry-run --Werror" "GITDIFFARGS=$GITDIFFARGS" "PYFORMATARGS=--check" "JSFORMATARGS=--check"

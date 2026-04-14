@@ -289,12 +289,8 @@ void DiscontinuitySolver::honeAndRoundSolution(Coordinate2D<double> start,
   }
 
   // Update left and right to make sure there are different from middle
-  if (left.x() >= middle.x() - precision / 2.) {
-    left.setX(middle.x() - precision / 2.);
-  }
-  if (right.x() <= middle.x() + precision / 2.) {
-    right.setX(middle.x() + precision / 2.);
-  }
+  left.setX(std::min(left.x(), middle.x() - precision / 2.));
+  right.setX(std::max(right.x(), middle.x() + precision / 2.));
   assert(middle.x() != left.x() && middle.x() != right.x());
 
   // Update ordinates

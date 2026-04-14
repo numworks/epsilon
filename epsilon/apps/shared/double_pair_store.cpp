@@ -439,4 +439,12 @@ void DoublePairStore::deletePairsOfUndef(int series) {
   }
 }
 
+uint8_t DoublePairStore::colorIndexForSeries(int series) const {
+  return m_storePreferences->colorIndexForSeries(series);
+}
+
+void DoublePairStore::setColorIndexForSeries(int series, uint8_t colorIndex) {
+  m_storePreferences->setColorIndexForSeries(series, colorIndex);
+}
+
 }  // namespace Shared

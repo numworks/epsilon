@@ -142,6 +142,8 @@ class DoublePairStore {
     assert(i < k_numberOfSeries);
     return Escher::Palette::DataColorLight[i];
   }
+  uint8_t colorIndexForSeries(int series) const;
+  void setColorIndexForSeries(int series, uint8_t colorIndex);
   /* This must be called each time the lists are modified.
    * It deletes the pairs of empty values and the trailing undef values,
    * updates the valid series, and stores the lists in the storage. */

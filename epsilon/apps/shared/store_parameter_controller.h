@@ -2,12 +2,15 @@
 
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
+#include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/switch_view.h>
 
+#include "color_names.h"
 #include "column_parameter_controller.h"
+#include "dataset_color_parameter_controller.h"
 
 namespace Shared {
 
@@ -24,7 +27,7 @@ class StoreParameterController : public ColumnParameterController {
   void initializeColumnParameters() override;
 
  protected:
-  constexpr static int k_numberOfCells = 4;
+  constexpr static int k_numberOfCells = 5;
 
   StoreColumnHelper* m_storeColumnHelper;
   Escher::MenuCell<Escher::OneLineBufferTextView<KDFont::Size::Large>>
@@ -43,6 +46,10 @@ class StoreParameterController : public ColumnParameterController {
 
   Escher::MenuCell<Escher::MessageTextView> m_fillFormula;
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView> m_sortCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::ChevronView>
+      m_colorCell;
+  DatasetColorParameterController m_datasetColorParameterController;
 };
 
 }  // namespace Shared

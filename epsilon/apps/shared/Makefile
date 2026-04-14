@@ -5,6 +5,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   color_cell.cpp \
   color_names.cpp \
   color_parameter_controller.cpp \
+  dataset_color_parameter_controller.cpp \
   column_helper.cpp \
   column_parameter_controller.cpp \
   curve_selection_controller.cpp \

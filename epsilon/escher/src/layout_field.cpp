@@ -499,7 +499,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
 
   // Handle events that have text
   const char* eventText = getTextFromEvent(event);
-  if (eventText != nullptr) {
+  if (eventText != nullptr && eventText[0] != 0) {
     prepareToEdit();
     bool didHandleEvent = processTextEvent(eventText);
     *layoutDidChange = didHandleEvent;

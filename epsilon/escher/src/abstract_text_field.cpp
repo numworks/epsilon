@@ -491,7 +491,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event,
 
   // Handle special events with text
   const char* eventText = getTextFromEvent(event);
-  if (eventText != nullptr) {
+  if (eventText != nullptr && eventText[0] != 0) {
     bool didHandleEvent = insertText(eventText);
     *textDidChange = didHandleEvent;
     return didHandleEvent;

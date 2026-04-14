@@ -84,7 +84,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   }
   // Handle keys from 0 to 9
   const char* eventTextPtr = event.text();
-  if (eventTextPtr != nullptr && strlen(eventTextPtr) == 1 &&
+  if (eventTextPtr != nullptr && eventTextPtr[0] != 0 && eventTextPtr[1] == 0 &&
       eventTextPtr[0] >= '0' && eventTextPtr[0] <= '9') {
     int iconIndex;
     if (eventTextPtr[0] == '0') {

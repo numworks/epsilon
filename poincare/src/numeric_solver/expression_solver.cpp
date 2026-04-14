@@ -319,15 +319,16 @@ void DiscontinuitySolver::honeAndRoundSolution(Coordinate2D<double> start,
   if (std::isfinite(left.y()) && std::isfinite(right.y()) &&
       std::abs(right.y() - left.y()) < NullTolerance(middle.x())) {
     // Left and right are the same
-    Interest interest = Interest::UnreachedDiscontinuity;
     if (!std::isfinite(middle.y())) {
       // We failed to locate the discontinuity, use left.y()
       middle.setY(left.y());
     } else if (std::abs(middle.y() - left.y()) >= NullTolerance(middle.x())) {
       // Middle has a different value. Discontinuity has been reached.
-      interest = Interest::ReachedDiscontinuity;
+      m_solutionQueue.push(
+          CoordToSolution(middle, Interest::ReachedDiscontinuity));
     }
-    m_solutionQueue.push(CoordToSolution(middle, interest));
+    m_solutionQueue.push(
+        CoordToSolution(middle, Interest::UnreachedDiscontinuity));
     return;
   }
 

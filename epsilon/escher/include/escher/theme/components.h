@@ -4,48 +4,52 @@
 
 namespace Escher {
 
-// List of all theme components
-#define THEME_COMPONENTS(X) \
-  X(WallScreen)             \
-  X(WallScreenDark)         \
-  X(BackgroundWhite)        \
-  X(BackgroundPopup)        \
-  X(SurfaceSelect)          \
-  X(BannerYellow)           \
-  X(BannerGrayWhite)        \
-  X(BannerGrayMiddle)       \
-  X(TextDefault)            \
-  X(TextGrayDark)           \
-  X(TextGrayDarkMiddle)     \
-  X(TextGrayVeryDark)       \
-  X(TextWhite)              \
-  X(TextPurple)             \
-  X(TextBluishGray)         \
-  X(TokenWhite)             \
-  X(TokenYellow)            \
-  X(TokenRed)               \
-  X(TokenBlack)             \
-  X(TokenGrayMiddle)        \
-  X(TokenGrayBright)        \
-  X(TokenGrayDark)          \
-  X(DataRed)                \
-  X(DataBlue)               \
-  X(DataGreen)              \
-  X(DataYellow)             \
-  X(DataMagenta)            \
-  X(DataTurquoise)          \
-  X(DataPink)               \
-  X(DataOrange)             \
-  X(DataViolet)             \
-  X(DataMint)
+// Theme-dependent components: color varies per theme
+#define THEMED_COMPONENTS(X) \
+  X(WallScreen)              \
+  X(WallScreenDark)          \
+  X(BackgroundWhite)         \
+  X(BackgroundPopup)         \
+  X(SurfaceSelect)           \
+  X(BannerYellow)            \
+  X(BannerGrayWhite)         \
+  X(BannerGrayMiddle)        \
+  X(TextDefault)             \
+  X(TextGrayDark)            \
+  X(TextGrayDarkMiddle)      \
+  X(TextGrayVeryDark)        \
+  X(TextWhite)               \
+  X(TextPurple)              \
+  X(TextBluishGray)          \
+  X(TokenWhite)              \
+  X(TokenYellow)             \
+  X(TokenRed)                \
+  X(TokenBlack)              \
+  X(TokenGrayMiddle)         \
+  X(TokenGrayBright)         \
+  X(TokenGrayDark)
 
 // TODO: check TextBluishGray
 
-constexpr static int k_numberOfDataComponents = 10;
+// Fixed components: color is the same in all themes.
+#define FIXED_COMPONENTS(X)            \
+  X(DataRed, Palette::Red)             \
+  X(DataBlue, Palette::Blue)           \
+  X(DataGreen, Palette::Green)         \
+  X(DataYellow, Palette::YellowDark)   \
+  X(DataMagenta, Palette::Magenta)     \
+  X(DataTurquoise, Palette::Turquoise) \
+  X(DataPink, Palette::Pink)           \
+  X(DataOrange, Palette::Orange)       \
+  X(DataViolet, Palette::Violet)       \
+  X(DataMint, Palette::Mint)
 
 enum class ThemeComponent : uint8_t {
 #define X(name) name,
-  THEME_COMPONENTS(X)
+  THEMED_COMPONENTS(X)
+#undef X
+#define X(name, color) name,
+      FIXED_COMPONENTS(X)
 #undef X
 };
 

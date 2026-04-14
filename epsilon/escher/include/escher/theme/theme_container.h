@@ -1,5 +1,6 @@
 #pragma once
 
+#include <escher/palette.h>
 #include <kandinsky/color.h>
 #include <omg/unreachable.h>
 
@@ -7,21 +8,31 @@
 
 namespace Escher {
 
-/* A ThemeContainer is a struct whose members are KDColors. The colors are the
- * same as in the ThemeComponent enum. It defines which color a theme uses for
- * each ThemeComponent.
- */
+/* A ThemeContainer holds one KDColor per themed component. Fixed components are
+ * not stored here: their color is resolved directly from the FIXED_COMPONENTS
+ * macro and is the same across all themes. */
 struct ThemeContainer {
 #define X(name) KDColor name;
-  THEME_COMPONENTS(X)
+  THEMED_COMPONENTS(X)
 #undef X
 
   constexpr KDColor get(ThemeComponent component) const {
+    // Fixed components resolve directly, without any per-theme storage
+    switch (component) {
+#define X(name, color)       \
+  case ThemeComponent::name: \
+    return color;
+      FIXED_COMPONENTS(X)
+#undef X
+      default:
+        break;
+    }
+    // Themed components are stored in this struct
     switch (component) {
 #define X(name)              \
   case ThemeComponent::name: \
     return name;
-      THEME_COMPONENTS(X)
+      THEMED_COMPONENTS(X)
 #undef X
       default:
         OMG_UNREACHABLE

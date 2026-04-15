@@ -116,7 +116,7 @@ void GraphController::CurveSelectionController::fillCellForRow(
   const char* name = Store::SeriesTitle(series);
   CurveSelectionCellWithChevron* myCell =
       static_cast<CurveSelectionCellWithChevron*>(cell);
-  myCell->setColor(DoublePairStore::colorOfSeriesAtIndex(series));
+  myCell->setColor(graphController()->store()->colorOfSeriesAtIndex(series));
   myCell->label()->setLayout(Layout::String(name));
 }
 
@@ -390,8 +390,8 @@ void GraphController::setRoundCrossCursorView() {
    * to date. */
   bool round = *m_selectedDotIndex < 0;
   m_cursorView.setIsRing(!round, &m_view);
-  assert(selectedSeriesIndex() < Palette::k_numberOfDataColors);
-  m_cursorView.setColor(Palette::DataColor[selectedSeriesIndex()], &m_view);
+  m_cursorView.setColor(m_store->colorOfSeriesAtIndex(selectedSeriesIndex()),
+                        &m_view);
 }
 
 Range2D<float> GraphController::optimalRange(

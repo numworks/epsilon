@@ -132,16 +132,8 @@ class DoublePairStore {
   uint32_t storeChecksumForSeries(int series) const;
 
   // Colors
-  static KDColor colorOfSeriesAtIndex(size_t i) {
-    static_assert(Escher::Palette::k_numberOfDataColors >= k_numberOfSeries);
-    assert(i < k_numberOfSeries);
-    return Escher::Palette::DataColor[i];
-  }
-  static KDColor colorLightOfSeriesAtIndex(size_t i) {
-    static_assert(Escher::Palette::k_numberOfDataColors >= k_numberOfSeries);
-    assert(i < k_numberOfSeries);
-    return Escher::Palette::DataColorLight[i];
-  }
+  KDColor colorOfSeriesAtIndex(int series) const;
+  KDColor colorLightOfSeriesAtIndex(int series) const;
   uint8_t colorIndexForSeries(int series) const;
   void setColorIndexForSeries(int series, uint8_t colorIndex);
   /* This must be called each time the lists are modified.

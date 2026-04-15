@@ -34,11 +34,11 @@ void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
                       m_highlightedBarEnd};
   HighlightTest highlights = plotView->hasFocus() ? &barIsHighlighted : nullptr;
 
-  HistogramDrawing histogram(
-      histogramLevels, m_store, context, highlights,
-      m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, true,
-      DoublePairStore::colorLightOfSeriesAtIndex(m_series),
-      DoublePairStore::colorOfSeriesAtIndex(m_series));
+  HistogramDrawing histogram(histogramLevels, m_store, context, highlights,
+                             m_store->firstDrawnBarAbscissa(),
+                             m_store->barWidth(), true, true,
+                             m_store->colorLightOfSeriesAtIndex(m_series),
+                             m_store->colorOfSeriesAtIndex(m_series));
   histogram.draw(plotView, ctx, rect);
 }
 

@@ -439,6 +439,18 @@ void DoublePairStore::deletePairsOfUndef(int series) {
   }
 }
 
+KDColor DoublePairStore::colorOfSeriesAtIndex(int series) const {
+  assert(series < k_numberOfSeries);
+  return Escher::Palette::DataColor[m_storePreferences->colorIndexForSeries(
+      series)];
+}
+
+KDColor DoublePairStore::colorLightOfSeriesAtIndex(int series) const {
+  assert(series < k_numberOfSeries);
+  return Escher::Palette::DataColorLight[m_storePreferences
+                                             ->colorIndexForSeries(series)];
+}
+
 uint8_t DoublePairStore::colorIndexForSeries(int series) const {
   return m_storePreferences->colorIndexForSeries(series);
 }

@@ -142,7 +142,7 @@ void StoreController::setTitleCellStyle(HighlightCell* cell, int column) {
   // TODO Share GrayDark with graph/list_controller
   myCell->setColor(!m_store->seriesIsActive(seriesIndex)
                        ? Palette::GrayDark
-                       : DoublePairStore::colorOfSeriesAtIndex(seriesIndex));
+                       : m_store->colorOfSeriesAtIndex(seriesIndex));
   myCell->setFont(KDFont::Size::Small);
 }
 

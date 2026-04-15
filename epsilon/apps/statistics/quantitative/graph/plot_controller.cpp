@@ -25,8 +25,7 @@ PlotController::PlotController(Escher::Responder* parentResponder,
 void PlotController::moveCursorToSelectedIndex(bool setColor) {
   if (setColor) {
     m_curveView.cursorView()->setColor(
-        Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()),
-        &m_curveView);
+        m_store->colorOfSeriesAtIndex(selectedSeries()), &m_curveView);
   }
   double x = valueAtIndex(selectedSeries(), selectedIndex());
   double y = resultAtIndex(selectedSeries(), selectedIndex());

@@ -26,7 +26,7 @@ void ResidualPlotController::updateCursor() {
   double x = xAtIndex(m_selectedDotIndex);
   double y = yAtIndex(m_selectedDotIndex);
   m_cursor.moveTo(x, x, y);
-  m_cursorView.setColor(Escher::Palette::DataColor[m_selectedSeriesIndex],
+  m_cursorView.setColor(m_store->colorOfSeriesAtIndex(m_selectedSeriesIndex),
                         &m_curveView);
 
   const int significantDigits = SharedGlobalPrefs().numberOfSignificantDigits();

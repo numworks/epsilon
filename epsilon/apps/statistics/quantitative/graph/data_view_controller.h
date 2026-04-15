@@ -18,6 +18,7 @@ class DataViewController : public Escher::ViewController,
                      Escher::StackViewController* stackViewController,
                      Escher::ViewController* typeViewController, Store* store);
   virtual DataView* dataView() = 0;
+  Store* store() const { return m_store; }
 
   // ViewController
   Escher::View* view() override { return dataView(); }

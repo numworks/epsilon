@@ -125,8 +125,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
     myCell->setFirstText(buffer);
     m_store->fillColumnName(series, 1, buffer);
     myCell->setSecondText(buffer);
-    assert(series < Palette::k_numberOfDataColors);
-    myCell->setColor(Palette::DataColor[series]);
+    myCell->setColor(m_store->colorOfSeriesAtIndex(series));
     return;
   }
 

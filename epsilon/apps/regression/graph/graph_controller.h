@@ -86,6 +86,8 @@ class GraphController : public Shared::InteractiveCurveViewController {
     Shared::CurveSelectionCellWithChevron m_cells[Store::k_numberOfSeries];
   };
 
+  Store* store() const { return m_store; }
+
   // ZoomCurveViewController
   Shared::InteractiveCurveViewRange* interactiveCurveViewRange() override {
     return const_cast<const GraphController*>(this)

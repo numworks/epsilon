@@ -63,7 +63,7 @@ void PlotViewPolicy::drawSeriesCurve(const AbstractPlotView* plotView,
                                      int series) const {
   int numberOfPairs = m_plotController->totalValues(series);
   // Draw and connect each points
-  KDColor color = Store::colorOfSeriesAtIndex(series);
+  KDColor color = m_plotController->store()->colorOfSeriesAtIndex(series);
   double previousX = NAN, previousY = NAN;
   for (int i = 0; i < numberOfPairs; i++) {
     double x = m_plotController->valueAtIndex(series, i);
@@ -82,7 +82,7 @@ void PlotViewPolicy::drawSeriesCurve(const AbstractPlotView* plotView,
   if (m_plotController->drawSeriesZScoreLine(series, &x, &y, &u, &v) &&
       !std::isnan(y) && !std::isnan(v)) {
     // Using brighter colors for the lines
-    color = Store::colorLightOfSeriesAtIndex(series);
+    color = m_plotController->store()->colorLightOfSeriesAtIndex(series);
     plotView->drawSegment(ctx, rect, Coordinate2D<float>(x, y),
                           Coordinate2D<float>(u, v), color, true);
   }

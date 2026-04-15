@@ -21,7 +21,7 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
   assert(numberOfSeries >= 0);
   assert(plotView->bounds().height() ==
          BoxFrameHeight(static_cast<size_t>(numberOfSeries)));
-  KDColor color = DoublePairStore::colorLightOfSeriesAtIndex(m_series);
+  KDColor color = m_store->colorLightOfSeriesAtIndex(m_series);
 
   // Draw the main box
   double firstQuart = m_store->firstQuartile(m_series);
@@ -62,7 +62,7 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
     if (plotView->hasFocus() && i == m_dataViewController->selectedIndex()) {
       continue;
     }
-    KDColor calculationColor = DoublePairStore::colorOfSeriesAtIndex(m_series);
+    KDColor calculationColor = m_store->colorOfSeriesAtIndex(m_series);
     drawCalculation(plotView, ctx, rect, i, lowBound, upBound, segmentOrd,
                     calculationColor, false);
   }

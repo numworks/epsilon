@@ -5,6 +5,8 @@
 #include <poincare/print_float.h>
 #include <stdarg.h>
 
+#include "raw_color_glyphs_view.h"
+
 namespace Escher {
 
 class AbstractBufferTextView : public TextView {
@@ -47,14 +49,32 @@ class BufferTextView : public AbstractBufferTextView {
   char m_buffer[BufferSize];
 };
 
+template <size_t BufferSize>
+class RawColorBufferTextView : public RawColor<BufferTextView<BufferSize>> {
+ public:
+  RawColorBufferTextView(TextFormatWithoutColors format = {},
+                         TextColors colors = {})
+      : RawColor<BufferTextView<BufferSize>>(MakeTextFormat(format)) {
+    this->m_rawColors = colors;
+  }
+};
+
 template <KDFont::Size Font, int NumberOfLines>
 using MultipleLinesBufferTextView = BufferTextView<
     NumberOfLines*(Ion::Display::Width / KDFont::GlyphWidth(Font)) + 1>;
 /* TODO: NumberOfLines * (Ion::Display::Width / KDFont::GlyphWidth(Font)) is a
  * size in terms of glyphs which is different from the size in terms of chars */
 
+template <KDFont::Size Font, int NumberOfLines>
+using MultipleLinesRawColorBufferTextView = RawColorBufferTextView<
+    NumberOfLines*(Ion::Display::Width / KDFont::GlyphWidth(Font)) + 1>;
+
 template <KDFont::Size Font = KDFont::Size::Small>
 using OneLineBufferTextView = MultipleLinesBufferTextView<Font, 1>;
+
+template <KDFont::Size Font = KDFont::Size::Small>
+using OneLineRawColorBufferTextView =
+    MultipleLinesRawColorBufferTextView<Font, 1>;
 
 template <int numberOfSignificantDigits =
               Poincare::PrintFloat::k_maxNumberOfSignificantDigits>

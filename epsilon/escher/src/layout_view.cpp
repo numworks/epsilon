@@ -1,4 +1,3 @@
-#include <apps/global_preferences.h>
 #include <escher/layout_style.h>
 #include <escher/layout_view.h>
 #include <escher/palette.h>

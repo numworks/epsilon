@@ -1,6 +1,6 @@
 #pragma once
 
-#include <escher/raw_color_message_text_view.h>
+#include <escher/message_text_view.h>
 #include <escher/view.h>
 
 #include "elements_view_data_source.h"

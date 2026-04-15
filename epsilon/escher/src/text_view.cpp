@@ -1,4 +1,3 @@
-#include <apps/global_preferences.h>
 #include <escher/text_view.h>
 
 namespace Escher {

@@ -32,7 +32,7 @@ class StorageViewerController : public Escher::ViewController {
       assert(index == 0);
       return &m_textView;
     }
-    Escher::BufferTextView<k_bufferSize> m_textView;
+    Escher::RawColorBufferTextView<k_bufferSize> m_textView;
   };
   // Special extension only used here.
   constexpr static const char* k_dummyBaseName = "0";

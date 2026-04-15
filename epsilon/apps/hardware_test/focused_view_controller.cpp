@@ -33,16 +33,12 @@ bool FocusedViewController::handleEvent(Ion::Events::Event event) {
 
 FocusedViewController::ContentView::ContentView()
     : SolidColorView(BasicColor::White),
-      m_prefixView({.style = {.font = KDFont::Size::Small},
+      m_prefixView({.font = KDFont::Size::Small,
                     .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_testNameView({.horizontalAlignment = KDGlyph::k_alignCenter}),
       m_testResultView({.horizontalAlignment = KDGlyph::k_alignCenter}),
-      m_suffixView1({
-          .style = {.font = KDFont::Size::Small},
-      }),
-      m_suffixView2({
-          .style = {.font = KDFont::Size::Small},
-      }) {}
+      m_suffixView1({.font = KDFont::Size::Small}),
+      m_suffixView2({.font = KDFont::Size::Small}) {}
 
 Escher::View* FocusedViewController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 5);
@@ -81,12 +77,11 @@ void FocusedViewController::ContentView::setSuffix2(const char* suffix2) {
 }
 
 void FocusedViewController::ContentView::setBackgroundColor(KDColor color) {
-  // TODO: buffer text view with plain color?
-  m_prefixView.setBackgroundColor(Escher::ThemeComponent::TextDefault);
-  m_testNameView.setBackgroundColor(Escher::ThemeComponent::TextDefault);
-  m_testResultView.setBackgroundColor(Escher::ThemeComponent::TextDefault);
-  m_suffixView1.setBackgroundColor(Escher::ThemeComponent::TextDefault);
-  m_suffixView2.setBackgroundColor(Escher::ThemeComponent::TextDefault);
+  m_prefixView.setBackgroundColor(color);
+  m_testNameView.setBackgroundColor(color);
+  m_testResultView.setBackgroundColor(color);
+  m_suffixView1.setBackgroundColor(color);
+  m_suffixView2.setBackgroundColor(color);
   SolidColorView::setColor(color);
 }
 

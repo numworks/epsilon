@@ -37,13 +37,12 @@ bool StorageViewerController::deleteDummyRecord() const {
 
 StorageViewerController::ContentView::ContentView()
     : SolidColorView(BasicColor::White),
-      m_textView({.style = {.font = KDFont::Size::Small},
+      m_textView({.font = KDFont::Size::Small,
                   .verticalAlignment = KDGlyph::k_alignTop}) {}
 
 void StorageViewerController::ContentView::setColor(KDColor color) {
   SolidColorView::setColor(color);
-  // TODO: temporary
-  m_textView.setBackgroundColor(Escher::ThemeComponent::BackgroundWhite);
+  m_textView.setBackgroundColor(color);
 }
 
 // Build storage information text and display it.

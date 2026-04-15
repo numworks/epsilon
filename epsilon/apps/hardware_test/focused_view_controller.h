@@ -40,11 +40,11 @@ class FocusedViewController : public Escher::ViewController {
                                  bool force);
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 5; }
-    Escher::OneLineBufferTextView<> m_prefixView;
-    Escher::OneLineBufferTextView<> m_testNameView;
-    Escher::OneLineBufferTextView<> m_testResultView;
-    Escher::OneLineBufferTextView<> m_suffixView1;
-    Escher::OneLineBufferTextView<> m_suffixView2;
+    Escher::OneLineRawColorBufferTextView<> m_prefixView;
+    Escher::OneLineRawColorBufferTextView<> m_testNameView;
+    Escher::OneLineRawColorBufferTextView<> m_testResultView;
+    Escher::OneLineRawColorBufferTextView<> m_suffixView1;
+    Escher::OneLineRawColorBufferTextView<> m_suffixView2;
   };
   ContentView m_view;
   bool m_success;

@@ -23,7 +23,7 @@ class StoreParameterController : public Shared::StoreParameterController {
   void viewWillAppear() override;
 
  private:
-  constexpr static int k_changeRegressionCellIndex = 2;
+  constexpr static int k_changeRegressionCellIndex = 3;
 
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>

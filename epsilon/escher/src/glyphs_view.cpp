@@ -2,33 +2,33 @@
 
 namespace Escher {
 void GlyphsView::setGlyphFormat(const TextFormat& format) {
-  m_glyphFormat = format;
+  m_textFormat = format;
   markWholeFrameAsDirty();
 }
 
 void GlyphsView::setFont(KDFont::Size font) {
-  m_glyphFormat.style.font = font;
+  m_textFormat.style.font = font;
   markWholeFrameAsDirty();
 }
 
 void GlyphsView::setTextColor(ThemeComponent textColor) {
-  if (textColor != m_glyphFormat.style.glyphColor) {
-    m_glyphFormat.style.glyphColor = textColor;
+  if (textColor != m_textFormat.style.glyphColor) {
+    m_textFormat.style.glyphColor = textColor;
     markWholeFrameAsDirty();
   }
 }
 
 void GlyphsView::setBackgroundColor(ThemeComponent backgroundColor) {
-  if (m_glyphFormat.style.backgroundColor != backgroundColor) {
-    m_glyphFormat.style.backgroundColor = backgroundColor;
+  if (m_textFormat.style.backgroundColor != backgroundColor) {
+    m_textFormat.style.backgroundColor = backgroundColor;
     markWholeFrameAsDirty();
   }
 }
 
 void GlyphsView::setAlignment(float horizontalAlignment,
                               float verticalAlignment) {
-  m_glyphFormat.horizontalAlignment = horizontalAlignment;
-  m_glyphFormat.verticalAlignment = verticalAlignment;
+  m_textFormat.horizontalAlignment = horizontalAlignment;
+  m_textFormat.verticalAlignment = verticalAlignment;
   markWholeFrameAsDirty();
 }
 

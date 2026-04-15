@@ -13,7 +13,11 @@ class GlyphsView : public View, public CellWidget {
  public:
   GlyphsView(const TextFormat& format = {}) { setGlyphFormat(format); }
 
-  KDFont::Size font() const { return m_glyphFormat.style.font; }
+  KDFont::Size font() const { return m_textFormat.style.font; }
+
+  virtual KDGlyph::Format glyphFormat() const {
+    return ToKDGlyphFormat(m_textFormat);
+  }
 
   void setGlyphFormat(const TextFormat& format);
   void setFont(KDFont::Size font);
@@ -50,7 +54,7 @@ class GlyphsView : public View, public CellWidget {
   }
 
  protected:
-  TextFormat m_glyphFormat;
+  TextFormat m_textFormat;
 };
 
 }  // namespace Escher

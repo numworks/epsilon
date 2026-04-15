@@ -8,8 +8,9 @@ namespace Elements {
 ElementsView::ElementsView()
     : m_singleElementView(Escher::Palette::White),
       m_nameView(I18n::Message::Default,
-                 {.style = {.font = KDFont::Size::Small},
-                  .horizontalAlignment = KDGlyph::k_alignCenter}),
+                 Escher::TextFormatWithoutColors{
+                     .font = KDFont::Size::Small,
+                     .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_redrawBackground(true) {}
 
 void ElementsView::drawRect(KDContext* ctx, KDRect rect) const {
@@ -108,9 +109,7 @@ void ElementsView::layoutSubviews(bool force) {
   setChildFrame(&m_singleElementView, cellRect, true);
 
   m_nameView.setMessage(ElementsDataBase::Name(z));
-  // TODO: temporary, element colors should be mapped to components
-  // color = dataSource->field()->getColors(z).fg()
-  m_nameView.setTextColor(Escher::ThemeComponent::TokenYellow);
+  m_nameView.setTextColor(dataSource->field()->getColors(z).fg());
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
   setChildFrame(&m_nameView,
                 KDRect(KDPoint(cellRect.x() + cellRect.width() +

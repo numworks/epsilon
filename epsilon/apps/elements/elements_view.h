@@ -1,6 +1,6 @@
 #pragma once
 
-#include <escher/message_text_view.h>
+#include <escher/raw_color_message_text_view.h>
 #include <escher/view.h>
 
 #include "elements_view_data_source.h"
@@ -53,7 +53,7 @@ class ElementsView : public Escher::View {
   void dirtyElement(AtomicNumber z);
 
   SingleElementView m_singleElementView;
-  Escher::MessageTextView m_nameView;
+  Escher::RawColorMessageTextView m_nameView;
   mutable bool m_redrawBackground;
 };
 

@@ -35,6 +35,7 @@ class StoreParameterController : public ColumnParameterController {
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::SwitchView>
       m_hideCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView> m_sortCell;
 
  private:
   ClearColumnHelper* clearColumnHelper() override;
@@ -45,7 +46,6 @@ class StoreParameterController : public ColumnParameterController {
   }
 
   Escher::MenuCell<Escher::MessageTextView> m_fillFormula;
-  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView> m_sortCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
       m_colorCell;

@@ -16,15 +16,21 @@ class StoreParameterController : public Shared::StoreParameterController {
                            StoreController* storeController, Store* m_store);
   void initializeColumnParameters() override;
   bool handleEvent(Ion::Events::Event event) override;
-  int numberOfRows() const override;
+  int numberOfRows() const override {
+    return m_isCumulatedFrequencyColumnSelected
+               ? k_numberOfCellsIfCFColumnSelected
+               : k_numberOfCellsIfCFColumnNotSelected;
+  }
   const Escher::AbstractMenuCell* cell(int row) const override;
   void viewWillAppear() override;
 
  private:
-  /* When displayed, hideCumulatedFrequencyCell is last and second.
-   * Remaining Shared::StoreParameterController are not displayed:
-   * m_fillFormula, m_hideCell and m_clearColumn */
-  constexpr static int k_hideCFIndex = 1;
+  /* When Cumulated Frequency column is selected, only sortColumn and
+   * hideCumulatedFrequencyCell cells are displayed. */
+  constexpr static int k_numberOfCellsIfCFColumnSelected = 2;
+  // Otherwise, add displayCumulatedFrequencyCell cell
+  constexpr static int k_numberOfCellsIfCFColumnNotSelected =
+      Shared::StoreParameterController::k_numberOfCells + 1;
   constexpr static int k_displayCFIndex =
       Shared::StoreParameterController::k_numberOfCells;
 

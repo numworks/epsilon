@@ -54,17 +54,14 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return Shared::StoreParameterController::handleEvent(event);
 }
 
-int StoreParameterController::numberOfRows() const {
-  return m_isCumulatedFrequencyColumnSelected
-             ? k_hideCFIndex + 1
-             : Shared::StoreParameterController::numberOfRows() + 1;
-}
-
 const Escher::AbstractMenuCell* StoreParameterController::cell(int row) const {
   assert(row >= 0 && row < numberOfRows());
-  if (m_isCumulatedFrequencyColumnSelected && row == k_hideCFIndex) {
-    return &m_hideCumulatedFrequencyCell;
-  } else if (!m_isCumulatedFrequencyColumnSelected && row == k_displayCFIndex) {
+  if (m_isCumulatedFrequencyColumnSelected) {
+    const Escher::AbstractMenuCell* cells[] = {&m_sortCell,
+                                               &m_hideCumulatedFrequencyCell};
+    return cells[row];
+  }
+  if (row == k_displayCFIndex) {
     return &m_displayCumulatedFrequencyCell;
   }
   return Shared::StoreParameterController::cell(row);

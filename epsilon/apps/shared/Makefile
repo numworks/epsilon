@@ -2,6 +2,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   app_with_store_menu.cpp \
   banner_view.cpp \
   buffer_function_title_cell.cpp \
+  abstract_color_parameter_controller.cpp \
   color_cell.cpp \
   color_names.cpp \
   color_parameter_controller.cpp \

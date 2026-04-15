@@ -59,11 +59,8 @@ void IonSimulatorEventsPushEventArray(const char* eventBufferAsChar, int length,
     ++eventBuffer;
     Ion::Simulator::StateFile::pushEventFromMemory(ch, &eventBuffer, bufferEnd);
     if (currentEventIndex < fromIndex) {
-      while (!Ion::Simulator::Journal::replayJournal()->isEmpty()) {
-        /* NOTE: A long ExternalText may create more than one event in the
-         * journal. So cleaning until empty is necessary */
-        Ion::Simulator::Journal::replayJournal()->popEvent();
-      }
+      Ion::Simulator::Journal::replayJournal()->popEvent();
+      assert(Ion::Simulator::Journal::replayJournal()->isEmpty());
     }
     currentEventIndex += 1;
   }

@@ -22,6 +22,11 @@ namespace Escher {
   X(TextWhite)               \
   X(TextPurple)              \
   X(TextBluishGray)          \
+  X(AxisBlack)               \
+  X(AxisLight)               \
+  X(AxisMedium)              \
+  X(AxisGrayBright)          \
+  X(AxisGrayDark)            \
   X(TokenWhite)              \
   X(TokenYellow)             \
   X(TokenRed)                \
@@ -30,7 +35,11 @@ namespace Escher {
   X(TokenGrayBright)         \
   X(TokenGrayDark)
 
-// TODO: check TextBluishGray
+/* TODO: check the following colors which are not in the specs but used anyway:
+ * - TextBluishGray (python app)
+ * - AxisGrayDark (additional result complex graph)
+ * - AxisGrayBright (polar grid)
+ */
 
 /* Fixed components: color is the same in all themes.
  * If a color component is declared as fixed, it avoids declaring it with the

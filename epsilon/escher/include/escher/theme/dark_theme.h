@@ -25,6 +25,11 @@ constexpr static ThemeContainer k_darkTheme =
                    .TextPurple = KDColor::RGB24(0xC3CAF4),
                    // TODO: check BluishGray mapping (if any)
                    .TextBluishGray = KDColor::RGB24(0x9296F6),
+                   .AxisBlack = KDColor::RGB24(0xDEDADE),
+                   .AxisLight = KDColor::RGB24(0x636363),
+                   .AxisMedium = KDColor::RGB24(0x636363),
+                   .AxisGrayBright = KDColor::RGB24(0x636363),
+                   .AxisGrayDark = KDColor::RGB24(0x636363),
                    .TokenWhite = Palette::Black,
                    .TokenYellow = KDColor::RGB24(0x733FFF),
                    // TODO: confirm TokenRed and TokenPurple

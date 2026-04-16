@@ -58,8 +58,10 @@ class WithCartesianGrid {
                        KDRect rect);
 
  private:
-  constexpr static KDColor k_boldColor = Escher::Palette::GrayMiddle;
-  constexpr static KDColor k_lightColor = Escher::Palette::GrayWhite;
+  constexpr static Escher::ThemeComponent k_boldColor =
+      Escher::ThemeComponent::AxisMedium;
+  constexpr static Escher::ThemeComponent k_lightColor =
+      Escher::ThemeComponent::AxisLight;
   static void DrawGridLines(const AbstractPlotView* plotView, KDContext* ctx,
                             KDRect rect, OMG::Axis parallel, bool boldGrid);
 };
@@ -73,7 +75,7 @@ class WithPolarGrid {
 
  private:
   constexpr static Escher::ThemeComponent k_boldColor =
-      Escher::ThemeComponent::TokenGrayMiddle;
+      Escher::ThemeComponent::AxisMedium;
   constexpr static Escher::ThemeComponent k_lightColor =
       Escher::ThemeComponent::TokenGrayBright;
   constexpr static float k_minimumGraduationDistanceToCenter = 60;
@@ -123,7 +125,7 @@ class PlainAxis {
 
  protected:
   constexpr static Escher::ThemeComponent k_color =
-      Escher::ThemeComponent::TextDefault;
+      Escher::ThemeComponent::AxisBlack;
 };
 
 class SimpleAxis : public PlainAxis {

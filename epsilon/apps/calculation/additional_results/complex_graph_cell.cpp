@@ -14,7 +14,8 @@ void ComplexGraphPolicy::drawPlot(const AbstractPlotView* plotView,
 
   // - Draw the segment from the origin to the dot (real, imag)
   plotView->drawSegment(ctx, rect, Coordinate2D<float>(0.f, 0.f),
-                        Coordinate2D<float>(real, imag), Palette::GrayDark);
+                        Coordinate2D<float>(real, imag),
+                        ColorPicker::Resolve(ThemeComponent::AxisGrayDark));
 
   // - Draw the partial ellipse indicating the angle θ
   constexpr float ellipseScale = 0.2f;
@@ -29,7 +30,7 @@ void ComplexGraphPolicy::drawPlot(const AbstractPlotView* plotView,
     th = imag < 0.f ? -M_PI_2 : M_PI_2;
   }
   drawArcOfEllipse(plotView, ctx, rect, Coordinate2D<float>(0.f, 0.f), a, b,
-                   0.f, th, Palette::GrayDark);
+                   0.f, th, ColorPicker::Resolve(ThemeComponent::AxisGrayDark));
 
   // - Draw dashed segment to indicate real and imaginary
   plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Horizontal, imag,

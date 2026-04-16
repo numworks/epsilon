@@ -30,7 +30,7 @@ void WithCartesianGrid::DrawGrid(const AbstractPlotView* plotView,
 void WithCartesianGrid::DrawGridLines(const AbstractPlotView* plotView,
                                       KDContext* ctx, KDRect rect,
                                       OMG::Axis parallel, bool boldGrid) {
-  KDColor color = boldGrid ? k_boldColor : k_lightColor;
+  Escher::ThemeComponent component = boldGrid ? k_boldColor : k_lightColor;
   bool oddIndexes = !boldGrid;
   assert(plotView);
   float min, max, step;
@@ -47,9 +47,10 @@ void WithCartesianGrid::DrawGridLines(const AbstractPlotView* plotView,
 
   int iMin = min / step;
   int iMax = max / step;
+  KDColor resolvedColor = Escher::ColorPicker::Resolve(component);
   for (int i = iMin + ((iMin % 2 == 0) == oddIndexes); i <= iMax; i += 2) {
     plotView->drawStraightSegment(ctx, rect, parallel, i * step, -INFINITY,
-                                  INFINITY, color);
+                                  INFINITY, resolvedColor);
   }
 }
 

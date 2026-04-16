@@ -32,6 +32,8 @@ class Palette {
   constexpr static KDColor WallScreenDark = KDColor::RGB24(0xe0e6ed);
   constexpr static KDColor PopUpTitleBackground = KDColor::RGB24(0x696475);
   constexpr static KDColor LowBattery = KDColor::RGB24(0xf30211);
+
+  // Data colors
   constexpr static KDColor Red = KDColor::RGB24(0xff000c);
   constexpr static KDColor RedLight = KDColor::RGB24(0xffcccc);
   constexpr static KDColor Magenta = KDColor::RGB24(0xff0588);
@@ -54,6 +56,13 @@ class Palette {
   constexpr static KDColor VioletLight = KDColor::RGB24(0xd7b3ff);
   constexpr static KDColor Mint = KDColor::RGB24(0x00c6b1);
   constexpr static KDColor MintLight = KDColor::RGB24(0xb1fef7);
+
+  // Dark theme colors
+  constexpr static KDColor DARK_VioletDeep = KDColor::RGB24(0x733FFF);
+  constexpr static KDColor DARK_VioletMiddle = KDColor::RGB24(0x9296F6);
+  constexpr static KDColor DARK_VioletLight = KDColor::RGB24(0xC3CAF4);
+  constexpr static KDColor DARK_AxisMain = KDColor::RGB24(0xDEDADE);
+  constexpr static KDColor DARK_AxisSecondary = KDColor::RGB24(0x636363);
 
   // Python red is the same as Red
   constexpr static KDColor PYTHON_Red = KDColor::RGB24(0xff000c);

@@ -36,17 +36,27 @@ namespace Escher {
  * same value in all themes. A fixed component color also doesn't need to be
  * stored in the ThemeContainer, it is resolved directly in the
  * ThemeContainer::get switch. */
-#define FIXED_COMPONENTS(X)            \
-  X(DataRed, Palette::Red)             \
-  X(DataBlue, Palette::Blue)           \
-  X(DataGreen, Palette::Green)         \
-  X(DataYellow, Palette::YellowDark)   \
-  X(DataMagenta, Palette::Magenta)     \
-  X(DataTurquoise, Palette::Turquoise) \
-  X(DataPink, Palette::Pink)           \
-  X(DataOrange, Palette::Orange)       \
-  X(DataViolet, Palette::Violet)       \
-  X(DataMint, Palette::Mint)
+#define FIXED_COMPONENTS(X)                      \
+  X(DataRed, Palette::Red)                       \
+  X(DataBlue, Palette::Blue)                     \
+  X(DataGreen, Palette::Green)                   \
+  X(DataYellow, Palette::YellowDark)             \
+  X(DataMagenta, Palette::Magenta)               \
+  X(DataTurquoise, Palette::Turquoise)           \
+  X(DataPink, Palette::Pink)                     \
+  X(DataOrange, Palette::Orange)                 \
+  X(DataViolet, Palette::Violet)                 \
+  X(DataMint, Palette::Mint)                     \
+  X(DataRedLight, Palette::RedLight)             \
+  X(DataBlueLight, Palette::BlueLight)           \
+  X(DataGreenLight, Palette::GreenLight)         \
+  X(DataYellowLight, Palette::YellowLight)       \
+  X(DataMagentaLight, Palette::MagentaLight)     \
+  X(DataTurquoiseLight, Palette::TurquoiseLight) \
+  X(DataPinkLight, Palette::PinkLight)           \
+  X(DataOrangeLight, Palette::OrangeLight)       \
+  X(DataVioletLight, Palette::VioletLight)       \
+  X(DataMintLight, Palette::MintLight)
 
 enum class ThemeComponent : uint8_t {
 #define X(name) name,
@@ -60,6 +70,11 @@ enum class ThemeComponent : uint8_t {
 constexpr ThemeComponent DataColorComponent(int index) {
   return static_cast<ThemeComponent>(
       static_cast<uint8_t>(ThemeComponent::DataRed) + index);
+}
+
+constexpr ThemeComponent DataColorLightComponent(int index) {
+  return static_cast<ThemeComponent>(
+      static_cast<uint8_t>(ThemeComponent::DataRedLight) + index);
 }
 
 }  // namespace Escher

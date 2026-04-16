@@ -42,7 +42,8 @@ class UserPreferences : public Shared::DoublePairStorePreferences {
   double m_firstDrawnBarAbscissa;
   bool m_displayOutliers;
   // Cumulated frequencies column display
-  bool m_displayCumulatedFrequencies[Shared::DoublePairStore::k_numberOfSeries];
+  std::array<bool, Shared::DoublePairStore::k_numberOfSeries>
+      m_displayCumulatedFrequencies;
 };
 
 }  // namespace Statistics

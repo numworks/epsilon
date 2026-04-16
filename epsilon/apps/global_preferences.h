@@ -5,6 +5,7 @@
 #include <escher/palette.h>
 #include <escher/theme/color_picker.h>
 #include <escher/theme/components.h>
+#include <escher/theme/theme_container.h>
 #include <ion.h>
 #include <kandinsky/font.h>
 #include <omg/global_box.h>
@@ -39,11 +40,6 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
 
   Escher::Theme theme() const { return s_data->m_theme; }
   void setTheme(Escher::Theme theme) { s_data->m_theme = theme; }
-
-  // Access each component color directly
-  KDColor color(Escher::ThemeComponent component) const {
-    return Escher::ColorPicker::Get(theme(), component);
-  }
 
   I18n::Language language() const { return s_data->m_language; }
   void setLanguage(I18n::Language language) { s_data->m_language = language; }

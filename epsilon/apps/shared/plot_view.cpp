@@ -2,12 +2,11 @@
 
 #include <escher/layout_view.h>
 #include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <float.h>
 
 #include <algorithm>
 #include <cmath>
-
-#include "global_preferences.h"
 
 using namespace Escher;
 using namespace Poincare;
@@ -207,7 +206,7 @@ void AbstractPlotView::drawLayout(KDContext* ctx, KDRect rect,
                                        xPosition, yPosition, ignoreMargin);
   if (KDRect(layoutOrigin, layoutSize).intersects(rect)) {
     ctx->fillRect(KDRect(layoutOrigin, layoutSize).intersectedWith(rect),
-                  SharedGlobalPrefs().color(backgroundColor()));
+                  ColorPicker::Resolve(backgroundColor()));
     layout.draw(ctx, layoutOrigin,
                 ToPoincareLayoutStyle(Escher::DefaultLayoutStyle(
                     {color, backgroundColor(), k_font})));
@@ -453,7 +452,7 @@ void AbstractPlotView::layoutSubviews(bool force) {
 }
 
 void AbstractPlotView::drawBackground(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(rect, SharedGlobalPrefs().color(backgroundColor()));
+  ctx->fillRect(rect, ColorPicker::Resolve(backgroundColor()));
 }
 
 /* The following code is dedicated to stamping the screen.

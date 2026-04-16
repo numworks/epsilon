@@ -1,6 +1,6 @@
 #include "double_pair_table_controller.h"
 
-#include <apps/global_preferences.h>
+#include <escher/theme/color_picker.h>
 
 using namespace Escher;
 
@@ -17,7 +17,7 @@ DoublePairTableController::DoublePairTableController(
   m_prefacedTwiceTableView.setMargins(k_margins);
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
     m_hideableCell[i].setColor(
-        SharedGlobalPrefs().color(m_selectableTableView.backgroundColor()));
+        ColorPicker::Resolve(m_selectableTableView.backgroundColor()));
   }
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
     m_calculationTitleCells[i].setAlignment(KDGlyph::k_alignRight,

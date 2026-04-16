@@ -1,9 +1,9 @@
-#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/abstract_text_field.h>
 #include <escher/clipboard.h>
 #include <escher/container.h>
 #include <escher/text_input_helpers.h>
+#include <escher/theme/color_picker.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <omg/utf8_helper.h>
@@ -54,7 +54,7 @@ void AbstractTextField::ContentView::drawRect(KDContext* ctx,
   if (m_isEditing) {
     backgroundColor = ThemeComponent::BackgroundWhite;
   }
-  ctx->fillRect(bounds(), SharedGlobalPrefs().color(backgroundColor));
+  ctx->fillRect(bounds(), ColorPicker::Resolve(backgroundColor));
   TextStyle glyphStyle{.glyphColor = m_format.style.glyphColor,
                        .backgroundColor = backgroundColor,
                        .font = m_format.style.font};
@@ -74,9 +74,8 @@ void AbstractTextField::ContentView::drawRect(KDContext* ctx,
     ctx->drawString(
         text() + selectionOffset,
         glyphFrameAtPosition(text(), textToDraw).origin(),
-        {.glyphColor = SharedGlobalPrefs().color(m_format.style.glyphColor),
-         .backgroundColor =
-             SharedGlobalPrefs().color(ThemeComponent::SurfaceSelect),
+        {.glyphColor = ColorPicker::Resolve(m_format.style.glyphColor),
+         .backgroundColor = ColorPicker::Resolve(ThemeComponent::SurfaceSelect),
          .font = m_format.style.font},
         selectionLength);
     textToDraw += selectionLength;

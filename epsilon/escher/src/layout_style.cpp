@@ -1,15 +1,15 @@
-#include <apps/global_preferences.h>
 #include <escher/layout_style.h>
+#include <escher/theme/color_picker.h>
 
 namespace Escher {
 
 Poincare::LayoutStyle ToPoincareLayoutStyle(const LayoutStyle& layoutStyle) {
   return Poincare::LayoutStyle{
       ToKDGlyphStyle(layoutStyle.textStyle),
-      SharedGlobalPrefs().color(layoutStyle.selectionColor),
-      SharedGlobalPrefs().color(layoutStyle.requiredPlaceholderColor),
-      SharedGlobalPrefs().color(layoutStyle.optionalPlaceholderColor),
-      SharedGlobalPrefs().color(layoutStyle.piecewiseCommaColor)};
+      ColorPicker::Resolve(layoutStyle.selectionColor),
+      ColorPicker::Resolve(layoutStyle.requiredPlaceholderColor),
+      ColorPicker::Resolve(layoutStyle.optionalPlaceholderColor),
+      ColorPicker::Resolve(layoutStyle.piecewiseCommaColor)};
 }
 
 }  // namespace Escher

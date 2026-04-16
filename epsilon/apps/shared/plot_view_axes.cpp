@@ -1,6 +1,7 @@
 #include "plot_view_axes.h"
 
 #include <apps/global_preferences.h>
+#include <escher/theme/color_picker.h>
 #include <limits.h>
 #include <poincare/print.h>
 
@@ -131,7 +132,7 @@ void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
        i <= std::ceil(radius.max / step); i++) {
     plotView->drawCircle(
         ctx, rect, {0.f, 0.f}, i * step,
-        SharedGlobalPrefs().color(i % 2 ? k_lightColor : k_boldColor));
+        Escher::ColorPicker::Resolve(i % 2 ? k_lightColor : k_boldColor));
   }
 }
 
@@ -236,8 +237,8 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
                                                           sin * radius.max)};
     ctx->drawAntialiasedLine(
         pixelFrom, pixelTo,
-        SharedGlobalPrefs().color((i % 2 == 0) ? k_boldColor : k_lightColor),
-        SharedGlobalPrefs().color(plotView->k_backgroundColor));
+        Escher::ColorPicker::Resolve((i % 2 == 0) ? k_boldColor : k_lightColor),
+        Escher::ColorPicker::Resolve(plotView->k_backgroundColor));
   }
 
   // Draw labels on top of the lines.
@@ -308,7 +309,7 @@ void PlainAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
                          KDRect rect, OMG::Axis axis) const {
   assert(plotView);
   plotView->drawStraightSegment(ctx, rect, axis, 0.f, -INFINITY, INFINITY,
-                                SharedGlobalPrefs().color(k_color));
+                                Escher::ColorPicker::Resolve(k_color));
 }
 
 // SimpleAxis
@@ -349,7 +350,7 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
     }
     if (drawTicks) {
       plotView->drawTick(ctx, rect, axis, t,
-                         SharedGlobalPrefs().color(k_color));
+                         Escher::ColorPicker::Resolve(k_color));
     }
     drawLabel(labelIndex, t, plotView, ctx, rect, axis);
   }

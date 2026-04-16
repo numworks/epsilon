@@ -1,8 +1,8 @@
 #pragma once
 
 #include <escher/editable_expression_model_cell.h>
+#include <escher/theme/color_picker.h>
 
-#include "global_preferences.h"
 #include "sequence_cell.h"
 
 namespace Sequence {
@@ -14,7 +14,7 @@ class EditableSequenceCell
                        Escher::LayoutFieldDelegate* layoutFieldDelegate);
 
   void updateSubviewsBackgroundAfterChangingState() override {
-    m_expressionBackground = SharedGlobalPrefs().color(backgroundColor());
+    m_expressionBackground = Escher::ColorPicker::Resolve(backgroundColor());
   }
 
   void layoutSubviews(bool force) override;

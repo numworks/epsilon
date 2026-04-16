@@ -2,8 +2,7 @@
 
 #include <apps/exam_mode_manager.h>
 #include <escher/palette.h>
-
-#include "global_preferences.h"
+#include <escher/theme/color_picker.h>
 
 using namespace Escher;
 
@@ -49,11 +48,11 @@ void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
       KDRect(k_colorIndicatorThickness, 0,
              bounds().width() - k_colorIndicatorThickness - ellipsisWidth,
              bounds().height()),
-      SharedGlobalPrefs().color(m_expressionBackground));
+      ColorPicker::Resolve(m_expressionBackground));
   // Color the ellipsis view
   ctx->fillRect(KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
                        bounds().height()),
-                SharedGlobalPrefs().color(m_ellipsisBackground));
+                ColorPicker::Resolve(m_ellipsisBackground));
 }
 
 KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {

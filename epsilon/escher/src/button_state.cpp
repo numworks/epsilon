@@ -1,6 +1,6 @@
-#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/button_state.h>
+#include <escher/theme/color_picker.h>
 
 #include <algorithm>
 
@@ -46,7 +46,7 @@ void ButtonState::layoutSubviews(bool force) {
 void ButtonState::drawRect(KDContext* ctx, KDRect rect) const {
   ThemeComponent backColor = isHighlighted() ? highlightedBackgroundColor()
                                              : ThemeComponent::BackgroundWhite;
-  ctx->fillRect(bounds(), SharedGlobalPrefs().color(backColor));
+  ctx->fillRect(bounds(), ColorPicker::Resolve(backColor));
 }
 
 KDSize ButtonState::minimalSizeForOptimalDisplay() const {

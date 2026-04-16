@@ -1,6 +1,6 @@
-#include <apps/global_preferences.h>
 #include <escher/palette.h>
 #include <escher/scroll_view.h>
+#include <escher/theme/color_picker.h>
 
 #include <new>
 extern "C" {
@@ -205,7 +205,7 @@ void ScrollView::InnerView::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   KDRect contentFrame = relativeChildFrame(m_scrollView->m_contentView);
-  KDColor color = SharedGlobalPrefs().color(m_scrollView->m_backgroundColor);
+  KDColor color = ColorPicker::Resolve(m_scrollView->m_backgroundColor);
   // Draw top margin
   KDCoordinate contentTop = contentFrame.origin().y();
   ctx->fillRect(KDRect(0, 0, width, contentTop), color);

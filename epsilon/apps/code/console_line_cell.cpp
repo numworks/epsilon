@@ -2,6 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <escher/theme/color_picker.h>
 #include <kandinsky/coordinate.h>
 #include <kandinsky/point.h>
 
@@ -25,8 +26,8 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(
   ctx->fillRect(bounds(), Palette::White);
   ctx->drawString(
       m_line->text(), KDPointZero,
-      {.glyphColor = SharedGlobalPrefs().color(textColor(m_line)),
-       .backgroundColor = SharedGlobalPrefs().color(defaultBackgroundColor()),
+      {.glyphColor = ColorPicker::Resolve(textColor(m_line)),
+       .backgroundColor = ColorPicker::Resolve(defaultBackgroundColor()),
        .font = SharedGlobalPrefs().font()});
 }
 

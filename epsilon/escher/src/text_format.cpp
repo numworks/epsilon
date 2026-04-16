@@ -1,12 +1,12 @@
-#include <apps/global_preferences.h>
 #include <escher/text_format.h>
+#include <escher/theme/color_picker.h>
 
 namespace Escher {
 
 KDGlyph::Style ToKDGlyphStyle(const TextStyle& textStyle) {
   return KDGlyph::Style{
-      .glyphColor = SharedGlobalPrefs().color(textStyle.glyphColor),
-      .backgroundColor = SharedGlobalPrefs().color(textStyle.backgroundColor),
+      .glyphColor = ColorPicker::Resolve(textStyle.glyphColor),
+      .backgroundColor = ColorPicker::Resolve(textStyle.backgroundColor),
       .font = textStyle.font};
 }
 

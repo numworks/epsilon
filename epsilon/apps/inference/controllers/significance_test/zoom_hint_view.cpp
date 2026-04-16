@@ -1,6 +1,6 @@
 #include "zoom_hint_view.h"
 
-#include "global_preferences.h"
+#include <escher/theme/color_picker.h>
 
 using namespace Escher;
 
@@ -21,7 +21,7 @@ ZoomHintView::ZoomHintView()
 void ZoomHintView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(),
                        k_legendHeight),
-                SharedGlobalPrefs().color(k_backgroundColor));
+                ColorPicker::Resolve(k_backgroundColor));
 }
 
 int ZoomHintView::numberOfSubviews() const {

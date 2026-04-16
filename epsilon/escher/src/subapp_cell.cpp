@@ -1,6 +1,6 @@
-#include <apps/global_preferences.h>
 #include <escher/palette.h>
 #include <escher/subapp_cell.h>
+#include <escher/theme/color_picker.h>
 #include <kandinsky/font.h>
 
 #include <algorithm>
@@ -23,7 +23,7 @@ void SubappCell::drawRect(KDContext* ctx, KDRect rect) const {
 void SubappCell::setHighlighted(bool highlighted) {
   HighlightCell::setHighlighted(highlighted);
   ThemeComponent backgroundColor = defaultBackgroundColor();
-  m_icon.setBackgroundColor(SharedGlobalPrefs().color(backgroundColor));
+  m_icon.setBackgroundColor(ColorPicker::Resolve(backgroundColor));
   m_title.setBackgroundColor(backgroundColor);
   m_subTitle.setBackgroundColor(backgroundColor);
 }

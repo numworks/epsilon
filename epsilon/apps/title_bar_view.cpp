@@ -1,6 +1,7 @@
 #include "title_bar_view.h"
 
 #include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <omg/unreachable.h>
 #include <poincare/print.h>
 
@@ -30,7 +31,7 @@ void TitleBarView::drawRect(KDContext* ctx, KDRect rect) const {
   /* As we cheated to layout the title view, we have to fill a very thin
    * rectangle at the top with the background color. */
   ctx->fillRect(KDRect(0, 0, bounds().width(), 2),
-                SharedGlobalPrefs().color(k_backgroundColor));
+                ColorPicker::Resolve(k_backgroundColor));
 }
 
 void TitleBarView::setTitle(I18n::Message title) {

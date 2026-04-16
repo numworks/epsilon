@@ -1,6 +1,6 @@
-#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/even_odd_expression_cell.h>
+#include <escher/theme/color_picker.h>
 
 using namespace Poincare;
 
@@ -34,10 +34,10 @@ void EvenOddExpressionCell::setMargins(KDHorizontalMargins margins) {
 void EvenOddExpressionCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Color the margins
   ctx->fillRect(KDRect(0, 0, m_margins.left(), bounds().height()),
-                SharedGlobalPrefs().color(backgroundColor()));
+                ColorPicker::Resolve(backgroundColor()));
   ctx->fillRect(KDRect(bounds().width() - m_margins.right(), 0,
                        m_margins.right(), bounds().height()),
-                SharedGlobalPrefs().color(backgroundColor()));
+                ColorPicker::Resolve(backgroundColor()));
 }
 
 void EvenOddExpressionCell::updateSubviewsBackgroundAfterChangingState() {

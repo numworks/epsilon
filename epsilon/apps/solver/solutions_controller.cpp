@@ -2,6 +2,7 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
+#include <escher/theme/color_picker.h>
 #include <omg/print.h>
 #include <poincare/helpers/symbol_pool.h>
 #include <poincare/k_tree.h>
@@ -33,12 +34,12 @@ void SolutionsController::ContentView::drawRect(KDContext* ctx,
   if (hideTableView()) {
     // No selectable table, fill the entire bound for background
     ctx->fillRect(KDRect(KDPointZero, bounds().size()),
-                  SharedGlobalPrefs().color(k_backgroundColor));
+                  ColorPicker::Resolve(k_backgroundColor));
   } else if (m_displayWarningMoreSolutions) {
     // Fill the bottom margin for additional warnings
     ctx->fillRect(KDRect(bounds().x(), bounds().height() - k_bottomMessageSpace,
                          bounds().size()),
-                  SharedGlobalPrefs().color(k_backgroundColor));
+                  ColorPicker::Resolve(k_backgroundColor));
   }
 }
 
@@ -192,7 +193,7 @@ SolutionsController::SolutionsController(Responder* parentResponder,
     m_symbolCells[i].setFont(k_solutionsFont);
   }
   for (int i = 0; i < k_numberOfEmptyCells; ++i) {
-    m_emptyCell[i].setColor(SharedGlobalPrefs().color(
+    m_emptyCell[i].setColor(ColorPicker::Resolve(
         SolutionsController::ContentView::k_backgroundColor));
   }
 }

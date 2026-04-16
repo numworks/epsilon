@@ -1,6 +1,7 @@
 #include "function_graph_cell.h"
 
 #include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <kandinsky/color.h>
 #include <poincare/print.h>
 #include <poincare/user_expression.h>
@@ -49,7 +50,7 @@ void FunctionAxis<N>::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
   // Draw the dashed lines since they are the ticks of the special labels
   plotView->drawDashedStraightSegment(
       ctx, rect, otherAxis, t, 0.0f, other,
-      SharedGlobalPrefs().color(k_specialLabelsColor));
+      ColorPicker::Resolve(k_specialLabelsColor));
   // Draw the special label
   PlotPolicy::AbstractLabeledAxis::drawLabel(N, t, plotView, ctx, rect, axis,
                                              k_specialLabelsColor);

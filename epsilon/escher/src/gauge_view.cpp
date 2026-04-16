@@ -1,7 +1,7 @@
-#include <apps/global_preferences.h>
 #include <escher/gauge_view.h>
 #include <escher/menu_cell.h>
 #include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 
 namespace Escher {
 
@@ -34,7 +34,7 @@ void GaugeView::setLevel(float level) {
 
 void GaugeView::setHighlighted(bool highlighted) {
   KDColor backgroundColor =
-      SharedGlobalPrefs().color(AbstractMenuCell::BackgroundColor(highlighted));
+      ColorPicker::Resolve(AbstractMenuCell::BackgroundColor(highlighted));
   if (m_backgroundColor != backgroundColor) {
     m_backgroundColor = backgroundColor;
     markWholeFrameAsDirty();

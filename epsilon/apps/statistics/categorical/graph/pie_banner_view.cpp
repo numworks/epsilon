@@ -1,7 +1,7 @@
 
 #include "pie_banner_view.h"
 
-#include <apps/global_preferences.h>
+#include <escher/theme/color_picker.h>
 
 namespace Statistics::Categorical {
 
@@ -19,8 +19,8 @@ PieBannerView::PieBannerView(Store* store)
       m_freqLabel(k_labelFormat),
       m_relativeLabel(k_labelFormat),
       // TODO: update SolidColorCell to take a theme component
-      m_colorCell(SharedGlobalPrefs().color(k_backgroundColor),
-                  SharedGlobalPrefs().color(k_backgroundColor), 1),
+      m_colorCell(Escher::ColorPicker::Resolve(k_backgroundColor),
+                  Escher::ColorPicker::Resolve(k_backgroundColor), 1),
       m_freqValue(k_valueFormat),
       m_relativeValue(k_valueFormat),
       m_store(store) {
@@ -73,7 +73,7 @@ void PieBannerView::setGroup(int group, int category) {
 
 void PieBannerView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bounds(),
-                SharedGlobalPrefs().color(
+                Escher::ColorPicker::Resolve(
                     m_isSelected ? k_backgroundColor
                                  : Escher::ThemeComponent::TokenWhite));
 }

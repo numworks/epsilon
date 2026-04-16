@@ -16,6 +16,7 @@ $(call create_module,escher,1,$(addprefix src/, \
   chevron_view.cpp \
   clipboard.cpp \
   container.cpp \
+  color_picker.cpp \
   dropdown_view.cpp \
   editable_expression_cell.cpp \
   editable_expression_model_cell.cpp \

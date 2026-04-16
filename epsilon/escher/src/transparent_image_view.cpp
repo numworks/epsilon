@@ -1,4 +1,4 @@
-#include <apps/global_preferences.h>
+#include <escher/theme/color_picker.h>
 #include <escher/transparent_image_view.h>
 #include <ion.h>
 #include <omg/memory.h>
@@ -52,8 +52,8 @@ void TransparentImageView::blendInPlace(KDColor* colorBuffer,
 }
 
 void TransparentImageView::setHighlighted(bool highlighted) {
-  setBackgroundColor(SharedGlobalPrefs().color(
-      AbstractMenuCell::BackgroundColor(highlighted)));
+  setBackgroundColor(
+      ColorPicker::Resolve(AbstractMenuCell::BackgroundColor(highlighted)));
 }
 
 }  // namespace Escher

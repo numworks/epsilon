@@ -1,5 +1,7 @@
 #include "results_homogeneity_table.h"
 
+#include <escher/theme/color_picker.h>
+
 #include "homogeneity_data_source.h"
 #include "inference/controllers/chi_square/results_homogeneity_controller.h"
 #include "inference/models/chi2_test.h"
@@ -40,10 +42,9 @@ void ResultsHomogeneityTable::handleResponderChainEvent(
 void ResultsHomogeneityTable::drawRect(KDContext* ctx, KDRect rect) const {
   CategoricalTableCell::drawRect(ctx, rect);
   // Draw over the next cell border to hide it
-  ctx->fillRect(
-      KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
-             bounds().width(), Metric::CellSeparatorThickness),
-      SharedGlobalPrefs().color(m_selectableTableView.backgroundColor()));
+  ctx->fillRect(KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
+                       bounds().width(), Metric::CellSeparatorThickness),
+                ColorPicker::Resolve(m_selectableTableView.backgroundColor()));
 }
 
 void ResultsHomogeneityTable::fillCellForLocation(Escher::HighlightCell* cell,

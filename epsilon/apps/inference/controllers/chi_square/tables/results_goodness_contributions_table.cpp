@@ -1,5 +1,6 @@
 #include "results_goodness_contributions_table.h"
 
+#include <escher/theme/color_picker.h>
 #include <poincare/print.h>
 
 namespace Inference {
@@ -21,7 +22,7 @@ void ResultGoodnessContributionsTable::drawRect(KDContext* ctx,
   ctx->fillRect(
       KDRect(0, bounds().height() - Escher::Metric::CellSeparatorThickness,
              bounds().width(), Escher::Metric::CellSeparatorThickness),
-      SharedGlobalPrefs().color(m_selectableTableView.backgroundColor()));
+      Escher::ColorPicker::Resolve(m_selectableTableView.backgroundColor()));
 }
 
 void ResultGoodnessContributionsTable::fillCellForLocation(

@@ -1,10 +1,9 @@
 #include "function_zoom_and_pan_curve_view_controller.h"
 
 #include <assert.h>
+#include <escher/theme/color_picker.h>
 
 #include <cmath>
-
-#include "global_preferences.h"
 
 using namespace Escher;
 
@@ -144,7 +143,7 @@ void FunctionZoomAndPanCurveViewController::ContentView::LegendView::drawRect(
     KDContext* ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(),
                        k_legendHeight),
-                SharedGlobalPrefs().color(k_backgroundColor));
+                ColorPicker::Resolve(k_backgroundColor));
 }
 
 int FunctionZoomAndPanCurveViewController::ContentView::LegendView::

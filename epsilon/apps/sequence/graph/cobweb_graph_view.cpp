@@ -4,6 +4,7 @@
 #include <apps/shared/continuous_function_cache.h>
 #include <apps/shared/poincare_helpers.h>
 #include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <kandinsky/color.h>
 #include <kandinsky/measuring_context.h>
 #include <omg/code_point.h>
@@ -196,7 +197,7 @@ void CobwebGraphView::drawBackground(KDContext* ctx, KDRect rect) const {
   if (shouldUpdate()) {
     return;
   }
-  ctx->fillRect(rect, SharedGlobalPrefs().color(backgroundColor()));
+  ctx->fillRect(rect, Escher::ColorPicker::Resolve(backgroundColor()));
 }
 
 }  // namespace Sequence

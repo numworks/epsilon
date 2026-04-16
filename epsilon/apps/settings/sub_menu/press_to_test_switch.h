@@ -1,9 +1,9 @@
 #pragma once
 
-#include <apps/global_preferences.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/switch_view.h>
+#include <escher/theme/color_picker.h>
 #include <escher/transparent_image_view.h>
 
 namespace Settings {
@@ -26,7 +26,7 @@ class AlternateSwitchAndImage : public Escher::CellWidget {
   }
   void setHighlighted(bool highlighted) override {
     m_switch.setHighlighted(highlighted);
-    m_image.setBackgroundColor(SharedGlobalPrefs().color(
+    m_image.setBackgroundColor(Escher::ColorPicker::Resolve(
         Escher::AbstractMenuCell::BackgroundColor(highlighted)));
   }
   bool canBeActivatedByEvent(Ion::Events::Event event) const override {

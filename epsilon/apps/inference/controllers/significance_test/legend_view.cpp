@@ -1,10 +1,9 @@
 #include "legend_view.h"
 
 #include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 
 #include <algorithm>
-
-#include "global_preferences.h"
 
 using namespace Escher;
 
@@ -12,12 +11,12 @@ namespace Inference {
 
 void LegendView::DotView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillAntialiasedCircle(KDPointZero, k_diameter / 2, Palette::YellowDark,
-                             SharedGlobalPrefs().color(k_backgroundColor));
+                             ColorPicker::Resolve(k_backgroundColor));
 }
 
 void LegendView::StripedDotView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillCircleWithStripes(KDPointZero, k_diameter / 2, Palette::PurpleBright,
-                             SharedGlobalPrefs().color(k_backgroundColor), 3);
+                             ColorPicker::Resolve(k_backgroundColor), 3);
 }
 
 LegendView::LegendView()

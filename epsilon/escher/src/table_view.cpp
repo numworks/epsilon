@@ -1,6 +1,6 @@
-#include <apps/global_preferences.h>
 #include <escher/metric.h>
 #include <escher/table_view.h>
+#include <escher/theme/color_picker.h>
 
 extern "C" {
 #include <assert.h>
@@ -78,7 +78,7 @@ void TableView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
    * to browse through all the cells, so we just go through the first row and
    * the first column.
    *  */
-  KDColor bColor = SharedGlobalPrefs().color(m_tableView->backgroundColor());
+  KDColor bColor = ColorPicker::Resolve(m_tableView->backgroundColor());
   int nC = numberOfDisplayableColumns();
   int nR = numberOfDisplayableRows();
   for (int k = 0; k < 2; k++) {

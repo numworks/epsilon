@@ -1,5 +1,6 @@
 #include "results_statistics_table.h"
 
+#include <escher/theme/color_picker.h>
 #include <omg/unreachable.h>
 
 #include "inference/controllers/anova/results_tab_controller.h"
@@ -39,10 +40,9 @@ void ResultsStatisticsTable::handleResponderChainEvent(
 void ResultsStatisticsTable::drawRect(KDContext* ctx, KDRect rect) const {
   CategoricalTableCell::drawRect(ctx, rect);
   // Draw over the next cell border to hide it
-  ctx->fillRect(
-      KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
-             bounds().width(), Metric::CellSeparatorThickness),
-      SharedGlobalPrefs().color(m_selectableTableView.backgroundColor()));
+  ctx->fillRect(KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
+                       bounds().width(), Metric::CellSeparatorThickness),
+                ColorPicker::Resolve(m_selectableTableView.backgroundColor()));
 }
 
 constexpr static double GroupStatisticsResultAtRow(

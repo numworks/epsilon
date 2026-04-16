@@ -1,9 +1,8 @@
 #include "banner_view.h"
 
 #include <assert.h>
+#include <escher/theme/color_picker.h>
 #include <ion.h>
-
-#include "global_preferences.h"
 
 namespace Shared {
 
@@ -18,9 +17,9 @@ void BannerView::drawRect(KDContext* ctx, KDRect rect) const {
   const KDCoordinate lineHeight = KDFont::GlyphHeight(k_font) + k_lineSpacing;
   const KDCoordinate lineWidth = bounds().width();
   for (KDCoordinate y = 0; y < frameHeight; y += lineHeight) {
-    ctx->fillRect(
-        KDRect(0, y, lineWidth, k_lineSpacing),
-        SharedGlobalPrefs().color(k_bannerFieldFormat.style.backgroundColor));
+    ctx->fillRect(KDRect(0, y, lineWidth, k_lineSpacing),
+                  Escher::ColorPicker::Resolve(
+                      k_bannerFieldFormat.style.backgroundColor));
   }
 }
 

@@ -1,6 +1,6 @@
 #include "sequence_cell.h"
 
-#include "global_preferences.h"
+#include <escher/theme/color_picker.h>
 
 using namespace Escher;
 
@@ -47,7 +47,7 @@ void AbstractSequenceCell::layoutSubviews(bool force) {
 void SequenceCell::updateSubviewsBackgroundAfterChangingState() {
   KDColor defaultColor = m_even ? Palette::White : Palette::WallScreen;
   // If not highlighted, selectedColor is defaultColor
-  KDColor selectedColor = SharedGlobalPrefs().color(backgroundColor());
+  KDColor selectedColor = ColorPicker::Resolve(backgroundColor());
   m_expressionBackground = m_parameterSelected ? defaultColor : selectedColor;
   m_ellipsisBackground = m_parameterSelected ? selectedColor : defaultColor;
   expressionCell()->setHighlighted(isHighlighted() && !m_parameterSelected);

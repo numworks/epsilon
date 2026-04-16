@@ -1,6 +1,6 @@
-#include <apps/global_preferences.h>
 #include <escher/even_odd_cell.h>
 #include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 
 namespace Escher {
 
@@ -38,7 +38,7 @@ ThemeComponent EvenOddCell::backgroundColor() const {
 
 void EvenOddCell::drawRect(KDContext* ctx, KDRect rect) const {
   ThemeComponent background = backgroundColor();
-  ctx->fillRect(rect, SharedGlobalPrefs().color(background));
+  ctx->fillRect(rect, ColorPicker::Resolve(background));
 }
 
 }  // namespace Escher

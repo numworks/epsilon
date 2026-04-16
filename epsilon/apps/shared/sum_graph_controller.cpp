@@ -3,6 +3,7 @@
 #include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/clipboard.h>
+#include <escher/theme/color_picker.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/print.h>
@@ -242,8 +243,8 @@ SumGraphController::LegendView::LegendView(SumGraphController* controller)
 
 void SumGraphController::LegendView::drawRect(KDContext* ctx,
                                               KDRect rect) const {
-  ctx->fillRect(bounds(), SharedGlobalPrefs().color(
-                              k_glyphsFormat.style.backgroundColor));
+  ctx->fillRect(bounds(),
+                ColorPicker::Resolve(k_glyphsFormat.style.backgroundColor));
 }
 
 KDSize SumGraphController::LegendView::minimalSizeForOptimalDisplay() const {

@@ -1,7 +1,7 @@
 #include "banner_view.h"
 
-#include <apps/global_preferences.h>
 #include <assert.h>
+#include <escher/theme/color_picker.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
@@ -15,7 +15,7 @@ namespace Elements {
 
 void BannerView::DotView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillAntialiasedCircle(KDPointZero, k_dotDiameter / 2, m_color,
-                             SharedGlobalPrefs().color(k_backgroundColor));
+                             Escher::ColorPicker::Resolve(k_backgroundColor));
 }
 
 void BannerView::DotView::setColor(KDColor color) {
@@ -33,16 +33,16 @@ BannerView::BannerView(Escher::Responder* textFieldParent,
       m_legendView({.style = {.glyphColor = k_legendColor,
                               .backgroundColor = k_backgroundColor,
                               .font = k_legendSize}}),
-      m_button(SharedGlobalPrefs().color(k_backgroundColor)) {
+      m_button(Escher::ColorPicker::Resolve(k_backgroundColor)) {
   m_textField.margins()->setLeft(Escher::Metric::CommonSmallMargin);
 }
 
 void BannerView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, 0, bounds().width(), k_borderHeight),
-                SharedGlobalPrefs().color(k_borderColor));
+                Escher::ColorPicker::Resolve(k_borderColor));
   ctx->fillRect(KDRect(0, k_borderHeight, bounds().width() - k_buttonWidth,
                        k_bannerHeight),
-                SharedGlobalPrefs().color(k_backgroundColor));
+                Escher::ColorPicker::Resolve(k_backgroundColor));
 }
 
 void BannerView::reload() {
@@ -100,7 +100,7 @@ void BannerView::layoutSubviews(bool force) {
                 KDRect(bounds().width() - k_buttonWidth, k_borderHeight,
                        k_buttonWidth, k_bannerHeight),
                 force);
-  m_button.setColor(SharedGlobalPrefs().color(buttonColor));
+  m_button.setColor(Escher::ColorPicker::Resolve(buttonColor));
 
   I18n::Message legendMessage = dataSource->field()->getMessage(z);
   if (legendMessage != I18n::Message::Default) {

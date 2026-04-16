@@ -19,7 +19,7 @@ constexpr const char* kStateFileExtension = "nwt";
 void saveState() {
   const char* path = Platform::filePathForWriting(kStateFileExtension);
   if (path != nullptr) {
-    StateFile::saveText(path);
+    StateFile::save(path, true);
   }
 }
 

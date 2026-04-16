@@ -319,54 +319,6 @@ void loadMemory(const char* buffer, size_t length, bool headlessStateFile) {
   Ion::Events::replayFrom(Journal::replayJournal());
 }
 
-static inline bool save(FILE* f) {
-  if (fwrite(sMagic, sMagicLength, 1, f) != 1) {
-    return false;
-  }
-#if ASSERTIONS
-  if (fwrite(sWildcardVersion, sVersionLength, 1, f) != 1) {
-    return false;
-  }
-#else
-  if (fwrite(softwareVersion(), sVersionLength, 1, f) != 1) {
-    return false;
-  }
-#endif
-  if (fwrite(&sProjectId, sProjectIdLength, 1, f) != 1) {
-    return false;
-  }
-  Ion::Events::Journal* journal = Journal::logJournal();
-  const char* logJournalLanguage = journal->startingLanguage()[0] != 0
-                                       ? journal->startingLanguage()
-                                       : sWildcardLanguage;
-  if (fwrite(logJournalLanguage, sLanguageLength, 1, f) != 1) {
-    return false;
-  }
-  while (!journal->isEmpty()) {
-    Ion::Events::Event e = journal->popEvent();
-    uint8_t code = static_cast<uint8_t>(e);
-    if (fwrite(&code, 1, 1, f) != 1) {
-      return false;
-    }
-    if (e == Ion::Events::ExternalText) {
-      const char* text = Ion::Events::sharedExternalTextBuffer();
-      if (fwrite(text, strlen(text) + 1, 1, f) != 1) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-void save(const char* filename) {
-  FILE* f = fopen(filename, "w");
-  if (f == nullptr) {
-    return;
-  }
-  save(f);
-  fclose(f);
-}
-
 #if ION_SIMULATOR_FILES
 
 static inline std::string escapeText(const char* text) {
@@ -384,43 +336,79 @@ static inline std::string escapeText(const char* text) {
   return result;
 }
 
-static inline bool saveText(FILE* f) {
-  fprintf(f, "%s\n", sTextMagic);
+static inline bool save(FILE* f, bool toText) {
+  const char* version =
 #if ASSERTIONS
-  fwrite(sWildcardVersion, sVersionLength, 1, f);
+      sWildcardVersion;
 #else
-  fwrite(softwareVersion(), sVersionLength, 1, f);
+      softwareVersion();
 #endif
-  fprintf(f, "\n");
-  fprintf(f, "%d\n", sProjectId);
+
+  // Magic + version + project ID
+  if (toText) {
+    fprintf(f, "%s\n", sTextMagic);
+    fwrite(version, sVersionLength, 1, f);
+    fprintf(f, "\n%d\n", sProjectId);
+  } else {
+    if (fwrite(sMagic, sMagicLength, 1, f) != 1 ||
+        fwrite(version, sVersionLength, 1, f) != 1 ||
+        fwrite(&sProjectId, sProjectIdLength, 1, f) != 1) {
+      return false;
+    }
+  }
+
+  // Language
   Ion::Events::Journal* journal = Journal::logJournal();
-  const char* logJournalLanguage = journal->startingLanguage()[0] != 0
-                                       ? journal->startingLanguage()
-                                       : sWildcardLanguage;
-  fprintf(f, "%s\n", logJournalLanguage);
+  const char* lang = journal->startingLanguage()[0] != 0
+                         ? journal->startingLanguage()
+                         : sWildcardLanguage;
+  if (toText) {
+    fprintf(f, "%s\n", lang);
+  } else {
+    if (fwrite(lang, sLanguageLength, 1, f) != 1) {
+      return false;
+    }
+  }
+
+  // Events
   while (!journal->isEmpty()) {
     Ion::Events::Event e = journal->popEvent();
     uint8_t code = static_cast<uint8_t>(e);
-    const char* name = Ion::Events::s_nameForEvent[code];
-    if (name[0] == 0) {
-      continue;
+    if (toText) {
+      const char* name = Ion::Events::s_nameForEvent[code];
+      if (name[0] == 0) {
+        continue;
+      }
+      fprintf(f, "%s", name);
+    } else {
+      if (fwrite(&code, 1, 1, f) != 1) {
+        return false;
+      }
     }
-    fprintf(f, "%s", name);
     if (e == Ion::Events::ExternalText) {
-      std::string escaped = escapeText(Ion::Events::sharedExternalTextBuffer());
-      fprintf(f, " %s", escaped.c_str());
+      if (toText) {
+        fprintf(f, " %s",
+                escapeText(Ion::Events::sharedExternalTextBuffer()).c_str());
+      } else {
+        const char* text = Ion::Events::sharedExternalTextBuffer();
+        if (fwrite(text, strlen(text) + 1, 1, f) != 1) {
+          return false;
+        }
+      }
     }
-    fprintf(f, "\n");
+    if (toText) {
+      fprintf(f, "\n");
+    }
   }
   return true;
 }
 
-void saveText(const char* filename) {
+void save(const char* filename, bool toText) {
   FILE* f = fopen(filename, "w");
   if (f == nullptr) {
     return;
   }
-  saveText(f);
+  save(f, toText);
   fclose(f);
 }
 

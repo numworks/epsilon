@@ -12,7 +12,7 @@ class BannerView : public Escher::View {
  public:
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
   constexpr static Escher::TextFormat k_bannerFieldFormat = {
-      .style = {.glyphColor = Escher::ThemeComponent::TextDefault,
+      .style = {.glyphColor = Escher::ThemeComponent::TextBanner,
                 .backgroundColor = Escher::ThemeComponent::BannerGrayMiddle,
                 .font = k_font},
       .horizontalAlignment = KDGlyph::k_alignCenter};

@@ -19,10 +19,12 @@ constexpr static ThemeContainer k_darkTheme =
                    .BannerGrayWhite = Palette::DARK_VioletMiddle,
                    .BannerGrayMiddle = Palette::DARK_VioletMiddle,
                    .TextDefault = Palette::DARK_VioletLight,
+                   .TextTables = Palette::White,
+                   .TextBanner = Palette::Black,
                    .TextGrayDark = Palette::DARK_VioletMiddle,
                    .TextGrayDarkMiddle = Palette::DARK_VioletMiddle,
                    .TextGrayVeryDark = Palette::DARK_VioletLight,
-                   .TextWhite = Palette::White,
+                   .TextWhite = Palette::Black,
                    .TextPurple = Palette::DARK_VioletLight,
                    // TODO: check BluishGray mapping (if any)
                    .TextBluishGray = Palette::DARK_VioletMiddle,

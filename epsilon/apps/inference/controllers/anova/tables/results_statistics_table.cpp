@@ -103,7 +103,7 @@ void ResultsStatisticsTable::fillColumnTitleForLocation(
   OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(innerColumn);
   myCell->setText(groupTitle.data());
   myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-  myCell->setTextColor(ThemeComponent::TextDefault);
+  myCell->setTextColor(ThemeComponent::TextTables);
 }
 void ResultsStatisticsTable::fillRowTitleForLocation(
     Escher::HighlightCell* cell, int innerRow) {
@@ -111,7 +111,7 @@ void ResultsStatisticsTable::fillRowTitleForLocation(
   headerCellType* myCell = static_cast<headerCellType*>(cell);
   myCell->setText(HeaderAtRow(innerRow));
   myCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-  myCell->setTextColor(ThemeComponent::TextDefault);
+  myCell->setTextColor(ThemeComponent::TextTables);
 }
 
 void ResultsStatisticsTable::fillRowSymbolForLocation(

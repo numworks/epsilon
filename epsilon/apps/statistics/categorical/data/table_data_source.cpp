@@ -57,7 +57,7 @@ void TableViewDataSource::fillCellForLocation(Escher::HighlightCell* cell,
     store()->getCategoryName(dataRow(row), txt, sizeof(txt));
     myCell->setText(txt);
     myCell->setTextColor(store()->isCategoryActive(dataRow(row))
-                             ? Escher::ThemeComponent::TextDefault
+                             ? Escher::ThemeComponent::TextTables
                              : Escher::ThemeComponent::TextGrayDark);
   } else if (type == k_typeOfInnerCells) {
     float p = store()->getValue(dataColumn(column), dataRow(row));

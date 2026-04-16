@@ -48,7 +48,7 @@ void InputDataTable::fillCellForLocation(Escher::HighlightCell* cell,
     myCell->setEven(true);
     OMG::String<k_groupTitleBufferSize> groupTitle = GroupTitle(column);
     myCell->setText(groupTitle.data());
-    myCell->setTextColor(ThemeComponent::TextDefault);
+    myCell->setTextColor(ThemeComponent::TextTables);
   } else {
     assert(type == k_typeOfInnerCells);
     fillInnerCellForLocation(cell, column, row - 1);

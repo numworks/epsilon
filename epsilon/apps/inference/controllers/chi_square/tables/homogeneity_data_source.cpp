@@ -25,7 +25,7 @@ void HomogeneityTableDataSource::fillCellForLocation(
     myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     myCell->setFont(KDFont::Size::Small);
     myCell->setEven(row % 2 == 0);
-    myCell->setTextColor(ThemeComponent::TextDefault);
+    myCell->setTextColor(ThemeComponent::TextTables);
   } else {
     assert(type == k_typeOfInnerCells);
     fillInnerCellForLocation(cell, column - 1, row - 1);

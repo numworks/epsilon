@@ -17,17 +17,17 @@ class LEDTestController : public Escher::ViewController {
   void viewWillAppear() override;
 
  private:
-  class ContentView : public Escher::SolidColorView {
+  class ContentView : public Escher::RawColorSolidColorView {
    public:
     ContentView();
-    Escher::SolidColorView* LEDColorIndicatorView();
+    Escher::RawColorSolidColorView* LEDColorIndicatorView();
 
    private:
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     Escher::View* subviewAtIndex(int index) override;
-    Escher::SolidColorView m_ledColorIndicatorView;
-    Escher::SolidColorView m_ledColorOutlineView;
+    Escher::RawColorSolidColorView m_ledColorIndicatorView;
+    Escher::RawColorSolidColorView m_ledColorOutlineView;
     Escher::OneLineBufferTextView<> m_ledView;
     ArrowView m_arrowView;
   };

@@ -14,10 +14,10 @@ class ClearanceViewerController : public Escher::ViewController {
   void viewWillAppear() override;
 
  private:
-  class ContentView : public Escher::SolidColorView {
+  class ContentView : public Escher::RawColorSolidColorView {
    public:
     constexpr static size_t k_bufferSize = 512;
-    ContentView() : SolidColorView(BasicColor::White) {}
+    ContentView() : Escher::RawColorSolidColorView(BasicColor::White) {}
     Escher::AbstractBufferTextView* textView() { return &m_textView; }
     void setColor(KDColor color) override;
 

@@ -40,9 +40,11 @@ class StackViewController : public ViewController {
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void setupActiveView();
-  void setupHeadersBorderOverlaping(
-      bool headersOverlapHeaders = true, bool headersOverlapContent = false,
-      KDColor headersContentBorderColor = Palette::GrayBright) {
+  void setupHeadersBorderOverlaping(bool headersOverlapHeaders = true,
+                                    bool headersOverlapContent = false,
+                                    ThemeComponent headersContentBorderColor =
+                                        // TODO: BorderGrayBright
+                                    ThemeComponent::TokenGrayBright) {
     m_view.setupHeadersBorderOverlaping(headersOverlapHeaders,
                                         headersOverlapContent,
                                         headersContentBorderColor);

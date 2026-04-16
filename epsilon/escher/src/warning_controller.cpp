@@ -6,7 +6,7 @@
 namespace Escher {
 
 WarningController::ContentView::ContentView()
-    : SolidColorView(Palette::Black),
+    : SolidColorView(ThemeComponent::BackgroundPopup),
       m_textView((I18n::Message)0,
                  {.style = {.glyphColor = ThemeComponent::TextWhite,
                             .backgroundColor = ThemeComponent::BackgroundPopup,

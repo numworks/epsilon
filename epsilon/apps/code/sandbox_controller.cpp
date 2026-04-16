@@ -11,7 +11,10 @@ using namespace Escher;
 namespace Code {
 
 SandboxController::SandboxController(Responder* parentResponder)
-    : ViewController(parentResponder), m_solidColorView(Palette::White) {}
+    : ViewController(parentResponder),
+      /* TODO: check whether the Python sandbox should change color in dark
+         theme */
+      m_solidColorView(ThemeComponent::BackgroundWhite) {}
 
 StackViewController* SandboxController::stackViewController() {
   return static_cast<StackViewController*>(parentResponder());

@@ -21,7 +21,7 @@ class DeadPixelsTestController : public Escher::ViewController {
   constexpr static KDColor k_colors[k_numberOfAdditionalColors] = {
       BasicColor::Red, BasicColor::Blue, BasicColor::Green, BasicColor::White};
   int m_colorIndex;
-  Escher::SolidColorView m_view;
+  Escher::RawColorSolidColorView m_view;
 };
 
 }  // namespace HardwareTest

@@ -17,7 +17,7 @@ LocalizationController::ContentView::ContentView(
     : m_controller(controller),
       m_selectableListView(controller, controller, dataSource),
       m_countryTitleMessage(I18n::Message::Country),
-      m_borderView(Palette::GrayBright) {
+      m_borderView(ThemeComponent::TokenGrayBright) {
   m_countryTitleMessage.setBackgroundColor(ThemeComponent::WallScreen);
   m_countryTitleMessage.setAlignment(KDGlyph::k_alignCenter,
                                      KDGlyph::k_alignCenter);

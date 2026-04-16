@@ -14,6 +14,9 @@ constexpr static Theme k_defaultTheme = Theme::Light;
 
 class ColorPicker {
  public:
+  /* Two Resolve overloads so that Resolve is callable on both raw colors and
+   * theme components */
+  inline static KDColor Resolve(KDColor rawColor) { return rawColor; }
   inline static KDColor Resolve(ThemeComponent component) {
     return Get(GetCurrentTheme(), component);
   };

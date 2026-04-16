@@ -1,15 +1,18 @@
 #pragma once
 
+#include <escher/theme/components.h>
 #include <escher/view.h>
 
 namespace Escher {
 
-/* A simple view filled with a single color */
-class SolidColorView : public View {
+/* A simple view filled with a single color. ColorType is either ThemeComponent
+ * or KDColor */
+template <typename ColorType>
+class SolidColorViewBase : public View {
  public:
-  SolidColorView(KDColor color);
+  SolidColorViewBase(ColorType color);
   void reload();
-  virtual void setColor(KDColor color);
+  virtual void setColor(ColorType color);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  protected:
@@ -18,17 +21,21 @@ class SolidColorView : public View {
   void logAttributes(std::ostream& os) const override;
 #endif
  private:
-  KDColor m_color;
+  ColorType m_color;
 };
 
-/* A simple view filled with a single color, with a border of customizable width
- * and color */
-class SolidColorWithBorderView : public View {
- public:
-  SolidColorWithBorderView(KDColor color, KDColor border,
-                           KDCoordinate borderWidth);
+using SolidColorView = SolidColorViewBase<ThemeComponent>;
+using RawColorSolidColorView = SolidColorViewBase<KDColor>;
 
-  void setColors(KDColor inside, KDColor border);
+/* A simple view filled with a single color, with a border of customizable width
+ * and color. ColorType is either ThemeComponent or KDColor */
+template <typename ColorType>
+class SolidColorWithBorderViewBase : public View {
+ public:
+  SolidColorWithBorderViewBase(ColorType color, ColorType border,
+                               KDCoordinate borderWidth);
+
+  void setColors(ColorType inside, ColorType border);
   void setBorderWidth(KDCoordinate width) {
     assert(width >= 0);
     m_borderWidth = width;
@@ -42,9 +49,12 @@ class SolidColorWithBorderView : public View {
 #endif
 
  private:
-  KDColor m_color;
-  KDColor m_border;
+  ColorType m_color;
+  ColorType m_border;
   KDCoordinate m_borderWidth;
 };
+
+using SolidColorWithBorderView = SolidColorWithBorderViewBase<ThemeComponent>;
+using RawColorSolidColorWithBorderView = SolidColorWithBorderViewBase<KDColor>;
 
 }  // namespace Escher

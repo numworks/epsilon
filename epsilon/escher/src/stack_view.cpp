@@ -9,7 +9,8 @@ StackView::StackView(
     OMG::AbstractStaticVector<StackHeaderView>* headerViewStack)
     : View(),
       m_stackHeaderViews(headerViewStack),
-      m_borderView(Palette::GrayBright),
+      // TODO: BorderGrayBright
+      m_borderView(ThemeComponent::TokenGrayBright),
       m_contentView(nullptr),
       m_style(style),
       m_headersOverlapHeaders(true),
@@ -24,7 +25,7 @@ void StackView::setContentView(View* view) {
 
 void StackView::setupHeadersBorderOverlaping(
     bool headersOverlapHeaders, bool headersOverlapContent,
-    KDColor headersContentBorderColor) {
+    ThemeComponent headersContentBorderColor) {
   m_headersOverlapHeaders = headersOverlapHeaders;
   m_headersOverlapContent = headersOverlapContent;
   m_borderView.setColor(headersContentBorderColor);

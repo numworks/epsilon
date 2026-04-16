@@ -18,9 +18,7 @@ PieBannerView::PieBannerView(Store* store)
       m_colorLabel(k_labelFormat),
       m_freqLabel(k_labelFormat),
       m_relativeLabel(k_labelFormat),
-      // TODO: update SolidColorCell to take a theme component
-      m_colorCell(Escher::ColorPicker::Resolve(k_backgroundColor),
-                  Escher::ColorPicker::Resolve(k_backgroundColor), 1),
+      m_colorCell(k_backgroundColor, k_backgroundColor, 1),
       m_freqValue(k_valueFormat),
       m_relativeValue(k_valueFormat),
       m_store(store) {
@@ -41,8 +39,8 @@ void PieBannerView::setCategory(int category) {
     m_category = category;
     char buffer[sizeof(Store::Label)];
     m_store->getCategoryName(m_category, buffer, sizeof(buffer));
-    m_colorCell.setColors(Escher::Palette::DataColorLight[m_category],
-                          Escher::Palette::DataColor[m_category]);
+    m_colorCell.setColors(Escher::DataColorLightComponent(m_category),
+                          Escher::DataColorComponent(m_category));
     m_categoryTitle.setText(buffer);
     constexpr int bufferSize =
         Poincare::PrintFloat::charSizeForFloatsWithPrecision(k_precision);

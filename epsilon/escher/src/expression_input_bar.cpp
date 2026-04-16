@@ -7,7 +7,7 @@
 namespace Escher {
 
 AbstractExpressionInputBar::AbstractExpressionInputBar()
-    : m_line(Palette::GrayMiddle) {}
+    : m_line(ThemeComponent::TokenGrayMiddle) {}
 
 void AbstractExpressionInputBar::layoutSubviews(bool force) {
   setChildFrame(&m_line, KDRect(0, 0, bounds().width(), k_separatorThickness),

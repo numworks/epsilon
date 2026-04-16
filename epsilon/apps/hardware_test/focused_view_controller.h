@@ -20,7 +20,7 @@ class FocusedViewController : public Escher::ViewController {
   bool handleEvent(Ion::Events::Event event) override;
 
  protected:
-  class ContentView : public Escher::SolidColorView {
+  class ContentView : public Escher::RawColorSolidColorView {
    public:
     ContentView();
     Escher::View* subviewAtIndex(int index) override;

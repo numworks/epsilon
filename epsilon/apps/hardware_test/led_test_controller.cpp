@@ -47,14 +47,15 @@ KDColor LEDTestController::LEDColorAtIndex(int i) {
 }
 
 LEDTestController::ContentView::ContentView()
-    : SolidColorView(BasicColor::White),
+    : RawColorSolidColorView(BasicColor::White),
       m_ledColorIndicatorView(BasicColor::Black),
       m_ledColorOutlineView(BasicColor::Black),
       m_ledView({.horizontalAlignment = KDGlyph::k_alignCenter}) {
   m_ledView.setText("LED");
 }
 
-SolidColorView* LEDTestController::ContentView::LEDColorIndicatorView() {
+RawColorSolidColorView*
+LEDTestController::ContentView::LEDColorIndicatorView() {
   return &m_ledColorIndicatorView;
 }
 

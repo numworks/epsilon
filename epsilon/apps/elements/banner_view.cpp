@@ -33,7 +33,7 @@ BannerView::BannerView(Escher::Responder* textFieldParent,
       m_legendView({.style = {.glyphColor = k_legendColor,
                               .backgroundColor = k_backgroundColor,
                               .font = k_legendSize}}),
-      m_button(Escher::ColorPicker::Resolve(k_backgroundColor)) {
+      m_button(k_backgroundColor) {
   m_textField.margins()->setLeft(Escher::Metric::CommonSmallMargin);
 }
 
@@ -100,7 +100,7 @@ void BannerView::layoutSubviews(bool force) {
                 KDRect(bounds().width() - k_buttonWidth, k_borderHeight,
                        k_buttonWidth, k_bannerHeight),
                 force);
-  m_button.setColor(Escher::ColorPicker::Resolve(buttonColor));
+  m_button.setColor(buttonColor);
 
   I18n::Message legendMessage = dataSource->field()->getMessage(z);
   if (legendMessage != I18n::Message::Default) {

@@ -32,7 +32,7 @@ bool FocusedViewController::handleEvent(Ion::Events::Event event) {
 }
 
 FocusedViewController::ContentView::ContentView()
-    : SolidColorView(BasicColor::White),
+    : Escher::RawColorSolidColorView(BasicColor::White),
       m_prefixView({.font = KDFont::Size::Small,
                     .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_testNameView({.horizontalAlignment = KDGlyph::k_alignCenter}),
@@ -82,7 +82,7 @@ void FocusedViewController::ContentView::setBackgroundColor(KDColor color) {
   m_testResultView.setBackgroundColor(color);
   m_suffixView1.setBackgroundColor(color);
   m_suffixView2.setBackgroundColor(color);
-  SolidColorView::setColor(color);
+  Escher::RawColorSolidColorView::setColor(color);
 }
 
 KDCoordinate FocusedViewController::ContentView::layoutGlyphView(

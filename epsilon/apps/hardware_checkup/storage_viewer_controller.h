@@ -15,7 +15,7 @@ class StorageViewerController : public Escher::ViewController {
   void viewWillAppear() override;
 
  private:
-  class ContentView : public Escher::SolidColorView {
+  class ContentView : public Escher::RawColorSolidColorView {
    public:
     constexpr static size_t k_lineBufferSize = 45 + 1 + 1;
     constexpr static size_t k_maxNumberOfLine = 16;

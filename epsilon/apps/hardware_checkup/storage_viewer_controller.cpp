@@ -36,12 +36,12 @@ bool StorageViewerController::deleteDummyRecord() const {
 }
 
 StorageViewerController::ContentView::ContentView()
-    : SolidColorView(BasicColor::White),
+    : Escher::RawColorSolidColorView(BasicColor::White),
       m_textView({.font = KDFont::Size::Small,
                   .verticalAlignment = KDGlyph::k_alignTop}) {}
 
 void StorageViewerController::ContentView::setColor(KDColor color) {
-  SolidColorView::setColor(color);
+  Escher::RawColorSolidColorView::setColor(color);
   m_textView.setBackgroundColor(color);
 }
 

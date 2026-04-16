@@ -137,11 +137,11 @@ static inline void pushEventFromFile(uint8_t c, FILE* f) {
 }
 
 static inline void unescapeText(char* text) {
-  // Unescape: \\ -> \, \n -> newline
-  char* src = text;
+  // Unescape: \\ -> \, \n -> newline. Text is modified in place.
+  const char* src = text;
   char* dst = text;
   while (*src) {
-    if (*src == '\\' && *(src + 1)) {
+    if (*src == '\\' && *(src + 1) != '\0') {
       if (*(src + 1) == '\\') {
         *dst++ = '\\';
         src += 2;
@@ -164,7 +164,10 @@ static bool loadTextFile(FILE* f) {
   while ((ch = getc(f)) != '\n' && ch != EOF) {
   }
 
-  static char line[Ion::Events::sharedExternalTextBufferSize + 64];
+  /* The longuest possible line is an external text where every
+   * character is escaped. */
+  static char line[sizeof("ExternalText ") +
+                   2 * Ion::Events::sharedExternalTextBufferSize];
 
   // Version
   if (fgets(line, sizeof(line), f) == nullptr) {
@@ -209,7 +212,7 @@ static bool loadTextFile(FILE* f) {
     // Name to ID lookup
     bool found = false;
     Ion::Events::Event e = Ion::Events::None;
-    for (int i = 0; i < 255; i++) {
+    for (int i = 0; i < UINT8_MAX; i++) {
       if (Ion::Events::s_nameForEvent[i][0] != 0 &&
           strcmp(Ion::Events::s_nameForEvent[i], line) == 0) {
         e = Ion::Events::Event(i);

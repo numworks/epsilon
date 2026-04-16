@@ -34,6 +34,7 @@ void pullRectNoFocus(KDRect r, KDColor* pixels);
 
 bool waitForVBlank();
 void refreshDisplay();
+uint8_t* framebufferData();
 
 class Context : public KDContext {
   friend OMG::GlobalBox<Context>;

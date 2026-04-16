@@ -24,7 +24,7 @@ class StandbyController : public Escher::ViewController {
       assert(index == 0);
       return &m_textView;
     }
-    Escher::PointerTextView m_textView;
+    Escher::RawColorPointerTextView m_textView;
   };
   ContentView m_view;
 };

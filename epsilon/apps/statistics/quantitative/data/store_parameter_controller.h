@@ -10,7 +10,8 @@ namespace Statistics {
 
 class StoreController;
 
-class StoreParameterController : public Shared::StoreParameterController {
+class StoreParameterController
+    : public Shared::ColorableStoreParameterController {
  public:
   StoreParameterController(Escher::Responder* parentResponder,
                            StoreController* storeController, Store* m_store);
@@ -30,9 +31,9 @@ class StoreParameterController : public Shared::StoreParameterController {
   constexpr static int k_numberOfCellsIfCFColumnSelected = 2;
   // Otherwise, add displayCumulatedFrequencyCell cell
   constexpr static int k_numberOfCellsIfCFColumnNotSelected =
-      Shared::StoreParameterController::k_numberOfCells + 1;
+      Shared::ColorableStoreParameterController::k_numberOfCells + 1;
   constexpr static int k_displayCFIndex =
-      Shared::StoreParameterController::k_numberOfCells;
+      Shared::ColorableStoreParameterController::k_numberOfCells;
 
   I18n::Message sortMessage() override;
 

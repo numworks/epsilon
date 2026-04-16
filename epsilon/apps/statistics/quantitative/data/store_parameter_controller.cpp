@@ -9,7 +9,8 @@ namespace Statistics {
 
 StoreParameterController::StoreParameterController(
     Responder* parentResponder, StoreController* storeController, Store* store)
-    : Shared::StoreParameterController(parentResponder, storeController),
+    : Shared::ColorableStoreParameterController(parentResponder,
+                                                storeController),
       m_store(store) {
   m_displayCumulatedFrequencyCell.label()->setMessage(
       I18n::Message::CumulatedFrequencyColumnToggleTitle);
@@ -24,7 +25,7 @@ StoreParameterController::StoreParameterController(
 void StoreParameterController::initializeColumnParameters() {
   // Number of cells and cells size may change when switching between columns
   m_selectableListView.resetSizeAndOffsetMemoization();
-  Shared::StoreParameterController::initializeColumnParameters();
+  Shared::ColorableStoreParameterController::initializeColumnParameters();
   int relativeColumn = m_store->relativeColumn(m_column);
   m_isCumulatedFrequencyColumnSelected = relativeColumn == 2;
 }
@@ -51,7 +52,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  return Shared::StoreParameterController::handleEvent(event);
+  return Shared::ColorableStoreParameterController::handleEvent(event);
 }
 
 const Escher::AbstractMenuCell* StoreParameterController::cell(int row) const {
@@ -64,14 +65,14 @@ const Escher::AbstractMenuCell* StoreParameterController::cell(int row) const {
   if (row == k_displayCFIndex) {
     return &m_displayCumulatedFrequencyCell;
   }
-  return Shared::StoreParameterController::cell(row);
+  return Shared::ColorableStoreParameterController::cell(row);
 }
 
 void StoreParameterController::viewWillAppear() {
   m_displayCumulatedFrequencyCell.accessory()->setState(
       m_store->displayCumulatedFrequenciesForSeries(
           m_storeColumnHelper->selectedSeries()));
-  Shared::StoreParameterController::viewWillAppear();
+  Shared::ColorableStoreParameterController::viewWillAppear();
 }
 
 I18n::Message StoreParameterController::sortMessage() {

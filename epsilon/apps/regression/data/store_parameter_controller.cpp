@@ -11,7 +11,8 @@ namespace Regression {
 
 StoreParameterController::StoreParameterController(
     Responder* parentResponder, Shared::StoreColumnHelper* storeColumnHelper)
-    : Shared::StoreParameterController(parentResponder, storeColumnHelper) {
+    : Shared::ColorableStoreParameterController(parentResponder,
+                                                storeColumnHelper) {
   m_changeRegressionCell.label()->setMessage(I18n::Message::RegressionModel);
 }
 
@@ -25,7 +26,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     stackView()->push(regressionController);
     return true;
   }
-  return Shared::StoreParameterController::handleEvent(event);
+  return Shared::ColorableStoreParameterController::handleEvent(event);
 }
 
 const AbstractMenuCell* StoreParameterController::cell(int row) const {
@@ -33,7 +34,7 @@ const AbstractMenuCell* StoreParameterController::cell(int row) const {
   if (row == k_changeRegressionCellIndex) {
     return &m_changeRegressionCell;
   }
-  return Shared::StoreParameterController::cell(
+  return Shared::ColorableStoreParameterController::cell(
       row - (row > k_changeRegressionCellIndex));
 }
 
@@ -42,7 +43,7 @@ void StoreParameterController::viewWillAppear() {
   m_changeRegressionCell.subLabel()->setMessage(
       regressionStore->modelForSeries(m_storeColumnHelper->selectedSeries())
           ->name());
-  Shared::StoreParameterController::viewWillAppear();
+  Shared::ColorableStoreParameterController::viewWillAppear();
 }
 
 }  // namespace Regression

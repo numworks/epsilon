@@ -8,7 +8,6 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/switch_view.h>
 
-#include "color_names.h"
 #include "column_parameter_controller.h"
 #include "dataset_color_parameter_controller.h"
 
@@ -27,7 +26,7 @@ class StoreParameterController : public ColumnParameterController {
   void initializeColumnParameters() override;
 
  protected:
-  constexpr static int k_numberOfCells = 5;
+  constexpr static int k_numberOfCells = 4;
 
   StoreColumnHelper* m_storeColumnHelper;
   Escher::MenuCell<Escher::OneLineBufferTextView<KDFont::Size::Large>>
@@ -46,6 +45,24 @@ class StoreParameterController : public ColumnParameterController {
   }
 
   Escher::MenuCell<Escher::MessageTextView> m_fillFormula;
+};
+
+/* Extends StoreParameterController with a color-selection cell (first row).
+ * Statistics and regression use this subclass; inference uses the lean base. */
+class ColorableStoreParameterController : public StoreParameterController {
+ public:
+  ColorableStoreParameterController(Escher::Responder* parentResponder,
+                                    StoreColumnHelper* storeColumnHelper);
+  bool handleEvent(Ion::Events::Event event) override;
+  int numberOfRows() const override { return k_numberOfCells; }
+  const Escher::AbstractMenuCell* cell(int row) const override;
+  void viewWillAppear() override;
+
+ protected:
+  constexpr static int k_numberOfCells =
+      StoreParameterController::k_numberOfCells + 1;
+
+ private:
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
       m_colorCell;

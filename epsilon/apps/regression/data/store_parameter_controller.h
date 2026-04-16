@@ -11,13 +11,14 @@ namespace Regression {
 
 class StoreController;
 
-class StoreParameterController : public Shared::StoreParameterController {
+class StoreParameterController
+    : public Shared::ColorableStoreParameterController {
  public:
   StoreParameterController(Escher::Responder* parentResponder,
                            Shared::StoreColumnHelper* storeColumnHelper);
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override {
-    return Shared::StoreParameterController::numberOfRows() + 1;
+    return Shared::ColorableStoreParameterController::numberOfRows() + 1;
   }
   const Escher::AbstractMenuCell* cell(int row) const override;
   void viewWillAppear() override;

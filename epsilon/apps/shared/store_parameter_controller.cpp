@@ -13,15 +13,13 @@ namespace Shared {
 StoreParameterController::StoreParameterController(
     Responder* parentResponder, StoreColumnHelper* storeColumnHelper)
     : ColumnParameterController(parentResponder),
-      m_storeColumnHelper(storeColumnHelper),
-      m_datasetColorParameterController(parentResponder) {
+      m_storeColumnHelper(storeColumnHelper) {
   m_hideCell.label()->setMessage(
       I18n::Message::ActivateDeactivateStoreParamTitle);
   m_hideCell.subLabel()->setMessage(
       I18n::Message::ActivateDeactivateStoreParamDescription);
   m_sortCell.label()->setMessage(I18n::Message::SortCellLabel);
   m_fillFormula.label()->setMessage(I18n::Message::FillWithFormula);
-  m_colorCell.label()->setMessage(I18n::Message::Color);
 }
 
 void StoreParameterController::initializeColumnParameters() {
@@ -58,12 +56,6 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
       updateHideCellSwitch();
       m_selectableListView.reloadSelectedCell();
     }
-  } else if (cell == &m_colorCell) {
-    m_datasetColorParameterController.setStore(m_storeColumnHelper->store());
-    m_datasetColorParameterController.setSeries(
-        m_storeColumnHelper->selectedSeries());
-    stackView()->push(&m_datasetColorParameterController);
-    return true;
   } else {
     assert(cell == &m_clearColumn);
     stackView()->pop();
@@ -75,8 +67,8 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
 
 const AbstractMenuCell* StoreParameterController::cell(int row) const {
   assert(row >= 0 && row < k_numberOfCells);
-  const AbstractMenuCell* cells[] = {&m_colorCell, &m_sortCell, &m_fillFormula,
-                                     &m_hideCell, &m_clearColumn};
+  const AbstractMenuCell* cells[] = {&m_sortCell, &m_fillFormula, &m_hideCell,
+                                     &m_clearColumn};
   static_assert(std::size(cells) == k_numberOfCells,
                 "StoreParameterController::k_numberOfCells is deprecated");
   return cells[row];
@@ -84,17 +76,50 @@ const AbstractMenuCell* StoreParameterController::cell(int row) const {
 
 void StoreParameterController::viewWillAppear() {
   updateHideCellSwitch();
-  if (m_column >= 0) {
-    int series = m_storeColumnHelper->store()->seriesAtColumn(m_column);
-    m_colorCell.subLabel()->setMessage(
-        DatasetColorParameterController::GetColorName(
-            m_storeColumnHelper->store()->colorIndexForSeries(series)));
-  }
   ColumnParameterController::viewWillAppear();
 }
 
 ClearColumnHelper* StoreParameterController::clearColumnHelper() {
   return m_storeColumnHelper->clearColumnHelper();
+}
+
+/* ColorableStoreParameterController */
+
+ColorableStoreParameterController::ColorableStoreParameterController(
+    Responder* parentResponder, StoreColumnHelper* storeColumnHelper)
+    : StoreParameterController(parentResponder, storeColumnHelper),
+      m_datasetColorParameterController(parentResponder) {
+  m_colorCell.label()->setMessage(I18n::Message::Color);
+}
+
+bool ColorableStoreParameterController::handleEvent(Ion::Events::Event event) {
+  AbstractMenuCell* cell = static_cast<AbstractMenuCell*>(selectedCell());
+  if (cell == &m_colorCell && m_colorCell.canBeActivatedByEvent(event)) {
+    m_datasetColorParameterController.setStore(m_storeColumnHelper->store());
+    m_datasetColorParameterController.setSeries(
+        m_storeColumnHelper->selectedSeries());
+    stackView()->push(&m_datasetColorParameterController);
+    return true;
+  }
+  return StoreParameterController::handleEvent(event);
+}
+
+const AbstractMenuCell* ColorableStoreParameterController::cell(int row) const {
+  assert(row >= 0 && row < k_numberOfCells);
+  if (row == 0) {
+    return &m_colorCell;
+  }
+  return StoreParameterController::cell(row - 1);
+}
+
+void ColorableStoreParameterController::viewWillAppear() {
+  if (m_column >= 0) {
+    int series = m_storeColumnHelper->store()->seriesAtColumn(m_column);
+    m_colorCell.subLabel()->setMessage(
+        AbstractColorParameterController::GetColorName(
+            m_storeColumnHelper->store()->colorIndexForSeries(series)));
+  }
+  StoreParameterController::viewWillAppear();
 }
 
 }  // namespace Shared

@@ -113,12 +113,11 @@ const AbstractMenuCell* ColorableStoreParameterController::cell(int row) const {
 }
 
 void ColorableStoreParameterController::viewWillAppear() {
-  if (m_column >= 0) {
-    int series = m_storeColumnHelper->store()->seriesAtColumn(m_column);
-    m_colorCell.subLabel()->setMessage(
-        AbstractColorParameterController::GetColorName(
-            m_storeColumnHelper->store()->colorIndexForSeries(series)));
-  }
+  assert(m_column >= 0);
+  int series = m_storeColumnHelper->store()->seriesAtColumn(m_column);
+  m_colorCell.subLabel()->setMessage(
+      AbstractColorParameterController::GetColorName(
+          m_storeColumnHelper->store()->colorIndexForSeries(series)));
   StoreParameterController::viewWillAppear();
 }
 

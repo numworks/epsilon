@@ -30,8 +30,8 @@ void AbstractColorParameterController::fillCellForRow(HighlightCell* cell,
                                                       int row) {
   ColorCell* colorCell = static_cast<ColorCell*>(cell);
   assert(row >= 0 && row < ColorNames::k_count);
-  colorCell->label()->setMessage(ColorNames::k_messages[row]);
-  colorCell->accessory()->setColor(ColorNames::k_colors[row]);
+  colorCell->label()->setMessage(GetColorName(row));
+  colorCell->accessory()->setColor(GetColor(row));
 }
 
 KDCoordinate AbstractColorParameterController::defaultRowHeight() {

@@ -106,7 +106,8 @@ void ColumnParameterController::viewWillAppear() {
    * redraws, it does not resize the sub-label within MenuCell::layoutSubviews).
    */
   m_colorCell.subLabel()->setMessage(
-      Shared::ColorNames::k_messages[m_store->colorIndexForGroup(m_column)]);
+      CategoricalColorParameterController::GetColorName(
+          m_store->colorIndexForGroup(m_column)));
   m_selectableListView.reloadCell(0, true);
   Escher::ExplicitSelectableListViewController::viewWillAppear();
 }

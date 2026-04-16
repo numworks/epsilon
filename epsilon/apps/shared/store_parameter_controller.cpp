@@ -87,8 +87,8 @@ void StoreParameterController::viewWillAppear() {
   if (m_column >= 0) {
     int series = m_storeColumnHelper->store()->seriesAtColumn(m_column);
     m_colorCell.subLabel()->setMessage(
-        ColorNames::k_messages[m_storeColumnHelper->store()
-                                   ->colorIndexForSeries(series)]);
+        DatasetColorParameterController::GetColorName(
+            m_storeColumnHelper->store()->colorIndexForSeries(series)));
   }
   ColumnParameterController::viewWillAppear();
 }

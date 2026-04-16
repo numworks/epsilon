@@ -9,7 +9,7 @@ namespace Shared {
 int ColorParameterController::currentColorIndex() const {
   KDColor functionColor = function()->color(m_derivationOrder);
   for (int i = 0; i < ColorNames::k_count; i++) {
-    if (functionColor == ColorNames::k_colors[i]) {
+    if (functionColor == GetColor(i)) {
       return i;
     }
   }
@@ -17,7 +17,7 @@ int ColorParameterController::currentColorIndex() const {
 }
 
 void ColorParameterController::setColorIndex(int colorIndex) {
-  function()->setColor(ColorNames::k_colors[colorIndex], m_derivationOrder);
+  function()->setColor(GetColor(colorIndex), m_derivationOrder);
 }
 
 void ColorParameterController::popAfterColorSelection(

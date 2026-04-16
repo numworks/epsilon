@@ -32,9 +32,10 @@ class AbstractEvenOddEditableTextCell : public EvenOddCell, public Responder {
 template <int NumberOfSignificantDigits>
 class EvenOddEditableTextCell : public AbstractEvenOddEditableTextCell {
  public:
-  EvenOddEditableTextCell(Responder* parentResponder = nullptr,
-                          TextFieldDelegate* delegate = nullptr,
-                          Escher::TextFormat format = k_smallCellDefaultFormat)
+  EvenOddEditableTextCell(
+      Responder* parentResponder = nullptr,
+      TextFieldDelegate* delegate = nullptr,
+      const Escher::TextFormat& format = k_smallCellDefaultFormat)
       : AbstractEvenOddEditableTextCell(parentResponder),
         m_editableCell(this, delegate, format) {}
 

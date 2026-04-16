@@ -33,7 +33,7 @@ class TextInput : public EditableField {
  protected:
   class ContentView : public TextCursorView::CursorFieldView {
    public:
-    ContentView(Escher::TextFormat format)
+    ContentView(const Escher::TextFormat& format)
         : TextCursorView::CursorFieldView(),
           m_cursorLocation(nullptr),
           m_selectionStart(nullptr),

@@ -9,7 +9,7 @@ class TextField : public AbstractTextField {
  public:
   TextField(Responder* parentResponder, char* textBuffer, size_t textBufferSize,
             TextFieldDelegate* delegate = nullptr,
-            Escher::TextFormat format = {})
+            const Escher::TextFormat& format = {})
       : AbstractTextField(parentResponder, &m_contentView, delegate),
         m_contentView(textBuffer, textBufferSize, format) {}
 

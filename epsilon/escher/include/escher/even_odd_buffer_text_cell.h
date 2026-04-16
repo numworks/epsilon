@@ -42,7 +42,7 @@ class EvenOddBufferTextCell : public AbstractEvenOddBufferTextCell {
       "EvenOddBufferTextCell must be templated with a BufferTextView class");
 #endif
  public:
-  EvenOddBufferTextCell(TextFormat format = k_smallCellDefaultFormat)
+  EvenOddBufferTextCell(const TextFormat& format = k_smallCellDefaultFormat)
       : AbstractEvenOddBufferTextCell(), m_bufferTextView(format) {}
 
  private:

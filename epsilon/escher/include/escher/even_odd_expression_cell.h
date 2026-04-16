@@ -8,7 +8,7 @@ namespace Escher {
 
 class EvenOddExpressionCell : public EvenOddCell {
  public:
-  EvenOddExpressionCell(TextFormat format = {});
+  EvenOddExpressionCell(const TextFormat& format = {});
   void setLayout(const Poincare::Layout& layout);
   void setBackgroundColor(ThemeComponent backgroundColor);
   void setTextColor(ThemeComponent textColor);

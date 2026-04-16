@@ -82,7 +82,7 @@ class AbstractTextField : public TextInput {
     constexpr static int k_maxBufferSize = 220;
 
     ContentView(char* textBuffer, size_t textBufferSize,
-                Escher::TextFormat format);
+                const Escher::TextFormat& format);
 
     // View
     void drawRect(KDContext* ctx, KDRect rect) const override;

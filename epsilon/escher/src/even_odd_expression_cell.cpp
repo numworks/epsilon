@@ -6,7 +6,7 @@ using namespace Poincare;
 
 namespace Escher {
 
-EvenOddExpressionCell::EvenOddExpressionCell(TextFormat format)
+EvenOddExpressionCell::EvenOddExpressionCell(const TextFormat& format)
     : EvenOddCell(), m_layoutView(format), m_margins() {}
 
 void EvenOddExpressionCell::setLayout(const Layout& layoutR) {

@@ -13,7 +13,8 @@ namespace Escher {
 class LayoutField : public EditableField {
  public:
   LayoutField(Responder* parentResponder,
-              LayoutFieldDelegate* delegate = nullptr, TextFormat format = {});
+              LayoutFieldDelegate* delegate = nullptr,
+              const TextFormat& format = {});
   void setDelegate(LayoutFieldDelegate* delegate);
   const Poincare::SymbolContext& context() const;
   bool isEditing() const { return m_contentView.isEditing(); }
@@ -109,7 +110,7 @@ class LayoutField : public EditableField {
 
   class ContentView : public TextCursorView::CursorFieldView {
    public:
-    ContentView(TextFormat format);
+    ContentView(const TextFormat& format);
     bool isEditing() const { return m_isEditing; }
     // returns True if LayoutField should reload
     bool setEditing(bool isEditing);

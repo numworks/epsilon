@@ -14,8 +14,9 @@ class ScrollableLayoutView : public ScrollableView<ScrollView::ArrowDecorator>,
                              public CellWidget {
  public:
   ScrollableLayoutView(Responder* parentResponder, KDCoordinate leftRightMargin,
-                       KDCoordinate topBottomMargin, TextFormat format = {});
-  ScrollableLayoutView(TextFormat format = {});
+                       KDCoordinate topBottomMargin,
+                       const TextFormat& format = {});
+  ScrollableLayoutView(const TextFormat& format = {});
   const Poincare::Layout& layout() const override;
   KDFont::Size font() const { return m_layoutView.font(); }
   void setFont(KDFont::Size font) {

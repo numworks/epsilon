@@ -12,7 +12,7 @@ class EvenOddDoubleBufferTextCell : public Escher::EvenOddCell,
  public:
   EvenOddDoubleBufferTextCell(
       Escher::Responder* parentResponder = nullptr,
-      Escher::TextFormat format =
+      const Escher::TextFormat& format =
           Escher::EvenOddCell::k_smallCellDefaultFormat);
   const char* text() const override;
   const char* firstText() const;

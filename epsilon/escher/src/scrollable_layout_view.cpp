@@ -9,7 +9,7 @@ namespace Escher {
 ScrollableLayoutView::ScrollableLayoutView(Responder* parentResponder,
                                            KDCoordinate leftRightMargin,
                                            KDCoordinate topBottomMargin,
-                                           TextFormat format)
+                                           const TextFormat& format)
     : ScrollableView(parentResponder, &m_layoutView, this),
       m_layoutView(format) {
   decorator()->setFont(format.style.font);
@@ -18,7 +18,7 @@ ScrollableLayoutView::ScrollableLayoutView(Responder* parentResponder,
   ScrollableView::setBackgroundColor(format.style.backgroundColor);
 }
 
-ScrollableLayoutView::ScrollableLayoutView(TextFormat format)
+ScrollableLayoutView::ScrollableLayoutView(const TextFormat& format)
     : ScrollableLayoutView(nullptr, 0, 0, format) {}
 
 const Poincare::Layout& ScrollableLayoutView::layout() const {

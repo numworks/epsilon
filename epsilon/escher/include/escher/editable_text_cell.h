@@ -36,7 +36,7 @@ class EditableTextCell : public AbstractEditableTextCell {
  public:
   EditableTextCell(Responder* parentResponder = nullptr,
                    TextFieldDelegate* delegate = nullptr,
-                   Escher::TextFormat format = {})
+                   const Escher::TextFormat& format = {})
       : AbstractEditableTextCell(parentResponder),
         m_textField(this, m_textBody, k_bufferSize, delegate, format) {
     m_textBody[0] = 0;

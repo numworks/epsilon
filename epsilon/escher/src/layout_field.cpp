@@ -101,7 +101,7 @@ KDRect LayoutField::ContentView::cursorRect() const {
                 m_cursor.cursorHeight(font()));
 }
 
-LayoutField::ContentView::ContentView(TextFormat format)
+LayoutField::ContentView::ContentView(const TextFormat& format)
     : m_cursor(), m_layoutView(&m_cursor, format), m_isEditing(false) {
   clearLayout();
 }
@@ -111,7 +111,8 @@ LayoutField::ContentView::ContentView(TextFormat format)
 static char s_draftBuffer[AbstractTextField::MaxBufferSize()];
 
 LayoutField::LayoutField(Responder* parentResponder,
-                         LayoutFieldDelegate* delegate, TextFormat format)
+                         LayoutFieldDelegate* delegate,
+                         const TextFormat& format)
     : EditableField(parentResponder, &m_contentView),
       m_contentView(format),
       m_delegate(delegate),

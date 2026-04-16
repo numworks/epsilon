@@ -24,7 +24,7 @@ static char s_draftTextBuffer[AbstractTextField::MaxBufferSize()];
 
 AbstractTextField::ContentView::ContentView(char* textBuffer,
                                             size_t textBufferSize,
-                                            Escher::TextFormat format)
+                                            const Escher::TextFormat& format)
     : TextInput::ContentView(format),
       m_textBuffer(textBuffer),
       m_textBufferSize(textBufferSize),

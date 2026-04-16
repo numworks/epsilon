@@ -17,7 +17,7 @@ class EditableExpressionModelCell : public HighlightCell {
  public:
   EditableExpressionModelCell(Responder* parentResponder = nullptr,
                               LayoutFieldDelegate* layoutDelegate = nullptr,
-                              TextFormat format = {});
+                              const TextFormat& format = {});
   void setLayout(const Poincare::Layout& layout) {
     m_layoutField.setLayout(layout);
   }

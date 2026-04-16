@@ -8,7 +8,7 @@ namespace Escher {
 
 class EvenOddMessageTextCell : public EvenOddCell {
  public:
-  EvenOddMessageTextCell(TextFormat format = {
+  EvenOddMessageTextCell(const TextFormat& format = {
                              .style = {.font = KDFont::Size::Small},
                              .horizontalAlignment = KDGlyph::k_alignCenter});
   void setMessage(I18n::Message textContent) {

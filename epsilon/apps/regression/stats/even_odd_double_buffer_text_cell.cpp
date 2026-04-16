@@ -8,7 +8,7 @@ using namespace Escher;
 namespace Regression {
 
 EvenOddDoubleBufferTextCell::EvenOddDoubleBufferTextCell(
-    Responder* parentResponder, Escher::TextFormat format)
+    Responder* parentResponder, const Escher::TextFormat& format)
     : EvenOddCell(),
       Responder(parentResponder),
       m_firstTextSelected(true),

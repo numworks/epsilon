@@ -13,16 +13,21 @@ format: CXXFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFF
 format: PYFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard --full-name) | grep --extended-regexp "(\.py$$)")
 format: JSFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard --full-name) | grep --extended-regexp "(\.js$$|\.cjs$$|\.mjs$$|\.ts$$|\.html)")
 format:
-# Use xargs to elegantly handle the case CXXFILES=""
-	echo "=== Formatting .c, .cpp and .h files ==="
-	$(CXXFORMAT) --version
-	cd $(ROOT); echo $(CXXFILES) | xargs -r $(CXXFORMAT) $(CXXFORMATARGS)
-	echo "=== Formatting .py files ==="
-	$(PYFORMAT) --version
-	cd $(ROOT); echo $(PYFILES) | xargs -r $(PYFORMAT) $(PYFORMATARGS)
-	echo "=== Formatting .js files ==="
-	$(JSFORMAT) --version
-	cd $(ROOT); echo $(JSFILES) | xargs -r $(JSFORMAT) $(JSFORMATARGS)
+	@if [ -n "$(CXXFILES)" ]; then \
+	  echo "=== Formatting .c, .cpp and .h files ==="; \
+	  $(CXXFORMAT) --version; \
+	  cd $(ROOT) && echo $(CXXFILES) | xargs -r $(CXXFORMAT) $(CXXFORMATARGS); \
+	fi
+	@if [ -n "$(PYFILES)" ]; then \
+	  echo "=== Formatting .py files ==="; \
+	  $(PYFORMAT) --version; \
+	  cd $(ROOT) && echo $(PYFILES) | xargs -r $(PYFORMAT) $(PYFORMATARGS); \
+	fi
+	@if [ -n "$(JSFILES)" ]; then \
+	  echo "=== Formatting .js files ==="; \
+	  $(JSFORMAT) --version; \
+	  cd $(ROOT) && echo $(JSFILES) | xargs -r $(JSFORMAT) $(JSFORMATARGS); \
+	fi
 
 .PHONY: reformat
 reformat:

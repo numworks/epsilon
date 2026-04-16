@@ -84,9 +84,9 @@ void BarGraphView::ContentView::drawCategory(KDContext* ctx, KDRect rect,
     KDCoordinate barHeight = (value / maxValue) * k_maxBarHeight;
     KDRect barRect(xOffset, yOffset + k_maxBarHeight - barHeight, k_barWidth,
                    barHeight);
-    ctx->fillRect(barRect, Escher::Palette::DataColorLight[group]);
+    ctx->fillRect(barRect, m_store->colorLightOfGroupAtIndex(group));
     // Draw borders
-    KDColor borderColor = Escher::Palette::DataColor[group];
+    KDColor borderColor = m_store->colorOfGroupAtIndex(group);
     KDCoordinate borderWidth = std::min(
         m_isSelected &&
                 (category == m_selectedCategory && group == m_selectedGroup)

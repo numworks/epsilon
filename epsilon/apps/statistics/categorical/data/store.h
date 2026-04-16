@@ -42,6 +42,7 @@ class Store {
     std::array<Label, k_maxNumberOfGroups> m_groupLabels = {};
     std::array<GroupStatus, k_maxNumberOfGroups> m_groupStatus = {};
     std::array<bool, k_maxNumberOfGroups> m_showRelativeFreqColumn = {};
+    std::array<uint8_t, k_maxNumberOfGroups> m_colorIndex = {};
     std::array<Label, k_maxNumberOfCategory> m_categoryLabels = {};
     float m_data[k_maxNumberOfGroups][k_maxNumberOfCategory];
     uint8_t m_selectedGroupForPieGraph;
@@ -110,6 +111,18 @@ class Store {
     m_table->m_showRelativeFreqColumn[col] = active;
   }
   float getRelativeFrequency(int col, int row) const;
+
+  // Color
+  KDColor colorOfGroupAtIndex(int group) const;
+  KDColor colorLightOfGroupAtIndex(int group) const;
+  uint8_t colorIndexForGroup(int col) const {
+    assert(0 <= col && col < k_maxNumberOfGroups);
+    return m_table->m_colorIndex[col];
+  }
+  void setColorIndexForGroup(int col, uint8_t colorIndex) {
+    assert(0 <= col && col < k_maxNumberOfGroups);
+    m_table->m_colorIndex[col] = colorIndex;
+  }
 
   // Selected group in pie graph
   int getSelectedGroupForPieGraph() {

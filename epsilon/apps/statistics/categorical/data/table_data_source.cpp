@@ -33,7 +33,7 @@ void TableViewDataSource::prepareHeaderCell(Escher::HighlightCell* cell,
         I18n::translate(I18n::Message::RelativeFrequencyColumnName));
   }
   myCell->setColor(store()->isGroupActive(info.groupNumber)
-                       ? Escher::Palette::DataColor[info.groupNumber]
+                       ? store()->colorOfGroupAtIndex(info.groupNumber)
                        : Escher::Palette::GrayDark);
   static_assert(Escher::Palette::k_numberOfDataColors >=
                 Store::k_maxNumberOfGroups);

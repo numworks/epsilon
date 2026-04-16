@@ -1,6 +1,7 @@
 
 #include "column_parameter_controller.h"
 
+#include <apps/shared/color_names.h>
 #include <escher/app.h>
 #include <poincare/print.h>
 
@@ -13,10 +14,12 @@ ColumnParameterController::ColumnParameterController(
     Escher::StackViewController* stackViewController,
     StoreController* storeController)
     : Escher::ExplicitSelectableListViewController(parentResponder),
+      m_colorParameterController(parentResponder),
       m_columnNameCell(&m_selectableListView, this),
       m_store(store),
       m_stackViewController(stackViewController),
       m_storeController(storeController) {
+  m_colorCell.label()->setMessage(I18n::Message::Color);
   m_columnNameCell.label()->setMessage(I18n::Message::ColumnName);
   m_showInGraphCell.label()->setMessage(
       I18n::Message::CategoricalActivateDeactivateStoreParamTitle);
@@ -24,6 +27,7 @@ ColumnParameterController::ColumnParameterController(
       I18n::Message::CategoricalActivateDeactivateStoreParamDescription);
   m_clearColumnCell.label()->setMessage(I18n::Message::ClearColumn);
   m_relativeFreqCell.label()->setMessage(I18n::Message::RelativeFrequency);
+  m_colorParameterController.setStore(store);
 }
 
 bool ColumnParameterController::handleEvent(Ion::Events::Event event) {
@@ -32,6 +36,11 @@ bool ColumnParameterController::handleEvent(Ion::Events::Event event) {
   assert(m_column >= 0);
   if (!cell->canBeActivatedByEvent(event)) {
     return false;
+  }
+  if (cell == &m_colorCell) {
+    m_colorParameterController.setColumn(m_column);
+    m_stackViewController->push(&m_colorParameterController);
+    return true;
   }
   if (cell == &m_clearColumnCell) {
     m_stackViewController->pop();
@@ -86,9 +95,20 @@ bool ColumnParameterController::textFieldDidFinishEditing(
 const Escher::AbstractMenuCell* ColumnParameterController::cell(int row) const {
   assert(0 <= row && row < k_numberOfCells);
   std::array<const Escher::AbstractMenuCell*, k_numberOfCells> cells = {
-      &m_columnNameCell, &m_showInGraphCell, &m_clearColumnCell,
+      &m_colorCell, &m_columnNameCell, &m_showInGraphCell, &m_clearColumnCell,
       &m_relativeFreqCell};
   return cells[row];
+}
+
+void ColumnParameterController::viewWillAppear() {
+  /* colorIndexForGroup or m_column may have been changed. Re-layout the cell so
+   * the sub-label frame reflects the new text width (setMessage alone only
+   * redraws, it does not resize the sub-label within MenuCell::layoutSubviews).
+   */
+  m_colorCell.subLabel()->setMessage(
+      Shared::ColorNames::k_messages[m_store->colorIndexForGroup(m_column)]);
+  m_selectableListView.reloadCell(0, true);
+  Escher::ExplicitSelectableListViewController::viewWillAppear();
 }
 
 const char* ColumnParameterController::title() const {

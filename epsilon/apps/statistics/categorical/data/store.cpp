@@ -1,14 +1,18 @@
 #include "store.h"
 
+#include <escher/palette.h>
+
 #include <cmath>
 
 namespace Statistics::Categorical {
 
 Store::TableData::TableData() : m_selectedGroupForPieGraph(0) {
+  static_assert(k_maxNumberOfGroups <= UINT8_MAX, "Too many groups");
   for (int group = 0; group < k_maxNumberOfGroups; ++group) {
     m_groupLabels[group][0] = '\x00';
     m_groupStatus[group] = GroupStatus::Empty;
     m_showRelativeFreqColumn[group] = false;
+    m_colorIndex[group] = static_cast<uint8_t>(group);
   }
   for (Label& label : m_categoryLabels) {
     label[0] = '\x00';
@@ -228,6 +232,14 @@ float Store::getRelativeFrequency(int col, int row) const {
   assert(0 <= row && row < k_maxNumberOfCategory);
   float value = m_table->m_data[col][row];
   return std::isfinite(value) ? value / m_sumOfCategories[col] : NAN;
+}
+
+KDColor Store::colorOfGroupAtIndex(int group) const {
+  return Escher::Palette::DataColor[colorIndexForGroup(group)];
+}
+
+KDColor Store::colorLightOfGroupAtIndex(int group) const {
+  return Escher::Palette::DataColorLight[colorIndexForGroup(group)];
 }
 
 void Store::recomputeSum(int column) {

@@ -6,7 +6,7 @@ using namespace Escher;
 
 namespace Shared {
 
-int ColorParameterController::currentColorIndex() {
+int ColorParameterController::currentColorIndex() const {
   KDColor functionColor = function()->color(m_derivationOrder);
   for (int i = 0; i < ColorNames::k_count; i++) {
     if (functionColor == ColorNames::k_colors[i]) {
@@ -33,7 +33,7 @@ void ColorParameterController::setRecord(Ion::Storage::Record record,
   m_derivationOrder = derivationOrder;
 }
 
-OMG::ExpiringPointer<Function> ColorParameterController::function() {
+OMG::ExpiringPointer<Function> ColorParameterController::function() const {
   return FunctionApp::app()->functionStore().modelForRecord(m_record);
 }
 

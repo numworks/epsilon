@@ -17,7 +17,7 @@ class DatasetColorParameterController
   void setSeries(int series) { m_series = series; }
 
  protected:
-  int currentColorIndex() override {
+  int currentColorIndex() const override {
     assert(m_store != nullptr);
     return m_store->colorIndexForSeries(m_series);
   }

@@ -18,7 +18,7 @@ class CategoricalColorParameterController
   void setColumn(int col) { m_column = col; }
 
  protected:
-  int currentColorIndex() override {
+  int currentColorIndex() const override {
     assert(m_store && m_column >= 0);
     return m_store->colorIndexForGroup(m_column);
   }

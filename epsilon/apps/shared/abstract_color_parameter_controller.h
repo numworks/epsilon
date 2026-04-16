@@ -37,7 +37,7 @@ class AbstractColorParameterController
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  protected:
-  virtual int currentColorIndex() = 0;
+  virtual int currentColorIndex() const = 0;
   virtual void setColorIndex(int colorIndex) = 0;
   // Default navigation: pop once (suitable for data app parameter menus).
   // Override for apps that need deeper stack unwinding.

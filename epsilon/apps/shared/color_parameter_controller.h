@@ -15,12 +15,12 @@ class ColorParameterController : public AbstractColorParameterController {
   void setRecord(Ion::Storage::Record record, int derivationOrder = 0);
 
  protected:
-  int currentColorIndex() override;
+  int currentColorIndex() const override;
   void setColorIndex(int colorIndex) override;
   void popAfterColorSelection(Escher::StackViewController* stack) override;
 
  private:
-  OMG::ExpiringPointer<Function> function();
+  OMG::ExpiringPointer<Function> function() const;
 
   Ion::Storage::Record m_record;
   int m_derivationOrder;

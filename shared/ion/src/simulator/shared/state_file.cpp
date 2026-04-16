@@ -54,6 +54,12 @@ static inline bool loadHeaderAfterMagic(const char* afterMagic) {
   return true;
 }
 
+static inline bool shouldNotAppearInStateFile(Ion::Events::Event e) {
+  // These events are runtime-only and must not be stored in state files
+  return e == Ion::Events::Termination || e == Ion::Events::TimerFire ||
+         e == Ion::Events::DeprecatedExternalText;
+}
+
 static inline Ion::Events::Event reconstructEvent(uint8_t c) {
   Ion::Events::Event e = Ion::Events::Event(c);
   if (!Events::isDefined(static_cast<uint8_t>(
@@ -63,8 +69,7 @@ static inline Ion::Events::Event reconstructEvent(uint8_t c) {
   }
   assert(Events::isDefined(static_cast<uint8_t>(e)));
 
-  if (e == Ion::Events::Termination || e == Ion::Events::TimerFire ||
-      e == Ion::Events::DeprecatedExternalText) {
+  if (shouldNotAppearInStateFile(e)) {
     return Ion::Events::None;
   }
   return e;
@@ -230,9 +235,7 @@ static bool loadTextFile(FILE* f) {
     if (!found) {
       continue;
     }
-    if (e == Ion::Events::None || e == Ion::Events::Termination ||
-        e == Ion::Events::TimerFire ||
-        e == Ion::Events::DeprecatedExternalText) {
+    if (e == Ion::Events::None || shouldNotAppearInStateFile(e)) {
       continue;
     }
 

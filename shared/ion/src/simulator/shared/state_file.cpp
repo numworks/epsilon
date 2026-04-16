@@ -158,6 +158,13 @@ static inline void unescapeText(char* text) {
   *dst = 0;
 }
 
+static inline void stripNewline(char* s) {
+  char* nl = strchr(s, '\n');
+  if (nl) {
+    *nl = 0;
+  }
+}
+
 static bool loadTextFile(FILE* f) {
   // Consume rest of magic line (the newline after "NWST")
   int ch;
@@ -173,7 +180,7 @@ static bool loadTextFile(FILE* f) {
   if (fgets(line, sizeof(line), f) == nullptr) {
     return false;
   }
-  line[strcspn(line, "\r\n")] = 0;
+  stripNewline(line);
   if (strncmp(line, softwareVersion(), sVersionLength) != 0 &&
       strncmp(line, sWildcardVersion, sVersionLength) != 0) {
     return false;
@@ -191,14 +198,14 @@ static bool loadTextFile(FILE* f) {
   if (fgets(line, sizeof(line), f) == nullptr) {
     return false;
   }
-  line[strcspn(line, "\r\n")] = 0;
+  stripNewline(line);
   if (strncmp(line, sWildcardLanguage, sLanguageLength) != 0) {
     Journal::replayJournal()->setStartingLanguage(line);
   }
 
   // Events
   while (fgets(line, sizeof(line), f) != nullptr) {
-    line[strcspn(line, "\r\n")] = 0;
+    stripNewline(line);
     if (line[0] == 0) {
       continue;
     }

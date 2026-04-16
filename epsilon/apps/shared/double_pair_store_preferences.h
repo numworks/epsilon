@@ -22,16 +22,32 @@ class DoublePairStorePreferences {
       m_colorIndex[i] = static_cast<uint8_t>(i);
     }
   }
-
+  constexpr static bool ValidSeriesIndex(int series) {
+    return series >= 0 && series < DoublePairStore::k_numberOfSeries;
+  }
   bool seriesIsActive(int series) const {
+    assert(ValidSeriesIndex(series));
     return m_valid[series] && !m_hidden[series];
   }
-  bool seriesIsValid(int series) const { return m_valid[series]; }
-  void setSeriesValid(int series, bool valid) { m_valid[series] = valid; }
-  void setSeriesHidden(int series, bool hidden) { m_hidden[series] = hidden; }
+  bool seriesIsValid(int series) const {
+    assert(ValidSeriesIndex(series));
+    return m_valid[series];
+  }
+  void setSeriesValid(int series, bool valid) {
+    assert(ValidSeriesIndex(series));
+    m_valid[series] = valid;
+  }
+  void setSeriesHidden(int series, bool hidden) {
+    assert(ValidSeriesIndex(series));
+    m_hidden[series] = hidden;
+  }
 
-  uint8_t colorIndexForSeries(int series) const { return m_colorIndex[series]; }
+  uint8_t colorIndexForSeries(int series) const {
+    assert(ValidSeriesIndex(series));
+    return m_colorIndex[series];
+  }
   void setColorIndexForSeries(int series, uint8_t colorIndex) {
+    assert(ValidSeriesIndex(series));
     m_colorIndex[series] = colorIndex;
   }
 

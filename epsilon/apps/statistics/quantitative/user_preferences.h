@@ -17,9 +17,11 @@ class UserPreferences : public Shared::DoublePairStorePreferences {
         m_displayCumulatedFrequencies{false, false, false} {}
 
   bool displayCumulatedFrequencies(int series) {
+    assert(ValidSeriesIndex(series));
     return m_displayCumulatedFrequencies[series];
   }
   void setDisplayCumulatedFrequencies(int series, bool value) {
+    assert(ValidSeriesIndex(series));
     m_displayCumulatedFrequencies[series] = value;
   }
 

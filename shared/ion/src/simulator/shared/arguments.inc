@@ -8,7 +8,7 @@
 
 BOOL_ARG(help, "--help", "-help", "Show this help message")
 TEXT_ARG(stateFile, "--load-state-file", "-l",
-         "Fetch events from an .nws state file", "statefile.nws")
+         "Fetch events from an .nws or .nwt state file", "statefile.nwt")
 
 BOOL_ARG(headless, "--headless", "-h", "Run without the SDL")
 

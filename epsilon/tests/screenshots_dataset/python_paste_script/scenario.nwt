@@ -33,7 +33,7 @@ Shift
 Shift
 Backspace
 Idle
-ExternalText import random\n\ndef plus_minus_game():\n    print("Welcome to Plus/Minus Game!")\n    print("You'll answer 5 questions.\\n")\n\n    for i in range(5):\n        num1 = random.randint(1, 100)\n        num2 = random.randint(1, 100)\n        operation = random.choice(["+", "-"])\n\n        if operation == "+":\n            correct_answer = num1 + num2\n        else:\n            correct_answer = num1 - num2\n\n        print("Question {}: {} {} {}".format(i + 1, num1, operation, num2))\n\n        try:\n            user_answer = int(input("Your answer: "))\n            if user_answer == correct_answer:\n                print("Correct!\\n")\n            else:\n                print("Wrong! The answer was {}\\n".format(correct_answer))\n        except ValueError:\n            print("Invalid input! Moving to next question.\\n")\n\nplus_minus_game()\n
+ExternalText def plus_minus_game():\n    print("Welcome to Plus/Minus Game!")\n    print("You'll answer 5 questions.\\n")\n\n    for i in range(5):\n        num1 = 42 + 3*i\n        num2 = 23-2*i\n        operation = ["+", "-"][i%2]\n\n        if operation == "+":\n            correct_answer = num1 + num2\n        else:\n            correct_answer = num1 - num2\n\n        print("Question {}: {} {} {}".format(i + 1, num1, operation, num2))\n\n        try:\n            user_answer = int(input("Your answer: "))\n            if user_answer == correct_answer:\n                print("Correct!\\n")\n            else:\n                print("Wrong! The answer was {}\\n".format(correct_answer))\n        except ValueError:\n            print("Invalid input! Moving to next question.\\n")\n\nplus_minus_game()\n
 Idle
 Back
 Idle

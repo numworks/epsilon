@@ -29,6 +29,8 @@ constexpr static ThemeContainer k_darkTheme =
                    .AxisMedium = Palette::DARK_AxisSecondary,
                    .AxisGrayBright = Palette::DARK_AxisSecondary,
                    .AxisGrayDark = Palette::DARK_AxisSecondary,
+                   .AxisGrayVeryDark = Palette::DARK_AxisSecondary,
+                   .AxisRed = Palette::Red,
                    .TokenWhite = Palette::Black,
                    .TokenYellow = Palette::DARK_VioletDeep,
                    // TODO: confirm TokenRed and TokenPurple
@@ -36,6 +38,7 @@ constexpr static ThemeContainer k_darkTheme =
                    .TokenBlack = Palette::DARK_VioletLight,
                    .TokenGrayMiddle = Palette::DARK_VioletLight,
                    .TokenGrayBright = Palette::DARK_VioletMiddle,
+                   .TokenGrayDarkest = Palette::DARK_VioletDeep,
                    .TokenGrayDark = Palette::DARK_VioletDeep};
 
 }  // namespace Escher

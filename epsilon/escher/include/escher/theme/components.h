@@ -28,12 +28,15 @@ namespace Escher {
   X(AxisMedium)              \
   X(AxisGrayBright)          \
   X(AxisGrayDark)            \
+  X(AxisGrayVeryDark)        \
+  X(AxisRed)                 \
   X(TokenWhite)              \
   X(TokenYellow)             \
   X(TokenRed)                \
   X(TokenBlack)              \
   X(TokenGrayMiddle)         \
   X(TokenGrayBright)         \
+  X(TokenGrayDarkest)        \
   X(TokenGrayDark)
 
 /* TODO: check the following colors which are not in the specs but used anyway:

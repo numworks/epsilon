@@ -27,11 +27,14 @@ constexpr static ThemeContainer k_lightTheme =
                    .AxisMedium = Palette::GrayMiddle,
                    .AxisGrayBright = Palette::GrayBright,
                    .AxisGrayDark = Palette::GrayDark,
+                   .AxisGrayVeryDark = Palette::GrayVeryDark,
+                   .AxisRed = Palette::Red,
                    .TokenWhite = Palette::White,
                    .TokenYellow = Palette::YellowDark,
                    .TokenRed = Palette::Red,
                    .TokenBlack = Palette::Black,
                    .TokenGrayMiddle = Palette::GrayMiddle,
                    .TokenGrayBright = Palette::GrayBright,
+                   .TokenGrayDarkest = Palette::GrayDarkest,
                    .TokenGrayDark = Palette::GrayDark};
 }  // namespace Escher

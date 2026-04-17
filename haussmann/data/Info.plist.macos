@@ -45,6 +45,7 @@
           <key>public.filename-extension</key>
           <array>
             <string>nws</string>
+            <string>nwt</string>
           </array>
         </dict>
       </dict>

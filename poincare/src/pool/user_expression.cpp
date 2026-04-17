@@ -4,6 +4,7 @@
 #include <poincare/helpers/symbol_pool.h>
 #include <poincare/layout.h>
 #include <poincare/simplification_parameters.h>
+#include <poincare/src/expression/angle.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/integer.h>
@@ -143,6 +144,10 @@ UserExpression UserExpression::Undefined() {
 
 UserExpression UserExpression::Builder(AngleUnit angleUnit) {
   return UserExpression::Builder(Units::Unit::Push(angleUnit));
+}
+
+UserExpression UserExpression::BuildPeriod(AngleUnit angleUnit) {
+  return UserExpression::Builder(Angle::Period(angleUnit));
 }
 
 UserExpression UserExpression::cloneChildAtIndex(int i) const {

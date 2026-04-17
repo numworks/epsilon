@@ -9,6 +9,7 @@ Right
 Up
 OK
 Down
+Down
 OK
 Down
 OK
@@ -27,6 +28,7 @@ Five
 OK
 Right
 OK
+Down
 Down
 OK
 Down
@@ -50,11 +52,14 @@ Backspace
 Left
 Up
 OK
+Down
 OK
 Right
 OK
+Down
 OK
 OK
+Down
 Down
 Down
 Down
@@ -66,6 +71,7 @@ OK
 Down
 Down
 Down
+Down
 OK
 Right
 OK
@@ -73,11 +79,13 @@ Right
 Up
 EXE
 Down
+Down
 EXE
 Down
 OK
 EXE
 OK
+Down
 Down
 OK
 Left
@@ -115,6 +123,7 @@ Up
 Up
 Left
 OK
+Down
 Down
 OK
 OK

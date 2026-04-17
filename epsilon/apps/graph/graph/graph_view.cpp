@@ -816,7 +816,8 @@ void GraphView::drawAxesAndGrid(KDContext* ctx, KDRect rect) const {
   InteractiveCurveViewRange* viewRange =
       static_cast<InteractiveCurveViewRange*>(range());
   if (viewRange->gridType() == InteractiveCurveViewRange::GridType::Polar) {
-    PlotPolicy::WithPolarGrid::DrawGrid(this, ctx, rect);
+    PlotPolicy::WithPolarGrid::DrawGrid(this, ctx, rect,
+                                        SharedGlobalPrefs().angleUnit());
 
   } else {
     assert(viewRange->gridType() ==

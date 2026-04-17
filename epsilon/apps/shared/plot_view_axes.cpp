@@ -73,40 +73,44 @@ void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
   *radiusMax = sqrt(xAbsoluteMax * xAbsoluteMax + yAbsoluteMax * yAbsoluteMax);
 }
 
-void WithPolarGrid::ComputeAngleBounds(const AbstractPlotView* plotView,
-                                       KDRect rect, float xMin, float xMax,
-                                       float yMin, float yMax, float* angleMin,
-                                       float* angleMax) {
+void WithPolarGrid::ComputeGraduationBounds(const AbstractPlotView* plotView,
+                                            KDRect rect, float xMin, float xMax,
+                                            float yMin, float yMax,
+                                            int* gradMin, int* gradMax) {
   float xAbsoluteMax = xMax > -xMin ? xMax : xMin;
   float yAbsoluteMax = yMax > -yMin ? yMax : yMin;
   float xAbsoluteMin = xMin > -xMax ? xMin : xMax;
   float yAbsoluteMin = yMin > -yMax ? yMin : yMax;
 
+  auto toGraduation = [](float angle) -> int {
+    return static_cast<int>(std::floor(angle * k_numberOfGraduations /
+                                       (2.f * static_cast<float>(M_PI))));
+  };
+
   if (xMin <= 0 && 0 <= xMax && yMin <= 0 && 0 <= yMax) {
     // The rect contains the origin.
-    *angleMin = 0;
-    *angleMax = 2 * M_PI;
+    *gradMin = 0;
+    *gradMax = k_numberOfGraduations;
   } else if (xMin <= 0 && 0 <= xMax) {
-    // The rect crosses the Y Axis.
-    *angleMin = atan2(yAbsoluteMin, xMin);
-    *angleMax = atan2(yAbsoluteMin, xMax);
+    // The rect crosses the Y axis.
+    *gradMin = toGraduation(atan2(yAbsoluteMin, xMin));
+    *gradMax = toGraduation(atan2(yAbsoluteMin, xMax));
   } else if (yMin <= 0 && 0 <= yMax) {
     // The rect crosses the X axis.
-    *angleMin = atan2(yMin, xAbsoluteMin);
-    *angleMax = atan2(yMax, xAbsoluteMin);
-
+    *gradMin = toGraduation(atan2(yMin, xAbsoluteMin));
+    *gradMax = toGraduation(atan2(yMax, xAbsoluteMin));
     if (xMax < 0) {
       /* The rect crosses the -Ox ray. As atan2 outputs in the range [-pi,pi],
        * the [a0, a1] arc must be complemented. */
-      *angleMin += 2.f * M_PI;
+      *gradMin += k_numberOfGraduations;
     }
   } else {
-    *angleMin = atan2(yAbsoluteMin, xAbsoluteMax);
-    *angleMax = atan2(yAbsoluteMax, xAbsoluteMin);
+    *gradMin = toGraduation(atan2(yAbsoluteMin, xAbsoluteMax));
+    *gradMax = toGraduation(atan2(yAbsoluteMax, xAbsoluteMin));
   }
 
-  if (*angleMin > *angleMax) {
-    std::swap(*angleMin, *angleMax);
+  if (*gradMin > *gradMax) {
+    std::swap(*gradMin, *gradMax);
   }
 }
 
@@ -125,15 +129,52 @@ void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
   }
 }
 
+void WithPolarGrid::FormatAngleLabel(char* buffer, size_t bufferSize, int index,
+                                     AngleUnit angleUnit) {
+  bool reductionFailure = false;
+  UserExpression label =
+      UserExpression::Create(
+          KMult(KA, KB, KPow(KC, -1_e)),
+          {.KA = UserExpression::Builder(index),
+           .KB = UserExpression::BuildPeriod(angleUnit),
+           .KC = UserExpression::Builder(k_numberOfGraduations)})
+          .cloneAndSimplify({.reductionPolicy = {.advanced = false}},
+                            &reductionFailure);
+  assert(!reductionFailure);
+  size_t len = label.serialize({buffer, bufferSize}, true);
+  // Append unit suffix.
+  if (angleUnit == AngleUnit::Degree) {
+    Print::CustomPrintf(buffer + len, bufferSize - len, "°");
+  } else if (angleUnit == AngleUnit::Gradian) {
+    Print::CustomPrintf(buffer + len, bufferSize - len, "gon");
+  }
+}
+
+void WithPolarGrid::TryDrawLabel(const AbstractPlotView* plotView,
+                                 KDContext* ctx, KDRect rect, const char* text,
+                                 Poincare::Coordinate2D<float> position,
+                                 AbstractPlotView::RelativePosition xRelative,
+                                 AbstractPlotView::RelativePosition yRelative,
+                                 KDRect* lastDrawnLabelRect) {
+  KDRect labelRect = plotView->labelRect(text, position, xRelative, yRelative);
+  if (labelRect.intersects(*lastDrawnLabelRect)) {
+    return;
+  }
+  plotView->drawLabel(ctx, rect, text, labelRect, k_boldColor);
+  *lastDrawnLabelRect = labelRect;
+}
+
 void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
-                             KDRect rect) {
+                             KDRect rect, AngleUnit angleUnit) {
+  assert(angleUnit != AngleUnit::None);
   DrawPolarCircles(plotView, ctx, rect);
-  // The widest label is of length 4 : '360°'
+  // The widest label is of length 9 : '1100/3gon'
+  constexpr int maxLabelGlyphs = 9;
   constexpr int graduationHorizontalMargin =
-      KDFont::GlyphWidth(KDFont::Size::Small) * 4 / 2;
+      KDFont::GlyphWidth(KDFont::Size::Small) * maxLabelGlyphs / 2;
   constexpr int graduationVerticalMargin =
       KDFont::GlyphHeight(KDFont::Size::Small) / 2;
-  constexpr int bufferSize = sizeof("360°");
+  constexpr int bufferSize = sizeof("1100/3gon");
   char buffer[bufferSize];
   KDRect bounds = plotView->bounds();
   float xMin = plotView->pixelToFloat(
@@ -155,83 +196,93 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
   float minimumSquareDistanceToCenter =
       std::pow(k_minimumGraduationDistanceToCenter * plotView->pixelWidth(), 2);
 
-  // Find angle bounds.
-  float angleBegin;
-  float angleEnd;
+  // Find graduation bounds.
+  int stepBegin, stepEnd;
   float radiusMin, radiusMax;
 
   ComputeRadiusBounds(plotView, rect, &radiusMin, &radiusMax);
-  ComputeAngleBounds(plotView, rect, xMin, xMax, yMin, yMax, &angleBegin,
-                     &angleEnd);
+  ComputeGraduationBounds(plotView, rect, xMin, xMax, yMin, yMax, &stepBegin,
+                          &stepEnd);
 
-  float k_angleStep = k_angleStepInDegree * M_PI / 180;
+  constexpr int k_stepsPerQuarter = k_numberOfGraduations / 4;
+  constexpr int k_stepsPerHalf = k_numberOfGraduations / 2;
 
-  for (int i = std::floor(angleBegin / k_angleStep);
-       i <= std::ceil(angleEnd / k_angleStep); i++) {
-    // Little trick to handle negative angles.
-    int angle = (i * k_angleStepInDegree + 360) % 360;
-
-    float angleRadian = angle * M_PI / 180.f;
+  // Draw lines
+  for (int i = stepBegin; i < stepEnd; i++) {
+    if (i % k_stepsPerQuarter == 0) {
+      continue;  // Don't draw lines that overlap the axes.
+    }
+    float angleRadian =
+        i * 2.f * static_cast<float>(M_PI) / k_numberOfGraduations;
     float cos = std::cos(angleRadian);
     float sin = std::sin(angleRadian);
-    bool shouldHaveGraduation = angle % (2 * k_angleStepInDegree) == 0;
-    // Don't draw under the axes.
-    if (angle % 90) {
-      KDPoint pixelFrom = {plotView->floatToKDCoordinatePixel(
-                               OMG::Axis::Horizontal, cos * radiusMin),
-                           plotView->floatToKDCoordinatePixel(
-                               OMG::Axis::Vertical, sin * radiusMin)};
-      KDPoint pixelTo = {plotView->floatToKDCoordinatePixel(
-                             OMG::Axis::Horizontal, cos * radiusMax),
+    KDPoint pixelFrom = {plotView->floatToKDCoordinatePixel(
+                             OMG::Axis::Horizontal, cos * radiusMin),
                          plotView->floatToKDCoordinatePixel(OMG::Axis::Vertical,
-                                                            sin * radiusMax)};
-      ctx->drawAntialiasedLine(
-          pixelFrom, pixelTo, shouldHaveGraduation ? k_boldColor : k_lightColor,
-          plotView->k_backgroundColor);
-    }
-    if (!shouldHaveGraduation) {
+                                                            sin * radiusMin)};
+    KDPoint pixelTo = {plotView->floatToKDCoordinatePixel(OMG::Axis::Horizontal,
+                                                          cos * radiusMax),
+                       plotView->floatToKDCoordinatePixel(OMG::Axis::Vertical,
+                                                          sin * radiusMax)};
+    ctx->drawAntialiasedLine(pixelFrom, pixelTo,
+                             (i % 2 == 0) ? k_boldColor : k_lightColor,
+                             plotView->k_backgroundColor);
+  }
+
+  // Draw labels on top of the lines.
+  KDRect lastDrawnLabelRect = KDRectZero;
+  for (int i = stepBegin; i < stepEnd; i++) {
+    if (i % 2 != 0) {
+      // Only bold lines are labeled.
       continue;
     }
-    Poincare::Print::CustomPrintf(buffer, bufferSize, "%i°", angle);
-    // Compute the position of the label
+    // Small trick to avoid laying out negative angles.
+    int labelIndex = (i + k_numberOfGraduations) % k_numberOfGraduations;
+    FormatAngleLabel(buffer, bufferSize, labelIndex, angleUnit);
+    // Compute the position of the label.
     float x, y;
+    float angleRadian =
+        i * 2.f * static_cast<float>(M_PI) / k_numberOfGraduations;
+    float cos = std::cos(angleRadian);
+    float sin = std::sin(angleRadian);
     AbstractPlotView::RelativePosition verticalRelativePosition =
         AbstractPlotView::RelativePosition::There;
     AbstractPlotView::RelativePosition horizontalRelativePosition =
         AbstractPlotView::RelativePosition::There;
     float xQuadrant = cos >= 0 ? xMax : xMin;
     float yQuadrant = sin >= 0 ? yMax : yMin;
-    // Is the ray exiting the screen through a side ?
+    bool isHorizontalAxis = (i % k_stepsPerHalf == 0);
+    bool isVerticalAxis = (i - k_stepsPerQuarter) % k_stepsPerHalf == 0;
+    // Is the ray exiting the screen through a side?
     if (std::fabs(cos) * std::fabs(yQuadrant) >
         std::fabs(sin) * std::fabs(xQuadrant)) {
       x = xQuadrant;
-      y = xQuadrant * sin / cos + (angle == 360 ? 0 : -labelMargin);
-      if (angle % 180 == 0) {
-        /* Since the axis is black, we need to draw the graduation under or on
-         * top of it */
-        verticalRelativePosition =
-            angle == 360 ? AbstractPlotView::RelativePosition::After
-                         : AbstractPlotView::RelativePosition::Before;
+      y = xQuadrant * sin / cos - labelMargin;
+      if (isHorizontalAxis) {
+        /* Since the axis is black, draw the graduation above it. */
+        verticalRelativePosition = AbstractPlotView::RelativePosition::Before;
       }
     } else {
-      // The ray is exiting through the top or the bottom
+      // The ray is exiting through the top or the bottom.
       x = std::copysign(yQuadrant * cos / sin, cos);
       y = yQuadrant;
-      if (angle == 90 || angle == 270) {
-        // Move the label for it not to be overridden by the vertical axis.
+      if (isVerticalAxis) {
+        // Move the label so it's not overridden by the vertical axis.
         horizontalRelativePosition = AbstractPlotView::RelativePosition::After;
       }
     }
     // TODO: update condition for non-orthonormal axes
     if (x * x + y * y > minimumSquareDistanceToCenter) {
-      plotView->drawLabel(ctx, rect, buffer, {x, y}, horizontalRelativePosition,
-                          verticalRelativePosition, k_boldColor);
-
-      if (angle == 0) {
-        // Show 360° as well
-        plotView->drawLabel(
-            ctx, rect, "360°", {x, y + labelMargin}, horizontalRelativePosition,
-            AbstractPlotView::RelativePosition::After, k_boldColor);
+      TryDrawLabel(plotView, ctx, rect, buffer, {x, y},
+                   horizontalRelativePosition, verticalRelativePosition,
+                   &lastDrawnLabelRect);
+      if (i == 0) {
+        // Also show the full-circle label below (360°/2π/400gon).
+        FormatAngleLabel(buffer, bufferSize, k_numberOfGraduations, angleUnit);
+        TryDrawLabel(plotView, ctx, rect, buffer, {x, y + labelMargin},
+                     horizontalRelativePosition,
+                     AbstractPlotView::RelativePosition::After,
+                     &lastDrawnLabelRect);
       }
     }
     /* TODO: don't print labels if the origin is off-screen and they end up on

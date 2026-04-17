@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/palette.h>
+#include <poincare/angle_unit.h>
 #include <poincare/print_float.h>
 
 #include "plot_view.h"
@@ -68,22 +69,31 @@ class WithPolarGrid {
 
  protected:
   static void DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
-                       KDRect rect);
+                       KDRect rect, Poincare::AngleUnit angleUnit);
 
  private:
   constexpr static KDColor k_boldColor = Escher::Palette::GrayMiddle;
   constexpr static KDColor k_lightColor = Escher::Palette::GrayBright;
   constexpr static float k_minimumGraduationDistanceToCenter = 60;
-  constexpr static int k_angleStepInDegree = 15;
+  constexpr static int k_numberOfGraduations = 24;
 
   static void DrawPolarCircles(const AbstractPlotView* plotView, KDContext* ctx,
                                KDRect rect);
+  static void FormatAngleLabel(char* buffer, size_t bufferSize, int index,
+                               Poincare::AngleUnit angleUnit);
 
   static void ComputeRadiusBounds(const AbstractPlotView* plotView, KDRect rect,
                                   float* min, float* max);
-  static void ComputeAngleBounds(const AbstractPlotView* plotView, KDRect rect,
-                                 float xMin, float xMax, float yMin, float yMax,
-                                 float* angleMin, float* angleMax);
+  static void ComputeGraduationBounds(const AbstractPlotView* plotView,
+                                      KDRect rect, float xMin, float xMax,
+                                      float yMin, float yMax, int* gradMin,
+                                      int* gradMax);
+  static void TryDrawLabel(const AbstractPlotView* plotView, KDContext* ctx,
+                           KDRect rect, const char* text,
+                           Poincare::Coordinate2D<float> position,
+                           AbstractPlotView::RelativePosition xRelative,
+                           AbstractPlotView::RelativePosition yRelative,
+                           KDRect* lastDrawnLabelRect);
 };
 
 class NoAxis {

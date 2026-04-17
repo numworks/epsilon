@@ -1,5 +1,7 @@
 #include "trigonometry_graph_cell.h"
 
+#include <apps/global_preferences.h>
+
 using namespace Shared;
 using namespace Poincare;
 using namespace Escher;
@@ -66,7 +68,8 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
 
 void UnitCircle::drawAxesAndGrid(const AbstractPlotView* plotView,
                                  KDContext* ctx, KDRect rect) const {
-  PlotPolicy::WithPolarGrid::DrawGrid(plotView, ctx, rect);
+  PlotPolicy::WithPolarGrid::DrawGrid(plotView, ctx, rect,
+                                      SharedGlobalPrefs().angleUnit());
   plotView->drawCircle(ctx, rect, {0.f, 0.f}, 1.f, Palette::Black);
   // Labels should be as close to the axes as possible so we place them manually
   KDRect labelRect = plotView->labelRect(

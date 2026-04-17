@@ -81,7 +81,7 @@ const char* Event::defaultText() const {
 // Internal functions
 
 Event State::privateSharedGetEvent(int* timeout) {
-  constexpr int delayBeforeRepeat = 200;
+  constexpr int delayBeforeRepeat = 299;
 #ifdef ION_VARIANT_EPSILON
   constexpr int delayBetweenRepeat = 50;
 #else

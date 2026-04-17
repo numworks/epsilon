@@ -168,9 +168,15 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
                              KDRect rect, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::None);
   DrawPolarCircles(plotView, ctx, rect);
-  // The widest label is of length 9 : '1100/3gon'
-  constexpr int maxLabelGlyphs = 9;
-  constexpr int graduationHorizontalMargin =
+  /* The widest label depends on angle unit:
+   * - Radian '11π/6' 6 glyphs
+   * - Degree '360°' 4 glyphs
+   * - Gradian '1100/3gon' 9 glyphs
+   */
+  int maxLabelGlyphs = angleUnit == AngleUnit::Radian   ? 6
+                       : angleUnit == AngleUnit::Degree ? 4
+                                                        : 9;
+  int graduationHorizontalMargin =
       KDFont::GlyphWidth(KDFont::Size::Small) * maxLabelGlyphs / 2;
   constexpr int graduationVerticalMargin =
       KDFont::GlyphHeight(KDFont::Size::Small) / 2;

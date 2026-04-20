@@ -1,6 +1,7 @@
 #include "continuous_function_store.h"
 
 #include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <ion.h>
 #include <omg/utf8_helper.h>
 
@@ -44,36 +45,28 @@ int ContinuousFunctionStore::numberOfActiveFunctions() const {
 
 using ErrorStatus = Ion::Storage::Record::ErrorStatus;
 
-static int indexInArray(KDColor value, const KDColor* array, size_t arraySize) {
-  for (size_t i = 0; i < arraySize - 1; i++) {
-    if (value == array[i]) {
-      return i;
-    }
-  }
-  assert(value == array[arraySize - 1]);
-  return arraySize - 1;
-}
-
 void ContinuousFunctionStore::fillLastFreeColors(bool* colorIsFree) const {
-  constexpr int paletteSize = std::size(Palette::DataColor);
+  constexpr int paletteSize = Palette::k_numberOfDataColors;
   int nFree = paletteSize;
   for (int c = 0; c < paletteSize; c++) {
-    // Initialize at true
     colorIsFree[c] = true;
   }
 
+  // Loop over existing function models starting from the most recent one
   int i = numberOfModels() - 1;
   while (i >= 0) {
     OMG::ExpiringPointer<const ContinuousFunction> f =
         modelForRecord(recordAtIndex(i));
     int nDerivatives = 1 + 2 * f->canDisplayDerivative();
-    for (int d = 0; d < nDerivatives; d++) {
-      int c = indexInArray(f->color(d), Palette::DataColor.data(), paletteSize);
-      if (colorIsFree[c]) {
-        colorIsFree[c] = false;
+    for (int d = 0; d < nDerivatives && nFree > 1; d++) {
+      int colorIndex =
+          static_cast<uint8_t>(Palette::DataColorToComponent(f->color(d))) -
+          static_cast<uint8_t>(DataColorComponent(0));
+      if (colorIsFree[colorIndex]) {
+        colorIsFree[colorIndex] = false;
         nFree--;
       }
-      // Stop when there is at most 1 free color
+      // Stop when there is only one free color
       if (nFree <= 1) {
         return;
       }
@@ -88,26 +81,24 @@ void ContinuousFunctionStore::tidyCaches() const {
   }
 }
 
-KDColor ContinuousFunctionStore::colorForNewModel() const {
+ThemeComponent ContinuousFunctionStore::colorForNewModel() const {
   // Check first last functions colors until there is at most 1 free color
-  constexpr int paletteSize = std::size(Palette::DataColor);
+  constexpr int paletteSize = Palette::k_numberOfDataColors;
   bool colorIsFree[paletteSize];
   fillLastFreeColors(colorIsFree);
-
   // Take first free color
-  for (int c = 0; c < paletteSize - 1; c++) {
+  for (int c = 0; c < paletteSize; c++) {
     if (colorIsFree[c]) {
-      return Palette::DataColor[c];
+      return DataColorComponent(c);
     }
   }
-  assert(colorIsFree[paletteSize - 1]);
-  return Palette::DataColor[paletteSize - 1];
+  OMG_UNREACHABLE
 }
 
 ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
                                                      ErrorStatus* error) {
-  KDColor nextColor = colorForNewModel();
-  return ContinuousFunction::NewModel(error, name, nextColor);
+  return ContinuousFunction::NewModel(
+      error, name, Escher::ColorPicker::Resolve(colorForNewModel()));
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {

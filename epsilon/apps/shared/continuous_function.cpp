@@ -234,11 +234,12 @@ void ContinuousFunction::updateDerivativeColorAfterChangingPlotDisplay(
     bool newDisplay, int derivationOrder) const {
   /* - if we are displaying the plot: use a new color
    * - if we are hiding the plot: use the color of the main function */
-  KDColor newColor = newDisplay
-                         ? GlobalContextAccessor::ContinuousFunctionContext()
-                               .colorForNewModel()
-                         : color();
-  recordData()->setColor(newColor, derivationOrder);
+  recordData()->setColor(
+      newDisplay ? Escher::ColorPicker::Resolve(
+                       GlobalContextAccessor::ContinuousFunctionContext()
+                           .colorForNewModel())
+                 : color(),
+      derivationOrder);
 }
 
 void ContinuousFunction::setDisplayValueFirstDerivative(bool display) {

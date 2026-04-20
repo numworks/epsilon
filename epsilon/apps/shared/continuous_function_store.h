@@ -1,5 +1,6 @@
 #pragma once
 
+#include <escher/theme/components.h>
 #include <omg/global_box.h>
 
 #include "continuous_function.h"
@@ -80,7 +81,7 @@ class ContinuousFunctionStore : public FunctionStore {
                : nullptr;
   }
 
-  KDColor colorForNewModel() const;
+  Escher::ThemeComponent colorForNewModel() const;
   ContinuousFunction newModel(const char* name,
                               Ion::Storage::Record::ErrorStatus* error);
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;

@@ -60,7 +60,7 @@ HighlightCell* DistributionController::reusableCell(int index) {
 }
 
 constexpr I18n::Message sMessages[] = {
-    I18n::Message::Binomial,    I18n::Message::Uniforme,
+    I18n::Message::Binomial,    I18n::Message::Uniform,
     I18n::Message::Exponential, I18n::Message::Normal,
     I18n::Message::ChiSquare,   I18n::Message::Student,
     I18n::Message::Geometric,   I18n::Message::Hypergeometric,

@@ -6,6 +6,7 @@
 
 namespace Shared {
 
+// TODO: use ThemeComponent
 class MemoizedCursorView : public CursorView {
  public:
   MemoizedCursorView() : m_underneathPixelBufferLoaded(false) {}

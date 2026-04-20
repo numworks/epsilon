@@ -2,6 +2,7 @@
 
 #include <apps/apps_container_helper.h>
 #include <assert.h>
+#include <escher/theme/color_picker.h>
 #include <poincare/symbol_context.h>
 
 #include "../app.h"
@@ -38,7 +39,8 @@ void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
     if (!m_store->seriesIsActive(series)) {
       continue;
     }
-    KDColor color = m_store->colorOfSeriesAtIndex(series);
+    KDColor color =
+        Escher::ColorPicker::Resolve(m_store->colorOfSeriesAtIndex(series));
     // - Draw regression curve
     Model* seriesModel = m_store->modelForSeries(series);
     CurveDrawing plot(Curve2D(evaluateRegression, seriesModel),

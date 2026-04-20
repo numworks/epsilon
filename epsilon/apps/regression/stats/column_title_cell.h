@@ -4,6 +4,7 @@
 
 namespace Regression {
 
+// TODO: use ThemeComponent
 class ColumnTitleCell : public EvenOddDoubleBufferTextCell {
  public:
   ColumnTitleCell(Escher::Responder* parentResponder = nullptr)

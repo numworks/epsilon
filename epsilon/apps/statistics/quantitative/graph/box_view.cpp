@@ -1,6 +1,7 @@
 #include "box_view.h"
 
 #include <assert.h>
+#include <escher/theme/color_picker.h>
 
 #include <cmath>
 
@@ -21,7 +22,7 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
   assert(numberOfSeries >= 0);
   assert(plotView->bounds().height() ==
          BoxFrameHeight(static_cast<size_t>(numberOfSeries)));
-  KDColor color = m_store->colorLightOfSeriesAtIndex(m_series);
+  ThemeComponent color = m_store->colorLightOfSeriesAtIndex(m_series);
 
   // Draw the main box
   double firstQuart = m_store->firstQuartile(m_series);
@@ -33,7 +34,7 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
   ctx->fillRect(KDRect(firstQuartilePixels, k_verticalSideSize,
                        thirdQuartilePixels - firstQuartilePixels,
                        BoxHeight(static_cast<size_t>(numberOfSeries))),
-                color);
+                ColorPicker::Resolve(color));
 
   /* Draw the horizontal lines linking the box to the whiskers
    * Compute the middle from the pixels for a better precision */
@@ -45,9 +46,11 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
   double lowerWhisker = m_store->lowerWhisker(m_series);
   double upperWhisker = m_store->upperWhisker(m_series);
   plotView->drawStraightSegment(ctx, rect, OMG::Axis::Horizontal, segmentOrd,
-                                lowerWhisker, firstQuart, color);
+                                lowerWhisker, firstQuart,
+                                ColorPicker::Resolve(color));
   plotView->drawStraightSegment(ctx, rect, OMG::Axis::Horizontal, segmentOrd,
-                                thirdQuart, upperWhisker, color);
+                                thirdQuart, upperWhisker,
+                                ColorPicker::Resolve(color));
 
   float lowBound = plotView->pixelToFloat(
       OMG::Axis::Vertical,
@@ -62,9 +65,9 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
     if (plotView->hasFocus() && i == m_dataViewController->selectedIndex()) {
       continue;
     }
-    KDColor calculationColor = m_store->colorOfSeriesAtIndex(m_series);
+    ThemeComponent calculationColor = m_store->colorOfSeriesAtIndex(m_series);
     drawCalculation(plotView, ctx, rect, i, lowBound, upBound, segmentOrd,
-                    calculationColor, false);
+                    ColorPicker::Resolve(calculationColor), false);
   }
   // Draw the selected calculation afterward, preventing it being overwritten.
   if (plotView->hasFocus()) {

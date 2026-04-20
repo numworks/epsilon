@@ -53,8 +53,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
       BufferFunctionTitleCell* seriesTitleCell =
           static_cast<BufferFunctionTitleCell*>(cell);
       seriesTitleCell->setText(titleBuffer);
-      seriesTitleCell->setColor(Escher::DataColorToComponent(
-          m_store->colorOfSeriesAtIndex(seriesNumber)));
+      seriesTitleCell->setColor(m_store->colorOfSeriesAtIndex(seriesNumber));
       return;
     }
     case k_calculationModeTitleCellType:

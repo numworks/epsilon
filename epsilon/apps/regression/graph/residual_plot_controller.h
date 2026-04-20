@@ -24,7 +24,7 @@ class ResidualPlotController : public Escher::ViewController {
   double yAtIndex(int index) const {
     return m_store->residualAtIndexForSeries(m_selectedSeriesIndex, index);
   }
-  KDColor selectedSeriesColor() const {
+  Escher::ThemeComponent selectedSeriesColor() const {
     return m_store->colorOfSeriesAtIndex(m_selectedSeriesIndex);
   }
   int numberOfResidualDots() const {

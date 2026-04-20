@@ -1,5 +1,7 @@
 #include "residual_plot_curve_view.h"
 
+#include <escher/theme/color_picker.h>
+
 #include "residual_plot_controller.h"
 
 using namespace Poincare;
@@ -11,12 +13,13 @@ namespace Regression {
 
 void ResidualPlotPolicy::drawPlot(const AbstractPlotView* plotView,
                                   KDContext* ctx, KDRect rect) const {
-  KDColor color = m_controller->selectedSeriesColor();
+  Escher::ThemeComponent color = m_controller->selectedSeriesColor();
   int numberOfDots = m_controller->numberOfResidualDots();
   for (int i = 0; i < numberOfDots; i++) {
     Coordinate2D<float> xy(m_controller->xAtIndex(i),
                            m_controller->yAtIndex(i));
-    plotView->drawDot(ctx, rect, Dots::Size::Tiny, xy, color);
+    plotView->drawDot(ctx, rect, Dots::Size::Tiny, xy,
+                      Escher::ColorPicker::Resolve(color));
   }
 }
 

@@ -125,7 +125,9 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
     myCell->setFirstText(buffer);
     m_store->fillColumnName(series, 1, buffer);
     myCell->setSecondText(buffer);
-    myCell->setColor(m_store->colorOfSeriesAtIndex(series));
+    // TODO: revert color resolve when ColumnTitleCell has a theme
+    myCell->setColor(
+        ColorPicker::Resolve(m_store->colorOfSeriesAtIndex(series)));
     return;
   }
 

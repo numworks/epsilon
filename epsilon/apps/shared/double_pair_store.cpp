@@ -1,6 +1,7 @@
 #include "double_pair_store.h"
 
 #include <assert.h>
+#include <escher/theme/data_colors.h>
 #include <ion.h>
 #include <ion/storage/file_system.h>
 #include <omg/list.h>
@@ -439,16 +440,17 @@ void DoublePairStore::deletePairsOfUndef(int series) {
   }
 }
 
-KDColor DoublePairStore::colorOfSeriesAtIndex(int series) const {
+Escher::ThemeComponent DoublePairStore::colorOfSeriesAtIndex(int series) const {
   assert(series < k_numberOfSeries);
-  return Escher::Palette::DataColor[m_storePreferences->colorIndexForSeries(
-      series)];
+  return Escher::DataColorComponent(
+      m_storePreferences->colorIndexForSeries(series));
 }
 
-KDColor DoublePairStore::colorLightOfSeriesAtIndex(int series) const {
+Escher::ThemeComponent DoublePairStore::colorLightOfSeriesAtIndex(
+    int series) const {
   assert(series < k_numberOfSeries);
-  return Escher::Palette::DataColorLight[m_storePreferences
-                                             ->colorIndexForSeries(series)];
+  return Escher::DataColorComponentLight(
+      m_storePreferences->colorIndexForSeries(series));
 }
 
 uint8_t DoublePairStore::colorIndexForSeries(int series) const {

@@ -1,6 +1,7 @@
 #include "histogram_view.h"
 
 #include <assert.h>
+#include <escher/theme/color_picker.h>
 
 #include <cmath>
 
@@ -34,11 +35,12 @@ void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
                       m_highlightedBarEnd};
   HighlightTest highlights = plotView->hasFocus() ? &barIsHighlighted : nullptr;
 
-  HistogramDrawing histogram(histogramLevels, m_store, context, highlights,
-                             m_store->firstDrawnBarAbscissa(),
-                             m_store->barWidth(), true, true,
-                             m_store->colorLightOfSeriesAtIndex(m_series),
-                             m_store->colorOfSeriesAtIndex(m_series));
+  HistogramDrawing histogram(
+      histogramLevels, m_store, context, highlights,
+      m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, true,
+      Escher::ColorPicker::Resolve(
+          m_store->colorLightOfSeriesAtIndex(m_series)),
+      Escher::ColorPicker::Resolve(m_store->colorOfSeriesAtIndex(m_series)));
   histogram.draw(plotView, ctx, rect);
 }
 

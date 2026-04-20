@@ -131,10 +131,9 @@ class DoublePairStore {
   uint32_t storeChecksum() const;
   uint32_t storeChecksumForSeries(int series) const;
 
-  // TODO: use ThemeComponent
   // Colors
-  KDColor colorOfSeriesAtIndex(int series) const;
-  KDColor colorLightOfSeriesAtIndex(int series) const;
+  Escher::ThemeComponent colorOfSeriesAtIndex(int series) const;
+  Escher::ThemeComponent colorLightOfSeriesAtIndex(int series) const;
   uint8_t colorIndexForSeries(int series) const;
   void setColorIndexForSeries(int series, uint8_t colorIndex);
   /* This must be called each time the lists are modified.

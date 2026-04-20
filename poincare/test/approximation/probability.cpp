@@ -9,12 +9,17 @@ QUIZ_CASE(pcj_approximation_probability) {
   // FIXME: precision problem
   approximates_to<float>("binompdf(4.4, 9, 0.7)", "0.0735138", k_realParams, 6);
   approximates_to<double>("binompdf(4.4, 9, 0.7)", "0.073513818");
+  approximates_to<double>("binomcdfrange(2,4,4,0.5)", "0.6875");
   approximates_to<float>("invbinom(0.9647324002, 15, 0.7)", "13");
   approximates_to<double>("invbinom(0.9647324002, 15, 0.7)", "13");
   approximates_to<float>("invbinom(0.95,100,0.42)", "50");
   approximates_to<double>("invbinom(0.95,100,0.42)", "50");
   approximates_to<float>("invbinom(0.01,150,0.9)", "126");
   approximates_to<double>("invbinom(0.01,150,0.9)", "126");
+
+  approximates_to<double>("uniformcdf(0.5,0,1)", "0.5");
+  approximates_to<double>("uniformcdfrange(0.25,0.75,0,1)", "0.5");
+  approximates_to<double>("invuniform(0.5,0,1)", "0.5");
 
   approximates_to<double>("geompdf(1,1)", "1");
   approximates_to<double>("geompdf(2,0.5)", "0.25");
@@ -68,6 +73,21 @@ QUIZ_CASE(pcj_approximation_probability) {
   approximates_to<float>("poissonpdf(2,2)", "0.2706706");
   approximates_to<float>("poissoncdf(2,2)", "0.6766764");
   approximates_to<double>("poissoncdf(2,2)", "0.67667641618306");
+  approximates_to<double>("poissoncdfrange(1,3,2)", "0.72178817726193");
+  approximates_to<float>("invpoisson(0.5,2)", "2");
+  approximates_to<double>("invpoisson(0.5,2)", "2");
+
+  approximates_to<double>("expcdf(1,1)", "0.63212055882856");
+  approximates_to<double>("expcdfrange(0.5,1,2)", "0.23254415793483");
+  approximates_to<double>("invexp(0.5,1)", "0.69314718055995");
+
+  approximates_to<double>("chi2cdf(1,1)", "0.68268949213709");
+  approximates_to<double>("chi2cdfrange(1,4,2)", "0.47119537647602");
+  approximates_to<double>("invchi2(0.5,2)", "1.3862943611199");
+
+  approximates_to<double>("Fcdf(1,1,1)", "0.5", k_realParams, 6);
+  approximates_to<double>("Fcdfrange(1,4,2,2)", "0.3");
+  approximates_to<double>("invF(0.5,1,1)", "1");
 
   approximates_to<float>("tpdf(1.2, 3.4)", "0.1706051");
   approximates_to<double>("tpdf(1.2, 3.4)", "0.17060506917323");

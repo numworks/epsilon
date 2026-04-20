@@ -573,8 +573,44 @@ constexpr ToolboxMessage binomialDistributionChildren[] = {
                        I18n::Message::BinomialPDF),
     ToolboxMessageLeaf(I18n::Message::BinomialCDFCommandWithArg,
                        I18n::Message::BinomialCDF),
+    ToolboxMessageLeaf(I18n::Message::BinomialCDFRangeCommandWithArg,
+                       I18n::Message::BinomialCDFRange),
     ToolboxMessageLeaf(I18n::Message::InvBinomialCommandWithArg,
                        I18n::Message::InvBinomial),
+};
+
+constexpr ToolboxMessage uniformDistributionChildren[] = {
+    ToolboxMessageLeaf(I18n::Message::UniformCDFCommandWithArg,
+                       I18n::Message::UniformCDF),
+    ToolboxMessageLeaf(I18n::Message::UniformCDFRangeCommandWithArg,
+                       I18n::Message::UniformCDFRange),
+    ToolboxMessageLeaf(I18n::Message::InvUniformCommandWithArg,
+                       I18n::Message::InvUniform),
+};
+
+constexpr ToolboxMessage exponentialDistributionChildren[] = {
+    ToolboxMessageLeaf(I18n::Message::ExpCDFCommandWithArg,
+                       I18n::Message::ExpCDF),
+    ToolboxMessageLeaf(I18n::Message::ExpCDFRangeCommandWithArg,
+                       I18n::Message::ExpCDFRange),
+    ToolboxMessageLeaf(I18n::Message::InvExpCommandWithArg,
+                       I18n::Message::InvExp),
+};
+
+constexpr ToolboxMessage chi2DistributionChildren[] = {
+    ToolboxMessageLeaf(I18n::Message::Chi2CDFCommandWithArg,
+                       I18n::Message::Chi2CDF),
+    ToolboxMessageLeaf(I18n::Message::Chi2CDFRangeCommandWithArg,
+                       I18n::Message::Chi2CDFRange),
+    ToolboxMessageLeaf(I18n::Message::InvChi2CommandWithArg,
+                       I18n::Message::InvChi2),
+};
+
+constexpr ToolboxMessage fisherDistributionChildren[] = {
+    ToolboxMessageLeaf(I18n::Message::FCDFCommandWithArg, I18n::Message::FCDF),
+    ToolboxMessageLeaf(I18n::Message::FCDFRangeCommandWithArg,
+                       I18n::Message::FCDFRange),
+    ToolboxMessageLeaf(I18n::Message::InvFCommandWithArg, I18n::Message::InvF),
 };
 
 constexpr ToolboxMessage poissonDistributionChildren[] = {
@@ -582,6 +618,10 @@ constexpr ToolboxMessage poissonDistributionChildren[] = {
                        I18n::Message::PoissonPDF),
     ToolboxMessageLeaf(I18n::Message::PoissonCDFCommandWithArg,
                        I18n::Message::PoissonCDF),
+    ToolboxMessageLeaf(I18n::Message::PoissonCDFRangeCommandWithArg,
+                       I18n::Message::PoissonCDFRange),
+    ToolboxMessageLeaf(I18n::Message::InvPoissonCommandWithArg,
+                       I18n::Message::InvPoisson),
 };
 
 constexpr ToolboxMessage geometricDistributionChildren[] = {
@@ -605,13 +645,18 @@ constexpr ToolboxMessage hypergeometricDistributionChildren[] = {
                        I18n::Message::InvHypergeom)};
 
 constexpr ToolboxMessage probabilityLawsChildren[] = {
-    ToolboxMessageNode(I18n::Message::Normal, normalDistributionChildren),
-    ToolboxMessageNode(I18n::Message::Student, studentDistributionChildren),
     ToolboxMessageNode(I18n::Message::Binomial, binomialDistributionChildren),
-    ToolboxMessageNode(I18n::Message::Poisson, poissonDistributionChildren),
+    ToolboxMessageNode(I18n::Message::Uniform, uniformDistributionChildren),
+    ToolboxMessageNode(I18n::Message::Exponential,
+                       exponentialDistributionChildren),
+    ToolboxMessageNode(I18n::Message::Normal, normalDistributionChildren),
+    ToolboxMessageNode(I18n::Message::ChiSquare, chi2DistributionChildren),
+    ToolboxMessageNode(I18n::Message::Student, studentDistributionChildren),
     ToolboxMessageNode(I18n::Message::Geometric, geometricDistributionChildren),
     ToolboxMessageNode(I18n::Message::Hypergeometric,
                        hypergeometricDistributionChildren),
+    ToolboxMessageNode(I18n::Message::Poisson, poissonDistributionChildren),
+    ToolboxMessageNode(I18n::Message::Fisher, fisherDistributionChildren),
 };
 
 constexpr ToolboxMessage randomChildren[] = {

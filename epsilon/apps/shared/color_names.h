@@ -1,18 +1,19 @@
 #pragma once
 
 #include <apps/i18n.h>
-#include <escher/palette.h>
+#include <escher/theme/data_colors.h>
 
 namespace Shared {
 
 namespace ColorNames {
 
+// Subset of DataColors
 constexpr static int k_count = 8;
-constexpr static KDColor k_colors[k_count] = {
-    Escher::Palette::Red,     Escher::Palette::Blue,
-    Escher::Palette::Green,   Escher::Palette::YellowDark,
-    Escher::Palette::Magenta, Escher::Palette::Turquoise,
-    Escher::Palette::Pink,    Escher::Palette::Orange};
+constexpr static Escher::ThemeComponent k_colors[k_count] = {
+    Escher::ThemeComponent::DataRed,     Escher::ThemeComponent::DataBlue,
+    Escher::ThemeComponent::DataGreen,   Escher::ThemeComponent::DataYellow,
+    Escher::ThemeComponent::DataMagenta, Escher::ThemeComponent::DataTurquoise,
+    Escher::ThemeComponent::DataPink,    Escher::ThemeComponent::DataOrange};
 
 constexpr static I18n::Message k_messages[k_count] = {
     I18n::Message::ColorRed,     I18n::Message::ColorBlue,
@@ -27,8 +28,8 @@ constexpr static I18n::Message k_curveMessages[k_count] = {
     I18n::Message::ColorPinkCurve,    I18n::Message::ColorOrangeCurve,
 };
 
-I18n::Message NameForColor(KDColor color);
-I18n::Message NameForCurveColor(KDColor color);
+I18n::Message NameForColor(Escher::ThemeComponent color);
+I18n::Message NameForCurveColor(Escher::ThemeComponent color);
 
 }  // namespace ColorNames
 

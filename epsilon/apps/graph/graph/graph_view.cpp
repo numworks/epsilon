@@ -1,6 +1,7 @@
 #include "graph_view.h"
 
 #include <apps/global_preferences.h>
+#include <escher/theme/color_picker.h>
 #include <poincare/trigonometry.h>
 
 #include "../app.h"
@@ -340,7 +341,7 @@ void GraphView::drawCartesian(KDContext* ctx, KDRect rect,
   bool patternWithoutCurve = false;
   float patternStart = tStart, patternEnd = tEnd;
   Curve2D patternLower, patternUpper, patternLower2;
-  Pattern pattern(m_areaIndex, f->color());
+  Pattern pattern(m_areaIndex, ColorPicker::Resolve(f->color()));
 
   switch (area) {
     case ContinuousFunctionProperties::AreaType::Outside:
@@ -383,8 +384,10 @@ void GraphView::drawCartesian(KDContext* ctx, KDRect rect,
           assert(f->canComputeArea());
           assert(otherModel->canComputeArea());
           patternLower = Curve2D(evaluateXY, otherModel);
-          pattern = Pattern(m_areaIndex,
-                            KDColor::HSVBlend(f->color(), otherModel->color()));
+          pattern = Pattern(
+              m_areaIndex,
+              KDColor::HSVBlend(ColorPicker::Resolve(f->color()),
+                                ColorPicker::Resolve(otherModel->color())));
         }
         patternStart = m_highlightedStart;
         patternEnd = m_highlightedEnd;
@@ -399,7 +402,8 @@ void GraphView::drawCartesian(KDContext* ctx, KDRect rect,
   for (int i = n - 1; i >= 0; i--) {
     Curve2DEvaluation<float> evaluationFloat = subCurveEvaluation<float>(f, i);
     CurveDrawing secondCurve(Curve2D(evaluationFloat, f), context(), tStart,
-                             tEnd, tStep, f->subCurveColor(i), true,
+                             tEnd, tStep,
+                             ColorPicker::Resolve(f->subCurveColor(i)), true,
                              f->properties().plotIsDotted());
     Curve2DEvaluation<double> evaluationDouble =
         subCurveEvaluation<double>(f, i);
@@ -638,7 +642,7 @@ void GraphView::drawFunction(KDContext* ctx, KDRect rect, ContinuousFunction* f,
   assert(f->properties().isParametric() || f->properties().isInversePolar() ||
          f->properties().isPolar());
   CurveDrawing plot(Curve2D(evaluateXY<float>, f), context(), tStart, tEnd,
-                    tStep, f->color());
+                    tStep, ColorPicker::Resolve(f->color()));
   plot.setPrecisionOptions(false, nullptr, discontinuity);
   plot.draw(this, ctx, rect);
 }
@@ -649,7 +653,7 @@ void GraphView::drawScatterPlot(KDContext* ctx, KDRect rect,
   // TODO Handle limiting tMax and tMin ?
   assert(context());
   for (Coordinate2D<float> p : f->iterateScatterPlot()) {
-    drawDot(ctx, rect, k_dotSize, p, f->color());
+    drawDot(ctx, rect, k_dotSize, p, ColorPicker::Resolve(f->color()));
   }
 }
 
@@ -785,7 +789,8 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect,
     // Refresh expiring pointer
     OMG::ExpiringPointer<ContinuousFunction> f =
         functionStore()->modelForRecord(selectedRec);
-    KDColor color = isDiscontinuity ? f->color() : Escher::Palette::GrayDarkest;
+    KDColor color = isDiscontinuity ? ColorPicker::Resolve(f->color())
+                                    : Escher::Palette::GrayDarkest;
     if (isRing) {
       drawRing(ctx, rect, k_dotSize, dotCoordinates, color, false);
     } else {

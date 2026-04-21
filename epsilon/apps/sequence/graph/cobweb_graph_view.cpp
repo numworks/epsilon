@@ -48,8 +48,9 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   constexpr size_t bufferSize = k_textMaxLength + 1;
   char name[bufferSize] = {};
   size_t nameLength = sequence->name(name, bufferSize);
-  KDColor fadedColor = KDColor::Blend(sequence->color(), Escher::Palette::White,
-                                      k_curveFadeRatio);
+  KDColor fadedColor =
+      KDColor::Blend(Escher::ColorPicker::Resolve(sequence->color()),
+                     Escher::Palette::White, k_curveFadeRatio);
   const SequenceContext& context =
       reinterpret_cast<const SequenceContext&>(App::app()->localContext());
 
@@ -114,22 +115,24 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   for (int i = initialStep; i < m_step; i++) {
     rank++;
     measuringContext.reset();
-    plotView->drawDashedStraightSegment(&measuringContext, rect,
-                                        OMG::Axis::Vertical, x, y, uOfX,
-                                        sequence->color());
+    plotView->drawDashedStraightSegment(
+        &measuringContext, rect, OMG::Axis::Vertical, x, y, uOfX,
+        Escher::ColorPicker::Resolve(sequence->color()));
     m_verticalLineCache[i].save(ctx, measuringContext.writtenRect());
-    plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Vertical, x, y,
-                                        uOfX, sequence->color());
+    plotView->drawDashedStraightSegment(
+        ctx, rect, OMG::Axis::Vertical, x, y, uOfX,
+        Escher::ColorPicker::Resolve(sequence->color()));
     y = uOfX;
     float uOfuOfX =
         sequence->evaluateXYAtParameter(static_cast<float>(rank + 1)).y();
     measuringContext.reset();
-    plotView->drawDashedStraightSegment(&measuringContext, rect,
-                                        OMG::Axis::Horizontal, y, x, uOfX,
-                                        sequence->color());
+    plotView->drawDashedStraightSegment(
+        &measuringContext, rect, OMG::Axis::Horizontal, y, x, uOfX,
+        Escher::ColorPicker::Resolve(sequence->color()));
     m_horizontalLineCache[i].save(ctx, measuringContext.writtenRect());
-    plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Horizontal, y, x,
-                                        uOfX, sequence->color());
+    plotView->drawDashedStraightSegment(
+        ctx, rect, OMG::Axis::Horizontal, y, x, uOfX,
+        Escher::ColorPicker::Resolve(sequence->color()));
     x = uOfX;
     uOfX = uOfuOfX;
   }

@@ -8,6 +8,7 @@
 
 namespace Shared {
 
+// TODO: use ThemeComponent
 /* Not ArbitraryShapedView since the shape never changes, the parent does not
  * need to be invalidated */
 class ColorView : public Escher::View, public Escher::CellWidget {

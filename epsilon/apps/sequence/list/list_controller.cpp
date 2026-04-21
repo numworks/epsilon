@@ -2,6 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <assert.h>
+#include <escher/theme/color_picker.h>
 #include <poincare/helpers/symbol.h>
 
 #include <algorithm>
@@ -74,7 +75,7 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
       Shared::Sequence* sequence =
           modelStore()->modelForRecord(recordAtRow(row));
       if (sequence->isActive()) {
-        nameColor = sequence->color();
+        nameColor = Escher::ColorPicker::Resolve(sequence->color());
       }
       if (type == k_expressionCellType) {
         fillExpressionCellForRow(sequenceCell->mainCell(), row);

@@ -2,7 +2,7 @@
 
 #include <apps/apps_container_helper.h>
 #include <apps/global_preferences.h>
-#include <escher/palette.h>
+#include <escher/theme/components.h>
 #include <omg/utf8_helper.h>
 #include <poincare/analysis_expression.h>
 #include <poincare/code_points.h>
@@ -33,7 +33,7 @@ constexpr CodePoint k_unnamedExpressionSymbol = k_cartesianSymbol;
 
 ContinuousFunction ContinuousFunction::NewModel(
     Ion::Storage::Record::ErrorStatus* error, const char* baseName,
-    KDColor color) {
+    Escher::ThemeComponent color) {
   assert(baseName != nullptr);
   // Create the record
   /* WARNING: We create an empty record with the baseName and extension right
@@ -210,7 +210,8 @@ CartesianConic ContinuousFunction::cartesianConicParameters() const {
   return CartesianConic(expressionReducedForAnalysis(), k_unknownName);
 }
 
-KDColor ContinuousFunction::subCurveColor(int subCurveIndex) const {
+Escher::ThemeComponent ContinuousFunction::subCurveColor(
+    int subCurveIndex) const {
   return color(derivationOrderFromSubCurveIndex(subCurveIndex));
 }
 
@@ -235,9 +236,8 @@ void ContinuousFunction::updateDerivativeColorAfterChangingPlotDisplay(
   /* - if we are displaying the plot: use a new color
    * - if we are hiding the plot: use the color of the main function */
   recordData()->setColor(
-      newDisplay ? Escher::ColorPicker::Resolve(
-                       GlobalContextAccessor::ContinuousFunctionContext()
-                           .colorForNewModel())
+      newDisplay ? GlobalContextAccessor::ContinuousFunctionContext()
+                       .colorForNewModel()
                  : color(),
       derivationOrder);
 }
@@ -521,7 +521,8 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   return e.approximateToPointOrRealScalarWithValue<T>(t).toPoint();
 }
 
-ContinuousFunction::RecordDataBuffer::RecordDataBuffer(KDColor color)
+ContinuousFunction::RecordDataBuffer::RecordDataBuffer(
+    Escher::ThemeComponent color)
     : Shared::Function::RecordDataBuffer(color),
       m_domain(-INFINITY, INFINITY),
       m_derivativesOptions{},
@@ -530,20 +531,21 @@ ContinuousFunction::RecordDataBuffer::RecordDataBuffer(KDColor color)
   m_derivativesOptions.colorSecondDerivative = color;
 }
 
-KDColor ContinuousFunction::RecordDataBuffer::color(int derivationOrder) const {
+Escher::ThemeComponent ContinuousFunction::RecordDataBuffer::color(
+    int derivationOrder) const {
   switch (derivationOrder) {
     case 0:
       return Function::RecordDataBuffer::color();
     case 1:
-      return KDColor::RGB16(m_derivativesOptions.colorFirstDerivative);
+      return m_derivativesOptions.colorFirstDerivative;
     default:
       assert(derivationOrder == 2);
-      return KDColor::RGB16(m_derivativesOptions.colorSecondDerivative);
+      return m_derivativesOptions.colorSecondDerivative;
   }
 }
 
-void ContinuousFunction::RecordDataBuffer::setColor(KDColor color,
-                                                    int derivationOrder) {
+void ContinuousFunction::RecordDataBuffer::setColor(
+    Escher::ThemeComponent color, int derivationOrder) {
   switch (derivationOrder) {
     case 0:
       Function::RecordDataBuffer::setColor(color);

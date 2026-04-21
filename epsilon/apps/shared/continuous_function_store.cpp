@@ -1,7 +1,7 @@
 #include "continuous_function_store.h"
 
 #include <escher/palette.h>
-#include <escher/theme/color_picker.h>
+#include <escher/theme/data_colors.h>
 #include <ion.h>
 #include <omg/utf8_helper.h>
 
@@ -59,9 +59,9 @@ void ContinuousFunctionStore::fillLastFreeColors(bool* colorIsFree) const {
         modelForRecord(recordAtIndex(i));
     int nDerivatives = 1 + 2 * f->canDisplayDerivative();
     for (int d = 0; d < nDerivatives && nFree > 1; d++) {
-      int colorIndex =
-          static_cast<uint8_t>(Palette::DataColorToComponent(f->color(d))) -
-          static_cast<uint8_t>(DataColorComponent(0));
+      int colorIndex = static_cast<uint8_t>(f->color(d)) -
+                       static_cast<uint8_t>(DataColorComponent(0));
+      assert(colorIndex >= 0 && colorIndex < k_numberOfDataColors);
       if (colorIsFree[colorIndex]) {
         colorIsFree[colorIndex] = false;
         nFree--;
@@ -97,8 +97,7 @@ ThemeComponent ContinuousFunctionStore::colorForNewModel() const {
 
 ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
                                                      ErrorStatus* error) {
-  return ContinuousFunction::NewModel(
-      error, name, Escher::ColorPicker::Resolve(colorForNewModel()));
+  return ContinuousFunction::NewModel(error, name, colorForNewModel());
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {

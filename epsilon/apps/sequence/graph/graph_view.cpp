@@ -1,5 +1,6 @@
 #include "graph_view.h"
 
+#include <escher/theme/color_picker.h>
 #include <poincare/symbol_context.h>
 
 #include <cmath>
@@ -29,11 +30,13 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
     if (std::isnan(y)) {
       continue;
     }
-    drawDot(ctx, rect, Dots::Size::Tiny, Coordinate2D<float>(x, y), s->color());
+    drawDot(ctx, rect, Dots::Size::Tiny, Coordinate2D<float>(x, y),
+            Escher::ColorPicker::Resolve(s->color()));
     if (x >= m_highlightedStart && x <= m_highlightedEnd &&
         record == m_selectedRecord) {
-      KDColor color =
-          m_shouldColorHighlighted ? s->color() : Escher::Palette::Black;
+      KDColor color = m_shouldColorHighlighted
+                          ? Escher::ColorPicker::Resolve(s->color())
+                          : Escher::Palette::Black;
       drawStraightSegment(ctx, rect, OMG::Axis::Vertical, x, y, 0.f, color);
     }
   }

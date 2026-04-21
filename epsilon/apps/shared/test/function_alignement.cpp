@@ -34,7 +34,7 @@ template <class F>
 void interactWithBaseRecordMember(F* fct) {
   /* Accessing Function record member m_color, which has a 2-byte alignment
    * Only effective in DEBUG=1, as there are no compiler optimizations */
-  KDColor color = fct->color();
+  Escher::ThemeComponent color = fct->color();
   (void)color;  // Silence compilation warning about unused variable.
 }
 

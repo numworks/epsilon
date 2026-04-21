@@ -79,9 +79,10 @@ void FunctionGraphController::selectCurveAtIndex(int curveIndex,
   functionGraphView()->selectRecord(r);
   OMG::ExpiringPointer<const Function> f =
       functionOrSequenceContext().modelForRecord(r);
-  KDColor color =
+  ThemeComponent color =
       f->color(f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex));
-  functionGraphView()->cursorView()->setColor(color, functionGraphView());
+  functionGraphView()->cursorView()->setColor(ColorPicker::Resolve(color),
+                                              functionGraphView());
   // Force reload to display the selected function on top
   if (willBeVisible) {
     functionGraphView()->reload(false, true);
@@ -108,7 +109,7 @@ void FunctionGraphController::FunctionSelectionController::fillCellForRow(
           graphController()->recordAtCurveIndex(row));
   CurveSelectionCellWithChevron* myCell =
       static_cast<CurveSelectionCellWithChevron*>(cell);
-  myCell->setColor(function->color());
+  myCell->setColor(ColorPicker::Resolve(function->color()));
   myCell->label()->setLayout(nameLayoutAtIndex(row).clone());
 }
 

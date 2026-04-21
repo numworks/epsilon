@@ -1,5 +1,6 @@
 #pragma once
 
+#include <escher/theme/components.h>
 #include <poincare/helpers/symbol.h>
 
 #include "expression_model_handle.h"
@@ -35,8 +36,8 @@ class Function : public ExpressionModelHandle {
 
   // Properties
   virtual bool isActive() const;
-  KDColor color(int derivationOrder = 0) const;
-  void setColor(KDColor color, int derivationOrder = 0);
+  Escher::ThemeComponent color(int derivationOrder = 0) const;
+  void setColor(Escher::ThemeComponent color, int derivationOrder = 0);
   void setActive(bool active);
   virtual int numberOfSubCurves(bool includeDerivatives = false) const {
     return 1;
@@ -89,30 +90,20 @@ class Function : public ExpressionModelHandle {
    */
   class __attribute__((packed)) RecordDataBuffer {
    public:
-    RecordDataBuffer(KDColor color) : m_color(color), m_active(true) {}
-    virtual KDColor color(int derivationOrder = 0) const {
-      return KDColor::RGB16(m_color);
+    RecordDataBuffer(Escher::ThemeComponent color)
+        : m_color(color), m_active(true) {}
+    virtual Escher::ThemeComponent color(int derivationOrder = 0) const {
+      return m_color;
     }
-    virtual void setColor(KDColor color, int derivationOrder = 0) {
+    virtual void setColor(Escher::ThemeComponent color,
+                          int derivationOrder = 0) {
       m_color = color;
     }
     virtual bool isActive() const { return m_active; }
     void setActive(bool active) { m_active = active; }
 
    private:
-#if __EMSCRIPTEN__
-    /* For emscripten memory representation, loads and stores must be aligned;
-     * performing a normal load or store on an unaligned address can fail
-     * silently. We thus use 'emscripten_align1_short' type, the unaligned
-     * version of uint16_t type to avoid producing an alignment error on the
-     * emscripten platform. */
-    static_assert(
-        sizeof(emscripten_align1_short) == sizeof(uint16_t),
-        "emscripten_align1_short should have the same size as uint16_t");
-    emscripten_align1_short m_color;
-#else
-    uint16_t m_color;
-#endif
+    Escher::ThemeComponent m_color;
     bool m_active;
   };
 

@@ -27,7 +27,9 @@ class AbstractColorParameterController
   static I18n::Message GetColorName(int row) {
     return ColorNames::k_messages[row];
   }
-  static KDColor GetColor(int row) { return ColorNames::k_colors[row]; }
+  static Escher::ThemeComponent GetColor(int row) {
+    return ColorNames::k_colors[row];
+  }
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

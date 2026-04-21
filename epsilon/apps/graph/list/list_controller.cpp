@@ -4,6 +4,7 @@
 #include <apps/shared/function_name_helper.h>
 #include <assert.h>
 #include <escher/metric.h>
+#include <escher/theme/color_picker.h>
 #include <omg/utf8_helper.h>
 #include <poincare/code_points.h>
 #include <poincare/helpers/symbol.h>
@@ -319,9 +320,11 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
           ->setParameterSelected(m_parameterColumnSelected);
     }
     // f can be null if the entry was just created and is still empty.
-    KDColor functionColor =
-        f->isActive() ? f->color(derivationOrder) : Palette::GrayDark;
-    static_cast<AbstractFunctionCell*>(cell)->setColor(functionColor);
+    ThemeComponent functionColor = f->isActive() ? f->color(derivationOrder)
+                                                 : ThemeComponent::AxisGrayDark;
+    // TODO: resolve can be removed when AbstractFunctionCell has a theme
+    static_cast<AbstractFunctionCell*>(cell)->setColor(
+        ColorPicker::Resolve(functionColor));
   }
   FunctionListController::fillCellForRow(cell, row);
 }

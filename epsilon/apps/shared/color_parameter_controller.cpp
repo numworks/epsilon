@@ -7,7 +7,7 @@ using namespace Escher;
 namespace Shared {
 
 int ColorParameterController::currentColorIndex() const {
-  KDColor functionColor = function()->color(m_derivationOrder);
+  ThemeComponent functionColor = function()->color(m_derivationOrder);
   for (int i = 0; i < ColorNames::k_count; i++) {
     if (functionColor == GetColor(i)) {
       return i;

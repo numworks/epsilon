@@ -10,6 +10,7 @@
 
 namespace Graph {
 
+// TODO: use ThemeComponent
 class AbstractFunctionCell : public Escher::EvenOddCell {
  public:
   AbstractFunctionCell();

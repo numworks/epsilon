@@ -37,11 +37,11 @@ size_t Function::NameWithArgument(Ion::Storage::Record record,
 
 bool Function::isActive() const { return recordData()->isActive(); }
 
-KDColor Function::color(int derivationOrder) const {
+Escher::ThemeComponent Function::color(int derivationOrder) const {
   return recordData()->color(derivationOrder);
 }
 
-void Function::setColor(KDColor color, int derivationOrder) {
+void Function::setColor(Escher::ThemeComponent color, int derivationOrder) {
   recordData()->setColor(color, derivationOrder);
 }
 

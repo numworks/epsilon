@@ -1,6 +1,7 @@
 #pragma once
 
 #include <assert.h>
+#include <escher/theme/components.h>
 #include <ion/storage/file_system.h>
 #include <poincare/code_points.h>
 #include <poincare/helpers/sequence.h>
@@ -168,7 +169,7 @@ class Sequence : public Function {
   class __attribute__((packed)) RecordDataBuffer
       : public Function::RecordDataBuffer {
    public:
-    RecordDataBuffer(KDColor color)
+    RecordDataBuffer(Escher::ThemeComponent color)
         : Function::RecordDataBuffer(color),
           m_type(Type::Explicit),
           m_initialRank(0),

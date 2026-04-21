@@ -1,7 +1,7 @@
 #include "sequence_store.h"
 
 #include <apps/global_preferences.h>
-#include <escher/palette.h>
+#include <escher/theme/data_colors.h>
 #include <ion/storage/file_system.h>
 
 #include <algorithm>
@@ -40,8 +40,8 @@ Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
   const char* name = FirstAvailableName(&nameIndex);
   assert(name);
   // Choose the corresponding color
-  assert(nameIndex < Palette::k_numberOfDataColors);
-  KDColor color = Palette::DataColor[nameIndex];
+  assert(nameIndex < k_numberOfDataColors);
+  ThemeComponent color = DataColorComponent(nameIndex);
   Sequence::RecordDataBuffer data(color);
   // m_sequences
   Storage::Record::ErrorStatus error =

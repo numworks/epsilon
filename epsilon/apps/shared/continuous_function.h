@@ -33,7 +33,8 @@ class ContinuousFunction : public Function {
 
   // Create a record with baseName
   static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus* error,
-                                     const char* baseName, KDColor color);
+                                     const char* baseName,
+                                     Escher::ThemeComponent color);
   static bool IsFunctionAssignment(const Poincare::UserExpression& e);
 
   // Builder
@@ -108,7 +109,7 @@ class ContinuousFunction : public Function {
            includeDerivatives *
                (displayPlotFirstDerivative() + displayPlotSecondDerivative());
   }
-  KDColor subCurveColor(int subCurveIndex) const;
+  Escher::ThemeComponent subCurveColor(int subCurveIndex) const;
 
   /* Expression */
 
@@ -281,10 +282,11 @@ class ContinuousFunction : public Function {
   class __attribute__((packed)) RecordDataBuffer
       : public Shared::Function::RecordDataBuffer {
    public:
-    RecordDataBuffer(KDColor color);
+    RecordDataBuffer(Escher::ThemeComponent color);
 
-    KDColor color(int derivationOrder = 0) const override;
-    void setColor(KDColor color, int derivationOrder = 0) override;
+    Escher::ThemeComponent color(int derivationOrder = 0) const override;
+    void setColor(Escher::ThemeComponent color,
+                  int derivationOrder = 0) override;
 
     bool displayValueFirstDerivative() const {
       return m_derivativesOptions.valueFirstDerivative;
@@ -336,14 +338,8 @@ class ContinuousFunction : public Function {
       bool plotFirstDerivative : 1;
       bool valueSecondDerivative : 1;
       bool plotSecondDerivative : 1;
-#if __EMSCRIPTEN__
-      // See comment in function.h
-      emscripten_align1_short colorFirstDerivative;
-      emscripten_align1_short colorSecondDerivative;
-#else
-      uint16_t colorFirstDerivative;
-      uint16_t colorSecondDerivative;
-#endif
+      Escher::ThemeComponent colorFirstDerivative;
+      Escher::ThemeComponent colorSecondDerivative;
     };
     DerivativesOptions m_derivativesOptions;
     bool m_tAuto;

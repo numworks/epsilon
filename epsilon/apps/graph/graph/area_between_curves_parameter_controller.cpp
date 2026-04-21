@@ -68,7 +68,8 @@ void AreaBetweenCurvesParameterController::fillCellForRow(
           AreaCompatibleFunctionAtIndex(row, m_mainRecord));
   CurveSelectionCell* curveSelectionCell =
       static_cast<CurveSelectionCell*>(cell);
-  curveSelectionCell->setColor(function->color());
+  // TODO: color resolve can be removed when CurveSelectionCell has a theme
+  curveSelectionCell->setColor(ColorPicker::Resolve(function->color()));
   curveSelectionCell->label()->setLayout(function->layout().clone());
 }
 

@@ -7,8 +7,14 @@
 namespace Shared {
 
 inline I18n::Message MessageForSyntaxError(Poincare::SyntaxError error) {
-  assert(error != Poincare::SyntaxError::None);
-  return I18n::Message::SyntaxError;
+  switch (error) {
+    case Poincare::SyntaxError::DataNotSuitable:
+      return I18n::Message::DataNotSuitable;
+    case Poincare::SyntaxError::None:
+      assert(false);
+    default:
+      return I18n::Message::SyntaxError;
+  }
 }
 
 }  // namespace Shared

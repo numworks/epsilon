@@ -61,6 +61,7 @@ enum class SyntaxError : uint8_t {
   MissingParenthesisInFunctionExponent = 50,
   NumberFollowsValidExpressionDirectly = 51,
   NonAcceptableExpression = 52,
+  DataNotSuitable = 53,
 };
 
 }  // namespace Poincare

@@ -10,6 +10,7 @@
 #include "column_parameter_controller.h"
 #include "global_store.h"
 #include "poincare_helpers.h"
+#include "syntax_error_message.h"
 
 using namespace Escher;
 using namespace Poincare;
@@ -120,30 +121,22 @@ bool StoreColumnHelper::fillColumnWithFormula(
     const Poincare::Layout& formulaLayout) {
   int column = store()->relativeColumn(referencedColumn());
   int series = store()->seriesAtColumn(referencedColumn());
-  /* TODO : Return Poincare::SyntaxError, add messages and use
-   * AbstractMathFieldDelegate::displayWarningForSyntaxError */
-  FillColumnStatus status =
+  Poincare::SyntaxError syntaxError =
       privateFillColumnWithFormula(formulaLayout, &series, &column);
-  if (status == FillColumnStatus::Success) {
-    /* We want to update the series only after the expression of the formula
-     * is destroyed, to avoid carrying multiple huge lists in the pool. That's
-     * why the formula is created in another scope
-     * (privateFillColumnWithFormula). */
-    if (!store()->updateSeries(series)) {
-      return false;
-    }
-    reload();
-    memoizeFormula(formulaLayout, formulaMemoizationIndex(series, column));
-    App::app()->setFirstResponder(table());
-    return true;
+  if (syntaxError != SyntaxError::None) {
+    App::app()->displayWarning(MessageForSyntaxError(syntaxError));
+    return false;
   }
-  if (status == FillColumnStatus::SyntaxError ||
-      status == FillColumnStatus::DataNotSuitable) {
-    App::app()->displayWarning(status == FillColumnStatus::SyntaxError
-                                   ? I18n::Message::SyntaxError
-                                   : I18n::Message::DataNotSuitable);
+  /* We want to update the series only after the expression of the formula is
+   * destroyed, to avoid carrying multiple huge lists in the pool. That's why
+   * the formula is created in another scope (privateFillColumnWithFormula). */
+  if (!store()->updateSeries(series)) {
+    return false;
   }
-  return false;
+  reload();
+  memoizeFormula(formulaLayout, formulaMemoizationIndex(series, column));
+  App::app()->setFirstResponder(table());
+  return true;
 }
 
 int StoreColumnHelper::formulaMemoizationIndex(int series, int column) {
@@ -151,15 +144,15 @@ int StoreColumnHelper::formulaMemoizationIndex(int series, int column) {
   return DoublePairStore::k_numberOfColumnsPerSeries * series + column;
 }
 
-StoreColumnHelper::FillColumnStatus
-StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
-                                                int* series, int* column) {
+Poincare::SyntaxError StoreColumnHelper::privateFillColumnWithFormula(
+    const Layout& formulaLayout, int* series, int* column) {
   StoreAppContext storeAppContext(store(), &GlobalContextAccessor::Context());
-  UserExpression formula = UserExpression::Parse(formulaLayout, storeAppContext,
-                                                 {.isAssignment = true});
-  if (formula.isUninitialized()) {
-    return FillColumnStatus::SyntaxError;
+  UserExpression::ParseOutput parseOutput = UserExpression::TryParse(
+      formulaLayout, storeAppContext, {.isAssignment = true});
+  if (parseOutput.syntaxError != SyntaxError::None) {
+    return parseOutput.syntaxError;
   }
+  UserExpression formula = parseOutput.expression;
   if (formula.isEquality()) {
     bool isValidEquality = false;
     const UserExpression leftOfEqual = formula.cloneChildAtIndex(0);
@@ -172,12 +165,12 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
       }
     }
     if (!isValidEquality) {
-      return FillColumnStatus::DataNotSuitable;
+      return SyntaxError::DataNotSuitable;
     }
   }
   Poincare::Dimension d = formula.dimension(storeAppContext);
   if (!(d.isScalar() || d.isList())) {
-    return FillColumnStatus::DataNotSuitable;
+    return SyntaxError::DataNotSuitable;
   }
 
   SystemExpression reduced = formula.cloneAndReduce(SimplificationParameters{
@@ -188,7 +181,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
       .reductionPolicy = {.target = ReductionTarget::System}});
 
   if (reduced.isUndefinedFailedSimplification() || reduced.isUndefined()) {
-    return FillColumnStatus::DataNotSuitable;
+    return SyntaxError::DataNotSuitable;
   }
 
   if (reduced.hasRandomList() || !reduced.isList()) {
@@ -205,7 +198,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
         !Poincare::Dimension(reduced.cloneChildAtIndex(0),
                              GlobalContextAccessor::Context())
              .isScalar()) {
-      return FillColumnStatus::DataNotSuitable;
+      return SyntaxError::DataNotSuitable;
     }
 
     bool allChildrenAreUndefined = true;
@@ -216,20 +209,20 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
       }
     }
     if (allChildrenAreUndefined) {
-      return FillColumnStatus::DataNotSuitable;
+      return SyntaxError::DataNotSuitable;
     }
     /* Delay the update of the series so that not too much data exists at the
      * same time in the pool. We might be working with huge lists right now, so
      * it's better to get out of the scope and destroy the list before storing
      * the data of the double pair store in the storage. */
     store()->setList(reduced, *series, *column, true, true);
-    return FillColumnStatus::Success;
+    return SyntaxError::None;
   }
   /* Formula isn't a list and has already been reduced with context, which is no
    * longer needed. Set each cell to the same value */
   double evaluation = reduced.approximateSystemToRealScalar<double>();
   if (std::isnan(evaluation)) {
-    return FillColumnStatus::DataNotSuitable;
+    return SyntaxError::DataNotSuitable;
   }
   int numberOfPairs = store()->numberOfPairsOfSeries(*series);
 
@@ -243,7 +236,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
           ApproximationPolicy{.optimize = true});
     }
   }
-  return FillColumnStatus::Success;
+  return SyntaxError::None;
 }
 
 size_t StoreColumnHelper::clearPopUpText(int column, char* buffer,

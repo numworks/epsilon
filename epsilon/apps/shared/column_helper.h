@@ -2,6 +2,7 @@
 
 #include <escher/input_view_controller.h>
 #include <escher/selectable_table_view.h>
+#include <poincare/syntax_error.h>
 
 #include "double_pair_store.h"
 #include "formula_template_menu_controller.h"
@@ -84,12 +85,7 @@ class StoreColumnHelper {
   }
   virtual void memoizeFormula(const Poincare::Layout& formula, int index) {}
   int formulaMemoizationIndex(int series, int relativeColumn);
-  enum class FillColumnStatus : uint8_t {
-    Success,
-    SyntaxError,
-    DataNotSuitable,
-  };
-  FillColumnStatus privateFillColumnWithFormula(
+  Poincare::SyntaxError privateFillColumnWithFormula(
       const Poincare::Layout& formulaLayout, int* series, int* column);
 
   ClearColumnHelper* m_clearColumnHelper;

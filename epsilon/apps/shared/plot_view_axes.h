@@ -84,6 +84,7 @@ class WithPolarGrid {
 
   static void ComputeRadiusBounds(const AbstractPlotView* plotView, KDRect rect,
                                   float* min, float* max);
+  static int PointToGraduation(float x, float y);
   static void ComputeGraduationBounds(const AbstractPlotView* plotView,
                                       KDRect rect, float xMin, float xMax,
                                       float yMin, float yMax, int* gradMin,

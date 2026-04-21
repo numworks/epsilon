@@ -73,6 +73,15 @@ void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
   *radiusMax = sqrt(xAbsoluteMax * xAbsoluteMax + yAbsoluteMax * yAbsoluteMax);
 }
 
+/* Associate a point on the grid to a graduation index in
+ * [-k_numberOfGraduations/2, k_numberOfGraduations/2] around the polar circle.
+ */
+int WithPolarGrid::PointToGraduation(float x, float y) {
+  return static_cast<int>(
+      std::floor(atan2(y, x) * WithPolarGrid::k_numberOfGraduations /
+                 (2.f * static_cast<float>(M_PI))));
+}
+
 void WithPolarGrid::ComputeGraduationBounds(const AbstractPlotView* plotView,
                                             KDRect rect, float xMin, float xMax,
                                             float yMin, float yMax,
@@ -82,31 +91,27 @@ void WithPolarGrid::ComputeGraduationBounds(const AbstractPlotView* plotView,
   float xAbsoluteMin = xMin > -xMax ? xMin : xMax;
   float yAbsoluteMin = yMin > -yMax ? yMin : yMax;
 
-  auto toGraduation = [](float angle) -> int {
-    return static_cast<int>(std::floor(angle * k_numberOfGraduations /
-                                       (2.f * static_cast<float>(M_PI))));
-  };
-
   if (xMin <= 0 && 0 <= xMax && yMin <= 0 && 0 <= yMax) {
     // The rect contains the origin.
     *gradMin = 0;
     *gradMax = k_numberOfGraduations;
   } else if (xMin <= 0 && 0 <= xMax) {
     // The rect crosses the Y axis.
-    *gradMin = toGraduation(atan2(yAbsoluteMin, xMin));
-    *gradMax = toGraduation(atan2(yAbsoluteMin, xMax));
+    *gradMin = PointToGraduation(xMin, yAbsoluteMin);
+    *gradMax = PointToGraduation(xMax, yAbsoluteMin);
   } else if (yMin <= 0 && 0 <= yMax) {
     // The rect crosses the X axis.
-    *gradMin = toGraduation(atan2(yMin, xAbsoluteMin));
-    *gradMax = toGraduation(atan2(yMax, xAbsoluteMin));
+    *gradMin = PointToGraduation(xAbsoluteMin, yMin);
+    *gradMax = PointToGraduation(xAbsoluteMin, yMax);
     if (xMax < 0) {
-      /* The rect crosses the -Ox ray. As atan2 outputs in the range [-pi,pi],
-       * the [a0, a1] arc must be complemented. */
+      /* The rect crosses the -Ox ray. As PointToGraduation outputs in the range
+       * [-k_numberOfGraduations/2, k_numberOfGraduations/2], the negative
+       * graduation must be complemented. */
       *gradMin += k_numberOfGraduations;
     }
   } else {
-    *gradMin = toGraduation(atan2(yAbsoluteMin, xAbsoluteMax));
-    *gradMax = toGraduation(atan2(yAbsoluteMax, xAbsoluteMin));
+    *gradMin = PointToGraduation(xAbsoluteMax, yAbsoluteMin);
+    *gradMax = PointToGraduation(xAbsoluteMin, yAbsoluteMax);
   }
 
   if (*gradMin > *gradMax) {

@@ -129,8 +129,9 @@ void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
   }
 }
 
-void WithPolarGrid::FormatAngleLabel(char* buffer, size_t bufferSize, int index,
+void WithPolarGrid::FormatAngleLabel(std::span<char> buffer, int index,
                                      AngleUnit angleUnit) {
+  assert(index >= 0 && index <= k_numberOfGraduations);
   bool reductionFailure = false;
   UserExpression label =
       UserExpression::Create(
@@ -141,12 +142,12 @@ void WithPolarGrid::FormatAngleLabel(char* buffer, size_t bufferSize, int index,
           .cloneAndSimplify({.reductionPolicy = {.advanced = false}},
                             &reductionFailure);
   assert(!reductionFailure);
-  size_t len = label.serialize({buffer, bufferSize}, true);
+  size_t len = label.serialize(buffer, true);
   // Append unit suffix.
   if (angleUnit == AngleUnit::Degree) {
-    Print::CustomPrintf(buffer + len, bufferSize - len, "°");
+    Print::CustomPrintf(buffer.data() + len, buffer.size() - len, "°");
   } else if (angleUnit == AngleUnit::Gradian) {
-    Print::CustomPrintf(buffer + len, bufferSize - len, "gon");
+    Print::CustomPrintf(buffer.data() + len, buffer.size() - len, "gon");
   }
 }
 
@@ -244,7 +245,7 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
     }
     // Small trick to avoid laying out negative angles.
     int labelIndex = (i + k_numberOfGraduations) % k_numberOfGraduations;
-    FormatAngleLabel(buffer, bufferSize, labelIndex, angleUnit);
+    FormatAngleLabel({buffer, bufferSize}, labelIndex, angleUnit);
     // Compute the position of the label.
     float x, y;
     float angleRadian =
@@ -284,7 +285,8 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
                    &lastDrawnLabelRect);
       if (i == 0) {
         // Also show the full-circle label below (360°/2π/400gon).
-        FormatAngleLabel(buffer, bufferSize, k_numberOfGraduations, angleUnit);
+        FormatAngleLabel({buffer, bufferSize}, k_numberOfGraduations,
+                         angleUnit);
         TryDrawLabel(plotView, ctx, rect, buffer, {x, y + labelMargin},
                      horizontalRelativePosition,
                      AbstractPlotView::RelativePosition::After,

@@ -79,7 +79,7 @@ class WithPolarGrid {
 
   static void DrawPolarCircles(const AbstractPlotView* plotView, KDContext* ctx,
                                KDRect rect);
-  static void FormatAngleLabel(char* buffer, size_t bufferSize, int index,
+  static void FormatAngleLabel(std::span<char> buffer, int index,
                                Poincare::AngleUnit angleUnit);
 
   static void ComputeRadiusBounds(const AbstractPlotView* plotView, KDRect rect,

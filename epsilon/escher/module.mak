@@ -120,6 +120,7 @@ endif
 
 $(call assert_defined,KANDINSKY_fonts_dependencies)
 
+# TODO: avoid this by moving theme to the LayoutPreferences
 # Escher needs the i18n.h header because the Escher sources include global_preferences.h
 $(call all_objects_for,$(SOURCES_escher)): $(OUTPUT_DIRECTORY)/apps/i18n.h $(KANDINSKY_fonts_dependencies)
 

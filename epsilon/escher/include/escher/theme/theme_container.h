@@ -24,11 +24,7 @@ struct ThemeContainer {
     return color;
       FIXED_COMPONENTS(X)
 #undef X
-      default:
-        break;
-    }
-    // Themed components are stored in this struct
-    switch (component) {
+      // Themed components are stored in this struct
 #define X(name)              \
   case ThemeComponent::name: \
     return name;

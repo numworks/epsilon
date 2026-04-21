@@ -6,6 +6,7 @@
 
 namespace Escher {
 
+// TODO: use a ThemeComponent
 class TransparentImageView : public ImageView, public CellWidget {
  public:
   const View* view() const override { return this; }

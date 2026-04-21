@@ -7,6 +7,7 @@
 
 namespace Sequence {
 
+// TODO: use ThemeComponent
 class AbstractSequenceCell : public Escher::EvenOddCell {
  public:
   AbstractSequenceCell()

@@ -5,6 +5,7 @@
 
 namespace Escher {
 
+// TODO: Bordered methods should use a ThemeComponent
 class Bordered {
  public:
   void drawBorderOfRect(KDContext* ctx, KDRect rect, KDColor borderColor) const;

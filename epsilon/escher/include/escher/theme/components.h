@@ -31,7 +31,11 @@ namespace Escher {
 
 // TODO: check TextBluishGray
 
-// Fixed components: color is the same in all themes.
+/* Fixed components: color is the same in all themes.
+ * If a color component is declared as fixed, it avoids declaring it with the
+ * same value in all themes. A fixed component color also doesn't need to be
+ * stored in the ThemeContainer, it is resolved directly in the
+ * ThemeContainer::get switch. */
 #define FIXED_COMPONENTS(X)            \
   X(DataRed, Palette::Red)             \
   X(DataBlue, Palette::Blue)           \

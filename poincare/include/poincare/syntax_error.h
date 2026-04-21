@@ -60,6 +60,7 @@ enum class SyntaxError : uint8_t {
   OnlyLogShouldUsePrefixLogBase2 = 49,
   MissingParenthesisInFunctionExponent = 50,
   NumberFollowsValidExpressionDirectly = 51,
+  NonAcceptableExpression = 52,
 };
 
 }  // namespace Poincare

@@ -74,7 +74,8 @@ bool MathLayoutFieldDelegate::isAcceptableLayoutOrWarning(
     return false;
   }
   if (!isAcceptableExpression(exp, symbolContext)) {
-    displayWarningForSyntaxError();
+    displayWarningForSyntaxError(
+        Poincare::SyntaxError::NonAcceptableExpression);
     return false;
   }
   return true;

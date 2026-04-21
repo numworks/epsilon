@@ -1,5 +1,9 @@
 #pragma once
 
+#include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/dependency.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/properties.h>
 #include <poincare/tree.h>
 
 #include "policies/solver.h"
@@ -45,5 +49,7 @@ class RootSolverFormalHelper {
     return root;
   }
 };
+
+#include <poincare/src/numeric_solver/root_solver_formal_helper.inc>
 
 }  // namespace Poincare::NumericSolver

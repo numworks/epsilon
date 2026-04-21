@@ -55,6 +55,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   store_menu_controller.cpp \
   store_parameter_controller.cpp \
   sum_graph_controller.cpp \
+  syntax_error_message.cpp \
   tab_table_controller.cpp \
   values_controller.cpp \
   values_parameter_controller.cpp \

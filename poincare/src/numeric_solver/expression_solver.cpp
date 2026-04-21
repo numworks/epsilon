@@ -1,4 +1,6 @@
 #include <poincare/numeric_solver/solver.h>
+// NOTE: needed for template instanciation of RootSolverFormalHelper
+#include <poincare/scandium/equation_solver.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/k_tree.h>
@@ -97,7 +99,11 @@ Solution<double> RootSolver::next() {
   return SolutionFromDetailedRoot(nextDetailedRoot());
 }
 
-RootSolver::DetailedRoot RootSolver::nextDetailedRoot() {
+// ------- RootSolverFormalHelper implementation -------
+
+template <typename TSolver>
+typename RootSolverFormalHelper<TSolver>::DetailedRoot
+RootSolverFormalHelper<TSolver>::nextDetailedRoot() {
   const Tree* e = getTree();
   if (e == nullptr || e->hasDescendantSatisfying(
                           [](const Tree* t) { return t->isRandomized(); })) {
@@ -126,7 +132,8 @@ RootSolver::DetailedRoot RootSolver::nextDetailedRoot() {
     case Type::Opposite:
     case Type::Sqrt: {
       /* f(x) = 0 <=> x = 0 */
-      RootSolver childSolver(m_stepper.start(), m_stepper.end(), e->child(0));
+      TSolver childSolver(as().m_stepper.start(), as().m_stepper.end(),
+                          e->child(0));
       return registerDetailedRoot(childSolver.nextDetailedRoot());
     }
 
@@ -138,7 +145,7 @@ RootSolver::DetailedRoot RootSolver::nextDetailedRoot() {
         return k_nanRoot;
       }
       // Use classic numeric scan
-      Solution<double> res = ExpressionSolver::next();
+      Solution<double> res = as().parentNext();
       if (res.interest != Interest::None) {
         res.interest = Interest::Root;
       }
@@ -146,12 +153,14 @@ RootSolver::DetailedRoot RootSolver::nextDetailedRoot() {
   }
 }
 
-RootSolver::DetailedRoot RootSolver::nextRootSearchingInChild(
+template <typename TSolver>
+typename RootSolverFormalHelper<TSolver>::DetailedRoot
+RootSolverFormalHelper<TSolver>::nextRootSearchingInChild(
     int childIndex) const {
   const Tree* e = getTree();
   const Tree* child = e->child(childIndex);
 
-  RootSolver childSolver(m_stepper.start(), m_stepper.end(), child);
+  TSolver childSolver(as().m_stepper.start(), as().m_stepper.end(), child);
 
   DetailedRoot root;
   while (std::isfinite(
@@ -171,14 +180,16 @@ RootSolver::DetailedRoot RootSolver::nextRootSearchingInChild(
             .policy = {.optimize = true},
             .expressionParameters = Approximation::Prepared{}});
     ebis->removeTree();
-    if (std::fabs(value) < NumericHelper::NullTolerance(root.x)) {
+    if (std::fabs(value) < TSolver::NumericHelper::NullTolerance(root.x)) {
       return {.x = root.x, .nullDescendant = root.nullDescendant};
     }
   }
   return k_nanRoot;
 }
 
-RootSolver::DetailedRoot RootSolver::nextRootSearchingInChildren(
+template <typename TSolver>
+typename RootSolverFormalHelper<TSolver>::DetailedRoot
+RootSolverFormalHelper<TSolver>::nextRootSearchingInChildren(
     ExpressionTestAuxiliary test) const {
   const Tree* e = getTree();
   DetailedRoot root = k_nanRoot;
@@ -188,8 +199,8 @@ RootSolver::DetailedRoot RootSolver::nextRootSearchingInChildren(
       DetailedRoot rootChild = nextRootSearchingInChild(i);
       if (std::isfinite(rootChild.x) &&
           (!std::isfinite(root.x) ||
-           std::fabs(m_stepper.start() - rootChild.x) <
-               std::fabs(m_stepper.start() - root.x))) {
+           std::fabs(as().m_stepper.start() - rootChild.x) <
+               std::fabs(as().m_stepper.start() - root.x))) {
         root = rootChild;
       }
     }
@@ -197,12 +208,16 @@ RootSolver::DetailedRoot RootSolver::nextRootSearchingInChildren(
   return root;
 }
 
-RootSolver::DetailedRoot RootSolver::nextRootInMultiplication() const {
+template <typename TSolver>
+typename RootSolverFormalHelper<TSolver>::DetailedRoot
+RootSolverFormalHelper<TSolver>::nextRootInMultiplication() const {
   assert(getTree()->isMult());
   return nextRootSearchingInChildren([](const Tree*) { return true; });
 }
 
-RootSolver::DetailedRoot RootSolver::nextRootInAddition() const {
+template <typename TSolver>
+typename RootSolverFormalHelper<TSolver>::DetailedRoot
+RootSolverFormalHelper<TSolver>::nextRootInAddition() const {
   /* Special case for expressions of the form "f(x)^a+g(x)", with:
    * - f(x) and g(x) sharing a root x0
    * - f(x) being defined only on one side of x0
@@ -234,22 +249,24 @@ RootSolver::DetailedRoot RootSolver::nextRootInAddition() const {
   DetailedRoot childrenRoot = nextRootSearchingInChildren(test);
 
   // Compare result with classic numeric scan
-  RootSolver solver = *this;
-  DetailedRoot root = {.x = solver.ExpressionSolver::next().x,
-                       .nullDescendant = getTree()};
-  if (!std::isfinite(root.x) || std::fabs(childrenRoot.x - m_stepper.start()) <
-                                    std::fabs(root.x - m_stepper.start())) {
+  TSolver solver = as();
+  DetailedRoot root = {.x = solver.parentNext().x, .nullDescendant = getTree()};
+  if (!std::isfinite(root.x) ||
+      std::fabs(childrenRoot.x - as().m_stepper.start()) <
+          std::fabs(root.x - as().m_stepper.start())) {
     root = childrenRoot;
   }
   return root;
 }
 
-RootSolver::DetailedRoot RootSolver::nextRootInDependency() const {
+template <typename TSolver>
+typename RootSolverFormalHelper<TSolver>::DetailedRoot
+RootSolverFormalHelper<TSolver>::nextRootInDependency() const {
   const Tree* e = getTree();
   assert(e->isDep());
   const Tree* main = Dependency::Main(e);
   const Tree* depsList = Dependency::Dependencies(e);
-  RootSolver depSolver(m_stepper.start(), m_stepper.end(), main);
+  TSolver depSolver(as().m_stepper.start(), as().m_stepper.end(), main);
 
   DetailedRoot root;
   // Find root in main and then check that the dependencies are not undefined
@@ -280,5 +297,13 @@ RootSolver::DetailedRoot RootSolver::nextRootInDependency() const {
 
   return {.x = root.x, .nullDescendant = root.nullDescendant};
 }
+
+template RootSolverFormalHelper<
+    Poincare::EquationSolver::BasicExpressionSolver>::DetailedRoot
+RootSolverFormalHelper<
+    Poincare::EquationSolver::BasicExpressionSolver>::nextDetailedRoot();
+
+template RootSolverFormalHelper<RootSolver>::DetailedRoot
+RootSolverFormalHelper<RootSolver>::nextDetailedRoot();
 
 }  // namespace Poincare::NumericSolver

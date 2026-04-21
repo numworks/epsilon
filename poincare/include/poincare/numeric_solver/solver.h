@@ -6,6 +6,7 @@
 #include "policies/queue.h"
 #include "policies/solver.h"
 #include "policies/step.h"
+#include "roots_solver_formal_helper.h"
 
 namespace Poincare::NumericSolver {
 
@@ -94,7 +95,9 @@ class ExtremumSolver : public ExpressionSolver {
       : ExpressionSolver(xMin, xMax, e, ExtremumBracketer{}) {}
 };
 
-class RootSolver : public ExpressionSolver {
+class RootSolver : public ExpressionSolver, RootSolverFormalHelper<RootSolver> {
+  friend RootSolverFormalHelper<RootSolver>;
+
  public:
   RootSolver(double xMin, double xMax, const Internal::Tree* e)
       : ExpressionSolver(xMin, xMax, e, RootBracketer{}) {}
@@ -102,34 +105,7 @@ class RootSolver : public ExpressionSolver {
   Solution<double> next() override;
 
  private:
-  struct DetailedRoot {
-    double x;
-    const Internal::Tree* nullDescendant = nullptr;
-  };
-  constexpr static DetailedRoot k_nanRoot = {.x = static_cast<double>(NAN),
-                                             .nullDescendant = nullptr};
-
-  const Internal::Tree* getTree() const {
-    return static_cast<const Internal::Tree*>(m_evaluator.data());
-  }
-
-  DetailedRoot nextDetailedRoot();
-  DetailedRoot nextRootSearchingInChild(int childIndex) const;
-  using ExpressionTestAuxiliary = bool (*)(const Internal::Tree*);
-  DetailedRoot nextRootSearchingInChildren(ExpressionTestAuxiliary test) const;
-  DetailedRoot nextRootInMultiplication() const;
-  DetailedRoot nextRootInAddition() const;
-  DetailedRoot nextRootInDependency() const;
-
-  DetailedRoot registerDetailedRoot(DetailedRoot root) {
-    registerSolution(SolutionFromDetailedRoot(root));
-    return root;
-  }
-
-  static Solution<double> SolutionFromDetailedRoot(DetailedRoot root) {
-    return std::isfinite(root.x) ? Solution<double>{root.x, 0., Interest::Root}
-                                 : k_noSolution<double>;
-  }
+  Solution<double> parentNext() { return ExpressionSolver::next(); }
 };
 
 class DiscontinuitySolver : public ExpressionSolver {

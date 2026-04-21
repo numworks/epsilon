@@ -3,6 +3,7 @@
 #include <apps/constant.h>
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <omg/unreachable.h>
 #include <poincare/code_points.h>
 #include <poincare/user_expression.h>
 
@@ -44,44 +45,6 @@ bool AbstractMathFieldDelegate::isAcceptableExpression(
 void AbstractMathFieldDelegate::displayWarningForSyntaxError(
     SyntaxError error) const {
   App::app()->displayWarning(MessageForSyntaxError(error));
-}
-
-bool AbstractMathFieldDelegate::isAcceptableTextOrWarning(
-    const char* text, const SymbolContext& symbolContext) {
-  if (text[0] == 0) {
-    return true;
-  }
-  /* Parsing
-   * Do not parse for assignment to detect if there is a syntax error, since
-   * some errors could be missed.
-   * Sometimes the field needs to be parsed for assignment but this is
-   * done later, namely by ContinuousFunction::buildExpressionFromLayout. */
-  UserExpression::ParseOutput result =
-      UserExpression::TryParse(text, symbolContext);
-  UserExpression exp = result.expression;
-  if (exp.isUninitialized()) {
-    // Unparsable expression
-    displayWarningForSyntaxError(result.syntaxError);
-    return false;
-  }
-  /* Expression serialization.
-   * Resulting texts are parseable and displayable, like:
-   * - 2*a
-   * - log(x,2) */
-  constexpr int bufferSize = TextField::MaxBufferSize();
-  char buffer[bufferSize];
-  int length = exp.serialize(buffer, false, SharedGlobalPrefs().displayMode());
-  if (length >= bufferSize - 1) {
-    /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
-     * escaped before printing utterly the expression. */
-    displayWarningForSyntaxError();
-    return false;
-  }
-  if (!isAcceptableExpression(exp, symbolContext)) {
-    displayWarningForSyntaxError();
-    return false;
-  }
-  return true;
 }
 
 MathLayoutFieldDelegate* MathLayoutFieldDelegate::Default() {
@@ -137,9 +100,10 @@ bool MathTextFieldDelegate::textFieldDidReceiveEvent(
 
 bool MathTextFieldDelegate::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
-  assert(!textField->isEditing());
-  return isAcceptableTextOrWarning(textField->text(),
-                                   App::app()->localContext());
+  /* textFieldDidFinishEditing implementation has been removed because it is
+   * unused. It can be added back if needed. */
+  OMG_UNREACHABLE;
+  return false;
 }
 
 template <typename T>

@@ -124,19 +124,16 @@ bool StoreColumnHelper::fillColumnWithFormula(
    * AbstractMathFieldDelegate::displayWarningForSyntaxError */
   FillColumnStatus status =
       privateFillColumnWithFormula(formulaLayout, &series, &column);
-  if (status == FillColumnStatus::Success ||
-      status == FillColumnStatus::NoDataToStore) {
-    if (status == FillColumnStatus::Success) {
-      /* We want to update the series only after the expression of the formula
-       * is destroyed, to avoid carrying multiple huge lists in the pool. That's
-       * why the formula is created in another scope
-       * (privateFillColumnWithFormula). */
-      if (!store()->updateSeries(series)) {
-        return false;
-      }
-      reload();
-      memoizeFormula(formulaLayout, formulaMemoizationIndex(series, column));
+  if (status == FillColumnStatus::Success) {
+    /* We want to update the series only after the expression of the formula
+     * is destroyed, to avoid carrying multiple huge lists in the pool. That's
+     * why the formula is created in another scope
+     * (privateFillColumnWithFormula). */
+    if (!store()->updateSeries(series)) {
+      return false;
     }
+    reload();
+    memoizeFormula(formulaLayout, formulaMemoizationIndex(series, column));
     App::app()->setFirstResponder(table());
     return true;
   }
@@ -235,9 +232,6 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
     return FillColumnStatus::DataNotSuitable;
   }
   int numberOfPairs = store()->numberOfPairsOfSeries(*series);
-  if (numberOfPairs == 0) {
-    return FillColumnStatus::NoDataToStore;
-  }
 
   // If formula contains a random formula, evaluate it for each pair.
   bool evaluateForEachPairs = formula.hasRandomNumber();

@@ -86,7 +86,6 @@ class StoreColumnHelper {
   int formulaMemoizationIndex(int series, int relativeColumn);
   enum class FillColumnStatus : uint8_t {
     Success,
-    NoDataToStore,
     SyntaxError,
     DataNotSuitable,
   };

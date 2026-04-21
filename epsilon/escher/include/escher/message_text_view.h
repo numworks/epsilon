@@ -33,7 +33,7 @@ class RawColorMessageTextView : public RawColor<MessageTextView> {
                           KDCoordinate lineSpacing = 0)
       : RawColor<MessageTextView>(message, MakeTextFormat(format),
                                   lineSpacing) {
-    this->m_rawColors = colors;
+    m_rawColors = colors;
   }
 };
 

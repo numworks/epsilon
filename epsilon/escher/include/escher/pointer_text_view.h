@@ -23,7 +23,7 @@ class RawColorPointerTextView : public RawColor<PointerTextView> {
                           TextFormatWithoutColors format = {},
                           TextColors colors = {})
       : RawColor<PointerTextView>(text, MakeTextFormat(format)) {
-    this->m_rawColors = colors;
+    m_rawColors = colors;
   }
 };
 

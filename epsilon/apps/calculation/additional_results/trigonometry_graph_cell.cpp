@@ -1,6 +1,7 @@
 #include "trigonometry_graph_cell.h"
 
 #include <apps/global_preferences.h>
+#include <escher/theme/components.h>
 
 using namespace Shared;
 using namespace Poincare;

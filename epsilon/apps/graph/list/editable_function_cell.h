@@ -3,9 +3,9 @@
 #include <escher/button_cell.h>
 #include <escher/editable_expression_model_cell.h>
 #include <escher/stack_view_controller.h>
+#include <escher/theme/components.h>
 
 #include "function_cell.h"
-#include "global_preferences.h"
 
 namespace Graph {
 

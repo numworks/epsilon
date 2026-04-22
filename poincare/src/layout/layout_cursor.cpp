@@ -236,18 +236,30 @@ void TreeStackCursor::insertAndRemoveLayout(
                                                               symbolContext);
   }
 
-  /* - Step 3 - Add empty row to grid layout if needed
-   * When an empty child at the bottom or right of the grid is filled,
-   * an empty row/column is added below/on the right.
-   */
   int index;
   Tree* parent = parentLayout(&index);
   if (parent && parent->isGridLayout() && RackLayout::IsEmpty(cursorRack())) {
+    /* - Step 3 - Add empty row to grid layout if needed
+     * When an empty child at the bottom or right of the grid is filled,
+     * an empty row/column is added below/on the right.
+     */
     setCursorRack(Grid::From(parent)->willFillEmptyChildAtIndex(index));
     m_position = 0;
+  } else if (parent && parent->isIntegralLayout() &&
+             index == Integral::k_differentialIndex &&
+             m_position == cursorRack()->numberOfChildren() &&
+             (ref->numberOfChildren() != 1 ||
+              !InputBeautification::LayoutIsIdentifierMaterial(
+                  ref->child(0)))) {
+    /* - Step 4 - Exit integral differential slot on non-identifier chars.
+     * When the cursor is at the right edge of an integral's differential slot
+     * and a non-identifier character is about to be inserted, relocate the
+     * cursor to the right of the integral so the inserted layout lands in the
+     * outer expression instead of inside the differential. */
+    moveCursorToLayout(parent, OMG::Direction::Right());
   }
 
-  /* - Step 4 - Close brackets on the left/right
+  /* - Step 5 - Close brackets on the left/right
    *
    * For example, if the current layout is "(3+4]|" (where "|"" is the cursor
    * and "]" is a temporary parenthesis), inserting something on the right
@@ -287,7 +299,7 @@ void TreeStackCursor::insertAndRemoveLayout(
                                                  Side::Right));
   }
 
-  /* - Step 5 - Add parenthesis around vertical offset
+  /* - Step 6 - Add parenthesis around vertical offset
    * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,
    * add parentheses to make (a^b)^c. */
   if (ref->child(0)->isVerticalOffsetLayout() &&
@@ -313,7 +325,7 @@ void TreeStackCursor::insertAndRemoveLayout(
     }
   }
 
-  // - Step 6 - Find position to point to if layout will be merged
+  // - Step 7 - Find position to point to if layout will be merged
   TreeStackCursor previousCursor = *this;
   TreeRef childToPoint;
   if (ref->numberOfChildren() > 0 && !(forceRight || forceLeft)) {
@@ -328,7 +340,7 @@ void TreeStackCursor::insertAndRemoveLayout(
     }
   }
 
-  // - Step 7 - Insert layout
+  // - Step 8 - Insert layout
   int numberOfInsertedChildren = ref->numberOfChildren();
   bool autocompletedPairInserted =
       (numberOfInsertedChildren == 1) && ref->child(0)->isAutocompletedPair();
@@ -346,7 +358,7 @@ void TreeStackCursor::insertAndRemoveLayout(
     m_position += numberOfInsertedChildren;
   }
 
-  /* - Step 8 - Collapse siblings and find position to point to if layout was
+  /* - Step 9 - Collapse siblings and find position to point to if layout was
    * not merged */
   if (numberOfInsertedChildren == 1 && !autocompletedPairInserted) {
     // ref is undef
@@ -363,15 +375,15 @@ void TreeStackCursor::insertAndRemoveLayout(
     }
   }
 
-  // - Step 9 - Point to required position
+  // - Step 10 - Point to required position
   if (!childToPoint.isUninitialized()) {
     moveCursorToLayout(childToPoint, OMG::Direction::Left());
   }
 
-  // - Step 10 - Balance brackets
+  // - Step 11 - Balance brackets
   balanceAutocompletedBracketsAndKeepAValidCursor();
 
-  // - Step 11 - Beautify after insertion if needed
+  // - Step 12 - Beautify after insertion if needed
   if (beautificationMethod.beautifyAfterInserting) {
     InputBeautification::BeautifyLeftOfCursorAfterInsertion(this,
                                                             symbolContext);

@@ -65,6 +65,7 @@ class InputBeautification {
       LayoutCursor* layoutCursor, const Poincare::SymbolContext& symbolContext);
   static bool BeautifyLeftOfCursorAfterInsertion(
       LayoutCursor* layoutCursor, const Poincare::SymbolContext& symbolContext);
+  static bool LayoutIsIdentifierMaterial(const Tree* l);
 
  private:
   constexpr static int k_maxNumberOfParameters = 4;
@@ -271,8 +272,6 @@ class InputBeautification {
         return log;
       }};
   constexpr static int k_indexOfBaseOfLog = 1;
-
-  static bool LayoutIsIdentifierMaterial(const Tree* l);
 
   // All following methods return true if layout was beautified
 

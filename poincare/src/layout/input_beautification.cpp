@@ -161,12 +161,12 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
          BeautifySum(h, insertedLayoutIndex, symbolContext, layoutCursor);
 }
 
-// private
-
 bool InputBeautification::LayoutIsIdentifierMaterial(const Tree* l) {
   return l->isCodePointLayout() &&
          Tokenizer::IsIdentifierMaterial(CodePointLayout::GetCodePoint(l));
 }
+
+// private
 
 bool InputBeautification::BeautifySymbols(Tree* rack,
                                           int rightmostIndexToBeautify,

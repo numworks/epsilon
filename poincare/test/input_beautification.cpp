@@ -174,6 +174,37 @@ QUIZ_CASE(pcj_input_beautification_after_inserting_layout) {
   }
 }
 
+QUIZ_CASE(pcj_input_beautification_exit_differential_slot) {
+#if POINCARE_INTEGRAL
+  // Non-identifier chars exit the differential slot and land outside.
+  {
+    Layout l = KRackL(KIntegralL("x"_l, KRackL(), KRackL(), KRackL()));
+    LayoutCursor c(l, l.tree()->child(0)->child(0));
+    c.insertText("+");
+    Layout expected =
+        KRackL(KIntegralL("x"_l, KRackL(), KRackL(), KRackL())) ^ "+"_l;
+    quiz_assert(c.rootRack()->treeIsIdenticalTo(expected.tree()));
+  }
+  // * exits and is post-beautified to ×.
+  {
+    Layout l = KRackL(KIntegralL("x"_l, KRackL(), KRackL(), KRackL()));
+    LayoutCursor c(l, l.tree()->child(0)->child(0));
+    c.insertText("*");
+    Layout expected =
+        KRackL(KIntegralL("x"_l, KRackL(), KRackL(), KRackL())) ^ "×"_l;
+    quiz_assert(c.rootRack()->treeIsIdenticalTo(expected.tree()));
+  }
+  // Letters stay inside the differential slot (no exit).
+  {
+    Layout l = KRackL(KIntegralL("x"_l, KRackL(), KRackL(), KRackL()));
+    LayoutCursor c(l, l.tree()->child(0)->child(0));
+    c.insertText("y");
+    Layout expected = KRackL(KIntegralL("xy"_l, KRackL(), KRackL(), KRackL()));
+    quiz_assert(c.rootRack()->treeIsIdenticalTo(expected.tree()));
+  }
+#endif
+}
+
 QUIZ_CASE(pcj_input_beautification_derivative) {
   const Layout firstOrderDerivative =
       KRackL(KDiffL("x"_l, KRackL(), "1"_l, KRackL()));

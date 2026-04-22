@@ -14,12 +14,13 @@ class ClearanceViewerController : public Escher::ViewController {
   void viewWillAppear() override;
 
  private:
-  class ContentView : public Escher::RawColorSolidColorView {
+  class ContentView : public Escher::SolidColorView {
    public:
     constexpr static size_t k_bufferSize = 512;
-    ContentView() : Escher::RawColorSolidColorView(BasicColor::White) {}
+    ContentView()
+        : Escher::SolidColorView(Escher::ThemeComponent::BasicWhite) {}
     Escher::AbstractBufferTextView* textView() { return &m_textView; }
-    void setColor(KDColor color) override;
+    void setColor(Escher::ThemeComponent color) override;
 
    private:
     void layoutSubviews(bool force = false) override;
@@ -28,9 +29,8 @@ class ClearanceViewerController : public Escher::ViewController {
       assert(index == 0);
       return &m_textView;
     }
-    /* TODO: turn back to a normal OneLineBufferTextView when SolidColorView is
-     * themed */
-    Escher::RawColorBufferTextView<k_bufferSize> m_textView;
+
+    Escher::BufferTextView<k_bufferSize> m_textView;
   };
   ContentView m_view;
 };

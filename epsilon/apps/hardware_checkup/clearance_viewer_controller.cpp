@@ -5,25 +5,26 @@
 
 namespace HardwareCheckup {
 
-void ClearanceViewerController::ContentView::setColor(KDColor color) {
-  Escher::RawColorSolidColorView::setColor(color);
+void ClearanceViewerController::ContentView::setColor(
+    Escher::ThemeComponent color) {
+  Escher::SolidColorView::setColor(color);
   m_textView.setBackgroundColor(color);
 }
 
 void ClearanceViewerController::viewWillAppear() {
-  KDColor color;
+  Escher::ThemeComponent color;
   const char* clearanceLevelText;
   switch (Ion::Authentication::clearanceLevel()) {
     case Ion::Authentication::ClearanceLevel::NumWorks:
-      color = BasicColor::Green;
+      color = Escher::ThemeComponent::BasicGreen;
       clearanceLevelText = "Clearance Level:\n\nNumWorks";
       break;
     case Ion::Authentication::ClearanceLevel::NumWorksAndThirdPartyApps:
-      color = BasicColor::Yellow;
+      color = Escher::ThemeComponent::BasicYellow;
       clearanceLevelText = "Clearance Level:\n\nNumWorks and Third-Party Apps";
       break;
     case Ion::Authentication::ClearanceLevel::ThirdParty:
-      color = BasicColor::Red;
+      color = Escher::ThemeComponent::BasicRed;
       clearanceLevelText = "Clearance Level:\n\nThird-Party";
       break;
     default:

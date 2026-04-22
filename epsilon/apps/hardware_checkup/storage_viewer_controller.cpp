@@ -1,5 +1,6 @@
 #include "storage_viewer_controller.h"
 
+#include <escher/theme/color_picker.h>
 #include <ion/storage/file_system.h>
 #include <kandinsky/basic_color.h>
 #include <poincare/preferences.h>
@@ -36,12 +37,13 @@ bool StorageViewerController::deleteDummyRecord() const {
 }
 
 StorageViewerController::ContentView::ContentView()
-    : Escher::RawColorSolidColorView(BasicColor::White),
-      m_textView({.font = KDFont::Size::Small,
+    : Escher::SolidColorView(Escher::ThemeComponent::BasicWhite),
+      m_textView({.style = {.font = KDFont::Size::Small},
                   .verticalAlignment = KDGlyph::k_alignTop}) {}
 
-void StorageViewerController::ContentView::setColor(KDColor color) {
-  Escher::RawColorSolidColorView::setColor(color);
+void StorageViewerController::ContentView::setColor(
+    Escher::ThemeComponent color) {
+  Escher::SolidColorView::setColor(color);
   m_textView.setBackgroundColor(color);
 }
 
@@ -52,10 +54,7 @@ void StorageViewerController::viewWillAppear() {
   size_t totalSize = Ion::Storage::FileSystem::k_totalSize;
   size_t usedSize = totalSize - availableSize;
   float ratio = static_cast<float>(usedSize) / totalSize;
-  // Set a color between green and red depending on the storage usage.
-  m_view.setColor(KDColor::Blend(BasicColor::Red, BasicColor::Green,
-                                 static_cast<uint8_t>(255 * ratio)));
-
+  m_view.setColor(Escher::ThemeComponent::BasicOrange);
   char lineBuffer[ContentView::k_lineBufferSize];
   m_view.textView()->setText("");
   // Display size usage

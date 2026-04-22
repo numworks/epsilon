@@ -13,7 +13,7 @@ class StandbyController : public Escher::ViewController {
   bool handleEvent(Ion::Events::Event event) override;
 
  private:
-  class ContentView : public Escher::RawColorSolidColorView {
+  class ContentView : public Escher::SolidColorView {
    public:
     ContentView();
 

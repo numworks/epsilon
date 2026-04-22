@@ -38,7 +38,7 @@ class GlobalPreferences : public Escher::LayoutPreferences::Interface,
   static GlobalPreferences* SharedGlobalPreferences();
   static void Init();
 
-  Escher::Theme theme() const { return s_data->m_theme; }
+  Escher::Theme theme() const override { return s_data->m_theme; }
   void setTheme(Escher::Theme theme) { s_data->m_theme = theme; }
 
   I18n::Language language() const { return s_data->m_language; }

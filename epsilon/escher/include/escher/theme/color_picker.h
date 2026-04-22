@@ -21,9 +21,10 @@ class ColorPicker {
  private:
   /* GetCurrentTheme is defined in the .cpp so that the details of how the
    * theme is accessed are hidden. Currently for Epsilon (the only project which
-   * uses Escher) the current theme is accessed by reading the theme member of
-   * the shared GlobalPreferences instance (which should be a very quick
-   * accessor) */
+   * uses Escher) the current theme is accessed by calling the virtual theme()
+   * getter of LayoutPreferences, which is itself defined in the
+   * GlobalPreferences concrete class. Accessing the GlobalPreferences theme
+   * member should be quick. */
   static Theme GetCurrentTheme();
 
   constexpr static KDColor Get(Theme theme, ThemeComponent component) {

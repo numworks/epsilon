@@ -1,5 +1,6 @@
 #pragma once
 
+#include <escher/theme/color_picker.h>
 #include <poincare/preferences.h>
 
 namespace Escher {
@@ -17,6 +18,8 @@ class LayoutPreferences {
     virtual bool linearMode() const = 0;
     virtual LogarithmKeyEvent logarithmKeyEvent() const = 0;
     virtual Poincare::Preferences::PrintFloatMode displayMode() const = 0;
+    virtual Escher::Theme theme() const = 0;
+
     bool operator==(const Interface&) const = default;
   };
 

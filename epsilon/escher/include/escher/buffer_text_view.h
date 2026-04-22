@@ -5,8 +5,6 @@
 #include <poincare/print_float.h>
 #include <stdarg.h>
 
-#include "raw_color_glyphs_view.h"
-
 namespace Escher {
 
 class AbstractBufferTextView : public TextView {
@@ -47,16 +45,6 @@ class BufferTextView : public AbstractBufferTextView {
   char* buffer() override { return m_buffer; }
   int maxTextSize() const override { return BufferSize; }
   char m_buffer[BufferSize];
-};
-
-template <size_t BufferSize>
-class RawColorBufferTextView : public RawColor<BufferTextView<BufferSize>> {
- public:
-  RawColorBufferTextView(TextFormatWithoutColors format = {},
-                         TextColors colors = {})
-      : RawColor<BufferTextView<BufferSize>>(MakeTextFormat(format)) {
-    this->m_rawColors = colors;
-  }
 };
 
 template <KDFont::Size Font, int NumberOfLines>

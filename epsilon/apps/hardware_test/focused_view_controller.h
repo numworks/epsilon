@@ -40,6 +40,8 @@ class FocusedViewController : public Escher::ViewController {
                                  bool force);
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 5; }
+    /* TODO: turn back to a normal OneLineBufferTextView when SolidColorView is
+     * themed */
     Escher::OneLineRawColorBufferTextView<> m_prefixView;
     Escher::OneLineRawColorBufferTextView<> m_testNameView;
     Escher::OneLineRawColorBufferTextView<> m_testResultView;

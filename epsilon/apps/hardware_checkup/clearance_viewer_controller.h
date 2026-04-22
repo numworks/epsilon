@@ -28,6 +28,8 @@ class ClearanceViewerController : public Escher::ViewController {
       assert(index == 0);
       return &m_textView;
     }
+    /* TODO: turn back to a normal OneLineBufferTextView when SolidColorView is
+     * themed */
     Escher::RawColorBufferTextView<k_bufferSize> m_textView;
   };
   ContentView m_view;

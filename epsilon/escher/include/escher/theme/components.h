@@ -1,5 +1,6 @@
 #pragma once
 
+#include <kandinsky/basic_color.h>
 #include <stdint.h>
 
 namespace Escher {
@@ -37,6 +38,14 @@ namespace Escher {
  * stored in the ThemeContainer, it is resolved directly in the
  * ThemeContainer::get switch. */
 #define FIXED_COMPONENTS(X)                      \
+  X(BasicBlack, BasicColor::Black)               \
+  X(BasicWhite, BasicColor::White)               \
+  X(BasicRed, BasicColor::Red)                   \
+  X(BasicGreen, BasicColor::Green)               \
+  X(BasicBlue, BasicColor::Blue)                 \
+  X(BasicYellow, BasicColor::Yellow)             \
+  X(BasicOrange, BasicColor::Orange)             \
+  X(BasicPurple, BasicColor::Purple)             \
   X(DataRed, Palette::Red)                       \
   X(DataBlue, Palette::Blue)                     \
   X(DataGreen, Palette::Green)                   \

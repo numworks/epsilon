@@ -77,9 +77,9 @@ endif
 # check_compiler_version,<minimum_required_version>
 define check_compiler_minimum_major_version
 $(if $(shell if [ $(word 1,$(subst ., ,$(shell $(CC) -dumpversion))) -lt $1 ]; then \
-	           echo error; \
-	           fi),\
-	$(error "Failed requirement, $(CC) must have a version >= $1 but has version $(shell $(CC) -dumpversion)"),)
+             echo error; \
+             fi),\
+  $(error "Failed requirement, $(CC) must have a version >= $1 but has version $(shell $(CC) -dumpversion)"),)
 endef
 
 define check_compiler_exact_version

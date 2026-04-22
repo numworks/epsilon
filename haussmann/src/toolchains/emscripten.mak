@@ -56,7 +56,7 @@ else
 # Computation speed comparison
 # Test: Repeat 10 000 times parse, reduce, approximate and beautify on the
 # latex string "((π/3)+(π/6)+(π/4))/(sqrt(40))"
-# Optim | poincare.wasm 
+# Optim | poincare.wasm
 #  -O0  |  ~ 9.3s
 #  -O3  |  ~ 6.0 s
 #  -Os  |  ~ 7.2 s

@@ -73,9 +73,9 @@ endef
 # rule when libraries_for_flavored_goal is used to generate the prerequisites.
 define libraries_for_flavored_goal
 $(call text_or,$(addprefix $(OUTPUT_DIRECTORY)/$(subst ./,,$(dir $1)),\
-	$(addsuffix $(subst $( ),,$(filter .%,$(subst ., .,$(notdir $1)))).a,\
-	$(MODULES_$(call name_for_flavored_target,$1)))), \
-	_UNREACHABLE)
+  $(addsuffix $(subst $( ),,$(filter .%,$(subst ., .,$(notdir $1)))).a,\
+  $(MODULES_$(call name_for_flavored_target,$1)))), \
+  _UNREACHABLE)
 endef
 
 # ldflags_for_flavored_goal, <flavored goal>
@@ -100,5 +100,5 @@ endef
 # _assert_valid_goal_name, <name>
 define _assert_valid_goal_name
 $(if $(shell echo '$1' | grep -Eq '[^a-z0-9_]' && echo error),\
-	$(error "Error: goal name should only contain lowercase letters, digits, and underscores"),)
+  $(error "Error: goal name should only contain lowercase letters, digits, and underscores"),)
 endef

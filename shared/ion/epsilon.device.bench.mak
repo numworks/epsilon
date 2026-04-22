@@ -110,9 +110,9 @@ _sources_ion_bench += $(addprefix device/core/device/bench/command/, \
   fill_backup.cpp \
 ) \
 $(addprefix device/core/device/shared-core/drivers/, \
-	backup_ram_$(PLATFORM).cpp \
-	backup_ram.cpp \
-	rtc.cpp \
+  backup_ram_$(PLATFORM).cpp \
+  backup_ram.cpp \
+  rtc.cpp \
 )
 endif
 

@@ -37,12 +37,12 @@ endef
 # _filter_element_with_tastes, <element and tastes>, <flavors>
 define _filter_element_with_tastes
 $(call _filter_negative_tastes,\
-	$(call _filter_positive_tastes,\
-		$(firstword $1),\
-		$(subst :+,,$(filter :+%,$1)),\
-		$2),\
-	$(subst :-,,$(filter :-%,$1)),\
-	$2)
+  $(call _filter_positive_tastes,\
+    $(firstword $1),\
+    $(subst :+,,$(filter :+%,$1)),\
+    $2),\
+  $(subst :-,,$(filter :-%,$1)),\
+  $2)
 endef
 
 # _filter_positive_tastes, <element>, <positive tastes>, <flavors>

@@ -1,7 +1,7 @@
 _sources_ion_eraser := \
 $(addprefix shared/, \
   dummy/assert.cpp \
-	display.cpp \
+  display.cpp \
   display_context.cpp \
 ) \
 $(addprefix device/shared/, \

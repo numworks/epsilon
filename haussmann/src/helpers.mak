@@ -69,15 +69,15 @@ endef
 # if archs are defined: stem -> $(OUTPUT_DIRECTORY)/arch1/stem $(OUTPUT_DIRECTORY)/arch2/stem
 define all_targets_named
 $(strip $(addprefix $(OUTPUT_DIRECTORY)/,\
-	$(if $(ARCHS),$(addsuffix /$1,$(ARCHS)),$1)\
+  $(if $(ARCHS),$(addsuffix /$1,$(ARCHS)),$1)\
 ))
 endef
 
 # all_objects_for, <sources list>
 define all_objects_for
 $(strip $(if $(ARCHS),\
-	$(foreach a,$(ARCHS),$(call objects_for_sources,$a/,$1) $(foreach d,$(ALL_SPECIAL_SUBDIRECTORIES),$(call objects_for_sources,$a/$d/,$1))),\
-	$(call objects_for_sources,,$1) $(foreach d,$(ALL_SPECIAL_SUBDIRECTORIES),$(call objects_for_sources,$d/,$1))))
+  $(foreach a,$(ARCHS),$(call objects_for_sources,$a/,$1) $(foreach d,$(ALL_SPECIAL_SUBDIRECTORIES),$(call objects_for_sources,$a/$d/,$1))),\
+  $(call objects_for_sources,,$1) $(foreach d,$(ALL_SPECIAL_SUBDIRECTORIES),$(call objects_for_sources,$d/,$1))))
 endef
 
 # generated_sources_for, <sources list>

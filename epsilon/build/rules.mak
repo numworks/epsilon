@@ -19,14 +19,14 @@ _EMCC ?= emcc
 # _file_check, <file>
 define _file_check
 $(if $(shell if test ! -f $(1) 2>&1 >/dev/null; then echo error; fi),\
-	$(error "Missing file: $(1)"),)
+  $(error "Missing file: $(1)"),)
 endef
 
 # Errors out if the command does not exist
 # _command_check, <command>
 define _command_check
 $(if $(shell if ! command -v $1; then echo error; fi),\
-	$(error "Missing command: $(1), did you forget to source?"),)
+  $(error "Missing command: $(1), did you forget to source?"),)
 endef
 
 

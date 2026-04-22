@@ -88,17 +88,17 @@ endef
 # _assert_valid_module_name, <name>
 define _assert_valid_module_name
 $(if $(shell echo '$1' | grep -Eq '[^a-z0-9_]' && echo error),\
-	$(error "Error: module name should only contain lowercase letters, digits, and underscores"),)
+  $(error "Error: module name should only contain lowercase letters, digits, and underscores"),)
 endef
 
 define _assert_valid_version
 $(if $(shell echo '$1' | grep -Eq '^[0-9]+$$' || echo error),\
-	$(error "Error: version should be an integer"),)
+  $(error "Error: version should be an integer"),)
 endef
 
 # _flavor_filtered_module_variable, <dot-separated flavored module>, <variable name>
 define _flavor_filtered_module_variable
 $(call flavor_filter,\
-	$($2_$(call name_for_flavored_target,$1)),\
-	$(call flavors_for_flavored_target,$(notdir $1)))
+  $($2_$(call name_for_flavored_target,$1)),\
+  $(call flavors_for_flavored_target,$(notdir $1)))
 endef

@@ -106,3 +106,4 @@ $(PATH_apps)/shared/grid_type_controller.cpp, \
 $(addprefix apps/shared/images/,polar_grid_icon.png cartesian_grid_icon.png))
 
 $(call i18n_with_universal,shared/i18n/colors)
+$(call i18n_with_universal,shared/i18n/errors)

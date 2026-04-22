@@ -29,7 +29,12 @@ inline TextFormat MakeTextFormat(const TextFormatWithoutColors& format) {
 }
 
 /* RawColor is a special version of any GlyphsView-derived class that works
- * with raw glyph and background colors instead of ThemeComponent. */
+ * with raw glyph and background colors instead of ThemeComponent.
+ * It is used by the RawColorMessageTextView class (used in Elements) and by the
+ * RawColorBufferTextView (that is temporary until SolidColorView uses
+ * ThemeComponents). When RawColorBufferTextView is not useful anymore and if we
+ * include the elements colors to the ThemeComponents enum, then we can remove
+ * RawColor. */
 template <typename Base>
 class RawColor : public Base {
  public:

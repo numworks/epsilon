@@ -24,7 +24,10 @@ class MessageTextView : public TextView {
 };
 
 /* RawColorMessageTextView is a special version of MessageTextView which works
- * with raw glyph and background colors instead of ThemeComponent. */
+ * with raw glyph and background colors instead of ThemeComponent.
+ * This class is used in the Elements app only. If the elements colors are
+ * included in the ThemeComponents enum, then we can remove
+ * RawColorMessageTextView. */
 class RawColorMessageTextView : public RawColor<MessageTextView> {
  public:
   RawColorMessageTextView(I18n::Message message = (I18n::Message)0,

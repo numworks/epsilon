@@ -1,13 +1,15 @@
 #include "column_title_cell.h"
 
+#include <escher/theme/data_colors.h>
+
 using namespace Escher;
 
 namespace Regression {
 
 void ColumnTitleCell::setColor(KDColor color) {
   m_functionColor = color;
-  m_firstBufferTextView.setTextColor(Palette::DataColorToComponent(color));
-  m_secondBufferTextView.setTextColor(Palette::DataColorToComponent(color));
+  m_firstBufferTextView.setTextColor(DataColorToComponent(color));
+  m_secondBufferTextView.setTextColor(DataColorToComponent(color));
   reloadCell();
 }
 

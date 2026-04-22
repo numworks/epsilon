@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
+#include <escher/theme/data_colors.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
@@ -52,7 +53,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
       BufferFunctionTitleCell* seriesTitleCell =
           static_cast<BufferFunctionTitleCell*>(cell);
       seriesTitleCell->setText(titleBuffer);
-      seriesTitleCell->setColor(Escher::Palette::DataColorToComponent(
+      seriesTitleCell->setColor(Escher::DataColorToComponent(
           m_store->colorOfSeriesAtIndex(seriesNumber)));
       return;
     }

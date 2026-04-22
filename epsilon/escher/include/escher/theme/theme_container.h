@@ -1,6 +1,5 @@
 #pragma once
 
-#include <escher/palette.h>
 #include <kandinsky/color.h>
 #include <omg/unreachable.h>
 

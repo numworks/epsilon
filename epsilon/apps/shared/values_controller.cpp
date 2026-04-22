@@ -2,6 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <assert.h>
+#include <escher/theme/data_colors.h>
 #include <limits.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
@@ -508,7 +509,7 @@ void ValuesController::setTitleCellStyle(HighlightCell* cell, int column) {
   Shared::Function* function =
       functionStore()->modelForRecord(recordAtColumn(column)).pointer();
   static_cast<FunctionTitleCell*>(cell)->setColor(
-      Palette::DataColorToComponent(function->color()));
+      DataColorToComponent(function->color()));
 }
 
 void ValuesController::reloadEditedCell(int column, int row) {

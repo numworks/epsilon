@@ -1,6 +1,5 @@
 #pragma once
 
-#include <escher/theme/components.h>
 #include <kandinsky/color.h>
 #include <omg/unreachable.h>
 #include <stddef.h>
@@ -73,6 +72,8 @@ class Palette {
   // The Python gray is between GrayMiddle and GrayDarkMiddle
   constexpr static KDColor PYTHON_GrayMiddle = KDColor::RGB24(0xC6C6C6);
 
+  /* TODO: remove the two KDColor data color arrays when they are not used
+   * anymore. Data colors are already defined in the fixed components */
   constexpr static int k_numberOfDataColors = 10;
 
   constexpr static std::array<KDColor, k_numberOfDataColors> DataColor = {
@@ -81,17 +82,6 @@ class Palette {
   constexpr static std::array<KDColor, k_numberOfDataColors> DataColorLight = {
       RedLight,       BlueLight, GreenLight,  YellowLight, MagentaLight,
       TurquoiseLight, PinkLight, OrangeLight, VioletLight, MintLight};
-
-  /* Helper to convert a raw color to a ThemeComponent. "color" must be one of
-   * the DataColors */
-  constexpr static ThemeComponent DataColorToComponent(KDColor color) {
-    for (int i = 0; i < k_numberOfDataColors; i++) {
-      if (DataColor[i] == color) {
-        return Escher::DataColorComponent(i);
-      }
-    }
-    OMG_UNREACHABLE
-  }
 };
 
 }  // namespace Escher

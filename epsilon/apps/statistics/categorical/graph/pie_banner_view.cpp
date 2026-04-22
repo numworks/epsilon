@@ -2,6 +2,7 @@
 #include "pie_banner_view.h"
 
 #include <escher/theme/color_picker.h>
+#include <escher/theme/data_colors.h>
 
 namespace Statistics::Categorical {
 
@@ -39,7 +40,7 @@ void PieBannerView::setCategory(int category) {
     m_category = category;
     char buffer[sizeof(Store::Label)];
     m_store->getCategoryName(m_category, buffer, sizeof(buffer));
-    m_colorCell.setColors(Escher::DataColorLightComponent(m_category),
+    m_colorCell.setColors(Escher::DataColorComponentLight(m_category),
                           Escher::DataColorComponent(m_category));
     m_categoryTitle.setText(buffer);
     constexpr int bufferSize =

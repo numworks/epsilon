@@ -5,6 +5,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/clipboard.h>
+#include <escher/theme/data_colors.h>
 #include <omg/utf8_helper.h>
 #include <poincare/cas.h>
 #include <poincare/circuit_breaker_checkpoint.h>
@@ -268,7 +269,7 @@ void ValuesController::setTitleCellStyle(HighlightCell* cell, int column) {
   OMG::ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
   static_cast<FunctionTitleCell*>(cell)->setColor(
-      Escher::Palette::DataColorToComponent(function->color(derivationOrder)));
+      Escher::DataColorToComponent(function->color(derivationOrder)));
 }
 
 // Shared::ValuesController

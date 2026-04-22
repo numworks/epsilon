@@ -1,5 +1,6 @@
 #pragma once
 
+#include <escher/palette.h>
 #include <kandinsky/basic_color.h>
 #include <stdint.h>
 
@@ -84,15 +85,5 @@ enum class ThemeComponent : uint8_t {
       FIXED_COMPONENTS(X)
 #undef X
 };
-
-constexpr ThemeComponent DataColorComponent(int index) {
-  return static_cast<ThemeComponent>(
-      static_cast<uint8_t>(ThemeComponent::DataRed) + index);
-}
-
-constexpr ThemeComponent DataColorLightComponent(int index) {
-  return static_cast<ThemeComponent>(
-      static_cast<uint8_t>(ThemeComponent::DataRedLight) + index);
-}
 
 }  // namespace Escher

@@ -2,6 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <escher/theme/data_colors.h>
 #include <poincare/print.h>
 #include <shared/poincare_helpers.h>
 
@@ -33,7 +34,7 @@ void TableViewDataSource::prepareHeaderCell(Escher::HighlightCell* cell,
         I18n::translate(I18n::Message::RelativeFrequencyColumnName));
   }
   myCell->setColor(store()->isGroupActive(info.groupNumber)
-                       ? Escher::Palette::DataColorToComponent(
+                       ? Escher::DataColorToComponent(
                              store()->colorOfGroupAtIndex(info.groupNumber))
                        : Escher::ThemeComponent::TokenGrayDark);
   static_assert(Escher::Palette::k_numberOfDataColors >=

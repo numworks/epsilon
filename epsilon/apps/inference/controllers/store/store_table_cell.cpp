@@ -1,6 +1,6 @@
 #include "store_table_cell.h"
 
-#include <escher/palette.h>
+#include <escher/theme/data_colors.h>
 #include <poincare/print.h>
 
 #include "inference/app.h"

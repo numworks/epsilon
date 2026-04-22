@@ -26,8 +26,6 @@ class DatasetColorParameterController
     m_store->setColorIndexForSeries(m_series, static_cast<uint8_t>(colorIndex));
   }
 
-  // popAfterColorSelection uses base default: stack->pop()
-
  private:
   DoublePairStore* m_store;
   int m_series;

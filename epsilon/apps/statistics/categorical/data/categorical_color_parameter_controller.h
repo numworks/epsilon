@@ -26,7 +26,6 @@ class CategoricalColorParameterController
     assert(m_store && m_column >= 0);
     m_store->setColorIndexForGroup(m_column, static_cast<uint8_t>(colorIndex));
   }
-  // popAfterColorSelection uses base default: stack->pop()
 
  private:
   Store* m_store;

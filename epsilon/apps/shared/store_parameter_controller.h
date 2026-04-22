@@ -47,8 +47,7 @@ class StoreParameterController : public ColumnParameterController {
   Escher::MenuCell<Escher::MessageTextView> m_fillFormula;
 };
 
-/* Extends StoreParameterController with a color-selection cell (first row).
- * Statistics and regression use this subclass; inference uses the lean base. */
+// Extends StoreParameterController with a color-selection cell (first row).
 class ColorableStoreParameterController : public StoreParameterController {
  public:
   ColorableStoreParameterController(Escher::Responder* parentResponder,

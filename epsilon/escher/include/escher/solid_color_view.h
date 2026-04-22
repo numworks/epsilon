@@ -5,14 +5,12 @@
 
 namespace Escher {
 
-/* A simple view filled with a single color. ColorType is either ThemeComponent
- * or KDColor */
-template <typename ColorType>
-class SolidColorViewBase : public View {
+// A simple view filled with a single color.
+class SolidColorView : public View {
  public:
-  SolidColorViewBase(ColorType color);
+  SolidColorView(ThemeComponent color);
   void reload();
-  virtual void setColor(ColorType color);
+  virtual void setColor(ThemeComponent color);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  protected:
@@ -21,21 +19,17 @@ class SolidColorViewBase : public View {
   void logAttributes(std::ostream& os) const override;
 #endif
  private:
-  ColorType m_color;
+  ThemeComponent m_color;
 };
 
-using SolidColorView = SolidColorViewBase<ThemeComponent>;
-using RawColorSolidColorView = SolidColorViewBase<KDColor>;
-
 /* A simple view filled with a single color, with a border of customizable width
- * and color. ColorType is either ThemeComponent or KDColor */
-template <typename ColorType>
-class SolidColorWithBorderViewBase : public View {
+ * and color. */
+class SolidColorWithBorderView : public View {
  public:
-  SolidColorWithBorderViewBase(ColorType color, ColorType border,
-                               KDCoordinate borderWidth);
+  SolidColorWithBorderView(ThemeComponent color, ThemeComponent border,
+                           KDCoordinate borderWidth);
 
-  void setColors(ColorType inside, ColorType border);
+  void setColors(ThemeComponent inside, ThemeComponent border);
   void setBorderWidth(KDCoordinate width) {
     assert(width >= 0);
     m_borderWidth = width;
@@ -49,12 +43,9 @@ class SolidColorWithBorderViewBase : public View {
 #endif
 
  private:
-  ColorType m_color;
-  ColorType m_border;
+  ThemeComponent m_color;
+  ThemeComponent m_border;
   KDCoordinate m_borderWidth;
 };
-
-using SolidColorWithBorderView = SolidColorWithBorderViewBase<ThemeComponent>;
-using RawColorSolidColorWithBorderView = SolidColorWithBorderViewBase<KDColor>;
 
 }  // namespace Escher

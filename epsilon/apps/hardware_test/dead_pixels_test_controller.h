@@ -1,8 +1,8 @@
 #pragma once
 
 #include <escher/solid_color_view.h>
+#include <escher/theme/components.h>
 #include <escher/view_controller.h>
-#include <kandinsky/basic_color.h>
 
 namespace HardwareTest {
 
@@ -11,17 +11,18 @@ class DeadPixelsTestController : public Escher::ViewController {
   DeadPixelsTestController(Escher::Responder* parentResponder)
       : Escher::ViewController(parentResponder),
         m_colorIndex(0),
-        m_view(BasicColor::Black) {}
+        m_view(Escher::ThemeComponent::BasicBlack) {}
   Escher::View* view() override { return &m_view; }
   bool handleEvent(Ion::Events::Event event) override;
 
  private:
   constexpr static int k_numberOfAdditionalColors = 4;
-  // BasicColor::Black is the first color, set in the constructor
-  constexpr static KDColor k_colors[k_numberOfAdditionalColors] = {
-      BasicColor::Red, BasicColor::Blue, BasicColor::Green, BasicColor::White};
+  // ThemeComponent::BasicBlack is the first color, set in the constructor
+  constexpr static Escher::ThemeComponent k_colors[k_numberOfAdditionalColors] =
+      {Escher::ThemeComponent::BasicRed, Escher::ThemeComponent::BasicBlue,
+       Escher::ThemeComponent::BasicGreen, Escher::ThemeComponent::BasicWhite};
   int m_colorIndex;
-  Escher::RawColorSolidColorView m_view;
+  Escher::SolidColorView m_view;
 };
 
 }  // namespace HardwareTest

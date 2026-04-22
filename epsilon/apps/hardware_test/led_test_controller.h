@@ -2,8 +2,8 @@
 
 #include <escher/buffer_text_view.h>
 #include <escher/solid_color_view.h>
+#include <escher/theme/components.h>
 #include <escher/view_controller.h>
-#include <kandinsky/basic_color.h>
 
 #include "arrow_view.h"
 
@@ -17,30 +17,31 @@ class LEDTestController : public Escher::ViewController {
   void viewWillAppear() override;
 
  private:
-  class ContentView : public Escher::RawColorSolidColorView {
+  class ContentView : public Escher::SolidColorView {
    public:
     ContentView();
-    Escher::RawColorSolidColorView* LEDColorIndicatorView();
+    Escher::SolidColorView* LEDColorIndicatorView();
 
    private:
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     Escher::View* subviewAtIndex(int index) override;
-    Escher::RawColorSolidColorView m_ledColorIndicatorView;
-    Escher::RawColorSolidColorView m_ledColorOutlineView;
+    Escher::SolidColorView m_ledColorIndicatorView;
+    Escher::SolidColorView m_ledColorOutlineView;
     Escher::OneLineBufferTextView<> m_ledView;
     ArrowView m_arrowView;
   };
-  void setLEDColor(KDColor color);
+  void setLEDColor(Escher::ThemeComponent color);
   constexpr static KDCoordinate k_arrowLength = 100;
   constexpr static KDCoordinate k_arrowMargin = 20;
   constexpr static KDCoordinate k_indicatorSize = 20;
   constexpr static KDCoordinate k_indicatorMargin = 8;
   constexpr static int k_numberOfColors = 5;
-  constexpr static KDColor k_LEDColors[k_numberOfColors] = {
-      BasicColor::White, BasicColor::Red, BasicColor::Blue, BasicColor::Green,
-      BasicColor::Black};
-  static KDColor LEDColorAtIndex(int i);
+  constexpr static Escher::ThemeComponent k_LEDColors[k_numberOfColors] = {
+      Escher::ThemeComponent::BasicWhite, Escher::ThemeComponent::BasicRed,
+      Escher::ThemeComponent::BasicBlue, Escher::ThemeComponent::BasicGreen,
+      Escher::ThemeComponent::BasicBlack};
+  static Escher::ThemeComponent LEDColorAtIndex(int i);
   ContentView m_view;
   int m_LEDColorIndex;
 };

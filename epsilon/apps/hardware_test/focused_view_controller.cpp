@@ -11,7 +11,9 @@ void FocusedViewController::viewWillAppear() {
   m_success = runTest();
   Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
   Ion::Display::setFocus(k_zoomFactor, KDPoint(0, 0));
-  KDColor backgroundColor = (m_success ? BasicColor::Green : BasicColor::Red);
+  Escher::ThemeComponent backgroundColor =
+      (m_success ? Escher::ThemeComponent::BasicGreen
+                 : Escher::ThemeComponent::BasicRed);
   m_view.setTexts(testName(), m_success ? "OK" : "NG");
   m_view.setBackgroundColor(backgroundColor);
 }
@@ -32,13 +34,17 @@ bool FocusedViewController::handleEvent(Ion::Events::Event event) {
 }
 
 FocusedViewController::ContentView::ContentView()
-    : Escher::RawColorSolidColorView(BasicColor::White),
-      m_prefixView({.font = KDFont::Size::Small,
+    : Escher::SolidColorView(Escher::ThemeComponent::BasicWhite),
+      m_prefixView({.style = {.font = KDFont::Size::Small},
                     .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_testNameView({.horizontalAlignment = KDGlyph::k_alignCenter}),
       m_testResultView({.horizontalAlignment = KDGlyph::k_alignCenter}),
-      m_suffixView1({.font = KDFont::Size::Small}),
-      m_suffixView2({.font = KDFont::Size::Small}) {}
+      m_suffixView1({
+          .style = {.font = KDFont::Size::Small},
+      }),
+      m_suffixView2({
+          .style = {.font = KDFont::Size::Small},
+      }) {}
 
 Escher::View* FocusedViewController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 5);
@@ -76,13 +82,14 @@ void FocusedViewController::ContentView::setSuffix2(const char* suffix2) {
   m_suffixView2.setText(suffix2);
 }
 
-void FocusedViewController::ContentView::setBackgroundColor(KDColor color) {
+void FocusedViewController::ContentView::setBackgroundColor(
+    Escher::ThemeComponent color) {
   m_prefixView.setBackgroundColor(color);
   m_testNameView.setBackgroundColor(color);
   m_testResultView.setBackgroundColor(color);
   m_suffixView1.setBackgroundColor(color);
   m_suffixView2.setBackgroundColor(color);
-  Escher::RawColorSolidColorView::setColor(color);
+  Escher::SolidColorView::setColor(color);
 }
 
 KDCoordinate FocusedViewController::ContentView::layoutGlyphView(

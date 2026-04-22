@@ -3,13 +3,13 @@ extern "C" {
 #include <assert.h>
 }
 
-#include <kandinsky/basic_color.h>
+#include <escher/theme/color_picker.h>
 
 using namespace Escher;
 
 namespace HardwareTest {
 
-constexpr KDColor LEDTestController::k_LEDColors[k_numberOfColors];
+constexpr ThemeComponent LEDTestController::k_LEDColors[k_numberOfColors];
 
 LEDTestController::LEDTestController(Responder* parentResponder)
     : ViewController(parentResponder), m_LEDColorIndex(0) {}
@@ -36,26 +36,25 @@ void LEDTestController::viewWillAppear() {
   setLEDColor(LEDColorAtIndex(m_LEDColorIndex++));
 }
 
-void LEDTestController::setLEDColor(KDColor color) {
-  Ion::LED::setColor(color);
+void LEDTestController::setLEDColor(ThemeComponent color) {
+  Ion::LED::setColor(ColorPicker::Resolve(color));
   m_view.LEDColorIndicatorView()->setColor(color);
 }
 
-KDColor LEDTestController::LEDColorAtIndex(int i) {
+ThemeComponent LEDTestController::LEDColorAtIndex(int i) {
   assert(i >= 0 && i < k_numberOfColors);
   return k_LEDColors[i];
 }
 
 LEDTestController::ContentView::ContentView()
-    : RawColorSolidColorView(BasicColor::White),
-      m_ledColorIndicatorView(BasicColor::Black),
-      m_ledColorOutlineView(BasicColor::Black),
+    : SolidColorView(ThemeComponent::BasicWhite),
+      m_ledColorIndicatorView(ThemeComponent::BasicBlack),
+      m_ledColorOutlineView(ThemeComponent::BasicBlack),
       m_ledView({.horizontalAlignment = KDGlyph::k_alignCenter}) {
   m_ledView.setText("LED");
 }
 
-RawColorSolidColorView*
-LEDTestController::ContentView::LEDColorIndicatorView() {
+SolidColorView* LEDTestController::ContentView::LEDColorIndicatorView() {
   return &m_ledColorIndicatorView;
 }
 

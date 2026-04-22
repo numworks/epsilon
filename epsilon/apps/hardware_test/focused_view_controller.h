@@ -20,7 +20,7 @@ class FocusedViewController : public Escher::ViewController {
   bool handleEvent(Ion::Events::Event event) override;
 
  protected:
-  class ContentView : public Escher::RawColorSolidColorView {
+  class ContentView : public Escher::SolidColorView {
    public:
     ContentView();
     Escher::View* subviewAtIndex(int index) override;
@@ -28,7 +28,7 @@ class FocusedViewController : public Escher::ViewController {
     void setPrefix(const char* prefix);
     void setSuffix1(const char* suffix1);
     void setSuffix2(const char* suffix2);
-    void setBackgroundColor(KDColor color);
+    void setBackgroundColor(Escher::ThemeComponent color);
 
    private:
     constexpr static KDCoordinate k_margin = 5;
@@ -40,13 +40,11 @@ class FocusedViewController : public Escher::ViewController {
                                  bool force);
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override { return 5; }
-    /* TODO: turn back to a normal OneLineBufferTextView when SolidColorView is
-     * themed */
-    Escher::OneLineRawColorBufferTextView<> m_prefixView;
-    Escher::OneLineRawColorBufferTextView<> m_testNameView;
-    Escher::OneLineRawColorBufferTextView<> m_testResultView;
-    Escher::OneLineRawColorBufferTextView<> m_suffixView1;
-    Escher::OneLineRawColorBufferTextView<> m_suffixView2;
+    Escher::OneLineBufferTextView<> m_prefixView;
+    Escher::OneLineBufferTextView<> m_testNameView;
+    Escher::OneLineBufferTextView<> m_testResultView;
+    Escher::OneLineBufferTextView<> m_suffixView1;
+    Escher::OneLineBufferTextView<> m_suffixView2;
   };
   ContentView m_view;
   bool m_success;

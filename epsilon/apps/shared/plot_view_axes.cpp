@@ -54,9 +54,8 @@ void WithCartesianGrid::DrawGridLines(const AbstractPlotView* plotView,
 
 // WithPolarGrid
 
-void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
-                                        KDRect rect, float* radiusMin,
-                                        float* radiusMax) {
+WithPolarGrid::RadiusBounds WithPolarGrid::ComputeRadiusBounds(
+    const AbstractPlotView* plotView, KDRect rect) {
   /* We translate the pixel coordinates into floats, adding/subtracting 1 to
    * account for conversion errors. */
   float xMin = plotView->pixelToFloat(OMG::Axis::Horizontal, rect.left() - 1);
@@ -69,8 +68,10 @@ void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
   float xAbsoluteMin = xMin <= 0 && xMax >= 0 ? 0 : std::min(-xMin, xMax);
   float yAbsoluteMin = yMin <= 0 && yMax >= 0 ? 0 : std::min(-yMin, yMax);
 
-  *radiusMin = sqrt(xAbsoluteMin * xAbsoluteMin + yAbsoluteMin * yAbsoluteMin);
-  *radiusMax = sqrt(xAbsoluteMax * xAbsoluteMax + yAbsoluteMax * yAbsoluteMax);
+  return {
+      .min = sqrtf(xAbsoluteMin * xAbsoluteMin + yAbsoluteMin * yAbsoluteMin),
+      .max = sqrtf(xAbsoluteMax * xAbsoluteMax + yAbsoluteMax * yAbsoluteMax),
+  };
 }
 
 /* Associate a point on the grid to a graduation index in
@@ -82,53 +83,52 @@ int WithPolarGrid::PointToGraduation(float x, float y) {
                  (2.f * static_cast<float>(M_PI))));
 }
 
-void WithPolarGrid::ComputeGraduationBounds(const AbstractPlotView* plotView,
-                                            KDRect rect, float xMin, float xMax,
-                                            float yMin, float yMax,
-                                            int* gradMin, int* gradMax) {
+WithPolarGrid::GraduationBounds WithPolarGrid::ComputeGraduationBounds(
+    const AbstractPlotView* plotView, KDRect rect, float xMin, float xMax,
+    float yMin, float yMax) {
   float xAbsoluteMax = xMax > -xMin ? xMax : xMin;
   float yAbsoluteMax = yMax > -yMin ? yMax : yMin;
   float xAbsoluteMin = xMin > -xMax ? xMin : xMax;
   float yAbsoluteMin = yMin > -yMax ? yMin : yMax;
 
+  GraduationBounds bounds;
   if (xMin <= 0 && 0 <= xMax && yMin <= 0 && 0 <= yMax) {
     // The rect contains the origin.
-    *gradMin = 0;
-    *gradMax = k_numberOfGraduations;
+    bounds.min = 0;
+    bounds.max = k_numberOfGraduations;
   } else if (xMin <= 0 && 0 <= xMax) {
     // The rect crosses the Y axis.
-    *gradMin = PointToGraduation(xMin, yAbsoluteMin);
-    *gradMax = PointToGraduation(xMax, yAbsoluteMin);
+    bounds.min = PointToGraduation(xMin, yAbsoluteMin);
+    bounds.max = PointToGraduation(xMax, yAbsoluteMin);
   } else if (yMin <= 0 && 0 <= yMax) {
     // The rect crosses the X axis.
-    *gradMin = PointToGraduation(xAbsoluteMin, yMin);
-    *gradMax = PointToGraduation(xAbsoluteMin, yMax);
+    bounds.min = PointToGraduation(xAbsoluteMin, yMin);
+    bounds.max = PointToGraduation(xAbsoluteMin, yMax);
     if (xMax < 0) {
       /* The rect crosses the -Ox ray. As PointToGraduation outputs in the range
        * [-k_numberOfGraduations/2, k_numberOfGraduations/2], the negative
        * graduation must be complemented. */
-      *gradMin += k_numberOfGraduations;
+      bounds.min += k_numberOfGraduations;
     }
   } else {
-    *gradMin = PointToGraduation(xAbsoluteMax, yAbsoluteMin);
-    *gradMax = PointToGraduation(xAbsoluteMin, yAbsoluteMax);
+    bounds.min = PointToGraduation(xAbsoluteMax, yAbsoluteMin);
+    bounds.max = PointToGraduation(xAbsoluteMin, yAbsoluteMax);
   }
 
-  if (*gradMin > *gradMax) {
-    std::swap(*gradMin, *gradMax);
+  if (bounds.min > bounds.max) {
+    std::swap(bounds.min, bounds.max);
   }
+  return bounds;
 }
 
 void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
                                      KDContext* ctx, KDRect rect) {
-  float radiusMin, radiusMax;
-
-  ComputeRadiusBounds(plotView, rect, &radiusMin, &radiusMax);
+  RadiusBounds radius = ComputeRadiusBounds(plotView, rect);
 
   float step = PoincareHelpers::ToFloat(plotView->range()->xGridUnit());
 
-  for (int i = std::max<int>(1, std::floor(radiusMin / step));
-       i <= std::ceil(radiusMax / step); i++) {
+  for (int i = std::max<int>(1, std::floor(radius.min / step));
+       i <= std::ceil(radius.max / step); i++) {
     plotView->drawCircle(ctx, rect, {0.f, 0.f}, i * step,
                          i % 2 ? k_lightColor : k_boldColor);
   }
@@ -209,18 +209,15 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
       std::pow(k_minimumGraduationDistanceToCenter * plotView->pixelWidth(), 2);
 
   // Find graduation bounds.
-  int stepBegin, stepEnd;
-  float radiusMin, radiusMax;
-
-  ComputeRadiusBounds(plotView, rect, &radiusMin, &radiusMax);
-  ComputeGraduationBounds(plotView, rect, xMin, xMax, yMin, yMax, &stepBegin,
-                          &stepEnd);
+  RadiusBounds radius = ComputeRadiusBounds(plotView, rect);
+  GraduationBounds graduation =
+      ComputeGraduationBounds(plotView, rect, xMin, xMax, yMin, yMax);
 
   constexpr int k_stepsPerQuarter = k_numberOfGraduations / 4;
   constexpr int k_stepsPerHalf = k_numberOfGraduations / 2;
 
   // Draw lines
-  for (int i = stepBegin; i < stepEnd; i++) {
+  for (int i = graduation.min; i < graduation.max; i++) {
     if (i % k_stepsPerQuarter == 0) {
       continue;  // Don't draw lines that overlap the axes.
     }
@@ -229,13 +226,13 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
     float cos = std::cos(angleRadian);
     float sin = std::sin(angleRadian);
     KDPoint pixelFrom = {plotView->floatToKDCoordinatePixel(
-                             OMG::Axis::Horizontal, cos * radiusMin),
+                             OMG::Axis::Horizontal, cos * radius.min),
                          plotView->floatToKDCoordinatePixel(OMG::Axis::Vertical,
-                                                            sin * radiusMin)};
+                                                            sin * radius.min)};
     KDPoint pixelTo = {plotView->floatToKDCoordinatePixel(OMG::Axis::Horizontal,
-                                                          cos * radiusMax),
+                                                          cos * radius.max),
                        plotView->floatToKDCoordinatePixel(OMG::Axis::Vertical,
-                                                          sin * radiusMax)};
+                                                          sin * radius.max)};
     ctx->drawAntialiasedLine(pixelFrom, pixelTo,
                              (i % 2 == 0) ? k_boldColor : k_lightColor,
                              plotView->k_backgroundColor);
@@ -243,7 +240,7 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
 
   // Draw labels on top of the lines.
   KDRect lastDrawnLabelRect = KDRectZero;
-  for (int i = stepBegin; i < stepEnd; i++) {
+  for (int i = graduation.min; i < graduation.max; i++) {
     if (i % 2 != 0) {
       // Only bold lines are labeled.
       continue;

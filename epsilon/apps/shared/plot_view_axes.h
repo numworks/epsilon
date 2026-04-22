@@ -77,18 +77,23 @@ class WithPolarGrid {
   constexpr static float k_minimumGraduationDistanceToCenter = 60;
   constexpr static int k_numberOfGraduations = 24;
 
+  struct RadiusBounds {
+    float min, max;
+  };
+  struct GraduationBounds {
+    int min, max;
+  };
+
   static void DrawPolarCircles(const AbstractPlotView* plotView, KDContext* ctx,
                                KDRect rect);
   static void FormatAngleLabel(std::span<char> buffer, int index,
                                Poincare::AngleUnit angleUnit);
-
-  static void ComputeRadiusBounds(const AbstractPlotView* plotView, KDRect rect,
-                                  float* min, float* max);
+  static RadiusBounds ComputeRadiusBounds(const AbstractPlotView* plotView,
+                                          KDRect rect);
   static int PointToGraduation(float x, float y);
-  static void ComputeGraduationBounds(const AbstractPlotView* plotView,
-                                      KDRect rect, float xMin, float xMax,
-                                      float yMin, float yMax, int* gradMin,
-                                      int* gradMax);
+  static GraduationBounds ComputeGraduationBounds(
+      const AbstractPlotView* plotView, KDRect rect, float xMin, float xMax,
+      float yMin, float yMax);
   static void TryDrawLabel(const AbstractPlotView* plotView, KDContext* ctx,
                            KDRect rect, const char* text,
                            Poincare::Coordinate2D<float> position,

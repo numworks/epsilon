@@ -65,16 +65,8 @@ using MultipleLinesBufferTextView = BufferTextView<
 /* TODO: NumberOfLines * (Ion::Display::Width / KDFont::GlyphWidth(Font)) is a
  * size in terms of glyphs which is different from the size in terms of chars */
 
-template <KDFont::Size Font, int NumberOfLines>
-using MultipleLinesRawColorBufferTextView = RawColorBufferTextView<
-    NumberOfLines*(Ion::Display::Width / KDFont::GlyphWidth(Font)) + 1>;
-
 template <KDFont::Size Font = KDFont::Size::Small>
 using OneLineBufferTextView = MultipleLinesBufferTextView<Font, 1>;
-
-template <KDFont::Size Font = KDFont::Size::Small>
-using OneLineRawColorBufferTextView =
-    MultipleLinesRawColorBufferTextView<Font, 1>;
 
 template <int numberOfSignificantDigits =
               Poincare::PrintFloat::k_maxNumberOfSignificantDigits>

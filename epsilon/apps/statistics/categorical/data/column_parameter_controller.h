@@ -42,6 +42,7 @@ class ColumnParameterController
   void setColumn(int col);
 
  private:
+  constexpr static int k_colorCellIndex = 0;
   constexpr static int k_numberOfCells = 5;
   constexpr static int k_titleBufferSize = 23 + sizeof(Store::Label);
   // mutable because title() needs to be const

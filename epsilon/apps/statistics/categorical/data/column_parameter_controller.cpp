@@ -97,6 +97,7 @@ const Escher::AbstractMenuCell* ColumnParameterController::cell(int row) const {
   std::array<const Escher::AbstractMenuCell*, k_numberOfCells> cells = {
       &m_colorCell, &m_columnNameCell, &m_showInGraphCell, &m_clearColumnCell,
       &m_relativeFreqCell};
+  assert(cells[k_colorCellIndex] == &m_colorCell);
   return cells[row];
 }
 
@@ -108,7 +109,7 @@ void ColumnParameterController::viewWillAppear() {
   m_colorCell.subLabel()->setMessage(
       CategoricalColorParameterController::GetColorName(
           m_store->colorIndexForGroup(m_column)));
-  m_selectableListView.reloadCell(0, true);
+  m_selectableListView.reloadCell(k_colorCellIndex, true);
   Escher::ExplicitSelectableListViewController::viewWillAppear();
 }
 

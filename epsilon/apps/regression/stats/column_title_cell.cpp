@@ -1,22 +1,23 @@
 #include "column_title_cell.h"
 
+#include <escher/theme/color_picker.h>
 #include <escher/theme/data_colors.h>
 
 using namespace Escher;
 
 namespace Regression {
 
-void ColumnTitleCell::setColor(KDColor color) {
+void ColumnTitleCell::setColor(ThemeComponent color) {
   m_functionColor = color;
-  m_firstBufferTextView.setTextColor(DataColorToComponent(color));
-  m_secondBufferTextView.setTextColor(DataColorToComponent(color));
+  m_firstBufferTextView.setTextColor(color);
+  m_secondBufferTextView.setTextColor(color);
   reloadCell();
 }
 
 void ColumnTitleCell::drawRect(KDContext* ctx, KDRect rect) const {
   EvenOddDoubleBufferTextCell::drawRect(ctx, rect);
   ctx->fillRect(KDRect(0, 0, bounds().width(), k_colorIndicatorThickness),
-                m_functionColor);
+                ColorPicker::Resolve(m_functionColor));
 }
 
 void ColumnTitleCell::layoutSubviews(bool force) {

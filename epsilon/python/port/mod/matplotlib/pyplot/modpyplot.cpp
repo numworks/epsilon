@@ -7,7 +7,8 @@ extern "C" {
 #endif
 }
 #include <assert.h>
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
+#include <escher/theme/data_colors.h>
 
 #include "plot_controller.h"
 #include "port.h"
@@ -17,9 +18,9 @@ Matplotlib::PlotController *sPlotController = nullptr;
 static int paletteIndex = 0;
 
 static KDColor nextDataColor(int* colorIndex) {
-  assert(*colorIndex < Escher::Palette::k_numberOfDataColors);
-  KDColor c = Escher::Palette::DataColor[*colorIndex];
-  *colorIndex = (*colorIndex + 1) % Escher::Palette::k_numberOfDataColors;
+  assert(*colorIndex < Escher::k_numberOfDataColors);
+  KDColor c = Escher::ColorPicker::Resolve(Escher::DataColorComponent(*colorIndex));
+  *colorIndex = (*colorIndex + 1) % Escher::k_numberOfDataColors;
   return c;
 }
 

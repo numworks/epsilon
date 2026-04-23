@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <ion.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #if ION_LOG_EVENTS_NAME
@@ -143,6 +144,10 @@ int main(int argc, char* argv[]) {
 
 #if ION_SIMULATOR_FILES
   if (args.stateFile) {
+    if (strcmp(args.stateFile, "-") != 0 && access(args.stateFile, F_OK) != 0) {
+      fprintf(stderr, "Error: state file not found: %s\n", args.stateFile);
+      return EXIT_FAILURE;
+    }
     assert(Journal::replayJournal());
     StateFile::load(args.stateFile, args.headlessStateFile);
     if (args.language) {
@@ -211,13 +216,22 @@ int main(int argc, char* argv[]) {
   Ion::Init();
 #if ION_SIMULATOR_EXTERNAL_APP
   if (args.externalApp) {
+    if (access(args.externalApp, F_OK) != 0) {
+      fprintf(stderr, "Error: external app not found: %s\n", args.externalApp);
+      return EXIT_FAILURE;
+    }
+    if (args.externalAppData && access(args.externalAppData, F_OK) != 0) {
+      fprintf(stderr, "Error: external app data not found: %s\n",
+              args.externalAppData);
+      return EXIT_FAILURE;
+    }
     if (load_eadk_external_data(args.externalAppData)) {
-      return -1;
+      return EXIT_FAILURE;
     }
     void* handle = dlopen(args.externalApp, RTLD_LAZY);
     if (handle == nullptr) {
       fprintf(stderr, "Error loading %s: %s\n", args.externalApp, dlerror());
-      return -1;
+      return EXIT_FAILURE;
     }
     int (*nwb_main)(int argc, const char* const argv[]);
     *(void**)(&nwb_main) = dlsym(handle, "main");
@@ -229,7 +243,7 @@ int main(int argc, char* argv[]) {
     }
     if (nwb_main == nullptr) {
       fprintf(stderr, "Could not locate nwb_main symbol: %s\n", dlerror());
-      return -1;
+      return EXIT_FAILURE;
     }
     /* This is a workaround for the web platform where we expect the journal to
      * call onEpsilonIdle to remove the loading spinner. We could remove the

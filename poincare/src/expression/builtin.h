@@ -115,12 +115,17 @@ constexpr static Aliases k_thetaAliases = "\01θ\00theta\00";
 // Units
 constexpr static Aliases k_litersAliases = "\01L\00l\00";
 constexpr static Aliases k_ohmAliases = "\01Ω\00ohm\00Ohm\00";
+// Trigo
+constexpr static Aliases k_cosAliases = "\01cos\00cosine\00cosinus\00";
+constexpr static Aliases k_sinAliases = "\01sin\00sine\00sinus\00";
+constexpr static Aliases k_tanAliases = "\01tan\00tangent\00";
 // Inverse trigo
-constexpr static Aliases k_acosAliases = "\01arccos\00acos\00";
+constexpr static Aliases k_acosAliases = "\01arccos\00acos\00arcos\00";
 constexpr static Aliases k_asinAliases = "\01arcsin\00asin\00";
 constexpr static Aliases k_atanAliases = "\01arctan\00atan\00";
 // Other functions
 constexpr static Aliases k_squareRootAliases = "\01√\00sqrt\00";
+constexpr static Aliases k_logAliases = "\01log\00logarithm\00";
 }  // namespace BuiltinsAliases
 
 #if POINCARE_TRANSLATE_BUILTINS
@@ -133,9 +138,9 @@ constexpr static Aliases k_squareRootAliases = "\01√\00sqrt\00";
 #endif
 
 constexpr static Builtin s_builtins[] = {
-    {Type::Cos, "cos"},
-    {Type::Sin, "sin"},
-    {Type::Tan, "tan"},
+    {Type::Cos, BuiltinsAliases::k_cosAliases},
+    {Type::Sin, BuiltinsAliases::k_sinAliases},
+    {Type::Tan, BuiltinsAliases::k_tanAliases},
     {Type::ACos, BuiltinsAliases::k_acosAliases},
     {Type::ASin, BuiltinsAliases::k_asinAliases},
     {Type::ATan, BuiltinsAliases::k_atanAliases},
@@ -156,8 +161,8 @@ constexpr static Builtin s_builtins[] = {
     {Type::ArTanH, "artanh"},
 #endif
     {Type::Exp, "exp"},
-    {Type::LogBase, "log"},
-    {Type::Log, "log"},
+    {Type::LogBase, BuiltinsAliases::k_logAliases},
+    {Type::Log, BuiltinsAliases::k_logAliases},
     // No Builtins for Type::Ln because it's a system tree.
     {Type::LnUser, "ln"},
 #if POINCARE_MATRIX

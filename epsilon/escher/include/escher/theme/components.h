@@ -12,10 +12,15 @@ namespace Escher {
   X(WallScreenDark)          \
   X(BackgroundWhite)         \
   X(BackgroundPopup)         \
+  X(BackgroundPopUpTitle)    \
   X(SurfaceSelect)           \
+  X(SurfaceSelectDark)       \
   X(BannerYellow)            \
+  X(BannerPurple)            \
   X(BannerGrayWhite)         \
   X(BannerGrayMiddle)        \
+  X(BannerGrayDarkMiddle)    \
+  X(BannerGrayDark)          \
   X(TextDefault)             \
   X(TextGrayDark)            \
   X(TextGrayDarkMiddle)      \
@@ -23,6 +28,16 @@ namespace Escher {
   X(TextWhite)               \
   X(TextPurple)              \
   X(TextBluishGray)          \
+  X(BorderWhite)             \
+  X(BorderWallScreen)        \
+  X(BorderGrayMiddle)        \
+  X(BorderGrayWhite)         \
+  X(BorderGrayBright)        \
+  X(BorderGrayDarkMiddle)    \
+  X(BorderGrayDark)          \
+  X(BorderPurple)            \
+  X(BorderPurpleDark)        \
+  X(BorderYellowDark)        \
   X(AxisBlack)               \
   X(AxisLight)               \
   X(AxisMedium)              \
@@ -34,10 +49,13 @@ namespace Escher {
   X(TokenYellow)             \
   X(TokenRed)                \
   X(TokenBlack)              \
+  X(TokenGrayWhite)          \
   X(TokenGrayMiddle)         \
   X(TokenGrayBright)         \
   X(TokenGrayDarkest)        \
-  X(TokenGrayDark)
+  X(TokenGrayDark)           \
+  X(TokenBatteryLevel)       \
+  X(TokenLowBattery)
 
 /* TODO: check the following colors which are not in the specs but used anyway:
  * - TextBluishGray (python app)

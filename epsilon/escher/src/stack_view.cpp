@@ -9,8 +9,7 @@ StackView::StackView(
     OMG::AbstractStaticVector<StackHeaderView>* headerViewStack)
     : View(),
       m_stackHeaderViews(headerViewStack),
-      // TODO: BorderGrayBright
-      m_borderView(ThemeComponent::TokenGrayBright),
+      m_borderView(ThemeComponent::BorderGrayBright),
       m_contentView(nullptr),
       m_style(style),
       m_headersOverlapHeaders(true),

@@ -87,9 +87,7 @@ NestedMenuController::NestedMenuController(Responder* parentResponder,
   m_selectableListView.hideScrollBars();
   /* Title and breadcrumb headers should not overlap. Breadcrumb should.
    * Using default tableCell's border color. */
-  setupHeadersBorderOverlaping(false, true,
-                               // TODO: BorderGrayBright
-                               ThemeComponent::TokenGrayBright);
+  setupHeadersBorderOverlaping(false, true, ThemeComponent::BorderGrayBright);
 }
 
 void NestedMenuController::viewWillAppear() {

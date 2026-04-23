@@ -43,8 +43,7 @@ class StackViewController : public ViewController {
   void setupHeadersBorderOverlaping(bool headersOverlapHeaders = true,
                                     bool headersOverlapContent = false,
                                     ThemeComponent headersContentBorderColor =
-                                        // TODO: BorderGrayBright
-                                    ThemeComponent::TokenGrayBright) {
+                                        ThemeComponent::BorderGrayBright) {
     m_view.setupHeadersBorderOverlaping(headersOverlapHeaders,
                                         headersOverlapContent,
                                         headersContentBorderColor);

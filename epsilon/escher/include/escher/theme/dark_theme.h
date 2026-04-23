@@ -12,7 +12,9 @@ constexpr static ThemeContainer k_darkTheme =
                    .BackgroundWhite = Palette::Black,
                    // TODO: check color of popups (black in light theme)
                    .BackgroundPopup = Palette::White,
+                   .BackgroundPopUpTitle = Palette::PopUpTitleBackground,
                    .SurfaceSelect = Palette::DARK_VioletLight,
+                   .SurfaceSelectDark = Palette::DARK_VioletLight,
                    .BannerYellow = Palette::DARK_VioletLight,
                    .BannerGrayWhite = Palette::DARK_VioletMiddle,
                    .BannerGrayMiddle = Palette::DARK_VioletMiddle,
@@ -24,6 +26,16 @@ constexpr static ThemeContainer k_darkTheme =
                    .TextPurple = Palette::DARK_VioletLight,
                    // TODO: check BluishGray mapping (if any)
                    .TextBluishGray = Palette::DARK_VioletMiddle,
+                   .BorderWhite = Palette::DARK_VioletDeep,
+                   .BorderWallScreen = Palette::DARK_VioletDeep,
+                   .BorderGrayMiddle = Palette::DARK_VioletDeep,
+                   .BorderGrayWhite = Palette::DARK_VioletMiddle,
+                   .BorderGrayBright = Palette::DARK_VioletMiddle,
+                   .BorderGrayDarkMiddle = Palette::Black,
+                   .BorderGrayDark = Palette::Black,
+                   .BorderPurple = Palette::Black,
+                   .BorderPurpleDark = Palette::Black,
+                   .BorderYellowDark = Palette::Black,
                    .AxisBlack = Palette::DARK_AxisMain,
                    .AxisLight = Palette::DARK_AxisSecondary,
                    .AxisMedium = Palette::DARK_AxisSecondary,
@@ -36,9 +48,13 @@ constexpr static ThemeContainer k_darkTheme =
                    // TODO: confirm TokenRed and TokenPurple
                    .TokenRed = Palette::DARK_VioletDeep,
                    .TokenBlack = Palette::DARK_VioletLight,
+                   .TokenGrayWhite = Palette::DARK_VioletLight,
                    .TokenGrayMiddle = Palette::DARK_VioletLight,
                    .TokenGrayBright = Palette::DARK_VioletMiddle,
                    .TokenGrayDarkest = Palette::DARK_VioletDeep,
-                   .TokenGrayDark = Palette::DARK_VioletDeep};
+                   .TokenGrayDark = Palette::DARK_VioletDeep,
+                   // TODO: decide on battery logo colors
+                   .TokenBatteryLevel = Palette::YellowLightBattery,
+                   .TokenLowBattery = Palette::LowBattery};
 
 }  // namespace Escher

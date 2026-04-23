@@ -73,9 +73,14 @@ QUIZ_CASE(kandinsky_color_hsv) {
     c++;
   }
 
-  /* Check for some values if conversion is correct
-   *
-   * WARNING: The RGB value given in escher/palette.h is not the real
+  using namespace Escher;
+
+  // Check for some values if conversion is correct
+  KDColor dataColors[] = {
+      Palette::Red,     Palette::Blue,      Palette::Green, Palette::YellowDark,
+      Palette::Magenta, Palette::Turquoise, Palette::Pink,  Palette::Orange};
+
+  /* WARNING: The RGB value given in escher/palette.h is not the real
    * RGB value of the color since colors are coded on uint16_t in epsilon.
    * The following HSV conversions are the conversions of the real RGB values.
    * */
@@ -89,11 +94,10 @@ QUIZ_CASE(kandinsky_color_hsv) {
       KDColor::HSVColor({350.0, 0.40, 255.0}),   // Pink
       KDColor::HSVColor({28.0, 0.878, 254.0}),   // Orange
   };
-  static_assert(std::size(dataColorsConversion) <=
-                Escher::Palette::k_numberOfDataColors);
+  static_assert(std::size(dataColors) == std::size(dataColorsConversion));
   for (size_t i = 0; i < std::size(dataColorsConversion); i++) {
     KDColor conversionColor = KDColor::ConvertHSVToRGB(dataColorsConversion[i]);
-    KDColor dataColor = Escher::Palette::DataColor[i];
+    KDColor dataColor = dataColors[i];
     quiz_assert(conversionColor == dataColor);
   }
 }

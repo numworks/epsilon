@@ -7,17 +7,22 @@ from pathlib import Path
 
 def process_file(path: Path, fix: bool) -> list[str]:
     msgs = []
+    # Fixed lines are appended to new_lines to override the file at
+    # the end if changes are needed.
     new_lines = []
     prev_continued = False
     chain_is_recipe = False
     for i, line in enumerate(path.read_text().splitlines(), 1):
         fixed = line
 
+        # Remove trailing whitespaces at the end of each line.
         if fixed != fixed.rstrip():
             msgs.append(f"{path}:{i}: trailing whitespace")
             if fix:
                 fixed = fixed.rstrip()
 
+        # Continuation lines outside of recipes (mostly source file
+        # lists) should be indented with spaces not tabs.
         if prev_continued and not chain_is_recipe:
             indent_end = len(fixed) - len(fixed.lstrip(" \t"))
             indent = fixed[:indent_end]
@@ -38,6 +43,8 @@ def process_file(path: Path, fix: bool) -> list[str]:
 
 
 def main():
+    # Reformat Makefiles given in parameters, or check that they are
+    # correct if --check is passed.
     args = sys.argv[1:]
     check = "--check" in args
     fix = not check

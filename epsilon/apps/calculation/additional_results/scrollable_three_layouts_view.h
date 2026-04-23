@@ -1,8 +1,8 @@
 #pragma once
 
 #include <escher/menu_cell.h>
-#include <escher/palette.h>
 #include <escher/scrollable_multiple_layouts_view.h>
+#include <escher/theme/components.h>
 #include <poincare/layout.h>
 
 #include "../calculation.h"

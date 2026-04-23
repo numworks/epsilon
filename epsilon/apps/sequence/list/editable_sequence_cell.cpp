@@ -1,7 +1,5 @@
 #include "editable_sequence_cell.h"
 
-#include <escher/palette.h>
-
 using namespace Escher;
 
 namespace Sequence {

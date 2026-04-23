@@ -1,6 +1,5 @@
 #include "battery_timer.h"
 
-#include <escher/palette.h>
 #include <ion/usb.h>
 
 #include "apps_container.h"

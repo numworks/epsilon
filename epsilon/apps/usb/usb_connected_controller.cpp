@@ -1,7 +1,7 @@
 #include "usb_connected_controller.h"
 
 #include <apps/i18n.h>
-#include <escher/palette.h>
+#include <escher/theme/components.h>
 
 namespace USB {
 

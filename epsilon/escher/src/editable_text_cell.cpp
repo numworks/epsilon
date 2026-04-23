@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <escher/container.h>
 #include <escher/editable_text_cell.h>
-#include <escher/palette.h>
+#include <escher/theme/components.h>
 #include <poincare/print_float.h>
 
 namespace Escher {

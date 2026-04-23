@@ -1,7 +1,7 @@
 #pragma once
 
 #include <assert.h>
-#include <escher/palette.h>
+#include <escher/theme/components.h>
 #include <kandinsky/color.h>
 #include <poincare/float_list.h>
 #include <poincare/range.h>

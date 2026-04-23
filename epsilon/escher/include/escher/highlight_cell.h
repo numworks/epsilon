@@ -1,6 +1,5 @@
 #pragma once
 
-#include <escher/palette.h>
 #include <escher/responder.h>
 #include <escher/theme/components.h>
 #include <escher/view.h>

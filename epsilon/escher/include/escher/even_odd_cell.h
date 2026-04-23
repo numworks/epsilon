@@ -3,6 +3,7 @@
 #include <escher/highlight_cell.h>
 #include <escher/metric.h>
 #include <escher/text_format.h>
+#include <escher/theme/components.h>
 
 namespace Escher {
 

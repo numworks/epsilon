@@ -3,7 +3,6 @@
 #include <apps/i18n.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/palette.h>
 
 #include "scrollable_three_layouts_view.h"
 

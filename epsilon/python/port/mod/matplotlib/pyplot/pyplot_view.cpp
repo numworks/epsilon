@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-#include <escher/palette.h>
+#include <escher/theme/components.h>
 
 
 using namespace Shared;

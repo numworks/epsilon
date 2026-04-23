@@ -1,6 +1,5 @@
 #include "function_graph_cell.h"
 
-#include <escher/palette.h>
 #include <escher/theme/color_picker.h>
 #include <kandinsky/color.h>
 #include <poincare/print.h>

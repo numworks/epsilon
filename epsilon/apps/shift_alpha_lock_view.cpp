@@ -1,6 +1,5 @@
 #include "shift_alpha_lock_view.h"
 
-#include <escher/palette.h>
 #include <escher/theme/color_picker.h>
 
 #include "title_bar_view.h"

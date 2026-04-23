@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <escher/container.h>
 #include <escher/input_view_controller.h>
-#include <escher/palette.h>
 
 namespace Escher {
 

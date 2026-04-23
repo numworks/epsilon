@@ -1,5 +1,4 @@
 #include <escher/even_odd_cell.h>
-#include <escher/palette.h>
 #include <escher/theme/color_picker.h>
 
 namespace Escher {

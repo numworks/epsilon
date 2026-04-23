@@ -4,8 +4,8 @@
 #include <escher/buffer_text_view.h>
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/palette.h>
 #include <escher/solid_color_view.h>
+#include <escher/theme/components.h>
 #include <escher/view.h>
 #include <shared/poincare_helpers.h>
 

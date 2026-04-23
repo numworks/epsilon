@@ -1,6 +1,5 @@
 #include "turtle.h"
 
-#include <escher/palette.h>
 #include <ion/display.h>
 
 #include <cmath>

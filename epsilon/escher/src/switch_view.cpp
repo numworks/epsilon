@@ -1,3 +1,4 @@
+#include <escher/palette.h>
 #include <escher/switch_view.h>
 
 namespace Escher {

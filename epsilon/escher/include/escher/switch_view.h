@@ -1,7 +1,6 @@
 #pragma once
 
 #include <escher/cell_widget.h>
-#include <escher/palette.h>
 #include <escher/toggleable_view.h>
 
 namespace Escher {

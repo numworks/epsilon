@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <escher/highlight_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/palette.h>
 #include <escher/responder.h>
 #include <escher/scroll_view_data_source.h>
 #include <escher/scrollable_view.h>

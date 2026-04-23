@@ -1,6 +1,6 @@
 #include "standby_controller.h"
 
-#include <escher/palette.h>
+#include <escher/theme/components.h>
 #include <ion/power.h>
 
 namespace HardwareCheckup {

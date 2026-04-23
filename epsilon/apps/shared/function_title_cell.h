@@ -2,7 +2,7 @@
 
 #include <escher/even_odd_cell.h>
 #include <escher/metric.h>
-#include <escher/palette.h>
+#include <escher/theme/components.h>
 
 namespace Shared {
 

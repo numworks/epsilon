@@ -5,8 +5,8 @@
 #include <escher/invocation.h>
 #include <escher/message_text_view.h>
 #include <escher/metric.h>
-#include <escher/palette.h>
 #include <escher/responder.h>
+#include <escher/theme/components.h>
 
 namespace Escher {
 

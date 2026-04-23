@@ -1,6 +1,5 @@
 #pragma once
 
-#include <escher/palette.h>
 #include <escher/responder.h>
 #include <escher/scroll_view.h>
 

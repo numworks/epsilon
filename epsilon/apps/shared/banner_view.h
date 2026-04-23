@@ -2,7 +2,7 @@
 
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/metric.h>
-#include <escher/palette.h>
+#include <escher/theme/components.h>
 #include <escher/view.h>
 #include <ion.h>
 

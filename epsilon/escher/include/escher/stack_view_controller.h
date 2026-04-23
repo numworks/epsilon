@@ -1,7 +1,7 @@
 #pragma once
 
-#include <escher/palette.h>
 #include <escher/stack_view.h>
+#include <escher/theme/components.h>
 #include <escher/view_controller.h>
 #include <stdint.h>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <escher/palette.h>
+#include <escher/theme/components.h>
 #include <poincare/angle_unit.h>
 #include <poincare/print_float.h>
 

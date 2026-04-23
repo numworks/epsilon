@@ -3,7 +3,6 @@
 #include <apps/apps_container.h>
 #include <apps/elements/elements_icon.h>
 #include <apps/i18n.h>
-#include <escher/palette.h>
 
 #include "elements_data_base.h"
 

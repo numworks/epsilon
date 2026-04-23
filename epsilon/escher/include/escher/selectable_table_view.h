@@ -1,6 +1,5 @@
 #pragma once
 
-#include <escher/palette.h>
 #include <escher/responder.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>

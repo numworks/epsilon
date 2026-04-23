@@ -1,7 +1,6 @@
 #pragma once
 
 #include <escher/highlight_cell.h>
-#include <escher/palette.h>
 #include <escher/scroll_view.h>
 #include <escher/table_view_data_source.h>
 

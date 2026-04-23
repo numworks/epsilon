@@ -2,7 +2,6 @@
 
 #include <escher/cell_widget.h>
 #include <escher/menu_cell.h>
-#include <escher/palette.h>
 #include <escher/text_format.h>
 #include <escher/theme/components.h>
 #include <escher/view.h>

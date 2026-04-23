@@ -1,6 +1,5 @@
 #include <escher/layout_style.h>
 #include <escher/layout_view.h>
-#include <escher/palette.h>
 #include <poincare/layout.h>
 
 #include <algorithm>

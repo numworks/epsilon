@@ -1,7 +1,6 @@
 #include "empty_battery_window.h"
 
 #include <apps/i18n.h>
-#include <escher/palette.h>
 #include <escher/theme/color_picker.h>
 #include <ion.h>
 extern "C" {

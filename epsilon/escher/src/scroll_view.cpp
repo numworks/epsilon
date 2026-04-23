@@ -1,4 +1,3 @@
-#include <escher/palette.h>
 #include <escher/scroll_view.h>
 #include <escher/theme/color_picker.h>
 

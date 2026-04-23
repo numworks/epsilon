@@ -2,7 +2,6 @@
 
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
-#include <escher/palette.h>
 
 #include "finance_icon.h"
 

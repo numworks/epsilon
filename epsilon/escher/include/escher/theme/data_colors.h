@@ -1,7 +1,6 @@
 #pragma once
 
 #include <assert.h>
-#include <escher/palette.h>
 #include <omg/unreachable.h>
 #include <stdint.h>
 

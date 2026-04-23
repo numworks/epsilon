@@ -3,7 +3,6 @@
 #include <apps/i18n.h>
 #include <apps/shared/toolbox_helpers.h>
 #include <assert.h>
-#include <escher/palette.h>
 #include <omg/utf8_helper.h>
 #include <python/port/port.h>
 #include <string.h>

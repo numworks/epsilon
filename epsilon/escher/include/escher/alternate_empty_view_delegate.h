@@ -2,7 +2,7 @@
 
 #include <escher/i18n.h>
 #include <escher/message_text_view.h>
-#include <escher/palette.h>
+#include <escher/theme/components.h>
 #include <escher/view_controller.h>
 
 namespace Escher {

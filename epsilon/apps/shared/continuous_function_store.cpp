@@ -1,6 +1,5 @@
 #include "continuous_function_store.h"
 
-#include <escher/palette.h>
 #include <escher/theme/data_colors.h>
 #include <ion.h>
 #include <omg/utf8_helper.h>

@@ -2,10 +2,7 @@
 
 #include <apps/i18n.h>
 #include <escher/layout_preferences.h>
-#include <escher/palette.h>
 #include <escher/theme/color_picker.h>
-#include <escher/theme/components.h>
-#include <escher/theme/theme_container.h>
 #include <ion.h>
 #include <kandinsky/font.h>
 #include <omg/global_box.h>

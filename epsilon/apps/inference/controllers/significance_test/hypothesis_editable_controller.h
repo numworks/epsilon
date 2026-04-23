@@ -7,7 +7,6 @@
 #include <escher/menu_cell.h>
 #include <escher/menu_cell_with_editable_text.h>
 #include <escher/message_text_view.h>
-#include <escher/palette.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>

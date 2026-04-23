@@ -1,7 +1,7 @@
 #pragma once
 
 #include <apps/i18n.h>
-#include <escher/palette.h>
+#include <escher/theme/components.h>
 #include <escher/view.h>
 #include <ion/display.h>
 #include <kandinsky/color.h>
@@ -28,14 +28,15 @@ class PieGraphViewDataSource {
   int setGroup(int group);
 
  protected:
-  constexpr static KDColor k_outsideColor = Escher::Palette::White;
+  constexpr static Escher::ThemeComponent k_outsideColor =
+      Escher::ThemeComponent::BackgroundWhite;
   float m_cumulatedAngles[Store::k_maxNumberOfCategory];
   uint8_t m_toGlobalCategories[Store::k_maxNumberOfCategory];
   /* Note: Now that colors do not change depending on selection, having
    * m_borderColors and m_insideColors might not be worth it anymore and we
    * could use Escher::Palette::DataColor directly. */
-  KDColor m_borderColors[Store::k_maxNumberOfCategory];
-  KDColor m_insideColors[Store::k_maxNumberOfCategory];
+  Escher::ThemeComponent m_borderColors[Store::k_maxNumberOfCategory];
+  Escher::ThemeComponent m_insideColors[Store::k_maxNumberOfCategory];
   Store* m_store;
   uint8_t m_selectedCategory;
   uint8_t m_numberOfActiveCategories;

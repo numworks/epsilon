@@ -1,5 +1,8 @@
 #include "pie_graph_view.h"
 
+#include <escher/theme/color_picker.h>
+#include <escher/theme/data_colors.h>
+
 #include <algorithm>
 #include <cmath>
 
@@ -39,8 +42,8 @@ int PieGraphViewDataSource::setGroup(int group) {
     }
     int localCatIndex = m_numberOfActiveCategories;
     m_insideColors[localCatIndex] =
-        Escher::Palette::DataColorLight[globalCatIndex];
-    m_borderColors[localCatIndex] = Escher::Palette::DataColor[globalCatIndex];
+        Escher::DataColorComponentLight(globalCatIndex);
+    m_borderColors[localCatIndex] = Escher::DataColorComponent(globalCatIndex);
     m_toGlobalCategories[localCatIndex] = globalCatIndex;
     cumulatedAngle += 2 * M_PI * rf;
     m_cumulatedAngles[localCatIndex] = cumulatedAngle;
@@ -91,8 +94,10 @@ void PieGraphView::drawRect(KDContext* ctx, KDRect rect) const {
       float edgeX = center.x() + (k_fradius - .7) * sin,
             edgeY = center.y() - (k_fradius - .7) * cos;
       KDColor blend = KDColor::Blend(
-          m_borderColors[i],
-          m_borderColors[(i + 1) % m_numberOfActiveCategories], 128);
+          Escher::ColorPicker::Resolve(m_borderColors[i]),
+          Escher::ColorPicker::Resolve(
+              m_borderColors[(i + 1) % m_numberOfActiveCategories]),
+          128);
       ctx->drawAntialiasedLineAutoBackground(center.x(), center.y(), edgeX,
                                              edgeY, blend);
     }
@@ -119,7 +124,7 @@ KDColor PieGraphView::pointColor(KDCoordinate x, KDCoordinate y,
   float distanceToRing = distanceToCenter - k_fradius;
   if (distanceToRing >= k_border) {
     // Outside the disk and outside anti-aliased border range
-    return k_outsideColor;
+    return Escher::ColorPicker::Resolve(k_outsideColor);
   }
 
   // Clockwise angle: 0° is Up, 90° is Right
@@ -135,11 +140,11 @@ KDColor PieGraphView::pointColor(KDCoordinate x, KDCoordinate y,
                                     : 0;
       if (-distanceToRing > insideBorderWidth + k_border) {
         // Fully inside the disk
-        return m_insideColors[i];
+        return Escher::ColorPicker::Resolve(m_insideColors[i]);
       }
       if (distanceToRing < 0 && -distanceToRing < insideBorderWidth) {
         // Fully inside the border
-        return m_borderColors[i];
+        return Escher::ColorPicker::Resolve(m_borderColors[i]);
       }
       /* Close to the anti-aliased edge of the border.
        * Depending on sign, blending with inside or outside color. */
@@ -150,8 +155,9 @@ KDColor PieGraphView::pointColor(KDCoordinate x, KDCoordinate y,
       assert(distanceToEdge <= k_border);
       uint8_t alpha = distanceToEdge / k_border * UINT8_MAX;
       return KDColor::Blend(
-          distanceToRing < 0 ? m_insideColors[i] : k_outsideColor,
-          m_borderColors[i], alpha);
+          distanceToRing < 0 ? Escher::ColorPicker::Resolve(m_insideColors[i])
+                             : Escher::ColorPicker::Resolve(k_outsideColor),
+          Escher::ColorPicker::Resolve(m_borderColors[i]), alpha);
     }
   }
   OMG_UNREACHABLE;

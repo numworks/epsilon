@@ -7,6 +7,10 @@
 #include <poincare/exam_mode.h>
 #include <stdint.h>
 
+#if __EMSCRIPTEN__
+#include <type_traits>
+#endif
+
 #include "angle_unit.h"
 #include "complex_format.h"
 

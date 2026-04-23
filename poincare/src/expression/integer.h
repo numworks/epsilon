@@ -8,6 +8,8 @@
 #include <poincare/src/memory/tree_ref.h>
 #include <stdlib.h>
 
+#include <algorithm>
+
 namespace Poincare::Internal {
 
 /* TODO:I'm not sure using uint32_t over uint8_t is worth the trouble.

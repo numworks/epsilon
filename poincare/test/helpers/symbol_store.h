@@ -6,6 +6,7 @@
 #include <poincare/src/memory/block.h>
 #include <poincare/symbol_store_interface.h>
 
+#include <array>
 #include <string_view>
 
 namespace Poincare::Internal {

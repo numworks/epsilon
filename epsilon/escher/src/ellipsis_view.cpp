@@ -1,5 +1,5 @@
 #include <escher/ellipsis_view.h>
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <kandinsky/color.h>
 
 namespace Escher {
@@ -30,8 +30,9 @@ void EllipsisView::drawRect(KDContext* ctx, KDRect rect) const {
                k_ellipsisHeight);
   KDColor ellipsisWorkingBuffer[EllipsisView::k_ellipsisWidth *
                                 EllipsisView::k_ellipsisHeight];
-  ctx->blendRectWithMask(frame, Palette::Black, (const uint8_t*)ellipsisMask,
-                         ellipsisWorkingBuffer);
+  ctx->blendRectWithMask(frame,
+                         ColorPicker::Resolve(ThemeComponent::TokenBlack),
+                         (const uint8_t*)ellipsisMask, ellipsisWorkingBuffer);
 }
 
 KDSize EllipsisView::minimalSizeForOptimalDisplay() const {

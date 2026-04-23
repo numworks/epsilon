@@ -3,7 +3,6 @@
 #include <escher/dropdown_view.h>
 #include <escher/image/caret.h>
 #include <escher/menu_cell.h>
-#include <escher/palette.h>
 #include <escher/theme/color_picker.h>
 
 #include <algorithm>
@@ -13,7 +12,8 @@ namespace Escher {
 PopupItemView::PopupItemView(HighlightCell* cell)
     : m_isPoppingUp(false), m_cell(cell) {
   m_caret.setImage(ImageStore::Caret);
-  m_caret.setBackgroundColor(Palette::White);
+  m_caret.setBackgroundColor(
+      ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
 }
 
 void PopupItemView::setHighlighted(bool highlighted) {
@@ -73,7 +73,7 @@ void PopupItemView::drawRect(KDContext* ctx, KDRect rect) const {
   // When popping, the cell has no borders
   ThemeComponent borderColor = m_isPoppingUp ? backgroundColor
                                : isHighlighted()
-                                   ? ThemeComponent::TokenGrayDark
+                                   ? ThemeComponent::BorderGrayDark
                                    : ThemeComponent::SurfaceSelect;
   drawBorderOfRect(ctx, bounds(), ColorPicker::Resolve(borderColor));
 }

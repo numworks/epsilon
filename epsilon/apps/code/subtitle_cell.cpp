@@ -1,7 +1,6 @@
 #include "subtitle_cell.h"
 
 #include <assert.h>
-#include <escher/palette.h>
 #include <escher/theme/color_picker.h>
 
 using namespace Escher;
@@ -19,7 +18,8 @@ void SubtitleCell::drawRect(KDContext* ctx, KDRect rect) const {
   ThemeComponent backColor =
       isHighlighted() ? ThemeComponent::SurfaceSelect : k_backgroundColor;
   drawInnerRect(ctx, bounds(), ColorPicker::Resolve(backColor));
-  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
+  drawBorderOfRect(ctx, bounds(),
+                   ColorPicker::Resolve(ThemeComponent::BorderGrayBright));
 }
 
 void SubtitleCell::layoutSubviews(bool force) {

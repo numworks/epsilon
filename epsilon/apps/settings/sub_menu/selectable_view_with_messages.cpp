@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <assert.h>
+#include <escher/theme/color_picker.h>
 
 #include <algorithm>
 
@@ -22,7 +23,7 @@ SelectableViewWithMessages::SelectableViewWithMessages(
            .verticalAlignment = KDGlyph::k_alignCenter}) {}
 
 void SelectableViewWithMessages::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::WallScreen);
+  ctx->fillRect(bounds(), ColorPicker::Resolve(ThemeComponent::WallScreen));
 }
 
 void SelectableViewWithMessages::setMessage(I18n::Message message) {

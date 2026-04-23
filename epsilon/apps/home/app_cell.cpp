@@ -1,6 +1,7 @@
 #include "app_cell.h"
 
 #include <assert.h>
+#include <escher/theme/color_picker.h>
 
 using namespace Escher;
 
@@ -17,7 +18,7 @@ void AppCell::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(
       KDRect(0, bounds().height() - nameSize.height() - 2 * k_nameHeightMargin,
              bounds().width(), nameSize.height() + 2 * k_nameHeightMargin),
-      Palette::White);
+      ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
 }
 
 int AppCell::numberOfSubviews() const { return isVisible() ? 2 : 0; }

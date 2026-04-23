@@ -1,5 +1,7 @@
 #include "illustration_cell.h"
 
+#include <escher/theme/color_picker.h>
+
 using namespace Shared;
 using namespace Poincare;
 using namespace Escher;
@@ -16,7 +18,8 @@ void IllustrationCell::layoutSubviews(bool force) {
 }
 
 void IllustrationCell::drawRect(KDContext* ctx, KDRect rect) const {
-  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
+  drawBorderOfRect(ctx, bounds(),
+                   ColorPicker::Resolve(ThemeComponent::BorderGrayBright));
 }
 
 }  // namespace Calculation

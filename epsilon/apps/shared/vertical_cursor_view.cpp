@@ -1,12 +1,14 @@
 #include "vertical_cursor_view.h"
 
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 
 namespace Shared {
 
 void VerticalCursorView::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
-  ctx->fillRect(KDRect(0, 0, 1, height), Escher::Palette::Black);
+  ctx->fillRect(
+      KDRect(0, 0, 1, height),
+      Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenBlack));
 }
 
 KDSize VerticalCursorView::minimalSizeForOptimalDisplay() const {

@@ -1,4 +1,4 @@
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <escher/toggleable_dot_view.h>
 #include <kandinsky/dot.h>
 
@@ -27,7 +27,9 @@ void ToggleableDotView::drawRect(KDContext* ctx, KDRect rect) const {
   KDRect frame(width - k_dotSize, heightCenter - halfHeight, k_dotSize,
                k_dotSize);
   ctx->blendRectWithMask(
-      frame, m_state ? Palette::YellowDark : Palette::GrayDark,
+      frame,
+      m_state ? ColorPicker::Resolve(ThemeComponent::TokenYellow)
+              : ColorPicker::Resolve(ThemeComponent::TokenGrayDark),
       m_state ? reinterpret_cast<const uint8_t*>(MediumDotMask)
               : reinterpret_cast<const uint8_t*>(MediumShallowDotMask),
       workingBuffer);

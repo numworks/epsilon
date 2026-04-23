@@ -4,6 +4,7 @@
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
+#include <escher/theme/color_picker.h>
 #include <escher/view_controller.h>
 
 #include "app_cell.h"
@@ -74,7 +75,8 @@ class Controller : public Escher::ViewController,
                 Escher::SelectableTableViewDataSource* selectionDataSource);
     Escher::SelectableTableView* selectableTableView();
     void drawRect(KDContext* ctx, KDRect rect) const override {
-      ctx->fillRect(bounds(), Escher::Palette::White);
+      ctx->fillRect(bounds(), Escher::ColorPicker::Resolve(
+                                  Escher::ThemeComponent::BackgroundWhite));
     }
     void reload() { markWholeFrameAsDirty(); }
     void reloadBottomRow(SimpleTableViewDataSource* dataSource,

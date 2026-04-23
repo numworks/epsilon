@@ -1,6 +1,6 @@
 #include <escher/button_row_controller.h>
 #include <escher/container.h>
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 
 #include <cmath>
 
@@ -135,17 +135,22 @@ void ButtonRowController::ContentView::drawRect(KDContext* ctx,
                                                 KDRect rect) const {
   if (numberOfButtons() == 0) {
     if (m_position == Position::Top) {
-      ctx->fillRect(KDRect(0, 0, bounds().width(), 1), Palette::GrayWhite);
+      ctx->fillRect(KDRect(0, 0, bounds().width(), 1),
+                    ColorPicker::Resolve(ThemeComponent::BorderGrayWhite));
     }
     return;
   }
   KDCoordinate rowHeight = buttonRowHeight();
   if (m_style == Style::PlainWhite) {
-    drawRowFrame(ctx, rowHeight, Palette::White, Palette::GrayWhite);
+    drawRowFrame(ctx, rowHeight,
+                 ColorPicker::Resolve(ThemeComponent::BackgroundWhite),
+                 ColorPicker::Resolve(ThemeComponent::BorderGrayWhite));
     return;
   }
   assert(m_style == Style::EmbossedGray);
-  drawRowFrame(ctx, rowHeight, Palette::GrayWhite, Palette::GrayMiddle);
+  drawRowFrame(ctx, rowHeight,
+               ColorPicker::Resolve(ThemeComponent::TokenGrayWhite),
+               ColorPicker::Resolve(ThemeComponent::BorderGrayMiddle));
 }
 
 bool ButtonRowController::ContentView::setSelectedButton(int selectedButton) {

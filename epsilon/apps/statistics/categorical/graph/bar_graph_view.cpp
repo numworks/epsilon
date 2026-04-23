@@ -1,6 +1,5 @@
 #include "bar_graph_view.h"
 
-#include <escher/palette.h>
 #include <escher/theme/color_picker.h>
 
 namespace Statistics::Categorical {
@@ -36,12 +35,14 @@ void BarGraphView::scrollToSelectedBar() {
 
 void BarGraphView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
   // Draw background
-  ctx->fillRect(rect, Escher::Palette::White);
+  ctx->fillRect(rect, Escher::ColorPicker::Resolve(
+                          Escher::ThemeComponent::BackgroundWhite));
   // Draw axis
-  ctx->drawLine(KDPoint(0, bounds().height() - k_legendHeight - k_axisHeight),
-                KDPoint(bounds().width(),
-                        bounds().height() - k_legendHeight - k_axisHeight),
-                Escher::Palette::Black);
+  ctx->drawLine(
+      KDPoint(0, bounds().height() - k_legendHeight - k_axisHeight),
+      KDPoint(bounds().width(),
+              bounds().height() - k_legendHeight - k_axisHeight),
+      Escher::ColorPicker::Resolve(Escher::ThemeComponent::AxisBlack));
   // Draw categories
   float maxBarValue = m_store->getMaxActiveTableValue();
   for (int category = 0; category < m_store->currentDimension().row;

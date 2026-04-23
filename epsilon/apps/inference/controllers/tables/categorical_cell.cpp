@@ -1,6 +1,7 @@
 #include "categorical_cell.h"
 
 #include <escher/layout_view.h>
+#include <escher/theme/color_picker.h>
 
 using namespace Escher;
 
@@ -20,10 +21,10 @@ void AbstractCategoricalCell::drawRect(KDContext* ctx, KDRect rect) const {
 
   // Draw horizontal margins
   ctx->fillRect(KDRect(0, 0, Metric::CommonMargins.left(), height),
-                Palette::WallScreenDark);
+                ColorPicker::Resolve(ThemeComponent::WallScreenDark));
   ctx->fillRect(KDRect(width - Metric::CommonMargins.right(), 0,
                        Metric::CommonMargins.right(), height),
-                Escher::Palette::WallScreenDark);
+                ColorPicker::Resolve(ThemeComponent::WallScreenDark));
 }
 
 void AbstractCategoricalCell::setHighlighted(bool highlight) {

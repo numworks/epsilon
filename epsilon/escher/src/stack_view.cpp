@@ -1,6 +1,6 @@
 #include <escher/metric.h>
-#include <escher/palette.h>
 #include <escher/stack_view.h>
+#include <escher/theme/color_picker.h>
 
 namespace Escher {
 
@@ -31,27 +31,31 @@ void StackView::setupHeadersBorderOverlaping(
 }
 
 void StackView::pushStack(const ViewController* vc) {
-  KDColor textColor = Palette::GrayDarkMiddle;
-  KDColor backgroundColor = Palette::White;
-  KDColor separatorColor = Palette::GrayBright;
+  ThemeComponent textColor = ThemeComponent::TextGrayDarkMiddle;
+  ThemeComponent backgroundColor = ThemeComponent::BackgroundWhite;
+  ThemeComponent separatorColor = ThemeComponent::BorderGrayBright;
   int numberOfStacks = m_stackHeaderViews->size();
   if (m_style == Style::GrayGradation) {
-    textColor = Palette::White;
-    constexpr KDColor k_grayGradationColors[] = {
-        Palette::PurpleBright, Palette::GrayDark, Palette::GrayDarkMiddle};
+    textColor = ThemeComponent::TextWhite;
+    // TODO: background and separator colors need to be different in dark mode
+    constexpr ThemeComponent k_grayGradationColors[] = {
+        ThemeComponent::BannerPurple, ThemeComponent::BannerGrayDark,
+        ThemeComponent::BannerGrayDarkMiddle};
     backgroundColor = k_grayGradationColors[numberOfStacks];
     separatorColor = k_grayGradationColors[numberOfStacks];
   } else if (m_style == Style::PurpleWhite) {
     if (numberOfStacks == 0) {
-      textColor = Palette::White;
-      backgroundColor = Palette::PopUpTitleBackground;
-      separatorColor = Palette::PurpleDark;
+      textColor = ThemeComponent::TextWhite;
+      backgroundColor = ThemeComponent::BackgroundPopUpTitle;
+      separatorColor = ThemeComponent::BorderPurpleDark;
     }
   } else {
     assert(m_style == Style::WhiteUniform);
   }
   m_stackHeaderViews->push(
-      StackHeaderView(vc, textColor, backgroundColor, separatorColor));
+      StackHeaderView(vc, ColorPicker::Resolve(textColor),
+                      ColorPicker::Resolve(backgroundColor),
+                      ColorPicker::Resolve(separatorColor)));
 }
 
 KDSize StackView::minimalSizeForOptimalDisplay() const {

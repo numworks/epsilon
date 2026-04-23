@@ -1,6 +1,5 @@
 #include "legend_view.h"
 
-#include <escher/palette.h>
 #include <escher/theme/color_picker.h>
 
 #include <algorithm>
@@ -10,12 +9,15 @@ using namespace Escher;
 namespace Inference {
 
 void LegendView::DotView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillAntialiasedCircle(KDPointZero, k_diameter / 2, Palette::YellowDark,
+  ctx->fillAntialiasedCircle(KDPointZero, k_diameter / 2,
+                             ColorPicker::Resolve(ThemeComponent::TokenYellow),
                              ColorPicker::Resolve(k_backgroundColor));
 }
 
 void LegendView::StripedDotView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillCircleWithStripes(KDPointZero, k_diameter / 2, Palette::PurpleBright,
+  ctx->fillCircleWithStripes(KDPointZero, k_diameter / 2,
+                             // TODO: should we use a TokenPurple?
+                             ColorPicker::Resolve(ThemeComponent::BannerPurple),
                              ColorPicker::Resolve(k_backgroundColor), 3);
 }
 

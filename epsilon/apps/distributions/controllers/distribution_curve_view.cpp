@@ -1,5 +1,6 @@
 #include "distribution_curve_view.h"
 
+#include <escher/theme/color_picker.h>
 #include <poincare/coordinate_2D.h>
 
 #include "../models/distribution/normal_distribution.h"
@@ -43,15 +44,18 @@ void DistributionPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
   if (m_distribution->isContinuous()) {
     CurveDrawing plot(Curve2D(evaluateDistribution2D, m_distribution), nullptr,
                       m_distribution->xMin(), m_distribution->xMax(),
-                      plotView->pixelWidth(), Palette::YellowDark, true);
-    plot.setPatternOptions(Pattern(Palette::YellowDark), lowerBound, upperBound,
-                           Curve2D(evaluateZero), Curve2D(), false);
+                      plotView->pixelWidth(),
+                      ColorPicker::Resolve(ThemeComponent::TokenYellow), true);
+    plot.setPatternOptions(
+        Pattern(ColorPicker::Resolve(ThemeComponent::TokenYellow)), lowerBound,
+        upperBound, Curve2D(evaluateZero), Curve2D(), false);
     plot.draw(plotView, ctx, rect);
   } else {
     double context[] = {lowerBound, upperBound};
     HistogramDrawing plot(evaluateDistribution1D<double>, m_distribution,
                           context, barIsHighlighted, 0.f, 1.f, false, false,
-                          Palette::GrayMiddle, Palette::YellowDark);
+                          ColorPicker::Resolve(ThemeComponent::AxisMedium),
+                          ColorPicker::Resolve(ThemeComponent::TokenYellow));
     plot.draw(plotView, ctx, rect);
   }
 }

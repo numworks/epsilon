@@ -1,5 +1,7 @@
 #include "equation_list_view.h"
 
+#include <escher/theme/color_picker.h>
+
 #include "list_controller.h"
 
 using namespace Escher;
@@ -112,29 +114,33 @@ const uint8_t bottomBrace[braceExtremumHeight][braceExtremumWidth] = {
 };
 
 void EquationListView::BraceView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::White);
+  ctx->fillRect(bounds(),
+                ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
   KDCoordinate height = bounds().height();
   KDCoordinate margin = 3;
   KDColor braceWorkingBuffer[60];
   ctx->blendRectWithMask(
       KDRect(margin, 0, braceExtremumWidth, braceExtremumHeight),
-      Palette::Black, (const uint8_t*)topBrace, (KDColor*)(braceWorkingBuffer));
+      ColorPicker::Resolve(ThemeComponent::TokenBlack),
+      (const uint8_t*)topBrace, (KDColor*)(braceWorkingBuffer));
   ctx->blendRectWithMask(KDRect(0, height / 2 - braceCenterHeight / 2,
                                 braceCenterWidth, braceCenterHeight),
-                         Palette::Black, (const uint8_t*)middleBrace,
+                         ColorPicker::Resolve(ThemeComponent::TokenBlack),
+                         (const uint8_t*)middleBrace,
                          (KDColor*)(braceWorkingBuffer));
   ctx->blendRectWithMask(KDRect(margin, height - braceExtremumHeight,
                                 braceExtremumWidth, braceExtremumHeight),
-                         Palette::Black, (const uint8_t*)bottomBrace,
+                         ColorPicker::Resolve(ThemeComponent::TokenBlack),
+                         (const uint8_t*)bottomBrace,
                          (KDColor*)(braceWorkingBuffer));
   ctx->fillRect(
       KDRect(margin, braceExtremumHeight, 1,
              height / 2 - braceCenterHeight / 2 - braceExtremumHeight),
-      Palette::Black);
+      ColorPicker::Resolve(ThemeComponent::TokenBlack));
   ctx->fillRect(
       KDRect(margin, height / 2 + braceCenterHeight / 2, 1,
              height / 2 - braceExtremumHeight / 2 - braceExtremumHeight),
-      Palette::Black);
+      ColorPicker::Resolve(ThemeComponent::TokenBlack));
 }
 
 KDSize EquationListView::BraceView::minimalSizeForOptimalDisplay() const {

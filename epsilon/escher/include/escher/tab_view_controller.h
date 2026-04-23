@@ -1,9 +1,9 @@
 #pragma once
 
 #include <escher/app.h>
-#include <escher/palette.h>
 #include <escher/tab_view.h>
 #include <escher/tab_view_data_source.h>
+#include <escher/theme/color_picker.h>
 #include <escher/view_controller.h>
 
 namespace Escher {
@@ -29,7 +29,9 @@ class TabViewController : public ViewController {
   void viewDidDisappear() override;
 
   ViewController* activeViewController();
-  virtual KDColor tabBackgroundColor() const { return Palette::PurpleBright; }
+  virtual KDColor tabBackgroundColor() const {
+    return ColorPicker::Resolve(ThemeComponent::BannerPurple);
+  }
 
  protected:
   class ContentView : public View {

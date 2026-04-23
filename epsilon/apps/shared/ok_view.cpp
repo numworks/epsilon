@@ -1,6 +1,6 @@
 #include "ok_view.h"
 
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 
 namespace Shared {
 
@@ -53,8 +53,9 @@ void OkView::drawRect(KDContext* ctx, KDRect rect) const {
   KDRect frame((width - k_okSize) / 2, (height - k_okSize) / 2, k_okSize,
                k_okSize);
   KDColor okWorkingBuffer[OkView::k_okSize * OkView::k_okSize];
-  ctx->blendRectWithMask(frame, Escher::Palette::Black, (const uint8_t*)okMask,
-                         okWorkingBuffer);
+  ctx->blendRectWithMask(
+      frame, Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenBlack),
+      (const uint8_t*)okMask, okWorkingBuffer);
 }
 
 KDSize OkView::minimalSizeForOptimalDisplay() const {

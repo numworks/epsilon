@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/tab_view_controller.h>
+#include <escher/theme/color_picker.h>
 
 #include "inference/controllers/inference_controller.h"
 #include "inference/controllers/tables/categorical_controller.h"
@@ -51,7 +52,7 @@ class ResultsHomogeneityTabController : public InferenceController,
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   KDColor tabBackgroundColor() const override {
-    return Escher::Palette::GrayDark;
+    return Escher::ColorPicker::Resolve(Escher::ThemeComponent::BannerGrayDark);
   }
 
  private:

@@ -1,6 +1,7 @@
 #include "trigonometry_graph_cell.h"
 
 #include <apps/global_preferences.h>
+#include <escher/theme/color_picker.h>
 #include <escher/theme/components.h>
 
 using namespace Shared;
@@ -29,15 +30,18 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
   float c = std::cos(angle);
 
   // - Draw sine and cosine projections
-  plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Horizontal, s, 0.f,
-                                      c, Palette::Red);
-  plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Vertical, c, 0.f, s,
-                                      Palette::Red);
-  plotView->drawSegment(ctx, rect, {0.f, 0.f}, {c, s}, Palette::Red);
+  plotView->drawDashedStraightSegment(
+      ctx, rect, OMG::Axis::Horizontal, s, 0.f, c,
+      ColorPicker::Resolve(ThemeComponent::AxisRed));
+  plotView->drawDashedStraightSegment(
+      ctx, rect, OMG::Axis::Vertical, c, 0.f, s,
+      ColorPicker::Resolve(ThemeComponent::AxisRed));
+  plotView->drawSegment(ctx, rect, {0.f, 0.f}, {c, s},
+                        ColorPicker::Resolve(ThemeComponent::AxisRed));
 
   // - Draw angle position on the circle
   plotView->drawDot(ctx, rect, Dots::Size::Large, Coordinate2D<float>(c, s),
-                    Palette::Red);
+                    ColorPicker::Resolve(ThemeComponent::AxisRed));
 
   // - Draw angle arc and label
   constexpr float k_arcRatio = 0.2;
@@ -53,7 +57,7 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
       ThemeComponent::TokenRed);
   // Draw the arc
   drawArcOfEllipse(plotView, ctx, rect, {0.f, 0.f}, k_arcRatio, k_arcRatio,
-                   0.0f, angle, Palette::Red);
+                   0.0f, angle, ColorPicker::Resolve(ThemeComponent::AxisRed));
 
   // - Draw "sin(θ)" and "cos(θ)" labels
   plotView->drawLabel(ctx, rect, "sin(θ)", Coordinate2D<float>(0.f, s),
@@ -72,7 +76,8 @@ void UnitCircle::drawAxesAndGrid(const AbstractPlotView* plotView,
                                  KDContext* ctx, KDRect rect) const {
   PlotPolicy::WithPolarGrid::DrawGrid(plotView, ctx, rect,
                                       SharedGlobalPrefs().angleUnit());
-  plotView->drawCircle(ctx, rect, {0.f, 0.f}, 1.f, Palette::Black);
+  plotView->drawCircle(ctx, rect, {0.f, 0.f}, 1.f,
+                       ColorPicker::Resolve(ThemeComponent::AxisBlack));
   // Labels should be as close to the axes as possible so we place them manually
   KDRect labelRect = plotView->labelRect(
       "-1", {-1, 0}, AbstractPlotView::RelativePosition::Before,

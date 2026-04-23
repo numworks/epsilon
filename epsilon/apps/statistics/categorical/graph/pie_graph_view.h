@@ -34,7 +34,7 @@ class PieGraphViewDataSource {
   uint8_t m_toGlobalCategories[Store::k_maxNumberOfCategory];
   /* Note: Now that colors do not change depending on selection, having
    * m_borderColors and m_insideColors might not be worth it anymore and we
-   * could use Escher::Palette::DataColor directly. */
+   * could use DataColorComponent directly. */
   Escher::ThemeComponent m_borderColors[Store::k_maxNumberOfCategory];
   Escher::ThemeComponent m_insideColors[Store::k_maxNumberOfCategory];
   Store* m_store;

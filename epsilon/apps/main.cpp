@@ -10,7 +10,7 @@
 
 #include <escher/init.h>
 #include <escher/layout_preferences.h>
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <ion.h>
 
 class DummyLayoutPreferences : public Escher::LayoutPreferences::Interface {
@@ -27,8 +27,11 @@ class DummyLayoutPreferences : public Escher::LayoutPreferences::Interface {
 char digit_to_char(int n) { return '0' + (n % 10); }
 
 void ion_main(int argc, const char* const argv[]) {
-  Ion::LED::setColor(Palette::Black);
-  Ion::Display::pushRectUniform(Ion::Display::Rect, Escher::Palette::White);
+  Ion::LED::setColor(
+      Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenBlack));
+  Ion::Display::pushRectUniform(
+      Ion::Display::Rect,
+      Escher::ColorPicker::Resolve(Escher::ThemeComponent::BackgroundWhite));
 
   constexpr int bufsiz = 32;
   char txtbuf[bufsiz];

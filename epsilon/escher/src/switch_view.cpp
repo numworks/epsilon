@@ -1,5 +1,5 @@
-#include <escher/palette.h>
 #include <escher/switch_view.h>
+#include <escher/theme/color_picker.h>
 
 namespace Escher {
 
@@ -58,15 +58,17 @@ void SwitchView::drawRect(KDContext* ctx, KDRect rect) const {
   KDRect frame(width - k_switchWidth, heightCenter - halfHeight, k_switchWidth,
                k_switchHeight);
   ctx->blendRectWithMask(
-      frame, m_state ? Palette::YellowDark : Palette::GrayDark,
+      frame,
+      m_state ? ColorPicker::Resolve(ThemeComponent::TokenYellow)
+              : ColorPicker::Resolve(ThemeComponent::TokenGrayDark),
       reinterpret_cast<const uint8_t*>(switchMask), workingBuffer);
 
   KDCoordinate onOffX = width - (m_state ? k_onOffSize : k_switchWidth);
   KDRect onOffFrame(onOffX, heightCenter - halfHeight, k_onOffSize,
                     k_onOffSize);
-  ctx->blendRectWithMask(onOffFrame, Palette::White,
-                         reinterpret_cast<const uint8_t*>(onOffMask),
-                         workingBuffer);
+  ctx->blendRectWithMask(
+      onOffFrame, ColorPicker::Resolve(ThemeComponent::BackgroundWhite),
+      reinterpret_cast<const uint8_t*>(onOffMask), workingBuffer);
 }
 
 }  // namespace Escher

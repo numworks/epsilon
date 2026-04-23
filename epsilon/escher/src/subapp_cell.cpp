@@ -1,4 +1,3 @@
-#include <escher/palette.h>
 #include <escher/subapp_cell.h>
 #include <escher/theme/color_picker.h>
 #include <kandinsky/font.h>
@@ -8,16 +7,20 @@
 namespace Escher {
 
 SubappCell::SubappCell() {
-  m_icon.setBackgroundColor(Palette::White);
+  m_icon.setBackgroundColor(
+      ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
   m_title.setFont(KDFont::Size::Large);
   m_subTitle.setFont(KDFont::Size::Small);
   m_subTitle.setTextColor(ThemeComponent::TextGrayDark);
 }
 
 void SubappCell::drawRect(KDContext* ctx, KDRect rect) const {
-  KDColor backColor = isHighlighted() ? Palette::Select : Palette::White;
+  KDColor backColor =
+      isHighlighted() ? ColorPicker::Resolve(ThemeComponent::SurfaceSelect)
+                      : ColorPicker::Resolve(ThemeComponent::BackgroundWhite);
   drawInnerRect(ctx, bounds(), backColor);
-  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
+  drawBorderOfRect(ctx, bounds(),
+                   ColorPicker::Resolve(ThemeComponent::BorderGrayBright));
 }
 
 void SubappCell::setHighlighted(bool highlighted) {

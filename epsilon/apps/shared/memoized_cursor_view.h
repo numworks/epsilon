@@ -1,6 +1,6 @@
 #pragma once
 
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 
 #include "cursor_view.h"
 
@@ -22,7 +22,9 @@ class MemoizedCursorView : public CursorView {
   virtual KDCoordinate size() const = 0;
   virtual KDColor* underneathPixelBuffer() const = 0;
   KDColor color() const {
-    return isHighlighted() ? Escher::Palette::GrayDarkest : m_color;
+    return isHighlighted() ? Escher::ColorPicker::Resolve(
+                                 Escher::ThemeComponent::TokenGrayDarkest)
+                           : m_color;
   }
   mutable bool m_underneathPixelBufferLoaded;
   bool eraseCursorIfPossible(const Escher::View* parent);

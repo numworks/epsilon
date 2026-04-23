@@ -1,7 +1,7 @@
 #include "editor_view.h"
 
 #include <apps/global_preferences.h>
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <omg/print.h>
 
 #include "app.h"
@@ -72,7 +72,7 @@ void EditorView::layoutSubviews(bool force) {
 /* EditorView::GutterView */
 
 void EditorView::GutterView::drawRect(KDContext* ctx, KDRect rect) const {
-  KDColor textColor = Palette::BlueishGray;
+  KDColor textColor = ColorPicker::Resolve(ThemeComponent::TextBluishGray);
   KDColor backgroundColor = KDColor::RGB24(0xE4E6E7);
 
   ctx->fillRect(rect, backgroundColor);

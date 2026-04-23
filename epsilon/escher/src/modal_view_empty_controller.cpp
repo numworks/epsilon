@@ -1,13 +1,15 @@
 #include <assert.h>
 #include <escher/i18n.h>
 #include <escher/modal_view_empty_controller.h>
+#include <escher/theme/components.h>
 
 namespace Escher {
 
 void ModalViewEmptyController::ModalViewEmptyView::drawRect(KDContext* ctx,
                                                             KDRect rect) const {
   ctx->fillRect(bounds(), k_backgroundColor);
-  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
+  drawBorderOfRect(ctx, bounds(),
+                   ColorPicker::Resolve(ThemeComponent::BorderGrayBright));
 }
 
 void ModalViewEmptyController::ModalViewEmptyView::layoutSubviews(bool force) {

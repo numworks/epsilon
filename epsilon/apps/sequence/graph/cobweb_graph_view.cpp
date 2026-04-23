@@ -3,7 +3,6 @@
 #include <apps/shared/continuous_function.h>
 #include <apps/shared/continuous_function_cache.h>
 #include <apps/shared/poincare_helpers.h>
-#include <escher/palette.h>
 #include <escher/theme/color_picker.h>
 #include <kandinsky/color.h>
 #include <kandinsky/measuring_context.h>
@@ -48,9 +47,10 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   constexpr size_t bufferSize = k_textMaxLength + 1;
   char name[bufferSize] = {};
   size_t nameLength = sequence->name(name, bufferSize);
-  KDColor fadedColor =
-      KDColor::Blend(Escher::ColorPicker::Resolve(sequence->color()),
-                     Escher::Palette::White, k_curveFadeRatio);
+  KDColor fadedColor = KDColor::Blend(
+      Escher::ColorPicker::Resolve(sequence->color()),
+      Escher::ColorPicker::Resolve(Escher::ThemeComponent::BackgroundWhite),
+      k_curveFadeRatio);
   const SequenceContext& context =
       reinterpret_cast<const SequenceContext&>(App::app()->localContext());
 
@@ -144,14 +144,15 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
    * When the said buffer is restored the element will appear twice. */
   measuringContext.reset();
   if (m_step) {
-    plotView->drawDashedStraightSegment(&measuringContext, rect,
-                                        OMG::Axis::Vertical, x, y, 0.f,
-                                        Escher::Palette::GrayDark);
+    plotView->drawDashedStraightSegment(
+        &measuringContext, rect, OMG::Axis::Vertical, x, y, 0.f,
+        Escher::ColorPicker::Resolve(Escher::ThemeComponent::AxisGrayDark));
     m_verticalLineCache[m_step].save(ctx, measuringContext.writtenRect());
   }
   measuringContext.reset();
-  plotView->drawDot(&measuringContext, rect, Dots::Size::Medium, {x, y},
-                    Escher::Palette::YellowDark);
+  plotView->drawDot(
+      &measuringContext, rect, Dots::Size::Medium, {x, y},
+      Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenYellow));
   m_dotCache.save(ctx, measuringContext.writtenRect());
   Poincare::Print::CustomPrintf(name + nameLength, bufferSize - nameLength,
                                 "(%i)", rank);
@@ -163,11 +164,13 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   m_textCache.save(ctx, measuringContext.writtenRect());
   // Actual drawings
   if (m_step) {
-    plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Vertical, x, y,
-                                        0.f, Escher::Palette::GrayDark);
+    plotView->drawDashedStraightSegment(
+        ctx, rect, OMG::Axis::Vertical, x, y, 0.f,
+        Escher::ColorPicker::Resolve(Escher::ThemeComponent::AxisGrayDark));
   }
-  plotView->drawDot(ctx, rect, Dots::Size::Medium, {x, y},
-                    Escher::Palette::YellowDark);
+  plotView->drawDot(
+      ctx, rect, Dots::Size::Medium, {x, y},
+      Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenYellow));
   // Draw label above x-axis
   plotView->drawLabel(ctx, rect, name, {x, 0.f},
                       AbstractPlotView::RelativePosition::After,

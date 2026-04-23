@@ -5,6 +5,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/stack_view_controller.h>
+#include <escher/theme/color_picker.h>
 
 #include <cmath>
 
@@ -47,7 +48,7 @@ PressToTestController::PressToTestController(Responder* parentResponder)
     m_switchCells[i].accessory()->imageView()->setImage(
         ImageStore::PressToTestSuccess);
     m_switchCells[i].accessory()->imageView()->setBackgroundColor(
-        Palette::White);
+        ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
   }
   resetController();
 }

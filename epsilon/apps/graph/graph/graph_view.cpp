@@ -248,7 +248,8 @@ void GraphView::drawInequalitiesIntersection(KDContext* ctx,
       if (!inRegion) {
         continue;
       }
-      ctx->setPixel(KDPoint(xCoord, yCoord), Palette::Black);
+      ctx->setPixel(KDPoint(xCoord, yCoord),
+                    ColorPicker::Resolve(ThemeComponent::TokenBlack));
     }
   }
 }
@@ -500,8 +501,8 @@ void GraphView::drawTangent(KDContext* ctx, KDRect rect,
       continue;
     }
     // Second dot in window found
-    drawSegment(ctx, rect, firstVisibleDot, currentDot, Palette::GrayVeryDark,
-                false);
+    drawSegment(ctx, rect, firstVisibleDot, currentDot,
+                ColorPicker::Resolve(ThemeComponent::AxisGrayVeryDark), false);
     break;
   }
 }
@@ -789,8 +790,10 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect,
     // Refresh expiring pointer
     OMG::ExpiringPointer<ContinuousFunction> f =
         functionStore()->modelForRecord(selectedRec);
-    KDColor color = isDiscontinuity ? ColorPicker::Resolve(f->color())
-                                    : Escher::Palette::GrayDarkest;
+    KDColor color =
+        isDiscontinuity
+            ? ColorPicker::Resolve(f->color())
+            : Escher::ColorPicker::Resolve(ThemeComponent::TokenGrayDarkest);
     if (isRing) {
       drawRing(ctx, rect, k_dotSize, dotCoordinates, color, false);
     } else {

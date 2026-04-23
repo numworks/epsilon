@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/metric.h>
+#include <escher/theme/color_picker.h>
 
 #include <algorithm>
 
@@ -37,14 +38,15 @@ KDSize CalculationCell::minimalSizeForOptimalDisplay() const {
 }
 
 void CalculationCell::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::White);
+  ctx->fillRect(bounds(),
+                ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
   if (m_isEditable) {
     KDSize textSize = m_text.minimalSizeForOptimalDisplay();
     ctx->strokeRect(KDRect(2 * k_margin + textSize.width(), 0,
                            calculationCellWidth() +
                                2 * Escher::Metric::CellSeparatorThickness,
                            bounds().height()),
-                    Palette::GrayMiddle);
+                    ColorPicker::Resolve(ThemeComponent::AxisMedium));
   }
 }
 

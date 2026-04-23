@@ -75,6 +75,7 @@ class WithCurves {
 
    private:
     constexpr static size_t k_size = 4;
+    // TODO: should k_transparent be themed?
     constexpr static KDColor k_transparent = Escher::Palette::White;
 
     KDColor m_c0, m_c1, m_c2, m_c3, m_cBackground;

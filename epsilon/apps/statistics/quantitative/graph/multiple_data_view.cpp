@@ -1,6 +1,7 @@
 #include "multiple_data_view.h"
 
 #include <assert.h>
+#include <escher/theme/color_picker.h>
 
 using namespace Shared;
 using namespace Escher;
@@ -35,7 +36,8 @@ int MultipleDataView::numberOfSubviews() const {
 
 void MultipleDataView::drawRect(KDContext* ctx, KDRect rect) const {
   if (!m_displayBanner) {
-    ctx->fillRect(bannerFrame(), Palette::White);
+    ctx->fillRect(bannerFrame(),
+                  ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
   }
 }
 

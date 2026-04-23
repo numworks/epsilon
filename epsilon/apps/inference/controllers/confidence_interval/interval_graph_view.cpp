@@ -1,13 +1,16 @@
 #include "interval_graph_view.h"
 
+#include <escher/theme/color_picker.h>
+
 namespace Inference {
 
 void IntervalGraphView::drawRect(KDContext* ctx, KDRect rect) const {
   /* We draw a background wall screen to avoid noisy screen when switching on
    * and off while the results are computed. */
-  ctx->fillRect(KDRect(0, bounds().height() - k_conclusionViewHeight,
-                       bounds().width(), k_conclusionViewHeight),
-                Escher::Palette::WallScreen);
+  ctx->fillRect(
+      KDRect(0, bounds().height() - k_conclusionViewHeight, bounds().width(),
+             k_conclusionViewHeight),
+      Escher::ColorPicker::Resolve(Escher::ThemeComponent::WallScreen));
 }
 
 void IntervalGraphView::reload() {

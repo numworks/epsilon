@@ -282,7 +282,8 @@ void ListController::addNewModelAction() {
 void ListController::fillCellForRow(HighlightCell* cell, int row) {
   int type = typeAtRow(row);
   if (type == k_editableCellType && isAddingNewModel()) {
-    static_cast<AbstractFunctionCell*>(cell)->setColor(Palette::GrayDark);
+    static_cast<AbstractFunctionCell*>(cell)->setColor(
+        ColorPicker::Resolve(ThemeComponent::TextGrayDark));
   } else if (type != k_addNewModelCellType) {
     assert(type == k_expressionCellType || type == k_editableCellType);
     int relativeRow;

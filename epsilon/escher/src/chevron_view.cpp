@@ -1,5 +1,5 @@
 #include <escher/chevron_view.h>
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 
 namespace Escher {
 
@@ -28,7 +28,8 @@ void ChevronView::drawRect(KDContext* ctx, KDRect rect) const {
                k_chevronWidth, k_chevronHeight);
   KDColor
       workingBuffer[ChevronView::k_chevronWidth * ChevronView::k_chevronHeight];
-  ctx->blendRectWithMask(frame, Palette::YellowDark,
+  ctx->blendRectWithMask(frame,
+                         ColorPicker::Resolve(ThemeComponent::TokenYellow),
                          (const uint8_t*)chevronMask, workingBuffer);
 }
 

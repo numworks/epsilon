@@ -1,7 +1,7 @@
 #include "multiple_boxes_view.h"
 
 #include <assert.h>
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 
 using namespace Shared;
 using namespace Escher;
@@ -95,9 +95,10 @@ void MultipleBoxesView::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate bannerHeight = bannerFrame().height();
   /* Boxes may have overlapping layouts. To prevent them from drawing over each
    * others, the background is filled here. */
-  ctx->fillRect(KDRect(0, 0, bounds().width(),
-                       bounds().height() - bannerHeight - k_axisViewHeight),
-                Escher::Palette::White);
+  ctx->fillRect(
+      KDRect(0, 0, bounds().width(),
+             bounds().height() - bannerHeight - k_axisViewHeight),
+      Escher::ColorPicker::Resolve(Escher::ThemeComponent::BackgroundWhite));
   MultipleDataView::drawRect(ctx, rect);
 }
 

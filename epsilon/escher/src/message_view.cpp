@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <escher/message_view.h>
+#include <escher/theme/color_picker.h>
 
 namespace Escher {
 
@@ -17,7 +18,8 @@ MessageView::MessageView(const I18n::Message* messages,
 }
 
 void MessageView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::White);
+  ctx->fillRect(bounds(),
+                ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
 }
 
 View* MessageView::subviewAtIndex(int index) {

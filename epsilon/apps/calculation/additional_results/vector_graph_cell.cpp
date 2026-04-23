@@ -1,6 +1,6 @@
 #include "vector_graph_cell.h"
 
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <kandinsky/color.h>
 
 #include <cmath>
@@ -41,14 +41,15 @@ void VectorGraphPolicy::drawPlot(const AbstractPlotView* plotView,
   drawArcOfEllipse(plotView, ctx, rect, Coordinate2D<float>(0.f, 0.f),
                    k_arcRadiusInPixels * plotView->pixelWidth(),
                    k_arcRadiusInPixels * plotView->pixelHeight(), 0.f, angle,
-                   Palette::GrayDark);
+                   ColorPicker::Resolve(ThemeComponent::AxisGrayDark));
 
   // - Draw arrow
   plotView->drawSegment(ctx, rect, Coordinate2D<float>(0.f, 0.f),
-                        Coordinate2D<float>(x, y), Palette::Red);
+                        Coordinate2D<float>(x, y),
+                        ColorPicker::Resolve(ThemeComponent::AxisRed));
   plotView->drawArrowhead(ctx, rect, Coordinate2D<float>(x, y),
                           Coordinate2D<float>(x, y), k_arrowSizeInPixels,
-                          Palette::Red);
+                          ColorPicker::Resolve(ThemeComponent::AxisRed));
 }
 
 VectorGraphView::VectorGraphView(VectorModel* model) : PlotView(model) {

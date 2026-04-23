@@ -1,5 +1,6 @@
 #include "interval_curve_view.h"
 
+#include <escher/theme/color_picker.h>
 #include <poincare/print.h>
 
 #include <cmath>
@@ -136,8 +137,12 @@ void IntervalPlotPolicy::drawPlot(const AbstractPlotView* plotView,
     // Draw the interval segment : --------
     double intervalRightBound = estimate - marginOfError;
     double intervalLeftBound = estimate + marginOfError;
-    KDColor intervalColor = isMainInterval ? Escher::Palette::YellowDark
-                                           : Escher::Palette::GrayDarkMiddle;
+    KDColor intervalColor =
+        isMainInterval
+            // TODO: confirm that we should use banner components
+            ? Escher::ColorPicker::Resolve(Escher::ThemeComponent::BannerYellow)
+            : Escher::ColorPicker::Resolve(
+                  Escher::ThemeComponent::BannerGrayDarkMiddle);
     KDCoordinate intervalThickness =
         isMainInterval ? k_mainIntervalThickness : k_intervalThickness;
     plotView->drawStraightSegment(

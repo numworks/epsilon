@@ -1,7 +1,6 @@
 #include "function_cell.h"
 
 #include <apps/exam_mode_manager.h>
-#include <escher/palette.h>
 #include <escher/theme/color_picker.h>
 
 using namespace Escher;
@@ -30,10 +29,10 @@ namespace Graph {
 AbstractFunctionCell::AbstractFunctionCell()
     : EvenOddCell(),
       m_messageTextView((I18n::Message)0,
-                        {.style = {.glyphColor = ThemeComponent::TokenGrayDark,
+                        {.style = {.glyphColor = ThemeComponent::TextGrayDark,
                                    .font = KDFont::Size::Small},
                          .verticalAlignment = KDGlyph::k_alignTop}),
-      m_functionColor(Palette::Black),
+      m_functionColor(ColorPicker::Resolve(ThemeComponent::TextDefault)),
       m_expressionBackground(ThemeComponent::BackgroundWhite),
       m_ellipsisBackground(ThemeComponent::BackgroundWhite),
       m_hideMessage(false) {}

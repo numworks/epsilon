@@ -1,6 +1,5 @@
 #include <escher/gauge_view.h>
 #include <escher/menu_cell.h>
-#include <escher/palette.h>
 #include <escher/theme/color_picker.h>
 
 namespace Escher {
@@ -19,7 +18,10 @@ const uint8_t gaugeIndicatorMask
         {0xFF, 0xFF, 0xE1, 0x0C, 0x00, 0x00, 0x0C, 0xE1, 0xFF, 0xFF},
 };
 
-GaugeView::GaugeView() : m_level(1), m_backgroundColor(Palette::White) {}
+GaugeView::GaugeView()
+    : m_level(1),
+      m_backgroundColor(ColorPicker::Resolve(ThemeComponent::BackgroundWhite)) {
+}
 
 float GaugeView::level() { return m_level; }
 
@@ -51,16 +53,16 @@ void GaugeView::drawRect(KDContext* ctx, KDRect rect) const {
 
   ctx->fillRect(KDRect(k_indicatorDiameter / 2, (height - k_thickness) / 2,
                        width * m_level, k_thickness),
-                Palette::YellowDark);
+                ColorPicker::Resolve(ThemeComponent::TokenYellow));
   ctx->fillRect(
       KDRect(k_indicatorDiameter / 2 + width * m_level,
              (height - k_thickness) / 2, width * (1.0f - m_level), k_thickness),
-      Palette::GrayDark);
+      ColorPicker::Resolve(ThemeComponent::TokenGrayDark));
   KDRect frame(width * m_level, (height - k_indicatorDiameter) / 2,
                k_indicatorDiameter, k_indicatorDiameter);
-  ctx->blendRectWithMask(frame, Palette::YellowDark,
-                         (const uint8_t*)gaugeIndicatorMask,
-                         gaugeIndicatorWorkingBuffer);
+  ctx->blendRectWithMask(
+      frame, ColorPicker::Resolve(ThemeComponent::TokenYellow),
+      (const uint8_t*)gaugeIndicatorMask, gaugeIndicatorWorkingBuffer);
 }
 
 KDSize GaugeView::minimalSizeForOptimalDisplay() const {

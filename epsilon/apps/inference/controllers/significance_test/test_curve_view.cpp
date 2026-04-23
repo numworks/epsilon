@@ -1,5 +1,6 @@
 #include "test_curve_view.h"
 
+#include <escher/theme/color_picker.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
@@ -91,16 +92,21 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
   float bothStart, bothEnd, singleStart, singleEnd, singleCurveStart,
       singleCurveEnd;
   if (op == Comparison::Operator::Superior) {
-    patternBoth = Pattern(true, false, false, true, Palette::PurpleBright,
-                          Palette::YellowDark);
+    // TODO: maybe use TokenYellow and TokenPurple?
+    patternBoth = Pattern(true, false, false, true,
+                          ColorPicker::Resolve(ThemeComponent::BannerPurple),
+                          ColorPicker::Resolve(ThemeComponent::BannerYellow));
     singleCurveStart = range->xMin();
     if (z < xAlpha) {
       singleStart = clampedZ;
-      patternSingle = Pattern(Palette::YellowDark);
+      patternSingle =
+          Pattern(ColorPicker::Resolve(ThemeComponent::BannerYellow));
       bothStart = clampedXAlpha;
     } else {
       singleStart = clampedXAlpha;
-      patternSingle = Pattern(true, false, false, true, Palette::PurpleBright);
+      patternSingle =
+          Pattern(true, false, false, true,
+                  ColorPicker::Resolve(ThemeComponent::BannerPurple));
       bothStart = clampedZ;
     }
     singleStart -= plotView->pixelWidth();
@@ -108,16 +114,20 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
     bothEnd = range->xMax();
   } else {
     assert(op == Comparison::Operator::Inferior);
-    patternBoth = Pattern(true, false, true, false, Palette::PurpleBright,
-                          Palette::YellowDark);
+    patternBoth = Pattern(true, false, true, false,
+                          ColorPicker::Resolve(ThemeComponent::BannerPurple),
+                          ColorPicker::Resolve(ThemeComponent::BannerYellow));
     bothStart = range->xMin();
     if (z < xAlpha) {
       bothEnd = clampedZ;
-      patternSingle = Pattern(true, false, true, false, Palette::PurpleBright);
+      patternSingle =
+          Pattern(true, false, true, false,
+                  ColorPicker::Resolve(ThemeComponent::BannerPurple));
       singleEnd = clampedXAlpha;
     } else {
       bothEnd = clampedXAlpha;
-      patternSingle = Pattern(Palette::YellowDark);
+      patternSingle =
+          Pattern(ColorPicker::Resolve(ThemeComponent::BannerYellow));
       singleEnd = clampedZ;
     }
     singleCurveStart = singleStart = bothEnd;
@@ -126,7 +136,8 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
 
   {
     CurveDrawing plot(Curve2D(evaluate, m_test), nullptr, bothStart, bothEnd,
-                      plotView->pixelWidth(), Palette::YellowDark);
+                      plotView->pixelWidth(),
+                      ColorPicker::Resolve(ThemeComponent::BannerYellow));
     plot.setPatternOptions(patternBoth, bothStart, bothEnd,
                            Curve2D(evaluateZero), Curve2D(), false);
     plot.draw(plotView, ctx, rect);
@@ -134,7 +145,7 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
   {
     CurveDrawing plot(Curve2D(evaluate, m_test), nullptr, singleCurveStart,
                       singleCurveEnd, plotView->pixelWidth(),
-                      Palette::YellowDark);
+                      ColorPicker::Resolve(ThemeComponent::BannerYellow));
     plot.setPatternOptions(patternSingle, singleStart, singleEnd,
                            Curve2D(evaluateZero), Curve2D(), false);
     plot.draw(plotView, ctx, rect);

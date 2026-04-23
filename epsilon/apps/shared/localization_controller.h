@@ -8,6 +8,7 @@
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view.h>
 #include <escher/solid_color_view.h>
+#include <escher/theme/color_picker.h>
 #include <escher/view_controller.h>
 
 #include <algorithm>
@@ -59,7 +60,8 @@ class LocalizationController
       return &m_selectableListView;
     }
     void drawRect(KDContext* ctx, KDRect rect) const override {
-      ctx->fillRect(bounds(), Escher::Palette::WallScreen);
+      ctx->fillRect(bounds(), Escher::ColorPicker::Resolve(
+                                  Escher::ThemeComponent::WallScreen));
     }
     void modeHasChanged();
 

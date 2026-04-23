@@ -4,8 +4,8 @@
 #include <escher/layout_view.h>
 #include <escher/list_view_data_source.h>
 #include <escher/menu_cell.h>
-#include <escher/palette.h>
 #include <escher/selectable_list_view_controller.h>
+#include <escher/theme/color_picker.h>
 #include <escher/view_controller.h>
 
 namespace Shared {
@@ -23,12 +23,15 @@ class CurveSelectionCellWithAccessory
   CurveSelectionCellWithAccessory()
       : Escher::MenuCell<Escher::LayoutView, Escher::EmptyCellWidget,
                          Accessory>(),
-        m_color(Escher::Palette::Black) {}
+        m_color(
+            Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenBlack)) {}
   void drawRect(KDContext* ctx, KDRect rect) const override {
     Escher::MenuCell<Escher::LayoutView, Escher::EmptyCellWidget,
                      Accessory>::drawRect(ctx, rect);
     // Draw the color indicator
-    assert(m_color != Escher::Palette::Black);  // Check that the color was set
+    assert(m_color !=
+           Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenBlack));
+    // Check that the color was set
     ctx->fillRect(
         KDRect(0, 0, k_colorIndicatorThickness, this->bounds().height()),
         m_color);

@@ -3,7 +3,7 @@
 #include <apps/shared/with_expression_cell.h>
 #include <escher/ellipsis_view.h>
 #include <escher/even_odd_cell.h>
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 
 namespace Sequence {
 
@@ -12,9 +12,12 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
  public:
   AbstractSequenceCell()
       : EvenOddCell(),
-        m_functionColor(Escher::Palette::Black),
-        m_expressionBackground(Escher::Palette::White),
-        m_ellipsisBackground(Escher::Palette::White),
+        m_functionColor(
+            Escher::ColorPicker::Resolve(Escher::ThemeComponent::TextDefault)),
+        m_expressionBackground(Escher::ColorPicker::Resolve(
+            Escher::ThemeComponent::BackgroundWhite)),
+        m_ellipsisBackground(Escher::ColorPicker::Resolve(
+            Escher::ThemeComponent::BackgroundWhite)),
         m_parameterSelected(false) {}
   void setParameterSelected(bool selected);
   virtual Escher::HighlightCell* mainCell() = 0;

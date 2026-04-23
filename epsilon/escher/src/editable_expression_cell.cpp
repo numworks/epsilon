@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <escher/container.h>
 #include <escher/editable_expression_cell.h>
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <poincare/print_float.h>
 
 namespace Escher {
@@ -16,7 +16,8 @@ EditableExpressionCell::EditableExpressionCell(
 }
 
 void EditableExpressionCell::drawRect(KDContext* ctx, KDRect rect) const {
-  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
+  drawBorderOfRect(ctx, bounds(),
+                   ColorPicker::Resolve(ThemeComponent::BorderGrayBright));
 }
 
 void EditableExpressionCell::setHighlighted(bool highlight) {

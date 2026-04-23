@@ -1,5 +1,7 @@
 #include "complex_graph_cell.h"
 
+#include <escher/theme/color_picker.h>
+
 using namespace Shared;
 using namespace Poincare;
 using namespace Escher;
@@ -33,14 +35,17 @@ void ComplexGraphPolicy::drawPlot(const AbstractPlotView* plotView,
                    0.f, th, ColorPicker::Resolve(ThemeComponent::AxisGrayDark));
 
   // - Draw dashed segment to indicate real and imaginary
-  plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Horizontal, imag,
-                                      0.f, real, Palette::Red);
-  plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Vertical, real, 0.f,
-                                      imag, Palette::Red);
+  plotView->drawDashedStraightSegment(
+      ctx, rect, OMG::Axis::Horizontal, imag, 0.f, real,
+      ColorPicker::Resolve(ThemeComponent::AxisRed));
+  plotView->drawDashedStraightSegment(
+      ctx, rect, OMG::Axis::Vertical, real, 0.f, imag,
+      ColorPicker::Resolve(ThemeComponent::AxisRed));
 
   // - Draw complex position on the plan
   plotView->drawDot(ctx, rect, Dots::Size::Large,
-                    Coordinate2D<float>(real, imag), Palette::Red);
+                    Coordinate2D<float>(real, imag),
+                    ColorPicker::Resolve(ThemeComponent::AxisRed));
 
   // - Draw labels: "re(z)", "im(z)", "|z|" and "arg(z)"
   plotView->drawLabel(ctx, rect, "re(z)", Coordinate2D<float>(real, 0.f),

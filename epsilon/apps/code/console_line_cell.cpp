@@ -23,7 +23,8 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(
 
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(
     KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::White);
+  ctx->fillRect(bounds(),
+                ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
   ctx->drawString(
       m_line->text(), KDPointZero,
       {.glyphColor = ColorPicker::Resolve(textColor(m_line)),

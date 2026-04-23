@@ -2,6 +2,7 @@
 
 #include <escher/responder.h>
 #include <escher/tab_view_controller.h>
+#include <escher/theme/color_picker.h>
 
 #include "inference/controllers/inference_controller.h"
 #include "inference/controllers/tables/categorical_controller.h"
@@ -96,7 +97,8 @@ class ResultsTabController : public InferenceController,
   bool handleEvent(Ion::Events::Event event) override;
 
   KDColor tabBackgroundColor() const override {
-    return Escher::Palette::GrayDarkMiddle;
+    return Escher::ColorPicker::Resolve(
+        Escher::ThemeComponent::BannerGrayDarkMiddle);
   }
 
  private:

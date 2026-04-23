@@ -1,5 +1,7 @@
 #include <escher/tab_view.h>
 #include <escher/tab_view_controller.h>
+#include <escher/theme/color_picker.h>
+
 extern "C" {
 #include <assert.h>
 }
@@ -16,7 +18,7 @@ void TabView::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   // Draw a separator with the content
   ctx->fillRect(KDRect(0, height - k_activeTabHeight, width, k_activeTabHeight),
-                Palette::White);
+                ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
 }
 
 void TabView::addTab(TabViewController* controller) {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 #include <escher/theme/components.h>
 #include <omg/enums.h>
 #include <poincare/coordinate_2D.h>
@@ -140,7 +140,9 @@ class AbstractPlotView : public Escher::View {
     drawArc(ctx, rect, center, radius, 0.f, 2 * M_PI, color);
   }
   void drawTick(KDContext* ctx, KDRect rect, OMG::Axis perpendicular,
-                float position, KDColor color = Escher::Palette::Black) const;
+                float position,
+                KDColor color = Escher::ColorPicker::Resolve(
+                    Escher::ThemeComponent::TokenBlack)) const;
   void drawArrowhead(KDContext* ctx, KDRect rect,
                      Poincare::Coordinate2D<float> xy,
                      Poincare::Coordinate2D<float> dxy, float pixelArrowWidth,

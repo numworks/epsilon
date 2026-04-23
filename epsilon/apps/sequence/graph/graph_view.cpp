@@ -36,7 +36,8 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
         record == m_selectedRecord) {
       KDColor color = m_shouldColorHighlighted
                           ? Escher::ColorPicker::Resolve(s->color())
-                          : Escher::Palette::Black;
+                          : Escher::ColorPicker::Resolve(
+                                Escher::ThemeComponent::TokenBlack);
       drawStraightSegment(ctx, rect, OMG::Axis::Vertical, x, y, 0.f, color);
     }
   }

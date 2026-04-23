@@ -1,4 +1,5 @@
 #include <escher/table_view_with_frozen_header.h>
+#include <escher/theme/color_picker.h>
 
 namespace Escher {
 
@@ -22,7 +23,7 @@ void TableViewWithFrozenHeader::drawRect(KDContext* ctx, KDRect rect) const {
       m_selectableTableView->minimalSizeForOptimalDisplay().height();
   ctx->fillRect(
       KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight),
-      Palette::WallScreen);
+      ColorPicker::Resolve(ThemeComponent::WallScreen));
 }
 
 View* TableViewWithFrozenHeader::subviewAtIndex(int index) {

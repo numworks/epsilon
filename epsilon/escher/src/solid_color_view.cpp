@@ -1,4 +1,3 @@
-#include <apps/global_preferences.h>
 #include <escher/solid_color_view.h>
 #include <escher/theme/color_picker.h>
 

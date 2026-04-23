@@ -44,7 +44,7 @@ CXXFLAGS := \
   -ffp-contract=off \
   -fno-exceptions \
   -fno-threadsafe-statics \
-  -std=c++20
+  -std=c++23
 
 ifeq ($(STRICT_WARNINGS),1)
 CXXFLAGS += -Werror

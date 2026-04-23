@@ -1,6 +1,7 @@
 #include "store.h"
 
 #include <escher/palette.h>
+#include <escher/theme/data_colors.h>
 
 #include <cmath>
 
@@ -234,13 +235,12 @@ float Store::getRelativeFrequency(int col, int row) const {
   return std::isfinite(value) ? value / m_sumOfCategories[col] : NAN;
 }
 
-KDColor Store::colorOfGroupAtIndex(int group) const {
-  // TODO: use DataComponent getter
-  return Escher::Palette::DataColor[colorIndexForGroup(group)];
+Escher::ThemeComponent Store::colorOfGroupAtIndex(int group) const {
+  return Escher::DataColorComponent(colorIndexForGroup(group));
 }
 
-KDColor Store::colorLightOfGroupAtIndex(int group) const {
-  return Escher::Palette::DataColorLight[colorIndexForGroup(group)];
+Escher::ThemeComponent Store::colorLightOfGroupAtIndex(int group) const {
+  return Escher::DataColorComponentLight(colorIndexForGroup(group));
 }
 
 void Store::recomputeSum(int column) {

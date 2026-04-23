@@ -1,6 +1,7 @@
 #include "bar_graph_view.h"
 
 #include <escher/palette.h>
+#include <escher/theme/color_picker.h>
 
 namespace Statistics::Categorical {
 
@@ -84,9 +85,11 @@ void BarGraphView::ContentView::drawCategory(KDContext* ctx, KDRect rect,
     KDCoordinate barHeight = (value / maxValue) * k_maxBarHeight;
     KDRect barRect(xOffset, yOffset + k_maxBarHeight - barHeight, k_barWidth,
                    barHeight);
-    ctx->fillRect(barRect, m_store->colorLightOfGroupAtIndex(group));
+    ctx->fillRect(barRect, Escher::ColorPicker::Resolve(
+                               m_store->colorLightOfGroupAtIndex(group)));
     // Draw borders
-    KDColor borderColor = m_store->colorOfGroupAtIndex(group);
+    KDColor borderColor =
+        Escher::ColorPicker::Resolve(m_store->colorOfGroupAtIndex(group));
     KDCoordinate borderWidth = std::min(
         m_isSelected &&
                 (category == m_selectedCategory && group == m_selectedGroup)

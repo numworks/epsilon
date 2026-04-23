@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <assert.h>
+#include <escher/theme/components.h>
 #include <poincare/print.h>
 #include <string.h>
 
@@ -112,10 +113,9 @@ class Store {
   }
   float getRelativeFrequency(int col, int row) const;
 
-  // TODO: use ThemeComponet
   // Color
-  KDColor colorOfGroupAtIndex(int group) const;
-  KDColor colorLightOfGroupAtIndex(int group) const;
+  Escher::ThemeComponent colorOfGroupAtIndex(int group) const;
+  Escher::ThemeComponent colorLightOfGroupAtIndex(int group) const;
   uint8_t colorIndexForGroup(int col) const {
     assert(0 <= col && col < k_maxNumberOfGroups);
     return m_table->m_colorIndex[col];

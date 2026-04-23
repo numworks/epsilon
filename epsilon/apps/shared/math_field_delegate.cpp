@@ -101,8 +101,11 @@ bool MathTextFieldDelegate::textFieldDidReceiveEvent(
 
 bool MathTextFieldDelegate::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
-  /* textFieldDidFinishEditing implementation has been removed because it is
-   * unused. It can be added back if needed. */
+  /* MathTextFieldDelegate and its subclasses must either override
+   * textFieldDidFinishEditing or never use it.
+   * TODO: Classes that never use it (like
+   * SimpleInteractiveCurveViewController), should maybe not inherit from
+   * MathTextFieldDelegate, but an intermediary class instead. */
   OMG_UNREACHABLE;
   return false;
 }

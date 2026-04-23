@@ -1,10 +1,9 @@
 #pragma once
 
 #include <kandinsky/color.h>
-#include <omg/unreachable.h>
-#include <stddef.h>
 
-#include <array>
+/* TODO: Palette should be hidden once all colors are accessed through a
+ * ThemeComponent. */
 
 namespace Escher {
 
@@ -71,17 +70,6 @@ class Palette {
   constexpr static KDColor PYTHON_DarkBlue = KDColor::RGB24(0x032f62);
   // The Python gray is between GrayMiddle and GrayDarkMiddle
   constexpr static KDColor PYTHON_GrayMiddle = KDColor::RGB24(0xC6C6C6);
-
-  /* TODO: remove the two KDColor data color arrays when they are not used
-   * anymore. Data colors are already defined in the fixed components */
-  constexpr static int k_numberOfDataColors = 10;
-
-  constexpr static std::array<KDColor, k_numberOfDataColors> DataColor = {
-      Red,       Blue, Green,  YellowDark, Magenta,
-      Turquoise, Pink, Orange, Violet,     Mint};
-  constexpr static std::array<KDColor, k_numberOfDataColors> DataColorLight = {
-      RedLight,       BlueLight, GreenLight,  YellowLight, MagentaLight,
-      TurquoiseLight, PinkLight, OrangeLight, VioletLight, MintLight};
 };
 
 }  // namespace Escher

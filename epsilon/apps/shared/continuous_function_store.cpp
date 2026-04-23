@@ -46,7 +46,7 @@ int ContinuousFunctionStore::numberOfActiveFunctions() const {
 using ErrorStatus = Ion::Storage::Record::ErrorStatus;
 
 void ContinuousFunctionStore::fillLastFreeColors(bool* colorIsFree) const {
-  constexpr int paletteSize = Palette::k_numberOfDataColors;
+  constexpr int paletteSize = k_numberOfDataColors;
   int nFree = paletteSize;
   for (int c = 0; c < paletteSize; c++) {
     colorIsFree[c] = true;
@@ -83,7 +83,7 @@ void ContinuousFunctionStore::tidyCaches() const {
 
 ThemeComponent ContinuousFunctionStore::colorForNewModel() const {
   // Check first last functions colors until there is at most 1 free color
-  constexpr int paletteSize = Palette::k_numberOfDataColors;
+  constexpr int paletteSize = k_numberOfDataColors;
   bool colorIsFree[paletteSize];
   fillLastFreeColors(colorIsFree);
   // Take first free color

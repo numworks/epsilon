@@ -1,5 +1,7 @@
 #pragma once
 
+#include <escher/theme/data_colors.h>
+
 #include <array>
 
 #include "double_pair_store.h"
@@ -12,10 +14,10 @@ class DoublePairStorePreferences {
     // TODO: use std::array::fill(false)
     static_assert(UINT8_MAX >= DoublePairStore::k_numberOfSeries,
                   "Too many series");
-    static_assert(Escher::Palette::k_numberOfDataColors >=
-                      DoublePairStore::k_numberOfSeries,
-                  "Not enough colors in the palette to give each series a "
-                  "default color.");
+    static_assert(
+        Escher::k_numberOfDataColors >= DoublePairStore::k_numberOfSeries,
+        "Not enough colors in the data color palette to give each series a "
+        "default color.");
     for (size_t i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
       m_valid[i] = false;
       m_hidden[i] = false;

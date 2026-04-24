@@ -111,10 +111,9 @@ install_linux_binary_deps() {
   if [[ $CI == "1" ]]; then
     # format.mak requires prettier
     # poincarejs workflow requires zip
-    sudo apt-get install -y parallel npm zip
+    sudo apt-get install -y lcov parallel npm zip
     sudo npm install -g prettier nwlink
     sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-17 100
-    install_latest_lcov
   fi
 }
 
@@ -142,36 +141,6 @@ install_windows_binary_deps() {
     pacman -S --noconfirm \
       mingw-w64-x86_64-python-pyusb \
       mingw-w64-x86_64-arm-none-eabi-gcc
-  fi
-}
-
-install_latest_lcov(){
-  sudo apt update
-  # Remove any existing lcov installed with apt
-  sudo apt remove lcov -y
-
-  LCOV_VERSION=2.3
-
-  # Install lcov release from the binary source, only if it is not already there
-  if ! lcov --version | grep -q $LCOV_VERSION
-  then
-    # Some lcov dependencies need to be manually installed
-    sudo apt install libdatetime-perl libcapture-tiny-perl libdatetime-format-dateparse-perl libjson-xs-perl -y
-    # Download the lcov github release with wget
-    sudo apt install wget
-    sudo wget https://github.com/linux-test-project/lcov/releases/download/v$LCOV_VERSION/lcov-$LCOV_VERSION.tar.gz && tar -xf lcov-$LCOV_VERSION.tar.gz
-    # Compile lcov
-    cd lcov-$LCOV_VERSION && sudo make install && cd ..
-    # Clean folder
-    rm -r lcov-*
-  fi
-
-  # Test that the right version is installed
-  if ! lcov --version | grep -q $LCOV_VERSION
-  then
-    echo "lcov version is incorrect, got "
-    lcov --version
-    exit 1
   fi
 }
 

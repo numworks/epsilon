@@ -91,7 +91,7 @@ install_linux_binary_deps() {
   sudo apt-get install --no-upgrade -y \
     build-essential \
     ccache \
-    clang-format-15 \
+    clang-format-17 \
     git \
     imagemagick \
     libfreetype6-dev \
@@ -113,7 +113,7 @@ install_linux_binary_deps() {
     # poincarejs workflow requires zip
     sudo apt-get install -y parallel npm zip
     sudo npm install -g prettier nwlink
-    sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-15 100
+    sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-17 100
     install_latest_lcov
   fi
 }

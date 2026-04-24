@@ -484,8 +484,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   if (t < tMin() || t > tMax()) {
     return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
-  int derivationOrder = derivationOrderFromSubCurveIndex(subCurveIndex);
-  const PreparedFunction& e = expressionApproximated(derivationOrder);
+  const PreparedFunction& e = expressionApproximated();
 
   if (properties().isScatterPlot()) {
     assert(e.dimension().isPointOrListOfPoints() ||
@@ -515,7 +514,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   if (!properties().isParametric()) {
     if (numberOfSubCurves() >= 2) {
       assert(subCurveIndex >= 0);
-      assert(derivationOrder == 0);
+      assert(!isDerivative());
       assert(e.isList());
       assert(e.numberOfChildren() > subCurveIndex);
     }
@@ -685,30 +684,33 @@ const SystemExpression& ContinuousFunction::Model::expressionReduced(
 const Poincare::PreparedFunction&
 ContinuousFunction::Model::expressionApproximated(
     const Ion::Storage::Record* record, int derivationOrder) const {
-  assert(0 <= derivationOrder && derivationOrder <= 2);
   PreparedFunction* approximated;
   switch (derivationOrder) {
-    case 0:
-      approximated = &m_expressionApproximated;
-      break;
     case 1:
       approximated = &m_expressionFirstDerivateApproximated;
       break;
-    default:
-      assert(derivationOrder == 2);
+    case 2:
       approximated = &m_expressionSecondDerivateApproximated;
+      break;
+    default:
+      assert(derivationOrder == 0);
+      approximated = &m_expressionApproximated;
       break;
   }
   if (approximated->isUninitialized()) {
-    const SystemExpression& e =
-        derivationOrder == 0
-            ? expressionReduced(record)
-            : expressionDerivateReduced(record, derivationOrder);
-    // TODO: factorise the next line with other methods?
-    *approximated =
-        e.getPreparedFunction(properties(record).isAlongY()
-                                  ? ContinuousFunctionProperties::k_ordinateName
-                                  : k_unknownName);
+    const SystemExpression& e = expressionReduced(record);
+    const char* symbolName = properties(record).isAlongY()
+                                 ? ContinuousFunctionProperties::k_ordinateName
+                                 : k_unknownName;
+    if (derivationOrder > 0) {
+      assert(!ContinuousFunction(*record).isDerivative());
+      const SystemExpression derivative =
+          e.getReducedDerivative(symbolName, derivationOrder);
+      *approximated = derivative.getPreparedFunction(symbolName);
+    } else {
+      // TODO: factorise the next line with other methods?
+      *approximated = e.getPreparedFunction(symbolName);
+    }
   }
   return *approximated;
 }
@@ -773,10 +775,20 @@ const Internal::Tree* ContinuousFunction::Model::expressionTree(
   return ExpressionModel::expressionTree(record)->child(1);
 }
 
+UserExpression ContinuousFunction::createDerivativeEquationFromParent() const {
+  assert(isDerivative());
+  ContinuousFunction parent(parentRecord());
+  UserExpression parentEquation =
+      parent.model()->ExpressionModel::expressionClone(&parent);
+  return parentEquation.getDerivative(k_unknownName, derivationOrder());
+}
+
 UserExpression ContinuousFunction::Model::originalEquation(
     const Ion::Storage::Record* record, CodePoint symbol) const {
+  ContinuousFunction f(*record);
   UserExpression unknownSymbolEquation =
-      ExpressionModel::expressionClone(record);
+      f.isDerivative() ? f.createDerivativeEquationFromParent()
+                       : ExpressionModel::expressionClone(record);
   if (unknownSymbolEquation.isUninitialized() || symbol == UCodePointUnknown) {
     return unknownSymbolEquation;
   }
@@ -802,7 +814,10 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     Comparison::Operator* computedEquationType,
     ContinuousFunctionProperties::SymbolType* computedFunctionSymbol,
     bool* isCartesianEquation) const {
-  UserExpression result = ExpressionModel::expressionClone(record);
+  ContinuousFunction f(*record);
+  UserExpression result = f.isDerivative()
+                              ? f.createDerivativeEquationFromParent()
+                              : ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
     return UserExpression::Undefined();
   }
@@ -903,21 +918,6 @@ UserExpression ContinuousFunction::Model::expressionEquation(
   }
   assert(!result.isUninitialized());
   return result;
-}
-
-SystemExpression ContinuousFunction::Model::expressionDerivateReduced(
-    const Ion::Storage::Record* record, int derivationOrder) const {
-  // Derivative isn't available on curves with multiple subcurves
-  assert(numberOfSubCurves(record) == 1);
-  assert(1 <= derivationOrder && derivationOrder <= 2);
-  SystemExpression* derivative = derivationOrder == 1
-                                     ? &m_expressionFirstDerivate
-                                     : &m_expressionSecondDerivate;
-  if (derivative->isUninitialized()) {
-    *derivative = expressionReduced(record).getReducedDerivative(
-        k_unknownName, derivationOrder);
-  }
-  return *derivative;
 }
 
 PreparedFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
@@ -1074,9 +1074,7 @@ void TidyIfDownStreamOf(Expression& expression,
 
 void ContinuousFunction::Model::tidyDownstreamPoolFrom(
     const PoolObject* treePoolCursor) const {
-  TidyIfDownStreamOf(m_expressionFirstDerivate, treePoolCursor);
   TidyIfDownStreamOf(m_expressionFirstDerivateApproximated, treePoolCursor);
-  TidyIfDownStreamOf(m_expressionSecondDerivate, treePoolCursor);
   TidyIfDownStreamOf(m_expressionSecondDerivateApproximated, treePoolCursor);
   TidyIfDownStreamOf(m_expressionSlope, treePoolCursor);
   TidyIfDownStreamOf(m_expressionApproximated, treePoolCursor);

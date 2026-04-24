@@ -311,6 +311,29 @@ UserExpression UserExpression::equivalentCartesianEquation() const {
   return UserExpression();
 }
 
+UserExpression UserExpression::getDerivative(const char* symbolName,
+                                             int derivationOrder) const {
+  if (isUninitialized()) {
+    return UserExpression();
+  }
+  assert(strcmp(symbolName, ordinateName) != 0);
+  Tree* equation = SharedTreeStack->pushEqual();
+  SharedTreeStack->pushUserVariable(ordinateName);
+  SharedTreeStack->pushDiff();
+  // Symbol (so that local variable is layouted to symbolName)
+  SharedTreeStack->pushUserVariable(symbolName);
+  // Symbol value (so that the derivative is evaluated at symbolName's value)
+  SharedTreeStack->pushUserVariable(symbolName);
+  Integer::Push(derivationOrder);
+  assert(!isComparison() || isEquality());
+  (isComparison() ? tree()->child(1) : tree())->cloneTree();
+  // Check dimension again as the diff may have changed it.
+  if (!Internal::Dimension::DeepCheck(equation)) {
+    equation->cloneTreeOverTree(KUndefUnhandledDimension);
+  }
+  return UserExpression::Builder(equation);
+}
+
 ComplexFormat UserExpression::preferredComplexFormat(
     ComplexFormat userComplexFormat, const SymbolContext& symbolContext,
     SymbolicComputation symbolicComputation) const {

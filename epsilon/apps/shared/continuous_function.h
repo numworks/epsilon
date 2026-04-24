@@ -259,17 +259,13 @@ class ContinuousFunction : public Function {
   /* Function */
   size_t nameWithoutArgument(char* buffer, size_t bufferSize,
                              int derivationOrder = 0) const;
+  Poincare::UserExpression createDerivativeEquationFromParent() const;
 
   /* Expressions */
 
   // Return the expression representing the equation for computations
   const Poincare::AnalysisExpression& expressionReducedForAnalysis() const {
     return m_model.expressionReducedForAnalysis(this);
-  }
-  // Return the reduced expression of the derivative
-  Poincare::SystemExpression expressionDerivateReduced(
-      int derivationOrder) const {
-    return m_model.expressionDerivateReduced(this, derivationOrder);
   }
   // Return the reduced expression of the slope (dy/dx)
   Poincare::PreparedFunctionScalar expressionSlopeReduced() const {
@@ -409,9 +405,6 @@ class ContinuousFunction : public Function {
         ContinuousFunctionProperties::SymbolType* computedFunctionSymbol =
             nullptr,
         bool* isCartesianEquation = nullptr) const;
-    // Return the derivative of the expression to plot.
-    Poincare::SystemExpression expressionDerivateReduced(
-        const Ion::Storage::Record* record, int derivationOrder) const;
     // Return the slope (dy/dx)
     Poincare::PreparedFunctionScalar expressionSlopeReduced(
         const Ion::Storage::Record* record) const;
@@ -462,9 +455,7 @@ class ContinuousFunction : public Function {
      */
     mutable Poincare::AnalysisExpression m_expressionForAnalysis;
     mutable Poincare::PreparedFunction m_expressionApproximated;
-    mutable Poincare::SystemExpression m_expressionFirstDerivate;
     mutable Poincare::PreparedFunction m_expressionFirstDerivateApproximated;
-    mutable Poincare::SystemExpression m_expressionSecondDerivate;
     mutable Poincare::PreparedFunction m_expressionSecondDerivateApproximated;
     mutable Poincare::PreparedFunctionScalar m_expressionSlope;
   };

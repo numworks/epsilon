@@ -173,7 +173,8 @@ const Internal::Tree* GlobalStore::TreeFromStorage(
       record.hasExtension(Ion::Storage::regressionListExtension)) {
     // The expression can be accessed by directly reading the record value
     return UserExpression::TreeFromAddress(record.value().buffer);
-  } else if (record.hasExtension(Ion::Storage::functionExtension)) {
+  } else if (record.hasExtension(Ion::Storage::functionExtension) &&
+             !ContinuousFunction(record).isDerivative()) {
     /* A function record value has metadata before the expression. To get the
      * expression, use the function record handle. */
     return ContinuousFunction(record).expressionTree();

@@ -11,6 +11,10 @@ ROOT := .
 
 .PHONY: format
 format: BASE ?= HEAD
+
+# Use this line to reformat all the code:
+# format: CXXFILES ?= $(shell (cd ..; git ls-files "*.h" "*.c" "*.cpp" "shared/libaxx/include/*"))
+
 format: CXXFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard --full-name) | grep --extended-regexp "(\.c$$|\.cpp$$|\.h$$|shared/libaxx/include)")
 format: PYFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard --full-name) | grep --extended-regexp "(\.py$$)")
 format: JSFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard --full-name) | grep --extended-regexp "(\.js$$|\.cjs$$|\.mjs$$|\.ts$$|\.html)")

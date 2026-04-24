@@ -1,7 +1,7 @@
 #pragma once
 
 #include <escher/solid_color_view.h>
-#include <escher/theme/color_picker.h>
+#include <escher/theme/components.h>
 #include <kandinsky/color.h>
 #include <kandinsky/rect.h>
 
@@ -19,8 +19,7 @@ namespace Escher {
 
 class OrientedLayout : public View {
  public:
-  OrientedLayout(
-      KDColor color = ColorPicker::Resolve(ThemeComponent::WallScreen))
+  OrientedLayout(ThemeComponent color = ThemeComponent::WallScreen)
       : m_backgroundColor(color),
         m_secondaryDirectionMargin(0),
         m_mainDirectionMargin(0) {}
@@ -39,7 +38,7 @@ class OrientedLayout : public View {
   virtual KDSize adaptSize(KDSize size) const = 0;
   virtual KDPoint adaptPoint(KDPoint point) const = 0;
 
-  KDColor m_backgroundColor;
+  ThemeComponent m_backgroundColor;
   KDCoordinate m_secondaryDirectionMargin;
   KDCoordinate m_mainDirectionMargin;
 };
@@ -47,8 +46,7 @@ class OrientedLayout : public View {
 /* View that lays out its subviews vertically.*/
 class VerticalLayout : public OrientedLayout {
  public:
-  VerticalLayout(
-      KDColor color = ColorPicker::Resolve(ThemeComponent::WallScreen))
+  VerticalLayout(ThemeComponent color = ThemeComponent::WallScreen)
       : OrientedLayout(color) {}
 
  private:
@@ -61,8 +59,7 @@ class VerticalLayout : public OrientedLayout {
 /* View that lays out its subviews horizontally.*/
 class HorizontalLayout : public OrientedLayout {
  public:
-  HorizontalLayout(
-      KDColor color = ColorPicker::Resolve(ThemeComponent::WallScreen))
+  HorizontalLayout(ThemeComponent color = ThemeComponent::WallScreen)
       : OrientedLayout(color) {}
 
  private:

@@ -10,16 +10,15 @@ namespace Escher {
 
 class SolidColorCell : public HighlightCell {
  public:
-  SolidColorCell(
-      KDColor color = ColorPicker::Resolve(ThemeComponent::BackgroundWhite))
+  SolidColorCell(ThemeComponent color = ThemeComponent::BackgroundWhite)
       : HighlightCell(), m_color(color) {}
   void drawRect(KDContext* ctx, KDRect rect) const override {
-    ctx->fillRect(rect, m_color);
+    ctx->fillRect(rect, ColorPicker::Resolve(m_color));
   }
-  void setColor(KDColor color) { m_color = color; }
+  void setColor(ThemeComponent color) { m_color = color; }
 
  private:
-  KDColor m_color;
+  ThemeComponent m_color;
 };
 
 }  // namespace Escher

@@ -116,9 +116,7 @@ void GraphController::CurveSelectionController::fillCellForRow(
   const char* name = Store::SeriesTitle(series);
   CurveSelectionCellWithChevron* myCell =
       static_cast<CurveSelectionCellWithChevron*>(cell);
-  // TODO: color resolution can disappear when Bordered is themed
-  myCell->setColor(Escher::ColorPicker::Resolve(
-      graphController()->store()->colorOfSeriesAtIndex(series)));
+  myCell->setColor(graphController()->store()->colorOfSeriesAtIndex(series));
   myCell->label()->setLayout(Layout::String(name));
 }
 
@@ -392,9 +390,7 @@ void GraphController::setRoundCrossCursorView() {
    * to date. */
   bool round = *m_selectedDotIndex < 0;
   m_cursorView.setIsRing(!round, &m_view);
-  // TODO: revert color resolve when MemoizedCursorView has a theme
-  m_cursorView.setColor(ColorPicker::Resolve(m_store->colorOfSeriesAtIndex(
-                            selectedSeriesIndex())),
+  m_cursorView.setColor(m_store->colorOfSeriesAtIndex(selectedSeriesIndex()),
                         &m_view);
 }
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <escher/tab_view_controller.h>
-#include <escher/theme/color_picker.h>
 
 #include "../inference_controller.h"
 #include "inference/controllers/results_controller.h"
@@ -23,8 +22,8 @@ class ResultsGoodnessTabController : public InferenceController,
   ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
-  KDColor tabBackgroundColor() const override {
-    return Escher::ColorPicker::Resolve(Escher::ThemeComponent::BannerGrayDark);
+  Escher::ThemeComponent tabBackgroundColor() const override {
+    return Escher::ThemeComponent::BannerGrayDark;
   }
 
  private:

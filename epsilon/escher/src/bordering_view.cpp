@@ -1,11 +1,9 @@
 #include <escher/bordering_view.h>
-#include <escher/theme/color_picker.h>
 
 namespace Escher {
 
 void BorderingView::drawRect(KDContext* ctx, KDRect rect) const {
-  drawBorderOfRect(ctx, bounds(),
-                   ColorPicker::Resolve(ThemeComponent::SurfaceSelect));
+  drawBorderOfRect(ctx, bounds(), ThemeComponent::SurfaceSelect);
 }
 
 KDSize BorderingView::minimalSizeForOptimalDisplay() const {

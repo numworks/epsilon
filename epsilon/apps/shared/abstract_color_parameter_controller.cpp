@@ -31,8 +31,7 @@ void AbstractColorParameterController::fillCellForRow(HighlightCell* cell,
   ColorCell* colorCell = static_cast<ColorCell*>(cell);
   assert(row >= 0 && row < ColorNames::k_count);
   colorCell->label()->setMessage(GetColorName(row));
-  // TODO: color resolve can disappear when Bordered has a theme
-  colorCell->accessory()->setColor(ColorPicker::Resolve(GetColor(row)));
+  colorCell->accessory()->setColor(GetColor(row));
 }
 
 KDCoordinate AbstractColorParameterController::defaultRowHeight() {

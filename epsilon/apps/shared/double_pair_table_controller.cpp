@@ -16,8 +16,7 @@ DoublePairTableController::DoublePairTableController(
   m_prefacedTwiceTableView.setBackgroundColor(ThemeComponent::WallScreenDark);
   m_prefacedTwiceTableView.setMargins(k_margins);
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
-    m_hideableCell[i].setColor(
-        ColorPicker::Resolve(m_selectableTableView.backgroundColor()));
+    m_hideableCell[i].setColor(m_selectableTableView.backgroundColor());
   }
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
     m_calculationTitleCells[i].setAlignment(KDGlyph::k_alignRight,

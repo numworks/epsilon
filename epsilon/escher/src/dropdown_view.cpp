@@ -3,7 +3,6 @@
 #include <escher/dropdown_view.h>
 #include <escher/image/caret.h>
 #include <escher/menu_cell.h>
-#include <escher/theme/color_picker.h>
 
 #include <algorithm>
 
@@ -12,16 +11,14 @@ namespace Escher {
 PopupItemView::PopupItemView(HighlightCell* cell)
     : m_isPoppingUp(false), m_cell(cell) {
   m_caret.setImage(ImageStore::Caret);
-  m_caret.setBackgroundColor(
-      ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
+  m_caret.setBackgroundColor(ThemeComponent::BackgroundWhite);
 }
 
 void PopupItemView::setHighlighted(bool highlighted) {
   if (m_cell) {
     m_cell->setHighlighted(highlighted);
   }
-  m_caret.setBackgroundColor(
-      ColorPicker::Resolve(AbstractMenuCell::BackgroundColor(highlighted)));
+  m_caret.setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
   HighlightCell::setHighlighted(highlighted);
 }
 
@@ -69,13 +66,13 @@ View* PopupItemView::subviewAtIndex(int i) {
 
 void PopupItemView::drawRect(KDContext* ctx, KDRect rect) const {
   ThemeComponent backgroundColor = defaultBackgroundColor();
-  drawInnerRect(ctx, bounds(), ColorPicker::Resolve(backgroundColor));
+  drawInnerRect(ctx, bounds(), backgroundColor);
   // When popping, the cell has no borders
   ThemeComponent borderColor = m_isPoppingUp ? backgroundColor
                                : isHighlighted()
                                    ? ThemeComponent::BorderGrayDark
                                    : ThemeComponent::SurfaceSelect;
-  drawBorderOfRect(ctx, bounds(), ColorPicker::Resolve(borderColor));
+  drawBorderOfRect(ctx, bounds(), borderColor);
 }
 
 Dropdown::DropdownPopupController::DropdownPopupController(

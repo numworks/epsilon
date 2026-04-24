@@ -22,7 +22,8 @@ KDSize MemoizedCursorView::minimalSizeForOptimalDisplay() const {
   return KDSize(size(), size());
 }
 
-void MemoizedCursorView::setColor(KDColor color, const Escher::View* parent) {
+void MemoizedCursorView::setColor(Escher::ThemeComponent color,
+                                  const Escher::View* parent) {
   m_color = color;
   eraseCursorIfPossible(parent);
   markWholeFrameAsDirty();

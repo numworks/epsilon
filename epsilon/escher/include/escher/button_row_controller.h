@@ -61,7 +61,8 @@ class ButtonRowController : public ViewController {
 
    private:
     void drawRowFrame(KDContext* ctx, KDCoordinate innerHeight,
-                      KDColor backgroundColor, KDColor borderColor) const;
+                      ThemeComponent backgroundColor,
+                      ThemeComponent borderColor) const;
     KDCoordinate buttonRowHeight() const;
 
     ViewController* m_mainViewController;

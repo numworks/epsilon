@@ -1,7 +1,6 @@
 #include "plot_controller.h"
 
 #include <apps/global_preferences.h>
-#include <escher/theme/color_picker.h>
 #include <poincare/print.h>
 
 #include "../data/store_controller.h"
@@ -26,9 +25,7 @@ PlotController::PlotController(Escher::Responder* parentResponder,
 void PlotController::moveCursorToSelectedIndex(bool setColor) {
   if (setColor) {
     m_curveView.cursorView()->setColor(
-        Escher::ColorPicker::Resolve(
-            m_store->colorOfSeriesAtIndex(selectedSeries())),
-        &m_curveView);
+        m_store->colorOfSeriesAtIndex(selectedSeries()), &m_curveView);
   }
   double x = valueAtIndex(selectedSeries(), selectedIndex());
   double y = resultAtIndex(selectedSeries(), selectedIndex());

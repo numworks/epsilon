@@ -10,7 +10,6 @@
 
 namespace Graph {
 
-// TODO: use ThemeComponent
 class AbstractFunctionCell : public Escher::EvenOddCell {
  public:
   AbstractFunctionCell();
@@ -33,7 +32,7 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   void setHideMessage(bool hide) { m_hideMessage = hide; }
 
   // - Color indicator
-  void setColor(KDColor color) { m_functionColor = color; }
+  void setColor(Escher::ThemeComponent color) { m_functionColor = color; }
 
  protected:
   // View
@@ -55,7 +54,7 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
       Escher::Metric::CellVerticalElementMargin;
   Escher::MessageTextView m_messageTextView;
   Escher::EllipsisView m_ellipsisView;
-  KDColor m_functionColor;
+  Escher::ThemeComponent m_functionColor;
   Escher::ThemeComponent m_expressionBackground;
   Escher::ThemeComponent m_ellipsisBackground;
   bool m_hideMessage;

@@ -19,9 +19,7 @@ const uint8_t gaugeIndicatorMask
 };
 
 GaugeView::GaugeView()
-    : m_level(1),
-      m_backgroundColor(ColorPicker::Resolve(ThemeComponent::BackgroundWhite)) {
-}
+    : m_level(1), m_backgroundColor(ThemeComponent::BackgroundWhite) {}
 
 float GaugeView::level() { return m_level; }
 
@@ -35,8 +33,8 @@ void GaugeView::setLevel(float level) {
 }
 
 void GaugeView::setHighlighted(bool highlighted) {
-  KDColor backgroundColor =
-      ColorPicker::Resolve(AbstractMenuCell::BackgroundColor(highlighted));
+  ThemeComponent backgroundColor =
+      AbstractMenuCell::BackgroundColor(highlighted);
   if (m_backgroundColor != backgroundColor) {
     m_backgroundColor = backgroundColor;
     markWholeFrameAsDirty();
@@ -44,7 +42,7 @@ void GaugeView::setHighlighted(bool highlighted) {
 }
 
 void GaugeView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), m_backgroundColor);
+  ctx->fillRect(bounds(), ColorPicker::Resolve(m_backgroundColor));
   /* Draw the gauge centered vertically on all the width available */
   KDCoordinate width = bounds().width() - k_indicatorDiameter;
   KDCoordinate height = bounds().height();

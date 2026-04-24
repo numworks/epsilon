@@ -1,6 +1,5 @@
 #include <escher/metric.h>
 #include <escher/stack_view.h>
-#include <escher/theme/color_picker.h>
 
 namespace Escher {
 
@@ -53,9 +52,7 @@ void StackView::pushStack(const ViewController* vc) {
     assert(m_style == Style::WhiteUniform);
   }
   m_stackHeaderViews->push(
-      StackHeaderView(vc, ColorPicker::Resolve(textColor),
-                      ColorPicker::Resolve(backgroundColor),
-                      ColorPicker::Resolve(separatorColor)));
+      StackHeaderView(vc, textColor, backgroundColor, separatorColor));
 }
 
 KDSize StackView::minimalSizeForOptimalDisplay() const {

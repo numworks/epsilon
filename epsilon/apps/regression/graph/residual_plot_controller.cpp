@@ -26,11 +26,8 @@ void ResidualPlotController::updateCursor() {
   double x = xAtIndex(m_selectedDotIndex);
   double y = yAtIndex(m_selectedDotIndex);
   m_cursor.moveTo(x, x, y);
-  // TODO: revert color resolved when MemoizedCursorView has a theme
-  m_cursorView.setColor(
-      Escher::ColorPicker::Resolve(
-          m_store->colorOfSeriesAtIndex(m_selectedSeriesIndex)),
-      &m_curveView);
+  m_cursorView.setColor(m_store->colorOfSeriesAtIndex(m_selectedSeriesIndex),
+                        &m_curveView);
 
   const int significantDigits = SharedGlobalPrefs().numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =

@@ -112,10 +112,9 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
   }
 }
 
-void ButtonRowController::ContentView::drawRowFrame(KDContext* ctx,
-                                                    KDCoordinate innerHeight,
-                                                    KDColor backgroundColor,
-                                                    KDColor borderColor) const {
+void ButtonRowController::ContentView::drawRowFrame(
+    KDContext* ctx, KDCoordinate innerHeight, ThemeComponent backgroundColor,
+    ThemeComponent borderColor) const {
   constexpr KDCoordinate k_borderHeight = 1;
   KDCoordinate height = innerHeight + m_verticalMargin;
   KDCoordinate y1, y2;
@@ -126,8 +125,10 @@ void ButtonRowController::ContentView::drawRowFrame(KDContext* ctx,
     y1 = bounds().height() - height;
     y2 = bounds().height() - height - k_borderHeight;
   }
-  ctx->fillRect(KDRect(0, y1, bounds().width(), height), backgroundColor);
-  ctx->fillRect(KDRect(0, y2, bounds().width(), k_borderHeight), borderColor);
+  ctx->fillRect(KDRect(0, y1, bounds().width(), height),
+                ColorPicker::Resolve(backgroundColor));
+  ctx->fillRect(KDRect(0, y2, bounds().width(), k_borderHeight),
+                ColorPicker::Resolve(borderColor));
   return;
 }
 
@@ -142,15 +143,13 @@ void ButtonRowController::ContentView::drawRect(KDContext* ctx,
   }
   KDCoordinate rowHeight = buttonRowHeight();
   if (m_style == Style::PlainWhite) {
-    drawRowFrame(ctx, rowHeight,
-                 ColorPicker::Resolve(ThemeComponent::BackgroundWhite),
-                 ColorPicker::Resolve(ThemeComponent::BorderGrayWhite));
+    drawRowFrame(ctx, rowHeight, ThemeComponent::BackgroundWhite,
+                 ThemeComponent::BorderGrayWhite);
     return;
   }
   assert(m_style == Style::EmbossedGray);
-  drawRowFrame(ctx, rowHeight,
-               ColorPicker::Resolve(ThemeComponent::TokenGrayWhite),
-               ColorPicker::Resolve(ThemeComponent::BorderGrayMiddle));
+  drawRowFrame(ctx, rowHeight, ThemeComponent::TokenGrayWhite,
+               ThemeComponent::BorderGrayMiddle);
 }
 
 bool ButtonRowController::ContentView::setSelectedButton(int selectedButton) {

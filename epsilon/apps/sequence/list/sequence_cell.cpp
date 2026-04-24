@@ -18,16 +18,16 @@ View* AbstractSequenceCell::subviewAtIndex(int index) {
 
 void AbstractSequenceCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Color the main background
-  ctx->fillRect(bounds(), m_expressionBackground);
+  ctx->fillRect(bounds(), ColorPicker::Resolve(m_expressionBackground));
   // Draw the color indicator
   ctx->fillRect(
       KDRect(0, 0, k_verticalColorIndicatorThickness, bounds().height()),
-      m_functionColor);
+      ColorPicker::Resolve(m_functionColor));
   // Color the ellipsis view
   KDCoordinate ellipsisWidth = displayEllipsis() ? k_ellipsisWidth : 0;
   ctx->fillRect(KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
                        bounds().height()),
-                m_ellipsisBackground);
+                ColorPicker::Resolve(m_ellipsisBackground));
 }
 
 void AbstractSequenceCell::layoutSubviews(bool force) {
@@ -45,11 +45,10 @@ void AbstractSequenceCell::layoutSubviews(bool force) {
 }
 
 void SequenceCell::updateSubviewsBackgroundAfterChangingState() {
-  KDColor defaultColor =
-      m_even ? ColorPicker::Resolve(ThemeComponent::BackgroundWhite)
-             : ColorPicker::Resolve(ThemeComponent::WallScreen);
+  ThemeComponent defaultColor =
+      m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen;
   // If not highlighted, selectedColor is defaultColor
-  KDColor selectedColor = ColorPicker::Resolve(backgroundColor());
+  ThemeComponent selectedColor = backgroundColor();
   m_expressionBackground = m_parameterSelected ? defaultColor : selectedColor;
   m_ellipsisBackground = m_parameterSelected ? selectedColor : defaultColor;
   expressionCell()->setHighlighted(isHighlighted() && !m_parameterSelected);

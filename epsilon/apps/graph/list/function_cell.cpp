@@ -32,7 +32,7 @@ AbstractFunctionCell::AbstractFunctionCell()
                         {.style = {.glyphColor = ThemeComponent::TextGrayDark,
                                    .font = KDFont::Size::Small},
                          .verticalAlignment = KDGlyph::k_alignTop}),
-      m_functionColor(ColorPicker::Resolve(ThemeComponent::TextDefault)),
+      m_functionColor(ThemeComponent::TextDefault),
       m_expressionBackground(ThemeComponent::BackgroundWhite),
       m_ellipsisBackground(ThemeComponent::BackgroundWhite),
       m_hideMessage(false) {}
@@ -41,7 +41,7 @@ void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate ellipsisWidth = ellipsisViewWidth();
   // Draw the color indicator
   ctx->fillRect(KDRect(0, 0, k_colorIndicatorThickness, bounds().height()),
-                m_functionColor);
+                ColorPicker::Resolve(m_functionColor));
   // Color the main background
   ctx->fillRect(
       KDRect(k_colorIndicatorThickness, 0,

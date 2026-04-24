@@ -1,7 +1,7 @@
 #pragma once
 
 #include <escher/bordered.h>
-#include <escher/theme/color_picker.h>
+#include <escher/theme/components.h>
 #include <escher/view.h>
 
 namespace Escher {
@@ -12,11 +12,9 @@ class StackHeaderView : public View, public Bordered {
  public:
   StackHeaderView(
       const ViewController* controller = nullptr,
-      KDColor textColor = ColorPicker::Resolve(ThemeComponent::TextDefault),
-      KDColor backgroundColor =
-          ColorPicker::Resolve(ThemeComponent::BackgroundPopup),
-      KDColor separatorColor =
-          ColorPicker::Resolve(ThemeComponent::TokenBlack));
+      ThemeComponent textColor = ThemeComponent::TextDefault,
+      ThemeComponent backgroundColor = ThemeComponent::BackgroundPopup,
+      ThemeComponent separatorColor = ThemeComponent::TokenBlack);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  protected:
@@ -27,9 +25,9 @@ class StackHeaderView : public View, public Bordered {
  private:
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
 
-  KDColor m_textColor;
-  KDColor m_backgroundColor;
-  KDColor m_separatorColor;
+  ThemeComponent m_textColor;
+  ThemeComponent m_backgroundColor;
+  ThemeComponent m_separatorColor;
   const ViewController* m_controller;
 };
 

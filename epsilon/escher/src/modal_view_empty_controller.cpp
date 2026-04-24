@@ -8,8 +8,7 @@ namespace Escher {
 void ModalViewEmptyController::ModalViewEmptyView::drawRect(KDContext* ctx,
                                                             KDRect rect) const {
   ctx->fillRect(bounds(), ColorPicker::Resolve(k_backgroundColor));
-  drawBorderOfRect(ctx, bounds(),
-                   ColorPicker::Resolve(ThemeComponent::BorderGrayBright));
+  drawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
 }
 
 void ModalViewEmptyController::ModalViewEmptyView::layoutSubviews(bool force) {

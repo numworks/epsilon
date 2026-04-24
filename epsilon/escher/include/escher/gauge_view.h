@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/cell_widget.h>
+#include <escher/theme/components.h>
 #include <escher/view.h>
 
 namespace Escher {
@@ -32,7 +33,7 @@ class GaugeView : public View, public CellWidget {
  private:
   constexpr static KDCoordinate k_thickness = 2;
   float m_level;
-  KDColor m_backgroundColor;
+  ThemeComponent m_backgroundColor;
 };
 
 }  // namespace Escher

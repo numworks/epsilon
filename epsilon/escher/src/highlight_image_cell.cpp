@@ -1,17 +1,15 @@
 #include <escher/highlight_image_cell.h>
-#include <escher/theme/color_picker.h>
+#include <escher/theme/components.h>
 
 namespace Escher {
 
 HighlightImageCell::HighlightImageCell() : HighlightCell() {
-  m_contentView.setBackgroundColor(
-      ColorPicker::Resolve(k_unselectedBackgroundColor));
+  m_contentView.setBackgroundColor(k_unselectedBackgroundColor);
 }
 
 void HighlightImageCell::setHighlighted(bool highlighted) {
-  m_contentView.setBackgroundColor(
-      highlighted ? Palette::Select
-                  : ColorPicker::Resolve(k_unselectedBackgroundColor));
+  m_contentView.setBackgroundColor(highlighted ? ThemeComponent::SurfaceSelect
+                                               : k_unselectedBackgroundColor);
   HighlightCell::setHighlighted(highlighted);
 }
 

@@ -1,17 +1,18 @@
 #pragma once
 
+#include <escher/theme/components.h>
+
 #include "cell_widget.h"
 #include "image_view.h"
 #include "menu_cell.h"
 
 namespace Escher {
 
-// TODO: use a ThemeComponent
 class TransparentImageView : public ImageView, public CellWidget {
  public:
   const View* view() const override { return this; }
-  KDColor backgroundColor() const { return m_backgroundColor; }
-  void setBackgroundColor(KDColor backgroundColor) {
+  ThemeComponent backgroundColor() const { return m_backgroundColor; }
+  void setBackgroundColor(ThemeComponent backgroundColor) {
     m_backgroundColor = backgroundColor;
   }
   void drawRect(KDContext* ctx, KDRect rect) const override;
@@ -22,7 +23,7 @@ class TransparentImageView : public ImageView, public CellWidget {
 
  private:
   void blendInPlace(KDColor* colorBuffer, uint8_t* alphaBuffer) const;
-  KDColor m_backgroundColor;
+  ThemeComponent m_backgroundColor;
 };
 
 }  // namespace Escher

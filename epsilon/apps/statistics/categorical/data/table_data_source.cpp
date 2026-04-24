@@ -11,7 +11,7 @@ namespace Statistics::Categorical {
 TableViewDataSource::TableViewDataSource(
     Escher::Responder* editableCellsParentResponder,
     Escher::TextFieldDelegate* textFieldDelegate)
-    : m_topLeftCell(Escher::Palette::WallScreenDark) {
+    : m_topLeftCell(Escher::ThemeComponent::WallScreenDark) {
   for (EvenOddEditableCell& cell : m_editableCells) {
     cell.setParentResponder(editableCellsParentResponder);
     cell.editableTextCell()->textField()->setDelegate(textFieldDelegate);

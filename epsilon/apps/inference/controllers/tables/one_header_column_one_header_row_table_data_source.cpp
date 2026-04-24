@@ -1,7 +1,6 @@
 #include "one_header_column_one_header_row_table_data_source.h"
 
 #include <escher/even_odd_editable_text_cell.h>
-#include <escher/theme/color_picker.h>
 
 using namespace Escher;
 
@@ -9,8 +8,7 @@ namespace Inference {
 
 OneHeaderColumnOneHeaderRowTableDataSource::
     OneHeaderColumnOneHeaderRowTableDataSource()
-    : m_topLeftCell(Escher::ColorPicker::Resolve(
-          Escher::ThemeComponent::WallScreenDark)) {}
+    : m_topLeftCell(Escher::ThemeComponent::WallScreenDark) {}
 
 int OneHeaderColumnOneHeaderRowTableDataSource::reusableCellCount(
     int type) const {

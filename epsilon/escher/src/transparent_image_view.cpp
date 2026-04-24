@@ -42,18 +42,18 @@ void TransparentImageView::drawRect(KDContext* ctx, KDRect rect) const {
 void TransparentImageView::blendInPlace(KDColor* colorBuffer,
                                         uint8_t* alphaBuffer) const {
   int position;
+  KDColor backgroundColor = ColorPicker::Resolve(m_backgroundColor);
   for (int row = 0; row < m_image->height(); row++) {
     for (int col = 0; col < m_image->width(); col++) {
       position = col + row * m_image->width();
       colorBuffer[position] = KDColor::Blend(
-          colorBuffer[position], m_backgroundColor, alphaBuffer[position]);
+          colorBuffer[position], backgroundColor, alphaBuffer[position]);
     }
   }
 }
 
 void TransparentImageView::setHighlighted(bool highlighted) {
-  setBackgroundColor(
-      ColorPicker::Resolve(AbstractMenuCell::BackgroundColor(highlighted)));
+  setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
 }
 
 }  // namespace Escher

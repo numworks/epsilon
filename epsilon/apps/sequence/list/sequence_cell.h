@@ -3,21 +3,17 @@
 #include <apps/shared/with_expression_cell.h>
 #include <escher/ellipsis_view.h>
 #include <escher/even_odd_cell.h>
-#include <escher/theme/color_picker.h>
+#include <escher/theme/components.h>
 
 namespace Sequence {
 
-// TODO: use ThemeComponent
 class AbstractSequenceCell : public Escher::EvenOddCell {
  public:
   AbstractSequenceCell()
       : EvenOddCell(),
-        m_functionColor(
-            Escher::ColorPicker::Resolve(Escher::ThemeComponent::TextDefault)),
-        m_expressionBackground(Escher::ColorPicker::Resolve(
-            Escher::ThemeComponent::BackgroundWhite)),
-        m_ellipsisBackground(Escher::ColorPicker::Resolve(
-            Escher::ThemeComponent::BackgroundWhite)),
+        m_functionColor(Escher::ThemeComponent::TextDefault),
+        m_expressionBackground(Escher::ThemeComponent::BackgroundWhite),
+        m_ellipsisBackground(Escher::ThemeComponent::BackgroundWhite),
         m_parameterSelected(false) {}
   void setParameterSelected(bool selected);
   virtual Escher::HighlightCell* mainCell() = 0;
@@ -26,7 +22,7 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
         const_cast<AbstractSequenceCell*>(this)->mainCell());
   }
 
-  void setColor(KDColor color) { m_functionColor = color; }
+  void setColor(Escher::ThemeComponent color) { m_functionColor = color; }
 
  private:
   int numberOfSubviews() const override { return 1 + displayEllipsis(); }
@@ -43,9 +39,9 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
       Escher::Metric::EllipsisCellWidth;
   virtual bool displayEllipsis() const { return true; }
   Escher::EllipsisView m_ellipsisView;
-  KDColor m_functionColor;
-  KDColor m_expressionBackground;
-  KDColor m_ellipsisBackground;
+  Escher::ThemeComponent m_functionColor;
+  Escher::ThemeComponent m_expressionBackground;
+  Escher::ThemeComponent m_ellipsisBackground;
   bool m_parameterSelected;
 };
 

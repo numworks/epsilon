@@ -70,12 +70,12 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
   if (type == k_expressionCellType || type == k_editableCellType) {
     AbstractSequenceCell* sequenceCell =
         static_cast<AbstractSequenceCell*>(cell);
-    KDColor nameColor = ColorPicker::Resolve(ThemeComponent::TextGrayDark);
+    ThemeComponent nameColor = ThemeComponent::TextGrayDark;
     if (type == k_expressionCellType || !isAddingNewModel()) {
       Shared::Sequence* sequence =
           modelStore()->modelForRecord(recordAtRow(row));
       if (sequence->isActive()) {
-        nameColor = Escher::ColorPicker::Resolve(sequence->color());
+        nameColor = sequence->color();
       }
       if (type == k_expressionCellType) {
         fillExpressionCellForRow(sequenceCell->mainCell(), row);

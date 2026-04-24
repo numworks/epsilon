@@ -1,4 +1,5 @@
 #include <escher/horizontal_or_vertical_layout.h>
+#include <escher/theme/color_picker.h>
 
 #include <algorithm>
 
@@ -48,26 +49,27 @@ void OrientedLayout::layoutSubviews(bool force) {
 void OrientedLayout::drawRect(KDContext* ctx, KDRect rect) const {
   // Draw in margins
   const KDSize boundsSize = adaptSize(bounds().size());
+  KDColor color = ColorPicker::Resolve(m_backgroundColor);
   // Left margin
   ctx->fillRect(
       adaptRect(KDRect(0, 0, m_secondaryDirectionMargin, boundsSize.height())),
-      m_backgroundColor);
+      color);
   // Right margin
   ctx->fillRect(
       adaptRect(KDRect(boundsSize.width() - m_secondaryDirectionMargin, 0,
                        m_secondaryDirectionMargin, boundsSize.height())),
-      m_backgroundColor);
+      color);
   // Top margin
   ctx->fillRect(
       adaptRect(KDRect(m_secondaryDirectionMargin, 0,
                        boundsSize.width() - 2 * m_secondaryDirectionMargin,
                        m_mainDirectionMargin)),
-      m_backgroundColor);
+      color);
   // Bottom margin
   ctx->fillRect(
       adaptRect(KDRect(m_secondaryDirectionMargin,
                        boundsSize.height() - m_mainDirectionMargin,
                        boundsSize.width() - 2 * m_secondaryDirectionMargin,
                        m_mainDirectionMargin)),
-      m_backgroundColor);
+      color);
 }

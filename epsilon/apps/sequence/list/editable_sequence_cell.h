@@ -14,7 +14,7 @@ class EditableSequenceCell
                        Escher::LayoutFieldDelegate* layoutFieldDelegate);
 
   void updateSubviewsBackgroundAfterChangingState() override {
-    m_expressionBackground = Escher::ColorPicker::Resolve(backgroundColor());
+    m_expressionBackground = backgroundColor();
   }
 
   void layoutSubviews(bool force) override;

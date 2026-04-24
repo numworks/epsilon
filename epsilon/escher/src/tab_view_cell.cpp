@@ -36,30 +36,31 @@ void TabViewCell::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   // choose the background color
-  KDColor text = m_active ? ColorPicker::Resolve(ThemeComponent::TextPurple)
-                          : ColorPicker::Resolve(ThemeComponent::TextWhite);
-  KDColor inactiveBackground = m_controller->tabBackgroundColor();
-  KDColor background =
-      m_active ? ColorPicker::Resolve(ThemeComponent::BackgroundWhite)
-               : inactiveBackground;
-  KDColor selection =
-      m_active ? ColorPicker::Resolve(ThemeComponent::SurfaceSelect)
-               : ColorPicker::Resolve(ThemeComponent::SurfaceSelectDark);
+  ThemeComponent text =
+      m_active ? ThemeComponent::TextPurple : ThemeComponent::TextWhite;
+  ThemeComponent inactiveBackground = m_controller->tabBackgroundColor();
+  ThemeComponent background =
+      m_active ? ThemeComponent::BackgroundWhite : inactiveBackground;
+  ThemeComponent selection = m_active ? ThemeComponent::SurfaceSelect
+                                      : ThemeComponent::SurfaceSelectDark;
   background = m_selected ? selection : background;
   // Color the background according to the state of the tab cell
   if (m_active || m_selected) {
-    ctx->fillRect(KDRect(0, 0, width, 1), inactiveBackground);
-    ctx->fillRect(KDRect(0, 1, width, height - 1), background);
+    ctx->fillRect(KDRect(0, 0, width, 1),
+                  ColorPicker::Resolve(inactiveBackground));
+    ctx->fillRect(KDRect(0, 1, width, height - 1),
+                  ColorPicker::Resolve(background));
   } else {
-    ctx->fillRect(KDRect(0, 0, width, height), background);
+    ctx->fillRect(KDRect(0, 0, width, height),
+                  ColorPicker::Resolve(background));
   }
   // Write title
-  ctx->alignAndDrawString(m_controller->tabName(m_tabNumber), KDPointZero,
-                          bounds().size(),
-                          {.style = {.glyphColor = text,
-                                     .backgroundColor = background,
-                                     .font = KDFont::Size::Small},
-                           .horizontalAlignment = KDGlyph::k_alignCenter});
+  ctx->alignAndDrawString(
+      m_controller->tabName(m_tabNumber), KDPointZero, bounds().size(),
+      {.style = {.glyphColor = ColorPicker::Resolve(text),
+                 .backgroundColor = ColorPicker::Resolve(background),
+                 .font = KDFont::Size::Small},
+       .horizontalAlignment = KDGlyph::k_alignCenter});
 }
 
 #if ESCHER_VIEW_LOGGING

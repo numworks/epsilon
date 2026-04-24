@@ -7,26 +7,23 @@
 namespace Escher {
 
 SubappCell::SubappCell() {
-  m_icon.setBackgroundColor(
-      ColorPicker::Resolve(ThemeComponent::BackgroundWhite));
+  m_icon.setBackgroundColor(ThemeComponent::BackgroundWhite);
   m_title.setFont(KDFont::Size::Large);
   m_subTitle.setFont(KDFont::Size::Small);
   m_subTitle.setTextColor(ThemeComponent::TextGrayDark);
 }
 
 void SubappCell::drawRect(KDContext* ctx, KDRect rect) const {
-  KDColor backColor =
-      isHighlighted() ? ColorPicker::Resolve(ThemeComponent::SurfaceSelect)
-                      : ColorPicker::Resolve(ThemeComponent::BackgroundWhite);
+  ThemeComponent backColor = isHighlighted() ? ThemeComponent::SurfaceSelect
+                                             : ThemeComponent::BackgroundWhite;
   drawInnerRect(ctx, bounds(), backColor);
-  drawBorderOfRect(ctx, bounds(),
-                   ColorPicker::Resolve(ThemeComponent::BorderGrayBright));
+  drawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
 }
 
 void SubappCell::setHighlighted(bool highlighted) {
   HighlightCell::setHighlighted(highlighted);
   ThemeComponent backgroundColor = defaultBackgroundColor();
-  m_icon.setBackgroundColor(ColorPicker::Resolve(backgroundColor));
+  m_icon.setBackgroundColor(backgroundColor);
   m_title.setBackgroundColor(backgroundColor);
   m_subTitle.setBackgroundColor(backgroundColor);
 }

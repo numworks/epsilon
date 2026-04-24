@@ -1,7 +1,6 @@
 #include <escher/menu_cell.h>
 #include <escher/menu_cell_with_editable_text.h>
 #include <escher/metric.h>
-#include <escher/theme/color_picker.h>
 #include <ion/display.h>
 namespace Escher {
 
@@ -9,9 +8,8 @@ AbstractMenuCell::AbstractMenuCell() : Bordered(), HighlightCell() {}
 
 void AbstractMenuCell::drawRect(KDContext* ctx, KDRect rect) const {
   ThemeComponent backColor = BackgroundColor(isHighlighted());
-  drawInnerRect(ctx, bounds(), ColorPicker::Resolve(backColor));
-  drawBorderOfRect(ctx, bounds(),
-                   ColorPicker::Resolve(ThemeComponent::BorderGrayBright));
+  drawInnerRect(ctx, bounds(), backColor);
+  drawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
 }
 
 KDSize AbstractMenuCell::minimalSizeForOptimalDisplay() const {

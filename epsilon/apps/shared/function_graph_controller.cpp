@@ -81,8 +81,7 @@ void FunctionGraphController::selectCurveAtIndex(int curveIndex,
       functionOrSequenceContext().modelForRecord(r);
   ThemeComponent color =
       f->color(f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex));
-  functionGraphView()->cursorView()->setColor(ColorPicker::Resolve(color),
-                                              functionGraphView());
+  functionGraphView()->cursorView()->setColor(color, functionGraphView());
   // Force reload to display the selected function on top
   if (willBeVisible) {
     functionGraphView()->reload(false, true);
@@ -109,7 +108,7 @@ void FunctionGraphController::FunctionSelectionController::fillCellForRow(
           graphController()->recordAtCurveIndex(row));
   CurveSelectionCellWithChevron* myCell =
       static_cast<CurveSelectionCellWithChevron*>(cell);
-  myCell->setColor(ColorPicker::Resolve(function->color()));
+  myCell->setColor(function->color());
   myCell->label()->setLayout(nameLayoutAtIndex(row).clone());
 }
 

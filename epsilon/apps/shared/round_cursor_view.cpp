@@ -1,5 +1,6 @@
 #include "round_cursor_view.h"
 
+#include <escher/theme/color_picker.h>
 #include <ion/display.h>
 
 namespace Shared {
@@ -15,7 +16,8 @@ void AbstractRoundCursorView::drawCursor(KDContext* ctx, KDRect rect) const {
                             : KDRect(r.x() + diff / 2, r.y() + diff / 2,
                                      r.width() - diff, r.height() - diff);
   const uint8_t* mask = Dots::Mask(Dots::Size::Large, m_isRing);
-  ctx->blendRectWithMask(dotRect, color(), mask, cursorWorkingBuffer);
+  ctx->blendRectWithMask(dotRect, Escher::ColorPicker::Resolve(color()), mask,
+                         cursorWorkingBuffer);
 }
 
 void ToggleableRingRoundCursorView::setIsRing(bool isRing, const View* parent) {

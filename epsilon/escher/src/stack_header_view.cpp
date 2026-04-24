@@ -1,5 +1,6 @@
 #include <escher/metric.h>
 #include <escher/stack_header_view.h>
+#include <escher/theme/color_picker.h>
 #include <escher/view_controller.h>
 extern "C" {
 #include <assert.h>
@@ -8,8 +9,9 @@ extern "C" {
 namespace Escher {
 
 StackHeaderView::StackHeaderView(const ViewController* controller,
-                                 KDColor textColor, KDColor backgroundColor,
-                                 KDColor separatorColor)
+                                 ThemeComponent textColor,
+                                 ThemeComponent backgroundColor,
+                                 ThemeComponent separatorColor)
     : View(),
       m_textColor(textColor),
       m_backgroundColor(backgroundColor),
@@ -23,11 +25,12 @@ void StackHeaderView::drawRect(KDContext* ctx, KDRect rect) const {
   drawBorderOfRect(ctx, b, m_separatorColor);
   drawInnerRect(ctx, b, m_backgroundColor);
   // Write title
-  ctx->alignAndDrawString(m_controller->title(), KDPointZero, bounds().size(),
-                          {.style = {.glyphColor = m_textColor,
-                                     .backgroundColor = m_backgroundColor,
-                                     .font = k_font},
-                           .horizontalAlignment = KDGlyph::k_alignCenter});
+  ctx->alignAndDrawString(
+      m_controller->title(), KDPointZero, bounds().size(),
+      {.style = {.glyphColor = ColorPicker::Resolve(m_textColor),
+                 .backgroundColor = ColorPicker::Resolve(m_backgroundColor),
+                 .font = k_font},
+       .horizontalAlignment = KDGlyph::k_alignCenter});
 }
 
 #if ESCHER_VIEW_LOGGING

@@ -283,7 +283,7 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
   int type = typeAtRow(row);
   if (type == k_editableCellType && isAddingNewModel()) {
     static_cast<AbstractFunctionCell*>(cell)->setColor(
-        ColorPicker::Resolve(ThemeComponent::TextGrayDark));
+        ThemeComponent::TextGrayDark);
   } else if (type != k_addNewModelCellType) {
     assert(type == k_expressionCellType || type == k_editableCellType);
     int relativeRow;
@@ -323,9 +323,7 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
     // f can be null if the entry was just created and is still empty.
     ThemeComponent functionColor = f->isActive() ? f->color(derivationOrder)
                                                  : ThemeComponent::AxisGrayDark;
-    // TODO: resolve can be removed when AbstractFunctionCell has a theme
-    static_cast<AbstractFunctionCell*>(cell)->setColor(
-        ColorPicker::Resolve(functionColor));
+    static_cast<AbstractFunctionCell*>(cell)->setColor(functionColor);
   }
   FunctionListController::fillCellForRow(cell, row);
 }

@@ -98,8 +98,9 @@ void BatteryView::updateBatteryAnimation() {
 }
 
 void BatteryView::drawInsideBatteryLevel(KDContext* ctx, KDCoordinate width,
-                                         KDColor color) const {
-  ctx->fillRect(KDRect(k_batteryInsideX, 0, width, k_batteryHeight), color);
+                                         ThemeComponent component) const {
+  ctx->fillRect(KDRect(k_batteryInsideX, 0, width, k_batteryHeight),
+                ColorPicker::Resolve(component));
   ctx->fillRect(KDRect(k_batteryInsideX + width, 0,
                        k_batteryInsideWidth - width, k_batteryHeight),
                 ColorPicker::Resolve(ThemeComponent::TokenBatteryLevel));
@@ -135,7 +136,7 @@ void BatteryView::drawRect(KDContext* ctx, KDRect rect) const {
     // LOW: Quite empty battery
     drawInsideBatteryLevel(
         ctx, m_lowBatteryAnimationState % 2 ? 0 : 2 * k_elementWidth,
-        ColorPicker::Resolve(ThemeComponent::TokenLowBattery));
+        ThemeComponent::TokenLowBattery);
   } else if (m_chargeState == Ion::Battery::Charge::FULL) {
     // FULL but not plugged: Full battery
     drawInsideBatteryLevel(ctx, k_batteryInsideWidth);

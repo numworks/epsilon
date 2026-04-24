@@ -53,7 +53,7 @@ class ButtonCell : public HighlightCell, public Responder {
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   void drawBorder(KDContext* ctx, OMG::Direction direction, int index,
-                  KDColor color) const;
+                  ThemeComponent color) const;
   int numberOfBordersInDirection(OMG::Direction direction) const;
 
   Invocation m_invocation;

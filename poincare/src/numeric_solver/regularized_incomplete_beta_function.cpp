@@ -35,7 +35,9 @@ namespace Poincare::Internal {
 #define TINY 1.0e-30
 
 double RegularizedIncompleteBetaFunction(double a, double b, double x) {
-  if (x < 0.0 || x > 1.0) return NAN;
+  if (x < 0.0 || x > 1.0) {
+    return NAN;
+  }
 
   /*The continued fraction converges nicely for x < (a+1)/(a+b+2)*/
   if (x > (a + 1.0) / (a + b + 2.0)) {
@@ -70,11 +72,15 @@ double RegularizedIncompleteBetaFunction(double a, double b, double x) {
 
     /*Do an iteration of Lentz's algorithm.*/
     d = 1.0 + numerator * d;
-    if (std::fabs(d) < TINY) d = TINY;
+    if (std::fabs(d) < TINY) {
+      d = TINY;
+    }
     d = 1.0 / d;
 
     c = 1.0 + numerator / c;
-    if (std::fabs(c) < TINY) c = TINY;
+    if (std::fabs(c) < TINY) {
+      c = TINY;
+    }
 
     const double cd = c * d;
     f *= cd;

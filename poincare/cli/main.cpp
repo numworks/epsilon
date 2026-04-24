@@ -172,7 +172,9 @@ int main(int argc, char* argv[]) {
 
     size_t first = line.find_first_not_of(" \t");
     size_t last = line.find_last_not_of(" \t");
-    if (first == std::string::npos) continue;  // Empty line
+    if (first == std::string::npos) {
+      continue;  // Empty line
+    }
     line = line.substr(first, (last - first + 1));
 
     add_history(line.c_str());

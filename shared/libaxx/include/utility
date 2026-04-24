@@ -9,7 +9,7 @@ namespace std {
 
 template <class T>
 typename remove_reference<T>::type&& move(T&& a) {
-  return (typename remove_reference<T>::type &&) a;
+  return (typename remove_reference<T>::type&&)a;
 }
 
 using size_t = size_t;

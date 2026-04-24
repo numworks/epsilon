@@ -140,9 +140,9 @@ typedef uintptr_t mp_uint_t;  // must be pointer size
 typedef long mp_off_t;
 
 // extra built in names to add to the global namespace
-#define MICROPY_PORT_BUILTINS                                      \
-  {MP_OBJ_NEW_QSTR(MP_QSTR_open), (mp_obj_t)&mp_builtin_open_obj}, \
-      {MP_OBJ_NEW_QSTR(MP_QSTR_input), (mp_obj_t)&mp_builtin_input_obj},
+#define MICROPY_PORT_BUILTINS                                        \
+  {MP_OBJ_NEW_QSTR(MP_QSTR_open), (mp_obj_t) & mp_builtin_open_obj}, \
+      {MP_OBJ_NEW_QSTR(MP_QSTR_input), (mp_obj_t) & mp_builtin_input_obj},
 
 #define MP_STATE_PORT MP_STATE_VM
 

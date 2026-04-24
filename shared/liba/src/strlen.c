@@ -2,6 +2,8 @@
 
 size_t strlen(const char* s) {
   const char* str = s;
-  while (*str) str++;
+  while (*str) {
+    str++;
+  }
   return str - s;
 }

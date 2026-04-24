@@ -14,7 +14,7 @@ template <class C>
 concept KTreeConcept = OMG::Concept::is_derived_from<C, AbstractKTree>;
 
 template <typename TSC, class... Args>
-concept HasATreeConcept = (false || ... ||
-                           std::is_same<const TSC*, Args>::value);
+concept HasATreeConcept =
+    (false || ... || std::is_same<const TSC*, Args>::value);
 
 }  // namespace Poincare::Internal::KTrees

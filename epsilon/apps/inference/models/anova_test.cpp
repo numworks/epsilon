@@ -265,8 +265,9 @@ bool ANOVATest::validateStatisticInputs() const {
   for (const InputStatisticsData& groupStatisticData : m_inputStatistics) {
     if (std::isnan(groupStatisticData.numberOfSamples()) ||
         std::isnan(groupStatisticData.mean()) ||
-        std::isnan(groupStatisticData.sampleStdDeviation()))
+        std::isnan(groupStatisticData.sampleStdDeviation())) {
       return false;
+    }
   }
   return true;
 }

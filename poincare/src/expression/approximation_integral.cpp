@@ -229,8 +229,9 @@ Private::DetailedResult<T> Approximator::tanhSinhQuadrature(
          * abs(y * weights) > abs(L1_I0 * tail_tolerance)
          * but L1_IO is abs(pi/2 * f(0)) before the first row and
          * tail_tolerance = tolerance^2 */
-        if (std::abs(weight * leftValue) < OMG::Float::EpsilonLax<T>())
+        if (std::abs(weight * leftValue) < OMG::Float::EpsilonLax<T>()) {
           leftOk = false;
+        }
       }
       if (rightOk) {
         T rightValue = evaluateIntegrandNearBound(
@@ -241,8 +242,9 @@ Private::DetailedResult<T> Approximator::tanhSinhQuadrature(
           maxWjFj = std::max(maxWjFj, std::abs(weight * rightValue));
           result += weight * rightValue;
         }
-        if (std::abs(weight * rightValue) < OMG::Float::EpsilonLax<T>())
+        if (std::abs(weight * rightValue) < OMG::Float::EpsilonLax<T>()) {
           rightOk = false;
+        }
       }
       // computing only odd ticks after the first level
       if (k) {

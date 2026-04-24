@@ -11,7 +11,7 @@ ROOT := .
 
 .PHONY: format
 format: BASE ?= HEAD
-format: CXXFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard --full-name) | grep --extended-regexp "(\.c$$|\.cpp$$|\.h$$|libaxx/include)")
+format: CXXFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard --full-name) | grep --extended-regexp "(\.c$$|\.cpp$$|\.h$$|shared/libaxx/include)")
 format: PYFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard --full-name) | grep --extended-regexp "(\.py$$)")
 format: JSFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard --full-name) | grep --extended-regexp "(\.js$$|\.cjs$$|\.mjs$$|\.ts$$|\.html)")
 format: MAKFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard --full-name) | grep --extended-regexp "(Makefile|\.mak)$$")

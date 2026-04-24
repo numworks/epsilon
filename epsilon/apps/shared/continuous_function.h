@@ -91,6 +91,10 @@ class ContinuousFunction : public Function {
   }
   // If the ContinuousFunction is named ("f(x)=...")
   bool isNamed() const;
+  bool isDerivative() const { return recordData()->derivationOrder() > 0; }
+  uint8_t derivationOrder() const { return recordData()->derivationOrder(); }
+  // Return the parent record for a derivative record
+  Ion::Storage::Record parentRecord() const;
   bool shouldDisplayIntersections() const {
     return !properties().isScatterPlot() && isActive() &&
            properties().canComputeIntersectionsWithFunctionsAlongSameVariable();
@@ -331,6 +335,13 @@ class ContinuousFunction : public Function {
     }
     void setTAuto(bool tAuto) { m_tAuto = tAuto; }
 
+    uint8_t derivationOrder() const { return m_derivationOrder; }
+    void setDerivationOrder(uint8_t order) { m_derivationOrder = order; }
+    const char* parentBaseName() const { return m_parentBaseName; }
+    void setParentBaseName(const char* name) {
+      strlcpy(m_parentBaseName, name, sizeof(m_parentBaseName));
+    }
+
    private:
     PackedRange1D m_domain;
     struct DerivativesOptions {
@@ -343,9 +354,10 @@ class ContinuousFunction : public Function {
     };
     DerivativesOptions m_derivativesOptions;
     bool m_tAuto;
-    /* In the record, after the boolean flag about displayValueFirstDerivative,
-     * there is the expression of the function, directly copied from the pool.
-     */
+    uint8_t m_derivationOrder;
+    char m_parentBaseName[Poincare::SymbolHelper::k_maxNameSize];
+    /* In the record at the end, there is the expression of the function,
+     * directly copied from the pool. */
     // char m_expression[0];
   };
 

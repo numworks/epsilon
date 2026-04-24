@@ -171,6 +171,13 @@ bool ContinuousFunction::isNamed() const {
          recordFullName[0] != k_unnamedRecordFirstChar;
 }
 
+Ion::Storage::Record ContinuousFunction::parentRecord() const {
+  assert(isDerivative());
+  return Ion::Storage::FileSystem::sharedFileSystem
+      ->recordBaseNamedWithExtension(recordData()->parentBaseName(),
+                                     Ion::Storage::functionExtension);
+}
+
 bool ContinuousFunction::isDiscontinuousOnFloatInterval(float minBound,
                                                         float maxBound) const {
   return expressionApproximated().isDiscontinuousOnInterval<float>(minBound,
@@ -526,9 +533,11 @@ ContinuousFunction::RecordDataBuffer::RecordDataBuffer(
     : Shared::Function::RecordDataBuffer(color),
       m_domain(-INFINITY, INFINITY),
       m_derivativesOptions{},
-      m_tAuto(true) {
+      m_tAuto(true),
+      m_derivationOrder(0) {
   m_derivativesOptions.colorFirstDerivative = color;
   m_derivativesOptions.colorSecondDerivative = color;
+  m_parentBaseName[0] = '\0';
 }
 
 Escher::ThemeComponent ContinuousFunction::RecordDataBuffer::color(

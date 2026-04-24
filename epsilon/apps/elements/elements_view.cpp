@@ -1,5 +1,7 @@
 #include "elements_view.h"
 
+#include <escher/theme/color_picker.h>
+
 #include "app.h"
 #include "table_layout.h"
 
@@ -16,12 +18,13 @@ ElementsView::ElementsView()
 void ElementsView::drawRect(KDContext* ctx, KDRect rect) const {
   /* Only draw the whole background when the view appears. This prevents
    * blinking when moving the cursor around. */
+  KDColor backgroundColor = Escher::ColorPicker::Resolve(k_backgroundColor);
   if (m_redrawBackground) {
-    ctx->fillRect(rect, k_backgroundColor);
+    ctx->fillRect(rect, backgroundColor);
     drawLigatures(ctx);
     m_redrawBackground = false;
   } else {
-    ctx->fillRect(SingleElementViewFrame(), k_backgroundColor);
+    ctx->fillRect(SingleElementViewFrame(), backgroundColor);
   }
 
   for (AtomicNumber z = 1; z <= ElementsDataBase::k_numberOfElements; z++) {
@@ -36,7 +39,7 @@ void ElementsView::drawRect(KDContext* ctx, KDRect rect) const {
   AtomicNumber previousSelection = dataSource->previousElement();
   if (ElementsDataBase::IsElement(previousSelection) &&
       previousSelection != selection) {
-    drawElementBorder(previousSelection, k_backgroundColor, ctx, rect);
+    drawElementBorder(previousSelection, backgroundColor, ctx, rect);
   }
   if (ElementsDataBase::IsElement(selection)) {
     drawElementBorder(selection, dataSource->field()->getColors(selection).fg(),
@@ -171,18 +174,20 @@ void ElementsView::drawLigatures(KDContext* ctx) const {
       k_lanthanideTopMargin + 2 * (k_cellMargin + k_cellSize);
   constexpr KDCoordinate yOffset = k_cellSize + k_cellMargin;
 
-  ctx->fillRect(KDRect(x, y, longArm, thickness), k_ligatureColor);
-  ctx->fillRect(KDRect(x + longArm, y, thickness, height), k_ligatureColor);
+  KDColor ligatureColor = Escher::ColorPicker::Resolve(k_ligatureColor);
+
+  ctx->fillRect(KDRect(x, y, longArm, thickness), ligatureColor);
+  ctx->fillRect(KDRect(x + longArm, y, thickness, height), ligatureColor);
   ctx->fillRect(KDRect(x + longArm + thickness, y + height - thickness,
                        shortArm, thickness),
-                k_ligatureColor);
+                ligatureColor);
 
-  ctx->fillRect(KDRect(x, y + yOffset, shortArm, thickness), k_ligatureColor);
+  ctx->fillRect(KDRect(x, y + yOffset, shortArm, thickness), ligatureColor);
   ctx->fillRect(KDRect(x + shortArm, y + yOffset, thickness, height),
-                k_ligatureColor);
+                ligatureColor);
   ctx->fillRect(KDRect(x + shortArm + thickness,
                        y + yOffset + height - thickness, longArm, thickness),
-                k_ligatureColor);
+                ligatureColor);
 }
 
 void ElementsView::dirtyElement(AtomicNumber z) {

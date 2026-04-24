@@ -3,6 +3,7 @@
 #include <escher/bordered.h>
 #include <escher/layout_view.h>
 #include <escher/message_text_view.h>
+#include <escher/theme/components.h>
 #include <escher/view_controller.h>
 
 namespace Escher {
@@ -24,7 +25,8 @@ class ModalViewEmptyController : public ViewController {
     void drawRect(KDContext* ctx, KDRect rect) const override;
 
    private:
-    constexpr static KDColor k_backgroundColor = Palette::WallScreen;
+    constexpr static ThemeComponent k_backgroundColor =
+        ThemeComponent::WallScreen;
     constexpr static KDFont::Size k_font = KDFont::Size::Small;
     constexpr static TextFormat k_format = {
         .style = {.backgroundColor = ThemeComponent::WallScreen,

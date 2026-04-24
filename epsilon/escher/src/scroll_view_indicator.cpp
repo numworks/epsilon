@@ -32,12 +32,14 @@ void ScrollViewHorizontalBar::drawRect(KDContext* ctx, KDRect rect) const {
   }
   KDCoordinate y = (bounds().height() - k_indicatorThickness) / 2;
   KDCoordinate height = k_indicatorThickness;
-  ctx->fillRect(KDRect(k_leftMargin, y, totalLength(), height), k_trackColor);
+  ctx->fillRect(KDRect(k_leftMargin, y, totalLength(), height),
+                ColorPicker::Resolve(k_trackColor));
 
   KDCoordinate x = int(std::round(m_offset * totalLength()));
   KDCoordinate width =
       std::min(int(m_visibleLength * totalLength()), totalLength() - x);
-  ctx->fillRect(KDRect(k_leftMargin + x, y, width, height), k_color);
+  ctx->fillRect(KDRect(k_leftMargin + x, y, width, height),
+                ColorPicker::Resolve(k_color));
 }
 
 ScrollViewVerticalBar::ScrollViewVerticalBar()
@@ -49,12 +51,14 @@ void ScrollViewVerticalBar::drawRect(KDContext* ctx, KDRect rect) const {
   }
   KDCoordinate x = (bounds().width() - k_indicatorThickness) / 2;
   KDCoordinate width = k_indicatorThickness;
-  ctx->fillRect(KDRect(x, m_margins.top(), width, totalLength()), k_trackColor);
+  ctx->fillRect(KDRect(x, m_margins.top(), width, totalLength()),
+                ColorPicker::Resolve(k_trackColor));
 
   KDCoordinate y = int(std::round(m_offset * totalLength()));
   KDCoordinate height =
       std::min(int(m_visibleLength * totalLength()), totalLength() - y);
-  ctx->fillRect(KDRect(x, m_margins.top() + y, width, height), k_color);
+  ctx->fillRect(KDRect(x, m_margins.top() + y, width, height),
+                ColorPicker::Resolve(k_color));
 }
 
 ScrollViewArrow::ScrollViewArrow()
@@ -71,13 +75,14 @@ bool ScrollViewArrow::update(bool visible) {
 void ScrollViewArrow::drawRect(KDContext* ctx, KDRect rect) const {
   KDColor color = ColorPicker::Resolve(m_backgroundColor);
   ctx->fillRect(bounds(), color);
-  ctx->alignAndDrawString(arrow(), KDPointZero, bounds().size(),
-                          {.style = {.glyphColor = k_color,
-                                     .backgroundColor = color,
-                                     .font = m_font},
-                           .horizontalAlignment = KDGlyph::k_alignLeft,
-                           .verticalAlignment = KDGlyph::k_alignCenter},
-                          m_visible);
+  ctx->alignAndDrawString(
+      arrow(), KDPointZero, bounds().size(),
+      {.style = {.glyphColor = ColorPicker::Resolve(k_color),
+                 .backgroundColor = color,
+                 .font = m_font},
+       .horizontalAlignment = KDGlyph::k_alignLeft,
+       .verticalAlignment = KDGlyph::k_alignCenter},
+      m_visible);
 }
 
 #if ESCHER_VIEW_LOGGING

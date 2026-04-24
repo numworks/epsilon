@@ -77,7 +77,7 @@ void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
   // Draw the curve
   CurveDrawing plot(Curve2D(evaluateFunction, &function), nullptr,
                     m_model->xMin(), m_model->xMax(), plotView->pixelWidth(),
-                    k_color);
+                    Escher::ColorPicker::Resolve(k_curveColor));
   plot.draw(plotView, ctx, rect);
 
   // Since exp(-2.5) is generalized as exp(-x), x cannot be negative
@@ -86,7 +86,8 @@ void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
   float y = m_model->ordinate();
 
   // Draw the dot
-  plotView->drawDot(ctx, rect, Dots::Size::Large, {x, y}, k_color);
+  plotView->drawDot(ctx, rect, Dots::Size::Large, {x, y},
+                    Escher::ColorPicker::Resolve(k_curveColor));
 }
 
 template bool

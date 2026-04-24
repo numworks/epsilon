@@ -2,7 +2,6 @@
 
 #include "elements_data_base.h"
 #include "elements_view_delegate.h"
-#include "palette.h"
 
 namespace Elements {
 

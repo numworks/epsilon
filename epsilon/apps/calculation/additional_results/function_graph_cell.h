@@ -1,6 +1,7 @@
 #pragma once
 
 #include <apps/shared/plot_view_policies.h>
+#include <escher/theme/data_colors.h>
 #include <kandinsky/rect.h>
 #include <poincare/preferences.h>
 
@@ -62,7 +63,8 @@ class FunctionGraphPolicy : public Shared::PlotPolicy::WithCurves {
   FunctionModel* m_model;
 
  private:
-  constexpr static KDColor k_color = Escher::Palette::Red;
+  constexpr static Escher::ThemeComponent k_curveColor =
+      Escher::DataColorComponent(0);
 };
 
 class FunctionGraphView

@@ -2,6 +2,7 @@
 
 #include <apps/constant.h>
 #include <apps/shared/plot_view_policies.h>
+#include <escher/theme/components.h>
 #include <omg/directions.h>
 
 #include <algorithm>
@@ -29,7 +30,8 @@ class BoxPlotPolicy {
   }
 
  protected:
-  constexpr static KDColor k_selectedColor = Escher::Palette::YellowDark;
+  constexpr static Escher::ThemeComponent k_selectedColor =
+      Escher::ThemeComponent::TokenYellow;
 
   constexpr static std::array<KDCoordinate, Store::k_numberOfSeries>
       k_boxesHeights = {40, 40, 27, 18, 15, 11};

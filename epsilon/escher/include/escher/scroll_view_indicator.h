@@ -1,7 +1,6 @@
 #pragma once
 
 #include <escher/metric.h>
-#include <escher/palette.h>
 #include <escher/theme/components.h>
 #include <escher/view.h>
 #include <kandinsky/margins.h>
@@ -10,7 +9,7 @@ namespace Escher {
 
 class ScrollViewIndicator : public View {
  protected:
-  constexpr static KDColor k_color = Palette::GrayDark;
+  constexpr static ThemeComponent k_color = ThemeComponent::TokenGrayDark;
 };
 
 class ScrollViewBar : public ScrollViewIndicator {
@@ -23,7 +22,8 @@ class ScrollViewBar : public ScrollViewIndicator {
  protected:
   constexpr static KDCoordinate k_indicatorThickness =
       Metric::ScrollViewBarThickness;
-  constexpr static KDColor k_trackColor = Palette::GrayMiddle;
+  constexpr static ThemeComponent k_trackColor =
+      ThemeComponent::TokenGrayMiddle;
 #if ESCHER_VIEW_LOGGING
   const char* className() const override;
   void logAttributes(std::ostream& os) const override;

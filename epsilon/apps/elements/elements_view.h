@@ -1,6 +1,7 @@
 #pragma once
 
 #include <escher/message_text_view.h>
+#include <escher/theme/components.h>
 #include <escher/view.h>
 
 #include "elements_view_data_source.h"
@@ -26,8 +27,10 @@ class ElementsView : public Escher::View {
   constexpr static KDCoordinate k_cellMargin = 1;
   constexpr static KDCoordinate k_zoomedViewMargin = 11;
   constexpr static KDCoordinate k_lanthanideTopMargin = 5;
-  constexpr static KDColor k_backgroundColor = Escher::Palette::White;
-  constexpr static KDColor k_ligatureColor = Escher::Palette::GrayMiddle;
+  constexpr static Escher::ThemeComponent k_backgroundColor =
+      Escher::ThemeComponent::BackgroundWhite;
+  constexpr static Escher::ThemeComponent k_ligatureColor =
+      Escher::ThemeComponent::TokenGrayMiddle;
 
   /* rectForCell returns the rect for the colored part of the cell, without
    * its border. This avoid redrawing cells just because their border overlaps

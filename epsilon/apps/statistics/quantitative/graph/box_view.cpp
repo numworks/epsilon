@@ -72,7 +72,8 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
   // Draw the selected calculation afterward, preventing it being overwritten.
   if (plotView->hasFocus()) {
     drawCalculation(plotView, ctx, rect, m_dataViewController->selectedIndex(),
-                    lowBound, upBound, segmentOrd, k_selectedColor, true);
+                    lowBound, upBound, segmentOrd,
+                    ColorPicker::Resolve(k_selectedColor), true);
   }
 }
 
@@ -137,10 +138,10 @@ void BoxPlotPolicy::drawChevronSelection(const AbstractPlotView* plotView,
                                          KDContext* ctx, KDRect rect,
                                          float calculation, float lowBound,
                                          float upBound) const {
-  drawChevron(plotView, ctx, rect, calculation, lowBound, k_selectedColor,
-              OMG::Direction::Up());
-  drawChevron(plotView, ctx, rect, calculation, upBound, k_selectedColor,
-              OMG::Direction::Down());
+  drawChevron(plotView, ctx, rect, calculation, lowBound,
+              ColorPicker::Resolve(k_selectedColor), OMG::Direction::Up());
+  drawChevron(plotView, ctx, rect, calculation, upBound,
+              ColorPicker::Resolve(k_selectedColor), OMG::Direction::Down());
 }
 
 void BoxPlotPolicy::drawChevron(const AbstractPlotView* plotView,

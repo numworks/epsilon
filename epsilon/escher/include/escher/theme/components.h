@@ -24,6 +24,9 @@ namespace Escher {
   X(TextDefault)             \
   X(TextTables)              \
   X(TextBanner)              \
+  X(TextSelect)              \
+  X(TextSelectGrayDark)      \
+  X(TextSelectGrayVeryDark)  \
   X(TextGrayDark)            \
   X(TextGrayDarkMiddle)      \
   X(TextGrayVeryDark)        \

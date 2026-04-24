@@ -1,6 +1,6 @@
 # Dockerfile used by the CI
 
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 ARG EMSDK_VERSION
 

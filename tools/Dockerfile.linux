@@ -1,6 +1,6 @@
 # Dockerfile used by the CI
 
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 WORKDIR /runner
 
@@ -13,7 +13,7 @@ COPY tools/setup.sh tools/setup.sh
 
 RUN tools/setup.sh --ci --only-simulator
 
-RUN apt-get install clang-19 libc++-19-dev libc++abi-19-dev elfutils && ln -s /usr/bin/clang-19 /usr/local/bin/clang && ln -s /usr/bin/clang++-19 /usr/local/bin/clang++
+RUN apt-get install clang-17 libc++-17-dev libc++abi-17-dev elfutils && ln -s /usr/bin/clang-17 /usr/local/bin/clang && ln -s /usr/bin/clang++-17 /usr/local/bin/clang++
 
 ENV PYTHON=/runner/.venv/bin/python
 

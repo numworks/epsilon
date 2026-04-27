@@ -345,4 +345,16 @@ void GlobalStore::StoreParametricComponentsOfRecord(
   storeParametricComponent(buffer, length, bufferSize, e, false);
 }
 
+void GlobalStore::DeleteDerivativesOfRecord(Ion::Storage::Record record) {
+  int n = s_continuousFunctionStore->numberOfModels();
+  for (int i = 0; i < n; i++) {
+    Ion::Storage::Record r = s_continuousFunctionStore->recordAtIndex(i);
+    OMG::ExpiringPointer<ContinuousFunction> f =
+        s_continuousFunctionStore->modelForRecord(r);
+    if (f->isDerivative() && f->parentRecord() == record) {
+      r.destroy();
+    }
+  }
+}
+
 }  // namespace Shared

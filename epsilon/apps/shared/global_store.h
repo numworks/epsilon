@@ -50,6 +50,7 @@ class GlobalStore final : public Poincare::SymbolStoreInterface {
                                                      size_t bufferSize);
   static void DeleteParametricComponentsOfRecord(Ion::Storage::Record record);
   static void StoreParametricComponentsOfRecord(Ion::Storage::Record record);
+  static void DeleteDerivativesOfRecord(Ion::Storage::Record record);
 
   bool setExpressionForUserSymbol(
       const Poincare::Internal::Tree* expression,

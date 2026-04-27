@@ -93,8 +93,15 @@ class ContinuousFunction : public Function {
   bool isNamed() const;
   bool isDerivative() const { return recordData()->derivationOrder() > 0; }
   uint8_t derivationOrder() const { return recordData()->derivationOrder(); }
+  void setDerivationOrder(uint8_t order) {
+    recordData()->setDerivationOrder(order);
+  }
+  void setParentBaseName(const char* name) {
+    recordData()->setParentBaseName(name);
+  }
   // Return the parent record for a derivative record
   Ion::Storage::Record parentRecord() const;
+
   bool shouldDisplayIntersections() const {
     return !properties().isScatterPlot() && isActive() &&
            properties().canComputeIntersectionsWithFunctionsAlongSameVariable();

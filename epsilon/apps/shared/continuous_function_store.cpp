@@ -99,6 +99,28 @@ ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
   return ContinuousFunction::NewModel(error, name, colorForNewModel());
 }
 
+Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addDerivativeModel(
+    const Ion::Storage::Record parentRecord, uint8_t order) {
+  assert(order == 1 || order == 2);
+  constexpr size_t bufferSize = ContinuousFunction::k_maxDefaultNameSize;
+  char name[bufferSize];
+  size_t length = UTF8Helper::WriteCodePoint(
+      name, bufferSize, ContinuousFunction::k_unnamedRecordFirstChar);
+  Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
+      name, length, bufferSize, modelExtension());
+  ErrorStatus error;
+  ContinuousFunction f = newModel(name, &error);
+  if (error != ErrorStatus::None) {
+    return error;
+  }
+  constexpr size_t nameBufferSize = Poincare::SymbolHelper::k_maxNameSize;
+  char parentName[nameBufferSize];
+  ContinuousFunction(parentRecord).name(parentName, nameBufferSize);
+  f.setDerivationOrder(order);
+  f.setParentBaseName(parentName);
+  return ErrorStatus::None;
+}
+
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
   constexpr size_t bufferSize = ContinuousFunction::k_maxDefaultNameSize;
   char name[bufferSize];

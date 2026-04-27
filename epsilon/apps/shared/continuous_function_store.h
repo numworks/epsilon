@@ -85,6 +85,8 @@ class ContinuousFunctionStore : public FunctionStore {
   ContinuousFunction newModel(const char* name,
                               Ion::Storage::Record::ErrorStatus* error);
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
+  Ion::Storage::Record::ErrorStatus addDerivativeModel(
+      const Ion::Storage::Record parentRecord, uint8_t order);
   int maxNumberOfModels() const override { return k_maxNumberOfModels; }
 
  private:

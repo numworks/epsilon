@@ -39,8 +39,10 @@ std::complex<T> ComputeComplexPower(const std::complex<T> c,
   constexpr T one = static_cast<T>(1.0);
   constexpr T minusOne = static_cast<T>(-1.0);
 
+  bool dIsRealInteger = d.imag() == zero && std::round(d.real()) == d.real();
+
   if (c.real() == zero && c.imag() != zero && c.imag() != one &&
-      d.imag() == zero && std::round(d.real()) == d.real()) {
+      dIsRealInteger) {
     /* (i*c)^d = i^d*c^d with d a real integer
      * This special case prevents inaccurate imaginary parts such as
      * (i*14.6789)^(2,0) = (-215.47 + i*2.63875e-14) */
@@ -62,7 +64,7 @@ std::complex<T> ComputeComplexPower(const std::complex<T> c,
 
   std::complex<T> result;
   if (c.imag() == zero && d.imag() == zero && c.real() != zero &&
-      (c.real() > zero || std::round(d.real()) == d.real())) {
+      (c.real() > zero || dIsRealInteger)) {
     /* pow: (R+, R) -> R+ (2^1.3 ~ 2.46)
      * pow: (R-, N) -> R+ ((-2)^3 = -8)
      * In these cases we rather use std::pow(double, double) because:
@@ -88,7 +90,7 @@ std::complex<T> ComputeComplexPower(const std::complex<T> c,
    * cartesian complex format. The issue is still visible when x is so small
    * that result is 0, which is plotted even though it is "complex". */
   if (complexFormat != ComplexFormat::Real && c.real() < zero &&
-      std::round(d.real()) != d.real()) {
+      !dIsRealInteger) {
     return result;
   }
   if (complexFormat == ComplexFormat::Real && result.imag() != zero) {

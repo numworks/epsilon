@@ -18,8 +18,9 @@ std::complex<T> ComputeComplexPower(const std::complex<T> c,
                                     ComplexFormat complexFormat) {
   constexpr T zero = static_cast<T>(0.0);
   constexpr T one = static_cast<T>(1.0);
-  if (c.real() == zero && c.imag() != zero && c.imag() != one) {
-    /* (i*c)^d = i^d*c^d
+  if (c.real() == zero && c.imag() != zero && c.imag() != one &&
+      d.imag() == zero && std::round(d.real()) == d.real()) {
+    /* (i*c)^d = i^d*c^d with d a real integer
      * This special case prevents inaccurate imaginary parts such as
      * (i*14.6789)^(2,0) = (-215.47 + i*2.63875e-14) */
     return ComputeComplexPower<T>(c.imag(), d, complexFormat) *

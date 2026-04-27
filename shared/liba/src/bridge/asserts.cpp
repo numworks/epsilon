@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 
 #include <cstdlib>
 #include <functional>
@@ -6,10 +7,12 @@
 
 /* Hook called from __assert_fail before exiting. The fuzzer_triage flavor
  * provides a strong override that prints a CSV line to stderr; otherwise this
- * weak no-op is used. */
-extern "C" [[gnu::weak]] void fuzzer_on_assert(const char* /*assertion*/,
-                                               const char* /*file*/,
-                                               unsigned int /*line*/) {}
+ * default replicates glibc's assertion message. */
+extern "C" [[gnu::weak]] void fuzzer_on_assert(const char* assertion,
+                                               const char* file,
+                                               unsigned int line) {
+  fprintf(stderr, "Assertion `%s' failed at %s:%u\n", assertion, file, line);
+}
 
 [[gnu::noinline, noreturn]] static void assert_fail_impl(const char* assertion,
                                                          const char* file,

@@ -864,6 +864,20 @@ QUIZ_CASE(sequence_evaluation) {
     check_sequences_defined_by(results, sequences);
   }
   sequences.reset();
+
+  // f(x) = tanh(x) - x^2 + 4
+  // u(n+1) = u(n) - f( u(n) ) / f'( u(n) )
+  {
+    PoincareTest::store("tanh(x)-x^2+4→f(x)", GlobalContextAccessor::Store());
+    double results[SequenceStore::k_maxNumberOfSequences][10] = {
+        {1.0, 3.380717133289028, 2.428854298132809, 2.239351790811816,
+         2.230976668933791, 2.230960095553654, 2.230960095488724,
+         2.230960095488724, 2.230960095488724, 2.230960095488724}};
+    sequences.types[0] = Sequence::Type::SingleRecurrence;
+    sequences.definitions[0] = "u(n)-f(u(n))/f'(u(n))";
+    check_sequences_defined_by(results, sequences);
+  }
+  sequences.reset();
 }
 
 QUIZ_CASE(sequence_store) {

@@ -169,7 +169,8 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   EquationStore* store = m_store;
 
-  bool forbidExactSolution = ExamModeManager::ExamMode().forbidExactResults();
+  bool forbidExactSolution =
+      ExamModeManager::ExamMode().forbidExactResultsInSolverApp();
 
   int nEquations = store->numberOfDefinedModels();
   int i = 0;

@@ -22,6 +22,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(!mode.forbidExactResults());
+      quiz_assert(!mode.forbidExactResultsInSolverApp());
       quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::Standard:
@@ -39,6 +40,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(!mode.forbidExactResults());
+      quiz_assert(!mode.forbidExactResultsInSolverApp());
       quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::Dutch:
@@ -56,6 +58,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(mode.forbidUnits());
       quiz_assert(mode.forbidAdditionalResults());
       quiz_assert(mode.forbidExactResults());
+      quiz_assert(mode.forbidExactResultsInSolverApp());
       quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::IBTest:
@@ -73,6 +76,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(mode.forbidUnits());
       quiz_assert(mode.forbidAdditionalResults());
       quiz_assert(!mode.forbidExactResults());
+      quiz_assert(!mode.forbidExactResultsInSolverApp());
       quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::Portuguese:
@@ -90,6 +94,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(!mode.forbidExactResults());
+      quiz_assert(!mode.forbidExactResultsInSolverApp());
       quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::English:
@@ -107,6 +112,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(!mode.forbidExactResults());
+      quiz_assert(!mode.forbidExactResultsInSolverApp());
       quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::STAAR:
@@ -124,6 +130,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(!mode.forbidExactResults());
+      quiz_assert(!mode.forbidExactResultsInSolverApp());
       quiz_assert(mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::Pennsylvania:
@@ -141,6 +148,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(mode.forbidExactResults());
+      quiz_assert(mode.forbidExactResultsInSolverApp());
       quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::SouthCarolina:
@@ -159,6 +167,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
       quiz_assert(mode.forbidExactResults());
+      quiz_assert(mode.forbidExactResultsInSolverApp());
       quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     case ExamMode::Ruleset::SAT:
@@ -175,7 +184,8 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(!mode.forbidSum());
       quiz_assert(!mode.forbidUnits());
       quiz_assert(!mode.forbidAdditionalResults());
-      quiz_assert(mode.forbidExactResults());
+      quiz_assert(!mode.forbidExactResults());
+      quiz_assert(mode.forbidExactResultsInSolverApp());
       quiz_assert(!mode.forbidSimultaneousEquationSolver());
       break;
     default:
@@ -204,6 +214,7 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidUnits());
     quiz_assert(!mode.forbidAdditionalResults());
     quiz_assert(!mode.forbidExactResults());
+    quiz_assert(!mode.forbidExactResultsInSolverApp());
   }
   {
     ExamMode mode(ExamMode::Ruleset::PressToTest,
@@ -223,6 +234,7 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidUnits());
     quiz_assert(!mode.forbidAdditionalResults());
     quiz_assert(!mode.forbidExactResults());
+    quiz_assert(!mode.forbidExactResultsInSolverApp());
   }
   {
     ExamMode mode(
@@ -242,6 +254,7 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidUnits());
     quiz_assert(!mode.forbidAdditionalResults());
     quiz_assert(!mode.forbidExactResults());
+    quiz_assert(!mode.forbidExactResultsInSolverApp());
   }
   {
     ExamMode mode(
@@ -261,6 +274,7 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidUnits());
     quiz_assert(!mode.forbidAdditionalResults());
     quiz_assert(!mode.forbidExactResults());
+    quiz_assert(!mode.forbidExactResultsInSolverApp());
   }
   {
     ExamMode mode(
@@ -280,6 +294,7 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidUnits());
     quiz_assert(!mode.forbidAdditionalResults());
     quiz_assert(!mode.forbidExactResults());
+    quiz_assert(!mode.forbidExactResultsInSolverApp());
   }
   {
     ExamMode mode(
@@ -299,6 +314,7 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidUnits());
     quiz_assert(!mode.forbidAdditionalResults());
     quiz_assert(!mode.forbidExactResults());
+    quiz_assert(!mode.forbidExactResultsInSolverApp());
   }
   {
     ExamMode mode(
@@ -318,6 +334,7 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidUnits());
     quiz_assert(!mode.forbidAdditionalResults());
     quiz_assert(!mode.forbidExactResults());
+    quiz_assert(!mode.forbidExactResultsInSolverApp());
   }
   {
     ExamMode mode(ExamMode::Ruleset::PressToTest,
@@ -336,6 +353,7 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidUnits());
     quiz_assert(!mode.forbidAdditionalResults());
     quiz_assert(!mode.forbidExactResults());
+    quiz_assert(!mode.forbidExactResultsInSolverApp());
   }
   {
     ExamMode mode(
@@ -355,6 +373,7 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidUnits());
     quiz_assert(!mode.forbidAdditionalResults());
     quiz_assert(mode.forbidExactResults());
+    quiz_assert(mode.forbidExactResultsInSolverApp());
   }
   {
     ExamMode mode(
@@ -374,6 +393,7 @@ void assert_press_to_test() {
     quiz_assert(!mode.forbidUnits());
     quiz_assert(!mode.forbidAdditionalResults());
     quiz_assert(!mode.forbidExactResults());
+    quiz_assert(!mode.forbidExactResultsInSolverApp());
   }
 }
 

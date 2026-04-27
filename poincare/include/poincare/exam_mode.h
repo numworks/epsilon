@@ -122,7 +122,10 @@ class __attribute__((packed)) ExamMode : public Ion::ExamMode::Configuration {
     return flags().getFlag(Flags::ForbidExactResults) ||
            ruleset() == Ruleset::Dutch || ruleset() == Ruleset::Pennsylvania ||
            ruleset() == Ruleset::SouthCarolina ||
-           ruleset() == Ruleset::NorthCarolina || ruleset() == Ruleset::SAT;
+           ruleset() == Ruleset::NorthCarolina;
+  }
+  bool forbidExactResultsInSolverApp() const {
+    return forbidExactResults() || ruleset() == Ruleset::SAT;
   }
   bool forbidSimultaneousEquationSolver() const {
     return ruleset() == Ruleset::STAAR;

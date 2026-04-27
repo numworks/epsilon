@@ -1,12 +1,13 @@
 #pragma once
 
 #include <poincare/src/expression/order.h>
+#include <stdint.h>
 
 namespace Poincare::Internal {
 
 namespace NAry {
 
-constexpr static size_t k_maxNumberOfChildren = 255;
+constexpr static size_t k_maxNumberOfChildren = UINT8_MAX;
 
 void AddChildAtIndex(Tree* nary, Tree* child, int index);
 inline void AddChild(Tree* nary, Tree* child) {

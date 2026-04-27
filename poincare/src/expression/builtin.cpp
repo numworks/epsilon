@@ -1,5 +1,6 @@
 #include "builtin.h"
 
+#include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <poincare/src/memory/type_block.h>
@@ -233,7 +234,7 @@ int Builtin::maxNumberOfParameters() const {
     case Type::GCD:
     case Type::LCM:
     case Type::Piecewise:
-      return UINT8_MAX;
+      return NAry::k_maxNumberOfChildren;
     default:
       /* For types such as Round, TypeBlock::NumberOfChildren gives the max
        * number of parameters. */

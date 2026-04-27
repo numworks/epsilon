@@ -25,14 +25,14 @@ extern "C" [[gnu::weak]] void fuzzer_on_assert(const char* /*assertion*/,
 
 #if defined(__linux__)
 // Part of the glibc ABI, called by the assert macro
-[[noreturn]] void __assert_fail(const char* assertion, const char* file,
-                                unsigned int line, const char* function) {
+void __assert_fail(const char* assertion, const char* file, unsigned int line,
+                   const char* function) {
   assert_fail_impl(assertion, file, line);
 }
 #elif defined(__APPLE__)
 // Part of the macOS ABI, called by the assert macro
-[[noreturn]] void __assert_rtn(const char* function, const char* file, int line,
-                               const char* assertion) {
+void __assert_rtn(const char* function, const char* file, int line,
+                  const char* assertion) {
   assert_fail_impl(assertion, file, static_cast<unsigned int>(line));
 }
 #else

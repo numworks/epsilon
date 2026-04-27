@@ -163,7 +163,10 @@ $(call all_objects_for,$(PATH_liba)/src/external/openbsd/%.c): CFLAGS += -w
 $(call all_objects_for,$(addprefix $(PATH_liba)/src/external/openbsd/,e_expf.c s_expm1f.c e_coshf.c e_powf.c)): CFLAGS += -Dvolatile=
 
 $(call import_module,liba_bridge,$(PATH_liba)/src/bridge)
-$(call create_module,liba_bridge,1,bridge.c)
+$(call create_module,liba_bridge,1, \
+  bridge.c \
+  asserts.cpp \
+)
 
 SFLAGS_liba_bridge := -I$(PATH_liba_bridge)
 

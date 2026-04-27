@@ -51,7 +51,8 @@ class DistributionBuiltin : public Builtin {
   Distribution::Type distribution() const { return m_distribution; }
   DistributionMethod::Type method() const { return m_method; }
   Tree* pushNode(int numberOfChildren) const override;
-  bool checkNumberOfParameters(int n) const override;
+  int maxNumberOfParameters() const override;
+  int minNumberOfParameters() const override { return maxNumberOfParameters(); }
 
  private:
   Distribution::Type m_distribution;
@@ -227,10 +228,21 @@ const char* Builtin::GetCustomIdentifierMainAlias(LayoutSpan name) {
   return nullptr;
 }
 
-bool Builtin::checkNumberOfParameters(int n) const {
+int Builtin::maxNumberOfParameters() const {
   switch (m_type) {
-    case Type::Diff:
-      return 3 <= n && n <= 4;
+    case Type::GCD:
+    case Type::LCM:
+    case Type::Piecewise:
+      return UINT8_MAX;
+    default:
+      /* For types such as Round, TypeBlock::NumberOfChildren gives the max
+       * number of parameters. */
+      return TypeBlock::NumberOfChildren(m_type);
+  }
+}
+
+int Builtin::minNumberOfParameters() const {
+  switch (m_type) {
     case Type::Round:
     case Type::Mean:
     case Type::Variance:
@@ -238,20 +250,21 @@ bool Builtin::checkNumberOfParameters(int n) const {
     case Type::SampleStdDev:
     case Type::Median:
     case Type::RandInt:
-      return 1 <= n && n <= 2;
+    case Type::Piecewise:
+      return 1;
     case Type::GCD:
     case Type::LCM:
-      return 2 <= n && n <= UINT8_MAX;
-    case Type::Piecewise:
-      return 1 <= n && n <= UINT8_MAX;
+      return 2;
+    case Type::Diff:
+      return 3;
     default:
-      return n == TypeBlock::NumberOfChildren(m_type);
+      return TypeBlock::NumberOfChildren(m_type);
   }
 }
 
-bool DistributionBuiltin::checkNumberOfParameters(int n) const {
-  return n == Distribution::NumberOfParameters(m_distribution) +
-                  DistributionMethod::NumberOfParameters(m_method);
+int DistributionBuiltin::maxNumberOfParameters() const {
+  return Distribution::NumberOfParameters(m_distribution) +
+         DistributionMethod::NumberOfParameters(m_method);
 }
 
 }  // namespace Poincare::Internal

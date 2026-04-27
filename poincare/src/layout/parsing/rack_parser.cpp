@@ -1040,8 +1040,11 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
 #endif
   assert(builtin);
 
-  if (!builtin->checkNumberOfParameters(numberOfParameters)) {
-    // Too few or too many parameters provided.
+  // Check the number of parameters provided.
+  if (numberOfParameters > builtin->maxNumberOfParameters()) {
+    RaiseParseFail(SyntaxError::TooFewOrTooManyParameters);
+  }
+  if (numberOfParameters < builtin->minNumberOfParameters()) {
     RaiseParseFail(SyntaxError::TooFewOrTooManyParameters);
   }
 

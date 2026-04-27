@@ -21,7 +21,8 @@ class Builtin {
   constexpr const Aliases* aliases() const { return &m_aliases; }
   virtual bool has2DLayout() const { return false; }
   virtual Tree* pushNode(int numberOfChildren) const;
-  virtual bool checkNumberOfParameters(int n) const;
+  virtual int maxNumberOfParameters() const;
+  virtual int minNumberOfParameters() const;
   static bool IsReservedFunction(const Tree* e) {
     return GetReservedFunction(e) != nullptr;
   }
@@ -96,7 +97,8 @@ class BuiltinWithLayout : public Builtin {
 
 class BuiltinAns : public Builtin {
   using Builtin::Builtin;
-  bool checkNumberOfParameters(int n) const override { return n == 0; }
+  int maxNumberOfParameters() const override { return 0; }
+  int minNumberOfParameters() const override { return 0; }
   Tree* pushNode(int numberOfChildren) const override;
 };
 

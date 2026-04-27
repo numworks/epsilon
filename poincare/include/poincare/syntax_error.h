@@ -15,7 +15,7 @@ enum class SyntaxError : uint8_t {
   SomethingWasExpected = 4,
   IncompleteExpression = 5,
   InvalidParenthesis = 6,
-  // Note: 7 is unused and available
+  TooManyParameters = 7,
   ExponentTooBig = 8,
   ForbiddenImplicitMultiplication = 9,
   CannotParsePercentOperator = 10,
@@ -36,7 +36,7 @@ enum class SyntaxError : uint8_t {
   LogBaseMustHaveOneParameter = 25,
   FunctionHasNoInverse = 26,
   FunctionCannotBePowered = 27,
-  TooFewOrTooManyParameters = 28,
+  TooFewParameters = 28,
   VariableNameTooLong1 = 29,
   VariableNameTooLong2 = 30,
   MissingRightParenthesis2 = 31,

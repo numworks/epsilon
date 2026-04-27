@@ -166,6 +166,7 @@ $(call import_module,liba_bridge,$(PATH_liba)/src/bridge)
 $(call create_module,liba_bridge,1, \
   bridge.c \
   asserts.cpp \
+  fuzzer_triage.cpp:+fuzzer_triage \
 )
 
 SFLAGS_liba_bridge := -I$(PATH_liba_bridge)

@@ -4,9 +4,17 @@
 #include <functional>
 #include <string>
 
+/* Hook called from __assert_fail before exiting. The fuzzer_triage flavor
+ * provides a strong override that prints a CSV line to stderr; otherwise this
+ * weak no-op is used. */
+extern "C" [[gnu::weak]] void fuzzer_on_assert(const char* /*assertion*/,
+                                               const char* /*file*/,
+                                               unsigned int /*line*/) {}
+
 [[gnu::noinline, noreturn]] static void assert_fail_impl(const char* assertion,
                                                          const char* file,
                                                          unsigned int line) {
+  fuzzer_on_assert(assertion, file, line);
   /* afl-tmin distinguishes crashes by exit code. Hash the file:line couple to
    * derive a stable return code per assert. The code is between 1 and 127, so
    * it never collides with the 128+sig codes used for signal-induced crashes.

@@ -24,7 +24,7 @@ class TitleBarView : public Escher::View {
   void reload();
 
   constexpr static Escher::ThemeComponent k_backgroundColor =
-      Escher::ThemeComponent::TokenYellow;
+      Escher::ThemeComponent::BannerYellow;
 
  private:
   constexpr static size_t k_preferenceTextSize = sizeof("tech/rad");

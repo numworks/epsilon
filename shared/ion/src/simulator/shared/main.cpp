@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <ion.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 #if ION_LOG_EVENTS_NAME
@@ -82,6 +81,10 @@ static inline int load_eadk_external_data(const char* path) {
 
 using namespace Ion::Simulator;
 
+#ifdef __AFL_HAVE_MANUAL_CONTROL
+__AFL_FUZZ_INIT();
+#endif
+
 int main(int argc, char* argv[]) {
   ArgumentsParser parser(argc, argv);
   Arguments args = parser.parse();
@@ -149,7 +152,9 @@ int main(int argc, char* argv[]) {
       return EXIT_FAILURE;
     }
     assert(Journal::replayJournal());
+#ifndef __AFL_HAVE_MANUAL_CONTROL
     StateFile::load(args.stateFile, args.headlessStateFile);
+#endif
     if (args.language) {
       // Override any language setting if there is
       fprintf(stderr,
@@ -260,7 +265,27 @@ int main(int argc, char* argv[]) {
     if (args.theme) {
       parser.push(ArgumentNames::theme, args.theme);
     }
-    ion_main(parser.argc(), parser.argv());
+#if __AFL_HAVE_MANUAL_CONTROL
+    /* AFL++ deferred forkserver. __AFL_INIT() marks the fork
+     * point. Everything above it run once per process and the
+     * forkserver snapshots after it. Inputs arrive via shared memory
+     * instead of stdin, skipping another process cost.
+     * TODO: move it after GlobalBox init (Ion::Init etc)
+     */
+    __AFL_INIT();
+    unsigned char* fuzzBuf = __AFL_FUZZ_TESTCASE_BUF;
+    /* TODO: Use a value greater than 1 to enable persistent
+     * fuzzing. This requires resetting the state between scenarios
+     * which may be hard. */
+    while (__AFL_LOOP(1)) {
+      int fuzzLen = __AFL_FUZZ_TESTCASE_LEN;
+      StateFile::loadMemory(reinterpret_cast<const char*>(fuzzBuf), fuzzLen,
+                            args.headlessStateFile);
+      ion_main(parser.argc(), parser.argv());
+    }
+#else
+  ion_main(parser.argc(), parser.argv());
+#endif
 #if ION_SIMULATOR_EXTERNAL_APP
   }
 #endif

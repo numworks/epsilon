@@ -12,6 +12,25 @@ template <typename T>
 static std::complex<T> ComputeNotPrincipalRealRootOfRationalPow(
     const std::complex<T> c, T p, T q);
 
+/* Returns true for (real, real) pow cases where std::pow gives misleading
+ * results and we prefer to return NaN instead. */
+template <typename T>
+static bool IsRealPowUndefined(T base, T exp) {
+  constexpr T zero = static_cast<T>(0.0);
+  constexpr T one = static_cast<T>(1.0);
+  /* 0^x with x <= 0: std::pow(0, x) might raise a domain or pole error, and
+   * std::pow(0, 0) is implementation-defined. */
+  if (base == zero && exp <= zero) {
+    return true;
+  }
+  /* std::pow(±Inf, 0) = 1, but we want undef. */
+  if (std::fabs(base) == INFINITY && exp == zero) {
+    return true;
+  }
+  /* std::pow(±1, ±Inf) = 1, but we want undef. */
+  return std::fabs(base) == one && std::fabs(exp) == INFINITY;
+}
+
 template <typename T>
 std::complex<T> ComputeComplexPower(const std::complex<T> c,
                                     const std::complex<T> d,
@@ -36,19 +55,8 @@ std::complex<T> ComputeComplexPower(const std::complex<T> c,
      * complex infinity, which we don't handle. We decide to return undef. */
     return NAN;
   }
-  if ((c.imag() == zero && d.imag() == zero) &&
-      ((c.real() == zero && d.real() <= zero)
-       /* 0^x with x <= 0 should return undef because std::pow(0, x) might raise
-        * a domain error or a pole error in those cases. Note that this error
-        * may or may not be raised depending on the implementation. The result
-        * of std::pow(0, 0) is also implementation-defined. So it is safer to
-        * return a NAN here. */
-       || (std::fabs(c.real()) == INFINITY && d.real() == zero)
-       /* std::pow(±Inf,0) = 1 but we want undef. */
-       || (std::fabs(c.real()) == static_cast<T>(1.0) &&
-           std::fabs(d.real()) == INFINITY)
-       /* std::pow(±1,±Inf) = 1 but we want undef. */
-       )) {
+  if (c.imag() == zero && d.imag() == zero &&
+      IsRealPowUndefined(c.real(), d.real())) {
     return NAN;
   }
 

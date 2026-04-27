@@ -24,7 +24,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin({22π/6,11π/6})", "{-√(3)/2,-1/2}");
   // test π/5 in all quadrants
   simplifies_to("cos({6π/5,-33π/5,18π/5,-π/5})",
-                "{-(1+√(5))/4,(1-√(5))/4,(-1+√(5))/4,(1+√(5))/4}");
+                "{(-1-√(5))/4,(1-√(5))/4,(-1+√(5))/4,(1+√(5))/4}");
   simplifies_to("sin({π/5,2π/5,3π/5,-6π/5})",
                 "{√((5-√(5))/8),√((5+√(5))/8),√((5+√(5))/8),√((5-√(5))/8)}");
   // test π/4 in all quadrants
@@ -288,7 +288,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin(1311π/6)", "1");
   simplifies_to("sin(-π17/8)", "-√(2-√(2))/2");
   simplifies_to("sin(41π/6)", "1/2");
-  simplifies_to("sin(-3π/10)", "-(1+√(5))/4");
+  simplifies_to("sin(-3π/10)", "(-1-√(5))/4");
   simplifies_to("sin(π/4+1000π)", "√(2)/2");
   simplifies_to("sin(-π/3)", "-√(3)/2");
   simplifies_to("sin(17π/5)", "-√((5+√(5))/8)");

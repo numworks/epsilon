@@ -134,6 +134,11 @@ QUIZ_CASE(solver_quadratic) {
   assert_solves_to("i/5×(x-3)^2=0", {"x=3", "delta=0"});
   assert_solves_to("2i×(x-3i)^2=0", {"x=3×i", "delta=0"});
 
+  assert_solves_to("x^2+(1+π)x+π/2=0", {"x=(-1-π-√(π^2+1))/2",
+                                        "x=(-1-π+√(π^2+1))/2", "delta=π^2+1"});
+  assert_solves_to("x^2+x+1=2", {"x=(-1-√(5))/2", "x=(-1+√(5))/2", "delta=5"});
+  assert_solves_to("-x^2+3x+1=0",
+                   {"x=(3-√(13))/2", "x=(3+√(13))/2", "delta=13"});
   assert_solves_to("2×x^2-4×x+2=0", {"x=1", "delta=0"});
   assert_solves_to("2×x^2-4×x+4=3", {"x=1-√(2)/2", "x=1+√(2)/2", "delta=8"});
   assert_solves_to("3×x^2-4x+4=2",

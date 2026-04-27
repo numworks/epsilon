@@ -2320,6 +2320,7 @@ template float Private::Approximator::privateToFloat(const Tree*);
 template float Private::Approximator::toLocalContext(const Tree*, float);
 template std::complex<float> Private::Approximator::privateToComplexRecursive(
     const Tree* e);
+template Tree* Private::Approximator::toComplexTree<float>(const Tree*);
 #endif
 template int IndexOfActivePiecewiseBranchAt(const Tree*, float);
 
@@ -2327,6 +2328,7 @@ template double Private::Approximator::privateToFloat(const Tree*);
 template double Private::Approximator::toLocalContext(const Tree*, double);
 template std::complex<double> Private::Approximator::privateToComplexRecursive(
     const Tree* e);
+template Tree* Private::Approximator::toComplexTree<double>(const Tree*);
 template int IndexOfActivePiecewiseBranchAt(const Tree*, double);
 
 }  // namespace Poincare::Internal::Approximation

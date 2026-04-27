@@ -83,6 +83,18 @@ std::complex<T> ComputeComplexPower(const std::complex<T> c,
     return result;
   }
 
+  /* Principal root of a negative base and non-integer index is always complex.
+   * Neglecting it could cause visual artefacts when plotting x^x with a
+   * cartesian complex format. The issue is still visible when x is so small
+   * that result is 0, which is plotted even though it is "complex". */
+  if (complexFormat != ComplexFormat::Real && c.real() < zero &&
+      std::round(d.real()) != d.real()) {
+    return result;
+  }
+  if (complexFormat == ComplexFormat::Real && result.imag() != zero) {
+    return NonReal<T>();
+  }
+
   /* Openbsd trigonometric functions are numerical implementation and thus are
    * approximative.
    * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
@@ -94,17 +106,6 @@ std::complex<T> ComputeComplexPower(const std::complex<T> c,
    * so arg(c^d) = y*ln(r)+xθ.
    * We consider that arg[π] is negligible if it is negligible compared to
    * norm(d) = sqrt(x^2+y^2) and ln(r) = ln(norm(c)).*/
-  if (complexFormat != ComplexFormat::Real && c.real() < zero &&
-      std::round(d.real()) != d.real()) {
-    /* Principal root of a negative base and non-integer index is always complex
-     * Neglecting it could cause visual artefacts when plotting x^x with a
-     * cartesian complex format. The issue is still visible when x is so small
-     * that result is 0, which is plotted even though it is "complex". */
-    return result;
-  }
-  if (complexFormat == ComplexFormat::Real && result.imag() != zero) {
-    return NonReal<T>();
-  }
   std::complex<T> precision = d.real() < zero ? std::pow(c, minusOne) : c;
   return NeglectRealOrImaginaryPartIfNegligible(result, precision, d, false);
 }

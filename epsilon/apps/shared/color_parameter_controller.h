@@ -8,11 +8,10 @@ namespace Shared {
 class ColorParameterController : public AbstractColorParameterController {
  public:
   ColorParameterController(Escher::Responder* parentResponder)
-      : AbstractColorParameterController(parentResponder),
-        m_derivationOrder(0) {}
+      : AbstractColorParameterController(parentResponder) {}
 
   // ColorParameterController
-  void setRecord(Ion::Storage::Record record, int derivationOrder = 0);
+  void setRecord(Ion::Storage::Record record) { m_record = record; }
 
  protected:
   int currentColorIndex() const override;
@@ -23,7 +22,6 @@ class ColorParameterController : public AbstractColorParameterController {
   OMG::ExpiringPointer<Function> function() const;
 
   Ion::Storage::Record m_record;
-  int m_derivationOrder;
 };
 
 }  // namespace Shared

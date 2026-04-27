@@ -222,11 +222,6 @@ CartesianConic ContinuousFunction::cartesianConicParameters() const {
   return CartesianConic(expressionReducedForAnalysis(), k_unknownName);
 }
 
-Escher::ThemeComponent ContinuousFunction::subCurveColor(
-    int subCurveIndex) const {
-  return color(derivationOrderFromSubCurveIndex(subCurveIndex));
-}
-
 void ContinuousFunction::updateModel(bool wasCartesian) {
   tidyCache();
   m_model.resetProperties();  // Reset model's properties.
@@ -243,17 +238,6 @@ void ContinuousFunction::updateModel(bool wasCartesian) {
   }
 }
 
-void ContinuousFunction::updateDerivativeColorAfterChangingPlotDisplay(
-    bool newDisplay, int derivationOrder) const {
-  /* - if we are displaying the plot: use a new color
-   * - if we are hiding the plot: use the color of the main function */
-  recordData()->setColor(
-      newDisplay ? GlobalContextAccessor::ContinuousFunctionContext()
-                       .colorForNewModel()
-                 : color(),
-      derivationOrder);
-}
-
 void ContinuousFunction::setDisplayValueFirstDerivative(bool display) {
   recordData()->setDisplayValueFirstDerivative(display);
 }
@@ -261,12 +245,8 @@ void ContinuousFunction::setDisplayValueFirstDerivative(bool display) {
 void ContinuousFunction::setDisplayPlotFirstDerivative(bool display) {
   /* Call recordData()->displayPlotFirstDerivative() instead of
    * displayPlotFirstDerivative() to avoid the assert. */
-  bool previousDisplay = recordData()->displayPlotFirstDerivative();
   recordData()->setDisplayPlotFirstDerivative(display);
   recordData()->setDisplayValueFirstDerivative(display);
-  if (previousDisplay != display) {
-    updateDerivativeColorAfterChangingPlotDisplay(display, 1);
-  }
 }
 
 void ContinuousFunction::setDisplayValueSecondDerivative(bool display) {
@@ -276,12 +256,8 @@ void ContinuousFunction::setDisplayValueSecondDerivative(bool display) {
 void ContinuousFunction::setDisplayPlotSecondDerivative(bool display) {
   /* Call recordData()->displayPlotSecondDerivative() instead of
    * displayPlotSecondDerivative() to avoid the assert. */
-  bool previousDisplay = recordData()->displayPlotSecondDerivative();
   recordData()->setDisplayPlotSecondDerivative(display);
   recordData()->setDisplayValueSecondDerivative(display);
-  if (previousDisplay != display) {
-    updateDerivativeColorAfterChangingPlotDisplay(display, 2);
-  }
 }
 
 int ContinuousFunction::derivationOrderFromRelativeIndex(
@@ -539,38 +515,7 @@ ContinuousFunction::RecordDataBuffer::RecordDataBuffer(
       m_derivativesOptions{},
       m_tAuto(true),
       m_derivationOrder(0) {
-  m_derivativesOptions.colorFirstDerivative = color;
-  m_derivativesOptions.colorSecondDerivative = color;
   m_parentBaseName[0] = '\0';
-}
-
-Escher::ThemeComponent ContinuousFunction::RecordDataBuffer::color(
-    int derivationOrder) const {
-  switch (derivationOrder) {
-    case 0:
-      return Function::RecordDataBuffer::color();
-    case 1:
-      return m_derivativesOptions.colorFirstDerivative;
-    default:
-      assert(derivationOrder == 2);
-      return m_derivativesOptions.colorSecondDerivative;
-  }
-}
-
-void ContinuousFunction::RecordDataBuffer::setColor(
-    Escher::ThemeComponent color, int derivationOrder) {
-  switch (derivationOrder) {
-    case 0:
-      Function::RecordDataBuffer::setColor(color);
-      break;
-    case 1:
-      m_derivativesOptions.colorFirstDerivative = color;
-      break;
-    default:
-      assert(derivationOrder == 2);
-      m_derivativesOptions.colorSecondDerivative = color;
-      break;
-  }
 }
 
 /* ContinuousFunction::Model */

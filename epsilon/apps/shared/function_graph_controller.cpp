@@ -79,9 +79,7 @@ void FunctionGraphController::selectCurveAtIndex(int curveIndex,
   functionGraphView()->selectRecord(r);
   OMG::ExpiringPointer<const Function> f =
       functionOrSequenceContext().modelForRecord(r);
-  ThemeComponent color =
-      f->color(f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex));
-  functionGraphView()->cursorView()->setColor(color, functionGraphView());
+  functionGraphView()->cursorView()->setColor(f->color(), functionGraphView());
   // Force reload to display the selected function on top
   if (willBeVisible) {
     functionGraphView()->reload(false, true);

@@ -267,8 +267,7 @@ void ValuesController::setTitleCellStyle(HighlightCell* cell, int column) {
   Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
   OMG::ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
-  static_cast<FunctionTitleCell*>(cell)->setColor(
-      function->color(derivationOrder));
+  static_cast<FunctionTitleCell*>(cell)->setColor(function->color());
 }
 
 // Shared::ValuesController

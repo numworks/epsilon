@@ -35,16 +35,6 @@ size_t Function::NameWithArgument(Ion::Storage::Record record,
   return length + WithArgument(argument, buffer + length, bufferSize - length);
 }
 
-bool Function::isActive() const { return recordData()->isActive(); }
-
-Escher::ThemeComponent Function::color(int derivationOrder) const {
-  return recordData()->color(derivationOrder);
-}
-
-void Function::setColor(Escher::ThemeComponent color, int derivationOrder) {
-  recordData()->setColor(color, derivationOrder);
-}
-
 void Function::setActive(bool active) {
   recordData()->setActive(active);
   if (!active) {

@@ -7,7 +7,7 @@ using namespace Escher;
 namespace Shared {
 
 int ColorParameterController::currentColorIndex() const {
-  ThemeComponent functionColor = function()->color(m_derivationOrder);
+  ThemeComponent functionColor = function()->color();
   for (int i = 0; i < ColorNames::k_count; i++) {
     if (functionColor == GetColor(i)) {
       return i;
@@ -17,7 +17,7 @@ int ColorParameterController::currentColorIndex() const {
 }
 
 void ColorParameterController::setColorIndex(int colorIndex) {
-  function()->setColor(GetColor(colorIndex), m_derivationOrder);
+  function()->setColor(GetColor(colorIndex));
 }
 
 void ColorParameterController::popAfterColorSelection(
@@ -25,12 +25,6 @@ void ColorParameterController::popAfterColorSelection(
   stack->popUntilDepth(
       Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
       true);
-}
-
-void ColorParameterController::setRecord(Ion::Storage::Record record,
-                                         int derivationOrder) {
-  m_record = record;
-  m_derivationOrder = derivationOrder;
 }
 
 OMG::ExpiringPointer<Function> ColorParameterController::function() const {

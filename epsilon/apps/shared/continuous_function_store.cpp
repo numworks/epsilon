@@ -56,19 +56,16 @@ void ContinuousFunctionStore::fillLastFreeColors(bool* colorIsFree) const {
   while (i >= 0) {
     OMG::ExpiringPointer<const ContinuousFunction> f =
         modelForRecord(recordAtIndex(i));
-    int nDerivatives = 1 + 2 * f->canDisplayDerivative();
-    for (int d = 0; d < nDerivatives && nFree > 1; d++) {
-      int colorIndex = static_cast<uint8_t>(f->color(d)) -
-                       static_cast<uint8_t>(DataColorComponent(0));
-      assert(colorIndex >= 0 && colorIndex < k_numberOfDataColors);
-      if (colorIsFree[colorIndex]) {
-        colorIsFree[colorIndex] = false;
-        nFree--;
-      }
-      // Stop when there is only one free color
-      if (nFree <= 1) {
-        return;
-      }
+    int colorIndex = static_cast<uint8_t>(f->color()) -
+                     static_cast<uint8_t>(DataColorComponent(0));
+    assert(colorIndex >= 0 && colorIndex < k_numberOfDataColors);
+    if (colorIsFree[colorIndex]) {
+      colorIsFree[colorIndex] = false;
+      nFree--;
+    }
+    // Stop when there is only one free color
+    if (nFree <= 1) {
+      return;
     }
     i--;
   }

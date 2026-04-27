@@ -28,7 +28,7 @@ void DerivativeColumnParameterController::viewWillAppear() {
   m_hideCell.label()->setMessage(m_parameterDelegate->hideDerivativeMessage());
   m_colorCell.setVisible(m_parameterDelegate->showColorCell());
   m_colorCell.subLabel()->setMessage(
-      ColorNames::NameForColor(function()->color(m_derivationOrder)));
+      ColorNames::NameForColor(function()->color()));
   ColumnParameterController::viewWillAppear();
 }
 
@@ -38,7 +38,7 @@ bool DerivativeColumnParameterController::handleEvent(
   StackViewController* stack =
       static_cast<StackViewController*>(parentResponder());
   if (cell == &m_colorCell && m_colorCell.canBeActivatedByEvent(event)) {
-    m_colorParameterController.setRecord(m_record, m_derivationOrder);
+    m_colorParameterController.setRecord(m_record);
     stack->push(&m_colorParameterController);
     return true;
   }

@@ -118,8 +118,6 @@ class ContinuousFunction : public Function {
            includeDerivatives *
                (displayPlotFirstDerivative() + displayPlotSecondDerivative());
   }
-  Escher::ThemeComponent subCurveColor(int subCurveIndex) const;
-
   /* Expression */
 
   // Return the unaltered equation expression, replacing unknown symbols.
@@ -272,9 +270,6 @@ class ContinuousFunction : public Function {
     return m_model.expressionSlopeReduced(this);
   }
 
-  void updateDerivativeColorAfterChangingPlotDisplay(bool newDisplay,
-                                                     int derivationOrder) const;
-
   /* Evaluation */
 
   // Evaluate XY at parameter (distinct from approximation with Polar types)
@@ -292,10 +287,6 @@ class ContinuousFunction : public Function {
       : public Shared::Function::RecordDataBuffer {
    public:
     RecordDataBuffer(Escher::ThemeComponent color);
-
-    Escher::ThemeComponent color(int derivationOrder = 0) const override;
-    void setColor(Escher::ThemeComponent color,
-                  int derivationOrder = 0) override;
 
     bool displayValueFirstDerivative() const {
       return m_derivativesOptions.valueFirstDerivative;
@@ -354,8 +345,6 @@ class ContinuousFunction : public Function {
       bool plotFirstDerivative : 1;
       bool valueSecondDerivative : 1;
       bool plotSecondDerivative : 1;
-      Escher::ThemeComponent colorFirstDerivative;
-      Escher::ThemeComponent colorSecondDerivative;
     };
     DerivativesOptions m_derivativesOptions;
     bool m_tAuto;

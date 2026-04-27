@@ -403,9 +403,8 @@ void GraphView::drawCartesian(KDContext* ctx, KDRect rect,
   for (int i = n - 1; i >= 0; i--) {
     Curve2DEvaluation<float> evaluationFloat = subCurveEvaluation<float>(f, i);
     CurveDrawing secondCurve(Curve2D(evaluationFloat, f), context(), tStart,
-                             tEnd, tStep,
-                             ColorPicker::Resolve(f->subCurveColor(i)), true,
-                             f->properties().plotIsDotted());
+                             tEnd, tStep, ColorPicker::Resolve(f->color()),
+                             true, f->properties().plotIsDotted());
     Curve2DEvaluation<double> evaluationDouble =
         subCurveEvaluation<double>(f, i);
     secondCurve.setPrecisionOptions(true, evaluationDouble, discontinuity);

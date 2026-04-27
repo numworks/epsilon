@@ -35,9 +35,9 @@ class Function : public ExpressionModelHandle {
   Function(Ion::Storage::Record record) : ExpressionModelHandle(record) {}
 
   // Properties
-  virtual bool isActive() const;
-  Escher::ThemeComponent color(int derivationOrder = 0) const;
-  void setColor(Escher::ThemeComponent color, int derivationOrder = 0);
+  virtual bool isActive() const { return recordData()->isActive(); }
+  Escher::ThemeComponent color() const { return recordData()->color(); }
+  void setColor(Escher::ThemeComponent color) { recordData()->setColor(color); }
   void setActive(bool active);
   virtual int numberOfSubCurves(bool includeDerivatives = false) const {
     return 1;
@@ -92,13 +92,8 @@ class Function : public ExpressionModelHandle {
    public:
     RecordDataBuffer(Escher::ThemeComponent color)
         : m_color(color), m_active(true) {}
-    virtual Escher::ThemeComponent color(int derivationOrder = 0) const {
-      return m_color;
-    }
-    virtual void setColor(Escher::ThemeComponent color,
-                          int derivationOrder = 0) {
-      m_color = color;
-    }
+    Escher::ThemeComponent color() const { return m_color; }
+    void setColor(Escher::ThemeComponent color) { m_color = color; }
     virtual bool isActive() const { return m_active; }
     void setActive(bool active) { m_active = active; }
 

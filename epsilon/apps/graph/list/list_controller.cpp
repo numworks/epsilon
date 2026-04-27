@@ -313,8 +313,8 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
           ->setParameterSelected(m_parameterColumnSelected);
     }
     // f can be null if the entry was just created and is still empty.
-    ThemeComponent functionColor = f->isActive() ? f->color(derivationOrder)
-                                                 : ThemeComponent::AxisGrayDark;
+    ThemeComponent functionColor =
+        f->isActive() ? f->color() : ThemeComponent::AxisGrayDark;
     static_cast<AbstractFunctionCell*>(cell)->setColor(functionColor);
   }
   FunctionListController::fillCellForRow(cell, row);

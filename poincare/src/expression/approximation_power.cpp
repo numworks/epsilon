@@ -18,6 +18,8 @@ std::complex<T> ComputeComplexPower(const std::complex<T> c,
                                     ComplexFormat complexFormat) {
   constexpr T zero = static_cast<T>(0.0);
   constexpr T one = static_cast<T>(1.0);
+  constexpr T minusOne = static_cast<T>(-1.0);
+
   if (c.real() == zero && c.imag() != zero && c.imag() != one &&
       d.imag() == zero && std::round(d.real()) == d.real()) {
     /* (i*c)^d = i^d*c^d with d a real integer
@@ -28,8 +30,8 @@ std::complex<T> ComputeComplexPower(const std::complex<T> c,
   }
 
   if (c.imag() == zero && c.real() < zero &&
-      ((d.real() == INFINITY && c.real() <= static_cast<T>(-1.0)) ||
-       (d.real() == -INFINITY && c.real() >= static_cast<T>(-1.0)))) {
+      ((d.real() == INFINITY && c.real() <= minusOne) ||
+       (d.real() == -INFINITY && c.real() >= minusOne))) {
     /* x^inf with x <= -1 and x^(-inf) with -1 <= x <= 0 are approximated to
      * complex infinity, which we don't handle. We decide to return undef. */
     return NAN;
@@ -92,12 +94,10 @@ std::complex<T> ComputeComplexPower(const std::complex<T> c,
      * that result is 0, which is plotted even though it is "complex". */
     return result;
   }
-  if (complexFormat == ComplexFormat::Real &&
-      result.imag() != static_cast<T>(0.0)) {
+  if (complexFormat == ComplexFormat::Real && result.imag() != zero) {
     return NonReal<T>();
   }
-  std::complex<T> precision =
-      d.real() < static_cast<T>(0.0) ? std::pow(c, static_cast<T>(-1.0)) : c;
+  std::complex<T> precision = d.real() < zero ? std::pow(c, minusOne) : c;
   return NeglectRealOrImaginaryPartIfNegligible(result, precision, d, false);
 }
 

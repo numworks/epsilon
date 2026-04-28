@@ -1,11 +1,16 @@
 #include "physical_constant.h"
 
+#include <omg/unreachable.h>
+
+#if POINCARE_PHYSICAL_CONSTANT
 #include "units/si_constants.h"
+#endif
 
 namespace Poincare::Internal {
 
 using namespace Units;
 
+#if POINCARE_PHYSICAL_CONSTANT
 /* Some of these are currently not tested in simplification.cpp because their
  * units are weirdly simplified. These tests would be updated when the output
  * units are updated. */
@@ -44,5 +49,13 @@ const PhysicalConstant::Properties& PhysicalConstant::GetProperties(
   assert(index < k_numberOfConstants);
   return k_constants[index];
 }
+#else
+int PhysicalConstant::Index(LayoutSpan name) { return -1; }
+
+const PhysicalConstant::Properties& PhysicalConstant::GetProperties(
+    const Tree* constant) {
+  OMG_UNREACHABLE;
+}
+#endif
 
 }  // namespace Poincare::Internal

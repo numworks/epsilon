@@ -343,7 +343,7 @@ NODE(Unit, UNIT, 0, {
   uint8_t representativeId;
   uint8_t prefixId;
 })
-NODE(PhysicalConstant, UNIT, 0, { uint8_t constantId; })
+NODE(PhysicalConstant, PHYSICAL_CONSTANT, 0, { uint8_t constantId; })
 RANGE(UnitOrPhysicalConstant, Unit, PhysicalConstant)
 
 // 9 - Order dependant expressions

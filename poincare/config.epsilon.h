@@ -49,6 +49,7 @@
 // Unit node and representatives
 #define POINCARE_UNIT 1
 #define POINCARE_UNIT_ONLY_ANGLES 0
+#define POINCARE_PHYSICAL_CONSTANT POINCARE_UNIT
 
 // True, False, comparisons and logic operators
 #define POINCARE_BOOLEAN 1

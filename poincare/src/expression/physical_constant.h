@@ -25,7 +25,11 @@ class PhysicalConstant {
 
   static const Properties& GetProperties(const Tree* constant);
 
+#if POINCARE_PHYSICAL_CONSTANT
   constexpr static int k_numberOfConstants = 14;
+#else
+  constexpr static int k_numberOfConstants = 0;
+#endif
 
  private:
   static const Properties k_constants[k_numberOfConstants];

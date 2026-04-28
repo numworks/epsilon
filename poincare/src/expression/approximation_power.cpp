@@ -85,12 +85,12 @@ std::complex<T> ComputeComplexPower(const std::complex<T> c,
     return result;
   }
 
-  /* Principal root of a negative base and non-integer index is always complex.
-   * Neglecting it could cause visual artefacts when plotting x^x with a
-   * cartesian complex format. The issue is still visible when x is so small
-   * that result is 0, which is plotted even though it is "complex". */
   if (complexFormat != ComplexFormat::Real && c.real() < zero &&
       !dIsRealInteger) {
+    /* Principal root of a negative base and non-integer index is always
+     * complex. Neglecting it could cause visual artefacts when plotting x^x
+     * with a cartesian complex format. The issue is still visible when x is so
+     * small that result is 0, which is plotted even though it is "complex". */
     return result;
   }
   if (complexFormat == ComplexFormat::Real && result.imag() != zero) {

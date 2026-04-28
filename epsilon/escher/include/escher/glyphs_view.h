@@ -4,6 +4,7 @@
 #include <escher/menu_cell.h>
 #include <escher/text_format.h>
 #include <escher/theme/components.h>
+#include <escher/theme/highlight.h>
 #include <escher/view.h>
 
 namespace Escher {
@@ -15,7 +16,7 @@ class GlyphsView : public View, public CellWidget {
   KDFont::Size font() const { return m_textFormat.style.font; }
 
   virtual KDGlyph::Format glyphFormat() const {
-    return ToKDGlyphFormat(m_textFormat);
+    return ToKDGlyphFormat(textFormat());
   }
 
   void setGlyphFormat(const TextFormat& format);
@@ -27,6 +28,7 @@ class GlyphsView : public View, public CellWidget {
   // CellWidget
   const View* view() const override { return this; }
   void setHighlighted(bool highlighted) override {
+    m_isHighlighted = highlighted;
     setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
   }
   bool alwaysAlignWithLabelAsAccessory() const override { return true; }
@@ -53,7 +55,24 @@ class GlyphsView : public View, public CellWidget {
   }
 
  protected:
+  // Takes highlight into account
+  virtual TextFormat textFormat() const {
+    return TextFormat{
+        .style =
+            TextStyle{
+                .glyphColor = m_isHighlighted
+                                  ? Highlight(m_textFormat.style.glyphColor)
+                                  : m_textFormat.style.glyphColor,
+                .backgroundColor = m_textFormat.style.backgroundColor,
+                .font = m_textFormat.style.font,
+            },
+        .horizontalAlignment = m_textFormat.horizontalAlignment,
+        .verticalAlignment = m_textFormat.verticalAlignment};
+  }
+
+ private:
   TextFormat m_textFormat;
+  bool m_isHighlighted = false;
 };
 
 }  // namespace Escher

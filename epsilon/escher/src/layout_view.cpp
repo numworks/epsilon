@@ -39,9 +39,9 @@ KDPoint LayoutView::drawingOrigin() const {
   KDSize layoutSize = layout()->layoutSize(font(), cursor());
   return KDPoint(
       m_horizontalMargin +
-          m_textFormat.horizontalAlignment *
+          textFormat().horizontalAlignment *
               (bounds().width() - 2 * m_horizontalMargin - layoutSize.width()),
-      std::max<KDCoordinate>(0, m_textFormat.verticalAlignment *
+      std::max<KDCoordinate>(0, textFormat().verticalAlignment *
                                     (bounds().height() - layoutSize.height())));
 }
 
@@ -49,7 +49,7 @@ void LayoutView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(rect, glyphFormat().style.backgroundColor);
   if (!layout().isUninitialized()) {
     layout().draw(ctx, drawingOrigin(),
-                  ToPoincareLayoutStyle(DefaultLayoutStyle(m_textFormat.style)),
+                  ToPoincareLayoutStyle(DefaultLayoutStyle(textFormat().style)),
                   cursor());
   }
 }

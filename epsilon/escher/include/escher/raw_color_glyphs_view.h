@@ -47,9 +47,9 @@ class RawColor : public Base {
     return KDGlyph::Format{
         .style = KDGlyph::Style{.glyphColor = m_rawColors.glyphColor,
                                 .backgroundColor = m_rawColors.backgroundColor,
-                                .font = this->m_textFormat.style.font},
-        .horizontalAlignment = this->m_textFormat.horizontalAlignment,
-        .verticalAlignment = this->m_textFormat.verticalAlignment};
+                                .font = this->textFormat().style.font},
+        .horizontalAlignment = this->textFormat().horizontalAlignment,
+        .verticalAlignment = this->textFormat().verticalAlignment};
   }
 
   void setTextColor(KDColor color) {

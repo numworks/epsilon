@@ -3,7 +3,7 @@
 namespace Escher {
 
 KDSize TextView::minimalSizeForOptimalDisplay() const {
-  return KDFont::Font(m_textFormat.style.font)
+  return KDFont::Font(textFormat().style.font)
       ->stringSize(text(), -1, m_lineSpacing);
 }
 

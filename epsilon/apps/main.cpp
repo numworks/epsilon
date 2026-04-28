@@ -12,6 +12,8 @@
 #include <escher/layout_preferences.h>
 #include <escher/theme/color_picker.h>
 #include <ion.h>
+#include <ion/exam_mode.h>
+#include <kandinsky/basic_color.h>
 
 class DummyLayoutPreferences : public Escher::LayoutPreferences::Interface {
   bool linearMode() const override { return false; };
@@ -27,11 +29,8 @@ class DummyLayoutPreferences : public Escher::LayoutPreferences::Interface {
 char digit_to_char(int n) { return '0' + (n % 10); }
 
 void ion_main(int argc, const char* const argv[]) {
-  Ion::LED::setColor(
-      Escher::ColorPicker::Resolve(Escher::ThemeComponent::TokenBlack));
-  Ion::Display::pushRectUniform(
-      Ion::Display::Rect,
-      Escher::ColorPicker::Resolve(Escher::ThemeComponent::BackgroundWhite));
+  Ion::LED::setColor(Ion::ExamMode::Configuration::k_defaultLEDColor);
+  Ion::Display::pushRectUniform(Ion::Display::Rect, BasicColor::White);
 
   constexpr int bufsiz = 32;
   char txtbuf[bufsiz];

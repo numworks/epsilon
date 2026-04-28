@@ -3,7 +3,6 @@
 #include <ion/exam_mode.h>
 #include <ion/external_apps.h>
 #include <ion/reset.h>
-#include <kandinsky/basic_color.h>
 
 #include "led.h"
 
@@ -143,7 +142,7 @@ KDColor Configuration::color() const {
     case Ruleset::Portuguese:
       return k_portugueseLEDColor;
     default:
-      return BasicColor::Black;
+      return k_defaultLEDColor;
   }
 }
 

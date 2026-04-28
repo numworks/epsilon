@@ -3,7 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/exam_mode_manager.h>
 #include <assert.h>
-#include <escher/theme/color_picker.h>
+#include <ion/exam_mode.h>
 
 using namespace Escher;
 
@@ -35,7 +35,7 @@ void App::didBecomeActive(Window* window) {
   // Disable spinner
   Ion::Events::setSpinner(false);
   if (ExamModeManager::ExamMode().color() ==
-      ColorPicker::Resolve(ThemeComponent::TokenBlack)) {
+      Ion::ExamMode::Configuration::k_defaultLEDColor) {
     // Forbid standby in exam mode with led since it disables the led
     Ion::Power::selectStandbyMode(true);
   }

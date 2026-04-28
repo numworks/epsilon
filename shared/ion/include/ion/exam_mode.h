@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ion/exam_bytes.h>
+#include <kandinsky/basic_color.h>
 #include <kandinsky/color.h>
 #include <omg/bit_helper.h>
 #include <omg/code_guard.h>
@@ -75,6 +76,7 @@ class Configuration {
   Int raw() const { return m_bits; }
   bool isUninitialized() const;
   bool isActive() const;
+  constexpr static KDColor k_defaultLEDColor = BasicColor::Black;
   KDColor color() const;
 
  private:

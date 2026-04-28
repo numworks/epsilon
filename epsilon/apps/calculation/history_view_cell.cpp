@@ -66,6 +66,7 @@ void HistoryViewCell::updateSubviewsBackgroundAfterChangingState() {
 void HistoryViewCell::reloadSubviewHighlight() {
   assert(m_dataSource);
   m_inputView.setExpressionBackgroundColor(backgroundColor());
+  m_inputView.setExpressionHighlighted(false);
   m_scrollableOutputView.evenOddCell()->setHighlighted(false);
   m_ellipsis.setHighlighted(false);
   if (isHighlighted()) {
@@ -73,7 +74,7 @@ void HistoryViewCell::reloadSubviewHighlight() {
         m_dataSource->selectedSubviewType();
     switch (type) {
       case HistoryViewCellDataSource::SubviewType::Input:
-        m_inputView.setExpressionBackgroundColor(ThemeComponent::SurfaceSelect);
+        m_inputView.setExpressionHighlighted(true);
         return;
       case HistoryViewCellDataSource::SubviewType::Output:
         m_scrollableOutputView.evenOddCell()->setHighlighted(true);

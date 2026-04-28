@@ -36,6 +36,11 @@ class ScrollableLayoutView : public ScrollableView<ScrollView::ArrowDecorator>,
   }
   void setHighlighted(bool highlighted) override;
 
+  // Only highlight the expression frame
+  void setExpressionHighlighted(bool highlight) {
+    m_layoutView.setHighlighted(highlight);
+  }
+
  private:
   LayoutView m_layoutView;
 };

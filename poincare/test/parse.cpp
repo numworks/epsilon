@@ -852,6 +852,7 @@ QUIZ_CASE(pcj_parse_identifiers) {
   // Reserved functions
   assert_parsed_expression_is("arccos(1)", KACos(1_e));
   assert_parsed_expression_is("acos(1)", KACos(1_e));
+  assert_parsed_expression_is("arcos(1)", KACos(1_e));
   assert_parsed_expression_is("cos^(-1)(1)", KACos(1_e));
   assert_parsed_expression_is("arcosh(1)", KArCosH(1_e));
   assert_parsed_expression_is("arccot(1)", KACot(1_e));
@@ -888,6 +889,8 @@ QUIZ_CASE(pcj_parse_identifiers) {
   assert_parsed_expression_is("det(1)", KDet(1_e));
   assert_parsed_expression_is("dot(1,1)", KDot(1_e, 1_e));
   assert_parsed_expression_is("cos(1)", KCos(1_e));
+  assert_parsed_expression_is("cosine(1)", KCos(1_e));
+  assert_parsed_expression_is("cosinus(1)", KCos(1_e));
   assert_parsed_expression_is("cosh(1)", KCosH(1_e));
   assert_parsed_expression_is("csc(1)", KCsc(1_e));
   assert_parsed_expression_is("factor(1)", KFactor(1_e));
@@ -906,7 +909,9 @@ QUIZ_CASE(pcj_parse_identifiers) {
   assert_text_not_parsable("lcm()");
   assert_parsed_expression_is("ln(1)", KLnUser(1_e));
   assert_parsed_expression_is("log(1)", KLog(1_e));
+  assert_parsed_expression_is("logarithm(1)", KLog(1_e));
   assert_parsed_expression_is("log(1,2)", KLogBase(1_e, 2_e));
+  assert_parsed_expression_is("logarithm(1,2)", KLogBase(1_e, 2_e));
   assert_parsed_expression_is("norm(1)", KNorm(1_e));
   assert_parsed_expression_is("permute(2,1)", KPermute(2_e, 1_e));
   assert_parsed_expression_is("product(1,n,2,3)",
@@ -927,12 +932,15 @@ QUIZ_CASE(pcj_parse_identifiers) {
   assert_parsed_expression_is("rref(1)", KRref(1_e));
   assert_parsed_expression_is("sec(1)", KSec(1_e));
   assert_parsed_expression_is("sin(1)", KSin(1_e));
+  assert_parsed_expression_is("sine(1)", KSin(1_e));
+  assert_parsed_expression_is("sinus(1)", KSin(1_e));
   assert_parsed_expression_is("sign(1)", KSignUser(1_e));
   assert_parsed_expression_is("sinh(1)", KSinH(1_e));
   assert_parsed_expression_is("sum(1,n,2,3)", KSum("n"_e, 2_e, 3_e, 1_e));
   assert_text_not_parsable("sum(1,2,3,4)");
   assert_text_not_parsable("sum(1,_s,3,4)");
   assert_parsed_expression_is("tan(1)", KTan(1_e));
+  assert_parsed_expression_is("tangent(1)", KTan(1_e));
   assert_parsed_expression_is("tanh(1)", KTanH(1_e));
   assert_parsed_expression_is("trace(1)", KTrace(1_e));
   assert_parsed_expression_is("transpose(1)", KTranspose(1_e));

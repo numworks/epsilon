@@ -268,40 +268,32 @@ bool AdvancedOperation::ExpandMult(Tree* e) {
   if (e->isMult() &&
       PatternMatching::Match(e, KMult(KA_s, KAdd(KB, KC_p), KD_s), &ctx)) {
     assert(ctx.getNumberOfTrees(KA) != 0 || ctx.getNumberOfTrees(KD) != 0);
-    bool distributeNegativeSignOnly = false;
+    Tree* result;
     if (ctx.getNumberOfTrees(KA) == 1) {
-      // For rationals of the form -1/q, distribute only the negative sign.
       const Tree* a = ctx.getTree(KA);
-      distributeNegativeSignOnly = a->isNegativeRational() &&
-                                   !a->isMinusOne() &&
-                                   Rational::Numerator(a).isMinusOne();
+      if (a->isNegativeRational() && !a->isMinusOne() &&
+          Rational::Numerator(a).isMinusOne()) {
+        // For rationals of the form -1/q, distribute only the negative sign.
+        result = SharedTreeStack->pushMult(2);
+        Rational::SetSign(a->cloneTree(), NonStrictSign::Positive);
+        Tree* clone = e->cloneTree();
+        clone->child(0)->cloneTreeOverTree(-1_e);
+        AdvancedOperation::ExpandMult(clone);
+        e->moveTreeOverTree(result);
+        SystematicReduction::ShallowReduce(e);
+        return true;
+      }
     }
     int numberOfTerms = 1 + ctx.getNumberOfTrees(KC);
-    Tree* result;
-    if (distributeNegativeSignOnly) {
-      result = SharedTreeStack->pushMult(2);
-      Tree* posRational = ctx.getTree(KA)->cloneTree();
-      Rational::SetSign(posRational, NonStrictSign::Positive);
-      SharedTreeStack->pushAdd(numberOfTerms);
-    } else {
-      result = SharedTreeStack->pushAdd(numberOfTerms);
-    }
+    result = SharedTreeStack->pushAdd(numberOfTerms);
     const Tree* term = ctx.getTree(KB);
     for (int i = 0; i < numberOfTerms; i++) {
       ctx.setNode(KB, term, 1, false);
       // TODO: Maybe limit the number of recursive calls.
-      if (distributeNegativeSignOnly) {
-        ExpandMult(PatternMatching::CreateReduce(KMult(-1_e, KB, KD_s), ctx));
-      } else {
-        ExpandMult(PatternMatching::CreateReduce(KMult(KA_s, KB, KD_s), ctx));
-      }
+      ExpandMult(PatternMatching::CreateReduce(KMult(KA_s, KB, KD_s), ctx));
       term = term->nextTree();
     }
     e->moveTreeOverTree(result);
-    if (distributeNegativeSignOnly) {
-      assert(e->isMult() && e->numberOfChildren() == 2);
-      SystematicReduction::ShallowReduce(e->child(1));
-    }
     SystematicReduction::ShallowReduce(e);
     return true;
   }

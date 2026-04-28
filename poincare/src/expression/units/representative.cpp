@@ -13,9 +13,12 @@ namespace Units {
 const Representative* const* Representative::DefaultRepresentatives() {
   static const Representative* defaultRepresentatives[k_numberOfDimensions] = {
 #if POINCARE_UNIT
+#if !POINCARE_UNIT_ONLY_ANGLES
     Time::representatives,
     Distance::representatives,
+#endif
     Angle::representatives,
+#if !POINCARE_UNIT_ONLY_ANGLES
     Mass::representatives,
     Current::representatives,
     Temperature::representatives,
@@ -38,6 +41,7 @@ const Representative* const* Representative::DefaultRepresentatives() {
     Surface::representatives,
     Volume::representatives,
     Speed::representatives,
+#endif
 #endif
     // Update AllRepresentatives in units/k_units.h if you change this
   };

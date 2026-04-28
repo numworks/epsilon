@@ -32,7 +32,9 @@ class Representative {
   // Operators
   bool operator==(const Representative&) const = default;
   bool operator!=(const Representative&) const = default;
-#if POINCARE_UNIT
+#if POINCARE_UNIT_ONLY_ANGLES
+  constexpr static int k_numberOfDimensions = 1;
+#elif POINCARE_UNIT
   constexpr static int k_numberOfDimensions = 25;
 #else
   constexpr static int k_numberOfDimensions = 0;

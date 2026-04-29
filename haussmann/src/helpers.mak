@@ -105,6 +105,19 @@ define rule_label
 endef
 endif
 
+# value_stamp, <stamp file>, <value>
+# Touches <stamp file> at parse time iff <value> differs from its content, so
+# rules depending on the stamp rebuild when a Make variable changes.
+define value_stamp
+$(shell mkdir -p $(dir $1) && \
+  current=$$(cat $1 2>/dev/null); \
+  if [ "$$current" != "$2" ]; then \
+    printf '%s\n' "$2" > $1 && \
+    [ "$(VERBOSE)" = "0" ] || printf '%-8s%s\n' STAMP \
+      "$(1:$(OUTPUT_DIRECTORY)/%=%)" >&2; \
+  fi)
+endef
+
 # All generated_headers should depend on this target to make sure they
 # are build before any object file
 generated_headers:

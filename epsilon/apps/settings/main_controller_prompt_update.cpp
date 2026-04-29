@@ -11,6 +11,7 @@ constexpr MessageTree s_modelMenu[] = {
     MessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren),
     MessageTree(I18n::Message::Brightness),
     MessageTree(I18n::Message::ScreenTimeout, s_modelScreenTimeoutChildren),
+    MessageTree(I18n::Message::ContrastMode),
     MessageTree(I18n::Message::FontSizes, s_modelFontChildren),
     MessageTree(I18n::Message::Language),
     MessageTree(I18n::Message::Country),
@@ -24,7 +25,7 @@ constexpr MessageTree s_modelMenu[] = {
 constexpr MessageTree s_model =
     MessageTree(I18n::Message::SettingsApp, s_modelMenu);
 
-constexpr int s_aboutIndex = 13;
+constexpr int s_aboutIndex = 14;
 static_assert(s_modelMenu[s_aboutIndex].label() == I18n::Message::About);
 
 }  // namespace Settings

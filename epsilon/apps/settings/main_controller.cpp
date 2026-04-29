@@ -116,6 +116,12 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     GlobalPreferences::SharedGlobalPreferences()->setShowPopUp(
         !SharedGlobalPrefs().showPopUp());
     m_selectableListView.reloadSelectedCell();
+  } else if (type == k_contrastModeCellType) {
+    Escher::Theme newTheme = SharedGlobalPrefs().theme() == Escher::Theme::Dark
+                                 ? Escher::Theme::Light
+                                 : Escher::Theme::Dark;
+    GlobalPreferences::SharedGlobalPreferences()->setTheme(newTheme);
+    m_selectableListView.reloadData();
   } else if (type == k_brightnessCellType) {
     int delta = Ion::Backlight::MaxBrightness /
                 GlobalPreferences::NumberOfBrightnessStates;
@@ -166,6 +172,8 @@ KDCoordinate MainController::nonMemoizedRowHeight(int row) {
       return protectedNonMemoizedRowHeight(&m_brightnessCell, row);
     case k_popUpCellType:
       return protectedNonMemoizedRowHeight(&m_popUpCell, row);
+    case k_contrastModeCellType:
+      return protectedNonMemoizedRowHeight(&m_contrastModeCell, row);
     case k_resetCellType:
       return protectedNonMemoizedRowHeight(&m_resetButton, row);
     default:
@@ -183,6 +191,9 @@ HighlightCell* MainController::reusableCell(int index, int type) {
   assert(index == 0);
   if (type == k_popUpCellType) {
     return &m_popUpCell;
+  }
+  if (type == k_contrastModeCellType) {
+    return &m_contrastModeCell;
   }
   if (type == k_resetCellType) {
     return &m_resetButton;
@@ -205,6 +216,8 @@ int MainController::typeAtRow(int row) const {
     case I18n::Message::UpdatePopUp:
     case I18n::Message::BetaPopUp:
       return k_popUpCellType;
+    case I18n::Message::ContrastMode:
+      return k_contrastModeCellType;
     case I18n::Message::ResetCalculator:
       return k_resetCellType;
     default:
@@ -238,6 +251,12 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
   if (type == k_popUpCellType) {
     assert(cell == &m_popUpCell);
     m_popUpCell.accessory()->setState(SharedGlobalPrefs().showPopUp());
+    return;
+  }
+  if (type == k_contrastModeCellType) {
+    assert(cell == &m_contrastModeCell);
+    m_contrastModeCell.accessory()->setState(SharedGlobalPrefs().theme() ==
+                                             Escher::Theme::Dark);
     return;
   }
   assert(type == k_defaultCellType);

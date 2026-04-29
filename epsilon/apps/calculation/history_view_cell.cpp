@@ -42,6 +42,7 @@ void HistoryViewCell::setEven(bool even) {
   EvenOddCell::setEven(even);
   m_scrollableOutputView.evenOddCell()->setEven(even);
   m_ellipsis.setEven(even);
+  updateSubviewsBackgroundAfterChangingState();
 }
 
 void HistoryViewCell::setHighlighted(bool highlight) {

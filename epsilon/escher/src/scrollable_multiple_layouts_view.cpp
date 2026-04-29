@@ -47,29 +47,23 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::setHighlighted(
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::
     updateSubviewsBackgroundAfterChangingState() {
-  ThemeComponent defaultColor = backgroundColor();
-  bool highlight = isHighlighted();
-
-  bool centerIsHighlighted =
-      highlight && m_selectedSubviewPosition == SubviewPosition::Center;
-  m_centeredLayoutView.setHighlighted(centerIsHighlighted);
-  m_centeredLayoutView.setBackgroundColor(
-      centerIsHighlighted ? ThemeComponent::SurfaceSelect : defaultColor);
-
-  bool rightIsHighLighted =
-      highlight && m_selectedSubviewPosition == SubviewPosition::Right;
-  m_rightLayoutView.setHighlighted(rightIsHighLighted);
-  m_rightLayoutView.setBackgroundColor(
-      rightIsHighLighted ? ThemeComponent::SurfaceSelect : defaultColor);
-
-  m_comparisonSign.setBackgroundColor(defaultColor);
-
+  // Update even / odd background
+  ThemeComponent evenOddColor = backgroundColor();
+  m_centeredLayoutView.setBackgroundColor(evenOddColor);
+  m_rightLayoutView.setBackgroundColor(evenOddColor);
+  m_comparisonSign.setBackgroundColor(evenOddColor);
   if (displayLeftLayout()) {
-    bool leftIsHighLighted =
-        highlight && m_selectedSubviewPosition == SubviewPosition::Left;
-    leftLayoutView()->setHighlighted(leftIsHighLighted);
-    leftLayoutView()->setBackgroundColor(
-        leftIsHighLighted ? ThemeComponent::SurfaceSelect : defaultColor);
+    leftLayoutView()->setBackgroundColor(evenOddColor);
+  }
+  // Update highlights
+  bool highlight = isHighlighted();
+  m_centeredLayoutView.setHighlighted(highlight && m_selectedSubviewPosition ==
+                                                       SubviewPosition::Center);
+  m_rightLayoutView.setHighlighted(highlight && m_selectedSubviewPosition ==
+                                                    SubviewPosition::Right);
+  if (displayLeftLayout()) {
+    leftLayoutView()->setHighlighted(highlight && m_selectedSubviewPosition ==
+                                                      SubviewPosition::Left);
   }
 }
 

@@ -24,8 +24,8 @@ void SubappCell::setHighlighted(bool highlighted) {
   HighlightCell::setHighlighted(highlighted);
   ThemeComponent backgroundColor = defaultBackgroundColor();
   m_icon.setBackgroundColor(backgroundColor);
-  m_title.setBackgroundColor(backgroundColor);
-  m_subTitle.setBackgroundColor(backgroundColor);
+  m_title.setHighlighted(highlighted);
+  m_subTitle.setHighlighted(highlighted);
 }
 
 View* SubappCell::subviewAtIndex(int i) {

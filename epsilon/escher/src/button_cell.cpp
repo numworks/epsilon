@@ -31,9 +31,11 @@ bool ButtonCell::handleEvent(Ion::Events::Event event) {
 
 void ButtonCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
-  ThemeComponent backgroundColor = highlight ? highlightedBackgroundColor()
-                                             : ThemeComponent::BackgroundWhite;
-  m_messageTextView.setBackgroundColor(backgroundColor);
+  m_messageTextView.setHighlighted(highlight);
+  // Background highlight is manual because the highlight color is custom
+  m_messageTextView.setBackgroundColor(highlight
+                                           ? highlightedBackgroundColor()
+                                           : ThemeComponent::BackgroundWhite);
   markWholeFrameAsDirty();
 }
 

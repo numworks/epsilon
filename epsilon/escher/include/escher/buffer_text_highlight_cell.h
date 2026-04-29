@@ -17,9 +17,7 @@ class SmallBufferTextHighlightCell : public HighlightCell {
     setChildFrame(&m_textView, bounds(), force);
   }
   void setHighlighted(bool highlight) override {
-    m_textView.setBackgroundColor(
-        highlight ? Escher::ThemeComponent::SurfaceSelect
-                  : Escher::ThemeComponent::BackgroundWhite);
+    m_textView.setHighlighted(highlight);
   }
 
  private:

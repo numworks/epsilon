@@ -1,6 +1,7 @@
 #include <escher/tab_view_cell.h>
 #include <escher/tab_view_controller.h>
 #include <escher/theme/color_picker.h>
+#include <escher/theme/highlight.h>
 extern "C" {
 #include <assert.h>
 }
@@ -44,6 +45,7 @@ void TabViewCell::drawRect(KDContext* ctx, KDRect rect) const {
   ThemeComponent selection = m_active ? ThemeComponent::SurfaceSelect
                                       : ThemeComponent::SurfaceSelectDark;
   background = m_selected ? selection : background;
+  text = Highlight(text, m_selected);
   // Color the background according to the state of the tab cell
   if (m_active || m_selected) {
     ctx->fillRect(KDRect(0, 0, width, 1),

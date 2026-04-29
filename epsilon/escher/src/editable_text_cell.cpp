@@ -8,9 +8,7 @@ namespace Escher {
 
 void AbstractEditableTextCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
-  ThemeComponent backgroundColor = highlight ? ThemeComponent::SurfaceSelect
-                                             : ThemeComponent::BackgroundWhite;
-  textField()->setBackgroundColor(backgroundColor);
+  textField()->setHighlighted(highlight);
 }
 
 const char* AbstractEditableTextCell::text() const {

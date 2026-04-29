@@ -19,14 +19,14 @@ void SuggestionTextField::ContentView::drawRect(KDContext* ctx,
                     glyphFrameAtPosition(draftText(), draftTextEnd()).origin(),
                     {.glyphColor = Palette::GrayDark,
                      .backgroundColor = Palette::White,
-                     .font = m_format.style.font});
+                     .font = textFormat().style.font});
   }
 }
 
 KDSize SuggestionTextField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize size = AbstractTextField::ContentView::minimalSizeForOptimalDisplay();
   return m_suggestion
-             ? KDSize(size.width() + KDFont::Font(m_format.style.font)
+             ? KDSize(size.width() + KDFont::Font(textFormat().style.font)
                                          ->stringSize(suggestionSuffix())
                                          .width(),
                       size.height())

@@ -40,14 +40,14 @@ AbstractTextField::ContentView::ContentView(char* textBuffer,
 
 void AbstractTextField::ContentView::drawRect(KDContext* ctx,
                                               KDRect rect) const {
-  ThemeComponent backgroundColor = m_format.style.backgroundColor;
+  ThemeComponent backgroundColor = textFormat().style.backgroundColor;
   if (m_isEditing) {
     backgroundColor = ThemeComponent::BackgroundWhite;
   }
   ctx->fillRect(bounds(), ColorPicker::Resolve(backgroundColor));
-  TextStyle glyphStyle{.glyphColor = m_format.style.glyphColor,
+  TextStyle glyphStyle{.glyphColor = textFormat().style.glyphColor,
                        .backgroundColor = backgroundColor,
-                       .font = m_format.style.font};
+                       .font = textFormat().style.font};
   if (selectionIsEmpty()) {
     ctx->drawString(text(), glyphFrameAtPosition(text(), text()).origin(),
                     ToKDGlyphStyle(glyphStyle));
@@ -64,10 +64,10 @@ void AbstractTextField::ContentView::drawRect(KDContext* ctx,
     ctx->drawString(text() + selectionOffset,
                     glyphFrameAtPosition(text(), textToDraw).origin(),
                     {.glyphColor = ColorPicker::Resolve(
-                         Highlight(m_format.style.glyphColor, true)),
+                         Highlight(textFormat().style.glyphColor, true)),
                      .backgroundColor = ColorPicker::Resolve(
-                         Highlight(m_format.style.backgroundColor, true)),
-                     .font = m_format.style.font},
+                         Highlight(textFormat().style.backgroundColor, true)),
+                     .font = textFormat().style.font},
                     selectionLength);
     textToDraw += selectionLength;
     // Draw the non selected text on the right of the selection
@@ -163,14 +163,14 @@ bool AbstractTextField::ContentView::insertTextAtLocation(const char* text,
   strlcpy(location, text, copySize);
   *overridenByteLocation = overridenByte;
 
-  reloadRectFromPosition(m_format.horizontalAlignment == 0.0f ? location
-                                                              : buffer);
+  reloadRectFromPosition(textFormat().horizontalAlignment == 0.0f ? location
+                                                                  : buffer);
   return true;
 }
 
 KDSize AbstractTextField::ContentView::minimalSizeForOptimalDisplay() const {
-  KDSize stringSize = KDFont::Font(m_format.style.font)->stringSize(text());
-  assert(stringSize.height() == KDFont::GlyphHeight(m_format.style.font));
+  KDSize stringSize = KDFont::Font(textFormat().style.font)->stringSize(text());
+  assert(stringSize.height() == KDFont::GlyphHeight(textFormat().style.font));
   if (m_isEditing) {
     return KDSize(stringSize.width() + TextCursorView::k_width,
                   stringSize.height());
@@ -183,7 +183,7 @@ bool AbstractTextField::ContentView::removePreviousGlyph() {
 
   char* buffer = const_cast<char*>(draftText());
 
-  if (m_format.horizontalAlignment > 0.0f) {
+  if (textFormat().horizontalAlignment > 0.0f) {
     /* Reload the view. If we do it later, the text being supposedly shorter, we
      * will not clean the first char. */
     reloadRectFromPosition(buffer);
@@ -199,7 +199,7 @@ bool AbstractTextField::ContentView::removePreviousGlyph() {
   // Set the cursor location and reload the view
   assert(cursorLocation() - removedLength >= buffer);
   setCursorLocation(cursorLocation() - removedLength);
-  if (m_format.horizontalAlignment == 0.0f) {
+  if (textFormat().horizontalAlignment == 0.0f) {
     reloadRectFromPosition(cursorLocation());
   }
   layoutSubviews();
@@ -213,8 +213,8 @@ bool AbstractTextField::ContentView::removeEndOfLine() {
   if (draftTextLength() == lengthToCursor) {
     return false;
   }
-  reloadRectFromPosition(m_format.horizontalAlignment == 0.0f ? cursorLocation()
-                                                              : buffer);
+  reloadRectFromPosition(
+      textFormat().horizontalAlignment == 0.0f ? cursorLocation() : buffer);
   *(const_cast<char*>(cursorLocation())) = 0;
   layoutSubviews();
   return true;
@@ -266,20 +266,22 @@ KDRect AbstractTextField::ContentView::glyphFrameAtPosition(
     const char* buffer, const char* position) const {
   assert(buffer != nullptr && position != nullptr);
   assert(position >= buffer);
-  KDSize glyphSize = KDFont::GlyphSize(m_format.style.font);
+  KDSize glyphSize = KDFont::GlyphSize(textFormat().style.font);
   KDCoordinate cursorWidth = TextCursorView::k_width;
   KDCoordinate horizontalOffset =
-      m_format.horizontalAlignment == 0.0f
+      textFormat().horizontalAlignment == 0.0f
           ? 0.0f
-          : m_format.horizontalAlignment *
+          : textFormat().horizontalAlignment *
                 (bounds().width() -
-                 KDFont::Font(m_format.style.font)->stringSize(buffer).width() -
+                 KDFont::Font(textFormat().style.font)
+                     ->stringSize(buffer)
+                     .width() -
                  cursorWidth);
   return KDRect(
-      horizontalOffset + KDFont::Font(m_format.style.font)
+      horizontalOffset + KDFont::Font(textFormat().style.font)
                              ->stringSizeUntil(buffer, position)
                              .width(),
-      m_format.verticalAlignment * (bounds().height() - glyphSize.height()),
+      textFormat().verticalAlignment * (bounds().height() - glyphSize.height()),
       glyphSize);
 }
 

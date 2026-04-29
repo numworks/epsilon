@@ -5,6 +5,7 @@
 #include <escher/scrollable_view.h>
 #include <escher/text_cursor_view.h>
 #include <escher/text_format.h>
+#include <escher/theme/highlight.h>
 #include <omg/directions.h>
 #include <string.h>
 
@@ -29,6 +30,10 @@ class TextInput : public EditableField {
   }
   void resetSelection() { contentView()->resetSelection(); }
   void deleteSelection();
+
+  void setHighlighted(bool highlighted) {
+    contentView()->setHighlighted(highlighted);
+  }
 
  protected:
   class ContentView : public TextCursorView::CursorFieldView {
@@ -81,9 +86,16 @@ class TextInput : public EditableField {
     // Format
     void setBackgroundColor(ThemeComponent backgroundColor);
     ThemeComponent backgroundColor() const {
-      return m_format.style.backgroundColor;
+      return textFormat().style.backgroundColor;
     }
     void setTextColor(ThemeComponent textColor);
+
+    void setHighlighted(bool highlighted) {
+      if (m_isHighlighted != highlighted) {
+        m_isHighlighted = highlighted;
+        markWholeFrameAsDirty();
+      }
+    }
 
    protected:
     void reloadRectFromAndToPositions(const char* start, const char* end);
@@ -92,8 +104,26 @@ class TextInput : public EditableField {
     virtual KDRect dirtyRectFromPosition(const char* position,
                                          bool includeFollowingLines) const;
 
+    // Takes highlight into account
+    virtual TextFormat textFormat() const {
+      return TextFormat{
+          .style =
+              TextStyle{
+                  .glyphColor =
+                      Highlight(m_format.style.glyphColor, m_isHighlighted),
+                  .backgroundColor = Highlight(m_format.style.backgroundColor,
+                                               m_isHighlighted),
+                  .font = m_format.style.font,
+              },
+          .horizontalAlignment = m_format.horizontalAlignment,
+          .verticalAlignment = m_format.verticalAlignment};
+    }
+
     const char* m_cursorLocation;
     const char* m_selectionStart;
+
+   private:
+    bool m_isHighlighted = false;
     Escher::TextFormat m_format;
   };
 

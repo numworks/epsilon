@@ -1,5 +1,6 @@
 #include <escher/even_odd_cell.h>
 #include <escher/theme/color_picker.h>
+#include <escher/theme/highlight.h>
 
 namespace Escher {
 
@@ -29,10 +30,10 @@ void EvenOddCell::setHighlighted(bool highlighted) {
 ThemeComponent EvenOddCell::backgroundColor() const {
   if (!isVisible()) {
     return k_hideColor;
-  } else if (isHighlighted()) {
-    return ThemeComponent::SurfaceSelect;
   }
-  return m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen;
+  return Highlight(
+      m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen,
+      isHighlighted());
 }
 
 void EvenOddCell::drawRect(KDContext* ctx, KDRect rect) const {

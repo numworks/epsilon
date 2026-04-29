@@ -28,7 +28,10 @@ class GlyphsView : public View, public CellWidget {
   // CellWidget
   const View* view() const override { return this; }
   void setHighlighted(bool highlighted) override {
-    m_isHighlighted = highlighted;
+    if (m_isHighlighted != highlighted) {
+      m_isHighlighted = highlighted;
+      markWholeFrameAsDirty();
+    }
   }
   bool alwaysAlignWithLabelAsAccessory() const override { return true; }
   bool preventRightAlignedSubLabel(Type type) const override {

@@ -16,6 +16,7 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .SurfaceSelect = Palette::DARK_VioletLight,
     .SurfaceSelectDark = Palette::DARK_VioletLight,
     .BannerYellow = Palette::DARK_VioletLight,
+    .BannerPurple = Palette::DARK_VioletMiddle,
     .BannerGrayWhite = Palette::DARK_VioletMiddle,
     .BannerGrayMiddle = Palette::DARK_VioletMiddle,
     .TextDefault = Palette::DARK_VioletLight,

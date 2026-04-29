@@ -4,9 +4,13 @@
 
 namespace Escher {
 
-/* Returns the highlighted version of a ThemeComponent. Useful for text and
- * background highlights */
-constexpr static ThemeComponent Highlight(ThemeComponent component) {
+/* Returns the highlighted version of a ThemeComponent if isHighlighted is true.
+ * Returns the component otherwise. Useful for text and background highlights */
+constexpr static ThemeComponent Highlight(ThemeComponent component,
+                                          bool isHighlighted) {
+  if (!isHighlighted) {
+    return component;
+  }
   switch (component) {
     case ThemeComponent::TextDefault:
       return ThemeComponent::TextSelect;

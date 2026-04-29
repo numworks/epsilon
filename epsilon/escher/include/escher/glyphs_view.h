@@ -62,13 +62,10 @@ class GlyphsView : public View, public CellWidget {
     return TextFormat{
         .style =
             TextStyle{
-                .glyphColor = m_isHighlighted
-                                  ? Highlight(m_textFormat.style.glyphColor)
-                                  : m_textFormat.style.glyphColor,
-                .backgroundColor =
-                    m_isHighlighted
-                        ? Highlight(m_textFormat.style.backgroundColor)
-                        : m_textFormat.style.backgroundColor,
+                .glyphColor =
+                    Highlight(m_textFormat.style.glyphColor, m_isHighlighted),
+                .backgroundColor = Highlight(m_textFormat.style.backgroundColor,
+                                             m_isHighlighted),
                 .font = m_textFormat.style.font,
             },
         .horizontalAlignment = m_textFormat.horizontalAlignment,

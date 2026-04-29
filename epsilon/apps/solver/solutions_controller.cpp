@@ -427,6 +427,8 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
       const Solution* solution = system->solution(row);
       ScrollableTwoLayoutsCell* valueCell =
           static_cast<ScrollableTwoLayoutsCell*>(cell);
+      valueCell->setComparisonSign(solution->comparisonSignIsEqual(),
+                                   solution->comparisonSignIsVisible());
       /* ScrollableTwoLayoutsCell will always try to display its
        * approximate layout. If the only layout is the exact one, they need to
        * be swapped.
@@ -438,8 +440,6 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
         valueCell->setLayouts(solution->exactLayout(),
                               solution->approximateLayout());
       }
-      valueCell->setComparisonSign(solution->comparisonSignIsEqual(),
-                                   solution->comparisonSignIsVisible());
     } else {
       /* It's a defined variable row, get values of the solutions or
        * discriminant */

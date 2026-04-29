@@ -14,6 +14,8 @@ constexpr static ThemeComponent Highlight(ThemeComponent component) {
       return ThemeComponent::TextSelectGrayDark;
     case ThemeComponent::TextGrayVeryDark:
       return ThemeComponent::TextSelectGrayVeryDark;
+    case ThemeComponent::TextPurple:
+      return ThemeComponent::TextSelectPurple;
     case ThemeComponent::BackgroundWhite:
     case ThemeComponent::WallScreen:
       return ThemeComponent::SurfaceSelect;

@@ -26,6 +26,7 @@ constexpr static ThemeContainer k_lightTheme =
                    .TextSelect = Palette::Black,
                    .TextSelectGrayDark = Palette::GrayDark,
                    .TextSelectGrayVeryDark = Palette::GrayVeryDark,
+                   .TextSelectPurple = Palette::PurpleBright,
                    .TextGrayDark = Palette::GrayDark,
                    .TextGrayDarkMiddle = Palette::GrayDarkMiddle,
                    .TextGrayVeryDark = Palette::GrayVeryDark,

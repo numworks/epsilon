@@ -27,6 +27,7 @@ namespace Escher {
   X(TextSelect)              \
   X(TextSelectGrayDark)      \
   X(TextSelectGrayVeryDark)  \
+  X(TextSelectPurple)        \
   X(TextGrayDark)            \
   X(TextGrayDarkMiddle)      \
   X(TextGrayVeryDark)        \

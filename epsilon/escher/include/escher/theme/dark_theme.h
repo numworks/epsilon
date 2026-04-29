@@ -25,6 +25,7 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     // TODO: should selected gray texts be another color than Black?
     .TextSelectGrayDark = Palette::Black,
     .TextSelectGrayVeryDark = Palette::Black,
+    .TextSelectPurple = Palette::Black,
     .TextGrayDark = Palette::DARK_VioletMiddle,
     .TextGrayDarkMiddle = Palette::DARK_VioletMiddle,
     .TextGrayVeryDark = Palette::DARK_VioletLight,

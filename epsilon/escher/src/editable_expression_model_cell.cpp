@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <escher/editable_expression_model_cell.h>
 #include <escher/theme/color_picker.h>
+#include <escher/theme/highlight.h>
 
 namespace Escher {
 
@@ -25,9 +26,8 @@ void EditableExpressionModelCell::setMargins(KDHorizontalMargins margins) {
 
 void EditableExpressionModelCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Color the margins
-  KDColor backgroundColor =
-      ColorPicker::Resolve(isHighlighted() ? ThemeComponent::SurfaceSelect
-                                           : ThemeComponent::BackgroundWhite);
+  KDColor backgroundColor = ColorPicker::Resolve(
+      Highlight(ThemeComponent::BackgroundWhite, isHighlighted()));
   ctx->fillRect(KDRect(0, 0, m_margins.left(), bounds().height()),
                 backgroundColor);
   ctx->fillRect(KDRect(bounds().width() - m_margins.right(), 0,

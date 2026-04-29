@@ -4,6 +4,7 @@
 #include <escher/chevron_view.h>
 #include <escher/highlight_cell.h>
 #include <escher/message_text_view.h>
+#include <escher/theme/components.h>
 #include <escher/transparent_image_view.h>
 namespace Escher {
 
@@ -26,6 +27,8 @@ class SubappCell : public HighlightCell, public Bordered {
   constexpr static int k_verticalMarginBetweenTexts = 5;
   constexpr static int k_verticalMarginBottom = 7;
   constexpr static int k_horizontalMarginBetweenTextAndIcon = 15;
+  constexpr static ThemeComponent k_background =
+      ThemeComponent::BackgroundWhite;
 
   TransparentImageView m_icon;
   MessageTextView m_title;

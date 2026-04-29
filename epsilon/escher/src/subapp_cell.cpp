@@ -1,5 +1,6 @@
 #include <escher/subapp_cell.h>
 #include <escher/theme/color_picker.h>
+#include <escher/theme/highlight.h>
 #include <kandinsky/font.h>
 
 #include <algorithm>
@@ -7,15 +8,14 @@
 namespace Escher {
 
 SubappCell::SubappCell() {
-  m_icon.setBackgroundColor(ThemeComponent::BackgroundWhite);
+  m_icon.setBackgroundColor(k_background);
   m_title.setFont(KDFont::Size::Large);
   m_subTitle.setFont(KDFont::Size::Small);
   m_subTitle.setTextColor(ThemeComponent::TextGrayDark);
 }
 
 void SubappCell::drawRect(KDContext* ctx, KDRect rect) const {
-  ThemeComponent backColor = isHighlighted() ? ThemeComponent::SurfaceSelect
-                                             : ThemeComponent::BackgroundWhite;
+  ThemeComponent backColor = Highlight(k_background, isHighlighted());
   drawInnerRect(ctx, bounds(), backColor);
   drawBorderOfRect(ctx, bounds(), ThemeComponent::BorderGrayBright);
 }

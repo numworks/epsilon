@@ -4,8 +4,8 @@
 
 namespace Escher {
 
-/* Returns the highlighted version of a ThemeComponent. Mostly useful for text
- * highlights */
+/* Returns the highlighted version of a ThemeComponent. Useful for text and
+ * background highlights */
 constexpr static ThemeComponent Highlight(ThemeComponent component) {
   switch (component) {
     case ThemeComponent::TextDefault:
@@ -14,6 +14,9 @@ constexpr static ThemeComponent Highlight(ThemeComponent component) {
       return ThemeComponent::TextSelectGrayDark;
     case ThemeComponent::TextGrayVeryDark:
       return ThemeComponent::TextSelectGrayVeryDark;
+    case ThemeComponent::BackgroundWhite:
+    case ThemeComponent::WallScreen:
+      return ThemeComponent::SurfaceSelect;
     default:
       return component;
   }

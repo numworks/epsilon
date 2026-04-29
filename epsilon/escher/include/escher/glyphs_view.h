@@ -29,7 +29,6 @@ class GlyphsView : public View, public CellWidget {
   const View* view() const override { return this; }
   void setHighlighted(bool highlighted) override {
     m_isHighlighted = highlighted;
-    setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
   }
   bool alwaysAlignWithLabelAsAccessory() const override { return true; }
   bool preventRightAlignedSubLabel(Type type) const override {
@@ -63,7 +62,10 @@ class GlyphsView : public View, public CellWidget {
                 .glyphColor = m_isHighlighted
                                   ? Highlight(m_textFormat.style.glyphColor)
                                   : m_textFormat.style.glyphColor,
-                .backgroundColor = m_textFormat.style.backgroundColor,
+                .backgroundColor =
+                    m_isHighlighted
+                        ? Highlight(m_textFormat.style.backgroundColor)
+                        : m_textFormat.style.backgroundColor,
                 .font = m_textFormat.style.font,
             },
         .horizontalAlignment = m_textFormat.horizontalAlignment,

@@ -78,6 +78,13 @@ class TextInput : public EditableField {
     size_t draftTextLength() const { return strlen(draftText()); }
     const char* draftTextEnd() const { return draftText() + draftTextLength(); }
 
+    // Format
+    void setBackgroundColor(ThemeComponent backgroundColor);
+    ThemeComponent backgroundColor() const {
+      return m_format.style.backgroundColor;
+    }
+    void setTextColor(ThemeComponent textColor);
+
    protected:
     void reloadRectFromAndToPositions(const char* start, const char* end);
     virtual KDRect glyphFrameAtPosition(const char* buffer,

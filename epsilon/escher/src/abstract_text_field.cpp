@@ -38,17 +38,6 @@ AbstractTextField::ContentView::ContentView(char* textBuffer,
   reinitDraftTextBuffer();
 }
 
-void AbstractTextField::ContentView::setBackgroundColor(
-    ThemeComponent backgroundColor) {
-  m_format.style.backgroundColor = backgroundColor;
-  markWholeFrameAsDirty();
-}
-
-void AbstractTextField::ContentView::setTextColor(ThemeComponent textColor) {
-  m_format.style.glyphColor = textColor;
-  markWholeFrameAsDirty();
-}
-
 void AbstractTextField::ContentView::drawRect(KDContext* ctx,
                                               KDRect rect) const {
   ThemeComponent backgroundColor = m_format.style.backgroundColor;

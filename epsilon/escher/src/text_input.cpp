@@ -83,6 +83,17 @@ KDRect TextInput::ContentView::dirtyRectFromPosition(
 
 /* TextInput */
 
+void TextInput::ContentView::setBackgroundColor(
+    ThemeComponent backgroundColor) {
+  m_format.style.backgroundColor = backgroundColor;
+  markWholeFrameAsDirty();
+}
+
+void TextInput::ContentView::setTextColor(ThemeComponent textColor) {
+  m_format.style.glyphColor = textColor;
+  markWholeFrameAsDirty();
+}
+
 bool TextInput::removePreviousGlyph() {
   contentView()->removePreviousGlyph();
   scrollToCursor();

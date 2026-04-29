@@ -100,13 +100,6 @@ class AbstractTextField : public TextInput {
     bool removeEndOfLine() override;
     size_t deleteSelection() override;
 
-    // Format
-    void setBackgroundColor(ThemeComponent backgroundColor);
-    ThemeComponent backgroundColor() const {
-      return m_format.style.backgroundColor;
-    }
-    void setTextColor(ThemeComponent textColor);
-
     bool isEditing() const { return m_isEditing; }
     void setText(const char* text);
     void setEditing(bool isEditing);

@@ -4,6 +4,7 @@
 #include <escher/container.h>
 #include <escher/text_input_helpers.h>
 #include <escher/theme/color_picker.h>
+#include <escher/theme/highlight.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <omg/utf8_helper.h>
@@ -71,13 +72,14 @@ void AbstractTextField::ContentView::drawRect(KDContext* ctx,
     int selectionLength = selectionRight() - selectionLeft();
     textToDraw += selectionOffset;
     // Draw the selected text
-    ctx->drawString(
-        text() + selectionOffset,
-        glyphFrameAtPosition(text(), textToDraw).origin(),
-        {.glyphColor = ColorPicker::Resolve(m_format.style.glyphColor),
-         .backgroundColor = ColorPicker::Resolve(ThemeComponent::SurfaceSelect),
-         .font = m_format.style.font},
-        selectionLength);
+    ctx->drawString(text() + selectionOffset,
+                    glyphFrameAtPosition(text(), textToDraw).origin(),
+                    {.glyphColor = ColorPicker::Resolve(
+                         Highlight(m_format.style.glyphColor, true)),
+                     .backgroundColor = ColorPicker::Resolve(
+                         Highlight(m_format.style.backgroundColor, true)),
+                     .font = m_format.style.font},
+                    selectionLength);
     textToDraw += selectionLength;
     // Draw the non selected text on the right of the selection
     ctx->drawString(text() + selectionOffset + selectionLength,

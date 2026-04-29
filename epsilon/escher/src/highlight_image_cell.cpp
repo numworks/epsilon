@@ -1,5 +1,6 @@
 #include <escher/highlight_image_cell.h>
 #include <escher/theme/components.h>
+#include <escher/theme/highlight.h>
 
 namespace Escher {
 
@@ -8,8 +9,8 @@ HighlightImageCell::HighlightImageCell() : HighlightCell() {
 }
 
 void HighlightImageCell::setHighlighted(bool highlighted) {
-  m_contentView.setBackgroundColor(highlighted ? ThemeComponent::SurfaceSelect
-                                               : k_unselectedBackgroundColor);
+  m_contentView.setBackgroundColor(
+      Highlight(k_unselectedBackgroundColor, highlighted));
   HighlightCell::setHighlighted(highlighted);
 }
 

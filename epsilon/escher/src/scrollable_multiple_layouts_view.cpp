@@ -49,21 +49,27 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::
     updateSubviewsBackgroundAfterChangingState() {
   ThemeComponent defaultColor = backgroundColor();
   bool highlight = isHighlighted();
-  ThemeComponent color =
-      highlight && m_selectedSubviewPosition == SubviewPosition::Center
-          ? ThemeComponent::SurfaceSelect
-          : defaultColor;
-  m_centeredLayoutView.setBackgroundColor(color);
-  color = highlight && m_selectedSubviewPosition == SubviewPosition::Right
-              ? ThemeComponent::SurfaceSelect
-              : defaultColor;
-  m_rightLayoutView.setBackgroundColor(color);
+
+  bool centerIsHighlighted =
+      highlight && m_selectedSubviewPosition == SubviewPosition::Center;
+  m_centeredLayoutView.setHighlighted(centerIsHighlighted);
+  m_centeredLayoutView.setBackgroundColor(
+      centerIsHighlighted ? ThemeComponent::SurfaceSelect : defaultColor);
+
+  bool rightIsHighLighted =
+      highlight && m_selectedSubviewPosition == SubviewPosition::Right;
+  m_rightLayoutView.setHighlighted(rightIsHighLighted);
+  m_rightLayoutView.setBackgroundColor(
+      rightIsHighLighted ? ThemeComponent::SurfaceSelect : defaultColor);
+
   m_comparisonSign.setBackgroundColor(defaultColor);
+
   if (displayLeftLayout()) {
-    color = highlight && m_selectedSubviewPosition == SubviewPosition::Left
-                ? ThemeComponent::SurfaceSelect
-                : defaultColor;
-    leftLayoutView()->setBackgroundColor(color);
+    bool leftIsHighLighted =
+        highlight && m_selectedSubviewPosition == SubviewPosition::Left;
+    leftLayoutView()->setHighlighted(leftIsHighLighted);
+    leftLayoutView()->setBackgroundColor(
+        leftIsHighLighted ? ThemeComponent::SurfaceSelect : defaultColor);
   }
 }
 

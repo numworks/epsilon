@@ -515,9 +515,10 @@ QUIZ_CASE(pcj_simplification_trigonometry_hyperbolic) {
   simplifies_to("cosh(2*pi+1)", "cosh(1+2×π)", k_cartesianSimplification);
   simplifies_to("cosh(-x)+sinh(x)", "e^(x)");
   simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
-  // TODO: Should simplify to 0
+  /* TODO: Should simplify to 0. Also a metric issue: tanh beautification is not
+   * taken into account. */
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
-                "-tanh(x)+((tanh(x)^2+1)×tanh(2×x))/2");
+                "-tanh(x)-((-(tanh(x)^2)-1)×tanh(2×x))/2");
   simplifies_to("arcosh(5)", "arcosh(5)", k_cartesianSimplification);
   simplifies_to("arcosh(5)-ln(5+√(24))", "0", k_cartesianSimplification);
   simplifies_to("arcosh(cosh(x))", "abs(x)", k_cartesianSimplification);

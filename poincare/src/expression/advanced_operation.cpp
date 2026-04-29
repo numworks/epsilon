@@ -269,16 +269,17 @@ bool AdvancedOperation::ExpandMult(Tree* e) {
       PatternMatching::Match(e, KMult(KA_s, KAdd(KB, KC_p), KD_s), &ctx)) {
     assert(ctx.getNumberOfTrees(KA) != 0 || ctx.getNumberOfTrees(KD) != 0);
     Tree* result;
-    if (ctx.getNumberOfTrees(KA) == 1) {
+    if (ctx.getNumberOfTrees(KA) > 0) {
       const Tree* a = ctx.getTree(KA);
       if (a->isNegativeRational() && !a->isMinusOne() &&
           Rational::Numerator(a).isMinusOne()) {
-        // For rationals of the form -1/q, distribute only the negative sign.
         result = SharedTreeStack->pushMult(2);
-        Rational::SetSign(a->cloneTree(), NonStrictSign::Positive);
-        Tree* clone = e->cloneTree();
-        clone->child(0)->cloneTreeOverTree(-1_e);
-        AdvancedOperation::ExpandMult(clone);
+        Tree* KATrees = PatternMatching::Create(KMult(KA_s), ctx);
+        Rational::SetSign(KATrees->isMult() ? KATrees->child(0) : KATrees,
+                          NonStrictSign::Positive);
+        Tree* toExpand = PatternMatching::CreateReduce(
+            KMult(-1_e, KAdd(KB, KC_p), KD_s), ctx);
+        AdvancedOperation::ExpandMult(toExpand);
         e->moveTreeOverTree(result);
         SystematicReduction::ShallowReduce(e);
         return true;

@@ -189,8 +189,9 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget target) {
           result = result * k_integerMultiplicationReductionFactor;
         }
         /* Trigonometry with complexes is beautified into hyperbolic
-         * trigonometry (cosh, sinh, asinh and atanh)*/
+         * trigonometry (sinh, asinh and atanh)*/
         // TODO: cost difference between trig and hyperbolic trig
+        // TODO: take tan and tanh beautification into account
         if (PatternMatching::Match(
                 e, KMult(KA_s, KTrig(KMult(KB_s, i_e), 1_e), KC_s, i_e),
                 &ctx) ||

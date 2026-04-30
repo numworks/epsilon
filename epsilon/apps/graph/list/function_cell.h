@@ -34,6 +34,8 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   // - Color indicator
   void setColor(Escher::ThemeComponent color) { m_functionColor = color; }
 
+  void setHighlighted(bool highlight) override;
+
  protected:
   // View
   bool displayFunctionType() const;
@@ -45,6 +47,9 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   KDCoordinate ellipsisViewWidth() const {
     return displayEllipsis() ? Escher::Metric::EllipsisCellWidth : 0;
   }
+
+  virtual bool expressionIsSelected() const { return isHighlighted(); }
+  virtual bool ellipsisIsSelected() const { return isHighlighted(); }
 
   constexpr static KDCoordinate k_colorIndicatorThickness =
       Escher::Metric::VerticalColorIndicatorThickness;
@@ -78,7 +83,8 @@ class FunctionCell
   // - Ellipsis View
   void setParameterSelected(bool selected);
 
-  void setHighlighted(bool highlight) override;
+  bool expressionIsSelected() const override { return !m_parameterSelected; }
+  bool ellipsisIsSelected() const override { return m_parameterSelected; }
 
  private:
   void updateSubviewsBackgroundAfterChangingState() override;

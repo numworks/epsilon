@@ -47,11 +47,14 @@ void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
       KDRect(k_colorIndicatorThickness, 0,
              bounds().width() - k_colorIndicatorThickness - ellipsisWidth,
              bounds().height()),
-      ColorPicker::Resolve(m_expressionBackground));
+      ColorPicker::Resolve(Highlight(
+          m_expressionBackground, isHighlighted() && expressionIsSelected())));
   // Color the ellipsis view
-  ctx->fillRect(KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
-                       bounds().height()),
-                ColorPicker::Resolve(m_ellipsisBackground));
+  ctx->fillRect(
+      KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
+             bounds().height()),
+      ColorPicker::Resolve(Highlight(m_ellipsisBackground,
+                                     isHighlighted() && ellipsisIsSelected())));
 }
 
 KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {
@@ -119,13 +122,10 @@ KDCoordinate AbstractFunctionCell::messageTextHeight() const {
   return m_messageTextView.minimalSizeForOptimalDisplay().height();
 }
 
-void FunctionCell::setHighlighted(bool highlight) {
-  /* When the function cell is selected: the highlight is on the ellipsis when
-   * m_parameterSelected, and on the expression with description (message) when
-   * !m_parameterSelected */
-  expressionCell()->setHighlighted(highlight && !m_parameterSelected);
-  m_messageTextView.setHighlighted(highlight && !m_parameterSelected);
-  AbstractFunctionCell::setHighlighted(highlight);
+void AbstractFunctionCell::setHighlighted(bool highlight) {
+  mainCell()->setHighlighted(highlight && expressionIsSelected());
+  m_messageTextView.setHighlighted(highlight && expressionIsSelected());
+  EvenOddCell::setHighlighted(highlight);
 }
 
 void FunctionCell::updateSubviewsBackgroundAfterChangingState() {

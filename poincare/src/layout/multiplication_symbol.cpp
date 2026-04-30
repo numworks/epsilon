@@ -275,7 +275,7 @@ CodePoint CodePointForOperatorSymbol(OperatorSymbol symbol) {
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
  * Brace         |    •    |    •    |     •     |      •      |       ×       |  •   |    •    |    •     |  ø   |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
- * Root          |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |  ø   |      •
+ * Root          |    ×    |    ×    |     •     |      ø      |       ø       |  ø   |    •    |    ×     |  ø   |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
  * Fraction      |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |  ø   |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
@@ -328,10 +328,13 @@ OperatorSymbol OperatorSymbolBetween(LayoutShape left, LayoutShape right,
         default:
           return MiddleDot;
       }
-    // fall-through
+    case Root:
+      if (right == OneLetter) {
+        return MiddleDot;
+      }
+      [[fallthrough]];
     case BoundaryPunctuation:
     case Fraction:
-    case Root:
       switch (right) {
         case Decimal:
         case Integer:

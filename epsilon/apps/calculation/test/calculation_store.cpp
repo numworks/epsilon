@@ -908,10 +908,10 @@ QUIZ_CASE(calculation_complex_format) {
                       DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Equal, "-1", nullptr, &store);
   assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "1+√(3)i", "1+1.7320508075689i",
-                      &store);
+                      EqualSign::Approximation, "1+√(3)·i",
+                      "1+1.7320508075689i", &store);
   assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "-2+2√(3)i",
+                      EqualSign::Approximation, "-2+2·√(3)·i",
                       "-2+3.4641016151378i", &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "((2^(3/4))/2)+((2^(3/4))/2)i",
@@ -920,7 +920,7 @@ QUIZ_CASE(calculation_complex_format) {
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       ComplexFormat::Polar);
   assertCalculationIs("1+i", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "√(2)e^((π/4)i)",
+                      EqualSign::Approximation, "√(2)·e^((π/4)i)",
                       "1.4142135623731e^(0.78539816339745i)", &store);
   assertCalculationIs("√(-1)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "e^((π/2)i)",
@@ -938,7 +938,7 @@ QUIZ_CASE(calculation_complex_format) {
                       EqualSign::Approximation, "4e^(((2π)/3)i)",
                       "4e^(2.0943951023932i)", &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "root(2,4)e^((π/4)i)",
+                      EqualSign::Approximation, "root(2,4)·e^((π/4)i)",
                       "1.1892071150027e^(0.78539816339745i)", &store);
 
   GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(

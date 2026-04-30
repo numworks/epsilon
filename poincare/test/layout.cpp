@@ -181,7 +181,7 @@ QUIZ_CASE(pcj_expression_to_layout_multiplication_operator) {
                                               "conj(2)×√(2)", "conj(2)√(2)");
   // √(2)a!
   assert_expression_layouts_and_serializes_to(KMult(KSqrt(2_e), KFact("a"_e)),
-                                              "√(2)×a!", "√(2)a!");
+                                              "√(2)×a!", "√(2)·a!");
   // a 2/3
   assert_expression_layouts_and_serializes_to(KMult("a"_e, KDiv(2_e, 3_e)),
                                               "a×2/3", "a(2/3)");

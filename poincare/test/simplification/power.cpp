@@ -44,10 +44,9 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("1881676377434183981909562699940347954480361860897069^(1/3)",
                 "root(1881676377434183981909562699940347954480361860897069,3)");
 
-  /* Principal angle of root of unity.
-   * Can simplify to root(25,3)/10-(√(3)×root(25,3))/10×i with +1 advanced
-   * reduction depth */
-  simplifies_to("(-5)^(-1/3)", "-(-5)^(2/3)/5", k_cartesianSimplification);
+  // Principal angle of root of unity.
+  simplifies_to("(-5)^(-1/3)*10", "root(25,3)-√(3)×root(25,3)×i",
+                k_cartesianSimplification);
 
   // Zero
   simplifies_to("0^3", "0");

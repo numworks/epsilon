@@ -268,12 +268,14 @@ bool AdvancedOperation::ExpandMult(Tree* e) {
   if (e->isMult() &&
       PatternMatching::Match(e, KMult(KA_s, KAdd(KB, KC_p), KD_s), &ctx)) {
     assert(ctx.getNumberOfTrees(KA) != 0 || ctx.getNumberOfTrees(KD) != 0);
-    Tree* result;
     if (ctx.getNumberOfTrees(KA) > 0) {
       const Tree* a = ctx.getTree(KA);
       if (a->isNegativeRational() && !a->isMinusOne() &&
           Rational::Numerator(a).isMinusOne()) {
-        result = SharedTreeStack->pushMult(2);
+        /* Distribute only the negative sign of a multiplication, if the first
+         * term is a rational of the form -1/q.
+         * KA_s*(KB+KC_p)*KD_s -> (-KA_s)*ExpandMult((-1)*(KB+KC_p)*KD_s) */
+        Tree* result = SharedTreeStack->pushMult(2);
         Tree* KATrees = PatternMatching::Create(KMult(KA_s), ctx);
         Rational::SetSign(KATrees->isMult() ? KATrees->child(0) : KATrees,
                           NonStrictSign::Positive);
@@ -286,7 +288,7 @@ bool AdvancedOperation::ExpandMult(Tree* e) {
       }
     }
     int numberOfTerms = 1 + ctx.getNumberOfTrees(KC);
-    result = SharedTreeStack->pushAdd(numberOfTerms);
+    Tree* result = SharedTreeStack->pushAdd(numberOfTerms);
     const Tree* term = ctx.getTree(KB);
     for (int i = 0; i < numberOfTerms; i++) {
       ctx.setNode(KB, term, 1, false);

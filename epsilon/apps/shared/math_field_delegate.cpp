@@ -44,6 +44,7 @@ bool AbstractMathFieldDelegate::isAcceptableExpression(
 
 void AbstractMathFieldDelegate::displayWarningForSyntaxError(
     SyntaxError error) const {
+  // TODO: Optimize space by factorizing "Syntax error:\n" from the messages
   App::app()->displayWarning(MessageForSyntaxError(error));
 }
 

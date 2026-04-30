@@ -52,7 +52,6 @@ I18n::Message MessageForSyntaxError(Poincare::SyntaxError error) {
     case Poincare::SyntaxError::MissingLeftExpression1:
     case Poincare::SyntaxError::MissingLeftExpression2:
     case Poincare::SyntaxError::MissingLeftExpression3:
-    case Poincare::SyntaxError::ExponentCannotExistAlone:
       return I18n::Message::SomethingExpected;
     case Poincare::SyntaxError::FunctionCannotBePowered:
       return I18n::Message::ThisFunctionCantBePowered;
@@ -85,6 +84,8 @@ I18n::Message MessageForSyntaxError(Poincare::SyntaxError error) {
       return I18n::Message::NumberFollowsValidExpressionDirectly;
     case Poincare::SyntaxError::NonAcceptableExpression:
       return I18n::Message::NonAcceptableExpression;
+    case Poincare::SyntaxError::ExponentCannotExistAlone:
+      return I18n::Message::ExponentCannotExistAlone;
     case Poincare::SyntaxError::None:
       assert(false);
     default:

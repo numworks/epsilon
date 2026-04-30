@@ -51,7 +51,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   void setHardwareTestVariant(HardwareTest::Variant variant);
   Shared::PromptController* promptController();
-  void redrawWindow();
+  void redrawWindow(bool force = false);
   void setDFUBetweenEvents(bool active) { m_dfuBetweenEvents = active; }
 
   // Ion::Storage::StorageDelegate

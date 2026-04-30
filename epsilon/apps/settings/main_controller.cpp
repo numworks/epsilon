@@ -1,5 +1,6 @@
 #include "main_controller.h"
 
+#include <apps/apps_container.h>
 #include <apps/exam_mode_manager.h>
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
@@ -121,7 +122,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
                                  ? Escher::Theme::Light
                                  : Escher::Theme::Dark;
     GlobalPreferences::SharedGlobalPreferences()->setTheme(newTheme);
-    m_selectableListView.reloadData();
+    AppsContainer::sharedAppsContainer()->redrawWindow(true);
   } else if (type == k_brightnessCellType) {
     int delta = Ion::Backlight::MaxBrightness /
                 GlobalPreferences::NumberOfBrightnessStates;

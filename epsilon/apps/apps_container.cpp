@@ -406,7 +406,7 @@ Shared::PromptController* AppsContainer::promptController() {
   return &m_promptController;
 }
 
-void AppsContainer::redrawWindow() { m_window.redraw(); }
+void AppsContainer::redrawWindow(bool force) { m_window.redraw(force); }
 
 bool AppsContainer::storageCanChangeForRecordName(
     const Ion::Storage::Record::Name recordName) const {

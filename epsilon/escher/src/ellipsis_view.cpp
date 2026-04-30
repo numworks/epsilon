@@ -30,8 +30,13 @@ void EllipsisView::drawRect(KDContext* ctx, KDRect rect) const {
                k_ellipsisHeight);
   KDColor ellipsisWorkingBuffer[EllipsisView::k_ellipsisWidth *
                                 EllipsisView::k_ellipsisHeight];
-  ctx->blendRectWithMask(frame,
-                         ColorPicker::Resolve(ThemeComponent::TokenBlack),
+  /* TODO: in dark mode, blending makes the ellipsis very hard to see (violet
+   * deep blended with a black background). We should reconsider blending in
+   * light mode. Instead of blending black with a white / WallScreen background,
+   * we could use a fixed TokenGrayDark or similar component. Alternatively, we
+   * could have a theme-specific behavior here (blending in light mode but not
+   * in dark mode), but it would be less generic if we add custom themes. */
+  ctx->blendRectWithMask(frame, ColorPicker::Resolve(k_color),
                          (const uint8_t*)ellipsisMask, ellipsisWorkingBuffer);
 }
 

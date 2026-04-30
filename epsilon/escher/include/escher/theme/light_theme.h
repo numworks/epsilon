@@ -59,6 +59,7 @@ constexpr static ThemeContainer k_lightTheme =
                    .TokenGrayBright = Palette::GrayBright,
                    .TokenGrayDarkest = Palette::GrayDarkest,
                    .TokenGrayDark = Palette::GrayDark,
+                   .TokenEllipsis = Palette::Black,
                    .TokenBatteryLevel = Palette::YellowLightBattery,
                    .TokenLowBattery = Palette::LowBattery};
 }  // namespace Escher

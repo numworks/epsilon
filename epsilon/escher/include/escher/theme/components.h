@@ -60,6 +60,7 @@ namespace Escher {
   X(TokenGrayBright)         \
   X(TokenGrayDarkest)        \
   X(TokenGrayDark)           \
+  X(TokenEllipsis)           \
   X(TokenBatteryLevel)       \
   X(TokenLowBattery)
 

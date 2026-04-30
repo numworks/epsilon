@@ -18,7 +18,6 @@ class EvenOddCellWithEllipsis : public EvenOddCell {
   }
   void layoutSubviews(bool force = false) override;
 
-  // TODO: add setHighlighted to EllipsisView and EvenOddCellWithEllipsis
   EllipsisView m_ellipsisView;
 };
 

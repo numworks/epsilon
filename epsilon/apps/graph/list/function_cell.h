@@ -10,6 +10,7 @@
 
 namespace Graph {
 
+// TODO: factorize with AbstractSequenceCell which is very similar
 class AbstractFunctionCell : public Escher::EvenOddCell {
  public:
   AbstractFunctionCell();

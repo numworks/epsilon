@@ -13,10 +13,6 @@ class EditableSequenceCell
   EditableSequenceCell(Escher::Responder* parentResponder,
                        Escher::LayoutFieldDelegate* layoutFieldDelegate);
 
-  void updateSubviewsBackgroundAfterChangingState() override {
-    m_expressionBackground = backgroundColor();
-  }
-
   void layoutSubviews(bool force) override;
 
  private:

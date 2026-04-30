@@ -1,6 +1,7 @@
 #include "sequence_cell.h"
 
 #include <escher/theme/color_picker.h>
+#include <escher/theme/highlight.h>
 
 using namespace Escher;
 
@@ -18,16 +19,20 @@ View* AbstractSequenceCell::subviewAtIndex(int index) {
 
 void AbstractSequenceCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Color the main background
-  ctx->fillRect(bounds(), ColorPicker::Resolve(m_expressionBackground));
+  ctx->fillRect(bounds(), ColorPicker::Resolve(Highlight(
+                              backgroundColor(),
+                              isHighlighted() && expressionIsSelected())));
   // Draw the color indicator
   ctx->fillRect(
       KDRect(0, 0, k_verticalColorIndicatorThickness, bounds().height()),
       ColorPicker::Resolve(m_functionColor));
   // Color the ellipsis view
   KDCoordinate ellipsisWidth = displayEllipsis() ? k_ellipsisWidth : 0;
-  ctx->fillRect(KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
-                       bounds().height()),
-                ColorPicker::Resolve(m_ellipsisBackground));
+  ctx->fillRect(
+      KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
+             bounds().height()),
+      ColorPicker::Resolve(Highlight(backgroundColor(),
+                                     isHighlighted() && ellipsisIsSelected())));
 }
 
 void AbstractSequenceCell::layoutSubviews(bool force) {
@@ -44,14 +49,17 @@ void AbstractSequenceCell::layoutSubviews(bool force) {
                 force);
 }
 
+ThemeComponent AbstractSequenceCell::backgroundColor() const {
+  return m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen;
+}
+
+void AbstractSequenceCell::setHighlighted(bool highlight) {
+  mainCell()->setHighlighted(highlight && expressionIsSelected());
+  EvenOddCell::setHighlighted(highlight);
+}
+
 void SequenceCell::updateSubviewsBackgroundAfterChangingState() {
-  ThemeComponent defaultColor =
-      m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen;
-  // If not highlighted, selectedColor is defaultColor
-  ThemeComponent selectedColor = backgroundColor();
-  m_expressionBackground = m_parameterSelected ? defaultColor : selectedColor;
-  m_ellipsisBackground = m_parameterSelected ? selectedColor : defaultColor;
-  expressionCell()->setHighlighted(isHighlighted() && !m_parameterSelected);
+  expressionCell()->setBackgroundColor(backgroundColor());
 }
 
 void AbstractSequenceCell::setParameterSelected(bool selected) {

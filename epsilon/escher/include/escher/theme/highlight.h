@@ -24,6 +24,8 @@ constexpr static ThemeComponent Highlight(ThemeComponent component,
     case ThemeComponent::WallScreen:
       return ThemeComponent::SurfaceSelect;
     default:
+      /* Other components either do not need an highlighted version, or don't
+       * change their color when they are highlighted. */
       return component;
   }
 }

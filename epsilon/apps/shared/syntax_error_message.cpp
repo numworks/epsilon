@@ -26,8 +26,8 @@ I18n::Message MessageForSyntaxError(Poincare::SyntaxError error) {
       return I18n::Message::FunctionMustHaveOnly1Parameter;
     case Poincare::SyntaxError::InvalidMatrixDimension:
       return I18n::Message::InvalidMatrixDimension;
-    case Poincare::SyntaxError::InvalidParenthesis:
-      return I18n::Message::InvalidUseOfParenthesis;
+    case Poincare::SyntaxError::EmptyParentheses:
+      return I18n::Message::EmptyParentheses;
     case Poincare::SyntaxError::MissingLeftBracket:
       return I18n::Message::MissingLeftBracket;
     case Poincare::SyntaxError::MissingFactorialParameterOnLeft:
@@ -69,6 +69,7 @@ I18n::Message MessageForSyntaxError(Poincare::SyntaxError error) {
       return I18n::Message::CannotParsePercentOperator;
     case Poincare::SyntaxError::NoBooleansBeforeNot:
       return I18n::Message::NoBooleansBeforeNot;
+    case Poincare::SyntaxError::TooManyParametersInParentheses:
     case Poincare::SyntaxError::Only2DPointsHandled:
       return I18n::Message::Only2DPointsHandled;
     case Poincare::SyntaxError::TooManyParameters:

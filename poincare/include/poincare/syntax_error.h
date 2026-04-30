@@ -14,7 +14,7 @@ enum class SyntaxError : uint8_t {
   RightSideMustBeSymbolOrFunction = 3,
   SomethingWasExpected = 4,
   IncompleteExpression = 5,
-  InvalidParenthesis = 6,
+  EmptyParentheses = 6,
   TooManyParameters = 7,
   ExponentTooBig = 8,
   ForbiddenImplicitMultiplication = 9,
@@ -62,6 +62,7 @@ enum class SyntaxError : uint8_t {
   NumberFollowsValidExpressionDirectly = 51,
   NonAcceptableExpression = 52,  // Used in Epsilon
   DataNotSuitable = 53,          // Used in Epsilon
+  TooManyParametersInParentheses = 54,
 };
 
 }  // namespace Poincare

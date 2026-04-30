@@ -75,16 +75,20 @@ Tree* PrivateParse(const Tree* l, ParsingContext parsingContext) {
       parsingContext.metadata.isCommaSeparatedList = true;
       Tree* list = RackParser(l->child(0), parsingContext).parseRack();
       if (l->layoutType() == LayoutType::Parentheses) {
-        int numberOfChildren = list->numberOfChildren();
+        switch (list->numberOfChildren()) {
+          case 0:
+            RackParser::RaiseParseFail(SyntaxError::EmptyParentheses);
+          case 1:
+            list->cloneNodeOverNode(KParentheses);
+            break;
 #if POINCARE_POINT
-        if (numberOfChildren == 2) {
-          list->cloneNodeOverNode(KPoint);
-        } else
+          case 2:
+            list->cloneNodeOverNode(KPoint);
+            break;
 #endif
-            if (numberOfChildren == 1) {
-          list->cloneNodeOverNode(KParentheses);
-        } else {
-          RackParser::RaiseParseFail(SyntaxError::InvalidParenthesis);
+          default:
+            RackParser::RaiseParseFail(
+                SyntaxError::TooManyParametersInParentheses);
         }
       }
       return list;

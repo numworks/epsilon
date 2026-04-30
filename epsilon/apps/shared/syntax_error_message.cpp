@@ -28,10 +28,6 @@ I18n::Message MessageForSyntaxError(Poincare::SyntaxError error) {
       return I18n::Message::InvalidMatrixDimension;
     case Poincare::SyntaxError::InvalidParenthesis:
       return I18n::Message::InvalidUseOfParenthesis;
-    case Poincare::SyntaxError::MissingLeftExpression1:
-    case Poincare::SyntaxError::MissingLeftExpression2:
-    case Poincare::SyntaxError::MissingLeftExpression3:
-      return I18n::Message::MissingExpressionOnTheLeft;
     case Poincare::SyntaxError::MissingLeftBracket:
       return I18n::Message::MissingLeftBracket;
     case Poincare::SyntaxError::MissingFactorialParameterOnLeft:
@@ -53,6 +49,9 @@ I18n::Message MessageForSyntaxError(Poincare::SyntaxError error) {
     case Poincare::SyntaxError::RightSideMustBeSymbolOrFunction:
       return I18n::Message::RightSideMustBeSymbolOrFunction;
     case Poincare::SyntaxError::SomethingWasExpected:
+    case Poincare::SyntaxError::MissingLeftExpression1:
+    case Poincare::SyntaxError::MissingLeftExpression2:
+    case Poincare::SyntaxError::MissingLeftExpression3:
     case Poincare::SyntaxError::ExponentCannotExistAlone:
       return I18n::Message::SomethingExpected;
     case Poincare::SyntaxError::FunctionCannotBePowered:

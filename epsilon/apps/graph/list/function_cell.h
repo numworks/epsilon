@@ -65,7 +65,7 @@ class TemplatedFunctionCell : public AbstractFunctionCell, public T {
  public:
   TemplatedFunctionCell() : AbstractFunctionCell(), T() {}
 
- private:
+ protected:
   Escher::HighlightCell* mainCell() override { return T::expressionCell(); }
 };
 
@@ -77,6 +77,8 @@ class FunctionCell
         m_parameterSelected(false) {}
   // - Ellipsis View
   void setParameterSelected(bool selected);
+
+  void setHighlighted(bool highlight) override;
 
  private:
   void updateSubviewsBackgroundAfterChangingState() override;

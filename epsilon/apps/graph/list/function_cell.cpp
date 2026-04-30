@@ -119,6 +119,15 @@ KDCoordinate AbstractFunctionCell::messageTextHeight() const {
   return m_messageTextView.minimalSizeForOptimalDisplay().height();
 }
 
+void FunctionCell::setHighlighted(bool highlight) {
+  /* When the function cell is selected: the highlight is on the ellipsis when
+   * m_parameterSelected, and on the expression with description (message) when
+   * !m_parameterSelected */
+  expressionCell()->setHighlighted(highlight && !m_parameterSelected);
+  m_messageTextView.setHighlighted(highlight && !m_parameterSelected);
+  AbstractFunctionCell::setHighlighted(highlight);
+}
+
 void FunctionCell::updateSubviewsBackgroundAfterChangingState() {
   ThemeComponent defaultColor =
       m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen;

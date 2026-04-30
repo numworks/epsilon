@@ -60,8 +60,7 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   Escher::MessageTextView m_messageTextView;
   Escher::EllipsisView m_ellipsisView;
   Escher::ThemeComponent m_functionColor;
-  Escher::ThemeComponent m_expressionBackground;
-  Escher::ThemeComponent m_ellipsisBackground;
+  Escher::ThemeComponent m_backgroundColor;
   bool m_hideMessage;
 };
 

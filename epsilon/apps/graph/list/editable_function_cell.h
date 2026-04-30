@@ -19,7 +19,7 @@ class EditableFunctionCell
                        Escher::StackViewController* modelsStackController);
 
   void updateSubviewsBackgroundAfterChangingState() override {
-    m_expressionBackground = backgroundColor();
+    m_backgroundColor = backgroundColor();
   }
 
   bool isEditing() { return layoutField()->isEditing(); }

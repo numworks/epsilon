@@ -105,7 +105,7 @@ class TextInput : public EditableField {
                                          bool includeFollowingLines) const;
 
     // Takes highlight into account
-    virtual TextFormat textFormat() const {
+    TextFormat textFormat() const {
       return TextFormat{
           .style =
               TextStyle{

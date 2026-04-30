@@ -42,6 +42,8 @@ void HistoryViewCell::setEven(bool even) {
   m_scrollableOutputView.evenOddCell()->setEven(even);
   m_ellipsis.setEven(even);
   EvenOddCell::setEven(even);
+  m_inputView.setBackgroundColor(backgroundColor());
+  m_scrollableOutputView.setBackgroundColor(backgroundColor());
 }
 
 void HistoryViewCell::setHighlighted(bool highlight) {
@@ -56,11 +58,6 @@ void HistoryViewCell::setHighlighted(bool highlight) {
     layoutSubviews();
     reloadScroll();
   }
-}
-
-void HistoryViewCell::updateSubviewsBackgroundAfterChangingState() {
-  m_inputView.setBackgroundColor(backgroundColor());
-  m_scrollableOutputView.setBackgroundColor(backgroundColor());
 }
 
 void HistoryViewCell::reloadSubviewHighlight() {

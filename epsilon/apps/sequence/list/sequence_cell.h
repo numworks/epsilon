@@ -60,8 +60,6 @@ class TemplatedSequenceCell : public AbstractSequenceCell, public T {
 class SequenceCell
     : public TemplatedSequenceCell<Shared::WithNonEditableExpressionCell> {
  public:
-  void updateSubviewsBackgroundAfterChangingState() override;
-
   bool expressionIsSelected() const override { return !m_parameterSelected; }
   bool ellipsisIsSelected() const override { return m_parameterSelected; }
 

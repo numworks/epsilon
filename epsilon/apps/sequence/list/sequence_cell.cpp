@@ -58,20 +58,16 @@ void AbstractSequenceCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);
 }
 
-void SequenceCell::updateSubviewsBackgroundAfterChangingState() {
-  expressionCell()->setBackgroundColor(backgroundColor());
-}
-
 void AbstractSequenceCell::setParameterSelected(bool selected) {
   if (selected != m_parameterSelected) {
     m_parameterSelected = selected;
-    updateSubviewsBackgroundAfterChangingState();
   }
 }
 
 void SequenceCell::setEven(bool even) {
   expressionCell()->setEven(even);
   AbstractSequenceCell::setEven(even);
+  expressionCell()->setBackgroundColor(backgroundColor());
 }
 
 }  // namespace Sequence

@@ -140,7 +140,6 @@ void FunctionCell::updateSubviewsBackgroundAfterChangingState() {
 void FunctionCell::setParameterSelected(bool selected) {
   if (selected != m_parameterSelected) {
     m_parameterSelected = selected;
-    updateSubviewsBackgroundAfterChangingState();
   }
 }
 

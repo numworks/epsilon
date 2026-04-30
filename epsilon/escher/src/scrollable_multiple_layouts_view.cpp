@@ -42,21 +42,6 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::setHighlighted(
   /* Do not call HighlightCell::setHighlighted to avoid marking all cell as
    * dirty */
   setHighlightedWithoutReload(highlight);
-  updateSubviewsBackgroundAfterChangingState();
-}
-
-void AbstractScrollableMultipleLayoutsView::ContentCell::
-    updateSubviewsBackgroundAfterChangingState() {
-  // Update even / odd background
-  ThemeComponent evenOddColor = backgroundColor();
-  m_centeredLayoutView.setBackgroundColor(evenOddColor);
-  m_rightLayoutView.setBackgroundColor(evenOddColor);
-  m_comparisonSign.setBackgroundColor(evenOddColor);
-  if (displayLeftLayout()) {
-    leftLayoutView()->setBackgroundColor(evenOddColor);
-  }
-  // Update highlights
-  bool highlight = isHighlighted();
   m_centeredLayoutView.setHighlighted(highlight && m_selectedSubviewPosition ==
                                                        SubviewPosition::Center);
   m_rightLayoutView.setHighlighted(highlight && m_selectedSubviewPosition ==
@@ -64,6 +49,17 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::
   if (displayLeftLayout()) {
     leftLayoutView()->setHighlighted(highlight && m_selectedSubviewPosition ==
                                                       SubviewPosition::Left);
+  }
+}
+
+void AbstractScrollableMultipleLayoutsView::ContentCell::
+    updateSubviewsBackgroundAfterChangingState() {
+  ThemeComponent evenOddColor = backgroundColor();
+  m_centeredLayoutView.setBackgroundColor(evenOddColor);
+  m_rightLayoutView.setBackgroundColor(evenOddColor);
+  m_comparisonSign.setBackgroundColor(evenOddColor);
+  if (displayLeftLayout()) {
+    leftLayoutView()->setBackgroundColor(evenOddColor);
   }
 }
 

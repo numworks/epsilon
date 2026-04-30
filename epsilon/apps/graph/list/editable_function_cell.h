@@ -18,10 +18,6 @@ class EditableFunctionCell
                        Escher::LayoutFieldDelegate* layoutFieldDelegate,
                        Escher::StackViewController* modelsStackController);
 
-  void updateSubviewsBackgroundAfterChangingState() override {
-    m_backgroundColor = backgroundColor();
-  }
-
   bool isEditing() { return layoutField()->isEditing(); }
   bool templateButtonShouldBeVisible() { return layoutField()->isEmpty(); }
   void setTemplateButtonVisible(bool visible);

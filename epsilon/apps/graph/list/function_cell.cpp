@@ -33,7 +33,6 @@ AbstractFunctionCell::AbstractFunctionCell()
                                    .font = KDFont::Size::Small},
                          .verticalAlignment = KDGlyph::k_alignTop}),
       m_functionColor(ThemeComponent::TextDefault),
-      m_backgroundColor(ThemeComponent::BackgroundWhite),
       m_hideMessage(false) {}
 
 void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
@@ -47,12 +46,12 @@ void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
              bounds().width() - k_colorIndicatorThickness - ellipsisWidth,
              bounds().height()),
       ColorPicker::Resolve(Highlight(
-          m_backgroundColor, isHighlighted() && expressionIsSelected())));
+          backgroundColor(), isHighlighted() && expressionIsSelected())));
   // Color the ellipsis view
   ctx->fillRect(
       KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
              bounds().height()),
-      ColorPicker::Resolve(Highlight(m_backgroundColor,
+      ColorPicker::Resolve(Highlight(backgroundColor(),
                                      isHighlighted() && ellipsisIsSelected())));
 }
 
@@ -121,6 +120,10 @@ KDCoordinate AbstractFunctionCell::messageTextHeight() const {
   return m_messageTextView.minimalSizeForOptimalDisplay().height();
 }
 
+ThemeComponent AbstractFunctionCell::backgroundColor() const {
+  return m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen;
+}
+
 void AbstractFunctionCell::setHighlighted(bool highlight) {
   mainCell()->setHighlighted(highlight && expressionIsSelected());
   m_messageTextView.setHighlighted(highlight && expressionIsSelected());
@@ -128,13 +131,10 @@ void AbstractFunctionCell::setHighlighted(bool highlight) {
 }
 
 void FunctionCell::updateSubviewsBackgroundAfterChangingState() {
-  ThemeComponent evenOddColor =
-      m_even ? ThemeComponent::BackgroundWhite : ThemeComponent::WallScreen;
-  m_backgroundColor = evenOddColor;
   if (displayFunctionType()) {
-    m_messageTextView.setBackgroundColor(evenOddColor);
+    m_messageTextView.setBackgroundColor(backgroundColor());
   }
-  expressionCell()->setBackgroundColor(evenOddColor);
+  expressionCell()->setBackgroundColor(backgroundColor());
 }
 
 void FunctionCell::setParameterSelected(bool selected) {

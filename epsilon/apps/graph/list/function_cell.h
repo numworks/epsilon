@@ -34,6 +34,8 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   // - Color indicator
   void setColor(Escher::ThemeComponent color) { m_functionColor = color; }
 
+  Escher::ThemeComponent backgroundColor() const override;
+
   void setHighlighted(bool highlight) override;
 
  protected:
@@ -60,7 +62,6 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   Escher::MessageTextView m_messageTextView;
   Escher::EllipsisView m_ellipsisView;
   Escher::ThemeComponent m_functionColor;
-  Escher::ThemeComponent m_backgroundColor;
   bool m_hideMessage;
 };
 

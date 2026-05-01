@@ -365,18 +365,23 @@ ComplexProperties Quotient(ComplexProperties p1, ComplexProperties p2) {
                            Properties::Zero());
 }
 
-ComplexProperties Binomial(ComplexProperties p) {
-  /* Bin(n, k) is only defined for n and k real, and k integer.
-   * It is always real, and integer if n is an integer. */
-  if (!p.isReal() || !p.realProperties().isFinite()) {
-    return ComplexProperties(Properties::Unknown(), Properties::Unknown());
-  }
-  return ComplexProperties(p.realProperties().isInteger() ? Properties::Integer()
-                                                          : Properties::Finite(),
-                           Properties::Zero());
-}
-
 namespace Internal {
+
+// Binomial helper: depends on both children (n,k). Implemented in Internal
+// so it can inspect dimensions (lists/matrices) and use Internal helpers.
+ComplexProperties Binomial(const Tree* e) {
+  const Tree* n = e->child(0);
+  const Tree* k = e->child(1);
+  // If any child is a matrix, binomial is not a scalar here.
+  if (Dimension::Get(n).isMatrix() || Dimension::Get(k).isMatrix()) {
+    return ComplexProperties::Unknown();
+  }
+  ComplexProperties nProp = GetComplexProperties(n);
+  Properties realProps = nProp.realProperties().isInteger()
+                             ? Properties::Integer()
+                             : Properties::Finite();
+  return ComplexProperties(realProps, Properties::Zero());
+}
 
 // Note: A complex function plotter can be used to fill in these methods.
 ComplexProperties GetComplexProperties(const Tree* e) {
@@ -504,7 +509,7 @@ ComplexProperties GetComplexProperties(const Tree* e) {
     case Type::Fact:
       return ComplexProperties::RealStrictlyPositiveInteger();
     case Type::Binomial:
-      return Binomial(GetComplexProperties(e->child(0)));
+      return Binomial(e);
     case Type::Diff:
       return ComplexProperties::Real();
 #if 0

@@ -648,7 +648,7 @@ QUIZ_CASE(pcj_properties) {
   // binomial
   assert_properties("binomial(4,3)", Properties::Integer());
   assert_properties("binomial(-2,-1)", Properties::Integer());
-  assert_properties("binomial(0.25,1)", Properties::Unknown());
+  assert_properties("binomial(0.25,1)", Properties::Finite());
 }
 
 void assert_projected_is_null(const char* input, OMG::Troolean isNull) {

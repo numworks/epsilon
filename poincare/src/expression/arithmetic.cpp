@@ -321,6 +321,14 @@ bool Arithmetic::ReduceBinomial(Tree* e) {
   assert(e->isBinomial());
   Tree* n = e->child(0);
   Tree* k = n->nextTree();
+  if (!n->isRational()) {
+    Projection::DeepSystemProject(n);
+    SystematicReduction::DeepReduce(n);
+  }
+  if (!k->isRational()) {
+    Projection::DeepSystemProject(k);
+    SystematicReduction::DeepReduce(k);
+  }
   OMG::Troolean kIsRationalInteger = Integer::IsRationalInteger(k);
   if (kIsRationalInteger == OMG::Troolean::False) {
     e->cloneTreeOverTree(KBadType);
@@ -337,37 +345,40 @@ bool Arithmetic::ReduceBinomial(Tree* e) {
     e->cloneTreeOverTree(0_e);
     return true;
   }
-  if (!n->isInteger()) {
-    // Generalized binomial coefficient
+  if (!n->isRational()) {
     return false;
   }
   const Tree* k_maxNValue = 300_e;
-  if (Order::CompareSystem(n, k) < 0) {
-    // Generalized binomial coefficient (n < k)
-    if (!Rational::Sign(n).isStrictlyNegative()) {
-      // When n is an integer and 0 <= n < k, binomial(n,k) is 0.
-      e->cloneTreeOverTree(0_e);
-      return true;
-    }
-    Tree* kMinusN =
-        IntegerHandler::Subtraction(Integer::Handler(k), Integer::Handler(n));
-    if (Order::CompareSystem(kMinusN, k_maxNValue) > 0) {
+  if (n->isInteger()) {
+    if (Order::CompareSystem(n, k) < 0) {
+      // Generalized binomial coefficient (n < k)
+      if (!Rational::Sign(n).isStrictlyNegative()) {
+        // When n is an integer and 0 <= n < k, binomial(n,k) is 0.
+        e->cloneTreeOverTree(0_e);
+        return true;
+      }
+      Tree* kMinusN =
+          IntegerHandler::Subtraction(Integer::Handler(k), Integer::Handler(n));
+      if (Order::CompareSystem(kMinusN, k_maxNValue) > 0) {
+        kMinusN->removeTree();
+        return false;
+      }
       kMinusN->removeTree();
-      return false;
-    }
-    kMinusN->removeTree();
-  } else {
-    if (Order::CompareSystem(n, k_maxNValue) > 0) {
-      return false;
-    }
-    // binomial(n, k) = binomial(n, n - k) if n - k < k
-    Tree* nMinusK =
-        IntegerHandler::Subtraction(Integer::Handler(n), Integer::Handler(k));
-    if (Order::CompareSystem(nMinusK, k) < 0) {
-      k->moveTreeOverTree(nMinusK);
     } else {
-      nMinusK->removeTree();
+      if (Order::CompareSystem(n, k_maxNValue) > 0) {
+        return false;
+      }
+      // binomial(n, k) = binomial(n, n - k) if n - k < k
+      Tree* nMinusK =
+          IntegerHandler::Subtraction(Integer::Handler(n), Integer::Handler(k));
+      if (Order::CompareSystem(nMinusK, k) < 0) {
+        k->moveTreeOverTree(nMinusK);
+      } else {
+        nMinusK->removeTree();
+      }
     }
+  } else if (Order::CompareSystem(k, k_maxNValue) > 0) {
+    return false;
   }
   /* As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~10^89
    * If n was negative, k - n < k_maxNValue, result < binomial(-150,150) ~10^88

@@ -368,9 +368,11 @@ ComplexProperties Quotient(ComplexProperties p1, ComplexProperties p2) {
 ComplexProperties Binomial(ComplexProperties p) {
   /* Bin(n, k) is only defined for n and k real, and k integer.
    * It is always real, and integer if n is an integer. */
-  return ComplexProperties(p.realProperties().isInteger()
-                               ? Properties::Integer()
-                               : Properties::Unknown(),
+  if (!p.isReal() || !p.realProperties().isFinite()) {
+    return ComplexProperties(Properties::Unknown(), Properties::Unknown());
+  }
+  return ComplexProperties(p.realProperties().isInteger() ? Properties::Integer()
+                                                          : Properties::Finite(),
                            Properties::Zero());
 }
 

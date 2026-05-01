@@ -121,7 +121,9 @@ QUIZ_CASE(pcj_simplification_combinatorics) {
   simplifies_to("binomial(10.34,0)", "1");
   simplifies_to("binomial(3.34,-1)", "0");
   simplifies_to("binomial(-10,10)", "92378");
-  simplifies_to("binomial(2.5,3)", "binomial(5/2,3)");
+  simplifies_to("binomial(0.25,1)", "1/4");
+  simplifies_to("binomial(5/2,3)", "5/16");
+  simplifies_to("binomial(2.5,3)", "5/16");
   simplifies_to("binomial(-200,120)", "binomial(-200,120)");
   simplifies_to("binomial(400,1)", "binomial(400,1)");
 

@@ -35,7 +35,7 @@ void TableViewDataSource::prepareHeaderCell(Escher::HighlightCell* cell,
   }
   myCell->setColor(store()->isGroupActive(info.groupNumber)
                        ? store()->colorOfGroupAtIndex(info.groupNumber)
-                       : Escher::ThemeComponent::TokenGrayDark);
+                       : Escher::ThemeComponent::TextGrayDark);
   static_assert(Escher::k_numberOfDataColors >= Store::k_maxNumberOfGroups);
 }
 

@@ -28,6 +28,12 @@ constexpr static ThemeComponent Highlight(ThemeComponent component,
       return ThemeComponent::TextSelectGrayVeryDark;
     case ThemeComponent::TextPurple:
       return ThemeComponent::TextSelectPurple;
+    case ThemeComponent::TextSelect:
+      /* In some special cases (see AbstractTextField::ContentView::drawRect at
+       * the "Draw the selected text" section), we highlight a text which can be
+       * in an highlighted cell. In this case, the color must switch from
+       * selected to un-selected. */
+      return ThemeComponent::TextDefault;
     case ThemeComponent::BackgroundWhite:
     case ThemeComponent::WallScreen:
       return ThemeComponent::SurfaceSelect;

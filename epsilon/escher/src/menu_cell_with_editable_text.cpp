@@ -3,8 +3,7 @@
 namespace Escher {
 
 void EditableTextWidget::setHighlighted(bool highlighted) {
-  m_textField->setBackgroundColor(
-      AbstractMenuCell::BackgroundColor(highlighted));
+  m_textField->setHighlighted(highlighted);
 }
 
 AbstractWithEditableText::AbstractWithEditableText(

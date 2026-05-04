@@ -1,5 +1,7 @@
 #pragma once
 
+#include <omg/unreachable.h>
+
 #include "components.h"
 
 namespace Escher {
@@ -23,10 +25,14 @@ constexpr static ThemeComponent Highlight(ThemeComponent component,
     case ThemeComponent::BackgroundWhite:
     case ThemeComponent::WallScreen:
       return ThemeComponent::SurfaceSelect;
-    default:
-      /* Other components either do not need an highlighted version, or don't
-       * change their color when they are highlighted. */
+    case ThemeComponent::TextWhite:
+    case ThemeComponent::TokenYellow:
+    case ThemeComponent::SurfaceSelect:
+      // These colors do not change when highlighted
       return component;
+    default:
+      /* Other components should not be highlightable */
+      OMG_UNREACHABLE
   }
 }
 

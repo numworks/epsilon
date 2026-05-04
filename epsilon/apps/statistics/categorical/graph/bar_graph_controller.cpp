@@ -143,7 +143,7 @@ void BarGraphController::ContentView::updateBannerView() {
   m_bannerView.frequencyView()->setText(buffer);
 
   // Relative frequency
-  float relativeFreq = m_store->getRelativeFrequency(group, category);
+  float relativeFreq = m_store->getJointRelativeFrequency(group, category);
   Poincare::Print::CustomPrintf(buffer, k_bufferSize, "%s%s%*.*ef",
                                 I18n::translate(I18n::Message::Relative),
                                 I18n::translate(I18n::Message::ColonConvention),

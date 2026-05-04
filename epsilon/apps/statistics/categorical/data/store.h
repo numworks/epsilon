@@ -111,7 +111,10 @@ class Store {
     assert(0 <= col && col < k_maxNumberOfGroups);
     m_table->m_showRelativeFreqColumn[col] = active;
   }
+  // Relative frequency of a value with respect to its group
   float getRelativeFrequency(int col, int row) const;
+  // Relative frequency of a value with respect to all active data
+  float getJointRelativeFrequency(int col, int row) const;
 
   // Color
   Escher::ThemeComponent colorOfGroupAtIndex(int group) const;
@@ -140,6 +143,7 @@ class Store {
   void recomputeSum(int column);
   void recomputeAllSums();
   bool nonMemoizedIsGroupEmpty(int column) const;
+  float totalSum() const;
 
   std::array<float, k_maxNumberOfGroups> m_sumOfCategories;
   int m_numberOfRows;

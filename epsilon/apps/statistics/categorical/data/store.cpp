@@ -234,6 +234,13 @@ float Store::getRelativeFrequency(int col, int row) const {
   return std::isfinite(value) ? value / m_sumOfCategories[col] : NAN;
 }
 
+float Store::getJointRelativeFrequency(int col, int row) const {
+  assert(0 <= col && col < k_maxNumberOfGroups);
+  assert(0 <= row && row < k_maxNumberOfCategory);
+  float value = m_table->m_data[col][row];
+  return std::isfinite(value) ? value / totalSum() : NAN;
+}
+
 Escher::ThemeComponent Store::colorOfGroupAtIndex(int group) const {
   return Escher::DataColorComponent(colorIndexForGroup(group));
 }
@@ -269,6 +276,18 @@ bool Store::nonMemoizedIsGroupEmpty(int column) const {
     }
   }
   return true;
+}
+
+float Store::totalSum() const {
+  float totalSum = 0;
+  for (int col = 0; col < m_numberOfColumns; col++) {
+    if (isGroupActive(col)) {
+      assert(std::isfinite(m_sumOfCategories[col]));
+      totalSum += m_sumOfCategories[col];
+    }
+  }
+  assert(totalSum > 0);
+  return totalSum;
 }
 
 }  // namespace Statistics::Categorical

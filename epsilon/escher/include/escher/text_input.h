@@ -123,8 +123,8 @@ class TextInput : public EditableField {
     const char* m_selectionStart;
 
    private:
-    bool m_isHighlighted = false;
     Escher::TextFormat m_format;
+    bool m_isHighlighted = false;
   };
 
   /* If the text to be appended is too long to be added without overflowing the

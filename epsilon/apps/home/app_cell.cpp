@@ -67,7 +67,6 @@ void AppCell::setVisible(bool visible) {
 
 void AppCell::reloadCell() {
   TextView* t = const_cast<TextView*>(textView());
-  // TODO: TokenWhite
   t->setTextColor(isHighlighted() ? ThemeComponent::TextWhite
                                   : ThemeComponent::TextDefault);
   t->setBackgroundColor(isHighlighted() ? ThemeComponent::TokenYellow

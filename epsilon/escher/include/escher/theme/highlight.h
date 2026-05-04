@@ -3,6 +3,7 @@
 #include <omg/unreachable.h>
 
 #include "components.h"
+#include "data_colors.h"
 
 namespace Escher {
 
@@ -11,6 +12,10 @@ namespace Escher {
 constexpr static ThemeComponent Highlight(ThemeComponent component,
                                           bool isHighlighted) {
   if (!isHighlighted) {
+    return component;
+  }
+  if (IsDataColor(component) || IsDataColorLight(component)) {
+    // Data colors do not change when highlighted
     return component;
   }
   switch (component) {

@@ -39,10 +39,9 @@ HistoryViewCell::HistoryViewCell(Responder* parentResponder)
       m_calculationSingleLine(false) {}
 
 void HistoryViewCell::setEven(bool even) {
-  EvenOddCell::setEven(even);
   m_scrollableOutputView.evenOddCell()->setEven(even);
   m_ellipsis.setEven(even);
-  updateSubviewsBackgroundAfterChangingState();
+  EvenOddCell::setEven(even);
 }
 
 void HistoryViewCell::setHighlighted(bool highlight) {

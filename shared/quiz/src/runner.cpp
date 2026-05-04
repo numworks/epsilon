@@ -7,6 +7,10 @@
 
 #include "cases.h"
 
+__attribute__((weak)) void runCaseWithInstructionCount(Quiz::TestCase body) {
+  body();
+}
+
 static bool clearConsole() { return Ion::Console::clear(); }
 
 namespace Quiz {
@@ -45,7 +49,7 @@ void Runner::innerRun() {
     }
     quiz_print(Cases::s_names[i]);
     Env::Flush();
-    Cases::s_bodies[i]();
+    runCaseWithInstructionCount(Cases::s_bodies[i]);
   }
   Env::Flush();
   clearConsole();

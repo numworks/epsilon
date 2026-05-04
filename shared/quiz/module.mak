@@ -1,6 +1,7 @@
 $(call create_module,quiz,1,$(addprefix src/, \
   cases.cpp \
   runner.cpp \
+  runner_perf_counter.cpp:+perf_counter \
   runner_arguments.cpp:+arguments \
   runner_no_arguments.cpp:-arguments \
   runner_exception.cpp:+exception \

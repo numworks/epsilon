@@ -41,11 +41,13 @@ AbstractTextField::ContentView::ContentView(char* textBuffer,
 void AbstractTextField::ContentView::drawRect(KDContext* ctx,
                                               KDRect rect) const {
   ThemeComponent backgroundColor = textFormat().style.backgroundColor;
+  ThemeComponent textColor = textFormat().style.glyphColor;
   if (m_isEditing) {
     backgroundColor = ThemeComponent::BackgroundWhite;
+    textColor = ThemeComponent::TextDefault;
   }
   ctx->fillRect(bounds(), ColorPicker::Resolve(backgroundColor));
-  TextStyle glyphStyle{.glyphColor = textFormat().style.glyphColor,
+  TextStyle glyphStyle{.glyphColor = textColor,
                        .backgroundColor = backgroundColor,
                        .font = textFormat().style.font};
   if (selectionIsEmpty()) {
@@ -61,14 +63,14 @@ void AbstractTextField::ContentView::drawRect(KDContext* ctx,
     int selectionLength = selectionRight() - selectionLeft();
     textToDraw += selectionOffset;
     // Draw the selected text
-    ctx->drawString(text() + selectionOffset,
-                    glyphFrameAtPosition(text(), textToDraw).origin(),
-                    {.glyphColor = ColorPicker::Resolve(
-                         Highlight(textFormat().style.glyphColor, true)),
-                     .backgroundColor = ColorPicker::Resolve(
-                         Highlight(textFormat().style.backgroundColor, true)),
-                     .font = textFormat().style.font},
-                    selectionLength);
+    ctx->drawString(
+        text() + selectionOffset,
+        glyphFrameAtPosition(text(), textToDraw).origin(),
+        {.glyphColor = ColorPicker::Resolve(Highlight(textColor, true)),
+         .backgroundColor =
+             ColorPicker::Resolve(Highlight(backgroundColor, true)),
+         .font = textFormat().style.font},
+        selectionLength);
     textToDraw += selectionLength;
     // Draw the non selected text on the right of the selection
     ctx->drawString(text() + selectionOffset + selectionLength,

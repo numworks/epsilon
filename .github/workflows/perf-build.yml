@@ -28,6 +28,7 @@ jobs:
         uses: ./.github/actions/docker-builder
         with:
           platform: linux
+          perfmon: 'true'
 
       - name: Checkout to most recent ancestor
         run: git checkout ${{ steps.common_ancestor.outputs.commit_sha }}

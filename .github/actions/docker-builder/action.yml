@@ -13,6 +13,10 @@ inputs:
     description: 'The Emscripten SDK version to install in the container'
     required: false
     default: 'unknown'
+  perfmon:
+    description: 'Add CAP_PERFMON to the container so perf_event_open can be used'
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -27,4 +31,8 @@ runs:
         CACHE_FOLDER=/tmp/ccache
         mkdir -p $CACHE_FOLDER
         CACHE_FLAGS="--env CCACHE_DIR=/cache --mount type=bind,source=$CACHE_FOLDER,target=/cache"
-        echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) $CACHE_FLAGS --env MAKEFLAGS --mount type=bind,source=.,target=/monorepo oasis-builder-${{ inputs.platform }}:latest sh -c" >> $GITHUB_ENV
+        EXTRA_FLAGS=""
+        if [ "${{ inputs.perfmon }}" = "true" ]; then
+          EXTRA_FLAGS="--cap-add=PERFMON"
+        fi
+        echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) $CACHE_FLAGS $EXTRA_FLAGS --env MAKEFLAGS --mount type=bind,source=.,target=/monorepo oasis-builder-${{ inputs.platform }}:latest sh -c" >> $GITHUB_ENV

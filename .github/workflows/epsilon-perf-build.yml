@@ -1,0 +1,25 @@
+name: Epsilon Perf
+
+on:
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'tests/**'
+      - '**/scandium/**'
+      - 'ion/src/simulator/**'
+      - 'external_apps/**'
+
+concurrency:
+  group: ${{ github.workflow }}-Epsilon-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
+
+jobs:
+  perf:
+    name: perf metrics
+    uses: ./.github/workflows/perf-build.yml
+    with:
+      project-path: epsilon
+      threshold: 5

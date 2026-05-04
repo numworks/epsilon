@@ -1,0 +1,70 @@
+name: Perf metrics
+# read-only repo token
+on:
+  workflow_call:
+    inputs:
+      project-path:
+        type: string
+      threshold:
+        type: number
+
+jobs:
+  perf:
+    timeout-minutes: 30
+    runs-on: ${{ fromJSON(vars.RUNNER_LABELS_LARGE) }}
+    env:
+      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }} PLATFORM=host DEBUG=0 VERBOSE=0
+    steps:
+      - name: Fetch target branch and PR branch
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 200
+
+      - name: Find most recent ancestor of PR and target branch
+        id: common_ancestor
+        run: echo "commit_sha=$(git merge-base ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})" >> $GITHUB_OUTPUT
+
+      - name: Build container and define DOCKER_RUN
+        uses: ./.github/actions/docker-builder
+        with:
+          platform: linux
+
+      - name: Checkout to most recent ancestor
+        run: git checkout ${{ steps.common_ancestor.outputs.commit_sha }}
+
+      - name: Build and run base
+        run: |
+          $DOCKER_RUN "make -C ${{ inputs.project-path }} ${{ inputs.project-path }}_test.perf_counter.bin"
+          $DOCKER_RUN "${{ inputs.project-path }}/output/release/linux/${{ inputs.project-path }}_test.perf_counter.bin --headless" > base.log
+
+      - name: Checkout head of PR
+        run: git checkout ${{ github.event.pull_request.head.sha }}
+
+      - name: Build and run head
+        run: |
+          $DOCKER_RUN "make -C ${{ inputs.project-path }} ${{ inputs.project-path }}_test.perf_counter.bin"
+          $DOCKER_RUN "${{ inputs.project-path }}/output/release/linux/${{ inputs.project-path }}_test.perf_counter.bin --headless" > head.log
+
+      - name: Compare
+        id: compare
+        run: |
+          set +e
+          $DOCKER_RUN "\$PYTHON tools/metrics/perf_compare.py base.log head.log --threshold ${{ inputs.threshold }}" > compare.txt
+          status=$?
+          echo "has_changes=$([ $status -eq 1 ] && echo true || echo false)" >> $GITHUB_OUTPUT
+          {
+            echo "details<<EOF"
+            cat compare.txt
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Add comment
+        if: steps.compare.outputs.has_changes == 'true'
+        uses: ./.github/actions/post-comment
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          pr-number: ${{ github.event.pull_request.number }}
+          body: |
+            ### ${{ inputs.project-path == 'scandium' && 'Scandium' || 'Epsilon' }} Performance analysis (threshold ${{ inputs.threshold }}%)
+            ${{ steps.compare.outputs.details }}

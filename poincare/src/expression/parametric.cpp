@@ -454,6 +454,12 @@ bool Explicit(Tree* e) {
     result->cloneNodeAtNode(isSum ? KAdd.node<2> : KMult.node<2>);
     // Terms are simplified one at a time to avoid overflowing the pool
     SystematicReduction::ShallowReduce(result);
+    // If terms are not collapsing, exit early
+    if (step == 10 && result->isAdd() &&
+        result->numberOfChildren() >= step - 1) {
+      SharedTreeStack->dropBlocksFrom(result);
+      return false;
+    }
   }
   e->moveTreeOverTree(result);
   return true;

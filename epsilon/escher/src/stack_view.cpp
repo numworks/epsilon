@@ -36,12 +36,14 @@ void StackView::pushStack(const ViewController* vc) {
   int numberOfStacks = m_stackHeaderViews->size();
   if (m_style == Style::GrayGradation) {
     textColor = ThemeComponent::TextWhite;
-    // TODO: background and separator colors need to be different in dark mode
-    constexpr ThemeComponent k_grayGradationColors[] = {
+    constexpr ThemeComponent k_backgrounds[] = {
         ThemeComponent::BannerPurple, ThemeComponent::BannerGrayDark,
         ThemeComponent::BannerGrayDarkMiddle};
-    backgroundColor = k_grayGradationColors[numberOfStacks];
-    separatorColor = k_grayGradationColors[numberOfStacks];
+    constexpr ThemeComponent k_separators[] = {
+        ThemeComponent::BorderPurple, ThemeComponent::BorderGrayDark,
+        ThemeComponent::BorderGrayDarkMiddle};
+    backgroundColor = k_backgrounds[numberOfStacks];
+    separatorColor = k_separators[numberOfStacks];
   } else if (m_style == Style::PurpleWhite) {
     if (numberOfStacks == 0) {
       textColor = ThemeComponent::TextWhite;

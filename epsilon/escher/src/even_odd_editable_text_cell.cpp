@@ -4,6 +4,11 @@
 
 namespace Escher {
 
+void AbstractEvenOddEditableTextCell::setHighlighted(bool highlighted) {
+  EvenOddCell::setHighlighted(highlighted);
+  editableTextCell()->setHighlighted(highlighted);
+}
+
 void AbstractEvenOddEditableTextCell::
     updateSubviewsBackgroundAfterChangingState() {
   editableTextCell()->textField()->setBackgroundColor(backgroundColor());

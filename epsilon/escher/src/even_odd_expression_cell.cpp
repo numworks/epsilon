@@ -13,6 +13,11 @@ void EvenOddExpressionCell::setLayout(const Layout& layoutR) {
   m_layoutView.setLayout(layoutR);
 }
 
+void EvenOddExpressionCell::setHighlighted(bool highlighted) {
+  EvenOddCell::setHighlighted(highlighted);
+  m_layoutView.setHighlighted(highlighted);
+}
+
 void EvenOddExpressionCell::setBackgroundColor(ThemeComponent backgroundColor) {
   m_layoutView.setBackgroundColor(backgroundColor);
 }

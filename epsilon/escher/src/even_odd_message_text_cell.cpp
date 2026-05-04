@@ -8,6 +8,11 @@ EvenOddMessageTextCell::EvenOddMessageTextCell(const TextFormat& format)
       m_messageTextView((I18n::Message)0, format),
       m_leftMargin(k_horizontalMargin) {}
 
+void EvenOddMessageTextCell::setHighlighted(bool highlighted) {
+  EvenOddCell::setHighlighted(highlighted);
+  m_messageTextView.setHighlighted(highlighted);
+}
+
 void EvenOddMessageTextCell::setAlignment(float horizontalAlignment,
                                           float verticalAlignment) {
   m_messageTextView.setAlignment(horizontalAlignment, verticalAlignment);

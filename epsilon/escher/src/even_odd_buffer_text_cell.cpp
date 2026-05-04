@@ -3,6 +3,11 @@
 
 namespace Escher {
 
+void AbstractEvenOddBufferTextCell::setHighlighted(bool highlighted) {
+  EvenOddCell::setHighlighted(highlighted);
+  bufferTextView()->setHighlighted(highlighted);
+}
+
 void AbstractEvenOddBufferTextCell::
     updateSubviewsBackgroundAfterChangingState() {
   bufferTextView()->setBackgroundColor(backgroundColor());

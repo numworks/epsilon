@@ -10,6 +10,7 @@ class EvenOddExpressionCell : public EvenOddCell {
  public:
   EvenOddExpressionCell(const TextFormat& format = {});
   void setLayout(const Poincare::Layout& layout);
+  void setHighlighted(bool highlight) override;
   void setBackgroundColor(ThemeComponent backgroundColor);
   void setTextColor(ThemeComponent textColor);
   void setFont(KDFont::Size font) { m_layoutView.setFont(font); }

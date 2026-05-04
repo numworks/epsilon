@@ -21,6 +21,7 @@ class AbstractEvenOddBufferTextCell : public EvenOddCell {
   void setTextColor(ThemeComponent textColor) {
     bufferTextView()->setTextColor(textColor);
   }
+  void setHighlighted(bool highlighted) override;
 
  protected:
   void updateSubviewsBackgroundAfterChangingState() override;

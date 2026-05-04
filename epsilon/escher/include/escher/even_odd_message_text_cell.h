@@ -15,6 +15,7 @@ class EvenOddMessageTextCell : public EvenOddCell {
     m_messageTextView.setMessage(textContent);
   }
   void setAlignment(float horizontalAlignment, float verticalAlignment);
+  void setHighlighted(bool highlighted) override;
   void setTextColor(ThemeComponent color) {
     m_messageTextView.setTextColor(color);
   }

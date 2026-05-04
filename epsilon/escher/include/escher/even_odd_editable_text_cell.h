@@ -11,6 +11,7 @@ class AbstractEvenOddEditableTextCell : public EvenOddCell, public Responder {
   AbstractEvenOddEditableTextCell(Responder* parentResponder)
       : EvenOddCell(), Responder(parentResponder) {}
   virtual AbstractEditableTextCell* editableTextCell() = 0;
+  void setHighlighted(bool highlighted) override;
   Responder* responder() override { return this; }
   const char* text() const override { return editableTextCell()->text(); }
 

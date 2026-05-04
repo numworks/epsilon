@@ -58,7 +58,7 @@ class GlyphsView : public View, public CellWidget {
 
  protected:
   // Takes highlight into account
-  virtual TextFormat textFormat() const {
+  TextFormat textFormat() const {
     return TextFormat{
         .style =
             TextStyle{

@@ -55,7 +55,7 @@ void LeftIntegralCalculation::compute(int indexKnownElement) {
     m_result =
         m_distribution->cumulativeDistributiveFunctionAtAbscissa(m_upperBound);
   } else {
-    if (!std::isnan(m_upperBound)) {
+    if (m_distribution->authorizedParameterAtIndex(m_upperBound, 0)) {
       double currentResult =
           m_distribution->cumulativeDistributiveFunctionAtAbscissa(
               m_upperBound);

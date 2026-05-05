@@ -63,6 +63,7 @@ void ConsoleLineCell::setLine(ConsoleLine line) {
 void ConsoleLineCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
   m_scrollableView.consoleLineView()->setHighlighted(highlight);
+  m_promptView.setHighlighted(highlight);
 }
 
 void ConsoleLineCell::reloadCell() {

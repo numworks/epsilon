@@ -21,11 +21,7 @@
 
 void assert_value_is(double value, double expected) {
   assert(std::isfinite(expected));
-  constexpr double k_precision = FLT_EPSILON;
-  if (!std::isfinite(value) ||
-      (std::fabs(value - expected) >= k_precision &&
-       (expected == 0.0 ||
-        std::fabs(value - expected) / expected >= k_precision))) {
+  if (!roughly_equal<double>(value, expected, FLT_EPSILON)) {
     constexpr int k_bufferSize = 50;
     char buffer[k_bufferSize];
     Poincare::Print::CustomPrintf(
@@ -138,18 +134,18 @@ QUIZ_CASE(distributions_results_uniform) {
   Distributions::UniformDistribution distribution;
   distribution.setParameterAtIndex(-1, 0);
   distribution.setParameterAtIndex(1, 1);
-  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(4), 0);
-  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(.2), 1. / 2.f);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(4.0), 0.0);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.2), 1.0 / 2.0);
   assert_cumulative_distributive_function_direct_and_inverse_is(
-      &distribution, 0.23f, (1.f + .23f) / 2.f);
+      &distribution, 0.23, (1.0 + 0.23) / 2.0);
   assert_cumulative_distributive_function_direct_and_inverse_is(
-      &distribution, -0.9, (1.F - 0.9f) / 2.f);
+      &distribution, -0.9, (1.0 - 0.9) / 2.0);
 
   // U(0.1, 17)
   distribution.setParameterAtIndex(0.1, 0);
   distribution.setParameterAtIndex(17., 1);
-  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(4),
-                              1.f / (17.f - .1f));
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(4.0),
+                              1.0 / (17.0 - 0.1));
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 0.2 * (17. - 0.1) + 0.1, 0.2);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution,

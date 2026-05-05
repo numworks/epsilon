@@ -1,6 +1,8 @@
 #include <escher/metric.h>
 #include <escher/stack_view.h>
 
+#include <array>
+
 namespace Escher {
 
 StackView::StackView(
@@ -33,15 +35,22 @@ void StackView::pushStack(const ViewController* vc) {
   ThemeComponent textColor = ThemeComponent::TextGrayDarkMiddle;
   ThemeComponent backgroundColor = ThemeComponent::BackgroundWhite;
   ThemeComponent separatorColor = ThemeComponent::BorderGrayBright;
+
   int numberOfStacks = m_stackHeaderViews->size();
   if (m_style == Style::GrayGradation) {
+    // Only 3 different stack header colors are defined
+    constexpr size_t k_maxNumberOfGraduatedStacks = 3;
+    assert(numberOfStacks >= 0 &&
+           numberOfStacks < k_maxNumberOfGraduatedStacks);
     textColor = ThemeComponent::TextWhite;
-    constexpr ThemeComponent k_backgrounds[] = {
-        ThemeComponent::BannerPurple, ThemeComponent::BannerGrayDark,
-        ThemeComponent::BannerGrayDarkMiddle};
-    constexpr ThemeComponent k_separators[] = {
-        ThemeComponent::BorderPurple, ThemeComponent::BorderGrayDark,
-        ThemeComponent::BorderGrayDarkMiddle};
+    constexpr std::array<ThemeComponent, k_maxNumberOfGraduatedStacks>
+        k_backgrounds = {ThemeComponent::BannerPurple,
+                         ThemeComponent::BannerGrayDark,
+                         ThemeComponent::BannerGrayDarkMiddle};
+    constexpr std::array<ThemeComponent, k_maxNumberOfGraduatedStacks>
+        k_separators = {ThemeComponent::BorderPurple,
+                        ThemeComponent::BorderGrayDark,
+                        ThemeComponent::BorderGrayDarkMiddle};
     backgroundColor = k_backgrounds[numberOfStacks];
     separatorColor = k_separators[numberOfStacks];
   } else if (m_style == Style::PurpleWhite) {

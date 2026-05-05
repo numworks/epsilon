@@ -2,7 +2,6 @@
 #include <float.h>
 #include <poincare/test/helpers/float.h>
 #include <quiz.h>
-#include <string.h>
 
 #include <cmath>
 
@@ -17,13 +16,15 @@
 #include "distributions/models/distribution/student_distribution.h"
 #include "distributions/models/distribution/uniform_distribution.h"
 
+double k_precision = FLT_EPSILON;
+
 void assert_cumulative_distributive_function_direct_is(
     Distributions::Distribution* distribution, double x, double result) {
   double r = distribution->cumulativeDistributiveFunctionAtAbscissa(x);
   quiz_assert(!std::isnan(r));
   quiz_assert(!std::isinf(r));
-  quiz_assert(std::fabs(r - result) < FLT_EPSILON ||
-              std::fabs(r - result) / result < FLT_EPSILON);
+  quiz_assert(std::fabs(r - result) < k_precision ||
+              std::fabs(r - result) / result < k_precision);
 }
 
 void assert_cumulative_distributive_function_inverse_is(
@@ -31,8 +32,8 @@ void assert_cumulative_distributive_function_inverse_is(
   double r = distribution->cumulativeDistributiveInverseForProbability(result);
   quiz_assert(!std::isnan(r));
   quiz_assert(!std::isinf(r));
-  quiz_assert(std::fabs(r - x) < FLT_EPSILON ||
-              std::fabs(r - x) / x < FLT_EPSILON);
+  quiz_assert(std::fabs(r - x) < k_precision ||
+              std::fabs(r - x) / x < k_precision);
 }
 
 void assert_cumulative_distributive_function_direct_and_inverse_is(
@@ -47,8 +48,8 @@ void assert_finite_integral_between_abscissas_is(
   double r = distribution->finiteIntegralBetweenAbscissas(a, b);
   quiz_assert(!std::isnan(r));
   quiz_assert(!std::isinf(r));
-  quiz_assert(std::fabs(r - result) < FLT_EPSILON ||
-              std::fabs(r - result) / result < FLT_EPSILON);
+  quiz_assert(std::fabs(r - result) < k_precision ||
+              std::fabs(r - result) / result < k_precision);
 }
 
 QUIZ_CASE(distributions_results_binomial) {

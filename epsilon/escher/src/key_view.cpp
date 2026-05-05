@@ -78,8 +78,10 @@ void KeyView::drawRect(KDContext* ctx, KDRect rect) const {
   KDRect frame((width - k_keySize) / 2, (height - k_keySize) / 2, k_keySize,
                k_keySize);
   KDColor keyWorkingBuffer[KeyView::k_keySize * KeyView::k_keySize];
+  /* Note: KeyView is only used on banners, so the color component of the key
+   * icons should be the same as the banner text color. */
   ctx->blendRectWithMask(frame,
-                         ColorPicker::Resolve(ThemeComponent::TokenBlack),
+                         ColorPicker::Resolve(ThemeComponent::TextBanner),
                          mask(), keyWorkingBuffer);
 }
 

@@ -20,8 +20,7 @@
 #include "distributions/models/distribution/uniform_distribution.h"
 
 void assert_value_is(double value, double expected) {
-  assert(std::isfinite(expected));
-  if (!roughly_equal<double>(value, expected, FLT_EPSILON)) {
+  if (!roughly_equal<double>(value, expected, FLT_EPSILON, true)) {
     constexpr int k_bufferSize = 50;
     char buffer[k_bufferSize];
     Poincare::Print::CustomPrintf(
@@ -127,6 +126,26 @@ QUIZ_CASE(distributions_results_binomial) {
   // TODO: Should be 6
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 7.0,
                                                            0.95);
+  assert_cumulative_distributive_function_inverse_is(&distribution, NAN, 0.0);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 0.0,
+                                                           1.0);
+  assert_cumulative_distributive_function_inverse_is(&distribution, 20.0, 1.0);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 20.0,
+                                                           0.0);
+
+  // B(0, 1.0)
+  distribution.setParameterAtIndex(0.0, 0);
+  distribution.setParameterAtIndex(1.0, 1);
+  assert_cumulative_distributive_function_inverse_is(&distribution, NAN, 0.5);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, NAN,
+                                                           0.5);
+
+  // B(0, 0.0)
+  distribution.setParameterAtIndex(0.0, 0);
+  distribution.setParameterAtIndex(0.0, 1);
+  assert_cumulative_distributive_function_inverse_is(&distribution, NAN, 0.5);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, NAN,
+                                                           0.5);
 }
 
 QUIZ_CASE(distributions_results_uniform) {
@@ -377,6 +396,13 @@ QUIZ_CASE(distributions_results_geometric) {
   // TODO: Should be 1.0
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 2.0,
                                                            0.6);
+  assert_cumulative_distributive_function_inverse_is(&distribution, NAN, 0.0);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 0.0,
+                                                           1.0);
+  assert_cumulative_distributive_function_inverse_is(&distribution, INFINITY,
+                                                     1.0);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution,
+                                                           INFINITY, 0.0);
 }
 
 QUIZ_CASE(distributions_results_hypergeometric) {
@@ -401,6 +427,12 @@ QUIZ_CASE(distributions_results_hypergeometric) {
   // TODO: Should be 29.0
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 30.0,
                                                            0.6);
+  assert_cumulative_distributive_function_inverse_is(&distribution, 0.0, 0.0);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 0.0,
+                                                           1.0);
+  assert_cumulative_distributive_function_inverse_is(&distribution, 50.0, 1.0);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution,
+                                                           INFINITY, 0.0);
 
   // H(10000, 10, 500)
   distribution.setParameterAtIndex(1000, 0);
@@ -468,6 +500,13 @@ QUIZ_CASE(distributions_results_poisson) {
   // TODO: Should be 2.0
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 3.0,
                                                            0.8);
+  assert_cumulative_distributive_function_inverse_is(&distribution, NAN, 0.0);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 0.0,
+                                                           1.0);
+  assert_cumulative_distributive_function_inverse_is(&distribution, INFINITY,
+                                                     1.0);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution,
+                                                           INFINITY, 0.0);
 }
 
 QUIZ_CASE(distributions_results_fisher) {

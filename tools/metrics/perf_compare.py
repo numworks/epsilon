@@ -62,6 +62,23 @@ def main():
     base = parse_log(args.base)
     head = parse_log(args.head)
 
+    if not base:
+        print(f"error: no instruction counts found in {args.base}", file=sys.stderr)
+        return 2
+    if not head:
+        print(f"error: no instruction counts found in {args.head}", file=sys.stderr)
+        return 2
+
+    zero_base = [n for n, c in base.items() if c == 0]
+    zero_head = [n for n, c in head.items() if c == 0]
+    if zero_base or zero_head:
+        bad = sorted(set(zero_base) | set(zero_head))
+        print(
+            "error: zero instruction count for: " + ", ".join(bad),
+            file=sys.stderr,
+        )
+        return 2
+
     common = sorted(set(base) & set(head))
 
     changed = []

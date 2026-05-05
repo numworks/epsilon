@@ -61,6 +61,15 @@ class Palette {
   constexpr static KDColor DARK_VioletPale = KDColor::RGB24(0xC3CAF4);
   constexpr static KDColor DARK_AxisMain = KDColor::RGB24(0xDEDADE);
   constexpr static KDColor DARK_AxisSecondary = KDColor::RGB24(0x636363);
+  // Dark theme data colors
+  constexpr static KDColor DARK_Red = KDColor::RGB24(0xFF6B70);
+  constexpr static KDColor DARK_Blue = KDColor::RGB24(0x7B96F9);
+  constexpr static KDColor DARK_Green = KDColor::RGB24(0x4AB300);
+  constexpr static KDColor DARK_Yellow = KDColor::RGB24(0xFFB531);
+  constexpr static KDColor DARK_Magenta = KDColor::RGB24(0xFF6BBA);
+  constexpr static KDColor DARK_Turquoise = KDColor::RGB24(0xA6DAF2);
+  constexpr static KDColor DARK_Pink = KDColor::RGB24(0xFFD6DC);
+  constexpr static KDColor DARK_Orange = KDColor::RGB24(0xFFA352);
 
   // Python red is the same as Red
   constexpr static KDColor PYTHON_Red = KDColor::RGB24(0xff000c);

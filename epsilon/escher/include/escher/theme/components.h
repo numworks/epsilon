@@ -68,7 +68,27 @@ namespace Escher {
   X(TokenGrayDark)           \
   X(TokenEllipsis)           \
   X(TokenBatteryLevel)       \
-  X(TokenLowBattery)
+  X(TokenLowBattery)         \
+  X(DataRed)                 \
+  X(DataBlue)                \
+  X(DataGreen)               \
+  X(DataYellow)              \
+  X(DataMagenta)             \
+  X(DataTurquoise)           \
+  X(DataPink)                \
+  X(DataOrange)              \
+  X(DataViolet)              \
+  X(DataMint)                \
+  X(DataRedLight)            \
+  X(DataBlueLight)           \
+  X(DataGreenLight)          \
+  X(DataYellowLight)         \
+  X(DataMagentaLight)        \
+  X(DataTurquoiseLight)      \
+  X(DataPinkLight)           \
+  X(DataOrangeLight)         \
+  X(DataVioletLight)         \
+  X(DataMintLight)
 
 /* TODO: check the following colors which are not in the specs but used anyway:
  * - TextBluishGray (python app)
@@ -81,35 +101,15 @@ namespace Escher {
  * same value in all themes. A fixed component color also doesn't need to be
  * stored in the ThemeContainer, it is resolved directly in the
  * ThemeContainer::get switch. */
-#define FIXED_COMPONENTS(X)                      \
-  X(BasicBlack, BasicColor::Black)               \
-  X(BasicWhite, BasicColor::White)               \
-  X(BasicRed, BasicColor::Red)                   \
-  X(BasicGreen, BasicColor::Green)               \
-  X(BasicBlue, BasicColor::Blue)                 \
-  X(BasicYellow, BasicColor::Yellow)             \
-  X(BasicOrange, BasicColor::Orange)             \
-  X(BasicPurple, BasicColor::Purple)             \
-  X(DataRed, Palette::Red)                       \
-  X(DataBlue, Palette::Blue)                     \
-  X(DataGreen, Palette::Green)                   \
-  X(DataYellow, Palette::YellowDark)             \
-  X(DataMagenta, Palette::Magenta)               \
-  X(DataTurquoise, Palette::Turquoise)           \
-  X(DataPink, Palette::Pink)                     \
-  X(DataOrange, Palette::Orange)                 \
-  X(DataViolet, Palette::Violet)                 \
-  X(DataMint, Palette::Mint)                     \
-  X(DataRedLight, Palette::RedLight)             \
-  X(DataBlueLight, Palette::BlueLight)           \
-  X(DataGreenLight, Palette::GreenLight)         \
-  X(DataYellowLight, Palette::YellowLight)       \
-  X(DataMagentaLight, Palette::MagentaLight)     \
-  X(DataTurquoiseLight, Palette::TurquoiseLight) \
-  X(DataPinkLight, Palette::PinkLight)           \
-  X(DataOrangeLight, Palette::OrangeLight)       \
-  X(DataVioletLight, Palette::VioletLight)       \
-  X(DataMintLight, Palette::MintLight)
+#define FIXED_COMPONENTS(X)          \
+  X(BasicBlack, BasicColor::Black)   \
+  X(BasicWhite, BasicColor::White)   \
+  X(BasicRed, BasicColor::Red)       \
+  X(BasicGreen, BasicColor::Green)   \
+  X(BasicBlue, BasicColor::Blue)     \
+  X(BasicYellow, BasicColor::Yellow) \
+  X(BasicOrange, BasicColor::Orange) \
+  X(BasicPurple, BasicColor::Purple)
 
 enum class ThemeComponent : uint8_t {
 #define X(name) name,

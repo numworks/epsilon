@@ -72,6 +72,26 @@ constexpr static ThemeContainer k_darkTheme = ThemeContainer{
     .TokenEllipsis = Palette::DARK_VioletDeep,
     // TODO: decide on battery logo colors
     .TokenBatteryLevel = Palette::YellowLightBattery,
-    .TokenLowBattery = Palette::LowBattery};
+    .TokenLowBattery = Palette::LowBattery,
+    .DataRed = Palette::DARK_Red,
+    .DataBlue = Palette::DARK_Blue,
+    .DataGreen = Palette::DARK_Green,
+    .DataYellow = Palette::DARK_Yellow,
+    .DataMagenta = Palette::DARK_Magenta,
+    .DataTurquoise = Palette::DARK_Turquoise,
+    .DataPink = Palette::DARK_Pink,
+    .DataOrange = Palette::DARK_Orange,
+    .DataViolet = Palette::Violet,
+    .DataMint = Palette::Mint,
+    .DataRedLight = Palette::RedLight,
+    .DataBlueLight = Palette::BlueLight,
+    .DataGreenLight = Palette::GreenLight,
+    .DataYellowLight = Palette::YellowLight,
+    .DataMagentaLight = Palette::MagentaLight,
+    .DataTurquoiseLight = Palette::TurquoiseLight,
+    .DataPinkLight = Palette::PinkLight,
+    .DataOrangeLight = Palette::OrangeLight,
+    .DataVioletLight = Palette::VioletLight,
+    .DataMintLight = Palette::MintLight};
 
 }  // namespace Escher

@@ -123,11 +123,10 @@ QUIZ_CASE(distributions_results_binomial) {
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 7.0,
                                                            0.93);
   assert_cumulative_distributive_function_inverse_is(&distribution, 6.0, 0.05);
-  // TODO: Should be 6
-  assert_right_cumulative_distributive_function_inverse_is(&distribution, 7.0,
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 6.0,
                                                            0.95);
   assert_cumulative_distributive_function_inverse_is(&distribution, NAN, 0.0);
-  assert_right_cumulative_distributive_function_inverse_is(&distribution, 0.0,
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, NAN,
                                                            1.0);
   assert_cumulative_distributive_function_inverse_is(&distribution, 20.0, 1.0);
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 20.0,
@@ -393,11 +392,10 @@ QUIZ_CASE(distributions_results_geometric) {
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 2.0,
                                                            0.4);
   assert_cumulative_distributive_function_inverse_is(&distribution, 1.0, 0.4);
-  // TODO: Should be 1.0
-  assert_right_cumulative_distributive_function_inverse_is(&distribution, 2.0,
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 1.0,
                                                            0.6);
   assert_cumulative_distributive_function_inverse_is(&distribution, NAN, 0.0);
-  assert_right_cumulative_distributive_function_inverse_is(&distribution, 0.0,
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, NAN,
                                                            1.0);
   assert_cumulative_distributive_function_inverse_is(&distribution, INFINITY,
                                                      1.0);
@@ -424,15 +422,14 @@ QUIZ_CASE(distributions_results_hypergeometric) {
   assert_cumulative_distributive_function_inverse_is(&distribution, 29.0, 0.4);
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 27.0,
                                                            0.9);
-  // TODO: Should be 29.0
-  assert_right_cumulative_distributive_function_inverse_is(&distribution, 30.0,
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 29.0,
                                                            0.6);
   assert_cumulative_distributive_function_inverse_is(&distribution, 0.0, 0.0);
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 0.0,
                                                            1.0);
   assert_cumulative_distributive_function_inverse_is(&distribution, 50.0, 1.0);
-  assert_right_cumulative_distributive_function_inverse_is(&distribution,
-                                                           INFINITY, 0.0);
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 50.0,
+                                                           0.0);
 
   // H(10000, 10, 500)
   distribution.setParameterAtIndex(1000, 0);
@@ -497,11 +494,10 @@ QUIZ_CASE(distributions_results_poisson) {
   assert_right_cumulative_distributive_function_inverse_is(&distribution, 3.0,
                                                            0.7);
   assert_cumulative_distributive_function_inverse_is(&distribution, 2.0, 0.2);
-  // TODO: Should be 2.0
-  assert_right_cumulative_distributive_function_inverse_is(&distribution, 3.0,
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, 2.0,
                                                            0.8);
   assert_cumulative_distributive_function_inverse_is(&distribution, NAN, 0.0);
-  assert_right_cumulative_distributive_function_inverse_is(&distribution, 0.0,
+  assert_right_cumulative_distributive_function_inverse_is(&distribution, NAN,
                                                            1.0);
   assert_cumulative_distributive_function_inverse_is(&distribution, INFINITY,
                                                      1.0);

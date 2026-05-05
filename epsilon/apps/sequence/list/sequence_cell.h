@@ -41,6 +41,9 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
   constexpr static KDCoordinate k_ellipsisWidth =
       Escher::Metric::EllipsisCellWidth;
   virtual bool displayEllipsis() const { return true; }
+  /* Note: in the base version expressionIsSelected(), ellipsisIsSelected() and
+   * isHighlighted() mean the same thing, but it is not the case in the
+   * SequenceCell override. */
   virtual bool expressionIsSelected() const { return isHighlighted(); }
   virtual bool ellipsisIsSelected() const { return isHighlighted(); }
   Escher::EllipsisView m_ellipsisView;

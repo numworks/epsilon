@@ -50,7 +50,9 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   KDCoordinate ellipsisViewWidth() const {
     return displayEllipsis() ? Escher::Metric::EllipsisCellWidth : 0;
   }
-
+  /* Note: in the base version expressionIsSelected(), ellipsisIsSelected() and
+   * isHighlighted() mean the same thing, but it is not the case in the
+   * FunctionCell override. */
   virtual bool expressionIsSelected() const { return isHighlighted(); }
   virtual bool ellipsisIsSelected() const { return isHighlighted(); }
 

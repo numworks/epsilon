@@ -58,7 +58,7 @@ class Palette {
   // Dark theme colors
   constexpr static KDColor DARK_VioletDeep = KDColor::RGB24(0x733FFF);
   constexpr static KDColor DARK_VioletMiddle = KDColor::RGB24(0x9296F6);
-  constexpr static KDColor DARK_VioletLight = KDColor::RGB24(0xC3CAF4);
+  constexpr static KDColor DARK_VioletPale = KDColor::RGB24(0xC3CAF4);
   constexpr static KDColor DARK_AxisMain = KDColor::RGB24(0xDEDADE);
   constexpr static KDColor DARK_AxisSecondary = KDColor::RGB24(0x636363);
 

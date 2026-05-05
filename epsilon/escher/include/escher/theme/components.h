@@ -51,6 +51,8 @@ namespace Escher {
   X(ButtonLightShadow2)      \
   X(ButtonGrayBorder)        \
   X(ButtonGrayShadow)        \
+  X(SwitchButtonActive)      \
+  X(SwitchButtonInactive)    \
   X(AxisBlack)               \
   X(AxisLight)               \
   X(AxisMedium)              \

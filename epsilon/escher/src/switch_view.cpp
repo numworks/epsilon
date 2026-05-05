@@ -59,8 +59,8 @@ void SwitchView::drawRect(KDContext* ctx, KDRect rect) const {
                k_switchHeight);
   ctx->blendRectWithMask(
       frame,
-      m_state ? ColorPicker::Resolve(ThemeComponent::TokenYellow)
-              : ColorPicker::Resolve(ThemeComponent::TokenGrayDark),
+      m_state ? ColorPicker::Resolve(ThemeComponent::SwitchButtonActive)
+              : ColorPicker::Resolve(ThemeComponent::SwitchButtonInactive),
       reinterpret_cast<const uint8_t*>(switchMask), workingBuffer);
 
   KDCoordinate onOffX = width - (m_state ? k_onOffSize : k_switchWidth);

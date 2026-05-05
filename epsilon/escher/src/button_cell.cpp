@@ -60,20 +60,29 @@ void ButtonCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Draw rectangle around cell
   if (m_style == Style::EmbossedLight) {
     drawBorder(ctx, OMG::Direction::Right(), 0,
-               ThemeComponent::TokenGrayBright);
-    drawBorder(ctx, OMG::Direction::Up(), 0, ThemeComponent::TokenGrayBright);
-    drawBorder(ctx, OMG::Direction::Left(), 0, ThemeComponent::TokenGrayBright);
-    drawBorder(ctx, OMG::Direction::Down(), 0, ThemeComponent::TokenGrayMiddle);
-    drawBorder(ctx, OMG::Direction::Down(), 1, ThemeComponent::TokenGrayBright);
-    drawBorder(ctx, OMG::Direction::Down(), 2, ThemeComponent::TokenGrayWhite);
+               ThemeComponent::ButtonLightBorderMain);
+    drawBorder(ctx, OMG::Direction::Up(), 0,
+               ThemeComponent::ButtonLightBorderMain);
+    drawBorder(ctx, OMG::Direction::Left(), 0,
+               ThemeComponent::ButtonLightBorderMain);
+    drawBorder(ctx, OMG::Direction::Down(), 0,
+               ThemeComponent::ButtonLightShadow2);
+    drawBorder(ctx, OMG::Direction::Down(), 1,
+               ThemeComponent::ButtonLightShadow1);
+    drawBorder(ctx, OMG::Direction::Down(), 2,
+               ThemeComponent::ButtonLightBorderBottom);
   } else if (m_style == Style::EmbossedGray) {
     drawBorder(ctx, OMG::Direction::Right(), 0,
-               ThemeComponent::TokenGrayMiddle);
-    drawBorder(ctx, OMG::Direction::Up(), 0, ThemeComponent::TokenGrayMiddle);
-    drawBorder(ctx, OMG::Direction::Left(), 1, ThemeComponent::TokenGrayMiddle);
-    drawBorder(ctx, OMG::Direction::Down(), 1, ThemeComponent::TokenGrayMiddle);
-    drawBorder(ctx, OMG::Direction::Left(), 0, ThemeComponent::TokenGrayDark);
-    drawBorder(ctx, OMG::Direction::Down(), 0, ThemeComponent::TokenGrayDark);
+               ThemeComponent::ButtonGrayBorder);
+    drawBorder(ctx, OMG::Direction::Up(), 0, ThemeComponent::ButtonGrayBorder);
+    drawBorder(ctx, OMG::Direction::Left(), 1,
+               ThemeComponent::ButtonGrayBorder);
+    drawBorder(ctx, OMG::Direction::Down(), 1,
+               ThemeComponent::ButtonGrayBorder);
+    drawBorder(ctx, OMG::Direction::Left(), 0,
+               ThemeComponent::ButtonGrayShadow);
+    drawBorder(ctx, OMG::Direction::Down(), 0,
+               ThemeComponent::ButtonGrayShadow);
   }
 }
 

@@ -45,6 +45,12 @@ namespace Escher {
   X(BorderPurple)            \
   X(BorderPurpleDark)        \
   X(BorderYellowDark)        \
+  X(ButtonLightBorderMain)   \
+  X(ButtonLightBorderBottom) \
+  X(ButtonLightShadow1)      \
+  X(ButtonLightShadow2)      \
+  X(ButtonGrayBorder)        \
+  X(ButtonGrayShadow)        \
   X(AxisBlack)               \
   X(AxisLight)               \
   X(AxisMedium)              \
@@ -56,7 +62,6 @@ namespace Escher {
   X(TokenYellow)             \
   X(TokenRed)                \
   X(TokenBlack)              \
-  X(TokenGrayWhite)          \
   X(TokenGrayMiddle)         \
   X(TokenGrayBright)         \
   X(TokenGrayDarkest)        \
